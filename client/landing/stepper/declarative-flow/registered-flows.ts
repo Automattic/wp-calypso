@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
 	AI_ASSEMBLER_FLOW,
-	LINK_IN_BIO_DOMAIN_FLOW,
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -41,16 +40,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'link-in-bio': () =>
 		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
-
-	[ LINK_IN_BIO_DOMAIN_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "link-in-bio-flow-domain" */ '../declarative-flow/link-in-bio-domain'
-		),
-
 	'link-in-bio-tld': () =>
 		import( /* webpackChunkName: "link-in-bio-tld-flow" */ '../declarative-flow/link-in-bio-tld' ),
-
-	podcasts: () => import( /* webpackChunkName: "podcasts-flow" */ '../declarative-flow/podcasts' ),
 
 	'link-in-bio-post-setup': () =>
 		import(
@@ -82,6 +73,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'assembler-first': () =>
 		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
+
+	'readymade-template': () =>
+		import( /* webpackChunkName: "readymade-template-flow" */ './readymade-template' ),
 
 	[ AI_ASSEMBLER_FLOW ]: () =>
 		import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),

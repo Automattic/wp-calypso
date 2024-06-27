@@ -10,7 +10,6 @@
 	"include": [ "src", "src/*.json", "types" ],
 	"exclude": [ "**/test/*" ],
 	"references": [
-		{ "path": "../site-picker" },
 		{ "path": "../state-utils" },
 		{ "path": "../viewport" },
 		{ "path": "../odie-client" },

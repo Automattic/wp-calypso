@@ -174,7 +174,7 @@ const SidebarCards = ( { isBasicHostingDisabled } ) => {
 	const sidebarCards = [
 		{
 			feature: 'site-backup',
-			content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
+			content: <SiteBackupCard />,
 			type: 'basic',
 		},
 		{

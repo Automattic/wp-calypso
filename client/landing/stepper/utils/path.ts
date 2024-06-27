@@ -1,9 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Plans } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { addQueryArgs } from '@wordpress/url';
 import { useMatch } from 'react-router-dom';
+import { useFlowLocale } from '../hooks/use-flow-locale';
 
 const plansPaths = Plans.plansSlugs;
 
@@ -92,7 +92,7 @@ export const useLoginUrl = ( {
 	locale?: string;
 	customLoginPath?: string | null;
 } ): string => {
-	const currentLocale = useLocale();
+	const currentLocale = useFlowLocale();
 	return getLoginUrl( {
 		variationName,
 		redirectTo,

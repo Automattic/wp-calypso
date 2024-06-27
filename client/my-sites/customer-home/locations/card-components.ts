@@ -24,6 +24,7 @@ import {
 	SECTION_BLOGGING_PROMPT,
 	SECTION_BLOGANUARY_BLOGGING_PROMPT,
 	SECTION_LEARN_GROW,
+	TASK_AFFILIATES,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_DOMAIN_UPSELL,
 	TASK_EARN_FEATURES,
@@ -68,6 +69,7 @@ import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/not
 import ReaderFirstPosts from 'calypso/my-sites/customer-home/cards/notices/reader-first-posts';
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
 import StagingSiteNotice from 'calypso/my-sites/customer-home/cards/notices/staging-site';
+import Affiliates from 'calypso/my-sites/customer-home/cards/tasks/affiliates';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/tasks/domain-upsell';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
@@ -105,6 +107,7 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ NOTICE_HOME_LIMITED_TIME_OFFER_COUPON ]: NoticeHomeLimitedTimeOfferCoupon,
 	[ NOTICE_SITE_LAUNCH_SELLER_UPSELL ]: SiteLaunchSellerUpsell,
 	[ NOTICE_STAGING_SITE ]: StagingSiteNotice,
+	[ TASK_AFFILIATES ]: Affiliates,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_DOMAIN_UPSELL ]: DomainUpsell,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,

@@ -49,7 +49,7 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
-	isGlobalSiteViewEnabled,
+	isAdminInterfaceWPAdmin,
 	isJetpackSite,
 	isCurrentPlanPaid,
 	getCustomizerUrl,
@@ -63,6 +63,7 @@ import {
 import { DIFMUpsell } from './difm-upsell-banner';
 import Masterbar from './masterbar';
 import SiteAdminInterface from './site-admin-interface';
+import SiteAdminInterfaceExperiment from './site-admin-interface/experiment';
 import SiteIconSetting from './site-icon-setting';
 import LaunchSite from './site-visibility/launch-site';
 import wrapSettingsForm from './wrap-settings-form';
@@ -552,16 +553,14 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderAdminInterface() {
-		const { site, isSimple } = this.props;
-		if (
-			! isEnabled( 'layout/wpcom-admin-interface' ) &&
-			( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) ||
-				( isEnabled( 'layout/dotcom-nav-redesign-v2' ) && isSimple ) )
-		) {
-			return null;
+		const { site, siteSlug, isSimple } = this.props;
+		if ( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) || isSimple ) {
+			return isEnabled( 'layout/wpcom-admin-interface' ) ? (
+				<SiteAdminInterfaceExperiment siteId={ site.ID } siteSlug={ siteSlug } />
+			) : null;
 		}
 
-		return <SiteAdminInterface siteId={ site.ID } />;
+		return <SiteAdminInterface siteId={ site.ID } siteSlug={ siteSlug } />;
 	}
 
 	render() {
@@ -579,7 +578,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isAtomicAndEditingToolkitDeactivated,
 			isWpcomStagingSite,
 			isUnlaunchedSite: propsisUnlaunchedSite,
-			isClassicView,
+			adminInterfaceIsWPAdmin,
 		} = this.props;
 		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
@@ -589,7 +588,7 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ clsx( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! isClassicView && (
+				{ ! adminInterfaceIsWPAdmin && (
 					<>
 						<SettingsSectionHeader
 							data-tip-target="settings-site-profile-save"
@@ -681,7 +680,7 @@ const connectComponent = connect( ( state ) => {
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
-		isClassicView: isGlobalSiteViewEnabled( state, siteId ),
+		adminInterfaceIsWPAdmin: isAdminInterfaceWPAdmin( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
 		isPaidPlan: isCurrentPlanPaid( state, siteId ),

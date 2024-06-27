@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
+	type SiteExcerptData,
 	SitesSortKey,
 	useSitesListFiltering,
 	useSitesListGrouping,
@@ -236,6 +237,24 @@ const SitesDashboardV2 = ( {
 		}
 	}, [ dataViewsState, setDataViewsState ] );
 
+	const openSitePreviewPane = useCallback(
+		( site: SiteExcerptData ) => {
+			setDataViewsState( ( prevState: DataViewsState ) => ( {
+				...prevState,
+				selectedItem: site,
+				type: 'list',
+			} ) );
+		},
+		[ setDataViewsState ]
+	);
+
+	const changeSitePreviewPane = ( siteId: number ) => {
+		const targetSite = allSites.find( ( site ) => site.ID === siteId );
+		if ( targetSite ) {
+			openSitePreviewPane( targetSite );
+		}
+	};
+
 	// todo: temporary mock data
 	const hideListing = false;
 	const isNarrowView = false;
@@ -282,7 +301,10 @@ const SitesDashboardV2 = ( {
 								dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
 								event="learn-more"
 								horizontal
-								href={ localizeUrl( 'https://wordpress.com/for-agencies' ) }
+								href={ localizeUrl(
+									'https://wordpress.com/for-agencies?ref=wpcom-sites-dashboard'
+								) }
+								target="_blank"
 								title={ translate( 'Managing multiple sites? Meet our agency hosting' ) }
 								tracksClickName="calypso_sites_dashboard_a4a_banner_click"
 							/>
@@ -311,6 +333,7 @@ const SitesDashboardV2 = ( {
 							selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
 							setSelectedSiteFeature={ setSelectedSiteFeature }
 							closeSitePreviewPane={ closeSitePreviewPane }
+							changeSitePreviewPane={ changeSitePreviewPane }
 						/>
 					</LayoutColumn>
 					<GuidedTour defaultTourId="siteManagementTour" />

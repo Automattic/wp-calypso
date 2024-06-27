@@ -1,15 +1,13 @@
 /* eslint-disable no-restricted-imports */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+import { Gravatar } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Markdown from 'react-markdown';
-import { useSelector } from 'react-redux';
-import Gravatar from 'calypso/components/gravatar';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import MaximizeIcon from '../../assets/maximize-icon.svg';
 import MinimizeIcon from '../../assets/minimize-icon.svg';
 import WapuuAvatar from '../../assets/wapuu-squared-avatar.svg';
@@ -21,26 +19,24 @@ import FoldableCard from '../foldable';
 import CustomALink from './custom-a-link';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
-import type { Message, Source } from '../../types';
+import type { CurrentUser, Message, Source } from '../../types';
 
 import './style.scss';
 
 export type ChatMessageProps = {
 	message: Message;
 	scrollToBottom: () => void;
+	currentUser: CurrentUser;
 };
 
 const ChatMessage = (
-	{ message, scrollToBottom }: ChatMessageProps,
+	{ message, scrollToBottom, currentUser }: ChatMessageProps,
 	ref: React.Ref< HTMLDivElement >
 ) => {
 	const isUser = message.role === 'user';
 	const { botName, extraContactOptions, addMessage, trackEvent } = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
-	const currentUser = useSelector( getCurrentUser ) ?? {
-		display_name: window?.odieUserData?.displayName ?? 'Me',
-	};
 	const translate = useTranslate();
 
 	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {

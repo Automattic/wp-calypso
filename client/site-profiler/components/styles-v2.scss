@@ -43,11 +43,13 @@
 	h3 {
 		font-family: $font-sf-pro-text;
 		font-size: 1.75rem;
-		line-height: 1.15;
+		line-height: normal;
 		margin-bottom: 1rem;
+		height: 200px;
 	}
 
 	h4 {
+		height: 80px;
 		margin-bottom: 1rem;
 	}
 

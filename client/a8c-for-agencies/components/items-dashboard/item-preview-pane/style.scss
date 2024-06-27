@@ -9,6 +9,10 @@
 		position: relative;
 		z-index: 1;
 
+		&.is-hidden .section-nav__panel {
+			display: none;
+		}
+
 		.section-nav-tab__link {
 			color: #000;
 		}
@@ -71,8 +75,8 @@
 			}
 
 			.section-nav__mobile-header {
-				margin: 16px 24px 0 24px;
-				width: 88%;
+				margin: 16px auto 0 auto;
+				width: 90%;
 				border: 1px solid var(--color-neutral-10) !important;
 				border-radius: 2px;
 				justify-content: space-between;

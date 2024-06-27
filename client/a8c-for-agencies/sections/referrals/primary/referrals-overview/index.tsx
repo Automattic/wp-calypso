@@ -30,6 +30,7 @@ import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
 import ReferralsFooter from '../footer';
+import AutomatedReferralComingSoonBanner from './automated-referral-coming-soon-banner';
 import LayoutBodyContent from './layout-body-content';
 import NewReferralOrderNotification from './new-referral-order-notification';
 
@@ -51,8 +52,10 @@ export default function ReferralsOverview( {
 
 	const isDesktop = useDesktopBreakpoint();
 
+	const selectedItem = dataViewsState.selectedItem;
+
 	const title =
-		isAutomatedReferral && isDesktop
+		isAutomatedReferral && isDesktop && ! selectedItem
 			? translate( 'Your referrals and commissions' )
 			: translate( 'Referrals' );
 
@@ -69,13 +72,11 @@ export default function ReferralsOverview( {
 
 	const isLoading = isFetching || isFetchingReferrals;
 
-	const selectedItem = dataViewsState.selectedItem;
-
 	return (
 		<Layout
 			className={ clsx( 'referrals-layout', {
 				'referrals-layout--automated': isAutomatedReferral,
-				'referrals-layout--full-width': isAutomatedReferral && hasReferrals,
+				'full-width-layout-with-table': isAutomatedReferral && hasReferrals,
 				'referrals-layout--has-selected': selectedItem,
 			} ) }
 			title={ title }
@@ -91,6 +92,8 @@ export default function ReferralsOverview( {
 							onClose={ () => setReferralEmail( '' ) }
 						/>
 					) }
+
+					{ ! isAutomatedReferral && <AutomatedReferralComingSoonBanner /> }
 
 					<LayoutHeader>
 						<Title>{ title } </Title>

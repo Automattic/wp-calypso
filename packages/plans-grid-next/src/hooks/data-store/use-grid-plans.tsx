@@ -196,6 +196,9 @@ const usePlanTypesWithIntent = ( {
 		case 'plans-videopress':
 			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
+		case 'plans-affiliate':
+			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		default:
 			planTypes = availablePlanTypes;
 	}
@@ -320,9 +323,6 @@ const useGridPlans: UseGridPlansType = ( {
 						product_slug: planSlug,
 				  };
 
-		const storageAddOnsForPlan =
-			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
-
 		const isVisible = isGridPlanVisible( {
 			planSlug,
 			planSlugsForIntent,
@@ -346,7 +346,6 @@ const useGridPlans: UseGridPlansType = ( {
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],
 			pricing: pricingMeta[ planSlug ],
-			storageAddOnsForPlan,
 		};
 	} );
 };

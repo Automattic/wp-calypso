@@ -11,12 +11,40 @@ const IndustrySelector = ( { setIndustry, industry }: Props ) => {
 
 	const industries = [
 		{
+			label: translate( 'Select your industry' ),
+			value: '',
+		},
+		{
 			label: translate( 'Agricultural services' ),
 			value: 'agricultural_services',
 		},
 		{
+			label: translate( 'Business services' ),
+			value: 'business_services',
+		},
+		{
+			label: translate( 'Clothing shops' ),
+			value: 'clothing_shops',
+		},
+		{
 			label: translate( 'Contracted services' ),
 			value: 'contracted_services',
+		},
+		{
+			label: translate( 'Government services' ),
+			value: 'government_services',
+		},
+		{
+			label: translate( 'Miscellaneous shops' ),
+			value: 'miscellaneous_shops',
+		},
+		{
+			label: translate( 'Professional services and membership organisations' ),
+			value: 'professional_services_and_membership_organisations',
+		},
+		{
+			label: translate( 'Retail outlet services' ),
+			value: 'retail_outlet_services',
 		},
 		{
 			label: translate( 'Transportation services' ),
@@ -25,30 +53,6 @@ const IndustrySelector = ( { setIndustry, industry }: Props ) => {
 		{
 			label: translate( 'Utility services' ),
 			value: 'utility_services',
-		},
-		{
-			label: translate( 'Retail outlet services' ),
-			value: 'retail_outlet_services',
-		},
-		{
-			label: translate( 'Clothing shops' ),
-			value: 'clothing_shops',
-		},
-		{
-			label: translate( 'Miscellaneous shops' ),
-			value: 'miscellaneous_shops',
-		},
-		{
-			label: translate( 'Business services' ),
-			value: 'business_services',
-		},
-		{
-			label: translate( 'Professional services and membership organisations' ),
-			value: 'professional_services_and_membership_organisations',
-		},
-		{
-			label: translate( 'Government services' ),
-			value: 'government_services',
 		},
 	];
 

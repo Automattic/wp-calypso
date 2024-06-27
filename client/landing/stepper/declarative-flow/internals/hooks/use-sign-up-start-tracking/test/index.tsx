@@ -106,6 +106,22 @@ describe( 'useSignUpTracking', () => {
 			} );
 		} );
 
+		it( 'tracks the calypso_signup_start event includes the flowVariant if the flow has one', () => {
+			render( {
+				flow: {
+					...signUpFlow,
+					variantSlug: 'variant-slug',
+				} satisfies Flow,
+				currentStepRoute: 'step-1',
+			} );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_start', {
+				flow: 'sign-up-flow',
+				flow_variant: 'variant-slug',
+				ref: '',
+			} );
+		} );
+
 		it( 'does not track events current step is NOT the first step', () => {
 			render( { flow: signUpFlow, currentStepRoute: 'step-2' } );
 

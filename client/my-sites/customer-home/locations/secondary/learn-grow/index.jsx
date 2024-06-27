@@ -1,10 +1,11 @@
 import config from '@automattic/calypso-config';
+import { DotPager } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { createElement, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import DotPager from 'calypso/components/dot-pager';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import {
+	EDUCATION_AFFILIATES,
 	EDUCATION_FREE_PHOTO_LIBRARY,
 	EDUCATION_EARN,
 	EDUCATION_STORE,
@@ -15,6 +16,7 @@ import {
 	EDUCATION_PROMOTE_POST,
 	EDUCATION_SITE_EDITOR_QUICK_START,
 } from 'calypso/my-sites/customer-home/cards/constants';
+import EducationAffiliates from 'calypso/my-sites/customer-home/cards/education/affiliates';
 import BloggingQuickStart from 'calypso/my-sites/customer-home/cards/education/blogging-quick-start';
 import EducationEarn from 'calypso/my-sites/customer-home/cards/education/earn';
 import FindSuccess from 'calypso/my-sites/customer-home/cards/education/find-success';
@@ -31,6 +33,7 @@ import trackMyHomeCardImpression, {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const cardComponents = {
+	[ EDUCATION_AFFILIATES ]: EducationAffiliates,
 	[ EDUCATION_FREE_PHOTO_LIBRARY ]: FreePhotoLibrary,
 	[ EDUCATION_EARN ]: EducationEarn,
 	[ EDUCATION_STORE ]: EducationStore,
@@ -71,6 +74,7 @@ const LearnGrow = () => {
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
+					cardComponents[ card ].isDisabled !== true &&
 					createElement( cardComponents[ card ], {
 						key: index,
 					} )

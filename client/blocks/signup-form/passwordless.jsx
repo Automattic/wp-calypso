@@ -14,6 +14,7 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -27,7 +28,6 @@ class PasswordlessSignupForm extends Component {
 		submitButtonLoadingLabel: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 		userEmail: PropTypes.string,
 		labelText: PropTypes.string,
-		isInviteLoggedOutForm: PropTypes.bool,
 		onInputBlur: PropTypes.func,
 		onInputChange: PropTypes.func,
 		onCreateAccountError: PropTypes.func,
@@ -128,16 +128,20 @@ class PasswordlessSignupForm extends Component {
 	createAccountError = async ( error ) => {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
-		if ( ! [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+		if ( ! isExistingAccountError( error.error ) ) {
 			this.setState( {
 				errorMessages: [
 					this.props.translate(
 						'Sorry, something went wrong when trying to create your account. Please try again.'
 					),
 				],
-				isSubmitting: false,
 			} );
 		}
+
+		this.setState( {
+			isSubmitting: false,
+		} );
+
 		this.props.onCreateAccountError?.( error, this.state.email );
 	};
 
@@ -307,18 +311,6 @@ class PasswordlessSignupForm extends Component {
 		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
 	}
 
-	getFormButtonAndToS() {
-		return this.props.isInviteLoggedOutForm ? (
-			<>
-				{ this.formFooter() } { this.props.renderTerms?.() }
-			</>
-		) : (
-			<>
-				{ this.props.renderTerms?.() } { this.formFooter() }
-			</>
-		);
-	}
-
 	render() {
 		const { errorMessages, isSubmitting } = this.state;
 
@@ -344,7 +336,8 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.getFormButtonAndToS() }
+					{ this.props.renderTerms?.() }
+					{ this.formFooter() }
 				</LoggedOutForm>
 			</div>
 		);

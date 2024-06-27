@@ -4,9 +4,8 @@ import { Button, Flex, FlexItem } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
 import { Icon, external } from '@wordpress/icons';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getSectionName } from 'calypso/state/ui/selectors';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { BackButton } from './back-button';
 import { BackToTopButton } from './back-to-top-button';
 import ArticleFetchingContent from './help-center-article-fetching-content';
@@ -14,7 +13,7 @@ import ArticleFetchingContent from './help-center-article-fetching-content';
 export const HelpCenterEmbedResult: React.FC = () => {
 	const { search } = useLocation();
 	const navigate = useNavigate();
-	const sectionName = useSelector( getSectionName );
+	const { sectionName } = useHelpCenterContext();
 
 	const params = new URLSearchParams( search );
 	const postId = params.get( 'postId' );

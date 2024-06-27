@@ -1,3 +1,5 @@
+import { UrlData } from 'calypso/blocks/import/types';
+
 export interface DNS {
 	host: string;
 	class: string;
@@ -64,6 +66,14 @@ export interface HostingProvider {
 	homepage_url?: string;
 }
 
+export interface HostingProviderUrlDetails {
+	name: string;
+	is_a8c: boolean;
+	is_unknown: boolean;
+	hosting_provider?: HostingProvider;
+	url_data?: UrlData;
+}
+
 export interface DomainAnalyzerQueryResponse {
 	domain: string;
 	whois: WhoIs;
@@ -125,6 +135,7 @@ export type PerformanceReport = {
 	performance: number;
 	overall_score: number;
 	is_wpcom: boolean;
+	is_wordpress: boolean;
 } & BasicMetrics;
 
 export interface UrlPerformanceMetricsQueryResponse {

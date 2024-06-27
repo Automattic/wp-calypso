@@ -4,6 +4,7 @@ import {
 	formattedNumber,
 	percentCalculator,
 	ShortenedNumber,
+	DotPager,
 } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
@@ -11,7 +12,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import DotPager from 'calypso/components/dot-pager';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {

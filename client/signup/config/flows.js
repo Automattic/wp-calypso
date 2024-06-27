@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getPlan, TYPE_ECOMMERCE, TYPE_BUSINESS } from '@automattic/calypso-products/';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
@@ -8,6 +9,7 @@ import {
 } from '@automattic/design-picker';
 import { isOnboardingGuidedFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
 import { get, includes, reject } from 'lodash';
+import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -49,21 +51,6 @@ function dependenciesContainCartItem( dependencies ) {
 	// @TODO: cartItem is now deprecated. Remove dependencies.cartItem and
 	// dependencies.domainItem once all steps and flows have been updated to use cartItems
 	return dependencies.cartItem || dependencies.domainItem || dependencies.cartItems;
-}
-
-function getSiteDestination( dependencies ) {
-	let protocol = 'https';
-
-	/**
-	 * It is possible that non-wordpress.com sites are not HTTPS ready.
-	 *
-	 * Redirect them
-	 */
-	if ( ! dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ) {
-		protocol = 'http';
-	}
-
-	return protocol + '://' + dependencies.siteSlug;
 }
 
 function getRedirectDestination( dependencies ) {
@@ -254,12 +241,68 @@ function getHostingFlowDestination( { stepperHostingFlow } ) {
 	return `/setup/${ stepperHostingFlow }`;
 }
 
-function getEntrepreneurFlowDestination() {
-	return '/setup/entrepreneur/trialAcknowledge';
+function getEntrepreneurFlowDestination( { redirect_to } ) {
+	return redirect_to || '/setup/entrepreneur/trialAcknowledge';
+}
+
+function getGuidedOnboardingFlowDestination( dependencies ) {
+	const { onboardingSegment, siteSlug, siteId, domainItem, cartItems, refParameter } = dependencies;
+
+	if ( ! onboardingSegment ) {
+		return getSignupDestination( dependencies );
+	}
+
+	if ( 'no-site' === siteSlug ) {
+		return '/home';
+	}
+
+	let queryParams = { siteSlug, siteId };
+
+	if ( domainItem ) {
+		queryParams = { siteId };
+	}
+
+	if ( refParameter ) {
+		queryParams.ref = refParameter;
+	}
+
+	const planSlug = getPlanCartItem( cartItems )?.product_slug;
+	const planType = getPlan( planSlug )?.type;
+
+	// Blog and Merchant setup without Entrepreneur/Ecommerce Plan
+	if (
+		( onboardingSegment === 'blogger' || onboardingSegment === 'merchant' ) &&
+		planType !== TYPE_ECOMMERCE
+	) {
+		return addQueryArgs( queryParams, `/setup/site-setup-wg/options` );
+	}
+
+	// Not Blog, Merchant, nor Developer/Agency without Entrepreneur/Ecommerce Plan
+	if (
+		onboardingSegment !== 'blogger' &&
+		onboardingSegment !== 'merchant' &&
+		onboardingSegment !== 'developer-or-agency' &&
+		planType !== TYPE_ECOMMERCE
+	) {
+		return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
+	}
+
+	// Entrepreneur/Ecommerce Plan
+	if ( planType === TYPE_ECOMMERCE ) {
+		return `/checkout/thank-you/${ siteSlug }`;
+	}
+
+	// Developer or Agency with Creator/Business Plan
+	if ( onboardingSegment === 'developer-or-agency' && planType === TYPE_BUSINESS ) {
+		queryParams.initiate_transfer_context = 'guided';
+		queryParams.redirect_to = `/home/${ siteSlug }`;
+		return addQueryArgs( queryParams, '/setup/transferring-hosted-site' );
+	}
+
+	return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
 }
 
 const flows = generateFlows( {
-	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
 	getLaunchDestination,
@@ -274,6 +317,7 @@ const flows = generateFlows( {
 	getDIFMSiteContentCollectionDestination,
 	getHostingFlowDestination,
 	getEntrepreneurFlowDestination,
+	getGuidedOnboardingFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

@@ -5,8 +5,6 @@ $stats-utm-popover-min-width: 270px;
 $stats-utm-border: 1px solid var(--gray-gray-5, #dcdcde);
 
 .stats-utm-picker {
-	padding-top: 2px; // space for a focus ring
-
 	> .components-button {
 		align-items: center;
 		background: #fff;

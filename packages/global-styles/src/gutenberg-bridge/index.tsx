@@ -27,8 +27,18 @@ const {
 
 const GlobalStylesContext: React.Context< GlobalStylesContextObject > = UntypedGSContext;
 
-const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user: GlobalStylesObject ) => {
-	return deepmerge( base, user, { isMergeableObject: isPlainObject } );
+const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user?: GlobalStylesObject ) => {
+	const mergedConfig = user ? deepmerge( base, user, { isMergeableObject: isPlainObject } ) : base;
+
+	// Remove section style variations until we handle them
+	if ( mergedConfig?.styles?.blocks ) {
+		delete mergedConfig.styles.blocks.variations;
+		for ( const key in mergedConfig.styles.blocks ) {
+			delete mergedConfig.styles.blocks[ key ].variations;
+		}
+	}
+
+	return mergedConfig;
 };
 
 const withExperimentalBlockEditorProvider = createHigherOrderComponent(

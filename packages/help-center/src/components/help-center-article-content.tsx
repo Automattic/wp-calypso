@@ -1,34 +1,24 @@
 /* eslint-disable no-restricted-imports */
-import SupportArticleHeader from 'calypso/blocks/support-article-dialog/header';
-import EmbedContainer from 'calypso/components/embed-container';
+import { EmbedContainer } from '@automattic/components';
+import { ArticleContentProps } from '../types';
 import HelpCenterFeedbackForm from './help-center-feedback-form';
+import { SupportArticleHeader } from './help-center-support-article-header';
 import Placeholders from './placeholder-lines';
-
 import './help-center-article-content.scss';
 
-interface ArticleContentProps {
-	content: string;
-	title: string;
-	link: string;
-	isLoading?: boolean;
-	postId: number;
-	blogId?: string | null;
-	slug?: string;
-}
-
 const ArticleContent = ( {
-	content,
-	title,
-	link,
+	content = '',
+	title = '',
+	link = '',
 	postId,
 	blogId,
 	isLoading = false,
 	slug,
 }: ArticleContentProps ) => {
-	const post = { title: title, url: link };
+	const post = { title, link };
 	return (
 		<article className="help-center-article-content__story">
-			{ isLoading ? (
+			{ isLoading || ! post ? (
 				<Placeholders lines={ 8 } />
 			) : (
 				<>

@@ -160,7 +160,12 @@ export default function LayoutBodyContent( {
 			<div className="referrals-overview__section-subtitle">
 				{ isAutomatedReferral ? (
 					translate(
-						'Make money when your clients buy Automattic products, hosting, or use WooPayments. No promo codes needed.'
+						'Make money when your clients buy Automattic products, hosting, or use WooPayments. No promo codes{{nbsp/}}needed.',
+						{
+							components: {
+								nbsp: <>&nbsp;</>,
+							},
+						}
 					)
 				) : (
 					<>
@@ -210,7 +215,7 @@ export default function LayoutBodyContent( {
 								}
 								description={
 									isAutomatedReferral
-										? translate( 'With {{a}}Tipalti ↗{{/a}}, our secure platform.', {
+										? translate( 'With {{a}}Tipalti{{/a}}↗, our secure platform.', {
 												components: {
 													a: (
 														<a
@@ -286,11 +291,22 @@ export default function LayoutBodyContent( {
 										: translate( 'Install WooPayments on your clients’ online stores' )
 								}
 								description={
-									isAutomatedReferral
-										? translate( 'Receive a rev share of 0.05% per sale.' )
-										: translate(
-												'Receive a revenue share of 5 basis points (0.05%) on new WooPayments total payments volume (TPV) on clients’ sites.'
-										  )
+									isAutomatedReferral ? (
+										<>
+											{ translate(
+												'Receive a revenue share of 5 basis points on the total payments{{nbsp/}}volume.',
+												{
+													components: {
+														nbsp: <>&nbsp;</>,
+													},
+												}
+											) }
+										</>
+									) : (
+										translate(
+											'Receive a revenue share of 5 basis points (0.05%) on new WooPayments total payments volume (TPV) on clients’ sites.'
+										)
+									)
 								}
 								buttonProps={ {
 									children: isAutomatedReferral
@@ -308,18 +324,11 @@ export default function LayoutBodyContent( {
 						{ isAutomatedReferral && (
 							<StepSection
 								className="referrals-overview__step-section-learn-more"
-								heading={ translate( 'Find out more about the program' ) }
+								heading={ translate( 'Find out more' ) }
 							>
 								<Button className="a8c-blue-link" borderless href={ A4A_REFERRALS_FAQ }>
 									{ translate( 'How much money will I make?' ) }
 								</Button>
-								<br />
-								{
-									// FIXME: Add link
-									<Button className="a8c-blue-link" borderless href="#">
-										{ translate( 'How does it work?' ) }
-									</Button>
-								}
 							</StepSection>
 						) }
 					</>

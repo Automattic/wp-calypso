@@ -1,9 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-body.is-section-reader:not(.is-reader-full-post) {
+body.is-section-reader {
 	div.layout.is-global-sidebar-visible {
-		.main {
+		.main:not(.reader-full-post) {
 			@media only screen and (min-width: 600px) and (max-width: 960px) {
 				padding: 24px;
 			}

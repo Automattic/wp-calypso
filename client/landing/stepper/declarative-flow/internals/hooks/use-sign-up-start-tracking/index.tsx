@@ -1,5 +1,5 @@
 import { SENSEI_FLOW } from '@automattic/onboarding';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import { type Flow } from '../../types';
@@ -21,7 +21,16 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 	// TODO: Check if we can remove the sensei flow reference from here.
 	const firstStepSlug = ( flow.name === SENSEI_FLOW ? steps[ 1 ] : steps[ 0 ] ).slug;
 	const isFirstStep = firstStepSlug === currentStepRoute;
-	const extraProps = flow.useSignupStartEventProps?.();
+	const flowVariant = flow.variantSlug;
+	const signupStartEventProps = flow.useSignupStartEventProps?.();
+
+	const extraProps = useMemo(
+		() => ( {
+			...signupStartEventProps,
+			...( flowVariant && { flow_variant: flowVariant } ),
+		} ),
+		[ signupStartEventProps, flowVariant ]
+	);
 	const flowName = flow.name;
 	const shouldTrack = flow.isSignupFlow && isFirstStep && ! signedUp;
 

@@ -4,6 +4,10 @@
 	grid-template-columns: 1fr 1fr;
 	row-gap: 16px;
 	column-gap: 32px;
+
+	@include breakpoint-deprecated("<960px") {
+		grid-template-columns: 1fr;
+	}
 }
 
 .partner-directory-agency-expertise__client-site,
@@ -19,11 +23,4 @@ h3.partner-directory-agency-expertise__client-samples-label {
 	line-height: 1.5;
 	font-weight: 500;
 	margin-block-end: 8px;
-}
-
-.partner-directory-agency-expertise__footer {
-	display: flex;
-	flex-direction: row;
-	gap: 8px;
-	margin-block-start: -16px;
 }

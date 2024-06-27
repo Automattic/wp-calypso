@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	isSiteAssemblerFlow,
 	isTailoredSignupFlow,
@@ -29,7 +30,7 @@ import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getIntervalType } from './util';
+import { getIntervalType, shouldBasePlansOnSegment } from './util';
 import './style.scss';
 
 export class PlansStep extends Component {
@@ -107,6 +108,7 @@ export class PlansStep extends Component {
 			selectedSite,
 			intent,
 			flowName,
+			initialContext,
 		} = this.props;
 
 		const intervalType = getIntervalType( this.props.path );
@@ -127,7 +129,12 @@ export class PlansStep extends Component {
 
 		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
 
-		const surveyedIntent = isOnboardingGuidedFlow( flowName ) ? segmentSlug : undefined;
+		const surveyedIntent = shouldBasePlansOnSegment(
+			flowName,
+			initialContext?.trailMapExperimentVariant
+		)
+			? segmentSlug
+			: undefined;
 
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
@@ -206,7 +213,7 @@ export class PlansStep extends Component {
 		) {
 			const a4aLinkButton = (
 				<Button
-					href="https://automattic.com/for-agencies/"
+					href={ localizeUrl( 'https://wordpress.com/for-agencies?ref=onboarding' ) }
 					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ () =>
@@ -342,7 +349,6 @@ PlansStep.propTypes = {
 		'plans-plugins',
 		'plans-jetpack-app',
 		'plans-import',
-		'plans-paid-media',
 		'default',
 	] ),
 };

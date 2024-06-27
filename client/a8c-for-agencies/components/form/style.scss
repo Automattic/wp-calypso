@@ -6,6 +6,10 @@
 	max-width: 700px;
 	margin: 0 auto;
 
+	@include breakpoint-deprecated("<660px") {
+		margin-block-end: rem(76px);
+	}
+
 	h1,
 	h2,
 	h3,

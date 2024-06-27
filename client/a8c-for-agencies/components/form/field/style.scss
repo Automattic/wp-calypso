@@ -16,7 +16,16 @@
 }
 
 .a4a-form__section-field-sub,
-.a4a-form__section-field-description {
+.a4a-form__section-field-description,
+.a4a-form__section-field-optional {
 	font-weight: 400;
+	color: var(--color-neutral-50);
+}
+
+.a4a-form__section-field-optional {
+	margin-inline-start: 4px;
+}
+
+.a4a-form__section-field-required {
 	color: var(--color-neutral-50);
 }

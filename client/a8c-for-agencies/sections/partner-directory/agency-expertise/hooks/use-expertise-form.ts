@@ -2,16 +2,21 @@ import { useCallback, useMemo, useState } from 'react';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../../types';
 
 type Props = {
-	initialData?: AgencyDirectoryApplication;
+	initialFormData?: AgencyDirectoryApplication | null;
 };
 
 function validateURL( url: string ) {
 	return /^(https?:\/\/)?([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]+(:[0-9]+)?(\/[a-z0-9-]*)*$/.test( url );
 }
 
-export default function useExpertiseForm( { initialData }: Props ) {
+function areURLsUnique( urls: string[] ) {
+	const urlSet = new Set( urls );
+	return urlSet.size === urls.length;
+}
+
+export default function useExpertiseForm( { initialFormData }: Props ) {
 	const [ formData, setFormData ] = useState< AgencyDirectoryApplication >(
-		initialData ?? {
+		initialFormData ?? {
 			status: 'pending',
 			services: [],
 			products: [],
@@ -93,9 +98,10 @@ export default function useExpertiseForm( { initialData }: Props ) {
 			formData.services.length > 0 &&
 			formData.products.length > 0 &&
 			formData.directories.length > 0 &&
+			formData.feedbackUrl.length > 0 &&
 			// Ensure that each directory request has 5 valid URLs
 			formData.directories.every( ( { urls } ) => {
-				return urls.every( ( url ) => url && validateURL( url ) );
+				return urls.every( ( url ) => url && validateURL( url ) ) && areURLsUnique( urls );
 			} ),
 		[ formData ]
 	);

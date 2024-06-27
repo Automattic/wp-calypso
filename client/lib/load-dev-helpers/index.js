@@ -59,4 +59,11 @@ export default function loadDevHelpers( reduxStore ) {
 			);
 		}
 	}
+
+	if ( config.isEnabled( 'dev/store-sandbox-helper' ) ) {
+		const el = document.querySelector( '.environment.is-store-sandbox' );
+		if ( el ) {
+			asyncRequire( 'calypso/lib/store-sandbox-helper' ).then( ( helper ) => helper.default( el ) );
+		}
+	}
 }

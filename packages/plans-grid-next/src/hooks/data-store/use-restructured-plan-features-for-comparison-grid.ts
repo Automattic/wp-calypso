@@ -144,7 +144,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						...featuresAvailable.jetpackFeatures,
 						...previousPlanFeatures.jetpackFeatures,
 					],
-					storageOptions: planFeaturesForGridPlans[ planSlug ].storageOptions,
+					storageFeature: planFeaturesForGridPlans[ planSlug ].storageFeature,
 					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.(),
 				};
 
@@ -152,7 +152,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			}
 
 			return planFeatureMap;
-		}, [ gridPlans, allFeaturesList, planFeaturesForGridPlans, intent ] );
+		}, [ gridPlans, allFeaturesList, planFeaturesForGridPlans, intent, hasRedeemedDomainCredit ] );
 	};
 
 export default useRestructuredPlanFeaturesForComparisonGrid;

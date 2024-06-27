@@ -2,6 +2,7 @@ import {
 	FEATURE_SOCIAL_INSTAGRAM_CONNECTION,
 	FEATURE_SOCIAL_MASTODON_CONNECTION,
 	FEATURE_SOCIAL_NEXTDOOR_CONNECTION,
+	FEATURE_SOCIAL_THREADS_CONNECTION,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { get, find, map } from 'lodash';
@@ -24,6 +25,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
 import { getSeoTitle, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import InstagramSharePreview from '../../components/share/instagram-share-preview';
+import ThreadsSharePreview from '../../components/share/threads-share-preview';
 import {
 	getPostImage,
 	getExcerptForPost,
@@ -43,6 +45,7 @@ const defaultServices = [
 	'tumblr',
 	'mastodon',
 	'nextdoor',
+	'threads',
 ];
 
 class SharingPreviewPane extends PureComponent {
@@ -166,6 +169,14 @@ class SharingPreviewPane extends PureComponent {
 						articleContent={ post.content }
 					/>
 				);
+			case 'threads':
+				return (
+					<ThreadsSharePreview
+						{ ...previewProps }
+						articleExcerpt={ post.excerpt }
+						articleContent={ post.content }
+					/>
+				);
 			default:
 				return null;
 		}
@@ -189,7 +200,7 @@ class SharingPreviewPane extends PureComponent {
 					</div>
 					<VerticalMenu onClick={ this.selectPreview } initialItemIndex={ initialMenuItemIndex }>
 						{ services.map( ( service ) => (
-							<SocialItem { ...{ key: service, service } } />
+							<SocialItem key={ service } service={ service } />
 						) ) }
 					</VerticalMenu>
 				</div>
@@ -219,6 +230,10 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_NEXTDOOR_CONNECTION ) ) {
 		disabledServices.push( 'nextdoor' );
+	}
+
+	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_THREADS_CONNECTION ) ) {
+		disabledServices.push( 'threads' );
 	}
 
 	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ) ) {

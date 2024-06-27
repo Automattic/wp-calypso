@@ -534,6 +534,9 @@
 			background: var(--color-light-backdrop);
 			max-height: calc(100vh - 32px - var(--masterbar-height));
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
+			@media (max-width: $break-small) {
+				max-height: calc(100vh - var(--masterbar-height));
+			}
 			.preview-pane__navigation {
 				box-shadow: 0 0 0 1px var(--color-border-subtle), 0 1px 2px var(--color-border-subtle);
 				// Fix the weird box-shadow on the top when the action buttons are wrapped into the newline;
@@ -1126,3 +1129,4 @@
 		padding: 70px 24px 24px calc(var(--sidebar-width-min) + 1px);
 	}
 }
+

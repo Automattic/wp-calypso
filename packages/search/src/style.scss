@@ -114,10 +114,10 @@ $input-z-index: 20;
 
 	&.is-open.has-focus {
 		border-color: var(--color-primary);
-		box-shadow: 0 0 0 1px var(--color-primary), 0 0 0 4px var(--color-primary-10);
+		box-shadow: 0 0 0 2px var(--color-primary);
 
 		&:hover {
-			box-shadow: 0 0 0 1px var(--color-primary), 0 0 0 4px var(--color-primary-20);
+			box-shadow: 0 0 0 2px var(--color-primary);
 		}
 	}
 

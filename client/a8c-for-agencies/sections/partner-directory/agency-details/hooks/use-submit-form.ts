@@ -1,17 +1,31 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import useSubmitAgencyDetailsMutation from 'calypso/a8c-for-agencies/data/partner-directory/use-submit-agency-details';
+import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { AgencyDetails } from '../../types';
 
 type Props = {
 	formData: AgencyDetails;
+	onSubmitSuccess?: ( data: Agency ) => void;
+	onSubmitError?: () => void;
 };
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function useSubmitForm( { formData }: Props ) {
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
+
+export default function useSubmitForm( { formData, onSubmitSuccess, onSubmitError }: Props ) {
+	const { mutate: submit, isPending: isSubmitting } = useSubmitAgencyDetailsMutation( {
+		onSuccess: ( data ) => {
+			if ( onSubmitSuccess && data?.profile ) {
+				onSubmitSuccess( data );
+			} else {
+				onSubmitError?.();
+			}
+		},
+		onError: () => {
+			onSubmitError?.();
+		},
+	} );
 
 	const onSubmit = useCallback( () => {
-		setIsSubmitting( true );
-		// FIXME: Submit the  data to the backend
-	}, [] );
+		submit( formData );
+	}, [ formData, submit ] );
 
 	return {
 		onSubmit,

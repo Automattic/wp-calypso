@@ -35,7 +35,8 @@
 		@include break-large {
 			height: 95px;
 		}
-		@include break-huge {
+
+		@include break-xhuge {
 			height: 65px;
 		}
 	}

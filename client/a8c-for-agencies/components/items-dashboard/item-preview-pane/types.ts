@@ -38,6 +38,7 @@ export interface PreviewPaneProps {
 	hasError?: boolean;
 	addTourDetails?: { id: string; tourId: string };
 	itemPreviewPaneHeaderExtraProps?: ItemPreviewPaneHeaderExtraProps;
+	hideNavIfSingleTab?: boolean;
 }
 
 export interface ItemPreviewPaneHeaderExtraProps {
@@ -48,4 +49,5 @@ export interface ItemPreviewPaneHeaderExtraProps {
 		itemData: ItemData;
 		closeSitePreviewPane: () => void;
 	} >;
+	subtitleExtra?: string | React.ComponentType;
 }
