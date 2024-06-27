@@ -11,7 +11,6 @@ export function paymentMethodName( method: string ): string {
 		bancontact: 'Bancontact',
 		card: translate( 'Credit or debit card' ),
 		eps: 'EPS',
-		giropay: 'Giropay',
 		ideal: 'iDEAL',
 		netbanking: 'Net Banking',
 		paypal: 'PayPal',
