@@ -20,7 +20,6 @@ export function PatternsGetStarted( { theme }: { theme?: 'dark' } ) {
 
 	return (
 		<PatternsSection
-			bodyFullWidth
 			description={ translate( 'Take a look at our how-to guides to get started with patterns.' ) }
 			theme={ theme }
 			title={ translate( 'All about patterns', {

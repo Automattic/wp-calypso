@@ -3,12 +3,10 @@
 
 
 .patterns-get-started__buttons {
-	padding: 0 110px;
 	margin-top: -32px;
 	margin-bottom: 48px;
 
 	@media (max-width: $break-wide) {
-		padding: 0 24px;
 		margin-top: -16px;
 	}
 
@@ -32,13 +30,8 @@
 	display: flex;
 	gap: 24px;
 	overflow: auto;
-	padding: 0 110px;
 	scroll-snap-type: x proximity;
 	scroll-padding-left: 24px;
-
-	@media (max-width: $break-wide) {
-		padding: 0 24px;
-	}
 }
 
 .patterns-get-started__item {
