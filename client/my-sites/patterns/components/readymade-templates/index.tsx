@@ -22,19 +22,19 @@ export const ReadymadeTemplates = () => {
 		const updateCurrentScrollLeft = () => {
 			setCurrentScrollLeft( container.scrollLeft );
 		};
-		const updateMacScrollLeft = () => {
+		const updateMaxScrollLeft = () => {
 			setMaxScrollLeft( container.scrollWidth - container.clientWidth - 1 ); // Extra pixel to handle rounding errors.
 		};
 
 		updateCurrentScrollLeft();
-		updateMacScrollLeft();
+		updateMaxScrollLeft();
 
 		container.addEventListener( 'scroll', updateCurrentScrollLeft );
-		window.addEventListener( 'resize', updateMacScrollLeft );
+		window.addEventListener( 'resize', updateMaxScrollLeft );
 
 		return () => {
 			container.removeEventListener( 'scroll', updateCurrentScrollLeft );
-			window.removeEventListener( 'resize', updateMacScrollLeft );
+			window.removeEventListener( 'resize', updateMaxScrollLeft );
 		};
 	}, [] );
 
