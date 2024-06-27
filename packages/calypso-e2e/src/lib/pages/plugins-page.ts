@@ -206,6 +206,13 @@ export class PluginsPage {
 	}
 
 	/**
+	 * Click the "Search Results" breadcrumb
+	 */
+	async clickSearchResultsBreadcrumb(): Promise< void > {
+		await this.page.click( selectors.breadcrumb( 'Search Results' ) );
+	}
+
+	/**
 	 * Select monthly
 	 */
 	async selectMonthlyPricing(): Promise< void > {
