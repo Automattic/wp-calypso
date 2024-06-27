@@ -338,7 +338,7 @@ function useReadymadeTemplate( templateId: number, options: object = { enabled: 
 		return null;
 	}
 
-	const styleVariations = [];
+	const styleVariations = [] as GlobalStylesObject[];
 	Object.values( readymadeTemplate.styles ?? [] ).forEach( ( readymadeTemplateStyleVariation ) => {
 		const styleVariation = assemblerTheme.style_variations.find(
 			( assemblerStyleVariation ) =>
