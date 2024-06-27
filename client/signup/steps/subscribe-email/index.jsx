@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import emailValidator from 'email-validator';
@@ -8,7 +9,6 @@ import { isRedirectAllowed } from 'calypso/lib/url/is-redirect-allowed';
 import useCreateNewAccountMutation from 'calypso/signup/hooks/use-create-new-account';
 import useSubscribeToMailingList from 'calypso/signup/hooks/use-subscribe-to-mailing-list';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SubscribeEmailStepContent from './content';
 
@@ -36,7 +36,7 @@ function SubscribeEmailStep( props ) {
 	const { mutate: subscribeToMailingList, isPending: isSubscribeToMailingListPending } =
 		useSubscribeToMailingList( {
 			onSuccess: () => {
-				props.recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {
+				recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {
 					mailing_list: queryParams.mailing_list,
 				} );
 				props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
@@ -50,12 +50,14 @@ function SubscribeEmailStep( props ) {
 				subscribeToMailingList( {
 					email_address: email,
 					mailing_list_category: queryParams.mailing_list,
+					from: queryParams.from,
 				} ),
 			onError: ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
 					subscribeToMailingList( {
 						email_address: email,
 						mailing_list_category: queryParams.mailing_list,
+						from: queryParams.from,
 					} );
 				}
 			},
@@ -93,6 +95,7 @@ function SubscribeEmailStep( props ) {
 								subscribeToMailingList( {
 									email_address: submittedEmail,
 									mailing_list_category: queryParams.mailing_list,
+									from: queryParams.from,
 								} );
 							}
 						} }
@@ -104,6 +107,4 @@ function SubscribeEmailStep( props ) {
 	);
 }
 
-export default connect( null, { recordTracksEvent, submitSignupStep } )(
-	localize( SubscribeEmailStep )
-);
+export default connect( null, { submitSignupStep } )( localize( SubscribeEmailStep ) );
