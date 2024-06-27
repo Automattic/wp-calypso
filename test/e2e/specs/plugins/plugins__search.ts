@@ -53,9 +53,9 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 
 	it( 'Click on breadcrumbs "Search Results"', async function () {
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
-			await pluginsPage.clickSearchResultsBreadcrumb();
+			await pluginsPage.clickCategory( 'Discover' );
 		} else {
-			await pluginsPage.clickBackBreadcrumb();
+			await pluginsPage.clickDropdownCategory( 'Discover' );
 		}
 		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
 	} );
