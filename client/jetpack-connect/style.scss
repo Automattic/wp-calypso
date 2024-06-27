@@ -1120,6 +1120,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 
 	.signup-form {
+		max-width: 327px;
+		padding-top: 48px;
 		.signup-form__passwordless-form-wrapper {
 			button.is-primary {
 				background-color: var(--wp-admin-theme-color);

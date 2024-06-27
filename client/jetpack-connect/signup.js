@@ -530,6 +530,7 @@ export class JetpackSignup extends Component {
 								? this.props.translate( 'Create an account' )
 								: this.props.translate( 'Create your account' )
 						}
+						labelText={ isWooCoreProfiler ? this.props.translate( 'Email address' ) : null }
 						submitForm={ this.handleSubmitSignup }
 						submitting={ isCreatingAccount }
 						suggestedUsername=""
