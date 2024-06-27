@@ -40,56 +40,13 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: DoYouLoveJetpackStatsNotice,
 		noticeId: 'do_you_love_jetpack_stats',
-		isVisibleFunc: ( {
-			isOdysseyStats,
-			isWpcom,
-			isVip,
-			isP2,
-			isOwnedByTeam51,
-			hasPaidStats,
-			isSiteJetpackNotAtomic,
-			isCommercial,
-		}: StatsNoticeProps ) => {
-			const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
-
-			// Show the notice if the site is Jetpack or it is Odyssey Stats.
-			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
-
-			const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
-
-			return !! (
-				( showUpgradeNoticeOnOdyssey ||
-					showUpgradeNoticeForJetpackNotAtomic ||
-					showUpgradeNoticeForWpcomSites ) &&
-				// Show the notice if the site has not purchased the paid stats product.
-				! hasPaidStats &&
-				// Show the notice if the site is not commercial.
-				! isCommercial &&
-				! isVip
-			);
-		},
+		isVisibleFunc: shouldShowDoYouLoveJetpackStatsNotice,
 		disabled: false,
 	},
 	{
 		component: TierUpgradeNotice,
 		noticeId: 'tier_upgrade',
-		isVisibleFunc: ( {
-			isOdysseyStats,
-			isWpcom,
-			isCommercialOwned,
-			isSiteJetpackNotAtomic,
-		}: StatsNoticeProps ) => {
-			// Show the notice if the site is Jetpack or it is Odyssey Stats.
-			const showTierUpgradeNoticeOnOdyssey = isOdysseyStats;
-			const showTierUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
-			// We don't show the notice for WPCOM sites for now.
-			return !! (
-				! isWpcom &&
-				( showTierUpgradeNoticeOnOdyssey || showTierUpgradeNoticeForJetpackNotAtomic ) &&
-				config.isEnabled( 'stats/tier-upgrade-slider' ) &&
-				isCommercialOwned
-			);
-		},
+		isVisibleFunc: shouldShowTierUpgradeNotice,
 		disabled: false,
 	},
 	{
@@ -135,6 +92,70 @@ function shouldShowCommercialSiteUpgradeNotice( {
 		// Show the notice only if the site is commercial.
 		isCommercial &&
 		! isVip
+	);
+}
+
+function shouldShowDoYouLoveJetpackStatsNotice( state: StatsNoticeProps ) {
+	// Base considerations for notice eligibility.
+	const { isCommercial, isWpcom, isP2, isOwnedByTeam51 } = state;
+	if ( isCommercial || isWpcom || isP2 || isOwnedByTeam51 ) {
+		return false;
+	}
+
+	// Test for paid plans.
+	const { hasPaidStats } = state;
+	if ( hasPaidStats ) {
+		return false;
+	}
+
+	// return true;
+	return shouldShowDoYouLoveJetpackStatsNotice2( state );
+}
+
+function shouldShowDoYouLoveJetpackStatsNotice2( {
+	isOdysseyStats,
+	isWpcom,
+	isVip,
+	isP2,
+	isOwnedByTeam51,
+	hasPaidStats,
+	isSiteJetpackNotAtomic,
+	isCommercial,
+}: StatsNoticeProps ) {
+	const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
+
+	// Show the notice if the site is Jetpack or it is Odyssey Stats.
+	const showUpgradeNoticeOnOdyssey = isOdysseyStats;
+
+	const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
+
+	return !! (
+		( showUpgradeNoticeOnOdyssey ||
+			showUpgradeNoticeForJetpackNotAtomic ||
+			showUpgradeNoticeForWpcomSites ) &&
+		// Show the notice if the site has not purchased the paid stats product.
+		! hasPaidStats &&
+		// Show the notice if the site is not commercial.
+		! isCommercial &&
+		! isVip
+	);
+}
+
+function shouldShowTierUpgradeNotice( {
+	isOdysseyStats,
+	isWpcom,
+	isCommercialOwned,
+	isSiteJetpackNotAtomic,
+}: StatsNoticeProps ) {
+	// Show the notice if the site is Jetpack or it is Odyssey Stats.
+	const showTierUpgradeNoticeOnOdyssey = isOdysseyStats;
+	const showTierUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
+	// We don't show the notice for WPCOM sites for now.
+	return !! (
+		! isWpcom &&
+		( showTierUpgradeNoticeOnOdyssey || showTierUpgradeNoticeForJetpackNotAtomic ) &&
+		config.isEnabled( 'stats/tier-upgrade-slider' ) &&
+		isCommercialOwned
 	);
 }
 
