@@ -50,9 +50,15 @@ const PartnerDirectoryDashboard = () => {
 
 	const agency = useSelector( getActiveAgency );
 
-	const [ applicationData, setApplicationData ] = useState( (): AgencyDirectoryApplication | null =>
-		mapApplicationFormData( agency )
+	const [ applicationData, setApplicationData ] = useState< AgencyDirectoryApplication | null >(
+		null
 	);
+
+	useEffect( () => {
+		if ( agency ) {
+			setApplicationData( mapApplicationFormData( agency ) );
+		}
+	}, [ agency ] );
 
 	const applicationWasSubmitted = applicationData?.status !== 'completed';
 
