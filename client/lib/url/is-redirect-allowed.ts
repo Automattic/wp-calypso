@@ -8,7 +8,7 @@
  */
 
 // TODO: Replace original implementation of isRedirectAllowed with a reference to this shared module
-export function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean {
+export function isRedirectAllowed( url: string ): boolean {
 	if ( url.startsWith( '/' ) ) {
 		return true;
 	}
@@ -22,28 +22,13 @@ export function isRedirectAllowed( url: string, siteSlug: string | undefined ): 
 		'cloud.jetpack.com',
 		'jetpack.com',
 		'akismet.com',
-		siteSlug,
 	];
 
 	try {
 		const parsedUrl = new URL( url );
-		const { hostname, pathname } = parsedUrl;
+		const { hostname } = parsedUrl;
 		if ( ! hostname ) {
 			return false;
-		}
-
-		// For subdirectory site, check that both hostname and subdirectory matches
-		// the siteSlug (host.name::subdirectory).
-		if ( siteSlug?.includes( '::' ) ) {
-			const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
-			const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
-			if (
-				hostname !== hostnameFromSlug &&
-				! pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
-			) {
-				return false;
-			}
-			return true;
 		}
 
 		// Return true for *.calypso.live urls.
