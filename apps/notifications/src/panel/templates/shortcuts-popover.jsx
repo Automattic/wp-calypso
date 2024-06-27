@@ -2,7 +2,7 @@ import { Popover } from '@automattic/components';
 import { isWithinBreakpoint, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { connect } from 'react-redux';
 import actions from '../state/actions';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
@@ -18,93 +18,88 @@ export const ShortcutsPopover = ( {
 	isPanelOpen,
 	isShortcutsPopoverOpen,
 	isMobile,
-	enableKeyboardShortcuts,
-	isScrollTop,
 } ) => {
 	const translate = useTranslate();
 
 	// create context for the keyboard shortcuts popover icon
-	const iconRef = useRef();
+	const popoverAnchorRef = useRef();
 	const spanRef = useRef();
-
-	// Enable keyboard shortcuts when the component mounts
-	useEffect( () => {
-		enableKeyboardShortcuts();
-	}, [] );
-
-	// Close the keyboard shortcuts popover when the user scrolls and the icon is no longer visible
-	useEffect( () => {
-		if ( isShortcutsPopoverOpen && ! isScrollTop ) {
-			closeShortcutsPopover();
-		}
-	}, [ isScrollTop, isShortcutsPopoverOpen ] );
 
 	// This function renders a list of keyboard shortcuts
 	const renderShortcutsPopover = () => {
 		return (
 			<Popover
 				onClose={ closeShortcutsPopover }
-				isVisible={ isPanelOpen && isShortcutsPopoverOpen && isScrollTop }
-				context={ iconRef.current }
+				isVisible={ isPanelOpen && isShortcutsPopoverOpen }
+				context={ popoverAnchorRef.current }
 				ignoreContext={ spanRef.current }
 				position="bottom left"
 				className="wpnc__keyboard-shortcuts-popover"
 			>
-				<h2>{ translate( 'Keyboard Shortcuts' ) }</h2>
-				<ul>
-					<li>
-						<span className="description">{ translate( 'Toggle Panel' ) }</span>
-						<span className="shortcut letter">n</span>
-					</li>
-					<li>
-						<span className="description">{ translate( 'Next' ) }</span>
-						<span className="shortcut has-icon">
-							<Gridicon icon="arrow-down" size={ 16 } />
-						</span>
-					</li>
-					<li>
-						<span className="description">{ translate( 'Previous' ) }</span>
-						<span className="shortcut has-icon">
-							<Gridicon icon="arrow-up" size={ 16 } />
-						</span>
-					</li>
-					<li>
-						<span className="description">{ translate( 'Left' ) }</span>
-						<span className="shortcut has-icon">
-							<Gridicon icon="arrow-left" size={ 16 } />
-						</span>
-					</li>
-					<li>
-						<span className="description">{ translate( 'Right' ) }</span>
-						<span className="shortcut has-icon">
-							<Gridicon icon="arrow-right" size={ 16 } />
-						</span>
-					</li>
-					<li>
-						<span className="description">{ translate( 'View All' ) }</span>
-						<span className="shortcut letter">a</span>
-					</li>
-					<li>
-						<span className="description">{ translate( 'View Unread' ) }</span>
-						<span className="shortcut letter">u</span>
-					</li>
-					<li>
-						<span className="description">{ translate( 'View Comments' ) }</span>
-						<span className="shortcut letter">c</span>
-					</li>
-					<li>
-						<span className="description">{ translate( 'View Subscribers' ) }</span>
-						<span className="shortcut letter">f</span>
-					</li>
-					<li>
-						<span className="description">{ translate( 'View Likes' ) }</span>
-						<span className="shortcut letter">l</span>
-					</li>
-					<li>
-						<span className="description">{ translate( 'Toggle Shortcuts Menu' ) }</span>
-						<span className="shortcut letter">i</span>
-					</li>
-				</ul>
+				{ /* Ignore linter rules since we just want to prevent the notifications panel from closing if user clicks inside the popover... */ }
+				{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
+				<div
+					onClick={ ( event ) => {
+						event.stopPropagation();
+						event.preventDefault();
+					} }
+				>
+					<h2>{ translate( 'Keyboard Shortcuts' ) }</h2>
+					<ul>
+						<li>
+							<span className="description">{ translate( 'Toggle Panel' ) }</span>
+							<span className="shortcut letter">n</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'Next' ) }</span>
+							<span className="shortcut has-icon">
+								<Gridicon icon="arrow-down" size={ 16 } />
+							</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'Previous' ) }</span>
+							<span className="shortcut has-icon">
+								<Gridicon icon="arrow-up" size={ 16 } />
+							</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'Left' ) }</span>
+							<span className="shortcut has-icon">
+								<Gridicon icon="arrow-left" size={ 16 } />
+							</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'Right' ) }</span>
+							<span className="shortcut has-icon">
+								<Gridicon icon="arrow-right" size={ 16 } />
+							</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'View All' ) }</span>
+							<span className="shortcut letter">a</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'View Unread' ) }</span>
+							<span className="shortcut letter">u</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'View Comments' ) }</span>
+							<span className="shortcut letter">c</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'View Subscribers' ) }</span>
+							<span className="shortcut letter">f</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'View Likes' ) }</span>
+							<span className="shortcut letter">l</span>
+						</li>
+						<li>
+							<span className="description">{ translate( 'Toggle Shortcuts Menu' ) }</span>
+							<span className="shortcut letter">i</span>
+						</li>
+					</ul>
+				</div>
 			</Popover>
 		);
 	};
@@ -120,6 +115,8 @@ export const ShortcutsPopover = ( {
 						},
 					] }
 				>
+					{ /* Attach the popover to this anchor instead of the button, so we can have retain position with scrolling. */ }
+					<div className="wpnc__keyboard-shortcuts-popover-anchor" ref={ popoverAnchorRef } />
 					<button
 						className={ clsx( 'wpnc__keyboard-shortcuts-button', {
 							'active-action': isShortcutsPopoverOpen,
@@ -132,7 +129,7 @@ export const ShortcutsPopover = ( {
 						} }
 						ref={ spanRef }
 					>
-						<Gridicon ref={ iconRef } icon="info-outline" size={ 18 } />
+						<Gridicon icon="info-outline" size={ 18 } />
 					</button>
 				</HotkeyContainer>
 			) }
@@ -152,7 +149,6 @@ const mapStateToProps = ( state ) => ( {
 const mapDispatchToProps = {
 	closeShortcutsPopover: actions.ui.closeShortcutsPopover,
 	toggleShortcutsPopover: actions.ui.toggleShortcutsPopover,
-	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( ShortcutsPopover );
