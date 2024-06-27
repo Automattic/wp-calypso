@@ -49,7 +49,6 @@ const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' >
 				gridPlanForSpotlight={
 					'gridPlanForSpotlight' in props ? props.gridPlanForSpotlight : gridPlanForSpotlight
 				}
-				featureGroupMap={ getPlanFeaturesGroupedForFeaturesGrid() }
 			/>
 		)
 	);
@@ -59,6 +58,7 @@ const defaultProps = {
 	allFeaturesList: getFeaturesList(),
 	coupon: undefined,
 	currentSitePlanSlug: undefined,
+	featureGroupMap: getPlanFeaturesGroupedForFeaturesGrid(),
 	generatedWPComSubdomain: {
 		isLoading: false,
 		result: { domain_name: 'zzz.wordpress.com' },
@@ -96,8 +96,8 @@ export default meta;
 
 type Story = StoryObj< typeof meta >;
 
-export const Plans = {
-	name: 'Default features grid',
+export const PlansInAdmin = {
+	name: 'Default in admin',
 	args: {
 		...defaultProps,
 		intent: 'plans-default-wpcom',
@@ -107,10 +107,19 @@ export const Plans = {
 	},
 } satisfies Story;
 
+export const PlansInSignup = {
+	name: 'Default in signup',
+	args: {
+		...defaultProps,
+		intent: 'plans-default-wpcom',
+		isInSignup: true,
+	},
+} satisfies Story;
+
 export const CategorizedFeatures = {
 	name: 'Categorized features grid',
 	args: {
-		...Plans.args,
+		...PlansInSignup.args,
 		gridPlanForSpotlight: undefined,
 
 		// to better show the effect of the categories, here we use the one from the comparison grid instead
@@ -119,8 +128,8 @@ export const CategorizedFeatures = {
 	},
 } satisfies Story;
 
-export const IntentWithNonDefaultPlanMix = {
-	name: 'Non-default plan mix configured by intent',
+export const CuratedPlanMixByIntent = {
+	name: 'Curated plan mix configured by intent',
 	args: {
 		...defaultProps,
 		intent: 'plans-newsletter',

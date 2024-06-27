@@ -77,7 +77,7 @@ export default meta;
 type Story = StoryObj< typeof meta >;
 
 export const DefaultComparisonGrid = {
-	name: 'Default comparison grid',
+	name: 'Default',
 	args: {
 		...defaultProps,
 	},
