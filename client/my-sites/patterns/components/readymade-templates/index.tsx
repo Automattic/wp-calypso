@@ -14,7 +14,7 @@ export const ReadymadeTemplates = () => {
 	const [ maxScrollLeft, setMaxScrollLeft ] = useState( 0 );
 
 	useEffect( () => {
-		if ( ! containerRef.current ) {
+		if ( ! containerRef.current || ! readymadeTemplates.length ) {
 			return;
 		}
 		const container = containerRef.current;
@@ -36,7 +36,7 @@ export const ReadymadeTemplates = () => {
 			container.removeEventListener( 'scroll', updateCurrentScrollLeft );
 			window.removeEventListener( 'resize', updateMaxScrollLeft );
 		};
-	}, [] );
+	}, [ readymadeTemplates.length ] );
 
 	const scroll = ( direction: 'left' | 'right' ) => {
 		if ( ! containerRef.current ) {
