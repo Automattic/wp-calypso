@@ -7,6 +7,7 @@ import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice, FormInputValidation } from '@automattic/components';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
 import { useGetOdieStorage, useSetOdieStorage } from '@automattic/odie-client';
+import { useLoadZendeskMessaging, useOpenZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
@@ -20,13 +21,7 @@ import { Link } from 'react-router-dom';
 import { BackButton } from '..';
 import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import {
-	useChatStatus,
-	useChatWidget,
-	useShouldRenderEmailOption,
-	useStillNeedHelpURL,
-	useZendeskMessaging,
-} from '../hooks';
+import { useChatStatus, useShouldRenderEmailOption, useStillNeedHelpURL } from '../hooks';
 import { Mail } from '../icons';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import type { HelpCenterSite } from '@automattic/data-stores';
@@ -75,7 +70,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		isLoading: isLoadingChatStatus,
 		supportActivity,
 	} = useChatStatus();
-	useZendeskMessaging(
+	useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats,
 		isEligibleForChat || hasActiveChats
@@ -87,7 +82,8 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	const wapuuChatId = useGetOdieStorage( 'chat_id' );
 	const setWapuuChatId = useSetOdieStorage( 'chat_id' );
 
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
+	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
+		sectionName,
 		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats
 	);
@@ -186,7 +182,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 			const escapedWapuuChatId = encodeURIComponent( wapuuChatId || '' );
 
-			openChatWidget( {
+			openZendeskWidget( {
 				aiChatId: escapedWapuuChatId,
 				siteUrl: site?.URL,
 				onError: () => setHasSubmittingError( true ),
@@ -197,7 +193,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 		return (
 			<div>
-				<button disabled={ isOpeningChatWidget } onClick={ handleOnClick }>
+				<button disabled={ isOpeningZendeskWidget } onClick={ handleOnClick }>
 					<div className="help-center-contact-page__box chat" role="button" tabIndex={ 0 }>
 						<div className="help-center-contact-page__box-icon">
 							<Icon icon={ comment } />

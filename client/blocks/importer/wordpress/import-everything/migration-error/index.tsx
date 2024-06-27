@@ -1,11 +1,11 @@
 import { HelpCenter, MigrationStatusError } from '@automattic/data-stores';
-import {
-	useChatStatus,
-	useChatWidget,
-	useCanConnectToZendesk,
-	useMessagingAvailability,
-} from '@automattic/help-center/src/hooks';
+import { useChatStatus } from '@automattic/help-center/src/hooks';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
+import {
+	useCanConnectToZendeskMessaging,
+	useZendeskMessagingAvailability,
+	useOpenZendeskMessaging,
+} from '@automattic/zendesk-client';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -41,12 +41,13 @@ export const MigrationError = ( props: Props ) => {
 	} = props;
 	const translate = useTranslate();
 	const { isEligibleForChat } = useChatStatus();
-	const { data: canConnectToZendesk } = useCanConnectToZendesk();
-	const { data: isMessagingAvailable } = useMessagingAvailability(
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
+	const { data: isMessagingAvailable } = useZendeskMessagingAvailability(
 		'wpcom_messaging',
 		isEligibleForChat
 	);
-	const { openChatWidget, isOpeningChatWidget } = useChatWidget(
+	const { openZendeskWidget, isOpeningZendeskWidget } = useOpenZendeskMessaging(
+		'migration-error',
 		'zendesk_support_chat_key',
 		isEligibleForChat
 	);
@@ -54,8 +55,8 @@ export const MigrationError = ( props: Props ) => {
 		useErrorDetails( status, sourceSiteUrl, targetSiteUrl );
 
 	const getHelp = useCallback( () => {
-		if ( isMessagingAvailable && canConnectToZendesk ) {
-			openChatWidget( {
+		if ( isMessagingAvailable && canConnectToZendeskMessaging ) {
+			openZendeskWidget( {
 				siteUrl: targetSiteUrl,
 				message: `${ status }: Import onboarding flow; migration failed`,
 			} );
@@ -64,11 +65,11 @@ export const MigrationError = ( props: Props ) => {
 			setShowHelpCenter( true );
 		}
 	}, [
-		openChatWidget,
+		openZendeskWidget,
 		targetSiteUrl,
 		status,
 		isMessagingAvailable,
-		canConnectToZendesk,
+		canConnectToZendeskMessaging,
 		setInitialRoute,
 		setShowHelpCenter,
 	] );
@@ -109,7 +110,7 @@ export const MigrationError = ( props: Props ) => {
 						<NextButton
 							onClick={ getHelp }
 							variant={ goBackCta || tryAgainCta || importContentCta ? 'secondary' : 'primary' }
-							isBusy={ isOpeningChatWidget }
+							isBusy={ isOpeningZendeskWidget }
 						>
 							{ translate( 'Contact support' ) }
 						</NextButton>

@@ -3,7 +3,8 @@
  * External Dependencies
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useZendeskMessagingBindings, useLoadZendeskMessaging } from '@automattic/zendesk-client';
+import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal Dependencies
@@ -13,66 +14,13 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
-import { useChatStatus, useZendeskMessaging, useStillNeedHelpURL } from '../hooks';
+import { useChatStatus, useStillNeedHelpURL } from '../hooks';
 import { useOpeningCoordinates } from '../hooks/use-opening-coordinates';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
-
-function useMessagingBindings( hasActiveChats: boolean, isMessagingScriptLoaded: boolean ) {
-	const { setShowMessagingLauncher, setShowMessagingWidget } = useDispatch( HELP_CENTER_STORE );
-	const { showMessagingLauncher, showMessagingWidget } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			showMessagingLauncher: helpCenterSelect.isMessagingLauncherShown(),
-			showMessagingWidget: helpCenterSelect.isMessagingWidgetShown(),
-		};
-	}, [] );
-
-	useEffect( () => {
-		if ( typeof window.zE !== 'function' || ! isMessagingScriptLoaded ) {
-			return;
-		}
-
-		window.zE( 'messenger:on', 'open', function () {
-			setShowMessagingWidget( true );
-		} );
-		window.zE( 'messenger:on', 'close', function () {
-			setShowMessagingWidget( false );
-		} );
-		window.zE( 'messenger:on', 'unreadMessages', function ( count ) {
-			if ( Number( count ) > 0 ) {
-				setShowMessagingLauncher( true );
-			}
-		} );
-	}, [ isMessagingScriptLoaded, setShowMessagingLauncher, setShowMessagingWidget ] );
-
-	useEffect( () => {
-		if ( typeof window.zE !== 'function' || ! isMessagingScriptLoaded ) {
-			return;
-		}
-		// `showMessagingLauncher` starts off as undefined. This check means don't touch the widget if we're in default state.
-		if ( typeof showMessagingLauncher === 'boolean' ) {
-			window.zE( 'messenger', showMessagingLauncher ? 'show' : 'hide' );
-		}
-	}, [ showMessagingLauncher, isMessagingScriptLoaded ] );
-
-	useEffect( () => {
-		if ( typeof window.zE !== 'function' || ! isMessagingScriptLoaded ) {
-			return;
-		}
-
-		window.zE( 'messenger', showMessagingWidget ? 'open' : 'close' );
-	}, [ showMessagingWidget, isMessagingScriptLoaded ] );
-
-	useEffect( () => {
-		if ( hasActiveChats ) {
-			setShowMessagingLauncher( true );
-		}
-	}, [ setShowMessagingLauncher, hasActiveChats ] );
-}
 
 const HelpCenter: React.FC< Container > = ( {
 	handleClose,
@@ -99,13 +47,13 @@ const HelpCenter: React.FC< Container > = ( {
 	useStillNeedHelpURL();
 
 	const { hasActiveChats, isEligibleForChat } = useChatStatus();
-	const { isMessagingScriptLoaded } = useZendeskMessaging(
+	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
 		( isHelpCenterShown && isEligibleForChat ) || hasActiveChats,
 		isEligibleForChat && hasActiveChats
 	);
 
-	useMessagingBindings( hasActiveChats, isMessagingScriptLoaded );
+	useZendeskMessagingBindings( HELP_CENTER_STORE, hasActiveChats, isMessagingScriptLoaded );
 
 	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 

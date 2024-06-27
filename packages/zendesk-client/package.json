@@ -1,5 +1,5 @@
 {
-	"name": "zendesk-client",
+	"name": "@automattic/zendesk-client",
 	"description": "Manages the connection to the Zendesk API",
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
@@ -16,7 +16,6 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@tanstack/react-query": "^5.48.0",
 		"@wordpress/api-fetch": "^7.2.0",
 		"@wordpress/element": "^6.2.0",
 		"@wordpress/url": "^4.2.0"
@@ -25,5 +24,9 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"typescript": "^5.3.3",
 		"wpcom-proxy-request": "workspace:^"
+	},
+	"peerDependencies": {
+		"@tanstack/react-query": "^5.15.5",
+		"react": "^18.2.0"
 	}
 }

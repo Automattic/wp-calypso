@@ -1,12 +1,7 @@
 export { useContactFormTitle } from './use-contact-form-title';
 export { useShouldRenderEmailOption } from './use-should-render-email-option';
 export { useStillNeedHelpURL } from './use-still-need-help-url';
-export { default as useMessagingAuth } from '../../../zendesk-client/src/use-authenticate-zendesk-messaging';
-export { default as useMessagingAvailability } from '../../../zendesk-client/src/use-zendesk-messaging-availability';
 export { default as useTyper } from './use-typer';
-export { useCanConnectToZendesk } from '../../../zendesk-client/src/use-can-connect-to-zendesk-messaging';
-export { default as useZendeskMessaging } from './use-zendesk-messaging';
 export { default as useChatStatus } from './use-chat-status';
-export { default as useChatWidget } from '../../../zendesk-client/src/use-open-zendesk-messaging';
 export { useShouldUseWapuu } from './use-should-use-wapuu';
 export { filterListBySearchTerm } from './use-admin-results';
