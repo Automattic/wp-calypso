@@ -1,9 +1,15 @@
+import { StatsCard } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
+// import EmptyStateAction from '../../../components/empty-state-action';
+import { JETPACK_SUPPORT_URL } from '../../../const';
 import useUTMMetricsQuery from '../../../hooks/use-utm-metrics-query';
 import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -117,49 +123,89 @@ const StatsModuleUTM = ( {
 
 	return (
 		<>
-			<StatsListCard
-				className={ clsx( className, 'stats-module__card', path ) }
-				moduleType={ path }
-				data={ data }
-				useShortLabel={ useShortLabel }
-				title={ moduleStrings?.title }
-				emptyMessage={ <div>{ moduleStrings.empty }</div> }
-				metricLabel={ metricLabel }
-				showMore={
-					displaySummaryLink && ! summary
-						? {
-								url: getHref(),
-								label:
-									data.length >= 10
-										? translate( 'View all', {
-												context: 'Stats: Button link to show more detailed stats information',
-										  } )
-										: translate( 'View details', {
-												context: 'Stats: Button label to see the detailed content of a panel',
-										  } ),
-						  }
-						: undefined
-				}
-				error={ hasError && <ErrorPanel /> }
-				loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
-				splitHeader
-				mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-				toggleControl={
-					<div className="stats-module__extended-toggle">
-						<UTMBuilder />
-						<UTMDropdown
-							buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-							onSelect={ setSelectedOption }
-							selectOptions={ optionLabels }
-							selected={ selectedOption }
+			{ ( ! data || ! data?.length ) && (
+				<StatsCard
+					className={ className }
+					title={ moduleStrings.title }
+					isEmpty
+					emptyMessage={
+						<EmptyModuleCard
+							icon={ trendingUp }
+							description={ translate(
+								'If you use UTM codes, your {{link}}campaign performance data{{/link}} will show here.',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#utm-stats` ) } />,
+									},
+									context: 'Stats: Info box label when the UTM module is empty',
+								}
+							) }
+							cards={
+								// <EmptyStateAction
+								// 	icon={ link }
+								// 	text={ translate( 'URL Builder' ) }
+								// 	analyticsDetails={ {
+								// 		from: 'module_utm',
+								// 		feature: 'utm_builder',
+								// 	} }
+								// 	onClick={ action.onClick }
+								// />
+								<UTMBuilder />
+							}
 						/>
-					</div>
-				}
-			/>
-			{ showFooterWithDownloads && (
-				<div className="stats-module__footer-actions stats-module__footer-actions--summary">
-					<UTMExportButton data={ data } fileName={ fileNameForExport } />
-				</div>
+					}
+				>
+					<div>empty</div>
+				</StatsCard>
+			) }
+			{ data && !! data.length && (
+				<>
+					<StatsListCard
+						className={ clsx( className, 'stats-module__card', path ) }
+						moduleType={ path }
+						data={ data }
+						useShortLabel={ useShortLabel }
+						title={ moduleStrings?.title }
+						emptyMessage={ <div>{ moduleStrings.empty }</div> }
+						metricLabel={ metricLabel }
+						showMore={
+							displaySummaryLink && ! summary
+								? {
+										url: getHref(),
+										label:
+											data.length >= 10
+												? translate( 'View all', {
+														context: 'Stats: Button link to show more detailed stats information',
+												  } )
+												: translate( 'View details', {
+														context: 'Stats: Button label to see the detailed content of a panel',
+												  } ),
+								  }
+								: undefined
+						}
+						error={ hasError && <ErrorPanel /> }
+						loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
+						splitHeader
+						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+						toggleControl={
+							<div className="stats-module__extended-toggle">
+								<UTMBuilder />
+								<UTMDropdown
+									buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+									onSelect={ setSelectedOption }
+									selectOptions={ optionLabels }
+									selected={ selectedOption }
+								/>
+							</div>
+						}
+					/>
+					{ showFooterWithDownloads && (
+						<div className="stats-module__footer-actions stats-module__footer-actions--summary">
+							<UTMExportButton data={ data } fileName={ fileNameForExport } />
+						</div>
+					) }
+				</>
 			) }
 		</>
 	);
