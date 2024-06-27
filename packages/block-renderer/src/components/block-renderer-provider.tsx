@@ -26,9 +26,9 @@ const useBlockRendererContext = (
 	// Remove section style variations until we handle them
 	if ( config?.styles?.blocks ) {
 		delete config.styles.blocks.variations;
-		delete config.styles.blocks[ 'core/group' ].variations;
-		delete config.styles.blocks[ 'core/column' ].variations;
-		delete config.styles.blocks[ 'core/columns' ].variations;
+		delete config.styles.blocks[ 'core/group' ]?.variations;
+		delete config.styles.blocks[ 'core/column' ]?.variations;
+		delete config.styles.blocks[ 'core/columns' ]?.variations;
 	}
 	const [ globalStyles ] = useSafeGlobalStylesOutputWithConfig( config );
 
