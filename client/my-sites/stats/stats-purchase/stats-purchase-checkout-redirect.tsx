@@ -28,7 +28,7 @@ const getStatsCheckoutURL = (
 	// The following cases get the logged out flow:
 	// - If the user is coming from My Jetpack
 	// - If no siteSlug is provided
-	// - If it's not an upgrade (currently causes errors in the logged in flow)
+	// - If it's not an upgrade (currently causes errors in the logged out flow)
 	const useLoggedOutFlow = from === 'jetpack-my-jetpack' || from === 'jetpack-stats-upgrade-notice';
 	const checkoutType = ( useLoggedOutFlow && ! isUpgrade ) || ! siteSlug ? 'jetpack' : siteSlug;
 	const checkoutProductUrl = new URL(
