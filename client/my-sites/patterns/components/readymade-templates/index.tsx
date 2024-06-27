@@ -9,7 +9,7 @@ import './style.scss';
 export const ReadymadeTemplates = () => {
 	const translate = useTranslate();
 	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
-	const containerRef = useRef( null );
+	const containerRef = useRef< HTMLDivElement >( null );
 	const [ currentScrollLeft, setCurrentScrollLeft ] = useState( 0 );
 	const [ maxScrollLeft, setMaxScrollLeft ] = useState( 0 );
 
