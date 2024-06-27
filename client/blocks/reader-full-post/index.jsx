@@ -199,14 +199,14 @@ export class FullPostView extends Component {
 				return this.handleLike();
 			}
 
-			// Previous post - j
+			// Next post - j
 			case 74: {
-				return this.goToPreviousPost();
+				return this.goToNextPost();
 			}
 
-			// Next post - k
+			// Previous post - k
 			case 75: {
-				return this.goToNextPost();
+				return this.goToPreviousPost();
 			}
 		}
 	};
