@@ -28,7 +28,6 @@ export function useStartStepperPerformanceTracking( flow: string, step: string )
 }
 
 function useStepperPerformanceTrackerStop( flow: string, step: string ) {
-	const performanceMetadata = useMemo( () => ( { flow: flow, step: step } ), [ flow, step ] );
 	const store = useStore();
 
 	// Use `useLayoutEffect` + rAF to be as close as possible to the actual rendering.
@@ -37,10 +36,10 @@ function useStepperPerformanceTrackerStop( flow: string, step: string ) {
 			stopPerformanceTracking( 'stepper', {
 				/// @ts-expect-error State is not properly typed in the performance tracking lib.
 				state: store.getState(),
-				metadata: performanceMetadata,
+				metadata: { flow, step },
 			} );
 		} );
-	}, [ store, performanceMetadata ] );
+	}, [ store,  flow, step ] );
 }
 
 // Stop performance data collection and report.
