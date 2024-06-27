@@ -44,9 +44,8 @@ import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import StatsModuleUTM from './features/modules/stats-module-utm';
-import StatsModuleUTMOverlay from './features/modules/stats-module-utm/stats-module-utm-overlay';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
+import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
@@ -444,6 +443,8 @@ class StatsSite extends Component {
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
+								summary={ false }
+								// showUpgradeJetpackOverlay={ supportsUTMStats && isOldJetpack }
 								className={ clsx(
 									'stats__flexible-grid-item--60',
 									'stats__flexible-grid-item--full--large',

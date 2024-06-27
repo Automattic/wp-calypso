@@ -1,13 +1,42 @@
 import { StatsCard } from '@automattic/components';
 import clsx from 'clsx';
-import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
-import useStatsPurchases from '../hooks/use-stats-purchases';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import statsStrings from '../stats-strings';
+import React from 'react';
+import { default as usePlanUsageQuery } from '../../../hooks/use-plan-usage-query';
+import useStatsPurchases from '../../../hooks/use-stats-purchases';
+import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import statsStrings from '../../../stats-strings';
+import { PeriodType } from '../../../stats-subscribers-chart-section';
 import StatsModuleUTM from './stats-module-utm';
 import StatsModuleUTMOverlay from './stats-module-utm-overlay';
+import StatsModuleUTMOverlayUpgradeVersion from './stats-module-utm-overlay-upgrde-version';
+import type { Moment } from 'moment';
 
-const StatsModuleUTMWrapper = ( { siteId, period, postId, query, summary, className } ) => {
+type StatsPeriodType = {
+	period: PeriodType;
+	key: string;
+	startOf: Moment;
+	endOf: Moment;
+};
+
+type StatsModuleUTMWrapperProps = {
+	siteId: number;
+	period: StatsPeriodType;
+	postId?: number;
+	query: string;
+	summary?: boolean;
+	className?: string;
+	// showUpgradeJetpackOverlay?: boolean;
+};
+
+const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
+	siteId,
+	period,
+	postId,
+	query,
+	summary,
+	// showUpgradeJetpackOverlay = false,
+	className,
+} ) => {
 	const moduleStrings = statsStrings();
 
 	// Check if blog is internal.
@@ -24,6 +53,11 @@ const StatsModuleUTMWrapper = ( { siteId, period, postId, query, summary, classN
 	}
 
 	const hideSummaryLink = postId !== undefined || summary === true;
+	// const overlayComponent = showUpgradeJetpackOverlay ? (
+	// 	<StatsModuleUTMOverlayUpgradeVersion siteId={ siteId } className={ className } />
+	// ) : (
+	// 	<StatsModuleUTMOverlay className={ className } siteId={ siteId } />
+	// );
 
 	return (
 		<>
@@ -36,10 +70,12 @@ const StatsModuleUTMWrapper = ( { siteId, period, postId, query, summary, classN
 					<StatsModulePlaceholder isLoading />
 				</StatsCard>
 			) }
+
 			{ ! isFetching && ! isAdvancedFeatureEnabled && (
 				<StatsModuleUTMOverlay className={ className } siteId={ siteId } />
 			) }
 			{ ! isFetching && isAdvancedFeatureEnabled && (
+				// @ts-expect-error TODO: Refactor StatsModuleUTM with TypeScript.
 				<StatsModuleUTM
 					path="utm"
 					className={ clsx( className, 'stats-module-utm' ) }

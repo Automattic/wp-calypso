@@ -4,16 +4,16 @@ import { useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useUTMMetricsQuery from '../hooks/use-utm-metrics-query';
-import ErrorPanel from '../stats-error';
-import StatsListCard from '../stats-list/stats-list-card';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import UTMBuilder from '../stats-module-utm-builder/';
+import useUTMMetricsQuery from '../../../hooks/use-utm-metrics-query';
+import ErrorPanel from '../../../stats-error';
+import StatsListCard from '../../../stats-list/stats-list-card';
+import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import UTMBuilder from '../../../stats-module-utm-builder/';
 import UTMDropdown from './stats-module-utm-dropdown';
 import UTMExportButton from './utm-export-button';
 
-import '../stats-module/style.scss';
-import '../stats-list/style.scss';
+import '../../../stats-module/style.scss';
+import '../../../stats-list/style.scss';
 
 const OPTION_KEYS = {
 	SOURCE_MEDIUM: 'utm_source,utm_medium',
