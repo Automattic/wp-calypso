@@ -438,6 +438,10 @@ class SignupForm extends Component {
 	};
 
 	handleBlur = ( event ) => {
+		if ( this.props.disableBlurValidation ) {
+			return;
+		}
+
 		const fieldId = event.target.id;
 		this.setState( {
 			isFieldDirty: { ...this.state.isFieldDirty, [ fieldId ]: true },

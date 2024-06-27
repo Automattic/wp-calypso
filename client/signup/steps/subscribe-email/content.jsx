@@ -29,6 +29,7 @@ function SubscribeEmailStepContent( props ) {
 				flowName={ flowName }
 				goToNextStep={ goToNextStep }
 				handleCreateAccountError={ handleCreateAccountError }
+				disableBlurValidation
 				isPasswordless
 				isReskinned
 				isSocialFirst={ false }
