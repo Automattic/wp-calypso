@@ -591,12 +591,14 @@ export class SiteSettingsFormGeneral extends Component {
 				{ ! isClassicView && (
 					<>
 						<SettingsSectionHeader
-							data-tip-target="settings-site-profile-save"
 							disabled={ isRequestingSettings || isSavingSettings }
 							isSaving={ isSavingSettings }
 							onButtonClick={ handleSubmitForm }
 							showButton
 							title={ translate( 'Site profile' ) }
+							buttonProps={ {
+								'data-tip-target': 'settings-site-profile-save',
+							} }
 						/>
 						<Card>
 							<form>
