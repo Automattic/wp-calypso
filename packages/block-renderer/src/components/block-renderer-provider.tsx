@@ -31,7 +31,7 @@ const useBlockRendererContext = (
 		delete config.styles.blocks[ 'core/columns' ].variations;
 	}
 	const [ globalStyles ] = useSafeGlobalStylesOutputWithConfig( config );
-	//debugger;
+
 	const context = useMemo(
 		() => ( {
 			isReady: !! settings,
