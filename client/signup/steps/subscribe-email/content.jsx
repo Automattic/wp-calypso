@@ -35,12 +35,11 @@ function SubscribeEmailStepContent( props ) {
 				isSocialSignupEnabled={ false }
 				labelText={ translate( 'Your email' ) }
 				queryArgs={ { user_email: email, redirect_to: redirectUrl } }
-				redirectToAfterLoginUrl={ redirectUrl }
 				shouldDisplayUserExistsError
 				step={ step }
 				stepName={ stepName }
-				submitButtonText={ translate( 'Subscribe email' ) }
 				submitButtonLabel={ translate( 'Subscribe email' ) }
+				submitButtonLoadingLabel={ translate( 'Subscribing…' ) }
 				submitForm={ handleSubmitForm }
 				suggestedUsername=""
 			/>

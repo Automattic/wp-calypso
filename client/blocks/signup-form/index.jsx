@@ -101,7 +101,7 @@ class SignupForm extends Component {
 		flowName: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
-		redirectToAfterLoginUrl: PropTypes.string.isRequired,
+		redirectToAfterLoginUrl: PropTypes.string,
 		goToNextStep: PropTypes.func,
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
@@ -113,7 +113,9 @@ class SignupForm extends Component {
 		save: PropTypes.func,
 		signupDependencies: PropTypes.object,
 		step: PropTypes.object,
-		submitButtonText: PropTypes.string.isRequired,
+		submitButtonText: PropTypes.string,
+		submitButtonLabel: PropTypes.string,
+		submitButtonLoadingLabel: PropTypes.string,
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -1281,6 +1283,7 @@ class SignupForm extends Component {
 		) {
 			let formProps = {
 				submitButtonLabel: this.props.submitButtonLabel,
+				submitButtonLoadingLabel: this.props.submitButtonLoadingLabel,
 			};
 
 			switch ( true ) {
