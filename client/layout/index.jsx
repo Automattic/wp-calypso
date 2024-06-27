@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
-import { shouldLoadInlineHelp } from '@automattic/help-center';
+import { useLocale } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
@@ -27,14 +27,17 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
+import { onboardingUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { useSelector } from 'calypso/state';
 import { getAdminColor } from 'calypso/state/admin-color/selectors';
 import { isOffline } from 'calypso/state/application/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowCollapsedGlobalSidebar,
 	getShouldShowGlobalSidebar,
@@ -45,13 +48,16 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
+import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
+	getSelectedSite,
 	getSelectedSiteId,
 	getSidebarIsCollapsed,
 	masterbarIsVisible,
@@ -59,7 +65,7 @@ import {
 import BodySectionCssClass from './body-section-css-class';
 import GlobalNotifications from './global-notifications';
 import LayoutLoader from './loader';
-import { handleScroll } from './utils';
+import { shouldLoadInlineHelp, handleScroll } from './utils';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
@@ -137,6 +143,13 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 		setShowHelpCenter( false );
 	}, [ setShowHelpCenter ] );
 
+	const locale = useLocale();
+	const hasPurchases = useSelector( hasCancelableUserPurchases );
+	const user = useSelector( getCurrentUser );
+	const selectedSite = useSelector( getSelectedSite );
+	const primarySiteSlug = useSelector( getPrimarySiteSlug );
+	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
+
 	if ( ! loadHelpCenter ) {
 		return null;
 	}
@@ -147,8 +160,15 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 			placeholder={ null }
 			handleClose={ handleClose }
 			currentRoute={ currentRoute }
+			locale={ locale }
+			sectionName={ sectionName }
+			site={ selectedSite || primarySite }
+			currentUser={ user }
+			hasPurchases={ hasPurchases }
 			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
+			onboardingUrl={ onboardingUrl() }
+			googleMailServiceFamily={ getGoogleMailServiceFamily() }
 		/>
 	);
 }
@@ -417,7 +437,8 @@ class Layout extends Component {
 				) }
 				<QueryPreferences />
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
-				{ this.props.isUnifiedSiteSidebarVisible && (
+				{ ( this.props.isUnifiedSiteSidebarVisible ||
+					config.isEnabled( 'layout/site-level-user-profile' ) ) && (
 					<QuerySiteAdminColor siteId={ this.props.siteId } />
 				) }
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
@@ -564,7 +585,10 @@ export default withCurrentRoute(
 
 		const calypsoColorScheme = getPreference( state, 'colorScheme' );
 		const siteColorScheme = getAdminColor( state, siteId ) ?? calypsoColorScheme;
-		const colorScheme = shouldShowUnifiedSiteSidebar ? siteColorScheme : calypsoColorScheme;
+		const colorScheme =
+			shouldShowUnifiedSiteSidebar || config.isEnabled( 'layout/site-level-user-profile' )
+				? siteColorScheme
+				: calypsoColorScheme;
 
 		return {
 			masterbarIsHidden,

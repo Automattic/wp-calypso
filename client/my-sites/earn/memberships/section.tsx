@@ -1,4 +1,4 @@
-import { Card, Button, Dialog, Gridicon } from '@automattic/components';
+import { Badge, Card, Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
@@ -16,6 +16,7 @@ import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/se
 import {
 	getConnectedAccountDescriptionForSiteId,
 	getConnectUrlForSiteId,
+	getMembershipsSandboxStatusForSiteId,
 	getCouponsAndGiftsEnabledForSiteId,
 	getIsConnectedForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
@@ -45,6 +46,11 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	const hasConnectedAccount = useSelector( ( state ) =>
 		getIsConnectedForSiteId( state, site?.ID )
 	);
+
+	const isMembershipsSandboxed = useSelector( ( state ) =>
+		getMembershipsSandboxStatusForSiteId( state, site?.ID )
+	);
+
 	const [ showDisconnectStripeDialog, setShowDisconnectStripeDialog ] = useState( false );
 
 	const products = useSelector( ( state ) => getProductsForSiteId( state, site?.ID ) );
@@ -87,6 +93,16 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Settings' ) }>
+					{ isMembershipsSandboxed === 'sandbox' && (
+						<Badge
+							type="warning"
+							className={ `memberships__settings-sandbox-warning${
+								! hasConnectedAccount ? ' stripe-disconnected' : ''
+							}` }
+						>
+							{ translate( 'Memberships Sandbox Active' ) }
+						</Badge>
+					) }
 					{ ! hasConnectedAccount && (
 						<Button
 							primary

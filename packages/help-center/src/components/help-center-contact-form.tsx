@@ -4,27 +4,27 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
+import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useGetOdieStorage } from '@automattic/odie-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
+import { getQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import { getQueryArgs } from 'calypso/lib/query-args';
-import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import { EMAIL_SUPPORT_LOCALES } from '../constants';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useSiteAnalysis } from '../data/use-site-analysis';
 import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
@@ -49,8 +49,6 @@ import type { AnalysisReport } from '../types';
 import type { HelpCenterSelect, SiteDetails, HelpCenterSite } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
 
-export const SITE_STORE = 'automattic/site';
-
 const fakeFaces = [
 	'john',
 	'joe',
@@ -66,24 +64,8 @@ const fakeFaces = [
 ].map( ( name ) => `https://s0.wp.com/i/support-engineers/${ name }.jpg` );
 const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 );
 
-const getSupportedLanguages = ( supportType: string, locale: string ) => {
-	const isLiveChatLanguageSupported = (
-		config( 'livechat_support_locales' ) as Array< string >
-	 ).includes( locale );
-
-	const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
-		locale
-	);
-
-	switch ( supportType ) {
-		case 'CHAT':
-			return ! isLiveChatLanguageSupported;
-		case 'EMAIL':
-			return ! isLanguageSupported && ! [ 'en', 'en-gb' ].includes( locale );
-
-		default:
-			return false;
-	}
+const isLocaleNotSupportedInEmailSupport = ( locale: string ) => {
+	return ! EMAIL_SUPPORT_LOCALES.includes( locale );
 };
 
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
@@ -94,7 +76,7 @@ type HelpCenterContactFormProps = {
 
 export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const { search } = useLocation();
-	const sectionName = useSelector( getSectionName );
+	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
 	const { onSubmit } = props;
@@ -106,19 +88,14 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const locale = useLocale();
 	const { isPending: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isPending: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
-	const userId = useSelector( getCurrentUserId );
-	const { data: userSites } = useUserSites( userId );
+	const { data: userSites } = useUserSites( currentUser.ID );
 	const userWithNoSites = userSites?.sites.length === 0;
 	const queryClient = useQueryClient();
-	const email = useSelector( getCurrentUserEmail );
-	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
-		'CURRENT_SITE'
-	);
+	const [ isSelfDeclaredSite, setIsSelfDeclaredSite ] = useState< boolean >( false );
 	const [ gptResponse, setGptResponse ] = useState< JetpackSearchAIResult >();
-	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
+	const { subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
-			currentSite: helpCenterSelect.getSite(),
 			subject: helpCenterSelect.getSubject(),
 			message: helpCenterSelect.getMessage(),
 			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
@@ -149,7 +126,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 	useEffect( () => {
 		if ( userWithNoSites ) {
-			setSitePickerChoice( 'OTHER_SITE' );
+			setIsSelfDeclaredSite( true );
 		}
 	}, [ userWithNoSites ] );
 
@@ -157,38 +134,38 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 	let ownershipResult: AnalysisReport = useSiteAnalysis(
 		// pass user email as query cache key
-		userId,
+		currentUser.ID,
 		userDeclaredSiteUrl,
-		sitePickerChoice === 'OTHER_SITE'
+		isSelfDeclaredSite
 	);
 
 	const ownershipStatusLoading = ownershipResult?.result === 'LOADING';
 	const isSubmitting = submittingTicket || submittingTopic || isOpeningChatWidget;
 
 	// if the user picked a site from the picker, we don't need to analyze the ownership
-	if ( currentSite && sitePickerChoice === 'CURRENT_SITE' ) {
+	if ( site && ! isSelfDeclaredSite ) {
 		ownershipResult = {
 			result: 'OWNED_BY_USER',
 			isWpcom: true,
-			siteURL: currentSite.URL,
-			site: currentSite,
+			siteURL: site.URL,
+			site: site,
 		};
 	}
 
 	// record the resolved site
 	useEffect( () => {
-		if ( ownershipResult?.site && sitePickerChoice === 'OTHER_SITE' ) {
+		if ( ownershipResult?.site && isSelfDeclaredSite ) {
 			setUserDeclaredSite( ownershipResult?.site as SiteDetails );
 		}
-	}, [ ownershipResult, setUserDeclaredSite, sitePickerChoice ] );
+	}, [ ownershipResult, setUserDeclaredSite, isSelfDeclaredSite ] );
 
 	let supportSite: SiteDetails | HelpCenterSite;
 
 	// if the user picked "other site", force them to declare a site
-	if ( sitePickerChoice === 'OTHER_SITE' ) {
+	if ( isSelfDeclaredSite ) {
 		supportSite = ownershipResult?.site as SiteDetails;
 	} else {
-		supportSite = currentSite as HelpCenterSite;
+		supportSite = site as HelpCenterSite;
 	}
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
@@ -357,7 +334,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 						`Plan: ${ productId } - ${ productName } (${ productTerm })`,
 					];
 
-					if ( getQueryArgs()?.ref === 'woocommerce-com' ) {
+					if ( getQueryArgs( window.location.href )?.ref === 'woocommerce-com' ) {
 						ticketMeta.push(
 							`Created during store setup on ${
 								isWcMobileApp() ? 'Woo mobile app' : 'Woo browser'
@@ -394,7 +371,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 								// wait 30 seconds until support-history endpoint actually updates
 								// yup, it takes that long (tried 5, and 10)
 								queryClient.invalidateQueries( {
-									queryKey: [ 'help-support-history', 'ticket', email ],
+									queryKey: [ 'help-support-history', 'ticket', currentUser.ID ],
 								} );
 							}, 30000 );
 						} )
@@ -462,7 +439,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		);
 	};
 
-	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale );
+	const shouldShowHelpLanguagePrompt = isLocaleNotSupportedInEmailSupport( locale );
 
 	const getHEsTraySection = () => {
 		return (
@@ -640,15 +617,8 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 			<HelpCenterSitePicker
 				ownershipResult={ ownershipResult }
-				sitePickerChoice={ sitePickerChoice }
-				setSitePickerChoice={ setSitePickerChoice }
-				currentSite={ currentSite }
-				siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
-				sitePickerEnabled={
-					mode === 'FORUM' &&
-					Boolean( supportSite?.plan?.product_slug ) &&
-					isFreePlanProduct( { product_slug: supportSite.plan?.product_slug as string } )
-				}
+				isSelfDeclaredSite={ isSelfDeclaredSite }
+				onSelfDeclaredSite={ setIsSelfDeclaredSite }
 			/>
 
 			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (

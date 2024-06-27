@@ -85,7 +85,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				duration: 6000,
 			} )
 		);
-	}, [ page, reduxDispatch, translate ] );
+	}, [ reduxDispatch, translate ] );
 
 	const {
 		formData,

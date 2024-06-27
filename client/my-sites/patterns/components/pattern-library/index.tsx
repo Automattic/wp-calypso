@@ -379,7 +379,7 @@ export const PatternLibrary = ( {
 				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && <PatternsCopyPasteInfo /> }
 			</div>
 
-			<PatternsGetStarted />
+			<PatternsGetStarted theme="dark" />
 		</>
 	);
 };

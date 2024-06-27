@@ -8,6 +8,7 @@ export interface AgencyDirectoryApplication {
 	directories: DirectoryApplication[];
 	feedbackUrl: string;
 	status?: AgencyDirectoryApplicationStatus;
+	isPublished?: boolean;
 }
 
 export interface DirectoryApplication {

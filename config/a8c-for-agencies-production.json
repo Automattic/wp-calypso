@@ -32,7 +32,8 @@
 		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
 		"cookie-banner": true,
 		"oauth": true,
-		"a4a-logged-out-signup": true
+		"a4a-logged-out-signup": true,
+		"a4a-automated-referrals": true
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -48,7 +49,8 @@
 		"a8c-for-agencies-referrals": true,
 		"a8c-for-agencies-settings": false,
 		"a8c-for-agencies-partner-directory": false,
-		"a8c-for-agencies-migrations": true
+		"a8c-for-agencies-migrations": true,
+		"a8c-for-agencies-client": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

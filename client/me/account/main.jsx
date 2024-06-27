@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
-import { Banner } from 'calypso/components/banner';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
@@ -884,19 +883,6 @@ class Account extends Component {
 						}
 					) }
 				/>
-				<Banner
-					disableHref
-					title={ this.props.translate(
-						'These settings are applied to sites using the Default admin interface style. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: (
-									<InlineSupportLink supportContext="admin-interface-style" showIcon={ false } />
-								),
-							},
-						}
-					) }
-				/>
 
 				<SectionHeader label={ translate( 'Account Information' ) } />
 				<Card className="account__settings">
@@ -967,7 +953,12 @@ class Account extends Component {
 
 						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
 
-						<FormFieldset className="account__settings-admin-home">
+						<FormFieldset
+							className="account__settings-admin-home"
+							style={
+								config.isEnabled( 'layout/site-level-user-profile' ) ? { marginBottom: 0 } : {}
+							}
+						>
 							<FormLabel id="account__default_landing_page">
 								{ translate( 'Admin home' ) }
 							</FormLabel>
@@ -975,6 +966,7 @@ class Account extends Component {
 						</FormFieldset>
 
 						{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
+							! config.isEnabled( 'layout/site-level-user-profile' ) &&
 							supportsCssCustomProperties() && (
 								<FormFieldset>
 									<FormLabel id="account__color_scheme" htmlFor="color_scheme">
