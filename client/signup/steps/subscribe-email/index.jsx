@@ -79,6 +79,7 @@ function SubscribeEmailStep( props ) {
 		<div className="subscribe-email">
 			<StepWrapper
 				flowName={ flowName }
+				hideBack
 				hideFormattedHeader
 				stepContent={
 					<SubscribeEmailStepContent
