@@ -2,12 +2,14 @@ import { Popover } from '@automattic/components';
 import { isWithinBreakpoint, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import actions from '../state/actions';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
 import getIsShortcutsPopoverOpen from '../state/selectors/get-is-shortcuts-popover-open';
-import { HotkeyContainer } from './container-hotkey';
+import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { getSelectedNoteId } from '../state/selectors/get-selected-note-id';
+import HotkeyContainer from './container-hotkey';
 import Gridicon from './gridicons';
 
 export const ShortcutsPopover = ( {
@@ -16,12 +18,18 @@ export const ShortcutsPopover = ( {
 	isPanelOpen,
 	isShortcutsPopoverOpen,
 	isMobile,
+	enableKeyboardShortcuts,
 } ) => {
 	const translate = useTranslate();
 
 	// create context for the keyboard shortcuts popover icon
 	const iconRef = useRef();
 	const spanRef = useRef();
+
+	// Enable keyboard shortcuts when the component mounts
+	useEffect( () => {
+		enableKeyboardShortcuts();
+	}, [] );
 
 	// This function renders a list of keyboard shortcuts
 	const renderShortcutsPopover = () => {
@@ -129,11 +137,14 @@ const mapStateToProps = ( state ) => ( {
 	isPanelOpen: getIsPanelOpen( state ),
 	isShortcutsPopoverOpen: getIsShortcutsPopoverOpen( state ),
 	isMobile: isWithinBreakpoint( MOBILE_BREAKPOINT ),
+	selectedNoteId: getSelectedNoteId( state ),
+	keyboardShortcutsAreEnabled: getKeyboardShortcutsEnabled( state ),
 } );
 
 const mapDispatchToProps = {
 	closeShortcutsPopover: actions.ui.closeShortcutsPopover,
 	toggleShortcutsPopover: actions.ui.toggleShortcutsPopover,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( ShortcutsPopover );
