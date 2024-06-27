@@ -9,14 +9,14 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import GoogleAnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-google-analytics';
 import { useSelector } from 'calypso/state';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
-import { isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
+import { isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import SharingServicesGroup from './services-group';
 
 const SharingConnections = ( { translate, isP2Hub, siteId } ) => {
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.POST_SHARING_ENABLED );
 
-	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
-		getIsGlobalSiteViewEnabled( state, siteId )
+	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+		isAdminInterfaceWPAdmin( state, siteId )
 	);
 
 	return (
@@ -50,7 +50,7 @@ const SharingConnections = ( { translate, isP2Hub, siteId } ) => {
 				numberOfPlaceholders={ isP2Hub ? 2 : undefined }
 			/>
 
-			{ isGlobalSiteViewEnabled && <GoogleAnalyticsSettings /> }
+			{ adminInterfaceIsWPAdmin && <GoogleAnalyticsSettings /> }
 		</div>
 	);
 };

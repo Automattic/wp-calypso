@@ -18,7 +18,7 @@ export const ODIE_THUMBS_UP_RATING_VALUE = 1;
 const ForwardedChatMessage = forwardRef< HTMLDivElement, ChatMessageProps >( ChatMessage );
 
 export const OdieAssistant: React.FC = () => {
-	const { chat, trackEvent } = useOdieAssistantContext();
+	const { chat, trackEvent, currentUser } = useOdieAssistantContext();
 	const chatboxMessagesRef = useRef< HTMLDivElement | null >( null );
 	const { ref: bottomRef, entry: lastMessageElement, inView } = useInView( { threshold: 0 } );
 	const [ stickToBottom, setStickToBottom ] = useState( true );
@@ -86,6 +86,7 @@ export const OdieAssistant: React.FC = () => {
 							<ForwardedChatMessage
 								message={ message }
 								key={ index }
+								currentUser={ currentUser }
 								scrollToBottom={ scrollToBottom }
 								ref={ chat.messages.length - 1 === index ? bottomRef : undefined }
 							/>

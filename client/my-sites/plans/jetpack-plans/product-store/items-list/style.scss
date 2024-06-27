@@ -13,6 +13,12 @@
 	@include break-medium {
 		grid-template-columns: repeat(2, 1fr);
 	}
+
+	.item-price > .display-price:not(.is-placeholder) {
+		flex-direction: column;
+		align-items: flex-start;
+		padding-top: 0.5rem;
+	}
 }
 
 .jetpack-product-store__all-items {

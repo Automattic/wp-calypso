@@ -12,15 +12,16 @@ export function mapApplicationFormData( agency: Agency | null ): AgencyDirectory
 		products: agency.profile.listing_details.products ?? [],
 		services: agency.profile.listing_details.services ?? [],
 		directories: agency.profile.partner_directory_application.directories.map(
-			( { status, directory, published, urls, note } ) => ( {
+			( { status, directory, is_published, urls, note } ) => ( {
 				status: status,
 				directory: directory,
-				published: published,
+				isPublished: is_published,
 				urls: urls,
 				note: note,
 			} )
 		),
 		feedbackUrl: agency.profile.partner_directory_application.feedback_url,
+		isPublished: !! agency.profile.partner_directory_application.is_published,
 	};
 }
 

@@ -17,7 +17,6 @@ import TopButtons from './top-buttons';
 type SpotlightPlanProps = {
 	currentSitePlanSlug?: string | null;
 	gridPlanForSpotlight?: GridPlan;
-	intervalType: string;
 	isInSignup: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
@@ -31,7 +30,6 @@ type SpotlightPlanProps = {
 const SpotlightPlan = ( {
 	currentSitePlanSlug,
 	gridPlanForSpotlight,
-	intervalType,
 	isInSignup,
 	onStorageAddOnClick,
 	planActionOverrides,
@@ -65,7 +63,6 @@ const SpotlightPlan = ( {
 			<PlanFeaturesList
 				renderedGridPlans={ [ gridPlanForSpotlight ] }
 				featureGroupSlug={ FEATURE_GROUP_STORAGE }
-				intervalType={ intervalType }
 				onStorageAddOnClick={ onStorageAddOnClick }
 				showUpgradeableStorage={ showUpgradeableStorage }
 			/>

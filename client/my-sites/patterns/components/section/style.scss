@@ -12,12 +12,6 @@
 		padding: 40px 0 48px;
 	}
 
-	&.patterns-section--full-width-body {
-		.patterns-section__body {
-			padding: 0;
-		}
-	}
-
 	&.patterns-section--dark {
 		background: #1d2327;
 		color: var(--studio-white);
@@ -57,4 +51,9 @@
 
 .patterns-section__body {
 	@include patterns-page-width;
+
+	.patterns-section--full-width-body & {
+		padding: 0;
+		max-width: none;
+	}
 }

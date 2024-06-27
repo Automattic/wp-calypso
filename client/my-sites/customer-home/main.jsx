@@ -49,7 +49,6 @@ import {
 	canCurrentUserUseCustomerHome,
 	getSitePlan,
 	getSiteOption,
-	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -77,9 +76,6 @@ const Home = ( {
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
-	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
-		getIsGlobalSiteViewEnabled( state, siteId )
-	);
 	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
@@ -159,7 +155,7 @@ const Home = ( {
 	const headerActions = (
 		<>
 			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-				{ isGlobalSiteViewEnabled ? translate( 'View site' ) : translate( 'Visit site' ) }
+				{ translate( 'View site' ) }
 			</Button>
 			{ config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && isAdmin && ! isP2 && (
 				<Button primary href={ `/overview/${ site.slug }` }>

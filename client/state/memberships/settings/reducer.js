@@ -24,6 +24,7 @@ export default ( state = {}, action ) => {
 						'data.connected_account_minimum_currency',
 						null
 					),
+					membershipsSandboxStatus: get( action, 'data.store_context', null ),
 					connectUrl: get( action, 'data.connect_url', null ),
 					couponsAndGiftsEnabled: get( action, 'data.coupons_and_gifts_enabled', null ),
 				},
