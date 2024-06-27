@@ -1,14 +1,13 @@
-import { Button } from '@automattic/components';
+import { Button, ButtonProps } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 
-interface SettingsSectionHeaderProps {
+interface SettingsSectionHeaderProps extends Omit< ButtonProps, 'title' > {
 	title: string | ReactNode;
 	id?: string;
 	isSaving?: boolean;
 	showButton?: boolean;
-	disabled?: boolean;
 	onButtonClick?: () => void;
 	children?: ReactNode;
 }
@@ -19,8 +18,8 @@ export default function SettingsSectionHeader( {
 	id,
 	isSaving,
 	showButton,
-	disabled,
 	onButtonClick,
+	...buttonProps
 }: SettingsSectionHeaderProps ) {
 	const translate = useTranslate();
 
@@ -28,7 +27,7 @@ export default function SettingsSectionHeader( {
 		<SectionHeader label={ title } id={ id }>
 			{ children }
 			{ showButton && (
-				<Button compact primary disabled={ disabled } onClick={ onButtonClick }>
+				<Button compact primary onClick={ onButtonClick } { ...buttonProps }>
 					{ isSaving ? translate( 'Saving…' ) : translate( 'Save settings' ) }
 				</Button>
 			) }

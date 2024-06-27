@@ -27,7 +27,7 @@ type AnchorProps = OwnProps &
 		href: NonUndefined< AnchorElementProps[ 'href' ] >;
 	};
 
-type ButtonProps = OwnProps & Omit< ButtonHTMLAttributes< HTMLButtonElement >, 'href' >;
+export type ButtonProps = OwnProps & Omit< ButtonHTMLAttributes< HTMLButtonElement >, 'href' >;
 
 const isAnchor = ( props: AnchorProps | ButtonProps ): props is AnchorProps =>
 	!! ( props as AnchorProps ).href;
