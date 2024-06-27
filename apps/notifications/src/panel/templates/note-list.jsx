@@ -108,6 +108,10 @@ export class NoteList extends Component {
 		this.setState( { scrolling: false } );
 	};
 
+	isScrollTop = () => {
+		return this.state.scrollY === 0;
+	};
+
 	updateStatusBar = ( message, classList, delay ) => {
 		this.setState( {
 			statusClasses: classList,
@@ -288,7 +292,14 @@ export class NoteList extends Component {
 		let [ notes ] = Object.entries( noteGroups ).reduce(
 			( [ list, isFirst ], [ timeGroupKey, timeGroupNotes ] ) => {
 				const title = groupTitles[ timeGroupKey ];
-				const header = <ListHeader key={ title } title={ title } isFirst={ isFirst } />;
+				const header = (
+					<ListHeader
+						key={ title }
+						title={ title }
+						isFirst={ isFirst }
+						isScrollTop={ this.isScrollTop() }
+					/>
+				);
 
 				return [ [ ...list, header, ...timeGroupNotes.map( createNoteComponent ) ], false ];
 			},

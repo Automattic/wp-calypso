@@ -19,6 +19,7 @@ export const ShortcutsPopover = ( {
 	isShortcutsPopoverOpen,
 	isMobile,
 	enableKeyboardShortcuts,
+	isScrollTop,
 } ) => {
 	const translate = useTranslate();
 
@@ -31,12 +32,19 @@ export const ShortcutsPopover = ( {
 		enableKeyboardShortcuts();
 	}, [] );
 
+	// Close the keyboard shortcuts popover when the user scrolls and the icon is no longer visible
+	useEffect( () => {
+		if ( isShortcutsPopoverOpen && ! isScrollTop ) {
+			closeShortcutsPopover();
+		}
+	}, [ isScrollTop, isShortcutsPopoverOpen ] );
+
 	// This function renders a list of keyboard shortcuts
 	const renderShortcutsPopover = () => {
 		return (
 			<Popover
 				onClose={ closeShortcutsPopover }
-				isVisible={ isPanelOpen && isShortcutsPopoverOpen }
+				isVisible={ isPanelOpen && isShortcutsPopoverOpen && isScrollTop }
 				context={ iconRef.current }
 				ignoreContext={ spanRef.current }
 				position="bottom left"

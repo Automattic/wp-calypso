@@ -4,7 +4,7 @@ import actions from '../state/actions';
 import Gridicon from './gridicons';
 import ShortcutsPopover from './shortcuts-popover';
 
-export const ListHeader = ( { isFirst, title, viewSettings } ) => {
+export const ListHeader = ( { isFirst, title, viewSettings, isScrollTop } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -28,7 +28,7 @@ export const ListHeader = ( { isFirst, title, viewSettings } ) => {
 						>
 							<Gridicon icon="cog" size={ 18 } />
 						</span>
-						<ShortcutsPopover />
+						<ShortcutsPopover { ...{ isScrollTop } } />
 					</>
 				) }
 			</div>
