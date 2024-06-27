@@ -9,32 +9,52 @@ import './style.scss';
 export const ReadymadeTemplates = () => {
 	const translate = useTranslate();
 	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
-	const container = useRef( null );
+	const containerRef = useRef( null );
 	const [ currentScrollLeft, setCurrentScrollLeft ] = useState( 0 );
 	const [ maxScrollLeft, setMaxScrollLeft ] = useState( 0 );
 
 	useEffect( () => {
-		const updateMacScrollLeft = () => {
-			setMaxScrollLeft( container.current.scrollWidth - container.current.clientWidth );
+		if ( ! containerRef.current ) {
+			return;
+		}
+		const container = containerRef.current;
+
+		const updateCurrentScrollLeft = () => {
+			setCurrentScrollLeft( container.scrollLeft );
 		};
+		const updateMacScrollLeft = () => {
+			setMaxScrollLeft( container.scrollWidth - container.clientWidth - 1 ); // Extra pixel to handle rounding errors.
+		};
+
+		updateCurrentScrollLeft();
 		updateMacScrollLeft();
+
+		container.addEventListener( 'scroll', updateCurrentScrollLeft );
 		window.addEventListener( 'resize', updateMacScrollLeft );
-		return () => window.removeEventListener( 'resize', updateMacScrollLeft );
+
+		return () => {
+			container.removeEventListener( 'scroll', updateCurrentScrollLeft );
+			window.removeEventListener( 'resize', updateMacScrollLeft );
+		};
 	}, [] );
 
 	const scroll = ( direction: 'left' | 'right' ) => {
+		if ( ! containerRef.current ) {
+			return;
+		}
+		const container = containerRef.current;
+
 		const increment = direction === 'right' ? 300 : -300;
-		let newScrollLeft = container.current.scrollLeft + increment;
+		let newScrollLeft = container.scrollLeft + increment;
 		if ( newScrollLeft < 0 ) {
 			newScrollLeft = 0;
 		} else if ( newScrollLeft > maxScrollLeft ) {
 			newScrollLeft = maxScrollLeft;
 		}
-		container.current.scrollTo( {
+		container.scrollTo( {
 			left: newScrollLeft,
 			behavior: 'smooth',
 		} );
-		setCurrentScrollLeft( newScrollLeft );
 	};
 
 	if ( ! readymadeTemplates.length ) {
@@ -50,7 +70,7 @@ export const ReadymadeTemplates = () => {
 			theme="dark"
 			title={ translate( 'Ready-to-use site layouts' ) }
 		>
-			<div className="readymade-templates" ref={ container }>
+			<div className="readymade-templates" ref={ containerRef }>
 				{ readymadeTemplates.map( ( readymadeTemplate ) => (
 					<a
 						href={ `/patterns/site-layouts/${ readymadeTemplate.template_id } ` }
@@ -66,12 +86,12 @@ export const ReadymadeTemplates = () => {
 			</div>
 			{ maxScrollLeft > 0 && (
 				<div className="readymade-templates-controls">
-					<button onClick={ () => scroll( 'left' ) } disabled={ currentScrollLeft === 0 }>
+					<button onClick={ () => scroll( 'left' ) } disabled={ currentScrollLeft <= 0 }>
 						<Icon icon={ chevronLeft } />
 					</button>
 					<button
 						onClick={ () => scroll( 'right' ) }
-						disabled={ currentScrollLeft === maxScrollLeft }
+						disabled={ currentScrollLeft >= maxScrollLeft }
 					>
 						<Icon icon={ chevronRight } />
 					</button>
