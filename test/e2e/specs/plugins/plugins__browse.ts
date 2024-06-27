@@ -77,9 +77,9 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 		it( 'Can return via breadcrumb from premium plugins', async function () {
 			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
-				await pluginsPage.clickPluginsBreadcrumb();
+				await pluginsPage.clickCategory( 'Discover' );
 			} else {
-				await pluginsPage.clickBackBreadcrumb();
+				await pluginsPage.clickDropdownCategory( 'Discover' );
 			}
 			await pluginsPage.validateHasSection( PluginsPage.paidSection );
 		} );
