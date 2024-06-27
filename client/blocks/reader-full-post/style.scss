@@ -30,9 +30,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post__content {
-	display: flex;
-	justify-content: space-around;
-	flex-wrap: wrap;
+	@media (min-width: $reader-full-post-desktop-min) {
+		display: flex;
+		justify-content: space-around;
+		flex-wrap: wrap;
+	}
 	max-width: 1200px;
 	margin: 0 auto;
 
@@ -120,6 +122,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 .reader-full-post__story {
 	max-width: var(--reader-full-post-story-max-width);
 	padding: 0 var(--reader-full-post-story-padding);
+	margin: 0 auto;
+	@media (min-width: $reader-full-post-desktop-min) {
+		margin: 0;
+	}
 
 	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body;
