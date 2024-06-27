@@ -1,31 +1,28 @@
-import {
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	PlanSlug,
-	StorageOption,
-} from '@automattic/calypso-products';
+import { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../../grid-context';
 import useIsLargeCurrency from '../../../../hooks/use-is-large-currency';
+import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
 import useStorageStringFromFeature from '../hooks/use-storage-string-from-feature';
 
 interface Props {
-	storageOption: StorageOption;
 	planSlug: PlanSlug;
 }
 
-const ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
-
-const PlanStorageLabel = ( { storageOption, planSlug }: Props ) => {
+const StorageFeatureLabel = ( { planSlug }: Props ) => {
 	const translate = useTranslate();
 	const { siteId, gridPlansIndex } = usePlansGridContext();
-	const currencyCode = gridPlansIndex[ planSlug ].pricing.currencyCode;
+	const {
+		pricing: { currencyCode },
+		features: { storageFeature },
+	} = gridPlansIndex[ planSlug ];
+	const storageSlug = storageFeature?.getSlug() as WPComPlanStorageFeatureSlug | undefined;
 	const storageStringFromFeature = useStorageStringFromFeature( {
 		siteId,
-		storageFeature: storageOption.slug,
+		storageSlug,
 		planSlug,
 	} );
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
@@ -45,12 +42,12 @@ const PlanStorageLabel = ( { storageOption, planSlug }: Props ) => {
 		currencyCode: currencyCode ?? 'USD',
 	} );
 
-	const containerClasses = clsx( 'plans-grid-next-plan-storage-label__container', {
+	const containerClasses = clsx( 'plans-grid-next-storage-feature-label__container', {
 		'is-row': ! isLargeCurrency,
 	} );
 
 	const volumeJSX = (
-		<div className="plan-features-2023-grid__storage-buttons" key={ storageOption.slug }>
+		<div className="plans-grid-next-storage-feature-label__volume-badge" key={ storageSlug }>
 			{ storageStringFromFeature }
 		</div>
 	);
@@ -58,7 +55,7 @@ const PlanStorageLabel = ( { storageOption, planSlug }: Props ) => {
 	return formattedMonthlyAddedCost && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug ) ? (
 		<div className={ containerClasses }>
 			{ volumeJSX }
-			<div className="plans-grid-next-plan-storage-label__offset-price">
+			<div className="plans-grid-next-storage-feature-label__offset-price">
 				{ translate( '+ %(formattedMonthlyAddedCost)s/month', {
 					args: { formattedMonthlyAddedCost },
 				} ) }
@@ -69,4 +66,4 @@ const PlanStorageLabel = ( { storageOption, planSlug }: Props ) => {
 	);
 };
 
-export default PlanStorageLabel;
+export default StorageFeatureLabel;

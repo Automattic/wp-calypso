@@ -1,18 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../../types';
+import { validateURL, areURLsUnique } from '../../utils/tools';
 
 type Props = {
 	initialFormData?: AgencyDirectoryApplication | null;
 };
-
-function validateURL( url: string ) {
-	return /^(https?:\/\/)?([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]+(:[0-9]+)?(\/[a-z0-9-]*)*$/.test( url );
-}
-
-function areURLsUnique( urls: string[] ) {
-	const urlSet = new Set( urls );
-	return urlSet.size === urls.length;
-}
 
 export default function useExpertiseForm( { initialFormData }: Props ) {
 	const [ formData, setFormData ] = useState< AgencyDirectoryApplication >(

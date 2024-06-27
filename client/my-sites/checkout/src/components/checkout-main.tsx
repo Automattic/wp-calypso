@@ -498,8 +498,6 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'p24', transactionData, dataForProcessor ),
 			bancontact: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'bancontact', transactionData, dataForProcessor ),
-			giropay: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'giropay', transactionData, dataForProcessor ),
 			wechat: ( transactionData: unknown ) =>
 				weChatProcessor( transactionData, dataForProcessor, translate ),
 			netbanking: ( transactionData: unknown ) =>

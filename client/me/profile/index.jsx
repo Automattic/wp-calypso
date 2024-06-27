@@ -6,7 +6,6 @@ import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
-import { Banner } from 'calypso/components/banner';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -61,19 +60,6 @@ class Profile extends Component {
 							components: {
 								learnMoreLink: (
 									<InlineSupportLink supportContext="manage-profile" showIcon={ false } />
-								),
-							},
-						}
-					) }
-				/>
-				<Banner
-					disableHref
-					title={ this.props.translate(
-						'These settings are applied to sites using the Default admin interface style. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: (
-									<InlineSupportLink supportContext="admin-interface-style" showIcon={ false } />
 								),
 							},
 						}

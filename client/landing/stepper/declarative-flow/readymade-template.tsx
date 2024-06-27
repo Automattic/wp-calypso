@@ -3,6 +3,7 @@ import { getAssemblerDesign } from '@automattic/design-picker';
 import { READYMADE_TEMPLATE_FLOW } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelect } from '@wordpress/data';
+import deepmerge from 'deepmerge';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
@@ -337,16 +338,17 @@ function useReadymadeTemplate( templateId: number, options: object = { enabled: 
 		return null;
 	}
 
-	readymadeTemplate.globalStyles = {};
-
-	if ( readymadeTemplate.style_variation ) {
+	const styleVariations = [] as GlobalStylesObject[];
+	Object.values( readymadeTemplate.styles ?? [] ).forEach( ( readymadeTemplateStyleVariation ) => {
 		const styleVariation = assemblerTheme.style_variations.find(
-			( sv ) => sv.title === readymadeTemplate.style_variation
+			( assemblerStyleVariation ) =>
+				assemblerStyleVariation.title === readymadeTemplateStyleVariation
 		);
 		if ( styleVariation ) {
-			readymadeTemplate.globalStyles = styleVariation;
+			styleVariations.push( styleVariation );
 		}
-	}
+	} );
+	readymadeTemplate.globalStyles = deepmerge.all( styleVariations );
 
 	return readymadeTemplate;
 }

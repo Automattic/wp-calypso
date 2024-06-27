@@ -1,6 +1,5 @@
 import {
 	type PlanSlug,
-	type StorageOption,
 	isP2FreePlan,
 	isFreePlan,
 	PLAN_FREE,
@@ -32,7 +31,6 @@ type PlanFeaturesActionsButtonProps = {
 	planActionOverrides?: PlanActionOverrides;
 	showMonthlyPrice: boolean;
 	isStuck: boolean;
-	storageOptions?: StorageOption[];
 	visibleGridPlans: GridPlan[];
 };
 

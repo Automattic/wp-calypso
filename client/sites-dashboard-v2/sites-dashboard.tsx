@@ -121,16 +121,13 @@ const SitesDashboardV2 = ( {
 			addDummyDataViewPrefix( 'last-interacted' ),
 			addDummyDataViewPrefix( 'status' ),
 		],
-		filters:
-			status === 'all'
-				? []
-				: [
-						{
-							field: addDummyDataViewPrefix( 'status' ),
-							operator: 'in',
-							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
-						},
-				  ],
+		filters: [
+			{
+				field: addDummyDataViewPrefix( 'status' ),
+				operator: 'in',
+				value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
+			},
+		],
 		selectedItem: selectedSite,
 		type: selectedSite ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 	} as DataViewsState;
