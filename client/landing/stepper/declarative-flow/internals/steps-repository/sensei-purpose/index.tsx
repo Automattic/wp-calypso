@@ -2,9 +2,11 @@ import { TextControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import React, { useEffect } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { SenseiStepProgress } from '../components/sensei-step-progress';
 import PurposeItem from './purpose-item';
@@ -19,8 +21,29 @@ import './style.scss';
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
+type ResponseError = {
+	error: string;
+};
+
+const setCourseTheme = async ( site: number, variation: string | null = null ) =>
+	wpcomRequest( {
+		path: `/sites/${ site }/themes/mine`,
+		method: 'POST',
+		apiVersion: '1.1',
+		body: {
+			theme: 'course',
+			...( variation && { style_variation_slug: variation } ),
+		},
+	} );
+
+const installCourseTheme = async ( siteId: number ) =>
+	wpcom.req.post( { path: `/sites/${ siteId }/themes/course/install` } );
+
 const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 	const [ progress, setProgress ] = useState< number >( 0 );
+	const urlParams = new URLSearchParams( window.location.search );
+	const siteId = parseInt( urlParams.get( 'siteId' ) ?? '0' );
+	const selectedVariation = urlParams.get( 'variation' ) ?? 'green';
 
 	useEffect( () => {
 		clearSelectedPurposes();
@@ -28,16 +51,33 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 
 	// Stall for a few seconds while the atomic transfer is going on.
 	useEffect( () => {
-		const tick = async () => {
-			if ( progress < 110 ) {
-				await wait( 1500 );
-				setProgress( ( progress ) => progress + 33 );
+		const installTheme = async () => {
+			await wait( 3000 );
+			if ( progress === 100 ) {
+				return;
+			}
+
+			try {
+				await installCourseTheme( siteId );
+				await setCourseTheme( siteId, selectedVariation );
+				setProgress( 100 );
+			} catch ( responseError: unknown ) {
+				if ( ( responseError as ResponseError )?.error === 'theme_already_installed' ) {
+					await setCourseTheme( siteId, selectedVariation );
+					setProgress( 100 );
+				} else {
+					setProgress(
+						( prevProgress ) =>
+							prevProgress + Math.min( 15, prevProgress + ( 100 - prevProgress ) / 2 )
+					);
+				}
 			}
 		};
-		tick();
-	}, [ progress ] );
 
-	const waiting = progress < 110;
+		installTheme();
+	}, [ siteId, progress, selectedVariation ] );
+
+	const waiting = progress < 100;
 
 	const [ sitePurpose, setSitePurpose ] = useState< SitePurpose >( {
 		selected: [],

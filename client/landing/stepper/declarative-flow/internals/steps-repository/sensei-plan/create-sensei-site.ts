@@ -7,7 +7,6 @@ import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import wpcom from 'calypso/lib/wp';
 import { Progress } from '../components/sensei-step-progress';
-import { wait } from '../sensei-launch/launch-completion-tasks';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 import type { StyleVariation } from 'calypso/../packages/design-picker';
 
@@ -65,7 +64,6 @@ export const useCreateSenseiSite = () => {
 
 	const siteProgressTitle = __( 'Laying out the foundations' );
 	const cartProgressTitle = __( 'Preparing Your Bundle' );
-	const styleProgressTitle = __( 'Applying your site styles' );
 
 	const [ progress, setProgress ] = useState< Progress >( {
 		percentage: 0,
@@ -112,7 +110,6 @@ export const useCreateSenseiSite = () => {
 		} );
 
 		const newSite = getNewSite();
-		const siteId = newSite?.blogid;
 		setSelectedSite( newSite?.blogid );
 		await Promise.all( [
 			setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW ),
@@ -121,7 +118,7 @@ export const useCreateSenseiSite = () => {
 
 		setProgress( {
 			percentage: 100,
-			title: styleProgressTitle,
+			title: cartProgressTitle,
 		} );
 
 		return { site: newSite };
@@ -137,7 +134,6 @@ export const useCreateSenseiSite = () => {
 		visibility,
 		siteProgressTitle,
 		cartProgressTitle,
-		styleProgressTitle,
 	] );
 
 	return { createAndConfigureSite, progress, setCourseThemeAndVariation };
