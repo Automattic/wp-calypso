@@ -36,7 +36,7 @@ function SubscribeEmailStep( props ) {
 	const { mutate: subscribeToMailingList, isPending: isSubscribeToMailingListPending } =
 		useSubscribeToMailingList( {
 			onSuccess: () => {
-				recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {
+				recordTracksEvent( 'calypso_signup_email_subscription_success', {
 					mailing_list: queryParams.mailing_list,
 				} );
 				props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
