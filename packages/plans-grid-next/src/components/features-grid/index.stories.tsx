@@ -1,8 +1,7 @@
 import {
-	TrailMapVariantType,
 	getFeaturesList,
 	getPlanFeaturesGroupedForFeaturesGrid,
-	setTrailMapExperiment,
+	getPlanFeaturesGroupedForComparisonGrid,
 } from '@automattic/calypso-products';
 import {
 	FeaturesGrid,
@@ -12,11 +11,7 @@ import {
 } from '../..';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const ComponentWrapper = (
-	props: Omit< FeaturesGridExternalProps, 'gridPlans' > & {
-		trailMapVariant?: TrailMapVariantType;
-	}
-) => {
+const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' > ) => {
 	const gridPlans = useGridPlansForFeaturesGrid( {
 		eligibleForFreeHostingTrial: true,
 		hasRedeemedDomainCredit: undefined,
@@ -95,12 +90,6 @@ const defaultProps = {
 const meta = {
 	title: 'FeaturesGrid',
 	component: ComponentWrapper,
-	decorators: [
-		( Story, { args: { trailMapVariant } } ) => {
-			trailMapVariant && setTrailMapExperiment( trailMapVariant );
-			return <Story />;
-		},
-	],
 } satisfies Meta< typeof ComponentWrapper >;
 
 export default meta;
@@ -108,7 +97,7 @@ export default meta;
 type Story = StoryObj< typeof meta >;
 
 export const Plans = {
-	name: '/plans',
+	name: 'Default features grid',
 	args: {
 		...defaultProps,
 		intent: 'plans-default-wpcom',
@@ -118,27 +107,22 @@ export const Plans = {
 	},
 } satisfies Story;
 
-export const Newsletter = {
-	name: '/setup/newsletter',
+export const CategorizedFeatures = {
+	name: 'Categorized features grid',
+	args: {
+		...Plans.args,
+		gridPlanForSpotlight: undefined,
+
+		// to better show the effect of the categories, here we use the one from the comparison grid instead
+		featureGroupMap: getPlanFeaturesGroupedForComparisonGrid(),
+		enableCategorisedFeatures: true,
+	},
+} satisfies Story;
+
+export const IntentWithNonDefaultPlanMix = {
+	name: 'Non-default plan mix configured by intent',
 	args: {
 		...defaultProps,
 		intent: 'plans-newsletter',
-	},
-} satisfies Story;
-
-export const TrailMapControl = {
-	args: {
-		...Plans.args,
-		trailMapVariant: 'control',
-		gridPlanForSpotlight: undefined,
-	},
-} satisfies Story;
-
-export const TrailMapCopyAndStructure = {
-	args: {
-		...Plans.args,
-		trailMapVariant: 'treatment',
-		gridPlanForSpotlight: undefined,
-		enableCategorisedFeatures: true,
 	},
 } satisfies Story;
