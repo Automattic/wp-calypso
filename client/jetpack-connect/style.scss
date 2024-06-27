@@ -1132,6 +1132,32 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				margin-bottom: 24px;
 			}
 		}
+
+		.auth-form__social {
+			padding-top: 0;
+			.auth-form__social-buttons {
+				width: 100%;
+				.social-buttons__button {
+					width: 100%;
+					border: 1px solid #a7aaad;
+					border-radius: 2px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					svg {
+						border-radius: 0;
+						border: none;
+						flex-shrink: 0;
+					}
+					span {
+						flex-grow: 1;
+						text-align: center;
+						// icon width * 2
+						margin-left: -40px;
+					}
+				}
+			}
+		}
 	}
 
 	.jetpack-connect__site.card {
