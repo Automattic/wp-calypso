@@ -233,8 +233,8 @@ class CurrentPlan extends Component {
 		}
 
 		const planDescription = isJetpackNotAtomic
-		    ? translate( 'Learn about the features included in your Jetpack plan.' );
-		    : translate( 'Learn about the features included in your WordPress.com plan.' );
+			? translate( 'Learn about the features included in your Jetpack plan.' )
+			: translate( 'Learn about the features included in your WordPress.com plan.' );
 
 		return (
 			<div>
