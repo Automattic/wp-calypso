@@ -24,6 +24,8 @@ const useCheckPlanAvailabilityForPurchase = ( {
 	planSlugs,
 	siteId,
 }: Props ): PlanAvailabilityForPurchase => {
+	// In some cases, we may not have the selected site ID available, so we fallback to the siteId prop.
+	// For example, when the user is redirected to the domain upsell page from the free signup flow.
 	const selectedSiteId = useSelector( getSelectedSiteId ) || siteId;
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
 
