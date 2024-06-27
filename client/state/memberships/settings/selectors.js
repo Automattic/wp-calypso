@@ -24,6 +24,9 @@ export function getconnectedAccountMinimumCurrencyForSiteId( state, siteId ) {
 		null
 	);
 }
+export function getMembershipsSandboxStatusForSiteId( state, siteId ) {
+	return get( state, [ 'memberships', 'settings', siteId, 'membershipsSandboxStatus' ], null );
+}
 export function getConnectUrlForSiteId( state, siteId ) {
 	return get( state, [ 'memberships', 'settings', siteId, 'connectUrl' ], '' );
 }

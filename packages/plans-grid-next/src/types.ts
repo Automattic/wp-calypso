@@ -6,7 +6,6 @@ import type {
 	FeatureList,
 	WPComStorageAddOnSlug,
 	FeatureObject,
-	StorageOption,
 	FeatureGroupMap,
 	Feature,
 } from '@automattic/calypso-products';
@@ -25,7 +24,7 @@ export type TransformedFeatureObject = FeatureObject & {
 export interface PlanFeaturesForGridPlan {
 	wpcomFeatures: TransformedFeatureObject[];
 	jetpackFeatures: TransformedFeatureObject[];
-	storageOptions: StorageOption[];
+	storageFeature?: FeatureObject;
 	// used for comparison grid so far
 	comparisonGridFeatureLabels?: Record< Feature, TranslateResult >;
 }
@@ -66,7 +65,6 @@ export type PlansIntent =
 	| 'plans-jetpack-app-site-creation'
 	| 'plans-import'
 	| 'plans-woocommerce'
-	| 'plans-paid-media'
 	| 'plans-p2'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
@@ -108,11 +106,9 @@ export interface CommonGridProps {
 	isInAdmin: boolean;
 	isReskinned?: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	intervalType: string;
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	planActionOverrides?: PlanActionOverrides;
-
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
@@ -138,6 +134,7 @@ export interface FeaturesGridProps extends CommonGridProps {
 export interface ComparisonGridProps extends CommonGridProps {
 	// Value of the `?plan=` query param, so we can highlight a given plan.
 	selectedPlan?: string;
+	intervalType: string;
 }
 
 export type UseActionCallback = ( {

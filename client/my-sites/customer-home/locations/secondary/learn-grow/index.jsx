@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import { DotPager } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { createElement, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import DotPager from 'calypso/components/dot-pager';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import {
 	EDUCATION_AFFILIATES,

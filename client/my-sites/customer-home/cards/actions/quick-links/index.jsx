@@ -26,10 +26,10 @@ import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
-	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
 	isNewSite,
 	getSitePlanSlug,
 	getSite,
+	isAdminInterfaceWPAdmin,
 } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -103,8 +103,8 @@ export const QuickLinks = ( {
 		) : null;
 
 	const usesWpAdminInterface = adminInterface === 'wp-admin';
-	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
-		getIsGlobalSiteViewEnabled( state, siteId )
+	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+		isAdminInterfaceWPAdmin( state, siteId )
 	);
 
 	const quickLinks = (
@@ -279,7 +279,7 @@ export const QuickLinks = ( {
 			{ isAtomic && hasBackups && (
 				<ActionBox
 					href={
-						isGlobalSiteViewEnabled
+						adminInterfaceIsWPAdmin
 							? `https://jetpack.com/redirect/?source=calypso-backups&site=${ siteSlug }`
 							: `/backup/${ siteSlug }`
 					}

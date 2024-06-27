@@ -21,6 +21,7 @@ import {
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
 	isSiteAssemblerFlow,
+	isReadymadeFlow,
 	setThemeOnSite,
 	AI_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
@@ -147,6 +148,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isSiteAssemblerFlow( flow ) ||
+		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;

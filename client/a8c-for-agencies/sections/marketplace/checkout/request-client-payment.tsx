@@ -18,6 +18,7 @@ import withMarketplaceType, {
 } from '../hoc/with-marketplace-type';
 import useRequestClientPaymentMutation from '../hooks/use-request-client-payment-mutation';
 import useShoppingCart from '../hooks/use-shopping-cart';
+import NoticeSummary from './notice-summary';
 import type { ShoppingCartItem } from '../types';
 
 interface Props {
@@ -119,17 +120,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 				</FormFieldset>
 			</div>
 
-			<div className="checkout__summary-notice">
-				<h3>{ translate( 'When you send this payment request:' ) }</h3>
-				<div className="checkout__summary-notice-item">
-					{ translate(
-						"Your client will be sent an invoice where they will be asked to create a WordPress.com account to pay for these products. Once paid, you'll be able to manage these products on behalf of the client."
-					) }
-				</div>
-				<div className="checkout__summary-notice-item">
-					{ translate( 'The client can cancel their products at any time.' ) }
-				</div>
-			</div>
+			<NoticeSummary type="request-client-payment" />
 
 			<div className="checkout__aside-actions">
 				<Button

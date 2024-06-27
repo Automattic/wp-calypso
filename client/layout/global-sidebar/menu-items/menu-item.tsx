@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import React, { useRef, forwardRef, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
-import { getShouldShowGlobalSiteSidebar } from 'calypso/state/global-sidebar/selectors';
+import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ReactNode, LegacyRef } from 'react';
 
@@ -46,7 +46,7 @@ const SidebarMenuItem = forwardRef< HTMLButtonElement | HTMLAnchorElement, Props
 			currentSection: false | { group?: string; name?: string };
 		};
 		const isSidebarCollapsed = useSelector( ( state ) => {
-			return getShouldShowGlobalSiteSidebar(
+			return getShouldShowCollapsedGlobalSidebar(
 				state,
 				selectedSiteId,
 				currentSection !== false ? currentSection?.group ?? '' : '',

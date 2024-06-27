@@ -14,7 +14,14 @@ interface StoreSandboxQueryResponse {
 }
 
 export function StoreSandboxHelper() {
-	const { data: isSandboxed = false } = useStoreSandboxStatusQuery();
+	const { data: storeSandboxStatus, isLoading: isLoading } = useStoreSandboxStatusQuery();
+	const isSandboxed = storeSandboxStatus?.sandbox_status ?? false;
+	const isEditable = storeSandboxStatus?.is_editable ?? false;
+	const reasonNotEditable = storeSandboxStatus?.reason_not_editable
+		? storeSandboxStatus.reason_not_editable
+		: null;
+	const reasonNotEditableText = isLoading ? 'Loading...' : reasonNotEditable;
+
 	const [ isStoreSandboxed, setIsStoreSandboxed ] = useState( isSandboxed );
 	const [ responseError, setResponseError ] = useState< string | null >( null );
 
@@ -57,8 +64,9 @@ export function StoreSandboxHelper() {
 				<ToggleControl
 					label="Store Sandbox"
 					checked={ isStoreSandboxed || false }
+					disabled={ ! isEditable }
 					onChange={ onToggleStoreSandbox }
-					help={ responseError ? responseError : popoverStatus }
+					help={ responseError ?? reasonNotEditableText ?? popoverStatus }
 				/>
 			</div>
 		</>
