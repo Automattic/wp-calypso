@@ -44,6 +44,8 @@ import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModuleUTM from './features/modules/stats-module-utm';
+import StatsModuleUTMOverlay from './features/modules/stats-module-utm/stats-module-utm-overlay';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -57,8 +59,6 @@ import StatsModule from './stats-module';
 import StatsModuleDevices from './stats-module-devices';
 import StatsModuleUpgradeOverlay from './stats-module-devices/stats-module-upgrade-overlay';
 import StatsModuleEmails from './stats-module-emails';
-import StatsModuleUTM from './stats-module-utm';
-import StatsModuleUTMOverlay from './stats-module-utm/stats-module-utm-overlay';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
