@@ -2,6 +2,7 @@ const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
+const CopyPlugin = require( 'copy-webpack-plugin' );
 const webpack = require( 'webpack' );
 
 /* Arguments to this function replicate webpack's so this config can be used on the command line,
@@ -24,12 +25,17 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		...webpackConfig,
 		mode: 'production',
 		entry: {
-			'help-center-gutenberg': path.join( __dirname, 'apps', 'help-center-gutenberg-plugin.js' ),
-			'help-center-wp-admin': path.join( __dirname, 'apps', 'help-center-wp-admin-bar.js' ),
-			'help-center-disconnected-jetpack': path.join(
+			'help-center-gutenberg': path.join( __dirname, 'apps', 'help-center-gutenberg.js' ),
+			'help-center-wp-admin': path.join( __dirname, 'apps', 'help-center-wp-admin.js' ),
+			'help-center-gutenberg-disconnected': path.join(
 				__dirname,
 				'apps',
-				'help-center-disconnected-jetpack.js'
+				'help-center-gutenberg-disconnected.js'
+			),
+			'help-center-wp-admin-disconnected': path.join(
+				__dirname,
+				'apps',
+				'help-center-wp-admin-disconnected.js'
 			),
 		},
 		output: {
@@ -49,7 +55,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 			),
 			new webpack.DefinePlugin( {
-				__i18n_text_domain__: JSON.stringify( 'full-site-editing' ),
+				__i18n_text_domain__: JSON.stringify( 'jetpack-mu-wpcom' ),
 				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			} ),
 			new DependencyExtractionWebpackPlugin( {
@@ -66,6 +72,14 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
+			new CopyPlugin( {
+				patterns: [
+					{
+						from: path.join( __dirname, 'apps', 'help-icon.svg' ),
+						to: path.join( __dirname, 'dist', 'apps' ),
+					},
+				],
+			} ),
 		],
 	};
 }

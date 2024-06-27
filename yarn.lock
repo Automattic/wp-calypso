@@ -1070,6 +1070,7 @@ __metadata:
     "@wordpress/primitives": "npm:^4.0.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:3.0.0"
     clsx: "npm:^2.1.1"
+    copy-webpack-plugin: "npm:^10.2.4"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-draggable: "npm:^4.4.4"

@@ -10,6 +10,7 @@ import clsx from 'clsx';
 import HelpCenter from '../src/components/help-center';
 import HelpIcon from '../src/components/help-icon';
 import useActionHooks from './use-action-hooks';
+import './help-center.scss';
 
 const queryClient = new QueryClient();
 
