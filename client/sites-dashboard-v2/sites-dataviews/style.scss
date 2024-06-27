@@ -113,3 +113,8 @@
 		outline-offset: 2px;
 	}
 }
+
+// Hide the reset filters button
+.sites-overview__content .dataviews-wrapper .dataviews-filters__view-actions .components-h-stack button:nth-of-type(3) {
+	display: none;
+}
