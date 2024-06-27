@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
-import { Banner } from 'calypso/components/banner';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
@@ -879,19 +878,6 @@ class Account extends Component {
 							components: {
 								learnMoreLink: (
 									<InlineSupportLink supportContext="account-settings" showIcon={ false } />
-								),
-							},
-						}
-					) }
-				/>
-				<Banner
-					disableHref
-					title={ this.props.translate(
-						'These settings are applied to sites using the Default admin interface style. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: (
-									<InlineSupportLink supportContext="admin-interface-style" showIcon={ false } />
 								),
 							},
 						}
