@@ -232,15 +232,9 @@ class CurrentPlan extends Component {
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
 		}
 
-		let planDescription = null;
-
-		if ( isJetpackNotAtomic ) {
-			planDescription = translate( 'Learn about the features included in your Jetpack plan.' );
-		} else {
-			planDescription = translate(
-				'Learn about the features included in your WordPress.com plan.'
-			);
-		}
+		const planDescription = isJetpackNotAtomic
+		    ? translate( 'Learn about the features included in your Jetpack plan.' );
+		    : translate( 'Learn about the features included in your WordPress.com plan.' );
 
 		return (
 			<div>
