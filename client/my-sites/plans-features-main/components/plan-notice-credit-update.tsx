@@ -32,10 +32,16 @@ const PlanNoticeCreditUpgrade = ( {
 		'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
 	);
 
+	const showNotice =
+		visiblePlans &&
+		visiblePlans.length > 0 &&
+		planUpgradeCreditsApplicable !== null &&
+		planUpgradeCreditsApplicable > 0;
+
 	return (
 		<>
 			<QuerySitePlans siteId={ siteId } />
-			{ visiblePlans && visiblePlans.length && planUpgradeCreditsApplicable && (
+			{ showNotice && (
 				<Notice
 					className={ className }
 					showDismiss={ !! onDismissClick }
