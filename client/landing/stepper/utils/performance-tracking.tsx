@@ -39,7 +39,7 @@ function useStepperPerformanceTrackerStop( flow: string, step: string ) {
 				metadata: { flow, step },
 			} );
 		} );
-	}, [ store,  flow, step ] );
+	}, [ store, flow, step ] );
 }
 
 // Stop performance data collection and report.
