@@ -1,5 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_MONTHLY,
+	isMonthly,
+} from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
@@ -99,7 +104,9 @@ export const UpgradePlanDetails = ( props: Props ) => {
 					<div>
 						<div className="import__upgrade-plan-cta">{ children }</div>
 						<div className="import__upgrade-plan-refund-sub-text">
-							{ __( 'Refundable within 14 days. No questions asked.' ) }
+							{ plan && ! isMonthly( plan.getStoreSlug() )
+								? __( 'Refundable within 14 days. No questions asked.' )
+								: __( 'Refundable within 7 days. No questions asked.' ) }
 						</div>
 					</div>
 
