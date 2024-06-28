@@ -81,7 +81,7 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 					showSummaryLink
 					className={ className }
 				>
-					<Geochart query={ period } />
+					<Geochart query={ query } />
 				</StatsModule>
 			) }
 		</>
