@@ -7,13 +7,13 @@ import {
 	redirectIfP2,
 	redirectIfJetpackNonAtomic,
 } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { handleHostingPanelRedirect } from 'calypso/my-sites/hosting/controller';
-import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
-} from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
+} from 'calypso/hosting/sites/components/site-preview-pane/constants';
+import { siteDashboard } from 'calypso/hosting/sites/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { handleHostingPanelRedirect } from 'calypso/my-sites/hosting/controller';
 import { hostingOverview, hostingConfiguration, hostingActivate } from './controller';
 
 export default function () {

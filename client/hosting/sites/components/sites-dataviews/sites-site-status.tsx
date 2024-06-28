@@ -13,11 +13,11 @@ import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpt
 import { SiteLaunchNag } from 'calypso/sites-dashboard/components/sites-site-launch-nag';
 import TransferNoticeWrapper from 'calypso/sites-dashboard/components/sites-transfer-notice-wrapper';
 import { WithAtomicTransfer } from 'calypso/sites-dashboard/components/with-atomic-transfer';
-import useRestoreSiteMutation from 'calypso/sites-dashboard/hooks/use-restore-site-mutation';
 import { MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
+import useRestoreSiteMutation from '../..//hooks/use-restore-site-mutation';
 import type { SiteExcerptData } from '@automattic/sites';
 
 const BadgeDIFM = styled.span`

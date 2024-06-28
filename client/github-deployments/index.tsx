@@ -4,6 +4,8 @@ import {
 	render as clientRender,
 	redirectToHostingPromoIfNotAtomic,
 } from 'calypso/controller';
+import { DOTCOM_GITHUB_DEPLOYMENTS } from 'calypso/hosting/sites/components/site-preview-pane/constants';
+import { siteDashboard } from 'calypso/hosting/sites/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	redirectHomeIfIneligible,
@@ -12,8 +14,6 @@ import {
 	deploymentRunLogs,
 	deploymentsList,
 } from 'calypso/my-sites/github-deployments/controller';
-import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
-import { DOTCOM_GITHUB_DEPLOYMENTS } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
 
 export default function () {
 	page( '/github-deployments', siteSelection, sites, makeLayout, clientRender );

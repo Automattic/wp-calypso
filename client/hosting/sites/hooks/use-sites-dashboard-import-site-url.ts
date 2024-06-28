@@ -1,6 +1,6 @@
 import { Primitive } from 'utility-types';
 import { addQueryArgs } from 'calypso/lib/url';
-import { TRACK_SOURCE_NAME } from '../utils';
+import { TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 
 export const useSitesDashboardImportSiteUrl = (
 	additionalParameters: Record< string, Primitive >

@@ -34,20 +34,18 @@ import {
 	SitesDashboardQueryParams,
 	handleQueryParamChange,
 } from 'calypso/sites-dashboard/components/sites-content-controls';
-import {
-	useShowSiteCreationNotice,
-	useShowSiteTransferredNotice,
-} from 'calypso/sites-dashboard/components/sites-dashboard';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
-import { useInitializeDataViewsPage } from './hooks/use-initialize-dataviews-page';
-import { useInitializeDataViewsSelectedItem } from './hooks/use-initialize-dataviews-selected-item';
-import { useSyncSelectedSite } from './hooks/use-sync-selected-site';
-import { useSyncSelectedSiteFeature } from './hooks/use-sync-selected-site-feature';
+import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
+import { useInitializeDataViewsSelectedItem } from '../hooks/use-initialize-dataviews-selected-item';
+import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
+import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
+import { useSyncSelectedSite } from '../hooks/use-sync-selected-site';
+import { useSyncSelectedSiteFeature } from '../hooks/use-sync-selected-site-feature';
 import {
 	CALYPSO_ONBOARDING_TOURS_PREFERENCE_NAME,
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
 	useOnboardingTours,
-} from './onboarding-tours';
+} from '../onboarding-tours';
 import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
@@ -82,7 +80,7 @@ const siteSortingKeys = [
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_STATUS_GROUP = 'all';
 
-const SitesDashboardV2 = ( {
+const SitesDashboard = ( {
 	// Note - control params (eg. search, page, perPage, status...) are currently meant for
 	// initializing the dataViewsState. Further calculations should reference the dataViewsState.
 	queryParams: {
@@ -340,4 +338,4 @@ const SitesDashboardV2 = ( {
 	);
 };
 
-export default SitesDashboardV2;
+export default SitesDashboard;

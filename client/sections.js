@@ -17,7 +17,7 @@ const sections = [
 	{
 		name: 'sites-dashboard',
 		paths: [ '/sites' ],
-		module: 'calypso/sites-dashboard',
+		module: 'calypso/hosting/sites',
 		group: 'sites-dashboard',
 	},
 	{
