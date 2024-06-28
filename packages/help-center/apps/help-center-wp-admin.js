@@ -1,6 +1,5 @@
-import './config';
-
 /* global helpCenterData */
+import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelect } from '@wordpress/data';

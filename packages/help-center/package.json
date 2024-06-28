@@ -10,7 +10,8 @@
 	"calypso:src": "src/index.ts",
 	"sideEffects": [
 		"*.css",
-		"*.scss"
+		"*.scss",
+		"apps/config.js"
 	],
 	"repository": {
 		"type": "git",
