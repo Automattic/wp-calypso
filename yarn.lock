@@ -1081,6 +1081,7 @@ __metadata:
     "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^10.0.0
     "@wordpress/element": ^6.0.0
+    postcss: "*"
     react: ^18.2.0
     react-dom: ^18.2.0
     redux: ^4.2.1
