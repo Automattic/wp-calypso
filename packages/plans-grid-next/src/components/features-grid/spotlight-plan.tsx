@@ -59,7 +59,12 @@ const SpotlightPlan = ( {
 					currentSitePlanSlug={ currentSitePlanSlug }
 				/>
 			) }
-			{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
+			{ isNotFreePlan && (
+				<BillingTimeframes
+					renderedGridPlans={ [ gridPlanForSpotlight ] }
+					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
+				/>
+			) }
 			<PlanFeaturesList
 				renderedGridPlans={ [ gridPlanForSpotlight ] }
 				featureGroupSlug={ FEATURE_GROUP_STORAGE }

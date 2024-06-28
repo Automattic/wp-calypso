@@ -119,6 +119,7 @@ const Table = ( {
 						renderedGridPlans={ gridPlansWithoutSpotlight }
 						showRefundPeriod={ showRefundPeriod }
 						options={ { isTableCell: true } }
+						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 					/>
 				</tr>
 				<StickyContainer

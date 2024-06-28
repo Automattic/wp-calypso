@@ -9,12 +9,14 @@ type BillingTimeframesProps = {
 	options?: {
 		isTableCell?: boolean;
 	};
+	planUpgradeCreditsApplicable?: number | null;
 };
 
 const BillingTimeframes = ( {
 	options,
 	renderedGridPlans,
 	showRefundPeriod,
+	planUpgradeCreditsApplicable,
 }: BillingTimeframesProps ) => {
 	return renderedGridPlans.map( ( { planSlug } ) => {
 		const classes = clsx(
@@ -28,7 +30,11 @@ const BillingTimeframes = ( {
 				isTableCell={ options?.isTableCell }
 				key={ planSlug }
 			>
-				<BillingTimeframe planSlug={ planSlug } showRefundPeriod={ showRefundPeriod } />
+				<BillingTimeframe
+					planSlug={ planSlug }
+					showRefundPeriod={ showRefundPeriod }
+					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
+				/>
 			</PlanDivOrTdContainer>
 		);
 	} );

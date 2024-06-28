@@ -111,7 +111,12 @@ const MobileView = ( {
 							currentSitePlanSlug={ currentSitePlanSlug }
 						/>
 					) }
-					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
+					{ isNotFreePlan && (
+						<BillingTimeframes
+							renderedGridPlans={ [ gridPlan ] }
+							planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
+						/>
+					) }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
 					{ storageFeatureGroup && (
 						<>

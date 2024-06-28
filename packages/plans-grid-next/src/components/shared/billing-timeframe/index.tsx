@@ -48,9 +48,14 @@ const RefundNotice = ( { planSlug, showRefundPeriod, billingPeriod }: RefundNoti
 interface Props {
 	planSlug: PlanSlug;
 	showRefundPeriod?: boolean;
+	planUpgradeCreditsApplicable?: number | null;
 }
 
-const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
+const BillingTimeframe = ( {
+	showRefundPeriod,
+	planSlug,
+	planUpgradeCreditsApplicable,
+}: Props ) => {
 	const translate = useTranslate();
 	const { helpers, gridPlansIndex, coupon, siteId } = usePlansGridContext();
 	const { isMonthlyPlan, billingTimeframe, pricing } = gridPlansIndex[ planSlug ];
@@ -64,6 +69,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		isMonthlyPlan,
 		storageAddOnsForPlan: storageAddOns,
 		coupon,
+		planUpgradeCreditsApplicable,
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
 	} );
 	const description = planBillingDescription || billingTimeframe;

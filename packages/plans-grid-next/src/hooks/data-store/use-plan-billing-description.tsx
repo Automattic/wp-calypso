@@ -21,6 +21,7 @@ interface UsePlanBillingDescriptionProps {
 	isMonthlyPlan?: boolean;
 	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null;
 	coupon?: string;
+	planUpgradeCreditsApplicable?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 }
 
@@ -31,6 +32,7 @@ export default function usePlanBillingDescription( {
 	storageAddOnsForPlan,
 	isMonthlyPlan,
 	coupon,
+	planUpgradeCreditsApplicable,
 	useCheckPlanAvailabilityForPurchase,
 }: UsePlanBillingDescriptionProps ) {
 	const translate = useTranslate();
@@ -207,7 +209,11 @@ export default function usePlanBillingDescription( {
 		return null;
 	}
 
-	if ( discountedPriceFullTermText ) {
+	/**
+	 * If this discount is related to a `Plan upgrade credit`
+	 * then we do not show any discount messaging as per Automattic/martech#1927
+	 */
+	if ( discountedPriceFullTermText && ! planUpgradeCreditsApplicable ) {
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 			return translate(
 				'per month, %(fullTermDiscountedPriceText)s for the first year, excl. taxes',

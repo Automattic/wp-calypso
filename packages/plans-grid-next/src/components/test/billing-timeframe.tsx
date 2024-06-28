@@ -173,6 +173,40 @@ describe( 'BillingTimeframe', () => {
 		);
 	} );
 
+	test( 'should show original price when plan is annual and upgrade credits are available', () => {
+		const pricing = {
+			currencyCode: 'USD',
+			originalPrice: { full: 120, monthly: 10 },
+			discountedPrice: { full: 60, monthly: 5 },
+			billingPeriod: PLAN_ANNUAL_PERIOD,
+		};
+
+		usePlansGridContext.mockImplementation( () => ( {
+			gridPlansIndex: {
+				[ PLAN_BUSINESS ]: {
+					isMonthlyPlan: false,
+					pricing,
+				},
+			},
+		} ) );
+
+		const { container } = render(
+			<BillingTimeframe
+				{ ...defaultProps }
+				planSlug={ PLAN_BUSINESS }
+				planUpgradeCreditsApplicable={ 100 }
+			/>
+		);
+
+		const originalPrice = formatCurrency( pricing.originalPrice.full, 'USD', {
+			stripZeros: true,
+			isSmallestUnit: true,
+		} );
+		expect( container ).toHaveTextContent(
+			`per month, ${ originalPrice } billed annually, excl. taxes`
+		);
+	} );
+
 	test( 'should show full-term price when plan is yearly', () => {
 		const pricing = {
 			currencyCode: 'USD',
