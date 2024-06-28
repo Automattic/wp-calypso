@@ -1,5 +1,4 @@
 import './config';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { registerPlugin } from '@wordpress/plugins';
@@ -13,7 +12,7 @@ function HelpCenterContent() {
 		<>
 			<Button
 				className="help-center"
-				href={ localizeUrl( 'https://wordpress.com/help' ) }
+				href="https://wordpress.com/help"
 				icon={ <HelpIcon /> }
 				label="Help"
 				size="compact"
