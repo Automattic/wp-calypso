@@ -69,14 +69,13 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		}
 	}, [ dispatch, siteId, isLoadingNotices, purchaseNotPostponed ] );
 
+	// Render conditions (for readability).
+	const shouldRenderPaywall =
+		! isLoading && ! skipPaywallFlow && redirectToPurchase && siteSlug && canUserManageOptions;
+	const shouldRenderContent = ! isLoading && ( canUserViewStats || canUserManageOptions );
+
 	// render purchase flow for Jetpack sites created after February 2024
-	if (
-		! isLoading &&
-		! skipPaywallFlow &&
-		redirectToPurchase &&
-		siteSlug &&
-		canUserManageOptions
-	) {
+	if ( shouldRenderPaywall ) {
 		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
 		const currentParams = new URLSearchParams( window.location.search );
 		const queryParams = new URLSearchParams();
@@ -99,7 +98,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		);
 
 		return null;
-	} else if ( ! isLoading && ( canUserViewStats || canUserManageOptions ) ) {
+	} else if ( shouldRenderContent ) {
 		return <>{ children }</>;
 	} else if ( isLoading ) {
 		return <StatsLoader />;
