@@ -1393,6 +1393,7 @@
 		.header__sections-list {
 			& ~ .header__jetpack-masterbar-cart {
 				display: flex;
+				align-items: center;
 			}
 		}
 
@@ -1415,7 +1416,8 @@
 			& > .header__jetpack-masterbar-cart {
 				justify-content: flex-end;
 				flex: unset;
-				margin-right: 16px;
+				margin-right: 0.5rem;
+				align-items: center;
 			}
 			.header__home-link {
 				flex: 1;

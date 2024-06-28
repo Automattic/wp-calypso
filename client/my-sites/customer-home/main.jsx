@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
@@ -157,7 +156,7 @@ const Home = ( {
 			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 				{ translate( 'View site' ) }
 			</Button>
-			{ config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) && isAdmin && ! isP2 && (
+			{ isAdmin && ! isP2 && (
 				<Button primary href={ `/overview/${ site.slug }` }>
 					{ translate( 'Hosting Overview' ) }
 				</Button>
