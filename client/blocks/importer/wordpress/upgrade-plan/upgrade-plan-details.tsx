@@ -15,6 +15,7 @@ import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-h
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 import UpgradePlanLoader from './upgrade-plan-loader';
+import withUpgradePlanDetailsQueries from './with-upgrade-plan-details-queries';
 import type { UpgradePlanDetailsProps } from './types';
 
 export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
@@ -119,4 +120,4 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	);
 };
 
-export default UpgradePlanDetails;
+export default withUpgradePlanDetailsQueries( UpgradePlanDetails );
