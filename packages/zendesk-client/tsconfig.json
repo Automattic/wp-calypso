@@ -7,5 +7,5 @@
 	},
 	"include": [ "src", "types.d.ts" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../data-stores" } ]
+	"references": [ { "path": "../data-stores" }, { "path": "../calypso-config" } ]
 }
