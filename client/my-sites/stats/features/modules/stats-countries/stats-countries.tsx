@@ -71,10 +71,9 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 					<></>
 				</StatsCard>
 			) }
-			{ /* { data && !! data.length && ( */ }
-			{ data && (
+			{ data && !! data.length && (
 				<StatsModule
-					path="countries"
+					path="countryviews"
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
