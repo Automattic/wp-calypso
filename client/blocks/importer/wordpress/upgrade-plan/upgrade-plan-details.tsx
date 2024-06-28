@@ -16,6 +16,86 @@ import { getSitePlan, getSitePlanRawPrice } from 'calypso/state/sites/plans/sele
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
+interface SwitcherProps {
+	selectedPlan: string;
+	onMonthlyPlanClick: () => void;
+	onAnnualPlanClick: () => void;
+}
+
+const UpgradePlanPeriodSwitcher = ( props: SwitcherProps ) => {
+	const { __ } = useI18n();
+
+	if ( config.isEnabled( 'migration-flow/introductory-offer' ) ) {
+		return null;
+	}
+
+	const { selectedPlan, onMonthlyPlanClick, onAnnualPlanClick } = props;
+
+	return (
+		<div className="import__upgrade-plan-period-switcher">
+			<ButtonGroup>
+				<Button
+					borderless
+					className={ clsx( { selected: selectedPlan === PLAN_BUSINESS_MONTHLY } ) }
+					onClick={ onMonthlyPlanClick }
+				>
+					{ __( 'Pay monthly' ) }
+				</Button>
+				<Button
+					borderless
+					className={ clsx( { selected: selectedPlan === PLAN_BUSINESS } ) }
+					onClick={ onAnnualPlanClick }
+				>
+					{ __( 'Pay annually' ) }
+				</Button>
+			</ButtonGroup>
+		</div>
+	);
+};
+
+interface PlanPriceOfferProps {
+	rawPrice?: number;
+	plan?: Plan;
+	planDetails?: SitePlanData;
+}
+
+const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
+	const { rawPrice, plan, planDetails } = props;
+	const introOfferEnabled = config.isEnabled( 'migration-flow/introductory-offer' );
+
+	// for tests
+	// planDetails = {
+	// 	...planDetails,
+	// 	introductoryOfferRawPrice: 150,
+	// 	currencyCode: 'USD',
+	// };
+
+	let price = <PlanPrice rawPrice={ rawPrice } currencyCode={ planDetails?.currencyCode } />;
+	if ( introOfferEnabled ) {
+		if ( planDetails?.introductoryOfferRawPrice ) {
+			price = (
+				<div>
+					<PlanPrice
+						rawPrice={ planDetails?.introductoryOfferRawPrice }
+						currencyCode={ planDetails?.currencyCode }
+					/>
+					<PlanPrice rawPrice={ rawPrice } currencyCode={ planDetails?.currencyCode } original />
+				</div>
+			);
+		}
+	}
+
+	// need adjust the billing time frame for intro
+	return (
+		<div className="import__upgrade-plan-price">
+			{ price }
+			<span className="plan-time-frame">
+				<small>{ plan?.getBillingTimeFrame() }</small>
+			</span>
+		</div>
+	);
+};
+
 interface Props {
 	siteId: number;
 	children: React.ReactNode;
@@ -50,22 +130,15 @@ export const UpgradePlanDetails = ( props: Props ) => {
 		plan && plan.getPathSlug && setSelectedPlanSlug( plan.getPathSlug() );
 	}, [ plan ] );
 
-	const introOfferEnabled = config.isEnabled( 'migration-flow/introductory-offer' );
-
-	const onMonthlyPlanClick = () => setSelectedPlan( PLAN_BUSINESS_MONTHLY );
-	const onAnnualPlanClick = () => setSelectedPlan( PLAN_BUSINESS );
-
 	return (
 		<div className="import__upgrade-plan-details">
 			<QuerySitePlans siteId={ siteId } />
 
-			{ renderUpgradePlanPeriodSwitcher(
-				introOfferEnabled,
-				selectedPlan,
-				onMonthlyPlanClick,
-				onAnnualPlanClick,
-				__
-			) }
+			<UpgradePlanPeriodSwitcher
+				selectedPlan={ selectedPlan }
+				onMonthlyPlanClick={ () => setSelectedPlan( PLAN_BUSINESS_MONTHLY ) }
+				onAnnualPlanClick={ () => setSelectedPlan( PLAN_BUSINESS ) }
+			/>
 
 			<div className="import__upgrade-plan-container">
 				<div className="import__upgrade-plan-features-container">
@@ -86,7 +159,11 @@ export const UpgradePlanDetails = ( props: Props ) => {
 						<p>{ __( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</p>
 					</div>
 
-					{ renderPlanPrice( introOfferEnabled, rawPrice, plan, planDetails ) }
+					<PlanPriceOffer
+						rawPrice={ rawPrice || undefined }
+						plan={ plan }
+						planDetails={ planDetails || undefined }
+					/>
 
 					<div>
 						<div className="import__upgrade-plan-cta">{ children }</div>
@@ -108,77 +185,5 @@ export const UpgradePlanDetails = ( props: Props ) => {
 		</div>
 	);
 };
-
-function renderUpgradePlanPeriodSwitcher(
-	introOfferEnabled: boolean,
-	selectedPlan: string,
-	onMonthlyPlanClick: () => void,
-	onAnnualPlanClick: () => void,
-	__: ( s: string ) => string
-) {
-	if ( introOfferEnabled ) {
-		return null;
-	}
-
-	return (
-		<div className="import__upgrade-plan-period-switcher">
-			<ButtonGroup>
-				<Button
-					borderless
-					className={ clsx( { selected: selectedPlan === PLAN_BUSINESS_MONTHLY } ) }
-					onClick={ onMonthlyPlanClick }
-				>
-					{ __( 'Pay monthly' ) }
-				</Button>
-				<Button
-					borderless
-					className={ clsx( { selected: selectedPlan === PLAN_BUSINESS } ) }
-					onClick={ onAnnualPlanClick }
-				>
-					{ __( 'Pay annually' ) }
-				</Button>
-			</ButtonGroup>
-		</div>
-	);
-}
-
-function renderPlanPrice(
-	introOfferEnabled: boolean,
-	rawPrice?: number,
-	plan?: Plan,
-	planDetails?: SitePlanData
-) {
-	// for tests
-	planDetails = {
-		...planDetails,
-		introductoryOfferRawPrice: 150,
-		currencyCode: 'USD',
-	};
-
-	let price = <PlanPrice rawPrice={ rawPrice } currencyCode={ planDetails?.currencyCode } />;
-	if ( introOfferEnabled ) {
-		if ( planDetails?.introductoryOfferRawPrice ) {
-			price = (
-				<div>
-					<PlanPrice
-						rawPrice={ planDetails?.introductoryOfferRawPrice }
-						currencyCode={ planDetails?.currencyCode }
-					/>
-					<PlanPrice rawPrice={ rawPrice } currencyCode={ planDetails?.currencyCode } original />
-				</div>
-			);
-		}
-	}
-
-	// need adjust the billing time frame for intro
-	return (
-		<div className="import__upgrade-plan-price">
-			{ price }
-			<span className="plan-time-frame">
-				<small>{ plan?.getBillingTimeFrame() }</small>
-			</span>
-		</div>
-	);
-}
 
 export default UpgradePlanDetails;
