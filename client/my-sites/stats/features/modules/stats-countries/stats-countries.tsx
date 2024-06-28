@@ -33,8 +33,6 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 	moduleStrings,
 	className,
 } ) => {
-	// eslint-disable-next-line no-console
-	console.log( query, 'new module' ); // This line logs the query prop for testing purposes
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsCountryViews';

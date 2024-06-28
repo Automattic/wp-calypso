@@ -21,8 +21,6 @@ class StatCountries extends Component {
 
 	render() {
 		const { summary, query, period, listItemClassName, className } = this.props;
-		// eslint-disable-next-line no-console
-		console.log( query, 'old module' ); // This line logs the query prop for testing purposes
 		const moduleStrings = statsStrings();
 
 		return (
