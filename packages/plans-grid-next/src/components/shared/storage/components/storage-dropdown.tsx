@@ -18,7 +18,6 @@ type StorageDropdownProps = {
 };
 
 type StorageDropdownOptionProps = {
-	planSlug: PlanSlug;
 	price?: string;
 	storageSlug: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	isLargeCurrency?: boolean;
@@ -35,7 +34,6 @@ const getStorageOptionPrice = (
 };
 
 const StorageDropdownOption = ( {
-	planSlug,
 	price,
 	storageSlug,
 	isLargeCurrency = false,
@@ -43,7 +41,7 @@ const StorageDropdownOption = ( {
 }: StorageDropdownOptionProps ) => {
 	const translate = useTranslate();
 	const { siteId } = usePlansGridContext();
-	const title = useStorageStringFromFeature( { storageSlug, siteId, planSlug } ) ?? '';
+	const title = useStorageStringFromFeature( { storageSlug, siteId } ) ?? '';
 
 	return (
 		<>
@@ -118,7 +116,6 @@ const StorageDropdown = ( {
 			key: slug,
 			name: (
 				<StorageDropdownOption
-					planSlug={ planSlug }
 					price={ getStorageOptionPrice( storageAddOns, slug ) }
 					storageSlug={ slug }
 				/>
@@ -132,7 +129,6 @@ const StorageDropdown = ( {
 		key: selectedStorageOptionForPlan,
 		name: (
 			<StorageDropdownOption
-				planSlug={ planSlug }
 				price={ selectedOptionPrice }
 				storageSlug={ selectedStorageOptionForPlan }
 				isLargeCurrency={ isLargeCurrency }
