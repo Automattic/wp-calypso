@@ -1,4 +1,71 @@
-# Specify query per page/route
+# Help Center
+
+The Help Center is the main tool our customers use to reach for support.
+
+## Development
+
+The Help Center is a bit complicated because it runs in multiple different environments.
+
+1. In Calypso.
+2. In Simple sites
+	- as a plugin to Gutenberg editor.
+	- as a wpadminbar menu item.
+4. In Atomic sites 
+	- as a plugin to Gutenberg editor.
+		- A plugin when the site is connected to Jetpack.
+		- A minimal plugin when the site is disconnected from Jetpack. This plugin simple links to wp.com/help.
+	- as a wpadminbar menu item.
+		- A menu item that opens the Help Center when connected to Jetpack.
+		- A minimal plugin when the site is disconnected from Jetpack. This plugin simple links to wp.com/help.
+
+### How to debug the Help Center
+
+#### In Calypso
+
+Follow the classic Calypso development setup. Run `yarn start` and edit away. Nothing else should be needed.
+
+#### In Simple sites
+
+1. cd into `packages/help-center`.
+2. run `yarn dev --sync`.
+3. Sandbox your site and `widgets.wp.com`.
+4. Your changes should be reflected on the site live.
+
+#### In Atomic sites
+
+If you only interested in making JS and CSS changes, you're in luck; you don't need to worry about running Jetpack.
+
+1. cd into `packages/help-center`.
+2. run `yarn dev --sync`.
+3. Sandbox `widgets.wp.com`.
+4. Your changes should be reflected on the site live.
+
+> [!NOTE] If you make changes to the *.asset.json files, they won't be synced with the site as Jetpack pulls these files via network. And since Jetpack pulls from production and not your sandbox, you'll have to deploy first for these changes to take effect.
+
+If you do want to modify PHP files. Please follow the development process of [`jetpack-mu-plugin`](https://github.com/Automattic/jetpack/blob/move/help-center/projects/packages/jetpack-mu-wpcom/README.md).
+
+### Translations
+
+Translation are uploaded to widgets.wp.com/help-center/languages. They're then downloaded in Jetpack during build process.
+
+### Deployment
+
+After every change to the Help Center, the development process is two parts:
+
+#### Deploy Calypso
+This simply means deploying Calypso as you normally would. 
+
+#### Deploy the Help Center
+1. cd into `packages/help-center`.
+2. run `yarn build --sync`.
+3. Create a patch from the changes on your sandbox.
+4. Deploy wpcom.
+
+This will deploy the Help Center app for Jetpack consumption. Along with the languages files.
+
+> [!NOTE] If you add new phrases to the Help Center. They will only be translated in Atomic sites after `jetpack-mu-plugin` is released. Which happens twice a day.
+
+### Specify query per page/route
 
 In [route-to-query-mapping.json](https://github.com/Automattic/wp-calypso/blob/add/tailored_posts_help_center/packages/help-center/src/route-to-query-mapping.json), there is a JSON structure where you can specify which search query Help Center should use based on the page URL/route.
 
@@ -11,7 +78,7 @@ Example
 "/wp-admin/post-new.php": "new post"
 ```
 
-## Suggest specific articles per page/route
+### Suggest specific articles per page/route
 
 In [tailored-post-ids-mapping.json](https://github.com/Automattic/wp-calypso/blob/add/tailored_posts_help_center/packages/help-center/src/tailored-post-ids-mapping.json), there is a JSON structure where you can specify which post id ( one or many ) from which blog ( just one blog ) should be displayed
 
