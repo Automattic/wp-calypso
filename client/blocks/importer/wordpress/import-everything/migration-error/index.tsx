@@ -70,6 +70,7 @@ export const MigrationError = ( props: Props ) => {
 			setShowHelpCenter( true );
 		}
 	}, [
+		resetStore,
 		openZendeskWidget,
 		targetSiteUrl,
 		status,
