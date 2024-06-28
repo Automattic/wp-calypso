@@ -4,6 +4,7 @@ import { getPlan, Plan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
@@ -53,6 +54,30 @@ const UpgradePlanPeriodSwitcher = ( props: SwitcherProps ) => {
 	);
 };
 
+interface PriceWithIntroductoryOfferProps {
+	rawPrice?: number;
+	introductoryOfferRawPrice?: number;
+	currencyCode: string;
+}
+
+const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
+	justify-content: flex-end;
+	display: flex;
+	flex-direction: ${ ( props ) => ( props.isLargeCurrency ? 'column' : 'row-reverse' ) };
+	align-items: ${ ( props ) => ( props.isLargeCurrency ? 'flex-start' : 'flex-end' ) };
+	gap: 4px;
+`;
+
+const PriceWithIntroductoryOffer = ( props: PriceWithIntroductoryOfferProps ) => {
+	const { rawPrice, introductoryOfferRawPrice, currencyCode } = props;
+	return (
+		<PricesGroup isLargeCurrency={ false }>
+			<PlanPrice rawPrice={ rawPrice } currencyCode={ currencyCode } original />
+			<PlanPrice rawPrice={ introductoryOfferRawPrice } currencyCode={ currencyCode } />
+		</PricesGroup>
+	);
+};
+
 interface PlanPriceOfferProps {
 	rawPrice?: number;
 	plan?: Plan;
@@ -60,30 +85,27 @@ interface PlanPriceOfferProps {
 }
 
 const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
-	const { rawPrice, plan, planDetails } = props;
+	const { rawPrice, plan } = props;
+	let { planDetails } = props;
 	const introOfferEnabled = config.isEnabled( 'migration-flow/introductory-offer' );
 
 	// for tests
-	// planDetails = {
-	// 	...planDetails,
-	// 	introductoryOfferRawPrice: 150,
-	// 	currencyCode: 'USD',
-	// };
+	planDetails = {
+		...planDetails,
+		introductoryOfferRawPrice: 150,
+		currencyCode: 'USD',
+	};
 
-	let price = <PlanPrice rawPrice={ rawPrice } currencyCode={ planDetails?.currencyCode } />;
-	if ( introOfferEnabled ) {
-		if ( planDetails?.introductoryOfferRawPrice ) {
-			price = (
-				<div>
-					<PlanPrice
-						rawPrice={ planDetails?.introductoryOfferRawPrice }
-						currencyCode={ planDetails?.currencyCode }
-					/>
-					<PlanPrice rawPrice={ rawPrice } currencyCode={ planDetails?.currencyCode } original />
-				</div>
-			);
-		}
-	}
+	const price =
+		introOfferEnabled && planDetails?.introductoryOfferRawPrice ? (
+			<PriceWithIntroductoryOffer
+				rawPrice={ rawPrice }
+				introductoryOfferRawPrice={ planDetails?.introductoryOfferRawPrice }
+				currencyCode={ planDetails?.currencyCode }
+			/>
+		) : (
+			<PlanPrice rawPrice={ rawPrice } currencyCode={ planDetails?.currencyCode } />
+		);
 
 	// need adjust the billing time frame for intro
 	return (
