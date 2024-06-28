@@ -50,7 +50,7 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 			{ ( ! data || ! data?.length ) && (
 				<StatsCard
 					className={ className }
-					title={ translate( 'Country Views' ) }
+					title={ translate( 'Locations' ) }
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
