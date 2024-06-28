@@ -1,5 +1,8 @@
 # Help Center
 
+<kbd><img width="417" alt="image" src="https://github.com/Automattic/wp-calypso/assets/17054134/05e99f88-59ea-4303-889c-bd6b9cc52ce7"></kbd>
+
+
 The Help Center is the main tool our customers use to reach for support.
 
 ## Development
