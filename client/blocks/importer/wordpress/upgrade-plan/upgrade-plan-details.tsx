@@ -55,7 +55,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 		plan && plan.getPathSlug && setSelectedPlanSlug( plan.getPathSlug() );
 	}, [ plan ] );
 
-	if ( isFetchingHostingDetails || ! rawPrice || ! planDetails?.currencyCode ) {
+	if ( isFetchingHostingDetails || typeof rawPrice !== 'number' || ! planDetails?.currencyCode ) {
 		return <UpgradePlanLoader />;
 	}
 
