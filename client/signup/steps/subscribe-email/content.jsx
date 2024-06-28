@@ -31,6 +31,7 @@ function SubscribeEmailStepContent( props ) {
 				handleCreateAccountError={ handleCreateAccountError }
 				handleCreateAccountSuccess={ handleCreateAccountSuccess }
 				disableBlurValidation
+				disableContinueAsUser
 				isPasswordless
 				isReskinned
 				isSocialFirst={ false }

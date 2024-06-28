@@ -95,6 +95,7 @@ class SignupForm extends Component {
 		disableEmailInput: PropTypes.bool,
 		disableSubmitButton: PropTypes.bool,
 		disableBlurValidation: PropTypes.bool,
+		disableContinueAsUser: PropTypes.bool,
 		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
@@ -1190,7 +1191,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		if ( this.props.currentUser ) {
+		if ( this.props.currentUser && ! this.props.disableContinueAsUser ) {
 			return (
 				<ContinueAsUser
 					redirectPath={ this.props.redirectToAfterLoginUrl }
