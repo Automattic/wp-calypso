@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/zendesk-client",
-	"description": "Manages the connection to the Zendesk API",
+	"description": "Manages the connection to the Zendesk API.",
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -9,6 +9,11 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"version": "1.0.0",
 	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Automattic/wp-calypso.git",
+		"directory": "/packages/zendesk-client"
+	},
 	"scripts": {
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"clean": "rm -rf dist",
@@ -29,5 +34,6 @@
 	},
 	"peerDependencies": {
 		"react": "^18.2.0"
-	}
+	},
+	"license": "GPL-2.0-or-later"
 }
