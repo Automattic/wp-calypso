@@ -74,6 +74,12 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		! isLoading && ! skipPaywallFlow && redirectToPurchase && siteSlug && canUserManageOptions;
 	const shouldRenderContent = ! isLoading && ( canUserViewStats || canUserManageOptions );
 
+	// Handle possible render conditions.
+	// Based on render conditions, loading state takes priority.
+	if ( isLoading ) {
+		return <StatsLoader />;
+	}
+
 	// render purchase flow for Jetpack sites created after February 2024
 	if ( shouldRenderPaywall ) {
 		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
@@ -100,8 +106,6 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		return null;
 	} else if ( shouldRenderContent ) {
 		return <>{ children }</>;
-	} else if ( isLoading ) {
-		return <StatsLoader />;
 	}
 
 	return null;
