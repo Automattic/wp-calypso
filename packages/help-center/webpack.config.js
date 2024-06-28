@@ -51,6 +51,11 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			filename: '[name].min.js', // dynamic filename
 			library: 'helpCenter',
 		},
+		optimization: {
+			...webpackConfig.optimization,
+			// disable module concatenation so that instances of `__()` are not renamed
+			concatenateModules: false,
+		},
 		plugins: [
 			...webpackConfig.plugins.filter(
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
