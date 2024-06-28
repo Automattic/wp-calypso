@@ -12,6 +12,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import React, { useState, useEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useSelector } from 'calypso/state';
 import { getSitePlan, getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
@@ -19,7 +20,7 @@ import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-h
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 import UpgradePlanLoader from './upgrade-plan-loader';
-import withUpgradePlanDetailsQueries from './with-upgrade-plan-details-queries';
+import withMigrationSticker from './with-migration-sticker';
 import type { UpgradePlanDetailsProps } from './types';
 
 export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
@@ -60,6 +61,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 
 	return (
 		<div className="import__upgrade-plan-details">
+			<QuerySitePlans siteId={ siteId } />
 			<div className="import__upgrade-plan-period-switcher">
 				<ButtonGroup>
 					<Button
@@ -130,4 +132,4 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	);
 };
 
-export default withUpgradePlanDetailsQueries( UpgradePlanDetails );
+export default withMigrationSticker( UpgradePlanDetails );
