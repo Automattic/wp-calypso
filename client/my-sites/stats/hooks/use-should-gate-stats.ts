@@ -25,6 +25,8 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_YEAR,
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
 } from '../constants';
+import { isSiteNew } from './use-site-compulsory-plan-selection-qualified-check';
+import { hasAnyPlan } from './use-stats-purchases';
 
 const paidStatsPaywall = [
 	STAT_TYPE_TOP_POSTS,
@@ -73,9 +75,17 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	const siteFeatures = getSiteFeatures( state, siteId );
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
 
-	// check site type
+	const isNewSite = isSiteNew( state, siteId );
+	const hasAnyStatsPlan = hasAnyPlan( state, siteId );
+
+	// Check gated modules for Jetpack sites.
 	if ( jetpackSite && ! atomicSite ) {
-		return [ ...paidStatsPaywall ].includes( statType );
+		// TODO: Determine more paywall segments and granular control for paid stats.
+		if ( isNewSite && ! hasAnyStatsPlan ) {
+			return [ ...paidStatsPaywall ].includes( statType );
+		}
+
+		return false;
 	}
 
 	// check if the site features have loaded and the site has paid stats feature

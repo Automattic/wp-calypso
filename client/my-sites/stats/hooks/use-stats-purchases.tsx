@@ -43,6 +43,25 @@ const getPurchasesBySiteId = createSelector(
 	getPurchases
 );
 
+// TODO: Consolidate this with the useStatsPurchases hook.
+export const hasAnyPlan = ( state: object, siteId: number | null ) => {
+	const sitePurchases = getPurchasesBySiteId( state, siteId );
+
+	const isFreeOwned = isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_FREE );
+	const isCommercialOwned = areProductsOwned( sitePurchases, [
+		...JETPACK_VIDEOPRESS_PRODUCTS,
+		PRODUCT_JETPACK_STATS_MONTHLY,
+		PRODUCT_JETPACK_STATS_YEARLY,
+		PRODUCT_JETPACK_STATS_BI_YEARLY,
+	] );
+	const isPWYWOwned = isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
+	const supportCommercialUse =
+		isCommercialOwned ||
+		JETPACK_COMPLETE_PLANS.some( ( plan ) => isProductOwned( sitePurchases, plan ) );
+
+	return isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse;
+};
+
 export default function useStatsPurchases( siteId: number | null ) {
 	const sitePurchases = useSelector( ( state ) => getPurchasesBySiteId( state, siteId ) );
 	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
