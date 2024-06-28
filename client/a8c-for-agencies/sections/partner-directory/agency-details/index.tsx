@@ -14,7 +14,7 @@ import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import IndustrySelector from '../components/industry-selector';
+import IndustriesSelector from '../components/industries-selector';
 import LanguageSelector from '../components/languages-selector';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
@@ -44,7 +44,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			);
 			page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
 		},
-		[ page, reduxDispatch, translate ]
+		[ translate ]
 	);
 
 	const onSubmitError = useCallback( () => {
@@ -53,7 +53,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				duration: 6000,
 			} )
 		);
-	}, [ page, reduxDispatch, translate ] );
+	}, [ translate ] );
 
 	const { formData, setFormData } = useDetailsForm( {
 		initialFormData,
@@ -165,10 +165,10 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 						}
 					/>
 				</FormField>
-				<FormField label={ translate( 'Industry' ) } isRequired>
-					<IndustrySelector
-						industry={ formData.industry }
-						setIndustry={ ( industry ) => setFormFields( { industry: industry } ) }
+				<FormField label={ translate( 'Industries' ) } isRequired>
+					<IndustriesSelector
+						industries={ formData.industries }
+						setIndustries={ ( industries ) => setFormFields( { industries } ) }
 					/>
 				</FormField>
 				<FormField label={ translate( 'Services you offer' ) } isRequired>
