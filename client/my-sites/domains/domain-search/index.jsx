@@ -44,7 +44,6 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getPreferredEditorView } from 'calypso/state/selectors/get-preferred-editor-view';
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
@@ -54,7 +53,7 @@ import {
 	isSiteOnWooExpress,
 	isSiteOnEcommerce,
 } from 'calypso/state/sites/plans/selectors';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -326,7 +325,7 @@ class DomainSearch extends Component {
 					  }
 					: {
 							goBackLink:
-								this.props.preferredView === 'classic'
+								this.props.preferredView === 'wp-admin'
 									? this.props.wpAdminUrl
 									: `/home/${ selectedSiteSlug }`,
 					  };
@@ -454,7 +453,7 @@ export default connect(
 				isSiteOnWooExpress( state, siteId ) ||
 				isSiteOnEcommerce( state, siteId ),
 			isFromMyHome: getCurrentQueryArguments( state )?.from === 'my-home',
-			preferredView: getPreferredEditorView( state, siteId ),
+			preferredView: getSiteOption( state, siteId, 'wpcom_admin_interface' ),
 			wpAdminUrl: getSiteAdminUrl( state, siteId ),
 		};
 	},
