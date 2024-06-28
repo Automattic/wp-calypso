@@ -2325,13 +2325,13 @@ __metadata:
   resolution: "@automattic/zendesk-client@workspace:packages/zendesk-client"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/api-fetch": "npm:^7.2.0"
     "@wordpress/element": "npm:^6.2.0"
     "@wordpress/url": "npm:^4.2.0"
     typescript: "npm:^5.3.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@tanstack/react-query": ^5.15.5
     react: ^18.2.0
   languageName: unknown
   linkType: soft

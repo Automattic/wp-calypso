@@ -16,10 +16,10 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/api-fetch": "^7.2.0",
 		"@wordpress/element": "^6.2.0",
 		"@wordpress/url": "^4.2.0",
-		"@tanstack/react-query": "^5.15.5",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
