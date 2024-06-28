@@ -21,7 +21,7 @@ type ValidationState = {
 	feedbackUrl?: string;
 };
 
-const useExperteseFormValidation = () => {
+const useExpertiseFormValidation = () => {
 	const translate = useTranslate();
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
 
@@ -79,4 +79,4 @@ const useExperteseFormValidation = () => {
 	return { validate, validationError, updateValidationError };
 };
 
-export default useExperteseFormValidation;
+export default useExpertiseFormValidation;

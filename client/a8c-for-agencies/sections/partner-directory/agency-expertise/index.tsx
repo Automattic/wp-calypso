@@ -19,8 +19,8 @@ import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
 import { PARTNER_DIRECTORY_DASHBOARD_SLUG } from '../constants';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../types';
-import useExperteseFormValidation from './hooks/use-expertese-form-validation';
 import useExpertiseForm from './hooks/use-expertise-form';
+import useExpertiseFormValidation from './hooks/use-expertise-form-validation';
 import useSubmitForm from './hooks/use-submit-form';
 
 import './style.scss';
@@ -63,7 +63,7 @@ type Props = {
 const AgencyExpertise = ( { initialFormData }: Props ) => {
 	const translate = useTranslate();
 
-	const { validate, validationError, updateValidationError } = useExperteseFormValidation();
+	const { validate, validationError, updateValidationError } = useExpertiseFormValidation();
 
 	const { availableDirectories } = useFormSelectors();
 
