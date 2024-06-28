@@ -49,7 +49,7 @@ import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import PromoCards from './promo-cards';
-import StatsCardUpgradeJepackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
+import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
@@ -461,7 +461,7 @@ class StatsSite extends Component {
 									'stats__flexible-grid-item--full--medium'
 								) }
 								overlay={
-									<StatsCardUpgradeJepackVersion
+									<StatsCardUpdateJetpackVersion
 										className="stats-module__upsell stats-module__upgrade"
 										siteId={ siteId }
 										statType="utm"
@@ -628,7 +628,7 @@ class StatsSite extends Component {
 								) }
 								siteId={ siteId }
 								overlay={
-									<StatsCardUpgradeJepackVersion
+									<StatsCardUpdateJetpackVersion
 										className="stats-module__upsell stats-module__upgrade"
 										siteId={ siteId }
 										statType="devices"
