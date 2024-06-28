@@ -8,7 +8,7 @@ import { addQueryArgs } from '@wordpress/url';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import { useSignUpStartTracking } from '../';
+import { TRACKING_LOCAL_STORAGE_KEY, useSignUpStartTracking } from '../';
 import type { Flow, StepperStep } from '../../../types';
 
 const steps = [ { slug: 'step-1' }, { slug: 'step-2' } ] as StepperStep[];
@@ -66,6 +66,10 @@ describe( 'useSignUpTracking', () => {
 	} );
 
 	describe( 'sign-up-flow', () => {
+		beforeEach( () => {
+			localStorage.clear();
+		} );
+
 		it( 'tracks the event current step is first step', () => {
 			render( {
 				flow: signUpFlow,
@@ -79,14 +83,41 @@ describe( 'useSignUpTracking', () => {
 			} );
 		} );
 
-		it( 'skips the tracking when the signed up flag is set', () => {
+		it( 'skips the tracking when the event was already tracked', () => {
+			localStorage.setItem(
+				TRACKING_LOCAL_STORAGE_KEY,
+				JSON.stringify( { [ signUpFlow.name ]: true } )
+			);
+
 			render( {
 				flow: signUpFlow,
 				currentStepRoute: 'step-1',
-				queryParams: { signed_up: 1 },
 			} );
 
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'maintains the tracking state of multiple flows', () => {
+			const A = { ...signUpFlow, name: 'flow-a' };
+			const B = { ...signUpFlow, name: 'flow-b' };
+
+			render( {
+				flow: A,
+				currentStepRoute: 'step-1',
+			} );
+
+			render( {
+				flow: B,
+				currentStepRoute: 'step-1',
+			} );
+
+			// remove the tracking state of flow-a
+			render( {
+				flow: A,
+				currentStepRoute: 'step-1',
+			} );
+
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 2 );
 		} );
 
 		it( 'tracks the event with extra props from useSighupStartEventProps', () => {
@@ -120,18 +151,6 @@ describe( 'useSignUpTracking', () => {
 				flow_variant: 'variant-slug',
 				ref: '',
 			} );
-		} );
-
-		it( 'does not track events current step is NOT the first step', () => {
-			render( { flow: signUpFlow, currentStepRoute: 'step-2' } );
-
-			expect( recordTracksEvent ).not.toHaveBeenCalled();
-		} );
-
-		it( 'does not track events current step is the first step AND the user is returning from the sign in flow', () => {
-			render( { flow: signUpFlow, currentStepRoute: 'step-1', queryParams: { signed_up: true } } );
-
-			expect( recordTracksEvent ).not.toHaveBeenCalled();
 		} );
 
 		// Check if sensei is a sign-up flow;
