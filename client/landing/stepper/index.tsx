@@ -82,15 +82,15 @@ const initializeHotJar = ( flowName: string ) => {
 };
 
 window.AppBoot = async () => {
-	// Start tracking performance, bearing in mind this is a full page load.
-	startStepperPerformanceTracking( { fullPageLoad: true } );
-
 	const flowName = getFlowFromURL();
 
 	if ( ! flowName ) {
 		// Stop the boot process if we can't determine the flow, reducing the number of edge cases
 		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
 	}
+
+	// Start tracking performance, bearing in mind this is a full page load.
+	startStepperPerformanceTracking( { fullPageLoad: true } );
 
 	initializeHotJar( flowName );
 	// put the proxy iframe in "all blog access" mode
