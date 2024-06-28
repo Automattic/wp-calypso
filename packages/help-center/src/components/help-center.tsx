@@ -2,19 +2,22 @@
 /**
  * External Dependencies
  */
+import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
-import { useSelector } from 'react-redux';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import {
+	HelpCenterRequiredContextProvider,
+	useHelpCenterContext,
+	type HelpCenterRequiredInformation,
+} from '../contexts/HelpCenterContext';
 import { useChatStatus, useZendeskMessaging, useStillNeedHelpURL } from '../hooks';
-import { HELP_CENTER_STORE, USER_STORE, SITE_STORE } from '../stores';
+import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
-import type { SiteSelect, UserSelect, HelpCenterSelect } from '@automattic/data-stores';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
 function useMessagingBindings( hasActiveChats: boolean, isMessagingScriptLoaded: boolean ) {
@@ -76,37 +79,17 @@ const HelpCenter: React.FC< Container > = ( {
 	currentRoute = window.location.pathname + window.location.search,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const { isHelpCenterShown, storedSite } = useSelect( ( select ) => {
+	const isHelpCenterShown = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			storedSite: helpCenterSelect.getSite(),
-			isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
-		};
+		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
-	const { setSite } = useDispatch( HELP_CENTER_STORE );
-
-	const siteId = useSelector( getSelectedSiteId );
-	const primarySiteId = useSelector( getPrimarySiteId );
-
-	useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] );
-
-	/**
-	 * This site is provided by the backed in Editing Toolkit.
-	 * It's difficult to get the site information on the client side in Atomic sites. So we moved this challenge to the backend,
-	 * and forwarded the data using `localize_script` to the client side.
-	 */
-	const backendProvidedSite = window?.helpCenterData?.currentSite;
-
-	const site = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSite( siteId || primarySiteId ),
-		[ siteId || primarySiteId ]
-	);
-
-	const usedSite = backendProvidedSite || site;
+	const { currentUser } = useHelpCenterContext();
 
 	useEffect( () => {
-		setSite( usedSite );
-	}, [ usedSite, setSite, storedSite ] );
+		if ( currentUser ) {
+			initializeAnalytics( currentUser, null );
+		}
+	}, [ currentUser ] );
 
 	useStillNeedHelpURL();
 
@@ -144,4 +127,12 @@ const HelpCenter: React.FC< Container > = ( {
 	);
 };
 
-export default HelpCenter;
+export default function ContextualizedHelpCenter(
+	props: Container & HelpCenterRequiredInformation
+) {
+	return (
+		<HelpCenterRequiredContextProvider value={ props }>
+			<HelpCenter { ...props } />
+		</HelpCenterRequiredContextProvider>
+	);
+}

@@ -35,6 +35,7 @@ type Props = {
 };
 
 export const siteStatusGroups = [
+	{ value: 1, label: __( 'All sites' ), slug: 'all' },
 	{ value: 2, label: __( 'Public' ), slug: 'public' },
 	{ value: 3, label: __( 'Private' ), slug: 'private' },
 	{ value: 4, label: __( 'Coming soon' ), slug: 'coming-soon' },

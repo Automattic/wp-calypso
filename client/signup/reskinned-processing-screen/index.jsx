@@ -65,11 +65,7 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 			];
 			break;
 		case 'email-subscription':
-			steps = [
-				{ title: __( 'Turning on the lights' ) },
-				{ title: __( 'Making you cookies' ) },
-				{ title: __( 'Subscribing to magic' ) },
-			];
+			steps = [ { title: __( 'Subscribing to magic' ) } ];
 			break;
 		default:
 			steps = [
@@ -95,7 +91,9 @@ export default function ReskinnedProcessingScreen( props ) {
 	const totalSteps = steps.current.length;
 	const shouldShowNewSpinner =
 		isDestinationSetupSiteFlow ||
-		[ 'setup-site', 'do-it-for-me', 'do-it-for-me-store' ].includes( flowName );
+		[ 'setup-site', 'do-it-for-me', 'do-it-for-me-store', 'email-subscription' ].includes(
+			flowName
+		);
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 

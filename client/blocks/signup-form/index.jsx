@@ -48,6 +48,7 @@ import {
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isP2Flow } from 'calypso/signup/is-flow';
@@ -93,6 +94,8 @@ class SignupForm extends Component {
 		disableEmailExplanation: PropTypes.string,
 		disableEmailInput: PropTypes.bool,
 		disableSubmitButton: PropTypes.bool,
+		disableBlurValidation: PropTypes.bool,
+		disableContinueAsUser: PropTypes.bool,
 		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
@@ -100,7 +103,7 @@ class SignupForm extends Component {
 		flowName: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
-		redirectToAfterLoginUrl: PropTypes.string.isRequired,
+		redirectToAfterLoginUrl: PropTypes.string,
 		goToNextStep: PropTypes.func,
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
@@ -112,13 +115,16 @@ class SignupForm extends Component {
 		save: PropTypes.func,
 		signupDependencies: PropTypes.object,
 		step: PropTypes.object,
-		submitButtonText: PropTypes.string.isRequired,
+		submitButtonText: PropTypes.string,
+		submitButtonLabel: PropTypes.string,
+		submitButtonLoadingLabel: PropTypes.string,
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		horizontal: PropTypes.bool,
 		shouldDisplayUserExistsError: PropTypes.bool,
 		submitForm: PropTypes.func,
+		handleCreateAccountError: PropTypes.func,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -434,6 +440,10 @@ class SignupForm extends Component {
 	};
 
 	handleBlur = ( event ) => {
+		if ( this.props.disableBlurValidation ) {
+			return;
+		}
+
 		const fieldId = event.target.id;
 		this.setState( {
 			isFieldDirty: { ...this.state.isFieldDirty, [ fieldId ]: true },
@@ -1136,6 +1146,24 @@ class SignupForm extends Component {
 			: formState.getFieldValue( this.state.form, 'email' );
 	};
 
+	handleCreateAccountError = ( error, email ) => {
+		if ( this.props.handleCreateAccountError ) {
+			return this.props.handleCreateAccountError( error, email );
+		}
+
+		if ( isExistingAccountError( error.error ) ) {
+			page(
+				addQueryArgs(
+					{
+						email_address: email,
+						is_signup_existing_account: true,
+					},
+					this.getLoginLink()
+				)
+			);
+		}
+	};
+
 	render() {
 		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
 			return null;
@@ -1163,7 +1191,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		if ( this.props.currentUser ) {
+		if ( this.props.currentUser && ! this.props.disableContinueAsUser ) {
 			return (
 				<ContinueAsUser
 					redirectPath={ this.props.redirectToAfterLoginUrl }
@@ -1261,6 +1289,7 @@ class SignupForm extends Component {
 		) {
 			let formProps = {
 				submitButtonLabel: this.props.submitButtonLabel,
+				submitButtonLoadingLabel: this.props.submitButtonLoadingLabel,
 			};
 
 			switch ( true ) {
@@ -1301,19 +1330,8 @@ class SignupForm extends Component {
 						labelText={ this.props.labelText }
 						onInputBlur={ this.handleBlur }
 						onInputChange={ this.handleChangeEvent }
-						onCreateAccountError={ ( error, email ) => {
-							if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-								page(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-										},
-										logInUrl
-									)
-								);
-							}
-						} }
+						onCreateAccountError={ this.handleCreateAccountError }
+						onCreateAccountSuccess={ this.handleCreateAccountSuccess }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (

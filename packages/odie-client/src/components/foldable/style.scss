@@ -80,6 +80,14 @@
 
 button.foldable-card__action {
 	cursor: pointer;
+	// Reset button styles to protect against wp-admin styles.
+	background: #0000;
+	appearance: none;
+	border: none;
+	font-size: inherit;
+	outline: 0;
+	padding: 0;
+	vertical-align: initial;
 }
 
 .foldable-card__main {

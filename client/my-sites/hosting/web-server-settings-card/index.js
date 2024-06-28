@@ -208,6 +208,7 @@ const WebServerSettingsCard = ( {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: '7.4',
+				disabled: true, // EOL 1st July, 2024
 			},
 			{
 				label: '8.0',

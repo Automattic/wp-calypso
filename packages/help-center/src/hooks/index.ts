@@ -9,3 +9,4 @@ export { default as useZendeskMessaging } from './use-zendesk-messaging';
 export { default as useChatStatus } from './use-chat-status';
 export { default as useChatWidget } from './use-chat-widget';
 export { useShouldUseWapuu } from './use-should-use-wapuu';
+export { filterListBySearchTerm } from './use-admin-results';

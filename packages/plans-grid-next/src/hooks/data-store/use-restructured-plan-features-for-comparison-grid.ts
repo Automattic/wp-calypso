@@ -144,7 +144,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						...featuresAvailable.jetpackFeatures,
 						...previousPlanFeatures.jetpackFeatures,
 					],
-					storageOptions: planFeaturesForGridPlans[ planSlug ].storageOptions,
+					storageFeature: planFeaturesForGridPlans[ planSlug ].storageFeature,
 					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.(),
 				};
 

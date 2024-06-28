@@ -11,7 +11,11 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { A4A_OVERVIEW_LINK, EXTERNAL_A4A_KNOWLEDGE_BASE } from '../../sidebar-menu/lib/constants';
+import {
+	A4A_OVERVIEW_LINK,
+	EXTERNAL_A4A_KNOWLEDGE_BASE,
+	EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE,
+} from '../../sidebar-menu/lib/constants';
 
 import './style.scss';
 
@@ -50,7 +54,7 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 			<li className="a4a-sidebar__profile-dropdown-menu-item">
 				<Button
 					borderless
-					href={ EXTERNAL_A4A_KNOWLEDGE_BASE }
+					href={ isClient ? EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE : EXTERNAL_A4A_KNOWLEDGE_BASE }
 					target="_blank"
 					rel="noopener noreferrer"
 				>

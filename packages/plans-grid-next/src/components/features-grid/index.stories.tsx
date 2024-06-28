@@ -69,7 +69,6 @@ const defaultProps = {
 		result: { domain_name: 'zzz.wordpress.com' },
 	},
 	hideUnavailableFeatures: false,
-	intervalType: 'yearly',
 	isCustomDomainAllowedOnFreePlan: false,
 	isInAdmin: false,
 	isInSignup: true,

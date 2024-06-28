@@ -13,7 +13,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 type PromoCardProps = {
@@ -39,10 +39,11 @@ const HostingFeatures = () => {
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
 	const siteId = useSelector( getSelectedSiteId );
-	const { siteSlug, isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
+	const { siteSlug, isSiteAtomic, hasSftpFeature, isPlanExpired } = useSelector( ( state ) => ( {
 		siteSlug: getSiteSlug( state, siteId ) || '',
 		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
 		hasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
+		isPlanExpired: !! getSelectedSite( state )?.plan?.expired,
 	} ) );
 	// The ref is required to persist the value of redirect_to after renders
 	const redirectUrl = useRef(
@@ -105,7 +106,7 @@ const HostingFeatures = () => {
 		page( `/setup/transferring-hosted-site?${ params }` );
 	};
 
-	if ( isSiteAtomic ) {
+	if ( isSiteAtomic && ! isPlanExpired ) {
 		page.replace( redirectUrl.current );
 		return;
 	}

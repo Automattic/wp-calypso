@@ -42,8 +42,13 @@ const GlobalSidebar = ( {
 		}
 	}, [] );
 
-	const handleBackLinkClick = () => {
+	const handleBackLinkClick = ( ev ) => {
 		recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_BACK_CLICK, { path } );
+		if ( props.onClose ) {
+			ev.preventDefault();
+			ev.stopPropagation();
+			props.onClose();
+		}
 	};
 
 	const getBackLinkFromURL = () => {

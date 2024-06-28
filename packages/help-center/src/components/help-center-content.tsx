@@ -8,12 +8,11 @@ import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import React, { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useShouldUseWapuu } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterContactForm } from './help-center-contact-form';
@@ -47,7 +46,8 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const location = useLocation();
 	const navigate = useNavigate();
 	const containerRef = useRef< HTMLDivElement >( null );
-	const section = useSelector( getSectionName );
+
+	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const { isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -55,17 +55,16 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
-	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
 			pathname: location.pathname,
 			search: location.search,
-			section,
+			section: sectionName,
 			force_site_id: true,
 			location: 'help-center',
 		} );
-	}, [ location, section ] );
+	}, [ location, sectionName ] );
 
 	const { initialRoute } = useSelect(
 		( select ) => ( {
@@ -121,11 +120,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								botNameSlug="wpcom-support-chat"
 								botName="Wapuu"
 								enabled={ shouldUseWapuu }
+								currentUser={ currentUser }
 								isMinimized={ isMinimized }
 								initialUserMessage={ searchTerm }
 								logger={ trackEvent }
 								loggerEventNamePrefix="calypso_odie"
-								selectedSiteId={ selectedSiteId }
+								selectedSiteId={ site?.ID as number }
 								extraContactOptions={
 									<HelpCenterContactPage
 										hideHeaders

@@ -34,7 +34,7 @@ import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import BillingTimeframe from '../shared/billing-timeframe';
-import { StorageFeature } from '../shared/storage';
+import { PlanStorage } from '../shared/storage';
 import { StickyContainer } from '../sticky-container';
 import type {
 	GridPlan,
@@ -50,7 +50,6 @@ import type {
 	PlanSlug,
 	WPComStorageAddOnSlug,
 	FeatureGroupMap,
-	StorageOption,
 } from '@automattic/calypso-products';
 
 const featureGroupRowTitleCellMaxWidth = 450;
@@ -338,7 +337,6 @@ type ComparisonGridHeaderCellProps = Omit< ComparisonGridHeaderProps, 'planTypeS
 	allVisible: boolean;
 	isLastInRow: boolean;
 	planSlug: PlanSlug;
-	storageOptions: StorageOption[];
 };
 
 type PlanFeatureFootnotes = {
@@ -360,7 +358,6 @@ const ComparisonGridHeaderCell = ( {
 	planUpgradeCreditsApplicable,
 	showRefundPeriod,
 	isStuck,
-	storageOptions,
 }: ComparisonGridHeaderCellProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
@@ -450,7 +447,6 @@ const ComparisonGridHeaderCell = ( {
 				showMonthlyPrice={ false }
 				isStuck={ false }
 				visibleGridPlans={ visibleGridPlans }
-				storageOptions={ storageOptions }
 			/>
 		</Cell>
 	);
@@ -504,7 +500,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						</PlanTypeSelectorWrapper>
 					) }
 				</RowTitleCell>
-				{ visibleGridPlans.map( ( { planSlug, features: { storageOptions } }, index ) => (
+				{ visibleGridPlans.map( ( { planSlug }, index ) => (
 					<ComparisonGridHeaderCell
 						planSlug={ planSlug }
 						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
@@ -521,7 +517,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						selectedPlan={ selectedPlan }
 						showRefundPeriod={ showRefundPeriod }
 						isStuck={ isStuck }
-						storageOptions={ storageOptions }
 					/>
 				) ) }
 			</PlanRow>
@@ -602,9 +597,8 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
-					<StorageFeature
+					<PlanStorage
 						planSlug={ planSlug }
-						intervalType={ intervalType }
 						onStorageAddOnClick={ onStorageAddOnClick }
 						showUpgradeableStorage={ showUpgradeableStorage }
 						priceOnSeparateLine

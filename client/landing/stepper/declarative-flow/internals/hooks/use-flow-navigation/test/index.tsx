@@ -63,6 +63,15 @@ describe( 'useFlowNavigation', () => {
 			expect( screen.getByTestId( 'location-display' ) ).toHaveTextContent( '/some-flow/step2' );
 		} );
 
+		it( 'navigates to the next step when there is not step in the url', () => {
+			const { result } = render( { initialEntry: '/setup/some-flow' } );
+			const navigate = result.current.navigate;
+
+			act( () => navigate( 'step2' ) );
+
+			expect( screen.getByTestId( 'location-display' ) ).toHaveTextContent( '/some-flow/step2' );
+		} );
+
 		it( 'includes the lang when its exists on the current step', () => {
 			const { result } = render( { initialEntry: '/setup/some-flow/some-step/es' } );
 			const navigate = result.current.navigate;

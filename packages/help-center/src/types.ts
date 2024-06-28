@@ -9,6 +9,16 @@ export interface Container {
 	currentRoute?: string;
 }
 
+export interface ArticleContentProps {
+	content: string | undefined;
+	title: string | undefined;
+	link: string | undefined;
+	isLoading?: boolean;
+	postId: number;
+	blogId?: string | null;
+	slug?: string;
+}
+
 export interface Header {
 	isMinimized?: boolean;
 	onMinimize?: () => void;
@@ -18,11 +28,8 @@ export interface Header {
 
 export interface SitePicker {
 	ownershipResult: AnalysisReport;
-	setSitePickerChoice: any;
-	sitePickerChoice: string;
-	currentSite: HelpCenterSite | undefined;
-	siteId: string | number | null | undefined;
-	sitePickerEnabled: boolean;
+	isSelfDeclaredSite: boolean;
+	onSelfDeclaredSite: ( selfDeclared: boolean ) => void;
 }
 
 export interface Article {

@@ -5,8 +5,6 @@ import {
 	createGooglePayMethod,
 	createBancontactMethod,
 	createBancontactPaymentMethodStore,
-	createGiropayMethod,
-	createGiropayPaymentMethodStore,
 	createP24Method,
 	createP24PaymentMethodStore,
 	createEpsMethod,
@@ -187,27 +185,6 @@ function useCreateBancontact( {
 		() =>
 			shouldLoad
 				? createBancontactMethod( {
-						store: paymentMethodStore,
-						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
-				: null,
-		[ shouldLoad, paymentMethodStore ]
-	);
-}
-
-function useCreateGiropay( {
-	isStripeLoading,
-	stripeLoadingError,
-}: {
-	isStripeLoading: boolean;
-	stripeLoadingError: StripeLoadingError;
-} ): PaymentMethod | null {
-	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createGiropayPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			shouldLoad
-				? createGiropayMethod( {
 						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
@@ -447,11 +424,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
-	const giropayMethod = useCreateGiropay( {
-		isStripeLoading,
-		stripeLoadingError,
-	} );
-
 	const epsMethod = useCreateEps( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -530,7 +502,6 @@ export default function useCreatePaymentMethods( {
 		freePaymentMethod,
 		paypalMethod,
 		idealMethod,
-		giropayMethod,
 		sofortMethod,
 		netbankingMethod,
 		pixMethod,
