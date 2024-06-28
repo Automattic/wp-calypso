@@ -25,7 +25,7 @@
 	"scripts": {
 		"clean": "rm -rf dist",
 		"build": "NODE_ENV=production yarn dev",
-		"build:app": "calypso-build",
+		"build:app": "calypso-build && yarn run translate",
 		"dev": "yarn run calypso-apps-builder --localPath dist/apps --remotePath /home/wpcom/public_html/widgets.wp.com/help-center",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
