@@ -28,10 +28,6 @@ export default function NoticeSummary( { type }: Props ) {
 		dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_client_terms_click' ) );
 	}, [ dispatch ] );
 
-	const handleAgencyTermsClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_agency_terms_click' ) );
-	}, [ dispatch ] );
-
 	const handleSubscriptionInfoLinkClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_subscription_info_link_click' ) );
 	}, [ dispatch ] );
@@ -113,7 +109,6 @@ export default function NoticeSummary( { type }: Props ) {
 				return [];
 		}
 	}, [
-		handleAgencyTermsClick,
 		handleCancellationInfoLinkClick,
 		handleClientTermsClick,
 		handleSubscriptionInfoLinkClick,
