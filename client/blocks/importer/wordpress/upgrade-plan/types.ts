@@ -9,3 +9,7 @@ export type HostingDetailsItem = {
 export type HostingDetails = {
 	[ key: string ]: HostingDetailsItem;
 };
+
+export type UpgradePlanDetailsProps = {
+	children: React.ReactNode;
+};

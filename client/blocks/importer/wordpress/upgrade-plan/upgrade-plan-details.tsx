@@ -1,17 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
-import QueryPlans from 'calypso/components/data/query-plans';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
-import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
-import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
@@ -19,12 +15,9 @@ import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-h
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 import UpgradePlanLoader from './upgrade-plan-loader';
+import type { UpgradePlanDetailsProps } from './types';
 
-interface Props {
-	children: React.ReactNode;
-}
-
-export const UpgradePlanDetails = ( props: Props ) => {
+export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	const { __ } = useI18n();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ showFeatures, setShowFeatures ] = useState( false );
@@ -58,8 +51,6 @@ export const UpgradePlanDetails = ( props: Props ) => {
 
 	return (
 		<div className="import__upgrade-plan-details">
-			<QueryPlans />
-
 			<div className="import__upgrade-plan-period-switcher">
 				<ButtonGroup>
 					<Button
@@ -128,33 +119,4 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	);
 };
 
-// TODO: Refactor splitting parts.
-const UpgradePlanDetailsWrapper = ( props: Props ) => {
-	const siteId = Number( useSiteIdParam() ) ?? 0;
-
-	const { addMigrationSticker, isPending } = useMigrationStickerMutation();
-
-	// It uses the layout effect to avoid the screen flickering because isPending starts as `true` and changes only after this effect.
-	useLayoutEffect( () => {
-		if ( ! config.isEnabled( 'migration-flow/introductory-offer' ) ) {
-			return;
-		}
-
-		if ( 0 !== siteId ) {
-			addMigrationSticker( siteId );
-		}
-	}, [ addMigrationSticker, siteId ] );
-
-	if ( isPending ) {
-		return <UpgradePlanLoader />;
-	}
-
-	return (
-		<div>
-			<QueryPlans />
-			<UpgradePlanDetails { ...props } />
-		</div>
-	);
-};
-
-export default UpgradePlanDetailsWrapper;
+export default UpgradePlanDetails;

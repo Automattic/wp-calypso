@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import PlanNoticeCreditUpgrade from 'calypso/my-sites/plans-features-main/components/plan-notice-credit-update';
-import UpgradePlanDetails from './upgrade-plan-details';
+import UpgradePlanDetailsWrapper from './upgrade-plan-details-wrapper';
 import type { PlanSlug } from '@automattic/calypso-products';
 
 import './style.scss';
@@ -180,7 +180,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				/>
 			) }
 
-			<UpgradePlanDetails>{ renderCTAs() }</UpgradePlanDetails>
+			<UpgradePlanDetailsWrapper>{ renderCTAs() }</UpgradePlanDetailsWrapper>
 		</div>
 	);
 };
