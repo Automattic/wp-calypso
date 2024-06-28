@@ -55,6 +55,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		migrationTrialEligibility?.error_code === 'email-unverified';
 
 	const hideFreeMigrationTrial =
+		isEnabled( 'migration-flow/introductory-offer' ) ||
 		( hideFreeMigrationTrialForNonVerifiedEmail &&
 			migrationTrialEligibility?.error_code === 'email-unverified' ) ||
 		! isEnabled( 'plans/migration-trial' );
