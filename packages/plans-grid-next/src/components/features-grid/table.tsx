@@ -20,7 +20,6 @@ type TableProps = {
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	hideUnavailableFeatures?: boolean;
-	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
@@ -42,7 +41,6 @@ const Table = ( {
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	onStorageAddOnClick,
@@ -169,7 +167,6 @@ const Table = ( {
 							generatedWPComSubdomain={ generatedWPComSubdomain }
 							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 							featureGroupSlug={ featureGroupSlug }
-							intervalType={ intervalType }
 							onStorageAddOnClick={ onStorageAddOnClick }
 							showUpgradeableStorage={ showUpgradeableStorage }
 						/>

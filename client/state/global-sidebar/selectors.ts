@@ -4,20 +4,20 @@ import isScheduledUpdatesMultisiteRoute, {
 	isScheduledUpdatesMultisiteCreateRoute,
 	isScheduledUpdatesMultisiteEditRoute,
 } from 'calypso/state/selectors/is-scheduled-updates-multisite-route';
-import { isGlobalSiteViewEnabled } from '../sites/selectors';
+import { isAdminInterfaceWPAdmin } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
-// Calypso pages (section name => route) for which we show the Global Site Dashboard.
+// Calypso pages (section name => route) for which we show the Site Dashboard.
 // Calypso pages not listed here will be shown in nav unification instead.
 // See: pfsHM7-Dn-p2.
-const GLOBAL_SITE_DASHBOARD_ROUTES = {
+const SITE_DASHBOARD_ROUTES = {
 	'hosting-overview': '/overview/',
 	hosting: '/hosting-config/',
 	'github-deployments': '/github-deployments/',
 	'site-monitoring': '/site-monitoring/',
 	'site-logs': '/site-logs/',
 	'hosting-features': '/hosting-features/',
-	'staging-site': '/staging-site',
+	'staging-site': '/staging-site/',
 };
 
 function isInSection( sectionName: string, sectionNames: string[] ) {
@@ -28,26 +28,22 @@ function isInRoute( state: AppState, routes: string[] ) {
 	return routes.some( ( route ) => state.route.path?.current?.startsWith( route ) );
 }
 
-function shouldShowGlobalSiteDashboard(
-	state: AppState,
-	siteId: number | null,
-	sectionName: string
-) {
+function shouldShowSiteDashboard( state: AppState, siteId: number | null, sectionName: string ) {
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
 		!! siteId &&
-		( isInSection( sectionName, Object.keys( GLOBAL_SITE_DASHBOARD_ROUTES ) ) ||
-			isInRoute( state, Object.values( GLOBAL_SITE_DASHBOARD_ROUTES ) ) )
+		( isInSection( sectionName, Object.keys( SITE_DASHBOARD_ROUTES ) ) ||
+			isInRoute( state, Object.values( SITE_DASHBOARD_ROUTES ) ) )
 	);
 }
 
-export const getShouldShowGlobalSiteSidebar = (
+export const getShouldShowSiteDashboard = (
 	state: AppState,
 	siteId: number | null,
 	sectionGroup: string,
 	sectionName: string
 ) => {
-	return sectionGroup === 'sites' && shouldShowGlobalSiteDashboard( state, siteId, sectionName );
+	return sectionGroup === 'sites' && shouldShowSiteDashboard( state, siteId, sectionName );
 };
 
 export const getShouldShowGlobalSidebar = (
@@ -64,13 +60,13 @@ export const getShouldShowGlobalSidebar = (
 		sectionGroup === 'sites-dashboard' ||
 		( sectionGroup === 'sites' && ! siteId ) ||
 		( sectionGroup === 'sites' && pluginsScheduledUpdates ) ||
-		getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName )
+		getShouldShowSiteDashboard( state, siteId, sectionGroup, sectionName )
 	);
 };
 
 export const getShouldShowCollapsedGlobalSidebar = (
 	state: AppState,
-	siteId: number,
+	siteId: number | null,
 	sectionGroup: string,
 	sectionName: string
 ) => {
@@ -79,12 +75,7 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	}
 
 	const isSitesDashboard = sectionGroup === 'sites-dashboard';
-	const isSiteDashboard = getShouldShowGlobalSiteSidebar(
-		state,
-		siteId,
-		sectionGroup,
-		sectionName
-	);
+	const isSiteDashboard = getShouldShowSiteDashboard( state, siteId, sectionGroup, sectionName );
 
 	// A site is just clicked and the global sidebar is in collapsing animation.
 	const isSiteJustSelectedFromSitesDashboard =
@@ -92,7 +83,7 @@ export const getShouldShowCollapsedGlobalSidebar = (
 		!! siteId &&
 		isInRoute( state, [
 			'/sites', // started collapsing when still in sites dashboard
-			...Object.values( GLOBAL_SITE_DASHBOARD_ROUTES ), // has just stopped collapsing when in one of the paths in site dashboard
+			...Object.values( SITE_DASHBOARD_ROUTES ), // has just stopped collapsing when in one of the paths in site dashboard
 		] );
 
 	const isPluginsScheduledUpdatesEditMode =
@@ -118,11 +109,11 @@ export const getShouldShowUnifiedSiteSidebar = (
 	sectionName: string
 ) => {
 	return (
-		( isGlobalSiteViewEnabled( state, siteId ) &&
+		( isAdminInterfaceWPAdmin( state, siteId ) &&
 			sectionGroup === 'sites' &&
 			sectionName !== 'plugins' &&
-			! shouldShowGlobalSiteDashboard( state, siteId, sectionName ) ) ||
-		( isGlobalSiteViewEnabled( state, siteId ) &&
+			! shouldShowSiteDashboard( state, siteId, sectionName ) ) ||
+		( isAdminInterfaceWPAdmin( state, siteId ) &&
 			sectionName === 'plugins' &&
 			! isScheduledUpdatesMultisiteRoute( state ) )
 	);

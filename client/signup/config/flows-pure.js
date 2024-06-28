@@ -43,7 +43,7 @@ const getEmailSubscriptionFlow = () => {
 		? [
 				{
 					name: 'email-subscription',
-					steps: [ 'subscribing-email' ],
+					steps: [ 'subscribe' ],
 					destination: ( dependencies ) => `${ dependencies.redirect }`,
 					description:
 						'Signup flow that subscripes user to guides appointments for email campaigns',

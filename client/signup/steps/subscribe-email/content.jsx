@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import SignupForm from 'calypso/blocks/signup-form';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 
-function SubscribingEmailStepContent( props ) {
+function SubscribeEmailStepContent( props ) {
 	const {
 		flowName,
 		goToNextStep,
@@ -48,4 +48,4 @@ function SubscribingEmailStepContent( props ) {
 	);
 }
 
-export default localize( SubscribingEmailStepContent );
+export default localize( SubscribeEmailStepContent );

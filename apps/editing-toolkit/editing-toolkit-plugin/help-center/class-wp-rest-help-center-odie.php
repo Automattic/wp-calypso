@@ -273,7 +273,10 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 		$body = Client::wpcom_json_api_request_as_user(
 			'/odie/chat/' . $bot_name_slug . '/' . $chat_id,
 			2,
-			array( 'method' => 'POST' ),
+			array(
+				'method'  => 'POST',
+				'timeout' => 30,
+			),
 			array(
 				'message' => $request->get_param( 'message' ),
 				'context' => $request->get_param( 'context' ) ?? array(),

@@ -28,11 +28,10 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 		.map( ( feature: string ) => getFeatureByKey( feature ) )
 		.filter( ( feature ) => feature?.getTitle() );
 
-	const storageOptions = plan
-		?.get2023PricingGridSignupStorageOptions?.()
-		.filter( ( option ) => ! option.isAddOn )
-		.map( ( option ) => getFeatureByKey( option.slug ) )
-		.filter( ( option ) => option?.getTitle() );
+	const storageFeature = plan?.getStorageFeature?.();
+	const storageFeatureTitle = storageFeature
+		? getFeatureByKey( storageFeature )?.getTitle()
+		: undefined;
 
 	return (
 		<ul className={ clsx( 'import__details-list' ) }>
@@ -80,11 +79,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 						<strong>{ __( 'Storage' ) }</strong>
 					</li>
 					<li className={ clsx( 'import__upgrade-plan-feature' ) }>
-						{ storageOptions?.map( ( storage, i ) => (
-							<Badge type="info" key={ i }>
-								{ storage?.getTitle() }
-							</Badge>
-						) ) }
+						<Badge type="info">{ storageFeatureTitle }</Badge>
 					</li>
 				</>
 			) }

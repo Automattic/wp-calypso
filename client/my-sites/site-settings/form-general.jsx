@@ -49,7 +49,7 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
-	isGlobalSiteViewEnabled,
+	isAdminInterfaceWPAdmin,
 	isJetpackSite,
 	isCurrentPlanPaid,
 	getCustomizerUrl,
@@ -578,7 +578,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isAtomicAndEditingToolkitDeactivated,
 			isWpcomStagingSite,
 			isUnlaunchedSite: propsisUnlaunchedSite,
-			isClassicView,
+			adminInterfaceIsWPAdmin,
 		} = this.props;
 		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
@@ -588,7 +588,7 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ clsx( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! isClassicView && (
+				{ ! adminInterfaceIsWPAdmin && (
 					<>
 						<SettingsSectionHeader
 							data-tip-target="settings-site-profile-save"
@@ -680,7 +680,7 @@ const connectComponent = connect( ( state ) => {
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
-		isClassicView: isGlobalSiteViewEnabled( state, siteId ),
+		adminInterfaceIsWPAdmin: isAdminInterfaceWPAdmin( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
 		isPaidPlan: isCurrentPlanPaid( state, siteId ),

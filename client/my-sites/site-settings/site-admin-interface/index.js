@@ -4,7 +4,7 @@ import { Card, FormLabel } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -79,6 +79,12 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 	} );
 
 	const [ selectedAdminInterface, setSelectedAdminInterface ] = useState( adminInterface );
+
+	// When switching from Classic to Default, adminInterface will initially reflect the cached state 'wp-admin'.
+	// It will then be updated to 'calypso', so we need to sync the change to selectedAdminInterface.
+	useEffect( () => {
+		setSelectedAdminInterface( adminInterface );
+	}, [ adminInterface ] );
 
 	const handleSubmitForm = ( value ) => {
 		if ( isHosting ) {

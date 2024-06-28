@@ -27,7 +27,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowGlobalSidebar,
-	getShouldShowGlobalSiteSidebar,
+	getShouldShowSiteDashboard,
 	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -92,7 +92,7 @@ class MasterbarLoggedIn extends Component {
 		hasDismissedThePopover: PropTypes.bool,
 		isUserNewerThanNewNavigation: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
-		shouldShowGlobalSiteSidebar: PropTypes.bool,
+		shouldShowSiteDashboard: PropTypes.bool,
 	};
 
 	subscribeToViewPortChanges() {
@@ -662,7 +662,7 @@ class MasterbarLoggedIn extends Component {
 			isCheckoutFailed,
 			loadHelpCenterIcon,
 			currentSelectedSiteId,
-			isGlobalSiteView,
+			isSiteDashboardView,
 		} = this.props;
 		const { isMobile } = this.state;
 
@@ -677,7 +677,7 @@ class MasterbarLoggedIn extends Component {
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderSidebarMobileMenu() }
 							{ this.renderGlobalMySites() }
-							{ isGlobalSiteView && currentSelectedSiteId && (
+							{ isSiteDashboardView && currentSelectedSiteId && (
 								<Site
 									siteId={ currentSelectedSiteId }
 									href={ this.getHomeUrl() }
@@ -798,7 +798,7 @@ export default connect(
 			sectionGroup,
 			sectionName
 		);
-		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+		const shouldShowSiteDashboard = getShouldShowSiteDashboard(
 			state,
 			currentSelectedSiteId,
 			sectionGroup,
@@ -844,8 +844,7 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
-			isGlobalView: shouldShowGlobalSidebar,
-			isGlobalSiteView: shouldShowGlobalSiteSidebar,
+			isSiteDashboardView: shouldShowSiteDashboard,
 			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
 		};

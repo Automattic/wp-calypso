@@ -52,12 +52,12 @@ export interface Agency {
 			directories: {
 				status: 'pending' | 'approved' | 'rejected' | 'closed';
 				directory: 'wordpress' | 'jetpack' | 'woocommerce' | 'pressable';
-				published: boolean;
 				urls: string[];
 				note: string;
 				is_published?: boolean;
 			}[];
 			feedback_url: string;
+			is_published?: boolean;
 		};
 	};
 }
