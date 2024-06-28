@@ -41,7 +41,7 @@ If you only interested in making JS and CSS changes, you're in luck; you don't n
 > [!IMPORTANT]
 > If you make changes to the *.asset.json files, i.e add or remove dependencies, these files won't be synced with the site as Jetpack pulls these files via network. And since Jetpack pulls from production and not your sandbox, you'll have to deploy first for these changes to take effect.
 
-If you do want to modify PHP files. Please follow the development process of [`jetpack-mu-plugin`](https://github.com/Automattic/jetpack/blob/move/help-center/projects/packages/jetpack-mu-wpcom/README.md).
+If you do want to modify PHP files. Please follow the development process of [`jetpack-mu-plugin`](https://github.com/Automattic/jetpack/blob/trunk/projects/packages/jetpack-mu-wpcom/README.md).
 
 ### Translations
 
