@@ -47,7 +47,7 @@ If you do want to modify PHP files. Please follow the development process of [`j
 
 ### Translations
 
-Translation are uploaded to widgets.wp.com/help-center/languages. They're then downloaded in Jetpack during build process.
+Translation are uploaded to widgets.wp.com/help-center/languages. They're then downloaded in Jetpack during the build process.
 
 ### Deployment
 
@@ -56,7 +56,7 @@ After every change to the Help Center, the development process is two parts:
 #### Deploy Calypso
 This simply means deploying Calypso as you normally would. 
 
-#### Deploy the Help Center
+#### Deploy the Help Center for Jetpack consumption
 1. cd into `packages/help-center`.
 2. run `yarn build --sync`.
 3. Create a patch from the changes on your sandbox.
@@ -67,6 +67,8 @@ This will deploy the Help Center app for Jetpack consumption. Along with the lan
 > [!IMPORTANT]
 > If you add new phrases to the Help Center. They will only be translated in Atomic sites after `jetpack-mu-plugin` is released. Which happens twice a day.
 
+
+## Contextualized Support articles 
 ### Specify query per page/route
 
 In [route-to-query-mapping.json](https://github.com/Automattic/wp-calypso/blob/add/tailored_posts_help_center/packages/help-center/src/route-to-query-mapping.json), there is a JSON structure where you can specify which search query Help Center should use based on the page URL/route.
