@@ -42,10 +42,6 @@ export default {
 		renderSingleTeamMember( context, next );
 	},
 
-	personSiteLevelProfile( context, next ) {
-		renderPersonSiteLevelProfile( context, next );
-	},
-
 	peopleInvites( context, next ) {
 		renderPeopleInvites( context, next );
 	},
@@ -253,23 +249,5 @@ function renderViewerTeamMember( context, next ) {
 		</>
 	);
 
-	next();
-}
-
-function renderPersonSiteLevelProfile( context, next ) {
-	const ProfileComponent = require( 'calypso/me/profile' ).default;
-
-	const PersonSiteLevelProfileTitle = () => {
-		const translate = useTranslate();
-
-		return <DocumentHead title={ translate( 'My Profile', { textOnly: true } ) } />;
-	};
-
-	context.primary = (
-		<>
-			<PersonSiteLevelProfileTitle />
-			<ProfileComponent path={ context.path } />
-		</>
-	);
 	next();
 }

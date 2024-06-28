@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import clsx from 'clsx';
@@ -6,7 +5,6 @@ import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -24,7 +22,6 @@ import withFormBase from 'calypso/me/form-base/with-form-base';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import UpdatedGravatarString from './updated-gravatar-string';
 
@@ -150,15 +147,6 @@ class Profile extends Component {
 					</form>
 				</Card>
 
-				{ isEnabled( 'layout/site-level-user-profile' ) && (
-					<>
-						<SectionHeader label={ this.props.translate( 'Color Scheme' ) } />
-						<Card>
-							<ColorSchemePicker defaultSelection={ this.props.colorSchemePreference } />
-						</Card>
-					</>
-				) }
-
 				<DomainUpsell context="profile" />
 
 				<ProfileLinks />
@@ -169,14 +157,9 @@ class Profile extends Component {
 
 export default compose(
 	connect(
-		( state ) => {
-			const colorSchemePreference = getPreference( state, 'colorScheme' );
-
-			return {
-				isFetchingUserSettings: isFetchingUserSettings( state ),
-				colorSchemePreference,
-			};
-		},
+		( state ) => ( {
+			isFetchingUserSettings: isFetchingUserSettings( state ),
+		} ),
 		{ recordGoogleEvent }
 	),
 	protectForm,

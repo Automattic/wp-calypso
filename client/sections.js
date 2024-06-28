@@ -123,6 +123,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'profile',
+		paths: [ '/profile' ],
+		module: 'calypso/my-sites/profile',
+		group: 'sites',
+	},
+	{
 		name: 'plugins',
 		paths: [ '/plugins', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/plugins` ],
 		module: 'calypso/my-sites/plugins',
