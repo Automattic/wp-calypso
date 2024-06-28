@@ -110,7 +110,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		}
 
 		return __( 'Contact WordPress.com Support (English)', __i18n_text_domain__ );
-	}, [ __, locale ] );
+	}, [ __, isEnglishLocale ] );
 
 	const emailHeaderText = useMemo( () => {
 		if ( isEnglishLocale ) {
@@ -135,7 +135,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		}
 
 		return __( 'Email', __i18n_text_domain__ );
-	}, [ __, locale ] );
+	}, [ __, locale, isEnglishLocale ] );
 
 	if ( isLoading ) {
 		return (
