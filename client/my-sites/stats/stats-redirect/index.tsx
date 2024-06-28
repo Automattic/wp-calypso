@@ -80,7 +80,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		return <StatsLoader />;
 	}
 
-	// render purchase flow for Jetpack sites created after February 2024
+	// Paywall is dependant on site age, type, & plan as well as user permissions.
 	if ( shouldRenderPaywall ) {
 		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
 		const currentParams = new URLSearchParams( window.location.search );
@@ -104,10 +104,17 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		);
 
 		return null;
-	} else if ( shouldRenderContent ) {
+	}
+
+	// Default is to show the user some stats.
+	// There are permissions considerations though, in which case we fall
+	// through and show nothing. Feels broken.
+	if ( shouldRenderContent ) {
 		return <>{ children }</>;
 	}
 
+	// TODO: Render a proper error message.
+	// Should indicate user does not have permissions to view stats.
 	return null;
 };
 
