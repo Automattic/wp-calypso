@@ -9,7 +9,6 @@ import clsx from 'clsx';
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import QueryPlans from 'calypso/components/data/query-plans';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
@@ -19,6 +18,7 @@ import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
+import UpgradePlanLoader from './upgrade-plan-loader';
 
 interface Props {
 	children: React.ReactNode;
@@ -53,11 +53,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	}, [ plan ] );
 
 	if ( isFetchingHostingDetails || ! rawPrice || ! currencyCode ) {
-		return (
-			<div className="import__upgrade-plan-loader">
-				<LoadingEllipsis />
-			</div>
-		);
+		return <UpgradePlanLoader />;
 	}
 
 	return (
@@ -150,11 +146,7 @@ const UpgradePlanDetailsWrapper = ( props: Props ) => {
 	}, [ addMigrationSticker, siteId ] );
 
 	if ( isPending ) {
-		return (
-			<div className="import__upgrade-plan-loader">
-				<LoadingEllipsis />
-			</div>
-		);
+		return <UpgradePlanLoader />;
 	}
 
 	return (
