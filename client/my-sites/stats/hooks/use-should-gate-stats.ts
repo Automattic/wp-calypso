@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
@@ -75,13 +76,14 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	const siteFeatures = getSiteFeatures( state, siteId );
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
 
+	const restrictDdashboard = config.isEnabled( 'stats/restricted-dashboard' );
 	const isNewSite = isSiteNew( state, siteId );
 	const hasAnyStatsPlan = hasAnyPlan( state, siteId );
 
 	// Check gated modules for Jetpack sites.
 	if ( jetpackSite && ! atomicSite ) {
 		// TODO: Determine more paywall segments and granular control for paid stats.
-		if ( isNewSite && ! hasAnyStatsPlan ) {
+		if ( restrictDdashboard && isNewSite && ! hasAnyStatsPlan ) {
 			return [ ...paidStatsPaywall ].includes( statType );
 		}
 
