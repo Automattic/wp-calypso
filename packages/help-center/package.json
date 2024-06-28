@@ -28,7 +28,8 @@
 		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist/apps --remotePath /home/wpcom/public_html/widgets.wp.com/help-center",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"translate": "rm -rf dist/apps/strings && wp-babel-makepot './dist/apps/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './dist' --dir './dist/apps/strings' --output './dist/apps/help-center.pot' && build-app-languages --stringsFilePath='./dist/apps/help-center.pot' --outputPath='./dist/apps/languages'"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
@@ -56,6 +57,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/wp-babel-makepot": "workspace:^",
 		"@storybook/addon-backgrounds": "^7.6.19",
 		"@wordpress/dependency-extraction-webpack-plugin": "5.9.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "3.0.0",

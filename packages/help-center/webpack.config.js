@@ -4,6 +4,7 @@ const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extrac
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
 const CopyPlugin = require( 'copy-webpack-plugin' );
 const webpack = require( 'webpack' );
+const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
 /* Arguments to this function replicate webpack's so this config can be used on the command line,
  * with individual options overridden by command line args.
@@ -55,8 +56,11 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 			),
 			new webpack.DefinePlugin( {
-				__i18n_text_domain__: JSON.stringify( 'jetpack-mu-wpcom' ),
+				__i18n_text_domain__: JSON.stringify( 'default' ),
 				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
+			} ),
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( './dist/chunks-map.json' ),
 			} ),
 			new DependencyExtractionWebpackPlugin( {
 				injectPolyfill: true,

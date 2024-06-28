@@ -1057,6 +1057,7 @@ __metadata:
     "@automattic/odie-client": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
+    "@automattic/wp-babel-makepot": "workspace:^"
     "@popperjs/core": "npm:^2.11.8"
     "@storybook/addon-backgrounds": "npm:^7.6.19"
     "@tanstack/react-query": "npm:^5.15.5"

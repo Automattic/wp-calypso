@@ -6,8 +6,3 @@ window.configData = {
 	},
 	wapuu: false,
 };
-window.process = {
-	env: {
-		NODE_DEBUG: 'dev',
-	},
-};
