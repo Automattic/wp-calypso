@@ -76,7 +76,7 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 					path="countries"
 					moduleStrings={ moduleStrings }
 					period={ period }
-					query={ period }
+					query={ query }
 					statType={ statType }
 					showSummaryLink
 					className={ className }
