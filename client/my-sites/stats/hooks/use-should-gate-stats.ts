@@ -93,5 +93,6 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 export const useShouldGateStats = ( statType: string ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isGatedStats = useSelector( ( state ) => shouldGateStats( state, siteId, statType ) );
-	return { isGatedStats };
+
+	return isGatedStats;
 };
