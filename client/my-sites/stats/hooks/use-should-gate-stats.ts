@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
@@ -8,10 +7,14 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	STATS_FEATURE_DOWNLOAD_CSV,
-	STAT_TYPE_SEARCH_TERMS,
-	STAT_TYPE_CLICKS,
+	STAT_TYPE_TOP_POSTS,
 	STAT_TYPE_REFERRERS,
+	STAT_TYPE_COUNTRY_VIEWS,
+	STAT_TYPE_CLICKS,
 	STAT_TYPE_TOP_AUTHORS,
+	STAT_TYPE_EMAILS_SUMMARY,
+	STAT_TYPE_SEARCH_TERMS,
+	STAT_TYPE_VIDEO_PLAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
 	STATS_FEATURE_DATE_CONTROL,
@@ -23,11 +26,22 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
 } from '../constants';
 
-const paidStats = [
-	STAT_TYPE_SEARCH_TERMS,
-	STAT_TYPE_CLICKS,
+const paidStatsPaywall = [
+	STAT_TYPE_TOP_POSTS,
+	STAT_TYPE_COUNTRY_VIEWS,
 	STAT_TYPE_REFERRERS,
+	STAT_TYPE_CLICKS,
 	STAT_TYPE_TOP_AUTHORS,
+	STAT_TYPE_EMAILS_SUMMARY,
+	STAT_TYPE_SEARCH_TERMS,
+	STAT_TYPE_VIDEO_PLAYS,
+];
+
+const paidStats = [
+	STAT_TYPE_REFERRERS,
+	STAT_TYPE_CLICKS,
+	STAT_TYPE_TOP_AUTHORS,
+	STAT_TYPE_SEARCH_TERMS,
 ];
 
 const granularControlForPaidStats = [
@@ -50,18 +64,6 @@ const granularControlForPaidStats = [
  * const isGatedStats = shouldGateStats( state, siteId, STAT_TYPE_SEARCH_TERMS );
  */
 export const shouldGateStats = ( state: object, siteId: number | null, statType: string ) => {
-	const isPaidStatsEnabled = isEnabled( 'stats/paid-wpcom-v2' );
-	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
-
-	// check feature flags
-	if ( ! isPaidStatsEnabled ) {
-		return false;
-	}
-	if ( isOdysseyStats ) {
-		// don't gate stats if using Odyssey stats
-		return false;
-	}
-
 	if ( ! siteId ) {
 		return true;
 	}
@@ -73,7 +75,7 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 
 	// check site type
 	if ( jetpackSite && ! atomicSite ) {
-		return false;
+		return [ ...paidStatsPaywall ].includes( statType );
 	}
 
 	// check if the site features have loaded and the site has paid stats feature
