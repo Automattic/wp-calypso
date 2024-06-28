@@ -1,6 +1,14 @@
 // Styles targeted at story content
 @import "./content";
 
+// Since we cannot use css variables in media queries, we need to define the valuess in scss.
+$reader-full-post-sidebar-width: 220px;
+$reader-full-post-story-padding: 24px;
+$reader-full-post-story-max-width: 720px;
+// 295 for sidebar and 16 for the right frame padding.
+$global-sidebar-and-frame-width: 295px + 16px;
+$reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-post-story-max-width + ( $reader-full-post-story-padding * 2 ) + $global-sidebar-and-frame-width;
+
 .is-group-reader.has-no-sidebar {
 	.masterbar {
 		@include breakpoint-deprecated( "<660px" ) {
@@ -15,12 +23,18 @@
 	// This allows our fixed positioned elements to be positioned relative to the main html document
 	backface-visibility: visible;
 	perspective: none;
+	// Full post horizontal paddings/widths to use for knowing breakpoints.
+	--reader-full-post-sidebar-width: #{$reader-full-post-sidebar-width};
+	--reader-full-post-story-padding: #{$reader-full-post-story-padding};
+	--reader-full-post-story-max-width: #{$reader-full-post-story-max-width};
 }
 
 .reader-full-post__content {
-	display: flex;
-	justify-content: space-around;
-	flex-wrap: wrap;
+	@media (min-width: $reader-full-post-desktop-min) {
+		display: flex;
+		justify-content: space-around;
+		flex-wrap: wrap;
+	}
 	max-width: 1200px;
 	margin: 0 auto;
 
@@ -80,12 +94,12 @@
 }
 
 .reader-full-post__sidebar {
-	width: 220px;
+	width: var(--reader-full-post-sidebar-width);
 	text-align: center;
 	margin-top: 55px;
 
 	// hide the sidebar when it cannot fit to the side of the content.
-	@media (max-width: 1298px) {
+	@media (max-width: $reader-full-post-desktop-min) {
 		display: none;
 	}
 }
@@ -106,8 +120,12 @@
 }
 
 .reader-full-post__story {
-	max-width: 720px;
-	padding: 0 24px;
+	max-width: var(--reader-full-post-story-max-width);
+	padding: 0 var(--reader-full-post-story-padding);
+	margin: 0 auto;
+	@media (min-width: $reader-full-post-desktop-min) {
+		margin: 0;
+	}
 
 	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body;
@@ -160,6 +178,7 @@
 	top: 0;
 	left: 0;
 	right: unset;
+	background-color: transparent;
 
 	// We will display this when the sidebar disappears @781 px.
 	@media (max-width: 781px) {

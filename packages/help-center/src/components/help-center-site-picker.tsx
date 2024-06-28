@@ -18,22 +18,25 @@ export const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 		return helpCenterSelect.getUserDeclaredSiteUrl();
 	}, [] );
 
+	// The lack of site slug implies the user has no sites at all.
 	const siteSlug = useSiteSlug();
 
 	return (
 		<>
-			<section>
-				<SelectControl
-					label="Site"
-					options={ [
-						{ label: siteSlug, value: 'current' },
-						{ label: __( 'Another site' ), value: 'another_site' },
-					] }
-					onChange={ ( value ) => {
-						onSelfDeclaredSite( value === 'another_site' );
-					} }
-				></SelectControl>
-			</section>
+			{ siteSlug && (
+				<section>
+					<SelectControl
+						label="Site"
+						options={ [
+							{ label: siteSlug, value: 'current' },
+							{ label: __( 'Another site' ), value: 'another_site' },
+						] }
+						onChange={ ( value ) => {
+							onSelfDeclaredSite( value === 'another_site' );
+						} }
+					></SelectControl>
+				</section>
+			) }
 			{ isSelfDeclaredSite && (
 				<section>
 					<TextControl

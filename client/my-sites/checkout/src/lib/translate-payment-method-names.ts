@@ -28,8 +28,6 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'bancontact';
 		case 'WPCOM_Billing_Stripe_Source_Eps':
 			return 'eps';
-		case 'WPCOM_Billing_Stripe_Source_Giropay':
-			return 'giropay';
 		case 'WPCOM_Billing_Stripe_Source_Ideal':
 			return 'ideal';
 		case 'WPCOM_Billing_Stripe_Source_P24':
@@ -81,8 +79,6 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_Stripe_Source_Bancontact';
 		case 'eps':
 			return 'WPCOM_Billing_Stripe_Source_Eps';
-		case 'giropay':
-			return 'WPCOM_Billing_Stripe_Source_Giropay';
 		case 'ideal':
 			return 'WPCOM_Billing_Stripe_Source_Ideal';
 		case 'p24':
@@ -117,7 +113,6 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Stripe_Source_Alipay':
 		case 'WPCOM_Billing_Stripe_Source_Bancontact':
 		case 'WPCOM_Billing_Stripe_Source_Eps':
-		case 'WPCOM_Billing_Stripe_Source_Giropay':
 		case 'WPCOM_Billing_Stripe_Source_Ideal':
 		case 'WPCOM_Billing_Stripe_Source_P24':
 		case 'WPCOM_Billing_Stripe_Source_Sofort':
@@ -149,7 +144,6 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'alipay':
 		case 'bancontact':
 		case 'eps':
-		case 'giropay':
 		case 'ideal':
 		case 'p24':
 		case 'sofort':
@@ -189,7 +183,6 @@ export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): bool
 		'alipay',
 		'bancontact',
 		'eps',
-		'giropay',
 		'ideal',
 		'netbanking',
 		'paypal',
