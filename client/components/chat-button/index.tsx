@@ -75,7 +75,8 @@ const ChatButton: FC< Props > = ( {
 		messagingGroup,
 		isEligibleForChat
 	);
-	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setInitialRoute, resetStore } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 
 	function shouldShowChatButton(): boolean {
@@ -119,7 +120,14 @@ const ChatButton: FC< Props > = ( {
 				message: initialMessage,
 				siteUrl,
 				onError,
-				onSuccess: onClick,
+				onSuccess: () => {
+					if ( typeof onClick === 'function' ) {
+						onClick();
+					}
+
+					resetStore();
+					setShowHelpCenter( false );
+				},
 			} );
 		} else {
 			setInitialRoute( '/contact-form?mode=CHAT' );

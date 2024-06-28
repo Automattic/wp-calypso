@@ -100,8 +100,14 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		};
 	}, [] );
 
-	const { resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
-		useDispatch( HELP_CENTER_STORE );
+	const {
+		resetStore,
+		setShowHelpCenter,
+		setUserDeclaredSite,
+		setShowMessagingChat,
+		setSubject,
+		setMessage,
+	} = useDispatch( HELP_CENTER_STORE );
 
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { hasActiveChats, isEligibleForChat, isLoading: isLoadingChatStatus } = useChatStatus();
@@ -321,6 +327,10 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 						message: initialChatMessage,
 						siteUrl: supportSite.URL,
 						onError: () => setHasSubmittingError( true ),
+						onSuccess: () => {
+							resetStore();
+							setShowHelpCenter( false );
+						},
 					} );
 					break;
 				}

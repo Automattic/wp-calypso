@@ -30,7 +30,8 @@ interface Props {
 }
 
 export const MigrationError = ( props: Props ) => {
-	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setInitialRoute, resetStore } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 	const {
 		sourceSiteUrl,
 		targetSiteUrl,
@@ -59,6 +60,10 @@ export const MigrationError = ( props: Props ) => {
 			openZendeskWidget( {
 				siteUrl: targetSiteUrl,
 				message: `${ status }: Import onboarding flow; migration failed`,
+				onSuccess: () => {
+					resetStore();
+					setShowHelpCenter( false );
+				},
 			} );
 		} else {
 			setInitialRoute( '/contact-form?mode=CHAT' );
