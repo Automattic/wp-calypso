@@ -32,6 +32,9 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
+	// TODO: Consolidate permissions checks.
+	// This same code is in LoadStatsPage (which calls this component) so
+	// it might not be necessary here.
 	const canUserManageOptions = useSelector( ( state ) =>
 		canCurrentUser( state, siteId, 'manage_options' )
 	);
@@ -115,6 +118,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 
 	// TODO: Render a proper error message.
 	// Should indicate user does not have permissions to view stats.
+	// See note above regarding permissions.
 	return null;
 };
 
