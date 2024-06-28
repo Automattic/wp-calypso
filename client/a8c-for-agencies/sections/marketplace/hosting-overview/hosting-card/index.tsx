@@ -144,7 +144,7 @@ export default function HostingCard( {
 					rel="norefferer nooppener"
 					href={ pressableUrl }
 				>
-					{ translate( 'Manage in your Pressable account' ) }
+					{ translate( 'Manage in Pressable' ) }
 					<Icon icon={ external } size={ 18 } />
 				</Button>
 			);
