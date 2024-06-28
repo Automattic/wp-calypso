@@ -13,10 +13,10 @@ The Help Center is a bit complicated because it runs in multiple different envir
 4. In Atomic sites 
 	- as a plugin to Gutenberg editor.
 		- A plugin when the site is connected to Jetpack.
-		- A minimal plugin when the site is disconnected from Jetpack. This plugin simple links to wp.com/help.
+		- A minimal plugin when the site is disconnected from Jetpack. This plugiy simple links to wp.com/help.
 	- as a wpadminbar menu item.
 		- A menu item that opens the Help Center when connected to Jetpack.
-		- A minimal plugin when the site is disconnected from Jetpack. This plugin simple links to wp.com/help.
+		- A minimal plugin when the site is disconnected from Jetpack. This plugiy simple links to wp.com/help.
 
 ### How to debug the Help Center
 
@@ -40,7 +40,8 @@ If you only interested in making JS and CSS changes, you're in luck; you don't n
 3. Sandbox `widgets.wp.com`.
 4. Your changes should be reflected on the site live.
 
-> [!NOTE] If you make changes to the *.asset.json files, they won't be synced with the site as Jetpack pulls these files via network. And since Jetpack pulls from production and not your sandbox, you'll have to deploy first for these changes to take effect.
+> [!IMPORTANT]
+> If you make changes to the *.asset.json files, they won't be synced with the site as Jetpack pulls these files via network. And since Jetpack pulls from production and not your sandbox, you'll have to deploy first for these changes to take effect.
 
 If you do want to modify PHP files. Please follow the development process of [`jetpack-mu-plugin`](https://github.com/Automattic/jetpack/blob/move/help-center/projects/packages/jetpack-mu-wpcom/README.md).
 
@@ -63,7 +64,8 @@ This simply means deploying Calypso as you normally would.
 
 This will deploy the Help Center app for Jetpack consumption. Along with the languages files.
 
-> [!NOTE] If you add new phrases to the Help Center. They will only be translated in Atomic sites after `jetpack-mu-plugin` is released. Which happens twice a day.
+> [!IMPORTANT]
+> If you add new phrases to the Help Center. They will only be translated in Atomic sites after `jetpack-mu-plugin` is released. Which happens twice a day.
 
 ### Specify query per page/route
 
