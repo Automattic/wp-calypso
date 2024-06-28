@@ -10,7 +10,7 @@
 	"sideEffects": false,
 	"scripts": {
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"clean": "rm -rf dist",
 		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
@@ -18,15 +18,15 @@
 	"dependencies": {
 		"@wordpress/api-fetch": "^7.2.0",
 		"@wordpress/element": "^6.2.0",
-		"@wordpress/url": "^4.2.0"
+		"@wordpress/url": "^4.2.0",
+		"@tanstack/react-query": "^5.15.5",
+		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.3.3",
-		"wpcom-proxy-request": "workspace:^"
+		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
-		"@tanstack/react-query": "^5.15.5",
 		"react": "^18.2.0"
 	}
 }

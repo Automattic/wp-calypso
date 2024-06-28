@@ -3,13 +3,13 @@ import { useEffect } from '@wordpress/element';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
 export function useZendeskMessagingBindings(
-	HELP_CENTER_STORE: string,
+	HelpCenterStore: string,
 	hasActiveChats: boolean,
 	isMessagingScriptLoaded: boolean
 ) {
-	const { setShowMessagingLauncher, setShowMessagingWidget } = useDispatch( HELP_CENTER_STORE );
+	const { setShowMessagingLauncher, setShowMessagingWidget } = useDispatch( HelpCenterStore );
 	const { showMessagingLauncher, showMessagingWidget } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		const helpCenterSelect: HelpCenterSelect = select( HelpCenterStore );
 		return {
 			showMessagingLauncher: helpCenterSelect.isMessagingLauncherShown(),
 			showMessagingWidget: helpCenterSelect.isMessagingWidgetShown(),

@@ -121,10 +121,7 @@ const ChatButton: FC< Props > = ( {
 				siteUrl,
 				onError,
 				onSuccess: () => {
-					if ( typeof onClick === 'function' ) {
-						onClick();
-					}
-
+					onClick?.();
 					resetStore();
 					setShowHelpCenter( false );
 				},
