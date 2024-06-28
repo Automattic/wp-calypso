@@ -10,6 +10,7 @@ function SubscribeEmailStepContent( props ) {
 		handleCreateAccountError,
 		handleCreateAccountSuccess,
 		isPending,
+		redirectToAfterLoginUrl,
 		redirectUrl,
 		step,
 		stepName,
@@ -31,17 +32,17 @@ function SubscribeEmailStepContent( props ) {
 				handleCreateAccountError={ handleCreateAccountError }
 				handleCreateAccountSuccess={ handleCreateAccountSuccess }
 				disableBlurValidation
-				disableContinueAsUser
 				isPasswordless
 				isReskinned
 				isSocialFirst={ false }
 				isSocialSignupEnabled={ false }
 				labelText={ translate( 'Your email' ) }
 				queryArgs={ { user_email: email, redirect_to: redirectUrl } }
+				redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 				shouldDisplayUserExistsError
 				step={ step }
 				stepName={ stepName }
-				submitButtonLabel={ translate( 'Subscribe email' ) }
+				submitButtonLabel={ translate( 'Subscribe' ) }
 				submitButtonLoadingLabel={ translate( 'Subscribing…' ) }
 				suggestedUsername=""
 			/>
