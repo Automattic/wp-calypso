@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	siteLaunchStatusGroupValues,
@@ -128,11 +127,6 @@ export function sitesDashboard( context: Context, next: () => void ) {
 
 export function siteDashboard( feature: string ) {
 	return ( context: Context, next: () => void ) => {
-		if ( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-			next();
-			return;
-		}
-
 		const state = context.store.getState();
 
 		context.primary = (

@@ -147,6 +147,7 @@ export interface BillingTransactionItem {
 	currency: string;
 	licensed_quantity: number | null;
 	new_quantity: number | null;
+	volume: number | null;
 	product: string;
 	product_slug: string;
 	variation: string;

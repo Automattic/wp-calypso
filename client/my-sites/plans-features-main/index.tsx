@@ -444,7 +444,7 @@ const PlansFeaturesMain = ( {
 	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
 		productSlug: currentPlan?.productSlug,
 		displayedIntervals,
-		intent,
+		flowName,
 		paidDomainName,
 	} );
 

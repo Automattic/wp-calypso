@@ -1,4 +1,10 @@
-import { JetpackPlan, Plan, WPComPlan, getFeatureByKey } from '@automattic/calypso-products';
+import {
+	type JetpackPlan,
+	type Plan,
+	type WPComPlan,
+	getFeatureByKey,
+	isMonthly,
+} from '@automattic/calypso-products';
 import { Badge } from '@automattic/components';
 import { Plans2023Tooltip } from '@automattic/plans-grid-next';
 import { chevronDown, Icon } from '@wordpress/icons';
@@ -18,8 +24,14 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 	const { plan, showFeatures, setShowFeatures } = props;
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 
+	const isMonthlyPlan = plan ? isMonthly( plan.getStoreSlug() ) : false;
+	const annualOnlyFeatures = ( plan as WPComPlan )?.getAnnualPlansOnlyFeatures?.() || [];
+
 	const wpcomFeatures = plan
 		?.get2023PricingGridSignupWpcomFeatures?.()
+		.filter( ( feature: string ) =>
+			isMonthlyPlan ? ! annualOnlyFeatures.includes( feature ) : true
+		)
 		.map( ( feature: string ) => getFeatureByKey( feature ) )
 		.filter( ( feature ) => feature?.getTitle() );
 
