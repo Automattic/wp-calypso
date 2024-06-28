@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { BadgeType, Button } from '@automattic/components';
 import { Icon, external, check } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -107,7 +106,7 @@ const PartnerDirectoryDashboard = () => {
 				} )
 			);
 		},
-		[ page, reduxDispatch, translate ]
+		[ translate ]
 	);
 
 	const { onSubmit: submitPublishProfile, isSubmitting: isSubmittingPublishProfile } =
@@ -209,7 +208,7 @@ const PartnerDirectoryDashboard = () => {
 		}
 		// Initial application status: no application has been submitted
 		return 0;
-	}, [ isValidFormData, isCompleted, applicationWasSubmitted ] );
+	}, [ isCompleted, hasDirectoryApproval, isValidFormData, applicationWasSubmitted ] );
 
 	// todo: to remove this when we have the links.
 	const displayProgramLinks = false;
@@ -264,13 +263,18 @@ const PartnerDirectoryDashboard = () => {
 								icon={ brandMeta.icon }
 								heading={ brand }
 								description={
-									// FIXME: Add links to all the buttons
 									key === 'approved' ? (
 										<>
-											<Button className="a8c-blue-link" borderless href={ brandMeta.url }>
+											<Button
+												className="a8c-blue-link"
+												borderless
+												href={ brandMeta.url }
+												target="_blank"
+											>
 												{ translate( '%(brand)s Partner Directory', {
 													args: { brand },
 												} ) }
+												<Icon icon={ external } size={ 18 } />
 											</Button>
 											<br />
 											<Button

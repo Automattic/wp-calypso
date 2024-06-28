@@ -7,7 +7,7 @@ export const getBrandMeta = ( brand: string ) => {
 	let url = '';
 
 	switch ( brand ) {
-		case 'WordPress':
+		case 'WordPress.com':
 		case 'WordPress VIP':
 			icon = <WordPressLogo />;
 			url = 'https://wordpress.com/';
@@ -17,11 +17,11 @@ export const getBrandMeta = ( brand: string ) => {
 			className = 'partner-directory-dashboard__woo-icon';
 			url = 'https://woocommerce.com/';
 			break;
-		case 'Pressable':
+		case 'Pressable.com':
 			icon = <img src={ pressableIcon } alt="" />;
 			url = 'https://pressable.com/';
 			break;
-		case 'Jetpack':
+		case 'Jetpack.com':
 			icon = <JetpackLogo />;
 			url = 'https://jetpack.com/';
 			break;
