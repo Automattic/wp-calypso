@@ -1,3 +1,4 @@
+import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { createRoot } from 'react-dom/client';
 import './help-center.scss';

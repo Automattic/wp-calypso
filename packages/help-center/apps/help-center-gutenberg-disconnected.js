@@ -1,3 +1,4 @@
+import './config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';

@@ -1,3 +1,5 @@
+import './config';
+
 /* global helpCenterData */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
