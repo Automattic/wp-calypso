@@ -8,7 +8,7 @@ function SubscribeEmailStepContent( props ) {
 		flowName,
 		goToNextStep,
 		handleCreateAccountError,
-		handleSubmitForm,
+		handleCreateAccountSuccess,
 		isPending,
 		redirectUrl,
 		step,
@@ -29,6 +29,7 @@ function SubscribeEmailStepContent( props ) {
 				flowName={ flowName }
 				goToNextStep={ goToNextStep }
 				handleCreateAccountError={ handleCreateAccountError }
+				handleCreateAccountSuccess={ handleCreateAccountSuccess }
 				disableBlurValidation
 				isPasswordless
 				isReskinned
@@ -41,7 +42,6 @@ function SubscribeEmailStepContent( props ) {
 				stepName={ stepName }
 				submitButtonLabel={ translate( 'Subscribe email' ) }
 				submitButtonLoadingLabel={ translate( 'Subscribing…' ) }
-				submitForm={ handleSubmitForm }
 				suggestedUsername=""
 			/>
 		</>

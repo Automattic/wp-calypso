@@ -94,6 +94,7 @@ class SignupForm extends Component {
 		disableEmailExplanation: PropTypes.string,
 		disableEmailInput: PropTypes.bool,
 		disableSubmitButton: PropTypes.bool,
+		disableBlurValidation: PropTypes.bool,
 		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
@@ -1329,6 +1330,7 @@ class SignupForm extends Component {
 						onInputBlur={ this.handleBlur }
 						onInputChange={ this.handleChangeEvent }
 						onCreateAccountError={ this.handleCreateAccountError }
+						onCreateAccountSuccess={ this.handleCreateAccountSuccess }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (

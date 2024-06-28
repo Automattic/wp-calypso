@@ -4,6 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { isRedirectAllowed } from 'calypso/lib/url/is-redirect-allowed';
 import useCreateNewAccountMutation from 'calypso/signup/hooks/use-create-new-account';
@@ -46,12 +47,29 @@ function SubscribeEmailStep( props ) {
 
 	const { mutate: createNewAccount, isPending: isCreateNewAccountPending } =
 		useCreateNewAccountMutation( {
-			onSuccess: () =>
+			onSuccess: ( response ) => {
+				const username =
+					( response && response.signup_sandbox_username ) || ( response && response.username );
+
+				const userId =
+					( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
+
+				recordRegistration( {
+					userData: {
+						ID: userId,
+						username: username,
+						email: this.state.email,
+					},
+					flow: flowName,
+					type: 'passwordless',
+				} );
+
 				subscribeToMailingList( {
 					email_address: email,
 					mailing_list_category: queryParams.mailing_list,
 					from: queryParams.from,
-				} ),
+				} );
+			},
 			onError: ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
 					subscribeToMailingList( {
@@ -88,9 +106,6 @@ function SubscribeEmailStep( props ) {
 						isPending={ isCreateNewAccountPending || isSubscribeToMailingListPending }
 						redirectUrl={ redirectUrl }
 						subscribeToMailingList={ subscribeToMailingList }
-						handleSubmitForm={ ( form, passwordLessData ) => {
-							console.log( { form, passwordLessData } );
-						} }
 						handleCreateAccountError={ ( error, submittedEmail ) => {
 							if ( isExistingAccountError( error.error ) ) {
 								subscribeToMailingList( {
@@ -99,6 +114,19 @@ function SubscribeEmailStep( props ) {
 									from: queryParams.from,
 								} );
 							}
+						} }
+						handleCreateAccountSuccess={ ( userData ) => {
+							recordRegistration( {
+								userData,
+								flow: flowName,
+								type: 'passwordless',
+							} );
+
+							subscribeToMailingList( {
+								email_address: userData.email,
+								mailing_list_category: queryParams.mailing_list,
+								from: queryParams.from,
+							} );
 						} }
 					/>
 				}
