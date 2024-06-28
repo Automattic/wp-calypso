@@ -11,5 +11,6 @@ export type HostingDetails = {
 };
 
 export type UpgradePlanDetailsProps = {
+	siteId: number;
 	children: React.ReactNode;
 };

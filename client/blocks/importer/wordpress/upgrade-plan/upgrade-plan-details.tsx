@@ -1,5 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_MONTHLY,
+	isMonthly,
+} from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
@@ -9,8 +14,7 @@ import React, { useState, useEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import { getSitePlan, getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
@@ -22,19 +26,23 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	const { __ } = useI18n();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ showFeatures, setShowFeatures ] = useState( false );
-
-	const { children } = props;
 	const [ selectedPlan, setSelectedPlan ] = useState<
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
 	>( PLAN_BUSINESS );
-	const plan = getPlan( selectedPlan );
-	const planId = plan?.getProductId();
+
+	const { children, siteId } = props;
 
 	const { list: upgradePlanHostingDetailsList, isFetching: isFetchingHostingDetails } =
 		useUpgradePlanHostingDetailsList();
 
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planId as number, true ) );
+	const plan = getPlan( selectedPlan );
+	const planDetails = useSelector( ( state ) =>
+		siteId ? getSitePlan( state, siteId, selectedPlan ) : null
+	);
+
+	const rawPrice = useSelector( ( state ) =>
+		getSitePlanRawPrice( state, siteId, selectedPlan, { returnMonthly: true } )
+	);
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
 
@@ -46,7 +54,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 		plan && plan.getPathSlug && setSelectedPlanSlug( plan.getPathSlug() );
 	}, [ plan ] );
 
-	if ( isFetchingHostingDetails || ! rawPrice || ! currencyCode ) {
+	if ( isFetchingHostingDetails || ! rawPrice || ! planDetails?.currencyCode ) {
 		return <UpgradePlanLoader />;
 	}
 
@@ -91,7 +99,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 					</div>
 
 					<div className="import__upgrade-plan-price">
-						<PlanPrice rawPrice={ rawPrice ?? undefined } currencyCode={ currencyCode } />
+						<PlanPrice rawPrice={ rawPrice } currencyCode={ planDetails?.currencyCode } />
 						<span className="plan-time-frame">
 							<small>{ plan?.getBillingTimeFrame() }</small>
 						</span>
@@ -100,7 +108,9 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 					<div>
 						<div className="import__upgrade-plan-cta">{ children }</div>
 						<div className="import__upgrade-plan-refund-sub-text">
-							{ __( 'Refundable within 14 days. No questions asked.' ) }
+							{ plan && ! isMonthly( plan.getStoreSlug() )
+								? __( 'Refundable within 14 days. No questions asked.' )
+								: __( 'Refundable within 7 days. No questions asked.' ) }
 						</div>
 					</div>
 

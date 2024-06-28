@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, ListTile, Popover } from '@automattic/components';
 import {
 	SITE_EXCERPT_REQUEST_FIELDS,
@@ -287,17 +286,12 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 
 	const dispatch = useDispatch();
 	const onSiteClick = ( event: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => {
-		if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-			event.stopPropagation();
-			event.preventDefault();
-			dispatch( setSelectedSiteId( site.ID ) );
-		}
+		event.stopPropagation();
+		event.preventDefault();
+		dispatch( setSelectedSiteId( site.ID ) );
 	};
 
-	let title = __( 'Visit Dashboard' );
-	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		title = __( 'View Site Details' );
-	}
+	const title = __( 'View Site Details' );
 
 	return (
 		<Row ref={ ref }>

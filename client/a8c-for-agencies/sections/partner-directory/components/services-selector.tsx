@@ -8,6 +8,8 @@ type Props = {
 	selectedServices: string[];
 };
 
+const MAX_SERVICES = 5;
+
 const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 	const { availableServices } = useFormSelectors();
 
@@ -40,7 +42,9 @@ const ServicesSelector = ( { setServices, selectedServices }: Props ) => {
 	return (
 		<FormTokenFieldWrapper
 			onChange={ onServiceLabelsSelected }
-			suggestions={ Object.values( availableServices ).sort() }
+			suggestions={
+				selectedServices.length >= MAX_SERVICES ? [] : Object.values( availableServices ).sort()
+			}
 			value={ selectedServicesByLabel }
 		/>
 	);

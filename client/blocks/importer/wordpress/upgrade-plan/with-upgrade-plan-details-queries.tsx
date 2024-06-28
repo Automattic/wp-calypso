@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useLayoutEffect } from 'react';
-import QueryPlans from 'calypso/components/data/query-plans';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import UpgradePlanLoader from './upgrade-plan-loader';
@@ -30,7 +30,7 @@ const withUpgradePlanDetailsQueries =
 
 		return (
 			<div>
-				<QueryPlans />
+				<QuerySitePlans />
 				<WrappedComponent { ...props } />
 			</div>
 		);
