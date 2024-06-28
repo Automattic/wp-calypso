@@ -1,8 +1,10 @@
+import { setThemeOnSite } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { SenseiStepContainer } from '../components/sensei-step-container';
@@ -18,12 +20,19 @@ import { useSubSteps } from './use-sub-steps';
 import type { Step } from '../../types';
 import './style.scss';
 
+type ResponseError = {
+	error: string;
+};
+
 const SENSEI_PRO_PLUGIN_SLUG = 'sensei-pro';
+const installCourseTheme = async ( siteId: number ) =>
+	wpcom.req.post( { path: `/sites/${ siteId }/themes/course/install` } );
 
 const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	const siteId = useSite()?.ID as number;
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
-
+	const urlParams = new URLSearchParams( window.location.search );
+	const selectedVariation = urlParams.get( 'variation' ) ?? 'green';
 	const { pollPlugins, isPluginInstalled, queuePlugin } = useAtomicSitePlugins();
 	const { requestChecklist, isSenseiIncluded } = useAtomicSiteChecklist();
 	const additionalPlugins = useMemo( () => getSelectedPlugins(), [] );
@@ -36,6 +45,21 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 
 	const percentage = useSubSteps(
 		[
+			async function installAndActivateTheme( retries ) {
+				try {
+					await installCourseTheme( siteId );
+					await setThemeOnSite( `${ siteId }`, 'pub/course', selectedVariation );
+					return true;
+				} catch ( responseError: unknown ) {
+					if ( ( responseError as ResponseError )?.error === 'theme_already_installed' ) {
+						await setThemeOnSite( `${ siteId }`, 'pub/course', selectedVariation );
+						return true;
+					}
+				}
+
+				await wait( 3000 );
+				return retries >= 10;
+			},
 			async function queueAdditionalPlugins() {
 				additionalPlugins.forEach( queuePlugin );
 				return true;
