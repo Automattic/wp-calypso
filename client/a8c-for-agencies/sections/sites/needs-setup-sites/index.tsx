@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Modal } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -20,6 +19,7 @@ import SitesHeaderActions from '../sites-header-actions';
 import ClientSite from './client-site';
 import { AvailablePlans } from './plan-field';
 import PurchaseConfirmationMessage from './purchase-confirmation-message';
+import SiteConfigurationsModal from './site-configurations-modal';
 import NeedSetupTable from './table';
 import type { ReferralAPIResponse } from '../../referrals/types';
 
@@ -187,11 +187,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 						</Actions>
 					</LayoutHeader>
 				</LayoutTop>
-				{ displaySiteConfigurationModal && (
-					<Modal title={ translate( 'Configure your site' ) } onRequestClose={ toggleModal }>
-						<h1>Configure your site placeholder modal</h1>
-					</Modal>
-				) }
+				{ displaySiteConfigurationModal && <SiteConfigurationsModal toggleModal={ toggleModal } /> }
 				<NeedSetupTable
 					availablePlans={ availablePlans }
 					isLoading={ isFetching }
