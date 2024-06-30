@@ -437,7 +437,8 @@ class Layout extends Component {
 				) }
 				<QueryPreferences />
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
-				{ this.props.isUnifiedSiteSidebarVisible && (
+				{ ( this.props.isUnifiedSiteSidebarVisible ||
+					config.isEnabled( 'layout/site-level-user-profile' ) ) && (
 					<QuerySiteAdminColor siteId={ this.props.siteId } />
 				) }
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
@@ -584,7 +585,10 @@ export default withCurrentRoute(
 
 		const calypsoColorScheme = getPreference( state, 'colorScheme' );
 		const siteColorScheme = getAdminColor( state, siteId ) ?? calypsoColorScheme;
-		const colorScheme = shouldShowUnifiedSiteSidebar ? siteColorScheme : calypsoColorScheme;
+		const colorScheme =
+			shouldShowUnifiedSiteSidebar || config.isEnabled( 'layout/site-level-user-profile' )
+				? siteColorScheme
+				: calypsoColorScheme;
 
 		return {
 			masterbarIsHidden,

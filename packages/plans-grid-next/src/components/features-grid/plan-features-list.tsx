@@ -14,7 +14,7 @@ import PlanFeatures2023GridFeatures from '../features';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
-import { StorageFeature } from '../shared/storage';
+import { PlanStorage } from '../shared/storage';
 import type { DataResponse, GridPlan } from '../../types';
 
 type PlanFeaturesListProps = {
@@ -37,7 +37,6 @@ type PlanFeaturesListProps = {
 		isTableCell?: boolean;
 	};
 	featureGroupSlug?: FeatureGroupSlug;
-	intervalType: string;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	showUpgradeableStorage: boolean;
 };
@@ -51,7 +50,6 @@ const PlanFeaturesList = ( {
 	renderedGridPlans,
 	selectedFeature,
 	featureGroupSlug,
-	intervalType,
 	onStorageAddOnClick,
 	showUpgradeableStorage = false,
 }: PlanFeaturesListProps ) => {
@@ -96,10 +94,9 @@ const PlanFeaturesList = ( {
 							</h2>
 						</PlanFeaturesItem>
 						<PlanFeaturesItem>
-							<StorageFeature
+							<PlanStorage
 								planSlug={ planSlug }
 								options={ { isTableCell: true } }
-								intervalType={ intervalType }
 								onStorageAddOnClick={ onStorageAddOnClick }
 								showUpgradeableStorage={ showUpgradeableStorage }
 							/>

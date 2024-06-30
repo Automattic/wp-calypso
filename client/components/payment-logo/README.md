@@ -26,8 +26,6 @@ import PaymentLogo from 'calypso/components/payment-logo';
 
 	<PaymentLogo type="eps" />
 
-	<PaymentLogo type="giropay" />
-
 	<PaymentLogo type="ideal" />
 
 	<PaymentLogo type="jcb" />
@@ -55,7 +53,6 @@ import PaymentLogo from 'calypso/components/payment-logo';
   - `diners`
   - `discover`
   - `eps`
-  - `giropay`
   - `ideal`
   - `jcb`
   - `mastercard`

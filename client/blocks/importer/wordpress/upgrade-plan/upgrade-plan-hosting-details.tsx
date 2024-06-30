@@ -55,7 +55,7 @@ export const UpgradePlanHostingDetails = () => {
 					</p>
 					<p className="import__upgrade-plan-hosting-details-header-subtext">
 						{ translate(
-							'Google data shows that %(boostPercentage)d%% more WordPress.com sites have good Core Web Vitals as compared to other WordPress hosts.',
+							'%(boostPercentage)d%% more WordPress.com sites have good Core Web Vitals when compared to any other WordPress host [Source: Google data].',
 							{
 								args: { boostPercentage },
 							}
