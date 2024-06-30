@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { trendingUp } from '@wordpress/icons';
+import { megaphone } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -11,12 +11,11 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL } from '../../../const';
-import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
-import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
+import { StatsEmptyActionSocial } from '../shared';
 
-type StatsTopPostsProps = {
+type StatsRefeeresProps = {
 	className?: string;
 	period: string;
 	query: string;
@@ -28,7 +27,7 @@ type StatsTopPostsProps = {
 	};
 };
 
-const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
+const StatsRefeeres: React.FC< StatsRefeeresProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -36,9 +35,7 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsTopPosts';
-	// Use StatsModule to display paywall upsell.
-	const shouldGateStatsTopPosts = useShouldGateStats( statType );
+	const statType = 'statsReferrers';
 
 	// TODO: sort out the state shape.
 	const requesting = useSelector( ( state: any ) =>
@@ -52,10 +49,33 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 		<>
 			{ /* This will be replaced with ghost loaders, fallback to the current implementation until then. */ }
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
+			{ ( ! data || ! data?.length ) && (
+				<StatsCard
+					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
+					title={ moduleStrings.title }
+					isEmpty
+					emptyMessage={
+						<EmptyModuleCard
+							icon={ megaphone }
+							description={ translate(
+								"We'll show you which websites are {{link}}referring visitors{{/link}} to your site.",
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#referrers` ) } />,
+									},
+									context: 'Stats: Info box label when the Referrers module is empty',
+								}
+							) }
+							cards={ <StatsEmptyActionSocial from="module_referrers" /> }
+						/>
+					}
+				/>
+			) }
 			{ /* TODO: consider supressing <StatsModule /> empty state */ }
-			{ ( data && !! data.length ) || shouldGateStatsTopPosts ? (
+			{ data && !! data.length && (
 				<StatsModule
-					path="posts"
+					path="referrers"
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
@@ -63,36 +83,9 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 					showSummaryLink
 					className={ className } // TODO: extend with a base class after adding skeleton loaders
 				/>
-			) : (
-				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
-					title={ moduleStrings.title }
-					isEmpty
-					emptyMessage={
-						<EmptyModuleCard
-							icon={ trendingUp }
-							description={ translate(
-								'Your top {{link}}posts and pages{{/link}} will display here and learn what content resonates the most. Start creating and sharing!',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#posts-amp-pages` ) } />,
-									},
-									context: 'Stats: Info box label when the Posts & Pages module is empty',
-								}
-							) }
-							cards={
-								<>
-									<StatsEmptyActionAI from="module_top_posts" />
-									<StatsEmptyActionSocial from="module_top_posts" />
-								</>
-							}
-						/>
-					}
-				/>
 			) }
 		</>
 	);
 };
 
-export default StatsTopPosts;
+export default StatsRefeeres;
