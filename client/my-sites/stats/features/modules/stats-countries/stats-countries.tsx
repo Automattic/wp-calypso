@@ -3,6 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { mapMarker } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
@@ -18,7 +19,10 @@ import StatsModulePlaceholder from '../../../stats-module/placeholder';
 type StatCountriesProps = {
 	className?: string;
 	period: string;
-	query: string;
+	query: {
+		date: string;
+		period: string;
+	};
 	moduleStrings: {
 		title: string;
 		item: string;
@@ -46,6 +50,9 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 
 	return (
 		<>
+			{ siteId && statType && (
+				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+			) }
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
 			{ ( ! data || ! data?.length ) && (
 				<StatsCard
