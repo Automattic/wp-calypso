@@ -7,6 +7,8 @@ import statsStrings from '../stats-strings';
 
 import './style.scss';
 
+// TODO: to delete if/when cleaning feature flag stats/empty-module-traffic
+
 class StatCountries extends Component {
 	static propTypes = {
 		summary: PropTypes.bool,

@@ -125,7 +125,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								initialUserMessage={ searchTerm }
 								logger={ trackEvent }
 								loggerEventNamePrefix="calypso_odie"
-								selectedSiteId={ site.ID as number }
+								selectedSiteId={ site?.ID as number }
 								extraContactOptions={
 									<HelpCenterContactPage
 										hideHeaders

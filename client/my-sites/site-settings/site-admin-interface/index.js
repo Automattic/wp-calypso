@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 import { Card, FormLabel } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
@@ -171,26 +170,22 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 						}
 					) }
 				</HostingCardDescription>
-				{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) ? (
-					<p className="form-setting-explanation">
-						{ translate( 'This setting has now moved to {{a}}Settings → General{{/a}}.', {
-							components: {
-								a: (
-									<a
-										href={
-											adminInterface === 'wp-admin'
-												? `${ siteAdminUrl }options-general.php`
-												: `/settings/general/${ siteSlug }#admin-interface-style`
-										}
-										rel="noreferrer"
-									/>
-								),
-							},
-						} ) }
-					</p>
-				) : (
-					renderForm()
-				) }
+				<p className="form-setting-explanation">
+					{ translate( 'This setting has now moved to {{a}}Settings → General{{/a}}.', {
+						components: {
+							a: (
+								<a
+									href={
+										adminInterface === 'wp-admin'
+											? `${ siteAdminUrl }options-general.php`
+											: `/settings/general/${ siteSlug }#admin-interface-style`
+									}
+									rel="noreferrer"
+								/>
+							),
+						},
+					} ) }
+				</p>
 			</HostingCard>
 		);
 	}

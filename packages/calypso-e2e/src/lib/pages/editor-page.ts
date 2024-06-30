@@ -5,7 +5,6 @@ import envVariables from '../../env-variables';
 import {
 	EditorComponent,
 	EditorPublishPanelComponent,
-	EditorNavSidebarComponent,
 	EditorToolbarComponent,
 	EditorSettingsSidebarComponent,
 	EditorGutenbergComponent,
@@ -51,7 +50,6 @@ export class EditorPage {
 	private page: Page;
 	private editor: EditorComponent;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
-	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	private editorGutenbergComponent: EditorGutenbergComponent;
@@ -78,7 +76,6 @@ export class EditorPage {
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
 		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
 		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
 		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
@@ -195,12 +192,10 @@ export class EditorPage {
 	 * This method will attempt to close the following panels:
 	 * 	- Publish Panel (including pre-publish checklist)
 	 * 	- Editor Settings Panel
-	 * 	- Editor Navigation Sidebar
 	 */
 	async closeAllPanels(): Promise< void > {
 		await Promise.allSettled( [
 			this.editorPublishPanelComponent.closePanel(),
-			this.editorToolbarComponent.closeNavSidebar(),
 			this.editorToolbarComponent.closeSettings(),
 		] );
 	}
@@ -938,10 +933,7 @@ export class EditorPage {
 			const navbarComponent = new NavbarComponent( this.page );
 			actions.push( navbarComponent.clickMySites() );
 		} else {
-			actions.push(
-				this.editorToolbarComponent.openNavSidebar(),
-				this.editorNavSidebarComponent.exitEditor()
-			);
+			actions.push( this.editorToolbarComponent.closeEditor() );
 		}
 
 		// Perform the actions and resolve promises.
