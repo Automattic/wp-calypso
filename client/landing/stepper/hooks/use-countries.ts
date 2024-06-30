@@ -4,7 +4,7 @@ import wpcom from 'calypso/lib/wp';
 type WooCountries = Record< string, string >;
 
 export function useCountries(
-	localeSlug: string | null,
+	localeSlug: string | null = 'en',
 	queryOptions: Omit< UseQueryOptions< any, Error, WooCountries >, 'queryKey' > = {}
 ): UseQueryResult< WooCountries > {
 	return useQuery< any, Error, WooCountries >( {
