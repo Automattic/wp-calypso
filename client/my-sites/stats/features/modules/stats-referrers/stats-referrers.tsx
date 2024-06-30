@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { trendingUp } from '@wordpress/icons';
+import { megaphone } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -13,9 +13,9 @@ import EmptyModuleCard from '../../../components/empty-module-card/empty-module-
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
-import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
+import { StatsEmptyActionSocial } from '../shared';
 
-type StatsTopPostsProps = {
+type StatsRefeeresProps = {
 	className?: string;
 	period: string;
 	query: string;
@@ -27,7 +27,7 @@ type StatsTopPostsProps = {
 	};
 };
 
-const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
+const StatsRefeeres: React.FC< StatsRefeeresProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -35,7 +35,7 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsTopPosts';
+	const statType = 'statsReferrers';
 
 	// TODO: sort out the state shape.
 	const requesting = useSelector( ( state: any ) =>
@@ -56,23 +56,18 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ trendingUp }
+							icon={ megaphone }
 							description={ translate(
-								'Your top {{link}}posts and pages{{/link}} will display here and learn what content resonates the most. Start creating and sharing!',
+								"We'll show you which websites are {{link}}referring visitors{{/link}} to your site.",
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#posts-amp-pages` ) } />,
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#referrers` ) } />,
 									},
-									context: 'Stats: Info box label when the Posts & Pages module is empty',
+									context: 'Stats: Info box label when the Referrers module is empty',
 								}
 							) }
-							cards={
-								<>
-									<StatsEmptyActionAI from="module_top_posts" />
-									<StatsEmptyActionSocial from="module_top_posts" />
-								</>
-							}
+							cards={ <StatsEmptyActionSocial from="module_referrers" /> }
 						/>
 					}
 				/>
@@ -80,7 +75,7 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 			{ /* TODO: consider supressing <StatsModule /> empty state */ }
 			{ data && !! data.length && (
 				<StatsModule
-					path="posts"
+					path="referrers"
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
@@ -93,4 +88,4 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 	);
 };
 
-export default StatsTopPosts;
+export default StatsRefeeres;
