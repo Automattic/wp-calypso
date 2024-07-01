@@ -47,12 +47,12 @@ export const THEME_TIERS = {
 		minimumUpsellPlan: PLAN_PERSONAL,
 		isFilterable: true,
 	},
-	THEME_TIER_PREMIUM: {
+	[ THEME_TIER_PREMIUM ]: {
 		label: getIncludedWithLabel( PLAN_PREMIUM ),
 		minimumUpsellPlan: PLAN_PREMIUM,
 		isFilterable: true,
 	},
-	THEME_TIER_PARTNER: {
+	[ THEME_TIER_PARTNER ]: {
 		label: translate( 'Partner', {
 			context: 'This theme is developed and supported by a theme partner',
 		} ),
