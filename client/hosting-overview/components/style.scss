@@ -251,7 +251,8 @@ $card-padding: 24px;
 	margin: 0;
 }
 
-a.hosting-overview__action-button {
+a.hosting-overview__action-button,
+button.hosting-overview__action-button {
 	display: flex;
 	justify-content: space-between;
 	color: var(--studio-gray-100);
@@ -267,6 +268,11 @@ a.hosting-overview__action-button {
 	&:focus {
 		color: var(--studio-gray-100);
 		text-decoration: none;
+	}
+
+	&[disabled] {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 }
 
@@ -296,18 +302,19 @@ a.hosting-overview__action-button {
 	}
 
 	&:hover {
-		color: var(--color-primary-60);
 		svg {
 			color: var(--color-primary-60);
 			fill: var(--color-primary-60);
 		}
 
-		.hosting-overview__action-button,
-		.hosting-overview__action-text,
-		.hosting-overview__dashicon {
-			color: var(--color-primary-60);
-			svg {
+		.hosting-overview__action-button:not([disabled]) {
+			.hosting-overview__action-text,
+			.hosting-overview__dashicon {
 				color: var(--color-primary-60);
+				svg {
+					color: var(--color-primary-60);
+					fill: var(--color-primary-60);
+				}
 			}
 		}
 	}
