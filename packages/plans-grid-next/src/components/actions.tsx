@@ -80,7 +80,7 @@ const PlanFeatures2023GridActions = ( {
 	);
 
 	const {
-		primary: { callback, text, status, classes },
+		primary: { callback, text, status, variant },
 		postButtonText,
 	} = useAction( {
 		availableForPurchase,
@@ -131,7 +131,7 @@ const PlanFeatures2023GridActions = ( {
 			onClick={ callback }
 			busy={ busy }
 			disabled={ status !== 'enabled' }
-			classes={ classes }
+			classes={ variant === 'secondary' ? 'is-secondary' : '' }
 		>
 			{ text }
 		</PlanButton>

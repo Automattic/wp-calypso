@@ -155,7 +155,7 @@ export interface GridAction {
 		callback: () => void;
 		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
 		status?: 'disabled' | 'blocked' | 'enabled';
-		classes?: string;
+		variant?: 'primary' | 'secondary';
 	};
 	postButtonText?: TranslateResult;
 }
