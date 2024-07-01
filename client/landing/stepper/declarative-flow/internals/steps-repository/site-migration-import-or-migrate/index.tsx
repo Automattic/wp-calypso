@@ -4,6 +4,7 @@ import { StepContainer, SubTitle, Title } from '@automattic/onboarding';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -14,6 +15,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const site = useSite();
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
+	const { deleteMigrationSticker } = useMigrationStickerMutation();
 
 	const options = [
 		{
@@ -45,6 +47,10 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 	const handleClick = ( destination: string ) => {
 		if ( destination === 'migrate' && ! canInstallPlugins ) {
 			return navigation.submit?.( { destination: 'upgrade' } );
+		}
+
+		if ( destination === 'import' && site && site.ID ) {
+			deleteMigrationSticker( site.ID );
 		}
 
 		return navigation.submit?.( { destination } );
