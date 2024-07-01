@@ -125,7 +125,7 @@ class SignupForm extends Component {
 		shouldDisplayUserExistsError: PropTypes.bool,
 		submitForm: PropTypes.func,
 		handleCreateAccountError: PropTypes.func,
-		notYouText: PropTypes.string,
+		notYouText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 
 		// Connected props
 		oauth2Client: PropTypes.object,
