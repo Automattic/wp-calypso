@@ -45,7 +45,7 @@ const getPurchasesBySiteId = createSelector(
 
 // TODO: Consolidate this with the useStatsPurchases hook.
 export const hasAnyPlan = ( state: object, siteId: number | null ) => {
-	const sitePurchases = getPurchasesBySiteId( state, siteId );
+	const sitePurchases = getSitePurchases( state, siteId );
 
 	const isFreeOwned = isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_FREE );
 	const isCommercialOwned = areProductsOwned( sitePurchases, [
