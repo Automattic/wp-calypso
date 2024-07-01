@@ -1,11 +1,11 @@
 /* global helpCenterData */
 import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import HelpCenter from '@automattic/help-center';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
-import HelpCenter from '../src/components/help-center';
 const queryClient = new QueryClient();
 import './help-center.scss';
 

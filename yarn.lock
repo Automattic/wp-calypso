@@ -18865,6 +18865,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"help-center-app@workspace:apps/help-center":
+  version: 0.0.0-use.local
+  resolution: "help-center-app@workspace:apps/help-center"
+  dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/help-center": "workspace:^"
+    "@automattic/wp-babel-makepot": "workspace:^"
+    "@storybook/addon-backgrounds": "npm:^7.6.19"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:5.9.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:3.0.0"
+    copy-webpack-plugin: "npm:^10.2.4"
+    typescript: "npm:^5.3.3"
+    webpack: "npm:^5.91.0"
+  peerDependencies:
+    "@automattic/calypso-router": "workspace:^"
+    "@wordpress/data": ^10.0.0
+    "@wordpress/element": ^6.0.0
+    postcss: "*"
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    redux: ^4.2.1
+  languageName: unknown
+  linkType: soft
+
 "hexoid@npm:^1.0.0":
   version: 1.0.0
   resolution: "hexoid@npm:1.0.0"

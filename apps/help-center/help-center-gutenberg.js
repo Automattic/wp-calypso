@@ -1,6 +1,7 @@
 /* global helpCenterData */
 import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -8,8 +9,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import clsx from 'clsx';
-import HelpCenter from '../src/components/help-center';
-import HelpIcon from '../src/components/help-icon';
 import useActionHooks from './use-action-hooks';
 import './help-center.scss';
 

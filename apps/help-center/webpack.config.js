@@ -18,7 +18,7 @@ const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chu
  */
 function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	env.WP = true;
-	const outputPath = path.join( __dirname, 'dist', 'apps' );
+	const outputPath = path.join( __dirname, 'dist' );
 
 	const webpackConfig = getBaseWebpackConfig( env, argv );
 
@@ -26,16 +26,16 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		...webpackConfig,
 		mode: 'production',
 		entry: {
-			'help-center-gutenberg': path.join( __dirname, 'apps', 'help-center-gutenberg.js' ),
-			'help-center-wp-admin': path.join( __dirname, 'apps', 'help-center-wp-admin.js' ),
+			'help-center-gutenberg': path.join( __dirname, 'help-center-gutenberg.js' ),
+			'help-center-wp-admin': path.join( __dirname, 'help-center-wp-admin.js' ),
 			'help-center-gutenberg-disconnected': path.join(
 				__dirname,
-				'apps',
+
 				'help-center-gutenberg-disconnected.js'
 			),
 			'help-center-wp-admin-disconnected': path.join(
 				__dirname,
-				'apps',
+
 				'help-center-wp-admin-disconnected.js'
 			),
 		},
@@ -84,7 +84,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			new CopyPlugin( {
 				patterns: [
 					{
-						from: path.join( __dirname, 'apps', 'help-icon.svg' ),
+						from: path.join( __dirname, 'help-icon.svg' ),
 						to: path.join( __dirname, 'dist', 'apps' ),
 					},
 				],

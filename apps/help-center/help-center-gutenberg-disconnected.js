@@ -1,8 +1,8 @@
 import './config';
+import { HelpIcon } from '@automattic/help-center';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { registerPlugin } from '@wordpress/plugins';
-import HelpIcon from '../src/components/help-icon';
 import './help-center.scss';
 
 function HelpCenterContent() {
