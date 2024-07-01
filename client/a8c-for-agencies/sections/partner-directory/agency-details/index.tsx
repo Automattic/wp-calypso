@@ -22,6 +22,7 @@ import { PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG } from '../constants';
 import { useCountryList } from './hooks/use-country-list';
 import useDetailsForm from './hooks/use-details-form';
 import useSubmitForm from './hooks/use-submit-form';
+import LogoPicker from './logo-picker';
 
 import './style.scss';
 
@@ -138,14 +139,14 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				</FormField>
 				<FormField
 					label={ translate( 'Company logo' ) }
-					description={ translate(
+					sub={ translate(
 						'Upload your agency logo sized at 800px by 320px. Format allowed: JPG, PNG'
 					) }
 					isRequired
 				>
-					<TextControl
-						value={ formData.logoUrl }
-						onChange={ ( value ) => setFormFields( { logoUrl: value } ) }
+					<LogoPicker
+						logo={ formData.logoUrl }
+						onPick={ ( value ) => setFormFields( { logoUrl: value } ) }
 					/>
 				</FormField>
 			</FormSection>
