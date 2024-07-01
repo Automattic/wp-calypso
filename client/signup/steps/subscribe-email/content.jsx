@@ -37,6 +37,27 @@ function SubscribeEmailStepContent( props ) {
 				isSocialFirst={ false }
 				isSocialSignupEnabled={ false }
 				labelText={ translate( 'Your email' ) }
+				notYouText={ translate(
+					'Not you?{{br/}}Log out and {{link}}subscribe with %(email)s{{/link}}',
+					{
+						components: {
+							br: <br />,
+							link: (
+								<button
+									type="button"
+									id="loginAsAnotherUser"
+									className="continue-as-user__change-user-link"
+									onClick={ () => {
+										props.recordTracksEvent( 'calypso_signup_click_on_change_account' );
+										props.redirectToLogout( window.location.href );
+									} }
+								/>
+							),
+						},
+						args: { email },
+						comment: 'Link to continue login as different user',
+					}
+				) }
 				queryArgs={ { user_email: email, redirect_to: redirectUrl } }
 				redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 				shouldDisplayUserExistsError
