@@ -560,13 +560,6 @@ $with-sidebar-min-page-width: 1114px;
 				top: 45px;
 				height: 18px;
 			}
-
-			@supports (-moz-appearance:none) {
-				/* Specific styles for Firefox */
-				.wpnc__keyboard-shortcuts-popover-anchor {
-					top: 0;
-				}
-			}
 		}
 	}
 
