@@ -1,0 +1,25 @@
+.stats-card-skeleton {
+	// use separate animation to match the cycle actoss card
+	.stats-card-skeleton__placeholder {
+		animation: stats-skeleton-card 1.8s ease-in-out infinite;
+	}
+
+	ul {
+		padding: 0 24px; // match horizontal bar spacing
+		margin: 0;
+	}
+
+	li {
+		list-style: none;
+
+		& + li {
+			margin-top: 3px;
+		}
+	}
+}
+
+@keyframes stats-skeleton-card {
+	50% {
+		background-color: var(--color-neutral-0);
+	}
+}

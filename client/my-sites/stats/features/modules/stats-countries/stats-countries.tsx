@@ -14,24 +14,10 @@ import EmptyModuleCard from '../../../components/empty-module-card/empty-module-
 import { SUPPORT_URL } from '../../../const';
 import Geochart from '../../../geochart';
 import StatsModule from '../../../stats-module';
-import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import type { StatsDefaultModuleProps } from '../types';
 
-type StatCountriesProps = {
-	className?: string;
-	period: string;
-	query: {
-		date: string;
-		period: string;
-	};
-	moduleStrings: {
-		title: string;
-		item: string;
-		value: string;
-		empty: string;
-	};
-};
-
-const StatCountries: React.FC< StatCountriesProps > = ( {
+const StatCountries: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -40,6 +26,7 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsCountryViews';
+	// const [ isRequestingData, setIsRequestingData ] = React.useState( true );
 
 	const requesting = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
@@ -48,13 +35,22 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
 
+	const isRequestingData = requesting && ! data;
+
 	return (
 		<>
 			{ siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
-			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
+			{ isRequestingData && (
+				<StatsCardSkeleton
+					isLoading={ isRequestingData }
+					className={ className }
+					title={ moduleStrings.title }
+					type={ 3 }
+				/>
+			) }
+			{ ! isRequestingData && ! data?.length && (
 				<StatsCard
 					className={ className }
 					title={ translate( 'Locations' ) }
@@ -78,7 +74,7 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 					<></>
 				</StatsCard>
 			) }
-			{ data && !! data.length && (
+			{ ! isRequestingData && !! data?.length && (
 				<StatsModule
 					path="countryviews"
 					moduleStrings={ moduleStrings }

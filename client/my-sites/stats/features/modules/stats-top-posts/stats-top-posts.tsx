@@ -13,25 +13,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
-import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import type { StatsDefaultModuleProps } from '../types';
 
-type StatsTopPostsProps = {
-	className?: string;
-	period: string;
-	query: {
-		date: string;
-		period: string;
-	};
-	moduleStrings: {
-		title: string;
-		item: string;
-		value: string;
-		empty: string;
-	};
-};
-
-const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
+const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -49,14 +35,22 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
 
+	const isRequestingData = requesting && ! data;
+
 	return (
 		<>
 			{ siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
-			{ /* This will be replaced with ghost loaders, fallback to the current implementation until then. */ }
-			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
+			{ isRequestingData && (
+				<StatsCardSkeleton
+					isLoading={ isRequestingData }
+					className={ className }
+					title={ moduleStrings.title }
+					type={ 1 }
+				/>
+			) }
+			{ ! isRequestingData && ! data?.length && (
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ moduleStrings.title }
@@ -85,7 +79,7 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 				/>
 			) }
 			{ /* TODO: consider supressing <StatsModule /> empty state */ }
-			{ data && !! data.length && (
+			{ ! isRequestingData && !! data?.length && (
 				<StatsModule
 					path="posts"
 					moduleStrings={ moduleStrings }
