@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { icon } from '@wordpress/icons';
+import { customLink } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -55,14 +55,17 @@ const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ icon }
-							description={ translate( 'Description with {{link}}link{{/link}} goes here.', {
-								comment: '{{link}} links to support documentation.',
-								components: {
-									link: <a href={ localizeUrl( `${ SUPPORT_URL }#type` ) } />,
-								},
-								context: 'Stats: Info box label when the **type** module is empty',
-							} ) }
+							icon={ customLink }
+							description={ translate(
+								'Learn about your most {{link}}clicked external links{{/link}} to track engaging content.',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />,
+									},
+									context: 'Stats: Info box label when the Clicks module is empty',
+								}
+							) }
 						/>
 					}
 				>
