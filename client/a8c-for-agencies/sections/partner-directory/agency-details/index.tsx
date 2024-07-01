@@ -11,9 +11,7 @@ import { A4A_PARTNER_DIRECTORY_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/c
 import BudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/budget-selector';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
-import { useSelector } from 'calypso/state';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import IndustrySelector from '../components/industry-selector';
@@ -24,7 +22,7 @@ import { PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG } from '../constants';
 import { useCountryList } from './hooks/use-country-list';
 import useDetailsForm from './hooks/use-details-form';
 import useSubmitForm from './hooks/use-submit-form';
-import LogoUploadButton from './logo-upload-button';
+import LogoPicker from './logo-picker';
 
 import './style.scss';
 
@@ -34,8 +32,6 @@ type Props = {
 
 const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 	const translate = useTranslate();
-
-	const agency = useSelector( getActiveAgency );
 
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
@@ -74,14 +70,6 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				...fields,
 			};
 		} );
-	};
-
-	// We have to simulate sa Site object to use addMedia
-	const site = {
-		ID: agency?.id,
-		options: {
-			allowed_file_types: [],
-		},
 	};
 
 	return (
@@ -151,12 +139,15 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				</FormField>
 				<FormField
 					label={ translate( 'Company logo' ) }
-					description={ translate(
+					sub={ translate(
 						'Upload your agency logo sized at 800px by 320px. Format allowed: JPG, PNG'
 					) }
 					isRequired
 				>
-					<LogoUploadButton site={ site } />
+					<LogoPicker
+						logo={ formData.logoUrl }
+						onLogoUpload={ ( value ) => setFormFields( { logoUrl: value } ) }
+					/>
 				</FormField>
 			</FormSection>
 
