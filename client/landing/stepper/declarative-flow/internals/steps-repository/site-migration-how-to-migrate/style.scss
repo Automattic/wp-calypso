@@ -19,28 +19,27 @@
 	}
 
 	.how-to-migrate__list {
-		margin-top: 50px;
-		padding-bottom: 108px;
-
 		@include break-mobile {
-			margin-top: 80px;
 			padding-bottom: revert;
 		}
 
 		.card {
-			svg {
-				fill: #1e1e1e;
+			&.is-clickable {
+				cursor: pointer;
+
+				// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
+				transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
+
+				&:hover {
+					box-shadow: 0 0 0 1px var(--color-neutral-light);
+				}
 			}
 		}
 	}
 
-	.how-to-migrate__header {
-		align-items: center;
-		margin-bottom: 8px;
-
-		@include break-mobile {
-			display: flex;
-			margin-bottom: 0;
+	#how-to-migrate-header {
+		.formatted-header__subtitle {
+			text-align: center;
 		}
 	}
 
