@@ -4,11 +4,11 @@ import {
 	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,
 	getPlan,
-	getPlans,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { PlanPrice } from '@automattic/components';
 import Card from '@automattic/components/src/card';
+import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { CustomSelectControl } from '@wordpress/components';
@@ -17,9 +17,9 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useState } from 'react';
 import './style.scss';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UpgradeButton from '../../components/upgrade-button/upgrade-button';
 import EcommerceTrialIncluded from '../../current-plan/trials/ecommerce-trial-included';
@@ -45,12 +45,20 @@ type PlanKeys =
 
 const useEntrepreneurPlanPrices = () => {
 	const translate = useTranslate();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || '';
-	const state = useSelector( ( stateValue ) => stateValue );
-	const rawPlans = getPlans();
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [
+			PLAN_ECOMMERCE_MONTHLY,
+			PLAN_ECOMMERCE,
+			PLAN_ECOMMERCE_2_YEARS,
+			PLAN_ECOMMERCE_3_YEARS,
+		],
+		coupon: undefined,
+		siteId: null,
+		storageAddOns: null,
+		useCheckPlanAvailabilityForPurchase,
+	} );
 
-	const baseMontlyPrice =
-		getPlanRawPrice( state, rawPlans[ PLAN_ECOMMERCE_MONTHLY ].getProductId(), false ) || 0;
+	const baseMontlyPrice = pricingMeta?.[ PLAN_ECOMMERCE_MONTHLY ]?.originalPrice?.full || 0;
 
 	const planPrices: Record< PlanKeys, PlanPriceType > = {
 		PLAN_ECOMMERCE: {
@@ -82,8 +90,8 @@ const useEntrepreneurPlanPrices = () => {
 			return;
 		}
 		const plan = planPrices[ key ];
-		plan.price = getPlanRawPrice( state, rawPlans[ plan.slug ].getProductId(), false ) || 0;
-		plan.montlyPrice = getPlanRawPrice( state, rawPlans[ plan.slug ].getProductId(), true ) || 0;
+		plan.price = pricingMeta?.[ plan.slug ]?.originalPrice?.full || 0;
+		plan.montlyPrice = pricingMeta?.[ plan.slug ]?.originalPrice?.monthly || 0;
 		plan.discount = Math.floor( ( 1 - plan.montlyPrice / baseMontlyPrice ) * 100 );
 		plan.discountText = translate( '%(discount)d%% off', {
 			args: { discount: plan.discount },
@@ -93,9 +101,9 @@ const useEntrepreneurPlanPrices = () => {
 			case 'PLAN_ECOMMERCE':
 				plan.subText = translate( 'per month, %(rawPrice)s billed annually, excl. taxes', {
 					args: {
-						rawPrice: formatCurrency( plan.price, currencyCode, {
+						rawPrice: formatCurrency( plan.price, pricingMeta?.[ plan.slug ]?.currencyCode ?? '', {
 							stripZeros: true,
-							isSmallestUnit: false,
+							isSmallestUnit: true,
 						} ),
 					},
 					comment: 'Excl. Taxes is short for excluding taxes',
@@ -104,9 +112,9 @@ const useEntrepreneurPlanPrices = () => {
 			case 'PLAN_ECOMMERCE_2_YEARS':
 				plan.subText = translate( 'per month, %(rawPrice)s billed every two years, excl. taxes', {
 					args: {
-						rawPrice: formatCurrency( plan.price, currencyCode, {
+						rawPrice: formatCurrency( plan.price, pricingMeta?.[ plan.slug ]?.currencyCode ?? '', {
 							stripZeros: true,
-							isSmallestUnit: false,
+							isSmallestUnit: true,
 						} ),
 					},
 					comment: 'Excl. Taxes is short for excluding taxes',
@@ -115,9 +123,9 @@ const useEntrepreneurPlanPrices = () => {
 			case 'PLAN_ECOMMERCE_3_YEARS':
 				plan.subText = translate( 'per month, %(rawPrice)s billed every three years, excl. taxes', {
 					args: {
-						rawPrice: formatCurrency( plan.price, currencyCode, {
+						rawPrice: formatCurrency( plan.price, pricingMeta?.[ plan.slug ]?.currencyCode ?? '', {
 							stripZeros: true,
-							isSmallestUnit: false,
+							isSmallestUnit: true,
 						} ),
 					},
 					comment: 'Excl. Taxes is short for excluding taxes',
@@ -220,7 +228,11 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 						</p>
 					</div>
 					<div className="price-block">
-						<PlanPrice rawPrice={ selectedPlan.montlyPrice } currencyCode={ currencyCode } />
+						<PlanPrice
+							rawPrice={ selectedPlan.montlyPrice }
+							currencyCode={ currencyCode }
+							isSmallestUnit
+						/>
 						<p className="card-text">{ selectedPlan.subText }</p>
 					</div>
 				</div>
