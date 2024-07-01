@@ -5,7 +5,7 @@ const tiers = stateFixture.productsList.items.jetpack_stats_yearly.price_tier_li
 
 describe( 'getAvailableUpgradeTiers', () => {
 	it( 'should return original tiers if not purchased or with no monthly views', () => {
-		const usageData = { views_limit: null, billableMonthlyViews: 0 };
+		const usageData = { views_limit: null, billable_monthly_views: 0 };
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
 		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
@@ -19,7 +19,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: 100_000,
 			current_tier: { limit: 100_000 },
-			billableMonthlyViews: 0,
+			billable_monthly_views: 0,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -32,7 +32,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: 110_000,
 			current_tier: { limit: 10_000 },
-			billableMonthlyViews: 0,
+			billable_monthly_views: 0,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -45,7 +45,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: 100_000,
 			current_tier: { limit: null },
-			billableMonthlyViews: 0,
+			billable_monthly_views: 0,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -58,7 +58,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: null,
 			current_tier: { limit: null },
-			billableMonthlyViews: 10_000,
+			billable_monthly_views: 10_000,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -71,7 +71,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: 10_000,
 			current_tier: { limit: 10_000 },
-			billableMonthlyViews: 100_001,
+			billable_monthly_views: 100_001,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -84,7 +84,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: null,
 			current_tier: { limit: null },
-			billableMonthlyViews: 1_000_001,
+			billable_monthly_views: 1_000_001,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -99,7 +99,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: 1_000_000,
 			current_tier: { limit: 1_000_000 },
-			billableMonthlyViews: 2_000_001,
+			billable_monthly_views: 2_000_001,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -112,7 +112,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: 1_000_000,
 			current_tier: { limit: 1_000_000 },
-			billableMonthlyViews: 16_500_000,
+			billable_monthly_views: 16_500_000,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -125,7 +125,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: 1_000_000,
 			current_tier: { minimum_price: 70000, limit: 1_000_000 },
-			billableMonthlyViews: 16_500_001,
+			billable_monthly_views: 16_500_001,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -141,7 +141,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: 100_000,
 			current_tier: { minimum_price: 20000, limit: 100_000 },
-			billableMonthlyViews: 260_000,
+			billable_monthly_views: 260_000,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -157,7 +157,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: 10_000,
 			current_tier: { minimum_price: 10000, limit: 10_000 },
-			billableMonthlyViews: 1_000_010,
+			billable_monthly_views: 1_000_010,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -173,7 +173,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 		const usageData = {
 			views_limit: 110_000,
 			current_tier: { minimum_price: 10000, limit: 10_000 },
-			billableMonthlyViews: 1_000_010,
+			billable_monthly_views: 900_010,
 		};
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
