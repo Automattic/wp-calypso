@@ -10,6 +10,7 @@ import { isRedirectAllowed } from 'calypso/lib/url/is-redirect-allowed';
 import useCreateNewAccountMutation from 'calypso/signup/hooks/use-create-new-account';
 import useSubscribeToMailingList from 'calypso/signup/hooks/use-subscribe-to-mailing-list';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -108,7 +109,15 @@ function SubscribeEmailStep( props ) {
 				from: queryArguments.from,
 			} );
 		}
-	}, [ createNewAccount, currentUser, flowName, email ] );
+	}, [
+		createNewAccount,
+		currentUser,
+		email,
+		flowName,
+		queryArguments.from,
+		queryArguments.mailing_list,
+		subscribeToMailingList,
+	] );
 
 	return (
 		<div className="subscribe-email">
@@ -166,5 +175,5 @@ export default connect(
 			queryArguments: queryArguments,
 		};
 	},
-	{ submitSignupStep }
+	{ redirectToLogout, submitSignupStep }
 )( localize( SubscribeEmailStep ) );

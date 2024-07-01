@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localize } from 'i18n-calypso';
 import SignupForm from 'calypso/blocks/signup-form';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
@@ -11,6 +12,7 @@ function SubscribeEmailStepContent( props ) {
 		handleCreateAccountSuccess,
 		isPending,
 		redirectToAfterLoginUrl,
+		redirectToLogout,
 		redirectUrl,
 		step,
 		stepName,
@@ -48,8 +50,8 @@ function SubscribeEmailStepContent( props ) {
 									id="loginAsAnotherUser"
 									className="continue-as-user__change-user-link"
 									onClick={ () => {
-										props.recordTracksEvent( 'calypso_signup_click_on_change_account' );
-										props.redirectToLogout( window.location.href );
+										recordTracksEvent( 'calypso_signup_click_on_change_account' );
+										redirectToLogout( window.location.href );
 									} }
 								/>
 							),
