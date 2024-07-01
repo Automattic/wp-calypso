@@ -238,7 +238,8 @@ $card-padding: 24px;
 	margin: 0;
 }
 
-a.hosting-overview__action-button {
+a.hosting-overview__action-button,
+button.hosting-overview__action-button {
 	display: flex;
 	justify-content: space-between;
 	color: var(--studio-gray-100);
@@ -254,6 +255,11 @@ a.hosting-overview__action-button {
 	&:focus {
 		color: var(--studio-gray-100);
 		text-decoration: none;
+	}
+
+	&[disabled] {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 }
 
@@ -297,16 +303,6 @@ a.hosting-overview__action-button {
 					fill: var(--color-primary-60);
 				}
 			}
-		}
-	}
-
-	button.hosting-overview__action-button {
-		display: inline-flex;
-		justify-content: space-between;
-		width: 100%;
-		&[disabled] {
-			opacity: 0.5;
-			cursor: not-allowed;
 		}
 	}
 }
