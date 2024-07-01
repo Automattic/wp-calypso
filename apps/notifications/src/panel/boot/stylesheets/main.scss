@@ -555,9 +555,14 @@ $with-sidebar-min-page-width: 1114px;
 			}
 
 			.wpnc__keyboard-shortcuts-popover-anchor {
-				display: inline-block;
-				vertical-align: baseline;
-				margin-left: auto;
+				position: absolute;
+				right: 0;
+				top: 45px;
+				height: 18px;
+
+				&::after {
+					content: "";
+				}
 			}
 		}
 	}

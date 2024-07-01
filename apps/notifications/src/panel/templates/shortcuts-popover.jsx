@@ -17,11 +17,10 @@ export const ShortcutsPopover = ( {
 	toggleShortcutsPopover,
 	isPanelOpen,
 	isShortcutsPopoverOpen,
+	popoverAnchorRef,
 } ) => {
 	const translate = useTranslate();
 
-	// create context for the keyboard shortcuts popover icon
-	const popoverAnchorRef = useRef();
 	const spanRef = useRef();
 	const { isMobile } = userAgent;
 
@@ -115,8 +114,6 @@ export const ShortcutsPopover = ( {
 						},
 					] }
 				>
-					{ /* Attach the popover to this anchor instead of the button, so we can have retain position with scrolling. */ }
-					<div className="wpnc__keyboard-shortcuts-popover-anchor" ref={ popoverAnchorRef } />
 					<button
 						className={ clsx( 'wpnc__keyboard-shortcuts-button', {
 							'active-action': isShortcutsPopoverOpen,
