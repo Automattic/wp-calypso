@@ -763,10 +763,10 @@ const WrappedCancelPurchaseForm = ( props ) => {
 		<ConnectedCancelPurchaseForm
 			{ ...props }
 			downgradePlanToPersonalPrice={
-				pricingMeta[ personalDowngradePlan?.getProductId() ]?.originalPrice?.full
+				pricingMeta?.[ personalDowngradePlan?.getProductId() ]?.originalPrice?.full
 			}
 			downgradePlanToMonthlyPrice={
-				pricingMeta[ monthlyDowngradePlan?.getProductId() ]?.originalPrice?.full
+				pricingMeta?.[ monthlyDowngradePlan?.getProductId() ]?.originalPrice?.full
 			}
 		/>
 	);
