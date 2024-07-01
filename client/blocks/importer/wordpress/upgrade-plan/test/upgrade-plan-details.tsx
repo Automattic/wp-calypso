@@ -84,6 +84,25 @@ describe( 'UpgradePlanDetails', () => {
 				expect( scope.isDone() ).toBe( true );
 			} );
 		} );
+
+		it( 'should call the sticker delete endpoint creation when unmounting the component', async () => {
+			nock.cleanAll();
+			const scope = nock( 'https://public-api.wordpress.com:443' )
+				.delete( `/wpcom/v2/sites/${ SITE_ID }/migration-flow` )
+				.reply( 200 );
+
+			const { unmount } = renderUpgradePlanDetailsComponent();
+
+			await waitFor( () => {
+				expect( scope.isDone() ).toBe( false );
+			} );
+
+			unmount();
+
+			await waitFor( () => {
+				expect( scope.isDone() ).toBe( true );
+			} );
+		} );
 	} );
 
 	describe( 'without migration sticker HOC', () => {
