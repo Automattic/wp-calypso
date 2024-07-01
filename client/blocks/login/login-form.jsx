@@ -906,7 +906,7 @@ export class LoginForm extends Component {
 
 								{ 'unknown_user' === requestError.code && ! isRecognizedLogin() && (
 									<Experiment
-										name="calypso_login_failed_show_migrate_cta_202406"
+										name="calypso_login_failed_show_migrate_cta_202407_v2"
 										defaultExperience={ null }
 										loadingExperience={ null }
 										treatmentExperience={
