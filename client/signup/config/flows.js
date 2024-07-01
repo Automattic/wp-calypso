@@ -37,28 +37,25 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 		checkoutURL += `/${ localeSlug }`;
 	}
 
-	let isDomainOnly;
-	// TODO:
-	// the domain only flow has special rule. Ideally they should also be configurable in flows-pure.
-	if ( [ 'domain', 'domain-for-gravatar' ].includes( flowName ) ) {
-		isDomainOnly = 1;
-		destination = `/start/${ flowName }/domain-only`;
-	}
+	const isDomainOnly = [ 'domain', 'domain-for-gravatar' ].includes( flowName );
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
 	// Due to historical reason, `destination` can be either a path or a complete URL.
 	// Thus, if it is determined as not an URL, we assume it as a path here. We can surely make it more comprehensive,
 	// but the required effort and computation cost might outweigh the gain.
+	//
+	// TODO:
+	// the domain only flow has special rule. Ideally they should also be configurable in flows-pure.
 	const checkoutBackUrl = isURL( destination )
 		? destination
-		: constructBackUrlFromPath( destination );
+		: constructBackUrlFromPath( isDomainOnly ? `/start/${ flowName }/domain-only` : destination );
 
 	return addQueryArgs(
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
-			isDomainOnly,
+			...( isDomainOnly && { isDomainOnly: 1 } ),
 			checkoutBackUrl,
 		},
 		checkoutURL
