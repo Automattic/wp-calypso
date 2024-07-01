@@ -553,18 +553,7 @@ $with-sidebar-min-page-width: 1114px;
 				padding-right: 8px;
 				color: var(--color-neutral-40, #787c82);
 			}
-
-			.wpnc__keyboard-shortcuts-popover-anchor {
-				position: absolute;
-				right: 0;
-				top: 45px;
-				height: 18px;
-			}
 		}
-	}
-
-	.disable-sticky .wpnc__time-group-wrap {
-		position: static;
 	}
 
 	.wpnc__undo-item {
