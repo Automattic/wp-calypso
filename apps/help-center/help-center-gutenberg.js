@@ -36,6 +36,7 @@ function HelpCenterContent() {
 		return () => clearTimeout( timeout );
 	}, [] );
 
+	// This allows you to open the help center when certain conditions are met.
 	useActionHooks();
 
 	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );

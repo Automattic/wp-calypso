@@ -70,7 +70,7 @@ This will deploy the Help Center app for Jetpack consumption. Along with the lan
 
 ### Specify query per page/route
 
-In [route-to-query-mapping.json](https://github.com/Automattic/wp-calypso/blob/add/tailored_posts_help_center/packages/help-center/src/route-to-query-mapping.json), there is a JSON structure where you can specify which search query Help Center should use based on the page URL/route.
+In [route-to-query-mapping.json](https://github.com/Automattic/wp-calypso/blob/trunk/help-center/src/route-to-query-mapping.json), there is a JSON structure where you can specify which search query Help Center should use based on the page URL/route.
 
 Example
 
@@ -83,7 +83,7 @@ Example
 
 ### Suggest specific articles per page/route
 
-In [tailored-post-ids-mapping.json](https://github.com/Automattic/wp-calypso/blob/add/tailored_posts_help_center/packages/help-center/src/tailored-post-ids-mapping.json), there is a JSON structure where you can specify which post id ( one or many ) from which blog ( just one blog ) should be displayed
+In [tailored-post-ids-mapping.json](https://github.com/Automattic/wp-calypso/blob/trunk/packages/help-center/src/tailored-post-ids-mapping.json), there is a JSON structure where you can specify which post id ( one or many ) from which blog ( just one blog ) should be displayed
 
 ```
 // This will fetch posts `"post_ids": [ 248292, 150414 ]` from `"blog_id": 9619154` and display them on `/home`
