@@ -197,7 +197,7 @@ function ContinueAsUser( {
 				<Button
 					busy={ isLoading }
 					primary
-					href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
+					href={ validatedRedirectPath || validatedRedirectUrlFromQuery || '/' }
 				>
 					{ translate( 'Continue' ) }
 				</Button>

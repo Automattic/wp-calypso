@@ -351,35 +351,18 @@ export class EditorToolbarComponent {
 		await button.click();
 	}
 
-	/* Navigation sidebar */
-
 	/**
-	 * Opens the nav sidebar.
+	 * Closes the editor.
+	 *
+	 * Clicks the `W` logo in the corner to close the editor.
 	 */
-	async openNavSidebar(): Promise< void > {
+	async closeEditor(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const target = editorParent.getByRole( 'button', {
-			name: 'Block editor sidebar',
+		const target = editorParent.getByRole( 'link', {
+			name: 'View Posts',
 		} );
 		if ( await this.targetIsOpen( target ) ) {
-			return;
-		}
-
-		await target.click();
-	}
-
-	/**
-	 * Closes the nav sidebar.
-	 */
-	async closeNavSidebar(): Promise< void > {
-		const editorParent = await this.editor.parent();
-
-		const target = editorParent.getByRole( 'button', {
-			name: 'Block editor sidebar',
-		} );
-
-		if ( ! ( await this.targetIsOpen( target ) ) ) {
 			return;
 		}
 

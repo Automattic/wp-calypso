@@ -44,6 +44,8 @@ import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModuleCountries from './features/modules/stats-countries';
+import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -416,27 +418,52 @@ class StatsSite extends Component {
 								) }
 							/>
 						) }
-						<StatsModule
-							path="referrers"
-							moduleStrings={ moduleStrings.referrers }
-							period={ this.props.period }
-							query={ query }
-							statType="statsReferrers"
-							showSummaryLink
-							className={ clsx(
-								'stats__flexible-grid-item--40--once-space',
-								'stats__flexible-grid-item--full--large',
-								'stats__flexible-grid-item--full--medium'
-							) }
-						/>
+						{ ! isNewStateEnabled && (
+							<StatsModule
+								path="referrers"
+								moduleStrings={ moduleStrings.referrers }
+								period={ this.props.period }
+								query={ query }
+								statType="statsReferrers"
+								showSummaryLink
+								className={ clsx(
+									'stats__flexible-grid-item--40--once-space',
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+						{ isNewStateEnabled && (
+							<StatsModuleReferrers
+								moduleStrings={ moduleStrings.referrers }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									'stats__flexible-grid-item--40--once-space',
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 
-						<Countries
-							path="countries"
-							period={ this.props.period }
-							query={ query }
-							summary={ false }
-							className={ clsx( 'stats__flexible-grid-item--full' ) }
-						/>
+						{ ! isNewStateEnabled && (
+							<Countries
+								path="countries"
+								period={ this.props.period }
+								query={ query }
+								summary={ false }
+								className={ clsx( 'stats__flexible-grid-item--full' ) }
+							/>
+						) }
+						{ isNewStateEnabled && (
+							<StatsModuleCountries
+								moduleStrings={ moduleStrings.countries }
+								period={ this.props.period }
+								query={ query }
+								summary={ false }
+								className={ clsx( 'stats__flexible-grid-item--full' ) }
+							/>
+						) }
 
 						{ /* If UTM if supported display the module or update Jetpack plugin card */ }
 						{ supportsUTMStats && ! isOldJetpack && (

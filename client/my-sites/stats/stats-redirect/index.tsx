@@ -32,6 +32,9 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
+	// TODO: Consolidate permissions checks.
+	// This same code is in LoadStatsPage (which calls this component) so
+	// it might not be necessary here.
 	const canUserManageOptions = useSelector( ( state ) =>
 		canCurrentUser( state, siteId, 'manage_options' )
 	);
@@ -51,6 +54,9 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	const redirectToPurchase =
 		isSiteJetpackNotAtomic && ! hasAnyPlan && purchaseNotPostponed && shouldShowPaywall;
 
+	// The restricted dashboard means no more paywall!
+	const skipPaywallFlow = config.isEnabled( 'stats/restricted-dashboard' );
+
 	// TODO: If notices are not used by class components, we don't have any reasons to launch any of those actions anymore. If we do need them, we should consider refactoring them to another component.
 	const dispatch = useDispatch();
 	useEffect( () => {
@@ -66,8 +72,19 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		}
 	}, [ dispatch, siteId, isLoadingNotices, purchaseNotPostponed ] );
 
-	// render purchase flow for Jetpack sites created after February 2024
-	if ( ! isLoading && redirectToPurchase && siteSlug && canUserManageOptions ) {
+	// Render conditions (for readability).
+	const shouldRenderPaywall =
+		! isLoading && ! skipPaywallFlow && redirectToPurchase && siteSlug && canUserManageOptions;
+	const shouldRenderContent = ! isLoading && ( canUserViewStats || canUserManageOptions );
+
+	// Handle possible render conditions.
+	// Based on render conditions, loading state takes priority.
+	if ( isLoading ) {
+		return <StatsLoader />;
+	}
+
+	// Paywall is dependant on site age, type, & plan as well as user permissions.
+	if ( shouldRenderPaywall ) {
 		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
 		const currentParams = new URLSearchParams( window.location.search );
 		const queryParams = new URLSearchParams();
@@ -90,12 +107,18 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		);
 
 		return null;
-	} else if ( ! isLoading && ( canUserViewStats || canUserManageOptions ) ) {
-		return <>{ children }</>;
-	} else if ( isLoading ) {
-		return <StatsLoader />;
 	}
 
+	// Default is to show the user some stats.
+	// There are permissions considerations though, in which case we fall
+	// through and show nothing. Feels broken.
+	if ( shouldRenderContent ) {
+		return <>{ children }</>;
+	}
+
+	// TODO: Render a proper error message.
+	// Should indicate user does not have permissions to view stats.
+	// See note above regarding permissions.
 	return null;
 };
 

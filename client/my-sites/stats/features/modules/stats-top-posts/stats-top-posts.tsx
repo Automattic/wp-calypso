@@ -1,23 +1,28 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { trendingUp, megaphone, starEmpty } from '@wordpress/icons';
+import { trendingUp } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import EmptyStateAction from '../../../components/empty-state-action';
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
 
 type StatsTopPostsProps = {
 	className?: string;
 	period: string;
-	query: string;
+	query: {
+		date: string;
+		period: string;
+	};
 	moduleStrings: {
 		title: string;
 		item: string;
@@ -25,11 +30,6 @@ type StatsTopPostsProps = {
 		empty: string;
 	};
 };
-
-// TODO: move to a shared file if this is the final URL
-const JETPACK_SUPPORT_AI_URL =
-	'https://jetpack.com/support/jetpack-blocks/jetpack-ai-assistant-block/';
-const JETPACK_SUPPORT_SOCIAL_URL = 'https://jetpack.com/support/jetpack-social/';
 
 const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 	period,
@@ -49,45 +49,16 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
 
-	const cardActions = [
-		{
-			icon: starEmpty,
-			text: translate( 'Craft engaging content with Jetpack AI assistant' ),
-			onClick: () => {
-				// analytics event tracting handled in EmptyStateAction component
-
-				setTimeout( () => ( window.location.href = localizeUrl( JETPACK_SUPPORT_AI_URL ) ), 250 );
-			},
-			analyticsDetails: {
-				from: 'module_top_posts',
-				feature: 'ai_assistant',
-			},
-		},
-		{
-			icon: megaphone,
-			text: translate( 'Share on social media with one click' ),
-			onClick: () => {
-				// analytics event tracting handled in EmptyStateAction component
-
-				setTimeout(
-					() => ( window.location.href = localizeUrl( JETPACK_SUPPORT_SOCIAL_URL ) ),
-					250
-				);
-			},
-			analyticsDetails: {
-				from: 'module_top_posts',
-				feature: 'social_sharing',
-			},
-		},
-	];
-
 	return (
 		<>
+			{ siteId && statType && (
+				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+			) }
 			{ /* This will be replaced with ghost loaders, fallback to the current implementation until then. */ }
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
 			{ ( ! data || ! data?.length ) && (
 				<StatsCard
-					className={ className }
+					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ moduleStrings.title }
 					isEmpty
 					emptyMessage={
@@ -103,20 +74,15 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 									context: 'Stats: Info box label when the Posts & Pages module is empty',
 								}
 							) }
-							cards={ cardActions.map( ( action, index ) => (
-								<EmptyStateAction
-									key={ index }
-									icon={ action.icon }
-									text={ action.text }
-									analyticsDetails={ action.analyticsDetails }
-									onClick={ action.onClick }
-								/>
-							) ) }
+							cards={
+								<>
+									<StatsEmptyActionAI from="module_top_posts" />
+									<StatsEmptyActionSocial from="module_top_posts" />
+								</>
+							}
 						/>
 					}
-				>
-					<div>empty</div>
-				</StatsCard>
+				/>
 			) }
 			{ /* TODO: consider supressing <StatsModule /> empty state */ }
 			{ data && !! data.length && (

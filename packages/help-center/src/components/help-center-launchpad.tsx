@@ -28,7 +28,7 @@ const getEnvironmentHostname = () => {
 export const HelpCenterLaunchpad = () => {
 	const { __ } = useI18n();
 	const { sectionName, site } = useHelpCenterContext();
-	const siteIntent = site.options.site_intent;
+	const siteIntent = site?.options.site_intent;
 	const siteSlug = useSiteSlug();
 
 	const { data } = useLaunchpad( siteSlug, siteIntent );

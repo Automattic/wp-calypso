@@ -1,14 +1,17 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { isRedirectAllowed } from 'calypso/lib/url/is-redirect-allowed';
 import useCreateNewAccountMutation from 'calypso/signup/hooks/use-create-new-account';
 import useSubscribeToMailingList from 'calypso/signup/hooks/use-subscribe-to-mailing-list';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SubscribeEmailStepContent from './content';
 
@@ -29,14 +32,22 @@ function sanitizeRedirectUrl( redirect ) {
  * into a single step.
  */
 function SubscribeEmailStep( props ) {
-	const { flowName, goToNextStep, queryParams, stepName } = props;
-	const redirectUrl = sanitizeRedirectUrl( queryParams.redirect_to );
+	const { currentUser, flowName, goToNextStep, queryArguments, stepName, translate } = props;
+
+	const email =
+		typeof queryArguments.user_email === 'string' ? queryArguments.user_email.trim() : '';
+
+	const redirectUrl = sanitizeRedirectUrl( queryArguments.redirect_to );
+
+	const redirectToAfterLoginUrl = currentUser
+		? addQueryArgs( window.location.href, { user_email: currentUser?.email } )
+		: '';
 
 	const { mutate: subscribeToMailingList, isPending: isSubscribeToMailingListPending } =
 		useSubscribeToMailingList( {
 			onSuccess: () => {
-				props.recordTracksEvent( 'calypso_signup_existing_email_subscription_success', {
-					mailing_list: queryParams.mailing_list,
+				recordTracksEvent( 'calypso_signup_email_subscription_success', {
+					mailing_list: queryArguments.mailing_list,
 				} );
 				props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
 				goToNextStep();
@@ -45,25 +56,42 @@ function SubscribeEmailStep( props ) {
 
 	const { mutate: createNewAccount, isPending: isCreateNewAccountPending } =
 		useCreateNewAccountMutation( {
-			onSuccess: () =>
+			onSuccess: ( response ) => {
+				const username =
+					( response && response.signup_sandbox_username ) || ( response && response.username );
+
+				const userId =
+					( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
+
+				recordRegistration( {
+					userData: {
+						ID: userId,
+						username: username,
+						email: this.state.email,
+					},
+					flow: flowName,
+					type: 'passwordless',
+				} );
+
 				subscribeToMailingList( {
-					email_address: queryParams.user_email,
-					mailing_list_category: queryParams.mailing_list,
-				} ),
+					email_address: email,
+					mailing_list_category: queryArguments.mailing_list,
+					from: queryArguments.from,
+				} );
+			},
 			onError: ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
 					subscribeToMailingList( {
-						email_address: queryParams.user_email,
-						mailing_list_category: queryParams.mailing_list,
+						email_address: email,
+						mailing_list_category: queryArguments.mailing_list,
+						from: queryArguments.from,
 					} );
 				}
 			},
 		} );
 
 	useEffect( () => {
-		const email = typeof queryParams.user_email === 'string' ? queryParams.user_email.trim() : '';
-
-		if ( emailValidator.validate( email ) ) {
+		if ( emailValidator.validate( email ) && ! currentUser ) {
 			createNewAccount( {
 				userData: {
 					email,
@@ -72,18 +100,55 @@ function SubscribeEmailStep( props ) {
 				isPasswordless: true,
 			} );
 		}
-	}, [ createNewAccount, flowName, queryParams.user_email ] );
+
+		if ( currentUser?.email === email ) {
+			subscribeToMailingList( {
+				email_address: email,
+				mailing_list_category: queryArguments.mailing_list,
+				from: queryArguments.from,
+			} );
+		}
+	}, [ createNewAccount, currentUser, flowName, email ] );
 
 	return (
 		<div className="subscribe-email">
 			<StepWrapper
 				flowName={ flowName }
-				hideFormattedHeader
+				fallbackHeaderText={
+					currentUser ? translate( 'Is this you?' ) : translate( 'Subscribe to our email list' )
+				}
+				hideFormattedHeader={ isCreateNewAccountPending || isSubscribeToMailingListPending }
+				hideBack
 				stepContent={
 					<SubscribeEmailStepContent
 						{ ...props }
+						email={ email }
 						isPending={ isCreateNewAccountPending || isSubscribeToMailingListPending }
+						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 						redirectUrl={ redirectUrl }
+						subscribeToMailingList={ subscribeToMailingList }
+						handleCreateAccountError={ ( error, submittedEmail ) => {
+							if ( isExistingAccountError( error.error ) ) {
+								subscribeToMailingList( {
+									email_address: submittedEmail,
+									mailing_list_category: queryArguments.mailing_list,
+									from: queryArguments.from,
+								} );
+							}
+						} }
+						handleCreateAccountSuccess={ ( userData ) => {
+							recordRegistration( {
+								userData,
+								flow: flowName,
+								type: 'passwordless',
+							} );
+
+							subscribeToMailingList( {
+								email_address: userData.email,
+								mailing_list_category: queryArguments.mailing_list,
+								from: queryArguments.from,
+							} );
+						} }
 					/>
 				}
 				stepName={ stepName }
@@ -92,6 +157,14 @@ function SubscribeEmailStep( props ) {
 	);
 }
 
-export default connect( null, { recordTracksEvent, submitSignupStep } )(
-	localize( SubscribeEmailStep )
-);
+export default connect(
+	( state ) => {
+		const queryArguments = getCurrentQueryArguments( state );
+
+		return {
+			currentUser: getCurrentUser( state ),
+			queryArguments: queryArguments,
+		};
+	},
+	{ submitSignupStep }
+)( localize( SubscribeEmailStep ) );
