@@ -275,7 +275,7 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 			2,
 			array(
 				'method'  => 'POST',
-				'timeout' => 30,
+				'timeout' => 60,
 			),
 			array(
 				'message' => $request->get_param( 'message' ),
