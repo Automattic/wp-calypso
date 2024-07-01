@@ -115,8 +115,6 @@ export const ShortcutsPopover = ( {
 						},
 					] }
 				>
-					{ /* Attach the popover to this anchor instead of the button, so we can have retain position with scrolling. */ }
-					<div className="wpnc__keyboard-shortcuts-popover-anchor" ref={ popoverAnchorRef } />
 					<button
 						className={ clsx( 'wpnc__keyboard-shortcuts-button', {
 							'active-action': isShortcutsPopoverOpen,
@@ -129,7 +127,7 @@ export const ShortcutsPopover = ( {
 						} }
 						ref={ spanRef }
 					>
-						<Gridicon icon="info-outline" size={ 18 } />
+						<Gridicon icon="info-outline" size={ 18 } ref={ popoverAnchorRef } />
 					</button>
 				</HotkeyContainer>
 			) }
