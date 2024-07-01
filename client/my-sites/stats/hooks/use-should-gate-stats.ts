@@ -76,14 +76,14 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	const siteFeatures = getSiteFeatures( state, siteId );
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
 
-	const restrictDdashboard = config.isEnabled( 'stats/restricted-dashboard' );
+	const restrictDashboard = config.isEnabled( 'stats/restricted-dashboard' );
 	const isNewSite = isSiteNew( state, siteId );
 	const hasAnyStatsPlan = hasAnyPlan( state, siteId );
 
 	// Check gated modules for Jetpack sites.
 	if ( jetpackSite && ! atomicSite ) {
 		// TODO: Determine more paywall segments and granular control for paid stats.
-		if ( restrictDdashboard && isNewSite && ! hasAnyStatsPlan ) {
+		if ( restrictDashboard && isNewSite && ! hasAnyStatsPlan ) {
 			return [ ...paidStatsPaywall ].includes( statType );
 		}
 
