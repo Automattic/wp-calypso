@@ -8,7 +8,7 @@
 	"sideEffects": [
 		"*.css",
 		"*.scss",
-		"apps/config.js"
+		"./config.js"
 	],
 	"repository": {
 		"type": "git",

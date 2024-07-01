@@ -77,7 +77,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				patterns: [
 					{
 						from: path.join( __dirname, 'help-icon.svg' ),
-						to: path.join( __dirname, 'dist', 'apps' ),
+						to: path.join( __dirname, 'dist' ),
 					},
 				],
 			} ),
