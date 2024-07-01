@@ -42,7 +42,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	// the domain only flow has special rule. Ideally they should also be configurable in flows-pure.
 	if ( [ 'domain', 'domain-for-gravatar' ].includes( flowName ) ) {
 		isDomainOnly = 1;
-		destination = 'start/${ flowName }/domain-only';
+		destination = `/start/${ flowName }/domain-only`;
 	}
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
