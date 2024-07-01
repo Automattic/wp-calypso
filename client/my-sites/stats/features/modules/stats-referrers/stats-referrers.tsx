@@ -22,6 +22,7 @@ const StatsRefeeres: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	debugLoaders,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -35,7 +36,7 @@ const StatsRefeeres: React.FC< StatsDefaultModuleProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
 
-	const isRequestingData = requesting && ! data;
+	const isRequestingData = debugLoaders || ( requesting && ! data );
 
 	return (
 		<>

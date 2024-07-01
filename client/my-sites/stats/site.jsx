@@ -390,6 +390,20 @@ class StatsSite extends Component {
 
 					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
+					{ isNewStateEnabled && ( // DELETE BEFORE MERGING
+						// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+						<div
+							style={ { background: 'green', color: 'white', padding: '10px', margin: '10px 0' } }
+							onClick={ () =>
+								this.setState( ( prevState ) => ( {
+									debugLoaders: ! prevState.debugLoaders,
+								} ) )
+							}
+						>
+							Toogle loaders
+						</div>
+					) }
+
 					<div className={ moduleListClasses }>
 						{ ! isNewStateEnabled && (
 							<StatsModule
@@ -411,6 +425,7 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.posts }
 								period={ this.props.period }
 								query={ query }
+								debugLoaders={ this.state.debugLoaders }
 								className={ clsx(
 									'stats__flexible-grid-item--60',
 									'stats__flexible-grid-item--full--large',
@@ -438,6 +453,7 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.referrers }
 								period={ this.props.period }
 								query={ query }
+								debugLoaders={ this.state.debugLoaders }
 								className={ clsx(
 									'stats__flexible-grid-item--40--once-space',
 									'stats__flexible-grid-item--full--large',
@@ -461,6 +477,7 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								summary={ false }
+								debugLoaders={ this.state.debugLoaders }
 								className={ clsx( 'stats__flexible-grid-item--full' ) }
 							/>
 						) }
