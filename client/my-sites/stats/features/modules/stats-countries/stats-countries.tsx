@@ -26,7 +26,6 @@ const StatCountries: React.FC< StatsDefaultModuleProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsCountryViews';
-	// const [ isRequestingData, setIsRequestingData ] = React.useState( true );
 
 	const requesting = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
