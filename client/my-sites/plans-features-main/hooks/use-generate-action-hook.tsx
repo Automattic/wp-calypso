@@ -228,7 +228,8 @@ function useGenerateActionHook( {
 		 */
 		let text = translate( 'Upgrade', { context: 'verb' } );
 		let status: 'enabled' | 'disabled' | 'blocked' | undefined;
-		let classes = '';
+		let variant: GridAction[ 'primary' ][ 'variant' ] = 'primary';
+
 		const current = sitePlanSlug === planSlug;
 		const isTrialPlan =
 			sitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
@@ -328,8 +329,8 @@ function useGenerateActionHook( {
 		} else if ( ! availableForPurchase ) {
 			/** Downgrade plan buttons */
 			status = 'enabled';
-			text = translate( 'Contact support', { context: 'verb' } );
-			classes = 'is-secondary';
+			text = translate( 'Downgrade', { context: 'verb' } );
+			variant = 'secondary';
 		}
 
 		return {
@@ -342,7 +343,7 @@ function useGenerateActionHook( {
 				} ),
 				status,
 				text,
-				classes,
+				variant,
 			},
 		};
 	};
