@@ -15,6 +15,7 @@ import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
+import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
@@ -129,10 +130,18 @@ function useGenerateActionCallback( {
 	} );
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const handleUpgrade = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
-	const handleDowngradeClick = useCallback( () => {
-		setInitialRoute( stillNeedHelpUrl );
-		setShowHelpCenter( true );
-	}, [ setInitialRoute, setShowHelpCenter, stillNeedHelpUrl ] );
+	const handleDowngradeClick = useCallback(
+		( planSlug: PlanSlug ) => {
+			// A downgrade to the free plan is essentially cancelling the current plan.
+			if ( isFreePlan( planSlug ) ) {
+				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
+				return;
+			}
+			setInitialRoute( stillNeedHelpUrl );
+			setShowHelpCenter( true );
+		},
+		[ currentPlan?.purchaseId, setInitialRoute, setShowHelpCenter, siteSlug, stillNeedHelpUrl ]
+	);
 
 	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) => {
 		return () => {
@@ -171,12 +180,17 @@ function useGenerateActionCallback( {
 				return;
 			}
 
+			/* 3. Handle plan downgrades and plan downgrade tracks events */
 			if ( sitePlanSlug && ! availableForPurchase ) {
-				handleDowngradeClick();
+				recordTracksEvent?.( 'calypso_plan_features_downgrade_click', {
+					current_plan: sitePlanSlug,
+					downgrading_to: planSlug,
+				} );
+				handleDowngradeClick( planSlug );
 				return;
 			}
 
-			/* 3. Handle plan upgrade and plan upgrade tracks events */
+			/* 4. Handle plan upgrade and plan upgrade tracks events */
 			if ( ! isFreePlan( planSlug ) ) {
 				recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
 					current_plan: sitePlanSlug,
