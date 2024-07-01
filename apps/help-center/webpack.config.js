@@ -40,12 +40,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		output: {
 			...webpackConfig.output,
 			path: outputPath,
-			// Unfortunately, we can't set the name to `[name].js` for the
-			// dev env because at runtime we'd also need a way to detect
-			// if the env was dev or prod, as the file is enqueued in WP
-			// and there's no way to do that now. The simpler alternative
-			// is to generate a .min.js for dev and prod, even though the
-			// file is not really minified in the dev env.
 			filename: '[name].min.js', // dynamic filename
 			library: 'helpCenter',
 		},
