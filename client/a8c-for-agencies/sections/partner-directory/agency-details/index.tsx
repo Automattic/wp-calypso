@@ -44,7 +44,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			);
 			page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
 		},
-		[ page, reduxDispatch, translate ]
+		[ translate ]
 	);
 
 	const onSubmitError = useCallback( () => {
@@ -53,7 +53,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				duration: 6000,
 			} )
 		);
-	}, [ page, reduxDispatch, translate ] );
+	}, [ translate ] );
 
 	const { formData, setFormData } = useDetailsForm( {
 		initialFormData,
