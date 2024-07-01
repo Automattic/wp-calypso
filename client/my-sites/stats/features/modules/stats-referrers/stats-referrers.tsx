@@ -4,6 +4,7 @@ import { megaphone } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -18,7 +19,10 @@ import { StatsEmptyActionSocial } from '../shared';
 type StatsRefeeresProps = {
 	className?: string;
 	period: string;
-	query: string;
+	query: {
+		date: string;
+		period: string;
+	};
 	moduleStrings: {
 		title: string;
 		item: string;
@@ -47,6 +51,9 @@ const StatsRefeeres: React.FC< StatsRefeeresProps > = ( {
 
 	return (
 		<>
+			{ siteId && statType && (
+				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+			) }
 			{ /* This will be replaced with ghost loaders, fallback to the current implementation until then. */ }
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
 			{ ( ! data || ! data?.length ) && (
