@@ -7,7 +7,7 @@ const LOGO_SIZE_HEIGHT = 320;
 
 type Props = {
 	logo?: string | null;
-	onLogoUpload?: ( url: string ) => void;
+	onPick?: ( url: string ) => void;
 };
 
 const getImage = ( file: File ): Promise< HTMLImageElement > => {
@@ -28,12 +28,12 @@ const getImage = ( file: File ): Promise< HTMLImageElement > => {
 	} );
 };
 
-const LogoPicker = ( { logo, onLogoUpload }: Props ) => {
+const LogoPicker = ( { logo, onPick }: Props ) => {
 	const translate = useTranslate();
 
 	const [ error, setError ] = useState< string | null >( null );
 
-	const onPick = ( file: File ) => {
+	const onImagePick = ( file: File ) => {
 		setError( null );
 
 		getImage( file ).then( ( img ) => {
@@ -42,7 +42,7 @@ const LogoPicker = ( { logo, onLogoUpload }: Props ) => {
 				return;
 			}
 
-			onLogoUpload?.( URL.createObjectURL( file ) );
+			onPick?.( URL.createObjectURL( file ) );
 		} );
 	};
 
@@ -50,7 +50,7 @@ const LogoPicker = ( { logo, onLogoUpload }: Props ) => {
 		<A4AImagePicker
 			className="partner-directory__logo-picker"
 			image={ logo }
-			onPick={ onPick }
+			onPick={ onImagePick }
 			error={ error }
 		/>
 	);

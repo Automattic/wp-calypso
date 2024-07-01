@@ -146,7 +146,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				>
 					<LogoPicker
 						logo={ formData.logoUrl }
-						onLogoUpload={ ( value ) => setFormFields( { logoUrl: value } ) }
+						onPick={ ( value ) => setFormFields( { logoUrl: value } ) }
 					/>
 				</FormField>
 			</FormSection>
