@@ -25,7 +25,7 @@ export default function A4AImagePicker( { className, image, onPick, error }: Pro
 
 	return (
 		<div className={ clsx( 'a4a-image-picker', className ) }>
-			<FilePicker accept="image/*" onPick={ onPickImages }>
+			<FilePicker accept="image/png, image/jpeg" onPick={ onPickImages }>
 				{ ! image && (
 					<div
 						className={ clsx( 'a4a-image-picker__upload-instructions', { 'is-error': !! error } ) }

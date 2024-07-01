@@ -45,7 +45,7 @@ export default function useSubmitForm( { formData, onSubmitSuccess, onSubmitErro
 			const media = await addMedia( [ file ], {
 				ID: 234537984, // https://a8cforagenciesportfolio.wordpress.com/ is the blog where we will dump profile images so it can be publicly access.
 				options: {
-					allowed_file_types: [ 'jpg', 'jpeg', 'png', 'gif' ],
+					allowed_file_types: [ 'jpg', 'jpeg', 'png' ],
 				},
 			} );
 			setIsUploadingImage( false );
