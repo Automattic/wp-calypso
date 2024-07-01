@@ -9,6 +9,7 @@ type StatsCardSkeletonProps = {
 	className?: string;
 	title?: string;
 	type?: 1 | 2 | 3;
+	withHero?: boolean;
 };
 
 const StatsCardSkeleton: React.FC< StatsCardSkeletonProps > = ( {
@@ -16,6 +17,7 @@ const StatsCardSkeleton: React.FC< StatsCardSkeletonProps > = ( {
 	className,
 	title,
 	type = 1,
+	withHero,
 } ) => {
 	// Horizontal Bar placeholders
 	const dataTypes = [
@@ -27,9 +29,26 @@ const StatsCardSkeleton: React.FC< StatsCardSkeletonProps > = ( {
 	const data = dataTypes[ type ] ?? dataTypes[ 1 ]; // Allow for different types
 
 	return isLoading ? (
-		<div className={ clsx( 'stats-card-skeleton', className ) } style={ { width: '100%' } }>
+		<div
+			className={ clsx(
+				'stats-card-skeleton',
+				{ [ 'stats-card-skeleton--with-hero' ]: withHero },
+				className
+			) }
+		>
 			{ /* TODO: Empty title - use another LoadingPlaceholder */ }
-			<StatsCard title={ title || '' }>
+			<StatsCard
+				title={ title || '' }
+				heroElement={
+					withHero ? (
+						<LoadingPlaceholder
+							className="stats-card-skeleton__placeholder"
+							width="100%"
+							height="400px"
+						/>
+					) : null
+				}
+			>
 				<ul>
 					{ data?.map( ( value, index ) => {
 						return (

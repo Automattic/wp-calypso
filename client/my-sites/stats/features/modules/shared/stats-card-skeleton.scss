@@ -1,4 +1,6 @@
 .stats-card-skeleton {
+	width: 100%;
+
 	// use separate animation to match the cycle actoss card
 	.stats-card-skeleton__placeholder {
 		animation: stats-skeleton-card 1.8s ease-in-out infinite;
@@ -14,6 +16,41 @@
 
 		& + li {
 			margin-top: 3px;
+		}
+	}
+
+	&.stats-card-skeleton--with-hero {
+		.stats-card__content {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.stats-card--hero {
+			margin-left: 24px;
+			margin-right: 24px;
+			flex: 1 1 auto;
+		}
+
+		.stats-card--header-and-body {
+			flex: 1 1 auto;
+		}
+
+		// match contry map breakpoint
+		@media (min-width: 1280px) {
+			.stats-card__content {
+				display: flex;
+				flex-direction: row;
+			}
+
+			.stats-card--hero {
+				padding: 0;
+				margin-right: 0;
+				flex: 4 4 auto;
+			}
+
+			.stats-card--header-and-body {
+				flex: 2 2 auto;
+			}
 		}
 	}
 }
