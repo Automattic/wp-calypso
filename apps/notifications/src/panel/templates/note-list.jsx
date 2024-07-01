@@ -332,7 +332,6 @@ export class NoteList extends Component {
 		}
 
 		const classes = clsx( 'wpnc__note-list', {
-			'disable-sticky': !! window.electron,
 			'is-note-open': !! this.props.selectedNoteId,
 		} );
 
