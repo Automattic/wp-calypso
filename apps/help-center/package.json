@@ -1,5 +1,5 @@
 {
-	"name": "help-center-app",
+	"name": "@automattic/help-center-app",
 	"version": "1.0.0",
 	"description": "Help Center app to be used in Jetpack.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -35,7 +35,8 @@
 		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/components": "^28.0.0",
 		"@wordpress/compose": "^7.0.0",
-		"@wordpress/plugins": "^7.0.0"
+		"@wordpress/plugins": "^7.0.0",
+		"@automattic/i18n-utils": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
