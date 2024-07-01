@@ -9,7 +9,11 @@ const withMigrationSticker =
 	( WrappedComponent: FC< UpgradePlanDetailsProps > ) => ( props: UpgradePlanDetailsProps ) => {
 		const { siteId } = props;
 
-		const { addMigrationSticker, isPending } = useMigrationStickerMutation();
+		const {
+			addMigrationSticker,
+			addMutationRest: { isPending },
+			deleteMigrationSticker,
+		} = useMigrationStickerMutation();
 
 		// It uses the layout effect to avoid the screen flickering because isPending starts as `true` and changes only after this effect.
 		useLayoutEffect( () => {
@@ -20,7 +24,13 @@ const withMigrationSticker =
 			if ( 0 !== siteId ) {
 				addMigrationSticker( siteId );
 			}
-		}, [ addMigrationSticker, siteId ] );
+
+			return () => {
+				if ( 0 !== siteId ) {
+					deleteMigrationSticker( siteId );
+				}
+			};
+		}, [ addMigrationSticker, deleteMigrationSticker, siteId ] );
 
 		if ( isPending ) {
 			return <UpgradePlanLoader />;
