@@ -30,12 +30,10 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			'help-center-wp-admin': path.join( __dirname, 'help-center-wp-admin.js' ),
 			'help-center-gutenberg-disconnected': path.join(
 				__dirname,
-
 				'help-center-gutenberg-disconnected.js'
 			),
 			'help-center-wp-admin-disconnected': path.join(
 				__dirname,
-
 				'help-center-wp-admin-disconnected.js'
 			),
 		},
