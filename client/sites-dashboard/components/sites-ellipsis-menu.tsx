@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	FEATURE_SFTP,
@@ -334,7 +333,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	const { __ } = useI18n();
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP ) && ! site?.plan?.expired;
 	const displayUpsell = ! hasFeatureSFTP;
-	const shouldLinkToHostingPromo = ! hasFeatureSFTP && isEnabled( 'layout/dotcom-nav-redesign-v2' );
+	const shouldLinkToHostingPromo = ! hasFeatureSFTP;
 	const submenuItems = useSubmenuItems( site );
 	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
 		offset: -8,

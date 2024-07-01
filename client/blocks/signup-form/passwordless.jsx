@@ -31,6 +31,7 @@ class PasswordlessSignupForm extends Component {
 		onInputBlur: PropTypes.func,
 		onInputChange: PropTypes.func,
 		onCreateAccountError: PropTypes.func,
+		onCreateAccountSuccess: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -165,6 +166,10 @@ class PasswordlessSignupForm extends Component {
 		const marketing_price_group = response?.marketing_price_group ?? '';
 		const { flowName, queryArgs = {} } = this.props;
 		const { redirect_to, oauth2_client_id, oauth2_redirect } = queryArgs;
+
+		if ( this.props.onCreateAccountSuccess ) {
+			return this.props.onCreateAccountSuccess( userData );
+		}
 
 		recordRegistration( {
 			userData,

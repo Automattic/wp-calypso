@@ -6,7 +6,8 @@ export type HelpCenterRequiredInformation = {
 	locale: string;
 	sectionName: string;
 	currentUser: CurrentUser;
-	site: HelpCenterSite;
+	// some users have no sites at all.
+	site: HelpCenterSite | null;
 	hasPurchases: false;
 	primarySiteId: number;
 	googleMailServiceFamily: string;
@@ -27,26 +28,7 @@ const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInforma
 		localeVariant: '',
 		site_count: 0,
 	},
-	site: {
-		ID: 0,
-		URL: '',
-		jetpack: false,
-		is_wpcom_atomic: false,
-		name: '',
-		plan: {
-			product_slug: '',
-		},
-		logo: {
-			id: 0,
-			sizes: [],
-			url: '',
-		},
-		options: {
-			launchpad_screen: '',
-			site_intent: '',
-			admin_url: '',
-		},
-	},
+	site: null,
 	hasPurchases: false,
 	primarySiteId: 0,
 	googleMailServiceFamily: '',

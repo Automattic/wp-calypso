@@ -51,6 +51,9 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	const redirectToPurchase =
 		isSiteJetpackNotAtomic && ! hasAnyPlan && purchaseNotPostponed && shouldShowPaywall;
 
+	// The restricted dashboard means no more paywall!
+	const skipPaywallFlow = config.isEnabled( 'stats/restricted-dashboard' );
+
 	// TODO: If notices are not used by class components, we don't have any reasons to launch any of those actions anymore. If we do need them, we should consider refactoring them to another component.
 	const dispatch = useDispatch();
 	useEffect( () => {
@@ -67,7 +70,13 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	}, [ dispatch, siteId, isLoadingNotices, purchaseNotPostponed ] );
 
 	// render purchase flow for Jetpack sites created after February 2024
-	if ( ! isLoading && redirectToPurchase && siteSlug && canUserManageOptions ) {
+	if (
+		! isLoading &&
+		! skipPaywallFlow &&
+		redirectToPurchase &&
+		siteSlug &&
+		canUserManageOptions
+	) {
 		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
 		const currentParams = new URLSearchParams( window.location.search );
 		const queryParams = new URLSearchParams();
