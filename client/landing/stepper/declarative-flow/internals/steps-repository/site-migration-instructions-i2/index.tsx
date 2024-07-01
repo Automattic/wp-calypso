@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, type FC } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -60,6 +61,7 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 		completed: isSetupCompleted,
 		error: setupError,
 	} = usePrepareSiteForMigration( siteId );
+	const { deleteMigrationSticker } = useMigrationStickerMutation();
 
 	const hasErrorGetMigrationKey = detailedStatus.migrationKey === 'error';
 	const showCopyIntoNewSite = isSetupCompleted && migrationKey;
@@ -102,6 +104,12 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 			} );
 		}
 	}, [ flow, setupError, siteId ] );
+
+	useEffect( () => {
+		if ( siteId ) {
+			deleteMigrationSticker( siteId );
+		}
+	}, [] );
 
 	const recordInstructionsLinkClick = ( linkname: string ) => {
 		recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
