@@ -645,6 +645,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.0.0"
     canvas-confetti: "npm:^1.6.0"
     clsx: "npm:^2.1.1"
+    debug: "npm:^4.3.3"
     gridicons: "npm:^3.4.2"
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
@@ -652,7 +653,7 @@ __metadata:
     prop-types: "npm:^15.7.2"
     qrcode.react: "npm:^3.1.0"
     react-modal: "npm:^3.16.1"
-    react-router-dom: "npm:^6.10.0"
+    react-router-dom: "npm:^6.23.1"
     react-slider: "npm:^2.0.5"
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.3.3"
@@ -1042,23 +1043,50 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/help-center-app@workspace:apps/help-center":
+  version: 0.0.0-use.local
+  resolution: "@automattic/help-center-app@workspace:apps/help-center"
+  dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/help-center": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@automattic/wp-babel-makepot": "workspace:^"
+    "@tanstack/react-query": "npm:^5.15.5"
+    "@wordpress/components": "npm:^28.0.0"
+    "@wordpress/compose": "npm:^7.0.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:5.9.0"
+    "@wordpress/plugins": "npm:^7.0.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:3.0.0"
+    copy-webpack-plugin: "npm:^10.2.4"
+    typescript: "npm:^5.3.3"
+    webpack: "npm:^5.91.0"
+  peerDependencies:
+    "@automattic/calypso-router": "workspace:^"
+    "@wordpress/data": ^10.0.0
+    "@wordpress/element": ^6.0.0
+    postcss: "*"
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    redux: ^4.2.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/help-center@workspace:^, @automattic/help-center@workspace:packages/help-center":
   version: 0.0.0-use.local
   resolution: "@automattic/help-center@workspace:packages/help-center"
   dependencies:
     "@automattic/calypso-color-schemes": "workspace:^"
-    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/odie-client": "workspace:^"
-    "@automattic/site-picker": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@popperjs/core": "npm:^2.11.8"
     "@storybook/addon-backgrounds": "npm:^7.6.19"
-    "@storybook/cli": "npm:^7.6.19"
-    "@storybook/react": "npm:^7.6.19"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/base-styles": "npm:^5.0.0"
     "@wordpress/components": "npm:^28.0.0"
@@ -1354,8 +1382,10 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
+    "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
+    "@wordpress/data": "npm:^10.0.0"
     autoprefixer: "npm:^10.2.5"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
@@ -1507,7 +1537,7 @@ __metadata:
     css-loader: "npm:^3.6.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    react-router-dom: "npm:^6.10.0"
+    react-router-dom: "npm:^6.23.1"
     redux: "npm:^4.2.1"
     sass-loader: "npm:^10.1.1"
     style-loader: "npm:^1.3.0"
@@ -1732,27 +1762,6 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  languageName: unknown
-  linkType: soft
-
-"@automattic/site-picker@workspace:^, @automattic/site-picker@workspace:packages/site-picker":
-  version: 0.0.0-use.local
-  resolution: "@automattic/site-picker@workspace:packages/site-picker"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/tour-kit": "workspace:^"
-    "@testing-library/jest-dom": "npm:^6.4.5"
-    "@testing-library/react": "npm:^15.0.7"
-    "@wordpress/dom": "npm:^4.0.0"
-    "@wordpress/i18n": "npm:^5.0.0"
-    "@wordpress/icons": "npm:^10.0.0"
-    clsx: "npm:^2.1.1"
-    typescript: "npm:^5.3.3"
-  peerDependencies:
-    "@wordpress/data": ^10.0.0
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    redux: ^4.2.1
   languageName: unknown
   linkType: soft
 
@@ -2182,7 +2191,6 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
-    "@automattic/site-picker": "workspace:^"
     "@automattic/tour-kit": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
@@ -6137,10 +6145,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.5.0, @remix-run/router@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "@remix-run/router@npm:1.5.0"
-  checksum: 63c3695df0470943213f8144183501bbb6a8176671f2ed4547ffa1852f79fd71054b4b4a715795e9e250198991d9e6e121b3fcab9c27df37871dcdfbc8de83a1
+"@remix-run/router@npm:1.16.1, @remix-run/router@npm:^1.5.0":
+  version: 1.16.1
+  resolution: "@remix-run/router@npm:1.16.1"
+  checksum: 5f1b0aef4924830eeab9c86dcaa5af8157066e5de65b449e7fdf406532b2384828a46a447c31b0735fd713a06938dd88bfd4e566d9989be70c770457dda16c92
   languageName: node
   linkType: hard
 
@@ -12478,8 +12486,8 @@ __metadata:
     react-markdown: "npm:^8.0.7"
     react-modal: "npm:^3.16.1"
     react-redux: "npm:^8.1.3"
-    react-router: "npm:^6.10.0"
-    react-router-dom: "npm:^6.10.0"
+    react-router: "npm:^6.23.1"
+    react-router-dom: "npm:^6.23.1"
     react-test-renderer: "npm:^18.2.0"
     react-transition-group: "npm:^4.3.0"
     redux: "npm:^4.2.1"
@@ -15356,6 +15364,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv-defaults@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "dotenv-defaults@npm:2.0.2"
+  dependencies:
+    dotenv: "npm:^8.2.0"
+  checksum: 14b7b8f6c21a30404106384398728746e63405bfeabe47ef7aadd0e81de49986d5896a612e5b1acddf655af6472a24947b7b113aa3ef3270a2877afa9c5bd287
+  languageName: node
+  linkType: hard
+
 "dotenv-expand@npm:^10.0.0":
   version: 10.0.0
   resolution: "dotenv-expand@npm:10.0.0"
@@ -15370,10 +15387,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv-webpack@npm:^8.1.0":
+  version: 8.1.0
+  resolution: "dotenv-webpack@npm:8.1.0"
+  dependencies:
+    dotenv-defaults: "npm:^2.0.2"
+  peerDependencies:
+    webpack: ^4 || ^5
+  checksum: 7a64587fc96eba8e4ffccf56d6af09606611a32bc5cf04a37057b8c2881bcd11bf43c3395404581be734ae7fd2788471ceac76cb3d0ba1283e675223f98e5816
+  languageName: node
+  linkType: hard
+
 "dotenv@npm:^16.0.0":
   version: 16.0.3
   resolution: "dotenv@npm:16.0.3"
   checksum: 109457ac5f9e930ca8066ea33887b6f839ab24d647a7a8b49ddcd1f32662e2c35591c5e5b9819063e430148a664d0927f0cbe60cf9575d89bc524f47ff7e78f0
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^8.2.0":
+  version: 8.6.0
+  resolution: "dotenv@npm:8.6.0"
+  checksum: 6750431dea8efbd54b9f2d9681b04e1ccc7989486461dcf058bb708d9e3d63b04115fcdf8840e38ad1e24a4a2e1e7c1560626c5e3ac7bc09371b127c49e2d45f
   languageName: node
   linkType: hard
 
@@ -27124,16 +27159,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^6.10.0":
-  version: 6.10.0
-  resolution: "react-router-dom@npm:6.10.0"
+"react-router-dom@npm:^6.23.1":
+  version: 6.23.1
+  resolution: "react-router-dom@npm:6.23.1"
   dependencies:
-    "@remix-run/router": "npm:1.5.0"
-    react-router: "npm:6.10.0"
+    "@remix-run/router": "npm:1.16.1"
+    react-router: "npm:6.23.1"
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: c62e4b4aac2067e64af632e113b8db0626b846ec88fb668e84492ceb04179a0789120844263e35dead1e13f70f6554c1a463c7c33d8feed579bf5a2a02f916f4
+  checksum: 01b954d7d0ff4c53bb2edbc816458f3fad1ce9ee49a4dfdc5c866065c23026c9cce429b46b754cbaebb83b22cfe5f605bbf441acf515e3c377cbdf021b0bec4c
   languageName: node
   linkType: hard
 
@@ -27156,14 +27191,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router@npm:6.10.0, react-router@npm:^6.10.0":
-  version: 6.10.0
-  resolution: "react-router@npm:6.10.0"
+"react-router@npm:6.23.1, react-router@npm:^6.23.1":
+  version: 6.23.1
+  resolution: "react-router@npm:6.23.1"
   dependencies:
-    "@remix-run/router": "npm:1.5.0"
+    "@remix-run/router": "npm:1.16.1"
   peerDependencies:
     react: ">=16.8"
-  checksum: 83b8d6a7d1572403b9227045148b34253d3e705dd196d5beff9be2e3c044ba1136100a6e45c219c109de7c764d548302242ab029b0df4c5536b8aaddb3b1aa57
+  checksum: 091949805745136350ab049b2a96281bf38742c9d3651019fb48ea79c5eafbfb0379f1d3e636602dd56b0ef278389e8fd25be983dc2c0ffd1103d06dfa8019f3
   languageName: node
   linkType: hard
 
@@ -33260,6 +33295,7 @@ __metadata:
     css-loader: "npm:^6.11.0"
     debug: "npm:^4.3.3"
     doctrine: "npm:^3.0.0"
+    dotenv-webpack: "npm:^8.1.0"
     enhanced-resolve: "npm:5.9.3"
     eslint: "npm:^8.57.0"
     eslint-config-prettier: "npm:^9.1.0"

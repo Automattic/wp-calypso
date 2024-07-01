@@ -241,16 +241,16 @@ function getHostingFlowDestination( { stepperHostingFlow } ) {
 	return `/setup/${ stepperHostingFlow }`;
 }
 
-function getEntrepreneurFlowDestination() {
-	return '/setup/entrepreneur/trialAcknowledge';
+function getEntrepreneurFlowDestination( { redirect_to } ) {
+	return redirect_to || '/setup/entrepreneur/trialAcknowledge';
 }
 
 function getGuidedOnboardingFlowDestination( dependencies ) {
-	if ( ! config.isEnabled( 'onboarding/guided' ) ) {
+	const { onboardingSegment, siteSlug, siteId, domainItem, cartItems, refParameter } = dependencies;
+
+	if ( ! onboardingSegment ) {
 		return getSignupDestination( dependencies );
 	}
-
-	const { onboardingSegment, siteSlug, siteId, domainItem, cartItems, refParameter } = dependencies;
 
 	if ( 'no-site' === siteSlug ) {
 		return '/home';

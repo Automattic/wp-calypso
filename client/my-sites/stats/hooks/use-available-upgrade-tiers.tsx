@@ -72,10 +72,21 @@ function filterLowerTiers(
 	} else {
 		// Filter out tiers that have been purchased or lower than the current usage.
 		tiers = availableTiers.filter( ( availableTier ) => {
+			// `usageData?.current_tier?.limit` is used here to filter out the purchased tier without considering bundled views from Complete plans.
 			return (
 				!! availableTier.transform_quantity_divide_by ||
 				( availableTier?.views as number ) >
-					Math.max( usageData?.views_limit, usageData?.billableMonthlyViews, 0 )
+					Math.max(
+						usageData?.current_tier?.limit ?? 0,
+						// Offset the billable monthly views by the views already included in plans, e.g. Complete.
+						/* Billable views count */
+						usageData?.billableMonthlyViews -
+							/* Total views limit including bundled in the Complete/Professional plan and Stats commercial product */
+							( usageData.views_limit ?? 0 ) +
+							/* Current tier views limit of Stats commercial product */
+							( usageData.current_tier?.limit ?? 0 ),
+						0
+					)
 			);
 		} );
 	}
@@ -93,6 +104,7 @@ function extendTiersBeyondHighestTier(
 		// Calculate the number of tiers to extend based on either current purchase or billable monthly views.
 		const startingTier =
 			Math.floor(
+				// Complete plans have 100k limit, which is less than the steps of 1M, and could be ignored here - so we could use views_limit.
 				Math.max( usageData?.views_limit, usageData?.billableMonthlyViews, 0 ) /
 					( highestTier.transform_quantity_divide_by || 1 )
 			) -

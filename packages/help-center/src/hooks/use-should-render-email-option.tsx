@@ -1,15 +1,16 @@
-import { useSupportAvailability } from '../data/use-support-availability';
+import { useSupportStatus } from '../data/use-support-status';
 
 export function useShouldRenderEmailOption() {
-	const { data: supportAvailability, isFetching } = useSupportAvailability();
+	const { data: supportStatus, isFetching } = useSupportStatus();
 
 	// Domain only customers should always see the email option
 	// Domain only users have this combination of support level === free, and is_user_eligible === true.
 	const isDomainOnlyUser =
-		supportAvailability?.is_user_eligible && supportAvailability?.supportLevel === 'free';
+		supportStatus?.eligibility.is_user_eligible &&
+		supportStatus?.eligibility.support_level === 'free';
 
 	return {
 		isLoading: isFetching,
-		render: isDomainOnlyUser || ( supportAvailability?.force_email_contact_form ?? false ),
+		render: isDomainOnlyUser || ( supportStatus?.availability.force_email_support ?? false ),
 	};
 }

@@ -5,12 +5,17 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/sections/overview/sidebar/contact-support';
+import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { A4A_OVERVIEW_LINK, EXTERNAL_A4A_KNOWLEDGE_BASE } from '../../sidebar-menu/lib/constants';
+import {
+	A4A_OVERVIEW_LINK,
+	EXTERNAL_A4A_KNOWLEDGE_BASE,
+	EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE,
+} from '../../sidebar-menu/lib/constants';
 
 import './style.scss';
 
@@ -32,17 +37,24 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 		dispatch( redirectToLogout() );
 	}, [ dispatch ] );
 
+	const isClient = isClientView();
+
 	return (
 		<ul className="a4a-sidebar__profile-dropdown-menu" hidden={ ! isExpanded }>
-			<li className="a4a-sidebar__profile-dropdown-menu-item">
-				<Button borderless onClick={ onGetHelp }>
-					{ translate( 'Contact support' ) }
-				</Button>
-			</li>
+			{
+				// Show the "Contact support" button if the user is not a client
+				! isClient && (
+					<li className="a4a-sidebar__profile-dropdown-menu-item">
+						<Button borderless onClick={ onGetHelp }>
+							{ translate( 'Contact support' ) }
+						</Button>
+					</li>
+				)
+			}
 			<li className="a4a-sidebar__profile-dropdown-menu-item">
 				<Button
 					borderless
-					href={ EXTERNAL_A4A_KNOWLEDGE_BASE }
+					href={ isClient ? EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE : EXTERNAL_A4A_KNOWLEDGE_BASE }
 					target="_blank"
 					rel="noopener noreferrer"
 				>

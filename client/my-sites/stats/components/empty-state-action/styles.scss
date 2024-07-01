@@ -12,10 +12,6 @@
 	width: 100%;
 	cursor: pointer;
 
-	@media (min-width: $break-xlarge) {
-		width: 300px;
-	}
-
 	&:hover {
 		background: $studio-gray-0;
 		border: 1px solid $studio-gray-80;

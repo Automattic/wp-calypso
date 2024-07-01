@@ -48,7 +48,7 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 		productTitle =
 			product.slug === 'wpcom-hosting-business' ? translate( 'WordPress.com Site' ) : product.name;
 		productDescription = translate(
-			'Plan with %(install)d managed WordPress install, with 50GB of storage each.',
+			'Plan with %(install)d managed WordPress install, with 50GB of storage.',
 			'Plan with %(install)d managed WordPress installs, with 50GB of storage each.',
 			{
 				args: {

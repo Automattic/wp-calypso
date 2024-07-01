@@ -246,6 +246,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-import-or-migrate' ),
 	},
 
+	SITE_MIGRATION_HOW_TO_MIGRATE: {
+		slug: 'site-migration-how-to-migrate',
+		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
+	},
+
 	SITE_MIGRATION_UPGRADE_PLAN: {
 		slug: 'site-migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-upgrade-plan' ),

@@ -7,13 +7,21 @@ import './styles.scss';
 interface EmptyStateActionProps {
 	text: string;
 	icon: JSX.Element;
+	analyticsDetails?: {
+		feature: string;
+		from: string;
+	};
 	onClick: () => void;
 }
 
-const EmptyStateAction: React.FC< EmptyStateActionProps > = ( { text, icon, onClick } ) => {
+const EmptyStateAction: React.FC< EmptyStateActionProps > = ( {
+	text,
+	icon,
+	analyticsDetails,
+	onClick,
+} ) => {
 	const handleClick = () => {
-		trackStatsAnalyticsEvent( 'utm_builder_opened' );
-		trackStatsAnalyticsEvent( 'advanced_feature_interaction', { feature: 'utm_builder' } );
+		trackStatsAnalyticsEvent( 'empty_state_interaction', analyticsDetails );
 
 		onClick();
 	};

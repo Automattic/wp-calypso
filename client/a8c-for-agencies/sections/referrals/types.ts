@@ -1,10 +1,13 @@
 interface ReferralPurchaseAPIResponse {
-	license_id: number;
-	quantity: number;
+	status: string;
 	product_id: number;
-	date_assigned: string;
+	quantity: number;
+	license: {
+		license_key: string;
+		attached_at: string | null;
+		revoked_at: string | null;
+	};
 	site_assigned: string;
-	license_key: string;
 }
 export interface ReferralPurchase extends ReferralPurchaseAPIResponse {
 	status: string;

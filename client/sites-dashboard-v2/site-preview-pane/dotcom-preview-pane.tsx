@@ -4,6 +4,11 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import HostingFeaturesIcon from 'calypso/hosting-features/components/hosting-features-icon';
+import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
+import SiteEnvironmentSwitcher from 'calypso/sites-dashboard-v2/site-preview-pane/site-environment-switcher';
+import { useSelector } from 'calypso/state';
+import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
+import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -26,6 +31,7 @@ type Props = {
 	setSelectedSiteFeature: ( feature: string ) => void;
 	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
+	changeSitePreviewPane: ( siteId: number ) => void;
 };
 
 const OVERLAY_MODAL_SELECTORS = [
@@ -40,12 +46,13 @@ const DotcomPreviewPane = ( {
 	setSelectedSiteFeature,
 	selectedSiteFeaturePreview,
 	closeSitePreviewPane,
+	changeSitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
 	const hasEnTranslation = useHasEnTranslation();
 
 	const isAtomicSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
-	const isSimpleSite = ! site.jetpack;
+	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
@@ -155,15 +162,35 @@ const DotcomPreviewPane = ( {
 		};
 	}, [ closeSitePreviewPane ] );
 
+	const { data: stagingSites } = useStagingSite( site.ID, {
+		enabled: ! site.is_wpcom_staging_site && site.is_wpcom_atomic,
+	} );
+
+	if ( site.options && site.is_wpcom_atomic ) {
+		site.options.wpcom_staging_blog_ids =
+			stagingSites?.map( ( stagingSite ) => stagingSite.id ) ?? [];
+	}
+
+	const stagingStatus = useSelector( ( state ) => getStagingSiteStatus( state, site.ID ) );
+	const isStagingStatusFinished =
+		stagingStatus === StagingSiteStatus.COMPLETE ||
+		stagingStatus === StagingSiteStatus.NONE ||
+		stagingStatus === StagingSiteStatus.UNSET;
+
 	return (
 		<ItemPreviewPane
 			itemData={ itemData }
 			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
+			className={ site.is_wpcom_staging_site ? 'is-staging-site' : '' }
 			itemPreviewPaneHeaderExtraProps={ {
 				externalIconSize: 16,
 				siteIconFallback: 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,
+				subtitleExtra: () =>
+					( site.is_wpcom_staging_site || isStagingStatusFinished ) && (
+						<SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />
+					),
 			} }
 		/>
 	);

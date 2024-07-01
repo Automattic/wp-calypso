@@ -26,14 +26,12 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook": "sb dev"
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/odie-client": "workspace:^",
-		"@automattic/site-picker": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.11.8",
@@ -50,11 +48,8 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
-		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-backgrounds": "^7.6.19",
-		"@storybook/cli": "^7.6.19",
-		"@storybook/react": "^7.6.19",
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {

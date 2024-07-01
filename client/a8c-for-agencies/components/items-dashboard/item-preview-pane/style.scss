@@ -9,6 +9,10 @@
 		position: relative;
 		z-index: 1;
 
+		&.is-hidden .section-nav__panel {
+			display: none;
+		}
+
 		.section-nav-tab__link {
 			color: #000;
 		}

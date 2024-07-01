@@ -69,7 +69,6 @@ const defaultProps = {
 		result: { domain_name: 'zzz.wordpress.com' },
 	},
 	hideUnavailableFeatures: false,
-	intervalType: 'yearly',
 	isCustomDomainAllowedOnFreePlan: false,
 	isInAdmin: false,
 	isInSignup: true,
@@ -135,25 +134,11 @@ export const TrailMapControl = {
 	},
 } satisfies Story;
 
-export const TrailMapStructure = {
-	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment_structure',
-		enableCategorisedFeatures: true,
-	},
-} satisfies Story;
-
-export const TrailMapCopy = {
-	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment_copy',
-	},
-} satisfies Story;
-
 export const TrailMapCopyAndStructure = {
 	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment_copy_and_structure',
+		...Plans.args,
+		trailMapVariant: 'treatment',
+		gridPlanForSpotlight: undefined,
 		enableCategorisedFeatures: true,
 	},
 } satisfies Story;

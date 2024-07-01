@@ -254,6 +254,10 @@
 				margin-top: 0;
 			}
 
+			.comments__comment .comments__form {
+				margin-top: 10px;
+			}
+
 			@include breakpoint-deprecated( "<660px" ) {
 				margin: 24px 0 0;
 			}
@@ -476,6 +480,10 @@
 	padding: 0 9px 2px;
 	background-color: var(--color-neutral-0);
 	align-self: center;
+
+	&:first-child {
+		padding-left: 0;
+	}
 }
 
 .reader-post-card__byline .reader-avatar {

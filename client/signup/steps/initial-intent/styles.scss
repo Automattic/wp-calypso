@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 
-.signup.is-guided {
+.signup__step.is-initial-intent {
 	.question-step {
 		.action-buttons.step-container__navigation {
 			button.button.navigation-link.is-borderless {
@@ -43,17 +43,27 @@
 				flex-direction: column;
 
 				.flow-question {
-					max-width: 430px;
+					max-width: 452px;
 
 					.flow-question__heading {
 						margin-bottom: 4px;
 						line-height: 24px;
+						letter-spacing: -0.6px;
 					}
 
 					.flow-question__description {
 						line-height: 20px;
 						letter-spacing: -0.15px;
 						margin-bottom: 0;
+					}
+
+					.components-card__body {
+						padding: 24px;
+
+						.components-flex {
+							gap: 1rem;
+						}
+
 					}
 				}
 			}

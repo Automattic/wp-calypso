@@ -42,7 +42,6 @@ import {
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
-import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
@@ -402,14 +401,6 @@ export class RenderDomainsStep extends Component {
 			: undefined;
 
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
-
-		maybeExcludeEmailsStep( {
-			domainItem,
-			resetSignupStep: this.props.removeStep,
-			siteUrl: suggestion?.domain_name,
-			stepName: 'emails',
-			submitSignupStep: this.props.submitSignupStep,
-		} );
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -1269,10 +1260,7 @@ export class RenderDomainsStep extends Component {
 		}
 
 		return (
-			<div
-				key={ this.props.step + this.props.stepSectionName }
-				className="domains__step-content domains__step-content-domain-step"
-			>
+			<div className="domains__step-content domains__step-content-domain-step">
 				{ this.props.isSideContentExperimentLoading ? (
 					<Spinner width="100" />
 				) : (
@@ -1379,7 +1367,8 @@ export class RenderDomainsStep extends Component {
 		} else if ( 'plans-first' === flowName ) {
 			backUrl = getStepUrl( flowName, previousStepName );
 		} else if ( isOnboardingGuidedFlow( flowName ) ) {
-			backUrl = getStepUrl( flowName, previousStepName );
+			// Let the framework decide the back url.
+			backUrl = undefined;
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 

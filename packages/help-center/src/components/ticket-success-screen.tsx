@@ -2,16 +2,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { getSectionName } from 'calypso/state/ui/selectors';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { BackButton } from './back-button';
 import { SuccessIcon } from './success-icon';
 
 export const SuccessScreen: React.FC = () => {
 	const { __ } = useI18n();
 	const { search } = useLocation();
-	const sectionName = useSelector( getSectionName );
+	const { sectionName } = useHelpCenterContext();
 	const params = new URLSearchParams( search );
 	const forumTopicUrl = params.get( 'forumTopic' );
 

@@ -52,6 +52,7 @@ export default function SiteStatsColumn( { site, stats }: Props ) {
 					translate( '%(totalViews)s views in the last 7 days', { args: { totalViews } } ) as string
 				}
 				onClick={ openStats }
+				disabled={ site?.sticker?.includes( 'migration-in-progress' ) }
 				className={ clsx(
 					'sites-overview__stats-trend',
 					`sites-overview__stats-trend__${ viewsTrend }`,

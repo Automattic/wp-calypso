@@ -72,11 +72,25 @@
 		.dataviews-view-table tr td:first-child {
 			padding-left: 64px;
 		}
-		.dataviews-view-table tr th:last-child,
-		.dataviews-view-table tr td:last-child {
-			padding-right: 64px;
-			width: 20px;
-			white-space: nowrap;
+		.dataviews-view-table tr {
+			th:last-child,
+			td:last-child {
+				padding-right: 64px;
+				width: 20px;
+				white-space: nowrap;
+
+				position: sticky;
+				right: 0;
+				z-index: 1;
+				background: linear-gradient(to right, transparent 0%, #fff 25%);
+			}
+
+			&:hover {
+				th:last-child,
+				td:last-child {
+					background: linear-gradient(to right, transparent 0%, var(--color-neutral-0) 25%);
+				}
+			}
 		}
 	}
 

@@ -288,7 +288,7 @@ export class NoteList extends Component {
 		let [ notes ] = Object.entries( noteGroups ).reduce(
 			( [ list, isFirst ], [ timeGroupKey, timeGroupNotes ] ) => {
 				const title = groupTitles[ timeGroupKey ];
-				const header = <ListHeader { ...{ key: title, title, isFirst } } />;
+				const header = <ListHeader key={ title } title={ title } isFirst={ isFirst } />;
 
 				return [ [ ...list, header, ...timeGroupNotes.map( createNoteComponent ) ], false ];
 			},
@@ -402,6 +402,7 @@ const mapStateToProps = ( state ) => ( {
 
 const mapDispatchToProps = {
 	selectNote: actions.ui.selectNote,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps, null, { forwardRef: true } )(

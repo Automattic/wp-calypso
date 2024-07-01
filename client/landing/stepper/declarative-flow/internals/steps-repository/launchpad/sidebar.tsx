@@ -202,104 +202,98 @@ const Sidebar = ( {
 	return (
 		<>
 			{ site && <QueryMembershipsSettings siteId={ site.ID } source="launchpad" /> }
-			<div className="launchpad__sidebar">
-				<div className="launchpad__sidebar-content-container">
-					<div className="launchpad__progress-bar-container">
-						<CircularProgressBar
-							size={ 40 }
-							enableDesktopScaling
-							currentStep={ currentTask || 0 }
-							numberOfSteps={ numberOfSteps }
-							showProgressText={ site !== null }
-						/>
-					</div>
-					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
-					<h1 className="launchpad__sidebar-h1">
-						{ showLaunchTitle && launchTitle ? launchTitle : title }
-					</h1>
-					<p className="launchpad__sidebar-description">{ subtitle }</p>
-					{ showDomain && (
-						<div className="launchpad__url-box">
-							{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
-							<div className="launchpad__url-box-domain">
-								<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
-								{ showClipboardButton && (
-									<>
-										<ClipboardButton
-											aria-label={ translate( 'Copy URL' ) }
-											text={ siteSlug }
-											className="launchpad__clipboard-button"
-											borderless
-											compact
-											onCopy={ () => setClipboardCopied( true ) }
-											onMouseLeave={ () => setClipboardCopied( false ) }
-											ref={ clipboardButtonEl }
-										>
-											<Icon icon={ copy } size={ 18 } />
-										</ClipboardButton>
-										<Tooltip
-											context={ clipboardButtonEl.current }
-											isVisible={ clipboardCopied }
-											position="top"
-										>
-											{ translate( 'Copied to clipboard!' ) }
-										</Tooltip>
-									</>
-								) }
-							</div>
-							{ showDomainUpgradeBadge() && (
-								<a href={ getDomainUpgradeBadgeUrl() }>
-									<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
-										{ translate( 'Customize' ) }
-									</Badge>
-								</a>
+			<div className="launchpad__sidebar-content-container">
+				<div className="launchpad__progress-bar-container">
+					<CircularProgressBar
+						size={ 40 }
+						enableDesktopScaling
+						currentStep={ currentTask || 0 }
+						numberOfSteps={ numberOfSteps }
+						showProgressText={ site !== null }
+					/>
+				</div>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
+				<h1 className="launchpad__sidebar-h1">
+					{ showLaunchTitle && launchTitle ? launchTitle : title }
+				</h1>
+				<p className="launchpad__sidebar-description">{ subtitle }</p>
+				{ showDomain && (
+					<div className="launchpad__url-box">
+						{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
+						<div className="launchpad__url-box-domain">
+							<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
+							{ showClipboardButton && (
+								<>
+									<ClipboardButton
+										aria-label={ translate( 'Copy URL' ) }
+										text={ siteSlug }
+										className="launchpad__clipboard-button"
+										borderless
+										compact
+										onCopy={ () => setClipboardCopied( true ) }
+										onMouseLeave={ () => setClipboardCopied( false ) }
+										ref={ clipboardButtonEl }
+									>
+										<Icon icon={ copy } size={ 18 } />
+									</ClipboardButton>
+									<Tooltip
+										context={ clipboardButtonEl.current }
+										isVisible={ clipboardCopied }
+										position="top"
+									>
+										{ translate( 'Copied to clipboard!' ) }
+									</Tooltip>
+								</>
 							) }
 						</div>
-					) }
-					{ isDomainSSLProcessing && (
-						<div className="launchpad__domain-notification">
-							<div className="launchpad__domain-notification-icon">
-								<Gridicon
-									className="launchpad__domain-checkmark-icon"
-									icon="checkmark"
-									size={ 18 }
-								/>
-							</div>
-							<p>
-								{ translate(
-									'We are currently setting up your new domain!{{br/}}It may take a few minutes before it is ready.',
-									{ components: { br: <br /> } }
-								) }
-							</p>
+						{ showDomainUpgradeBadge() && (
+							<a href={ getDomainUpgradeBadgeUrl() }>
+								<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
+									{ translate( 'Customize' ) }
+								</Badge>
+							</a>
+						) }
+					</div>
+				) }
+				{ isDomainSSLProcessing && (
+					<div className="launchpad__domain-notification">
+						<div className="launchpad__domain-notification-icon">
+							<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark" size={ 18 } />
 						</div>
-					) }
-					<LaunchpadInternal
-						flow={ flow }
-						site={ site }
-						siteSlug={ launchpadKey }
-						checklistSlug={ checklistSlug }
-						taskFilter={ () => enhancedTasks || [] }
-						launchpadContext="onboarding"
-						makeLastTaskPrimaryAction
+						<p>
+							{ translate(
+								'We are currently setting up your new domain!{{br/}}It may take a few minutes before it is ready.',
+								{ components: { br: <br /> } }
+							) }
+						</p>
+					</div>
+				) }
+				<LaunchpadInternal
+					flow={ flow }
+					site={ site }
+					siteSlug={ launchpadKey }
+					checklistSlug={ checklistSlug }
+					taskFilter={ () => enhancedTasks || [] }
+					launchpadContext="onboarding"
+					makeLastTaskPrimaryAction
+				/>
+				{ showPlansModal && site?.ID && (
+					<RecurringPaymentsPlanAddEditModal
+						closeDialog={ () => setShowPlansModal( false ) }
+						product={ {
+							price: 5,
+							subscribe_as_site_subscriber: true,
+							title: translate( 'Paid newsletter' ),
+							type: TYPE_TIER,
+						} }
+						annualProduct={ {
+							price: 5 * 12,
+							subscribe_as_site_subscriber: true,
+							title: `${ translate( 'Paid newsletter' ) } ${ translate( '(yearly)' ) }`,
+						} }
+						siteId={ site.ID }
 					/>
-					{ showPlansModal && site?.ID && (
-						<RecurringPaymentsPlanAddEditModal
-							closeDialog={ () => setShowPlansModal( false ) }
-							product={ {
-								price: 5,
-								subscribe_as_site_subscriber: true,
-								title: translate( 'Paid newsletter' ),
-								type: TYPE_TIER,
-							} }
-							annualProduct={ {
-								price: 5 * 12,
-								subscribe_as_site_subscriber: true,
-								title: `${ translate( 'Paid newsletter' ) } ${ translate( '(yearly)' ) }`,
-							} }
-							siteId={ site.ID }
-						/>
-					) }
-				</div>
+				) }
 			</div>
 		</>
 	);

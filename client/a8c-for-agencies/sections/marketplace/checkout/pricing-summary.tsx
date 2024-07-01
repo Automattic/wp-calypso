@@ -1,8 +1,6 @@
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import ShoppingCartMenuItem from '../shopping-cart/shopping-cart-menu/item';
 import { useTotalInvoiceValue } from '../wpcom-overview/hooks/use-total-invoice-value';
@@ -22,7 +20,6 @@ export default function PricingSummary( {
 	isClient,
 }: Props ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const userProducts = useSelector( getProductsList );
 
@@ -31,14 +28,6 @@ export default function PricingSummary( {
 	const { discountedCost, actualCost } = getTotalInvoiceValue( userProducts, items );
 
 	const currency = items[ 0 ]?.currency ?? 'USD'; // FIXME: Fix if multiple currencies are supported
-
-	const learnMoreLink = ''; //FIXME: Add link for A4A;
-
-	const onClickLearnMore = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_learn_more_click' ) );
-	}, [ dispatch ] );
-
-	const showLearnMoreLink = false; // FIXME: Remove this once the correct link is added
 
 	// Show actual cost if the agency is referring a client
 	const totalCost = isAutomatedReferrals ? actualCost : discountedCost;
@@ -87,33 +76,6 @@ export default function PricingSummary( {
 					} ) }
 				</span>
 			</div>
-
-			{
-				// Show the notice only if it is agency checkout
-				isAgencyCheckout && (
-					<div className="checkout__summary-notice">
-						{ showLearnMoreLink
-							? translate(
-									'You will be billed at the end of every month. Your first month may be less than the above amount. {{a}}Learn more{{/a}}',
-									{
-										components: {
-											a: (
-												<a
-													href={ learnMoreLink }
-													target="_blank"
-													rel="noopener noreferrer"
-													onClick={ onClickLearnMore }
-												/>
-											),
-										},
-									}
-							  )
-							: translate(
-									'You will be billed at the end of every month. Your first month may be less than the above amount.'
-							  ) }
-					</div>
-				)
-			}
 		</div>
 	);
 }

@@ -33,7 +33,6 @@ const ALT_TEXT = {
 	diners: 'Diners Club',
 	discover: 'Discover',
 	eps: 'eps',
-	giropay: 'Giropay',
 	ideal: 'iDEAL',
 	jcb: 'JCB',
 	mastercard: 'Mastercard',

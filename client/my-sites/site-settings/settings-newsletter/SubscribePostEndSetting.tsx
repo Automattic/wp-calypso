@@ -33,6 +33,7 @@ export const SubscribePostEndSetting = ( {
 		return addQueryArgs( siteEditorUrl, {
 			postType: 'wp_template',
 			postId: `${ themeSlug }//single`,
+			canvas: 'edit',
 		} );
 	};
 

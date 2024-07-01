@@ -16,6 +16,7 @@ import wrapSettingsForm from '../wrap-settings-form';
 import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
+import { PaidNewsletterSection } from './PaidNewsletterSection';
 import { ReplyToSetting } from './ReplyToSetting';
 import { SenderNameSetting } from './SenderNameSetting';
 import { SubscribeModalOnCommentSetting } from './SubscribeModalOnCommentSetting';
@@ -164,7 +165,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	return (
 		<form onSubmit={ handleSubmitForm }>
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="subscriptions"
@@ -212,7 +213,13 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					</>
 				) }
 			</Card>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
+
+			<SettingsSectionHeader
+				disabled={ disabled }
+				id="paid-newsletter"
+				title={ translate( 'Paid Newsletter' ) }
+			/>
+			<PaidNewsletterSection />
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="email-settings"
@@ -250,8 +257,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					value={ jetpack_subscriptions_reply_to }
 				/>
 			</Card>
-
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				id="newsletter-categories-settings"
 				title={ translate( 'Newsletter categories' ) }
@@ -267,8 +272,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				handleToggle={ handleToggle }
 				updateFields={ updateFields }
 			/>
-
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="messages"
@@ -294,7 +297,13 @@ const NewsletterSettings = () => {
 	return (
 		<Main className="site-settings">
 			<DocumentHead title={ translate( 'Newsletter Settings' ) } />
-			<NavigationHeader navigationItems={ [] } title={ translate( 'Newsletter Settings' ) } />
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Newsletter Settings' ) }
+				subtitle={ translate(
+					'Transform your blog posts into newsletters to easily reach your subscribers.'
+				) }
+			/>
 			<SubscriptionsModuleBanner />
 			<NewsletterSettingsForm />
 		</Main>

@@ -1,5 +1,6 @@
 .color-scheme.is-classic-bright {
 	/* Theme Properties */
+	--theme-text-color: #044b7a; /* Direct from wp-admin */
 	--color-primary: var(--studio-blue-50);
 	--color-primary-rgb: var(--studio-blue-50-rgb);
 	--color-primary-dark: var(--studio-blue-70);
@@ -101,6 +102,12 @@
 	--color-sidebar-submenu-text: var(--studio-blue-70);
 	--color-sidebar-submenu-hover-text: var(--color-accent);
 	--color-sidebar-submenu-selected-text: var(--color-accent);
+
+	/* Sidebar Submenu - Nav Redesign */
+	--color-navredesign-sidebar-submenu-text: var(--color-sidebar-submenu-text);
+	--color-navredesign-sidebar-menu-selected-text: var(--theme-text-color);
+	--color-navredesign-sidebar-submenu-selected-text: var(--color-accent);
+	--color-navredesign-sidebar-submenu-hover-text: var(--color-accent);
 
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--studio-pink-50);

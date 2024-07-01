@@ -8,7 +8,7 @@ import './style.scss';
 
 interface Props {
 	onClose: () => void;
-	siteId: string;
+	siteId: string | number;
 }
 
 const WhatsNewGuide: React.FC< Props > = ( { onClose, siteId } ) => {

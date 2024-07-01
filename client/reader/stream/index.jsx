@@ -174,12 +174,13 @@ class ReaderStream extends Component {
 	};
 
 	scrollToSelectedPost( animate ) {
+		const scrollContainer = this.state.listContext || window;
+		const containerOffset = scrollContainer.getBoundingClientRect?.().top || 0;
 		const headerOffset = -1 * this.props.fixedHeaderHeight || 0; // a fixed position header means we can't just scroll the element into view.
-		const totalOffset = headerOffset - 35; // 35px of constant offset to ensure the post isnt cramped against the top container or header border.
+		const totalOffset = headerOffset - containerOffset - 20; // 20px of constant offset to ensure the post isnt cramped against the top container or header border.
 		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
 			selectedNode.focus();
-			const scrollContainer = this.state.listContext || window;
 			const scrollContainerPosition = scrollContainer.scrollTop;
 			const boundingClientRect = selectedNode.getBoundingClientRect();
 			const scrollY = parseInt(
@@ -378,8 +379,11 @@ class ReaderStream extends Component {
 		// This should already be false but this is a safety.
 		this.wasSelectedByOpeningPost = false;
 
+		// If the currently selected item is too far away in scroll position to be rendered by the
+		// infinite list, lets fall back to the magic selection functionality noted below.
+		const selectedItem = this.state.listContext?.querySelector( '.card.is-selected' );
 		// do we have a selected item? if so, just move to the next one
-		if ( this.props.selectedPostKey ) {
+		if ( this.props.selectedPostKey && selectedItem ) {
 			this.props.selectNextItem( { streamKey, items } );
 			return;
 		}
@@ -594,7 +598,8 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
+			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		let body;
@@ -635,7 +640,8 @@ class ReaderStream extends Component {
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 					className="stream__list"
-					context={ this.state.listContext ?? false }
+					context={ this.state.listContext }
+					selectedItem={ selectedPostKey }
 				/>
 			);
 

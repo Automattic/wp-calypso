@@ -1,4 +1,5 @@
 @import "@automattic/typography/styles/variables";
+@import "@automattic/global-styles/src/components/search-control-styles";
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
@@ -18,11 +19,11 @@
 		> * {
 			padding-inline: 8px;
 
-			@include breakpoint-deprecated( ">660px" ) {
+			@include breakpoint-deprecated(">660px") {
 				padding-inline: 8px;
 			}
 
-			@include breakpoint-deprecated( ">960px" ) {
+			@include breakpoint-deprecated(">960px") {
 				padding-inline: 26px;
 			}
 
@@ -236,9 +237,7 @@
 
 // Styles for actions (search, filters).
 .dataviews-filters__view-actions {
-	.components-search-control {
-		min-width: 245px;
-	}
+	@include search-control-wpcom-styles;
 
 	.components-search-control .components-input-control__container {
 		width: 100%;
@@ -248,14 +247,11 @@
 		align-items: center;
 		// Places search above filters
 		z-index: 1;
-		margin-top: 1px;
-		border-radius: 4px;
-		background-color: var(--color-surface, $white);
+		margin-top: 2px;
 
 		.components-input-control__input {
 			padding: 0 0 0 10px;
 			font-size: $font-body-small;
-			color: var(--studio-gray-40);
 
 			&::placeholder {
 				color: var(--studio-gray-40);
@@ -264,12 +260,7 @@
 
 		// Search icon
 		.components-input-control__suffix {
-			color: var(--studio-gray-40);
 			margin-right: 4px;
-		}
-
-		.components-input-control__backdrop {
-			box-shadow: 0 0 0 1px var(--studio-gray-10);
 		}
 	}
 }
@@ -538,6 +529,29 @@
 			padding-left: 24px;
 			padding-right: 24px;
 		}
+	}
+
+	.is-staging-site {
+		position: relative;
+
+		.item-preview__admin-button {
+			background-color: var(--studio-yellow-20);
+			color: var(--studio-yellow-80);
+			border: 0;
+		}
+	}
+
+	.is-staging-site::before {
+		content: "";
+		position: absolute;
+		z-index: 300;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: inherit;
+		pointer-events: none;
+		box-shadow: inset 0 0 0 3px var(--studio-yellow-20);
 	}
 
 	.domains-table-header .list__header-column {

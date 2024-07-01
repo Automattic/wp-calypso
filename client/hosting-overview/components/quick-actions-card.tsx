@@ -4,7 +4,7 @@ import { chevronRightSmall, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import { HostingCard } from 'calypso/components/hosting-card';
+import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
@@ -60,15 +60,28 @@ const QuickActionsCard: FC = () => {
 
 	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( site?.ID );
 
+	const isMac = window?.navigator.userAgent && window.navigator.userAgent.indexOf( 'Mac' ) > -1;
+	const paletteShortcut = isMac ? '⌘K' : 'Ctrl + K';
+
 	return (
-		<HostingCard
-			className="hosting-overview__quick-actions"
-			title={
-				hasEnTranslation( 'Quick actions' )
-					? translate( 'Quick actions' )
-					: translate( 'WP Admin links' )
-			}
-		>
+		<HostingCard className="hosting-overview__quick-actions">
+			<div className="hosting-card__title-wrapper">
+				<h3 className="hosting-card__title">
+					{ hasEnTranslation( 'Command Palette' )
+						? translate( 'Command Palette' )
+						: translate( 'Quick actions' ) }
+				</h3>
+				<span className="hosting-card__title-shortcut">{ paletteShortcut }</span>
+			</div>
+			<HostingCardDescription>
+				{ translate(
+					// Translators: {{shortcut/}} is "⌘K" or "Ctrl+K" depending on the user's OS.
+					'Navigate your site smoothly. Use the commands below or press %(shortcut)s for more options.',
+					{
+						args: { shortcut: paletteShortcut },
+					}
+				) }
+			</HostingCardDescription>
 			<ul className="hosting-overview__actions-list">
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-wordpress-alt hosting-overview__dashicon" /> }

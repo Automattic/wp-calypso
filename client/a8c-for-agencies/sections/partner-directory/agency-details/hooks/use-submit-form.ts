@@ -15,11 +15,11 @@ export default function useSubmitForm( { formData, onSubmitSuccess, onSubmitErro
 			if ( onSubmitSuccess && data?.profile ) {
 				onSubmitSuccess( data );
 			} else {
-				onSubmitError && onSubmitError();
+				onSubmitError?.();
 			}
 		},
 		onError: () => {
-			onSubmitError && onSubmitError();
+			onSubmitError?.();
 		},
 	} );
 

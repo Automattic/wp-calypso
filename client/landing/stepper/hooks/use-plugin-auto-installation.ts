@@ -20,7 +20,7 @@ interface SiteMigrationStatus {
 }
 
 type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
-const DEFAULT_RETRY = process.env.NODE_ENV !== 'production' ? 1 : 100;
+const DEFAULT_RETRY = process.env.NODE_ENV === 'test' ? 1 : 100;
 const DEFAULT_RETRY_DELAY = process.env.NODE_ENV !== 'production' ? 300 : 3000;
 
 const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>

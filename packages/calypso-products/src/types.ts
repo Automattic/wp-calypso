@@ -285,13 +285,6 @@ export type FeatureGroup = {
 };
 export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 
-export type StorageOption = {
-	slug: WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug;
-	// Determines if the storage option is an add-on that can be purchased. There are a mixture of patterns
-	// to identify add-ons for now, and we're temporarily adding one more
-	isAddOn: boolean;
-};
-
 export type Plan = BillingTerm & {
 	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK | typeof GROUP_P2;
 	type: PlanType;
@@ -332,10 +325,10 @@ export type Plan = BillingTerm & {
 	 */
 	getPlanComparisonFeatureLabels?: () => Record< Feature, TranslateResult >;
 
-	get2023PricingGridSignupStorageOptions?: (
+	getStorageFeature?: (
 		showLegacyStorageFeature?: boolean,
 		isCurrentPlan?: boolean
-	) => StorageOption[];
+	) => WPComPlanStorageFeatureSlug;
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;

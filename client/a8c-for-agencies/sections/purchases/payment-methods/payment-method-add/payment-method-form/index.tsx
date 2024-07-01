@@ -202,7 +202,14 @@ function PaymentMethodForm() {
 			refetchStoredCards();
 			// If the user is in the client view, we need to redirect to the client view
 			if ( isClientView() && returnQueryArg.startsWith( A4A_CLIENT_CHECKOUT ) ) {
-				page( returnQueryArg );
+				page(
+					addQueryArgs(
+						{
+							payment_method_added: true,
+						},
+						returnQueryArg
+					)
+				);
 			}
 		} else {
 			page( isClientView() ? A4A_CLIENT_PAYMENT_METHODS_LINK : A4A_PAYMENT_METHODS_LINK );

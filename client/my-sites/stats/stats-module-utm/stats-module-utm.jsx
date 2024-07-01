@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -61,7 +60,6 @@ const StatsModuleUTM = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
-	const isBuilderEnabled = config.isEnabled( 'stats/utm-builder' );
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
@@ -148,7 +146,7 @@ const StatsModuleUTM = ( {
 				mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 				toggleControl={
 					<div className="stats-module__extended-toggle">
-						{ isBuilderEnabled && <UTMBuilder /> }
+						<UTMBuilder />
 						<UTMDropdown
 							buttonLabel={ optionLabels[ selectedOption ].selectLabel }
 							onSelect={ setSelectedOption }

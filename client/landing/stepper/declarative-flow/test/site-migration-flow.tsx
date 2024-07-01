@@ -9,6 +9,7 @@ import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-tri
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from '../../../../lib/url';
+import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
 import siteMigrationFlow from '../site-migration-flow';
@@ -187,7 +188,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'migrate redirects from the import-from page to new instructions if flag enabled', () => {
+		it( 'migrate redirects from the import-from page to how-to-migrate page', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -195,10 +196,64 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }`,
+				state: {
+					siteSlug: 'example.wordpress.com',
+				},
+			} );
+		} );
+
+		it( 'migrate redirects from the how-to-migrate (myself) page page to instructions page', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug,
+				dependencies: {
+					destination: 'migrate',
+					how: 'myself',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
 				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`,
 				state: {
 					siteSlug: 'example.wordpress.com',
 				},
+			} );
+		} );
+
+		it( 'migrate redirects from the how-to-migrate (do it for me) page to assisted migration page', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug,
+				dependencies: {
+					destination: 'migrate',
+					how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }`,
+				state: {
+					siteSlug: 'example.wordpress.com',
+				},
+			} );
+		} );
+
+		it( 'migrate redirects from the how-to-migrate (upgrade needed) page to site-migration-upgrade-plan step', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug,
+				dependencies: {
+					destination: 'upgrade',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&destination=upgrade`,
+				state: null,
 			} );
 		} );
 
@@ -227,7 +282,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'upgrade redirects from the import-from page to site-migration-upgrade-plan page', () => {
+		it( 'upgrade redirects from the import-from page to site-migration-how-to-migrate page', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -238,7 +293,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/site-migration-upgrade-plan',
+				path: '/site-migration-how-to-migrate',
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );
@@ -302,7 +357,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?siteSlug=example.wordpress.com`,
+				path: `/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );

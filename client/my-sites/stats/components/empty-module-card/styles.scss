@@ -1,0 +1,19 @@
+.stats-empty-module-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 18px 0 32px;
+}
+
+.stats-empty-module-card__icon {
+	width: 34px;
+}
+
+.stats-empty-module-card__description {
+	margin: 24px 0;
+	text-align: center;
+}
+
+.stats-empty-module-card__content {
+	width: 80%;
+}

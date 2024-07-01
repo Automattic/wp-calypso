@@ -14,17 +14,11 @@ import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { useFormSelectors } from '../components/hooks/use-form-selectors';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
-import {
-	DIRECTORY_JETPACK,
-	DIRECTORY_PRESSABLE,
-	DIRECTORY_WOOCOMMERCE,
-	DIRECTORY_WPCOM,
-	PARTNER_DIRECTORY_DASHBOARD_SLUG,
-} from '../constants';
+import { PARTNER_DIRECTORY_DASHBOARD_SLUG } from '../constants';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../types';
-import { getPartnerDirectoryLabel } from '../utils/get-partner-directory-label';
 import useExpertiseForm from './hooks/use-expertise-form';
 import useSubmitForm from './hooks/use-submit-form';
 
@@ -68,6 +62,8 @@ type Props = {
 const AgencyExpertise = ( { initialFormData }: Props ) => {
 	const translate = useTranslate();
 
+	const { availableDirectories } = useFormSelectors();
+
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
 			response && reduxDispatch( setActiveAgency( response ) );
@@ -89,7 +85,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				duration: 6000,
 			} )
 		);
-	}, [ page, reduxDispatch, translate ] );
+	}, [ reduxDispatch, translate ] );
 
 	const {
 		formData,
@@ -106,17 +102,13 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 
 	const { services, products, directories, feedbackUrl } = formData;
 
-	const directoryOptions: DirectoryApplicationType[] = [
-		DIRECTORY_WPCOM,
-		DIRECTORY_WOOCOMMERCE,
-		DIRECTORY_JETPACK,
-		DIRECTORY_PRESSABLE,
-	];
+	const directoryOptions = Object.keys( availableDirectories ) as DirectoryApplicationType[];
 
 	return (
 		<Form
 			className="partner-directory-agency-expertise"
 			title={ translate( 'Share your expertise' ) }
+			autocomplete="off"
 			description={ translate( "Pick your agency's specialties and choose your directories." ) }
 		>
 			<FormSection title={ translate( 'Product and Service' ) }>
@@ -125,6 +117,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					description={ translate(
 						'We allow each agency to offer up to five services to help you focus on what you do best.'
 					) }
+					isRequired
 				>
 					<ServicesSelector
 						selectedServices={ services }
@@ -137,7 +130,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					/>
 				</FormField>
 
-				<FormField label={ translate( 'What products do you work with?' ) }>
+				<FormField label={ translate( 'What products do you work with?' ) } isRequired>
 					<ProductsSelector
 						selectedProducts={ products }
 						setProducts={ ( value ) =>
@@ -154,12 +147,13 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Automattic Partner Directories' ) }
 					sub={ translate( 'Select the Automattic directories you would like to appear on.' ) }
+					isRequired
 				>
 					<div className="partner-directory-agency-expertise__directory-options">
 						{ directoryOptions.map( ( directory ) => (
 							<CheckboxControl
 								key={ `directory-${ directory }` }
-								label={ getPartnerDirectoryLabel( directory ) }
+								label={ availableDirectories[ directory ] }
 								checked={ isDirectorySelected( directory ) }
 								onChange={ ( value ) => setDirectorySelected( directory, value ) }
 								disabled={ isDirectoryApproved( directory ) }
@@ -174,6 +168,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 						sub={ translate(
 							"For each directory you selected, provide URLs of 5 client sites you've worked on. This helps us gauge your expertise."
 						) }
+						isRequired
 					>
 						<div className="partner-directory-agency-expertise__directory-client-sites">
 							{ directories.map( ( { directory } ) => (
@@ -181,7 +176,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 									key={ `directory-samples-${ directory }` }
 									label={ translate( 'Relevant examples for %(directory)s', {
 										args: {
-											directory: getPartnerDirectoryLabel( directory ),
+											directory: availableDirectories[ directory ],
 										},
 										comment: '%(directory)s is the directory name, e.g. "WordPress.com"',
 									} ) }
@@ -198,9 +193,9 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Share customer feedback' ) }
 					description={ translate(
-						'Great support is key to our success. Share a link to your customer feedback from Google, Clutch, Facebook, etc., or testimonials featured on your website. If you don’t have online reviews, provide a link to client references or case studies.'
+						'Share a link to your customer feedback from Google, Clutch, Facebook, etc., or testimonials featured on your website. If you don’t have online reviews, provide a link to client references or case studies.'
 					) }
-					isOptional
+					isRequired
 				>
 					<TextControl
 						type="text"
@@ -215,6 +210,10 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					/>
 				</FormField>
 			</FormSection>
+
+			<div className="partner-directory-agency-cta__required-information">
+				{ translate( '* indicates a required information' ) }
+			</div>
 
 			<div className="partner-directory-agency-cta__footer">
 				<Button

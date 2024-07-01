@@ -8,6 +8,7 @@ export interface AgencyDirectoryApplication {
 	directories: DirectoryApplication[];
 	feedbackUrl: string;
 	status?: AgencyDirectoryApplicationStatus;
+	isPublished?: boolean;
 }
 
 export interface DirectoryApplication {
@@ -27,7 +28,7 @@ export interface AgencyDetails {
 	landingPageUrl: string;
 	country: string;
 	isAvailable: boolean;
-	industry: string;
+	industries: string[];
 	services: string[];
 	products: string[];
 	languagesSpoken: string[];

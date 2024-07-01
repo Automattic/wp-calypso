@@ -604,7 +604,7 @@ type SectionForPostsAndPages = 'posts' | 'pages';
 
 export type Section = SectionForVideos | SectionForTours | SectionForPostsAndPages;
 
-export function getContextResults( section: Section, siteIntent: string ) {
+export function getContextResults( section: string, siteIntent: string ) {
 	// Posts and Pages have a common help section
 	if ( section === 'posts' || section === 'pages' ) {
 		section = 'posts-pages';

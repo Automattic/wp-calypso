@@ -1,3 +1,5 @@
+import { UrlData } from 'calypso/blocks/import/types';
+
 export interface DNS {
 	host: string;
 	class: string;
@@ -62,6 +64,14 @@ export interface HostingProvider {
 	is_cdn: boolean;
 	support_url?: string;
 	homepage_url?: string;
+}
+
+export interface HostingProviderUrlDetails {
+	name: string;
+	is_a8c: boolean;
+	is_unknown: boolean;
+	hosting_provider?: HostingProvider;
+	url_data?: UrlData;
 }
 
 export interface DomainAnalyzerQueryResponse {

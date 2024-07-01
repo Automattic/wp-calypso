@@ -78,6 +78,14 @@ export default function ItemPreviewPaneHeader( {
 							) : (
 								itemData.subtitle
 							) }
+
+							{ extraProps && extraProps.subtitleExtra ? (
+								<span>
+									<extraProps.subtitleExtra />
+								</span>
+							) : (
+								''
+							) }
 						</div>
 					</div>
 					{ isPreviewLoaded && (

@@ -123,6 +123,13 @@ export default function ProductCard( props: Props ) {
 		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
 	}, [ asReferral, isSelected, translate ] );
 
+	const ctaLightboxLabel = useMemo( () => {
+		if ( asReferral ) {
+			return isSelected ? translate( 'Remove from referral' ) : translate( 'Add to referral' );
+		}
+		return isSelected ? translate( 'Remove from cart' ) : translate( 'Add to cart' );
+	}, [ asReferral, isSelected, translate ] );
+
 	return (
 		<>
 			<div
@@ -181,7 +188,7 @@ export default function ProductCard( props: Props ) {
 				<LicenseLightbox
 					product={ product }
 					quantity={ quantity }
-					ctaLabel={ isSelected ? translate( 'Remove from cart' ) : translate( 'Add to cart' ) }
+					ctaLabel={ ctaLightboxLabel }
 					isCTAPrimary={ ! isSelected }
 					isDisabled={ isDisabled }
 					onActivate={ onSelectProduct }

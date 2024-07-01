@@ -19,38 +19,6 @@
 		pointer-events: none;
 	}
 
-	.signup-header__overlay-banner {
-		position: absolute;
-		// to account for the 8px margin-top on the signup header
-		top: -8px;
-		left: 0;
-		width: 100%;
-		height: 80px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		&.is-dark-background {
-			background-color: #0675c4;
-			color: var(--color-text-inverted);
-		}
-
-		.signup-header__overlay-banner-with-refund-period {
-			font-size: var(--scss-font-body-small);
-
-			.signup-header__overlay-banner-with-refund-period-icon,
-			.signup-header__overlay-banner-with-refund-period-text {
-				display: inline;
-				vertical-align: middle;
-			}
-
-			&.is-mobile {
-				max-width: 230px;
-				text-align: center;
-			}
-		}
-	}
-
 	.wordpress-logo {
 		height: 180px;
 		width: 180px;
@@ -63,14 +31,6 @@
 
 		&.is-large {
 			transform: scale(1) translateY(80px);
-		}
-
-		&.is-dark-background {
-			// override white-signup layout styles when the background is forced dark here
-			body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow) & {
-				fill: var(--color-text-inverted);
-			}
-
 		}
 	}
 

@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import UserContactSupportModalForm from 'calypso/a8c-for-agencies/components/user-contact-support-modal-form';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/sections/overview/sidebar/contact-support';
+import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
@@ -15,7 +16,7 @@ import Sidebar, {
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { A4A_OVERVIEW_LINK } from '../sidebar-menu/lib/constants';
+import { A4A_OVERVIEW_LINK, A4A_CLIENT_SUBSCRIPTIONS_LINK } from '../sidebar-menu/lib/constants';
 import SidebarHeader from './header';
 import ProfileDropdown from './header/profile-dropdown';
 
@@ -60,6 +61,8 @@ const A4ASidebar = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const isClient = isClientView();
+
 	const [ showUserSupportForm, setShowUserSupportForm ] = useState( false );
 
 	const onShowUserSupportForm = useCallback( () => {
@@ -72,6 +75,11 @@ const A4ASidebar = ( {
 		history.pushState( null, '', window.location.pathname + window.location.search );
 		setShowUserSupportForm( false );
 	}, [] );
+
+	const contactUsUrl = isClient
+		? A4A_CLIENT_SUBSCRIPTIONS_LINK + '#contact-support'
+		: A4A_OVERVIEW_LINK + '#contact-sales';
+	const contactUsText = isClient ? translate( 'Contact support' ) : translate( 'Contact sales' );
 
 	return (
 		<Sidebar className={ clsx( 'a4a-sidebar', className ) }>
@@ -124,10 +132,8 @@ const A4ASidebar = ( {
 					) }
 
 					<SidebarNavigatorMenuItem
-						title={ translate( 'Contact sales', {
-							comment: 'A4A sidebar navigation item',
-						} ) }
-						link={ A4A_OVERVIEW_LINK + '#contact-sales' }
+						title={ contactUsText }
+						link={ contactUsUrl }
 						path=""
 						icon={ <Icon icon={ starEmpty } /> }
 						onClickMenuItem={ onShowUserSupportForm }

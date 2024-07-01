@@ -59,6 +59,19 @@ $card-padding: 24px;
 	padding-bottom: 10px;
 }
 
+.hosting-overview__quick-actions .hosting-card__title-wrapper {
+	margin-bottom: 12px;
+}
+.hosting-overview__quick-actions .hosting-card__title {
+	display: inline;
+}
+.hosting-overview__quick-actions .hosting-card__title-shortcut {
+	margin-left: 1em;
+	background-color: var(--studio-gray-0);
+	padding: 0.25em;
+	font-size: 0.75rem;
+}
+
 .hosting-card.support-card {
 	.happiness-engineers-tray {
 		align-items: flex-start;

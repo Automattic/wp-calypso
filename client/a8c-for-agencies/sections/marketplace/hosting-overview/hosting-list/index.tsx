@@ -147,7 +147,7 @@ export default function HostingList( { selectedSite }: Props ) {
 					/>
 				) }
 
-				{ isWPCOMOptionEnabled && (
+				{ isWPCOMOptionEnabled && ! hideSection && (
 					<HostingCard
 						plan={ vipPlan }
 						className="hosting-list__vip-card"

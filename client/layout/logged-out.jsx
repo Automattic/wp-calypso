@@ -196,21 +196,34 @@ const LayoutLoggedOut = ( {
 			'subscriptions',
 			'theme',
 			'themes',
+			'start-with',
 		].includes( sectionName ) &&
 		! isReaderTagPage &&
 		! isReaderSearchPage &&
 		! isReaderDiscoverPage
 	) {
 		const nonMonochromeSections = [ 'plugins' ];
+		const whiteNavbarSections = [ 'start-with' ];
+
+		const className = clsx( {
+			'is-style-monochrome':
+				isEnabled( 'site-profiler/metrics' ) && ! nonMonochromeSections.includes( sectionName ),
+			'is-style-white':
+				isEnabled( 'start-with/square-payments' ) && whiteNavbarSections.includes( sectionName ),
+		} );
 
 		masterbar = (
 			<UniversalNavbarHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
+				className={ className }
 				{ ...( isEnabled( 'site-profiler/metrics' ) &&
 					! nonMonochromeSections.includes( sectionName ) && {
 						logoColor: 'white',
-						className: 'is-style-monochrome',
+					} ) }
+				{ ...( isEnabled( 'start-with/square-payments' ) &&
+					whiteNavbarSections.includes( sectionName ) && {
+						logoColor: 'black',
 					} ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {

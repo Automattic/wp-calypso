@@ -7,4 +7,6 @@ export { HelpCenterContactForm } from './components/help-center-contact-form';
 export { default as Mail } from './icons/mail';
 export { default as NewReleases } from './icons/new-releases';
 export * from './support-variations';
-export { shouldLoadInlineHelp } from './utils';
+export * from './hooks/use-admin-results';
+export { useHelpSearchQuery } from './hooks/use-help-search-query';
+export { useSupportArticleAlternatesQuery } from './hooks/use-support-article-alternates-query';
