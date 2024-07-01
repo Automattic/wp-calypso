@@ -5,7 +5,6 @@ import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
-	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -94,23 +93,8 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		return `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
 	}
 
-	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-		const isGravatarMagicCode =
-			isGravatarOAuth2Client( oauth2Client ) && get( currentQuery, 'gravatar_magic_code' );
-
-		// Gravatar powered clients signup via the magic login page
-		return login( {
-			locale,
-			twoFactorAuthType: 'link',
-			oauth2ClientId: oauth2Client.id,
-			redirectTo: redirectTo,
-			gravatarMagicCode: isGravatarMagicCode,
-			gravatarFrom: isGravatarMagicCode && 'signup',
-		} );
-	}
-
-	if ( isStudioAppOAuth2Client( oauth2Client ) ) {
-		// Studio app signup via the magic login page
+	if ( isGravPoweredOAuth2Client( oauth2Client ) || isStudioAppOAuth2Client( oauth2Client ) ) {
+		// Studio app and Gravatar powered clients signup via the magic login page
 		return login( {
 			locale,
 			twoFactorAuthType: 'link',

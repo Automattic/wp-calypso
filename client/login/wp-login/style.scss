@@ -607,34 +607,17 @@ $image-height: 47px;
 
 /* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights */
 .layout.is-section-login.is-grav-powered-login-page {
+	background-color: #e7e9ea;
+
 	&.is-wp-job-manager {
-		background-color: #e7e9ea;
 
 		.login a,
 		.login__form-change-username {
 			color: #2404eb;
 		}
 
-		.login {
-			padding-top: 30px;
-			padding-bottom: 30px;
-			border-radius: 2px;
-		}
-
-		.wp-login__main {
-			max-width: 560px;
-		}
-
-		.login__form-header {
-			font-size: 24px;
-			margin-top: 32px;
-		}
-
-		.login__form-terms {
-			text-align: center;
-		}
-
 		.form-button.is-primary {
+
 			&,
 			&:disabled {
 				background-color: #2404eb;
@@ -652,7 +635,7 @@ $image-height: 47px;
 	}
 
 	.wp-login__main {
-		max-width: 480px;
+		max-width: 560px;
 	}
 
 	.login,
@@ -665,9 +648,8 @@ $image-height: 47px;
 
 	.login {
 		background-color: #fff;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 8px;
-		padding: 20px;
+		border-radius: 2px;
+		padding: 30px 20px;
 		color: #00101c;
 		line-height: 1.5;
 
@@ -682,11 +664,11 @@ $image-height: 47px;
 
 	.login__form-header {
 		font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-		font-size: 32px;
+		font-size: $font-title-medium;
 		font-weight: 900;
 		line-height: 1.2;
 		text-align: left;
-		margin: 30px 0 24px;
+		margin: 32px 0 24px;
 	}
 
 	.login__form {
@@ -795,30 +777,13 @@ $image-height: 47px;
 	}
 
 	@include break-small {
-		background-color: #e7e9ea;
-
-		&.is-wp-job-manager {
-			.login {
-				padding-top: 40px;
-				padding-bottom: 40px;
-			}
-
-			.login__form-header {
-				font-size: 40px;
-				margin-top: 48px;
-			}
-
-			.auth-form__social {
-				margin-left: auto;
-			}
-		}
-
 		.login {
 			padding: 40px 56px;
 		}
 
 		.login__form-header {
 			font-size: 40px;
+			margin-top: 48px;
 		}
 
 		.login__form-terms {
@@ -826,7 +791,6 @@ $image-height: 47px;
 		}
 
 		.auth-form__social {
-			margin-left: 0;
 			width: fit-content;
 		}
 
