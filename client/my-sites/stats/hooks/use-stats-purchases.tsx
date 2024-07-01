@@ -48,6 +48,8 @@ export const hasAnyPlan = ( state: object, siteId: number | null ) => {
 	const sitePurchases = getSitePurchases( state, siteId );
 
 	const isFreeOwned = isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_FREE );
+	// TODO: After the paywall is removed, we should be able to enable the VideoPress module and page based on their subscription information,
+	// which means the particular logic here wouldn't be necessary anymore.
 	const isCommercialOwned = areProductsOwned( sitePurchases, [
 		...JETPACK_VIDEOPRESS_PRODUCTS,
 		PRODUCT_JETPACK_STATS_MONTHLY,
