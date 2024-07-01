@@ -8,7 +8,6 @@ import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
-import clsx from 'clsx';
 import useActionHooks from './use-action-hooks';
 import './help-center.scss';
 
@@ -44,7 +43,7 @@ function HelpCenterContent() {
 	const content = (
 		<>
 			<Button
-				className={ clsx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
+				className={ [ 'entry-point-button', 'help-center', show ? 'is-active' : '' ].join( ' ' ) }
 				onClick={ handleToggleHelpCenter }
 				icon={
 					<HelpIcon
