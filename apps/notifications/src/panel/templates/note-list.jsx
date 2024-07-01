@@ -402,6 +402,7 @@ const mapStateToProps = ( state ) => ( {
 
 const mapDispatchToProps = {
 	selectNote: actions.ui.selectNote,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps, null, { forwardRef: true } )(
