@@ -45,6 +45,9 @@ describe( 'shouldGateStats in Calypso', () => {
 					},
 				},
 			},
+			purchases: {
+				data: [],
+			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
 		expect( isGatedStats ).toBe( false );
@@ -68,6 +71,9 @@ describe( 'shouldGateStats in Calypso', () => {
 						},
 					},
 				},
+			},
+			purchases: {
+				data: [],
 			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
@@ -93,6 +99,9 @@ describe( 'shouldGateStats in Calypso', () => {
 					},
 				},
 			},
+			purchases: {
+				data: [],
+			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
 		expect( isGatedStats ).toBe( false );
@@ -116,6 +125,9 @@ describe( 'shouldGateStats in Calypso', () => {
 						},
 					},
 				},
+			},
+			purchases: {
+				data: [],
 			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
@@ -141,6 +153,9 @@ describe( 'shouldGateStats in Calypso', () => {
 					},
 				},
 			},
+			purchases: {
+				data: [],
+			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, notGatedStatType );
 		expect( isGatedStats ).toBe( false );
@@ -165,6 +180,9 @@ describe( 'shouldGateStats in Calypso', () => {
 					},
 				},
 			},
+			purchases: {
+				data: [],
+			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, notGatedStatType );
 		expect( isGatedStats ).toBe( false );
@@ -188,6 +206,9 @@ describe( 'shouldGateStats in Calypso', () => {
 						},
 					},
 				},
+			},
+			purchases: {
+				data: [],
 			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
@@ -230,6 +251,9 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 					},
 				},
 			},
+			purchases: {
+				data: [],
+			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
 		expect( isGatedStats ).toBe( false );
@@ -253,6 +277,9 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 						},
 					},
 				},
+			},
+			purchases: {
+				data: [],
 			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
