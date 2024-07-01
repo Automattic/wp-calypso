@@ -1,14 +1,15 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { safeImageUrl } from '@automattic/calypso-url';
-import { Badge } from '@automattic/components';
+import { Badge, Tooltip } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { Fragment, useMemo } from 'react';
+import { Fragment, useMemo, useRef, useState } from 'react';
 import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
@@ -17,6 +18,7 @@ import {
 	formatNumber,
 	getAdvertisingDashboardPath,
 	getCampaignBudgetData,
+	getCampaignStartDateFormatted,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
 } from '../../utils';
@@ -124,6 +126,11 @@ export default function CampaignItem( props: Props ) {
 		page.show( openCampaignURL );
 	};
 
+	const campaignIdString = campaign.campaign_id.toString();
+	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
+	const tooltipRef = useRef< HTMLDivElement >( null );
+	const isTouch = hasTouch();
+
 	function getMobileStats() {
 		const statElements = [];
 		if ( impressions_total > 0 ) {
@@ -193,7 +200,28 @@ export default function CampaignItem( props: Props ) {
 				</div>
 			</td>
 			<td className="campaign-item__status">
-				<div>{ statusBadge }</div>
+				{ ui_status === campaignStatus.SCHEDULED ? (
+					<>
+						<div
+							ref={ tooltipRef }
+							onMouseEnter={ () => ! isTouch && setActiveTooltipId( campaignIdString ) }
+							onMouseLeave={ () => ! isTouch && setActiveTooltipId( '' ) }
+						>
+							{ statusBadge }
+						</div>
+						<Tooltip
+							className="import__campaign-schedule-tooptip"
+							position="bottom"
+							hideArrow
+							context={ tooltipRef.current }
+							isVisible={ activeTooltipId === campaignIdString }
+						>
+							<div>{ getCampaignStartDateFormatted( start_date ) }</div>
+						</Tooltip>
+					</>
+				) : (
+					<div>{ statusBadge }</div>
+				) }
 			</td>
 			<td className="campaign-item__ends">
 				<div>
