@@ -24,10 +24,10 @@
 		"clean": "rm -rf dist",
 		"build": "NODE_ENV=production yarn dev",
 		"build:app": "calypso-build && yarn run translate",
-		"dev": "yarn run calypso-apps-builder --localPath dist/apps --remotePath /home/wpcom/public_html/widgets.wp.com/help-center",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/help-center",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"translate": "rm -rf dist/apps/strings && wp-babel-makepot './dist/apps/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './dist' --dir './dist/apps/strings' --output './dist/apps/help-center.pot' && build-app-languages --stringsFilePath='./dist/apps/help-center.pot' --outputPath='./dist/apps/languages'"
+		"translate": "rm -rf dist/strings && wp-babel-makepot './dist/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './dist' --dir './dist/strings' --output './dist/help-center.pot' && build-app-languages --stringsFilePath='./dist/help-center.pot' --outputPath='./dist/languages'"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
