@@ -33,7 +33,7 @@ type StatClicksProps = {
 const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings, className } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsType';
+	const statType = 'statsClicks';
 
 	const requesting = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
@@ -51,7 +51,7 @@ const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings
 			{ ( ! data || ! data?.length ) && (
 				<StatsCard
 					className={ className }
-					title={ translate( 'Locations' ) }
+					title={ translate( 'Clicks' ) }
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
@@ -74,7 +74,7 @@ const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings
 			) }
 			{ data && !! data.length && (
 				<StatsModule
-					path="path"
+					path="clicks"
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
