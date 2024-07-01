@@ -125,6 +125,7 @@ class SignupForm extends Component {
 		shouldDisplayUserExistsError: PropTypes.bool,
 		submitForm: PropTypes.func,
 		handleCreateAccountError: PropTypes.func,
+		notYouText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -1196,7 +1197,29 @@ class SignupForm extends Component {
 				<ContinueAsUser
 					redirectPath={ this.props.redirectToAfterLoginUrl }
 					onChangeAccount={ this.handleOnChangeAccount }
-					isSignUpFlow
+					notYouText={
+						this.props.notYouText ||
+						this.props.translate(
+							'Not you?{{br/}} Sign out or log in with {{link}}another account{{/link}}',
+							{
+								components: {
+									br: <br />,
+									link: (
+										<button
+											type="button"
+											id="loginAsAnotherUser"
+											className="continue-as-user__change-user-link"
+											onClick={ this.handleOnChangeAccount }
+										/>
+									),
+								},
+								args: {
+									userName: this.props.currentUser.display_name || this.props.currentUser.username,
+								},
+								comment: 'Link to continue login as different user',
+							}
+						)
+					}
 				/>
 			);
 		}
