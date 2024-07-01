@@ -241,7 +241,9 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							'By switching to monthly payments, you will keep most of the features for %(planCost)s per month.',
 							{
 								args: {
-									planCost: formatCurrency( props.downgradePlanPrice ?? 0, currencyCode ),
+									planCost: formatCurrency( props.downgradePlanPrice ?? 0, currencyCode, {
+										isSmallestUnit: true,
+									} ),
 								},
 							}
 						) }{ ' ' }
