@@ -1064,6 +1064,7 @@ __metadata:
     typescript: "npm:^5.3.3"
     webpack: "npm:^5.91.0"
   peerDependencies:
+    "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^10.0.0
     "@wordpress/element": ^6.0.0
     postcss: "*"
