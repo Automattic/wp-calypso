@@ -44,6 +44,7 @@ import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModuleAuthors from './features/modules/stats-authors';
 import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
 import StatsModuleReferrers from './features/modules/stats-referrers';
@@ -545,8 +546,26 @@ class StatsSite extends Component {
 							/>
 						) }
 						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
-						{ ! this.isModuleHidden( 'authors' ) && (
+						{ ! this.isModuleHidden( 'authors' ) && ! isNewStateEnabled && (
 							<StatsModule
+								path="authors"
+								moduleStrings={ moduleStrings.authors }
+								period={ this.props.period }
+								query={ query }
+								statType="statsTopAuthors"
+								className={ clsx(
+									{
+										'stats__author-views': ! supportsUTMStats,
+									},
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large'
+								) }
+								showSummaryLink
+							/>
+						) }
+
+						{ ! this.isModuleHidden( 'authors' ) && isNewStateEnabled && (
+							<StatsModuleAuthors
 								path="authors"
 								moduleStrings={ moduleStrings.authors }
 								period={ this.props.period }
