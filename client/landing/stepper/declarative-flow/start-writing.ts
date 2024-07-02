@@ -21,7 +21,7 @@ import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
 	get title() {
-		return translate( 'Blog' );
+		return translate( 'Start writing' );
 	},
 	isSignupFlow: true,
 	useSteps() {
