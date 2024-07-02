@@ -14,6 +14,11 @@ export default function getIsWooPasswordless( state: AppState ): boolean {
 		return false;
 	}
 
+	// Enable Woo Passwordless if user is from WooCommerce Core Profiler.
+	if ( state?.route?.query?.initial?.from === 'woocommerce-core-profiler' ) {
+		return true;
+	}
+
 	// Enable Woo Passwordless only if user is from WooCommerce.com. Not enable for other flows such as "Core Profiler" for now.
 	return isWooOAuth2Client( getCurrentOAuth2Client( state ) ) && getWccomFrom( state ) !== null;
 }
