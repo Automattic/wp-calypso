@@ -1,6 +1,8 @@
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Questions } from './questions';
 import { Sidebar } from './sidebar';
@@ -10,12 +12,21 @@ import './style.scss';
 
 const SiteMigrationInstructions: Step = function () {
 	const sidebar = <Sidebar />;
+	const site = useSite();
+	const siteId = site?.ID;
+	const { deleteMigrationSticker } = useMigrationStickerMutation();
 
 	const stepContent = (
 		<LaunchpadContainer sidebar={ sidebar }>
 			<SitePreview />
 		</LaunchpadContainer>
 	);
+
+	useEffect( () => {
+		if ( siteId ) {
+			deleteMigrationSticker( siteId );
+		}
+	}, [ deleteMigrationSticker, siteId ] );
 
 	const questions = <Questions />;
 

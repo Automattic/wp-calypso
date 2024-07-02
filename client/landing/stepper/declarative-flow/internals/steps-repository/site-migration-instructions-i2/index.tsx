@@ -109,7 +109,7 @@ const SiteMigrationInstructions: Step = function ( { flow } ) {
 		if ( siteId ) {
 			deleteMigrationSticker( siteId );
 		}
-	}, [] );
+	}, [ deleteMigrationSticker, siteId ] );
 
 	const recordInstructionsLinkClick = ( linkname: string ) => {
 		recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
