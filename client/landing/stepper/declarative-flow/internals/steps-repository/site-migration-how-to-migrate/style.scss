@@ -19,22 +19,7 @@
 	}
 
 	.how-to-migrate__list {
-		@include break-mobile {
-			padding-bottom: revert;
-		}
-
-		.card {
-			&.is-clickable {
-				cursor: pointer;
-
-				// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
-				transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
-
-				&:hover {
-					box-shadow: 0 0 0 1px var(--color-neutral-light);
-				}
-			}
-		}
+		text-align: center;
 	}
 
 	#how-to-migrate-header {

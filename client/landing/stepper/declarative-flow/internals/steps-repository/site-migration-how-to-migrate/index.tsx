@@ -1,5 +1,4 @@
 import { StepContainer } from '@automattic/onboarding';
-import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -77,16 +76,14 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 	const stepContent = (
 		<>
 			<div className="how-to-migrate__list">
-				<VStack alignment="top" spacing="2">
-					{ options.map( ( option, i ) => (
-						<FlowCard
-							key={ i }
-							title={ option.label }
-							text={ option.description }
-							onClick={ () => handleClick( option.value ) }
-						/>
-					) ) }
-				</VStack>
+				{ options.map( ( option, i ) => (
+					<FlowCard
+						key={ i }
+						title={ option.label }
+						text={ option.description }
+						onClick={ () => handleClick( option.value ) }
+					/>
+				) ) }
 			</div>
 		</>
 	);
