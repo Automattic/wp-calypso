@@ -564,6 +564,7 @@ class StatsSite extends Component {
 							/>
 						) }
 
+						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
 						{ ! this.isModuleHidden( 'authors' ) && isNewStateEnabled && (
 							<StatsModuleAuthors
 								path="authors"
