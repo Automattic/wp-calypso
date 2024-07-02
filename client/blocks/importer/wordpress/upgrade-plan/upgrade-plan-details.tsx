@@ -154,13 +154,13 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 		<PlanPrice rawPrice={ originalMonthlyPrice } currencyCode={ currencyCode } isSmallestUnit />
 	);
 
-	if ( plan && introOfferEnabled && ! isIntroOfferComplete ) {
+	if ( plan && showIntroOffer && formattedIntroOfferPrice ) {
 		plan.getBillingTimeFrame = () =>
 			translate(
 				'per month, %(discounted)s billed annually for the first year, %(original)s atferwards',
 				{
 					args: {
-						discounted: formattedIntroOfferPrice || '',
+						discounted: formattedIntroOfferPrice,
 						original: formattedOriginalPrice || '',
 					},
 				}
