@@ -32,6 +32,7 @@ module.exports.loader = ( {
 			options: {
 				workers: workerCount,
 				workerParallelJobs: 50,
+				poolTimeout: 2000,
 			},
 		},
 		{
