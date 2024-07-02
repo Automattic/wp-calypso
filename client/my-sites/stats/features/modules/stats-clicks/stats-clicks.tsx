@@ -15,7 +15,7 @@ import EmptyModuleCard from '../../../components/empty-module-card/empty-module-
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
-import type { StatsDefaultModuleProps } from '../types';
+import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 	period,
@@ -27,7 +27,7 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsClicks';
 
-	const requesting = useSelector( ( state ) =>
+	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>

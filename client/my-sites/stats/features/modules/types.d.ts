@@ -13,4 +13,13 @@ type StatsDefaultModuleProps = {
 	};
 };
 
-export type { StatsDefaultModuleProps };
+// TODO: updat this with the remaining properties when needed.
+type StatsStateProps = {
+	stats: {
+		lists: {
+			requests: boolean;
+		};
+	};
+};
+
+export type { StatsDefaultModuleProps, StatsStateProps };

@@ -16,7 +16,7 @@ import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
-import type { StatsDefaultModuleProps } from '../types';
+import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	period,
@@ -30,8 +30,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsTopPosts = useShouldGateStats( statType );
 
-	// TODO: sort out the state shape.
-	const requesting = useSelector( ( state: any ) =>
+	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
