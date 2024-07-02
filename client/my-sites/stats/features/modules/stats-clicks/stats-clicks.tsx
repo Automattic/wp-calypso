@@ -16,7 +16,7 @@ import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 
-type StatClicksProps = {
+type StatsClicksProps = {
 	className?: string;
 	period: string;
 	query: {
@@ -31,7 +31,12 @@ type StatClicksProps = {
 	};
 };
 
-const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings, className } ) => {
+const StatsClicks: React.FC< StatsClicksProps > = ( {
+	period,
+	query,
+	moduleStrings,
+	className,
+} ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsClicks';
@@ -92,4 +97,4 @@ const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings
 	);
 };
 
-export default StatClicks;
+export default StatsClicks;
