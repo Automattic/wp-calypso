@@ -73,7 +73,7 @@ const updateStyleVariation = async ( siteId: number, selectedVariation: string )
 		theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href || '';
 	const userGlobalStylesId = parseInt( userGlobalStylesLink.split( '/' ).pop() || '', 10 );
 	const styleVariation = styleVariations.find(
-		( variation ) => variation.title?.toLowerCase() === selectedVariation
+		( variation ) => variation.title === selectedVariation
 	);
 
 	if ( styleVariation && userGlobalStylesId ) {
