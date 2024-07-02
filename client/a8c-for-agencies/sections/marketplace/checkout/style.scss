@@ -57,10 +57,8 @@
 
 .checkout__main-title {
 	margin-block-end: 64px;
-	font-size: 2.25rem;
-	line-height: 1.1;
-	font-weight: 600;
 	margin-block-start: 32px;
+	@include a4a-font-heading-xxl;
 
 	@include breakpoint-deprecated( ">960px" ) {
 		margin-block-start: 0;
@@ -116,28 +114,23 @@
 	}
 
 	.checkout__summary-pricing-discounted {
-		font-size: 1.25rem;
-		font-weight: 600;
+		@include a4a-font-heading-lg;
 		color: var(--color-neutral-80);
-		line-height: 1;
 
 		@include break-xlarge {
-			font-size: 1.5rem;
-			font-weight: 700;
+			@include a4a-font-heading-xl;
 			color: var(--color-black);
 		}
 	}
 
 	.checkout__summary-pricing-original {
+		@include a4a-font-body-lg;
 		text-decoration: line-through;
-		font-weight: 400;
-		font-size: 1rem;
 		margin-inline-start: 8px;
 	}
 
 	.checkout__summary-pricing-interval {
-		font-size: 0.75rem;
-		font-weight: 400;
+		@include a4a-font-body-sm;
 		color: var(--color-neutral-60);
 		line-height: 2;
 	}
@@ -151,16 +144,14 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	font-weight: 500;
-	font-size: 1rem;
-	line-height: 1.5;
+	@include a4a-font-heading-md;
 }
 
 
 .checkout__summary-notice {
+	@include a4a-font-body-sm;
+	margin-block-end: 16px;
 	color: var(--color-neutral-50);
-	font-size: rem(12px);
-	margin-block-end: 1rem;
 
 	a {
 		text-decoration: underline;
@@ -198,13 +189,11 @@
 		justify-content: center;
 		border-radius: 4px;
 		min-height: 40px;
-		font-weight: 600;
 	}
 
 	> .button.is-link {
 		color: var(--color-black);
 		text-decoration: underline;
-		font-weight: 400;
 	}
 }
 
@@ -244,8 +233,7 @@
 	}
 
 	.product-info__label {
-		font-size: rem(16px);
-		font-weight: 700;
+		@include a4a-font-heading-md;
 	}
 
 	.product-info__count {
@@ -257,10 +245,9 @@
 	}
 
 	.product-info__description {
-		color: var(--color-neutral-70);
-		font-size: rem(16px);
-		font-weight: 400;
+		@include a4a-font-body-lg;
 		margin-block: 4px 0;
+		color: var(--color-neutral-70);
 	}
 }
 
