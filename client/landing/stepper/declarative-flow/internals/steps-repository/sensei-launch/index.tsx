@@ -1,3 +1,4 @@
+import { StyleVariation } from '@automattic/design-picker';
 import { setThemeOnSite } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -24,9 +25,61 @@ type ResponseError = {
 	error: string;
 };
 
+type Theme = {
+	_links: {
+		'wp:user-global-styles': { href: string }[];
+	};
+};
+
 const SENSEI_PRO_PLUGIN_SLUG = 'sensei-pro';
 const installCourseTheme = async ( siteId: number ) =>
 	wpcom.req.post( { path: `/sites/${ siteId }/themes/course/install` } );
+
+const getStyleVariations = ( siteId: number, stylesheet: string ): Promise< StyleVariation[] > =>
+	wpcom.req.get( {
+		path: `/sites/${ siteId }/global-styles/themes/${ stylesheet }/variations`,
+		apiNamespace: 'wp/v2',
+	} );
+
+const getSiteTheme = ( siteId: number, stylesheet: string ): Promise< Theme > =>
+	wpcom.req.get( {
+		path: `/sites/${ siteId }/themes/${ stylesheet }`,
+		apiNamespace: 'wp/v2',
+	} );
+
+const setStyleVariation = async (
+	siteId: number,
+	globalStylesId: number,
+	globalStyles: StyleVariation
+) => {
+	await wpcom.req.post( {
+		path: `/sites/${ siteId }/global-styles/${ globalStylesId }`,
+		apiNamespace: 'wp/v2',
+		body: {
+			id: globalStylesId,
+			settings: globalStyles.settings ?? {},
+			styles: globalStyles.styles ?? {},
+		},
+	} );
+};
+
+const updateStyleVariation = async ( siteId: number, selectedVariation: string ) => {
+	const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
+		getStyleVariations( siteId, 'course' ),
+		getSiteTheme( siteId, 'course' ),
+	] );
+
+	const userGlobalStylesLink: string =
+		theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href || '';
+	const userGlobalStylesId = parseInt( userGlobalStylesLink.split( '/' ).pop() || '', 10 );
+	const styleVariation = styleVariations.find(
+		( variation ) => variation.title?.toLowerCase() === selectedVariation
+	);
+
+	if ( styleVariation && userGlobalStylesId ) {
+		await setStyleVariation( siteId, userGlobalStylesId, styleVariation );
+	}
+};
 
 const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	const siteId = useSite()?.ID as number;
@@ -48,11 +101,14 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 			async function installAndActivateTheme( retries ) {
 				try {
 					await installCourseTheme( siteId );
+					// SelectedStyleVariation is not supported on non Simple sites but it is for Simple sites.
 					await setThemeOnSite( `${ siteId }`, 'pub/course', selectedVariation );
+					await updateStyleVariation( siteId, selectedVariation );
 					return true;
 				} catch ( responseError: unknown ) {
 					if ( ( responseError as ResponseError )?.error === 'theme_already_installed' ) {
 						await setThemeOnSite( `${ siteId }`, 'pub/course', selectedVariation );
+						await updateStyleVariation( siteId, selectedVariation );
 						return true;
 					}
 				}

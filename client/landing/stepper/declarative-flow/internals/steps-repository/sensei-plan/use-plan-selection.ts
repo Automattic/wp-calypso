@@ -79,7 +79,7 @@ export const usePlanSelection = ( {
 
 			await cartManagerClient.forCartKey( cartKey ).actions.addProductsToCart( productsToAdd );
 
-			const styleVariation = getSelectedStyleVariation()?.slug ?? 'green';
+			const styleVariation = getSelectedStyleVariation()?.title ?? 'Green';
 			const redirectTo = encodeURIComponent(
 				`/setup/sensei/senseiPurpose?siteSlug=${ site?.site_slug }&siteId=${ site?.blogid }&variation=${ styleVariation }`
 			);
