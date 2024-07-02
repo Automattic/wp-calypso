@@ -547,15 +547,10 @@ class StatsSite extends Component {
 								statType="statsTopAuthors"
 								className={ clsx(
 									{
-										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
-										'stats__flexible-grid-item--full--large': supportsUTMStats,
-										'stats__flexible-grid-item--full--medium': supportsUTMStats,
+										'stats__author-views': ! supportsUTMStats,
 									},
-									{
-										'stats__flexible-grid-item--half': ! supportsUTMStats,
-										'stats__flexible-grid-item--full--large': ! supportsUTMStats,
-									},
-									'stats__flexible-grid-item--full--medium'
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large'
 								) }
 								showSummaryLink
 							/>
