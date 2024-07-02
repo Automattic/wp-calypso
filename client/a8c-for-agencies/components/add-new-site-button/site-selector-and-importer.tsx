@@ -13,6 +13,7 @@ import {
 	A4A_SITES_LINK_NEEDS_SETUP,
 } from '../sidebar-menu/lib/constants';
 import JetpackConnectionModal from './jetpack-connection-modal';
+import UrlConnectionModal from './url-connection-modal';
 
 import './style.scss';
 
@@ -29,6 +30,7 @@ export default function SiteSelectorAndImporter( {
 
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
 	const [ showJetpackConnectionModal, setShowJetpackConnectionModal ] = useState( false );
+	const [ showUrlConnectionModal, setShowUrlConnectionModal ] = useState( false );
 
 	const toggleMenu = () => {
 		setMenuVisible( ( isVisible ) => ! isVisible );
@@ -130,6 +132,12 @@ export default function SiteSelectorAndImporter( {
 							iconClassName: 'site-selector-and-importer__popover-button-wp-icon',
 							heading: translate( 'Via URL' ),
 							description: translate( 'Type in the address of your site' ),
+							buttonProps: {
+								onClick: () => {
+									setShowUrlConnectionModal( true );
+									setMenuVisible( false );
+								},
+							},
 						} ) }
 					</div>
 					<div className="site-selector-and-importer__popover-column">
@@ -179,6 +187,9 @@ export default function SiteSelectorAndImporter( {
 
 			{ showJetpackConnectionModal && (
 				<JetpackConnectionModal onClose={ () => setShowJetpackConnectionModal( false ) } />
+			) }
+			{ showUrlConnectionModal && (
+				<UrlConnectionModal onClose={ () => setShowUrlConnectionModal( false ) } />
 			) }
 		</>
 	);
