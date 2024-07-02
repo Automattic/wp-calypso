@@ -14,6 +14,8 @@ export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string 
 		);
 	} );
 
+	return isThemeAllowed;
+
 	const retainedBenefits = useTierRetainedBenefitsQuery( siteId, themeId );
 
 	const hasFeature = useSelector( ( state ) => {
