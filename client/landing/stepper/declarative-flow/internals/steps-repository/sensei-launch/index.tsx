@@ -78,7 +78,10 @@ const updateStyleVariation = async ( siteId: number, selectedVariation: string )
 
 	if ( styleVariation && userGlobalStylesId ) {
 		await setStyleVariation( siteId, userGlobalStylesId, styleVariation );
+		return true;
 	}
+
+	return false;
 };
 
 const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
@@ -99,22 +102,21 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	const percentage = useSubSteps(
 		[
 			async function installAndActivateTheme( retries ) {
+				let updated = false;
 				try {
 					await installCourseTheme( siteId );
 					// SelectedStyleVariation is not supported on non Simple sites but it is for Simple sites.
 					await setThemeOnSite( `${ siteId }`, 'pub/course', selectedVariation );
-					await updateStyleVariation( siteId, selectedVariation );
-					return true;
+					updated = await updateStyleVariation( siteId, selectedVariation );
 				} catch ( responseError: unknown ) {
 					if ( ( responseError as ResponseError )?.error === 'theme_already_installed' ) {
 						await setThemeOnSite( `${ siteId }`, 'pub/course', selectedVariation );
-						await updateStyleVariation( siteId, selectedVariation );
-						return true;
+						updated = await updateStyleVariation( siteId, selectedVariation );
 					}
 				}
 
-				await wait( 3000 );
-				return retries >= 10;
+				await wait( 4000 );
+				return updated || retries >= 15;
 			},
 			async function queueAdditionalPlugins() {
 				additionalPlugins.forEach( queuePlugin );
