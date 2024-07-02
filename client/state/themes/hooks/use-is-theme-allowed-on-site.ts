@@ -35,7 +35,7 @@ export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string 
 		return false;
 	}
 
-	if ( retainedBenefits.tier.feature === null ) {
+	if ( retainedBenefits?.tier?.feature === null ) {
 		return true;
 	}
 
