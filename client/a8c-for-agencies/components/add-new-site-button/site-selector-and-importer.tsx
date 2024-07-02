@@ -12,6 +12,7 @@ import {
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 	A4A_SITES_LINK_NEEDS_SETUP,
 } from '../sidebar-menu/lib/constants';
+import JetpackConnectionModal from './jetpack-connection-modal';
 
 import './style.scss';
 
@@ -27,6 +28,7 @@ export default function SiteSelectorAndImporter( {
 	const translate = useTranslate();
 
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
+	const [ showJetpackConnectionModal, setShowJetpackConnectionModal ] = useState( false );
 
 	const toggleMenu = () => {
 		setMenuVisible( ( isVisible ) => ! isVisible );
@@ -116,6 +118,12 @@ export default function SiteSelectorAndImporter( {
 							icon: <JetpackLogo />,
 							heading: translate( 'Via Jetpack' ),
 							description: translate( 'Import one or more Jetpack connected sites' ),
+							buttonProps: {
+								onClick: () => {
+									setShowJetpackConnectionModal( true );
+									setMenuVisible( false );
+								},
+							},
 						} ) }
 						{ menuItem( {
 							icon: navigation,
@@ -168,6 +176,10 @@ export default function SiteSelectorAndImporter( {
 					</div>
 				</div>
 			</Popover>
+
+			{ showJetpackConnectionModal && (
+				<JetpackConnectionModal onClose={ () => setShowJetpackConnectionModal( false ) } />
+			) }
 		</>
 	);
 }
