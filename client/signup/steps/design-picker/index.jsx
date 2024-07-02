@@ -7,8 +7,6 @@ import DesignPicker, {
 	isBlankCanvasDesign,
 	useCategorization,
 	useThemeDesignsQuery,
-	PREMIUM_THEME,
-	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -18,6 +16,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { THEME_TIER_PARTNER, THEME_TIER_PREMIUM } from 'calypso/components/theme-tier/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
@@ -107,8 +106,8 @@ export default function DesignPickerStep( props ) {
 		theme: design?.stylesheet ?? `pub/${ design?.theme }`,
 		template: design?.template,
 		tier: design?.design_tier,
-		is_premium: design?.design_tier === PREMIUM_THEME,
-		is_externally_managed: design?.design_tier === MARKETPLACE_THEME,
+		is_premium: design?.design_tier === THEME_TIER_PREMIUM,
+		is_externally_managed: design?.design_tier === THEME_TIER_PARTNER,
 		flow: flowName,
 		intent: dependencies.intent,
 	} );
