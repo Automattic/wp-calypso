@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
@@ -40,6 +40,23 @@ export const useSiteName = () => {
 	const translate = useTranslate();
 	const [ siteName, setSiteName ] = useState( '' );
 	const [ isRandomSiteLoading, setIsRandomSiteLoading ] = useState( true );
+	const specialCharValidationErrorMessage = useMemo(
+		() => translate( 'Your site address can only contain letters and numbers.' ),
+		[ translate ]
+	);
+	const lengthValidationErrorMessage = useMemo(
+		() =>
+			translate(
+				'Your site address should be between %(minimumLength)s and %(maximumLength)s characters in length.',
+				{
+					args: {
+						minimumLength: SUBDOMAIN_LENGTH_MINIMUM,
+						maximumLength: SUBDOMAIN_LENGTH_MAXIMUM,
+					},
+				}
+			),
+		[ translate ]
+	);
 
 	useEffect( () => {
 		getRandomSiteName()
@@ -56,20 +73,12 @@ export const useSiteName = () => {
 	let validationMessage: string | React.ReactNode;
 
 	if ( siteName.match( /[^a-z0-9]/i ) ) {
-		validationMessage = translate( 'Your site address can only contain letters and numbers.' );
+		validationMessage = specialCharValidationErrorMessage;
 	} else if (
 		siteName.length < SUBDOMAIN_LENGTH_MINIMUM ||
 		siteName.length > SUBDOMAIN_LENGTH_MAXIMUM
 	) {
-		validationMessage = translate(
-			'Your site address should be between %(minimumLength)s and %(maximumLength)s characters in length.',
-			{
-				args: {
-					minimumLength: SUBDOMAIN_LENGTH_MINIMUM,
-					maximumLength: SUBDOMAIN_LENGTH_MAXIMUM,
-				},
-			}
-		);
+		validationMessage = lengthValidationErrorMessage;
 	}
 
 	const showValidationMessage = !! validationMessage && ! isRandomSiteLoading;
