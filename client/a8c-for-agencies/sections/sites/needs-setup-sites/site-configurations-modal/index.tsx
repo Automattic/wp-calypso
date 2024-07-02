@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CheckboxControl, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -9,6 +9,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
 import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
+import { useSiteName } from './use-site-name';
 
 import './style.scss';
 
@@ -21,6 +22,7 @@ export default function SiteConfigurationsModal( { toggleModal }: SiteConfigurat
 	const translate = useTranslate();
 	const dataCenterOptions = useDataCenterOptions();
 	const { phpVersions } = usePhpVersions();
+	const siteName = useSiteName();
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
 		setAllowClientsToUseSiteHelpCenter( ! allowClientsToUseSiteHelpCenter );
@@ -58,7 +60,42 @@ export default function SiteConfigurationsModal( { toggleModal }: SiteConfigurat
 						'Once the site is created, you can connect a custom domain to your site and make that your site address instead.'
 					) }
 				>
-					<FormTextInputWithAffixes suffix=".wpcomstaging.com" noWrap />
+					<div className="configure-your-site-modal-form__site-name-wrapper">
+						<FormTextInputWithAffixes
+							isError={ siteName.showValidationMessage }
+							value={ siteName.siteName }
+							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+								siteName.setSiteName( event.target.value )
+							}
+							disabled={ siteName.isRandomSiteLoading }
+							suffix=".wpcomstaging.com"
+							noWrap
+							spellcheck="false"
+							placeholder={ siteName.isRandomSiteLoading && '...' }
+						/>
+						<div className="configure-your-site-modal-form__site-name-icon-wrapper">
+							{ ! siteName.showValidationMessage && ! siteName.isRandomSiteLoading && (
+								<Gridicon
+									icon="checkmark-circle"
+									size={ 24 }
+									className="configure-your-site-modal-form__site-name-success"
+								/>
+							) }
+							{ siteName.showValidationMessage && (
+								<Gridicon
+									icon="cross-circle"
+									size={ 24 }
+									className="configure-your-site-modal-form__site-name-fail"
+								/>
+							) }
+						</div>
+					</div>
+					{ siteName.showValidationMessage && (
+						<div className="configure-your-site-modal-form__site-name-validation-message">
+							<Gridicon icon="info-outline" size={ 16 } />
+							{ siteName.validationMessage }
+						</div>
+					) }
 				</FormField>
 				<FormField
 					label={ translate( 'PHP Version' ) }

@@ -29,4 +29,36 @@
 		background-color: var(--color-neutral-0);
 		border-radius: 4px;
 	}
+
+	.configure-your-site-modal-form__site-name-wrapper {
+		display: flex;
+		align-items: center;
+
+		.configure-your-site-modal-form__site-name-icon-wrapper {
+			display: flex;
+			width: 24px;
+			margin-left: 5px;
+		}
+
+		.configure-your-site-modal-form__site-name-success {
+			fill: var(--color-success);
+		}
+
+		.configure-your-site-modal-form__site-name-fail {
+			color: var(--color-error);
+		}
+	}
+
+	.configure-your-site-modal-form__site-name-validation-message {
+		display: flex;
+		align-items: center;
+		font-size: rem(14px);
+		line-height: 1.5;
+		color: var(--color-error);
+
+		svg {
+			margin-right: 5px;
+		}
+	}
+
 }
