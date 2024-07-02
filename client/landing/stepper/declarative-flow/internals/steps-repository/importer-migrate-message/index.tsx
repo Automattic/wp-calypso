@@ -93,10 +93,10 @@ const ImporterMigrateMessage: Step = () => {
 						{ __( `We'll help you with the domain changes after the migration is completed.` ) }
 					</div>
 					<div className="migration-message__actions">
-						<Button onClick={ () => {} } primary transparent href={ `/home/${ siteSlug }` }>
+						<Button primary transparent href={ `/home/${ siteSlug }` }>
 							{ __( 'Let me explore' ) }
 						</Button>
-						<Button onClick={ () => {} } primary transparent href="/support">
+						<Button primary transparent href="/support">
 							{ __( 'Help me learn' ) }
 						</Button>
 					</div>
