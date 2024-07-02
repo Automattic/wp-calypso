@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { link } from '@wordpress/icons';
+import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -130,7 +130,7 @@ const StatsModuleUTM = ( {
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ link }
+							icon={ trendingUp }
 							description={ translate(
 								'If you use UTM codes, your {{link}}campaign performance data{{/link}} will show here.',
 								{

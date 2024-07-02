@@ -1,4 +1,4 @@
-import { trendingUp } from '@wordpress/icons';
+import { link } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import EmptyStateAction from '../../../components/empty-state-action';
@@ -15,7 +15,7 @@ const StatsEmptyActionUTMBuilder: React.FC< StatsEmptyActionUTMBuilderProps > = 
 	const translate = useTranslate();
 	return (
 		<EmptyStateAction
-			icon={ trendingUp }
+			icon={ link }
 			text={ translate( 'Generate URL with codes using our builder' ) }
 			analyticsDetails={ {
 				from: from,
