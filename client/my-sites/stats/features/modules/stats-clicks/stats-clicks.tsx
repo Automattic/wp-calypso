@@ -14,23 +14,14 @@ import EmptyModuleCard from '../../../components/empty-module-card/empty-module-
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import type { StatsDefaultModuleProps } from '../types';
 
-type StatClicksProps = {
-	className?: string;
-	period: string;
-	query: {
-		date: string;
-		period: string;
-	};
-	moduleStrings: {
-		title: string;
-		item: string;
-		value: string;
-		empty: string;
-	};
-};
-
-const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings, className } ) => {
+const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
+	period,
+	query,
+	moduleStrings,
+	className,
+} ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsClicks';

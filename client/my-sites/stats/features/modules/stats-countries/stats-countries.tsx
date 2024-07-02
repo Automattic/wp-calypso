@@ -15,23 +15,9 @@ import { SUPPORT_URL } from '../../../const';
 import Geochart from '../../../geochart';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import type { StatsDefaultModuleProps } from '../types';
 
-type StatCountriesProps = {
-	className?: string;
-	period: string;
-	query: {
-		date: string;
-		period: string;
-	};
-	moduleStrings: {
-		title: string;
-		item: string;
-		value: string;
-		empty: string;
-	};
-};
-
-const StatCountries: React.FC< StatCountriesProps > = ( {
+const StatCountries: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
