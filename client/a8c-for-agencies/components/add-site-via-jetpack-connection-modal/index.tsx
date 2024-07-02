@@ -38,7 +38,7 @@ export default function AddSiteViaJetpackConnectionModal() {
 	return (
 		<A4AThemedModal
 			className="add-site-via-jetpack-connection-modal"
-			sidebarImage={ JetpackConnectionSidebarImage }
+			modalImage={ JetpackConnectionSidebarImage }
 			dismissable
 		>
 			<h1 className="add-site-via-jetpack-connection-modal__title">
