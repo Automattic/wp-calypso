@@ -44,6 +44,7 @@ import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
 import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
@@ -498,27 +499,51 @@ class StatsSite extends Component {
 						) }
 
 						{ /* If UTM card or update card is not visible, shift "Clicks" and reduct to 1/2 for easier stacking */ }
-						<StatsModule
-							path="clicks"
-							moduleStrings={ moduleStrings.clicks }
-							period={ this.props.period }
-							query={ query }
-							statType="statsClicks"
-							showSummaryLink
-							className={ clsx(
-								{
-									'stats__flexible-grid-item--40--once-space': supportsUTMStats,
-									'stats__flexible-grid-item--full--large': supportsUTMStats,
-									'stats__flexible-grid-item--full--medium': supportsUTMStats,
-								},
-								{
-									'stats__flexible-grid-item--half': ! supportsUTMStats,
-									'stats__flexible-grid-item--full--large': ! supportsUTMStats,
-								},
-								'stats__flexible-grid-item--full--medium'
-							) }
-						/>
+						{ isNewStateEnabled && (
+							<StatsModuleClicks
+								path="clicks"
+								moduleStrings={ moduleStrings.clicks }
+								period={ this.props.period }
+								query={ query }
+								statType="statsClicks"
+								showSummaryLink
+								className={ clsx(
+									{
+										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
+										'stats__flexible-grid-item--full--large': supportsUTMStats,
+										'stats__flexible-grid-item--full--medium': supportsUTMStats,
+									},
+									{
+										'stats__flexible-grid-item--half': ! supportsUTMStats,
+										'stats__flexible-grid-item--full--large': ! supportsUTMStats,
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 
+						{ ! isNewStateEnabled && (
+							<StatsModule
+								path="clicks"
+								moduleStrings={ moduleStrings.clicks }
+								period={ this.props.period }
+								query={ query }
+								statType="statsClicks"
+								showSummaryLink
+								className={ clsx(
+									{
+										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
+										'stats__flexible-grid-item--full--large': supportsUTMStats,
+										'stats__flexible-grid-item--full--medium': supportsUTMStats,
+									},
+									{
+										'stats__flexible-grid-item--half': ! supportsUTMStats,
+										'stats__flexible-grid-item--full--large': ! supportsUTMStats,
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
 						{ ! this.isModuleHidden( 'authors' ) && (
 							<StatsModule
