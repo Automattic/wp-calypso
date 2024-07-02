@@ -629,7 +629,7 @@ class Login extends Component {
 				default:
 					headerText = <h3>{ translate( 'One last step' ) }</h3>;
 					subtitle = translate(
-						"In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
+						"In order to take advantage of the benefits offered by Jetpack and WooPayments, please log in to your WordPress.com account below. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 						{
 							components: {
 								signupLink,
