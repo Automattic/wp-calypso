@@ -107,14 +107,7 @@ export const ShortcutsPopover = ( {
 	return (
 		<>
 			{ ! isMobile && (
-				<HotkeyContainer
-					shortcuts={ [
-						{
-							hotkey: 73, // i key number
-							action: toggleShortcutsPopover,
-						},
-					] }
-				>
+				<HotkeyContainer shortcuts={ [] }>
 					<button
 						className={ clsx( 'wpnc__keyboard-shortcuts-button', {
 							'active-action': isShortcutsPopoverOpen,
