@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { trendingUp } from '@wordpress/icons';
@@ -63,6 +64,7 @@ const StatsModuleUTM = ( {
 	query,
 	postId,
 } ) => {
+	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
@@ -123,7 +125,7 @@ const StatsModuleUTM = ( {
 
 	return (
 		<>
-			{ ! data?.length && (
+			{ ! data?.length && isNewEmptyStateEnabled && (
 				<StatsCard
 					className={ className }
 					title={ moduleStrings.title }
