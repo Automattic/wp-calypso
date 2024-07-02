@@ -47,7 +47,7 @@ function SubscribeEmailStepContent( props ) {
 							link: (
 								<button
 									type="button"
-									id="loginAsAnotherUser"
+									id="subscribeDifferentEmail"
 									className="continue-as-user__change-user-link"
 									onClick={ () => {
 										recordTracksEvent( 'calypso_signup_click_on_change_account' );
@@ -57,7 +57,7 @@ function SubscribeEmailStepContent( props ) {
 							),
 						},
 						args: { email },
-						comment: 'Link to continue login as different user',
+						comment: 'Link to continue subscribe to email list as different user',
 					}
 				) }
 				queryArgs={ { user_email: email, redirect_to: redirectUrl } }
