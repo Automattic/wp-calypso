@@ -6,9 +6,10 @@ import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { removeNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import SitesDashboardV2 from './sites-dashboard';
+import SitesDashboard from './components/sites-dashboard';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
 
 const getStatusFilterValue = ( status?: string ) => {
@@ -115,7 +116,7 @@ export function sitesDashboard( context: Context, next: () => void ) {
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			<SitesDashboardV2 queryParams={ getQueryParams( context ) } />
+			<SitesDashboard queryParams={ getQueryParams( context ) } />
 		</>
 	);
 
@@ -130,7 +131,7 @@ export function siteDashboard( feature: string ) {
 		const state = context.store.getState();
 
 		context.primary = (
-			<SitesDashboardV2
+			<SitesDashboard
 				selectedSite={ getSelectedSite( state ) }
 				initialSiteFeature={ feature }
 				selectedSiteFeaturePreview={ context.primary }
@@ -139,4 +140,13 @@ export function siteDashboard( feature: string ) {
 		);
 		next();
 	};
+}
+
+export function maybeRemoveCheckoutSuccessNotice( context: PageJSContext, next: () => void ) {
+	if ( context.query[ 'new-site' ] ) {
+		// `?new-site` shows a site creation notice and we don't want to show a double notice,
+		// so hide the checkout success notice if it's there.
+		context.store.dispatch( removeNotice( 'checkout-thank-you-success' ) );
+	}
+	next();
 }

@@ -1,6 +1,12 @@
 import page from '@automattic/calypso-router';
-import sitesDashboardV2 from 'calypso/sites-dashboard-v2';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation } from 'calypso/my-sites/controller';
 import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
+import {
+	maybeRemoveCheckoutSuccessNotice,
+	sanitizeQueryParameters,
+	sitesDashboard,
+} from './controller';
 
 export default function () {
 	// Maintain old `/sites/:id` URLs by redirecting them to My Home
@@ -12,5 +18,13 @@ export default function () {
 		page.redirect( getSiteHomeUrl( state, siteId ) );
 	} );
 
-	sitesDashboardV2();
+	page(
+		'/sites',
+		maybeRemoveCheckoutSuccessNotice,
+		sanitizeQueryParameters,
+		navigation,
+		sitesDashboard,
+		makeLayout,
+		clientRender
+	);
 }

@@ -5,7 +5,6 @@ import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import HostingFeaturesIcon from 'calypso/hosting-features/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
-import SiteEnvironmentSwitcher from 'calypso/sites-dashboard-v2/site-preview-pane/site-environment-switcher';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
@@ -20,6 +19,7 @@ import {
 	DOTCOM_STAGING_SITE,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
+import SiteEnvironmentSwitcher from './site-environment-switcher';
 import type {
 	ItemData,
 	FeaturePreviewInterface,
