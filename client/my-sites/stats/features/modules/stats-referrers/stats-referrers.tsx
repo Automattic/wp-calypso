@@ -41,6 +41,7 @@ const StatsReferrers: React.FC< StatsReferrersProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsReferrers';
+
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsReferrers = useShouldGateStats( statType );
 
