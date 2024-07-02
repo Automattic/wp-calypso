@@ -6,7 +6,7 @@ export const ThreadsLinkPreview: React.FC< ThreadsPreviewProps > = ( props ) => 
 		<ThreadsPostPreview
 			{ ...props }
 			// Override the props that are irrelevant to link preview
-			text=""
+			caption=""
 			media={ undefined }
 		/>
 	);

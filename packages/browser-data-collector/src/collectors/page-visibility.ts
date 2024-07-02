@@ -9,6 +9,7 @@
  * It also assumes there is only one report running. If we ever have more than one, we may have problems when
  * unsubscribing from the `visibilitychange` event.
  */
+import type { Collector } from '../types';
 
 // Assume it is visible by default. If the Page Visiblity API is not supported by the browser, it will be reported as visible.
 let wasHidden = false;

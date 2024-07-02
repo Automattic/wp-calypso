@@ -242,14 +242,11 @@ export class Login extends Component {
 	renderGravPoweredLoginBlockFooter() {
 		const { oauth2Client, translate, locale, currentQuery, currentRoute } = this.props;
 
-		const isGravatarMagicCode =
-			isGravatarOAuth2Client( oauth2Client ) && currentQuery.gravatar_magic_code === 'true';
 		const magicLoginUrl = login( {
 			locale,
 			twoFactorAuthType: 'link',
 			oauth2ClientId: currentQuery?.client_id,
 			redirectTo: currentQuery?.redirect_to,
-			gravatarMagicCode: isGravatarMagicCode,
 		} );
 		const currentUrl = new URL( window.location.href );
 		currentUrl.searchParams.append( 'lostpassword_flow', true );
@@ -272,7 +269,7 @@ export class Login extends Component {
 							this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' )
 						}
 					>
-						{ isGravatarMagicCode
+						{ isGravatarOAuth2Client( oauth2Client )
 							? translate( 'Email me a login code.' )
 							: translate( 'Email me a login link.' ) }
 					</a>

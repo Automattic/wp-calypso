@@ -20,13 +20,9 @@
 }
 
 .a4a-form__heading-title {
-	font-size: rem(24px);
-	line-height: 1.3;
-	font-weight: 600;
+	@include a4a-font-heading-xl;
 }
 
 .a4a-form__heading-description {
-	font-size: rem(16px);
-	line-height: 1.5;
-	font-weight: 400;
+	@include a4a-font-body-lg;
 }

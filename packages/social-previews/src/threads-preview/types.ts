@@ -4,7 +4,7 @@ export type ThreadsPreviewsProps = SocialPreviewsBaseProps & {
 	posts: Array< ThreadsPreviewProps >;
 };
 
-export type ThreadsCardProps = SocialPreviewBaseProps;
+export type ThreadsCardProps = Omit< SocialPreviewBaseProps, 'description' >;
 
 export type SidebarProps = {
 	showThreadConnector?: boolean;
@@ -20,11 +20,4 @@ export type MediaProps = {
 	media: Array< MediaItem >;
 };
 
-export type TextProps = {
-	text: string;
-	url: string;
-};
-
-export type ThreadsPreviewProps = SidebarProps &
-	HeaderProps &
-	Partial< ThreadsCardProps & Pick< TextProps, 'text' > >;
+export type ThreadsPreviewProps = SidebarProps & HeaderProps & Partial< ThreadsCardProps >;

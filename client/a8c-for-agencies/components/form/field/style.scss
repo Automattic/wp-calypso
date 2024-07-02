@@ -7,8 +7,7 @@
 .a4a-form__section-field-label,
 .a4a-form__section-field-sub,
 .a4a-form__section-field-description {
-	font-size: rem(14px);
-	line-height: 1.5;
+	@include a4a-font-body-md;
 }
 
 .a4a-form__section-field-label {

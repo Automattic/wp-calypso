@@ -106,7 +106,7 @@ export const ShortcutsPopover = ( {
 
 	return (
 		<>
-			{ ! isMobile && (
+			{ ! isMobile && isPanelOpen && (
 				<HotkeyContainer
 					shortcuts={ [
 						{
