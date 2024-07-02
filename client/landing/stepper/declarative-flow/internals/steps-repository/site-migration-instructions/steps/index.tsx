@@ -1,6 +1,7 @@
 import { Checklist, ChecklistItem } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import React, { FC } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MaybeLink } from './maybe-link';
 
 interface Props {
@@ -21,6 +22,12 @@ const getPluginInstallationPage = ( fromUrl: string ) => {
 
 const getMigrateGuruPageURL = ( siteURL: string ) =>
 	removeDuplicatedSlashes( `${ siteURL }/wp-admin/admin.php?page=migrateguru` );
+
+const recordInstructionsLinkClick = ( linkname: string ) => {
+	recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
+		linkname,
+	} );
+};
 
 export const Steps: FC< Props > = ( { fromUrl } ) => {
 	const translate = useTranslate();
@@ -45,6 +52,7 @@ export const Steps: FC< Props > = ( { fromUrl } ) => {
 											href={ getPluginInstallationPage( fromUrl ) }
 											target="_blank"
 											rel="noreferrer noopener"
+											onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
 										/>
 									),
 								},
@@ -81,6 +89,7 @@ export const Steps: FC< Props > = ( { fromUrl } ) => {
 												target="_blank"
 												rel="noreferrer noopener"
 												fallback={ <strong /> }
+												onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
 											/>
 										),
 									},
