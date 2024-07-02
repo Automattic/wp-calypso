@@ -7,15 +7,12 @@ import {
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
-import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
@@ -134,30 +131,4 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	);
 };
 
-const SiteMigrationUpgradePlanWithMigrationSticker: Step = function ( props ) {
-	// TODO: Handle siteId 0.
-	const siteId = Number( useSiteIdParam() ) ?? 0;
-
-	const {
-		addMigrationSticker,
-		addMutationRest: { isPending, isError },
-	} = useMigrationStickerMutation();
-
-	useEffect( () => {
-		addMigrationSticker( siteId );
-	}, [ addMigrationSticker, siteId ] );
-
-	if ( isPending ) {
-		// TODO: Improve loading state.
-		return <div>Activating special offer...</div>;
-	}
-
-	if ( isError ) {
-		// TODO: Improve error state.
-		return <div>Error. Try again!</div>;
-	}
-
-	return <SiteMigrationUpgradePlan { ...props } />;
-};
-
-export default SiteMigrationUpgradePlanWithMigrationSticker;
+export default SiteMigrationUpgradePlan;
