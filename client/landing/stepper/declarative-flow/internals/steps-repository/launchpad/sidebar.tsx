@@ -11,6 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { copy, Icon } from '@wordpress/icons';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
@@ -69,7 +70,7 @@ const Sidebar = ( {
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const [ showPlansModal, setShowPlansModal ] = useState( false );
 	const queryClient = useQueryClient();
-
+	const hasSkippedCheckout = Boolean( getQueryArg( window.location.href, 'skippedCheckout' ) );
 	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 
 	const {
@@ -128,6 +129,7 @@ const Sidebar = ( {
 			domainCartItem,
 			productCartItems,
 			stripeConnectUrl,
+			hasSkippedCheckout,
 		} );
 	}, [
 		site,
