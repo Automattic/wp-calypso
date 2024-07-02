@@ -31,6 +31,7 @@ module.exports.loader = ( {
 			loader: require.resolve( 'thread-loader' ),
 			options: {
 				workers: workerCount,
+				workerParallelJobs: 50,
 			},
 		},
 		{
