@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { useSiteSlug } from '../hooks/use-site-slug';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { redirect } from './internals/steps-repository/import/util';
 import Intro from './internals/steps-repository/intro';
 import ProcessingStep from './internals/steps-repository/processing-step';
@@ -12,7 +13,7 @@ import SenseiLaunch from './internals/steps-repository/sensei-launch';
 import SenseiPlan from './internals/steps-repository/sensei-plan';
 import SenseiPurpose from './internals/steps-repository/sensei-purpose';
 import SenseiSetup from './internals/steps-repository/sensei-setup';
-import { AssertConditionState, Flow } from './internals/types';
+import { Flow } from './internals/types';
 import './internals/sensei.scss';
 
 function getStartUrl( step: string, locale: string ) {
@@ -28,15 +29,20 @@ const sensei: Flow = {
 	},
 	isSignupFlow: true,
 	useSteps() {
-		return [
+		const publicSteps = [
 			{ slug: 'intro', component: Intro },
 			{ slug: 'senseiSetup', component: SenseiSetup },
 			{ slug: 'senseiDomain', component: SenseiDomain },
+		];
+
+		const privateSteps = stepsWithRequiredLogin( [
 			{ slug: 'senseiPlan', component: SenseiPlan },
 			{ slug: 'senseiPurpose', component: SenseiPurpose },
 			{ slug: 'senseiLaunch', component: SenseiLaunch },
 			{ slug: 'processing', component: ProcessingStep },
-		];
+		] );
+
+		return [ ...publicSteps, ...privateSteps ];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -73,23 +79,6 @@ const sensei: Flow = {
 		};
 
 		return { submit, goToStep };
-	},
-
-	useAssertConditions() {
-		const currentPath = window.location.pathname;
-		const isLoggedIn = useSelector( isUserLoggedIn );
-		const isPlanStep = currentPath.endsWith( `setup/${ this.name }/senseiPlan` );
-		const locale = useFlowLocale();
-
-		let result = { state: AssertConditionState.SUCCESS };
-
-		if ( isPlanStep && ! isLoggedIn ) {
-			redirect( getStartUrl( 'senseiPlan', locale ) );
-
-			result = { state: AssertConditionState.FAILURE };
-		}
-
-		return result;
 	},
 };
 
