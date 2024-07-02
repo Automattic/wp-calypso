@@ -1,19 +1,28 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { getPlan, Plan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
+import {
+	calculateMonthlyPriceForPlan,
+	getPlan,
+	Plan,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_MONTHLY,
+} from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
+import { SitePlanPricing } from '@automattic/data-stores';
+import { useSitePlans } from '@automattic/data-stores/src/plans';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import { useSelector } from 'calypso/state';
-import { getSitePlan, getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
+import { getSitePlan } from 'calypso/state/sites/plans/selectors';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
@@ -54,60 +63,109 @@ const UpgradePlanPeriodSwitcher = ( props: SwitcherProps ) => {
 	);
 };
 
-interface PriceWithIntroductoryOfferProps {
-	rawPrice?: number;
-	introductoryOfferRawPrice?: number;
-	currencyCode: string;
-}
+const Badge = styled.div< { isForIntroOffer?: boolean; isHidden?: boolean } >`
+	text-align: center;
+	white-space: nowrap;
+	font-size: 0.75rem;
+	line-height: 1.25rem;
+	border-radius: 4px;
+	height: 21px;
+	display: inline-block;
+	width: fit-content;
+	letter-spacing: 0.2px;
+	font-weight: 500;
+	text-align: center;
+	padding: 0 12px;
+	background-color: #e6d1ff;
+	color: #350e63;
+	text-transform: none;
+`;
 
-const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
+const PricesGroup = styled.div`
 	justify-content: flex-end;
 	display: flex;
-	flex-direction: ${ ( props ) => ( props.isLargeCurrency ? 'column' : 'row-reverse' ) };
-	align-items: ${ ( props ) => ( props.isLargeCurrency ? 'flex-start' : 'flex-end' ) };
+	flex-direction: row-reverse;
+	align-items: flex-end;
 	gap: 4px;
 `;
 
+interface PriceWithIntroductoryOfferProps {
+	originalMonthlyPrice: number;
+	introOfferMonthlyPrice: number;
+	currencyCode?: string;
+}
+
 const PriceWithIntroductoryOffer = ( props: PriceWithIntroductoryOfferProps ) => {
-	const { rawPrice, introductoryOfferRawPrice, currencyCode } = props;
+	const { originalMonthlyPrice, introOfferMonthlyPrice, currencyCode } = props;
+	const translate = useTranslate();
+
 	return (
-		<PricesGroup isLargeCurrency={ false }>
-			<PlanPrice rawPrice={ rawPrice } currencyCode={ currencyCode } original />
-			<PlanPrice rawPrice={ introductoryOfferRawPrice } currencyCode={ currencyCode } />
-		</PricesGroup>
+		<>
+			<Badge>{ translate( 'One time offer' ) }</Badge>
+			<PricesGroup>
+				<PlanPrice
+					rawPrice={ originalMonthlyPrice }
+					currencyCode={ currencyCode }
+					original
+					isSmallestUnit
+				/>
+				<PlanPrice rawPrice={ introOfferMonthlyPrice } currencyCode={ currencyCode } />
+			</PricesGroup>
+		</>
 	);
 };
 
 interface PlanPriceOfferProps {
-	rawPrice?: number;
 	plan?: Plan;
-	planDetails?: SitePlanData;
+	currencyCode?: string;
+	originalMonthlyPrice?: number;
+	introOfferMonthlyPrice?: number;
+	formattedOriginalPrice?: string;
+	formattedIntroOfferPrice?: string;
+	introOfferEnabled: boolean;
+	isIntroOfferComplete: boolean;
 }
 
 const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
-	const { rawPrice, plan } = props;
-	let { planDetails } = props;
-	const introOfferEnabled = config.isEnabled( 'migration-flow/introductory-offer' );
+	const translate = useTranslate();
 
-	// for tests
-	planDetails = {
-		...planDetails,
-		introductoryOfferRawPrice: 150,
-		currencyCode: 'USD',
-	};
+	const {
+		plan,
+		formattedOriginalPrice,
+		formattedIntroOfferPrice,
+		introOfferEnabled,
+		isIntroOfferComplete,
+		introOfferMonthlyPrice,
+		originalMonthlyPrice,
+		currencyCode,
+	} = props;
 
-	const price =
-		introOfferEnabled && planDetails?.introductoryOfferRawPrice ? (
-			<PriceWithIntroductoryOffer
-				rawPrice={ rawPrice }
-				introductoryOfferRawPrice={ planDetails?.introductoryOfferRawPrice }
-				currencyCode={ planDetails?.currencyCode }
-			/>
-		) : (
-			<PlanPrice rawPrice={ rawPrice } currencyCode={ planDetails?.currencyCode } />
-		);
+	const showIntroOffer =
+		introOfferEnabled && ! isIntroOfferComplete && introOfferMonthlyPrice && originalMonthlyPrice;
 
-	// need adjust the billing time frame for intro
+	const price = showIntroOffer ? (
+		<PriceWithIntroductoryOffer
+			originalMonthlyPrice={ originalMonthlyPrice }
+			introOfferMonthlyPrice={ introOfferMonthlyPrice }
+			currencyCode={ currencyCode }
+		/>
+	) : (
+		<PlanPrice rawPrice={ originalMonthlyPrice } currencyCode={ currencyCode } isSmallestUnit />
+	);
+
+	if ( plan && introOfferEnabled && ! isIntroOfferComplete ) {
+		plan.getBillingTimeFrame = () =>
+			translate(
+				'per month, %(discounted)s billed annually for the first year, %(original)s atferwards',
+				{
+					args: {
+						discounted: formattedIntroOfferPrice || '',
+						original: formattedOriginalPrice || '',
+					},
+				}
+			);
+	}
+
 	return (
 		<div className="import__upgrade-plan-price">
 			{ price }
@@ -116,6 +174,44 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 			</span>
 		</div>
 	);
+};
+
+const preparePlanPriceOfferProps = (
+	selectedPlan: string,
+	plan?: Plan,
+	pricing?: SitePlanPricing,
+	planDetails?: SitePlanData
+): PlanPriceOfferProps => {
+	let formattedOriginalPrice = undefined;
+	if ( planDetails && planDetails.formattedOriginalPrice ) {
+		formattedOriginalPrice = planDetails.formattedOriginalPrice;
+	}
+	if ( ! formattedOriginalPrice ) {
+		formattedOriginalPrice = planDetails?.formattedPrice || undefined;
+	}
+
+	const currencyCode = pricing?.currencyCode;
+	const originalMonthlyPrice = pricing?.originalPrice.monthly || undefined;
+
+	const introOfferRawPrice = pricing?.introOffer?.rawPrice;
+	const introOfferMonthlyPrice = introOfferRawPrice
+		? calculateMonthlyPriceForPlan( selectedPlan, introOfferRawPrice )
+		: undefined;
+	const formattedIntroOfferPrice = pricing?.introOffer?.formattedPrice || undefined;
+
+	const introOfferEnabled = config.isEnabled( 'migration-flow/introductory-offer' );
+	const isIntroOfferComplete = pricing?.introOffer?.isOfferComplete || false;
+
+	return {
+		plan,
+		currencyCode,
+		originalMonthlyPrice,
+		introOfferMonthlyPrice,
+		formattedOriginalPrice,
+		formattedIntroOfferPrice,
+		introOfferEnabled,
+		isIntroOfferComplete,
+	};
 };
 
 interface Props {
@@ -134,12 +230,19 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	const { children, siteId } = props;
 
 	const plan = getPlan( selectedPlan );
-	const planDetails = useSelector( ( state ) =>
-		siteId ? getSitePlan( state, siteId, selectedPlan ) : null
-	);
 
-	const rawPrice = useSelector( ( state ) =>
-		getSitePlanRawPrice( state, siteId, selectedPlan, { returnMonthly: true } )
+	const plans = useSitePlans( { siteId } );
+	const pricing = plans.data ? plans.data[ selectedPlan ].pricing : undefined;
+
+	const planDetails =
+		useSelector( ( state ) => ( siteId ? getSitePlan( state, siteId, selectedPlan ) : null ) ) ||
+		undefined;
+
+	const planPriceOfferProps = preparePlanPriceOfferProps(
+		selectedPlan,
+		plan,
+		pricing,
+		planDetails
 	);
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
@@ -181,11 +284,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 						<p>{ __( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</p>
 					</div>
 
-					<PlanPriceOffer
-						rawPrice={ rawPrice || undefined }
-						plan={ plan }
-						planDetails={ planDetails || undefined }
-					/>
+					<PlanPriceOffer { ...planPriceOfferProps } />
 
 					<div>
 						<div className="import__upgrade-plan-cta">{ children }</div>
@@ -193,7 +292,6 @@ export const UpgradePlanDetails = ( props: Props ) => {
 							{ __( 'Refundable within 14 days. No questions asked.' ) }
 						</div>
 					</div>
-
 					<div className="import__upgrade-plan-features-list">
 						<UpgradePlanFeatureList
 							plan={ plan }
