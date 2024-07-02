@@ -801,6 +801,11 @@ class PluginNotices extends Component {
 				return translate(
 					'The update cannot be installed because we will be unable to copy some files. This is usually due to inconsistent file permissions.'
 				);
+
+			case 'server_error':
+				return translate(
+					'The plugin encountered errors upon activation. As a safety measure, the plugin is installed but remains deactivated.'
+				);
 		}
 
 		return null;
