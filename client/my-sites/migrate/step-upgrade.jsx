@@ -161,7 +161,7 @@ const WrappedStepUpgrade = ( props ) => {
 	const currentPlanSlug = get( targetSite, 'plan.product_slug' );
 	const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 	const plan = isEcommerceTrial ? getPlan( PLAN_WOOEXPRESS_SMALL ) : getPlan( PLAN_BUSINESS );
-	const planSlug = plan.getProductId();
+	const planSlug = plan.getStoreSlug();
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ planSlug ],
 		coupon: undefined,
