@@ -1,10 +1,6 @@
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import debug from 'debug';
-import {
-	getGoogleAnalyticsDefaultConfig,
-	setupGoogleAnalyticsGtag,
-	fireGoogleAnalyticsPageView,
-	fireGoogleAnalyticsEvent,
-} from 'calypso/lib/analytics/ad-tracking';
+import { GA4 } from 'calypso/lib/analytics/ad-tracking';
 import isAkismetCheckout from '../akismet/is-akismet-checkout';
 import isJetpackCheckout from '../jetpack/is-jetpack-checkout';
 import isJetpackCloud from '../jetpack/is-jetpack-cloud';
@@ -35,8 +31,7 @@ function initialize() {
 		}
 
 		gaDebug( 'parameters:', params );
-
-		setupGoogleAnalyticsGtag( params );
+		GA4.setup( params );
 
 		initialized = true;
 	}
@@ -62,14 +57,21 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
 			useA8CForAgenciesGoogleAnalytics +
 			']'
 	);
+	const getGa4PropertyGtag = () => {
+		if ( useJetpackGoogleAnalytics ) {
+			return GA4.Ga4PropertyGtag.JETPACK;
+		}
+		if ( useAkismetGoogleAnalytics ) {
+			return GA4.Ga4PropertyGtag.AKISMET;
+		}
+		if ( useA8CForAgenciesGoogleAnalytics ) {
+			return GA4.Ga4PropertyGtag.A8C_FOR_AGENCIES;
+		}
+		return GA4.Ga4PropertyGtag.WPCOM;
+	};
 
-	fireGoogleAnalyticsPageView(
-		urlPath,
-		pageTitle,
-		useJetpackGoogleAnalytics,
-		useAkismetGoogleAnalytics,
-		useA8CForAgenciesGoogleAnalytics
-	);
+	const ga4PropertyGtag = getGa4PropertyGtag();
+	GA4.firePageView( pageTitle, urlPath, ga4PropertyGtag );
 } );
 
 /**
@@ -123,4 +125,38 @@ export function makeGoogleAnalyticsTrackingFunction( func ) {
 
 		func( ...args );
 	};
+}
+
+/**
+ * Returns the default configuration for Google Analytics
+ * @returns {Object} GA's default config
+ */
+function getGoogleAnalyticsDefaultConfig() {
+	const currentUser = getCurrentUser();
+
+	return {
+		...( currentUser && { user_id: currentUser.hashedPii.ID } ),
+		anonymize_ip: true,
+		transport_type: 'function' === typeof window.navigator.sendBeacon ? 'beacon' : 'xhr',
+		use_amp_client_id: true,
+		custom_map: {
+			dimension3: 'client_id',
+		},
+		linker: { accept_incoming: true },
+	};
+}
+
+/**
+ * Fires a generic Google Analytics event
+ * @param {string} category Is the string that will appear as the event category.
+ * @param {string} action Is the string that will appear as the event action in Google Analytics Event reports.
+ * @param {string} label Is the string that will appear as the event label.
+ * @param {number} value Is a non-negative integer that will appear as the event value.
+ */
+function fireGoogleAnalyticsEvent( category, action, label, value ) {
+	window.gtag( 'event', action, {
+		event_category: category,
+		event_label: label,
+		value: value,
+	} );
 }
