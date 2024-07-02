@@ -94,7 +94,6 @@ const ImporterMigrateMessage: Step = () => {
 						</span>
 						{ __( `We'll help you with the domain changes after the migration is completed.` ) }
 					</div>
-
 					<div className="migration-message__actions">
 						<FlowCard
 							title={ __( 'Let me explore' ) }
