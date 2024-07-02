@@ -33,6 +33,7 @@ export default function JetpackConnectionModal( { onClose }: Props ) {
 				}
 			)
 		);
+		onClose?.();
 	};
 
 	const onSiteChange = ( event: ChangeEvent< HTMLInputElement > ) => {
