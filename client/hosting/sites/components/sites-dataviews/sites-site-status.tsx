@@ -17,7 +17,7 @@ import { MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
-import useRestoreSiteMutation from '../..//hooks/use-restore-site-mutation';
+import useRestoreSiteMutation from '../../hooks/use-restore-site-mutation';
 import type { SiteExcerptData } from '@automattic/sites';
 
 const BadgeDIFM = styled.span`
