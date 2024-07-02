@@ -22,63 +22,51 @@ const baseTask = {
 	completed: false,
 	disabled: false,
 };
-const baseArgs = {
-	onClick: () => {},
-};
 
 export const Default: Story = {
 	args: {
-		...baseArgs,
+		onClick: () => {},
 		task: baseTask,
 	},
 };
 
 export const Completed: Story = {
 	args: {
-		...baseArgs,
+		onClick: () => {},
 		task: { ...baseTask, completed: true },
 	},
 };
 
 export const Disabled: Story = {
 	args: {
-		...baseArgs,
+		onClick: () => {},
 		task: { ...baseTask, disabled: true },
 	},
 };
 
 export const WithBadgetText: Story = {
 	args: {
-		...baseArgs,
+		onClick: () => {},
 		task: { ...baseTask, badge_text: 'Upgrade plan' },
 	},
 };
 
 export const WithTaskCounter: Story = {
 	args: {
-		...baseArgs,
+		onClick: () => {},
 		task: { ...baseTask, repetition_count: 1, target_repetitions: 3 },
 	},
 };
 
 export const WithSubtitle: Story = {
 	args: {
-		...baseArgs,
+		onClick: () => {},
 		task: { ...baseTask, subtitle: 'This is a subtitle' },
-	},
-};
-
-export const NotClickable: Story = {
-	args: {
-		...baseArgs,
-		task: { ...baseTask },
-		onClick: undefined,
 	},
 };
 
 export const Expanded: Story = {
 	args: {
-		...baseArgs,
 		task: baseTask,
 		expandable: {
 			content: <p>This is the expanded content.</p>,
@@ -89,7 +77,6 @@ export const Expanded: Story = {
 
 export const ExpandedWithAction: Story = {
 	args: {
-		...baseArgs,
 		task: baseTask,
 		expandable: {
 			content: <p>This is the expanded content.</p>,
