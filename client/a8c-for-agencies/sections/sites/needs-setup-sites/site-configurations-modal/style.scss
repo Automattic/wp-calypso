@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+
 .configure-your-site-modal-form {
 	max-width: 600px;
 
@@ -28,6 +30,13 @@
 		text-align: right;
 		background-color: var(--color-neutral-0);
 		border-radius: 4px;
+	}
+
+	.configure-your-site-modal-form__site-name-placeholder {
+		@include placeholder( --color-neutral-10 );
+
+		flex: 1;
+		display: block;
 	}
 
 	.configure-your-site-modal-form__site-name-wrapper {

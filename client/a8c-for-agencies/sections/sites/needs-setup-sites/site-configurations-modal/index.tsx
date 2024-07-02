@@ -15,14 +15,20 @@ import './style.scss';
 
 type SiteConfigurationsModalProps = {
 	toggleModal: () => void;
+	randomSiteName: string;
+	isRandomSiteNameLoading: boolean;
 };
 
-export default function SiteConfigurationsModal( { toggleModal }: SiteConfigurationsModalProps ) {
+export default function SiteConfigurationsModal( {
+	toggleModal,
+	randomSiteName,
+	isRandomSiteNameLoading,
+}: SiteConfigurationsModalProps ) {
 	const [ allowClientsToUseSiteHelpCenter, setAllowClientsToUseSiteHelpCenter ] = useState( true );
 	const translate = useTranslate();
 	const dataCenterOptions = useDataCenterOptions();
 	const { phpVersions } = usePhpVersions();
-	const siteName = useSiteName();
+	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
 		setAllowClientsToUseSiteHelpCenter( ! allowClientsToUseSiteHelpCenter );
@@ -61,20 +67,22 @@ export default function SiteConfigurationsModal( { toggleModal }: SiteConfigurat
 					) }
 				>
 					<div className="configure-your-site-modal-form__site-name-wrapper">
-						<FormTextInputWithAffixes
-							isError={ siteName.showValidationMessage }
-							value={ siteName.siteName }
-							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-								siteName.setSiteName( event.target.value )
-							}
-							disabled={ siteName.isRandomSiteLoading }
-							suffix=".wpcomstaging.com"
-							noWrap
-							spellcheck="false"
-							placeholder={ siteName.isRandomSiteLoading && '...' }
-						/>
+						{ isRandomSiteNameLoading ? (
+							<div className="configure-your-site-modal-form__site-name-placeholder" />
+						) : (
+							<FormTextInputWithAffixes
+								isError={ siteName.showValidationMessage }
+								value={ siteName.siteName }
+								onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+									siteName.setSiteName( event.target.value )
+								}
+								suffix=".wpcomstaging.com"
+								noWrap
+								spellcheck="false"
+							/>
+						) }
 						<div className="configure-your-site-modal-form__site-name-icon-wrapper">
-							{ ! siteName.showValidationMessage && ! siteName.isRandomSiteLoading && (
+							{ ! siteName.showValidationMessage && ! isRandomSiteNameLoading && (
 								<Gridicon
 									icon="checkmark-circle"
 									size={ 24 }

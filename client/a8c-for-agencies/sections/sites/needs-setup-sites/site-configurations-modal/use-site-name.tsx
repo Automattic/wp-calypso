@@ -32,14 +32,31 @@ const getRandomSiteName = async () => {
 		}
 	}
 
-	// If all 10 urlSuggestions are taken (very unlikly) return empty '' name as falback
+	// If all 10 urlSuggestions are taken (very unlikely) return empty '' name as falback
 	return '';
 };
 
-export const useSiteName = () => {
+export const useRandomSiteName = () => {
+	const [ randomSiteName, setRandomSiteName ] = useState( '' );
+	const [ isRandomSiteNameLoading, setIsRandomSiteNameLoading ] = useState( true );
+	useEffect( () => {
+		getRandomSiteName()
+			.then( ( randomSiteName ) => {
+				setRandomSiteName( randomSiteName );
+				setIsRandomSiteNameLoading( false );
+			} )
+			.catch( () => {
+				setRandomSiteName( '' );
+				setIsRandomSiteNameLoading( false );
+			} );
+	}, [] );
+
+	return { randomSiteName, isRandomSiteNameLoading };
+};
+
+export const useSiteName = ( randomSiteName: string, isRandomSiteNameLoading: boolean ) => {
 	const translate = useTranslate();
-	const [ siteName, setSiteName ] = useState( '' );
-	const [ isRandomSiteLoading, setIsRandomSiteLoading ] = useState( true );
+	const [ siteName, setSiteName ] = useState( randomSiteName );
 	const specialCharValidationErrorMessage = useMemo(
 		() => translate( 'Your site address can only contain letters and numbers.' ),
 		[ translate ]
@@ -59,16 +76,8 @@ export const useSiteName = () => {
 	);
 
 	useEffect( () => {
-		getRandomSiteName()
-			.then( ( randomSiteName ) => {
-				setSiteName( randomSiteName );
-				setIsRandomSiteLoading( false );
-			} )
-			.catch( () => {
-				setSiteName( '' );
-				setIsRandomSiteLoading( false );
-			} );
-	}, [] );
+		setSiteName( randomSiteName );
+	}, [ randomSiteName ] );
 
 	let validationMessage: string | React.ReactNode;
 
@@ -81,7 +90,7 @@ export const useSiteName = () => {
 		validationMessage = lengthValidationErrorMessage;
 	}
 
-	const showValidationMessage = !! validationMessage && ! isRandomSiteLoading;
+	const showValidationMessage = !! validationMessage && ! isRandomSiteNameLoading;
 
-	return { siteName, setSiteName, validationMessage, showValidationMessage, isRandomSiteLoading };
+	return { siteName, setSiteName, validationMessage, showValidationMessage };
 };
