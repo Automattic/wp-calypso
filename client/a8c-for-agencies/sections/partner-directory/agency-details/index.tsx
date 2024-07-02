@@ -14,7 +14,7 @@ import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import IndustrySelector from '../components/industry-selector';
+import IndustriesSelector from '../components/industries-selector';
 import LanguageSelector from '../components/languages-selector';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
@@ -22,6 +22,7 @@ import { PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG } from '../constants';
 import { useCountryList } from './hooks/use-country-list';
 import useDetailsForm from './hooks/use-details-form';
 import useSubmitForm from './hooks/use-submit-form';
+import LogoPicker from './logo-picker';
 
 import './style.scss';
 
@@ -44,7 +45,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			);
 			page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
 		},
-		[ page, reduxDispatch, translate ]
+		[ translate ]
 	);
 
 	const onSubmitError = useCallback( () => {
@@ -53,7 +54,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				duration: 6000,
 			} )
 		);
-	}, [ page, reduxDispatch, translate ] );
+	}, [ translate ] );
 
 	const { formData, setFormData } = useDetailsForm( {
 		initialFormData,
@@ -138,14 +139,14 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				</FormField>
 				<FormField
 					label={ translate( 'Company logo' ) }
-					description={ translate(
+					sub={ translate(
 						'Upload your agency logo sized at 800px by 320px. Format allowed: JPG, PNG'
 					) }
 					isRequired
 				>
-					<TextControl
-						value={ formData.logoUrl }
-						onChange={ ( value ) => setFormFields( { logoUrl: value } ) }
+					<LogoPicker
+						logo={ formData.logoUrl }
+						onPick={ ( value ) => setFormFields( { logoUrl: value } ) }
 					/>
 				</FormField>
 			</FormSection>
@@ -165,10 +166,10 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 						}
 					/>
 				</FormField>
-				<FormField label={ translate( 'Industry' ) } isRequired>
-					<IndustrySelector
-						industry={ formData.industry }
-						setIndustry={ ( industry ) => setFormFields( { industry: industry } ) }
+				<FormField label={ translate( 'Industries' ) } isRequired>
+					<IndustriesSelector
+						industries={ formData.industries }
+						setIndustries={ ( industries ) => setFormFields( { industries } ) }
 					/>
 				</FormField>
 				<FormField label={ translate( 'Services you offer' ) } isRequired>

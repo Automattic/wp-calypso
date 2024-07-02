@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import isScheduledUpdatesMultisiteRoute, {
 	isScheduledUpdatesMultisiteCreateRoute,
@@ -30,7 +29,6 @@ function isInRoute( state: AppState, routes: string[] ) {
 
 function shouldShowSiteDashboard( state: AppState, siteId: number | null, sectionName: string ) {
 	return (
-		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
 		!! siteId &&
 		( isInSection( sectionName, Object.keys( SITE_DASHBOARD_ROUTES ) ) ||
 			isInRoute( state, Object.values( SITE_DASHBOARD_ROUTES ) ) )
@@ -70,10 +68,6 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	sectionGroup: string,
 	sectionName: string
 ) => {
-	if ( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		return false;
-	}
-
 	const isSitesDashboard = sectionGroup === 'sites-dashboard';
 	const isSiteDashboard = getShouldShowSiteDashboard( state, siteId, sectionGroup, sectionName );
 

@@ -6,6 +6,7 @@ import {
 	Plan,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_MONTHLY,
+	isMonthly,
 } from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { SitePlanPricing } from '@automattic/data-stores';
@@ -289,7 +290,9 @@ export const UpgradePlanDetails = ( props: Props ) => {
 					<div>
 						<div className="import__upgrade-plan-cta">{ children }</div>
 						<div className="import__upgrade-plan-refund-sub-text">
-							{ __( 'Refundable within 14 days. No questions asked.' ) }
+							{ plan && ! isMonthly( plan.getStoreSlug() )
+								? __( 'Refundable within 14 days. No questions asked.' )
+								: __( 'Refundable within 7 days. No questions asked.' ) }
 						</div>
 					</div>
 					<div className="import__upgrade-plan-features-list">

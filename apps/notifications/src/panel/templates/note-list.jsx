@@ -332,7 +332,6 @@ export class NoteList extends Component {
 		}
 
 		const classes = clsx( 'wpnc__note-list', {
-			'disable-sticky': !! window.chrome || !! window.electron, // position: sticky doesn't work in Chrome – `window.chrome` does not exist in electron
 			'is-note-open': !! this.props.selectedNoteId,
 		} );
 
@@ -402,6 +401,7 @@ const mapStateToProps = ( state ) => ( {
 
 const mapDispatchToProps = {
 	selectNote: actions.ui.selectNote,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps, null, { forwardRef: true } )(

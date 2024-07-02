@@ -3,7 +3,7 @@
 ## v2.1.0
 
 - Added Threads preview
-- Fixed media image URL for Tumblr preview
+- Fixed media image URL for Tumblr and Instagram previews
 
 ## v2.0.1 (2024-06-10)
 
