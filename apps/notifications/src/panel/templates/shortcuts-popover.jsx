@@ -94,10 +94,6 @@ export const ShortcutsPopover = ( {
 							<span className="description">{ translate( 'View Likes' ) }</span>
 							<span className="shortcut letter">l</span>
 						</li>
-						<li>
-							<span className="description">{ translate( 'Toggle Shortcuts Menu' ) }</span>
-							<span className="shortcut letter">i</span>
-						</li>
 					</ul>
 				</div>
 			</Popover>
