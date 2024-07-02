@@ -17,7 +17,7 @@ import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import { StatsEmptyActionSocial } from '../shared';
 import type { StatsDefaultModuleProps } from '../types';
 
-const StatsRefeeres: React.FC< StatsDefaultModuleProps > = ( {
+const StatsReferres: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -81,4 +81,4 @@ const StatsRefeeres: React.FC< StatsDefaultModuleProps > = ( {
 	);
 };
 
-export default StatsRefeeres;
+export default StatsReferres;
