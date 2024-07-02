@@ -25,7 +25,8 @@ type AllProps = Assign< React.SVGProps< SVGSVGElement >, Props >;
 function useProxiedURL( url: string ) {
 	const [ urlProxy, setUrlProxy ] = React.useState( url );
 	React.useEffect( () => {
-		if ( window.location.origin !== new URL( url ).origin ) {
+		// Only bother with cross-origin absolute URLs.
+		if ( url.startsWith( 'https://' ) && window.location.origin !== new URL( url ).origin ) {
 			fetch( url )
 				.then( ( res ) => res.blob() )
 				.then( ( blob ) => {
