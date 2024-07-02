@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, calendar } from '@wordpress/icons';
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DateControlPickerDate from './stats-date-control-picker-date';
