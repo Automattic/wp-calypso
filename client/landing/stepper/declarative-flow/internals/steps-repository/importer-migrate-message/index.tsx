@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
@@ -90,6 +91,14 @@ const ImporterMigrateMessage: Step = () => {
 							<Icon icon={ globe } />
 						</span>
 						{ __( `We'll help you with the domain changes after the migration is completed.` ) }
+					</div>
+					<div className="migration-message__actions">
+						<Button onClick={ () => {} } primary transparent href={ `/home/${ siteSlug }` }>
+							{ __( 'Let me explore' ) }
+						</Button>
+						<Button onClick={ () => {} } primary transparent href="/support">
+							{ __( 'Help me learn' ) }
+						</Button>
 					</div>
 				</>
 			}
