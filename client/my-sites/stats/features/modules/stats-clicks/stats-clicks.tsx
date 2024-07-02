@@ -1,6 +1,7 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { customLink } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -41,7 +42,7 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
 			{ ( ! data || ! data?.length ) && (
 				<StatsCard
-					className={ className }
+					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ translate( 'Clicks' ) }
 					isEmpty
 					emptyMessage={
