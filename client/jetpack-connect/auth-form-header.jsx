@@ -23,6 +23,7 @@ export class AuthFormHeader extends Component {
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
+		disableSiteCard: PropTypes.bool,
 
 		// Connected props
 		translate: PropTypes.func.isRequired,
@@ -300,7 +301,7 @@ export class AuthFormHeader extends Component {
 					headerText={ this.getHeaderText() }
 					subHeaderText={ this.getSubHeaderText() }
 				/>
-				{ ! this.props.hideSiteCard && this.getSiteCard() }
+				{ ! this.props.disableSiteCard && this.getSiteCard() }
 			</div>
 		);
 	}
