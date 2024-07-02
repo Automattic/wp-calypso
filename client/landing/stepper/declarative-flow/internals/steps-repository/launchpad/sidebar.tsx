@@ -94,7 +94,7 @@ const Sidebar = ( {
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
-	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
+	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow, hasSkippedCheckout );
 
 	const { planCartItem, domainCartItem, productCartItems } = useSelect(
 		( select ) => ( {
