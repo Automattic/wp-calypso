@@ -3,7 +3,9 @@
 
 	// use separate animation to match the cycle actoss card
 	.stats-card-skeleton__placeholder {
-		animation: stats-skeleton-card 1.8s ease-in-out infinite;
+		animation: stats-skeleton-card 2.5s ease-in-out infinite;
+		background-color: rgba(var(--color-neutral-5-rgb), 0.8);
+		border-radius: 4px;
 	}
 
 	ul {
