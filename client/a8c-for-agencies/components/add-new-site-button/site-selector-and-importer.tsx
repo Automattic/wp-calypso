@@ -3,8 +3,10 @@ import { Icon, navigation } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
+import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import A4ALogo from '../a4a-logo';
+import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from '../sidebar-menu/lib/constants';
 
 import './style.scss';
 
@@ -54,6 +56,8 @@ export default function SiteSelectorAndImporter( {
 	};
 
 	const chevronIcon = isMenuVisible ? 'chevron-up' : 'chevron-down';
+
+	const pressableOwnership = usePressableOwnershipType();
 
 	return (
 		<>
@@ -108,6 +112,13 @@ export default function SiteSelectorAndImporter( {
 							icon: <img src={ pressableIcon } alt="" />,
 							heading: translate( 'Pressable' ),
 							description: translate( 'Optimized and hassle-free hosting for business websites' ),
+							buttonProps: {
+								href:
+									pressableOwnership === 'regular'
+										? 'https://my.pressable.com/agency/auth'
+										: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+								target: pressableOwnership === 'regular' ? '_blank' : '_self',
+							},
 						} ) }
 						{ menuItem( {
 							icon: <WordPressLogo />,
