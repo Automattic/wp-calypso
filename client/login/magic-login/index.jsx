@@ -496,7 +496,7 @@ class MagicLogin extends Component {
 	};
 
 	renderGravPoweredMagicLoginTos() {
-		const { oauth2Client, translate, query } = this.props;
+		const { oauth2Client, translate } = this.props;
 
 		const textOptions = {
 			components: {
@@ -524,24 +524,19 @@ class MagicLogin extends Component {
 			},
 		};
 
-		let tosText = translate(
-			`By clicking “Send me sign in link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.`,
-			textOptions
+		return (
+			<div className="grav-powered-magic-login__tos">
+				{ isGravatarOAuth2Client( oauth2Client )
+					? translate(
+							`By clicking “Continue“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.`,
+							textOptions
+					  )
+					: translate(
+							`By clicking “Send me sign in link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a Gravatar account if you don't already have one.`,
+							textOptions
+					  ) }
+			</div>
 		);
-
-		if ( isGravatarOAuth2Client( oauth2Client ) && query.gravatar_magic_code === 'true' ) {
-			tosText = translate(
-				`By clicking “Continue“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.`,
-				textOptions
-			);
-		} else if ( isWPJobManagerOAuth2Client( oauth2Client ) ) {
-			translate(
-				`By clicking “Send me sign in link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a Gravatar account if you don't already have one.`,
-				textOptions
-			);
-		}
-
-		return <div className="grav-powered-magic-login__tos">{ tosText }</div>;
 	}
 
 	resendEmailCountdownId = null;
@@ -924,19 +919,17 @@ class MagicLogin extends Component {
 		const { isRequestingEmail, requestEmailErrorMessage } = this.state;
 
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
-		const isGravatarMagicCode = isGravatar && query.gravatar_magic_code === 'true';
-		const submitButtonLabel = isGravatarMagicCode
+		const submitButtonLabel = isGravatar
 			? translate( 'Continue' )
 			: translate( 'Send me sign in link' );
 		const loginUrl = login( {
 			locale,
 			redirectTo: query?.redirect_to,
 			oauth2ClientId: query?.client_id,
-			gravatarMagicCode: isGravatarMagicCode,
 		} );
 		let headerText = translate( 'Sign in with your email' );
 
-		if ( isGravatarMagicCode ) {
+		if ( isGravatar ) {
 			headerText =
 				query?.gravatar_from === 'signup'
 					? translate( 'Create your Profile' )
@@ -955,8 +948,8 @@ class MagicLogin extends Component {
 						hideSubHeaderText
 						inputPlaceholder={ translate( 'Enter your email address' ) }
 						submitButtonLabel={ submitButtonLabel }
-						tosComponent={ ! isGravatarMagicCode && this.renderGravPoweredMagicLoginTos() }
-						onSubmitEmail={ isGravatarMagicCode ? this.handleGravPoweredEmailSubmit : undefined }
+						tosComponent={ ! isGravatar && this.renderGravPoweredMagicLoginTos() }
+						onSubmitEmail={ isGravatar ? this.handleGravPoweredEmailSubmit : undefined }
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
 						errorMessage={ requestEmailErrorMessage }
@@ -966,7 +959,7 @@ class MagicLogin extends Component {
 						isSubmitButtonDisabled={ isRequestingEmail || !! requestEmailErrorMessage }
 						isSubmitButtonBusy={ isRequestingEmail }
 					/>
-					{ isGravatarMagicCode && (
+					{ isGravatar && (
 						<div className="grav-powered-magic-login__feature-items">
 							<div className="grav-powered-magic-login__feature-item">
 								<svg
@@ -1071,7 +1064,7 @@ class MagicLogin extends Component {
 							</div>
 						</div>
 					) }
-					{ ! isGravatarMagicCode && (
+					{ ! isGravatar && (
 						<hr className="grav-powered-magic-login__divider grav-powered-magic-login__divider--email-form" />
 					) }
 					<footer className="grav-powered-magic-login__footer grav-powered-magic-login__footer--email-form">
@@ -1183,8 +1176,6 @@ class MagicLogin extends Component {
 				<Main
 					className={ clsx( 'grav-powered-magic-login', {
 						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
-						'grav-powered-magic-login--gravatar-magic-link':
-							isGravatarOAuth2Client( oauth2Client ) && query.gravatar_magic_code !== 'true',
 					} ) }
 				>
 					{ renderContent }
