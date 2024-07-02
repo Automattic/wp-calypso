@@ -53,6 +53,7 @@ function SubscribeEmailStep( props ) {
 	const redirectToAfterLoginUrl = currentUser
 		? addQueryArgs( window.location.href, { user_email: currentUser?.email } )
 		: '';
+
 	const { mutate: subscribeToMailingList, isPending: isSubscribeToMailingListPending } =
 		useSubscribeToMailingList( {
 			onSuccess: () => {
@@ -77,7 +78,7 @@ function SubscribeEmailStep( props ) {
 					userData: {
 						ID: userId,
 						username: username,
-						email: this.state.email,
+						email,
 					},
 					flow: flowName,
 					type: 'passwordless',
