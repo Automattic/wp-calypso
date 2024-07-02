@@ -5,8 +5,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import A4AThemedModal from '../a4a-themed-modal';
-import JetpackConnectionSidebarImage from './sidebar-image.png';
+import A4AThemedModal from '../../a4a-themed-modal';
+import modalImage from './modal-image.png';
 
 import './style.scss';
 
@@ -14,7 +14,11 @@ function isValidURL( url: string ) {
 	return /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?$/i.test( url );
 }
 
-export default function AddSiteViaJetpackConnectionModal() {
+type Props = {
+	onClose: () => void;
+};
+
+export default function JetpackConnectionModal( { onClose }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -37,21 +41,22 @@ export default function AddSiteViaJetpackConnectionModal() {
 
 	return (
 		<A4AThemedModal
-			className="add-site-via-jetpack-connection-modal"
-			modalImage={ JetpackConnectionSidebarImage }
+			className="jetpack-connection-modal"
+			modalImage={ modalImage }
+			onClose={ onClose }
 			dismissable
 		>
-			<h1 className="add-site-via-jetpack-connection-modal__title">
+			<h1 className="jetpack-connection-modal__title">
 				{ translate( 'Add a site by remotely installing the Jetpack plugin' ) }
 			</h1>
 
-			<p className="add-site-via-jetpack-connection-modal__instruction">
+			<p className="jetpack-connection-modal__instruction">
 				{ translate(
 					"The Jetpack plugin let’s you easily connect your clients' sites to Automattic for Agencies. We’ll remotely install Jetpack for you on the site, and it will appear here."
 				) }
 			</p>
 
-			<div className="add-site-via-jetpack-connection-modal__input-container">
+			<div className="jetpack-connection-modal__input-container">
 				<FormFieldset>
 					<FormLabel htmlFor="site">{ translate( 'What site do you want to connect?' ) }</FormLabel>
 					<FormTextInput
