@@ -3,12 +3,21 @@ import { Icon, navigation } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
+import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
+import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import A4ALogo from '../a4a-logo';
+import {
+	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+	A4A_SITES_LINK_NEEDS_SETUP,
+} from '../sidebar-menu/lib/constants';
 
 import './style.scss';
 
 const ICON_SIZE = 32;
+
+type PendingSite = { features: { wpcom_atomic: { state: string; license_key: string } } };
 
 export default function SiteSelectorAndImporter( {
 	showMainButtonLabel,
@@ -31,12 +40,14 @@ export default function SiteSelectorAndImporter( {
 		heading,
 		description,
 		buttonProps,
+		extraContent,
 	}: {
 		icon: JSX.Element;
 		iconClassName?: string;
 		heading: string;
 		description: string;
 		buttonProps?: React.ComponentProps< typeof Button >;
+		extraContent?: JSX.Element;
 	} ) => {
 		return (
 			<Button { ...buttonProps } className="site-selector-and-importer__popover-button" borderless>
@@ -48,12 +59,25 @@ export default function SiteSelectorAndImporter( {
 					<div className="site-selector-and-importer__popover-button-description">
 						{ description }
 					</div>
+					{ extraContent }
 				</div>
 			</Button>
 		);
 	};
 
 	const chevronIcon = isMenuVisible ? 'chevron-up' : 'chevron-down';
+
+	const pressableOwnership = usePressableOwnershipType();
+
+	const { data: pendingSites } = useFetchPendingSites();
+
+	const allAvailableSites =
+		pendingSites?.filter(
+			( { features }: PendingSite ) =>
+				features.wpcom_atomic.state === 'pending' && !! features.wpcom_atomic.license_key
+		) ?? [];
+
+	const hasPendingWPCOMSites = allAvailableSites.length > 0;
 
 	return (
 		<>
@@ -105,14 +129,41 @@ export default function SiteSelectorAndImporter( {
 							{ translate( 'Add a new site' ).toUpperCase() }
 						</div>
 						{ menuItem( {
-							icon: <img src={ pressableIcon } alt="" />,
-							heading: translate( 'Pressable' ),
-							description: translate( 'Optimized and hassle-free hosting for business websites' ),
-						} ) }
-						{ menuItem( {
 							icon: <WordPressLogo />,
 							heading: translate( 'WordPress.com' ),
 							description: translate( 'Best for large-scale businesses and major eCommerce sites' ),
+							buttonProps: {
+								href: hasPendingWPCOMSites
+									? A4A_SITES_LINK_NEEDS_SETUP
+									: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+							},
+							extraContent: hasPendingWPCOMSites ? (
+								<div className="site-selector-and-importer__popover-site-count">
+									{ translate(
+										'%(pendingSites)d site available',
+										'%(pendingSites)d sites available',
+										{
+											args: {
+												pendingSites: allAvailableSites.length,
+											},
+											count: allAvailableSites.length,
+											comment: '%(pendingSites)s is the number of sites available.',
+										}
+									) }
+								</div>
+							) : undefined,
+						} ) }
+						{ menuItem( {
+							icon: <img src={ pressableIcon } alt="" />,
+							heading: translate( 'Pressable' ),
+							description: translate( 'Optimized and hassle-free hosting for business websites' ),
+							buttonProps: {
+								href:
+									pressableOwnership === 'regular'
+										? 'https://my.pressable.com/agency/auth'
+										: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+								target: pressableOwnership === 'regular' ? '_blank' : '_self',
+							},
 						} ) }
 					</div>
 				</div>
