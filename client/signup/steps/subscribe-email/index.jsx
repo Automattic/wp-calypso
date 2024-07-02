@@ -16,6 +16,8 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SubscribeEmailStepContent from './content';
 
+import './style.scss';
+
 function sanitizeRedirectUrl( redirect ) {
 	const isHttpOrHttps =
 		!! redirect && ( redirect.startsWith( 'https://' ) || redirect.startsWith( 'http://' ) );
