@@ -2,10 +2,8 @@ import { SENSEI_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { useFlowLocale } from '../hooks/use-flow-locale';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { redirect } from './internals/steps-repository/import/util';
 import Intro from './internals/steps-repository/intro';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SenseiDomain from './internals/steps-repository/sensei-domain';
@@ -15,12 +13,6 @@ import SenseiPurpose from './internals/steps-repository/sensei-purpose';
 import SenseiSetup from './internals/steps-repository/sensei-setup';
 import { Flow } from './internals/types';
 import './internals/sensei.scss';
-
-function getStartUrl( step: string, locale: string ) {
-	const localeUrlPart = locale && locale !== 'en' ? `/${ locale }` : '';
-
-	return `/start/account/user${ localeUrlPart }?redirect_to=/setup/${ SENSEI_FLOW }/${ step }&main_flow=${ SENSEI_FLOW }`;
-}
 
 const sensei: Flow = {
 	name: SENSEI_FLOW,
@@ -46,7 +38,6 @@ const sensei: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const locale = useFlowLocale();
 		const siteSlug = useSiteSlug();
 		const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -62,8 +53,6 @@ const sensei: Flow = {
 					if ( isLoggedIn ) {
 						return navigate( 'senseiDomain' );
 					}
-
-					return redirect( getStartUrl( 'senseiDomain', locale ) );
 				case 'senseiDomain':
 					return navigate( 'senseiPlan' );
 				case 'senseiPurpose':
