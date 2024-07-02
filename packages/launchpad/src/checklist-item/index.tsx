@@ -118,7 +118,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 					{ expandable.content }
 					{ expandable.action && (
 						<Button
-							className="checklist-item__checklist-primary-button"
+							className="checklist-item__checklist-expanded-action-button"
 							onClick={ expandable.action.onClick }
 						>
 							{ expandable.action.label }
