@@ -41,7 +41,7 @@ const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
 	const { isLoading: isLoadingFeatureCheck, supportCommercialUse } = useStatsPurchases( siteId );
 
 	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
-	const isFetching = isFetchingUsage || isLoadingFeatureCheck; // Tis is not fetching UTM data.
+	const isFetching = isFetchingUsage || isLoadingFeatureCheck; // This is not fetching UTM data.
 	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
 
 	// Hide the module if the specific post is the Home page.

@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { trendingUp } from '@wordpress/icons';
+import { link } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -8,13 +8,13 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-// import EmptyStateAction from '../../../components/empty-state-action';
 import { JETPACK_SUPPORT_URL } from '../../../const';
 import useUTMMetricsQuery from '../../../hooks/use-utm-metrics-query';
 import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import UTMBuilder from '../../../stats-module-utm-builder/';
+import StatsEmptyActionUTMBuilder from '../shared/stats-empty-action-utm-builder';
 import UTMDropdown from './stats-module-utm-dropdown';
 import UTMExportButton from './utm-export-button';
 
@@ -123,14 +123,14 @@ const StatsModuleUTM = ( {
 
 	return (
 		<>
-			{ ( ! data || ! data?.length ) && (
+			{ ! data?.length && (
 				<StatsCard
 					className={ className }
 					title={ moduleStrings.title }
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ trendingUp }
+							icon={ link }
 							description={ translate(
 								'If you use UTM codes, your {{link}}campaign performance data{{/link}} will show here.',
 								{
@@ -141,25 +141,12 @@ const StatsModuleUTM = ( {
 									context: 'Stats: Info box label when the UTM module is empty',
 								}
 							) }
-							cards={
-								// <EmptyStateAction
-								// 	icon={ link }
-								// 	text={ translate( 'URL Builder' ) }
-								// 	analyticsDetails={ {
-								// 		from: 'module_utm',
-								// 		feature: 'utm_builder',
-								// 	} }
-								// 	onClick={ action.onClick }
-								// />
-								<UTMBuilder />
-							}
+							cards={ <UTMBuilder trigger={ <StatsEmptyActionUTMBuilder /> } /> }
 						/>
 					}
-				>
-					<div>empty</div>
-				</StatsCard>
+				/>
 			) }
-			{ data && !! data.length && (
+			{ !! data?.length && (
 				<>
 					<StatsListCard
 						className={ clsx( className, 'stats-module__card', path ) }

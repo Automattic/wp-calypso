@@ -9,9 +9,10 @@ import StatsUtmBuilderForm from './stats-module-utm-builder-form';
 
 interface Props {
 	modalClassName: string;
+	trigger?: React.ReactNode;
 }
 
-const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
+const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
@@ -26,14 +27,22 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
 
 	return (
 		<>
-			<Button
-				icon={ link }
-				className="stats-utm-builder__trigger"
-				onClick={ handleClick }
-				variant="secondary"
-			>
-				{ translate( 'URL Builder' ) }
-			</Button>
+			{ /* div wrapper is needed to support custom trigger elements with an interal click event */ }
+			{ trigger ? (
+				// eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-tabindex
+				<div onClick={ handleClick } onKeyDown={ handleClick } tabIndex={ 0 }>
+					{ trigger }
+				</div>
+			) : (
+				<Button
+					icon={ link }
+					className="stats-utm-builder__trigger"
+					onClick={ handleClick }
+					variant="secondary"
+				>
+					{ translate( 'URL Builder' ) }
+				</Button>
+			) }
 			{ isOpen && (
 				<Modal
 					title={ translate( 'URL Builder' ) }
