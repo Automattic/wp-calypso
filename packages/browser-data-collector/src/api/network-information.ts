@@ -1,5 +1,5 @@
-import type { EffectiveConnectionType, Navigator } from '../types';
+import type { EffectiveConnectionType } from '../global-types';
 
 export const getEffectiveType = (): EffectiveConnectionType => {
-	return ( window.navigator as Navigator )?.connection?.effectiveType;
+	return window.navigator?.connection?.effectiveType;
 };

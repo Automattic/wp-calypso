@@ -1,6 +1,6 @@
-import type { Navigator } from '../types';
+import '../global-types';
 
 export const getMemory = (): number => {
 	const navigator = window?.navigator;
-	return ( navigator as Navigator )?.deviceMemory;
+	return navigator?.deviceMemory;
 };
