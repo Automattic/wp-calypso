@@ -4,6 +4,7 @@ import { mapMarker } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
@@ -41,6 +42,9 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsCountryViews';
 
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsCountries = useShouldGateStats( statType );
+
 	const requesting = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
@@ -54,31 +58,7 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
-				<StatsCard
-					className={ className }
-					title={ translate( 'Locations' ) }
-					isEmpty
-					emptyMessage={
-						<EmptyModuleCard
-							icon={ mapMarker }
-							description={ translate(
-								'Stats on visitors and their {{link}}viewing location{{/link}} will appear here to learn from where you are getting visits.',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
-									},
-									context: 'Stats: Info box label when the Countries module is empty',
-								}
-							) }
-						/>
-					}
-				>
-					<></>
-				</StatsCard>
-			) }
-			{ data && !! data.length && (
+			{ ( data && !! data.length ) || shouldGateStatsCountries ? (
 				<StatsModule
 					path="countryviews"
 					moduleStrings={ moduleStrings }
@@ -90,6 +70,31 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 				>
 					<Geochart query={ query } />
 				</StatsModule>
+			) : (
+				( ! data || ! data?.length ) && (
+					<StatsCard
+						className={ className }
+						title={ translate( 'Locations' ) }
+						isEmpty
+						emptyMessage={
+							<EmptyModuleCard
+								icon={ mapMarker }
+								description={ translate(
+									'Stats on visitors and their {{link}}viewing location{{/link}} will appear here to learn from where you are getting visits.',
+									{
+										comment: '{{link}} links to support documentation.',
+										components: {
+											link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
+										},
+										context: 'Stats: Info box label when the Countries module is empty',
+									}
+								) }
+							/>
+						}
+					>
+						<></>
+					</StatsCard>
+				)
 			) }
 		</>
 	);
