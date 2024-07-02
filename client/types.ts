@@ -55,7 +55,8 @@ export interface Theme {
 	theme_uri: string;
 	theme_tier: {
 		slug: string;
-		feature: string;
+		feature?: string;
+		featureList?: string[];
 		platform: string;
 	};
 	trending_rank: number;
