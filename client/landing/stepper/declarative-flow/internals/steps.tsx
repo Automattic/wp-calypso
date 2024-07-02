@@ -133,6 +133,10 @@ export const STEPS = {
 	},
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
+	MIGRATION_HANDLER: {
+		slug: 'migrationHandler',
+		asyncComponent: () => import( './steps-repository/migration-handler' ),
+	},
 
 	OPTIONS: {
 		slug: 'options',
