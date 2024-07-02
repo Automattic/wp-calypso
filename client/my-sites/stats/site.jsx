@@ -508,8 +508,15 @@ class StatsSite extends Component {
 								statType="statsClicks"
 								showSummaryLink
 								className={ clsx(
-									'stats__flexible-grid-item--40--once-space',
-									'stats__flexible-grid-item--full--large',
+									{
+										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
+										'stats__flexible-grid-item--full--large': supportsUTMStats,
+										'stats__flexible-grid-item--full--medium': supportsUTMStats,
+									},
+									{
+										'stats__flexible-grid-item--half': ! supportsUTMStats,
+										'stats__flexible-grid-item--full--large': ! supportsUTMStats,
+									},
 									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
