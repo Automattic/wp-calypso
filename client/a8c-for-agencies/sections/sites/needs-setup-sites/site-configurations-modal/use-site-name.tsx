@@ -13,31 +13,27 @@ const checkSiteAvailability = async ( siteName: string ) => {
 };
 
 const getRandomSiteName = async () => {
-	let randomSiteName = '';
-	try {
-		const { suggestions } = await wpcom.req.get( {
-			apiNamespace: 'wpcom/v2',
-			path: `/site-suggestions`,
-		} );
-		const { title } = suggestions[ 0 ];
+	const { suggestions } = await wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: `/site-suggestions`,
+	} );
+	const { title } = suggestions[ 0 ];
 
-		const { body: urlSuggestions } = await wpcom.req.get( {
-			apiNamespace: 'rest/v1.1',
-			path: `/domains/suggestions?http_envelope=1&query=${ title }&quantity=10&include_wordpressdotcom=true&include_dotblogsubdomain=false&only_wordpressdotcom=true&vendor=dot&managed_subdomain_quantity=0`,
-		} );
+	const { body: urlSuggestions } = await wpcom.req.get( {
+		apiNamespace: 'rest/v1.1',
+		path: `/domains/suggestions?http_envelope=1&query=${ title }&quantity=10&include_wordpressdotcom=true&include_dotblogsubdomain=false&only_wordpressdotcom=true&vendor=dot&managed_subdomain_quantity=0`,
+	} );
 
-		for ( const { domain_name } of urlSuggestions ) {
-			const siteName = domain_name.split( '.' )[ 0 ];
-			const isAvailable = await checkSiteAvailability( siteName );
-			if ( isAvailable ) {
-				randomSiteName = siteName;
-				break;
-			}
+	for ( const { domain_name } of urlSuggestions ) {
+		const siteName = domain_name.split( '.' )[ 0 ];
+		const isAvailable = await checkSiteAvailability( siteName );
+		if ( isAvailable ) {
+			return siteName;
 		}
-	} catch {}
+	}
 
-	// If all 10 urlSuggestions are taken (very unlikly) or if any requests fail, use empty '' name as falback
-	return randomSiteName;
+	// If all 10 urlSuggestions are taken (very unlikly) return empty '' name as falback
+	return '';
 };
 
 export const useSiteName = () => {
@@ -46,10 +42,15 @@ export const useSiteName = () => {
 	const [ isRandomSiteLoading, setIsRandomSiteLoading ] = useState( true );
 
 	useEffect( () => {
-		getRandomSiteName().then( ( randomSiteName ) => {
-			setSiteName( randomSiteName );
-			setIsRandomSiteLoading( false );
-		} );
+		getRandomSiteName()
+			.then( ( randomSiteName ) => {
+				setSiteName( randomSiteName );
+				setIsRandomSiteLoading( false );
+			} )
+			.catch( () => {
+				setSiteName( '' );
+				setIsRandomSiteLoading( false );
+			} );
 	}, [] );
 
 	let validationMessage: string | React.ReactNode;
