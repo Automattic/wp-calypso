@@ -1,0 +1,88 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-selector-and-importer__button {
+	.gridicon {
+		margin-left: 6px;
+		top: 2px;
+	}
+}
+.site-selector-and-importer__popover {
+	.popover__inner {
+		width: 650px;
+		text-align: unset;
+	}
+}
+
+.site-selector-and-importer__popover-content {
+	display: flex;
+	flex-direction: column;
+	padding: 28px 32px;
+	gap: 32px;
+
+	@include break-large {
+		flex-direction: row;
+	}
+
+	.site-selector-and-importer__popover-column {
+		&:first-child {
+			flex: 1.4;
+		}
+		&:last-child {
+			flex: 1;
+		}
+	}
+}
+
+.site-selector-and-importer__popover-column-heading {
+	color: var(--color-accent-40);
+	font-size: rem(12px);
+	font-weight: 500;
+	margin-block-end: 8px;
+}
+
+
+.site-selector-and-importer__popover-button {
+	padding: 8px;
+
+	@include break-large {
+		display: flex;
+		gap: 8px;
+	}
+
+	.site-selector-and-importer__popover-button-icon {
+		display: none;
+
+		@include break-large {
+			display: block;
+		}
+
+		.sidebar__menu-icon {
+			width: 24px;
+			height: 24px;
+			max-width: fit-content;
+		}
+	}
+
+	.site-selector-and-importer__popover-button-wp-icon {
+		.sidebar__menu-icon {
+			width: 36px;
+			height: 36px;
+			position: relative;
+			left: 6px;
+			top: -6px;
+			margin-left: -12px;
+		}
+	}
+
+	.site-selector-and-importer__popover-button-heading {
+		font-size: rem(14px);
+		font-weight: 600;
+	}
+
+	.site-selector-and-importer__popover-button-description {
+		font-size: rem(12px);
+		line-height: 1.7;
+		color: var(--color-accent);
+	}
+}
