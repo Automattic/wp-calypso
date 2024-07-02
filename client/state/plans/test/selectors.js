@@ -25,8 +25,7 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	} ),
 } ) );
 
-import deepFreeze from 'deep-freeze';
-import { getPlans, isRequestingPlans, getPlan, getPlanRawPrice, getPlanSlug } from '../selectors';
+import { getPlans, isRequestingPlans, getPlan, getPlanSlug } from '../selectors';
 import { PLANS, getStateInstance } from './fixture';
 
 describe( 'selectors', () => {
@@ -55,113 +54,6 @@ describe( 'selectors', () => {
 		test( 'should return undefined when given an unknown product id', () => {
 			const state = getStateInstance();
 			expect( getPlan( state, 44 ) ).toBeUndefined();
-		} );
-	} );
-
-	describe( '#getPlanRawPrice()', () => {
-		test( 'should return annual raw price', () => {
-			const state = deepFreeze( {
-				plans: {
-					items: [
-						{
-							product_id: 1003,
-							product_slug: 'value_bundle',
-							raw_price: 99,
-						},
-					],
-				},
-			} );
-			const price = getPlanRawPrice( state, 1003 );
-			expect( price ).toEqual( 99 );
-		} );
-		test( 'should return monthly price plan object', () => {
-			const state = deepFreeze( {
-				plans: {
-					items: [
-						{
-							product_id: 1003,
-							product_slug: 'value_bundle',
-							raw_price: 99,
-						},
-					],
-				},
-			} );
-			const price = getPlanRawPrice( state, 1003, true );
-			expect( price ).toEqual( 8.25 );
-		} );
-		test( 'should return monthly price plan object when raw price is 0', () => {
-			const state = deepFreeze( {
-				plans: {
-					items: [
-						{
-							product_id: 1003,
-							product_slug: 'value_bundle',
-							raw_price: 0,
-						},
-					],
-				},
-			} );
-			const price = getPlanRawPrice( state, 1003, true );
-			expect( price ).toEqual( 0 );
-		} );
-		test( 'should return monthly price plan object when term is biennial', () => {
-			const state = deepFreeze( {
-				plans: {
-					items: [
-						{
-							product_id: 1029,
-							product_slug: 'personal-bundle-2y',
-							raw_price: 240,
-						},
-					],
-				},
-			} );
-			const price = getPlanRawPrice( state, 1029, true );
-			expect( price ).toEqual( 10 );
-		} );
-		test( 'should return monthly price plan object when term is monthly', () => {
-			const state = deepFreeze( {
-				plans: {
-					items: [
-						{
-							product_id: 2003,
-							product_slug: 'jetpack_premium_monthly',
-							raw_price: 24,
-						},
-					],
-				},
-			} );
-			const price = getPlanRawPrice( state, 2003, true );
-			expect( price ).toEqual( 24 );
-		} );
-		test( 'should return null when raw price is missing', () => {
-			const state = deepFreeze( {
-				plans: {
-					items: [
-						{
-							product_id: 1003,
-							product_slug: 'value_bundle',
-						},
-					],
-				},
-			} );
-			const price = getPlanRawPrice( state, 1003, true );
-			expect( price ).toBeNull();
-		} );
-		test( 'should return null when plan is not available', () => {
-			const state = deepFreeze( {
-				plans: {
-					items: [
-						{
-							product_id: 1003,
-							product_slug: 'value_bundle',
-							raw_price: 99,
-						},
-					],
-				},
-			} );
-			const price = getPlanRawPrice( state, 44, true );
-			expect( price ).toBeNull();
 		} );
 	} );
 
