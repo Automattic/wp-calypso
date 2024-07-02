@@ -1,21 +1,23 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localize } from 'i18n-calypso';
 import SignupForm from 'calypso/blocks/signup-form';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 
 function SubscribeEmailStepContent( props ) {
 	const {
+		email,
 		flowName,
 		goToNextStep,
-		handleSubmitSignup,
+		handleCreateAccountError,
+		handleCreateAccountSuccess,
 		isPending,
-		queryParams,
+		redirectToAfterLoginUrl,
+		redirectToLogout,
 		redirectUrl,
 		step,
 		stepName,
 		translate,
 	} = props;
-
-	const user_email = queryParams?.user_email;
 
 	if ( isPending ) {
 		return <ReskinnedProcessingScreen flowName={ flowName } hasPaidDomain={ false } />;
@@ -24,24 +26,47 @@ function SubscribeEmailStepContent( props ) {
 	return (
 		<>
 			<SignupForm
+				// recaptchaClientId={ this.state.recaptchaClientId }
 				displayUsernameInput={ false }
-				email={ user_email || '' }
+				email={ email || '' }
 				flowName={ flowName }
 				goToNextStep={ goToNextStep }
-				handleCreateAccountError={ () => {} }
+				handleCreateAccountError={ handleCreateAccountError }
+				handleCreateAccountSuccess={ handleCreateAccountSuccess }
+				disableBlurValidation
 				isPasswordless
 				isReskinned
 				isSocialFirst={ false }
 				isSocialSignupEnabled={ false }
 				labelText={ translate( 'Your email' ) }
-				queryArgs={ { user_email, redirect_to: redirectUrl } }
-				// recaptchaClientId={ this.state.recaptchaClientId }
-				redirectToAfterLoginUrl={ redirectUrl }
+				notYouText={ translate(
+					'Not you?{{br/}}Log out and {{link}}subscribe with %(email)s{{/link}}',
+					{
+						components: {
+							br: <br />,
+							link: (
+								<button
+									type="button"
+									id="subscribeDifferentEmail"
+									className="continue-as-user__change-user-link"
+									onClick={ () => {
+										recordTracksEvent( 'calypso_signup_click_on_change_account' );
+										redirectToLogout( window.location.href );
+									} }
+								/>
+							),
+						},
+						args: { email },
+						comment: 'Link to continue subscribe to email list as different user',
+					}
+				) }
+				queryArgs={ { user_email: email, redirect_to: redirectUrl } }
+				redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 				shouldDisplayUserExistsError
 				step={ step }
 				stepName={ stepName }
-				submitButtonText={ translate( 'Create an account' ) }
-				submitForm={ handleSubmitSignup }
+				submitButtonLabel={ translate( 'Subscribe' ) }
+				submitButtonLoadingLabel={ translate( 'Subscribing…' ) }
 				suggestedUsername=""
 			/>
 		</>

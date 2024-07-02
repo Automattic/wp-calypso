@@ -27,7 +27,7 @@ export function useCustomizerUrls() {
 
 	return panels.reduce(
 		( acc, panel ) => {
-			if ( ! site.jetpack && siteSlug ) {
+			if ( ! site?.jetpack && siteSlug ) {
 				const panelPath = panel === 'root' ? '' : panel;
 				const url = [ '' ]
 					.concat( [ 'customize', panelPath, siteSlug ].filter( Boolean ) )
@@ -36,7 +36,7 @@ export function useCustomizerUrls() {
 					return: returnUrl,
 				} );
 			} else {
-				const customizerUrl = site.options.admin_url + 'customize.php';
+				const customizerUrl = site?.options.admin_url + 'customize.php';
 
 				acc[ panel ] = addQueryArgs( customizerUrl, {
 					return: returnUrl,

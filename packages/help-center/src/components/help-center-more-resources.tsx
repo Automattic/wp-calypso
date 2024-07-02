@@ -26,7 +26,7 @@ type CoreDataPlaceholder = {
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
 	const { sectionName, site } = useHelpCenterContext();
-	const { data } = useWhatsNewAnnouncementsQuery( site.ID.toString() );
+	const { data } = useWhatsNewAnnouncementsQuery( site?.ID );
 
 	const showWhatsNewItem = data && data.length > 0;
 
@@ -145,8 +145,8 @@ export const HelpCenterMoreResources = () => {
 					</li>
 				) }
 			</ul>
-			{ showGuide && (
-				<WhatsNewGuide onClose={ () => setShowGuide( false ) } siteId={ site.ID.toString() } />
+			{ showGuide && site && (
+				<WhatsNewGuide onClose={ () => setShowGuide( false ) } siteId={ site.ID } />
 			) }
 		</>
 	);

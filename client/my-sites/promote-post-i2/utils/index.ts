@@ -147,6 +147,16 @@ export const getCampaignDurationFormatted = (
 	return `${ dateStartFormatted } - ${ dateEndFormatted }`;
 };
 
+export const getCampaignStartDateFormatted = ( start_date?: string ) => {
+	if ( ! start_date ) {
+		return '-';
+	}
+
+	// translators: Moment.js date format. LLL: June 7, 2024 9:27 AM
+	const format = _x( 'LLL', 'datetime format' );
+	return moment.utc( start_date ).format( format );
+};
+
 export const getCampaignActiveDays = ( start_date?: string, end_date?: string ) => {
 	if ( ! start_date || ! end_date ) {
 		return 0;
