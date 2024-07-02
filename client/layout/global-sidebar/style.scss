@@ -201,6 +201,7 @@ $brand-text: "SF Pro Text", $sans;
 		gap: 8px;
 		align-items: center;
 		padding: 16px 24px;
+		flex-wrap: wrap;
 
 		.sidebar__menu-icon {
 			margin-right: 0;
@@ -302,6 +303,25 @@ $brand-text: "SF Pro Text", $sans;
 				svg path {
 					fill: var(--color-sidebar-gridicon-selected-fill);
 				}
+			}
+		}
+
+		.sidebar__footer-write-post {
+			order: -1;
+			width: 100%;
+			display: none; //hide by default
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			gap: 4px;
+			color: var(--studio-gray-50);
+			border-radius: 2px;
+
+			&:hover,
+			&.is-active {
+				background-color: var(--color-surface);
+				border-radius: 2px;
+				color: var(--studio-gray-100);
 			}
 		}
 	}
@@ -526,5 +546,11 @@ body.has-global-sidebar .is-global-sidebar-visible.is-support-session {
 		right: 0;
 		top: 0;
 		z-index: z-index("root", ".layout__secondary") + 1;
+	}
+}
+
+body.is-section-reader .global-sidebar {
+	.sidebar__footer-write-post {
+		display: flex !important;
 	}
 }

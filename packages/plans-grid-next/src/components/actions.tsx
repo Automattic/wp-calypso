@@ -1,6 +1,5 @@
 import {
 	type PlanSlug,
-	type StorageOption,
 	isP2FreePlan,
 	isFreePlan,
 	PLAN_FREE,
@@ -32,7 +31,6 @@ type PlanFeaturesActionsButtonProps = {
 	planActionOverrides?: PlanActionOverrides;
 	showMonthlyPrice: boolean;
 	isStuck: boolean;
-	storageOptions?: StorageOption[];
 	visibleGridPlans: GridPlan[];
 };
 
@@ -142,7 +140,8 @@ const PlanFeatures2023GridActions = ( {
 			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
 	)?.checkoutLink;
 
-	const nonDefaultStorageOptionSelected = defaultStorageOption !== selectedStorageOptionForPlan;
+	const nonDefaultStorageOptionSelected =
+		selectedStorageOptionForPlan && defaultStorageOption !== selectedStorageOptionForPlan;
 
 	let actionButton = (
 		<Plans2023Tooltip

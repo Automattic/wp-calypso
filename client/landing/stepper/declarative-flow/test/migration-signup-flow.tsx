@@ -36,40 +36,6 @@ describe( 'Migration Signup Flow', () => {
 		} );
 	} );
 
-	describe( 'useAssertConditions', () => {
-		it( 'redirects the user to the login page when they are not logged in', () => {
-			( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( false );
-			const searchValue = '?ref=logged-out-homepage&aff=aff123&vid=vid321';
-			window.location.search = searchValue;
-
-			const { runUseAssertionCondition } = renderFlow( migrationSignupFlow );
-			runUseAssertionCondition( {
-				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-				currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }${ searchValue }`,
-			} );
-
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				`/start/account/user-social?variationName=migration-signup&toStepper=true&redirect_to=/setup/migration-signup&vid=vid321&aff=aff123&ref=logged-out-homepage`
-			);
-		} );
-
-		it( 'redirects the user to the login page with the correct locale when they are not logged in', () => {
-			( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( false );
-			const searchValue = '?ref=logged-out-homepage&aff=aff123&vid=vid321&locale=fr';
-			window.location.search = searchValue;
-
-			const { runUseAssertionCondition } = renderFlow( migrationSignupFlow );
-			runUseAssertionCondition( {
-				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-				currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }${ searchValue }`,
-			} );
-
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				`/start/account/user-social/fr?variationName=migration-signup&toStepper=true&redirect_to=/setup/migration-signup%3Flocale%3Dfr&vid=vid321&aff=aff123&ref=logged-out-homepage`
-			);
-		} );
-	} );
-
 	describe( 'useStepNavigation', () => {
 		it( 'redirects the user to the processing step from the create-site step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );

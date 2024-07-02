@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/social-previews",
-	"version": "2.0.1",
+	"version": "2.1.0-beta.6",
 	"description": "A suite of components to generate previews for a post for both social and search engines.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",

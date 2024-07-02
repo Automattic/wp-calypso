@@ -1,10 +1,10 @@
 import { TIMELESS_PLAN_BUSINESS, TIMELESS_PLAN_PREMIUM } from '@automattic/data-stores/src/plans';
-import { useLocale } from '@automattic/i18n-utils';
 import { VIDEOPRESS_TV_PURCHASE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import {
 	setSignupCompleteSlug,
@@ -42,7 +42,7 @@ const videopressTvPurchase: Flow = {
 		}
 
 		const name = this.name;
-		const locale = useLocale();
+		const locale = useFlowLocale();
 		const { setPendingAction, setProgress, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { supportedPlans } = useSupportedPlans( locale, 'MONTHLY' );

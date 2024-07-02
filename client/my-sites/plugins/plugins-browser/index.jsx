@@ -16,6 +16,7 @@ import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
+import useIsVisible from 'calypso/my-sites/plugins/plugins-browser/use-is-visible';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
@@ -36,6 +37,11 @@ import PluginsSearchResultPage from '../plugins-search-results-page';
 import SearchCategories from '../search-categories';
 
 import './style.scss';
+
+const THRESHOLD = 10;
+const SEARCH_CATEGORIES_HEIGHT = 36;
+const LAYOUT_PADDING = 16;
+const MASTERBAR_HEIGHT = 32;
 
 const searchTerms = [ 'woocommerce', 'seo', 'file manager', 'jetpack', 'ecommerce', 'form' ];
 
@@ -60,7 +66,7 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isL
 	return null;
 };
 
-const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader } ) => {
+const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
@@ -73,6 +79,17 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
+
+	const loggedInSearchBoxRef = useRef( null );
+	const isLoggedInSearchBoxSticky =
+		useIsVisible( loggedInSearchBoxRef, {
+			rootMargin: `${
+				-1 *
+				( THRESHOLD +
+					SEARCH_CATEGORIES_HEIGHT +
+					( selectedSite ? MASTERBAR_HEIGHT : LAYOUT_PADDING ) )
+			}px 0px 0px 0px`,
+		} ) === false;
 
 	const jetpackNonAtomic = useSelector(
 		( state ) =>
@@ -163,14 +180,12 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				}
 			/>
 
-			{ ! hideHeader && (
-				<PluginsNavigationHeader
-					navigationHeaderRef={ navigationHeaderRef }
-					categoryName={ categoryName }
-					category={ category }
-					search={ search }
-				/>
-			) }
+			<PluginsNavigationHeader
+				navigationHeaderRef={ navigationHeaderRef }
+				categoryName={ categoryName }
+				category={ category }
+				search={ search }
+			/>
 			<div className="plugins-browser__content-wrapper">
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
@@ -179,11 +194,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 					<SearchCategories
 						category={ category }
 						isSearching={ isFetchingPluginsBySearchTerm }
-						isSticky={ isAboveElement }
+						isSticky={ isLoggedInSearchBoxSticky }
 						searchRef={ searchRef }
 						searchTerm={ search }
 						searchTerms={ searchTerms }
-						stickySearchBoxRef={ searchHeaderRef }
 					/>
 				) : (
 					<>
@@ -218,6 +232,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 						</div>
 					</>
 				) }
+				{ isLoggedIn && <div ref={ loggedInSearchBoxRef } /> }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
 					<div className="plugins-browser__marketplace-footer">

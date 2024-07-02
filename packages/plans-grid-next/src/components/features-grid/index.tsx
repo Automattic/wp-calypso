@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
 import { PlanFeaturesItem } from '../item';
-import { StorageFeature } from '../shared/storage';
+import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
 import PartnerLogos from './partner-logos';
@@ -32,7 +32,6 @@ type MobileViewProps = {
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	hideUnavailableFeatures?: boolean;
-	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
@@ -64,7 +63,6 @@ const MobileView = ( {
 	gridPlanForSpotlight,
 	renderedGridPlans,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	onStorageAddOnClick,
@@ -83,6 +81,7 @@ const MobileView = ( {
 			) as FeatureGroupSlug[],
 		[ featureGroupMap ]
 	);
+	const storageFeatureGroup = featureGroupMap[ FEATURE_GROUP_STORAGE ];
 
 	return renderedGridPlans
 		.reduce( ( acc, gridPlan ) => {
@@ -114,14 +113,24 @@ const MobileView = ( {
 					) }
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
-					<PlanFeaturesItem>
-						<StorageFeature
-							planSlug={ gridPlan.planSlug }
-							intervalType={ intervalType }
-							onStorageAddOnClick={ onStorageAddOnClick }
-							showUpgradeableStorage={ showUpgradeableStorage }
-						/>
-					</PlanFeaturesItem>
+					{ storageFeatureGroup && (
+						<>
+							<PlanFeaturesItem>
+								<h2 className="plans-grid-next-features-grid__feature-group-title">
+									{ storageFeatureGroup?.getTitle() }
+								</h2>
+							</PlanFeaturesItem>
+							<div className="plan-features-2023-grid__highlighted-feature">
+								<PlanFeaturesItem>
+									<PlanStorage
+										planSlug={ gridPlan.planSlug }
+										onStorageAddOnClick={ onStorageAddOnClick }
+										showUpgradeableStorage={ showUpgradeableStorage }
+									/>
+								</PlanFeaturesItem>
+							</div>
+						</>
+					) }
 					<TopButtons
 						renderedGridPlans={ [ gridPlan ] }
 						isInSignup={ isInSignup }
@@ -157,7 +166,6 @@ const MobileView = ( {
 									generatedWPComSubdomain={ generatedWPComSubdomain }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 									featureGroupSlug={ featureGroupSlug }
-									intervalType={ intervalType }
 									onStorageAddOnClick={ onStorageAddOnClick }
 									showUpgradeableStorage={ showUpgradeableStorage }
 								/>
@@ -175,7 +183,6 @@ type TabletViewProps = {
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	hideUnavailableFeatures?: boolean;
-	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
@@ -194,7 +201,6 @@ const TabletView = ( {
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	onStorageAddOnClick,
@@ -218,7 +224,6 @@ const TabletView = ( {
 		generatedWPComSubdomain,
 		gridPlanForSpotlight,
 		hideUnavailableFeatures,
-		intervalType,
 		isCustomDomainAllowedOnFreePlan,
 		isInSignup,
 		onStorageAddOnClick,
@@ -252,7 +257,6 @@ const FeaturesGrid = ( {
 	gridPlans,
 	gridSize,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	onStorageAddOnClick,
@@ -267,7 +271,6 @@ const FeaturesGrid = ( {
 	const spotlightPlanProps = {
 		currentSitePlanSlug,
 		gridPlanForSpotlight,
-		intervalType,
 		isInSignup,
 		onStorageAddOnClick,
 		planActionOverrides,

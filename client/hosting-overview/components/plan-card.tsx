@@ -224,45 +224,47 @@ const PlanCard: FC = () => {
 						</>
 					) }
 				</div>
-				{ ! isStaging && ! isAgencyPurchase && (
+				{ ! isStaging && (
 					<>
-						<PricingSection />
-						<PlanStorage
-							className="hosting-overview__plan-storage"
-							hideWhenNoStorage
-							siteId={ site?.ID }
-							StorageBarComponent={ PlanStorageBar }
-						>
-							{ storageAddons.length > 0 && (
-								<div className="hosting-overview__plan-storage-footer">
-									<Button
-										className="hosting-overview__link-button"
-										plain
-										href={ `/add-ons/${ site?.slug }` }
-									>
-										{ translate( 'Need more storage?' ) }
-									</Button>
-								</div>
-							) }
-						</PlanStorage>
+						{ isAgencyPurchase && (
+							<div className="hosting-overview__plan-agency-purchase">
+								<p>
+									{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
+										components: {
+											a: isA4A ? (
+												<a
+													href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
+												></a>
+											) : (
+												<strong></strong>
+											),
+										},
+									} ) }
+								</p>
+							</div>
+						) }
+						{ ! isAgencyPurchase && <PricingSection /> }
+						{ ! isLoading && (
+							<PlanStorage
+								className="hosting-overview__plan-storage"
+								hideWhenNoStorage
+								siteId={ site?.ID }
+								StorageBarComponent={ PlanStorageBar }
+							>
+								{ storageAddons.length > 0 && ! isAgencyPurchase && (
+									<div className="hosting-overview__plan-storage-footer">
+										<Button
+											className="hosting-overview__link-button"
+											plain
+											href={ `/add-ons/${ site?.slug }` }
+										>
+											{ translate( 'Need more storage?' ) }
+										</Button>
+									</div>
+								) }
+							</PlanStorage>
+						) }
 					</>
-				) }
-				{ isAgencyPurchase && (
-					<div className="hosting-overview__plan-agency-purchase">
-						<p>
-							{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
-								components: {
-									a: isA4A ? (
-										<a
-											href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
-										></a>
-									) : (
-										<strong></strong>
-									),
-								},
-							} ) }
-						</p>
-					</div>
 				) }
 			</HostingCard>
 		</>

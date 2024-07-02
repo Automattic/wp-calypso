@@ -10,9 +10,7 @@
 	li {
 		display: flex;
 		flex-direction: row;
-		font-size: 1rem;
-		line-height: 1.6;
-		font-weight: 400;
+		@include a4a-font-body-lg($line-height: 1.625);
 	}
 }
 

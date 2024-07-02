@@ -59,6 +59,7 @@ export default function SiteStatsColumn( { site, stats, siteError }: Props ) {
 						} ) as string
 					}
 					onClick={ openStats }
+					disabled={ site?.sticker?.includes( 'migration-in-progress' ) }
 					className={ clsx(
 						'sites-overview__stats-trend',
 						`sites-overview__stats-trend__${ viewsTrend }`,

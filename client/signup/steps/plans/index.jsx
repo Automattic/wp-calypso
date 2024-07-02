@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	isSiteAssemblerFlow,
 	isTailoredSignupFlow,
@@ -212,7 +213,7 @@ export class PlansStep extends Component {
 		) {
 			const a4aLinkButton = (
 				<Button
-					href="https://automattic.com/for-agencies/"
+					href={ localizeUrl( 'https://wordpress.com/for-agencies?ref=onboarding' ) }
 					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ () =>
@@ -348,7 +349,6 @@ PlansStep.propTypes = {
 		'plans-plugins',
 		'plans-jetpack-app',
 		'plans-import',
-		'plans-paid-media',
 		'default',
 	] ),
 };

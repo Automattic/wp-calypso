@@ -3,4 +3,19 @@
 		padding-block-start: 24px;
 		padding-block-end: 0;
 	}
+
+	&.is-mobile-view {
+		.a4a-layout__top-wrapper {
+			display: none;
+		}
+
+		.a4a-layout__body-wrapper {
+			padding-inline: 16px;
+			padding-block-end: 48px;
+
+			@include breakpoint-deprecated( ">660px" ) {
+				padding-inline: 64px;
+			}
+		}
+	}
 }

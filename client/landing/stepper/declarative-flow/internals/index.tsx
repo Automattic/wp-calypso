@@ -3,11 +3,11 @@ import {
 	isSenseiFlow,
 	isWooExpressFlow,
 } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useMemo, Suspense, lazy } from 'react';
+import React, { useEffect, useMemo, lazy } from 'react';
 import Modal from 'react-modal';
-import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
@@ -16,12 +16,13 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
-import { ONBOARD_STORE } from '../../stores';
 import { StepRoute, StepperLoader } from './components';
+import { Boot } from './components/boot';
+import { RedirectToStep } from './components/redirect-to-step';
+import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
-import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
-
+import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
 
 /**
@@ -39,6 +40,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	Modal.setAppElement( '#wpcom' );
 	const flowSteps = flow.useSteps();
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
+	const { navigate, params } = useFlowNavigation();
+	const currentStepRoute = params.step || '';
 
 	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
 		() =>
@@ -53,16 +56,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		[ flowSteps ]
 	);
 
-	const location = useLocation();
-	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
 	const { __ } = useI18n();
-	const navigate = useNavigate();
-	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
-	const intent = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
-		[]
-	);
-
 	useSaveQueryParams();
 
 	const { site, siteSlugOrId } = useSiteData();
@@ -90,25 +84,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ flow, siteSlugOrId, selectedSite ] );
 
-	const _navigate = async ( path: string, extraData = {} ) => {
-		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
-		setStepData( {
-			path: path,
-			intent: intent,
-			previousStep: currentStepRoute,
-			...extraData,
-		} );
-
-		const _path = path.includes( '?' ) // does path contain search params
-			? generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }` )
-			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ window.location.search }` );
-
-		navigate( _path, { state: stepPaths } );
-	};
-
 	const stepNavigation = flow.useStepNavigation(
 		currentStepRoute,
-		_navigate,
+		navigate,
 		flowSteps.map( ( step ) => step.slug )
 	);
 
@@ -118,15 +96,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		[]
 	);
 
-	flow.useSideEffect?.( currentStepRoute, _navigate );
+	flow.useSideEffect?.( currentStepRoute, navigate );
 
 	useSyncRoute();
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
-	}, [ location ] );
+	}, [ currentStepRoute ] );
 
-	const assertCondition = flow.useAssertConditions?.( _navigate ) ?? {
+	const assertCondition = flow.useAssertConditions?.( navigate ) ?? {
 		state: AssertConditionState.SUCCESS,
 	};
 
@@ -164,13 +142,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	useSignUpStartTracking( { flow, currentStepRoute: currentStepRoute } );
 
 	return (
-		<Suspense fallback={ <StepperLoader /> }>
+		<Boot fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 			<Routes>
 				{ flowSteps.map( ( step ) => (
 					<Route
 						key={ step.slug }
-						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }
+						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }/:lang?` }
 						element={
 							<StepRoute
 								step={ step }
@@ -181,19 +159,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 						}
 					/>
 				) ) }
-				<Route
-					path="*"
-					element={
-						<Navigate
-							to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${
-								window.location.search
-							}` }
-							replace
-						/>
-					}
-				/>
+				<Route path="/:flow/:lang?" element={ <RedirectToStep slug={ stepPaths[ 0 ] } /> } />
 			</Routes>
 			<AsyncCheckoutModal siteId={ site?.ID } />
-		</Suspense>
+		</Boot>
 	);
 };

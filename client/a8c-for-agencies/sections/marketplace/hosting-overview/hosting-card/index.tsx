@@ -90,11 +90,11 @@ export default function HostingCard( {
 
 	const priceIntervalDescription = useMemo< string >( () => {
 		if ( plan.price_interval === 'day' ) {
-			return translate( 'USD per plan per day' );
+			return translate( 'per plan per day' );
 		}
 
 		if ( plan.price_interval === 'month' ) {
-			return translate( 'USD per plan per month' );
+			return translate( 'per plan per month' );
 		}
 
 		return translate( 'USD' );
@@ -257,7 +257,7 @@ export default function HostingCard( {
 						</div>
 						{ shouldShowDiscount ? (
 							<div className="hosting-card__price-discount">
-								{ translate( 'Volume savings up to %(highestDiscountPercentage)s%', {
+								{ translate( 'Volume savings up to %(highestDiscountPercentage)s%%', {
 									args: { highestDiscountPercentage: Math.trunc( highestDiscountPercentage ) },
 								} ) }
 							</div>

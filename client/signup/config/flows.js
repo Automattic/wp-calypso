@@ -53,21 +53,6 @@ function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.cartItems;
 }
 
-function getSiteDestination( dependencies ) {
-	let protocol = 'https';
-
-	/**
-	 * It is possible that non-wordpress.com sites are not HTTPS ready.
-	 *
-	 * Redirect them
-	 */
-	if ( ! dependencies.siteSlug.match( /wordpress\.[a-z]+$/i ) ) {
-		protocol = 'http';
-	}
-
-	return protocol + '://' + dependencies.siteSlug;
-}
-
 function getRedirectDestination( dependencies ) {
 	try {
 		if (
@@ -256,16 +241,16 @@ function getHostingFlowDestination( { stepperHostingFlow } ) {
 	return `/setup/${ stepperHostingFlow }`;
 }
 
-function getEntrepreneurFlowDestination() {
-	return '/setup/entrepreneur/trialAcknowledge';
+function getEntrepreneurFlowDestination( { redirect_to } ) {
+	return redirect_to || '/setup/entrepreneur/trialAcknowledge';
 }
 
 function getGuidedOnboardingFlowDestination( dependencies ) {
-	if ( ! config.isEnabled( 'onboarding/guided' ) ) {
+	const { onboardingSegment, siteSlug, siteId, domainItem, cartItems, refParameter } = dependencies;
+
+	if ( ! onboardingSegment ) {
 		return getSignupDestination( dependencies );
 	}
-
-	const { onboardingSegment, siteSlug, siteId, domainItem, cartItems, refParameter } = dependencies;
 
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
@@ -284,9 +269,22 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 	const planSlug = getPlanCartItem( cartItems )?.product_slug;
 	const planType = getPlan( planSlug )?.type;
 
-	// Blog setup
-	if ( onboardingSegment === 'blogger' ) {
+	// Blog and Merchant setup without Entrepreneur/Ecommerce Plan
+	if (
+		( onboardingSegment === 'blogger' || onboardingSegment === 'merchant' ) &&
+		planType !== TYPE_ECOMMERCE
+	) {
 		return addQueryArgs( queryParams, `/setup/site-setup-wg/options` );
+	}
+
+	// Not Blog, Merchant, nor Developer/Agency without Entrepreneur/Ecommerce Plan
+	if (
+		onboardingSegment !== 'blogger' &&
+		onboardingSegment !== 'merchant' &&
+		onboardingSegment !== 'developer-or-agency' &&
+		planType !== TYPE_ECOMMERCE
+	) {
+		return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
 	}
 
 	// Entrepreneur/Ecommerce Plan
@@ -305,7 +303,6 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 }
 
 const flows = generateFlows( {
-	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
 	getLaunchDestination,

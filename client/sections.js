@@ -17,7 +17,7 @@ const sections = [
 	{
 		name: 'sites-dashboard',
 		paths: [ '/sites' ],
-		module: 'calypso/sites-dashboard',
+		module: 'calypso/hosting/sites',
 		group: 'sites-dashboard',
 	},
 	{
@@ -245,6 +245,15 @@ const sections = [
 		module: 'calypso/signup',
 		enableLoggedOut: true,
 		isomorphic: true,
+	},
+	{
+		name: 'start-with',
+		paths: [ '/start-with' ],
+		module: 'calypso/start-with',
+		enableLoggedOut: true,
+		group: 'start-with',
+		isomorphic: true,
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'jetpack-app',
@@ -839,6 +848,7 @@ const sections = [
 			'/client/subscriptions',
 			'/client/payment-methods',
 			'/client/payment-methods/add',
+			'/client/checkout',
 		],
 		module: 'calypso/a8c-for-agencies/sections/client',
 		group: 'a8c-for-agencies',

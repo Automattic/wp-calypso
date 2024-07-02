@@ -38,6 +38,7 @@ export default function ItemPreviewPane( {
 	itemData,
 	addTourDetails,
 	itemPreviewPaneHeaderExtraProps,
+	hideNavIfSingleTab,
 }: PreviewPaneProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
@@ -78,6 +79,8 @@ export default function ItemPreviewPane( {
 		);
 	} );
 
+	const shouldHideNav = hideNavIfSingleTab && featureTabs.length <= 1;
+
 	return (
 		<div className={ clsx( 'item-preview__pane', className ) }>
 			<ItemPreviewPaneHeader
@@ -87,7 +90,10 @@ export default function ItemPreviewPane( {
 				extraProps={ itemPreviewPaneHeaderExtraProps }
 			/>
 			<div ref={ setNavRef }>
-				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
+				<SectionNav
+					className={ clsx( 'preview-pane__navigation', { 'is-hidden': shouldHideNav } ) }
+					selectedText={ selectedFeature.tab.label }
+				>
 					{ navItems && navItems.length > 0 ? (
 						<NavTabs hasHorizontalScroll>{ navItems }</NavTabs>
 					) : null }

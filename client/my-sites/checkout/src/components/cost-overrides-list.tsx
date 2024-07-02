@@ -19,7 +19,6 @@ import {
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
 	getLabel,
-	hasCheckoutVersion,
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
@@ -29,7 +28,6 @@ import type { Theme } from '@automattic/composite-checkout';
 import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
 
 const CostOverridesListStyle = styled.div`
-	grid-area: discounts;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -63,9 +61,9 @@ const CostOverridesListStyle = styled.div`
 	}
 `;
 
-const DeleteButton = styled( Button )< { theme?: Theme; shouldUseCheckoutV2: boolean } >`
+const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
-	font-size: ${ ( props ) => ( props.shouldUseCheckoutV2 ? '12px' : 'inherit' ) };
+	font-size: '12px';
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
@@ -282,6 +280,10 @@ const ProductTitleAreaForCostOverridesList = styled.div`
 	display: flex;
 	justify-content: space-between;
 	gap: 0.5em;
+
+	& .cost-overrides-list-product__title {
+		flex: 1 1 min-content;
+	}
 `;
 
 function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
@@ -317,7 +319,6 @@ export function CouponCostOverride( {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;
@@ -346,7 +347,6 @@ export function CouponCostOverride( {
 						className="cost-overrides-list-item__actions-remove"
 						onClick={ removeCoupon }
 						aria-label={ translate( 'Remove coupon' ) }
-						shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 					>
 						{ translate( 'Remove' ) }
 					</DeleteButton>

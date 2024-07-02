@@ -7,7 +7,7 @@ import {
 } from '../data';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
-import type { Chat, Context, Message, Nudge, OdieAllowedBots } from '../types';
+import type { Chat, Context, CurrentUser, Message, Nudge, OdieAllowedBots } from '../types';
 import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -24,6 +24,7 @@ type OdieAssistantContextInterface = {
 	botNameSlug: OdieAllowedBots;
 	chat: Chat;
 	clearChat: () => void;
+	currentUser: CurrentUser;
 	initialUserMessage: string | null | undefined;
 	isLoadingChat: boolean;
 	isLoading: boolean;
@@ -61,6 +62,7 @@ const defaultContextInterfaceValues = {
 	isVisible: false,
 	lastNudge: null,
 	odieClientId: '',
+	currentUser: { display_name: 'Me' },
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
@@ -90,6 +92,7 @@ type OdieAssistantProviderProps = {
 	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
 	isMinimized?: boolean;
+	currentUser: CurrentUser;
 	extraContactOptions?: ReactNode;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
 	loggerEventNamePrefix?: string;
@@ -109,6 +112,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	loggerEventNamePrefix,
 	selectedSiteId,
 	version = null,
+	currentUser,
 	children,
 } ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
@@ -224,6 +228,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				botNameSlug,
 				chat,
 				clearChat,
+				currentUser,
 				extraContactOptions,
 				initialUserMessage,
 				isLoadingChat: false,

@@ -18,19 +18,24 @@ import {
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
+import useFetchClientReferral from '../../client/hooks/use-fetch-client-referral';
 import { MarketplaceTypeContext } from '../context';
 import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
+import useProductsById from '../hooks/use-products-by-id';
 import useProductsBySlug from '../hooks/use-products-by-slug';
 import useShoppingCart from '../hooks/use-shopping-cart';
+import { getClientReferralQueryArgs } from '../lib/get-client-referral-query-args';
 import useSubmitForm from '../products-overview/product-listing/hooks/use-submit-form';
+import NoticeSummary from './notice-summary';
 import PricingSummary from './pricing-summary';
 import ProductInfo from './product-info';
 import RequestClientPayment from './request-client-payment';
+import SubmitPaymentInfo from './submit-payment-info';
 import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
 
-function Checkout() {
+function Checkout( { isClient }: { isClient?: boolean } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -38,13 +43,21 @@ function Checkout() {
 	const isAutomatedReferrals = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
 	const { selectedCartItems, onRemoveCartItem, onClearCart } = useShoppingCart();
-	const sites = useSelector( getSites );
 
+	// Fetch selected products by slug for site checkout
+	const { selectedProductsBySlug } = useProductsBySlug();
+
+	// Fetch client referral items if it's a client referral checkout
+	const { data: clientCheckoutItems } = useFetchClientReferral( getClientReferralQueryArgs() );
+
+	// Get referred products for client referral checkout only if it's a client referral checkout
+	const { referredProducts } = useProductsById( clientCheckoutItems?.products ?? [], isClient );
+
+	// Get sites and selected site
+	const sites = useSelector( getSites );
 	const siteId = getQueryArg( window.location.href, 'site_id' )?.toString();
 	const selectedSite =
 		siteId && sites ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
-
-	const { selectedProductsBySlug } = useProductsBySlug();
 
 	const { isReady, submitForm } = useSubmitForm( {
 		selectedSite,
@@ -64,13 +77,16 @@ function Checkout() {
 			.flat();
 	}, [ selectedCartItems ] );
 
-	const checkoutItems = siteId ? selectedProductsBySlug : sortedSelectedItems;
+	// Use selected products by slug for site checkout
+	let checkoutItems = siteId ? selectedProductsBySlug : sortedSelectedItems;
+
+	// Use referred products for client referral checkout
+	if ( isClient ) {
+		checkoutItems = referredProducts;
+	}
 
 	const onCheckout = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_checkout_click' ) );
-
 		submitForm( checkoutItems );
-
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_checkout_checkout_click', {
 				total_licenses: checkoutItems.length,
@@ -105,31 +121,69 @@ function Checkout() {
 
 	const title = isAutomatedReferrals ? translate( 'Referral checkout' ) : translate( 'Checkout' );
 
+	let actionContent = (
+		<>
+			<NoticeSummary type="agency-purchase" />
+
+			<div className="checkout__aside-actions">
+				<Button
+					primary
+					onClick={ onCheckout }
+					disabled={ ! checkoutItems.length || ! isReady }
+					busy={ ! isReady }
+				>
+					{ translate( 'Purchase' ) }
+				</Button>
+
+				{ siteId ? (
+					<Button onClick={ cancelPurchase }>{ translate( 'Cancel' ) }</Button>
+				) : (
+					<>
+						<Button onClick={ onContinueShopping }>{ translate( 'Continue shopping' ) }</Button>
+
+						<Button borderless onClick={ onEmptyCart }>
+							{ translate( 'Empty cart' ) }
+						</Button>
+					</>
+				) }
+			</div>
+		</>
+	);
+
+	if ( isAutomatedReferrals ) {
+		actionContent = <RequestClientPayment checkoutItems={ checkoutItems } />;
+	}
+
+	if ( isClient ) {
+		actionContent = <SubmitPaymentInfo disableButton={ checkoutItems?.length === 0 } />;
+	}
+
 	return (
 		<Layout
 			className="checkout"
 			title={ title }
 			wide
-			withBorder
+			withBorder={ ! isClient }
 			compact
-			sidebarNavigation={ <MobileSidebarNavigation /> }
+			sidebarNavigation={ ! isClient && <MobileSidebarNavigation /> }
 		>
-			<LayoutTop>
-				<LayoutHeader>
-					<Breadcrumb
-						items={ [
-							{
-								label: translate( 'Marketplace' ),
-								href: A4A_MARKETPLACE_LINK,
-							},
-							{
-								label: title,
-							},
-						] }
-					/>
-				</LayoutHeader>
-			</LayoutTop>
-
+			{ isClient ? null : (
+				<LayoutTop>
+					<LayoutHeader>
+						<Breadcrumb
+							items={ [
+								{
+									label: translate( 'Marketplace' ),
+									href: A4A_MARKETPLACE_LINK,
+								},
+								{
+									label: title,
+								},
+							] }
+						/>
+					</LayoutHeader>
+				</LayoutTop>
+			) }
 			<LayoutBody>
 				<div className="checkout__container">
 					<div className="checkout__main">
@@ -147,42 +201,17 @@ function Checkout() {
 					<div
 						className={ clsx( 'checkout__aside', {
 							'checkout__aside--referral': isAutomatedReferrals,
+							'checkout__aside--client': isClient,
 						} ) }
 					>
 						<PricingSummary
 							items={ checkoutItems }
-							onRemoveItem={ siteId ? undefined : onRemoveItem }
+							onRemoveItem={ siteId || isClient ? undefined : onRemoveItem }
 							isAutomatedReferrals={ isAutomatedReferrals }
+							isClient={ isClient }
 						/>
 
-						{ isAutomatedReferrals ? (
-							<RequestClientPayment checkoutItems={ checkoutItems } />
-						) : (
-							<div className="checkout__aside-actions">
-								<Button
-									primary
-									onClick={ onCheckout }
-									disabled={ ! checkoutItems.length || ! isReady }
-									busy={ ! isReady }
-								>
-									{ translate( 'Purchase' ) }
-								</Button>
-
-								{ siteId ? (
-									<Button onClick={ cancelPurchase }>{ translate( 'Cancel' ) }</Button>
-								) : (
-									<>
-										<Button onClick={ onContinueShopping }>
-											{ translate( 'Continue shopping' ) }
-										</Button>
-
-										<Button borderless onClick={ onEmptyCart }>
-											{ translate( 'Empty cart' ) }
-										</Button>
-									</>
-								) }
-							</div>
-						) }
+						{ actionContent }
 					</div>
 				</div>
 			</LayoutBody>

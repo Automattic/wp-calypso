@@ -6,21 +6,28 @@ import './style.scss';
 type Props = {
 	label: string;
 	sub?: string;
-	description?: string;
-	isOptional?: boolean;
+	description?: string | ReactNode;
+	showOptionalLabel?: boolean;
 	children: ReactNode;
+	isRequired?: boolean;
 };
 
-export default function FormField( { label, sub, children, description, isOptional }: Props ) {
+export default function FormField( {
+	label,
+	sub,
+	children,
+	description,
+	showOptionalLabel,
+	isRequired,
+}: Props ) {
 	const translate = useTranslate();
 
 	return (
 		<div className="a4a-form__section-field">
 			<div className="a4a-form__section-field-heading">
 				<h3 className="a4a-form__section-field-label">
-					{ label }
-
-					{ isOptional && (
+					{ label } { isRequired && <span className="a4a-form__section-field-required">*</span> }
+					{ ! isRequired && showOptionalLabel && (
 						<span className="a4a-form__section-field-optional">({ translate( 'optional' ) })</span>
 					) }
 				</h3>

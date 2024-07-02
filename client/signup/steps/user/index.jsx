@@ -46,8 +46,10 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
@@ -208,6 +210,7 @@ export class UserStep extends Component {
 			userLoggedIn,
 			wccomFrom,
 			isReskinned,
+			isOnboardingAffiliateFlow,
 		} = this.props;
 
 		let subHeaderText = this.props.subHeaderText;
@@ -276,7 +279,7 @@ export class UserStep extends Component {
 					}
 				);
 			} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-				subHeaderText = translate( 'To get started create a new account with WordPress.com.' );
+				subHeaderText = translate( 'Create your new Blaze Pro account.' );
 			} else {
 				subHeaderText = translate(
 					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
@@ -330,6 +333,12 @@ export class UserStep extends Component {
 					);
 				}
 			}
+		}
+
+		if ( isOnboardingAffiliateFlow ) {
+			subHeaderText = translate(
+				"Thanks for stopping by! You're a few steps away from building your perfect website. Let's do this."
+			);
 		}
 
 		if ( this.props.userLoggedIn ) {
@@ -494,9 +503,13 @@ export class UserStep extends Component {
 			wccomFrom,
 			isSocialFirst,
 			userLoggedIn,
+			isBlazePro,
 		} = this.props;
 
 		if ( userLoggedIn ) {
+			if ( isBlazePro ) {
+				return translate( 'Log in to your Blaze Pro account' );
+			}
 			return translate( 'Is this you?' );
 		}
 
@@ -776,8 +789,10 @@ const ConnectedUser = connect(
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
 			isWooPasswordless: getIsWooPasswordless( state ),
+			isBlazePro: getIsBlazePro( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
+			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
 		};
 	},
 	{

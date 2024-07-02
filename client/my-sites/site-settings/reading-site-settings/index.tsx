@@ -28,7 +28,7 @@ type Fields = {
 type SiteSettingsSectionProps = {
 	fields: Fields;
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
-	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
+	handleSubmitForm: ( event?: React.FormEvent< HTMLFormElement > ) => void;
 	handleToggle?: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
 	disabled?: boolean;
 	isRequestingSettings?: boolean;
@@ -59,7 +59,6 @@ export const SiteSettingsSection = ( {
 
 	return (
 		<>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				title={ translate( 'Site settings' ) }
 				showButton

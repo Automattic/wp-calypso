@@ -36,7 +36,7 @@
 		"@wordpress/icons": "^10.0.0",
 		"@wordpress/react-i18n": "^4.0.0",
 		"clsx": "^2.1.1",
-		"react-router-dom": "^6.10.0",
+		"react-router-dom": "^6.23.1",
 		"tslib": "^2.5.0",
 		"wpcom-proxy-request": "workspace:^"
 	},

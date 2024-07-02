@@ -4,12 +4,9 @@ import { StepContainer, SubTitle, Title } from '@automattic/onboarding';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
-import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
+import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
-import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -34,24 +31,10 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 		},
 	];
 
-	let importSiteHostName = '';
-
-	try {
-		importSiteHostName = new URL( importSiteQueryParam )?.hostname;
-	} catch ( e ) {}
-
-	const { data: urlData } = useAnalyzeUrlQuery( importSiteQueryParam, true );
-	const { data: hostingProviderData } = useHostingProviderQuery( importSiteHostName, true );
-	const hostingProviderName = useHostingProviderName(
-		hostingProviderData?.hosting_provider,
-		urlData
-	);
-
-	const hostingProviderSlug = hostingProviderData?.hosting_provider?.slug;
+	const { data: hostingProviderDetails } = useHostingProviderUrlDetails( importSiteQueryParam );
+	const hostingProviderName = hostingProviderDetails.name;
 	const shouldDisplayHostIdentificationMessage =
-		hostingProviderSlug &&
-		hostingProviderSlug !== 'unknown' &&
-		hostingProviderSlug !== 'automattic';
+		! hostingProviderDetails.is_unknown && ! hostingProviderDetails.is_a8c;
 
 	const canInstallPlugins = site?.plan?.features?.active.find(
 		( feature ) => feature === 'install-plugins'
@@ -111,8 +94,6 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 			</div>
 		</>
 	);
-
-	usePresalesChat( 'wpcom', true, true );
 
 	return (
 		<>

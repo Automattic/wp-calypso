@@ -25,6 +25,8 @@ const selectors = {
 
 	// Schedule
 	scheduleButton: `button.editor-post-schedule__dialog-toggle`,
+	schedulePopoverCloseButton:
+		'[data-wp-component="Popover"][aria-label="Change publish date"] [aria-label="Close"]',
 	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
 	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) => `role=button[name="${ meridian }"i]`,
 
@@ -301,8 +303,14 @@ export class EditorSettingsSidebarComponent {
 		}
 
 		const editorParent = await this.editor.parent();
-		const buttonLocator = editorParent.locator( selectors.scheduleButton );
-		await buttonLocator.click();
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			const buttonLocator = editorParent.locator( selectors.schedulePopoverCloseButton );
+			await buttonLocator.click();
+		} else {
+			const buttonLocator = editorParent.locator( selectors.scheduleButton );
+			await buttonLocator.click();
+		}
 	}
 
 	/**

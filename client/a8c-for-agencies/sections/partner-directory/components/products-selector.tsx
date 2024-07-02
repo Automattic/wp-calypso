@@ -1,11 +1,11 @@
-import { FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useCallback, useMemo } from 'react';
+import FormTokenFieldWrapper from './form-token-field-wrapper';
 import { reverseMap, useFormSelectors } from './hooks/use-form-selectors';
 
 type Props = {
-	setProducts: ( tokens: ( string | TokenItem )[] ) => void;
-	selectedProducts: ( string | TokenItem )[];
+	setProducts: ( tokens: string[] ) => void;
+	selectedProducts: string[];
 };
 
 const ProductsSelector = ( { setProducts, selectedProducts }: Props ) => {
@@ -36,14 +36,9 @@ const ProductsSelector = ( { setProducts, selectedProducts }: Props ) => {
 	);
 
 	return (
-		<FormTokenField
-			__experimentalAutoSelectFirstMatch
-			__experimentalExpandOnFocus
-			__experimentalShowHowTo={ false }
-			__nextHasNoMarginBottom
-			label=""
+		<FormTokenFieldWrapper
 			onChange={ onProductLabelsSelected }
-			suggestions={ Object.values( availableProducts ) }
+			suggestions={ Object.values( availableProducts ).sort() }
 			value={ selectedProductsByLabel }
 		/>
 	);

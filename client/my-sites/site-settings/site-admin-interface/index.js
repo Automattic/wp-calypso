@@ -1,10 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 import { Card, FormLabel } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -79,6 +78,12 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 	} );
 
 	const [ selectedAdminInterface, setSelectedAdminInterface ] = useState( adminInterface );
+
+	// When switching from Classic to Default, adminInterface will initially reflect the cached state 'wp-admin'.
+	// It will then be updated to 'calypso', so we need to sync the change to selectedAdminInterface.
+	useEffect( () => {
+		setSelectedAdminInterface( adminInterface );
+	}, [ adminInterface ] );
 
 	const handleSubmitForm = ( value ) => {
 		if ( isHosting ) {
@@ -165,26 +170,22 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 						}
 					) }
 				</HostingCardDescription>
-				{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) ? (
-					<p className="form-setting-explanation">
-						{ translate( 'This setting has now moved to {{a}}Settings → General{{/a}}.', {
-							components: {
-								a: (
-									<a
-										href={
-											adminInterface === 'wp-admin'
-												? `${ siteAdminUrl }options-general.php`
-												: `/settings/general/${ siteSlug }#admin-interface-style`
-										}
-										rel="noreferrer"
-									/>
-								),
-							},
-						} ) }
-					</p>
-				) : (
-					renderForm()
-				) }
+				<p className="form-setting-explanation">
+					{ translate( 'This setting has now moved to {{a}}Settings → General{{/a}}.', {
+						components: {
+							a: (
+								<a
+									href={
+										adminInterface === 'wp-admin'
+											? `${ siteAdminUrl }options-general.php`
+											: `/settings/general/${ siteSlug }#admin-interface-style`
+									}
+									rel="noreferrer"
+								/>
+							),
+						},
+					} ) }
+				</p>
 			</HostingCard>
 		);
 	}

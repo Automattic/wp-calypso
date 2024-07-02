@@ -3,26 +3,23 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice, FormInputValidation } from '@automattic/components';
-import { HelpCenterSelect } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
 import { useGetOdieStorage, useSetOdieStorage } from '@automattic/odie-client';
-import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { FC, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
 import { BackButton } from '..';
+import { EMAIL_SUPPORT_LOCALES } from '../constants';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import {
 	useChatStatus,
 	useChatWidget,
@@ -31,7 +28,6 @@ import {
 	useZendeskMessaging,
 } from '../hooks';
 import { Mail } from '../icons';
-import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import type { HelpCenterSite } from '@automattic/data-stores';
 
@@ -85,12 +81,8 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		isEligibleForChat || hasActiveChats
 	);
 
+	const { sectionName, site } = useHelpCenterContext();
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
-	const sectionName = useSelector( getSectionName );
-	const currentSite = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return helpCenterSelect.getSite();
-	}, [] );
 
 	const wapuuChatId = useGetOdieStorage( 'chat_id' );
 	const setWapuuChatId = useSetOdieStorage( 'chat_id' );
@@ -127,9 +119,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 			return __( 'Email', __i18n_text_domain__ );
 		}
 
-		const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
-			locale
-		);
+		const isLanguageSupported = EMAIL_SUPPORT_LOCALES.includes( locale );
 
 		if ( isLanguageSupported ) {
 			const language = getLanguage( locale )?.name;
@@ -172,7 +162,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	};
 
 	const renderChatOption = () => {
-		const productSlug = ( currentSite as HelpCenterSite )?.plan?.product_slug;
+		const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
 		const plan = getPlan( productSlug );
 		const productId = plan?.getProductId();
 
@@ -188,7 +178,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 			recordTracksEvent( 'calypso_help_live_chat_begin', {
 				site_plan_product_id: productId,
-				is_automated_transfer: currentSite?.is_wpcom_atomic,
+				is_automated_transfer: site?.is_wpcom_atomic,
 				force_site_id: true,
 				location: 'help-center',
 				section: sectionName,
@@ -201,14 +191,14 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 				message += `Support request started with <strong>Wapuu</strong><br />Wapuu Chat: <a href="https://mc.a8c.com/odie/odie-chat.php?chat_id=${ escapedWapuuChatId }">${ escapedWapuuChatId }</a><br />`;
 			}
 
-			if ( currentSite?.URL ) {
-				message += `Site: ${ encodeURIComponent( currentSite?.URL || '' ) }<br />`;
+			if ( site?.URL ) {
+				message += `Site: ${ encodeURIComponent( site?.URL || '' ) }<br />`;
 			}
 
 			openChatWidget( {
 				aiChatId: escapedWapuuChatId,
 				message: message,
-				siteUrl: currentSite?.URL,
+				siteUrl: site?.URL,
 				onError: () => setHasSubmittingError( true ),
 				// Reset Odie chat after passing to support
 				onSuccess: () => setWapuuChatId( null ),
@@ -284,7 +274,8 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
 	const { url, isLoading } = useStillNeedHelpURL();
-	const sectionName = useSelector( getSectionName );
+	const helpCenterContext = useHelpCenterContext();
+	const sectionName = helpCenterContext.sectionName;
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
 	const trackContactButtonClicked = () => {

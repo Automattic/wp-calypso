@@ -40,10 +40,16 @@ function SocialAuthToS( props ) {
 
 	if ( props.isBlazePro ) {
 		return getToSComponent(
-			props.translate(
-				'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-				toSLinks
-			)
+			<>
+				{ props.translate(
+					'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+					toSLinks
+				) }
+				<br />
+				{ props.translate(
+					'Blaze Pro uses WordPress.com accounts under the hood. Tumblr, Blaze Pro, and WordPress.com are properties of Automattic, Inc.'
+				) }
+			</>
 		);
 	}
 

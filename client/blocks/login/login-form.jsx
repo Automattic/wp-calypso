@@ -69,7 +69,7 @@ import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
-
+import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
 import './login-form.scss';
 
 export class LoginForm extends Component {
@@ -762,6 +762,10 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
+		const isFromAutomatticForAgenciesReferralClient = isA4AReferralClient(
+			currentQuery,
+			oauth2Client
+		);
 
 		const signupUrl = this.getSignupUrl();
 
@@ -1032,26 +1036,28 @@ export class LoginForm extends Component {
 					) }
 				</Card>
 
-				{ config.isEnabled( 'signup/social' ) && ! isCoreProfilerLostPasswordFlow && (
-					<Fragment>
-						<FormDivider />
-						<SocialLoginForm
-							linkingSocialService={
-								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
-							}
-							onSuccess={ this.props.onSuccess }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-							shouldRenderToS={
-								this.props.isWoo && ! isPartnerSignup && ! this.props.isWooPasswordless
-							}
-							isSocialFirst={ isSocialFirst }
-						>
-							{ loginButtons }
-						</SocialLoginForm>
-					</Fragment>
-				) }
+				{ ! isFromAutomatticForAgenciesReferralClient &&
+					config.isEnabled( 'signup/social' ) &&
+					! isCoreProfilerLostPasswordFlow && (
+						<Fragment>
+							<FormDivider />
+							<SocialLoginForm
+								linkingSocialService={
+									this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
+								}
+								onSuccess={ this.props.onSuccess }
+								socialService={ this.props.socialService }
+								socialServiceResponse={ this.props.socialServiceResponse }
+								uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
+								shouldRenderToS={
+									this.props.isWoo && ! isPartnerSignup && ! this.props.isWooPasswordless
+								}
+								isSocialFirst={ isSocialFirst }
+							>
+								{ loginButtons }
+							</SocialLoginForm>
+						</Fragment>
+					) }
 
 				{ this.showJetpackConnectSiteOnly() && (
 					<JetpackConnectSiteOnly

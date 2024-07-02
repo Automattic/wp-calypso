@@ -8,12 +8,14 @@ export const ScheduleListFilter = () => {
 	const { searchTerm, handleSearch } = useContext( MultisitePluginUpdateManagerContext );
 
 	return (
-		<div className="plugins-update-manager-multisite-filter">
-			<SearchControl
-				value={ searchTerm }
-				placeholder={ translate( 'Search by site' ) }
-				onChange={ handleSearch }
-			/>
+		<div className="plugins-update-manager-multisite-filters">
+			<div className="plugins-update-manager-multisite-filter">
+				<SearchControl
+					value={ searchTerm }
+					placeholder={ translate( 'Search by site' ) }
+					onChange={ handleSearch }
+				/>
+			</div>
 		</div>
 	);
 };

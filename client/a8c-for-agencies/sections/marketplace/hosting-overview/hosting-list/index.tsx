@@ -3,10 +3,8 @@ import { Card } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useContext } from 'react';
-import { useSelector } from 'react-redux';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
 import SimpleList from '../../common/simple-list';
 import { MarketplaceTypeContext } from '../../context';
@@ -14,6 +12,7 @@ import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { getCheapestPlan, getWPCOMCreatorPlan } from '../../lib/hosting';
 import ListingSection from '../../listing-section';
 import wpcomBulkOptions from '../../wpcom-overview/lib/wpcom-bulk-options';
+import usePressableOwnershipType from '../hooks/use-pressable-ownership-type';
 import HostingCard from '../hosting-card';
 
 import './style.scss';
@@ -24,7 +23,6 @@ interface Props {
 
 export default function HostingList( { selectedSite }: Props ) {
 	const translate = useTranslate();
-	const activeAgency = useSelector( getActiveAgency );
 
 	const { data } = useProductsQuery( false, true );
 
@@ -42,20 +40,7 @@ export default function HostingList( { selectedSite }: Props ) {
 
 	const wpcomOptions = wpcomBulkOptions( wpcomProducts?.discounts?.tiers );
 
-	const pressableOwnership = useMemo( () => {
-		// Agencies can have pressable through A4A Licenses or via Pressable itself
-		const hasPressablePlan = !! activeAgency?.third_party?.pressable?.pressable_id;
-
-		if ( ! hasPressablePlan ) {
-			return 'none';
-		}
-
-		// If the agency has a regular Pressable plan (not brought through A4A marketplace), A4A id is null.
-		const hasRegularPressablePlan =
-			hasPressablePlan && activeAgency?.third_party?.pressable?.a4a_id === null;
-
-		return hasRegularPressablePlan ? 'regular' : 'agency';
-	}, [ activeAgency ] );
+	const pressableOwnership = usePressableOwnershipType();
 
 	const { isLoadingProducts, pressablePlans, wpcomPlans } = useProductAndPlans( {
 		selectedSite,
@@ -147,7 +132,7 @@ export default function HostingList( { selectedSite }: Props ) {
 					/>
 				) }
 
-				{ isWPCOMOptionEnabled && (
+				{ isWPCOMOptionEnabled && ! hideSection && (
 					<HostingCard
 						plan={ vipPlan }
 						className="hosting-list__vip-card"

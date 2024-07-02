@@ -418,6 +418,15 @@ class Login extends Component {
 					) }
 				</p>
 			);
+			if ( this.props.isBlazePro ) {
+				postHeader = (
+					<p className="login__header-subtitle login__lostpassword-subtitle">
+						{ translate(
+							'It happens to the best of us. Enter the email address associated with your Blaze Pro account and we’ll send you a link to reset your password.'
+						) }
+					</p>
+				);
+			}
 		} else if ( privateSite ) {
 			headerText = translate( 'This is a private WordPress.com site' );
 		} else if ( oauth2Client ) {
@@ -528,7 +537,11 @@ class Login extends Component {
 
 			if ( isA4AOAuth2Client( oauth2Client ) ) {
 				headerText = translate(
-					'Howdy! Log in to Automattic for Agencies with your WordPress.com account.'
+					'Howdy! Log in to Automattic for Agencies with your WordPress.com{{nbsp/}}account.',
+					{
+						components: { nbsp: <>&nbsp;</> },
+						comment: 'The {{nbsp/}} is a non-breaking space',
+					}
 				);
 				preHeader = (
 					<div>
@@ -574,16 +587,9 @@ class Login extends Component {
 
 			if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 				headerText = <h3>{ translate( 'Log in to your Blaze Pro account' ) }</h3>;
-				const poweredByWpCom = (
-					<>
-						{ translate( 'Log in with your WordPress.com account.' ) }
-						<br />
-					</>
-				);
 
 				postHeader = (
 					<p className="login__header-subtitle">
-						{ poweredByWpCom }
 						{ translate( "Don't have an account? {{signupLink}}Sign up here{{/signupLink}}", {
 							components: { signupLink },
 						} ) }
@@ -848,10 +854,22 @@ class Login extends Component {
 						isWooCoreProfilerFlow={ isWooCoreProfilerFlow }
 						from={ get( currentQuery, 'from' ) }
 					/>
-					{ ! isWooCoreProfilerFlow && (
+					{ ! isWooCoreProfilerFlow && ! isBlazePro && (
 						<div className="login__lost-password-footer">
 							<p className="login__lost-password-no-account">
 								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
+									components: {
+										signupLink,
+									},
+								} ) }
+							</p>
+						</div>
+					) }
+					{ isBlazePro && (
+						<div className="login__lost-password-footer">
+							<p className="login__lost-password-no-account">
+								<span>{ translate( 'Don’t have an account?' ) }&nbsp;</span>
+								{ translate( '{{signupLink}}Sign up{{/signupLink}}', {
 									components: {
 										signupLink,
 									},
@@ -917,6 +935,7 @@ class Login extends Component {
 						<ContinueAsUser
 							onChangeAccount={ this.handleContinueAsAnotherUser }
 							isWooOAuth2Client={ isWoo }
+							isBlazePro={ isBlazePro }
 						/>
 						<LoginForm
 							disableAutoFocus={ disableAutoFocus }
@@ -942,7 +961,7 @@ class Login extends Component {
 					<div className="login__body login__body--continue-as-user">
 						<ContinueAsUser
 							onChangeAccount={ this.handleContinueAsAnotherUser }
-							isBlazeProOAuth2Client={ isBlazePro }
+							isBlazePro={ isBlazePro }
 						/>
 						<LoginForm
 							disableAutoFocus={ disableAutoFocus }

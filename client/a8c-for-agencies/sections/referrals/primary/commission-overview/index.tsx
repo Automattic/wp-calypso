@@ -69,7 +69,11 @@ export default function CommissionOverview( {
 				{ isAutomatedReferral && (
 					<>
 						<div className="commission-overview__section-heading">
-							{ translate( 'Referrals and commissions Frequently Asked Questions (FAQ)' ) }
+							{ translate( 'Referrals and commissions Frequently Asked Questions{{nbsp/}}(FAQ)', {
+								components: {
+									nbsp: <>&nbsp;</>,
+								},
+							} ) }
 						</div>
 						<div className="commission-overview__section-subtitle">
 							{ translate(
@@ -84,7 +88,7 @@ export default function CommissionOverview( {
 							header={
 								<div className="commission-overview__heading">
 									<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
-									{ translate( 'Woo Payments revenue share' ) }
+									{ translate( 'WooPayments revenue share' ) }
 								</div>
 							}
 							expanded
@@ -92,8 +96,8 @@ export default function CommissionOverview( {
 							summary={ false }
 						>
 							{ translate(
-								'You will receive a revenue share of 5 basis points (0.05%) on new WooPayments gross merchandise value (“GMV”) on client sites through June 30, 2025.' +
-									' For example, if your client’s store generates $1M in GMV per year, your revenue share for that year would be $500.'
+								'You will receive a revenue share of 5 basis points (bps) on new WooPayments total payments volume (“TPV”) on client sites through June 30, 2025.' +
+									' For example, if your client’s store generates $1M in TPV per year, your revenue share for that year would be $500.'
 							) }
 						</FoldableCard>
 
@@ -102,7 +106,11 @@ export default function CommissionOverview( {
 								<div className="commission-overview__heading">
 									<img src={ pressableIcon } alt="Pressable" />
 									<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
-									{ translate( 'Hosting revenue share (WordPress.com and Pressable)' ) }
+									{ translate( 'Hosting revenue share (WordPress.com and{{nbsp/}}Pressable)', {
+										components: {
+											nbsp: <>&nbsp;</>,
+										},
+									} ) }
 								</div>
 							}
 							expanded
@@ -119,7 +127,12 @@ export default function CommissionOverview( {
 								<div className="commission-overview__heading">
 									<JetpackLogo className="jetpack-logo" size={ 24 } />
 									<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
-									{ translate( 'Jetpack products and Woo-owned extensions' ) }
+									{ translate( 'Jetpack products and Woo{{8209/}}owned{{nbsp/}}extensions', {
+										components: {
+											nbsp: <>&nbsp;</>,
+											8209: <>&#8209;</>,
+										},
+									} ) }
 								</div>
 							}
 							expanded

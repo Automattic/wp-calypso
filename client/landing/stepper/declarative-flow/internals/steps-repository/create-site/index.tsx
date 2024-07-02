@@ -21,6 +21,7 @@ import {
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
 	isSiteAssemblerFlow,
+	isReadymadeFlow,
 	setThemeOnSite,
 	AI_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
@@ -67,7 +68,11 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation();
+	const partnerBundle = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPartnerBundle(),
+		[]
+	);
+	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 
 	const urlData = useSelector( getUrlData );
 
@@ -143,6 +148,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isSiteAssemblerFlow( flow ) ||
+		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;

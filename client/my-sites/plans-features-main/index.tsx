@@ -12,7 +12,6 @@ import {
 	isValidFeatureKey,
 	getFeaturesList,
 	isWooExpressPlan,
-	PLAN_ECOMMERCE,
 	getPlanFeaturesGroupedForFeaturesGrid,
 	getWooExpressFeaturesGroupedForComparisonGrid,
 	getPlanFeaturesGroupedForComparisonGrid,
@@ -21,8 +20,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { ONBOARDING_GUIDED_FLOW, isAnyHostingFlow } from '@automattic/onboarding';
+import { isAnyHostingFlow, isOnboardingGuidedFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
 	ComparisonGrid,
@@ -44,7 +42,7 @@ import {
 } from '@wordpress/element';
 import { hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
-import { TranslateResult, localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
@@ -73,7 +71,6 @@ import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
-import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
@@ -245,7 +242,6 @@ const PlansFeaturesMain = ( {
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
-	const isEnglishLocale = useIsEnglishLocale();
 
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
@@ -324,17 +320,6 @@ const PlansFeaturesMain = ( {
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
 
-	const {
-		isLoading: isTrailMapExperimentLoading,
-		isTrailMapAny,
-		isTrailMapCopy,
-		isTrailMapStructure,
-	} = useExperimentForTrailMap( {
-		flowName,
-		isInSignup,
-		intent,
-	} );
-
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	// TODO: We should move the modal logic into a data store
@@ -401,13 +386,6 @@ const PlansFeaturesMain = ( {
 		forceDefaultIntent: shouldForceDefaultPlansBasedOnIntent( intent ),
 	} );
 
-	let highlightLabelOverrides: { [ K in PlanSlug ]?: TranslateResult } | undefined;
-	if ( isTrailMapAny ) {
-		highlightLabelOverrides = {
-			[ PLAN_ECOMMERCE ]: translate( 'Best for eCommerce' ),
-		};
-	}
-
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGridRaw = useGridPlansForFeaturesGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -427,7 +405,6 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		highlightLabelOverrides,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -467,7 +444,7 @@ const PlansFeaturesMain = ( {
 	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
 		productSlug: currentPlan?.productSlug,
 		displayedIntervals,
-		intent,
+		flowName,
 		paidDomainName,
 	} );
 
@@ -640,11 +617,7 @@ const PlansFeaturesMain = ( {
 		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
 	);
 	const isLoadingGridPlans = Boolean(
-		! intent ||
-			! gridPlansForFeaturesGrid ||
-			! gridPlansForComparisonGrid ||
-			isExperimentLoading ||
-			isTrailMapExperimentLoading
+		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid || isExperimentLoading
 	);
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
@@ -689,8 +662,8 @@ const PlansFeaturesMain = ( {
 			Array.isArray( gridPlansForFeaturesGrid ) &&
 			Array.isArray( gridPlansForComparisonGrid ) &&
 			gridPlansForFeaturesGrid.length < gridPlansForComparisonGrid.length &&
-			flowName === ONBOARDING_GUIDED_FLOW &&
-			isEnglishLocale
+			flowName &&
+			isOnboardingGuidedFlow( flowName )
 		) {
 			return translate( 'Compare all plans' );
 		}
@@ -753,7 +726,6 @@ const PlansFeaturesMain = ( {
 					offeringFreePlan={ offeringFreePlan }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
-					showPlanBenefits={ isInSignup && isTrailMapAny }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -786,12 +758,11 @@ const PlansFeaturesMain = ( {
 										gridPlans={ gridPlansForFeaturesGrid }
 										hideUnavailableFeatures={ hideUnavailableFeatures }
 										intent={ intent }
-										intervalType={ intervalType }
 										isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 										isInAdmin={ ! isInSignup }
 										isInSignup={ isInSignup }
 										onStorageAddOnClick={ handleStorageAddOnClick }
-										paidDomainName={ isTrailMapCopy ? undefined : paidDomainName }
+										paidDomainName={ paidDomainName }
 										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 										recordTracksEvent={ recordTracksEvent }
 										selectedFeature={ selectedFeature }
@@ -802,8 +773,7 @@ const PlansFeaturesMain = ( {
 										stickyRowOffset={ masterbarHeight }
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 										useAction={ useAction }
-										enableFeatureTooltips={ ! isTrailMapCopy }
-										enableCategorisedFeatures={ isTrailMapStructure }
+										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
 									/>
 								) }
@@ -875,9 +845,8 @@ const PlansFeaturesMain = ( {
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
-													enableFeatureTooltips={ ! isTrailMapCopy }
+													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
-													hideUnsupportedFeatures={ isTrailMapStructure }
 												/>
 											) }
 											<ComparisonGridToggle

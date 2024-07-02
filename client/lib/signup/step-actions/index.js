@@ -1134,41 +1134,6 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
-export function maybeExcludeEmailsStep( {
-	domainItem,
-	resetSignupStep,
-	siteUrl,
-	stepName,
-	submitSignupStep,
-} ) {
-	const isEmailStepExcluded = flows.excludedSteps.includes( stepName );
-
-	/* If we have a domain, make sure the step isn't excluded */
-	if ( domainItem ) {
-		if ( ! isEmailStepExcluded ) {
-			return;
-		}
-
-		resetSignupStep( stepName );
-		flows.resetExcludedStep( stepName );
-
-		return;
-	}
-
-	/* We don't have a domain, so exclude the step if it hasn't been excluded yet */
-	if ( isEmailStepExcluded ) {
-		return;
-	}
-
-	const emailItem = undefined;
-
-	submitSignupStep( { stepName, emailItem, wasSkipped: true }, { emailItem } );
-
-	recordExcludeStepEvent( stepName, siteUrl );
-
-	flows.excludeStep( stepName );
-}
-
 export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {
 	if ( 'onboarding-registrationless' !== nextProps.flowName ) {
 		return;
@@ -1225,18 +1190,11 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 	flows.excludeStep( stepName );
 }
 
-export function excludeSurveyStepIfInactive( stepName, defaultDependencies, nextProps ) {
-	if ( ! nextProps.initialContext?.isSignupSurveyActive ) {
-		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
-		flows.excludeStep( stepName );
-	}
-}
-
 export function excludeSegmentSurveyStepIfInactive( stepName, _, nextProps ) {
 	// trailMapExperimentVariant = undefined | null | 'treatment_guided' | 'treatment_survey_only'
 	// null => control group.
 	const { trailMapExperimentVariant } = nextProps?.initialContext ?? {};
-	// The check has to be null to make we don't remove the step before the experiment loads.
+	// The check has to be null to make sure we don't remove the step before the experiment loads.
 	if ( trailMapExperimentVariant === null ) {
 		nextProps.submitSignupStep(
 			{ stepName, wasSkipped: true },
@@ -1266,23 +1224,6 @@ export function excludeStepIfProfileComplete( stepName, defaultDependencies, nex
 		debug( 'Skipping P2 complete profile step' );
 		recordTracksEvent( 'calypso_signup_p2_complete_profile_autoskip' );
 		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
-		flows.excludeStep( stepName );
-	}
-}
-
-export function isAddOnsFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { store, submitSignupStep } = nextProps;
-
-	const state = store.getState();
-	const cartItem = get( getSignupDependencyStore( state ), 'cartItem', null );
-	let fulfilledDependencies = [];
-
-	if ( cartItem ) {
-		submitSignupStep( { stepName, cartItem: [], wasSkipped: true }, { cartItem: [] } );
-		fulfilledDependencies = [ 'cartItem' ];
-	}
-
-	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
 	}
 }

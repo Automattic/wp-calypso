@@ -224,6 +224,7 @@ export const FEATURE_SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing';
 export const FEATURE_SOCIAL_MASTODON_CONNECTION = 'social-mastodon-connection';
 export const FEATURE_SOCIAL_INSTAGRAM_CONNECTION = 'social-instagram-connection';
 export const FEATURE_SOCIAL_NEXTDOOR_CONNECTION = 'social-nextdoor-connection';
+export const FEATURE_SOCIAL_THREADS_CONNECTION = 'social-threads-connection';
 export const FEATURE_JETPACK_MONITOR_MONTHLY = PRODUCT_JETPACK_MONITOR_MONTHLY;
 export const FEATURE_JETPACK_MONITOR_YEARLY = PRODUCT_JETPACK_MONITOR_YEARLY;
 export const FEATURE_MONITOR_1_MINUTE_CHECK_INTERVAL = 'monitor-1-minute-check-interval';

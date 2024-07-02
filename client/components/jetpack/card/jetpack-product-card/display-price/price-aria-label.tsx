@@ -7,6 +7,7 @@ interface Props {
 	currencyCode: string;
 	billingTerm: Duration;
 	isDiscounted: boolean;
+	discountPercentage?: number;
 	finalPrice: number;
 	originalPrice?: number;
 	formattedOriginalPrice?: string;

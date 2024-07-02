@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -61,7 +60,6 @@ const StatsModuleUTM = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
-	const isBuilderEnabled = config.isEnabled( 'stats/utm-builder' );
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
@@ -125,12 +123,7 @@ const StatsModuleUTM = ( {
 				data={ data }
 				useShortLabel={ useShortLabel }
 				title={ moduleStrings?.title }
-				emptyMessage={
-					<div>
-						{ moduleStrings.empty }
-						{ isBuilderEnabled && <UTMBuilder /> }
-					</div>
-				}
+				emptyMessage={ <div>{ moduleStrings.empty }</div> }
 				metricLabel={ metricLabel }
 				showMore={
 					displaySummaryLink && ! summary
@@ -152,12 +145,15 @@ const StatsModuleUTM = ( {
 				splitHeader
 				mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 				toggleControl={
-					<UTMDropdown
-						buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-						onSelect={ setSelectedOption }
-						selectOptions={ optionLabels }
-						selected={ selectedOption }
-					/>
+					<div className="stats-module__extended-toggle">
+						<UTMBuilder />
+						<UTMDropdown
+							buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+							onSelect={ setSelectedOption }
+							selectOptions={ optionLabels }
+							selected={ selectedOption }
+						/>
+					</div>
 				}
 			/>
 			{ showFooterWithDownloads && (

@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_PREMIUM, getPlan, isFreePlan, isPersonalPlan } from '@automattic/calypso-products';
+import { DotPager } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -8,7 +9,6 @@ import YoastLogo from 'calypso/assets/images/icons/yoast-logo.svg';
 import GoogleAnalyticsLogo from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import writePost from 'calypso/assets/images/onboarding/site-options.svg';
 import BlazeLogo from 'calypso/components/blaze-logo';
-import DotPager from 'calypso/components/dot-pager';
 import { useHasNeverPublishedPost } from 'calypso/data/stats/use-has-never-published-post';
 import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';

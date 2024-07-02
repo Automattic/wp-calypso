@@ -124,23 +124,29 @@ class Help_Center {
 			'before'
 		);
 
-		wp_localize_script(
-			'help-center-script',
-			'helpCenterData',
-			array(
-				'currentSite' => $this->get_current_site(),
-			)
-		);
+		$user_id      = get_current_user_id();
+		$user_data    = get_userdata( $user_id );
+		$username     = $user_data->user_login;
+		$user_email   = $user_data->user_email;
+		$display_name = $user_data->display_name;
+		$avatar_url   = function_exists( 'wpcom_get_avatar_url' ) ? wpcom_get_avatar_url( $user_email, 64, '', true )[0] : get_avatar_url( $user_id );
 
-		$current_user = wp_get_current_user();
-
-		wp_localize_script(
+		wp_add_inline_script(
 			'help-center-script',
-			'odieUserData',
-			array(
-				'displayName' => $current_user->data->display_name,
-				'email'       => $current_user->data->user_email,
-			)
+			'const helpCenterData = ' . wp_json_encode(
+				array(
+					'currentUser' => array(
+						'ID'           => $user_id,
+						'username'     => $username,
+						'display_name' => $display_name,
+						'avatar_URL'   => $avatar_url,
+						'email'        => $user_email,
+					),
+					'site'        => $this->get_current_site(),
+					'locale'      => get_locale(),
+				)
+			),
+			'before'
 		);
 
 		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
@@ -175,21 +181,24 @@ class Help_Center {
 		$plan    = array_pop( $bundles );
 
 		$return_data = array(
-			'ID'               => $site,
-			'name'             => get_bloginfo( 'name' ),
-			'URL'              => get_bloginfo( 'url' ),
-			'plan'             => array(
+			'ID'              => $site,
+			'name'            => get_bloginfo( 'name' ),
+			'URL'             => get_bloginfo( 'url' ),
+			'plan'            => array(
 				'product_slug' => isset( $plan->product_slug ) ? $plan->product_slug : null,
 			),
-			'is_wpcom_atomic'  => defined( 'IS_ATOMIC' ) && IS_ATOMIC,
-			'jetpack'          => true === apply_filters( 'is_jetpack_site', false, $site ),
-			'logo'             => array(
+			'is_wpcom_atomic' => defined( 'IS_ATOMIC' ) && IS_ATOMIC,
+			'jetpack'         => true === apply_filters( 'is_jetpack_site', false, $site ),
+			'logo'            => array(
 				'id'    => $logo_id,
 				'sizes' => array(),
 				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0] ?? '',
 			),
-			'launchpad_screen' => get_option( 'launchpad_screen' ),
-			'site_intent'      => get_option( 'site_intent' ),
+			'options'         => array(
+				'launchpad_screen' => get_option( 'launchpad_screen' ),
+				'site_intent'      => get_option( 'site_intent' ),
+				'admin_url'        => get_admin_url(),
+			),
 		);
 
 		if ( $is_support_site ) {
@@ -211,8 +220,8 @@ class Help_Center {
 		$controller = new WP_REST_Help_Center_Sibyl();
 		$controller->register_rest_route();
 
-		require_once __DIR__ . '/class-wp-rest-help-center-support-availability.php';
-		$controller = new WP_REST_Help_Center_Support_Availability();
+		require_once __DIR__ . '/class-wp-rest-help-center-support-status.php';
+		$controller = new WP_REST_Help_Center_Support_Status();
 		$controller->register_rest_route();
 
 		require_once __DIR__ . '/class-wp-rest-help-center-search.php';
@@ -349,12 +358,10 @@ class Help_Center {
 			function () {
 				global $wp_admin_bar;
 
-				wp_localize_script(
+				wp_add_inline_script(
 					'help-center-script',
-					'helpCenterAdminBar',
-					array(
-						'isLoaded' => true,
-					)
+					'helpCenterData.isAdminBar = true;',
+					'before'
 				);
 
 				$wp_admin_bar->add_menu(

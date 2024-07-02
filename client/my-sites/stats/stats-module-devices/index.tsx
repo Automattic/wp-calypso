@@ -43,7 +43,6 @@ const StatsModuleDevicesWrapper: React.FC< StatsModuleDevicesWrapperProps > = ( 
 	return (
 		<>
 			{ isFetching && (
-				// @ts-expect-error TODO: Refactor StatsCard with TypeScript.
 				<StatsCard
 					title={ devicesStrings.title }
 					className={ clsx( className, DEVICES_CLASS_NAME, 'stats-module__card', 'devices' ) }

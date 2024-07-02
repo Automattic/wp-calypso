@@ -177,8 +177,8 @@ const Settings = ( {
 	const renderStatusSection = () => {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
-			domain.type === domainTypes.TRANSFER ||
-			domain.isGravatarDomain
+			domain?.type === domainTypes.TRANSFER ||
+			domain?.isGravatarDomain
 		) {
 			return null;
 		}

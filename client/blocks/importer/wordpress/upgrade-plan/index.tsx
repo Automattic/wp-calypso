@@ -8,7 +8,9 @@ import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
+import PlanNoticeCreditUpgrade from 'calypso/my-sites/plans-features-main/components/plan-notice-credit-update';
 import UpgradePlanDetails from './upgrade-plan-details';
+import type { PlanSlug } from '@automattic/calypso-products';
 
 import './style.scss';
 
@@ -24,6 +26,7 @@ interface Props {
 	onContentOnlyClick?: () => void;
 	trackingEventsProps?: Record< string, unknown >;
 	hideFreeMigrationTrialForNonVerifiedEmail?: boolean;
+	visiblePlan?: PlanSlug;
 }
 
 export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
@@ -43,6 +46,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		isBusy,
 		trackingEventsProps,
 		hideFreeMigrationTrialForNonVerifiedEmail = false,
+		visiblePlan = PLAN_BUSINESS,
 	} = props;
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan( site.ID );
 	const isEligibleForTrialPlan =
@@ -168,7 +172,13 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				</div>
 			) }
 
-			<UpgradePlanDetails>{ renderCTAs() }</UpgradePlanDetails>
+			<PlanNoticeCreditUpgrade
+				linkTarget="_blank"
+				siteId={ site.ID }
+				visiblePlans={ [ visiblePlan ] }
+			/>
+
+			<UpgradePlanDetails siteId={ site.ID }>{ renderCTAs() }</UpgradePlanDetails>
 		</div>
 	);
 };

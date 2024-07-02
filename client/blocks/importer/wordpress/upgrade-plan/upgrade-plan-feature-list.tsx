@@ -1,4 +1,10 @@
-import { JetpackPlan, Plan, WPComPlan, getFeatureByKey } from '@automattic/calypso-products';
+import {
+	type JetpackPlan,
+	type Plan,
+	type WPComPlan,
+	getFeatureByKey,
+	isMonthly,
+} from '@automattic/calypso-products';
 import { Badge } from '@automattic/components';
 import { Plans2023Tooltip } from '@automattic/plans-grid-next';
 import { chevronDown, Icon } from '@wordpress/icons';
@@ -18,8 +24,14 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 	const { plan, showFeatures, setShowFeatures } = props;
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 
+	const isMonthlyPlan = plan ? isMonthly( plan.getStoreSlug() ) : false;
+	const annualOnlyFeatures = ( plan as WPComPlan )?.getAnnualPlansOnlyFeatures?.() || [];
+
 	const wpcomFeatures = plan
 		?.get2023PricingGridSignupWpcomFeatures?.()
+		.filter( ( feature: string ) =>
+			isMonthlyPlan ? ! annualOnlyFeatures.includes( feature ) : true
+		)
 		.map( ( feature: string ) => getFeatureByKey( feature ) )
 		.filter( ( feature ) => feature?.getTitle() );
 
@@ -28,11 +40,10 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 		.map( ( feature: string ) => getFeatureByKey( feature ) )
 		.filter( ( feature ) => feature?.getTitle() );
 
-	const storageOptions = plan
-		?.get2023PricingGridSignupStorageOptions?.()
-		.filter( ( option ) => ! option.isAddOn )
-		.map( ( option ) => getFeatureByKey( option.slug ) )
-		.filter( ( option ) => option?.getTitle() );
+	const storageFeature = plan?.getStorageFeature?.();
+	const storageFeatureTitle = storageFeature
+		? getFeatureByKey( storageFeature )?.getTitle()
+		: undefined;
 
 	return (
 		<ul className={ clsx( 'import__details-list' ) }>
@@ -80,11 +91,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 						<strong>{ __( 'Storage' ) }</strong>
 					</li>
 					<li className={ clsx( 'import__upgrade-plan-feature' ) }>
-						{ storageOptions?.map( ( storage, i ) => (
-							<Badge type="info" key={ i }>
-								{ storage?.getTitle() }
-							</Badge>
-						) ) }
+						<Badge type="info">{ storageFeatureTitle }</Badge>
 					</li>
 				</>
 			) }

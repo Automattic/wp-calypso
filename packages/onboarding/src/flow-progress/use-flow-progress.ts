@@ -1,7 +1,6 @@
 import {
 	ECOMMERCE_FLOW,
 	LINK_IN_BIO_FLOW,
-	LINK_IN_BIO_DOMAIN_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	FREE_FLOW,
 	COPY_SITE_FLOW,
@@ -35,14 +34,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		domains: 3,
 		plans: 4,
 		launchpad: 5,
-	},
-	[ LINK_IN_BIO_DOMAIN_FLOW ]: {
-		intro: 0,
-		user: 0,
-		patterns: 1,
-		linkInBioSetup: 2,
-		plans: 3,
-		launchpad: 4,
 	},
 	[ LINK_IN_BIO_TLD_FLOW ]: {
 		domains: 0,

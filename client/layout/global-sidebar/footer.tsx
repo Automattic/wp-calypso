@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { recordCommandPaletteOpen } from '@automattic/command-palette/src/tracks';
+import { Button } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { LocalizeProps } from 'i18n-calypso';
@@ -9,6 +10,7 @@ import Gravatar from 'calypso/components/gravatar';
 import QuickLanguageSwitcher from 'calypso/layout/masterbar/quick-language-switcher';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import { UserData } from 'calypso/lib/user/user';
+import ReaderWriteIcon from 'calypso/reader/components/icons/write-icon';
 import { useSelector } from 'calypso/state';
 import getCurrentRoutePattern from 'calypso/state/selectors/get-current-route-pattern';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -32,6 +34,15 @@ export const GlobalSidebarFooter: FC< {
 
 	return (
 		<SidebarFooter>
+			<Button
+				className="sidebar__footer-link sidebar__footer-write-post"
+				href="/post/"
+				target="_blank"
+				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.WRITE_POST_CLICK ) }
+			>
+				<ReaderWriteIcon />
+				{ translate( 'Write a post' ) }
+			</Button>
 			<SidebarMenuItem
 				url="/me"
 				className="sidebar__footer-link sidebar__footer-profile"

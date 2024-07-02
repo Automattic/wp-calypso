@@ -67,7 +67,7 @@ export default function ThankYouDomainProduct( {
 	} else if ( isGravatarDomain ) {
 		actions = (
 			<Button variant="primary" href="https://gravatar.com/profile">
-				{ translate( 'Manage domain at Gravatar' ) }
+				{ translate( 'Return to Gravatar' ) }
 			</Button>
 		);
 	} else if ( purchase?.blogId && siteSlug ) {

@@ -3,6 +3,7 @@ import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, FormEventHandler, useCallback, useEffect, useState } from 'react';
+import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -117,6 +118,8 @@ export default function UserContactSupportModalForm( {
 		}
 	}, [ dispatch, show ] );
 
+	const isClient = isClientView();
+
 	if ( ! show ) {
 		return null;
 	}
@@ -138,7 +141,7 @@ export default function UserContactSupportModalForm( {
 				</Button>
 
 				<h1 className="a4a-contact-support-modal-form__title">
-					{ translate( 'Contact sales & support' ) }
+					{ isClient ? translate( 'Contact support' ) : translate( 'Contact sales & support' ) }
 				</h1>
 
 				<FormFieldset>

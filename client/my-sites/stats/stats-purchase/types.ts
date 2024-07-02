@@ -9,6 +9,7 @@ export type PriceTierListItemProps = {
 	minimum_units: number;
 	per_unit_fee?: number;
 	transform_quantity_divide_by?: number | null;
+	limit?: number;
 };
 
 export type StatsPlanTierUI = {
