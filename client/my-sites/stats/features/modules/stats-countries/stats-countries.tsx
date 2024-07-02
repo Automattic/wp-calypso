@@ -17,7 +17,7 @@ import Geochart from '../../../geochart';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 
-type StatCountriesProps = {
+type StatsCountriesProps = {
 	className?: string;
 	period: string;
 	query: {
@@ -32,7 +32,7 @@ type StatCountriesProps = {
 	};
 };
 
-const StatCountries: React.FC< StatCountriesProps > = ( {
+const StatsCountries: React.FC< StatsCountriesProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -100,4 +100,4 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 	);
 };
 
-export default StatCountries;
+export default StatsCountries;
