@@ -10,30 +10,36 @@ import './style.scss';
 
 const ICON_SIZE = 32;
 
-export default function SiteSelectorAndImporter() {
+export default function SiteSelectorAndImporter( {
+	showMainButtonLabel,
+}: {
+	showMainButtonLabel: boolean;
+} ) {
 	const translate = useTranslate();
 
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
 
-	const toggleMenu = ( isMenuVisible: boolean ) => {
-		setMenuVisible( isMenuVisible );
+	const toggleMenu = () => {
+		setMenuVisible( ( isVisible ) => ! isVisible );
 	};
 
 	const popoverMenuContext = useRef( null );
 
-	const buttonContent = ( {
+	const menuItem = ( {
 		icon,
 		iconClassName,
 		heading,
 		description,
+		buttonProps,
 	}: {
 		icon: JSX.Element;
 		iconClassName?: string;
 		heading: string;
 		description: string;
+		buttonProps?: React.ComponentProps< typeof Button >;
 	} ) => {
 		return (
-			<div className="site-selector-and-importer__popover-button">
+			<Button { ...buttonProps } className="site-selector-and-importer__popover-button" borderless>
 				<div className={ clsx( 'site-selector-and-importer__popover-button-icon', iconClassName ) }>
 					<Icon className="sidebar__menu-icon" icon={ icon } size={ ICON_SIZE } />
 				</div>
@@ -43,19 +49,21 @@ export default function SiteSelectorAndImporter() {
 						{ description }
 					</div>
 				</div>
-			</div>
+			</Button>
 		);
 	};
+
+	const chevronIcon = isMenuVisible ? 'chevron-up' : 'chevron-down';
 
 	return (
 		<>
 			<Button
 				className="site-selector-and-importer__button"
 				ref={ popoverMenuContext }
-				onClick={ () => toggleMenu( true ) }
+				onClick={ toggleMenu }
 			>
-				{ translate( 'Add sites' ) }
-				<Gridicon icon={ isMenuVisible ? 'chevron-up' : 'chevron-down' } />
+				{ showMainButtonLabel ? translate( 'Add sites' ) : null }
+				<Gridicon icon={ showMainButtonLabel ? chevronIcon : 'plus' } />
 			</Button>
 			<Popover
 				className="site-selector-and-importer__popover"
@@ -63,30 +71,29 @@ export default function SiteSelectorAndImporter() {
 				position="bottom right"
 				isVisible={ isMenuVisible }
 				closeOnEsc
-				onClose={ () => toggleMenu( false ) }
+				onClose={ toggleMenu }
 			>
 				<div className="site-selector-and-importer__popover-content">
 					<div className="site-selector-and-importer__popover-column">
 						<div className="site-selector-and-importer__popover-column-heading">
 							{ translate( 'Import existing sites' ).toUpperCase() }
 						</div>
-
-						{ buttonContent( {
+						{ menuItem( {
 							icon: <WordPressLogo />,
 							heading: translate( 'Via WordPress.com' ),
 							description: translate( 'Import sites bought on WordPress.com' ),
 						} ) }
-						{ buttonContent( {
+						{ menuItem( {
 							icon: <A4ALogo />,
 							heading: translate( 'Via the Automattic plugin' ),
 							description: translate( 'Connect with the Automattic for Agencies plugin' ),
 						} ) }
-						{ buttonContent( {
+						{ menuItem( {
 							icon: <JetpackLogo />,
 							heading: translate( 'Via Jetpack' ),
 							description: translate( 'Import one or more Jetpack connected sites' ),
 						} ) }
-						{ buttonContent( {
+						{ menuItem( {
 							icon: navigation,
 							iconClassName: 'site-selector-and-importer__popover-button-wp-icon',
 							heading: translate( 'Via URL' ),
@@ -97,12 +104,12 @@ export default function SiteSelectorAndImporter() {
 						<div className="site-selector-and-importer__popover-column-heading">
 							{ translate( 'Add a new site' ).toUpperCase() }
 						</div>
-						{ buttonContent( {
+						{ menuItem( {
 							icon: <img src={ pressableIcon } alt="" />,
 							heading: translate( 'Pressable' ),
 							description: translate( 'Optimized and hassle-free hosting for business websites' ),
 						} ) }
-						{ buttonContent( {
+						{ menuItem( {
 							icon: <WordPressLogo />,
 							heading: translate( 'WordPress.com' ),
 							description: translate( 'Best for large-scale businesses and major eCommerce sites' ),

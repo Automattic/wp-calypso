@@ -40,7 +40,7 @@ const AddNewSiteButton = ( {
 	const isSiteSelectorAndImportedEnabled = config.isEnabled( 'a4a-site-selector-and-importer' );
 
 	if ( isSiteSelectorAndImportedEnabled ) {
-		return <SiteSelectorAndImporter />;
+		return <SiteSelectorAndImporter showMainButtonLabel={ showMainButtonLabel } />;
 	}
 
 	return (

@@ -9,8 +9,12 @@
 }
 .site-selector-and-importer__popover {
 	.popover__inner {
-		width: 650px;
+		width: 280px;
 		text-align: unset;
+
+		@include break-large {
+			width: 650px;
+		}
 	}
 }
 
@@ -41,13 +45,19 @@
 	margin-block-end: 8px;
 }
 
-
-.site-selector-and-importer__popover-button {
-	padding: 8px;
+.theme-a8c-for-agencies  .button.site-selector-and-importer__popover-button {
+	padding: 0 8px;
+	white-space: unset;
+	text-align: unset;
+	margin-block: 16px;
+	width: 100%;
+	border-radius: 0;
 
 	@include break-large {
 		display: flex;
 		gap: 8px;
+		align-items: unset;
+		justify-content: unset;
 	}
 
 	.site-selector-and-importer__popover-button-icon {
@@ -64,6 +74,7 @@
 		}
 	}
 
+	// This is a workaround to make all the buttons the same dimensions
 	.site-selector-and-importer__popover-button-wp-icon {
 		.sidebar__menu-icon {
 			width: 36px;
