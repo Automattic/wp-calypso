@@ -1,3 +1,5 @@
+import '../global-types';
+
 export const getCalypsoVersion = (): string => {
 	return window?.COMMIT_SHA;
 };

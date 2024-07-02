@@ -4,13 +4,13 @@ import {
 	render as clientRender,
 	redirectToHostingPromoIfNotAtomic,
 } from 'calypso/controller';
-import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
-import { redirectHomeIfIneligible } from 'calypso/my-sites/site-monitoring/controller';
-import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
 import {
 	DOTCOM_LOGS_PHP,
 	DOTCOM_LOGS_WEB,
-} from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
+} from 'calypso/hosting/sites/components/site-preview-pane/constants';
+import { siteDashboard } from 'calypso/hosting/sites/controller';
+import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
+import { redirectHomeIfIneligible } from 'calypso/my-sites/site-monitoring/controller';
 import { httpRequestLogs, phpErrorLogs } from './controller';
 
 export default function () {

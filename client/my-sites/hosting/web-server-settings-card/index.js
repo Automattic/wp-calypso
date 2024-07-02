@@ -12,6 +12,8 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
+import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
+import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
 import {
 	updateAtomicPhpVersion,
 	updateAtomicStaticFile404,
@@ -71,6 +73,8 @@ const WebServerSettingsCard = ( {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 	const [ selectedWpVersion, setSelectedWpVersion ] = useState( '' );
 	const [ selectedStaticFile404, setSelectedStaticFile404 ] = useState( '' );
+	const { recommendedValue, phpVersions } = usePhpVersions();
+	const dataCenterOptions = useDataCenterOptions();
 
 	const isLoading =
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
@@ -154,12 +158,6 @@ const WebServerSettingsCard = ( {
 			return;
 		}
 
-		const dataCenterOptions = {
-			bur: translate( 'US West (Burbank, California)' ),
-			dfw: translate( 'US Central (Dallas-Fort Worth, Texas)' ),
-			dca: translate( 'US East (Washington, D.C.)' ),
-			ams: translate( 'EU West (Amsterdam, Netherlands)' ),
-		};
 		const displayValue =
 			dataCenterOptions[ geoAffinity ] !== undefined
 				? dataCenterOptions[ geoAffinity ]
@@ -183,8 +181,6 @@ const WebServerSettingsCard = ( {
 		);
 	};
 
-	const recommendedValue = '8.1';
-
 	const changePhpVersion = ( event ) => {
 		const newVersion = event.target.value;
 
@@ -193,44 +189,6 @@ const WebServerSettingsCard = ( {
 
 	const updateVersion = () => {
 		updatePhpVersion( siteId, selectedPhpVersion );
-	};
-
-	const getPhpVersions = () => {
-		return [
-			{
-				label: '7.3',
-				value: '7.3',
-				disabled: true, // EOL 6th December, 2021
-			},
-			{
-				label: translate( '%s (deprecated)', {
-					args: '7.4',
-					comment: 'PHP Version for a version switcher',
-				} ),
-				value: '7.4',
-				disabled: true, // EOL 1st July, 2024
-			},
-			{
-				label: '8.0',
-				value: '8.0',
-				disabled: true, // EOL 26th November, 2023
-			},
-			{
-				label: translate( '%s (recommended)', {
-					args: '8.1',
-					comment: 'PHP Version for a version switcher',
-				} ),
-				value: recommendedValue,
-			},
-			{
-				label: '8.2',
-				value: '8.2',
-			},
-			{
-				label: '8.3',
-				value: '8.3',
-			},
-		];
 	};
 
 	const getPhpVersionContent = () => {
@@ -251,7 +209,7 @@ const WebServerSettingsCard = ( {
 					onChange={ changePhpVersion }
 					value={ selectedPhpVersionValue }
 				>
-					{ getPhpVersions().map( ( option ) => {
+					{ phpVersions.map( ( option ) => {
 						// Show disabled PHP version only if the site is still using it.
 						if ( option.value !== phpVersion && option.disabled ) {
 							return null;
