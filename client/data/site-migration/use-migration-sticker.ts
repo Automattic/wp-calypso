@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
@@ -35,7 +36,13 @@ export const useMigrationStickerMutation = () => {
 	);
 
 	const deleteMigrationSticker = useCallback(
-		( targetBlogId: SiteId ) => deleteMutate( { targetBlogId } ),
+		( targetBlogId: SiteId ) => {
+			if ( ! config.isEnabled( 'migration-flow/introductory-offer' ) ) {
+				return;
+			}
+
+			deleteMutate( { targetBlogId } );
+		},
 		[ deleteMutate ]
 	);
 
