@@ -504,6 +504,7 @@ function installPluginHelper(
 			// If the error is a ServerError, the plugin was installed but not activated
 			if ( error.name === 'ServerError' && lastStep === 'doActivate' ) {
 				type = PLUGIN_INSTALL_REQUEST_PARTIAL_SUCCESS;
+				error.error = 'server_error_during_activation';
 				data = { ...plugin, active: false };
 			}
 			dispatch( { ...defaultAction, type, error, data } );
