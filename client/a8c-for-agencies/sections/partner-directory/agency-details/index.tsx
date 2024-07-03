@@ -72,7 +72,14 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			//FIXME: check if there's a better way to distinct parent for scrolling to the top
 			const parent = document.getElementsByClassName( 'partner-directory__body' )?.[ 0 ];
 			// Scrolling only for fields positioned on top
-			if ( error.name || error.email || error.website || error.bio || error.logo ) {
+			if (
+				error.name ||
+				error.email ||
+				error.website ||
+				error.bio ||
+				error.logo ||
+				error.landingPage
+			) {
 				if ( parent ) {
 					parent?.scrollTo( { behavior: 'smooth', top: 0 } );
 				}
