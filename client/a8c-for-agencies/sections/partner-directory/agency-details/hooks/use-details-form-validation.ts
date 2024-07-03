@@ -13,7 +13,7 @@ type ValidationState = {
 	bio?: string;
 	country?: string;
 	logo?: string;
-	industry?: string;
+	industries?: string;
 	services?: string;
 	products?: string;
 	languages?: string;
@@ -59,14 +59,8 @@ const useDetailsFormValidation = () => {
 				newValidationError.country = translate( `Company location can't be empty` );
 			}
 
-			if ( payload.logoUrl === '' ) {
-				newValidationError.logo = translate( `Logo URL can't be empty` );
-			} else if ( ! isValidUrl( payload.logoUrl ) ) {
-				newValidationError.logo = translate( `Please enter a valid URL` );
-			}
-
-			if ( payload.industry === '' ) {
-				newValidationError.industry = translate( `Industry field can't be empty` );
+			if ( payload.industries.length < 1 ) {
+				newValidationError.industries = translate( `Please provide industries` );
 			}
 
 			if ( payload.services.length < 1 ) {

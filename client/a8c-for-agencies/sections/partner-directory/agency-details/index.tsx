@@ -187,14 +187,12 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					sub={ translate(
 						'Upload your agency logo sized at 800px by 320px. Format allowed: JPG, PNG'
 					) }
-					error={ validationError.logo }
 					isRequired
 				>
 					<LogoPicker
 						logo={ formData.logoUrl }
 						onPick={ ( value ) => {
 							setFormFields( { logoUrl: value } );
-							updateValidationError( { logo: undefined } );
 						} }
 					/>
 				</FormField>
@@ -215,12 +213,16 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 						}
 					/>
 				</FormField>
-				<FormField label={ translate( 'Industries' ) } isRequired>
+				<FormField
+					label={ translate( 'Industries' ) }
+					error={ validationError.industries }
+					isRequired
+				>
 					<IndustriesSelector
 						industries={ formData.industries }
 						setIndustries={ ( industries ) => {
 							setFormFields( { industries } );
-							updateValidationError( { industry: undefined } );
+							updateValidationError( { industries: undefined } );
 						} }
 					/>
 				</FormField>

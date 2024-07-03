@@ -33,7 +33,6 @@ export default function useDetailsForm( { initialFormData }: Props ) {
 			emailValidator.validate( formData.email ) &&
 			isValidUrl( formData.website ) &&
 			formData.bioDescription.length > 0 &&
-			isValidUrl( formData.logoUrl ) &&
 			// landingPageUrl is optional
 			( formData.landingPageUrl.length === 0 || isValidUrl( formData.landingPageUrl ) ) &&
 			formData.country?.length > 0 &&
