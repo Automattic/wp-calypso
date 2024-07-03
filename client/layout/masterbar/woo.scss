@@ -1765,5 +1765,23 @@ $breakpoint-mobile: 660px;
 		.login__lostpassword-subtitle a {
 			line-height: inherit;
 		}
+
+		&.is-woo-passwordless {
+			input[type="text"].form-text-input {
+				border-radius: 2px;
+				border: 1px solid var(--Gutenberg-Gray-500, #bbb);
+				background: var(--Gutenberg-White, #fff);
+				&:hover,
+				&:focus {
+					border: 2px solid var(--Gutenberg-Gray-500, #bbb);
+				}
+			}
+
+			.auth-form__social .auth-form__social-buttons .social-buttons__button.button {
+				border-radius: 2px;
+				border: 1px solid var(--Gray-Gray-20, #a7aaad) !important;
+				background: var(--black-white-white, #fff);
+			}
+		}
 	}
 }
