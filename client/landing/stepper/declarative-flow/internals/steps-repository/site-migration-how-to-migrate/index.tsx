@@ -1,4 +1,3 @@
-import { Card } from '@automattic/components';
 import { StepContainer, SubTitle, Title } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -11,6 +10,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
+import FlowCard from '../components/flow-card';
 import type { Step } from '../../types';
 
 import './style.scss';
@@ -89,18 +89,12 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 
 			<div className="how-to-migrate__list">
 				{ options.map( ( option, i ) => (
-					<Card
-						tagName="button"
-						displayAsLink
+					<FlowCard
 						key={ i }
+						title={ option.label }
+						text={ option.description }
 						onClick={ () => handleClick( option.value ) }
-					>
-						<div className="how-to-migrate__header">
-							<h2 className="how-to-migrate__name">{ option.label }</h2>
-						</div>
-
-						<p className="how-to-migrate__description">{ option.description }</p>
-					</Card>
+					/>
 				) ) }
 			</div>
 		</>

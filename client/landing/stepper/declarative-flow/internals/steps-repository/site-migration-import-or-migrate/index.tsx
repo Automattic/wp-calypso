@@ -1,5 +1,5 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { Badge, Card } from '@automattic/components';
+import { BadgeType } from '@automattic/components';
 import { StepContainer, SubTitle, Title } from '@automattic/onboarding';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -7,6 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import FlowCard from '../components/flow-card';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -22,6 +23,13 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 				"All your site's content, themes, plugins, users and customizations."
 			),
 			value: 'migrate',
+			badge: {
+				type: 'info-blue' as BadgeType,
+				// translators: %(planName)s is a plan name (e.g. Commerce plan).
+				text: translate( 'Requires %(planName)s plan', {
+					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+				} ) as string,
+			},
 			selected: true,
 		},
 		{
@@ -67,29 +75,13 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 
 			<div className="import-or-migrate__list">
 				{ options.map( ( option, i ) => (
-					<Card
-						tagName="button"
-						displayAsLink
+					<FlowCard
 						key={ i }
+						title={ option.label }
+						badge={ option.badge }
+						text={ option.description }
 						onClick={ () => handleClick( option.value ) }
-					>
-						<div className="import-or-migrate__header">
-							<h2 className="import-or-migrate__name">{ option.label }</h2>
-
-							{ option.value === 'migrate' && (
-								<Badge type="info-blue">
-									{
-										// translators: %(planName)s is a plan name (e.g. Commerce plan).
-										translate( 'Requires %(planName)s plan', {
-											args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-										} )
-									}
-								</Badge>
-							) }
-						</div>
-
-						<p className="import-or-migrate__description">{ option.description }</p>
-					</Card>
+					/>
 				) ) }
 			</div>
 		</>

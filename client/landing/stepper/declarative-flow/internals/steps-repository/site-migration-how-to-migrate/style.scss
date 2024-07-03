@@ -19,6 +19,8 @@
 	}
 
 	.how-to-migrate__list {
+		display: flex;
+		flex-direction: column;
 		margin-top: 50px;
 		padding-bottom: 108px;
 
@@ -27,10 +29,8 @@
 			padding-bottom: revert;
 		}
 
-		.card {
-			svg {
-				fill: #1e1e1e;
-			}
+		.flow-question {
+			max-width: none;
 		}
 	}
 
