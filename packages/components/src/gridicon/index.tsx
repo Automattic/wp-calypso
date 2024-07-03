@@ -17,16 +17,26 @@ interface Props {
 
 type AllProps = Assign< React.SVGProps< SVGSVGElement >, Props >;
 
+function isCrossOrigin( url: string ) {
+	try {
+		return new URL( url ).origin !== window.location.origin;
+	} catch ( e ) {
+		return false;
+	}
+}
+
 /**
  * Fetches the SVG file and creates a proxy URL for it.
  * @param url the original cross-origin URL
  * @returns the proxied URL.
  */
 function useProxiedURL( url: string ) {
-	const [ urlProxy, setUrlProxy ] = React.useState( url );
+	const isCrossOriginUrl = isCrossOrigin( url );
+	// If cross-origin, return `undefined` until the proxy URL is fetched.
+	const [ urlProxy, setUrlProxy ] = React.useState( isCrossOriginUrl ? undefined : url );
+
 	React.useEffect( () => {
-		// Only bother with cross-origin absolute URLs.
-		if ( url.startsWith( 'https://' ) && window.location.origin !== new URL( url ).origin ) {
+		if ( isCrossOriginUrl ) {
 			fetch( url )
 				.then( ( res ) => res.blob() )
 				.then( ( blob ) => {
@@ -34,7 +44,7 @@ function useProxiedURL( url: string ) {
 					setUrlProxy( urlProxy );
 				} );
 		}
-	}, [ url ] );
+	}, [ url, isCrossOriginUrl ] );
 
 	return urlProxy;
 }
@@ -68,7 +78,7 @@ const Gridicon = React.memo(
 				{ ...otherProps }
 			>
 				{ title && <title>{ title }</title> }
-				<use xlinkHref={ `${ proxiedSpritePath }#${ iconName }` } />
+				{ proxiedSpritePath && <use xlinkHref={ `${ proxiedSpritePath }#${ iconName }` } /> }
 			</svg>
 		);
 	} )
