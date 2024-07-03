@@ -55,30 +55,28 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 					className={ className }
 				></StatsModule>
 			) : (
-				( ! data || ! data?.length ) && (
-					<StatsCard
-						className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
-						title={ translate( 'Clicks' ) }
-						isEmpty
-						emptyMessage={
-							<EmptyModuleCard
-								icon={ customLink }
-								description={ translate(
-									'Learn about your most {{link}}clicked external links{{/link}} to track engaging content.',
-									{
-										comment: '{{link}} links to support documentation.',
-										components: {
-											link: <a href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />,
-										},
-										context: 'Stats: Info box label when the Clicks module is empty',
-									}
-								) }
-							/>
-						}
-					>
-						<></>
-					</StatsCard>
-				)
+				<StatsCard
+					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
+					title={ translate( 'Clicks' ) }
+					isEmpty
+					emptyMessage={
+						<EmptyModuleCard
+							icon={ customLink }
+							description={ translate(
+								'Learn about your most {{link}}clicked external links{{/link}} to track engaging content.',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />,
+									},
+									context: 'Stats: Info box label when the Clicks module is empty',
+								}
+							) }
+						/>
+					}
+				>
+					<></>
+				</StatsCard>
 			) }
 		</>
 	);
