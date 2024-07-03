@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
@@ -53,6 +54,11 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 		has_source_site: migrateFrom !== '' && migrateFrom !== null,
 	};
 
+	const introOfferEnabled = isEnabled( 'migration-flow/introductory-offer' );
+	const ctaText = introOfferEnabled
+		? translate( 'Get the plan and migrate' )
+		: translate( 'Upgrade and migrate' );
+
 	const stepContent = (
 		<>
 			{ showMigrationModal && (
@@ -67,7 +73,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 			) }
 			<UpgradePlan
 				site={ siteItem }
-				ctaText={ translate( 'Upgrade and migrate' ) }
+				ctaText={ ctaText }
 				subTitleText=""
 				isBusy={ false }
 				hideTitleAndSubTitle

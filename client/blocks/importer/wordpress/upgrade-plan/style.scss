@@ -122,6 +122,50 @@ $business-plan-color: #7f54b3;
 		}
 	}
 
+	.import__upgrade-plan-price-group {
+		justify-content: flex-end;
+		display: flex;
+		flex-direction: row-reverse;
+		align-items: baseline;
+		gap: 4px;
+
+		.plan-price.is-original {
+			font-size: 1.25rem;
+
+			&::before {
+				border-top: 2px solid var(--color-neutral-light);
+				transform: rotate(0deg);
+			}
+
+			.plan-price__currency-symbol {
+				font-size: 0.75rem;
+				vertical-align: text-top;
+			}
+
+			.plan-price__integer {
+				font-size: 1.25rem;
+			}
+		}
+	}
+
+	.import__upgrade-plan-price-badge {
+		text-align: center;
+		white-space: nowrap;
+		font-size: 0.75rem;
+		line-height: 1.25;
+		border-radius: 4px;
+		height: 21px;
+		display: inline-block;
+		width: fit-content;
+		letter-spacing: 0.2px;
+		font-weight: 500;
+		padding: 0 12px;
+		background-color: #e6d1ff;
+		color: #350e63;
+		text-transform: none;
+		margin-bottom: 0.5rem;
+	}
+
 	.import__upgrade-plan-cta {
 		display: flex;
 		flex-direction: column;
