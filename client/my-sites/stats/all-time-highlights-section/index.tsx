@@ -156,9 +156,8 @@ export default function AllTimeHighlightsSection( {
 			<h3 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h3>
 			<DotPager>
 				<AllTimeStatsCard infoItems={ infoItems } />
-				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-					return <MostPopularDayTimeCard key={ card.id } cardInfo={ card } />;
-				} ) }
+				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } />
+				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } />
 			</DotPager>
 
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
@@ -171,9 +170,8 @@ export default function AllTimeHighlightsSection( {
 
 			<div className="highlight-cards-list">
 				<AllTimeStatsCard infoItems={ infoItems } />
-				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-					return <MostPopularDayTimeCard key={ card.id } cardInfo={ card } />;
-				} ) }
+				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } />
+				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } />
 			</div>
 
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
