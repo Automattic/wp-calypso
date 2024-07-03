@@ -53,20 +53,17 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet, price, theme_tier
 		( { slug }: any ) => slug === 'featured'
 	);
 
-	const is_premium = stylesheet && stylesheet.startsWith( 'premium/' );
-
 	return {
 		slug: id,
 		title: name,
 		recipe: {
 			stylesheet,
 		},
-		is_premium,
 		categories: taxonomies?.theme_subject ?? [],
 		is_featured_picks: isFeaturedPicks,
 		showFirst: isFeaturedPicks,
 		...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-		design_type: is_premium ? 'premium' : 'standard',
+		design_type: theme_tier?.slug === 'premium' ? 'premium' : 'standard',
 		design_tier: theme_tier?.slug,
 		price,
 

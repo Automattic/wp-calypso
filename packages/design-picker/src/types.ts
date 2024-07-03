@@ -86,7 +86,6 @@ export interface Design {
 	title: string;
 	description?: string;
 	recipe?: DesignRecipe;
-	is_premium: boolean;
 	is_externally_managed?: boolean;
 	is_bundled_with_woo?: boolean;
 	categories: Category[];
