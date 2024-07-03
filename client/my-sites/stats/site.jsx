@@ -49,6 +49,7 @@ import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
 import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
+import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
@@ -61,8 +62,6 @@ import StatsModule from './stats-module';
 import StatsModuleDevices from './stats-module-devices';
 import StatsModuleUpgradeOverlay from './stats-module-devices/stats-module-upgrade-overlay';
 import StatsModuleEmails from './stats-module-emails';
-import StatsModuleUTM from './stats-module-utm';
-import StatsModuleUTMOverlay from './stats-module-utm/stats-module-utm-overlay';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -473,6 +472,7 @@ class StatsSite extends Component {
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
+								summary={ false }
 								className={ clsx(
 									'stats__flexible-grid-item--60',
 									'stats__flexible-grid-item--full--large',
