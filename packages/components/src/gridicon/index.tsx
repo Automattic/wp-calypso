@@ -18,14 +18,10 @@ interface Props {
 type AllProps = Assign< React.SVGProps< SVGSVGElement >, Props >;
 
 function isCrossOrigin( url: string ) {
-	if ( ! url.startsWith( 'https://' ) ) {
+	if ( typeof window === 'undefined' ) {
 		return false;
 	}
-	try {
-		return new URL( url ).origin !== window.location.origin;
-	} catch ( e ) {
-		return false;
-	}
+	return new URL( url, window.location.href ).origin !== window.location.origin;
 }
 
 /**
