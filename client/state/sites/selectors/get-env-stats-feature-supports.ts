@@ -54,7 +54,7 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			'0.18.0-alpha',
 			isOdysseyStats
 		),
-		shouldUsePurchasesApiInJetpack: version_greater_than_or_equal(
+		shouldUseStatsBuiltInPurchasesApi: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.21.0-alpha',
 			isOdysseyStats

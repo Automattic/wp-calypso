@@ -19,13 +19,13 @@ import { getApiNamespace, getApiPath } from '../lib/get-api';
 
 async function queryOdysseyQuerySitePurchases(
 	siteId: number | null,
-	shouldUsePurchasesApiInJetpack: boolean
+	shouldUseStatsBuiltInPurchasesApi: boolean
 ) {
 	if ( ! siteId ) {
 		return;
 	}
 
-	const apiPath = shouldUsePurchasesApiInJetpack
+	const apiPath = shouldUseStatsBuiltInPurchasesApi
 		? `/sites/${ siteId }/purchases`
 		: '/site/purchases';
 
@@ -47,12 +47,12 @@ async function queryOdysseyQuerySitePurchases(
 
 const useOdysseyQuerySitePurchases = (
 	siteId: number | null,
-	shouldUsePurchasesApiInJetpack = false
+	shouldUseStatsBuiltInPurchasesApi = false
 ) => {
 	return useQuery( {
 		...getDefaultQueryParams(),
 		queryKey: [ 'odyssey-stats', 'site-purchases', siteId ],
-		queryFn: () => queryOdysseyQuerySitePurchases( siteId, shouldUsePurchasesApiInJetpack ),
+		queryFn: () => queryOdysseyQuerySitePurchases( siteId, shouldUseStatsBuiltInPurchasesApi ),
 		staleTime: 10 * 1000,
 		// If the module is not active, we don't want to retry the query.
 		retry: false,
@@ -60,14 +60,14 @@ const useOdysseyQuerySitePurchases = (
 };
 
 export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number | null } ) {
-	const { shouldUsePurchasesApiInJetpack } = useSelector( ( state ) =>
+	const { shouldUseStatsBuiltInPurchasesApi } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
 	const {
 		data: purchases,
 		isFetching,
 		isError: hasOtherErrors,
-	} = useOdysseyQuerySitePurchases( siteId, shouldUsePurchasesApiInJetpack );
+	} = useOdysseyQuerySitePurchases( siteId, shouldUseStatsBuiltInPurchasesApi );
 	const reduxDispatch = useDispatch();
 
 	useEffect( () => {
