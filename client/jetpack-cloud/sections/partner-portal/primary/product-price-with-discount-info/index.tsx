@@ -49,7 +49,7 @@ export default function ProductPriceWithDiscount( {
 							) }
 
 							<span className="product-price-with-discount__price-discount">
-								{ translate( 'Save %(discountPercentage)s%', {
+								{ translate( 'Save %(discountPercentage)s%%', {
 									args: {
 										discountPercentage,
 									},

@@ -9,9 +9,10 @@ import StatsUtmBuilderForm from './stats-module-utm-builder-form';
 
 interface Props {
 	modalClassName: string;
+	trigger?: React.ReactElement;
 }
 
-const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
+const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
@@ -24,16 +25,22 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
 		openModal();
 	};
 
+	const triggerNode = trigger ? (
+		React.cloneElement( trigger, { onClick: handleClick } )
+	) : (
+		<Button
+			icon={ link }
+			className="stats-utm-builder__trigger"
+			onClick={ handleClick }
+			variant="secondary"
+		>
+			{ translate( 'URL Builder' ) }
+		</Button>
+	);
+
 	return (
 		<>
-			<Button
-				icon={ link }
-				className="stats-utm-builder__trigger"
-				onClick={ handleClick }
-				variant="secondary"
-			>
-				{ translate( 'URL Builder' ) }
-			</Button>
+			{ triggerNode }
 			{ isOpen && (
 				<Modal
 					title={ translate( 'URL Builder' ) }
