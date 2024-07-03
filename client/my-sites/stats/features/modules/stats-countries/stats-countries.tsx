@@ -15,7 +15,7 @@ import { SUPPORT_URL } from '../../../const';
 import Geochart from '../../../geochart';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import type { StatsDefaultModuleProps } from '../types';
+import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatCountries: React.FC< StatsDefaultModuleProps > = ( {
 	period,
@@ -28,7 +28,7 @@ const StatCountries: React.FC< StatsDefaultModuleProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsCountryViews';
 
-	const requesting = useSelector( ( state ) =>
+	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>

@@ -15,9 +15,9 @@ import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionSocial } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import type { StatsDefaultModuleProps } from '../types';
+import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatsRefeeres: React.FC< StatsDefaultModuleProps > = ( {
+const StatsReferres: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -29,7 +29,7 @@ const StatsRefeeres: React.FC< StatsDefaultModuleProps > = ( {
 	const statType = 'statsReferrers';
 
 	// TODO: sort out the state shape.
-	const requesting = useSelector( ( state: any ) =>
+	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
@@ -90,4 +90,4 @@ const StatsRefeeres: React.FC< StatsDefaultModuleProps > = ( {
 	);
 };
 
-export default StatsRefeeres;
+export default StatsReferres;

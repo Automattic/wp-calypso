@@ -82,7 +82,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 
 				.formatted-header__title {
 					color: var( --studio-gray-80, #2c3338 );
-					font-family: 'SF Pro Display', sans-serif;
 					font-size: 1.5rem;
 					font-style: normal;
 					font-weight: 500;

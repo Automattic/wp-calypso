@@ -6,13 +6,28 @@ import { getThemeTierForTheme } from 'calypso/state/themes/selectors';
 export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string ) {
 	const isThemeAllowed = useSelector( ( state ) => {
 		const themeTier = getThemeTierForTheme( state, themeId );
-		return themeTier?.feature ? siteHasFeature( state, siteId, themeTier.feature ) : true;
+		const features = themeTier?.featureList ?? [ themeTier?.feature ];
+
+		return features.some(
+			( feature: string | null | undefined ) =>
+				! feature || siteHasFeature( state, siteId, feature )
+		);
 	} );
 
+	return isThemeAllowed;
+
 	const retainedBenefits = useTierRetainedBenefitsQuery( siteId, themeId );
-	const hasFeature = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, retainedBenefits?.tier.feature ?? '' )
-	);
+
+	const hasFeature = useSelector( ( state ) => {
+		const retainedFeatures = retainedBenefits?.tier?.featureList ?? [
+			retainedBenefits?.tier?.feature,
+		];
+
+		return retainedFeatures.some(
+			( feature: string | null | undefined ) =>
+				! feature || siteHasFeature( state, siteId, feature )
+		);
+	} );
 
 	if ( isThemeAllowed ) {
 		return true;
@@ -22,7 +37,7 @@ export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string 
 		return false;
 	}
 
-	if ( retainedBenefits.tier.feature === null ) {
+	if ( retainedBenefits?.tier?.feature === null ) {
 		return true;
 	}
 

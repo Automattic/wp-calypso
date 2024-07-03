@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
@@ -8,10 +8,14 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	STATS_FEATURE_DOWNLOAD_CSV,
-	STAT_TYPE_SEARCH_TERMS,
-	STAT_TYPE_CLICKS,
+	STAT_TYPE_TOP_POSTS,
 	STAT_TYPE_REFERRERS,
+	STAT_TYPE_COUNTRY_VIEWS,
+	STAT_TYPE_CLICKS,
 	STAT_TYPE_TOP_AUTHORS,
+	STAT_TYPE_EMAILS_SUMMARY,
+	STAT_TYPE_SEARCH_TERMS,
+	STAT_TYPE_VIDEO_PLAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
 	STATS_FEATURE_DATE_CONTROL,
@@ -22,12 +26,25 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_YEAR,
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
 } from '../constants';
+import { isSiteNew } from './use-site-compulsory-plan-selection-qualified-check';
+import { hasAnyPlan } from './use-stats-purchases';
+
+const paidStatsPaywall = [
+	STAT_TYPE_TOP_POSTS,
+	STAT_TYPE_COUNTRY_VIEWS,
+	STAT_TYPE_REFERRERS,
+	STAT_TYPE_CLICKS,
+	STAT_TYPE_TOP_AUTHORS,
+	STAT_TYPE_EMAILS_SUMMARY,
+	STAT_TYPE_SEARCH_TERMS,
+	STAT_TYPE_VIDEO_PLAYS,
+];
 
 const paidStats = [
-	STAT_TYPE_SEARCH_TERMS,
-	STAT_TYPE_CLICKS,
 	STAT_TYPE_REFERRERS,
+	STAT_TYPE_CLICKS,
 	STAT_TYPE_TOP_AUTHORS,
+	STAT_TYPE_SEARCH_TERMS,
 ];
 
 const granularControlForPaidStats = [
@@ -50,18 +67,6 @@ const granularControlForPaidStats = [
  * const isGatedStats = shouldGateStats( state, siteId, STAT_TYPE_SEARCH_TERMS );
  */
 export const shouldGateStats = ( state: object, siteId: number | null, statType: string ) => {
-	const isPaidStatsEnabled = isEnabled( 'stats/paid-wpcom-v2' );
-	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
-
-	// check feature flags
-	if ( ! isPaidStatsEnabled ) {
-		return false;
-	}
-	if ( isOdysseyStats ) {
-		// don't gate stats if using Odyssey stats
-		return false;
-	}
-
 	if ( ! siteId ) {
 		return true;
 	}
@@ -71,8 +76,17 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	const siteFeatures = getSiteFeatures( state, siteId );
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
 
-	// check site type
+	const restrictDashboard = config.isEnabled( 'stats/restricted-dashboard' );
+	const isNewSite = isSiteNew( state, siteId );
+	const hasAnyStatsPlan = hasAnyPlan( state, siteId );
+
+	// Check gated modules for Jetpack sites.
 	if ( jetpackSite && ! atomicSite ) {
+		// TODO: Determine more paywall segments and granular control for paid stats.
+		if ( restrictDashboard && isNewSite && ! hasAnyStatsPlan ) {
+			return [ ...paidStatsPaywall ].includes( statType );
+		}
+
 		return false;
 	}
 
@@ -91,5 +105,6 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 export const useShouldGateStats = ( statType: string ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isGatedStats = useSelector( ( state ) => shouldGateStats( state, siteId, statType ) );
-	return { isGatedStats };
+
+	return isGatedStats;
 };

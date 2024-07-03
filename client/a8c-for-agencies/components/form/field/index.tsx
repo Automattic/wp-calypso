@@ -6,7 +6,7 @@ import './style.scss';
 type Props = {
 	label: string;
 	sub?: string;
-	description?: string;
+	description?: string | ReactNode;
 	showOptionalLabel?: boolean;
 	children: ReactNode;
 	isRequired?: boolean;

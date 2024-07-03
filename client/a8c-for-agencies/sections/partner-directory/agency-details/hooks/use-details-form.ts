@@ -17,7 +17,7 @@ export default function useDetailsForm( { initialFormData }: Props ) {
 			landingPageUrl: '',
 			country: '',
 			isAvailable: true,
-			industry: '',
+			industries: [],
 			languagesSpoken: [],
 			budgetLowerRange: '0',
 			services: [],
@@ -35,7 +35,7 @@ export default function useDetailsForm( { initialFormData }: Props ) {
 			// landingPageUrl is optional
 			( formData.landingPageUrl.length === 0 || validateURL( formData.landingPageUrl ) ) &&
 			formData.country?.length > 0 &&
-			formData.industry.length > 0 &&
+			formData.industries.length > 0 &&
 			formData.services.length > 0 &&
 			formData.products.length > 0 &&
 			formData.languagesSpoken.length > 0,

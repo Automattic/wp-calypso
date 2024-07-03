@@ -1,6 +1,6 @@
 import { ThreadsPreviews } from '@automattic/social-previews';
 import { PureComponent } from 'react';
-import { decodeEntities } from 'calypso/lib/formatting';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 
 export class ThreadsSharePreview extends PureComponent {
 	render() {
@@ -11,23 +11,42 @@ export class ThreadsSharePreview extends PureComponent {
 			message,
 			imageUrl,
 			seoTitle,
-			articleSummary,
+			articleContent,
 			hidePostPreview,
 			media,
 		} = this.props;
+
+		let caption = seoTitle;
+
+		if ( message ) {
+			caption = message;
+		} else if ( seoTitle && articleContent ) {
+			caption = `${ seoTitle }\n\n${ articleContent }`;
+		}
+
+		const captionLength =
+			// 500 characters
+			500 -
+			// Number of characters in the article URL
+			articleUrl.length -
+			// 2 characters for line break
+			2;
+
+		caption = stripHTML( decodeEntities( caption ) ).slice( 0, captionLength );
+
+		caption += `\n\n${ articleUrl }`;
 
 		return (
 			<div className="threads-share-preview">
 				<ThreadsPreviews
 					posts={ [
 						{
-							description: decodeEntities( articleSummary ),
 							title: decodeEntities( seoTitle ),
 							image: imageUrl,
 							url: articleUrl,
 							name: externalName,
 							profileImage: externalProfilePicture,
-							text: message,
+							caption,
 							media,
 						},
 					] }

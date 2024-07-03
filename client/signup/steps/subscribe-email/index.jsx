@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
+import DOMPurify from 'dompurify';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -10,10 +11,21 @@ import { isRedirectAllowed } from 'calypso/lib/url/is-redirect-allowed';
 import useCreateNewAccountMutation from 'calypso/signup/hooks/use-create-new-account';
 import useSubscribeToMailingList from 'calypso/signup/hooks/use-subscribe-to-mailing-list';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SubscribeEmailStepContent from './content';
+
+import './style.scss';
+
+function sanitizeEmail( email ) {
+	if ( typeof email !== 'string' ) {
+		return '';
+	}
+
+	return DOMPurify.sanitize( email ).trim();
+}
 
 function sanitizeRedirectUrl( redirect ) {
 	const isHttpOrHttps =
@@ -34,8 +46,7 @@ function sanitizeRedirectUrl( redirect ) {
 function SubscribeEmailStep( props ) {
 	const { currentUser, flowName, goToNextStep, queryArguments, stepName, translate } = props;
 
-	const email =
-		typeof queryArguments.user_email === 'string' ? queryArguments.user_email.trim() : '';
+	const email = sanitizeEmail( queryArguments.user_email );
 
 	const redirectUrl = sanitizeRedirectUrl( queryArguments.redirect_to );
 
@@ -67,7 +78,7 @@ function SubscribeEmailStep( props ) {
 					userData: {
 						ID: userId,
 						username: username,
-						email: this.state.email,
+						email,
 					},
 					flow: flowName,
 					type: 'passwordless',
@@ -108,7 +119,15 @@ function SubscribeEmailStep( props ) {
 				from: queryArguments.from,
 			} );
 		}
-	}, [ createNewAccount, currentUser, flowName, email ] );
+	}, [
+		createNewAccount,
+		currentUser,
+		email,
+		flowName,
+		queryArguments.from,
+		queryArguments.mailing_list,
+		subscribeToMailingList,
+	] );
 
 	return (
 		<div className="subscribe-email">
@@ -166,5 +185,5 @@ export default connect(
 			queryArguments: queryArguments,
 		};
 	},
-	{ submitSignupStep }
+	{ redirectToLogout, submitSignupStep }
 )( localize( SubscribeEmailStep ) );

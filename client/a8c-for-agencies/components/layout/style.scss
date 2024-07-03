@@ -209,7 +209,6 @@ html,
 	}
 
 	.a4a-layout__header-title {
-		font-size: rem(24px);
 		margin-block-end: 0;
 		display: none;
 
@@ -235,23 +234,16 @@ html,
 
 .a4a-layout__header-title {
 	color: var(--studio-gray-80, #2c3338);
-	font-family: "SF Pro Display", sans-serif;
-	font-size: rem(24px);
-	font-style: normal;
-	font-weight: 500;
-	line-height: 1.2;
-
+	@include a4a-font-heading-xl($font-weight: 500);
 	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}
 }
 
 .a4a-layout__header-subtitle {
-	font-size: 1rem;
+	@include a4a-font-body-lg;
 	color: var(--color-neutral-60);
 	margin: 8px 0 0 0;
-	font-weight: 400;
-	line-height: 1.2;
 
 	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
