@@ -6,7 +6,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import A4AThemedModal from '../../a4a-themed-modal';
-import modalImage from './modal-image.png';
+import modalImage from '../a4a-connection-modal/modal-image.png';
 
 import './style.scss';
 
