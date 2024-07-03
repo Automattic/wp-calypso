@@ -11,7 +11,7 @@ export function useCountries(
 	return useQuery< any, Error, WooCountries >( {
 		queryKey: [ 'countries', localeSlug ],
 		queryFn: () =>
-			wpcom.req.get( `/woocommerce/countries/regions/`, {
+			wpcom.req.get( '/woocommerce/countries/regions/', {
 				apiNamespace: 'wpcom/v2',
 			} ),
 		staleTime: Infinity,

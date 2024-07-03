@@ -47,8 +47,8 @@ export interface Option {
 }
 
 export function useCountriesAndStates() {
-	const translate = useTranslate();
 	const { data: countriesList } = useCountries();
+	const translate = useTranslate();
 
 	return useMemo( () => {
 		const countryOptions = < { [ key: string ]: Option } >{};
