@@ -567,11 +567,9 @@ class StatsSite extends Component {
 						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
 						{ ! this.isModuleHidden( 'authors' ) && isNewStateEnabled && (
 							<StatsModuleAuthors
-								path="authors"
 								moduleStrings={ moduleStrings.authors }
 								period={ this.props.period }
 								query={ query }
-								statType="statsTopAuthors"
 								className={ clsx(
 									{
 										'stats__author-views': ! supportsUTMStats,
@@ -579,7 +577,6 @@ class StatsSite extends Component {
 									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large'
 								) }
-								showSummaryLink
 							/>
 						) }
 
