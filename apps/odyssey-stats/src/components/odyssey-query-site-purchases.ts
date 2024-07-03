@@ -37,7 +37,12 @@ async function queryOdysseyQuerySitePurchases(
 			} )
 			// Endpoint `site/purchases` returns a stringified JSON object as data.
 			// Our own endpoint `/sites/${ siteId }/purchases` returns a JSON object.
-			.then( ( res: { data: string } ) => ( res?.data ? JSON.parse( res.data ) : res ) )
+			.then( ( res: { data: string } ) => {
+				if ( res?.data ) {
+					return JSON.parse( res.data );
+				}
+				return res ? res : [];
+			} )
 			.catch( ( error: APIError ) => error )
 	);
 }
@@ -108,7 +113,7 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 			reduxDispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
-				purchases: purchases,
+				purchases,
 			} );
 		}
 	}, [ purchases, isFetching, reduxDispatch, hasOtherErrors, siteId ] );
