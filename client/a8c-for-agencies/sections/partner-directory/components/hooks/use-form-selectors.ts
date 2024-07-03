@@ -42,7 +42,7 @@ export function useFormSelectors() {
 	};
 
 	const availableProducts: Record< string, string > = {
-		wordpress: 'WordPress.com',
+		wordpress_com: 'WordPress.com',
 		woocommerce: 'WooCommerce',
 		jetpack: 'Jetpack',
 		wordpress_vip: 'WordPress VIP',

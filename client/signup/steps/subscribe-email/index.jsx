@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useEffect } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import DOMPurify from 'dompurify';
 import emailValidator from 'email-validator';
@@ -27,7 +27,7 @@ function sanitizeEmail( email ) {
 	return DOMPurify.sanitize( email ).trim();
 }
 
-function sanitizeRedirectUrl( redirect ) {
+function getRedirectUrl( redirect ) {
 	const isHttpOrHttps =
 		!! redirect && ( redirect.startsWith( 'https://' ) || redirect.startsWith( 'http://' ) );
 	const redirectUrl = isHttpOrHttps
@@ -48,7 +48,7 @@ function SubscribeEmailStep( props ) {
 
 	const email = sanitizeEmail( queryArguments.user_email );
 
-	const redirectUrl = sanitizeRedirectUrl( queryArguments.redirect_to );
+	const redirectUrl = getRedirectUrl( queryArguments.redirect_to );
 
 	const redirectToAfterLoginUrl = currentUser
 		? addQueryArgs( window.location.href, { user_email: currentUser?.email } )
@@ -65,44 +65,60 @@ function SubscribeEmailStep( props ) {
 			},
 		} );
 
+	const handleSubscribeToMailingList = useCallback(
+		( { email_address } = { email_address: email } ) => {
+			subscribeToMailingList( {
+				email_address,
+				mailing_list_category: queryArguments.mailing_list,
+				from: queryArguments.from,
+				first_name: queryArguments.first_name,
+				last_name: queryArguments.last_name,
+			} );
+		},
+		[
+			email,
+			queryArguments.first_name,
+			queryArguments.from,
+			queryArguments.last_name,
+			queryArguments.mailing_list,
+			subscribeToMailingList,
+		]
+	);
+
+	const handlerecordRegistration = useCallback(
+		( userData ) => {
+			recordRegistration( {
+				userData,
+				flow: flowName,
+				type: 'passwordless',
+			} );
+		},
+		[ flowName ]
+	);
+
 	const { mutate: createNewAccount, isPending: isCreateNewAccountPending } =
 		useCreateNewAccountMutation( {
 			onSuccess: ( response ) => {
-				const username =
-					( response && response.signup_sandbox_username ) || ( response && response.username );
+				const userData = {
+					ID: ( response && response.signup_sandbox_user_id ) || ( response && response.user_id ),
+					username:
+						( response && response.signup_sandbox_username ) || ( response && response.username ),
+					email,
+				};
 
-				const userId =
-					( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
-
-				recordRegistration( {
-					userData: {
-						ID: userId,
-						username: username,
-						email,
-					},
-					flow: flowName,
-					type: 'passwordless',
-				} );
-
-				subscribeToMailingList( {
-					email_address: email,
-					mailing_list_category: queryArguments.mailing_list,
-					from: queryArguments.from,
-				} );
+				handlerecordRegistration( userData );
+				handleSubscribeToMailingList();
 			},
 			onError: ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
-					subscribeToMailingList( {
-						email_address: email,
-						mailing_list_category: queryArguments.mailing_list,
-						from: queryArguments.from,
-					} );
+					handleSubscribeToMailingList();
 				}
 			},
 		} );
 
 	useEffect( () => {
-		if ( emailValidator.validate( email ) && ! currentUser ) {
+		// 1. User is not logged in and the email submitted to the flow is valid
+		if ( ! currentUser && emailValidator.validate( email ) ) {
 			createNewAccount( {
 				userData: {
 					email,
@@ -112,22 +128,11 @@ function SubscribeEmailStep( props ) {
 			} );
 		}
 
+		// 2. User is logged in and their email matches the email submitted to the flow
 		if ( currentUser?.email === email ) {
-			subscribeToMailingList( {
-				email_address: email,
-				mailing_list_category: queryArguments.mailing_list,
-				from: queryArguments.from,
-			} );
+			handleSubscribeToMailingList();
 		}
-	}, [
-		createNewAccount,
-		currentUser,
-		email,
-		flowName,
-		queryArguments.from,
-		queryArguments.mailing_list,
-		subscribeToMailingList,
-	] );
+	}, [ createNewAccount, currentUser, email, flowName, handleSubscribeToMailingList ] );
 
 	return (
 		<div className="subscribe-email">
@@ -148,25 +153,12 @@ function SubscribeEmailStep( props ) {
 						subscribeToMailingList={ subscribeToMailingList }
 						handleCreateAccountError={ ( error, submittedEmail ) => {
 							if ( isExistingAccountError( error.error ) ) {
-								subscribeToMailingList( {
-									email_address: submittedEmail,
-									mailing_list_category: queryArguments.mailing_list,
-									from: queryArguments.from,
-								} );
+								handleSubscribeToMailingList( { email_address: submittedEmail } );
 							}
 						} }
 						handleCreateAccountSuccess={ ( userData ) => {
-							recordRegistration( {
-								userData,
-								flow: flowName,
-								type: 'passwordless',
-							} );
-
-							subscribeToMailingList( {
-								email_address: userData.email,
-								mailing_list_category: queryArguments.mailing_list,
-								from: queryArguments.from,
-							} );
+							handlerecordRegistration( userData );
+							handleSubscribeToMailingList( { email_address: userData.email } );
 						} }
 					/>
 				}

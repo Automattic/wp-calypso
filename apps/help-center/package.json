@@ -23,8 +23,8 @@
 	"scripts": {
 		"clean": "rm -rf dist",
 		"teamcity:build-app": "yarn run build",
-		"build": "NODE_ENV=production yarn dev",
-		"build:app": "calypso-build && yarn run translate",
+		"build": "NODE_ENV=production yarn dev && yarn run translate",
+		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/help-center",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
