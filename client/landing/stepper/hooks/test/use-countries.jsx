@@ -21,7 +21,7 @@ describe( 'use-countries hook', () => {
 		};
 
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/woocommerce/countries/regions/?_locale=en' )
+			.get( '/wpcom/v2/woocommerce/countries/regions/' )
 			.reply( 200, expected );
 
 		const { result } = renderHook( () => useCountries(), {
