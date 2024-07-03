@@ -5,7 +5,6 @@ import {
 	getPlans,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
-import { AddOns } from '@automattic/data-stores';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
@@ -49,6 +48,7 @@ import type {
 	Feature,
 	FeatureGroup,
 	PlanSlug,
+	WPComStorageAddOnSlug,
 	FeatureGroupMap,
 } from '@automattic/calypso-products';
 
@@ -534,7 +534,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
-	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 } > = ( {
 	feature,
 	visibleGridPlans,
@@ -683,7 +683,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
-	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -805,7 +805,7 @@ const FeatureGroup = ( {
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
-	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	visibleGridPlans: GridPlan[];
 	planFeatureFootnotes: {

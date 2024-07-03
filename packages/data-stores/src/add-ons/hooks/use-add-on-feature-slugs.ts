@@ -5,10 +5,11 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_CUSTOM_DESIGN,
 	WPCOM_FEATURES_NO_ADVERTS,
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
 	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import { ADD_ON_100GB_STORAGE, ADD_ON_50GB_STORAGE } from '../constants';
 
 /**
  * Returns any relevant feature slugs for a given add-on.
@@ -25,9 +26,9 @@ const useAddOnFeatureSlugs = ( addOnProductSlug: string, quantity?: number ) => 
 				return [ WPCOM_FEATURES_NO_ADVERTS ];
 			case PRODUCT_1GB_SPACE:
 				if ( quantity === 50 ) {
-					return [ ADD_ON_50GB_STORAGE ];
+					return [ FEATURE_50GB_STORAGE_ADD_ON ];
 				} else if ( quantity === 100 ) {
-					return [ ADD_ON_100GB_STORAGE ];
+					return [ FEATURE_100GB_STORAGE_ADD_ON ];
 				}
 			default:
 				return null;

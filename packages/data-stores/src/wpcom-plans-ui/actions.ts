@@ -1,5 +1,8 @@
-import type { StorageAddOnSlug } from '../add-ons/types';
-import type { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
+import type {
+	PlanSlug,
+	WPComPlanStorageFeatureSlug,
+	WPComStorageAddOnSlug,
+} from '@automattic/calypso-products';
 
 export const setShowDomainUpsellDialog = ( show: boolean ) =>
 	( {
@@ -17,7 +20,7 @@ export const setSelectedStorageOptionForPlan = ( {
 	planSlug,
 	siteId,
 }: {
-	addOnSlug: StorageAddOnSlug | WPComPlanStorageFeatureSlug;
+	addOnSlug: WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	planSlug: PlanSlug;
 	siteId?: number | null;
 } ) =>

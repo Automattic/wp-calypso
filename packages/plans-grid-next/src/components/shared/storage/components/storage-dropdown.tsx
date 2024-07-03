@@ -9,24 +9,29 @@ import DropdownOption from '../../../dropdown-option';
 import useAvailableStorageOptions from '../hooks/use-available-storage-dropdown-options';
 import useDefaultStorageOption from '../hooks/use-default-storage-option';
 import useStorageStringFromFeature from '../hooks/use-storage-string-from-feature';
-import type { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
+import type {
+	PlanSlug,
+	WPComPlanStorageFeatureSlug,
+	WPComStorageAddOnSlug,
+} from '@automattic/calypso-products';
+import type { AddOnMeta } from '@automattic/data-stores';
 
 type StorageDropdownProps = {
 	planSlug: PlanSlug;
-	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	priceOnSeparateLine?: boolean;
 };
 
 type StorageDropdownOptionProps = {
 	planSlug: PlanSlug;
 	price?: string;
-	storageSlug: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug;
+	storageSlug: WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	isLargeCurrency?: boolean;
 	priceOnSeparateLine?: boolean;
 };
 
 const getStorageOptionPrice = (
-	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null,
+	storageAddOnsForPlan: ( AddOnMeta | null )[] | null,
 	storageOptionSlug: string
 ) => {
 	return storageAddOnsForPlan?.find(
@@ -142,7 +147,7 @@ const StorageDropdown = ( {
 	};
 
 	const handleOnChange = useCallback(
-		( { selectedItem }: { selectedItem: { key: AddOns.StorageAddOnSlug } } ) => {
+		( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) => {
 			const addOnSlug = selectedItem?.key;
 
 			if ( addOnSlug ) {

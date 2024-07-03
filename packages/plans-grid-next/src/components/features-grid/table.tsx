@@ -1,4 +1,3 @@
-import { AddOns } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -14,7 +13,7 @@ import PlanPrice from './plan-price';
 import PlanTagline from './plan-tagline';
 import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import TopButtons from './top-buttons';
-import type { FeatureGroupSlug } from '@automattic/calypso-products';
+import type { FeatureGroupSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
 
 type TableProps = {
 	currentSitePlanSlug?: string | null;
@@ -23,7 +22,7 @@ type TableProps = {
 	hideUnavailableFeatures?: boolean;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
