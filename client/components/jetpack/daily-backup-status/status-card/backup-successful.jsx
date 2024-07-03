@@ -62,6 +62,9 @@ const BackupSuccessful = ( {
 
 	const [ showContent, toggleShowContent ] = useToggleContent();
 
+	const isCloneFlow =
+		availableActions && availableActions.length === 1 && availableActions[ 0 ] === 'clone';
+
 	return (
 		<>
 			<div className="status-card__message-head">
@@ -70,16 +73,18 @@ const BackupSuccessful = ( {
 					{ isToday ? translate( 'Latest backup' ) : translate( 'Latest backup on this day' ) }
 				</div>
 
-				<div className="status-card__toolbar">
-					<Toolbar
-						siteId={ siteId }
-						activity={ backup }
-						isContentExpanded={ showContent }
-						onToggleContent={ toggleShowContent }
-						availableActions={ [ 'download', 'rewind', 'view' ] }
-						onClickClone={ onClickClone }
-					/>
-				</div>
+				{ ! isCloneFlow && (
+					<div className="status-card__toolbar">
+						<Toolbar
+							siteId={ siteId }
+							activity={ backup }
+							isContentExpanded={ showContent }
+							onToggleContent={ toggleShowContent }
+							availableActions={ availableActions }
+							onClickClone={ onClickClone }
+						/>
+					</div>
+				) }
 			</div>
 			<div className="status-card__hide-desktop">
 				<div className="status-card__title">{ displayDate }</div>
