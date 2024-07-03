@@ -45,10 +45,12 @@ import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModuleAuthors from './features/modules/stats-authors';
 import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
 import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
+import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
 import HighlightsSection from './highlights-section';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
@@ -62,8 +64,6 @@ import StatsModule from './stats-module';
 import StatsModuleDevices from './stats-module-devices';
 import StatsModuleUpgradeOverlay from './stats-module-devices/stats-module-upgrade-overlay';
 import StatsModuleEmails from './stats-module-emails';
-import StatsModuleUTM from './stats-module-utm';
-import StatsModuleUTMOverlay from './stats-module-utm/stats-module-utm-overlay';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -486,6 +486,7 @@ class StatsSite extends Component {
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
+								summary={ false }
 								className={ clsx(
 									'stats__flexible-grid-item--60',
 									'stats__flexible-grid-item--full--large',
@@ -559,7 +560,7 @@ class StatsSite extends Component {
 							/>
 						) }
 						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
-						{ ! this.isModuleHidden( 'authors' ) && (
+						{ ! this.isModuleHidden( 'authors' ) && ! isNewStateEnabled && (
 							<StatsModule
 								path="authors"
 								moduleStrings={ moduleStrings.authors }
@@ -574,6 +575,23 @@ class StatsSite extends Component {
 									'stats__flexible-grid-item--full--large'
 								) }
 								showSummaryLink
+							/>
+						) }
+
+						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
+						{ ! this.isModuleHidden( 'authors' ) && isNewStateEnabled && (
+							<StatsModuleAuthors
+								moduleStrings={ moduleStrings.authors }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									{
+										'stats__author-views': ! supportsUTMStats,
+									},
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large',
+									'stats-card--empty-variant'
+								) }
 							/>
 						) }
 

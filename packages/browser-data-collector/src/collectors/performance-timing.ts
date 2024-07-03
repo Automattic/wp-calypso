@@ -21,6 +21,7 @@ import {
 	getLoadEventStart,
 	getloadEventEnd,
 } from '../api/performance-timing';
+import type { Collector } from '../types';
 
 const normalize = ( value: number, start: number ): number => {
 	// Some properties should return 0 if the value is not present (eg: redirectStart if there are no redirect)
