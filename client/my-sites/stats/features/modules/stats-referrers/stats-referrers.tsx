@@ -36,7 +36,7 @@ const StatsReferres: React.FC< StatsDefaultModuleProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
 
-	const isRequestingData = debugLoaders || ( requesting && ! data );
+	const isRequestingData = debugLoaders || requesting;
 
 	return (
 		<>

@@ -48,7 +48,7 @@ const StatClicks: React.FC< StatClicksProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
 
-	const isRequestingData = debugLoaders || ( requesting && ! data );
+	const isRequestingData = debugLoaders || requesting;
 
 	return (
 		<>

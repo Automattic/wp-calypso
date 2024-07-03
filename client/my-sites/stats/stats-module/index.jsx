@@ -148,9 +148,9 @@ class StatsModule extends Component {
 
 		return (
 			<>
-				{ siteId && statType && (
+				{ /* { siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
-				) }
+				) } */ }
 				<StatsListCard
 					className={ clsx( className, 'stats-module__card', path ) }
 					moduleType={ path }
