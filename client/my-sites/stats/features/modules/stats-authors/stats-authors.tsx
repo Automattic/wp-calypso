@@ -13,7 +13,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
-import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
 
 type StatClicksProps = {
 	className?: string;
@@ -30,7 +30,13 @@ type StatClicksProps = {
 	};
 };
 
-const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings, className } ) => {
+const StatClicks: React.FC< StatClicksProps > = ( {
+	period,
+	query,
+	moduleStrings,
+	className,
+	debugLoaders,
+} ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsTopAuthors';
@@ -42,13 +48,22 @@ const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
 
+	const isRequestingData = debugLoaders || ( requesting && ! data );
+
 	return (
 		<>
 			{ siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
-			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
+			{ isRequestingData && (
+				<StatsCardSkeleton
+					isLoading={ isRequestingData }
+					className={ className }
+					title={ moduleStrings.title }
+					type={ 2 }
+				/>
+			) }
+			{ ! isRequestingData && ! data?.length && (
 				<StatsCard
 					className={ className }
 					title={ translate( 'Authors' ) }
@@ -72,7 +87,7 @@ const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings
 					<></>
 				</StatsCard>
 			) }
-			{ data && !! data.length && (
+			{ ! isRequestingData && !! data.length && (
 				<StatsModule
 					path="authors"
 					moduleStrings={ moduleStrings }

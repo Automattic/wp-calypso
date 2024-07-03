@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
-import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
@@ -22,6 +22,7 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	debugLoaders,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -34,13 +35,22 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
 
+	const isRequestingData = debugLoaders || ( requesting && ! data );
+
 	return (
 		<>
 			{ siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
-			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
+			{ isRequestingData && (
+				<StatsCardSkeleton
+					isLoading={ isRequestingData }
+					className={ className }
+					title={ moduleStrings.title }
+					type={ 3 }
+				/>
+			) }
+			{ ! isRequestingData && ! data?.length && (
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ translate( 'Clicks' ) }
@@ -64,7 +74,7 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 					<></>
 				</StatsCard>
 			) }
-			{ data && !! data.length && (
+			{ ! isRequestingData && !! data.length && (
 				<StatsModule
 					path="clicks"
 					moduleStrings={ moduleStrings }

@@ -54,7 +54,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 				/>
 			) }
 			{ /* TODO: consider supressing <StatsModule /> empty state */ }
-			{ ( ! isRequestingData && ! data?.length ) || shouldGateStatsTopPosts ? (
+			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsTopPosts ) && (
 				<StatsModule
 					path="posts"
 					moduleStrings={ moduleStrings }
@@ -64,7 +64,8 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					showSummaryLink
 					className={ className } // TODO: extend with a base class after adding skeleton loaders
 				/>
-			) : (
+			) }
+			{ ! isRequestingData && ! data?.length && (
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ moduleStrings.title }

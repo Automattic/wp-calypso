@@ -525,6 +525,7 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsClicks"
 								showSummaryLink
+								debugLoaders={ this.state.debugLoaders }
 								className={ clsx(
 									{
 										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
@@ -587,6 +588,7 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.authors }
 								period={ this.props.period }
 								query={ query }
+								debugLoaders={ this.state.debugLoaders }
 								className={ clsx(
 									{
 										'stats__author-views': ! supportsUTMStats,
