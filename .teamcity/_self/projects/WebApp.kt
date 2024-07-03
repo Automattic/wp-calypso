@@ -579,13 +579,13 @@ object CheckCodeStyleBranch : BuildType({
 				# Avoid running more than 16 parallel eslint tasks as it could OOM
 				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" -gt 16 ] || [ "${'$'}TOTAL_FILES_TO_LINT" == "0" ]; then
 					echo "Linting all files"
-					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
+					yarn run eslint --cache --cache-location "./cache/eslint-cache" --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 				else
 					# To avoid `ENAMETOOLONG` errors linting files, we have to lint them one by one,
 					# instead of passing the full list of files to eslint directly.
 					for file in ${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?)${'$'}' || true); do
 						( echo "Linting ${'$'}file"
-						yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${'$'}{file//\//_}.xml" "${'$'}file" ) &
+						yarn run eslint --cache --cache-location "./cache/eslint-cache" --format checkstyle --output-file "./checkstyle_results/eslint/${'$'}{file//\//_}.xml" "${'$'}file" ) &
 					done
 					wait
 				fi
