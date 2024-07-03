@@ -19,7 +19,6 @@ import './style.scss';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UpgradeButton from '../../components/upgrade-button/upgrade-button';
 import EcommerceTrialIncluded from '../../current-plan/trials/ecommerce-trial-included';
@@ -36,6 +35,7 @@ interface PlanPriceType {
 	subText?: ReactNode;
 	discount?: number;
 	discountText?: ReactNode;
+	currencyCode?: string;
 }
 type PlanKeys =
 	| 'PLAN_ECOMMERCE'
@@ -64,14 +64,17 @@ const useEntrepreneurPlanPrices = () => {
 		PLAN_ECOMMERCE: {
 			term: translate( 'Pay yearly' ),
 			slug: PLAN_ECOMMERCE,
+			currencyCode: pricingMeta?.[ PLAN_ECOMMERCE ]?.currencyCode,
 		},
 		PLAN_ECOMMERCE_2_YEARS: {
 			term: translate( 'Pay every 2 years' ),
 			slug: PLAN_ECOMMERCE_2_YEARS,
+			currencyCode: pricingMeta?.[ PLAN_ECOMMERCE_2_YEARS ]?.currencyCode,
 		},
 		PLAN_ECOMMERCE_3_YEARS: {
 			term: translate( 'Pay every 3 years' ),
 			slug: PLAN_ECOMMERCE_3_YEARS,
+			currencyCode: pricingMeta?.[ PLAN_ECOMMERCE_3_YEARS ]?.currencyCode,
 		},
 		PLAN_ECOMMERCE_MONTHLY: {
 			term: translate( 'Pay monthly' ),
@@ -82,6 +85,7 @@ const useEntrepreneurPlanPrices = () => {
 				args: { rawPrice: baseMontlyPrice },
 				comment: 'Excl. Taxes is short for excluding taxes',
 			} ),
+			currencyCode: pricingMeta?.[ PLAN_ECOMMERCE_MONTHLY ]?.currencyCode,
 		},
 	};
 	const keys = Object.keys( planPrices ) as PlanKeys[];
@@ -142,7 +146,6 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const plans = useEntrepreneurPlanPrices();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const isEnglish = useIsEnglishLocale();
 	const [ selectedInterval, setSelectedInterval ] = useState< PlanKeys >( 'PLAN_ECOMMERCE' );
 	const selectedPlan = plans[ selectedInterval ];
@@ -230,7 +233,7 @@ export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
 					<div className="price-block">
 						<PlanPrice
 							rawPrice={ selectedPlan.montlyPrice }
-							currencyCode={ currencyCode }
+							currencyCode={ selectedPlan.currencyCode }
 							isSmallestUnit
 						/>
 						<p className="card-text">{ selectedPlan.subText }</p>
