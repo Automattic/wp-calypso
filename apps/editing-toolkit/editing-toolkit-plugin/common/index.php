@@ -55,7 +55,7 @@ function is_homepage_title_hidden() {
 	}
 
 	if ( defined( 'MU_WPCOM_HOMEPAGE_TITLE_HIDDEN' ) && MU_WPCOM_HOMEPAGE_TITLE_HIDDEN ) {
-		return
+		return;
 	}
 
 	$hide_homepage_title = (bool) get_theme_mod( 'hide_front_page_title', false );
@@ -76,7 +76,7 @@ function needs_slider_width_workaround() {
 	global $post;
 
 	if ( defined( 'MU_WPCOM_SLIDER_WIDTH' ) && MU_WPCOM_SLIDER_WIDTH ) {
-		return
+		return;
 	}
 
 	if (
@@ -182,7 +182,7 @@ add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_script_and_style'
  **/
 function wpcom_gutenberg_enable_custom_line_height() {
 	if ( defined( 'MU_WPCOM_CUSTOM_LINE_HEIGHT' ) && MU_WPCOM_CUSTOM_LINE_HEIGHT ) {
-		return
+		return;
 	}
 
 	add_theme_support( 'custom-line-height' );
@@ -236,7 +236,7 @@ add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_disable_hei
  */
 function enqueue_override_preview_button_url() {
 	if ( defined( 'MU_WPCOM_OVERRIDE_PREVIEW_BUTTON_URL' ) && MU_WPCOM_OVERRIDE_PREVIEW_BUTTON_URL ) {
-		return
+		return;
 	}
 
 	if ( ! function_exists( 'is_blog_atomic' ) ) {
