@@ -91,42 +91,41 @@ const resetAnalyticsData = () => {
 class SignupForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
-		disableBlurValidation: PropTypes.bool,
-		disableContinueAsUser: PropTypes.bool,
-		disabled: PropTypes.bool,
 		disableEmailExplanation: PropTypes.string,
 		disableEmailInput: PropTypes.bool,
 		disableSubmitButton: PropTypes.bool,
+		disableBlurValidation: PropTypes.bool,
+		disableContinueAsUser: PropTypes.bool,
+		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
 		email: PropTypes.string,
 		flowName: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
+		redirectToAfterLoginUrl: PropTypes.string,
 		goToNextStep: PropTypes.func,
-		handleCreateAccountError: PropTypes.func,
-		handleCreateAccountSuccess: PropTypes.func,
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
-		horizontal: PropTypes.bool,
 		isPasswordless: PropTypes.bool,
-		isSocialFirst: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
+		isSocialFirst: PropTypes.bool,
 		locale: PropTypes.string,
-		notYouText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 		positionInFlow: PropTypes.number,
-		redirectToAfterLoginUrl: PropTypes.string,
 		save: PropTypes.func,
-		shouldDisplayUserExistsError: PropTypes.bool,
 		signupDependencies: PropTypes.object,
 		step: PropTypes.object,
+		submitButtonText: PropTypes.string,
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
-		submitButtonText: PropTypes.string,
-		submitForm: PropTypes.func,
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		horizontal: PropTypes.bool,
+		shouldDisplayUserExistsError: PropTypes.bool,
+		submitForm: PropTypes.func,
+		handleCreateAccountError: PropTypes.func,
+		notYouText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -1355,7 +1354,7 @@ class SignupForm extends Component {
 						onInputBlur={ this.handleBlur }
 						onInputChange={ this.handleChangeEvent }
 						onCreateAccountError={ this.handleCreateAccountError }
-						onCreateAccountSuccess={ this.props.handleCreateAccountSuccess }
+						onCreateAccountSuccess={ this.handleCreateAccountSuccess }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (
