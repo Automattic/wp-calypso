@@ -41,8 +41,10 @@ describe( 'useLoginUrlForFlow', () => {
 		const flowWithExtraParams = {
 			...flow,
 			useLoginParams: () => ( {
-				foo: 'bar',
-				bar: 'baz',
+				extraQueryParams: {
+					foo: 'bar',
+					bar: 'baz',
+				},
 			} ),
 		} satisfies Flow;
 
