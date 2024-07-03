@@ -329,7 +329,6 @@ class DomainSearch extends Component {
 									? this.props.wpAdminUrl
 									: `/home/${ selectedSiteSlug }`,
 					  };
-
 			content = (
 				<span>
 					<div className="domain-search__content">

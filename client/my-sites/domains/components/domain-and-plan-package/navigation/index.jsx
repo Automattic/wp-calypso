@@ -6,14 +6,17 @@ import './style.scss';
 export default function DomainAndPlanPackageNavigation( props ) {
 	const translate = useTranslate();
 
+	// `goBackLink` will be either wp-admin or My Home, depending on the user's
+	// current admin interface preference.
+	// If unavailable, we fall back to the previous page in history.
 	const goBack = () => {
-		if ( window.history.length > 1 ) {
-			window.history.go( -1 );
+		if ( props.goBackLink ) {
+			window.location.assign( props.goBackLink );
 			return;
 		}
 
-		if ( props.goBackLink ) {
-			window.location.assign( props.goBackLink );
+		if ( window.history.length > 1 ) {
+			window.history.go( -1 );
 		}
 	};
 
@@ -23,7 +26,8 @@ export default function DomainAndPlanPackageNavigation( props ) {
 		args: { currentStep: step, stepCount: 3 },
 	} );
 
-	const buttonText = props.goBackText || translate( 'Back' );
+	const buttonText =
+		props.goBackText || ( props.step !== 1 ? translate( 'Back' ) : translate( 'Home' ) );
 
 	return (
 		<div className="domain-and-plan-package-navigation">
