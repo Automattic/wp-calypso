@@ -9,8 +9,8 @@ const selectors = {
 	section: ( name: string ) =>
 		`${ panel } .components-panel__body-title button:has-text("${ name }")`,
 
-	// Revisions (before 18.4.0)
-	showRevisionButton: '.editor-post-last-revision__panel', // Revision is a link, not a panel.
+	// Revisions (after 18.7.0)
+	showRevisionButton: '.editor-private-post-last-revision__button',
 
 	// Status & Visibility
 	visibilityButton: '.edit-post-post-visibility__toggle',
