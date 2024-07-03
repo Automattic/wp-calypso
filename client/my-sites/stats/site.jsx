@@ -575,7 +575,8 @@ class StatsSite extends Component {
 										'stats__author-views': ! supportsUTMStats,
 									},
 									'stats__flexible-grid-item--half',
-									'stats__flexible-grid-item--full--large'
+									'stats__flexible-grid-item--full--large',
+									'stats-card--empty-variant'
 								) }
 							/>
 						) }
