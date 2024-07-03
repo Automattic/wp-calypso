@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
