@@ -15,7 +15,7 @@ import {
 	PURCHASES_SITE_FETCH_FAILED,
 } from 'calypso/state/action-types';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
-import { getApiPath } from '../lib/get-api';
+import { getApiNamespace, getApiPath } from '../lib/get-api';
 
 async function queryOdysseyQuerySitePurchases(
 	siteId: number | null,
@@ -29,11 +29,17 @@ async function queryOdysseyQuerySitePurchases(
 		? `/sites/${ siteId }/purchases`
 		: '/site/purchases';
 
-	return wpcom.req
-		.get( {
-			path: getApiPath( apiPath, { siteId } ),
-		} )
-		.catch( ( error: APIError ) => error );
+	return (
+		wpcom.req
+			.get( {
+				path: getApiPath( apiPath, { siteId } ),
+				apiNamespace: getApiNamespace(),
+			} )
+			// Endpoint `site/purchases` returns a stringified JSON object as data.
+			// Our own endpoint `/sites/${ siteId }/purchases` returns a JSON object.
+			.then( ( res: { data: string } ) => ( res?.data ? JSON.parse( res.data ) : res ) )
+			.catch( ( error: APIError ) => error )
+	);
 }
 /**
  * Update site products in the Redux store by fetching purchases via API for Odyssey Stats.
@@ -76,11 +82,27 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 		}
 
 		if ( isError( purchases ) || hasOtherErrors ) {
-			// Dispatch to the Purchases reducer for error status
-			reduxDispatch( {
-				type: PURCHASES_SITE_FETCH_FAILED,
-				error: 'purchase_fetch_failed',
-			} );
+			// As `site/purchases` are still in use for legacy versions, so we still need to feed it with data.
+			if ( ( purchases as APIError ).status !== 403 ) {
+				// Dispatch to the Purchases reducer for error status
+				reduxDispatch( {
+					type: PURCHASES_SITE_FETCH_FAILED,
+					error: 'purchase_fetch_failed',
+				} );
+			} else {
+				// TODO: Remove this after fixing the API permission issue from Jetpack.
+				reduxDispatch( {
+					type: PURCHASES_SITE_FETCH_COMPLETED,
+					siteId,
+					purchases: [
+						{
+							expiry_status: 'active',
+							product_slug: 'jetpack_stats_pwyw_yearly',
+							blog_id: siteId,
+						},
+					],
+				} );
+			}
 		} else {
 			// Dispatch to the Purchases reducer for consistent requesting status
 			reduxDispatch( {
