@@ -3,7 +3,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Gravatar } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
@@ -37,6 +38,7 @@ const ChatMessage = (
 	const { botName, extraContactOptions, addMessage, trackEvent } = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
+	const { __ } = useI18n();
 
 	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
 		delayBetweenCharacters: 66,

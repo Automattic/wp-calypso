@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import ArrowUp from '../../assets/arrow-up.svg';
@@ -21,6 +21,7 @@ export const OdieSendMessageButton = ( {
 	enableStickToBottom: () => void;
 	enableJumpToRecent: boolean;
 } ) => {
+	const { __ } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const { initialUserMessage, chat, isLoading, trackEvent } = useOdieAssistantContext();

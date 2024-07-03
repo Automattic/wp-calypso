@@ -1,5 +1,5 @@
-import { __ } from '@wordpress/i18n';
 import { Icon, chevronDown } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useOdieAssistantContext } from '../../context';
 
@@ -11,6 +11,7 @@ export const JumpToRecent = ( {
 	enableJumpToRecent: boolean;
 } ) => {
 	const { trackEvent, isMinimized } = useOdieAssistantContext();
+	const { __ } = useI18n();
 	const jumpToRecent = () => {
 		scrollToBottom();
 		trackEvent( 'chat_jump_to_recent_click' );

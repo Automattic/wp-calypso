@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../';
 import { noop, useOdieAssistantContext } from '../../context';
@@ -15,6 +15,7 @@ const WasThisHelpfulButtons = ( {
 	message: Message;
 	onDislike?: () => void;
 } ) => {
+	const { __ } = useI18n();
 	const { setMessageLikedStatus, trackEvent } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessageFeedback } = useOdieSendMessageFeedback();
 
