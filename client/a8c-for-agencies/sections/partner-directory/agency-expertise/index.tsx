@@ -76,7 +76,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 			);
 			page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
 		},
-		[ page, reduxDispatch, translate ]
+		[ translate ]
 	);
 
 	const onSubmitError = useCallback( () => {
@@ -85,7 +85,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				duration: 6000,
 			} )
 		);
-	}, [ reduxDispatch, translate ] );
+	}, [ translate ] );
 
 	const {
 		formData,

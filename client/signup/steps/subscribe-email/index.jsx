@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useEffect } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
+import DOMPurify from 'dompurify';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -10,10 +11,23 @@ import { isRedirectAllowed } from 'calypso/lib/url/is-redirect-allowed';
 import useCreateNewAccountMutation from 'calypso/signup/hooks/use-create-new-account';
 import useSubscribeToMailingList from 'calypso/signup/hooks/use-subscribe-to-mailing-list';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SubscribeEmailStepContent from './content';
 
-function sanitizeRedirectUrl( redirect ) {
+import './style.scss';
+
+function sanitizeEmail( email ) {
+	if ( typeof email !== 'string' ) {
+		return '';
+	}
+
+	return DOMPurify.sanitize( email ).trim();
+}
+
+function getRedirectUrl( redirect ) {
 	const isHttpOrHttps =
 		!! redirect && ( redirect.startsWith( 'https://' ) || redirect.startsWith( 'http://' ) );
 	const redirectUrl = isHttpOrHttps
@@ -30,59 +44,81 @@ function sanitizeRedirectUrl( redirect ) {
  * into a single step.
  */
 function SubscribeEmailStep( props ) {
-	const { flowName, goToNextStep, queryParams, stepName } = props;
-	const redirectUrl = sanitizeRedirectUrl( queryParams.redirect_to );
-	const email = typeof queryParams.user_email === 'string' ? queryParams.user_email.trim() : '';
+	const { currentUser, flowName, goToNextStep, queryArguments, stepName, translate } = props;
+
+	const email = sanitizeEmail( queryArguments.user_email );
+
+	const redirectUrl = getRedirectUrl( queryArguments.redirect_to );
+
+	const redirectToAfterLoginUrl = currentUser
+		? addQueryArgs( window.location.href, { user_email: currentUser?.email } )
+		: '';
 
 	const { mutate: subscribeToMailingList, isPending: isSubscribeToMailingListPending } =
 		useSubscribeToMailingList( {
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_signup_email_subscription_success', {
-					mailing_list: queryParams.mailing_list,
+					mailing_list: queryArguments.mailing_list,
 				} );
 				props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
 				goToNextStep();
 			},
 		} );
 
+	const handleSubscribeToMailingList = useCallback(
+		( { email_address } = { email_address: email } ) => {
+			subscribeToMailingList( {
+				email_address,
+				mailing_list_category: queryArguments.mailing_list,
+				from: queryArguments.from,
+				first_name: queryArguments.first_name,
+				last_name: queryArguments.last_name,
+			} );
+		},
+		[
+			email,
+			queryArguments.first_name,
+			queryArguments.from,
+			queryArguments.last_name,
+			queryArguments.mailing_list,
+			subscribeToMailingList,
+		]
+	);
+
+	const handlerecordRegistration = useCallback(
+		( userData ) => {
+			recordRegistration( {
+				userData,
+				flow: flowName,
+				type: 'passwordless',
+			} );
+		},
+		[ flowName ]
+	);
+
 	const { mutate: createNewAccount, isPending: isCreateNewAccountPending } =
 		useCreateNewAccountMutation( {
 			onSuccess: ( response ) => {
-				const username =
-					( response && response.signup_sandbox_username ) || ( response && response.username );
+				const userData = {
+					ID: ( response && response.signup_sandbox_user_id ) || ( response && response.user_id ),
+					username:
+						( response && response.signup_sandbox_username ) || ( response && response.username ),
+					email,
+				};
 
-				const userId =
-					( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
-
-				recordRegistration( {
-					userData: {
-						ID: userId,
-						username: username,
-						email: this.state.email,
-					},
-					flow: flowName,
-					type: 'passwordless',
-				} );
-
-				subscribeToMailingList( {
-					email_address: email,
-					mailing_list_category: queryParams.mailing_list,
-					from: queryParams.from,
-				} );
+				handlerecordRegistration( userData );
+				handleSubscribeToMailingList();
 			},
 			onError: ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
-					subscribeToMailingList( {
-						email_address: email,
-						mailing_list_category: queryParams.mailing_list,
-						from: queryParams.from,
-					} );
+					handleSubscribeToMailingList();
 				}
 			},
 		} );
 
 	useEffect( () => {
-		if ( emailValidator.validate( email ) ) {
+		// 1. User is not logged in and the email submitted to the flow is valid
+		if ( ! currentUser && emailValidator.validate( email ) ) {
 			createNewAccount( {
 				userData: {
 					email,
@@ -91,42 +127,38 @@ function SubscribeEmailStep( props ) {
 				isPasswordless: true,
 			} );
 		}
-	}, [ createNewAccount, flowName, email ] );
+
+		// 2. User is logged in and their email matches the email submitted to the flow
+		if ( currentUser?.email === email ) {
+			handleSubscribeToMailingList();
+		}
+	}, [ createNewAccount, currentUser, email, flowName, handleSubscribeToMailingList ] );
 
 	return (
 		<div className="subscribe-email">
 			<StepWrapper
 				flowName={ flowName }
+				fallbackHeaderText={
+					currentUser ? translate( 'Is this you?' ) : translate( 'Subscribe to our email list' )
+				}
+				hideFormattedHeader={ isCreateNewAccountPending || isSubscribeToMailingListPending }
 				hideBack
-				hideFormattedHeader
 				stepContent={
 					<SubscribeEmailStepContent
 						{ ...props }
 						email={ email }
 						isPending={ isCreateNewAccountPending || isSubscribeToMailingListPending }
+						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 						redirectUrl={ redirectUrl }
 						subscribeToMailingList={ subscribeToMailingList }
 						handleCreateAccountError={ ( error, submittedEmail ) => {
 							if ( isExistingAccountError( error.error ) ) {
-								subscribeToMailingList( {
-									email_address: submittedEmail,
-									mailing_list_category: queryParams.mailing_list,
-									from: queryParams.from,
-								} );
+								handleSubscribeToMailingList( { email_address: submittedEmail } );
 							}
 						} }
 						handleCreateAccountSuccess={ ( userData ) => {
-							recordRegistration( {
-								userData,
-								flow: flowName,
-								type: 'passwordless',
-							} );
-
-							subscribeToMailingList( {
-								email_address: userData.email,
-								mailing_list_category: queryParams.mailing_list,
-								from: queryParams.from,
-							} );
+							handlerecordRegistration( userData );
+							handleSubscribeToMailingList( { email_address: userData.email } );
 						} }
 					/>
 				}
@@ -136,4 +168,14 @@ function SubscribeEmailStep( props ) {
 	);
 }
 
-export default connect( null, { submitSignupStep } )( localize( SubscribeEmailStep ) );
+export default connect(
+	( state ) => {
+		const queryArguments = getCurrentQueryArguments( state );
+
+		return {
+			currentUser: getCurrentUser( state ),
+			queryArguments: queryArguments,
+		};
+	},
+	{ redirectToLogout, submitSignupStep }
+)( localize( SubscribeEmailStep ) );

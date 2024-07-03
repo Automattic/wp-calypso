@@ -5,7 +5,6 @@ import {
 	isFreePlan,
 	isPersonalPlan,
 	PLAN_PERSONAL,
-	WPComStorageAddOnSlug,
 	PLAN_FREE,
 	type PlanSlug,
 	UrlFriendlyTermType,
@@ -603,7 +602,7 @@ const PlansFeaturesMain = ( {
 	 * TODO: `handleStorageAddOnClick` no longer necessary. Tracking can be done from the grid components directly.
 	 */
 	const handleStorageAddOnClick = useCallback(
-		( addOnSlug: WPComStorageAddOnSlug ) =>
+		( addOnSlug: AddOns.StorageAddOnSlug ) =>
 			recordTracksEvent( 'calypso_signup_storage_add_on_dropdown_option_click', {
 				add_on_slug: addOnSlug,
 			} ),

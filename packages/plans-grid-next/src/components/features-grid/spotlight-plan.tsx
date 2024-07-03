@@ -1,9 +1,5 @@
-import {
-	FEATURE_GROUP_STORAGE,
-	WPComStorageAddOnSlug,
-	getPlanClass,
-	isFreePlan,
-} from '@automattic/calypso-products';
+import { FEATURE_GROUP_STORAGE, getPlanClass, isFreePlan } from '@automattic/calypso-products';
+import { AddOns } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { GridPlan, PlanActionOverrides } from '../../types';
 import BillingTimeframes from './billing-timeframes';
@@ -18,7 +14,7 @@ type SpotlightPlanProps = {
 	currentSitePlanSlug?: string | null;
 	gridPlanForSpotlight?: GridPlan;
 	isInSignup: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
 	showUpgradeableStorage: boolean;

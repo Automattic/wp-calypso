@@ -1,0 +1,73 @@
+@import "@wordpress/base-styles/mixins";
+
+.configure-your-site-modal-form {
+	max-width: 600px;
+
+	select {
+		width: fit-content;
+	}
+	.components-modal__content {
+		padding: 0;
+	}
+	.configure-your-site-modal-form__main {
+		padding: 0 30px;
+	}
+
+	.configure-your-site-modal-form__php-version-select {
+		min-width: 200px;
+	}
+	.configure-your-site-modal-form__allow-clients-to-use-help-center {
+		margin-top: 15px;
+		display: flex;
+		font-weight: 400;
+		color: var(--color-neutral-50);
+		font-size: rem(14px);
+		line-height: 1.5;
+	}
+
+	.configure-your-site-modal-form__footer {
+		padding: 24px 40px;
+		text-align: right;
+		background-color: var(--color-neutral-0);
+		border-radius: 4px;
+	}
+
+	.configure-your-site-modal-form__site-name-placeholder {
+		@include placeholder( --color-neutral-10 );
+
+		flex: 1;
+		display: block;
+	}
+
+	.configure-your-site-modal-form__site-name-wrapper {
+		display: flex;
+		align-items: center;
+
+		.configure-your-site-modal-form__site-name-icon-wrapper {
+			display: flex;
+			width: 24px;
+			margin-left: 5px;
+		}
+
+		.configure-your-site-modal-form__site-name-success {
+			fill: var(--color-success);
+		}
+
+		.configure-your-site-modal-form__site-name-fail {
+			color: var(--color-error);
+		}
+	}
+
+	.configure-your-site-modal-form__site-name-validation-message {
+		display: flex;
+		align-items: center;
+		font-size: rem(14px);
+		line-height: 1.5;
+		color: var(--color-error);
+
+		svg {
+			margin-right: 5px;
+		}
+	}
+
+}

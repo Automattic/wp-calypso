@@ -10,7 +10,7 @@
 	}
 
 	.a4a-popover__title {
-		font-size: rem(14px);
+		@include a4a-font-body-md;
 		color: var(--color-accent-60);
 	}
 }

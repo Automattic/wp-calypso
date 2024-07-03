@@ -538,7 +538,8 @@ $with-sidebar-min-page-width: 1114px;
 			text-align: left;
 			position: sticky;
 
-			.wpnc__settings {
+			.wpnc__settings,
+			.wpnc__keyboard-shortcuts-button {
 				display: flex;
 				flex-grow: 1;
 
@@ -546,11 +547,13 @@ $with-sidebar-min-page-width: 1114px;
 					outline: var(--color-primary-light) solid 2px;
 				}
 			}
-		}
-	}
 
-	.disable-sticky .wpnc__time-group-wrap {
-		position: static;
+			.wpnc__keyboard-shortcuts-button {
+				flex-grow: 0;
+				padding-right: 8px;
+				color: var(--color-neutral-40, #787c82);
+			}
+		}
 	}
 
 	.wpnc__undo-item {
@@ -985,6 +988,61 @@ $with-sidebar-min-page-width: 1114px;
 		}
 		to {
 			background-color: var(--color-surface);
+		}
+	}
+}
+
+.wpnc__keyboard-shortcuts-popover.popover {
+	font: {
+		family: $sans;
+		size: $wpnc__capital-font-size;
+	}
+
+	.popover__arrow {
+		z-index: 1000;
+	}
+	.popover__inner {
+		width: 250px;
+		z-index: 999;
+		left: 0;
+
+		h2 {
+			padding: 10px;
+			margin: 0;
+			border-bottom: 1px solid var(--color-neutral-10);
+			text-align: left;
+			font-weight: bold;
+			font-size: $wpnc__capital-font-size;
+		}
+
+		ul {
+			padding: 10px 20px 10px 10px;
+			margin: 0;
+		}
+
+		li {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 8px;
+
+			.shortcut {
+				border: 1px solid var(--color-neutral-10);
+				border-radius: 4px;
+				min-width: 25px;
+				min-height: 25px;
+
+				&.letter {
+					font-weight: bold;
+					line-height: 25px;
+				}
+
+				&.has-icon {
+					svg {
+						margin-top: 4px;
+					}
+				}
+			}
 		}
 	}
 }

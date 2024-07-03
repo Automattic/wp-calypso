@@ -36,7 +36,7 @@ export interface Agency {
 		};
 		listing_details: {
 			is_available: boolean;
-			industry: string;
+			industries: string[];
 			services: string[];
 			products: string[];
 			languages_spoken: string[];
