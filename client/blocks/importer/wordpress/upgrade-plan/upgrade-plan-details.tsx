@@ -17,9 +17,9 @@ import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-sel
 import { useSelector } from 'calypso/state';
 import { getSitePlan, getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
+import { Skeleton } from './skeleton';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
-import UpgradePlanLoader from './upgrade-plan-loader';
 import withMigrationSticker from './with-migration-sticker';
 import type { UpgradePlanDetailsProps } from './types';
 
@@ -56,7 +56,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	}, [ plan ] );
 
 	if ( isFetchingHostingDetails || typeof rawPrice !== 'number' || ! planDetails?.currencyCode ) {
-		return <UpgradePlanLoader />;
+		return <Skeleton />;
 	}
 
 	return (

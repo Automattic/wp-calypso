@@ -94,7 +94,9 @@ describe( 'UpgradePlanDetails', () => {
 				UpgradePlanDetailsWithoutHoc
 			);
 
-			expect( container.querySelector( '.import__upgrade-plan-loader' ) ).toBeInTheDocument();
+			expect(
+				container.querySelector( '.import__upgrade-plan-details--loading' )
+			).toBeInTheDocument();
 			expect( queryByText( CHILDREN ) ).not.toBeInTheDocument();
 		} );
 
@@ -106,7 +108,9 @@ describe( 'UpgradePlanDetails', () => {
 				}
 			);
 
-			expect( container.querySelector( '.import__upgrade-plan-loader' ) ).toBeInTheDocument();
+			expect(
+				container.querySelector( '.import__upgrade-plan-details--loading' )
+			).toBeInTheDocument();
 			expect( queryByText( CHILDREN ) ).not.toBeInTheDocument();
 		} );
 
@@ -118,7 +122,9 @@ describe( 'UpgradePlanDetails', () => {
 				}
 			);
 
-			expect( container.querySelector( '.import__upgrade-plan-loader' ) ).toBeInTheDocument();
+			expect(
+				container.querySelector( '.import__upgrade-plan-details--loading' )
+			).toBeInTheDocument();
 			expect( queryByText( CHILDREN ) ).not.toBeInTheDocument();
 		} );
 	} );

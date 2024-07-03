@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useLayoutEffect } from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
-import UpgradePlanLoader from './upgrade-plan-loader';
+import { Skeleton } from './skeleton';
 import type { UpgradePlanDetailsProps } from './types';
 import type { FC } from 'react';
 
@@ -23,7 +23,7 @@ const withMigrationSticker =
 		}, [ addMigrationSticker, siteId ] );
 
 		if ( isPending ) {
-			return <UpgradePlanLoader />;
+			return <Skeleton />;
 		}
 
 		return <WrappedComponent { ...props } />;
