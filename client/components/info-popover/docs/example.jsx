@@ -36,7 +36,7 @@ class InfoPopoverExample extends PureComponent {
 				<InfoPopover
 					id="popover__info-popover-example"
 					position={ this.state.popoverPosition }
-					showOnHover={ true }
+					showOnHover
 				>
 					Shows on hover.
 				</InfoPopover>

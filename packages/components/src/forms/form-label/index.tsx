@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Children, FunctionComponent, LabelHTMLAttributes } from 'react';
 
@@ -23,7 +23,7 @@ const FormLabel: FunctionComponent< Props & LabelProps > = ( {
 	const hasChildren: boolean = Children.count( children ) > 0;
 
 	return (
-		<label { ...labelProps } className={ classnames( className, 'form-label' ) }>
+		<label { ...labelProps } className={ clsx( className, 'form-label' ) }>
 			{ children }
 			{ hasChildren && required && (
 				<small className="form-label__required">{ translate( 'Required' ) }</small>

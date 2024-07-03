@@ -9,7 +9,7 @@ import {
 	getIntroductoryOfferIntervalDisplay,
 	isUserVisibleCostOverride,
 } from '@automattic/wpcom-checkout';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import { Component, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
@@ -39,6 +39,7 @@ import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionQuantitySummary,
+	renderDomainTransactionVolumeSummary,
 	transactionIncludesTax,
 } from './utils';
 import { VatVendorDetails } from './vat-vendor-details';
@@ -533,6 +534,7 @@ function ReceiptLineItem( {
 					{ item.licensed_quantity && (
 						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
 					) }
+					{ item.volume && <em>{ renderDomainTransactionVolumeSummary( item, translate ) }</em> }
 				</td>
 				<td className="billing-history__receipt-amount">
 					{ doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
@@ -686,7 +688,7 @@ function ReceiptLabels( { hideDetailsLabelOnPrint }: { hideDetailsLabelOnPrint?:
 		<div>
 			<FormLabel
 				htmlFor="billing-history__billing-details-textarea"
-				className={ classNames( { 'receipt__no-print': hideDetailsLabelOnPrint } ) }
+				className={ clsx( { 'receipt__no-print': hideDetailsLabelOnPrint } ) }
 			>
 				{ translate( 'Billing Details' ) }
 			</FormLabel>

@@ -112,12 +112,12 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 				<RegisterDomainStep
 					key={ domainSuggestion }
 					suggestion={ domainSuggestion }
-					domainsWithPlansOnly={ true }
+					domainsWithPlansOnly
 					onAddDomain={ submitWithDomain }
-					includeWordPressDotCom={ true }
+					includeWordPressDotCom
 					offerUnavailableOption={ false }
 					showAlreadyOwnADomain={ false }
-					isSignupStep={ true }
+					isSignupStep
 					basePath=""
 					products={ productsList }
 					vendor={ getSuggestionsVendor( {
@@ -142,16 +142,16 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					vendor={ flow }
 					basePath=""
 					suggestion={ domainSuggestion }
-					domainsWithPlansOnly={ true }
-					isSignupStep={ true }
-					includeWordPressDotCom={ true }
+					domainsWithPlansOnly
+					isSignupStep
+					includeWordPressDotCom
 					includeDotBlogSubdomain={ false }
 					showAlreadyOwnADomain={ false }
 					onAddDomain={ onAddDomain }
 					onSkip={ onSkip }
 					products={ productsList }
-					useProvidedProductsList={ true }
-					isReskinned={ true }
+					useProvidedProductsList
+					isReskinned
 				/>
 				<div className="aside-sections">
 					<div className="aside-section">
@@ -249,7 +249,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }
-				isWideLayout={ true }
+				isWideLayout
 				isLargeSkipLayout={ false }
 				stepContent={ getStepContent() }
 				recordTracksEvent={ recordTracksEvent }

@@ -2,15 +2,19 @@ import {
 	getAssemblerDesign,
 	themesIllustrationImage,
 	assemblerIllustrationImage,
+	hiBigSky,
 } from '@automattic/design-picker';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
+import BigSkyDisclaimerModal from '../../components/big-sky-disclaimer-modal';
 import DesignChoice from './design-choice';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -28,7 +32,17 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		[]
 	);
 
+	const { isEligible, isLoading } = useIsBigSkyEligible();
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+
+	useEffect( () => {
+		if ( ! isLoading && isEligible ) {
+			recordTracksEvent( 'calypso_big_sky_view_choice', {
+				flow,
+				step: stepName,
+			} );
+		}
+	}, [ isEligible, isLoading, flow, stepName ] );
 
 	const handleSubmit = ( destination: string ) => {
 		recordTracksEvent( 'calypso_signup_design_choices_submit', {
@@ -38,8 +52,12 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 			destination: kebabCase( destination ),
 		} );
 
-		if ( destination === 'pattern-assembler' ) {
+		if ( destination === 'pattern-assembler' || destination === 'launch-big-sky' ) {
 			setSelectedDesign( getAssemblerDesign() );
+		}
+
+		if ( destination === 'launch-big-sky' ) {
+			return;
 		}
 
 		submit?.( { destination } );
@@ -71,6 +89,18 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								destination="pattern-assembler"
 								onSelect={ handleSubmit }
 							/>
+							{ ! isLoading && isEligible && (
+								<BigSkyDisclaimerModal flow={ flow } stepName={ stepName }>
+									<DesignChoice
+										className="design-choices__try-big-sky"
+										title={ translate( 'Try Big Sky' ) }
+										description={ translate( 'The AI website builder for WordPress.' ) }
+										imageSrc={ hiBigSky }
+										destination="launch-big-sky"
+										onSelect={ handleSubmit }
+									/>
+								</BigSkyDisclaimerModal>
+							) }
 						</div>
 					</>
 				}

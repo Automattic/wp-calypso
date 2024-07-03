@@ -1,4 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordCommandPaletteOpen } from '@automattic/command-palette/src/tracks';
+import { Button } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { LocalizeProps } from 'i18n-calypso';
 import { FC } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -6,59 +10,50 @@ import Gravatar from 'calypso/components/gravatar';
 import QuickLanguageSwitcher from 'calypso/layout/masterbar/quick-language-switcher';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import { UserData } from 'calypso/lib/user/user';
+import ReaderWriteIcon from 'calypso/reader/components/icons/write-icon';
 import { useSelector } from 'calypso/state';
+import getCurrentRoutePattern from 'calypso/state/selectors/get-current-route-pattern';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { GLOBAL_SIDEBAR_EVENTS } from './events';
+import SidebarMenuItem from './menu-items/menu-item';
+import SidebarNotifications from './menu-items/notifications';
+import { SidebarSearch } from './menu-items/search';
 
-const CustomReaderIcon = () => (
-	<svg
-		className="sidebar__menu-icon sidebar_svg-reader"
-		fill="none"
-		height="24"
-		viewBox="4 4 24 24"
-		width="24"
-		xmlns="http://www.w3.org/2000/svg"
-	>
-		<clipPath id="readerIconSidebarFooter">
-			<path d="m4 11.2002h24v10.2857h-24z"></path>
-		</clipPath>
-		<g clipPath="url(#readerIconSidebarFooter)">
-			<path
-				d="m4.94437 16.8443-.94437-.0656v-1.4979l1.05696-.0515c.73758-2.4238 2.27248-3.924 4.78852-4.0248 2.48152-.0961 4.13592 1.2541 5.05502 3.6099.3317-.1946.7077-.297 1.0903-.297s.7586.1024 1.0903.297c.9604-2.3863 2.6355-3.7505 5.1722-3.6005 2.4632.1406 3.9591 1.6408 4.6828 4.0177l1.057.0492v1.444c-.0528.0304-.0873.0726-.1149.0679-.6893-.1054-.9007.211-1.0615.8861-.586 2.4589-2.7872 3.9732-5.3538 3.7927-2.2977-.1618-4.2302-2.1097-4.5381-4.5475-.0359-.2323-.1505-.4444-.3239-.5995-.1734-.155-.3945-.2431-.625-.249-.2239.01-.4376.0984-.6051.2505-.1674.152-.2783.3582-.314.5839-.3332 2.5785-2.3506 4.4983-4.8115 4.5756-2.60796.0821-4.67824-1.608-5.20213-4.245-.01149-.1313-.05974-.2509-.0988-.3962zm5.05505 3.0942c.93708.0075 1.83898-.3643 2.50778-1.034.6689-.6696 1.0503-1.5824 1.0606-2.5384.0049-.9553-.3621-1.8736-1.0204-2.5531s-1.5541-1.0646-2.4905-1.0708c-.93734-.0075-1.83926.3647-2.50784 1.0349s-1.04921 1.5836-1.05831 2.5398c-.00302.4737.08568.9433.261 1.382.17532.4386.43381.8376.76065 1.1741s.7156.6038 1.14397.7866c.42836.1829.88789.2776 1.35223.2789zm11.96208 0c.9375 0 1.8366-.3798 2.4997-1.0558.6631-.6761 1.0359-1.593 1.0365-2.5494-.0048-.956-.381-1.871-1.046-2.5446-.665-.6735-1.5646-1.0507-2.5017-1.0488-.9374 0-1.8366.3797-2.4997 1.0557-.6631.6761-1.0359 1.5931-1.0365 2.5494.0021.4744.0958.9437.2757 1.3811s.4424.8344.7727 1.1683.7219.5982 1.1523.7777c.4304.1796.8912.2709 1.3562.2687z"
-				fill="#fff"
-			></path>
-		</g>
-	</svg>
-);
 export const GlobalSidebarFooter: FC< {
 	translate: LocalizeProps[ 'translate' ];
 	user?: UserData;
 } > = ( { translate, user } ) => {
+	const hasEnTranslation = useHasEnTranslation();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
+	const isDesktop = useBreakpoint( '>=782px' );
+
+	const isMac = window?.navigator.userAgent && window.navigator.userAgent.indexOf( 'Mac' ) > -1;
+	const searchShortcut = isMac ? '⌘ + K' : 'Ctrl + K';
+
+	const currentRoute = useSelector( getCurrentRoutePattern ) ?? '';
+
 	return (
 		<SidebarFooter>
-			<a
-				href="/read"
-				className="sidebar__footer-link sidebar__footer-reader tooltip tooltip-top"
-				title={ translate( 'Reader' ) }
-				data-tooltip={ translate( 'Reader' ) }
-				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.READER_CLICK ) }
+			<Button
+				className="sidebar__footer-link sidebar__footer-write-post"
+				href="/post/"
+				target="_blank"
+				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.WRITE_POST_CLICK ) }
 			>
-				<CustomReaderIcon />
-			</a>
-			<a
-				href="/me"
-				className="sidebar__footer-link sidebar__footer-profile tooltip tooltip-top"
-				title={ translate( 'Profile' ) }
-				data-tooltip={ translate( 'Profile' ) }
+				<ReaderWriteIcon />
+				{ translate( 'Write a post' ) }
+			</Button>
+			<SidebarMenuItem
+				url="/me"
+				className="sidebar__footer-link sidebar__footer-profile"
+				tooltip={ translate( 'Profile' ) }
+				tooltipPlacement="top"
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.PROFILE_CLICK ) }
-			>
-				<Gravatar user={ user } size={ 20 } />
-			</a>
+				icon={ <Gravatar user={ user } size={ 20 } /> }
+			/>
 			<AsyncLoad
 				require="./menu-items/help-center/help-center"
 				tooltip={ translate( 'Help' ) }
-				tooltipPlacement="top"
 				placeholder={
 					<div className="link-help">
 						<span className="help"></span>
@@ -66,6 +61,28 @@ export const GlobalSidebarFooter: FC< {
 				}
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.HELPCENTER_CLICK ) }
 			/>
+			{ isDesktop && (
+				<>
+					<SidebarSearch
+						tooltip={
+							hasEnTranslation( 'Command Palette (%(shortcut)s)' )
+								? translate( 'Command Palette (%(shortcut)s)', {
+										args: { shortcut: searchShortcut },
+								  } )
+								: translate( 'Jump to…' )
+						}
+						onClick={ () => {
+							recordCommandPaletteOpen( currentRoute, 'sidebar_click' );
+							recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.SEARCH_CLICK );
+						} }
+					/>
+					<SidebarNotifications
+						className="sidebar__item-notifications"
+						tooltip={ translate( 'Notifications' ) }
+						onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.NOTIFICATION_CLICK ) }
+					/>
+				</>
+			) }
 			{ isInSupportSession && (
 				<QuickLanguageSwitcher className="sidebar__footer-language-switcher" shouldRenderAsButton />
 			) }

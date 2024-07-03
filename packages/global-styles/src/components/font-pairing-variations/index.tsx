@@ -4,7 +4,7 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { InView, IntersectionObserverProps } from 'react-intersection-observer';
@@ -45,7 +45,7 @@ const FontPairingVariation = ( {
 			user: fontPairingVariation,
 			base,
 			// When font paring isn't passed, it should be available on the base.
-			merged: ! fontPairingVariation ? base : mergeBaseAndUserConfigs( base, fontPairingVariation ),
+			merged: mergeBaseAndUserConfigs( base, fontPairingVariation ),
 		};
 	}, [ fontPairingVariation, base ] );
 	return (
@@ -53,7 +53,7 @@ const FontPairingVariation = ( {
 			role="option"
 			as="button"
 			{ ...composite }
-			className={ classnames( 'global-styles-variation__item', {
+			className={ clsx( 'global-styles-variation__item', {
 				'is-active': isActive,
 			} ) }
 			onClick={ onSelect }

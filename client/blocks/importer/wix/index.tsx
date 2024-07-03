@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -130,7 +130,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<>
-			<div className={ classnames( `importer-${ importer }` ) }>
+			<div className={ clsx( `importer-${ importer }` ) }>
 				{ ( () => {
 					if ( checkIsFailed() ) {
 						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;

@@ -1,6 +1,6 @@
 import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
@@ -48,7 +48,7 @@ class Profile extends Component {
 		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
 
 		return (
-			<Main className="profile">
+			<Main wideLayout className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<NavigationHeader
@@ -122,7 +122,7 @@ class Profile extends Component {
 						</FormFieldset>
 
 						<FormFieldset
-							className={ classnames( {
+							className={ clsx( {
 								'profile__gravatar-fieldset-is-loading': this.props.isFetchingUserSettings,
 							} ) }
 						>

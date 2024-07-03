@@ -1,7 +1,10 @@
 import { useI18n } from '@wordpress/react-i18n';
+import { translate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringLineChart } from './components/site-monitoring-line-chart';
 import {
@@ -334,7 +337,7 @@ const useErrorHttpCodeSeries = () => {
 		{
 			...seriesDefaultProps,
 			statusCode: 408,
-			label: __( 'Request Timeout' ),
+			label: __( '408: Request Timeout' ),
 		},
 		{
 			...seriesDefaultProps,
@@ -536,7 +539,20 @@ export const MetricsTab = () => {
 	return (
 		<div className="site-monitoring-metrics-tab">
 			<div className="site-monitoring-time-controls__container">
-				<div className="site-monitoring-time-controls__title">{ dateRange }</div>
+				<NavigationHeader
+					className="site-monitoring__navigation-header"
+					title={
+						<>
+							{ translate( 'Monitoring: ' ) }
+							{ dateRange }
+						</>
+					}
+					subtitle={ translate( 'Monitor your site’s performance. {{link}}Learn more.{{/link}}', {
+						components: {
+							link: <InlineSupportLink supportContext="site-monitoring" showIcon={ false } />,
+						},
+					} ) }
+				/>
 				<TimeDateChartControls onTimeRangeChange={ handleTimeRangeChange }></TimeDateChartControls>
 			</div>
 			<SiteMonitoringLineChart

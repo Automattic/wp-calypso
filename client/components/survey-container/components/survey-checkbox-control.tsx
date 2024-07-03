@@ -1,7 +1,12 @@
-import { QuestionSelectionType } from './question-step';
+import { QuestionSelectionComponentProps } from './question-step';
 import SurveyCheckboxOption from './survey-checkbox-option';
 
-const SurveyCheckboxControl = ( { onChange, question, value }: QuestionSelectionType ) => {
+const SurveyCheckboxControl = ( {
+	onChange,
+	question,
+	value,
+	disabled,
+}: QuestionSelectionComponentProps ) => {
 	return (
 		<div className="question-options__container">
 			{ question.options.map( ( option, index ) => (
@@ -11,7 +16,8 @@ const SurveyCheckboxControl = ( { onChange, question, value }: QuestionSelection
 					question={ question }
 					onChange={ onChange }
 					value={ value }
-				></SurveyCheckboxOption>
+					disabled={ disabled }
+				/>
 			) ) }
 		</div>
 	);

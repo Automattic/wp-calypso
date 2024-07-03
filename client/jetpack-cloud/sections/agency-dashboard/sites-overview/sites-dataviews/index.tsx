@@ -95,7 +95,7 @@ const SitesDataViews = ( {
 				id: 'site',
 				header: (
 					<>
-						<SiteSort isSortable={ true } columnKey="site">
+						<SiteSort isSortable columnKey="site">
 							<span className="sites-dataview__site-header">
 								{ translate( 'Site' ).toUpperCase() }
 							</span>
@@ -315,7 +315,7 @@ const SitesDataViews = ( {
 				paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
 				fields={ fields }
 				view={ sitesViewState }
-				search={ true }
+				search
 				searchLabel={ translate( 'Search for sites' ) }
 				getItemId={ ( item: SiteInfo ) => {
 					item.id = item.site.value.blog_id; // setting the id because of a issue with the DataViews component

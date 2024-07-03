@@ -2,7 +2,7 @@ import { PLAN_ANNUAL_PERIOD } from '@automattic/calypso-products';
 import { SegmentedControl } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { useState } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import useMaxDiscount from '../hooks/use-max-discount';
@@ -26,7 +26,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	} = props;
 	const showBiennialToggle = displayedIntervals.includes( '2yearly' );
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
-	const segmentClasses = classNames( 'price-toggle', {
+	const segmentClasses = clsx( 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && props.plans.length );
@@ -66,7 +66,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 				className="plan-type-selector__interval-type"
 				ref={ intervalType === 'monthly' ? ( ref ) => ref && ! spanRef && setSpanRef( ref ) : null }
 			>
-				<SegmentedControl compact className={ segmentClasses } primary={ true }>
+				<SegmentedControl compact className={ segmentClasses } primary>
 					{ intervalTabs.map( ( interval ) => (
 						<SegmentedControl.Item
 							key={ interval }

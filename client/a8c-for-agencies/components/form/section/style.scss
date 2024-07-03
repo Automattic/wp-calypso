@@ -1,0 +1,21 @@
+
+.a4a-form__section {
+	padding: 16px 24px;
+	border-radius: 4px;
+}
+
+.a4a-form__section-heading-title {
+	@include a4a-font-heading-lg($font-weight: 500);
+}
+
+.a4a-form__section-heading-description {
+	@include a4a-font-body-md;
+	color: var(--color-neutral-50);
+}
+
+.a4a-form__section-body {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	padding: 24px 0;
+}

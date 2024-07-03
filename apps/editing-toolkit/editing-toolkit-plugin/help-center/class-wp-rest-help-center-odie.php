@@ -99,6 +99,25 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
+			$this->rest_base . '/history/last-chat-id',
+			// Get last chat ID.
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_last_chat_id' ),
+					'permission_callback' => array( $this, 'permission_callback' ),
+				),
+				// Set last chat ID.
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'set_last_chat_id' ),
+					'permission_callback' => array( $this, 'permission_callback' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
 			$this->rest_base . '/chat/(?P<bot_id>[a-zA-Z0-9-]+)/(?P<chat_id>\d+)/(?P<message_id>\d+)/feedback',
 			array(
 				array(
@@ -167,6 +186,79 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Get chat_id and last_chat_id from user preferences.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_last_chat_id() {
+		// Forward the request body to the support chat endpoint.
+		$body = Client::wpcom_json_api_request_as_user(
+			'/me/preferences',
+			2,
+			array( 'method' => 'GET' )
+		);
+
+		if ( is_wp_error( $body ) ) {
+			return $body;
+		}
+
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
+
+		$projected_response = array(
+			'odie_chat_id'      => $response->odie_chat_id,
+			'odie_last_chat_id' => $response->odie_last_chat_id,
+		);
+
+		return rest_ensure_response( $projected_response );
+	}
+
+	/**
+	 * Set chat_id or last_chat_id from user preferences.
+	 *
+	 * @param \WP_REST_Request $request The request sent to the API.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function set_last_chat_id( \WP_REST_Request $request ) {
+		$chat_id      = $request['odie_chat_id'];
+		$last_chat_id = $request['odie_last_chat_id'];
+
+		$data = array(
+			'calypso_preferences' => array(),
+		);
+
+		if ( $request->has_param( 'odie_chat_id' ) ) {
+			$data['calypso_preferences']['odie_chat_id'] = $chat_id;
+		}
+
+		if ( $request->has_param( 'odie_last_chat_id' ) ) {
+			$data['calypso_preferences']['odie_last_chat_id'] = $last_chat_id;
+		}
+
+		$body = Client::wpcom_json_api_request_as_user(
+			'/me/preferences',
+			2,
+			array( 'method' => 'POST' ),
+			$data
+		);
+
+		if ( is_wp_error( $body ) ) {
+			return $body;
+		}
+
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
+
+		$projected_response = array(
+			'calypso_preferences' => array(
+				'odie_chat_id'      => $response->calypso_preferences->odie_chat_id,
+				'odie_last_chat_id' => $response->calypso_preferences->odie_last_chat_id,
+			),
+		);
+
+		return rest_ensure_response( $projected_response );
+	}
+
+	/**
 	 * Send a message to the support chat.
 	 *
 	 * @param \WP_REST_Request $request The request sent to the API.
@@ -181,7 +273,10 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 		$body = Client::wpcom_json_api_request_as_user(
 			'/odie/chat/' . $bot_name_slug . '/' . $chat_id,
 			2,
-			array( 'method' => 'POST' ),
+			array(
+				'method'  => 'POST',
+				'timeout' => 30,
+			),
 			array(
 				'message' => $request->get_param( 'message' ),
 				'context' => $request->get_param( 'context' ) ?? array(),

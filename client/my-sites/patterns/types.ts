@@ -55,11 +55,28 @@ export type PatternGalleryProps = {
 	getPatternPermalink?( pattern: Pattern ): string;
 	isGridView?: boolean;
 	patterns?: Pattern[];
-	patternTypeFilter: PatternTypeFilter;
-	searchTerm?: string;
 };
 
 export type PatternGalleryFC = React.FC< PatternGalleryProps >;
 
+export type ReadymadeTemplateDetailsProps = {
+	id: number;
+};
+export type ReadymadeTemplateDetailsFC = React.FC< ReadymadeTemplateDetailsProps >;
+
 export type PatternType = 'pattern' | 'page-layout';
 export type PatternView = 'grid' | 'list';
+
+type ReadymadeTemplatePattern = {
+	id: number;
+	source_site_sid: number;
+};
+
+export type ReadymadeTemplate = {
+	template_id: number;
+	title: string;
+	description: string;
+	content: string;
+	screenshot: string;
+	patterns: ReadymadeTemplatePattern[];
+};

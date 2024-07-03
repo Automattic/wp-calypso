@@ -47,8 +47,23 @@ import {
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	PRODUCT_JETPACK_AI_MONTHLY,
+	PRODUCT_JETPACK_AI_MONTHLY_100,
+	PRODUCT_JETPACK_AI_MONTHLY_200,
+	PRODUCT_JETPACK_AI_MONTHLY_500,
+	PRODUCT_JETPACK_AI_MONTHLY_750,
+	PRODUCT_JETPACK_AI_MONTHLY_1000,
 	PRODUCT_JETPACK_AI_YEARLY,
+	PRODUCT_JETPACK_AI_YEARLY_100,
+	PRODUCT_JETPACK_AI_YEARLY_200,
+	PRODUCT_JETPACK_AI_YEARLY_500,
+	PRODUCT_JETPACK_AI_YEARLY_750,
+	PRODUCT_JETPACK_AI_YEARLY_1000,
 	PRODUCT_JETPACK_AI_BI_YEARLY,
+	PRODUCT_JETPACK_AI_BI_YEARLY_100,
+	PRODUCT_JETPACK_AI_BI_YEARLY_200,
+	PRODUCT_JETPACK_AI_BI_YEARLY_500,
+	PRODUCT_JETPACK_AI_BI_YEARLY_750,
+	PRODUCT_JETPACK_AI_BI_YEARLY_1000,
 	JETPACK_TAG_FOR_VIDEOGRAPHERS,
 	JETPACK_TAG_FOR_ALL_SITES,
 	JETPACK_TAG_FOR_BLOGGERS,
@@ -69,8 +84,23 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
 	PRODUCT_JETPACK_STATS_BI_YEARLY,
+	PRODUCT_JETPACK_STATS_BI_YEARLY_10K,
+	PRODUCT_JETPACK_STATS_BI_YEARLY_100K,
+	PRODUCT_JETPACK_STATS_BI_YEARLY_250K,
+	PRODUCT_JETPACK_STATS_BI_YEARLY_500K,
+	PRODUCT_JETPACK_STATS_BI_YEARLY_1M,
 	PRODUCT_JETPACK_STATS_YEARLY,
+	PRODUCT_JETPACK_STATS_YEARLY_10K,
+	PRODUCT_JETPACK_STATS_YEARLY_100K,
+	PRODUCT_JETPACK_STATS_YEARLY_250K,
+	PRODUCT_JETPACK_STATS_YEARLY_500K,
+	PRODUCT_JETPACK_STATS_YEARLY_1M,
 	PRODUCT_JETPACK_STATS_MONTHLY,
+	PRODUCT_JETPACK_STATS_MONTHLY_10K,
+	PRODUCT_JETPACK_STATS_MONTHLY_100K,
+	PRODUCT_JETPACK_STATS_MONTHLY_250K,
+	PRODUCT_JETPACK_STATS_MONTHLY_500K,
+	PRODUCT_JETPACK_STATS_MONTHLY_1M,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 	PRODUCT_JETPACK_MONITOR_YEARLY,
@@ -81,9 +111,51 @@ import {
 	PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
 	PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
 	PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
+	PRODUCT_WOOCOMMERCE_ADVANCED_NOTIFICATIONS,
+	PRODUCT_WOOCOMMERCE_ALL_PRODUCTS_WOO_SUBSCRIPTIONS,
+	PRODUCT_WOOCOMMERCE_AUTOMATEWOO_BIRTHDAYS,
+	PRODUCT_WOOCOMMERCE_AUTOMATEWOO_REFER_A_FRIEND,
+	PRODUCT_WOOCOMMERCE_BACK_IN_STOCK_NOTIFICATIONS,
+	PRODUCT_WOOCOMMERCE_BULK_STOCK_MANAGEMENT,
+	PRODUCT_WOOCOMMERCE_CHECKOUT_FIELD_EDITOR,
+	PRODUCT_WOOCOMMERCE_COMPOSITE_PRODUCTS,
+	PRODUCT_WOOCOMMERCE_CONDITIONAL_SHIPPING_PAYMENTS,
+	PRODUCT_WOOCOMMERCE_EU_VAT_NUMBER,
+	PRODUCT_WOOCOMMERCE_FLAT_RATE_BOX_SHIPPING,
+	PRODUCT_WOOCOMMERCE_GIFT_CARDS,
+	PRODUCT_WOOCOMMERCE_GIFTING_WC_SUBSCRIPTIONS,
+	PRODUCT_WOOCOMMERCE_PER_PRODUCT_SHIPPING,
+	PRODUCT_WOOCOMMERCE_PRODUCT_CSV_IMPORT_SUITE,
+	PRODUCT_WOOCOMMERCE_PRODUCT_RECOMMENDATIONS,
+	PRODUCT_WOOCOMMERCE_PRODUCT_VENDORS,
+	PRODUCT_WOOCOMMERCE_RETURNS_WARRANTY_REQUESTS,
+	PRODUCT_WOOCOMMERCE_SUBSCRIPTION_DOWNLOADS,
+	PRODUCT_WOOCOMMERCE_SHIPMENT_TRACKING,
+	PRODUCT_WOOCOMMERCE_SHIPPING_MULTIPLE_ADDRESSES,
+	PRODUCT_WOOCOMMERCE_STOREFRONT_EXTENSIONS_BUNDLE,
+	PRODUCT_WOOCOMMERCE_TABLE_RATE_SHIPPING,
+	PRODUCT_WOOCOMMERCE_ADDITIONAL_IMAGE_VARIATIONS,
+	PRODUCT_WOOCOMMERCE_BOOKINGS_AVAILABILITY,
+	PRODUCT_WOOCOMMERCE_BOX_OFFICE,
+	PRODUCT_WOOCOMMERCE_BRANDS,
+	PRODUCT_WOOCOMMERCE_COUPON_CAMPAIGNS,
+	PRODUCT_WOOCOMMERCE_DEPOSITS,
+	PRODUCT_WOOCOMMERCE_DISTANCE_RATE_SHIPPING,
+	PRODUCT_WOOCOMMERCE_ONE_PAGE_CHECKOUT,
+	PRODUCT_WOOCOMMERCE_ORDER_BARCODES,
+	PRODUCT_WOOCOMMERCE_POINTS_AND_REWARDS,
+	PRODUCT_WOOCOMMERCE_PRE_ORDERS,
+	PRODUCT_WOOCOMMERCE_PURCHASE_ORDER_GATEWAY,
+	PRODUCT_WOOCOMMERCE_SHIPPING,
+	PRODUCT_WOOCOMMERCE_ACCOMMODATIONS_BOOKINGS,
+	PRODUCT_WOOCOMMERCE_TAX,
+	PRODUCT_WOOCOMMERCE_WOOPAYMENTS,
 	PRODUCT_JETPACK_CREATOR_BI_YEARLY,
 	PRODUCT_JETPACK_CREATOR_YEARLY,
 	PRODUCT_JETPACK_CREATOR_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -163,6 +235,9 @@ export const getJetpackProductsShortNames = (): Record< string, React.ReactEleme
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: 'Social',
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: 'Social',
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: 'Social',
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: 'Stats',
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: 'Stats',
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: 'Stats',
@@ -457,6 +532,9 @@ export const getJetpackProductsTaglines = (): Record<
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: { default: socialAdvancedTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: { default: socialAdvancedTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: { default: socialAdvancedTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: { default: socialTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: { default: socialTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: { default: socialTagLine },
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: {
 			default: backupAddonTagLine,
 			owned: backupAddonOwnedTagLine,
@@ -633,6 +711,9 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialDescription,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercialDescription,
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercialDescription,
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercialDescription,
@@ -719,6 +800,9 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedShortDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedShortDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialShortDescription,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercialShortDescription,
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercialShortDescription,
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercialShortDescription,
@@ -807,6 +891,9 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialFeaturedText,
 		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorFeaturedText,
 		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorFeaturedText,
 	};
@@ -863,12 +950,128 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const woocommerceProductAddOnsLightboxDescription = translate(
 		'Offer add-ons like gift wrapping, special messages, or other special options for your products.'
 	);
-
 	const woocommerceMinMaxQuantitiesLightboxDescription = translate(
 		'Minimum and maximum quantity rules for products, orders, and categories.'
 	);
 	const woocommerceAutomateWooLightboxDescription = translate(
 		'Powerful marketing automation for WooCommerce. AutomateWoo has the tools you need to grow your store and make more money.'
+	);
+	const woocommerceAdvancedNotificationsLightboxDescription = translate(
+		'Easily setup new order and stock email notifications for multiple recipients of your choosing.'
+	);
+	const woocommerceAllProductsWooSubscriptionsLightboxDescription = translate(
+		'Add subscription plans to your existing products and start capturing residual revenue with All Products for WooCommerce Subscriptions.'
+	);
+	const woocommerceAutomatewooBirthdaysLightboxDescription = translate(
+		'Delight customers and boost organic sales with a special WooCommerce birthday email (and coupon!) on their special day.'
+	);
+	const woocommerceAutomatewooReferAFriendLightboxDescription = translate(
+		'Boost your organic sales by adding a customer referral program to your WooCommerce store.'
+	);
+	const woocommerceBackInStockNotificationsLightboxDescription = translate(
+		'Notify customers when your out-of-stock products become available. Recover lost sales, build customer loyalty, and gain deeper insights into your inventory.'
+	);
+	const woocommerceBulkStockManagementLightboxDescription = translate(
+		'Edit product and variation stock levels in bulk via this handy interface'
+	);
+	const woocommerceCheckoutFieldEditorLightboxDescription = translate(
+		'Optimize your checkout process by adding, removing or editing fields to suit your needs.'
+	);
+	const woocommerceCompositeProductsLightboxDescription = translate(
+		'The definitive product builder plugin for WooCommerce. Create and offer personalized product kits and custom product configurators.'
+	);
+	const woocommerceConditionalShippingPaymentsLightboxDescription = translate(
+		'Use conditional logic to restrict the shipping methods, payment gateways and shipping countries or states available to customers at checkout.'
+	);
+	const woocommerceEuVatNumberLightboxDescription = translate(
+		'Collect VAT numbers at checkout and remove the VAT charge for eligible EU businesses.'
+	);
+	const woocommerceFlatRateBoxShippingLightboxDescription = translate(
+		'Pack items into boxes with pre-defined costs per destination'
+	);
+	const woocommerceGiftCardsLightboxDescription = translate(
+		'Offer digital prepaid gift cards and e-gift certificates that customers can redeem at your WooCommerce store.'
+	);
+	const woocommerceGiftingWcSubscriptionsLightboxDescription = translate(
+		"Offer customers a way to purchase subscriptions for others. A gift that keeps on giving for your customers and your store's revenue."
+	);
+	const woocommercePerProductShippingLightboxDescription = translate(
+		'Define separate shipping costs per product which are combined at checkout to provide a total shipping cost.'
+	);
+	const woocommerceProductCsvImportSuiteLightboxDescription = translate(
+		'Import, merge, and export products and variations to and from WooCommerce using a CSV file.'
+	);
+	const woocommerceProductRecommendationsLightboxDescription = translate(
+		'Offer smarter upsells, cross-sells, and frequently bought together recommendations. Use analytics to measure their impact and optimize your strategies.'
+	);
+	const woocommerceProductVendorsLightboxDescription = translate(
+		'Turn your store into a multi-vendor marketplace. Allow multiple vendors to sell via your site and in return take a commission on sales.'
+	);
+	const woocommerceReturnsWarrantyRequestsLightboxDescription = translate(
+		'Manage the RMA process, add warranties to products, and let customers request and manage returns/exchanges from their account.'
+	);
+	const woocommerceSubscriptionDownloadsLightboxDescription = translate(
+		'Offer additional downloads to your subscribers, via downloadable products listed in your store.'
+	);
+	const woocommerceShipmentTrackingLightboxDescription = translate(
+		'Add shipment tracking information to your orders.'
+	);
+	const woocommerceShippingMultipleAddressesLightboxDescription = translate(
+		'Allow your customers to ship individual items in a single order to multiple addresses.'
+	);
+	const woocommerceStorefrontExtensionsBundleLightboxDescription = translate(
+		'All the tools you need to customize your WooCommerce store design. Storefront is our free, intuitive theme for WooCommerce - make it yours without touching code with the Storefront Extensions bundle.'
+	);
+	const woocommerceTableRateShippingLightboxDescription = translate(
+		"The Table Rate shipping module extends WooCommerce's default shipping options giving you highly customisable shipping options."
+	);
+	const woocommerceAdditionalImageVariationsLightboxDescription = translate(
+		'Unlimited images for your product variations.'
+	);
+	const woocommerceBookingsAvailabilityLightboxDescription = translate(
+		'Sell more bookings by presenting a calendar or schedule of available slots in a page or post.'
+	);
+	const woocommerceBoxOfficeLightboxDescription = translate(
+		'Sell tickets for your next event, concert, function, fundraiser or conference directly on your own site'
+	);
+	const woocommerceBrandsLightboxDescription = translate(
+		'Create, assign and list brands for products, and allow customers to view by brand.'
+	);
+	const woocommerceCouponCampaignsLightboxDescription = translate(
+		'Categorize coupons within coupon campaigns, making it easier to track the performance of a collection of coupons.'
+	);
+	const woocommerceDepositsLightboxDescription = translate(
+		'Enable custom payment schedules with WooCommerce Deposits. Accept payments as deposits, layaway plans, or any desired payment structure.'
+	);
+	const woocommerceDistanceRateShippingLightboxDescription = translate(
+		'WooCommerce Distance Rate shipping allows you to charge shipping rates based on the distance or total travel time to your customers as well as charge based on weight, total value or number of items in cart.'
+	);
+	const woocommerceOnePageCheckoutLightboxDescription = translate(
+		'Create special pages where customers can choose products, checkout & pay all on the one page.'
+	);
+	const woocommerceOrderBarcodesLightboxDescription = translate(
+		'Generates a unique barcode for each order on your site perfect for e-tickets, packing slips, reservations and a variety of other uses.'
+	);
+	const woocommercePointsAndRewardsLightboxDescription = translate(
+		'Reward your customers for purchases and other actions with points which can be redeemed for discounts.'
+	);
+	const woocommercePreOrdersLightboxDescription = translate(
+		'Allow customers to order products before they are available.'
+	);
+	const woocommercePurchaseOrderGatewayLightboxDescription = translate(
+		'Seamlessly accept purchase orders as a payment method on your WooCommerce store.'
+	);
+	const woocommerceShippingLightboxDescription = translate(
+		'Print USPS and DHL labels right from the WooCommerce desktop and save up to 90% instantly. WooCommerce Shipping is free and saves you time and money.'
+	);
+	const woocommerceAccommodationsBookingsLightboxDescription = translate(
+		'Book accommodation using WooCommerce and the WooCommerce Bookings extension.'
+	);
+	const woocommerceTaxLightboxDescription = translate(
+		'Automatically calculate how much sales tax should be collected for WooCommerce orders — by city, country, or state — at checkout.'
+	);
+	const woocommerceWoopaymentsLightboxDescription = translate(
+		'The only payment solution fully integrated to Woo. Accept credit/debit cards and local payment options with no setup or monthly fees.'
 	);
 
 	return {
@@ -912,6 +1115,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialLightboxDescription,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsLightboxDescription,
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsLightboxDescription,
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsLightboxDescription,
@@ -923,6 +1129,66 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_ADVANCED_NOTIFICATIONS ]:
+			woocommerceAdvancedNotificationsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_ALL_PRODUCTS_WOO_SUBSCRIPTIONS ]:
+			woocommerceAllProductsWooSubscriptionsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO_BIRTHDAYS ]:
+			woocommerceAutomatewooBirthdaysLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO_REFER_A_FRIEND ]:
+			woocommerceAutomatewooReferAFriendLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_BACK_IN_STOCK_NOTIFICATIONS ]:
+			woocommerceBackInStockNotificationsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_BULK_STOCK_MANAGEMENT ]:
+			woocommerceBulkStockManagementLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_CHECKOUT_FIELD_EDITOR ]:
+			woocommerceCheckoutFieldEditorLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_COMPOSITE_PRODUCTS ]: woocommerceCompositeProductsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_CONDITIONAL_SHIPPING_PAYMENTS ]:
+			woocommerceConditionalShippingPaymentsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_EU_VAT_NUMBER ]: woocommerceEuVatNumberLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_FLAT_RATE_BOX_SHIPPING ]:
+			woocommerceFlatRateBoxShippingLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_GIFT_CARDS ]: woocommerceGiftCardsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_GIFTING_WC_SUBSCRIPTIONS ]:
+			woocommerceGiftingWcSubscriptionsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PER_PRODUCT_SHIPPING ]: woocommercePerProductShippingLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_CSV_IMPORT_SUITE ]:
+			woocommerceProductCsvImportSuiteLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_RECOMMENDATIONS ]:
+			woocommerceProductRecommendationsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_VENDORS ]: woocommerceProductVendorsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_RETURNS_WARRANTY_REQUESTS ]:
+			woocommerceReturnsWarrantyRequestsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTION_DOWNLOADS ]:
+			woocommerceSubscriptionDownloadsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_SHIPMENT_TRACKING ]: woocommerceShipmentTrackingLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_SHIPPING_MULTIPLE_ADDRESSES ]:
+			woocommerceShippingMultipleAddressesLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_STOREFRONT_EXTENSIONS_BUNDLE ]:
+			woocommerceStorefrontExtensionsBundleLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_TABLE_RATE_SHIPPING ]: woocommerceTableRateShippingLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_ADDITIONAL_IMAGE_VARIATIONS ]:
+			woocommerceAdditionalImageVariationsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS_AVAILABILITY ]:
+			woocommerceBookingsAvailabilityLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_BOX_OFFICE ]: woocommerceBoxOfficeLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_BRANDS ]: woocommerceBrandsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_COUPON_CAMPAIGNS ]: woocommerceCouponCampaignsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_DEPOSITS ]: woocommerceDepositsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_DISTANCE_RATE_SHIPPING ]:
+			woocommerceDistanceRateShippingLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_ONE_PAGE_CHECKOUT ]: woocommerceOnePageCheckoutLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_ORDER_BARCODES ]: woocommerceOrderBarcodesLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_POINTS_AND_REWARDS ]: woocommercePointsAndRewardsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PRE_ORDERS ]: woocommercePreOrdersLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PURCHASE_ORDER_GATEWAY ]:
+			woocommercePurchaseOrderGatewayLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_SHIPPING ]: woocommerceShippingLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_ACCOMMODATIONS_BOOKINGS ]:
+			woocommerceAccommodationsBookingsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_TAX ]: woocommerceTaxLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_WOOPAYMENTS ]: woocommerceWoopaymentsLightboxDescription,
 	};
 };
 
@@ -1103,6 +1369,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Recycle content' ),
 		translate( 'Image generator' ),
 	];
+	const socialIncludesInfo = socialAdvancedIncludesInfo;
 	const statsCommercialIncludesInfo = [
 		translate( 'Real-time data on visitors' ),
 		translate( 'Traffic stats and trends for posts and pages' ),
@@ -1114,7 +1381,6 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'UTM tracking' ),
 	];
 	const aiAssistantIncludesInfo = [
-		translate( '100 monthly requests (upgradeable)' ),
 		translate( 'Prompt-based content generation' ),
 		translate( 'Text, table, and list generation' ),
 		translate( 'Adaptive tone adjustment' ),
@@ -1178,39 +1444,78 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	];
 	const woocommerceAutomateWooIncludesInfo = [
 		translate(
-			'Follow-up Emails – Automatically email customers who buy specific products, ask for a review, or suggest other products they might like.'
+			'Follow-up Emails - Automatically email customers who buy specific products, ask for a review, or suggest other products they might like.'
 		),
 		translate(
-			'Abandoned Cart – Remind customers who left items in their cart using emails at set intervals.'
+			'Abandoned Cart - Remind customers who left items in their cart using emails at set intervals.'
 		),
 		translate(
-			'Win Back Inactive Customers – Target inactive customers with email marketing campaigns. Include special offers and recommendations.'
+			'Win Back Inactive Customers - Target inactive customers with email marketing campaigns. Include special offers and recommendations.'
 		),
 		translate(
-			'SMS Notifications – Send SMS notifications to customers or admins for any of AutomateWoo’s wide range of triggers.'
+			'SMS Notifications - Send SMS notifications to customers or admins for any of AutomateWoo’s wide range of triggers.'
 		),
 		translate(
-			'Review Rewards – Encourage more product reviews by offering discounts. Limit the discount based on number of reviews posted and the rating given.'
+			'Review Rewards - Encourage more product reviews by offering discounts. Limit the discount based on number of reviews posted and the rating given.'
 		),
 		translate(
-			'Wishlist Marketing – Send timed wishlist reminder emails and notify when a wished product goes on sale. Integrates with WooCommerce Wishlists or YITH Wishlists.'
+			'Wishlist Marketing - Send timed wishlist reminder emails and notify when a wished product goes on sale. Integrates with WooCommerce Wishlists or YITH Wishlists.'
 		),
 		translate(
-			'Card Expiry Notifications – Notify customers before a saved credit or debit card expires. This can reduce failed payments and churn when selling subscriptions.'
+			'Card Expiry Notifications - Notify customers before a saved credit or debit card expires. This can reduce failed payments and churn when selling subscriptions.'
 		),
 		translate(
-			'Personalized Coupons – Generate dynamically customized coupons for customers to raise purchase rates.'
+			'Personalized Coupons - Generate dynamically customized coupons for customers to raise purchase rates.'
 		),
 		translate(
-			'Subscriptions Automation – Action WooCommerce Subscription events such as status changes, failed payments, and renewal reminders.'
+			'Subscriptions Automation - Action WooCommerce Subscription events such as status changes, failed payments, and renewal reminders.'
 		),
 		translate(
-			'Bookings Automations – Send emails on WooCommerce Bookings events such as booking confirmation or completion.'
+			'Bookings Automations - Send emails on WooCommerce Bookings events such as booking confirmation or completion.'
 		),
 		translate(
-			'Automatic VIP – Reward your best customers with VIP status based on different spending requirements.'
+			'Automatic VIP - Reward your best customers with VIP status based on different spending requirements.'
 		),
 	];
+	const woocommerceAdvancedNotificationsIncludesInfo: any = null;
+	const woocommerceAllProductsWooSubscriptionsIncludesInfo: any = null;
+	const woocommerceAutomatewooBirthdaysIncludesInfo: any = null;
+	const woocommerceAutomatewooReferAFriendIncludesInfo: any = null;
+	const woocommerceBackInStockNotificationsIncludesInfo: any = null;
+	const woocommerceBulkStockManagementIncludesInfo: any = null;
+	const woocommerceCheckoutFieldEditorIncludesInfo: any = null;
+	const woocommerceCompositeProductsIncludesInfo: any = null;
+	const woocommerceConditionalShippingPaymentsIncludesInfo: any = null;
+	const woocommerceEuVatNumberIncludesInfo: any = null;
+	const woocommerceFlatRateBoxShippingIncludesInfo: any = null;
+	const woocommerceGiftCardsIncludesInfo: any = null;
+	const woocommerceGiftingWcSubscriptionsIncludesInfo: any = null;
+	const woocommercePerProductShippingIncludesInfo: any = null;
+	const woocommerceProductCsvImportSuiteIncludesInfo: any = null;
+	const woocommerceProductRecommendationsIncludesInfo: any = null;
+	const woocommerceProductVendorsIncludesInfo: any = null;
+	const woocommerceReturnsWarrantyRequestsIncludesInfo: any = null;
+	const woocommerceSubscriptionDownloadsIncludesInfo: any = null;
+	const woocommerceShipmentTrackingIncludesInfo: any = null;
+	const woocommerceShippingMultipleAddressesIncludesInfo: any = null;
+	const woocommerceStorefrontExtensionsBundleIncludesInfo: any = null;
+	const woocommerceTableRateShippingIncludesInfo: any = null;
+	const woocommerceAdditionalImageVariationsIncludesInfo: any = null;
+	const woocommerceBookingsAvailabilityIncludesInfo: any = null;
+	const woocommerceBoxOfficeIncludesInfo: any = null;
+	const woocommerceBrandsIncludesInfo: any = null;
+	const woocommerceCouponCampaignsIncludesInfo: any = null;
+	const woocommerceDepositsIncludesInfo: any = null;
+	const woocommerceDistanceRateShippingIncludesInfo: any = null;
+	const woocommerceOnePageCheckoutIncludesInfo: any = null;
+	const woocommerceOrderBarcodesIncludesInfo: any = null;
+	const woocommercePointsAndRewardsIncludesInfo: any = null;
+	const woocommercePreOrdersIncludesInfo: any = null;
+	const woocommercePurchaseOrderGatewayIncludesInfo: any = null;
+	const woocommerceShippingIncludesInfo: any = null;
+	const woocommerceAccommodationsBookingsIncludesInfo: any = null;
+	const woocommerceTaxIncludesInfo: any = null;
+	const woocommerceWoopaymentsIncludesInfo: any = null;
 	const monitorIncludesInfo = [
 		translate( '1-minute monitoring interval' ),
 		translate( 'Multiple email recipients' ),
@@ -1218,9 +1523,78 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	];
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantIncludesInfo,
-		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantIncludesInfo,
-		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantIncludesInfo,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_MONTHLY_100 ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_MONTHLY_200 ]: [
+			translate( '200 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_MONTHLY_500 ]: [
+			translate( '500 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_MONTHLY_750 ]: [
+			translate( '750 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_MONTHLY_1000 ]: [
+			translate( '1000 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_YEARLY ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_YEARLY_100 ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_YEARLY_200 ]: [
+			translate( '200 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_YEARLY_500 ]: [
+			translate( '500 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_YEARLY_750 ]: [
+			translate( '750 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_YEARLY_1000 ]: [
+			translate( '1000 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_BI_YEARLY_100 ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_BI_YEARLY_200 ]: [
+			translate( '200 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_BI_YEARLY_500 ]: [
+			translate( '500 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_BI_YEARLY_750 ]: [
+			translate( '750 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_BI_YEARLY_1000 ]: [
+			translate( '1000 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1,
@@ -1258,9 +1632,81 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
-		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercialIncludesInfo,
-		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercialIncludesInfo,
-		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercialIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialIncludesInfo,
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: [
+			translate( '10K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY_10K ]: [
+			translate( '10K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY_100K ]: [
+			translate( '100K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY_250K ]: [
+			translate( '250K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY_500K ]: [
+			translate( '500K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY_1M ]: [
+			translate( '1M site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: [
+			translate( '10K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_YEARLY_10K ]: [
+			translate( '10K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_YEARLY_100K ]: [
+			translate( '100K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_YEARLY_250K ]: [
+			translate( '250K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_YEARLY_500K ]: [
+			translate( '500K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_YEARLY_1M ]: [
+			translate( '1M site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: [
+			translate( '10K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_MONTHLY_10K ]: [
+			translate( '10K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_MONTHLY_100K ]: [
+			translate( '100K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_MONTHLY_250K ]: [
+			translate( '250K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_MONTHLY_500K ]: [
+			translate( '500K site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_STATS_MONTHLY_1M ]: [
+			translate( '1M site views (upgradeable)' ),
+			...statsCommercialIncludesInfo,
+		],
 		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorIncludesInfo,
 		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorIncludesInfo,
 		[ PRODUCT_WOOCOMMERCE_BOOKINGS ]: woocommerceBookingsIncludesInfo,
@@ -1269,6 +1715,53 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsIncludesInfo,
 		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesIncludesInfo,
 		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_ADVANCED_NOTIFICATIONS ]: woocommerceAdvancedNotificationsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_ALL_PRODUCTS_WOO_SUBSCRIPTIONS ]:
+			woocommerceAllProductsWooSubscriptionsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO_BIRTHDAYS ]: woocommerceAutomatewooBirthdaysIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO_REFER_A_FRIEND ]:
+			woocommerceAutomatewooReferAFriendIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_BACK_IN_STOCK_NOTIFICATIONS ]:
+			woocommerceBackInStockNotificationsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_BULK_STOCK_MANAGEMENT ]: woocommerceBulkStockManagementIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_CHECKOUT_FIELD_EDITOR ]: woocommerceCheckoutFieldEditorIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_COMPOSITE_PRODUCTS ]: woocommerceCompositeProductsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_CONDITIONAL_SHIPPING_PAYMENTS ]:
+			woocommerceConditionalShippingPaymentsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_EU_VAT_NUMBER ]: woocommerceEuVatNumberIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_FLAT_RATE_BOX_SHIPPING ]: woocommerceFlatRateBoxShippingIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_GIFT_CARDS ]: woocommerceGiftCardsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_GIFTING_WC_SUBSCRIPTIONS ]: woocommerceGiftingWcSubscriptionsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PER_PRODUCT_SHIPPING ]: woocommercePerProductShippingIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_CSV_IMPORT_SUITE ]: woocommerceProductCsvImportSuiteIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_RECOMMENDATIONS ]: woocommerceProductRecommendationsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_VENDORS ]: woocommerceProductVendorsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_RETURNS_WARRANTY_REQUESTS ]:
+			woocommerceReturnsWarrantyRequestsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTION_DOWNLOADS ]: woocommerceSubscriptionDownloadsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_SHIPMENT_TRACKING ]: woocommerceShipmentTrackingIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_SHIPPING_MULTIPLE_ADDRESSES ]:
+			woocommerceShippingMultipleAddressesIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_STOREFRONT_EXTENSIONS_BUNDLE ]:
+			woocommerceStorefrontExtensionsBundleIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_TABLE_RATE_SHIPPING ]: woocommerceTableRateShippingIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_ADDITIONAL_IMAGE_VARIATIONS ]:
+			woocommerceAdditionalImageVariationsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS_AVAILABILITY ]: woocommerceBookingsAvailabilityIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_BOX_OFFICE ]: woocommerceBoxOfficeIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_BRANDS ]: woocommerceBrandsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_COUPON_CAMPAIGNS ]: woocommerceCouponCampaignsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_DEPOSITS ]: woocommerceDepositsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_DISTANCE_RATE_SHIPPING ]: woocommerceDistanceRateShippingIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_ONE_PAGE_CHECKOUT ]: woocommerceOnePageCheckoutIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_ORDER_BARCODES ]: woocommerceOrderBarcodesIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_POINTS_AND_REWARDS ]: woocommercePointsAndRewardsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PRE_ORDERS ]: woocommercePreOrdersIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_PURCHASE_ORDER_GATEWAY ]: woocommercePurchaseOrderGatewayIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_SHIPPING ]: woocommerceShippingIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_ACCOMMODATIONS_BOOKINGS ]: woocommerceAccommodationsBookingsIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_TAX ]: woocommerceTaxIncludesInfo,
+		[ PRODUCT_WOOCOMMERCE_WOOPAYMENTS ]: woocommerceWoopaymentsIncludesInfo,
 	};
 };
 
@@ -1332,7 +1825,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Best-in-class support from WordPress experts' ),
 	];
 
-	const socialBenefits = [
+	const socialBasicBenefits = [
 		translate( 'Save time by sharing your posts automatically' ),
 		translate( 'Unlock your growth potential by building a following on social media' ),
 		translate( 'Easy-to-use interface' ),
@@ -1350,6 +1843,8 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Automatically create custom images, saving you hours of tedious work' ),
 		translate( 'Repurpose, reuse or republish already published content' ),
 	];
+
+	const socialBenefits = socialAdvancedBenefits;
 
 	const statsCommercialBenefits = [
 		translate( 'Better understand your audience' ),
@@ -1384,7 +1879,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	// WooCommerce Extensions benefits
 	const woocommerceBookingsBenefits = [
 		translate(
-			'Let your customers book reservations, appointments, or rentals independently – no phone calls are required.'
+			'Let your customers book reservations, appointments, or rentals independently - no phone calls are required.'
 		),
 		translate(
 			'Offer discounts for groups or people booking multiple slots, show lower prices for early birds, higher prices on weekends, or special prices for kids.'
@@ -1438,7 +1933,45 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Multilingual support. AutomateWoo has support for the popular WPML plugin' ),
 		translate( 'AutomateWoo integrates with your favorite plugins and services' ),
 	];
-
+	const woocommerceAdvancedNotificationsBenefits: any = null;
+	const woocommerceAllProductsWooSubscriptionsBenefits: any = null;
+	const woocommerceAutomatewooBirthdaysBenefits: any = null;
+	const woocommerceAutomatewooReferAFriendBenefits: any = null;
+	const woocommerceBackInStockNotificationsBenefits: any = null;
+	const woocommerceBulkStockManagementBenefits: any = null;
+	const woocommerceCheckoutFieldEditorBenefits: any = null;
+	const woocommerceCompositeProductsBenefits: any = null;
+	const woocommerceConditionalShippingPaymentsBenefits: any = null;
+	const woocommerceEuVatNumberBenefits: any = null;
+	const woocommerceFlatRateBoxShippingBenefits: any = null;
+	const woocommerceGiftCardsBenefits: any = null;
+	const woocommerceGiftingWcSubscriptionsBenefits: any = null;
+	const woocommercePerProductShippingBenefits: any = null;
+	const woocommerceProductCsvImportSuiteBenefits: any = null;
+	const woocommerceProductRecommendationsBenefits: any = null;
+	const woocommerceProductVendorsBenefits: any = null;
+	const woocommerceReturnsWarrantyRequestsBenefits: any = null;
+	const woocommerceSubscriptionDownloadsBenefits: any = null;
+	const woocommerceShipmentTrackingBenefits: any = null;
+	const woocommerceShippingMultipleAddressesBenefits: any = null;
+	const woocommerceStorefrontExtensionsBundleBenefits: any = null;
+	const woocommerceTableRateShippingBenefits: any = null;
+	const woocommerceAdditionalImageVariationsBenefits: any = null;
+	const woocommerceBookingsAvailabilityBenefits: any = null;
+	const woocommerceBoxOfficeBenefits: any = null;
+	const woocommerceBrandsBenefits: any = null;
+	const woocommerceCouponCampaignsBenefits: any = null;
+	const woocommerceDepositsBenefits: any = null;
+	const woocommerceDistanceRateShippingBenefits: any = null;
+	const woocommerceOnePageCheckoutBenefits: any = null;
+	const woocommerceOrderBarcodesBenefits: any = null;
+	const woocommercePointsAndRewardsBenefits: any = null;
+	const woocommercePreOrdersBenefits: any = null;
+	const woocommercePurchaseOrderGatewayBenefits: any = null;
+	const woocommerceShippingBenefits: any = null;
+	const woocommerceAccommodationsBookingsBenefits: any = null;
+	const woocommerceTaxBenefits: any = null;
+	const woocommerceWoopaymentsBenefits: any = null;
 	const monitorBenefits = [
 		translate(
 			'Rapid detection: With our 1-minute interval monitoring, we detect potential issues faster than ever before.'
@@ -1487,12 +2020,15 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boostBenefits,
 		[ PRODUCT_JETPACK_BOOST ]: boostBenefits,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostBenefits,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialBenefits,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBenefits,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialBasicBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasicBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasicBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: socialBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: socialBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: socialBenefits,
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercialBenefits,
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercialBenefits,
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercialBenefits,
@@ -1504,6 +2040,51 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS ]: woocommerceProductAddOnsBenefits,
 		[ PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES ]: woocommerceMinMaxQuantitiesBenefits,
 		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO ]: woocommerceAutomateWooBenefits,
+		[ PRODUCT_WOOCOMMERCE_ADVANCED_NOTIFICATIONS ]: woocommerceAdvancedNotificationsBenefits,
+		[ PRODUCT_WOOCOMMERCE_ALL_PRODUCTS_WOO_SUBSCRIPTIONS ]:
+			woocommerceAllProductsWooSubscriptionsBenefits,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO_BIRTHDAYS ]: woocommerceAutomatewooBirthdaysBenefits,
+		[ PRODUCT_WOOCOMMERCE_AUTOMATEWOO_REFER_A_FRIEND ]: woocommerceAutomatewooReferAFriendBenefits,
+		[ PRODUCT_WOOCOMMERCE_BACK_IN_STOCK_NOTIFICATIONS ]:
+			woocommerceBackInStockNotificationsBenefits,
+		[ PRODUCT_WOOCOMMERCE_BULK_STOCK_MANAGEMENT ]: woocommerceBulkStockManagementBenefits,
+		[ PRODUCT_WOOCOMMERCE_CHECKOUT_FIELD_EDITOR ]: woocommerceCheckoutFieldEditorBenefits,
+		[ PRODUCT_WOOCOMMERCE_COMPOSITE_PRODUCTS ]: woocommerceCompositeProductsBenefits,
+		[ PRODUCT_WOOCOMMERCE_CONDITIONAL_SHIPPING_PAYMENTS ]:
+			woocommerceConditionalShippingPaymentsBenefits,
+		[ PRODUCT_WOOCOMMERCE_EU_VAT_NUMBER ]: woocommerceEuVatNumberBenefits,
+		[ PRODUCT_WOOCOMMERCE_FLAT_RATE_BOX_SHIPPING ]: woocommerceFlatRateBoxShippingBenefits,
+		[ PRODUCT_WOOCOMMERCE_GIFT_CARDS ]: woocommerceGiftCardsBenefits,
+		[ PRODUCT_WOOCOMMERCE_GIFTING_WC_SUBSCRIPTIONS ]: woocommerceGiftingWcSubscriptionsBenefits,
+		[ PRODUCT_WOOCOMMERCE_PER_PRODUCT_SHIPPING ]: woocommercePerProductShippingBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_CSV_IMPORT_SUITE ]: woocommerceProductCsvImportSuiteBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_RECOMMENDATIONS ]: woocommerceProductRecommendationsBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_VENDORS ]: woocommerceProductVendorsBenefits,
+		[ PRODUCT_WOOCOMMERCE_RETURNS_WARRANTY_REQUESTS ]: woocommerceReturnsWarrantyRequestsBenefits,
+		[ PRODUCT_WOOCOMMERCE_SUBSCRIPTION_DOWNLOADS ]: woocommerceSubscriptionDownloadsBenefits,
+		[ PRODUCT_WOOCOMMERCE_SHIPMENT_TRACKING ]: woocommerceShipmentTrackingBenefits,
+		[ PRODUCT_WOOCOMMERCE_SHIPPING_MULTIPLE_ADDRESSES ]:
+			woocommerceShippingMultipleAddressesBenefits,
+		[ PRODUCT_WOOCOMMERCE_STOREFRONT_EXTENSIONS_BUNDLE ]:
+			woocommerceStorefrontExtensionsBundleBenefits,
+		[ PRODUCT_WOOCOMMERCE_TABLE_RATE_SHIPPING ]: woocommerceTableRateShippingBenefits,
+		[ PRODUCT_WOOCOMMERCE_ADDITIONAL_IMAGE_VARIATIONS ]:
+			woocommerceAdditionalImageVariationsBenefits,
+		[ PRODUCT_WOOCOMMERCE_BOOKINGS_AVAILABILITY ]: woocommerceBookingsAvailabilityBenefits,
+		[ PRODUCT_WOOCOMMERCE_BOX_OFFICE ]: woocommerceBoxOfficeBenefits,
+		[ PRODUCT_WOOCOMMERCE_BRANDS ]: woocommerceBrandsBenefits,
+		[ PRODUCT_WOOCOMMERCE_COUPON_CAMPAIGNS ]: woocommerceCouponCampaignsBenefits,
+		[ PRODUCT_WOOCOMMERCE_DEPOSITS ]: woocommerceDepositsBenefits,
+		[ PRODUCT_WOOCOMMERCE_DISTANCE_RATE_SHIPPING ]: woocommerceDistanceRateShippingBenefits,
+		[ PRODUCT_WOOCOMMERCE_ONE_PAGE_CHECKOUT ]: woocommerceOnePageCheckoutBenefits,
+		[ PRODUCT_WOOCOMMERCE_ORDER_BARCODES ]: woocommerceOrderBarcodesBenefits,
+		[ PRODUCT_WOOCOMMERCE_POINTS_AND_REWARDS ]: woocommercePointsAndRewardsBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRE_ORDERS ]: woocommercePreOrdersBenefits,
+		[ PRODUCT_WOOCOMMERCE_PURCHASE_ORDER_GATEWAY ]: woocommercePurchaseOrderGatewayBenefits,
+		[ PRODUCT_WOOCOMMERCE_SHIPPING ]: woocommerceShippingBenefits,
+		[ PRODUCT_WOOCOMMERCE_ACCOMMODATIONS_BOOKINGS ]: woocommerceAccommodationsBookingsBenefits,
+		[ PRODUCT_WOOCOMMERCE_TAX ]: woocommerceTaxBenefits,
+		[ PRODUCT_WOOCOMMERCE_WOOPAYMENTS ]: woocommerceWoopaymentsBenefits,
 	};
 };
 

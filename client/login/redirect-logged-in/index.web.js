@@ -14,7 +14,13 @@ function isExternalUrl( url ) {
 
 	try {
 		const urlObject = new URL( url );
-		if ( urlObject.hostname === 'wordpress.com' && urlObject.protocol === 'https:' ) {
+		const allowedHostname = [
+			'wordpress.com',
+			'subscribe.wordpress.com',
+			'agencies.automattic.com',
+		];
+
+		if ( allowedHostname.includes( urlObject.hostname ) && urlObject.protocol === 'https:' ) {
 			return false;
 		}
 	} catch {

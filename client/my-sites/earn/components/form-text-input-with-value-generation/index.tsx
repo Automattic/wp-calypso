@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useState, useCallback, ChangeEvent, FocusEvent, MouseEvent } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -87,7 +87,7 @@ const FormTextInputWithValueGeneration = ( {
 
 	return (
 		<div
-			className={ classNames( 'form-text-input-with-value-generation', className, {
+			className={ clsx( 'form-text-input-with-value-generation', className, {
 				'is-focused': focused,
 				'is-disabled': disabled,
 				'is-error': isError,

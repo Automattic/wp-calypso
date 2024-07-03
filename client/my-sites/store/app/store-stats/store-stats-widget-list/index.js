@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { findIndex } from 'lodash';
 import PropTypes from 'prop-types';
@@ -58,7 +58,7 @@ class StoreStatsWidgetList extends Component {
 				{ values.map( ( value, i ) => {
 					return (
 						<TableItem
-							className={ classnames( 'store-stats-widget-list__table-item', value.key ) }
+							className={ clsx( 'store-stats-widget-list__table-item', value.key ) }
 							isHeader
 							key={ i }
 							isTitle={ 0 === i }
@@ -103,7 +103,7 @@ class StoreStatsWidgetList extends Component {
 					<TableRow className="store-stats-widget-list__table-row" key={ i }>
 						{ values.map( ( value, j ) => (
 							<TableItem
-								className={ classnames( 'store-stats-widget-list__table-item', value.key ) }
+								className={ clsx( 'store-stats-widget-list__table-item', value.key ) }
 								key={ value.key }
 								isTitle={ 0 === j }
 							>

@@ -1,5 +1,5 @@
 import { FormLabel } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
@@ -8,7 +8,7 @@ import './style.scss';
 
 const FormRadiosBar = ( { isThumbnail, checked, onChange, items, disabled } ) => {
 	return (
-		<div className={ classnames( 'form-radios-bar', { 'is-thumbnail': isThumbnail } ) }>
+		<div className={ clsx( 'form-radios-bar', { 'is-thumbnail': isThumbnail } ) }>
 			{ items.map( ( item, i ) =>
 				isThumbnail ? (
 					<FormRadioWithThumbnail

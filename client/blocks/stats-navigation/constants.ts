@@ -49,12 +49,14 @@ const traffic = {
 	showIntervals: true,
 	paywall: true,
 } as NavItem;
+
 const insights = {
 	label: translate( 'Insights' ),
 	path: '/stats/insights',
 	showIntervals: false,
 	paywall: true,
 } as NavItem;
+
 // TODO: Consider adding subscriber counts into this nav item in the future.
 // See client/blocks/subscribers-count/index.jsx.
 const subscribers = {
@@ -64,16 +66,19 @@ const subscribers = {
 	path: '/stats/subscribers',
 	showIntervals: false,
 } as NavItem;
+
 const store = {
 	label: translate( 'Store' ),
 	path: '/store/stats/orders',
 	showIntervals: true,
 } as NavItem;
+
 const wordads = {
 	label: translate( 'Ads' ),
 	path: '/stats/ads',
 	showIntervals: true,
 } as NavItem;
+
 const googleMyBusiness = {
 	label: translate( 'Google Business Profile' ),
 	path: '/google-my-business/stats',

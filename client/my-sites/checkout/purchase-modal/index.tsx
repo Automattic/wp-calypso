@@ -6,13 +6,13 @@ import {
 	type PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import classNames from 'classnames';
+import { getContactDetailsType } from '@automattic/wpcom-checkout';
+import clsx from 'clsx';
 import { useState, useMemo, useEffect, type PropsWithChildren } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isCreditCard, type StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/src/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-card-processor';
-import getContactDetailsType from 'calypso/my-sites/checkout/src/lib/get-contact-details-type';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -37,6 +37,7 @@ type PurchaseModalProps = {
 	onClose: () => void;
 	siteSlug: string;
 	productToAdd: MinimalRequestCartProduct;
+	coupon?: string;
 	showFeatureList: boolean;
 } & (
 	| {
@@ -82,9 +83,9 @@ function PurchaseModal( {
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			baseClassName="purchase-modal dialog"
-			className={ classNames( {
+			className={ clsx( {
 				'has-feature-list': showFeatureList,
 			} ) }
 			onClose={ onClose }
@@ -112,6 +113,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		onPurchaseSuccess = null,
 		disabledThankYouPage,
 		productToAdd,
+		coupon,
 		siteSlug,
 		showFeatureList,
 	} = props;
@@ -132,7 +134,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const { razorpayConfiguration } = useRazorpay();
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
-	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate } =
+	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate, applyCoupon } =
 		useShoppingCart( cartKey );
 	const selectedSite = useSelector( getSelectedSite );
 	const paymentMethodsState = useStoredPaymentMethods( {
@@ -204,7 +206,9 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				city: wrapValueInManagedValue( storedCard.tax_location?.city ),
 				postalCode: wrapValueInManagedValue( storedCard.tax_location?.postal_code ),
 			};
+
 			setRequestSent( true );
+
 			updateCartContactDetailsForCheckout(
 				countries ?? [],
 				responseCart,
@@ -213,6 +217,9 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				vatDetails
 			);
 			replaceProductsInCart( [ productToAdd ] );
+			if ( coupon ) {
+				applyCoupon( coupon );
+			}
 		}
 	}, [
 		replaceProductsInCart,
@@ -225,6 +232,8 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		requestSent,
 		setRequestSent,
 		responseCart,
+		applyCoupon,
+		coupon,
 	] );
 
 	const handleOnClose = () => {

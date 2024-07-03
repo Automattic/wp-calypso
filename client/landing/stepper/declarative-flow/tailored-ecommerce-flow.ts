@@ -5,11 +5,9 @@ import {
 	PLAN_ECOMMERCE_3_YEARS,
 	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
-import { useLocale } from '@automattic/i18n-utils';
 import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	setSignupCompleteSlug,
@@ -20,8 +18,8 @@ import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import getQuantityFromStorageType from '../utils/get-quantity-from-storage-slug';
-import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { STEPS } from './internals/steps';
 import { AssertConditionState } from './internals/types';
 import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
 import type {
@@ -58,37 +56,31 @@ const ecommerceFlow: Flow = {
 		return { recur };
 	},
 	useSteps() {
-		return [
+		const steps = [
 			{
 				slug: 'storeProfiler',
 				asyncComponent: () => import( './internals/steps-repository/store-profiler' ),
 			},
-			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
+			STEPS.DOMAINS,
 			{
 				slug: 'designCarousel',
 				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
 			},
 			{
+				// Note: the slug for STEPS.SITE_CREATION_STEP is 'create-site'
 				slug: 'createSite',
 				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
-			{
-				slug: 'waitForPluginInstall',
-				asyncComponent: () => import( './internals/steps-repository/wait-for-plugin-install' ),
-			},
-			{
-				slug: 'waitForAtomic',
-				asyncComponent: () => import( './internals/steps-repository/wait-for-atomic' ),
-			},
+			STEPS.PROCESSING,
+			STEPS.WAIT_FOR_PLUGIN_INSTALL,
+			STEPS.WAIT_FOR_ATOMIC,
 			{
 				slug: 'checkPlan',
 				asyncComponent: () => import( './internals/steps-repository/check-plan' ),
 			},
 		];
+
+		return stepsWithRequiredLogin( steps );
 	},
 
 	useAssertConditions(): AssertConditionResult {
@@ -98,75 +90,10 @@ const ecommerceFlow: Flow = {
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
-		const flowName = this.name;
-
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
-
-		const { recurType, couponCode, storageAddonSlug } = useSelect(
-			( select ) => ( {
-				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
-				couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
-				storageAddonSlug: ( select( ONBOARD_STORE ) as OnboardSelect ).getStorageAddonSlug(),
-			} ),
-			[]
-		);
-
-		const getStartUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
-
-			if ( recurType !== ecommerceFlowRecurTypes.YEARLY ) {
-				flowParams.set( 'recur', recurType );
-				hasFlowParams = true;
-			}
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			if ( couponCode || storageAddonSlug ) {
-				hasFlowParams = true;
-				flowParams.set( 'storage', storageAddonSlug );
-				flowParams.set( 'coupon', couponCode );
-			}
-
-			const redirectTarget =
-				`/setup/ecommerce/storeProfiler` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-			const logInUrl = getLoginUrl( {
-				variationName: flowName,
-				redirectTo: redirectTarget,
-				locale,
-			} );
-
-			return logInUrl + ( flags ? `&flags=${ flags }` : '' );
-		};
-
-		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/blog/blogger-intent route which has no locale in the path so we need to
-		// redirect off of the first render.
-		// This effects both /setup/blog/<locale> starting points and /setup/blog/blogger-intent/<locale> urls.
-		// The double call also hapens on urls without locale.
-		useEffect( () => {
-			if ( ! userIsLoggedIn ) {
-				const logInUrl = getStartUrl();
-				window.location.assign( logInUrl );
-			}
-		}, [] );
-
 		if ( ! userIsLoggedIn ) {
 			result = {
 				state: AssertConditionState.FAILURE,
-				message: 'store-setup requires a logged in user',
+				message: 'ecommerce requires a logged in user',
 			};
 		}
 
@@ -183,13 +110,20 @@ const ecommerceFlow: Flow = {
 			resetStorageAddonSlug,
 		} = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
-		const { selectedDesign, recurType, couponCode, storageAddonSlug } = useSelect(
-			( select ) => ( {
-				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
-				couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
-				storageAddonSlug: ( select( ONBOARD_STORE ) as OnboardSelect ).getStorageAddonSlug(),
-			} ),
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
+		const recurType = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			[]
+		);
+		const couponCode = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
+			[]
+		);
+		const storageAddonSlug = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStorageAddonSlug(),
 			[]
 		);
 		const selectedPlan = getPlanFromRecurType( recurType );

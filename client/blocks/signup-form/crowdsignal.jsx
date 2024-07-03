@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -42,17 +42,17 @@ class CrowdsignalSignupForm extends Component {
 	render() {
 		const { translate } = this.props;
 
-		const socialCardClass = classNames(
+		const socialCardClass = clsx(
 			'signup-form__crowdsignal-card',
 			'signup-form__crowdsignal-social',
 			{
 				'is-active': ! this.state.showSignupForm,
 			}
 		);
-		const signupCardClass = classNames( 'signup-form__crowdsignal-card', {
+		const signupCardClass = clsx( 'signup-form__crowdsignal-card', {
 			'is-active': this.state.showSignupForm,
 		} );
-		const backButtonWrapperClass = classNames( 'signup-form__crowdsignal-back-button-wrapper', {
+		const backButtonWrapperClass = clsx( 'signup-form__crowdsignal-back-button-wrapper', {
 			'is-first-step': ! this.state.showSignupForm,
 		} );
 
@@ -111,7 +111,7 @@ class CrowdsignalSignupForm extends Component {
 						</h2>
 
 						<div className="signup-form__crowdsignal-card-content">
-							<LoggedOutForm onSubmit={ this.props.handleSubmit } noValidate={ true }>
+							<LoggedOutForm onSubmit={ this.props.handleSubmit } noValidate>
 								{ this.props.formFields }
 
 								<LoggedOutFormFooter>

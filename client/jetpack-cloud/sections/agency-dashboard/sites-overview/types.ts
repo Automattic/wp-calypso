@@ -2,7 +2,15 @@ import { TranslateResult } from 'i18n-calypso';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 // All types based on which the data is populated on the agency dashboard table rows
-export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
+export type AllowedTypes =
+	| 'site'
+	| 'stats'
+	| 'boost'
+	| 'backup'
+	| 'scan'
+	| 'monitor'
+	| 'plugin'
+	| 'error';
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
@@ -89,6 +97,7 @@ export interface Site {
 	latest_backup_status: string;
 	is_connection_healthy: boolean;
 	awaiting_plugin_updates: Array< string >;
+	multisite: boolean;
 	is_favorite: boolean;
 	monitor_settings: MonitorSettings;
 	monitor_last_status_change: string;
@@ -107,6 +116,7 @@ export interface Site {
 	latest_scan_has_threats_found: boolean;
 	active_paid_subscription_slugs: Array< string >;
 	site_color?: string;
+	enabled_plugin_slugs?: Array< string >;
 }
 export interface SiteNode {
 	value: Site;
@@ -152,6 +162,11 @@ export interface MonitorNode {
 	error?: boolean;
 	settings?: MonitorSettings;
 }
+export interface ErrorNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes;
+	value: string;
+}
 export interface SiteData {
 	site: SiteNode;
 	stats: StatsNode;
@@ -160,9 +175,11 @@ export interface SiteData {
 	scan: ScanNode;
 	plugin: PluginNode;
 	monitor: MonitorNode;
+	error: ErrorNode;
 	isFavorite?: boolean;
 	isSelected?: boolean;
 	onSelect?: () => void;
+	ref?: string | number;
 }
 
 export interface RowMetaData {
@@ -264,6 +281,7 @@ export interface AgencyDashboardFilterMap {
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption >;
 	showOnlyFavorites: boolean;
+	isNotMultisite?: boolean;
 };
 
 export type ProductInfo = { name: string; key: string; status: 'rejected' | 'fulfilled' };
@@ -337,6 +355,8 @@ export interface ToggleActivaateMonitorAPIResponse {
 export interface ToggleActivateMonitorArgs {
 	siteId: number;
 	params: { monitor_active: boolean };
+	hasJetpackPluginInstalled: boolean;
+	agencyId?: number;
 }
 
 export interface Backup {

@@ -2,24 +2,34 @@ import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useLayoutEffect } from 'react';
 import localStorageHelper from 'store';
-import { ImporterMainPlatform } from 'calypso/blocks/import/types';
+import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import CreateSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/create-site';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
+import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
+import { ImporterMainPlatform } from 'calypso/lib/importer/types';
+import { useSite } from '../hooks/use-site';
+import { useLoginUrl } from '../utils/path';
 import Import from './internals/steps-repository/import';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
 import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
 import ImportVerifyEmail from './internals/steps-repository/import-verify-email';
+import ImporterMigrateMessage from './internals/steps-repository/importer-migrate-message';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SitePickerStep from './internals/steps-repository/site-picker';
 import TrialAcknowledge from './internals/steps-repository/trial-acknowledge';
-import { Flow, ProvidedDependencies } from './internals/types';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -47,7 +57,21 @@ const importHostedSiteFlow: Flow = {
 			{ slug: 'verifyEmail', component: ImportVerifyEmail },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'error', component: MigrationError },
+			{ slug: 'migrateMessage', component: ImporterMigrateMessage },
 		];
+	},
+
+	useAssertConditions(): AssertConditionResult {
+		const { isAdmin, isFetching } = useIsSiteAdmin();
+		const result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		useEffect( () => {
+			if ( isAdmin === false && ! isFetching ) {
+				window.location.assign( `/setup/${ this.name }/import` );
+			}
+		}, [ isAdmin, isFetching ] );
+
+		return result;
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -55,6 +79,8 @@ const importHostedSiteFlow: Flow = {
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
 		const siteSlugParam = useSiteSlugParam();
+		const site = useSite();
+		const isSitePlanCompatible = site && isTargetSitePlanCompatible( site );
 		const siteCount =
 			useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] )
 				?.site_count ?? 0;
@@ -207,8 +233,18 @@ const importHostedSiteFlow: Flow = {
 					return window.location.assign( '/sites?hosting-flow=true' );
 
 				case 'importerWordpress':
-					// remove the siteSlug in case they want to change the destination site
-					urlQueryParams.delete( 'siteSlug' );
+					if ( urlQueryParams.has( 'showModal' ) ) {
+						// remove the siteSlug in case they want to change the destination site
+						urlQueryParams.delete( 'siteSlug' );
+						urlQueryParams.delete( 'showModal' );
+						return navigate( `sitePicker?${ urlQueryParams.toString() }` );
+					}
+
+					if ( ! isSitePlanCompatible ) {
+						urlQueryParams.set( 'showModal', 'true' );
+						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					}
+
 					return navigate( `sitePicker?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker':
@@ -216,8 +252,11 @@ const importHostedSiteFlow: Flow = {
 					urlQueryParams.delete( 'from' );
 					return navigate( `import?${ urlQueryParams.toString() }` );
 
-				case 'importReady':
 				case 'importReadyNot':
+					urlQueryParams.delete( 'siteSlug' );
+					urlQueryParams.delete( 'from' );
+					return navigate( `import?${ urlQueryParams.toString() }` );
+				case 'importReady':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
 					// remove the siteSlug in case they want to change the
@@ -252,17 +291,23 @@ const importHostedSiteFlow: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 	useSideEffect( currentStep ) {
+		const flowName = this.name;
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+
+		const logInUrl = useLoginUrl( {
+			variationName: flowName,
+			redirectTo: `/setup/${ flowName }`,
+		} );
 
 		const urlQueryParams = useQuery();
 		const restoreFlowQueryParam = urlQueryParams.get( 'restore-progress' );
 
 		useLayoutEffect( () => {
 			if ( ! userIsLoggedIn ) {
-				window.location.assign( '/start/hosting' );
+				window.location.assign( logInUrl );
 			}
 
 			if ( restoreFlowQueryParam === null ) {

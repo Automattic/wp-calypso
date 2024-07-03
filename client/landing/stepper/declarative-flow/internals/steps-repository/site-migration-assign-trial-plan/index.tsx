@@ -1,5 +1,5 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useAddHostingTrialMutation, {
 	HOSTING_INTENT_MIGRATE,
 } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -11,6 +11,7 @@ import { Step } from '../../types';
 const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const site = useSite();
+	const [ isAddingTrial, setIsAddingTrial ] = useState( false );
 
 	const dispatch = useDispatch();
 	const { addHostingTrial } = useAddHostingTrialMutation( {
@@ -26,15 +27,17 @@ const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
 	} );
 
 	useEffect( () => {
-		if ( site ) {
+		// A site is trial eligible if it has no plan or the free plan.
+		const siteIsTrialEligible = ! site?.plan || site?.plan?.product_slug === 'free_plan';
+		if ( site && siteIsTrialEligible && ! isAddingTrial ) {
+			setIsAddingTrial( true );
 			const assignMigrationTrialPlan = () => {
 				site.ID && addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY, HOSTING_INTENT_MIGRATE );
 			};
 
 			assignMigrationTrialPlan();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ site, isAddingTrial, addHostingTrial ] );
 
 	return null;
 };

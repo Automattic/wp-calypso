@@ -4,3 +4,8 @@ export type SyncSuccessParams = {
 	hours: number;
 	weekday?: number;
 };
+
+export type PathsOnChangeEvent = {
+	paths: string[];
+	hasUnsubmittedPath: boolean;
+};

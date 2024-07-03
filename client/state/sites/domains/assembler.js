@@ -65,6 +65,8 @@ export const createSiteDomainObject = ( domain ) => {
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
 		canManageDnsRecords: Boolean( domain.can_manage_dns_records ),
 		canManageNameServers: Boolean( domain.can_manage_name_servers ),
+		canTransferToAnyUser: Boolean( domain.can_transfer_to_any_user ),
+		canTransferToOtherSite: Boolean( domain.can_transfer_to_other_site ),
 		canUpdateContactInfo: Boolean( domain.can_update_contact_info ),
 		cannotManageDnsRecordsReason: domain.cannot_manage_dns_records_reason
 			? String( domain.cannot_manage_dns_records_reason )
@@ -101,6 +103,7 @@ export const createSiteDomainObject = ( domain ) => {
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
 		isDomainOnlySite: Boolean( domain.is_domain_only_site ),
+		isGravatarDomain: Boolean( domain.is_gravatar_domain ),
 		isLocked: Boolean( domain.is_locked ),
 		isRenewable: Boolean( domain.is_renewable ),
 		isRedeemable: Boolean( domain.is_redeemable ),
@@ -138,6 +141,7 @@ export const createSiteDomainObject = ( domain ) => {
 		pendingRegistrationTime: String( domain.pending_registration_time ),
 		pendingTransfer: domain.pending_transfer,
 		pointsToWpcom: Boolean( domain.points_to_wpcom ),
+		productSlug: ! domain.product_slug ? null : String( domain.product_slug ),
 		privateDomain: domain.private_domain,
 		privacyAvailable: Boolean( domain.privacy_available ),
 		registeredViaTrustee: Boolean( domain.registered_via_trustee ),

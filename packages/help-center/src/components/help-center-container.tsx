@@ -4,9 +4,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
+import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
-import classnames from 'classnames';
-import { useState, useRef, FC } from 'react';
+import clsx from 'clsx';
+import { useState, useRef, useEffect, useCallback, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 import { MemoryRouter } from 'react-router-dom';
 /**
@@ -46,14 +47,14 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
-	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
+	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
 
-	const onDismiss = () => {
+	const onDismiss = useCallback( () => {
 		setIsVisible( false );
 		recordTracksEvent( `calypso_inlinehelp_close` );
-	};
+	}, [ setIsVisible, recordTracksEvent ] );
 
 	const toggleVisible = () => {
 		if ( ! isVisible ) {
@@ -73,6 +74,27 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	// https://github.com/react-grid-layout/react-draggable/blob/781ef77c86be9486400da9837f43b96186166e38/README.md
 	const nodeRef = useRef( null );
 
+	const focusReturnRef = useFocusReturn();
+
+	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef ] );
+
+	const shouldCloseOnEscapeRef = useRef( false );
+
+	shouldCloseOnEscapeRef.current = !! show && ! hidden && ! isMinimized;
+
+	useEffect( () => {
+		const handleKeydown = ( e: KeyboardEvent ) => {
+			if ( e.key === 'Escape' && shouldCloseOnEscapeRef.current ) {
+				onDismiss();
+			}
+		};
+
+		document.addEventListener( 'keydown', handleKeydown );
+		return () => {
+			document.removeEventListener( 'keydown', handleKeydown );
+		};
+	}, [ shouldCloseOnEscapeRef, onDismiss ] );
+
 	if ( ! show || hidden ) {
 		return null;
 	}
@@ -86,7 +108,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 					handle=".help-center__container-header"
 					bounds="body"
 				>
-					<Card className={ classNames } { ...animationProps } ref={ nodeRef }>
+					<Card className={ classNames } { ...animationProps } ref={ cardMergeRefs }>
 						<HelpCenterHeader
 							isMinimized={ isMinimized }
 							onMinimize={ () => setIsMinimized( true ) }

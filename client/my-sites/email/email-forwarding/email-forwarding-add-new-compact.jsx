@@ -108,7 +108,7 @@ class EmailForwardingAddNewCompact extends Component {
 						suffix={ '@' + selectedDomainName }
 						value={ mailbox }
 					/>
-					{ ! isValidMailbox && <FormInputValidation text={ mailboxError } isError={ true } /> }
+					{ ! isValidMailbox && <FormInputValidation text={ mailboxError } isError /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -120,9 +120,7 @@ class EmailForwardingAddNewCompact extends Component {
 						isError={ ! isValidDestination }
 						value={ destination }
 					/>
-					{ ! isValidDestination && (
-						<FormInputValidation text={ destinationError } isError={ true } />
-					) }
+					{ ! isValidDestination && <FormInputValidation text={ destinationError } isError /> }
 				</FormFieldset>
 			</div>
 		);

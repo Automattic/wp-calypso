@@ -15,7 +15,7 @@
 	color: $font-color;
 	background-color: var(--studio-white);
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		border-radius: 0;
 		border-left: 0;
 		border-right: 0;
@@ -72,6 +72,8 @@
 		justify-content: space-between;
 		align-items: center;
 		flex-wrap: wrap;
+		// Add padding to wrapped elements in narrow viewports.
+		row-gap: 16px;
 	}
 
 	.stats-card-header__additional {
@@ -132,6 +134,23 @@
 	}
 }
 
+// TODO: update when cleaning stats/empty-module-traffic feature flag
+// (stats-card--empty-variant should be added to the root of the card when isEmpty is passed = className shouldn't
+// continue to set it - it's not compatible with footer actions)
+.stats-card--empty-variant {
+	.stats-card--header-and-body {
+		display: flex;
+		flex-direction: column;
+		min-height: 100%;
+	}
+
+	.stats-card--body-empty {
+		display: flex;
+		flex: 1 0 auto;
+		align-items: center;
+	}
+}
+
 .stats-card-avatar {
 	display: flex;
 
@@ -140,4 +159,11 @@
 		height: $stats-avatar-size;
 		border-radius: 50%;
 	}
+}
+
+.stats-module__extended-toggle {
+	display: flex;
+	gap: 0 5px;
+	justify-content: center;
+	padding-top: 2px; // for focus ring for Jetpack
 }

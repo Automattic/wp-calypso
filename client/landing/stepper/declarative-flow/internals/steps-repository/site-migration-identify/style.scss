@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 
 .import__capture-container {
 	max-width: 368px;
@@ -69,6 +70,57 @@
 			color: inherit;
 			margin: 0;
 			padding: 0;
+		}
+	}
+}
+
+.import__capture-wrapper {
+	margin-bottom: 60px;
+
+	@media (min-width: $break-small) {
+		margin-bottom: 0;
+	}
+}
+
+.import__site-identify-hosting-details {
+	background-color: #f6f7f7;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+	margin: 40px auto 0 auto;
+	max-width: 368px;
+	padding: 1.5rem;
+
+	&--title {
+		color: var(--studio-gray-100);
+		font-size: 1.25rem;
+		font-weight: 500;
+	}
+
+	&--list {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+
+		&-item {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+
+			&-description {
+				color: var(--studio-gray-60);
+				font-size: 0.875rem;
+				font-weight: 400;
+				letter-spacing: -0.16px;
+			}
+
+			&-title {
+				color: var(--studio-gray-70);
+				font-size: 1rem;
+				font-weight: 500;
+				letter-spacing: -0.32px;
+			}
 		}
 	}
 }

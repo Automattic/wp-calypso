@@ -1,69 +1,20 @@
-import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { useLocale, englishLocales } from '@automattic/i18n-utils';
-import { useI18n } from '@wordpress/react-i18n';
+import { useLocale, isLocaleRtl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import type { Goal } from './types';
 
 const SiteGoal = Onboard.SiteGoal;
 
-const DIFMSupportedLocales = [ ...englishLocales, 'es' ];
-
-// export const CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME =
-// 	'calypso_builtbyexpress_goal_copy_change_202210';
-// export const VARIATION_CONTROL = 'control';
-// export const VARIATION_BUY = 'variation_buy';
-// export const VARIATION_GET = 'variation_get';
-
-const useBBEGoal = () => {
-	const translate = useTranslate();
-
-	// ************************************************************************
-	// ****  Experiment skeleton left in for future BBE copy change tests  ****
-	// ************************************************************************
-	//
-
-	// const [ , experimentAssignment ] = useExperiment(
-	// 	CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME
-	// );
-	// const variationName = experimentAssignment?.variationName;
-
-	// let builtByExpressGoalDisplayText;
-	// switch ( variationName ) {
-	// 	case VARIATION_BUY:
-	// 		builtByExpressGoalDisplayText = translate( 'Buy a website' );
-	// 		break;
-	// 	case VARIATION_GET:
-	// 		builtByExpressGoalDisplayText = translate( 'Get a website quickly' );
-	// 		break;
-	// 	case VARIATION_CONTROL:
-	// 	default:
-	// 		builtByExpressGoalDisplayText = translate( 'Hire a professional to design my website' );
-	// }
-	//
-	// ************************************************************************
-
-	return translate( 'Get a website built quickly' );
-};
-
 export const useGoals = (): Goal[] => {
+	loadExperimentAssignment( 'calypso_design_picker_image_optimization_202406' ); // Temporary for A/B test.
+
 	const translate = useTranslate();
-	const { hasTranslation } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 	const locale = useLocale();
-	const builtByExpressGoalDisplayText = useBBEGoal();
 
 	const importDisplayText = () => {
-		// New copy waiting on translation.
-		if (
-			config.isEnabled( 'onboarding/new-migration-flow' ) &&
-			( englishLocales.includes( translate?.localeSlug || '' ) ||
-				hasTranslation( 'Import existing content or website' ) )
-		) {
-			return translate( 'Import existing content or website' );
-		}
-
-		// Original copy
-		return translate( 'Import my existing website content' );
+		return translate( 'Import existing content or website' );
 	};
 
 	const goals = [
@@ -81,7 +32,9 @@ export const useGoals = (): Goal[] => {
 		},
 		{
 			key: SiteGoal.DIFM,
-			title: builtByExpressGoalDisplayText,
+			title: hasEnTranslation( 'Let us build your site in 4 days' )
+				? translate( 'Let us build your site in 4 days' )
+				: translate( 'Get a website built quickly' ),
 			isPremium: true,
 		},
 		{
@@ -95,10 +48,10 @@ export const useGoals = (): Goal[] => {
 	];
 
 	/**
-	 * Hides the DIFM goal for all locales except English and ES.
+	 * Hides the DIFM goal for RTL locales.
 	 */
 	const hideDIFMGoalForUnsupportedLocales = ( { key }: Goal ) => {
-		if ( key === SiteGoal.DIFM && ! DIFMSupportedLocales.includes( locale ) ) {
+		if ( key === SiteGoal.DIFM && isLocaleRtl( locale ) ) {
 			return false;
 		}
 		return true;

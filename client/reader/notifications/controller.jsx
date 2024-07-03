@@ -44,9 +44,8 @@ export function notifications( context, next ) {
 			<div className="reader-notifications__panel">
 				<AsyncLoad
 					require="calypso/notifications"
-					isShowing={ true }
+					isShowing
 					checkToggle={ () => {} }
-					setIndicator={ () => {} }
 					placeholder={ null }
 					isGlobalSidebarVisible={ shouldShowGlobalSidebar }
 				/>

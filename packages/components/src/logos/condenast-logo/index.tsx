@@ -1,5 +1,12 @@
 const CondenastLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
-	<svg xmlns="http://www.w3.org/2000/svg" width={ 84 } height={ 27 } fill="none" { ...props }>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width={ 84 }
+		height={ 27 }
+		viewBox="0 0 84 27"
+		fill="none"
+		{ ...props }
+	>
 		<title>WordPress VIP client logo for Conde Nast</title>
 		<path
 			fill="#50575E"

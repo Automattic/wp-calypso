@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import type { MouseEventHandler, PropsWithChildren } from 'react';
 
 const Wrapper = styled.div`
@@ -37,7 +37,7 @@ const CheckoutTermsItem = ( {
 	isPrewrappedChildren?: boolean;
 } > ) => {
 	return (
-		<Wrapper className={ classNames( 'checkout__terms-item', className ) } onClick={ onClick }>
+		<Wrapper className={ clsx( 'checkout__terms-item', className ) } onClick={ onClick }>
 			{ isPrewrappedChildren ? children : <p>{ children }</p> }
 		</Wrapper>
 	);

@@ -538,7 +538,7 @@ ul.module-content-list-item-action-submenu {
 		}
 
 		// Hide 'View' label next to icon on 2-column modules
-		@media ( min-width: "783px" ) {
+		@media (min-width: "783px") {
 			.stats__module-list & span.module-content-list-item-action-label-view {
 				display: none;
 			}

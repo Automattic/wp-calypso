@@ -1,25 +1,41 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .step-section {
 	.step-section__header {
 		display: flex;
 		align-items: center;
 		margin-block-end: 16px;
-		gap: 8px;
+		gap: 16px;
+
+		@include break-large {
+			gap: 8px;
+		}
 
 		.step-section__step-count {
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			border: 2px solid var(--color-primary-60);
 			font-size: rem(12px);
 			font-weight: 600;
-			color: var(--color-primary-60);
+			background: var(--color-primary-50);
 			width: 24px;
 			border-radius: 50%;
 			height: 24px;
+			color: var(--color-text-inverted);
 		}
 
 		.step-section__step-heading {
 			font-size: rem(20px);
+			font-weight: 600;
+			text-wrap: pretty;
 		}
+	}
+}
+
+.referrals-layout--automated,
+.commission-overview__layout-automated {
+	.step-section .step-section__header .step-section__step-heading {
+		font-size: rem(16px);
 	}
 }

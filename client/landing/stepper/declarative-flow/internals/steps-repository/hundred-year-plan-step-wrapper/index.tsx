@@ -181,7 +181,7 @@ function InfoColumnWrapper( { isMobile, children }: PropsWithChildren< { isMobil
 	const planTitle = getPlan( PLAN_100_YEARS )?.getTitle();
 
 	return isMobile ? (
-		<StyledFoldableCard smooth hideSummary={ true } header={ planTitle }>
+		<StyledFoldableCard smooth hideSummary header={ planTitle }>
 			{ children }
 		</StyledFoldableCard>
 	) : (
@@ -263,10 +263,10 @@ function HundredYearPlanStepWrapper( props: Props ) {
 		<>
 			<StepContainer
 				stepName={ stepName }
-				isWideLayout={ true }
-				hideBack={ true }
+				isWideLayout
+				hideBack
 				flowName={ flowName }
-				hideFormattedHeader={ true }
+				hideFormattedHeader
 				shouldStickyNavButtons={ false }
 				stepContent={
 					<Container

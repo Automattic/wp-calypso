@@ -314,7 +314,7 @@ const SiteSubscriptionRow = ( {
 						icon={ ! delivery_methods.email?.send_comments ? 'cross' : 'checkmark' }
 						iconSize={ 16 }
 						className={ ! delivery_methods.email?.send_comments ? 'red' : 'green' }
-						showOnHover={ true }
+						showOnHover
 					>
 						{ delivery_methods.email?.send_comments
 							? translate( 'You will receive email notifications for new comments on this site.' )

@@ -28,6 +28,7 @@ export const SITE_REQUEST_FIELDS = [
 	'was_hosting_trial',
 	'description',
 	'user_interactions',
+	'is_deleted',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [

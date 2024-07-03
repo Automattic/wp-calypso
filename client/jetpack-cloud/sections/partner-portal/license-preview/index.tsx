@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
@@ -133,13 +133,13 @@ export default function LicensePreview( {
 
 	return (
 		<div
-			className={ classnames( {
+			className={ clsx( {
 				'license-preview': true,
 				'license-preview--is-open': isOpen && ! isChildLicense,
 			} ) }
 		>
 			<LicenseListItem
-				className={ classnames( {
+				className={ clsx( {
 					'license-preview__card': true,
 					'license-preview__card--is-detached': licenseState === LicenseState.Detached,
 					'license-preview__card--is-revoked': licenseState === LicenseState.Revoked,

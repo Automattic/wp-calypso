@@ -63,7 +63,7 @@ function LicenseStateFilter() {
 			selectedText={
 				<span>
 					{ selectedItem.label }
-					<Count count={ selectedItem.count } compact={ true } />
+					<Count count={ selectedItem.count } compact />
 				</span>
 			}
 			selectedCount={ selectedItem.count }
@@ -71,7 +71,7 @@ function LicenseStateFilter() {
 		>
 			<NavTabs selectedText={ selectedItem.label } selectedCount={ selectedItem.count }>
 				{ navItems.map( ( props ) => (
-					<NavItem { ...props } compactCount={ true } />
+					<NavItem { ...props } compactCount />
 				) ) }
 			</NavTabs>
 		</SectionNav>

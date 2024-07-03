@@ -14,10 +14,11 @@ import page from '@automattic/calypso-router';
 import NotificationsPanel, {
 	refreshNotes,
 } from '@automattic/notifications/src/panel/Notifications';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import localStorageHelper from 'store';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -56,10 +57,15 @@ export class Notifications extends Component {
 		isVisible: isDesktop ? true : getIsVisible(),
 	};
 
+	focusedElementBeforeOpen = null;
+
 	componentDidMount() {
-		window.addEventListener( 'mousedown', this.props.checkToggle );
-		window.addEventListener( 'touchstart', this.props.checkToggle );
-		window.addEventListener( 'keydown', this.handleKeyPress );
+		document.addEventListener( 'click', this.props.checkToggle );
+		document.addEventListener( 'keydown', this.handleKeyPress );
+
+		if ( this.props.isShowing ) {
+			this.focusedElementBeforeOpen = document.activeElement;
+		}
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
@@ -77,10 +83,21 @@ export class Notifications extends Component {
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.isShowing === this.props.isShowing ) {
+			return;
+		}
+
+		if ( ! prevProps.isShowing && this.props.isShowing ) {
+			this.focusedElementBeforeOpen = document.activeElement;
+		} else {
+			this.focusedElementBeforeOpen?.focus();
+		}
+	}
+
 	componentWillUnmount() {
-		window.removeEventListener( 'mousedown', this.props.checkToggle );
-		window.removeEventListener( 'touchstart', this.props.checkToggle );
-		window.removeEventListener( 'keydown', this.handleKeyPress );
+		document.removeEventListener( 'click', this.props.checkToggle );
+		document.removeEventListener( 'keydown', this.handleKeyPress );
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
@@ -138,10 +155,8 @@ export class Notifications extends Component {
 
 		switch ( event.data.action ) {
 			case 'openPanel':
-				// checktoggle closes panel with no parameters
-				this.props.checkToggle();
-				// ... and toggles when the 2nd parameter is true
-				this.props.checkToggle( null, true );
+				// Ensure panel is opened.
+				this.props.checkToggle( null, true, true );
 				return refreshNotes();
 
 			case 'trackClick':
@@ -176,7 +191,7 @@ export class Notifications extends Component {
 		const customMiddleware = {
 			APP_RENDER_NOTES: [
 				( store, { newNoteCount } ) => {
-					this.props.setIndicator( newNoteCount );
+					localStorageHelper.set( 'wpnotes_unseen_count', newNoteCount );
 					this.props.setUnseenCount( newNoteCount );
 				},
 			],
@@ -256,10 +271,9 @@ export class Notifications extends Component {
 		return (
 			<div
 				id="wpnc-panel"
-				className={ classNames( 'wide', 'wpnc__main', {
+				className={ clsx( 'wide', 'wpnc__main', {
 					'wpnt-open': this.props.isShowing,
 					'wpnt-closed': ! this.props.isShowing,
-					'global-sidebar-visible': this.props.isGlobalSidebarVisible ?? false,
 				} ) }
 			>
 				<NotificationsPanel

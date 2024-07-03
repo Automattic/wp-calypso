@@ -34,13 +34,14 @@ export const STAT_TYPE_STREAK = 'statsStreak';
 export const STAT_TYPE_SUMMARY = 'statsSummary';
 export const STAT_TYPE_TAGS = 'statsTags';
 export const STAT_TYPE_TOP_AUTHORS = 'statsTopAuthors';
+export const STAT_TYPE_EMAILS_SUMMARY = 'statsEmailsSummary';
 export const STAT_TYPE_TOP_POSTS = 'statsTopPosts';
 export const STAT_TYPE_VIDEO_PLAYS = 'statsVideoPlays';
 export const STAT_TYPE_VISITS = 'statsVisits';
 export const STAT_TYPE_TAGS_LIST = 'tagsList';
 export const STAT_TYPE_USERS_LIST = 'usersList';
 export const STAT_TYPE_WPCOM_PLUGINS_LIST = 'wpcomPluginsList';
-export const STATS_TYPE_DEVICE_STATS = 'statsDeviceStats';
+export const STATS_TYPE_DEVICE_STATS = 'stats_devices_module';
 
 // stats feature are for more granular control, string value is based on component name
 export const STATS_FEATURE_DATE_CONTROL = 'StatsDateControl';

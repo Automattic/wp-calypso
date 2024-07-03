@@ -1,63 +1,12 @@
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
-.site-migration-instructions {
+.step-route.site-migration-instructions {
 	.step-container {
-		padding: 0 1.5rem 1.5rem 1rem;
-		max-width: 654px;
-		min-height: calc(100svh - 2 * #{$header-height});
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+		padding: 0 0 60px;
 
-	}
-
-	.step-container__content {
-		height: auto;
-		min-height: auto;
-	}
-	.step-container__header {
-		margin-top: 0;
-		margin-bottom: 2rem;
-	}
-
-	.site-migration-instructions__list {
-		margin-left: 18px;
-		margin-bottom: 12px;
-
-		li {
-			margin-bottom: 0.5rem;
-		}
-	}
-	.site-migration-instructions__content {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.site-migration-instructions__key {
-		margin-top: 8px;
-	}
-
-	.step-container__header p {
-		margin-top: 1.5rem;
-	}
-	.loading {
-		tab-size: 4;
-		min-height: calc(100vh - 2 * #{$header-height});
-		width: 100%;
-		display: flex;
-		justify-content: center;
-		flex-direction: column;
-		align-items: center;
-
-		.loading__content {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 1rem;
+		@include break-large {
+			padding: 0;
 		}
 	}
 }

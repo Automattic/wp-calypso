@@ -144,6 +144,7 @@ class CommentReplyInput extends Component {
 
 		if ( event ) {
 			event.preventDefault();
+			event.stopPropagation();
 		}
 
 		if ( '' === this.state.value ) {

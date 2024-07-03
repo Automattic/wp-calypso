@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 
 type FormLegendProps = {
@@ -7,7 +7,7 @@ type FormLegendProps = {
 } & React.HTMLAttributes< HTMLLegendElement >;
 
 const FormLegend = ( { className, children, ...otherProps }: FormLegendProps ) => (
-	<legend { ...otherProps } className={ classnames( className, 'form-legend' ) }>
+	<legend { ...otherProps } className={ clsx( className, 'form-legend' ) }>
 		{ children }
 	</legend>
 );

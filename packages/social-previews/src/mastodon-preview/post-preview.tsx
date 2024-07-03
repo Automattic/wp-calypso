@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import MastodonPostActions from './post/actions';
 import MastonPostBody from './post/body';
 import MastodonPostCard from './post/card';
@@ -15,9 +15,7 @@ export const MastodonPostPreview: React.FC< MastodonPreviewProps > = ( props ) =
 			<MastodonPostHeader user={ user } />
 			<MastonPostBody { ...props }>
 				{ media?.length ? (
-					<div
-						className={ classNames( 'mastodon-preview__media', { 'as-grid': media.length > 1 } ) }
-					>
+					<div className={ clsx( 'mastodon-preview__media', { 'as-grid': media.length > 1 } ) }>
 						{ media.map( ( mediaItem, index ) => (
 							<div
 								key={ `mastodon-preview__media-item-${ index }` }

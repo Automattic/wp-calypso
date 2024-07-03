@@ -14,6 +14,7 @@ export const FormattedBlockRenderer =
 		}
 
 		const children = nestedContent.map( ( child, key ) => (
+			// eslint-disable-next-line no-use-before-define
 			<FormattedBlock key={ key } content={ child } onClick={ onClick } meta={ meta } />
 		) );
 

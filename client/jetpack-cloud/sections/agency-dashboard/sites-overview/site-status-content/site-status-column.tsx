@@ -15,6 +15,7 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -44,6 +45,10 @@ export default function SiteStatusColumn( { type, rows, metadata, disabled }: Pr
 		isSupported,
 	} = metadata;
 
+	if ( rows.site.value.sticker?.includes( 'migration-in-progress' ) ) {
+		disabled = true;
+	}
+
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -65,7 +70,7 @@ export default function SiteStatusColumn( { type, rows, metadata, disabled }: Pr
 			: hasSelectedLicensesOfType( state, siteId, type )
 	);
 
-	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
+	const isA4AEnabled = isA8CForAgencies();
 	const partner = useSelector( getCurrentPartner );
 	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 

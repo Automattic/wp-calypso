@@ -11,16 +11,15 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
+import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { SitePlanData } from 'calypso/my-sites/checkout/src/hooks/product-variants';
-import { useSelector } from 'calypso/state';
-import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { WooExpressPlans } from '../ecommerce-trial/wooexpress-plans';
-import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -38,29 +37,37 @@ const WooExpressPlansPage = ( {
 	showIntervalToggle,
 }: WooExpressPlansPageProps ) => {
 	const translate = useTranslate();
-
 	const annualPlanSlug = isWooExpressSmallPlan( currentPlan.productSlug )
 		? PLAN_WOOEXPRESS_SMALL
 		: PLAN_WOOEXPRESS_MEDIUM;
 	const monthlyPlanSlug = isWooExpressSmallPlan( currentPlan.productSlug )
 		? PLAN_WOOEXPRESS_SMALL_MONTHLY
 		: PLAN_WOOEXPRESS_MEDIUM_MONTHLY;
-
 	const annualPlan = getPlans()[ annualPlanSlug ];
 	const monthlyPlan = getPlans()[ monthlyPlanSlug ];
 
-	const annualPlanPrice = useSelector(
-		( state ) => getPlanRawPrice( state, annualPlan.getProductId(), false ) || 0
-	);
-	const annualPlanMonthlyPrice = useSelector(
-		( state ) => getPlanRawPrice( state, annualPlan.getProductId(), true ) || 0
-	);
-	const monthlyPlanPrice = useSelector(
-		( state ) => getPlanRawPrice( state, monthlyPlan.getProductId() ) || 0
-	);
-	const currencyCode = useSelector(
-		( state ) => getPlan( state, annualPlan.getProductId() )?.currency_code || ''
-	);
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ annualPlanSlug, monthlyPlanSlug ],
+		siteId: null,
+		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
+	} );
+
+	// Using `discountedPrice` below will give us the price with any currency/conversion discounts applied.
+	const annualPlanPrice =
+		pricingMeta?.[ annualPlanSlug ]?.discountedPrice?.full ??
+		pricingMeta?.[ annualPlanSlug ]?.originalPrice?.full ??
+		0;
+	const annualPlanMonthlyPrice =
+		pricingMeta?.[ annualPlanSlug ]?.discountedPrice?.monthly ??
+		pricingMeta?.[ annualPlanSlug ]?.originalPrice?.monthly ??
+		0;
+	const monthlyPlanPrice =
+		pricingMeta?.[ monthlyPlanSlug ]?.discountedPrice?.full ??
+		pricingMeta?.[ monthlyPlanSlug ]?.originalPrice?.full ??
+		0;
+	const currencyCode = pricingMeta?.[ annualPlanSlug ]?.currencyCode ?? '';
 
 	const isAnnualSubscription = ! isMonthly( currentPlan.productSlug );
 	const activePlan = isAnnualSubscription ? annualPlan : monthlyPlan;
@@ -119,7 +126,7 @@ const WooExpressPlansPage = ( {
 		<>
 			<BodySectionCssClass bodyClass={ [ 'is-woo-express-plan' ] } />
 			<Card
-				className={ classNames(
+				className={ clsx(
 					'woo-express-plans-page__price-card',
 					'woo-express-plans-page__price-card-for-grid'
 				) }

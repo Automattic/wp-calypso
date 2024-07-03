@@ -1,14 +1,13 @@
-import { Plans, AddOns } from '@automattic/data-stores';
-import { UpgradeClickHandler } from './hooks/use-upgrade-click-handler';
+import { Plans, AddOns, PlanPricing } from '@automattic/data-stores';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	UrlFriendlyTermType,
 	PlanSlug,
 	FeatureList,
-	WPComStorageAddOnSlug,
 	FeatureObject,
-	StorageOption,
+	FeatureGroupMap,
+	Feature,
 } from '@automattic/calypso-products';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
 /******************
@@ -24,9 +23,9 @@ export type TransformedFeatureObject = FeatureObject & {
 export interface PlanFeaturesForGridPlan {
 	wpcomFeatures: TransformedFeatureObject[];
 	jetpackFeatures: TransformedFeatureObject[];
-	storageOptions: StorageOption[];
+	storageFeature?: FeatureObject;
 	// used for comparison grid so far
-	conditionalFeatures?: FeatureObject[];
+	comparisonGridFeatureLabels?: Record< Feature, TranslateResult >;
 }
 
 export interface GridPlan {
@@ -38,7 +37,6 @@ export interface GridPlan {
 	planTitle: TranslateResult;
 	availableForPurchase: boolean;
 	pricing: Plans.PricingMetaForGridPlan;
-	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null;
 	productNameShort?: string | null;
 	billingTimeframe?: TranslateResult | null;
 	current?: boolean;
@@ -56,6 +54,7 @@ export interface GridPlan {
 export type GridSize = 'small' | 'medium' | 'large';
 
 export type PlansIntent =
+	| 'plans-affiliate'
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
 	| 'plans-link-in-bio'
@@ -65,22 +64,24 @@ export type PlansIntent =
 	| 'plans-jetpack-app-site-creation'
 	| 'plans-import'
 	| 'plans-woocommerce'
-	| 'plans-paid-media'
 	| 'plans-p2'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
 	| 'plans-videopress'
+	| 'plans-guided-segment-developer-or-agency'
+	| 'plans-guided-segment-merchant'
+	| 'plans-guided-segment-blogger'
+	| 'plans-guided-segment-nonprofit'
+	| 'plans-guided-segment-consumer-or-business'
 	| 'default';
 
 export interface PlanActionOverrides {
 	loggedInFreePlan?: {
 		text?: TranslateResult;
 		status?: 'blocked' | 'enabled';
-		callback?: () => void;
 	};
 	currentPlan?: {
 		text?: TranslateResult;
-		callback?: () => void;
 	};
 	trialAlreadyUsed?: {
 		postButtonText?: TranslateResult;
@@ -102,14 +103,11 @@ export interface CommonGridProps {
 	siteId?: number | null;
 	isInSignup: boolean;
 	isInAdmin: boolean;
-	isLaunchPage?: boolean | null;
 	isReskinned?: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	intervalType: string;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	planActionOverrides?: PlanActionOverrides;
-
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
@@ -117,7 +115,6 @@ export interface CommonGridProps {
 	showRefundPeriod?: boolean;
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	onUpgradeClick?: UpgradeClickHandler;
 	planUpgradeCreditsApplicable?: number | null;
 	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
 	gridSize?: string;
@@ -136,7 +133,54 @@ export interface FeaturesGridProps extends CommonGridProps {
 export interface ComparisonGridProps extends CommonGridProps {
 	// Value of the `?plan=` query param, so we can highlight a given plan.
 	selectedPlan?: string;
+	intervalType: string;
 }
+
+export type UseActionCallback = ( {
+	planSlug,
+	cartItemForPlan,
+	selectedStorageAddOn,
+}: {
+	planSlug: PlanSlug;
+	cartItemForPlan?: MinimalRequestCartProduct | null;
+	selectedStorageAddOn?: AddOns.AddOnMeta | null;
+} ) => () => void;
+
+export interface GridAction {
+	primary: {
+		text: TranslateResult;
+		callback: () => void;
+		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
+		status?: 'disabled' | 'blocked' | 'enabled';
+	};
+	postButtonText?: TranslateResult;
+}
+
+export type UseAction = ( {
+	availableForPurchase,
+	billingPeriod,
+	cartItemForPlan,
+	currentPlanBillingPeriod,
+	isFreeTrialAction,
+	isLargeCurrency,
+	isStuck,
+	planSlug,
+	planTitle,
+	priceString,
+	selectedStorageAddOn,
+}: {
+	availableForPurchase?: boolean;
+	billingPeriod?: PlanPricing[ 'billPeriod' ];
+	cartItemForPlan?: MinimalRequestCartProduct | null;
+	currentPlanBillingPeriod?: PlanPricing[ 'billPeriod' ];
+	isFreeTrialAction?: boolean;
+	isLargeCurrency?: boolean;
+	isStuck?: boolean;
+	planSlug: PlanSlug;
+	planTitle?: TranslateResult;
+	priceString?: string;
+	selectedStorageAddOn?: AddOns.AddOnMeta | null;
+} ) => GridAction;
 
 export type GridContextProps = {
 	gridPlans: GridPlan[];
@@ -144,12 +188,24 @@ export type GridContextProps = {
 	intent?: PlansIntent;
 	siteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	useAction: UseAction;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;
+	enableFeatureTooltips?: boolean;
+	featureGroupMap: Partial< FeatureGroupMap >;
+	hideUnsupportedFeatures?: boolean;
+	/**
+	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.
+	 * It is only used for showing "Everything in [previous] plus".
+	 */
+	enableCategorisedFeatures?: boolean;
 };
 
-export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
+export type ComparisonGridExternalProps = Omit<
+	GridContextProps,
+	'children' | 'enableCategorisedFeatures'
+> &
 	Omit< ComparisonGridProps, 'onUpgradeClick' | 'gridContainerRef' | 'gridSize' > & {
 		className?: string;
 		onUpgradeClick?: (
@@ -158,7 +214,7 @@ export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
 		) => void;
 	};
 
-export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
+export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' | 'featureGroupMap' > &
 	Omit<
 		FeaturesGridProps,
 		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'gridContainerRef' | 'gridSize'
@@ -168,6 +224,7 @@ export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug
 		) => void;
+		featureGroupMap?: Partial< FeatureGroupMap >; // make it optional for Features Grid
 	};
 
 /************************

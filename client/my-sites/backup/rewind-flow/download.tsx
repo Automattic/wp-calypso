@@ -1,10 +1,11 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getRewindBackupProgress, rewindBackup } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequest from 'calypso/state/selectors/get-request';
 import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
@@ -84,6 +85,12 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		downloadRewindId !== rewindId || ( downloadId !== 0 && requestedBackup !== downloadId );
 	const isOtherDownloadInProgress = isOtherDownloadInfo && downloadProgress !== undefined;
 	const isDownloadURLNotReady = downloadUrl === undefined || downloadUrl === '';
+
+	useEffect( () => {
+		if ( ! isDownloadURLNotReady ) {
+			dispatch( recordTracksEvent( 'calypso_jetpack_backup_download_ready' ) );
+		}
+	}, [ isDownloadURLNotReady, dispatch ] );
 
 	const renderConfirm = () => (
 		<>

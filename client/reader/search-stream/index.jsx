@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { CompactCard, SegmentedControl } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { trim, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
@@ -39,15 +39,6 @@ const updateQueryArg = ( params ) =>
 	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
 const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
-
-const SpacerDiv = withDimensions( ( { width, height } ) => (
-	<div
-		style={ {
-			width: `${ width }px`,
-			height: `${ height - 38 }px`,
-		} }
-	/>
-) );
 
 class SearchStream extends React.Component {
 	static propTypes = {
@@ -151,9 +142,9 @@ class SearchStream extends React.Component {
 			comment: 'A sort order, showing the most recent posts first.',
 		} );
 
-		const searchStreamResultsClasses = classnames( 'search-stream__results', 'is-two-columns' );
+		const searchStreamResultsClasses = clsx( 'search-stream__results', 'is-two-columns' );
 
-		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
+		const singleColumnResultsClasses = clsx( 'search-stream__single-column-results', {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
 		const suggestionList = flatMap( suggestions, ( suggestion ) => [
@@ -173,13 +164,10 @@ class SearchStream extends React.Component {
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
-				<div
-					className="search-stream__fixed-area"
-					style={ { width: this.props.width } }
-					ref={ this.handleFixedAreaMounted }
-				>
+				<div className="search-stream__fixed-area" ref={ this.handleFixedAreaMounted }>
 					<NavigationHeader
 						title={ translate( 'Search' ) }
+						style={ { width: this.props.width } }
 						subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }
 					/>
 					<CompactCard className="search-stream__input-card">
@@ -188,7 +176,7 @@ class SearchStream extends React.Component {
 							onSearchClose={ this.scrollToTop }
 							onSearchOpen={ this.resetSearchFeeds }
 							autoFocus={ this.props.autoFocusInput }
-							delaySearch={ true }
+							delaySearch
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText }
 							initialValue={ query || '' }
@@ -224,7 +212,7 @@ class SearchStream extends React.Component {
 						/>
 					) }
 				</div>
-				{ isLoggedIn && <SpacerDiv domTarget={ this.fixedAreaRef } /> }
+				{ /* { isLoggedIn && <SpacerDiv domTarget={ this.fixedAreaRef } /> } */ }
 				{ ! hidePostsAndSites && wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">

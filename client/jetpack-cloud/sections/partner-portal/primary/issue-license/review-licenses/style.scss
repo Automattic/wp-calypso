@@ -9,7 +9,7 @@
 	.jetpack-lightbox__content-aside {
 		padding: 24px;
 
-		@media only screen and ( min-width: 782px ) {
+		@media only screen and (min-width: 782px) {
 			padding: 16px;
 		}
 
@@ -50,7 +50,7 @@
 			background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
 			border-radius: 4px;
 
-			@media only screen and ( min-width: 821px ) {
+			@media only screen and (min-width: 821px) {
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -101,7 +101,7 @@
 	border: 1px solid var(--color-link);
 	padding: 1rem;
 
-	@media only screen and ( min-width: 782px ) {
+	@media only screen and (min-width: 782px) {
 		margin-block-start: 32px;
 	}
 

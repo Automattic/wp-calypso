@@ -1,4 +1,4 @@
-import { COMMANDS } from '@automattic/command-palette';
+import { useCommands } from '@automattic/command-palette';
 import type { Command, CommandCallBackParams } from '@automattic/command-palette';
 
 const waitForElementAndClick = ( selector: string, attempt = 1 ) => {
@@ -14,10 +14,11 @@ const waitForElementAndClick = ( selector: string, attempt = 1 ) => {
 export const useCommandsWpAdmin = (): Command[] => {
 	// Only override commands that need a specific behavior for WP Admin.
 	// Commands need to be defined in `packages/command-palette/src/commands.tsx`.
-	COMMANDS.getHelp.callback = ( { close }: CommandCallBackParams ) => {
+	const commands = useCommands();
+	commands.getHelp.callback = ( { close }: CommandCallBackParams ) => {
 		close();
 		waitForElementAndClick( '#wp-admin-bar-help-center' );
 	};
 
-	return Object.values( COMMANDS ) as Command[];
+	return Object.values( commands ) as Command[];
 };

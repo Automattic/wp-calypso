@@ -46,17 +46,17 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			isOdysseyStats
 		),
 		supportsUTMStats:
-			// TODO: Remove the flag check once UTM stats are released.
-			config.isEnabled( 'stats/utm-module' ) &&
 			// UTM stats are only available for Jetpack sites for now.
-			isSiteJetpackNotAtomic &&
-			version_greater_than_or_equal( statsAdminVersion, '0.17.0-alpha', isOdysseyStats ),
-		supportsDevicesStats: config.isEnabled( 'stats/devices' ) && isSiteJetpackNotAtomic,
+			isSiteJetpackNotAtomic,
+		supportsDevicesStats: isSiteJetpackNotAtomic,
 		supportsOnDemandCommercialClassification: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.18.0-alpha',
 			isOdysseyStats
 		),
+		isOldJetpack:
+			isSiteJetpackNotAtomic &&
+			! version_greater_than_or_equal( statsAdminVersion, '0.19.0-alpha', isOdysseyStats ),
 	};
 }
 

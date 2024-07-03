@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -211,7 +211,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		const baseClassName = 'promote-post-i2__header-subtitle';
 		return (
 			<div
-				className={ classNames(
+				className={ clsx(
 					baseClassName,
 					`${ baseClassName }_${ isMobile ? 'mobile' : 'desktop' }`
 				) }
@@ -234,7 +234,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			<div className="promote-post-i2__top-bar">
 				<FormattedHeader
 					brandFont
-					className={ classNames( 'advertising__page-header', {
+					className={ clsx( 'advertising__page-header', {
 						'advertising__page-header_has-banner': showBanner,
 					} ) }
 					children={ headerSubtitle( false ) /* for desktop */ }
@@ -273,7 +273,7 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			{ ! isLoadingBillingSummary && paymentBlocked && (
 				<Notice
-					isReskinned={ true }
+					isReskinned
 					showDismiss={ false }
 					status="is-error"
 					icon="notice-outline"

@@ -42,7 +42,7 @@ const SitePicker = function SitePicker( props: Props ) {
 	const { sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		SITE_PICKER_FILTER_CONFIG,
-		( site ) => ! site.is_wpcom_staging_site
+		( site ) => ! site.is_wpcom_staging_site && ! site.is_deleted
 	);
 
 	return (
@@ -79,14 +79,14 @@ const SitePicker = function SitePicker( props: Props ) {
 								onSitesSortingChange={ onSitesSortingChange }
 								statuses={ statuses }
 								selectedStatus={ selectedStatus }
-								hasSitesSortingPreferenceLoaded={ true }
+								hasSitesSortingPreferenceLoaded
 							/>
 							{ paginatedSites.length > 0 || isLoading ? (
 								<>
 									<SitesGrid
 										isLoading={ isLoading }
 										sites={ paginatedSites }
-										siteSelectorMode={ true }
+										siteSelectorMode
 										onSiteSelectBtnClick={ onSelectSite }
 									/>
 									{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (

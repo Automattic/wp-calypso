@@ -13,7 +13,7 @@
 	border: 1px solid var(--color-border-subtle);
 	flex-wrap: wrap;
 
-	@media ( min-width: 480px ) {
+	@media (min-width: 480px) {
 		padding: 20px 25px;
 	}
 
@@ -29,7 +29,7 @@
 		flex-basis: 100%;
 		text-align: left;
 
-		@media ( min-width: 480px ) {
+		@media (min-width: 480px) {
 			flex-basis: initial;
 		}
 

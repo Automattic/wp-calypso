@@ -1,9 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { GlobalStylesObject } from '../types';
 
 type Options = {
 	enabled?: boolean;
+	base_variation_stylesheet?: string;
 };
 
 const useFontPairingVariations = (
@@ -18,7 +20,12 @@ const useFontPairingVariations = (
 				path: `/sites/${ encodeURIComponent( siteId ) }/global-styles-variation/font-pairings`,
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
-				query: new URLSearchParams( { stylesheet } ).toString(),
+				query: new URLSearchParams( {
+					stylesheet,
+					...( isEnabled( 'design-picker/use-assembler-styles' )
+						? { base_variation_stylesheet: 'pub/assembler' }
+						: {} ),
+				} ).toString(),
 			} ),
 		refetchOnMount: 'always',
 		staleTime: Infinity,

@@ -29,4 +29,15 @@
 
 .site-sort__clickable {
 	cursor: pointer;
+	// Inline block to ensure focus outline is rectangular.
+	display: inline-block;
+	// 5px right padding so focus border doesnt overlap icon.
+	padding-right: 5px;
+	border-radius: 2px;
+	.accessible-focus &:focus {
+		outline-style: solid;
+		outline-color: var(--color-primary-light);
+		outline-width: 2px;
+		outline-offset: 2px;
+	}
 }

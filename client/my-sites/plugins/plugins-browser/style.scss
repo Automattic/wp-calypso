@@ -1,3 +1,7 @@
+.main.is-wide-layout.plugins-browser--site-view {
+	max-width: 100%;
+}
+
 .plugins-browser__billling-interval-switcher {
 	margin-right: 15px;
 }
@@ -6,7 +10,7 @@
 	display: flex;
 	align-items: center;
 
-	@media screen and ( max-width: 960px ) {
+	@media screen and (max-width: 960px) {
 		.plugins-browser__button {
 			border: none;
 		}
@@ -58,7 +62,6 @@
 		width: 200vw;
 		left: -100vw;
 		z-index: -1;
-		border-top: 1px solid #f6f7f7;
 	}
 }
 

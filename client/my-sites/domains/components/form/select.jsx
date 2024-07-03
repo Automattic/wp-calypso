@@ -1,5 +1,5 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -30,7 +30,7 @@ export default class Select extends PureComponent {
 	};
 
 	render() {
-		const classes = classNames( this.props.additionalClasses, this.props.name );
+		const classes = clsx( this.props.additionalClasses, this.props.name );
 
 		const validationId = `validation-field-${ this.props.name }`;
 

@@ -9,12 +9,19 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } from '../const';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
+import {
+	MIN_STEP_SPLITS,
+	DEFAULT_STARTING_FRACTION,
+	UI_EMOJI_HEART_TIER_THRESHOLD,
+	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
+} from './stats-purchase-consts';
 import PersonalPurchase from './stats-purchase-personal';
 import {
 	StatsCommercialPriceDisplay,
@@ -22,12 +29,6 @@ import {
 	StatsSingleItemPagePurchaseFrame,
 	StatsSingleItemCard,
 } from './stats-purchase-shared';
-import {
-	MIN_STEP_SPLITS,
-	DEFAULT_STARTING_FRACTION,
-	UI_EMOJI_HEART_TIER_THRESHOLD,
-	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
-} from './stats-purchase-wizard';
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
@@ -84,7 +85,6 @@ interface StatsCommercialFlowOptOutFormProps {
 }
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-single';
-const FLAGS_CHECKOUT_FLOWS_V2 = 'stats/checkout-flows-v2';
 
 const StatsUpgradeInstructions = () => {
 	const translate = useTranslate();
@@ -102,6 +102,36 @@ const StatsUpgradeInstructions = () => {
 			</div>
 		</div>
 	);
+};
+
+const useLocalizedStrings = ( isCommercial: boolean ) => {
+	const translate = useTranslate();
+
+	// Page title, info text, and button text depend on isCommercial status of site.
+	if ( isCommercial ) {
+		return {
+			pageTitle: translate( 'Upgrade and continue using Jetpack Stats' ),
+			infoText: translate(
+				'To continue using Stats and access its newest premium features you need to get a commercial license. {{link}}Learn more about this update{{/link}}.',
+				{
+					comment: '{{link}} links to explainer post on Jetpack blog.',
+					components: {
+						link: <a href={ JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } />,
+					},
+					context: 'Stats: Descriptive text in the commercial purchase flow',
+				}
+			),
+			continueButtonText: translate( 'Upgrade now and continue' ),
+		};
+	}
+
+	return {
+		pageTitle: translate( 'Simple, yet powerful stats to grow your site' ),
+		infoText: translate(
+			'Jetpack Stats makes it easy to see how your site is doing. No data science skills needed. Start with a commercial license and get premium access to:'
+		),
+		continueButtonText: translate( 'Get Stats to grow my site' ),
+	};
 };
 
 const StatsCommercialPurchase = ( {
@@ -130,13 +160,10 @@ const StatsCommercialPurchase = ( {
 		setPurchaseTierQuantity( value );
 	}, [] );
 
-	const pageTitle = config.isEnabled( FLAGS_CHECKOUT_FLOWS_V2 )
-		? translate( 'Welcome to Jetpack Stats' )
-		: translate( 'Jetpack Stats' );
-
-	const continueButtonText = config.isEnabled( FLAGS_CHECKOUT_FLOWS_V2 )
-		? translate( 'Upgrade and continue' )
-		: translate( 'Purchase' );
+	const isCommercial = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'is_commercial' )
+	) as boolean;
+	const { pageTitle, infoText, continueButtonText } = useLocalizedStrings( isCommercial );
 
 	// TODO: Remove isTierUpgradeSliderEnabled code paths.
 
@@ -145,7 +172,7 @@ const StatsCommercialPurchase = ( {
 			<h1>{ pageTitle }</h1>
 			{ ! isCommercialOwned && (
 				<>
-					<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
+					<p>{ infoText }</p>
 					<StatsBenefitsCommercial />
 				</>
 			) }
@@ -166,6 +193,7 @@ const StatsCommercialPurchase = ( {
 			) }
 			{ isTierUpgradeSliderEnabled && (
 				<>
+					<p>{ translate( 'Pick your Stats tier below:' ) }</p>
 					<StatsCommercialUpgradeSlider
 						currencyCode={ currencyCode }
 						analyticsEventName={ `${
@@ -173,23 +201,29 @@ const StatsCommercialPurchase = ( {
 						}_stats_purchase_commercial_slider_clicked` }
 						onSliderChange={ handleSliderChanged }
 					/>
-					<ButtonComponent
-						variant="primary"
-						primary={ isWPCOMSite ? true : undefined }
-						onClick={ () =>
-							gotoCheckoutPage( {
-								from,
-								type: 'commercial',
-								siteSlug,
-								adminUrl,
-								redirectUri,
-								price: undefined,
-								quantity: purchaseTierQuantity,
-							} )
-						}
-					>
-						{ continueButtonText }
-					</ButtonComponent>
+					<div className="stats-purchase-wizard__actions">
+						<ButtonComponent
+							variant="primary"
+							primary={ isWPCOMSite ? true : undefined }
+							onClick={ () =>
+								gotoCheckoutPage( {
+									from,
+									type: 'commercial',
+									siteSlug,
+									adminUrl,
+									redirectUri,
+									price: undefined,
+									quantity: purchaseTierQuantity,
+									isUpgrade: isCommercialOwned,
+								} )
+							}
+						>
+							{ continueButtonText }
+						</ButtonComponent>
+					</div>
+					<div className="stats-purchase-page__footnotes">
+						<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>
+					</div>
 				</>
 			) }
 		</>
@@ -222,19 +256,18 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		const queryFrom = isOdysseyStats ? '&from=jetpack-my-jetpack' : '';
 		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial` );
 
-		page( `/stats/purchase/${ siteSlug }?productType=commercial&flags=stats/type-detection` );
+		page( `/stats/purchase/${ siteSlug }?productType=commercial${ queryFrom }` );
 	};
-
-	const pageTitle = config.isEnabled( FLAGS_CHECKOUT_FLOWS_V2 )
-		? translate( 'Name your price for Jetpack Stats' )
-		: translate( 'Jetpack Stats' );
 
 	return (
 		<>
-			<h1>{ pageTitle }</h1>
-			<p>{ translate( 'The most advanced stats Jetpack has to offer.' ) }</p>
+			<h1>{ translate( 'Support Jetpack Stats and set your price' ) }</h1>
+			<p>
+				{ translate( 'Help Jetpack Stats with a non-commercial license and get these perks:' ) }
+			</p>
 			<PersonalPurchase
 				subscriptionValue={ subscriptionValue }
 				setSubscriptionValue={ setSubscriptionValue }
@@ -253,7 +286,6 @@ const StatsPersonalPurchase = ( {
 				adminUrl={ adminUrl }
 				redirectUri={ redirectUri }
 				from={ from }
-				isStandalone={ true }
 			/>
 		</>
 	);
@@ -348,7 +380,9 @@ function StatsCommercialFlowOptOutForm( {
 		'commercial-dext': translate( 'Commercial Domain Extension' ),
 		'contact-details': translate( 'Business Contact Details' ),
 		'manual-override': translate( 'Manual Override' ),
+		'promotes-service': translate( 'Promotion of Service' ),
 		ecommerce: translate( 'Ecommerce' ),
+		donations: translate( 'Donations' ),
 	};
 	const { supportsOnDemandCommercialClassification } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
@@ -408,11 +442,11 @@ function StatsCommercialFlowOptOutForm( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ comemercialClassificationRunAt, siteId ]
 	);
-	const hasRunLessThan3DAgo =
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
+	const canReverify = Date.now() - commercialClassificationLastRunAt > 1000 * 60 * 60 * 24 * 1; // 1 day
+	const hasClassificationStarted = commercialClassificationLastRunAt > 0;
 	const isClassificationInProgress =
-		commercialClassificationLastRunAt > 0 &&
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
+		hasClassificationStarted && Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 30; // half an hour
+	const isClassificationFinished = hasClassificationStarted && ! isClassificationInProgress;
 
 	const isFormSubmissionDisabled =
 		! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
@@ -443,9 +477,9 @@ function StatsCommercialFlowOptOutForm( {
 					},
 				}
 		  )
-		: translate( 'To use a non-commercial license you must agree to the following:' );
-	const formButton = isCommercial ? translate( 'Contact support' ) : translate( 'Continue' );
-	const formHandler = isCommercial ? handleRequestUpdateClick : handleSwitchToPersonalClick;
+		: translate(
+				'For non-commercial use, get started with a non-commercial license, including an optional contribution. Please agree to the following terms:'
+		  );
 
 	return (
 		<>
@@ -496,21 +530,34 @@ function StatsCommercialFlowOptOutForm( {
 				</ul>
 			</div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
-				{ supportsOnDemandCommercialClassification && isCommercial && (
+				{ ! isCommercial && (
 					<Button
 						variant="secondary"
-						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled }
-						onClick={ handleCommercialClassification }
+						disabled={ isFormSubmissionDisabled }
+						onClick={ handleSwitchToPersonalClick }
 					>
-						{ translate( 'Reverify' ) }
+						{ translate( 'Continue' ) }
 					</Button>
 				) }
-				{ ( ! supportsOnDemandCommercialClassification ||
-					! isCommercial ||
-					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
-					<Button variant="secondary" disabled={ isFormSubmissionDisabled } onClick={ formHandler }>
-						{ formButton }
-					</Button>
+				{ isCommercial && (
+					<>
+						{ supportsOnDemandCommercialClassification && (
+							<Button
+								variant="secondary"
+								disabled={ ! canReverify || isFormSubmissionDisabled }
+								onClick={ handleCommercialClassification }
+							>
+								{ translate( 'Reverify' ) }
+							</Button>
+						) }
+						{ ( ! supportsOnDemandCommercialClassification ||
+							isClassificationFinished ||
+							errorMessage ) && (
+							<Button variant="secondary" onClick={ handleRequestUpdateClick }>
+								{ translate( 'Contact support' ) }
+							</Button>
+						) }
+					</>
 				) }
 			</div>
 			{ supportsOnDemandCommercialClassification && isCommercial && (
@@ -520,18 +567,18 @@ function StatsCommercialFlowOptOutForm( {
 					) }
 					{ isClassificationInProgress && ! errorMessage && (
 						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-							{ translate( 'We are verifying your site. Please come back later…' ) }
+							{ translate(
+								'We are working on verifying your site… Please come back in about 30 minutes. You will have an option to contact support when the process is finished.'
+							) }
 						</p>
 					) }
-					{ ! isClassificationInProgress &&
-						commercialClassificationLastRunAt > 0 &&
-						! errorMessage && (
-							<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-								{ translate(
-									'We have finished verify your site. If you still think this is an error, please contact our support.'
-								) }
-							</p>
-						) }
+					{ isClassificationFinished && ! errorMessage && (
+						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
+							{ translate(
+								'We have finished verifying your site. If you still think this is an error, please contact support by clicking the button above.'
+							) }
+						</p>
+					) }
 				</>
 			) }
 		</>

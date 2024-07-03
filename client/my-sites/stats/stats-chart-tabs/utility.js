@@ -7,7 +7,7 @@ import {
 	chevronRight,
 	postContent,
 } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat, translate } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import moment from 'moment';
@@ -21,7 +21,7 @@ export function formatDate( date, period ) {
 		case 'day':
 			return momentizedDate.format( 'LL' );
 		case 'week':
-			return momentizedDate.format( 'L' ) + ' - ' + momentizedDate.add( 6, 'days' ).format( 'L' );
+			return momentizedDate.format( 'LL' ) + ' - ' + momentizedDate.add( 6, 'days' ).format( 'LL' );
 		case 'month':
 			return momentizedDate.format( 'MMMM YYYY' );
 		case 'year':
@@ -53,7 +53,7 @@ export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, perio
 
 		const recordClassName =
 			record.classNames && record.classNames.length ? record.classNames.join( ' ' ) : null;
-		const className = classNames( recordClassName, {
+		const className = clsx( recordClassName, {
 			'is-selected': record.period === queryDate,
 		} );
 

@@ -131,6 +131,7 @@
 					text-decoration: none;
 					color: var(--studio-gray-100);
 					font-size: $font-body-small;
+					border-radius: 2px;
 
 					svg:first-child {
 						margin-right: 15px;
@@ -230,6 +231,7 @@
 			.inline-help__resource-cell a,
 			.inline-help__resource-cell button {
 				display: flex;
+				border-radius: 2px;
 
 				svg:first-of-type {
 					margin-right: 15px;
@@ -293,8 +295,8 @@
 
 					&:active,
 					&:focus {
-						box-shadow: 0 0 0 1px var(--studio-blue-30), 0 0 2px 1px rgb(79 148 212 / 80%);
-						outline: 1px solid transparent;
+						box-shadow: none;
+						outline: var(--color-primary-light) solid 2px;
 					}
 				}
 
@@ -344,6 +346,7 @@
 				overflow: hidden;
 				border-radius: 2px;
 				cursor: pointer;
+				text-align: left;
 
 				.help-center-contact-page__box-icon {
 					border-radius: 2px 0 0 2px;
@@ -435,6 +438,7 @@
 
 				.help-center-search-results__cell a {
 					display: flex;
+					border-radius: 2px;
 
 					svg {
 						margin-right: 15px;
@@ -670,10 +674,9 @@
 		}
 
 		&:focus {
-			color: #043959;
-			box-shadow: 0 0 0 1px #4f94d4, 0 0 2px 1px rgba(79, 148, 212, 0.8);
-			outline: 1px solid transparent;
-			border-color: inherit;
+			border-color: transparent;
+			box-shadow: none;
+			outline: var(--color-primary-light) solid 2px;
 		}
 
 		svg {

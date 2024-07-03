@@ -18,11 +18,11 @@
 			margin-top: 8.5rem + $sale-banner-height;
 
 			// tablets
-			@media ( max-width: 900px ) {
+			@media (max-width: 900px) {
 				margin-top: 8.5rem + $sale-banner-height + math.div($mobile-offset, 3);
 			}
 			// mobiles
-			@media ( max-width: 560px ) {
+			@media (max-width: 560px) {
 				margin-top: 8.5rem + $sale-banner-height + $mobile-offset;
 			}
 		}
@@ -110,6 +110,14 @@
 
 	.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing & {
 		background: var(--color-surface-backdrop);
+	}
+}
+
+.jetpack-product-store__products-list {
+	.item-price .display-price {
+		&:not(.is-placeholder) {
+			max-height: none;
+		}
 	}
 }
 

@@ -77,7 +77,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 
 	const purchaseActions = usePurchaseActions();
 
-	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" specificSiteActions /> ];
+	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" /> ];
 
 	const [ changeSiteAddressSourceDomain, setChangeSiteAddressSourceDomain ] =
 		useState< ResponseDomain | null >( null );
@@ -124,9 +124,11 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
-			<Main>
+			<Main wideLayout>
 				<DocumentHead title={ translate( 'Domains' ) } />
-				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
+				<BodySectionCssClass
+					bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page', 'is-bulk-site-domains-page' ] }
+				/>
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				{ ! isLoading && <GoogleDomainOwnerBanner /> }
 				<PrimaryDomainSelector

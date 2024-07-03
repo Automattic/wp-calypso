@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect } from 'react';
 import QueryBackupStagingSite from 'calypso/components/data/query-backup-staging-site';
 import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getBackupStagingSiteInfo from 'calypso/state/rewind/selectors/get-backup-staging-site-info';
 import getBackupStagingUpdateRequestStatus from 'calypso/state/rewind/selectors/get-backup-staging-update-status';
 import hasFetchedStagingSiteInfo from 'calypso/state/rewind/selectors/has-fetched-staging-site-info';
@@ -39,9 +40,18 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 		}
 	}, [ hasFetched, isLoading, isStaging ] );
 
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_setup_staging_site_view' ) );
+	}, [ dispatch ] );
+
 	const toggleStagingFlag = useCallback( () => {
 		setStagingToggle( ! stagingToggle );
 		dispatch( requestUpdateBackupStagingFlag( siteId, ! isStaging ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_setup_staging_site_toggle', {
+				toggle: ! isStaging,
+			} )
+		);
 	}, [ dispatch, isStaging, siteId, stagingToggle ] );
 
 	const stagingIcon = (
@@ -72,7 +82,7 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 		<>
 			<QueryBackupStagingSite siteId={ siteId } />
 			<div className="jetpack-staging-sites-management">
-				<Card compact={ true } className="setting-title">
+				<Card compact className="setting-title">
 					<h3>{ translate( 'Set up as staging site' ) }</h3>
 					<div className="staging-icon">{ stagingIcon }</div>
 				</Card>

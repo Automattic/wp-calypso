@@ -2,7 +2,7 @@
 	.layout__content {
 		background-color: var(--studio-white);
 		overflow: inherit;
-		@media ( max-width: 782px ) {
+		@media (max-width: 782px) {
 			background-color: var(--studio-white);
 			.layout__primary {
 				height: 100vh;
@@ -28,7 +28,7 @@
 		"domainpicker basket"
 		"domainpicker empty";
 
-	@media ( max-width: 782px ) {
+	@media (max-width: 782px) {
 		grid-template-rows: 1fr 157px;
 		grid-template-columns: 100%;
 		grid-template-areas:
@@ -42,17 +42,17 @@
 
 	> div {
 		padding: 0 20px;
-		@media ( max-width: 782px ) {
+		@media (max-width: 782px) {
 			padding: 0 20px;
 		}
 	}
 
 	.marketplace-domain-upsell__header {
 		margin: 0 0 20px;
-		@media ( min-width: 782px ) {
+		@media (min-width: 782px) {
 			margin: 0 0 20px;
 		}
-		@media ( min-width: 600px ) {
+		@media (min-width: 600px) {
 			margin: 0 0 20px;
 		}
 	}
@@ -76,7 +76,7 @@
 			padding: 0 20px;
 		}
 
-		@media ( max-width: 782px ) {
+		@media (max-width: 782px) {
 			padding: 30px 0 0;
 			overflow-y: scroll;
 			-ms-overflow-style: none !important;
@@ -93,7 +93,7 @@
 		width: 100%;
 		justify-content: space-around;
 		height: auto;
-		@media ( max-width: 782px ) {
+		@media (max-width: 782px) {
 			background-color: var(--studio-gray-0);
 			padding: 0;
 			align-items: flex-end;

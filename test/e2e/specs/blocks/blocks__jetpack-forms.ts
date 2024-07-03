@@ -21,13 +21,11 @@ const blockFlows: BlockFlow[] = [
 	new FormPatternsFlow(
 		{
 			labelPrefix: 'Form Patterns',
-			patternName: 'Lead Capture Form',
 		},
 		{
 			otherExpectedFields: [
 				{ type: 'textbox', accessibleName: 'Name' },
 				{ type: 'textbox', accessibleName: 'Email' },
-				{ type: 'button', accessibleName: 'Subscribe' },
 			],
 		}
 	),

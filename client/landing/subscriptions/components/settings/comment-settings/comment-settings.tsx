@@ -1,6 +1,6 @@
 import { SubscriptionManager } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { SubscriptionsEllipsisMenu } from '../../subscriptions-ellipsis-menu';
 import { UnsubscribeIcon } from '../icons';
@@ -40,7 +40,7 @@ const CommentSettings = ( {
 			<hr className="subscriptions__separator" />
 
 			<Button
-				className={ classNames( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
+				className={ clsx( 'unsubscribe-button', { 'is-loading': unsubscribing } ) }
 				disabled={ unsubscribing }
 				icon={ <UnsubscribeIcon className="subscriptions-ellipsis-menu__item-icon" /> }
 				onClick={ onUnsubscribe }

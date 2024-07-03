@@ -59,8 +59,12 @@ export default function getPlanFeatures(
 		}
 	}
 
-	const emailSupport = String( translate( 'Customer support via email' ) );
-	const liveChatSupport = String( translate( 'Live chat support' ) );
+	/**
+	 * For WPCOM plans, the feature list for new purchases is returned by the above function.
+	 * The following is used to return the feature list for manual renewals.
+	 */
+	const fastSupport = String( translate( 'Fast support' ) );
+	const prioritySupport = String( translate( 'Priority support 24/7' ) );
 	const freeOneYearDomain = showFreeDomainFeature
 		? String( translate( 'Free domain for one year' ) )
 		: undefined;
@@ -69,7 +73,7 @@ export default function getPlanFeatures(
 	if ( isWpComPersonalPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
-			emailSupport,
+			fastSupport,
 			String( translate( 'Best-in-class hosting' ) ),
 			String( translate( 'Dozens of Free Themes' ) ),
 			String( translate( 'Ad-free experience' ) ),
@@ -79,7 +83,7 @@ export default function getPlanFeatures(
 	if ( isStarterPlan( productSlug ) ) {
 		return [
 			freeOneYearDomain,
-			emailSupport,
+			fastSupport,
 			String( translate( 'Best-in-class hosting' ) ),
 			String( translate( 'Dozens of Free Themes' ) ),
 			String( translate( 'Track your stats with Google Analytics' ) ),
@@ -89,8 +93,8 @@ export default function getPlanFeatures(
 	if ( isWpComPremiumPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
-			isMonthlyPlan && emailSupport,
-			! isMonthlyPlan && liveChatSupport,
+			isMonthlyPlan && fastSupport,
+			! isMonthlyPlan && prioritySupport,
 			isEnabled( 'themes/premium' )
 				? String( translate( 'Unlimited access to our library of Premium Themes' ) )
 				: null,
@@ -104,8 +108,8 @@ export default function getPlanFeatures(
 	if ( isWpComBusinessPlan( productSlug ) || isWpComProPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
-			isMonthlyPlan && emailSupport,
-			! isMonthlyPlan && liveChatSupport,
+			isMonthlyPlan && fastSupport,
+			! isMonthlyPlan && prioritySupport,
 			String( translate( 'Install custom plugins and themes' ) ),
 			String( translate( 'Drive traffic to your site with our advanced SEO tools' ) ),
 			String( translate( 'Track your stats with Google Analytics' ) ),
@@ -116,8 +120,8 @@ export default function getPlanFeatures(
 	if ( isWpComEcommercePlan( productSlug ) || isWooExpressPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
-			isMonthlyPlan && emailSupport,
-			! isMonthlyPlan && liveChatSupport,
+			isMonthlyPlan && fastSupport,
+			! isMonthlyPlan && prioritySupport,
 			String( translate( 'Install custom plugins and themes' ) ),
 			String( translate( 'Accept payments in 60+ countries' ) ),
 			String( translate( 'Integrations with top shipping carriers' ) ),

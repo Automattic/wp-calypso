@@ -1,8 +1,8 @@
 import { Button } from '@automattic/components';
 import { Icon, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
 	useProductDescription,
@@ -19,6 +19,7 @@ import { APIProductFamilyProduct } from '../../../../../state/partner-portal/typ
 import './style.scss';
 
 interface Props {
+	asReferral?: boolean;
 	product: APIProductFamilyProduct;
 	isSelected: boolean;
 	isDisabled?: boolean;
@@ -30,6 +31,7 @@ interface Props {
 
 export default function ProductCard( props: Props ) {
 	const {
+		asReferral,
 		product,
 		isSelected,
 		isDisabled,
@@ -76,6 +78,16 @@ export default function ProductCard( props: Props ) {
 		}
 	}, [] );
 
+	const truncateDescription = ( description: any ) => {
+		if ( description.length <= 84 ) {
+			return description;
+		}
+
+		const lastSpace = description.slice( 0, 82 ).lastIndexOf( ' ' );
+
+		return description.slice( 0, lastSpace > 0 ? lastSpace : 83 ) + '…';
+	};
+
 	const { description: productDescription } = useProductDescription( product.slug );
 
 	const onShowLightbox = useCallback(
@@ -104,6 +116,20 @@ export default function ProductCard( props: Props ) {
 		setShowLightbox( false );
 	}, [ resetParams ] );
 
+	const ctaLabel = useMemo( () => {
+		if ( asReferral ) {
+			return isSelected ? translate( 'Added to referral' ) : translate( 'Add to referral' );
+		}
+		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
+	}, [ asReferral, isSelected, translate ] );
+
+	const ctaLightboxLabel = useMemo( () => {
+		if ( asReferral ) {
+			return isSelected ? translate( 'Remove from referral' ) : translate( 'Add to referral' );
+		}
+		return isSelected ? translate( 'Remove from cart' ) : translate( 'Add to cart' );
+	}, [ asReferral, isSelected, translate ] );
+
 	return (
 		<>
 			<div
@@ -112,7 +138,7 @@ export default function ProductCard( props: Props ) {
 				role="button"
 				tabIndex={ 0 }
 				aria-disabled={ isDisabled }
-				className={ classNames( {
+				className={ clsx( {
 					'product-card': true,
 					selected: isSelected,
 					disabled: isDisabled,
@@ -133,22 +159,28 @@ export default function ProductCard( props: Props ) {
 									/>
 								</div>
 
-								<div className="product-card__description">{ productDescription }</div>
-
-								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
-									<LicenseLightboxLink productName={ productTitle } onClick={ onShowLightbox } />
-								) }
+								<div className="product-card__description">
+									{ truncateDescription( productDescription ) }
+								</div>
 							</div>
-
-							<Button
-								className="product-card__select-button"
-								primary={ ! isSelected }
-								tabIndex={ -1 }
-							>
-								{ isSelected && <Icon icon={ check } /> }
-								{ isSelected ? translate( 'Added' ) : translate( 'Add to cart' ) }
-							</Button>
 						</div>
+					</div>
+					<div className="product-card__buttons">
+						<Button
+							className="product-card__select-button"
+							primary={ ! isSelected }
+							tabIndex={ -1 }
+						>
+							{ isSelected && <Icon icon={ check } /> }
+							{ ctaLabel }
+						</Button>
+						{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
+							<LicenseLightboxLink
+								customText={ translate( 'View details' ) }
+								productName={ productTitle }
+								onClick={ onShowLightbox }
+							/>
+						) }
 					</div>
 				</div>
 			</div>
@@ -156,7 +188,7 @@ export default function ProductCard( props: Props ) {
 				<LicenseLightbox
 					product={ product }
 					quantity={ quantity }
-					ctaLabel={ isSelected ? translate( 'Remove from cart' ) : translate( 'Add to cart' ) }
+					ctaLabel={ ctaLightboxLabel }
 					isCTAPrimary={ ! isSelected }
 					isDisabled={ isDisabled }
 					onActivate={ onSelectProduct }

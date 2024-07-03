@@ -11,12 +11,15 @@ import {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import FilterSearch from '../../../../components/filter-search';
-import { ShoppingCartContext } from '../../context';
+import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import ListingSection from '../../listing-section';
 import MultiProductCard from '../multi-product-card';
 import ProductCard from '../product-card';
+import ProductFilter from '../product-filter';
+import EmptyResultMessage from './empty-result-message';
 import { getSupportedBundleSizes, useProductBundleSize } from './hooks/use-product-bundle-size';
+import useSelectedProductFilters from './hooks/use-selected-product-filters';
 import useSubmitForm from './hooks/use-submit-form';
 import VolumePriceSelector from './volume-price-selector';
 import type { ShoppingCartItem } from '../../types';
@@ -28,36 +31,55 @@ import './style.scss';
 interface ProductListingProps {
 	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
+	productBrand: string;
 }
 
-export default function ProductListing( { selectedSite, suggestedProduct }: ProductListingProps ) {
+export default function ProductListing( {
+	selectedSite,
+	suggestedProduct,
+	productBrand,
+}: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const { selectedCartItems, setSelectedCartItems } = useContext( ShoppingCartContext );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const isReferingProducts = marketplaceType === 'referral';
 
 	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
 
 	const {
-		selectedSize: quantity,
+		selectedSize: selectedBundleSize,
 		availableSizes: availableBundleSizes,
 		setSelectedSize: setSelectedBundleSize,
 	} = useProductBundleSize();
 
+	const { selectedFilters, setSelectedFilters, resetFilters } = useSelectedProductFilters( {
+		productBrand,
+	} );
+
+	const quantity = useMemo(
+		() => ( isReferingProducts ? 1 : selectedBundleSize ),
+		[ isReferingProducts, selectedBundleSize ]
+	);
+
 	const {
 		filteredProductsAndBundles,
 		isLoadingProducts,
-		plans,
-		backupAddons,
-		products,
+		jetpackPlans,
+		jetpackBackupAddons,
+		jetpackProducts,
 		wooExtensions,
 		data,
 		suggestedProductSlugs,
 	} = useProductAndPlans( {
 		selectedSite,
 		selectedBundleSize: quantity,
+		selectedProductFilters: selectedFilters,
 		productSearchQuery,
 	} );
+
+	const isEmptyList = ! filteredProductsAndBundles.length;
 
 	// Create a ref for `filteredProductsAndBundles` to prevent unnecessary re-renders caused by the `useEffect` hook.
 	const filteredProductsAndBundlesRef = useRef( filteredProductsAndBundles );
@@ -230,6 +252,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 		return products.map( ( productOption ) =>
 			Array.isArray( productOption ) ? (
 				<MultiProductCard
+					asReferral={ isReferingProducts }
 					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
 					products={ productOption }
 					onSelectProduct={ onSelectOrReplaceProduct }
@@ -251,6 +274,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 				/>
 			) : (
 				<ProductCard
+					asReferral={ isReferingProducts }
 					key={ productOption.slug }
 					product={ productOption }
 					onSelectProduct={ onSelectProduct }
@@ -277,13 +301,21 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 			<QueryProductsList currency="USD" />
 
 			<div className="product-listing__actions">
-				<FilterSearch
-					label={ translate( 'Search plans, products, add-ons, and extensions' ) }
-					onSearch={ onProductSearch }
-					onClick={ trackClickCallback( 'search' ) }
-				/>
+				<div className="product-listing__actions-search-and-filter">
+					<FilterSearch
+						label={ translate( 'Search products' ) }
+						onSearch={ onProductSearch }
+						onClick={ trackClickCallback( 'search' ) }
+					/>
 
-				{ availableBundleSizes.length > 1 && (
+					<ProductFilter
+						selectedFilters={ selectedFilters }
+						setSelectedFilters={ setSelectedFilters }
+						resetFilters={ resetFilters }
+					/>
+				</div>
+
+				{ ! isReferingProducts && availableBundleSizes.length > 1 && (
 					<VolumePriceSelector
 						selectedBundleSize={ quantity }
 						availableBundleSizes={ availableBundleSizes }
@@ -292,8 +324,15 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 				) }
 			</div>
 
+			{ isEmptyList && (
+				<div className="product-listing">
+					<EmptyResultMessage />
+				</div>
+			) }
+
 			{ wooExtensions.length > 0 && (
 				<ListingSection
+					id="woocommerce-extensions"
 					icon={ <WooLogo width={ 45 } height={ 28 } /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
@@ -304,20 +343,20 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 				</ListingSection>
 			) }
 
-			{ plans.length > 0 && (
+			{ jetpackPlans.length > 0 && (
 				<ListingSection
+					id="jetpack-plans"
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Plans' ) }
 					description={ translate(
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 					) } // FIXME: Add proper description for A4A
-					isTwoColumns
 				>
-					{ getProductCards( plans ) }
+					{ getProductCards( jetpackPlans ) }
 				</ListingSection>
 			) }
 
-			{ products.length > 0 && (
+			{ jetpackProducts.length > 0 && (
 				<ListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Products' ) }
@@ -325,11 +364,11 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 						'Mix and match powerful security, performance, and growth tools for your sites.'
 					) }
 				>
-					{ getProductCards( products ) }
+					{ getProductCards( jetpackProducts ) }
 				</ListingSection>
 			) }
 
-			{ backupAddons.length > 0 && (
+			{ jetpackBackupAddons.length > 0 && (
 				<ListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
@@ -337,7 +376,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 						'Add additional storage to your current VaultPress Backup plans.'
 					) }
 				>
-					{ getProductCards( backupAddons ) }
+					{ getProductCards( jetpackBackupAddons ) }
 				</ListingSection>
 			) }
 		</div>

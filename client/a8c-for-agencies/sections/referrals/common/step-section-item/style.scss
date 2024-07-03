@@ -15,6 +15,7 @@
 	.step-section-item__icon {
 		display: none;
 
+
 		@include break-large {
 			display: block;
 		}
@@ -26,7 +27,9 @@
 	}
 
 	.step-section-item__description {
-		font-size: rem(13px);
+		margin-block-start: 4px;
+		font-size: rem(14px);
+		line-height: 1.7;
 		color: var(--color-accent);
 	}
 
@@ -34,27 +37,111 @@
 		margin-block-start: 16px;
 		margin-inline-start: auto;
 
-		button {
+		.button {
 			width: 100%;
-		}
+			height: 40px;
 
-		@include break-large {
-			margin-block: auto;
-			display: flex;
-			gap: 16px;
+			@include break-large {
+				min-width: 100px;
+				width: auto;
+				height: inherit;
+			}
 		}
 	}
 }
 
 .step-section-item__status {
-	margin-block-start: 8px;
+
+	&.is-small-screen {
+		display: block;
+		margin-block-end: 16px;
+
+		@include break-large {
+			display: none;
+		}
+	}
+
+	&.is-large-screen {
+		display: none;
+		width: 30%;
+
+		@include break-large {
+			display: flex;
+			margin-block-start: 0;
+		}
+	}
+
+	.step-section-item__status-wrapper {
+		margin-left: auto;
+	}
+
+	&.badge {
+		white-space: nowrap;
+		position: relative;
+		top: -1px;
+	}
 
 	&.badge--success {
 		background-color: var(--color-success-5);
 		color: var(--color-success-80);
 	}
+
 	&.badge--warning {
 		background-color: var(--color-warning-5);
 		color: var(--color-warning-80);
 	}
+
+	&.badge--error {
+		background-color: var(--color-error-5);
+		color: var(--color-error-80);
+	}
+}
+
+.step-section-item__content {
+	@include break-large {
+		max-width: 70%;
+	}
+}
+
+.referrals-layout--automated .step-section-item {
+	.step-section-item__button .button {
+		min-width: 120px;
+	}
+
+	.step-section-item__button {
+		@include break-large {
+			margin-block: auto;
+		}
+	}
+
+	.step-section-item__status.is-large-screen {
+		@include break-large {
+			display: inline-flex;
+			position: relative;
+			left: 4px;
+		}
+
+	}
+}
+
+.step-section-item__step-number {
+	display: none;
+	color: var(--color-accent);
+	font-size: rem(12px);
+	font-weight: 600;
+	text-align: center;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 2px solid var(--color-accent);
+
+	@include break-large {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+.sidebar__menu-icon {
+	fill: currentColor;
 }

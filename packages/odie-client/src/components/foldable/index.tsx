@@ -1,5 +1,5 @@
 import { Card, CompactCard, ScreenReaderText, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { FC, useState, useEffect, useCallback, PropsWithChildren } from 'react';
 import './style.scss';
 
@@ -121,7 +121,7 @@ const FoldableCard: FC< FoldableCardProps > = ( {
 	};
 
 	const Container = compact ? CompactCard : Card;
-	const itemSiteClasses = classNames( 'foldable-card', className, {
+	const itemSiteClasses = clsx( 'foldable-card', className, {
 		'is-disabled': disabled,
 		'is-expanded': isExpanded,
 		'has-expanded-summary': !! expandedSummary,

@@ -18,9 +18,10 @@ class EditorMediaModalGalleryPreviewIndividual extends Component {
 				return (
 					<div
 						key={ item.ID }
+						/* eslint-disable-next-line */
 						dangerouslySetInnerHTML={ { __html: markup.get( this.props.site, item ) } }
 					/>
-				); // eslint-disable-line react/no-danger
+				);
 			}
 
 			return cloneElement( caption, { key: item.ID } );

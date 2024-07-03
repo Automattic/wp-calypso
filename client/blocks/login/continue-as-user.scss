@@ -30,24 +30,6 @@
 		}
 	}
 
-	.continue-as-user__gravatar-link {
-		color: var(--color-text);
-		margin: 0 auto;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 150%;
-
-		.continue-as-user__username {
-			margin-top: 12px;
-			font-size: $font-title-small;
-			font-weight: 600;
-		}
-		.continue-as-user__email {
-			margin-top: 4px;
-			font-size: $font-body;
-			margin-bottom: 48px;
-		}
-	}
-
 	.continue-as-user__gravatar {
 		display: inline;
 		border: 1px solid #a7aaad;

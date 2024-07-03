@@ -2,7 +2,7 @@ import { Badge, Button, FormInputValidation, FormLabel, Gridicon } from '@automa
 import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -428,7 +428,7 @@ export default function DomainForwardingCard( {
 			>
 				<FormLabel>{ translate( 'Source URL' ) }</FormLabel>
 				<div
-					className={ classNames( 'forwards-from', {
+					className={ clsx( 'forwards-from', {
 						'has-subdomain-selector':
 							sourceType === 'domain' ||
 							( ! checkIfIsThereMainDomainForwarding() && pointsToWpcom ),
@@ -440,7 +440,7 @@ export default function DomainForwardingCard( {
 						name="origin"
 						onChange={ handleSubdomainChange }
 						value={ sourceType === 'domain' ? domain.domain : subdomain }
-						className={ classNames( { 'is-error': ! isValidUrl } ) }
+						className={ clsx( { 'is-error': ! isValidUrl } ) }
 						maxLength={ 1000 }
 						prefix={
 							( ( child.subdomain === '' && child.domain_redirect_id !== 0 ) ||
@@ -469,7 +469,7 @@ export default function DomainForwardingCard( {
 						onChange={ handleForwardToChange }
 						onBlur={ forwardValidation }
 						value={ targetUrl }
-						className={ classNames( { 'is-error': ! isValidUrl } ) }
+						className={ clsx( { 'is-error': ! isValidUrl } ) }
 						maxLength={ 1000 }
 						suffix={
 							child.target_host + child.target_path !== '' &&
@@ -481,7 +481,7 @@ export default function DomainForwardingCard( {
 						}
 					/>
 					<Button
-						className={ classNames( 'forwarding__checkmark', {
+						className={ clsx( 'forwarding__checkmark', {
 							visible: pointsToWpcom && isValidUrl && child.target_host + child.target_path !== '',
 						} ) }
 					>
@@ -490,7 +490,7 @@ export default function DomainForwardingCard( {
 				</div>
 				{ ! isValidUrl && (
 					<div className="domain-forwarding-card__error-field">
-						<FormInputValidation isError={ true } text={ errorMessage } />
+						<FormInputValidation isError text={ errorMessage } />
 					</div>
 				) }
 				<Accordion title={ translate( 'Advanced settings', { textOnly: true } ) }>
@@ -605,7 +605,7 @@ export default function DomainForwardingCard( {
 		<>
 			{ renderNotice() }
 			{ renderNoticeForPrimaryDomain() }
-			{ forceReloadDns && <QueryDomainDns domain={ domain.name } forceReload={ true } /> }
+			{ forceReloadDns && <QueryDomainDns domain={ domain.name } forceReload /> }
 			<form
 				onSubmit={ ( e ) => {
 					e.preventDefault();

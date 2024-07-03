@@ -20,6 +20,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, getTopLevelOfTld, isMappedDomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
+import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
@@ -66,6 +67,8 @@ type ErrResponse = {
 const TransferPage = ( props: TransferPageProps ) => {
 	const dispatch = useDispatch();
 	const {
+		canTransferToAnyUser,
+		canTransferToOtherSite,
 		currentRoute,
 		domains,
 		isDomainInfoLoading,
@@ -118,7 +121,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const renderTransferOptions = () => {
 		const options = [];
 
-		if ( ! isDomainOnly ) {
+		if ( ! isDomainOnly && canTransferToAnyUser ) {
 			const mainText = isMapping
 				? __( 'Transfer this domain connection to any administrator on this site' )
 				: __( 'Transfer this domain to any administrator on this site' );
@@ -139,7 +142,8 @@ const TransferPage = ( props: TransferPageProps ) => {
 				/>
 			);
 		} else if (
-			! [ 'uk', 'fr', 'ca', 'de', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) )
+			! [ 'uk', 'fr', 'ca', 'de', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) ) &&
+			canTransferToOtherSite
 		) {
 			options.push(
 				<ActionCard
@@ -175,21 +179,23 @@ const TransferPage = ( props: TransferPageProps ) => {
 			? __( 'Transfer this domain connection to any site you are an administrator on' )
 			: __( 'Transfer this domain to any site you are an administrator on' );
 
-		options.push(
-			<ActionCard
-				key="transfer-to-another-site"
-				buttonHref={ domainManagementTransferToOtherSite(
-					selectedSite?.slug,
-					selectedDomainName,
-					currentRoute
-				) }
-				// translators: Continue is a verb
-				buttonText={ __( 'Continue' ) }
-				// translators: Transfer a domain to another WordPress.com site
-				headerText={ __( 'To another WordPress.com site' ) }
-				mainText={ mainText }
-			/>
-		);
+		if ( canTransferToOtherSite ) {
+			options.push(
+				<ActionCard
+					key="transfer-to-another-site"
+					buttonHref={ domainManagementTransferToOtherSite(
+						selectedSite?.slug,
+						selectedDomainName,
+						currentRoute
+					) }
+					// translators: Continue is a verb
+					buttonText={ __( 'Continue' ) }
+					// translators: Transfer a domain to another WordPress.com site
+					headerText={ __( 'To another WordPress.com site' ) }
+					mainText={ mainText }
+				/>
+			);
+		}
 
 		return options.length > 0 ? <Card>{ options }</Card> : null;
 	};
@@ -367,6 +373,14 @@ const TransferPage = ( props: TransferPageProps ) => {
 						? __( 'Transfer to another registrar' )
 						: __( 'Advanced Options' ) }
 				</CardHeading>
+				{ domain?.isGravatarDomain && (
+					<InfoNotice
+						redesigned
+						text={ __(
+							'This domain is provided at no cost for the first year for use with your Gravatar profile. This offer is limited to one free domain per user. If you transfer this domain to another registrar, you will have to pay the standard price to register another domain for your Gravatar profile.'
+						) }
+					/>
+				) }
 				{ topLevelOfTld !== 'uk' ? renderCommonTldTransferOptions() : renderUkTransferOptions() }
 			</Card>
 		);
@@ -443,6 +457,8 @@ const transferPageComponent = connect( ( state: AppState, ownProps: TransferPage
 	const siteId = getSelectedSiteId( state );
 	const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
 	return {
+		canTransferToAnyUser: domain?.canTransferToAnyUser ?? false,
+		canTransferToOtherSite: domain?.canTransferToOtherSite ?? false,
 		currentRoute: getCurrentRoute( state ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ) ?? false,
 		isDomainInfoLoading: ! domainInfo.hasLoadedFromServer,

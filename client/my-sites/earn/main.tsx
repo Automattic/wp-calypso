@@ -246,7 +246,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const jetpackLearnMoreLink = localizeUrl( 'https://jetpack.com/support/monetize-your-site/' );
 
 	return (
-		<Main wideLayout={ true } className="earn">
+		<Main wideLayout className="earn">
 			<PageViewTracker
 				path={ section ? `${ earnPath }/${ section }/:site` : `${ earnPath }/:site` }
 				title={ `${ adsProgramName } ${ capitalize( section ) }` }

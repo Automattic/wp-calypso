@@ -8,14 +8,17 @@ export const URL_REFERRER_PARAM = 'pattern-library';
 export function getCategoryUrlPath(
 	categorySlug: string,
 	type: PatternTypeFilter,
-	includeLocale = true
+	includeLocale = true,
+	isGridView = false
 ) {
 	const href =
 		type === PatternTypeFilter.PAGES
 			? `/patterns/layouts/${ categorySlug }`
 			: `/patterns/${ categorySlug }`;
 
-	return includeLocale ? addLocaleToPathLocaleInFront( href ) : href;
+	const hrefWithLocale = includeLocale ? addLocaleToPathLocaleInFront( href ) : href;
+
+	return hrefWithLocale + ( isGridView ? '?grid=1' : '' );
 }
 
 export function getOnboardingUrl( locale: Locale, isLoggedIn: boolean ) {

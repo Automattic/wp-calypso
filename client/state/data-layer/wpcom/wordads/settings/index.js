@@ -70,6 +70,7 @@ export const saveWordadsSettings = ( action ) => ( dispatch, getState ) => {
 				wordads_display_archive: settings.display_options.display_archive,
 				enable_header_ad: settings.display_options.enable_header_ad,
 				wordads_second_belowpost: settings.display_options.second_belowpost,
+				wordads_inline_enabled: settings.display_options.inline_enabled,
 				wordads_ccpa_enabled: settings.ccpa_enabled,
 				wordads_ccpa_privacy_policy_url: settings.ccpa_privacy_policy_url,
 				wordads_custom_adstxt_enabled: settings.custom_adstxt_enabled,

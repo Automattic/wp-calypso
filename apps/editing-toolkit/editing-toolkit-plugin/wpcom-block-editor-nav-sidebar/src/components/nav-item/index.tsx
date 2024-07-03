@@ -4,7 +4,7 @@ import { forwardRef } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { _x } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Post } from '../../types';
 
 import './style.scss';
@@ -18,11 +18,11 @@ interface NavItemProps {
 
 const NavItem = forwardRef< HTMLLIElement, NavItemProps >(
 	( { item, postType, selected, statusLabel }, ref ) => {
-		const buttonClasses = classNames( 'wpcom-block-editor-nav-item', {
+		const buttonClasses = clsx( 'wpcom-block-editor-nav-item', {
 			'is-selected': selected,
 		} );
 
-		const titleClasses = classNames( 'wpcom-block-editor-nav-item__title', {
+		const titleClasses = clsx( 'wpcom-block-editor-nav-item__title', {
 			'is-untitled': ! item.title?.raw,
 		} );
 

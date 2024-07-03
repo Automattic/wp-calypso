@@ -2,20 +2,24 @@ import {
 	getPlanClass,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	WPComStorageAddOnSlug,
-	PlanSlug,
+	type FeatureGroupSlug,
+	FEATURE_GROUP_STORAGE,
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
-import classNames from 'classnames';
+import { AddOns } from '@automattic/data-stores';
+import { useMemo } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
+import { usePlansGridContext } from '../../grid-context';
+import { PlanFeaturesItem } from '../item';
+import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
+import PartnerLogos from './partner-logos';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
 import PlanPrice from './plan-price';
-import PlanStorageOptions from './plan-storage-options';
 import PlanTagline from './plan-tagline';
 import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import SpotlightPlan from './spotlight-plan';
@@ -28,12 +32,9 @@ type MobileViewProps = {
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	hideUnavailableFeatures?: boolean;
-	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
@@ -42,37 +43,45 @@ type MobileViewProps = {
 	showUpgradeableStorage: boolean;
 };
 
+const CardContainer = (
+	props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
+) => {
+	const { children, planSlug, ...otherProps } = props;
+
+	return isWpcomEnterpriseGridPlan( planSlug ) ? (
+		<div { ...otherProps }>{ children }</div>
+	) : (
+		<FoldableCard { ...otherProps } compact clickableHeader>
+			{ children }
+		</FoldableCard>
+	);
+};
+
 const MobileView = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
 	renderedGridPlans,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
-	onUpgradeClick,
 	paidDomainName,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
 	selectedFeature,
 	showUpgradeableStorage,
 }: MobileViewProps ) => {
-	const CardContainer = (
-		props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
-	) => {
-		const { children, planSlug, ...otherProps } = props;
-		return isWpcomEnterpriseGridPlan( planSlug ) ? (
-			<div { ...otherProps }>{ children }</div>
-		) : (
-			<FoldableCard { ...otherProps } compact clickableHeader>
-				{ children }
-			</FoldableCard>
-		);
-	};
 	const translate = useTranslate();
+	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const featureGroups = useMemo(
+		() =>
+			Object.keys( featureGroupMap ).filter(
+				( key ) => FEATURE_GROUP_STORAGE !== key
+			) as FeatureGroupSlug[],
+		[ featureGroupMap ]
+	);
+	const storageFeatureGroup = featureGroupMap[ FEATURE_GROUP_STORAGE ];
 
 	return renderedGridPlans
 		.reduce( ( acc, gridPlan ) => {
@@ -83,7 +92,7 @@ const MobileView = ( {
 			return acc.concat( gridPlan );
 		}, [] as GridPlan[] )
 		.map( ( gridPlan, index ) => {
-			const planCardClasses = classNames(
+			const planCardClasses = clsx(
 				'plans-grid-next-features-grid__mobile-plan-card',
 				getPlanClass( gridPlan.planSlug )
 			);
@@ -104,19 +113,29 @@ const MobileView = ( {
 					) }
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
-					<PlanStorageOptions
-						renderedGridPlans={ [ gridPlan ] }
-						intervalType={ intervalType }
-						onStorageAddOnClick={ onStorageAddOnClick }
-						showUpgradeableStorage={ showUpgradeableStorage }
-					/>
+					{ storageFeatureGroup && (
+						<>
+							<PlanFeaturesItem>
+								<h2 className="plans-grid-next-features-grid__feature-group-title">
+									{ storageFeatureGroup?.getTitle() }
+								</h2>
+							</PlanFeaturesItem>
+							<div className="plan-features-2023-grid__highlighted-feature">
+								<PlanFeaturesItem>
+									<PlanStorage
+										planSlug={ gridPlan.planSlug }
+										onStorageAddOnClick={ onStorageAddOnClick }
+										showUpgradeableStorage={ showUpgradeableStorage }
+									/>
+								</PlanFeaturesItem>
+							</div>
+						</>
+					) }
 					<TopButtons
 						renderedGridPlans={ [ gridPlan ] }
 						isInSignup={ isInSignup }
-						isLaunchPage={ isLaunchPage }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						planActionOverrides={ planActionOverrides }
-						onUpgradeClick={ onUpgradeClick }
 					/>
 					<CardContainer
 						header={ translate( 'Show all features' ) }
@@ -130,15 +149,28 @@ const MobileView = ( {
 							)
 						}
 					>
-						<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
-						<PlanFeaturesList
-							renderedGridPlans={ [ gridPlan ] }
-							selectedFeature={ selectedFeature }
-							paidDomainName={ paidDomainName }
-							hideUnavailableFeatures={ hideUnavailableFeatures }
-							generatedWPComSubdomain={ generatedWPComSubdomain }
-							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-						/>
+						<PartnerLogos renderedGridPlans={ [ gridPlan ] } />
+						{ ! enableCategorisedFeatures && (
+							<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
+						) }
+						{ featureGroups.map( ( featureGroupSlug ) => (
+							<div
+								className="plans-grid-next-features-grid__feature-group-row"
+								key={ featureGroupSlug }
+							>
+								<PlanFeaturesList
+									renderedGridPlans={ [ gridPlan ] }
+									selectedFeature={ selectedFeature }
+									paidDomainName={ paidDomainName }
+									hideUnavailableFeatures={ hideUnavailableFeatures }
+									generatedWPComSubdomain={ generatedWPComSubdomain }
+									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+									featureGroupSlug={ featureGroupSlug }
+									onStorageAddOnClick={ onStorageAddOnClick }
+									showUpgradeableStorage={ showUpgradeableStorage }
+								/>
+							</div>
+						) ) }
 					</CardContainer>
 				</div>
 			);
@@ -151,17 +183,15 @@ type TabletViewProps = {
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	hideUnavailableFeatures?: boolean;
-	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
+	showRefundPeriod?: boolean;
 	showUpgradeableStorage: boolean;
 	stickyRowOffset: number;
 };
@@ -170,18 +200,16 @@ const TabletView = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
-	renderedGridPlans,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
-	onUpgradeClick,
 	paidDomainName,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
+	renderedGridPlans,
 	selectedFeature,
+	showRefundPeriod,
 	showUpgradeableStorage,
 	stickyRowOffset,
 }: TabletViewProps ) => {
@@ -196,16 +224,14 @@ const TabletView = ( {
 		generatedWPComSubdomain,
 		gridPlanForSpotlight,
 		hideUnavailableFeatures,
-		intervalType,
 		isCustomDomainAllowedOnFreePlan,
 		isInSignup,
-		isLaunchPage,
 		onStorageAddOnClick,
-		onUpgradeClick,
 		paidDomainName,
 		planActionOverrides,
 		planUpgradeCreditsApplicable,
 		selectedFeature,
+		showRefundPeriod,
 		showUpgradeableStorage,
 		stickyRowOffset,
 	};
@@ -225,40 +251,28 @@ const TabletView = ( {
 };
 
 const FeaturesGrid = ( {
-	gridPlans,
-	gridPlanForSpotlight,
-	stickyRowOffset,
-	isInSignup,
-	planUpgradeCreditsApplicable,
 	currentSitePlanSlug,
-	isLaunchPage,
-	planActionOverrides,
-	onUpgradeClick,
-	intervalType,
-	onStorageAddOnClick,
-	showUpgradeableStorage,
-	paidDomainName,
-	hideUnavailableFeatures,
-	selectedFeature,
-	siteId,
 	generatedWPComSubdomain,
-	isCustomDomainAllowedOnFreePlan,
+	gridPlanForSpotlight,
+	gridPlans,
 	gridSize,
+	hideUnavailableFeatures,
+	isCustomDomainAllowedOnFreePlan,
+	isInSignup,
+	onStorageAddOnClick,
+	paidDomainName,
+	planActionOverrides,
+	planUpgradeCreditsApplicable,
+	selectedFeature,
+	showRefundPeriod,
+	showUpgradeableStorage,
+	stickyRowOffset,
 }: FeaturesGridProps ) => {
-	const handleUpgradeClick = useUpgradeClickHandler( {
-		gridPlans,
-		onUpgradeClick,
-		selectedSiteId: siteId,
-	} );
-
 	const spotlightPlanProps = {
 		currentSitePlanSlug,
 		gridPlanForSpotlight,
-		intervalType,
 		isInSignup,
-		isLaunchPage,
 		onStorageAddOnClick,
-		onUpgradeClick: handleUpgradeClick,
 		planActionOverrides,
 		planUpgradeCreditsApplicable,
 		selectedFeature,
@@ -268,10 +282,11 @@ const FeaturesGrid = ( {
 	const planFeaturesProps = {
 		...spotlightPlanProps,
 		generatedWPComSubdomain,
-		renderedGridPlans: gridPlans,
 		hideUnavailableFeatures,
 		isCustomDomainAllowedOnFreePlan,
 		paidDomainName,
+		renderedGridPlans: gridPlans,
+		showRefundPeriod,
 	};
 
 	return (

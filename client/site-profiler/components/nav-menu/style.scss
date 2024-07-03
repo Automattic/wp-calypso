@@ -1,0 +1,44 @@
+.site-profiler-nav-menu {
+	background-color: #101517;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px;
+	margin-top: 20px;
+
+	ul {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		list-style: none;
+		padding: 1.5em 2em;
+		margin: 0;
+		align-items: center;
+		gap: 1.5em;
+		overflow-x: scroll;
+
+		li button {
+			color: var(--studio-gray-20);
+			text-wrap: nowrap;
+			padding: 1em 0;
+			cursor: pointer;
+
+			&:hover,
+			&.active {
+				color: var(--studio-white);
+			}
+		}
+
+		.site-profiler-nav-menu__cta a {
+			background-color: #3858e9;
+			color: var(--studio-white);
+			border-radius: 4px;
+			text-decoration: none !important;
+			padding: 1em 1.5em;
+			text-wrap: nowrap;
+
+			&:hover {
+				background-color: #193de0;
+				color: var(--studio-white) !important;
+			}
+		}
+	}
+}

@@ -110,7 +110,7 @@ export function handleQueryParamChange( queryParams: SitesDashboardQueryParams )
 	} );
 
 	// Use relative URL to avoid full page refresh.
-	page.replace( url.pathname + url.search );
+	page.replace( url.pathname + url.search + url.hash );
 }
 
 export const SitesContentControls = ( {
@@ -154,7 +154,7 @@ export const SitesContentControls = ( {
 				onSearch={ handleSearch }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
-				disableAutocorrect={ true }
+				disableAutocorrect
 				defaultValue={ initialSearch }
 				ref={ searchRef }
 			/>

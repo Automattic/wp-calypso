@@ -44,6 +44,8 @@ const MyApp = () => (
 
 ## Odie Storage
 
+Odie stores user's chat ID in Calypso's user preferences. So that the chat continuity works across Calypso, wp-admin, and wp-admin in Atomic sites.
+
 ### Types
 
 ```tsx
@@ -54,17 +56,17 @@ type OdieStorageKey = 'chat_id' | 'last_chat_id';
 
 ```tsx
 import {
-	getOdieStorage,
-	setOdieStorage,
-	clearOdieStorage,
-	useOdieStorage,
+	useGetOdieStorage,
+	useSetOdieStorage,
 } from '@automattic/odie-client';
 
 // Usage examples
-setOdieStorage( 'chat_id', 'new_chat_id' );
-const chatId = getOdieStorage( 'chat_id' );
-clearOdieStorage( 'chat_id' );
-const chatId = useOdieStorage( 'chat_id' ); // Listen for changes
+function Examples() {
+	const updateChatId = useSetOdieStorage( 'chat_id' )
+	updateChatId( 'new_chat_id' );
+
+	const chatId = useGetOdieStorage( 'chat_id' );
+}
 ```
 
 _Note: Setting `chat_id` fetches a new chat from the server and also sets `last_chat_id`. Clearing `chat_id` does not clear `last_chat_id`._

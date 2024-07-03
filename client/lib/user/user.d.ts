@@ -46,4 +46,5 @@ export type OptionalUserData = {
 	atomic_visible_site_count?: number;
 	is_google_domain_owner: boolean;
 	had_hosting_trial: boolean;
+	is_subscription_only: boolean;
 };

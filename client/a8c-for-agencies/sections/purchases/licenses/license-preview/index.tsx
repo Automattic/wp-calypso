@@ -1,11 +1,17 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
-import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
+import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	isPressableHostingProduct,
+	isWPCOMHostingProduct,
+} from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
+import ClientSite from 'calypso/a8c-for-agencies/sections/sites/needs-setup-sites/client-site';
 import FormattedDate from 'calypso/components/formatted-date';
 import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
@@ -25,6 +31,7 @@ import BundleDetails from '../license-details/bundle-details';
 import LicensesOverviewContext from '../licenses-overview/context';
 import LicenseActions from './license-actions';
 import LicenseBundleDropDown from './license-bundle-dropdown';
+import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
 
 import './style.scss';
 
@@ -41,6 +48,7 @@ interface Props {
 	parentLicenseId?: number | null;
 	quantity?: number | null;
 	isChildLicense?: boolean;
+	referral?: ReferralAPIResponse | null;
 }
 
 export default function LicensePreview( {
@@ -56,12 +64,16 @@ export default function LicensePreview( {
 	parentLicenseId,
 	quantity,
 	isChildLicense,
+	referral,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
+
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const isWPCOMLicense = isWPCOMHostingProduct( licenseKey );
 	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
 	const { filter } = useContext( LicensesOverviewContext );
@@ -85,7 +97,9 @@ export default function LicensePreview( {
 	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
 	const assign = useCallback( () => {
-		const redirectUrl = addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
+		const redirectUrl = isWPCOMLicense
+			? A4A_SITES_LINK_NEEDS_SETUP
+			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
 		if ( paymentMethodRequired ) {
 			const noticeLinkHref = addQueryArgs(
 				{
@@ -109,7 +123,7 @@ export default function LicensePreview( {
 		}
 
 		page.redirect( redirectUrl );
-	}, [ paymentMethodRequired, translate, dispatch, licenseKey ] );
+	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, translate, dispatch ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -134,15 +148,21 @@ export default function LicensePreview( {
 		</Badge>
 	);
 
+	// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
+	//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
+	const productTitle = licenseKey.startsWith( 'wpcom-hosting-business' )
+		? translate( 'WordPress.com Site' )
+		: product;
+
 	return (
 		<div
-			className={ classnames( {
+			className={ clsx( {
 				'license-preview': true,
 				'license-preview--is-open': isOpen && ! isChildLicense,
 			} ) }
 		>
 			<LicenseListItem
-				className={ classnames( {
+				className={ clsx( {
 					'license-preview__card': true,
 					'license-preview__card--is-detached': licenseState === LicenseState.Detached,
 					'license-preview__card--is-revoked': licenseState === LicenseState.Revoked,
@@ -150,7 +170,14 @@ export default function LicensePreview( {
 				} ) }
 			>
 				<div>
-					<span className="license-preview__product">{ product }</span>
+					<span className="license-preview__product">
+						{ productTitle }
+						{ isAutomatedReferralsEnabled && referral && (
+							<div className="license-preview__client-email">
+								<ClientSite referral={ referral } />
+							</div>
+						) }
+					</span>
 				</div>
 
 				<div>
@@ -164,7 +191,7 @@ export default function LicensePreview( {
 						<>
 							<div className="license-preview__product-small">{ product }</div>
 							{ domain }
-							{ isPressableLicense && (
+							{ isPressableLicense && ! revokedAt && (
 								<a
 									className="license-preview__product-pressable-link"
 									target="_blank"
@@ -184,7 +211,7 @@ export default function LicensePreview( {
 											compact
 											onClick={ assign }
 										>
-											{ translate( 'Assign' ) }
+											{ isWPCOMLicense ? translate( 'Create site' ) : translate( 'Assign' ) }
 										</Button>
 									) }
 								</span>
@@ -237,26 +264,20 @@ export default function LicensePreview( {
 				) }
 
 				<div className="license-preview__badge-container">
-					{ isParentLicense
-						? bundleCountContent
-						: LicenseType.Standard === licenseType && (
-								<Badge type="success">{ translate( 'Standard license' ) }</Badge>
-						  ) }
+					{ !! isParentLicense && bundleCountContent }
 				</div>
 
 				<div>
-					{ isParentLicense && (
+					{ !! isParentLicense && ! revokedAt && (
 						<LicenseBundleDropDown
 							product={ product }
 							licenseKey={ licenseKey }
 							bundleSize={ quantity }
 						/>
 					) }
-					{ isSiteAtomic ? (
+					{ isWPCOMLicense && isSiteAtomic ? (
 						<LicenseActions
 							siteUrl={ siteUrl }
-							licenseKey={ licenseKey }
-							product={ product }
 							attachedAt={ attachedAt }
 							revokedAt={ revokedAt }
 							licenseType={ licenseType }
@@ -286,6 +307,7 @@ export default function LicensePreview( {
 						onCopyLicense={ onCopyLicense }
 						licenseType={ licenseType }
 						isChildLicense={ isChildLicense }
+						referral={ referral }
 					/>
 				) ) }
 		</div>

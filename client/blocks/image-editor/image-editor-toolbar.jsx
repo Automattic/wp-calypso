@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { values as objectValues } from 'lodash';
 import PropTypes from 'prop-types';
@@ -189,7 +189,7 @@ export class ImageEditorToolbar extends Component {
 		];
 
 		return buttons.map( ( button ) => {
-			const buttonClasses = classNames( 'image-editor__toolbar-button', {
+			const buttonClasses = clsx( 'image-editor__toolbar-button', {
 				'is-disabled': button && button.disabled,
 			} );
 			return button ? (

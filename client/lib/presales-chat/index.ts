@@ -1,7 +1,7 @@
 import {
-	useChatStatus,
 	useMessagingAvailability,
 	useZendeskMessaging,
+	useCanConnectToZendesk,
 } from '@automattic/help-center/src/hooks';
 import { ZENDESK_SOURCE_URL_TICKET_FIELD_ID } from '@automattic/help-center/src/hooks/use-chat-widget';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
@@ -58,12 +58,16 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 	const isWpMobileAppUser = isWpMobileApp();
 	const group = getGroupName( keyType );
 
-	const { canConnectToZendesk } = useChatStatus( group, enabled );
+	const { data: canConnectToZendesk } = useCanConnectToZendesk(
+		enabled && ! skipAvailabilityCheck
+	);
 	const isEligibleForPresalesChat =
 		enabled && isEnglishLocale && canConnectToZendesk && ! isWpMobileAppUser;
 
-	const { data: chatAvailability, isInitialLoading: isLoadingAvailability } =
-		useMessagingAvailability( group, isEligibleForPresalesChat && ! skipAvailabilityCheck );
+	const { data: chatAvailability, isLoading: isLoadingAvailability } = useMessagingAvailability(
+		group,
+		isEligibleForPresalesChat && ! skipAvailabilityCheck
+	);
 
 	const isPresalesChatAvailable =
 		skipAvailabilityCheck || Boolean( chatAvailability?.is_available );

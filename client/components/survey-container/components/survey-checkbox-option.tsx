@@ -1,11 +1,14 @@
+import { PremiumBadge } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
+import clsx from 'clsx';
 import { Question, Option } from '../types';
 
-type SurveyCheckboxOptionType = {
+type SurveyCheckboxOptionProps = {
 	question: Question;
 	option: Option;
 	onChange: ( key: string, value: string[] ) => void;
 	value: string[];
+	disabled?: boolean;
 };
 
 const SurveyCheckboxOption = ( {
@@ -13,7 +16,8 @@ const SurveyCheckboxOption = ( {
 	option,
 	onChange,
 	value,
-}: SurveyCheckboxOptionType ) => {
+	disabled,
+}: SurveyCheckboxOptionProps ) => {
 	const isSelected = value.includes( option.value );
 	const handleToggle = () => {
 		const newValue = isSelected
@@ -31,7 +35,10 @@ const SurveyCheckboxOption = ( {
 
 	return (
 		<div
-			className={ `question-options__option-control ${ isSelected ? 'checked' : '' }` }
+			className={ clsx( 'question-options__option-control', {
+				checked: isSelected,
+				disabled,
+			} ) }
 			role="checkbox"
 			onClick={ handleToggle }
 			onKeyDown={ handleKeyDown }
@@ -48,6 +55,7 @@ const SurveyCheckboxOption = ( {
 				tabIndex={ -1 }
 				aria-hidden="true"
 				onClick={ ( e ) => e.stopPropagation() }
+				disabled={ disabled }
 			/>
 
 			<div className="question-options__option-label">
@@ -61,6 +69,7 @@ const SurveyCheckboxOption = ( {
 					</span>
 				) }
 			</div>
+			{ option?.additionalProps?.is_premium && <PremiumBadge shouldHideTooltip /> }
 		</div>
 	);
 };

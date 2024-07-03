@@ -15,7 +15,8 @@ export default function useBannerSubtitle(
 	trialDaysLeftToDisplay: number,
 	trialExpiration: Moment | null,
 	selectedSiteId: number | null,
-	isEcommerceTrial?: boolean
+	isWooExpressTrial?: boolean,
+	isEntrepreneurTrial?: boolean
 ): string {
 	const locale = useLocale();
 	const translate = useTranslate();
@@ -36,7 +37,7 @@ export default function useBannerSubtitle(
 		// this may need updating for intro offers with singly counted units e.g. 1 month|year
 		let introOfferSubtitle;
 		if (
-			isEcommerceTrial &&
+			isWooExpressTrial &&
 			anyWooExpressIntroOffer &&
 			'month' === anyWooExpressIntroOffer.intervalUnit
 		) {
@@ -66,6 +67,34 @@ export default function useBannerSubtitle(
 							introOfferFormattedPrice: anyWooExpressIntroOffer.formattedPrice,
 							introOfferIntervalCount: anyWooExpressIntroOffer.intervalCount,
 						},
+					}
+				);
+			}
+		}
+		let entrepreneurTrialSubtitle;
+		if ( isEntrepreneurTrial ) {
+			if ( trialDaysLeftToDisplay < 1 ) {
+				entrepreneurTrialSubtitle = translate(
+					'Your free trial ends today. Add payment method by %(expirationdate)s to continue selling your products and access all the power.',
+					{
+						args: {
+							expirationdate: readableExpirationDate as string,
+						},
+						comment: '%expirationdate is the date the trial ends',
+					}
+				);
+			} else {
+				entrepreneurTrialSubtitle = translate(
+					'Your free trial ends in %(daysLeft)d day. Complete the plan purchase by %(expirationdate)s to keep selling and unlock all features!',
+					'Your free trial ends in %(daysLeft)d days. Complete the plan purchase by %(expirationdate)s to keep selling and unlock all features!',
+					{
+						args: {
+							daysLeft: trialDaysLeftToDisplay,
+							expirationdate: readableExpirationDate as string,
+						},
+						count: trialDaysLeftToDisplay,
+						comment:
+							'%daysLeft is the number of days left in the trial, %expirationdate is the date the trial ends',
 					}
 				);
 			}
@@ -136,6 +165,8 @@ export default function useBannerSubtitle(
 					subtitle = translate(
 						'Your free trial has expired. Upgrade to a plan to unlock new features and start selling.'
 					);
+				} else if ( entrepreneurTrialSubtitle ) {
+					subtitle = entrepreneurTrialSubtitle;
 				} else if ( introOfferSubtitle ) {
 					subtitle = introOfferSubtitle;
 				} else if ( trialDaysLeftToDisplay < 1 ) {
@@ -170,7 +201,8 @@ export default function useBannerSubtitle(
 		trialDaysLeftToDisplay,
 		readableExpirationDate,
 		anyWooExpressIntroOffer,
-		isEcommerceTrial,
+		isWooExpressTrial,
+		isEntrepreneurTrial,
 		translate,
 	] );
 

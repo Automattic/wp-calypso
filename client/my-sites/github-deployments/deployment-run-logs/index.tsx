@@ -1,14 +1,15 @@
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
-import ActionPanel from 'calypso/components/action-panel/index';
-import HeaderCake from 'calypso/components/header-cake/index';
+import ActionPanel from 'calypso/components/action-panel';
+import HeaderCake from 'calypso/components/header-cake';
+import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { PageShell } from 'calypso/my-sites/github-deployments/components/page-shell';
 import { useSort } from 'calypso/my-sites/github-deployments/components/sort-button/use-sort';
 import { DeploymentsRunsTable } from 'calypso/my-sites/github-deployments/deployment-run-logs/deployments-run-table';
 import { useCodeDeploymentsRunsQuery } from 'calypso/my-sites/github-deployments/deployment-run-logs/use-code-deployment-run-query';
 import { indexPage } from 'calypso/my-sites/github-deployments/routes';
-import { useSelector } from 'calypso/state/index';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -33,7 +34,8 @@ export function DeploymentRunsLogs( { codeDeploymentId }: DeploymentRunsDialogPr
 
 	return (
 		<PageShell pageTitle={ __( 'GitHub Deployments' ) }>
-			<HeaderCake onClick={ goToDeployments } isCompact>
+			<HeaderCakeBack icon="chevron-left" onClick={ goToDeployments } />
+			<HeaderCake isCompact>
 				<h1>{ __( 'Deployment runs' ) }</h1>
 			</HeaderCake>
 			<ActionPanel>

@@ -3,9 +3,10 @@ import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { isValueTruthy, getContactDetailsType } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
+import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
@@ -40,7 +41,6 @@ import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
-import getContactDetailsType from '../lib/get-contact-details-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { pixProcessor } from '../lib/pix-processor';
@@ -102,6 +102,7 @@ export interface CheckoutMainProps {
 	 */
 	fromSiteSlug?: string;
 	adminUrl?: string;
+	hostingIntent?: string | undefined;
 }
 
 export default function CheckoutMain( {
@@ -131,6 +132,7 @@ export default function CheckoutMain( {
 	connectAfterCheckout,
 	fromSiteSlug,
 	adminUrl,
+	hostingIntent,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
@@ -207,6 +209,7 @@ export default function CheckoutMain( {
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
 		isGiftPurchase,
+		hostingIntent,
 	} );
 
 	const cartKey = useCartKey();
@@ -495,8 +498,6 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'p24', transactionData, dataForProcessor ),
 			bancontact: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'bancontact', transactionData, dataForProcessor ),
-			giropay: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'giropay', transactionData, dataForProcessor ),
 			wechat: ( transactionData: unknown ) =>
 				weChatProcessor( transactionData, dataForProcessor, translate ),
 			netbanking: ( transactionData: unknown ) =>
@@ -690,9 +691,13 @@ export default function CheckoutMain( {
 			transactionError: string | null;
 			paymentMethodId: string | null;
 		} ) => {
-			reduxDispatch(
-				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+			const errorNoticeText = transactionError ? (
+				<div dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( transactionError ) } } /> // eslint-disable-line react/no-danger -- The API response can contain anchor elements that we need to parse so they are rendered properly
+			) : (
+				translate( 'An error occurred during your purchase.' )
 			);
+
+			reduxDispatch( errorNotice( errorNoticeText ) );
 
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_payment_error', {

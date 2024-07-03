@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import classnames from 'classnames';
+import clsx from 'clsx';
 /**
  * Internal Dependencies
  */
@@ -25,7 +25,7 @@ const TourKitStep: React.FunctionComponent< Props > = ( {
 	onGoToStep,
 } ) => {
 	const isMobile = useMobileBreakpoint();
-	const classes = classnames(
+	const classes = clsx(
 		'tour-kit-step',
 		`is-step-${ currentStepIndex }`,
 		classParser(

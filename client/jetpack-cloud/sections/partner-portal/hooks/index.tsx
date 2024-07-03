@@ -223,6 +223,193 @@ export function useProductDescription( productSlug: string ): {
 					'Powerful marketing automation for WooCommerce - grow your store and make more money.'
 				);
 				break;
+			case 'woocommerce-advanced-notifications':
+				description = translate(
+					'Easily setup new order and stock email notifications for multiple recipients of your choosing.'
+				);
+				break;
+			case 'woocommerce-all-products-woo-subscriptions':
+				description = translate(
+					'Add subscription plans to your existing products and start capturing residual revenue with All Products for WooCommerce Subscriptions.'
+				);
+				break;
+			case 'woocommerce-automatewoo-birthdays':
+				description = translate(
+					'Delight customers and boost organic sales with a special WooCommerce birthday email (and coupon!) on their special day.'
+				);
+				break;
+			case 'woocommerce-automatewoo-refer-a-friend':
+				description = translate(
+					'Boost your organic sales by adding a customer referral program to your WooCommerce store.'
+				);
+				break;
+			case 'woocommerce-back-in-stock-notifications':
+				description = translate(
+					'Notify customers when your out-of-stock products become available. Recover lost sales, build customer loyalty, and gain deeper insights into your inventory.'
+				);
+				break;
+			case 'woocommerce-bulk-stock-management':
+				description = translate(
+					'Edit product and variation stock levels in bulk via this handy interface.'
+				);
+				break;
+			case 'woocommerce-checkout-field-editor':
+				description = translate(
+					'Optimize your checkout process by adding, removing or editing fields to suit your needs.'
+				);
+				break;
+			case 'woocommerce-composite-products':
+				description = translate(
+					'The definitive product builder plugin for WooCommerce. Create and offer personalized product kits and custom product configurators.'
+				);
+				break;
+			case 'woocommerce-conditional-shipping-payments':
+				description = translate(
+					'Use conditional logic to restrict the shipping methods, payment gateways and shipping countries or states available to customers at checkout.'
+				);
+				break;
+			case 'woocommerce-eu-vat-number':
+				description = translate(
+					'Collect VAT numbers at checkout and remove the VAT charge for eligible EU businesses.'
+				);
+				break;
+			case 'woocommerce-flat-rate-box-shipping':
+				description = translate( 'Pack items into boxes with pre-defined costs per destination.' );
+				break;
+			case 'woocommerce-gift-cards':
+				description = translate(
+					'Offer digital prepaid gift cards and e-gift certificates that customers can redeem at your WooCommerce store.'
+				);
+				break;
+			case 'woocommerce-gifting-wc-subscriptions':
+				description = translate(
+					"Offer customers a way to purchase subscriptions for others. A gift that keeps on giving for your customers and your store's revenue."
+				);
+				break;
+			case 'woocommerce-per-product-shipping':
+				description = translate(
+					'Define separate shipping costs per product which are combined at checkout to provide a total shipping cost.'
+				);
+				break;
+			case 'woocommerce-product-csv-import-suite':
+				description = translate(
+					'Import, merge, and export products and variations to and from WooCommerce using a CSV file.'
+				);
+				break;
+			case 'woocommerce-product-recommendations':
+				description = translate(
+					'Offer smarter upsells, cross-sells, and frequently bought together recommendations. Use analytics to measure their impact and optimize your strategies.'
+				);
+				break;
+			case 'woocommerce-product-vendors':
+				description = translate(
+					'Turn your store into a multi-vendor marketplace. Allow multiple vendors to sell via your site and in return take a commission on sales.'
+				);
+				break;
+			case 'woocommerce-returns-warranty-requests':
+				description = translate(
+					'Manage the RMA process, add warranties to products, and let customers request and manage returns/exchanges from their account.'
+				);
+				break;
+			case 'woocommerce-subscription-downloads':
+				description = translate(
+					'Offer additional downloads to your subscribers, via downloadable products listed in your store.'
+				);
+				break;
+			case 'woocommerce-shipment-tracking':
+				description = translate( 'Add shipment tracking information to your orders.' );
+				break;
+			case 'woocommerce-shipping-multiple-addresses':
+				description = translate(
+					'Allow your customers to ship individual items in a single order to multiple addresses.'
+				);
+				break;
+			case 'woocommerce-storefront-extensions-bundle':
+				description = translate(
+					'All the tools you need to customize your WooCommerce store design. Storefront is our free, intuitive theme for WooCommerce - make it yours without touching code with the Storefront Extensions bundle.'
+				);
+				break;
+			case 'woocommerce-table-rate-shipping':
+				description = translate(
+					"The Table Rate shipping module extends WooCommerce's default shipping options giving you highly customisable shipping options."
+				);
+				break;
+			case 'woocommerce-additional-image-variations':
+				description = translate( 'Unlimited images for your product variations.' );
+				break;
+			case 'woocommerce-bookings-availability':
+				description = translate(
+					'Sell more bookings by presenting a calendar or schedule of available slots in a page or post.'
+				);
+				break;
+			case 'woocommerce-box-office':
+				description = translate(
+					'Sell tickets for your next event, concert, function, fundraiser or conference directly on your own site.'
+				);
+				break;
+			case 'woocommerce-brands':
+				description = translate(
+					'Create, assign and list brands for products, and allow customers to view by brand.'
+				);
+				break;
+			case 'woocommerce-coupon-campaigns':
+				description = translate(
+					'Categorize coupons within coupon campaigns, making it easier to track the performance of a collection of coupons.'
+				);
+				break;
+			case 'woocommerce-deposits':
+				description = translate(
+					'Enable custom payment schedules with WooCommerce Deposits. Accept payments as deposits, layaway plans, or any desired payment structure.'
+				);
+				break;
+			case 'woocommerce-distance-rate-shipping':
+				description = translate(
+					'WooCommerce Distance Rate shipping allows you to charge shipping rates based on the distance or total travel time to your customers as well as charge based on weight, total value or number of items in cart.'
+				);
+				break;
+			case 'woocommerce-one-page-checkout':
+				description = translate(
+					'Create special pages where customers can choose products, checkout & pay all on the one page.'
+				);
+				break;
+			case 'woocommerce-order-barcodes':
+				description = translate(
+					'Generates a unique barcode for each order on your site perfect for e-tickets, packing slips, reservations and a variety of other uses.'
+				);
+				break;
+			case 'woocommerce-points-and-rewards':
+				description = translate(
+					'Reward your customers for purchases and other actions with points which can be redeemed for discounts.'
+				);
+				break;
+			case 'woocommerce-pre-orders':
+				description = translate( 'Allow customers to order products before they are available.' );
+				break;
+			case 'woocommerce-purchase-order-gateway':
+				description = translate(
+					'Seamlessly accept purchase orders as a payment method on your WooCommerce store.'
+				);
+				break;
+			case 'woocommerce-shipping':
+				description = translate(
+					'Print USPS and DHL labels right from your WooCommerce dashboard and instantly save on shipping. WooCommerce Shipping is free to use and saves you time and money.'
+				);
+				break;
+			case 'woocommerce-accommodations-bookings':
+				description = translate(
+					'Book accommodation using WooCommerce and the WooCommerce Bookings extension.'
+				);
+				break;
+			case 'woocommerce-tax':
+				description = translate(
+					'Automatically calculate how much sales tax should be collected for WooCommerce orders — by city, country, or state — at checkout.'
+				);
+				break;
+			case 'woocommerce-woopayments':
+				description = translate(
+					'The only payment solution fully integrated to Woo. Accept credit/debit cards and local payment options with no setup or monthly fees.'
+				);
+				break;
 			case 'jetpack-stats':
 				description = translate( 'Powerful analytics to help you understand your audience.' );
 				break;

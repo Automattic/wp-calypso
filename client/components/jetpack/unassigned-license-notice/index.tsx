@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,6 +11,7 @@ import {
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { JETPACK_MANAGE_LICENCES_LINK } from 'calypso/jetpack-cloud/sections/sidebar-navigation/lib/constants';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPaginatedLicenses } from 'calypso/state/partner-portal/licenses/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
@@ -84,7 +84,7 @@ const UnusedLicenseNotice = ( { featureType }: UnusedLicenseNoticeProps ) => {
 				>
 					<NoticeAction
 						href={
-							isEnabled( 'a8c-for-agencies' )
+							isA8CForAgencies()
 								? `${ A4A_UNASSIGNED_LICENSES_LINK }`
 								: `${ JETPACK_MANAGE_LICENCES_LINK }/unassigned`
 						}

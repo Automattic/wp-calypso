@@ -1,18 +1,19 @@
 import { Button, CompactCard } from '@automattic/components';
 import { useSendInvites } from '@automattic/data-stores';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import React from 'react';
 import { getRole } from 'calypso/blocks/importer/wordpress/import-everything/import-users/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent, composeAnalytics } from 'calypso/state/analytics/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { requestSiteInvites } from 'calypso/state/invites/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { Invite } from '../team-invites/types';
 import type { Member, SiteDetails } from '@automattic/data-stores';
 import './style.scss';
@@ -45,6 +46,7 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 	const siteId = site && site?.ID;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isSimple = useSelector( isSimpleSite );
 
 	const { isPending: isSubmittingInvites, mutateAsync: sendInvites } = useSendInvites(
 		siteId as number
@@ -77,7 +79,8 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 			! user.linked_user_ID &&
 			site &&
 			site.slug &&
-			! isSelectable
+			! isSelectable &&
+			! isSimple
 		);
 	};
 
@@ -178,7 +181,7 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 
 	const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
-	const classes = classNames( 'people-list-item', {
+	const classes = clsx( 'people-list-item', {
 		'is-invite': isInvite,
 		'is-invite-details': type === 'invite-details',
 	} );

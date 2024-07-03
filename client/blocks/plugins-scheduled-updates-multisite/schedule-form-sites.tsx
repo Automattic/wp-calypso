@@ -1,6 +1,7 @@
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { __experimentalText as Text, CheckboxControl, SearchControl } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, Fragment, useCallback, useState } from 'react';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -48,38 +49,59 @@ export const ScheduleFormSites = ( props: Props ) => {
 	return (
 		<div className="form-field">
 			<label htmlFor="sites">{ translate( 'Select sites' ) }</label>
-			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
+			<div className={ clsx( { 'form-control-container': borderWrapper } ) }>
 				{ ( ( showError && error ) || ( fieldTouched && error ) ) && (
 					<Text className="validation-msg">
 						<Icon className="icon-info" icon={ info } size={ 16 } />
 						{ error }
 					</Text>
 				) }
-				<SearchControl
-					id="sites"
-					onChange={ ( s ) => setSearchTerm( s.trim() ) }
-					placeholder={ translate( 'Search sites' ) }
-				/>
-				{ ! sites.length && (
-					<Text className="info-msg">
-						You can only select sites with Creator plan. Please upgrade your site to enable this
-						feature.
-					</Text>
+				{ !! sites.length && (
+					<SearchControl
+						id="sites"
+						value={ searchTerm }
+						onChange={ ( s ) => setSearchTerm( s.trim() ) }
+						placeholder={ translate( 'Search sites' ) }
+					/>
 				) }
-				<div className="checkbox-options-container">
+				{ ! sites.length && (
+					<p className="placeholder-info">
+						{ translate(
+							// Translators: %(planName)s is the plan - Business or Creator
+							'To select a site, please ensure it has a %(planName)s plan or higher.{{br/}}Upgrade your site to proceed.',
+							{
+								components: {
+									br: <br />,
+								},
+								args: {
+									planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+								},
+							}
+						) }
+					</p>
+				) }
+				<div className="checkbox-options-container checkbox-options-container__sites">
 					{ sites.map( ( site ) => (
 						<Fragment key={ site.ID }>
-							{ site?.name && site.name.toLowerCase().includes( searchTerm.toLowerCase() ) && (
-								<CheckboxControl
-									key={ site.ID }
-									label={ site.name }
-									onChange={ ( isChecked ) => {
-										onSiteSelectionChange( site, isChecked );
-										setFieldTouched( true );
-									} }
-									checked={ selectedSites.includes( site.ID ) }
-								/>
-							) }
+							{ site?.name &&
+								( site.name.toLowerCase().includes( searchTerm.toLowerCase() ) ||
+									site.slug.toLowerCase().includes( searchTerm.toLowerCase() ) ) && (
+									<div>
+										<CheckboxControl
+											key={ site.ID }
+											onChange={ ( isChecked ) => {
+												onSiteSelectionChange( site, isChecked );
+												setFieldTouched( true );
+											} }
+											checked={ selectedSites.includes( site.ID ) }
+										/>
+										<label htmlFor={ `${ site.ID }` }>
+											{ site.name }
+											<br />
+											<span className="site-slug">{ site.slug }</span>
+										</label>
+									</div>
+								) }
 						</Fragment>
 					) ) }
 				</div>

@@ -1,9 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, Tooltip } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useMemo } from 'react';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useSelector } from 'calypso/state';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import { jetpackBoostDesktopIcon, jetpackBoostMobileIcon } from '../../icons';
@@ -24,7 +24,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 
 	const partner = useSelector( getCurrentPartner );
 	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
-	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
+	const isA4AEnabled = isA8CForAgencies();
 
 	const helpIconRef = useRef< HTMLElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
@@ -132,7 +132,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 								<InProgressIcon />
 							) : (
 								<div
-									className={ classNames(
+									className={ clsx(
 										'site-expanded-content__card-content-score',
 										getBoostRatingClass( overallScore )
 									) }

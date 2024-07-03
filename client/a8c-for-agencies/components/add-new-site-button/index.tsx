@@ -1,12 +1,13 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import JetpackLogo from 'calypso/components/jetpack-logo';
+import { A4A_DOWNLOAD_LINK_ON_GITHUB } from 'calypso/a8c-for-agencies/constants';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
+import A4ALogo, { LOGO_COLOR_SECONDARY_ALT } from '../a4a-logo';
 import { A4A_SITES_CONNECT_URL_LINK } from '../sidebar-menu/lib/constants';
+import SiteSelectorAndImporter from './site-selector-and-importer';
 import type { MutableRefObject } from 'react';
-
-const JETPACK_CONNECT_URL = 'https://wordpress.com/jetpack/connect?source=a8c-for-agencies';
 
 type Props = {
 	showMainButtonLabel?: boolean;
@@ -14,7 +15,7 @@ type Props = {
 	popoverContext?: MutableRefObject< HTMLElement | null >;
 	onToggleMenu?: ( isOpen: boolean ) => void;
 	onClickAddNewSite?: () => void;
-	onClickJetpackMenuItem?: () => void;
+	onClickA4APluginMenuItem?: () => void;
 	onClickUrlMenuItem?: () => void;
 };
 
@@ -24,13 +25,23 @@ const AddNewSiteButton = ( {
 	popoverContext,
 	onToggleMenu,
 	onClickAddNewSite,
-	onClickJetpackMenuItem,
+	onClickA4APluginMenuItem,
 	onClickUrlMenuItem,
 }: Props ): JSX.Element => {
 	const translate = useTranslate();
 
 	/** @todo Remove this line once the A4A_SITES_CONNECT_URL_LINK URL exists. */
 	const showAddSitesByURLButton = false;
+
+	const showAddSitesFromWPCOMAccount = config.isEnabled(
+		'a8c-for-agencies/import-site-from-wpcom'
+	);
+
+	const isSiteSelectorAndImportedEnabled = config.isEnabled( 'a4a-site-selector-and-importer' );
+
+	if ( isSiteSelectorAndImportedEnabled ) {
+		return <SiteSelectorAndImporter showMainButtonLabel={ showMainButtonLabel } />;
+	}
 
 	return (
 		<SplitButton
@@ -40,13 +51,22 @@ const AddNewSiteButton = ( {
 			toggleIcon={ showMainButtonLabel ? undefined : 'plus' }
 			onToggle={ onToggleMenu }
 			onClick={ onClickAddNewSite }
-			href={ JETPACK_CONNECT_URL }
+			href={ A4A_DOWNLOAD_LINK_ON_GITHUB }
 		>
-			{ /** @todo Add support for the "a8c-for-agencies" source parameter in JETPACK_CONNECT_URL. */ }
-			<PopoverMenuItem onClick={ onClickJetpackMenuItem } href={ JETPACK_CONNECT_URL }>
-				<JetpackLogo className="gridicon" size={ 18 } />
-				<span>{ translate( 'Connect a site to Jetpack' ) }</span>
+			<PopoverMenuItem onClick={ onClickA4APluginMenuItem } href={ A4A_DOWNLOAD_LINK_ON_GITHUB }>
+				<A4ALogo
+					className="gridicon"
+					size={ 18 }
+					colors={ { secondary: LOGO_COLOR_SECONDARY_ALT } }
+				/>
+				<span>{ translate( 'Download A4A Plugin' ) }</span>
 			</PopoverMenuItem>
+
+			{ showAddSitesFromWPCOMAccount && (
+				<PopoverMenuItem href="/sites/add/from-wpcom">
+					<span>{ translate( 'From your WordPress.com account' ) }</span>
+				</PopoverMenuItem>
+			) }
 
 			{ showAddSitesByURLButton && (
 				<>

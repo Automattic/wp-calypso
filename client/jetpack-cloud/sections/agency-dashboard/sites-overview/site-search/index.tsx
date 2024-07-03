@@ -26,7 +26,7 @@ export default function SiteSearch( {
 			placeholder={
 				isMobile ? translate( 'Search sites' ) : translate( 'Search by site title or domain' )
 			}
-			delaySearch={ true }
+			delaySearch
 		/>
 	);
 }

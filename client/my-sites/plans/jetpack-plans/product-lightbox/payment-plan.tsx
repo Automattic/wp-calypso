@@ -1,7 +1,7 @@
 import { JETPACK_SOCIAL_ADVANCED_PRODUCTS } from '@automattic/calypso-products';
 import { PlanPrice } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { isNumber } from 'lodash';
 import { useCallback } from 'react';
@@ -19,6 +19,7 @@ type PaymentPlanProps = {
 	product: SelectorProduct;
 	showPlansOneBelowTheOther?: boolean;
 	isActive?: boolean;
+	quantity?: number | null;
 };
 const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	isMultiSiteIncompatible,
@@ -26,20 +27,29 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	product,
 	showPlansOneBelowTheOther = false,
 	isActive = true,
+	quantity = null,
 } ) => {
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();
 
-	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching } = useItemPrice(
-		siteId,
-		product,
-		product?.monthlyProductSlug || ''
-	);
+	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching, priceTierList } =
+		useItemPrice( siteId, product, product?.monthlyProductSlug || '' );
 
+	const currentTier =
+		quantity &&
+		priceTierList.find( ( tier ) => {
+			if ( tier.maximum_units ) {
+				return quantity >= tier.minimum_units && quantity <= tier.maximum_units;
+			}
+
+			return quantity >= tier.minimum_units;
+		} );
+
+	const currentTierPrice = currentTier && currentTier.minimum_price / 100 / 12;
 	const currentPrice = isNumber( discountedPrice ) ? discountedPrice : originalPrice;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
-	const labelClass = classNames(
+	const labelClass = clsx(
 		'product-lightbox__variants-grey-label',
 		isFetching && 'is-placeholder'
 	);
@@ -68,7 +78,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 		return 1 === discountedPriceDuration
 			? translate( '%(percentOff)d%% off the first month', translateArgs )
 			: translate( '%(percentOff)d%% off the first year', translateArgs );
-	}, [ discountedPrice, product?.productSlug, originalPrice, discountedPriceDuration, translate ] );
+	}, [ discountedPrice, product?.productSlug, discountedPriceDuration, translate, originalPrice ] );
 
 	return (
 		<div className="product-lightbox__variants-plan">
@@ -81,20 +91,24 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 					{ ! showPlansOneBelowTheOther && <p>{ translate( 'Payment plan:' ) }</p> }
 
 					<div
-						className={ classNames(
+						className={ clsx(
 							'product-lightbox__variants-plan-card',
 							! isActive && 'product-lightbox__variants-plan-card inactive'
 						) }
 					>
 						<div className={ labelClass } ref={ containerRef }>
 							<span className="product-lightbox__variants-plan-card-price">
-								<PlanPrice rawPrice={ currentPrice } currencyCode={ currencyCode } />
+								<PlanPrice
+									rawPrice={ currentTier ? currentTierPrice : currentPrice }
+									currencyCode={ currencyCode }
+								/>
 							</span>
 							<div
-								className={ classNames( 'product-lightbox__variants-timeframe', {
+								className={ clsx( 'product-lightbox__variants-timeframe', {
 									'is-compact': isCompact,
 								} ) }
 							>
+								{ /* discountPercentage is omitted as we are showing that below the timeframe in this context */ }
 								<TimeFrame
 									billingTerm={ billingTerm }
 									discountedPriceDuration={ discountedPriceDuration }

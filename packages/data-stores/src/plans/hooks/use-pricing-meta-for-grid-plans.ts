@@ -84,6 +84,7 @@ const usePricingMetaForGridPlans = ( {
 				[ planSlug in PlanSlug ]?: {
 					originalPrice: Plans.PlanPricing[ 'originalPrice' ];
 					discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
+					currencyCode: Plans.PlanPricing[ 'currencyCode' ];
 				};
 		  }
 		| null = null;
@@ -98,20 +99,16 @@ const usePricingMetaForGridPlans = ( {
 	} else {
 		planPrices = Object.fromEntries(
 			planSlugs.map( ( planSlug ) => {
-				const availableForPurchase = planAvailabilityForPurchase[ planSlug ];
-				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-				const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
-					return selectedStorageOption && addOn?.featureSlugs?.includes( selectedStorageOption );
-				} );
-				const storageAddOnPrices =
-					selectedStorageAddOn?.purchased || selectedStorageAddOn?.exceedsSiteStorageLimits
-						? null
-						: selectedStorageAddOn?.prices;
-				const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
-				const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
-
 				const plan = plans.data?.[ planSlug ];
 				const sitePlan = sitePlans.data?.[ planSlug ];
+				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
+				const selectedStorageAddOn = selectedStorageOption
+					? storageAddOns?.find( ( addOn ) => {
+							return addOn?.featureSlugs?.includes( selectedStorageOption );
+					  } )
+					: null;
+				const storageAddOnPriceMonthly = selectedStorageAddOn?.prices?.monthlyPrice || 0;
+				const storageAddOnPriceYearly = selectedStorageAddOn?.prices?.yearlyPrice || 0;
 
 				/**
 				 * 0. No plan or sitePlan (when selected site exists): planSlug is for a priceless plan.
@@ -129,6 +126,7 @@ const usePricingMetaForGridPlans = ( {
 								monthly: null,
 								full: null,
 							},
+							currencyCode: plans.data?.[ planSlug ]?.pricing?.currencyCode,
 						},
 					];
 				}
@@ -169,6 +167,9 @@ const usePricingMetaForGridPlans = ( {
 								monthly: null,
 								full: null,
 							},
+							currencyCode: purchasedPlan
+								? purchasedPlan?.currencyCode
+								: plan?.pricing?.currencyCode,
 						},
 					];
 				}
@@ -176,7 +177,7 @@ const usePricingMetaForGridPlans = ( {
 				/**
 				 * 2. Original and Discounted prices for plan available for purchase.
 				 */
-				if ( availableForPurchase ) {
+				if ( planAvailabilityForPurchase[ planSlug ] ) {
 					const originalPrice = {
 						monthly: getTotalPrice( plan.pricing.originalPrice.monthly, storageAddOnPriceMonthly ),
 						full: getTotalPrice( plan.pricing.originalPrice.full, storageAddOnPriceYearly ),
@@ -194,6 +195,7 @@ const usePricingMetaForGridPlans = ( {
 						{
 							originalPrice,
 							discountedPrice,
+							currencyCode: plan?.pricing?.currencyCode,
 						},
 					];
 				}
@@ -215,6 +217,7 @@ const usePricingMetaForGridPlans = ( {
 							monthly: null,
 							full: null,
 						},
+						currencyCode: plan?.pricing?.currencyCode,
 					},
 				];
 			} )
@@ -233,7 +236,7 @@ const usePricingMetaForGridPlans = ( {
 					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
 					billingPeriod: plans.data?.[ planSlug ]?.pricing?.billPeriod,
 					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
-					currencyCode: plans.data?.[ planSlug ]?.pricing?.currencyCode,
+					currencyCode: planPrices?.[ planSlug ]?.currencyCode,
 					expiry: sitePlans.data?.[ planSlug ]?.expiry,
 					introOffer: introOffers?.[ planSlug ],
 				},

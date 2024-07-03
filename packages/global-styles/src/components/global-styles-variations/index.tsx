@@ -3,7 +3,7 @@ import { PremiumBadge } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
@@ -63,7 +63,7 @@ const GlobalStylesVariation = ( {
 	};
 	return (
 		<div
-			className={ classnames( 'global-styles-variations__item', {
+			className={ clsx( 'global-styles-variations__item', {
 				'is-active': isActive,
 			} ) }
 			role="button"
@@ -147,7 +147,7 @@ const GlobalStylesVariations = ( {
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
 			<div className="global-styles-variations__container">
 				<div
-					className={ classnames( 'global-styles-variations__type', {
+					className={ clsx( 'global-styles-variations__type', {
 						'combined-variations': ! splitDefaultVariation,
 					} ) }
 				>

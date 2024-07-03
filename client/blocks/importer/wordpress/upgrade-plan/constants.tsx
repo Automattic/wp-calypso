@@ -1,8 +1,16 @@
-import { shield, trendingUp, chartBar } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import customerImageAjitBohra from 'calypso/assets/images/migrations/customer-testimonials/ajit-bohra.jpg';
+import customerImageAntonyAgnel from 'calypso/assets/images/migrations/customer-testimonials/antony-agnel.jpg';
 import customerImageChrisCoyier from 'calypso/assets/images/migrations/customer-testimonials/chris-coyier.jpg';
 import customerImageEmmaLucasCopley from 'calypso/assets/images/migrations/customer-testimonials/emma-lucas-copley.jpg';
+
+// Threshold for a website that has a "good" Largest Contentful Paint (LCP) score according to Core Web Vital metrics.
+// A "good" LCP score is considered to be 2.5 seconds or less.
+export const upgradePlanSiteMetricsLcpThreshold = 2500;
+
+// Threshold for a website that has a "good" First Input Delay (FID) score according to Core Web Vital metrics.
+// A "good" FID score is considered to be 100 milliseconds or less.
+export const upgradePlanSiteMetricsFidThreshold = 100;
 
 export const UpgradePlanHostingTestimonials = [
 	{
@@ -29,22 +37,12 @@ export const UpgradePlanHostingTestimonials = [
 		),
 		customerInfo: 'papyrusandpeppermint.com',
 	},
-];
-
-export const UpgradePlanHostingDetailsList = [
 	{
-		title: translate( 'Reduced error rate' ),
-		description: translate( '16% fewer errors' ),
-		icon: shield,
-	},
-	{
-		title: translate( 'Increased speed' ),
-		description: translate( '30% faster' ),
-		icon: trendingUp,
-	},
-	{
-		title: translate( 'Higher availability' ),
-		description: translate( '3% better uptime' ),
-		icon: chartBar,
+		customerImage: customerImageAntonyAgnel,
+		customerName: 'Antony Agnel',
+		customerTestimonial: translate(
+			`"After moving my website to WordPress.com, my site never crashed due to WordPress upgrades. Thanks to their rigorous testing and quality assurance – I could proudly say that my site never went down due to any WordPress upgrade."`
+		),
+		customerInfo: 'AntonyAgnel.com',
 	},
 ];

@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { forwardRef } from 'react';
 import type {
 	Ref,
@@ -27,7 +27,7 @@ type AnchorProps = OwnProps &
 		href: NonUndefined< AnchorElementProps[ 'href' ] >;
 	};
 
-type ButtonProps = OwnProps & Omit< ButtonHTMLAttributes< HTMLButtonElement >, 'href' >;
+export type ButtonProps = OwnProps & Omit< ButtonHTMLAttributes< HTMLButtonElement >, 'href' >;
 
 const isAnchor = ( props: AnchorProps | ButtonProps ): props is AnchorProps =>
 	!! ( props as AnchorProps ).href;
@@ -72,8 +72,8 @@ const Button: ForwardRefRenderFunction<
 	ButtonProps | AnchorProps
 > = ( props, ref ) => {
 	const classes = props.plain
-		? classnames( 'button-plain', props.className )
-		: classnames( 'button', props.className, {
+		? clsx( 'button-plain', props.className )
+		: clsx( 'button', props.className, {
 				'is-compact': props.compact,
 				'is-primary': props.primary,
 				'is-scary': props.scary,

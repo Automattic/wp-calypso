@@ -1,10 +1,10 @@
 import page from '@automattic/calypso-router';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import getKeyboardHandler from '../../../lib/get-keyboard-handler';
 
 const TableRow = ( { className, isHeader, href, children, ...props } ) => {
-	const rowClasses = classnames( 'table-row', className, {
+	const rowClasses = clsx( 'table-row', className, {
 		'is-header': isHeader,
 	} );
 

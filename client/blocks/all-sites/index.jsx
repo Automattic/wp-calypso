@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Count } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Icon, chevronDown } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -89,7 +89,7 @@ class AllSites extends Component {
 		} = this.props;
 
 		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
-		const allSitesClass = classNames( {
+		const allSitesClass = clsx( {
 			'all-sites': true,
 			'is-selected': isSelected,
 			'is-highlighted': isHighlighted,

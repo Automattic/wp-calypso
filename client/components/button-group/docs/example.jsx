@@ -16,6 +16,7 @@ class Buttons extends PureComponent {
 	render() {
 		return (
 			<div>
+				{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
 				<a className="docs__design-toggle button" onClick={ this.toggleButtons }>
 					{ this.state.compact ? 'Normal Buttons' : 'Compact Buttons' }
 				</a>

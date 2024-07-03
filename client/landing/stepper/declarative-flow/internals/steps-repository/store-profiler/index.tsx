@@ -165,7 +165,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 			skipButtonAlign="top"
 			shouldHideNavButtons={ flow === ECOMMERCE_FLOW }
 			goBack={ goBack }
-			hideBack={ true }
+			hideBack
 			goNext={ goNext }
 			formattedHeader={
 				<FormattedHeader

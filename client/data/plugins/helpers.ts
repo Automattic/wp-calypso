@@ -8,7 +8,6 @@ import type { SitePlugin, CorePlugin } from './types';
  * Returns an array of the modified objects with the fields decoded.
  *
  * If no fields are provided, it defaults to decoding the 'name' field.
- *
  * @param plugins - The array of objects to decode
  * @param fields - The fields to decode (defaults to ['name'])
  * @returns An array of the modified objects with the specified fields decoded

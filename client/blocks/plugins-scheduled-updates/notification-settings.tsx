@@ -1,9 +1,9 @@
 import {
 	__experimentalText as Text,
 	CheckboxControl,
+	Button,
 	Card,
 	CardHeader,
-	Button,
 	CardBody,
 	CardFooter,
 } from '@wordpress/components';
@@ -61,13 +61,14 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 
 	useEffect( () => {
 		if ( isSuccess ) {
+			onNavBack?.();
 			dispatch( successNotice( translate( 'Your notification settings have been saved.' ) ) );
 		} else if ( isError ) {
 			dispatch(
 				errorNotice( translate( 'Failed to save notification settings. Please try again.' ) )
 			);
 		}
-	}, [ isSuccess, isError ] );
+	}, [ isSuccess, isError, onNavBack ] );
 
 	const handleCheckboxChange = ( field: keyof typeof formValues ) => ( checked: boolean ) => {
 		setFormValues( ( prevValues ) => ( {
@@ -94,42 +95,44 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody className="notification-settings-form">
-				<label>{ translate( 'Email me' ) }</label>
-				<Text className="info-msg">
-					{ translate(
-						'Receive email notifications to stay informed about the performance of the plugin updates.'
-					) }
-				</Text>
-
-				<div className="form-field">
-					<CheckboxControl
-						label={ translate( 'On successful updates' ) }
-						checked={ formValues.success }
-						onChange={ handleCheckboxChange( 'success' ) }
-						disabled={ ! isFetched || hasGlobalNotificationsDisabled }
-					/>
-				</div>
-				<div className="form-field">
-					<CheckboxControl
-						label={ translate( 'On failed updates' ) }
-						checked={ formValues.failure }
-						onChange={ handleCheckboxChange( 'failure' ) }
-						disabled={ ! isFetched || hasGlobalNotificationsDisabled }
-					/>
-				</div>
-
-				{ hasGlobalNotificationsDisabled && (
+				<form>
+					<label>{ translate( 'Email me' ) }</label>
 					<Text className="info-msg">
 						{ translate(
-							"You've opted out of WordPress.com's scheduled update notifications. Head to {{notificationSettingsLink}}Notification Settings{{/notificationSettingsLink}} to re-enable them.",
-							{
-								components: {
-									notificationSettingsLink: <a href="/me/notifications/updates" />,
-								},
-							}
+							'Receive email notifications to stay informed about the performance of the plugin updates.'
 						) }
 					</Text>
-				) }
+
+					<div className="form-field">
+						<CheckboxControl
+							label={ translate( 'On successful updates' ) }
+							checked={ formValues.success }
+							onChange={ handleCheckboxChange( 'success' ) }
+							disabled={ ! isFetched || hasGlobalNotificationsDisabled }
+						/>
+					</div>
+					<div className="form-field">
+						<CheckboxControl
+							label={ translate( 'On failed updates' ) }
+							checked={ formValues.failure }
+							onChange={ handleCheckboxChange( 'failure' ) }
+							disabled={ ! isFetched || hasGlobalNotificationsDisabled }
+						/>
+					</div>
+
+					{ hasGlobalNotificationsDisabled && (
+						<Text className="info-msg">
+							{ translate(
+								"You've opted out of WordPress.com's scheduled update notifications. Head to {{notificationSettingsLink}}Notification Settings{{/notificationSettingsLink}} to re-enable them.",
+								{
+									components: {
+										notificationSettingsLink: <a href="/me/notifications/updates" />,
+									},
+								}
+							) }
+						</Text>
+					) }
+				</form>
 			</CardBody>
 			<CardFooter>
 				<Button variant="primary" disabled={ isSaving } onClick={ onSave }>

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { getSupportedBundleSizes } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-product-bundle-size';
 import { useDispatch } from 'calypso/state';
@@ -50,7 +50,7 @@ export default function PricingLicenseSelector( {
 						<button
 							key={ index }
 							onClick={ item.onClick }
-							className={ classNames( 'pricing-license-option', { 'is-selected': item.selected } ) }
+							className={ clsx( 'pricing-license-option', { 'is-selected': item.selected } ) }
 						>
 							{ item.label }
 						</button>

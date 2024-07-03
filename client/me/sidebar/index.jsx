@@ -79,6 +79,7 @@ class MeSidebar extends Component {
 		const props = {
 			path: context.path,
 			requireBackLink: true,
+			siteTitle: this.props.translate( 'Profile' ),
 		};
 		return <GlobalSidebar { ...props }>{ this.renderMenu( { isGlobal: true } ) }</GlobalSidebar>;
 	}
@@ -229,7 +230,7 @@ export default withCurrentRoute(
 	connect(
 		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
-			const sectionName = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
 			const siteId = getSelectedSiteId( state );
 			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 				state,

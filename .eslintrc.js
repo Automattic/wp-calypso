@@ -286,8 +286,6 @@ module.exports = {
 	],
 	env: {
 		jest: true,
-		// mocha is only still on because we have not finished porting all of our tests to jest's syntax
-		mocha: true,
 		node: true,
 	},
 	globals: {
@@ -419,6 +417,7 @@ module.exports = {
 
 		'react/forbid-foreign-prop-types': 'error',
 		'react/jsx-curly-brace-presence': [ 'error', { props: 'never', children: 'never' } ],
+		'react/jsx-boolean-value': 'error',
 		// enforce our classname namespacing rules
 		'wpcalypso/jsx-classname-namespace': 'error',
 

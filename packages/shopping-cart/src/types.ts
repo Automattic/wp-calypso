@@ -418,7 +418,7 @@ export interface ResponseCartProduct {
 	 * The override_code is a string that identifies the reason for the override.
 	 * When displaying the reason to the customer, use the human_readable_reason.
 	 */
-	cost_overrides?: ResponseCartCostOverride[];
+	cost_overrides: ResponseCartCostOverride[];
 
 	/**
 	 * If set, is used to transform the usage/quantity of units used to derive the number of units
@@ -525,6 +525,8 @@ export interface ResponseCartCostOverride {
 	old_subtotal_integer: number;
 	override_code: string;
 	does_override_original_cost: boolean;
+	percentage: number;
+	first_unit_only: boolean;
 }
 
 export type IntroductoryOfferUnit = 'day' | 'week' | 'month' | 'year' | 'indefinite';
@@ -608,6 +610,7 @@ export interface ResponseCartProductExtra {
 	receipt_for_domain?: number;
 	domain_registration_agreement_url?: string;
 	legal_agreements?: never[] | DomainLegalAgreements;
+	is_gravatar_domain?: boolean;
 
 	/**
 	 * Set to 'renewal' if requesting a renewal.
@@ -661,6 +664,18 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	signup?: boolean;
 	headstart_theme?: string;
 	feature_slug?: string;
+	/**
+	 * A way to signal intent to the back end when included as an extra with
+	 * certain products.
+	 *
+	 * The only current usage is on Creator plan products that are bought
+	 * on flow `/setup/site-migration`. If value `'migrate` is passed the
+	 * Atomic DB will be created with UTF-8 encoding, which is a requirement
+	 * for Migration Guru, our new tool for handling migrations. This extra
+	 * can be removed once all migration flows are using Migration Guru.
+	 *
+	 */
+	hosting_intent?: string;
 }
 
 export interface GSuiteProductUser {
@@ -781,12 +796,6 @@ export interface TermsOfServiceRecordArgsBase {
 	renewal_price_integer: number;
 
 	/**
-	 * If the promotional price is due to an introductory offer, this is true
-	 * when `should_prorate_when_offer_ends` is set on the offer.
-	 */
-	is_renewal_price_prorated: boolean;
-
-	/**
 	 * The price of the product after the promotional pricing expires. If the
 	 * next auto-renewal after the price expires would prorate the renewal price,
 	 * this DOES NOT include that proration. See
@@ -817,27 +826,62 @@ export interface TermsOfServiceRecordArgsBase {
 	 * included.
 	 *
 	 * This is the price that we will attempt to charge on
-	 * `subscription_end_of_promotion_date`.
+	 * `subscription_maybe_prorated_regular_auto_renew_date`.
 	 *
 	 * This price is an integer in the currency's smallest unit.
 	 */
 	maybe_prorated_regular_renewal_price_integer: number;
+
+	/**
+	 * True if the product in the cart which has these terms is a manual renewal
+	 * (as opposed to a new purchase or a quantity upgrade).
+	 */
+	is_renewal: boolean;
+
+	/**
+	 * The number of auto-renewals after the current purchase completes which
+	 * will be affected by the promotional pricing. If the product is affected by
+	 * a prorated introductory offer, then the auto-renewal where the user will
+	 * be charged the prorated price is not counted by this number.
+	 */
+	remaining_promotional_auto_renewals: number;
 }
 
 export interface TermsOfServiceRecordArgsRenewal extends TermsOfServiceRecordArgsBase {
 	/**
 	 * The date that the promotional pricing will end, formatted as a ISO 8601
-	 * date (eg: `2004-02-12T15:19:21+00:00`). This will be the date that an
-	 * auto-renew will be attempted with the non-promotional price
-	 * (`maybe_prorated_regular_renewal_price_integer`).
-	 *
-	 * If the promotional price only lasts for the initial purchase, then this
-	 * will be the same as `subscription_auto_renew_date`.
+	 * date (eg: `2004-02-12T15:19:21+00:00`). This may be the date that an
+	 * auto-renew will be attempted with the non-promotional price, but if the
+	 * subscription renews earlier than the expiry date, the renewal may happen
+	 * earlier than this date. See `subscription_regular_auto_renew_date` for
+	 * the actual date of the non-promotional renewal.
 	 *
 	 * Only set if we can easily determine when the product will renew. Does not
 	 * apply to domain transfers or multi-year domains.
 	 */
 	subscription_end_of_promotion_date: string;
+
+	/**
+	 * This date that an auto-renew will be attempted with the non-promotional
+	 * possibly prorated price (`maybe_prorated_regular_renewal_price_integer`).
+	 *
+	 * This is ISO 8601 formatted (eg: `2004-02-12T15:19:21+00:00`).
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
+	subscription_maybe_prorated_regular_auto_renew_date: string;
+
+	/**
+	 * This date that an auto-renew will be attempted with the non-promotional
+	 * regular recurring price (`regular_renewal_price_integer`).
+	 *
+	 * This is ISO 8601 formatted (eg: `2004-02-12T15:19:21+00:00`).
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
+	subscription_regular_auto_renew_date: string;
 
 	/**
 	 * The date when the product's subscription will expire if not renewed. This

@@ -1,7 +1,7 @@
 import { Spinner } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { Icon, search, closeSmall } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import i18n from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
@@ -343,7 +343,7 @@ class Search extends Component {
 			spellCheck: 'false',
 		};
 
-		const searchClass = classNames( this.props.additionalClasses, this.props.dir, {
+		const searchClass = clsx( this.props.additionalClasses, this.props.dir, {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
@@ -353,8 +353,8 @@ class Search extends Component {
 			search: true,
 		} );
 
-		const fadeDivClass = classNames( 'search__input-fade', this.props.dir );
-		const inputClass = classNames( 'search__input', this.props.dir );
+		const fadeDivClass = clsx( 'search__input-fade', this.props.dir );
+		const inputClass = clsx( 'search__input', this.props.dir );
 
 		return (
 			<div dir={ this.props.dir || null } className={ searchClass } role="search">

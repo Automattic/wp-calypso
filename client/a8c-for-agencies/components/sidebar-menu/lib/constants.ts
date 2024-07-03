@@ -2,6 +2,7 @@ export const A4A_LANDING_LINK = '/landing';
 export const A4A_OVERVIEW_LINK = '/overview';
 export const A4A_SITES_LINK = '/sites';
 export const A4A_SITES_LINK_NEEDS_ATTENTION = '/sites?issue_types=all_issues';
+export const A4A_SITES_LINK_NEEDS_SETUP = '/sites/need-setup';
 export const A4A_SITES_LINK_FAVORITE = '/sites?is_favorite';
 export const A4A_SITES_LINK_WALKTHROUGH_TOUR = `${ A4A_SITES_LINK }?tour=sites-walkthrough`;
 export const A4A_SITES_LINK_ADD_NEW_SITE_TOUR = '/sites?tour=add-new-site';
@@ -17,6 +18,10 @@ export const A4A_MARKETPLACE_ASSIGN_LICENSE_LINK = `${ A4A_MARKETPLACE_LINK }/as
 export const A4A_PURCHASES_LINK = '/purchases';
 export const A4A_REFERRALS_LINK = '/referrals';
 export const A4A_REFERRALS_BANK_DETAILS_LINK = '/referrals/bank-details';
+export const A4A_REFERRALS_COMMISSIONS_LINK = '/referrals/commissions';
+export const A4A_REFERRALS_DASHBOARD = `${ A4A_REFERRALS_LINK }/dashboard`;
+export const A4A_REFERRALS_PAYMENT_SETTINGS = `${ A4A_REFERRALS_LINK }/payment-settings`;
+export const A4A_REFERRALS_FAQ = `${ A4A_REFERRALS_LINK }/faq`;
 export const A4A_LICENSES_LINK = `${ A4A_PURCHASES_LINK }/licenses`;
 export const A4A_UNASSIGNED_LICENSES_LINK = `${ A4A_LICENSES_LINK }/unassigned`;
 export const A4A_BILLING_LINK = `${ A4A_PURCHASES_LINK }/billing`;
@@ -25,3 +30,18 @@ export const A4A_PAYMENT_METHODS_LINK = `${ A4A_PURCHASES_LINK }/payment-methods
 export const A4A_PAYMENT_METHODS_ADD_LINK = `${ A4A_PURCHASES_LINK }/payment-methods/add`;
 export const A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK = `${ A4A_MARKETPLACE_LINK }/download-products`;
 export const A4A_SIGNUP_LINK = '/signup';
+export const A4A_SIGNUP_FINISH_LINK = '/signup/finish';
+export const A4A_MIGRATIONS_LINK = '/migrations';
+export const A4A_SETTINGS_LINK = '/settings';
+export const A4A_PARTNER_DIRECTORY_LINK = '/partner-directory';
+export const A4A_PARTNER_DIRECTORY_DASHBOARD_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/dashboard`;
+export const EXTERNAL_A4A_KNOWLEDGE_BASE = 'http://automattic.com/for-agencies/help';
+
+// Client
+export const A4A_CLIENT_LANDING_LINK = '/client/landing';
+export const A4A_CLIENT_SUBSCRIPTIONS_LINK = '/client/subscriptions';
+export const A4A_CLIENT_PAYMENT_METHODS_LINK = '/client/payment-methods';
+export const A4A_CLIENT_PAYMENT_METHODS_ADD_LINK = `${ A4A_CLIENT_PAYMENT_METHODS_LINK }/add`;
+export const A4A_CLIENT_CHECKOUT = '/client/checkout';
+export const EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE =
+	'https://agencieshelp.automattic.com/knowledge-base/client-billing/';

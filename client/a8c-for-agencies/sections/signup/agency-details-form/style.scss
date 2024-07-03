@@ -37,7 +37,26 @@
 		}
 	}
 
+	.agency-details-form__footer-error {
+		margin-block-start: 0.25rem;
+		color: var(--color-scary-40);
+		font-style: italic;
+		font-size: 0.875rem;
+		line-height: 14px;
+
+		&.hidden {
+			display: none;
+		}
+
+		// FIXME: come up with better solution for line1 and line2 separation
+		&.line-separated {
+			margin-block-start: -0.25rem;
+			margin-block-end: 0.5rem;
+		}
+	}
+
 	.company-details-form__tos p {
 		font-size: 1rem;
 	}
+
 }

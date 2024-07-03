@@ -65,6 +65,7 @@ import DomainDiagnosticsCard from './cards/domain-diagnostics-card';
 import DomainForwardingCard from './cards/domain-forwarding-card';
 import DomainOnlyConnectCard from './cards/domain-only-connect';
 import DomainSecurityDetails from './cards/domain-security-details';
+import GravatarDomainCard from './cards/gravatar-domain';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
 import SiteRedirectCard from './cards/site-redirect-card';
@@ -176,7 +177,8 @@ const Settings = ( {
 	const renderStatusSection = () => {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
-			domain.type === domainTypes.TRANSFER
+			domain?.type === domainTypes.TRANSFER ||
+			domain?.isGravatarDomain
 		) {
 			return null;
 		}
@@ -193,6 +195,22 @@ const Settings = ( {
 					selectedSite={ selectedSite }
 					hasConnectableSites={ hasConnectableSites }
 				/>
+			</Accordion>
+		);
+	};
+
+	const renderGravatarSection = () => {
+		if ( ! ( domain && domain.isGravatarDomain ) ) {
+			return null;
+		}
+
+		return (
+			<Accordion
+				title={ translate( 'Gravatar profile domain', { textOnly: true } ) }
+				key="status"
+				expanded
+			>
+				<GravatarDomainCard />
 			</Accordion>
 		);
 	};
@@ -295,10 +313,7 @@ const Settings = ( {
 	};
 
 	const renderNameServersSection = () => {
-		if ( ! domain ) {
-			return null;
-		}
-		if ( domain.type !== domainTypes.REGISTERED ) {
+		if ( ! domain || domain.type !== domainTypes.REGISTERED || domain.isGravatarDomain ) {
 			return null;
 		}
 
@@ -407,8 +422,14 @@ const Settings = ( {
 			! domain ||
 			domain.type === domainTypes.SITE_REDIRECT ||
 			domain.transferStatus === transferStatus.PENDING_ASYNC ||
-			! domain.canManageDnsRecords
+			! domain.canManageDnsRecords ||
+			! domains
 		) {
+			return null;
+		}
+
+		const selectedDomain = domains.find( ( domain ) => selectedDomainName === domain.name );
+		if ( ! selectedDomain ) {
 			return null;
 		}
 
@@ -424,6 +445,7 @@ const Settings = ( {
 							{ renderExternalNameserversNotice( 'DNS' ) }
 							<DnsRecords
 								dns={ dns }
+								selectedDomain={ selectedDomain }
 								selectedDomainName={ selectedDomainName }
 								selectedSite={ selectedSite }
 								currentRoute={ currentRoute }
@@ -576,12 +598,11 @@ const Settings = ( {
 			>
 				<Button
 					onClick={ handleTransferDomainClick }
-					href={ domainUseMyDomain(
-						selectedSite?.slug,
-						domain.name,
-						useMyDomainInputMode.transferDomain
-					) }
-					primary={ true }
+					href={ domainUseMyDomain( selectedSite?.slug, {
+						domain: domain.name,
+						initialMode: useMyDomainInputMode.transferDomain,
+					} ) }
+					primary
 				>
 					{ translate( 'Transfer' ) }
 				</Button>
@@ -613,7 +634,7 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				expanded={ true }
+				expanded
 				title={ translate( 'Contact verification', { textOnly: true } ) }
 				subtitle={ translate( 'Additional contact verification required for your domain', {
 					textOnly: true,
@@ -699,6 +720,7 @@ const Settings = ( {
 			<>
 				{ renderUnverifiedEmailNotice() }
 				{ renderStatusSection() }
+				{ renderGravatarSection() }
 				{ renderDetailsSection() }
 				{ renderTranferInMappedDomainSection() }
 				{ renderDiagnosticsSection() }
@@ -716,11 +738,13 @@ const Settings = ( {
 
 	const renderSettingsCards = () => {
 		if ( ! domain ) {
-			return undefined;
+			return null;
 		}
 		return (
 			<>
-				<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
+				{ ! domain.isGravatarDomain && (
+					<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
+				) }
 				<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
 				<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
 				<DomainDisconnectCard selectedSite={ selectedSite } domain={ domain } />

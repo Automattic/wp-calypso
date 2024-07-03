@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
@@ -24,7 +24,7 @@ const SparklineChart = ( {
 } ) => {
 	return (
 		<div
-			className={ classnames( 'stats-sparkline', className ) }
+			className={ clsx( 'stats-sparkline', className ) }
 			title={ title }
 			style={ { height: chartHeight + 'px', width: chartWidth + 'px' } }
 		>

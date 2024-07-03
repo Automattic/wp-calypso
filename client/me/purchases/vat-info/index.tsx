@@ -91,7 +91,7 @@ export default function VatInfoPage() {
 			</Column>
 			<Column type="sidebar">
 				<Card className="vat-info__sidebar-card">
-					<CardHeading tagName="h1" size={ 16 } isBold={ true } className="vat-info__sidebar-title">
+					<CardHeading tagName="h1" size={ 16 } isBold className="vat-info__sidebar-title">
 						{ title }
 					</CardHeading>
 					<p className="vat-info__sidebar-paragraph">
@@ -140,7 +140,7 @@ export default function VatInfoPage() {
 									learnMoreLink: (
 										<InlineSupportLink
 											supportLink={ taxSupportPageURL }
-											showText={ true }
+											showText
 											showIcon={ false }
 											supportPostId={ 234670 } //This is what makes the document appear in a dialogue
 											linkTitle={ taxSupportPageLinkTitle }

@@ -1,0 +1,42 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography";
+
+.stats-empty-action__cta {
+	height: 52px;
+	margin-bottom: 12px;
+	border: 1px solid $studio-gray-5;
+	border-radius: 4px;
+	box-shadow: none;
+	width: 100%;
+	cursor: pointer;
+
+	&:hover {
+		background: $studio-gray-0;
+		border: 1px solid $studio-gray-80;
+	}
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	.stats-empty-action__card-body {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 8px;
+		font-size: $font-body-small;
+		font-weight: 500;
+		line-height: rem(20px);
+	}
+
+	.stats-empty-action__cta-link-text {
+		color: $studio-gray-80 !important;
+		flex-grow: 1;
+	}
+
+	.stats-empty-action__cta-link-icon {
+		color: $studio-gray-90 !important;
+	}
+}

@@ -1,23 +1,23 @@
 import { getQueryArg } from '@wordpress/url';
 import { useMemo } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import {
-	isWooCommerceProduct,
-	isWpcomHostingProduct,
-} from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import { isProductMatch } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/filter';
 import { useSelector } from 'calypso/state';
 import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import {
-	PRODUCT_FILTER_ALL,
-	PRODUCT_FILTER_PLANS,
-	PRODUCT_FILTER_PRESSABLE_PLANS,
-	PRODUCT_FILTER_PRODUCTS,
-	PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
-	PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
+	PRODUCT_TYPE_JETPACK_BACKUP_ADDON,
+	PRODUCT_TYPE_JETPACK_PLAN,
+	PRODUCT_TYPE_JETPACK_PRODUCT,
+	PRODUCT_TYPE_PRESSABLE_PLAN,
+	PRODUCT_TYPE_WOO_EXTENSION,
+	PRODUCT_TYPE_WPCOM_PLAN,
 } from '../constants';
-import { isPressableHostingProduct } from '../lib/hosting';
+import {
+	SelectedFilters,
+	filterProductsAndPlans,
+	filterProductsAndPlansByType,
+} from '../lib/product-filter';
 import type { SiteDetails } from '@automattic/data-stores';
 
 // Plans and Products that we can merged into 1 card.
@@ -27,58 +27,17 @@ const MERGABLE_PRODUCTS = [ 'jetpack-backup' ];
 type Props = {
 	selectedBundleSize?: number;
 	selectedSite?: SiteDetails | null;
-	selectedProductFilter?: string | null;
 	productSearchQuery?: string;
 	usePublicQuery?: boolean;
-};
-
-const getProductsAndPlansByFilter = (
-	filter: string | null,
-	allProductsAndPlans?: APIProductFamilyProduct[]
-) => {
-	switch ( filter ) {
-		case PRODUCT_FILTER_PRODUCTS:
-			return (
-				allProductsAndPlans?.filter(
-					( { family_slug } ) =>
-						family_slug !== 'jetpack-packs' &&
-						family_slug !== 'jetpack-backup-storage' &&
-						! isWooCommerceProduct( family_slug ) &&
-						! isWpcomHostingProduct( family_slug ) &&
-						! isPressableHostingProduct( family_slug )
-				) || []
-			);
-		case PRODUCT_FILTER_PLANS:
-			return (
-				allProductsAndPlans?.filter( ( { family_slug } ) => family_slug === 'jetpack-packs' ) || []
-			);
-
-		case PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS:
-			return (
-				allProductsAndPlans
-					?.filter( ( { family_slug } ) => family_slug === 'jetpack-backup-storage' )
-					.sort( ( a, b ) => a.product_id - b.product_id ) || []
-			);
-
-		case PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS:
-			return (
-				allProductsAndPlans?.filter( ( { family_slug } ) => isWooCommerceProduct( family_slug ) ) ||
-				[]
-			);
-		case PRODUCT_FILTER_PRESSABLE_PLANS:
-			return (
-				allProductsAndPlans?.filter( ( { family_slug } ) =>
-					isPressableHostingProduct( family_slug )
-				) || []
-			);
-	}
-
-	return allProductsAndPlans || [];
+	selectedProductFilters?: SelectedFilters;
 };
 
 // This function gets the displayable Plans based on how it should be arranged in the listing.
-const getDisplayablePlans = ( filteredProductsAndBundles: APIProductFamilyProduct[] ) => {
-	const plans = getProductsAndPlansByFilter( PRODUCT_FILTER_PLANS, filteredProductsAndBundles );
+const getDisplayableJetpackPlans = ( filteredProductsAndBundles: APIProductFamilyProduct[] ) => {
+	const plans = filterProductsAndPlansByType(
+		PRODUCT_TYPE_JETPACK_PLAN,
+		filteredProductsAndBundles
+	);
 
 	const filteredPlans = MERGABLE_PLANS.map( ( filter ) => {
 		return plans.filter( ( { slug } ) => slug.startsWith( filter ) );
@@ -94,9 +53,9 @@ const getDisplayablePlans = ( filteredProductsAndBundles: APIProductFamilyProduc
 };
 
 // This function gets the displayable Products based on how it should be arranged in the listing.
-const getDisplayableProducts = ( filteredProductsAndBundles: APIProductFamilyProduct[] ) => {
-	const products = getProductsAndPlansByFilter(
-		PRODUCT_FILTER_PRODUCTS,
+const getDisplayableJetpackProducts = ( filteredProductsAndBundles: APIProductFamilyProduct[] ) => {
+	const products = filterProductsAndPlansByType(
+		PRODUCT_TYPE_JETPACK_PRODUCT,
 		filteredProductsAndBundles
 	);
 	const filteredProducts = MERGABLE_PRODUCTS.map( ( filter ) => {
@@ -118,10 +77,21 @@ const getDisplayableProducts = ( filteredProductsAndBundles: APIProductFamilyPro
 	} ) as APIProductFamilyProduct[];
 };
 
+const getDisplayableWoocommerceExtensions = (
+	filteredProductsAndBundles: APIProductFamilyProduct[]
+) => {
+	const extensions = filterProductsAndPlansByType(
+		PRODUCT_TYPE_WOO_EXTENSION,
+		filteredProductsAndBundles
+	);
+
+	return extensions.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+};
+
 export default function useProductAndPlans( {
 	selectedBundleSize = 1,
 	selectedSite,
-	selectedProductFilter = PRODUCT_FILTER_ALL,
+	selectedProductFilters,
 	productSearchQuery,
 	usePublicQuery = false,
 }: Props ) {
@@ -132,20 +102,16 @@ export default function useProductAndPlans( {
 	);
 
 	return useMemo( () => {
+		let filteredProductsAndBundles = filterProductsAndPlans( data ?? [], selectedProductFilters );
+
 		// List only products that is compatible with current bundle size.
-		const supportedProducts =
+		filteredProductsAndBundles =
 			selectedBundleSize > 1
-				? data?.filter(
+				? filteredProductsAndBundles?.filter(
 						( { supported_bundles } ) =>
 							supported_bundles?.some?.( ( { quantity } ) => selectedBundleSize === quantity )
 				  )
-				: data;
-
-		// We pre-filter the list by current selected filter
-		let filteredProductsAndBundles = getProductsAndPlansByFilter(
-			selectedProductFilter,
-			supportedProducts
-		);
+				: filteredProductsAndBundles;
 
 		// Filter products based on the search term
 		if ( productSearchQuery ) {
@@ -171,29 +137,30 @@ export default function useProductAndPlans( {
 			isLoadingProducts,
 			data,
 			filteredProductsAndBundles,
-			plans: getDisplayablePlans( filteredProductsAndBundles ),
-			products: getDisplayableProducts( filteredProductsAndBundles ),
-			backupAddons: getProductsAndPlansByFilter(
-				PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
+			jetpackPlans: getDisplayableJetpackPlans( filteredProductsAndBundles ),
+			jetpackProducts: getDisplayableJetpackProducts( filteredProductsAndBundles ),
+			jetpackBackupAddons: filterProductsAndPlansByType(
+				PRODUCT_TYPE_JETPACK_BACKUP_ADDON,
 				filteredProductsAndBundles
 			),
-			wooExtensions: getProductsAndPlansByFilter(
-				PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
+			wooExtensions: getDisplayableWoocommerceExtensions( filteredProductsAndBundles ),
+			pressablePlans: filterProductsAndPlansByType(
+				PRODUCT_TYPE_PRESSABLE_PLAN,
 				filteredProductsAndBundles
 			),
-			pressablePlans: getProductsAndPlansByFilter(
-				PRODUCT_FILTER_PRESSABLE_PLANS,
+			wpcomPlans: filterProductsAndPlansByType(
+				PRODUCT_TYPE_WPCOM_PLAN,
 				filteredProductsAndBundles
 			),
 			suggestedProductSlugs,
 		};
 	}, [
-		addedPlanAndProducts,
 		data,
-		isLoadingProducts,
+		selectedProductFilters,
 		selectedBundleSize,
 		productSearchQuery,
-		selectedProductFilter,
 		selectedSite,
+		addedPlanAndProducts,
+		isLoadingProducts,
 	] );
 }

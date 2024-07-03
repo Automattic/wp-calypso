@@ -1,5 +1,5 @@
 import { ProgressBar, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat, localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -231,7 +231,7 @@ export class ImportingPane extends PureComponent {
 			site,
 		} = this.props;
 		const { customData } = importerStatus;
-		const progressClasses = classNames( 'importer__import-progress', {
+		const progressClasses = clsx( 'importer__import-progress', {
 			'is-complete': this.isFinished(),
 		} );
 

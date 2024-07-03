@@ -8,6 +8,7 @@ import {
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
+import { ReadymadeTemplateDetails } from 'calypso/my-sites/patterns/components/readymade-template-details';
 import { PatternsContext } from 'calypso/my-sites/patterns/context';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
@@ -29,11 +30,11 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 	context.primary = (
 		<PatternsContext.Provider
 			value={ {
-				searchTerm: context.query[ QUERY_PARAM_SEARCH ] ?? '',
 				category: context.params.category ?? '',
 				isGridView: !! context.query.grid,
 				patternTypeFilter:
 					context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
+				searchTerm: context.query[ QUERY_PARAM_SEARCH ] ?? '',
 			} }
 		>
 			<PatternsWrapper>
@@ -95,6 +96,18 @@ function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) 
 		} );
 }
 
+function renderReadymadeTemplateDetails( context: RouterContext, next: RouterNext ) {
+	performanceMark( context, 'renderReadymadeTemplateDetails' );
+
+	context.primary = (
+		<PatternsWrapper>
+			<ReadymadeTemplateDetails id={ parseInt( context.params.id ) } />
+		</PatternsWrapper>
+	);
+
+	next();
+}
+
 export default function ( router: ReturnType< typeof serverRouter > ) {
 	const langParam = getLanguageRouteParam();
 
@@ -111,6 +124,16 @@ export default function ( router: ReturnType< typeof serverRouter > ) {
 		setLocalizedCanonicalUrl,
 		fetchCategoriesAndPatterns,
 		renderPatterns,
+		makeLayout
+	);
+
+	router(
+		[ '/patterns/:type(site-layouts)/:id' ],
+		ssrSetupLocale,
+		excludeSearchFromCanonicalUrlAndHrefLangLinks,
+		setHrefLangLinks,
+		setLocalizedCanonicalUrl,
+		renderReadymadeTemplateDetails,
 		makeLayout
 	);
 }

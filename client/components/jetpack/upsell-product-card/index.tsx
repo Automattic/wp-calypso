@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -6,6 +5,7 @@ import {
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo, useState } from 'react';
@@ -19,6 +19,7 @@ import QueryJetpackPartnerKey from 'calypso/components/data/query-jetpack-partne
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
 import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/single-site-upsell-lightbox';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import productAboveButtonText from 'calypso/my-sites/plans/jetpack-plans/product-card/product-above-button-text';
 import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
@@ -66,7 +67,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	const siteProduct: SiteProduct | undefined = useSelector( ( state ) =>
 		getSiteAvailableProduct( state, siteId, item.productSlug )
 	);
-	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
+	const isA4AEnabled = isA8CForAgencies();
 
 	let aboveButtonText: TranslateResult | null;
 	let billingTerm: Duration;
@@ -95,20 +96,23 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 
 	if ( hasJetpackPartnerAccess ) {
 		const manageProductSlug = nonManageProductSlug.replace( '_yearly', '' ).replace( /_/g, '-' );
-		const productPurchaseLink = isA4AEnabled
-			? `${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }`
-			: '#';
 		manageProduct = products?.find( ( product ) => product.slug === manageProductSlug );
 		isFetchingPrices = isFetchingManagePrices || !! isFetchingNonManagePrices;
 		if ( manageProduct ) {
 			aboveButtonText = null;
 			billingTerm = TERM_MONTHLY;
-			ctaButtonURL = productPurchaseLink;
+			ctaButtonURL = '#';
 			currencyCode = manageProduct.currency;
 			originalPrice = parseFloat( manageProduct.amount );
 			onCtaButtonClickInternal = () => {
-				setShowLightbox( true );
 				onCtaButtonClick();
+				if ( isA4AEnabled ) {
+					page.redirect(
+						`${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }`
+					);
+					return;
+				}
+				setShowLightbox( true );
 			};
 		}
 	} else {
@@ -228,7 +232,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 						onClose={ () => setShowLightbox( false ) }
 						nonManageProductSlug={ nonManageProductSlug }
 						nonManageProductPrice={ nonManageProductPrice }
-						partnerCanIssueLicense={ true }
+						partnerCanIssueLicense
 						siteId={ siteId }
 					/>
 				) }
@@ -281,7 +285,7 @@ export const UpsellProductCardPlaceholder: React.FC = () => {
 
 			<div className="upsell-product-card__price-container">
 				<DisplayPrice
-					pricesAreFetching={ true }
+					pricesAreFetching
 					billingTerm={ TERM_ANNUALLY }
 					productName="Placeholder product"
 				/>

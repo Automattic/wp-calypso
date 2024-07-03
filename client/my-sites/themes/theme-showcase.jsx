@@ -4,7 +4,7 @@ import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { SelectDropdown } from '@automattic/components';
 import { isAssemblerSupported } from '@automattic/design-picker';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
@@ -644,7 +644,7 @@ class ThemeShowcase extends Component {
 		const tabFilters = this.getTabFilters();
 		const tiers = this.getTiers();
 
-		const classnames = classNames( 'theme-showcase', {
+		const classnames = clsx( 'theme-showcase', {
 			'is-collection-view': isCollectionView,
 		} );
 
@@ -707,7 +707,7 @@ class ThemeShowcase extends Component {
 								) }
 							</div>
 							<div
-								className={ classNames( 'themes__filters', {
+								className={ clsx( 'themes__filters', {
 									'is-woo-express': isSiteWooExpress,
 								} ) }
 							>

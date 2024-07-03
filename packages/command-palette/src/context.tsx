@@ -19,7 +19,7 @@ export interface CommandPaletteContext
 	search: string;
 	selectedCommandName: string;
 	setEmptyListNotice: ( message: string ) => void;
-	setFooterMessage: ( message: string ) => void;
+	setFooterMessage: ( message: string | JSX.Element ) => void;
 	setSelectedCommandName: ( name: string ) => void;
 }
 

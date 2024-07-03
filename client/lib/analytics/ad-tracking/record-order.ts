@@ -11,9 +11,6 @@ import {
 	YAHOO_GEMINI_CONVERSION_PIXEL_URL,
 	PANDORA_CONVERSION_PIXEL_URL,
 	ICON_MEDIA_ORDER_PIXEL_URL,
-	GA_PRODUCT_BRAND_WPCOM,
-	GA_PRODUCT_BRAND_JETPACK,
-	GA_PRODUCT_BRAND_AKISMET,
 } from './constants';
 import { cartToCriteoItems, recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
@@ -77,7 +74,6 @@ export async function recordOrder(
 	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInCriteo( cart, orderId );
-	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInParsely( wpcomJetpackCartInfo );
@@ -505,74 +501,6 @@ function recordOrderInGoogleAds(
 	}
 }
 
-function recordOrderInGAEnhancedEcommerce(
-	cart: ResponseCart,
-	orderId: number | null | undefined,
-	wpcomJetpackCartInfo: WpcomJetpackCartInfo
-): void {
-	if ( ! mayWeTrackByTracker( 'gaEnhancedEcommerce' ) ) {
-		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] ad tracking is disallowed' );
-		return;
-	}
-
-	if ( ! mayWeTrackByTracker( 'ga' ) || ! mayWeTrackByTracker( 'gaEnhancedEcommerce' ) ) {
-		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] Google Analytics is not enabled' );
-		return;
-	}
-
-	let products;
-	let brand: string;
-	let totalCostUSD;
-
-	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		products = wpcomJetpackCartInfo.wpcomProducts;
-		brand = GA_PRODUCT_BRAND_WPCOM;
-		totalCostUSD = wpcomJetpackCartInfo.wpcomCostUSD;
-	} else if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		products = wpcomJetpackCartInfo.jetpackProducts;
-		brand = GA_PRODUCT_BRAND_JETPACK;
-		totalCostUSD = wpcomJetpackCartInfo.jetpackCostUSD;
-	} else {
-		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] No products' );
-		return;
-	}
-
-	const items: Array< {
-		id: string;
-		name: string;
-		quantity: number;
-		price: string;
-		brand: string;
-	} > = [];
-	products.map( ( product ) => {
-		items.push( {
-			id: product.product_id.toString(),
-			name: product.product_name_en.toString(),
-			quantity: parseInt( String( product.volume ) ),
-			price: ( costToUSD( product.cost, cart.currency ) ?? '' ).toString(),
-			brand,
-		} );
-	} );
-
-	const params = [
-		'event',
-		'purchase',
-		{
-			transaction_id: orderId?.toString(),
-			value: parseFloat( String( totalCostUSD ) ),
-			currency: 'USD',
-			tax: parseFloat( cart.total_tax ?? 0 ),
-			coupon: cart.coupon?.toString() ?? '',
-			affiliation: brand,
-			items,
-		},
-	];
-
-	window.gtag( ...params );
-
-	debug( 'recordOrderInGAEnhancedEcommerce: Record WPCom Purchase', params );
-}
-
 /**
  * Records an order in the Jetpack.com GA4 Property
  */
@@ -590,29 +518,6 @@ function recordOrderInJetpackGA(
 			cartToGaPurchase( String( orderId ), cart, wpcomJetpackCartInfo ),
 			Ga4PropertyGtag.JETPACK
 		);
-
-		const jetpackParams = [
-			'event',
-			'purchase',
-			{
-				send_to: TRACKING_IDS.jetpackGoogleAnalyticsGtag,
-				value: wpcomJetpackCartInfo.jetpackCostUSD,
-				currency: 'USD',
-				transaction_id: orderId,
-				coupon: cart.coupon?.toString() ?? '',
-				items: wpcomJetpackCartInfo.jetpackProducts.map(
-					( { product_id, product_name_en, cost, volume } ) => ( {
-						id: product_id.toString(),
-						name: product_name_en.toString(),
-						quantity: parseInt( String( volume ) ),
-						price: ( costToUSD( cost, cart.currency ) ?? '' ).toString(),
-						brand: GA_PRODUCT_BRAND_JETPACK,
-					} )
-				),
-			},
-		];
-		debug( 'recordOrderInJetpackGA: Record Jetpack Purchase', jetpackParams );
-		window.gtag( ...jetpackParams );
 	}
 }
 
@@ -633,29 +538,6 @@ function recordOrderInAkismetGA(
 			cartToGaPurchase( String( orderId ), cart, wpcomJetpackCartInfo ),
 			Ga4PropertyGtag.AKISMET
 		);
-
-		const akismetParams = [
-			'event',
-			'purchase',
-			{
-				send_to: TRACKING_IDS.akismetGoogleAnalyticsGtag,
-				value: wpcomJetpackCartInfo.akismetCostUSD,
-				currency: 'USD',
-				transaction_id: orderId,
-				coupon: cart.coupon?.toString() ?? '',
-				items: wpcomJetpackCartInfo.akismetProducts.map(
-					( { product_id, product_name_en, cost, volume } ) => ( {
-						id: product_id.toString(),
-						name: product_name_en.toString(),
-						quantity: parseInt( String( volume ) ),
-						price: ( costToUSD( cost, cart.currency ) ?? '' ).toString(),
-						brand: GA_PRODUCT_BRAND_AKISMET,
-					} )
-				),
-			},
-		];
-		debug( 'recordOrderInAkismetGA: Record Akismet Purchase', akismetParams );
-		window.gtag( ...akismetParams );
 	}
 }
 

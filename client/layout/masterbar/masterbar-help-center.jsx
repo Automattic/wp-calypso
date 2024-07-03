@@ -5,7 +5,7 @@ import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -36,7 +36,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 		<>
 			<Item
 				onClick={ handleToggleHelpCenter }
-				className={ classnames( 'masterbar__item-help', {
+				className={ clsx( 'masterbar__item-help', {
 					'is-active': helpCenterVisible,
 				} ) }
 				tooltip={ tooltip }

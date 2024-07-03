@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const pathIncludes = ( currentPath, term, position ) =>
@@ -39,9 +39,17 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		}
 	}
 
+	if ( pathIncludes( currentPath, 'plugins', 1 ) ) {
+		if ( pathIncludes( currentPath, 'browse', 2 ) ) {
+			return pathIncludes( path, 'plugins', 1 ) && ! pathIncludes( path, 'scheduled-updates', 2 );
+		}
+
+		return pathIncludes( path, 'plugins', 1 ) && fragmentIsEqual( path, currentPath, 2 );
+	}
+
 	if ( pathIncludes( currentPath, 'settings', 1 ) ) {
-		// Jetpack Cloud uses a simpler /settings/:site pattern for the settings page.
-		if ( isJetpackCloud() ) {
+		// Jetpack Cloud uses a simpler /settings/:site pattern, and A4A uses /settings/:tab, for the settings page.
+		if ( isJetpackCloud() || isA8CForAgencies() ) {
 			return fragmentIsEqual( path, currentPath, 1 );
 		}
 
@@ -75,8 +83,10 @@ export const itemLinkMatches = ( path, currentPath ) => {
 
 	// All URLs in the A4A Purchases start with 'purchases' or 'marketplace' will need to compare at the second position.
 	if (
-		isEnabled( 'a8c-for-agencies' ) &&
-		( pathIncludes( currentPath, 'purchases', 1 ) || pathIncludes( currentPath, 'marketplace', 1 ) )
+		isA8CForAgencies() &&
+		( pathIncludes( currentPath, 'purchases', 1 ) ||
+			pathIncludes( currentPath, 'marketplace', 1 ) ||
+			pathIncludes( currentPath, 'client', 1 ) )
 	) {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}

@@ -2,8 +2,8 @@
 // Slides in when there are new posts available
 .reader-update-notice {
 	position: fixed;
-	top: ( 47px + 8px );
 	right: 16px;
+	top: calc(var(--masterbar-height) + 16px);
 	background: rgba(var(--color-accent-rgb), 0.96);
 	padding: 8px 18px 8px 34px;
 	border-radius: 24px; /* stylelint-disable-line scales/radii */
@@ -16,6 +16,16 @@
 	pointer-events: none;
 	transition: background 0.15s ease-in-out, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	font-size: $font-body;
+
+	@media (min-width: 600px) {
+		top: calc(var(--masterbar-height) + (24px * 2));
+		right: calc(24px* 2);
+	}
+
+	@media (min-width: 782px) {
+		top: 32px;
+		right: 32px;
+	}
 
 	&:hover {
 		background: var(--color-primary);

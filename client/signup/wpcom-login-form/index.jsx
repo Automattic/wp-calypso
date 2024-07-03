@@ -20,7 +20,13 @@ function getFormAction( redirectTo ) {
 	return `https://${ subdomain }wordpress.com/wp-login.php`;
 }
 
-export default function WpcomLoginForm( { extraFields, redirectTo, authorization, pwd, log } ) {
+export default function WpcomLoginForm( {
+	extraFields = {},
+	redirectTo,
+	authorization,
+	pwd = '',
+	log,
+} ) {
 	const form = useRef();
 
 	useEffect( () => {

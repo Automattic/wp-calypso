@@ -93,7 +93,7 @@ const ConnectedDomainDetails = ( {
 	return (
 		<div className="details-card">
 			<div className="details-card__section">{ getDescriptionText() }</div>
-			<div className="details-card__section">
+			<div className="details-card__section details-card__section-actions">
 				{ renderPlanDetailsButton() }
 				{ renderMappingInstructionsButton() }
 			</div>

@@ -8,7 +8,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import { setExpandedService } from 'calypso/state/sharing/actions';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteSlug, isGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MarketingBusinessTools from './business-tools';
 import SharingButtons from './buttons/buttons';
@@ -82,19 +82,6 @@ export const connections = ( context, next ) => {
 		dispatch(
 			errorNotice( translate( 'You are not authorized to manage sharing settings for this site.' ) )
 		);
-	}
-
-	// Google Analytics settings
-	if ( context.hashstring === 'analytics' ) {
-		// This route is only available when the site is included in the early release of nav redesign.
-		// TODO: remove this block when the early release check is dropped.
-		// See: https://github.com/Automattic/wp-calypso/pull/88742
-		if ( ! isGlobalSiteViewEnabled( state, siteId ) ) {
-			// Redirect to the original location of the Google Analytics settings.
-			return page.redirect(
-				`/marketing/traffic/${ context.params.domain }#${ context.hashstring }`
-			);
-		}
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );

@@ -103,9 +103,7 @@ const PluginsDiscoveryPage = ( props ) => {
 
 	return (
 		<>
-			{ ! isTransferring && ! hasRequestedTrial && (
-				<UpgradeNudge { ...props } paidPlugins={ true } />
-			) }
+			{ ! isTransferring && ! hasRequestedTrial && <UpgradeNudge { ...props } paidPlugins /> }
 			{ ! isTrialAcknowledgeModalOpen && ! isAtomic && (
 				<HostingActivateStatus
 					context="plugin"

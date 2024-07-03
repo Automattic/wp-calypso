@@ -126,7 +126,7 @@ describe( 'PlanStorageBar basic tests', () => {
 	} );
 
 	test( 'should include upgrade link when displayUpgradeLink is true', () => {
-		const { container } = render( <PlanStorageBar { ...props } displayUpgradeLink={ true } /> );
+		const { container } = render( <PlanStorageBar { ...props } displayUpgradeLink /> );
 		expect( container.getElementsByClassName( 'plan-storage__storage-link' ) ).toHaveLength( 1 );
 	} );
 

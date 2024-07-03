@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { cloneElement, isValidElement } from 'react';
 import './style.scss';
 
@@ -32,7 +32,7 @@ export const ListTile = ( {
 			<div className="list-tile__leading">{ leading }</div>
 		) : isValidElement< { className: string } >( leading ) ? (
 			cloneElement( leading, {
-				className: classNames( 'list-tile__leading', leading.props.className ),
+				className: clsx( 'list-tile__leading', leading.props.className ),
 			} )
 		) : null;
 
@@ -41,14 +41,14 @@ export const ListTile = ( {
 			<div className="list-tile__trailing">{ trailing }</div>
 		) : isValidElement< { className: string } >( trailing ) ? (
 			cloneElement( trailing, {
-				className: classNames( 'list-tile__trailing', trailing.props.className ),
+				className: clsx( 'list-tile__trailing', trailing.props.className ),
 			} )
 		) : null;
 
 	return (
-		<div className={ classNames( 'list-tile', className ) }>
+		<div className={ clsx( 'list-tile', className ) }>
 			{ leadingElement }
-			<div className={ classNames( 'list-tile__content', contentClassName ) }>
+			<div className={ clsx( 'list-tile__content', contentClassName ) }>
 				{ title }
 				{ subtitle }
 			</div>

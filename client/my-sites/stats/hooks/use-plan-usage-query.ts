@@ -17,19 +17,19 @@ export interface PlanUsage {
 	over_limit_months: number;
 	current_tier: PriceTierListItemProps;
 	is_internal: boolean;
-	billableMonthlyViews: number;
+	billable_monthly_views: number;
+	validMonthlyViews: number;
 }
 
 function selectPlanUsage( payload: PlanUsage ): PlanUsage {
+	const recent_usages =
+		payload?.recent_usages
+			?.map( ( usage ) => usage?.views_count ?? 0 )
+			.filter( ( views ) => views > 0 ) ?? [];
+
 	return {
 		...payload,
-		billableMonthlyViews: Math.max(
-			payload?.recent_usages[ 0 ]?.views_count ?? 0,
-			payload?.recent_usages[ 1 ]?.views_count ?? 0,
-			payload?.recent_usages[ 2 ]?.views_count ?? 0,
-			payload?.current_usage?.views_count ?? 0,
-			0
-		),
+		validMonthlyViews: recent_usages.length > 0 ? Math.min( ...recent_usages ) : 0,
 	};
 }
 
@@ -45,6 +45,7 @@ export default function usePlanUsageQuery(
 ): UseQueryResult< PlanUsage, unknown > {
 	return useQuery( {
 		...getDefaultQueryParams< PlanUsage >(),
+		staleTime: 0,
 		queryKey: [ 'stats', 'usage', 'query', siteId ],
 		queryFn: () => queryPlanUsage( siteId ),
 		select: selectPlanUsage,

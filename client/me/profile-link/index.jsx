@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -47,7 +47,7 @@ class ProfileLink extends Component {
 	}
 
 	render() {
-		const classes = classNames( {
+		const classes = clsx( {
 			'profile-link': true,
 			'is-placeholder': this.props.isPlaceholder,
 		} );
@@ -71,6 +71,7 @@ class ProfileLink extends Component {
 						rel="noopener noreferrer"
 						onClick={ this.getClickHandler( 'Profile Links Site Images Link' ) }
 					>
+						{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
 						<img className="profile-link__image" src={ imageSrc } />
 					</a>
 				) }

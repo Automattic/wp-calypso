@@ -105,7 +105,7 @@ class MapDomainStep extends Component {
 							false // domainAndPlanUpsellFlow
 						) }
 						price={ suggestion.cost }
-						isMappingProduct={ true }
+						isMappingProduct
 					/>
 
 					<div className="map-domain-step__add-domain" role="group">

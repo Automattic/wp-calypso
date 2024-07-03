@@ -4,6 +4,7 @@ import {
 	FEATURE_READER,
 	FEATURE_STATS,
 	FEATURE_SUPPORT,
+	LAUNCHPAD_ENTREPRENEUR_SITE_SETUP,
 	LAUNCHPAD_INTENT_BUILD,
 	LAUNCHPAD_INTENT_FREE_NEWSLETTER,
 	LAUNCHPAD_INTENT_HOSTING,
@@ -23,6 +24,7 @@ import {
 	SECTION_BLOGGING_PROMPT,
 	SECTION_BLOGANUARY_BLOGGING_PROMPT,
 	SECTION_LEARN_GROW,
+	TASK_AFFILIATES,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_DOMAIN_UPSELL,
 	TASK_EARN_FEATURES,
@@ -49,6 +51,7 @@ import DomainUpsellFeature from 'calypso/my-sites/customer-home/cards/features/d
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import ReaderCard from 'calypso/my-sites/customer-home/cards/features/reader';
 import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
+import LaunchpadEntrepreneurSiteSetup from 'calypso/my-sites/customer-home/cards/launchpad/entrepreneur-site-setup';
 import LaunchpadIntentBuild from 'calypso/my-sites/customer-home/cards/launchpad/intent-build';
 import LaunchpadIntentHosting from 'calypso/my-sites/customer-home/cards/launchpad/intent-hosting';
 import {
@@ -66,6 +69,7 @@ import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/not
 import ReaderFirstPosts from 'calypso/my-sites/customer-home/cards/notices/reader-first-posts';
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
 import StagingSiteNotice from 'calypso/my-sites/customer-home/cards/notices/staging-site';
+import Affiliates from 'calypso/my-sites/customer-home/cards/tasks/affiliates';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/tasks/domain-upsell';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
@@ -78,7 +82,7 @@ import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import { ReviveAutoRevertedAtomic } from 'calypso/my-sites/customer-home/cards/tasks/revive-auto-reverted-atomic';
 import SiteResumeCopy from 'calypso/my-sites/customer-home/cards/tasks/site-resume-copy';
-import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
+import { ConnectedSiteSetupListWrapper } from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
 import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
 import UseBuiltBy from 'calypso/my-sites/customer-home/cards/tasks/use-built-by';
 import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email';
@@ -103,6 +107,7 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ NOTICE_HOME_LIMITED_TIME_OFFER_COUPON ]: NoticeHomeLimitedTimeOfferCoupon,
 	[ NOTICE_SITE_LAUNCH_SELLER_UPSELL ]: SiteLaunchSellerUpsell,
 	[ NOTICE_STAGING_SITE ]: StagingSiteNotice,
+	[ TASK_AFFILIATES ]: Affiliates,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_DOMAIN_UPSELL ]: DomainUpsell,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,
@@ -118,7 +123,7 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ TASK_REACTIVATE_EXPIRED_PLAN ]: ReviveAutoRevertedAtomic,
 	[ TASK_REACTIVATE_RESTORE_BACKUP ]: ReviveAutoRevertedAtomic,
 	[ TASK_SITE_RESUME_COPY ]: SiteResumeCopy,
-	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
+	[ TASK_SITE_SETUP_CHECKLIST ]: ConnectedSiteSetupListWrapper,
 	[ TASK_UPSELL_TITAN ]: TitanBanner,
 	[ TASK_USE_BUILT_BY ]: UseBuiltBy,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
@@ -132,6 +137,7 @@ const CARD_COMPONENTS: CardComponentMap = {
 	[ FEATURE_READER ]: ReaderCard,
 	[ FEATURE_SUPPORT ]: HelpSearch,
 	[ FEATURE_STATS ]: Stats,
+	[ LAUNCHPAD_ENTREPRENEUR_SITE_SETUP ]: LaunchpadEntrepreneurSiteSetup,
 	[ LAUNCHPAD_INTENT_BUILD ]: LaunchpadIntentBuild,
 	[ LAUNCHPAD_INTENT_FREE_NEWSLETTER ]: LaunchpadIntentFreeNewsletter,
 	[ LAUNCHPAD_INTENT_HOSTING ]: LaunchpadIntentHosting,

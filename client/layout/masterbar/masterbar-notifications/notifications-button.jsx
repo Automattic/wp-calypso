@@ -1,16 +1,15 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { Component, createRef } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import store from 'store';
-import AsyncLoad from 'calypso/components/async-load';
 import TranslatableString from 'calypso/components/translatable/proptype';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { BellIcon } from 'calypso/layout/global-sidebar/menu-items/notifications/icon';
+import { setUnseenCount } from 'calypso/state/notifications/actions';
+import getUnseenCount from 'calypso/state/selectors/get-notification-unseen-count';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import MasterbarItem from '../item';
-import { BellIcon } from './notifications-bell-icon';
 
 import './notifications-style.scss';
 
@@ -22,54 +21,33 @@ class MasterbarItemNotifications extends Component {
 		//connected
 		isNotificationsOpen: PropTypes.bool,
 		hasUnseenNotifications: PropTypes.bool,
+		unseenCount: PropTypes.number,
 	};
-
-	notificationLink = createRef();
-	notificationPanel = createRef();
 
 	state = {
 		animationState: 0,
+		// unseenCount is null on initial load, so we use hasUnseenNotifications which checks user
+		// data as well.
 		newNote: this.props.hasUnseenNotifications,
 	};
 
 	componentDidUpdate( prevProps ) {
-		if ( ! prevProps.isNotificationsOpen && this.props.isNotificationsOpen ) {
-			this.props.recordTracksEvent( 'calypso_notification_open', {
-				unread_notifications: store.get( 'wpnotes_unseen_count' ),
-			} );
-			this.setNotesIndicator( 0 );
+		if ( ! this.props.isNotificationsOpen && prevProps.unseenCount !== this.props.unseenCount ) {
+			this.setNotesIndicator( this.props.unseenCount, prevProps.unseenCount );
 		}
 
-		// focus on main window if we just closed the notes panel
-		if ( prevProps.isNotificationsOpen && ! this.props.isNotificationsOpen ) {
-			this.notificationLink.current.blur();
-			this.notificationPanel.current.blur();
-			window.focus();
+		if ( ! prevProps.isNotificationsOpen && this.props.isNotificationsOpen ) {
+			this.setNotesIndicator( 0 );
+			// Ensure we setUnseenCount when opening notes panel. The panel only calls this on
+			// APP_RENDER_NOTES which is not consistently called when opening the panel.
+			this.props.setUnseenCount( 0 );
 		}
 	}
 
-	checkToggleNotes = ( event, forceToggle ) => {
-		const target = event ? event.target : false;
-
-		// Ignore clicks or other events which occur inside of the notification panel.
-		if (
-			target &&
-			( this.notificationLink.current.contains( target ) ||
-				this.notificationPanel.current.contains( target ) )
-		) {
-			return;
-		}
-
-		if ( this.props.isNotificationsOpen || forceToggle === true ) {
-			this.toggleNotesFrame( event );
-		}
-	};
-
 	toggleNotesFrame = ( event ) => {
-		if ( event ) {
-			event.preventDefault && event.preventDefault();
-			event.stopPropagation && event.stopPropagation();
-		}
+		event.preventDefault();
+		event.stopPropagation();
+
 		// Get URL and if it matches "/read/notifications", don't open the panel
 		// As it will cause duplicate notification panels to show
 		if ( window.location.pathname === '/read/notifications' ) {
@@ -86,20 +64,17 @@ class MasterbarItemNotifications extends Component {
 	 * should be in: on, off, or animate-to-on
 	 * @param {number} currentUnseenCount Number of reported unseen notifications
 	 */
-	setNotesIndicator = ( currentUnseenCount ) => {
-		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
+	setNotesIndicator = ( currentUnseenCount, prevUnseenCount ) => {
 		let newAnimationState = this.state.animationState;
 
 		if ( 0 === currentUnseenCount ) {
 			// If we don't have new notes at load-time, remove the `-1` "init" status
 			newAnimationState = 0;
-		} else if ( currentUnseenCount > existingUnseenCount ) {
+		} else if ( currentUnseenCount > prevUnseenCount ) {
 			// Animate the indicator bubble by swapping CSS classes through the animation state
 			// Note that we could have an animation state of `-1` indicating the initial load
 			newAnimationState = 1 - Math.abs( this.state.animationState );
 		}
-
-		store.set( 'wpnotes_unseen_count', currentUnseenCount );
 
 		this.setState( {
 			newNote: currentUnseenCount > 0,
@@ -108,7 +83,7 @@ class MasterbarItemNotifications extends Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'masterbar-notifications', {
+		const classes = clsx( this.props.className, 'masterbar-notifications', {
 			'is-active':
 				this.props.isNotificationsOpen || window.location.pathname === '/read/notifications',
 			'has-unread': this.state.newNote,
@@ -124,18 +99,8 @@ class MasterbarItemNotifications extends Component {
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
 					className={ classes }
-					ref={ this.notificationLink }
 					key={ this.state.animationState }
 				/>
-				<div className="masterbar-notifications__panel" ref={ this.notificationPanel }>
-					<AsyncLoad
-						require="calypso/notifications"
-						isShowing={ this.props.isNotificationsOpen }
-						checkToggle={ this.checkToggleNotes }
-						setIndicator={ this.setNotesIndicator }
-						placeholder={ null }
-					/>
-				</div>
 			</>
 		);
 	}
@@ -144,12 +109,13 @@ class MasterbarItemNotifications extends Component {
 const mapStateToProps = ( state ) => {
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),
+		unseenCount: getUnseenCount( state ),
 		hasUnseenNotifications: hasUnseenNotifications( state ),
 	};
 };
 const mapDispatchToProps = {
 	toggleNotificationsPanel,
-	recordTracksEvent,
+	setUnseenCount,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );

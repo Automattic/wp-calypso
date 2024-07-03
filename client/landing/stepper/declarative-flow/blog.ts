@@ -1,13 +1,12 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
-	AssertConditionResult,
+	type AssertConditionResult,
 	AssertConditionState,
-	Flow,
+	type Flow,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useLoginUrl } from '../utils/path';
@@ -35,15 +34,7 @@ const Blog: Flow = {
 		const flowName = this.name;
 		const isLoggedIn = useSelector( isUserLoggedIn );
 
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
+		const locale = useFlowLocale();
 
 		const logInUrl = useLoginUrl( {
 			variationName: 'blogger-intent',

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Dialog, FormLabel, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
@@ -357,7 +357,7 @@ class TranslatorLauncher extends Component {
 		const { translate, isEmpathyModeEnabled, selectedLanguageSlug } = this.props;
 		const { isEnabled, isActive, infoDialogVisible } = this.state;
 
-		const launcherClasses = classNames( 'community-translator', {
+		const launcherClasses = clsx( 'community-translator', {
 			'is-active': isActive,
 			'is-incompatible': isEmpathyModeEnabled,
 		} );

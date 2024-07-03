@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -15,7 +15,7 @@ export default class extends Component {
 		const { onClick, size = 24 } = this.props;
 		const icon = `gridicons-${ this.props.icon }`;
 		const sharedProps = {
-			className: classNames( 'gridicon', icon ),
+			className: clsx( 'gridicon', icon ),
 			height: size,
 			width: size,
 			onClick,
@@ -127,6 +127,16 @@ export default class extends Component {
 					</svg>
 				);
 
+			case 'gridicons-info-outline':
+				return (
+					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+						<title>Info</title>
+						<g>
+							<path d="M13 9h-2V7h2v2zm0 2h-2v6h2v-6zm-1-7c-4.411 0-8 3.589-8 8s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8m0-2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2z" />
+						</g>
+					</svg>
+				);
+
 			case 'gridicons-lock':
 				return (
 					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -223,6 +233,16 @@ export default class extends Component {
 						<title>Arrow Left</title>
 						<g>
 							<path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+						</g>
+					</svg>
+				);
+
+			case 'gridicons-arrow-right':
+				return (
+					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+						<title>Arrow Left</title>
+						<g>
+							<path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z" />
 						</g>
 					</svg>
 				);

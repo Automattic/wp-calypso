@@ -1,6 +1,6 @@
 import { Badge, Card } from '@automattic/components';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import QueryWordadsPayments from 'calypso/components/data/query-wordads-payments';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
@@ -33,6 +33,7 @@ type WordAdSettings = {
 		display_page: boolean;
 		enable_header_ad: boolean;
 		second_belowpost: boolean;
+		inline_enabled: boolean;
 		sidebar: boolean;
 		display_archive: boolean;
 	};
@@ -60,7 +61,7 @@ const WordAdsPayments = () => {
 
 	function paymentsTable( currentPayments: Payments, type: string ) {
 		const rows: React.ReactNode[] = [];
-		const classes = classNames( 'payments_history' );
+		const classes = clsx( 'payments_history' );
 
 		currentPayments.forEach( ( payment ) => {
 			rows.push(

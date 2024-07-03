@@ -15,7 +15,7 @@ export default function MyComponent() {
 			threatDescription="Description..."
 			action="fix"
 			siteName="WordPress.com"
-			showDialog={ true }
+			showDialog
 			onCloseDialog={ () => console.log( 'Closing this dialog...' ) }
 			onConfirmation={ () => console.log( 'Fixing this threat...' ) }
 		/>

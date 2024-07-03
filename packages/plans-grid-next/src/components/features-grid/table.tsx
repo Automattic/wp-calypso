@@ -1,34 +1,35 @@
-import { PlanSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import { AddOns } from '@automattic/data-stores';
+import { useMemo } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { usePlansGridContext } from '../../grid-context';
 import { DataResponse, GridPlan, PlanActionOverrides } from '../../types';
 import { StickyContainer } from '../sticky-container';
 import BillingTimeframes from './billing-timeframes';
+import PartnerLogos from './partner-logos';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
 import PlanPrice from './plan-price';
-import PlanStorageOptions from './plan-storage-options';
 import PlanTagline from './plan-tagline';
 import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import TopButtons from './top-buttons';
+import type { FeatureGroupSlug } from '@automattic/calypso-products';
 
 type TableProps = {
 	currentSitePlanSlug?: string | null;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	hideUnavailableFeatures?: boolean;
-	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
+	showRefundPeriod?: boolean;
 	showUpgradeableStorage: boolean;
 	stickyRowOffset: number;
 	options?: {
@@ -41,39 +42,45 @@ const Table = ( {
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
-	onUpgradeClick,
 	paidDomainName,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
 	renderedGridPlans,
 	selectedFeature,
+	showRefundPeriod,
 	showUpgradeableStorage,
 	stickyRowOffset,
 }: TableProps ) => {
+	const translate = useTranslate();
+	const { enableCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const featureGroups = useMemo(
+		() => Object.keys( featureGroupMap ) as FeatureGroupSlug[],
+		[ featureGroupMap ]
+	);
 	// Do not render the spotlight plan if it exists
-	const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
-		? renderedGridPlans
-		: renderedGridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug );
-	/**
-	 * Search for a plan with a highlight label.
-	 * Some margin is applied in the stylesheet to cover the badges/labels.
-	 */
+	const gridPlansWithoutSpotlight = useMemo(
+		() =>
+			! gridPlanForSpotlight
+				? renderedGridPlans
+				: renderedGridPlans.filter(
+						( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug
+				  ),
+		[ renderedGridPlans, gridPlanForSpotlight ]
+	);
+	// Search for a plan with a highlight label. Some margin is applied in the stylesheet to cover the badges/labels
 	const hasHighlightedPlan = gridPlansWithoutSpotlight.some(
 		( { highlightLabel } ) => !! highlightLabel
 	);
-	const tableClasses = classNames(
+	const tableClasses = clsx(
 		'plan-features-2023-grid__table',
 		`has-${ gridPlansWithoutSpotlight.length }-cols`,
 		{
 			'has-highlighted-plan': hasHighlightedPlan,
 		}
 	);
-	const translate = useTranslate();
 
 	return (
 		<table className={ tableClasses }>
@@ -111,6 +118,7 @@ const Table = ( {
 				<tr>
 					<BillingTimeframes
 						renderedGridPlans={ gridPlansWithoutSpotlight }
+						showRefundPeriod={ showRefundPeriod }
 						options={ { isTableCell: true } }
 					/>
 				</tr>
@@ -125,39 +133,46 @@ const Table = ( {
 							renderedGridPlans={ gridPlansWithoutSpotlight }
 							options={ { isTableCell: true, isStuck } }
 							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							planActionOverrides={ planActionOverrides }
-							onUpgradeClick={ onUpgradeClick }
 						/>
 					) }
 				</StickyContainer>
 				<tr>
-					<PreviousFeaturesIncludedTitle
+					<PartnerLogos
 						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 					/>
 				</tr>
-				<tr>
-					<PlanFeaturesList
-						renderedGridPlans={ gridPlansWithoutSpotlight }
-						options={ { isTableCell: true } }
-						paidDomainName={ paidDomainName }
-						hideUnavailableFeatures={ hideUnavailableFeatures }
-						selectedFeature={ selectedFeature }
-						generatedWPComSubdomain={ generatedWPComSubdomain }
-						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-					/>
-				</tr>
-				<tr>
-					<PlanStorageOptions
-						renderedGridPlans={ gridPlansWithoutSpotlight }
-						options={ { isTableCell: true } }
-						intervalType={ intervalType }
-						onStorageAddOnClick={ onStorageAddOnClick }
-						showUpgradeableStorage={ showUpgradeableStorage }
-					/>
-				</tr>
+				{ ! enableCategorisedFeatures && (
+					<tr>
+						<PreviousFeaturesIncludedTitle
+							renderedGridPlans={ gridPlansWithoutSpotlight }
+							options={ { isTableCell: true } }
+						/>
+					</tr>
+				) }
+				{ featureGroups.map( ( featureGroupSlug, featureGroupIndex ) => (
+					<tr
+						className={ clsx( 'plans-grid-next-features-grid__feature-group-row', {
+							'is-first-feature-group-row': featureGroupIndex === 0,
+						} ) }
+						key={ featureGroupSlug }
+					>
+						<PlanFeaturesList
+							renderedGridPlans={ gridPlansWithoutSpotlight }
+							options={ { isTableCell: true } }
+							paidDomainName={ paidDomainName }
+							hideUnavailableFeatures={ hideUnavailableFeatures }
+							selectedFeature={ selectedFeature }
+							generatedWPComSubdomain={ generatedWPComSubdomain }
+							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+							featureGroupSlug={ featureGroupSlug }
+							onStorageAddOnClick={ onStorageAddOnClick }
+							showUpgradeableStorage={ showUpgradeableStorage }
+						/>
+					</tr>
+				) ) }
 			</tbody>
 		</table>
 	);

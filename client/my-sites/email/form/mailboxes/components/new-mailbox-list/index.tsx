@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -233,7 +233,7 @@ const NewMailBoxList = (
 				} ) }
 
 				<div
-					className={ classNames( 'new-mailbox-list__supplied-actions', {
+					className={ clsx( 'new-mailbox-list__supplied-actions', {
 						'new-mailbox-list__supplied-actions--disable-additional-mailboxes':
 							! showAddNewMailboxButton,
 					} ) }

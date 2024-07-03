@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -39,7 +39,7 @@ export default function ManagePricingPage() {
 		<>
 			<JetpackComMasterbar />
 			<Main
-				className={ classNames( 'selector__main', 'fs-unmask', 'jetpack-manage-pricing-page' ) }
+				className={ clsx( 'selector__main', 'fs-unmask', 'jetpack-manage-pricing-page' ) }
 				id={ MAIN_CONTENT_ID }
 				wideLayout
 			>

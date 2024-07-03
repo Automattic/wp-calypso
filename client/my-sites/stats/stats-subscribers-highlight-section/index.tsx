@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	ComponentSwapper,
 	CountComparisonCard,
@@ -114,23 +113,20 @@ export default function SubscribersHighlightSection( { siteId }: { siteId: numbe
 		comment: 'Heading for Subscribers page highlights section',
 	} );
 
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-
 	// Check if the site has any paid subscription products added.
 	// Intentionally not using getProductsForSiteId here because we want to show the loading state.
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
 
-	// Odyssey Stats doesn't support the membership API endpoint yet.
 	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
-	const isPaidSubscriptionProductsLoading = ! isOdysseyStats && ! products;
-	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
+	const isPaidSubscriptionProductsLoading = ! products;
+	const hasAddedPaidSubscriptionProduct = products && products.length > 0;
 
 	const highlights = useSubscriberHighlights( siteId, hasAddedPaidSubscriptionProduct );
 
 	return (
 		<div className="highlight-cards subscribers-page has-odyssey-stats-bg-color">
 			<h1 className="highlight-cards-heading">{ localizedTitle }</h1>
-			{ siteId && ! isOdysseyStats && <QueryMembershipProducts siteId={ siteId } /> }
+			{ siteId && <QueryMembershipProducts siteId={ siteId } /> }
 			<ComponentSwapper
 				breakpoint="<660px"
 				breakpointActiveComponent={

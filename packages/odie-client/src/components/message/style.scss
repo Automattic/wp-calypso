@@ -174,6 +174,7 @@
 }
 
 $feedback-button-size: 28px;
+
 .odie-feedback-component-container {
 	display: flex;
 	justify-content: space-between;
@@ -250,22 +251,25 @@ $feedback-button-size: 28px;
 $custom-border-corner-size: 16px;
 
 .odie-gradient-to-white {
-	position: absolute;
-	left: 0;
-	right: 0;
 	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 50%);
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	height: 96px;
+	height: 100px;
 	justify-content: center;
 	z-index: 5;
 	pointer-events: none;
+	position: fixed;
+	width: 100%;
 
 	&.is-hidden {
 		opacity: 0;
 		bottom: 0 !important;
 		transition: opacity 0.3s ease, bottom 0.3s ease;
+
+		.odie-jump-to-recent-message-button {
+			pointer-events: none;
+		}
 	}
 
 	&.is-visible {
@@ -320,31 +324,38 @@ $custom-border-corner-size: 16px;
 		-webkit-transform: scale3d(1, 1, 1);
 		transform: scale3d(1, 1, 1);
 	}
+
 	30% {
 		-webkit-transform: scale3d(1.25, 0.75, 1);
 		transform: scale3d(1.25, 0.75, 1);
 	}
+
 	40% {
 		-webkit-transform: scale3d(0.75, 1.25, 1);
 		transform: scale3d(0.75, 1.25, 1);
 	}
+
 	50% {
 		-webkit-transform: scale3d(1.15, 0.85, 1);
 		transform: scale3d(1.15, 0.85, 1);
 	}
+
 	65% {
 		-webkit-transform: scale3d(0.95, 1.05, 1);
 		transform: scale3d(0.95, 1.05, 1);
 	}
+
 	75% {
 		-webkit-transform: scale3d(1.05, 0.95, 1);
 		transform: scale3d(1.05, 0.95, 1);
 	}
+
 	100% {
 		-webkit-transform: scale3d(1, 1, 1);
 		transform: scale3d(1, 1, 1);
 	}
 }
+
 .odie-feedback-message {
 	position: relative;
 	font-weight: 600;
@@ -388,6 +399,7 @@ $custom-border-corner-size: 16px;
 	0% {
 		height: $feedback-button-size;
 	}
+
 	100% {
 		height: 0;
 	}
@@ -397,6 +409,7 @@ $custom-border-corner-size: 16px;
 	0% {
 		opacity: 1;
 	}
+
 	100% {
 		opacity: 0;
 	}
@@ -407,6 +420,7 @@ $custom-border-corner-size: 16px;
 		transform: translateY(1rem);
 		opacity: 0;
 	}
+
 	100% {
 		transform: translateY(0);
 		opacity: 1;

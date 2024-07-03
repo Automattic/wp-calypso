@@ -26,7 +26,7 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( { emailAddress
 		<div className="magic-login__successfully-jetpack">
 			<RedirectWhenLoggedIn
 				redirectTo="/help"
-				replaceCurrentLocation={ true }
+				replaceCurrentLocation
 				waitForEmailAddress={ emailAddress }
 			/>
 

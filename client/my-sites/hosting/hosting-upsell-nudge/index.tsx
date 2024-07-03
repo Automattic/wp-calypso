@@ -65,7 +65,7 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 			callToAction={ callToAction }
 			plan={ plan as string }
 			feature={ feature }
-			showIcon={ true }
+			showIcon
 			list={ features }
 			renderListItem={ ( { icon, title, description }: FeatureListItem ) => (
 				<>

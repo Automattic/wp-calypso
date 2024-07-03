@@ -407,7 +407,9 @@ function PrimaryButton( {
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isDisabledForWpcomStaging = isWpcomStaging && isMarketplaceProduct;
+	const isIncompatibleForAtomic = isAtomic && 'vaultpress' === plugin.slug;
 
 	const onClick = useCallback( () => {
 		dispatch(
@@ -452,7 +454,12 @@ function PrimaryButton( {
 		<CTAButton
 			plugin={ plugin }
 			hasEligibilityMessages={ hasEligibilityMessages }
-			disabled={ incompatiblePlugin || userCantManageTheSite || isDisabledForWpcomStaging }
+			disabled={
+				incompatiblePlugin ||
+				userCantManageTheSite ||
+				isDisabledForWpcomStaging ||
+				isIncompatibleForAtomic
+			}
 		/>
 	);
 }

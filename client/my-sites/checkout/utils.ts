@@ -125,3 +125,7 @@ export function isContextJetpackSitelessCheckout( context: Context ): boolean {
 	}
 	return true;
 }
+
+export function isContextSourceMyJetpack( context: Context ): boolean {
+	return context.query?.source === 'my-jetpack';
+}

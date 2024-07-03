@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useSelector } from 'calypso/state';
@@ -10,7 +10,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
 
 function getStepClassName( currentStep: number, step: number ): string {
-	return classnames( {
+	return clsx( {
 		'step-current': currentStep === step,
 		'step-next': currentStep < step,
 		'step-complete': currentStep > step,

@@ -4,7 +4,7 @@ import getJetpackConnectionHealth from './get-jetpack-connection-health';
 import isJetpackConnectionProblem from './is-jetpack-connection-problem';
 
 export const STALE_CONNECTION_HEALTH_THRESHOLD = 1000 * 60 * 5; // 5 minutes
-export const STALE_CONNECTION_HEALTH_THRESHOLD_SHORT = 1000 * 60 * 2; // 2 minutes
+export const STALE_CONNECTION_HEALTH_THRESHOLD_SHORT = 1000 * 15; // 15 seconds
 
 /**
  * Returns true if the current site Jetpack site connection health status should be requested

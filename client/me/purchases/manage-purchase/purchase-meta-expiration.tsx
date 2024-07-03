@@ -6,7 +6,7 @@ import {
 	isJetpackProduct,
 	JETPACK_LEGACY_PLANS,
 } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -84,7 +84,7 @@ function PurchaseMetaExpiration( {
 				siteSlug={ site && ! isCancellableSitelessPurchase ? site.slug : '' }
 				purchase={ purchase }
 				toggleSource="manage-purchase"
-				showLink={ true }
+				showLink
 				getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 			/>
 		) : (
@@ -162,7 +162,7 @@ function PurchaseMetaExpiration( {
 					</div>
 				) }
 				<span
-					className={ classNames( 'manage-purchase__detail', {
+					className={ clsx( 'manage-purchase__detail', {
 						'is-expiring': isCloseToExpiration( purchase ),
 					} ) }
 				>

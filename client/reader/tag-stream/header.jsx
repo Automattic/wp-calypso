@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { SegmentedControl } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -74,7 +74,7 @@ class TagStreamHeader extends Component {
 		const titleText = description ?? title;
 		const subtitleText = description ? title : null;
 
-		const classes = classnames( {
+		const classes = clsx( {
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
 			'has-description': isPromptTag || description,

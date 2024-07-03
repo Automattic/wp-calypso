@@ -22,7 +22,7 @@
 		color: var(--studio-gray-100);
 	}
 
-	@media ( min-width: $break-mobile ) {
+	@media (min-width: $break-mobile) {
 		// to collapse double borders into one
 		+ .plan-item {
 			margin-left: -1px;
@@ -33,7 +33,7 @@
 	// doesn't get truncated from top
 	margin-top: 30px;
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		// on mobile, we have the plans stacked on top of each other
 		// the -1 is to collapse shared borders
 		&:not(.is-popular) {
@@ -59,7 +59,7 @@
 	display: flex;
 	align-items: center;
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1em;
 	}
@@ -77,7 +77,7 @@
 	line-height: 24px;
 	display: inline-block;
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 14px;
 	}
@@ -101,7 +101,7 @@
 }
 
 .plan-item:not(.is-popular) .plan-item__name {
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		font-weight: normal;
 	}
 }
@@ -142,7 +142,7 @@
 }
 
 .plan-item:not(.is-open) .plan-item__price-amount {
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		font-weight: normal;
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1em;
@@ -160,13 +160,13 @@
 .plan-item.is-popular .plan-item__summary,
 .plan-item__summary {
 	// disable toggling on desktop and for popular plan
-	@media ( min-width: $break-mobile ) {
+	@media (min-width: $break-mobile) {
 		pointer-events: none;
 	}
 }
 
 .plan-item:not(.is-open) .plan-item__summary {
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		display: flex;
 	}
 }
@@ -207,7 +207,7 @@
 }
 
 .plan-item.is-popular {
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		order: -3;
 	}
 }

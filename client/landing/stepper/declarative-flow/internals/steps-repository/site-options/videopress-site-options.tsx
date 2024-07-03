@@ -118,7 +118,7 @@ export const VideoPressSiteOptions = ( { navigation }: Pick< StepProps, 'navigat
 			<StepContainer
 				stepName="site-options"
 				shouldHideNavButtons
-				hideSkip={ true }
+				hideSkip
 				isHorizontalLayout={ false }
 				formattedHeader={
 					<FormattedHeader

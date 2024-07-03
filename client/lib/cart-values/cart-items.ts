@@ -47,6 +47,7 @@ import {
 	is100Year,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
+import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
@@ -838,6 +839,7 @@ export function getDomainPriceRule(
 		product_slug?: string;
 		productSlug?: string;
 		cost?: string;
+		sale_cost?: number;
 		domain_name?: string;
 		is_premium?: boolean;
 	},
@@ -859,6 +861,10 @@ export function getDomainPriceRule(
 
 	if ( isMonthlyOrFreeFlow( flowName ) ) {
 		return 'PRICE';
+	}
+
+	if ( isDomainForGravatarFlow( flowName ) ) {
+		return suggestion.sale_cost === 0 ? 'FREE_FOR_FIRST_YEAR' : 'PRICE';
 	}
 
 	if ( domainAndPlanUpsellFlow ) {

@@ -9,7 +9,7 @@ import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { positionLeft, positionRight } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { TimelineIcon } from './icon';
 
 const DEFAULT_BACKGROUND = '#eeeeee';
@@ -66,7 +66,7 @@ export function registerTimelineItemBlock() {
 				setAttributes( { alignment: newAlignment } );
 			};
 
-			const classes = classnames( 'wp-block-jetpack-timeline-item', {
+			const classes = clsx( 'wp-block-jetpack-timeline-item', {
 				'is-left': attributes.alignment === 'left',
 				'is-right': attributes.alignment === 'right',
 			} );
@@ -82,7 +82,7 @@ export function registerTimelineItemBlock() {
 						<InspectorControls>
 							<PanelColorSettings
 								title={ __( 'Color Settings', 'full-site-editing' ) }
-								enableAlpha={ true }
+								enableAlpha
 								colorSettings={ [
 									{
 										value: attributes.background,
@@ -103,7 +103,7 @@ export function registerTimelineItemBlock() {
 			);
 		},
 		save: ( { attributes } ) => {
-			const classes = classnames( {
+			const classes = clsx( {
 				'is-left': attributes.alignment === 'left',
 				'is-right': attributes.alignment === 'right',
 			} );

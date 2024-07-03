@@ -43,15 +43,18 @@ export function useProductBundleSize( isPublicFacing = false ) {
 				return;
 			}
 
+			// We need to make sure that we  add query parameters after the #, otherwise it will not be parsed correctly.
+			const hrefWithoutHash = window.location.origin + window.location.pathname;
+
 			const queryArgs =
 				size === 1
-					? removeQueryArgs( window.location.href, BUNDLE_SIZE_PARAM_KEY )
-					: addQueryArgs( window.location.href, {
+					? removeQueryArgs( hrefWithoutHash, BUNDLE_SIZE_PARAM_KEY )
+					: addQueryArgs( hrefWithoutHash, {
 							...getQueryArgs( window.location.href ),
 							[ BUNDLE_SIZE_PARAM_KEY ]: `${ size }`,
 					  } );
 
-			window.history.pushState( null, '', queryArgs );
+			window.history.pushState( null, '', queryArgs + window.location.hash ); // Insert back the hash to retain it.
 
 			setSelectedSize( size );
 		},

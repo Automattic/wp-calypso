@@ -1,5 +1,5 @@
 import { Button, CompactCard, ScreenReaderText, Gridicon, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Fragment, PureComponent } from 'react';
@@ -150,7 +150,7 @@ class Task extends PureComponent {
 
 		return (
 			<CompactCard
-				className={ classNames( 'checklist__task', {
+				className={ clsx( 'checklist__task', {
 					warning: isWarning,
 					'is-completed': completed,
 					'is-in-progress': inProgress,

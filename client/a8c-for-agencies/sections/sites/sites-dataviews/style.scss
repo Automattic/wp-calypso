@@ -176,15 +176,6 @@
 	}
 }
 
-.sites-overview__content:has(.dataviews-pagination) {
-	padding-bottom: 32px !important;
-}
-
-.main.a4a-layout.sites-dashboard:has(.dataviews-pagination) {
-	height: calc(100vh - 70px) !important;
-}
-
-
 .dataviews-pagination {
 	background: #fff;
 	border-top: 1px solid #f1f1f1;
@@ -261,25 +252,5 @@
 .dataviews-wrapper:has(.dataviews-no-results) {
 	.spinner-wrapper {
 		display: none;
-	}
-}
-
-.is-section-a8c-for-agencies-sites {
-	a.site-actions__menu-item {
-		&:hover,
-		&:focus {
-			background: var(--wp-components-color-accent);
-			color: var(--color-text-inverted);
-		}
-	}
-
-	.components-dropdown-menu {
-		padding: 8px;
-		border-radius: 4px;
-
-		[role="menuitem"],
-		[role="menuitemradio"] {
-			border-radius: 4px;
-		}
 	}
 }

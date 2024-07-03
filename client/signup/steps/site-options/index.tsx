@@ -5,8 +5,9 @@ import storeImageUrl from 'calypso/assets/images/onboarding/store-onboarding.svg
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSite } from 'calypso/state/sites/selectors';
 import SiteOptions from './site-options';
 import type { SiteOptionsFormValues } from './types';
 import './index.scss';
@@ -24,7 +25,9 @@ export default function SiteOptionsStep( props: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { stepName, signupDependencies, flowName, goToNextStep } = props;
-	const { siteTitle, tagline } = signupDependencies;
+	const { siteTitle, tagline, siteId } = signupDependencies;
+
+	const siteDetails = useSelector( ( state ) => ( siteId ? getSite( state, siteId ) : null ) );
 
 	const getSiteOptionsProps = ( stepName: string ) => {
 		switch ( stepName ) {
@@ -109,8 +112,8 @@ export default function SiteOptionsStep( props: Props ) {
 			headerImageUrl={ headerImage }
 			stepContent={
 				<SiteOptions
-					defaultSiteTitle={ siteTitle }
-					defaultTagline={ tagline }
+					defaultSiteTitle={ siteTitle || siteDetails?.title || '' }
+					defaultTagline={ tagline || siteDetails?.description || '' }
 					siteTitleLabel={ siteTitleLabel }
 					siteTitleExplanation={ siteTitleExplanation }
 					taglineExplanation={ taglineExplanation }
@@ -123,7 +126,7 @@ export default function SiteOptionsStep( props: Props ) {
 			align="left"
 			skipButtonAlign="top"
 			skipLabelText={ translate( 'Skip this step' ) }
-			isHorizontalLayout={ true }
+			isHorizontalLayout
 			defaultDependencies={ {
 				siteTitle: '',
 				tagline: '',

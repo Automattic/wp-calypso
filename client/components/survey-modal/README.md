@@ -7,9 +7,8 @@ Simple modal component that links to a survey.
 ```js
 import { useState } from 'react';
 import ReactDOM from 'react-dom';
-
-import SurveyModal from 'calypso/components/survey-modal';
 import surveyImage from 'calypso/assets/images/illustrations/illustration-seller.svg';
+import SurveyModal from 'calypso/components/survey-modal';
 
 function MyComponent() {
 	const [ isModalVisible, setIsModalVisible ] = useState( false );

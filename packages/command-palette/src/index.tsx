@@ -2,10 +2,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
 import { __experimentalHStack as HStack, Modal, TextHighlight } from '@wordpress/components';
 import { useDebounce } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
 import { chevronLeft as backIcon, Icon, search as inputIcon } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { cleanForSlug } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -13,8 +13,10 @@ import {
 	CommandPaletteContextProvider,
 	useCommandPaletteContext,
 } from './context';
+import { recordCommandPaletteOpen } from './tracks';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { useCommandPalette } from './use-command-palette';
+import { siteUsesWpAdminInterface } from './utils';
 import type { Command as PaletteCommand } from './commands';
 import type { SiteExcerptData } from '@automattic/sites';
 import './style.scss';
@@ -79,6 +81,14 @@ const StyledCommandsFooter = styled.div( {
 	paddingBottom: '12px',
 	borderTop: '1px solid var(--studio-gray-5)',
 	color: 'var(--studio-gray-50)',
+	a: {
+		color: 'var(--studio-gray-50)',
+		'text-decoration': 'none',
+	},
+	'a.command-palette__footer-current-site, a:hover': {
+		color: 'var(--studio-gray-100)',
+	},
+	'a:hover': { 'text-decoration': 'underline' },
 } );
 
 export function CommandMenuGroup() {
@@ -91,12 +101,45 @@ export function CommandMenuGroup() {
 		setEmptyListNotice,
 		navigate,
 		currentRoute,
+		currentSiteId,
+		useSites,
 	} = useCommandPaletteContext();
-	const { commands, filterNotice, emptyListNotice } = useCommandPalette();
+	const { commands, filterNotice, emptyListNotice, inSiteContext } = useCommandPalette();
+	const { __ } = useI18n();
+
+	const sites = useSites();
+	const currentSite = sites.find( ( site: { ID: unknown } ) => site.ID === currentSiteId );
+	const adminUrl =
+		currentSite && siteUsesWpAdminInterface( currentSite )
+			? 'https://' + currentSite.slug + '/wp-admin'
+			: 'https://wordpress.com/home/' + currentSite?.slug;
+
+	// Should just use the name but need Jetpack change for this to work in wp-admin
+	const siteName = currentSite?.name ?? currentSite?.slug;
 
 	useEffect( () => {
+		if ( ! filterNotice && inSiteContext ) {
+			const sitesPath = currentRoute.startsWith( '/wp-admin' )
+				? 'https://wordpress.com/sites'
+				: '/sites/';
+			const message = (
+				<>
+					<a className="command-palette__footer-all-sites" href={ sitesPath }>
+						{ __( 'All sites', __i18n_text_domain__ ) }
+					</a>
+					{ ' / ' }
+					{ adminUrl && (
+						<a className="command-palette__footer-current-site" href={ adminUrl }>
+							{ siteName }
+						</a>
+					) }
+				</>
+			);
+			setFooterMessage( message );
+			return;
+		}
 		setFooterMessage( filterNotice ?? '' );
-	}, [ setFooterMessage, filterNotice ] );
+	}, [ setFooterMessage, filterNotice, inSiteContext, currentRoute, adminUrl, siteName, __ ] );
 
 	useEffect( () => {
 		setEmptyListNotice( emptyListNotice ?? '' );
@@ -130,7 +173,7 @@ export function CommandMenuGroup() {
 					>
 						<HStack
 							alignment="left"
-							className={ classnames( 'commands-command-menu__item', {
+							className={ clsx( 'commands-command-menu__item', {
 								'has-icon': command.icon || command.image,
 							} ) }
 						>
@@ -164,6 +207,7 @@ function CommandInput() {
 	const commandMenuInput = useRef< HTMLInputElement >( null );
 	const itemValue = useCommandState( ( state ) => state.value );
 	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
+	const { __ } = useI18n();
 
 	useEffect( () => {
 		// Focus the command palette input when mounting the modal,
@@ -192,6 +236,7 @@ const NotFoundMessage = () => {
 			search_text: search,
 		} );
 	}, 600 );
+	const { __ } = useI18n();
 
 	useEffect( () => {
 		// Track search queries only for root
@@ -246,15 +291,13 @@ const CommandPalette = ( {
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
 	const [ isOpenLocal, setIsOpenLocal ] = useState( false );
 	const isOpen = isOpenLocal || isOpenGlobal;
-	const [ footerMessage, setFooterMessage ] = useState( '' );
+	const [ footerMessage, setFooterMessage ] = useState< string | JSX.Element >( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	const open = useCallback( () => {
 		toggleModalOpenClassnameOnDocumentHtmlElement( true );
 
 		setIsOpenLocal( true );
-		recordTracksEvent( 'calypso_hosting_command_palette_open', {
-			current_route: currentRoute,
-		} );
+		recordCommandPaletteOpen( currentRoute, 'keyboard' );
 	}, [ currentRoute ] );
 	const close = useCallback< CommandPaletteContext[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
@@ -275,6 +318,7 @@ const CommandPalette = ( {
 	);
 	const toggle = useCallback( () => ( isOpen ? close() : open() ), [ isOpen, close, open ] );
 	const commandFilter = useCommandFilter();
+	const { __ } = useI18n();
 
 	const commandListRef = useRef< HTMLDivElement >( null );
 
@@ -423,4 +467,5 @@ const CommandPalette = ( {
 
 export default CommandPalette;
 export type { Command, CommandCallBackParams } from './commands';
-export { COMMANDS } from './commands';
+export { useCommands } from './commands';
+export { PromptIcon } from './icons/prompt';

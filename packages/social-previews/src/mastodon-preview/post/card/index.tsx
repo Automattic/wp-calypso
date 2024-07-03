@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { baseDomain, getTitleFromDescription, stripHtmlTags } from '../../../helpers';
 import { mastodonTitle } from '../../helpers';
 import { MastodonPreviewProps } from '../../types';
@@ -15,7 +15,7 @@ const MastodonPostCard: React.FC< MastodonPreviewProps > = ( {
 	customImage,
 } ) => {
 	return (
-		<div className={ classNames( 'mastodon-preview__card', { 'has-image': image } ) }>
+		<div className={ clsx( 'mastodon-preview__card', { 'has-image': image } ) }>
 			<div className="mastodon-preview__card-img">
 				{ image || customImage ? (
 					<img

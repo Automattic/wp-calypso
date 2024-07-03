@@ -1,12 +1,13 @@
-import { isFreePlanProduct } from '@automattic/calypso-products';
+import { PLAN_ECOMMERCE_TRIAL_MONTHLY, isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedPurchase } from 'calypso/state/ui/selectors';
 import CurrentPlan from './';
 
 export function currentPlan( context, next ) {
 	const state = context.store.getState();
 
 	const selectedSite = getSelectedSite( state );
+	const purchase = getSelectedPurchase( state );
 
 	if ( ! selectedSite ) {
 		page.redirect( '/plans/' );
@@ -14,7 +15,12 @@ export function currentPlan( context, next ) {
 		return null;
 	}
 
-	if ( isFreePlanProduct( selectedSite.plan ) ) {
+	const isFreePlan = isFreePlanProduct( selectedSite.plan );
+	const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
+	const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+	const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.isWooExpressTrial;
+
+	if ( isFreePlan || isEntrepreneurTrial ) {
 		page.redirect( `/plans/${ selectedSite.slug }` );
 
 		return null;

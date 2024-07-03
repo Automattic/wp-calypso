@@ -7,7 +7,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
-import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
@@ -156,67 +155,12 @@ class DeleteSite extends Component {
 	}
 
 	renderBody() {
-		if (
-			getLocaleSlug() === 'en' ||
-			getLocaleSlug() === 'en-gb' ||
-			i18n.hasTranslation(
-				'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.'
-			)
-		) {
-			return (
-				<>
-					<div>
-						<p>
-							{ translate(
-								'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.',
-								{
-									components: {
-										strong: <strong />,
-									},
-								}
-							) }
-						</p>
-						<p>
-							{ translate(
-								'Once deleted, your domain {{strong}}%(siteDomain)s{{/strong}} will also become unavailable.',
-								{
-									components: {
-										strong: <strong />,
-									},
-									args: {
-										siteDomain: this.props.siteDomain,
-									},
-								}
-							) }
-						</p>
-					</div>
-				</>
-			);
-		}
-
 		return (
 			<>
-				<ActionPanelFigure>
-					<h3 className="delete-site__content-list-header">
-						{ translate( 'These items will be deleted' ) }
-					</h3>
-					<ul className="delete-site__content-list">
-						<li className="delete-site__content-list-item">{ translate( 'Posts' ) }</li>
-						<li className="delete-site__content-list-item">{ translate( 'Pages' ) }</li>
-						<li className="delete-site__content-list-item">{ translate( 'Media' ) }</li>
-						<li className="delete-site__content-list-item">{ translate( 'Users & Authors' ) }</li>
-						<li className="delete-site__content-list-item">{ translate( 'Domains' ) }</li>
-						<li className="delete-site__content-list-item">
-							{ translate( 'Purchased Upgrades' ) }
-						</li>
-						<li className="delete-site__content-list-item">{ translate( 'Premium Themes' ) }</li>
-					</ul>
-				</ActionPanelFigure>
 				<div>
 					<p>
 						{ translate(
-							'Deletion {{strong}}can not{{/strong}} be undone, ' +
-								'and will remove all content, contributors, domains, themes and upgrades from this site.',
+							'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.',
 							{
 								components: {
 									strong: <strong />,
@@ -226,17 +170,16 @@ class DeleteSite extends Component {
 					</p>
 					<p>
 						{ translate(
-							"If you're unsure about what deletion means or have any other questions, " +
-								'please chat with someone from our support team before proceeding.'
+							'Once deleted, your domain {{strong}}%(siteDomain)s{{/strong}} will also become unavailable.',
+							{
+								components: {
+									strong: <strong />,
+								},
+								args: {
+									siteDomain: this.props.siteDomain,
+								},
+							}
 						) }
-					</p>
-					<p>
-						<a
-							className="delete-site__body-text-link action-panel__body-text-link"
-							href="/help/contact"
-						>
-							{ translate( 'Contact support' ) }
-						</a>
 					</p>
 				</div>
 			</>

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { get, isEmpty, last, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -124,7 +124,7 @@ class EditorRevisionsList extends PureComponent {
 			selectedRevisionId,
 			siteId,
 		} = this.props;
-		const classes = classNames( 'editor-revisions-list', {
+		const classes = clsx( 'editor-revisions-list', {
 			'is-loading': isEmpty( revisions ),
 		} );
 
@@ -141,7 +141,7 @@ class EditorRevisionsList extends PureComponent {
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
 						{ map( revisions, ( revision ) => {
-							const itemClasses = classNames( 'editor-revisions-list__revision', {
+							const itemClasses = clsx( 'editor-revisions-list__revision', {
 								'is-selected': revision.id === selectedRevisionId,
 							} );
 							const revisionChanges = get( comparisons, [ revision.id, 'diff', 'totals' ], {} );

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import { STATS_TYPE_DEVICE_STATS } from '../constants';
 import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
@@ -9,11 +9,13 @@ import './stats-module-devices.scss';
 type StatsModuleUpgradeOverlayProps = {
 	siteId: number;
 	className?: string;
+	overlay?: React.ReactNode;
 };
 
 const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( {
 	siteId,
 	className,
+	overlay,
 } ) => {
 	const fakeData = [
 		{
@@ -50,7 +52,7 @@ const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( 
 		// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
 		<StatsListCard
 			title="Devices"
-			className={ classNames(
+			className={ clsx(
 				className,
 				'stats-module-upgrade-overlay',
 				'stats-module__card',
@@ -61,13 +63,15 @@ const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( 
 			mainItemLabel="Visitors"
 			splitHeader
 			overlay={
-				<StatsCardUpsellJetpack
-					className="stats-module__upsell"
-					siteId={ siteId }
-					statType={ STATS_TYPE_DEVICE_STATS }
-				/>
+				overlay ?? (
+					<StatsCardUpsellJetpack
+						className="stats-module__upsell"
+						siteId={ siteId }
+						statType={ STATS_TYPE_DEVICE_STATS }
+					/>
+				)
 			}
-		></StatsListCard>
+		/>
 	);
 };
 

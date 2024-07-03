@@ -98,7 +98,7 @@ body.is-mobile-app-view {
 	}
 
 	// stylelint-disable-next-line unit-allowed-list
-	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+	@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
 		body.font-smoothing-antialiased & {
 			text-rendering: optimizeLegibility;
 			-moz-osx-font-smoothing: grayscale;
@@ -154,6 +154,12 @@ body.is-mobile-app-view {
 					border-color: #a2aab2;
 				}
 			}
+		}
+	}
+	.masterbar__item-notifications {
+		svg.sidebar_svg-notifications {
+			margin: 0;
+			fill: none;
 		}
 	}
 }
@@ -291,16 +297,33 @@ body.is-mobile-app-view {
 
 	.dashicons-before {
 		height: 20px;
+		color: var(--color-masterbar-icon);
 	}
 
+	// The hover colors are supposed to be the same as those in wp-admin.
 	&:hover {
 		@include breakpoint-deprecated( ">480px" ) {
 			background: var(--color-masterbar-item-hover-background);
-			color: var(--color-masterbar-text);
-
+			color: var(--color-masterbar-highlight);
 			.masterbar--is-checkout & {
 				background: var(--color-checkout-masterbar-item-hover-background);
 				color: var(--color-checkout-masterbar-text);
+			}
+			.masterbar__item-content {
+				color: var(--color-masterbar-highlight);
+			}
+			.dashicons-before {
+				color: var(--color-masterbar-highlight);
+			}
+		}
+	}
+	// Reader icon is only available on Default interface sites, so we apply the Calypso color for consistency.
+	// https://github.com/Automattic/wp-calypso/pull/90136#issuecomment-2089512298
+	&.masterbar__reader:hover {
+		@include breakpoint-deprecated( ">480px" ) {
+			color: var(--color-masterbar-text);
+			.masterbar__item-content {
+				color: var(--color-masterbar-text);
 			}
 		}
 	}
@@ -358,7 +381,7 @@ body.is-mobile-app-view {
 		background: var(--studio-orange-70);
 	}
 
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		font-size: $masterbar-mobile-font-size;
 	}
 
@@ -455,7 +478,7 @@ body.is-mobile-app-view {
 	}
 }
 .masterbar__item-action-search {
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		display: none !important; //Mobile styles not yet handled
 	}
 
@@ -509,7 +532,7 @@ body.is-mobile-app-view {
 	transition: all 0.2s ease-out;
 	font-size: $masterbar-font-size;
 
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		height: 34px;
 		margin-top: 6px;
 		margin-right: 9px;
@@ -617,7 +640,7 @@ body.is-mobile-app-view {
 
 		border: 2px solid var(--color-border-inverted);
 
-		@media only screen and ( max-width: 782px ) {
+		@media only screen and (max-width: 782px) {
 			width: 22px;
 			height: 22px;
 		}
@@ -629,7 +652,7 @@ body.is-mobile-app-view {
 	}
 
 	.gridicon {
-		@media only screen and ( max-width: 782px ) {
+		@media only screen and (max-width: 782px) {
 			position: relative;
 			left: 4px;
 		}
@@ -638,7 +661,7 @@ body.is-mobile-app-view {
 			display: block;
 			padding: 0;
 
-			@media only screen and ( max-width: 782px ) {
+			@media only screen and (max-width: 782px) {
 				padding-left: 8px;
 			}
 		}
@@ -670,7 +693,7 @@ body.is-mobile-app-view {
 		margin-right: auto;
 	}
 
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		.gridicon + .masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -688,7 +711,7 @@ body.is-mobile-app-view {
 		border-bottom: 1px solid #646970;
 	}
 
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		.masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -706,7 +729,7 @@ body.is-mobile-app-view {
 	color: $masterbar-color-primary;
 	font-size: $masterbar-font-size;
 
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and (max-width: 782px) {
 		height: 34px;
 		margin-top: 6px;
 		margin-right: 9px;
@@ -950,7 +973,7 @@ a.masterbar__quick-language-switcher {
 		top: -0.5px;
 
 		/* Hide the secure checkout text on very small devices */
-		@media screen and ( max-width: 300px ) {
+		@media screen and (max-width: 300px) {
 			display: none;
 		}
 
@@ -1033,11 +1056,27 @@ a.masterbar__quick-language-switcher {
 		padding: 0 7px;
 	}
 
+	.masterbar__item-me {
+		gap: 0;
+	}
+
 	.masterbar__item-all-sites {
 		gap: 2px;
 
-		@media only screen and ( min-width: 783px ) {
+		@media only screen and (min-width: 783px) {
 			padding: 0 8px 0 4px;
+		}
+
+		svg {
+			fill: var(--color-masterbar-icon);
+			width: 20px;
+			padding-inline: 2px;
+		}
+
+		&:hover {
+			svg {
+				fill: var(--color-masterbar-highlight);
+			}
 		}
 	}
 

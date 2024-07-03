@@ -1,18 +1,22 @@
-import { Card, Gridicon } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, PropsWithChildren } from 'react';
-import CardHeading from 'calypso/components/card-heading';
+import { FunctionComponent, ReactNode } from 'react';
+import { HostingCard } from 'calypso/components/hosting-card';
 
-export const CardContentWrapper: FunctionComponent< PropsWithChildren > = ( { children } ) => {
+interface Props {
+	children: ReactNode;
+	className?: string;
+}
+
+export const CardContentWrapper: FunctionComponent< Props > = ( { children, className } ) => {
 	const translate = useTranslate();
 	return (
-		<Card className="staging-site-card">
-			{
-				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<Gridicon icon="science" size={ 32 } />
-			}
-			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
+		<HostingCard
+			className={ clsx( 'staging-site-card', className ) }
+			headingId="staging-site"
+			title={ translate( 'Staging site' ) }
+		>
 			{ children }
-		</Card>
+		</HostingCard>
 	);
 };

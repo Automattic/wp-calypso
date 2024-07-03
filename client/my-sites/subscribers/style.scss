@@ -17,11 +17,11 @@
 			display: none;
 		}
 
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			display: inline-block;
 		}
 
-		@media ( min-width: $break-small ) {
+		@media (min-width: $break-small) {
 			.add-subscribers-button-text {
 				display: inline;
 			}
@@ -29,11 +29,11 @@
 	}
 	padding: 0 32px;
 
-	@media ( max-width: $break-small ) {
+	@media (max-width: $break-small) {
 		padding: 0 16px;
 	}
 	.navigation-header {
-		@media ( max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			padding: 16px 0;
 		}
 	}
@@ -66,7 +66,7 @@
 	padding-bottom: 0;
 }
 
-@media ( max-width: $break-medium ) {
+@media (max-width: $break-medium) {
 	.is-section-subscribers .layout__content {
 		padding-left: 0 !important;
 		padding-right: 0 !important;

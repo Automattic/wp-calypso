@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
@@ -35,18 +35,18 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isCompactPost, h
 		if ( imagesToDisplay.length === 4 ) {
 			imageWidth = imageWidth / 2;
 			imageHeight = imageHeight / 2;
-			classNames = classnames( 'reader-post-card__featured-images', 'four-images' );
+			classNames = clsx( 'reader-post-card__featured-images', 'four-images' );
 		} else if ( imagesToDisplay.length === 3 ) {
 			if ( index !== 0 ) {
 				// leave space for a 2px gap, always round down to an integer
 				imageHeight = Math.floor( imageHeight / 2 ) - 1;
 			}
-			classNames = classnames( 'reader-post-card__featured-images', 'three-images' );
+			classNames = clsx( 'reader-post-card__featured-images', 'three-images' );
 		} else if ( imagesToDisplay.length === 2 ) {
-			classNames = classnames( 'reader-post-card__featured-images', 'two-images' );
+			classNames = clsx( 'reader-post-card__featured-images', 'two-images' );
 		} else {
 			width = '100%';
-			classNames = classnames( 'reader-post-card__featured-images', 'one-image' );
+			classNames = clsx( 'reader-post-card__featured-images', 'one-image' );
 		}
 
 		const featuredImage = (

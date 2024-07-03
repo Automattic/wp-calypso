@@ -31,20 +31,20 @@
 	"dependencies": {
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@wordpress/components": "^27.4.0",
-		"@wordpress/data": "^9.26.0",
-		"@wordpress/icons": "^9.47.0",
-		"@wordpress/react-i18n": "^3.54.0",
-		"classnames": "^2.3.2",
-		"react-router-dom": "^6.10.0",
+		"@wordpress/components": "^28.0.0",
+		"@wordpress/data": "^10.0.0",
+		"@wordpress/icons": "^10.0.0",
+		"@wordpress/react-i18n": "^4.0.0",
+		"clsx": "^2.1.1",
+		"react-router-dom": "^6.23.1",
 		"tslib": "^2.5.0",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@testing-library/react": "^14.3.1",
-		"@wordpress/base-styles": "^4.47.0",
+		"@testing-library/react": "^15.0.7",
+		"@wordpress/base-styles": "^5.0.0",
 		"copyfiles": "^2.3.0",
 		"css-loader": "^3.6.0",
 		"react": "^18.2.0",
@@ -56,7 +56,7 @@
 		"webpack": "^5.91.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^4.56.0",
+		"@wordpress/i18n": "^5.0.0",
 		"react": "^18.2.0"
 	},
 	"private": true

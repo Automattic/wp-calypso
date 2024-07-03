@@ -54,6 +54,7 @@ describe( 'CommandPalette', () => {
 			commands: commands,
 			filterNotice: 'Mock Filter Notice',
 			emptyListNotice: 'No results found',
+			currentSiteId: null,
 		} );
 
 		render(
@@ -63,6 +64,7 @@ describe( 'CommandPalette', () => {
 					currentSiteId={ null }
 					navigate={ () => {} }
 					useCommands={ () => commands }
+					useSites={ () => [] }
 				/>
 			</QueryClientProvider>
 		);

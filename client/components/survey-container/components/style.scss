@@ -3,8 +3,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "client/components/forms/form-radio/style.scss";
 
-$blueberry-color: #2145e6;
-$blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+$blueberry-color: #3858e9;
+$dark-blueberry-color: #2145e6;
+$blueberry-focus-color: #abc0f5;
 
 @mixin question-options-container {
 	display: flex;
@@ -23,7 +24,7 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 	flex-basis: calc(100% - 48px);
 	gap: 16px;
 	align-items: center;
-	border-radius: 2px;
+	border-radius: 4px;
 	border: solid 1px $studio-gray-5;
 	padding: 16px;
 	cursor: pointer;
@@ -47,6 +48,7 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 		flex-direction: column;
 		align-items: start;
 		gap: 44px;
+		padding-bottom: 40px;
 	}
 
 	&__continue-button.components-button.is-primary {
@@ -59,8 +61,12 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 			&:hover,
 			&:focus,
 			&:active {
-				background-color: $blueberry-hover-color;
-				border-color: $blueberry-hover-color;
+				background-color: $dark-blueberry-color;
+				border-color: $dark-blueberry-color;
+			}
+
+			&:focus {
+				box-shadow: inset 0 0 0 1px $studio-white, 0 0 0 var(--wp-admin-border-width-focus) $blueberry-color;
 			}
 		}
 	}
@@ -75,8 +81,13 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 				border-color: $blueberry-color;
 			}
 
+			&.disabled {
+				opacity: 0.5;
+				pointer-events: none;
+			}
+
 			// Radio styles
-			input[type="radio"] {
+			input[type="radio"].form-radio {
 				height: 20px;
 				width: 20px;
 				min-width: 20px;
@@ -92,6 +103,11 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 					width: 14px;
 					height: 14px;
 					background-color: $blueberry-color;
+				}
+
+				&:focus {
+					border-color: $blueberry-color;
+					box-shadow: 0 0 0 2px $blueberry-focus-color;
 				}
 			}
 
@@ -117,12 +133,13 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 					box-shadow: inset 0 0 0 1px $studio-white;
 
 					&:focus {
-						box-shadow: inset 0 0 0 1px #fff, 0 0 0 2px $studio-gray-10;
+						box-shadow: inset 0 0 0 1px #fff, 0 0 0 2px $blueberry-focus-color;
 					}
 				}
 
 				&:focus {
-					box-shadow: 0 0 0 2px $studio-gray-10;
+					border-color: $blueberry-color;
+					box-shadow: 0 0 0 2px $blueberry-focus-color;
 				}
 			}
 
@@ -149,5 +166,20 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 
 	.step-container__header {
 		margin-top: 96px;
+	}
+
+	&.disabled {
+		.step-container__navigation button,
+		.step-container__skip-wrapper button {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	}
+}
+
+.question-flow-cards {
+	&.is-disabled > * {
+		opacity: 0.5;
+		pointer-events: none;
 	}
 }

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
@@ -24,6 +25,7 @@ import {
 	getPlan,
 	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	JETPACK_CREATOR_PRODUCTS,
+	JETPACK_SOCIAL_V1_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -147,28 +149,39 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		availableProducts = [ ...availableProducts, ...JETPACK_STATS_PRODUCTS ];
 	}
 
-	const socialProductsToShow: string[] = [];
+	if ( isEnabled( 'jetpack/social-plans-v1' ) ) {
+		// If Jetpack Social is directly or indirectly owned, continue, otherwise make it available.
+		if (
+			! ownedProducts.some( ( ownedProduct ) =>
+				( JETPACK_SOCIAL_V1_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+			)
+		) {
+			availableProducts = [ ...availableProducts, ...JETPACK_SOCIAL_V1_PRODUCTS ];
+		}
+	} else {
+		const socialProductsToShow: string[] = [];
 
-	const ownsSocialBasic =
-		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ) ||
-		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC ) ||
-		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY );
-	const ownsSocialAdvanced =
-		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ) ||
-		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED ) ||
-		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY );
+		const ownsSocialBasic =
+			ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ) ||
+			ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC ) ||
+			ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY );
+		const ownsSocialAdvanced =
+			ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ) ||
+			ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED ) ||
+			ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY );
 
-	// If neither Social Basic or Social Advanced backups are owned, then show Social Basic Plan.
-	// Otherwise the one owned will be displayed via purchasedProducts.
-	if ( ! ownsSocialBasic && ! ownsSocialAdvanced ) {
-		socialProductsToShow.push(
-			PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
-			PRODUCT_JETPACK_SOCIAL_ADVANCED,
-			PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY
-		);
+		// If neither Social Basic or Social Advanced backups are owned, then show Social Basic Plan.
+		// Otherwise the one owned will be displayed via purchasedProducts.
+		if ( ! ownsSocialBasic && ! ownsSocialAdvanced ) {
+			socialProductsToShow.push(
+				PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
+				PRODUCT_JETPACK_SOCIAL_ADVANCED,
+				PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY
+			);
+		}
+
+		availableProducts = [ ...availableProducts, ...socialProductsToShow ];
 	}
-
-	availableProducts = [ ...availableProducts, ...socialProductsToShow ];
 
 	// If the user does not own the AI product, include it in available products
 	if (

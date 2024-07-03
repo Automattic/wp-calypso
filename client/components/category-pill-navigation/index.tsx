@@ -4,7 +4,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useRtl } from 'i18n-calypso';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 
@@ -135,7 +135,7 @@ export const CategoryPillNavigation = ( {
 							key={ button.label }
 							href={ button.link }
 							onClick={ () => onSelect( button.id ) }
-							className={ classnames( 'category-pill-navigation__button', {
+							className={ clsx( 'category-pill-navigation__button', {
 								'is-active': button.isActive,
 							} ) }
 						>
@@ -176,7 +176,7 @@ export const CategoryPillNavigation = ( {
 							key={ category.id }
 							href={ category.link }
 							onClick={ () => onSelect( category.id ) }
-							className={ classnames( 'category-pill-navigation__button', {
+							className={ clsx( 'category-pill-navigation__button', {
 								'is-active': category.id === selectedCategoryId,
 							} ) }
 						>

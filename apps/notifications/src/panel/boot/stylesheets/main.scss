@@ -17,11 +17,11 @@ $with-sidebar-min-page-width: 1114px;
 
 	.wpnc__note-list {
 		left: auto;
-		width: 410px;
+		width: 400px;
 	}
 
 	.wpnc__single-view {
-		right: 410px;
+		right: 400px;
 		left: 10px;
 		top: 0;
 		bottom: 0;
@@ -63,7 +63,7 @@ $with-sidebar-min-page-width: 1114px;
 	-webkit-font-smoothing: subpixel-antialiased;
 
 	/* stylelint-disable-next-line unit-allowed-list */
-	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+	@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
 		body.font-smoothing-antialiased & {
 			text-rendering: optimizeLegibility;
 			-moz-osx-font-smoothing: grayscale;
@@ -71,10 +71,10 @@ $with-sidebar-min-page-width: 1114px;
 		}
 	}
 
-	@media only screen and ( max-width: 799px ) {
+	@media only screen and (max-width: 799px) {
 		background-color: var(--color-neutral-0);
 	}
-	@media only screen and ( min-width: 409px ) and ( max-width: 430px ) {
+	@media only screen and (min-width: 409px) and (max-width: 430px) {
 		background-color: var(--color-surface);
 	}
 
@@ -268,6 +268,11 @@ $with-sidebar-min-page-width: 1114px;
 			color: var(--color-neutral-70);
 		}
 
+		&:focus {
+			outline: var(--color-primary-light) solid 2px;
+			outline-offset: -2px;
+		}
+
 		&:first-of-type {
 			border-top-left-radius: 4px;
 			border-bottom-left-radius: 4px;
@@ -403,7 +408,7 @@ $with-sidebar-min-page-width: 1114px;
 			overflow-y: hidden;
 		}
 
-		@media only screen and ( min-width: 409px ) and ( max-width: 430px ) {
+		@media only screen and (min-width: 409px) and (max-width: 430px) {
 			left: 9px;
 		}
 
@@ -450,6 +455,7 @@ $with-sidebar-min-page-width: 1114px;
 			border-style: solid;
 		}
 
+		.wpnc__note:focus,
 		.wpnc__selected-note {
 			box-shadow: inset 4px 0 0 var(--color-primary);
 
@@ -519,6 +525,7 @@ $with-sidebar-min-page-width: 1114px;
 			.gridicons-cog {
 				cursor: pointer;
 				align-self: center;
+				border-radius: 2px;
 				margin-left: auto;
 				margin-right: $wpnc__padding-small;
 			}
@@ -531,15 +538,22 @@ $with-sidebar-min-page-width: 1114px;
 			text-align: left;
 			position: sticky;
 
-			.wpnc__settings {
+			.wpnc__settings,
+			.wpnc__keyboard-shortcuts-button {
 				display: flex;
 				flex-grow: 1;
+
+				&:focus svg {
+					outline: var(--color-primary-light) solid 2px;
+				}
+			}
+
+			.wpnc__keyboard-shortcuts-button {
+				flex-grow: 0;
+				padding-right: 8px;
+				color: var(--color-neutral-40, #787c82);
 			}
 		}
-	}
-
-	.disable-sticky .wpnc__time-group-wrap {
-		position: static;
 	}
 
 	.wpnc__undo-item {
@@ -585,7 +599,7 @@ $with-sidebar-min-page-width: 1114px;
 		right: 0;
 		box-shadow: -3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
 
-		@media only screen and ( min-width: 480px ) {
+		@media only screen and (min-width: 480px) {
 			border-left: 1px solid var(--color-neutral-0);
 		}
 
@@ -944,15 +958,15 @@ $with-sidebar-min-page-width: 1114px;
 	}
 
 	// Check if global-sidebar-visible not present
-	&:not(.global-sidebar-visible) {
-		@media only screen and ( min-width: $no-sidebar-min-page-width ) {
+	body:not(:has(.is-global-sidebar-visible)) & {
+		@media only screen and (min-width: $no-sidebar-min-page-width) {
 			@include setToggleNoteBehaviour;
 		}
 	}
 
 	// Override the CSS variable value if .global-sidebar-visible is present
-	&.global-sidebar-visible {
-		@media only screen and ( min-width: $with-sidebar-min-page-width ) {
+	body:has(.is-global-sidebar-visible) & {
+		@media only screen and (min-width: $with-sidebar-min-page-width) {
 			@include setToggleNoteBehaviour;
 		}
 	}
@@ -974,6 +988,61 @@ $with-sidebar-min-page-width: 1114px;
 		}
 		to {
 			background-color: var(--color-surface);
+		}
+	}
+}
+
+.wpnc__keyboard-shortcuts-popover.popover {
+	font: {
+		family: $sans;
+		size: $wpnc__capital-font-size;
+	}
+
+	.popover__arrow {
+		z-index: 1000;
+	}
+	.popover__inner {
+		width: 250px;
+		z-index: 999;
+		left: 0;
+
+		h2 {
+			padding: 10px;
+			margin: 0;
+			border-bottom: 1px solid var(--color-neutral-10);
+			text-align: left;
+			font-weight: bold;
+			font-size: $wpnc__capital-font-size;
+		}
+
+		ul {
+			padding: 10px 20px 10px 10px;
+			margin: 0;
+		}
+
+		li {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 8px;
+
+			.shortcut {
+				border: 1px solid var(--color-neutral-10);
+				border-radius: 4px;
+				min-width: 25px;
+				min-height: 25px;
+
+				&.letter {
+					font-weight: bold;
+					line-height: 25px;
+				}
+
+				&.has-icon {
+					svg {
+						margin-top: 4px;
+					}
+				}
+			}
 		}
 	}
 }

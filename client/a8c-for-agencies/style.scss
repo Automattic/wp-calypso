@@ -129,6 +129,8 @@
 		justify-content: center;
 		white-space: nowrap;
 
+		@include a4a-font-label-button;
+
 		box-sizing: border-box;
 		border-radius: 4px;
 
@@ -197,26 +199,126 @@
 	.button.is-borderless {
 		background: none;
 		color: var(--color-accent-80);
+
+		&.a8c-blue-link {
+			color: var(--color-primary-50);
+			text-decoration: underline;
+
+			svg {
+				fill: var(--color-primary-50);
+				margin-inline-start: 4px;
+			}
+		}
 	}
 
 	.split-button .button {
-		font-size: 0.875rem;
+		@include a4a-font-label-button;
 		height: 40px;
 	}
 
 	.components-form-toggle.is-checked .components-form-toggle__track {
-		background-color: var(--color-primary-60);
-		border-color: var(--color-primary-60);
+		background-color: var(--color-primary-50);
+		border-color: var(--color-primary-50);
+	}
+
+	.components-checkbox-control__input {
+		border-radius: 4px;
+		border-color: var(--color-neutral-10);
+		margin: 0;
+	}
+
+	.components-checkbox-control__input-container {
+		margin: 0 8px 0 0;
 	}
 
 	.components-checkbox-control__input[type="checkbox"]:checked,
 	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--color-primary-60);
-		border-color: var(--color-primary-60);
+		background: var(--color-primary-50);
+		border-color: var(--color-primary-50);
+	}
+
+	.components-checkbox-control__input[type="checkbox"]:focus {
+		box-shadow: none;
+		outline: none;
+
+		&:not(.components-checkbox-control__input[type="checkbox"]:checked) {
+			border-color: var(--color-neutral-10);
+		}
+	}
+
+	.components-checkbox-control__input[type="checkbox"]:focus-visible {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		outline: none;
 	}
 
 	.components-button.is-tertiary {
 		color: var(--color-primary-60);
+	}
+
+	.components-base-control__field {
+		margin: 0;
+	}
+
+	.components-form-token-field__input-container,
+	.components-text-control__input {
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 2px;
+		box-sizing: border-box;
+		color: var(--color-neutral-70);
+		font-size: rem(14px);
+		line-height: 1.5;
+		margin: 0;
+		padding: 8px 12px;
+		transition: all 0.15s ease-in-out;
+		width: 100%;
+		min-height: 36px;
+
+		:not(.components-form-token-field__input-container) {
+			&.is-active,
+			&:focus {
+				border-color: var(--color-primary);
+				box-shadow: 0 0 0 2px var(--color-primary-5);
+				outline: none;
+			}
+		}
+	}
+
+	.components-form-token-field__input-container {
+		position: relative;
+
+		&.is-active,
+		&:focus {
+			box-shadow: none;
+			outline: none;
+			border-color: var(--color-primary-50);
+		}
+
+		.components-form-token-field__suggestions-list {
+			box-sizing: border-box;
+			position: absolute;
+			margin-block-start: 7px;
+			margin-inline-start: -13px;
+			background-color: var(--color-surface);
+			border: 1px solid var(--color-neutral-10);
+			z-index: 10;
+			box-shadow: none;
+			width: calc(100% + 2px);
+			border-block-start-color: var(--color-primary-50);
+		}
+
+		.components-form-token-field__token,
+		.components-form-token-field__token-text,
+		.components-form-token-field__remove-token.components-button {
+			background-color: var(--color-neutral-5);
+			border-radius: 4px;
+		}
+
+		> * {
+			margin: 0;
+			padding: 0;
+		}
 	}
 
 	.button.is-borderless.is-primary.is-active,
@@ -226,15 +328,33 @@
 		color: var(--color-primary-60);
 	}
 
+	.search {
+		&,
+		& > *,
+		input[type="search"] {
+			border-radius: 4px;
+		}
+	}
+
 	// Masterbar
-	@media only screen and ( min-width: 782px ) {
+	@media only screen and (min-width: 782px) {
 		--masterbar-height: 46px;
+	}
+
+	.button[disabled],
+	.button:disabled,
+	.button.disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		pointer-events: none;
 	}
 }
 
 // New navigation will not include a masterbar
 .theme-a8c-for-agencies .layout.has-no-masterbar {
-	--masterbar-height: 0;
+	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-height: 0px;
 
 	.layout__content {
 		padding: 16px;
@@ -299,6 +419,15 @@
 	margin: 0;
 }
 
+.theme-a8c-for-agencies .dialog.card {
+	border-radius: 4px;
+
+	.dialog__action-buttons {
+		border: none;
+		background: var(--color-surface);
+	}
+}
+
 // Universal Text Styles
 html {
 	h2 {
@@ -339,7 +468,7 @@ html {
 }
 
 .layout.focus-content .layout__secondary {
-	@media only screen and ( max-width: 782px ) and ( min-width: 660px ) {
+	@media only screen and (max-width: 782px) and (min-width: 660px) {
 		transform: none;
 		padding: 0;
 	}
@@ -373,7 +502,6 @@ html {
 
 	.popover__menu-item {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
 		border: none;
 		outline: none;
@@ -403,6 +531,93 @@ html {
 
 		.gridicon {
 			fill: var(--color-error-50);
+		}
+	}
+}
+
+.popover.tooltip.gray-tooltip {
+	.popover__arrow {
+		&::before {
+			border-bottom-color: var(--color-accent-60);
+			inset-block-start: 1px;
+		}
+	}
+	.popover__inner {
+		background: var(--color-accent-60);
+		color: var(--color-text-white);
+		padding: 10px 12px;
+		border: none;
+	}
+}
+
+.redesigned-a8c-table {
+	thead .dataviews-view-table__row th {
+		font-size: 0.75rem;
+		font-weight: 500;
+		line-height: 20px;
+		color: var(--color-accent-80);
+	}
+
+	.dataviews-filters__view-actions {
+		display: none;
+	}
+
+	.dataviews-view-table tr {
+		td,
+		th {
+			.action-button {
+				display: flex;
+				justify-content: flex-end;
+				width: 100%;
+				padding-inline-end: 12px;
+
+				.gridicon {
+					margin-top: 0;
+					top: 0;
+				}
+			}
+			&:first-child {
+				text-align: left;
+				padding-inline-start: 16px;
+			}
+		}
+		th[data-field-id="actions"] {
+			text-align: right;
+			padding-inline-end: 16px;
+		}
+	}
+
+	.dataviews-view-list li {
+		cursor: pointer;
+	}
+
+	.dataviews-view-list li .components-h-stack {
+		display: block;
+		width: 100%;
+	}
+}
+
+.full-width-layout-with-table {
+	.a4a-layout__body-wrapper {
+		max-width: 100%;
+		padding-inline: 0;
+	}
+
+	.redesigned-a8c-table .dataviews-view-table tr {
+		td:first-child,
+		th:first-child {
+			padding-inline-start: 16px;
+
+			@include breakpoint-deprecated( ">660px" ) {
+				padding-inline-start: 64px;
+			}
+		}
+		td:last-child,
+		th:last-child {
+			padding-inline-end: 16px;
+			@include breakpoint-deprecated( ">660px" ) {
+				padding-inline-end: 64px;
+			}
 		}
 	}
 }

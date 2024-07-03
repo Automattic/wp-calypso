@@ -1,14 +1,22 @@
+import clsx from 'clsx';
 import { useCallback } from 'react';
 import { Question, Option } from '../types';
 
-type SurveyRadioOptionType = {
+type SurveyRadioOptionProps = {
 	question: Question;
 	option: Option;
 	onChange: ( key: string, value: string[] ) => void;
 	value: string[];
+	disabled?: boolean;
 };
 
-const SurveyRadioOption = ( { question, option, onChange, value }: SurveyRadioOptionType ) => {
+const SurveyRadioOption = ( {
+	question,
+	option,
+	onChange,
+	value,
+	disabled,
+}: SurveyRadioOptionProps ) => {
 	const isSelected = value.includes( option.value );
 
 	const handleKeyDown = useCallback(
@@ -26,7 +34,10 @@ const SurveyRadioOption = ( { question, option, onChange, value }: SurveyRadioOp
 
 	return (
 		<div
-			className={ `question-options__option-control ${ isSelected ? 'checked' : '' }` }
+			className={ clsx( 'question-options__option-control', {
+				checked: isSelected,
+				disabled,
+			} ) }
 			role="radio"
 			tabIndex={ 0 }
 			onClick={ handleClick }
@@ -44,6 +55,7 @@ const SurveyRadioOption = ( { question, option, onChange, value }: SurveyRadioOp
 				className="form-radio"
 				tabIndex={ -1 }
 				aria-hidden="true"
+				disabled={ disabled }
 			/>
 
 			<div className="question-options__option-label">

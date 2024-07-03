@@ -18,19 +18,28 @@ import type {
 export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	gridPlans,
 	allFeaturesList,
+	hasRedeemedDomainCredit,
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
+	hasRedeemedDomainCredit?: boolean;
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
-	( { gridPlans, allFeaturesList, intent, selectedFeature, showLegacyStorageFeature } ) => {
+	( {
+		gridPlans,
+		allFeaturesList,
+		hasRedeemedDomainCredit,
+		intent,
+		selectedFeature,
+		showLegacyStorageFeature,
+	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
 			allFeaturesList,
@@ -49,7 +58,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.();
 				const isMonthlyPlan = isMonthly( planSlug );
 
-				const wpcomFeatures = planConstantObj.get2023PlanComparisonFeatureOverride
+				const wpcomFeatures = planConstantObj.get2023PlanComparisonFeatureOverride?.().length
 					? getPlanFeaturesObject(
 							allFeaturesList,
 							planConstantObj.get2023PlanComparisonFeatureOverride().slice()
@@ -59,7 +68,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 							planConstantObj.get2023PricingGridSignupWpcomFeatures?.().slice()
 					  );
 
-				const jetpackFeatures = planConstantObj.get2023PlanComparisonJetpackFeatureOverride
+				const jetpackFeatures = planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.()
+					.length
 					? getPlanFeaturesObject(
 							allFeaturesList,
 							planConstantObj.get2023PlanComparisonJetpackFeatureOverride().slice()
@@ -120,10 +130,10 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						...featuresAvailable.wpcomFeatures,
 						...previousPlanFeatures.wpcomFeatures,
 					].filter( ( feature ) => {
-						// Remove the custom domain feature for Woo Express plans with an introductory offer.
+						// Remove the custom domain feature if custom domain has been redeemed or for Woo Express plans with an introductory offer.
 						if (
-							'plans-woocommerce' === intent &&
-							gridPlan.pricing.introOffer &&
+							( ( 'plans-woocommerce' === intent && gridPlan.pricing.introOffer ) ||
+								hasRedeemedDomainCredit ) &&
 							FEATURE_CUSTOM_DOMAIN === feature.getSlug()
 						) {
 							return false;
@@ -134,18 +144,15 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						...featuresAvailable.jetpackFeatures,
 						...previousPlanFeatures.jetpackFeatures,
 					],
-					storageOptions: planFeaturesForGridPlans[ planSlug ].storageOptions,
-					conditionalFeatures: getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj.get2023PlanComparisonConditionalFeatures?.()
-					),
+					storageFeature: planFeaturesForGridPlans[ planSlug ].storageFeature,
+					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.(),
 				};
 
 				previousPlan = planSlug;
 			}
 
 			return planFeatureMap;
-		}, [ gridPlans, allFeaturesList, planFeaturesForGridPlans, intent ] );
+		}, [ gridPlans, allFeaturesList, planFeaturesForGridPlans, intent, hasRedeemedDomainCredit ] );
 	};
 
 export default useRestructuredPlanFeaturesForComparisonGrid;

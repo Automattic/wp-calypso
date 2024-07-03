@@ -73,7 +73,10 @@ export const allSitesViewColumns = (
 		label: null,
 		isSortable: false,
 	},
-	{ name: 'action', label: null },
+	{
+		name: 'action',
+		label: __( 'Actions', __i18n_text_domain__ ),
+	},
 ];
 
 export const siteSpecificViewColumns = (
@@ -123,7 +126,10 @@ export const siteSpecificViewColumns = (
 		label: null,
 		isSortable: false,
 	},
-	{ name: 'action', label: null },
+	{
+		name: 'action',
+		label: __( 'Actions', __i18n_text_domain__ ),
+	},
 ];
 export const applyColumnSort = (
 	domains: PartialDomainData[],

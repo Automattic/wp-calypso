@@ -24,7 +24,7 @@
 			flex: 1 1 0;
 			overflow: hidden;
 			word-wrap: break-word;
-			@media ( max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				flex: auto;
 			}
 		}
@@ -55,7 +55,7 @@
 			line-height: rem(20px);
 			letter-spacing: -0.15px;
 		}
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			flex-direction: column;
 		}
 	}

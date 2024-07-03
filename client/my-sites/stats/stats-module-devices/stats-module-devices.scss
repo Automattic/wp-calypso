@@ -17,13 +17,15 @@
 	.pie-chart__legend {
 		flex-direction: row;
 		align-items: center;
+		flex-wrap: wrap;
+		column-gap: 20px;
+		row-gap: 12px;
 		padding: 0 20px;
 
 		.legend-item {
 			flex-direction: row;
 
 			&:not(:first-child) {
-				margin-left: 20px;
 				margin-top: 0;
 			}
 		}
@@ -45,22 +47,21 @@
 		}
 	}
 
-	// TODO: Update corresponding colors based on color schemes.
-	.pie-chart__chart-section-donut-desktop,
-	.pie-chart__legend-sample-donut-desktop {
-		fill: var(--studio-jetpack-green-60);
+	.pie-chart__chart-section-0,
+	.pie-chart__legend-sample-0 {
+		fill: var(--color-primary-70);
 	}
-	.pie-chart__chart-section-donut-mobile,
-	.pie-chart__legend-sample-donut-mobile {
-		fill: #069e08;
+	.pie-chart__chart-section-1,
+	.pie-chart__legend-sample-1 {
+		fill: var(--color-primary-50);
 	}
-	.pie-chart__chart-section-donut-tablet,
-	.pie-chart__legend-sample-donut-tablet {
-		fill: #64ca43;
+	.pie-chart__chart-section-2,
+	.pie-chart__legend-sample-2 {
+		fill: var(--color-primary-30);
 	}
-	.pie-chart__chart-section-donut-others,
-	.pie-chart__legend-sample-donut-others {
-		fill: #d0e6b8;
+	.pie-chart__chart-section-3,
+	.pie-chart__legend-sample-3 {
+		fill: var(--color-primary-10);
 	}
 }
 
@@ -77,10 +78,17 @@
 }
 
 .stats-module-devices__tabs {
+	// Align items by resetting the margin set from the segmented-controls mixin.
+	&.segmented-control {
+		@media (max-width: 660px) {
+			margin-top: 0;
+		}
+	}
+
 	.segmented-control__item {
 		min-width: 80px;
 
-		@media (max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			min-width: auto;
 		}
 	}

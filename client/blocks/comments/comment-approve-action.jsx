@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -10,7 +10,7 @@ const noop = () => {};
 
 const CommentApproveAction = ( { translate, status, approveComment, unapproveComment } ) => {
 	const isApproved = status === 'approved';
-	const buttonStyle = classnames( 'comments__comment-actions-approve', {
+	const buttonStyle = clsx( 'comments__comment-actions-approve', {
 		'is-approved': isApproved,
 	} );
 

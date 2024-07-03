@@ -1,5 +1,5 @@
 import { FormLabel } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
@@ -215,7 +215,7 @@ class EditorMediaModalDetailFields extends Component {
 
 		return (
 			<EditorMediaModalFieldset legend={ this.props.translate( 'Rating' ) }>
-				<div className={ classnames( 'form-radios-bar' ) } style={ { display: 'flex' } }>
+				<div className={ clsx( 'form-radios-bar' ) } style={ { display: 'flex' } }>
 					{ items.map( ( item, i ) => (
 						<FormLabel key={ item.value + i } style={ { paddingRight: '15px' } }>
 							<FormRadio

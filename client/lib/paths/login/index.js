@@ -39,6 +39,8 @@ export function login( {
 	isPartnerSignup = undefined,
 	action = undefined,
 	lostpasswordFlow = undefined,
+	usernameOnly = undefined,
+	gravatarFrom = undefined,
 } = {} ) {
 	let url = '/log-in';
 
@@ -104,6 +106,14 @@ export function login( {
 
 	if ( lostpasswordFlow ) {
 		url = addQueryArgs( { lostpassword_flow: true }, url );
+	}
+
+	if ( usernameOnly ) {
+		url = addQueryArgs( { username_only: true }, url );
+	}
+
+	if ( gravatarFrom ) {
+		url = addQueryArgs( { gravatar_from: gravatarFrom }, url );
 	}
 
 	return url;

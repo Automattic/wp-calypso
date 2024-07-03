@@ -18,17 +18,19 @@
 
 	.site-actions__actions-small-screen {
 		position: unset;
-		margin-left: 10px;
-		margin-right: 10px;
+		/** Increase the click area */
+		padding: 10px;
+		margin: -10px 0;
 	}
 
 	.site-actions__actions-large-screen {
 		display: block;
-		margin-left: 10px;
-		margin-right: 10px;
+		/** Increase the click area */
+		padding: 10px;
+		margin: -10px 0;
 	}
 
-	@media ( min-width: $break-large ) {
+	@media (min-width: $break-large) {
 		.layout__content {
 			padding: 16px 12px 16px calc(var(--sidebar-width-max) + 16px);
 		}
@@ -38,7 +40,7 @@
 		}
 	}
 
-	@media ( max-width: $break-large ) {
+	@media (max-width: $break-large) {
 		.sites-dashboard__layout {
 			.sites-overview {
 				overflow: hidden;
@@ -163,7 +165,7 @@
 		}
 	}
 
-	@media ( max-width: $break-wide ) {
+	@media (max-width: $break-wide) {
 		.sites-dashboard__layout:not(.preview-hidden) {
 			flex-direction: column;
 			gap: 0;
@@ -183,7 +185,7 @@
 		}
 	}
 
-	@media ( min-width: $break-wide ) {
+	@media (min-width: $break-wide) {
 		.sites-dashboard__layout:not(.preview-hidden) {
 
 			.sites-overview {
@@ -321,7 +323,7 @@
 		border-radius: 8px; /* stylelint-disable-line scales/radii */
 	}
 
-	@media only screen and ( min-width: $break-large ) {
+	@media only screen and (min-width: $break-large) {
 		.sites-overview {
 			padding: 24px 18px;
 		}
@@ -356,7 +358,7 @@
 			padding: 0;
 		}
 
-		@media only screen and ( min-width: $break-large ) {
+		@media only screen and (min-width: $break-large) {
 			.sites-overview {
 				padding: 46px 64px 0;
 				overflow-x: auto;
@@ -364,7 +366,7 @@
 		}
 	}
 
-	@media ( max-width: 660px ) {
+	@media (max-width: 660px) {
 		.sites-overview__page-heading {
 			display: none;
 		}

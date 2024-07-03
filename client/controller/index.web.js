@@ -1,5 +1,12 @@
 import config from '@automattic/calypso-config';
+import {
+	isJetpackPlanSlug,
+	isJetpackProductSlug,
+	setPlansListExperiment,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { localStorageExperimentAssignmentKey } from '@automattic/explat-client/src/internal/experiment-assignment-store';
+import localStorage from '@automattic/explat-client/src/internal/local-storage';
 import {
 	getLanguage,
 	getLanguageSlugs,
@@ -7,6 +14,7 @@ import {
 } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
@@ -14,25 +22,33 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { login, createAccountUrl } from 'calypso/lib/paths';
+import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
+import { navigate } from 'calypso/lib/navigate';
+import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
-import { getSiteFragment } from 'calypso/lib/route';
+import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
+import {
+	getProductSlugFromContext,
+	isContextSourceMyJetpack,
+} from 'calypso/my-sites/checkout/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
-import { render, hydrate } from './web-util.js';
+import { hydrate, render } from './web-util.js';
 
 /**
  * Re-export
  */
-export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
-export { render, hydrate } from './web-util.js';
+export { setLocaleMiddleware, setSectionMiddleware } from './shared.js';
+export { hydrate, render } from './web-util.js';
 
+const PLAN_NAME_EXPERIMENT = 'wpcom_plan_name_change_personal_premium_v1';
 export const ProviderWrappedLayout = ( {
 	store,
 	queryClient,
@@ -46,6 +62,24 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
+
+	const [ isLoading, experimentAssignment ] = useExperiment( PLAN_NAME_EXPERIMENT );
+
+	useEffect( () => {
+		if ( ! isLoading ) {
+			setPlansListExperiment( PLAN_NAME_EXPERIMENT, experimentAssignment?.variationName );
+		}
+	}, [ isLoading, experimentAssignment?.variationName ] );
+
+	useEffect( () => {
+		// TODO: Implement a proper way to reset the experiment assignment
+		try {
+			localStorage.removeItem( localStorageExperimentAssignmentKey( PLAN_NAME_EXPERIMENT ) );
+			loadExperimentAssignment( PLAN_NAME_EXPERIMENT );
+		} catch ( e ) {
+			// Ignore NS_ERROR_FILE_NOT_FOUND Firefox (bug report: https://bugzilla.mozilla.org/show_bug.cgi?id=1536796)
+		}
+	}, [ userLoggedIn ] );
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />
@@ -82,7 +116,6 @@ export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
  * For logged in users with bootstrap (production), ReactDOM.hydrate().
  * Otherwise (development), ReactDOM.render().
  * See: https://wp.me/pd2qbF-P#comment-20
- *
  * @param context - Middleware context
  */
 function smartHydrate( context ) {
@@ -96,7 +129,6 @@ function smartHydrate( context ) {
 
 /**
  * Isomorphic routing helper, client side
- *
  * @param { string } route - A route path
  * @param {...Function} middlewares - Middleware to be invoked for route
  *
@@ -127,6 +159,7 @@ export const redirectInvalidLanguage = ( context, next ) => {
 
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
+
 	if ( isUserLoggedIn( state ) ) {
 		next();
 		return;
@@ -170,7 +203,6 @@ export function redirectLoggedOut( context, next ) {
 /**
  * Middleware to redirect logged out users to create an account.
  * Designed for use in situations where no site is selected, such as the reader.
- *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -186,8 +218,53 @@ export function redirectLoggedOutToSignup( context, next ) {
 }
 
 /**
+ * Middleware to redirect users coming from My Jetpack when necessary
+ * @see pbNhbs-ag3-p2
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectMyJetpack( context, next ) {
+	const state = context.store.getState();
+	const product = getProductSlugFromContext( context );
+	const isJetpackProduct = isJetpackPlanSlug( product ) || isJetpackProductSlug( product );
+
+	if ( isJetpackProduct && ! isUserLoggedIn( state ) && isContextSourceMyJetpack( context ) ) {
+		// Redirect to the siteless checkout page
+		const redirectUrl = addQueryArgs(
+			{
+				connect_after_checkout: true,
+				from_site_slug: context.query.site,
+				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
+			},
+			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
+		);
+		page( redirectUrl );
+		return;
+	}
+
+	next();
+}
+
+/**
+ * Middleware to redirect a user to the Dashboard.
+ * @param   {Object}   context Context object
+ * @returns {void}
+ */
+export function redirectToDashboard( context ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const adminInterface = getSiteOption( state, site?.ID, 'wpcom_admin_interface' );
+	const redirectUrl =
+		adminInterface === 'wp-admin'
+			? getSiteAdminUrl( state, site?.ID )
+			: getSiteHomeUrl( state, site?.ID );
+
+	return navigate( redirectUrl );
+}
+
+/**
  * Middleware to redirect a user if they don't have the appropriate capability.
- *
  * @param   {string}   capability Capability to check
  * @returns {Function}            Middleware function
  */
@@ -198,7 +275,7 @@ export function redirectIfCurrentUserCannot( capability ) {
 		const currentUserCan = canCurrentUser( state, site?.ID, capability );
 
 		if ( site && ! currentUserCan ) {
-			return page.redirect( `/home/${ site.slug }` );
+			return redirectToDashboard( context );
 		}
 
 		next();
@@ -206,8 +283,62 @@ export function redirectIfCurrentUserCannot( capability ) {
 }
 
 /**
+ * Middleware to redirect a user if the site is a P2.
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectIfP2( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const isP2 = site?.options?.is_wpforteams_site;
+
+	if ( isP2 ) {
+		return redirectToDashboard( context );
+	}
+
+	next();
+}
+
+/**
+ * Middleware to redirect a user if the site is a pure Jetpack site.
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectIfJetpackNonAtomic( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
+	const isJetpackNonAtomic = ! isAtomicSite && !! site?.jetpack;
+
+	if ( isJetpackNonAtomic ) {
+		return redirectToDashboard( context );
+	}
+
+	next();
+}
+
+/**
+ * Middleware to redirect a user to /hosting-features if the site is not Atomic.
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectToHostingPromoIfNotAtomic( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
+
+	if ( ! isAtomicSite ) {
+		return page.redirect( `/hosting-features/${ site?.slug }` );
+	}
+
+	next();
+}
+
+/**
  * Removes the locale parameter from the path, and redirects logged-in users to it.
- *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -226,7 +357,6 @@ export function redirectWithoutLocaleParamIfLoggedIn( context, next ) {
 
 /**
  * Removes the locale parameter from the beginning of the path, and redirects logged-in users to it.
- *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}

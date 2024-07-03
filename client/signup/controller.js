@@ -1,22 +1,17 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isOnboardingGuidedFlow } from '@automattic/onboarding';
 import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients.js';
 import { login } from 'calypso/lib/paths';
-import { sectionify, addQueryArgs } from 'calypso/lib/route';
+import { sectionify } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
-import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors.js';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route.js';
-import getPreviousQuery from 'calypso/state/selectors/get-previous-query';
-import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
@@ -232,6 +227,21 @@ export default {
 			return;
 		}
 
+		store.set( 'signup-locale', localeFromParams );
+
+		const isOnboardingFlow = flowName === 'onboarding';
+
+		// See: 1113-gh-Automattic/experimentation-platform for details.
+		if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
+			// `isTokenLoaded` covers users who just logged in.
+			if ( wpcom.isTokenLoaded() || userLoggedIn ) {
+				const trailMapExperimentAssignment = await loadExperimentAssignment(
+					'calypso_signup_onboarding_trailmap_guided_flow'
+				);
+				initialContext.trailMapExperimentVariant = trailMapExperimentAssignment.variationName;
+			}
+		}
+
 		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
 			return page.redirect(
 				getValidPath( context.params, userLoggedIn ) +
@@ -239,33 +249,6 @@ export default {
 			);
 		}
 
-		store.set( 'signup-locale', localeFromParams );
-
-		/**
-		 * The experiment is only loaded on the onboarding flow
-		 * If user is logged out we load the experiment
-		 * If user is logged in we load the experiment only if the user has no sites
-		 * More info: pbxNRc-3xO-p2
-		 */
-		const isNewUser = ! getCurrentUserSiteCount( context.store.getState() );
-		initialContext.isSignupSurveyActive = false;
-		const isOnboardingFlow = flowName === 'onboarding';
-		if ( isOnboardingFlow && ( ! userLoggedIn || ( userLoggedIn && isNewUser ) ) ) {
-			const experiment = await loadExperimentAssignment(
-				'calypso_signup_onboarding_site_goals_survey_i2'
-			);
-			initialContext.isSignupSurveyActive =
-				experiment.variationName === 'treatment' ||
-				experiment.variationName === 'treatment_scrambled';
-		}
-
-		if (
-			config.isEnabled( 'onboarding/new-user-survey' ) ||
-			config.isEnabled( 'onboarding/new-user-survey-scrambled' )
-		) {
-			// Force display of the new user survey for the onboarding flow
-			initialContext.isSignupSurveyActive = true;
-		}
 		next();
 	},
 
@@ -290,14 +273,21 @@ export default {
 			initialContext = context;
 		}
 
-		const { query } = initialContext;
+		const { query, trailMapExperimentVariant } = initialContext;
 
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
 
-		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, {
+		const params = {
 			flow: flowName,
-		} );
+		};
+
+		// Clean me up after the experiment is over (see: pdDR7T-1xi-p2)
+		if ( isOnboardingGuidedFlow( flowName ) ) {
+			params.trailmap_variant = trailMapExperimentVariant || 'control';
+		}
+
+		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, params );
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
@@ -429,50 +419,5 @@ export default {
 					next();
 				} );
 		}
-	},
-
-	async redirectWooPasswordless( context, next ) {
-		if ( ! config.isEnabled( 'woo/passwordless' ) ) {
-			next();
-			return;
-		}
-
-		const state = context.store.getState();
-		const oauth2Client = getCurrentOAuth2Client( state );
-		const wccomFrom = getWccomFrom( state );
-		const isWCCOM = isWooOAuth2Client( oauth2Client ) && wccomFrom !== null;
-		const wooPasswordless = getWooPasswordless( state );
-
-		if ( ! isWCCOM ) {
-			// Only enable Woo passwordless for WooCommerce.com users
-			next();
-			return;
-		}
-
-		if ( wooPasswordless ) {
-			// Woo passwordless is already enabled via query parameter
-			next();
-			return;
-		}
-
-		const previousQuery = getPreviousQuery( state );
-
-		if ( ! previousQuery || ! previousQuery[ 'woo-passwordless' ] ) {
-			// If the previous page did not have the woo-passwordless query parameter, fetch the experiment assignment. Otherwise, skip the experiment assignment.
-
-			const experimentAssignment = await loadExperimentAssignment(
-				'calypso_wooexpress_signup_passwordless_registration_202404_v1'
-			);
-			if ( experimentAssignment.variationName !== 'treatment' ) {
-				next();
-				return;
-			}
-		}
-
-		// Add the woo-passwordless query parameter to the URL.
-		const currentRoute = getCurrentRoute( state );
-		const currentQuery = getCurrentQueryArguments( state );
-		const queryParams = { ...currentQuery, 'woo-passwordless': 'yes' };
-		return page.replace( addQueryArgs( queryParams, currentRoute ) );
 	},
 };

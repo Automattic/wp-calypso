@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { __experimentalUseFocusOutside as useFocusOutside } from '@wordpress/compose';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
@@ -106,7 +106,7 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 	return (
 		<div ref={ wrapperRef } { ...useFocusOutside( closeSearch ) }>
 			<div
-				className={ classnames( 'search-themes-card', {
+				className={ clsx( 'search-themes-card', {
 					'is-suggestions-open': isSearchOpen,
 				} ) }
 				role="presentation"

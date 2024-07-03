@@ -1,34 +1,55 @@
 import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
-	LayoutHeaderTitle as Title,
+	LayoutHeaderBreadcrumb as Breadcrumb,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_MARKETPLACE_CHECKOUT_LINK,
+	A4A_MARKETPLACE_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
+import ReferralToggle from '../common/referral-toggle';
 import { ShoppingCartContext } from '../context';
+import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import ProductListing from './product-listing';
-import type { AssignLicenseProps } from '../types';
+import ProductNavigation from './product-navigation';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
-export default function ProductsOverview( { siteId, suggestedProduct }: AssignLicenseProps ) {
+type Props = {
+	siteId?: string;
+	suggestedProduct?: string;
+	productBrand: string;
+};
+
+function ProductsOverview( { siteId, suggestedProduct, productBrand }: Props ) {
 	const translate = useTranslate();
 
-	const { selectedCartItems, setSelectedCartItems, onRemoveCartItem } = useShoppingCart();
-
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
+
+	const {
+		selectedCartItems,
+		setSelectedCartItems,
+		onRemoveCartItem,
+		showCart,
+		setShowCart,
+		toggleCart,
+	} = useShoppingCart();
+
+	const { isLoading } = useProductsQuery();
 
 	const sites = useSelector( getSites );
 
@@ -41,21 +62,49 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 		}
 	}, [ siteId, sites ] );
 
+	useEffect( () => {
+		if ( window.location.hash && ! isLoading ) {
+			const target = window.location.hash.replace( '#', '' );
+			const element = document.getElementById( target );
+
+			if ( element ) {
+				element.scrollIntoView( {
+					behavior: 'smooth',
+					block: 'start',
+				} );
+			}
+		}
+	}, [ isLoading ] );
+
 	return (
 		<Layout
-			className={ classNames( 'products-overview' ) }
+			className={ clsx( 'products-overview' ) }
 			title={ translate( 'Product Marketplace' ) }
 			wide
 			withBorder
+			compact
 		>
-			<LayoutTop>
+			<LayoutTop withNavigation>
 				<LayoutHeader showStickyContent={ showStickyContent }>
-					<Title>{ translate( 'Marketplace' ) } </Title>
+					<Breadcrumb
+						items={ [
+							{
+								label: translate( 'Marketplace' ),
+								href: A4A_MARKETPLACE_LINK,
+							},
+							{
+								label: translate( 'Products' ),
+							},
+						] }
+					/>
 
 					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
-
+						<ReferralToggle />
 						<ShoppingCart
+							showCart={ showCart }
+							setShowCart={ setShowCart }
+							toggleCart={ toggleCart }
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
 							onCheckout={ () => {
@@ -64,13 +113,21 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 						/>
 					</Actions>
 				</LayoutHeader>
+
+				<ProductNavigation selectedTab={ productBrand } />
 			</LayoutTop>
 
 			<LayoutBody>
 				<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
-					<ProductListing selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+					<ProductListing
+						selectedSite={ selectedSite }
+						suggestedProduct={ suggestedProduct }
+						productBrand={ productBrand }
+					/>
 				</ShoppingCartContext.Provider>
 			</LayoutBody>
 		</Layout>
 	);
 }
+
+export default withMarketplaceType( ProductsOverview );

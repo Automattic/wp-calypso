@@ -1,6 +1,7 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -28,6 +29,25 @@ const ProductionCard = styled( Card )( {
 	paddingTop: '0',
 	backgroundImage: `url(${ dividerPattern })`,
 	backgroundRepeat: 'repeat-x',
+
+	'&.is-borderless': {
+		boxShadow: 'none',
+	},
+
+	'> .gridicon': {
+		display: 'inline-block',
+		marginInlineEnd: '16px',
+		marginBottom: '16px',
+		verticalAlign: 'middle',
+	},
+
+	'> .card-heading': {
+		display: 'inline-block',
+		marginTop: 0,
+		marginBottom: '16px',
+		verticalAlign: 'middle',
+		lineHeight: '32px',
+	},
 } );
 
 const ProductionCardIcon = styled( Gridicon )( {
@@ -51,12 +71,13 @@ const SyncActionsContainer = styled( ActionButtons )( {
 } );
 
 type CardProps = {
-	disabled: boolean;
+	disabled?: boolean;
 	siteId: number;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
+	isBorderless?: boolean;
 };
 
-function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps ) {
+function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless }: CardProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ syncError, setSyncError ] = useState< string | null >( null );
@@ -140,7 +161,15 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				<ActionButtons>
 					<Button
 						primary
-						onClick={ () => navigate( `/hosting-config/${ urlToSlug( productionSite.url ) }` ) }
+						onClick={ () => {
+							navigate(
+								`/overview/${ urlToSlug( productionSite.url ) }?search=${ urlToSlug(
+									productionSite.url
+								) }`,
+								false,
+								true
+							);
+						} }
 						disabled={ disabled || isSyncInProgress }
 					>
 						<span>{ __( 'Switch to production site' ) }</span>
@@ -176,8 +205,9 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 			)
 		);
 	}
+
 	return (
-		<ProductionCard className="staging-site-card">
+		<ProductionCard className={ clsx( 'staging-site-card', { 'is-borderless': isBorderless } ) }>
 			{
 				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
 				<ProductionCardIcon icon="science" size={ 32 } />

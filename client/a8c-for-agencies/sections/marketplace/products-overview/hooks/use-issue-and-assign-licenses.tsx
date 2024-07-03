@@ -1,10 +1,11 @@
 import page from '@automattic/calypso-router';
-import { getQueryArg } from '@wordpress/url';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import {
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
+	A4A_SITES_LINK_NEEDS_SETUP,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { useDispatch } from 'calypso/state';
@@ -33,15 +34,17 @@ const useGetLicenseIssuedMessage = () => {
 			}
 
 			// Only one individual license; let's be more specific
-			if ( licenses.length === 1 && ( licenses[ 0 ].quantity ?? 1 ) === 1 ) {
+			if ( licenses.length === 1 ) {
 				const productName =
 					products?.data?.find?.( ( p ) => p.slug === licenses[ 0 ].slug )?.name ?? '';
 				return translate(
 					'Thanks for your purchase! Below you can view and assign your new {{strong}}%(productName)s{{/strong}} license to a website.',
+					'Thanks for your purchase! Below you can view and assign your new {{strong}}%(productName)s{{/strong}} licenses to a website.',
 					{
 						args: {
 							productName,
 						},
+						count: licenses[ 0 ].licenses.length ?? 1,
 						components: {
 							strong: <strong />,
 						},
@@ -102,7 +105,7 @@ function useIssueAndAssignLicenses(
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_multiple_licenses_issued', {
 					products: issuedLicenses
-						.map( ( license ) => `${ license.slug }:${ license.quantity ?? 1 }` )
+						.map( ( license ) => `${ license.slug }:${ license.licenses.length ?? 1 }` )
 						.join( ',' ),
 				} )
 			);
@@ -110,7 +113,9 @@ function useIssueAndAssignLicenses(
 			// We have issued the licenses successfully so we can now call onSuccess callback regardless if it was able to assign it.
 			options.onSuccess?.();
 
-			const issuedKeys = issuedLicenses.map( ( { license_key } ) => license_key );
+			const issuedKeys = issuedLicenses
+				.map( ( item ) => item.licenses.map( ( lic ) => lic.license_key ) )
+				.flat();
 
 			// TODO: Move dispatch events and redirects outside this function
 			//
@@ -118,10 +123,23 @@ function useIssueAndAssignLicenses(
 			// then, redirect to somewhere more appropriate
 			const selectedSiteId = selectedSite?.ID;
 			if ( ! selectedSiteId ) {
-				const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
-				dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
+				const wpcomPlan = issuedLicenses.find(
+					( license ) => license.slug?.startsWith( 'wpcom-hosting' )
+				);
+				const hasPurchaseWPCOMPlan = !! wpcomPlan;
 
-				page.redirect( A4A_LICENSES_LINK );
+				if ( ! hasPurchaseWPCOMPlan ) {
+					const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
+					dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
+				}
+
+				page.redirect(
+					hasPurchaseWPCOMPlan
+						? addQueryArgs( A4A_SITES_LINK_NEEDS_SETUP, {
+								wpcom_creator_purchased: wpcomPlan.slug,
+						  } )
+						: A4A_LICENSES_LINK
+				);
 				return;
 			}
 

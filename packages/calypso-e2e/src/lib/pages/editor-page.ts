@@ -5,7 +5,6 @@ import envVariables from '../../env-variables';
 import {
 	EditorComponent,
 	EditorPublishPanelComponent,
-	EditorNavSidebarComponent,
 	EditorToolbarComponent,
 	EditorSettingsSidebarComponent,
 	EditorGutenbergComponent,
@@ -51,7 +50,6 @@ export class EditorPage {
 	private page: Page;
 	private editor: EditorComponent;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
-	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	private editorGutenbergComponent: EditorGutenbergComponent;
@@ -78,7 +76,6 @@ export class EditorPage {
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
 		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
 		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
 		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
@@ -195,12 +192,10 @@ export class EditorPage {
 	 * This method will attempt to close the following panels:
 	 * 	- Publish Panel (including pre-publish checklist)
 	 * 	- Editor Settings Panel
-	 * 	- Editor Navigation Sidebar
 	 */
 	async closeAllPanels(): Promise< void > {
 		await Promise.allSettled( [
 			this.editorPublishPanelComponent.closePanel(),
-			this.editorToolbarComponent.closeNavSidebar(),
 			this.editorToolbarComponent.closeSettings(),
 		] );
 	}
@@ -580,7 +575,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
 
-		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
+		await this.editorSettingsSidebarComponent.expandSummary( 'Summary' );
 		await this.editorSettingsSidebarComponent.openVisibilityOptions();
 		await this.editorSettingsSidebarComponent.selectVisibility( visibility, {
 			password: password,
@@ -637,7 +632,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
-		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
+		await this.editorSettingsSidebarComponent.expandSummary( 'Summary' );
 		await this.editorSettingsSidebarComponent.enterUrlSlug( slug );
 	}
 
@@ -699,19 +694,14 @@ export class EditorPage {
 		visit = false,
 		timeout,
 	}: { visit?: boolean; timeout?: number } = {} ): Promise< URL > {
-		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
 		const actionsArray = [];
+		await this.editorToolbarComponent.waitForPublishButton();
 
 		// Every publish action requires at least one click on the EditorToolbarComponent.
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
 
-		// Determine whether the post/page is yet to be published or the post/page
-		// is merely being updated.
-		// If not yet published, a second click on the EditorPublishPanelComponent
-		// is added to the array of actions.
-		if ( publishButtonText.toLowerCase() !== 'update' ) {
-			actionsArray.push( this.editorPublishPanelComponent.publish() );
-		}
+		// Trigger a secondary/confirmation click if needed
+		actionsArray.push( this.editorPublishPanelComponent.publish() );
 
 		// Resolve the promises.
 		const [ response ] = await Promise.all( [
@@ -758,7 +748,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
 
-		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
+		await this.editorSettingsSidebarComponent.expandSummary( 'Summary' );
 		await this.editorSettingsSidebarComponent.openSchedule();
 		await this.editorSettingsSidebarComponent.setScheduleDetails( date );
 		await this.editorSettingsSidebarComponent.closeSchedule();
@@ -769,12 +759,25 @@ export class EditorPage {
 	 */
 	async unpublish(): Promise< void > {
 		const editorParent = await this.editor.parent();
-
 		await this.editorToolbarComponent.switchToDraft();
+
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-		await editorParent.getByRole( 'button' ).getByText( 'OK' ).click();
+		// Saves the draft
+		await Promise.race( [ this.editorToolbarComponent.clickPublish(), this.confirmUnpublish() ] );
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
 		await editorParent.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
+	}
+
+	/**
+	 * Confirms the unpublish action in some views
+	 */
+	async confirmUnpublish(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const okButtonLocator = editorParent.getByRole( 'button' ).getByText( 'OK' );
+
+		if ( await okButtonLocator.count() ) {
+			okButtonLocator.click();
+		}
 	}
 
 	/**
@@ -930,10 +933,7 @@ export class EditorPage {
 			const navbarComponent = new NavbarComponent( this.page );
 			actions.push( navbarComponent.clickMySites() );
 		} else {
-			actions.push(
-				this.editorToolbarComponent.openNavSidebar(),
-				this.editorNavSidebarComponent.exitEditor()
-			);
+			actions.push( this.editorToolbarComponent.closeEditor() );
 		}
 
 		// Perform the actions and resolve promises.

@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { SVG, Path } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { createElement, ReactNode, useEffect, useRef } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -136,7 +136,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 
 	return (
 		<div
-			className={ classNames( 'jetpack-product-card', className, {
+			className={ clsx( 'jetpack-product-card', className, {
 				'is-disabled': isDisabled,
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,

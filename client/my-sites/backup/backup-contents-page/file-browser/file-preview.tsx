@@ -1,7 +1,9 @@
 import { useEffect, useState } from '@wordpress/element';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useCallback } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { FileBrowserItem } from './types';
 import { useBackupFileQuery } from './use-backup-file-query';
 
@@ -36,6 +38,13 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 		shouldPreviewFile
 	);
 
+	const dispatch = useDispatch();
+
+	const handleShowPreviewClick = useCallback( () => {
+		setShowSensitivePreview( true );
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_browser_preview_file_sensitive_click' ) );
+	}, [ dispatch ] );
+
 	useEffect( () => {
 		if ( isSuccess && data && data.url && isTextContent ) {
 			window
@@ -49,7 +58,7 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 		return (
 			<div className="file-card__preview-sensitive">
 				<p>{ translate( 'This preview is hidden because it contains sensitive information.' ) }</p>
-				<button className="button button-small" onClick={ () => setShowSensitivePreview( true ) }>
+				<button className="button button-small" onClick={ handleShowPreviewClick }>
 					{ translate( 'Show preview' ) }
 				</button>
 			</div>
@@ -91,12 +100,17 @@ const FilePreview: FunctionComponent< FilePreviewProps > = ( { item, siteId } ) 
 				break;
 		}
 
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_browser_preview_file', {
+				file_type: item.type,
+			} )
+		);
 		return content;
 	};
 
 	const isLoading = isTextContent ? ! fileContent && ! isError : isInitialLoading;
 	const isReady = isTextContent ? fileContent : isSuccess;
-	const classNames = classnames( 'file-card__preview', item.type, {
+	const classNames = clsx( 'file-card__preview', item.type, {
 		'file-card__preview--is-loading': isLoading,
 	} );
 

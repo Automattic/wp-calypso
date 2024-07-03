@@ -1,77 +1,88 @@
-import config from '@automattic/calypso-config';
-import { useCallback } from 'react';
-import DocumentHead from 'calypso/components/data/document-head';
+import { useCallback, useEffect } from 'react';
 import Main from 'calypso/components/main';
-import SurveyContainer from 'calypso/components/survey-container';
-import { useSurveyContext } from 'calypso/components/survey-container/context';
-import { Question } from 'calypso/components/survey-container/types';
-import {
-	useCachedAnswers,
-	useSaveAnswersMutation,
-	useSurveyStructureQuery,
-} from 'calypso/data/segmentaton-survey';
-import SegmentationSurveyProvider from './provider';
-import type { Step } from '../../types';
+import SegmentationSurvey from 'calypso/components/segmentation-survey';
+import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
+import { useHash } from 'calypso/landing/stepper/hooks/use-hash';
+import type { ProvidedDependencies, Step } from '../../types';
 import './style.scss';
 
-const SURVEY_KEY = 'entrepreneur-trial';
+export const ENTREPRENEUR_TRIAL_SURVEY_KEY = 'entrepreneur-trial';
+const WHAT_WOULD_YOU_LIKE_TO_DO_QUESTION_KEY = 'what-would-you-like-to-do';
+const MIGRATE_MY_STORE_ANSWER_KEY = 'migrate-my-store';
 
-const SegmentationSurveyDocumentHead = () => {
-	const { currentQuestion } = useSurveyContext();
+type NavigationDecision = {
+	proceedWithNavigation: boolean;
+	providedDependencies: ProvidedDependencies;
+};
 
-	if ( ! currentQuestion ) {
-		return null;
-	}
+const checkMigrationAnswer = ( questionKey: string, answerKeys: string[] ): boolean =>
+	questionKey === WHAT_WOULD_YOU_LIKE_TO_DO_QUESTION_KEY &&
+	answerKeys.includes( MIGRATE_MY_STORE_ANSWER_KEY );
 
-	return <DocumentHead title={ currentQuestion.headerText } />;
+const useShouldNavigate = () => {
+	const hash = useHash();
+
+	const shouldNavigate = useCallback(
+		( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ): NavigationDecision => {
+			const isMigrationFlow = checkMigrationAnswer( questionKey, answerKeys );
+
+			const proceedWithNavigation = isLastQuestion || isMigrationFlow;
+			const providedDependencies: ProvidedDependencies = { isMigrationFlow };
+
+			if ( proceedWithNavigation ) {
+				const lastQuestionPath = hash;
+
+				if ( lastQuestionPath ) {
+					providedDependencies.lastQuestionPath = lastQuestionPath;
+				}
+			}
+
+			return {
+				proceedWithNavigation,
+				providedDependencies,
+			};
+		},
+		[ hash ]
+	);
+
+	return { shouldNavigate };
 };
 
 const SegmentationSurveyStep: Step = ( { navigation } ) => {
-	const { data: questions } = useSurveyStructureQuery( { surveyKey: SURVEY_KEY } );
-	const { mutate } = useSaveAnswersMutation( { surveyKey: SURVEY_KEY } );
-	const { answers, setAnswers, clearAnswers } = useCachedAnswers( SURVEY_KEY );
-
-	const onChangeAnswer = useCallback(
-		( questionKey: string, value: string[] ) => {
-			const newAnswers = { ...answers, [ questionKey ]: value };
-			setAnswers( newAnswers );
-		},
-		[ answers, setAnswers ]
+	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents(
+		ENTREPRENEUR_TRIAL_SURVEY_KEY
 	);
+	const { shouldNavigate } = useShouldNavigate();
 
-	const onSubmitQuestion = useCallback(
-		( currentQuestion: Question ) => {
-			mutate( {
-				questionKey: currentQuestion.key,
-				answerKeys: answers[ currentQuestion.key ] || [],
-			} );
+	// Record Tracks start event on component mount
+	useEffect( () => {
+		recordStartEvent();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
-			if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
-				clearAnswers();
-			}
-		},
-		[ answers, clearAnswers, mutate, questions ]
-	);
+	const handleNext = ( questionKey: string, answerKeys: string[], isLastQuestion?: boolean ) => {
+		const { proceedWithNavigation, providedDependencies } = shouldNavigate(
+			questionKey,
+			answerKeys,
+			isLastQuestion
+		);
 
-	if ( ! config.isEnabled( 'ecommerce-segmentation-survey' ) ) {
-		return null;
-	}
+		if ( proceedWithNavigation ) {
+			recordCompleteEvent();
+			navigation.submit?.( providedDependencies );
+		}
+	};
 
 	return (
 		<Main className="segmentation-survey-step">
-			<SegmentationSurveyProvider
-				navigation={ navigation }
-				onSubmitQuestion={ onSubmitQuestion }
-				questions={ questions }
-			>
-				<SegmentationSurveyDocumentHead />
-
-				<SurveyContainer
-					answers={ answers }
-					onChange={ onChangeAnswer }
-					recordTracksEvent={ () => undefined }
-				/>
-			</SegmentationSurveyProvider>
+			<SegmentationSurvey
+				surveyKey={ ENTREPRENEUR_TRIAL_SURVEY_KEY }
+				onBack={ navigation.goBack }
+				onNext={ handleNext }
+				headerAlign="left"
+				clearAnswersOnLastQuestion={ false }
+				skipNextNavigation={ checkMigrationAnswer }
+			/>
 		</Main>
 	);
 };

@@ -8,6 +8,7 @@ import LinkCard from 'calypso/components/link-card';
 import Section, { SectionContainer } from 'calypso/components/section';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/route';
+import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -147,61 +148,60 @@ const EducationFooter = () => {
 
 	return (
 		<EducationFooterContainer>
-			<Section
-				header={ __( 'Get started with plugins' ) }
-				subheader={ __( 'Our favorite how-to guides to get you started with plugins' ) }
-			>
-				<ThreeColumnContainer>
-					<LinkCard
-						external
-						target="_blank"
-						title={
-							<CardText color="var(--studio-gray-100)">
-								{ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
-							</CardText>
-						}
-						titleMarginBottom="16px"
-						cta={ <ReadMoreLink /> }
-						url={ localizeUrl(
-							'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
-						) }
-						border="var(--studio-gray-5)"
-						onClick={ () => onClickLinkCard( 'website_building' ) }
-					/>
-					<LinkCard
-						external
-						target="_blank"
-						title={
-							<CardText color="var(--studio-gray-100)">
-								{ __( 'How to Use WordPress Plugins: The Complete Beginner’s Guide' ) }
-							</CardText>
-						}
-						titleMarginBottom="16px"
-						cta={ <ReadMoreLink /> }
-						url={ localizeUrl(
-							'https://wordpress.com/go/website-building/how-to-use-wordpress-plugins/'
-						) }
-						border="var(--studio-gray-5)"
-						onClick={ () => onClickLinkCard( 'customization' ) }
-					/>
-					<LinkCard
-						external
-						target="_blank"
-						title={
-							<CardText color="var(--studio-gray-100)">
-								{ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
-							</CardText>
-						}
-						titleMarginBottom="16px"
-						cta={ <ReadMoreLink /> }
-						url={ localizeUrl(
-							'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
-						) }
-						border="var(--studio-gray-5)"
-						onClick={ () => onClickLinkCard( 'seo' ) }
-					/>
-				</ThreeColumnContainer>
-			</Section>
+			<PluginsResultsHeader
+				title={ __( 'Get started with plugins' ) }
+				subtitle={ __( 'Our favorite how-to guides to get you started with plugins' ) }
+			/>
+			<ThreeColumnContainer>
+				<LinkCard
+					external
+					target="_blank"
+					title={
+						<CardText color="var(--studio-gray-100)">
+							{ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
+						</CardText>
+					}
+					titleMarginBottom="16px"
+					cta={ <ReadMoreLink /> }
+					url={ localizeUrl(
+						'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
+					) }
+					border="var(--studio-gray-5)"
+					onClick={ () => onClickLinkCard( 'website_building' ) }
+				/>
+				<LinkCard
+					external
+					target="_blank"
+					title={
+						<CardText color="var(--studio-gray-100)">
+							{ __( 'How to Use WordPress Plugins: The Complete Beginner’s Guide' ) }
+						</CardText>
+					}
+					titleMarginBottom="16px"
+					cta={ <ReadMoreLink /> }
+					url={ localizeUrl(
+						'https://wordpress.com/go/website-building/how-to-use-wordpress-plugins/'
+					) }
+					border="var(--studio-gray-5)"
+					onClick={ () => onClickLinkCard( 'customization' ) }
+				/>
+				<LinkCard
+					external
+					target="_blank"
+					title={
+						<CardText color="var(--studio-gray-100)">
+							{ __( '17 Must-Have WordPress Plugins (Useful For All Sites)' ) }
+						</CardText>
+					}
+					titleMarginBottom="16px"
+					cta={ <ReadMoreLink /> }
+					url={ localizeUrl(
+						'https://wordpress.com/go/website-building/17-must-have-wordpress-plugins-useful-for-all-sites/'
+					) }
+					border="var(--studio-gray-5)"
+					onClick={ () => onClickLinkCard( 'seo' ) }
+				/>
+			</ThreeColumnContainer>
 		</EducationFooterContainer>
 	);
 };

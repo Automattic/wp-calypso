@@ -2,4 +2,10 @@
 	.components-popover {
 		z-index: z-index("root", ".categories__menu .components-popover");
 	}
+
+	&.is-logged-in {
+		.components-toolbar .components-button::before {
+			height: 38px;
+		}
+	}
 }

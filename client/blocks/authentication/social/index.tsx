@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
@@ -85,7 +85,7 @@ const SocialAuthenticationForm = ( {
 	return (
 		! isSignupOnDesktop && (
 			<Card
-				className={ classNames( 'auth-form__social', isLogin ? 'is-login' : 'is-signup', {
+				className={ clsx( 'auth-form__social', isLogin ? 'is-login' : 'is-signup', {
 					'is-social-first': isSocialFirst,
 				} ) }
 			>
@@ -126,7 +126,7 @@ const SocialAuthenticationForm = ( {
 							// If we are on signup, attach the query string to the state so we can pass it back to the server to show the correct UI.
 							// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
 							queryString={
-								isWpccFlow( flowName ) && ! isLogin ? window?.location?.search?.slice( 1 ) : null
+								isWpccFlow( flowName ) && ! isLogin ? window?.location?.search?.slice( 1 ) : ''
 							}
 						/>
 

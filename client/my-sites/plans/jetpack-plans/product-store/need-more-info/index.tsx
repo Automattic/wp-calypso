@@ -1,6 +1,7 @@
-import { localizeUrl, useLocale } from '@automattic/i18n-utils';
+import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/sections/manage/pricing/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import MoreInfoBox from '../../more-info-box';
 
@@ -24,7 +25,6 @@ const usePlanComparisonUrl = () => {
 
 export const NeedMoreInfo: React.FC = () => {
 	const translate = useTranslate();
-	const locale = useLocale();
 
 	const planComparisonUrl = usePlanComparisonUrl();
 
@@ -40,8 +40,11 @@ export const NeedMoreInfo: React.FC = () => {
 					trackEventName="calypso_plans_comparison_table_link_click"
 				/>
 				<MoreInfoBox
-					buttonLabel={ translate( 'Explore bulk pricing' ) }
-					buttonLink={ localizeUrl( 'https://cloud.jetpack.com/manage/pricing', locale ) }
+					buttonLabel={ translate( 'Jetpack for Agencies' ) }
+					// The JETPACK_COM_A4A_LANDING_PAGE is only available in English at this time, so we
+					// won't worry about localizing the link for now. Although we may want to localize it
+					// in the future when/if the page gets translated & posted to other languages/locales.
+					buttonLink={ JETPACK_COM_A4A_LANDING_PAGE }
 					trackEventName="calypso_jpcom_agencies_page_more_info_button_link_click"
 				/>
 			</div>

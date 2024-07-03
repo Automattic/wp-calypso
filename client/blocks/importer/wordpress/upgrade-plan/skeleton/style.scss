@@ -1,0 +1,28 @@
+@import "~@automattic/color-studio/dist/color-variables";
+@import "~@wordpress/base-styles/colors";
+
+@keyframes import-upgrade-plan-skeleton__animation {
+	0% {
+		opacity: 0.5;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0.5;
+	}
+}
+
+.import-upgrade-plan-skeleton {
+	color: $studio-gray-0;
+	background-color: $studio-gray-5;
+	width: 100%;
+	border-radius: 4px;
+	animation: import-upgrade-plan-skeleton__animation 1.6s ease-in-out infinite;
+
+	&::after {
+		content: "";
+	}
+}

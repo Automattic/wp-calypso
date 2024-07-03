@@ -10,12 +10,13 @@ import DesignPicker, {
 } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { THEME_TIER_PARTNER, THEME_TIER_PREMIUM } from 'calypso/components/theme-tier/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
@@ -104,8 +105,9 @@ export default function DesignPickerStep( props ) {
 	const getEventPropsByDesign = ( design ) => ( {
 		theme: design?.stylesheet ?? `pub/${ design?.theme }`,
 		template: design?.template,
-		is_premium: design?.is_premium,
-		is_externally_managed: design?.is_externally_managed,
+		tier: design?.design_tier,
+		is_premium: design?.design_tier === THEME_TIER_PREMIUM,
+		is_externally_managed: design?.design_tier === THEME_TIER_PARTNER,
 		flow: flowName,
 		intent: dependencies.intent,
 	} );
@@ -183,7 +185,7 @@ export default function DesignPickerStep( props ) {
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
 					onUpgrade={ upgradePlanFromDesignPicker }
-					className={ classnames( {
+					className={ clsx( {
 						'design-picker-step__has-categories': showDesignPickerCategories,
 					} ) }
 					highResThumbnails
@@ -285,7 +287,7 @@ export default function DesignPickerStep( props ) {
 	return (
 		<StepWrapper
 			{ ...props }
-			className={ classnames( {
+			className={ clsx( {
 				'design-picker__has-categories': showDesignPickerCategories,
 				'design-picker__hide-category-column': useDIFMThemes || 'sell' === intent,
 			} ) }

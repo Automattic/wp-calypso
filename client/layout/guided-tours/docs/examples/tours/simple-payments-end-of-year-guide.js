@@ -187,7 +187,7 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 					<ButtonRow>
 						<Quit primary>{ translate( 'Got it, thanks!' ) }</Quit>
 					</ButtonRow>
-					<Link href="https://wordpress.com/support/menus/">
+					<Link href={ localizeUrl( 'https://wordpress.com/support/menus/' ) }>
 						{ translate( 'Learn about managing menus' ) }
 					</Link>
 				</Fragment>

@@ -162,17 +162,8 @@ $mobile-card-max-width: 440px;
 		}
 
 		.plan-features-2023-grid__table-item {
-			&.plan-features-2023-grid__storage {
+			.plans-grid-next-plan-storage {
 				padding-top: 0;
-			}
-		}
-
-		.components-custom-select-control {
-			.storage-add-on-dropdown-option__title {
-				font-size: 0.875rem;
-			}
-			.components-custom-select-control__button {
-				height: 40px;
 			}
 		}
 	}
@@ -212,14 +203,6 @@ $mobile-card-max-width: 440px;
 
 	&.has-4-cols {
 		max-width: $table-cell-max-width * 4;
-	}
-
-	.components-custom-select-control__label {
-		color: var(--studio-gray-100);
-	}
-
-	.components-custom-select-control__menu {
-		margin-left: 0;
 	}
 }
 
@@ -326,12 +309,6 @@ $mobile-card-max-width: 440px;
 			padding-bottom: 23px;
 		}
 
-		&.plan-features-2023-grid__storage {
-			padding-top: 0;
-			padding-bottom: 32px;
-			width: 205px;
-		}
-
 		.plan-features-2023-grid__header-title {
 			margin-top: 24px;
 		}
@@ -347,6 +324,27 @@ $mobile-card-max-width: 440px;
 
 		.plan-features-2023-gridrison__actions {
 			width: 200px;
+		}
+	}
+}
+
+.plans-grid-next-features-grid__feature-group-title {
+	font-weight: 600;
+	color: var(--studio-gray-80);
+}
+
+.plans-grid-next-features-grid__feature-group-row {
+	> .plan-features-2023-grid__table-item {
+		padding-top: 24px;
+	}
+
+	/**
+	 * This is only relevant to match the styling for the Enterprise plan's parter logos,
+	 * which should probably be cleaned-up/refactored instead
+	 */
+	&.is-first-feature-group-row > .plan-features-2023-grid__table-item {
+		@include plans-grid-medium-large {
+			padding-top: 14px;
 		}
 	}
 }
@@ -382,6 +380,13 @@ $mobile-card-max-width: 440px;
 
 		.plan-features-2023-grid__item-title {
 			text-decoration: line-through;
+		}
+	}
+
+	.plan-features-2023-grid__item-sub-feature-list {
+		margin-bottom: 0;
+		& > li {
+			margin-top: 8px;
 		}
 	}
 }
@@ -428,19 +433,6 @@ $mobile-card-max-width: 440px;
 			margin: 0;
 			top: 14px;
 		}
-	}
-}
-
-.storage-add-on-dropdown__offset-price-container {
-	width: 100%;
-	margin-top: 8px;
-	text-align: left;
-
-	.storage-add-on-dropdown__offset-price {
-		color: var(--studio-green-50);
-
-		font-size: 0.75rem;
-		font-weight: 500;
 	}
 }
 
@@ -597,39 +589,14 @@ $mobile-card-max-width: 440px;
 			padding: 24px 0 6px 20px;
 		}
 
-		&.plan-features-2023-grid__storage {
+		&.plans-grid-next-plan-storage {
 			padding: 24px 20px 38px 20px;
-
-			.plan-features-2023-grid__storage-title {
-				color: var(--studio-gray-100);
-				font-weight: 500;
-				/* stylelint-disable-next-line */
-				font-size: 0.688rem;
-				line-height: 16px;
-				margin-bottom: 10px;
-				text-transform: uppercase;
-			}
-
-			.plan-features-2023-grid__storage-buttons {
-				background: #f2f2f2;
-				/* stylelint-disable-next-line */
-				border-radius: 5px;
-				padding: 4px 0;
-				width: fit-content;
-				text-align: center;
-				font-size: $font-body-extra-small;
-				font-weight: 400;
-				line-height: 20px;
-				color: var(--studio-gray-90);
-				min-width: 64px;
-			}
 		}
 
 		.plan-features-2023-grid__common-title {
 			font-weight: 600;
 			font-size: $font-body-small;
 			padding: 0 20px;
-			margin-bottom: 12px;
 
 			&.is-personal-plan {
 				color: var(--studio-blue-60);
@@ -674,43 +641,6 @@ $mobile-card-max-width: 440px;
 			color: var(--studio-orange-40);
 		}
 	}
-
-	// test
-
-	.components-custom-select-control {
-		line-height: 0px;
-		font-size: 0.75rem;
-
-		.storage-add-on-dropdown-option {
-			display: inline-block;
-			line-height: 20px;
-			min-height: 30px;
-			padding-top: 5px;
-		}
-
-		.storage-add-on-dropdown-option__title {
-			color: var(--color-text);
-			font-weight: 500;
-		}
-
-		.storage-add-on-dropdown-option__price,
-		.storage-add-on-dropdown-option__per-month {
-			display: inline-block;
-
-			font-size: 0.75rem;
-			font-weight: 500;
-		}
-
-		.storage-add-on-dropdown-option__price {
-			margin-left: 4px;
-		}
-
-		.components-custom-select-control__item {
-			&.is-highlighted {
-				background-color: var(--studio-gray-0);
-			}
-		}
-	}
 }
 
 .plans-grid-next-comparison-grid {
@@ -721,10 +651,6 @@ $mobile-card-max-width: 440px;
 		@include plans-grid-medium-large {
 			padding-top: 43px; // enough to cover `plans-grid__popular-badge` repositioning (top: -43px)
 		}
-	}
-
-	.plan-comparison-grid__feature-group-row.is-storage-feature {
-		align-items: flex-start;
 	}
 
 	.plan-features-2023-gridrison__actions {
@@ -895,24 +821,6 @@ $mobile-card-max-width: 440px;
 		}
 	}
 
-	.plan-comparison-grid__feature-group-row-cell {
-		.components-custom-select-control {
-			width: 100%;
-
-			label {
-				display: none;
-			}
-		}
-
-		.components-custom-select-control__menu {
-			margin-left: 0;
-
-			li {
-				text-align: left;
-			}
-		}
-	}
-
 	.plan-comparison-grid__plan {
 		.gridicon {
 			display: none;
@@ -946,10 +854,17 @@ $mobile-card-max-width: 440px;
 			text-wrap: pretty;
 		}
 
-		&:not(.has-feature):not(.has-conditional-feature) {
+		&:not(.has-feature):not(.has-feature-label) {
 			.plan-comparison-grid__plan-title,
 			.plan-comparison-grid__plan-subtitle {
 				text-decoration: line-through;
+			}
+
+			&.hide-unsupported-feature {
+				.plan-comparison-grid__plan-title,
+				.plan-comparison-grid__plan-subtitle {
+					display: none;
+				}
 			}
 		}
 
@@ -1027,6 +942,170 @@ $mobile-card-max-width: 440px;
 			@include plans-grid-large {
 				font-size: $font-body-extra-small;
 				line-height: 16px;
+			}
+		}
+	}
+}
+
+/*********************************
+ * Storage Add-On Dropdown parts *
+ *********************************/
+
+.plans-grid-next-storage-feature-label__container {
+	display: flex;
+	gap: 5px;
+	flex-direction: column;
+	align-items: baseline;
+
+	&.is-row {
+		flex-direction: row;
+	}
+
+	/**
+	 * Comparison grid override
+	 * Always render as column/wrapped
+	 */
+	.plans-grid-next-comparison-grid & {
+		flex-direction: column;
+		align-items: center;
+	}
+}
+
+.plans-grid-next-storage-feature-label__offset-price {
+	color: var(--studio-green-50);
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+}
+
+.plans-grid-next-storage-dropdown__addon-offset-price-container {
+	width: 100%;
+	margin-top: 8px;
+	text-align: left;
+
+	.plans-grid-next-storage-dropdown__addon-offset-price {
+		color: var(--studio-green-50);
+		font-size: $font-body-extra-small;
+		font-weight: 500;
+	}
+}
+
+.plans-grid-next-storage-dropdown__option {
+	display: inline-block;
+	line-height: 20px;
+	min-height: 30px;
+	padding-top: 5px;
+}
+
+.plans-grid-next-storage-dropdown__option-title {
+	color: var(--color-text);
+	font-weight: 500;
+
+	.plans-grid-next-features-grid__mobile-plan-card & {
+		font-size: 0.875rem;
+	}
+}
+
+.plans-grid-next-storage-dropdown__option-price,
+.plans-grid-next-storage-dropdown__option-per-month {
+	display: inline-block;
+
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+
+.plans-grid-next-storage-dropdown__option-price {
+	margin-left: 4px;
+}
+
+.plans-grid-next-storage-feature-label__volume-badge {
+	background: #f2f2f2;
+	color: var(--studio-gray-90);
+	/* stylelint-disable-next-line */
+	border-radius: 5px;
+	padding: 4px 0;
+	text-align: center;
+	font-size: $font-body-extra-small;
+	font-weight: 400;
+	line-height: 20px;
+	width: fit-content;
+	min-width: 64px;
+
+	.plans-grid-next-comparison-grid & {
+		margin-top: 10px;
+		margin-left: auto;
+		margin-right: auto;
+
+		@include plans-grid-medium-large {
+			margin-top: 0;
+		}
+	}
+}
+
+.plans-grid-next-plan-storage {
+	width: 100%;
+
+	.plan-features-2023-grid__plan-spotlight & {
+		padding-top: 0;
+		padding-bottom: 32px;
+		max-width: $table-cell-max-width;
+	}
+
+	.plans-grid-next-comparison-grid & {
+		width: 100%;
+	}
+
+	/***********************************
+	 * Custom Select Control overrides *
+	 ***********************************/
+
+	.components-custom-select-control {
+		line-height: 0px;
+		font-size: 0.75rem;
+
+		/**************
+	     * 1. General *
+		 **************/
+
+		.components-custom-select-control__label {
+			color: var(--studio-gray-100);
+		}
+
+		.components-custom-select-control__menu {
+			margin-left: 0;
+			box-sizing: border-box;
+		}
+
+		.components-custom-select-control__item {
+			&.is-highlighted {
+				background-color: var(--studio-gray-0);
+			}
+		}
+
+		/*****************************
+		 * 2. Features Grid - mobile *
+		 *****************************/
+
+		.plans-grid-next-features-grid__mobile-plan-card & {
+			.components-custom-select-control__button {
+				height: 40px;
+			}
+		}
+
+		/**********************
+		 * 3. Comparison Grid *
+		 **********************/
+
+		.plans-grid-next-comparison-grid & {
+			width: 100%;
+			label {
+				display: none;
+			}
+
+			.components-custom-select-control__menu {
+				margin-left: 0;
+				li {
+					text-align: left;
+				}
 			}
 		}
 	}

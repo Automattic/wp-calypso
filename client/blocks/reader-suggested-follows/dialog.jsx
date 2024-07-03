@@ -28,12 +28,12 @@ const ReaderSuggestedFollowsDialog = ( { onClose, siteId, postId, isVisible } ) 
 	return (
 		<Dialog
 			additionalClassNames="reader-recommended-follows-dialog"
-			isBackdropVisible={ true }
+			isBackdropVisible
 			isVisible={ isVisible }
 			onClose={ onClose }
-			showCloseIcon={ true }
+			showCloseIcon
 			label={ translate( 'Suggested sites' ) }
-			shouldCloseOnEsc={ true }
+			shouldCloseOnEsc
 		>
 			<div className="reader-recommended-follows-dialog__content">
 				<div className="reader-recommended-follows-dialog__header">

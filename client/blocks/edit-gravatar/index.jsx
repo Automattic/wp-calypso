@@ -1,6 +1,6 @@
 import path from 'path';
 import { Dialog, Gridicon, Spinner } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -123,7 +123,7 @@ export class EditGravatar extends Component {
 	renderImageEditor() {
 		if ( this.state.isEditingImage ) {
 			return (
-				<Dialog additionalClassNames="edit-gravatar-modal" isVisible={ true }>
+				<Dialog additionalClassNames="edit-gravatar-modal" isVisible>
 					<ImageEditor
 						allowedAspectRatios={ [ AspectRatios.ASPECT_1X1 ] }
 						media={ { src: this.state.image } }
@@ -198,7 +198,7 @@ export class EditGravatar extends Component {
 											href={ gravatarLink }
 											target="_blank"
 											rel="noopener noreferrer"
-											icon={ true }
+											icon
 										/>
 									),
 									p: <p />,
@@ -214,7 +214,7 @@ export class EditGravatar extends Component {
 	render() {
 		const { isGravatarProfileHidden, isUploading, translate, user, additionalUploadHtml } =
 			this.props;
-		const gravatarLink = `https://gravatar.com/profile`;
+		const gravatarLink = 'https://gravatar.com';
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
@@ -235,7 +235,7 @@ export class EditGravatar extends Component {
 		/* eslint-disable jsx-a11y/no-static-element-interactions */
 		return (
 			<div
-				className={ classnames(
+				className={ clsx(
 					'edit-gravatar',
 					{ 'is-unverified': ! user.email_verified },
 					{ 'is-uploading': isUploading }
@@ -245,7 +245,7 @@ export class EditGravatar extends Component {
 					<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
 						<div
 							data-tip-target="edit-gravatar"
-							className={ classnames( 'edit-gravatar__image-container', {
+							className={ clsx( 'edit-gravatar__image-container', {
 								'is-uploading': isUploading,
 							} ) }
 						>
@@ -288,7 +288,7 @@ export class EditGravatar extends Component {
 											href={ gravatarLink }
 											target="_blank"
 											rel="noopener noreferrer"
-											icon={ true }
+											icon
 										/>
 									),
 									p: <p />,

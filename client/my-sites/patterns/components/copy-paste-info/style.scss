@@ -21,7 +21,7 @@
 	padding: 32px 24px 48px;
 	scroll-snap-align: start;
 
-	@media ( max-width: $break-wide ) {
+	@media (max-width: $break-xlarge) {
 		padding: 32px 24px 24px;
 	}
 

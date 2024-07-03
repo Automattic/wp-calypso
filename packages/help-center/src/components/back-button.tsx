@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { Icon, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles.scss';
 
@@ -11,7 +11,7 @@ export const BackButton = ( { onClick, backToRoot = false, className }: Props ) 
 	const { __ } = useI18n();
 	const location = useLocation();
 	const navigate = useNavigate();
-	const buttonClassName = classNames( 'back-button__help-center', className );
+	const buttonClassName = clsx( 'back-button__help-center', className );
 
 	function defaultOnClick() {
 		if ( backToRoot ) {
@@ -24,8 +24,14 @@ export const BackButton = ( { onClick, backToRoot = false, className }: Props ) 
 			navigate( -1 );
 		}
 	}
+
 	return (
-		<Button className={ buttonClassName } onClick={ onClick || defaultOnClick }>
+		<Button
+			className={ buttonClassName }
+			/* eslint-disable-next-line jsx-a11y/no-autofocus */
+			autoFocus
+			onClick={ onClick || defaultOnClick }
+		>
 			<Icon icon={ chevronLeft } size={ 18 } />
 			{ __( 'Back', __i18n_text_domain__ ) }
 		</Button>

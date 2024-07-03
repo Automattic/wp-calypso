@@ -1,5 +1,5 @@
 import { Popover } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import SiteSelector from 'calypso/components/site-selector';
@@ -42,14 +42,14 @@ class SitesPopover extends Component {
 				showAddNewSite={ false }
 				indicator={ false }
 				autoFocus={ ! hasTouch() } // eslint-disable-line jsx-a11y/no-autofocus
-				groups={ true }
+				groups
 				onClose={ this.props.onClose }
 			/>
 		);
 	}
 
 	render() {
-		const classes = classnames(
+		const classes = clsx(
 			this.props.className,
 			'popover sites-popover',
 			this.props.header && 'has-header'

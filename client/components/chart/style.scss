@@ -228,7 +228,7 @@ $y-axis-padding: 0 20px;
 	align-items: center;
 	justify-content: flex-end;
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		padding: 0 16px;
 	}
 }
@@ -241,7 +241,7 @@ $y-axis-padding: 0 20px;
 	margin: 0;
 	font-size: $font-body-extra-small;
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		display: none;
 	}
 }
@@ -253,7 +253,7 @@ $y-axis-padding: 0 20px;
 	text-align: left;
 
 	// Expand labels to create bigger touch targets
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		width: 50%;
 		display: inline-block;
 
@@ -334,7 +334,7 @@ $y-axis-padding: 0 20px;
 		}
 	}
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		display: block;
 	}
 }

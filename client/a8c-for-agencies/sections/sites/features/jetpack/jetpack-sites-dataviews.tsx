@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -19,11 +20,13 @@ import {
 } from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
-import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
+import useFormattedSites from '../../hooks/use-formatted-sites';
 import { AllowedTypes, Site, SiteData } from '../../types';
+import type { MouseEvent, KeyboardEvent } from 'react';
 
 export const JetpackSitesDataViews = ( {
 	data,
@@ -41,17 +44,46 @@ export const JetpackSitesDataViews = ( {
 	const sitesPerPage = dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 
-	const sites = useFormattedSites( data?.sites ?? [] );
+	const possibleSites = data?.sites ?? [];
+	const connectionStatus = useFetchTestConnections( true, possibleSites );
+
+	const sites = useFormattedSites( possibleSites, connectionStatus ).reduce< SiteData[] >(
+		( acc, item ) => {
+			item.ref = item.site.value.blog_id;
+			acc.push( item );
+			// If this site has an error, we duplicate this row - while changing the duplicate's type to 'error' - to display an error message below it.
+			if ( item.site.error ) {
+				acc.push( {
+					...item,
+					site: {
+						...item.site,
+						type: 'error',
+					},
+					ref: `error-${ item.ref }`,
+				} );
+			}
+			return acc;
+		},
+		[]
+	);
+
+	const isNotProduction = config( 'env_id' ) !== 'a8c-for-agencies-production';
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
-			setDataViewsState( ( prevState: DataViewsState ) => ( {
-				...prevState,
-				selectedItem: site,
-				type: DATAVIEWS_LIST,
-			} ) );
+			if ( site.sticker?.includes( 'migration-in-progress' ) && ! isNotProduction ) {
+				return;
+			}
+
+			if ( site.is_connection_healthy ) {
+				setDataViewsState( ( prevState: DataViewsState ) => ( {
+					...prevState,
+					selectedItem: site,
+					type: DATAVIEWS_LIST,
+				} ) );
+			}
 		},
-		[ setDataViewsState, dataViewsState ]
+		[ setDataViewsState ]
 	);
 
 	const renderField = useCallback(
@@ -60,15 +92,22 @@ export const JetpackSitesDataViews = ( {
 				return <TextPlaceholder />;
 			}
 
+			if ( item.site.type === 'error' ) {
+				return <div className="sites-dataview__site-error"></div>;
+			}
+
 			if ( column ) {
 				return (
-					<SiteStatusContent
-						rows={ item }
-						type={ column }
-						isLargeScreen={ isLargeScreen }
-						isFavorite={ item.isFavorite }
-						siteError={ item.site.error }
-					/>
+					<>
+						{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
+						<SiteStatusContent
+							rows={ item }
+							type={ column }
+							isLargeScreen={ isLargeScreen }
+							isFavorite={ item.isFavorite }
+							siteError={ item.site.error }
+						/>
+					</>
 				);
 			}
 		},
@@ -113,7 +152,7 @@ export const JetpackSitesDataViews = ( {
 				id: 'site',
 				header: (
 					<>
-						<SiteSort isSortable={ true } columnKey="site">
+						<SiteSort isSortable columnKey="site">
 							<span
 								className="sites-dataview__site-header sites-dataview__site-header--sort"
 								ref={ ( ref ) => setIntroRef( ref as HTMLElement | null ) }
@@ -134,12 +173,25 @@ export const JetpackSitesDataViews = ( {
 						return <TextPlaceholder />;
 					}
 					const site = item.site.value;
+
+					if ( item.site.type === 'error' ) {
+						return (
+							<div className="sites-dataview__site-error">
+								<Gridicon size={ 18 } icon="notice-outline" />
+								<span>{ translate( "Jetpack can't connect to this site." ) }</span>
+							</div>
+						);
+					}
+
 					return (
-						<SiteDataField
-							site={ site }
-							isLoading={ isLoading }
-							onSiteTitleClick={ openSitePreviewPane }
-						/>
+						<>
+							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
+							<SiteDataField
+								site={ site }
+								isLoading={ isLoading }
+								onSiteTitleClick={ openSitePreviewPane }
+							/>
+						</>
 					);
 				},
 				enableHiding: false,
@@ -291,14 +343,22 @@ export const JetpackSitesDataViews = ( {
 					if ( isLoading ) {
 						return <TextPlaceholder />;
 					}
+
+					if ( item.site.type === 'error' ) {
+						return <div className="sites-dataview__site-error"></div>;
+					}
+
 					return (
-						<span className="sites-dataviews__favorite-btn-wrapper">
-							<SiteSetFavorite
-								isFavorite={ item.isFavorite || false }
-								siteId={ item.site.value.blog_id }
-								siteUrl={ item.site.value.url }
-							/>
-						</span>
+						<>
+							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
+							<span className="sites-dataviews__favorite-btn-wrapper">
+								<SiteSetFavorite
+									isFavorite={ item.isFavorite || false }
+									siteId={ item.site.value.blog_id }
+									siteUrl={ item.site.value.url }
+								/>
+							</span>
+						</>
 					);
 				},
 				enableHiding: false,
@@ -311,22 +371,42 @@ export const JetpackSitesDataViews = ( {
 					if ( isLoading ) {
 						return <TextPlaceholder />;
 					}
+
+					if ( item.site.type === 'error' ) {
+						return <div className="sites-dataview__site-error"></div>;
+					}
+
 					return (
-						<div className="sites-dataviews__actions">
-							<SiteActions
-								isLargeScreen={ isLargeScreen }
-								site={ item.site }
-								siteError={ item.site.error }
-							/>
-							<Button
-								onClick={ () => openSitePreviewPane( item.site.value ) }
-								className="site-preview__open"
-								borderless
-								ref={ ( ref ) => setActionsRef( ( current ) => current || ref ) }
+						<>
+							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
+							{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
+							<div
+								className={ `sites-dataviews__actions ${
+									item.site.error ? 'sites-dataviews__actions-error' : ''
+								}` }
+								onClick={ ( e: MouseEvent ) => e.stopPropagation() }
+								onKeyDown={ ( e: KeyboardEvent ) => e.stopPropagation() }
 							>
-								<Gridicon icon="chevron-right" />
-							</Button>
-						</div>
+								{ ( ! item.site.value.sticker?.includes( 'migration-in-progress' ) ||
+									isNotProduction ) && (
+									<>
+										<SiteActions
+											isLargeScreen={ isLargeScreen }
+											site={ item.site }
+											siteError={ item.site.error }
+										/>
+										<Button
+											onClick={ () => openSitePreviewPane( item.site.value ) }
+											className="site-preview__open"
+											borderless
+											ref={ ( ref ) => setActionsRef( ( current ) => current || ref ) }
+										>
+											<Gridicon icon="chevron-right" />
+										</Button>
+									</>
+								) }
+							</div>
+						</>
 					);
 				},
 				header: (
@@ -368,12 +448,13 @@ export const JetpackSitesDataViews = ( {
 			totalItems: totalSites,
 			totalPages: totalPages,
 		},
-		itemFieldId: 'site.value.blog_id',
+		itemFieldId: 'ref',
 		searchLabel: translate( 'Search for sites' ),
 		fields: [],
 		actions: [],
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
+		onSelectionChange: ( [ item ]: SiteData[] ) => openSitePreviewPane( item.site.value ),
 	} );
 
 	// Actions: Pause Monitor, Resume Monitor, Custom Notification, Reset Notification

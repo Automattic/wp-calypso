@@ -1,21 +1,38 @@
 import QuestionStep from './components/question-step';
-import { useSurveyContext } from './context';
-import { Answers } from './types';
+import { QuestionComponentMap } from './components/question-step-mapping';
+import { Answers, Question, QuestionConfiguration } from './types';
 
-type SurveyContainerType = {
+type SurveyContainerProps = {
 	answers: Answers;
-	hideBackOnFirstPage?: boolean;
+	questions: Question[];
+	currentPage: number;
+	onBack: () => void;
+	onContinue: () => void;
+	onSkip: () => void;
 	onChange: ( questionKey: string, value: string[] ) => void;
-	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
+	hideBackOnFirstPage?: boolean;
+	disabled?: boolean;
+	headerAlign?: 'center' | 'left' | 'right';
+	questionConfiguration?: QuestionConfiguration;
+	questionComponentMap?: QuestionComponentMap;
 };
 
 const SurveyContainer = ( {
 	answers,
-	hideBackOnFirstPage = true,
+	questions,
+	currentPage,
+	onBack,
+	onContinue,
+	onSkip,
 	onChange,
-	recordTracksEvent,
-}: SurveyContainerType ) => {
-	const { currentPage, currentQuestion, nextPage, previousPage, skip } = useSurveyContext();
+	hideBackOnFirstPage = true,
+	disabled,
+	headerAlign,
+	questionConfiguration = {},
+	questionComponentMap,
+}: SurveyContainerProps ) => {
+	const currentQuestion = questions[ currentPage - 1 ];
+	const currentQuestionConfiguration = questionConfiguration?.[ currentQuestion.key ];
 	const hideBack = hideBackOnFirstPage && currentPage === 1;
 
 	if ( ! currentQuestion ) {
@@ -24,14 +41,18 @@ const SurveyContainer = ( {
 
 	return (
 		<QuestionStep
-			hideBack={ hideBack }
-			previousPage={ previousPage }
-			nextPage={ nextPage }
-			skip={ skip }
-			recordTracksEvent={ recordTracksEvent }
-			onChange={ onChange }
 			question={ currentQuestion }
 			value={ answers[ currentQuestion.key ] || [] }
+			onChange={ onChange }
+			onBack={ onBack }
+			onContinue={ onContinue }
+			onSkip={ onSkip }
+			disabled={ disabled }
+			hideBack={ hideBack }
+			hideContinue={ currentQuestionConfiguration?.hideContinue }
+			hideSkip={ currentQuestionConfiguration?.hideSkip }
+			headerAlign={ headerAlign }
+			questionComponentMap={ questionComponentMap }
 		/>
 	);
 };

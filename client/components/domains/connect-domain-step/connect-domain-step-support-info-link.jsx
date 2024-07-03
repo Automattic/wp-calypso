@@ -6,7 +6,7 @@ import {
 } from '@automattic/urls';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { modeType } from './constants';
 
@@ -24,10 +24,7 @@ export default function ConnectDomainStepSupportInfoLink( { baseClassName, mode 
 		return null;
 	}
 
-	const classes = classNames(
-		baseClassName + '__support-documentation',
-		baseClassName + '__info-links'
-	);
+	const classes = clsx( baseClassName + '__support-documentation', baseClassName + '__info-links' );
 
 	return (
 		<div className={ classes }>

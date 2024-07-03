@@ -9,7 +9,7 @@ import {
 	FEATURE_FAST_DNS,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	FEATURE_ISOLATED_INFRA,
-	FEATURE_LIVE_CHAT_SUPPORT,
+	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_MANAGED_HOSTING,
 	FEATURE_MULTI_SITE,
 	FEATURE_NO_ADS,
@@ -33,7 +33,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Icon as WpIcon, check, close } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
@@ -457,7 +457,7 @@ export const ThemeUpgradeModal = ( {
 			FEATURE_CUSTOM_DOMAIN,
 			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_LIVE_CHAT_SUPPORT,
+			FEATURE_PRIORITY_24_7_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_WORDADS,
 		] );
@@ -477,7 +477,7 @@ export const ThemeUpgradeModal = ( {
 			FEATURE_CUSTOM_DOMAIN,
 			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_LIVE_CHAT_SUPPORT,
+			FEATURE_PRIORITY_24_7_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_WORDADS,
 			FEATURE_BANDWIDTH,
@@ -494,7 +494,7 @@ export const ThemeUpgradeModal = ( {
 		return getPlanFeaturesObject( [
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_STYLE_CUSTOMIZATION,
-			FEATURE_LIVE_CHAT_SUPPORT,
+			FEATURE_PRIORITY_24_7_SUPPORT,
 			FEATURE_NO_ADS,
 			FEATURE_ACCEPT_PAYMENTS,
 			FEATURE_MANAGED_HOSTING,
@@ -559,7 +559,7 @@ export const ThemeUpgradeModal = ( {
 		<Dialog
 			additionalClassNames={ additionalClassNames }
 			additionalOverlayClassNames={ additionalOverlayClassNames }
-			className={ classNames( 'theme-upgrade-modal', { loading: isLoading } ) }
+			className={ clsx( 'theme-upgrade-modal', { loading: isLoading } ) }
 			isVisible={ isOpen }
 			onClose={ () => closeModal( 'dialog_action' ) }
 			isFullScreen

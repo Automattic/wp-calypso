@@ -16,6 +16,7 @@ const RespondToCustomerFeedback = () => {
 				{
 					externalLink: true,
 					// Not using localizeUrl() because this page doesn't exist on translated versions of the /go site
+					// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 					url: 'https://wordpress.com/go/content-blogging/how-to-respond-to-customer-feedback/',
 					text: translate( 'Learn more' ),
 				},

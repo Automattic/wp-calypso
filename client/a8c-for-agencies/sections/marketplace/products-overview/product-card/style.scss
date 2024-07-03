@@ -11,6 +11,11 @@
 			cursor: not-allowed;
 		}
 	}
+
+	// Override discount text color with success color
+	.product-price-with-discount__price .product-price-with-discount__price-discount {
+		color: var(--color-success);
+	}
 }
 
 .product-card__inner {
@@ -21,6 +26,8 @@
 	border-radius: 4px;
 	user-select: none;
 	cursor: pointer;
+	display: flex;
+	flex-direction: column;
 
 	@include break-xlarge {
 		padding: 1.75rem;
@@ -39,17 +46,6 @@
 
 .product-card:focus-visible .components-button {
 	box-shadow: inset 0 0 0 1px var(--color-surface), 0 0 0 var(--wp-admin-border-width-focus) var(--color-accent);
-}
-
-button.product-card__select-button {
-	border-radius: 4px;
-	padding: 7px 12px;
-	font-size: 0.75rem;
-	font-weight: 600;
-	line-height: 1.1;
-	max-height: 36px;
-	min-width: 82px;
-	max-width: 82px;
 }
 
 @mixin product-card-block__details {
@@ -86,23 +82,45 @@ button.product-card__select-button {
 }
 
 .product-card__main {
-	display: flex;
+	display: block;
 	width: 100%;
-	justify-content: space-between;
-	gap: 0.5rem;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+}
+
+.product-card__buttons {
+	display: inline-flex;
+	gap: 1rem;
+	justify-content: center;
+	align-self: flex-start;
+	margin-block-start: auto;
+	padding-block-start: 1rem;
 
 	@include breakpoint-deprecated( "<660px" ) {
-		display: block;
-
-		.product-card__select-button {
-			margin-block-start: 0.5rem;
-			width: 100%;
-			justify-content: center;
-			text-align: center;
-			font-size: 1rem;
+		.button {
+			padding: 4px;
 		}
 	}
 }
+
+.product-card__select-button {
+	display: block;
+	justify-content: center;
+	text-align: center;
+	font-size: 1rem;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		padding: 7px 12px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		height: 2rem;
+	}
+}
+
 
 .product-card__heading {
 	display: flex;
@@ -119,9 +137,7 @@ button.product-card__select-button {
 }
 
 .product-card__title {
-	font-size: 1.5rem;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.5rem;
+	@include a4a-font-heading-xl;
 	color: var(--color-neutral-80);
 
 	@include product-card-block__title;
@@ -144,10 +160,8 @@ button.product-card__select-button {
 }
 
 .product-card__description {
-	font-size: 1rem;
+	@include a4a-font-body-lg;
 	color: var(--color-neutral-60);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.5rem;
 	margin: 8px 0;
 }
 

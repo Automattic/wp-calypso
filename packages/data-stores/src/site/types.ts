@@ -1,3 +1,4 @@
+import { SiteGoal } from '../onboard';
 import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
@@ -207,6 +208,7 @@ export interface SiteDetailsCapabilities {
 	publish_posts: boolean;
 	remove_users: boolean;
 	upload_files: boolean;
+	update_plugins: boolean;
 	view_hosting: boolean;
 	view_stats: boolean;
 }
@@ -269,6 +271,7 @@ export interface SiteDetailsOptions {
 	selected_features?: FeatureId[];
 	show_on_front?: string;
 	site_intent?: string;
+	site_goals?: SiteGoal[];
 	site_segment?: string | null;
 	site_vertical_id?: string | null;
 	software_version?: string;

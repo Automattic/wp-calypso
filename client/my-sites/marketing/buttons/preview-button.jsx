@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -66,7 +66,7 @@ class SharingButtonsPreviewButton extends Component {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
-		const classes = classNames(
+		const classes = clsx(
 			'sharing-buttons-preview-button',
 			'style-' + this.props.style,
 			'share-' + this.props.button.ID,

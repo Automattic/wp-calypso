@@ -8,22 +8,22 @@ import * as Site from '../../site';
  */
 
 const useAddOnCheckoutLink = (): ( (
-	selectedSiteSlug: Site.SiteDetails[ 'slug' ] | null,
+	selectedSiteId: Site.SiteDetails[ 'ID' ] | null,
 	addOnSlug: string,
 	quantity?: number
 ) => string ) => {
 	const checkoutLinkCallback = useCallback(
 		(
-			selectedSiteSlug: Site.SiteDetails[ 'slug' ] | null,
+			selectedSiteId: Site.SiteDetails[ 'ID' ] | null,
 			addOnSlug: string,
 			quantity?: number
 		): string => {
 			// If no site is provided, return the checkout link with the add-on (will render site-selector).
-			if ( ! selectedSiteSlug ) {
+			if ( ! selectedSiteId ) {
 				return `/checkout/${ addOnSlug }`;
 			}
 
-			const checkoutLinkFormat = `/checkout/${ selectedSiteSlug }/${ addOnSlug }`;
+			const checkoutLinkFormat = `/checkout/${ selectedSiteId }/${ addOnSlug }`;
 
 			if ( quantity ) {
 				return checkoutLinkFormat + `:-q-${ quantity }`;

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { useMarketingMessage } from './use-marketing-message';
@@ -122,7 +122,7 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 		return null;
 	}
 
-	const classNames = cx( 'nudge-container', props.className, `is-${ slugify( props.path ) }` );
+	const classNames = clsx( 'nudge-container', props.className, `is-${ slugify( props.path ) }` );
 
 	return (
 		<Container path={ props.path } className={ classNames } role="status">

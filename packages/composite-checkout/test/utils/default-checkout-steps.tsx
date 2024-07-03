@@ -65,7 +65,7 @@ export function DefaultCheckoutSteps( { items }: { items: LineItem[] } ) {
 				activeStepContent={ <CheckoutOrderSummary items={ items } /> }
 				titleContent="Order summary"
 				isStepActive={ false }
-				isStepComplete={ true }
+				isStepComplete
 				stepNumber={ 1 }
 				stepId="order-summary-step"
 			/>

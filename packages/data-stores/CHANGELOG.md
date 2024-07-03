@@ -12,7 +12,7 @@
   - `useSiteAnalysis`
   - `useJetpackSearchAIQuery`
   - `useSubmitForumsMutation`
-  - `useSupportAvailability`
+  - `useSupportStatus`
   - `useSupportActivity`
   - `useUpdateZendeskUserFieldsMutation`
   - `useUserSites`

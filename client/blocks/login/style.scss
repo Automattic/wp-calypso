@@ -586,7 +586,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	.is-social-first {
 		.login__form-subheader-terms {
 			display: block;
-			max-width: 420px;
+			max-width: 450px;
 			margin: 0 auto;
 
 			color: var(--studio-gray-50, #646970);
@@ -608,6 +608,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
+.is-grav-powered-client,
 .is-gravatar {
 	.login__form-terms {
 		display: block;

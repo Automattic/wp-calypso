@@ -18,7 +18,7 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import React, { useEffect, useLayoutEffect } from 'react';
 import { connect } from 'react-redux';
@@ -175,7 +175,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					displayedIntervals={ [ 'yearly', '2yearly', '3yearly', 'monthly' ] }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
-					isStepperUpgradeFlow={ true }
+					isStepperUpgradeFlow
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ onUpgradeClick }
 					paidDomainName={ getPaidDomainName() }
@@ -259,11 +259,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
-					shouldHideNavButtons={ true }
+					shouldHideNavButtons
 					fallbackHeaderText={ fallbackHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
 					isWideLayout={ false }
-					isExtraWideLayout={ true }
+					isExtraWideLayout
 					stepContent={ plansFeaturesList() }
 					allowBackFirstStep={ false }
 				/>
@@ -271,7 +271,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		);
 	};
 
-	const classes = classNames( 'plans-step', {
+	const classes = clsx( 'plans-step', {
 		'has-no-sidebar': true,
 		'is-wide-layout': false,
 		'is-extra-wide-layout': true,

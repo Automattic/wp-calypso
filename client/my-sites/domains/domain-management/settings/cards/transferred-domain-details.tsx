@@ -21,7 +21,10 @@ const TransferredDomainDetails = ( {
 	const isEnglishLocale = useIsEnglishLocale();
 
 	const getStartTransferHref = ( siteSlug: string, domainName: string ) => {
-		return domainUseMyDomain( siteSlug, domainName, useMyDomainInputMode.startPendingTransfer );
+		return domainUseMyDomain( siteSlug, {
+			domain: domainName,
+			initialMode: useMyDomainInputMode.startPendingTransfer,
+		} );
 	};
 
 	const renderStartTransferButton = () => {

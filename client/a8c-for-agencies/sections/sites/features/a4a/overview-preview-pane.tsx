@@ -1,6 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import ItemPreviewPane, {
+	createFeaturePreview,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
+import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import SiteDetails from 'calypso/a8c-for-agencies/sections/sites/features/a4a/site-details';
 import {
 	JETPACK_ACTIVITY_ID,
@@ -17,7 +21,6 @@ import { PreviewPaneProps } from 'calypso/a8c-for-agencies/sections/sites/site-p
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
 import { A4A_SITES_DASHBOARD_DEFAULT_FEATURE } from '../../constants';
-import SitePreviewPane, { createFeaturePreview } from '../../site-preview-pane';
 import HostingOverviewPreview from '../hosting/overview';
 import { JetpackActivityPreview } from '../jetpack/activity';
 import { JetpackBackupPreview } from '../jetpack/backup';
@@ -28,6 +31,7 @@ import { JetpackStatsPreview } from '../jetpack/jetpack-stats';
 import { JetpackScanPreview } from '../jetpack/scan';
 
 import '../jetpack/style.scss';
+import '../../site-preview-pane/a4a-style.scss';
 
 export function OverviewPreviewPane( {
 	site,
@@ -149,12 +153,21 @@ export function OverviewPreviewPane( {
 		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
 	);
 
+	const itemData: ItemData = {
+		title: site.blogname,
+		subtitle: site.url,
+		url: site.url_with_scheme,
+		blogId: site.blog_id,
+		isDotcomSite: site.is_atomic,
+	};
+
 	return (
-		<SitePreviewPane
-			site={ site }
-			closeSitePreviewPane={ closeSitePreviewPane }
+		<ItemPreviewPane
+			itemData={ itemData }
+			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
 			className={ className }
+			addTourDetails={ { id: 'sites-walkthrough-site-preview-tabs', tourId: 'sitesWalkthrough' } }
 		/>
 	);
 }

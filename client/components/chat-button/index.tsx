@@ -1,9 +1,14 @@
 import { Button, Gridicon, Spinner } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { useChatStatus, useChatWidget } from '@automattic/help-center/src/hooks';
+import {
+	useChatStatus,
+	useChatWidget,
+	useCanConnectToZendesk,
+	useMessagingAvailability,
+} from '@automattic/help-center/src/hooks';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import type { MessagingGroup } from '@automattic/help-center/src/hooks/use-messaging-availability';
 import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
 import type { FC } from 'react';
@@ -62,17 +67,15 @@ const ChatButton: FC< Props > = ( {
 	withHelpCenter = true,
 } ) => {
 	const { __ } = useI18n();
-
+	const { hasActiveChats, isEligibleForChat, isPrecancellationChatOpen, isPresalesChatOpen } =
+		useChatStatus();
 	const messagingGroup = getMessagingGroupForIntent( chatIntent );
-	const {
-		canConnectToZendesk,
-		hasActiveChats,
-		isChatAvailable,
-		isEligibleForChat,
-		isPrecancellationChatOpen,
-		isPresalesChatOpen,
-	} = useChatStatus( messagingGroup );
+	const { data: isMessagingAvailable } = useMessagingAvailability(
+		messagingGroup,
+		isEligibleForChat
+	);
 	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { data: canConnectToZendesk } = useCanConnectToZendesk();
 
 	function shouldShowChatButton(): boolean {
 		if ( isEligibleForChat && hasActiveChats ) {
@@ -95,7 +98,7 @@ const ChatButton: FC< Props > = ( {
 				break;
 		}
 
-		if ( isEligibleForChat && isChatAvailable && ( canConnectToZendesk || withHelpCenter ) ) {
+		if ( isEligibleForChat && isMessagingAvailable && ( canConnectToZendesk || withHelpCenter ) ) {
 			return true;
 		}
 
@@ -123,7 +126,7 @@ const ChatButton: FC< Props > = ( {
 		}
 	};
 
-	const classes = classnames( 'chat-button', className );
+	const classes = clsx( 'chat-button', className );
 
 	if ( ! shouldShowChatButton() ) {
 		return null;
@@ -143,7 +146,7 @@ const ChatButton: FC< Props > = ( {
 			primary={ primary }
 			borderless={ borderless }
 			onClick={ handleClick }
-			title={ __( 'Support Chat' ) }
+			title={ __( 'Contact us' ) }
 		>
 			{ getChildren() }
 		</Button>

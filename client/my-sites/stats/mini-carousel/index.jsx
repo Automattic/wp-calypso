@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_PREMIUM, getPlan, isFreePlan, isPersonalPlan } from '@automattic/calypso-products';
+import { DotPager } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -8,12 +9,11 @@ import YoastLogo from 'calypso/assets/images/icons/yoast-logo.svg';
 import GoogleAnalyticsLogo from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import writePost from 'calypso/assets/images/onboarding/site-options.svg';
 import BlazeLogo from 'calypso/components/blaze-logo';
-import DotPager from 'calypso/components/dot-pager';
 import { useHasNeverPublishedPost } from 'calypso/data/stats/use-has-never-published-post';
 import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MiniCarouselBlock from './mini-carousel-block';
 import { isBlockDismissed } from './selectors';
@@ -46,6 +46,9 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	const jetpackNonAtomic = useSelector(
 		( state ) => isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
 	);
+	const isSimpleClassic = useSelector( ( state ) =>
+		getSiteOption( state, selectedSiteId, 'is_wpcom_simple' )
+	);
 
 	const currentPlanSlug = useSelector( ( state ) =>
 		getCurrentPlan( state, selectedSiteId )
@@ -75,7 +78,9 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
 	const showYoastPromo =
-		! useSelector( isBlockDismissed( EVENT_YOAST_PROMO_DISMISS ) ) && ! jetpackNonAtomic;
+		! useSelector( isBlockDismissed( EVENT_YOAST_PROMO_DISMISS ) ) &&
+		! jetpackNonAtomic &&
+		! isSimpleClassic;
 
 	const showGoogleAnalyticsPromo =
 		! useSelector( isBlockDismissed( EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS ) ) &&

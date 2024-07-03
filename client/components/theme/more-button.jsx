@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
@@ -54,7 +54,7 @@ class ThemeMoreButton extends Component {
 	render() {
 		const { siteId, themeId, themeName, hasStyleVariations, options, active } = this.props;
 		const { showPopover, hasPopoverOpened } = this.state;
-		const classes = classNames(
+		const classes = clsx(
 			'theme__more-button',
 			{ 'is-active': active },
 			{ 'is-open': showPopover }

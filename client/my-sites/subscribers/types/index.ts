@@ -6,6 +6,7 @@ export type SubscriberEndpointResponse = {
 	page: number;
 	pages: number;
 	subscribers: Subscriber[];
+	is_owner_subscribed: boolean;
 };
 
 export type SubscriptionPlan = {

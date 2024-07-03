@@ -1,9 +1,9 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 
 const JetpackBlazeHeader = ( { className = '' } ) => (
-	<header className={ classNames( 'jetpack-blaze-header', className ) }>
+	<header className={ clsx( 'jetpack-blaze-header', className ) }>
 		<svg width="175" height="32" viewBox="0 0 175 32" fill="none">
 			<g clipPath="url(#clip0_8399_69928)">
 				<path

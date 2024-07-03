@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import Deprecated from './deprecated';
 import Free from './free';
@@ -111,11 +111,7 @@ const Wrapper: React.FC< OwnProps > = ( props ) => {
 
 	return (
 		<div
-			className={ classNames(
-				'display-price',
-				{ 'is-jetpack-cloud': isJetpackCloud() },
-				priceTypes
-			) }
+			className={ clsx( 'display-price', { 'is-jetpack-cloud': isJetpackCloud() }, priceTypes ) }
 		>
 			<DisplayPrice { ...props } />
 		</div>

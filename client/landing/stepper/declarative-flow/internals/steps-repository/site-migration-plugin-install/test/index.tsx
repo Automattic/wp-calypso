@@ -55,8 +55,8 @@ describe( 'SiteMigrationPluginInstall', () => {
 			.post( '/rest/v1.2/sites/123/plugins/migrate-guru%2fmigrateguru', { active: true } )
 			.reply( 200 );
 
-		const result = getPendingAction()();
-		await expect( result ).resolves.toBe( true );
+		const result = await getPendingAction()();
+		expect( result.pluginInstalled ).toBe( true );
 
 		expect( nock.isDone() ).toBe( true );
 		expect( getProgress() ).toBe( 1 );
@@ -81,8 +81,8 @@ describe( 'SiteMigrationPluginInstall', () => {
 			.post( '/rest/v1.2/sites/123/plugins/migrate-guru%2fmigrateguru', { active: true } )
 			.reply( 200 );
 
-		const result = getPendingAction()();
-		await expect( result ).resolves.toBe( true );
+		const result = await getPendingAction()();
+		expect( result.pluginInstalled ).toBe( true );
 
 		expect( nock.isDone() ).toBe( true );
 		expect( getProgress() ).toBe( 1 );
@@ -105,8 +105,8 @@ describe( 'SiteMigrationPluginInstall', () => {
 			.post( '/rest/v1.2/sites/123/plugins/migrate-guru%2fmigrateguru', { active: true } )
 			.reply( 200 );
 
-		const result = getPendingAction()();
-		await expect( result ).resolves.toBe( true );
+		const result = await getPendingAction()();
+		expect( result.pluginInstalled ).toBe( true );
 
 		expect( nock.isDone() ).toBe( true );
 		expect( getProgress() ).toBe( 1 );

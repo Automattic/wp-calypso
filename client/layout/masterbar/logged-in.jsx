@@ -1,13 +1,14 @@
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products/src';
 import page from '@automattic/calypso-router';
+import { PromptIcon } from '@automattic/command-palette';
 import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import AsyncLoad from 'calypso/components/async-load';
@@ -26,7 +27,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowGlobalSidebar,
-	getShouldShowGlobalSiteSidebar,
+	getShouldShowSiteDashboard,
 	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -91,7 +92,7 @@ class MasterbarLoggedIn extends Component {
 		hasDismissedThePopover: PropTypes.bool,
 		isUserNewerThanNewNavigation: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
-		shouldShowGlobalSiteSidebar: PropTypes.bool,
+		shouldShowSiteDashboard: PropTypes.bool,
 	};
 
 	subscribeToViewPortChanges() {
@@ -494,7 +495,7 @@ class MasterbarLoggedIn extends Component {
 		const { translate } = this.props;
 		return (
 			<Notifications
-				isShowing={ true }
+				isShowing
 				isActive={ this.isActive( 'notifications' ) }
 				className="masterbar__item-notifications"
 				tooltip={ translate( 'Manage your notifications' ) }
@@ -517,8 +518,8 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<Item
 				className="masterbar__item-menu"
-				icon="search"
-				tooltip={ this.props.translate( 'Jump to…' ) }
+				icon={ <PromptIcon /> }
+				tooltip={ this.props.translate( 'Command Palette' ) }
 				isActive={ this.props.isCommandPaletteOpen }
 				onClick={ handleClick }
 			/>
@@ -661,7 +662,7 @@ class MasterbarLoggedIn extends Component {
 			isCheckoutFailed,
 			loadHelpCenterIcon,
 			currentSelectedSiteId,
-			isGlobalSiteView,
+			isSiteDashboardView,
 		} = this.props;
 		const { isMobile } = this.state;
 
@@ -676,12 +677,12 @@ class MasterbarLoggedIn extends Component {
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderSidebarMobileMenu() }
 							{ this.renderGlobalMySites() }
-							{ isGlobalSiteView && currentSelectedSiteId && (
+							{ isSiteDashboardView && currentSelectedSiteId && (
 								<Site
 									siteId={ currentSelectedSiteId }
 									href={ this.getHomeUrl() }
-									isSelected={ true }
-									inlineBadges={ true }
+									isSelected
+									inlineBadges
 								/>
 							) }
 						</div>
@@ -797,7 +798,7 @@ export default connect(
 			sectionGroup,
 			sectionName
 		);
-		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+		const shouldShowSiteDashboard = getShouldShowSiteDashboard(
 			state,
 			currentSelectedSiteId,
 			sectionGroup,
@@ -843,8 +844,7 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
-			isGlobalView: shouldShowGlobalSidebar,
-			isGlobalSiteView: shouldShowGlobalSiteSidebar,
+			isSiteDashboardView: shouldShowSiteDashboard,
 			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
 		};

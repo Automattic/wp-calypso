@@ -14,7 +14,7 @@ import { Card, CompactCard, Button, FormLabel, Gridicon } from '@automattic/comp
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ToggleControl } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -49,10 +49,11 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
-	isGlobalSiteViewEnabled,
+	isAdminInterfaceWPAdmin,
 	isJetpackSite,
 	isCurrentPlanPaid,
 	getCustomizerUrl,
+	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -62,6 +63,7 @@ import {
 import { DIFMUpsell } from './difm-upsell-banner';
 import Masterbar from './masterbar';
 import SiteAdminInterface from './site-admin-interface';
+import SiteAdminInterfaceExperiment from './site-admin-interface/experiment';
 import SiteIconSetting from './site-icon-setting';
 import LaunchSite from './site-visibility/launch-site';
 import wrapSettingsForm from './wrap-settings-form';
@@ -551,12 +553,12 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderAdminInterface() {
-		const { site } = this.props;
-		if ( ! isEnabled( 'layout/wpcom-admin-interface' ) ) {
-			return null;
+		const { site, siteSlug, isSimple } = this.props;
+		if ( isSimple ) {
+			return <SiteAdminInterfaceExperiment siteId={ site.ID } siteSlug={ siteSlug } />;
 		}
 
-		return <SiteAdminInterface siteId={ site.ID } />;
+		return <SiteAdminInterface siteId={ site.ID } siteSlug={ siteSlug } />;
 	}
 
 	render() {
@@ -574,25 +576,27 @@ export class SiteSettingsFormGeneral extends Component {
 			isAtomicAndEditingToolkitDeactivated,
 			isWpcomStagingSite,
 			isUnlaunchedSite: propsisUnlaunchedSite,
-			isClassicView,
+			adminInterfaceIsWPAdmin,
 		} = this.props;
-		const classes = classNames( 'site-settings__general-settings', {
+		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
 
 		return (
-			<div className={ classNames( classes ) }>
+			<div className={ clsx( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! isClassicView && (
+				{ ! adminInterfaceIsWPAdmin && (
 					<>
 						<SettingsSectionHeader
-							data-tip-target="settings-site-profile-save"
 							disabled={ isRequestingSettings || isSavingSettings }
 							isSaving={ isSavingSettings }
 							onButtonClick={ handleSubmitForm }
 							showButton
 							title={ translate( 'Site profile' ) }
+							buttonProps={ {
+								'data-tip-target': 'settings-site-profile-save',
+							} }
 						/>
 						<Card>
 							<form>
@@ -654,7 +658,7 @@ export class SiteSettingsFormGeneral extends Component {
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }
-								showIcon={ true }
+								showIcon
 								event="settings_remove_footer"
 								tracksImpressionName="calypso_upgrade_nudge_impression"
 								tracksClickName="calypso_upgrade_nudge_cta_click"
@@ -676,7 +680,7 @@ const connectComponent = connect( ( state ) => {
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
-		isClassicView: isGlobalSiteViewEnabled( state, siteId ),
+		adminInterfaceIsWPAdmin: isAdminInterfaceWPAdmin( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
 		isPaidPlan: isCurrentPlanPaid( state, siteId ),
@@ -695,6 +699,7 @@ const connectComponent = connect( ( state ) => {
 		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
 		isLaunchable:
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
+		isSimple: isSimpleSite( state, siteId ),
 	};
 } );
 

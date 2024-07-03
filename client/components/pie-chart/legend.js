@@ -6,12 +6,12 @@ import DataType from './data-type';
 
 const NUM_COLOR_SECTIONS = 3;
 
-function transformData( data ) {
+export function sortData( data ) {
 	return sortBy( data, ( datum ) => datum.value )
 		.reverse()
 		.map( ( datum, index ) => ( {
 			...datum,
-			sectionNum: index % NUM_COLOR_SECTIONS,
+			sectionNum: index % ( data.length || NUM_COLOR_SECTIONS ),
 		} ) );
 }
 
@@ -33,7 +33,7 @@ class PieChartLegend extends Component {
 			return {
 				data: nextProps.data,
 				dataTotal: nextProps.data.reduce( ( sum, { value } ) => sum + value, 0 ),
-				transformedData: transformData( nextProps.data ),
+				transformedData: sortData( nextProps.data ),
 			};
 		}
 

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import type { AkismetLogoType } from './types';
 
 const AkismetLogo: AkismetLogoType = ( {
@@ -12,7 +12,7 @@ const AkismetLogo: AkismetLogoType = ( {
 			viewBox="0 0 111 21"
 			width={ size.width }
 			height={ size.height }
-			className={ classNames( 'akismet-logo', className ) }
+			className={ clsx( 'akismet-logo', className ) }
 			fill="none"
 		>
 			<path

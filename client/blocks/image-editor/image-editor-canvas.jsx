@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -15,8 +15,7 @@ import {
 	isImageEditorImageLoaded,
 } from 'calypso/state/editor/image-editor/selectors';
 import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import ImageEditorCrop from './image-editor-crop';
@@ -100,9 +99,9 @@ export class ImageEditorCanvas extends Component {
 	}
 
 	fetchImageBlob( src ) {
-		const { siteSlug, isPrivateAtomic } = this.props;
+		const { siteSlug, isJetpackNonAtomic } = this.props;
 		const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
-		const useProxy = isPrivateAtomic && filePath && isRelativeToSiteRoot;
+		const useProxy = ! isJetpackNonAtomic && !! filePath && isRelativeToSiteRoot;
 
 		if ( useProxy ) {
 			return getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, { query } );
@@ -271,7 +270,7 @@ export class ImageEditorCanvas extends Component {
 			maxHeight: 85 / heightRatio + '%',
 		};
 
-		const canvasClasses = classNames( 'image-editor__canvas', {
+		const canvasClasses = clsx( 'image-editor__canvas', {
 			'is-placeholder': ! isImageLoaded,
 		} );
 
@@ -293,8 +292,7 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
-		const isPrivateAtomic =
-			isPrivateSite( state, siteId ) && isSiteAutomatedTransfer( state, siteId );
+		const isJetpackNonAtomic = isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
 
 		const transform = getImageEditorTransform( state );
 		const { src, mimeType } = getImageEditorFileInfo( state );
@@ -304,7 +302,7 @@ export default connect(
 
 		return {
 			siteSlug,
-			isPrivateAtomic,
+			isJetpackNonAtomic,
 			src,
 			mimeType,
 			transform,

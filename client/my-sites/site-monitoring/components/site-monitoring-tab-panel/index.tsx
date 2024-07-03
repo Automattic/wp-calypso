@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -29,7 +29,7 @@ export const SiteMonitoringTabPanel = ( {
 	return (
 		<SectionNav
 			selectedText={ selectedText }
-			className={ classnames( 'site-monitoring-tab-panel', className ) }
+			className={ clsx( 'site-monitoring-tab-panel', className ) }
 		>
 			<NavTabs>
 				{ tabs.map( ( { name, title } ) => {

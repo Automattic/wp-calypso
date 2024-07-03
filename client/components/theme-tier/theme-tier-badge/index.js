@@ -1,5 +1,5 @@
 import { BUNDLED_THEME, DOT_ORG_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useSelector } from 'calypso/state';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
@@ -61,11 +61,7 @@ export default function ThemeTierBadge( {
 
 	return (
 		<div
-			className={ classNames(
-				'theme-tier-badge',
-				`theme-tier-badge--${ themeTier.slug }`,
-				className
-			) }
+			className={ clsx( 'theme-tier-badge', `theme-tier-badge--${ themeTier.slug }`, className ) }
 		>
 			<ThemeTierBadgeContextProvider
 				canGoToCheckout={ canGoToCheckout }

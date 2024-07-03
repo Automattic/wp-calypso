@@ -138,7 +138,7 @@ export function CloudflareAnalyticsSettings( {
 				feature={ FEATURE_CLOUDFLARE_ANALYTICS }
 				plan={ plan }
 				href={ null }
-				showIcon={ true }
+				showIcon
 				title={ nudgeTitle }
 			/>
 		);

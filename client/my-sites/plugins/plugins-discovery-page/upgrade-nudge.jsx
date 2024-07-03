@@ -96,7 +96,7 @@ const UpgradeNudge = ( {
 				className="plugins-discovery-page__upsell"
 				callToAction={ translate( 'Upgrade now' ) }
 				icon="notice-outline"
-				showIcon={ true }
+				showIcon
 				href={
 					pluginsPlansPageFlag
 						? pluginsPlansPage
@@ -105,7 +105,7 @@ const UpgradeNudge = ( {
 				feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
 				plan={ requiredPlan.getStoreSlug() }
 				title={ title }
-				isOneClickCheckoutEnabled={ true }
+				isOneClickCheckoutEnabled
 			/>
 		);
 	}
@@ -122,7 +122,7 @@ const UpgradeNudge = ( {
 				className="plugins-discovery-page__upsell"
 				callToAction={ translate( 'Upgrade now' ) }
 				icon="notice-outline"
-				showIcon={ true }
+				showIcon
 				href={ `/plans/${ siteSlug }` }
 				feature={ FEATURE_INSTALL_PLUGINS }
 				plan={ PLAN_ECOMMERCE_MONTHLY }
@@ -144,7 +144,7 @@ const UpgradeNudge = ( {
 				args: { planName: getPlan( plan )?.getTitle() },
 			} ) }
 			icon="notice-outline"
-			showIcon={ true }
+			showIcon
 			onClick={ handleUpsellNudgeClick }
 			secondaryCallToAction={ secondaryCallToAction }
 			secondaryOnClick={ secondaryOnClick }
@@ -152,7 +152,7 @@ const UpgradeNudge = ( {
 			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ title }
-			isOneClickCheckoutEnabled={ true }
+			isOneClickCheckoutEnabled
 		/>
 	);
 };

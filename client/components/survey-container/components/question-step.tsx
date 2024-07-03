@@ -1,53 +1,58 @@
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { Question, QuestionType } from '../types';
-import SurveyCheckboxControl from './survey-checkbox-control';
-import SurveyRadioControl from './survey-radio-control';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { Question } from '../types';
 import './style.scss';
+import { QuestionComponentMap, defaultQuestionComponentMap } from './question-step-mapping';
 
-const questionTypeComponentMap = {
-	[ QuestionType.SINGLE_CHOICE ]: SurveyRadioControl,
-	[ QuestionType.MULTIPLE_CHOICE ]: SurveyCheckboxControl,
-};
-
-export type QuestionSelectionType = {
+export type QuestionSelectionComponentProps = {
 	question: Question;
 	value: string[];
 	onChange: ( questionKey: string, value: string[] ) => void;
+	disabled?: boolean;
+	onContinue?: () => void;
 };
 
 type QuestionStepType = {
-	hideBack: boolean;
-	previousPage: () => void;
-	nextPage: () => void;
-	skip: () => void;
-	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
-} & QuestionSelectionType;
+	onBack: () => void;
+	onContinue: () => void;
+	onSkip: () => void;
+	hideBack?: boolean;
+	hideContinue?: boolean;
+	hideSkip?: boolean;
+	headerAlign?: 'center' | 'left' | 'right';
+	questionComponentMap?: QuestionComponentMap;
+} & QuestionSelectionComponentProps;
 
 const QuestionStep = ( {
-	hideBack,
-	previousPage,
-	nextPage,
-	skip,
 	question,
 	value,
 	onChange,
-	recordTracksEvent,
+	onBack,
+	onContinue,
+	onSkip,
+	disabled,
+	hideBack,
+	hideContinue,
+	hideSkip,
+	headerAlign = 'center',
+	questionComponentMap = defaultQuestionComponentMap,
 }: QuestionStepType ) => {
 	const translate = useTranslate();
-	const SelectionComponent = questionTypeComponentMap[ question.type ];
+	const SelectionComponent = questionComponentMap[ question.type ];
 
 	return (
 		<StepContainer
-			className="question-step"
+			className={ clsx( 'question-step', { disabled } ) }
 			hideBack={ hideBack }
-			goBack={ previousPage }
-			goNext={ skip }
+			goBack={ onBack }
+			goNext={ onSkip }
 			formattedHeader={
 				<FormattedHeader
-					align="left"
+					align={ headerAlign }
 					headerText={ question.headerText }
 					subHeaderText={ question.subHeaderText }
 				/>
@@ -55,12 +60,26 @@ const QuestionStep = ( {
 			stepName={ question.key }
 			stepContent={
 				<div className="question-step__content">
-					<SelectionComponent question={ question } value={ value } onChange={ onChange } />
-					<Button className="question-step__continue-button" onClick={ nextPage } variant="primary">
-						{ translate( 'Continue' ) }
-					</Button>
+					<SelectionComponent
+						question={ question }
+						value={ value }
+						onChange={ onChange }
+						disabled={ disabled }
+						onContinue={ onContinue }
+					/>
+					{ ! hideContinue && (
+						<Button
+							className="question-step__continue-button"
+							onClick={ onContinue }
+							variant="primary"
+							disabled={ disabled }
+						>
+							{ translate( 'Continue' ) }
+						</Button>
+					) }
 				</div>
 			}
+			hideSkip={ hideSkip }
 			skipLabelText={ translate( 'Skip' ) }
 			recordTracksEvent={ recordTracksEvent }
 		/>

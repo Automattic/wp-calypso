@@ -112,7 +112,7 @@ const SiteOptions: React.FC< Props > = ( {
 			</FormFieldset>
 			{ acceptSearchTerms && (
 				<FormFieldset className="site-options__form-fieldset">
-					<FormLabel htmlFor="searchTerms" optional={ true }>
+					<FormLabel htmlFor="searchTerms" optional>
 						{ translate( 'Search terms' ) }
 					</FormLabel>
 					<FormInput

@@ -295,8 +295,9 @@ export class ReaderSidebar extends Component {
 			path: this.props.path,
 			onClick: this.handleClick,
 			requireBackLink: true,
-			backLinkText: i18n.translate( 'All sites' ),
-			backLinkHref: '/sites',
+			siteTitle: i18n.translate( 'Reader' ),
+			backLinkHref: this.props.returnPath || '/sites',
+			onClose: this.props.onClose && ( () => this.props.onClose() ),
 		};
 		return (
 			<GlobalSidebar { ...props }>
@@ -342,6 +343,7 @@ export default withCurrentRoute(
 				sectionGroup,
 				sectionName
 			);
+
 			return {
 				isListsOpen: isListsOpen( state ),
 				isTagsOpen: isTagsOpen( state ),

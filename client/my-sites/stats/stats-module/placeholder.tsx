@@ -1,5 +1,5 @@
 import { Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './placeholder.scss';
 
@@ -16,7 +16,7 @@ const StatsModulePlaceholder: React.FC< StatsModulePlaceholderProps > = ( {
 		return null;
 	}
 
-	const classes = classNames( 'stats-module__placeholder', 'is-void', className );
+	const classes = clsx( 'stats-module__placeholder', 'is-void', className );
 
 	return (
 		<div className={ classes }>

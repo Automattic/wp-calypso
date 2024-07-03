@@ -5,6 +5,8 @@ import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import MailIcon from 'calypso/components/social-icons/mail';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -14,14 +16,23 @@ import './style.scss';
 
 interface SignupFormSocialFirst {
 	goToNextStep: () => void;
-	step: string;
+	step: object;
 	stepName: string;
 	flowName: string;
 	redirectToAfterLoginUrl: string;
 	logInUrl: string;
 	socialService: string;
-	socialServiceResponse: string;
-	handleSocialResponse: () => void;
+	socialServiceResponse: object;
+	handleSocialResponse: (
+		service: string,
+		access_token: string,
+		id_token: string | null,
+		userData: {
+			password: string;
+			email: string;
+			extra: { first_name: string; last_name: string; username_hint: string };
+		} | null
+	) => void;
 	isReskinned: boolean;
 	queryArgs: object;
 	userEmail: string;
@@ -124,8 +135,8 @@ const SignupFormSocialFirst = ( {
 						socialServiceResponse={ socialServiceResponse }
 						isReskinned={ isReskinned }
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
-						disableTosText={ true }
-						compact={ true }
+						disableTosText
+						compact
 						isSocialFirst={ isSocialFirst }
 					>
 						<Button
@@ -159,6 +170,20 @@ const SignupFormSocialFirst = ( {
 						submitButtonLabel={ __( 'Continue' ) }
 						userEmail={ userEmail }
 						renderTerms={ renderEmailStepTermsOfService }
+						onCreateAccountError={ ( error: { error: string }, email: string ) => {
+							if ( isExistingAccountError( error.error ) ) {
+								window.location.assign(
+									addQueryArgs(
+										{
+											email_address: email,
+											is_signup_existing_account: true,
+											redirect_to: window.location.origin + `/setup/${ flowName }`,
+										},
+										logInUrl
+									)
+								);
+							}
+						} }
 						{ ...gravatarProps }
 					/>
 					<Button

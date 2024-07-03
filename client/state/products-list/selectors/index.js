@@ -1,5 +1,4 @@
 export { getAvailableProductsList } from './get-available-products-list';
-export { getPlanPrice } from './get-plan-price';
 export { getProductBySlug } from './get-product-by-slug';
 export { getProductCost } from './get-product-cost';
 export { getProductIntroductoryOffer } from './get-product-introductory-offer';
@@ -18,3 +17,4 @@ export { getProductSaleCouponCost } from './get-product-sale-coupon-cost';
 export { getProductSaleCouponDiscount } from './get-product-sale-coupon-discount';
 export { getProductCurrencyCode } from './get-product-currency-code';
 export { getMarketplaceProducts } from './get-marketplace-products';
+export { getProductBillingSlugByThemeId } from './get-product-billing-slug-by-theme-id';

@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -15,23 +15,40 @@ import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
-	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import HostingOverview from '../common/hosting-overview';
+import { MarketplaceTypeContext } from '../context';
+import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
-import { getHostingLogo } from '../lib/hosting';
-import ShoppingCart, { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
+import ShoppingCart from '../shopping-cart';
 import PressableOverviewFeatures from './footer';
 import PressableOverviewPlanSelection from './plan-selection';
+
 import './style.scss';
 
-export default function PressableOverview() {
+function PressableOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedCartItems, setSelectedCartItems, onRemoveCartItem } = useShoppingCart();
+	const {
+		selectedCartItems,
+		setSelectedCartItems,
+		onRemoveCartItem,
+		showCart,
+		setShowCart,
+		toggleCart,
+	} = useShoppingCart();
+
+	const { setMarketplaceType } = useContext( MarketplaceTypeContext );
+
+	// Set the marketplace type to regular when the component mounts
+	// since we are not using the referral marketplace for Pressable.
+	useEffect( () => {
+		setMarketplaceType( 'regular' );
+	}, [ setMarketplaceType ] );
 
 	const onAddToCart = useCallback(
 		( item: APIProductFamilyProduct ) => {
@@ -41,10 +58,9 @@ export default function PressableOverview() {
 			);
 
 			setSelectedCartItems( [ ...items, { ...item, quantity: 1 } ] );
-
-			page( A4A_MARKETPLACE_PRODUCTS_LINK + CART_URL_HASH_FRAGMENT );
+			setShowCart( true );
 		},
-		[ selectedCartItems, setSelectedCartItems ]
+		[ selectedCartItems, setSelectedCartItems, setShowCart ]
 	);
 
 	const PRESSABLE_LINK = 'https://pressable.com/';
@@ -82,6 +98,9 @@ export default function PressableOverview() {
 					<Actions>
 						<MobileSidebarNavigation />
 						<ShoppingCart
+							showCart={ showCart }
+							setShowCart={ setShowCart }
+							toggleCart={ toggleCart }
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
 							onCheckout={ () => {
@@ -93,31 +112,17 @@ export default function PressableOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<section className="pressable-overview__banner">
-					<div className="pressable-overview__banner-logo">
-						{ getHostingLogo( 'pressable-hosting' ) }
-					</div>
-
-					<h1 className="pressable-overview__banner-title">
-						{ translate( 'Managed WordPress Hosting' ) }
-					</h1>
-
-					<h2 className="pressable-overview__banner-subtitle">
-						{ translate( 'Scalable plans to help you grow your business.' ) }
-					</h2>
-				</section>
-
+				<HostingOverview
+					slug="pressable-hosting"
+					title={ translate( 'Managed WordPress Hosting' ) }
+					subtitle={ translate( 'Scalable plans to help you grow your business.' ) }
+				/>
 				<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
 
-				<section className="pressable-overview__banner">
-					<h1 className="pressable-overview__banner-title">
-						{ translate( 'The Pressable Promise' ) }
-					</h1>
-
-					<h2 className="pressable-overview__banner-subtitle">
-						{ translate( 'Flexible plans that are designed to grow with your business.' ) }
-					</h2>
-				</section>
+				<HostingOverview
+					title={ translate( 'The Pressable Promise' ) }
+					subtitle={ translate( 'Flexible plans that are designed to grow with your business.' ) }
+				/>
 
 				<PressableOverviewFeatures />
 
@@ -136,3 +141,5 @@ export default function PressableOverview() {
 		</Layout>
 	);
 }
+
+export default withMarketplaceType( PressableOverview );

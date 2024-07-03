@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
@@ -19,17 +19,22 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 	return (
 		<PatternsSection title={ title } description={ description }>
 			<div
-				className={ classNames( 'patterns-category-gallery', {
+				className={ clsx( 'patterns-category-gallery', {
 					'is-regular-patterns': patternTypeFilter === PatternTypeFilter.REGULAR,
 					'is-page-patterns': patternTypeFilter === PatternTypeFilter.PAGES,
 				} ) }
 			>
 				{ categories?.map( ( category ) => {
-					const patternCount =
-						patternTypeFilter === PatternTypeFilter.PAGES
-							? category.pagePatternCount
-							: category.regularPatternCount;
-
+					const patternCountText =
+						patternTypeFilter === PatternTypeFilter.REGULAR
+							? translate( '%(count)d pattern', '%(count)d patterns', {
+									count: category.regularPatternCount,
+									args: { count: category.regularPatternCount },
+							  } )
+							: translate( '%(count)d layout', '%(count)d layouts', {
+									count: category.pagePatternCount,
+									args: { count: category.pagePatternCount },
+							  } );
 					return (
 						<LocalizedLink
 							className="patterns-category-gallery__item"
@@ -38,7 +43,7 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 						>
 							<div className="patterns-category-gallery__item-preview">
 								<div
-									className={ classNames( 'patterns-category-gallery__item-preview', {
+									className={ clsx( 'patterns-category-gallery__item-preview', {
 										'patterns-category-gallery__item-preview--page-layout':
 											patternTypeFilter === PatternTypeFilter.PAGES,
 										'patterns-category-gallery__item-preview--mirrored': category.name === 'footer',
@@ -57,12 +62,7 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 							</div>
 
 							<div className="patterns-category-gallery__item-name">{ category.label }</div>
-							<div className="patterns-category-gallery__item-count">
-								{ translate( '%(count)d pattern', '%(count)d patterns', {
-									count: patternCount,
-									args: { count: patternCount },
-								} ) }
-							</div>
+							<div className="patterns-category-gallery__item-count">{ patternCountText }</div>
 						</LocalizedLink>
 					);
 				} ) }

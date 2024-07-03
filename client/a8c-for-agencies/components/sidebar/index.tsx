@@ -1,5 +1,9 @@
-import classNames from 'classnames';
+import page from '@automattic/calypso-router';
+import { Icon, starEmpty } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
+import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
@@ -10,6 +14,7 @@ import Sidebar, {
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import A4AContactSupportWidget, { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
 import SidebarHeader from './header';
 import ProfileDropdown from './header/profile-dropdown';
 
@@ -54,8 +59,16 @@ const A4ASidebar = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const isClient = isClientView();
+
+	const onShowUserSupportForm = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_share_product_feedback_click' ) );
+	}, [ dispatch ] );
+
+	const contactUsText = isClient ? translate( 'Contact support' ) : translate( 'Contact sales' );
+
 	return (
-		<Sidebar className={ classNames( 'a4a-sidebar', className ) }>
+		<Sidebar className={ clsx( 'a4a-sidebar', className ) }>
 			<SidebarHeader withProfileDropdown={ ! withUserProfileFooter } />
 
 			<SidebarMain>
@@ -87,14 +100,14 @@ const A4ASidebar = ( {
 				<ul>
 					{ withGetHelpLink && (
 						<SidebarNavigatorMenuItem
-							isExternalLink
 							title={ translate( 'Get help', {
 								comment: 'A4A sidebar navigation item',
 							} ) }
-							link="https://agencies.automattic.com/support"
+							link=""
 							path=""
 							icon={ <JetpackIcons icon="help" /> }
 							onClickMenuItem={ () => {
+								page( CONTACT_URL_HASH_FRAGMENT );
 								dispatch(
 									recordTracksEvent( 'calypso_a4a_sidebar_menu_click', {
 										menu_item: 'A4A / Support',
@@ -104,9 +117,19 @@ const A4ASidebar = ( {
 						/>
 					) }
 
+					<SidebarNavigatorMenuItem
+						title={ contactUsText }
+						link={ CONTACT_URL_HASH_FRAGMENT }
+						path=""
+						icon={ <Icon icon={ starEmpty } /> }
+						onClickMenuItem={ onShowUserSupportForm }
+					/>
+
 					{ withUserProfileFooter && <ProfileDropdown dropdownPosition="up" /> }
 				</ul>
 			</SidebarFooter>
+
+			<A4AContactSupportWidget />
 		</Sidebar>
 	);
 };

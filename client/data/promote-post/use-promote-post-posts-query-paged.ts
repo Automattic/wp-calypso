@@ -13,6 +13,10 @@ type BlazablePostsQueryOptions = {
 	page?: number;
 };
 
+interface PostQueryResultError {
+	code?: string;
+}
+
 export const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
 	let searchQueryParams = '';
 
@@ -67,7 +71,7 @@ const usePostsQueryPaged = (
 	siteId: number,
 	searchOptions: SearchOptions,
 	queryOptions: BlazablePostsQueryOptions = {}
-): InfiniteQueryObserverResult< PostQueryResult > => {
+): InfiniteQueryObserverResult< PostQueryResult, PostQueryResultError > => {
 	const searchQueryParams = getSearchOptionsQueryParams( searchOptions );
 	return useInfiniteQuery( {
 		queryKey: [ 'promote-post-posts', siteId, searchQueryParams ],
@@ -100,6 +104,20 @@ const usePostsQueryPaged = (
 				return lastPage.page + 1;
 			}
 			return undefined;
+		},
+		retry: ( failureCount, error ) => {
+			// The posts_not_ready happens when the posts are not sync yet
+			// We want to show the error ASAP not waiting the retries in this case.
+			if ( error.hasOwnProperty( 'code' ) && 'posts_not_ready' === error.code ) {
+				return false;
+			}
+
+			// We have to define a fallback amount of failures because we
+			// override the retry option with a function.
+			// We use 3 as the failureCount since its the default value for
+			// react-query that we used before.
+			// @link https://react-query.tanstack.com/guides/query-retries
+			return 3 > failureCount;
 		},
 	} );
 };

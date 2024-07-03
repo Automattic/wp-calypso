@@ -73,10 +73,10 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 		<>
 			<DocumentHead title={ getCurrentMessage() } />
 			<StepContainer
-				shouldHideNavButtons={ true }
-				hideFormattedHeader={ true }
+				shouldHideNavButtons
+				hideFormattedHeader
 				stepName="assign-trial-step"
-				isHorizontalLayout={ true }
+				isHorizontalLayout
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
 					<>

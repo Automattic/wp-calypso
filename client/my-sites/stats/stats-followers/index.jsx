@@ -1,6 +1,6 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { Component } from 'react';
@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isAdminInterfaceWPAdmin, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -70,6 +70,7 @@ class StatModuleFollowers extends Component {
 			isAtomic,
 			isJetpack,
 			className,
+			isAdminInterface,
 		} = this.props;
 		const isLoading = requestingWpcomFollowers || requestingEmailFollowers;
 		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
@@ -80,11 +81,14 @@ class StatModuleFollowers extends Component {
 		const summaryPageSlug = siteSlug || '';
 		// email-followers is no longer available, so fallback to the new subscribers URL.
 		// Old, non-functional path: '/people/email-followers/' + summaryPageSlug.
-		// If the site is Atomic or Jetpack self-hosted, it links to Jetpack cloud.
-		// For all other cases, turn to the WP.com URL since Odyssey Stats doesn't have the Followers page.
+		// If the site is Atomic, Simple Classic or Jetpack self-hosted, it links to Jetpack Cloud.
+		// jetpack/manage-simple-sites is the feature flag for allowing Simple sites in Jetpack Cloud.
 		const jetpackCloudLink = `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`;
 		const wpcomLink = `https://wordpress.com/people/subscribers/${ summaryPageSlug }`;
-		const summaryPageLink = isAtomic || isJetpack ? jetpackCloudLink : wpcomLink;
+		const summaryPageLink =
+			isAtomic || isJetpack || ( isEnabled( 'jetpack/manage-simple-sites' ) && isAdminInterface )
+				? jetpackCloudLink
+				: wpcomLink;
 
 		// Combine data sets, sort by recency, and limit to 10.
 		const data = [ ...( wpcomData?.subscribers ?? [] ), ...( emailData?.subscribers ?? [] ) ]
@@ -149,7 +153,7 @@ class StatModuleFollowers extends Component {
 						)
 					}
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					className={ classNames( 'stats__modernised-followers', className ) }
+					className={ clsx( 'stats__modernised-followers', className ) }
 					showLeftIcon
 				/>
 			</>
@@ -188,6 +192,7 @@ const connectComponent = connect(
 			isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
 			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
+			isAdminInterface: isAdminInterfaceWPAdmin( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent }

@@ -121,7 +121,7 @@
 
 	// --- Metadata settings for git ---
 	labels: [ 'Framework', '[Type] Task', 'dependencies' ],
-	reviewers: [ 'team:team-calypso' ],
+	reviewers: [ 'team:@automattic/calypso-dependency-updates' ],
 	branchPrefix: 'renovate/',
 	gitAuthor: 'Renovate Bot (self-hosted) <bot@renovateapp.com>',
 	platform: 'github',

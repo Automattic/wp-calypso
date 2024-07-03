@@ -3,6 +3,7 @@ import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, FormEventHandler, useCallback, useEffect, useState } from 'react';
+import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -18,12 +19,17 @@ import './style.scss';
 type Props = {
 	show: boolean;
 	onClose?: () => void;
+	defaultMessage?: string;
 };
 
 const DEFAULT_MESSAGE_VALUE = '';
 const DEFAULT_PRODUCT_VALUE = 'a4a';
 
-export default function UserContactSupportModalForm( { show, onClose }: Props ) {
+export default function UserContactSupportModalForm( {
+	show,
+	onClose,
+	defaultMessage = DEFAULT_MESSAGE_VALUE,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -33,16 +39,19 @@ export default function UserContactSupportModalForm( { show, onClose }: Props ) 
 	const [ email, setEmail ] = useState( user?.email );
 	const [ product, setProduct ] = useState( DEFAULT_PRODUCT_VALUE );
 	const [ site, setSite ] = useState( '' );
-	const [ message, setMessage ] = useState( DEFAULT_MESSAGE_VALUE );
+	const [ message, setMessage ] = useState( defaultMessage );
 
 	const isPressableSelected = product === 'pressable';
 	const hasCompletedForm = !! message && !! name && !! email && !! product && ! isPressableSelected;
 
 	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport();
 
-	const onModalClose = useCallback( () => {
-		setMessage( DEFAULT_MESSAGE_VALUE );
+	const resetForm = useCallback( () => {
+		setMessage( defaultMessage );
 		setProduct( DEFAULT_PRODUCT_VALUE );
+	}, [ defaultMessage ] );
+
+	const onModalClose = useCallback( () => {
 		onClose?.();
 
 		dispatch( recordTracksEvent( 'calypso_a4a_user_contact_support_form_close' ) );
@@ -59,6 +68,12 @@ export default function UserContactSupportModalForm( { show, onClose }: Props ) 
 			onModalClose();
 		}
 	}, [ dispatch, isSubmissionSuccessful, onModalClose, translate ] );
+
+	useEffect( () => {
+		if ( show ) {
+			resetForm();
+		}
+	}, [ defaultMessage, resetForm, show ] );
 
 	const onNameChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setName( event.currentTarget.value );
@@ -103,6 +118,8 @@ export default function UserContactSupportModalForm( { show, onClose }: Props ) 
 		}
 	}, [ dispatch, show ] );
 
+	const isClient = isClientView();
+
 	if ( ! show ) {
 		return null;
 	}
@@ -124,7 +141,7 @@ export default function UserContactSupportModalForm( { show, onClose }: Props ) 
 				</Button>
 
 				<h1 className="a4a-contact-support-modal-form__title">
-					{ translate( 'Contact support' ) }
+					{ isClient ? translate( 'Contact support' ) : translate( 'Contact sales & support' ) }
 				</h1>
 
 				<FormFieldset>

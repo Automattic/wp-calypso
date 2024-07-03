@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import {
@@ -10,6 +11,7 @@ import {
 } from '@automattic/data-stores';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import {
 	Icon,
@@ -22,19 +24,93 @@ import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useDebounce } from 'use-debounce';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
-import { useSiteOption } from 'calypso/state/sites/hooks';
-import { getSectionName } from 'calypso/state/ui/selectors';
+import { preventWidows } from 'calypso/lib/formatting';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useAdminResults } from '../hooks/use-admin-results';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
+import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
+
+type HelpLinkProps = {
+	result: SearchResult;
+	type: string;
+	index: number;
+	onLinkClickHandler: (
+		event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
+		result: SearchResult,
+		type: string
+	) => void;
+	externalLinks?: boolean;
+};
+
+const isResultFromDeveloperWordpress = ( url: string ) => {
+	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
+	return developerSiteRegex.test( url );
+};
+
+const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
+	const { result, type, index, onLinkClickHandler, externalLinks } = props;
+	const { link, title, icon } = result;
+	const { sectionName } = useHelpCenterContext();
+	const isRtl = useRtl();
+
+	const wpAdminSections = [ 'wp-admin', 'gutenberg-editor' ].includes( sectionName );
+	const external = wpAdminSections || ( externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION );
+
+	const LinkIcon = () => {
+		if ( type === 'admin_section' ) {
+			return <Icon icon={ arrowRight } />;
+		}
+
+		if ( icon ) {
+			return <Gridicon icon={ icon } />;
+		}
+
+		return <Icon icon={ pageIcon } />;
+	};
+
+	const DeveloperResourceIndicator = () => {
+		return (
+			<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
+		);
+	};
+
+	return (
+		<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
+			<li className="help-center-search-results__item">
+				<div className="help-center-search-results__cell">
+					<a
+						href={ localizeUrl( link ) }
+						onClick={ ( event ) => {
+							if ( ! external ) {
+								event.preventDefault();
+							}
+							onLinkClickHandler( event, result, type );
+						} }
+						{ ...( external && {
+							target: '_blank',
+							rel: 'noreferrer',
+						} ) }
+					>
+						{ isResultFromDeveloperWordpress( result.link ) ? (
+							<DeveloperResourceIndicator />
+						) : (
+							<LinkIcon />
+						) }
+						<span>{ preventWidows( decodeEntities( title ) ) }</span>
+						<Icon
+							width={ 20 }
+							height={ 20 }
+							icon={ result.post_id ? chevronRight : externalIcon }
+						/>
+					</a>
+				</div>
+			</li>
+		</Fragment>
+	);
+};
 
 interface SearchResultsSectionProps {
 	type: string;
@@ -45,11 +121,6 @@ interface SearchResultsSectionProps {
 
 const noop = () => {
 	return;
-};
-
-const isResultFromDeveloperWordpress = ( url: string ) => {
-	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
-	return developerSiteRegex.test( url );
 };
 
 function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
@@ -111,19 +182,17 @@ function HelpSearchResults( {
 	location = 'inline-help-popover',
 	currentRoute,
 }: HelpSearchResultsProps ) {
-	const dispatch = useDispatch();
-	const hasPurchases = useSelector( hasCancelableUserPurchases );
-	const sectionName = useSelector( getSectionName );
-	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
+	const { hasPurchases, sectionName, site } = useHelpCenterContext();
+
+	const adminResults = useAdminResults( searchQuery );
 
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
-	const siteIntent = useSiteOption( 'site_intent' );
+	const siteIntent = site?.options.site_intent;
 	const rawContextualResults = useMemo(
-		() => getContextResults( sectionName, siteIntent ),
+		() => getContextResults( sectionName || 'gutenberg-editor', siteIntent ?? 'build' ),
 		[ sectionName, siteIntent ]
 	);
 
-	const isRtl = useRtl();
 	const locale = useLocale();
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
@@ -138,7 +207,6 @@ function HelpSearchResults( {
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
 		debouncedQuery || contextSearch, // If there's a query, we don't context search
 		locale,
-		{},
 		sectionName,
 		debouncedQuery
 			? undefined // If there's a query, we don't need tailored articles
@@ -177,19 +245,17 @@ function HelpSearchResults( {
 		// check and catch admin section links.
 		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
 			// record track-event.
-			dispatch(
-				recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
-					link: link,
-					search_term: searchQuery,
-					location,
-					section: sectionName,
-				} )
-			);
+			recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
+				link: link,
+				search_term: searchQuery,
+				location,
+				section: sectionName,
+			} );
 
 			// push state only if it's internal link.
 			if ( ! /^http/.test( link ) ) {
 				event.preventDefault();
-				openAdminInNewTab ? window.open( 'https://wordpress.com' + link, '_blank' ) : page( link );
+				openAdminInNewTab ? window.open( link, '_blank' ) : page( link );
 				onAdminSectionSelect( event );
 			}
 
@@ -210,73 +276,8 @@ function HelpSearchResults( {
 			? 'calypso_inlinehelp_tailored_article_select'
 			: 'calypso_inlinehelp_article_select';
 
-		dispatch( recordTracksEvent( eventName, eventData ) );
+		recordTracksEvent( eventName, eventData );
 		onSelect( event, result );
-	};
-
-	type HelpLinkProps = {
-		result: SearchResult;
-		type: string;
-		index: number;
-	};
-
-	const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
-		const { result, type, index } = props;
-		const { link, title, icon } = result;
-
-		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
-
-		const LinkIcon = () => {
-			if ( type === 'admin_section' ) {
-				return <Icon icon={ arrowRight } />;
-			}
-
-			if ( icon ) {
-				return <Gridicon icon={ icon } />;
-			}
-
-			return <Icon icon={ pageIcon } />;
-		};
-
-		const DeveloperResourceIndicator = () => {
-			return (
-				<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
-			);
-		};
-
-		return (
-			<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
-				<li className="help-center-search-results__item">
-					<div className="help-center-search-results__cell">
-						<a
-							href={ localizeUrl( link ) }
-							onClick={ ( event ) => {
-								if ( ! external ) {
-									event.preventDefault();
-								}
-								onLinkClickHandler( event, result, type );
-							} }
-							{ ...( external && {
-								target: '_blank',
-								rel: 'noreferrer',
-							} ) }
-						>
-							{ isResultFromDeveloperWordpress( result.link ) ? (
-								<DeveloperResourceIndicator />
-							) : (
-								<LinkIcon />
-							) }
-							<span>{ preventWidows( decodeEntities( title ) ) }</span>
-							<Icon
-								width={ 20 }
-								height={ 20 }
-								icon={ result.post_id ? chevronRight : externalIcon }
-							/>
-						</a>
-					</div>
-				</li>
-			</Fragment>
-		);
 	};
 
 	const renderSearchResultsSection = ( {
@@ -304,6 +305,8 @@ function HelpSearchResults( {
 							result={ result }
 							type={ type }
 							index={ index }
+							onLinkClickHandler={ onLinkClickHandler }
+							externalLinks={ externalLinks }
 						/>
 					) ) }
 				</ul>
@@ -311,59 +314,46 @@ function HelpSearchResults( {
 		) : null;
 	};
 
-	const renderSearchSections = () => {
-		const sections = [
-			{
-				type: SUPPORT_TYPE_API_HELP,
-				title: __( 'Recommended Resources', __i18n_text_domain__ ),
-				results: searchResults.slice( 0, 5 ),
-				condition: ! isSearching && searchResults.length > 0,
-			},
-			{
-				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? __( 'Recommended Resources', __i18n_text_domain__ ) : '',
-				results: contextualResults.slice( 0, 6 ),
-				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
-			},
-			{
-				type: SUPPORT_TYPE_ADMIN_SECTION,
-				title: __( 'Show me where to', __i18n_text_domain__ ),
-				results: adminResults,
-				condition: !! searchQuery && adminResults.length > 0,
-			},
-		];
-
-		return sections.map( renderSearchResultsSection );
-	};
+	const sections = [
+		{
+			type: SUPPORT_TYPE_API_HELP,
+			title: __( 'Recommended Resources', __i18n_text_domain__ ),
+			results: searchResults.slice( 0, 5 ),
+			condition: ! isSearching && searchResults.length > 0,
+		},
+		{
+			type: SUPPORT_TYPE_CONTEXTUAL_HELP,
+			title: ! searchQuery.length ? __( 'Recommended Resources', __i18n_text_domain__ ) : '',
+			results: contextualResults.slice( 0, 6 ),
+			condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
+		},
+		{
+			type: SUPPORT_TYPE_ADMIN_SECTION,
+			title: __( 'Show me where to', __i18n_text_domain__ ),
+			results: adminResults,
+			condition: !! searchQuery && adminResults.length > 0,
+		},
+	].map( renderSearchResultsSection );
 
 	const resultsLabel = hasAPIResults
 		? __( 'Search Results', __i18n_text_domain__ )
 		: __( 'Helpful resources for this section', __i18n_text_domain__ );
 
-	const renderSearchResults = () => {
-		return (
-			<>
-				{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
-				{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
-					<p className="help-center-search-results__empty-results">
-						{ __(
-							'Sorry, there were no matches. Here are some of the most searched for help pages for this section:',
-							__i18n_text_domain__
-						) }
-					</p>
-				) : null }
-
-				<div className="help-center-search-results__results" aria-label={ resultsLabel }>
-					{ renderSearchSections() }
-				</div>
-			</>
-		);
-	};
-
 	return (
 		<>
-			<QueryUserPurchases />
-			{ renderSearchResults() }
+			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
+			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
+				<p className="help-center-search-results__empty-results">
+					{ __(
+						'Sorry, there were no matches. Here are some of the most searched for help pages for this section:',
+						__i18n_text_domain__
+					) }
+				</p>
+			) : null }
+
+			<div className="help-center-search-results__results" aria-label={ resultsLabel }>
+				{ sections }
+			</div>
 		</>
 	);
 }

@@ -1,11 +1,12 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { ImporterMainPlatform } from 'calypso/blocks/import/types';
+import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -83,6 +84,7 @@ const siteSetupFlow: Flow = {
 			STEPS.IMPORTER_MEDIUM,
 			STEPS.IMPORTER_SQUARESPACE,
 			STEPS.IMPORTER_WORDPRESS,
+			STEPS.LAUNCH_BIG_SKY,
 			STEPS.VERIFY_EMAIL,
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.PROCESSING,
@@ -116,6 +118,7 @@ const siteSetupFlow: Flow = {
 		);
 
 		const { site, siteSlug, siteId } = useSiteData();
+		const isSitePlanCompatible = site && isTargetSitePlanCompatible( site );
 		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
@@ -335,20 +338,15 @@ const siteSetupFlow: Flow = {
 
 					switch ( intent ) {
 						case SiteIntent.Import:
-							if ( config.isEnabled( 'onboarding/new-migration-flow' ) ) {
-								return exitFlow(
-									`/setup/site-migration?siteSlug=${ siteSlug }&flags=onboarding/new-migration-flow`
-								);
-							}
+							return exitFlow( `/setup/site-migration?siteSlug=${ siteSlug }&ref=goals` );
 
-							return navigate( 'import' );
 						case SiteIntent.DIFM:
 							return navigate( 'difmStartingPoint' );
 						case SiteIntent.Write:
 						case SiteIntent.Sell:
 							return navigate( 'options' );
 						default: {
-							if ( config.isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'designSetup' );
@@ -491,7 +489,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Write:
 							return navigate( 'bloggerStartingPoint' );
 						default: {
-							if ( config.isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'goals' );
@@ -524,14 +522,33 @@ const siteSetupFlow: Flow = {
 				case 'importerBlogger':
 				case 'importerMedium':
 				case 'importerSquarespace':
+					if ( backToFlow ) {
+						return navigate( `importList?siteSlug=${ siteSlug }&backToFlow=${ backToFlow }` );
+					}
 					return navigate( `importList?siteSlug=${ siteSlug }` );
 
 				case 'importerWordpress':
+					if ( backToFlow ) {
+						return goToFlow( backToFlow );
+					}
+
 					if ( urlQueryParams.get( 'option' ) === 'content' ) {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}
-					return navigate( `import?siteSlug=${ siteSlug }` );
 
+					if ( urlQueryParams.has( 'showModal' ) ) {
+						// remove the siteSlug in case they want to change the destination site
+						urlQueryParams.delete( 'siteSlug' );
+						urlQueryParams.delete( 'showModal' );
+						return navigate( `import?siteSlug=${ siteSlug }` );
+					}
+
+					if ( ! isSitePlanCompatible ) {
+						urlQueryParams.set( 'showModal', 'true' );
+						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					}
+
+					return navigate( `import?siteSlug=${ siteSlug }` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':

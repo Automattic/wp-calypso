@@ -97,10 +97,9 @@ function getBlockedPurchaseErrorMessage( {
 			components: {
 				a: (
 					<a
-						href={
-							'https://wordpress.com/error-report/' +
-							( selectedSiteSlug ? '?url=payment@' + selectedSiteSlug : '' )
-						}
+						href={ `https://wordpress.com/account-assistance-form/${
+							selectedSiteSlug ? '?url=payment@' + selectedSiteSlug : ''
+						}` }
 						target="_blank"
 						rel="noopener noreferrer"
 					/>

@@ -95,7 +95,8 @@
 	}
 }
 
-.payment-method-details__name {
+.payment-method-details__name,
+.payment-method-details__vpa {
 	color: var(--color-neutral-50);
 	display: block;
 	font-size: 0.875rem;

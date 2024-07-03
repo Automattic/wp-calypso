@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
@@ -90,11 +90,11 @@ class SplitButton extends PureComponent {
 			popoverContext,
 		} = this.props;
 		const { isMenuVisible } = this.state;
-		const toggleClasses = classNames( 'split-button__toggle', {
+		const toggleClasses = clsx( 'split-button__toggle', {
 			'split-button__toggle--white-separator': whiteSeparator,
 		} );
-		const popoverClasses = classNames( 'split-button__menu', 'popover', popoverClassName );
-		const classes = classNames( 'split-button', className, {
+		const popoverClasses = clsx( 'split-button__menu', 'popover', popoverClassName );
+		const classes = clsx( 'split-button', className, {
 			'is-menu-visible': isMenuVisible,
 			'is-disabled': disabled,
 			'has-icon-text': label && icon,

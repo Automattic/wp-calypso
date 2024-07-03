@@ -6,11 +6,11 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useSiteDateTimeFormat } from './hooks/use-site-date-time-format';
+import { useDateTimeFormat } from '../plugin-scheduled-updates-common/hooks/use-date-time-format';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleFormTime } from './schedule-form-time';
 import { DAILY_OPTION, DAY_OPTIONS, DEFAULT_HOUR, WEEKLY_OPTION } from './schedule-form.const';
@@ -40,7 +40,7 @@ export function ScheduleFormFrequency( props: Props ) {
 		onChange,
 		onTouch,
 	} = props;
-	const { isAmPmPhpTimeFormat } = useSiteDateTimeFormat( siteSlug );
+	const { isAmPmPhpTimeFormat } = useDateTimeFormat( siteSlug );
 	const isAmPmFormat = isAmPmPhpTimeFormat();
 
 	const initDate = initTimestamp
@@ -66,7 +66,7 @@ export function ScheduleFormFrequency( props: Props ) {
 		<div className={ `form-field form-field--frequency ${ className }` }>
 			<label htmlFor="frequency">{ translate( 'Select frequency' ) }</label>
 			<Flex direction={ [ 'column', 'row' ] }>
-				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
+				<FlexItem className={ clsx( 'radio-option', { selected: frequency === 'daily' } ) }>
 					<Flex className="form-field--frequency-container" gap={ 6 }>
 						<FlexItem>
 							<RadioControl
@@ -82,6 +82,7 @@ export function ScheduleFormFrequency( props: Props ) {
 								hour={ hour }
 								period={ period }
 								isAmPmFormat={ isAmPmFormat }
+								onTouch={ ( touched ) => setFieldTouched( touched ) }
 								onChange={ ( hour, period ) => {
 									setHour( hour );
 									setPeriod( period );
@@ -90,7 +91,7 @@ export function ScheduleFormFrequency( props: Props ) {
 						</FlexItem>
 					</Flex>
 				</FlexItem>
-				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'weekly' } ) }>
+				<FlexItem className={ clsx( 'radio-option', { selected: frequency === 'weekly' } ) }>
 					<Flex
 						className="form-field--frequency-container"
 						gap={ 6 }
@@ -121,6 +122,7 @@ export function ScheduleFormFrequency( props: Props ) {
 										hour={ hour }
 										period={ period }
 										isAmPmFormat={ isAmPmFormat }
+										onTouch={ ( touched ) => setFieldTouched( touched ) }
 										onChange={ ( hour, period ) => {
 											setHour( hour );
 											setPeriod( period );

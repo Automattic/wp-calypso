@@ -19,6 +19,12 @@
 			}
 		}
 
+		&.details-card__section-actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 16px;
+		}
+
 		.details-card__date {
 			display: block;
 			margin-top: 16px;
@@ -45,9 +51,6 @@
 
 		& .button:not(.is-primary):not(:disabled) {
 			color: var(--studio-gray-80);
-		}
-		& .button:not(:first-child) {
-			margin-left: 16px;
 		}
 	}
 }

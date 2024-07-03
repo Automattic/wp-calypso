@@ -1,5 +1,5 @@
 import { StatsCard } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -23,7 +23,6 @@ const StatsModuleDevicesWrapper: React.FC< StatsModuleDevicesWrapperProps > = ( 
 	period,
 	postId,
 	query,
-	// summary,
 	className,
 } ) => {
 	const { devices: devicesStrings } = statsStrings();
@@ -44,10 +43,9 @@ const StatsModuleDevicesWrapper: React.FC< StatsModuleDevicesWrapperProps > = ( 
 	return (
 		<>
 			{ isFetching && (
-				// @ts-expect-error TODO: Refactor StatsCard with TypeScript.
 				<StatsCard
 					title={ devicesStrings.title }
-					className={ classNames( className, DEVICES_CLASS_NAME, 'stats-module__card', 'devices' ) }
+					className={ clsx( className, DEVICES_CLASS_NAME, 'stats-module__card', 'devices' ) }
 					isNew
 				>
 					<StatsModulePlaceholder isLoading />
@@ -59,7 +57,7 @@ const StatsModuleDevicesWrapper: React.FC< StatsModuleDevicesWrapperProps > = ( 
 			{ ! isFetching && isAdvancedFeatureEnabled && (
 				<StatsModuleDevices
 					path="devices"
-					className={ classNames( className, DEVICES_CLASS_NAME ) }
+					className={ clsx( className, DEVICES_CLASS_NAME ) }
 					period={ period }
 					query={ query }
 					isLoading={ isFetching }

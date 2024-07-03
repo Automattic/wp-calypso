@@ -183,15 +183,6 @@
 	}
 }
 
-.sites-overview__content:has(.dataviews-pagination) {
-	padding-bottom: 32px !important;
-}
-
-.main.a4a-layout.sites-dashboard:has(.dataviews-pagination) {
-	height: calc(100vh - 70px) !important;
-}
-
-
 .dataviews-pagination {
 	background: #fff;
 	border-top: 1px solid #f1f1f1;

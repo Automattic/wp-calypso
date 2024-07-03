@@ -1,14 +1,14 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
-import { Card, FormLabel, MaterialIcon } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -20,7 +20,7 @@ import {
 	removeNotice,
 	successNotice,
 } from 'calypso/state/notices/actions';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSiteOption, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
 import './style.scss';
 const changeLoadingNoticeId = 'admin-interface-change-loading';
@@ -34,7 +34,7 @@ const FormRadioStyled = styled( FormRadio )( {
 	},
 } );
 
-const SiteAdminInterface = ( { siteId, isHosting } ) => {
+const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const dispatch = useDispatch();
@@ -47,6 +47,7 @@ const SiteAdminInterface = ( { siteId, isHosting } ) => {
 	const adminInterface = useSelector(
 		( state ) => getSiteOption( state, siteId, 'wpcom_admin_interface' ) || 'calypso'
 	);
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutation( siteId, {
 		onMutate: () => {
@@ -78,6 +79,12 @@ const SiteAdminInterface = ( { siteId, isHosting } ) => {
 
 	const [ selectedAdminInterface, setSelectedAdminInterface ] = useState( adminInterface );
 
+	// When switching from Classic to Default, adminInterface will initially reflect the cached state 'wp-admin'.
+	// It will then be updated to 'calypso', so we need to sync the change to selectedAdminInterface.
+	useEffect( () => {
+		setSelectedAdminInterface( adminInterface );
+	}, [ adminInterface ] );
+
 	const handleSubmitForm = ( value ) => {
 		if ( isHosting ) {
 			dispatch(
@@ -105,53 +112,9 @@ const SiteAdminInterface = ( { siteId, isHosting } ) => {
 		}
 	};
 
-	return (
-		<>
-			{ ! isHosting && (
-				<SettingsSectionHeader
-					id="admin-interface-style"
-					disabled={ isUpdating }
-					isSaving={ isUpdating }
-					onButtonClick={ () => handleSubmitForm( selectedAdminInterface ) }
-					showButton
-					title={ translate(
-						'Admin interface style {{infoPopover}} Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}. {{/infoPopover}}',
-						{
-							components: {
-								supportLink: (
-									<InlineSupportLink supportContext="admin-interface-style" showIcon={ false } />
-								),
-								infoPopover: <InfoPopover position="bottom right" />,
-							},
-							comment: 'The header of the Admin interface style setting',
-						}
-					) }
-				/>
-			) }
-			<Card>
-				{ isHosting && (
-					<>
-						<MaterialIcon icon="display_settings" style="filled" size={ 32 } />
-						<CardHeading id="admin-interface-style" size={ 20 }>
-							{ translate( 'Admin interface style' ) }
-						</CardHeading>
-						<p>
-							{ translate(
-								'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}.',
-								{
-									components: {
-										supportLink: (
-											<InlineSupportLink
-												supportContext="admin-interface-style"
-												showIcon={ false }
-											/>
-										),
-									},
-								}
-							) }
-						</p>
-					</>
-				) }
+	const renderForm = () => {
+		return (
+			<>
 				<FormFieldset>
 					<FormLabel>
 						<FormRadioStyled
@@ -164,9 +127,7 @@ const SiteAdminInterface = ( { siteId, isHosting } ) => {
 						/>
 					</FormLabel>
 					<FormSettingExplanation>
-						{ hasEnTranslation( 'Use WP-Admin to manage your site.' )
-							? translate( 'Use WP-Admin to manage your site.' )
-							: translate( 'The classic WP-Admin WordPress interface.' ) }
+						{ translate( 'Use WP-Admin to manage your site.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset>
@@ -181,12 +142,76 @@ const SiteAdminInterface = ( { siteId, isHosting } ) => {
 						/>
 					</FormLabel>
 					<FormSettingExplanation>
-						{ hasEnTranslation( 'Use WordPress.com’s legacy dashboard to manage your site.' )
-							? translate( 'Use WordPress.com’s legacy dashboard to manage your site.' )
-							: translate( 'The WordPress.com redesign for a better experience.' ) }
+						{ hasEnTranslation( 'Use WordPress.com’s native dashboard to manage your site.' )
+							? translate( 'Use WordPress.com’s native dashboard to manage your site.' )
+							: translate( 'Use WordPress.com’s legacy dashboard to manage your site.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
-			</Card>
+			</>
+		);
+	};
+
+	if ( isHosting ) {
+		return (
+			<HostingCard
+				className="admin-interface-style-card"
+				headingId="admin-interface-style"
+				title={ translate( 'Admin interface style' ) }
+			>
+				<HostingCardDescription>
+					{ translate(
+						'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}.',
+						{
+							components: {
+								supportLink: (
+									<InlineSupportLink supportContext="admin-interface-style" showIcon={ false } />
+								),
+							},
+						}
+					) }
+				</HostingCardDescription>
+				<p className="form-setting-explanation">
+					{ translate( 'This setting has now moved to {{a}}Settings → General{{/a}}.', {
+						components: {
+							a: (
+								<a
+									href={
+										adminInterface === 'wp-admin'
+											? `${ siteAdminUrl }options-general.php`
+											: `/settings/general/${ siteSlug }#admin-interface-style`
+									}
+									rel="noreferrer"
+								/>
+							),
+						},
+					} ) }
+				</p>
+			</HostingCard>
+		);
+	}
+
+	return (
+		<>
+			<SettingsSectionHeader
+				id="admin-interface-style"
+				disabled={ isUpdating }
+				isSaving={ isUpdating }
+				onButtonClick={ () => handleSubmitForm( selectedAdminInterface ) }
+				showButton
+				title={ translate(
+					'Admin interface style {{infoPopover}} Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}. {{/infoPopover}}',
+					{
+						components: {
+							supportLink: (
+								<InlineSupportLink supportContext="admin-interface-style" showIcon={ false } />
+							),
+							infoPopover: <InfoPopover position="bottom right" />,
+						},
+						comment: 'The header of the Admin interface style setting',
+					}
+				) }
+			/>
+			<Card>{ renderForm() }</Card>
 		</>
 	);
 };

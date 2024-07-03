@@ -57,7 +57,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 const PromoSection: FunctionComponent< Props > = ( { header, promos } ) => {
 	return (
 		<div className="promo-section">
-			{ header && <PromoSectionCard isPrimary={ true } { ...header } /> }
+			{ header && <PromoSectionCard isPrimary { ...header } /> }
 			<div className="promo-section__promos">
 				{ promos.map( ( promo, i ) => (
 					<PromoSectionCard { ...promo } key={ i } />

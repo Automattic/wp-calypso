@@ -16,11 +16,11 @@
 	max-width: 1224px;
 	margin: -25px max(calc(50% - 612px), 32px) 20px;
 
-	@media ( max-width: 660px ) {
+	@media (max-width: 660px) {
 		margin: -15px 16px 15px;
 	}
 
-	@media ( min-width: 659px ) and ( max-width: 782px ) {
+	@media (min-width: 659px) and (max-width: 782px) {
 		margin: -10px 32px 15px;
 	}
 }

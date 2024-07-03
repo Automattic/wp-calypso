@@ -1,4 +1,3 @@
-import { PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
@@ -14,6 +13,7 @@ import {
 	isFreeFlow,
 	isLinkInBioFlow,
 	isMigrationFlow,
+	isMigrationSignupFlow,
 	isStartWritingFlow,
 	isWooExpressFlow,
 	isEntrepreneurFlow,
@@ -21,6 +21,7 @@ import {
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
 	isSiteAssemblerFlow,
+	isReadymadeFlow,
 	setThemeOnSite,
 	AI_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
@@ -32,7 +33,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
-import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -68,8 +68,11 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
-	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation();
+	const partnerBundle = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPartnerBundle(),
+		[]
+	);
+	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 
 	const urlData = useSelector( getUrlData );
 
@@ -145,6 +148,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isSiteAssemblerFlow( flow ) ||
+		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
@@ -164,13 +168,15 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const useThemeHeadstart =
 		! isStartWritingFlow( flow ) &&
 		! isNewHostedSiteCreationFlow( flow ) &&
-		! isSiteAssemblerFlow( flow );
+		! isSiteAssemblerFlow( flow ) &&
+		! isMigrationSignupFlow( flow );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
 			return {
 				siteSlug: getSignupCompleteSlug(),
 				goToCheckout: true,
+				siteCreated: true,
 			};
 		}
 
@@ -197,16 +203,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			await setThemeOnSite( site.siteSlug, preselectedThemeSlug, preselectedThemeStyleVariation );
 		}
 
-		if ( planCartItem?.product_slug === PLAN_HOSTING_TRIAL_MONTHLY && site ) {
-			await addHostingTrial( { siteId: site.siteId, planSlug: PLAN_HOSTING_TRIAL_MONTHLY } );
-
-			return {
-				siteId: site.siteId,
-				siteSlug: site.siteSlug,
-				goToCheckout: false,
-			};
-		}
-
 		if ( isEntrepreneurFlow( flow ) && site ) {
 			await addEcommerceTrial( { siteId: site.siteId } );
 
@@ -214,6 +210,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 				siteId: site.siteId,
 				siteSlug: site.siteSlug,
 				goToCheckout: false,
+				siteCreated: true,
 			};
 		}
 
@@ -235,6 +232,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteSlug: site?.siteSlug,
 			goToCheckout: Boolean( planCartItem ),
 			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
+			siteCreated: true,
 		};
 	}
 
@@ -270,10 +268,10 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		<>
 			<DocumentHead title={ getCurrentMessage() } />
 			<StepContainer
-				shouldHideNavButtons={ true }
-				hideFormattedHeader={ true }
+				shouldHideNavButtons
+				hideFormattedHeader
 				stepName="create-site"
-				isHorizontalLayout={ true }
+				isHorizontalLayout
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
 					<>

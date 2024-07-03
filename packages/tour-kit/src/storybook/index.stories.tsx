@@ -46,7 +46,6 @@ const Tour = ( {
 			{
 				referenceElements: {
 					desktop: '.storybook__tourkit-references-a',
-					mobile: '.storybook__tourkit-references-a',
 				},
 				meta: {
 					description: 'Lorem ipsum dolor sit amet.',

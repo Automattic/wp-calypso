@@ -1,11 +1,216 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$data-view-border-color: #f1f1f1;
+
+.referrals-overview__section-notice {
+	margin-block-end: 48px;
+}
+
 .referrals-overview__section-heading {
 	margin-block-start: 24px;
 	font-size: rem(24px);
+	margin-block-end: 8px;
+	font-weight: 600;
+}
+.referrals-overview__section-subtitle {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	font-size: rem(14px);
+	font-weight: 400;
 	margin-block-end: 48px;
+	color: var(--color-neutral-50);
+}
+
+
+.referrals-overview__step-section-woo-payments {
+	a.button,
+	a.button:visited {
+		text-decoration: underline;
+		justify-content: flex-start;
+	}
+
+	&.step-section-item .step-section-item__button {
+		margin-block-start: 0;
+	}
 }
 
 .referrals-overview__section-container {
 	display: flex;
 	flex-direction: column;
 	gap: 48px;
+}
+
+.referrals-layout:not(.full-width-layout-with-table) .a4a-layout__body-wrapper {
+	max-width: 900px;
+}
+
+.referrals-overview__section-container .a4a-text-placeholder {
+	height: 80px;
+}
+
+.referrals-layout--automated {
+	.referrals-overview__section-container {
+		gap: 32px;
+	}
+
+	.referrals-overview__step-section-learn-more {
+		a.button {
+			padding-block: 4px;
+		}
+
+		.step-section__header {
+			margin-block-end: 0;
+		}
+	}
+
+	.referrals-overview__section-subtitle {
+		margin-block-end: 32px;
+	}
+
+	&:not(.full-width-layout-with-table) .a4a-layout__body-wrapper {
+		max-width: 700px;
+	}
+
+	.referrals-overview__step-section-woo-payments {
+		margin-block-end: 0;
+
+		a,
+		a:visited {
+			text-decoration: none;
+			justify-content: center;
+		}
+
+		&.step-section-item .step-section-item__button {
+			margin-block-start: 16px;
+
+			@include break-large {
+				margin-block: auto;
+			}
+		}
+	}
+
+	.consolidated-view {
+		padding-block: 16px 48px;
+	}
+
+	.referrals-overview__section-heading {
+		margin-block-start: 32px;
+	}
+
+	&.main.a4a-layout.is-with-border .a4a-layout__top-wrapper:not(.has-navigation) {
+		padding-block-start: 24px;
+		padding-block-end: 0;
+	}
+
+	&.main.a4a-layout {
+		@include break-large {
+			background: inherit;
+		}
+	}
+
+	&.referrals-layout--has-selected {
+		ul.dataviews-view-list {
+			margin: 0;
+			list-style: none;
+		}
+
+		li:not(.section-nav-tab) {
+			margin-inline: -24px;
+			padding: 16px 24px;
+			border-bottom: 1px solid $data-view-border-color;
+		}
+
+		.dataviews-view-list__item .components-flex {
+			gap: 0;
+		}
+
+		.dataviews-filters__view-actions {
+			border-bottom: 1px solid $data-view-border-color;
+			margin-inline-start: -24px;
+			padding-inline: 24px;
+			padding-block-end: 16px;
+			margin-block-end: 0;
+		}
+
+		.a4a-layout__top-wrapper > *,
+		.a4a-layout__body > * {
+			padding-inline: 24px;
+		}
+
+		.referrals-layout__column {
+			flex: unset;
+			height: 100%;
+			transition: all 0.2s;
+			width: 400px;
+			display: none;
+
+			@include break-wide {
+				display: block;
+			}
+		}
+
+		.a4a-layout__header-actions a.button {
+			text-wrap: nowrap;
+		}
+	}
+}
+
+.referrals-overview__opacity-70-percent {
+	opacity: 0.7;
+}
+
+.jetpack-logo {
+	fill: var(--color-jetpack);
+}
+
+.woocommerce-logo {
+	fill: var(--color-woocommerce);
+}
+
+.referrals-overview__section-icons {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	margin-block-start: 56px;
+}
+
+.a4a-layout__header-actions {
+	a.button {
+		text-wrap: pretty;
+	}
+}
+
+.referrals-overview__link {
+	color: var(--color-accent-100);
+	text-decoration: underline;
+
+	&:hover,
+	&:visited,
+	&:focus {
+		color: var(--color-accent-100);
+	}
+}
+
+// FIXME: This is a temporary fix to make the referral layout columns the same height
+.main.a4a-layout-column.referrals-layout__column {
+	height: auto;
+	overflow-y: scroll;
+}
+
+
+.referrals-layout .notice-banner {
+	display: none;
+	margin-block-end: 24px;
+}
+
+.referrals-layout:not(.referrals-layout--has-selected) .notice-banner {
+	display: flex;
+}
+
+.referrals-layout .item-preview__pane {
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 32px);
 }

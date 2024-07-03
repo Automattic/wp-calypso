@@ -1,8 +1,9 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useContext } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -17,27 +18,46 @@ import {
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
+import useFetchClientReferral from '../../client/hooks/use-fetch-client-referral';
+import { MarketplaceTypeContext } from '../context';
+import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
+import useProductsById from '../hooks/use-products-by-id';
 import useProductsBySlug from '../hooks/use-products-by-slug';
 import useShoppingCart from '../hooks/use-shopping-cart';
+import { getClientReferralQueryArgs } from '../lib/get-client-referral-query-args';
 import useSubmitForm from '../products-overview/product-listing/hooks/use-submit-form';
+import NoticeSummary from './notice-summary';
 import PricingSummary from './pricing-summary';
 import ProductInfo from './product-info';
+import RequestClientPayment from './request-client-payment';
+import SubmitPaymentInfo from './submit-payment-info';
 import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
 
-export default function Checkout() {
+function Checkout( { isClient }: { isClient?: boolean } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedCartItems, onRemoveCartItem, onClearCart } = useShoppingCart();
-	const sites = useSelector( getSites );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const isAutomatedReferrals = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
+	const { selectedCartItems, onRemoveCartItem, onClearCart } = useShoppingCart();
+
+	// Fetch selected products by slug for site checkout
+	const { selectedProductsBySlug } = useProductsBySlug();
+
+	// Fetch client referral items if it's a client referral checkout
+	const { data: clientCheckoutItems } = useFetchClientReferral( getClientReferralQueryArgs() );
+
+	// Get referred products for client referral checkout only if it's a client referral checkout
+	const { referredProducts } = useProductsById( clientCheckoutItems?.products ?? [], isClient );
+
+	// Get sites and selected site
+	const sites = useSelector( getSites );
 	const siteId = getQueryArg( window.location.href, 'site_id' )?.toString();
 	const selectedSite =
 		siteId && sites ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
-
-	const { selectedProductsBySlug } = useProductsBySlug();
 
 	const { isReady, submitForm } = useSubmitForm( {
 		selectedSite,
@@ -57,13 +77,16 @@ export default function Checkout() {
 			.flat();
 	}, [ selectedCartItems ] );
 
-	const checkoutItems = siteId ? selectedProductsBySlug : sortedSelectedItems;
+	// Use selected products by slug for site checkout
+	let checkoutItems = siteId ? selectedProductsBySlug : sortedSelectedItems;
+
+	// Use referred products for client referral checkout
+	if ( isClient ) {
+		checkoutItems = referredProducts;
+	}
 
 	const onCheckout = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_checkout_click' ) );
-
 		submitForm( checkoutItems );
-
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_checkout_checkout_click', {
 				total_licenses: checkoutItems.length,
@@ -96,35 +119,75 @@ export default function Checkout() {
 		page( A4A_SITES_LINK );
 	}, [ dispatch ] );
 
+	const title = isAutomatedReferrals ? translate( 'Referral checkout' ) : translate( 'Checkout' );
+
+	let actionContent = (
+		<>
+			<NoticeSummary type="agency-purchase" />
+
+			<div className="checkout__aside-actions">
+				<Button
+					primary
+					onClick={ onCheckout }
+					disabled={ ! checkoutItems.length || ! isReady }
+					busy={ ! isReady }
+				>
+					{ translate( 'Purchase' ) }
+				</Button>
+
+				{ siteId ? (
+					<Button onClick={ cancelPurchase }>{ translate( 'Cancel' ) }</Button>
+				) : (
+					<>
+						<Button onClick={ onContinueShopping }>{ translate( 'Continue shopping' ) }</Button>
+
+						<Button borderless onClick={ onEmptyCart }>
+							{ translate( 'Empty cart' ) }
+						</Button>
+					</>
+				) }
+			</div>
+		</>
+	);
+
+	if ( isAutomatedReferrals ) {
+		actionContent = <RequestClientPayment checkoutItems={ checkoutItems } />;
+	}
+
+	if ( isClient ) {
+		actionContent = <SubmitPaymentInfo disableButton={ checkoutItems?.length === 0 } />;
+	}
+
 	return (
 		<Layout
 			className="checkout"
-			title={ translate( 'Checkout' ) }
+			title={ title }
 			wide
-			withBorder
+			withBorder={ ! isClient }
 			compact
-			sidebarNavigation={ <MobileSidebarNavigation /> }
+			sidebarNavigation={ ! isClient && <MobileSidebarNavigation /> }
 		>
-			<LayoutTop>
-				<LayoutHeader>
-					<Breadcrumb
-						items={ [
-							{
-								label: translate( 'Marketplace' ),
-								href: A4A_MARKETPLACE_LINK,
-							},
-							{
-								label: translate( 'Checkout' ),
-							},
-						] }
-					/>
-				</LayoutHeader>
-			</LayoutTop>
-
+			{ isClient ? null : (
+				<LayoutTop>
+					<LayoutHeader>
+						<Breadcrumb
+							items={ [
+								{
+									label: translate( 'Marketplace' ),
+									href: A4A_MARKETPLACE_LINK,
+								},
+								{
+									label: title,
+								},
+							] }
+						/>
+					</LayoutHeader>
+				</LayoutTop>
+			) }
 			<LayoutBody>
 				<div className="checkout__container">
 					<div className="checkout__main">
-						<h1 className="checkout__main-title">{ translate( 'Checkout' ) }</h1>
+						<h1 className="checkout__main-title">{ title }</h1>
 
 						<div className="checkout__main-list">
 							{ checkoutItems.map( ( items ) => (
@@ -135,45 +198,25 @@ export default function Checkout() {
 							) ) }
 						</div>
 					</div>
-					<div className="checkout__aside">
+					<div
+						className={ clsx( 'checkout__aside', {
+							'checkout__aside--referral': isAutomatedReferrals,
+							'checkout__aside--client': isClient,
+						} ) }
+					>
 						<PricingSummary
 							items={ checkoutItems }
-							onRemoveItem={ siteId ? undefined : onRemoveItem }
+							onRemoveItem={ siteId || isClient ? undefined : onRemoveItem }
+							isAutomatedReferrals={ isAutomatedReferrals }
+							isClient={ isClient }
 						/>
 
-						<div className="checkout__aside-actions">
-							<Button
-								primary
-								onClick={ onCheckout }
-								disabled={ ! checkoutItems.length || ! isReady }
-								busy={ ! isReady }
-							>
-								{ translate( 'Purchase %(count)d plan', 'Purchase %(count)d plans', {
-									context: 'button label',
-									count: checkoutItems.length,
-									args: {
-										count: checkoutItems.length,
-									},
-								} ) }
-							</Button>
-
-							{ siteId ? (
-								<Button onClick={ cancelPurchase }>{ translate( 'Cancel' ) }</Button>
-							) : (
-								<>
-									<Button onClick={ onContinueShopping }>
-										{ translate( 'Continue shopping' ) }
-									</Button>
-
-									<Button borderless onClick={ onEmptyCart }>
-										{ translate( 'Empty cart' ) }
-									</Button>
-								</>
-							) }
-						</div>
+						{ actionContent }
 					</div>
 				</div>
 			</LayoutBody>
 		</Layout>
 	);
 }
+
+export default withMarketplaceType( Checkout );

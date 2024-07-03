@@ -1,9 +1,15 @@
-import { JetpackPlan, Plan, WPComPlan, getFeatureByKey } from '@automattic/calypso-products';
+import {
+	type JetpackPlan,
+	type Plan,
+	type WPComPlan,
+	getFeatureByKey,
+	isMonthly,
+} from '@automattic/calypso-products';
 import { Badge } from '@automattic/components';
 import { Plans2023Tooltip } from '@automattic/plans-grid-next';
 import { chevronDown, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React, { useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
@@ -18,8 +24,14 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 	const { plan, showFeatures, setShowFeatures } = props;
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 
+	const isMonthlyPlan = plan ? isMonthly( plan.getStoreSlug() ) : false;
+	const annualOnlyFeatures = ( plan as WPComPlan )?.getAnnualPlansOnlyFeatures?.() || [];
+
 	const wpcomFeatures = plan
 		?.get2023PricingGridSignupWpcomFeatures?.()
+		.filter( ( feature: string ) =>
+			isMonthlyPlan ? ! annualOnlyFeatures.includes( feature ) : true
+		)
 		.map( ( feature: string ) => getFeatureByKey( feature ) )
 		.filter( ( feature ) => feature?.getTitle() );
 
@@ -28,16 +40,15 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 		.map( ( feature: string ) => getFeatureByKey( feature ) )
 		.filter( ( feature ) => feature?.getTitle() );
 
-	const storageOptions = plan
-		?.get2023PricingGridSignupStorageOptions?.()
-		.filter( ( option ) => ! option.isAddOn )
-		.map( ( option ) => getFeatureByKey( option.slug ) )
-		.filter( ( option ) => option?.getTitle() );
+	const storageFeature = plan?.getStorageFeature?.();
+	const storageFeatureTitle = storageFeature
+		? getFeatureByKey( storageFeature )?.getTitle()
+		: undefined;
 
 	return (
-		<ul className={ classnames( 'import__details-list' ) }>
+		<ul className={ clsx( 'import__details-list' ) }>
 			{ ! showFeatures && (
-				<li className={ classnames( 'import__upgrade-plan-feature-more' ) }>
+				<li className={ clsx( 'import__upgrade-plan-feature-more' ) }>
 					<button onClick={ () => setShowFeatures( true ) }>
 						{ __( 'Show all features' ) }
 						<Icon size={ 18 } icon={ chevronDown } />
@@ -48,7 +59,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 			{ showFeatures && (
 				<>
 					{ wpcomFeatures?.map( ( feature, i ) => (
-						<li className={ classnames( 'import__upgrade-plan-feature' ) } key={ i }>
+						<li className={ clsx( 'import__upgrade-plan-feature' ) } key={ i }>
 							<Plans2023Tooltip
 								id={ `feature-${ i }` }
 								text={ feature?.getDescription?.() }
@@ -61,11 +72,11 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 						</li>
 					) ) }
 
-					<li className={ classnames( 'import__upgrade-plan-feature logo' ) }>
+					<li className={ clsx( 'import__upgrade-plan-feature logo' ) }>
 						<JetpackLogo size={ 16 } />
 					</li>
 					{ jetpackFeatures?.map( ( feature, i ) => (
-						<li className={ classnames( 'import__upgrade-plan-feature' ) } key={ i }>
+						<li className={ clsx( 'import__upgrade-plan-feature' ) } key={ i }>
 							<Plans2023Tooltip
 								id={ `jetpack-feature-${ i }` }
 								text={ feature?.getDescription?.() }
@@ -76,15 +87,11 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 							</Plans2023Tooltip>
 						</li>
 					) ) }
-					<li className={ classnames( 'import__upgrade-plan-feature logo' ) }>
+					<li className={ clsx( 'import__upgrade-plan-feature logo' ) }>
 						<strong>{ __( 'Storage' ) }</strong>
 					</li>
-					<li className={ classnames( 'import__upgrade-plan-feature' ) }>
-						{ storageOptions?.map( ( storage, i ) => (
-							<Badge type="info" key={ i }>
-								{ storage?.getTitle() }
-							</Badge>
-						) ) }
+					<li className={ clsx( 'import__upgrade-plan-feature' ) }>
+						<Badge type="info">{ storageFeatureTitle }</Badge>
 					</li>
 				</>
 			) }

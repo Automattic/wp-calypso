@@ -7,15 +7,17 @@ interface Props {
 	hour: string;
 	period: string;
 	isAmPmFormat: boolean;
+	onTouch?: ( touched: boolean ) => void;
 	onChange: ( hour: string, period: string ) => void;
 }
 export function ScheduleFormTime( props: Props ) {
-	const { hour: initHour, period: initPeriod, isAmPmFormat, onChange } = props;
+	const { hour: initHour, period: initPeriod, isAmPmFormat, onTouch, onChange } = props;
 
 	const [ hour, setHour ] = useState(
 		isAmPmFormat ? initHour : convertHourTo24( initHour, initPeriod )
 	);
 	const [ period, setPeriod ] = useState( initPeriod );
+	const [ fieldTouched, setFieldTouched ] = useState( false );
 
 	useEffect( () => {
 		if ( isAmPmFormat ) {
@@ -29,6 +31,7 @@ export function ScheduleFormTime( props: Props ) {
 	useEffect( () => {
 		setPeriod( initPeriod );
 	}, [ initPeriod ] );
+	useEffect( () => onTouch?.( fieldTouched ), [ fieldTouched ] );
 
 	return (
 		<div className="form-field">
@@ -40,6 +43,7 @@ export function ScheduleFormTime( props: Props ) {
 					options={ isAmPmFormat ? HOUR_OPTIONS : HOUR_OPTIONS_24 }
 					onChange={ ( hour ) => {
 						setHour( hour );
+						setFieldTouched( true );
 
 						if ( isAmPmFormat ) {
 							onChange?.( hour, period );
@@ -60,6 +64,7 @@ export function ScheduleFormTime( props: Props ) {
 						options={ PERIOD_OPTIONS }
 						onChange={ ( period ) => {
 							setPeriod( period );
+							setFieldTouched( true );
 							onChange?.( hour, period );
 						} }
 					/>

@@ -144,7 +144,7 @@
 	margin-right: 8px;
 	transition: transform 0.1s ease;
 }
-@media ( prefers-reduced-motion: reduce ) {
+@media (prefers-reduced-motion: reduce) {
 	.wp-social-link {
 		transition-duration: 0s;
 	}

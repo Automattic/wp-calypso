@@ -335,7 +335,7 @@ export class JetpackAuthorize extends Component {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else if ( this.isFromMigrationPlugin() ) {
-			navigate( `/setup/import-focused/migrationHandler?from=${ urlToSlug( homeUrl ) }` );
+			navigate( `/setup/hosted-site-migration?ref=jetpack-connect&from=${ urlToSlug( homeUrl ) }` );
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );
@@ -1056,6 +1056,7 @@ export class JetpackAuthorize extends Component {
 							<Disclaimer
 								siteName={ decodeEntities( authQuery.blogname ) }
 								companyName={ this.getCompanyName() }
+								from={ authQuery.from }
 							/>
 							<div className="jetpack-connect__jetpack-logo-wrapper">
 								<JetpackLogo monochrome size={ 18 } />{ ' ' }
@@ -1207,10 +1208,14 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		const { blogname } = this.props.authQuery;
+		const { blogname, from } = this.props.authQuery;
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-				<Disclaimer siteName={ decodeEntities( blogname ) } companyName={ this.getCompanyName() } />
+				<Disclaimer
+					siteName={ decodeEntities( blogname ) }
+					companyName={ this.getCompanyName() }
+					from={ from }
+				/>
 				<Button
 					primary
 					disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }

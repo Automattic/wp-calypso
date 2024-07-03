@@ -82,7 +82,7 @@ $plan-features-header-banner-height: 20px;
 		width: calc(100vw - var(--approximate-viewport-scrollbar-width));
 		margin-left: calc(50% - 50vw + var(--approximate-viewport-scrollbar-width) / 2);
 
-		@media ( min-width: 1600px ) {
+		@media (min-width: 1600px) {
 			max-width: 1600px;
 			margin-left: -280px;
 		}
@@ -102,7 +102,7 @@ $plan-features-header-banner-height: 20px;
 			width: 100%;
 		}
 
-		@media ( min-width: 1800px ) {
+		@media (min-width: 1800px) {
 			max-width: 1520px;
 			margin-left: -240px;
 		}

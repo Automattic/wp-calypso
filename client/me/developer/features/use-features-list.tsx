@@ -36,6 +36,19 @@ export const useFeaturesList = () => {
 			),
 		},
 		{
+			id: 'multi-site-management',
+			title: translate( 'Multiple site management', {
+				comment: 'Feature title',
+			} ),
+			description: translate(
+				'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.',
+				{
+					comment: 'Feature description',
+				}
+			),
+			linkLearnMore: localizeUrl( 'https://wordpress.com/for-agencies?ref=wpcom-dev-dashboard' ),
+		},
+		{
 			id: 'code',
 			title: translate( 'Custom code', {
 				comment: 'Feature title',

@@ -1,5 +1,5 @@
 import { useRef } from '@wordpress/element';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
 import PlanButton from './components/plan-button';
@@ -10,6 +10,7 @@ import useGridPlanForSpotlight from './hooks/data-store/use-grid-plan-for-spotli
 import useGridPlans from './hooks/data-store/use-grid-plans';
 import useGridPlansForComparisonGrid from './hooks/data-store/use-grid-plans-for-comparison-grid';
 import useGridPlansForFeaturesGrid from './hooks/data-store/use-grid-plans-for-features-grid';
+import usePlanBillingDescription from './hooks/data-store/use-plan-billing-description';
 import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
 import useGridSize from './hooks/use-grid-size';
@@ -22,11 +23,11 @@ const WrappedComparisonGrid = ( {
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
+	useAction,
 	recordTracksEvent,
 	allFeaturesList,
 	intervalType,
 	isInSignup,
-	isLaunchPage,
 	currentSitePlanSlug,
 	selectedPlan,
 	selectedFeature,
@@ -35,6 +36,9 @@ const WrappedComparisonGrid = ( {
 	stickyRowOffset,
 	coupon,
 	className,
+	hideUnsupportedFeatures,
+	enableFeatureTooltips,
+	featureGroupMap,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
@@ -49,7 +53,7 @@ const WrappedComparisonGrid = ( {
 		] ),
 	} );
 
-	const classNames = classnames( 'plans-grid-next', className, {
+	const classNames = clsx( 'plans-grid-next', className, {
 		'is-small': 'small' === gridSize,
 		'is-smedium': 'smedium' === gridSize,
 		'is-medium': 'medium' === gridSize,
@@ -65,14 +69,17 @@ const WrappedComparisonGrid = ( {
 				siteId={ siteId }
 				gridPlans={ gridPlans }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useAction={ useAction }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				coupon={ coupon }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				featureGroupMap={ featureGroupMap }
+				hideUnsupportedFeatures={ hideUnsupportedFeatures }
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }
 					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					siteId={ siteId }
 					selectedPlan={ selectedPlan }
@@ -94,11 +101,15 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		intent,
 		gridPlans,
 		useCheckPlanAvailabilityForPurchase,
+		useAction,
 		recordTracksEvent,
 		allFeaturesList,
 		coupon,
 		isInAdmin,
 		className,
+		enableFeatureTooltips,
+		enableCategorisedFeatures,
+		featureGroupMap = {},
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
@@ -111,7 +122,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		] ),
 	} );
 
-	const classNames = classnames( 'plans-grid-next', className, {
+	const classNames = clsx( 'plans-grid-next', className, {
 		'is-small': 'small' === gridSize,
 		'is-medium': 'medium' === gridSize,
 		'is-large': 'large' === gridSize,
@@ -125,8 +136,12 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				gridPlans={ gridPlans }
 				coupon={ coupon }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useAction={ useAction }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				enableCategorisedFeatures={ enableCategorisedFeatures }
+				featureGroupMap={ featureGroupMap }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>
@@ -159,6 +174,7 @@ export {
 	useGridPlansForFeaturesGrid,
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
+	usePlanBillingDescription,
 	usePlanFeaturesForGridPlans,
 	useRestructuredPlanFeaturesForComparisonGrid,
 };

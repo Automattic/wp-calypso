@@ -1,18 +1,25 @@
+import clsx from 'clsx';
 import React from 'react';
 
 import './style.scss';
 
 interface StepSectionProps {
 	heading: string;
-	stepCount: number;
+	stepCount?: number;
 	children: React.ReactNode;
+	className?: string;
 }
 
-export default function StepSection( { stepCount, heading, children }: StepSectionProps ) {
+export default function StepSection( {
+	stepCount,
+	heading,
+	children,
+	className,
+}: StepSectionProps ) {
 	return (
-		<div className="step-section">
+		<div className={ clsx( 'step-section', className ) }>
 			<div className="step-section__header">
-				<div className="step-section__step-count">{ stepCount }</div>
+				{ !! stepCount && <div className="step-section__step-count">{ stepCount }</div> }
 				<div className="step-section__step-heading">{ heading }</div>
 			</div>
 			<div className="step-section__content">{ children }</div>

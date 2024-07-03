@@ -13,6 +13,10 @@
 		border-radius: 2px;
 	}
 
+	.validation-msg {
+		margin: 0.5rem 0;
+	}
+
 	.components-text-control__input {
 		border-color: var(--studio-gray-10);
 	}
@@ -54,11 +58,6 @@
 	.components-search-control {
 		max-width: 300px;
 		margin-bottom: 1.5rem;
-
-		.components-input-control__container {
-			border: solid 1px var(--studio-gray-10);
-			background-color: var(--studio-white);
-		}
 	}
 
 	.checkbox-options-container {
@@ -105,6 +104,27 @@
 			box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
 		}
 
+		&__sites {
+			> div {
+				display: flex;
+				align-items: center;
+
+				label {
+					max-width: calc(100% - 2rem);
+
+					.site-slug {
+						color: var(--studio-gray-50);
+						display: inline-block;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						max-width: 100%;
+					}
+				}
+			}
+
+		}
+
 	}
 
 	.form-field {
@@ -129,7 +149,6 @@
 	.radio-option {
 		padding: 1.5rem;
 		flex-basis: 100%;
-		margin-bottom: 0.5rem !important;
 
 		.form-field--frequency-container {
 			flex-direction: column;
@@ -189,4 +208,65 @@
 			}
 		}
 	}
+
+	.form-field--plugins {
+		.components-base-control__field {
+			display: flex;
+		}
+
+		.components-checkbox-control__label {
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+	}
+
+	.form-field--paths {
+		.paths,
+		.new-path {
+			.components-button {
+				min-width: rem(100px);
+				justify-content: center;
+			}
+		}
+
+		.paths {
+			.components-input-control__backdrop {
+				border-color: var(--studio-gray-0);
+			}
+		}
+
+		.new-path {
+			margin-bottom: 0.75rem;
+
+			.components-input-control__backdrop {
+				border-color: var(--studio-gray-10);
+			}
+
+			.components-input-base[class*="Root-rootFocusedStyles"] {
+				.components-input-control__backdrop {
+					border-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+				}
+			}
+		}
+
+		.path {
+			margin-bottom: 0.75rem;
+		}
+
+		input[readonly] {
+			color: var(--studio-gray-50);
+			background: var(--studio-gray-0);
+		}
+
+		button.is-verifying {
+			svg {
+				animation: scheduled-updates-rotate 2s linear infinite;
+			}
+		}
+	}
+}
+
+.schedule-form-button {
+	margin: 0.5rem 0;
 }

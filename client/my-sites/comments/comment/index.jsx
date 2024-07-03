@@ -1,6 +1,6 @@
 import { Card, FoldableCard } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
@@ -208,7 +208,7 @@ export class Comment extends Component {
 
 		const isEditMode = isSingularEditMode && ! isBulkMode;
 
-		const classes = classNames( 'comment', {
+		const classes = clsx( 'comment', {
 			'is-at-max-depth': isAtMaxDepth,
 			'is-bulk-mode': isBulkMode,
 			'is-edit-mode': isEditMode,

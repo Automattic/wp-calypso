@@ -390,7 +390,7 @@ $design-preview-sidebar-width: 311px;
 
 	.theme-preview__frame-wrapper {
 		.theme-preview__frame {
-			@media ( max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				border: 0;
 				border-radius: 0;
 				box-shadow: none;

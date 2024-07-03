@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import i18n from 'i18n-calypso';
 import { Question, QuestionType } from 'calypso/components/survey-container/types';
 import wpcom from 'calypso/lib/wp';
 
@@ -15,6 +16,7 @@ type SurveyStructureResponse = {
 		label: string;
 		value: string;
 		help_text: string;
+		additional_props: Record< string, boolean >;
 	}[];
 }[];
 
@@ -28,6 +30,7 @@ const mapSurveyStructureResponse = ( response: SurveyStructureResponse ): Questi
 					label: option.label,
 					value: option.value,
 					helpText: option.help_text,
+					additionalProps: option.additional_props,
 				};
 			} ),
 			subHeaderText: question.sub_header_text,
@@ -36,8 +39,14 @@ const mapSurveyStructureResponse = ( response: SurveyStructureResponse ): Questi
 	} );
 
 const useSurveyStructureQuery = ( { surveyKey }: SurveyStructureQueryArgs ) => {
+	// This follows exact logic as addLocaleQueryParam() middleware
+	// which will add _locale to the query param and we want to cache
+	// our surveys with the same locale value.
+	const locale = i18n.getLocaleVariant() || i18n.getLocaleSlug();
+	const queryKey = [ 'survey-structure', surveyKey, ...( locale ? [ locale ] : [] ) ];
+
 	return useQuery( {
-		queryKey: [ 'survey-structure', surveyKey ],
+		queryKey,
 		queryFn: () => {
 			return wpcom.req.get( {
 				path: `/segmentation-survey/${ surveyKey }`,

@@ -1,7 +1,7 @@
 import { Spinner } from '@automattic/components';
 import { DomainUpdateStatus } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { StatusPopover } from '../status-popover';
 import { ResolveDomainStatusReturn } from '../utils/resolve-domain-status';
@@ -43,7 +43,7 @@ export const DomainsTableStatusCell = ( {
 
 	return (
 		<Element
-			className={ classNames( 'domains-table-row__status-cell', {
+			className={ clsx( 'domains-table-row__status-cell', {
 				[ `domains-table-row__status-cell__${ domainStatus?.statusClass }` ]:
 					!! domainStatus?.statusClass,
 			} ) }

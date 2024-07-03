@@ -46,9 +46,9 @@ describe( 'DailyPostButton', () => {
 				<DailyPostButton
 					post={ dailyPromptPost }
 					site={ sampleReadingSite }
-					canParticipate={ true }
+					canParticipate
 					primarySiteSlug={ sampleUserSite.slug }
-					onlyOneSite={ true }
+					onlyOneSite
 					markPostSeen={ markPostSeen }
 				/>
 			);
@@ -63,9 +63,9 @@ describe( 'DailyPostButton', () => {
 					tagName="article"
 					post={ dailyPromptPost }
 					site={ sampleReadingSite }
-					canParticipate={ true }
+					canParticipate
 					primarySiteSlug={ sampleUserSite.slug }
-					onlyOneSite={ true }
+					onlyOneSite
 					markPostSeen={ markPostSeen }
 				/>
 			);
@@ -80,9 +80,9 @@ describe( 'DailyPostButton', () => {
 				<DailyPostButton
 					post={ dailyPromptPost }
 					site={ sampleReadingSite }
-					canParticipate={ true }
+					canParticipate
 					primarySiteSlug={ sampleUserSite.slug }
-					onlyOneSite={ true }
+					onlyOneSite
 					markPostSeen={ markPostSeen }
 				/>
 			);
@@ -100,7 +100,7 @@ describe( 'DailyPostButton', () => {
 					tagName="span"
 					post={ dailyPromptPost }
 					site={ sampleReadingSite }
-					canParticipate={ true }
+					canParticipate
 					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ false }
 					markPostSeen={ markPostSeen }
@@ -125,9 +125,9 @@ describe( 'DailyPostButton', () => {
 					tagName="span"
 					post={ dailyPromptPost }
 					site={ sampleReadingSite }
-					canParticipate={ true }
+					canParticipate
 					primarySiteSlug={ sampleUserSite.slug }
-					onlyOneSite={ true }
+					onlyOneSite
 					markPostSeen={ markPostSeen }
 				/>
 			);

@@ -3,11 +3,10 @@
  */
 import { useZendeskMessaging } from '@automattic/help-center/src/hooks';
 import { useDispatch } from '@wordpress/data';
-import { useSelector } from 'react-redux';
 /**
  * External Dependencies
  */
-import { getSectionName } from 'calypso/state/ui/selectors'; /* eslint-disable-line no-restricted-imports */
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useUpdateZendeskUserFieldsMutation } from '../data/use-update-zendesk-user-fields';
 import { HELP_CENTER_STORE } from '../stores';
 import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
@@ -26,7 +25,7 @@ export default function useChatWidget(
 	configName: ZendeskConfigName = 'zendesk_support_chat_key',
 	enabled = true
 ) {
-	const sectionName = useSelector( getSectionName );
+	const { sectionName } = useHelpCenterContext();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitZendeskUserFields } =
 		useUpdateZendeskUserFieldsMutation();
 	const { setShowHelpCenter, resetStore } = useDispatch( HELP_CENTER_STORE );
@@ -57,6 +56,8 @@ export default function useChatWidget(
 					window.zE( 'messenger:set', 'conversationFields', [
 						{ id: ZENDESK_SOURCE_URL_TICKET_FIELD_ID, value: window.location.href },
 					] );
+				} else {
+					throw new Error( 'Zendesk chat widget not loaded' );
 				}
 			} )
 			.catch( () => {

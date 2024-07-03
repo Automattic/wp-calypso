@@ -1,103 +1,139 @@
-import { pages, plugins, payment, percent } from '@wordpress/icons';
+import { Button } from '@automattic/components';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import {
+	DATAVIEWS_TABLE,
+	initialDataViewsState,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
+import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
+	LayoutHeaderActions as Actions,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_REFERRALS_BANK_DETAILS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
+import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
+import {
+	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
+	MARKETPLACE_TYPE_REFERRAL,
+} from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import StepSection from '../../common/step-section';
-import StepSectionItem from '../../common/step-section-item';
+import useFetchReferrals from '../../hooks/use-fetch-referrals';
+import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
+import ReferralDetails from '../../referral-details';
+import ReferralsFooter from '../footer';
+import AutomatedReferralComingSoonBanner from './automated-referral-coming-soon-banner';
+import LayoutBodyContent from './layout-body-content';
+import NewReferralOrderNotification from './new-referral-order-notification';
 
 import './style.scss';
 
-export default function ReferralsOverview() {
+export default function ReferralsOverview( {
+	isAutomatedReferral = false,
+}: {
+	isAutomatedReferral?: boolean;
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const title = translate( 'Referrals' );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
-	const onAddBankDetailsClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' ) );
+	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
+		REFERRAL_EMAIL_QUERY_PARAM_KEY
+	);
+
+	const isDesktop = useDesktopBreakpoint();
+
+	const selectedItem = dataViewsState.selectedItem;
+
+	const title =
+		isAutomatedReferral && isDesktop && ! selectedItem
+			? translate( 'Your referrals and commissions' )
+			: translate( 'Referrals' );
+
+	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
+	const { data: referrals, isFetching: isFetchingReferrals } =
+		useFetchReferrals( isAutomatedReferral );
+
+	const hasReferrals = !! referrals?.length;
+
+	const makeAReferral = useCallback( () => {
+		sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REFERRAL );
+		dispatch( recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' ) );
 	}, [ dispatch ] );
 
-	const hasPayeeAccount = false; // FIXME: Replace with actual check
-	const showStatus = true; // FIXME: Replace with actual check
-	const statusType = 'warning'; // FIXME: Replace with actual check
-	const status = 'Pending'; // FIXME: Replace with actual check
+	const isLoading = isFetching || isFetchingReferrals;
 
 	return (
-		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
-			<PageViewTracker title="Referrals" path="/referrals" />
+		<Layout
+			className={ clsx( 'referrals-layout', {
+				'referrals-layout--automated': isAutomatedReferral,
+				'full-width-layout-with-table': isAutomatedReferral && hasReferrals,
+				'referrals-layout--has-selected': selectedItem,
+			} ) }
+			title={ title }
+			wide
+			sidebarNavigation={ ! isAutomatedReferral && <MobileSidebarNavigation /> }
+			withBorder={ isAutomatedReferral }
+		>
+			<LayoutColumn wide className="referrals-layout__column">
+				<LayoutTop>
+					{ !! referralEmail && (
+						<NewReferralOrderNotification
+							email={ referralEmail }
+							onClose={ () => setReferralEmail( '' ) }
+						/>
+					) }
 
-			<LayoutTop>
-				<LayoutHeader>
-					<Title>{ title } </Title>
-				</LayoutHeader>
-			</LayoutTop>
+					{ ! isAutomatedReferral && <AutomatedReferralComingSoonBanner /> }
 
-			<LayoutBody>
-				<div className="referrals-overview__section-heading">
-					{ translate( 'Earn a 30% commission for every purchase made by a client' ) }
-				</div>
-				<div className="referrals-overview__section-container">
-					<StepSection heading={ translate( 'Get set up' ) } stepCount={ 1 }>
-						<StepSectionItem
-							icon={ pages }
-							heading={ translate( 'Add your bank details and upload tax forms' ) }
-							description={ translate(
-								'Once confirmed, we’ll be able to send you a commission payment at the end of each month.'
-							) }
-							buttonProps={ {
-								children: hasPayeeAccount
-									? translate( 'Edit bank details' )
-									: translate( 'Add bank details' ),
-								href: A4A_REFERRALS_BANK_DETAILS_LINK,
-								onClick: onAddBankDetailsClick,
-								primary: true,
-							} }
-							statusProps={
-								showStatus
-									? {
-											children: status,
-											type: statusType,
-									  }
-									: undefined
-							}
-						/>
-						<StepSectionItem
-							icon={ plugins }
-							heading={ translate( 'Install the A4A plugin on your clients’ sites' ) }
-							description={ translate(
-								'Our plugin can confirm that your agency is connected to the Automattic products your clients buy.'
-							) }
-							buttonProps={ { children: translate( 'Download plugin' ) } }
-						/>
-					</StepSection>
-					<StepSection heading={ translate( 'Get paid' ) } stepCount={ 2 }>
-						<StepSectionItem
-							icon={ payment }
-							heading={ translate( 'Have your client purchase Automattic Products' ) }
-							description={ translate(
-								'We offer commissions for each purchase of Automattic products by your clients, including Woo, Jetpack, and hosting from either Pressable or WordPress.com.'
-							) }
-						/>
-						<StepSectionItem
-							icon={ percent }
-							heading={ translate( 'Get paid a commission on your referrals' ) }
-							description={ translate(
-								'At the end of each month, we will review your clients’ purchases and pay you a commission based on them.'
-							) }
-						/>
-					</StepSection>
-				</div>
-			</LayoutBody>
+					<LayoutHeader>
+						<Title>{ title } </Title>
+						{ isAutomatedReferral && (
+							<Actions>
+								<MobileSidebarNavigation />
+								<Button primary href={ A4A_MARKETPLACE_PRODUCTS_LINK } onClick={ makeAReferral }>
+									{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
+								</Button>
+							</Actions>
+						) }
+					</LayoutHeader>
+				</LayoutTop>
+
+				<LayoutBody>
+					<LayoutBodyContent
+						isAutomatedReferral={ isAutomatedReferral }
+						tipaltiData={ tipaltiData }
+						referrals={ referrals }
+						isLoading={ isLoading }
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+					/>
+					{ ! isFetching && ! isAutomatedReferral && <ReferralsFooter /> }
+				</LayoutBody>
+			</LayoutColumn>
+			{ dataViewsState.selectedItem && (
+				<LayoutColumn wide>
+					<ReferralDetails
+						referral={ dataViewsState.selectedItem }
+						closeSitePreviewPane={ () =>
+							setDataViewsState( {
+								...dataViewsState,
+								type: DATAVIEWS_TABLE,
+								selectedItem: undefined,
+							} )
+						}
+					/>
+				</LayoutColumn>
+			) }
 		</Layout>
 	);
 }

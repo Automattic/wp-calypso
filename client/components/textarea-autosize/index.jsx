@@ -1,5 +1,5 @@
 import autosize from 'autosize';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import FormTextarea from 'calypso/components/forms/form-textarea';
@@ -32,7 +32,7 @@ export default class TextareaAutosize extends Component {
 	}
 
 	render() {
-		const classes = classnames( 'textarea-autosize', this.props.className );
+		const classes = clsx( 'textarea-autosize', this.props.className );
 
 		return (
 			<FormTextarea { ...this.props } className={ classes } forwardedRef={ this.textareaRef } />

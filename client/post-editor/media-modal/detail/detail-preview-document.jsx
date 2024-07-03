@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -11,10 +11,11 @@ export default class extends Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'is-document' );
+		const classes = clsx( this.props.className, 'is-document' );
 
 		return (
 			<div className={ classes }>
+				{ /* eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }
 				<Gridicon icon="pages" size={ 120 } />
 			</div>
 		);

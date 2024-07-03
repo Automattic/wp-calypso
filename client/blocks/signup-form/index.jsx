@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import {
@@ -23,7 +23,7 @@ import {
 	isEmpty,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, useEffect } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
@@ -48,6 +48,7 @@ import {
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isP2Flow } from 'calypso/signup/is-flow';
@@ -58,8 +59,9 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { resetSignup } from 'calypso/state/signup/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -89,36 +91,42 @@ const resetAnalyticsData = () => {
 class SignupForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		disableBlurValidation: PropTypes.bool,
+		disableContinueAsUser: PropTypes.bool,
+		disabled: PropTypes.bool,
 		disableEmailExplanation: PropTypes.string,
 		disableEmailInput: PropTypes.bool,
 		disableSubmitButton: PropTypes.bool,
-		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
 		email: PropTypes.string,
 		flowName: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
-		redirectToAfterLoginUrl: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func,
+		handleCreateAccountError: PropTypes.func,
+		handleCreateAccountSuccess: PropTypes.func,
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
+		horizontal: PropTypes.bool,
 		isPasswordless: PropTypes.bool,
-		isSocialSignupEnabled: PropTypes.bool,
 		isSocialFirst: PropTypes.bool,
+		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
+		notYouText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 		positionInFlow: PropTypes.number,
+		redirectToAfterLoginUrl: PropTypes.string,
 		save: PropTypes.func,
+		shouldDisplayUserExistsError: PropTypes.bool,
 		signupDependencies: PropTypes.object,
 		step: PropTypes.object,
-		submitButtonText: PropTypes.string.isRequired,
+		submitButtonLabel: PropTypes.string,
+		submitButtonLoadingLabel: PropTypes.string,
+		submitButtonText: PropTypes.string,
+		submitForm: PropTypes.func,
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-		horizontal: PropTypes.bool,
-		shouldDisplayUserExistsError: PropTypes.bool,
-		submitForm: PropTypes.func,
-		isInviteLoggedOutForm: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -290,7 +298,7 @@ class SignupForm extends Component {
 		const fieldsForValidation = filter( [
 			'email',
 			this.props.isPasswordless === false && 'password', // Remove password from validation if passwordless
-			this.props.displayUsernameInput && 'username',
+			this.displayUsernameInput() && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );
@@ -434,6 +442,10 @@ class SignupForm extends Component {
 	};
 
 	handleBlur = ( event ) => {
+		if ( this.props.disableBlurValidation ) {
+			return;
+		}
+
 		const fieldId = event.target.id;
 		this.setState( {
 			isFieldDirty: { ...this.state.isFieldDirty, [ fieldId ]: true },
@@ -512,12 +524,11 @@ class SignupForm extends Component {
 		return login( {
 			emailAddress,
 			isJetpack: this.isJetpack(),
-			from: this.getLoginLinkFrom(),
+			from: this.props.isP2Flow ? 'p2' : this.props.from,
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 			wccomFrom: this.props.wccomFrom,
-			isWhiteLogin: this.props.isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
 		} );
 	}
@@ -544,7 +555,7 @@ class SignupForm extends Component {
 	globalNotice( notice, status ) {
 		return (
 			<Notice
-				className={ classNames( 'signup-form__notice', {
+				className={ clsx( 'signup-form__notice', {
 					'signup-form__span-columns': this.isHorizontal(),
 				} ) }
 				showDismiss={ false }
@@ -573,7 +584,7 @@ class SignupForm extends Component {
 			};
 		}
 
-		if ( this.props.displayUsernameInput ) {
+		if ( this.displayUsernameInput() ) {
 			userData.username = formState.getFieldValue( this.state.form, 'username' );
 		} else {
 			userData.extra = {
@@ -620,6 +631,10 @@ class SignupForm extends Component {
 			}
 			return message;
 		} );
+	}
+
+	displayUsernameInput() {
+		return this.props.displayUsernameInput && ! this.props.isBlazePro;
 	}
 
 	formFields() {
@@ -691,7 +706,7 @@ class SignupForm extends Component {
 					<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'email' ) } />
 				) }
 
-				{ this.props.displayUsernameInput && (
+				{ this.displayUsernameInput() && (
 					<>
 						<FormLabel htmlFor="username">
 							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooCoreProfilerFlow )
@@ -916,6 +931,20 @@ class SignupForm extends Component {
 			);
 		}
 
+		if ( this.props.isBlazePro ) {
+			tosText = (
+				<>
+					{ this.props.translate(
+						'By creating an account, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+						options
+					) }{ ' ' }
+					{ this.props.translate(
+						'Blaze Pro uses WordPress.com accounts under the hood. Tumblr, Blaze Pro, and WordPress.com are properties of Automattic, Inc.'
+					) }
+				</>
+			);
+		}
+
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
 	};
 
@@ -962,28 +991,14 @@ class SignupForm extends Component {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			return this.globalNotice( this.props.step.errors[ 0 ], 'is-error' );
 		}
-		if ( this.userCreationComplete() ) {
-			return (
-				<TrackRender eventName="calypso_signup_account_already_created_show">
-					{ this.globalNotice(
-						{
-							info: true,
-							message: this.props.translate(
-								'Your account has already been created. You can change your email, username, and password later.'
-							),
-						},
-						'is-info'
-					) }
-				</TrackRender>
-			);
-		}
+
 		return false;
 	}
 
 	emailDisableExplanation() {
 		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
 			return (
-				<FormSettingExplanation noValidate={ true }>
+				<FormSettingExplanation noValidate>
 					{ this.props.disableEmailExplanation }
 				</FormSettingExplanation>
 			);
@@ -1042,7 +1057,7 @@ class SignupForm extends Component {
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
 				{ this.termsOfServiceLink() }
 				<FormButton
-					className={ classNames(
+					className={ clsx(
 						'signup-form__submit',
 						variationName && `${ variationName }-signup-form`
 					) }
@@ -1061,7 +1076,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, translate, isWoo } = this.props;
+		const { flowName, translate, isWoo, isBlazePro } = this.props;
 
 		if ( this.props.isP2Flow ) {
 			return (
@@ -1078,6 +1093,19 @@ class SignupForm extends Component {
 
 		if ( isWoo ) {
 			return null;
+		}
+
+		if ( isBlazePro ) {
+			return (
+				<div className="signup-form__p2-footer-link">
+					<LoggedOutFormLinks>
+						<span>{ this.props.translate( 'Already have an account?' ) }&nbsp;</span>
+						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
+							{ this.props.translate( 'Log in here' ) }
+						</LoggedOutFormLinkItem>
+					</LoggedOutFormLinks>
+				</div>
+			);
 		}
 
 		return (
@@ -1120,6 +1148,24 @@ class SignupForm extends Component {
 			: formState.getFieldValue( this.state.form, 'email' );
 	};
 
+	handleCreateAccountError = ( error, email ) => {
+		if ( this.props.handleCreateAccountError ) {
+			return this.props.handleCreateAccountError( error, email );
+		}
+
+		if ( isExistingAccountError( error.error ) ) {
+			page(
+				addQueryArgs(
+					{
+						email_address: email,
+						is_signup_existing_account: true,
+					},
+					this.getLoginLink()
+				)
+			);
+		}
+	};
+
 	render() {
 		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
 			return null;
@@ -1147,20 +1193,42 @@ class SignupForm extends Component {
 			);
 		}
 
-		if ( this.props.currentUser ) {
+		if ( this.props.currentUser && ! this.props.disableContinueAsUser ) {
 			return (
 				<ContinueAsUser
 					redirectPath={ this.props.redirectToAfterLoginUrl }
 					onChangeAccount={ this.handleOnChangeAccount }
-					isSignUpFlow
+					notYouText={
+						this.props.notYouText ||
+						this.props.translate(
+							'Not you?{{br/}} Sign out or log in with {{link}}another account{{/link}}',
+							{
+								components: {
+									br: <br />,
+									link: (
+										<button
+											type="button"
+											id="loginAsAnotherUser"
+											className="continue-as-user__change-user-link"
+											onClick={ this.handleOnChangeAccount }
+										/>
+									),
+								},
+								args: {
+									userName: this.props.currentUser.display_name || this.props.currentUser.username,
+								},
+								comment: 'Link to continue login as different user',
+							}
+						)
+					}
 				/>
 			);
 		}
 
 		if ( this.props.isJetpackWooCommerceFlow || this.props.isJetpackWooDnaFlow ) {
 			return (
-				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
-					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate={ true }>
+				<div className={ clsx( 'signup-form__woocommerce', this.props.className ) }>
+					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate>
 						{ this.props.formHeader && (
 							<header className="signup-form__header">{ this.props.formHeader }</header>
 						) }
@@ -1245,6 +1313,7 @@ class SignupForm extends Component {
 		) {
 			let formProps = {
 				submitButtonLabel: this.props.submitButtonLabel,
+				submitButtonLoadingLabel: this.props.submitButtonLoadingLabel,
 			};
 
 			switch ( true ) {
@@ -1265,7 +1334,7 @@ class SignupForm extends Component {
 
 			return (
 				<div
-					className={ classNames( 'signup-form', this.props.className, {
+					className={ clsx( 'signup-form', this.props.className, {
 						'is-horizontal': this.isHorizontal(),
 					} ) }
 				>
@@ -1282,10 +1351,11 @@ class SignupForm extends Component {
 						disableSubmitButton={ this.props.disableSubmitButton || emailErrorMessage }
 						queryArgs={ this.props.queryArgs }
 						userEmail={ this.getEmailValue() }
-						isInviteLoggedOutForm={ this.props.isInviteLoggedOutForm }
 						labelText={ this.props.labelText }
 						onInputBlur={ this.handleBlur }
 						onInputChange={ this.handleChangeEvent }
+						onCreateAccountError={ this.handleCreateAccountError }
+						onCreateAccountSuccess={ this.props.handleCreateAccountSuccess }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (
@@ -1316,13 +1386,13 @@ class SignupForm extends Component {
 
 		return (
 			<div
-				className={ classNames( 'signup-form', this.props.className, {
+				className={ clsx( 'signup-form', this.props.className, {
 					'is-horizontal': this.isHorizontal(),
 				} ) }
 			>
 				{ this.getNotice() }
 
-				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
+				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate>
 					{ this.props.formHeader && (
 						<header className="signup-form__header">{ this.props.formHeader }</header>
 					) }
@@ -1352,14 +1422,6 @@ class SignupForm extends Component {
 	}
 }
 
-function TrackRender( { children, eventName } ) {
-	useEffect( () => {
-		recordTracksEvent( eventName );
-	}, [ eventName ] );
-
-	return children;
-}
-
 export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
@@ -1374,12 +1436,13 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: getWccomFrom( state ),
-			isWooPasswordless: !! getWooPasswordless( state ),
+			isWooPasswordless: getIsWooPasswordless( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
 			isWooCoreProfilerFlow,
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
+			isBlazePro: getIsBlazePro( state ),
 		};
 	},
 	{

@@ -34,7 +34,7 @@ class UpgradeBanner extends Component {
 									'or Jetpack Security to unlock powerful features:'
 							)
 						) }
-						showIcon={ true }
+						showIcon
 						list={ [
 							translate( 'Access full activity for the past 30 days.' ),
 							translate( 'Filter events by type and date.' ),
@@ -42,7 +42,7 @@ class UpgradeBanner extends Component {
 					/>
 				) : (
 					<UpsellNudge
-						forceDisplay={ true }
+						forceDisplay
 						callToAction={ translate( 'Upgrade now' ) }
 						event="activity_log_upgrade_click_wpcom"
 						feature={ FEATURE_JETPACK_ESSENTIAL }
@@ -55,7 +55,7 @@ class UpgradeBanner extends Component {
 									'unlock powerful features:'
 							)
 						) }
-						showIcon={ true }
+						showIcon
 						list={ [
 							translate( 'Access full activity for the past 30 days.' ),
 							translate( 'Filter events by type and date.' ),

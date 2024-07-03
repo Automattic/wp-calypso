@@ -1,9 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Plans } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { addQueryArgs } from '@wordpress/url';
 import { useMatch } from 'react-router-dom';
+import { useFlowLocale } from '../hooks/use-flow-locale';
 
 const plansPaths = Plans.plansSlugs;
 
@@ -50,6 +50,7 @@ export const getLoginUrl = ( {
 	redirectTo,
 	pageTitle,
 	locale,
+	customLoginPath,
 }: {
 	/**
 	 * Variation name is used to track the relevant login flow in the signup framework as explained in https://github.com/Automattic/wp-calypso/issues/67173
@@ -58,10 +59,12 @@ export const getLoginUrl = ( {
 	redirectTo?: string | null;
 	pageTitle?: string | null;
 	locale: string;
+	customLoginPath?: string | null;
 } ): string => {
-	const loginPath = `/start/account/${
+	const defaultLoginPath = `/start/account/${
 		isEnabled( 'signup/social-first' ) ? 'user-social' : 'user'
 	}`;
+	const loginPath = customLoginPath || defaultLoginPath;
 	const localizedLoginPath = locale && locale !== 'en' ? `${ loginPath }/${ locale }` : loginPath;
 
 	// Empty values are ignored down the call stack, so we don't need to check for them here.
@@ -78,6 +81,7 @@ export const useLoginUrl = ( {
 	redirectTo,
 	pageTitle,
 	locale,
+	customLoginPath,
 }: {
 	/**
 	 * Variation name is used to track the relevant login flow in the signup framework as explained in https://github.com/Automattic/wp-calypso/issues/67173
@@ -86,12 +90,14 @@ export const useLoginUrl = ( {
 	redirectTo?: string | null;
 	pageTitle?: string | null;
 	locale?: string;
+	customLoginPath?: string | null;
 } ): string => {
-	const currentLocale = useLocale();
+	const currentLocale = useFlowLocale();
 	return getLoginUrl( {
 		variationName,
 		redirectTo,
 		pageTitle,
 		locale: locale ?? currentLocale,
+		customLoginPath,
 	} );
 };

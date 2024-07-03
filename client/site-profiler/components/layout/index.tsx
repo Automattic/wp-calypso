@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import './styles.scss';
 
@@ -15,7 +15,7 @@ export function LayoutBlock( props: Props ) {
 
 	return (
 		<div
-			className={ classnames( 'l-block', className, {
+			className={ clsx( 'l-block', className, {
 				'is-mono-bg': isMonoBg,
 				'width-small': width === 'small',
 				'width-medium': width === 'medium',
@@ -30,5 +30,5 @@ export function LayoutBlock( props: Props ) {
 export function LayoutBlockSection( props: Props ) {
 	const { children, className } = props;
 
-	return <div className={ classnames( 'l-block-section', className ) }>{ children }</div>;
+	return <div className={ clsx( 'l-block-section', className ) }>{ children }</div>;
 }

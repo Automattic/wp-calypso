@@ -68,15 +68,15 @@ const SenseiDomain: Step = ( { navigation } ) => {
 						vendor="sensei"
 						key="domainForm"
 						suggestion={ domainSuggestion }
-						domainsWithPlansOnly={ true }
-						isSignupStep={ true }
+						domainsWithPlansOnly
+						isSignupStep
 						includeWordPressDotCom
 						onAddDomain={ onAddDomain }
 						onSkip={ onSkip }
 						products={ productsList }
 						useProvidedProductsList
 						align="left"
-						isWideLayout={ true }
+						isWideLayout
 						basePath=""
 					/>
 					<div className="domains__domain-side-content-container">

@@ -1,10 +1,8 @@
 import { Button, Popover } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { GuidedTourContext } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
-import { TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
-import { A4A_ONBOARDING_TOURS_PREFERENCE_NAME } from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -17,53 +15,72 @@ import './style.scss';
 
 type Props = {
 	id: string;
-	tourId: TourId;
+	tourId: string;
 	context?: HTMLElement | null;
 	className?: string;
 	hideSteps?: boolean;
+	title?: JSX.Element | string;
+	description?: JSX.Element | string;
 };
 
 /**
  * Renders a single step in a guided tour.
  */
-export function GuidedTourStep( { id, tourId, context, hideSteps, className }: Props ) {
+export function GuidedTourStep( {
+	id,
+	tourId,
+	context,
+	hideSteps,
+	className,
+	title,
+	description,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { currentStep, currentStepCount, stepsCount, nextStep } = useContext( GuidedTourContext );
+	const { currentStep, currentStepCount, stepsCount, nextStep, preferenceNames, eventNames } =
+		useContext( GuidedTourContext );
 
-	const preference = useSelector( ( state ) =>
-		getPreference( state, A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ tourId ] )
-	);
+	const preference = useSelector( ( state ) => getPreference( state, preferenceNames[ tourId ] ) );
 	const hasFetched = !! useSelector( preferencesLastFetchedTimestamp );
 	const showTour = useMemo( () => {
 		return Boolean( hasFetched && ! preference?.dismiss && currentStep && currentStep.id === id );
 	}, [ currentStep, hasFetched, id, preference?.dismiss ] );
 
 	const lastTourLabel = stepsCount === 1 ? translate( 'Got it' ) : translate( 'Done' );
+	const isLastStep = currentStepCount === stepsCount;
 
 	/**
 	 * Dismiss all steps in the tour.
 	 */
 	const endTour = useCallback( () => {
 		dispatch(
-			savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ tourId ], {
+			savePreference( preferenceNames[ tourId ], {
 				...preference,
 				dismiss: true,
+				// Save the dismissed timestamp so we can show the new steps that are added after it in the future.
+				timestamp: Date.now(),
 			} )
 		);
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_end_tour', {
+			recordTracksEvent( eventNames.endTour, {
 				tour: id,
 			} )
 		);
 	}, [ dispatch, tourId, preference, id ] );
 
+	const completeStep = () => {
+		nextStep( currentStep );
+		if ( isLastStep ) {
+			endTour();
+		}
+	};
+
 	// Record an event when the tour starts
 	useEffect( () => {
 		if ( currentStepCount === 1 && showTour ) {
 			dispatch(
-				recordTracksEvent( 'calypso_a4a_start_tour', {
+				recordTracksEvent( eventNames.startTour, {
 					tour: id,
 				} )
 			);
@@ -73,16 +90,16 @@ export function GuidedTourStep( { id, tourId, context, hideSteps, className }: P
 	// Add a click event listener to the context element if the step requires it
 	useEffect( () => {
 		if ( currentStep && currentStep.nextStepOnTargetClick && context ) {
-			( context as HTMLElement ).addEventListener( 'click', nextStep );
+			( context as HTMLElement ).addEventListener( 'click', completeStep );
 		}
 
 		// Cleanup function to remove the event listener on unmount
 		return () => {
 			if ( context ) {
-				( context as HTMLElement ).removeEventListener( 'click', nextStep );
+				( context as HTMLElement ).removeEventListener( 'click', completeStep );
 			}
 		};
-	}, [ nextStep, currentStep, context ] );
+	}, [ completeStep, currentStep, context ] );
 
 	// Do not render unless this is the current step in the active tour.
 	if ( ! currentStep || id !== currentStep.id ) {
@@ -92,12 +109,12 @@ export function GuidedTourStep( { id, tourId, context, hideSteps, className }: P
 	return (
 		<Popover
 			isVisible={ showTour }
-			className={ classNames( className, 'guided-tour__popover' ) }
+			className={ clsx( className, 'guided-tour__popover' ) }
 			context={ context }
 			position={ currentStep.popoverPosition }
 		>
-			<h2 className="guided-tour__popover-heading">{ currentStep.title }</h2>
-			<p className="guided-tour__popover-description">{ currentStep.description }</p>
+			<h2 className="guided-tour__popover-heading">{ title ?? currentStep.title }</h2>
+			<p className="guided-tour__popover-description">{ description ?? currentStep.description }</p>
 			<div className="guided-tour__popover-footer">
 				<div>
 					{
@@ -113,9 +130,7 @@ export function GuidedTourStep( { id, tourId, context, hideSteps, className }: P
 				</div>
 				<div className="guided-tour__popover-footer-right-content">
 					<>
-						{ ( ( ! currentStep.nextStepOnTargetClick &&
-							stepsCount > 1 &&
-							currentStepCount < stepsCount ) ||
+						{ ( ( ! currentStep.nextStepOnTargetClick && stepsCount > 1 && ! isLastStep ) ||
 							currentStep.forceShowSkipButton ) && (
 							// Show the skip button if there are multiple steps and we're not on the last step, unless we explicitly choose to add them
 							<Button borderless onClick={ endTour }>
@@ -123,8 +138,8 @@ export function GuidedTourStep( { id, tourId, context, hideSteps, className }: P
 							</Button>
 						) }
 						{ ! currentStep.nextStepOnTargetClick && (
-							<Button onClick={ nextStep }>
-								{ currentStepCount === stepsCount ? lastTourLabel : translate( 'Next' ) }
+							<Button className={ currentStep.classNames?.nextStepButton } onClick={ completeStep }>
+								{ isLastStep ? lastTourLabel : translate( 'Next' ) }
 							</Button>
 						) }
 					</>

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -6,6 +5,7 @@ import { useContext, useMemo } from 'react';
 import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
@@ -46,7 +46,7 @@ export default function LicenseInfoModal( {
 	const partner = useSelector( getCurrentPartner );
 	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
-	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
+	const isA4AEnabled = isA8CForAgencies();
 	const { hideLicenseInfo } = useContext( SitesOverviewContext );
 
 	const { products: dashboardProducts } = useContext( DashboardDataContext );

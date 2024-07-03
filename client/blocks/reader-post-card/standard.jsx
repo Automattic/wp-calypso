@@ -25,7 +25,7 @@ const StandardPost = ( { post, children, expandCard, postKey, isExpanded, site }
 				<ReaderExcerpt
 					post={ post }
 					hasExcerpt={ hasExcerpt }
-					showExcerpt={ true }
+					showExcerpt
 					setHasExcerpt={ setHasExcerpt }
 				/>
 			</div>

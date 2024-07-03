@@ -88,7 +88,7 @@ export default function HighlightsSection( {
 			className="has-odyssey-stats-bg-color"
 			counts={ counts }
 			previousCounts={ previousCounts }
-			showValueTooltip={ true }
+			showValueTooltip
 			onClickComments={ () => null }
 			onClickLikes={ () => null }
 			onClickViews={ () => null }

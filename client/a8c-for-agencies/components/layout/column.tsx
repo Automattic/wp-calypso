@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { ReactNode } from 'react';
 import Main from 'calypso/components/main';
 
@@ -15,7 +15,7 @@ type Props = {
 export default function LayoutColumn( { children, className, wide, withBorder, compact }: Props ) {
 	return (
 		<Main
-			className={ classNames( 'a4a-layout-column', className, {
+			className={ clsx( 'a4a-layout-column', className, {
 				'is-with-border': withBorder,
 				'is-compact': compact,
 			} ) }

@@ -58,13 +58,7 @@ const CommissionFees = ( {
 								commissionFee: commission * 100,
 							},
 							components: {
-								link: (
-									<ExternalLink
-										href="https://stripe.com/pricing"
-										icon={ true }
-										iconSize={ iconSize }
-									/>
-								),
+								link: <ExternalLink href="https://stripe.com/pricing" icon iconSize={ iconSize } />,
 							},
 						}
 					) }

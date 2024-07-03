@@ -45,7 +45,7 @@ export function DIFMUpsell( { site, isUnlaunchedSite, urlRef }: Props ) {
 			href={ url }
 			target="_blank"
 			icon={ <WordPressLogo size={ 32 } /> }
-			disableCircle={ true }
+			disableCircle
 			event="settings_bb_upsell"
 			tracksImpressionName="calypso_settings_bb_upsell_impression"
 			tracksClickName="calypso_settings_bb_upsell_cta_click"

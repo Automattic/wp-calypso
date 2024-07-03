@@ -3,6 +3,7 @@ import { Tooltip } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import { recordLogRocketEvent } from 'calypso/lib/analytics/logrocket';
 import { EVERY_SECOND, Interval } from 'calypso/lib/interval';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -17,6 +18,7 @@ interface Props {
 	tooltipText?: string;
 	trackEventName: string;
 	variant: 'primary' | 'secondary' | 'tertiary';
+	onClick?: ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => void;
 }
 
 const BackupNowButton: FunctionComponent< Props > = ( {
@@ -25,6 +27,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 	tooltipText,
 	trackEventName,
 	variant,
+	onClick,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -38,11 +41,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		[ dispatch, siteId ]
 	);
 	const trackedRequestBackupSite = useTrackCallback( requestBackupSite, trackEventName );
-	const enqueueBackup = () => {
-		trackedRequestBackupSite();
-		setDisabled( true );
-		setEnqueued( true );
-	};
+
 	const backupCurrentlyInProgress = useSelector( ( state ) =>
 		getInProgressBackupForSite( state, siteId )
 	);
@@ -51,6 +50,17 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		() => dispatch( requestRewindBackups( siteId ) ),
 		[ dispatch, siteId ]
 	);
+
+	const onClickHandler = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
+		trackedRequestBackupSite();
+		recordLogRocketEvent( trackEventName );
+		setDisabled( true );
+		setEnqueued( true );
+
+		if ( onClick ) {
+			onClick( event );
+		}
+	};
 
 	useEffect( () => {
 		const statusLabels = {
@@ -79,15 +89,13 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		}
 	}, [ areBackupsStopped, backupCurrentlyInProgress, tooltipText, translate, enqueued, children ] );
 
-	// TODO: If we want to re-enable the backup button we can set enqueue to false once we detect a backup in progress
-
 	const button = (
 		<div>
 			{ /* Wrapped in a div to avoid disabled button blocking hover events from reaching Tooltip */ }
 			<Button
 				primary={ variant === 'primary' }
 				plain={ variant === 'tertiary' }
-				onClick={ enqueueBackup }
+				onClick={ onClickHandler }
 				disabled={ backupCurrentlyInProgress || areBackupsStopped || disabled }
 			>
 				{ buttonContent }

@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -155,7 +155,7 @@ class StatsNavigation extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
 
-		const wrapperClass = classNames( 'stats-navigation', {
+		const wrapperClass = clsx( 'stats-navigation', {
 			'stats-navigation--modernized': ! isLegacy,
 		} );
 

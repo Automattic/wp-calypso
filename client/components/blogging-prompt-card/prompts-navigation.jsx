@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -126,7 +126,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => 
 	};
 
 	const renderPromptNavigation = () => {
-		const buttonClasses = classnames( 'navigation-link' );
+		const buttonClasses = clsx( 'navigation-link' );
 		let promptLabel = translate( 'Daily writing prompt' );
 		if ( thisIsAIPrompt ) {
 			promptLabel = translate( 'A prompt for you from Jetpack AI' );

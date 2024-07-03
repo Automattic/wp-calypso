@@ -5,7 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 import PlansFeatureList from '../plans-feature-list';
 import { PLANS_STORE } from '../stores';
@@ -122,7 +122,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	return (
 		<div
-			className={ classNames( 'plan-item', {
+			className={ clsx( 'plan-item', {
 				'is-popular': isPopular,
 				'is-open': isOpen,
 				'badge-next-to-name': popularBadgeVariation === 'NEXT_TO_NAME',
@@ -131,7 +131,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 			{ isPopular && popularBadgeVariation === 'ON_TOP' && (
 				<span className="plan-item__badge">{ displayedPopularBadgeText }</span>
 			) }
-			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
+			<div className={ clsx( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
 				<div className="plan-item__details">
 					<div
 						tabIndex={ 0 }
@@ -143,7 +143,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						className="plan-item__summary"
 					>
 						<div
-							className={ classNames( 'plan-item__heading', {
+							className={ clsx( 'plan-item__heading', {
 								'badge-next-to-name': popularBadgeVariation === 'NEXT_TO_NAME',
 							} ) }
 						>
@@ -157,7 +157,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						{ tagline && <p className="plan-item__tagline">{ tagline }</p> }
 						<div className="plan-item__price">
 							<div
-								className={ classNames( 'plan-item__price-amount', {
+								className={ clsx( 'plan-item__price-amount', {
 									'is-loading': ! planProduct?.price,
 								} ) }
 							>
@@ -181,7 +181,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							vertical spacing as the rest of the plan cards
 						 */ }
 						<div
-							className={ classNames( 'plan-item__price-discount', {
+							className={ clsx( 'plan-item__price-discount', {
 								'plan-item__price-discount--disabled': billingPeriod !== 'ANNUALLY',
 								'plan-item__price-discount--hidden': isFree,
 							} ) }
@@ -208,7 +208,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								</Button>
 							) : (
 								<Button
-									className={ classNames( 'plan-item__select-button full-width', {
+									className={ clsx( 'plan-item__select-button full-width', {
 										'is-selected': isSelected,
 										'is-popular': isPopular,
 									} ) }

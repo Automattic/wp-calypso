@@ -2,7 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 
-@media ( max-width: $break-small ) {
+@media (max-width: $break-small) {
 	.domains-table {
 		padding: 0 16px;
 	}
@@ -21,34 +21,45 @@
 		--row-gap: 20px;
 
 		display: grid;
-		gap: var(--row-gap) 16px;
+
+		th,
+		td {
+			padding: var(--row-gap) 8px;
+			&:first-child {
+				margin-inline-start: -8px;
+			}
+
+			&.domains-table-checkbox-td {
+				min-width: fit-content;
+			}
+		}
 
 		// Note: The checkbox does not count for column counting purposes
 
 		&.is-7-column {
-			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto 36px;
+			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto auto;
 		}
 		&.is-7-column:not(.has-checkbox) {
-			grid-template-columns: 2fr 1fr 1fr auto auto auto 36px;
+			grid-template-columns: 2fr 1fr 1fr auto auto auto auto;
 		}
 		&.is-6-column {
-			grid-template-columns: 20px 2fr 1fr minmax(auto, 1fr) auto auto 36px;
+			grid-template-columns: 20px 2fr 1fr minmax(auto, 1fr) auto auto auto;
 		}
 		&.is-6-column:not(.has-checkbox) {
-			grid-template-columns: 2fr 1fr minmax(auto, 1fr) auto auto 36px;
+			grid-template-columns: 2fr 1fr minmax(auto, 1fr) auto auto auto;
 		}
 		&.is-5-column {
-			grid-template-columns: 20px 1fr minmax(auto, 1fr) auto auto 36px;
+			grid-template-columns: 20px 1fr minmax(auto, 1fr) auto auto auto;
 		}
 		&.is-5-column:not(.has-checkbox) {
-			grid-template-columns: 1fr minmax(auto, 1fr) auto auto 36px;
+			grid-template-columns: 1fr minmax(auto, 1fr) auto auto auto;
 		}
 
 		tr::after {
 			display: block;
 			content: "";
 			height: 1px;
-			background: #f0f0f0;
+			background: var(--color-border-secondary);
 			grid-column: 1 / -1;
 		}
 	}
@@ -90,6 +101,16 @@
 		margin-bottom: 4px;
 	}
 
+	.domains-table__row {
+		&:has(a.domains-table__domain-name) {
+			cursor: pointer;
+
+			&:hover td {
+				background-color: #f7faff;
+			}
+		}
+	}
+
 	.domains-table-row__status-cell {
 		white-space: pre-line;
 		display: flex;
@@ -117,6 +138,12 @@
 		}
 	}
 
+	.domains-table-checkbox-td {
+		input[type="checkbox"][disabled] {
+			cursor: no-drop;
+		}
+	}
+
 	.domains-table-row__domain {
 		flex-direction: column;
 		align-items: flex-start;
@@ -125,6 +152,12 @@
 
 	.domains-table-row__actions {
 		text-align: right;
+		justify-content: flex-end;
+
+		button {
+			min-width: unset;
+			padding: 0;
+		}
 	}
 }
 
@@ -226,6 +259,9 @@
 }
 
 .domains-table-mobile-cards {
+	overflow-y: auto;
+	max-height: calc(100vh - 326px);
+
 	.domains-table-mobile-cards-select-all {
 		display: flex;
 		align-items: center;
@@ -260,9 +296,12 @@
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
+	position: relative;
 	padding: 16px 0;
-	border-bottom: 1px solid #f0f0f0;
-
+	border-bottom: 1px solid var(--color-border-secondary);
+	&:hover {
+		background-color: #f7faff;
+	}
 	&-header {
 		display: flex;
 		align-items: center;
@@ -310,7 +349,7 @@
 		flex-direction: column;
 		gap: 16px;
 		padding: 16px 0;
-		border-bottom: 1px solid #f0f0f0;
+		border-bottom: 1px solid var(--color-border-secondary);
 
 		> div {
 			display: flex;
@@ -327,15 +366,30 @@
 		}
 	}
 
+	.domains-table__domain-link {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	}
+
+	// Prevent the following elements become unclickable due to the domain-link overlay.
+	&:has(.domains-table__domain-link) {
+		button,
+		input {
+			position: relative;
+			z-index: 0;
+		}
+	}
 }
 
 a.domains-table-add-email-button {
-	font-size: $font-body-small;
+	font-size: $font-body-extra-small;
 	font-style: normal;
 	font-weight: 400;
-	line-height: 20px; /* 142.857% */
+	line-height: 16px;
 	letter-spacing: -0.15px;
-	text-decoration: underline;
 	color: var(--color-link);
 }
 

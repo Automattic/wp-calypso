@@ -133,11 +133,11 @@ export default function AgencySignupForm() {
 
 			{ hasFetched && ! partner && (
 				<CompanyDetailsForm
-					includeTermsOfService={ true }
+					includeTermsOfService
 					isLoading={ createPartner.isPending }
 					onSubmit={ onSubmit }
 					submitLabel={ translate( 'Continue' ) }
-					showSignupFields={ true }
+					showSignupFields
 					referrer={ referrer }
 				/>
 			) }

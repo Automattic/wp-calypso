@@ -14,6 +14,12 @@
 	}
 
 	.a4a-layout-column {
+		.a4a-layout-column__container {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+
 		@include breakpoint-deprecated( "<660px" ) {
 			border-radius: 0;
 		}
@@ -21,14 +27,16 @@
 
 	.site-actions__actions-large-screen {
 		display: block;
-		margin-left: 10px;
-		margin-right: 10px;
+		/** Increase the click area */
+		padding: 10px;
+		margin: -10px 0;
 	}
 
 	.site-actions__actions-small-screen {
 		position: unset;
-		margin-left: 10px;
-		margin-right: 10px;
+		/** Increase the click area */
+		padding: 10px;
+		margin: -10px 0;
 	}
 
 	.a4a-layout__top-wrapper:not(.preview-hidden) {
@@ -36,6 +44,10 @@
 		@include breakpoint-deprecated( "<660px" ) {
 			padding-block-start: 0;
 		}
+	}
+
+	.components-input-base {
+		border-radius: 4px;
 	}
 
 	@media (min-width: $break-large) {
@@ -60,10 +72,25 @@
 		.dataviews-view-table tr td:first-child {
 			padding-left: 64px;
 		}
-		.dataviews-view-table tr th:last-child,
-		.dataviews-view-table tr td:last-child {
-			padding-right: 64px;
-			width: 20px;
+		.dataviews-view-table tr {
+			th:last-child,
+			td:last-child {
+				padding-right: 64px;
+				width: 20px;
+				white-space: nowrap;
+
+				position: sticky;
+				right: 0;
+				z-index: 1;
+				background: linear-gradient(to right, transparent 0%, #fff 25%);
+			}
+
+			&:hover {
+				th:last-child,
+				td:last-child {
+					background: linear-gradient(to right, transparent 0%, var(--color-neutral-0) 25%);
+				}
+			}
 		}
 	}
 
@@ -74,8 +101,6 @@
 	}
 
 	@media (max-width: $break-large) {
-		height: calc(100vh - 120px); /* Matches the offset defined in PR #65520 */
-
 		.section-nav__mobile-header {
 			padding: 13px;
 		}
@@ -127,10 +152,14 @@
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
 			padding: 8px 24px 8px 8px;
+			width: 70%;
+		}
+
+		.dataviews-view-table tr td:first-child:has(.sites-dataview__site-error) {
+			padding: 8px 0 8px 8px;
 		}
 		.dataviews-view-table tr td:last-child {
-			padding: 0;
-			padding-inline-end: 8px;
+			padding: 8px 8px 8px 0;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
@@ -183,7 +212,7 @@
 			padding-inline-end: 8px;
 		}
 
-		.site-preview__content {
+		.item-preview__content {
 			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
 
 			.backup__page .main {
@@ -194,8 +223,8 @@
 		}
 
 		.dataviews-view-table-wrapper {
+			flex: 1;
 			overflow-y: auto;
-			max-height: calc(100vh - 326px); /* 326px is the size of all the height above and below the dataview, from the edges of the screen, plus 10px offset from the padding. Currently below 9px + 309 above */
 
 			table {
 				width: 100%;
@@ -239,12 +268,6 @@
 		&.sites-dashboard__layout {
 			.dataviews-view-table-wrapper {
 				overflow-y: auto;
-				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
-			}
-
-			.is-hiding-navigation .dataviews-view-table-wrapper {
-				overflow-y: auto;
-				max-height: calc(100vh - 260px); /* 260px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
 			}
 		}
 
@@ -321,11 +344,18 @@
 				margin: 0;
 				padding: 0;
 				overflow-y: auto;
-				max-height: calc(100vh - 300px); /* 300px is the size of all content above the dataview in list style, which includes our CTA elements, the pagination bottom bar, and an additional 20px margin. */
 
 				li {
 					padding: 8px 24px;
 					border-bottom: 1px solid var(--color-accent-5);
+				}
+
+				li:has(.sites-dataview__site-error-span) {
+					border-bottom: 0;
+				}
+
+				li:has(.sites-dataview__site-error) {
+					padding: 0 24px 24px;
 				}
 
 				.dataviews-view-list__fields {
@@ -355,6 +385,12 @@
 							width: 100%;
 							justify-content: flex-start;
 						}
+
+						.sites-dataview__site-error {
+							font-size: rem(13px);
+							border-radius: 4px;
+							padding: 4px 4px 4px 2px;
+						}
 					}
 				}
 
@@ -382,8 +418,8 @@
 		color: var(--color-accent-80);
 	}
 
-	tr.dataviews-view-table__row th[data-field-id="favorite"] {
-		vertical-align: top;
+	tr.dataviews-view-table__row th[data-field-id="favorite"] svg {
+		vertical-align: middle;
 	}
 
 	tr.dataviews-view-table__row {
@@ -392,6 +428,50 @@
 				visibility: visible;
 			}
 		}
+	}
+
+	tr:has(.sites-dataview__site-error):hover {
+		background: unset;
+		background-color: unset;
+	}
+
+	td:has(.sites-dataview__site-error-span) {
+		border-bottom: 0;
+	}
+
+	td:has(.sites-dataview__site-error) {
+		padding: 0 0 16px 0;
+		height: 40px;
+	}
+
+	td:first-child:has(.sites-dataview__site-error) {
+		padding: 0 0 16px 64px;
+
+		.sites-dataview__site-error {
+			padding-left: 10px;
+			border-radius: 4px 0 0 4px;
+		}
+	}
+
+	td:last-child:has(.sites-dataview__site-error) {
+		padding: 0 64px 16px 0;
+
+		.sites-dataview__site-error {
+			border-radius: 0 4px 4px 0;
+		}
+	}
+
+	.dataviews-view-table__cell-content-wrapper:has(.sites-dataview__site-error) {
+		height: 100%;
+	}
+
+	.sites-dataview__site-error {
+		color: #691c1c;
+		background-color: #facfd2;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		gap: 6px;
 	}
 
 	.sites-overview__content-wrapper {
@@ -473,6 +553,17 @@
 		}
 
 		.dataviews-wrapper {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+
+			> div[data-wp-component="VStack"] {
+				align-items: stretch;
+				overflow: hidden;
+			}
+
 			.components-button:focus:not(:disabled) {
 				box-shadow: 0 0 0 2px var(--color-primary-light);
 			}
@@ -488,17 +579,17 @@
 		}
 
 		.sites-overview {
+			height: 100%;
 			width: 400px;
 			flex: unset;
 			transition: all 0.2s;
 			background: var(--color-light-backdrop);
 
 			.sites-overview__content {
-				margin-top: 24px;
-
-				&.is-hiding-navigation {
-					margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
-				}
+				display: flex;
+				flex: 1;
+				height: 100%;
+				overflow: hidden;
 			}
 		}
 
@@ -517,7 +608,7 @@
 			font-size: rem(24px);
 		}
 
-		.site-preview__pane {
+		.item-preview__pane {
 			flex-grow: 1;
 			width: auto;
 			transition: flex-grow 0.2s;
@@ -537,7 +628,7 @@
 				transition: flex-grow 0.2s;
 			}
 
-			.site-preview__pane {
+			.item-preview__pane {
 				max-width: 0;
 				padding: 0;
 			}
@@ -545,6 +636,14 @@
 			@media only screen and (min-width: $break-large) {
 				.sites-overview {
 					padding: 0;
+
+					.sites-overview__content {
+						margin-top: 24px;
+
+						&.is-hiding-navigation {
+							margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
+						}
+					}
 
 					.dataviews-filters__view-actions {
 						& > :first-child {
@@ -673,6 +772,9 @@
 		vertical-align: middle;
 		color: var(--color-accent-5);
 	}
+	.sites-overview__stats-trend {
+		padding: 0 8px 0 4px;
+	}
 	.sites-overview__stats-trend__up,
 	.sites-overview__stats-trend__down {
 		vertical-align: middle;
@@ -702,13 +804,6 @@
 		vertical-align: middle;
 		color: var(--color-accent-80);
 		font-size: 0.75rem;
-	}
-	.sites-overview__stats-trend svg {
-		position: relative;
-		inset-block-start: 0.3rem;
-		@media screen and (max-width: $break-xlarge) {
-			inset-block-start: 0.27rem;
-		}
 	}
 	.sites-overview__disabled {
 		color: var(--color-accent-5);
@@ -814,7 +909,7 @@
 	.sites-overview__stats {
 		color: var(--color-text-black);
 		display: inline-block;
-		line-height: 17px;
+		line-height: 1;
 		height: 18px;
 		padding: 2px 1px;
 	}
@@ -1045,37 +1140,91 @@
 	}
 }
 
-.sites-dashboard__empty {
+.sites-dashboard-empty {
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: 12px;
 	align-items: center;
 
 	margin: 24px auto;
-	padding: 64px 0;
 	max-width: 700px;
 	text-align: center;
-}
 
-.sites-dashboard__empty-message {
-	font-size: 1rem;
-	font-weight: 400;
-	line-height: 1.5;
-}
-
-.sites-dashboard__empty-actions {
-	display: flex;
-	flex-direction: row;
-	gap: 8px;
-
-	margin: 0 auto;
-
-	> .button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
+	@include break-large {
+		align-items: start;
+		text-align: left;
 	}
 }
+
+.sites-dashboard-empty__heading {
+	font-size: rem(24px);
+	font-weight: 600;
+}
+
+.sites-dashboard-empty__subheading {
+	font-size: inherit;
+}
+
+.sites-dashboard-empty__body {
+	margin-block-end: 16px;
+	border-radius: 4px;
+	border: 1px solid var(--color-accent-5);
+	padding: 16px 24px;
+
+	@include break-large {
+		display: flex;
+		gap: 16px;
+	}
+
+	.sites-dashboard-empty__plugins-icon {
+		display: none;
+		opacity: 0.7;
+
+		@include break-large {
+			display: block;
+		}
+	}
+
+	.sites-dashboard-empty__content {
+		text-align: left;
+	}
+
+	.sites-dashboard-empty__content-heading {
+		font-size: rem(16px);
+		font-weight: 500;
+	}
+
+	.sites-dashboard-empty__content-description {
+		margin-block-start: 4px;
+		font-size: rem(14px);
+		line-height: 1.7;
+		color: var(--color-accent);
+	}
+
+	.sites-dashboard-empty__content-button {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+
+		margin-block-start: 16px;
+		margin-inline-start: auto;
+
+		@include break-large {
+			flex-direction: row;
+		}
+
+		.button {
+			width: 100%;
+			height: 40px;
+
+			@include break-large {
+				width: auto;
+				height: inherit;
+			}
+		}
+	}
+}
+
 
 /* See wp-calypso/client/layout/style.scss for the original style - this is removed on sites dashboard to enable pagination to display properly. */
 .layout__primary .preview-hidden {
@@ -1084,3 +1233,11 @@
 	}
 }
 
+.sites-dashboard .notice-banner {
+	display: none;
+}
+
+.sites-dashboard.preview-hidden .notice-banner {
+	display: flex;
+	margin: 0 64px 24px !important;
+}

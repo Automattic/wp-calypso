@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import classNames from 'classnames';
+import { getQueryArg } from '@wordpress/url';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
@@ -20,9 +21,9 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { type TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
@@ -41,15 +42,19 @@ import SitesHeaderActions from '../sites-header-actions';
 import SiteNotifications from '../sites-notifications';
 import EmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
+import ProvisioningSiteNotification from './provisioning-site-notification';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
 
 import './style.scss';
-
+import './sites-dataviews-style.scss';
 export default function SitesDashboard() {
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const dispatch = useDispatch();
 
 	const agencyId = useSelector( getActiveAgencyId );
+
+	const recentlyCreatedSite = getQueryArg( window.location.href, 'created_site' ) ?? null;
+	const migrationIntent = getQueryArg( window.location.href, 'migration' ) ?? null;
 
 	const {
 		dataViewsState,
@@ -207,7 +212,7 @@ export default function SitesDashboard() {
 
 	return (
 		<Layout
-			className={ classNames(
+			className={ clsx(
 				'sites-dashboard',
 				'sites-dashboard__layout',
 				! dataViewsState.selectedItem && 'preview-hidden'
@@ -218,6 +223,13 @@ export default function SitesDashboard() {
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ navItems.length > 1 }>
+						{ recentlyCreatedSite && (
+							<ProvisioningSiteNotification
+								siteId={ Number( recentlyCreatedSite ) }
+								migrationIntent={ !! migrationIntent }
+							/>
+						) }
+
 						<LayoutHeader>
 							<Title>{ translate( 'Sites' ) }</Title>
 							<Actions>
@@ -233,8 +245,8 @@ export default function SitesDashboard() {
 					</LayoutTop>
 
 					<SiteNotifications />
-					{ tourId && <GuidedTour defaultTourId={ tourId as TourId } /> }
-
+					{ tourId && <GuidedTour defaultTourId={ tourId } /> }
+					<QueryReaderTeams />
 					<DashboardDataContext.Provider
 						value={ {
 							verifiedContacts: {
@@ -252,7 +264,7 @@ export default function SitesDashboard() {
 						} }
 					>
 						<JetpackSitesDataViews
-							className={ classNames( 'sites-overview__content', {
+							className={ clsx( 'sites-overview__content', {
 								'is-hiding-navigation': navItems.length <= 1,
 							} ) }
 							data={ data }

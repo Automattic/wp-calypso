@@ -99,8 +99,8 @@ export default function StoreFeaturesStep( props: Props ) {
 				</>
 			}
 			align="left"
-			hideSkip={ true }
-			isHorizontalLayout={ true }
+			hideSkip
+			isHorizontalLayout
 			defaultDependencies={ {
 				siteTitle: '',
 				tagline: '',

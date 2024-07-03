@@ -1,7 +1,7 @@
-import { ACCOUNT_FLOW, HOSTING_LP_FLOW } from '@automattic/onboarding';
+import { ACCOUNT_FLOW, HOSTING_LP_FLOW, ENTREPRENEUR_FLOW } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -35,6 +35,7 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 			break;
 		case ACCOUNT_FLOW:
 		case HOSTING_LP_FLOW:
+		case ENTREPRENEUR_FLOW:
 			steps = [ { title: __( 'Creating your account' ) } ];
 			break;
 		case 'setup-site':
@@ -63,6 +64,9 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 				{ title: __( 'Closing the loop' ) },
 			];
 			break;
+		case 'email-subscription':
+			steps = [ { title: __( 'Subscribing to magic' ) } ];
+			break;
 		default:
 			steps = [
 				! isDestinationSetupSiteFlow && { title: __( 'Building your site' ) },
@@ -87,7 +91,9 @@ export default function ReskinnedProcessingScreen( props ) {
 	const totalSteps = steps.current.length;
 	const shouldShowNewSpinner =
 		isDestinationSetupSiteFlow ||
-		[ 'setup-site', 'do-it-for-me', 'do-it-for-me-store' ].includes( flowName );
+		[ 'setup-site', 'do-it-for-me', 'do-it-for-me-store', 'email-subscription' ].includes(
+			flowName
+		);
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
@@ -115,7 +121,7 @@ export default function ReskinnedProcessingScreen( props ) {
 
 	return (
 		<div
-			className={ classnames( 'reskinned-processing-screen', {
+			className={ clsx( 'reskinned-processing-screen', {
 				'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
 			} ) }
 		>

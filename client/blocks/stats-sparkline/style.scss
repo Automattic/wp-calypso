@@ -6,3 +6,11 @@
 .stats-sparkline__bar {
 	fill: var(--color-stats-sparkline);
 }
+
+a:focus {
+	.stats-sparkline {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+		border-radius: 2px;
+		margin-left: 2px;
+	}
+}

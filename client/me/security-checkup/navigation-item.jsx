@@ -34,7 +34,7 @@ class SecurityCheckupNavigationItem extends Component {
 
 	render() {
 		if ( this.props.isPlaceholder ) {
-			return <VerticalNavItem isPlaceholder={ true } />;
+			return <VerticalNavItem isPlaceholder />;
 		}
 
 		return (

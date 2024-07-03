@@ -3,9 +3,11 @@ import { formatCurrency } from '@automattic/format-currency';
 import { Popover } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { getTotalInvoiceValue } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
+import { useContext } from 'react';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import { MarketplaceTypeContext } from '../../context';
+import { useTotalInvoiceValue } from '../../wpcom-overview/hooks/use-total-invoice-value';
 import ShoppingCartMenuItem from './item';
 import type { ShoppingCartItem } from '../../types';
 
@@ -22,11 +24,13 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 	const translate = useTranslate();
 
 	const userProducts = useSelector( getProductsList );
+	const { getTotalInvoiceValue } = useTotalInvoiceValue();
 	const { discountedCost } = getTotalInvoiceValue( userProducts, items );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
 
 	return (
 		<Popover
-			isVisible={ true }
+			isVisible
 			onClose={ onClose }
 			noArrow={ false }
 			offset={ 24 }
@@ -58,7 +62,11 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 
 				<div className="shopping-cart__menu-footer">
 					<div className="shopping-cart__menu-total">
-						<span>{ translate( 'Total:' ) }</span>
+						<span>
+							{ marketplaceType === 'regular'
+								? translate( 'Total:' )
+								: translate( 'Total your client will pay:' ) }
+						</span>
 						<span>
 							{ translate( '%(total)s/mo', {
 								args: { total: formatCurrency( discountedCost, items[ 0 ]?.currency ?? 'USD' ) },

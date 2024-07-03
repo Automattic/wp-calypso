@@ -37,7 +37,7 @@
 	max-width: calc(800px - 3em);
 	padding: 2em 1.25em;
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		.is-ecommerce-trial-plan & {
 			margin-left: 1.25em;
 			margin-right: 1.25em;
@@ -66,7 +66,7 @@
 			margin-left: 2em;
 			text-align: right;
 
-			@media ( max-width: $break-small ) {
+			@media (max-width: $break-small) {
 				flex: 1 100%;
 				margin-top: 2em;
 				margin-left: 0;
@@ -83,7 +83,7 @@
 					color: #044b7a;
 				}
 
-				@media ( max-width: $break-small ) {
+				@media (max-width: $break-small) {
 					width: 100%;
 				}
 			}

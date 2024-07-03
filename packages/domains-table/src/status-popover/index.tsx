@@ -1,6 +1,6 @@
 import { Gridicon, Popover } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { useState, useRef } from 'react';
 import { useDebounce } from 'use-debounce';
 import './style.scss';
@@ -50,7 +50,7 @@ export const StatusPopover = ( {
 				onMouseEnter={ handleOnMouseEnterButton }
 				onMouseLeave={ handleOnMouseLeave }
 				ref={ iconRef }
-				className={ classNames( 'status-popover', className ) }
+				className={ clsx( 'status-popover', className ) }
 			>
 				{ popoverTargetElement }
 			</button>
@@ -61,7 +61,7 @@ export const StatusPopover = ( {
 					isVisible
 					context={ iconRef.current }
 					position={ position }
-					className={ classNames( 'status-popover__tooltip', className ) }
+					className={ clsx( 'status-popover__tooltip', className ) }
 					onMouseEnter={ handleOnMouseEnterPopover }
 					onMouseLeave={ handleOnMouseLeavePopover }
 				>

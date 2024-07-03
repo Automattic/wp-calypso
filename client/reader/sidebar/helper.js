@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { some, startsWith } from 'lodash';
 
 const exported = {
@@ -25,7 +25,7 @@ const exported = {
 			isActionButtonSelected = true;
 		}
 
-		return classNames( {
+		return clsx( {
 			selected,
 			'is-action-button-selected': isActionButtonSelected,
 			...additionalClasses,
@@ -34,7 +34,7 @@ const exported = {
 
 	itemLinkClassStartsWithOneOf: function ( paths, currentPath, additionalClasses ) {
 		const selected = this.pathStartsWithOneOf( paths, currentPath );
-		return classNames( { selected, ...additionalClasses } );
+		return clsx( { selected, ...additionalClasses } );
 	},
 
 	pathStartsWithOneOf: function ( paths, currentPath ) {

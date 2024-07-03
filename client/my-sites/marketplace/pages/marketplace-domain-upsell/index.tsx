@@ -5,7 +5,7 @@ import { isDesktop } from '@automattic/viewport';
 import { ThemeProvider } from '@emotion/react';
 import styled from '@emotion/styled';
 import { HorizontalRule } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ExternalLink from 'calypso/components/external-link';
@@ -162,7 +162,7 @@ function CalypsoWrappedMarketplaceDomainUpsell() {
 				/>
 			</Masterbar>
 			<div
-				className={ classnames( 'marketplace-domain-upsell__root', {
+				className={ clsx( 'marketplace-domain-upsell__root', {
 					'expanded-basket-view': isExpandedBasketView,
 				} ) }
 			>

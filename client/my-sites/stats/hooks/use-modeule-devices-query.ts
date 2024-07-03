@@ -1,4 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback, useMemo } from 'react';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from './default-query-params';
 import { processQueryParams, QueryStatsParams } from './utils';
@@ -28,21 +30,38 @@ function capitalizeFirstLetter( string: string ) {
 	return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
 }
 
-const parseDevicesData = ( data: {
-	top_values: { [ key: string ]: number };
-} ): Array< StatsDevicesData > => {
-	const keys = Object.keys( data.top_values );
+function useParseDevicesData() {
+	const translate = useTranslate();
 
-	return keys.map( ( key: string ) => {
-		return {
-			key,
-			label: capitalizeFirstLetter( key ),
-			value: data.top_values[ key ],
-		};
-	} );
-};
+	// Translate data labels for device screen sizes.
+	const deviceLabels: { [ key: string ]: string } = useMemo(
+		() => ( {
+			mobile: translate( 'Mobile' ),
+			tablet: translate( 'Tablet' ),
+			desktop: translate( 'Desktop' ),
+		} ),
+		[ translate ]
+	);
+
+	return useCallback(
+		( data: { top_values: { [ key: string ]: number } } ): Array< StatsDevicesData > => {
+			const keys = Object.keys( data.top_values );
+
+			return keys.map( ( key: string ) => {
+				return {
+					key,
+					label: deviceLabels[ key ] ?? capitalizeFirstLetter( key ),
+					value: data.top_values[ key ],
+				};
+			} );
+		},
+		[ deviceLabels ]
+	);
+}
 
 const useModuleDevicesQuery = ( siteId: number, deviceParam: string, query: QueryStatsParams ) => {
+	const parseDevicesData = useParseDevicesData();
+
 	return useQuery( {
 		...getDefaultQueryParams(),
 		queryKey: [ 'stats', 'devices', siteId, deviceParam, query ],

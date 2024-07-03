@@ -18,8 +18,8 @@ export class P2PlansMain extends Component {
 				<PlansFeaturesMain
 					siteId={ siteId }
 					intervalType={ [ 'monthly' ] }
-					hidePlansFeatureComparison={ true }
-					hidePlanTypeSelector={ true }
+					hidePlansFeatureComparison
+					hidePlanTypeSelector
 					intent="plans-p2"
 					isInSignup={ false }
 				/>

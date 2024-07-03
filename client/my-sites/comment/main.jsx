@@ -81,9 +81,9 @@ export class CommentView extends Component {
 				{ canModerateComments && (
 					<Comment
 						commentId={ commentId }
-						refreshCommentData={ true }
+						refreshCommentData
 						redirect={ redirectToPostView }
-						isPostView={ true }
+						isPostView
 						isSingularEditMode={ canModerateComments && isEditMode }
 						onToggleEditMode={ this.toggleEditMode }
 					/>

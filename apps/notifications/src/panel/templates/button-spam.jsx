@@ -7,6 +7,7 @@ import { keys } from '../helpers/input';
 import { spamNote } from '../state/notes/thunks';
 import ActionButton from './action-button';
 
+// eslint-disable-next-line no-shadow
 const SpamButton = ( { note, translate, spamNote } ) => {
 	const restClient = useContext( RestClientContext );
 

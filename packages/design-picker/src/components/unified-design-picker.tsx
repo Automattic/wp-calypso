@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import photon from 'photon';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -28,25 +28,43 @@ const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name
 
 interface DesignPreviewImageProps {
 	design: Design;
+	imageOptimizationExperiment?: boolean;
 	locale?: string;
 	styleVariation?: StyleVariation;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 }
 
 const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	design,
 	locale,
 	styleVariation,
+	oldHighResImageLoading,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
-	if ( design.is_externally_managed && design.screenshot ) {
+	if ( design?.design_tier === 'partner' && design.screenshot ) {
 		const fit = '479,360';
 		// We're stubbing out the high res version here as part of a size reduction experiment.
 		// See #88786 and TODO for discussion / info.
 		const themeImgSrc = photon( design.screenshot, { fit } ) || design.screenshot;
-		// const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
+		const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
 
-		return <img src={ themeImgSrc } srcSet={ `${ themeImgSrc }` } alt={ design.description } />;
+		if ( oldHighResImageLoading ) {
+			<img
+				src={ themeImgSrc }
+				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
+				alt={ design.description }
+			/>;
+		} else {
+			return (
+				<img
+					loading="lazy"
+					src={ themeImgSrc }
+					srcSet={ `${ themeImgSrc }` }
+					alt={ design.description }
+				/>
+			);
+		}
 	}
 
 	return (
@@ -58,7 +76,12 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
-			options={ getMShotOptions( { scrollable: false, highRes: ! isMobile, isMobile } ) }
+			options={ getMShotOptions( {
+				scrollable: false,
+				highRes: ! isMobile,
+				isMobile,
+				oldHighResImageLoading,
+			} ) }
 			scrollable={ false }
 		/>
 	);
@@ -117,13 +140,13 @@ const useTrackDesignView = ( {
 
 				recordTracksEvent( 'calypso_design_picker_design_display', {
 					category: trackingCategory,
-					design_type: design.design_type,
 					...( design?.design_tier && { design_tier: design.design_tier } ),
-					is_premium: design.is_premium,
+					is_premium: design?.design_tier === 'premium',
+					// TODO: Better to track whether already available on this sites plan.
 					is_premium_available: isPremiumThemeAvailable,
 					slug: design.slug,
 					is_virtual: design.is_virtual,
-					is_externally_managed: design.is_externally_managed,
+					is_externally_managed: design?.design_tier === 'partner',
 				} );
 
 				if ( category ) {
@@ -152,6 +175,7 @@ interface DesignCardProps {
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 }
 
 const DesignCard: React.FC< DesignCardProps > = ( {
@@ -163,6 +187,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	onChangeVariation,
 	onPreview,
 	getBadge,
+	oldHighResImageLoading,
 } ) => {
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
@@ -188,6 +213,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					design={ design }
 					locale={ locale }
 					styleVariation={ selectedStyleVariation }
+					oldHighResImageLoading={ oldHighResImageLoading }
 				/>
 			}
 			badge={ getBadge( design.slug, isLocked ) }
@@ -214,6 +240,7 @@ interface DesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -227,6 +254,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
+	oldHighResImageLoading,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useMemo( () => {
@@ -252,7 +280,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				) }
 				{ assemblerCtaData.shouldGoToAssemblerStep && (
 					<Button
-						className={ classnames( 'design-picker__design-your-own-button', {
+						className={ clsx( 'design-picker__design-your-own-button', {
 							'design-picker__design-your-own-button-without-categories': ! hasCategories,
 						} ) }
 						onClick={ () => onClickDesignYourOwnTopButton( getAssemblerDesign() ) }
@@ -279,6 +307,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 							onChangeVariation={ onChangeVariation }
 							onPreview={ onPreview }
 							getBadge={ getBadge }
+							oldHighResImageLoading={ oldHighResImageLoading }
 						/>
 					);
 				} ) }
@@ -301,6 +330,7 @@ export interface UnifiedDesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
+	oldHighResImageLoading?: boolean; // Temporary for A/B test
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -316,6 +346,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
 	getBadge,
+	oldHighResImageLoading,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -331,14 +362,9 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 
 	return (
 		<div
-			className={ classnames(
-				'design-picker',
-				`design-picker--theme-light`,
-				'design-picker__unified',
-				{
-					'design-picker--has-categories': hasCategories,
-				}
-			) }
+			className={ clsx( 'design-picker', `design-picker--theme-light`, 'design-picker__unified', {
+				'design-picker--has-categories': hasCategories,
+			} ) }
 		>
 			{ heading }
 			<div className="unified-design-picker__designs">
@@ -353,6 +379,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					getBadge={ getBadge }
+					oldHighResImageLoading={ oldHighResImageLoading }
 				/>
 				{ bottomAnchorContent }
 			</div>

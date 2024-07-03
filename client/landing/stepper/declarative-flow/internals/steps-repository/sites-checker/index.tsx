@@ -44,8 +44,8 @@ const SitesChecker: Step = function SitePicker( { navigation, flow } ) {
 			<DocumentHead title={ __( 'Checking sites' ) } />
 			<QuerySites allSites />
 			<StepContainer
-				shouldHideNavButtons={ true }
-				hideFormattedHeader={ true }
+				shouldHideNavButtons
+				hideFormattedHeader
 				stepName="sites-checker-step"
 				stepContent={
 					<>

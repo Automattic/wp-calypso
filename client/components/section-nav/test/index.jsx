@@ -1,11 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import { render } from '@testing-library/react';
 import { createElement, Children } from 'react';
 import ReactDom from 'react-dom';
 import TestUtils from 'react-dom/test-utils';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import SectionNav from '../';
+import NavItem from '../item';
+import NavTabs from '../tabs';
 
 jest.mock( 'calypso/lib/analytics/ga', () => ( {
 	recordEvent: () => {},
@@ -81,6 +84,61 @@ describe( 'section-nav', () => {
 				( child ) => child && child.className === 'section-nav__mobile-header'
 			);
 			expect( header ).toBeUndefined();
+		} );
+	} );
+
+	describe( 'Nav Tabs', () => {
+		afterEach( () => {
+			Object.defineProperty( window, 'innerWidth', { value: 1024 } );
+		} );
+
+		test( 'should not contain has-horizontal-scroll class if window width < 480px and NavTabs hasHorizontalScroll true', () => {
+			Object.defineProperty( window, 'innerWidth', { value: 400 } );
+
+			render(
+				<NavTabs label="Status" hasHorizontalScroll>
+					<NavItem path="/demo" selected>
+						Demo
+					</NavItem>
+				</NavTabs>
+			);
+
+			const horizontalScrollClass = document.getElementsByClassName( 'has-horizontal-scroll' )[ 0 ];
+			expect( horizontalScrollClass ).toBeUndefined();
+		} );
+
+		test( 'should contain has-horizontal-scroll class if window width > 480px and NavTabs hasHorizontalScroll true', () => {
+			Object.defineProperty( window, 'innerWidth', { value: 800 } );
+
+			render(
+				<SectionNav selectedText="Test">
+					<NavTabs label="Status" hasHorizontalScroll>
+						<NavItem path="/demo" selected>
+							Demo
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
+			);
+
+			const horizontalScrollClass = document.getElementsByClassName( 'has-horizontal-scroll' )[ 0 ];
+			expect( horizontalScrollClass ).toBeInTheDocument();
+		} );
+
+		test( 'should not contain has-horizontal-scroll class if window width > 480px and NavTabs hasHorizontalScroll false', () => {
+			Object.defineProperty( window, 'innerWidth', { value: 800 } );
+
+			render(
+				<SectionNav selectedText="Test">
+					<NavTabs label="Status" hasHorizontalScroll={ false }>
+						<NavItem path="/demo" selected>
+							Demo
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
+			);
+
+			const horizontalScrollClass = document.getElementsByClassName( 'has-horizontal-scroll' )[ 0 ];
+			expect( horizontalScrollClass ).toBeUndefined();
 		} );
 	} );
 

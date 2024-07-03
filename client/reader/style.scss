@@ -1,6 +1,45 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+body.is-section-reader {
+	div.layout.is-global-sidebar-visible {
+		.main:not(.reader-full-post) {
+			@media only screen and (min-width: 600px) and (max-width: 960px) {
+				padding: 24px;
+			}
+			@media only screen and (max-width: 660px) {
+				padding-top: 0;
+			}
+			border-block-end: 1px solid var(--studio-gray-0);
+		}
+		.layout__primary > div {
+			background: var(--color-surface);
+			border-radius: 8px; /* stylelint-disable-line scales/radii */
+			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
+			@media only screen and (min-width: 600px) {
+				height: calc(100vh - var(--masterbar-height) - 50px);
+			}
+			@media only screen and (min-width: 782px) {
+				height: calc(100vh - 32px);
+			}
+			overflow: hidden;
+		}
+		.layout__primary > div > div:not(.tags__header) {
+			height: 100%;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+	}
+
+	@media only screen and (max-width: 781px) {
+		div.layout.is-global-sidebar-visible {
+			.layout__primary {
+				overflow-x: auto;
+			}
+		}
+	}
+}
+
 .is-group-reader .async-load {
 	margin: 30px auto;
 	width: 50%;
@@ -17,7 +56,7 @@
 .is-reader-page .search-stream__with-sites.main {
 	margin: 0 auto;
 	@include breakpoint-deprecated( "<660px" ) {
-		margin: 16px;
+		margin: 16px 0;
 	}
 }
 
@@ -222,12 +261,37 @@
 .is-group-reader .reader-share__button-label,
 .is-group-reader .comment-button__label-status,
 .is-group-reader .like-button__label-status {
-	@media ( max-width: 530px ) {
+	@media (max-width: 530px) {
 		@include hide-content-accessibly();
 	}
 
-	@media ( min-width: 661px ) and ( max-width: 790px ) {
+	@media (min-width: 661px) and (max-width: 790px) {
 		@include hide-content-accessibly();
+	}
+}
+
+.is-group-reader {
+	@media screen and (min-width: 782px) {
+		.navigation-header::after {
+			content: "";
+			display: block;
+			position: relative;
+			left: calc(-1 * (100vw - 100%)/2 - 132px);
+			margin: 24px 0;
+			width: 100vw;
+			height: 1px;
+			background: var(--color-border-secondary);
+		}
+	}
+}
+.is-group-reader .reader-notifications__panel {
+	@media only screen and (min-width: 1114px) {
+		.wpnc__main {
+			width: calc(100vw - 310px);
+			.wpnc__note-list {
+				left: 0;
+			}
+		}
 	}
 }
 
@@ -362,6 +426,12 @@
 
 .is-reader-page .search-stream__single-column-results .empty-content {
 	margin-top: 0;
+}
+
+.search-stream__single-column-results .reader-tag-sidebar-recommended-sites {
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 36px 16px 0;
+	}
 }
 
 .layout.has-header-section.is-section-reader {

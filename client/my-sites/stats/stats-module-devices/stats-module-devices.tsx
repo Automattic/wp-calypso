@@ -1,5 +1,7 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import PieChart from 'calypso/components/pie-chart';
@@ -12,8 +14,6 @@ import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import statsStrings from '../stats-strings';
 
-// import '../stats-module/style.scss';
-// import '../stats-list/style.scss';
 import './stats-module-devices.scss';
 
 const OPTION_KEYS = {
@@ -27,6 +27,15 @@ type SelectOptionType = {
 	value: string;
 };
 
+interface StatsDevicesChartData {
+	id: string;
+	value: number;
+	icon: string;
+	name: string;
+	descrtipion?: string;
+	className?: string;
+}
+
 interface StatsModuleDevicesProps {
 	path: string;
 	className?: string;
@@ -37,7 +46,9 @@ interface StatsModuleDevicesProps {
 	isLoading?: boolean;
 }
 
-const prepareChartData = ( data: Array< StatsDevicesData > | undefined ) => {
+const prepareChartData = (
+	data: Array< StatsDevicesData > | undefined
+): Array< StatsDevicesChartData > => {
 	if ( ! data ) {
 		return [];
 	}
@@ -77,39 +88,44 @@ const prepareChartData = ( data: Array< StatsDevicesData > | undefined ) => {
 const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 	path,
 	className,
-	// period, // we will need period once the API endpoint is done
 	isLoading,
 	query,
 } ) => {
 	const { devices: devicesStrings } = statsStrings();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const optionLabels = {
 		[ OPTION_KEYS.SIZE ]: {
 			selectLabel: translate( 'Size' ),
 			headerLabel: translate( 'Visitors share per screen size' ),
+			analyticsId: 'screensize',
 		},
 		[ OPTION_KEYS.BROWSER ]: {
 			selectLabel: translate( 'Browser' ),
 			headerLabel: translate( 'Browser' ),
+			analyticsId: 'browser',
 		},
 		[ OPTION_KEYS.OS ]: {
 			selectLabel: translate( 'OS' ),
 			headerLabel: translate( 'Operating System' ),
+			analyticsId: 'os',
 		},
 	};
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SIZE );
-
 	const { isFetching, data } = useModuleDevicesQuery( siteId, selectedOption, query );
-
 	const showLoader = isLoading || isFetching;
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
 
-		// TODO: add analytics events
+		// publish an event
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_devices_module_menu_clicked`, {
+			button: optionLabels[ filter ]?.analyticsId ?? filter,
+		} );
 
 		setSelectedOption( filter );
 	};
@@ -133,7 +149,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 
 		return (
 			<StatsCard
-				className={ classNames( className, 'stats-module__card', path ) }
+				className={ clsx( className, 'stats-module__card', path ) }
 				title={ devicesStrings.title }
 				titleURL=""
 				metricLabel=""
@@ -173,7 +189,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 	return (
 		// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
 		<StatsListCard
-			className={ classNames( className, 'stats-module__card', path ) }
+			className={ clsx( className, 'stats-module__card', path ) }
 			moduleType={ path }
 			data={ data }
 			title={ devicesStrings.title }

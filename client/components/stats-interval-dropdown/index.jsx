@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Dropdown } from '@wordpress/components';
 import { check, Icon, chevronDown, lock } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import qs from 'qs';
 import './style.scss';
 
@@ -39,7 +39,7 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals, onGat
 
 					return (
 						<li
-							className={ classNames( 'stats-interval-dropdown-listing__interval', {
+							className={ clsx( 'stats-interval-dropdown-listing__interval', {
 								[ 'is-selected' ]: isSelectedItem( intervalKey ),
 							} ) }
 							key={ intervalKey }

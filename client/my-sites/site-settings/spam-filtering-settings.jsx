@@ -67,7 +67,7 @@ const SpamFilteringSettings = ( {
 				) }
 				event="calypso_akismet_settings_upgrade_nudge"
 				feature={ WPCOM_FEATURES_ANTISPAM }
-				showIcon={ true }
+				showIcon
 				href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_ANTI_SPAM }` }
 			/>
 		);

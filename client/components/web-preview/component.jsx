@@ -1,5 +1,5 @@
 import { RootChild } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -133,7 +133,7 @@ export class WebPreviewModal extends Component {
 	}
 
 	render() {
-		const className = classNames( this.props.className, 'web-preview', {
+		const className = clsx( this.props.className, 'web-preview', {
 			'is-touch': hasTouch(),
 			'is-with-sidebar': this.props.hasSidebar,
 			'is-visible': this.props.showPreview,
@@ -153,7 +153,7 @@ export class WebPreviewModal extends Component {
 						<WebPreviewContent
 							{ ...this.props }
 							onDeviceUpdate={ this.setDeviceViewport }
-							isModalWindow={ true }
+							isModalWindow
 							frontPageMetaDescription={ this.props.frontPageMetaDescription || null }
 						/>
 					</div>

@@ -61,7 +61,7 @@ $stats-card-min-width: 390px;
 }
 
 .stats-card {
-	@media (max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		min-width: $stats-card-min-width;
 	}
 }

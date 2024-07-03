@@ -1,5 +1,6 @@
 import {
 	JETPACK_COMPLETE_PLANS,
+	JETPACK_VIDEOPRESS_PRODUCTS,
 	PRODUCT_JETPACK_STATS_BI_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 	PRODUCT_JETPACK_STATS_MONTHLY,
@@ -33,11 +34,35 @@ const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: st
 const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) => {
 	return filterPurchasesByProducts( ownedPurchases, [ searchedProduct ] ).length > 0;
 };
+const areProductsOwned = ( ownedPurchases: Purchase[], searchedProducts: string[] ) => {
+	return filterPurchasesByProducts( ownedPurchases, searchedProducts ).length > 0;
+};
 
 const getPurchasesBySiteId = createSelector(
 	( state, siteId ) => getSitePurchases( state, siteId ),
 	getPurchases
 );
+
+// TODO: Consolidate this with the useStatsPurchases hook.
+export const hasAnyPlan = ( state: object, siteId: number | null ) => {
+	const sitePurchases = getSitePurchases( state, siteId );
+
+	const isFreeOwned = isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_FREE );
+	// TODO: After the paywall is removed, we should be able to enable the VideoPress module and page based on their subscription information,
+	// which means the particular logic here wouldn't be necessary anymore.
+	const isCommercialOwned = areProductsOwned( sitePurchases, [
+		...JETPACK_VIDEOPRESS_PRODUCTS,
+		PRODUCT_JETPACK_STATS_MONTHLY,
+		PRODUCT_JETPACK_STATS_YEARLY,
+		PRODUCT_JETPACK_STATS_BI_YEARLY,
+	] );
+	const isPWYWOwned = isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
+	const supportCommercialUse =
+		isCommercialOwned ||
+		JETPACK_COMPLETE_PLANS.some( ( plan ) => isProductOwned( sitePurchases, plan ) );
+
+	return isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse;
+};
 
 export default function useStatsPurchases( siteId: number | null ) {
 	const sitePurchases = useSelector( ( state ) => getPurchasesBySiteId( state, siteId ) );
@@ -51,11 +76,12 @@ export default function useStatsPurchases( siteId: number | null ) {
 	}, [ sitePurchases ] );
 
 	const isCommercialOwned = useMemo( () => {
-		return (
-			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_MONTHLY ) ||
-			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_YEARLY ) ||
-			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_BI_YEARLY )
-		);
+		return areProductsOwned( sitePurchases, [
+			...JETPACK_VIDEOPRESS_PRODUCTS,
+			PRODUCT_JETPACK_STATS_MONTHLY,
+			PRODUCT_JETPACK_STATS_YEARLY,
+			PRODUCT_JETPACK_STATS_BI_YEARLY,
+		] );
 	}, [ sitePurchases ] );
 
 	const isPWYWOwned = useMemo( () => {

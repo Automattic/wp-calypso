@@ -65,8 +65,6 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import FailedPurchaseDetails from './failed-purchase-details';
-import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
@@ -80,8 +78,8 @@ import TransferPending from './transfer-pending';
 import './style.scss';
 import {
 	getDomainPurchase,
-	isBulkDomainTransfer,
-	isDomainOnly,
+	isOnlyDomainTransfers,
+	isOnlyDomainPurchases,
 	isSearch,
 	isTitanWithoutMailboxes,
 } from './utils';
@@ -98,12 +96,6 @@ declare global {
 	}
 }
 
-type ComponentAndPrimaryPurchaseAndDomain =
-	| []
-	| [ string | false ]
-	| [ string | false, ReceiptPurchase | undefined ]
-	| [ string | false, ReceiptPurchase | undefined, string | undefined ];
-
 export interface CheckoutThankYouProps {
 	domainOnlySiteFlow: boolean;
 	email: string;
@@ -111,7 +103,6 @@ export interface CheckoutThankYouProps {
 	gsuiteReceiptId: number;
 	selectedFeature: string;
 	selectedSite: null | SiteDetails;
-	siteUnlaunchedBeforeUpgrade: boolean;
 	upgradeIntent: string;
 	redirectTo?: string;
 	displayMode?: string;
@@ -165,10 +156,6 @@ export function getPurchases( props: CheckoutThankYouCombinedProps ): ReceiptPur
 	];
 }
 
-export function getFailedPurchases( props: CheckoutThankYouCombinedProps ) {
-	return ( props.receipt.data && props.receipt.data.failedPurchases ) || [];
-}
-
 function findPurchaseAndDomain(
 	purchases: ReceiptPurchase[],
 	predicate: FindPredicate
@@ -220,7 +207,7 @@ export class CheckoutThankYou extends Component<
 			this.props.fetchReceipt( gsuiteReceiptId );
 		}
 
-		if ( isBulkDomainTransfer( getPurchases( this.props ) ) ) {
+		if ( isOnlyDomainTransfers( getPurchases( this.props ) ) ) {
 			// We need to reset the store upon checkout completion, on the bulk domain transfer flow
 			// We do it dinamically to avoid loading unnecessary javascript if not necessary.
 			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
@@ -409,13 +396,9 @@ export class CheckoutThankYou extends Component<
 	primaryCta = () => {
 		const { selectedSite, upgradeIntent, redirectTo } = this.props;
 
-		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
+		if ( ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
 			const siteSlug = selectedSite?.slug;
-
-			if ( ! siteSlug && getFailedPurchases( this.props ).length > 0 ) {
-				return page( '/start/domain-first' );
-			}
 
 			if ( redirectTo && ! isExternal( redirectTo ) ) {
 				return page( redirectTo );
@@ -494,41 +477,46 @@ export class CheckoutThankYou extends Component<
 		return { path: '/checkout/thank-you/no-site', properties: {} };
 	};
 
+	getMasterBar = () => {
+		const { translate } = this.props;
+		const purchases = getPurchases( this.props );
+		const wasEcommercePlanPurchased = purchases.some( isEcommerce );
+
+		const siteId = this.props.selectedSite?.ID;
+		const siteSlug = this.props.selectedSite?.slug;
+
+		return (
+			<MasterbarStyled
+				onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
+				backText={ translate( 'Back to dashboard' ) }
+				canGoBack={ !! siteId && ! wasEcommercePlanPurchased } // Back button is hidden for E-Commcerce Plans as a workaround to avoid taking users back to the loading page.
+				showContact
+			/>
+		);
+	};
+
 	render() {
 		const { translate, email, receiptId, selectedFeature } = this.props;
-		let purchases: ReceiptPurchase[] = [];
+		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
 		let showHappinessSupport = ! this.props.isSimplified;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
-		let wasTitanEmailOnlyProduct = false;
-		let wasBulkDomainTransfer = false;
 
 		if ( ! this.isDataLoaded() ) {
-			const siteId = this.props.selectedSite?.ID;
-			const siteSlug = this.props.selectedSite?.slug;
-
 			return (
 				<>
-					<MasterbarStyled
-						onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
-						backText={ translate( 'Back to dashboard' ) }
-						canGoBack={ !! siteId }
-						showContact
-					/>
+					{ this.getMasterBar() }
 					<PlaceholderThankYou />
 				</>
 			);
 		}
 
 		if ( ! this.isGenericReceipt() ) {
-			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			delayedTransferPurchase = purchases.find( isDelayedDomainTransfer );
-			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
-			wasBulkDomainTransfer = isBulkDomainTransfer( purchases );
 		}
 
 		// Continue to show the TransferPending progress bar until both the Atomic transfer is complete
@@ -546,22 +534,28 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** REFACTORED REDESIGN */
-		if ( this.isDataLoaded() && isRefactoredForThankYouV2( this.props ) ) {
+		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 			const domainPurchase = getDomainPurchase( purchases );
 			const gSuiteOrExtraLicenseOrGoogleWorkspace = purchases.find(
 				isGSuiteOrExtraLicenseOrGoogleWorkspace
 			);
 
-			if ( wasBulkDomainTransfer ) {
+			if ( isOnlyDomainTransfers( purchases ) ) {
 				pageContent = (
 					<DomainBulkTransferThankYou
 						purchases={ purchases }
 						currency={ this.props.receipt.data?.currency ?? 'USD' }
 					/>
 				);
-			} else if ( isDomainOnly( purchases ) ) {
-				pageContent = <DomainOnlyThankYou purchases={ purchases } receiptId={ receiptId } />;
+			} else if ( isOnlyDomainPurchases( purchases ) ) {
+				pageContent = (
+					<DomainOnlyThankYou
+						purchases={ purchases }
+						receiptId={ receiptId }
+						isGravatarDomain={ !! this.props.receipt.data?.isGravatarDomain }
+					/>
+				);
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
 				pageContent = (
 					<PlanOnlyThankYou
@@ -572,20 +566,16 @@ export class CheckoutThankYou extends Component<
 				);
 			} else if ( purchases.length === 1 && isSearch( purchases[ 0 ] ) ) {
 				pageContent = <JetpackSearchThankYou purchase={ purchases[ 0 ] } />;
-			} else if ( wasTitanEmailOnlyProduct ) {
-				const titanPurchase = purchases.find( ( purchase ) => isTitanMail( purchase ) );
-
+			} else if ( purchases.length === 1 && isTitanMail( purchases[ 0 ] ) ) {
 				pageContent = (
 					<TitanSetUpThankYou
 						domainName={ purchases[ 0 ].meta }
-						numberOfMailboxesPurchased={ titanPurchase?.newQuantity }
+						numberOfMailboxesPurchased={ purchases[ 0 ].newQuantity }
 						emailAddress={ email }
 						isDomainOnlySite={ this.props.domainOnlySiteFlow }
 					/>
 				);
 			} else if ( isTitanWithoutMailboxes( selectedFeature ) && domainPurchase ) {
-				// Users may purchase Titan subscription without specifying the mailbox name using
-				// the onboard with email flow (https://wordpress.com/start/onboarding-with-email/mailbox-domain)
 				pageContent = (
 					<TitanSetUpThankYou
 						domainName={ domainPurchase.meta }
@@ -602,7 +592,6 @@ export class CheckoutThankYou extends Component<
 
 			if ( pageContent ) {
 				const siteId = this.props.selectedSite?.ID;
-				const siteSlug = this.props.selectedSite?.slug;
 
 				return (
 					<Main className="checkout-thank-you is-redesign-v2">
@@ -610,12 +599,7 @@ export class CheckoutThankYou extends Component<
 
 						{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 
-						<MasterbarStyled
-							onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
-							backText={ translate( 'Back to dashboard' ) }
-							canGoBack={ !! siteId && ! wasEcommercePlanPurchased }
-							showContact
-						/>
+						{ this.getMasterBar() }
 
 						{ pageContent }
 					</Main>
@@ -649,7 +633,18 @@ export class CheckoutThankYou extends Component<
 		return (
 			<Main className="checkout-thank-you">
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
+				<Card className="checkout-thank-you__content">
+					<div>
+						<CheckoutThankYouHeader
+							selectedSite={ this.props.selectedSite }
+							upgradeIntent={ this.props.upgradeIntent }
+							primaryCta={ this.primaryCta }
+							displayMode={ this.props.displayMode }
+							purchases={ purchases }
+							currency={ this.props.receipt.data?.currency }
+						/>
+					</div>
+				</Card>
 				{ showHappinessSupport && (
 					<Card className="checkout-thank-you__footer">
 						<HappinessSupport
@@ -676,78 +671,6 @@ export class CheckoutThankYou extends Component<
 				selectedSite?.slug ?? '',
 				delayedTransferPurchase?.meta ?? ''
 			)
-		);
-	};
-
-	/**
-	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
-	 * just performed by the user.
-	 *
-	 * returns an array of varying size with the component instance,
-	 * then an optional purchase object possibly followed by a domain name
-	 */
-	getComponentAndPrimaryPurchaseAndDomain = (): ComponentAndPrimaryPurchaseAndDomain => {
-		if ( ! this.isDataLoaded() || this.isGenericReceipt() ) {
-			return [];
-		}
-		const failedPurchases = getFailedPurchases( this.props );
-		const hasFailedPurchases = failedPurchases.length > 0;
-		if ( hasFailedPurchases ) {
-			return [ 'failed-purchase-details' ];
-		}
-
-		return [];
-	};
-
-	productRelatedMessages = () => {
-		const {
-			selectedSite,
-			siteUnlaunchedBeforeUpgrade,
-			upgradeIntent,
-			isSimplified,
-			displayMode,
-			receipt,
-		} = this.props;
-		const purchases = getPurchases( this.props );
-		const failedPurchases = getFailedPurchases( this.props );
-		const hasFailedPurchases = failedPurchases.length > 0;
-		const componentAndPrimaryPurchaseAndDomain = this.getComponentAndPrimaryPurchaseAndDomain();
-		const [ component, primaryPurchase ] = componentAndPrimaryPurchaseAndDomain;
-
-		return (
-			<div>
-				<CheckoutThankYouHeader
-					isDataLoaded={ this.isDataLoaded() }
-					isSimplified={ isSimplified }
-					primaryPurchase={ primaryPurchase }
-					selectedSite={ selectedSite }
-					hasFailedPurchases={ hasFailedPurchases }
-					siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
-					upgradeIntent={ upgradeIntent }
-					primaryCta={ this.primaryCta }
-					displayMode={ displayMode }
-					purchases={ purchases }
-					currency={ receipt.data?.currency }
-				>
-					{ ! isSimplified && primaryPurchase && (
-						<CheckoutThankYouFeaturesHeader
-							isDataLoaded={ this.isDataLoaded() }
-							isGenericReceipt={ this.isGenericReceipt() }
-							purchases={ purchases }
-							hasFailedPurchases={ hasFailedPurchases }
-						/>
-					) }
-
-					{ ! isSimplified && component && (
-						<div className="checkout-thank-you__purchase-details-list">
-							<PurchaseDetailsWrapper
-								{ ...this.props }
-								componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
-							/>
-						</div>
-					) }
-				</CheckoutThankYouHeader>
-			</div>
 		);
 	};
 }
@@ -808,23 +731,3 @@ export default connect(
 		requestSite,
 	}
 )( localize( CheckoutThankYou ) );
-
-/**
- * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
- * just performed by the user.
- */
-function PurchaseDetailsWrapper(
-	props: CheckoutThankYouCombinedProps & {
-		componentAndPrimaryPurchaseAndDomain: ComponentAndPrimaryPurchaseAndDomain;
-	}
-): JSX.Element | null {
-	const purchases = getPurchases( props );
-	const failedPurchases = getFailedPurchases( props );
-	const hasFailedPurchases = failedPurchases.length > 0;
-
-	if ( hasFailedPurchases ) {
-		return <FailedPurchaseDetails purchases={ purchases } failedPurchases={ failedPurchases } />;
-	}
-
-	return null;
-}

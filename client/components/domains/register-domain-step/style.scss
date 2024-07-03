@@ -161,15 +161,6 @@
 	@include break-xlarge {
 		margin: 0;
 	}
-
-	&--stacked {
-		flex-direction: column;
-		align-items: start;
-
-		svg {
-			float: left;
-		}
-	}
 }
 
 .register-domain-step__placeholder.empty-content {

@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { category, key, receipt, store, tag } from '@wordpress/icons';
+import { category, key, receipt, store, tag, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import FoldableNav from 'calypso/a8c-for-agencies/components/foldable-nav';
 import { FoldableNavItem } from 'calypso/a8c-for-agencies/components/foldable-nav/types';
@@ -9,6 +9,7 @@ import {
 	A4A_PURCHASES_LINK,
 	A4A_BILLING_LINK,
 	A4A_INVOICES_LINK,
+	EXTERNAL_A4A_KNOWLEDGE_BASE,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 
 import './style.scss';
@@ -54,6 +55,14 @@ export default function OverviewSidebarQuickLinks() {
 			slug: 'view_invoices',
 			title: translate( 'View invoices' ),
 			trackEventName: 'calypso_a4a_overview_quick_links_view_invoices_click',
+		},
+		{
+			icon: info,
+			link: EXTERNAL_A4A_KNOWLEDGE_BASE,
+			slug: 'view_knowledge_base',
+			title: translate( 'View Knowledge Base' ),
+			trackEventName: 'calypso_a4a_overview_quick_links_knowledge_base_click',
+			isExternalLink: true,
 		},
 	];
 

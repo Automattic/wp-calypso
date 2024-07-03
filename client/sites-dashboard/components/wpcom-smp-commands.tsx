@@ -1,8 +1,8 @@
-import { COMMANDS } from '@automattic/command-palette';
+import { useCommands } from '@automattic/command-palette';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
 import deepmerge from 'deepmerge';
+import { useTranslate } from 'i18n-calypso';
 import {
 	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
 	getEdgeCacheStatus,
@@ -19,7 +19,7 @@ import { NoticeStatus } from 'calypso/state/notices/types';
 import type { Command, CommandCallBackParams } from '@automattic/command-palette';
 
 export const useCommandsCalypso = (): Command[] => {
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const { setEdgeCache } = useSetEdgeCacheMutation();
@@ -59,18 +59,22 @@ export const useCommandsCalypso = (): Command[] => {
 		siteSlug: string
 	) => {
 		const loadingMessage =
-			copyType === 'username' ? __( 'Copying username…' ) : __( 'Copying SSH connection string…' );
+			copyType === 'username'
+				? translate( 'Copying username…' )
+				: translate( 'Copying SSH connection string…' );
 		const { removeNotice: removeLoadingNotice } = displayNotice( loadingMessage, 'is-plain', 5000 );
 		const sshUser = await fetchSshUser( siteId );
 
 		if ( ! sshUser ) {
 			removeLoadingNotice();
 			displayNotice(
-				__( 'SFTP/SSH credentials must be created before SSH connection string can be copied.' ),
+				translate(
+					'SFTP/SSH credentials must be created before SSH connection string can be copied.'
+				),
 				'is-error',
 				null,
 				{
-					button: __( 'Manage Hosting Configuration' ),
+					button: translate( 'Manage Hosting Configuration' ),
 					onClick: () => navigate( `/hosting-config/${ siteSlug }#sftp-credentials` ),
 				}
 			);
@@ -81,13 +85,15 @@ export const useCommandsCalypso = (): Command[] => {
 		navigator.clipboard.writeText( textToCopy );
 		removeLoadingNotice();
 		const successMessage =
-			copyType === 'username' ? __( 'Copied username.' ) : __( 'Copied SSH connection string.' );
+			copyType === 'username'
+				? translate( 'Copied username.' )
+				: translate( 'Copied SSH connection string.' );
 		displayNotice( successMessage );
 	};
 
 	const resetSshSftpPassword = async ( siteId: number, siteSlug: string ) => {
 		const { removeNotice: removeLoadingNotice } = displayNotice(
-			__( 'Resetting SFTP/SSH password…' ),
+			translate( 'Resetting SFTP/SSH password…' ),
 			'is-plain',
 			5000
 		);
@@ -96,11 +102,11 @@ export const useCommandsCalypso = (): Command[] => {
 		if ( ! sshUser ) {
 			removeLoadingNotice();
 			displayNotice(
-				__( 'SFTP/SSH credentials must be created before SFTP/SSH password can be reset.' ),
+				translate( 'SFTP/SSH credentials must be created before SFTP/SSH password can be reset.' ),
 				'is-error',
 				null,
 				{
-					button: __( 'Manage Hosting Configuration' ),
+					button: translate( 'Manage Hosting Configuration' ),
 					onClick: () => navigate( `/hosting-config/${ siteSlug }#sftp-credentials` ),
 				}
 			);
@@ -116,13 +122,17 @@ export const useCommandsCalypso = (): Command[] => {
 
 		if ( ! sshPassword ) {
 			removeLoadingNotice();
-			displayNotice( __( 'Unexpected error resetting SFTP/SSH password.' ), 'is-error', 5000 );
+			displayNotice(
+				translate( 'Unexpected error resetting SFTP/SSH password.' ),
+				'is-error',
+				5000
+			);
 			return;
 		}
 
 		navigator.clipboard.writeText( sshPassword );
 		removeLoadingNotice();
-		displayNotice( __( 'SFTP/SSH password reset and copied to clipboard.' ) );
+		displayNotice( translate( 'SFTP/SSH password reset and copied to clipboard.' ) );
 	};
 
 	const clearEdgeCache = async ( siteId: number ) => {
@@ -136,7 +146,7 @@ export const useCommandsCalypso = (): Command[] => {
 			// Always clear the WordPress cache.
 			dispatch( clearWordPressCache( siteId, 'Clear cache via command palette' ) );
 		} catch ( error ) {
-			displayNotice( __( 'Failed to clear cache.' ), 'is-error' );
+			displayNotice( translate( 'Failed to clear cache.' ), 'is-error' );
 		}
 	};
 
@@ -146,7 +156,7 @@ export const useCommandsCalypso = (): Command[] => {
 		// Check if the cache is already active
 		if ( currentStatus ) {
 			// Display a different notice if the cache is already active
-			displayNotice( __( 'Edge cache is already enabled.' ), 'is-success', 5000, {
+			displayNotice( translate( 'Edge cache is already enabled.' ), 'is-success', 5000, {
 				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
 			} );
 			return;
@@ -159,7 +169,7 @@ export const useCommandsCalypso = (): Command[] => {
 		const currentStatus = await getEdgeCacheStatus( siteId );
 
 		if ( ! currentStatus ) {
-			displayNotice( __( 'Edge cache is already disabled.' ), 'is-success', 5000, {
+			displayNotice( translate( 'Edge cache is already disabled.' ), 'is-success', 5000, {
 				id: EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
 			} );
 			return;
@@ -172,11 +182,11 @@ export const useCommandsCalypso = (): Command[] => {
 
 	// Create URLSearchParams for send feedback by email command
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
-
 	// Only override commands that need a specific behavior for Calypso.
 	// Commands need to be defined in `packages/command-palette/src/commands.tsx`.
+	const defaultCommands = useCommands();
 	const commands = Object.values(
-		deepmerge( COMMANDS, {
+		deepmerge( defaultCommands, {
 			switchSite: {
 				// This command is explicitly about switching sites, it should therefore always display the site selector
 				// where possible.

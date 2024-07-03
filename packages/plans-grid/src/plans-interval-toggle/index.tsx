@@ -2,7 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Popover } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState } from 'react';
 import * as React from 'react';
 import SegmentedControl from '../segmented-control';
@@ -29,7 +29,7 @@ export const PopupMessages: React.FunctionComponent< PopupMessagesProps > = ( {
 			{ Object.keys( variants ).map( ( variant ) => (
 				<Popover
 					key={ variant }
-					className={ classNames(
+					className={ clsx(
 						'plans-interval-toggle__popover',
 						`plans-interval-toggle__popover--${ variant }`
 					) }
@@ -83,7 +83,7 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 
 	return (
 		<div
-			className={ classNames(
+			className={ clsx(
 				'plans-interval-toggle',
 				{ 'plans-interval-toggle--monthly': intervalType === 'MONTHLY' },
 				className

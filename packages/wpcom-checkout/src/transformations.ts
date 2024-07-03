@@ -281,7 +281,7 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 ): boolean {
 	if (
 		costOverrides?.some( ( costOverride ) => {
-			costOverride.override_code !== 'introductory-offer';
+			! isOverrideCodeIntroductoryOffer( costOverride.override_code );
 		} )
 	) {
 		return false;
@@ -301,7 +301,7 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 function doesIntroductoryOfferCostOverrideHavePriceIncrease(
 	costOverride: ResponseCartCostOverride
 ): boolean {
-	if ( costOverride.override_code !== 'introductory-offer' ) {
+	if ( ! isOverrideCodeIntroductoryOffer( costOverride.override_code ) ) {
 		return false;
 	}
 	if ( costOverride.old_subtotal_integer >= costOverride.new_subtotal_integer ) {
@@ -355,6 +355,7 @@ export function filterCostOverridesForLineItem(
 				// discount is only temporary and the user will still be charged
 				// the remainder before the next renewal.
 				if (
+					isOverrideCodeIntroductoryOffer( costOverride.override_code ) &&
 					doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 						product.cost_overrides,
 						product.introductory_offer_terms,
@@ -635,4 +636,16 @@ export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {
 	const taxes = cart.total_tax_integer;
 	const totalBeforeCredits = subtotal + taxes;
 	return credits > 0 && totalBeforeCredits > 0 && credits >= totalBeforeCredits;
+}
+
+export function isOverrideCodeIntroductoryOffer( overrideCode: string ): boolean {
+	switch ( overrideCode ) {
+		case 'introductory-offer':
+			return true;
+		case 'prorated-introductory-offer':
+			return true;
+		case 'quantity-upgrade-introductory-offer':
+			return true;
+	}
+	return false;
 }

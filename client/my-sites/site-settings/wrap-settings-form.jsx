@@ -198,9 +198,39 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 							path,
 						} );
 						break;
+					case 'jetpack_subscribe_overlay_enabled':
+						trackTracksEvent( 'calypso_settings_subscription_overlay_updated', {
+							value: fields.jetpack_subscribe_overlay_enabled,
+							path,
+						} );
+						break;
 					case 'jetpack_subscriptions_subscribe_post_end_enabled':
 						trackTracksEvent( 'calypso_settings_subscribe_post_end_updated', {
 							value: fields.jetpack_subscriptions_subscribe_post_end_enabled,
+							path,
+						} );
+						break;
+					case 'jetpack_verbum_subscription_modal':
+						trackTracksEvent( 'calypso_settings_verbum_subscription_modal_updated', {
+							value: fields.jetpack_verbum_subscription_modal,
+							path,
+						} );
+						break;
+					case 'jetpack_subscriptions_from_name':
+						trackTracksEvent( 'calypso_setting_jetpack_subscriptions_from_name_updated', {
+							value: fields.jetpack_subscriptions_from_name,
+							path,
+						} );
+						break;
+					case 'jetpack_subscriptions_subscribe_navigation_enabled':
+						trackTracksEvent( 'calypso_settings_subscribe_navigation_updated', {
+							value: fields.jetpack_subscriptions_subscribe_navigation_enabled,
+							path,
+						} );
+						break;
+					case 'jetpack_subscriptions_login_navigation_enabled':
+						trackTracksEvent( 'calypso_settings_subscriber_login_navigation_updated', {
+							value: fields.jetpack_subscriptions_login_navigation_enabled,
 							path,
 						} );
 						break;

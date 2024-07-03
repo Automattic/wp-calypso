@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
@@ -15,7 +15,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
-import TranslatorInvite from 'calypso/components/translator-invite';
 import {
 	getSignupUrl,
 	isReactLostPasswordScreenEnabled,
@@ -26,6 +25,7 @@ import {
 	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
+	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -42,7 +42,8 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginButtons from './login-buttons';
@@ -173,7 +174,7 @@ export class Login extends Component {
 
 		return (
 			<div
-				className={ classNames( 'wp-login__footer', {
+				className={ clsx( 'wp-login__footer', {
 					'wp-login__footer--oauth': isOauthLogin,
 					'wp-login__footer--jetpack': ! isOauthLogin,
 				} ) }
@@ -268,7 +269,9 @@ export class Login extends Component {
 							this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' )
 						}
 					>
-						{ translate( 'Email me a login link.' ) }
+						{ isGravatarOAuth2Client( oauth2Client )
+							? translate( 'Email me a login code.' )
+							: translate( 'Email me a login link.' ) }
 					</a>
 					<a
 						href={ lostPasswordUrl }
@@ -306,7 +309,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( isReactLostPasswordScreenEnabled() && this.props.isWoo ) {
+		if ( isReactLostPasswordScreenEnabled() && ( this.props.isWoo || this.props.isBlazePro ) ) {
 			return (
 				<a
 					className="login__lost-password-link"
@@ -432,23 +435,22 @@ export class Login extends Component {
 			twoFactorAuthType,
 			locale,
 			isLoginView,
-			path,
 			signupUrl,
 			isWooCoreProfilerFlow,
 			isWooPasswordless,
 			isPartnerSignup,
 			isWoo,
+			isBlazePro,
 		} = this.props;
 
 		if ( isGravPoweredLoginPage ) {
 			return this.renderGravPoweredLoginBlockFooter();
 		}
 
-		if ( isWooPasswordless && isLoginView ) {
+		if ( ( isWooPasswordless || isBlazePro ) && isLoginView ) {
 			return (
 				<>
-					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos={ true } />
-					<TranslatorInvite path={ path } />
+					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />
 				</>
 			);
 		}
@@ -457,7 +459,6 @@ export class Login extends Component {
 			return (
 				<>
 					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
-					{ isLoginView && <TranslatorInvite path={ path } /> }
 				</>
 			);
 		}
@@ -470,6 +471,7 @@ export class Login extends Component {
 			! isJetpackMagicLinkSignUpFlow &&
 			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
 			! ( isWoo && ! isPartnerSignup ) &&
+			! isBlazePro &&
 			! isWooCoreProfilerFlow;
 
 		if ( shouldRenderFooter ) {
@@ -488,12 +490,11 @@ export class Login extends Component {
 						getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
 						renderSignUpLink={ this.renderSignUpLink.bind( this ) }
 					/>
-					{ isLoginView && <TranslatorInvite path={ path } /> }
 				</>
 			);
 		}
 
-		return isLoginView ? <TranslatorInvite path={ path } /> : null;
+		return null;
 	}
 
 	renderContent( isSocialFirst ) {
@@ -578,17 +579,28 @@ export class Login extends Component {
 	}
 
 	render() {
-		const { locale, translate, isFromMigrationPlugin, isGravPoweredClient, isWoo, isWhiteLogin } =
-			this.props;
+		const {
+			locale,
+			translate,
+			isFromMigrationPlugin,
+			isGravPoweredClient,
+			isWoo,
+			isBlazePro,
+			isWhiteLogin,
+		} = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		const isSocialFirst =
-			config.isEnabled( 'login/social-first' ) && isWhiteLogin && ! isGravPoweredClient && ! isWoo;
+			config.isEnabled( 'login/social-first' ) &&
+			isWhiteLogin &&
+			! isGravPoweredClient &&
+			! isWoo &&
+			! isBlazePro;
 
 		return (
 			<div>
 				{ this.props.isP2Login && this.renderP2Logo() }
 				<Main
-					className={ classNames( 'wp-login__main', {
+					className={ clsx( 'wp-login__main', {
 						'is-wpcom-migration': isFromMigrationPlugin,
 						'is-social-first': isSocialFirst,
 					} ) }
@@ -636,7 +648,8 @@ export default connect(
 			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
 			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ),
-			isWooPasswordless: getWooPasswordless( state ),
+			isWooPasswordless: getIsWooPasswordless( state ),
+			isBlazePro: getIsBlazePro( state ),
 			currentRoute,
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),

@@ -6,6 +6,13 @@ export type Source = {
 	heading: string;
 };
 
+export type CurrentUser = {
+	display_name: string;
+	avatar_URL?: string;
+	email?: string;
+	id?: number;
+};
+
 type Feature =
 	| 'login'
 	| 'logout'

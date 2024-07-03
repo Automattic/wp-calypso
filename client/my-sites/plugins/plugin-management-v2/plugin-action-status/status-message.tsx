@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import useStatusMessageText from './use-status-message-text';
 import type { CurrentSiteStatus, PluginActionStatus } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -33,9 +33,7 @@ export default function StatusMessage( {
 	}
 
 	return (
-		<span
-			className={ classNames( 'plugin-action-status', `plugin-action-status-${ currentStatus }` ) }
-		>
+		<span className={ clsx( 'plugin-action-status', `plugin-action-status-${ currentStatus }` ) }>
 			{ message }
 		</span>
 	);

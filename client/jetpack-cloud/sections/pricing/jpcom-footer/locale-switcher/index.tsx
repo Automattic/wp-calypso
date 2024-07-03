@@ -1,6 +1,6 @@
 import { Dialog, Gridicon } from '@automattic/components';
 import { jetpackComLocales, useLocale } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
@@ -85,7 +85,7 @@ const LocaleSwitcher: React.FC< Props > = ( { isVisible, onClose } ) => {
 				{ languages.map( ( { label, code } ) => (
 					<li key={ code }>
 						<a
-							className={ classNames( 'locale-switcher__link', {
+							className={ clsx( 'locale-switcher__link', {
 								'is-active': code === defaultLocale,
 							} ) }
 							href={ '/' + code + absoluteHref }

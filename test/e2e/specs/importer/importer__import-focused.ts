@@ -109,7 +109,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 
 		it( 'Should select the second site and press `Upgrade and migrate` on modal prompt', async () => {
 			await page.getByRole( 'button', { name: 'Select this site' } ).nth( 1 ).click();
-			await startImportFlow.clickButton( 'Upgrade and migrate' );
+			await page.getByRole( 'button', { name: 'Continue' } ).click();
 		} );
 
 		it( 'Should render "Upgrade Plan" screen', async () => {
@@ -135,7 +135,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 
 		it( 'Should select the first site and press `Upgrade and migrate` on modal prompt', async () => {
 			await page.getByRole( 'button', { name: 'Select this site' } ).first().click();
-			await startImportFlow.clickButton( 'Upgrade and migrate' );
+			await page.getByRole( 'button', { name: 'Continue' } ).click();
 		} );
 
 		it( 'Should render "Migration Ready" screen', async () => {

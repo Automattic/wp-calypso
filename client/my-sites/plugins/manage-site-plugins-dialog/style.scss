@@ -1,8 +1,9 @@
 
 .manage-site-plugins-dialog__container {
+	padding-top: 0;
 	width: 900px;
 
-	@media screen and ( max-width: 1040px ) {
+	@media screen and (max-width: 1040px) {
 		width: auto;
 	}
 
@@ -13,7 +14,7 @@
 	.manage-site-plugins-dialog__finish-button {
 		float: right;
 
-		@media screen and ( max-width: 1040px ) {
+		@media screen and (max-width: 1040px) {
 			margin-top: 16px;
 		}
 	}

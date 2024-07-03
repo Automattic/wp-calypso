@@ -1,9 +1,5 @@
-import { __ } from '@wordpress/i18n';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { canCurrentUser } from '../../state/selectors/can-current-user';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { GitHubDeploymentCreation } from './deployment-creation';
 import { GitHubDeploymentManagement } from './deployment-management';
 import { DeploymentRunsLogs } from './deployment-run-logs';
@@ -81,30 +77,13 @@ export const deploymentRunLogs: Callback = ( context, next ) => {
 
 export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
+	const site = getSelectedSite( state );
+	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
+	const isJetpackNonAtomic = ! isAtomicSite && !! site?.jetpack;
 
-	if ( ! siteId ) {
-		context.page.replace( `/home/${ siteSlug }` );
+	if ( isJetpackNonAtomic ) {
+		context.page.replace( `/overview/${ site?.slug }` );
 		return;
 	}
-
-	if ( isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ) ) {
-		context.page.replace( `/stats/day/${ siteSlug }` );
-		return;
-	}
-
-	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-
-	if ( ! canManageOptions ) {
-		context.store.dispatch(
-			errorNotice( __( 'You are not authorized to manage GitHub Deployments for this site.' ), {
-				displayOnNextPage: true,
-			} )
-		);
-		context.page.replace( `/home/${ siteSlug }` );
-		return;
-	}
-
 	next();
 };

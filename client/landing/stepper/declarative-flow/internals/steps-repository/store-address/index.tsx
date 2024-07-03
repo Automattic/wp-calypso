@@ -311,7 +311,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 			className={ `is-step-${ intent }` }
 			goNext={ goNext }
 			goBack={ goBack }
-			isHorizontalLayout={ true }
+			isHorizontalLayout
 			formattedHeader={
 				<FormattedHeader
 					id="site-options-header"
@@ -333,7 +333,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 
 function ControlError( { error }: { error: string } ) {
 	if ( error ) {
-		return <FormInputValidation isError={ true } isValid={ false } text={ error } />;
+		return <FormInputValidation isError isValid={ false } text={ error } />;
 	}
 	return null;
 }

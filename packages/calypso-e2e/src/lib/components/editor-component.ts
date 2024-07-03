@@ -95,7 +95,9 @@ export class EditorComponent {
 	private async waitForFramedCanvas() {
 		const parentLocator = await this.parent();
 		const canvasLocator = parentLocator
-			.frameLocator( 'iframe[name="editor-canvas"]' )
+			.locator( '.block-editor-iframe__scale-container' )
+			.first()
+			.frameLocator( 'iframe' )
 			.locator( '.editor-styles-wrapper' );
 
 		await canvasLocator.waitFor( { timeout: EDITOR_TIMEOUT } );

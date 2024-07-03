@@ -2,22 +2,21 @@ import { __experimentalText as Text, Button } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
-import { useSiteSlug } from './hooks/use-site-slug';
 
 interface Props {
+	pluginsUrl: string;
 	canCreateSchedules: boolean;
 	onCreateNewSchedule?: () => void;
 }
 export const ScheduleListEmpty = ( props: Props ) => {
-	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 
-	const { onCreateNewSchedule, canCreateSchedules } = props;
+	const { pluginsUrl, onCreateNewSchedule, canCreateSchedules } = props;
 	const { siteHasEligiblePlugins } = useSiteHasEligiblePlugins();
 
 	return (
-		<div className="empty-state">
-			<Text as="p" align="center">
+		<div className="empty-state empty-state__center">
+			<Text as="p">
 				{ ( () => {
 					if ( ! siteHasEligiblePlugins && canCreateSchedules ) {
 						return translate(
@@ -27,7 +26,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 						return translate( 'This site is unable to schedule auto-updates for plugins.' );
 					}
 					return translate(
-						"Take control of your site's maintenance by choosing when your plugins update—whatever day and time is most convenient. Up to two schedules let you enjoy hassle-free automatic updates, and our built-in rollback feature reverts any flawed updates for added peace of mind."
+						"Take control of your site's maintenance by choosing when your plugins update—whatever day and time is most convenient. Enjoy hassle-free automatic updates with our built-in rollback feature, reverting any flawed updates for added peace of mind."
 					);
 				} )() }
 			</Text>
@@ -37,7 +36,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 						<Button
 							__next40pxDefaultSize
 							variant={ canCreateSchedules ? 'primary' : 'secondary' }
-							href={ `/plugins/${ siteSlug }` }
+							href={ pluginsUrl }
 						>
 							{ translate( 'Explore plugins' ) }
 						</Button>

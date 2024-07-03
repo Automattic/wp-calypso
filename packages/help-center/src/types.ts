@@ -9,6 +9,16 @@ export interface Container {
 	currentRoute?: string;
 }
 
+export interface ArticleContentProps {
+	content: string | undefined;
+	title: string | undefined;
+	link: string | undefined;
+	isLoading?: boolean;
+	postId: number;
+	blogId?: string | null;
+	slug?: string;
+}
+
 export interface Header {
 	isMinimized?: boolean;
 	onMinimize?: () => void;
@@ -18,11 +28,8 @@ export interface Header {
 
 export interface SitePicker {
 	ownershipResult: AnalysisReport;
-	setSitePickerChoice: any;
-	sitePickerChoice: string;
-	currentSite: HelpCenterSite | undefined;
-	siteId: string | number | null | undefined;
-	sitePickerEnabled: boolean;
+	isSelfDeclaredSite: boolean;
+	onSelfDeclaredSite: ( selfDeclared: boolean ) => void;
 }
 
 export interface Article {
@@ -80,14 +87,14 @@ export interface MessagingAvailability {
 export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 interface Availability {
-	presale: boolean;
-	precancellation: boolean;
+	is_presales_chat_open: boolean;
+	is_precancellation_chat_open: boolean;
+	force_email_support: boolean;
 }
 
-export interface ChatAvailability {
-	locale: string;
+interface Eligibility {
 	is_user_eligible: boolean;
-	supportLevel:
+	support_level:
 		| 'free'
 		| 'personal'
 		| 'personal-with-legacy-chat'
@@ -98,17 +105,11 @@ export interface ChatAvailability {
 		| 'ecommerce'
 		| 'jetpack-paid'
 		| 'p2-plus';
-	nickname: string;
-	availability: Availability;
-	is_presales_chat_open: boolean;
-	is_precancellation_chat_open: boolean;
-	wapuu_assistant_enabled: boolean;
 }
 
-export interface OtherSupportAvailability {
-	is_user_eligible_for_upwork: boolean;
-	is_user_eligible_for_tickets: boolean;
-	is_user_eligible_for_chat: boolean;
+export interface SupportStatus {
+	eligibility: Eligibility;
+	availability: Availability;
 }
 
 export interface SupportActivity {

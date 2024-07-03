@@ -16,7 +16,13 @@ import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
-export const MySitesSidebarUnifiedBody = ( { path, children, onMenuItemClick } ) => {
+export const MySitesSidebarUnifiedBody = ( {
+	isGlobalSidebarCollapsed,
+	path,
+	children,
+	onMenuItemClick,
+	isUnifiedSiteSidebarVisible,
+} ) => {
 	const menuItems = useSiteMenuItems();
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const site = useSelector( getSelectedSite );
@@ -32,7 +38,10 @@ export const MySitesSidebarUnifiedBody = ( { path, children, onMenuItemClick } )
 		<>
 			{ menuItems &&
 				menuItems.map( ( item, i ) => {
-					const isSelected = item?.url && itemLinkMatches( item.url, path );
+					const isSelected =
+						( item?.url && itemLinkMatches( item.url, path ) ) ||
+						// Keep the Sites icon selected when there is a selected site.
+						( item.slug === 'sites' && site );
 
 					if ( 'current-site' === item?.type ) {
 						return (
@@ -58,6 +67,7 @@ export const MySitesSidebarUnifiedBody = ( { path, children, onMenuItemClick } )
 								selected={ isSelected }
 								sidebarCollapsed={ sidebarIsCollapsed }
 								shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+								isUnifiedSiteSidebarVisible={ isUnifiedSiteSidebarVisible }
 								{ ...item }
 							/>
 						);
@@ -68,6 +78,7 @@ export const MySitesSidebarUnifiedBody = ( { path, children, onMenuItemClick } )
 							key={ item.slug }
 							selected={ isSelected }
 							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+							showTooltip={ !! isGlobalSidebarCollapsed }
 							trackClickEvent={ onMenuItemClick }
 							{ ...item }
 						/>

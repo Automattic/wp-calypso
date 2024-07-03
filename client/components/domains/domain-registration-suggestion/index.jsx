@@ -2,7 +2,7 @@ import { Badge, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { HTTPS_SSL } from '@automattic/urls';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -269,7 +269,7 @@ class DomainRegistrationSuggestion extends Component {
 
 		const { name, tld } = this.getDomainParts( domain );
 
-		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
+		const titleWrapperClassName = clsx( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain':
 				this.props.showStrikedOutPrice && ! this.props.isFeatured,
 			'domain-registration-suggestion__larger-domain': name.length > 15 ? true : false,
@@ -431,7 +431,7 @@ class DomainRegistrationSuggestion extends Component {
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
 
-		const extraClasses = classNames( {
+		const extraClasses = clsx( {
 			'featured-domain-suggestion': isFeatured,
 			'is-unavailable': isUnavailableDomain,
 		} );

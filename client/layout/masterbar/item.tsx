@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, Fragment, forwardRef } from 'react';
 import type { ReactNode, LegacyRef } from 'react';
@@ -68,7 +68,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	}
 
 	render() {
-		const itemClasses = classNames( 'masterbar__item', this.props.className, {
+		const itemClasses = clsx( 'masterbar__item', this.props.className, {
 			'is-active': this.props.isActive,
 			'has-unseen': this.props.hasUnseen,
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,

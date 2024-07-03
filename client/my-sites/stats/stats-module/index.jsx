@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
@@ -75,15 +75,7 @@ class StatsModule extends Component {
 		const { period, startOf } = this.props.period;
 		const { path, query } = this.props;
 
-		return (
-			<DatePicker
-				period={ period }
-				date={ startOf }
-				path={ path }
-				query={ query }
-				summary={ true }
-			/>
-		);
+		return <DatePicker period={ period } date={ startOf } path={ path } query={ query } summary />;
 	}
 
 	getHref() {
@@ -112,7 +104,7 @@ class StatsModule extends Component {
 			'statsSearchTerms',
 			'statsClicks',
 			'statsReferrers',
-			// statsEmailsOpen and statsEmailsClick are not used. statsEmailsSummary and statsEmailsSummaryByOpens are used at the moment,
+			// statsEmailsOpen and statsEmailsClick are not used. statsEmailsSummary are used at the moment,
 			// besides this, email page uses separate summary component: <StatsEmailSummary />
 			'statsEmailsOpen',
 			'statsEmailsClick',
@@ -150,7 +142,7 @@ class StatsModule extends Component {
 
 		const displaySummaryLink = data && ! this.props.hideSummaryLink;
 		const isAllTime = this.isAllTimeList();
-		const footerClass = classNames( 'stats-module__footer-actions', {
+		const footerClass = clsx( 'stats-module__footer-actions', {
 			'stats-module__footer-actions--summary': summary,
 		} );
 
@@ -160,7 +152,7 @@ class StatsModule extends Component {
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				<StatsListCard
-					className={ classNames( className, 'stats-module__card', path ) }
+					className={ clsx( className, 'stats-module__card', path ) }
 					moduleType={ path }
 					data={ data }
 					useShortLabel={ useShortLabel }

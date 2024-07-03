@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { localeRegexString } from '@automattic/i18n-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import closest from 'component-closest';
 import { truncate } from 'lodash';
 import PropTypes from 'prop-types';
@@ -169,7 +169,7 @@ class ReaderPostCard extends Component {
 
 		const shouldShowPostCardComments = ! isConversations;
 
-		const classes = classnames( 'reader-post-card', {
+		const classes = clsx( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
 			'is-gallery': isGalleryPost,
@@ -202,7 +202,7 @@ class ReaderPostCard extends Component {
 				showSiteName={ showSiteName }
 				showAvatar={ ! compact }
 				teams={ teams }
-				showFollow={ true }
+				showFollow
 				openSuggestedFollows={ this.openSuggestedFollowsModal }
 				compact={ compact }
 			/>

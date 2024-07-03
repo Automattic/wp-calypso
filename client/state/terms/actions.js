@@ -1,5 +1,4 @@
 import { filter, get } from 'lodash';
-import { v4 as uuid } from 'uuid';
 import wpcom from 'calypso/lib/wp';
 import {
 	TERM_REMOVE,
@@ -26,29 +25,13 @@ import 'calypso/state/terms/init';
  */
 export function addTerm( siteId, taxonomy, term ) {
 	return ( dispatch ) => {
-		const temporaryId = 'temporary' + uuid();
-
-		dispatch(
-			receiveTerm( siteId, taxonomy, {
-				...term,
-				ID: temporaryId,
-			} )
-		);
-
 		return wpcom
 			.site( siteId )
 			.taxonomy( taxonomy )
 			.term()
 			.add( term )
-			.then(
-				( data ) => {
-					dispatch( receiveTerm( siteId, taxonomy, data ) );
-					return data;
-				},
-				() => Promise.resolve() // Silently ignore failure so we can proceed to remove temporary
-			)
 			.then( ( data ) => {
-				dispatch( removeTerm( siteId, taxonomy, temporaryId ) );
+				dispatch( receiveTerm( siteId, taxonomy, data ) );
 				return data;
 			} );
 	};

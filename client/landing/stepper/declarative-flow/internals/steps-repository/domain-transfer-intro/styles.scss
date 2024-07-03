@@ -22,7 +22,7 @@ $heading-font-family: "SF Pro Display", $sans;
 			height: 48px;
 			width: 240px;
 
-			@media (max-width: $break-medium ) {
+			@media (max-width: $break-medium) {
 				width: 100%;
 			}
 		}
@@ -31,7 +31,7 @@ $heading-font-family: "SF Pro Display", $sans;
 	&.intro {
 		padding: 0;
 
-		@media (max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			header {
 				text-align: center;
 			}
@@ -50,7 +50,7 @@ $heading-font-family: "SF Pro Display", $sans;
 			flex-direction: column;
 			height: 100%;
 
-			@media (max-width: $break-medium ) {
+			@media (max-width: $break-medium) {
 				padding: 0;
 				margin-top: 48px;
 			}
@@ -59,7 +59,7 @@ $heading-font-family: "SF Pro Display", $sans;
 				margin: 0;
 				text-align: center;
 
-				@media (max-width: $break-medium ) {
+				@media (max-width: $break-medium) {
 					margin-top: 48px;
 				}
 
@@ -68,7 +68,7 @@ $heading-font-family: "SF Pro Display", $sans;
 						font-size: 2.75rem;
 						line-height: 52px;
 
-						@media (max-width: $break-medium ) {
+						@media (max-width: $break-medium) {
 							text-align: left;
 							font-size: 2rem;
 							line-height: 40px;
@@ -80,7 +80,7 @@ $heading-font-family: "SF Pro Display", $sans;
 						margin-top: 16px;
 						text-align: center;
 
-						@media (max-width: $break-medium ) {
+						@media (max-width: $break-medium) {
 							text-align: left;
 							line-height: 20px;
 						}
@@ -101,7 +101,7 @@ $heading-font-family: "SF Pro Display", $sans;
 						padding: 24px;
 						margin: 0 auto;
 
-						@media (max-width: $break-medium ) {
+						@media (max-width: $break-medium) {
 							padding: 16px;
 							width: inherit;
 						}
@@ -120,7 +120,7 @@ $heading-font-family: "SF Pro Display", $sans;
 					}
 
 
-					@media ( max-width: $break-mobile ) {
+					@media (max-width: $break-mobile) {
 						.select-items__item-title-badge {
 							display: block;
 						}
@@ -161,11 +161,11 @@ $heading-font-family: "SF Pro Display", $sans;
 				padding-bottom: 56px;
 				margin: 0;
 
-				@media (min-width: $break-large ) {
+				@media (min-width: $break-large) {
 					margin-top: auto;
 				}
 
-				@media (max-width: $break-large ) {
+				@media (max-width: $break-large) {
 					padding-bottom: 32px;
 				}
 			}

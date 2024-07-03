@@ -3,6 +3,7 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
+import restoreSuccessImage from 'calypso/assets/images/illustrations/jetpack-restore-success.svg';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
@@ -153,6 +154,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		refetchPreflightStatus,
 	] );
 
+	const onGoBack = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_goback' ) );
+	}, [ dispatch ] );
+
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const loading = rewindState.state === 'uninitialized';
@@ -168,25 +173,24 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			<div className="rewind-flow__header">
 				<Gridicon icon="history" size={ 48 } />
 			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Restore site' ) }</h3>
+			<h3 className="rewind-flow__title">{ translate( 'Restore your site' ) }</h3>
 			<p className="rewind-flow__info">
-				{ translate(
-					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point for your restore. ',
-					{
-						args: {
-							backupDisplayDate,
-						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
+				{ translate( 'Selected restore point: {{strong}}%(backupDisplayDate)s{{/strong}}', {
+					args: {
+						backupDisplayDate,
+					},
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</p>
 			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
 			<RewindFlowNotice
 				gridicon="notice"
-				title={ translate( 'Restoring will override and remove all content after this point.' ) }
+				title={ translate(
+					'Important: this action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
+				) }
 				type={ RewindFlowNoticeLevel.WARNING }
 			/>
 			<>
@@ -201,7 +205,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				) }
 			</>
 			<div className="rewind-flow__btn-group">
-				<Button className="rewind-flow__back-button" href={ backupMainPath( siteSlug ) }>
+				<Button
+					className="rewind-flow__back-button"
+					href={ backupMainPath( siteSlug ) }
+					onClick={ onGoBack }
+				>
 					{ translate( 'Go back' ) }
 				</Button>
 				<Button
@@ -210,7 +218,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					onClick={ onConfirm }
 					disabled={ disableRestore }
 				>
-					{ translate( 'Confirm restore' ) }
+					{ translate( 'Restore now' ) }
 				</Button>
 			</div>
 			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
@@ -254,10 +262,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const renderFinished = () => (
 		<>
 			<div className="rewind-flow__header">
-				<img
-					src="/calypso/images/illustrations/jetpack-restore-success.svg"
-					alt="jetpack cloud restore success"
-				/>
+				<img src={ restoreSuccessImage } alt="jetpack cloud restore success" />
 			</div>
 			<h3 className="rewind-flow__title">
 				{ translate( 'Your site has been successfully restored.' ) }
@@ -275,8 +280,18 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button primary href={ siteUrl } className="rewind-flow__primary-button">
-				{ translate( 'View your website' ) }
+			<Button
+				primary
+				href={ siteUrl }
+				target="_blank"
+				className="rewind-flow__primary-button"
+				onClick={ () =>
+					dispatch( recordTracksEvent( 'calypso_jetpack_restore_completed_view_site' ) )
+				}
+			>
+				{ translate( 'View your website {{externalIcon/}}', {
+					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
+				} ) }
 			</Button>
 		</>
 	);
@@ -309,10 +324,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	useEffect( () => {
 		if ( isFinished ) {
+			dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_completed' ) );
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
 		}
-	}, [ isFinished ] );
+	}, [ dispatch, isFinished ] );
 
 	const render = () => {
 		if ( loading ) {

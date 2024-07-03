@@ -1,12 +1,40 @@
 import { getQueryArg } from '@wordpress/url';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import type { ShoppingCartItem } from '../types';
+import { MarketplaceTypeContext } from '../context';
+import { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
+import { type ShoppingCartItem } from '../types';
 
 const SELECTED_ITEMS_SESSION_STORAGE_KEY = 'shopping-card-selected-items';
+const SELECTED_ITEMS_SESSION_STORAGE_KEY_REFERRAL = 'referrals-shopping-card-selected-items';
 
 export default function useShoppingCart() {
 	const [ selectedCartItems, setSelectedCartItems ] = useState< ShoppingCartItem[] >( [] );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
+	const [ showCart, setShowCart ] = useState( window.location.hash === CART_URL_HASH_FRAGMENT );
+
+	const storageKey = useMemo( () => {
+		return marketplaceType === 'regular'
+			? SELECTED_ITEMS_SESSION_STORAGE_KEY
+			: SELECTED_ITEMS_SESSION_STORAGE_KEY_REFERRAL;
+	}, [ marketplaceType ] );
+
+	const toggleCart = () => {
+		setShowCart( ( prevState ) => {
+			const nextState = ! prevState;
+
+			const hashFragment = nextState ? CART_URL_HASH_FRAGMENT : '';
+
+			window.history.replaceState(
+				null,
+				'',
+				window.location.pathname + window.location.search + hashFragment
+			);
+
+			return nextState;
+		} );
+	};
 
 	const { data } = useProductsQuery();
 
@@ -18,12 +46,12 @@ export default function useShoppingCart() {
 		// If there is suggested product slug from URL, we will need to clear our cache to
 		// reflect the suggested pre-selected items.
 		if ( hasSuggestedProductSlug ) {
-			sessionStorage.removeItem( SELECTED_ITEMS_SESSION_STORAGE_KEY );
+			sessionStorage.removeItem( storageKey );
 		}
 
 		const selectedItemsCache =
 			sessionStorage
-				.getItem( SELECTED_ITEMS_SESSION_STORAGE_KEY )
+				.getItem( storageKey )
 				?.split( ',' )
 				.map( ( item ) => {
 					const cacheData = item.split( ':' );
@@ -41,7 +69,8 @@ export default function useShoppingCart() {
 					return (
 						product.slug === slug &&
 						( quantity === 1 ||
-							product.supported_bundles.map( ( bundle ) => bundle.quantity ).includes( quantity ) )
+							product.supported_bundles.map( ( bundle ) => bundle.quantity ).includes( quantity ) ||
+							product.family_slug === 'wpcom-hosting' )
 					);
 				} );
 
@@ -49,18 +78,22 @@ export default function useShoppingCart() {
 					loadedItems.push( { ...product, quantity: match.quantity } );
 				}
 			} );
-
 			setSelectedCartItems( loadedItems );
+		} else if ( ! selectedItemsCache.length ) {
+			setSelectedCartItems( [] );
 		}
-	}, [ data ] );
+	}, [ data, storageKey ] );
 
-	const setAndCacheSelectedItems = useCallback( ( items: ShoppingCartItem[] ) => {
-		sessionStorage.setItem(
-			SELECTED_ITEMS_SESSION_STORAGE_KEY,
-			items.map( ( item ) => `${ item.slug }:${ item.quantity }` ).join( ',' )
-		);
-		setSelectedCartItems( items );
-	}, [] );
+	const setAndCacheSelectedItems = useCallback(
+		( items: ShoppingCartItem[] ) => {
+			sessionStorage.setItem(
+				storageKey,
+				items.map( ( item ) => `${ item.slug }:${ item.quantity }` ).join( ',' )
+			);
+			setSelectedCartItems( items );
+		},
+		[ storageKey ]
+	);
 
 	const onRemoveCartItem = useCallback(
 		( item: ShoppingCartItem ) => {
@@ -80,5 +113,8 @@ export default function useShoppingCart() {
 		setSelectedCartItems: setAndCacheSelectedItems,
 		onRemoveCartItem,
 		onClearCart,
+		showCart,
+		setShowCart,
+		toggleCart,
 	};
 }

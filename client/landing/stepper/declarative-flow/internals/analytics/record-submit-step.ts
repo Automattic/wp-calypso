@@ -1,7 +1,7 @@
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { reduce, snakeCase } from 'lodash';
+import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getStepOldSlug } from '../index';
 import { ProvidedDependencies } from '../types';
 
 export function recordSubmitStep(

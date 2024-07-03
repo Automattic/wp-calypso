@@ -3,6 +3,7 @@ import { EmbedRequestParams, addApiMiddleware } from './api';
 import { Editor } from './editor';
 import { loadBlocksWithCustomizations } from './load-blocks';
 import { loadTextFormatting } from './load-text-formatting';
+
 /**
  * Add Gutenberg editor to the page.
  * @param textarea   Textarea element.

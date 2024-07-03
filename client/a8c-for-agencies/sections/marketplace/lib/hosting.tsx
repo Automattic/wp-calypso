@@ -1,3 +1,5 @@
+import { VIPLogo } from '@automattic/components';
+import { translate } from 'i18n-calypso';
 import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
@@ -22,6 +24,17 @@ export function getCheapestPlan( plans: APIProductFamilyProduct[] ) {
 }
 
 /**
+ * Get the WPCOM Creator plan from a list of plans
+ * @param {APIProductFamilyProduct[]} plans - List of plans
+ * @returns {APIProductFamilyProduct} - WPCOM Creator plan
+ */
+export function getWPCOMCreatorPlan( plans: APIProductFamilyProduct[] ) {
+	return plans.find( ( plan: APIProductFamilyProduct ) => {
+		return plan.slug === 'wpcom-hosting-business';
+	} );
+}
+
+/**
  * Get the URL for a hosting provider
  * @param {string} slug - Hosting provider slug
  * @returns {string} - Hosting provider URL
@@ -32,6 +45,8 @@ export function getHostingPageUrl( slug: string ) {
 			return A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK;
 		case 'wpcom-hosting':
 			return A4A_MARKETPLACE_HOSTING_WPCOM_LINK;
+		case 'vip':
+			return 'https://wpvip.com/contact/';
 	}
 
 	return A4A_MARKETPLACE_HOSTING_LINK;
@@ -42,12 +57,19 @@ export function getHostingPageUrl( slug: string ) {
  * @param {string} slug - Hosting provider slug
  * @returns {Element} - Hosting provider logo
  */
-export function getHostingLogo( slug: string ) {
+export function getHostingLogo( slug: string, showText = true ) {
 	switch ( slug ) {
 		case 'pressable-hosting':
 			return <img src={ PressableLogo } alt="" />;
 		case 'wpcom-hosting':
 			return <img src={ WPCOMLogo } alt="" />;
+		case 'vip':
+			return (
+				<div className="wordpress-vip-logo">
+					<VIPLogo height={ 30 } width={ 67 } />
+					{ showText && translate( '(Enterprise)' ) }
+				</div>
+			);
 	}
 
 	return null;
@@ -59,5 +81,18 @@ export function getHostingLogo( slug: string ) {
  * @returns boolean True if Pressable hosting product, false if not
  */
 export function isPressableHostingProduct( keyOrSlug: string ) {
-	return keyOrSlug.startsWith( 'pressable-hosting' ) || keyOrSlug.startsWith( 'jetpack-pressable' );
+	return (
+		keyOrSlug.startsWith( 'pressable-wp' ) ||
+		keyOrSlug.startsWith( 'pressable-hosting' ) ||
+		keyOrSlug.startsWith( 'jetpack-pressable' )
+	);
+}
+
+/**
+ * Determine if current slug is a WPCOM hosting product.
+ * @param {string} keyOrSlug - Product slug
+ * @returns {boolean} - True if WPCOM hosting product, false if not
+ */
+export function isWPCOMHostingProduct( keyOrSlug: string ) {
+	return keyOrSlug.startsWith( 'wpcom-hosting' );
 }

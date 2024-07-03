@@ -5,12 +5,17 @@ import { PluginsScheduledUpdates } from 'calypso/blocks/plugins-scheduled-update
 import { PluginsScheduledUpdatesMultisite } from 'calypso/blocks/plugins-scheduled-updates-multisite';
 import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { navigate } from 'calypso/lib/navigate';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { navigation, sites } from 'calypso/my-sites/controller';
+import PluginsSidebar from 'calypso/my-sites/plugins/sidebar';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
 import { UNLISTED_PLUGINS } from './constants';
@@ -116,7 +121,14 @@ export function plugins( context, next ) {
 export function scheduledUpdates( context, next ) {
 	const siteSlug = context?.params?.site_slug;
 	const scheduleId = context?.params?.schedule_id;
-	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/${ siteSlug }` );
+	const goToScheduledUpdatesList = () => {
+		// check if window.location query has multisite
+		if ( window?.location.search.includes( 'multisite' ) ) {
+			page.show( `/plugins/scheduled-updates` );
+		} else {
+			page.show( `/plugins/scheduled-updates/${ siteSlug }` );
+		}
+	};
 
 	if ( ! siteSlug ) {
 		sites( context, next );
@@ -180,17 +192,40 @@ export function scheduledUpdates( context, next ) {
 }
 
 export function scheduledUpdatesMultisite( context, next ) {
+	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/` );
+	const goToScheduleEdit = ( id ) => page.show( `/plugins/scheduled-updates/edit/${ id }` );
+	const goToScheduleLogs = ( id, siteSlug ) =>
+		page.show( `/plugins/scheduled-updates/logs/${ siteSlug }/${ id }?multisite` );
+	const goToScheduleCreate = () => page.show( `/plugins/scheduled-updates/create/` );
+
+	const callbackHandlers = {
+		onNavBack: goToScheduledUpdatesList,
+		onShowLogs: goToScheduleLogs,
+		onEditSchedule: goToScheduleEdit,
+		onCreateNewSchedule: goToScheduleCreate,
+	};
+
 	switch ( context.params.action ) {
 		case 'create':
-			context.primary = createElement( PluginsScheduledUpdatesMultisite );
+			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
+				context: 'create',
+				...callbackHandlers,
+			} );
 			break;
 
 		case 'edit':
-			context.primary = `Edit multisite scheduled updates ${ context.params.schedule_id }`;
+			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
+				id: context.params.id,
+				context: 'edit',
+				...callbackHandlers,
+			} );
 			break;
 
 		default:
-			context.primary = 'List of multisite scheduled updates';
+			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
+				context: 'list',
+				...callbackHandlers,
+			} );
 			break;
 	}
 
@@ -302,6 +337,30 @@ export async function redirectTrialSites( context, next ) {
 	next();
 }
 
+/**
+ * Middleware to redirect staging sites to the admin interface.
+ */
+export function redirectStagingSites( context, next ) {
+	const { store } = context;
+	const state = store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( selectedSite && isSiteWpcomStaging( state, selectedSite.ID ) ) {
+		const adminInterface = getSiteOption( state, selectedSite.ID, 'wpcom_admin_interface' );
+		const siteAdminUrl = getSiteAdminUrl( state, selectedSite.ID );
+
+		if ( selectedSite ) {
+			return navigate(
+				adminInterface === 'wp-admin' ? siteAdminUrl : `/home/${ selectedSite.slug }`
+			);
+		}
+
+		return false;
+	}
+
+	next();
+}
+
 export function scrollTopIfNoHash( context, next ) {
 	if ( typeof window !== 'undefined' && ! window.location.hash ) {
 		window.scrollTo( 0, 0 );
@@ -326,5 +385,30 @@ export function maybeRedirectLoggedOut( context, next ) {
 	if ( siteFragment ) {
 		return redirectLoggedOut( context, next );
 	}
+	next();
+}
+
+export function renderPluginsSidebar( context, next ) {
+	const state = context.store.getState();
+	const siteUrl = getSiteFragment( context.path );
+
+	if ( ! isUserLoggedIn( state ) ) {
+		next();
+	}
+
+	if ( ! siteUrl ) {
+		context.secondary = (
+			<PluginsSidebar
+				path={ context.path }
+				isCollapsed={ getShouldShowCollapsedGlobalSidebar(
+					state,
+					undefined,
+					context.section.group,
+					context.section.name
+				) }
+			/>
+		);
+	}
+
 	next();
 }

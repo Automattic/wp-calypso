@@ -53,9 +53,7 @@ function getWebpackConfig(
 	).slice( 0, 11 );
 
 	const pageMeta = {
-		nodePlatform: process.platform,
-		nodeVersion: process.version,
-		gitDescribe,
+		'git-describe': gitDescribe,
 	};
 
 	return {
@@ -79,20 +77,22 @@ function getWebpackConfig(
 			new HtmlWebpackPlugin( {
 				filename: path.join( outputPath, 'index.html' ),
 				template: path.join( __dirname, 'src', 'index.ejs' ),
-				title: 'Notifications',
+				publicPath: 'https://widgets.wp.com/notifications/',
 				hash: true,
 				inject: false,
-				isRTL: false,
-				...pageMeta,
+				scriptLoading: 'blocking',
+				meta: pageMeta,
+				includeStyle: ( href ) => ! href.includes( '.rtl.css' ),
 			} ),
 			new HtmlWebpackPlugin( {
 				filename: path.join( outputPath, 'rtl.html' ),
 				template: path.join( __dirname, 'src', 'index.ejs' ),
-				title: 'Notifications',
+				publicPath: 'https://widgets.wp.com/notifications/',
 				hash: true,
 				inject: false,
-				isRTL: true,
-				...pageMeta,
+				scriptLoading: 'blocking',
+				meta: pageMeta,
+				includeStyle: ( href ) => href.includes( '.rtl.css' ),
 			} ),
 			shouldEmitStats &&
 				new BundleAnalyzerPlugin( {

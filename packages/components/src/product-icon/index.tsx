@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { findKey, includes } from 'lodash';
 import * as React from 'react';
 import { iconToProductSlugMap, paths } from './config';
@@ -29,7 +29,7 @@ const ProductIcon: React.FunctionComponent< Props > = ( { className, slug } ) =>
 	return (
 		<img
 			src={ iconPath }
-			className={ classNames( 'product-icon', `is-${ iconSlug }`, className ) }
+			className={ clsx( 'product-icon', `is-${ iconSlug }`, className ) }
 			role="presentation"
 			alt=""
 		/>

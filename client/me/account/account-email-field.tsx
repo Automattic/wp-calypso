@@ -92,7 +92,7 @@ const AccountEmailValidationNotice = ( {
 		} );
 	}
 
-	return <FormInputValidation isError={ true } text={ noticeText } />;
+	return <FormInputValidation isError text={ noticeText } />;
 };
 
 const AccountEmailPendingEmailChangeNotice = ( {

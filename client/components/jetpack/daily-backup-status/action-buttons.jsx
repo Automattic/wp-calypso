@@ -121,7 +121,7 @@ const ActionButtons = ( {
 			<CloneButton
 				disabled={ disabled }
 				rewindId={ rewindId }
-				primary={ true }
+				primary
 				onClickClone={ onClickClone }
 			/>
 		) }

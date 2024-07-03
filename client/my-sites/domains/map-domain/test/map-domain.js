@@ -53,7 +53,7 @@ describe( 'MapDomain component', () => {
 	} );
 
 	test( 'redirects if site cannot be upgraded at new props', () => {
-		const { rerender } = render( <MapDomain { ...defaultProps } isSiteUpgradeable={ true } /> );
+		const { rerender } = render( <MapDomain { ...defaultProps } isSiteUpgradeable /> );
 		rerender(
 			<MapDomain { ...defaultProps } isSiteUpgradeable={ false } selectedSiteId={ 501 } />
 		);

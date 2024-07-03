@@ -1,5 +1,5 @@
 import { Count, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { preload } from 'calypso/sections-helper';
@@ -38,7 +38,7 @@ class NavItem extends PureComponent {
 			'is-external': this.props.isExternalLink,
 		};
 		itemClasses[ 'section-nav-' + itemClassPrefix ] = true;
-		const itemClassName = classNames( this.props.className, itemClasses );
+		const itemClassName = clsx( this.props.className, itemClasses );
 
 		let target;
 		let onClick;

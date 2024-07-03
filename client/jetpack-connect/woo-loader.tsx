@@ -1,7 +1,7 @@
 // Copied and modified from woocommerce: https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce-admin/client/core-profiler/pages/Loader.tsx#L26
 // TODO: Remove this once we create a reusable component
 import { useState, useEffect } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { HTMLAttributes } from 'react';
 
 import './woo-loader.scss';
@@ -73,7 +73,7 @@ export const WooLoader = ( { className, stages }: Props ) => {
 	}, [ stages, currentStageIndex ] );
 
 	return (
-		<div className={ classNames( 'jetpack-connect-woocommerce-loader', className ) }>
+		<div className={ clsx( 'jetpack-connect-woocommerce-loader', className ) }>
 			<div className="jetpack-connect-loader-wrapper">
 				{ stage.image && stage.image }
 

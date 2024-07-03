@@ -8,7 +8,7 @@ export const parseUrl = function ( value = '' ) {
 	return new URL( hasProtocol ? rawUrl : 'https://' + rawUrl );
 };
 
-const hasTld = function ( hostname ) {
+export const hasTld = function ( hostname ) {
 	// Min length of hostname with TLD is 4 characters, e.g. "a.co".
 	const lastDotIndex = hostname.lastIndexOf( '.' );
 	return hostname.length > 3 && lastDotIndex >= 1 && lastDotIndex < hostname.length - 2;

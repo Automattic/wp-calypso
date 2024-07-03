@@ -33,6 +33,7 @@ import {
 	getJetpackPlanAlsoIncludedFeatures,
 	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
+import { getProductPartsFromAlias } from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
 import {
 	getHelpLink,
 	getSupportLink,
@@ -154,11 +155,16 @@ function itemToSelectorProduct(
 			return null;
 		}
 
-		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
+		const { slug: productSlug, quantity } = getProductPartsFromAlias(
+			item.product_alias || item.product_slug
+		);
+
+		const iconSlug = `${ yearlyProductSlug || productSlug }_v2_dark`;
 		const features = buildCardFeaturesFromItem( item );
 
 		return {
-			productSlug: item.product_slug,
+			productSlug,
+			productAlias: item.product_alias,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug,
 			displayName: getJetpackProductDisplayName( item ) ?? '',
@@ -185,6 +191,7 @@ function itemToSelectorProduct(
 				items: features,
 			},
 			disclaimer: getJetpackProductDisclaimer( item.product_slug, features, getDisclaimerLink() ),
+			quantity,
 		};
 	}
 
@@ -202,6 +209,7 @@ function itemToSelectorProduct(
 		const features = buildCardFeaturesFromItem( item );
 		return {
 			productSlug,
+			productAlias: productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
 			displayName: getForCurrentCROIteration( item.getTitle ) ?? '',

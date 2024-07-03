@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 import { Assign } from 'utility-types';
 
@@ -28,7 +28,7 @@ function InlineSocialLogo( props: Assign< React.SVGProps< SVGSVGElement >, Props
 	// The current CSS expects individual icon classes in the form of e.g. `.twitter`, but the social-logos build
 	// appears to generate them in the form of `.social-logo-twitter` instead.
 	// We add both here, to ensure compatibility.
-	const iconClass = classnames( 'social-logo', iconName, icon, className );
+	const iconClass = clsx( 'social-logo', iconName, icon, className );
 
 	return (
 		<svg

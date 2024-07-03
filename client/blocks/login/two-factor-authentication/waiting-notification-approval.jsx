@@ -21,7 +21,7 @@ export default function WaitingTwoFactorNotificationApproval( { switchTwoFactorA
 				</p>
 				<PushNotificationIllustration />
 			</Card>
-			<FormDivider isHorizontal={ true } />
+			<FormDivider isHorizontal />
 			<TwoFactorActions
 				twoFactorAuthType="push"
 				switchTwoFactorAuthType={ switchTwoFactorAuthType }

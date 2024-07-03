@@ -1,24 +1,182 @@
+@import "../plugin-scheduled-updates-common/styles";
+
+$brand-display: "SF Pro Display", sans-serif;
+
 .plugins-update-manager-multisite {
-	h1 {
-		font-size: 2rem;
-		margin-bottom: 1rem;
+	@media screen and (max-width: $break-medium) {
+		margin: 1rem;
 	}
 
-	.schedule-form {
-		& > .form-control-container {
-			margin-bottom: 1.25rem;
+	&__header {
+		@media screen and (max-width: $break-large) {
+			padding-top: 24px;
+		}
+	}
 
-			&:last-child {
-				margin-bottom: 0;
+	&__header-main {
+		display: flex;
+		margin: 0 auto;
+		justify-content: space-between;
+		box-sizing: border-box;
+		column-gap: 10px;
+		flex: 1;
+		button {
+			padding: 8px 14px;
+		}
+	}
+
+	&.plugins-update-manager-multisite-edit,
+	&.plugins-update-manager-multisite-create {
+		h1 {
+			font-size: 2rem !important;
+		}
+	}
+
+	.components-notice {
+		margin-bottom: 1.25rem;
+		margin-top: 1.25rem;
+
+		ul {
+			margin-top: 1.25rem;
+		}
+	}
+
+	.plugins-update-manager-multisite-filters,
+	.plugins-update-manager-multisite-table-container {
+		@media screen and (min-width: $break-xhuge) {
+			max-width: 1400px;
+			margin: 0 auto;
+		}
+		@media screen and (min-width: $break-large) {
+			td:last-child,
+			th:last-child {
+				padding-right: 64px;
+				text-align: right;
+			}
+			td.menu button {
+				padding: 0;
+				justify-content: end;
+			}
+		}
+		@media screen and (max-width: $break-small) {
+			.empty-state {
+				padding-inline: 0 !important;
+			}
+		}
+	}
+	.plugins-update-manager-multisite-filter {
+		margin-top: 1.25rem;
+		margin-bottom: 1.25rem;
+
+		.components-search-control {
+			margin-bottom: 0;
+		}
+	}
+
+	.plugins-update-manager-multisite-card {
+		margin-bottom: 1rem;
+		border-bottom: solid 1px var(--studio-gray-0);
+
+		&:first-child {
+			border-top: solid 1px var(--studio-gray-0);
+		}
+
+		&.is-selected {
+			background: #f7faff;
+		}
+
+		&__new {
+			line-height: 2;
+		}
+
+		&__label {
+			font-size: 0.875rem;
+			margin-bottom: 0.75rem;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+
+			label {
+				display: block;
+				color: var(--studio-gray-40);
 			}
 
-			& > .components-flex {
-				gap: 2rem;
+			strong {
+				font-weight: 500;
+			}
 
-				& > .components-flex-item {
-					flex-basis: 100%;
-					width: 100%;
+			.badge-component {
+				margin-inline-start: 0.5rem;
+			}
+		}
+
+		&__name-label {
+			// Compensate for the big icon
+			margin-bottom: 0.75rem - rem(10px);
+		}
+
+		&__last-update-label {
+			align-items: flex-start;
+
+			.components-button {
+				font-size: 0.875rem;
+			}
+
+			label {
+				display: inline-flex;
+				align-items: center;
+			}
+
+			> div {
+				display: flex;
+				flex-direction: row-reverse;
+				align-items: center;
+
+				.badge-component {
+					margin-inline-end: 0;
+					padding: 0 9px;
+
+					svg {
+						top: 3px;
+						width: 18px;
+						height: 18px;
+					}
 				}
+			}
+		}
+
+		&__sites {
+			margin: 1rem -1rem;
+			background-color: $studio-gray-0;
+
+
+			&-site {
+				border-bottom: solid 1px var(--studio-gray-5);
+				padding-top: 1rem;
+
+				> div {
+					padding: 0 1rem 1rem 1rem;
+				}
+			}
+		}
+	}
+
+	.components-card__footer {
+		display: flex;
+		align-items: baseline;
+
+		.validation-msg {
+			width: 100%;
+		}
+	}
+}
+
+main.scheduled-updates-list {
+	.plugins-update-manager-multisite {
+		&__header-main {
+			@media screen and (min-width: $break-xhuge) {
+				max-width: 1400px;
+				padding-inline: 64px;
 			}
 		}
 	}

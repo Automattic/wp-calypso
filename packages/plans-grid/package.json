@@ -32,24 +32,24 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
-		"@wordpress/components": "^27.4.0",
-		"@wordpress/compose": "^6.33.0",
-		"@wordpress/icons": "^9.47.0",
-		"@wordpress/react-i18n": "^3.54.0",
-		"classnames": "^2.3.2",
+		"@wordpress/components": "^28.0.0",
+		"@wordpress/compose": "^7.0.0",
+		"@wordpress/icons": "^10.0.0",
+		"@wordpress/react-i18n": "^4.0.0",
+		"clsx": "^2.1.1",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@wordpress/base-styles": "^4.47.0",
+		"@wordpress/base-styles": "^5.0.0",
 		"prop-types": "^15.7.2",
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.26.0",
-		"@wordpress/element": "^5.33.0",
-		"@wordpress/i18n": "^4.56.0",
+		"@wordpress/data": "^10.0.0",
+		"@wordpress/element": "^6.0.0",
+		"@wordpress/i18n": "^5.0.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1"

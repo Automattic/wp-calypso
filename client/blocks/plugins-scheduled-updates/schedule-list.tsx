@@ -1,12 +1,13 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	__experimentalText as Text,
 	__experimentalConfirmDialog as ConfirmDialog,
+	Spinner,
 	Button,
 	Card,
 	CardBody,
 	CardHeader,
-	Spinner,
 } from '@wordpress/components';
 import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -14,6 +15,8 @@ import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSelector } from 'calypso/state';
+import { getSiteAdminUrl, isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
@@ -23,6 +26,7 @@ import { ScheduleListEmpty } from './schedule-list-empty';
 import { ScheduleListTable } from './schedule-list-table';
 
 interface Props {
+	siteId: number | null;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
 	onEditSchedule: ( id: string ) => void;
@@ -31,14 +35,19 @@ interface Props {
 export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
-	const isMobile = useMobileBreakpoint();
+	const isDesktopScreen = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { isEligibleForFeature, loading: isEligibleForFeatureLoading } = useIsEligibleForFeature();
 	const { siteHasEligiblePlugins, loading: siteHasEligiblePluginsLoading } =
 		useSiteHasEligiblePlugins();
 
-	const { onNavBack, onCreateNewSchedule, onEditSchedule, onShowLogs } = props;
+	const { siteId, onNavBack, onCreateNewSchedule, onEditSchedule, onShowLogs } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< undefined | string >();
+
+	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+		isAdminInterfaceWPAdmin( state, siteId )
+	);
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const {
 		data: schedules = [],
@@ -101,7 +110,7 @@ export const ScheduleList = ( props: Props ) => {
 			>
 				{ translate( 'Are you sure you want to delete this schedule?' ) }
 			</ConfirmDialog>
-			<Card className="plugins-update-manager">
+			<Card className="plugins-update-manager schedule-list--card__single-site">
 				<CardHeader size="extraSmall">
 					<div className="ch-placeholder">
 						{ onNavBack && (
@@ -117,6 +126,11 @@ export const ScheduleList = ( props: Props ) => {
 					{ schedules.length === 0 && isLoading && <Spinner /> }
 					{ ! isLoading && showScheduleListEmpty && (
 						<ScheduleListEmpty
+							pluginsUrl={
+								adminInterfaceIsWPAdmin
+									? `${ siteAdminUrl }plugin-install.php`
+									: `/plugins/${ siteSlug }`
+							}
 							onCreateNewSchedule={ onCreateNewSchedule }
 							canCreateSchedules={ canCreateSchedules }
 						/>
@@ -127,7 +141,7 @@ export const ScheduleList = ( props: Props ) => {
 						schedules.length > 0 &&
 						canCreateSchedules && (
 							<>
-								{ isMobile ? (
+								{ ! isDesktopScreen ? (
 									<ScheduleListCards
 										onRemoveClick={ openRemoveDialog }
 										onEditClick={ onEditSchedule }

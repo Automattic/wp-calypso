@@ -1,5 +1,5 @@
 import { Card, FormLabel } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -21,7 +21,7 @@ export default function NewAppPasswordForm( {
 	const dispatch = useDispatch();
 	const [ appName, setAppName ] = useState( '' );
 
-	const cardClasses = classNames( 'application-passwords__add-new-card', {
+	const cardClasses = clsx( 'application-passwords__add-new-card', {
 		'is-visible': addingPassword,
 	} );
 

@@ -126,7 +126,7 @@ class SelectIpsTag extends Component {
 		} = this.props;
 
 		return (
-			<NoticeAction href={ registrarUrl } external={ true }>
+			<NoticeAction href={ registrarUrl } external>
 				{ translate( 'Open' ) }
 			</NoticeAction>
 		);

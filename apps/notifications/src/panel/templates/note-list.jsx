@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import ReactDOM from 'react-dom';
@@ -249,6 +249,8 @@ export class NoteList extends Component {
 						global={ this.props.global }
 						currentNote={ this.props.selectedNoteId }
 						selectedNote={ this.props.selectedNote }
+						isShowing={ this.props.isPanelOpen }
+						handleFocus={ this.props.navigateToNoteById }
 					/>
 				);
 			}
@@ -286,7 +288,7 @@ export class NoteList extends Component {
 		let [ notes ] = Object.entries( noteGroups ).reduce(
 			( [ list, isFirst ], [ timeGroupKey, timeGroupNotes ] ) => {
 				const title = groupTitles[ timeGroupKey ];
-				const header = <ListHeader { ...{ key: title, title, isFirst } } />;
+				const header = <ListHeader key={ title } title={ title } isFirst={ isFirst } />;
 
 				return [ [ ...list, header, ...timeGroupNotes.map( createNoteComponent ) ], false ];
 			},
@@ -329,12 +331,11 @@ export class NoteList extends Component {
 			);
 		}
 
-		const classes = classNames( 'wpnc__note-list', {
-			'disable-sticky': !! window.chrome || !! window.electron, // position: sticky doesn't work in Chrome – `window.chrome` does not exist in electron
+		const classes = clsx( 'wpnc__note-list', {
 			'is-note-open': !! this.props.selectedNoteId,
 		} );
 
-		const listViewClasses = classNames( 'wpnc__list-view', {
+		const listViewClasses = clsx( 'wpnc__list-view', {
 			wpnc__current: !! this.props.selectedNoteId,
 			'is-empty-list': emptyNoteList,
 		} );
@@ -347,28 +348,40 @@ export class NoteList extends Component {
 		};
 
 		return (
-			<div className={ classes } id="wpnc__note-list">
-				<FilterBar controller={ this.props.filterController } />
-				<button className="screen-reader-text" onClick={ this.props.closePanel }>
-					{ this.props.translate( 'Close notifications' ) }
-				</button>
-				<div ref={ this.storeScrollableContainer } className={ listViewClasses }>
-					<ol ref={ this.storeNoteList } className="wpnc__notes" { ...notificationsListAriaProps }>
-						<StatusBar
-							statusClasses={ this.state.statusClasses }
-							statusMessage={ this.state.statusMessage }
-							statusTimeout={ this.state.statusTimeout }
-							statusReset={ this.resetStatusBar }
-						/>
-						{ notes }
-						{ this.props.isLoading && (
-							<div style={ loadingIndicatorVisibility } className="wpnc__loading-indicator">
-								<Spinner />
-							</div>
-						) }
-					</ol>
+			<>
+				{ /* Keep the wpnc__note-list as the first child of the Fragment to ensure the ReactDOM.findDOMNode returns the list element */ }
+				<div className={ classes } id="wpnc__note-list" ref={ this.props.listElementRef }>
+					<FilterBar
+						controller={ this.props.filterController }
+						isPanelOpen={ this.props.isPanelOpen }
+						/* eslint-disable-next-line jsx-a11y/no-autofocus */
+						autoFocus={ ! this.props.selectedNote }
+					/>
+					<button className="screen-reader-text" onClick={ this.props.closePanel }>
+						{ this.props.translate( 'Close notifications' ) }
+					</button>
+					<div ref={ this.storeScrollableContainer } className={ listViewClasses }>
+						<ol
+							ref={ this.storeNoteList }
+							className="wpnc__notes"
+							{ ...notificationsListAriaProps }
+						>
+							{ notes }
+							{ this.props.isLoading && (
+								<div style={ loadingIndicatorVisibility } className="wpnc__loading-indicator">
+									<Spinner />
+								</div>
+							) }
+						</ol>
+					</div>
 				</div>
-			</div>
+				<StatusBar
+					statusClasses={ this.state.statusClasses }
+					statusMessage={ this.state.statusMessage }
+					statusTimeout={ this.state.statusTimeout }
+					statusReset={ this.resetStatusBar }
+				/>
+			</>
 		);
 	}
 }
@@ -388,6 +401,7 @@ const mapStateToProps = ( state ) => ( {
 
 const mapDispatchToProps = {
 	selectNote: actions.ui.selectNote,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps, null, { forwardRef: true } )(

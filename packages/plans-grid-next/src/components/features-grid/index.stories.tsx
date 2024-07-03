@@ -1,49 +1,137 @@
-import { getFeaturesList } from '@automattic/calypso-products';
-import { Meta } from '@storybook/react';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { FeaturesGrid, useGridPlansForFeaturesGrid } from '../..';
-import { defaultArgs } from '../../storybook-mocks';
+import {
+	getFeaturesList,
+	getPlanFeaturesGroupedForFeaturesGrid,
+	getPlanFeaturesGroupedForComparisonGrid,
+} from '@automattic/calypso-products';
+import {
+	FeaturesGrid,
+	FeaturesGridExternalProps,
+	useGridPlanForSpotlight,
+	useGridPlansForFeaturesGrid,
+} from '../..';
+import type { Meta, StoryObj } from '@storybook/react';
 
-const queryClient = new QueryClient();
+const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' > ) => {
+	const gridPlans = useGridPlansForFeaturesGrid( {
+		eligibleForFreeHostingTrial: true,
+		hasRedeemedDomainCredit: undefined,
+		hiddenPlans: undefined,
+		isDisplayingPlansNeededForFeature: false,
+		isSubdomainNotGenerated: false,
+		selectedFeature: undefined,
+		selectedPlan: undefined,
+		storageAddOns: [],
+		term: 'TERM_ANNUALLY',
+		useFreeTrialPlanSlugs: undefined,
 
-const RenderFeaturesGrid = ( props: any ) => {
-	const useGridPlans = () => defaultArgs.gridPlans;
+		// Mirror values from props
+		siteId: props.siteId,
+		intent: props.intent,
+		coupon: props.coupon,
+		allFeaturesList: props.allFeaturesList,
+		isInSignup: props.isInSignup,
+		showLegacyStorageFeature: props.showLegacyStorageFeature,
+		useCheckPlanAvailabilityForPurchase: props.useCheckPlanAvailabilityForPurchase,
+	} );
 
-	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid(
-		{
-			allFeaturesList: getFeaturesList(),
-			selectedFeature: props.selectedFeature,
-			showLegacyStorageFeature: props.showLegacyStorageFeature,
-			useCheckPlanAvailabilityForPurchase: () => ( { value_bundle: true } ),
-			storageAddOns: [],
-		},
-		useGridPlans
+	const gridPlanForSpotlight = useGridPlanForSpotlight( {
+		gridPlans,
+		siteId: props.siteId,
+		intent: props.intent,
+		isSpotlightOnCurrentPlan: true,
+	} );
+
+	return (
+		gridPlans && (
+			<FeaturesGrid
+				{ ...props }
+				gridPlans={ gridPlans }
+				gridPlanForSpotlight={
+					'gridPlanForSpotlight' in props ? props.gridPlanForSpotlight : gridPlanForSpotlight
+				}
+			/>
+		)
 	);
-
-	return <FeaturesGrid { ...props } gridPlans={ gridPlansForFeaturesGrid } />;
 };
 
-export default {
-	title: 'plans-grid-next',
-	component: RenderFeaturesGrid,
-	decorators: [
-		( Story ) => (
-			<QueryClientProvider client={ queryClient }>
-				<Story />
-			</QueryClientProvider>
-		),
-	],
-	parameters: {
-		viewport: {
-			defaultViewport: 'LARGE',
-		},
+const defaultProps = {
+	allFeaturesList: getFeaturesList(),
+	coupon: undefined,
+	currentSitePlanSlug: undefined,
+	featureGroupMap: getPlanFeaturesGroupedForFeaturesGrid(),
+	generatedWPComSubdomain: {
+		isLoading: false,
+		result: { domain_name: 'zzz.wordpress.com' },
 	},
-} as Meta;
-
-const storyDefaults = {
-	args: defaultArgs,
+	hideUnavailableFeatures: false,
+	isCustomDomainAllowedOnFreePlan: false,
+	isInAdmin: false,
+	isInSignup: true,
+	onStorageAddOnClick: () => {},
+	planActionOverrides: undefined,
+	planUpgradeCreditsApplicable: undefined,
+	recordTracksEvent: () => {},
+	showLegacyStorageFeature: false,
+	showRefundPeriod: false,
+	showUpgradeableStorage: true,
+	siteId: undefined,
+	stickyRowOffset: 0,
+	useCheckPlanAvailabilityForPurchase: () => ( {} ),
+	useAction: () => ( {
+		primary: {
+			text: 'test',
+			callback: () => {},
+			status: 'enabled' as const,
+		},
+		postButtonText: '',
+	} ),
 };
 
-export const FeaturesGridTest = {
-	...storyDefaults,
-};
+const meta = {
+	title: 'FeaturesGrid',
+	component: ComponentWrapper,
+} satisfies Meta< typeof ComponentWrapper >;
+
+export default meta;
+
+type Story = StoryObj< typeof meta >;
+
+export const PlansInAdmin = {
+	name: 'Default in admin',
+	args: {
+		...defaultProps,
+		intent: 'plans-default-wpcom',
+		siteId: 222597060,
+		isInAdmin: true,
+		isInSignup: false,
+	},
+} satisfies Story;
+
+export const PlansInSignup = {
+	name: 'Default in signup',
+	args: {
+		...defaultProps,
+		intent: 'plans-default-wpcom',
+		isInSignup: true,
+	},
+} satisfies Story;
+
+export const CategorizedFeatures = {
+	name: 'Categorized features grid',
+	args: {
+		...PlansInSignup.args,
+		gridPlanForSpotlight: undefined,
+
+		// to better show the effect of the categories, here we use the one from the comparison grid instead
+		featureGroupMap: getPlanFeaturesGroupedForComparisonGrid(),
+		enableCategorisedFeatures: true,
+	},
+} satisfies Story;
+
+export const CuratedPlanMixByIntent = {
+	name: 'Curated plan mix configured by intent',
+	args: {
+		...defaultProps,
+		intent: 'plans-newsletter',
+	},
+} satisfies Story;

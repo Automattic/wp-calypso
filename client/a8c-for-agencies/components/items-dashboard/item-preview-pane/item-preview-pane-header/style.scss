@@ -1,0 +1,122 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.item-preview__header {
+
+	.item-preview__header-content {
+		.item-preview__header-info {
+			display: flex;
+			flex-direction: row;
+			flex-grow: 1;
+			gap: 10px;
+		}
+
+		.item-preview__header-title-summary {
+			word-wrap: anywhere;
+
+			.item-preview__header-summary-link svg {
+				vertical-align: middle;
+			}
+		}
+
+		.item-preview__close-preview,
+		.item-preview__close-preview-button,
+		.item-preview__admin-button {
+			align-self: flex-start;
+		}
+
+		.item-preview__close-preview-button {
+			margin-right: 15px;
+		}
+	}
+
+	@media (min-width: $break-large) {
+		.item-preview__header-favicon {
+			margin-right: 24px;
+			position: relative;
+		}
+
+		.item-preview__header-content {
+			padding: 48px 48px 24px 48px;
+			display: flex;
+			align-items: center;
+
+			.item-preview__header-title-summary {
+				flex-grow: 1;
+				display: flex;
+				flex-direction: column;
+
+				.item-preview__header-title {
+					@include a4a-font-heading-xxl;
+					color: var(--color-text-black);
+					margin-bottom: 4px;
+				}
+
+				.item-preview__header-summary {
+
+					.item-preview__header-summary-link {
+						display: flex;
+						gap: 2px;
+						align-items: center;
+						@include a4a-font-body-lg;
+						color: var(--color-accent-70);
+						width: fit-content;
+						text-decoration: none;
+
+						&:hover {
+							color: var(--color-link-dark);
+							text-decoration: underline;
+						}
+
+						&:focus {
+							box-shadow: none;
+							outline: thin dotted;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@media (max-width: $break-large) {
+		display: flex;
+		padding: 24px 24px 8px;
+
+		.sites-dataviews__site-favicon {
+			border-radius: 2px;
+		}
+
+		.item-preview__header-content {
+			flex-grow: 1;
+			display: flex;
+
+			.item-preview__header-title-summary {
+				flex-grow: 1;
+				display: flex;
+				flex-direction: column;
+
+				.item-preview__header-title {
+					@include a4a-font-heading-md;
+					color: var(--color-text-black);
+					margin-bottom: 4px;
+				}
+
+				.item-preview__header-summary {
+
+					.item-preview__header-summary-link {
+						display: flex;
+						align-items: center;
+						@include a4a-font-body-md;
+						color: var(--color-accent-70);
+						width: fit-content;
+						text-decoration: none;
+
+						&:focus {
+							box-shadow: none;
+						}
+					}
+				}
+
+			}
+		}
+	}
+}

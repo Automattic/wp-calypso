@@ -246,7 +246,7 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 				positionInFlow={ positionInFlow }
 				headerText={ getHeaderText() }
 				subHeaderText={ getSubHeaderText() }
-				showHeaderLogout={ true }
+				showHeaderLogout
 			>
 				<div className="p2-join-workspace">
 					{ isLoading ? (

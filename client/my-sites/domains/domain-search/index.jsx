@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { BackButton, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -46,6 +46,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
+import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	isSiteOnECommerceTrial,
@@ -98,11 +99,10 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		const domainMappingUrl = domainUseMyDomain(
-			this.props.selectedSiteSlug,
+		const domainMappingUrl = domainUseMyDomain( this.props.selectedSiteSlug, {
 			domain,
-			useMyDomainInputMode.transferOrConnect
-		);
+			initialMode: useMyDomainInputMode.transferOrConnect,
+		} );
 		this.isMounted && page( domainMappingUrl );
 	};
 
@@ -121,6 +121,10 @@ class DomainSearch extends Component {
 			document.body.classList.add( 'is-domain-plan-package-flow' );
 		}
 		this.checkSiteIsUpgradeable();
+
+		if ( this.props.isAddNewDomainContext ) {
+			this.props.setCurrentFlowName( 'domains' );
+		}
 
 		this.isMounted = true;
 	}
@@ -272,7 +276,7 @@ class DomainSearch extends Component {
 			return null;
 		}
 
-		const classes = classnames( 'main-column', {
+		const classes = clsx( 'main-column', {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
 		} );
 		const { domainRegistrationMaintenanceEndTime } = this.state;
@@ -450,5 +454,6 @@ export default connect(
 	{
 		recordAddDomainButtonClick,
 		recordRemoveDomainButtonClick,
+		setCurrentFlowName,
 	}
 )( withCartKey( withShoppingCart( localize( DomainSearch ) ) ) );

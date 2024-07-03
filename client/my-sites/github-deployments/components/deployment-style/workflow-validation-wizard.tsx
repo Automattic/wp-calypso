@@ -50,27 +50,19 @@ export const WorkflowValidationWizard = ( {
 		}
 
 		const workflowPath = `https://github.com/${ repository.owner }/${ repository.name }/blob/${ branchName }/${ workflow.workflow_path }`;
-
-		if ( workflowCheckResult.conclusion === 'error' ) {
-			return (
-				<p>
-					{ createInterpolateElement(
+		const description =
+			workflowCheckResult.conclusion === 'error'
+				? createInterpolateElement( __( 'Your workflow <filename /> is good to go!' ), {
+						filename: <ExternalLink href={ workflowPath }>{ workflow.file_name }</ExternalLink>,
+				  } )
+				: createInterpolateElement(
 						__( 'Please edit <filename /> and fix the problems we found.' ),
 						{
 							filename: <ExternalLink href={ workflowPath }>{ workflow.file_name }</ExternalLink>,
 						}
-					) }
-				</p>
-			);
-		}
+				  );
 
-		return (
-			<p>
-				{ createInterpolateElement( __( 'Your workflow <filename /> is good to go!' ), {
-					filename: <ExternalLink href={ workflowPath }>{ workflow.file_name }</ExternalLink>,
-				} ) }
-			</p>
-		);
+		return <p css={ { fontSize: '14px' } }>{ description }</p>;
 	};
 
 	return (

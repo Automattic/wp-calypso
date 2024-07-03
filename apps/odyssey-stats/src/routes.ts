@@ -47,11 +47,24 @@ const siteSelection = ( context: Context, next: () => void ) => {
 
 	dispatch( { type: SITE_REQUEST, siteId: siteId } );
 	wpcom.req
-		.get( {
-			path: getApiPath( '/site', { siteId } ),
-			apiNamespace: getApiNamespace(),
+		.get(
+			{
+				path: getApiPath( '/site', { siteId } ),
+				apiNamespace: getApiNamespace(),
+			},
+			{
+				// Only add the http_envelope flag if it's a Simple Classic site.
+				http_envelope: ! config.isEnabled( 'is_running_in_jetpack_site' ),
+			}
+		)
+		.then( ( data: { data: string } | SiteDetails ) => {
+			// For Jetpack/Atomic sites, data format is { data: JSON string of SiteDetails }
+			if ( config.isEnabled( 'is_running_in_jetpack_site' ) && 'data' in data ) {
+				return JSON.parse( data.data );
+			}
+			// For Simple sites, data is SiteDetails, so we directly pass it.
+			return data;
 		} )
-		.then( ( site: { data: string } ) => JSON.parse( site.data ) )
 		.then( ( site: SiteDetails ) => {
 			dispatch( { type: ODYSSEY_SITE_RECEIVE, site } );
 			dispatch( { type: SITE_REQUEST_SUCCESS, siteId } );

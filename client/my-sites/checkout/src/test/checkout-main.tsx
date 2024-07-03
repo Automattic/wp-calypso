@@ -523,7 +523,7 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
 		} );
 	} );
 
@@ -540,7 +540,7 @@ describe( 'CheckoutMain', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 3 );
 		} );
 	} );
 
@@ -561,7 +561,7 @@ describe( 'CheckoutMain', () => {
 		await waitFor( () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 4 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 6 );
 		} );
 	} );
 
@@ -631,7 +631,11 @@ describe( 'CheckoutMain', () => {
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalled();
 		} );
-		expect( await screen.findByText( /WordPress.com Personal/ ) ).toBeInTheDocument();
+		expect(
+			await screen.findByText( /WordPress.com Personal/, {
+				ignore: '.cost-overrides-list-product__title',
+			} )
+		).toBeInTheDocument();
 		// There are two versions of the "Gift" label: one shown at small width and one at wide width.
 		expect( ( await screen.findAllByText( 'Gift' ) ).length ).toBeGreaterThan( 0 );
 		expect( errorNotice ).not.toHaveBeenCalled();

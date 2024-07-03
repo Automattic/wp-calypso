@@ -8,7 +8,7 @@
 	display: flex;
 
 	// Keep synced with $custom-mobile-breakpoint in packages/components/src/highlight-cards/variables.scss.
-	@media ( max-width: 660px ) {
+	@media (max-width: 660px) {
 		margin-left: $font-body-small;
 		margin-right: $font-body-small;
 	}
@@ -33,7 +33,7 @@
 	}
 
 	// Keep synced with $custom-mobile-breakpoint in packages/components/src/highlight-cards/variables.scss.
-	@media ( max-width: 660px ) {
+	@media (max-width: 660px) {
 		margin-left: $font-body-small;
 		margin-right: $font-body-small;
 	}

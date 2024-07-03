@@ -783,9 +783,9 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
-			isFullLayout={ true }
+			isFullLayout
 			hideBack={ shouldHideBack() }
-			hideSkip={ true }
+			hideSkip
 			stepContent={
 				<PatternAssemblerContainer
 					siteId={ site?.ID }

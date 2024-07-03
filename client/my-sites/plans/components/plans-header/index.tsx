@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -16,7 +16,7 @@ const DomainUpsellHeader: React.FunctionComponent = () => {
 		'See and compare the features available on each WordPress.com plan.'
 	);
 	const withSkipButton = false;
-	const classes = classNames(
+	const classes = clsx(
 		'plans__formatted-header',
 		'plans__section-header',
 		'modernized-header',

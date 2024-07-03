@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 import * as React from 'react';
 
@@ -23,7 +23,7 @@ export const JetpackBenefitsCard: React.FC< Props > = ( {
 		return null;
 	};
 
-	const statBlockClassNames = classNames( 'jetpack-benefits__stat-block ', {
+	const statBlockClassNames = clsx( 'jetpack-benefits__stat-block ', {
 		'jetpack-benefits__stat-block--placeholder': placeholder,
 	} );
 

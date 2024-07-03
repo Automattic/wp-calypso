@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+$brand-text: "SF Pro Text", $sans;
+
 .github-deployments-list {
 	display: flex;
 	flex-direction: column;
@@ -43,18 +46,18 @@
 
 	td {
 		vertical-align: middle !important;
-		padding-right: 32px;
+		padding-right: 22px;
 
 		> * {
 			white-space: nowrap;
 		}
 
-		.github-deployments-list__repository-details {
+		.github-deployments-list__repository-details,
+		&.deployment-message i {
 			white-space: normal;
 		}
 
 		&:last-child {
-			padding-left: 32px;
 			padding-right: 0;
 			text-align: right;
 		}
@@ -207,5 +210,18 @@
 .github-deployments-commit-details-popover {
 	.popover__inner {
 		padding: 16px;
+	}
+}
+
+.github-deployments {
+	.header-cake__back {
+		color: var(--studio-gray-60);
+		font-size: $font-body-small;
+		padding: 0;
+		margin-bottom: 16px;
+		svg {
+			margin-right: 2px;
+			fill: var(--studio-gray-60);
+		}
 	}
 }

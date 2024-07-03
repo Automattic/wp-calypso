@@ -66,6 +66,11 @@ export function isAgencyUser( state: PartnerPortalStore | IAppState ): boolean {
 	);
 }
 
+export function isA4AUser( state: PartnerPortalStore | IAppState ): boolean {
+	const currentUser = getCurrentUser( state );
+	return currentUser?.jetpack_partner_types?.includes( 'a4a_agency' ) ?? false;
+}
+
 export function showAgencyDashboard( state: PartnerPortalStore ): boolean {
 	return config.isEnabled( 'jetpack/agency-dashboard' ) && isAgencyUser( state );
 }

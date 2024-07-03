@@ -1,0 +1,23 @@
+.simple-list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		display: flex;
+		flex-direction: row;
+		@include a4a-font-body-lg($line-height: 1.625);
+	}
+}
+
+.simple-list-icon {
+	margin-inline-end: 4px;
+	fill: var(--color-primary-40);
+	margin-block-end: -6px;
+	min-width: 24px;
+	min-height: 24px;
+}

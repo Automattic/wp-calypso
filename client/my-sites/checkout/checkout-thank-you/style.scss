@@ -103,27 +103,6 @@
 	text-align: left;
 }
 
-.checkout-thank-you__features-header {
-	color: var(--color-neutral-50);
-	font-size: $font-title-medium;
-	font-weight: 400;
-	line-height: 32px;
-	margin: 48px 48px 24px;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		box-shadow: none;
-		margin-bottom: 0;
-	}
-
-	&.is-placeholder {
-		@include placeholder( --color-neutral-10 );
-
-		margin-left: auto;
-		margin-right: auto;
-		width: 20%;
-	}
-}
-
 .checkout-thank-you__purchase-details-list {
 	text-align: center;
 
@@ -185,6 +164,9 @@
 	display: flex;
 	text-align: left;
 	margin-top: 15px;
+	font-size: $font-title-small;
+	font-weight: 400;
+	word-break: break-word;
 
 	.gridicons-checkmark-circle {
 		position: relative;
@@ -196,7 +178,6 @@
 }
 
 .checkout-thank-you__header-heading,
-.checkout-thank-you__header-text,
 .checkout-thank-you__success-message-item {
 	clear: none;
 }
@@ -217,58 +198,6 @@
 	font-size: $font-title-medium;
 	font-weight: 400;
 	margin: 24px 0 8px;
-}
-
-.checkout-thank-you__header-text,
-.checkout-thank-you__success-message-item {
-	font-size: $font-title-small;
-	font-weight: 400;
-	margin-top: 15px;
-	word-break: break-word;
-}
-
-.checkout-thank-you__header.is-placeholder {
-	@include breakpoint-deprecated( "<660px" ) {
-		padding-top: 170px;
-	}
-
-	@include breakpoint-deprecated( ">660px" ) {
-		padding-left: 190px;
-	}
-
-	.checkout-thank-you__header-icon {
-		display: none;
-	}
-
-	.checkout-thank-you__header-heading,
-	.checkout-thank-you__header-text,
-	.checkout-thank-you__success-message-item {
-		@include placeholder( --color-neutral-10 );
-
-		display: block;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			margin: 0 auto;
-		}
-	}
-
-	.checkout-thank-you__header-heading {
-		width: 50%;
-	}
-
-	.checkout-thank-you__header-text,
-	.checkout-thank-you__success-message-item {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 2em;
-		margin-bottom: 8px;
-		margin-top: 15px;
-		width: 90%;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			margin-bottom: 18px;
-			margin-top: 18px;
-		}
-	}
 }
 
 // eCommerce Plan Thank You styles

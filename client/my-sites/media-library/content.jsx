@@ -2,7 +2,7 @@ import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { groupBy, isEmpty, map, size, values } from 'lodash';
 import PropTypes from 'prop-types';
@@ -309,7 +309,7 @@ export class MediaLibraryContent extends Component {
 		};
 		return (
 			<NoticeAction
-				external={ true }
+				external
 				href={
 					upgradeNudgeFeature
 						? `/plans/compare/${ this.props.siteSlug }?feature=${ upgradeNudgeFeature }`
@@ -483,7 +483,7 @@ export class MediaLibraryContent extends Component {
 	}
 
 	render() {
-		const classNames = classnames( 'media-library__content', {
+		const classNames = clsx( 'media-library__content', {
 			'has-no-upload-button': ! this.props.displayUploadMediaButton,
 		} );
 

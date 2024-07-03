@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { englishLocales, useLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useInView } from 'react-intersection-observer';
@@ -25,6 +26,7 @@ const SiteLaunchDonutContainer = styled.div( {
 	position: 'relative',
 	flexShrink: 0,
 	height: '25px',
+	zIndex: 0,
 } );
 
 const SiteLaunchNagLink = styled.a( {
@@ -33,11 +35,8 @@ const SiteLaunchNagLink = styled.a( {
 	gap: '25px',
 	marginLeft: '-5px',
 	fontSize: '12px',
-	lineHeight: '20px',
+	lineHeight: '16px',
 	whiteSpace: 'nowrap',
-	'&:hover span': {
-		textDecoration: 'underline',
-	},
 } );
 
 const SiteLaunchNagText = styled.span( {
@@ -84,7 +83,8 @@ const recordNagView = () => {
 };
 
 export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 	const { ref } = useInView( {
 		onChange: ( inView ) => inView && recordNagView(),
 	} );
@@ -106,7 +106,11 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const link = validSiteIntent
 		? getLaunchpadUrl( site.slug, validSiteIntent )
 		: getDashboardUrl( site.slug );
-	const text = validSiteIntent ? __( 'Launch guide' ) : __( 'Launch checklist' );
+	const checklistTranslation =
+		hasTranslation( 'Checklist' ) || englishLocales.includes( locale )
+			? __( 'Checklist' )
+			: __( 'Launch checklist' );
+	const text = validSiteIntent ? __( 'Launch guide' ) : checklistTranslation;
 
 	return (
 		<SiteLaunchNagLink

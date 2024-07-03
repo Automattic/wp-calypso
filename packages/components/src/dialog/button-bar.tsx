@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { isValidElement, cloneElement } from 'react';
 import Button from '../button';
 import type { ReactElement, ReactNode, FunctionComponent } from 'react';
@@ -37,7 +37,7 @@ const ButtonBar: FunctionComponent< Props > = ( { buttons, baseClassName, onButt
 					return cloneElement( button, { key } );
 				}
 
-				const classes = classnames( button.className, button.additionalClassNames, {
+				const classes = clsx( button.className, button.additionalClassNames, {
 					'is-primary': button.isPrimary || ( buttons.length === 1 && ! button.scary ),
 				} );
 

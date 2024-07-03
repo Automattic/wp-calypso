@@ -1,5 +1,5 @@
 import { FormLabel } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -46,7 +46,7 @@ export class FormPhoneInput extends Component {
 
 	render() {
 		return (
-			<div className={ classnames( this.props.className, 'form-phone-input' ) }>
+			<div className={ clsx( this.props.className, 'form-phone-input' ) }>
 				<FormFieldset className="form-phone-input__country">
 					<FormLabel htmlFor="country_code">
 						{ this.props.translate( 'Country code', {

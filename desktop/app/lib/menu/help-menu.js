@@ -47,6 +47,7 @@ module.exports = function ( { view, window } ) {
 		{
 			label: 'Privacy Policy',
 			click: function () {
+				// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 				shell.openExternal( 'https://automattic.com/privacy/' );
 			},
 		},

@@ -39,7 +39,9 @@ export default function PluginAvailableOnSitesList( props: Props ) {
 			<div className="plugin-details-v2__title">{ translate( 'Available on' ) }</div>
 			<SitesList
 				{ ...props }
-				items={ sitesWithSecondarySites.map( ( site ) => site.site ) }
+				items={ sitesWithSecondarySites
+					.map( ( site ) => site.site )
+					.filter( ( site ) => site && ! site.is_deleted ) }
 				columns={ columns }
 			/>
 		</div>

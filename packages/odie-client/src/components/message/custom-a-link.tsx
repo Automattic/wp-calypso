@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useOdieAssistantContext } from '../../context';
 import { uriTransformer } from './uri-transformer';
 
@@ -21,7 +21,7 @@ const CustomALink = ( {
 } ) => {
 	const { trackEvent } = useOdieAssistantContext();
 
-	const classNames = classnames( 'odie-sources', {
+	const classNames = clsx( 'odie-sources', {
 		'odie-sources-inline': inline,
 	} );
 

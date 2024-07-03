@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { isBlankCanvasDesign } from '../..';
 import type { Design } from '../../types';
 import './style.scss';
@@ -20,11 +20,11 @@ const FeaturedPicksButtons: React.FC< Props > = ( { className, designs, onSelect
 	}
 
 	return (
-		<div className={ classnames( 'featured-picks-buttons', className ) }>
+		<div className={ clsx( 'featured-picks-buttons', className ) }>
 			{ designs.map( ( design ) => (
 				<Button
 					key={ design.slug }
-					className={ classnames( 'featured-picks-buttons__button', className ) }
+					className={ clsx( 'featured-picks-buttons__button', className ) }
 					variant="secondary"
 					onClick={ () => onSelect( design ) }
 				>

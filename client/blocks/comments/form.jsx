@@ -1,5 +1,5 @@
 import { Button, FormInputValidation } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -145,7 +145,7 @@ class PostCommentForm extends Component {
 			return null;
 		}
 
-		const buttonClasses = classNames( {
+		const buttonClasses = clsx( {
 			'is-active': this.hasCommentText(),
 			'is-visible': this.state.haveFocus || this.hasCommentText(),
 		} );

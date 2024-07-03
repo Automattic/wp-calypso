@@ -5,7 +5,7 @@
 	display: flex;
 	min-height: 140px;
 
-	@media ( min-width: 661px ) and ( max-width: 773px ) {
+	@media (min-width: 661px) and (max-width: 773px) {
 		background-position: 150px 20px;
 	}
 
@@ -23,7 +23,7 @@
 		margin-right: -8px; // prevent right crop of illustration
 
 		// Hides the character when main content column gets too narrow
-		@media ( min-width: 661px ) and ( max-width: 840px ) {
+		@media (min-width: 661px) and (max-width: 840px) {
 			display: none;
 		}
 

@@ -1,5 +1,5 @@
-import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
+import { getProductBillingSlugByThemeId } from 'calypso/state/products-list/selectors/get-product-billing-slug-by-theme-id';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
 /**
@@ -9,7 +9,10 @@ import { getUserPurchases } from 'calypso/state/purchases/selectors';
  * @returns {boolean} true if the site subscribed to the theme
  */
 export function isMarketplaceThemeSubscribedByUser( state = {}, themeId: string ) {
-	const products = getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( themeId ) );
+	const products = getProductsByBillingSlug(
+		state,
+		getProductBillingSlugByThemeId( state, themeId )
+	);
 	const userPurchases = getUserPurchases( state );
 
 	return !! (

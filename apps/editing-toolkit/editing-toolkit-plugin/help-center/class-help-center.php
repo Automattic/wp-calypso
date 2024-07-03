@@ -7,6 +7,8 @@
 
 namespace A8C\FSE;
 
+use Automattic\Jetpack\Connection\Manager as Connection_Manager;
+
 /**
  * Class Help_Center
  */
@@ -46,7 +48,8 @@ class Help_Center {
 			return;
 		}
 
-		$this->asset_file = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
+		$file             = $this->is_jetpack_disconnected() ? 'dist/help-center-disconnected.asset.php' : 'dist/help-center.asset.php';
+		$this->asset_file = include plugin_dir_path( __FILE__ ) . $file;
 		$this->version    = $this->asset_file['version'];
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
@@ -85,9 +88,11 @@ class Help_Center {
 	public function enqueue_script() {
 		$script_dependencies = $this->asset_file['dependencies'];
 
+		// If the user is not connected, the Help Center icon will link to the support page.
+		// The disconnected version is significantly smaller than the connected version.
 		wp_enqueue_script(
 			'help-center-script',
-			plugins_url( 'dist/help-center.min.js', __FILE__ ),
+			plugins_url( $this->is_jetpack_disconnected() ? 'dist/help-center-disconnected.min.js' : 'dist/help-center.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$this->version,
 			true
@@ -119,23 +124,29 @@ class Help_Center {
 			'before'
 		);
 
-		wp_localize_script(
-			'help-center-script',
-			'helpCenterData',
-			array(
-				'currentSite' => $this->get_current_site(),
-			)
-		);
+		$user_id      = get_current_user_id();
+		$user_data    = get_userdata( $user_id );
+		$username     = $user_data->user_login;
+		$user_email   = $user_data->user_email;
+		$display_name = $user_data->display_name;
+		$avatar_url   = function_exists( 'wpcom_get_avatar_url' ) ? wpcom_get_avatar_url( $user_email, 64, '', true )[0] : get_avatar_url( $user_id );
 
-		$current_user = wp_get_current_user();
-
-		wp_localize_script(
+		wp_add_inline_script(
 			'help-center-script',
-			'odieUserData',
-			array(
-				'displayName' => $current_user->data->display_name,
-				'email'       => $current_user->data->user_email,
-			)
+			'const helpCenterData = ' . wp_json_encode(
+				array(
+					'currentUser' => array(
+						'ID'           => $user_id,
+						'username'     => $username,
+						'display_name' => $display_name,
+						'avatar_URL'   => $avatar_url,
+						'email'        => $user_email,
+					),
+					'site'        => $this->get_current_site(),
+					'locale'      => get_locale(),
+				)
+			),
+			'before'
 		);
 
 		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
@@ -170,21 +181,24 @@ class Help_Center {
 		$plan    = array_pop( $bundles );
 
 		$return_data = array(
-			'ID'               => $site,
-			'name'             => get_bloginfo( 'name' ),
-			'URL'              => get_bloginfo( 'url' ),
-			'plan'             => array(
+			'ID'              => $site,
+			'name'            => get_bloginfo( 'name' ),
+			'URL'             => get_bloginfo( 'url' ),
+			'plan'            => array(
 				'product_slug' => isset( $plan->product_slug ) ? $plan->product_slug : null,
 			),
-			'is_wpcom_atomic'  => defined( 'IS_ATOMIC' ) && IS_ATOMIC,
-			'jetpack'          => true === apply_filters( 'is_jetpack_site', false, $site ),
-			'logo'             => array(
+			'is_wpcom_atomic' => defined( 'IS_ATOMIC' ) && IS_ATOMIC,
+			'jetpack'         => true === apply_filters( 'is_jetpack_site', false, $site ),
+			'logo'            => array(
 				'id'    => $logo_id,
 				'sizes' => array(),
 				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0] ?? '',
 			),
-			'launchpad_screen' => get_option( 'launchpad_screen' ),
-			'site_intent'      => get_option( 'site_intent' ),
+			'options'         => array(
+				'launchpad_screen' => get_option( 'launchpad_screen' ),
+				'site_intent'      => get_option( 'site_intent' ),
+				'admin_url'        => get_admin_url(),
+			),
 		);
 
 		if ( $is_support_site ) {
@@ -206,8 +220,8 @@ class Help_Center {
 		$controller = new WP_REST_Help_Center_Sibyl();
 		$controller->register_rest_route();
 
-		require_once __DIR__ . '/class-wp-rest-help-center-support-availability.php';
-		$controller = new WP_REST_Help_Center_Support_Availability();
+		require_once __DIR__ . '/class-wp-rest-help-center-support-status.php';
+		$controller = new WP_REST_Help_Center_Support_Status();
 		$controller->register_rest_route();
 
 		require_once __DIR__ . '/class-wp-rest-help-center-search.php';
@@ -240,6 +254,10 @@ class Help_Center {
 
 		require_once __DIR__ . '/class-wp-rest-help-center-odie.php';
 		$controller = new WP_REST_Help_Center_Odie();
+		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-email-support-enabled.php';
+		$controller = new WP_REST_Help_Center_Email_Support_Enabled();
 		$controller->register_rest_route();
 	}
 	/**
@@ -276,6 +294,43 @@ class Help_Center {
 	}
 
 	/**
+	 * Returns true if the current user is connected through Jetpack
+	 */
+	public function is_jetpack_disconnected() {
+		$user_id = get_current_user_id();
+		$blog_id = get_current_blog_id();
+
+		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+			return ! ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id );
+		}
+
+		if ( true === apply_filters( 'is_jetpack_site', false, $blog_id ) ) {
+			return ! ( new Connection_Manager( 'jetpack' ) )->is_user_connected( $user_id );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns the URL for the Help Center redirect.
+	 * Used for the Help Center when disconnected.
+	 */
+	public function get_help_center_url() {
+		// phpcs:ignore WPCOM.I18nRules.LocalizedUrl.LocalizedUrlAssignedToVariable
+		$help_url = 'https://wordpress.com/help';
+
+		if ( ! $this->is_jetpack_disconnected() ) {
+			return false;
+		}
+
+		if ( function_exists( 'localized_wpcom_url' ) ) {
+			return localized_wpcom_url( $help_url );
+		}
+
+		return $help_url;
+	}
+
+	/**
 	 * Add icon to WP-ADMIN admin bar.
 	 */
 	public function enqueue_wp_admin_scripts() {
@@ -296,19 +351,17 @@ class Help_Center {
 			);
 		}
 
-		// Crazy high number inorder to prevent Jetpack removing it
+		// Crazy high number to prevent Jetpack removing it
 		// https://github.com/Automattic/jetpack/blob/30213ee594cd06ca27199f73b2658236fda24622/projects/plugins/jetpack/modules/masterbar/masterbar/class-masterbar.php#L196.
 		add_action(
 			'wp_before_admin_bar_render',
 			function () {
 				global $wp_admin_bar;
 
-				wp_localize_script(
+				wp_add_inline_script(
 					'help-center-script',
-					'helpCenterAdminBar',
-					array(
-						'isLoaded' => true,
-					)
+					'helpCenterData.isAdminBar = true;',
+					'before'
 				);
 
 				$wp_admin_bar->add_menu(
@@ -316,9 +369,11 @@ class Help_Center {
 						'id'     => 'help-center',
 						'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
 						'parent' => 'top-secondary',
+						'href'   => $this->get_help_center_url(),
 						'meta'   => array(
-							'html'  => '<div id="help-center-masterbar" />',
-							'class' => 'menupop',
+							'html'   => '<div id="help-center-masterbar" />',
+							'class'  => 'menupop',
+							'target' => '_blank',
 						),
 					)
 				);

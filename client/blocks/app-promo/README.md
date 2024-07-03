@@ -15,7 +15,7 @@ function render() {
 			campaign="your-cool-campaing"
 			subheader="this is a subheader"
 			className="a-cool-class"
-			hasQRCode={ true }
+			hasQRCode
 			hasGetAppButton={ false }
 			/>
 	);

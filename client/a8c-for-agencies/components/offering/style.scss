@@ -6,16 +6,12 @@
 	padding-block-start: 16px;
 
 	.a4a-offering-card__title {
-		font-weight: 500;
-		font-size: 1rem;
-		line-height: 24px;
+		@include a4a-font-heading-md;
 		color: var(--color-neutral-100);
 	}
 
 	.a4a-offering-card__description {
-		font-weight: 400;
-		font-size: 0.875rem;
-		line-height: 20px;
+		@include a4a-font-body-md;
 		color: var(--color-neutral-60);
 		margin-block-end: 16px;
 	}
@@ -29,25 +25,36 @@
 
 			.a4a-offering-item__title {
 				color: var(--color-neutral-100);
-				font-weight: 500;
-				font-size: 1rem;
+				@include a4a-font-heading-md;
 				margin-inline-start: 10px;
 			}
 		}
 
 		.a4a-offering-item__description {
 			color: var(--color-neutral-60);
-			font-weight: 400;
-			font-size: 0.875rem;
+			@include a4a-font-body-md;
+		}
+
+		.foldable-card__header {
+			padding-inline: 24px;
 		}
 
 		.foldable-card__content {
-			border: none;
 			padding-block-start: 0;
-		}
-		.foldable-card.is-expanded .foldable-card__content {
 			border: none;
-			padding: 0;
+		}
+		&.foldable-card.is-expanded .foldable-card__content {
+			padding-block: 0 24px;
+			padding-inline: 24px;
+			border: none;
+		}
+
+		.foldable-card__action {
+			right: 8px;
+		}
+
+		.foldable-card__expand .gridicon {
+			fill: var(--color-neutral-100);
 		}
 
 		.a4a-offering-item__button {
@@ -59,7 +66,7 @@
 		display: grid;
 		gap: 16px;
 
-		margin: 8px 0 16px 0;
+		margin: 8px 0 24px 0;
 		padding: 0;
 
 		list-style-type: none;
@@ -72,16 +79,15 @@
 	.a4a-offering-item__card-list-item {
 		color: var(--color-neutral-80);
 		display: flex;
-		align-items: center;
-		font-size: 0.875rem;
-		line-height: 20px;
+		align-items: flex-start;
+		@include a4a-font-body-md;
 	}
 
 	.a4a-offering-item__icon-container {
 		margin-inline-end: 10px;
 
 		.a4a-offering-item__gridicon {
-			fill: var(--color-primary-20);
+			fill: var(--color-primary-30);
 			display: flex;
 			align-items: center;
 			justify-content: center;

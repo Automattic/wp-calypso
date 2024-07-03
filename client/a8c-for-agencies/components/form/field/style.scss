@@ -1,0 +1,30 @@
+.a4a-form__section-field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.a4a-form__section-field-label,
+.a4a-form__section-field-sub,
+.a4a-form__section-field-description {
+	@include a4a-font-body-md;
+}
+
+.a4a-form__section-field-label {
+	font-weight: 500;
+}
+
+.a4a-form__section-field-sub,
+.a4a-form__section-field-description,
+.a4a-form__section-field-optional {
+	font-weight: 400;
+	color: var(--color-neutral-50);
+}
+
+.a4a-form__section-field-optional {
+	margin-inline-start: 4px;
+}
+
+.a4a-form__section-field-required {
+	color: var(--color-neutral-50);
+}

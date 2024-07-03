@@ -1,5 +1,5 @@
 import { FormInputValidation, FormLabel, Gridicon, Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -233,12 +233,12 @@ export default function TransferDomainToAnyUser( {
 								name="email"
 								onChange={ handleEmailChange }
 								value={ email }
-								className={ classNames( 'transfer-domain-to-any-user__input', {
+								className={ clsx( 'transfer-domain-to-any-user__input', {
 									'is-error': ! isValidEmail,
 								} ) }
 								maxLength={ 1000 }
 							/>
-							{ ! isValidEmail && <FormInputValidation isError={ true } text={ errorMessage } /> }
+							{ ! isValidEmail && <FormInputValidation isError text={ errorMessage } /> }
 						</FormFieldset>
 						<div className="transfer-domain-to-any-user__notice">
 							<Gridicon icon="info-outline" size={ 18 } />

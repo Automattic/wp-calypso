@@ -1,10 +1,11 @@
 import { Spinner } from '@automattic/components';
-import { DataViews } from '@wordpress/dataviews';
+import { usePrevious } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode } from 'react';
+import { ReactNode, useRef, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom';
+import { DataViews } from 'calypso/components/dataviews';
 import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
-// todo: Extract from style.scss not common styles (colors and specific to Jetpack Cloud components)
+
 import './style.scss';
 
 const getIdByPath = ( item: object, path: string ) => {
@@ -54,29 +55,32 @@ export type ItemsDataViewsProps = {
 
 const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsProps ) => {
 	const translate = useTranslate();
-
-	// Until the DataViews package is updated to support the spinner, we need to manually add the (loading) spinner to the table wrapper for now.
-	// todo: The DataViews v0.9 has the spinner support. Remove this once we upgrade the package.
-	const SpinnerWrapper = () => {
-		return (
-			<div className="spinner-wrapper">
-				<Spinner />
-			</div>
-		);
-	};
+	const scrollContainerRef = useRef< HTMLElement >();
+	const previousDataViewsState = usePrevious( data.dataViewsState );
 	const dataviewsWrapper = document.getElementsByClassName( 'dataviews-wrapper' )[ 0 ];
-	if ( dataviewsWrapper ) {
-		// Remove any existing spinner if present
-		const existingSpinner = dataviewsWrapper.querySelector( '.spinner-wrapper' );
-		if ( existingSpinner ) {
-			existingSpinner.remove();
+
+	useLayoutEffect( () => {
+		if (
+			! scrollContainerRef.current ||
+			previousDataViewsState?.type !== data.dataViewsState.type
+		) {
+			scrollContainerRef.current = document.querySelector(
+				'.dataviews-view-list, .dataviews-view-table-wrapper'
+			) as HTMLElement;
 		}
 
-		const spinnerWrapper = dataviewsWrapper.appendChild( document.createElement( 'div' ) );
-		spinnerWrapper.classList.add( 'spinner-wrapper' );
-		// Render the SpinnerWrapper component inside the spinner wrapper
-		ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
-	}
+		if ( ! previousDataViewsState?.selectedItem && data.dataViewsState.selectedItem ) {
+			window.setTimeout(
+				() => scrollContainerRef.current?.querySelector( 'li.is-selected' )?.scrollIntoView(),
+				300
+			);
+			return;
+		}
+
+		if ( previousDataViewsState?.page !== data.dataViewsState.page ) {
+			scrollContainerRef.current?.scrollTo( 0, 0 );
+		}
+	}, [ data.dataViewsState.type, data.dataViewsState.page ] );
 
 	return (
 		<div className={ className }>
@@ -85,7 +89,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 				paginationInfo={ data.pagination }
 				fields={ data.fields }
 				view={ data.dataViewsState }
-				search={ true }
+				search={ data?.enableSearch ?? true }
 				searchLabel={ data.searchLabel ?? translate( 'Search' ) }
 				getItemId={
 					data.getItemId ??
@@ -95,11 +99,23 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 						return item.id;
 					} )
 				}
+				onSelectionChange={ data.onSelectionChange }
 				onChangeView={ data.setDataViewsState }
 				supportedLayouts={ [ 'table' ] }
 				actions={ data.actions }
 				isLoading={ isLoading }
 			/>
+			{ dataviewsWrapper &&
+				ReactDOM.createPortal(
+					/**
+					 * Until the DataViews package is updated to support the spinner, we need to manually add the (loading) spinner to the table wrapper for now.
+					 * todo: The DataViews v0.9 has the spinner support. Remove this once we upgrade the package.
+					 */
+					<div className="spinner-wrapper">
+						<Spinner />
+					</div>,
+					dataviewsWrapper
+				) }
 		</div>
 	);
 };
