@@ -8,7 +8,7 @@ import {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import A4AThemedModal from '../../a4a-themed-modal';
-import modalImage from './modal-image.png';
+import modalImage from './modal-image.jpg';
 
 import './style.scss';
 
