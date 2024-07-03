@@ -105,7 +105,7 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 	}
 
 	const billingTimeFrame = translate(
-		'per month, %(discountedPrice)s billed annually for the first year, %(originalPrice)s afterwards, excl. taxes',
+		'per month, %(discountedPrice)s billed annually for the first year, %(originalPrice)s per year afterwards, excl. taxes',
 		{
 			args: {
 				discountedPrice: formatCurrency( introOfferFullPrice, currencyCode, { stripZeros: true } ),
@@ -148,13 +148,12 @@ const preparePlanPriceOfferProps = (
 	const currencyCode = pricing?.currencyCode;
 	const originalMonthlyPrice = pricing?.originalPrice.monthly || undefined;
 
-	const introOfferRawPrice = pricing?.introOffer?.rawPrice;
-	const introOfferMonthlyPrice = introOfferRawPrice
-		? calculateMonthlyPriceForPlan( selectedPlan, introOfferRawPrice )
+	const introOfferFullPrice = pricing?.introOffer?.rawPrice || undefined;
+	const introOfferMonthlyPrice = introOfferFullPrice
+		? calculateMonthlyPriceForPlan( selectedPlan, introOfferFullPrice )
 		: undefined;
 
-	const originalFullPrice = pricing?.originalPrice.full || undefined;
-	const introOfferFullPrice = pricing?.introOffer?.rawPrice || undefined;
+	const originalFullPrice = pricing?.originalPrice.full || undefined;	
 
 	const introOfferEnabled = config.isEnabled( 'migration-flow/introductory-offer' );
 	const isIntroOfferComplete = pricing?.introOffer?.isOfferComplete || false;
