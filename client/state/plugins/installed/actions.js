@@ -443,19 +443,25 @@ function installPluginHelper(
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST } );
 
+		let lastStep = '';
+
 		const doInstall = function ( pluginData ) {
+			lastStep = 'doInstall';
 			return getPluginHandler( siteId, pluginData.slug ).install();
 		};
 
 		const doActivate = function ( pluginData ) {
+			lastStep = 'doActivate';
 			return getPluginHandler( siteId, pluginData.id ).activate();
 		};
 
 		const doUpdate = function ( pluginData ) {
+			lastStep = 'doUpdate';
 			return getPluginHandler( siteId, pluginData.id ).updateVersion();
 		};
 
 		const doAutoupdates = function ( pluginData ) {
+			lastStep = 'doAutoupdates';
 			return getPluginHandler( siteId, pluginData.id ).enableAutoupdate();
 		};
 
@@ -496,7 +502,7 @@ function installPluginHelper(
 			let type = PLUGIN_INSTALL_REQUEST_FAILURE;
 			let data = {};
 			// If the error is a ServerError, the plugin was installed but not activated
-			if ( error.name === 'ServerError' ) {
+			if ( error.name === 'ServerError' && lastStep === 'doActivate' ) {
 				type = PLUGIN_INSTALL_REQUEST_PARTIAL_SUCCESS;
 				data = { ...plugin, active: false };
 			}
