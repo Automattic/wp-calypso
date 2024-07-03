@@ -91,7 +91,7 @@ describe( 'ChecklistItem', () => {
 
 	describe( 'when the task is disabled', () => {
 		it( 'disables the button', () => {
-			renderComponent( { task: buildTask( { disabled: true } ) } );
+			renderComponent( { task: buildTask( { disabled: true } ), onClick: () => {} } );
 			const taskButton = screen.queryByRole( 'button' );
 
 			expect( taskButton ).toBeDisabled();
@@ -120,7 +120,7 @@ describe( 'ChecklistItem', () => {
 		} );
 
 		it( 'disables the task', () => {
-			renderComponent( { task: buildTask( { completed: true } ) } );
+			renderComponent( { task: buildTask( { completed: true } ), onClick: () => {} } );
 			const taskButton = screen.queryByRole( 'button' );
 
 			expect( taskButton ).toBeDisabled();
@@ -135,7 +135,10 @@ describe( 'ChecklistItem', () => {
 			} );
 
 			it( 'enables the task', () => {
-				renderComponent( { task: buildTask( { completed: true, disabled: false } ) } );
+				renderComponent( {
+					task: buildTask( { completed: true, disabled: false } ),
+					onClick: () => {},
+				} );
 				const taskButton = screen.queryByRole( 'button' );
 
 				expect( taskButton ).toBeEnabled();
