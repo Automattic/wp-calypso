@@ -8,6 +8,7 @@ import { useSelect } from '@wordpress/data';
 import * as Plans from '../';
 import * as Purchases from '../../purchases';
 import * as WpcomPlansUI from '../../wpcom-plans-ui';
+import { COST_OVERRIDE_REASONS } from '../constants';
 import type { AddOnMeta } from '../../add-ons/types';
 
 export type UseCheckPlanAvailabilityForPurchase = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
@@ -40,6 +41,13 @@ interface Props {
 	 * `storageAddOmns` TODO: should become a required prop.
 	 */
 	storageAddOns: ( AddOnMeta | null )[] | null;
+
+	/**
+	 * Whether to include discounts from plan proration.
+	 * This is applicable only if a siteId is passed to this hook.
+	 * If true, the pricing includes discounts from upgrade credits.
+	 */
+	withProratedDiscounts?: boolean;
 }
 
 function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
@@ -62,6 +70,7 @@ const usePricingMetaForGridPlans = ( {
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
 	storageAddOns,
+	withProratedDiscounts,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
 	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs } );
 	// plans - should have a definition for all plans, being the main source of API data
@@ -187,7 +196,11 @@ const usePricingMetaForGridPlans = ( {
 					};
 
 					// Do not return discounted prices if discount is due to plan proration
-					if ( sitePlan?.pricing.discountReasonCode === 'recent-plan-proration' ) {
+					if (
+						! withProratedDiscounts &&
+						sitePlan?.pricing?.costOverrides?.[ 0 ].overrideCode ===
+							COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION
+					) {
 						return [
 							planSlug,
 							{
