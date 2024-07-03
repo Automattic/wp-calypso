@@ -117,6 +117,7 @@ export interface Site {
 	active_paid_subscription_slugs: Array< string >;
 	site_color?: string;
 	enabled_plugin_slugs?: Array< string >;
+	a4a_site_id?: number;
 }
 export interface SiteNode {
 	value: Site;

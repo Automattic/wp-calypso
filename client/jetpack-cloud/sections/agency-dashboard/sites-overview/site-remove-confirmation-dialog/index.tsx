@@ -7,12 +7,15 @@ import './style.scss';
 type Props = {
 	site: SiteNode;
 	onClose: () => void;
+	onConfirm?: () => void;
+	busy?: boolean;
 };
 
-export function SiteRemoveConfirmationDialog( { site, onClose }: Props ) {
+export function SiteRemoveConfirmationDialog( { site, onConfirm, onClose, busy }: Props ) {
 	const translate = useTranslate();
 
 	const title = translate( 'Remove site' );
+
 	return (
 		<Dialog
 			label={ title }
@@ -20,11 +23,18 @@ export function SiteRemoveConfirmationDialog( { site, onClose }: Props ) {
 			additionalClassNames="site-remove-confirmation-dialog"
 			onClose={ onClose }
 			buttons={ [
-				<Button key="cancel-button" onClick={ onClose }>
+				<Button key="cancel-button" onClick={ onClose } disabled={ busy }>
 					{ translate( 'Cancel' ) }
 				</Button>,
 
-				<Button key="remove-site-button" primary scary>
+				<Button
+					key="remove-site-button"
+					primary
+					scary
+					disabled={ busy }
+					busy={ busy }
+					onClick={ onConfirm }
+				>
 					{ translate( 'Remove site' ) }
 				</Button>,
 			] }

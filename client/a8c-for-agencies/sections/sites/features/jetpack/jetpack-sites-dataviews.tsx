@@ -36,6 +36,7 @@ export const JetpackSitesDataViews = ( {
 	dataViewsState,
 	forceTourExampleSite = false,
 	className,
+	onRefetchSite,
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
@@ -394,6 +395,7 @@ export const JetpackSitesDataViews = ( {
 											isLargeScreen={ isLargeScreen }
 											site={ item.site }
 											siteError={ item.site.error }
+											onRefetchSite={ onRefetchSite }
 										/>
 										<Button
 											onClick={ () => openSitePreviewPane( item.site.value ) }
@@ -433,7 +435,9 @@ export const JetpackSitesDataViews = ( {
 			isLoading,
 			openSitePreviewPane,
 			renderField,
+			isNotProduction,
 			isLargeScreen,
+			onRefetchSite,
 		]
 	);
 
