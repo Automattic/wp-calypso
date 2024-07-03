@@ -238,13 +238,25 @@ export default function AllTimeHighlightsSection( {
 	);
 }
 
-function AllTimeStatsCard( props: any ) {
+type InfoItem = {
+	id: string;
+	icon: JSX.Element;
+	title: string;
+	count: number;
+	hidden?: boolean;
+};
+
+type AllTimeStatsCardProps = {
+	infoItems: InfoItem[];
+};
+
+function AllTimeStatsCard( { infoItems }: AllTimeStatsCardProps ) {
 	const translate = useTranslate();
 	return (
 		<Card className="highlight-card">
 			<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
 			<div className="highlight-card-info-item-list">
-				{ props.infoItems
+				{ infoItems
 					.filter( ( i ) => ! i.hidden )
 					.map( ( info ) => {
 						return (
