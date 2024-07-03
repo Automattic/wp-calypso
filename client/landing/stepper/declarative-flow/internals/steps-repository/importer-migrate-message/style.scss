@@ -54,4 +54,10 @@
 		margin: auto;
 		padding: 8px 0;
 	}
+
+	.migration-message__actions {
+		display: flex;
+		gap: 2em;
+		margin-top: 3em; /* could also work with padding-top */
+	}
 }

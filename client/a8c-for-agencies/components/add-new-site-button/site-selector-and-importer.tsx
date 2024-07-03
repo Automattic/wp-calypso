@@ -12,6 +12,7 @@ import {
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 	A4A_SITES_LINK_NEEDS_SETUP,
 } from '../sidebar-menu/lib/constants';
+import A4AConnectionModal from './a4a-connection-modal';
 import JetpackConnectionModal from './jetpack-connection-modal';
 import UrlConnectionModal from './url-connection-modal';
 
@@ -29,6 +30,7 @@ export default function SiteSelectorAndImporter( {
 	const translate = useTranslate();
 
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
+	const [ showA4AConnectionModal, setShowA4AConnectionModal ] = useState( false );
 	const [ showJetpackConnectionModal, setShowJetpackConnectionModal ] = useState( false );
 	const [ showUrlConnectionModal, setShowUrlConnectionModal ] = useState( false );
 
@@ -115,6 +117,12 @@ export default function SiteSelectorAndImporter( {
 							icon: <A4ALogo />,
 							heading: translate( 'Via the Automattic plugin' ),
 							description: translate( 'Connect with the Automattic for Agencies plugin' ),
+							buttonProps: {
+								onClick: () => {
+									setShowA4AConnectionModal( true );
+									setMenuVisible( false );
+								},
+							},
 						} ) }
 						{ menuItem( {
 							icon: <JetpackLogo />,
@@ -184,6 +192,10 @@ export default function SiteSelectorAndImporter( {
 					</div>
 				</div>
 			</Popover>
+
+			{ showA4AConnectionModal && (
+				<A4AConnectionModal onClose={ () => setShowA4AConnectionModal( false ) } />
+			) }
 
 			{ showJetpackConnectionModal && (
 				<JetpackConnectionModal onClose={ () => setShowJetpackConnectionModal( false ) } />

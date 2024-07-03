@@ -23,7 +23,7 @@ export default function useSiteCompulsoryPlanSelectionQualifiedCheck( siteId: nu
 	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
 	const isNewSite = useSelector( ( state ) => isSiteNew( state, siteId ) );
 	const isExceedingTrafficThreshold =
-		( usageInfo?.billableMonthlyViews ?? 0 ) > MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL; // Targeting all existing sites with views higher than 1000/mth.
+		( usageInfo?.validMonthlyViews ?? 0 ) > MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL; // Targeting all existing sites with views higher than 1000/mth.
 
 	// Show paywall if the site exceeds the traffic threshold. Exempt VIP sites.
 	const shouldShowPaywall = ! isVip && ! isPending && ( isNewSite || isExceedingTrafficThreshold );
