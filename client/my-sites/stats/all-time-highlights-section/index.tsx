@@ -157,24 +157,7 @@ export default function AllTimeHighlightsSection( {
 			<DotPager>
 				<AllTimeStatsCard infoItems={ infoItems } />
 				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-					return (
-						<Card key={ card.id } className="highlight-card">
-							<h4 className="highlight-card-heading">{ card.heading }</h4>
-							<div className="highlight-card-detail-item-list">
-								{ card.items.map( ( item ) => {
-									return (
-										<div key={ item.id } className="highlight-card-detail-item">
-											<div className="highlight-card-detail-item-header">{ item.header }</div>
-
-											<div className="highlight-card-detail-item-content">{ item.content }</div>
-
-											<div className="highlight-card-detail-item-footer">{ item.footer }</div>
-										</div>
-									);
-								} ) }
-							</div>
-						</Card>
-					);
+					return <MostPopularDayTimeCard key={ card.id } card={ card } />;
 				} ) }
 			</DotPager>
 
@@ -189,24 +172,7 @@ export default function AllTimeHighlightsSection( {
 			<div className="highlight-cards-list">
 				<AllTimeStatsCard infoItems={ infoItems } />
 				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-					return (
-						<Card key={ card.id } className="highlight-card">
-							<h4 className="highlight-card-heading">{ card.heading }</h4>
-							<div className="highlight-card-detail-item-list">
-								{ card.items.map( ( item ) => {
-									return (
-										<div key={ item.id } className="highlight-card-detail-item">
-											<div className="highlight-card-detail-item-header">{ item.header }</div>
-
-											<div className="highlight-card-detail-item-content">{ item.content }</div>
-
-											<div className="highlight-card-detail-item-footer">{ item.footer }</div>
-										</div>
-									);
-								} ) }
-							</div>
-						</Card>
-					);
+					return <MostPopularDayTimeCard key={ card.id } card={ card } />;
 				} ) }
 			</div>
 
@@ -272,6 +238,25 @@ function AllTimeStatsCard( { infoItems }: AllTimeStatsCardProps ) {
 							</div>
 						);
 					} ) }
+			</div>
+		</Card>
+	);
+}
+
+function MostPopularDayTimeCard( { card }: any ) {
+	return (
+		<Card key={ card.id } className="highlight-card">
+			<h4 className="highlight-card-heading">{ card.heading }</h4>
+			<div className="highlight-card-detail-item-list">
+				{ card.items.map( ( item ) => {
+					return (
+						<div key={ item.id } className="highlight-card-detail-item">
+							<div className="highlight-card-detail-item-header">{ item.header }</div>
+							<div className="highlight-card-detail-item-content">{ item.content }</div>
+							<div className="highlight-card-detail-item-footer">{ item.footer }</div>
+						</div>
+					);
+				} ) }
 			</div>
 		</Card>
 	);
