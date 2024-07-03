@@ -1,4 +1,4 @@
-export function validateURL( url: string ) {
+export function isValidUrl( url: string ) {
 	return (
 		url.length > 3 &&
 		/^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?$/i.test( url )

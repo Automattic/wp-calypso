@@ -1,17 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { AgencyDirectoryApplication } from '../../types';
-import { areURLsUnique } from '../../utils/tools';
-
-export const CAPTURE_URL_RGX =
-	/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?(\/.*)?$/i;
-
-const isValidUrl = ( urlString: string ) => {
-	if ( ! urlString || urlString === '' ) {
-		return false;
-	}
-	return !! CAPTURE_URL_RGX.test( urlString );
-};
+import { areURLsUnique, isValidUrl } from '../../utils/tools';
 
 type ValidationState = {
 	services?: string;

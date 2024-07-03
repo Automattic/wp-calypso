@@ -1,7 +1,7 @@
 import emailValidator from 'email-validator';
 import { useMemo, useState } from 'react';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
-import { validateURL } from '../../utils/tools';
+import { isValidUrl } from '../../utils/tools';
 
 type Props = {
 	initialFormData?: AgencyDetails | null;
@@ -31,11 +31,11 @@ export default function useDetailsForm( { initialFormData }: Props ) {
 			formData.name.length > 0 &&
 			formData.email.length > 0 &&
 			emailValidator.validate( formData.email ) &&
-			validateURL( formData.website ) &&
+			isValidUrl( formData.website ) &&
 			formData.bioDescription.length > 0 &&
-			validateURL( formData.logoUrl ) &&
+			isValidUrl( formData.logoUrl ) &&
 			// landingPageUrl is optional
-			( formData.landingPageUrl.length === 0 || validateURL( formData.landingPageUrl ) ) &&
+			( formData.landingPageUrl.length === 0 || isValidUrl( formData.landingPageUrl ) ) &&
 			formData.country?.length > 0 &&
 			formData.industry.length > 0 &&
 			formData.services.length > 0 &&

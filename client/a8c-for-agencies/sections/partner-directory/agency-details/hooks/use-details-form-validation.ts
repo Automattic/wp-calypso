@@ -2,13 +2,7 @@ import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { AgencyDetails } from '../../types';
-
-export const CAPTURE_URL_RGX =
-	/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?(\/.*)?$/i;
-
-const isValidUrl = ( urlString: string ) => {
-	return !! CAPTURE_URL_RGX.test( urlString );
-};
+import { isValidUrl } from '../../utils/tools';
 
 type ValidationState = {
 	name?: string;
