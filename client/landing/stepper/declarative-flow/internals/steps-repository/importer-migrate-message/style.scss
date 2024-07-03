@@ -57,6 +57,7 @@
 
 	.migration-message__actions {
 		display: flex;
-		gap: 1em;
+		gap: 2em;
+		margin-top: 3em; /* could also work with padding-top */
 	}
 }
