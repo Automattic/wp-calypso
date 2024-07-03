@@ -45,7 +45,7 @@ export function InstagramPostPreview( {
 									<source src={ mediaItem.url } type={ mediaItem.type } />
 								</video>
 							) : (
-								<img className="instagram-preview__media--image" src={ image } alt="" />
+								<img className="instagram-preview__media--image" src={ mediaItem.url } alt="" />
 							) }
 						</div>
 					) : (

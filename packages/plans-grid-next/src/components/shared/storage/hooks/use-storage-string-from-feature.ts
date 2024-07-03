@@ -4,16 +4,13 @@ import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_200GB_STORAGE,
-	FEATURE_50GB_STORAGE_ADD_ON,
-	FEATURE_100GB_STORAGE_ADD_ON,
 	FEATURE_P2_3GB_STORAGE,
 	FEATURE_P2_13GB_STORAGE,
 	PRODUCT_1GB_SPACE,
 	PlanSlug,
-	WPComStorageAddOnSlug,
 	WPComPlanStorageFeatureSlug,
 } from '@automattic/calypso-products';
-import { Purchases } from '@automattic/data-stores';
+import { Purchases, AddOns } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
 
@@ -22,7 +19,7 @@ const useStorageStringFromFeature = ( {
 	siteId,
 	planSlug,
 }: {
-	storageSlug?: WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug;
+	storageSlug?: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	siteId?: null | number | string;
 	planSlug: PlanSlug;
 } ) => {
@@ -62,7 +59,7 @@ const useStorageStringFromFeature = ( {
 		// TODO: Remove when upgradeable storage is released in plans 2023
 		case FEATURE_200GB_STORAGE:
 			return translate( '200 GB' );
-		case FEATURE_50GB_STORAGE_ADD_ON:
+		case AddOns.ADD_ON_50GB_STORAGE:
 			/**
 			 * Displayed string is: purchased storage + default 50GB storage + Add-On
 			 * TODO: the default 50GB should be coming from plan context, not hardcoded here
@@ -72,7 +69,7 @@ const useStorageStringFromFeature = ( {
 					quantity: purchasedQuantityTotal + 50 + 50,
 				},
 			} );
-		case FEATURE_100GB_STORAGE_ADD_ON:
+		case AddOns.ADD_ON_100GB_STORAGE:
 			/**
 			 * Displayed string is: purchased storage + default 50GB storage + Add-On
 			 * TODO: the default 50GB should be coming from plan context, not hardcoded here

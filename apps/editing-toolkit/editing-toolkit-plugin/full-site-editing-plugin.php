@@ -269,14 +269,6 @@ function load_whats_new() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
 
 /**
- * Error reporting for wp-admin / Gutenberg.
- */
-function load_error_reporting() {
-	require_once __DIR__ . '/error-reporting/index.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_error_reporting' );
-
-/**
  * Tags Education
  */
 function load_tags_education() {
@@ -288,6 +280,11 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  * Help center
  */
 function load_help_center() {
+	// Only load the help center if it hasn't been loaded already by Jetpack.
+	if ( class_exists( 'A8C\FSE\Help_Center' ) ) {
+		return;
+	}
+
 	// disable help center in P2s.
 	if (
 		defined( 'IS_WPCOM' )
@@ -313,7 +310,8 @@ function load_help_center() {
 
 	require_once __DIR__ . '/help-center/class-help-center.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_help_center' );
+
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_help_center', 100 );
 
 /**
  * Load paragraph block

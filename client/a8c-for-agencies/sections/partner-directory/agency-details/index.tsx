@@ -14,7 +14,7 @@ import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import IndustrySelector from '../components/industry-selector';
+import IndustriesSelector from '../components/industries-selector';
 import LanguageSelector from '../components/languages-selector';
 import ProductsSelector from '../components/products-selector';
 import ServicesSelector from '../components/services-selector';
@@ -23,6 +23,7 @@ import { useCountryList } from './hooks/use-country-list';
 import useDetailsForm from './hooks/use-details-form';
 import useDetailsFormValidation from './hooks/use-details-form-validation';
 import useSubmitForm from './hooks/use-submit-form';
+import LogoPicker from './logo-picker';
 
 import './style.scss';
 
@@ -183,15 +184,15 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				</FormField>
 				<FormField
 					label={ translate( 'Company logo' ) }
-					description={ translate(
+					sub={ translate(
 						'Upload your agency logo sized at 800px by 320px. Format allowed: JPG, PNG'
 					) }
 					error={ validationError.logo }
 					isRequired
 				>
-					<TextControl
-						value={ formData.logoUrl }
-						onChange={ ( value ) => {
+					<LogoPicker
+						logo={ formData.logoUrl }
+						onPick={ ( value ) => {
 							setFormFields( { logoUrl: value } );
 							updateValidationError( { logo: undefined } );
 						} }
@@ -214,11 +215,11 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 						}
 					/>
 				</FormField>
-				<FormField label={ translate( 'Industry' ) } error={ validationError.industry } isRequired>
-					<IndustrySelector
-						industry={ formData.industry }
-						setIndustry={ ( industry ) => {
-							setFormFields( { industry: industry } );
+				<FormField label={ translate( 'Industries' ) } isRequired>
+					<IndustriesSelector
+						industries={ formData.industries }
+						setIndustries={ ( industries ) => {
+							setFormFields( { industries } );
 							updateValidationError( { industry: undefined } );
 						} }
 					/>

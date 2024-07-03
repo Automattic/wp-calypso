@@ -1,5 +1,6 @@
 import { getDomContentLoadedEventStart, getNavigationStart } from '../api/performance-timing';
 import { getResources } from '../api/resources-timing';
+import type { Collector } from '../types';
 
 export const collector: Collector = ( report ) => {
 	const domContentLoaded = getDomContentLoadedEventStart() - getNavigationStart();

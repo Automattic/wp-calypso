@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Modal } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -20,6 +19,8 @@ import SitesHeaderActions from '../sites-header-actions';
 import ClientSite from './client-site';
 import { AvailablePlans } from './plan-field';
 import PurchaseConfirmationMessage from './purchase-confirmation-message';
+import SiteConfigurationsModal from './site-configurations-modal';
+import { useRandomSiteName } from './site-configurations-modal/use-site-name';
 import NeedSetupTable from './table';
 import type { ReferralAPIResponse } from '../../referrals/types';
 
@@ -43,6 +44,7 @@ const isA4aSiteCreationConfigurationsEnabled = config.isEnabled(
 );
 
 export default function NeedSetup( { licenseKey }: Props ) {
+	const { randomSiteName, isRandomSiteNameLoading } = useRandomSiteName();
 	const translate = useTranslate();
 	const [ displaySiteConfigurationModal, setDisplaySiteConfigurationModal ] = useState( false );
 
@@ -188,9 +190,11 @@ export default function NeedSetup( { licenseKey }: Props ) {
 					</LayoutHeader>
 				</LayoutTop>
 				{ displaySiteConfigurationModal && (
-					<Modal title={ translate( 'Configure your site' ) } onRequestClose={ toggleModal }>
-						<h1>Configure your site placeholder modal</h1>
-					</Modal>
+					<SiteConfigurationsModal
+						toggleModal={ toggleModal }
+						randomSiteName={ randomSiteName }
+						isRandomSiteNameLoading={ isRandomSiteNameLoading }
+					/>
 				) }
 				<NeedSetupTable
 					availablePlans={ availablePlans }
