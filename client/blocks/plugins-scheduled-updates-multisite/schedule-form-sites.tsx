@@ -83,25 +83,28 @@ export const ScheduleFormSites = ( props: Props ) => {
 				<div className="checkbox-options-container checkbox-options-container__sites">
 					{ sites.map( ( site ) => (
 						<Fragment key={ site.ID }>
-							{ site?.name &&
-								( site.name.toLowerCase().includes( searchTerm.toLowerCase() ) ||
-									site.slug.toLowerCase().includes( searchTerm.toLowerCase() ) ) && (
-									<div>
-										<CheckboxControl
-											key={ site.ID }
-											onChange={ ( isChecked ) => {
-												onSiteSelectionChange( site, isChecked );
-												setFieldTouched( true );
-											} }
-											checked={ selectedSites.includes( site.ID ) }
-										/>
-										<label htmlFor={ `${ site.ID }` }>
-											{ site.name }
-											<br />
-											<span className="site-slug">{ site.slug }</span>
-										</label>
-									</div>
-								) }
+							{ ( ( site?.name && site.name.toLowerCase().includes( searchTerm.toLowerCase() ) ) ||
+								site.slug.toLowerCase().includes( searchTerm.toLowerCase() ) ) && (
+								<div>
+									<CheckboxControl
+										key={ site.ID }
+										onChange={ ( isChecked ) => {
+											onSiteSelectionChange( site, isChecked );
+											setFieldTouched( true );
+										} }
+										checked={ selectedSites.includes( site.ID ) }
+									/>
+									<label htmlFor={ `${ site.ID }` }>
+										{ site?.name && (
+											<>
+												{ site.name }
+												<br />
+											</>
+										) }
+										<span className="site-slug">{ site.slug }</span>
+									</label>
+								</div>
+							) }
 						</Fragment>
 					) ) }
 				</div>
