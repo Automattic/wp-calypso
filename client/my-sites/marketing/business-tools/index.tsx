@@ -40,10 +40,6 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 		recordTracksEvent( 'calypso_marketing_business_quickbooks_button_click' );
 	};
 
-	const handleEvernoteClick = () => {
-		recordTracksEvent( 'calypso_marketing_business_evernote_button_click' );
-	};
-
 	const handleMondayClick = () => {
 		recordTracksEvent( 'calypso_marketing_business_monday_button_click' );
 	};
@@ -78,24 +74,6 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						target="_blank"
 					>
 						{ translate( 'Manage your finances' ) }
-					</Button>
-				</MarketingBusinessToolsFeature>
-
-				<MarketingBusinessToolsFeature
-					category={ translate( 'Productivity' ) }
-					title={ translate( 'Evernote' ) }
-					description={ translate(
-						'Evernote is the place to organize your work, declutter your life, and remember everything. Maintaining the important information you need to manage your work or your personal life has never been easier.'
-					) }
-					imagePath={ evernoteLogo }
-					imageAlt=""
-				>
-					<Button
-						onClick={ handleEvernoteClick }
-						href="https://evernote.grsm.io/ebcc-wordpresscom"
-						target="_blank"
-					>
-						{ translate( 'Take better notes' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 
