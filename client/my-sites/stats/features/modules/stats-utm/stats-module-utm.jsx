@@ -125,30 +125,31 @@ const StatsModuleUTM = ( {
 
 	return (
 		<>
-			{ ! data?.length && isNewEmptyStateEnabled && (
-				<StatsCard
-					className={ className }
-					title={ moduleStrings.title }
-					isEmpty
-					emptyMessage={
-						<EmptyModuleCard
-							icon={ trendingUp }
-							description={ translate(
-								'If you use UTM codes, your {{link}}campaign performance data{{/link}} will show here.',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#utm-stats` ) } />,
-									},
-									context: 'Stats: Info box label when the UTM module is empty',
-								}
-							) }
-							cards={ <UTMBuilder trigger={ <StatsEmptyActionUTMBuilder /> } /> }
-						/>
-					}
-				/>
-			) }
-			{ !! data?.length && (
+			{ ! data?.length &&
+				isNewEmptyStateEnabled && ( // no data and new empty state enabled
+					<StatsCard
+						className={ className }
+						title={ moduleStrings.title }
+						isEmpty
+						emptyMessage={
+							<EmptyModuleCard
+								icon={ trendingUp }
+								description={ translate(
+									'If you use UTM codes, your {{link}}campaign performance data{{/link}} will show here.',
+									{
+										comment: '{{link}} links to support documentation.',
+										components: {
+											link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#utm-stats` ) } />,
+										},
+										context: 'Stats: Info box label when the UTM module is empty',
+									}
+								) }
+								cards={ <UTMBuilder trigger={ <StatsEmptyActionUTMBuilder /> } /> }
+							/>
+						}
+					/>
+				) }
+			{ ( !! data?.length || ! isNewEmptyStateEnabled ) && ( // show when new empty state is disabled or data is available
 				<>
 					<StatsListCard
 						className={ clsx( className, 'stats-module__card', path ) }
