@@ -157,7 +157,11 @@ export const getNewSiteParams = ( {
 
 	// Guided onboarding flow specific dependencies
 	const guidedFlowProps = {};
-	if ( isOnboardingGuidedFlow( flowToCheck ) ) {
+	const trailMapExperimentVariant = signupDependencies?.trailMapExperimentVariant;
+	if (
+		( isOnboardingGuidedFlow( flowToCheck ) && trailMapExperimentVariant === 'guided' ) ||
+		trailMapExperimentVariant === 'survey'
+	) {
 		const whatBringsYouToWordPress =
 			signupDependencies?.segmentationSurveyAnswers?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
@@ -1200,6 +1204,7 @@ export function excludeSegmentSurveyStepIfInactive( stepName, _, nextProps ) {
 			{
 				segmentationSurveyAnswers: null,
 				onboardingSegment: null,
+				trailMapExperimentVariant: null,
 			}
 		);
 		flows.excludeStep( stepName );
