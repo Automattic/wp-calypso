@@ -41,6 +41,7 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 	PLUGIN_ACTION_STATUS_UPDATE,
+	PLUGIN_INSTALL_REQUEST_PARTIAL_SUCCESS,
 } from 'calypso/state/action-types';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -492,7 +493,14 @@ function installPluginHelper(
 					.then( successCallback )
 					.catch( errorCallback );
 			}
-			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_FAILURE, error } );
+			let type = PLUGIN_INSTALL_REQUEST_FAILURE;
+			let data = {};
+			// If the error is a ServerError, the plugin was installed but not activated
+			if ( error.name === 'ServerError' ) {
+				type = PLUGIN_INSTALL_REQUEST_PARTIAL_SUCCESS;
+				data = { ...plugin, active: false };
+			}
+			dispatch( { ...defaultAction, type, error, data } );
 			recordInstallPluginEvent( 'RECEIVE_INSTALLED_PLUGIN', error );
 			return Promise.reject( error );
 		};
