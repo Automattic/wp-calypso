@@ -1,4 +1,4 @@
-import i18n from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { forwardRef, WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import ChatMessage, { ChatMessageProps } from './components/message';
@@ -7,9 +7,10 @@ import { useOdieAssistantContext, OdieAssistantProvider } from './context';
 
 import './style.scss';
 
-export const WAPUU_ERROR_MESSAGE = i18n.translate(
+/* translators: Error message when Wapuu fails to send a message */
+export const WAPUU_ERROR_MESSAGE = __(
 	"Wapuu oopsie! 😺 I'm in snooze mode and can't chat just now. Don't fret, just browse through the buttons below to connect with WordPress.com support.",
-	{ comment: 'Error message when Wapuu fails to send a message', textOnly: true }
+	__i18n_text_domain__
 );
 
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;

@@ -1,5 +1,5 @@
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../';
 import { noop, useOdieAssistantContext } from '../../context';
 import { useOdieSendMessageFeedback } from '../../query';
@@ -15,7 +15,6 @@ const WasThisHelpfulButtons = ( {
 	message: Message;
 	onDislike?: () => void;
 } ) => {
-	const translate = useTranslate();
 	const { setMessageLikedStatus, trackEvent } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessageFeedback } = useOdieSendMessageFeedback();
 
@@ -79,14 +78,16 @@ const WasThisHelpfulButtons = ( {
 		<div className={ containerClasses }>
 			<div className="odie-feedback-message">
 				<span className={ questionClasses }>
-					{ translate( 'Was this helpful?', {
-						context: 'Indicates if a messaged provided by a chatbot was helpful or not',
-					} ) }
+					{
+						/* translators: Indicates if a messaged provided by a chatbot was helpful or not */
+						__( 'Was this helpful?', __i18n_text_domain__ )
+					}
 				</span>
 				<span className={ thanksClasses }>
-					{ translate( 'Thanks!', {
-						context: 'Indicates that the user has provided feedback to a chatbot message',
-					} ) }
+					{
+						/* translators: Indicates that the user has provided feedback to a chatbot message */
+						__( 'Thanks!', __i18n_text_domain__ )
+					}
 				</span>
 			</div>
 			<span className="odie-feedback-component-button-container">
