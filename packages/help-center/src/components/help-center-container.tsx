@@ -13,6 +13,7 @@ import { MemoryRouter } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
+import { calculateOpeningPosition } from '../calculate-opening-position';
 import { FeatureFlagProvider } from '../contexts/FeatureFlagContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
@@ -33,7 +34,12 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	return <Draggable { ...props } />;
 };
 
-const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, currentRoute } ) => {
+const HelpCenterContainer: React.FC< Container > = ( {
+	handleClose,
+	hidden,
+	currentRoute,
+	lastClickEvent,
+} ) => {
 	const { show, isMinimized, initialRoute } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -45,6 +51,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 
+	const [ clickedOpenPosition, setClickedOpenPosition ] = useState( { left: 0, top: 0 } );
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
@@ -67,6 +74,8 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	const animationProps = {
 		style: {
 			animation: `${ isVisible ? 'fadeIn' : 'fadeOut' } .5s`,
+			top: `${ clickedOpenPosition.top }px`,
+			left: `${ clickedOpenPosition.left }px`,
 		},
 		onAnimationEnd: toggleVisible,
 	};
@@ -81,6 +90,21 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	const shouldCloseOnEscapeRef = useRef( false );
 
 	shouldCloseOnEscapeRef.current = !! show && ! hidden && ! isMinimized;
+
+	// Set Help Center initial position relative to the last click
+	useEffect( () => {
+		if ( show && nodeRef.current ) {
+			const { left, top } = calculateOpeningPosition(
+				lastClickEvent as MouseEvent,
+				nodeRef.current
+			);
+
+			setClickedOpenPosition( {
+				left: left,
+				top: top,
+			} );
+		}
+	}, [ show ] );
 
 	useEffect( () => {
 		const handleKeydown = ( e: KeyboardEvent ) => {

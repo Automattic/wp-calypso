@@ -7,6 +7,7 @@ export interface Container {
 	isLoading?: boolean;
 	hidden?: boolean;
 	currentRoute?: string;
+	lastClickEvent?: MouseEvent;
 }
 
 export interface ArticleContentProps {
