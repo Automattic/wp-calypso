@@ -752,7 +752,7 @@ const WrappedCancelPurchaseForm = ( props ) => {
 	const personalDowngradePlan = getDowngradePlanFromPurchase( props.purchase );
 	const monthlyDowngradePlan = getDowngradePlanToMonthlyFromPurchase( props.purchase );
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
-		planSlugs: [ personalDowngradePlan?.getProductId(), monthlyDowngradePlan?.getProductId() ],
+		planSlugs: [ personalDowngradePlan?.getStoreSlug(), monthlyDowngradePlan?.getStoreSlug() ],
 		coupon: undefined,
 		siteId: null,
 		storageAddOns: null,
@@ -763,10 +763,10 @@ const WrappedCancelPurchaseForm = ( props ) => {
 		<ConnectedCancelPurchaseForm
 			{ ...props }
 			downgradePlanToPersonalPrice={
-				pricingMeta?.[ personalDowngradePlan?.getProductId() ]?.originalPrice?.full
+				pricingMeta?.[ personalDowngradePlan?.getStoreSlug() ]?.originalPrice?.full
 			}
 			downgradePlanToMonthlyPrice={
-				pricingMeta?.[ monthlyDowngradePlan?.getProductId() ]?.originalPrice?.full
+				pricingMeta?.[ monthlyDowngradePlan?.getStoreSlug() ]?.originalPrice?.full
 			}
 		/>
 	);
