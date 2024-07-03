@@ -32,8 +32,9 @@ export default function setup() {
 	if ( 'development' === process.env.NODE_ENV ) {
 		require( 'calypso/server/bundler' )( app );
 
-		// When mocking WordPress.com to point locally, wordpress.com/wp-login.php will hit Calypso.
-		// redirect traffic to de.wordpress.com to hit the real backend.
+		// When mocking WordPress.com to point locally, wordpress.com/wp-login.php will hit Calypso creating an infinite loop.
+		// redirect traffic to de.wordpress.com to hit the real backend and prevent a loop.
+		// `de.wordpress.com` accepts POST requests to `/wp-login.php` exactly like `wordpress.com`.
 		if ( process.env.MOCK_WORDPRESSDOTCOM === '1' ) {
 			app.use(
 				'/wp-login.php',
