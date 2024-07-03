@@ -1,4 +1,4 @@
-import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useCountries } from 'calypso/landing/stepper/hooks/use-countries';
 
@@ -47,9 +47,8 @@ export interface Option {
 }
 
 export function useCountriesAndStates() {
-	const localeSlug = getLocaleSlug();
-	const { data: countriesList } = useCountries( localeSlug );
 	const translate = useTranslate();
+	const { data: countriesList } = useCountries();
 
 	return useMemo( () => {
 		const countryOptions = < { [ key: string ]: Option } >{};
