@@ -6,6 +6,8 @@ const CopyPlugin = require( 'copy-webpack-plugin' );
 const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 /* Arguments to this function replicate webpack's so this config can be used on the command line,
  * with individual options overridden by command line args.
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
@@ -24,7 +26,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 
 	return {
 		...webpackConfig,
-		mode: 'production',
+		mode: isDevelopment ? 'development' : 'production',
 		entry: {
 			'help-center-gutenberg': path.join( __dirname, 'help-center-gutenberg.js' ),
 			'help-center-wp-admin': path.join( __dirname, 'help-center-wp-admin.js' ),
