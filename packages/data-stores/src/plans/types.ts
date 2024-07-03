@@ -91,6 +91,8 @@ export interface PlanPricing {
 		monthly: number | null;
 		full: number | null;
 	};
+
+	discountReasonCode?: string;
 }
 
 export interface SitePlanPricing extends Omit< PlanPricing, 'billPeriod' > {}
@@ -162,6 +164,15 @@ export interface PricedAPIPlanIntroductoryOffer {
 	introductory_offer_end_date?: string;
 }
 
+export interface CostOverrides {
+	does_override_original_cost: boolean;
+	first_unit_only: boolean;
+	new_price: number;
+	old_price: number;
+	override_code: string;
+	percentage: number;
+}
+
 export interface PricedAPIPlanPricing {
 	bill_period: -1 | ( typeof PERIOD_LIST )[ number ];
 	product_display_price: string;
@@ -180,6 +191,8 @@ export interface PricedAPIPlanPricing {
 	orig_cost_integer: number;
 
 	currency_code: string;
+
+	cost_overrides?: CostOverrides[];
 }
 
 export interface PricedAPISitePlanPricing

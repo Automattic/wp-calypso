@@ -53,6 +53,7 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 							pricing: {
 								currencyCode: plan.currency_code,
 								introOffer: unpackIntroOffer( plan ),
+								discountReasonCode: plan.cost_overrides?.[ 0 ]?.override_code,
 								originalPrice: {
 									monthly:
 										typeof originalPriceFull === 'number'

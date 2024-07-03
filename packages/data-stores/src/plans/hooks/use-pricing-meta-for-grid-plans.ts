@@ -175,7 +175,52 @@ const usePricingMetaForGridPlans = ( {
 				}
 
 				/**
-				 * 2. Original and Discounted prices for plan available for purchase.
+				 * 2. Original and Discounted prices for site-specific plans available for purchase
+				 */
+				if ( siteId && planAvailabilityForPurchase[ planSlug ] ) {
+					const originalPrice = {
+						monthly: getTotalPrice(
+							sitePlan?.pricing.originalPrice.monthly,
+							storageAddOnPriceMonthly
+						),
+						full: getTotalPrice( sitePlan?.pricing.originalPrice.full, storageAddOnPriceYearly ),
+					};
+
+					// Do not return discounted prices if discount is due to plan proration
+					if ( sitePlan?.pricing.discountReasonCode === 'recent-plan-proration' ) {
+						return [
+							planSlug,
+							{
+								originalPrice,
+								discountedPrice: {
+									monthly: null,
+									full: null,
+								},
+								currencyCode: sitePlan?.pricing?.currencyCode,
+							},
+						];
+					}
+
+					const discountedPrice = {
+						monthly: getTotalPrice(
+							sitePlan?.pricing.discountedPrice.monthly,
+							storageAddOnPriceMonthly
+						),
+						full: getTotalPrice( sitePlan?.pricing.discountedPrice.full, storageAddOnPriceYearly ),
+					};
+
+					return [
+						planSlug,
+						{
+							originalPrice,
+							discountedPrice,
+							currencyCode: sitePlan?.pricing?.currencyCode,
+						},
+					];
+				}
+
+				/**
+				 * 3. Original and Discounted prices for plan available for purchase.
 				 */
 				if ( planAvailabilityForPurchase[ planSlug ] ) {
 					const originalPrice = {
