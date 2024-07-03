@@ -116,7 +116,7 @@
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
 		"migration-flow/new-migration-instructions-step": false,
-		"migration-flow/enable-migration-assistant": true,
+		"migration-flow/enable-migration-assistant": false,
 		"my-sites/add-ons": true,
 		"onboarding/design-choices": true,
 		"onboarding/import": true,
