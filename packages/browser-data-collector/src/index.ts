@@ -1,5 +1,6 @@
 import { ReportImpl } from './report';
 import { send } from './transports/logstash';
+import type { Collector, Report, ReportData, ReportPayload } from './types';
 
 const inFlightReporters: Map< string, Promise< Report > > = new Map();
 
@@ -55,3 +56,5 @@ export const stop = async (
 
 	return send( payload );
 };
+
+export type { Collector, Report, ReportData, ReportPayload };
