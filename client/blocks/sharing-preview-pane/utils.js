@@ -55,30 +55,16 @@ export const isSocialPost = ( post ) => {
 };
 
 export function getPostCustomMedia( post ) {
-	const media = [];
-
 	// Attach media only if "Share as a social post" option is enabled.
 	if ( isSocialPost( post ) ) {
-		const sigImageUrl = getSigImageUrl( post );
-
-		if ( sigImageUrl ) {
-			media.push( {
-				type: 'image/jpeg',
-				url: sigImageUrl,
-				alt: '',
-			} );
-		} else {
-			for ( const { id, url, type } of getPostAttachedMedia( post ) ) {
-				media.push( {
-					type: type || post.attachments?.[ id ]?.mime_type,
-					url,
-					alt: '',
-				} );
-			}
-		}
+		return getPostAttachedMedia( post ).map( ( { id, url, type } ) => ( {
+			type: type || post.attachments?.[ id ]?.mime_type,
+			url,
+			alt: '',
+		} ) );
 	}
 
-	return media;
+	return [];
 }
 
 export function getSigImageUrl( post ) {
