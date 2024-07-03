@@ -150,11 +150,10 @@ $business-plan-color: #7f54b3;
 
 	.import__upgrade-plan-price-badge {
 		text-align: center;
-		white-space: nowrap;
 		font-size: 0.75rem;
-		line-height: 1.25;
+		line-height: 1.5;
+		height: auto;
 		border-radius: 4px;
-		height: 21px;
 		display: inline-block;
 		width: fit-content;
 		letter-spacing: 0.2px;
