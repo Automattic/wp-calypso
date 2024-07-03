@@ -1,8 +1,4 @@
-import {
-	type PlanSlug,
-	WPComStorageAddOnSlug,
-	isWpcomEnterpriseGridPlan,
-} from '@automattic/calypso-products';
+import { type PlanSlug, isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { usePlansGridContext } from '../../../../grid-context';
 import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
@@ -10,7 +6,7 @@ import StorageDropdown from './storage-dropdown';
 import StorageFeatureLabel from './storage-feature-label';
 
 type Props = {
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	showUpgradeableStorage: boolean;
 	planSlug: PlanSlug;
 	options?: {

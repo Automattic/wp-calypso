@@ -16,23 +16,9 @@ import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import { StatsEmptyActionSocial } from '../shared';
+import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-type StatsReferrersProps = {
-	className?: string;
-	period: string;
-	query: {
-		date: string;
-		period: string;
-	};
-	moduleStrings: {
-		title: string;
-		item: string;
-		value: string;
-		empty: string;
-	};
-};
-
-const StatsReferrers: React.FC< StatsReferrersProps > = ( {
+const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -46,7 +32,7 @@ const StatsReferrers: React.FC< StatsReferrersProps > = ( {
 	const shouldGateStatsReferrers = useShouldGateStats( statType );
 
 	// TODO: sort out the state shape.
-	const requesting = useSelector( ( state: any ) =>
+	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>

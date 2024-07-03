@@ -111,33 +111,6 @@ function should_activate_sentry( $user_id, $blog_id ) {
 }
 
 /**
- * Enqueue assets
- */
-function enqueue_script() {
-	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/error-reporting.asset.php';
-	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
-	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/error-reporting.min.js' );
-	$script_id           = 'a8c-fse-error-reporting-script';
-
-	wp_enqueue_script(
-		$script_id,
-		plugins_url( 'dist/error-reporting.min.js', __FILE__ ),
-		$script_dependencies,
-		$script_version,
-		true
-	);
-
-	wp_localize_script(
-		$script_id,
-		'A8C_ETK_ErrorReporting_Config',
-		array(
-			'shouldActivateSentry' => should_activate_sentry( get_current_user_id(), get_current_blog_id() ) ? 'true' : 'false',
-			'releaseName'          => defined( 'WPCOM_DEPLOYED_GIT_HASH' ) ? 'WPCOM_' . WPCOM_DEPLOYED_GIT_HASH : 'WPCOM_NO_RELEASE',
-		)
-	);
-}
-
-/**
  * Setup the error reporting module by setting the necessary hooks. Whether or not we get the
  * homebrew version or Sentry is decided inside the `enqueue_script` function, stored in a bool
  * var, and passed over to the clientside script (index.js) which will then use this value to
@@ -146,9 +119,6 @@ function enqueue_script() {
 function setup_error_reporting() {
 	add_action( 'admin_print_scripts', __NAMESPACE__ . '\head_error_handler', 0 );
 	add_filter( 'script_loader_tag', __NAMESPACE__ . '\add_crossorigin_to_script_els', 99, 2 );
-	// We load as last as possible for perf reasons. The head handler will
-	// capture errors until the main handler is loaded.
-	add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_script', 99 );
 }
 
 if ( is_site_eligible_for_error_reporting() ) {

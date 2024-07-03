@@ -16,23 +16,9 @@ import { SUPPORT_URL } from '../../../const';
 import Geochart from '../../../geochart';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-type StatsCountriesProps = {
-	className?: string;
-	period: string;
-	query: {
-		date: string;
-		period: string;
-	};
-	moduleStrings: {
-		title: string;
-		item: string;
-		value: string;
-		empty: string;
-	};
-};
-
-const StatsCountries: React.FC< StatsCountriesProps > = ( {
+const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -45,7 +31,7 @@ const StatsCountries: React.FC< StatsCountriesProps > = ( {
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsCountries = useShouldGateStats( statType );
 
-	const requesting = useSelector( ( state ) =>
+	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>

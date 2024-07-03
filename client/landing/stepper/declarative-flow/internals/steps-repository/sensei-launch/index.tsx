@@ -1,9 +1,11 @@
+import { StyleVariation } from '@automattic/design-picker';
 import { setThemeOnSite } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { SenseiStepContainer } from '../components/sensei-step-container';
@@ -19,12 +21,91 @@ import { useSubSteps } from './use-sub-steps';
 import type { Step } from '../../types';
 import './style.scss';
 
+type ResponseError = {
+	error: string;
+};
+
+type Theme = {
+	_links: {
+		'wp:user-global-styles': { href: string }[];
+	};
+};
+
 const SENSEI_PRO_PLUGIN_SLUG = 'sensei-pro';
+const installCourseTheme = async ( siteId: number ) =>
+	wpcom.req.post( { path: `/sites/${ siteId }/themes/course/install` } );
+
+const getStyleVariations = ( siteId: number, stylesheet: string ): Promise< StyleVariation[] > =>
+	wpcom.req.get( {
+		path: `/sites/${ siteId }/global-styles/themes/${ stylesheet }/variations`,
+		apiNamespace: 'wp/v2',
+	} );
+
+const getSiteTheme = ( siteId: number, stylesheet: string ): Promise< Theme > =>
+	wpcom.req.get( {
+		path: `/sites/${ siteId }/themes/${ stylesheet }`,
+		apiNamespace: 'wp/v2',
+	} );
+
+const setStyleVariation = async (
+	siteId: number,
+	globalStylesId: number,
+	globalStyles: StyleVariation
+) =>
+	await wpcom.req.post( {
+		path: `/sites/${ siteId }/global-styles/${ globalStylesId }`,
+		apiNamespace: 'wp/v2',
+		body: {
+			id: globalStylesId,
+			settings: globalStyles.settings ?? {},
+			styles: globalStyles.styles ?? {},
+		},
+	} );
+
+const updateStyleVariation = async ( siteId: number, selectedVariation: string ) => {
+	try {
+		const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
+			getStyleVariations( siteId, 'course' ),
+			getSiteTheme( siteId, 'course' ),
+		] );
+
+		const userGlobalStylesLink = theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href;
+
+		if ( ! userGlobalStylesLink ) {
+			return false;
+		}
+
+		const userGlobalStylesId = parseInt( userGlobalStylesLink.split( '/' ).pop() || '', 10 );
+
+		if ( isNaN( userGlobalStylesId ) ) {
+			return false;
+		}
+
+		const styleVariation = styleVariations.find(
+			( variation ) => variation.title === selectedVariation
+		);
+
+		if ( ! styleVariation ) {
+			return false;
+		}
+
+		const updatedStyleVariation = await setStyleVariation(
+			siteId,
+			userGlobalStylesId,
+			styleVariation
+		);
+
+		return updatedStyleVariation?.id || false;
+	} catch ( error ) {
+		return false;
+	}
+};
 
 const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	const siteId = useSite()?.ID as number;
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
-
+	const urlParams = new URLSearchParams( window.location.search );
+	const selectedVariation = urlParams.get( 'variation' ) ?? 'green';
 	const { pollPlugins, isPluginInstalled, queuePlugin } = useAtomicSitePlugins();
 	const { requestChecklist, isSenseiIncluded } = useAtomicSiteChecklist();
 	const additionalPlugins = useMemo( () => getSelectedPlugins(), [] );
@@ -37,6 +118,23 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 
 	const percentage = useSubSteps(
 		[
+			async function installAndActivateTheme( retries ) {
+				let updated = false;
+				try {
+					await installCourseTheme( siteId );
+					// SelectedStyleVariation is not supported on non Simple sites but it is for Simple sites.
+					await setThemeOnSite( `${ siteId }`, 'pub/course', selectedVariation );
+					updated = await updateStyleVariation( siteId, selectedVariation );
+				} catch ( responseError: unknown ) {
+					if ( ( responseError as ResponseError )?.error === 'theme_already_installed' ) {
+						await setThemeOnSite( `${ siteId }`, 'pub/course', selectedVariation );
+						updated = await updateStyleVariation( siteId, selectedVariation );
+					}
+				}
+
+				await wait( 4000 );
+				return updated || retries >= 15;
+			},
 			async function queueAdditionalPlugins() {
 				additionalPlugins.forEach( queuePlugin );
 				return true;
@@ -63,12 +161,6 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 			},
 			async function switchToDefaultAdminPanelView() {
 				await setAdminInterfaceStyle( siteId, 'wp-admin' );
-				return true;
-			},
-			async function refreshThemeOnAtomic() {
-				await wait( 1200 );
-				await setThemeOnSite( siteId.toString(), 'pub/twentytwentytwo' );
-				await setThemeOnSite( siteId.toString(), 'pub/course' );
 				return true;
 			},
 			async function done() {
