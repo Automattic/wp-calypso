@@ -18,6 +18,9 @@ interface Props {
 type AllProps = Assign< React.SVGProps< SVGSVGElement >, Props >;
 
 function isCrossOrigin( url: string ) {
+	if ( ! url.startsWith( 'https://' ) ) {
+		return false;
+	}
 	try {
 		return new URL( url ).origin !== window.location.origin;
 	} catch ( e ) {
@@ -31,20 +34,22 @@ function isCrossOrigin( url: string ) {
  * @returns the proxied URL.
  */
 function useProxiedURL( url: string ) {
-	const isCrossOriginUrl = isCrossOrigin( url );
-	// If cross-origin, return `undefined` until the proxy URL is fetched.
-	const [ urlProxy, setUrlProxy ] = React.useState( isCrossOriginUrl ? undefined : url );
-
+	const [ urlProxy, setUrlProxy ] = React.useState( () =>
+		isCrossOrigin( url ) ? undefined : url
+	);
 	React.useEffect( () => {
-		if ( isCrossOriginUrl ) {
+		if ( isCrossOrigin( url ) ) {
+			setUrlProxy( undefined );
 			fetch( url )
 				.then( ( res ) => res.blob() )
 				.then( ( blob ) => {
 					const urlProxy = URL.createObjectURL( blob );
 					setUrlProxy( urlProxy );
 				} );
+		} else {
+			setUrlProxy( url );
 		}
-	}, [ url, isCrossOriginUrl ] );
+	}, [ url ] );
 
 	return urlProxy;
 }
