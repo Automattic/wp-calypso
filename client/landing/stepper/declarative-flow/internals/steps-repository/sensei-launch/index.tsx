@@ -51,7 +51,7 @@ const setStyleVariation = async (
 	siteId: number,
 	globalStylesId: number,
 	globalStyles: StyleVariation
-) => {
+) =>
 	await wpcom.req.post( {
 		path: `/sites/${ siteId }/global-styles/${ globalStylesId }`,
 		apiNamespace: 'wp/v2',
@@ -61,27 +61,44 @@ const setStyleVariation = async (
 			styles: globalStyles.styles ?? {},
 		},
 	} );
-};
 
 const updateStyleVariation = async ( siteId: number, selectedVariation: string ) => {
-	const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
-		getStyleVariations( siteId, 'course' ),
-		getSiteTheme( siteId, 'course' ),
-	] );
+	try {
+		const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
+			getStyleVariations( siteId, 'course' ),
+			getSiteTheme( siteId, 'course' ),
+		] );
 
-	const userGlobalStylesLink: string =
-		theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href || '';
-	const userGlobalStylesId = parseInt( userGlobalStylesLink.split( '/' ).pop() || '', 10 );
-	const styleVariation = styleVariations.find(
-		( variation ) => variation.title === selectedVariation
-	);
+		const userGlobalStylesLink = theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href;
 
-	if ( styleVariation && userGlobalStylesId ) {
-		await setStyleVariation( siteId, userGlobalStylesId, styleVariation );
-		return true;
+		if ( ! userGlobalStylesLink ) {
+			return false;
+		}
+
+		const userGlobalStylesId = parseInt( userGlobalStylesLink.split( '/' ).pop() || '', 10 );
+
+		if ( isNaN( userGlobalStylesId ) ) {
+			return false;
+		}
+
+		const styleVariation = styleVariations.find(
+			( variation ) => variation.title === selectedVariation
+		);
+
+		if ( ! styleVariation ) {
+			return false;
+		}
+
+		const updatedStyleVariation = await setStyleVariation(
+			siteId,
+			userGlobalStylesId,
+			styleVariation
+		);
+
+		return updatedStyleVariation?.id || false;
+	} catch ( error ) {
+		return false;
 	}
-
-	return false;
 };
 
 const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
