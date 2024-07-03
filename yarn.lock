@@ -2185,7 +2185,6 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
     "@automattic/format-currency": "workspace:^"
-    "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/newspack-blocks": "npm:2.0.0"
     "@automattic/onboarding": "workspace:^"
