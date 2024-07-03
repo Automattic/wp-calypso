@@ -34,9 +34,14 @@ $blueberry-color: #3858e9;
 		padding: 2px 1px 0 0;
 	}
 
+	.flow-question__title-wrapper {
+		display: flex;
+	}
+
 	.flow-question__heading {
 		font-weight: 500;
 		font-size: $font-body-large;
+		margin-right: 8px;
 	}
 
 	.flow-question__description {
