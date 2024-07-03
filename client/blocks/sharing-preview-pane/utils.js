@@ -40,21 +40,18 @@ export function getPostAttachedMedia( post ) {
 	return getPostAutoSharingOptions( post )?.attached_media || [];
 }
 
-export const getPostCustomImage = ( post ) => {
-	const [ firstMedia ] = getPostAttachedMedia( post );
-
-	if ( firstMedia?.url && firstMedia.type?.startsWith( 'image/' ) ) {
-		return firstMedia.url;
-	}
-	return null;
-};
-
 export function getPostImageGeneratorSettings( post ) {
 	return getPostAutoSharingOptions( post )?.image_generator_settings || {};
 }
 
 export const isSocialPost = ( post ) => {
-	return !! getPostAutoSharingOptions( post )?.should_upload_attached_media;
+	const socialPostOptions = getPostAutoSharingOptions( post );
+
+	if ( socialPostOptions?.version === 2 ) {
+		return getPostAttachedMedia( post ).length > 0;
+	}
+
+	return Boolean( socialPostOptions?.should_upload_attached_media );
 };
 
 export function getPostCustomMedia( post ) {
