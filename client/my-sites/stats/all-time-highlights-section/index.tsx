@@ -167,13 +167,11 @@ export default function AllTimeHighlightsSection( {
 	const highlightCards = (
 		<div className="highlight-cards">
 			<h3 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h3>
-
 			<div className="highlight-cards-list">
 				<AllTimeStatsCard infoItems={ infoItems } />
 				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } />
 				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } />
 			</div>
-
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
 	);
