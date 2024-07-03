@@ -1,8 +1,7 @@
 import {
-	TrailMapVariantType,
 	getFeaturesList,
 	getPlanFeaturesGroupedForFeaturesGrid,
-	setTrailMapExperiment,
+	getPlanFeaturesGroupedForComparisonGrid,
 } from '@automattic/calypso-products';
 import {
 	FeaturesGrid,
@@ -12,11 +11,7 @@ import {
 } from '../..';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const ComponentWrapper = (
-	props: Omit< FeaturesGridExternalProps, 'gridPlans' > & {
-		trailMapVariant?: TrailMapVariantType;
-	}
-) => {
+const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' > ) => {
 	const gridPlans = useGridPlansForFeaturesGrid( {
 		eligibleForFreeHostingTrial: true,
 		hasRedeemedDomainCredit: undefined,
@@ -54,7 +49,6 @@ const ComponentWrapper = (
 				gridPlanForSpotlight={
 					'gridPlanForSpotlight' in props ? props.gridPlanForSpotlight : gridPlanForSpotlight
 				}
-				featureGroupMap={ getPlanFeaturesGroupedForFeaturesGrid() }
 			/>
 		)
 	);
@@ -64,6 +58,7 @@ const defaultProps = {
 	allFeaturesList: getFeaturesList(),
 	coupon: undefined,
 	currentSitePlanSlug: undefined,
+	featureGroupMap: getPlanFeaturesGroupedForFeaturesGrid(),
 	generatedWPComSubdomain: {
 		isLoading: false,
 		result: { domain_name: 'zzz.wordpress.com' },
@@ -95,20 +90,14 @@ const defaultProps = {
 const meta = {
 	title: 'FeaturesGrid',
 	component: ComponentWrapper,
-	decorators: [
-		( Story, { args: { trailMapVariant } } ) => {
-			trailMapVariant && setTrailMapExperiment( trailMapVariant );
-			return <Story />;
-		},
-	],
 } satisfies Meta< typeof ComponentWrapper >;
 
 export default meta;
 
 type Story = StoryObj< typeof meta >;
 
-export const Plans = {
-	name: '/plans',
+export const PlansInAdmin = {
+	name: 'Default in admin',
 	args: {
 		...defaultProps,
 		intent: 'plans-default-wpcom',
@@ -118,27 +107,31 @@ export const Plans = {
 	},
 } satisfies Story;
 
-export const Newsletter = {
-	name: '/setup/newsletter',
+export const PlansInSignup = {
+	name: 'Default in signup',
+	args: {
+		...defaultProps,
+		intent: 'plans-default-wpcom',
+		isInSignup: true,
+	},
+} satisfies Story;
+
+export const CategorizedFeatures = {
+	name: 'Categorized features grid',
+	args: {
+		...PlansInSignup.args,
+		gridPlanForSpotlight: undefined,
+
+		// to better show the effect of the categories, here we use the one from the comparison grid instead
+		featureGroupMap: getPlanFeaturesGroupedForComparisonGrid(),
+		enableCategorisedFeatures: true,
+	},
+} satisfies Story;
+
+export const CuratedPlanMixByIntent = {
+	name: 'Curated plan mix configured by intent',
 	args: {
 		...defaultProps,
 		intent: 'plans-newsletter',
-	},
-} satisfies Story;
-
-export const TrailMapControl = {
-	args: {
-		...Plans.args,
-		trailMapVariant: 'control',
-		gridPlanForSpotlight: undefined,
-	},
-} satisfies Story;
-
-export const TrailMapCopyAndStructure = {
-	args: {
-		...Plans.args,
-		trailMapVariant: 'treatment',
-		gridPlanForSpotlight: undefined,
-		enableCategorisedFeatures: true,
 	},
 } satisfies Story;

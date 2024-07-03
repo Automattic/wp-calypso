@@ -6,6 +6,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import A4ALogo, { LOGO_COLOR_SECONDARY_ALT } from '../a4a-logo';
 import { A4A_SITES_CONNECT_URL_LINK } from '../sidebar-menu/lib/constants';
+import SiteSelectorAndImporter from './site-selector-and-importer';
 import type { MutableRefObject } from 'react';
 
 type Props = {
@@ -35,6 +36,12 @@ const AddNewSiteButton = ( {
 	const showAddSitesFromWPCOMAccount = config.isEnabled(
 		'a8c-for-agencies/import-site-from-wpcom'
 	);
+
+	const isSiteSelectorAndImportedEnabled = config.isEnabled( 'a4a-site-selector-and-importer' );
+
+	if ( isSiteSelectorAndImportedEnabled ) {
+		return <SiteSelectorAndImporter showMainButtonLabel={ showMainButtonLabel } />;
+	}
 
 	return (
 		<SplitButton

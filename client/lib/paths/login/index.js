@@ -40,7 +40,6 @@ export function login( {
 	action = undefined,
 	lostpasswordFlow = undefined,
 	usernameOnly = undefined,
-	gravatarMagicCode = undefined,
 	gravatarFrom = undefined,
 } = {} ) {
 	let url = '/log-in';
@@ -111,10 +110,6 @@ export function login( {
 
 	if ( usernameOnly ) {
 		url = addQueryArgs( { username_only: true }, url );
-	}
-
-	if ( gravatarMagicCode ) {
-		url = addQueryArgs( { gravatar_magic_code: true }, url );
 	}
 
 	if ( gravatarFrom ) {

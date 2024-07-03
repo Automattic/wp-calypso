@@ -1,7 +1,10 @@
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import React from 'react';
+import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { HostingBadge } from './hosting-badge';
 import { Questions } from './questions';
 import { Sidebar } from './sidebar';
 import { SitePreview } from './site-preview';
@@ -9,10 +12,16 @@ import type { Step } from '../../types';
 import './style.scss';
 
 const SiteMigrationInstructions: Step = function () {
-	const sidebar = <Sidebar />;
+	const queryParams = useQuery();
+	const importSiteQueryParam = queryParams.get( 'from' ) ?? '';
+	const { data: hostingDetails } = useHostingProviderUrlDetails( importSiteQueryParam );
+	const showHostingBadge = ! hostingDetails.is_unknown && ! hostingDetails.is_a8c;
 
+	const sidebar = <Sidebar />;
 	const stepContent = (
 		<LaunchpadContainer sidebar={ sidebar }>
+			{ showHostingBadge && <HostingBadge hostingName={ hostingDetails.name } /> }
+
 			<SitePreview />
 		</LaunchpadContainer>
 	);

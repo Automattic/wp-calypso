@@ -100,22 +100,6 @@ export default function HostingCard( {
 		return translate( 'USD' );
 	}, [ plan.price_interval, translate ] );
 
-	const exploreButtonText = useMemo( () => {
-		return marketplaceType === 'referral'
-			? translate( 'Explore %(hosting)s', {
-					args: {
-						hosting: name,
-					},
-					comment: '%(hosting)s is the name of the hosting provider.',
-			  } )
-			: translate( 'Explore %(hosting)s plans', {
-					args: {
-						hosting: name,
-					},
-					comment: '%(hosting)s is the name of the hosting provider.',
-			  } );
-	}, [ marketplaceType, name, translate ] );
-
 	// Call `setPriceHeight` when the component mounts and when the window is resized,
 	// to keep the height of the card consistent with others.
 	useEffect( () => {
@@ -144,7 +128,7 @@ export default function HostingCard( {
 					rel="norefferer nooppener"
 					href={ pressableUrl }
 				>
-					{ translate( 'Manage in your Pressable account' ) }
+					{ translate( 'Manage in Pressable' ) }
 					<Icon icon={ external } size={ 18 } />
 				</Button>
 			);
@@ -173,17 +157,15 @@ export default function HostingCard( {
 				onClick={ onExploreClick }
 				primary
 			>
-				{ exploreButtonText }
+				{ translate( 'Explore %(hosting)s', {
+					args: {
+						hosting: name,
+					},
+					comment: '%(hosting)s is the name of the hosting provider.',
+				} ) }
 			</Button>
 		);
-	}, [
-		onExploreClick,
-		onVipDemoClick,
-		plan.family_slug,
-		pressableOwnership,
-		exploreButtonText,
-		translate,
-	] );
+	}, [ name, onExploreClick, onVipDemoClick, plan.family_slug, pressableOwnership, translate ] );
 
 	return (
 		<div className={ clsx( 'hosting-card', className ) }>
@@ -257,7 +239,7 @@ export default function HostingCard( {
 						</div>
 						{ shouldShowDiscount ? (
 							<div className="hosting-card__price-discount">
-								{ translate( 'Volume savings up to %(highestDiscountPercentage)s%', {
+								{ translate( 'Volume savings up to %(highestDiscountPercentage)s%%', {
 									args: { highestDiscountPercentage: Math.trunc( highestDiscountPercentage ) },
 								} ) }
 							</div>

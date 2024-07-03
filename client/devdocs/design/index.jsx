@@ -122,7 +122,6 @@ import Collection from 'calypso/devdocs/design/search-collection';
 import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
 import SitesGridItemExample from 'calypso/sites-dashboard/components/sites-grid-item/docs/example';
 import SitesGridItemSelectExample from 'calypso/sites-dashboard/components/sites-grid-item-select/docs/example';
-import SitesTableRowExample from 'calypso/sites-dashboard/components/sites-table-row/docs/example';
 
 export default class DesignAssets extends Component {
 	static displayName = 'DesignAssets';
@@ -269,7 +268,6 @@ export default class DesignAssets extends Component {
 					<SiteThumbnail readmeFilePath="/packages/components/src/site-thumbnail" />
 					<SitesGridItemExample readmeFilePath="/client/sites-dashboard/components/sites-grid-item" />
 					<SitesGridItemSelectExample readmeFilePath="/client/sites-dashboard/components/sites-grid-item-select" />
-					<SitesTableRowExample readmeFilePath="/client/sites-dashboard/components/sites-table-row" />
 					<StepProgress readmeFilePath="step-progress" />
 					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />

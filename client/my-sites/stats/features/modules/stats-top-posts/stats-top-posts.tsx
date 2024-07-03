@@ -12,26 +12,13 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL } from '../../../const';
+import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
+import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-type StatsTopPostsProps = {
-	className?: string;
-	period: string;
-	query: {
-		date: string;
-		period: string;
-	};
-	moduleStrings: {
-		title: string;
-		item: string;
-		value: string;
-		empty: string;
-	};
-};
-
-const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
+const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -40,9 +27,10 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsTopPosts';
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsTopPosts = useShouldGateStats( statType );
 
-	// TODO: sort out the state shape.
-	const requesting = useSelector( ( state: any ) =>
+	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
@@ -56,7 +44,18 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 			) }
 			{ /* This will be replaced with ghost loaders, fallback to the current implementation until then. */ }
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
+			{ /* TODO: consider supressing <StatsModule /> empty state */ }
+			{ ( data && !! data.length ) || shouldGateStatsTopPosts ? (
+				<StatsModule
+					path="posts"
+					moduleStrings={ moduleStrings }
+					period={ period }
+					query={ query }
+					statType={ statType }
+					showSummaryLink
+					className={ className } // TODO: extend with a base class after adding skeleton loaders
+				/>
+			) : (
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ moduleStrings.title }
@@ -82,18 +81,6 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 							}
 						/>
 					}
-				/>
-			) }
-			{ /* TODO: consider supressing <StatsModule /> empty state */ }
-			{ data && !! data.length && (
-				<StatsModule
-					path="posts"
-					moduleStrings={ moduleStrings }
-					period={ period }
-					query={ query }
-					statType={ statType }
-					showSummaryLink
-					className={ className } // TODO: extend with a base class after adding skeleton loaders
 				/>
 			) }
 		</>
