@@ -28,13 +28,25 @@ function sanitizeEmail( email ) {
 }
 
 function getRedirectUrl( redirect ) {
-	const isHttpOrHttps =
-		!! redirect && ( redirect.startsWith( 'https://' ) || redirect.startsWith( 'http://' ) );
-	const redirectUrl = isHttpOrHttps
-		? addQueryArgs( redirect, { subscribed: true } )
-		: addQueryArgs( 'https://' + redirect, { subscribed: true } );
+	const baseUrl = 'https://wordpress.com/';
 
-	return isRedirectAllowed( redirectUrl ) ? redirectUrl : 'https://wordpress.com/';
+	if ( typeof redirect !== 'string' ) {
+		return baseUrl;
+	}
+
+	if ( redirect.startsWith( '/' ) ) {
+		redirect = 'https://wordpress.com' + redirect;
+	}
+
+	if (
+		! redirect.startsWith( 'https://' ) &&
+		! redirect.startsWith( 'http://' ) &&
+		! redirect.startsWith( '/' )
+	) {
+		redirect = 'https://' + redirect;
+	}
+
+	return isRedirectAllowed( redirect ) ? addQueryArgs( redirect, { subscribed: true } ) : baseUrl;
 }
 
 /**
