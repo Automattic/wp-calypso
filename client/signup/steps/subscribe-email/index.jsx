@@ -66,7 +66,7 @@ function SubscribeEmailStep( props ) {
 		} );
 
 	const handleSubscribeToMailingList = useCallback(
-		( { email_address = email } ) => {
+		( { email_address } = { email_address: email } ) => {
 			subscribeToMailingList( {
 				email_address,
 				mailing_list_category: queryArguments.mailing_list,
