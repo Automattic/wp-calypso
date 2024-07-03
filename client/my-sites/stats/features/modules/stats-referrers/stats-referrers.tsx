@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -17,7 +18,7 @@ import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import { StatsEmptyActionSocial } from '../shared';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatsReferres: React.FC< StatsDefaultModuleProps > = ( {
+const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -26,6 +27,9 @@ const StatsReferres: React.FC< StatsDefaultModuleProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsReferrers';
+
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsReferrers = useShouldGateStats( statType );
 
 	// TODO: sort out the state shape.
 	const requesting = useSelector( ( state: StatsStateProps ) =>
@@ -42,7 +46,18 @@ const StatsReferres: React.FC< StatsDefaultModuleProps > = ( {
 			) }
 			{ /* This will be replaced with ghost loaders, fallback to the current implementation until then. */ }
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
+			{ /* TODO: consider supressing <StatsModule /> empty state */ }
+			{ ( data && !! data.length ) || shouldGateStatsReferrers ? (
+				<StatsModule
+					path="referrers"
+					moduleStrings={ moduleStrings }
+					period={ period }
+					query={ query }
+					statType={ statType }
+					showSummaryLink
+					className={ className } // TODO: extend with a base class after adding skeleton loaders
+				/>
+			) : (
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ moduleStrings.title }
@@ -65,20 +80,8 @@ const StatsReferres: React.FC< StatsDefaultModuleProps > = ( {
 					}
 				/>
 			) }
-			{ /* TODO: consider supressing <StatsModule /> empty state */ }
-			{ data && !! data.length && (
-				<StatsModule
-					path="referrers"
-					moduleStrings={ moduleStrings }
-					period={ period }
-					query={ query }
-					statType={ statType }
-					showSummaryLink
-					className={ className } // TODO: extend with a base class after adding skeleton loaders
-				/>
-			) }
 		</>
 	);
 };
 
-export default StatsReferres;
+export default StatsReferrers;
