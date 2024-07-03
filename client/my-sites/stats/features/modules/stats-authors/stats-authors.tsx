@@ -33,7 +33,7 @@ type StatClicksProps = {
 const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings, className } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsAuthors';
+	const statType = 'statsTopAuthors';
 
 	const requesting = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
