@@ -155,30 +155,7 @@ export default function AllTimeHighlightsSection( {
 		<div className="highlight-cards-mobile">
 			<h3 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h3>
 			<DotPager>
-				<Card className="highlight-card">
-					<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
-					<div className="highlight-card-info-item-list">
-						{ infoItems
-							.filter( ( i ) => ! i.hidden )
-							.map( ( info ) => {
-								return (
-									<div key={ info.id } className="highlight-card-info-item">
-										<Icon icon={ info.icon } />
-
-										<span className="highlight-card-info-item-title">{ info.title }</span>
-
-										<span
-											className="highlight-card-info-item-count"
-											title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
-										>
-											{ formattedNumber( info.count ) }
-										</span>
-									</div>
-								);
-							} ) }
-					</div>
-				</Card>
-
+				<AllTimeStatsCard infoItems={ infoItems } />
 				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
 					return (
 						<Card key={ card.id } className="highlight-card">
@@ -210,30 +187,7 @@ export default function AllTimeHighlightsSection( {
 			<h3 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h3>
 
 			<div className="highlight-cards-list">
-				<Card className="highlight-card">
-					<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
-					<div className="highlight-card-info-item-list">
-						{ infoItems
-							.filter( ( i ) => ! i.hidden )
-							.map( ( info ) => {
-								return (
-									<div key={ info.id } className="highlight-card-info-item">
-										<Icon icon={ info.icon } />
-
-										<span className="highlight-card-info-item-title">{ info.title }</span>
-
-										<span
-											className="highlight-card-info-item-count"
-											title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
-										>
-											{ formattedNumber( info.count ) }
-										</span>
-									</div>
-								);
-							} ) }
-					</div>
-				</Card>
-
+				<AllTimeStatsCard infoItems={ infoItems } />
 				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
 					return (
 						<Card key={ card.id } className="highlight-card">
@@ -281,5 +235,32 @@ export default function AllTimeHighlightsSection( {
 				breakpointInactiveComponent={ highlightCards }
 			/>
 		</div>
+	);
+}
+
+function AllTimeStatsCard( props: any ) {
+	const translate = useTranslate();
+	return (
+		<Card className="highlight-card">
+			<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
+			<div className="highlight-card-info-item-list">
+				{ props.infoItems
+					.filter( ( i ) => ! i.hidden )
+					.map( ( info ) => {
+						return (
+							<div key={ info.id } className="highlight-card-info-item">
+								<Icon icon={ info.icon } />
+								<span className="highlight-card-info-item-title">{ info.title }</span>
+								<span
+									className="highlight-card-info-item-count"
+									title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
+								>
+									{ formattedNumber( info.count ) }
+								</span>
+							</div>
+						);
+					} ) }
+			</div>
+		</Card>
 	);
 }
