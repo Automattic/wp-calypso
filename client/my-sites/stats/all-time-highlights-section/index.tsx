@@ -9,7 +9,7 @@ import {
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useSelector } from 'calypso/state';
@@ -157,7 +157,7 @@ export default function AllTimeHighlightsSection( {
 			<DotPager>
 				<AllTimeStatsCard infoItems={ infoItems } />
 				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-					return <MostPopularDayTimeCard key={ card.id } card={ card } />;
+					return <MostPopularDayTimeCard key={ card.id } cardInfo={ card } />;
 				} ) }
 			</DotPager>
 
@@ -172,7 +172,7 @@ export default function AllTimeHighlightsSection( {
 			<div className="highlight-cards-list">
 				<AllTimeStatsCard infoItems={ infoItems } />
 				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-					return <MostPopularDayTimeCard key={ card.id } card={ card } />;
+					return <MostPopularDayTimeCard key={ card.id } cardInfo={ card } />;
 				} ) }
 			</div>
 
@@ -243,12 +243,28 @@ function AllTimeStatsCard( { infoItems }: AllTimeStatsCardProps ) {
 	);
 }
 
-function MostPopularDayTimeCard( { card }: any ) {
+type CardInfoItem = {
+	id: string;
+	header: string;
+	content: string | JSX.Element;
+	footer: string | React.ReactNode;
+};
+
+type MostPopularDayTimeCardProps = {
+	cardInfo: {
+		id: string;
+		loading?: boolean;
+		heading: string;
+		items: CardInfoItem[];
+	};
+};
+
+function MostPopularDayTimeCard( { cardInfo }: MostPopularDayTimeCardProps ) {
 	return (
-		<Card key={ card.id } className="highlight-card">
-			<h4 className="highlight-card-heading">{ card.heading }</h4>
+		<Card key={ cardInfo.id } className="highlight-card">
+			<h4 className="highlight-card-heading">{ cardInfo.heading }</h4>
 			<div className="highlight-card-detail-item-list">
-				{ card.items.map( ( item ) => {
+				{ cardInfo.items.map( ( item ) => {
 					return (
 						<div key={ item.id } className="highlight-card-detail-item">
 							<div className="highlight-card-detail-item-header">{ item.header }</div>
