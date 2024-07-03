@@ -2198,6 +2198,7 @@ __metadata:
     "@babel/core": "npm:^7.24.5"
     "@floating-ui/utils": "npm:^0.1.6"
     "@popperjs/core": "npm:^2.11.8"
+    "@sentry/browser": "npm:^7.54.0"
     "@tanstack/eslint-plugin-query": "npm:^5.14.6"
     "@tanstack/react-query": "npm:^5.15.5"
     "@testing-library/jest-dom": "npm:^6.4.5"
@@ -6203,7 +6204,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:7.54.0":
+"@sentry/browser@npm:7.54.0, @sentry/browser@npm:^7.54.0":
   version: 7.54.0
   resolution: "@sentry/browser@npm:7.54.0"
   dependencies:

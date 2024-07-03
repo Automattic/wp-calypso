@@ -269,6 +269,14 @@ function load_whats_new() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
 
 /**
+ * Error reporting for wp-admin / Gutenberg.
+ */
+function load_error_reporting() {
+	require_once __DIR__ . '/error-reporting/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_error_reporting' );
+
+/**
  * Tags Education
  */
 function load_tags_education() {
