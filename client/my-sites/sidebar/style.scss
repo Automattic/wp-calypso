@@ -224,15 +224,19 @@ $font-size: rem(14px);
 
 				&:hover,
 				&:focus {
-					background-color: var(--color-sidebar-menu-hover-background);
-					color: var(--color-sidebar-menu-hover-text);
+					background-color: var(--color-sidebar-submenu-hover-background);
+					color: var(--color-sidebar-submenu-hover-text);
 				}
 			}
 
 			.selected .sidebar__menu-link {
-				background-color: var(--color-sidebar-menu-selected-background);
-				color: var(--color-sidebar-menu-selected-text);
+				background-color: var(--color-sidebar-submenu-selected-background);
+				color: var(--color-sidebar-submenu-selected-text);
 				font-weight: 600;
+
+				&:hover {
+					color: var(--color-sidebar-submenu-hover-text);
+				}
 			}
 
 			.sidebar__menu-link-text {
@@ -315,6 +319,7 @@ $font-size: rem(14px);
 		.sidebar__menu.sidebar__menu--selected {
 			.sidebar__heading {
 				background: var(--color-sidebar-menu-hover-background);
+				color: var(--color-sidebar-menu-selected-text);
 
 				&::after {
 					display: block;
@@ -866,12 +871,18 @@ $font-size: rem(14px);
 	.collapse-sidebar__toggle {
 		.sidebar__menu-link {
 			cursor: pointer;
-			color: var(--color-sidebar-text-alternative);
+			color: var(--color-sidebar-text);
 			font-size: rem(13px);
 
 			&:hover,
 			&:focus {
+				color: var(--color-sidebar-submenu-hover-text);
 				background-color: transparent;
+				box-shadow: none;
+
+				.sidebar__menu-icon {
+					color: var(--color-sidebar-submenu-hover-text);
+				}
 			}
 		}
 
