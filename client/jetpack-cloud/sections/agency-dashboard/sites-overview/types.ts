@@ -221,7 +221,8 @@ export type AllowedActionTypes =
 	| 'site_settings'
 	| 'set_up_site'
 	| 'change_domain'
-	| 'hosting_configuration';
+	| 'hosting_configuration'
+	| 'remove_site';
 
 export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };

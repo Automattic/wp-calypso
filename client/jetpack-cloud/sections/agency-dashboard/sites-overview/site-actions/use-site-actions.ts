@@ -124,6 +124,13 @@ export default function useSiteActions(
 				isExternalLink: true,
 				isEnabled: true && ! isUrlOnly,
 			},
+			{
+				name: translate( 'Remove site' ),
+				onClick: () => handleClickMenuItem( 'remove_site' ),
+				isEnabled: isA8CForAgencies() && isEnabled( 'a4a-site-selector-and-importer' ),
+				icon: 'trash',
+				className: 'is-error',
+			},
 		];
 	}, [
 		dispatch,
