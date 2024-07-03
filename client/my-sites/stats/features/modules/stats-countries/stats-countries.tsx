@@ -57,30 +57,28 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 					<Geochart query={ query } />
 				</StatsModule>
 			) : (
-				( ! data || ! data?.length ) && (
-					<StatsCard
-						className={ className }
-						title={ translate( 'Locations' ) }
-						isEmpty
-						emptyMessage={
-							<EmptyModuleCard
-								icon={ mapMarker }
-								description={ translate(
-									'Stats on visitors and their {{link}}viewing location{{/link}} will appear here to learn from where you are getting visits.',
-									{
-										comment: '{{link}} links to support documentation.',
-										components: {
-											link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
-										},
-										context: 'Stats: Info box label when the Countries module is empty',
-									}
-								) }
-							/>
-						}
-					>
-						<></>
-					</StatsCard>
-				)
+				<StatsCard
+					className={ className }
+					title={ translate( 'Locations' ) }
+					isEmpty
+					emptyMessage={
+						<EmptyModuleCard
+							icon={ mapMarker }
+							description={ translate(
+								'Stats on visitors and their {{link}}viewing location{{/link}} will appear here to learn from where you are getting visits.',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
+									},
+									context: 'Stats: Info box label when the Countries module is empty',
+								}
+							) }
+						/>
+					}
+				>
+					<></>
+				</StatsCard>
 			) }
 		</>
 	);
