@@ -10,11 +10,14 @@ import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selector
 import getActionEventName from './get-action-event-name';
 import type { SiteNode, AllowedActionTypes } from '../types';
 
-export default function useSiteActions(
-	site: SiteNode,
-	isLargeScreen: boolean,
-	siteError?: boolean
-) {
+type Props = {
+	site: SiteNode;
+	isLargeScreen: boolean;
+	siteError?: boolean;
+	onSelect?: ( action: AllowedActionTypes ) => void;
+};
+
+export default function useSiteActions( { site, isLargeScreen, siteError, onSelect }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );
@@ -42,6 +45,7 @@ export default function useSiteActions(
 		const handleClickMenuItem = ( actionType: AllowedActionTypes ) => {
 			const eventName = getActionEventName( actionType, isLargeScreen );
 			dispatch( recordTracksEvent( eventName ) );
+			onSelect?.( actionType );
 		};
 
 		const isWPCOMAtomicSiteCreationEnabled =

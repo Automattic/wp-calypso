@@ -1,0 +1,9 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-remove-confirmation-dialog {
+	.site-remove-confirmation-dialog__heading {
+		padding-block-end: 16px;
+		@include a4a-font-heading-lg;
+	}
+}

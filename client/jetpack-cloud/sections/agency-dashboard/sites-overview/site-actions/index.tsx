@@ -1,10 +1,11 @@
 import { Gridicon, Button } from '@automattic/components';
 import clsx from 'clsx';
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { SiteRemoveConfirmationDialog } from '../site-remove-confirmation-dialog';
 import useSiteActions from './use-site-actions';
-import type { SiteNode } from '../types';
+import type { AllowedActionTypes, SiteNode } from '../types';
 
 import './style.scss';
 
@@ -16,18 +17,30 @@ interface Props {
 
 export default function SiteActions( { isLargeScreen = false, site, siteError }: Props ) {
 	const [ isOpen, setIsOpen ] = useState( false );
+	const [ showRemoveSiteDialog, setShowRemoveSiteDialog ] = useState( false );
 
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
-	const showActions = () => {
+	const showActions = useCallback( () => {
 		setIsOpen( true );
-	};
+	}, [] );
 
-	const closeDropdown = () => {
+	const closeDropdown = useCallback( () => {
 		setIsOpen( false );
-	};
+	}, [] );
 
-	const siteActions = useSiteActions( site, isLargeScreen, siteError );
+	const onSelectAction = useCallback( ( action: AllowedActionTypes ) => {
+		if ( action === 'remove_site' ) {
+			setShowRemoveSiteDialog( true );
+		}
+	}, [] );
+
+	const siteActions = useSiteActions( {
+		site,
+		isLargeScreen,
+		siteError,
+		onSelect: onSelectAction,
+	} );
 
 	return (
 		<>
@@ -65,6 +78,13 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 						</PopoverMenuItem>
 					) ) }
 			</PopoverMenu>
+
+			{ showRemoveSiteDialog && (
+				<SiteRemoveConfirmationDialog
+					site={ site }
+					onClose={ () => setShowRemoveSiteDialog( false ) }
+				/>
+			) }
 		</>
 	);
 }
