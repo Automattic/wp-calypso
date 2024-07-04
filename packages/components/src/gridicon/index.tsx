@@ -41,7 +41,8 @@ function useProxiedURL( url: string ) {
 				.then( ( blob ) => {
 					const urlProxy = URL.createObjectURL( blob );
 					setUrlProxy( urlProxy );
-				} );
+				} )
+				.catch( () => {} );
 		} else {
 			setUrlProxy( url );
 		}
