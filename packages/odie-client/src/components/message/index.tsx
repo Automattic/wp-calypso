@@ -20,7 +20,7 @@ import FoldableCard from '../foldable';
 import CustomALink from './custom-a-link';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
-import type { CurrentUser, Message, Source } from '../../types';
+import type { CurrentUser, Message, Source } from '../../types/';
 
 import './style.scss';
 

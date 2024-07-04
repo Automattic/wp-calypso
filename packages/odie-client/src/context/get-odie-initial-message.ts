@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { Message, OdieAllowedBots } from '../types';
+import { Message, OdieAllowedBots } from '../types/index';
 
 const getOdieInitialPrompt = ( botNameSlug: OdieAllowedBots ): string => {
 	switch ( botNameSlug ) {

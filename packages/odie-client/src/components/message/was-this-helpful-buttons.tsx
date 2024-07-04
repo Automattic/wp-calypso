@@ -4,7 +4,7 @@ import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../.
 import { noop, useOdieAssistantContext } from '../../context';
 import { useOdieSendMessageFeedback } from '../../query';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
-import type { Message } from '../../types';
+import type { Message } from '../../types/';
 
 import './style.scss';
 

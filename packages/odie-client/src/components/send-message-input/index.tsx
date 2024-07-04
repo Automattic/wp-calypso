@@ -5,7 +5,7 @@ import TextareaAutosize from 'calypso/components/textarea-autosize';
 import ArrowUp from '../../assets/arrow-up.svg';
 import { useOdieAssistantContext } from '../../context';
 import { useOdieSendMessage } from '../../query';
-import { Message } from '../../types';
+import { Message } from '../../types/';
 import { JumpToRecent } from '../message/jump-to-recent';
 
 import './style.scss';
