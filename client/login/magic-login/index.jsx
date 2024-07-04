@@ -580,7 +580,7 @@ class MagicLogin extends Component {
 	};
 
 	renderGravPoweredSecondaryEmailOptions() {
-		const { oauth2Client, translate } = this.props;
+		const { oauth2Client, translate, query } = this.props;
 		const {
 			usernameOrEmail,
 			isNewAccount,
@@ -691,9 +691,11 @@ class MagicLogin extends Component {
 					{ translate( 'Continue' ) }
 				</FormButton>
 				<footer className="grav-powered-magic-login__footer">
-					<button onClick={ this.handleGravPoweredEmailSwitch }>
-						{ translate( 'Switch email' ) }
-					</button>
+					{ query?.gravatar_from !== '3rd-party' && (
+						<button onClick={ this.handleGravPoweredEmailSwitch }>
+							{ translate( 'Switch email' ) }
+						</button>
+					) }
 					<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
 						{ translate( 'Need help logging in?' ) }
 					</a>
@@ -928,12 +930,17 @@ class MagicLogin extends Component {
 			oauth2ClientId: query?.client_id,
 		} );
 		let headerText = translate( 'Sign in with your email' );
+		let isEmailInputDisabled = isRequestingEmail;
 
 		if ( isGravatar ) {
 			headerText =
 				query?.gravatar_from === 'signup'
 					? translate( 'Create your Profile' )
 					: translate( 'Edit your Profile' );
+
+			if ( query?.gravatar_from === '3rd-party' ) {
+				isEmailInputDisabled = true;
+			}
 		}
 
 		return (
@@ -954,7 +961,7 @@ class MagicLogin extends Component {
 						createAccountForNewUser
 						errorMessage={ requestEmailErrorMessage }
 						onErrorDismiss={ () => this.setState( { requestEmailErrorMessage: null } ) }
-						isEmailInputDisabled={ isRequestingEmail }
+						isEmailInputDisabled={ isEmailInputDisabled }
 						isEmailInputError={ !! requestEmailErrorMessage }
 						isSubmitButtonDisabled={ isRequestingEmail || !! requestEmailErrorMessage }
 						isSubmitButtonBusy={ isRequestingEmail }
