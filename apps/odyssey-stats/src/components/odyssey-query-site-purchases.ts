@@ -28,12 +28,13 @@ async function queryOdysseyQuerySitePurchases(
 	const apiPath = shouldUseStatsBuiltInPurchasesApi
 		? `/sites/${ siteId }/purchases`
 		: '/site/purchases';
+	const apiNamespace = shouldUseStatsBuiltInPurchasesApi ? 'jetpack/v4/stats-app' : 'jetpack/v4';
 
 	return (
 		wpcom.req
 			.get( {
 				path: getApiPath( apiPath, { siteId } ),
-				apiNamespace: getApiNamespace(),
+				apiNamespace: getApiNamespace( apiNamespace ),
 			} )
 			// Endpoint `site/purchases` returns a stringified JSON object as data.
 			// Our own endpoint `/sites/${ siteId }/purchases` returns a JSON object.
