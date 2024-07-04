@@ -152,12 +152,6 @@ export default function SiteSelectorAndImporter( {
 							iconClassName: 'site-selector-and-importer__popover-button-wp-icon',
 							heading: translate( 'Via URL' ),
 							description: translate( 'Type in the address of your site' ),
-							buttonProps: {
-								onClick: () => {
-									setShowUrlConnectionModal( true );
-									setMenuVisible( false );
-								},
-							},
 						} ) }
 					</div>
 					<div className="site-selector-and-importer__popover-column">
