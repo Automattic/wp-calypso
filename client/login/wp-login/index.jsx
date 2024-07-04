@@ -247,6 +247,7 @@ export class Login extends Component {
 			twoFactorAuthType: 'link',
 			oauth2ClientId: currentQuery?.client_id,
 			redirectTo: currentQuery?.redirect_to,
+			gravatarFrom: currentQuery?.gravatar_from,
 		} );
 		const currentUrl = new URL( window.location.href );
 		currentUrl.searchParams.append( 'lostpassword_flow', true );
@@ -258,6 +259,7 @@ export class Login extends Component {
 			lostPassword( { locale } )
 		);
 		const signupUrl = getSignupUrl( currentQuery, currentRoute, oauth2Client, locale );
+		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
 		return (
 			<>
@@ -269,7 +271,7 @@ export class Login extends Component {
 							this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' )
 						}
 					>
-						{ isGravatarOAuth2Client( oauth2Client )
+						{ isGravatar
 							? translate( 'Email me a login code.' )
 							: translate( 'Email me a login link.' ) }
 					</a>
@@ -281,13 +283,15 @@ export class Login extends Component {
 					>
 						{ translate( 'Lost your password?' ) }
 					</a>
-					<div>
-						{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
-							components: {
-								signupLink: <a href={ signupUrl } />,
-							},
-						} ) }
-					</div>
+					{ ! ( isGravatar && currentQuery?.gravatar_from === '3rd-party' ) && (
+						<div>
+							{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
+								components: {
+									signupLink: <a href={ signupUrl } />,
+								},
+							} ) }
+						</div>
+					) }
 					<div>
 						{ translate( 'Any question? {{a}}Check our help docs{{/a}}.', {
 							components: {

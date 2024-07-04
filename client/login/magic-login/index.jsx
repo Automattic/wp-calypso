@@ -928,6 +928,7 @@ class MagicLogin extends Component {
 			locale,
 			redirectTo: query?.redirect_to,
 			oauth2ClientId: query?.client_id,
+			gravatarFrom: query?.gravatar_from,
 		} );
 		let headerText = translate( 'Sign in with your email' );
 		let isEmailInputDisabled = isRequestingEmail;
