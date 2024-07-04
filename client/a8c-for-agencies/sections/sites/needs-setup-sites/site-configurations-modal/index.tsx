@@ -156,7 +156,7 @@ export default function SiteConfigurationsModal( {
 				</FormField>
 				<FormField label={ translate( 'Primary data center' ) }>
 					<FormSelect name="primary_data_center" onChange={ () => {} }>
-						<option value="">{ translate( 'No Preference' ) }</option>
+						<option value="">{ translate( 'No preference' ) }</option>
 						{ dataCenterOptionsElements }
 					</FormSelect>
 				</FormField>
