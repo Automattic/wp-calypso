@@ -6,12 +6,6 @@
 	select {
 		width: fit-content;
 	}
-	.components-modal__content {
-		padding: 0;
-	}
-	.configure-your-site-modal-form__main {
-		padding: 0 30px;
-	}
 
 	.configure-your-site-modal-form__php-version-select {
 		min-width: 200px;
@@ -26,10 +20,8 @@
 	}
 
 	.configure-your-site-modal-form__footer {
-		padding: 24px 40px;
+		margin-top: 42px;
 		text-align: right;
-		background-color: var(--color-neutral-0);
-		border-radius: 4px;
 	}
 
 	.configure-your-site-modal-form__site-name-placeholder {
@@ -45,7 +37,8 @@
 
 		.configure-your-site-modal-form__site-name-icon-wrapper {
 			display: flex;
-			width: 24px;
+			justify-content: space-around;
+			margin-right: -5px;
 			margin-left: 5px;
 		}
 
@@ -54,7 +47,7 @@
 		}
 
 		.configure-your-site-modal-form__site-name-fail {
-			color: var(--color-error);
+			fill: var(--color-error);
 		}
 	}
 
@@ -64,6 +57,7 @@
 		font-size: rem(14px);
 		line-height: 1.5;
 		color: var(--color-error);
+		margin-top: 4px;
 
 		svg {
 			margin-right: 5px;
