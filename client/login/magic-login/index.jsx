@@ -590,6 +590,7 @@ class MagicLogin extends Component {
 			hashedEmail,
 		} = this.state;
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
+		const isFrom3rdPartyApp = query?.gravatar_from === '3rd-party';
 
 		this.emailToSha256( usernameOrEmail ).then( ( email ) =>
 			this.setState( { hashedEmail: email } )
@@ -691,7 +692,7 @@ class MagicLogin extends Component {
 					{ translate( 'Continue' ) }
 				</FormButton>
 				<footer className="grav-powered-magic-login__footer">
-					{ query?.gravatar_from !== '3rd-party' && (
+					{ ! isFrom3rdPartyApp && (
 						<button onClick={ this.handleGravPoweredEmailSwitch }>
 							{ translate( 'Switch email' ) }
 						</button>
@@ -939,7 +940,9 @@ class MagicLogin extends Component {
 					? translate( 'Create your Profile' )
 					: translate( 'Edit your Profile' );
 
-			if ( query?.gravatar_from === '3rd-party' ) {
+			const isFrom3rdPartyApp = query?.gravatar_from === '3rd-party';
+
+			if ( isFrom3rdPartyApp ) {
 				isEmailInputDisabled = true;
 			}
 		}
