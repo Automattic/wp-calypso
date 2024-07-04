@@ -214,55 +214,49 @@ const StatsModuleUTM = ( {
 			) }
 			{ ! isNewEmptyStateEnabled && (
 				<>
-					{ !! data?.length && (
-						<>
-							<StatsListCard
-								className={ clsx( className, 'stats-module__card', path ) }
-								moduleType={ path }
-								data={ data }
-								useShortLabel={ useShortLabel }
-								title={ moduleStrings?.title }
-								emptyMessage={ <div>{ moduleStrings.empty }</div> }
-								metricLabel={ metricLabel }
-								showMore={
-									displaySummaryLink && ! summary
-										? {
-												url: getHref(),
-												label:
-													data.length >= 10
-														? translate( 'View all', {
-																context:
-																	'Stats: Button link to show more detailed stats information',
-														  } )
-														: translate( 'View details', {
-																context:
-																	'Stats: Button label to see the detailed content of a panel',
-														  } ),
-										  }
-										: undefined
-								}
-								error={ hasError && <ErrorPanel /> }
-								loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
-								splitHeader
-								mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-								toggleControl={
-									<div className="stats-module__extended-toggle">
-										<UTMBuilder />
-										<UTMDropdown
-											buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-											onSelect={ setSelectedOption }
-											selectOptions={ optionLabels }
-											selected={ selectedOption }
-										/>
-									</div>
-								}
-							/>
-							{ showFooterWithDownloads && (
-								<div className="stats-module__footer-actions stats-module__footer-actions--summary">
-									<UTMExportButton data={ data } fileName={ fileNameForExport } />
-								</div>
-							) }
-						</>
+					<StatsListCard
+						className={ clsx( className, 'stats-module__card', path ) }
+						moduleType={ path }
+						data={ data }
+						useShortLabel={ useShortLabel }
+						title={ moduleStrings?.title }
+						emptyMessage={ <div>{ moduleStrings.empty }</div> }
+						metricLabel={ metricLabel }
+						showMore={
+							displaySummaryLink && ! summary
+								? {
+										url: getHref(),
+										label:
+											data.length >= 10
+												? translate( 'View all', {
+														context: 'Stats: Button link to show more detailed stats information',
+												  } )
+												: translate( 'View details', {
+														context: 'Stats: Button label to see the detailed content of a panel',
+												  } ),
+								  }
+								: undefined
+						}
+						error={ hasError && <ErrorPanel /> }
+						loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
+						splitHeader
+						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+						toggleControl={
+							<div className="stats-module__extended-toggle">
+								<UTMBuilder />
+								<UTMDropdown
+									buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+									onSelect={ setSelectedOption }
+									selectOptions={ optionLabels }
+									selected={ selectedOption }
+								/>
+							</div>
+						}
+					/>
+					{ showFooterWithDownloads && (
+						<div className="stats-module__footer-actions stats-module__footer-actions--summary">
+							<UTMExportButton data={ data } fileName={ fileNameForExport } />
+						</div>
 					) }
 				</>
 			) }
