@@ -1,9 +1,11 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { customLink } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
@@ -14,28 +16,22 @@ import EmptyModuleCard from '../../../components/empty-module-card/empty-module-
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-type StatClicksProps = {
-	className?: string;
-	period: string;
-	query: {
-		date: string;
-		period: string;
-	};
-	moduleStrings: {
-		title: string;
-		item: string;
-		value: string;
-		empty: string;
-	};
-};
-
-const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings, className } ) => {
+const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
+	period,
+	query,
+	moduleStrings,
+	className,
+} ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsClicks';
 
-	const requesting = useSelector( ( state ) =>
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsClicks = useShouldGateStats( statType );
+
+	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
@@ -48,9 +44,19 @@ const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
-				<StatsCard
+			{ ( data && !! data.length ) || shouldGateStatsClicks ? (
+				<StatsModule
+					path="clicks"
+					moduleStrings={ moduleStrings }
+					period={ period }
+					query={ query }
+					statType={ statType }
+					showSummaryLink
 					className={ className }
+				></StatsModule>
+			) : (
+				<StatsCard
+					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ translate( 'Clicks' ) }
 					isEmpty
 					emptyMessage={
@@ -72,19 +78,8 @@ const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings
 					<></>
 				</StatsCard>
 			) }
-			{ data && !! data.length && (
-				<StatsModule
-					path="clicks"
-					moduleStrings={ moduleStrings }
-					period={ period }
-					query={ query }
-					statType={ statType }
-					showSummaryLink
-					className={ className }
-				></StatsModule>
-			) }
 		</>
 	);
 };
 
-export default StatClicks;
+export default StatsClicks;

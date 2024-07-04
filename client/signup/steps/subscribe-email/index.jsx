@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useEffect } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
+import DOMPurify from 'dompurify';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -18,14 +19,34 @@ import SubscribeEmailStepContent from './content';
 
 import './style.scss';
 
-function sanitizeRedirectUrl( redirect ) {
-	const isHttpOrHttps =
-		!! redirect && ( redirect.startsWith( 'https://' ) || redirect.startsWith( 'http://' ) );
-	const redirectUrl = isHttpOrHttps
-		? addQueryArgs( redirect, { subscribed: true } )
-		: addQueryArgs( 'https://' + redirect, { subscribed: true } );
+function sanitizeEmail( email ) {
+	if ( typeof email !== 'string' ) {
+		return '';
+	}
 
-	return isRedirectAllowed( redirectUrl ) ? redirectUrl : 'https://wordpress.com/';
+	return DOMPurify.sanitize( email ).trim();
+}
+
+function getRedirectUrl( redirect ) {
+	const baseUrl = 'https://wordpress.com/';
+
+	if ( typeof redirect !== 'string' ) {
+		return baseUrl;
+	}
+
+	if ( redirect.startsWith( '/' ) ) {
+		redirect = 'https://wordpress.com' + redirect;
+	}
+
+	if (
+		! redirect.startsWith( 'https://' ) &&
+		! redirect.startsWith( 'http://' ) &&
+		! redirect.startsWith( '/' )
+	) {
+		redirect = 'https://' + redirect;
+	}
+
+	return isRedirectAllowed( redirect ) ? addQueryArgs( redirect, { subscribed: true } ) : baseUrl;
 }
 
 /**
@@ -37,10 +58,9 @@ function sanitizeRedirectUrl( redirect ) {
 function SubscribeEmailStep( props ) {
 	const { currentUser, flowName, goToNextStep, queryArguments, stepName, translate } = props;
 
-	const email =
-		typeof queryArguments.user_email === 'string' ? queryArguments.user_email.trim() : '';
+	const email = sanitizeEmail( queryArguments.user_email );
 
-	const redirectUrl = sanitizeRedirectUrl( queryArguments.redirect_to );
+	const redirectUrl = getRedirectUrl( queryArguments.redirect_to );
 
 	const redirectToAfterLoginUrl = currentUser
 		? addQueryArgs( window.location.href, { user_email: currentUser?.email } )
@@ -57,44 +77,60 @@ function SubscribeEmailStep( props ) {
 			},
 		} );
 
+	const handleSubscribeToMailingList = useCallback(
+		( { email_address } = { email_address: email } ) => {
+			subscribeToMailingList( {
+				email_address,
+				mailing_list_category: queryArguments.mailing_list,
+				from: queryArguments.from,
+				first_name: queryArguments.first_name,
+				last_name: queryArguments.last_name,
+			} );
+		},
+		[
+			email,
+			queryArguments.first_name,
+			queryArguments.from,
+			queryArguments.last_name,
+			queryArguments.mailing_list,
+			subscribeToMailingList,
+		]
+	);
+
+	const handlerecordRegistration = useCallback(
+		( userData ) => {
+			recordRegistration( {
+				userData,
+				flow: flowName,
+				type: 'passwordless',
+			} );
+		},
+		[ flowName ]
+	);
+
 	const { mutate: createNewAccount, isPending: isCreateNewAccountPending } =
 		useCreateNewAccountMutation( {
 			onSuccess: ( response ) => {
-				const username =
-					( response && response.signup_sandbox_username ) || ( response && response.username );
+				const userData = {
+					ID: ( response && response.signup_sandbox_user_id ) || ( response && response.user_id ),
+					username:
+						( response && response.signup_sandbox_username ) || ( response && response.username ),
+					email,
+				};
 
-				const userId =
-					( response && response.signup_sandbox_user_id ) || ( response && response.user_id );
-
-				recordRegistration( {
-					userData: {
-						ID: userId,
-						username: username,
-						email: this.state.email,
-					},
-					flow: flowName,
-					type: 'passwordless',
-				} );
-
-				subscribeToMailingList( {
-					email_address: email,
-					mailing_list_category: queryArguments.mailing_list,
-					from: queryArguments.from,
-				} );
+				handlerecordRegistration( userData );
+				handleSubscribeToMailingList();
 			},
 			onError: ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
-					subscribeToMailingList( {
-						email_address: email,
-						mailing_list_category: queryArguments.mailing_list,
-						from: queryArguments.from,
-					} );
+					handleSubscribeToMailingList();
 				}
 			},
 		} );
 
 	useEffect( () => {
-		if ( emailValidator.validate( email ) && ! currentUser ) {
+		// 1. User is not logged in and the email submitted to the flow is valid
+		if ( ! currentUser && emailValidator.validate( email ) ) {
 			createNewAccount( {
 				userData: {
 					email,
@@ -104,22 +140,11 @@ function SubscribeEmailStep( props ) {
 			} );
 		}
 
+		// 2. User is logged in and their email matches the email submitted to the flow
 		if ( currentUser?.email === email ) {
-			subscribeToMailingList( {
-				email_address: email,
-				mailing_list_category: queryArguments.mailing_list,
-				from: queryArguments.from,
-			} );
+			handleSubscribeToMailingList();
 		}
-	}, [
-		createNewAccount,
-		currentUser,
-		email,
-		flowName,
-		queryArguments.from,
-		queryArguments.mailing_list,
-		subscribeToMailingList,
-	] );
+	}, [ createNewAccount, currentUser, email, flowName, handleSubscribeToMailingList ] );
 
 	return (
 		<div className="subscribe-email">
@@ -140,25 +165,12 @@ function SubscribeEmailStep( props ) {
 						subscribeToMailingList={ subscribeToMailingList }
 						handleCreateAccountError={ ( error, submittedEmail ) => {
 							if ( isExistingAccountError( error.error ) ) {
-								subscribeToMailingList( {
-									email_address: submittedEmail,
-									mailing_list_category: queryArguments.mailing_list,
-									from: queryArguments.from,
-								} );
+								handleSubscribeToMailingList( { email_address: submittedEmail } );
 							}
 						} }
 						handleCreateAccountSuccess={ ( userData ) => {
-							recordRegistration( {
-								userData,
-								flow: flowName,
-								type: 'passwordless',
-							} );
-
-							subscribeToMailingList( {
-								email_address: userData.email,
-								mailing_list_category: queryArguments.mailing_list,
-								from: queryArguments.from,
-							} );
+							handlerecordRegistration( userData );
+							handleSubscribeToMailingList( { email_address: userData.email } );
 						} }
 					/>
 				}

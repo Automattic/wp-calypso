@@ -44,16 +44,13 @@
 }
 
 .user-feedback-modal-form__title {
-	font-size: 1.5rem;
-	font-weight: 700;
-	line-height: 0.8;
+	@include a4a-font-body-lg;
 	margin: 0;
 	padding: 0;
 }
 
 p.user-feedback-modal-form__instruction {
-	font-size: 1rem;
-	font-weight: 400;
+	@include a4a-font-body-lg;
 	margin: 0;
 }
 

@@ -107,6 +107,10 @@
 			}
 		}
 
+		.block-editor-iframe__container {
+			overflow-x: unset;
+		}
+
 		&,
 		& iframe {
 			min-height: 140px;

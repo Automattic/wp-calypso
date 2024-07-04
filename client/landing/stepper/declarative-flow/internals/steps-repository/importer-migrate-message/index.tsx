@@ -14,6 +14,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import FlowCard from '../components/flow-card';
+import { redirect } from '../import/util';
 import { useSubmitMigrationTicket } from './hooks/use-submit-migration-ticket';
 
 const ImporterMigrateMessage: Step = () => {
@@ -90,6 +92,22 @@ const ImporterMigrateMessage: Step = () => {
 							<Icon icon={ globe } />
 						</span>
 						{ __( `We'll help you with the domain changes after the migration is completed.` ) }
+					</div>
+					<div className="migration-message__actions">
+						<FlowCard
+							title={ __( 'Let me explore' ) }
+							text={ __(
+								'Discover more features and options available on WordPress.com on your own.'
+							) }
+							onClick={ () => redirect( `/home/${ siteSlug }` ) }
+						/>
+						<FlowCard
+							title={ __( 'Help me learn' ) }
+							text={ __(
+								'Access guides and tutorials to better understand how to use WordPress.com.'
+							) }
+							onClick={ () => redirect( '/support' ) }
+						/>
 					</div>
 				</>
 			}
