@@ -60,7 +60,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	const onDismiss = useCallback( () => {
 		setIsVisible( false );
 		recordTracksEvent( `calypso_inlinehelp_close` );
-	}, [ setIsVisible, recordTracksEvent ] );
+	}, [ setIsVisible ] );
 
 	const toggleVisible = () => {
 		if ( ! isVisible ) {
@@ -72,7 +72,9 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 	const animationProps = {
 		style: {
-			animation: `${ isVisible ? 'fadeIn' : 'fadeOut' } .25s ease-out`,
+			animation: isMobile
+				? `${ isVisible ? 'fadeIn' : 'fadeOut' } .25s ease-out`
+				: `${ isVisible ? 'slideIn' : 'fadeOut' } .25s ease-out`,
 			...openingCoordinates,
 		},
 		onAnimationEnd: toggleVisible,

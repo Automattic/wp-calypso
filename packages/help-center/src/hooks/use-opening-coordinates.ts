@@ -1,3 +1,4 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useState, useEffect } from 'react';
 
 const AESTHETIC_OFFSET = 20;
@@ -46,6 +47,8 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 };
 
 export function useOpeningCoordinates( disabled: boolean = false, isMinimized: boolean ) {
+	const isMobile = useMobileBreakpoint();
+
 	// Store the last click event to be used for the opening position
 	const [ openingCoordinates, setOpeningCoordinates ] = useState< {
 		top?: number;
@@ -81,6 +84,10 @@ export function useOpeningCoordinates( disabled: boolean = false, isMinimized: b
 
 		return () => document.removeEventListener( 'mousedown', handler );
 	}, [ disabled ] );
+
+	if ( isMobile ) {
+		return undefined;
+	}
 
 	if ( isMinimized && openingCoordinates ) {
 		return { ...openingCoordinates, top: 'auto', transformOrigin: 'bottom right' };

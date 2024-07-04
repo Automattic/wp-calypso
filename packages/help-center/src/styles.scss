@@ -211,6 +211,16 @@ $head-foot-height: 50px;
 	@keyframes fadeIn {
 		0% {
 			opacity: 0;
+		}
+
+		100% {
+			opacity: 1;
+		}
+	}
+
+	@keyframes slideIn {
+		0% {
+			opacity: 0;
 			transform: scale(0);
 		}
 
