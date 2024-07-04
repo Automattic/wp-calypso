@@ -118,6 +118,7 @@
 		"migration-flow/new-migration-instructions-step": false,
 		"migration-flow/introductory-offer": false,
 		"migration-flow/enable-migration-assistant": true,
+		"my-sites/add-ons": true,
 		"onboarding/design-choices": true,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
