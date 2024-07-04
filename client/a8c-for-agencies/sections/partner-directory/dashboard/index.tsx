@@ -59,7 +59,7 @@ const PartnerDirectoryDashboard = () => {
 		}
 	}, [ agency ] );
 
-	const applicationWasSubmitted = applicationData?.status !== 'completed';
+	const applicationWasSubmitted = applicationData ? applicationData.status !== 'completed' : false;
 
 	const agencyDetailsData = useMemo( () => mapAgencyDetailsFormData( agency ), [ agency ] );
 

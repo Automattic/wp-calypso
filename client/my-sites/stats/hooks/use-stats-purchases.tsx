@@ -1,6 +1,8 @@
 import {
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PRODUCT_JETPACK_STATS_BI_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 	PRODUCT_JETPACK_STATS_MONTHLY,
@@ -59,7 +61,9 @@ export const hasAnyPlan = ( state: object, siteId: number | null ) => {
 	const isPWYWOwned = isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
 	const supportCommercialUse =
 		isCommercialOwned ||
-		JETPACK_COMPLETE_PLANS.some( ( plan ) => isProductOwned( sitePurchases, plan ) );
+		[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, ...JETPACK_COMPLETE_PLANS ].some(
+			( plan ) => isProductOwned( sitePurchases, plan )
+		);
 
 	return isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse;
 };
@@ -91,7 +95,9 @@ export default function useStatsPurchases( siteId: number | null ) {
 	const supportCommercialUse = useMemo(
 		() =>
 			isCommercialOwned ||
-			JETPACK_COMPLETE_PLANS.some( ( plan ) => isProductOwned( sitePurchases, plan ) ),
+			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, ...JETPACK_COMPLETE_PLANS ].some(
+				( plan ) => isProductOwned( sitePurchases, plan )
+			),
 		[ sitePurchases, isCommercialOwned ]
 	);
 
