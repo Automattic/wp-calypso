@@ -166,6 +166,7 @@ Uses custom theme highlight monochromatic palette for primary + accent
 	--color-sidebar-menu-hover-text: var(--theme-text-color);
 
 	/* Sidebar Hover - Nav unification */
+	--color-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-hover-text);
 
 	/* Sidebar Submenu - Nav Unification */
 	--color-sidebar-submenu-background: var(--theme-submenu-background-color);
@@ -178,6 +179,7 @@ Uses custom theme highlight monochromatic palette for primary + accent
 	--color-navredesign-sidebar-menu-selected-text: var(--theme-text-color);
 	--color-navredesign-sidebar-submenu-selected-text: var(--theme-text-color);
 	--color-navredesign-sidebar-submenu-hover-text: #33f078; /* $menu-submenu-focus-text */
+	--color-navredesign-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-hover-text);
 
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--theme-highlight-color);
