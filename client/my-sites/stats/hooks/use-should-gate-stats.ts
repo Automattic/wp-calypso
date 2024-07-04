@@ -30,7 +30,7 @@ import {
 import { isSiteNew } from './use-site-compulsory-plan-selection-qualified-check';
 import { hasAnyPlan } from './use-stats-purchases';
 
-const jetpackPaidStatsPaywall = [
+const jetpackStatsCommercialPaywall = [
 	STAT_TYPE_TOP_POSTS,
 	STAT_TYPE_COUNTRY_VIEWS,
 	STAT_TYPE_REFERRERS,
@@ -41,7 +41,7 @@ const jetpackPaidStatsPaywall = [
 	STAT_TYPE_VIDEO_PLAYS,
 ];
 
-const granularControlForJetpackPaidStatsPaywall = [
+const granularControlForJetpackStatsCommercialPaywall = [
 	STATS_FEATURE_DATE_CONTROL,
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
@@ -95,9 +95,10 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	if ( jetpackSite && ! atomicSite ) {
 		// TODO: Determine more paywall segments and granular control for paid stats.
 		if ( restrictDashboard && isNewSite && ! hasAnyStatsPlan ) {
-			return [ ...jetpackPaidStatsPaywall, ...granularControlForJetpackPaidStatsPaywall ].includes(
-				statType
-			);
+			return [
+				...jetpackStatsCommercialPaywall,
+				...granularControlForJetpackStatsCommercialPaywall,
+			].includes( statType );
 		}
 
 		return false;
