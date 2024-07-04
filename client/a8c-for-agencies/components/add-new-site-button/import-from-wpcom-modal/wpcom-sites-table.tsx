@@ -12,7 +12,7 @@ import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selecto
 import getSites from 'calypso/state/selectors/get-sites';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import useManagedSitsMap from './hooks/use-managed-sites-map';
+import useManagedSitesMap from './hooks/use-managed-sites-map';
 import WPCOMSitesTableContent from './table-content';
 
 export type SiteItem = {
@@ -61,7 +61,7 @@ export default function WPCOMSitesTable( {
 		},
 	} );
 
-	const { map: managedSitesMap, isPending } = useManagedSitsMap( { size: data?.total } );
+	const { map: managedSitesMap, isPending } = useManagedSitesMap( { size: data?.total } );
 
 	const sites = useSelector( getSites );
 

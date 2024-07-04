@@ -7,7 +7,7 @@ type Props = {
 	size?: number;
 };
 
-export default function useManagedSitsMap( { size = 100 }: Props ) {
+export default function useManagedSitesMap( { size = 100 }: Props ) {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const { data, isPending } = useFetchDashboardSites( {
