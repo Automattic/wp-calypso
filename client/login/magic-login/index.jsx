@@ -590,7 +590,8 @@ class MagicLogin extends Component {
 			hashedEmail,
 		} = this.state;
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
-		const isFrom3rdPartyApp = query?.gravatar_from === '3rd-party';
+		const isFromGravatar3rdPartyApp =
+			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party';
 
 		this.emailToSha256( usernameOrEmail ).then( ( email ) =>
 			this.setState( { hashedEmail: email } )
@@ -692,7 +693,7 @@ class MagicLogin extends Component {
 					{ translate( 'Continue' ) }
 				</FormButton>
 				<footer className="grav-powered-magic-login__footer">
-					{ ! isFrom3rdPartyApp && (
+					{ ! isFromGravatar3rdPartyApp && (
 						<button onClick={ this.handleGravPoweredEmailSwitch }>
 							{ translate( 'Switch email' ) }
 						</button>
@@ -723,8 +724,8 @@ class MagicLogin extends Component {
 			verificationCodeInputValue,
 			resendEmailCountdown,
 		} = this.state;
-		const is3rdPartyApp =
-			isGravatarOAuth2Client( oauth2Client ) && query.gravatar_from === '3rd-party';
+		const isFromGravatar3rdPartyApp =
+			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party';
 		const isProcessingCode = isValidatingCode || isCodeValidated;
 		let errorText = translate( 'Something went wrong. Please try again.' );
 
@@ -799,7 +800,7 @@ class MagicLogin extends Component {
 				</form>
 				<footer
 					className={ clsx( 'grav-powered-magic-login__footer', {
-						'grav-powered-magic-login__footer--vertical': ! is3rdPartyApp,
+						'grav-powered-magic-login__footer--vertical': ! isFromGravatar3rdPartyApp,
 					} ) }
 				>
 					<button
@@ -819,7 +820,7 @@ class MagicLogin extends Component {
 									args: { countdown: resendEmailCountdown },
 							  } ) }
 					</button>
-					{ ! is3rdPartyApp && (
+					{ ! isFromGravatar3rdPartyApp && (
 						<button
 							onClick={ () => {
 								this.resetResendEmailCountdown();
@@ -935,12 +936,12 @@ class MagicLogin extends Component {
 		let isEmailInputDisabled = isRequestingEmail;
 
 		if ( isGravatar ) {
-			headerText =
-				query?.gravatar_from === 'signup'
-					? translate( 'Create your Profile' )
-					: translate( 'Edit your Profile' );
-
+			const isFromSignup = query?.gravatar_from === 'signup';
 			const isFrom3rdPartyApp = query?.gravatar_from === '3rd-party';
+
+			headerText = isFromSignup
+				? translate( 'Create your Profile' )
+				: translate( 'Edit your Profile' );
 
 			if ( isFrom3rdPartyApp ) {
 				isEmailInputDisabled = true;
