@@ -7,6 +7,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS,
 	MAP_EXISTING_DOMAIN,
+	PREMIUM_DOMAINS,
 } from '@automattic/urls';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
@@ -175,6 +176,29 @@ function getAvailabilityNotice(
 				break;
 			}
 		case domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
+			if ( errorData?.cannot_transfer_due_to_unsupported_premium_tld ) {
+				message = translate(
+					"{{strong}}%(domain)s{{/strong}} is already connected to this site and cannot be transferred to WordPress.com because we don't support premium domain transfers for the %(tld)s TLD. {{a}}Learn more{{/a}}.",
+					{
+						args: {
+							domain,
+							tld,
+						},
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									target={ linksTarget }
+									rel="noopener noreferrer"
+									href={ localizeUrl( PREMIUM_DOMAINS ) }
+								/>
+							),
+						},
+					}
+				);
+				break;
+			}
+
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already connected to this site and cannot be transferred to WordPress.com. {{a}}Learn more{{/a}}.',
 				{

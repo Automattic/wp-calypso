@@ -57,6 +57,8 @@ export function getAvailabilityErrorMessage( { availabilityData, domainName, sel
 		site,
 		maintenanceEndTime,
 		isSiteDomainOnly,
+		cannot_transfer_due_to_unsupported_premium_tld:
+			availabilityData?.cannot_transfer_due_to_unsupported_premium_tld,
 	} );
 	return errorData?.message || null;
 }
