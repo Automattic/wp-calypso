@@ -178,25 +178,6 @@ function get_iso_639_locale( $language ) {
 }
 
 /**
- * Prevent HEIC images from being uploaded by drag and drop
- * See: https://github.com/Automattic/wp-calypso/issues/55102
- *
- * Can be disabled with the `a8c_disable_heic_images` filter.
- */
-function enqueue_disable_heic_images_script() {
-	if ( apply_filters( 'a8c_disable_heic_images', true ) ) {
-		wp_enqueue_script(
-			'a8c-disable-heic-images',
-			plugins_url( 'dist/disable-heic-images.min.js', __FILE__ ),
-			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/disable-heic-images.min.js' ),
-			true
-		);
-	}
-}
-add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_disable_heic_images_script' );
-
-/**
  * Overrides the block editor preview button url with one that accounts for third party cookie
  * blocking.
  */
