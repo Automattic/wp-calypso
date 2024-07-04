@@ -20,7 +20,7 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	const buttonTopEdge = y;
 	const buttonBottomEdge = y + height;
 
-	const coords = { left: 0, top: 0, transformOrigin: `${ x }px ${ y }px` };
+	const coords = { left: 0, top: 0, bottom: undefined, transformOrigin: `${ x }px ${ y }px` };
 
 	if ( buttonTopEdge + helpCenterHeight + AESTHETIC_OFFSET > innerHeight ) {
 		// Align the bottom edge of the help center with the top edge of the button
@@ -45,9 +45,11 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	return coords;
 };
 
-export function useOpeningCoordinates( disabled: boolean = false ) {
+export function useOpeningCoordinates( disabled: boolean = false, isMinimized: boolean ) {
 	// Store the last click event to be used for the opening position
-	const [ openingCoordinates, setOpeningCoordinates ] = useState( { top: 0, left: 0 } );
+	const [ openingCoordinates, setOpeningCoordinates ] = useState<
+		{ top: number | 'unset'; left: number } | undefined
+	>();
 
 	useEffect( () => {
 		function handler( event: MouseEvent ) {
@@ -78,5 +80,8 @@ export function useOpeningCoordinates( disabled: boolean = false ) {
 		return () => document.removeEventListener( 'mousedown', handler );
 	}, [ disabled ] );
 
+	if ( isMinimized && openingCoordinates ) {
+		return { ...openingCoordinates, top: 'unset', transformOrigin: 'bottom right' };
+	}
 	return openingCoordinates;
 }

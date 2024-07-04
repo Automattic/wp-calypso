@@ -80,9 +80,12 @@ const HelpCenter: React.FC< Container > = ( {
 	currentRoute = window.location.pathname + window.location.search,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const isHelpCenterShown = useSelect( ( select ) => {
+	const { isHelpCenterShown, isMinimized } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return helpCenterSelect.isHelpCenterShown();
+		return {
+			isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
+			isMinimized: helpCenterSelect.getIsMinimized(),
+		};
 	}, [] );
 
 	const { currentUser } = useHelpCenterContext();
@@ -104,7 +107,7 @@ const HelpCenter: React.FC< Container > = ( {
 
 	useMessagingBindings( hasActiveChats, isMessagingScriptLoaded );
 
-	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown );
+	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];

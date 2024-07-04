@@ -119,6 +119,7 @@ $head-foot-height: 50px;
 			&.is-minimized {
 				min-height: $head-foot-height;
 				top: unset;
+				right: 50px;
 				bottom: calc(#{$header-height} + 16px);
 
 				.help-center__container-header {
