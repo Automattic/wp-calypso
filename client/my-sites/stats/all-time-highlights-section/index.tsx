@@ -151,13 +151,16 @@ export default function AllTimeHighlightsSection( {
 		};
 	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal, userLocale ] );
 
+	// TODO: Set this value properly.
+	const showOverlay = true;
+
 	const highlightCardsMobile = (
 		<div className="highlight-cards-mobile">
 			<h3 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h3>
 			<DotPager>
-				<AllTimeStatsCard infoItems={ infoItems } />
-				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } />
-				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } />
+				<AllTimeStatsCard infoItems={ infoItems } isLocked={ showOverlay } />
+				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } isLocked={ showOverlay } />
+				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } isLocked={ showOverlay } />
 			</DotPager>
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
@@ -167,9 +170,9 @@ export default function AllTimeHighlightsSection( {
 		<div className="highlight-cards">
 			<h3 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h3>
 			<div className="highlight-cards-list">
-				<AllTimeStatsCard infoItems={ infoItems } />
-				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } />
-				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } />
+				<AllTimeStatsCard infoItems={ infoItems } isLocked={ showOverlay } />
+				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } isLocked={ showOverlay } />
+				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } isLocked={ showOverlay } />
 			</div>
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
@@ -209,10 +212,15 @@ type InfoItem = {
 
 type AllTimeStatsCardProps = {
 	infoItems: InfoItem[];
+	isLocked: boolean;
 };
 
-function AllTimeStatsCard( { infoItems }: AllTimeStatsCardProps ) {
+function AllTimeStatsCard( { infoItems, isLocked }: AllTimeStatsCardProps ) {
 	const translate = useTranslate();
+	if ( isLocked ) {
+		console.log( 'should lock this card' );
+	}
+
 	return (
 		<Card className="highlight-card">
 			<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
@@ -252,9 +260,14 @@ type MostPopularDayTimeCardProps = {
 		heading: string;
 		items: CardInfoItem[];
 	};
+	isLocked: boolean;
 };
 
-function MostPopularDayTimeCard( { cardInfo }: MostPopularDayTimeCardProps ) {
+function MostPopularDayTimeCard( { cardInfo, isLocked }: MostPopularDayTimeCardProps ) {
+	if ( isLocked ) {
+		console.log( 'should lock this card' );
+	}
+
 	return (
 		<Card key={ cardInfo.id } className="highlight-card">
 			<h4 className="highlight-card-heading">{ cardInfo.heading }</h4>
