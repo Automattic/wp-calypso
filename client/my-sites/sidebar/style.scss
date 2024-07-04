@@ -870,7 +870,7 @@ $font-size: rem(14px);
 	.collapse-sidebar__toggle {
 		.sidebar__menu-link {
 			cursor: pointer;
-			color: var(--color-sidebar-text);
+			color: var(--color-collapse-menu-text);
 			font-size: rem(13px);
 
 			&:hover,
