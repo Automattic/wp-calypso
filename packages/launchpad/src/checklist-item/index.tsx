@@ -2,19 +2,10 @@ import { Badge, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { translate, useRtl } from 'i18n-calypso';
-import type { Task } from '../types';
+import type { Task, Expandable } from '../types';
 import type { FC, Key } from 'react';
 
 import './style.scss';
-
-interface Expandable {
-	isOpen: boolean;
-	content: JSX.Element;
-	action?: {
-		label: string;
-		onClick: () => void;
-	};
-}
 
 interface Props {
 	key?: Key;
