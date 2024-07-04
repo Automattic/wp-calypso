@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import {
 	calculateMonthlyPriceForPlan,
 	getPlan,
@@ -10,8 +9,8 @@ import {
 } from '@automattic/calypso-products';
 import { Badge, CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { SitePlanPricing } from '@automattic/data-stores';
-import { useSitePlans } from '@automattic/data-stores/src/plans';
 import { formatCurrency } from '@automattic/format-currency';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
@@ -23,6 +22,7 @@ import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
 interface SwitcherProps {
+	introOfferAvailable: boolean;
 	selectedPlan: string;
 	onMonthlyPlanClick: () => void;
 	onAnnualPlanClick: () => void;
@@ -30,12 +30,11 @@ interface SwitcherProps {
 
 const UpgradePlanPeriodSwitcher = ( props: SwitcherProps ) => {
 	const translate = useTranslate();
+	const { introOfferAvailable, selectedPlan, onMonthlyPlanClick, onAnnualPlanClick } = props;
 
-	if ( config.isEnabled( 'migration-flow/introductory-offer' ) ) {
+	if ( introOfferAvailable ) {
 		return null;
 	}
-
-	const { selectedPlan, onMonthlyPlanClick, onAnnualPlanClick } = props;
 
 	return (
 		<div className="import__upgrade-plan-period-switcher">
@@ -66,34 +65,27 @@ interface PlanPriceOfferProps {
 	introOfferMonthlyPrice?: number;
 	originalFullPrice?: number;
 	introOfferFullPrice?: number;
-	introOfferEnabled: boolean;
-	isIntroOfferComplete: boolean;
+	introOfferAvailable: boolean;
 }
 
 const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const {
 		plan,
 		originalFullPrice,
 		introOfferFullPrice,
-		introOfferEnabled,
-		isIntroOfferComplete,
+		introOfferAvailable,
 		introOfferMonthlyPrice,
 		originalMonthlyPrice,
 		currencyCode,
 	} = props;
 
-	const showIntroOffer =
-		introOfferEnabled &&
-		! isIntroOfferComplete &&
-		introOfferMonthlyPrice &&
-		originalMonthlyPrice &&
-		introOfferFullPrice &&
-		originalFullPrice &&
-		currencyCode;
+	const showOriginalPrice =
+		! introOfferAvailable || ! introOfferFullPrice || ! originalFullPrice || ! currencyCode;
 
-	if ( ! showIntroOffer ) {
+	if ( showOriginalPrice ) {
 		return (
 			<div className="import__upgrade-plan-price">
 				<PlanPrice rawPrice={ originalMonthlyPrice } currencyCode={ currencyCode } isSmallestUnit />
@@ -104,25 +96,49 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 		);
 	}
 
-	const billingTimeFrame = translate(
-		'per month, %(discountedPrice)s billed annually for the first year, %(originalPrice)s per year afterwards, excl. taxes',
-		{
-			args: {
-				discountedPrice: formatCurrency( introOfferFullPrice, currencyCode, { stripZeros: true } ),
-				originalPrice: formatCurrency( originalFullPrice, currencyCode, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ),
-			},
-			comment:
-				'excl. taxes stands for excluding taxes; discountedPrice is a formatted price like $150; originalPrice is a formatted price like $200',
-		}
-	);
+	const billingTimeFrame = hasEnTranslation(
+		'per month, %(discountedPrice)s billed annually for the first year, %(originalPrice)s per year afterwards, excl. taxes'
+	)
+		? translate(
+				'per month, %(discountedPrice)s billed annually for the first year, %(originalPrice)s per year afterwards, excl. taxes',
+				{
+					args: {
+						discountedPrice: formatCurrency( introOfferFullPrice, currencyCode, {
+							stripZeros: true,
+						} ),
+						originalPrice: formatCurrency( originalFullPrice, currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+					comment:
+						'excl. taxes stands for excluding taxes; discountedPrice is a formatted price like $150; originalPrice is a formatted price like $200',
+				}
+		  )
+		: translate(
+				'per month, for your first %(introOfferIntervalUnit)s,{{br/}}' +
+					'then %(rawPrice)s billed annually, excl. taxes',
+				{
+					args: {
+						rawPrice: formatCurrency( originalFullPrice, currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+						introOfferIntervalUnit: translate( 'year' ),
+					},
+					components: { br: <br /> },
+					comment: 'excl. taxes is short for excluding taxes',
+				}
+		  );
+
+	const badgeText = hasEnTranslation( 'One time offer' )
+		? translate( 'One time offer' )
+		: translate( 'One time discount' );
 
 	return (
 		<div className="import__upgrade-plan-price">
 			<Badge type="info-purple" className="import__upgrade-plan-price-badge">
-				{ translate( 'One time offer' ) }
+				{ badgeText }
 			</Badge>
 			<div className="import__upgrade-plan-price-group">
 				<PlanPrice
@@ -142,21 +158,19 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 
 const preparePlanPriceOfferProps = (
 	selectedPlan: string,
+	introOfferAvailable: boolean,
 	plan?: Plan,
 	pricing?: SitePlanPricing
 ): PlanPriceOfferProps => {
 	const currencyCode = pricing?.currencyCode;
-	const originalMonthlyPrice = pricing?.originalPrice.monthly || undefined;
+	const originalMonthlyPrice = pricing?.originalPrice.monthly ?? undefined;
 
-	const introOfferFullPrice = pricing?.introOffer?.rawPrice || undefined;
+	const introOfferFullPrice = pricing?.introOffer?.rawPrice ?? undefined;
 	const introOfferMonthlyPrice = introOfferFullPrice
 		? calculateMonthlyPriceForPlan( selectedPlan, introOfferFullPrice )
 		: undefined;
 
-	const originalFullPrice = pricing?.originalPrice.full || undefined;	
-
-	const introOfferEnabled = config.isEnabled( 'migration-flow/introductory-offer' );
-	const isIntroOfferComplete = pricing?.introOffer?.isOfferComplete || false;
+	const originalFullPrice = pricing?.originalPrice.full ?? undefined;
 
 	return {
 		plan,
@@ -165,14 +179,14 @@ const preparePlanPriceOfferProps = (
 		introOfferMonthlyPrice,
 		originalFullPrice,
 		introOfferFullPrice,
-		introOfferEnabled,
-		isIntroOfferComplete,
+		introOfferAvailable,
 	};
 };
 
 interface Props {
-	siteId: number;
 	children: React.ReactNode;
+	introOfferAvailable: boolean;
+	pricing?: SitePlanPricing;
 }
 
 export const UpgradePlanDetails = ( props: Props ) => {
@@ -183,14 +197,16 @@ export const UpgradePlanDetails = ( props: Props ) => {
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
 	>( PLAN_BUSINESS );
 
-	const { children, siteId } = props;
+	const { children, pricing, introOfferAvailable } = props;
 
 	const plan = getPlan( selectedPlan );
 
-	const plans = useSitePlans( { siteId } );
-	const pricing = plans.data ? plans.data[ selectedPlan ].pricing : undefined;
-
-	const planPriceOfferProps = preparePlanPriceOfferProps( selectedPlan, plan, pricing );
+	const planPriceOfferProps = preparePlanPriceOfferProps(
+		selectedPlan,
+		introOfferAvailable,
+		plan,
+		pricing
+	);
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
 
@@ -205,6 +221,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	return (
 		<div className="import__upgrade-plan-details">
 			<UpgradePlanPeriodSwitcher
+				introOfferAvailable={ introOfferAvailable }
 				selectedPlan={ selectedPlan }
 				onMonthlyPlanClick={ () => setSelectedPlan( PLAN_BUSINESS_MONTHLY ) }
 				onAnnualPlanClick={ () => setSelectedPlan( PLAN_BUSINESS ) }

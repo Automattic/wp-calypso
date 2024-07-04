@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { SiteDetails } from '@automattic/data-stores';
+import { SiteDetails, Plans } from '@automattic/data-stores';
 import { useHasEnTranslation, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -54,6 +54,18 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		// If the user's email is unverified, we still want to show the trial plan option
 		migrationTrialEligibility?.error_code === 'email-unverified';
 
+	const plans = Plans.useSitePlans( { siteId: site.ID } );
+	const pricing = plans.data ? plans.data[ visiblePlan ].pricing : undefined;
+
+	const introOfferAvailable =
+		isEnabled( 'migration-flow/introductory-offer' ) &&
+		pricing?.introOffer &&
+		pricing.introOffer.rawPrice &&
+		! pricing.introOffer.isOfferComplete &&
+		pricing.originalPrice.monthly &&
+		pricing.originalPrice.full &&
+		pricing.currencyCode;
+
 	const hideFreeMigrationTrial =
 		isEnabled( 'migration-flow/introductory-offer' ) ||
 		( hideFreeMigrationTrialForNonVerifiedEmail &&
@@ -83,7 +95,12 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	}, [ migrationTrialEligibility, hideFreeMigrationTrial ] );
 
 	const renderCTAs = () => {
-		const cta = ctaText === '' ? translate( 'Continue' ) : ctaText;
+		let cta = ctaText;
+		if ( introOfferAvailable && hasEnTranslation( 'Get the plan and migrate' ) ) {
+			cta = translate( 'Get the plan and migrate' );
+		} else {
+			cta = cta === '' ? translate( 'Continue' ) : cta;
+		}
 		const trialText = translate( 'Try 7 days for free' );
 
 		if ( hideFreeMigrationTrial ) {
@@ -179,7 +196,9 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				visiblePlans={ [ visiblePlan ] }
 			/>
 
-			<UpgradePlanDetails siteId={ site.ID }>{ renderCTAs() }</UpgradePlanDetails>
+			<UpgradePlanDetails pricing={ pricing } introOfferAvailable={ !! introOfferAvailable }>
+				{ renderCTAs() }
+			</UpgradePlanDetails>
 		</div>
 	);
 };
