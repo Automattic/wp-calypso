@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook, act } from '@testing-library/react';
-import { useSitePreviewMShotImageHandler } from '../hooks/use-site-preview-mshot-image-handler';
+import { useSitePreviewMShotImageHandler } from '../use-site-preview-mshot-image-handler';
 
 // Mocking fetch globally
 global.fetch = jest.fn( () =>
