@@ -55,7 +55,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		migrationTrialEligibility?.error_code === 'email-unverified';
 
 	const plans = Plans.useSitePlans( { siteId: site.ID } );
-	const pricing = plans.data ? plans.data[ visiblePlan ].pricing : undefined;
+	const pricing = plans.data ? plans.data[ visiblePlan ]?.pricing : undefined;
 
 	const introOfferAvailable =
 		isEnabled( 'migration-flow/introductory-offer' ) &&
@@ -67,7 +67,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		pricing.currencyCode;
 
 	const hideFreeMigrationTrial =
-		isEnabled( 'migration-flow/introductory-offer' ) ||
+		introOfferAvailable ||
 		( hideFreeMigrationTrialForNonVerifiedEmail &&
 			migrationTrialEligibility?.error_code === 'email-unverified' ) ||
 		! isEnabled( 'plans/migration-trial' );
@@ -98,8 +98,8 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		let cta = ctaText;
 		if ( introOfferAvailable && hasEnTranslation( 'Get the plan and migrate' ) ) {
 			cta = translate( 'Get the plan and migrate' );
-		} else {
-			cta = cta === '' ? translate( 'Continue' ) : cta;
+		} else if ( cta === '' ) {
+			cta = translate( 'Continue' );
 		}
 		const trialText = translate( 'Try 7 days for free' );
 

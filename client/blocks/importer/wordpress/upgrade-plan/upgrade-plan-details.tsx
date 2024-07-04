@@ -220,12 +220,15 @@ export const UpgradePlanDetails = ( props: Props ) => {
 
 	return (
 		<div className="import__upgrade-plan-details">
-			<UpgradePlanPeriodSwitcher
-				introOfferAvailable={ introOfferAvailable }
-				selectedPlan={ selectedPlan }
-				onMonthlyPlanClick={ () => setSelectedPlan( PLAN_BUSINESS_MONTHLY ) }
-				onAnnualPlanClick={ () => setSelectedPlan( PLAN_BUSINESS ) }
-			/>
+			{ introOfferAvailable && (
+				<UpgradePlanPeriodSwitcher
+					introOfferAvailable={ introOfferAvailable }
+					selectedPlan={ selectedPlan }
+					onMonthlyPlanClick={ () => setSelectedPlan( PLAN_BUSINESS_MONTHLY ) }
+					onAnnualPlanClick={ () => setSelectedPlan( PLAN_BUSINESS ) }
+				/>
+			)
+		}
 
 			<div className="import__upgrade-plan-container">
 				<div className="import__upgrade-plan-features-container">

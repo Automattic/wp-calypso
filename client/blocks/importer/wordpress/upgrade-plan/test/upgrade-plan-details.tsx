@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { SitePlanPricing } from '@automattic/data-stores';
+import { type SitePlanPricing } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
