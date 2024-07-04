@@ -5,15 +5,6 @@
 
 $business-plan-color: #7f54b3;
 
-@keyframes fadeIn {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
-}
-
 .import__upgrade-plan {
 	p {
 		color: var(--studio-gray-40);
@@ -185,11 +176,6 @@ $business-plan-color: #7f54b3;
 	.import__upgrade-plan-details {
 		margin-top: 2.5rem;
 		margin-bottom: 2.5rem;
-
-		&:not(.import__upgrade-plan-details--loading) {
-			opacity: 0;
-			animation: fadeIn 1s forwards;
-		}
 
 		&.import__upgrade-plan-details--loading {
 			.import__upgrade-plan-features-container,

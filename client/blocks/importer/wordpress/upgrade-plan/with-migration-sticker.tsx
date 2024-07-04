@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { Skeleton } from './skeleton';
 import type { UpgradePlanDetailsProps } from './types';
@@ -11,8 +11,7 @@ const withMigrationSticker =
 
 		const { addMigrationSticker, isPending } = useMigrationStickerMutation();
 
-		// It uses the layout effect to avoid the screen flickering because isPending starts as `true` and changes only after this effect.
-		useLayoutEffect( () => {
+		useEffect( () => {
 			if ( ! config.isEnabled( 'migration-flow/introductory-offer' ) ) {
 				return;
 			}
