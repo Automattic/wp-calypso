@@ -4,12 +4,15 @@ $radius: 20px; /* stylelint-disable-line scales/radii */
 	flex: 1;
 	border-radius: $radius;
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07), 0 3px 10px rgba(0, 0, 0, 0.04);
+
+	& &__screenshot {
+		width: 100%;
+		height: 680px;
+	}
 }
 
 .migration-instructions-from-preview__screenshot {
 	display: block;
-	width: 100% !important;
-	height: 680px !important; // Will remove this important before final publish.
 	min-height: 100%;
 	border-radius: $radius;
 	border: solid 12px var(--color-neutral-0);
