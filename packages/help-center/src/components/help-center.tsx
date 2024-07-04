@@ -4,7 +4,7 @@
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { createPortal, useEffect, useRef, useState } from '@wordpress/element';
+import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
@@ -14,6 +14,7 @@ import {
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
 import { useChatStatus, useZendeskMessaging, useStillNeedHelpURL } from '../hooks';
+import { useOpeningCoordinates } from '../hooks/use-opening-coordinates';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -83,6 +84,7 @@ const HelpCenter: React.FC< Container > = ( {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
+
 	const { currentUser } = useHelpCenterContext();
 
 	useEffect( () => {
@@ -102,19 +104,7 @@ const HelpCenter: React.FC< Container > = ( {
 
 	useMessagingBindings( hasActiveChats, isMessagingScriptLoaded );
 
-	// Store the last click event to be used for the opening position
-	const [ lastClickEvent, setLastClickEvent ] = useState< MouseEvent >();
-	const handleLastClickEvent = ( event: MouseEvent ) => {
-		setLastClickEvent( event );
-	};
-
-	useEffect( () => {
-		document.addEventListener( 'mousedown', handleLastClickEvent );
-
-		return () => {
-			document.removeEventListener( 'mousedown', handleLastClickEvent );
-		};
-	}, [] );
+	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
@@ -136,7 +126,7 @@ const HelpCenter: React.FC< Container > = ( {
 			handleClose={ handleClose }
 			hidden={ hidden }
 			currentRoute={ currentRoute }
-			lastClickEvent={ lastClickEvent }
+			openingCoordinates={ openingCoordinates }
 		/>,
 		portalParent
 	);

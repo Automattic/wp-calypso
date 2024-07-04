@@ -7,7 +7,7 @@ export interface Container {
 	isLoading?: boolean;
 	hidden?: boolean;
 	currentRoute?: string;
-	lastClickEvent?: MouseEvent;
+	openingCoordinates?: { top: number; left: number; transformOrigin: string };
 }
 
 export interface ArticleContentProps {
