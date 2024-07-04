@@ -318,7 +318,7 @@ $font-size: rem(14px);
 		// Is toggled open
 		.sidebar__menu.sidebar__menu--selected {
 			.sidebar__heading {
-				background: var(--color-sidebar-menu-hover-background);
+				background: var(--color-sidebar-menu-selected-background);
 				color: var(--color-sidebar-menu-selected-text);
 
 				&::after {
