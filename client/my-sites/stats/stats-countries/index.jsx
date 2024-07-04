@@ -9,7 +9,7 @@ import './style.scss';
 
 // TODO: to delete if/when cleaning feature flag stats/empty-module-traffic
 
-class StatCountries extends Component {
+class StatsCountries extends Component {
 	static propTypes = {
 		summary: PropTypes.bool,
 		path: PropTypes.string,
@@ -42,4 +42,4 @@ class StatCountries extends Component {
 	}
 }
 
-export default localize( StatCountries );
+export default localize( StatsCountries );

@@ -54,4 +54,10 @@
 		margin: auto;
 		padding: 8px 0;
 	}
+
+	.migration-message__actions {
+		display: flex;
+		justify-content: center;
+		margin: 0 -10px;
+	}
 }
