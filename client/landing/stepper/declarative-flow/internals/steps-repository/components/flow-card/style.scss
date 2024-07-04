@@ -37,6 +37,9 @@ $blueberry-color: #3858e9;
 	.flow-question__heading {
 		font-weight: 500;
 		font-size: $font-body-large;
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
 	}
 
 	.flow-question__description {
