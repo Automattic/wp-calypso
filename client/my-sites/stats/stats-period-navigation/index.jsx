@@ -169,7 +169,6 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	onGatedHandler = ( events, source, statType ) => {
-		// TODO: Show the upsell model with Jetpack Stats products like the Premium plan for WPCOM sites.
 		// Stop the popup from showing for Jetpack sites.
 		if ( this.props.isSiteJetpackNotAtomic ) {
 			return;

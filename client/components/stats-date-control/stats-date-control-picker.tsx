@@ -18,6 +18,7 @@ const DateControlPicker = ( {
 	onShortcut,
 	onApply,
 	overlay,
+	onGatedHandler,
 }: DateControlPickerProps ) => {
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
@@ -67,6 +68,18 @@ const DateControlPicker = ( {
 	};
 
 	const handleShortcutSelected = ( shortcut: DateControlPickerShortcut ) => {
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		if ( shortcut.isGated && onGatedHandler ) {
+			const events = [
+				{ name: `${ event_from }_stats_date_picker_shortcut_${ shortcut.id }_gated_clicked` },
+				{
+					name: 'jetpack_stats_upsell_clicked',
+					params: { stat_type: shortcut.statType, source: event_from },
+				},
+			];
+			return onGatedHandler( events, event_from, shortcut.statType );
+		}
+
 		togglePopoverOpened( false );
 		updateLocalStateFromShortcut( shortcut );
 		onShortcut( shortcut );
