@@ -60,28 +60,6 @@ function is_homepage_title_hidden() {
 }
 
 /**
- * Detects if the site is using Gutenberg 9.2 or above, which contains a bug in the
- * interface package, causing some "slider" blocks (such as Jetpack's Slideshow) to
- * incorrectly calculate their width as 33554400px when set at full width.
- *
- * @see https://github.com/WordPress/gutenberg/pull/26552
- *
- * @return bool True if the site needs a temporary fix for the incorrect slider width.
- */
-function needs_slider_width_workaround() {
-	global $post;
-
-	if (
-		( defined( 'GUTENBERG_DEVELOPMENT_MODE' ) && GUTENBERG_DEVELOPMENT_MODE ) ||
-		( defined( 'GUTENBERG_VERSION' ) && version_compare( GUTENBERG_VERSION, '9.2', '>=' ) )
-	) {
-		// Workaround only needed when in the editor.
-		return isset( $post );
-	}
-	return false;
-}
-
-/**
  * Determines whether the user should be included in trialing a new font-smoothing rule.
  *
  * @return bool True if antialiased font-smoothing rule should be applied.
@@ -106,7 +84,7 @@ function use_font_smooth_antialiased() {
  * @return bool True if the common module assets should be loaded.
  */
 function should_load_assets() {
-	return (bool) is_homepage_title_hidden() || needs_slider_width_workaround() || use_font_smooth_antialiased();
+	return (bool) is_homepage_title_hidden() || use_font_smooth_antialiased();
 }
 
 /**
@@ -118,10 +96,6 @@ function should_load_assets() {
 function admin_body_classes( $classes ) {
 	if ( is_homepage_title_hidden() ) {
 		$classes .= ' hide-homepage-title';
-	}
-
-	if ( needs_slider_width_workaround() ) {
-		$classes .= ' slider-width-workaround';
 	}
 
 	if ( use_font_smooth_antialiased() && ! is_network_admin() ) {
