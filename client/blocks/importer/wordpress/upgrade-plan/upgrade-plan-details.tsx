@@ -14,15 +14,14 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import React, { useState, useEffect, PropsWithChildren } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
 interface SwitcherProps {
-	introOfferAvailable: boolean;
 	selectedPlan: string;
 	onMonthlyPlanClick: () => void;
 	onAnnualPlanClick: () => void;
@@ -30,11 +29,7 @@ interface SwitcherProps {
 
 const UpgradePlanPeriodSwitcher = ( props: SwitcherProps ) => {
 	const translate = useTranslate();
-	const { introOfferAvailable, selectedPlan, onMonthlyPlanClick, onAnnualPlanClick } = props;
-
-	if ( introOfferAvailable ) {
-		return null;
-	}
+	const { selectedPlan, onMonthlyPlanClick, onAnnualPlanClick } = props;
 
 	return (
 		<div className="import__upgrade-plan-period-switcher">
@@ -54,6 +49,24 @@ const UpgradePlanPeriodSwitcher = ( props: SwitcherProps ) => {
 					{ translate( 'Pay annually' ) }
 				</Button>
 			</ButtonGroup>
+		</div>
+	);
+};
+
+interface UpgradePlanPriceProps {
+	billingTimeFrame: TranslateResult | undefined;
+}
+
+const UpgradePlanPrice = ( props: PropsWithChildren< UpgradePlanPriceProps > ) => {
+	const { billingTimeFrame, children } = props;
+	return (
+		<div className="import__upgrade-plan-price">
+			{ ' ' }
+			{ children }{ ' ' }
+			<span className="plan-time-frame">
+				{ ' ' }
+				<small>{ billingTimeFrame ?? '' }</small>{ ' ' }
+			</span>{ ' ' }
 		</div>
 	);
 };
@@ -87,12 +100,9 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 
 	if ( showOriginalPrice ) {
 		return (
-			<div className="import__upgrade-plan-price">
+			<UpgradePlanPrice billingTimeFrame={ plan?.getBillingTimeFrame() }>
 				<PlanPrice rawPrice={ originalMonthlyPrice } currencyCode={ currencyCode } isSmallestUnit />
-				<span className="plan-time-frame">
-					<small>{ plan?.getBillingTimeFrame() }</small>
-				</span>
-			</div>
+			</UpgradePlanPrice>
 		);
 	}
 
@@ -136,7 +146,7 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 		: translate( 'One time discount' );
 
 	return (
-		<div className="import__upgrade-plan-price">
+		<UpgradePlanPrice billingTimeFrame={ billingTimeFrame }>
 			<Badge type="info-purple" className="import__upgrade-plan-price-badge">
 				{ badgeText }
 			</Badge>
@@ -149,10 +159,7 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 				/>
 				<PlanPrice rawPrice={ introOfferMonthlyPrice } currencyCode={ currencyCode } />
 			</div>
-			<span className="plan-time-frame">
-				<small>{ billingTimeFrame }</small>
-			</span>
-		</div>
+		</UpgradePlanPrice>
 	);
 };
 
@@ -220,15 +227,13 @@ export const UpgradePlanDetails = ( props: Props ) => {
 
 	return (
 		<div className="import__upgrade-plan-details">
-			{ introOfferAvailable && (
+			{ ! introOfferAvailable && (
 				<UpgradePlanPeriodSwitcher
-					introOfferAvailable={ introOfferAvailable }
 					selectedPlan={ selectedPlan }
 					onMonthlyPlanClick={ () => setSelectedPlan( PLAN_BUSINESS_MONTHLY ) }
 					onAnnualPlanClick={ () => setSelectedPlan( PLAN_BUSINESS ) }
 				/>
-			)
-		}
+			) }
 
 			<div className="import__upgrade-plan-container">
 				<div className="import__upgrade-plan-features-container">
