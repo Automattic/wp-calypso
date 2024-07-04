@@ -18,6 +18,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
+import { STAT_TYPE_INIGHTS } from '../constants';
 import { useShouldGateStats } from '../hooks/use-should-gate-stats';
 import StatsCardUpsell from '../stats-card-upsell';
 import PostCardsGroup from './post-cards-group';
@@ -153,10 +154,9 @@ export default function AllTimeHighlightsSection( {
 		};
 	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal, userLocale ] );
 
-	// TODO: Set this value properly.
-	// Currenty tied to top posts. Should be tied to insights.
-	// Do we want to get granular on this page? I'm guessing it's not necessary yet.
-	const shouldLockCards = useShouldGateStats( 'statsTopPosts' );
+	// TODO: Investigate granularity on Insights page.
+	// Do we want to get granular on this page? It's probably not necessary yet.
+	const shouldLockCards = useShouldGateStats( STAT_TYPE_INIGHTS );
 
 	const highlightCardsMobile = (
 		<div className="highlight-cards-mobile">
