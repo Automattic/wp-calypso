@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MaybeLink } from './maybe-link';
 import type { Task, Expandable } from '@automattic/launchpad';
@@ -37,6 +38,7 @@ type Steps = Step[];
 
 export const useSteps = ( { fromUrl }: Options ): Steps => {
 	const translate = useTranslate();
+	const [ currentStep, setCurrentStep ] = useState( 0 );
 
 	const steps = [
 		{
@@ -116,15 +118,18 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 			task: {
 				id: step.title,
 				title: step.title,
-				completed: false,
+				completed: currentStep > index,
 				disabled: false,
 			},
 			expandable: {
 				content: step.content,
-				isOpen: true,
+				isOpen: currentStep === index,
 				action: {
 					label: index === steps.length - 1 ? translate( 'Done' ) : translate( 'Next' ),
-					onClick: () => {},
+					onClick: () => {
+						// TODO: Done should navigate to the next flow step.
+						setCurrentStep( index + 1 );
+					},
 				},
 			},
 		};
