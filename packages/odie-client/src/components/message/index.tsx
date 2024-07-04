@@ -38,7 +38,7 @@ const ChatMessage = (
 	const { botName, extraContactOptions, addMessage, trackEvent } = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
 
 	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
 		delayBetweenCharacters: 66,
@@ -145,7 +145,7 @@ const ChatMessage = (
 			<Gravatar
 				user={ currentUser }
 				size={ 32 }
-				alt={ __( 'User profile display picture', __i18n_text_domain__ ) }
+				alt={ _x( 'User profile display picture', 'html alt tag', __i18n_text_domain__ ) }
 			/>
 			<strong className="message-header-name">{ currentUser.display_name }</strong>
 		</>
@@ -153,8 +153,11 @@ const ChatMessage = (
 		<>
 			<img
 				src={ WapuuAvatar }
-				/* translators: %s is bot name, like Wapuu */
-				alt={ sprintf( __( '%(botName)s profile picture', __i18n_text_domain__ ), botName ) }
+				alt={ sprintf(
+					/* translators: %s is bot name, like Wapuu */
+					_x( '%(botName)s profile picture', 'html alt tag', __i18n_text_domain__ ),
+					botName
+				) }
 				className={ wapuuAvatarClasses }
 			/>
 			{ message.type === 'placeholder' ? (
@@ -162,7 +165,11 @@ const ChatMessage = (
 					src={ WapuuThinking }
 					alt={ sprintf(
 						/* translators: %s is bot name, like Wapuu */
-						__( 'Loading state, awaiting response from %(botName)s', __i18n_text_domain__ ),
+						_x(
+							'Loading state, awaiting response from %(botName)s',
+							'html alt tag',
+							__i18n_text_domain__
+						),
 						botName
 					) }
 					className="odie-chatbox-thinking-icon"
@@ -178,7 +185,11 @@ const ChatMessage = (
 							src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
 							alt={ sprintf(
 								/* translators: %s is bot name, like Wapuu */
-								__( 'Icon to expand or collapse %(botName)s messages', __i18n_text_domain__ ),
+								_x(
+									'Icon to expand or collapse %(botName)s messages',
+									'html alt tag',
+									__i18n_text_domain__
+								),
 								botName
 							) }
 						/>
@@ -271,8 +282,9 @@ const ChatMessage = (
 						>
 							{
 								/* translators: Message displayed when the user dislikes a message from the bot */
-								__(
+								_x(
 									'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
+									'Message displayed when the user dislikes a message from the bot',
 									__i18n_text_domain__
 								)
 							}
@@ -288,7 +300,11 @@ const ChatMessage = (
 					clickableHeader
 					header={
 						/* translators: Below this text are links to sources for the current message received from the bot. */
-						__( 'Related Guides', __i18n_text_domain__ )
+						_x(
+							'Related Guides',
+							'Below this text are links to sources for the current message received from the bot.',
+							__i18n_text_domain__
+						)
 					}
 					onClose={ () =>
 						trackEvent( 'chat_message_action_sources', {

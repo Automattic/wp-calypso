@@ -11,7 +11,7 @@ export const JumpToRecent = ( {
 	enableJumpToRecent: boolean;
 } ) => {
 	const { trackEvent, isMinimized } = useOdieAssistantContext();
-	const { __ } = useI18n();
+	const { _x } = useI18n();
 	const jumpToRecent = () => {
 		scrollToBottom();
 		trackEvent( 'chat_jump_to_recent_click' );
@@ -35,7 +35,11 @@ export const JumpToRecent = ( {
 			>
 				{
 					/* translators: A dynamic button that appears on a chatbox, when the last message is not vissible */
-					__( 'Jump to recent', __i18n_text_domain__ )
+					_x(
+						'Jump to recent',
+						'A dynamic button that appears on a chatbox, when the last message is not vissible',
+						__i18n_text_domain__
+					)
 				}
 				<Icon icon={ chevronDown } fill="white" />
 			</button>

@@ -21,7 +21,7 @@ export const OdieSendMessageButton = ( {
 	enableStickToBottom: () => void;
 	enableJumpToRecent: boolean;
 } ) => {
-	const { __ } = useI18n();
+	const { _x } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const { initialUserMessage, chat, isLoading, trackEvent } = useOdieAssistantContext();
@@ -94,8 +94,16 @@ export const OdieSendMessageButton = ( {
 						placeholder={
 							userHasAskedToContactHE || userHasNegativeFeedback
 								? // translators: Placeholder text for the message input field (chat) */
-								  __( 'Continue chatting with Wapuu', __i18n_text_domain__ )
-								: __( 'Ask your question', __i18n_text_domain__ )
+								  _x(
+										'Continue chatting with Wapuu',
+										'Placeholder text for the message input field (chat)',
+										__i18n_text_domain__
+								  )
+								: _x(
+										'Ask your question',
+										'Placeholder text for the message input field (chat)',
+										__i18n_text_domain__
+								  )
 						}
 						className="odie-send-message-input"
 						rows={ 1 }
@@ -110,7 +118,7 @@ export const OdieSendMessageButton = ( {
 						className="odie-send-message-inner-button"
 						disabled={ messageString.trim() === '' || isLoading }
 					>
-						<img src={ ArrowUp } alt={ __( 'Arrow icon', __i18n_text_domain__ ) } />
+						<img src={ ArrowUp } alt={ _x( 'Arrow icon', 'html alt tag', __i18n_text_domain__ ) } />
 					</button>
 				</form>
 			</div>

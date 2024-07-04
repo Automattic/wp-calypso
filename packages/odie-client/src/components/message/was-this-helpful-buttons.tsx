@@ -15,7 +15,7 @@ const WasThisHelpfulButtons = ( {
 	message: Message;
 	onDislike?: () => void;
 } ) => {
-	const { __ } = useI18n();
+	const { _x } = useI18n();
 	const { setMessageLikedStatus, trackEvent } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessageFeedback } = useOdieSendMessageFeedback();
 
@@ -81,13 +81,21 @@ const WasThisHelpfulButtons = ( {
 				<span className={ questionClasses }>
 					{
 						/* translators: Indicates if a messaged provided by a chatbot was helpful or not */
-						__( 'Was this helpful?', __i18n_text_domain__ )
+						_x(
+							'Was this helpful?',
+							'Indicates if a messaged provided by a chatbot was helpful or not',
+							__i18n_text_domain__
+						)
 					}
 				</span>
 				<span className={ thanksClasses }>
 					{
 						/* translators: Indicates that the user has provided feedback to a chatbot message */
-						__( 'Thanks!', __i18n_text_domain__ )
+						_x(
+							'Thanks!',
+							' Indicates that the user has provided feedback to a chatbot message',
+							__i18n_text_domain__
+						)
 					}
 				</span>
 			</div>
