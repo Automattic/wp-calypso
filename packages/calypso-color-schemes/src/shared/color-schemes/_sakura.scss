@@ -120,19 +120,21 @@
 	--color-sidebar-menu-hover-background-rgb: var(--studio-pink-10-rgb);
 	--color-sidebar-menu-hover-text: var(--studio-pink-90);
 
+
 	/* Sidebar Submenu - Nav Unification */
 	--color-sidebar-submenu-background: var(--studio-pink-90);
-	--color-sidebar-submenu-text: var(--studio-pink-0);
+	--color-sidebar-submenu-text: #f5e9ed; /* Direct from wp-admin */
 	--color-sidebar-submenu-hover-text: var(--studio-blue-20);
-	--color-sidebar-submenu-selected-text: var(--studio-pink-0);
-	--color-sidebar-submenu-selected-hover-text: var(--studio-pink-0);
+	--color-sidebar-submenu-selected-text: var(--color-sidebar-submenu-text);
+	--color-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-text);
 
 	/* Sidebar Submenu - Nav Redesign */
-	--color-navredesign-sidebar-submenu-selected-text: var(--studio-pink-0);
-	--color-navredesign-sidebar-submenu-selected-hover-text: var(--studio-pink-0);
+	--color-navredesign-sidebar-submenu-text: var(--color-sidebar-submenu-text);
+	--color-navredesign-sidebar-submenu-selected-text: var(--color-sidebar-submenu-text);
+	--color-navredesign-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-text);
 
 	/* Collapse Menu Button Fix */
-	--color-collapse-menu-text: var(--color-sidebar-text-alternative);
+	--color-collapse-menu-text: #8c1749; /* Direct from wp-admin */
 
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--studio-blue-50);
