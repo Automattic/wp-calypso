@@ -47,9 +47,11 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 
 export function useOpeningCoordinates( disabled: boolean = false, isMinimized: boolean ) {
 	// Store the last click event to be used for the opening position
-	const [ openingCoordinates, setOpeningCoordinates ] = useState<
-		{ top: number | 'unset'; left: number } | undefined
-	>();
+	const [ openingCoordinates, setOpeningCoordinates ] = useState< {
+		top?: number;
+		left?: number;
+		transformOrigin?: string;
+	} >( {} );
 
 	useEffect( () => {
 		function handler( event: MouseEvent ) {
@@ -81,7 +83,7 @@ export function useOpeningCoordinates( disabled: boolean = false, isMinimized: b
 	}, [ disabled ] );
 
 	if ( isMinimized && openingCoordinates ) {
-		return { ...openingCoordinates, top: 'unset', transformOrigin: 'bottom right' };
+		return { ...openingCoordinates, top: 'auto', transformOrigin: 'bottom right' };
 	}
 	return openingCoordinates;
 }
