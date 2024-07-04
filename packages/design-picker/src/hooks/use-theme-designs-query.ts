@@ -63,7 +63,7 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet, price, theme_tier
 		is_featured_picks: isFeaturedPicks,
 		showFirst: isFeaturedPicks,
 		...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-		design_type: theme_tier?.slug === 'premium' ? 'premium' : 'standard',
+		design_type: theme_tier?.slug === 'free' ? 'standard' : 'premium',
 		design_tier: theme_tier?.slug,
 		price,
 

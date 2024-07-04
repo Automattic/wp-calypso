@@ -91,7 +91,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
 
-	const isPremiumDesign = design?.design_tier === 'premium';
+	const isPremiumDesign = design?.design_tier !== 'free';
 
 	const badgeType = isPremiumDesign ? 'premium' : 'none';
 

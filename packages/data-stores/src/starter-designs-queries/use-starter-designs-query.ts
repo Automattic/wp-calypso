@@ -114,7 +114,7 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		is_bundled_with_woo,
 		price,
 		software_sets,
-		design_type: design_type ?? ( theme_tier?.slug === 'premium' ? 'premium' : 'standard' ),
+		design_type: design_type ?? ( theme_tier?.slug === 'free' ? 'standard' : 'premium' ),
 		style_variations,
 		is_virtual: design.is_virtual && !! design.recipe?.pattern_ids?.length,
 		...( preview_data && { preview_data } ),

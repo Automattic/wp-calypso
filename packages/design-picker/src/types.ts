@@ -69,7 +69,7 @@ export interface SoftwareSet {
  */
 export type DesignType =
 	| 'vertical'
-	| 'premium'
+	| 'premium' // The design is non-free, Design.design_tier will have more nuance.
 	| 'standard' // The design is free.
 	| 'default' // The default design and it means user skipped the step and didn't select any design.
 	| 'anchor-fm'
