@@ -18,6 +18,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
+import { useShouldGateStats } from '../hooks/use-should-gate-stats';
 import StatsCardUpsell from '../stats-card-upsell';
 import PostCardsGroup from './post-cards-group';
 
@@ -153,22 +154,24 @@ export default function AllTimeHighlightsSection( {
 	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal, userLocale ] );
 
 	// TODO: Set this value properly.
-	const showOverlay = true;
+	// Currenty tied to top posts. Should be tied to insights.
+	// Do we want to get granular on this page? I'm guessing it's not necessary yet.
+	const shouldLockCards = useShouldGateStats( 'statsTopPosts' );
 
 	const highlightCardsMobile = (
 		<div className="highlight-cards-mobile">
 			<h3 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h3>
 			<DotPager>
-				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ showOverlay } />
+				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ shouldLockCards } />
 				<MostPopularDayTimeCard
 					cardInfo={ mostPopularTimeItems }
 					siteId={ siteId }
-					isLocked={ showOverlay }
+					isLocked={ shouldLockCards }
 				/>
 				<MostPopularDayTimeCard
 					cardInfo={ bestViewsEverItems }
 					siteId={ siteId }
-					isLocked={ showOverlay }
+					isLocked={ shouldLockCards }
 				/>
 			</DotPager>
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
@@ -179,16 +182,16 @@ export default function AllTimeHighlightsSection( {
 		<div className="highlight-cards">
 			<h3 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h3>
 			<div className="highlight-cards-list">
-				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ showOverlay } />
+				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ shouldLockCards } />
 				<MostPopularDayTimeCard
 					cardInfo={ mostPopularTimeItems }
 					siteId={ siteId }
-					isLocked={ showOverlay }
+					isLocked={ shouldLockCards }
 				/>
 				<MostPopularDayTimeCard
 					cardInfo={ bestViewsEverItems }
 					siteId={ siteId }
-					isLocked={ showOverlay }
+					isLocked={ shouldLockCards }
 				/>
 			</div>
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
