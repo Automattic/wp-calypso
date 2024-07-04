@@ -1,10 +1,9 @@
-import { useTierRetainedBenefitsQuery } from 'calypso/data/themes/use-tier-retained-benefits-query';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getThemeTierForTheme } from 'calypso/state/themes/selectors';
 
 export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string ) {
-	const isThemeAllowed = useSelector( ( state ) => {
+	return useSelector( ( state ) => {
 		const themeTier = getThemeTierForTheme( state, themeId );
 		const features = themeTier?.featureList ?? [ themeTier?.feature ];
 
@@ -14,8 +13,7 @@ export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string 
 		);
 	} );
 
-	return isThemeAllowed;
-
+	/* @SEE https://github.com/Automattic/dotcom-forge/issues/8028
 	const retainedBenefits = useTierRetainedBenefitsQuery( siteId, themeId );
 
 	const hasFeature = useSelector( ( state ) => {
@@ -42,4 +40,5 @@ export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string 
 	}
 
 	return hasFeature;
+	 */
 }

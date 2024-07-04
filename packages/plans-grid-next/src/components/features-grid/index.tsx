@@ -2,11 +2,11 @@ import {
 	getPlanClass,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	type WPComStorageAddOnSlug,
 	type FeatureGroupSlug,
 	FEATURE_GROUP_STORAGE,
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
+import { AddOns } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -34,7 +34,7 @@ type MobileViewProps = {
 	hideUnavailableFeatures?: boolean;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
@@ -185,7 +185,7 @@ type TabletViewProps = {
 	hideUnavailableFeatures?: boolean;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;

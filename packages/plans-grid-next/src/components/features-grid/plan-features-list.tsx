@@ -3,9 +3,9 @@ import {
 	isWpcomEnterpriseGridPlan,
 	FEATURE_GROUP_STORAGE,
 	FEATURE_GROUP_ALL_FEATURES,
-	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import { JetpackLogo } from '@automattic/components';
+import { AddOns } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { usePlansGridContext } from '../../grid-context';
@@ -37,7 +37,7 @@ type PlanFeaturesListProps = {
 		isTableCell?: boolean;
 	};
 	featureGroupSlug?: FeatureGroupSlug;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	showUpgradeableStorage: boolean;
 };
 

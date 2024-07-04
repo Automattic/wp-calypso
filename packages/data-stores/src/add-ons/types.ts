@@ -1,4 +1,5 @@
 import { TranslateResult } from 'i18n-calypso';
+import { STORAGE_ADD_ONS } from './constants';
 import type { StoreProductSlug } from '../products-list';
 
 export interface AddOnMeta {
@@ -21,3 +22,5 @@ export interface AddOnMeta {
 	checkoutLink?: string;
 	exceedsSiteStorageLimits?: boolean;
 }
+
+export type StorageAddOnSlug = ( typeof STORAGE_ADD_ONS )[ number ];

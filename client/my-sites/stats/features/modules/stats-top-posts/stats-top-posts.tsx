@@ -28,6 +28,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsTopPosts';
+
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsTopPosts = useShouldGateStats( statType );
 

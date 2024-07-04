@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
@@ -17,7 +18,7 @@ import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
+const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -27,6 +28,9 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsClicks';
+
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsClicks = useShouldGateStats( statType );
 
 	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
@@ -50,7 +54,17 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 					type={ 3 }
 				/>
 			) }
-			{ ! isRequestingData && ! data?.length && (
+			{ ( ! isRequestingData && !! data.length ) || shouldGateStatsClicks ? (
+				<StatsModule
+					path="clicks"
+					moduleStrings={ moduleStrings }
+					period={ period }
+					query={ query }
+					statType={ statType }
+					showSummaryLink
+					className={ className }
+				></StatsModule>
+			) : (
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ translate( 'Clicks' ) }
@@ -74,19 +88,8 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 					<></>
 				</StatsCard>
 			) }
-			{ ! isRequestingData && !! data.length && (
-				<StatsModule
-					path="clicks"
-					moduleStrings={ moduleStrings }
-					period={ period }
-					query={ query }
-					statType={ statType }
-					showSummaryLink
-					className={ className }
-				></StatsModule>
-			) }
 		</>
 	);
 };
 
-export default StatClicks;
+export default StatsClicks;
