@@ -151,7 +151,7 @@ export default function AllTimeHighlightsSection( {
 		};
 	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal, userLocale ] );
 
-	const mobileCards = (
+	const highlightCardsMobile = (
 		<div className="highlight-cards-mobile">
 			<h3 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h3>
 			<DotPager>
@@ -159,12 +159,11 @@ export default function AllTimeHighlightsSection( {
 				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } />
 				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } />
 			</DotPager>
-
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
 	);
 
-	const highlightCards = (
+	const highlightCardsStandard = (
 		<div className="highlight-cards">
 			<h3 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h3>
 			<div className="highlight-cards-list">
@@ -193,8 +192,8 @@ export default function AllTimeHighlightsSection( {
 			<ComponentSwapper
 				className="all-time-highlights-section__highlight-cards-swapper"
 				breakpoint="<660px"
-				breakpointActiveComponent={ mobileCards }
-				breakpointInactiveComponent={ highlightCards }
+				breakpointActiveComponent={ highlightCardsMobile }
+				breakpointInactiveComponent={ highlightCardsStandard }
 			/>
 		</div>
 	);
