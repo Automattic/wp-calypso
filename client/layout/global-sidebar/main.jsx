@@ -8,12 +8,10 @@ import { useSelector } from 'react-redux';
 import { GlobalSidebarHeader } from 'calypso/layout/global-sidebar/header';
 import useSiteMenuItems from 'calypso/my-sites/sidebar/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSection } from 'calypso/state/ui/selectors';
 import Sidebar from '../sidebar';
 import { GLOBAL_SIDEBAR_EVENTS } from './events';
-import { GlobalSidebarFooter } from './footer';
 import './style.scss';
 
 const GlobalSidebar = ( {
@@ -28,7 +26,6 @@ const GlobalSidebar = ( {
 	const menuItems = useSiteMenuItems();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const translate = useTranslate();
-	const currentUser = useSelector( getCurrentUser );
 	const isDesktop = useBreakpoint( '>=782px' );
 	const isRtl = useRtl();
 	const previousRoute = useSelector( getPreviousRoute );
@@ -102,7 +99,6 @@ const GlobalSidebar = ( {
 					{ children }
 				</Sidebar>
 			</div>
-			<GlobalSidebarFooter user={ currentUser } translate={ translate } />
 		</div>
 	);
 };
