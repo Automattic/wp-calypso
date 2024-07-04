@@ -159,9 +159,17 @@ export default function AllTimeHighlightsSection( {
 		<div className="highlight-cards-mobile">
 			<h3 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h3>
 			<DotPager>
-				<AllTimeStatsCard infoItems={ infoItems } isLocked={ showOverlay } />
-				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } isLocked={ showOverlay } />
-				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } isLocked={ showOverlay } />
+				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ showOverlay } />
+				<MostPopularDayTimeCard
+					cardInfo={ mostPopularTimeItems }
+					siteId={ siteId }
+					isLocked={ showOverlay }
+				/>
+				<MostPopularDayTimeCard
+					cardInfo={ bestViewsEverItems }
+					siteId={ siteId }
+					isLocked={ showOverlay }
+				/>
 			</DotPager>
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
@@ -171,9 +179,17 @@ export default function AllTimeHighlightsSection( {
 		<div className="highlight-cards">
 			<h3 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h3>
 			<div className="highlight-cards-list">
-				<AllTimeStatsCard infoItems={ infoItems } isLocked={ showOverlay } />
-				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } isLocked={ showOverlay } />
-				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } isLocked={ showOverlay } />
+				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ showOverlay } />
+				<MostPopularDayTimeCard
+					cardInfo={ mostPopularTimeItems }
+					siteId={ siteId }
+					isLocked={ showOverlay }
+				/>
+				<MostPopularDayTimeCard
+					cardInfo={ bestViewsEverItems }
+					siteId={ siteId }
+					isLocked={ showOverlay }
+				/>
 			</div>
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
@@ -213,13 +229,14 @@ type InfoItem = {
 
 type AllTimeStatsCardProps = {
 	infoItems: InfoItem[];
+	siteId: number;
 	isLocked: boolean;
 };
 
-function AllTimeStatsCard( { infoItems, isLocked }: AllTimeStatsCardProps ) {
+function AllTimeStatsCard( { infoItems, siteId, isLocked }: AllTimeStatsCardProps ) {
 	const translate = useTranslate();
 	if ( isLocked ) {
-		return <UpsellCard heading={ translate( 'All-time stats' ) } siteId={ 0 } />;
+		return <UpsellCard heading={ translate( 'All-time stats' ) } siteId={ siteId } />;
 	}
 
 	return (
@@ -261,12 +278,13 @@ type MostPopularDayTimeCardProps = {
 		heading: string;
 		items: CardInfoItem[];
 	};
+	siteId: number;
 	isLocked: boolean;
 };
 
-function MostPopularDayTimeCard( { cardInfo, isLocked }: MostPopularDayTimeCardProps ) {
+function MostPopularDayTimeCard( { cardInfo, siteId, isLocked }: MostPopularDayTimeCardProps ) {
 	if ( isLocked ) {
-		return <UpsellCard heading={ cardInfo.heading } siteId={ 0 } />;
+		return <UpsellCard heading={ cardInfo.heading } siteId={ siteId } />;
 	}
 
 	return (
