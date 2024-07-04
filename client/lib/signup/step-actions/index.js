@@ -157,8 +157,8 @@ export const getNewSiteParams = ( {
 
 	// Guided onboarding flow specific dependencies
 	const guidedFlowProps = {};
-	const trailMapExperimentVariant = signupDependencies?.trailMapExperimentVariant;
 	if ( isOnboardingGuidedFlow( flowToCheck ) ) {
+		const trailMapExperimentVariant = signupDependencies?.trailMapExperimentVariant;
 		const whatBringsYouToWordPress =
 			signupDependencies?.segmentationSurveyAnswers?.[ 'what-brings-you-to-wordpress' ]?.[ 0 ];
 
@@ -273,6 +273,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		siteAccentColor,
 		domainCart,
 	} = stepData;
+	debugger;
 
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
