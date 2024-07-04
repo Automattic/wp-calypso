@@ -1,7 +1,5 @@
 import { SENSEI_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import Intro from './internals/steps-repository/intro';
@@ -29,6 +27,7 @@ const sensei: Flow = {
 		};
 	},
 	useSteps() {
+		//TODO: Migrate to use lazy loading `asyncComponent`
 		const publicSteps = [
 			{ slug: 'intro', component: Intro },
 			{ slug: 'senseiSetup', component: SenseiSetup },
@@ -47,7 +46,6 @@ const sensei: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const siteSlug = useSiteSlug();
-		const isLoggedIn = useSelector( isUserLoggedIn );
 
 		const submit = ( deps: any, stepResult?: string ) => {
 			if ( stepResult ) {
@@ -58,9 +56,7 @@ const sensei: Flow = {
 				case 'intro':
 					return navigate( 'senseiSetup' );
 				case 'senseiSetup':
-					if ( isLoggedIn ) {
-						return navigate( 'senseiDomain' );
-					}
+					return navigate( 'senseiDomain' );
 				case 'senseiDomain':
 					return navigate( 'senseiPlan' );
 				case 'senseiPurpose':
