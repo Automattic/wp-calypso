@@ -4,10 +4,8 @@ import { READYMADE_TEMPLATE_FLOW } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelect } from '@wordpress/data';
 import deepmerge from 'deepmerge';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
-import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
@@ -17,7 +15,7 @@ import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
 import { CalypsoDispatch } from 'calypso/state/types';
 import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
@@ -44,7 +42,7 @@ const readymadeTemplateFlow: Flow = {
 	},
 
 	useSteps() {
-		return [
+		return stepsWithRequiredLogin( [
 			STEPS.CHECK_SITES,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.FREE_POST_SETUP,
@@ -55,7 +53,7 @@ const readymadeTemplateFlow: Flow = {
 			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
-		];
+		] );
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -229,27 +227,9 @@ const readymadeTemplateFlow: Flow = {
 
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
-		const locale = useFlowLocale();
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: window.location.href.replace( window.location.origin, '' ),
-			locale,
-		} );
-
-		useEffect( () => {
-			if ( ! isLoggedIn ) {
-				window.location.assign( logInUrl );
-			}
-		}, [] );
-
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		if ( ! isLoggedIn ) {
-			result = {
-				state: AssertConditionState.CHECKING,
-				message: `${ flowName } requires a logged in user`,
-			};
-		} else if ( isCreateSite && ! userAlreadyHasSites ) {
+		if ( isLoggedIn && isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } with no preexisting sites`,
