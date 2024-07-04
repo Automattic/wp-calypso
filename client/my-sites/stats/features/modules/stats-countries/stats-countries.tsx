@@ -67,7 +67,7 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 					<Geochart query={ query } skipQuery />
 				</StatsModule>
 			) }
-			{ ! isRequestingData && ! data?.length && (
+			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
 				// show empty state
 				<StatsCard
 					className={ className }
