@@ -20,6 +20,14 @@ const sensei: Flow = {
 		return translate( 'Course Creator' );
 	},
 	isSignupFlow: true,
+
+	useLoginParams() {
+		return {
+			extraQueryParams: {
+				main_flow: SENSEI_FLOW,
+			},
+		};
+	},
 	useSteps() {
 		const publicSteps = [
 			{ slug: 'intro', component: Intro },
