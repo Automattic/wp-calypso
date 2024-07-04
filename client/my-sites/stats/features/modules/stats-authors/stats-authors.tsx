@@ -1,6 +1,7 @@
 import { StatsCard } from '@automattic/components';
+import { blockPostAuthor } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { postAuthor } from '@wordpress/icons'; // TODO this isn't quite the right icon. Need to update when we can locate the correct icon
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -50,12 +51,12 @@ const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
 			{ ( ! data || ! data?.length ) && (
 				<StatsCard
-					className={ className }
+					className={ clsx( 'stats-card--empty-variant', className ) }
 					title={ translate( 'Authors' ) }
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ postAuthor }
+							icon={ blockPostAuthor }
 							description={ translate(
 								'Learn about your most {{link}}popular authors{{/link}} to better understand how they contribute to grow your site.',
 								{

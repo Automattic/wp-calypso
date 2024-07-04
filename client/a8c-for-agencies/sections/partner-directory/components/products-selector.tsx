@@ -32,7 +32,7 @@ const ProductsSelector = ( { setProducts, selectedProducts }: Props ) => {
 			} );
 			setProducts( selectedProductsBySlug );
 		},
-		[ availableProductsByLabel ]
+		[ availableProductsByLabel, setProducts ]
 	);
 
 	return (

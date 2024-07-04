@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
@@ -15,6 +14,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import FlowCard from '../components/flow-card';
+import { redirect } from '../import/util';
 import { useSubmitMigrationTicket } from './hooks/use-submit-migration-ticket';
 
 const ImporterMigrateMessage: Step = () => {
@@ -93,12 +94,20 @@ const ImporterMigrateMessage: Step = () => {
 						{ __( `We'll help you with the domain changes after the migration is completed.` ) }
 					</div>
 					<div className="migration-message__actions">
-						<Button primary transparent href={ `/home/${ siteSlug }` }>
-							{ __( 'Let me explore' ) }
-						</Button>
-						<Button primary transparent href="/support">
-							{ __( 'Help me learn' ) }
-						</Button>
+						<FlowCard
+							title={ __( 'Let me explore' ) }
+							text={ __(
+								'Discover more features and options available on WordPress.com on your own.'
+							) }
+							onClick={ () => redirect( `/home/${ siteSlug }` ) }
+						/>
+						<FlowCard
+							title={ __( 'Help me learn' ) }
+							text={ __(
+								'Access guides and tutorials to better understand how to use WordPress.com.'
+							) }
+							onClick={ () => redirect( '/support' ) }
+						/>
 					</div>
 				</>
 			}

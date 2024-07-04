@@ -69,6 +69,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
  * Load Posts List Block.
  */
 function load_posts_list_block() {
+	if ( defined( 'MU_WPCOM_POSTS_LIST_BLOCK' ) && MU_WPCOM_POSTS_LIST_BLOCK ) {
+		return;
+	}
+
 	if ( class_exists( 'Posts_List_Block' ) ) {
 		return;
 	}
@@ -95,6 +99,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_posts_list_block' );
  * Load Starter_Page_Templates.
  */
 function load_starter_page_templates() {
+	if ( defined( 'MU_WPCOM_STARTER_PAGE_TEMPLATES' ) && MU_WPCOM_STARTER_PAGE_TEMPLATES ) {
+		return;
+	}
+
 	// We don't want the user to choose a template when copying a post.
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['jetpack-copy'] ) ) {
@@ -122,6 +130,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
  * Load Global Styles plugin.
  */
 function load_global_styles() {
+	if ( defined( 'MU_WPCOM_JETPACK_GLOBAL_STYLES' ) && MU_WPCOM_JETPACK_GLOBAL_STYLES ) {
+		return;
+	}
+
 	require_once __DIR__ . '/global-styles/class-global-styles.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
@@ -130,6 +142,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
  * Load Event Countdown Block.
  */
 function load_countdown_block() {
+	if ( defined( 'MU_WPCOM_JETPACK_COUNTDOWN_BLOCK' ) && MU_WPCOM_JETPACK_COUNTDOWN_BLOCK ) {
+		return;
+	}
+
 	require_once __DIR__ . '/event-countdown-block/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_countdown_block' );
@@ -138,6 +154,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_countdown_block' );
  * Load Timeline Block.
  */
 function load_timeline_block() {
+	if ( defined( 'MU_WPCOM_JETPACK_TIMELINE_BLOCK' ) && MU_WPCOM_JETPACK_TIMELINE_BLOCK ) {
+		return;
+	}
+
 	require_once __DIR__ . '/jetpack-timeline/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
@@ -151,6 +171,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
  * not aware of content sections outside of post_content yet.
  */
 function enqueue_coblocks_gallery_scripts() {
+	if ( defined( 'MU_WPCOM_COBLOCKS_GALLERY' ) && MU_WPCOM_COBLOCKS_GALLERY ) {
+		return;
+	}
+
 	if ( ! function_exists( 'CoBlocks' ) || ! is_full_site_editing_active() ) {
 		return;
 	}
@@ -198,6 +222,10 @@ add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scr
  * Load Blog Posts block.
  */
 function load_blog_posts_block() {
+	if ( defined( 'MU_WPCOM_NEWSPACK_BLOCKS' ) && MU_WPCOM_NEWSPACK_BLOCKS ) {
+		return;
+	}
+
 	// Use regex instead of static slug in order to match plugin installation also from github, where slug may contain (HASH|branch-name).
 	$slug_regex    = '/newspack-blocks(-[A-Za-z0-9-]+)?\/newspack-blocks\.php/';
 	$disable_block = (
@@ -227,6 +255,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
  * Load WPCOM Block Editor NUX.
  */
 function load_wpcom_block_editor_nux() {
+	if ( defined( 'MU_WPCOM_BLOCK_EDITOR_NUX' ) && MU_WPCOM_BLOCK_EDITOR_NUX ) {
+		return;
+	}
+
 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
@@ -235,6 +267,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
  * Load Block Inserter Modifications module.
  */
 function load_block_inserter_modifications() {
+	if ( defined( 'MU_WPCOM_BLOCK_INSERTER_MODIFICATIONS' ) && MU_WPCOM_BLOCK_INSERTER_MODIFICATIONS ) {
+		return;
+	}
+
 	require_once __DIR__ . '/block-inserter-modifications/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );
@@ -243,6 +279,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modification
  * Load Mailerlite module.
  */
 function load_mailerlite() {
+	if ( defined( 'MU_WPCOM_MAILERLITE_WIDGET' ) && MU_WPCOM_MAILERLITE_WIDGET ) {
+		return;
+	}
+
 	require_once __DIR__ . '/mailerlite/subscriber-popup.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_mailerlite' );
@@ -264,6 +304,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar'
  * What's New section of the Tools menu.
  */
 function load_whats_new() {
+	if ( defined( 'MU_WPCOM_WHATS_NEW' ) && MU_WPCOM_WHATS_NEW ) {
+		return;
+	}
+
 	require_once __DIR__ . '/whats-new/class-whats-new.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
@@ -272,6 +316,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
  * Tags Education
  */
 function load_tags_education() {
+	if ( defined( 'MU_WPCOM_TAGS_EDUCATION' ) && MU_WPCOM_TAGS_EDUCATION ) {
+		return;
+	}
+
 	require_once __DIR__ . '/tags-education/class-tags-education.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
@@ -280,6 +328,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  * Load paragraph block
  */
 function load_paragraph_block() {
+	if ( defined( 'MU_WPCOM_PARAGRAPH_BLOCK' ) && MU_WPCOM_PARAGRAPH_BLOCK ) {
+		return;
+	}
+
 	require_once __DIR__ . '/paragraph-block/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_paragraph_block' );
@@ -288,6 +340,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_paragraph_block' );
  * Override org documentation links.
  */
 function load_wpcom_documentation_links() {
+	if ( defined( 'MU_WPCOM_DOCUMENTATION_LINKS' ) && MU_WPCOM_DOCUMENTATION_LINKS ) {
+		return;
+	}
+
 	require_once __DIR__ . '/wpcom-documentation-links/class-wpcom-documentation-links.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_documentation_links' );
@@ -296,6 +352,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_documentation_links' 
  * Add support links to block description.
  */
 function load_block_description_links() {
+	if ( defined( 'MU_WPCOM_BLOCK_DESCRIPTION_LINKS' ) && MU_WPCOM_BLOCK_DESCRIPTION_LINKS ) {
+		return;
+	}
+
 	require_once __DIR__ . '/wpcom-block-description-links/class-wpcom-block-description-links.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
@@ -304,6 +364,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
  * Load WP.com Global Styles.
  */
 function load_wpcom_global_styles() {
+	if ( defined( 'MU_WPCOM_GLOBAL_STYLES' ) && MU_WPCOM_GLOBAL_STYLES ) {
+		return;
+	}
+
 	require_once __DIR__ . '/wpcom-global-styles/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_global_styles' );
