@@ -71,7 +71,10 @@ export default function WPCOMSitesTable( {
 	// Maybe we should finalize on the list if sites to be displayed
 	const items = useMemo( () => {
 		return sites
-			.filter( ( site ) => site && ! managedSitesMap?.[ site.ID as number ] )
+			.filter(
+				( site ) =>
+					site && site.visible && ! site.is_private && ! managedSitesMap?.[ site.ID as number ]
+			)
 			.map( ( site ) =>
 				site
 					? {
