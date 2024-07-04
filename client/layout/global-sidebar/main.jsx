@@ -83,7 +83,7 @@ const GlobalSidebar = ( {
 		return <Spinner className="sidebar__menu-loading" />;
 	}
 
-	const { requireBackLink, siteTitle, backLinkHref, ...sidebarProps } = props;
+	const { requireBackLink, siteTitle, backLinkHref, subHeading, ...sidebarProps } = props;
 	const sidebarBackLinkHref = getBackLinkFromURL() || backLinkHref || previousLink || '/sites';
 
 	return (
@@ -99,6 +99,7 @@ const GlobalSidebar = ( {
 							<span className="sidebar__site-title">{ siteTitle || translate( 'Back' ) }</span>
 						</div>
 					) }
+					{ subHeading && <div className="sidebar__sub-heading">{ subHeading }</div> }
 					{ children }
 				</Sidebar>
 			</div>

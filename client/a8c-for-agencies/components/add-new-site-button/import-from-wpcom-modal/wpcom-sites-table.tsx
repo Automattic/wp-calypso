@@ -3,9 +3,7 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { CheckboxControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useMemo, useCallback } from 'react';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import { useMemo, useCallback } from 'react';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
@@ -14,9 +12,10 @@ import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selecto
 import getSites from 'calypso/state/selectors/get-sites';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import WPCOMSitesTableContent from './table-content';
 import type { Site } from 'calypso/a8c-for-agencies/sections/sites/types';
 
-type SiteItem = {
+export type SiteItem = {
 	id: number;
 	site: string;
 	date: string;
@@ -66,9 +65,8 @@ export default function WPCOMSitesTable( {
 
 	const isDesktop = useDesktopBreakpoint();
 
-	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
-
 	// FIXME: This is a temporary solution to filter out sites that are already connected
+	// Maybe we should finalize on the list if sites to be displayed
 	const items = useMemo( () => {
 		return sites
 			.filter(
@@ -107,55 +105,94 @@ export default function WPCOMSitesTable( {
 	);
 
 	const fields = useMemo(
-		() => [
-			{
-				id: 'site',
-				header: (
-					<div>
-						<CheckboxControl
-							label={ translate( 'Site' ).toUpperCase() }
-							checked={ selectedSites.length === items.length }
-							onChange={ onSelectAllSites }
-							disabled={ false }
-						/>
-					</div>
-				),
-				getValue: () => '-' as string,
-				render: ( { item }: { item: SiteItem } ) => (
-					<CheckboxControl
-						label={ item.site }
-						checked={ selectedSites.includes( item.id ) }
-						onChange={ ( checked ) => onSelectSite( checked, item ) }
-						disabled={ false }
-					/>
-				),
-				width: '100%',
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'date',
-				header: translate( 'Date' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: SiteItem } ) => new Date( item.date ).toLocaleDateString(),
-				width: '100%',
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'type',
-				header: translate( 'Type' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: SiteItem } ) => <TypeIcon siteId={ item.id } />,
-				width: '100%',
-				enableHiding: false,
-				enableSorting: false,
-			},
-		],
-		[ items.length, onSelectAllSites, onSelectSite, selectedSites, translate ]
+		() =>
+			! isDesktop
+				? [
+						{
+							id: 'site',
+							header: (
+								<div>
+									<CheckboxControl
+										label={ translate( 'Site' ).toUpperCase() }
+										checked={ selectedSites.length === items.length }
+										onChange={ onSelectAllSites }
+										disabled={ false }
+									/>
+								</div>
+							),
+							getValue: () => '-' as string,
+							render: ( { item }: { item: SiteItem } ) => (
+								<div className="wpcom-sites-table__site-mobile">
+									<CheckboxControl
+										className="view-details-button"
+										data-site-id={ item.id }
+										// We don't want to show the label here since we show the logo and site name separately
+										label={ undefined }
+										checked={ selectedSites.includes( item.id ) }
+										onChange={ ( checked ) => onSelectSite( checked, item ) }
+										disabled={ false }
+									/>
+									<TypeIcon siteId={ item.id } />
+									<span>{ item.site }</span>
+								</div>
+							),
+							width: '100%',
+							enableHiding: false,
+							enableSorting: false,
+						},
+				  ]
+				: [
+						{
+							id: 'site',
+							header: (
+								<div>
+									<CheckboxControl
+										label={ translate( 'Site' ).toUpperCase() }
+										checked={ selectedSites.length === items.length }
+										onChange={ onSelectAllSites }
+										disabled={ false }
+									/>
+								</div>
+							),
+							getValue: () => '-' as string,
+							render: ( { item }: { item: SiteItem } ) => (
+								<CheckboxControl
+									className="view-details-button"
+									data-site-id={ item.id }
+									label={ item.site }
+									checked={ selectedSites.includes( item.id ) }
+									onChange={ ( checked ) => onSelectSite( checked, item ) }
+									disabled={ false }
+								/>
+							),
+							width: '100%',
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
+							id: 'date',
+							header: translate( 'Date' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: SiteItem } ) =>
+								new Date( item.date ).toLocaleDateString(),
+							width: '100%',
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
+							id: 'type',
+							header: translate( 'Type' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: SiteItem } ) => <TypeIcon siteId={ item.id } />,
+							width: '100%',
+							enableHiding: false,
+							enableSorting: false,
+						},
+				  ],
+		[ isDesktop, items.length, onSelectAllSites, onSelectSite, selectedSites, translate ]
 	);
 
-	return isDesktop ? (
+	return (
 		<div className="wpcom-sites-table redesigned-a8c-table">
 			{ isFetching ? (
 				<>
@@ -169,22 +206,8 @@ export default function WPCOMSitesTable( {
 					<TextPlaceholder />
 				</>
 			) : (
-				<ItemsDataViews
-					data={ {
-						items,
-						fields,
-						getItemId: ( item ) => `${ item.id }`,
-						pagination: {
-							totalItems: 1,
-							totalPages: 1,
-						},
-						enableSearch: false,
-						actions: [],
-						dataViewsState: dataViewsState,
-						setDataViewsState: setDataViewsState,
-					} }
-				/>
+				<WPCOMSitesTableContent items={ items } fields={ fields } />
 			) }
 		</div>
-	) : null;
+	);
 }
