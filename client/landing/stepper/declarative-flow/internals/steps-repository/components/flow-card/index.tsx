@@ -33,10 +33,10 @@ const FlowCard = ( { icon, onClick, text, title, disabled = false, badge }: Flow
 						</FlexItem>
 					) }
 					<FlexBlock>
-						<div className="flow-question__title-wrapper">
-							<h3 className="flow-question__heading">{ title }</h3>
+						<h3 className="flow-question__heading">
+							{ title }
 							{ badge && <Badge type={ badge.type }>{ badge.text }</Badge> }
-						</div>
+						</h3>
 						<p className="flow-question__description">{ text }</p>
 					</FlexBlock>
 					<FlexItem>
