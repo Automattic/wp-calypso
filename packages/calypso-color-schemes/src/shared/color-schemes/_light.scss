@@ -160,11 +160,13 @@ Primary+Accent is studio blue.
 	--color-sidebar-submenu-hover-background: transparent;
 	--color-sidebar-submenu-hover-text: var(--theme-highlight-color);
 	--color-sidebar-submenu-selected-text: #333;
+	--color-sidebar-submenu-selected-hover-text: var(--theme-highlight-color);
 
 	/* Sidebar Submenu - Nav Redesign */
 	--color-navredesign-sidebar-submenu-text: var(--color-sidebar-submenu-text);
 	--color-navredesign-sidebar-submenu-selected-text: var(--theme-text-color);
 	--color-navredesign-sidebar-submenu-hover-text: var(--theme-highlight-color);
+	--color-navredesign-sidebar-submenu-selected-hover-text: var(--theme-highlight-color);
 
 	/* Fix for notification bell */
 	.masterbar__item-notifications {
@@ -172,6 +174,9 @@ Primary+Accent is studio blue.
 			fill: #000;
 		}
 	}
+
+	/* Collapse Menu Button Fix */
+	--color-collapse-menu-text: #777;
 
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--theme-highlight-color);
