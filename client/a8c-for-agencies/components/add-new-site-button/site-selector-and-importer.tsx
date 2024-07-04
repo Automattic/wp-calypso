@@ -6,6 +6,8 @@ import { useRef, useState } from 'react';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import A4ALogo from '../a4a-logo';
 import {
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
@@ -13,6 +15,7 @@ import {
 	A4A_SITES_LINK_NEEDS_SETUP,
 } from '../sidebar-menu/lib/constants';
 import A4AConnectionModal from './a4a-connection-modal';
+import ImportFromWPCOMModal from './import-from-wpcom-modal';
 import JetpackConnectionModal from './jetpack-connection-modal';
 
 import './style.scss';
@@ -27,13 +30,21 @@ export default function SiteSelectorAndImporter( {
 	showMainButtonLabel: boolean;
 } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
 	const [ showA4AConnectionModal, setShowA4AConnectionModal ] = useState( false );
 	const [ showJetpackConnectionModal, setShowJetpackConnectionModal ] = useState( false );
+	const [ showImportFromWPCOMModal, setShowImportFromWPCOMModal ] = useState( false );
 
 	const toggleMenu = () => {
 		setMenuVisible( ( isVisible ) => ! isVisible );
+	};
+
+	const handleImportFromWPCOM = () => {
+		dispatch( recordTracksEvent( 'calypso_a8c_agency_sites_import_wpcom_click' ) );
+		setShowImportFromWPCOMModal( true );
+		setMenuVisible( false );
 	};
 
 	const popoverMenuContext = useRef( null );
@@ -110,6 +121,9 @@ export default function SiteSelectorAndImporter( {
 							icon: <WordPressLogo />,
 							heading: translate( 'Via WordPress.com' ),
 							description: translate( 'Import sites bought on WordPress.com' ),
+							buttonProps: {
+								onClick: handleImportFromWPCOM,
+							},
 						} ) }
 						{ menuItem( {
 							icon: <A4ALogo />,
@@ -197,6 +211,10 @@ export default function SiteSelectorAndImporter( {
 
 			{ showJetpackConnectionModal && (
 				<JetpackConnectionModal onClose={ () => setShowJetpackConnectionModal( false ) } />
+			) }
+
+			{ showImportFromWPCOMModal && (
+				<ImportFromWPCOMModal onClose={ () => setShowImportFromWPCOMModal( false ) } />
 			) }
 		</>
 	);

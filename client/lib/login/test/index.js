@@ -1,4 +1,8 @@
-import { pathWithLeadingSlash, getSignupUrl } from 'calypso/lib/login';
+/**
+ * @jest-environment jsdom
+ */
+
+import { pathWithLeadingSlash, getSignupUrl, isRecognizedLogin } from 'calypso/lib/login';
 
 describe( 'pathWithLeadingSlash', () => {
 	test( 'should add leading slash', () => {
@@ -212,5 +216,17 @@ describe( 'getSignupUrl', () => {
 		).toEqual(
 			'/start/account?redirect_to=https%3A%2F%2Fpublic-api.wordpress.com%2Fpublic.api%2Fconnect%2F%3Faction%3Dverify'
 		);
+	} );
+} );
+
+describe( 'isRecognizedLogin', () => {
+	it( 'should return false when the `recognized_logins` cookie is not set', () => {
+		expect( isRecognizedLogin() ).toBe( false );
+	} );
+
+	it( 'should return true when the `recognized_logins` cookie is set', () => {
+		document.cookie = 'recognized_logins=foo';
+
+		expect( isRecognizedLogin() ).toBe( true );
 	} );
 } );

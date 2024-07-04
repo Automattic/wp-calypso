@@ -57,7 +57,7 @@
 
 	.migration-message__actions {
 		display: flex;
-		gap: 2em;
-		margin-top: 3em; /* could also work with padding-top */
+		justify-content: center;
+		margin: 0 -10px;
 	}
 }
