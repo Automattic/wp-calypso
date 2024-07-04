@@ -37,112 +37,96 @@ type Steps = Step[];
 
 export const useSteps = ( { fromUrl }: Options ): Steps => {
 	const translate = useTranslate();
-	return [
-		{
-			task: {
-				id: '1',
-				title: translate( '1. Install the Migrate Guru plugin' ),
-				completed: false,
-				disabled: false,
-			},
-			expandable: {
-				content: (
-					<p>
-						{ translate(
-							'First you’ll need to install and activate the {{a}}Migrate Guru plugin{{/a}} on the site you want to migrate. Click next when you’re ready.',
-							{
-								components: {
-									a: (
-										<a
-											href={ getPluginInstallationPage( fromUrl ) }
-											target="_blank"
-											rel="noreferrer noopener"
-											onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
-										/>
-									),
-								},
-							}
-						) }
-					</p>
-				),
-				isOpen: true,
-				action: {
-					label: translate( 'Next' ),
-					onClick: () => {},
-				},
-			},
-		},
-		{
-			task: {
-				id: '2',
-				title: translate( '2. Get your site ready' ),
-				completed: false,
-				disabled: false,
-			},
-			expandable: {
-				content: (
-					<>
-						<p>
-							{ translate(
-								'Head to the {{a}}Migrate Guru page on the site you’re migrating{{/a}}, Tap in your email address and click {{strong}}‘%(migrateLabel)s’{{/strong}}.',
-								{
-									components: {
-										strong: <strong />,
-										a: (
-											<MaybeLink
-												href={ fromUrl ? getMigrateGuruPageURL( fromUrl ) : undefined }
-												target="_blank"
-												rel="noreferrer noopener"
-												fallback={ <strong /> }
-												onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
-											/>
-										),
-									},
-									args: { migrateLabel: 'Migrate' },
-								}
-							) }
-						</p>
-						<p>
-							<strong>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</strong>
-						</p>
-						<p>{ translate( 'All set? Click next below.' ) }</p>
-					</>
-				),
-				isOpen: true,
-				action: {
-					label: translate( 'Next' ),
-					onClick: () => {},
-				},
-			},
-		},
-		{
-			task: {
-				id: '3',
-				title: translate( '3. Add your migration key' ),
-				completed: false,
-				disabled: false,
-			},
-			expandable: {
-				content: (
-					<p>
-						{ translate(
-							'Copy and paste the migration key below in the Migrate Guru Migration key field and click {{strong}}%(migrateLabel)s{{/strong}}.',
 
+	const steps = [
+		{
+			title: translate( '1. Install the Migrate Guru plugin' ),
+			content: (
+				<p>
+					{ translate(
+						'First you’ll need to install and activate the {{a}}Migrate Guru plugin{{/a}} on the site you want to migrate. Click next when you’re ready.',
+						{
+							components: {
+								a: (
+									<a
+										href={ getPluginInstallationPage( fromUrl ) }
+										target="_blank"
+										rel="noreferrer noopener"
+										onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
+									/>
+								),
+							},
+						}
+					) }
+				</p>
+			),
+		},
+		{
+			title: translate( '2. Get your site ready' ),
+			content: (
+				<>
+					<p>
+						{ translate(
+							'Head to the {{a}}Migrate Guru page on the site you’re migrating{{/a}}, Tap in your email address and click {{strong}}‘%(migrateLabel)s’{{/strong}}.',
 							{
 								components: {
 									strong: <strong />,
+									a: (
+										<MaybeLink
+											href={ fromUrl ? getMigrateGuruPageURL( fromUrl ) : undefined }
+											target="_blank"
+											rel="noreferrer noopener"
+											fallback={ <strong /> }
+											onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
+										/>
+									),
 								},
 								args: { migrateLabel: 'Migrate' },
 							}
 						) }
 					</p>
-				),
+					<p>
+						<strong>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</strong>
+					</p>
+					<p>{ translate( 'All set? Click next below.' ) }</p>
+				</>
+			),
+		},
+		{
+			title: translate( '3. Add your migration key' ),
+			content: (
+				<p>
+					{ translate(
+						'Copy and paste the migration key below in the Migrate Guru Migration key field and click {{strong}}%(migrateLabel)s{{/strong}}.',
+
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: { migrateLabel: 'Migrate' },
+						}
+					) }
+				</p>
+			),
+		},
+	];
+
+	return steps.map( ( step, index ) => {
+		return {
+			task: {
+				id: step.title,
+				title: step.title,
+				completed: false,
+				disabled: false,
+			},
+			expandable: {
+				content: step.content,
 				isOpen: true,
 				action: {
-					label: translate( 'Done' ),
+					label: index === steps.length - 1 ? translate( 'Done' ) : translate( 'Next' ),
 					onClick: () => {},
 				},
 			},
-		},
-	];
+		};
+	} );
 };
