@@ -21,6 +21,40 @@ import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
+/**
+ * This function calculates the position of the Help Center based on the last click event
+ *
+ * @param lastClickEvent MouseEvent object
+ * @param HelpCenter node reference
+ * @returns object with left and top properties
+ */
+export const calculateOpeningPosition = (
+	clientX: number,
+	clientY: number,
+	HelpCenter: HTMLElement
+) => {
+	const { innerWidth, innerHeight } = window;
+	const { offsetWidth, offsetHeight } = HelpCenter;
+
+	let x = clientX - offsetWidth / 2;
+	let y = clientY + 25;
+
+	if ( clientX + offsetWidth / 2 > innerWidth ) {
+		// In case the click was too close to the right edge of the screen, we move it to the left
+		x = innerWidth - offsetWidth - 25;
+	} else if ( x < 0 ) {
+		// In case the click was too close to the left edge of the screen, we move it to the right
+		x = 25;
+	}
+
+	if ( clientY + offsetHeight > innerHeight ) {
+		// In case the click was too close to the bottom edge of the screen, we move it to the top
+		y = clientY - offsetHeight - 25;
+	}
+
+	return { x, y };
+};
+
 interface OptionalDraggableProps extends Partial< DraggableProps > {
 	draggable: boolean;
 	children?: React.ReactNode;
@@ -103,6 +137,14 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		<MemoryRouter initialEntries={ initialRoute ? [ initialRoute ] : undefined }>
 			<FeatureFlagProvider>
 				<OptionalDraggable
+					defaultPosition={
+						Array.isArray( show )
+							? calculateOpeningPosition( show[ 0 ], show[ 1 ], {
+									offsetWidth: 410,
+									offsetHeight: Math.min( window.innerHeight * 0.8, 800 ),
+							  } )
+							: { x: 100, y: 200 }
+					}
 					draggable={ ! isMobile && ! isMinimized }
 					nodeRef={ nodeRef }
 					handle=".help-center__container-header"

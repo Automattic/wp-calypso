@@ -524,13 +524,6 @@ $brand-text: "SF Pro Text", $sans;
 	}
 }
 
-body.has-global-sidebar .help-center .components-card.help-center__container.is-desktop {
-	top: auto;
-	right: auto;
-	bottom: 34px;
-	left: 116px;
-}
-
 body.has-global-sidebar.has-global-sidebar-collapsed .help-center .components-card.help-center__container.is-desktop {
 	left: 82px;
 }

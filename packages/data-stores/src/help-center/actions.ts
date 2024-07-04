@@ -66,7 +66,12 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 		show,
 	} ) as const;
 
-export const setShowHelpCenter = function* ( show: boolean ) {
+export const setShowHelpCenter = function* ( showAtCoords: [ number, number ] | false ) {
+	if ( show && window.event && window.event.type === 'click' ) {
+		const target = window.event.srcElement;
+		const coords = target.getBoundingClientRect();
+		show = [ coords.x + coords.width / 2, coords.y + coords.height / 2 ];
+	}
 	if ( ! show ) {
 		yield setInitialRoute( undefined );
 		yield setIsMinimized( false );
