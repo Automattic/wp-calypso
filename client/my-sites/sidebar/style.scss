@@ -637,6 +637,11 @@ $font-size: rem(14px);
 				background-color: revert;
 				color: var(--color-navredesign-sidebar-submenu-selected-text);
 				font-weight: 600;
+
+				&:hover,
+				&:focus {
+					color: var(--color-navredesign-sidebar-submenu-selected-hover-text);
+				}
 			}
 			.sidebar__menu-link {
 				color: var(--color-navredesign-sidebar-submenu-text);
