@@ -30,7 +30,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	const statType = 'statsTopPosts';
 
 	// Use StatsModule to display paywall upsell.
-	const shouldGateStatsTopPosts = useShouldGateStats( statType );
+	const shouldGateStatsModule = useShouldGateStats( statType );
 
 	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
@@ -39,11 +39,11 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
 
-	const isRequestingData = debugLoaders || ( requesting && ! data );
+	const isRequestingData = debugLoaders || requesting;
 
 	return (
 		<>
-			{ siteId && statType && (
+			{ ! shouldGateStatsModule && siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ isRequestingData && (
@@ -54,8 +54,8 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					type={ 1 }
 				/>
 			) }
-			{ /* TODO: consider supressing <StatsModule /> empty state */ }
-			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsTopPosts ) && (
+			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
+				// show data or an overlay
 				<StatsModule
 					path="posts"
 					moduleStrings={ moduleStrings }
@@ -63,10 +63,12 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					query={ query }
 					statType={ statType }
 					showSummaryLink
-					className={ className } // TODO: extend with a base class after adding skeleton loaders
+					className={ className }
+					skipQuery
 				/>
 			) }
 			{ ! isRequestingData && ! data?.length && (
+				// show empty state
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ moduleStrings.title }

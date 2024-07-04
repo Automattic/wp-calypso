@@ -30,7 +30,7 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 	const statType = 'statsCountryViews';
 
 	// Use StatsModule to display paywall upsell.
-	const shouldGateStatsCountries = useShouldGateStats( statType );
+	const shouldGateStatsModule = useShouldGateStats( statType );
 
 	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
@@ -39,11 +39,11 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
 
-	const isRequestingData = debugLoaders || ( requesting && ! data );
+	const isRequestingData = debugLoaders || requesting;
 
 	return (
 		<>
-			{ siteId && statType && (
+			{ ! shouldGateStatsModule && siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ isRequestingData && (
@@ -55,7 +55,8 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 					withHero
 				/>
 			) }
-			{ ( ! isRequestingData && !! data.length ) || shouldGateStatsCountries ? (
+			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
+				// show data or an overlay
 				<StatsModule
 					path="countryviews"
 					moduleStrings={ moduleStrings }
@@ -64,10 +65,13 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 					statType={ statType }
 					showSummaryLink
 					className={ className }
+					skipQuery
 				>
-					<Geochart query={ query } />
+					<Geochart query={ query } skipQuery />
 				</StatsModule>
-			) : (
+			) }
+			{ ! isRequestingData && ! data?.length && (
+				// show empty state
 				<StatsCard
 					className={ className }
 					title={ translate( 'Locations' ) }
@@ -87,9 +91,7 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 							) }
 						/>
 					}
-				>
-					<></>
-				</StatsCard>
+				/>
 			) }
 		</>
 	);

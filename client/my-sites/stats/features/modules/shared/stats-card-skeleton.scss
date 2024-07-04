@@ -1,6 +1,11 @@
 .stats-card-skeleton {
 	width: 100%;
 
+	.stats-card {
+		height: 100%;
+		box-sizing: border-box;
+	}
+
 	// use separate animation to match the cycle actoss card
 	.stats-card-skeleton__placeholder {
 		animation: stats-skeleton-card 2.5s ease-in-out infinite;

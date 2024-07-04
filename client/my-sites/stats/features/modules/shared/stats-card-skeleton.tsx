@@ -39,6 +39,7 @@ const StatsCardSkeleton: React.FC< StatsCardSkeletonProps > = ( {
 			{ /* TODO: Empty title - use another LoadingPlaceholder */ }
 			<StatsCard
 				title={ title || '' }
+				metricLabel=""
 				heroElement={
 					withHero ? (
 						<LoadingPlaceholder
