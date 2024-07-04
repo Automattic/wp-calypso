@@ -23,7 +23,6 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
-	debugLoaders,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -32,14 +31,12 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
-	const requesting = useSelector( ( state: StatsStateProps ) =>
+	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
-
-	const isRequestingData = debugLoaders || requesting;
 
 	return (
 		<>

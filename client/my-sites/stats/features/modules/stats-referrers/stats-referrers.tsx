@@ -23,7 +23,6 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
-	debugLoaders,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -32,15 +31,12 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
-	// TODO: sort out the state shape.
-	const requesting = useSelector( ( state: StatsStateProps ) =>
+	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
-
-	const isRequestingData = debugLoaders || requesting; //TODO
 
 	return (
 		<>
