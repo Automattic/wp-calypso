@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { trendingUp } from '@wordpress/icons';
+import { postList } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -63,9 +63,9 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ trendingUp }
+							icon={ postList }
 							description={ translate(
-								'Your top {{link}}posts and pages{{/link}} will display here and learn what content resonates the most. Start creating and sharing!',
+								'Your top {{link}}posts and pages{{/link}} will display here and you can learn what content resonates the most. Start creating and sharing!',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {

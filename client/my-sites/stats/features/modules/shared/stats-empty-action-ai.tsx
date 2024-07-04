@@ -1,5 +1,5 @@
+import { sparkles } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { starEmpty } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import EmptyStateAction from '../../../components/empty-state-action';
@@ -17,7 +17,7 @@ const StatsEmptyActionAI: React.FC< StatsEmptyActionAIProps > = ( { from } ) => 
 
 	return (
 		<EmptyStateAction
-			icon={ starEmpty }
+			icon={ sparkles }
 			text={ translate( 'Craft engaging content with Jetpack AI assistant' ) }
 			analyticsDetails={ {
 				from: from,
