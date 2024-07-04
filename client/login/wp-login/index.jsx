@@ -242,6 +242,8 @@ export class Login extends Component {
 	renderGravPoweredLoginBlockFooter() {
 		const { oauth2Client, translate, locale, currentQuery, currentRoute } = this.props;
 
+		const isGravatar = isGravatarOAuth2Client( oauth2Client );
+		const isFromGravatar3rdPartyApp = isGravatar && currentQuery?.gravatar_from === '3rd-party';
 		const magicLoginUrl = login( {
 			locale,
 			twoFactorAuthType: 'link',
@@ -259,7 +261,6 @@ export class Login extends Component {
 			lostPassword( { locale } )
 		);
 		const signupUrl = getSignupUrl( currentQuery, currentRoute, oauth2Client, locale );
-		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
 		return (
 			<>
@@ -283,7 +284,7 @@ export class Login extends Component {
 					>
 						{ translate( 'Lost your password?' ) }
 					</a>
-					{ ! ( isGravatar && currentQuery?.gravatar_from === '3rd-party' ) && (
+					{ ! isFromGravatar3rdPartyApp && (
 						<div>
 							{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
 								components: {
