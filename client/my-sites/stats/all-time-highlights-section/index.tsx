@@ -235,13 +235,14 @@ type AllTimeStatsCardProps = {
 
 function AllTimeStatsCard( { infoItems, siteId, isLocked }: AllTimeStatsCardProps ) {
 	const translate = useTranslate();
+	const heading = translate( 'All-time stats' );
 	if ( isLocked ) {
-		return <UpsellCard heading={ translate( 'All-time stats' ) } siteId={ siteId } />;
+		return <UpsellCard heading={ heading } siteId={ siteId } />;
 	}
 
 	return (
 		<Card className="highlight-card">
-			<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
+			<h4 className="highlight-card-heading">{ heading }</h4>
 			<div className="highlight-card-info-item-list">
 				{ infoItems
 					.filter( ( i ) => ! i.hidden )
