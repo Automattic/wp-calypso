@@ -14,7 +14,6 @@ import {
 } from '../sidebar-menu/lib/constants';
 import A4AConnectionModal from './a4a-connection-modal';
 import JetpackConnectionModal from './jetpack-connection-modal';
-import UrlConnectionModal from './url-connection-modal';
 
 import './style.scss';
 
@@ -32,7 +31,6 @@ export default function SiteSelectorAndImporter( {
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
 	const [ showA4AConnectionModal, setShowA4AConnectionModal ] = useState( false );
 	const [ showJetpackConnectionModal, setShowJetpackConnectionModal ] = useState( false );
-	const [ showUrlConnectionModal, setShowUrlConnectionModal ] = useState( false );
 
 	const toggleMenu = () => {
 		setMenuVisible( ( isVisible ) => ! isVisible );
@@ -199,9 +197,6 @@ export default function SiteSelectorAndImporter( {
 
 			{ showJetpackConnectionModal && (
 				<JetpackConnectionModal onClose={ () => setShowJetpackConnectionModal( false ) } />
-			) }
-			{ showUrlConnectionModal && (
-				<UrlConnectionModal onClose={ () => setShowUrlConnectionModal( false ) } />
 			) }
 		</>
 	);

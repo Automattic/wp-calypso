@@ -1,16 +1,18 @@
-import { Button } from '@automattic/components';
-import { Icon, check, download, external } from '@wordpress/icons';
+import { Button, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import {
-	A4A_DOWNLOAD_LINK_ON_GITHUB,
-	A4A_PLUGIN_LINK_ON_WPORG,
-} from 'calypso/a8c-for-agencies/constants';
+import { useState, ChangeEvent, useMemo } from 'react';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import A4AThemedModal from '../../a4a-themed-modal';
 import modalImage from './modal-image.jpg';
 
 import './style.scss';
+
+function isValidURL( url: string ) {
+	return /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?$/i.test( url );
+}
 
 type Props = {
 	onClose: () => void;
@@ -20,17 +22,37 @@ export default function A4AConnectionModal( { onClose }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const onDownloadPlugin = () => {
+	const [ site, setSite ] = useState( '' );
+
+	const onComplete = () => {
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_add_site_via_a4a_plugin_modal_download_plugin_click' )
+			recordTracksEvent( 'calypso_a4a_add_site_via_a4a_connection_modal_button_click', {
+				site,
+			} )
 		);
 		onClose?.();
 	};
 
-	const onLearnMore = () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_add_site_via_a4a_plugin_modal_learn_more_click' ) );
-		onClose?.();
+	const onSiteChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+		setSite( event.currentTarget.value );
 	};
+
+	const buttonUrl = useMemo( () => {
+		if ( ! isValidURL ) {
+			return '';
+		}
+		try {
+			const validSite = ! /^https?:\/\//i.test( site )
+				? new URL( `https://${ site }` )
+				: new URL( site );
+			const url = new URL(
+				`${ validSite.origin }/wp-admin/plugin-install.php?s=automattic-for-agencies-client&tab=search&type=term`
+			);
+			return url.href;
+		} catch ( e ) {
+			return '';
+		}
+	}, [ site ] );
 
 	return (
 		<A4AThemedModal
@@ -40,55 +62,43 @@ export default function A4AConnectionModal( { onClose }: Props ) {
 			dismissable
 		>
 			<h1 className="a4a-connection-modal__title">
-				{ translate( 'Download and install the Automattic for Agencies plugin to connect a site' ) }
+				{ translate(
+					'Add a site by remotely installing the Automattic for Agencies client plugin'
+				) }
 			</h1>
 
 			<p className="a4a-connection-modal__instruction">
-				{ translate( 'Follow these steps to connect:' ) }
-
-				<ul>
-					<li>
-						<Icon className="gridicon" icon={ check } size={ 24 } />{ ' ' }
-						{ translate( 'Download and install the plugin on your client’s site.' ) }
-					</li>
-					<li>
-						<Icon className="gridicon" icon={ check } size={ 24 } />
-						{ translate( 'Click the {{b}}Connect site{{/b}} button on the plugin’s interface.', {
-							components: {
-								b: <b />,
-							},
-						} ) }
-					</li>
-					<li>
-						<Icon className="gridicon" icon={ check } size={ 24 } />{ ' ' }
-						{ translate( 'That’s it! See your client’s site in the dashboard.' ) }
-					</li>
-				</ul>
+				{ translate(
+					'This lightweight plugin securely connects your clients’ sites to the Automattic for Agencies Sites Dashboard, enabling you to manage them from one place and to be notified immediately if any site is experiencing security or performance issues.'
+				) }
 			</p>
 
-			<div className="a4a-connection-modal__actions">
-				<Button
-					className="a4a-connection-modal__download-button"
-					primary
-					onClick={ onDownloadPlugin }
-					href={ A4A_DOWNLOAD_LINK_ON_GITHUB }
-					target="_blank"
-					rel="noreferrer noopener"
-				>
-					{ translate( 'Download the plugin' ) }
-					<Icon className="gridicon" icon={ download } />
-				</Button>
+			<div className="a4a-connection-modal__input-container">
+				<FormFieldset>
+					<FormLabel htmlFor="site">{ translate( 'What site do you want to connect?' ) }</FormLabel>
+					<FormTextInput
+						name="site"
+						id="site"
+						placeholder={ translate( 'Site URL' ) }
+						value={ site }
+						onChange={ onSiteChange }
+						onClick={ () =>
+							dispatch(
+								recordTracksEvent( 'calypso_a4a_add_site_via_a4a_connection_modal_site_url_click' )
+							)
+						}
+					/>
+				</FormFieldset>
 
 				<Button
-					className="a4a-connection-modal__learn-more-link"
-					onClick={ onLearnMore }
-					href={ A4A_PLUGIN_LINK_ON_WPORG }
+					primary
+					onClick={ onComplete }
+					disabled={ ! isValidURL( site ) }
+					href={ buttonUrl }
 					target="_blank"
 					rel="noreferrer noopener"
-					plain
 				>
-					<span>{ translate( 'Learn more' ) }</span>
-					<Icon className="gridicon" icon={ external } size={ 18 } />
+					{ translate( 'Connect' ) }
 				</Button>
 			</div>
 		</A4AThemedModal>
