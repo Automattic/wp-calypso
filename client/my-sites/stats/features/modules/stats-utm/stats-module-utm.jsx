@@ -15,6 +15,7 @@ import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import UTMBuilder from '../../../stats-module-utm-builder/';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsEmptyActionUTMBuilder from '../shared/stats-empty-action-utm-builder';
 import UTMDropdown from './stats-module-utm-dropdown';
 import UTMExportButton from './utm-export-button';
@@ -125,75 +126,143 @@ const StatsModuleUTM = ( {
 
 	return (
 		<>
-			{ ! data?.length &&
-				isNewEmptyStateEnabled && ( // no data and new empty state enabled
-					<StatsCard
-						className={ className }
-						title={ moduleStrings.title }
-						isEmpty
-						emptyMessage={
-							<EmptyModuleCard
-								icon={ trendingUp }
-								description={ translate(
-									'If you use UTM codes, your {{link}}campaign performance data{{/link}} will show here.',
-									{
-										comment: '{{link}} links to support documentation.',
-										components: {
-											link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#utm-stats` ) } />,
-										},
-										context: 'Stats: Info box label when the UTM module is empty',
-									}
-								) }
-								cards={ <UTMBuilder trigger={ <StatsEmptyActionUTMBuilder /> } /> }
-							/>
-						}
-					/>
-				) }
-			{ ( !! data?.length || ! isNewEmptyStateEnabled ) && ( // show when new empty state is disabled or data is available
+			{ isNewEmptyStateEnabled && (
 				<>
-					<StatsListCard
-						className={ clsx( className, 'stats-module__card', path ) }
-						moduleType={ path }
-						data={ data }
-						useShortLabel={ useShortLabel }
-						title={ moduleStrings?.title }
-						emptyMessage={ <div>{ moduleStrings.empty }</div> }
-						metricLabel={ metricLabel }
-						showMore={
-							displaySummaryLink && ! summary
-								? {
-										url: getHref(),
-										label:
-											data.length >= 10
-												? translate( 'View all', {
-														context: 'Stats: Button link to show more detailed stats information',
-												  } )
-												: translate( 'View details', {
-														context: 'Stats: Button label to see the detailed content of a panel',
-												  } ),
-								  }
-								: undefined
-						}
-						error={ hasError && <ErrorPanel /> }
-						loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
-						splitHeader
-						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-						toggleControl={
-							<div className="stats-module__extended-toggle">
-								<UTMBuilder />
-								<UTMDropdown
-									buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-									onSelect={ setSelectedOption }
-									selectOptions={ optionLabels }
-									selected={ selectedOption }
+					{ showLoader && (
+						<StatsCardSkeleton
+							isLoading={ isFetchingUTM }
+							className={ className }
+							title={ moduleStrings.title }
+							type={ 3 }
+						/>
+					) }
+					{ ! showLoader &&
+						! data?.length && ( // no data and new empty state enabled
+							<StatsCard
+								className={ className }
+								title={ moduleStrings.title }
+								isEmpty
+								emptyMessage={
+									<EmptyModuleCard
+										icon={ trendingUp }
+										description={ translate(
+											'If you use UTM codes, your {{link}}campaign performance data{{/link}} will show here.',
+											{
+												comment: '{{link}} links to support documentation.',
+												components: {
+													link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#utm-stats` ) } />,
+												},
+												context: 'Stats: Info box label when the UTM module is empty',
+											}
+										) }
+										cards={ <UTMBuilder trigger={ <StatsEmptyActionUTMBuilder /> } /> }
+									/>
+								}
+							/>
+						) }
+					{ ! showLoader &&
+						!! data?.length && ( // show when new empty state is disabled or data is available
+							<>
+								<StatsListCard
+									className={ clsx( className, 'stats-module__card', path ) }
+									moduleType={ path }
+									data={ data }
+									useShortLabel={ useShortLabel }
+									title={ moduleStrings?.title }
+									emptyMessage={ <div>{ moduleStrings.empty }</div> }
+									metricLabel={ metricLabel }
+									showMore={
+										displaySummaryLink && ! summary
+											? {
+													url: getHref(),
+													label:
+														data.length >= 10
+															? translate( 'View all', {
+																	context:
+																		'Stats: Button link to show more detailed stats information',
+															  } )
+															: translate( 'View details', {
+																	context:
+																		'Stats: Button label to see the detailed content of a panel',
+															  } ),
+											  }
+											: undefined
+									}
+									error={ hasError && <ErrorPanel /> }
+									splitHeader
+									mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+									toggleControl={
+										<div className="stats-module__extended-toggle">
+											<UTMBuilder />
+											<UTMDropdown
+												buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+												onSelect={ setSelectedOption }
+												selectOptions={ optionLabels }
+												selected={ selectedOption }
+											/>
+										</div>
+									}
 								/>
-							</div>
-						}
-					/>
-					{ showFooterWithDownloads && (
-						<div className="stats-module__footer-actions stats-module__footer-actions--summary">
-							<UTMExportButton data={ data } fileName={ fileNameForExport } />
-						</div>
+								{ showFooterWithDownloads && (
+									<div className="stats-module__footer-actions stats-module__footer-actions--summary">
+										<UTMExportButton data={ data } fileName={ fileNameForExport } />
+									</div>
+								) }
+							</>
+						) }
+				</>
+			) }
+			{ ! isNewEmptyStateEnabled && (
+				<>
+					{ !! data?.length && (
+						<>
+							<StatsListCard
+								className={ clsx( className, 'stats-module__card', path ) }
+								moduleType={ path }
+								data={ data }
+								useShortLabel={ useShortLabel }
+								title={ moduleStrings?.title }
+								emptyMessage={ <div>{ moduleStrings.empty }</div> }
+								metricLabel={ metricLabel }
+								showMore={
+									displaySummaryLink && ! summary
+										? {
+												url: getHref(),
+												label:
+													data.length >= 10
+														? translate( 'View all', {
+																context:
+																	'Stats: Button link to show more detailed stats information',
+														  } )
+														: translate( 'View details', {
+																context:
+																	'Stats: Button label to see the detailed content of a panel',
+														  } ),
+										  }
+										: undefined
+								}
+								error={ hasError && <ErrorPanel /> }
+								loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
+								splitHeader
+								mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+								toggleControl={
+									<div className="stats-module__extended-toggle">
+										<UTMBuilder />
+										<UTMDropdown
+											buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+											onSelect={ setSelectedOption }
+											selectOptions={ optionLabels }
+											selected={ selectedOption }
+										/>
+									</div>
+								}
+							/>
+							{ showFooterWithDownloads && (
+								<div className="stats-module__footer-actions stats-module__footer-actions--summary">
+									<UTMExportButton data={ data } fileName={ fileNameForExport } />
+								</div>
+							) }
+						</>
 					) }
 				</>
 			) }
