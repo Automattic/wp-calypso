@@ -273,7 +273,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		siteAccentColor,
 		domainCart,
 	} = stepData;
-	debugger;
 
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
