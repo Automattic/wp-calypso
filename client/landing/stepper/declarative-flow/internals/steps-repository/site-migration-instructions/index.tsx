@@ -16,10 +16,16 @@ import { Steps } from './steps';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteMigrationInstructions: Step = function () {
+const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	const site = useSite();
 	const siteId = site?.ID;
 	const { deleteMigrationSticker } = useMigrationStickerMutation();
+
+	useEffect( () => {
+		if ( siteId ) {
+			deleteMigrationSticker( siteId );
+		}
+	}, [ deleteMigrationSticker, siteId ] );
 
 	const queryParams = useQuery();
 	const importSiteQueryParam = queryParams.get( 'from' ) ?? '';
@@ -28,9 +34,13 @@ const SiteMigrationInstructions: Step = function () {
 
 	const { detailedStatus } = usePrepareSiteForMigration( siteId );
 
+	const onComplete = () => {
+		navigation.submit?.( { destination: 'migration-started' } );
+	};
+
 	const sidebar = (
 		<Sidebar>
-			<Steps fromUrl={ importSiteQueryParam } />
+			<Steps fromUrl={ importSiteQueryParam } onComplete={ onComplete } />
 			<Provisioning status={ detailedStatus } />
 		</Sidebar>
 	);
@@ -42,12 +52,6 @@ const SiteMigrationInstructions: Step = function () {
 			<SitePreview />
 		</LaunchpadContainer>
 	);
-
-	useEffect( () => {
-		if ( siteId ) {
-			deleteMigrationSticker( siteId );
-		}
-	}, [ deleteMigrationSticker, siteId ] );
 
 	const questions = <Questions />;
 

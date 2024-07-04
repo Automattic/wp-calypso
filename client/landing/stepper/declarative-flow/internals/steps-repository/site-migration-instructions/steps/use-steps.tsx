@@ -27,6 +27,7 @@ const recordInstructionsLinkClick = ( linkname: string ) => {
 
 interface Options {
 	fromUrl: string;
+	onComplete: () => void;
 }
 
 interface Step {
@@ -36,7 +37,7 @@ interface Step {
 
 type Steps = Step[];
 
-export const useSteps = ( { fromUrl }: Options ): Steps => {
+export const useSteps = ( { fromUrl, onComplete }: Options ): Steps => {
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
@@ -127,8 +128,12 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 				action: {
 					label: index === steps.length - 1 ? translate( 'Done' ) : translate( 'Next' ),
 					onClick: () => {
-						// TODO: Done should navigate to the next flow step.
-						setCurrentStep( index + 1 );
+						if ( steps.length - 1 > index ) {
+							setCurrentStep( index + 1 );
+						} else {
+							// When clicking on the last step.
+							onComplete();
+						}
 					},
 				},
 			},

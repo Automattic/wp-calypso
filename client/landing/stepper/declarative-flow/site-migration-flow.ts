@@ -44,6 +44,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			MIGRATION_INSTRUCTIONS_STEP,
+			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
@@ -365,6 +366,16 @@ const siteMigration: Flow = {
 									: {},
 						} );
 						return;
+					}
+				}
+
+				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
+					// Take the user to the migration started step.
+					if ( providedDependencies?.destination === 'migration-started' ) {
+						return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
+							siteId,
+							siteSlug,
+						} );
 					}
 				}
 			}
