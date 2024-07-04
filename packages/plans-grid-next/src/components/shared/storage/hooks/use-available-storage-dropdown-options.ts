@@ -34,9 +34,7 @@ const useAvailableStorageDropdownOptions = ( {
 					 * TODO: Also planning to refactor this closer to the data layer e.g. plans having a "storage-upgradeable" flag.
 					 */
 					...( ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug ) && availableStorageAddOns
-						? availableStorageAddOns.map(
-								( addOn ) => addOn?.featureSlugs?.[ 0 ] as AddOns.StorageAddOnSlug
-						  )
+						? availableStorageAddOns.map( ( addOn ) => addOn?.addOnSlug as AddOns.StorageAddOnSlug )
 						: [] ),
 			  ]
 			: null;
