@@ -1,9 +1,10 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { BadgeType } from '@automattic/components';
-import { StepContainer, SubTitle, Title } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -60,19 +61,6 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 
 	const stepContent = (
 		<>
-			<Title>{ translate( 'What do you want to do?' ) }</Title>
-
-			{ shouldDisplayHostIdentificationMessage && (
-				<SubTitle>
-					{
-						// translators: %(hostingProviderName)s is the name of a hosting provider (e.g. WP Engine).
-						translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
-							args: { hostingProviderName },
-						} )
-					}
-				</SubTitle>
-			) }
-
 			<div className="import-or-migrate__list">
 				{ options.map( ( option, i ) => (
 					<FlowCard
@@ -95,6 +83,20 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 				className="import-or-migrate"
 				shouldHideNavButtons={ false }
 				hideSkip
+				formattedHeader={
+					<FormattedHeader
+						id="how-to-migrate-header"
+						headerText={ translate( 'What do you want to do?' ) }
+						subHeaderText={
+							shouldDisplayHostIdentificationMessage
+								? translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
+										args: { hostingProviderName },
+								  } )
+								: ''
+						}
+						align="center"
+					/>
+				}
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
 				goBack={ navigation.goBack }

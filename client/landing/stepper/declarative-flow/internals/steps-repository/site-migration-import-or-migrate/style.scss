@@ -19,13 +19,11 @@
 	}
 
 	.import-or-migrate__list {
-		margin-top: 50px;
 		padding-bottom: 108px;
 		display: flex;
 		flex-direction: column;
 
 		@include break-mobile {
-			margin-top: 80px;
 			padding-bottom: revert;
 		}
 
@@ -34,21 +32,15 @@
 		}
 	}
 
-	.import-or-migrate__header {
-		align-items: center;
-		margin-bottom: 8px;
-
-		@include break-mobile {
-			display: flex;
-			margin-bottom: 0;
-		}
-	}
-
 	.import-or-migrate__name {
 		color: var(--studio-gray-100);
 		font-size: 1.25rem;
 		font-weight: 500;
 		margin-right: 8px;
+	}
+
+	#how-to-migrate-header .formatted-header__subtitle {
+		text-align: center;
 	}
 
 	.import-or-migrate__description {
