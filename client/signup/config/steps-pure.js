@@ -929,7 +929,11 @@ export function generateSteps( {
 		'initial-intent': {
 			stepName: 'initial-intent',
 			fulfilledStepCallback: excludeSegmentSurveyStepIfInactive,
-			providesDependencies: [ 'segmentationSurveyAnswers', 'onboardingSegment' ],
+			providesDependencies: [
+				'segmentationSurveyAnswers',
+				'onboardingSegment',
+				'trailMapExperimentVariant',
+			],
 		},
 	};
 }

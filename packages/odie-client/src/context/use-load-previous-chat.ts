@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useOdieGetChat } from '../query';
-import { Chat, OdieAllowedBots } from '../types';
+import { Chat, OdieAllowedBots } from '../types/';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 
 export const useLoadPreviousChat = (
