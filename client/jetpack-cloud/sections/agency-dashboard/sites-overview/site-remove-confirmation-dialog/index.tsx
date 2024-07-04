@@ -41,13 +41,16 @@ export function SiteRemoveConfirmationDialog( { site, onConfirm, onClose, busy }
 		>
 			<h2 className="site-remove-confirmation-dialog__heading">{ title }</h2>
 
-			{ translate( 'Are you sure you want to remove the site {{b}}%(siteName)s{{/b}}?', {
-				args: { siteName: site.value?.url },
-				components: {
-					b: <b />,
-				},
-				comment: '%(siteName)s is the site name',
-			} ) }
+			{ translate(
+				'Are you sure you want to remove the site {{b}}%(siteName)s{{/b}} from the dashboard?',
+				{
+					args: { siteName: site.value?.url },
+					components: {
+						b: <b />,
+					},
+					comment: '%(siteName)s is the site name',
+				}
+			) }
 		</Dialog>
 	);
 }
