@@ -1,6 +1,6 @@
 import { Icon, chevronDown } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import { useOdieAssistantContext } from '../../context';
 
 export const JumpToRecent = ( {
@@ -11,7 +11,7 @@ export const JumpToRecent = ( {
 	enableJumpToRecent: boolean;
 } ) => {
 	const { trackEvent, isMinimized } = useOdieAssistantContext();
-	const translate = useTranslate();
+	const { _x } = useI18n();
 	const jumpToRecent = () => {
 		scrollToBottom();
 		trackEvent( 'chat_jump_to_recent_click' );
@@ -33,10 +33,14 @@ export const JumpToRecent = ( {
 				disabled={ ! enableJumpToRecent }
 				onClick={ jumpToRecent }
 			>
-				{ translate( 'Jump to recent', {
-					context:
+				{
+					/* translators: A dynamic button that appears on a chatbox, when the last message is not vissible */
+					_x(
+						'Jump to recent',
 						'A dynamic button that appears on a chatbox, when the last message is not vissible',
-				} ) }
+						__i18n_text_domain__
+					)
+				}
 				<Icon icon={ chevronDown } fill="white" />
 			</button>
 		</div>
