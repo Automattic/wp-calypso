@@ -18,6 +18,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
+import StatsCardUpsell from '../stats-card-upsell';
 import PostCardsGroup from './post-cards-group';
 
 import './style.scss';
@@ -218,7 +219,7 @@ type AllTimeStatsCardProps = {
 function AllTimeStatsCard( { infoItems, isLocked }: AllTimeStatsCardProps ) {
 	const translate = useTranslate();
 	if ( isLocked ) {
-		console.log( 'should lock this card' );
+		return <UpsellCard heading={ translate( 'All-time stats' ) } siteId={ 0 } />;
 	}
 
 	return (
@@ -265,7 +266,7 @@ type MostPopularDayTimeCardProps = {
 
 function MostPopularDayTimeCard( { cardInfo, isLocked }: MostPopularDayTimeCardProps ) {
 	if ( isLocked ) {
-		console.log( 'should lock this card' );
+		return <UpsellCard heading={ cardInfo.heading } siteId={ 0 } />;
 	}
 
 	return (
@@ -282,6 +283,24 @@ function MostPopularDayTimeCard( { cardInfo, isLocked }: MostPopularDayTimeCardP
 					);
 				} ) }
 			</div>
+		</Card>
+	);
+}
+
+type UpsellCardProps = {
+	heading: string;
+	siteId: number;
+};
+
+function UpsellCard( { heading, siteId }: UpsellCardProps ) {
+	return (
+		<Card className="highlight-card">
+			<h4 className="highlight-card-heading">{ heading }</h4>
+			<StatsCardUpsell
+				className="stats-module__upsell"
+				statType="insights-highlights"
+				siteId={ siteId }
+			/>
 		</Card>
 	);
 }
