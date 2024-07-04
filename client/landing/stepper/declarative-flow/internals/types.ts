@@ -115,6 +115,13 @@ export type Flow = {
 	 */
 	isSignupFlow: boolean;
 	useSignupStartEventProps?: () => Record< string, string | number >;
+
+	/**
+	 *  You can use this hook to configure the login url.
+	 * @returns An object describing the configuration.
+	 * For now only extraQueryParams is supported.
+	 */
+	useLoginParams?: () => { extraQueryParams: Record< string, string | number > };
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;

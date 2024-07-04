@@ -40,6 +40,10 @@ function is_full_site_editing_active() {
 		return false;
 	}
 
+	if ( defined( 'MU_WPCOM_FSE' ) && MU_WPCOM_FSE ) {
+		return false;
+	}
+
 	return is_site_eligible_for_full_site_editing() && is_theme_supported() && did_insert_template_parts();
 }
 
@@ -179,6 +183,10 @@ function did_insert_template_parts() {
  * if the theme is unsupported.
  */
 function populate_wp_template_data() {
+	if ( defined( 'MU_WPCOM_TEMPLATE_INSERTER' ) && MU_WPCOM_TEMPLATE_INSERTER ) {
+		return;
+	}
+
 	if ( ! is_theme_supported() ) {
 		return;
 	}

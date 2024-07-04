@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../../types';
-import { validateURL, areURLsUnique } from '../../utils/tools';
+import { isValidUrl, areURLsUnique } from '../../utils/tools';
 
 type Props = {
 	initialFormData?: AgencyDirectoryApplication | null;
@@ -93,7 +93,7 @@ export default function useExpertiseForm( { initialFormData }: Props ) {
 			formData.feedbackUrl.length > 0 &&
 			// Ensure that each directory request has 5 valid URLs
 			formData.directories.every( ( { urls } ) => {
-				return urls.every( ( url ) => url && validateURL( url ) ) && areURLsUnique( urls );
+				return urls.every( ( url ) => url && isValidUrl( url ) ) && areURLsUnique( urls );
 			} ),
 		[ formData ]
 	);

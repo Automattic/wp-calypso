@@ -1,8 +1,4 @@
-import {
-	PlanSlug,
-	WPComStorageAddOnSlug,
-	WPComPlanStorageFeatureSlug,
-} from '@automattic/calypso-products';
+import { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { usePlansGridContext } from '../../../../grid-context';
@@ -20,7 +16,7 @@ interface Props {
  */
 const useAvailableStorageDropdownOptions = ( {
 	planSlug,
-}: Props ): ( WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug )[] | null => {
+}: Props ): ( AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug )[] | null => {
 	const { siteId, gridPlansIndex } = usePlansGridContext();
 	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
 
@@ -38,9 +34,7 @@ const useAvailableStorageDropdownOptions = ( {
 					 * TODO: Also planning to refactor this closer to the data layer e.g. plans having a "storage-upgradeable" flag.
 					 */
 					...( ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug ) && availableStorageAddOns
-						? availableStorageAddOns.map(
-								( addOn ) => addOn?.featureSlugs?.[ 0 ] as WPComStorageAddOnSlug
-						  )
+						? availableStorageAddOns.map( ( addOn ) => addOn?.addOnSlug as AddOns.StorageAddOnSlug )
 						: [] ),
 			  ]
 			: null;

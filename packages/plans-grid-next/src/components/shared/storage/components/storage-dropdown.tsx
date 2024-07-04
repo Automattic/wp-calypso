@@ -9,38 +9,30 @@ import DropdownOption from '../../../dropdown-option';
 import useAvailableStorageOptions from '../hooks/use-available-storage-dropdown-options';
 import useDefaultStorageOption from '../hooks/use-default-storage-option';
 import useStorageStringFromFeature from '../hooks/use-storage-string-from-feature';
-import type {
-	PlanSlug,
-	WPComPlanStorageFeatureSlug,
-	WPComStorageAddOnSlug,
-} from '@automattic/calypso-products';
-import type { AddOnMeta } from '@automattic/data-stores';
+import type { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
 
 type StorageDropdownProps = {
 	planSlug: PlanSlug;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	priceOnSeparateLine?: boolean;
 };
 
 type StorageDropdownOptionProps = {
-	planSlug: PlanSlug;
 	price?: string;
-	storageSlug: WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug;
+	storageSlug: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	isLargeCurrency?: boolean;
 	priceOnSeparateLine?: boolean;
 };
 
 const getStorageOptionPrice = (
-	storageAddOnsForPlan: ( AddOnMeta | null )[] | null,
+	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null,
 	storageOptionSlug: string
 ) => {
-	return storageAddOnsForPlan?.find(
-		( addOn ) => addOn?.featureSlugs?.includes( storageOptionSlug )
-	)?.prices?.formattedMonthlyPrice;
+	return storageAddOnsForPlan?.find( ( addOn ) => addOn?.addOnSlug === storageOptionSlug )?.prices
+		?.formattedMonthlyPrice;
 };
 
 const StorageDropdownOption = ( {
-	planSlug,
 	price,
 	storageSlug,
 	isLargeCurrency = false,
@@ -48,7 +40,7 @@ const StorageDropdownOption = ( {
 }: StorageDropdownOptionProps ) => {
 	const translate = useTranslate();
 	const { siteId } = usePlansGridContext();
-	const title = useStorageStringFromFeature( { storageSlug, siteId, planSlug } ) ?? '';
+	const title = useStorageStringFromFeature( { storageSlug, siteId } ) ?? '';
 
 	return (
 		<>
@@ -123,7 +115,6 @@ const StorageDropdown = ( {
 			key: slug,
 			name: (
 				<StorageDropdownOption
-					planSlug={ planSlug }
 					price={ getStorageOptionPrice( storageAddOns, slug ) }
 					storageSlug={ slug }
 				/>
@@ -137,7 +128,6 @@ const StorageDropdown = ( {
 		key: selectedStorageOptionForPlan,
 		name: (
 			<StorageDropdownOption
-				planSlug={ planSlug }
 				price={ selectedOptionPrice }
 				storageSlug={ selectedStorageOptionForPlan }
 				isLargeCurrency={ isLargeCurrency }
@@ -147,7 +137,7 @@ const StorageDropdown = ( {
 	};
 
 	const handleOnChange = useCallback(
-		( { selectedItem }: { selectedItem: { key: WPComStorageAddOnSlug } } ) => {
+		( { selectedItem }: { selectedItem: { key: AddOns.StorageAddOnSlug } } ) => {
 			const addOnSlug = selectedItem?.key;
 
 			if ( addOnSlug ) {

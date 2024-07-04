@@ -30,7 +30,6 @@ import {
 	getPostImage,
 	getExcerptForPost,
 	getSummaryForPost,
-	getPostCustomImage,
 	getSigImageUrl,
 	getPostCustomMedia,
 } from './utils';
@@ -101,7 +100,7 @@ class SharingPreviewPane extends PureComponent {
 		const articleContent = getExcerptForPost( post );
 		const articleSummary = getSummaryForPost( post, translate );
 		const siteDomain = get( site, 'domain', '' );
-		const imageUrl = getSigImageUrl( post ) || getPostCustomImage( post ) || getPostImage( post );
+		const imageUrl = getSigImageUrl( post ) || getPostImage( post );
 		const media = getPostCustomMedia( post );
 
 		const connection = find( connections, { service: selectedService } ) ?? {};

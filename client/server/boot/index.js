@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import userAgent from 'express-useragent';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import api from 'calypso/server/api';
 import config from 'calypso/server/config';
 import analytics from 'calypso/server/lib/analytics';
@@ -30,6 +31,16 @@ export default function setup() {
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		require( 'calypso/server/bundler' )( app );
+
+		// When mocking WordPress.com to point locally, wordpress.com/wp-login.php will hit Calypso creating an infinite loop.
+		// redirect traffic to de.wordpress.com to hit the real backend and prevent a loop.
+		// `de.wordpress.com` accepts POST requests to `/wp-login.php` exactly like `wordpress.com`.
+		if ( process.env.MOCK_WORDPRESSDOTCOM === '1' ) {
+			app.use(
+				'/wp-login.php',
+				createProxyMiddleware( { target: 'https://de.wordpress.com/wp-login.php' } )
+			);
+		}
 
 		if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 			if ( config( 'wordpress_logged_in_cookie' ) ) {

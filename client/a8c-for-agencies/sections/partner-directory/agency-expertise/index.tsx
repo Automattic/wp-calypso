@@ -20,6 +20,7 @@ import ServicesSelector from '../components/services-selector';
 import { PARTNER_DIRECTORY_DASHBOARD_SLUG } from '../constants';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../types';
 import useExpertiseForm from './hooks/use-expertise-form';
+import useExpertiseFormValidation from './hooks/use-expertise-form-validation';
 import useSubmitForm from './hooks/use-submit-form';
 
 import './style.scss';
@@ -62,6 +63,8 @@ type Props = {
 const AgencyExpertise = ( { initialFormData }: Props ) => {
 	const translate = useTranslate();
 
+	const { validate, validationError, updateValidationError } = useExpertiseFormValidation();
+
 	const { availableDirectories } = useFormSelectors();
 
 	const onSubmitSuccess = useCallback(
@@ -90,7 +93,6 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 	const {
 		formData,
 		setFormData,
-		isValidFormData,
 		isDirectorySelected,
 		isDirectoryApproved,
 		setDirectorySelected,
@@ -99,6 +101,22 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 	} = useExpertiseForm( { initialFormData } );
 
 	const { onSubmit, isSubmitting } = useSubmitForm( { formData, onSubmitSuccess, onSubmitError } );
+
+	const submitForm = () => {
+		const error = validate( formData );
+		if ( error ) {
+			//FIXME: check if there's a better way to distinct parent for scrolling to the top
+			const parent = document.getElementsByClassName( 'partner-directory__body' )?.[ 0 ];
+			// Scrolling only for fields positioned on top
+			if ( error.services || error.products ) {
+				if ( parent ) {
+					parent?.scrollTo( { behavior: 'smooth', top: 0 } );
+				}
+			}
+			return;
+		}
+		onSubmit();
+	};
 
 	const { services, products, directories, feedbackUrl } = formData;
 
@@ -117,28 +135,35 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					description={ translate(
 						'We allow each agency to offer up to five services to help you focus on what you do best.'
 					) }
+					error={ validationError.services }
 					isRequired
 				>
 					<ServicesSelector
 						selectedServices={ services }
-						setServices={ ( value ) =>
+						setServices={ ( value ) => {
 							setFormData( ( state ) => ( {
 								...state,
 								services: value as string[],
-							} ) )
-						}
+							} ) );
+							updateValidationError( { services: undefined } );
+						} }
 					/>
 				</FormField>
 
-				<FormField label={ translate( 'What products do you work with?' ) } isRequired>
+				<FormField
+					label={ translate( 'What products do you work with?' ) }
+					error={ validationError.products }
+					isRequired
+				>
 					<ProductsSelector
 						selectedProducts={ products }
-						setProducts={ ( value ) =>
+						setProducts={ ( value ) => {
 							setFormData( ( state ) => ( {
 								...state,
 								products: value as string[],
-							} ) )
-						}
+							} ) );
+							updateValidationError( { products: undefined } );
+						} }
 					/>
 				</FormField>
 			</FormSection>
@@ -147,6 +172,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Automattic Partner Directories' ) }
 					sub={ translate( 'Select the Automattic directories you would like to appear on.' ) }
+					error={ validationError.directories }
 					isRequired
 				>
 					<div className="partner-directory-agency-expertise__directory-options">
@@ -155,7 +181,10 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 								key={ `directory-${ directory }` }
 								label={ availableDirectories[ directory ] }
 								checked={ isDirectorySelected( directory ) }
-								onChange={ ( value ) => setDirectorySelected( directory, value ) }
+								onChange={ ( value ) => {
+									setDirectorySelected( directory, value );
+									updateValidationError( { directories: undefined, clientSites: undefined } );
+								} }
 								disabled={ isDirectoryApproved( directory ) }
 							/>
 						) ) }
@@ -168,6 +197,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 						sub={ translate(
 							"For each directory you selected, provide URLs of 5 client sites you've worked on. This helps us gauge your expertise."
 						) }
+						error={ validationError.clientSites }
 						isRequired
 					>
 						<div className="partner-directory-agency-expertise__directory-client-sites">
@@ -181,9 +211,10 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 										comment: '%(directory)s is the directory name, e.g. "WordPress.com"',
 									} ) }
 									samples={ getDirectoryClientSamples( directory ) }
-									onChange={ ( samples: string[] ) =>
-										setDirectorClientSample( directory, samples )
-									}
+									onChange={ ( samples: string[] ) => {
+										setDirectorClientSample( directory, samples );
+										updateValidationError( { clientSites: undefined } );
+									} }
 								/>
 							) ) }
 						</div>
@@ -195,18 +226,20 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					description={ translate(
 						'Share a link to your customer feedback from Google, Clutch, Facebook, etc., or testimonials featured on your website. If you don’t have online reviews, provide a link to client references or case studies.'
 					) }
+					error={ validationError.feedbackUrl }
 					isRequired
 				>
 					<TextControl
 						type="text"
 						placeholder={ translate( 'Enter URL' ) }
 						value={ feedbackUrl }
-						onChange={ ( value ) =>
+						onChange={ ( value ) => {
 							setFormData( ( state ) => ( {
 								...state,
 								feedbackUrl: value,
-							} ) )
-						}
+							} ) );
+							updateValidationError( { feedbackUrl: undefined } );
+						} }
 					/>
 				</FormField>
 			</FormSection>
@@ -223,7 +256,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					{ translate( 'Cancel' ) }
 				</Button>
 
-				<Button primary onClick={ onSubmit } disabled={ ! isValidFormData || isSubmitting }>
+				<Button primary onClick={ submitForm } disabled={ isSubmitting }>
 					{ initialFormData
 						? translate( 'Update my expertise' )
 						: translate( 'Submit my application' ) }

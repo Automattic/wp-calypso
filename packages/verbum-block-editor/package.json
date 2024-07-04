@@ -24,8 +24,8 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "rm -rf dist",
-		"build": "NODE_ENV=production yarn dev && yarn translate",
-		"upload": "yarn build && rsync -ahz --delete --exclude='.*' dist/ wpcom-sandbox:/home/wpcom/public_html/widgets.wp.com/verbum-block-editor",
+		"build": "NODE_ENV=production yarn dev",
+		"upload": "yarn build && yarn translate && rsync -ahz --delete --exclude='.*' dist/ wpcom-sandbox:/home/wpcom/public_html/widgets.wp.com/verbum-block-editor",
 		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/verbum-block-editor",
 		"watch": "tsc --build ./tsconfig.json --watch",

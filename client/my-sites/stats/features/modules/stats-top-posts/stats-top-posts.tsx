@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { trendingUp } from '@wordpress/icons';
+import { postList } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -16,23 +16,9 @@ import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
+import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-type StatsTopPostsProps = {
-	className?: string;
-	period: string;
-	query: {
-		date: string;
-		period: string;
-	};
-	moduleStrings: {
-		title: string;
-		item: string;
-		value: string;
-		empty: string;
-	};
-};
-
-const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
+const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -41,11 +27,11 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsTopPosts';
+
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsTopPosts = useShouldGateStats( statType );
 
-	// TODO: sort out the state shape.
-	const requesting = useSelector( ( state: any ) =>
+	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
@@ -77,9 +63,9 @@ const StatsTopPosts: React.FC< StatsTopPostsProps > = ( {
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ trendingUp }
+							icon={ postList }
 							description={ translate(
-								'Your top {{link}}posts and pages{{/link}} will display here and learn what content resonates the most. Start creating and sharing!',
+								'Your top {{link}}posts and pages{{/link}} will display here and you can learn what content resonates the most. Start creating and sharing!',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {

@@ -66,7 +66,7 @@ function filterLowerTiers(
 	// Filter out already purchased tiers.
 	let tiers: StatsPlanTierUI[];
 
-	if ( ! usageData || ( ! usageData?.views_limit && ! usageData?.billableMonthlyViews ) ) {
+	if ( ! usageData || ( ! usageData?.views_limit && ! usageData?.billable_monthly_views ) ) {
 		// No tier has been purchased or we don't have billable monthly views.
 		tiers = availableTiers;
 	} else {
@@ -78,13 +78,8 @@ function filterLowerTiers(
 				( availableTier?.views as number ) >
 					Math.max(
 						usageData?.current_tier?.limit ?? 0,
-						// Offset the billable monthly views by the views already included in plans, e.g. Complete.
-						/* Billable views count */
-						usageData?.billableMonthlyViews -
-							/* Total views limit including bundled in the Complete/Professional plan and Stats commercial product */
-							( usageData.views_limit ?? 0 ) +
-							/* Current tier views limit of Stats commercial product */
-							( usageData.current_tier?.limit ?? 0 ),
+						// The billable monthly views count already excludes plans, e.g., Complete.
+						usageData?.billable_monthly_views,
 						0
 					)
 			);
@@ -105,7 +100,7 @@ function extendTiersBeyondHighestTier(
 		const startingTier =
 			Math.floor(
 				// Complete plans have 100k limit, which is less than the steps of 1M, and could be ignored here - so we could use views_limit.
-				Math.max( usageData?.views_limit, usageData?.billableMonthlyViews, 0 ) /
+				Math.max( usageData?.views_limit, usageData?.billable_monthly_views, 0 ) /
 					( highestTier.transform_quantity_divide_by || 1 )
 			) -
 			EXTENSION_THRESHOLD_IN_MILLION +

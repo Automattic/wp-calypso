@@ -199,8 +199,8 @@ class Starter_Page_Templates {
 			}
 		}
 
-		// Hide non-user-facing categories (Pages & Virtual Theme) in modal
-		$hidden_categories = array( 'page', 'virtual-theme' );
+		// Hide non-user-facing categories (Pages, Virtual Theme, and wordpress.com/patterns homepage) in modal
+		$hidden_categories = array( 'page', 'virtual-theme', '_public_library_homepage' );
 		foreach ( $page_templates as &$page_template ) {
 			if ( ! isset( $page_template['categories'] ) ) {
 				continue;
