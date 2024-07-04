@@ -10,7 +10,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
@@ -20,22 +20,23 @@ import { useSubmitMigrationTicket } from './hooks/use-submit-migration-ticket';
 const ImporterMigrateMessage: Step = () => {
 	const locale = useLocale();
 	const user = useSelector( getCurrentUser ) as UserData;
-	const siteSlugParam = useSiteSlugParam();
+	const siteSlug = useSiteSlug();
 	const fromUrl = useQuery().get( 'from' ) || '';
-	const siteSlug = siteSlugParam ?? '';
 	const { isPending, sendTicket } = useSubmitMigrationTicket();
 
 	useEffect( () => {
-		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
-			path: window.location.pathname,
-		} );
-		sendTicket( {
-			locale,
-			from_url: fromUrl,
-			blog_url: siteSlug,
-		} );
+		if ( siteSlug ) {
+			recordTracksEvent( 'wpcom_support_free_migration_request_click', {
+				path: window.location.pathname,
+			} );
+			sendTicket( {
+				locale,
+				from_url: fromUrl,
+				blog_url: siteSlug,
+			} );
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ siteSlug ] );
 
 	return (
 		<StepContainer
