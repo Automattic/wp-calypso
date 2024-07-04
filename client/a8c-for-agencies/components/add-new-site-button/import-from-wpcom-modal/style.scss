@@ -36,16 +36,13 @@
 }
 
 .import-from-wpcom-modal__title {
-	font-size: rem(20px);
-	font-weight: 600;
-	line-height: 1.2;
+	@include a4a-font-heading-lg;
 	margin: 0;
 	padding: 0;
 }
 
 p.import-from-wpcom-modal__instruction {
-	font-size: rem(12px);
-	line-height: 1.3;
+	@include a4a-font-body-sm;
 	margin: 0;
 	color: var(--color-accent-60);
 }
