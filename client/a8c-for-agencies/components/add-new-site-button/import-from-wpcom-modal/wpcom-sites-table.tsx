@@ -105,57 +105,94 @@ export default function WPCOMSitesTable( {
 	);
 
 	const fields = useMemo(
-		() => [
-			{
-				id: 'site',
-				header: (
-					<div>
-						<CheckboxControl
-							label={ translate( 'Site' ).toUpperCase() }
-							checked={ selectedSites.length === items.length }
-							onChange={ onSelectAllSites }
-							disabled={ false }
-						/>
-					</div>
-				),
-				getValue: () => '-' as string,
-				render: ( { item }: { item: SiteItem } ) => (
-					<CheckboxControl
-						className="view-details-button"
-						data-site-id={ item.id }
-						label={ item.site }
-						checked={ selectedSites.includes( item.id ) }
-						onChange={ ( checked ) => onSelectSite( checked, item ) }
-						disabled={ false }
-					/>
-				),
-				width: '100%',
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'date',
-				header: translate( 'Date' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: SiteItem } ) => new Date( item.date ).toLocaleDateString(),
-				width: '100%',
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'type',
-				header: translate( 'Type' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: SiteItem } ) => <TypeIcon siteId={ item.id } />,
-				width: '100%',
-				enableHiding: false,
-				enableSorting: false,
-			},
-		],
-		[ items.length, onSelectAllSites, onSelectSite, selectedSites, translate ]
+		() =>
+			! isDesktop
+				? [
+						{
+							id: 'site',
+							header: (
+								<div>
+									<CheckboxControl
+										label={ translate( 'Site' ).toUpperCase() }
+										checked={ selectedSites.length === items.length }
+										onChange={ onSelectAllSites }
+										disabled={ false }
+									/>
+								</div>
+							),
+							getValue: () => '-' as string,
+							render: ( { item }: { item: SiteItem } ) => (
+								<div className="wpcom-sites-table__site-mobile">
+									<CheckboxControl
+										className="view-details-button"
+										data-site-id={ item.id }
+										// We don't want to show the label here since we show the logo and site name separately
+										label={ undefined }
+										checked={ selectedSites.includes( item.id ) }
+										onChange={ ( checked ) => onSelectSite( checked, item ) }
+										disabled={ false }
+									/>
+									<TypeIcon siteId={ item.id } />
+									<span>{ item.site }</span>
+								</div>
+							),
+							width: '100%',
+							enableHiding: false,
+							enableSorting: false,
+						},
+				  ]
+				: [
+						{
+							id: 'site',
+							header: (
+								<div>
+									<CheckboxControl
+										label={ translate( 'Site' ).toUpperCase() }
+										checked={ selectedSites.length === items.length }
+										onChange={ onSelectAllSites }
+										disabled={ false }
+									/>
+								</div>
+							),
+							getValue: () => '-' as string,
+							render: ( { item }: { item: SiteItem } ) => (
+								<CheckboxControl
+									className="view-details-button"
+									data-site-id={ item.id }
+									label={ item.site }
+									checked={ selectedSites.includes( item.id ) }
+									onChange={ ( checked ) => onSelectSite( checked, item ) }
+									disabled={ false }
+								/>
+							),
+							width: '100%',
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
+							id: 'date',
+							header: translate( 'Date' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: SiteItem } ) =>
+								new Date( item.date ).toLocaleDateString(),
+							width: '100%',
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
+							id: 'type',
+							header: translate( 'Type' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: SiteItem } ) => <TypeIcon siteId={ item.id } />,
+							width: '100%',
+							enableHiding: false,
+							enableSorting: false,
+						},
+				  ],
+		[ isDesktop, items.length, onSelectAllSites, onSelectSite, selectedSites, translate ]
 	);
 
-	return isDesktop ? (
+	return (
 		<div className="wpcom-sites-table redesigned-a8c-table">
 			{ isFetching ? (
 				<>
@@ -172,5 +209,5 @@ export default function WPCOMSitesTable( {
 				<WPCOMSitesTableContent items={ items } fields={ fields } />
 			) }
 		</div>
-	) : null;
+	);
 }

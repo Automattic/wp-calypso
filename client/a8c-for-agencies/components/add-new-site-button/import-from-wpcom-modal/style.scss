@@ -24,7 +24,7 @@
 }
 
 .import-from-wpcom-modal__main {
-	padding: 40px;
+	padding: 20px;
 	gap: 8px;
 	display: flex;
 	flex-direction: column;
@@ -32,6 +32,7 @@
 
 	@include break-large {
 		width: 800px;
+		padding: 40px;
 	}
 }
 
@@ -110,5 +111,34 @@ p.import-from-wpcom-modal__instruction {
 	.wpcom-sites-table__icon {
 		width: 24px;
 		height: 24px;
+	}
+}
+
+.wpcom-sites-table__site-mobile {
+	display: inline-flex;
+	align-items: center;
+
+	.wpcom-sites-table__icon {
+		margin-inline-end: 8px;
+	}
+
+	span {
+		@include a4a-font-body-sm;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 215px;
+
+		@include break-mobile {
+			max-width: 370px;
+		}
+
+		@include break-small {
+			max-width: 400px;
+		}
+
+		@include break-large {
+			max-width: unset;
+		}
 	}
 }
