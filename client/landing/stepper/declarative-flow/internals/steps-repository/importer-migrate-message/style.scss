@@ -58,6 +58,11 @@
 	.migration-message__actions {
 		display: flex;
 		justify-content: center;
-		margin: 0 -10px;
+		margin: 32px -10px 0;
+		flex-direction: column;
+
+		@include break-small {
+			flex-direction: row;
+		}
 	}
 }
