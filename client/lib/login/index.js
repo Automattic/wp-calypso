@@ -99,13 +99,15 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	}
 
 	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+		const gravatarFrom = get( currentQuery, 'gravatar_from', 'signup' );
+
 		// Gravatar powered clients signup via the magic login page
 		return login( {
 			locale,
 			twoFactorAuthType: 'link',
 			oauth2ClientId: oauth2Client.id,
 			redirectTo: redirectTo,
-			gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && 'signup',
+			gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && gravatarFrom,
 		} );
 	}
 
