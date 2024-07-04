@@ -3,13 +3,8 @@
 
 body.is-section-reader {
 	div.layout.is-global-sidebar-visible {
-		.main:not(.reader-full-post) {
-			@media only screen and (min-width: 600px) and (max-width: 960px) {
-				padding: 24px;
-			}
-			@media only screen and (max-width: 660px) {
-				padding-top: 0;
-			}
+		.main {
+			padding: 24px;
 			border-block-end: 1px solid var(--studio-gray-0);
 		}
 		.layout__primary > div {

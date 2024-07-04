@@ -327,8 +327,7 @@ class Layout extends Component {
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
-		const globalSidebarDesktop = this.state.isDesktop && this.props.isGlobalSidebarVisible;
-		if ( this.props.masterbarIsHidden || globalSidebarDesktop ) {
+		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
 		if ( this.props.isWooCoreProfilerFlow ) {
@@ -360,13 +359,12 @@ class Layout extends Component {
 	}
 
 	render() {
-		const globalSidebarDesktop = this.state.isDesktop && this.props.isGlobalSidebarVisible;
 		const sectionClass = clsx( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
-			'has-no-masterbar': this.props.masterbarIsHidden || globalSidebarDesktop,
+			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-logged-in': this.props.isLoggedIn,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
