@@ -54,6 +54,10 @@ function is_homepage_title_hidden() {
 		return false;
 	}
 
+	if ( defined( 'MU_WPCOM_HOMEPAGE_TITLE_HIDDEN' ) && MU_WPCOM_HOMEPAGE_TITLE_HIDDEN ) {
+		return;
+	}
+
 	$hide_homepage_title = (bool) get_theme_mod( 'hide_front_page_title', false );
 	$is_homepage         = ( (int) get_option( 'page_on_front' ) === $post->ID );
 	return (bool) is_block_editor_screen() && $hide_homepage_title && $is_homepage;
@@ -70,6 +74,10 @@ function is_homepage_title_hidden() {
  */
 function needs_slider_width_workaround() {
 	global $post;
+
+	if ( defined( 'MU_WPCOM_SLIDER_WIDTH' ) && MU_WPCOM_SLIDER_WIDTH ) {
+		return;
+	}
 
 	if (
 		( defined( 'GUTENBERG_DEVELOPMENT_MODE' ) && GUTENBERG_DEVELOPMENT_MODE ) ||
@@ -106,7 +114,7 @@ function use_font_smooth_antialiased() {
  * @return bool True if the common module assets should be loaded.
  */
 function should_load_assets() {
-	return (bool) is_homepage_title_hidden() || needs_slider_width_workaround() || use_font_smooth_antialiased();
+	return (bool) is_homepage_title_hidden() || use_font_smooth_antialiased();
 }
 
 /**
@@ -118,10 +126,6 @@ function should_load_assets() {
 function admin_body_classes( $classes ) {
 	if ( is_homepage_title_hidden() ) {
 		$classes .= ' hide-homepage-title';
-	}
-
-	if ( needs_slider_width_workaround() ) {
-		$classes .= ' slider-width-workaround';
 	}
 
 	if ( use_font_smooth_antialiased() && ! is_network_admin() ) {
@@ -177,6 +181,10 @@ add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_script_and_style'
  * @see https://github.com/WordPress/gutenberg/pull/23904
  **/
 function wpcom_gutenberg_enable_custom_line_height() {
+	if ( defined( 'MU_WPCOM_CUSTOM_LINE_HEIGHT' ) && MU_WPCOM_CUSTOM_LINE_HEIGHT ) {
+		return;
+	}
+
 	add_theme_support( 'custom-line-height' );
 }
 add_action( 'after_setup_theme', __NAMESPACE__ . '\wpcom_gutenberg_enable_custom_line_height' );
@@ -227,6 +235,10 @@ add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_disable_hei
  * blocking.
  */
 function enqueue_override_preview_button_url() {
+	if ( defined( 'MU_WPCOM_OVERRIDE_PREVIEW_BUTTON_URL' ) && MU_WPCOM_OVERRIDE_PREVIEW_BUTTON_URL ) {
+		return;
+	}
+
 	if ( ! function_exists( 'is_blog_atomic' ) ) {
 		return;
 	};
