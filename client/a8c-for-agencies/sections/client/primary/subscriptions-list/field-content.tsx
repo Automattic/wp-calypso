@@ -20,8 +20,8 @@ export function SubscriptionPrice( { isFetching, amount }: Props & { amount?: st
 	return isFetching ? (
 		<TextPlaceholder />
 	) : (
-		translate( '%(price)s per month', {
-			args: { price: formatCurrency( Number( amount ?? 0 ), 'USD' ) },
+		translate( '%(total)s/mo', {
+			args: { total: formatCurrency( Number( amount ?? 0 ), 'USD' ) },
 		} )
 	);
 }
