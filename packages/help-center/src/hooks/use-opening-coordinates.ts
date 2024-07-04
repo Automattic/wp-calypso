@@ -35,12 +35,23 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 
 	if ( buttonLeftEdge + helpCenterWidth + AESTHETIC_OFFSET > innerWidth ) {
 		// Align right edge of the help center with the right edge of the button
-		coords.left = buttonRightEdge - helpCenterWidth;
+		coords.left = buttonRightEdge - helpCenterWidth - AESTHETIC_OFFSET;
 		coords.transformOrigin += ' right';
 	} else {
 		// Align left edge of the help center with the left edge of the button
-		coords.left = buttonLeftEdge;
+		coords.left = buttonLeftEdge + AESTHETIC_OFFSET;
 		coords.transformOrigin += ' left';
+	}
+
+	// If the help center is off screen, move it to the top left or top right of the button
+	if ( coords.top < 0 ) {
+		const isButtonOnLeft = innerWidth / 2 > buttonLeftEdge;
+
+		coords.top = AESTHETIC_OFFSET;
+		coords.left = isButtonOnLeft
+			? buttonRightEdge + AESTHETIC_OFFSET
+			: buttonLeftEdge - helpCenterWidth - AESTHETIC_OFFSET;
+		coords.transformOrigin = isButtonOnLeft ? 'left' : 'right';
 	}
 
 	return coords;
