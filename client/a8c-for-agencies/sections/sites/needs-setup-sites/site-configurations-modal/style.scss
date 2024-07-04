@@ -35,6 +35,18 @@
 		display: flex;
 		align-items: center;
 
+		.form-text-input-with-affixes {
+			.configure-your-site-modal-form__input {
+				border-top-left-radius: 2px;
+				border-bottom-left-radius: 2px;
+			}
+
+			.form-text-input-with-affixes__suffix {
+				border-top-right-radius: 2px;
+				border-bottom-right-radius: 2px;
+			}
+		}
+
 		.configure-your-site-modal-form__site-name-icon-wrapper {
 			display: flex;
 			justify-content: space-around;

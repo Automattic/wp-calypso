@@ -92,6 +92,7 @@ export default function SiteConfigurationsModal( {
 							<div className="configure-your-site-modal-form__site-name-placeholder" />
 						) : (
 							<FormTextInputWithAffixes
+								className="configure-your-site-modal-form__input"
 								name="site_name"
 								isError={ siteName.showValidationMessage }
 								value={ siteName.siteName }
