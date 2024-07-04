@@ -178,7 +178,7 @@ function getAvailabilityNotice(
 		case domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
 			if ( errorData?.cannot_transfer_due_to_unsupported_premium_tld ) {
 				message = translate(
-					"{{strong}}%(domain)s{{/strong}} is already connected to this site and cannot be transferred to WordPress.com because we don't support premium domain transfers for the %(tld)s TLD. {{a}}Learn more{{/a}}.",
+					'{{strong}}%(domain)s{{/strong}} is already connected to this site and cannot be transferred to WordPress.com because premium domain transfers for the %(tld)s TLD are not supported. {{a}}Learn more{{/a}}.',
 					{
 						args: {
 							domain,
@@ -334,7 +334,7 @@ function getAvailabilityNotice(
 			if ( isForTransferOnly ) {
 				if ( errorData?.cannot_transfer_due_to_unsupported_premium_tld ) {
 					message = translate(
-						"This domain cannot be transferred to WordPress.com because it's premium and currently we don't support premium transfers for the %(tld)s TLD. It can be connected instead. {{a}}Learn More.{{/a}}",
+						'Premium domains ending with %(tld)s cannot be transferred to WordPress.com. Please connect your domain instead. {{a}}Learn more.{{/a}}',
 						{
 							args: {
 								tld,
@@ -354,7 +354,7 @@ function getAvailabilityNotice(
 				}
 
 				message = translate(
-					'This domain cannot be transferred to WordPress.com but it can be connected instead. {{a}}Learn More.{{/a}}',
+					'This domain cannot be transferred to WordPress.com but it can be connected instead. {{a}}Learn more.{{/a}}',
 					{
 						components: {
 							a: (
