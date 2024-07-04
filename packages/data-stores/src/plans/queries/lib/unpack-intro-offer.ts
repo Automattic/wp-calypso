@@ -31,6 +31,7 @@ const unpackIntroOffer = (
 	return {
 		formattedPrice: plan.introductory_offer_formatted_price as string,
 		rawPrice: plan.introductory_offer_raw_price as number,
+		rawPriceInteger: plan.introductory_offer_raw_price_integer as number,
 		intervalUnit: plan.introductory_offer_interval_unit as string,
 		intervalCount: plan.introductory_offer_interval_count as number,
 		isOfferComplete,

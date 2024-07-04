@@ -69,6 +69,7 @@ export interface PlanProduct {
 export interface PlanIntroductoryOffer {
 	formattedPrice: string;
 	rawPrice: number;
+	rawPriceInteger: number;
 	intervalUnit: string;
 	intervalCount: number;
 	isOfferComplete: boolean;
@@ -175,6 +176,7 @@ export interface PlanNext {
 export interface PricedAPIPlanIntroductoryOffer {
 	introductory_offer_formatted_price?: string;
 	introductory_offer_raw_price?: number;
+	introductory_offer_raw_price_integer?: number;
 	introductory_offer_interval_unit?: string;
 	introductory_offer_interval_count?: number;
 	introductory_offer_end_date?: string;
