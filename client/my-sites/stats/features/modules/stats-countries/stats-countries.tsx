@@ -4,6 +4,7 @@ import { mapMarker } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
@@ -15,23 +16,9 @@ import { SUPPORT_URL } from '../../../const';
 import Geochart from '../../../geochart';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-type StatCountriesProps = {
-	className?: string;
-	period: string;
-	query: {
-		date: string;
-		period: string;
-	};
-	moduleStrings: {
-		title: string;
-		item: string;
-		value: string;
-		empty: string;
-	};
-};
-
-const StatCountries: React.FC< StatCountriesProps > = ( {
+const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -41,7 +28,10 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsCountryViews';
 
-	const requesting = useSelector( ( state ) =>
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsCountries = useShouldGateStats( statType );
+
+	const requesting = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
@@ -54,7 +44,19 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
+			{ ( data && !! data.length ) || shouldGateStatsCountries ? (
+				<StatsModule
+					path="countryviews"
+					moduleStrings={ moduleStrings }
+					period={ period }
+					query={ query }
+					statType={ statType }
+					showSummaryLink
+					className={ className }
+				>
+					<Geochart query={ query } />
+				</StatsModule>
+			) : (
 				<StatsCard
 					className={ className }
 					title={ translate( 'Locations' ) }
@@ -78,21 +80,8 @@ const StatCountries: React.FC< StatCountriesProps > = ( {
 					<></>
 				</StatsCard>
 			) }
-			{ data && !! data.length && (
-				<StatsModule
-					path="countryviews"
-					moduleStrings={ moduleStrings }
-					period={ period }
-					query={ query }
-					statType={ statType }
-					showSummaryLink
-					className={ className }
-				>
-					<Geochart query={ query } />
-				</StatsModule>
-			) }
 		</>
 	);
 };
 
-export default StatCountries;
+export default StatsCountries;

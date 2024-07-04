@@ -1,8 +1,4 @@
-import {
-	type PlanSlug,
-	type WPComStorageAddOnSlug,
-	type WPComPlanStorageFeatureSlug,
-} from '@automattic/calypso-products';
+import { type PlanSlug, type WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { usePlansGridContext } from '../../../../grid-context';
 import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
@@ -19,7 +15,7 @@ type Props = {
  */
 export default function useDefaultStorageOption( {
 	planSlug,
-}: Props ): WPComStorageAddOnSlug | WPComPlanStorageFeatureSlug | undefined {
+}: Props ): AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug | undefined {
 	const { siteId, gridPlansIndex } = usePlansGridContext();
 	const {
 		features: { storageFeature },
@@ -28,6 +24,6 @@ export default function useDefaultStorageOption( {
 	const purchasedAddOn = storageAddOns?.find( ( storageAddOn ) => storageAddOn?.purchased );
 
 	return purchasedAddOn && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
-		? ( purchasedAddOn?.featureSlugs?.[ 0 ] as WPComStorageAddOnSlug )
+		? ( purchasedAddOn?.addOnSlug as AddOns.StorageAddOnSlug )
 		: ( storageFeature?.getSlug() as WPComPlanStorageFeatureSlug );
 }

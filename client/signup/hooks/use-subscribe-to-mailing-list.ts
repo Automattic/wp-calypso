@@ -8,6 +8,9 @@ interface APIResponse {
 
 interface SubscribeToMailingListParams {
 	email_address: string;
+	first_name: string;
+	from: string;
+	last_name: string;
 	mailing_list_category: string;
 }
 

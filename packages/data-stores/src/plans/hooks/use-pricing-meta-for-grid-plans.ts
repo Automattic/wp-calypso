@@ -10,7 +10,13 @@ import * as Purchases from '../../purchases';
 import * as WpcomPlansUI from '../../wpcom-plans-ui';
 import type { AddOnMeta } from '../../add-ons/types';
 
-export type UseCheckPlanAvailabilityForPurchase = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
+export type UseCheckPlanAvailabilityForPurchase = ( {
+	planSlugs,
+	siteId,
+}: {
+	planSlugs: PlanSlug[];
+	siteId?: number | null;
+} ) => {
 	[ planSlug in PlanSlug ]?: boolean;
 };
 
@@ -63,7 +69,7 @@ const usePricingMetaForGridPlans = ( {
 	useCheckPlanAvailabilityForPurchase,
 	storageAddOns,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
-	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs } );
+	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs, siteId } );
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
@@ -104,7 +110,7 @@ const usePricingMetaForGridPlans = ( {
 				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
 				const selectedStorageAddOn = selectedStorageOption
 					? storageAddOns?.find( ( addOn ) => {
-							return addOn?.featureSlugs?.includes( selectedStorageOption );
+							return addOn?.addOnSlug === selectedStorageOption;
 					  } )
 					: null;
 				const storageAddOnPriceMonthly = selectedStorageAddOn?.prices?.monthlyPrice || 0;

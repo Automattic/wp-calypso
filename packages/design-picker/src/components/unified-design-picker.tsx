@@ -42,7 +42,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
-	if ( design.is_externally_managed && design.screenshot ) {
+	if ( design?.design_tier === 'partner' && design.screenshot ) {
 		const fit = '479,360';
 		// We're stubbing out the high res version here as part of a size reduction experiment.
 		// See #88786 and TODO for discussion / info.
@@ -140,13 +140,13 @@ const useTrackDesignView = ( {
 
 				recordTracksEvent( 'calypso_design_picker_design_display', {
 					category: trackingCategory,
-					design_type: design.design_type,
 					...( design?.design_tier && { design_tier: design.design_tier } ),
-					is_premium: design.is_premium,
+					is_premium: design?.design_tier === 'premium',
+					// TODO: Better to track whether already available on this sites plan.
 					is_premium_available: isPremiumThemeAvailable,
 					slug: design.slug,
 					is_virtual: design.is_virtual,
-					is_externally_managed: design.is_externally_managed,
+					is_externally_managed: design?.design_tier === 'partner',
 				} );
 
 				if ( category ) {

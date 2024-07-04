@@ -20,6 +20,7 @@ import ClientSite from './client-site';
 import { AvailablePlans } from './plan-field';
 import PurchaseConfirmationMessage from './purchase-confirmation-message';
 import SiteConfigurationsModal from './site-configurations-modal';
+import { useRandomSiteName } from './site-configurations-modal/use-site-name';
 import NeedSetupTable from './table';
 import type { ReferralAPIResponse } from '../../referrals/types';
 
@@ -43,6 +44,7 @@ const isA4aSiteCreationConfigurationsEnabled = config.isEnabled(
 );
 
 export default function NeedSetup( { licenseKey }: Props ) {
+	const { randomSiteName, isRandomSiteNameLoading } = useRandomSiteName();
 	const translate = useTranslate();
 	const [ displaySiteConfigurationModal, setDisplaySiteConfigurationModal ] = useState( false );
 
@@ -187,7 +189,13 @@ export default function NeedSetup( { licenseKey }: Props ) {
 						</Actions>
 					</LayoutHeader>
 				</LayoutTop>
-				{ displaySiteConfigurationModal && <SiteConfigurationsModal toggleModal={ toggleModal } /> }
+				{ displaySiteConfigurationModal && (
+					<SiteConfigurationsModal
+						toggleModal={ toggleModal }
+						randomSiteName={ randomSiteName }
+						isRandomSiteNameLoading={ isRandomSiteNameLoading }
+					/>
+				) }
 				<NeedSetupTable
 					availablePlans={ availablePlans }
 					isLoading={ isFetching }
