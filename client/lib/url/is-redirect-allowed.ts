@@ -31,8 +31,11 @@ export function isRedirectAllowed( url: string ): boolean {
 			return false;
 		}
 
-		// Return true for *.calypso.live urls.
-		if ( /^([a-zA-Z0-9-]+\.)?calypso\.live$/.test( hostname ) ) {
+		// Return true for *.calypso.live or *.wordpress.com urls
+		if (
+			/^([a-zA-Z0-9-]+\.)?calypso\.live$/.test( hostname ) ||
+			/^([a-zA-Z0-9-]+\.)?wordpress\.com$/.test( hostname )
+		) {
 			return true;
 		}
 

@@ -78,7 +78,8 @@ function useUpgradeHandler( {
 					product_slug: selectedStorageAddOn.productSlug,
 					quantity: selectedStorageAddOn.quantity,
 					volume: 1,
-					extra: { feature_slug: selectedStorageAddOn?.featureSlugs?.[ 0 ] },
+					// TODO: `feature_slug` below should be refactored to `add_on_slug` now that the two concepts are separated
+					extra: { feature_slug: selectedStorageAddOn?.addOnSlug },
 				};
 
 			if ( cartItemForPlan ) {

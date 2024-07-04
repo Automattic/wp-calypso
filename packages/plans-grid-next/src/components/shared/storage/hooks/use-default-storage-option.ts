@@ -24,6 +24,6 @@ export default function useDefaultStorageOption( {
 	const purchasedAddOn = storageAddOns?.find( ( storageAddOn ) => storageAddOn?.purchased );
 
 	return purchasedAddOn && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
-		? ( purchasedAddOn?.featureSlugs?.[ 0 ] as AddOns.StorageAddOnSlug )
+		? ( purchasedAddOn?.addOnSlug as AddOns.StorageAddOnSlug )
 		: ( storageFeature?.getSlug() as WPComPlanStorageFeatureSlug );
 }

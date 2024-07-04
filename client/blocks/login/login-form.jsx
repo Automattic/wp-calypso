@@ -28,10 +28,15 @@ import {
 	getSignupUrl,
 	pathWithLeadingSlash,
 	isReactLostPasswordScreenEnabled,
+	isRecognizedLogin,
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+	isGravatarOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -766,6 +771,8 @@ export class LoginForm extends Component {
 			currentQuery,
 			oauth2Client
 		);
+		const isFromGravatar3rdPartyApp =
+			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
 
 		const signupUrl = this.getSignupUrl();
 
@@ -823,6 +830,12 @@ export class LoginForm extends Component {
 			} );
 		}
 
+		const shouldShowSocialLoginForm =
+			config.isEnabled( 'signup/social' ) &&
+			! isFromAutomatticForAgenciesReferralClient &&
+			! isCoreProfilerLostPasswordFlow &&
+			! isFromGravatar3rdPartyApp;
+
 		return (
 			<form
 				className={ clsx( {
@@ -877,7 +890,7 @@ export class LoginForm extends Component {
 							name="usernameOrEmail"
 							ref={ this.saveUsernameOrEmailRef }
 							value={ this.state.usernameOrEmail }
-							disabled={ isFormDisabled || this.isPasswordView() }
+							disabled={ isFormDisabled || this.isPasswordView() || isFromGravatar3rdPartyApp }
 						/>
 
 						{ requestError && requestError.field === 'usernameOrEmail' && (
@@ -903,17 +916,19 @@ export class LoginForm extends Component {
 										) }
 								</FormInputValidation>
 
-								<Experiment
-									name="calypso_login_failed_show_migrate_cta_202406"
-									defaultExperience={ null }
-									loadingExperience={ null }
-									treatmentExperience={
-										<MigrateNotice
-											translate={ this.props.translate }
-											recordTracksEvent={ this.props.recordTracksEvent }
-										/>
-									}
-								/>
+								{ 'unknown_user' === requestError.code && ! isRecognizedLogin() && (
+									<Experiment
+										name="calypso_login_failed_show_migrate_cta_202407_v2"
+										defaultExperience={ null }
+										loadingExperience={ null }
+										treatmentExperience={
+											<MigrateNotice
+												translate={ this.props.translate }
+												recordTracksEvent={ this.props.recordTracksEvent }
+											/>
+										}
+									/>
+								) }
 							</Fragment>
 						) }
 
@@ -1036,28 +1051,26 @@ export class LoginForm extends Component {
 					) }
 				</Card>
 
-				{ ! isFromAutomatticForAgenciesReferralClient &&
-					config.isEnabled( 'signup/social' ) &&
-					! isCoreProfilerLostPasswordFlow && (
-						<Fragment>
-							<FormDivider />
-							<SocialLoginForm
-								linkingSocialService={
-									this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
-								}
-								onSuccess={ this.props.onSuccess }
-								socialService={ this.props.socialService }
-								socialServiceResponse={ this.props.socialServiceResponse }
-								uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-								shouldRenderToS={
-									this.props.isWoo && ! isPartnerSignup && ! this.props.isWooPasswordless
-								}
-								isSocialFirst={ isSocialFirst }
-							>
-								{ loginButtons }
-							</SocialLoginForm>
-						</Fragment>
-					) }
+				{ shouldShowSocialLoginForm && (
+					<Fragment>
+						<FormDivider />
+						<SocialLoginForm
+							linkingSocialService={
+								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
+							}
+							onSuccess={ this.props.onSuccess }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
+							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
+							shouldRenderToS={
+								this.props.isWoo && ! isPartnerSignup && ! this.props.isWooPasswordless
+							}
+							isSocialFirst={ isSocialFirst }
+						>
+							{ loginButtons }
+						</SocialLoginForm>
+					</Fragment>
+				) }
 
 				{ this.showJetpackConnectSiteOnly() && (
 					<JetpackConnectSiteOnly

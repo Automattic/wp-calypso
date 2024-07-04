@@ -139,7 +139,7 @@ class Help extends PureComponent {
 				{ this.getCoursesTeaser() }
 				<CompactCard
 					className="help__support-link"
-					href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
+					href="https://www.youtube.com/@WordPressdotcom"
 					target="_blank"
 				>
 					<Gridicon icon="video" size={ 36 } />

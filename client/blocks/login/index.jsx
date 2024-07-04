@@ -23,6 +23,7 @@ import {
 	isA4AOAuth2Client,
 	isWooOAuth2Client,
 	isBlazeProOAuth2Client,
+	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -575,11 +576,16 @@ class Login extends Component {
 				} );
 
 				if ( isGravPoweredLoginPage ) {
+					const isFromGravatar3rdPartyApp =
+						isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+
 					postHeader = (
 						<p className="login__header-subtitle">
-							{ translate(
-								'If you prefer logging in with a password, or a social media account, choose below:'
-							) }
+							{ isFromGravatar3rdPartyApp
+								? translate( 'Please log in with your email and password.' )
+								: translate(
+										'If you prefer logging in with a password, or a social media account, choose below:'
+								  ) }
 						</p>
 					);
 				}
