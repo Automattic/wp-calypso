@@ -16,7 +16,7 @@ export interface SitesDataViewsProps {
 	isLoading: boolean;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 	dataViewsState: DataViewsState;
-	onRefetchSite?: () => void;
+	onRefetchSite?: () => Promise< unknown >;
 }
 
 export interface SiteInfo extends SiteData {

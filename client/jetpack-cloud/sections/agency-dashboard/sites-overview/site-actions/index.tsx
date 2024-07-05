@@ -14,7 +14,7 @@ interface Props {
 	isLargeScreen?: boolean;
 	site: SiteNode;
 	siteError: boolean | undefined;
-	onRefetchSite?: () => void;
+	onRefetchSite?: () => Promise< unknown >;
 }
 
 export default function SiteActions( {
@@ -25,6 +25,7 @@ export default function SiteActions( {
 }: Props ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ showRemoveSiteDialog, setShowRemoveSiteDialog ] = useState( false );
+	const [ isPendingRefetch, setIsPendingRefetch ] = useState( false );
 
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
@@ -57,8 +58,14 @@ export default function SiteActions( {
 				{ siteId: site.value?.a4a_site_id },
 				{
 					onSuccess: () => {
-						setShowRemoveSiteDialog( false );
-						onRefetchSite?.();
+						setIsPendingRefetch( true );
+						// Add 1 second delay to refetch sites to give time for site profile to be reindexed properly.
+						setTimeout( () => {
+							onRefetchSite?.()?.then( () => {
+								setIsPendingRefetch( false );
+								setShowRemoveSiteDialog( false );
+							} );
+						}, 1000 );
 					},
 				}
 			);
@@ -107,7 +114,7 @@ export default function SiteActions( {
 					site={ site }
 					onClose={ () => setShowRemoveSiteDialog( false ) }
 					onConfirm={ onRemoveSite }
-					busy={ isPending }
+					busy={ isPending || isPendingRefetch }
 				/>
 			) }
 		</>
