@@ -1,11 +1,9 @@
-import { PlanCostOverride, PricedAPISitePlan } from '../../types';
+import { CostOverride, PricedAPISitePlan } from '../../types';
 
 /**
  * Unpacks cost overrides from an API plan to the respective `PlanCostOverride` structure for the store.
  */
-export default function unpackCostOverrides(
-	plan: PricedAPISitePlan
-): PlanCostOverride[] | undefined {
+export default function unpackCostOverrides( plan: PricedAPISitePlan ): CostOverride[] | undefined {
 	return plan?.cost_overrides?.map( ( costOverride ) => ( {
 		doesOverrideOriginalCost: costOverride.does_override_original_cost,
 		firstUnitOnly: costOverride.first_unit_only,

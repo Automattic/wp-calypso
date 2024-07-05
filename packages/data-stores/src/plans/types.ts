@@ -68,7 +68,7 @@ export interface PlanIntroductoryOffer {
 	isOfferComplete: boolean;
 }
 
-export interface PlanCostOverride {
+export interface CostOverride {
 	doesOverrideOriginalCost: boolean;
 	firstUnitOnly: boolean;
 	newPrice: number;
@@ -103,7 +103,7 @@ export interface PlanPricing {
 }
 
 export interface SitePlanPricing extends Omit< PlanPricing, 'billPeriod' > {
-	costOverrides?: PlanCostOverride[];
+	costOverrides?: CostOverride[];
 }
 
 /**
@@ -173,7 +173,7 @@ export interface PricedAPIPlanIntroductoryOffer {
 	introductory_offer_end_date?: string;
 }
 
-export interface PricedAPIPlanCostOverrides {
+export interface PricedAPISitePlanCostOverride {
 	does_override_original_cost: boolean;
 	first_unit_only: boolean;
 	new_price: number;
@@ -206,7 +206,7 @@ export interface PricedAPISitePlanPricing
 	extends Omit< PricedAPIPlanPricing, 'orig_cost_integer' | 'bill_period' > {
 	raw_discount_integer: number;
 
-	cost_overrides?: PricedAPIPlanCostOverrides[];
+	cost_overrides?: PricedAPISitePlanCostOverride[];
 }
 
 /**
