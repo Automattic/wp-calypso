@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import type { ScheduleUpdates } from './use-update-schedules-query';
-import type { SiteSlug } from 'calypso/types';
+import { MultisiteSchedulesUpdates, ScheduleUpdates } from './use-update-schedules-query';
+import type { SiteId, SiteSlug } from 'calypso/types';
 
 export type CreateRequestParams = {
 	plugins: string[];
@@ -234,7 +234,11 @@ export function useDeleteUpdateScheduleMutation( siteSlug: SiteSlug, queryOption
 	return { deleteUpdateSchedule, ...mutation };
 }
 
-export function useBatchDeleteUpdateScheduleMutation( siteSlugs: SiteSlug[], queryOptions = {} ) {
+export function useBatchDeleteUpdateScheduleMutation(
+	siteSlugs: SiteSlug[],
+	siteIds: SiteId[] = [],
+	queryOptions = {}
+) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation( {
@@ -257,9 +261,20 @@ export function useBatchDeleteUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 
 			return results;
 		},
-		onSettled: () => {
-			queryClient.removeQueries( { queryKey: [ 'multisite-schedules-update' ] } );
+		onMutate: () => {
+			// Optimistically update the cache
+			const prevSiteSchedules = queryClient.getQueryData( [
+				'multisite-schedules-update',
+			] ) as MultisiteSchedulesUpdates;
+			const sites = { ...prevSiteSchedules?.sites };
+			siteIds.forEach( ( siteId ) => delete sites[ siteId ] );
 
+			const newSiteSchedules = { sites: sites };
+
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], newSiteSchedules );
+			return newSiteSchedules;
+		},
+		onSettled: () => {
 			siteSlugs.forEach( ( siteSlug ) => {
 				queryClient.removeQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
 			} );
