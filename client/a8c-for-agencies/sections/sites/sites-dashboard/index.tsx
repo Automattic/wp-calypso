@@ -234,7 +234,7 @@ export default function SitesDashboard() {
 							<Title>{ translate( 'Sites' ) }</Title>
 							<Actions>
 								<MobileSidebarNavigation />
-								<SitesHeaderActions />
+								<SitesHeaderActions onWPCOMImport={ () => refetch() } />
 							</Actions>
 						</LayoutHeader>
 						{ navItems.length > 1 && (

@@ -73,7 +73,9 @@ export default function WPCOMSitesTable( {
 		return sites
 			.filter(
 				( site ) =>
-					site && site.visible && ! site.is_private && ! managedSitesMap?.[ site.ID as number ]
+					site &&
+					( site.is_wpcom_atomic || site.jetpack ) &&
+					! managedSitesMap?.[ site.ID as number ]
 			)
 			.map( ( site ) =>
 				site
