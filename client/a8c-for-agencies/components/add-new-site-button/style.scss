@@ -46,12 +46,16 @@
 }
 
 .theme-a8c-for-agencies  .button.is-borderless.site-selector-and-importer__popover-button {
-	padding: 0 8px;
+	padding: 8px;
 	white-space: unset;
 	text-align: unset;
-	margin-block: 16px;
+	margin-block: 0;
 	width: 100%;
-	border-radius: 0;
+	border-radius: 4px;
+
+	&:hover {
+		background-color: var(--color-neutral-0);
+	}
 
 	@include break-large {
 		display: flex;
