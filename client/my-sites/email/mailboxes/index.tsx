@@ -112,6 +112,9 @@ const MailboxesManagement = ( {
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId as number ) );
 
 	if ( isP2 ) {
+		// This path is no longer accessible via the sidebar, but we still need
+		// to handle the case where the the url is accessed directly.
+		// see https://github.com/Automattic/dotcom-forge/issues/8069
 		return <NotSupportedOnP2Card />;
 	}
 
