@@ -149,10 +149,6 @@ const PartnerDirectoryDashboard = () => {
 		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_edit_profile_click' ) );
 	}, [ dispatch ] );
 
-	const onAgencyProfileClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_agency_profile_click' ) );
-	}, [ dispatch ] );
-
 	// We want to scroll to the top of the page when the component is rendered
 	useEffect( () => {
 		document.querySelector( '.partner-directory__body' )?.scrollTo( 0, 0 );
@@ -176,7 +172,7 @@ const PartnerDirectoryDashboard = () => {
 
 	const { availableDirectories } = useFormSelectors();
 
-	const directoryApplicationStatuses =
+	const directoryApplicationStatuses: DirectoryApplicationStatus[] =
 		applicationData?.directories?.reduce( ( statuses: DirectoryApplicationStatus[], directory ) => {
 			statuses.push( {
 				brand: availableDirectories[ directory.directory ],
@@ -264,33 +260,29 @@ const PartnerDirectoryDashboard = () => {
 								heading={ brand }
 								description={
 									key === 'approved' ? (
-										brandMeta.isPublic ? (
-											<>
-												<Button
-													className="a8c-blue-link"
-													borderless
-													href={ brandMeta.url }
-													target="_blank"
-												>
-													{ translate( '%(brand)s Partner Directory', {
-														args: { brand },
-													} ) }
-													<Icon icon={ external } size={ 18 } />
-												</Button>
-												<br />
-												<Button
-													className="a8c-blue-link"
-													onClick={ onAgencyProfileClick }
-													href={ brandMeta.urlProfile }
-													borderless
-												>
-													{ translate( `Your agency's profile` ) }
-													<Icon icon={ external } size={ 18 } />
-												</Button>
-											</>
-										) : (
-											<div>Comming soon message...</div>
-										)
+										<>
+											<Button
+												className="a8c-blue-link"
+												borderless
+												href={ brandMeta.url }
+												target="_blank"
+											>
+												{ translate( '%(brand)s Partner Directory', {
+													args: { brand },
+												} ) }
+												<Icon icon={ external } size={ 18 } />
+											</Button>
+											<br />
+											<Button
+												className="a8c-blue-link"
+												borderless
+												href={ brandMeta.urlProfile }
+												target="_blank"
+											>
+												{ translate( `Your agency's profile` ) }
+												<Icon icon={ external } size={ 18 } />
+											</Button>
+										</>
 									) : (
 										<DashboardStatusBadge
 											statusProps={ {
