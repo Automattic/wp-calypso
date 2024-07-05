@@ -26,6 +26,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
+import { STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from 'calypso/my-sites/stats/constants';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -51,6 +52,7 @@ import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
 import HighlightsSection from './highlights-section';
+import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import PromoCards from './promo-cards';
@@ -220,6 +222,7 @@ class StatsSite extends Component {
 			supportsUTMStatsFeature,
 			supportsDevicesStatsFeature,
 			isOldJetpack,
+			shouldForceDefaultDateRange,
 		} = this.props;
 		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -274,11 +277,22 @@ class StatsSite extends Component {
 				? moment( customChartRange.chartEnd )
 				: moment( customChartRange.chartEnd ).endOf( period );
 
-		const customChartQuantity = Math.ceil(
+		let customChartQuantity = Math.ceil(
 			adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
 		);
 
 		customChartRange.daysInRange = daysInRange;
+
+		// Force the default date range to be 7 days if the 30-day option is locked.
+		if ( shouldForceDefaultDateRange ) {
+			// For ChartTabs
+			customChartQuantity = 7;
+
+			// For StatsDateControl
+			customChartRange.daysInRange = 7;
+			customChartRange.chartEnd = moment().format( 'YYYY-MM-DD' );
+			customChartRange.chartStart = moment().subtract( 7, 'days' ).format( 'YYYY-MM-DD' );
+		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
@@ -857,6 +871,13 @@ export default connect(
 			isOldJetpack,
 		} = getEnvStatsFeatureSupportChecks( state, siteId );
 
+		// Determine if the default date range should be forced to 7 days.
+		const shouldForceDefaultDateRange = shouldGateStats(
+			state,
+			siteId,
+			STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS
+		);
+
 		return {
 			canUserViewStats,
 			isAtomic: isAtomicSite( state, siteId ),
@@ -876,6 +897,7 @@ export default connect(
 			supportsUTMStatsFeature: supportsUTMStats,
 			supportsDevicesStatsFeature: supportsDevicesStats,
 			isOldJetpack,
+			shouldForceDefaultDateRange,
 		};
 	},
 	{
