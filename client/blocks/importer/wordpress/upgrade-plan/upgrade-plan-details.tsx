@@ -157,7 +157,11 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 					original
 					isSmallestUnit
 				/>
-				<PlanPrice rawPrice={ introOfferMonthlyPrice } currencyCode={ currencyCode } />
+				<PlanPrice
+					className="improt__upgrade-plan-price-discounted"
+					rawPrice={ introOfferMonthlyPrice }
+					currencyCode={ currencyCode }
+				/>
 			</div>
 		</UpgradePlanPrice>
 	);
