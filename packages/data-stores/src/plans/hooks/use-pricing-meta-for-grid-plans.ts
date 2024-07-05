@@ -198,7 +198,7 @@ const usePricingMetaForGridPlans = ( {
 					// Do not return discounted prices if discount is due to plan proration
 					if (
 						! withProratedDiscounts &&
-						sitePlan?.pricing?.costOverrides?.[ 0 ].overrideCode ===
+						sitePlan?.pricing?.costOverrides?.[ 0 ]?.overrideCode ===
 							COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION
 					) {
 						return [
