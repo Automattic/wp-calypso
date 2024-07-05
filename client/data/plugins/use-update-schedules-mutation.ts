@@ -266,13 +266,17 @@ export function useBatchDeleteUpdateScheduleMutation(
 			const prevSiteSchedules = queryClient.getQueryData( [
 				'multisite-schedules-update',
 			] ) as MultisiteSchedulesUpdatesResponse;
-			const sites = { ...prevSiteSchedules?.sites };
+			const sites = JSON.parse( JSON.stringify( prevSiteSchedules.sites ) );
 			siteIds.forEach( ( siteId ) => sites[ siteId ] && delete sites[ siteId ][ id ] );
 
-			const newSiteSchedules = { sites: sites };
+			const newSiteSchedules = { sites };
 
 			queryClient.setQueryData( [ 'multisite-schedules-update' ], newSiteSchedules );
-			return newSiteSchedules;
+			return { prevSiteSchedules };
+		},
+		onError: ( err, id, context ) => {
+			// Set previous value on error
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], context?.prevSiteSchedules );
 		},
 		onSettled: () => {
 			siteSlugs.forEach( ( siteSlug ) => {
