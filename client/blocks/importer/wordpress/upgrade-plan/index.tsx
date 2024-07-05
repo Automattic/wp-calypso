@@ -16,7 +16,7 @@ import './style.scss';
 import withMigrationSticker from './with-migration-sticker';
 import type { UpgradePlanProps } from './types';
 
-const WrappedComponent: React.FunctionComponent< UpgradePlanProps > = ( props ) => {
+export const UpgradePlanUnwrapped: React.FunctionComponent< UpgradePlanProps > = ( props ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const plan = getPlan( PLAN_BUSINESS );
@@ -201,4 +201,4 @@ const WrappedComponent: React.FunctionComponent< UpgradePlanProps > = ( props ) 
 	);
 };
 
-export const UpgradePlan = withMigrationSticker( WrappedComponent );
+export const UpgradePlan = withMigrationSticker( UpgradePlanUnwrapped );

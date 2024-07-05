@@ -10,7 +10,7 @@ import nock from 'nock';
 import React, { type ComponentPropsWithoutRef } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useUpgradePlanHostingDetailsList } from '../hooks/use-get-upgrade-plan-hosting-details-list';
-import { UpgradePlan } from '../index';
+import { UpgradePlan, UpgradePlanUnwrapped as UpgradePlanWithoutHOC } from '../index';
 
 const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
 	( useUpgradePlanHostingDetailsList as jest.Mock ).mockReturnValue( {
@@ -59,12 +59,15 @@ jest.mock( '../upgrade-plan-details', () => ( {
 
 jest.mock( '@automattic/calypso-analytics' );
 
-function renderUpgradePlanComponent( props: ComponentPropsWithoutRef< typeof UpgradePlan > ) {
+function renderUpgradePlanComponent(
+	props: ComponentPropsWithoutRef< typeof UpgradePlan >,
+	Component = UpgradePlan
+) {
 	const queryClient = new QueryClient();
 
 	return renderWithProvider(
 		<QueryClientProvider client={ queryClient }>
-			<UpgradePlan { ...props } />
+			<Component { ...props } />
 		</QueryClientProvider>,
 		{
 			initialState: {
@@ -250,7 +253,7 @@ describe( 'UpgradePlan', () => {
 		it( 'should call the sticker endpoint creation when rendering the component', async () => {
 			nock.cleanAll();
 			const scope = nock( 'https://public-api.wordpress.com:443' )
-				.post( `/wpcom/v2/sites/${ SITE_ID }/migration-flow` )
+				.post( `/wpcom/v2/sites/${ DEFAULT_SITE_ID }/migration-flow` )
 				.reply( 200 );
 
 			renderUpgradePlanComponent( getUpgradePlanProps( {} ) );
@@ -266,7 +269,8 @@ describe( 'UpgradePlan', () => {
 			mockUseUpgradePlanHostingDetailsList( true );
 
 			const { queryByText, container } = renderUpgradePlanComponent(
-				getUpgradePlanProps( { ctaText: CTA_TEXT } )
+				getUpgradePlanProps( { ctaText: CTA_TEXT } ),
+				UpgradePlanWithoutHOC
 			);
 
 			expect(
