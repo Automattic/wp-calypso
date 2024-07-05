@@ -1,7 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import {
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_MONTHLY,
+} from '@automattic/calypso-products';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -53,9 +57,34 @@ const mockTrialEligibilityAPI = ( payload: TrialEligibilityResponse ) => {
 describe( 'SiteMigrationUpgradePlan', () => {
 	const render = ( props?: Partial< StepProps > ) => {
 		const combinedProps = { ...mockStepProps( props ) };
+
+		const plansBaseData = {
+			currencyCode: 'USD',
+			rawPrice: 0,
+			rawDiscount: 0,
+		};
+
 		return renderStep( <SiteMigrationUpgradePlan { ...combinedProps } />, {
 			reducers: {
 				plans: plansReducer,
+			},
+			initialState: {
+				sites: {
+					plans: {
+						'site-id': {
+							data: [
+								{
+									...plansBaseData,
+									productSlug: PLAN_BUSINESS,
+								},
+								{
+									...plansBaseData,
+									productSlug: PLAN_BUSINESS_MONTHLY,
+								},
+							],
+						},
+					},
+				},
 			},
 		} );
 	};
@@ -69,7 +98,9 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Upgrade and migrate/ } ) );
+		await waitFor( async () => {
+			await userEvent.click( screen.getByRole( 'button', { name: /Upgrade and migrate/ } ) );
+		} );
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
@@ -82,8 +113,10 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Pay monthly/ } ) );
-		await userEvent.click( screen.getByRole( 'button', { name: /Upgrade and migrate/ } ) );
+		await waitFor( async () => {
+			await userEvent.click( screen.getByRole( 'button', { name: /Pay monthly/ } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /Upgrade and migrate/ } ) );
+		} );
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
@@ -96,8 +129,10 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Pay annually/ } ) );
-		await userEvent.click( screen.getByRole( 'button', { name: /Upgrade and migrate/ } ) );
+		await waitFor( async () => {
+			await userEvent.click( screen.getByRole( 'button', { name: /Pay annually/ } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /Upgrade and migrate/ } ) );
+		} );
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
