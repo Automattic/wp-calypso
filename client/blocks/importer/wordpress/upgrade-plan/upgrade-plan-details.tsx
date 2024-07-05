@@ -18,8 +18,6 @@ import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useState, useEffect, type PropsWithChildren } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
-import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
-import { Skeleton } from './skeleton';
 import { UpgradePlanDetailsProps } from './types';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
@@ -205,10 +203,7 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
 	>( PLAN_BUSINESS );
 
-	const { children, pricing, introOfferAvailable } = props;
-
-	const { list: upgradePlanHostingDetailsList, isFetching: isFetchingHostingDetails } =
-		useUpgradePlanHostingDetailsList();
+	const { children, pricing, introOfferAvailable, upgradePlanHostingDetailsList } = props;
 
 	const plan = getPlan( selectedPlan );
 
@@ -228,14 +223,6 @@ export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	useEffect( () => {
 		plan && plan.getPathSlug && setSelectedPlanSlug( plan.getPathSlug() );
 	}, [ plan ] );
-
-	if (
-		isFetchingHostingDetails ||
-		typeof pricing?.originalPrice.monthly !== 'number' ||
-		! pricing.currencyCode
-	) {
-		return <Skeleton />;
-	}
 
 	return (
 		<div className="import__upgrade-plan-details">

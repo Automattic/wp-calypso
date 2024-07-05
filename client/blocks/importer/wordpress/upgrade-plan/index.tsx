@@ -9,6 +9,8 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import PlanNoticeCreditUpgrade from 'calypso/my-sites/plans-features-main/components/plan-notice-credit-update';
+import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
+import { Skeleton } from './skeleton';
 import UpgradePlanDetails from './upgrade-plan-details';
 import './style.scss';
 import withMigrationSticker from './with-migration-sticker';
@@ -38,6 +40,9 @@ const WrappedComponent: React.FunctionComponent< UpgradePlanProps > = ( props ) 
 		migrationTrialEligibility?.eligible ||
 		// If the user's email is unverified, we still want to show the trial plan option
 		migrationTrialEligibility?.error_code === 'email-unverified';
+
+	const { list: upgradePlanHostingDetailsList, isFetching: isFetchingHostingDetails } =
+		useUpgradePlanHostingDetailsList();
 
 	const plans = Plans.useSitePlans( { siteId: site.ID } );
 	const pricing = plans.data ? plans.data[ visiblePlan ]?.pricing : undefined;
@@ -140,6 +145,10 @@ const WrappedComponent: React.FunctionComponent< UpgradePlanProps > = ( props ) 
 				'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
 		  );
 
+	if ( isFetchingHostingDetails ) {
+		return <Skeleton />;
+	}
+
 	return (
 		<div className="import__upgrade-plan">
 			{ ! hideTitleAndSubTitle && (
@@ -181,7 +190,11 @@ const WrappedComponent: React.FunctionComponent< UpgradePlanProps > = ( props ) 
 				visiblePlans={ [ visiblePlan ] }
 			/>
 
-			<UpgradePlanDetails pricing={ pricing } introOfferAvailable={ !! introOfferAvailable }>
+			<UpgradePlanDetails
+				pricing={ pricing }
+				introOfferAvailable={ !! introOfferAvailable }
+				upgradePlanHostingDetailsList={ upgradePlanHostingDetailsList }
+			>
 				{ renderCTAs() }
 			</UpgradePlanDetails>
 		</div>

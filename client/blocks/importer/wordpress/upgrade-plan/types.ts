@@ -16,6 +16,7 @@ export type UpgradePlanDetailsProps = {
 	children: React.ReactNode;
 	introOfferAvailable: boolean;
 	pricing?: SitePlanPricing;
+	upgradePlanHostingDetailsList: Array< HostingDetailsItem >;
 };
 
 export type UpgradePlanProps = {
