@@ -252,7 +252,7 @@ const PartnerDirectoryDashboard = () => {
 				</div>
 				{ directoryApplicationStatuses.length > 0 &&
 					directoryApplicationStatuses.map( ( { brand, status, type, key } ) => {
-						const brandMeta = getBrandMeta( brand );
+						const brandMeta = getBrandMeta( brand, agency );
 						const showPopoverOnLoad =
 							directoryApplicationStatuses.filter( ( { key } ) => key === 'rejected' ).length === 1;
 						return (
@@ -264,28 +264,33 @@ const PartnerDirectoryDashboard = () => {
 								heading={ brand }
 								description={
 									key === 'approved' ? (
-										<>
-											<Button
-												className="a8c-blue-link"
-												borderless
-												href={ brandMeta.url }
-												target="_blank"
-											>
-												{ translate( '%(brand)s Partner Directory', {
-													args: { brand },
-												} ) }
-												<Icon icon={ external } size={ 18 } />
-											</Button>
-											<br />
-											<Button
-												className="a8c-blue-link"
-												onClick={ onAgencyProfileClick }
-												href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }` }
-												borderless
-											>
-												{ translate( `Your agency's profile` ) }
-											</Button>
-										</>
+										brandMeta.isPublic ? (
+											<>
+												<Button
+													className="a8c-blue-link"
+													borderless
+													href={ brandMeta.url }
+													target="_blank"
+												>
+													{ translate( '%(brand)s Partner Directory', {
+														args: { brand },
+													} ) }
+													<Icon icon={ external } size={ 18 } />
+												</Button>
+												<br />
+												<Button
+													className="a8c-blue-link"
+													onClick={ onAgencyProfileClick }
+													href={ brandMeta.urlProfile }
+													borderless
+												>
+													{ translate( `Your agency's profile` ) }
+													<Icon icon={ external } size={ 18 } />
+												</Button>
+											</>
+										) : (
+											<div>Comming soon message...</div>
+										)
 									) : (
 										<DashboardStatusBadge
 											statusProps={ {
