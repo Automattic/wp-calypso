@@ -123,7 +123,7 @@ function useGenerateActionCallback( {
 	withDiscount?: string;
 } ): UseActionCallback {
 	const { setShowHelpCenter, setInitialRoute } = useDispatch( HELP_CENTER_STORE );
-	const { url: stillNeedHelpUrl } = useStillNeedHelpURL( true );
+	const { url: stillNeedHelpUrl } = useStillNeedHelpURL( false );
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
