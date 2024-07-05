@@ -1,9 +1,9 @@
 import { StatsCard } from '@automattic/components';
 import clsx from 'clsx';
-import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
-import useStatsPurchases from '../hooks/use-stats-purchases';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import statsStrings from '../stats-strings';
+import { default as usePlanUsageQuery } from '../../../hooks/use-plan-usage-query';
+import useStatsPurchases from '../../../hooks/use-stats-purchases';
+import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import statsStrings from '../../../stats-strings';
 import StatsModuleDevices from './stats-module-devices';
 import StatsModuleUpgradeOverlay from './stats-module-upgrade-overlay';
 

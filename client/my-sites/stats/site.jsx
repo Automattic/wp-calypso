@@ -47,6 +47,9 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import StatsModuleAuthors from './features/modules/stats-authors';
 import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
+import StatsModuleDevices, {
+	StatsModuleUpgradeDevicesOverlay,
+} from './features/modules/stats-module-devices';
 import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
@@ -59,8 +62,6 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
-import StatsModuleDevices from './stats-module-devices';
-import StatsModuleUpgradeOverlay from './stats-module-devices/stats-module-upgrade-overlay';
 import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
@@ -690,7 +691,7 @@ class StatsSite extends Component {
 							/>
 						) }
 						{ ! supportsDevicesStats && isOldJetpack && (
-							<StatsModuleUpgradeOverlay
+							<StatsModuleUpgradeDevicesOverlay
 								className={ clsx(
 									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large'
