@@ -8,7 +8,7 @@ import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
-import { createRoot } from 'react-dom/client';
+import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter, matchPath } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
@@ -118,8 +118,7 @@ window.AppBoot = async () => {
 	const flowLoader = determineFlow();
 	const { default: flow } = await flowLoader();
 
-	const root = createRoot( document.getElementById( 'wpcom' )! );
-	root.render(
+	ReactDom.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
 			<Provider store={ reduxStore }>
 				<QueryClientProvider client={ queryClient }>
@@ -141,6 +140,7 @@ window.AppBoot = async () => {
 					) }
 				</QueryClientProvider>
 			</Provider>
-		</CalypsoI18nProvider>
+		</CalypsoI18nProvider>,
+		document.getElementById( 'wpcom' )
 	);
 };
