@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { MultisiteSchedulesUpdatesResponse, ScheduleUpdates } from './use-update-schedules-query';
+import type {
+	MultisiteSchedulesUpdatesResponse,
+	ScheduleUpdates,
+} from './use-update-schedules-query';
 import type { SiteId, SiteSlug } from 'calypso/types';
 
 export type CreateRequestParams = {
