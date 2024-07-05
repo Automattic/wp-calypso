@@ -304,11 +304,6 @@ export function useBatchDeleteUpdateScheduleMutation(
 			// Set previous value on error
 			queryClient.setQueryData( [ 'multisite-schedules-update' ], context?.prevSiteSchedules );
 		},
-		onSettled: () => {
-			siteSlugs.forEach( ( siteSlug ) => {
-				queryClient.removeQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
-			} );
-		},
 		...queryOptions,
 	} );
 
