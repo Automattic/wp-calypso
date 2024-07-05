@@ -61,7 +61,11 @@ export function useCreateUpdateScheduleMutation( siteSlug: SiteSlug, queryOption
 	return { createUpdateSchedule, ...mutation };
 }
 
-export function useBatchCreateUpdateScheduleMutation( siteSlugs: SiteSlug[], queryOptions = {} ) {
+export function useBatchCreateUpdateScheduleMutation(
+	siteSlugs: SiteSlug[],
+	siteIds: SiteId[] = [],
+	queryOptions = {}
+) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation( {
@@ -86,13 +90,31 @@ export function useBatchCreateUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 
 			return results;
 		},
-		onSettled: () => {
-			queryClient.removeQueries( { queryKey: [ 'multisite-schedules-update' ] } );
+		onMutate: ( params: CreateRequestParams ) => {
+			const prevSiteSchedules = queryClient.getQueryData( [
+				'multisite-schedules-update',
+			] ) as MultisiteSchedulesUpdatesResponse;
+			const nextSiteSchedules = JSON.parse( JSON.stringify( prevSiteSchedules || {} ) ); // deep copy
 
-			siteSlugs.forEach( ( siteSlug ) => {
-				queryClient.removeQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
+			siteIds.forEach( ( siteId ) => {
+				nextSiteSchedules.sites[ siteId ] = nextSiteSchedules.sites[ siteId ] || {};
+				nextSiteSchedules.sites[ siteId ][ 'temp-id' ] = {
+					args: params.plugins,
+					last_run_status: null,
+					last_run_timestamp: null,
+					timestamp: params.schedule.timestamp,
+					schedule: params.schedule.interval,
+					interval: params.schedule.timestamp,
+				};
 			} );
+
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], nextSiteSchedules );
+
+			return { prevSiteSchedules };
 		},
+		onError: ( err, params, context ) =>
+			// Set previous value on error
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], context?.prevSiteSchedules ),
 		...queryOptions,
 	} );
 
@@ -263,10 +285,11 @@ export function useBatchDeleteUpdateScheduleMutation(
 		},
 		onMutate: ( id: string ) => {
 			// Optimistically update the cache
-			const prevSiteSchedules = queryClient.getQueryData( [
+			const data = queryClient.getQueryData( [
 				'multisite-schedules-update',
 			] ) as MultisiteSchedulesUpdatesResponse;
-			const sites = JSON.parse( JSON.stringify( prevSiteSchedules.sites ) );
+			const prevSiteSchedules = JSON.parse( JSON.stringify( data || {} ) ); // deep copy
+			const sites = prevSiteSchedules?.sites || [];
 			siteIds.forEach( ( siteId ) => sites[ siteId ] && delete sites[ siteId ][ id ] );
 
 			const newSiteSchedules = { sites };
