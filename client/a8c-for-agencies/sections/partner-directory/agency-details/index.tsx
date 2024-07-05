@@ -114,7 +114,13 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			}
 		>
 			<FormSection title={ translate( 'Agency information' ) }>
-				<FormField label={ translate( 'Company name' ) } error={ validationError.name } isRequired>
+				<FormField
+					label={ translate( 'Company name' ) }
+					error={ validationError.name }
+					field={ formData.name }
+					checks={ [ 'non-empty' ] }
+					isRequired
+				>
 					<TextControl
 						value={ formData.name }
 						onChange={ ( value ) => {
@@ -127,6 +133,8 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					label={ translate( 'Company email' ) }
 					description={ translate( 'Client inquiries and leads will go to this email.' ) }
 					error={ validationError.email }
+					field={ formData.email }
+					checks={ [ 'non-empty', 'email' ] }
 					isRequired
 				>
 					<TextControl
@@ -140,6 +148,8 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Company website' ) }
 					error={ validationError.website }
+					field={ formData.website }
+					checks={ [ 'non-empty', 'url' ] }
 					isRequired
 				>
 					<TextControl
@@ -156,6 +166,8 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 						"Optional: Include your custom landing page for leads from Automattic platforms. We'll direct clients to this page."
 					) }
 					error={ validationError.landingPage }
+					field={ formData.landingPageUrl }
+					checks={ [ 'url' ] }
 				>
 					<TextControl
 						value={ formData.landingPageUrl }

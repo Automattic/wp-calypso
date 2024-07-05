@@ -136,6 +136,8 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 						'We allow each agency to offer up to five services to help you focus on what you do best.'
 					) }
 					error={ validationError.services }
+					field={ services }
+					checks={ [ 'non-empty' ] }
 					isRequired
 				>
 					<ServicesSelector
@@ -153,6 +155,8 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'What products do you work with?' ) }
 					error={ validationError.products }
+					field={ products }
+					checks={ [ 'non-empty' ] }
 					isRequired
 				>
 					<ProductsSelector
