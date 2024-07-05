@@ -22,12 +22,7 @@ const SiteMigrationInstructions: Step = function () {
 
 	const site = useSite();
 	const siteId = site?.ID;
-	const {
-		detailedStatus,
-		// migrationKey,
-		// completed: isSetupCompleted,
-		// error: setupError,
-	} = usePrepareSiteForMigration( siteId );
+	const { detailedStatus } = usePrepareSiteForMigration( siteId );
 
 	const sidebar = (
 		<Sidebar>
