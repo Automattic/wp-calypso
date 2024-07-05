@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { SiteDetails, Plans } from '@automattic/data-stores';
+import { Plans } from '@automattic/data-stores';
 import { useHasEnTranslation, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -10,26 +10,11 @@ import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import PlanNoticeCreditUpgrade from 'calypso/my-sites/plans-features-main/components/plan-notice-credit-update';
 import UpgradePlanDetails from './upgrade-plan-details';
-import type { PlanSlug } from '@automattic/calypso-products';
-
 import './style.scss';
+import withMigrationSticker from './with-migration-sticker';
+import type { UpgradePlanProps } from './types';
 
-interface Props {
-	site: SiteDetails;
-	isBusy: boolean;
-	ctaText: string;
-	subTitleText?: string;
-	hideTitleAndSubTitle?: boolean;
-	onFreeTrialClick?: () => void;
-	navigateToVerifyEmailStep: () => void;
-	onCtaClick: () => void;
-	onContentOnlyClick?: () => void;
-	trackingEventsProps?: Record< string, unknown >;
-	hideFreeMigrationTrialForNonVerifiedEmail?: boolean;
-	visiblePlan?: PlanSlug;
-}
-
-export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
+const WrappedComponent: React.FunctionComponent< UpgradePlanProps > = ( props ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const plan = getPlan( PLAN_BUSINESS );
@@ -202,3 +187,5 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		</div>
 	);
 };
+
+export const UpgradePlan = withMigrationSticker( WrappedComponent );

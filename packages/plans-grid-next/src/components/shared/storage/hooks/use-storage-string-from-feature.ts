@@ -7,21 +7,53 @@ import {
 	FEATURE_P2_3GB_STORAGE,
 	FEATURE_P2_13GB_STORAGE,
 	PRODUCT_1GB_SPACE,
-	PlanSlug,
 	WPComPlanStorageFeatureSlug,
 } from '@automattic/calypso-products';
 import { Purchases, AddOns } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
+
+const getIntegerVolume = (
+	storageSlug?: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug
+) => {
+	switch ( storageSlug ) {
+		case FEATURE_1GB_STORAGE:
+			return 1;
+		case FEATURE_6GB_STORAGE:
+			return 6;
+		case FEATURE_13GB_STORAGE:
+			return 13;
+		case FEATURE_50GB_STORAGE:
+			return 50;
+		case FEATURE_P2_3GB_STORAGE:
+			return 3;
+		case FEATURE_P2_13GB_STORAGE:
+			return 13;
+		// TODO: Remove when upgradeable storage is released in plans 2023
+		case FEATURE_200GB_STORAGE:
+			return 200;
+		case AddOns.ADD_ON_50GB_STORAGE:
+			/**
+			 * Displayed string is: purchased storage + default 50GB storage + Add-On
+			 * TODO: the default 50GB should be coming from plan context, not hardcoded here
+			 */
+			return 100;
+		case AddOns.ADD_ON_100GB_STORAGE:
+			/**
+			 * Displayed string is: purchased storage + default 50GB storage + Add-On
+			 * TODO: the default 50GB should be coming from plan context, not hardcoded here
+			 */
+			return 150;
+		default:
+			return 0;
+	}
+};
 
 const useStorageStringFromFeature = ( {
 	storageSlug,
 	siteId,
-	planSlug,
 }: {
 	storageSlug?: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	siteId?: null | number | string;
-	planSlug: PlanSlug;
 } ) => {
 	const translate = useTranslate();
 	const spaceUpgradesPurchased = Purchases.useSitePurchasesByProductSlug( {
@@ -34,54 +66,11 @@ const useStorageStringFromFeature = ( {
 		  }, 0 )
 		: 0;
 
-	switch ( storageSlug ) {
-		case FEATURE_1GB_STORAGE:
-			return translate( '1 GB' );
-		case FEATURE_6GB_STORAGE:
-			return translate( '6 GB' );
-		case FEATURE_13GB_STORAGE:
-			return translate( '13 GB' );
-		case FEATURE_50GB_STORAGE:
-			/**
-			 * TODO: Don't do this here. Diverge and show the version with the green pricing next
-			 */
-			return translate( '%(quantity)d GB', {
-				args: {
-					quantity: ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
-						? purchasedQuantityTotal + 50
-						: 50,
-				},
-			} );
-		case FEATURE_P2_3GB_STORAGE:
-			return translate( '3 GB' );
-		case FEATURE_P2_13GB_STORAGE:
-			return translate( '13 GB' );
-		// TODO: Remove when upgradeable storage is released in plans 2023
-		case FEATURE_200GB_STORAGE:
-			return translate( '200 GB' );
-		case AddOns.ADD_ON_50GB_STORAGE:
-			/**
-			 * Displayed string is: purchased storage + default 50GB storage + Add-On
-			 * TODO: the default 50GB should be coming from plan context, not hardcoded here
-			 */
-			return translate( '%(quantity)d GB', {
-				args: {
-					quantity: purchasedQuantityTotal + 50 + 50,
-				},
-			} );
-		case AddOns.ADD_ON_100GB_STORAGE:
-			/**
-			 * Displayed string is: purchased storage + default 50GB storage + Add-On
-			 * TODO: the default 50GB should be coming from plan context, not hardcoded here
-			 */
-			return translate( '%(quantity)d GB', {
-				args: {
-					quantity: purchasedQuantityTotal + 50 + 100,
-				},
-			} );
-		default:
-			return null;
-	}
+	return translate( '%(quantity)d GB', {
+		args: {
+			quantity: purchasedQuantityTotal + getIntegerVolume( storageSlug ),
+		},
+	} );
 };
 
 export default useStorageStringFromFeature;

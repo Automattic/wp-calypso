@@ -15,9 +15,12 @@ import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
 import { type TranslateResult, useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect, type PropsWithChildren } from 'react';
+import { useState, useEffect, type PropsWithChildren } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
+import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
+import { Skeleton } from './skeleton';
+import { UpgradePlanDetailsProps } from './types';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
@@ -194,13 +197,7 @@ const preparePlanPriceOfferProps = (
 	};
 };
 
-interface Props {
-	children: React.ReactNode;
-	introOfferAvailable: boolean;
-	pricing?: SitePlanPricing;
-}
-
-export const UpgradePlanDetails = ( props: Props ) => {
+export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	const translate = useTranslate();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ showFeatures, setShowFeatures ] = useState( false );
@@ -209,6 +206,9 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	>( PLAN_BUSINESS );
 
 	const { children, pricing, introOfferAvailable } = props;
+
+	const { list: upgradePlanHostingDetailsList, isFetching: isFetchingHostingDetails } =
+		useUpgradePlanHostingDetailsList();
 
 	const plan = getPlan( selectedPlan );
 
@@ -228,6 +228,14 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	useEffect( () => {
 		plan && plan.getPathSlug && setSelectedPlanSlug( plan.getPathSlug() );
 	}, [ plan ] );
+
+	if (
+		isFetchingHostingDetails ||
+		typeof pricing?.originalPrice.monthly !== 'number' ||
+		! pricing.currencyCode
+	) {
+		return <Skeleton />;
+	}
 
 	return (
 		<div className="import__upgrade-plan-details">
@@ -276,7 +284,9 @@ export const UpgradePlanDetails = ( props: Props ) => {
 						/>
 					</div>
 				</div>
-				<UpgradePlanHostingDetails />
+				<UpgradePlanHostingDetails
+					upgradePlanHostingDetailsList={ upgradePlanHostingDetailsList }
+				/>
 			</div>
 		</div>
 	);

@@ -3,43 +3,36 @@ import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { UpgradePlanHostingTestimonials } from './constants';
 import cwvtechReportJson from './cwvtech-report.json';
-import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
-import { Skeleton } from './skeleton';
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
+import type { HostingDetailsItem } from './types';
 
-export const UpgradePlanHostingDetails = () => {
+interface Props {
+	upgradePlanHostingDetailsList: Array< HostingDetailsItem >;
+}
+
+export const UpgradePlanHostingDetails: React.FC< Props > = ( {
+	upgradePlanHostingDetailsList,
+} ) => {
 	const translate = useTranslate();
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
-	const { list: upgradePlanHostingDetailsList, isFetching } = useUpgradePlanHostingDetailsList();
 
-	let hostingDetailsItems = null;
-
-	if ( isFetching ) {
-		hostingDetailsItems = Array.from( { length: 3 } ).map( ( _, index ) => (
-			<li key={ index } className="import__upgrade-plan-hosting-details-list-loading">
-				<Skeleton width="60%" />
-				<Skeleton height="15px" />
+	const hostingDetailsItems = upgradePlanHostingDetailsList.map(
+		( { title, description, icon }, i ) => (
+			<li key={ i }>
+				<Icon
+					className="import__upgrade-plan-hosting-details-list-icon"
+					icon={ icon }
+					size={ 24 }
+				/>
+				<div className="import__upgrade-plan-hosting-details-list-stats">
+					<p className="import__upgrade-plan-hosting-details-list-stats-title">{ title }</p>
+					<span className="import__upgrade-plan-hosting-details-list-stats-description">
+						{ description }
+					</span>
+				</div>
 			</li>
-		) );
-	} else {
-		hostingDetailsItems = upgradePlanHostingDetailsList.map(
-			( { title, description, icon }, i ) => (
-				<li key={ i }>
-					<Icon
-						className="import__upgrade-plan-hosting-details-list-icon"
-						icon={ icon }
-						size={ 24 }
-					/>
-					<div className="import__upgrade-plan-hosting-details-list-stats">
-						<p className="import__upgrade-plan-hosting-details-list-stats-title">{ title }</p>
-						<span className="import__upgrade-plan-hosting-details-list-stats-description">
-							{ description }
-						</span>
-					</div>
-				</li>
-			)
-		);
-	}
+		)
+	);
 
 	const boostPercentage = Math.round(
 		( cwvtechReportJson[ 'WordPress.com' ].goodCWM - cwvtechReportJson[ 'WordPress' ].goodCWM ) *

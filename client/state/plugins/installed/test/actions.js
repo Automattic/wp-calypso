@@ -666,6 +666,7 @@ describe( 'actions', () => {
 				action: INSTALL_PLUGIN,
 				siteId: 2916284,
 				pluginId: 'fake/fake',
+				data: {},
 				error: expect.objectContaining( { message: 'Plugin file does not exist.' } ),
 			} );
 		} );

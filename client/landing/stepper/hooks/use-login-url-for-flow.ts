@@ -14,6 +14,7 @@ export function useLoginUrlForFlow( { flow }: UseLoginUrlForFlowProps ): string 
 	const location = useLocation();
 	const { siteId, siteSlug } = useSiteData();
 	const path = useHref( location.pathname );
+	const { extraQueryParams } = flow.useLoginParams?.() ?? {};
 
 	const redirectTo = addQueryArgs( path, {
 		...( locale && locale !== 'en' ? { locale } : {} ),
@@ -27,5 +28,6 @@ export function useLoginUrlForFlow( { flow }: UseLoginUrlForFlowProps ): string 
 		pageTitle: flow.title,
 		locale,
 		redirectTo,
+		extra: extraQueryParams,
 	} );
 }

@@ -221,6 +221,13 @@ $business-plan-color: #7f54b3;
 	.import__upgrade-plan-details {
 		margin-top: 2.5rem;
 		margin-bottom: 2.5rem;
+
+		&.import__upgrade-plan-details--loading {
+			.import__upgrade-plan-features-container,
+			.import__upgrade-plan-hosting-details .import__upgrade-plan-hosting-details-card-container {
+				gap: 0;
+			}
+		}
 	}
 
 	.import__upgrade-plan-refund-sub-text {
@@ -370,10 +377,6 @@ $business-plan-color: #7f54b3;
 					&:last-child {
 						margin-bottom: 0;
 					}
-				}
-
-				.import__upgrade-plan-hosting-details-list-loading {
-					flex-direction: column;
 				}
 
 				.import__upgrade-plan-hosting-details-list-icon {

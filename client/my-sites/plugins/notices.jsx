@@ -821,6 +821,14 @@ class PluginNotices extends Component {
 							}
 						);
 
+					case 'server_error_during_activation':
+						return translate(
+							'Error activating %(plugin)s on %(site)s because it triggered a fatal error. As a safety measure, the plugin is installed but remains deactivated.',
+							{
+								args: translateArg,
+							}
+						);
+
 					default:
 						if ( additionalExplanation ) {
 							translateArg.additionalExplanation = additionalExplanation;

@@ -13,73 +13,25 @@
 	font-weight: 400;
 	line-height: 1.4;
 	margin-block-end: 24px;
-
-	ul {
-		padding: 0;
-		margin: 16px 0 0;
-		list-style-type: none;
-
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-
-		li {
-			display: flex;
-			flex-direction: row;
-			gap: 4px;
-			align-items: center;
-
-			margin: 0;
-			padding: 0;
-		}
-	}
-
-	.gridicon {
-		fill: var(--color-primary-30);
-	}
 }
 
-.a4a-connection-modal__actions {
+.a4a-connection-modal__input-container {
 	display: flex;
-	flex-direction: row;
 	gap: 16px;
-}
+	align-items: flex-end;
+	flex-direction: column;
 
-.a4a-connection-modal__download-button {
-	font-size: rem(12px);
-
-	.gridicon {
-		display: inline-block;
-		margin-inline-start: 8px;
-		margin-block-start: -6px;
-	}
-}
-
-.a4a-connection-modal__learn-more-link {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	gap: 4px;
-	font-size: rem(12px);
-	padding: 4px 12px;
-
-	&,
-	&:hover,
-	&:visited {
-		color: var(--color-text);
-		fill: var(--color-text);
+	.form-fieldset {
+		margin: 0;
+		width: 70%;
 	}
 
-	span {
-		text-decoration: underline;
+	.button {
+		flex-grow: 1;
 	}
 
-	&:focus-visible {
-		border-color: var(--color-primary);
-		border-radius: 4px;
-		box-shadow: 0 0 0 2px var(--color-primary-10);
-		outline: none;
+	@include break-small {
+
+		flex-direction: row;
 	}
 }

@@ -22,7 +22,9 @@ interface Props {
 	signupDependencies: {
 		segmentationSurveyAnswers: SurveyData;
 		onboardingSegment: string;
+		trailMapExperimentVariant: string;
 	};
+	initialContext: { [ key: string ]: any };
 	stepSectionName: string | undefined;
 }
 
@@ -45,6 +47,7 @@ export default function InitialIntentStep( props: Props ) {
 		signupDependencies,
 		flowName,
 		stepSectionName: currentPageString,
+		initialContext,
 	} = props;
 	const currentPage = currentPageString ? Number( currentPageString ) : 1;
 	const currentAnswers = signupDependencies.segmentationSurveyAnswers || {};
@@ -53,6 +56,7 @@ export default function InitialIntentStep( props: Props ) {
 	const subHeaderText = translate(
 		'This will help us tailor your onboarding experience to your needs.'
 	);
+	const trailMapExperimentVariant = initialContext?.trailMapExperimentVariant;
 
 	const { recordStartEvent, recordCompleteEvent } = useSegmentationSurveyTracksEvents(
 		GUIDED_FLOW_SEGMENTATION_SURVEY_KEY
@@ -110,6 +114,7 @@ export default function InitialIntentStep( props: Props ) {
 			{
 				segmentationSurveyAnswers: updatedAnswers,
 				onboardingSegment: segment,
+				trailMapExperimentVariant,
 			}
 		);
 
