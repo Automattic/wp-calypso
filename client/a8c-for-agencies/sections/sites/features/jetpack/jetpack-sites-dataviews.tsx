@@ -435,7 +435,6 @@ export const JetpackSitesDataViews = ( {
 			isLoading,
 			openSitePreviewPane,
 			renderField,
-			isNotProduction,
 			isLargeScreen,
 			onRefetchSite,
 		]
