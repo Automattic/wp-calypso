@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSidebarIsCollapsed,
@@ -34,6 +35,8 @@ export const MySitesSidebarUnifiedBody = ( {
 	// since WP Admin is considered a separate area from Calypso on those sites.
 	const shouldOpenExternalLinksInCurrentTab = ! isJetpack || isSiteAtomic;
 
+	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, siteId ) );
+
 	return (
 		<>
 			{ menuItems &&
@@ -42,6 +45,12 @@ export const MySitesSidebarUnifiedBody = ( {
 						( item?.url && itemLinkMatches( item.url, path ) ) ||
 						// Keep the Sites icon selected when there is a selected site.
 						( item.slug === 'sites' && site );
+
+					// Email is not available for P2 sites, so we don't show the
+					// 'My Mailboxes' menu item.
+					if ( isP2 && 'My Mailboxes' === item.title ) {
+						return;
+					}
 
 					if ( 'current-site' === item?.type ) {
 						return (
