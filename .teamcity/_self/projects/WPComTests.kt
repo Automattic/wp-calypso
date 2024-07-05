@@ -359,7 +359,8 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 }
 
 fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
-	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
+	// Temporarily removed php-old and php-new from this list pending rename of the blogs. See p1720019588866209-slack-C05Q5HSS013.
+	val atomicVariations = listOf("default", "wp-beta", "wp-previous", "private", "ecomm-plan")
 
 	return BuildType({
 		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")

@@ -27,6 +27,7 @@ class StatsGeochart extends Component {
 		data: PropTypes.array,
 		kind: PropTypes.string,
 		postId: PropTypes.number,
+		skipQuery: PropTypes.bool,
 		isLoading: PropTypes.bool,
 	};
 
@@ -166,7 +167,7 @@ class StatsGeochart extends Component {
 	};
 
 	render() {
-		const { siteId, statType, query, data, kind, isLoading } = this.props;
+		const { siteId, statType, query, data, kind, skipQuery, isLoading } = this.props;
 		// Only pass isLoading when kind is email.
 		const isGeoLoading = kind === 'email' ? isLoading : ! data || ! this.state.visualizationsLoaded;
 		const classes = clsx( 'stats-geochart', {
@@ -176,7 +177,7 @@ class StatsGeochart extends Component {
 
 		return (
 			<>
-				{ siteId && kind === 'site' && (
+				{ ! skipQuery && siteId && kind === 'site' && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 

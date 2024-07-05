@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -13,11 +14,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
-import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import { StatsEmptyActionSocial } from '../shared';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatsReferres: React.FC< StatsDefaultModuleProps > = ( {
+const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -27,8 +28,10 @@ const StatsReferres: React.FC< StatsDefaultModuleProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsReferrers';
 
-	// TODO: sort out the state shape.
-	const requesting = useSelector( ( state: StatsStateProps ) =>
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsModule = useShouldGateStats( statType );
+
+	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
@@ -37,12 +40,32 @@ const StatsReferres: React.FC< StatsDefaultModuleProps > = ( {
 
 	return (
 		<>
-			{ siteId && statType && (
+			{ ! shouldGateStatsModule && siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
-			{ /* This will be replaced with ghost loaders, fallback to the current implementation until then. */ }
-			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
+			{ isRequestingData && (
+				<StatsCardSkeleton
+					isLoading={ isRequestingData }
+					className={ className }
+					title={ moduleStrings.title }
+					type={ 2 }
+				/>
+			) }
+			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
+				// show data or an overlay
+				<StatsModule
+					path="referrers"
+					moduleStrings={ moduleStrings }
+					period={ period }
+					query={ query }
+					statType={ statType }
+					showSummaryLink
+					className={ className }
+					skipQuery
+				/>
+			) }
+			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
+				// show empty state
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ moduleStrings.title }
@@ -65,20 +88,8 @@ const StatsReferres: React.FC< StatsDefaultModuleProps > = ( {
 					}
 				/>
 			) }
-			{ /* TODO: consider supressing <StatsModule /> empty state */ }
-			{ data && !! data.length && (
-				<StatsModule
-					path="referrers"
-					moduleStrings={ moduleStrings }
-					period={ period }
-					query={ query }
-					statType={ statType }
-					showSummaryLink
-					className={ className } // TODO: extend with a base class after adding skeleton loaders
-				/>
-			) }
 		</>
 	);
 };
 
-export default StatsReferres;
+export default StatsReferrers;

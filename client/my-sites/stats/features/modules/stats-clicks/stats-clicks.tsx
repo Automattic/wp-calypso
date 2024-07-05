@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
@@ -14,10 +15,10 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
-import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
+const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -27,7 +28,10 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsClicks';
 
-	const requesting = useSelector( ( state: StatsStateProps ) =>
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsModule = useShouldGateStats( statType );
+
+	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
@@ -36,11 +40,32 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 
 	return (
 		<>
-			{ siteId && statType && (
+			{ ! shouldGateStatsModule && siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
-			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
+			{ isRequestingData && (
+				<StatsCardSkeleton
+					isLoading={ isRequestingData }
+					className={ className }
+					title={ moduleStrings.title }
+					type={ 3 }
+				/>
+			) }
+			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
+				// show data or an overlay
+				<StatsModule
+					path="clicks"
+					moduleStrings={ moduleStrings }
+					period={ period }
+					query={ query }
+					statType={ statType }
+					showSummaryLink
+					className={ className }
+					skipQuery
+				/>
+			) }
+			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
+				// show empty state
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ translate( 'Clicks' ) }
@@ -60,23 +85,10 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 							) }
 						/>
 					}
-				>
-					<></>
-				</StatsCard>
-			) }
-			{ data && !! data.length && (
-				<StatsModule
-					path="clicks"
-					moduleStrings={ moduleStrings }
-					period={ period }
-					query={ query }
-					statType={ statType }
-					showSummaryLink
-					className={ className }
-				></StatsModule>
+				/>
 			) }
 		</>
 	);
 };
 
-export default StatClicks;
+export default StatsClicks;

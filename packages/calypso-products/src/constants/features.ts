@@ -487,23 +487,3 @@ export const FEATURE_TYPE_JETPACK_SCAN = 'jetpack_scan';
 export const FEATURE_TYPE_JETPACK_SEARCH = 'jetpack_search';
 export const FEATURE_TYPE_JETPACK_STATS = 'jetpack_stats';
 export const FEATURE_TYPE_JETPACK_VIDEOPRESS = 'jetpack_videopress';
-
-//Trail Map Specific new features
-export const FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS = 'pre_installed_ecommerce_plugins';
-export const FEATURE_20_PREMIUM_THEMES = '20_premium_themes';
-export const FEATURE_48_PREMIUM_THEMES = '48_premium_themes';
-export const FEATURE_AD_SUPPORTED_EXPERIENCE = 'ad_experience';
-export const FEATURE_REAL_TIME_STATS = 'real_time_stats';
-export const FEATURE_AUTOMATED_BURST_SCALING = 'automated_burst_scaling';
-export const FEATURE_DATABASE_ACCESS = 'database_access';
-export const FEATURE_DEVELOPER_TOOLS = 'developer_tools';
-export const FEATURE_DYNAMIC_PRODUCT_UPSELLS = 'dynamic_product_upsells';
-export const FEATURE_FREE_MIGRATIONS = 'free_migrations';
-export const FEATURE_FULL_DATA_CENTER_REDUNDANCIES = 'full_data_center_redundancies';
-export const FEATURE_GITHUB_DEPLOYMENTS = 'github_deployments';
-export const FEATURE_HELP_CENTER_SUPPORT = 'help_center_support';
-export const FEATURE_LIMITED_STATS = 'limited_stats';
-export const FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT = 'local_development_environment';
-export const FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS = 'pre_installed_security_perf_plugins';
-export const FEATURE_WEB_SERVER_SETTINGS = 'web_server_settings';
-export const FEATURE_1_WEBSITE = '1_website';

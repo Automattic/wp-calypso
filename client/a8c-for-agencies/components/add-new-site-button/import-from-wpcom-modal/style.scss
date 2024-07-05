@@ -1,0 +1,144 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.import-from-wpcom-modal {
+	max-width: 827px;
+	max-height: 100%;
+	margin: 0;
+
+	.components-modal__content {
+		padding: 0;
+
+		> div {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 100%;
+			position: relative;
+		}
+	}
+
+	@include break-medium {
+		margin: auto;
+	}
+}
+
+.import-from-wpcom-modal__main {
+	padding: 20px;
+	gap: 8px;
+	display: flex;
+	flex-direction: column;
+	height: 680px;
+
+	@include break-large {
+		width: 800px;
+		padding: 40px;
+	}
+}
+
+.import-from-wpcom-modal__title {
+	@include a4a-font-heading-lg;
+	margin: 0;
+	padding: 0;
+}
+
+p.import-from-wpcom-modal__instruction {
+	@include a4a-font-body-sm;
+	margin: 0;
+	color: var(--color-accent-60);
+}
+
+.import-from-wpcom-modal__footer {
+	padding: 24px 40px;
+	text-align: right;
+	border-radius: 4px;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background: var(--color-light-backdrop);
+
+	.button {
+		margin-inline-end: 8px;
+	}
+}
+
+.import-from-wpcom-modal__close-button {
+	position: absolute;
+	inset-inline-end: 1rem;
+	inset-block-start: 1rem;
+	cursor: pointer;
+	transition: scale 0.2s ease-in;
+	max-height: 24px;
+
+	&:hover {
+		scale: 1.2;
+	}
+
+	&:focus-visible {
+		border-color: var(--color-primary);
+		outline: none;
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		border-radius: 4px;
+	}
+}
+
+.wpcom-sites-table.redesigned-a8c-table {
+	margin-block-start: 24px;
+
+	.dataviews-wrapper tr.dataviews-view-table__row {
+		.components-checkbox-control__input {
+			opacity: 1;
+		}
+
+		.components-checkbox-control__label {
+			cursor: pointer;
+		}
+
+		td {
+			border-bottom: none;
+			padding-block: 8px;
+		}
+	}
+
+	.dataviews-view-table {
+		padding-block-end: 60px;
+	}
+
+	.a4a-text-placeholder {
+		margin-block: 32px;
+	}
+
+	.wpcom-sites-table__icon {
+		width: 24px;
+		height: 24px;
+	}
+}
+
+.wpcom-sites-table__site-mobile {
+	display: inline-flex;
+	align-items: center;
+
+	.wpcom-sites-table__icon {
+		margin-inline-end: 8px;
+	}
+
+	span {
+		@include a4a-font-body-sm;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 215px;
+
+		@include break-mobile {
+			max-width: 370px;
+		}
+
+		@include break-small {
+			max-width: 400px;
+		}
+
+		@include break-large {
+			max-width: unset;
+		}
+	}
+}

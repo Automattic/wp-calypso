@@ -8,35 +8,57 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
+import { useSelector } from 'calypso/state';
 import {
 	PURCHASES_SITE_FETCH,
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_SITE_FETCH_FAILED,
 } from 'calypso/state/action-types';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getApiNamespace, getApiPath } from '../lib/get-api';
 
-async function queryOdysseyQuerySitePurchases( siteId: number | null ) {
+async function queryOdysseyQuerySitePurchases(
+	siteId: number | null,
+	shouldUseStatsBuiltInPurchasesApi: boolean
+) {
 	if ( ! siteId ) {
 		return;
 	}
 
-	return wpcom.req
-		.get( {
-			path: getApiPath( '/site/purchases', { siteId } ),
-			apiNamespace: getApiNamespace(),
-		} )
-		.then( ( res: { data: string } ) => JSON.parse( res.data ) )
-		.catch( ( error: APIError ) => error );
+	const apiPath = shouldUseStatsBuiltInPurchasesApi
+		? `/sites/${ siteId }/purchases`
+		: '/site/purchases';
+	const apiNamespace = shouldUseStatsBuiltInPurchasesApi ? 'jetpack/v4/stats-app' : 'jetpack/v4';
+
+	return (
+		wpcom.req
+			.get( {
+				path: getApiPath( apiPath, { siteId } ),
+				apiNamespace: getApiNamespace( apiNamespace ),
+			} )
+			// Endpoint `site/purchases` returns a stringified JSON object as data.
+			// Our own endpoint `/sites/${ siteId }/purchases` returns a JSON object.
+			.then( ( res: { data: string } ) => {
+				if ( res?.data ) {
+					return JSON.parse( res.data );
+				}
+				return res ? res : [];
+			} )
+			.catch( ( error: APIError ) => error )
+	);
 }
 /**
  * Update site products in the Redux store by fetching purchases via API for Odyssey Stats.
  */
 
-const useOdysseyQuerySitePurchases = ( siteId: number | null ) => {
+const useOdysseyQuerySitePurchases = (
+	siteId: number | null,
+	shouldUseStatsBuiltInPurchasesApi = false
+) => {
 	return useQuery( {
 		...getDefaultQueryParams(),
 		queryKey: [ 'odyssey-stats', 'site-purchases', siteId ],
-		queryFn: () => queryOdysseyQuerySitePurchases( siteId ),
+		queryFn: () => queryOdysseyQuerySitePurchases( siteId, shouldUseStatsBuiltInPurchasesApi ),
 		staleTime: 10 * 1000,
 		// If the module is not active, we don't want to retry the query.
 		retry: false,
@@ -44,11 +66,14 @@ const useOdysseyQuerySitePurchases = ( siteId: number | null ) => {
 };
 
 export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number | null } ) {
+	const { shouldUseStatsBuiltInPurchasesApi } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
 	const {
 		data: purchases,
 		isFetching,
 		isError: hasOtherErrors,
-	} = useOdysseyQuerySitePurchases( siteId );
+	} = useOdysseyQuerySitePurchases( siteId, shouldUseStatsBuiltInPurchasesApi );
 	const reduxDispatch = useDispatch();
 
 	useEffect( () => {
@@ -63,6 +88,7 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 		}
 
 		if ( isError( purchases ) || hasOtherErrors ) {
+			// As `site/purchases` are still in use for legacy versions, so we still need to feed it with data.
 			if ( ( purchases as APIError ).status !== 403 ) {
 				// Dispatch to the Purchases reducer for error status
 				reduxDispatch( {
@@ -88,7 +114,7 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 			reduxDispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
-				purchases: purchases,
+				purchases,
 			} );
 		}
 	}, [ purchases, isFetching, reduxDispatch, hasOtherErrors, siteId ] );
