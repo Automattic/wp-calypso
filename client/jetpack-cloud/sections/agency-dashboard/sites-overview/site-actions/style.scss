@@ -27,7 +27,7 @@
 	color: var(--studio-gray-40);
 	margin: 0 0.1em;
 }
-a.site-actions__menu-item {
+.site-actions__menu-item {
 	margin: 0 -1px;
 	border-style: solid;
 	border-color: var(--studio-gray-5);
@@ -40,13 +40,24 @@ a.site-actions__menu-item {
 	align-items: center;
 	padding: 0 16px;
 	min-width: 200px;
+
+	&.is-error {
+		color: var(--color-error);
+
+		svg.gridicon {
+			fill: var(--color-error);
+		}
+	}
+
 	&:last-child {
 		margin-bottom: 5px;
 		border-bottom-width: 0;
 	}
+
 	&:first-child {
 		margin-top: 5px;
 	}
+
 	&:hover,
 	&:focus {
 		border-style: solid;
