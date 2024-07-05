@@ -49,6 +49,10 @@ export const MarketingTools: FunctionComponent = () => {
 		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
 	};
 
+	const handleMailchimpClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_mailchimp_button_click' );
+	};
+
 	const handleVerblioClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_verblio_button_click' );
 	};
@@ -106,6 +110,23 @@ export const MarketingTools: FunctionComponent = () => {
 						target="_blank"
 					>
 						{ translate( 'Create a logo' ) }
+					</Button>
+				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
+					title={ translate( 'Grow your business with Mailchimp' ) }
+					description={ translate(
+						'Create newsletters, automate your email and SMS marketing campaigns, track your subscriber activity, and target your customers with personalized messages. Enhance your site and build long-term relationships with your audience.'
+					) }
+					imagePath="/calypso/images/marketing/mailchimp-logo.svg"
+					imageAlt={ translate( 'Mailchimp logo' ) }
+				>
+					<Button
+						onClick={ handleMailchimpClick }
+						href="https://mailchimp.com/pricing/marketing/"
+						target="_blank"
+					>
+						{ translate( 'Get started today' ) }
 					</Button>
 				</MarketingToolsFeature>
 
