@@ -80,7 +80,7 @@ export default function JetpackConnectionModal( { onClose }: Props ) {
 					primary
 					onClick={ onInstallJetpack }
 					disabled={ ! isValidURL( site ) }
-					href={ ` https://wordpress.com/jetpack/connect?url=${ site }` }
+					href={ ` https://wordpress.com/jetpack/connect?url=${ site }&source=a8c-for-agencies` }
 					target="_blank"
 					rel="noreferrer noopener"
 				>
