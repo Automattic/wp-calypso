@@ -1,62 +1,84 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
+import { useDebounce } from 'use-debounce';
+import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { getRandomSiteBaseUrl } from './use-random-site-name';
+
+import './style.scss';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
 
-const checkSiteAvailability = async ( siteName: string ) => {
-	// To do: check site availability on the server
-	if ( siteName ) {
-		return true;
-	}
-};
+const checkSiteAvailability = async ( agencyId: number, siteId: number, siteName: string ) => {
+	const response = await wpcom.req.post(
+		{
+			path: `/agency/${ agencyId }/sites/${ siteId }/provision/validate`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ site_name: siteName, domain: 'wordpress.com', type: freeSiteAddressType.BLOG }
+	);
 
-const getRandomSiteName = async () => {
-	const { suggestions } = await wpcom.req.get( {
-		apiNamespace: 'wpcom/v2',
-		path: `/site-suggestions`,
-	} );
-	const { title } = suggestions[ 0 ];
-
-	const { body: urlSuggestions } = await wpcom.req.get( {
-		apiNamespace: 'rest/v1.1',
-		path: `/domains/suggestions?http_envelope=1&query=${ title }&quantity=10&include_wordpressdotcom=true&include_dotblogsubdomain=false&only_wordpressdotcom=true&vendor=dot&managed_subdomain_quantity=0`,
-	} );
-
-	for ( const { domain_name } of urlSuggestions ) {
-		const siteName = domain_name.split( '.' )[ 0 ];
-		const isAvailable = await checkSiteAvailability( siteName );
-		if ( isAvailable ) {
-			return siteName;
-		}
+	if ( ! response.valid ) {
+		const siteNameSuggestion = await getRandomSiteBaseUrl( siteName );
+		return { siteNameSuggestion, valid: false };
 	}
 
-	// If all 10 urlSuggestions are taken (very unlikely) return empty '' name as falback
-	return '';
+	return response;
 };
 
-export const useRandomSiteName = () => {
-	const [ randomSiteName, setRandomSiteName ] = useState( '' );
-	const [ isRandomSiteNameLoading, setIsRandomSiteNameLoading ] = useState( true );
+const useCheckSiteAvailability = (
+	siteId: number,
+	siteName: string,
+	skipAvailability: boolean
+) => {
+	const agencyId = useSelector( getActiveAgencyId );
+	const [ availabilityState, setAvilabilityState ] = useState( {
+		isSiteNameAvailiable: true,
+		isCheckingSiteAvailability: false,
+		siteNameSuggestion: '',
+	} );
+
 	useEffect( () => {
-		getRandomSiteName()
-			.then( ( randomSiteName ) => {
-				setRandomSiteName( randomSiteName );
-				setIsRandomSiteNameLoading( false );
-			} )
-			.catch( () => {
-				setRandomSiteName( '' );
-				setIsRandomSiteNameLoading( false );
+		if ( skipAvailability ) {
+			setAvilabilityState( {
+				isSiteNameAvailiable: true,
+				isCheckingSiteAvailability: false,
+				siteNameSuggestion: '',
 			} );
-	}, [] );
+			return;
+		}
+		if ( ! agencyId ) {
+			return;
+		}
+		setAvilabilityState( {
+			isSiteNameAvailiable: false,
+			isCheckingSiteAvailability: true,
+			siteNameSuggestion: '',
+		} );
 
-	return { randomSiteName, isRandomSiteNameLoading };
+		checkSiteAvailability( agencyId, siteId, siteName ).then( ( result ) => {
+			setAvilabilityState( {
+				isSiteNameAvailiable: result.valid,
+				isCheckingSiteAvailability: false,
+				siteNameSuggestion: result.siteNameSuggestion,
+			} );
+		} );
+	}, [ agencyId, siteId, siteName, skipAvailability ] );
+
+	return availabilityState;
 };
 
-export const useSiteName = ( randomSiteName: string, isRandomSiteNameLoading: boolean ) => {
+export const useSiteName = (
+	randomSiteName: string,
+	isRandomSiteNameLoading: boolean,
+	siteId: number
+) => {
 	const translate = useTranslate();
 	const [ siteName, setSiteName ] = useState( randomSiteName );
+	const [ debouncedSiteName ] = useDebounce( siteName, 500 );
 	const specialCharValidationErrorMessage = useMemo(
 		() => translate( 'Your site address can only contain letters and numbers.' ),
 		[ translate ]
@@ -90,7 +112,48 @@ export const useSiteName = ( randomSiteName: string, isRandomSiteNameLoading: bo
 		validationMessage = lengthValidationErrorMessage;
 	}
 
-	const showValidationMessage = !! validationMessage && ! isRandomSiteNameLoading;
+	const isDebouncingSiteName = siteName !== debouncedSiteName;
+	const skipAvailability =
+		validationMessage || isDebouncingSiteName || debouncedSiteName === randomSiteName;
 
-	return { siteName, setSiteName, validationMessage, showValidationMessage };
+	const { isCheckingSiteAvailability, isSiteNameAvailiable, siteNameSuggestion } =
+		useCheckSiteAvailability( siteId, debouncedSiteName, !! skipAvailability );
+
+	if ( ! isSiteNameAvailiable && ! isCheckingSiteAvailability && ! isDebouncingSiteName ) {
+		validationMessage = translate(
+			'Sorry, that address is taken. How about{{nbsp /}}{{button}}%s{{/button}}?',
+			{
+				args: [ siteNameSuggestion ],
+				components: {
+					nbsp: <>&nbsp;</>,
+					button: (
+						<button
+							onClick={ () => setSiteName( siteNameSuggestion ) }
+							className="configure-your-site-modal-form__site-name-suggestion"
+						/>
+					),
+				},
+			}
+		);
+	}
+
+	const showValidationMessage =
+		!! validationMessage && ! isRandomSiteNameLoading && ! isCheckingSiteAvailability;
+
+	const isSiteNameReadyForUse =
+		isSiteNameAvailiable &&
+		! showValidationMessage &&
+		! isDebouncingSiteName &&
+		! isCheckingSiteAvailability &&
+		! isRandomSiteNameLoading;
+
+	return {
+		siteName,
+		setSiteName,
+		isSiteNameReadyForUse,
+		validationMessage,
+		showValidationMessage,
+		isCheckingSiteAvailability,
+		isDebouncingSiteName,
+	};
 };
