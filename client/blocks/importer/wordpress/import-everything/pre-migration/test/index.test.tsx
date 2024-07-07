@@ -1,9 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { Provider } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
@@ -15,6 +17,7 @@ import getSiteCredentialsRequestStatus from 'calypso/state/selectors/get-site-cr
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import { useUpgradePlanHostingDetailsList } from '../../../upgrade-plan/hooks/use-get-upgrade-plan-hosting-details-list';
 import PreMigration from '../index';
 
 const user = {
@@ -54,6 +57,7 @@ jest.mock( 'calypso/data/plans/use-check-eligibility-migration-trial-plan' );
 jest.mock( 'calypso/state/user-settings/selectors' );
 jest.mock( 'calypso/state/selectors/get-user-setting' );
 jest.mock( 'calypso/state/selectors/get-site-credentials-request-status' );
+jest.mock( '../../../upgrade-plan/hooks/use-get-upgrade-plan-hosting-details-list' );
 
 function renderPreMigrationScreen( props?: any ) {
 	const initialState = getInitialState( initialReducer, user.ID );
@@ -63,6 +67,21 @@ function renderPreMigrationScreen( props?: any ) {
 			currentUser: {
 				user: {
 					...user,
+				},
+			},
+			sites: {
+				...initialState.sites,
+				plans: {
+					[ targetSite.ID as number ]: {
+						data: [
+							{
+								currencyCode: 'USD',
+								productSlug: PLAN_BUSINESS,
+								rawPrice: 0,
+								rawDiscount: 0,
+							},
+						],
+					},
 				},
 			},
 		},
@@ -82,14 +101,16 @@ function renderPreMigrationScreen( props?: any ) {
 }
 
 describe( 'PreMigration', () => {
+	beforeAll( () => {
+		nock.disableNetConnect();
+	} );
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	test( 'should show Upgrade plan screen', () => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		useSiteMigrateInfo.mockReturnValue( {
+	test( 'should show Upgrade plan screen', async () => {
+		( useSiteMigrateInfo as jest.Mock ).mockReturnValue( {
 			sourceSiteId: 777712,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
@@ -97,9 +118,12 @@ describe( 'PreMigration', () => {
 			isInitFetchingDone: true,
 		} );
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		useCheckEligibilityMigrationTrialPlan.mockReturnValue( {
+		( useUpgradePlanHostingDetailsList as jest.Mock ).mockReturnValue( {
+			list: [],
+			isFetching: false,
+		} );
+
+		( useCheckEligibilityMigrationTrialPlan as jest.Mock ).mockReturnValue( {
 			blog_id: 777712,
 			eligible: false,
 		} );
@@ -112,9 +136,11 @@ describe( 'PreMigration', () => {
 			onContentOnlyClick,
 		} );
 
-		expect( screen.getByText( 'Take your site to the next level' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Upgrade and migrate' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'free content-only import option' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'Take your site to the next level' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Upgrade and migrate' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'free content-only import option' ) ).toBeInTheDocument();
+		} );
 
 		// Click on "Use the content-only import option"
 		const button = screen.getByText( 'free content-only import option' );

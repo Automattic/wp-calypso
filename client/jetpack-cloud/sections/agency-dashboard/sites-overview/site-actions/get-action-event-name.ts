@@ -38,6 +38,10 @@ const actionEventNames: ActionEventNames = {
 		large_screen: 'calypso_jetpack_agency_dashboard_hosting_configuration_large_screen',
 		small_screen: 'calypso_jetpack_agency_dashboard_hosting_configuration_small_screen',
 	},
+	remove_site: {
+		large_screen: 'calypso_jetpack_agency_dashboard_remove_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_remove_small_screen',
+	},
 };
 
 // Returns event name based on the action type

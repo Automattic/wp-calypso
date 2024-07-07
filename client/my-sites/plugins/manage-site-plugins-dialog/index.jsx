@@ -22,7 +22,9 @@ export const ManageSitePluginsDialog = ( { isVisible, onClose, plugin } ) => {
 
 	const sites = useSelector( getSelectedOrAllSites );
 	sites.sort( orderByAtomic );
-	const sitesWithoutPlugin = sites.filter(
+
+	const sitesToShow = sites.filter( ( item ) => item && ! item?.options?.is_domain_only );
+	const sitesWithoutPlugin = sitesToShow.filter(
 		( site ) => ! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin.ID === site.ID )
 	);
 
