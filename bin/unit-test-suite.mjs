@@ -58,11 +58,11 @@ const tscCommands = [
 // to result in the fastest overall completion time.
 //
 // --workerIdleMemoryLimit=512MB is added because of https://github.com/jestjs/jest/issues/11956
-const testClient = withUnitTestInfo( 'test-client --maxWorkers=8 --workerIdleMemoryLimit=1GB' );
-const testPackages = withUnitTestInfo( 'test-packages --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
-const testServer = withUnitTestInfo( 'test-server --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
+const testClient = withUnitTestInfo( 'test-client --maxWorkers=8 --workerIdleMemoryLimit=1GB --runInBand' );
+const testPackages = withUnitTestInfo( 'test-packages --maxWorkers=4 --workerIdleMemoryLimit=1GB --runInBand' );
+const testServer = withUnitTestInfo( 'test-server --maxWorkers=4 --workerIdleMemoryLimit=1GB --runInBand' );
 const testBuildTools = withUnitTestInfo(
-	'test-build-tools --maxWorkers=4 --workerIdleMemoryLimit=1GB'
+	'test-build-tools --maxWorkers=4 --workerIdleMemoryLimit=1GB --runInBand'
 );
 // Includes ETK and Odyssey Stats, migrated here from their individual builds.
 const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryLimit=1GB' );
