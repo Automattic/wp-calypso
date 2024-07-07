@@ -58,7 +58,7 @@ const tscCommands = [
 // to result in the fastest overall completion time.
 //
 // --workerIdleMemoryLimit=512MB is added because of https://github.com/jestjs/jest/issues/11956
-const testClient = withUnitTestInfo( 'test-client --runInBand --workerIdleMemoryLimit=1GB' );
+const testClient = withUnitTestInfo( 'test-client --maxWorkers=7 --workerIdleMemoryLimit=1GB' );
 const testPackages = withUnitTestInfo( 'test-packages --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
 const testServer = withUnitTestInfo( 'test-server --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
 const testBuildTools = withUnitTestInfo(
