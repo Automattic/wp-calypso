@@ -18,6 +18,9 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
+import { STAT_TYPE_INSIGHTS } from '../constants';
+import { useShouldGateStats } from '../hooks/use-should-gate-stats';
+import StatsCardUpsell from '../stats-card-upsell';
 import PostCardsGroup from './post-cards-group';
 
 import './style.scss';
@@ -151,13 +154,25 @@ export default function AllTimeHighlightsSection( {
 		};
 	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal, userLocale ] );
 
+	// TODO: Investigate granularity on Insights page.
+	// Do we want to get granular on this page? It's probably not necessary yet.
+	const shouldLockCards = useShouldGateStats( STAT_TYPE_INSIGHTS );
+
 	const highlightCardsMobile = (
 		<div className="highlight-cards-mobile">
 			<h3 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h3>
 			<DotPager>
-				<AllTimeStatsCard infoItems={ infoItems } />
-				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } />
-				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } />
+				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ shouldLockCards } />
+				<MostPopularDayTimeCard
+					cardInfo={ mostPopularTimeItems }
+					siteId={ siteId }
+					isLocked={ shouldLockCards }
+				/>
+				<MostPopularDayTimeCard
+					cardInfo={ bestViewsEverItems }
+					siteId={ siteId }
+					isLocked={ shouldLockCards }
+				/>
 			</DotPager>
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
@@ -167,9 +182,17 @@ export default function AllTimeHighlightsSection( {
 		<div className="highlight-cards">
 			<h3 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h3>
 			<div className="highlight-cards-list">
-				<AllTimeStatsCard infoItems={ infoItems } />
-				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } />
-				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } />
+				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ shouldLockCards } />
+				<MostPopularDayTimeCard
+					cardInfo={ mostPopularTimeItems }
+					siteId={ siteId }
+					isLocked={ shouldLockCards }
+				/>
+				<MostPopularDayTimeCard
+					cardInfo={ bestViewsEverItems }
+					siteId={ siteId }
+					isLocked={ shouldLockCards }
+				/>
 			</div>
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
@@ -209,13 +232,20 @@ type InfoItem = {
 
 type AllTimeStatsCardProps = {
 	infoItems: InfoItem[];
+	siteId: number;
+	isLocked: boolean;
 };
 
-function AllTimeStatsCard( { infoItems }: AllTimeStatsCardProps ) {
+function AllTimeStatsCard( { infoItems, siteId, isLocked }: AllTimeStatsCardProps ) {
 	const translate = useTranslate();
+	const heading = translate( 'All-time stats' );
+	if ( isLocked ) {
+		return <UpsellCard heading={ heading } siteId={ siteId } />;
+	}
+
 	return (
 		<Card className="highlight-card">
-			<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
+			<h4 className="highlight-card-heading">{ heading }</h4>
 			<div className="highlight-card-info-item-list">
 				{ infoItems
 					.filter( ( i ) => ! i.hidden )
@@ -252,9 +282,15 @@ type MostPopularDayTimeCardProps = {
 		heading: string;
 		items: CardInfoItem[];
 	};
+	siteId: number;
+	isLocked: boolean;
 };
 
-function MostPopularDayTimeCard( { cardInfo }: MostPopularDayTimeCardProps ) {
+function MostPopularDayTimeCard( { cardInfo, siteId, isLocked }: MostPopularDayTimeCardProps ) {
+	if ( isLocked ) {
+		return <UpsellCard heading={ cardInfo.heading } siteId={ siteId } />;
+	}
+
 	return (
 		<Card key={ cardInfo.id } className="highlight-card">
 			<h4 className="highlight-card-heading">{ cardInfo.heading }</h4>
@@ -269,6 +305,24 @@ function MostPopularDayTimeCard( { cardInfo }: MostPopularDayTimeCardProps ) {
 					);
 				} ) }
 			</div>
+		</Card>
+	);
+}
+
+type UpsellCardProps = {
+	heading: string;
+	siteId: number;
+};
+
+function UpsellCard( { heading, siteId }: UpsellCardProps ) {
+	return (
+		<Card className="highlight-card">
+			<h4 className="highlight-card-heading">{ heading }</h4>
+			<StatsCardUpsell
+				className="stats-module__upsell"
+				statType="insights-highlights"
+				siteId={ siteId }
+			/>
 		</Card>
 	);
 }
