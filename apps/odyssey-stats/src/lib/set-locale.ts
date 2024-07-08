@@ -9,7 +9,7 @@ const DEFAULT_MOMENT_LOCALE = 'en';
 const SIMPLE_SITE_DEFAULT_LOCALE = 'en';
 const ALWAYS_LOAD_WITH_LOCALE = [ 'pt', 'zh' ];
 /**
- * inlined from 'calypso/my-sites/site-settings/date-time-format/utils' as the moduel import the whole moment-timezone library, which is 755k before gzip.
+ * inlined from 'calypso/my-sites/site-settings/date-time-format/utils' as the module import the whole moment-timezone library, which is 755k before gzip.
  */
 export const phpToMomentMapping = {
 	d: 'DD',
