@@ -252,6 +252,25 @@ body.is-mobile-app-view {
 	transition: all 0.2s ease-in-out;
 	justify-content: center;
 
+	&.has-subitems {
+		display: block;
+	}
+
+	> a {
+		display: flex;
+		align-items: center;
+	}
+
+	.masterbar__item-subitems {
+		margin: 0;
+		padding: 0;
+		box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+		background: #2c3338;
+		display: none;
+		position: absolute;
+		float: none;
+	}
+
 	.masterbar--is-checkout & {
 		height: var(--masterbar-height);
 		line-height: var(--masterbar-height);
@@ -302,6 +321,31 @@ body.is-mobile-app-view {
 
 	// The hover colors are supposed to be the same as those in wp-admin.
 	&:hover {
+		.masterbar__item-subitems {
+			display: block;
+			background: var(--color-masterbar-item-hover-background);
+			list-style: none;
+			clear: none;
+			text-indent: 0;
+			z-index: 99999;
+		}
+		.masterbar__item-subitems-item {
+			line-height: 2;
+			height: 26px;
+			white-space: nowrap;
+			min-width: 140px;
+			a {
+				padding-inline: 10px;
+				color: var(--color-masterbar-text);
+			}
+
+			&:hover {
+				a {
+					color: var(--color-masterbar-highlight);
+				}
+			}
+		}
+
 		@include breakpoint-deprecated( ">480px" ) {
 			background: var(--color-masterbar-item-hover-background);
 			color: var(--color-masterbar-highlight);
@@ -692,10 +736,6 @@ body.is-mobile-app-view {
 			height: 19px;
 		}
 	}
-}
-
-.masterbar__item-my-site-actions {
-
 }
 
 .masterbar__login-links {

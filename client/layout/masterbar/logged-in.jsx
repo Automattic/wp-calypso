@@ -397,8 +397,8 @@ class MasterbarLoggedIn extends Component {
 					className="masterbar__item-my-site"
 					url={ siteUrl }
 					icon={ <span className="dashicons-before dashicons-admin-home" /> }
-					tooltip={ translate( 'Visit your site' ) }
 					tipTarget="Menu"
+					subItems={ [ { label: translate( 'Visiy your site' ), url: siteUrl } ] }
 				>
 					{ siteTitle }
 				</Item>
@@ -414,11 +414,30 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
+		const siteActions = [
+			{
+				label: translate( 'Post' ),
+				url: siteUrl,
+			},
+			{
+				label: translate( 'Media' ),
+				url: siteUrl,
+			},
+			{
+				label: translate( 'Page' ),
+				url: siteUrl,
+			},
+			{
+				label: translate( 'User' ),
+				url: siteUrl,
+			},
+		];
 		return (
 			<>
 				<Item
 					className="masterbar__item-my-site-actions"
 					url={ siteUrl }
+					subItems={ siteActions }
 					icon={ <span className="dashicons-before dashicons-plus" /> }
 					tooltip={ translate( 'New' ) }
 					tipTarget="Menu"

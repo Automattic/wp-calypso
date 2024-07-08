@@ -7,6 +7,10 @@ import type { ReactNode, LegacyRef } from 'react';
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
+interface MasterbarSubItemProps {
+	url: string;
+	label: string;
+}
 interface MasterbarItemProps {
 	url?: string;
 	innerRef?: LegacyRef< HTMLButtonElement | HTMLAnchorElement >;
@@ -21,6 +25,7 @@ interface MasterbarItemProps {
 	children?: ReactNode;
 	alwaysShowContent?: boolean;
 	disabled?: boolean;
+	subItems?: Array< MasterbarSubItemProps >;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -35,6 +40,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		preloadSection: PropTypes.func,
 		hasUnseen: PropTypes.bool,
 		alwaysShowContent: PropTypes.bool,
+		subItems: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -67,11 +73,27 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		);
 	}
 
+	renderSubItems() {
+		const { subItems } = this.props;
+
+		return (
+			<ul className="masterbar__item-subitems">
+				{ subItems &&
+					subItems.map( ( item ) => (
+						<li key={ item.url } className="masterbar__item-subitems-item">
+							<a href={ item.url }>{ item.label }</a>
+						</li>
+					) ) }
+			</ul>
+		);
+	}
+
 	render() {
 		const itemClasses = clsx( 'masterbar__item', this.props.className, {
 			'is-active': this.props.isActive,
 			'has-unseen': this.props.hasUnseen,
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
+			'has-subitems': this.props.subItems,
 		} );
 
 		const attributes = {
@@ -84,7 +106,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			disabled: this.props.disabled,
 		};
 
-		if ( this.props.url ) {
+		if ( this.props.url && ! this.props.subItems ) {
 			return (
 				<a
 					{ ...attributes }
@@ -96,9 +118,21 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			);
 		}
 
+		if ( this.props.url && this.props.subItems ) {
+			return (
+				<button { ...attributes }>
+					<a href={ this.props.url } ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }>
+						{ this.renderChildren() }
+					</a>
+					{ this.renderSubItems() }
+				</button>
+			);
+		}
+
 		return (
 			<button { ...attributes } ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }>
 				{ this.renderChildren() }
+				{ this.renderSubItems() }
 			</button>
 		);
 	}
