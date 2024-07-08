@@ -4,6 +4,8 @@ import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useImportWPCOMSitesMutation from 'calypso/a8c-for-agencies/data/sites/use-import-wpcom-sites';
+import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import WPCOMSitesTable from './wpcom-sites-table';
 
 import './style.scss';
@@ -15,6 +17,7 @@ type Props = {
 
 export default function ImportFromWPCOMModal( { onImport, onClose }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const [ selectedSites, setSelectedSites ] = useState< number[] | [] >( [] );
 
@@ -32,6 +35,18 @@ export default function ImportFromWPCOMModal( { onImport, onClose }: Props ) {
 						onImport?.( selectedSites );
 						onClose();
 						setIsPendingImport( false );
+						dispatch(
+							successNotice(
+								selectedSites.length === 1
+									? translate( 'The site has been successfully added.' )
+									: translate( '%(count)s sites have been successfully added.', {
+											args: {
+												count: selectedSites.length,
+											},
+											comment: '%(count)s is the number of sites added.',
+									  } )
+							)
+						);
 					}, 1000 );
 				},
 			} );
