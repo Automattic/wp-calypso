@@ -189,75 +189,11 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 								}
 							/>
 						) }
-					{ ! showLoader &&
-						!! data?.length && ( // show when new empty state is disabled or data is available
-							<>
-								{
-									// Use dedicated StatsCard for the screen size chart section.
-									OPTION_KEYS.SIZE === selectedOption ? (
-										<StatsCard
-											className={ clsx( className, 'stats-module__card', path ) }
-											title={ devicesStrings.title }
-											titleURL=""
-											metricLabel=""
-											splitHeader
-											isNew
-											mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-											toggleControl={ toggleControlComponent }
-											isEmpty={ ! showLoader && ( ! chartData || ! chartData.length ) }
-											emptyMessage={ devicesStrings.empty }
-										>
-											{ showLoader ? (
-												<StatsModulePlaceholder isLoading={ showLoader } />
-											) : (
-												<div className="stats-card--body__chart">
-													<PieChart
-														data={ chartData }
-														startAngle={ 0 }
-														svgSize={ 224 }
-														donut
-														hasTooltip
-													/>
-													<PieChartLegend
-														data={ chartData }
-														onlyPercent
-														svgElement={
-															<svg
-																width="15"
-																height="14"
-																viewBox="0 0 15 14"
-																fill="none"
-																xmlns="http://www.w3.org/2000/svg"
-															>
-																<rect x="0.5" width="14" height="14" rx="3" />
-															</svg>
-														}
-													/>
-												</div>
-											) }
-										</StatsCard>
-									) : (
-										// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
-										<StatsListCard
-											className={ clsx( className, 'stats-module__card', path ) }
-											moduleType={ path }
-											data={ data }
-											title={ devicesStrings.title }
-											emptyMessage={ devicesStrings.empty }
-											metricLabel={ translate( 'Visitors' ) }
-											splitHeader
-											useShortNumber
-											mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-											toggleControl={ toggleControlComponent }
-										/>
-									)
-								}
-							</>
-						) }
 				</>
 			) }
 
-			{ ! isNewEmptyStateEnabled && (
+			{ ( ! isNewEmptyStateEnabled ||
+				( isNewEmptyStateEnabled && ! showLoader && !! data?.length ) ) && (
 				<>
 					{
 						// Use dedicated StatsCard for the screen size chart section.
@@ -274,6 +210,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 								isEmpty={ ! showLoader && ( ! chartData || ! chartData.length ) }
 								emptyMessage={ devicesStrings.empty }
 							>
+								{ /* Remove StatsModulePlaceholder component and showLoader check when clearing `stats/empty-module-traffic` feature flag */ }
 								{ showLoader ? (
 									<StatsModulePlaceholder isLoading={ showLoader } />
 								) : (
