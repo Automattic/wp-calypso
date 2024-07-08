@@ -14,6 +14,7 @@ import nock from 'nock';
 import React from 'react';
 import { useUpgradePlanHostingDetailsList } from 'calypso/blocks/importer/wordpress/upgrade-plan/hooks/use-get-upgrade-plan-hosting-details-list';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import plansReducer from 'calypso/state/plans/reducer';
 import SiteMigrationUpgradePlan from '../';
@@ -27,6 +28,15 @@ jest.mock( 'calypso/data/hosting/use-add-hosting-trial-mutation' );
 jest.mock(
 	'calypso/blocks/importer/wordpress/upgrade-plan/hooks/use-get-upgrade-plan-hosting-details-list'
 );
+
+jest.mock( 'calypso/data/import-flow/use-selected-plan-upgrade', () => {
+	const original = jest.requireActual( 'calypso/data/import-flow/use-selected-plan-upgrade' );
+
+	return {
+		...original,
+		useSelectedPlanUpgradeQuery: jest.fn(),
+	};
+} );
 
 jest.mock( '@automattic/data-stores', () => {
 	const dataStores = jest.requireActual( '@automattic/data-stores' );
@@ -95,6 +105,12 @@ const mockUseUpgradePlanHostingDetailsList = () => {
 	} );
 };
 
+const mockUseSelectedPlanUpgradeQuery = ( visiblePlan ) => {
+	( useSelectedPlanUpgradeQuery as jest.Mock ).mockReturnValue( {
+		data: visiblePlan,
+	} );
+};
+
 describe( 'SiteMigrationUpgradePlan', () => {
 	const render = ( props?: Partial< StepProps > ) => {
 		const combinedProps = { ...mockStepProps( props ) };
@@ -136,8 +152,9 @@ describe( 'SiteMigrationUpgradePlan', () => {
 	} );
 
 	beforeEach( () => {
+		mockUsePricingMetaForGridPlans( PLAN_BUSINESS, 'year' );
 		mockUseUpgradePlanHostingDetailsList();
-		mockUsePricingMetaForGridPlans();
+		mockUseSelectedPlanUpgradeQuery( 'business' );
 	} );
 
 	it( 'selects annual plan as default', async () => {
@@ -156,7 +173,9 @@ describe( 'SiteMigrationUpgradePlan', () => {
 	} );
 
 	it( 'selects the monthly plan', async () => {
-		mockUsePricingMetaForGridPlans( PLAN_BUSINESS_MONTHLY );
+		mockUsePricingMetaForGridPlans( PLAN_BUSINESS_MONTHLY, 'month' );
+		mockUseSelectedPlanUpgradeQuery( 'business-monthly' );
+
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
 
@@ -190,6 +209,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 
 	it( 'selects free trial', async () => {
 		mockTrialEligibilityAPI( API_RESPONSE_EMAIL_VERIFIED );
+
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
 
