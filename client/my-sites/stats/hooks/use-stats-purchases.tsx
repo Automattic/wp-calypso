@@ -123,6 +123,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 		isLegacyCommercialLicense,
 		hasLoadedSitePurchases,
 		hasAnyPlan: isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse,
+		hasAnyStatsPlan: isCommercialOwned || isPWYWOwned || isPWYWOwned,
 		isLoading: ! hasLoadedSitePurchases || isRequestingSitePurchases,
 	};
 }
