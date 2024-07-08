@@ -34,18 +34,13 @@ export class DateRangeSelector extends Component {
 		selectDateRange( this.props.siteId, formattedStartDate, formattedEndDate ); // enough?
 	};
 
-	handleResetSelection = ( clearDateRangePickerDates ) => {
+	handleResetSelection = () => {
 		const { siteId, selectDateRange } = this.props;
 		this.setState( {
 			fromDate: null,
 			toDate: null,
 		} );
 		selectDateRange( siteId, null, null );
-
-		if ( clearDateRangePickerDates ) {
-			// Call function to clear dates in DateRangePicker
-			clearDateRangePickerDates();
-		}
 	};
 
 	getFormattedFromDate = ( from, to ) => {
@@ -167,7 +162,10 @@ export class DateRangeSelector extends Component {
 								className="filterbar__selection-close"
 								compact
 								borderless
-								onClick={ () => this.handleResetSelection( props.onClearClick ) }
+								onClick={ () => {
+									this.handleResetSelection();
+									props.onClearClick();
+								} }
 							>
 								<Gridicon icon="cross-small" />
 							</Button>
