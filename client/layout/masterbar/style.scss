@@ -715,10 +715,6 @@ body.is-mobile-app-view {
 }
 
 .masterbar__reader {
-	@include breakpoint-deprecated( ">480px" ) {
-		margin-right: auto;
-	}
-
 	@media only screen and (max-width: 782px) {
 		.gridicon + .masterbar__item-content {
 			padding-left: 6px;
