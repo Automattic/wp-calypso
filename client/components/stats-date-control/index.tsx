@@ -69,16 +69,6 @@ const StatsDateControl = ( {
 	// Handler for shortcut selection.
 	const onShortcutHandler = ( shortcut: DateControlPickerShortcut ) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		if ( shortcut.isGated && onGatedHandler ) {
-			const events = [
-				{ name: `${ event_from }_stats_date_picker_shortcut_${ shortcut.id }_gated_clicked` },
-				{
-					name: 'jetpack_stats_upsell_clicked',
-					params: { stat_type: shortcut.statType, source: event_from },
-				},
-			];
-			return onGatedHandler( events, event_from, shortcut.statType );
-		}
 		// Generate new dates.
 		const anchor = moment().subtract( shortcut.offset, 'days' );
 		const endDate = anchor.format( 'YYYY-MM-DD' );
@@ -132,6 +122,7 @@ const StatsDateControl = ( {
 				selectedShortcut={ getShortcutForRange()?.id }
 				onShortcut={ onShortcutHandler }
 				onApply={ onApplyButtonHandler }
+				onGatedHandler={ onGatedHandler }
 				overlay={ overlay }
 			/>
 		</div>

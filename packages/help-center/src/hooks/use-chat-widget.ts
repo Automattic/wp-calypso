@@ -34,7 +34,7 @@ export default function useChatWidget(
 
 	const openChatWidget = ( {
 		aiChatId,
-		message = 'No message from user',
+		message = '',
 		siteUrl = 'No site selected',
 		onError,
 		onSuccess,

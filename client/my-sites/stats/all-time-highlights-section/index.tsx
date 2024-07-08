@@ -9,7 +9,7 @@ import {
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useSelector } from 'calypso/state';
@@ -18,6 +18,9 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
+import { STAT_TYPE_INSIGHTS } from '../constants';
+import { useShouldGateStats } from '../hooks/use-should-gate-stats';
+import StatsCardUpsell from '../stats-card-upsell';
 import PostCardsGroup from './post-cards-group';
 
 import './style.scss';
@@ -151,111 +154,46 @@ export default function AllTimeHighlightsSection( {
 		};
 	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal, userLocale ] );
 
-	const mobileCards = (
+	// TODO: Investigate granularity on Insights page.
+	// Do we want to get granular on this page? It's probably not necessary yet.
+	const shouldLockCards = useShouldGateStats( STAT_TYPE_INSIGHTS );
+
+	const highlightCardsMobile = (
 		<div className="highlight-cards-mobile">
 			<h3 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h3>
 			<DotPager>
-				<Card className="highlight-card">
-					<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
-					<div className="highlight-card-info-item-list">
-						{ infoItems
-							.filter( ( i ) => ! i.hidden )
-							.map( ( info ) => {
-								return (
-									<div key={ info.id } className="highlight-card-info-item">
-										<Icon icon={ info.icon } />
-
-										<span className="highlight-card-info-item-title">{ info.title }</span>
-
-										<span
-											className="highlight-card-info-item-count"
-											title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
-										>
-											{ formattedNumber( info.count ) }
-										</span>
-									</div>
-								);
-							} ) }
-					</div>
-				</Card>
-
-				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-					return (
-						<Card key={ card.id } className="highlight-card">
-							<h4 className="highlight-card-heading">{ card.heading }</h4>
-							<div className="highlight-card-detail-item-list">
-								{ card.items.map( ( item ) => {
-									return (
-										<div key={ item.id } className="highlight-card-detail-item">
-											<div className="highlight-card-detail-item-header">{ item.header }</div>
-
-											<div className="highlight-card-detail-item-content">{ item.content }</div>
-
-											<div className="highlight-card-detail-item-footer">{ item.footer }</div>
-										</div>
-									);
-								} ) }
-							</div>
-						</Card>
-					);
-				} ) }
+				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ shouldLockCards } />
+				<MostPopularDayTimeCard
+					cardInfo={ mostPopularTimeItems }
+					siteId={ siteId }
+					isLocked={ shouldLockCards }
+				/>
+				<MostPopularDayTimeCard
+					cardInfo={ bestViewsEverItems }
+					siteId={ siteId }
+					isLocked={ shouldLockCards }
+				/>
 			</DotPager>
-
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
 	);
 
-	const highlightCards = (
+	const highlightCardsStandard = (
 		<div className="highlight-cards">
 			<h3 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h3>
-
 			<div className="highlight-cards-list">
-				<Card className="highlight-card">
-					<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
-					<div className="highlight-card-info-item-list">
-						{ infoItems
-							.filter( ( i ) => ! i.hidden )
-							.map( ( info ) => {
-								return (
-									<div key={ info.id } className="highlight-card-info-item">
-										<Icon icon={ info.icon } />
-
-										<span className="highlight-card-info-item-title">{ info.title }</span>
-
-										<span
-											className="highlight-card-info-item-count"
-											title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
-										>
-											{ formattedNumber( info.count ) }
-										</span>
-									</div>
-								);
-							} ) }
-					</div>
-				</Card>
-
-				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-					return (
-						<Card key={ card.id } className="highlight-card">
-							<h4 className="highlight-card-heading">{ card.heading }</h4>
-							<div className="highlight-card-detail-item-list">
-								{ card.items.map( ( item ) => {
-									return (
-										<div key={ item.id } className="highlight-card-detail-item">
-											<div className="highlight-card-detail-item-header">{ item.header }</div>
-
-											<div className="highlight-card-detail-item-content">{ item.content }</div>
-
-											<div className="highlight-card-detail-item-footer">{ item.footer }</div>
-										</div>
-									);
-								} ) }
-							</div>
-						</Card>
-					);
-				} ) }
+				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ shouldLockCards } />
+				<MostPopularDayTimeCard
+					cardInfo={ mostPopularTimeItems }
+					siteId={ siteId }
+					isLocked={ shouldLockCards }
+				/>
+				<MostPopularDayTimeCard
+					cardInfo={ bestViewsEverItems }
+					siteId={ siteId }
+					isLocked={ shouldLockCards }
+				/>
 			</div>
-
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
 	);
@@ -277,9 +215,114 @@ export default function AllTimeHighlightsSection( {
 			<ComponentSwapper
 				className="all-time-highlights-section__highlight-cards-swapper"
 				breakpoint="<660px"
-				breakpointActiveComponent={ mobileCards }
-				breakpointInactiveComponent={ highlightCards }
+				breakpointActiveComponent={ highlightCardsMobile }
+				breakpointInactiveComponent={ highlightCardsStandard }
 			/>
 		</div>
+	);
+}
+
+type InfoItem = {
+	id: string;
+	icon: JSX.Element;
+	title: string;
+	count: number;
+	hidden?: boolean;
+};
+
+type AllTimeStatsCardProps = {
+	infoItems: InfoItem[];
+	siteId: number;
+	isLocked: boolean;
+};
+
+function AllTimeStatsCard( { infoItems, siteId, isLocked }: AllTimeStatsCardProps ) {
+	const translate = useTranslate();
+	const heading = translate( 'All-time stats' );
+	if ( isLocked ) {
+		return <UpsellCard heading={ heading } siteId={ siteId } />;
+	}
+
+	return (
+		<Card className="highlight-card">
+			<h4 className="highlight-card-heading">{ heading }</h4>
+			<div className="highlight-card-info-item-list">
+				{ infoItems
+					.filter( ( i ) => ! i.hidden )
+					.map( ( info ) => {
+						return (
+							<div key={ info.id } className="highlight-card-info-item">
+								<Icon icon={ info.icon } />
+								<span className="highlight-card-info-item-title">{ info.title }</span>
+								<span
+									className="highlight-card-info-item-count"
+									title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
+								>
+									{ formattedNumber( info.count ) }
+								</span>
+							</div>
+						);
+					} ) }
+			</div>
+		</Card>
+	);
+}
+
+type CardInfoItem = {
+	id: string;
+	header: string;
+	content: string | JSX.Element;
+	footer: string | React.ReactNode;
+};
+
+type MostPopularDayTimeCardProps = {
+	cardInfo: {
+		id: string;
+		loading?: boolean;
+		heading: string;
+		items: CardInfoItem[];
+	};
+	siteId: number;
+	isLocked: boolean;
+};
+
+function MostPopularDayTimeCard( { cardInfo, siteId, isLocked }: MostPopularDayTimeCardProps ) {
+	if ( isLocked ) {
+		return <UpsellCard heading={ cardInfo.heading } siteId={ siteId } />;
+	}
+
+	return (
+		<Card key={ cardInfo.id } className="highlight-card">
+			<h4 className="highlight-card-heading">{ cardInfo.heading }</h4>
+			<div className="highlight-card-detail-item-list">
+				{ cardInfo.items.map( ( item ) => {
+					return (
+						<div key={ item.id } className="highlight-card-detail-item">
+							<div className="highlight-card-detail-item-header">{ item.header }</div>
+							<div className="highlight-card-detail-item-content">{ item.content }</div>
+							<div className="highlight-card-detail-item-footer">{ item.footer }</div>
+						</div>
+					);
+				} ) }
+			</div>
+		</Card>
+	);
+}
+
+type UpsellCardProps = {
+	heading: string;
+	siteId: number;
+};
+
+function UpsellCard( { heading, siteId }: UpsellCardProps ) {
+	return (
+		<Card className="highlight-card">
+			<h4 className="highlight-card-heading">{ heading }</h4>
+			<StatsCardUpsell
+				className="stats-module__upsell"
+				statType="insights-highlights"
+				siteId={ siteId }
+			/>
+		</Card>
 	);
 }

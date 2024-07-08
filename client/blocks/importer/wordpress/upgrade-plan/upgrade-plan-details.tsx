@@ -16,15 +16,14 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useSelector } from 'calypso/state';
 import { getSitePlan, getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
+import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
+import { Skeleton } from './skeleton';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
+import withMigrationSticker from './with-migration-sticker';
+import type { UpgradePlanDetailsProps } from './types';
 
-interface Props {
-	siteId: number;
-	children: React.ReactNode;
-}
-
-export const UpgradePlanDetails = ( props: Props ) => {
+export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
 	const { __ } = useI18n();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ showFeatures, setShowFeatures ] = useState( false );
@@ -33,6 +32,9 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	>( PLAN_BUSINESS );
 
 	const { children, siteId } = props;
+
+	const { list: upgradePlanHostingDetailsList, isFetching: isFetchingHostingDetails } =
+		useUpgradePlanHostingDetailsList();
 
 	const plan = getPlan( selectedPlan );
 	const planDetails = useSelector( ( state ) =>
@@ -52,6 +54,10 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	useEffect( () => {
 		plan && plan.getPathSlug && setSelectedPlanSlug( plan.getPathSlug() );
 	}, [ plan ] );
+
+	if ( isFetchingHostingDetails || typeof rawPrice !== 'number' || ! planDetails?.currencyCode ) {
+		return <Skeleton />;
+	}
 
 	return (
 		<div className="import__upgrade-plan-details">
@@ -118,10 +124,12 @@ export const UpgradePlanDetails = ( props: Props ) => {
 						/>
 					</div>
 				</div>
-				<UpgradePlanHostingDetails />
+				<UpgradePlanHostingDetails
+					upgradePlanHostingDetailsList={ upgradePlanHostingDetailsList }
+				/>
 			</div>
 		</div>
 	);
 };
 
-export default UpgradePlanDetails;
+export default withMigrationSticker( UpgradePlanDetails );

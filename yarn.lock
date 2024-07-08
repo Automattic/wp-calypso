@@ -2039,6 +2039,41 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/whats-new-app@workspace:apps/whats-new":
+  version: 0.0.0-use.local
+  resolution: "@automattic/whats-new-app@workspace:apps/whats-new"
+  dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/languages": "workspace:^"
+    "@automattic/sites": "workspace:^"
+    "@automattic/whats-new": "workspace:^"
+    "@automattic/wp-babel-makepot": "workspace:^"
+    "@tanstack/react-query": "npm:^5.15.5"
+    "@wordpress/components": "npm:^28.0.0"
+    "@wordpress/data": "npm:^10.0.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/element": "npm:^6.0.0"
+    "@wordpress/i18n": "npm:^5.0.0"
+    "@wordpress/plugins": "npm:^7.0.0"
+    calypso: "workspace:^"
+    gettext-parser: "npm:^6.0.0"
+    i18n-calypso: "workspace:^"
+    lodash: "npm:^4.17.21"
+    mkdirp: "npm:^1.0.4"
+    node-fetch: "npm:^2.6.6"
+    npm-run-all: "npm:^4.1.5"
+    postcss: "npm:^8.4.5"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    redux: "npm:^4.2.1"
+    webpack: "npm:^5.91.0"
+    webpack-bundle-analyzer: "npm:^4.10.2"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/whats-new@workspace:^, @automattic/whats-new@workspace:packages/whats-new":
   version: 0.0.0-use.local
   resolution: "@automattic/whats-new@workspace:packages/whats-new"
@@ -2185,7 +2220,6 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
     "@automattic/format-currency": "workspace:^"
-    "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/newspack-blocks": "npm:2.0.0"
     "@automattic/onboarding": "workspace:^"

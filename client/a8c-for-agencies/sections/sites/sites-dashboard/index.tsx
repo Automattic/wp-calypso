@@ -234,7 +234,7 @@ export default function SitesDashboard() {
 							<Title>{ translate( 'Sites' ) }</Title>
 							<Actions>
 								<MobileSidebarNavigation />
-								<SitesHeaderActions />
+								<SitesHeaderActions onWPCOMImport={ () => refetch() } />
 							</Actions>
 						</LayoutHeader>
 						{ navItems.length > 1 && (
@@ -272,6 +272,7 @@ export default function SitesDashboard() {
 							isLargeScreen={ isLargeScreen || false }
 							setDataViewsState={ setDataViewsState }
 							dataViewsState={ dataViewsState }
+							onRefetchSite={ refetch }
 						/>
 					</DashboardDataContext.Provider>
 				</LayoutColumn>

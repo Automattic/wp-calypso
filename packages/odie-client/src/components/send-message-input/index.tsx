@@ -1,11 +1,11 @@
 /* eslint-disable no-restricted-imports */
-import { useTranslate } from 'i18n-calypso';
+import { useI18n } from '@wordpress/react-i18n';
 import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import ArrowUp from '../../assets/arrow-up.svg';
 import { useOdieAssistantContext } from '../../context';
 import { useOdieSendMessage } from '../../query';
-import { Message } from '../../types';
+import { Message } from '../../types/';
 import { JumpToRecent } from '../message/jump-to-recent';
 
 import './style.scss';
@@ -21,11 +21,11 @@ export const OdieSendMessageButton = ( {
 	enableStickToBottom: () => void;
 	enableJumpToRecent: boolean;
 } ) => {
+	const { _x } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const { initialUserMessage, chat, isLoading, trackEvent } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
-	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( initialUserMessage && ! chat.chat_id ) {
@@ -93,14 +93,17 @@ export const OdieSendMessageButton = ( {
 					<TextareaAutosize
 						placeholder={
 							userHasAskedToContactHE || userHasNegativeFeedback
-								? translate( 'Continue chatting with Wapuu', {
-										context: 'Placeholder text for the message input field (chat)',
-										textOnly: true,
-								  } )
-								: translate( 'Ask your question', {
-										context: 'Placeholder text for the message input field (chat)',
-										textOnly: true,
-								  } )
+								? // translators: Placeholder text for the message input field (chat) */
+								  _x(
+										'Continue chatting with Wapuu',
+										'Placeholder text for the message input field (chat)',
+										__i18n_text_domain__
+								  )
+								: _x(
+										'Ask your question',
+										'Placeholder text for the message input field (chat)',
+										__i18n_text_domain__
+								  )
 						}
 						className="odie-send-message-input"
 						rows={ 1 }
@@ -115,13 +118,7 @@ export const OdieSendMessageButton = ( {
 						className="odie-send-message-inner-button"
 						disabled={ messageString.trim() === '' || isLoading }
 					>
-						<img
-							src={ ArrowUp }
-							alt={ translate( 'Arrow icon', {
-								context: 'html alt tag',
-								textOnly: true,
-							} ) }
-						/>
+						<img src={ ArrowUp } alt={ _x( 'Arrow icon', 'html alt tag', __i18n_text_domain__ ) } />
 					</button>
 				</form>
 			</div>

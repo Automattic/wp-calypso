@@ -13,30 +13,25 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL } from '../../../const';
+import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
-import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-type StatClicksProps = {
-	className?: string;
-	period: string;
-	query: {
-		date: string;
-		period: string;
-	};
-	moduleStrings: {
-		title: string;
-		item: string;
-		value: string;
-		empty: string;
-	};
-};
-
-const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings, className } ) => {
+const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
+	period,
+	query,
+	moduleStrings,
+	className,
+} ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsTopAuthors';
 
-	const requesting = useSelector( ( state ) =>
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsModule = useShouldGateStats( statType );
+
+	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
@@ -45,11 +40,32 @@ const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings
 
 	return (
 		<>
-			{ siteId && statType && (
+			{ ! shouldGateStatsModule && siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
-			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
-			{ ( ! data || ! data?.length ) && (
+			{ isRequestingData && (
+				<StatsCardSkeleton
+					isLoading={ isRequestingData }
+					className={ className }
+					title={ moduleStrings.title }
+					type={ 2 }
+				/>
+			) }
+			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
+				// show data or an overlay
+				<StatsModule
+					path="authors"
+					moduleStrings={ moduleStrings }
+					period={ period }
+					query={ query }
+					statType={ statType }
+					showSummaryLink
+					className={ className }
+					skipQuery
+				/>
+			) }
+			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
+				// show empty state
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) }
 					title={ translate( 'Authors' ) }
@@ -69,20 +85,7 @@ const StatClicks: React.FC< StatClicksProps > = ( { period, query, moduleStrings
 							) }
 						/>
 					}
-				>
-					<></>
-				</StatsCard>
-			) }
-			{ data && !! data.length && (
-				<StatsModule
-					path="authors"
-					moduleStrings={ moduleStrings }
-					period={ period }
-					query={ query }
-					statType={ statType }
-					showSummaryLink
-					className={ className }
-				></StatsModule>
+				/>
 			) }
 		</>
 	);
