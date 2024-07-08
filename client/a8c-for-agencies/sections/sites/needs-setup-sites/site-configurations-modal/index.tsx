@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { CheckboxControl, Icon, Modal } from '@wordpress/components';
+import { CheckboxControl, Icon, Modal, Spinner } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -14,21 +14,23 @@ import { useSiteName } from './use-site-name';
 import './style.scss';
 
 type SiteConfigurationsModalProps = {
-	toggleModal: () => void;
+	closeModal: () => void;
 	randomSiteName: string;
 	isRandomSiteNameLoading: boolean;
+	siteId: number;
 };
 
 export default function SiteConfigurationsModal( {
-	toggleModal,
+	closeModal,
 	randomSiteName,
 	isRandomSiteNameLoading,
+	siteId,
 }: SiteConfigurationsModalProps ) {
 	const [ allowClientsToUseSiteHelpCenter, setAllowClientsToUseSiteHelpCenter ] = useState( true );
 	const translate = useTranslate();
 	const dataCenterOptions = useDataCenterOptions();
 	const { phpVersions } = usePhpVersions();
-	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
+	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading, siteId );
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
 		setAllowClientsToUseSiteHelpCenter( ! allowClientsToUseSiteHelpCenter );
@@ -77,7 +79,7 @@ export default function SiteConfigurationsModal( {
 	return (
 		<Modal
 			title={ translate( 'Configure your new site' ) }
-			onRequestClose={ toggleModal }
+			onRequestClose={ closeModal }
 			className="configure-your-site-modal-form"
 		>
 			<form onSubmit={ onSubmit }>
@@ -106,7 +108,7 @@ export default function SiteConfigurationsModal( {
 							/>
 						) }
 						<div className="configure-your-site-modal-form__site-name-icon-wrapper">
-							{ ! siteName.showValidationMessage && ! isRandomSiteNameLoading && (
+							{ siteName.isSiteNameReadyForUse && (
 								<Icon
 									icon={ check }
 									size={ 28 }
@@ -120,6 +122,9 @@ export default function SiteConfigurationsModal( {
 									color="red"
 									className="configure-your-site-modal-form__site-name-fail"
 								/>
+							) }
+							{ siteName.isCheckingSiteAvailability && (
+								<Spinner className="configure-your-site-modal-form__site-name-loading" />
 							) }
 						</div>
 					</div>
@@ -187,7 +192,7 @@ export default function SiteConfigurationsModal( {
 											<a
 												target="_blank"
 												href={ localizeUrl(
-													'https://wordpress.com/support/hosting-configuration'
+													'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
 												) }
 												rel="noreferrer"
 											/>
