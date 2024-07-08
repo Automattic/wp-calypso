@@ -5,11 +5,14 @@ import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_MONTHLY,
+	PlanSlug,
 } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
+import { useUpgradePlanHostingDetailsList } from 'calypso/blocks/importer/wordpress/upgrade-plan/hooks/use-get-upgrade-plan-hosting-details-list';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import plansReducer from 'calypso/state/plans/reducer';
@@ -21,6 +24,21 @@ const planSlug = PLAN_MIGRATION_TRIAL_MONTHLY;
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
 jest.mock( 'calypso/data/hosting/use-add-hosting-trial-mutation' );
+jest.mock(
+	'calypso/blocks/importer/wordpress/upgrade-plan/hooks/use-get-upgrade-plan-hosting-details-list'
+);
+
+jest.mock( '@automattic/data-stores', () => {
+	const dataStores = jest.requireActual( '@automattic/data-stores' );
+
+	return {
+		...dataStores,
+		Plans: {
+			...dataStores.Plans,
+			usePricingMetaForGridPlans: jest.fn(),
+		},
+	};
+} );
 
 ( useSite as jest.Mock ).mockReturnValue( {
 	ID: 'site-id',
@@ -52,6 +70,29 @@ const mockTrialEligibilityAPI = ( payload: TrialEligibilityResponse ) => {
 	mockApi()
 		.get( `/wpcom/v2/sites/site-id/hosting/trial/check-eligibility/${ planSlug }` )
 		.reply( 200, payload );
+};
+
+const mockUsePricingMetaForGridPlans = (
+	plan: PlanSlug = PLAN_BUSINESS,
+	billingPeriod: string = 'year'
+) => {
+	const planPricing = {
+		currencyCode: 'USD',
+		originalPrice: { full: 60, monthly: 5 },
+		discountedPrice: { full: 24, monthly: 2 },
+		billingPeriod: billingPeriod,
+	};
+
+	Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+		[ plan ]: planPricing,
+	} ) );
+};
+
+const mockUseUpgradePlanHostingDetailsList = () => {
+	( useUpgradePlanHostingDetailsList as jest.Mock ).mockReturnValue( {
+		list: [],
+		isFetching: false,
+	} );
 };
 
 describe( 'SiteMigrationUpgradePlan', () => {
@@ -94,6 +135,11 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		mockTrialEligibilityAPI( API_RESPONSE_EMAIL_VERIFIED );
 	} );
 
+	beforeEach( () => {
+		mockUseUpgradePlanHostingDetailsList();
+		mockUsePricingMetaForGridPlans();
+	} );
+
 	it( 'selects annual plan as default', async () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
@@ -110,6 +156,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 	} );
 
 	it( 'selects the monthly plan', async () => {
+		mockUsePricingMetaForGridPlans( PLAN_BUSINESS_MONTHLY );
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
 
