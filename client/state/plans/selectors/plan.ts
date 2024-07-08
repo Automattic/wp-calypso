@@ -29,6 +29,7 @@ export const getPlan = createSelector(
 );
 
 /**
+ * @deprecated but still in use
  * Returns a plan searched by its slug
  * @param  {Object} state      global state
  * @param  {string} planSlug the plan slug
@@ -40,6 +41,7 @@ export const getPlanBySlug = createSelector(
 );
 
 /**
+ * @deprecated but still in use
  * Returns a plan product_slug. Useful for getting a cartItem for a plan.
  * @param  {Object}  state     global state
  * @param  {number}  productId the plan productId
