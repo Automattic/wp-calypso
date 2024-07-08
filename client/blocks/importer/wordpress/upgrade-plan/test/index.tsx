@@ -43,7 +43,11 @@ const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
 	} );
 };
 
-const mockUsePricingMetaForGridPlans = () => {
+const mockUsePricingMetaForGridPlans = ( empty: boolean = false ) => {
+	if ( empty ) {
+		return;
+	}
+
 	const planYearlyPricing = {
 		currencyCode: 'USD',
 		originalPrice: { full: 60, monthly: 5 },
@@ -293,6 +297,21 @@ describe( 'UpgradePlan', () => {
 	describe( 'without migration sticker HOC', () => {
 		it( 'should render fetch state when hosting details are fetching', async () => {
 			mockUseUpgradePlanHostingDetailsList( true );
+
+			const { queryByText, container } = renderUpgradePlanComponent(
+				getUpgradePlanProps( { ctaText: CTA_TEXT } ),
+				UnwrappedUpgradePlan
+			);
+
+			expect(
+				container.querySelector( '.import__upgrade-plan-details--loading' )
+			).toBeInTheDocument();
+			expect( queryByText( CTA_TEXT ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should render fetch state when pricing is not available', async () => {
+			mockUseUpgradePlanHostingDetailsList( true );
+			mockUsePricingMetaForGridPlans( true );
 
 			const { queryByText, container } = renderUpgradePlanComponent(
 				getUpgradePlanProps( { ctaText: CTA_TEXT } ),
