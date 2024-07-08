@@ -192,7 +192,7 @@ export default function SiteConfigurationsModal( {
 											<a
 												target="_blank"
 												href={ localizeUrl(
-													'https://wordpress.com/support/hosting-configuration'
+													'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
 												) }
 												rel="noreferrer"
 											/>
