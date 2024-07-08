@@ -5,6 +5,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
+import validateEmail from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/email';
+import validateNonEmpty from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/non-empty';
+import validateUrl from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/url';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
 import SearchableDropdown from 'calypso/a8c-for-agencies/components/searchable-dropdown';
 import { A4A_PARTNER_DIRECTORY_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -118,7 +121,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					label={ translate( 'Company name' ) }
 					error={ validationError.name }
 					field={ formData.name }
-					checks={ [ 'non-empty' ] }
+					checks={ [ validateNonEmpty ] }
 					isRequired
 				>
 					<TextControl
@@ -134,7 +137,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					description={ translate( 'Client inquiries and leads will go to this email.' ) }
 					error={ validationError.email }
 					field={ formData.email }
-					checks={ [ 'non-empty', 'email' ] }
+					checks={ [ validateNonEmpty, validateEmail ] }
 					isRequired
 				>
 					<TextControl
@@ -149,7 +152,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					label={ translate( 'Company website' ) }
 					error={ validationError.website }
 					field={ formData.website }
-					checks={ [ 'non-empty', 'url' ] }
+					checks={ [ validateNonEmpty, validateUrl ] }
 					isRequired
 				>
 					<TextControl
@@ -167,7 +170,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					) }
 					error={ validationError.landingPage }
 					field={ formData.landingPageUrl }
-					checks={ [ 'url' ] }
+					checks={ [ validateUrl ] }
 				>
 					<TextControl
 						value={ formData.landingPageUrl }

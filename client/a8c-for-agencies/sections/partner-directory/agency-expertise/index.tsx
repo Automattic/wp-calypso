@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
+import validateNonEmpty from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/non-empty';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
 import {
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
@@ -137,7 +138,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					) }
 					error={ validationError.services }
 					field={ services }
-					checks={ [ 'non-empty' ] }
+					checks={ [ validateNonEmpty ] }
 					isRequired
 				>
 					<ServicesSelector
@@ -156,7 +157,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					label={ translate( 'What products do you work with?' ) }
 					error={ validationError.products }
 					field={ products }
-					checks={ [ 'non-empty' ] }
+					checks={ [ validateNonEmpty ] }
 					isRequired
 				>
 					<ProductsSelector
