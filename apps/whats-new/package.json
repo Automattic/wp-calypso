@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/whats-new-app",
 	"version": "1.0.0",
-	"description": "Provides utils to load the whats new in different environments",
+	"description": "Provides utils to load the whats new in different environments.",
 	"main": "dist/build.min.js",
 	"sideEffects": true,
 	"repository": {
