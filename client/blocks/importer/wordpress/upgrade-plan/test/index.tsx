@@ -3,6 +3,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_MIGRATION_TRIAL_MONTHLY, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -11,7 +12,6 @@ import React, { type ComponentPropsWithoutRef } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useUpgradePlanHostingDetailsList } from '../hooks/use-get-upgrade-plan-hosting-details-list';
 import { UpgradePlan, UnwrappedUpgradePlan } from '../index';
-import '@automattic/data-stores';
 
 // Stub out UpgradePlanDetails because it has much more complex dependencies, and only provides a wrapper around the content from this component.
 jest.mock( '../upgrade-plan-details', () => ( {
@@ -21,6 +21,20 @@ jest.mock( '../upgrade-plan-details', () => ( {
 
 jest.mock( '@automattic/calypso-analytics' );
 
+jest.mock( '../hooks/use-get-upgrade-plan-hosting-details-list' );
+
+jest.mock( '@automattic/data-stores', () => {
+	const dataStores = jest.requireActual( '@automattic/data-stores' );
+	return {
+		Onboard: dataStores.Onboard,
+		Plans: {
+			usePricingMetaForGridPlans: jest.fn(),
+		},
+		Purchases: dataStores.Purchases,
+		Site: dataStores.Site,
+	};
+} );
+
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
 	( useUpgradePlanHostingDetailsList as jest.Mock ).mockReturnValue( {
@@ -29,9 +43,18 @@ const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
 	} );
 };
 
-jest.mock( '../hooks/use-get-upgrade-plan-hosting-details-list' );
+const mockUsePricingMetaForGridPlans = () => {
+	const planYearlyPricing = {
+		currencyCode: 'USD',
+		originalPrice: { full: 60, monthly: 5 },
+		discountedPrice: { full: 24, monthly: 2 },
+		billingPeriod: 'year',
+	};
 
-jest.mock( '@automattic/data-stores' );
+	Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+		[ PLAN_BUSINESS ]: planYearlyPricing,
+	} ) );
+};
 
 const CTA_TEXT = 'CTA';
 const DEFAULT_SITE_ID = 123;
@@ -139,6 +162,7 @@ describe( 'UpgradePlan', () => {
 
 	beforeEach( () => {
 		mockUseUpgradePlanHostingDetailsList( false );
+		mockUsePricingMetaForGridPlans();
 	} );
 
 	it( 'should call onCtaClick when the user clicks on the Continue button', async () => {

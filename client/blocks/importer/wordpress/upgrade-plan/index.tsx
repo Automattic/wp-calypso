@@ -154,7 +154,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 				'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
 		  );
 
-	if ( isFetchingHostingDetails ) {
+	if ( isFetchingHostingDetails || ! pricing ) {
 		return <Skeleton />;
 	}
 
