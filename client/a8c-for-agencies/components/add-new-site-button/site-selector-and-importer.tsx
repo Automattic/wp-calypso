@@ -1,5 +1,5 @@
 import { Popover, Gridicon, Button, WordPressLogo, JetpackLogo } from '@automattic/components';
-import { Icon, navigation } from '@wordpress/icons';
+import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
@@ -146,12 +146,6 @@ export default function SiteSelectorAndImporter( {
 									setMenuVisible( false );
 								},
 							},
-						} ) }
-						{ menuItem( {
-							icon: navigation,
-							iconClassName: 'site-selector-and-importer__popover-button-wp-icon',
-							heading: translate( 'Via URL' ),
-							description: translate( 'Type in the address of your site' ),
 						} ) }
 					</div>
 					<div className="site-selector-and-importer__popover-column">
