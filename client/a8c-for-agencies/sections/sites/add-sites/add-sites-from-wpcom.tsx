@@ -11,7 +11,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
-import useImportWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-import-wpcom-site';
+import useImportWPCOMSitesMutation from 'calypso/a8c-for-agencies/data/sites/use-import-wpcom-sites';
 import useFetchDashboardSites, {
 	FetchDashboardSitesArgsInterface,
 } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
@@ -26,22 +26,19 @@ const AddSitesFromWPCOM = ( { dashboardSitesQuery }: AddSitesFromWPCOMProps ) =>
 	const translate = useTranslate();
 
 	const { data, isFetched, isLoading } = useFetchDashboardSites( dashboardSitesQuery );
-	const { mutate: importWPCOMSite, isPending: isImportingSite } = useImportWPCOMSiteMutation();
+	const { mutate: importWPCOMSites, isPending: isImportingSite } = useImportWPCOMSitesMutation();
 	const { refetch: refetchPendingSites } = useFetchPendingSites();
 
 	const handleSiteSelection = useCallback(
 		( blogId: number ) => {
-			importWPCOMSite(
-				{ blog_id: blogId },
-				{
-					onSuccess: () => {
-						refetchPendingSites();
-						page( addQueryArgs( A4A_SITES_LINK, { created_site: blogId } ) );
-					},
-				}
-			);
+			importWPCOMSites( [ blogId ], {
+				onSuccess: () => {
+					refetchPendingSites();
+					page( addQueryArgs( A4A_SITES_LINK, { created_site: blogId } ) );
+				},
+			} );
 		},
-		[ importWPCOMSite ]
+		[ importWPCOMSites, refetchPendingSites ]
 	);
 
 	return (

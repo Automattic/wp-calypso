@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import clsx from 'clsx';
 import React from 'react';
@@ -6,6 +7,7 @@ import useStatsPurchases from '../../../hooks/use-stats-purchases';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import statsStrings from '../../../stats-strings';
 import { PeriodType } from '../../../stats-subscribers-chart-section';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsModuleUTM from './stats-module-utm';
 import StatsModuleUTMOverlay from './stats-module-utm-overlay';
 import type { Moment } from 'moment';
@@ -34,6 +36,7 @@ const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
 	summary,
 	className,
 } ) => {
+	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 	const moduleStrings = statsStrings();
 
 	// Check if blog is internal.
@@ -53,7 +56,15 @@ const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
 
 	return (
 		<>
-			{ isFetching && (
+			{ isFetching && isNewEmptyStateEnabled && (
+				<StatsCardSkeleton
+					isLoading={ isFetching }
+					className={ className }
+					title={ moduleStrings?.utm?.title }
+					type={ 3 }
+				/>
+			) }
+			{ isFetching && ! isNewEmptyStateEnabled && (
 				<StatsCard
 					title="UTM"
 					className={ clsx( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
@@ -73,7 +84,7 @@ const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
 					moduleStrings={ moduleStrings.utm }
 					period={ period }
 					query={ query }
-					isLoading={ isFetching ?? true }
+					isLoading={ isFetching ?? true } // remove this line when cleaning 'stats/empty-module-traffic' - isFetching will never be true here and loaders are handled inside
 					hideSummaryLink={ hideSummaryLink }
 					postId={ postId }
 					summary={ summary }

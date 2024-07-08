@@ -117,6 +117,7 @@ export interface Site {
 	active_paid_subscription_slugs: Array< string >;
 	site_color?: string;
 	enabled_plugin_slugs?: Array< string >;
+	a4a_site_id?: number;
 }
 export interface SiteNode {
 	value: Site;
@@ -221,7 +222,8 @@ export type AllowedActionTypes =
 	| 'site_settings'
 	| 'set_up_site'
 	| 'change_domain'
-	| 'hosting_configuration';
+	| 'hosting_configuration'
+	| 'remove_site';
 
 export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };

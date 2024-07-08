@@ -28,7 +28,9 @@ export default function A4AThemedModal( {
 			__experimentalHideHeader
 		>
 			<div className="a4a-themed-modal__wrapper">
-				<img className="a4a-themed-modal__sidebar-image" src={ modalImage } alt="" />
+				<div className="a4a-themed-modal__sidebar-image-container">
+					<img className="a4a-themed-modal__sidebar-image" src={ modalImage } alt="" />
+				</div>
 				<div className="a4a-themed-modal__content">
 					{ dismissable && (
 						<Button className="a4a-themed-modal__dismiss-button" onClick={ onClose } plain>

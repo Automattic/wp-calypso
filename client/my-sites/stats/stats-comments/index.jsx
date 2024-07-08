@@ -7,6 +7,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { STAT_TYPE_COMMENTS } from 'calypso/my-sites/stats/constants';
+import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
@@ -107,6 +110,7 @@ class StatsComments extends Component {
 			siteId,
 			translate,
 			className,
+			gateStatsComments,
 		} = this.props;
 		const commentsAuthors = get( commentsStatsData, 'authors' );
 		const commentsPosts = get( commentsStatsData, 'posts' );
@@ -129,7 +133,7 @@ class StatsComments extends Component {
 
 		return (
 			<>
-				{ siteId && <QuerySiteStats statType="statsComments" siteId={ siteId } /> }
+				{ siteId && <QuerySiteStats statType={ STAT_TYPE_COMMENTS } siteId={ siteId } /> }
 				{ siteId && (
 					<QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ { max: 7 } } />
 				) }
@@ -170,6 +174,16 @@ class StatsComments extends Component {
 					}
 					className={ clsx( 'stats__modernised-comments', className ) }
 					showLeftIcon
+					overlay={
+						siteId &&
+						gateStatsComments && (
+							<StatsCardUpsell
+								className="stats-module__upsell"
+								statType={ STAT_TYPE_COMMENTS }
+								siteId={ siteId }
+							/>
+						)
+					}
 				/>
 			</>
 		);
@@ -180,17 +194,24 @@ const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
+		const gateStatsComments = shouldGateStats( state, siteId, STAT_TYPE_COMMENTS );
 
 		return {
 			commentFollowersTotal: get(
 				getSiteStatsNormalizedData( state, siteId, 'statsCommentFollowers', { max: 7 } ),
 				'total'
 			),
-			commentsStatsData: getSiteStatsNormalizedData( state, siteId, 'statsComments', {} ),
-			hasCommentsStatsQueryFailed: hasSiteStatsQueryFailed( state, siteId, 'statsComments', {} ),
-			requestingCommentsStats: isRequestingSiteStatsForQuery( state, siteId, 'statsComments', {} ),
+			commentsStatsData: getSiteStatsNormalizedData( state, siteId, STAT_TYPE_COMMENTS, {} ),
+			hasCommentsStatsQueryFailed: hasSiteStatsQueryFailed( state, siteId, STAT_TYPE_COMMENTS, {} ),
+			requestingCommentsStats: isRequestingSiteStatsForQuery(
+				state,
+				siteId,
+				STAT_TYPE_COMMENTS,
+				{}
+			),
 			siteId,
 			siteSlug,
+			gateStatsComments,
 		};
 	},
 	{ recordGoogleEvent }

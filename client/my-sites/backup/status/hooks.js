@@ -87,7 +87,7 @@ export const useDatesWithNoSuccessfulBackups = ( siteId, startDate, endDate ) =>
 				// Remove dates from the dates array that have backups
 				// This should leave only dates that have no backups in the array
 				const backupDate = adjustDate( item.activityDate ).format( 'MM-DD-YYYY' );
-				if ( dates.indexOf( backupDate ) > -1 ) {
+				if ( dates.indexOf( backupDate ) > -1 && item.activityIsRewindable ) {
 					dates.splice( dates.indexOf( backupDate ), 1 );
 				}
 			} );

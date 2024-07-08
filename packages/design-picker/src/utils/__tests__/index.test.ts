@@ -15,7 +15,6 @@ const testDesign: Design = {
 		base: 'Cabin',
 	},
 	categories: [ { slug: 'featured', name: 'Featured' } ],
-	is_premium: false,
 	features: [],
 };
 

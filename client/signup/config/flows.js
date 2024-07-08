@@ -11,7 +11,6 @@ import { isOnboardingGuidedFlow, isSiteAssemblerFlow } from '@automattic/onboard
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
-import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
@@ -401,14 +400,10 @@ const Flows = {
 		}
 
 		if ( isUserLoggedIn ) {
-			const urlParams = new URLSearchParams( window.location.search );
-			const param = urlParams.get( 'user_completed' );
 			const isUserStepOnly = flow.steps.length === 1 && stepConfig[ flow.steps[ 0 ] ].providesToken;
 
-			// Remove the user step unless the user has just completed the step
-			// and then clicked the back button.
-			// If the user step is the only step in the whole flow, e.g. /start/account, don't remove it as well.
-			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() && ! isUserStepOnly ) {
+			// Remove the user step unless it is the only step in the whole flow, e.g., `/start/account`
+			if ( ! isUserStepOnly ) {
 				flow = removeUserStepFromFlow( flow );
 			}
 		}
