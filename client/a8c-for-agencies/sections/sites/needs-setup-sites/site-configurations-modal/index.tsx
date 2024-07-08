@@ -5,6 +5,7 @@ import { check, closeSmall } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
+import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
@@ -15,6 +16,7 @@ import './style.scss';
 
 type SiteConfigurationsModalProps = {
 	closeModal: () => void;
+	onCreateSiteSuccess: ( id: number ) => void;
 	randomSiteName: string;
 	isRandomSiteNameLoading: boolean;
 	siteId: number;
@@ -22,15 +24,18 @@ type SiteConfigurationsModalProps = {
 
 export default function SiteConfigurationsModal( {
 	closeModal,
+	onCreateSiteSuccess,
 	randomSiteName,
 	isRandomSiteNameLoading,
 	siteId,
 }: SiteConfigurationsModalProps ) {
 	const [ allowClientsToUseSiteHelpCenter, setAllowClientsToUseSiteHelpCenter ] = useState( true );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const translate = useTranslate();
 	const dataCenterOptions = useDataCenterOptions();
 	const { phpVersions } = usePhpVersions();
 	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading, siteId );
+	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
 		setAllowClientsToUseSiteHelpCenter( ! allowClientsToUseSiteHelpCenter );
@@ -63,23 +68,40 @@ export default function SiteConfigurationsModal( {
 
 	const onSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
+		setIsSubmitting( true );
 		const formData = new FormData( event.currentTarget );
 		const phpVersion = formData.get( 'php_version' ) as string;
 		const primaryDataCenter = ( formData.get( 'primary_data_center' ) as string ) || undefined;
 		const params = {
+			id: siteId,
 			site_name: siteName.siteName,
 			php_version: phpVersion,
 			primary_data_center: primaryDataCenter,
 			is_fully_managed_agency_site: allowClientsToUseSiteHelpCenter,
 		};
-		// eslint-disable-next-line no-console
-		console.log( params );
+		createWPCOMSite( params, {
+			onSuccess: () => {
+				onCreateSiteSuccess( siteId );
+			},
+			onError: async ( error ) => {
+				if ( error.status === 400 ) {
+					await siteName.revalidateCurrentSiteName();
+					setIsSubmitting( false );
+				}
+			},
+		} );
+	};
+
+	const onRequestCloseModal = () => {
+		if ( ! isSubmitting ) {
+			closeModal();
+		}
 	};
 
 	return (
 		<Modal
 			title={ translate( 'Configure your new site' ) }
-			onRequestClose={ closeModal }
+			onRequestClose={ onRequestCloseModal }
 			className="configure-your-site-modal-form"
 		>
 			<form onSubmit={ onSubmit }>
@@ -105,6 +127,7 @@ export default function SiteConfigurationsModal( {
 								suffix=".wpcomstaging.com"
 								noWrap
 								spellCheck="false"
+								disabled={ isSubmitting }
 							/>
 						) }
 						<div className="configure-your-site-modal-form__site-name-icon-wrapper">
@@ -156,12 +179,13 @@ export default function SiteConfigurationsModal( {
 						className="configure-your-site-modal-form__php-version-select"
 						name="php_version"
 						onChange={ () => {} }
+						disabled={ isSubmitting }
 					>
 						{ phpVersionsElements }
 					</FormSelect>
 				</FormField>
 				<FormField label={ translate( 'Primary data center' ) }>
-					<FormSelect name="primary_data_center" onChange={ () => {} }>
+					<FormSelect disabled={ isSubmitting } name="primary_data_center" onChange={ () => {} }>
 						<option value="">{ translate( 'No preference' ) }</option>
 						{ dataCenterOptionsElements }
 					</FormSelect>
@@ -173,6 +197,7 @@ export default function SiteConfigurationsModal( {
 							onChange={ toggleAllowClientsToUseSiteHelpCenter }
 							checked={ allowClientsToUseSiteHelpCenter }
 							name="is_fully_managed_agency_site"
+							disabled={ isSubmitting }
 						/>
 						<label htmlFor="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox">
 							{ translate(
@@ -204,7 +229,12 @@ export default function SiteConfigurationsModal( {
 					</div>
 				</FormField>
 				<div className="configure-your-site-modal-form__footer">
-					<Button primary type="submit">
+					<Button
+						primary
+						type="submit"
+						busy={ isSubmitting }
+						disabled={ ! siteName.isSiteNameReadyForUse }
+					>
 						{ translate( 'Create site' ) }
 					</Button>
 				</div>

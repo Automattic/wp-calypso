@@ -138,19 +138,24 @@ export default function NeedSetup( { licenseKey }: Props ) {
 				features.wpcom_atomic.state === 'provisioning' && !! features.wpcom_atomic.license_key
 		);
 
+	const onCreateSiteSuccess = useCallback(
+		( id: number ) => {
+			refetchPendingSites();
+			page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
+		},
+		[ refetchPendingSites ]
+	);
+
 	const onCreateSite = useCallback(
 		( id: number ) => {
 			createWPCOMSite(
 				{ id },
 				{
-					onSuccess: () => {
-						refetchPendingSites();
-						page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
-					},
+					onSuccess: () => onCreateSiteSuccess( id ),
 				}
 			);
 		},
-		[ createWPCOMSite, refetchPendingSites ]
+		[ createWPCOMSite, onCreateSiteSuccess ]
 	);
 
 	const onMigrateSite = useCallback(
@@ -197,6 +202,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 						randomSiteName={ randomSiteName }
 						isRandomSiteNameLoading={ isRandomSiteNameLoading }
 						siteId={ currentSiteConfigurationId }
+						onCreateSiteSuccess={ onCreateSiteSuccess }
 					/>
 				) }
 				<NeedSetupTable
