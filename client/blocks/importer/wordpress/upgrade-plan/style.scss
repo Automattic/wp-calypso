@@ -28,10 +28,10 @@ $business-plan-color: #7f54b3;
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
+		gap: 1.5rem;
 		margin-bottom: -3px;
 		max-width: 100%;
-		padding: 1.5em;
+		padding: 3em 1.5em;
 		width: auto;
 		z-index: 1;
 
@@ -234,7 +234,7 @@ $business-plan-color: #7f54b3;
 		color: $business-plan-color;
 		font-size: 0.75rem;
 		font-weight: 500;
-		margin-top: 0.5rem;
+		margin-top: 0.6rem;
 		text-align: center;
 	}
 
@@ -310,7 +310,7 @@ $business-plan-color: #7f54b3;
 			display: flex;
 			flex-direction: column;
 			margin-bottom: 0;
-			width: 352px;
+			width: 372px;
 		}
 
 		.import__upgrade-plan-hosting-details-card-container {
