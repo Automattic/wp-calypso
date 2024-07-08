@@ -11,7 +11,17 @@ import React, { type ComponentPropsWithoutRef } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useUpgradePlanHostingDetailsList } from '../hooks/use-get-upgrade-plan-hosting-details-list';
 import { UpgradePlan, UnwrappedUpgradePlan } from '../index';
+import '@automattic/data-stores';
 
+// Stub out UpgradePlanDetails because it has much more complex dependencies, and only provides a wrapper around the content from this component.
+jest.mock( '../upgrade-plan-details', () => ( {
+	__esModule: true,
+	default: ( { children } ) => <div>{ children }</div>,
+} ) );
+
+jest.mock( '@automattic/calypso-analytics' );
+
+const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
 	( useUpgradePlanHostingDetailsList as jest.Mock ).mockReturnValue( {
 		list: [],
@@ -20,6 +30,8 @@ const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
 };
 
 jest.mock( '../hooks/use-get-upgrade-plan-hosting-details-list' );
+
+jest.mock( '@automattic/data-stores' );
 
 const CTA_TEXT = 'CTA';
 const DEFAULT_SITE_ID = 123;
@@ -51,13 +63,14 @@ const DEFAULT_SITE_CAPABILITIES = {
 	view_stats: true,
 };
 
-// Stub out UpgradePlanDetails because it has much more complex dependencies, and only provides a wrapper around the content from this component.
-jest.mock( '../upgrade-plan-details', () => ( {
-	__esModule: true,
-	default: ( { children } ) => <div>{ children }</div>,
-} ) );
+const API_RESPONSE_ELIGIBLE = {
+	eligible: true,
+};
 
-jest.mock( '@automattic/calypso-analytics' );
+const API_RESPONSE_INELIGIBLE_UNVERIFIED_EMAIL = {
+	eligible: true,
+	error_code: 'email-unverified',
+};
 
 function renderUpgradePlanComponent(
 	props: ComponentPropsWithoutRef< typeof UpgradePlan >,
@@ -120,17 +133,6 @@ function getUpgradePlanProps(
 		...customProps,
 	};
 }
-
-const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
-
-const API_RESPONSE_ELIGIBLE = {
-	eligible: true,
-};
-
-const API_RESPONSE_INELIGIBLE_UNVERIFIED_EMAIL = {
-	eligible: true,
-	error_code: 'email-unverified',
-};
 
 describe( 'UpgradePlan', () => {
 	beforeAll( () => nock.disableNetConnect() );
