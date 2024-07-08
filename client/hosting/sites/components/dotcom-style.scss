@@ -689,7 +689,7 @@
 		padding-top: var(--masterbar-height);
 
 		@include break-small {
-			padding-top: calc(var(--masterbar-height) + 24px);
+			padding-top: calc(var(--masterbar-height) + 12px);
 		}
 
 		.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
