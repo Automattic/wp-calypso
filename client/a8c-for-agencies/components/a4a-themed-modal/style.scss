@@ -34,14 +34,20 @@
 	border: none;
 }
 
-.a4a-themed-modal__sidebar-image {
+
+.a4a-themed-modal__sidebar-image-container {
 	min-width: 270px;
-	height: auto;
+
 	display: none;
 
 	@include break-small {
 		display: block;
 	}
+}
+
+.a4a-themed-modal__sidebar-image {
+	width: 270px;
+	height: auto;
 }
 
 .a4a-themed-modal__content {
