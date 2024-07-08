@@ -17,6 +17,7 @@ type Props = {
 	onClickAddNewSite?: () => void;
 	onClickA4APluginMenuItem?: () => void;
 	onClickUrlMenuItem?: () => void;
+	onWPCOMImport?: ( blogIds: number[] ) => void;
 };
 
 const AddNewSiteButton = ( {
@@ -27,6 +28,7 @@ const AddNewSiteButton = ( {
 	onClickAddNewSite,
 	onClickA4APluginMenuItem,
 	onClickUrlMenuItem,
+	onWPCOMImport,
 }: Props ): JSX.Element => {
 	const translate = useTranslate();
 
@@ -40,7 +42,12 @@ const AddNewSiteButton = ( {
 	const isSiteSelectorAndImportedEnabled = config.isEnabled( 'a4a-site-selector-and-importer' );
 
 	if ( isSiteSelectorAndImportedEnabled ) {
-		return <SiteSelectorAndImporter showMainButtonLabel={ showMainButtonLabel } />;
+		return (
+			<SiteSelectorAndImporter
+				showMainButtonLabel={ showMainButtonLabel }
+				onWPCOMImport={ onWPCOMImport }
+			/>
+		);
 	}
 
 	return (

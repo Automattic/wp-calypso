@@ -24,11 +24,12 @@ const ICON_SIZE = 32;
 
 type PendingSite = { features: { wpcom_atomic: { state: string; license_key: string } } };
 
-export default function SiteSelectorAndImporter( {
-	showMainButtonLabel,
-}: {
+type Props = {
+	onWPCOMImport?: ( blogIds: number[] ) => void;
 	showMainButtonLabel: boolean;
-} ) {
+};
+
+export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMImport }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -202,7 +203,10 @@ export default function SiteSelectorAndImporter( {
 			) }
 
 			{ showImportFromWPCOMModal && (
-				<ImportFromWPCOMModal onClose={ () => setShowImportFromWPCOMModal( false ) } />
+				<ImportFromWPCOMModal
+					onClose={ () => setShowImportFromWPCOMModal( false ) }
+					onImport={ onWPCOMImport }
+				/>
 			) }
 		</>
 	);
