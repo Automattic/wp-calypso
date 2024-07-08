@@ -163,6 +163,7 @@ export interface PlanNext {
 	pricing: PlanPricing;
 	/* END: Same SitePlan/PlanNext props */
 	productNameShort: string;
+	pathSlug?: string;
 }
 
 export interface PricedAPIPlanIntroductoryOffer {
@@ -216,7 +217,7 @@ export interface PricedAPISitePlanPricing
 export interface PricedAPIPlan extends PricedAPIPlanPricing, PricedAPIPlanIntroductoryOffer {
 	product_id: number;
 	product_name: string;
-	path_slug?: PlanPath;
+	path_slug?: string;
 	product_slug: StorePlanSlug;
 	product_name_short: string;
 	product_type?: string;
