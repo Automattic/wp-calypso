@@ -17,7 +17,7 @@
 		"teamcity:build-app": "./bin/ci-build-steps.sh",
 		"build": "NODE_ENV=production yarn dev",
 		"build:block-inserter-modifications": "calypso-build --env source='block-inserter-modifications/contextual-tips'",
-		"build:common": " calypso-build --env source='common','common/data-stores','common/disable-heic-images','common/override-preview-button-url'",
+		"build:common": " calypso-build --env source='common','common/data-stores','common/override-preview-button-url'",
 		"build:event-countdown-block": "calypso-build --env source='event-countdown-block'",
 		"build:global-styles": "calypso-build --env source='global-styles'",
 		"build:global-styles-customizer-fonts": "calypso-build --env source='global-styles/customizer-fonts'",
