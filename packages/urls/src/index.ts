@@ -53,6 +53,7 @@ export const MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS = `${ root }/domains/connect-a
 export const MAP_SUBDOMAIN = `${ root }/domains/connect-subdomain/`;
 export const MAP_SUBDOMAIN_WITH_CNAME_RECORDS = `${ root }/domains/connect-subdomain/#adding-cname-records-with-your-registrar`;
 export const MAP_DOMAIN_CHANGE_NAME_SERVERS = `${ root }/domains/connect-existing-domain/#step-2-change-your-domains-name-servers`;
+export const PREMIUM_DOMAINS = `${ root }/domains/premium-domains/`;
 export const PRIVACY_PROTECTION = `${ root }/domains/domain-registrations-and-privacy/#privacy-protection`;
 export const PUBLIC_VS_PRIVATE = `${ root }/domains/register-domain/#public-versus-private-registration-and-gdpr`;
 export const REFUNDS = `${ root }/refunds/`;

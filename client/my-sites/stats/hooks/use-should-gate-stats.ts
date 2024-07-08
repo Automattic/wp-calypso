@@ -28,6 +28,7 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_QUARTER,
 	STATS_FEATURE_SUMMARY_LINKS_YEAR,
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
+	STAT_TYPE_INSIGHTS,
 } from '../constants';
 import { isSiteNew } from './use-site-compulsory-plan-selection-qualified-check';
 import { hasAnyPlan } from './use-stats-purchases';
@@ -43,6 +44,7 @@ const jetpackStatsCommercialPaywall = [
 	STAT_TYPE_VIDEO_PLAYS,
 	STAT_TYPE_TAGS,
 	STAT_TYPE_COMMENTS,
+	STAT_TYPE_INSIGHTS,
 ];
 
 const granularControlForJetpackStatsCommercialPaywall = [

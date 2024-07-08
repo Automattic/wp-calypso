@@ -124,6 +124,7 @@ export const setShowSupportDoc = function* ( link: string, postId: number, blogI
 		cacheBuster: String( Date.now() ),
 	} );
 	yield setInitialRoute( `/post/?${ params }` );
+	yield setIsMinimized( false );
 	yield setShowHelpCenter( true );
 };
 
