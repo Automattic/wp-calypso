@@ -126,6 +126,7 @@
 		"layout/query-selected-editor": true,
 		"layout/site-level-user-profile": false,
 		"layout/support-article-dialog": true,
+		"layout/mb": true,
 		"legal-updates-banner": true,
 		"livechat_solution": true,
 		"login/magic-login": true,
