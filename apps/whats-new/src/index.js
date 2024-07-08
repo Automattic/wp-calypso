@@ -37,8 +37,8 @@ function WhatsNewApp( { siteId } ) {
 
 registerPlugin( 'whats-new', {
 	render: () => {
+		// Can't load the whats new app without a config.
 		if ( ! window.whatsNewAppConfig ) {
-			// Can't load the whats new app without a config.
 			return null;
 		}
 
