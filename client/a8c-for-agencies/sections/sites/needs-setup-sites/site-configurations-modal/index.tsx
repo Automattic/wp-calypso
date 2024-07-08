@@ -229,7 +229,12 @@ export default function SiteConfigurationsModal( {
 					</div>
 				</FormField>
 				<div className="configure-your-site-modal-form__footer">
-					<Button primary type="submit" busy={ isSubmitting }>
+					<Button
+						primary
+						type="submit"
+						busy={ isSubmitting }
+						disabled={ ! siteName.isSiteNameReadyForUse }
+					>
 						{ translate( 'Create site' ) }
 					</Button>
 				</div>
