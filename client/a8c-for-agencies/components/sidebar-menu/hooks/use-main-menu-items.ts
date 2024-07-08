@@ -128,7 +128,7 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-partner-directory' )
+			...( config.isEnabled( 'a4a-partner-directory' )
 				? [
 						{
 							icon: commentAuthorAvatar,
