@@ -324,6 +324,10 @@ class MasterbarLoggedIn extends Component {
 		const icon =
 			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
 
+		if ( config.isEnabled( 'layout/mb' ) ) {
+			mySitesUrl = '/sites';
+		}
+
 		if ( 'sites' === section && isResponsiveMenu ) {
 			mySitesUrl = '';
 		}
