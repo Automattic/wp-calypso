@@ -1,4 +1,4 @@
-import { useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 
 interface MShotConfig {
 	vpw: number;
@@ -40,10 +40,6 @@ export const useSitePreviewMShotImageHandler = () => {
 	const [ mShotsOption, setMShotsOption ] = useState< MShotConfig | undefined >( undefined );
 	const [ currentSegment, setCurrentSegment ] = useState( '' );
 
-	const callMShotEndpoint = ( url: string ) => {
-		fetch( url, { method: 'GET' } );
-	};
-
 	const getSegment = ( width: number ) => {
 		switch ( true ) {
 			case width >= 1024:
@@ -54,6 +50,8 @@ export const useSitePreviewMShotImageHandler = () => {
 				return 'mobile';
 		}
 	};
+
+	const previewRef = useRef< HTMLDivElement >( null );
 
 	const updateDimensions = ( previewRef: React.RefObject< HTMLDivElement > ) => {
 		if ( previewRef.current ) {
@@ -71,9 +69,23 @@ export const useSitePreviewMShotImageHandler = () => {
 		}
 	};
 
+	useEffect( () => {
+		updateDimensions( previewRef );
+
+		// Throttle the resize event handling.
+		let resizeTimeout: ReturnType< typeof setTimeout >;
+		const throttledResizeHandler = () => {
+			clearTimeout( resizeTimeout );
+			resizeTimeout = setTimeout( () => updateDimensions( previewRef ), 200 );
+		};
+
+		window.addEventListener( 'resize', throttledResizeHandler );
+		return () => window.removeEventListener( 'resize', throttledResizeHandler );
+	}, [] );
+
 	const createScreenshots = ( url: string ) => {
 		Object.entries( mShotConfigs ).forEach( ( mShotParams ) => {
-			callMShotEndpoint(
+			fetch(
 				`https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?${ Object.entries(
 					mShotParams[ 1 ]
 				)
@@ -84,5 +96,12 @@ export const useSitePreviewMShotImageHandler = () => {
 		} );
 	};
 
-	return { createScreenshots, getSegment, mShotsOption, updateDimensions, currentSegment };
+	return {
+		createScreenshots,
+		getSegment,
+		mShotsOption,
+		updateDimensions,
+		currentSegment,
+		previewRef,
+	};
 };
