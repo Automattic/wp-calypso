@@ -10,7 +10,7 @@ import nock from 'nock';
 import React, { type ComponentPropsWithoutRef } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useUpgradePlanHostingDetailsList } from '../hooks/use-get-upgrade-plan-hosting-details-list';
-import { UpgradePlan, UpgradePlanUnwrapped as UpgradePlanWithoutHOC } from '../index';
+import { UpgradePlan, UnwrappedUpgradePlan } from '../index';
 
 const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
 	( useUpgradePlanHostingDetailsList as jest.Mock ).mockReturnValue( {
@@ -270,7 +270,7 @@ describe( 'UpgradePlan', () => {
 
 			const { queryByText, container } = renderUpgradePlanComponent(
 				getUpgradePlanProps( { ctaText: CTA_TEXT } ),
-				UpgradePlanWithoutHOC
+				UnwrappedUpgradePlan
 			);
 
 			expect(

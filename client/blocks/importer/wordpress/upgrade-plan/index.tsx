@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import PlanNoticeCreditUpgrade from 'calypso/my-sites/plans-features-main/components/plan-notice-credit-update';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
 import { Skeleton } from './skeleton';
 import UpgradePlanDetails from './upgrade-plan-details';
@@ -16,7 +17,7 @@ import './style.scss';
 import withMigrationSticker from './with-migration-sticker';
 import type { UpgradePlanProps } from './types';
 
-export const UpgradePlanUnwrapped: React.FunctionComponent< UpgradePlanProps > = ( props ) => {
+export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > = ( props ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const plan = getPlan( PLAN_BUSINESS );
@@ -44,8 +45,16 @@ export const UpgradePlanUnwrapped: React.FunctionComponent< UpgradePlanProps > =
 	const { list: upgradePlanHostingDetailsList, isFetching: isFetchingHostingDetails } =
 		useUpgradePlanHostingDetailsList();
 
-	const plans = Plans.useSitePlans( { siteId: site.ID } );
-	const pricing = plans.data ? plans.data[ visiblePlan ]?.pricing : undefined;
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		coupon: undefined,
+		planSlugs: [ visiblePlan ],
+		siteId: site.ID,
+		storageAddOns: null,
+		useCheckPlanAvailabilityForPurchase,
+	} );
+
+	const pricing =
+		pricingMeta && pricingMeta[ visiblePlan ] ? pricingMeta[ visiblePlan ] : undefined;
 
 	const introOfferAvailable =
 		isEnabled( 'migration-flow/introductory-offer' ) &&
@@ -201,4 +210,4 @@ export const UpgradePlanUnwrapped: React.FunctionComponent< UpgradePlanProps > =
 	);
 };
 
-export const UpgradePlan = withMigrationSticker( UpgradePlanUnwrapped );
+export const UpgradePlan = withMigrationSticker( UnwrappedUpgradePlan );
