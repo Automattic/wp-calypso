@@ -43,7 +43,7 @@ body.is-section-me {
 				height: calc(100vh - var(--masterbar-height) - 50px);
 			}
 			@media only screen and (min-width: 782px) {
-				height: calc(100vh - 32px);
+				height: calc(100vh - var(--masterbar-height) - 28px);
 			}
 			overflow-y: auto;
 			overflow-x: hidden;
