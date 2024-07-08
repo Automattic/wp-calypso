@@ -42,11 +42,11 @@ const useCheckSiteAvailability = (
 	} );
 
 	useEffect( () => {
-		if ( skipAvailability ) {
+		if ( skipAvailability || availabilityState.siteNameSuggestion === siteName ) {
 			setAvilabilityState( {
 				isSiteNameAvailiable: true,
 				isCheckingSiteAvailability: false,
-				siteNameSuggestion: '',
+				siteNameSuggestion: availabilityState.siteNameSuggestion,
 			} );
 			return;
 		}
@@ -66,6 +66,7 @@ const useCheckSiteAvailability = (
 				siteNameSuggestion: result.siteNameSuggestion,
 			} );
 		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ agencyId, siteId, siteName, skipAvailability ] );
 
 	return availabilityState;
