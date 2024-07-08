@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
