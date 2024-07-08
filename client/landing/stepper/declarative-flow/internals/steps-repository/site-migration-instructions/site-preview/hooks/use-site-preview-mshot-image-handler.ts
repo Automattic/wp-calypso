@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from '@wordpress/element';
+import { throttle } from 'lodash';
 
 interface MShotConfig {
 	vpw: number;
@@ -70,18 +71,11 @@ export const useSitePreviewMShotImageHandler = () => {
 	};
 
 	useEffect( () => {
-		updateDimensions( previewRef );
-
-		// Throttle the resize event handling.
-		let resizeTimeout: ReturnType< typeof setTimeout >;
-		const throttledResizeHandler = () => {
-			clearTimeout( resizeTimeout );
-			resizeTimeout = setTimeout( () => updateDimensions( previewRef ), 200 );
-		};
+		const throttledResizeHandler = throttle( () => updateDimensions( previewRef ), 200 );
 
 		window.addEventListener( 'resize', throttledResizeHandler );
 		return () => window.removeEventListener( 'resize', throttledResizeHandler );
-	}, [] );
+	}, [ previewRef ] );
 
 	const createScreenshots = ( url: string ) => {
 		Object.entries( mShotConfigs ).forEach( ( mShotParams ) => {
