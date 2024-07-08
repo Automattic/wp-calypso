@@ -40,7 +40,7 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 
 	const steps = [
 		{
-			title: translate( '1. Install the Migrate Guru plugin' ),
+			title: translate( 'Install the Migrate Guru plugin' ),
 			content: (
 				<p>
 					{ translate(
@@ -62,7 +62,7 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 			),
 		},
 		{
-			title: translate( '2. Get your site ready' ),
+			title: translate( 'Get your site ready' ),
 			content: (
 				<>
 					<p>
@@ -93,7 +93,7 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 			),
 		},
 		{
-			title: translate( '3. Add your migration key' ),
+			title: translate( 'Add your migration key' ),
 			content: (
 				<p>
 					{ translate(
