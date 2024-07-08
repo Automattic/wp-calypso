@@ -5,16 +5,14 @@ $radius: 20px; /* stylelint-disable-line scales/radii */
 	border-radius: $radius;
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07), 0 3px 10px rgba(0, 0, 0, 0.04);
 
+	& > .site-thumbnail,
 	& &__screenshot {
-		width: 100%;
+		border: solid 12px var(--color-neutral-0);
+		border-radius: $radius;
+		box-sizing: border-box;
+		display: block;
 		height: 680px;
+		min-height: 100%;
+		width: 100%;
 	}
-}
-
-.migration-instructions-from-preview__screenshot {
-	display: block;
-	min-height: 100%;
-	border-radius: $radius;
-	border: solid 12px var(--color-neutral-0);
-	box-sizing: border-box;
 }
