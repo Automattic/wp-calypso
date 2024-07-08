@@ -13,6 +13,7 @@ import { QueryStatsParams } from '../../../hooks/utils';
 import StatsListCard from '../../../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import statsStrings from '../../../stats-strings';
+import type { StatsPeriodType } from '../types';
 
 import './stats-module-devices.scss';
 
@@ -39,7 +40,7 @@ interface StatsDevicesChartData {
 interface StatsModuleDevicesProps {
 	path: string;
 	className?: string;
-	period?: string;
+	period?: StatsPeriodType;
 	postId?: number;
 	query: QueryStatsParams;
 	summary?: boolean;
@@ -95,6 +96,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 
 	const optionLabels = {
 		[ OPTION_KEYS.SIZE ]: {
@@ -143,64 +145,78 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		/>
 	);
 
-	// Use dedicated StatsCard for the screen size chart section.
-	if ( OPTION_KEYS.SIZE === selectedOption ) {
-		const chartData = prepareChartData( data );
-
-		return (
-			<StatsCard
-				className={ clsx( className, 'stats-module__card', path ) }
-				title={ devicesStrings.title }
-				titleURL=""
-				metricLabel=""
-				splitHeader
-				isNew
-				mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-				toggleControl={ toggleControlComponent }
-				isEmpty={ ! showLoader && ( ! chartData || ! chartData.length ) }
-				emptyMessage={ devicesStrings.empty }
-			>
-				{ showLoader ? (
-					<StatsModulePlaceholder isLoading={ showLoader } />
-				) : (
-					<div className="stats-card--body__chart">
-						<PieChart data={ chartData } startAngle={ 0 } svgSize={ 224 } donut hasTooltip />
-						<PieChartLegend
-							data={ chartData }
-							onlyPercent
-							svgElement={
-								<svg
-									width="15"
-									height="14"
-									viewBox="0 0 15 14"
-									fill="none"
-									xmlns="http://www.w3.org/2000/svg"
-								>
-									<rect x="0.5" width="14" height="14" rx="3" />
-								</svg>
-							}
-						/>
-					</div>
-				) }
-			</StatsCard>
-		);
-	}
+	const chartData = OPTION_KEYS.SIZE === selectedOption ? prepareChartData( data ) : null;
 
 	return (
-		// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
-		<StatsListCard
-			className={ clsx( className, 'stats-module__card', path ) }
-			moduleType={ path }
-			data={ data }
-			title={ devicesStrings.title }
-			emptyMessage={ devicesStrings.empty }
-			metricLabel={ translate( 'Visitors' ) }
-			loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
-			splitHeader
-			useShortNumber
-			mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-			toggleControl={ toggleControlComponent }
-		/>
+		<>
+			{ isNewEmptyStateEnabled && <></> }
+
+			{ ! isNewEmptyStateEnabled && (
+				<>
+					{
+						// Use dedicated StatsCard for the screen size chart section.
+						OPTION_KEYS.SIZE === selectedOption ? (
+							<StatsCard
+								className={ clsx( className, 'stats-module__card', path ) }
+								title={ devicesStrings.title }
+								titleURL=""
+								metricLabel=""
+								splitHeader
+								isNew
+								mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+								toggleControl={ toggleControlComponent }
+								isEmpty={ ! showLoader && ( ! chartData || ! chartData.length ) }
+								emptyMessage={ devicesStrings.empty }
+							>
+								{ showLoader ? (
+									<StatsModulePlaceholder isLoading={ showLoader } />
+								) : (
+									<div className="stats-card--body__chart">
+										<PieChart
+											data={ chartData }
+											startAngle={ 0 }
+											svgSize={ 224 }
+											donut
+											hasTooltip
+										/>
+										<PieChartLegend
+											data={ chartData }
+											onlyPercent
+											svgElement={
+												<svg
+													width="15"
+													height="14"
+													viewBox="0 0 15 14"
+													fill="none"
+													xmlns="http://www.w3.org/2000/svg"
+												>
+													<rect x="0.5" width="14" height="14" rx="3" />
+												</svg>
+											}
+										/>
+									</div>
+								) }
+							</StatsCard>
+						) : (
+							// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
+							<StatsListCard
+								className={ clsx( className, 'stats-module__card', path ) }
+								moduleType={ path }
+								data={ data }
+								title={ devicesStrings.title }
+								emptyMessage={ devicesStrings.empty }
+								metricLabel={ translate( 'Visitors' ) }
+								loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
+								splitHeader
+								useShortNumber
+								mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+								toggleControl={ toggleControlComponent }
+							/>
+						)
+					}
+				</>
+			) }
+		</>
 	);
 };
 

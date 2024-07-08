@@ -1,30 +1,25 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import clsx from 'clsx';
 import { default as usePlanUsageQuery } from '../../../hooks/use-plan-usage-query';
 import useStatsPurchases from '../../../hooks/use-stats-purchases';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import statsStrings from '../../../stats-strings';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsModuleDevices from './stats-module-devices';
 import StatsModuleUpgradeOverlay from './stats-module-upgrade-overlay';
+import type { StatsAdvancedModuleWrapperProps } from '../types';
 
 const DEVICES_CLASS_NAME = 'stats-module-devices';
 
-interface StatsModuleDevicesWrapperProps {
-	siteId: number;
-	period: string;
-	postId?: number;
-	query: object;
-	summary?: boolean;
-	className?: string;
-}
-
-const StatsModuleDevicesWrapper: React.FC< StatsModuleDevicesWrapperProps > = ( {
+const StatsModuleDevicesWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 	siteId,
 	period,
 	postId,
 	query,
 	className,
 } ) => {
+	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 	const { devices: devicesStrings } = statsStrings();
 
 	// Check if blog is internal.
@@ -32,7 +27,7 @@ const StatsModuleDevicesWrapper: React.FC< StatsModuleDevicesWrapperProps > = ( 
 	const { isLoading: isLoadingFeatureCheck, supportCommercialUse } = useStatsPurchases( siteId );
 
 	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
-	const isFetching = isFetchingUsage || isLoadingFeatureCheck;
+	const isFetching = isFetchingUsage || isLoadingFeatureCheck; // This is not fetching Devices data.
 	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
 
 	// Hide the module if the specific post is the Home page.
@@ -42,7 +37,15 @@ const StatsModuleDevicesWrapper: React.FC< StatsModuleDevicesWrapperProps > = ( 
 
 	return (
 		<>
-			{ isFetching && (
+			{ isFetching && isNewEmptyStateEnabled && (
+				<StatsCardSkeleton
+					isLoading={ isFetching }
+					className={ className }
+					title={ devicesStrings?.title }
+					type={ 1 }
+				/>
+			) }
+			{ isFetching && ! isNewEmptyStateEnabled && (
 				<StatsCard
 					title={ devicesStrings.title }
 					className={ clsx( className, DEVICES_CLASS_NAME, 'stats-module__card', 'devices' ) }
