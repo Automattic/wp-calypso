@@ -41,6 +41,7 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 	PLUGIN_ACTION_STATUS_UPDATE,
+	PLUGIN_INSTALL_REQUEST_PARTIAL_SUCCESS,
 } from 'calypso/state/action-types';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -442,19 +443,25 @@ function installPluginHelper(
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST } );
 
+		let lastStep = '';
+
 		const doInstall = function ( pluginData ) {
+			lastStep = 'doInstall';
 			return getPluginHandler( siteId, pluginData.slug ).install();
 		};
 
 		const doActivate = function ( pluginData ) {
+			lastStep = 'doActivate';
 			return getPluginHandler( siteId, pluginData.id ).activate();
 		};
 
 		const doUpdate = function ( pluginData ) {
+			lastStep = 'doUpdate';
 			return getPluginHandler( siteId, pluginData.id ).updateVersion();
 		};
 
 		const doAutoupdates = function ( pluginData ) {
+			lastStep = 'doAutoupdates';
 			return getPluginHandler( siteId, pluginData.id ).enableAutoupdate();
 		};
 
@@ -492,7 +499,15 @@ function installPluginHelper(
 					.then( successCallback )
 					.catch( errorCallback );
 			}
-			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_FAILURE, error } );
+			let type = PLUGIN_INSTALL_REQUEST_FAILURE;
+			let data = {};
+			// If the error is a ServerError, the plugin was installed but not activated
+			if ( error.name === 'ServerError' && lastStep === 'doActivate' ) {
+				type = PLUGIN_INSTALL_REQUEST_PARTIAL_SUCCESS;
+				error.error = 'server_error_during_activation';
+				data = { ...plugin, active: false };
+			}
+			dispatch( { ...defaultAction, type, error, data } );
 			recordInstallPluginEvent( 'RECEIVE_INSTALLED_PLUGIN', error );
 			return Promise.reject( error );
 		};

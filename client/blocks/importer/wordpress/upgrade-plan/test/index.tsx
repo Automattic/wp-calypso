@@ -2,37 +2,26 @@
  * @jest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { PLAN_MIGRATION_TRIAL_MONTHLY, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React, { type ComponentPropsWithoutRef } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { UpgradePlan } from '../index';
+import { useUpgradePlanHostingDetailsList } from '../hooks/use-get-upgrade-plan-hosting-details-list';
+import { UpgradePlan, UpgradePlanUnwrapped as UpgradePlanWithoutHOC } from '../index';
 
-// Stub out UpgradePlanDetails because it has much more complex dependencies, and only provides a wrapper around the content from this component.
-jest.mock( '../upgrade-plan-details', () => ( {
-	__esModule: true,
-	default: ( { children } ) => <div>{ children }</div>,
-} ) );
+const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
+	( useUpgradePlanHostingDetailsList as jest.Mock ).mockReturnValue( {
+		list: [],
+		isFetching,
+	} );
+};
 
-jest.mock( '@automattic/calypso-analytics' );
+jest.mock( '../hooks/use-get-upgrade-plan-hosting-details-list' );
 
-function renderUpgradePlanComponent( props: ComponentPropsWithoutRef< typeof UpgradePlan > ) {
-	const queryClient = new QueryClient();
-
-	return renderWithProvider(
-		<QueryClientProvider client={ queryClient }>
-			<UpgradePlan { ...props } />
-		</QueryClientProvider>,
-		{
-			initialState: {},
-			reducers: {},
-		}
-	);
-}
-
+const CTA_TEXT = 'CTA';
 const DEFAULT_SITE_ID = 123;
 const DEFAULT_SITE_SLUG = 'test-example.wordpress.com';
 
@@ -56,10 +45,51 @@ const DEFAULT_SITE_CAPABILITIES = {
 	promote_users: true,
 	publish_posts: true,
 	remove_users: true,
+	update_plugins: true,
 	upload_files: true,
 	view_hosting: true,
 	view_stats: true,
 };
+
+// Stub out UpgradePlanDetails because it has much more complex dependencies, and only provides a wrapper around the content from this component.
+jest.mock( '../upgrade-plan-details', () => ( {
+	__esModule: true,
+	default: ( { children } ) => <div>{ children }</div>,
+} ) );
+
+jest.mock( '@automattic/calypso-analytics' );
+
+function renderUpgradePlanComponent(
+	props: ComponentPropsWithoutRef< typeof UpgradePlan >,
+	Component = UpgradePlan
+) {
+	const queryClient = new QueryClient();
+
+	return renderWithProvider(
+		<QueryClientProvider client={ queryClient }>
+			<Component { ...props } />
+		</QueryClientProvider>,
+		{
+			initialState: {
+				sites: {
+					plans: {
+						[ DEFAULT_SITE_ID ]: {
+							data: [
+								{
+									currencyCode: 'USD',
+									rawPrice: 0,
+									rawDiscount: 0,
+									productSlug: PLAN_BUSINESS,
+								},
+							],
+						},
+					},
+				},
+			},
+			reducers: {},
+		}
+	);
+}
 
 function getUpgradePlanProps(
 	customProps: Partial< ComponentPropsWithoutRef< typeof UpgradePlan > > = {}
@@ -104,6 +134,10 @@ const API_RESPONSE_INELIGIBLE_UNVERIFIED_EMAIL = {
 
 describe( 'UpgradePlan', () => {
 	beforeAll( () => nock.disableNetConnect() );
+
+	beforeEach( () => {
+		mockUseUpgradePlanHostingDetailsList( false );
+	} );
 
 	it( 'should call onCtaClick when the user clicks on the Continue button', async () => {
 		const mockOnCtaClick = jest.fn();
@@ -202,6 +236,47 @@ describe( 'UpgradePlan', () => {
 				'calypso_site_migration_upgrade_plan_screen',
 				{ migration_trial_hidden: 'true' }
 			);
+		} );
+	} );
+
+	describe( 'with migration sticker HOC', () => {
+		it( 'should render children', async () => {
+			const { queryByText } = renderUpgradePlanComponent(
+				getUpgradePlanProps( { ctaText: CTA_TEXT } )
+			);
+
+			await waitFor( () => {
+				expect( queryByText( CTA_TEXT ) ).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should call the sticker endpoint creation when rendering the component', async () => {
+			nock.cleanAll();
+			const scope = nock( 'https://public-api.wordpress.com:443' )
+				.post( `/wpcom/v2/sites/${ DEFAULT_SITE_ID }/migration-flow` )
+				.reply( 200 );
+
+			renderUpgradePlanComponent( getUpgradePlanProps( {} ) );
+
+			await waitFor( () => {
+				expect( scope.isDone() ).toBe( true );
+			} );
+		} );
+	} );
+
+	describe( 'without migration sticker HOC', () => {
+		it( 'should render fetch state when hosting details are fetching', async () => {
+			mockUseUpgradePlanHostingDetailsList( true );
+
+			const { queryByText, container } = renderUpgradePlanComponent(
+				getUpgradePlanProps( { ctaText: CTA_TEXT } ),
+				UpgradePlanWithoutHOC
+			);
+
+			expect(
+				container.querySelector( '.import__upgrade-plan-details--loading' )
+			).toBeInTheDocument();
+			expect( queryByText( CTA_TEXT ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

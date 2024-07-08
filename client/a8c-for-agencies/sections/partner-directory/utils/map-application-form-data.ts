@@ -51,7 +51,7 @@ export function mapAgencyDetailsFormData( agency: Agency | null ): AgencyDetails
 		landingPageUrl: agency.profile.company_details.landing_page_url,
 		country: agency.profile.company_details.country,
 		isAvailable: agency.profile.listing_details.is_available,
-		industry: agency.profile.listing_details.industry,
+		industries: agency.profile.listing_details.industries,
 		services: agency.profile.listing_details.services,
 		products: agency.profile.listing_details.products,
 		languagesSpoken: languages,

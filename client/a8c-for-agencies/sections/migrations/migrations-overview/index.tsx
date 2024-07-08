@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Card, WordPressLogo } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -10,7 +11,10 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_REFERRALS_BANK_DETAILS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_REFERRALS_BANK_DETAILS_LINK,
+	A4A_REFERRALS_PAYMENT_SETTINGS,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StatusBadge from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item/status-badge';
 import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hooks/use-get-tipalti-payee';
 import { getAccountStatus } from 'calypso/a8c-for-agencies/sections/referrals/lib/get-account-status';
@@ -25,6 +29,8 @@ export default function MigrationsOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const title = translate( 'Migrations' );
+
+	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
 
 	const { data } = useGetTipaltiPayee();
 	const accountStatus = getAccountStatus( data, translate );
@@ -136,7 +142,11 @@ export default function MigrationsOverview() {
 							<Button
 								primary
 								compact
-								href={ A4A_REFERRALS_BANK_DETAILS_LINK }
+								href={
+									isAutomatedReferralsEnabled
+										? A4A_REFERRALS_PAYMENT_SETTINGS
+										: A4A_REFERRALS_BANK_DETAILS_LINK
+								}
 								onClick={ onAddBankDetailsClick }
 							>
 								{ translate( 'Enter bank details' ) }

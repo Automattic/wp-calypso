@@ -22,36 +22,41 @@ export const ManageSitePluginsDialog = ( { isVisible, onClose, plugin } ) => {
 
 	const sites = useSelector( getSelectedOrAllSites );
 	sites.sort( orderByAtomic );
-	const sitesWithoutPlugin = sites.filter(
+
+	const sitesToShow = sites.filter( ( item ) => item && ! item?.options?.is_domain_only );
+	const sitesWithoutPlugin = sitesToShow.filter(
 		( site ) => ! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin.ID === site.ID )
 	);
 
 	const isLoading = useSelector( ( state ) => isWporgPluginFetchingSelector( state, plugin.slug ) );
 
 	return (
-		<Dialog
-			className="manage-site-plugins-dialog__container"
-			isVisible={ isVisible }
-			onClose={ onClose }
-			shouldCloseOnEsc
-		>
-			<SitesWithInstalledPluginsList
-				isWpCom
-				sites={ sitesWithPlugin }
-				isLoading={ isLoading }
-				plugin={ plugin }
-			/>
+		<>
+			{ isVisible && (
+				<Dialog
+					className="manage-site-plugins-dialog__container"
+					isVisible={ isVisible }
+					onClose={ onClose }
+					shouldCloseOnEsc
+				>
+					<SitesWithInstalledPluginsList
+						isWpCom
+						sites={ sitesWithPlugin }
+						isLoading={ isLoading }
+						plugin={ plugin }
+					/>
 
-			<PluginAvailableOnSitesList
-				sites={ sitesWithoutPlugin }
-				isLoading={ isLoading }
-				plugin={ plugin }
-			/>
-
-			<Button className="manage-site-plugins-dialog__finish-button" onClick={ onClose } primary>
-				{ translate( 'Close' ) }
-			</Button>
-		</Dialog>
+					<PluginAvailableOnSitesList
+						sites={ sitesWithoutPlugin }
+						isLoading={ isLoading }
+						plugin={ plugin }
+					/>
+					<Button className="manage-site-plugins-dialog__finish-button" onClick={ onClose } primary>
+						{ translate( 'Close' ) }
+					</Button>
+				</Dialog>
+			) }
+		</>
 	);
 };
 

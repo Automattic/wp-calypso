@@ -1,0 +1,63 @@
+{
+	"name": "@automattic/help-center-app",
+	"version": "1.0.0",
+	"description": "Help Center app to be used in Jetpack.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"sideEffects": [
+		"*.css",
+		"*.scss",
+		"./config.js"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/help-center"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"types": "dist/types",
+	"scripts": {
+		"clean": "rm -rf dist",
+		"teamcity:build-app": "yarn run build",
+		"build": "NODE_ENV=production yarn dev && yarn run translate",
+		"build:app": "calypso-build",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/help-center",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"translate": "rm -rf dist/strings && wp-babel-makepot './dist/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './dist' --dir './dist/strings' --output './dist/help-center.pot' && build-app-languages --stringsFilePath='./dist/help-center.pot' --outputPath='./dist/languages'"
+	},
+	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/help-center": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
+		"@tanstack/react-query": "^5.15.5",
+		"@wordpress/components": "^28.0.0",
+		"@wordpress/compose": "^7.0.0",
+		"@wordpress/plugins": "^7.0.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/wp-babel-makepot": "workspace:^",
+		"@wordpress/dependency-extraction-webpack-plugin": "5.9.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "3.0.0",
+		"copy-webpack-plugin": "^10.2.4",
+		"typescript": "^5.3.3",
+		"webpack": "^5.91.0"
+	},
+	"peerDependencies": {
+		"@automattic/calypso-router": "workspace:^",
+		"@wordpress/data": "^10.0.0",
+		"@wordpress/element": "^6.0.0",
+		"postcss": "*",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"redux": "^4.2.1"
+	},
+	"private": true
+}

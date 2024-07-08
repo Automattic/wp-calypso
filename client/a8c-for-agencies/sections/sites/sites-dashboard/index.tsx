@@ -272,6 +272,7 @@ export default function SitesDashboard() {
 							isLargeScreen={ isLargeScreen || false }
 							setDataViewsState={ setDataViewsState }
 							dataViewsState={ dataViewsState }
+							onRefetchSite={ refetch }
 						/>
 					</DashboardDataContext.Provider>
 				</LayoutColumn>

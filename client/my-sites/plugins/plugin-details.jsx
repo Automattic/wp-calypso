@@ -373,7 +373,7 @@ function PluginDetails( props ) {
 			<NavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 			<PluginNotices
 				pluginId={ fullPlugin.id }
-				sites={ sitesWithPlugins }
+				sites={ selectedOrAllSites }
 				plugins={ [ fullPlugin ] }
 			/>
 			{ isSiteConnected === false && (

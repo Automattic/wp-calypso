@@ -1043,6 +1043,37 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/help-center-app@workspace:apps/help-center":
+  version: 0.0.0-use.local
+  resolution: "@automattic/help-center-app@workspace:apps/help-center"
+  dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/help-center": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@automattic/wp-babel-makepot": "workspace:^"
+    "@tanstack/react-query": "npm:^5.15.5"
+    "@wordpress/components": "npm:^28.0.0"
+    "@wordpress/compose": "npm:^7.0.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:5.9.0"
+    "@wordpress/plugins": "npm:^7.0.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:3.0.0"
+    copy-webpack-plugin: "npm:^10.2.4"
+    typescript: "npm:^5.3.3"
+    webpack: "npm:^5.91.0"
+  peerDependencies:
+    "@automattic/calypso-router": "workspace:^"
+    "@wordpress/data": ^10.0.0
+    "@wordpress/element": ^6.0.0
+    postcss: "*"
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    redux: ^4.2.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/help-center@workspace:^, @automattic/help-center@workspace:packages/help-center":
   version: 0.0.0-use.local
   resolution: "@automattic/help-center@workspace:packages/help-center"
@@ -1351,8 +1382,10 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
+    "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
+    "@wordpress/data": "npm:^10.0.0"
     autoprefixer: "npm:^10.2.5"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
@@ -2165,7 +2198,6 @@ __metadata:
     "@babel/core": "npm:^7.24.5"
     "@floating-ui/utils": "npm:^0.1.6"
     "@popperjs/core": "npm:^2.11.8"
-    "@sentry/browser": "npm:^7.54.0"
     "@tanstack/eslint-plugin-query": "npm:^5.14.6"
     "@tanstack/react-query": "npm:^5.15.5"
     "@testing-library/jest-dom": "npm:^6.4.5"
@@ -6171,7 +6203,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:7.54.0, @sentry/browser@npm:^7.54.0":
+"@sentry/browser@npm:7.54.0":
   version: 7.54.0
   resolution: "@sentry/browser@npm:7.54.0"
   dependencies:
@@ -7858,12 +7890,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/http-proxy@npm:^1.17.8":
-  version: 1.17.8
-  resolution: "@types/http-proxy@npm:1.17.8"
+"@types/http-proxy@npm:^1.17.10, @types/http-proxy@npm:^1.17.8":
+  version: 1.17.14
+  resolution: "@types/http-proxy@npm:1.17.14"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 3a423534960443e98f7e6f7a1b2ad56f2f93d6e9e927298e683a58ac3e1add4066288dfc3afa80724aee58133ab5272ed58321c11bf0925b7237c010c05f2ced
+  checksum: c4bffd87be9aff7e879c05bd2c28716220e0eb39788e3f8d314eee665324ad8f5f0919041cbd710254d553cd9cea023f8b776d4b1ec31d2188eac60af18c3022
   languageName: node
   linkType: hard
 
@@ -19189,6 +19221,20 @@ __metadata:
     "@types/express":
       optional: true
   checksum: 25a0e550dd1900ee5048a692e0e9b2b6339d06d487a705d90c47e359e9c6561d648cd7862d001d090e651c9efffa1b6e5160fcf1f299b5fa4935f76e9754eb11
+  languageName: node
+  linkType: hard
+
+"http-proxy-middleware@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "http-proxy-middleware@npm:3.0.0"
+  dependencies:
+    "@types/http-proxy": "npm:^1.17.10"
+    debug: "npm:^4.3.4"
+    http-proxy: "npm:^1.18.1"
+    is-glob: "npm:^4.0.1"
+    is-plain-obj: "npm:^3.0.0"
+    micromatch: "npm:^4.0.5"
+  checksum: a3da2e9211483834384c27ad37dcff00dc8ea4990bb791f1383d3a5951f28f77fdc41dbaf2501a6607dcfca3dacac11e43bda22c4f68224abe532cbab8983ede
   languageName: node
   linkType: hard
 
@@ -33283,6 +33329,7 @@ __metadata:
     glob: "npm:^7.1.6"
     globby: "npm:^10.0.2"
     gzip-size: "npm:^6.0.0"
+    http-proxy-middleware: "npm:^3.0.0"
     husky: "npm:^7.0.4"
     i18n-calypso: "workspace:^"
     i18n-calypso-cli: "workspace:^"

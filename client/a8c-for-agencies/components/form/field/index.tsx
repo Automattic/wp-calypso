@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 
@@ -6,10 +7,11 @@ import './style.scss';
 type Props = {
 	label: string;
 	sub?: string;
-	description?: string;
+	description?: string | ReactNode;
 	showOptionalLabel?: boolean;
 	children: ReactNode;
 	isRequired?: boolean;
+	error?: string;
 };
 
 export default function FormField( {
@@ -19,6 +21,7 @@ export default function FormField( {
 	description,
 	showOptionalLabel,
 	isRequired,
+	error,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -34,7 +37,22 @@ export default function FormField( {
 				{ sub && <p className="a4a-form__section-field-sub">{ sub }</p> }
 			</div>
 
-			{ children }
+			<div
+				className={ clsx( 'a4a-form__content-wrapper', {
+					'is-error': !! error,
+				} ) }
+			>
+				{ children }
+			</div>
+
+			<div
+				className={ clsx( 'a4a-form__error', {
+					hidden: ! error,
+				} ) }
+				role="alert"
+			>
+				{ error }
+			</div>
 
 			{ description && <p className="a4a-form__section-field-description">{ description }</p> }
 		</div>

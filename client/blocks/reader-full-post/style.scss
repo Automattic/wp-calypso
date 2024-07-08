@@ -121,7 +121,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 .reader-full-post__story {
 	max-width: var(--reader-full-post-story-max-width);
-	padding: 0 var(--reader-full-post-story-padding);
+	padding: 32px var(--reader-full-post-story-padding);
 	margin: 0 auto;
 	@media (min-width: $reader-full-post-desktop-min) {
 		margin: 0;
@@ -173,20 +173,21 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 .reader-full-post .back-button {
 	border: none;
-	display: none;
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: unset;
 	background-color: transparent;
 
-	// We will display this when the sidebar disappears @781 px.
-	@media (max-width: 781px) {
-		display: inline-block;
+	button.is-compact.is-borderless {
+		margin: 2px;
+		@media (max-width: 781px) {
+			padding-top: 12px;
+			padding-bottom: 12px;
+		}
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
-		top: 4px;
 		left: 14px;
 	}
 }
@@ -478,12 +479,8 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	font-size: $font-title-medium;
 	font-weight: 700;
 	line-height: 34px;
-	margin: 56px 0 0;
 	max-width: 750px;
 
-	@include breakpoint-deprecated( "<1280px" ) {
-		margin-top: 32px;
-	}
 
 	@include breakpoint-deprecated( ">960px" ) {
 		font-size: $font-headline-small;
@@ -495,9 +492,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		line-height: 40px;
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 8px 0 0 32px;
-	}
 
 	.reader-full-post__header-title-link {
 		display: block;

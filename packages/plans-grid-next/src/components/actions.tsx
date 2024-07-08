@@ -82,7 +82,7 @@ const PlanFeatures2023GridActions = ( {
 	);
 	const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
 		return selectedStorageOptionForPlan && addOn
-			? addOn.featureSlugs?.includes( selectedStorageOptionForPlan )
+			? addOn.addOnSlug === selectedStorageOptionForPlan
 			: false;
 	} );
 
@@ -136,8 +136,7 @@ const PlanFeatures2023GridActions = ( {
 	);
 
 	const storageAddOnCheckoutHref = storageAddOns?.find(
-		( addOn ) =>
-			selectedStorageOptionForPlan && addOn?.featureSlugs?.includes( selectedStorageOptionForPlan )
+		( addOn ) => selectedStorageOptionForPlan && addOn?.addOnSlug === selectedStorageOptionForPlan
 	)?.checkoutLink;
 
 	const nonDefaultStorageOptionSelected =

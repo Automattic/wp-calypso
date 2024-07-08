@@ -26,8 +26,23 @@ export function useFormSelectors() {
 		international_multilingual_consulting: translate( 'International and Multilingual Consulting' ),
 	};
 
+	const availableIndustries: Record< string, string > = {
+		agricultural_services: translate( 'Agricultural services' ),
+		business_services: translate( 'Business services' ),
+		clothing_shops: translate( 'Clothing shops' ),
+		contracted_services: translate( 'Contracted services' ),
+		government_services: translate( 'Government services' ),
+		miscellaneous_shops: translate( 'Miscellaneous shops' ),
+		professional_services_and_membership_organisations: translate(
+			'Professional services and membership organisations'
+		),
+		retail_outlet_services: translate( 'Retail outlet services' ),
+		transportation_services: translate( 'Transportation services' ),
+		utility_services: translate( 'Utility services' ),
+	};
+
 	const availableProducts: Record< string, string > = {
-		wordpress: 'WordPress',
+		wordpress_com: 'WordPress.com',
 		woocommerce: 'WooCommerce',
 		jetpack: 'Jetpack',
 		wordpress_vip: 'WordPress VIP',
@@ -46,5 +61,6 @@ export function useFormSelectors() {
 		availableLanguages,
 		availableProducts,
 		availableDirectories,
+		availableIndustries,
 	};
 }

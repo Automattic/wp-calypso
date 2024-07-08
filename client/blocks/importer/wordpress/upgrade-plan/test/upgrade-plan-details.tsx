@@ -1,144 +1,105 @@
 /**
  * @jest-environment jsdom
  */
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import { type SitePlanPricing } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import React from 'react';
+import React, { type ComponentPropsWithoutRef } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { useUpgradePlanHostingDetailsList } from '../hooks/use-get-upgrade-plan-hosting-details-list';
-import UpgradePlanDetails, {
-	UpgradePlanDetails as UpgradePlanDetailsWithoutHoc,
-} from '../upgrade-plan-details';
+import { UpgradePlanDetails } from '../upgrade-plan-details';
 
-jest.mock( '../hooks/use-get-upgrade-plan-hosting-details-list' );
-
-const SITE_ID = 123;
-const CHILDREN = 'CTA';
-
-const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
-	( useUpgradePlanHostingDetailsList as jest.Mock ).mockReturnValue( {
-		list: [],
-		isFetching,
-	} );
-};
-
-function renderUpgradePlanDetailsComponent( Component = UpgradePlanDetails, planData = {} ) {
+function renderUpgradePlanDetailsComponent(
+	props: ComponentPropsWithoutRef< typeof UpgradePlanDetails >
+) {
 	const queryClient = new QueryClient();
 
 	return renderWithProvider(
 		<QueryClientProvider client={ queryClient }>
-			<Component siteId={ SITE_ID }>{ CHILDREN }</Component>
+			<UpgradePlanDetails { ...props } children="Content" />
 		</QueryClientProvider>,
 		{
-			initialState: {
-				sites: {
-					plans: {
-						[ SITE_ID ]: {
-							data: [
-								{
-									currencyCode: 'USD',
-									rawPrice: 0,
-									rawDiscount: 0,
-									productSlug: PLAN_BUSINESS,
-									...planData,
-								},
-							],
-						},
-					},
-				},
-			},
+			initialState: {},
 			reducers: {},
 		}
 	);
 }
 
+function getPricing(): SitePlanPricing {
+	return {
+		currencyCode: 'USD',
+		originalPrice: {
+			monthly: 2500,
+			full: 30000,
+		},
+		discountedPrice: {
+			monthly: 0,
+			full: 0,
+		},
+		introOffer: {
+			formattedPrice: '$150',
+			rawPrice: 150,
+			isOfferComplete: false,
+			intervalUnit: 'year',
+			intervalCount: 1,
+		},
+	};
+}
+
 describe( 'UpgradePlanDetails', () => {
-	beforeAll( () => {
-		nock.disableNetConnect();
-	} );
+	beforeAll( () => nock.disableNetConnect() );
 
-	beforeEach( () => {
-		mockUseUpgradePlanHostingDetailsList( false );
-	} );
-
-	describe( 'with migration sticker HOC', () => {
-		it( 'should render children', async () => {
-			const { queryByText } = renderUpgradePlanDetailsComponent();
-
-			await waitFor( () => {
-				expect( queryByText( CHILDREN ) ).toBeInTheDocument();
-			} );
+	it( 'should show the pricing description for the introductory offer when the intro offer is avaiable', async () => {
+		renderUpgradePlanDetailsComponent( {
+			pricing: getPricing(),
+			introOfferAvailable: true,
+			children: 'Content',
+			upgradePlanHostingDetailsList: [],
 		} );
 
-		it( 'should call the sticker endpoint creation when rendering the component', async () => {
-			nock.cleanAll();
-			const scope = nock( 'https://public-api.wordpress.com:443' )
-				.post( `/wpcom/v2/sites/${ SITE_ID }/migration-flow` )
-				.reply( 200 );
+		await waitFor( () => {
+			expect( screen.getByText( 'One time offer' ) ).toBeInTheDocument();
 
-			renderUpgradePlanDetailsComponent();
+			// Introductory offer price per month (calculated from the full price).
+			expect( screen.getByText( '12' ) ).toBeInTheDocument();
+			expect( screen.getByText( '.50' ) ).toBeInTheDocument();
 
-			await waitFor( () => {
-				expect( scope.isDone() ).toBe( true );
-			} );
-		} );
+			// Original price per month, paid annually.
+			expect( screen.getByText( '25' ) ).toBeInTheDocument();
 
-		it( 'should call the sticker delete endpoint creation when unmounting the component', async () => {
-			nock.cleanAll();
-			const scope = nock( 'https://public-api.wordpress.com:443' )
-				.delete( `/wpcom/v2/sites/${ SITE_ID }/migration-flow` )
-				.reply( 200 );
+			expect(
+				screen.getByText(
+					'per month, $150 billed annually for the first year, $300 per year afterwards, excl. taxes'
+				)
+			).toBeInTheDocument();
 
-			const { unmount } = renderUpgradePlanDetailsComponent();
-
-			await waitFor( () => {
-				expect( scope.isDone() ).toBe( false );
-			} );
-
-			unmount();
-
-			await waitFor( () => {
-				expect( scope.isDone() ).toBe( true );
-			} );
+			expect( screen.queryByText( 'Pay monthly' ) ).toBeNull();
+			expect( screen.queryByText( 'Pay annually' ) ).toBeNull();
 		} );
 	} );
 
-	describe( 'without migration sticker HOC', () => {
-		it( 'should render fetch state when hosting details are fetching', async () => {
-			mockUseUpgradePlanHostingDetailsList( true );
-
-			const { queryByText, container } = renderUpgradePlanDetailsComponent(
-				UpgradePlanDetailsWithoutHoc
-			);
-
-			expect( container.querySelector( '.import__upgrade-plan-loader' ) ).toBeInTheDocument();
-			expect( queryByText( CHILDREN ) ).not.toBeInTheDocument();
+	it( 'should show the standard pricing offer description when the introductory offer is not avaiable', async () => {
+		renderUpgradePlanDetailsComponent( {
+			pricing: getPricing(),
+			introOfferAvailable: false,
+			children: 'Content',
+			upgradePlanHostingDetailsList: [],
 		} );
 
-		it( 'should render fetch state when price is not ready', async () => {
-			const { queryByText, container } = renderUpgradePlanDetailsComponent(
-				UpgradePlanDetailsWithoutHoc,
-				{
-					rawPrice: null,
-				}
-			);
+		await waitFor( () => {
+			expect( screen.queryByText( 'One time offer' ) ).toBeNull();
 
-			expect( container.querySelector( '.import__upgrade-plan-loader' ) ).toBeInTheDocument();
-			expect( queryByText( CHILDREN ) ).not.toBeInTheDocument();
-		} );
+			// Introductory offer price per month (calculated from the full price).
+			expect( screen.queryByText( '12' ) ).toBeNull();
+			expect( screen.queryByText( '.50' ) ).toBeNull();
 
-		it( 'should render fetch state when currency is not ready', async () => {
-			const { queryByText, container } = renderUpgradePlanDetailsComponent(
-				UpgradePlanDetailsWithoutHoc,
-				{
-					currencyCode: null,
-				}
-			);
+			// Original price per month, paid annually.
+			expect( screen.getByText( '25' ) ).toBeInTheDocument();
 
-			expect( container.querySelector( '.import__upgrade-plan-loader' ) ).toBeInTheDocument();
-			expect( queryByText( CHILDREN ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'per month, billed annually' ) ).toBeInTheDocument();
+
+			expect( screen.getByText( 'Pay monthly' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Pay annually' ) ).toBeInTheDocument();
 		} );
 	} );
 } );
