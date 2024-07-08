@@ -28,7 +28,7 @@ $business-plan-color: #7f54b3;
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
+		gap: 1rem;
 		margin-bottom: -3px;
 		max-width: 100%;
 		padding: 1.5em;
@@ -41,6 +41,7 @@ $business-plan-color: #7f54b3;
 			margin-right: 0;
 			margin-left: 0;
 			width: 352px;
+			gap: 1.5rem;
 			padding: 3em 1.5em;
 		}
 	}
