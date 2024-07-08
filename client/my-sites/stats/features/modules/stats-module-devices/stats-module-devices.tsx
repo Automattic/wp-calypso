@@ -1,6 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { mobile } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -8,11 +10,14 @@ import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
+import { JETPACK_SUPPORT_URL } from '../../../const';
 import useModuleDevicesQuery, { StatsDevicesData } from '../../../hooks/use-modeule-devices-query';
 import { QueryStatsParams } from '../../../hooks/utils';
 import StatsListCard from '../../../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import statsStrings from '../../../stats-strings';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsPeriodType } from '../types';
 
 import './stats-module-devices.scss';
@@ -149,7 +154,108 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 
 	return (
 		<>
-			{ isNewEmptyStateEnabled && <></> }
+			{ isNewEmptyStateEnabled && (
+				<>
+					{ showLoader && (
+						<StatsCardSkeleton
+							isLoading={ isFetching }
+							className={ className }
+							title={ devicesStrings.title }
+							type={ 3 }
+						/>
+					) }
+					{ ! showLoader &&
+						! data?.length && ( // no data and new empty state enabled
+							<StatsCard
+								className={ className }
+								title={ devicesStrings.title }
+								isEmpty
+								emptyMessage={
+									<EmptyModuleCard
+										icon={ mobile }
+										description={ translate(
+											'Stats on visitors and {{link}}their viewing device{{/link}} will appear here.',
+											{
+												comment: '{{link}} links to support documentation.',
+												components: {
+													link: (
+														<a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#devices-stats` ) } />
+													),
+												},
+												context: 'Stats: Info box label when the Devices module is empty',
+											}
+										) }
+									/>
+								}
+							/>
+						) }
+					{ ! showLoader &&
+						!! data?.length && ( // show when new empty state is disabled or data is available
+							<>
+								{
+									// Use dedicated StatsCard for the screen size chart section.
+									OPTION_KEYS.SIZE === selectedOption ? (
+										<StatsCard
+											className={ clsx( className, 'stats-module__card', path ) }
+											title={ devicesStrings.title }
+											titleURL=""
+											metricLabel=""
+											splitHeader
+											isNew
+											mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+											toggleControl={ toggleControlComponent }
+											isEmpty={ ! showLoader && ( ! chartData || ! chartData.length ) }
+											emptyMessage={ devicesStrings.empty }
+										>
+											{ showLoader ? (
+												<StatsModulePlaceholder isLoading={ showLoader } />
+											) : (
+												<div className="stats-card--body__chart">
+													<PieChart
+														data={ chartData }
+														startAngle={ 0 }
+														svgSize={ 224 }
+														donut
+														hasTooltip
+													/>
+													<PieChartLegend
+														data={ chartData }
+														onlyPercent
+														svgElement={
+															<svg
+																width="15"
+																height="14"
+																viewBox="0 0 15 14"
+																fill="none"
+																xmlns="http://www.w3.org/2000/svg"
+															>
+																<rect x="0.5" width="14" height="14" rx="3" />
+															</svg>
+														}
+													/>
+												</div>
+											) }
+										</StatsCard>
+									) : (
+										// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
+										<StatsListCard
+											className={ clsx( className, 'stats-module__card', path ) }
+											moduleType={ path }
+											data={ data }
+											title={ devicesStrings.title }
+											emptyMessage={ devicesStrings.empty }
+											metricLabel={ translate( 'Visitors' ) }
+											splitHeader
+											useShortNumber
+											mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+											toggleControl={ toggleControlComponent }
+										/>
+									)
+								}
+							</>
+						) }
+				</>
+			) }
 
 			{ ! isNewEmptyStateEnabled && (
 				<>
