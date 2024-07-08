@@ -5,6 +5,9 @@ import { useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useSelector } from 'calypso/state';
 import { getSiteStatsViewSummary } from 'calypso/state/stats/lists/selectors';
+import { STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS } from '../constants';
+import { useShouldGateStats } from '../hooks/use-should-gate-stats';
+import StatsCardUpsell from '../stats-card-upsell';
 import StatsHeatMapLegend from '../stats-heap-map/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import Months from '../stats-views/months';
@@ -28,10 +31,15 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 			{ value: 'average', label: translate( 'Average per day' ) },
 		];
 	}, [ translate ] );
+	const shouldGateStats = useShouldGateStats( STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS );
 
 	const toggleViews = ( option?: chartOption ) => {
 		setChartOption( option?.value || 'total' );
 	};
+
+	const cardWrapperClassName = clsx( 'highlight-card', {
+		'highlight-card--has-overlay': shouldGateStats,
+	} );
 
 	const tableWrapperClass = clsx( 'stats__table-wrapper', {
 		'is-loading': ! viewData,
@@ -45,7 +53,11 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 				<h3 className="highlight-cards-heading">{ translate( 'All-time insights' ) }</h3>
 
 				<div className="highlight-cards-list">
-					<Card className="highlight-card">
+					{ /* 
+						TODO: Refactor this card along with other similar structure cards to a component
+						supporting overlay inside highlight-cards
+					*/ }
+					<Card className={ cardWrapperClassName }>
 						<div className="highlight-card-heading">
 							<h4>{ translate( 'Total views' ) }</h4>
 							{ viewData && (
@@ -53,12 +65,20 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 							) }
 						</div>
 
-						<div className={ tableWrapperClass }>
-							<StatsModulePlaceholder isLoading={ ! viewData } />
-							<Months dataKey={ chartOption } data={ viewData } siteSlug={ slug } showYearTotal />
+						<div className="highlight-card-content">
+							<div className={ tableWrapperClass }>
+								<StatsModulePlaceholder isLoading={ ! viewData } />
+								<Months dataKey={ chartOption } data={ viewData } siteSlug={ slug } showYearTotal />
+							</div>
+							<StatsHeatMapLegend />
 						</div>
 
-						<StatsHeatMapLegend />
+						{ shouldGateStats && (
+							<StatsCardUpsell
+								statType={ STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS }
+								siteId={ siteId }
+							/>
+						) }
 					</Card>
 				</div>
 			</div>

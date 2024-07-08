@@ -1,5 +1,5 @@
 import { Popover, Gridicon, Button, WordPressLogo, JetpackLogo } from '@automattic/components';
-import { Icon, navigation } from '@wordpress/icons';
+import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
@@ -24,11 +24,12 @@ const ICON_SIZE = 32;
 
 type PendingSite = { features: { wpcom_atomic: { state: string; license_key: string } } };
 
-export default function SiteSelectorAndImporter( {
-	showMainButtonLabel,
-}: {
+type Props = {
+	onWPCOMImport?: ( blogIds: number[] ) => void;
 	showMainButtonLabel: boolean;
-} ) {
+};
+
+export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMImport }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -147,12 +148,6 @@ export default function SiteSelectorAndImporter( {
 								},
 							},
 						} ) }
-						{ menuItem( {
-							icon: navigation,
-							iconClassName: 'site-selector-and-importer__popover-button-wp-icon',
-							heading: translate( 'Via URL' ),
-							description: translate( 'Type in the address of your site' ),
-						} ) }
 					</div>
 					<div className="site-selector-and-importer__popover-column">
 						<div className="site-selector-and-importer__popover-column-heading">
@@ -208,7 +203,10 @@ export default function SiteSelectorAndImporter( {
 			) }
 
 			{ showImportFromWPCOMModal && (
-				<ImportFromWPCOMModal onClose={ () => setShowImportFromWPCOMModal( false ) } />
+				<ImportFromWPCOMModal
+					onClose={ () => setShowImportFromWPCOMModal( false ) }
+					onImport={ onWPCOMImport }
+				/>
 			) }
 		</>
 	);

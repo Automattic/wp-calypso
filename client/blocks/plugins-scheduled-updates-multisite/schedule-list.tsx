@@ -53,9 +53,13 @@ export const ScheduleList = ( props: Props ) => {
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >(
 		initSelectedScheduleId
 	);
+	const selectedSchedule = schedules?.find( ( s ) => s.schedule_id === selectedScheduleId );
 	const [ selectedSiteSlug, setSelectedSiteSlug ] = useState< string | undefined >();
 	const [ selectedSiteSlugs, setSelectedSiteSlugs ] = useState< string[] >( [] );
 	const selectedSiteSlugsForMutate = selectedSiteSlug ? [ selectedSiteSlug ] : selectedSiteSlugs;
+	const selectedSiteIdsForMutate = selectedSiteSlugsForMutate
+		.map( ( slug ) => selectedSchedule?.sites.find( ( site ) => site.slug === slug )?.ID )
+		.filter( ( id ) => !! id ) as number[];
 
 	useEffect( () => {
 		const schedule = schedules?.find( ( schedule ) => schedule.schedule_id === selectedScheduleId );
@@ -63,14 +67,18 @@ export const ScheduleList = ( props: Props ) => {
 	}, [ selectedScheduleId ] );
 	useEffect( () => setSelectedScheduleId( initSelectedScheduleId ), [ initSelectedScheduleId ] );
 
-	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation( selectedSiteSlugsForMutate, {
-		onSuccess: () => {
-			// Refetch again after 5 seconds
-			setTimeout( () => {
-				refetch();
-			}, 5000 );
-		},
-	} );
+	const deleteUpdateSchedules = useBatchDeleteUpdateScheduleMutation(
+		[ ...selectedSiteSlugsForMutate ],
+		[ ...selectedSiteIdsForMutate ],
+		{
+			onSuccess: () => {
+				// Re-fetch again after 5 seconds
+				setTimeout( () => {
+					refetch();
+				}, 5000 );
+			},
+		}
+	);
 
 	const openRemoveDialog = ( id: string, siteSlug?: SiteSlug ) => {
 		setRemoveDialogOpen( true );
