@@ -672,6 +672,32 @@ body.is-mobile-app-view {
 	}
 }
 
+.masterbar__item-howdy {
+	.masterbar__item-content {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+	}
+
+	.gravatar {
+		border-radius: unset;
+
+		@media only screen and (max-width: 782px) {
+			width: 22px;
+			height: 22px;
+		}
+
+		@include breakpoint-deprecated( "<480px" ) {
+			width: 19px;
+			height: 19px;
+		}
+	}
+}
+
+.masterbar__item-my-site-actions {
+
+}
+
 .masterbar__login-links {
 	display: flex;
 	margin-left: auto;

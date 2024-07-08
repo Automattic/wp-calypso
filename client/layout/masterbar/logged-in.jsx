@@ -383,6 +383,82 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderSiteMenu() {
+		const { sectionGroup, currentSelectedSiteSlug, translate, siteTitle, siteUrl } = this.props;
+
+		// Only display on site-specific pages.
+		if ( sectionGroup !== 'sites' || ! currentSelectedSiteSlug ) {
+			return null;
+		}
+
+		return (
+			<>
+				<Item
+					className="masterbar__item-my-site"
+					url={ siteUrl }
+					icon={ <span className="dashicons-before dashicons-admin-home" /> }
+					tooltip={ translate( 'Visit your site' ) }
+					tipTarget="Menu"
+				>
+					{ siteTitle }
+				</Item>
+			</>
+		);
+	}
+
+	renderSiteActionMenu() {
+		const { sectionGroup, currentSelectedSiteSlug, translate, siteUrl } = this.props;
+
+		// Only display on site-specific pages.
+		if ( sectionGroup !== 'sites' || ! currentSelectedSiteSlug ) {
+			return null;
+		}
+
+		return (
+			<>
+				<Item
+					className="masterbar__item-my-site-actions"
+					url={ siteUrl }
+					icon={ <span className="dashicons-before dashicons-plus" /> }
+					tooltip={ translate( 'New' ) }
+					tipTarget="Menu"
+				>
+					{ translate( 'New' ) }
+				</Item>
+			</>
+		);
+	}
+
+	renderProfileMenu() {
+		const { translate, user } = this.props;
+		const { isMobile } = this.state;
+		return (
+			<Item
+				tipTarget="me"
+				url="/me"
+				onClick={ this.clickMe }
+				isActive={ this.isActive( 'me' ) }
+				className="masterbar__item-howdy"
+				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
+				preloadSection={ this.preloadMe }
+			>
+				{ ! isMobile && (
+					<span className="masterbar__item-howdy-howdy">
+						{ translate( 'Howdy, %(display_name)s', {
+							args: { display_name: user.display_name },
+						} ) }
+					</span>
+				) }
+				<Gravatar
+					className="masterbar__item-howdy-gravatar"
+					user={ user }
+					alt={ translate( 'My Profile' ) }
+					size={ 18 }
+				/>
+			</Item>
+		);
+	}
+
 	renderReader( showLabel = true ) {
 		const { translate } = this.props;
 		return (
@@ -672,6 +748,67 @@ class MasterbarLoggedIn extends Component {
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return this.renderCheckout();
+		}
+
+		if ( config.isEnabled( 'layout/mb' ) ) {
+			if ( isMobile ) {
+				if ( isInEditor && loadHelpCenterIcon ) {
+					return (
+						<Masterbar>
+							<div className="masterbar__section masterbar__section--left">
+								{ this.renderMySites() }
+							</div>
+							<div className="masterbar__section masterbar__section--right">
+								{ this.renderCart() }
+								{ this.renderNotifications() }
+							</div>
+						</Masterbar>
+					);
+				}
+				return (
+					<>
+						{ this.renderPopupSearch() }
+						<Masterbar>
+							<div className="masterbar__section masterbar__section--left">
+								{ this.renderMySites() }
+								{ this.renderReader( false ) }
+								{ this.renderSiteMenu() }
+								{ this.renderSiteActionMenu() }
+								{ this.renderLanguageSwitcher() }
+								{ this.renderSearch() }
+							</div>
+							<div className="masterbar__section masterbar__section--right">
+								{ this.renderCart() }
+								{ loadHelpCenterIcon && this.renderHelpCenter() }
+								{ this.renderNotifications() }
+								{ this.renderProfileMenu() }
+							</div>
+						</Masterbar>
+					</>
+				);
+			}
+			return (
+				<>
+					{ this.renderPopupSearch() }
+					<Masterbar>
+						<div className="masterbar__section masterbar__section--left">
+							{ this.renderMySites() }
+							{ this.renderReader() }
+							{ this.renderSiteMenu() }
+							{ this.renderSiteActionMenu() }
+							{ this.renderLanguageSwitcher() }
+							{ this.renderSearch() }
+						</div>
+						<div className="masterbar__section masterbar__section--right">
+							{ this.renderCart() }
+							{ this.renderLaunchpadNavigator() }
+							{ loadHelpCenterIcon && this.renderHelpCenter() }
+							{ this.renderNotifications() }
+							{ this.renderProfileMenu() }
+						</div>
+					</Masterbar>
+				</>
+			);
 		}
 
 		if ( this.props.isMobileGlobalNavVisible ) {
