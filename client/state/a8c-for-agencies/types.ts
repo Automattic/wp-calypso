@@ -60,6 +60,7 @@ export interface Agency {
 			is_published?: boolean;
 		};
 	};
+	partner_directory_allowed: boolean;
 }
 
 export interface AgencyStore {
