@@ -45,7 +45,7 @@ describe( 'Provisioning', () => {
 		expect( provisioningElement.length ).toBe( 0 );
 	} );
 
-	it( "shouldn't render when all actins are done", () => {
+	it( "shouldn't render when all actions are done", () => {
 		const status = {
 			siteTransfer: 'success',
 			pluginInstallation: 'success',
