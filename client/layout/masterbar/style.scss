@@ -452,41 +452,68 @@ body.is-mobile-app-view {
 			color: initial;
 		}
 	}
-}
 
-// mb text color fixes
-.masterbar__item.mb {
-	&:hover {
-		.masterbar__item-subitems-item {
-			&:hover {
-				a {
-					color: var(--color-masterbar-text);
+	// mb text color fixes
+	&.mb {
+
+		// Reader icon is only available on Default interface sites, so we apply the Calypso color for consistency.
+		// https://github.com/Automattic/wp-calypso/pull/90136#issuecomment-2089512298
+		&.masterbar__reader:hover {
+			@include breakpoint-deprecated( ">480px" ) {
+				color: var(--color-masterbar-highlight);
+				.masterbar__item-content {
+					color: var(--color-masterbar-highlight);
 				}
 			}
 		}
 
-		@include breakpoint-deprecated( ">480px" ) {
-			color: var(--color-masterbar-text);
-			.masterbar--is-checkout & {
-				color: var(--color-checkout-masterbar-text);
+		.dashicons-plus {
+			padding-top: 2px;
+		}
+
+		&:hover {
+			svg path,
+			.gridicon {
+				fill: var(--color-masterbar-highlight);
 			}
+		}
+
+		&.masterbar__item-notifications {
+			margin-right: 0;
+		}
+
+		@media only screen and (max-width: 782px) {
+			width: 52px;
+
 			.masterbar__item-content {
-				color: var(--color-masterbar-text);
+				display: none;
 			}
+
+			.masterbar__item-howdy-howdy {
+				display: none;
+			}
+
+			svg path,
+			.gridicon {
+				height: 32px;
+				width: 32px;
+			}
+
 			.dashicons-before {
-				color: var(--color-masterbar-text);
+				height: unset;
+
+				&::before {
+					width: 52px;
+					display: inline-block;
+					position: relative;
+					font-size: $font-title-large;
+					text-align: center;
+					top: 7px;
+					height: unset;
+				}
 			}
 		}
 	}
-
-	.dashicons-before {
-		color: var(--color-masterbar-text);
-	}
-
-	.dashicons-plus {
-		padding-top: 2px;
-	}
-
 }
 
 .masterbar__item-logo {
