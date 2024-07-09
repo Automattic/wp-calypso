@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .how-to-migrate {
-	max-width: 602px;
+	max-width: 620px;
 	padding: 0 12px;
 
 	.onboarding-title {
@@ -23,6 +23,7 @@
 
 		.flow-question {
 			max-width: none;
+			width: 100%;
 		}
 	}
 
