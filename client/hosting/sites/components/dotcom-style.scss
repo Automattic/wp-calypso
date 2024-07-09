@@ -557,7 +557,8 @@
 	}
 }
 
-.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout,
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .a4a-layout-with-columns__container .a4a-layout-column {
 	.a4a-layout-column__container {
 		display: flex;
 		flex-direction: column;
