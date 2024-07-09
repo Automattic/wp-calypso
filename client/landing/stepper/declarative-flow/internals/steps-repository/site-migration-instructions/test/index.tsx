@@ -44,7 +44,6 @@ const render = ( props?: Partial< StepProps > ) => {
 	deleteMigrationSticker: jest.fn(),
 } );
 
-// ( Sidebar as jest.Mock ).mockImplementation( () => <div>Sidebar Component</div> );
 ( SitePreview as jest.Mock ).mockImplementation( () => <div>SitePreview Component</div> );
 
 describe( 'SiteMigrationInstructions', () => {
