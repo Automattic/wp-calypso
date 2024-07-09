@@ -1,4 +1,4 @@
-import { category, Icon } from '@wordpress/icons';
+import { category, Icon, brush } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 
 export const SidebarIconPlugins = () => (
@@ -38,6 +38,14 @@ export default function globalSidebarMenu() {
 			navigationLabel: translate( 'Manage all domains' ),
 			type: 'menu-item',
 			url: '/domains/manage',
+		},
+		{
+			icon: <Icon icon={ brush } size={ 24 } className="sidebar__menu-icon" />,
+			slug: 'themes',
+			title: translate( 'Themes' ),
+			navigationLabel: translate( 'Themes' ),
+			type: 'menu-item',
+			url: '/themes',
 		},
 		{
 			icon: <SidebarIconPlugins />,
