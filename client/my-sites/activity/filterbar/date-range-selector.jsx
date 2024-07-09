@@ -162,7 +162,10 @@ export class DateRangeSelector extends Component {
 								className="filterbar__selection-close"
 								compact
 								borderless
-								onClick={ this.handleResetSelection }
+								onClick={ () => {
+									this.handleResetSelection();
+									props.onClearClick();
+								} }
 							>
 								<Gridicon icon="cross-small" />
 							</Button>
