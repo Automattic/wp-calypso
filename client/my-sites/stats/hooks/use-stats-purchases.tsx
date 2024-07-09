@@ -91,6 +91,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 
 	const isCommercialOwned = useMemo( () => {
 		return areProductsOwned( sitePurchases, [
+			// TODO: Remove the VideoPress products after releasing the feature flag `stats/restricted-dashboard`.
 			...JETPACK_VIDEOPRESS_PRODUCTS,
 			PRODUCT_JETPACK_STATS_MONTHLY,
 			PRODUCT_JETPACK_STATS_YEARLY,
