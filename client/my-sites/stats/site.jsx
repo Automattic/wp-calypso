@@ -50,7 +50,7 @@ import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
 import StatsModuleDevices, {
 	StatsModuleUpgradeDevicesOverlay,
-} from './features/modules/stats-module-devices';
+} from './features/modules/stats-devices';
 import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
