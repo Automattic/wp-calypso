@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
@@ -8,7 +9,6 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import SiteMigrationInstructions from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
-import { Sidebar } from '../sidebar';
 import { SitePreview } from '../site-preview';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
@@ -23,7 +23,6 @@ jest.mock( 'calypso/data/site-profiler/use-hosting-provider-url-details' );
 } );
 
 // Mock the hooks and components
-jest.mock( '../sidebar' );
 jest.mock( '../site-preview' );
 
 jest.mock( 'calypso/lib/analytics/tracks', () => {
@@ -45,7 +44,7 @@ const render = ( props?: Partial< StepProps > ) => {
 	deleteMigrationSticker: jest.fn(),
 } );
 
-( Sidebar as jest.Mock ).mockImplementation( () => <div>Sidebar Component</div> );
+// ( Sidebar as jest.Mock ).mockImplementation( () => <div>Sidebar Component</div> );
 ( SitePreview as jest.Mock ).mockImplementation( () => <div>SitePreview Component</div> );
 
 describe( 'SiteMigrationInstructions', () => {
@@ -77,5 +76,38 @@ describe( 'SiteMigrationInstructions', () => {
 		render();
 
 		expect( deleteMigrationSticker ).toHaveBeenCalledWith( 123 );
+	} );
+
+	it( 'should render the steps progress', () => {
+		const { container } = render();
+
+		expect( container.querySelector( '.circular__progress-bar-text' )?.innerHTML ).toEqual( '0/3' );
+	} );
+
+	it( 'should update the progress when completing steps', async () => {
+		const { container, getByRole } = render();
+
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+
+		expect( container.querySelector( '.circular__progress-bar-text' )?.innerHTML ).toEqual( '1/3' );
+	} );
+
+	it( 'should navigate to the next step when clicking on Next', async () => {
+		const { queryByText, getByRole } = render();
+
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+
+		expect(
+			queryByText( 'Then, pick WordPress.com as your destination host.' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'should be able to navigate back to the first step when it was completed', async () => {
+		const { queryByText, getByRole } = render();
+
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+		await userEvent.click( getByRole( 'button', { name: /Install the Migrate Guru plugin/ } ) );
+
+		expect( queryByText( 'Migrate Guru plugin' ) ).toBeInTheDocument();
 	} );
 } );
