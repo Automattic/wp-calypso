@@ -44,7 +44,7 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 	const { localizePath } = useLocalizedPlugins();
 
 	const installedPlugins = useSelector( ( state ) =>
-		getPlugins( state, siteObjectsToSiteIds( sites ) )
+		siteId ? getPlugins( state, siteObjectsToSiteIds( sites ) ) : []
 	);
 
 	plugins = plugins
