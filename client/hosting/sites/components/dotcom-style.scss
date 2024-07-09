@@ -276,6 +276,10 @@
 	}
 }
 
+.theme-default .layout__secondary .global-sidebar {
+	border: none;
+}
+
 // Styles collapsed site list.
 .wpcom-site {
 	.layout__content {
@@ -315,9 +319,6 @@
 			.sidebar__footer-profile img {
 				max-width: none;
 			}
-		}
-		.global-sidebar {
-			border: none;
 		}
 	}
 	.is-global-sidebar-collapsed {
