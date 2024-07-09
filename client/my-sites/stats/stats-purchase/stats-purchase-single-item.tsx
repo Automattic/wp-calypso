@@ -147,7 +147,7 @@ const StatsCommercialPurchase = ( {
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
-	const { isCommercialOwned } = useStatsPurchases( siteId );
+	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
@@ -214,7 +214,7 @@ const StatsCommercialPurchase = ( {
 									redirectUri,
 									price: undefined,
 									quantity: purchaseTierQuantity,
-									isUpgrade: isCommercialOwned,
+									isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
 								} )
 							}
 						>
@@ -241,6 +241,7 @@ const StatsPersonalPurchase = ( {
 	disableFreeProduct = false,
 }: StatsPersonalPurchaseProps ) => {
 	const translate = useTranslate();
+
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
 
 	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
