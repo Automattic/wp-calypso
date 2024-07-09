@@ -40,12 +40,9 @@ const areProductsOwned = ( ownedPurchases: Purchase[], searchedProducts: string[
 	return filterPurchasesByProducts( ownedPurchases, searchedProducts ).length > 0;
 };
 
-// TODO: After the paywall is removed, we should be able to enable the VideoPress module and page based on their subscription information,
-// which means the particular logic here wouldn't be necessary anymore.
 // TODO: Consolidate this with the useStatsPurchases hook.
 const isCommercialOwned = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [
-		...JETPACK_VIDEOPRESS_PRODUCTS,
 		PRODUCT_JETPACK_STATS_MONTHLY,
 		PRODUCT_JETPACK_STATS_YEARLY,
 		PRODUCT_JETPACK_STATS_BI_YEARLY,
@@ -60,11 +57,21 @@ const supportCommercialUse = ( ownedPurchases: Purchase[] ) => {
 		)
 	);
 };
+// TODO: Refactor this to a comprehensive function that checks single module products.
+const isVideoPressOwned = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_VIDEOPRESS_PRODUCTS ] );
+};
 
 export const hasSupportedCommercialUse = ( state: object, siteId: number | null ) => {
 	const sitePurchases = getSitePurchases( state, siteId );
 
 	return supportCommercialUse( sitePurchases );
+};
+
+export const hasSupportedVideoPressUse = ( state: object, siteId: number | null ) => {
+	const sitePurchases = getSitePurchases( state, siteId );
+
+	return isVideoPressOwned( sitePurchases );
 };
 
 const getPurchasesBySiteId = createSelector(

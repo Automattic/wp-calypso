@@ -33,7 +33,7 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_YEAR,
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
 } from '../constants';
-import { hasSupportedCommercialUse } from './use-stats-purchases';
+import { hasSupportedCommercialUse, hasSupportedVideoPressUse } from './use-stats-purchases';
 
 const jetpackStatsAdvancedPaywall = [ STATS_TYPE_DEVICE_STATS, STATS_FEATURE_UTM_STATS ];
 
@@ -108,6 +108,14 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 		}
 
 		if ( supportStatsCommercialUse ) {
+			return false;
+		}
+
+		// The particular case for checking the Videos module by the VideoPress product purchase.
+		if (
+			[ STAT_TYPE_VIDEO_PLAYS ].includes( statType ) &&
+			hasSupportedVideoPressUse( state, siteId )
+		) {
 			return false;
 		}
 
