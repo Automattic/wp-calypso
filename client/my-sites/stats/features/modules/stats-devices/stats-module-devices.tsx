@@ -10,15 +10,15 @@ import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import EmptyModuleCard from '../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL } from '../const';
-import StatsCardSkeleton from '../features/modules/shared/stats-card-skeleton';
-import useModuleDevicesQuery, { StatsDevicesData } from '../hooks/use-modeule-devices-query';
-import { QueryStatsParams } from '../hooks/utils';
-import StatsListCard from '../stats-list/stats-list-card';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import statsStrings from '../stats-strings';
-import type { StatsPeriodType } from '../features/modules/types';
+import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
+import { JETPACK_SUPPORT_URL } from '../../../const';
+import useModuleDevicesQuery, { StatsDevicesData } from '../../../hooks/use-modeule-devices-query';
+import { QueryStatsParams } from '../../../hooks/utils';
+import StatsListCard from '../../../stats-list/stats-list-card';
+import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import statsStrings from '../../../stats-strings';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import type { StatsPeriodType } from '../types';
 
 import './stats-module-devices.scss';
 
