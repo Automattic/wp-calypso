@@ -282,7 +282,7 @@
 }
 
 // Styles collapsed site list.
-.wpcom-site {
+.wpcom-site .is-global-sidebar-visible {
 	.layout__content {
 		transition: padding-left 220ms ease-out;
 		min-height: 100vh;
@@ -683,10 +683,10 @@
 }
 
 // Override styles from my-sites/sidebar
-.wpcom-site div.is-group-sites,
-.wpcom-site div.is-group-sites-dashboard,
-.wpcom-site div.is-section-domains,
-.wpcom-site div.is-section-plugins {
+.wpcom-site div.is-group-sites.is-global-sidebar-visible,
+.wpcom-site div.is-group-sites-dashboard.is-global-sidebar-visible,
+.wpcom-site div.is-section-domains.is-global-sidebar-visible,
+.wpcom-site div.is-section-plugins.is-global-sidebar-visible {
 	&.focus-content .layout__content,
 	&.focus-sidebar .layout__content {
 		padding-right: 16px;
