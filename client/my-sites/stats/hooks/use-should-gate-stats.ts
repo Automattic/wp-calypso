@@ -50,6 +50,7 @@ const jetpackStatsCommercialPaywall = [
 	STAT_TYPE_TAGS,
 	STAT_TYPE_COMMENTS,
 	STAT_TYPE_INSIGHTS,
+	STATS_FEATURE_UTM_STATS,
 ];
 
 const granularControlForJetpackStatsCommercialPaywall = [
@@ -96,6 +97,8 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	const jetpackSite = isJetpackSite( state, siteId );
 	const atomicSite = isAtomicSite( state, siteId );
 
+	const supportStatsCommercialUse = hasSupportedCommercialUse( state, siteId );
+
 	// Check gated modules for Jetpack sites.
 	if ( jetpackSite && ! atomicSite ) {
 		const restrictDashboard = config.isEnabled( 'stats/restricted-dashboard' );
@@ -103,7 +106,6 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 			return false;
 		}
 
-		const supportStatsCommercialUse = hasSupportedCommercialUse( state, siteId );
 		if ( supportStatsCommercialUse ) {
 			return false;
 		}
@@ -119,6 +121,11 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 
 		// Paywall advanced stats for non-commercial sites.
 		return [ ...jetpackStatsAdvancedPaywall ].includes( statType );
+	}
+
+	// Gate advanced stats for non-Jetpack sites unless they have a Jetpack Stats commercial purchase.
+	if ( jetpackStatsAdvancedPaywall.includes( statType ) ) {
+		return ! supportStatsCommercialUse;
 	}
 
 	const siteFeatures = getSiteFeatures( state, siteId );
