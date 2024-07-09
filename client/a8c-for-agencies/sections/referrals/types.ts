@@ -18,10 +18,9 @@ export interface ReferralClient {
 	email: string;
 }
 export interface Referral {
-	id: string;
+	id: number;
 	client: ReferralClient;
 	purchases: ReferralPurchase[];
-	commissions: number;
 	statuses: string[];
 }
 
@@ -29,6 +28,5 @@ export interface ReferralAPIResponse {
 	id: number;
 	client: ReferralClient;
 	products: ReferralPurchaseAPIResponse[];
-	commission: number;
 	status: string;
 }

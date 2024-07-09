@@ -76,6 +76,11 @@ describe( 'usePricingMetaForGridPlans', () => {
 							full: 250,
 							monthly: 250,
 						},
+						costOverrides: [
+							{
+								overrideCode: 'recent-plan-proration',
+							},
+						],
 					},
 				},
 			},
@@ -163,7 +168,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 		expect( pricingMeta ).toEqual( expectedPricingMeta );
 	} );
 
-	it( 'should return the original price and discounted price', () => {
+	it( 'should return the original price and discounted price when no site id is passed', () => {
 		Plans.useCurrentPlan.mockImplementation( () => ( {
 			productSlug: PLAN_PERSONAL,
 			planSlug: PLAN_PERSONAL,
@@ -179,7 +184,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
 			storageAddOns: null,
-			selectedSiteId: 100,
+			siteId: undefined,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
 		} );
@@ -193,6 +198,90 @@ describe( 'usePricingMetaForGridPlans', () => {
 				discountedPrice: {
 					full: 400,
 					monthly: 400,
+				},
+				billingPeriod: 365,
+				currencyCode: 'USD',
+				expiry: null,
+				introOffer: null,
+			},
+		};
+
+		expect( pricingMeta ).toEqual( expectedPricingMeta );
+	} );
+
+	it( 'should return the original price and discounted price when site id is passed and withProratedDiscounts is true', () => {
+		Plans.useCurrentPlan.mockImplementation( () => ( {
+			productSlug: PLAN_PERSONAL,
+			planSlug: PLAN_PERSONAL,
+		} ) );
+
+		const useCheckPlanAvailabilityForPurchase = () => {
+			return {
+				[ PLAN_PREMIUM ]: true,
+				[ PLAN_PERSONAL ]: true,
+			};
+		};
+
+		const pricingMeta = usePricingMetaForGridPlans( {
+			planSlugs: [ PLAN_PREMIUM ],
+			storageAddOns: null,
+			siteId: 100,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
+			withProratedDiscounts: true,
+		} );
+
+		const expectedPricingMeta = {
+			[ PLAN_PREMIUM ]: {
+				originalPrice: {
+					full: 500,
+					monthly: 500,
+				},
+				discountedPrice: {
+					full: 250,
+					monthly: 250,
+				},
+				billingPeriod: 365,
+				currencyCode: 'USD',
+				expiry: null,
+				introOffer: null,
+			},
+		};
+
+		expect( pricingMeta ).toEqual( expectedPricingMeta );
+	} );
+
+	it( 'should return the original price and discounted price when site id is passed and withProratedDiscounts is false', () => {
+		Plans.useCurrentPlan.mockImplementation( () => ( {
+			productSlug: PLAN_PERSONAL,
+			planSlug: PLAN_PERSONAL,
+		} ) );
+
+		const useCheckPlanAvailabilityForPurchase = () => {
+			return {
+				[ PLAN_PREMIUM ]: true,
+				[ PLAN_PERSONAL ]: true,
+			};
+		};
+
+		const pricingMeta = usePricingMetaForGridPlans( {
+			planSlugs: [ PLAN_PREMIUM ],
+			storageAddOns: null,
+			siteId: 100,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
+			withProratedDiscounts: false,
+		} );
+
+		const expectedPricingMeta = {
+			[ PLAN_PREMIUM ]: {
+				originalPrice: {
+					full: 500,
+					monthly: 500,
+				},
+				discountedPrice: {
+					full: null,
+					monthly: null,
 				},
 				billingPeriod: 365,
 				currencyCode: 'USD',

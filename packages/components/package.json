@@ -34,10 +34,10 @@
 		"@automattic/material-design-icons": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
-		"@wordpress/base-styles": "^5.0.0",
-		"@wordpress/components": "^28.0.0",
-		"@wordpress/icons": "^10.0.0",
-		"@wordpress/react-i18n": "^4.0.0",
+		"@wordpress/base-styles": "^5.2.0",
+		"@wordpress/components": "^28.2.0",
+		"@wordpress/icons": "^10.2.0",
+		"@wordpress/react-i18n": "^4.2.0",
 		"canvas-confetti": "^1.6.0",
 		"clsx": "^2.1.1",
 		"gridicons": "^3.4.2",
@@ -51,7 +51,7 @@
 		"uuid": "^9.0.1"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.0.0",
+		"@wordpress/data": "^10.2.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},

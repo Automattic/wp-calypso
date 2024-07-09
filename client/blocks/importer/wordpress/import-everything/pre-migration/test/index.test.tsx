@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { PLAN_BUSINESS } from '@automattic/calypso-products';
-import { SiteDetails } from '@automattic/data-stores';
+import { Plans, SiteDetails } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -49,6 +49,18 @@ jest.mock( 'react-router-dom', () => ( {
 		state: undefined,
 	} ) ),
 } ) );
+
+jest.mock( '@automattic/data-stores', () => {
+	const dataStores = jest.requireActual( '@automattic/data-stores' );
+
+	return {
+		...dataStores,
+		Plans: {
+			...dataStores.Plans,
+			usePricingMetaForGridPlans: jest.fn(),
+		},
+	};
+} );
 
 jest.mock( 'calypso/blocks/importer/hooks/use-site-can-migrate' );
 jest.mock( 'calypso/state/selectors/is-requesting-site-credentials' );
@@ -127,6 +139,15 @@ describe( 'PreMigration', () => {
 			blog_id: 777712,
 			eligible: false,
 		} );
+
+		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+			[ PLAN_BUSINESS ]: {
+				currencyCode: 'USD',
+				originalPrice: { full: 60, monthly: 5 },
+				discountedPrice: { full: 24, monthly: 2 },
+				billingPeriod: 'year',
+			},
+		} ) );
 
 		renderPreMigrationScreen( {
 			sourceSite: sourceSite,

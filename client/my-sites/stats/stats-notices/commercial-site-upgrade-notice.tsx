@@ -4,8 +4,7 @@ import NoticeBanner from '@automattic/components/src/notice-banner';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { trackStatsAnalyticsEvent } from '../utils';
@@ -20,22 +19,6 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
-	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
-	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
-		siteId,
-		'commercial_site_upgrade',
-		'postponed',
-		30 * 24 * 3600
-	);
-
-	const dismissNotice = () => {
-		isOdysseyStats
-			? recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_dismissed' )
-			: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_dismissed' );
-
-		setNoticeDismissed( true );
-		postponeNoticeAsync();
-	};
 
 	const gotoJetpackStatsProduct = () => {
 		isOdysseyStats
@@ -53,16 +36,10 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 	};
 
 	useEffect( () => {
-		if ( ! noticeDismissed ) {
-			isOdysseyStats
-				? recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_viewed' )
-				: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_viewed' );
-		}
-	}, [ noticeDismissed, isOdysseyStats ] );
-
-	if ( noticeDismissed ) {
-		return null;
-	}
+		isOdysseyStats
+			? recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_viewed' )
+			: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_viewed' );
+	}, [ isOdysseyStats ] );
 
 	const learnMoreLink = isWPCOMSite
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
@@ -77,7 +54,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 			<NoticeBanner
 				level="info"
 				title={ translate( 'Upgrade to Stats Commercial' ) }
-				onClose={ dismissNotice }
+				onClose={ () => {} }
 				hideCloseButton
 			>
 				{ translate(

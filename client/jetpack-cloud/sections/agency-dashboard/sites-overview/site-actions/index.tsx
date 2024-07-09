@@ -1,9 +1,12 @@
 import { Gridicon, Button } from '@automattic/components';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useCallback } from 'react';
 import useRemoveSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-remove-site';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import { SiteRemoveConfirmationDialog } from '../site-remove-confirmation-dialog';
 import useSiteActions from './use-site-actions';
 import type { AllowedActionTypes, SiteNode } from '../types';
@@ -23,6 +26,9 @@ export default function SiteActions( {
 	siteError,
 	onRefetchSite,
 }: Props ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ showRemoveSiteDialog, setShowRemoveSiteDialog ] = useState( false );
 	const [ isPendingRefetch, setIsPendingRefetch ] = useState( false );
@@ -64,13 +70,14 @@ export default function SiteActions( {
 							onRefetchSite?.()?.then( () => {
 								setIsPendingRefetch( false );
 								setShowRemoveSiteDialog( false );
+								dispatch( successNotice( translate( 'The site has been successfully removed.' ) ) );
 							} );
 						}, 1000 );
 					},
 				}
 			);
 		}
-	}, [ onRefetchSite, removeSite, site.value?.a4a_site_id ] );
+	}, [ dispatch, onRefetchSite, removeSite, site.value?.a4a_site_id, translate ] );
 
 	return (
 		<>

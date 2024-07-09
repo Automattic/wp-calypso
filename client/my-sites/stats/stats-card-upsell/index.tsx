@@ -5,7 +5,7 @@ import StatsCardUpsellJetpack from './stats-card-upsell-jetpack';
 import StatsCardUpsellWPCOM from './stats-card-upsell-wpcom';
 
 export interface Props {
-	className: string;
+	className?: string;
 	statType: string;
 	siteId: number;
 	buttonLabel?: string;
