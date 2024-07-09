@@ -11,7 +11,6 @@
 
 .wpcom-site .a4a-layout-with-columns__container {
 	background: var(--color-sidebar-background);
-	padding-top: 32px;
 }
 
 .wpcom-site .main.a4a-layout.sites-dashboard {
@@ -277,26 +276,15 @@
 	}
 }
 
-.wpcom-site .is-group-sites.is-global-sidebar-collapsed,
-.wpcom-site .is-group-sites.is-global-sidebar-visible:has(.sites-dashboard.sites-dashboard__layout),
-.wpcom-site .is-group-sites.is-global-sidebar-visible.is-section-plugins {
+// Styles collapsed site list.
+.wpcom-site {
 	.layout__content {
+		transition: padding-left 220ms ease-out;
 		min-height: 100vh;
 
 		@include break-medium {
 			padding: calc(var(--masterbar-height) + 12px) 16px 16px calc(var(--sidebar-width-max));
 		}
-	}
-
-	.layout__secondary .global-sidebar {
-		border: none;
-	}
-}
-
-// Styles collapsed site list.
-.wpcom-site {
-	.layout__content {
-		transition: padding-left 220ms ease-out;
 	}
 	.layout__secondary {
 		transition: width 220ms ease-out;
@@ -327,6 +315,9 @@
 			.sidebar__footer-profile img {
 				max-width: none;
 			}
+		}
+		.global-sidebar {
+			border: none;
 		}
 	}
 	.is-global-sidebar-collapsed {
