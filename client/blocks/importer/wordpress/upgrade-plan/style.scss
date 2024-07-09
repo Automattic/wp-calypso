@@ -113,6 +113,7 @@ $business-plan-color: #7f54b3;
 			font-weight: inherit;
 		}
 
+
 		.plan-time-frame {
 			color: var(--studio-gray-50);
 
@@ -120,6 +121,50 @@ $business-plan-color: #7f54b3;
 				display: block;
 			}
 		}
+	}
+
+	.import__upgrade-plan-price-group {
+		justify-content: flex-end;
+		display: flex;
+		flex-direction: row-reverse;
+		align-items: baseline;
+		gap: 4px;
+
+		.plan-price.is-original {
+			font-size: 1.25rem;
+
+			&::before {
+				border-top: 2px solid var(--color-neutral-light);
+				transform: rotate(0deg);
+			}
+
+			.plan-price__currency-symbol {
+				font-size: 0.75rem;
+				vertical-align: text-top;
+			}
+
+			.plan-price__integer {
+				font-size: 1.25rem;
+			}
+		}
+		.improt__upgrade-plan-price-discounted {
+			.plan-price__fraction {
+				line-height: 1;
+				font-size: 2.75rem;
+				font-weight: inherit;
+				vertical-align: unset;
+			}
+		}
+	}
+
+	.import__upgrade-plan-price-badge {
+		font-size: 0.75rem;
+		border-radius: 4px;
+		width: fit-content;
+		font-weight: 500;
+		background-color: #e6d1ff;
+		color: #350e63;
+		margin-bottom: 0.75rem;
 	}
 
 	.import__upgrade-plan-cta {
