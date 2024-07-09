@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
 import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
@@ -21,6 +22,8 @@ import { PreviewPaneProps } from 'calypso/a8c-for-agencies/sections/sites/site-p
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
 import { A4A_SITES_DASHBOARD_DEFAULT_FEATURE } from '../../constants';
+import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
+import useFormattedSites from '../../hooks/use-formatted-sites';
 import HostingOverviewPreview from '../hosting/overview';
 import { JetpackActivityPreview } from '../jetpack/activity';
 import { JetpackBackupPreview } from '../jetpack/backup';
@@ -29,6 +32,7 @@ import { JetpackMonitorPreview } from '../jetpack/jetpack-monitor';
 import { JetpackPluginsPreview } from '../jetpack/jetpack-plugins';
 import { JetpackStatsPreview } from '../jetpack/jetpack-stats';
 import { JetpackScanPreview } from '../jetpack/scan';
+import SiteErrorPreview from './site-error-preview';
 
 import '../jetpack/style.scss';
 import '../../site-preview-pane/a4a-style.scss';
@@ -43,12 +47,18 @@ export function OverviewPreviewPane( {
 	const translate = useTranslate();
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], ! isSmallScreen );
 
+	const connectionStatus = useFetchTestConnections( true, [ site ] );
+	const formattedSite = useFormattedSites( [ site ], connectionStatus );
+
 	const trackEvent = useCallback(
 		( eventName: string ) => {
 			recordEvent( eventName );
 		},
 		[ recordEvent ]
 	);
+
+	// Show error pane if there is an error
+	const showErrorPane = formattedSite?.[ 0 ].site.error ?? false;
 
 	const { selectedSiteFeature, setSelectedSiteFeature } = useContext( SitesDashboardContext );
 
@@ -60,6 +70,20 @@ export function OverviewPreviewPane( {
 			setSelectedSiteFeature( undefined );
 		};
 	}, [] );
+
+	const errorFeatures = useMemo(
+		() => [
+			createFeaturePreview(
+				'error',
+				null,
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteErrorPreview site={ site } trackEvent={ trackEvent } />
+			),
+		],
+		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent ]
+	);
 
 	// Jetpack features: Boost, Backup, Monitor, Stats
 	const features = useMemo(
@@ -163,10 +187,13 @@ export function OverviewPreviewPane( {
 
 	return (
 		<ItemPreviewPane
+			hideNavIfSingleTab
 			itemData={ itemData }
 			closeItemPreviewPane={ closeSitePreviewPane }
-			features={ features }
-			className={ className }
+			features={ showErrorPane ? errorFeatures : features }
+			className={ clsx( className, {
+				'site-error-preview': showErrorPane,
+			} ) }
 			addTourDetails={ { id: 'sites-walkthrough-site-preview-tabs', tourId: 'sitesWalkthrough' } }
 		/>
 	);
