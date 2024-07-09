@@ -77,6 +77,9 @@ export const useSitePreviewMShotImageHandler = () => {
 	};
 
 	useEffect( () => {
+		if ( ! previewRef?.current ) {
+			return;
+		}
 		updateDimensions( previewRef );
 		const throttledResizeHandler = throttle( () => updateDimensions( previewRef ), 200 );
 
