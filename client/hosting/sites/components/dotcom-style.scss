@@ -680,8 +680,8 @@
 }
 
 // Override styles from my-sites/sidebar
-.wpcom-site div.is-section-hosting:not(.has-no-masterbar),
-.wpcom-site div.is-section-hosting-dashboard:not(.has-no-masterbar),
+.wpcom-site div.is-group-sites:not(.has-no-masterbar),
+.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar),
 .wpcom-site div.is-section-plugins:not(.has-no-masterbar) {
 	&.focus-content .layout__content,
 	&.focus-sidebar .layout__content {
