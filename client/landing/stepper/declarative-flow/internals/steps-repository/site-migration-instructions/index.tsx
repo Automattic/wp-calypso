@@ -25,8 +25,6 @@ const SiteMigrationInstructions: Step = function () {
 	const { data: hostingDetails } = useHostingProviderUrlDetails( importSiteQueryParam );
 	const showHostingBadge = ! hostingDetails.is_unknown && ! hostingDetails.is_a8c;
 
-	const site = useSite();
-	const siteId = site?.ID;
 	const { detailedStatus } = usePrepareSiteForMigration( siteId );
 
 	const sidebar = (
