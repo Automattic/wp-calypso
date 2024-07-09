@@ -3,9 +3,26 @@
  */
 import { renderHook, act, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { useRef } from 'react';
 import { useSitePreviewMShotImageHandler } from '../use-site-preview-mshot-image-handler';
 
+jest.mock( 'react', () => {
+	const actualReact = jest.requireActual( 'react' );
+	return {
+		...actualReact,
+		useRef: jest.fn(),
+	};
+} );
+
 describe( 'useSitePreviewMShotImageHandler', () => {
+	let mockRef: { current: HTMLDivElement | null };
+	const mockElement = document.createElement( 'div' );
+
+	beforeEach( () => {
+		mockRef = { current: mockElement };
+		( useRef as jest.Mock ).mockReturnValue( mockRef );
+	} );
+
 	afterEach( () => {
 		nock.cleanAll();
 		jest.clearAllMocks();
@@ -65,8 +82,10 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 		async ( width, segment, mShotProps ) => {
 			const { result } = renderHook( () => useSitePreviewMShotImageHandler() );
 
-			Object.defineProperty( result.current.previewRef, 'current', {
-				value: { offsetWidth: width },
+			act( () => {
+				Object.defineProperty( result.current.previewRef, 'current', {
+					value: { offsetWidth: width },
+				} );
 			} );
 
 			act( () => {
