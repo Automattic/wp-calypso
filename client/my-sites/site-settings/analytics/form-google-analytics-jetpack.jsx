@@ -11,6 +11,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { find } from 'lodash';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -24,6 +25,7 @@ import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestSiteSettings } from 'calypso/state/site-settings/actions';
 import FormAnalyticsStores from '../form-analytics-stores';
 
 import './style.scss';
@@ -62,6 +64,7 @@ const GoogleAnalyticsJetpackForm = ( {
 	// TODO: it would be better to get wooCommercePlugin directly in form-google-analytics using getAllPluginsIndexedByPluginSlug
 	const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
 	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.sites[ siteId ].active : false;
+	const dispatch = useDispatch();
 
 	useEffect( () => {
 		// Show the form if GA module is active, or it's been removed but GA is activated via the Legacy Plugin.
@@ -71,6 +74,12 @@ const GoogleAnalyticsJetpackForm = ( {
 			setDisplayForm( false );
 		}
 	}, [ jetpackModuleActive, setDisplayForm, isJetpackModuleAvailable, fields?.wga?.is_active ] );
+
+	useEffect( () => {
+		if ( jetpackModuleActive && ! fields.hasOwnProperty( 'wga' ) ) {
+			dispatch( requestSiteSettings( siteId ) );
+		}
+	}, [ jetpackModuleActive, siteId ] );
 
 	const handleToggleChange = ( key ) => {
 		const value = fields.wga ? ! fields.wga[ key ] : false;
