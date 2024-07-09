@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
 import { useSelector } from 'calypso/state';
 import SitesList from '../sites-list';
+import { getSitesThatAreNotInternal } from '../utils/get-sites-that-are-not-internal';
 import { getSitesThatCanInstallPlugins } from '../utils/get-sites-that-can-install-plugins';
 import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -31,11 +32,15 @@ export default function PluginAvailableOnSitesList( props: Props ) {
 		getSitesWithSecondarySites( state, props.sites )
 	).map( ( site ) => site.site );
 
-	const sitesThatCanInstallPlugins = useSelector( ( state ) =>
-		getSitesThatCanInstallPlugins( state, sitesWithSecondarySites )
-	);
+	const sitesThatCanInstallPlugins = useSelector( ( state ) => {
+		return getSitesThatCanInstallPlugins( state, sitesWithSecondarySites );
+	} );
 
-	if ( ! sitesThatCanInstallPlugins?.length ) {
+	const sitesThatAreNotInternal = useSelector( ( state ) => {
+		return getSitesThatAreNotInternal( state, sitesThatCanInstallPlugins );
+	} );
+
+	if ( ! sitesThatAreNotInternal?.length ) {
 		return null;
 	}
 
@@ -44,7 +49,7 @@ export default function PluginAvailableOnSitesList( props: Props ) {
 			<div className="plugin-details-v2__title">{ translate( 'Available on' ) }</div>
 			<SitesList
 				{ ...props }
-				items={ sitesThatCanInstallPlugins.filter( ( site ) => site && ! site.is_deleted ) }
+				items={ sitesThatAreNotInternal.filter( ( site ) => site && ! site.is_deleted ) }
 				columns={ columns }
 			/>
 		</div>
