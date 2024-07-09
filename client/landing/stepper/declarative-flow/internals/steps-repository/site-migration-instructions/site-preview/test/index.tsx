@@ -8,12 +8,15 @@ import { useSitePreviewMShotImageHandler } from '../hooks/use-site-preview-mshot
 
 jest.mock( '../hooks/use-site-preview-mshot-image-handler' );
 jest.mock( '@automattic/components', () => ( {
-	SiteThumbnail: jest.fn( ( props ) => (
-		<div { ...props }>
-			<div>Mocked Site Preview Image</div>
-			{ props.children }
-		</div>
-	) ),
+	SiteThumbnail: jest.fn( ( props ) => {
+		const { className, alt } = props;
+		return (
+			<div { ...{ className, alt } }>
+				<div>Mocked Site Preview Image</div>
+				{ props.children }
+			</div>
+		);
+	} ),
 	Spinner: () => <div>Mocked Spinner</div>,
 } ) );
 
