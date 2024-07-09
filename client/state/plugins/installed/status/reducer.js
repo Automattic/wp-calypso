@@ -26,6 +26,7 @@ import {
 	PLUGIN_INSTALL_REQUEST_PARTIAL_SUCCESS,
 } from 'calypso/state/action-types';
 import {
+	PLUGIN_INSTALLATION_INCOMPLETED,
 	PLUGIN_INSTALLATION_COMPLETED,
 	PLUGIN_INSTALLATION_ERROR,
 	PLUGIN_INSTALLATION_IN_PROGRESS,
@@ -160,9 +161,14 @@ function statusForSitePlugin( state = {}, action ) {
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE:
 		case PLUGIN_INSTALL_REQUEST_FAILURE:
 		case PLUGIN_REMOVE_REQUEST_FAILURE:
-		case PLUGIN_INSTALL_REQUEST_PARTIAL_SUCCESS:
 			return Object.assign( {}, state, {
 				status: PLUGIN_INSTALLATION_ERROR,
+				action: action.action,
+				error: action.error,
+			} );
+		case PLUGIN_INSTALL_REQUEST_PARTIAL_SUCCESS:
+			return Object.assign( {}, state, {
+				status: PLUGIN_INSTALLATION_INCOMPLETED,
 				action: action.action,
 				error: action.error,
 			} );

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { type SitePlanPricing } from '@automattic/data-stores';
+import { type PricingMetaForGridPlan } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -25,7 +25,7 @@ function renderUpgradePlanDetailsComponent(
 	);
 }
 
-function getPricing(): SitePlanPricing {
+function getPricing(): PricingMetaForGridPlan {
 	return {
 		currencyCode: 'USD',
 		originalPrice: {

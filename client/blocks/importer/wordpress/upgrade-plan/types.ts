@@ -1,5 +1,5 @@
 import type { PlanSlug } from '@automattic/calypso-products';
-import type { SiteDetails, SitePlanPricing } from '@automattic/data-stores';
+import type { PricingMetaForGridPlan, SiteDetails } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
 
 export type HostingDetailsItem = {
@@ -15,7 +15,7 @@ export type HostingDetails = {
 export type UpgradePlanDetailsProps = {
 	children: React.ReactNode;
 	introOfferAvailable: boolean;
-	pricing?: SitePlanPricing;
+	pricing?: PricingMetaForGridPlan;
 	upgradePlanHostingDetailsList: Array< HostingDetailsItem >;
 };
 

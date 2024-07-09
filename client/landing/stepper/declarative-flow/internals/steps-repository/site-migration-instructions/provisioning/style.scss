@@ -1,0 +1,46 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.migration-instructions-provisioning {
+	background: #e8ecfb;
+	border-radius: 4px;
+	bottom: 80px;
+	font-size: 0.875rem;
+	margin: auto 16px 0 0;
+	padding: 12px;
+	position: fixed;
+
+	@include break-large {
+		bottom: 40px;
+		margin-right: 0;
+		position: sticky;
+	}
+}
+
+.migration-instructions-provisioning__message {
+	margin-bottom: 12px;
+}
+
+.migration-instructions-provisioning__action {
+	align-items: center;
+	display: flex;
+	gap: 8px;
+}
+
+.migration-instructions-provisioning__action-icon {
+	align-items: center;
+	display: flex;
+
+	.components-spinner {
+		margin: 0;
+	}
+}
+
+.migration-instructions-provisioning__action-text {
+	font-size: 1rem;
+	font-weight: 500;
+}
+
+.migration-instructions-provisioning__action-progress {
+	margin-left: auto;
+}

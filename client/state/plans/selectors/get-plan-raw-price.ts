@@ -30,6 +30,9 @@ export function getPlanRawPrice(
 		// will return a meaningful value, and it will fall back to the price of rawPriceInteger instead. Because
 		// origCostInteger will never be undefined, and because it already defaults to rawPriceInteger, we can simply
 		// return origCostInteger here.
+
+		// TODO clk: when migrating to data-stores this would be the equivalent
+		// of `pricing.originalPrice[ 'full' | 'monthly' ]` (without `siteId`)
 		price = origCostInteger;
 	}
 

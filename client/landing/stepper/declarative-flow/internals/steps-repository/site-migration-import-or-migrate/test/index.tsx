@@ -86,7 +86,7 @@ describe( 'Site Migration Import or Migrate Step', () => {
 
 		const { container, queryByText } = render();
 
-		expect( container.querySelectorAll( '.onboarding-subtitle' ) ).toHaveLength( 1 );
+		expect( container.querySelectorAll( '.formatted-header__subtitle' ) ).toHaveLength( 1 );
 		expect( queryByText( /WP Engine/ ) ).toBeInTheDocument();
 	} );
 

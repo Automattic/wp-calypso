@@ -68,3 +68,7 @@ export const PERIOD_LIST = [
 	PLAN_BIENNIAL_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 ] as const;
+
+export const COST_OVERRIDE_REASONS = {
+	RECENT_PLAN_PRORATION: 'recent-plan-proration',
+};

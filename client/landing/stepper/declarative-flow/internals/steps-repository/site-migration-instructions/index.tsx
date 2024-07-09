@@ -3,10 +3,12 @@ import { StepContainer } from '@automattic/onboarding';
 import React, { useEffect } from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
+import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { HostingBadge } from './hosting-badge';
+import { Provisioning } from './provisioning';
 import { Questions } from './questions';
 import { Sidebar } from './sidebar';
 import { SitePreview } from './site-preview';
@@ -23,7 +25,16 @@ const SiteMigrationInstructions: Step = function () {
 	const { data: hostingDetails } = useHostingProviderUrlDetails( importSiteQueryParam );
 	const showHostingBadge = ! hostingDetails.is_unknown && ! hostingDetails.is_a8c;
 
-	const sidebar = <Sidebar />;
+	const site = useSite();
+	const siteId = site?.ID;
+	const { detailedStatus } = usePrepareSiteForMigration( siteId );
+
+	const sidebar = (
+		<Sidebar>
+			<Provisioning status={ detailedStatus } />
+		</Sidebar>
+	);
+
 	const stepContent = (
 		<LaunchpadContainer sidebar={ sidebar }>
 			{ showHostingBadge && <HostingBadge hostingName={ hostingDetails.name } /> }
