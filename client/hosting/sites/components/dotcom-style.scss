@@ -686,6 +686,7 @@
 	&.focus-sidebar .layout__content {
 		padding-right: 16px;
 		padding-bottom: 16px;
+		min-height: 100vh;
 
 		@include break-small {
 			padding-top: calc(var(--masterbar-height) + 12px);
