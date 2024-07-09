@@ -59,11 +59,7 @@
 		}
 	}
 
-	height: calc(100vh - var(--masterbar-height));
-
-	@media (min-width: 782px) {
-		height: calc(100vh - var(--masterbar-height) - 32px);
-	}
+	height: calc(100vh - var(--masterbar-height) - 32px);
 
 	.sites-site-favicon {
 		margin-right: 0;
@@ -276,8 +272,14 @@
 	}
 }
 
-.theme-default .layout__secondary .global-sidebar {
-	border: none;
+.wpcom-site {
+	.layout__content {
+		min-height: 100vh;
+	}
+
+	.layout__secondary .global-sidebar {
+		border: none;
+	}
 }
 
 // Styles collapsed site list.
@@ -561,7 +563,8 @@
 	}
 }
 
-.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout,
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .a4a-layout-with-columns__container .a4a-layout-column {
 	.a4a-layout-column__container {
 		display: flex;
 		flex-direction: column;
@@ -622,6 +625,13 @@
 
 // Use flexbox to structure of fly-out panel.
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
+	&.a4a-layout,
+	.a4a-layout-column,
+	.a4a-layout-with-columns__container {
+		overflow: visible;
+		height: calc(100vh - 32px - var(--masterbar-height));
+	}
+
 	.a4a-layout-column__container {
 		display: flex;
 		flex-direction: column;
@@ -674,18 +684,22 @@
 }
 
 // Override styles from my-sites/sidebar
-.wpcom-site div.is-group-sites:not(.has-no-masterbar),
-.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar),
-.wpcom-site div.is-section-plugins:not(.has-no-masterbar) {
+.wpcom-site div.is-group-sites,
+.wpcom-site div.is-group-sites-dashboard,
+.wpcom-site div.is-section-domains,
+.wpcom-site div.is-section-plugins {
 	&.focus-content .layout__content,
 	&.focus-sidebar .layout__content {
-		padding-bottom: 0;
-		padding-top: var(--masterbar-height);
+		padding-right: 16px;
+		padding-bottom: 16px;
+		min-height: 100vh;
 
 		@include break-small {
 			padding-top: calc(var(--masterbar-height) + 12px);
 		}
 
+		@include break-medium {
+			padding-left: calc(var(--sidebar-width-max));
 		.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
 			height: calc(100vh - var(--masterbar-height));
 		}
