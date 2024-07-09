@@ -41,6 +41,8 @@ $business-plan-color: #7f54b3;
 			margin-right: 0;
 			margin-left: 0;
 			width: 352px;
+			gap: 1.5rem;
+			padding: 3em 1.5em;
 		}
 	}
 
@@ -234,7 +236,7 @@ $business-plan-color: #7f54b3;
 		color: $business-plan-color;
 		font-size: 0.75rem;
 		font-weight: 500;
-		margin-top: 0.5rem;
+		margin-top: 0.6rem;
 		text-align: center;
 	}
 
@@ -310,7 +312,7 @@ $business-plan-color: #7f54b3;
 			display: flex;
 			flex-direction: column;
 			margin-bottom: 0;
-			width: 352px;
+			width: 372px;
 		}
 
 		.import__upgrade-plan-hosting-details-card-container {
