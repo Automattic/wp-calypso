@@ -8,11 +8,11 @@ interface Props {
 }
 
 export const Steps: FC< Props > = ( { fromUrl, onComplete } ) => {
-	const checklistItems = useSteps( { fromUrl, onComplete } );
+	const { steps } = useSteps( { fromUrl, onComplete } );
 
 	return (
 		<Checklist>
-			{ checklistItems.map( ( props ) => (
+			{ steps.map( ( props ) => (
 				<ChecklistItem key={ props.task.id } { ...props } />
 			) ) }
 		</Checklist>

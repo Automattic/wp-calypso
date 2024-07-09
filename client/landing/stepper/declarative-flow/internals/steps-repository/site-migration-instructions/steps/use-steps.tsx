@@ -49,6 +49,11 @@ interface Step {
 
 type Steps = Step[];
 
+interface StepsObject {
+	steps: Steps;
+	currentStep: number;
+}
+
 const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
 
@@ -126,13 +131,13 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 	];
 };
 
-export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): Steps => {
+export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): StepsObject => {
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
-	const steps = useStepsData( { fromUrl } );
+	const stepsData = useStepsData( { fromUrl } );
 
-	return steps.map( ( step, index ) => {
+	const steps: Steps = stepsData.map( ( step, index, array ) => {
 		const onActionClick = () => {
 			setCurrentStep( index + 1 );
 
@@ -142,7 +147,7 @@ export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): Steps => {
 			}
 
 			// When clicking on the last step.
-			if ( index === steps.length - 1 ) {
+			if ( index === array.length - 1 ) {
 				onComplete();
 			}
 		};
@@ -166,11 +171,16 @@ export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): Steps => {
 				content: step.content,
 				isOpen: currentStep === index,
 				action: {
-					label: index === steps.length - 1 ? translate( 'Done' ) : translate( 'Next' ),
+					label: index === array.length - 1 ? translate( 'Done' ) : translate( 'Next' ),
 					onClick: onActionClick,
 				},
 			},
 			onClick: onItemClick,
 		};
 	} );
+
+	return {
+		steps,
+		currentStep,
+	};
 };
