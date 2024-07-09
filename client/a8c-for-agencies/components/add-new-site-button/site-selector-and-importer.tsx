@@ -1,7 +1,7 @@
 import { Popover, Gridicon, Button, WordPressLogo, JetpackLogo } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
@@ -61,7 +61,7 @@ export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMI
 		icon: JSX.Element;
 		iconClassName?: string;
 		heading: string;
-		description: string;
+		description: string | TranslateResult;
 		buttonProps?: React.ComponentProps< typeof Button >;
 		extraContent?: JSX.Element;
 	} ) => {
@@ -121,7 +121,10 @@ export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMI
 						{ menuItem( {
 							icon: <WordPressLogo />,
 							heading: translate( 'Via WordPress.com' ),
-							description: translate( 'Import sites bought on WordPress.com' ),
+							description: translate( 'Import sites bought on{{nbsp/}}WordPress.com', {
+								components: { nbsp: <>&nbsp;</> },
+								comment: 'nbsp is a non-breaking space character',
+							} ),
 							buttonProps: {
 								onClick: handleImportFromWPCOM,
 							},
@@ -129,7 +132,10 @@ export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMI
 						{ menuItem( {
 							icon: <A4ALogo />,
 							heading: translate( 'Via the Automattic plugin' ),
-							description: translate( 'Connect with the Automattic for Agencies plugin' ),
+							description: translate( 'Connect with the Automattic for Agencies{{nbsp/}}plugin', {
+								components: { nbsp: <>&nbsp;</> },
+								comment: 'nbsp is a non-breaking space character',
+							} ),
 							buttonProps: {
 								onClick: () => {
 									setShowA4AConnectionModal( true );
