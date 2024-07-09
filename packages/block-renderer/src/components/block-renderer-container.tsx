@@ -16,10 +16,7 @@ import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	( window as any ).wpcomGutenberg?.pluginVersion?.startsWith( 'v18.7' )
-		? 'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.'
-		: 'I know using unstable features means my theme or plugin will inevitably break in the next version of WordPress.',
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
 	'@wordpress/block-editor'
 );
 
