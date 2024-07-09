@@ -75,7 +75,7 @@
 		"@wordpress/data": "^10.0.0",
 		"@wordpress/data-controls": "^4.0.0",
 		"@wordpress/date": "^5.0.0",
-		"@wordpress/dependency-extraction-webpack-plugin": "^5.9.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.0.0",
 		"@wordpress/dom-ready": "^4.0.0",
 		"@wordpress/edit-post": "^8.0.0",
 		"@wordpress/element": "^6.0.0",

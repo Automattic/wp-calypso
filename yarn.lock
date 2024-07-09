@@ -150,7 +150,7 @@ __metadata:
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/data": "npm:^10.0.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.0.0"
     autoprefixer: "npm:^10.2.5"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
@@ -282,7 +282,7 @@ __metadata:
     "@babel/core": "npm:^7.24.5"
     "@types/webpack-env": "npm:^1.18.5"
     "@wordpress/browserslist-config": "npm:^6.0.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.0.0"
     autoprefixer: "npm:^10.2.5"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.8.2"
@@ -565,7 +565,7 @@ __metadata:
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/data": "npm:^10.0.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.0.0"
     "@wordpress/dom-ready": "npm:^4.0.0"
     "@wordpress/i18n": "npm:^5.0.0"
     calypso: "workspace:^"
@@ -1489,7 +1489,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/base-styles": "npm:^5.0.0"
     "@wordpress/data": "npm:^10.0.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.0.0"
     "@wordpress/icons": "npm:^10.0.0"
     autoprefixer: "npm:^10.2.5"
     babel-jest: "npm:^29.6.1"
@@ -2145,7 +2145,7 @@ __metadata:
     "@wordpress/components": "npm:^28.0.0"
     "@wordpress/compose": "npm:^7.0.0"
     "@wordpress/data": "npm:^10.0.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.0.0"
     "@wordpress/dom-ready": "npm:^4.0.0"
     "@wordpress/edit-post": "npm:^8.0.0"
     "@wordpress/edit-site": "npm:^6.0.0"
@@ -2247,7 +2247,7 @@ __metadata:
     "@wordpress/data": "npm:^10.0.0"
     "@wordpress/data-controls": "npm:^4.0.0"
     "@wordpress/date": "npm:^5.0.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.9.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.0.0"
     "@wordpress/dom-ready": "npm:^4.0.0"
     "@wordpress/edit-post": "npm:^8.0.0"
     "@wordpress/element": "npm:^6.0.0"
@@ -9535,14 +9535,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dependency-extraction-webpack-plugin@npm:5.9.0":
-  version: 5.9.0
-  resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:5.9.0"
+"@wordpress/dependency-extraction-webpack-plugin@npm:6.0.0":
+  version: 6.0.0
+  resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:6.0.0"
   dependencies:
     json2php: "npm:^0.0.7"
   peerDependencies:
     webpack: ^5.0.0
-  checksum: de26747649fe096736bbd443b657947abc8965a14dc298a5566dcae31b0fdb232e7bd283c1f263c99a89d0884a279260013abbf88535fb4e04cc62ef5ba947ca
+  checksum: f052343a2a0fe6cdc745bed68741bb591b8c7a8c0ac6ca0df4efff4d61e00fcfb0e3e541c42876ff96a9f0ad7c34082ffe142d0a3cf3f907af042c88f4d41f37
   languageName: node
   linkType: hard
 
