@@ -19,6 +19,7 @@ import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
+import { getSiteIdParam } from './internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
@@ -133,7 +134,7 @@ const siteMigration: Flow = {
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep, variantSlug );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
-			const siteId = getSiteIdBySlug( siteSlug ) || urlQueryParams.get( 'siteId' );
+			const siteId = getSiteIdBySlug( siteSlug ) || getSiteIdParam( urlQueryParams );
 
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
