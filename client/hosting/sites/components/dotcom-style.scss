@@ -700,13 +700,14 @@
 
 		@include break-medium {
 			padding-left: calc(var(--sidebar-width-max));
-		.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
-			height: calc(100vh - var(--masterbar-height));
+			.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+				height: calc(100vh - var(--masterbar-height));
+			}
 		}
-	}
 
-	// Prevent the content pushed out via translateX(100%) creating a scrollbar
-	&.focus-sidebar .layout__content .layout__primary {
-		overflow-x: hidden;
+		// Prevent the content pushed out via translateX(100%) creating a scrollbar
+		&.focus-sidebar .layout__content .layout__primary {
+			overflow-x: hidden;
+		}
 	}
 }
