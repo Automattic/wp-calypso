@@ -7,15 +7,12 @@ import { useSitePreviewMShotImageHandler } from '../use-site-preview-mshot-image
 
 describe( 'useSitePreviewMShotImageHandler', () => {
 	afterEach( () => {
+		nock.cleanAll();
 		jest.clearAllMocks();
 	} );
 
 	beforeAll( () => {
 		nock.disableNetConnect();
-	} );
-
-	beforeEach( () => {
-		nock.cleanAll();
 	} );
 
 	it( 'should return the correct segment based on width', () => {
@@ -99,7 +96,7 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 		} );
 	} );
 
-	it( 'should call the mShot endpoint for each config during createScreenshots', () => {
+	it( 'should call the mShot endpoint for each config during createScreenshots', async () => {
 		const { result } = renderHook( () => useSitePreviewMShotImageHandler() );
 		const url = 'http://example.com';
 
@@ -117,8 +114,10 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 			result.current.createScreenshots( url );
 		} );
 
-		scopes.forEach( ( scope ) => {
-			expect( scope.isDone() ).toBe( true );
+		await waitFor( () => {
+			scopes.forEach( ( scope ) => {
+				expect( scope.isDone() ).toBe( true );
+			} );
 		} );
 	} );
 } );

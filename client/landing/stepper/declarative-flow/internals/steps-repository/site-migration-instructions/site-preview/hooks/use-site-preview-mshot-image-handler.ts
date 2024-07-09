@@ -70,6 +70,12 @@ export const useSitePreviewMShotImageHandler = () => {
 		}
 	};
 
+	const sendScreenshotRequest = ( screenShotUrl: string ) => {
+		const http = new XMLHttpRequest();
+		http.open( 'GET', screenShotUrl );
+		http.send();
+	};
+
 	useEffect( () => {
 		updateDimensions( previewRef );
 		const throttledResizeHandler = throttle( () => updateDimensions( previewRef ), 200 );
@@ -80,14 +86,14 @@ export const useSitePreviewMShotImageHandler = () => {
 
 	const createScreenshots = ( url: string ) => {
 		Object.entries( mShotConfigs ).forEach( ( mShotParams ) => {
-			fetch(
-				`https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?${ Object.entries(
-					mShotParams[ 1 ]
-				)
-					.filter( ( entry ) => !! entry[ 1 ] )
-					.map( ( [ key, val ] ) => key + '=' + val )
-					.join( '&' ) }`
-			);
+			const screenShotUrl = `https://s0.wp.com/mshots/v1/${ encodeURIComponent(
+				url
+			) }?${ Object.entries( mShotParams[ 1 ] )
+				.filter( ( entry ) => !! entry[ 1 ] )
+				.map( ( [ key, val ] ) => key + '=' + val )
+				.join( '&' ) }`;
+
+			sendScreenshotRequest( screenShotUrl );
 		} );
 	};
 
