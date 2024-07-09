@@ -59,11 +59,7 @@
 		}
 	}
 
-	height: calc(100vh - var(--masterbar-height));
-
-	@media (min-width: 782px) {
-		height: calc(100vh - var(--masterbar-height) - 32px);
-	}
+	height: calc(100vh - var(--masterbar-height) - 32px);
 
 	.sites-site-favicon {
 		margin-right: 0;
