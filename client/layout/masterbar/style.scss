@@ -471,6 +471,10 @@ body.is-mobile-app-view {
 			padding-top: 2px;
 		}
 
+		.dashicons-before::before {
+			margin-right: 6px;
+		}
+
 		&:hover {
 			svg path,
 			.gridicon {
