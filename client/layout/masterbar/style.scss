@@ -482,10 +482,16 @@ body.is-mobile-app-view {
 			margin-right: 0;
 		}
 
+		&.masterbar__item-help {
+			flex: unset;
+		}
+
 		@media only screen and (max-width: 782px) {
 			width: 52px;
+			padding: 0;
 
-			.masterbar__item-content {
+			// Show gravatar content
+			&:not(.masterbar__item-howdy) .masterbar__item-content {
 				display: none;
 			}
 
