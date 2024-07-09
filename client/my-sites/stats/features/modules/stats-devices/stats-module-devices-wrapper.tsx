@@ -1,14 +1,14 @@
 import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import clsx from 'clsx';
-import StatsCardSkeleton from '../features/modules/shared/stats-card-skeleton';
-import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
-import useStatsPurchases from '../hooks/use-stats-purchases';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import statsStrings from '../stats-strings';
+import { default as usePlanUsageQuery } from '../../../hooks/use-plan-usage-query';
+import useStatsPurchases from '../../../hooks/use-stats-purchases';
+import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import statsStrings from '../../../stats-strings';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsModuleDevices from './stats-module-devices';
 import StatsModuleUpgradeOverlay from './stats-module-upgrade-overlay';
-import type { StatsAdvancedModuleWrapperProps } from '../features/modules/types';
+import type { StatsAdvancedModuleWrapperProps } from '../types';
 
 const DEVICES_CLASS_NAME = 'stats-module-devices';
 
