@@ -19,6 +19,7 @@ import {
 	hasActivatedTheme,
 	isThemeActive,
 	isActivatingTheme,
+	isInstallingTheme,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useIsValidThankYouTheme from './use-is-valid-thank-you-theme';
@@ -61,6 +62,7 @@ export const ThankYouThemeSection = ( {
 	const isFSEActive = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
 	const hasActivated = useSelector( ( state ) => hasActivatedTheme( state, siteId ) );
 	const isActivating = useSelector( ( state ) => isActivatingTheme( state, siteId ) );
+	const isInstalling = useSelector( ( state ) => isInstallingTheme( state, theme.id, siteId ) );
 	const customizeUrl = useSelector( ( state ) =>
 		getCustomizeUrl( state, theme.id, siteId, isFSEActive )
 	);
@@ -119,7 +121,7 @@ export const ThankYouThemeSection = ( {
 					<>
 						<Button
 							primary
-							busy={ ( isActivating && ! hasActivated ) || isLoading }
+							busy={ ( ( isInstalling || isActivating ) && ! hasActivated ) || isLoading }
 							onClick={ handleActivateTheme }
 							href={ isActive ? customizeUrl : undefined }
 							disabled={ ! isValidThankyouSectionTheme }

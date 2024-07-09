@@ -48,6 +48,7 @@ export default function PluginRowFormatter( {
 	const dispatch = useDispatch();
 
 	const billingPeriod = useSelector( getBillingInterval );
+	const pluginId = item.id || item.slug; // Plugin ID only available on Site plugin item object
 
 	const PluginDetailsButton = (
 		props: PropsWithChildren< { className: string; onClick?: MouseEventHandler } >
@@ -88,7 +89,7 @@ export default function PluginRowFormatter( {
 
 	const installInProgress = useSelector(
 		( state ) =>
-			selectedSite && isPluginActionInProgress( state, selectedSite.ID, item.id, INSTALL_PLUGIN )
+			selectedSite && isPluginActionInProgress( state, selectedSite.ID, pluginId, INSTALL_PLUGIN )
 	);
 
 	if ( selectedSite ) {
@@ -106,7 +107,7 @@ export default function PluginRowFormatter( {
 	const allStatuses = getPluginActionStatuses( state );
 
 	let currentSiteStatuses = allStatuses.filter(
-		( status ) => status.pluginId === item.id && status.action !== UPDATE_PLUGIN
+		( status ) => status.pluginId === pluginId && status.action !== UPDATE_PLUGIN
 	);
 
 	if ( 'site-name' === columnKey ) {

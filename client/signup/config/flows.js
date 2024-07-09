@@ -55,7 +55,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			ref: getQueryArgs()?.ref,
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
 			...( isDomainOnly && { isDomainOnly: 1 } ),
-			checkoutBackUrl,
+			checkoutBackUrl: addQueryArgs( { skippedCheckout: 1 }, checkoutBackUrl ),
 		},
 		checkoutURL
 	);

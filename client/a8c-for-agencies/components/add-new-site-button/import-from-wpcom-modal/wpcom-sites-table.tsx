@@ -74,6 +74,7 @@ export default function WPCOMSitesTable( {
 			.filter(
 				( site ) =>
 					site &&
+					! site.is_wpcom_staging_site &&
 					( site.is_wpcom_atomic || site.jetpack ) &&
 					! managedSitesMap?.[ site.ID as number ]
 			)

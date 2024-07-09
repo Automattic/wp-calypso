@@ -1,5 +1,5 @@
 import { isTailoredSignupFlow } from '@automattic/onboarding';
-import { getQueryArg } from '@wordpress/url';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
@@ -43,14 +43,14 @@ export const leaveCheckout = ( {
 	}
 
 	if ( isTailoredSignupFlow( signupFlowName ) ) {
-		const urlFromCookie = retrieveSignupDestination();
+		const urlFromCookie = addQueryArgs( retrieveSignupDestination(), { skippedCheckout: 1 } );
 		if ( urlFromCookie ) {
 			window.location.assign( urlFromCookie );
 		}
 	}
 
 	if ( redirectToParam && launchpadURLRegexMatch ) {
-		const launchpadUrl = redirectToParam?.toString();
+		const launchpadUrl = addQueryArgs( redirectToParam?.toString(), { skippedCheckout: 1 } );
 		window.location.assign( launchpadUrl );
 		return;
 	}
