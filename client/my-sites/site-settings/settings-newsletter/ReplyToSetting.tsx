@@ -4,7 +4,11 @@ import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { isJetpackSite as isJetpackSiteSelector } from 'calypso/state/sites/selectors';
+import versionCompare from 'calypso/lib/version-compare';
+import {
+	isJetpackSite as isJetpackSiteSelector,
+	getSiteOption,
+} from 'calypso/state/sites/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 
 type ReplyToSettingProps = {
@@ -21,8 +25,12 @@ export const ReplyToSetting = ( {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID;
-	const isWPcomSite = useSelector( ( state ) => {
-		return ! isJetpackSiteSelector( state, siteId );
+	const isSupportedSite = useSelector( ( state ) => {
+		if ( ! isJetpackSiteSelector( state, siteId ) ) {
+			return true;
+		}
+		const jetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+		return jetpackVersion && versionCompare( jetpackVersion, '13.5', '>=' );
 	} );
 
 	return (
@@ -39,7 +47,7 @@ export const ReplyToSetting = ( {
 					label={ translate( 'Replies are not allowed' ) }
 				/>
 			</FormLabel>
-			{ isWPcomSite && (
+			{ isSupportedSite && (
 				<>
 					<FormLabel>
 						<FormRadio
