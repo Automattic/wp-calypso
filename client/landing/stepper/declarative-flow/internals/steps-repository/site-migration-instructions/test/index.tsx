@@ -109,4 +109,15 @@ describe( 'SiteMigrationInstructions', () => {
 
 		expect( queryByText( 'Migrate Guru plugin' ) ).toBeInTheDocument();
 	} );
+
+	it( 'should navigate to the next step when the steps are completed', async () => {
+		const submit = jest.fn();
+		const { getByRole } = render( { navigation: { submit } } );
+
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+		await userEvent.click( getByRole( 'button', { name: /Done/ } ) );
+
+		expect( submit ).toHaveBeenCalledWith( { destination: 'migration-started' } );
+	} );
 } );
