@@ -17,7 +17,6 @@ import './style.scss';
 import withMigrationSticker from './with-migration-sticker';
 import type { UpgradePlanProps } from './types';
 
-
 export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > = ( props ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
