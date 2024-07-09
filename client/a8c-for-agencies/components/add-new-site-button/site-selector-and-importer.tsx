@@ -81,8 +81,6 @@ export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMI
 		);
 	};
 
-	const chevronIcon = isMenuVisible ? 'chevron-up' : 'chevron-down';
-
 	const pressableOwnership = usePressableOwnershipType();
 
 	const { data: pendingSites } = useFetchPendingSites();
@@ -103,7 +101,10 @@ export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMI
 				onClick={ toggleMenu }
 			>
 				{ showMainButtonLabel ? translate( 'Add sites' ) : null }
-				<Gridicon icon={ showMainButtonLabel ? chevronIcon : 'plus' } />
+				<Gridicon
+					className={ clsx( { reverse: showMainButtonLabel && isMenuVisible } ) }
+					icon={ showMainButtonLabel ? 'chevron-down' : 'plus' }
+				/>
 			</Button>
 			<Popover
 				className="site-selector-and-importer__popover"
