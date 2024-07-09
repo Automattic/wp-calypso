@@ -121,7 +121,7 @@ export default function SiteConfigurationsModal( {
 								isError={ siteName.showValidationMessage }
 								value={ siteName.siteName }
 								onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-									siteName.setSiteName( event.target.value )
+									siteName.setSiteName( event.target.value.toLocaleLowerCase() )
 								}
 								onKeyDown={ onSiteNameKeyDown }
 								suffix=".wpcomstaging.com"
