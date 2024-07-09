@@ -12,11 +12,6 @@ export default function DomainAndPlanPackageNavigation( props ) {
 	const goBack = () => {
 		if ( props.goBackLink ) {
 			window.location.assign( props.goBackLink );
-			return;
-		}
-
-		if ( window.history.length > 1 ) {
-			window.history.go( -1 );
 		}
 	};
 
