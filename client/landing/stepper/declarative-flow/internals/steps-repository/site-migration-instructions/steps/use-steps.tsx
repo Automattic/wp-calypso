@@ -25,7 +25,18 @@ const recordInstructionsLinkClick = ( linkname: string ) => {
 	} );
 };
 
-interface Options {
+interface StepsDataOptions {
+	fromUrl: string;
+}
+
+interface StepData {
+	title: string;
+	content: JSX.Element;
+}
+
+type StepsData = StepData[];
+
+interface StepsOptions {
 	fromUrl: string;
 	onComplete: () => void;
 }
@@ -33,15 +44,15 @@ interface Options {
 interface Step {
 	task: Task;
 	expandable?: Expandable;
+	onClick?: () => void;
 }
 
 type Steps = Step[];
 
-export const useSteps = ( { fromUrl, onComplete }: Options ): Steps => {
+const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
-	const [ currentStep, setCurrentStep ] = useState( 0 );
 
-	const steps = [
+	return [
 		{
 			title: translate( 'Install the Migrate Guru plugin' ),
 			content: (
@@ -113,13 +124,35 @@ export const useSteps = ( { fromUrl, onComplete }: Options ): Steps => {
 			),
 		},
 	];
+};
+
+export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): Steps => {
+	const translate = useTranslate();
+	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
+	const steps = useStepsData( { fromUrl } );
 
 	return steps.map( ( step, index ) => {
+		const onActionClick = () => {
+			setCurrentStep( index + 1 );
+
+			if ( lastCompleteStep < index ) {
+				setLastCompleteStep( index );
+			}
+
+			// When clicking on the last step.
+			if ( index === steps.length - 1 ) {
+				onComplete();
+			}
+		};
+
+		const onItemClick = undefined;
+
 		return {
 			task: {
 				id: step.title,
 				title: step.title,
-				completed: currentStep > index,
+				completed: lastCompleteStep >= index,
 				disabled: false,
 			},
 			expandable: {
@@ -127,16 +160,10 @@ export const useSteps = ( { fromUrl, onComplete }: Options ): Steps => {
 				isOpen: currentStep === index,
 				action: {
 					label: index === steps.length - 1 ? translate( 'Done' ) : translate( 'Next' ),
-					onClick: () => {
-						if ( steps.length - 1 > index ) {
-							setCurrentStep( index + 1 );
-						} else {
-							// When clicking on the last step.
-							onComplete();
-						}
-					},
+					onClick: onActionClick,
 				},
 			},
+			onClick: onItemClick,
 		};
 	} );
 };
