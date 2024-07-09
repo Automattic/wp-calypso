@@ -694,7 +694,7 @@
 		min-height: 100vh;
 
 		@include break-small {
-			padding-top: calc(var(--masterbar-height) + 12px);
+			padding-top: calc(var(--masterbar-height) + 16px);
 		}
 
 		@include break-medium {

@@ -48,7 +48,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				// Add border around everything
 				overflow: hidden;
 				min-height: 100vh;
-				padding-top: calc( var( --masterbar-height ) + 12px );
+				padding-top: calc( var( --masterbar-height ) + 16px );
 				padding-right: 16px;
 				padding-bottom: 16px;
 				padding-left: calc( var( --sidebar-width-max ) );
