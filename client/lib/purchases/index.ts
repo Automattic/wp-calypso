@@ -253,7 +253,12 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 	const { productName, productSlug, purchaseRenewalQuantity } = purchase;
 	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames( 'full' );
 
-	if ( isJetpackAISlug( purchase.productSlug ) && purchase.purchaseRenewalQuantity ) {
+	if (
+		isJetpackAISlug( purchase.productSlug ) &&
+		purchase.purchaseRenewalQuantity &&
+		purchase.priceTierList &&
+		purchase.priceTierList.length > 0
+	) {
 		return i18n.translate( '%(productName)s (%(quantity)s requests per month)', {
 			args: {
 				productName: jetpackProductsDisplayNames[ productSlug ],
