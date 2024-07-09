@@ -5,11 +5,11 @@ import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function phpErrorLogs( context: PageJSContext, next: () => void ) {
 	context.primary = (
-		<>
+		<div className="site-logs-overview">
 			<PageViewTracker path="/site-logs/:site/php" title="PHP Error Logs" />
 			<LogsHeader logType="php" />
 			<LogsTab logType="php" />
-		</>
+		</div>
 	);
 
 	next();
@@ -17,11 +17,11 @@ export function phpErrorLogs( context: PageJSContext, next: () => void ) {
 
 export function httpRequestLogs( context: PageJSContext, next: () => void ) {
 	context.primary = (
-		<>
+		<div className="site-logs-overview">
 			<PageViewTracker path="/site-logs/:site/web" title="Web Server Logs" />
 			<LogsHeader logType="web" />
 			<LogsTab logType="web" />
-		</>
+		</div>
 	);
 
 	next();
