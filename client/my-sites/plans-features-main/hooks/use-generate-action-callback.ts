@@ -9,7 +9,6 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
-import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
@@ -102,6 +101,39 @@ function useUpgradeHandler( {
 	);
 }
 
+function useDowngradeHandler( {
+	siteSlug,
+	currentPlan,
+}: {
+	siteSlug: string | null | undefined;
+	currentPlan: Plans.SitePlan | undefined;
+} ) {
+	const { setShowHelpCenter, setInitialRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
+	return useCallback(
+		( planSlug: PlanSlug ) => {
+			// A downgrade to the free plan is essentially cancelling the current plan.
+			if ( isFreePlan( planSlug ) ) {
+				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
+				return;
+			}
+
+			if ( ! siteSlug ) {
+				return;
+			}
+
+			const chatUrl = `/contact-form?${ new URLSearchParams( {
+				mode: 'CHAT',
+				'disable-gpt': 'true',
+				'skip-resources': 'true',
+			} ).toString() }`;
+			setMessage( 'I want to downgrade my plan' );
+			setInitialRoute( chatUrl );
+			setShowHelpCenter( true );
+		},
+		[ currentPlan?.purchaseId, setInitialRoute, setMessage, setShowHelpCenter, siteSlug ]
+	);
+}
+
 function useGenerateActionCallback( {
 	currentPlan,
 	eligibleForFreeHostingTrial,
@@ -123,26 +155,13 @@ function useGenerateActionCallback( {
 	siteSlug?: string | null;
 	withDiscount?: string;
 } ): UseActionCallback {
-	const { setShowHelpCenter, setInitialRoute } = useDispatch( HELP_CENTER_STORE );
-	const { url: stillNeedHelpUrl } = useStillNeedHelpURL( false );
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
 	} );
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const handleUpgrade = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
-	const handleDowngradeClick = useCallback(
-		( planSlug: PlanSlug ) => {
-			// A downgrade to the free plan is essentially cancelling the current plan.
-			if ( isFreePlan( planSlug ) ) {
-				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
-				return;
-			}
-			setInitialRoute( stillNeedHelpUrl );
-			setShowHelpCenter( true );
-		},
-		[ currentPlan?.purchaseId, setInitialRoute, setShowHelpCenter, siteSlug, stillNeedHelpUrl ]
-	);
+	const handleDowngradeClick = useDowngradeHandler( { siteSlug, currentPlan } );
 
 	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) => {
 		return () => {
