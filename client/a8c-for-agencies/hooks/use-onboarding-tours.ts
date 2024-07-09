@@ -1,7 +1,7 @@
+import config from '@automattic/calypso-config';
 import { Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -85,7 +85,7 @@ export default function useOnboardingTours() {
 				title: translate( 'Explore the marketplace' ),
 				useCalypsoPath: true,
 			},
-			...( isSectionNameEnabled( 'a8c-for-agencies-partner-directory' )
+			...( config.isEnabled( 'a4a-partner-directory' )
 				? [
 						{
 							calypso_path: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
