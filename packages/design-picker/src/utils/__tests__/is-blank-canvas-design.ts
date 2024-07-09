@@ -13,7 +13,6 @@ describe( 'Design Picker blank canvas utils', () => {
 				template: 'mock-blank-canvas-design-template',
 				theme: 'mock-blank-canvas-design-theme',
 				categories: [ { slug: 'featured', name: 'Featured' } ],
-				is_premium: false,
 				features: [],
 			};
 			expect( isBlankCanvasDesign( mockDesign ) ).toBeTruthy();

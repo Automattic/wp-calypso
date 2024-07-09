@@ -250,6 +250,10 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
+		if ( ! showPlansComparisonGrid ) {
+			recordTracksEvent( 'calypso_signup_onboarding_plans_compare_all' );
+		}
+
 		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
 	};
 

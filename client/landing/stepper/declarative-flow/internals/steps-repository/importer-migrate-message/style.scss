@@ -4,6 +4,14 @@
 .import-hosted-site,
 .site-migration :not(.site-migration-instructions--launchpad),
 .import-focused.migrate-message {
+
+	.step-container__header {
+		margin: auto;
+		max-width: 720px;
+		padding: 24px;
+		width: auto;
+	}
+
 	.step-container__content {
 		margin: auto;
 		max-width: 720px;
@@ -58,6 +66,11 @@
 	.migration-message__actions {
 		display: flex;
 		justify-content: center;
-		margin: 0 -10px;
+		margin: 32px -10px 0;
+		flex-direction: column;
+
+		@include break-small {
+			flex-direction: row;
+		}
 	}
 }

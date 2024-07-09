@@ -308,24 +308,6 @@ import {
 	FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
 	FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
 	FEATURE_WOOCOMMERCE_HOSTING,
-	FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS,
-	FEATURE_20_PREMIUM_THEMES,
-	FEATURE_48_PREMIUM_THEMES,
-	FEATURE_AD_SUPPORTED_EXPERIENCE,
-	FEATURE_REAL_TIME_STATS,
-	FEATURE_AUTOMATED_BURST_SCALING,
-	FEATURE_DATABASE_ACCESS,
-	FEATURE_DEVELOPER_TOOLS,
-	FEATURE_DYNAMIC_PRODUCT_UPSELLS,
-	FEATURE_FREE_MIGRATIONS,
-	FEATURE_FULL_DATA_CENTER_REDUNDANCIES,
-	FEATURE_GITHUB_DEPLOYMENTS,
-	FEATURE_HELP_CENTER_SUPPORT,
-	FEATURE_LIMITED_STATS,
-	FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT,
-	FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
-	FEATURE_WEB_SERVER_SETTINGS,
-	FEATURE_1_WEBSITE,
 	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	FEATURE_PRIORITY_24_7_SUPPORT,
 } from './constants';
@@ -2602,94 +2584,6 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Advanced Jetpack features' ),
 	},
 	/* END: Sensei Features */
-
-	/* Start: Trail Map new Features */
-	[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ]: {
-		getSlug: () => FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS,
-		getTitle: () => i18n.translate( '25+ pre-installed ecommerce plugins ($1,500/year value)' ),
-	},
-	[ FEATURE_20_PREMIUM_THEMES ]: {
-		getSlug: () => FEATURE_20_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( '20 premium themes' ),
-	},
-	[ FEATURE_48_PREMIUM_THEMES ]: {
-		getSlug: () => FEATURE_48_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( '48 premium themes' ),
-	},
-	[ FEATURE_AD_SUPPORTED_EXPERIENCE ]: {
-		getSlug: () => FEATURE_AD_SUPPORTED_EXPERIENCE,
-		getTitle: () => i18n.translate( 'Ad-supported experience' ),
-	},
-	[ FEATURE_REAL_TIME_STATS ]: {
-		getSlug: () => FEATURE_REAL_TIME_STATS,
-		getTitle: () => i18n.translate( 'Advanced Real Time stats' ),
-	},
-	[ FEATURE_AUTOMATED_BURST_SCALING ]: {
-		getSlug: () => FEATURE_AUTOMATED_BURST_SCALING,
-		getTitle: () => i18n.translate( 'Automated burst scaling' ),
-	},
-	[ FEATURE_DATABASE_ACCESS ]: {
-		getSlug: () => FEATURE_DATABASE_ACCESS,
-		getTitle: () => i18n.translate( 'Database access' ),
-	},
-	[ FEATURE_DEVELOPER_TOOLS ]: {
-		getSlug: () => FEATURE_DEVELOPER_TOOLS,
-		getTitle: () => i18n.translate( 'Developer tools' ),
-	},
-	[ FEATURE_FREE_MIGRATIONS ]: {
-		getSlug: () => FEATURE_FREE_MIGRATIONS,
-		getTitle: () => i18n.translate( 'Free migrations' ),
-	},
-	[ FEATURE_FULL_DATA_CENTER_REDUNDANCIES ]: {
-		getSlug: () => FEATURE_FULL_DATA_CENTER_REDUNDANCIES,
-		getTitle: () => i18n.translate( 'Full data center redundancies' ),
-	},
-	[ FEATURE_GITHUB_DEPLOYMENTS ]: {
-		getSlug: () => FEATURE_GITHUB_DEPLOYMENTS,
-		getTitle: () => i18n.translate( 'GitHub deployments' ),
-	},
-	[ FEATURE_HELP_CENTER_SUPPORT ]: {
-		getSlug: () => FEATURE_HELP_CENTER_SUPPORT,
-		getTitle: () => i18n.translate( 'Help center support' ),
-	},
-	[ FEATURE_LIMITED_STATS ]: {
-		getSlug: () => FEATURE_LIMITED_STATS,
-		getTitle: () => i18n.translate( 'Limited stats' ),
-	},
-	[ FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT ]: {
-		getSlug: () => FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT,
-		getTitle: () => i18n.translate( 'Local development environment' ),
-	},
-	[ FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS ]: {
-		getSlug: () => FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
-		getTitle: () =>
-			i18n.translate( 'Pre-installed plugins for security and performance ($239/year value)' ),
-	},
-	[ FEATURE_WEB_SERVER_SETTINGS ]: {
-		getSlug: () => FEATURE_WEB_SERVER_SETTINGS,
-		getTitle: () => i18n.translate( 'Web server settings' ),
-	},
-	[ FEATURE_1_WEBSITE ]: {
-		getSlug: () => FEATURE_1_WEBSITE,
-		getTitle: () => i18n.translate( '1 website' ),
-	},
-	[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ]: {
-		getSlug: () => FEATURE_DYNAMIC_PRODUCT_UPSELLS,
-		getTitle: () => i18n.translate( 'Dynamic product upsells' ),
-	},
-	/* END: Trail Map New Features */
-};
-
-FEATURES_LIST[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ] = {
-	...FEATURES_LIST[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ],
-	getSubFeatureObjects: () => [
-		FEATURES_LIST[ FEATURE_UNLIMITED_PRODUCTS ],
-		FEATURES_LIST[ FEATURE_MIN_MAX_ORDER_QUANTITY ],
-		FEATURES_LIST[ FEATURE_BULK_DISCOUNTS ],
-		FEATURES_LIST[ FEATURE_INVENTORY ],
-		FEATURES_LIST[ FEATURE_DYNAMIC_PRODUCT_UPSELLS ],
-		FEATURES_LIST[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ],
-	],
 };
 
 export { FEATURES_LIST };

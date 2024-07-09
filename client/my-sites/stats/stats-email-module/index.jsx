@@ -53,7 +53,13 @@ class StatsEmailModule extends Component {
 					metricLabel={ metricLabel }
 					heroElement={
 						path === 'countries' && (
-							<Geochart kind="email" statType={ statType } postId={ postId } query={ query } />
+							<Geochart
+								kind="email"
+								statType={ statType }
+								postId={ postId }
+								query={ query }
+								isLoading={ isLoading }
+							/>
 						)
 					}
 				/>

@@ -45,6 +45,7 @@ interface GetEnhancedTasksProps {
 	goToStep?: NavigationControls[ 'goToStep' ];
 	flow: string;
 	isEmailVerified?: boolean;
+	hasSkippedCheckout?: boolean;
 	checklistStatuses?: ChecklistStatuses;
 	planCartItem?: MinimalRequestCartProduct | null;
 	domainCartItem?: MinimalRequestCartProduct | null;
@@ -73,6 +74,7 @@ export function getEnhancedTasks( {
 	goToStep,
 	flow = '',
 	isEmailVerified = false,
+	hasSkippedCheckout = false,
 	checklistStatuses = {},
 	planCartItem,
 	domainCartItem,
@@ -103,6 +105,7 @@ export function getEnhancedTasks( {
 		stripeConnectUrl,
 		queryClient,
 		setShowPlansModal,
+		hasSkippedCheckout,
 	};
 
 	return tasks.map( ( task ) => {

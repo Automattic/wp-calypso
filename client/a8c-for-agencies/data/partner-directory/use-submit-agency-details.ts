@@ -41,6 +41,7 @@ function mutationSubmitAgencyDetails(
 			profile_company_logo_url: agencyDetails.logoUrl,
 			profile_company_landing_page_url: agencyDetails.landingPageUrl,
 			profile_company_country: agencyDetails.country,
+			profile_listing_is_global: agencyDetails.isGlobal,
 			profile_listing_is_available: agencyDetails.isAvailable,
 			profile_listing_industries: agencyDetails.industries,
 			profile_listing_languages_spoken: languages,
