@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { SitePreview } from '..';
 import { useSitePreviewMShotImageHandler } from '../hooks/use-site-preview-mshot-image-handler';
@@ -46,15 +46,6 @@ describe( 'SitePreview', () => {
 		render( <SitePreview /> );
 
 		expect( screen.getByText( 'Mocked Site Preview Image' ) ).toBeInTheDocument();
-	} );
-
-	it( 'should call updateDimensions on mount and on window resize', async () => {
-		render( <SitePreview /> );
-
-		expect( mockUpdateDimensions ).toHaveBeenCalledTimes( 1 );
-
-		window.dispatchEvent( new Event( 'resize' ) );
-		await waitFor( () => expect( mockUpdateDimensions ).toHaveBeenCalledTimes( 2 ) );
 	} );
 
 	it( 'should pass the correct props to SiteThumbnail', () => {

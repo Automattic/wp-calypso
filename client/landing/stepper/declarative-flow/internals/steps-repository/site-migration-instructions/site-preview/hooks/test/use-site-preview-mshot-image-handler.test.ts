@@ -1,19 +1,21 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { useSitePreviewMShotImageHandler } from '../use-site-preview-mshot-image-handler';
-
-// Mocking fetch globally
-global.fetch = jest.fn( () =>
-	Promise.resolve( {
-		json: () => Promise.resolve( {} ),
-	} )
-) as jest.Mock;
 
 describe( 'useSitePreviewMShotImageHandler', () => {
 	afterEach( () => {
 		jest.clearAllMocks();
+	} );
+
+	beforeAll( () => {
+		nock.disableNetConnect();
+	} );
+
+	beforeEach( () => {
+		nock.cleanAll();
 	} );
 
 	it( 'should return the correct segment based on width', () => {
@@ -24,48 +26,99 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 		expect( result.current.getSegment( 500 ) ).toBe( 'mobile' );
 	} );
 
-	it( 'should update dimensions and mShot options correctly', () => {
-		const { result } = renderHook( () => useSitePreviewMShotImageHandler() );
-		const previewRef = {
-			current: {
-				offsetWidth: 1300,
+	it.each( [
+		[
+			1200,
+			'desktop',
+			{
+				vpw: 1600,
+				vph: 1600,
+				w: 1600,
+				h: 1624,
+				screen_height: 1600,
+				scale: 2,
 			},
-		};
+		],
+		[
+			800,
+			'tablet',
+			{
+				vpw: 767,
+				vph: 1600,
+				w: 767,
+				h: 1600,
+				screen_height: 1600,
+				scale: 2,
+			},
+		],
+		[
+			500,
+			'mobile',
+			{
+				vpw: 479,
+				vph: 1200,
+				w: 479,
+				h: 1200,
+				screen_height: 1200,
+				scale: 2,
+			},
+		],
+	] )(
+		'should return correct value for segment for width: %d ( %p )',
+		async ( width, segment, mShotProps ) => {
+			const { result } = renderHook( () => useSitePreviewMShotImageHandler() );
+
+			Object.defineProperty( result.current.previewRef, 'current', {
+				value: { offsetWidth: width },
+			} );
+
+			act( () => {
+				window.dispatchEvent( new Event( 'resize' ) );
+			} );
+
+			await waitFor( () => {
+				expect( result.current.currentSegment ).toEqual( segment );
+				expect( result.current.mShotsOption ).toEqual( mShotProps );
+			} );
+		}
+	);
+
+	it( 'should update mShotsOption after resize', async () => {
+		const { result } = renderHook( () => useSitePreviewMShotImageHandler() );
+
+		Object.defineProperty( result.current.previewRef, 'current', {
+			value: { offsetWidth: 900 },
+		} );
 
 		act( () => {
-			result.current.updateDimensions( previewRef as React.RefObject< HTMLDivElement > );
+			window.dispatchEvent( new Event( 'resize' ) );
 		} );
 
-		expect( result.current.mShotsOption ).toEqual( {
-			vpw: 1600,
-			vph: 1600,
-			w: 1600,
-			h: 1624,
-			screen_height: 1600,
-			scale: 2,
+		await waitFor( () => {
+			expect( result.current.currentSegment ).toEqual( 'tablet' );
 		} );
-		expect( result.current.currentSegment ).toBe( 'desktop' );
 	} );
 
 	it( 'should call the mShot endpoint for each config during createScreenshots', () => {
 		const { result } = renderHook( () => useSitePreviewMShotImageHandler() );
+		const url = 'http://example.com';
+
+		const expectedUrls = [
+			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=1600&vph=1600&w=1600&h=1624&screen_height=1600&scale=2',
+			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=767&vph=1600&w=767&h=1600&screen_height=1600&scale=2',
+			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=479&vph=1200&w=479&h=1200&screen_height=1200&scale=2',
+		];
+
+		const scopes = expectedUrls.map( ( expectedUrl ) =>
+			nock( 'https://s0.wp.com' ).get( expectedUrl ).reply( 200, {} )
+		);
 
 		act( () => {
-			result.current.createScreenshots( 'http://example.com' );
+			result.current.createScreenshots( url );
 		} );
 
-		expect( fetch ).toHaveBeenCalledTimes( 3 );
-		expect( fetch ).toHaveBeenCalledWith(
-			'https://s0.wp.com/mshots/v1/http%3A%2F%2Fexample.com?vpw=1600&vph=1600&w=1600&h=1624&screen_height=1600&scale=2',
-			{ method: 'GET' }
-		);
-		expect( fetch ).toHaveBeenCalledWith(
-			'https://s0.wp.com/mshots/v1/http%3A%2F%2Fexample.com?vpw=767&vph=1600&w=767&h=1600&screen_height=1600&scale=2',
-			{ method: 'GET' }
-		);
-		expect( fetch ).toHaveBeenCalledWith(
-			'https://s0.wp.com/mshots/v1/http%3A%2F%2Fexample.com?vpw=479&vph=1200&w=479&h=1200&screen_height=1200&scale=2',
-			{ method: 'GET' }
-		);
+		scopes.forEach( ( scope ) => {
+			expect( scope.isDone() ).toBe( true );
+		} );
 	} );
 } );
