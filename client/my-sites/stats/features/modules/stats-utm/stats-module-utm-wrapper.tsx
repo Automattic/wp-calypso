@@ -6,29 +6,12 @@ import { default as usePlanUsageQuery } from '../../../hooks/use-plan-usage-quer
 import useStatsPurchases from '../../../hooks/use-stats-purchases';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import statsStrings from '../../../stats-strings';
-import { PeriodType } from '../../../stats-subscribers-chart-section';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsModuleUTM from './stats-module-utm';
 import StatsModuleUTMOverlay from './stats-module-utm-overlay';
-import type { Moment } from 'moment';
+import type { StatsAdvancedModuleWrapperProps } from '../types';
 
-type StatsPeriodType = {
-	period: PeriodType;
-	key: string;
-	startOf: Moment;
-	endOf: Moment;
-};
-
-type StatsModuleUTMWrapperProps = {
-	siteId: number;
-	period: StatsPeriodType;
-	postId?: number;
-	query: string;
-	summary?: boolean;
-	className?: string;
-};
-
-const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
+const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 	siteId,
 	period,
 	postId,

@@ -211,14 +211,16 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			>
 				<FormField label={ translate( 'Availability' ) }>
 					<ToggleControl
-						onChange={ ( isChecked ) => setFormFields( { isGlobal: isChecked } ) }
-						checked={ formData.isGlobal }
-						label={ translate( 'Accepting remote work from any location' ) }
-					/>
-					<ToggleControl
 						onChange={ ( isChecked ) => setFormFields( { isAvailable: isChecked } ) }
 						checked={ formData.isAvailable }
 						label={ translate( 'Accepting new clients' ) }
+					/>
+				</FormField>
+				<FormField label={ translate( 'Global remote work' ) }>
+					<ToggleControl
+						onChange={ ( isChecked ) => setFormFields( { isGlobal: isChecked } ) }
+						checked={ formData.isGlobal }
+						label={ translate( 'Accepting remote work from any location' ) }
 					/>
 				</FormField>
 				<FormField

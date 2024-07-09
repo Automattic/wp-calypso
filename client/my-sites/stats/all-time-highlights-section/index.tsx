@@ -8,6 +8,7 @@ import {
 } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useMemo } from 'react';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -239,31 +240,34 @@ type AllTimeStatsCardProps = {
 function AllTimeStatsCard( { infoItems, siteId, isLocked }: AllTimeStatsCardProps ) {
 	const translate = useTranslate();
 	const heading = translate( 'All-time stats' );
-	if ( isLocked ) {
-		return <UpsellCard heading={ heading } siteId={ siteId } />;
-	}
+	const wrapperClassName = clsx( 'highlight-card', {
+		'highlight-card--has-overlay': isLocked,
+	} );
 
 	return (
-		<Card className="highlight-card">
+		<Card className={ wrapperClassName }>
 			<h4 className="highlight-card-heading">{ heading }</h4>
-			<div className="highlight-card-info-item-list">
-				{ infoItems
-					.filter( ( i ) => ! i.hidden )
-					.map( ( info ) => {
-						return (
-							<div key={ info.id } className="highlight-card-info-item">
-								<Icon icon={ info.icon } />
-								<span className="highlight-card-info-item-title">{ info.title }</span>
-								<span
-									className="highlight-card-info-item-count"
-									title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
-								>
-									{ formattedNumber( info.count ) }
-								</span>
-							</div>
-						);
-					} ) }
+			<div className="highlight-card-content">
+				<div className="highlight-card-info-item-list">
+					{ infoItems
+						.filter( ( i ) => ! i.hidden )
+						.map( ( info ) => {
+							return (
+								<div key={ info.id } className="highlight-card-info-item">
+									<Icon icon={ info.icon } />
+									<span className="highlight-card-info-item-title">{ info.title }</span>
+									<span
+										className="highlight-card-info-item-count"
+										title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
+									>
+										{ formattedNumber( info.count ) }
+									</span>
+								</div>
+							);
+						} ) }
+				</div>
 			</div>
+			{ isLocked && <StatsCardUpsell statType={ STAT_TYPE_INSIGHTS } siteId={ siteId } /> }
 		</Card>
 	);
 }
@@ -287,42 +291,27 @@ type MostPopularDayTimeCardProps = {
 };
 
 function MostPopularDayTimeCard( { cardInfo, siteId, isLocked }: MostPopularDayTimeCardProps ) {
-	if ( isLocked ) {
-		return <UpsellCard heading={ cardInfo.heading } siteId={ siteId } />;
-	}
+	const wrapperClassName = clsx( 'highlight-card', {
+		'highlight-card--has-overlay': isLocked,
+	} );
 
 	return (
-		<Card key={ cardInfo.id } className="highlight-card">
+		<Card key={ cardInfo.id } className={ wrapperClassName }>
 			<h4 className="highlight-card-heading">{ cardInfo.heading }</h4>
-			<div className="highlight-card-detail-item-list">
-				{ cardInfo.items.map( ( item ) => {
-					return (
-						<div key={ item.id } className="highlight-card-detail-item">
-							<div className="highlight-card-detail-item-header">{ item.header }</div>
-							<div className="highlight-card-detail-item-content">{ item.content }</div>
-							<div className="highlight-card-detail-item-footer">{ item.footer }</div>
-						</div>
-					);
-				} ) }
+			<div className="highlight-card-content">
+				<div className="highlight-card-detail-item-list">
+					{ cardInfo.items.map( ( item ) => {
+						return (
+							<div key={ item.id } className="highlight-card-detail-item">
+								<div className="highlight-card-detail-item-header">{ item.header }</div>
+								<div className="highlight-card-detail-item-content">{ item.content }</div>
+								<div className="highlight-card-detail-item-footer">{ item.footer }</div>
+							</div>
+						);
+					} ) }
+				</div>
 			</div>
-		</Card>
-	);
-}
-
-type UpsellCardProps = {
-	heading: string;
-	siteId: number;
-};
-
-function UpsellCard( { heading, siteId }: UpsellCardProps ) {
-	return (
-		<Card className="highlight-card">
-			<h4 className="highlight-card-heading">{ heading }</h4>
-			<StatsCardUpsell
-				className="stats-module__upsell"
-				statType="insights-highlights"
-				siteId={ siteId }
-			/>
+			{ isLocked && <StatsCardUpsell statType={ STAT_TYPE_INSIGHTS } siteId={ siteId } /> }
 		</Card>
 	);
 }

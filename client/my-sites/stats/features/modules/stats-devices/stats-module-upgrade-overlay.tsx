@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import React from 'react';
-import { STATS_TYPE_DEVICE_STATS } from '../constants';
-import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
-import StatsListCard from '../stats-list/stats-list-card';
+import { STATS_TYPE_DEVICE_STATS } from '../../../constants';
+import StatsCardUpsellJetpack from '../../../stats-card-upsell/stats-card-upsell-jetpack';
+import StatsListCard from '../../../stats-list/stats-list-card';
 
 import './stats-module-devices.scss';
 

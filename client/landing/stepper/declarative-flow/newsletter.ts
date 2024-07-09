@@ -135,7 +135,7 @@ const newsletter: Flow = {
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								providedDependencies?.siteSlug as string
-							) }?redirect_to=${ launchpadUrl }&signup=1`
+							) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
 						);
 					}
 

@@ -1,5 +1,11 @@
 @import "@automattic/typography/styles/fonts";
 
+.migration-instructions-sidebar {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
 .migration-instructions-sidebar__title {
 	font-family: $brand-serif;
 	font-size: 2.75rem;

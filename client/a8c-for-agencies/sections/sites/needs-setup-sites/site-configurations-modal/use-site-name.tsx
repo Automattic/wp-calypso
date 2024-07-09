@@ -69,7 +69,15 @@ const useCheckSiteAvailability = (
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ agencyId, siteId, siteName, skipAvailability ] );
 
-	return availabilityState;
+	const revalidateCurrentSiteName = async () => {
+		setAvilabilityState( {
+			isSiteNameAvailiable: false,
+			isCheckingSiteAvailability: false,
+			siteNameSuggestion: await getRandomSiteBaseUrl( siteName ),
+		} );
+	};
+
+	return { ...availabilityState, revalidateCurrentSiteName };
 };
 
 export const useSiteName = (
@@ -117,8 +125,12 @@ export const useSiteName = (
 	const skipAvailability =
 		validationMessage || isDebouncingSiteName || debouncedSiteName === randomSiteName;
 
-	const { isCheckingSiteAvailability, isSiteNameAvailiable, siteNameSuggestion } =
-		useCheckSiteAvailability( siteId, debouncedSiteName, !! skipAvailability );
+	const {
+		isCheckingSiteAvailability,
+		isSiteNameAvailiable,
+		siteNameSuggestion,
+		revalidateCurrentSiteName,
+	} = useCheckSiteAvailability( siteId, debouncedSiteName, !! skipAvailability );
 
 	if ( ! isSiteNameAvailiable && ! isCheckingSiteAvailability && ! isDebouncingSiteName ) {
 		validationMessage = translate(
@@ -156,5 +168,6 @@ export const useSiteName = (
 		showValidationMessage,
 		isCheckingSiteAvailability,
 		isDebouncingSiteName,
+		revalidateCurrentSiteName,
 	};
 };
