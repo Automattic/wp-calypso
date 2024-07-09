@@ -1,6 +1,5 @@
 import { ComponentType, useCallback, useMemo, useState } from 'react';
-
-export type FieldTypes = string | Array< string >;
+import { FieldTypes } from './types';
 
 type Validator< T > = ( field: T ) => string | null;
 
@@ -15,8 +14,12 @@ function withErrorHandling< T, F extends FieldTypes >(
 ): ComponentType< T & ContextProps< F > > {
 	return ( props ) => {
 		const { checks, field } = props;
-		const [ error, setError ] = useState< string | undefined >( undefined );
+		const [ error, setError ] = useState< string | undefined >( props.error );
+
 		const newProps = useMemo( () => ( { ...props, error } ), [ props, error ] );
+		if ( !! props.error && props.error !== newProps.error ) {
+			setError( props.error );
+		}
 
 		const validate = useCallback( () => {
 			if ( ! checks ) {

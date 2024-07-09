@@ -5,7 +5,7 @@ export function isValidUrl( url: string ) {
 	);
 }
 
-export function areURLsUnique( urls: string[] ) {
+export function areURLsUnique( urls: unknown[] ) {
 	const urlSet = new Set( urls );
 	return urlSet.size === urls.length;
 }

@@ -1,9 +1,9 @@
 import { translate } from 'i18n-calypso';
-import { FieldTypes } from '..';
+import { FieldTypes } from '../types';
 
-const validateNonEmpty = ( field?: FieldTypes ) => {
+const validateNonEmpty = ( message?: string ) => ( field?: FieldTypes ) => {
 	if ( ! field?.length ) {
-		return translate( 'Field should not be empty' );
+		return message ?? translate( 'Field should not be empty' );
 	}
 	return null;
 };

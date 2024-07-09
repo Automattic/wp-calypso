@@ -37,15 +37,15 @@ const useExpertiseFormValidation = () => {
 						newValidationError.clientSites = translate( `Client sites can't be empty` );
 						return;
 					}
-					if ( ! areURLsUnique( directory.urls ) ) {
-						newValidationError.clientSites = translate( `URLs should be unique` );
-						return;
-					}
 					for ( const url of directory.urls ) {
 						if ( ! isValidUrl( url ) ) {
 							newValidationError.clientSites = translate( `Please provide valid URLs` );
 							return;
 						}
+					}
+					if ( ! areURLsUnique( directory.urls ) ) {
+						newValidationError.clientSites = translate( `URLs should be unique` );
+						return;
 					}
 				} );
 			}

@@ -121,7 +121,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					label={ translate( 'Company name' ) }
 					error={ validationError.name }
 					field={ formData.name }
-					checks={ [ validateNonEmpty ] }
+					checks={ [ validateNonEmpty() ] }
 					isRequired
 				>
 					<TextControl
@@ -137,7 +137,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					description={ translate( 'Client inquiries and leads will go to this email.' ) }
 					error={ validationError.email }
 					field={ formData.email }
-					checks={ [ validateNonEmpty, validateEmail ] }
+					checks={ [ validateNonEmpty(), validateEmail() ] }
 					isRequired
 				>
 					<TextControl
@@ -152,7 +152,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					label={ translate( 'Company website' ) }
 					error={ validationError.website }
 					field={ formData.website }
-					checks={ [ validateNonEmpty, validateUrl ] }
+					checks={ [ validateNonEmpty(), validateUrl() ] }
 					isRequired
 				>
 					<TextControl
@@ -170,7 +170,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					) }
 					error={ validationError.landingPage }
 					field={ formData.landingPageUrl }
-					checks={ [ validateUrl ] }
+					checks={ [ validateUrl() ] }
 				>
 					<TextControl
 						value={ formData.landingPageUrl }
@@ -180,7 +180,13 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 						} }
 					/>
 				</FormField>
-				<FormField label={ translate( 'Company bio' ) } error={ validationError.bio } isRequired>
+				<FormField
+					label={ translate( 'Company bio' ) }
+					error={ validationError.bio }
+					checks={ [ validateNonEmpty() ] }
+					field={ formData.bioDescription }
+					isRequired
+				>
 					<TextareaControl
 						value={ formData.bioDescription }
 						onChange={ ( value ) => {
@@ -192,6 +198,8 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Company location' ) }
 					error={ validationError.country }
+					checks={ [ validateNonEmpty() ] }
+					field={ formData.country }
 					isRequired
 				>
 					<SearchableDropdown
@@ -241,6 +249,8 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Industries' ) }
 					error={ validationError.industries }
+					field={ formData.industries }
+					checks={ [ validateNonEmpty() ] }
 					isRequired
 				>
 					<IndustriesSelector
@@ -254,6 +264,8 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Services you offer' ) }
 					error={ validationError.services }
+					field={ formData.services }
+					checks={ [ validateNonEmpty() ] }
 					isRequired
 				>
 					<ServicesSelector
@@ -267,6 +279,8 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Products you work with' ) }
 					error={ validationError.products }
+					checks={ [ validateNonEmpty() ] }
+					field={ formData.products }
 					isRequired
 				>
 					<ProductsSelector
@@ -280,6 +294,8 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Languages spoken' ) }
 					error={ validationError.languages }
+					checks={ [ validateNonEmpty() ] }
+					field={ formData.languagesSpoken }
 					isRequired
 				>
 					<LanguageSelector
@@ -301,6 +317,8 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'Minimum project budget' ) }
 					error={ validationError.minimumBudget }
+					checks={ [ validateNonEmpty() ] }
+					field={ formData.budgetLowerRange }
 					isRequired
 				>
 					<BudgetSelector
