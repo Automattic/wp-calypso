@@ -20,6 +20,10 @@
 
 	.how-to-migrate__list {
 		text-align: center;
+
+		.flow-question {
+			max-width: none;
+		}
 	}
 
 	#how-to-migrate-header {
