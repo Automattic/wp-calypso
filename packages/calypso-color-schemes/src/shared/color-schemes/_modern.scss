@@ -165,14 +165,12 @@ Uses custom theme highlight monochromatic palette for primary + accent
 	--color-sidebar-menu-hover-background-rgb: var(--theme-highlight-color-rgb);
 	--color-sidebar-menu-hover-text: var(--theme-text-color);
 
-	/* Sidebar Hover - Nav unification */
-	--color-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-hover-text);
-
 	/* Sidebar Submenu - Nav Unification */
 	--color-sidebar-submenu-background: var(--theme-submenu-background-color);
 	--color-sidebar-submenu-text: var(--theme-submenu-text-color);
 	--color-sidebar-submenu-hover-background: transparent;
 	--color-sidebar-submenu-hover-text: #33f078; /* $menu-submenu-focus-text */
+	--color-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-hover-text);
 
 	/* Sidebar Submenu - Nav Redesign */
 	--color-navredesign-sidebar-submenu-text: var(--color-sidebar-submenu-text);
