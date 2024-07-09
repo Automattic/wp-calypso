@@ -338,6 +338,7 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<Item
+				className="masterbar__item-my-sites"
 				url={ mySitesUrl }
 				tipTarget="my-sites"
 				icon={ icon }
