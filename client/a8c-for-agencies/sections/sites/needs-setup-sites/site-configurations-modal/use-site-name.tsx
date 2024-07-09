@@ -133,21 +133,25 @@ export const useSiteName = (
 	} = useCheckSiteAvailability( siteId, debouncedSiteName, !! skipAvailability );
 
 	if ( ! isSiteNameAvailiable && ! isCheckingSiteAvailability && ! isDebouncingSiteName ) {
-		validationMessage = translate(
-			'Sorry, that address is taken. How about{{nbsp /}}{{button}}%s{{/button}}?',
-			{
-				args: [ siteNameSuggestion ],
-				components: {
-					nbsp: <>&nbsp;</>,
-					button: (
-						<button
-							onClick={ () => setSiteName( siteNameSuggestion ) }
-							className="configure-your-site-modal-form__site-name-suggestion"
-						/>
-					),
-				},
-			}
-		);
+		if ( siteNameSuggestion ) {
+			validationMessage = translate(
+				'Sorry, that address is taken. How about{{nbsp /}}{{button}}%s{{/button}}?',
+				{
+					args: [ siteNameSuggestion ],
+					components: {
+						nbsp: <>&nbsp;</>,
+						button: (
+							<button
+								onClick={ () => setSiteName( siteNameSuggestion ) }
+								className="configure-your-site-modal-form__site-name-suggestion"
+							/>
+						),
+					},
+				}
+			);
+		} else {
+			validationMessage = translate( 'Sorry, that address is taken.' );
+		}
 	}
 
 	const showValidationMessage =

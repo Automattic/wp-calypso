@@ -77,7 +77,7 @@ export default function SiteConfigurationsModal( {
 			site_name: siteName.siteName,
 			php_version: phpVersion,
 			primary_data_center: primaryDataCenter,
-			is_fully_managed_agency_site: allowClientsToUseSiteHelpCenter,
+			is_fully_managed_agency_site: ! allowClientsToUseSiteHelpCenter,
 		};
 		createWPCOMSite( params, {
 			onSuccess: () => {
@@ -121,7 +121,7 @@ export default function SiteConfigurationsModal( {
 								isError={ siteName.showValidationMessage }
 								value={ siteName.siteName }
 								onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-									siteName.setSiteName( event.target.value )
+									siteName.setSiteName( event.target.value.toLocaleLowerCase() )
 								}
 								onKeyDown={ onSiteNameKeyDown }
 								suffix=".wpcomstaging.com"
