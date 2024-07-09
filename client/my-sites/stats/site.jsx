@@ -62,7 +62,7 @@ import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsModuleDevices from './stats-module-devices';
-import StatsModuleUpgradeOverlay from './stats-module-devices/stats-module-upgrade-overlay';
+import StatsModuleUpgradeDevicesOverlay from './stats-module-devices/stats-module-upgrade-overlay';
 import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
@@ -704,7 +704,7 @@ class StatsSite extends Component {
 							/>
 						) }
 						{ ! supportsDevicesStats && isOldJetpack && (
-							<StatsModuleUpgradeOverlay
+							<StatsModuleUpgradeDevicesOverlay
 								className={ clsx(
 									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large'
