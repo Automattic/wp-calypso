@@ -26,8 +26,8 @@ const SiteMigrationInstructions: Step = function () {
 
 	const sidebar = (
 		<Sidebar>
-			<Provisioning status={ detailedStatus } />
 			<Steps fromUrl={ importSiteQueryParam } />
+			<Provisioning status={ detailedStatus } />
 		</Sidebar>
 	);
 
