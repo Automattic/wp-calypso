@@ -1,4 +1,4 @@
-import { ShortenedNumber } from '@automattic/components';
+import { Gridicon, ShortenedNumber } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -14,6 +14,7 @@ import { SiteStats } from '../types';
 type Props = {
 	site?: Site;
 	stats: SiteStats;
+	siteError?: boolean;
 };
 
 const getTrendIcon = ( viewsTrend: 'up' | 'down' | 'same' ) => {
@@ -27,7 +28,7 @@ const getTrendIcon = ( viewsTrend: 'up' | 'down' | 'same' ) => {
 	}
 };
 
-export default function SiteStatsColumn( { site, stats }: Props ) {
+export default function SiteStatsColumn( { site, stats, siteError }: Props ) {
 	const { setSelectedSiteFeature, setDataViewsState } = useContext( SitesDashboardContext );
 	const { total: totalViews, trend: viewsTrend } = stats.views;
 	const trendIcon = getTrendIcon( viewsTrend );
@@ -45,25 +46,53 @@ export default function SiteStatsColumn( { site, stats }: Props ) {
 
 	// When in A4A, the stats column is a clickable button that opens the preview pane.
 	if ( isA4A ) {
+		const shouldShowUpsell =
+			! site?.is_atomic && ! site?.enabled_plugin_slugs?.find( ( value ) => value === 'jetpack' );
+
+		if ( ! shouldShowUpsell ) {
+			return (
+				<button
+					type="button"
+					title={
+						translate( '%(totalViews)s views in the last 7 days', {
+							args: { totalViews },
+						} ) as string
+					}
+					onClick={ openStats }
+					disabled={ site?.sticker?.includes( 'migration-in-progress' ) }
+					className={ clsx(
+						'sites-overview__stats-trend',
+						`sites-overview__stats-trend__${ viewsTrend }`,
+						{ 'button is-borderless': isA4A }
+					) }
+				>
+					{ trendIcon }
+					<div className="sites-overview__stats">
+						<span className="shortened-number">{ formatNumber( totalViews ) }</span>
+					</div>
+				</button>
+			);
+		}
+
 		return (
-			<button
-				type="button"
-				title={
-					translate( '%(totalViews)s views in the last 7 days', { args: { totalViews } } ) as string
-				}
-				onClick={ openStats }
-				disabled={ site?.sticker?.includes( 'migration-in-progress' ) }
-				className={ clsx(
-					'sites-overview__stats-trend',
-					`sites-overview__stats-trend__${ viewsTrend }`,
-					{ 'button is-borderless': isA4A }
-				) }
-			>
-				{ trendIcon }
-				<div className="sites-overview__stats">
-					<span className="shortened-number">{ formatNumber( totalViews ) }</span>
-				</div>
-			</button>
+			<>
+				<span
+					className={
+						siteError
+							? 'sites-overview__disabled sites-overview__row-status'
+							: 'sites-overview__row-status'
+					}
+				>
+					<button
+						className="sites-overview__column-action-button"
+						onClick={ openStats }
+						disabled={ siteError }
+					>
+						<Gridicon icon="plus-small" size={ 16 } />
+						<span>{ translate( 'Add' ) }</span>
+					</button>
+				</span>
+			</>
 		);
 	}
 

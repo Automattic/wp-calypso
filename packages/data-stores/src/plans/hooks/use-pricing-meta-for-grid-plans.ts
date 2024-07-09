@@ -8,6 +8,7 @@ import { useSelect } from '@wordpress/data';
 import * as Plans from '../';
 import * as Purchases from '../../purchases';
 import * as WpcomPlansUI from '../../wpcom-plans-ui';
+import { COST_OVERRIDE_REASONS } from '../constants';
 import type { AddOnMeta } from '../../add-ons/types';
 
 export type UseCheckPlanAvailabilityForPurchase = ( {
@@ -46,6 +47,13 @@ interface Props {
 	 * `storageAddOmns` TODO: should become a required prop.
 	 */
 	storageAddOns: ( AddOnMeta | null )[] | null;
+
+	/**
+	 * Whether to include discounts from plan proration.
+	 * This is applicable only if a siteId is passed to this hook.
+	 * If true, the pricing includes discounts from upgrade credits.
+	 */
+	withProratedDiscounts?: boolean;
 }
 
 function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
@@ -68,6 +76,7 @@ const usePricingMetaForGridPlans = ( {
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
 	storageAddOns,
+	withProratedDiscounts,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
 	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs, siteId } );
 	// plans - should have a definition for all plans, being the main source of API data
@@ -181,7 +190,56 @@ const usePricingMetaForGridPlans = ( {
 				}
 
 				/**
-				 * 2. Original and Discounted prices for plan available for purchase.
+				 * 2. Original and Discounted prices for site-specific plans available for purchase
+				 */
+				if ( siteId && planAvailabilityForPurchase[ planSlug ] ) {
+					const originalPrice = {
+						monthly: getTotalPrice(
+							sitePlan?.pricing.originalPrice.monthly,
+							storageAddOnPriceMonthly
+						),
+						full: getTotalPrice( sitePlan?.pricing.originalPrice.full, storageAddOnPriceYearly ),
+					};
+
+					// Do not return discounted prices if discount is due to plan proration
+					if (
+						! withProratedDiscounts &&
+						sitePlan?.pricing?.costOverrides?.[ 0 ]?.overrideCode ===
+							COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION
+					) {
+						return [
+							planSlug,
+							{
+								originalPrice,
+								discountedPrice: {
+									monthly: null,
+									full: null,
+								},
+								currencyCode: sitePlan?.pricing?.currencyCode,
+							},
+						];
+					}
+
+					const discountedPrice = {
+						monthly: getTotalPrice(
+							sitePlan?.pricing.discountedPrice.monthly,
+							storageAddOnPriceMonthly
+						),
+						full: getTotalPrice( sitePlan?.pricing.discountedPrice.full, storageAddOnPriceYearly ),
+					};
+
+					return [
+						planSlug,
+						{
+							originalPrice,
+							discountedPrice,
+							currencyCode: sitePlan?.pricing?.currencyCode,
+						},
+					];
+				}
+
+				/**
+				 * 3. Original and Discounted prices for plan available for purchase.
 				 */
 				if ( planAvailabilityForPurchase[ planSlug ] ) {
 					const originalPrice = {

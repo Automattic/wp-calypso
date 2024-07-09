@@ -4,7 +4,6 @@ import { CheckboxControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
-import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useSelector } from 'calypso/state';
@@ -14,6 +13,7 @@ import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useManagedSitesMap from './hooks/use-managed-sites-map';
 import WPCOMSitesTableContent from './table-content';
+import WPCOMSitesTablePlaceholder from './table-placeholder';
 
 export type SiteItem = {
 	id: number;
@@ -73,7 +73,9 @@ export default function WPCOMSitesTable( {
 		return sites
 			.filter(
 				( site ) =>
-					site && site.visible && ! site.is_private && ! managedSitesMap?.[ site.ID as number ]
+					site &&
+					( site.is_wpcom_atomic || site.jetpack ) &&
+					! managedSitesMap?.[ site.ID as number ]
 			)
 			.map( ( site ) =>
 				site
@@ -195,16 +197,7 @@ export default function WPCOMSitesTable( {
 	return (
 		<div className="wpcom-sites-table redesigned-a8c-table">
 			{ isPending ? (
-				<>
-					<TextPlaceholder />
-					<TextPlaceholder />
-					<TextPlaceholder />
-					<TextPlaceholder />
-					<TextPlaceholder />
-					<TextPlaceholder />
-					<TextPlaceholder />
-					<TextPlaceholder />
-				</>
+				<WPCOMSitesTablePlaceholder />
 			) : (
 				<WPCOMSitesTableContent items={ items } fields={ fields } />
 			) }

@@ -68,6 +68,15 @@ export interface PlanIntroductoryOffer {
 	isOfferComplete: boolean;
 }
 
+export interface CostOverride {
+	doesOverrideOriginalCost: boolean;
+	firstUnitOnly: boolean;
+	newPrice: number;
+	oldPrice: number;
+	overrideCode: string;
+	percentage: number;
+}
+
 export interface PlanPricing {
 	billPeriod: -1 | ( typeof PERIOD_LIST )[ number ];
 	currencyCode: string;
@@ -93,7 +102,9 @@ export interface PlanPricing {
 	};
 }
 
-export interface SitePlanPricing extends Omit< PlanPricing, 'billPeriod' > {}
+export interface SitePlanPricing extends Omit< PlanPricing, 'billPeriod' > {
+	costOverrides?: CostOverride[];
+}
 
 /**
  * `PricingMetaForGridPlan` should be adjusted to extend `PlanPricing`, or modify `PlanPricing` to have a single pricing interface.
@@ -162,6 +173,15 @@ export interface PricedAPIPlanIntroductoryOffer {
 	introductory_offer_end_date?: string;
 }
 
+export interface PricedAPISitePlanCostOverride {
+	does_override_original_cost: boolean;
+	first_unit_only: boolean;
+	new_price: number;
+	old_price: number;
+	override_code: string;
+	percentage: number;
+}
+
 export interface PricedAPIPlanPricing {
 	bill_period: -1 | ( typeof PERIOD_LIST )[ number ];
 	product_display_price: string;
@@ -185,6 +205,8 @@ export interface PricedAPIPlanPricing {
 export interface PricedAPISitePlanPricing
 	extends Omit< PricedAPIPlanPricing, 'orig_cost_integer' | 'bill_period' > {
 	raw_discount_integer: number;
+
+	cost_overrides?: PricedAPISitePlanCostOverride[];
 }
 
 /**

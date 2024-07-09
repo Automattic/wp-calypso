@@ -1,6 +1,6 @@
 import { Button, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useDispatch } from 'calypso/state';
@@ -23,6 +23,7 @@ export default function JetpackConnectionModal( { onClose }: Props ) {
 	const dispatch = useDispatch();
 
 	const [ site, setSite ] = useState( '' );
+	const linkRef = useRef< HTMLAnchorElement >( null );
 
 	const onInstallJetpack = () => {
 		dispatch(
@@ -38,6 +39,15 @@ export default function JetpackConnectionModal( { onClose }: Props ) {
 
 	const onSiteChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		setSite( event.currentTarget.value );
+	};
+
+	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
+		if ( ! isValidURL( site ) ) {
+			return;
+		}
+		if ( event.key === 'Enter' ) {
+			linkRef?.current?.click?.();
+		}
 	};
 
 	return (
@@ -66,6 +76,7 @@ export default function JetpackConnectionModal( { onClose }: Props ) {
 						placeholder={ translate( 'Site URL' ) }
 						value={ site }
 						onChange={ onSiteChange }
+						onKeyDown={ handleKeyDown }
 						onClick={ () =>
 							dispatch(
 								recordTracksEvent(
@@ -78,9 +89,10 @@ export default function JetpackConnectionModal( { onClose }: Props ) {
 
 				<Button
 					primary
+					ref={ linkRef }
 					onClick={ onInstallJetpack }
 					disabled={ ! isValidURL( site ) }
-					href={ ` https://wordpress.com/jetpack/connect?url=${ site }` }
+					href={ ` https://wordpress.com/jetpack/connect?url=${ site }&source=a8c-for-agencies` }
 					target="_blank"
 					rel="noreferrer noopener"
 				>

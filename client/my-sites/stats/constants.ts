@@ -27,6 +27,7 @@ export const STAT_TYPE_COMMENTS = 'statsComments';
 export const STAT_TYPE_COUNTRY_VIEWS = 'statsCountryViews';
 export const STAT_TYPE_FOLLOWERS = 'statsFollowers';
 export const STAT_TYPE_INSIGHTS = 'statsInsights';
+export const STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS = 'statsInsightsAllTimeInsights';
 export const STAT_TYPE_PUBLICIZE = 'statsPublicize';
 export const STAT_TYPE_REFERRERS = 'statsReferrers';
 export const STAT_TYPE_SEARCH_TERMS = 'statsSearchTerms';

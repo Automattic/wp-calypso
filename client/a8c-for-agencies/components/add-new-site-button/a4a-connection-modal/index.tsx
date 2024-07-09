@@ -1,6 +1,6 @@
 import { Button, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, ChangeEvent, useMemo } from 'react';
+import { useState, ChangeEvent, useMemo, useRef } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useDispatch } from 'calypso/state';
@@ -23,6 +23,7 @@ export default function A4AConnectionModal( { onClose }: Props ) {
 	const dispatch = useDispatch();
 
 	const [ site, setSite ] = useState( '' );
+	const linkRef = useRef< HTMLAnchorElement >( null );
 
 	const onComplete = () => {
 		dispatch(
@@ -54,6 +55,15 @@ export default function A4AConnectionModal( { onClose }: Props ) {
 		}
 	}, [ site ] );
 
+	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
+		if ( ! isValidURL( site ) ) {
+			return;
+		}
+		if ( event.key === 'Enter' ) {
+			linkRef?.current?.click?.();
+		}
+	};
+
 	return (
 		<A4AThemedModal
 			className="a4a-connection-modal"
@@ -82,6 +92,7 @@ export default function A4AConnectionModal( { onClose }: Props ) {
 						placeholder={ translate( 'Site URL' ) }
 						value={ site }
 						onChange={ onSiteChange }
+						onKeyDown={ handleKeyDown }
 						onClick={ () =>
 							dispatch(
 								recordTracksEvent( 'calypso_a4a_add_site_via_a4a_connection_modal_site_url_click' )
@@ -92,6 +103,7 @@ export default function A4AConnectionModal( { onClose }: Props ) {
 
 				<Button
 					primary
+					ref={ linkRef }
 					onClick={ onComplete }
 					disabled={ ! isValidURL( site ) }
 					href={ buttonUrl }

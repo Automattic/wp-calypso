@@ -8,7 +8,7 @@ import {
 	isMonthly,
 } from '@automattic/calypso-products';
 import { Badge, CloudLogo, Button, PlanPrice } from '@automattic/components';
-import { SitePlanPricing } from '@automattic/data-stores';
+import { PricingMetaForGridPlan } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Title } from '@automattic/onboarding';
@@ -172,7 +172,7 @@ const preparePlanPriceOfferProps = (
 	selectedPlan: string,
 	introOfferAvailable: boolean,
 	plan?: Plan,
-	pricing?: SitePlanPricing
+	pricing?: PricingMetaForGridPlan
 ): PlanPriceOfferProps => {
 	const currencyCode = pricing?.currencyCode;
 	const originalMonthlyPrice = pricing?.originalPrice.monthly ?? undefined;

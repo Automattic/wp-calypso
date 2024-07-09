@@ -3,6 +3,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_MIGRATION_TRIAL_MONTHLY, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -10,8 +11,31 @@ import nock from 'nock';
 import React, { type ComponentPropsWithoutRef } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useUpgradePlanHostingDetailsList } from '../hooks/use-get-upgrade-plan-hosting-details-list';
-import { UpgradePlan, UpgradePlanUnwrapped as UpgradePlanWithoutHOC } from '../index';
+import { UpgradePlan, UnwrappedUpgradePlan } from '../index';
 
+// Stub out UpgradePlanDetails because it has much more complex dependencies, and only provides a wrapper around the content from this component.
+jest.mock( '../upgrade-plan-details', () => ( {
+	__esModule: true,
+	default: ( { children } ) => <div>{ children }</div>,
+} ) );
+
+jest.mock( '@automattic/calypso-analytics' );
+
+jest.mock( '../hooks/use-get-upgrade-plan-hosting-details-list' );
+
+jest.mock( '@automattic/data-stores', () => {
+	const dataStores = jest.requireActual( '@automattic/data-stores' );
+	return {
+		Onboard: dataStores.Onboard,
+		Plans: {
+			usePricingMetaForGridPlans: jest.fn(),
+		},
+		Purchases: dataStores.Purchases,
+		Site: dataStores.Site,
+	};
+} );
+
+const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
 	( useUpgradePlanHostingDetailsList as jest.Mock ).mockReturnValue( {
 		list: [],
@@ -19,7 +43,22 @@ const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
 	} );
 };
 
-jest.mock( '../hooks/use-get-upgrade-plan-hosting-details-list' );
+const mockUsePricingMetaForGridPlans = ( empty: boolean = false ) => {
+	if ( empty ) {
+		return;
+	}
+
+	const planYearlyPricing = {
+		currencyCode: 'USD',
+		originalPrice: { full: 60, monthly: 5 },
+		discountedPrice: { full: 24, monthly: 2 },
+		billingPeriod: 'year',
+	};
+
+	Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+		[ PLAN_BUSINESS ]: planYearlyPricing,
+	} ) );
+};
 
 const CTA_TEXT = 'CTA';
 const DEFAULT_SITE_ID = 123;
@@ -51,13 +90,14 @@ const DEFAULT_SITE_CAPABILITIES = {
 	view_stats: true,
 };
 
-// Stub out UpgradePlanDetails because it has much more complex dependencies, and only provides a wrapper around the content from this component.
-jest.mock( '../upgrade-plan-details', () => ( {
-	__esModule: true,
-	default: ( { children } ) => <div>{ children }</div>,
-} ) );
+const API_RESPONSE_ELIGIBLE = {
+	eligible: true,
+};
 
-jest.mock( '@automattic/calypso-analytics' );
+const API_RESPONSE_INELIGIBLE_UNVERIFIED_EMAIL = {
+	eligible: true,
+	error_code: 'email-unverified',
+};
 
 function renderUpgradePlanComponent(
 	props: ComponentPropsWithoutRef< typeof UpgradePlan >,
@@ -121,22 +161,12 @@ function getUpgradePlanProps(
 	};
 }
 
-const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
-
-const API_RESPONSE_ELIGIBLE = {
-	eligible: true,
-};
-
-const API_RESPONSE_INELIGIBLE_UNVERIFIED_EMAIL = {
-	eligible: true,
-	error_code: 'email-unverified',
-};
-
 describe( 'UpgradePlan', () => {
 	beforeAll( () => nock.disableNetConnect() );
 
 	beforeEach( () => {
 		mockUseUpgradePlanHostingDetailsList( false );
+		mockUsePricingMetaForGridPlans();
 	} );
 
 	it( 'should call onCtaClick when the user clicks on the Continue button', async () => {
@@ -270,7 +300,22 @@ describe( 'UpgradePlan', () => {
 
 			const { queryByText, container } = renderUpgradePlanComponent(
 				getUpgradePlanProps( { ctaText: CTA_TEXT } ),
-				UpgradePlanWithoutHOC
+				UnwrappedUpgradePlan
+			);
+
+			expect(
+				container.querySelector( '.import__upgrade-plan-details--loading' )
+			).toBeInTheDocument();
+			expect( queryByText( CTA_TEXT ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should render fetch state when pricing is not available', async () => {
+			mockUseUpgradePlanHostingDetailsList( true );
+			mockUsePricingMetaForGridPlans( true );
+
+			const { queryByText, container } = renderUpgradePlanComponent(
+				getUpgradePlanProps( { ctaText: CTA_TEXT } ),
+				UnwrappedUpgradePlan
 			);
 
 			expect(
