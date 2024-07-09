@@ -10,7 +10,11 @@ const withMigrationSticker =
 		const { site } = props;
 		const siteId = site.ID;
 
-		const { addMigrationSticker, isPending } = useMigrationStickerMutation();
+		const {
+			addMigrationSticker,
+			addMutationRest: { isPending },
+			deleteMigrationSticker,
+		} = useMigrationStickerMutation();
 
 		useEffect( () => {
 			if ( ! config.isEnabled( 'migration-flow/introductory-offer' ) ) {
@@ -20,7 +24,13 @@ const withMigrationSticker =
 			if ( 0 !== siteId ) {
 				addMigrationSticker( siteId );
 			}
-		}, [ addMigrationSticker, siteId ] );
+
+			return () => {
+				if ( 0 !== siteId ) {
+					deleteMigrationSticker( siteId );
+				}
+			};
+		}, [ addMigrationSticker, deleteMigrationSticker, siteId ] );
 
 		if ( isPending ) {
 			return <Skeleton />;

@@ -1,6 +1,7 @@
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -16,12 +17,15 @@ import type { Step } from '../../types';
 import './style.scss';
 
 const SiteMigrationInstructions: Step = function () {
+	const site = useSite();
+	const siteId = site?.ID;
+	const { deleteMigrationSticker } = useMigrationStickerMutation();
+
 	const queryParams = useQuery();
 	const importSiteQueryParam = queryParams.get( 'from' ) ?? '';
 	const { data: hostingDetails } = useHostingProviderUrlDetails( importSiteQueryParam );
 	const showHostingBadge = ! hostingDetails.is_unknown && ! hostingDetails.is_a8c;
-	const site = useSite();
-	const siteId = site?.ID;
+
 	const { detailedStatus } = usePrepareSiteForMigration( siteId );
 
 	const sidebar = (
@@ -38,6 +42,12 @@ const SiteMigrationInstructions: Step = function () {
 			<SitePreview />
 		</LaunchpadContainer>
 	);
+
+	useEffect( () => {
+		if ( siteId ) {
+			deleteMigrationSticker( siteId );
+		}
+	}, [ deleteMigrationSticker, siteId ] );
 
 	const questions = <Questions />;
 
