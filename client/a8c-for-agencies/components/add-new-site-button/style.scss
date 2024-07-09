@@ -5,9 +5,17 @@
 	.gridicon {
 		margin-left: 6px;
 		top: 2px;
+		transition: transform 100ms ease-in-out;
+
+		&.reverse {
+			transform: rotate(180deg);
+		}
 	}
 }
-.site-selector-and-importer__popover {
+.popover.site-selector-and-importer__popover {
+	animation: fadeIn 0.2s ease-out;
+	margin-inline-start: 32px;
+
 	.popover__inner {
 		width: 280px;
 		text-align: unset;
