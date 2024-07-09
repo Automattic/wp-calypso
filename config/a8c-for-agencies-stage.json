@@ -53,7 +53,7 @@
 		"a8c-for-agencies-signup": true,
 		"a8c-for-agencies-referrals": true,
 		"a8c-for-agencies-settings": false,
-		"a8c-for-agencies-partner-directory": false,
+		"a8c-for-agencies-partner-directory": true,
 		"a8c-for-agencies-migrations": true,
 		"a8c-for-agencies-client": true
 	},
