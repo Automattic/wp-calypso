@@ -1,3 +1,4 @@
+import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import React, { useEffect } from 'react';
@@ -13,6 +14,7 @@ import { Questions } from './questions';
 import { Sidebar } from './sidebar';
 import { SitePreview } from './site-preview';
 import { Steps } from './steps';
+import { useSteps } from './steps/use-steps';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -38,9 +40,20 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 		navigation.submit?.( { destination: 'migration-started' } );
 	};
 
+	const { steps, completedSteps } = useSteps( { fromUrl: importSiteQueryParam, onComplete } );
+
 	const sidebar = (
-		<Sidebar>
-			<Steps fromUrl={ importSiteQueryParam } onComplete={ onComplete } />
+		<Sidebar
+			progress={
+				<CircularProgressBar
+					size={ 40 }
+					enableDesktopScaling
+					numberOfSteps={ steps.length }
+					currentStep={ completedSteps }
+				/>
+			}
+		>
+			<Steps steps={ steps } />
 			<Provisioning status={ detailedStatus } />
 		</Sidebar>
 	);

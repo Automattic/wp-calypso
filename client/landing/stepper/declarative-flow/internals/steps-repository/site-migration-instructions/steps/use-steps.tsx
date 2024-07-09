@@ -47,11 +47,11 @@ interface Step {
 	onClick?: () => void;
 }
 
-type Steps = Step[];
+export type Steps = Step[];
 
 interface StepsObject {
 	steps: Steps;
-	currentStep: number;
+	completedSteps: number;
 }
 
 const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
@@ -181,6 +181,6 @@ export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): StepsObject =
 
 	return {
 		steps,
-		currentStep,
+		completedSteps: lastCompleteStep + 1,
 	};
 };
