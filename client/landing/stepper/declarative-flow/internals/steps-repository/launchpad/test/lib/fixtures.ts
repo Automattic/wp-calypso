@@ -247,6 +247,7 @@ export const defaultDomainResponse: ResponseDomain = {
 	hasWpcomNameservers: false,
 	hasZone: false,
 	isAutoRenewing: false,
+	isDnssecEnabled: false,
 	isDnssecSupported: false,
 	isEligibleForInboundTransfer: false,
 	isGravatarDomain: false,

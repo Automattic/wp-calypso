@@ -29,6 +29,7 @@ export const itemsSchema = {
 					hasRegistration: { type: 'boolean' },
 					hasWpcomNameservers: { type: 'boolean' },
 					hasZone: { type: 'boolean' },
+					isDnssecEnabled: { type: 'boolean' },
 					isDnssecSupported: { type: 'boolean' },
 					isGravatarDomain: { type: 'boolean' },
 					isPendingIcannVerification: { type: 'boolean' },

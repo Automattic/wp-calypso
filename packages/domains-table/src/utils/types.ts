@@ -89,6 +89,7 @@ export type ResponseDomain = {
 	hasZone: boolean;
 	isAutoRenewing: boolean;
 	isEligibleForInboundTransfer: boolean;
+	isDnssecEnabled: boolean;
 	isDnssecSupported: boolean;
 	isGravatarDomain: boolean;
 	isIcannVerificationSuspended: boolean | null;

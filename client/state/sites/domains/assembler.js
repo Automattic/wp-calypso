@@ -103,6 +103,7 @@ export const createSiteDomainObject = ( domain ) => {
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
 		isDomainOnlySite: Boolean( domain.is_domain_only_site ),
+		isDnssecEnabled: Boolean( domain.is_dnssec_enabled ),
 		isDnssecSupported: Boolean( domain.is_dnssec_supported ),
 		isGravatarDomain: Boolean( domain.is_gravatar_domain ),
 		isLocked: Boolean( domain.is_locked ),
