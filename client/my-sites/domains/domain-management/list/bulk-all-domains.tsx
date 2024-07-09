@@ -190,7 +190,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						background: var( --color-surface );
 						border-radius: 8px;
 						box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
-						height: calc( 100vh - 32px );
+						height: calc( 100vh - var( --masterbar-height ) - 32px );
 						overflow: hidden;
 						max-width: none;
 					}
