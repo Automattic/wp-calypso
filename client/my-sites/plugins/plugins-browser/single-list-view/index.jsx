@@ -47,9 +47,10 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 		siteId ? getPlugins( state, siteObjectsToSiteIds( sites ) ) : []
 	);
 
-	plugins = plugins
-		.filter( isNotBlocked )
-		.filter( ( plugin ) => isNotInstalled( plugin, installedPlugins ) );
+	plugins = plugins.filter(
+		( plugin ) =>
+			isNotBlocked( plugin ) && ( ! siteId || isNotInstalled( plugin, installedPlugins ) )
+	);
 
 	let listLink = '/plugins/browse/' + category;
 	if ( domain ) {
