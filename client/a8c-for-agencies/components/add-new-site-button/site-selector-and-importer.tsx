@@ -108,10 +108,11 @@ export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMI
 			<Popover
 				className="site-selector-and-importer__popover"
 				context={ popoverMenuContext?.current }
-				position="bottom right"
 				isVisible={ isMenuVisible }
 				closeOnEsc
 				onClose={ toggleMenu }
+				autoPosition={ false }
+				position="bottom left"
 			>
 				<div className="site-selector-and-importer__popover-content">
 					<div className="site-selector-and-importer__popover-column">
