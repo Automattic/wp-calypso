@@ -325,7 +325,7 @@ class DomainSearch extends Component {
 					  }
 					: {
 							goBackLink:
-								this.props.preferredView === 'wp-admin'
+								this.props.preferredView === 'wp-admin' && !! this.props.wpAdminUrl
 									? this.props.wpAdminUrl
 									: `/home/${ selectedSiteSlug }`,
 					  };
