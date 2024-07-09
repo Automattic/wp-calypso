@@ -9523,6 +9523,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/dataviews@patch:@wordpress/dataviews@npm%3A0.4.1#~/.yarn/patches/@wordpress-dataviews-npm-0.4.1-2c01fa0792.patch":
+  version: 0.4.1
+  resolution: "@wordpress/dataviews@patch:@wordpress/dataviews@npm%3A0.4.1#~/.yarn/patches/@wordpress-dataviews-npm-0.4.1-2c01fa0792.patch::version=0.4.1&hash=d91dff"
+  dependencies:
+    "@babel/runtime": "npm:^7.16.0"
+    "@wordpress/a11y": "npm:^3.50.0"
+    "@wordpress/components": "npm:^25.16.0"
+    "@wordpress/compose": "npm:^6.27.0"
+    "@wordpress/element": "npm:^5.27.0"
+    "@wordpress/i18n": "npm:^4.50.0"
+    "@wordpress/icons": "npm:^9.41.0"
+    "@wordpress/keycodes": "npm:^3.50.0"
+    "@wordpress/primitives": "npm:^3.48.0"
+    "@wordpress/private-apis": "npm:^0.32.0"
+    classnames: "npm:^2.3.1"
+    remove-accents: "npm:^0.5.0"
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 757d69e92446b3d0a28b94c3cf2d3711a304c9949001392e2bb62f37409bee6561af5587df057a2296229f12b70210626d25db94280dfaa8b5f0789dd5131ddb
+  languageName: node
+  linkType: hard
+
 "@wordpress/date@npm:5.2.0":
   version: 5.2.0
   resolution: "@wordpress/date@npm:5.2.0"
@@ -12418,7 +12440,7 @@ __metadata:
     "@wordpress/components": "npm:^28.2.0"
     "@wordpress/compose": "npm:^7.2.0"
     "@wordpress/data": "npm:^10.2.0"
-    "@wordpress/dataviews": "npm:0.4.1"
+    "@wordpress/dataviews": "patch:@wordpress/dataviews@npm%3A0.4.1#~/.yarn/patches/@wordpress-dataviews-npm-0.4.1-2c01fa0792.patch"
     "@wordpress/dom": "npm:^4.2.0"
     "@wordpress/edit-post": "npm:^8.2.0"
     "@wordpress/element": "npm:^6.2.0"
