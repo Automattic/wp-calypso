@@ -88,6 +88,7 @@ export type ResponseDomain = {
 	hasWpcomNameservers: boolean;
 	hasZone: boolean;
 	isAutoRenewing: boolean;
+	isDnssecSupported: boolean;
 	isEligibleForInboundTransfer: boolean;
 	isIcannVerificationSuspended: boolean;
 	isGravatarDomain: boolean;

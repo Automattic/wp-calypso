@@ -43,6 +43,7 @@ export interface DomainData {
 	partner_domain: boolean;
 	wpcom_domain: boolean;
 	has_zone: boolean;
+	is_dnssec_supported: boolean;
 	is_gravatar_domain: boolean;
 	is_renewable: boolean;
 	is_redeemable: boolean;
