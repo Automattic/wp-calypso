@@ -13,12 +13,11 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useUpgradePlanHostingDetailsList } from '../hooks/use-get-upgrade-plan-hosting-details-list';
 import { UpgradePlan, UnwrappedUpgradePlan } from '../index';
 
-const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
-	( useUpgradePlanHostingDetailsList as jest.Mock ).mockReturnValue( {
-		list: [],
-		isFetching,
-	} );
-};
+// Stub out UpgradePlanDetails because it has much more complex dependencies, and only provides a wrapper around the content from this component.
+jest.mock( '../upgrade-plan-details', () => ( {
+	__esModule: true,
+	default: ( { children } ) => <div>{ children }</div>,
+} ) );
 
 jest.mock( '@automattic/calypso-analytics' );
 
