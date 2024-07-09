@@ -15,6 +15,11 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	const helpCenterWidth = 410;
 	const helpCenterHeight = Math.min( 800, innerHeight * 0.8 );
 
+	// Return an empty object in mobile view
+	if ( innerWidth <= 480 ) {
+		return {};
+	}
+
 	const buttonLeftEdge = x;
 	const buttonRightEdge = x + width;
 
@@ -43,15 +48,16 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 		coords.transformOrigin += ' left';
 	}
 
-	// If the help center is off screen, move it to the top left or top right of the button
-	if ( coords.top < 0 ) {
-		const isButtonOnLeft = innerWidth / 2 > buttonLeftEdge;
-
-		coords.top = AESTHETIC_OFFSET;
-		coords.left = isButtonOnLeft
-			? buttonRightEdge + AESTHETIC_OFFSET
-			: buttonLeftEdge - helpCenterWidth - AESTHETIC_OFFSET;
-		coords.transformOrigin = isButtonOnLeft ? 'left' : 'right';
+	// If the help center is off screen, move it to a set position
+	if (
+		coords.top < 0 ||
+		coords.left < 0 ||
+		coords.left + helpCenterWidth > innerWidth ||
+		coords.top + helpCenterHeight > innerHeight
+	) {
+		coords.top = 100;
+		coords.left = innerWidth - helpCenterWidth - AESTHETIC_OFFSET;
+		coords.transformOrigin = 'center';
 	}
 
 	return coords;
