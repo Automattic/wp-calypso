@@ -4,7 +4,7 @@ import NoticeBanner from '@automattic/components/src/notice-banner';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { trackStatsAnalyticsEvent } from '../utils';
@@ -19,7 +19,6 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
-	const [ noticeDismissed ] = useState( false );
 
 	const gotoJetpackStatsProduct = () => {
 		isOdysseyStats
@@ -37,22 +36,14 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 	};
 
 	useEffect( () => {
-		if ( ! noticeDismissed ) {
-			isOdysseyStats
-				? recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_viewed' )
-				: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_viewed' );
-		}
-	}, [ noticeDismissed, isOdysseyStats ] );
-
-	if ( noticeDismissed ) {
-		return null;
-	}
+		isOdysseyStats
+			? recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_viewed' )
+			: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_viewed' );
+	}, [ isOdysseyStats ] );
 
 	const learnMoreLink = isWPCOMSite
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
-
-	const hideCloseButton = true; // currently hiding close button and dismiss click functionality is disabled for all commerical upgrade notices. To add more specific conditionals later, we can modify here
 
 	return (
 		<div
@@ -64,7 +55,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 				level="info"
 				title={ translate( 'Upgrade to Stats Commercial' ) }
 				onClose={ () => {} }
-				hideCloseButton={ hideCloseButton }
+				hideCloseButton={ false }
 			>
 				{ translate(
 					'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
