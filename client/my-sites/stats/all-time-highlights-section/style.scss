@@ -15,6 +15,21 @@
 	.highlight-card {
 		padding: 24px;
 		min-width: 320px;
+
+		&.highlight-card--has-overlay {
+			.highlight-card-content {
+				filter: blur(10px);
+			}
+		}
+
+		.stats-card-upsell {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
 	}
 
 	.post-stats-card {
@@ -50,6 +65,14 @@
 				margin-left: 0;
 			}
 		}
+	}
+
+	.stats-card-upsell {
+		height: unset;
+	}
+
+	.highlight-cards-list {
+		overflow-x: unset;
 	}
 
 	.highlight-card-heading {

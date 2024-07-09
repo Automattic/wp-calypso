@@ -1,10 +1,11 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { CheckboxControl, Modal } from '@wordpress/components';
+import { CheckboxControl, Icon, Modal, Spinner } from '@wordpress/components';
+import { check, closeSmall } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
+import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
@@ -14,21 +15,27 @@ import { useSiteName } from './use-site-name';
 import './style.scss';
 
 type SiteConfigurationsModalProps = {
-	toggleModal: () => void;
+	closeModal: () => void;
+	onCreateSiteSuccess: ( id: number ) => void;
 	randomSiteName: string;
 	isRandomSiteNameLoading: boolean;
+	siteId: number;
 };
 
 export default function SiteConfigurationsModal( {
-	toggleModal,
+	closeModal,
+	onCreateSiteSuccess,
 	randomSiteName,
 	isRandomSiteNameLoading,
+	siteId,
 }: SiteConfigurationsModalProps ) {
 	const [ allowClientsToUseSiteHelpCenter, setAllowClientsToUseSiteHelpCenter ] = useState( true );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const translate = useTranslate();
 	const dataCenterOptions = useDataCenterOptions();
 	const { phpVersions } = usePhpVersions();
-	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
+	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading, siteId );
+	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
 		setAllowClientsToUseSiteHelpCenter( ! allowClientsToUseSiteHelpCenter );
@@ -49,21 +56,59 @@ export default function SiteConfigurationsModal( {
 		Object.keys( dataCenterOptions ) as Array< keyof typeof dataCenterOptions >
 	 ).map( ( key ) => (
 		<option key={ key } value={ key }>
-			{ dataCenterOptions[ key ] }
+			{ dataCenterOptions[ key as keyof typeof dataCenterOptions ] }
 		</option>
 	) );
 
+	const onSiteNameKeyDown = ( event: React.KeyboardEvent ) => {
+		if ( event.key === 'Enter' ) {
+			event.preventDefault();
+		}
+	};
+
+	const onSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
+		event.preventDefault();
+		setIsSubmitting( true );
+		const formData = new FormData( event.currentTarget );
+		const phpVersion = formData.get( 'php_version' ) as string;
+		const primaryDataCenter = ( formData.get( 'primary_data_center' ) as string ) || undefined;
+		const params = {
+			id: siteId,
+			site_name: siteName.siteName,
+			php_version: phpVersion,
+			primary_data_center: primaryDataCenter,
+			is_fully_managed_agency_site: allowClientsToUseSiteHelpCenter,
+		};
+		createWPCOMSite( params, {
+			onSuccess: () => {
+				onCreateSiteSuccess( siteId );
+			},
+			onError: async ( error ) => {
+				if ( error.status === 400 ) {
+					await siteName.revalidateCurrentSiteName();
+					setIsSubmitting( false );
+				}
+			},
+		} );
+	};
+
+	const onRequestCloseModal = () => {
+		if ( ! isSubmitting ) {
+			closeModal();
+		}
+	};
+
 	return (
 		<Modal
-			title={ translate( 'Configure your site' ) }
-			onRequestClose={ toggleModal }
+			title={ translate( 'Configure your new site' ) }
+			onRequestClose={ onRequestCloseModal }
 			className="configure-your-site-modal-form"
 		>
-			<FormFieldset className="configure-your-site-modal-form__main">
+			<form onSubmit={ onSubmit }>
 				<FormField
 					label={ translate( 'Site address' ) }
 					description={ translate(
-						'Once the site is created, you can connect a custom domain to your site and make that your site address instead.'
+						'After creating your site, you can connect a custom domain for the address.'
 					) }
 				>
 					<div className="configure-your-site-modal-form__site-name-wrapper">
@@ -71,30 +116,38 @@ export default function SiteConfigurationsModal( {
 							<div className="configure-your-site-modal-form__site-name-placeholder" />
 						) : (
 							<FormTextInputWithAffixes
+								className="configure-your-site-modal-form__input"
+								name="site_name"
 								isError={ siteName.showValidationMessage }
 								value={ siteName.siteName }
 								onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 									siteName.setSiteName( event.target.value )
 								}
+								onKeyDown={ onSiteNameKeyDown }
 								suffix=".wpcomstaging.com"
 								noWrap
-								spellcheck="false"
+								spellCheck="false"
+								disabled={ isSubmitting }
 							/>
 						) }
 						<div className="configure-your-site-modal-form__site-name-icon-wrapper">
-							{ ! siteName.showValidationMessage && ! isRandomSiteNameLoading && (
-								<Gridicon
-									icon="checkmark-circle"
-									size={ 24 }
+							{ siteName.isSiteNameReadyForUse && (
+								<Icon
+									icon={ check }
+									size={ 28 }
 									className="configure-your-site-modal-form__site-name-success"
 								/>
 							) }
 							{ siteName.showValidationMessage && (
-								<Gridicon
-									icon="cross-circle"
-									size={ 24 }
+								<Icon
+									icon={ closeSmall }
+									size={ 28 }
+									color="red"
 									className="configure-your-site-modal-form__site-name-fail"
 								/>
+							) }
+							{ siteName.isCheckingSiteAvailability && (
+								<Spinner className="configure-your-site-modal-form__site-name-loading" />
 							) }
 						</div>
 					</div>
@@ -106,13 +159,17 @@ export default function SiteConfigurationsModal( {
 					) }
 				</FormField>
 				<FormField
-					label={ translate( 'PHP Version' ) }
+					label={ translate( 'PHP version' ) }
 					description={ translate(
 						'The PHP version can be changed after your site is created via {{a}}Web Server Settings{{/a}}.',
 						{
 							components: {
 								a: (
-									<a href="https://developer.wordpress.com/docs/developer-tools/web-server-settings/" />
+									<a
+										target="_blank"
+										href="https://developer.wordpress.com/docs/developer-tools/web-server-settings/"
+										rel="noreferrer"
+									/>
 								),
 							},
 						}
@@ -120,14 +177,16 @@ export default function SiteConfigurationsModal( {
 				>
 					<FormSelect
 						className="configure-your-site-modal-form__php-version-select"
-						name="product"
+						name="php_version"
 						onChange={ () => {} }
+						disabled={ isSubmitting }
 					>
 						{ phpVersionsElements }
 					</FormSelect>
 				</FormField>
-				<FormField label={ translate( 'Primary Data Center' ) }>
-					<FormSelect name="product" id="product" onChange={ () => {} }>
+				<FormField label={ translate( 'Primary data center' ) }>
+					<FormSelect disabled={ isSubmitting } name="primary_data_center" onChange={ () => {} }>
+						<option value="">{ translate( 'No preference' ) }</option>
 						{ dataCenterOptionsElements }
 					</FormSelect>
 				</FormField>
@@ -137,6 +196,8 @@ export default function SiteConfigurationsModal( {
 							id="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox"
 							onChange={ toggleAllowClientsToUseSiteHelpCenter }
 							checked={ allowClientsToUseSiteHelpCenter }
+							name="is_fully_managed_agency_site"
+							disabled={ isSubmitting }
 						/>
 						<label htmlFor="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox">
 							{ translate(
@@ -145,16 +206,20 @@ export default function SiteConfigurationsModal( {
 									components: {
 										HcLink: (
 											<a
+												target="_blank"
 												href={ localizeUrl(
-													'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
+													'https://wordpress.com/support/help-support-options/#how-to-contact-us'
 												) }
+												rel="noreferrer"
 											/>
 										),
 										HfLink: (
 											<a
+												target="_blank"
 												href={ localizeUrl(
-													'https://wordpress.com/support/hosting-configuration'
+													'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
 												) }
+												rel="noreferrer"
 											/>
 										),
 									},
@@ -163,12 +228,17 @@ export default function SiteConfigurationsModal( {
 						</label>
 					</div>
 				</FormField>
-			</FormFieldset>
-			<div className="configure-your-site-modal-form__footer">
-				<Button primary onClick={ () => {} }>
-					{ translate( 'Create site' ) }
-				</Button>
-			</div>
+				<div className="configure-your-site-modal-form__footer">
+					<Button
+						primary
+						type="submit"
+						busy={ isSubmitting }
+						disabled={ ! siteName.isSiteNameReadyForUse }
+					>
+						{ translate( 'Create site' ) }
+					</Button>
+				</div>
+			</form>
 		</Modal>
 	);
 }

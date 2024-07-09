@@ -16,20 +16,25 @@ import {
 	STAT_TYPE_EMAILS_SUMMARY,
 	STAT_TYPE_SEARCH_TERMS,
 	STAT_TYPE_VIDEO_PLAYS,
+	STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS,
+	STAT_TYPE_TAGS,
+	STAT_TYPE_COMMENTS,
+	STATS_FEATURE_DATE_CONTROL,
+	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
 	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
-	STATS_FEATURE_DATE_CONTROL,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
 	STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
 	STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
 	STATS_FEATURE_SUMMARY_LINKS_QUARTER,
 	STATS_FEATURE_SUMMARY_LINKS_YEAR,
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
+	STAT_TYPE_INSIGHTS,
 } from '../constants';
 import { isSiteNew } from './use-site-compulsory-plan-selection-qualified-check';
 import { hasAnyPlan } from './use-stats-purchases';
 
-const paidStatsPaywall = [
+const jetpackStatsCommercialPaywall = [
 	STAT_TYPE_TOP_POSTS,
 	STAT_TYPE_COUNTRY_VIEWS,
 	STAT_TYPE_REFERRERS,
@@ -38,6 +43,20 @@ const paidStatsPaywall = [
 	STAT_TYPE_EMAILS_SUMMARY,
 	STAT_TYPE_SEARCH_TERMS,
 	STAT_TYPE_VIDEO_PLAYS,
+	STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS,
+	STAT_TYPE_TAGS,
+	STAT_TYPE_COMMENTS,
+	STAT_TYPE_INSIGHTS,
+];
+
+const granularControlForJetpackStatsCommercialPaywall = [
+	STATS_FEATURE_DATE_CONTROL,
+	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
+	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
+	STATS_FEATURE_DATE_CONTROL_LAST_YEAR,
+	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+	STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
+	STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
 ];
 
 const paidStats = [
@@ -84,7 +103,10 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	if ( jetpackSite && ! atomicSite ) {
 		// TODO: Determine more paywall segments and granular control for paid stats.
 		if ( restrictDashboard && isNewSite && ! hasAnyStatsPlan ) {
-			return [ ...paidStatsPaywall ].includes( statType );
+			return [
+				...jetpackStatsCommercialPaywall,
+				...granularControlForJetpackStatsCommercialPaywall,
+			].includes( statType );
 		}
 
 		return false;
