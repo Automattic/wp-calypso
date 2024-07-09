@@ -136,6 +136,7 @@ export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): Steps => {
 		const onActionClick = () => {
 			setCurrentStep( index + 1 );
 
+			// When completing a step that wasn't completed yet.
 			if ( lastCompleteStep < index ) {
 				setLastCompleteStep( index );
 			}
@@ -146,7 +147,13 @@ export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): Steps => {
 			}
 		};
 
-		const onItemClick = undefined;
+		// Allow clicking on already completed steps only, so users can see the previous steps again.
+		const onItemClick =
+			index > lastCompleteStep || index === currentStep
+				? undefined
+				: () => {
+						setCurrentStep( index );
+				  };
 
 		return {
 			task: {
