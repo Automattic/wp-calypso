@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'PageViewTracker' );
 jest.mock( 'calypso/blocks/upsell-nudge', () =>
 	jest.fn( () => <div data-testid="UpsellNudge" /> )
@@ -85,7 +84,6 @@ describe( 'GoogleAnalyticsForm basic tests', () => {
 	test( 'jetpack form should not blow up and have proper CSS class', () => {
 		render(
 			<Provider store={ store }>
-				{ ' ' }
 				<GoogleAnalyticsJetpackForm { ...props } />
 			</Provider>
 		);
