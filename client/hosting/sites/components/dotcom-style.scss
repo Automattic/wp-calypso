@@ -67,6 +67,7 @@
 }
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
+	height: calc(100vh - var(--masterbar-height));
 	background: var(--studio-white);
 
 	.a4a-layout__top-wrapper {
@@ -285,6 +286,11 @@
 .wpcom-site {
 	.layout__content {
 		transition: padding-left 220ms ease-out;
+		min-height: 100vh;
+
+		@include break-medium {
+			padding: calc(var(--masterbar-height) + 12px) 16px 16px calc(var(--sidebar-width-max));
+		}
 	}
 	.layout__secondary {
 		transition: width 220ms ease-out;
@@ -694,6 +700,8 @@
 
 		@include break-medium {
 			padding-left: calc(var(--sidebar-width-max));
+		.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+			height: calc(100vh - var(--masterbar-height));
 		}
 	}
 

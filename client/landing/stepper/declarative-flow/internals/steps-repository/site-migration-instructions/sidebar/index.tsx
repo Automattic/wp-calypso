@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import './style.scss';
 
-export const Sidebar: FC = () => {
+export const Sidebar: FC< { children: ReactNode } > = ( { children } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -14,6 +14,7 @@ export const Sidebar: FC = () => {
 				{ translate( 'Follow these steps to get started.' ) }
 			</p>
 			[CHECKLIST HERE]
+			{ children }
 		</div>
 	);
 };

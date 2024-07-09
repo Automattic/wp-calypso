@@ -8,6 +8,7 @@ import {
 	INSTALL_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import {
+	PLUGIN_INSTALLATION_INCOMPLETED,
 	PLUGIN_INSTALLATION_COMPLETED,
 	PLUGIN_INSTALLATION_ERROR,
 	PLUGIN_INSTALLATION_IN_PROGRESS,
@@ -51,7 +52,8 @@ export type PluginActionTypes =
 export type PluginActionStatus =
 	| typeof PLUGIN_INSTALLATION_IN_PROGRESS
 	| typeof PLUGIN_INSTALLATION_COMPLETED
-	| typeof PLUGIN_INSTALLATION_ERROR;
+	| typeof PLUGIN_INSTALLATION_ERROR
+	| typeof PLUGIN_INSTALLATION_INCOMPLETED;
 
 export type CurrentSiteStatus = {
 	action: PluginActionTypes;
