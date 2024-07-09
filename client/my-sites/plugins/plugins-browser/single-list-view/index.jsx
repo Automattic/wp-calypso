@@ -44,13 +44,12 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 	const { localizePath } = useLocalizedPlugins();
 
 	const installedPlugins = useSelector( ( state ) =>
-		siteId ? getPlugins( state, siteObjectsToSiteIds( sites ) ) : []
+		getPlugins( state, siteObjectsToSiteIds( sites ) )
 	);
 
-	plugins = plugins.filter(
-		( plugin ) =>
-			isNotBlocked( plugin ) && ( ! siteId || isNotInstalled( plugin, installedPlugins ) )
-	);
+	plugins = plugins
+		.filter( isNotBlocked )
+		.filter( ( plugin ) => ! siteId || isNotInstalled( plugin, installedPlugins ) );
 
 	let listLink = '/plugins/browse/' + category;
 	if ( domain ) {
