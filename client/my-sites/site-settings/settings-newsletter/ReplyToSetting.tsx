@@ -1,15 +1,8 @@
 import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import versionCompare from 'calypso/lib/version-compare';
-import {
-	isJetpackSite as isJetpackSiteSelector,
-	getSiteOption,
-} from 'calypso/state/sites/selectors';
-import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 
 type ReplyToSettingProps = {
 	value?: string;
@@ -23,15 +16,6 @@ export const ReplyToSetting = ( {
 	updateFields,
 }: ReplyToSettingProps ) => {
 	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const siteId = selectedSite?.ID;
-	const isSupportedSite = useSelector( ( state ) => {
-		if ( ! isJetpackSiteSelector( state, siteId ) ) {
-			return true;
-		}
-		const jetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-		return jetpackVersion && versionCompare( jetpackVersion, '13.5', '>=' );
-	} );
 
 	return (
 		<FormFieldset>
@@ -47,19 +31,15 @@ export const ReplyToSetting = ( {
 					label={ translate( 'Replies are not allowed' ) }
 				/>
 			</FormLabel>
-			{ isSupportedSite && (
-				<>
-					<FormLabel>
-						<FormRadio
-							checked={ value === 'comment' }
-							value="comment"
-							onChange={ () => updateFields( { jetpack_subscriptions_reply_to: 'comment' } ) }
-							disabled={ disabled }
-							label={ translate( 'Replies will be a public comment on the post' ) }
-						/>
-					</FormLabel>
-				</>
-			) }
+			<FormLabel>
+				<FormRadio
+					checked={ value === 'comment' }
+					value="comment"
+					onChange={ () => updateFields( { jetpack_subscriptions_reply_to: 'comment' } ) }
+					disabled={ disabled }
+					label={ translate( 'Replies will be a public comment on the post' ) }
+				/>
+			</FormLabel>
 			<FormLabel>
 				<FormRadio
 					checked={ value === 'author' }
