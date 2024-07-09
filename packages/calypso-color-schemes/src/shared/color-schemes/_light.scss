@@ -168,15 +168,15 @@ Primary+Accent is studio blue.
 	--color-navredesign-sidebar-submenu-hover-text: var(--theme-highlight-color);
 	--color-navredesign-sidebar-submenu-selected-hover-text: var(--theme-highlight-color);
 
+	/* Collapse Menu Button */
+	--color-collapse-menu-text: #777;
+
 	/* Fix for notification bell */
 	.masterbar__item-notifications {
 		.gridicon {
 			fill: #000;
 		}
 	}
-
-	/* Collapse Menu Button Fix */
-	--color-collapse-menu-text: #777;
 
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--theme-highlight-color);
