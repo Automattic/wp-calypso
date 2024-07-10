@@ -161,6 +161,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 						'We allow each agency to offer up to five services to help you focus on what you do best.'
 					) }
 					error={ validationError.services }
+					field={ services }
 					checks={ [ validateNonEmpty() ] }
 					isRequired
 				>
@@ -228,8 +229,6 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 							"For each directory you selected, provide URLs of 5 client sites you've worked on. This helps us gauge your expertise."
 						) }
 						error={ validationError.clientSites }
-						field={ formData.directories }
-						checks={ [ validateNonEmpty() ] }
 						isRequired
 					>
 						<div className="partner-directory-agency-expertise__directory-client-sites">
