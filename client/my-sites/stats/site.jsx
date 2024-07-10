@@ -228,7 +228,7 @@ class StatsSite extends Component {
 			supportsDevicesStatsFeature,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
-			gateEmails,
+			gateModuleEmails,
 		} = this.props;
 		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -623,7 +623,7 @@ class StatsSite extends Component {
 						) }
 
 						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ supportsEmailStats && isNewStateEnabled && ! gateEmails && (
+						{ supportsEmailStats && isNewStateEnabled && ! gateModuleEmails && (
 							<StatsModuleEmails
 								period={ this.props.period }
 								moduleStrings={ moduleStrings.emails }
@@ -908,7 +908,7 @@ export default connect(
 		);
 
 		// Determine if the STAT_TYPE_SEARCH_TERMS stat should be gated for the current site.
-		const gateEmails = shouldGateStats( STAT_TYPE_EMAILS_SUMMARY );
+		const gateModuleEmails = shouldGateStats( STAT_TYPE_EMAILS_SUMMARY );
 
 		return {
 			canUserViewStats,
@@ -930,7 +930,7 @@ export default connect(
 			supportsDevicesStatsFeature: supportsDevicesStats,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
-			gateEmails,
+			gateModuleEmails,
 		};
 	},
 	{
