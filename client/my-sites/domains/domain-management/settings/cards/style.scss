@@ -493,3 +493,34 @@
 		background-color: var(--studio-gray-0);
 	}
 }
+
+.domain-dnssec-card__accordion {
+	color: var(--studio-gray-50);
+
+	form,
+	fieldset {
+		background-color: var(--studio-gray-0);
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+	}
+
+	form {
+		padding: 20px;
+	}
+
+	fieldset {
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+
+	legend {
+		margin-bottom: 0.5em;
+	}
+
+	input {
+		border: 1px solid var(--studio-gray-10);
+		padding: 7px 14px;
+	}
+}

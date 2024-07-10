@@ -35,6 +35,7 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
+import DnssecCard from 'calypso/my-sites/domains/domain-management/settings/cards/dnssec-card';
 import GlueRecordsCard from 'calypso/my-sites/domains/domain-management/settings/cards/glue-records-card';
 import {
 	domainManagementEdit,
@@ -703,6 +704,14 @@ const Settings = ( {
 		return <GlueRecordsCard domain={ domain } />;
 	};
 
+	const renderDnssecSection = () => {
+		if ( ! domain || ! domain.isDnssecSupported ) {
+			return null;
+		}
+
+		return <DnssecCard domain={ domain } />;
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		if ( ! domain ) {
@@ -732,6 +741,7 @@ const Settings = ( {
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
 				{ renderDomainGlueRecordsSection() }
+				{ renderDnssecSection() }
 			</>
 		);
 	};
