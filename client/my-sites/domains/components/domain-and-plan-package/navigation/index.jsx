@@ -8,7 +8,6 @@ export default function DomainAndPlanPackageNavigation( props ) {
 
 	// `goBackLink` will be either wp-admin or My Home, depending on the user's
 	// current admin interface preference.
-	// If unavailable, we fall back to the previous page in history.
 	const goBack = () => {
 		if ( props.goBackLink ) {
 			window.location.assign( props.goBackLink );
