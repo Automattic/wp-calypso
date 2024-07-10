@@ -256,7 +256,7 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 	if (
 		isJetpackAISlug( purchase.productSlug ) &&
 		purchase.purchaseRenewalQuantity &&
-		! purchase.priceTierList?.length
+		purchase.priceTierList?.length
 	) {
 		return i18n.translate( '%(productName)s (%(quantity)s requests per month)', {
 			args: {
@@ -269,7 +269,7 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 	if (
 		isJetpackStatsPaidProductSlug( purchase.productSlug ) &&
 		purchase.purchaseRenewalQuantity &&
-		! purchase.priceTierList?.length
+		purchase.priceTierList?.length
 	) {
 		return i18n.translate( '%(productName)s (%(quantity)s views per month)', {
 			args: {
