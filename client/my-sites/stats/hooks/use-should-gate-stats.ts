@@ -35,8 +35,11 @@ import {
 } from '../constants';
 import { hasSupportedCommercialUse, hasSupportedVideoPressUse } from './use-stats-purchases';
 
+// If Jetpack sites don't have any purchase that supports commercial use, gate advanced modules accordingly.
 const jetpackStatsAdvancedPaywall = [ STATS_TYPE_DEVICE_STATS, STATS_FEATURE_UTM_STATS ];
 
+// If Jetpack commerical sites don't have any purchase that supports commercial use,
+// gate modules or cards accordingly.
 const jetpackStatsCommercialPaywall = [
 	STAT_TYPE_TOP_POSTS,
 	STAT_TYPE_COUNTRY_VIEWS,
@@ -54,6 +57,8 @@ const jetpackStatsCommercialPaywall = [
 	STATS_FEATURE_UTM_STATS,
 ];
 
+// If Jetpack commerical sites don't have any purchase that supports commercial use,
+// gate controls accordingly.
 const granularControlForJetpackStatsCommercialPaywall = [
 	STATS_FEATURE_DATE_CONTROL,
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
@@ -64,6 +69,7 @@ const granularControlForJetpackStatsCommercialPaywall = [
 	STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
 ];
 
+// Gated modules for WPCOM sites without the FEATURE_STATS_PAID feature.
 const paidStats = [
 	STAT_TYPE_REFERRERS,
 	STAT_TYPE_CLICKS,
@@ -71,6 +77,7 @@ const paidStats = [
 	STAT_TYPE_SEARCH_TERMS,
 ];
 
+// Gated controls for WPCOM sites without the FEATURE_STATS_PAID feature.
 const granularControlForPaidStats = [
 	STATS_FEATURE_DATE_CONTROL,
 	STATS_FEATURE_DATE_CONTROL_LAST_90_DAYS,
@@ -85,7 +92,8 @@ const granularControlForPaidStats = [
 ];
 
 /*
- * Check if a site has access to a paid stats feature in wpcom.
+ * Check if a site can access a specific module or card based on the WPCOM plan or Jetpack Stats product purchase.
+ *
  * Utility function intended to be used with useSelector or redux connect mapStateToProps.
  * For example in mapStateToProps:
  * const isGatedStats = shouldGateStats( state, siteId, STAT_TYPE_SEARCH_TERMS );
@@ -140,17 +148,17 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	const siteFeatures = getSiteFeatures( state, siteId );
 	const siteHasPaidStats = siteHasFeature( state, siteId, FEATURE_STATS_PAID );
 
-	// check if the site features have loaded and the site has paid stats feature
+	// Check if the site features have loaded and the site has the FEATURE_STATS_PAID feature.
 	if ( ! siteFeatures || siteHasPaidStats ) {
 		return false;
 	}
 
-	// site cannot acesss paid stats, gate stats accordingly
+	// Sites cannot access the feature FEATURE_STATS_PAID, gate stats accordingly
 	return [ ...paidStats, ...granularControlForPaidStats ].includes( statType );
 };
 
 /*
- * Check if a statType is gated wpcom paid stats.
+ * Check if a statType is gated.
  */
 export const useShouldGateStats = ( statType: string ) => {
 	const siteId = useSelector( getSelectedSiteId );
