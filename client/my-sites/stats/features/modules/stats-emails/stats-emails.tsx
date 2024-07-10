@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
-import StatsModulePlaceholder from '../../../stats-module/placeholder';
+import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsEmptyActionEmail from '../shared/stats-empty-action-email';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
@@ -28,7 +28,7 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsEmailsSummary';
 
-	const requesting = useSelector( ( state: StatsStateProps ) =>
+	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 	const data = useSelector( ( state ) =>
@@ -40,7 +40,14 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 			{ siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
-			{ requesting && <StatsModulePlaceholder isLoading={ requesting } /> }
+			{ isRequestingData && (
+				<StatsCardSkeleton
+					isLoading={ isRequestingData }
+					className={ className }
+					title={ moduleStrings.title }
+					type={ 2 }
+				/>
+			) }
 			{ ! data?.length ? (
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) }
