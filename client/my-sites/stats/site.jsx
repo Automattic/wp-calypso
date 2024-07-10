@@ -230,6 +230,7 @@ class StatsSite extends Component {
 			shouldForceDefaultDateRange,
 			gateModuleEmails,
 		} = this.props;
+
 		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
@@ -907,8 +908,8 @@ export default connect(
 			STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS
 		);
 
-		// Determine if the STAT_TYPE_SEARCH_TERMS stat should be gated for the current site.
-		const gateModuleEmails = shouldGateStats( STAT_TYPE_EMAILS_SUMMARY );
+		// Determine if the emails module should be gated for the current site.
+		const gateModuleEmails = shouldGateStats( state, siteId, STAT_TYPE_EMAILS_SUMMARY );
 
 		return {
 			canUserViewStats,
