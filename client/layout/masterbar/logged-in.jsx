@@ -447,7 +447,6 @@ class MasterbarLoggedIn extends Component {
 
 	renderProfileMenu() {
 		const { translate, user } = this.props;
-		const { isMobile } = this.state;
 		return (
 			<Item
 				tipTarget="me"
@@ -458,13 +457,11 @@ class MasterbarLoggedIn extends Component {
 				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 				preloadSection={ this.preloadMe }
 			>
-				{ ! isMobile && (
-					<span className="masterbar__item-howdy-howdy">
-						{ translate( 'Howdy, %(display_name)s', {
-							args: { display_name: user.display_name },
-						} ) }
-					</span>
-				) }
+				<span className="masterbar__item-howdy-howdy">
+					{ translate( 'Howdy, %(display_name)s', {
+						args: { display_name: user.display_name },
+					} ) }
+				</span>
 				<Gravatar
 					className="masterbar__item-howdy-gravatar"
 					user={ user }
