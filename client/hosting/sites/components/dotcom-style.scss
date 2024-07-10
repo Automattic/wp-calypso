@@ -326,7 +326,7 @@
 			}
 		}
 	}
-	.is-global-sidebar-collapsed {
+	&.is-global-sidebar-collapsed {
 		@media (min-width: 661px) {
 			.layout__secondary {
 				transition: all 220ms ease-out;
