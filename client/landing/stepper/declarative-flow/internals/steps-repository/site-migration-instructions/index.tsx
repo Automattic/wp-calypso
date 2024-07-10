@@ -15,32 +15,70 @@ import { Sidebar } from './sidebar';
 import { SitePreview } from './site-preview';
 import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
+import type { Status } from './provisioning';
 import type { Step } from '../../types';
 import './style.scss';
+
+interface PreparationEventsHookOptions {
+	migrationKeyStatus: Status;
+	preparationCompleted: boolean;
+	fromUrl: string;
+}
+
+const usePreparationEvents = ( {
+	migrationKeyStatus,
+	preparationCompleted,
+	fromUrl,
+}: PreparationEventsHookOptions ) => {
+	useEffect( () => {
+		if ( 'error' === migrationKeyStatus ) {
+			recordTracksEvent(
+				'calypso_onboarding_site_migration_instructions_unable_to_get_migration_key',
+				{
+					from: fromUrl,
+				}
+			);
+		}
+	}, [ migrationKeyStatus, fromUrl ] );
+
+	useEffect( () => {
+		if ( preparationCompleted ) {
+			recordTracksEvent( 'calypso_site_migration_instructions_preparation_complete' );
+		}
+	}, [ preparationCompleted ] );
+};
 
 const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	const site = useSite();
 	const siteId = site?.ID;
-	const { deleteMigrationSticker } = useMigrationStickerMutation();
+	const queryParams = useQuery();
+	const fromUrl = queryParams.get( 'from' ) ?? '';
 
+	// Delete migration sticker.
+	const { deleteMigrationSticker } = useMigrationStickerMutation();
 	useEffect( () => {
 		if ( siteId ) {
 			deleteMigrationSticker( siteId );
 		}
 	}, [ deleteMigrationSticker, siteId ] );
 
-	const queryParams = useQuery();
-	const importSiteQueryParam = queryParams.get( 'from' ) ?? '';
-	const { data: hostingDetails } = useHostingProviderUrlDetails( importSiteQueryParam );
+	// Site preparation.
+	const { detailedStatus, completed: preparationCompleted } = usePrepareSiteForMigration( siteId );
+	usePreparationEvents( {
+		migrationKeyStatus: detailedStatus.migrationKey,
+		preparationCompleted,
+		fromUrl,
+	} );
+
+	// Hosting details.
+	const { data: hostingDetails } = useHostingProviderUrlDetails( fromUrl );
 	const showHostingBadge = ! hostingDetails.is_unknown && ! hostingDetails.is_a8c;
 
-	const { detailedStatus } = usePrepareSiteForMigration( siteId );
-
-	const onComplete = () => {
+	// Steps.
+	const onCompleteSteps = () => {
 		navigation.submit?.( { destination: 'migration-started' } );
 	};
-
-	const { steps, completedSteps } = useSteps( { fromUrl: importSiteQueryParam, onComplete } );
+	const { steps, completedSteps } = useSteps( { fromUrl, onComplete: onCompleteSteps } );
 
 	const sidebar = (
 		<Sidebar

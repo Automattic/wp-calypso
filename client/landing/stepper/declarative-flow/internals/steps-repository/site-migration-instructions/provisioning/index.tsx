@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 import { FC } from 'react';
 import './style.scss';
 
-type Status = 'idle' | 'pending' | 'success' | 'error';
+export type Status = 'idle' | 'pending' | 'success' | 'error';
 
 interface ProvisioningProps {
 	status: {
