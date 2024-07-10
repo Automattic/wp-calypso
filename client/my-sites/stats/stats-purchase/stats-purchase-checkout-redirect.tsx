@@ -175,7 +175,7 @@ const gotoCheckoutPage = ( {
 		quantity,
 	} );
 
-	const redirectUrl = getRedirectUrl( { from, type, adminUrl, redirectUri, siteSlug } );
+	const redirectUrl = getRedirectUrl( { type, adminUrl, redirectUri, siteSlug } );
 	const checkoutBackUrl = getCheckoutBackUrl( { from, adminUrl, siteSlug } );
 
 	// Allow some time for the event to be recorded before redirecting.
