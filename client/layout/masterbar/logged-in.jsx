@@ -788,42 +788,17 @@ class MasterbarLoggedIn extends Component {
 		}
 
 		if ( config.isEnabled( 'layout/mb' ) ) {
-			if ( isMobile ) {
-				if ( isInEditor && loadHelpCenterIcon ) {
-					return (
-						<Masterbar>
-							<div className="masterbar__section masterbar__section--left">
-								{ this.renderMySites() }
-							</div>
-							<div className="masterbar__section masterbar__section--right">
-								{ this.renderCart() }
-								{ this.renderNotifications() }
-							</div>
-						</Masterbar>
-					);
-				}
+			if ( isMobile && isInEditor && loadHelpCenterIcon ) {
 				return (
-					<>
-						{ this.renderPopupSearch() }
-						<Masterbar>
-							<div className="masterbar__section masterbar__section--left">
-								{ this.renderSidebarMobileMenu() }
-								{ this.renderMySites() }
-								{ this.renderReader( false ) }
-								{ this.renderSiteMenu() }
-								{ this.renderSiteActionMenu() }
-								{ this.renderLanguageSwitcher() }
-								{ this.renderSearch() }
-							</div>
-							<div className="masterbar__section masterbar__section--right">
-								{ this.renderCart() }
-								{ this.renderCommandPaletteSearch() }
-								{ loadHelpCenterIcon && this.renderHelpCenter() }
-								{ this.renderNotifications() }
-								{ this.renderProfileMenu() }
-							</div>
-						</Masterbar>
-					</>
+					<Masterbar>
+						<div className="masterbar__section masterbar__section--left">
+							{ this.renderMySites() }
+						</div>
+						<div className="masterbar__section masterbar__section--right">
+							{ this.renderCart() }
+							{ this.renderNotifications() }
+						</div>
+					</Masterbar>
 				);
 			}
 			return (
@@ -833,7 +808,7 @@ class MasterbarLoggedIn extends Component {
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderSidebarMobileMenu() }
 							{ this.renderMySites() }
-							{ this.renderReader() }
+							{ this.renderReader( ! isMobile ) }
 							{ this.renderSiteMenu() }
 							{ this.renderSiteActionMenu() }
 							{ this.renderLanguageSwitcher() }
