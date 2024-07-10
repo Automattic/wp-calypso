@@ -40,34 +40,44 @@ const areProductsOwned = ( ownedPurchases: Purchase[], searchedProducts: string[
 	return filterPurchasesByProducts( ownedPurchases, searchedProducts ).length > 0;
 };
 
-const getPurchasesBySiteId = createSelector(
-	( state, siteId ) => getSitePurchases( state, siteId ),
-	getPurchases
-);
-
 // TODO: Consolidate this with the useStatsPurchases hook.
-export const hasAnyPlan = ( state: object, siteId: number | null ) => {
-	const sitePurchases = getSitePurchases( state, siteId );
-
-	const isFreeOwned = isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_FREE );
-	// TODO: After the paywall is removed, we should be able to enable the VideoPress module and page based on their subscription information,
-	// which means the particular logic here wouldn't be necessary anymore.
-	const isCommercialOwned = areProductsOwned( sitePurchases, [
-		...JETPACK_VIDEOPRESS_PRODUCTS,
+const isCommercialOwned = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [
 		PRODUCT_JETPACK_STATS_MONTHLY,
 		PRODUCT_JETPACK_STATS_YEARLY,
 		PRODUCT_JETPACK_STATS_BI_YEARLY,
 	] );
-	const isPWYWOwned = isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
-	const supportCommercialUse =
-		isCommercialOwned ||
+};
+// TODO: Consolidate this with the useStatsPurchases hook.
+const supportCommercialUse = ( ownedPurchases: Purchase[] ) => {
+	return (
+		isCommercialOwned( ownedPurchases ) ||
 		[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, ...JETPACK_COMPLETE_PLANS ].some(
-			( plan ) => isProductOwned( sitePurchases, plan )
-		);
-
-	return isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse;
+			( plan ) => isProductOwned( ownedPurchases, plan )
+		)
+	);
+};
+// TODO: Refactor this to a comprehensive function that checks single module products.
+const isVideoPressOwned = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_VIDEOPRESS_PRODUCTS ] );
 };
 
+export const hasSupportedCommercialUse = ( state: object, siteId: number | null ) => {
+	const sitePurchases = getSitePurchases( state, siteId );
+
+	return supportCommercialUse( sitePurchases );
+};
+
+export const hasSupportedVideoPressUse = ( state: object, siteId: number | null ) => {
+	const sitePurchases = getSitePurchases( state, siteId );
+
+	return isVideoPressOwned( sitePurchases );
+};
+
+const getPurchasesBySiteId = createSelector(
+	( state, siteId ) => getSitePurchases( state, siteId ),
+	getPurchases
+);
 export default function useStatsPurchases( siteId: number | null ) {
 	const sitePurchases = useSelector( ( state ) => getPurchasesBySiteId( state, siteId ) );
 	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
@@ -81,6 +91,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 
 	const isCommercialOwned = useMemo( () => {
 		return areProductsOwned( sitePurchases, [
+			// TODO: Remove the VideoPress products after releasing the feature flag `stats/restricted-dashboard`.
 			...JETPACK_VIDEOPRESS_PRODUCTS,
 			PRODUCT_JETPACK_STATS_MONTHLY,
 			PRODUCT_JETPACK_STATS_YEARLY,
@@ -123,6 +134,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 		isLegacyCommercialLicense,
 		hasLoadedSitePurchases,
 		hasAnyPlan: isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse,
+		hasAnyStatsPlan: isCommercialOwned || isPWYWOwned || isFreeOwned,
 		isLoading: ! hasLoadedSitePurchases || isRequestingSitePurchases,
 	};
 }

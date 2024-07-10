@@ -40,7 +40,7 @@
 		"@babel/compat-data": "^7.24.4",
 		"@babel/core": "^7.24.5",
 		"@types/webpack-env": "^1.18.5",
-		"@wordpress/browserslist-config": "^6.0.0",
+		"@wordpress/browserslist-config": "^6.2.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^5.9.0",
 		"autoprefixer": "^10.2.5",
 		"babel-loader": "^8.2.3",
