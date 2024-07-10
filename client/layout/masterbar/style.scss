@@ -377,7 +377,7 @@ body.is-mobile-app-view {
 			color: var(--color-masterbar-highlight);
 			.masterbar--is-checkout & {
 				background: var(--color-checkout-masterbar-item-hover-background);
-				color: var(--color-checkout-masterbar-highlight);
+				color: var(--color-checkout-masterbar-text);
 			}
 			.masterbar__item-content {
 				color: var(--color-masterbar-highlight);
