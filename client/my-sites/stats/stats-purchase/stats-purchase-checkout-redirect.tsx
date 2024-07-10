@@ -88,20 +88,17 @@ const getCheckoutBackUrl = ( {
 };
 
 const getRedirectUrl = ( {
-	from,
 	type,
 	adminUrl,
 	redirectUri,
 	siteSlug,
 }: {
-	from: string;
 	type: string;
 	adminUrl?: string;
 	redirectUri?: string;
 	siteSlug: string;
 } ) => {
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isStartedFromJetpackSite = from.startsWith( 'jetpack' ) || isOdysseyStats;
+	const isFromWPAdmin = config.isEnabled( 'is_running_in_jetpack_site' );
 	const statsPurchaseSuccess = type === 'free' ? 'free' : 'paid';
 
 	// If it's a siteless checkout, let it redirect to the thank you page,
@@ -110,7 +107,7 @@ const getRedirectUrl = ( {
 		return '';
 	}
 
-	if ( ! isStartedFromJetpackSite ) {
+	if ( ! isFromWPAdmin ) {
 		redirectUri = addPurchaseTypeToUri(
 			redirectUri || `/stats/day/${ siteSlug }`,
 			statsPurchaseSuccess
