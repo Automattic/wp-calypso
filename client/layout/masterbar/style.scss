@@ -344,7 +344,7 @@ body.is-mobile-app-view {
 	}
 
 	.gridicon {
-		fill: var(--color-masterbar-text); // only because safari gets currentColor wrong
+		fill: var(--color-masterbar-icon); // only because safari gets currentColor wrong
 
 		.masterbar--is-checkout & {
 			fill: var(--color-checkout-masterbar-text);
