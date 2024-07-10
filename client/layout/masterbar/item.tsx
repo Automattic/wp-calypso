@@ -76,15 +76,16 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 
 	renderSubItems() {
 		const { subItems } = this.props;
-
+		if ( ! subItems ) {
+			return null;
+		}
 		return (
 			<ul className="masterbar__item-subitems">
-				{ subItems &&
-					subItems.map( ( item, i ) => (
-						<li key={ i } className="masterbar__item-subitems-item">
-							<a href={ item.url }>{ item.label }</a>
-						</li>
-					) ) }
+				{ subItems.map( ( item, i ) => (
+					<li key={ i } className="masterbar__item-subitems-item">
+						<a href={ item.url }>{ item.label }</a>
+					</li>
+				) ) }
 			</ul>
 		);
 	}
