@@ -14,8 +14,7 @@ import { BASE_ROUTE } from './config';
 export function getFinalImporterUrl(
 	targetSlug: string,
 	fromSite: string,
-	platform: ImporterPlatform,
-	backToFlow?: string
+	platform: ImporterPlatform
 ) {
 	let importerUrl;
 	const encodedFromSite = encodeURIComponent( fromSite );
@@ -37,12 +36,6 @@ export function getFinalImporterUrl(
 		}
 	} else {
 		importerUrl = getWpOrgImporterUrl( targetSlug, platform );
-	}
-
-	if ( backToFlow ) {
-		importerUrl = addQueryArgs( importerUrl, {
-			backToFlow,
-		} );
 	}
 
 	return importerUrl;
