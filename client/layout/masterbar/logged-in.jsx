@@ -264,7 +264,7 @@ class MasterbarLoggedIn extends Component {
 			return (
 				<Item
 					tipTarget="Menu"
-					icon="menu"
+					icon={ <span className="dashicons-before dashicons-menu-alt" /> }
 					onClick={ this.handleToggleMobileMenu }
 					isActive={ this.isSidebarOpen() }
 					className="masterbar__item-menu"

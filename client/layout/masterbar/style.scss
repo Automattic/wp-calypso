@@ -453,11 +453,9 @@ body.is-mobile-app-view {
 		}
 	}
 
-	// mb text color fixes
+	// layout/mb overrides
 	&.mb {
-
-		// Reader icon is only available on Default interface sites, so we apply the Calypso color for consistency.
-		// https://github.com/Automattic/wp-calypso/pull/90136#issuecomment-2089512298
+		// Override the reader override
 		&.masterbar__reader:hover {
 			@include breakpoint-deprecated( ">480px" ) {
 				color: var(--color-masterbar-highlight);
@@ -540,6 +538,14 @@ body.is-mobile-app-view {
 				}
 			}
 
+			.dashicons-menu-alt {
+				padding-top: 0;
+				&::before {
+					top: 0;
+					font-size: unset;
+				}
+			}
+
 			.dashicons-before {
 				height: unset;
 				&::before {
@@ -550,6 +556,10 @@ body.is-mobile-app-view {
 					text-align: center;
 					top: 7px;
 					height: unset;
+				}
+
+				&:hover {
+					color: var(--color-masterbar-highlight);
 				}
 			}
 		}
