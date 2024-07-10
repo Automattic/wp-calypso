@@ -35,5 +35,5 @@ export default function useManagedSitesMap( { size = 100 }: Props ) {
 			}, {} ),
 			isPending,
 		};
-	}, [ data, isPending ] );
+	}, [ data?.sites, isPending ] );
 }

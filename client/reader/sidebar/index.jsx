@@ -294,7 +294,7 @@ export class ReaderSidebar extends Component {
 		const props = {
 			path: this.props.path,
 			onClick: this.handleClick,
-			requireBackLink: true,
+			requireBackLink: false,
 			siteTitle: i18n.translate( 'Reader' ),
 			backLinkHref: this.props.returnPath || '/sites',
 			onClose: this.props.onClose && ( () => this.props.onClose() ),

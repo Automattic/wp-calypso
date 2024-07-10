@@ -48,6 +48,10 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import StatsModuleAuthors from './features/modules/stats-authors';
 import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
+import StatsModuleDevices, {
+	StatsModuleUpgradeDevicesOverlay,
+} from './features/modules/stats-devices';
+import StatsModuleEmails from './features/modules/stats-emails';
 import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
@@ -61,9 +65,7 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
-import StatsModuleDevices from './stats-module-devices';
-import StatsModuleUpgradeOverlay from './stats-module-devices/stats-module-upgrade-overlay';
-import StatsModuleEmails from './stats-module-emails';
+import StatsModuleEmailsOld from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -595,9 +597,32 @@ class StatsSite extends Component {
 						) }
 
 						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ supportsEmailStats && (
+						{ supportsEmailStats && ! isNewStateEnabled && (
+							<StatsModuleEmailsOld // This is the old component & location. Remove and consolidate once stats/empty-module-traffic flag is removed
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									{
+										// half if odd number of modules after countries - UTM + Clicks + Authors or Clicks
+										'stats__flexible-grid-item--half':
+											( supportsUTMStats && ! this.isModuleHidden( 'authors' ) ) ||
+											( ! supportsUTMStats && this.isModuleHidden( 'authors' ) ),
+										// full if even number of modules after countries - UTM + Clicks or Authors + Clicks
+										'stats__flexible-grid-item--full':
+											( supportsUTMStats && this.isModuleHidden( 'authors' ) ) ||
+											( ! supportsUTMStats && ! this.isModuleHidden( 'authors' ) ),
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+
+						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
+						{ supportsEmailStats && isNewStateEnabled && (
 							<StatsModuleEmails
 								period={ this.props.period }
+								moduleStrings={ moduleStrings.emails }
 								query={ query }
 								className={ clsx(
 									{
@@ -704,7 +729,7 @@ class StatsSite extends Component {
 							/>
 						) }
 						{ ! supportsDevicesStats && isOldJetpack && (
-							<StatsModuleUpgradeOverlay
+							<StatsModuleUpgradeDevicesOverlay
 								className={ clsx(
 									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large'

@@ -16,12 +16,14 @@ export default function getJetpackCheckoutRedirectUrl( state, siteId ) {
 	const redirectMap = {
 		jetpack: 'admin.php?page=jetpack#/recommendations',
 		'jetpack-backup': 'admin.php?page=jetpack-backup',
+		'jetpack-social': 'admin.php?page=jetpack-social',
 	};
 
 	// Higher values are prioritized
 	const priority = {
 		jetpack: 1,
 		'jetpack-backup': 0,
+		'jetpack-social': 0,
 	};
 
 	let bestMatchingPlugin = null;

@@ -17,6 +17,7 @@ export default function useDetailsForm( { initialFormData }: Props ) {
 			logoUrl: '',
 			landingPageUrl: '',
 			country: '',
+			isGlobal: false,
 			isAvailable: true,
 			industries: [],
 			languagesSpoken: [],

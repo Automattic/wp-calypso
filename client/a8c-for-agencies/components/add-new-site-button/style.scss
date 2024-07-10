@@ -5,9 +5,17 @@
 	.gridicon {
 		margin-left: 6px;
 		top: 2px;
+		transition: transform 100ms ease-in-out;
+
+		&.reverse {
+			transform: rotate(180deg);
+		}
 	}
 }
-.site-selector-and-importer__popover {
+.popover.site-selector-and-importer__popover {
+	animation: fadeIn 0.2s ease-out;
+	margin-inline-start: 32px;
+
 	.popover__inner {
 		width: 280px;
 		text-align: unset;
@@ -46,12 +54,16 @@
 }
 
 .theme-a8c-for-agencies  .button.is-borderless.site-selector-and-importer__popover-button {
-	padding: 0 8px;
+	padding: 8px;
 	white-space: unset;
 	text-align: unset;
-	margin-block: 16px;
+	margin-block: 0;
 	width: 100%;
-	border-radius: 0;
+	border-radius: 4px;
+
+	&:hover {
+		background-color: var(--color-neutral-0);
+	}
 
 	@include break-large {
 		display: flex;

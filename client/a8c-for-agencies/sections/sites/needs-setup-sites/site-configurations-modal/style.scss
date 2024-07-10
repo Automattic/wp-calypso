@@ -50,16 +50,24 @@
 		.configure-your-site-modal-form__site-name-icon-wrapper {
 			display: flex;
 			justify-content: space-around;
-			margin-right: -5px;
 			margin-left: 5px;
+			width: 28px;
 		}
 
 		.configure-your-site-modal-form__site-name-success {
+			margin-right: -5px;
 			fill: var(--color-success);
 		}
 
 		.configure-your-site-modal-form__site-name-fail {
+			margin-right: -5px;
 			fill: var(--color-error);
+		}
+
+		.configure-your-site-modal-form__site-name-loading {
+			display: flex;
+			justify-content: space-around;
+			margin: 0;
 		}
 	}
 
@@ -70,6 +78,13 @@
 		line-height: 1.5;
 		color: var(--color-error);
 		margin-top: 4px;
+
+		.configure-your-site-modal-form__site-name-suggestion {
+			text-decoration: underline;
+			font-weight: bold;
+			color: var(--color-error);
+			cursor: pointer;
+		}
 
 		svg {
 			margin-right: 5px;

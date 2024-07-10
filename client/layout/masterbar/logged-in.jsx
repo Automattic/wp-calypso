@@ -8,9 +8,8 @@ import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Site from 'calypso/blocks/site';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
@@ -27,7 +26,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowGlobalSidebar,
-	getShouldShowSiteDashboard,
 	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -92,7 +90,6 @@ class MasterbarLoggedIn extends Component {
 		hasDismissedThePopover: PropTypes.bool,
 		isUserNewerThanNewNavigation: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
-		shouldShowSiteDashboard: PropTypes.bool,
 	};
 
 	subscribeToViewPortChanges() {
@@ -782,15 +779,8 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const {
-			isInEditor,
-			isCheckout,
-			isCheckoutPending,
-			isCheckoutFailed,
-			loadHelpCenterIcon,
-			currentSelectedSiteId,
-			isSiteDashboardView,
-		} = this.props;
+		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
+			this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
@@ -869,19 +859,13 @@ class MasterbarLoggedIn extends Component {
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderSidebarMobileMenu() }
 							{ this.renderGlobalMySites() }
-							{ isSiteDashboardView && currentSelectedSiteId && (
-								<Site
-									siteId={ currentSelectedSiteId }
-									href={ this.getHomeUrl() }
-									isSelected
-									inlineBadges
-								/>
-							) }
+							{ this.renderReader() }
 						</div>
 						<div className="masterbar__section masterbar__section--right">
 							{ this.renderSearch() }
 							{ this.renderCart() }
-							{ this.renderCommandPaletteSearch() }
+							{ this.renderMe() }
+							{ loadHelpCenterIcon && this.renderHelpCenter() }
 							{ this.renderNotifications() }
 						</div>
 					</Masterbar>
@@ -990,12 +974,6 @@ export default connect(
 			sectionGroup,
 			sectionName
 		);
-		const shouldShowSiteDashboard = getShouldShowSiteDashboard(
-			state,
-			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
-		);
 		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 			state,
 			currentSelectedSiteId,
@@ -1036,7 +1014,6 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
-			isSiteDashboardView: shouldShowSiteDashboard,
 			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
 		};

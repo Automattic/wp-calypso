@@ -44,12 +44,20 @@ class PluginNotices extends Component {
 	}
 
 	getCurrentNotices = () => {
-		const { completedNotices, errorNotices, inProgressNotices, pluginId, siteId } = this.props;
+		const {
+			completedNotices,
+			incompletedNotices,
+			errorNotices,
+			inProgressNotices,
+			pluginId,
+			siteId,
+		} = this.props;
 
 		return {
 			errors: filterNotices( errorNotices, siteId, pluginId ),
 			inProgress: filterNotices( inProgressNotices, siteId, pluginId ),
 			completed: filterNotices( completedNotices, siteId, pluginId ),
+			incompleted: filterNotices( incompletedNotices, siteId, pluginId ),
 		};
 	};
 
@@ -112,6 +120,14 @@ class PluginNotices extends Component {
 				this.getMessage( currentNotices.errors, this.errorMessage, 'error' ),
 				{
 					onDismissClick: () => this.props.removePluginStatuses( 'error' ),
+					id: 'plugin-notice',
+				}
+			);
+		} else if ( currentNotices.incompleted.length > 0 ) {
+			this.props.errorNotice(
+				this.getMessage( currentNotices.incompleted, this.errorMessage, 'incompleted' ),
+				{
+					onDismissClick: () => this.props.removePluginStatuses( 'incompleted' ),
 					id: 'plugin-notice',
 				}
 			);
@@ -808,11 +824,15 @@ class PluginNotices extends Component {
 
 	singleErrorMessage = ( action, translateArg, sampleLog ) => {
 		const { translate } = this.props;
-		const additionalExplanation = this.additionalExplanation( sampleLog.error.error );
+
+		//Check that error code exists in the log, if not, use 'unknown_error'
+		const errorCode = sampleLog.error.error || 'unknown_error';
+
+		const additionalExplanation = this.additionalExplanation( errorCode );
 
 		switch ( action ) {
 			case INSTALL_PLUGIN:
-				switch ( sampleLog.error.error ) {
+				switch ( errorCode ) {
 					case 'unauthorized_full_access':
 						return translate(
 							'Error installing %(plugin)s on %(site)s, remote management is off.',
@@ -845,7 +865,7 @@ class PluginNotices extends Component {
 				}
 
 			case REMOVE_PLUGIN:
-				switch ( sampleLog.error.error ) {
+				switch ( errorCode ) {
 					case 'unauthorized_full_access':
 						return translate( 'Error removing %(plugin)s on %(site)s, remote management is off.', {
 							args: translateArg,
@@ -857,7 +877,7 @@ class PluginNotices extends Component {
 				}
 
 			case UPDATE_PLUGIN:
-				switch ( sampleLog.error.error ) {
+				switch ( errorCode ) {
 					case 'unauthorized_full_access':
 						return translate( 'Error updating %(plugin)s on %(site)s, remote management is off.', {
 							args: translateArg,
@@ -878,7 +898,7 @@ class PluginNotices extends Component {
 				}
 
 			case ACTIVATE_PLUGIN:
-				switch ( sampleLog.error.error ) {
+				switch ( errorCode ) {
 					case 'unauthorized_full_access':
 						return translate(
 							'Error activating %(plugin)s on %(site)s, remote management is off.',
@@ -893,7 +913,7 @@ class PluginNotices extends Component {
 				}
 
 			case DEACTIVATE_PLUGIN:
-				switch ( sampleLog.error.error ) {
+				switch ( errorCode ) {
 					case 'unauthorized_full_access':
 						return translate(
 							'Error deactivating %(plugin)s on %(site)s, remote management is off.',
@@ -908,7 +928,7 @@ class PluginNotices extends Component {
 				}
 
 			case ENABLE_AUTOUPDATE_PLUGIN:
-				switch ( sampleLog.error.error ) {
+				switch ( errorCode ) {
 					case 'unauthorized_full_access':
 						return translate(
 							'Error enabling autoupdates for %(plugin)s on %(site)s, remote management is off.',
@@ -926,7 +946,7 @@ class PluginNotices extends Component {
 				}
 
 			case DISABLE_AUTOUPDATE_PLUGIN:
-				switch ( sampleLog.error.error ) {
+				switch ( errorCode ) {
 					case 'unauthorized_full_access':
 						return translate(
 							'Error disabling autoupdates for %(plugin)s on %(site)s, remote management is off.',
@@ -958,6 +978,7 @@ class PluginNotices extends Component {
 export default connect(
 	( state ) => ( {
 		completedNotices: getPluginStatusesByType( state, 'completed' ),
+		incompletedNotices: getPluginStatusesByType( state, 'incompleted' ),
 		errorNotices: getPluginStatusesByType( state, 'error' ),
 		inProgressNotices: getPluginStatusesByType( state, 'inProgress' ),
 		siteId: getSelectedSiteId( state ),

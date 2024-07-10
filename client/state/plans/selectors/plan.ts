@@ -29,6 +29,7 @@ export const getPlan = createSelector(
 );
 
 /**
+ * @deprecated but still in use
  * Returns a plan searched by its slug
  * @param  {Object} state      global state
  * @param  {string} planSlug the plan slug

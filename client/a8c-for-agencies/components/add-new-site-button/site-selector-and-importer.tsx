@@ -1,7 +1,7 @@
 import { Popover, Gridicon, Button, WordPressLogo, JetpackLogo } from '@automattic/components';
-import { Icon, navigation } from '@wordpress/icons';
+import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
@@ -24,11 +24,12 @@ const ICON_SIZE = 32;
 
 type PendingSite = { features: { wpcom_atomic: { state: string; license_key: string } } };
 
-export default function SiteSelectorAndImporter( {
-	showMainButtonLabel,
-}: {
+type Props = {
+	onWPCOMImport?: ( blogIds: number[] ) => void;
 	showMainButtonLabel: boolean;
-} ) {
+};
+
+export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMImport }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -60,7 +61,7 @@ export default function SiteSelectorAndImporter( {
 		icon: JSX.Element;
 		iconClassName?: string;
 		heading: string;
-		description: string;
+		description: string | TranslateResult;
 		buttonProps?: React.ComponentProps< typeof Button >;
 		extraContent?: JSX.Element;
 	} ) => {
@@ -79,8 +80,6 @@ export default function SiteSelectorAndImporter( {
 			</Button>
 		);
 	};
-
-	const chevronIcon = isMenuVisible ? 'chevron-up' : 'chevron-down';
 
 	const pressableOwnership = usePressableOwnershipType();
 
@@ -102,15 +101,19 @@ export default function SiteSelectorAndImporter( {
 				onClick={ toggleMenu }
 			>
 				{ showMainButtonLabel ? translate( 'Add sites' ) : null }
-				<Gridicon icon={ showMainButtonLabel ? chevronIcon : 'plus' } />
+				<Gridicon
+					className={ clsx( { reverse: showMainButtonLabel && isMenuVisible } ) }
+					icon={ showMainButtonLabel ? 'chevron-down' : 'plus' }
+				/>
 			</Button>
 			<Popover
 				className="site-selector-and-importer__popover"
 				context={ popoverMenuContext?.current }
-				position="bottom right"
 				isVisible={ isMenuVisible }
 				closeOnEsc
 				onClose={ toggleMenu }
+				autoPosition={ false }
+				position="bottom left"
 			>
 				<div className="site-selector-and-importer__popover-content">
 					<div className="site-selector-and-importer__popover-column">
@@ -120,7 +123,10 @@ export default function SiteSelectorAndImporter( {
 						{ menuItem( {
 							icon: <WordPressLogo />,
 							heading: translate( 'Via WordPress.com' ),
-							description: translate( 'Import sites bought on WordPress.com' ),
+							description: translate( 'Import sites bought on{{nbsp/}}WordPress.com', {
+								components: { nbsp: <>&nbsp;</> },
+								comment: 'nbsp is a non-breaking space character',
+							} ),
 							buttonProps: {
 								onClick: handleImportFromWPCOM,
 							},
@@ -128,7 +134,10 @@ export default function SiteSelectorAndImporter( {
 						{ menuItem( {
 							icon: <A4ALogo />,
 							heading: translate( 'Via the Automattic plugin' ),
-							description: translate( 'Connect with the Automattic for Agencies plugin' ),
+							description: translate( 'Connect with the Automattic for Agencies{{nbsp/}}plugin', {
+								components: { nbsp: <>&nbsp;</> },
+								comment: 'nbsp is a non-breaking space character',
+							} ),
 							buttonProps: {
 								onClick: () => {
 									setShowA4AConnectionModal( true );
@@ -147,12 +156,6 @@ export default function SiteSelectorAndImporter( {
 								},
 							},
 						} ) }
-						{ menuItem( {
-							icon: navigation,
-							iconClassName: 'site-selector-and-importer__popover-button-wp-icon',
-							heading: translate( 'Via URL' ),
-							description: translate( 'Type in the address of your site' ),
-						} ) }
 					</div>
 					<div className="site-selector-and-importer__popover-column">
 						<div className="site-selector-and-importer__popover-column-heading">
@@ -161,7 +164,7 @@ export default function SiteSelectorAndImporter( {
 						{ menuItem( {
 							icon: <WordPressLogo />,
 							heading: translate( 'WordPress.com' ),
-							description: translate( 'Best for large-scale businesses and major eCommerce sites' ),
+							description: translate( 'Optimized and hassle-free hosting for business websites' ),
 							buttonProps: {
 								href: hasPendingWPCOMSites
 									? A4A_SITES_LINK_NEEDS_SETUP
@@ -186,7 +189,7 @@ export default function SiteSelectorAndImporter( {
 						{ menuItem( {
 							icon: <img src={ pressableIcon } alt="" />,
 							heading: translate( 'Pressable' ),
-							description: translate( 'Optimized and hassle-free hosting for business websites' ),
+							description: translate( 'Best for large-scale businesses and major eCommerce sites' ),
 							buttonProps: {
 								href:
 									pressableOwnership === 'regular'
@@ -208,7 +211,10 @@ export default function SiteSelectorAndImporter( {
 			) }
 
 			{ showImportFromWPCOMModal && (
-				<ImportFromWPCOMModal onClose={ () => setShowImportFromWPCOMModal( false ) } />
+				<ImportFromWPCOMModal
+					onClose={ () => setShowImportFromWPCOMModal( false ) }
+					onImport={ onWPCOMImport }
+				/>
 			) }
 		</>
 	);

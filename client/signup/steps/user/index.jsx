@@ -15,7 +15,6 @@ import SignupForm from 'calypso/blocks/signup-form';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
-import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isA4AOAuth2Client,
@@ -148,21 +147,12 @@ export class UserStep extends Component {
 		recaptchaClientId: null,
 	};
 
-	componentDidUpdate() {
-		if ( this.props.step?.status === 'completed' ) {
+	componentDidUpdate( prevProps ) {
+		if (
+			prevProps.step?.status !== this.props.step?.status &&
+			this.props.step?.status === 'completed'
+		) {
 			this.props.goToNextStep();
-			return;
-		}
-
-		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
-			// It looks like the user just completed the User Registartion Step
-			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
-			const url = new URL( window.location );
-			const searchParams = url.searchParams;
-			searchParams.set( 'user_completed', true );
-			url.search = searchParams.toString();
-			// Redirect to itself and append ?user_completed
-			window.location.replace( url.toString() );
 		}
 	}
 
@@ -482,10 +472,6 @@ export class UserStep extends Component {
 		return this.props.step && 'completed' === this.props.step.status;
 	}
 
-	userCreationCompletedAndHasHistory( props ) {
-		return 'completed' === props.step?.status && detectHistoryNavigation.loadedViaHistory();
-	}
-
 	userCreationPending() {
 		return this.props.step && 'pending' === this.props.step.status;
 	}
@@ -594,10 +580,6 @@ export class UserStep extends Component {
 
 		if ( this.userCreationPending() ) {
 			return translate( 'Creating Your Account…' );
-		}
-
-		if ( this.userCreationComplete() ) {
-			return translate( 'Account created - Go to next step' );
 		}
 
 		return translate( 'Create your account' );
@@ -749,6 +731,10 @@ export class UserStep extends Component {
 	}
 
 	render() {
+		if ( this.userCreationComplete() ) {
+			return null; // return nothing so that we don't see the completed signup form flash.
+		}
+
 		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
 		}
@@ -759,10 +745,6 @@ export class UserStep extends Component {
 
 		if ( isGravatarOAuth2Client( this.props.oauth2Client ) && ! this.props.userLoggedIn ) {
 			return this.renderGravatarSignupStep();
-		}
-
-		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
-			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
 		// TODO: decouple hideBack flag from the flow name.
