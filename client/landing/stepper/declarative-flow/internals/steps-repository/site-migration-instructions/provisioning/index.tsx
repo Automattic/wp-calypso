@@ -42,9 +42,7 @@ export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
 	// Error handler.
 	if ( currentAction.status === 'error' ) {
 		const contactClickHandler = () => {
-			recordTracksEvent(
-				'calypso_onboarding_site_migration_instructions_questions_happiness_engineer'
-			);
+			recordTracksEvent( 'calypso_onboarding_site_migration_instructions_error_contact_support' );
 		};
 
 		text = translate(
