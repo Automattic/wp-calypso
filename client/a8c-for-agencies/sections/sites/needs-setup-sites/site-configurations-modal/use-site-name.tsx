@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
@@ -35,11 +35,14 @@ const useCheckSiteAvailability = (
 	skipAvailability: boolean
 ) => {
 	const agencyId = useSelector( getActiveAgencyId );
+	const siteNameRef = useRef( '' );
 	const [ availabilityState, setAvilabilityState ] = useState( {
 		isSiteNameAvailiable: true,
 		isCheckingSiteAvailability: false,
 		siteNameSuggestion: '',
 	} );
+
+	siteNameRef.current = siteName;
 
 	useEffect( () => {
 		if ( skipAvailability || availabilityState.siteNameSuggestion === siteName ) {
@@ -60,11 +63,13 @@ const useCheckSiteAvailability = (
 		} );
 
 		checkSiteAvailability( agencyId, siteId, siteName ).then( ( result ) => {
-			setAvilabilityState( {
-				isSiteNameAvailiable: result.valid,
-				isCheckingSiteAvailability: false,
-				siteNameSuggestion: result.siteNameSuggestion,
-			} );
+			if ( siteName === siteNameRef.current ) {
+				setAvilabilityState( {
+					isSiteNameAvailiable: result.valid,
+					isCheckingSiteAvailability: false,
+					siteNameSuggestion: result.siteNameSuggestion,
+				} );
+			}
 		} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ agencyId, siteId, siteName, skipAvailability ] );
