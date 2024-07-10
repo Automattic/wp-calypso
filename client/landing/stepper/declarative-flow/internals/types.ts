@@ -121,7 +121,13 @@ export type Flow = {
 	 * @returns An object describing the configuration.
 	 * For now only extraQueryParams is supported.
 	 */
-	useLoginParams?: () => { extraQueryParams: Record< string, string | number > };
+	useLoginParams?: () => {
+		/**
+		 * A custom login path to use instead of the default login path.
+		 */
+		customLoginPath?: string;
+		extraQueryParams: Record< string, string | number >;
+	};
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;
