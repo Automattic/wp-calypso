@@ -12,6 +12,7 @@ import { AddOns, Plans } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
@@ -109,6 +110,7 @@ function useDowngradeHandler( {
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
 	const { setShowHelpCenter, setInitialRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
+	const translate = useTranslate();
 	return useCallback(
 		( planSlug: PlanSlug ) => {
 			// A downgrade to the free plan is essentially cancelling the current plan.
@@ -126,11 +128,11 @@ function useDowngradeHandler( {
 				'disable-gpt': 'true',
 				'skip-resources': 'true',
 			} ).toString() }`;
-			setMessage( 'I want to downgrade my plan' );
+			setMessage( translate( 'I want to downgrade my plan.' ) );
 			setInitialRoute( chatUrl );
 			setShowHelpCenter( true );
 		},
-		[ currentPlan?.purchaseId, setInitialRoute, setMessage, setShowHelpCenter, siteSlug ]
+		[ currentPlan?.purchaseId, setInitialRoute, setMessage, setShowHelpCenter, siteSlug, translate ]
 	);
 }
 
