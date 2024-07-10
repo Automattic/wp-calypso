@@ -207,6 +207,11 @@ body.is-mobile-app-view {
 	}
 
 	&--left {
+		.masterbar__item-subitems {
+			left: 0;
+		}
+
+
 		@include breakpoint-deprecated( "<660px" ) {
 			a .masterbar__item-content {
 				display: none;
@@ -218,6 +223,9 @@ body.is-mobile-app-view {
 		flex: 1;
 		justify-content: flex-end;
 
+		.masterbar__item-subitems {
+			right: 0;
+		}
 		@include breakpoint-deprecated( ">480px" ) {
 			flex-grow: 0;
 		}
@@ -259,17 +267,54 @@ body.is-mobile-app-view {
 	> a {
 		display: flex;
 		align-items: center;
+		justify-content: center;
+		gap: 5px;
 	}
 
 	.masterbar__item-subitems {
 		margin: 0;
-		padding: 0;
+		padding: 6px 0;
 		box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-		background: #2c3338;
 		display: none;
 		position: absolute;
 		float: none;
+		min-width: 100%;
+		text-align: left;
+		top: var(--masterbar-height);
+		background: var(--color-masterbar-item-hover-background);
+		list-style: none;
+		clear: none;
+		text-indent: 0;
+
+		.masterbar__item-subitems-item {
+			margin-right: 6px;
+			white-space: nowrap;
+			min-width: 140px;
+			line-height: 2;
+			a {
+				display: inline-block;
+				width: 100%;
+				padding: 0 0 0 6px;
+				color: var(--color-masterbar-text);
+			}
+
+			&:hover {
+				background: var(--color-masterbar-item-hover-background);
+				a {
+					color: var(--color-masterbar-highlight);
+				}
+			}
+
+		}
+
+		@media only screen and (max-width: 782px) {
+			position: fixed;
+			.masterbar__item-subitems-item {
+				padding: 8px 16px;
+			}
+		}
 	}
+
 
 	.masterbar--is-checkout & {
 		height: var(--masterbar-height);
@@ -323,30 +368,9 @@ body.is-mobile-app-view {
 	&:hover {
 		.masterbar__item-subitems {
 			display: block;
-			background: var(--color-masterbar-background);
-			list-style: none;
-			clear: none;
-			text-indent: 0;
 			z-index: 99999;
-
 		}
-		.masterbar__item-subitems-item {
-			line-height: 2;
-			height: 26px;
-			white-space: nowrap;
-			min-width: 140px;
-			a {
-				padding-inline: 10px;
-				color: var(--color-masterbar-text);
-			}
 
-			&:hover {
-				background: var(--color-masterbar-item-hover-background);
-				a {
-					color: var(--color-masterbar-highlight);
-				}
-			}
-		}
 
 		@include breakpoint-deprecated( ">480px" ) {
 			background: var(--color-masterbar-item-hover-background);
@@ -491,10 +515,6 @@ body.is-mobile-app-view {
 
 		.dashicons-plus {
 			padding-top: 2px;
-		}
-
-		.dashicons-before::before {
-			margin-right: 6px;
 		}
 
 		&:hover {

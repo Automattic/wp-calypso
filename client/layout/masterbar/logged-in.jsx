@@ -452,7 +452,25 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderProfileMenu() {
-		const { translate, user } = this.props;
+		const { translate, user, siteUrl } = this.props;
+		// todo: needs aligning with wp-admin side
+		const profileActions = [
+			{
+				// todo: support: toplabel: user.display_name,
+				label: translate( 'Edit WordPress.com Profile' ),
+				url: '/me',
+			},
+			{
+				label: translate( 'Edit Site Profile' ),
+				url: siteUrl + '/wp-admin/profile.php',
+			},
+			{
+				label: translate( 'Log Out' ),
+				// todo: support: onClick: dispatch(redirectToLogout()),
+				url: 'https://wordpress.com/wp-login.php?action=logout',
+				// todo: support tooltip: translate( 'Log out of WordPress.com' ),
+			},
+		];
 		return (
 			<Item
 				tipTarget="me"
@@ -462,6 +480,16 @@ class MasterbarLoggedIn extends Component {
 				className="masterbar__item-howdy"
 				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 				preloadSection={ this.preloadMe }
+				subItems={ profileActions }
+				// todo: support:
+				/*subItemIcon={
+					<Gravatar
+						className="masterbar__item-howdy-gravatar"
+						user={ user }
+						alt={ translate( 'My Profile' ) }
+						size={ 46 }
+					/>
+				}*/
 			>
 				<span className="masterbar__item-howdy-howdy">
 					{ translate( 'Howdy, %(display_name)s', {
