@@ -29,6 +29,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
+import { getAccountStatus } from '../../lib/get-account-status';
 import ReferralDetails from '../../referral-details';
 import ReferralsFooter from '../footer';
 import AutomatedReferralComingSoonBanner from './automated-referral-coming-soon-banner';
@@ -61,7 +62,9 @@ export default function ReferralsOverview( {
 			: translate( 'Referrals' );
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
-	const referralsAvailable = tipaltiData.statusType === 'success';
+	const accountStatus = getAccountStatus( tipaltiData, translate );
+	const referralsAvailable = accountStatus?.statusType === 'success';
+	const actionRequiredNotice = ! isFetching && accountStatus?.statusType === 'warning';
 
 	const { data: referrals, isFetching: isFetchingReferrals } =
 		useFetchReferrals( isAutomatedReferral );
@@ -95,7 +98,7 @@ export default function ReferralsOverview( {
 							onClose={ () => setReferralEmail( '' ) }
 						/>
 					) }
-					{ ! referralsAvailable && (
+					{ actionRequiredNotice && (
 						<div className="referrals-overview__notice">
 							<NoticeBanner
 								level="warning"
