@@ -26,7 +26,10 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
-import { STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from 'calypso/my-sites/stats/constants';
+import {
+	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
+	STAT_TYPE_EMAILS_SUMMARY,
+} from 'calypso/my-sites/stats/constants';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -225,6 +228,7 @@ class StatsSite extends Component {
 			supportsDevicesStatsFeature,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
+			gateEmails,
 		} = this.props;
 		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -619,7 +623,7 @@ class StatsSite extends Component {
 						) }
 
 						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ supportsEmailStats && isNewStateEnabled && (
+						{ supportsEmailStats && isNewStateEnabled && ! gateEmails && (
 							<StatsModuleEmails
 								period={ this.props.period }
 								moduleStrings={ moduleStrings.emails }
@@ -903,6 +907,9 @@ export default connect(
 			STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS
 		);
 
+		// Determine if the STAT_TYPE_SEARCH_TERMS stat should be gated for the current site.
+		const gateEmails = shouldGateStats( STAT_TYPE_EMAILS_SUMMARY );
+
 		return {
 			canUserViewStats,
 			isAtomic: isAtomicSite( state, siteId ),
@@ -923,6 +930,7 @@ export default connect(
 			supportsDevicesStatsFeature: supportsDevicesStats,
 			isOldJetpack,
 			shouldForceDefaultDateRange,
+			gateEmails,
 		};
 	},
 	{
