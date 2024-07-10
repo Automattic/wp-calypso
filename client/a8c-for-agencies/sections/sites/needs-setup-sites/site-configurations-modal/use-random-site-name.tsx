@@ -6,7 +6,7 @@ export const getRandomSiteBaseUrl = async ( title: string ) => {
 	try {
 		const { body: urlSuggestions } = await wpcom.req.get( {
 			apiNamespace: 'rest/v1.1',
-			path: `/domains/suggestions?http_envelope=1&query=${ title }&quantity=10&include_wordpressdotcom=true&include_dotblogsubdomain=false&vendor=dot`,
+			path: `/domains/suggestions?http_envelope=1&query=${ title }&quantity=1&include_wordpressdotcom=true&include_dotblogsubdomain=false&vendor=dot`,
 		} );
 		const validUrlWpComUrl = urlSuggestions.find( ( suggestion: { domain_name: string } ) =>
 			suggestion.domain_name.includes( 'wordpress.com' )
@@ -51,3 +51,6 @@ export const useRandomSiteName = () => {
 
 	return { randomSiteName, isRandomSiteNameLoading };
 };
+
+// https://public-api.wordpress.com/rest/v1.1/domains/suggestions?http_envelope=1&query=test&quantity=1&include_wordpressdotcom=true&include_dotblogsubdomain=false&vendor=dot
+// https://public-api.wordpress.com/rest/v1.1domains/suggestions?http_envelope=1&query=test&quantity=1&include_wordpressdotcom=true&include_dotblogsubdomain=false&vendor=dot
