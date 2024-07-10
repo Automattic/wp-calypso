@@ -63,7 +63,12 @@ function ConnectDomainStep( {
 	const baseClassName = 'connect-domain-step';
 	if ( stepsDefinition[ pageSlug ] === undefined ) {
 		// eslint-disable-next-line no-console
-		console.error( 'Tried to set invalid pageSlug in ConnectDomainStep', pageSlug, firstStep );
+		console.error(
+			'Tried to set invalid pageSlug in ConnectDomainStep',
+			pageSlug,
+			firstStep,
+			domain
+		);
 	}
 	const currentStep = stepsDefinition[ pageSlug ] || stepsDefinition[ firstStep ];
 	const isStepStart = stepType.START === currentStep.step;
