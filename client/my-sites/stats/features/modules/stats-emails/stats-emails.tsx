@@ -87,6 +87,7 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 					showSummaryLink
 					className={ className }
 					hasNoBackground
+					skipQuery
 				/>
 			) }
 		</>
