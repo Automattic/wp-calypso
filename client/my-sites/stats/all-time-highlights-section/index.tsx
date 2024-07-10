@@ -19,7 +19,11 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
-import { STAT_TYPE_INSIGHTS } from '../constants';
+import {
+	STAT_TYPE_INSIGHTS_ALL_TIME_STATS,
+	STAT_TYPE_INSIGHTS_MOST_POPULAR_TIME,
+	STAT_TYPE_INSIGHTS_MOST_POPULAR_DAY,
+} from '../constants';
 import { useShouldGateStats } from '../hooks/use-should-gate-stats';
 import StatsCardUpsell from '../stats-card-upsell';
 import PostCardsGroup from './post-cards-group';
@@ -87,6 +91,7 @@ export default function AllTimeHighlightsSection( {
 	const mostPopularTimeItems = useMemo( () => {
 		return {
 			id: 'mostPopularTime',
+			statType: STAT_TYPE_INSIGHTS_MOST_POPULAR_TIME,
 			loading: isInsightsLoading,
 			heading: translate( 'Most popular time' ),
 			items: [
@@ -134,6 +139,7 @@ export default function AllTimeHighlightsSection( {
 
 		return {
 			id: 'bestViewsEver',
+			statType: STAT_TYPE_INSIGHTS_MOST_POPULAR_DAY,
 			heading: translate( 'Most popular day' ),
 			items: [
 				{
@@ -155,25 +161,13 @@ export default function AllTimeHighlightsSection( {
 		};
 	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal, userLocale ] );
 
-	// TODO: Investigate granularity on Insights page.
-	// Do we want to get granular on this page? It's probably not necessary yet.
-	const shouldLockCards = useShouldGateStats( STAT_TYPE_INSIGHTS );
-
 	const highlightCardsMobile = (
 		<div className="highlight-cards-mobile">
 			<h3 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h3>
 			<DotPager>
-				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ shouldLockCards } />
-				<MostPopularDayTimeCard
-					cardInfo={ mostPopularTimeItems }
-					siteId={ siteId }
-					isLocked={ shouldLockCards }
-				/>
-				<MostPopularDayTimeCard
-					cardInfo={ bestViewsEverItems }
-					siteId={ siteId }
-					isLocked={ shouldLockCards }
-				/>
+				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } />
+				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } siteId={ siteId } />
+				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } siteId={ siteId } />
 			</DotPager>
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
@@ -183,17 +177,9 @@ export default function AllTimeHighlightsSection( {
 		<div className="highlight-cards">
 			<h3 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h3>
 			<div className="highlight-cards-list">
-				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } isLocked={ shouldLockCards } />
-				<MostPopularDayTimeCard
-					cardInfo={ mostPopularTimeItems }
-					siteId={ siteId }
-					isLocked={ shouldLockCards }
-				/>
-				<MostPopularDayTimeCard
-					cardInfo={ bestViewsEverItems }
-					siteId={ siteId }
-					isLocked={ shouldLockCards }
-				/>
+				<AllTimeStatsCard infoItems={ infoItems } siteId={ siteId } />
+				<MostPopularDayTimeCard cardInfo={ mostPopularTimeItems } siteId={ siteId } />
+				<MostPopularDayTimeCard cardInfo={ bestViewsEverItems } siteId={ siteId } />
 			</div>
 			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
@@ -234,14 +220,15 @@ type InfoItem = {
 type AllTimeStatsCardProps = {
 	infoItems: InfoItem[];
 	siteId: number;
-	isLocked: boolean;
 };
 
-function AllTimeStatsCard( { infoItems, siteId, isLocked }: AllTimeStatsCardProps ) {
+function AllTimeStatsCard( { infoItems, siteId }: AllTimeStatsCardProps ) {
 	const translate = useTranslate();
+	const shouldLockCard = useShouldGateStats( STAT_TYPE_INSIGHTS_ALL_TIME_STATS );
+
 	const heading = translate( 'All-time stats' );
 	const wrapperClassName = clsx( 'highlight-card', {
-		'highlight-card--has-overlay': isLocked,
+		'highlight-card--has-overlay': shouldLockCard,
 	} );
 
 	return (
@@ -267,7 +254,9 @@ function AllTimeStatsCard( { infoItems, siteId, isLocked }: AllTimeStatsCardProp
 						} ) }
 				</div>
 			</div>
-			{ isLocked && <StatsCardUpsell statType={ STAT_TYPE_INSIGHTS } siteId={ siteId } /> }
+			{ shouldLockCard && (
+				<StatsCardUpsell statType={ STAT_TYPE_INSIGHTS_ALL_TIME_STATS } siteId={ siteId } />
+			) }
 		</Card>
 	);
 }
@@ -282,17 +271,19 @@ type CardInfoItem = {
 type MostPopularDayTimeCardProps = {
 	cardInfo: {
 		id: string;
+		statType: string;
 		loading?: boolean;
 		heading: string;
 		items: CardInfoItem[];
 	};
 	siteId: number;
-	isLocked: boolean;
 };
 
-function MostPopularDayTimeCard( { cardInfo, siteId, isLocked }: MostPopularDayTimeCardProps ) {
+function MostPopularDayTimeCard( { cardInfo, siteId }: MostPopularDayTimeCardProps ) {
+	const shouldLockCard = useShouldGateStats( cardInfo.statType );
+
 	const wrapperClassName = clsx( 'highlight-card', {
-		'highlight-card--has-overlay': isLocked,
+		'highlight-card--has-overlay': shouldLockCard,
 	} );
 
 	return (
@@ -311,7 +302,7 @@ function MostPopularDayTimeCard( { cardInfo, siteId, isLocked }: MostPopularDayT
 					} ) }
 				</div>
 			</div>
-			{ isLocked && <StatsCardUpsell statType={ STAT_TYPE_INSIGHTS } siteId={ siteId } /> }
+			{ shouldLockCard && <StatsCardUpsell statType={ cardInfo.statType } siteId={ siteId } /> }
 		</Card>
 	);
 }
