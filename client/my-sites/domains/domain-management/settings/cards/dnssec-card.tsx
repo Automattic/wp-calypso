@@ -3,7 +3,8 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Accordion from 'calypso/components/domains/accordion';
-import wpcom from 'calypso/lib/wp';
+import useDisableDnssecMutation from 'calypso/data/domains/dnssec/use-disable-dnssec-mutation';
+import useEnableDnssecMutation from 'calypso/data/domains/dnssec/use-enable-dnssec-mutation';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setDnssecRecords } from 'calypso/state/sites/domains/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -22,6 +23,40 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 	const [ dnskey, setDnskey ] = useState( domain.dnssecRecords?.dnskey );
 	const [ dsData, setDsData ] = useState( domain.dnssecRecords?.dsData );
 
+	const { disableDnssec } = useDisableDnssecMutation( {
+		onSuccess() {
+			setIsUpdating( false );
+			setIsEnabled( false );
+			dispatch( setDnssecRecords( selectedSiteId, domain.name, null ) );
+		},
+		onError() {
+			setIsUpdating( false );
+		},
+	} );
+
+	const { enableDnssec } = useEnableDnssecMutation( {
+		onSuccess( success: any ) {
+			// Key-Systems only returns DS records with digest types 2 and 4, so let's show only those here
+			// (a DS record with digest type 1 is also returned by the endpoint)
+			const dsRdata = success.data?.cryptokeys?.[ 0 ].ds_data
+				?.filter( ( dsData: any ) => [ 2, 4 ].includes( dsData.digest_type ) )
+				.map( ( dsData: any ) => dsData.rdata );
+			const dnssecRecords = {
+				dnskey: success.data?.cryptokeys?.[ 0 ].dnskey?.rdata,
+				dsData: dsRdata,
+			};
+
+			dispatch( setDnssecRecords( selectedSiteId, domain.name, dnssecRecords ) );
+			setDnskey( success.data?.cryptokeys?.[ 0 ].dnskey?.rdata );
+			setDsData( dsRdata );
+			setIsUpdating( false );
+			setIsEnabled( true );
+		},
+		onError() {
+			setIsUpdating( false );
+		},
+	} );
+
 	const onToggle = () => {
 		setIsUpdating( true );
 
@@ -33,46 +68,9 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 		);
 
 		if ( isEnabled ) {
-			wpcom.req
-				.post( {
-					method: 'DELETE',
-					path: `/domains/dnssec/${ domain.name }`,
-					apiNamespace: 'wpcom/v2',
-				} )
-				.then( () => {
-					setIsUpdating( false );
-					setIsEnabled( false );
-					dispatch( setDnssecRecords( selectedSiteId, domain.name, null ) );
-				} )
-				.catch( () => {
-					setIsUpdating( false );
-				} );
+			disableDnssec( domain.name );
 		} else {
-			wpcom.req
-				.post( {
-					path: `/domains/dnssec/${ domain.name }`,
-					apiNamespace: 'wpcom/v2',
-				} )
-				.then( ( success: any ) => {
-					// Key-Systems only returns DS records with digest types 2 and 4, so let's show only those here
-					// (a DS record with digest type 1 is also returned by the endpoint)
-					const dsRdata = success.data?.cryptokeys?.[ 0 ].ds_data
-						?.filter( ( dsData: any ) => [ 2, 4 ].includes( dsData.digest_type ) )
-						.map( ( dsData: any ) => dsData.rdata );
-					const dnssecRecords = {
-						dnskey: success.data?.cryptokeys?.[ 0 ].dnskey?.rdata,
-						dsData: dsRdata,
-					};
-
-					dispatch( setDnssecRecords( selectedSiteId, domain.name, dnssecRecords ) );
-					setDnskey( success.data?.cryptokeys?.[ 0 ].dnskey?.rdata );
-					setDsData( dsRdata );
-					setIsUpdating( false );
-					setIsEnabled( true );
-				} )
-				.catch( () => {
-					setIsUpdating( false );
-				} );
+			enableDnssec( domain.name );
 		}
 	};
 
