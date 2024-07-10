@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -60,6 +61,8 @@ export default function ReferralsOverview( {
 			: translate( 'Referrals' );
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
+	const referralsAvailable = tipaltiData.statusType === 'success';
+
 	const { data: referrals, isFetching: isFetchingReferrals } =
 		useFetchReferrals( isAutomatedReferral );
 
@@ -92,6 +95,26 @@ export default function ReferralsOverview( {
 							onClose={ () => setReferralEmail( '' ) }
 						/>
 					) }
+					{ ! referralsAvailable && (
+						<div className="referrals-overview__notice">
+							<NoticeBanner
+								level="warning"
+								title={ translate( 'Your payment settings require action' ) }
+							>
+								<div>
+									{ translate(
+										'Please confirm your details before referring products to your clients.'
+									) }
+								</div>
+								<Button
+									className="referrals-overview__notice-button"
+									href="/referrals/payment-settings"
+								>
+									{ translate( 'Go to payment settings' ) }
+								</Button>
+							</NoticeBanner>
+						</div>
+					) }
 
 					{ ! isAutomatedReferral && <AutomatedReferralComingSoonBanner /> }
 
@@ -100,7 +123,12 @@ export default function ReferralsOverview( {
 						{ isAutomatedReferral && (
 							<Actions>
 								<MobileSidebarNavigation />
-								<Button primary href={ A4A_MARKETPLACE_PRODUCTS_LINK } onClick={ makeAReferral }>
+								<Button
+									primary
+									href={ A4A_MARKETPLACE_PRODUCTS_LINK }
+									onClick={ makeAReferral }
+									disabled={ ! referralsAvailable }
+								>
 									{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
 								</Button>
 							</Actions>
