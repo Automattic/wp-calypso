@@ -324,13 +324,14 @@ class MasterbarLoggedIn extends Component {
 		const icon =
 			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
 
+		if ( 'sites' === section && isResponsiveMenu ) {
+			mySitesUrl = '';
+		}
+
 		if ( config.isEnabled( 'layout/mb' ) ) {
 			mySitesUrl = '/sites';
 		}
 
-		if ( 'sites' === section && isResponsiveMenu ) {
-			mySitesUrl = '';
-		}
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
 			// we are the /sites page but there is no site. Disable the home link
 			return <Item icon={ icon } disabled />;
@@ -790,6 +791,7 @@ class MasterbarLoggedIn extends Component {
 						{ this.renderPopupSearch() }
 						<Masterbar>
 							<div className="masterbar__section masterbar__section--left">
+								{ this.renderSidebarMobileMenu() }
 								{ this.renderMySites() }
 								{ this.renderReader( false ) }
 								{ this.renderSiteMenu() }
