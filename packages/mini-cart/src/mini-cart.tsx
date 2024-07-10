@@ -78,7 +78,7 @@ const HiddenText = styled.span`
 	width: 1px;
 `;
 
-const TaxNotCalculatedLineItemWrapper = styled.div`
+const TaxCalculationLineItemWrapper = styled.div`
 	font-size: 12px;
 	text-wrap: pretty;
 	line-height: 1em;
@@ -87,18 +87,16 @@ const TaxNotCalculatedLineItemWrapper = styled.div`
 function TaxNotCalculatedLineItem() {
 	const { __ } = useI18n();
 	return (
-		<TaxNotCalculatedLineItemWrapper>
-			{ __( 'Tax: to be calculated' ) }
-		</TaxNotCalculatedLineItemWrapper>
+		<TaxCalculationLineItemWrapper>{ __( 'Tax: to be calculated' ) }</TaxCalculationLineItemWrapper>
 	);
 }
 
 function TaxAddedLineItem() {
 	const { __ } = useI18n();
 	return (
-		<TaxNotCalculatedLineItemWrapper>
+		<TaxCalculationLineItemWrapper>
 			{ __( 'Includes applicable taxes' ) }
-		</TaxNotCalculatedLineItemWrapper>
+		</TaxCalculationLineItemWrapper>
 	);
 }
 
