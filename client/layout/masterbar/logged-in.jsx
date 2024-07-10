@@ -16,6 +16,7 @@ import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
+import { siteUsesWpAdminInterface } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
@@ -31,6 +32,7 @@ import {
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
@@ -53,7 +55,12 @@ import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-cur
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSectionGroup, getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSectionGroup,
+	getSectionName,
+	getSelectedSite,
+	getSelectedSiteId,
+} from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import { MasterBarMobileMenu } from './masterbar-menu';
@@ -407,29 +414,44 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderSiteActionMenu() {
-		const { sectionGroup, currentSelectedSiteSlug, translate, siteUrl } = this.props;
+		const {
+			sectionGroup,
+			currentSelectedSiteSlug,
+			currentSelectedSite,
+			translate,
+			siteUrl,
+			siteAdminUrl,
+			newPostUrl,
+			newPageUrl,
+		} = this.props;
 
 		// Only display on site-specific pages.
 		if ( sectionGroup !== 'sites' || ! currentSelectedSiteSlug ) {
 			return null;
 		}
 
+		const isClassicView = siteUsesWpAdminInterface( currentSelectedSite );
+
 		const siteActions = [
 			{
 				label: translate( 'Post' ),
-				url: siteUrl,
+				url: newPostUrl,
 			},
 			{
 				label: translate( 'Media' ),
-				url: siteUrl,
+				url: isClassicView
+					? `${ siteAdminUrl }media-new.php`
+					: `/media/${ currentSelectedSiteSlug }`,
 			},
 			{
 				label: translate( 'Page' ),
-				url: siteUrl,
+				url: newPageUrl,
 			},
 			{
 				label: translate( 'User' ),
-				url: siteUrl,
+				url: isClassicView
+					? `${ siteAdminUrl }user-new.php`
+					: `/people/new/${ currentSelectedSiteSlug }`,
 			},
 		];
 		return (
@@ -973,6 +995,7 @@ export default connect(
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
+			currentSelectedSite: getSelectedSite( state ),
 			currentSelectedSiteSlug: currentSelectedSiteId
 				? getSiteSlug( state, currentSelectedSiteId )
 				: undefined,
@@ -991,6 +1014,8 @@ export default connect(
 			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
 			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
+			newPostUrl: getEditorUrl( state, currentSelectedSiteId, null, 'post' ),
+			newPageUrl: getEditorUrl( state, currentSelectedSiteId, null, 'page' ),
 		};
 	},
 	{
