@@ -602,8 +602,8 @@ class StatsSite extends Component {
 						) }
 
 						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ supportsEmailStats && ! isNewStateEnabled && (
-							<StatsModuleEmailsOld // This is the old component & location. Remove and consolidate once stats/empty-module-traffic flag is removed
+						{ supportsEmailStats && ( ! isNewStateEnabled || gateModuleEmails ) && (
+							<StatsModuleEmailsOld // This is the old component & location. we will display it if gateModuleEmails is true because it supports the overlay
 								period={ this.props.period }
 								query={ query }
 								className={ clsx(
