@@ -15,7 +15,7 @@ export const Sidebar: FC< Props > = ( { children } ) => {
 				{ translate( 'Let’s migrate your site' ) }
 			</h1>
 			<p className="migration-instructions-sidebar__description">
-				{ translate( 'Follow these steps to get started.' ) }
+				{ translate( 'Follow these steps to get started:' ) }
 			</p>
 
 			{ children }

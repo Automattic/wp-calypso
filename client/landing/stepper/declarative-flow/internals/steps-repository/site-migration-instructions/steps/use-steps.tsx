@@ -40,13 +40,14 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 
 	const steps = [
 		{
-			title: translate( 'Install the Migrate Guru plugin' ),
+			title: translate( 'Migrate Guru plugin' ),
 			content: (
 				<p>
 					{ translate(
-						'First you’ll need to install and activate the {{a}}Migrate Guru plugin{{/a}} on the site you want to migrate. Click next when you’re ready.',
+						'Install and activate the {{a}}Migrate Guru plugin{{/a}} on your site. Once done, click {{strong}}Next{{/strong}} to progress.',
 						{
 							components: {
+								strong: <strong />,
 								a: (
 									<a
 										href={ getPluginInstallationPage( fromUrl ) }
@@ -62,12 +63,12 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 			),
 		},
 		{
-			title: translate( 'Get your site ready' ),
+			title: translate( 'Set up migration key' ),
 			content: (
 				<>
 					<p>
 						{ translate(
-							'Head to the {{a}}Migrate Guru page on the site you’re migrating{{/a}}, Tap in your email address and click {{strong}}‘%(migrateLabel)s’{{/strong}}.',
+							'Go to the {{a}}Migrate Guru page on your source site{{/a}}, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
 							{
 								components: {
 									strong: <strong />,
@@ -86,19 +87,29 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 						) }
 					</p>
 					<p>
-						<strong>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</strong>
+						<strong>
+							{ translate( 'When asked to select a destination host, pick WordPress.com' ) }
+						</strong>
 					</p>
-					<p>{ translate( 'All set? Click next below.' ) }</p>
+					<p>
+						{ translate(
+							'Once you have selected WordPress.com, come back here and click {{strong}}Next{{/strong}}.',
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
 				</>
 			),
 		},
 		{
-			title: translate( 'Add your migration key' ),
+			title: translate( 'Enter your migration Key' ),
 			content: (
 				<p>
 					{ translate(
-						'Copy and paste the migration key below in the Migrate Guru Migration key field and click {{strong}}%(migrateLabel)s{{/strong}}.',
-
+						'Paste the migration key below in Migrate Guru’s Migration key field and click {{strong}}%(migrateLabel)s{{/strong}}.',
 						{
 							components: {
 								strong: <strong />,
