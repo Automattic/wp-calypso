@@ -68,7 +68,7 @@ const NonTotalPrices = styled.div`
 `;
 const TotalPrice = styled.div`
 	font-size: 14px;
-	padding-top: 16px;
+	padding: 16px 0 6px;
 `;
 
 const TaxNotCalculatedLineItemWrapper = styled.div`
