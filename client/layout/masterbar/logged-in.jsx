@@ -401,7 +401,7 @@ class MasterbarLoggedIn extends Component {
 					url={ siteUrl }
 					icon={ <span className="dashicons-before dashicons-admin-home" /> }
 					tipTarget="Menu"
-					subItems={ [ { label: translate( 'Visiy your site' ), url: siteUrl } ] }
+					subItems={ [ { label: translate( 'Visit your site' ), url: siteUrl } ] }
 				>
 					{ siteTitle }
 				</Item>
