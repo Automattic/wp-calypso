@@ -1,9 +1,4 @@
-import {
-	FEATURE_SOCIAL_INSTAGRAM_CONNECTION,
-	FEATURE_SOCIAL_MASTODON_CONNECTION,
-	FEATURE_SOCIAL_NEXTDOOR_CONNECTION,
-	FEATURE_SOCIAL_THREADS_CONNECTION,
-} from '@automattic/calypso-products';
+import { FEATURE_SOCIAL_THREADS_CONNECTION } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { get, find, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -223,20 +218,8 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	const disabledServices = [];
 
-	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_INSTAGRAM_CONNECTION ) ) {
-		disabledServices.push( 'instagram-business' );
-	}
-
-	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_NEXTDOOR_CONNECTION ) ) {
-		disabledServices.push( 'nextdoor' );
-	}
-
 	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_THREADS_CONNECTION ) ) {
 		disabledServices.push( 'threads' );
-	}
-
-	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ) ) {
-		disabledServices.push( 'mastodon' );
 	}
 
 	return {

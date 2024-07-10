@@ -1,4 +1,3 @@
-import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -10,7 +9,6 @@ import nextdoorExample from 'calypso/assets/images/connections/connections-nextd
 import threadsExample from 'calypso/assets/images/connections/connections-threads.png';
 import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import GooglePlusDeprication from './google-plus-deprecation';
@@ -548,7 +546,7 @@ class SharingServiceExamples extends Component {
 			return <GooglePlusDeprication />;
 		}
 
-		if ( 'mastodon' === this.props.service.ID && this.props.isMastodonEligible ) {
+		if ( 'mastodon' === this.props.service.ID ) {
 			return (
 				<Mastodon
 					service={ this.props.service }
@@ -584,11 +582,8 @@ class SharingServiceExamples extends Component {
 }
 
 export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
 	return {
 		site: getSelectedSite( state ),
 		hasJetpack: ! isJetpackCloud() || isJetpackSite( state, getSelectedSiteId( state ) ),
-		isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
 	};
 } )( localize( SharingServiceExamples ) );
