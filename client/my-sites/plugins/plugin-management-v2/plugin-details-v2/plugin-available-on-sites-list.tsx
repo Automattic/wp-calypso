@@ -3,7 +3,6 @@ import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-mana
 import { useSelector } from 'calypso/state';
 import SitesList from '../sites-list';
 import { getSitesThatAreNotInternal } from '../utils/get-sites-that-are-not-internal';
-import { getSitesThatCanInstallPlugins } from '../utils/get-sites-that-can-install-plugins';
 import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -32,12 +31,8 @@ export default function PluginAvailableOnSitesList( props: Props ) {
 		getSitesWithSecondarySites( state, props.sites )
 	).map( ( site ) => site.site );
 
-	const sitesThatCanInstallPlugins = useSelector( ( state ) => {
-		return getSitesThatCanInstallPlugins( state, sitesWithSecondarySites );
-	} );
-
 	const sitesThatAreNotInternal = useSelector( ( state ) => {
-		return getSitesThatAreNotInternal( state, sitesThatCanInstallPlugins );
+		return getSitesThatAreNotInternal( state, sitesWithSecondarySites );
 	} );
 
 	if ( ! sitesThatAreNotInternal?.length ) {
