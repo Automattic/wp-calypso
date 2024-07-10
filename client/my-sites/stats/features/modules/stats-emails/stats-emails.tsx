@@ -13,6 +13,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL } from '../../../const';
+import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsEmptyActionEmail from '../shared/stats-empty-action-email';
@@ -28,6 +29,8 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsEmailsSummary';
 
+	const shouldGateStatsModule = useShouldGateStats( statType );
+
 	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
@@ -37,7 +40,7 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 
 	return (
 		<>
-			{ siteId && statType && (
+			{ ! shouldGateStatsModule && siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ isRequestingData && (
@@ -48,29 +51,7 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 					type={ 2 }
 				/>
 			) }
-			{ ! data?.length ? (
-				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) }
-					title={ translate( 'Emails' ) }
-					isEmpty
-					emptyMessage={
-						<EmptyModuleCard
-							icon={ mail }
-							description={ translate(
-								'Learn about your {{link}}latest emails sent{{/link}} to better understand how they performed. Start sending!',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#emails` ) } />,
-									},
-									context: 'Stats: Info box label when the Emails module is empty',
-								}
-							) }
-							cards={ <StatsEmptyActionEmail from="module_emails" /> }
-						/>
-					}
-				/>
-			) : (
+			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
 				<StatsModule
 					additionalColumns={ {
 						header: (
@@ -95,6 +76,29 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 					className={ className }
 					hasNoBackground
 					skipQuery
+				/>
+			) }
+			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
+				<StatsCard
+					className={ clsx( 'stats-card--empty-variant', className ) }
+					title={ translate( 'Emails' ) }
+					isEmpty
+					emptyMessage={
+						<EmptyModuleCard
+							icon={ mail }
+							description={ translate(
+								'Learn about your {{link}}latest emails sent{{/link}} to better understand how they performed. Start sending!',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#emails` ) } />,
+									},
+									context: 'Stats: Info box label when the Emails module is empty',
+								}
+							) }
+							cards={ <StatsEmptyActionEmail from="module_emails" /> }
+						/>
+					}
 				/>
 			) }
 		</>
