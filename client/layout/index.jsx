@@ -246,7 +246,6 @@ class Layout extends Component {
 		} );
 
 		this.refreshColorScheme( undefined, this.props.colorScheme );
-		this.addSidebarClassToBody();
 	}
 
 	/**
@@ -265,31 +264,6 @@ class Layout extends Component {
 				this.props.colorScheme !== 'modern' )
 		) {
 			this.refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
-		}
-
-		if (
-			prevProps.isGlobalSidebarVisible !== this.props.isGlobalSidebarVisible ||
-			prevProps.isGlobalSidebarCollapsed !== this.props.isGlobalSidebarCollapsed
-		) {
-			this.addSidebarClassToBody();
-		}
-	}
-
-	addSidebarClassToBody() {
-		if ( typeof document === 'undefined' ) {
-			return;
-		}
-
-		if ( this.props.isGlobalSidebarVisible ) {
-			document.querySelector( 'body' ).classList.add( 'has-global-sidebar' );
-		} else {
-			document.querySelector( 'body' ).classList.remove( 'has-global-sidebar' );
-		}
-
-		if ( this.props.isGlobalSidebarCollapsed ) {
-			document.querySelector( 'body' ).classList.add( 'has-global-sidebar-collapsed' );
-		} else {
-			document.querySelector( 'body' ).classList.remove( 'has-global-sidebar-collapsed' );
 		}
 	}
 
@@ -327,8 +301,7 @@ class Layout extends Component {
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
-		const globalSidebarDesktop = this.state.isDesktop && this.props.isGlobalSidebarVisible;
-		if ( this.props.masterbarIsHidden || globalSidebarDesktop ) {
+		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
 		if ( this.props.isWooCoreProfilerFlow ) {
@@ -360,13 +333,12 @@ class Layout extends Component {
 	}
 
 	render() {
-		const globalSidebarDesktop = this.state.isDesktop && this.props.isGlobalSidebarVisible;
 		const sectionClass = clsx( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
-			'has-no-masterbar': this.props.masterbarIsHidden || globalSidebarDesktop,
+			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-logged-in': this.props.isLoggedIn,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,

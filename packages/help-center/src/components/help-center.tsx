@@ -14,6 +14,7 @@ import {
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
 import { useChatStatus, useZendeskMessaging, useStillNeedHelpURL } from '../hooks';
+import { useOpeningCoordinates } from '../hooks/use-opening-coordinates';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -79,10 +80,14 @@ const HelpCenter: React.FC< Container > = ( {
 	currentRoute = window.location.pathname + window.location.search,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const isHelpCenterShown = useSelect( ( select ) => {
+	const { isHelpCenterShown, isMinimized } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return helpCenterSelect.isHelpCenterShown();
+		return {
+			isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
+			isMinimized: helpCenterSelect.getIsMinimized(),
+		};
 	}, [] );
+
 	const { currentUser } = useHelpCenterContext();
 
 	useEffect( () => {
@@ -101,6 +106,8 @@ const HelpCenter: React.FC< Container > = ( {
 	);
 
 	useMessagingBindings( hasActiveChats, isMessagingScriptLoaded );
+
+	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
@@ -122,6 +129,7 @@ const HelpCenter: React.FC< Container > = ( {
 			handleClose={ handleClose }
 			hidden={ hidden }
 			currentRoute={ currentRoute }
+			openingCoordinates={ openingCoordinates }
 		/>,
 		portalParent
 	);

@@ -2,14 +2,16 @@
  * @jest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { PLAN_MIGRATION_TRIAL_MONTHLY, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React, { type ComponentPropsWithoutRef } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { UpgradePlan } from '../index';
+import { useUpgradePlanHostingDetailsList } from '../hooks/use-get-upgrade-plan-hosting-details-list';
+import { UpgradePlan, UnwrappedUpgradePlan } from '../index';
 
 // Stub out UpgradePlanDetails because it has much more complex dependencies, and only provides a wrapper around the content from this component.
 jest.mock( '../upgrade-plan-details', () => ( {
@@ -19,20 +21,46 @@ jest.mock( '../upgrade-plan-details', () => ( {
 
 jest.mock( '@automattic/calypso-analytics' );
 
-function renderUpgradePlanComponent( props: ComponentPropsWithoutRef< typeof UpgradePlan > ) {
-	const queryClient = new QueryClient();
+jest.mock( '../hooks/use-get-upgrade-plan-hosting-details-list' );
 
-	return renderWithProvider(
-		<QueryClientProvider client={ queryClient }>
-			<UpgradePlan { ...props } />
-		</QueryClientProvider>,
-		{
-			initialState: {},
-			reducers: {},
-		}
-	);
-}
+jest.mock( '@automattic/data-stores', () => {
+	const dataStores = jest.requireActual( '@automattic/data-stores' );
+	return {
+		Onboard: dataStores.Onboard,
+		Plans: {
+			usePricingMetaForGridPlans: jest.fn(),
+		},
+		Purchases: dataStores.Purchases,
+		Site: dataStores.Site,
+	};
+} );
 
+const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
+const mockUseUpgradePlanHostingDetailsList = ( isFetching: boolean ) => {
+	( useUpgradePlanHostingDetailsList as jest.Mock ).mockReturnValue( {
+		list: [],
+		isFetching,
+	} );
+};
+
+const mockUsePricingMetaForGridPlans = ( empty: boolean = false ) => {
+	if ( empty ) {
+		return;
+	}
+
+	const planYearlyPricing = {
+		currencyCode: 'USD',
+		originalPrice: { full: 60, monthly: 5 },
+		discountedPrice: { full: 24, monthly: 2 },
+		billingPeriod: 'year',
+	};
+
+	Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+		[ PLAN_BUSINESS ]: planYearlyPricing,
+	} ) );
+};
+
+const CTA_TEXT = 'CTA';
 const DEFAULT_SITE_ID = 123;
 const DEFAULT_SITE_SLUG = 'test-example.wordpress.com';
 
@@ -56,10 +84,52 @@ const DEFAULT_SITE_CAPABILITIES = {
 	promote_users: true,
 	publish_posts: true,
 	remove_users: true,
+	update_plugins: true,
 	upload_files: true,
 	view_hosting: true,
 	view_stats: true,
 };
+
+const API_RESPONSE_ELIGIBLE = {
+	eligible: true,
+};
+
+const API_RESPONSE_INELIGIBLE_UNVERIFIED_EMAIL = {
+	eligible: true,
+	error_code: 'email-unverified',
+};
+
+function renderUpgradePlanComponent(
+	props: ComponentPropsWithoutRef< typeof UpgradePlan >,
+	Component = UpgradePlan
+) {
+	const queryClient = new QueryClient();
+
+	return renderWithProvider(
+		<QueryClientProvider client={ queryClient }>
+			<Component { ...props } />
+		</QueryClientProvider>,
+		{
+			initialState: {
+				sites: {
+					plans: {
+						[ DEFAULT_SITE_ID ]: {
+							data: [
+								{
+									currencyCode: 'USD',
+									rawPrice: 0,
+									rawDiscount: 0,
+									productSlug: PLAN_BUSINESS,
+								},
+							],
+						},
+					},
+				},
+			},
+			reducers: {},
+		}
+	);
+}
 
 function getUpgradePlanProps(
 	customProps: Partial< ComponentPropsWithoutRef< typeof UpgradePlan > > = {}
@@ -91,19 +161,13 @@ function getUpgradePlanProps(
 	};
 }
 
-const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
-
-const API_RESPONSE_ELIGIBLE = {
-	eligible: true,
-};
-
-const API_RESPONSE_INELIGIBLE_UNVERIFIED_EMAIL = {
-	eligible: true,
-	error_code: 'email-unverified',
-};
-
 describe( 'UpgradePlan', () => {
 	beforeAll( () => nock.disableNetConnect() );
+
+	beforeEach( () => {
+		mockUseUpgradePlanHostingDetailsList( false );
+		mockUsePricingMetaForGridPlans();
+	} );
 
 	it( 'should call onCtaClick when the user clicks on the Continue button', async () => {
 		const mockOnCtaClick = jest.fn();
@@ -202,6 +266,62 @@ describe( 'UpgradePlan', () => {
 				'calypso_site_migration_upgrade_plan_screen',
 				{ migration_trial_hidden: 'true' }
 			);
+		} );
+	} );
+
+	describe( 'with migration sticker HOC', () => {
+		it( 'should render children', async () => {
+			const { queryByText } = renderUpgradePlanComponent(
+				getUpgradePlanProps( { ctaText: CTA_TEXT } )
+			);
+
+			await waitFor( () => {
+				expect( queryByText( CTA_TEXT ) ).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should call the sticker endpoint creation when rendering the component', async () => {
+			nock.cleanAll();
+			const scope = nock( 'https://public-api.wordpress.com:443' )
+				.post( `/wpcom/v2/sites/${ DEFAULT_SITE_ID }/migration-flow` )
+				.reply( 200 );
+
+			renderUpgradePlanComponent( getUpgradePlanProps( {} ) );
+
+			await waitFor( () => {
+				expect( scope.isDone() ).toBe( true );
+			} );
+		} );
+	} );
+
+	describe( 'without migration sticker HOC', () => {
+		it( 'should render fetch state when hosting details are fetching', async () => {
+			mockUseUpgradePlanHostingDetailsList( true );
+
+			const { queryByText, container } = renderUpgradePlanComponent(
+				getUpgradePlanProps( { ctaText: CTA_TEXT } ),
+				UnwrappedUpgradePlan
+			);
+
+			expect(
+				container.querySelector( '.import__upgrade-plan-details--loading' )
+			).toBeInTheDocument();
+			expect( queryByText( CTA_TEXT ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should render fetch state when pricing is not available', async () => {
+			mockUseUpgradePlanHostingDetailsList( true );
+			mockUsePricingMetaForGridPlans( true );
+
+			const { queryByText, container } = renderUpgradePlanComponent(
+				getUpgradePlanProps( { ctaText: CTA_TEXT } ),
+				UnwrappedUpgradePlan
+			);
+
+			expect(
+				container.querySelector( '.import__upgrade-plan-details--loading' )
+			).toBeInTheDocument();
+			expect( queryByText( CTA_TEXT ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

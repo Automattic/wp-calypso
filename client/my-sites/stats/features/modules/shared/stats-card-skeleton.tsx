@@ -8,6 +8,9 @@ type StatsCardSkeletonProps = {
 	isLoading: boolean;
 	className?: string;
 	title?: string;
+	/**
+	 * @property {number} type - Type of card to display. One of three sets with different bar lengths to avoid a monotonous interface.
+	 */
 	type?: 1 | 2 | 3;
 	withHero?: boolean;
 };

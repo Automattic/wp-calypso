@@ -38,7 +38,6 @@
 		{ "path": "../../packages/calypso-analytics" },
 		{ "path": "../../packages/composite-checkout" },
 		{ "path": "../../packages/data-stores" },
-		{ "path": "../../packages/help-center" },
 		{ "path": "../../packages/i18n-utils" },
 		{ "path": "../../packages/onboarding" },
 		{ "path": "../../packages/plans-grid" },

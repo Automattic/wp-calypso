@@ -31,8 +31,8 @@
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/languages": "workspace:^",
-		"@wordpress/compose": "^7.0.0",
-		"@wordpress/i18n": "^5.0.0",
+		"@wordpress/compose": "^7.2.0",
+		"@wordpress/i18n": "^5.2.0",
 		"react": "^18.2.0",
 		"tslib": "^2.3.0"
 	},

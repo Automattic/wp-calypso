@@ -27,6 +27,7 @@ export interface AgencyDetails {
 	logoUrl: string;
 	landingPageUrl: string;
 	country: string;
+	isGlobal: boolean;
 	isAvailable: boolean;
 	industries: string[];
 	services: string[];

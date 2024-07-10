@@ -2,33 +2,18 @@ import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import clsx from 'clsx';
 import React from 'react';
+import { STATS_FEATURE_UTM_STATS } from 'calypso/my-sites/stats/constants';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { default as usePlanUsageQuery } from '../../../hooks/use-plan-usage-query';
 import useStatsPurchases from '../../../hooks/use-stats-purchases';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import statsStrings from '../../../stats-strings';
-import { PeriodType } from '../../../stats-subscribers-chart-section';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsModuleUTM from './stats-module-utm';
 import StatsModuleUTMOverlay from './stats-module-utm-overlay';
-import type { Moment } from 'moment';
+import type { StatsAdvancedModuleWrapperProps } from '../types';
 
-type StatsPeriodType = {
-	period: PeriodType;
-	key: string;
-	startOf: Moment;
-	endOf: Moment;
-};
-
-type StatsModuleUTMWrapperProps = {
-	siteId: number;
-	period: StatsPeriodType;
-	postId?: number;
-	query: string;
-	summary?: boolean;
-	className?: string;
-};
-
-const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
+const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 	siteId,
 	period,
 	postId,
@@ -37,7 +22,9 @@ const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
 	className,
 } ) => {
 	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
+	const isGatedByShouldGateStats = config.isEnabled( 'stats/restricted-dashboard' );
 	const moduleStrings = statsStrings();
+	const shouldGateStats = useShouldGateStats( STATS_FEATURE_UTM_STATS );
 
 	// Check if blog is internal.
 	const { isPending: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
@@ -45,7 +32,9 @@ const StatsModuleUTMWrapper: React.FC< StatsModuleUTMWrapperProps > = ( {
 
 	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
 	const isFetching = isFetchingUsage || isLoadingFeatureCheck; // This is not fetching UTM data.
-	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
+
+	const isAdvancedFeatureEnabled =
+		isSiteInternal || ( isGatedByShouldGateStats ? ! shouldGateStats : supportCommercialUse );
 
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {

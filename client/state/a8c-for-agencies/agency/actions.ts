@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 // Required for modular state.
 import 'calypso/state/a8c-for-agencies/init';
@@ -53,6 +54,11 @@ export function receiveAgencies( agencies: Agency[] ): AgencyThunkAction {
 
 		if ( newAgency ) {
 			dispatch( setActiveAgency( newAgency ) );
+
+			// Enable the Partner Directory section
+			if ( ! config.isEnabled( 'a4a-partner-directory' ) && newAgency.partner_directory_allowed ) {
+				config.enable( 'a4a-partner-directory' );
+			}
 		}
 	};
 }

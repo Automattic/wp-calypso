@@ -2,18 +2,15 @@ import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getPlanSlug } from 'calypso/state/plans/selectors';
 import type { Plan } from '@automattic/calypso-products';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
@@ -64,11 +61,6 @@ const Header: React.FC< HeaderProps > = ( { paidDomainName } ) => {
 
 const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, originalUrl } ) => {
 	const dispatch = useDispatch();
-	const planSlug = useSelector( ( state: AppState ) =>
-		getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 )
-	) as string | null;
-	const plansLoaded = Boolean( planSlug );
-
 	const freeDomainSuggestionNameRef = useRef< string | undefined >( undefined );
 
 	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null | undefined ) => {
@@ -105,26 +97,18 @@ const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, or
 	return (
 		<Main className="jetpack-app__plans">
 			<QueryPlans />
-			{ plansLoaded ? (
-				<>
-					<Header paidDomainName={ paidDomainName } />
-					<PlansFeaturesMain
-						paidDomainName={ paidDomainName }
-						intent="plans-jetpack-app-site-creation"
-						isInSignup
-						intervalType="yearly"
-						onUpgradeClick={ onUpgradeClick }
-						plansWithScroll={ false }
-						hidePlanTypeSelector
-						hidePlansFeatureComparison
-						setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
-					/>
-				</>
-			) : (
-				<div className="jetpack-app__plans-loading">
-					<LoadingEllipsis />
-				</div>
-			) }
+			<Header paidDomainName={ paidDomainName } />
+			<PlansFeaturesMain
+				paidDomainName={ paidDomainName }
+				intent="plans-jetpack-app-site-creation"
+				isInSignup
+				intervalType="yearly"
+				onUpgradeClick={ onUpgradeClick }
+				plansWithScroll={ false }
+				hidePlanTypeSelector
+				hidePlansFeatureComparison
+				setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
+			/>
 		</Main>
 	);
 };

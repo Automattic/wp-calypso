@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
@@ -103,6 +103,8 @@ const SitesDashboard = ( {
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
+
+	const hasEnTranslation = useHasEnTranslation();
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
@@ -290,9 +292,17 @@ const SitesDashboard = ( {
 									},
 								} ) }
 								className="sites-a8c-for-agencies-banner"
-								description={ translate(
-									'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.'
-								) }
+								description={
+									hasEnTranslation(
+										"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients."
+									)
+										? translate(
+												"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients."
+										  )
+										: translate(
+												'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.'
+										  )
+								}
 								dismissPreferenceName="dismissible-card-a8c-for-agencies-sites"
 								event="learn-more"
 								horizontal
@@ -300,7 +310,15 @@ const SitesDashboard = ( {
 									'https://wordpress.com/for-agencies?ref=wpcom-sites-dashboard'
 								) }
 								target="_blank"
-								title={ translate( 'Managing multiple sites? Meet our agency hosting' ) }
+								title={
+									hasEnTranslation(
+										'Building sites for customers? Earn more with our agency program.'
+									)
+										? translate(
+												'Building sites for customers? Earn more with our agency program.'
+										  )
+										: translate( 'Managing multiple sites? Meet our agency hosting' )
+								}
 								tracksClickName="calypso_sites_dashboard_a4a_banner_click"
 							/>
 						</div>

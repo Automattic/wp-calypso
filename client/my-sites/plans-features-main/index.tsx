@@ -52,7 +52,6 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { useExperiment } from 'calypso/lib/explat';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { shouldForceDefaultPlansBasedOnIntent } from 'calypso/my-sites/plans-features-main/components/utils/utils';
@@ -616,11 +615,9 @@ const PlansFeaturesMain = ( {
 	const comparisonGridContainerClasses = clsx( 'plans-features-main__comparison-grid-container', {
 		'is-hidden': ! showPlansComparisonGrid,
 	} );
-	const [ isExperimentLoading ] = useExperiment(
-		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
-	);
+
 	const isLoadingGridPlans = Boolean(
-		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid || isExperimentLoading
+		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid
 	);
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 

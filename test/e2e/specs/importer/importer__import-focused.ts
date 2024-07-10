@@ -52,7 +52,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		} );
 
 		it( 'Should render "Install Jetpack" screen', async () => {
-			await startImportFlow.clickButton( 'Upgrade and migrate' );
+			await startImportFlow.clickButton( 'Get the plan and migrate' );
 			await startImportFlow.validateInstallJetpackPage();
 		} );
 	} );
@@ -74,7 +74,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		} );
 
 		it( 'Should redirect to "Checkout" page', async () => {
-			await startImportFlow.clickButton( 'Upgrade and migrate' );
+			await startImportFlow.clickButton( 'Get the plan and migrate' );
 			await startImportFlow.validateCheckoutPage();
 		} );
 	} );
