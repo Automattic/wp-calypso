@@ -327,6 +327,12 @@ class MasterbarLoggedIn extends Component {
 			mySitesUrl = '/sites';
 		}
 
+		let isActive = this.isActive( 'sites' ) && ! isMenuOpen;
+
+		if ( config.isEnabled( 'layout/mb' ) ) {
+			isActive = section === 'sites-dashboard';
+		}
+
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
 			// we are the /sites page but there is no site. Disable the home link
 			return <Item icon={ icon } disabled />;
@@ -339,7 +345,7 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="my-sites"
 				icon={ icon }
 				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
+				isActive={ isActive }
 				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
 			/>
