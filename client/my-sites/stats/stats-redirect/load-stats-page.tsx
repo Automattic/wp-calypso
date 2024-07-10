@@ -1,10 +1,12 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import { type ReactNode } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, type ReactNode } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
+import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -80,6 +82,18 @@ export default function LoadStatsPage( { children }: AsyncLoadProps ) {
 		isJetpackModuleActive( state as object, siteId, 'stats' )
 	);
 	const path = useSelector( ( state ) => getCurrentRouteParameterized( state as object, siteId ) );
+
+	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
+	const reduxDispatch = useDispatch();
+
+	// Dispatch the plan usage data to the Redux store for monthly views check in shouldGateStats.
+	useEffect( () => {
+		reduxDispatch( {
+			type: STATS_PLAN_USAGE_RECEIVE,
+			siteId,
+			data: usageInfo,
+		} );
+	}, [ reduxDispatch, isPending, siteId, usageInfo ] );
 
 	// Odyssey Stats: This UX is not possible in Odyssey as this page would not be able to render in the first place.
 	const showEnableStatsModule =
