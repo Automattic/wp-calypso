@@ -622,6 +622,7 @@ class StatsSite extends Component {
 						{ supportsEmailStats && isNewStateEnabled && (
 							<StatsModuleEmails
 								period={ this.props.period }
+								moduleStrings={ moduleStrings.emails }
 								query={ query }
 								className={ clsx(
 									{
