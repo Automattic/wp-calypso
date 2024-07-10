@@ -298,6 +298,25 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
+		it( 'Uses the siteId param fallback', async () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?siteSlug=example.wordpress.com&siteId=123`,
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+				dependencies: {
+					action: 'continue',
+					platform: 'wordpress',
+					from: 'https://site-to-be-migrated.com',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com&siteId=123`,
+				state: null,
+			} );
+		} );
+
 		it( 'redirects from site-migration-assign-trial-plan step to bundleTransfer step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 

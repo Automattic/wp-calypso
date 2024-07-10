@@ -5,12 +5,18 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
+import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import SiteMigrationInstructions from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
+jest.mock( 'calypso/data/site-migration/use-migration-sticker' );
+
+( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
+	deleteMigrationSticker: jest.fn(),
+} );
 
 ( useSite as jest.Mock ).mockReturnValue( {
 	ID: 123,
@@ -104,6 +110,22 @@ describe( 'SiteMigrationInstructions i2', () => {
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Show key' } ) );
 
 		expect( screen.getByDisplayValue( 'some-migration-key' ) ).toBeVisible();
+	} );
+
+	it( 'should call the delete migration sticker function when rendered', async () => {
+		const deleteMigrationSticker = jest.fn();
+
+		( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
+			deleteMigrationSticker,
+		} );
+
+		( useSite as jest.Mock ).mockReturnValue( {
+			ID: 123,
+		} );
+
+		render();
+
+		expect( deleteMigrationSticker ).toHaveBeenCalledWith( 123 );
 	} );
 
 	it( 'renders the fallback text when is not possible to get the migration key', async () => {

@@ -30,10 +30,6 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	getPlan: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/state/plans/selectors', () => ( {
-	getPlanRawPrice: jest.fn(),
-} ) );
-
 describe( 'selectors', () => {
 	describe( '#getProductDisplayCost()', () => {
 		test( 'should return null when the products list has not been fetched', () => {

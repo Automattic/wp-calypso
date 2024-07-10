@@ -11,6 +11,7 @@ type Site = {
 	features: {
 		wpcom_atomic: {
 			state: string;
+			blog_id: number;
 		};
 	};
 };
@@ -20,7 +21,7 @@ export default function useIsSiteReady( { siteId }: Props ) {
 
 	useEffect( () => {
 		const match = data?.find(
-			( site: Site ) => site.id === siteId && site.features.wpcom_atomic.state === 'active'
+			( site: Site ) => site.id === siteId && site.features.wpcom_atomic?.state === 'active'
 		);
 
 		if ( match ) {
