@@ -165,7 +165,7 @@ const WrappedStepUpgrade = ( props ) => {
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ planSlug ],
 		coupon: undefined,
-		siteId: null,
+		siteId: null, // null site ID means we're fetching global (non-site-specific) pricing
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
@@ -176,7 +176,10 @@ const WrappedStepUpgrade = ( props ) => {
 			isEcommerceTrial={ isEcommerceTrial }
 			billingTimeFrame={ plan.getBillingTimeFrame() }
 			currencyCode={ pricingMeta[ planSlug ]?.currencyCode }
-			planPrice={ pricingMeta[ planSlug ]?.originalPrice?.monthly }
+			planPrice={
+				pricingMeta[ planSlug ]?.discountedPrice?.monthly ??
+				pricingMeta[ planSlug ]?.originalPrice?.monthly
+			}
 		/>
 	);
 };
