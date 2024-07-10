@@ -61,7 +61,7 @@
 
 	height: calc(100vh - var(--masterbar-height));
 
-	@media (min-width: 782px) {
+	@include break-small {
 		height: calc(100vh - var(--masterbar-height) - 32px);
 	}
 
