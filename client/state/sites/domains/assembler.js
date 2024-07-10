@@ -37,6 +37,17 @@ function assembleCurrentUserCannotAddEmailReason( reason ) {
 	return errorDetails[ 0 ];
 }
 
+function assembleDnssecRecords( dnssecRecords ) {
+	if ( ! dnssecRecords ) {
+		return {};
+	}
+
+	return {
+		dnskey: dnssecRecords.dnskey,
+		dsData: dnssecRecords.ds_data,
+	};
+}
+
 /**
  * Creates a ResponseDomain object.
  * @param {Object} domain domain object
@@ -89,6 +100,7 @@ export const createSiteDomainObject = ( domain ) => {
 			domain.current_user_cannot_add_email_reason
 		),
 		currentUserIsOwner: Boolean( domain.current_user_is_owner ),
+		dnssecRecords: assembleDnssecRecords( domain.dnssec_records ),
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),
 		domainRegistrationAgreementUrl: getDomainRegistrationAgreementUrl( domain ),

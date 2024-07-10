@@ -1,6 +1,11 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
+interface DnssecRecords {
+	dnskey: string;
+	dsData: Array< string >;
+}
+
 export interface DomainData {
 	primary_domain: boolean;
 	blog_name: string;
@@ -25,6 +30,7 @@ export interface DomainData {
 	can_set_as_primary: boolean;
 	can_transfer_to_any_user: boolean;
 	can_transfer_to_other_site: boolean;
+	dnssec_records?: DnssecRecords;
 	domain: string;
 	domain_notice_states: unknown;
 	supports_domain_connect: unknown;

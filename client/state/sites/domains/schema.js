@@ -20,6 +20,7 @@ export const itemsSchema = {
 					cannotManageDnsRecordsReason: { type: [ 'null', 'string' ] },
 					cannotManageNameServersReason: { type: [ 'null', 'string' ] },
 					cannotUpdateContactInfoReason: { type: [ 'null', 'string' ] },
+					dnssecRecords: { type: [ 'null', 'object' ] },
 					domain: { type: 'string' },
 					expired: { type: 'boolean' },
 					expiry: { type: [ 'null', 'string' ] },
