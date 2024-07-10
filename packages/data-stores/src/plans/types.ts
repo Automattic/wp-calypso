@@ -51,7 +51,7 @@ export interface PlanProduct {
 	storeSlug: StorePlanSlug;
 	annualDiscount?: number;
 	periodAgnosticSlug: PlanSlug;
-	pathSlug?: PlanPath;
+	pathSlug?: string;
 	/**
 	 * Useful for two cases:
 	 * 1) to show how much we bill the users for annual plans ($8/mo billed $96)
@@ -271,7 +271,7 @@ export interface PricedAPIPlanFree extends PricedAPIPlan {
 	raw_price_integer: 0;
 }
 export interface PricedAPIPlanPaidAnnually extends PricedAPIPlan {
-	path_slug: PlanPath;
+	path_slug: string;
 	bill_period: 365;
 }
 export interface PricedAPIPlanPaidMonthly extends PricedAPIPlan {
