@@ -7,7 +7,13 @@ import type { PlanSlug as PlanSlugFromProducts } from '@automattic/calypso-produ
 export type StorePlanSlug = ( typeof plansProductSlugs )[ number ];
 export type PlanSlug = ( typeof plansSlugs )[ number ];
 
-// at the moment possible plan paths are identical with plan slugs
+/**
+ * at the moment possible plan paths are identical with plan slugs
+ *
+ * Update 2024/07/10:
+ *   - it looks like the above is no longer the reality
+ *   - the type should either be removed (widened to string) or compiled to a list of all possible paths
+ */
 export type PlanPath = PlanSlug;
 
 export type PlanBillingPeriod = 'MONTHLY' | 'ANNUALLY';
