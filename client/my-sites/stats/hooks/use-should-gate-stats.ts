@@ -149,6 +149,7 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 	}
 
 	// Gate advanced stats for non-Jetpack sites unless they have a Jetpack Stats commercial purchase.
+	// Dotcom sites are not able to see these modules yet, so the line wouldn't apply to them.
 	if ( jetpackStatsAdvancedPaywall.includes( statType ) ) {
 		return ! supportStatsCommercialUse;
 	}
