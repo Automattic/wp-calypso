@@ -24,9 +24,10 @@ const getStatsCheckoutURL = (
 	adminUrl?: string,
 	isUpgrade?: boolean
 ) => {
-	const isFromJetpack = from?.startsWith( 'jetpack' );
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	// Get the checkout URL for the product, or the siteless checkout URL if from Jetpack or no siteSlug is provided
-	const checkoutType = ( isFromJetpack && ! isUpgrade ) || ! siteSlug ? 'jetpack' : siteSlug;
+	// TODO: We don't have Jetpack Stats purchase enabled for Simple sites, but if we do, we will want Simple sites to use normal checkout flow as users are always logged in.
+	const checkoutType = ( isOdysseyStats && ! isUpgrade ) || ! siteSlug ? 'jetpack' : siteSlug;
 	const checkoutProductUrl = new URL(
 		`/checkout/${ checkoutType }/${ product }`,
 		'https://wordpress.com'
@@ -36,7 +37,8 @@ const getStatsCheckoutURL = (
 	setUrlParam( checkoutProductUrl, 'redirect_to', redirectUrl );
 	setUrlParam( checkoutProductUrl, 'checkoutBackUrl', checkoutBackUrl );
 
-	if ( isFromJetpack && siteSlug ) {
+	// Add more required params for siteless checkout.
+	if ( checkoutType === 'jetpack' ) {
 		setUrlParam( checkoutProductUrl, 'connect_after_checkout', 'true' );
 		setUrlParam( checkoutProductUrl, 'admin_url', adminUrl );
 		setUrlParam( checkoutProductUrl, 'from_site_slug', siteSlug );
