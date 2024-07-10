@@ -141,7 +141,7 @@ export default function SiteConfigurationsModal( {
 							{ siteName.showValidationMessage && (
 								<Icon
 									icon={ info }
-									size={ 28 }
+									size={ 24 }
 									color="red"
 									className="configure-your-site-modal-form__site-name-fail"
 								/>

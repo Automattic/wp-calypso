@@ -51,6 +51,3 @@ export const useRandomSiteName = () => {
 
 	return { randomSiteName, isRandomSiteNameLoading };
 };
-
-// https://public-api.wordpress.com/rest/v1.1/domains/suggestions?http_envelope=1&query=test&quantity=1&include_wordpressdotcom=true&include_dotblogsubdomain=false&vendor=dot
-// https://public-api.wordpress.com/rest/v1.1domains/suggestions?http_envelope=1&query=test&quantity=1&include_wordpressdotcom=true&include_dotblogsubdomain=false&vendor=dot

@@ -36,7 +36,7 @@ const useCheckSiteAvailability = (
 ) => {
 	const agencyId = useSelector( getActiveAgencyId );
 	const siteNameRef = useRef( '' );
-	const [ availabilityState, setAvilabilityState ] = useState( {
+	const [ availabilityState, setAvailabilityState ] = useState( {
 		isSiteNameAvailiable: true,
 		isCheckingSiteAvailability: false,
 		siteNameSuggestion: '',
@@ -46,7 +46,7 @@ const useCheckSiteAvailability = (
 
 	useEffect( () => {
 		if ( skipAvailability || availabilityState.siteNameSuggestion === siteName ) {
-			setAvilabilityState( {
+			setAvailabilityState( {
 				isSiteNameAvailiable: true,
 				isCheckingSiteAvailability: false,
 				siteNameSuggestion: availabilityState.siteNameSuggestion,
@@ -56,7 +56,7 @@ const useCheckSiteAvailability = (
 		if ( ! agencyId ) {
 			return;
 		}
-		setAvilabilityState( {
+		setAvailabilityState( {
 			isSiteNameAvailiable: false,
 			isCheckingSiteAvailability: true,
 			siteNameSuggestion: '',
@@ -64,7 +64,7 @@ const useCheckSiteAvailability = (
 
 		checkSiteAvailability( agencyId, siteId, siteName ).then( ( result ) => {
 			if ( siteName === siteNameRef.current ) {
-				setAvilabilityState( {
+				setAvailabilityState( {
 					isSiteNameAvailiable: result.valid,
 					isCheckingSiteAvailability: false,
 					siteNameSuggestion: result.siteNameSuggestion,
@@ -75,7 +75,7 @@ const useCheckSiteAvailability = (
 	}, [ agencyId, siteId, siteName, skipAvailability ] );
 
 	const revalidateCurrentSiteName = async () => {
-		setAvilabilityState( {
+		setAvailabilityState( {
 			isSiteNameAvailiable: false,
 			isCheckingSiteAvailability: false,
 			siteNameSuggestion: await getRandomSiteBaseUrl( siteName ),
