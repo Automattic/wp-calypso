@@ -3,7 +3,12 @@ import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
-export default function DomainAndPlanPackageNavigation( props ) {
+export default function DomainAndPlanPackageNavigation( props: {
+	goBackLink: string;
+	goBackText?: string;
+	step?: number;
+	hidePlansPage?: boolean;
+} ) {
 	const translate = useTranslate();
 
 	// `goBackLink` will be either wp-admin or My Home, depending on the user's
@@ -24,7 +29,7 @@ export default function DomainAndPlanPackageNavigation( props ) {
 	return (
 		<div className="domain-and-plan-package-navigation">
 			<div className="domain-and-plan-package-navigation__back">
-				<Button borderless="true" onClick={ goBack }>
+				<Button borderless onClick={ goBack }>
 					<Gridicon icon="chevron-left" />
 					<span>{ buttonText }</span>
 				</Button>
