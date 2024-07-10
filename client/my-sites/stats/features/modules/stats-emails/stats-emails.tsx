@@ -15,7 +15,6 @@ import EmptyModuleCard from '../../../components/empty-module-card/empty-module-
 import { SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
-import statsStrings from '../../../stats-strings';
 import StatsEmptyActionEmail from '../shared/stats-empty-action-email';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
@@ -94,54 +93,4 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 	);
 };
 
-// TODO: remove this and use exclusively class above (StatEmail) once stats/empty-module-traffic feature flag is removed.
-
-type StatEmailsOldProps = {
-	period: string;
-	query: string;
-	className?: string;
-};
-
-const StatEmailsOld = ( { period, query, className }: StatEmailsOldProps ) => {
-	const translate = useTranslate();
-	const moduleStrings = statsStrings();
-
-	return (
-		<StatsModule
-			additionalColumns={ {
-				header: (
-					<>
-						<span>{ translate( 'Opens' ) }</span>
-					</>
-				),
-				body: ( item: any ) => (
-					<>
-						<span>{ item.opens }</span>
-					</>
-				),
-			} }
-			path="emails"
-			moduleStrings={ moduleStrings.emails }
-			period={ period }
-			query={ query }
-			statType="statsEmailsSummary"
-			mainItemLabel={ translate( 'Latest Emails' ) }
-			metricLabel={ translate( 'Clicks' ) }
-			showSummaryLink
-			className={ className }
-			hasNoBackground
-		/>
-	);
-};
-
-// Feature flag control component. TODO: remove this along with JSX above once stats/empty-module-traffic feature flag is removed.
-const EmailStatsComponent: React.FC< any > = ( props ) => {
-	const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
-
-	if ( isNewStateEnabled ) {
-		return <StatEmails { ...props } />;
-	}
-	return <StatEmailsOld { ...props } />;
-};
-
-export default EmailStatsComponent;
+export default StatEmails;
