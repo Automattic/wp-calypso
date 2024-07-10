@@ -827,6 +827,7 @@ class MasterbarLoggedIn extends Component {
 							</div>
 							<div className="masterbar__section masterbar__section--right">
 								{ this.renderCart() }
+								{ this.renderCommandPaletteSearch() }
 								{ loadHelpCenterIcon && this.renderHelpCenter() }
 								{ this.renderNotifications() }
 								{ this.renderProfileMenu() }
@@ -849,6 +850,7 @@ class MasterbarLoggedIn extends Component {
 						</div>
 						<div className="masterbar__section masterbar__section--right">
 							{ this.renderCart() }
+							{ this.renderCommandPaletteSearch() }
 							{ this.renderLaunchpadNavigator() }
 							{ loadHelpCenterIcon && this.renderHelpCenter() }
 							{ this.renderNotifications() }
