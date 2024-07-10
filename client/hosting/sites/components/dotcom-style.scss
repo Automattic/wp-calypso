@@ -686,11 +686,6 @@
 	&.focus-content .layout__content,
 	&.focus-sidebar .layout__content {
 		padding-bottom: 0;
-		padding-top: var(--masterbar-height);
-
-		@include break-small {
-			padding-top: calc(var(--masterbar-height) + 24px);
-		}
 
 		.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
 			height: calc(100vh - var(--masterbar-height));

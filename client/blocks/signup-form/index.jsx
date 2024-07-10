@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, FormInputValidation, FormLabel } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
@@ -1040,16 +1040,6 @@ class SignupForm extends Component {
 	};
 
 	formFooter() {
-		if ( this.userCreationComplete() ) {
-			return (
-				<LoggedOutFormFooter>
-					<Button primary onClick={ () => this.props.goToNextStep() }>
-						{ this.props.translate( 'Continue' ) }
-					</Button>
-				</LoggedOutFormFooter>
-			);
-		}
-
 		const params = new URLSearchParams( window.location.search );
 		const variationName = params.get( 'variationName' );
 
@@ -1127,10 +1117,6 @@ class SignupForm extends Component {
 				) }
 			</>
 		);
-	}
-
-	userCreationComplete() {
-		return this.props.step && 'completed' === this.props.step.status;
 	}
 
 	handleOnChangeAccount = () => {
@@ -1235,7 +1221,7 @@ class SignupForm extends Component {
 
 						{ this.renderWooCommerce() }
 
-						{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+						{ this.props.isSocialSignupEnabled && (
 							<SocialSignupForm
 								handleResponse={ this.handleWooCommerceSocialConnect }
 								socialService={ this.props.socialService }
@@ -1282,7 +1268,6 @@ class SignupForm extends Component {
 		if ( this.props.isSocialFirst ) {
 			return (
 				<SignupFormSocialFirst
-					step={ this.props.step }
 					stepName={ this.props.stepName }
 					flowName={ this.props.flowName }
 					goToNextStep={ this.props.goToNextStep }
@@ -1303,8 +1288,7 @@ class SignupForm extends Component {
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
-			( ! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete() ) ||
-			this.props.isWoo;
+			( ! config.isEnabled( 'desktop' ) && this.isHorizontal() ) || this.props.isWoo;
 
 		if (
 			( this.props.isPasswordless &&
@@ -1340,7 +1324,6 @@ class SignupForm extends Component {
 				>
 					{ this.getNotice() }
 					<PasswordlessSignupForm
-						step={ this.props.step }
 						stepName={ this.props.stepName }
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
@@ -1366,8 +1349,7 @@ class SignupForm extends Component {
 					{ ! isGravatar && (
 						<>
 							{ showSeparator && <FormDivider /> }
-
-							{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+							{ this.props.isSocialSignupEnabled && (
 								<SocialSignupForm
 									handleResponse={ this.props.handleSocialResponse }
 									socialService={ this.props.socialService }
@@ -1404,7 +1386,7 @@ class SignupForm extends Component {
 
 				{ showSeparator && <FormDivider /> }
 
-				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+				{ this.props.isSocialSignupEnabled && (
 					<SocialSignupForm
 						handleResponse={ this.props.handleSocialResponse }
 						socialService={ this.props.socialService }

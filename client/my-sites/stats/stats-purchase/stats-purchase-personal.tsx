@@ -12,6 +12,7 @@ import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import useStatsPurchases from 'calypso/my-sites/stats/hooks/use-stats-purchases';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -61,6 +62,7 @@ const PersonalPurchase = ( {
 	} = sliderSettings;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
+	const { hasAnyStatsPlan } = useStatsPurchases( siteId );
 
 	const sliderLabel = ( ( props, state ) => {
 		let emoji;
@@ -122,6 +124,7 @@ const PersonalPurchase = ( {
 			adminUrl,
 			redirectUri,
 			price: subscriptionValue / MIN_STEP_SPLITS,
+			isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
 		} );
 	};
 

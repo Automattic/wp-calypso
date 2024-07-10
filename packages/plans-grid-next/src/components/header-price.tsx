@@ -133,7 +133,6 @@ const HeaderPriceContainer = styled.div`
 
 const PlanFeatures2023GridHeaderPrice = ( {
 	planSlug,
-	planUpgradeCreditsApplicable,
 	visibleGridPlans,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
 	const translate = useTranslate();
@@ -149,11 +148,10 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	 * then we do not show any discount messaging as per Automattic/martech#1927
 	 * We currently only support the `One time discount` in some currencies
 	 */
-	const isGridPlanOneTimeDiscounted =
-		Boolean( discountedPrice.monthly ) && ! planUpgradeCreditsApplicable;
-	const isAnyVisibleGridPlanOneTimeDiscounted =
-		visibleGridPlans.some( ( { pricing } ) => pricing.discountedPrice.monthly ) &&
-		! planUpgradeCreditsApplicable;
+	const isGridPlanOneTimeDiscounted = Boolean( discountedPrice.monthly );
+	const isAnyVisibleGridPlanOneTimeDiscounted = visibleGridPlans.some(
+		( { pricing } ) => pricing.discountedPrice.monthly
+	);
 
 	const isGridPlanOnIntroOffer = introOffer && ! introOffer.isOfferComplete;
 	const isAnyVisibleGridPlanOnIntroOffer = visibleGridPlans.some(
