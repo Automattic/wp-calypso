@@ -453,6 +453,13 @@ body.is-mobile-app-view {
 		}
 	}
 
+	&.masterbar__item-sidebar-menu {
+		display: none;
+		@media only screen and (max-width: 782px) {
+			display: inline-block;
+		}
+	}
+
 	// layout/mb overrides
 	&.mb {
 		// Override the reader override

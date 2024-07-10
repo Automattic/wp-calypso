@@ -257,22 +257,17 @@ class MasterbarLoggedIn extends Component {
 	 * In nav unification, the menu is openned with the Sites button
 	 */
 	renderSidebarMobileMenu() {
-		const { isResponsiveMenu } = this.state;
 		const { translate } = this.props;
-
-		if ( isResponsiveMenu ) {
-			return (
-				<Item
-					tipTarget="Menu"
-					icon={ <span className="dashicons-before dashicons-menu-alt" /> }
-					onClick={ this.handleToggleMobileMenu }
-					isActive={ this.isSidebarOpen() }
-					className="masterbar__item-menu"
-					tooltip={ translate( 'Menu' ) }
-				/>
-			);
-		}
-		return null;
+		return (
+			<Item
+				tipTarget="Menu"
+				icon={ <span className="dashicons-before dashicons-menu-alt" /> }
+				onClick={ this.handleToggleMobileMenu }
+				isActive={ this.isSidebarOpen() }
+				className="masterbar__item-sidebar-menu"
+				tooltip={ translate( 'Menu' ) }
+			/>
+		);
 	}
 
 	renderGlobalMySites() {
