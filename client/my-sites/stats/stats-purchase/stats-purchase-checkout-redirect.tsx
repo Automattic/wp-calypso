@@ -67,14 +67,12 @@ const getCheckoutBackUrl = ( {
 	siteSlug: string;
 	adminUrl?: string;
 } ) => {
-	// TODO: Enumerate all possible values of `from` parameter.
-	const isFromWPAdmin = from.startsWith( 'jetpack' );
+	const isFromWPAdmin = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isFromMyJetpack = from === 'jetpack-my-jetpack';
 	const isFromPlansPage = from === 'calypso-plans';
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	// Use full URL even though redirecting on Calypso.
-	if ( ! isFromWPAdmin && ! isOdysseyStats ) {
+	if ( ! isFromWPAdmin ) {
 		if ( ! siteSlug ) {
 			return 'https://cloud.jetpack.com/pricing/';
 		}
