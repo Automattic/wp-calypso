@@ -156,7 +156,7 @@ $search-categories-padding-top: 40px;
 		@include break-medium {
 			position: fixed;
 			z-index: 20;
-			top: var(--masterbar-height);
+			top: calc(var(--masterbar-height) + 16px);
 			padding: 10px 32px;
 			box-sizing: border-box;
 			border-top-left-radius: 4px;
