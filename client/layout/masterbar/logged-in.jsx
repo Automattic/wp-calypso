@@ -841,6 +841,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderPopupSearch() }
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
+							{ this.renderSidebarMobileMenu() }
 							{ this.renderMySites() }
 							{ this.renderReader() }
 							{ this.renderSiteMenu() }
