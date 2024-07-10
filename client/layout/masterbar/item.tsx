@@ -80,8 +80,8 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		return (
 			<ul className="masterbar__item-subitems">
 				{ subItems &&
-					subItems.map( ( item ) => (
-						<li key={ item.url } className="masterbar__item-subitems-item">
+					subItems.map( ( item, i ) => (
+						<li key={ i } className="masterbar__item-subitems-item">
 							<a href={ item.url }>{ item.label }</a>
 						</li>
 					) ) }
