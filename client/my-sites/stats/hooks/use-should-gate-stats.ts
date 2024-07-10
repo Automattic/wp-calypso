@@ -5,6 +5,7 @@ import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
+import { getPlanUsageBillableMonthlyViews } from 'calypso/state/stats/plan-usage/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	STATS_FEATURE_DOWNLOAD_CSV,
@@ -33,6 +34,7 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_YEAR,
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
 } from '../constants';
+import { MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL } from './use-site-compulsory-plan-selection-qualified-check';
 import { hasSupportedCommercialUse, hasSupportedVideoPressUse } from './use-stats-purchases';
 
 // If Jetpack sites don't have any purchase that supports commercial use, gate advanced modules accordingly.
@@ -128,12 +130,18 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 		}
 
 		const isSiteCommercial = getSiteOption( state, siteId, 'is_commercial' ) || false;
-		// Paywall basic stats for commercial sites.
 		if ( isSiteCommercial ) {
-			return [
-				...jetpackStatsCommercialPaywall,
-				...granularControlForJetpackStatsCommercialPaywall,
-			].includes( statType );
+			const billableMonthlyViews = getPlanUsageBillableMonthlyViews( state, siteId );
+			// Paywall basic stats for commercial sites with monthly views of more than 1k.
+			if ( billableMonthlyViews >= MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL ) {
+				return [
+					...jetpackStatsCommercialPaywall,
+					...granularControlForJetpackStatsCommercialPaywall,
+				].includes( statType );
+			}
+
+			// Paywall advanced stats for commercial sites with monthly views less than 1k.
+			return [ ...jetpackStatsAdvancedPaywall ].includes( statType );
 		}
 
 		// Paywall advanced stats for non-commercial sites.
