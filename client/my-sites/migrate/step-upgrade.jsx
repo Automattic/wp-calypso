@@ -165,7 +165,12 @@ const WrappedStepUpgrade = ( props ) => {
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ planSlug ],
 		coupon: undefined,
-		siteId: null, // null site ID means we're fetching global (non-site-specific) pricing
+		/**
+		 * null site ID means we're fetching global (non-site-specific) pricing.
+		 * once https://github.com/Automattic/martech/issues/3142 is addressed, we should be able
+		 * to grab currency discounts with a site ID.
+		 */
+		siteId: null,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
