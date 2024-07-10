@@ -27,6 +27,14 @@
 	}
 }
 
+.migration-instructions-provisioning__action-icon-error {
+	> svg {
+		display: block;
+	}
+
+	fill: var(--color-error);
+}
+
 .migration-instructions-provisioning__action-text {
 	font-size: 1rem;
 	font-weight: 500;
