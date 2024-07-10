@@ -4,17 +4,8 @@
 .migration-instructions-provisioning {
 	background: #e8ecfb;
 	border-radius: 4px;
-	bottom: 80px;
 	font-size: 0.875rem;
-	margin: auto 16px 0 0;
 	padding: 12px;
-	position: fixed;
-
-	@include break-large {
-		bottom: 40px;
-		margin-right: 0;
-		position: sticky;
-	}
 }
 
 .migration-instructions-provisioning__message {

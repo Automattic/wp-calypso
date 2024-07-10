@@ -53,7 +53,9 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 				/>
 			}
 		>
-			<Steps steps={ steps } />
+			<div className="site-migration-instructions__steps">
+				<Steps steps={ steps } />
+			</div>
 			<Provisioning status={ detailedStatus } />
 		</Sidebar>
 	);
