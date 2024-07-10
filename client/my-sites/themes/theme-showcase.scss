@@ -7,6 +7,10 @@
 		--color-surface-backdrop: var(--studio-white);
 	}
 
+	.layout__content {
+		padding-left: calc(var(--sidebar-width-max) + 33px);
+	}
+
 	.main > .notice.is-error {
 		margin-top: 24px;
 		margin-bottom: 0;
