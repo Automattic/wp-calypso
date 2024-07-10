@@ -290,10 +290,6 @@
 	.layout__content {
 		transition: padding-left 220ms ease-out;
 		min-height: 100vh;
-
-		@include break-medium {
-			padding: 16px 16px 16px calc(var(--sidebar-width-max));
-		}
 	}
 	.layout__secondary {
 		transition: width 220ms ease-out;
@@ -712,6 +708,15 @@
 		// Prevent the content pushed out via translateX(100%) creating a scrollbar
 		&.focus-sidebar .layout__content .layout__primary {
 			overflow-x: hidden;
+		}
+	}
+}
+
+.wpcom-site div.is-section-themes.is-global-sidebar-visible {
+	&.focus-content .layout__content,
+	&.focus-sidebar .layout__content {
+		@include break-medium {
+			padding-left: calc(var(--sidebar-width-max) + 33px);
 		}
 	}
 }
