@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
-import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { search } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -16,11 +16,10 @@ import { SUPPORT_URL } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-// import StatsEmptyActionSearch from '../shared/stats-empty-action-search';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
-	// period,
+	period,
 	query,
 	moduleStrings,
 	className,
@@ -54,29 +53,13 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
 				<StatsModule
 					path="searchterms"
-					// moduleStrings={ moduleStrings.search }
-					// period={ this.props.period }
+					moduleStrings={ moduleStrings }
+					period={ period }
 					query={ query }
-					statType="statsSearchTerms"
+					statType={ statType }
 					showSummaryLink
-					// className={ clsx(
-					// 	{
-					// 		// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
-					// 		'stats__flexible-grid-item--one-third--two-spaces':
-					// 			// ! isJetpack && ! this.isModuleHidden( 'videos' ),
-					// 	},
-					// 	{
-					// 		'stats__flexible-grid-item--full--large':
-					// 			// isJetpack && this.isModuleHidden( 'videos' ),
-					// 	},
-					// 	{
-					// 		// 1/2 for all other cases to stack with Devices or empty space
-					// 		// 'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-					// 		// Avoid 1/3 on smaller screen if Videos is visible
-					// 		// 'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-					// 	},
-					// 	'stats__flexible-grid-item--full--medium'
-					// ) }
+					className={ className }
+					skipQuery
 				/>
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
@@ -86,9 +69,9 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ mail }
+							icon={ search }
 							description={ translate(
-								'Learn about your {{link}}latest search sent{{/link}} to better understand how they performed. Start sending!',
+								'Learn about {{link}}popular terms{{/link}} visitors use to find your site content on search engines.',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
@@ -97,7 +80,6 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 									context: 'Stats: Info box label when the Search module is empty',
 								}
 							) }
-							// cards={ <StatsEmptyActionSearch from="module_search" /> }
 						/>
 					}
 				/>
