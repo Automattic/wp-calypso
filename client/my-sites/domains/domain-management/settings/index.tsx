@@ -744,9 +744,9 @@ const Settings = ( {
 				{ renderForwardingSection() }
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
+				{ renderDnssecSection() }
 				{ renderDomainSecuritySection() }
 				{ renderDomainGlueRecordsSection() }
-				{ renderDnssecSection() }
 			</>
 		);
 	};
