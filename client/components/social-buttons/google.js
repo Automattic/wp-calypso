@@ -1,12 +1,10 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
-import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { cloneElement, Component, Fragment } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
-import GoogleIcon from 'calypso/components/social-icons/google';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
@@ -18,6 +16,7 @@ import './style.scss';
 const noop = () => {};
 
 class GoogleSocialButton extends Component {
+	buttonRef = createRef();
 	static propTypes = {
 		clientId: PropTypes.string.isRequired,
 		fetchBasicProfile: PropTypes.bool,
@@ -40,8 +39,6 @@ class GoogleSocialButton extends Component {
 
 	constructor( props ) {
 		super( props );
-
-		this.handleClick = this.handleClick.bind( this );
 	}
 
 	componentDidMount() {
@@ -51,12 +48,13 @@ class GoogleSocialButton extends Component {
 				redirect_uri: this.props.redirectUri,
 				state: this.props.state,
 			} );
+		} else {
+			this.fetchNonceAndInitializeGoogleSignIn();
 		}
 	}
 
 	async initializeGoogleSignIn( state ) {
 		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
-
 		if ( ! googleSignIn ) {
 			this.props.recordTracksEvent( 'calypso_social_button_failure', {
 				social_account_type: 'google',
@@ -71,7 +69,7 @@ class GoogleSocialButton extends Component {
 			return;
 		}
 
-		this.client = googleSignIn.initCodeClient( {
+		this.client = googleSignIn.initialize( {
 			client_id: this.props.clientId,
 			scope: this.props.scope,
 			ux_mode: this.props.uxMode,
@@ -88,13 +86,17 @@ class GoogleSocialButton extends Component {
 					return;
 				}
 
-				this.handleAuthorizationCode( { auth_code: response.code, state: response.state } );
+				this.handleAuthorizationCode( { auth_code: response.credential, state: response.state } );
 			},
 		} );
+		googleSignIn.renderButton(
+			this.buttonRef.current,
+			{ theme: 'outline' } // customization attributes
+		);
 	}
 
 	async loadGoogleIdentityServicesAPI() {
-		if ( ! window?.google?.accounts?.oauth2 ) {
+		if ( ! window?.google?.accounts?.id ) {
 			try {
 				await loadScript( 'https://accounts.google.com/gsi/client' );
 			} catch {
@@ -103,7 +105,7 @@ class GoogleSocialButton extends Component {
 			}
 		}
 
-		return window?.google?.accounts?.oauth2 ?? null;
+		return window?.google?.accounts?.id ?? null;
 	}
 
 	async handleAuthorizationCode( { auth_code, redirect_uri, state } ) {
@@ -167,57 +169,19 @@ class GoogleSocialButton extends Component {
 		}
 	}
 
-	async handleClick( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		await this.fetchNonceAndInitializeGoogleSignIn();
-		this.props.onClick( event );
-
-		this.client?.requestCode();
-	}
-
 	render() {
-		const isDisabled = Boolean( this.props.isFormDisabled );
-
-		const { children } = this.props;
-		let customButton = null;
-
-		if ( children ) {
-			const childProps = {
-				className: clsx( { disabled: isDisabled } ),
-				onClick: this.handleClick,
-			};
-
-			customButton = cloneElement( children, childProps );
-		}
-
 		return (
-			<Fragment>
-				{ customButton ? (
-					customButton
-				) : (
-					<button
-						className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
-						onClick={ this.handleClick }
-						disabled={ isDisabled }
-					>
-						<GoogleIcon
-							isDisabled={ isDisabled }
-							width={ this.props.isReskinned ? 19 : 20 }
-							height={ this.props.isReskinned ? 19 : 20 }
-						/>
-
-						<span className="social-buttons__service-name">
-							{ this.props.translate( 'Continue with %(service)s', {
-								args: { service: 'Google' },
-								comment:
-									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
-							} ) }
-						</span>
-					</button>
-				) }
-			</Fragment>
+			<div
+				ref={ this.buttonRef }
+				className="google__sign-in-container"
+				id="g-id-signin"
+				data-type="standard"
+				data-theme="outline"
+				data-text="sign_in_with"
+				data-shape="rectangular"
+				data-locale={ getLocaleSlug() }
+				data-logo_alignment="left"
+			></div>
 		);
 	}
 }
