@@ -3,7 +3,7 @@ body.is-section-me {
 	background: var(--studio-gray-0);
 
 	&.rtl .layout__content {
-		padding: 16px calc(var(--sidebar-width-max)) 16px 16px;
+		padding: calc(var(--masterbar-height) + 12px) calc(var(--sidebar-width-max)) 16px 16px;
 	}
 
 	.layout__content {
@@ -12,7 +12,7 @@ body.is-section-me {
 		min-height: 100vh;
 		padding-bottom: 0;
 		@media only screen and (min-width: 782px) {
-			padding: 16px 16px 16px calc(var(--sidebar-width-max)) !important;
+			padding: calc(var(--masterbar-height) + 12px) 16px 16px calc(var(--sidebar-width-max)) !important;
 		}
 		@media only screen and (max-width: 600px) {
 			background: var(--studio-white);
@@ -32,13 +32,7 @@ body.is-section-me {
 
 	div.layout.is-global-sidebar-visible {
 		.main {
-			@media only screen and (min-width: 600px) and (max-width: 960px) {
-				padding: 24px;
-			}
-			@media only screen and (max-width: 600px) {
-				padding-top: 0;
-				padding-bottom: 0;
-			}
+			padding: 24px;
 			border-block-end: 1px solid var(--studio-gray-0);
 		}
 		.layout__primary {
@@ -49,7 +43,7 @@ body.is-section-me {
 				height: calc(100vh - var(--masterbar-height) - 50px);
 			}
 			@media only screen and (min-width: 782px) {
-				height: calc(100vh - 32px);
+				height: calc(100vh - var(--masterbar-height) - 28px);
 			}
 			overflow-y: auto;
 			overflow-x: hidden;

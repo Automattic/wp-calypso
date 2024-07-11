@@ -1,34 +1,37 @@
 import { StatsCard } from '@automattic/components';
-import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { customLink } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import EmptyModuleCard from 'calypso/my-sites/stats/components/empty-module-card/empty-module-card';
+import { SUPPORT_URL } from 'calypso/my-sites/stats/const';
+import StatsCardSkeleton from 'calypso/my-sites/stats/features/modules/shared/stats-card-skeleton';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import StatsModule from 'calypso/my-sites/stats/stats-module';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
-import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
-import StatsModule from '../../../stats-module';
-import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import StatsEmptyActionEmail from '../shared/stats-empty-action-email';
-import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
+import type {
+	StatsDefaultModuleProps,
+	StatsStateProps,
+} from 'calypso/my-sites/stats/features/modules/types';
 
-const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
+const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
 	className,
-}: StatsDefaultModuleProps ) => {
+} ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsEmailsSummary';
+	const statType = 'statsFileDownloads';
 
+	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
 	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
@@ -48,55 +51,43 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 					isLoading={ isRequestingData }
 					className={ className }
 					title={ moduleStrings.title }
-					type={ 2 }
+					type={ 3 }
 				/>
 			) }
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
+				// show data or an overlay
 				<StatsModule
-					additionalColumns={ {
-						header: (
-							<>
-								<span>{ translate( 'Opens' ) }</span>
-							</>
-						),
-						body: ( item: { opens: number } ) => (
-							<>
-								<span>{ item.opens }</span>
-							</>
-						),
-					} }
-					path="emails"
+					metricLabel={ translate( 'Downloads' ) }
+					useShortLabel
+					path="filedownloads"
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
-					statType="statsEmailsSummary"
-					mainItemLabel={ translate( 'Latest Emails' ) }
-					metricLabel={ translate( 'Clicks' ) }
+					statType={ statType }
 					showSummaryLink
 					className={ className }
-					hasNoBackground
 					skipQuery
 				/>
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
+				// show empty state
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) }
-					title={ translate( 'Emails' ) }
+					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
+					title={ moduleStrings.title }
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ mail }
+							icon={ customLink }
 							description={ translate(
-								'Learn about your {{link}}latest emails sent{{/link}} to better understand how they performed. Start sending!',
+								'Your most {{link}}downloaded files{{/link}} will display here.',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#emails` ) } />,
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) } />,
 									},
-									context: 'Stats: Info box label when the Emails module is empty',
+									context: 'Stats: Info box label when the file downloads module is empty',
 								}
 							) }
-							cards={ <StatsEmptyActionEmail from="module_emails" /> }
 						/>
 					}
 				/>
@@ -105,4 +96,4 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 	);
 };
 
-export default StatEmails;
+export default StatsDownloads;

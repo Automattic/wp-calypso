@@ -20,7 +20,7 @@ export default function ProvisioningSiteNotification( { siteId, migrationIntent 
 	const wpOverviewUrl = `https://wordpress.com/overview/${ siteSlug }`;
 	const wpMigrationUrl = addQueryArgs(
 		{
-			siteId: site?.id,
+			siteId: site?.features.wpcom_atomic.blog_id,
 			siteSlug,
 		},
 		'https://wordpress.com/setup/hosted-site-migration/site-migration-identify'

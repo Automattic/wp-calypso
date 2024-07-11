@@ -109,7 +109,7 @@ $brand-text: "SF Pro Text", $sans;
 		@include custom-scrollbars-on-hover(transparent, $gray-600);
 		flex: 1;
 		overflow-y: auto;
-		padding-top: 12px;
+		padding-top: 16px;
 
 		.sidebar,
 		.sidebar__menu:not(.is-togglable) {
@@ -121,9 +121,6 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar {
 			overflow: visible;
-			&:first-child {
-				margin-top: 4px;
-			}
 
 			.sidebar__menu.is-togglable .sidebar__heading,
 			.sidebar__expandable-content .sidebar__menu-link {
@@ -356,7 +353,6 @@ $brand-text: "SF Pro Text", $sans;
 
 	.sidebar__back-link {
 		padding-left: 12px;
-		margin-top: 4px;
 		margin-bottom: 24px;
 		display: flex;
 		align-items: center;
@@ -506,8 +502,6 @@ $brand-text: "SF Pro Text", $sans;
 			.sidebar__body {
 				overflow-y: visible;
 				.sidebar__menu-item-parent .sidebar__menu-link {
-					margin: 0 auto;
-
 					> *:not(:first-child) {
 						display: none;
 					}
