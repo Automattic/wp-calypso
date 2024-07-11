@@ -20,6 +20,7 @@ import { siteUsesWpAdminInterface } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import {
 	getCurrentUser,
 	getCurrentUserDate,
@@ -529,25 +530,24 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderProfileMenu() {
-		const { translate, user, siteUrl } = this.props;
-		// todo: needs aligning with wp-admin side
+		const { translate, user, siteUrl, currentSelectedSite } = this.props;
+		const isClassicView = siteUsesWpAdminInterface( currentSelectedSite );
 		const profileActions = [
 			{
-				// todo: support: toplabel: user.display_name,
-				label: translate( 'Edit WordPress.com Profile' ),
-				url: '/me',
+				label: translate( 'Edit Profile' ),
+				url: isClassicView ? siteUrl + '/wp-admin/profile.php' : '/me',
 			},
 			{
-				label: translate( 'Edit Site Profile' ),
-				url: siteUrl + '/wp-admin/profile.php',
+				label: translate( 'My Account' ),
+				url: '/me/account',
 			},
 			{
 				label: translate( 'Log Out' ),
-				// todo: support: onClick: dispatch(redirectToLogout()),
-				url: 'https://wordpress.com/wp-login.php?action=logout',
-				// todo: support tooltip: translate( 'Log out of WordPress.com' ),
+				onClick: () => this.props.redirectToLogout(),
+				tooltip: translate( 'Log out of WordPress.com' ),
 			},
 		];
+
 		return (
 			<Item
 				tipTarget="me"
@@ -1084,5 +1084,6 @@ export default connect(
 		activateNextLayoutFocus,
 		savePreference,
 		openCommandPalette,
+		redirectToLogout,
 	}
 )( localize( MasterbarLoggedIn ) );
