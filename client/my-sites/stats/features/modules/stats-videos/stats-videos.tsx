@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
-import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { video } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -85,7 +85,7 @@ const StatVideos: React.FC< StatsDefaultModuleProps > = ( {
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ mail }
+							icon={ video }
 							description={ translate(
 								'Learn about your {{link}}most popular videos{{/link}} to better understand how they performed. Start uploading!',
 								{
