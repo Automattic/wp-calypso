@@ -109,7 +109,7 @@ function HelpSearchResults( {
 	const { setShowSupportDoc } = useDataStoreDispatch( 'automattic/help-center' );
 
 	const onLinkClickHandler = ( event, result, type ) => {
-		const { link, post_id: postId, blog_id: blogId, title } = result;
+		const { link, post_id: postId, blog_id: blogId } = result;
 		if ( ! link ) {
 			onSelect( event, result );
 			return;
@@ -119,7 +119,7 @@ function HelpSearchResults( {
 			if ( type === SUPPORT_TYPE_API_HELP ) {
 				event.preventDefault();
 
-				setShowSupportDoc( link, postId, blogId, title );
+				setShowSupportDoc( link, postId, blogId );
 			}
 			onSelect( event, result );
 			return;
