@@ -499,27 +499,13 @@ class MasterbarLoggedIn extends Component {
 				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 				preloadSection={ this.preloadMe }
 				subItems={ profileActions }
-				// todo: support:
-				/*subItemIcon={
-					<Gravatar
-						className="masterbar__item-howdy-gravatar"
-						user={ user }
-						alt={ translate( 'My Profile' ) }
-						size={ 46 }
-					/>
-				}*/
 			>
 				<span className="masterbar__item-howdy-howdy">
 					{ translate( 'Howdy, %(display_name)s', {
 						args: { display_name: user.display_name },
 					} ) }
 				</span>
-				<Gravatar
-					className="masterbar__item-howdy-gravatar"
-					user={ user }
-					alt={ translate( 'My Profile' ) }
-					size={ 18 }
-				/>
+				<Gravatar className="masterbar__item-howdy-gravatar" alt=" " user={ user } size={ 18 } />
 			</Item>
 		);
 	}

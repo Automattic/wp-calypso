@@ -876,6 +876,13 @@ body.is-mobile-app-view {
 			height: 22px;
 		}
 	}
+
+	@media only screen and (max-width: 782px) {
+		.masterbar__item-howdy-howdy {
+			display: none;
+		}
+	}
+
 }
 
 .masterbar__login-links {
