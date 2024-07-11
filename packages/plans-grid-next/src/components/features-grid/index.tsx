@@ -34,7 +34,7 @@ import type {
 	PlanActionOverrides,
 } from '../../types';
 
-import '../../style.scss';
+import './style.scss';
 
 type MobileViewProps = {
 	currentSitePlanSlug?: string | null;

@@ -54,7 +54,7 @@ import type {
 	FeatureGroupMap,
 } from '@automattic/calypso-products';
 
-import '../../style.scss';
+import './style.scss';
 
 const featureGroupRowTitleCellMaxWidth = 450;
 const rowCellMaxWidth = 290;
