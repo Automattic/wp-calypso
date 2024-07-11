@@ -472,7 +472,9 @@ class MasterbarLoggedIn extends Component {
 
 	renderProfileMenu() {
 		const { translate, user, siteUrl, currentSelectedSite } = this.props;
-		const isClassicView = siteUsesWpAdminInterface( currentSelectedSite );
+		const isClassicView = currentSelectedSite
+			? siteUsesWpAdminInterface( currentSelectedSite )
+			: false;
 		const profileActions = [
 			{
 				label: translate( 'Edit Profile' ),
