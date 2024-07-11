@@ -46,8 +46,8 @@ export type TitanEmailSubscription = EmailSubscription & {
 export type TransferStatus = ( typeof transferStatus )[ keyof typeof transferStatus ];
 
 export type DnssecRecords = {
-	dnskey: string;
-	dsData: Array< string >;
+	dnskey?: string;
+	dsData?: Array< string >;
 };
 
 export type ResponseDomain = {
