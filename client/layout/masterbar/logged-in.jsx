@@ -423,10 +423,19 @@ class MasterbarLoggedIn extends Component {
 			siteAdminUrl,
 			newPostUrl,
 			newPageUrl,
+			domainOnlySite,
+			isMigrationInProgress,
+			isEcommerce,
 		} = this.props;
 
 		// Only display on site-specific pages.
-		if ( sectionGroup !== 'sites' || ! currentSelectedSiteSlug ) {
+		if (
+			sectionGroup !== 'sites' ||
+			! currentSelectedSiteSlug ||
+			domainOnlySite ||
+			isMigrationInProgress ||
+			isEcommerce
+		) {
 			return null;
 		}
 
