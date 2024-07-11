@@ -1,3 +1,4 @@
+import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MaybeLink } from './maybe-link';
@@ -49,10 +50,9 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 							components: {
 								strong: <strong />,
 								a: (
-									<a
+									<ExternalLink
 										href={ getPluginInstallationPage( fromUrl ) }
 										target="_blank"
-										rel="noreferrer noopener"
 										onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
 									/>
 								),
