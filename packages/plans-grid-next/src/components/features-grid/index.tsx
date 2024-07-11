@@ -34,6 +34,8 @@ import type {
 	PlanActionOverrides,
 } from '../../types';
 
+import '../../style.scss';
+
 type MobileViewProps = {
 	currentSitePlanSlug?: string | null;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;

@@ -11,7 +11,6 @@ import usePlanBillingDescription from './hooks/data-store/use-plan-billing-descr
 import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
-import './style.scss';
 
 /**
  * Types
