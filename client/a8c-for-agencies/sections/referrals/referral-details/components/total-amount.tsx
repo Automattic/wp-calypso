@@ -22,7 +22,7 @@ const TotalAmount = ( { purchase, data, isFetching }: Props ) => {
 
 	return product?.amount ? (
 		translate( '%(total)s/mo', {
-			args: { total: formatCurrency( parseInt( product.amount ), product.currency ?? 'USD' ) },
+			args: { total: formatCurrency( Number( product.amount ?? 0 ), product.currency ?? 'USD' ) },
 		} )
 	) : (
 		<Gridicon icon="minus" />
