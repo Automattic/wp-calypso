@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
-import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { video } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -16,10 +16,10 @@ import { SUPPORT_URL } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import StatsEmptyActionEmail from '../shared/stats-empty-action-email';
+import StatsEmptyActionVideo from '../shared/stats-empty-action-video';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
+const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -27,7 +27,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 }: StatsDefaultModuleProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsEmailsSummary';
+	const statType = 'statsVideoPlays';
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
@@ -53,50 +53,35 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 			) }
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
 				<StatsModule
-					additionalColumns={ {
-						header: (
-							<>
-								<span>{ translate( 'Opens' ) }</span>
-							</>
-						),
-						body: ( item: { opens: number } ) => (
-							<>
-								<span>{ item.opens }</span>
-							</>
-						),
-					} }
-					path="emails"
+					path="videoplays"
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
-					statType="statsEmailsSummary"
-					mainItemLabel={ translate( 'Latest Emails' ) }
-					metricLabel={ translate( 'Clicks' ) }
+					statType="statsVideoPlays"
 					showSummaryLink
 					className={ className }
-					hasNoBackground
 					skipQuery
 				/>
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) }
-					title={ translate( 'Emails' ) }
+					title={ translate( 'Videos' ) }
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ mail }
+							icon={ video }
 							description={ translate(
-								'Learn about your {{link}}latest emails sent{{/link}} to better understand how they performed. Start sending!',
+								'Learn about your {{link}}most popular videos{{/link}} to better understand how they performed. Start uploading!',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#emails` ) } />,
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />,
 									},
-									context: 'Stats: Info box label when the Emails module is empty',
+									context: 'Stats: Info box label when the Videos module is empty',
 								}
 							) }
-							cards={ <StatsEmptyActionEmail from="module_emails" /> }
+							cards={ <StatsEmptyActionVideo from="module_videos" /> }
 						/>
 					}
 				/>
@@ -105,4 +90,4 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 	);
 };
 
-export default StatsEmails;
+export default StatsVideos;
