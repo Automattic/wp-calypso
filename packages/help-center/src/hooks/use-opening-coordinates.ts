@@ -37,7 +37,7 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	const buttonTopEdge = y;
 	const buttonBottomEdge = y + height;
 
-	let coords = defaultPosition;
+	const coords = { ...defaultPosition };
 
 	if ( buttonTopEdge + helpCenterHeight + AESTHETIC_OFFSET > innerHeight ) {
 		// Align the bottom edge of the help center with the top edge of the button
@@ -66,7 +66,7 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 		coords.left + helpCenterWidth > innerWidth ||
 		coords.top + helpCenterHeight > innerHeight
 	) {
-		coords = defaultPosition;
+		return defaultPosition;
 	}
 
 	return coords;
