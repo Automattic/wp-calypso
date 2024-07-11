@@ -234,6 +234,7 @@ export const defaultDomainResponse: any = {
 	currentUserCanManage: false,
 	currentUserCannotAddEmailReason: null,
 	currentUserIsOwner: false,
+	dnssecRecords: undefined,
 	domain: '',
 	domainLockingAvailable: false,
 	domainRegistrationAgreementUrl: null,
