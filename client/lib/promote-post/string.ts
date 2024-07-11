@@ -223,6 +223,9 @@ const BlazePressStrings = () => {
 	translate( 'Now' );
 	translate( '%(creditUsed)s (%(remainingCredit)s remain)', { context: 'amount of money' } );
 	translate( 'Credits', { context: 'amount of money' } );
+	translate(
+		'The maximum amount of tokens to generate on the output. Beware of model limitations.'
+	);
 };
 
 if ( window.BlazePress ) {
