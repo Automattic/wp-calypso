@@ -19,7 +19,7 @@
 			max-width: none;
 			overflow-y: auto;
 
-			@include breakpoint-deprecated( ">782px" ) {
+			@include break-small {
 				height: calc(100vh - var(--masterbar-height) - 32px);
 			}
 		}
