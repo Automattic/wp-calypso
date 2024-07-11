@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon, Button } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { Component, Fragment, forwardRef } from 'react';
+import React, { Component, Fragment, forwardRef } from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import type { ReactNode, LegacyRef } from 'react';
 
@@ -57,11 +57,14 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		isOpenByTouch: false,
 	};
 
+	componentButtonRef = React.createRef< HTMLButtonElement >();
+	componentDivRef = React.createRef< HTMLDivElement >();
+
 	_preloaded = false;
 
 	componentDidMount() {
-		document.addEventListener( 'touchstart', this.closeMenu );
-		return () => document.removeEventListener( 'touchstart', this.closeMenu );
+		document.addEventListener( 'touchstart', this.closeMenuOnOutsideTouch );
+		return () => document.removeEventListener( 'touchstart', this.closeMenuOnOutsideTouch );
 	}
 
 	preload = () => {
@@ -132,8 +135,15 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		this.setState( { isOpenByTouch: false } );
 	};
 
-	closeMenu = () => {
-		this.setState( { isOpenByTouch: false } );
+	closeMenuOnOutsideTouch = ( event: TouchEvent ) => {
+		const isInComponentButtonRef = this.componentButtonRef.current?.contains(
+			event.target as Node
+		);
+		const isInComponentDivRef = this.componentDivRef.current?.contains( event.target as Node );
+
+		if ( ! isInComponentButtonRef && ! isInComponentDivRef ) {
+			this.setState( { isOpenByTouch: false } );
+		}
 	};
 
 	render() {
@@ -146,36 +156,33 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			mb: isEnabled( 'layout/mb' ),
 		} );
 
-		const touchStart = ( event: React.TouchEvent ) => {
-			this.preload();
-			event.stopPropagation();
-		};
-
 		const attributes = {
 			'data-tip-target': this.props.tipTarget,
 			onClick: this.props.onClick,
 			title: this.props.tooltip,
 			className: itemClasses,
-			onTouchStart: touchStart,
+			onTouchStart: this.preload,
 			onMouseEnter: this.preload,
 			disabled: this.props.disabled,
 		};
 
 		if ( this.props.url && ! this.props.subItems ) {
 			return (
-				<a
-					{ ...attributes }
-					href={ this.props.url }
-					ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
-				>
-					{ this.renderChildren() }
-				</a>
+				<div ref={ this.componentDivRef }>
+					<a
+						{ ...attributes }
+						href={ this.props.url }
+						ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
+					>
+						{ this.renderChildren() }
+					</a>
+				</div>
 			);
 		}
 
 		if ( this.props.url && this.props.subItems ) {
 			return (
-				<button { ...attributes }>
+				<button { ...attributes } ref={ this.componentButtonRef }>
 					<a
 						href={ this.props.url }
 						ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
@@ -189,10 +196,16 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		}
 
 		return (
-			<button { ...attributes } ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }>
-				{ this.renderChildren() }
-				{ this.renderSubItems() }
-			</button>
+			<div ref={ this.componentDivRef }>
+				<button
+					{ ...attributes }
+					ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }
+					onTouchEnd={ this.toggleMenuByTouch }
+				>
+					{ this.renderChildren() }
+					{ this.renderSubItems() }
+				</button>
+			</div>
 		);
 	}
 }
