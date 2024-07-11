@@ -1,7 +1,7 @@
+import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { MaybeLink } from './maybe-link';
 import type { Task, Expandable } from '@automattic/launchpad';
 
 const removeDuplicatedSlashes = ( url: string ) => url.replace( /(https?:\/\/)|(\/)+/g, '$1$2' );
@@ -63,14 +63,14 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 			content: (
 				<p>
 					{ translate(
-						'First you’ll need to install and activate the {{a}}Migrate Guru plugin{{/a}} on the site you want to migrate. Click next when you’re ready.',
+						"First you'll need to install and activate the {{a}}Migrate Guru plugin{{/a}} on the site you want to migrate. Click {{strong}}Next{{/strong}} when you're ready.",
 						{
 							components: {
+								strong: <strong />,
 								a: (
-									<a
+									<ExternalLink
 										href={ getPluginInstallationPage( fromUrl ) }
 										target="_blank"
-										rel="noreferrer noopener"
 										onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
 									/>
 								),
@@ -86,18 +86,18 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 				<>
 					<p>
 						{ translate(
-							'Head to the {{a}}Migrate Guru page on the site you’re migrating{{/a}}, Tap in your email address and click {{strong}}‘%(migrateLabel)s’{{/strong}}.',
+							'Head to the {{a}}Migrate Guru plugin screen on your source site{{/a}}, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
 							{
 								components: {
 									strong: <strong />,
-									a: (
-										<MaybeLink
-											href={ fromUrl ? getMigrateGuruPageURL( fromUrl ) : undefined }
+									a: fromUrl ? (
+										<ExternalLink
+											href={ getMigrateGuruPageURL( fromUrl ) }
 											target="_blank"
-											rel="noreferrer noopener"
-											fallback={ <strong /> }
 											onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
 										/>
+									) : (
+										<strong />
 									),
 								},
 								args: { migrateLabel: 'Migrate' },
@@ -107,25 +107,39 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 					<p>
 						<strong>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</strong>
 					</p>
-					<p>{ translate( 'All set? Click next below.' ) }</p>
+					<p>
+						{ translate( 'All set? Click {{strong}}Next{{/strong}} below.', {
+							components: {
+								strong: <strong />,
+							},
+						} ) }
+					</p>
 				</>
 			),
 		},
 		{
 			title: translate( 'Add your migration key' ),
 			content: (
-				<p>
-					{ translate(
-						'Copy and paste the migration key below in the Migrate Guru Migration key field and click {{strong}}%(migrateLabel)s{{/strong}}.',
-
-						{
+				<>
+					<p>
+						{ translate(
+							'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the {{strong}}Migration key{{/strong}} field.',
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<p>
+						{ translate( 'Click {{strong}}%(migrateLabel)s{{/strong}} to finish.', {
 							components: {
 								strong: <strong />,
 							},
 							args: { migrateLabel: 'Migrate' },
-						}
-					) }
-				</p>
+						} ) }
+					</p>
+				</>
 			),
 		},
 	];
