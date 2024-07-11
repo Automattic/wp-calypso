@@ -7,10 +7,13 @@ $data-view-border-color: #f1f1f1;
 	margin-block-end: 48px;
 }
 
-.referrals-overview__notice-button {
-	margin-block-start: 1rem;
-	background-color: var(--color-accent-100) !important;
-	color: var(--color-surface) !important;
+.theme-a8c-for-agencies {
+	.button.referrals-overview__notice-button {
+		margin-block-start: 1rem;
+		background-color: var(--color-accent-100);
+		color: var(--color-surface);
+	}
+
 }
 
 .referrals-overview__section-heading {

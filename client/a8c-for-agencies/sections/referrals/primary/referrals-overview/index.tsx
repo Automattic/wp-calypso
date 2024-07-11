@@ -47,6 +47,7 @@ export default function ReferralsOverview( {
 	const dispatch = useDispatch();
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+	const [ requiredNoticeClose, setRequiredNoticeClosed ] = useState( false );
 
 	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
 		REFERRAL_EMAIL_QUERY_PARAM_KEY
@@ -64,7 +65,8 @@ export default function ReferralsOverview( {
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
 	const accountStatus = getAccountStatus( tipaltiData, translate );
 	const referralsAvailable = accountStatus?.statusType === 'success';
-	const actionRequiredNotice = ! isFetching && accountStatus?.statusType === 'warning';
+	const actionRequiredNotice =
+		! requiredNoticeClose && ! isFetching && accountStatus?.statusType === 'warning';
 
 	const { data: referrals, isFetching: isFetchingReferrals } =
 		useFetchReferrals( isAutomatedReferral );
@@ -103,6 +105,7 @@ export default function ReferralsOverview( {
 							<NoticeBanner
 								level="warning"
 								title={ translate( 'Your payment settings require action' ) }
+								onClose={ () => setRequiredNoticeClosed( true ) }
 							>
 								<div>
 									{ translate(
