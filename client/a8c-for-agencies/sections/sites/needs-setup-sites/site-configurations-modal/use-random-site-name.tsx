@@ -4,10 +4,11 @@ import wpcom from 'calypso/lib/wp';
 export const getRandomSiteBaseUrl = async ( title: string ) => {
 	const siteName = '';
 	try {
-		const { body: urlSuggestions } = await wpcom.req.get( {
+		const response = await wpcom.req.get( {
 			apiNamespace: 'rest/v1.1',
 			path: `/domains/suggestions?http_envelope=1&query=${ title }&quantity=1&include_wordpressdotcom=true&include_dotblogsubdomain=false&vendor=dot`,
 		} );
+		const urlSuggestions = response.body || response;
 		const validUrlWpComUrl = urlSuggestions.find( ( suggestion: { domain_name: string } ) =>
 			suggestion.domain_name.includes( 'wordpress.com' )
 		);

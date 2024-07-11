@@ -40,10 +40,6 @@ type NeedsSetupSite = {
 	id: number;
 };
 
-const isA4aSiteCreationConfigurationsEnabled = config.isEnabled(
-	'a4a-site-creation-configurations'
-);
-
 export default function NeedSetup( { licenseKey }: Props ) {
 	const { randomSiteName, isRandomSiteNameLoading } = useRandomSiteName();
 	const translate = useTranslate();
@@ -147,18 +143,6 @@ export default function NeedSetup( { licenseKey }: Props ) {
 		[ refetchPendingSites ]
 	);
 
-	const onCreateSite = useCallback(
-		( id: number ) => {
-			createWPCOMSite(
-				{ id },
-				{
-					onSuccess: () => onCreateSiteSuccess( id ),
-				}
-			);
-		},
-		[ createWPCOMSite, onCreateSiteSuccess ]
-	);
-
 	const onCreateSiteWithConfig = useCallback(
 		( id: number ) => {
 			recordTracksEvent( 'calypso_a4a_create_site_config' );
@@ -218,9 +202,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 					availablePlans={ availablePlans }
 					isLoading={ isFetching }
 					provisioning={ isProvisioning }
-					onCreateSite={
-						isA4aSiteCreationConfigurationsEnabled ? onCreateSiteWithConfig : onCreateSite
-					}
+					onCreateSite={ onCreateSiteWithConfig }
 					onMigrateSite={ onMigrateSite }
 				/>
 			</LayoutColumn>
