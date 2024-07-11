@@ -875,11 +875,6 @@ body.is-mobile-app-view {
 			width: 22px;
 			height: 22px;
 		}
-
-		@include breakpoint-deprecated( "<480px" ) {
-			width: 19px;
-			height: 19px;
-		}
 	}
 }
 
