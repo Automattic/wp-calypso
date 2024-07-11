@@ -1,7 +1,6 @@
 import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { MaybeLink } from './maybe-link';
 import type { Task, Expandable } from '@automattic/launchpad';
 
 const removeDuplicatedSlashes = ( url: string ) => url.replace( /(https?:\/\/)|(\/)+/g, '$1$2' );
@@ -72,14 +71,14 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 							{
 								components: {
 									strong: <strong />,
-									a: (
-										<MaybeLink
-											href={ fromUrl ? getMigrateGuruPageURL( fromUrl ) : undefined }
+									a: fromUrl ? (
+										<ExternalLink
+											href={ getMigrateGuruPageURL( fromUrl ) }
 											target="_blank"
-											rel="noreferrer noopener"
-											fallback={ <strong /> }
 											onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
 										/>
+									) : (
+										<strong />
 									),
 								},
 								args: { migrateLabel: 'Migrate' },
