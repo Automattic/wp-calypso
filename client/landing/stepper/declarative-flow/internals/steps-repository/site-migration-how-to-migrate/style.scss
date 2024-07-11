@@ -5,6 +5,12 @@
 	max-width: 602px;
 	padding: 0 12px;
 
+	@include break-large {
+		.step-container__header .how-to-migrate__formatted-header {
+			margin: 0 -24px;
+		}
+	}
+
 	.onboarding-title {
 		font-size: 2.75rem;
 		text-align: center;
@@ -19,18 +25,16 @@
 	}
 
 	.how-to-migrate__list {
-		margin-top: 50px;
 		padding-bottom: 108px;
+		display: flex;
+		flex-direction: column;
 
 		@include break-mobile {
-			margin-top: 80px;
 			padding-bottom: revert;
 		}
 
-		.card {
-			svg {
-				fill: #1e1e1e;
-			}
+		.flow-question {
+			max-width: none;
 		}
 	}
 

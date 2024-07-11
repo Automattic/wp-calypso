@@ -1,8 +1,8 @@
-import { Card } from '@automattic/components';
-import { StepContainer, SubTitle, Title } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
@@ -11,6 +11,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
+import FlowCard from '../components/flow-card';
 import type { Step } from '../../types';
 
 import './style.scss';
@@ -74,33 +75,14 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 
 	const stepContent = (
 		<>
-			<Title>{ translate( 'How do you want to migrate?' ) }</Title>
-
-			{ shouldDisplayHostIdentificationMessage && (
-				<SubTitle>
-					{
-						// translators: %(hostingProviderName)s is the name of a hosting provider (e.g. WP Engine).
-						translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
-							args: { hostingProviderName },
-						} )
-					}
-				</SubTitle>
-			) }
-
 			<div className="how-to-migrate__list">
 				{ options.map( ( option, i ) => (
-					<Card
-						tagName="button"
-						displayAsLink
+					<FlowCard
 						key={ i }
+						title={ option.label }
+						text={ option.description }
 						onClick={ () => handleClick( option.value ) }
-					>
-						<div className="how-to-migrate__header">
-							<h2 className="how-to-migrate__name">{ option.label }</h2>
-						</div>
-
-						<p className="how-to-migrate__description">{ option.description }</p>
-					</Card>
+					/>
 				) ) }
 			</div>
 		</>
@@ -114,6 +96,21 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 				className="how-to-migrate"
 				shouldHideNavButtons={ false }
 				hideSkip
+				formattedHeader={
+					<FormattedHeader
+						id="how-to-migrate-header"
+						headerText={ translate( 'How do you want to migrate?' ) }
+						className="how-to-migrate__formatted-header"
+						subHeaderText={
+							shouldDisplayHostIdentificationMessage
+								? translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
+										args: { hostingProviderName },
+								  } )
+								: ''
+						}
+						align="center"
+					/>
+				}
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
 				goBack={ navigation.goBack }
