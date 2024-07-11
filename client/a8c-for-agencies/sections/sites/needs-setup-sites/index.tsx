@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
@@ -158,6 +159,14 @@ export default function NeedSetup( { licenseKey }: Props ) {
 		[ createWPCOMSite, onCreateSiteSuccess ]
 	);
 
+	const onCreateSiteWithConfig = useCallback(
+		( id: number ) => {
+			recordTracksEvent( 'calypso_a4a_create_site_config' );
+			setCurrentSiteConfigurationId( id );
+		},
+		[ setCurrentSiteConfigurationId ]
+	);
+
 	const onMigrateSite = useCallback(
 		( id: number ) => {
 			createWPCOMSite(
@@ -210,7 +219,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 					isLoading={ isFetching }
 					provisioning={ isProvisioning }
 					onCreateSite={
-						isA4aSiteCreationConfigurationsEnabled ? setCurrentSiteConfigurationId : onCreateSite
+						isA4aSiteCreationConfigurationsEnabled ? onCreateSiteWithConfig : onCreateSite
 					}
 					onMigrateSite={ onMigrateSite }
 				/>
