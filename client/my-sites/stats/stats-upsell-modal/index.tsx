@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
@@ -26,7 +27,14 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const plans = Plans.usePlans( { coupon: undefined } );
 	const plan = plans?.data?.[ PLAN_PREMIUM ];
-	const isLoading = plans.isLoading;
+	const pricing = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ PLAN_PREMIUM ],
+		siteId: selectedSiteId,
+		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
+	} )?.[ PLAN_PREMIUM ];
+	const isLoading = plans.isLoading || ! pricing;
 	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 	const eventPrefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 	const isSimpleClassic = useSelector( ( state ) =>
@@ -97,14 +105,12 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 							? ''
 							: translate( '%(planName)s plan', { args: { planName: plan.productNameShort } } ) }
 					</h2>
-					{ plan?.pricing && (
+					{ pricing && (
 						<div className="stats-upsell-modal__price-amount">
 							<PlanPrice
 								className="screen-upsell__plan-price"
-								currencyCode={ plan.pricing.currencyCode }
-								rawPrice={
-									plan.pricing.discountedPrice.monthly ?? plan.pricing.originalPrice.monthly
-								}
+								currencyCode={ pricing.currencyCode }
+								rawPrice={ pricing.discountedPrice.monthly ?? pricing.originalPrice.monthly }
 								displayPerMonthNotation={ false }
 								isLargeCurrency
 								isSmallestUnit
@@ -112,13 +118,13 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 						</div>
 					) }
 					<div className="stats-upsell-modal__price-per-month">
-						{ ! plan?.pricing
+						{ ! pricing
 							? ''
 							: translate( 'per month, %(planPrice)s billed yearly', {
 									args: {
 										planPrice: formatCurrency(
-											plan.pricing.discountedPrice.full ?? plan.pricing.originalPrice.full ?? 0,
-											plan.pricing.currencyCode ?? '',
+											pricing.discountedPrice.full ?? pricing.originalPrice.full ?? 0,
+											pricing.currencyCode ?? '',
 											{
 												stripZeros: true,
 												isSmallestUnit: true,
