@@ -25,15 +25,11 @@ export default function SupportCard() {
 	const dispatch = useDispatch();
 
 	return (
-		<HostingCard className="support-card" title={ translate( 'Support' ) }>
+		<HostingCard className="support-card" title={ translate( 'Need some help?' ) }>
 			<HappinessEngineersTray />
-			<p>
-				{ translate(
-					'If you need help or have any questions, our Happiness Engineers are here when you need them.'
-				) }
-			</p>
+			<p>{ translate( 'Our AI assistant can help, or connect you to our support team.' ) }</p>
 			<Button onClick={ () => dispatch( trackNavigateToContactSupport() ) } href="/help/contact">
-				{ translate( 'Contact us' ) }
+				{ translate( 'Get help' ) }
 			</Button>
 		</HostingCard>
 	);
