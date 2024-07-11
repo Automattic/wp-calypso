@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
-import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { search } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -16,10 +16,9 @@ import { SUPPORT_URL } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import StatsEmptyActionEmail from '../shared/stats-empty-action-email';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
+const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -27,7 +26,7 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 }: StatsDefaultModuleProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsEmailsSummary';
+	const statType = 'statsSearchTerms';
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
@@ -53,50 +52,34 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 			) }
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
 				<StatsModule
-					additionalColumns={ {
-						header: (
-							<>
-								<span>{ translate( 'Opens' ) }</span>
-							</>
-						),
-						body: ( item: { opens: number } ) => (
-							<>
-								<span>{ item.opens }</span>
-							</>
-						),
-					} }
-					path="emails"
+					path="searchterms"
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
-					statType="statsEmailsSummary"
-					mainItemLabel={ translate( 'Latest Emails' ) }
-					metricLabel={ translate( 'Clicks' ) }
+					statType={ statType }
 					showSummaryLink
 					className={ className }
-					hasNoBackground
 					skipQuery
 				/>
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) }
-					title={ translate( 'Emails' ) }
+					title={ translate( 'Search' ) }
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ mail }
+							icon={ search }
 							description={ translate(
-								'Learn about your {{link}}latest emails sent{{/link}} to better understand how they performed. Start sending!',
+								'Learn about {{link}}popular terms{{/link}} visitors use to find your site content on search engines.',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#emails` ) } />,
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#search` ) } />,
 									},
-									context: 'Stats: Info box label when the Emails module is empty',
+									context: 'Stats: Info box label when the Search module is empty',
 								}
 							) }
-							cards={ <StatsEmptyActionEmail from="module_emails" /> }
 						/>
 					}
 				/>
@@ -105,4 +88,4 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 	);
 };
 
-export default StatEmails;
+export default StatSearch;

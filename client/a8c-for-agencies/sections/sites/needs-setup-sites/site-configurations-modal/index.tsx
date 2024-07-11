@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CheckboxControl, Icon, Modal, Spinner } from '@wordpress/components';
-import { check, closeSmall } from '@wordpress/icons';
+import { check, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
@@ -140,8 +140,8 @@ export default function SiteConfigurationsModal( {
 							) }
 							{ siteName.showValidationMessage && (
 								<Icon
-									icon={ closeSmall }
-									size={ 28 }
+									icon={ info }
+									size={ 24 }
 									color="red"
 									className="configure-your-site-modal-form__site-name-fail"
 								/>
