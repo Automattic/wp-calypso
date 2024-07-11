@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import { areURLsUnique, isValidUrl } from 'calypso/a8c-for-agencies/components/form/utils';
 import { AgencyDirectoryApplication } from '../../types';
-import { areURLsUnique, isValidUrl } from '../../utils/tools';
 
 type ValidationState = {
 	services?: string;

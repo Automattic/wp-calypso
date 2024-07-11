@@ -1,8 +1,5 @@
 import { translate } from 'i18n-calypso';
-import {
-	areURLsUnique,
-	isValidUrl,
-} from 'calypso/a8c-for-agencies/sections/partner-directory/utils/tools';
+import { areURLsUnique, isValidUrl } from '../../../utils';
 import { FieldTypes } from '../types';
 
 const validateUniqueUrls = ( messages?: string[] ) => ( field?: FieldTypes ) => {
