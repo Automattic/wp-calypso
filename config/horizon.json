@@ -139,7 +139,7 @@
 		"ssr/prefetch-timebox": true,
 		"stats/empty-module-traffic": false,
 		"stats/paid-wpcom-v2": true,
-		"stats/restricted-dashboard": false,
+		"stats/restricted-dashboard": true,
 		"stats/tier-upgrade-slider": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
