@@ -27,6 +27,16 @@
 			background-color: var(--studio-gray-5);
 		}
 	}
+
+	.importer-header {
+		display: none;
+	}
+
+	.importer__file-importer-card.card {
+		padding: 0;
+		margin: 0;
+		box-shadow: none;
+	}
 }
 
 .logo-chain {

@@ -1,6 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import StepProgress from 'calypso/components/step-progress';
+import { useSelector } from 'calypso/state';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ImporterLogo from '../importer-logo';
 import Content from './content';
 import PaidSubscribers from './paid-subscribers';
@@ -13,7 +15,7 @@ function LogoChain( { logos } ) {
 	return (
 		<div className="logo-chain">
 			{ logos.map( ( logo ) => (
-				<div className="logo-chain__logo" style={ { background: logo.color } }>
+				<div key={ logo.name } className="logo-chain__logo" style={ { background: logo.color } }>
 					<ImporterLogo key={ logo.name } icon={ logo.name } />
 				</div>
 			) ) }
@@ -27,6 +29,8 @@ const stepSlugs = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
 
 export default function NewsletterImporter( { siteSlug, engine, step } ) {
 	const translate = useTranslate();
+
+	const selectedSite = useSelector( getSelectedSite );
 
 	const stepsProgress = [
 		translate( 'Content' ),
@@ -56,9 +60,9 @@ export default function NewsletterImporter( { siteSlug, engine, step } ) {
 				] }
 			/>
 
-			<FormattedHeader headerText="Import your newsletter" />
+			<FormattedHeader headerText={ translate( 'Import your newsletter' ) } />
 			<StepProgress steps={ stepsProgress } currentStep={ stepIndex } />
-			<Step siteSlug nextStepUrl={ nextStepUrl } />
+			<Step siteSlug={ siteSlug } nextStepUrl={ nextStepUrl } selectedSite={ selectedSite } />
 		</div>
 	);
 }
