@@ -3,6 +3,7 @@ import { Gridicon, Button } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, Fragment, forwardRef } from 'react';
+import { navigate } from 'calypso/lib/navigate';
 import type { ReactNode, LegacyRef } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -52,7 +53,16 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		url: '',
 	};
 
+	state = {
+		isOpenByTouch: false,
+	};
+
 	_preloaded = false;
+
+	componentDidMount() {
+		document.addEventListener( 'touchstart', this.closeMenu );
+		return () => document.removeEventListener( 'touchstart', this.closeMenu );
+	}
 
 	preload = () => {
 		if ( ! this._preloaded && typeof this.props.preloadSection === 'function' ) {
@@ -85,16 +95,46 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 				{ subItems.map( ( item, i ) => (
 					<li key={ i } className="masterbar__item-subitems-item">
 						{ item.onClick && (
-							<Button className="is-link" onClick={ item.onClick }>
+							<Button
+								className="is-link"
+								onClick={ item.onClick }
+								onTouchEnd={ ( ev: React.TouchEvent ) => {
+									ev.preventDefault();
+									this.setState( { isOpenByTouch: false } );
+									item.onClick && item.onClick();
+								} }
+							>
 								{ item.label }
 							</Button>
 						) }
-						{ ! item.onClick && item.url && <a href={ item.url }>{ item.label }</a> }
+						{ ! item.onClick && item.url && (
+							<a href={ item.url } onTouchEnd={ this.navigateSubAnchorTouch }>
+								{ item.label }
+							</a>
+						) }
 					</li>
 				) ) }
 			</ul>
 		);
 	}
+
+	toggleMenuByTouch = ( event: React.TouchEvent ) => {
+		event.preventDefault();
+		this.setState( { isOpenByTouch: ! this.state.isOpenByTouch } );
+	};
+
+	navigateSubAnchorTouch = ( event: React.TouchEvent ) => {
+		event.preventDefault();
+		const url = event.currentTarget.getAttribute( 'href' );
+		if ( url ) {
+			navigate( url );
+		}
+		this.setState( { isOpenByTouch: false } );
+	};
+
+	closeMenu = () => {
+		this.setState( { isOpenByTouch: false } );
+	};
 
 	render() {
 		const itemClasses = clsx( 'masterbar__item', this.props.className, {
@@ -102,15 +142,21 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			'has-unseen': this.props.hasUnseen,
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
 			'has-subitems': this.props.subItems,
+			'is-open': this.state.isOpenByTouch,
 			mb: isEnabled( 'layout/mb' ),
 		} );
+
+		const touchStart = ( event: React.TouchEvent ) => {
+			this.preload();
+			event.stopPropagation();
+		};
 
 		const attributes = {
 			'data-tip-target': this.props.tipTarget,
 			onClick: this.props.onClick,
 			title: this.props.tooltip,
 			className: itemClasses,
-			onTouchStart: this.preload,
+			onTouchStart: touchStart,
 			onMouseEnter: this.preload,
 			disabled: this.props.disabled,
 		};
@@ -130,7 +176,11 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		if ( this.props.url && this.props.subItems ) {
 			return (
 				<button { ...attributes }>
-					<a href={ this.props.url } ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }>
+					<a
+						href={ this.props.url }
+						ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
+						onTouchEnd={ this.toggleMenuByTouch }
+					>
 						{ this.renderChildren() }
 					</a>
 					{ this.renderSubItems() }
