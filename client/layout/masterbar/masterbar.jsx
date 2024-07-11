@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import './style.scss';
 
-const Masterbar = ( { children, className, innerRef } ) => (
-	<header id="header" className={ clsx( 'masterbar', className ) } ref={ innerRef }>
+const Masterbar = ( { children, className } ) => (
+	<header id="header" className={ clsx( 'masterbar', className ) }>
 		{ children }
 	</header>
 );

@@ -23,7 +23,6 @@ export type MasterbarCartButtonProps = {
 	checkoutLabel?: string;
 	cartIcon?: React.ReactNode;
 	emptyCart?: React.ReactNode;
-	onLoad?: () => void;
 };
 
 export function MasterbarCartButton( {
@@ -37,7 +36,6 @@ export function MasterbarCartButton( {
 	checkoutLabel,
 	cartIcon,
 	emptyCart,
-	onLoad = () => {},
 }: MasterbarCartButtonProps ) {
 	const { responseCart, reloadFromServer } = useShoppingCart(
 		selectedSiteId ? selectedSiteId : undefined
@@ -53,11 +51,10 @@ export function MasterbarCartButton( {
 	useEffect( () => {
 		if ( shouldShowCart ) {
 			reduxDispatch( recordTracksEvent( 'calypso_masterbar_cart_shown' ) );
-			onLoad();
 		} else {
 			setIsActive( false );
 		}
-	}, [ shouldShowCart, reduxDispatch, onLoad ] );
+	}, [ shouldShowCart, reduxDispatch ] );
 
 	useEffect( () => {
 		if ( isActive ) {
