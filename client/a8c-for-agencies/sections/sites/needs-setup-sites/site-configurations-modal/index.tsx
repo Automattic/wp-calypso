@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CheckboxControl, Icon, Modal, Spinner } from '@wordpress/components';
@@ -72,13 +73,19 @@ export default function SiteConfigurationsModal( {
 		const formData = new FormData( event.currentTarget );
 		const phpVersion = formData.get( 'php_version' ) as string;
 		const primaryDataCenter = ( formData.get( 'primary_data_center' ) as string ) || undefined;
-		const params = {
-			id: siteId,
-			site_name: siteName.siteName,
+		const trackingParams = {
 			php_version: phpVersion,
 			primary_data_center: primaryDataCenter,
 			is_fully_managed_agency_site: ! allowClientsToUseSiteHelpCenter,
 		};
+		const params = {
+			...trackingParams,
+			id: siteId,
+			site_name: siteName.siteName,
+		};
+
+		recordTracksEvent( 'calypso_a4a_create_site_config_submit', trackingParams );
+
 		createWPCOMSite( params, {
 			onSuccess: () => {
 				onCreateSiteSuccess( siteId );
@@ -94,6 +101,7 @@ export default function SiteConfigurationsModal( {
 
 	const onRequestCloseModal = () => {
 		if ( ! isSubmitting ) {
+			recordTracksEvent( 'calypso_a4a_create_site_config_close' );
 			closeModal();
 		}
 	};
