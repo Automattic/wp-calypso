@@ -698,7 +698,24 @@ class StatsSite extends Component {
 							/>
 						) }
 
-						{ ! this.isModuleHidden( 'videos' ) && (
+						{ isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
+							<StatsModule
+								moduleStrings={ moduleStrings.videoplays }
+								period={ this.props.period }
+								query={ query }
+								showSummaryLink
+								className={ clsx(
+									{
+										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
+										'stats__flexible-grid-item--half': isJetpack,
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+
+						{ ! isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
 								path="videoplays"
 								moduleStrings={ moduleStrings.videoplays }
