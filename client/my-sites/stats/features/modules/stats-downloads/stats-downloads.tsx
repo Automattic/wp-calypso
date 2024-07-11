@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { customLink } from '@wordpress/icons';
+import { download } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -77,7 +77,7 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ customLink }
+							icon={ download }
 							description={ translate(
 								'Your most {{link}}downloaded files{{/link}} will display here.',
 								{
