@@ -151,7 +151,7 @@ class MasterbarLoggedIn extends Component {
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
 
-		if ( this.props.isMobileGlobalNavVisible ) {
+		if ( config.isEnabled( 'layout/mb' ) || this.props.isMobileGlobalNavVisible ) {
 			// Fall through to navigate to /sites
 			return;
 		}
@@ -296,16 +296,12 @@ class MasterbarLoggedIn extends Component {
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
-		const { isMenuOpen, isResponsiveMenu } = this.state;
+		const { isMenuOpen } = this.state;
 
 		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
 			: '/sites';
 		let icon = this.wordpressIcon();
-
-		if ( 'sites' === section && isResponsiveMenu ) {
-			mySitesUrl = '';
-		}
 
 		if ( this.state.isMobile && this.props.isInEditor ) {
 			mySitesUrl = `/home/${ siteSlug }`;
