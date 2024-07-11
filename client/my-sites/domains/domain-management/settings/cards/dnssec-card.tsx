@@ -90,8 +90,8 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 
 		return (
 			<fieldset>
-				<legend>DNSKEY</legend>
-				<input type="text" disabled value={ dnskey } />
+				<legend>{ translate( 'DNSKEY' ) }</legend>
+				<div className="domain-dnssec-card__record">{ dnskey }</div>
 			</fieldset>
 		);
 	};
@@ -103,9 +103,13 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 
 		return (
 			<fieldset>
-				<legend>DS</legend>
+				<legend>{ translate( 'DS records' ) } </legend>
 				{ dsData.map( ( dsRecord ) => {
-					return <input key={ dsRecord } type="text" disabled value={ dsRecord } />;
+					return (
+						<div key={ dsRecord } className="domain-dnssec-card__record">
+							{ dsRecord }
+						</div>
+					);
 				} ) }
 			</fieldset>
 		);
