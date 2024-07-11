@@ -419,7 +419,6 @@ class MasterbarLoggedIn extends Component {
 			currentSelectedSiteSlug,
 			currentSelectedSite,
 			translate,
-			siteUrl,
 			siteAdminUrl,
 			newPostUrl,
 			newPageUrl,
@@ -458,7 +457,7 @@ class MasterbarLoggedIn extends Component {
 			<>
 				<Item
 					className="masterbar__item-my-site-actions"
-					url={ siteUrl }
+					url={ newPostUrl }
 					subItems={ siteActions }
 					icon={ <span className="dashicons-before dashicons-plus" /> }
 					tooltip={ translate( 'New' ) }
