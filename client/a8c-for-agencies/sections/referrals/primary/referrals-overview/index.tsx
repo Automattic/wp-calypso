@@ -70,8 +70,6 @@ export default function ReferralsOverview( {
 	const { data: referrals, isFetching: isFetchingReferrals } =
 		useFetchReferrals( isAutomatedReferral );
 
-	const isPayable = tipaltiData?.IsPayable;
-
 	const hasReferrals = !! referrals?.length;
 
 	const actionRequiredNotice =
@@ -130,7 +128,7 @@ export default function ReferralsOverview( {
 
 					<LayoutHeader>
 						<Title>{ title } </Title>
-						{ isAutomatedReferral && isPayable && (
+						{ isAutomatedReferral && (
 							<Actions>
 								<MobileSidebarNavigation />
 								<span
