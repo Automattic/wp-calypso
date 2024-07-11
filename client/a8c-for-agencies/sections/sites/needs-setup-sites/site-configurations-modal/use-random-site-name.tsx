@@ -5,14 +5,10 @@ export const getRandomSiteBaseUrl = async ( title: string ) => {
 	const siteName = '';
 	try {
 		// const { body: urlSuggestions } = await wpcom.req.get( {
-		const wpcomRequest = await wpcom.req.get( {
+		const urlSuggestions = await wpcom.req.get( {
 			apiNamespace: 'rest/v1.1',
-			path: `/domains/suggestions?http_envelope=1&query=${ title }&quantity=1&include_wordpressdotcom=true&include_dotblogsubdomain=false&vendor=dot`,
+			path: `/domains/suggestions?&query=${ title }&quantity=1&include_wordpressdotcom=true&include_dotblogsubdomain=false&vendor=dot`,
 		} );
-		// eslint-disable-next-line no-console
-		console.log( 'debuglog wpcomRequest line 12', wpcomRequest );
-
-		const urlSuggestions = wpcomRequest.body;
 		// eslint-disable-next-line no-console
 		console.log( 'debuglog urlSuggestions line 17', urlSuggestions );
 		const validUrlWpComUrl = urlSuggestions.find( ( suggestion: { domain_name: string } ) =>
