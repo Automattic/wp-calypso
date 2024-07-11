@@ -273,7 +273,7 @@ body.is-mobile-app-view {
 
 	.masterbar__item-subitems {
 		margin: 0;
-		padding: 6px 0 0 6px;
+		padding: 6px 0;
 		box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 		display: none;
 		position: absolute;
@@ -288,6 +288,7 @@ body.is-mobile-app-view {
 
 		.masterbar__item-subitems-item {
 			margin-right: 6px;
+			padding-left: 6px;
 			white-space: nowrap;
 			min-width: 140px;
 			line-height: 2;
