@@ -53,6 +53,7 @@ import StatsModuleDevices, {
 } from './features/modules/stats-devices';
 import StatsModuleEmails from './features/modules/stats-emails';
 import StatsModuleReferrers from './features/modules/stats-referrers';
+import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
 import HighlightsSection from './highlights-section';
@@ -636,6 +637,35 @@ class StatsSite extends Component {
 											( ! supportsUTMStats && ! this.isModuleHidden( 'authors' ) ),
 									},
 									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+
+						{ isNewStateEnabled && (
+							<StatsModuleSearch
+								path="searchterms"
+								moduleStrings={ moduleStrings.search }
+								period={ this.props.period }
+								query={ query }
+								statType="statsSearchTerms"
+								showSummaryLink
+								className={ clsx(
+									{
+										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! isJetpack && ! this.isModuleHidden( 'videos' ),
+									},
+									{
+										'stats__flexible-grid-item--full--large':
+											isJetpack && this.isModuleHidden( 'videos' ),
+									},
+									{
+										// 1/2 for all other cases to stack with Devices or empty space
+										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										// Avoid 1/3 on smaller screen if Videos is visible
+										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+									},
 									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
