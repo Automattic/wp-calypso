@@ -107,7 +107,7 @@ describe( 'useSteps', () => {
 		expect( result.current.steps[ 1 ].onClick ).toBeUndefined();
 	} );
 
-	it( 'Should allow to navigate directly to completed steps', () => {
+	it( 'Should allow to navigate directly to already visited steps', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
 		// Navigate through the action button to the next step.
@@ -123,5 +123,12 @@ describe( 'useSteps', () => {
 		} );
 
 		expect( result.current.steps[ 0 ].expandable.isOpen ).toBeTruthy();
+
+		// Navigate directly to the second which was already visited.
+		act( () => {
+			result.current.steps[ 1 ].onClick!();
+		} );
+
+		expect( result.current.steps[ 1 ].expandable.isOpen ).toBeTruthy();
 	} );
 } );

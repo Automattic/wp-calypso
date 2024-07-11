@@ -166,9 +166,9 @@ export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): StepsObject =
 			}
 		};
 
-		// Allow clicking on already completed steps only, so users can see the previous steps again.
+		// Allow clicking on visited steps only, so users can see the previous steps again.
 		const onItemClick =
-			index > lastCompleteStep || index === currentStep
+			index > lastCompleteStep + 1 || index === currentStep
 				? undefined
 				: () => {
 						setCurrentStep( index );
