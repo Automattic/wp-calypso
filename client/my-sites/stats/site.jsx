@@ -647,7 +647,6 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.search }
 								period={ this.props.period }
 								query={ query }
-								statType="statsSearchTerms"
 								showSummaryLink
 								className={ clsx(
 									{
