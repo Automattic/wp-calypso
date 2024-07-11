@@ -68,7 +68,7 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 				<>
 					<p>
 						{ translate(
-							'Go to the {{a}}Migrate Guru page on your source site{{/a}}, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
+							'Head to the {{a}}Migrate Guru plugin screen on your source site{{/a}}, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
 							{
 								components: {
 									strong: <strong />,
@@ -88,7 +88,7 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 					</p>
 					<p>
 						<strong>
-							{ translate( 'When asked to select a destination host, pick WordPress.com' ) }
+							{ translate( 'When asked to select a destination host, pick WordPress.com.' ) }
 						</strong>
 					</p>
 					<p>
