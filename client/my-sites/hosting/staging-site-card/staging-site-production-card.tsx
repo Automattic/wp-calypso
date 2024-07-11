@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { HostingCardHeading } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import { navigate } from 'calypso/lib/navigate';
@@ -29,21 +28,6 @@ const ProductionCard = styled( Card )( {
 
 	'&.is-borderless': {
 		boxShadow: 'none',
-	},
-
-	'> .gridicon': {
-		display: 'inline-block',
-		marginInlineEnd: '16px',
-		marginBottom: '16px',
-		verticalAlign: 'middle',
-	},
-
-	'> .card-heading': {
-		display: 'inline-block',
-		marginTop: 0,
-		marginBottom: '16px',
-		verticalAlign: 'middle',
-		lineHeight: '32px',
 	},
 } );
 
@@ -196,8 +180,12 @@ function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless 
 	}
 
 	return (
-		<ProductionCard className={ clsx( 'staging-site-card', { 'is-borderless': isBorderless } ) }>
-			<HostingCardHeading id="staging-site" title={ __( 'Staging site' ) } />
+		<ProductionCard
+			className={ clsx( 'hosting-card staging-site-card', { 'is-borderless': isBorderless } ) }
+		>
+			<h3 id="staging-site" className="hosting-card__title">
+				{ __( 'Staging site' ) }
+			</h3>
 			{ cardContent }
 		</ProductionCard>
 	);
