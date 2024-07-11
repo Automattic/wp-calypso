@@ -51,6 +51,7 @@ import StatsModuleCountries from './features/modules/stats-countries';
 import StatsModuleDevices, {
 	StatsModuleUpgradeDevicesOverlay,
 } from './features/modules/stats-devices';
+import StatsModuleDownloads from './features/modules/stats-downloads';
 import StatsModuleEmails from './features/modules/stats-emails';
 import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleSearch from './features/modules/stats-search';
@@ -715,10 +716,36 @@ class StatsSite extends Component {
 								) }
 							/>
 						) }
+
 						{
-							// File downloads are not yet supported in Jetpack Stats
+							// File downloads are not yet supported in Jetpack environment
+							isNewStateEnabled && ! isJetpack && (
+								<StatsModuleDownloads
+									moduleStrings={ moduleStrings.filedownloads }
+									period={ this.props.period }
+									query={ query }
+									className={ clsx(
+										{
+											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										},
+										{
+											'stats__flexible-grid-item--one-third--two-spaces':
+												! this.isModuleHidden( 'videos' ),
+										},
+
+										{
+											// Avoid 1/3 on smaller screen if Videos is visible
+											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+										},
+										'stats__flexible-grid-item--full--medium'
+									) }
+								/>
+							)
+						}
+						{
+							// File downloads are not yet supported in Jetpack environment
 							// TODO: Confirm the above statement.
-							! isJetpack && (
+							! isNewStateEnabled && ! isJetpack && (
 								<StatsModule
 									path="filedownloads"
 									metricLabel={ translate( 'Downloads' ) }
