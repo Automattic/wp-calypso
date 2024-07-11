@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
@@ -147,7 +148,10 @@ export const useSiteName = (
 						nbsp: <>&nbsp;</>,
 						button: (
 							<button
-								onClick={ () => setSiteName( siteNameSuggestion ) }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_a4a_create_site_config_suggested_name' );
+									setSiteName( siteNameSuggestion );
+								} }
 								className="configure-your-site-modal-form__site-name-suggestion"
 							/>
 						),

@@ -1,6 +1,7 @@
 import { CheckoutProvider, Button } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { isBillingInfoEmpty } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -76,6 +77,28 @@ const HiddenText = styled.span`
 	white-space: nowrap;
 	width: 1px;
 `;
+
+const TaxCalculationLineItemWrapper = styled.div`
+	font-size: 12px;
+	text-wrap: pretty;
+	line-height: 1em;
+`;
+
+function TaxNotCalculatedLineItem() {
+	const { __ } = useI18n();
+	return (
+		<TaxCalculationLineItemWrapper>{ __( 'Tax: to be calculated' ) }</TaxCalculationLineItemWrapper>
+	);
+}
+
+function TaxAddedLineItem() {
+	const { __ } = useI18n();
+	return (
+		<TaxCalculationLineItemWrapper>
+			{ __( 'Includes applicable taxes' ) }
+		</TaxCalculationLineItemWrapper>
+	);
+}
 
 function MiniCartTotal( { responseCart }: { responseCart: ResponseCart } ) {
 	const { __ } = useI18n();
@@ -170,6 +193,10 @@ export function MiniCart( {
 				/>
 				{ shouldRenderEmptyCart && emptyCart }
 				{ ! shouldRenderEmptyCart && <MiniCartTotal responseCart={ responseCart } /> }
+				{ ! shouldRenderEmptyCart && isBillingInfoEmpty( responseCart ) && (
+					<TaxNotCalculatedLineItem />
+				) }
+				{ ! shouldRenderEmptyCart && ! isBillingInfoEmpty( responseCart ) && <TaxAddedLineItem /> }
 				<MiniCartFooter className="mini-cart__footer">
 					{ ! shouldRenderEmptyCart && (
 						<Button

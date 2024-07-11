@@ -34,6 +34,7 @@ import {
 } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
+	isBillingInfoEmpty,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
 	getCreditsLineItemFromCart,
@@ -164,6 +165,24 @@ export function CheckoutSummaryFeaturedList( {
 		</>
 	);
 }
+
+const TaxNotCalculatedLineItemWrapper = styled.div`
+	font-size: 14px;
+	text-wrap: pretty;
+	line-height: 1em;
+`;
+
+function TaxNotCalculatedLineItem() {
+	const translate = useTranslate();
+	return (
+		<TaxNotCalculatedLineItemWrapper>
+			{ translate( 'Tax: to be calculated', {
+				textOnly: true,
+			} ) }
+		</TaxNotCalculatedLineItemWrapper>
+	);
+}
+
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -192,6 +211,7 @@ function CheckoutSummaryPriceList() {
 							<span>{ taxLineItem.formattedAmount }</span>
 						</CheckoutSummaryLineItem>
 					) ) }
+					{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
 					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
 						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + creditsLineItem.id }>
 							<span>{ creditsLineItem.label }</span>
