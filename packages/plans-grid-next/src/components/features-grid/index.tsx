@@ -37,7 +37,6 @@ type MobileViewProps = {
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
-	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
 	showUpgradeableStorage: boolean;
@@ -68,7 +67,6 @@ const MobileView = ( {
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	selectedFeature,
 	showUpgradeableStorage,
 }: MobileViewProps ) => {
@@ -107,7 +105,6 @@ const MobileView = ( {
 					{ isNotFreePlan && (
 						<PlanPrice
 							renderedGridPlans={ [ gridPlan ] }
-							planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 							currentSitePlanSlug={ currentSitePlanSlug }
 						/>
 					) }
@@ -188,7 +185,6 @@ type TabletViewProps = {
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
-	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
 	showRefundPeriod?: boolean;
@@ -206,7 +202,6 @@ const TabletView = ( {
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	renderedGridPlans,
 	selectedFeature,
 	showRefundPeriod,
@@ -229,7 +224,6 @@ const TabletView = ( {
 		onStorageAddOnClick,
 		paidDomainName,
 		planActionOverrides,
-		planUpgradeCreditsApplicable,
 		selectedFeature,
 		showRefundPeriod,
 		showUpgradeableStorage,
@@ -262,7 +256,6 @@ const FeaturesGrid = ( {
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	selectedFeature,
 	showRefundPeriod,
 	showUpgradeableStorage,
@@ -274,7 +267,6 @@ const FeaturesGrid = ( {
 		isInSignup,
 		onStorageAddOnClick,
 		planActionOverrides,
-		planUpgradeCreditsApplicable,
 		selectedFeature,
 		showUpgradeableStorage,
 	};

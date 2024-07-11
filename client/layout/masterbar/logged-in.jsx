@@ -12,7 +12,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
-import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -21,11 +20,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
-import {
-	getCurrentUser,
-	getCurrentUserDate,
-	getCurrentUserSiteCount,
-} from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserDate } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowGlobalSidebar,
 	getShouldShowUnifiedSiteSidebar,
@@ -43,7 +38,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
-import { isTrialExpired } from 'calypso/state/sites/plans/selectors/trials/trials-expiration';
 import {
 	getSiteSlug,
 	isJetpackSite,
@@ -52,7 +46,6 @@ import {
 	getSiteUrl,
 	getSiteAdminUrl,
 } from 'calypso/state/sites/selectors';
-import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -300,42 +293,23 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	getHomeUrl() {
-		const { hasNoSites, siteSlug, isCustomerHomeEnabled, isSiteTrialExpired } = this.props;
-		// eslint-disable-next-line no-nested-ternary
-		return hasNoSites || isSiteTrialExpired
-			? '/sites'
-			: isCustomerHomeEnabled
-			? `/home/${ siteSlug }`
-			: getStatsPathForTab( 'day', siteSlug );
-	}
-
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
-		const homeUrl = this.getHomeUrl();
-
 		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
-			: homeUrl;
-
-		const icon =
-			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
+			: '/sites';
+		let icon = this.wordpressIcon();
 
 		if ( 'sites' === section && isResponsiveMenu ) {
 			mySitesUrl = '';
 		}
 
-		if ( config.isEnabled( 'layout/mb' ) ) {
-			mySitesUrl = '/sites';
-		}
-
-		let isActive = this.isActive( 'sites' ) && ! isMenuOpen;
-
-		if ( config.isEnabled( 'layout/mb' ) ) {
-			isActive = section === 'sites-dashboard';
+		if ( this.state.isMobile && this.props.isInEditor ) {
+			mySitesUrl = `/home/${ siteSlug }`;
+			icon = 'chevron-left';
 		}
 
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
@@ -350,7 +324,7 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="my-sites"
 				icon={ icon }
 				onClick={ this.clickMySites }
-				isActive={ isActive }
+				isActive={ this.isActive( 'sites-dashboard' ) && ! isMenuOpen }
 				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
 			/>
@@ -959,7 +933,6 @@ export default connect(
 			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
 			isSiteMigrationActiveRoute( state );
 
-		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 			state,
 			currentSelectedSiteId,
@@ -974,7 +947,6 @@ export default connect(
 		);
 		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
-			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
 			siteSlug: getSiteSlug( state, siteId ),
@@ -983,7 +955,6 @@ export default connect(
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
-			hasNoSites: siteCount === 0,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
 			isInEditor: getSectionName( state ) === 'gutenberg-editor',
@@ -1005,7 +976,6 @@ export default connect(
 			isUserNewerThanNewNavigation:
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
-			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
 			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),

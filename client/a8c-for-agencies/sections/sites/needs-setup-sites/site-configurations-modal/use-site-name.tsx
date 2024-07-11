@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
@@ -35,15 +35,18 @@ const useCheckSiteAvailability = (
 	skipAvailability: boolean
 ) => {
 	const agencyId = useSelector( getActiveAgencyId );
-	const [ availabilityState, setAvilabilityState ] = useState( {
+	const siteNameRef = useRef( '' );
+	const [ availabilityState, setAvailabilityState ] = useState( {
 		isSiteNameAvailiable: true,
 		isCheckingSiteAvailability: false,
 		siteNameSuggestion: '',
 	} );
 
+	siteNameRef.current = siteName;
+
 	useEffect( () => {
 		if ( skipAvailability || availabilityState.siteNameSuggestion === siteName ) {
-			setAvilabilityState( {
+			setAvailabilityState( {
 				isSiteNameAvailiable: true,
 				isCheckingSiteAvailability: false,
 				siteNameSuggestion: availabilityState.siteNameSuggestion,
@@ -53,24 +56,26 @@ const useCheckSiteAvailability = (
 		if ( ! agencyId ) {
 			return;
 		}
-		setAvilabilityState( {
+		setAvailabilityState( {
 			isSiteNameAvailiable: false,
 			isCheckingSiteAvailability: true,
 			siteNameSuggestion: '',
 		} );
 
 		checkSiteAvailability( agencyId, siteId, siteName ).then( ( result ) => {
-			setAvilabilityState( {
-				isSiteNameAvailiable: result.valid,
-				isCheckingSiteAvailability: false,
-				siteNameSuggestion: result.siteNameSuggestion,
-			} );
+			if ( siteName === siteNameRef.current ) {
+				setAvailabilityState( {
+					isSiteNameAvailiable: result.valid,
+					isCheckingSiteAvailability: false,
+					siteNameSuggestion: result.siteNameSuggestion,
+				} );
+			}
 		} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ agencyId, siteId, siteName, skipAvailability ] );
 
 	const revalidateCurrentSiteName = async () => {
-		setAvilabilityState( {
+		setAvailabilityState( {
 			isSiteNameAvailiable: false,
 			isCheckingSiteAvailability: false,
 			siteNameSuggestion: await getRandomSiteBaseUrl( siteName ),

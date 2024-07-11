@@ -118,12 +118,12 @@ export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMI
 				<div className="site-selector-and-importer__popover-content">
 					<div className="site-selector-and-importer__popover-column">
 						<div className="site-selector-and-importer__popover-column-heading">
-							{ translate( 'Import existing sites' ).toUpperCase() }
+							{ translate( 'Add existing sites' ).toUpperCase() }
 						</div>
 						{ menuItem( {
 							icon: <WordPressLogo />,
 							heading: translate( 'Via WordPress.com' ),
-							description: translate( 'Import sites bought on{{nbsp/}}WordPress.com', {
+							description: translate( 'Add sites bought on{{nbsp/}}WordPress.com', {
 								components: { nbsp: <>&nbsp;</> },
 								comment: 'nbsp is a non-breaking space character',
 							} ),

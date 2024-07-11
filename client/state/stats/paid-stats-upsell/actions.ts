@@ -1,5 +1,4 @@
 import { STATS_PAID_STATS_UPSELL_MODAL_TOGGLE } from 'calypso/state/action-types';
-import 'calypso/state/data-layer/wpcom/sites/stats/module-toggles';
 import 'calypso/state/stats/init';
 
 /**
