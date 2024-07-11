@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-imports */
 import { useEffect } from 'react';
-import { SUPPORT_BLOG_ID } from '../constants';
 import { usePostByKey } from '../hooks/use-post-by-key';
 import { useSupportArticleAlternatePostKey } from '../hooks/use-support-article-alternates-query';
 import ArticleContent from './help-center-article-content';
@@ -8,12 +7,12 @@ import './help-center-article-content.scss';
 
 interface ArticleFetchingContentProps {
 	postId: number;
-	blogId?: string | null;
+	blogId?: string | undefined;
 	articleUrl?: string | null;
 }
 
 const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetchingContentProps ) => {
-	const postKey = useSupportArticleAlternatePostKey( +( blogId ?? SUPPORT_BLOG_ID ), postId );
+	const postKey = useSupportArticleAlternatePostKey( blogId, postId );
 	const post = usePostByKey( postKey ).data;
 	const isLoading = ! post?.content || ! postKey;
 

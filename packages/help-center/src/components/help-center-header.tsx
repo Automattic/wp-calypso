@@ -5,7 +5,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useCallback } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { SUPPORT_BLOG_ID } from '../constants';
 import { usePostByKey } from '../hooks/use-post-by-key';
 import { useSupportArticleAlternatePostKey } from '../hooks/use-support-article-alternates-query';
 import { HELP_CENTER_STORE } from '../stores';
@@ -16,12 +15,9 @@ export function ArticleTitle() {
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const postId = params.get( 'postId' );
-	const blogId = params.get( 'blogId' );
+	const blogId = params.get( 'blogId' ) ?? undefined;
 
-	const postKey = useSupportArticleAlternatePostKey(
-		+( blogId ?? SUPPORT_BLOG_ID ),
-		+( postId || 0 )
-	);
+	const postKey = useSupportArticleAlternatePostKey( blogId, +( postId || 0 ) );
 	const post = usePostByKey( postKey ).data;
 
 	return (

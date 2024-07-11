@@ -1,9 +1,10 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { SUPPORT_BLOG_ID } from '../constants';
 
 export function useSupportArticleAlternatesQuery(
-	blogId: number,
+	blogId: number | string,
 	postId: number,
 	locale: string,
 	queryOptions = {}
@@ -25,9 +26,12 @@ export function useSupportArticleAlternatesQuery(
 	} );
 }
 
-const getPostKey = ( blogId: number, postId: number ) => ( { blogId, postId } );
+export const getPostKey = ( blogId: number | string, postId: number ) => ( { blogId, postId } );
 
-export const useSupportArticleAlternatePostKey = ( blogId: number, postId: number ) => {
+export const useSupportArticleAlternatePostKey = (
+	blogId: number | string = SUPPORT_BLOG_ID,
+	postId: number = 0
+) => {
 	const locale = useLocale();
 	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId, locale, {
 		enabled: canAccessWpcomApis(),
