@@ -5,13 +5,13 @@ import type { ZendeskConfigName, MessagingMetadata } from './types';
 
 export function useOpenZendeskMessaging(
 	sectionName: string,
-	configName: ZendeskConfigName = 'zendesk_support_chat_key',
+	keyConfigName: ZendeskConfigName = 'zendesk_support_chat_key',
 	enabled = true
 ) {
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 
-	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( configName, enabled, enabled );
+	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( keyConfigName, enabled, enabled );
 
 	const openZendeskWidget = ( {
 		aiChatId,

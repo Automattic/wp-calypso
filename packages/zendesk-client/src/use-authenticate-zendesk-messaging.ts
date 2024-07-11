@@ -13,7 +13,7 @@ import type { APIFetchOptions, MessagingAuth } from './types';
 
 let isLoggedIn = false;
 
-export function useAuthenticateZendeskMessaging( enabled: boolean ) {
+export function useAuthenticateZendeskMessaging( enabled = true ) {
 	const currentEnvironment = config( 'env_id' );
 	const isTestMode = currentEnvironment === 'development';
 
