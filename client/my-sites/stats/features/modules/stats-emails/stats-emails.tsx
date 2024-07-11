@@ -19,7 +19,7 @@ import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsEmptyActionEmail from '../shared/stats-empty-action-email';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
+const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -105,4 +105,4 @@ const StatEmails: React.FC< StatsDefaultModuleProps > = ( {
 	);
 };
 
-export default StatEmails;
+export default StatsEmails;

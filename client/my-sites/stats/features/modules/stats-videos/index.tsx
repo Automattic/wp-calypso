@@ -1,1 +1,1 @@
-export { default } from './stats-emails';
+export { default } from './stats-videos';

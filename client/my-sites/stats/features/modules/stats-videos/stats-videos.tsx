@@ -16,10 +16,10 @@ import { SUPPORT_URL } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import StatsEmptyActionVideo from '../shared/stats-empty-action-email';
+// import StatsEmptyActionVideo from '../shared/stats-empty-action-video';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatVideos: React.FC< StatsDefaultModuleProps > = ( {
+const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -80,7 +80,7 @@ const StatVideos: React.FC< StatsDefaultModuleProps > = ( {
 									context: 'Stats: Info box label when the Videos module is empty',
 								}
 							) }
-							cards={ <StatsEmptyActionVideo from="module_videos" /> }
+							// cards={ <StatsEmptyActionVideo from="module_videos" /> }
 						/>
 					}
 				/>
@@ -89,4 +89,4 @@ const StatVideos: React.FC< StatsDefaultModuleProps > = ( {
 	);
 };
 
-export default StatVideos;
+export default StatsVideos;
