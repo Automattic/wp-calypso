@@ -98,6 +98,8 @@ export function testDomain(
 		private_domain: false,
 		partner_domain: false,
 		has_zone: false,
+		is_dnssec_enabled: false,
+		is_dnssec_supported: true,
 		is_gravatar_domain: false,
 		is_renewable: false,
 		is_redeemable: false,
