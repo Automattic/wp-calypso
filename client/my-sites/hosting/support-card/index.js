@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-import { HappinessEngineersTray } from 'calypso/components/happiness-engineers-tray';
 import { HostingCard } from 'calypso/components/hosting-card';
 import {
 	composeAnalytics,
@@ -26,7 +25,6 @@ export default function SupportCard() {
 
 	return (
 		<HostingCard className="support-card" title={ translate( 'Need some help?' ) }>
-			<HappinessEngineersTray />
 			<p>{ translate( 'Our AI assistant can help, or connect you to our support team.' ) }</p>
 			<Button onClick={ () => dispatch( trackNavigateToContactSupport() ) } href="/help/contact">
 				{ translate( 'Get help' ) }
