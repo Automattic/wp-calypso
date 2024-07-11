@@ -6,7 +6,7 @@ import Accordion from 'calypso/components/domains/accordion';
 import useDisableDnssecMutation from 'calypso/data/domains/dnssec/use-disable-dnssec-mutation';
 import useEnableDnssecMutation from 'calypso/data/domains/dnssec/use-enable-dnssec-mutation';
 import { useDispatch, useSelector } from 'calypso/state';
-import { setDnssecRecords } from 'calypso/state/sites/domains/actions';
+import { disableDnssecAction, enableDnssecAction } from 'calypso/state/sites/domains/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -27,7 +27,7 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 		onSuccess() {
 			setIsUpdating( false );
 			setIsEnabled( false );
-			dispatch( setDnssecRecords( selectedSiteId, domain.name, null ) );
+			dispatch( disableDnssecAction( selectedSiteId, domain.name ) );
 		},
 		onError() {
 			setIsUpdating( false );
@@ -47,7 +47,7 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 				dsData: dsRdata,
 			};
 
-			dispatch( setDnssecRecords( selectedSiteId, domain.name, dnssecRecords ) );
+			dispatch( enableDnssecAction( selectedSiteId, domain.name, dnssecRecords ) );
 			setDnskey( success.data?.cryptokeys?.[ 0 ].dnskey?.rdata );
 			setDsData( dsRdata );
 			setIsUpdating( false );

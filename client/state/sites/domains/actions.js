@@ -182,14 +182,17 @@ export const setPrimaryDomain = ( siteId, domain ) => async ( dispatch ) => {
 	dispatch( updatePrimaryDomainCompleteAction( siteId, domain ) );
 };
 
-/**
- * @param {number|null} siteId
- * @param {string} domain
- * @param {Object} dnssecRecords
- */
-export const setDnssecRecords = ( siteId, domain, dnssecRecords ) => {
+export const disableDnssecAction = ( siteId, domain ) => {
 	return {
-		type: dnssecRecords ? DOMAIN_DNSSEC_ENABLE_SUCCESS : DOMAIN_DNSSEC_DISABLE_SUCCESS,
+		type: DOMAIN_DNSSEC_DISABLE_SUCCESS,
+		siteId,
+		domain,
+	};
+};
+
+export const enableDnssecAction = ( siteId, domain, dnssecRecords ) => {
+	return {
+		type: DOMAIN_DNSSEC_ENABLE_SUCCESS,
 		siteId,
 		domain,
 		dnssecRecords,
