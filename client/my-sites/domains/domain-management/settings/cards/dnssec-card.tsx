@@ -23,7 +23,7 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 	const [ dnskey, setDnskey ] = useState( domain.dnssecRecords?.dnskey );
 	const [ dsData, setDsData ] = useState( domain.dnssecRecords?.dsData );
 
-	const { disableDnssec } = useDisableDnssecMutation( {
+	const { disableDnssec } = useDisableDnssecMutation( domain.name, {
 		onSuccess() {
 			setIsUpdating( false );
 			setIsEnabled( false );
@@ -34,13 +34,14 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 		},
 	} );
 
-	const { enableDnssec } = useEnableDnssecMutation( {
-		onSuccess( success: any ) {
+	const { enableDnssec } = useEnableDnssecMutation( domain.name, {
+		onSuccess( success ) {
 			// Key-Systems only returns DS records with digest types 2 and 4, so let's show only those here
 			// (a DS record with digest type 1 is also returned by the endpoint)
 			const dsRdata = success.data?.cryptokeys?.[ 0 ].ds_data
-				?.filter( ( dsData: any ) => [ 2, 4 ].includes( dsData.digest_type ) )
-				.map( ( dsData: any ) => dsData.rdata );
+				?.filter( ( dsData ) => [ 2, 4 ].includes( dsData.digest_type ) )
+				.map( ( dsData ) => dsData.rdata );
+
 			const dnssecRecords = {
 				dnskey: success.data?.cryptokeys?.[ 0 ].dnskey?.rdata,
 				dsData: dsRdata,
@@ -68,9 +69,9 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 		);
 
 		if ( isEnabled ) {
-			disableDnssec( domain.name );
+			disableDnssec();
 		} else {
-			enableDnssec( domain.name );
+			enableDnssec();
 		}
 	};
 

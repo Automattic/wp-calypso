@@ -1,29 +1,24 @@
 import { useMutation } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { DomainsApiError } from 'calypso/lib/domains/types';
 import wp from 'calypso/lib/wp';
 
-interface Variables {
-	domain: string;
-}
-
-export default function useDisableDnssecMutation( queryOptions: {
-	onSuccess?: () => void;
-	onError?: ( error: any ) => void;
-} ) {
+export default function useDisableDnssecMutation(
+	domainName: string,
+	queryOptions: {
+		onSuccess?: () => void;
+		onError?: ( error: DomainsApiError ) => void;
+	}
+) {
 	const mutation = useMutation( {
-		mutationFn: async ( { domain }: Variables ) => {
+		mutationFn: () => {
 			return wp.req.post( {
 				method: 'DELETE',
-				path: `/domains/dnssec/${ domain }`,
+				path: `/domains/dnssec/${ domainName }`,
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
 		...queryOptions,
 	} );
 
-	const { mutate } = mutation;
-
-	const disableDnssec = useCallback( ( domain: string ) => mutate( { domain } ), [ mutate ] );
-
-	return { disableDnssec, ...mutation };
+	return { disableDnssec: mutation.mutate, ...mutation };
 }
