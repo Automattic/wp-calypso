@@ -292,11 +292,25 @@ body.is-mobile-app-view {
 			white-space: nowrap;
 			min-width: 140px;
 			line-height: 2;
-			a {
+			a,
+			button {
 				display: inline-block;
 				width: 100%;
 				padding: 0 0 0 6px;
 				color: var(--color-masterbar-text);
+			}
+
+			.is-link {
+				border: none;
+				background: none;
+				text-decoration: none;
+				outline: none;
+				margin: 0;
+				text-align: left;
+
+				&:hover {
+					color: var(--color-masterbar-highlight);
+				}
 			}
 
 			&:hover {

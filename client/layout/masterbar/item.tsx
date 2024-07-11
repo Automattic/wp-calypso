@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, Fragment, forwardRef } from 'react';
@@ -9,8 +9,9 @@ import type { ReactNode, LegacyRef } from 'react';
 const noop = () => {};
 
 interface MasterbarSubItemProps {
-	url: string;
 	label: string;
+	url?: string;
+	onClick?: () => void;
 }
 interface MasterbarItemProps {
 	url?: string;
@@ -83,7 +84,12 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			<ul className="masterbar__item-subitems">
 				{ subItems.map( ( item, i ) => (
 					<li key={ i } className="masterbar__item-subitems-item">
-						<a href={ item.url }>{ item.label }</a>
+						{ item.onClick && (
+							<Button className="is-link" onClick={ item.onClick }>
+								{ item.label }
+							</Button>
+						) }
+						{ ! item.onClick && item.url && <a href={ item.url }>{ item.label }</a> }
 					</li>
 				) ) }
 			</ul>
