@@ -298,13 +298,17 @@ class MasterbarLoggedIn extends Component {
 		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
 			: '/sites';
-
-		const icon =
-			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
+		let icon = this.wordpressIcon();
 
 		if ( 'sites' === section && isResponsiveMenu ) {
 			mySitesUrl = '';
 		}
+
+		if ( this.state.isMobile && this.props.isInEditor ) {
+			mySitesUrl = `/home/${ siteSlug }`;
+			icon = 'chevron-left';
+		}
+
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
 			// we are the /sites page but there is no site. Disable the home link
 			return <Item icon={ icon } disabled />;

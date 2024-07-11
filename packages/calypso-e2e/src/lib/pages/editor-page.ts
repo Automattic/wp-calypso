@@ -918,7 +918,7 @@ export class EditorPage {
 		// There are three different places to return to,
 		// depending on how the editor was entered.
 		const navigationPromise = Promise.race( [
-			this.page.waitForNavigation( { url: '**/sites' } ),
+			this.page.waitForNavigation( { url: '**/home/**' } ),
 			this.page.waitForNavigation( { url: '**/posts/**' } ),
 			this.page.waitForNavigation( { url: '**/pages/**' } ),
 			this.page.waitForNavigation( { url: '**/wp-admin/edit**' } ),
