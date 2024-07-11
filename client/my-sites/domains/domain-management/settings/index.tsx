@@ -705,7 +705,12 @@ const Settings = ( {
 	};
 
 	const renderDnssecSection = () => {
-		if ( ! domain || ! domain.isDnssecSupported ) {
+		if (
+			! domain ||
+			domain.type !== domainTypes.REGISTERED ||
+			domain.isSubdomain ||
+			! domain.isDnssecSupported
+		) {
 			return null;
 		}
 
