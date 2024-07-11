@@ -90,14 +90,11 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 						<strong>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</strong>
 					</p>
 					<p>
-						{ translate(
-							'Once you have selected WordPress.com, come back here and click {{strong}}Next{{/strong}}.',
-							{
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
+						{ translate( 'All set? Click {{strong}}Next{{/strong}} below.', {
+							components: {
+								strong: <strong />,
+							},
+						} ) }
 					</p>
 				</>
 			),
@@ -108,7 +105,7 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 				<>
 					<p>
 						{ translate(
-							'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the Migration key field.'
+							'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the {{strong}}Migration key{{/strong}} field.'
 						) }
 					</p>
 					<p>
