@@ -122,11 +122,15 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	}
 
 	toggleMenuByTouch = ( event: React.TouchEvent ) => {
+		// Prevent navigation by touching the parent menu item, and trigger toggling the menu instead.
 		event.preventDefault();
 		this.setState( { isOpenByTouch: ! this.state.isOpenByTouch } );
 	};
 
 	navigateSubAnchorTouch = ( event: React.TouchEvent ) => {
+		// We must prevent the default anchor behavior and navigate manually. Otherwise there is a
+		// race condition between the click on the anchor firing and the menu closing before that
+		// can happen.
 		event.preventDefault();
 		const url = event.currentTarget.getAttribute( 'href' );
 		if ( url ) {
@@ -136,10 +140,12 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	};
 
 	closeMenuOnOutsideTouch = ( event: TouchEvent ) => {
-		if ( ! this.props.subItems ) {
+		// If no subItems or the menu is already closed, there is nothing to close.
+		if ( ! this.props.subItems || ! this.state.isOpenByTouch ) {
 			return;
 		}
 
+		// Check refs to see if the touch event started inside our component, if it didn't, close the menu.
 		const isInComponentButtonRef = this.componentButtonRef.current?.contains(
 			event.target as Node
 		);
