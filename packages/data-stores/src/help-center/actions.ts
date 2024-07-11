@@ -116,17 +116,11 @@ export const setShowMessagingChat = function* () {
 	yield resetStore();
 };
 
-export const setShowSupportDoc = function* (
-	link: string,
-	postId: number,
-	blogId?: number,
-	title?: string
-) {
+export const setShowSupportDoc = function* ( link: string, postId: number, blogId?: number ) {
 	const params = new URLSearchParams( {
 		link,
 		postId: String( postId ),
 		...( blogId && { blogId: String( blogId ) } ), // Conditionally add blogId if it exists, the default is support blog
-		...( title && { title } ), // Conditionally add title if it exists
 		cacheBuster: String( Date.now() ),
 	} );
 	yield setInitialRoute( `/post/?${ params }` );
