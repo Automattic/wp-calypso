@@ -181,6 +181,8 @@ export const useSteps = ( { fromUrl, migrationKey, onComplete }: StepsOptions ):
 						setCurrentStep( index );
 				  };
 
+		const isMigrationKeyStep = index === array.length - 1;
+
 		return {
 			task: {
 				id: step.title,
@@ -192,7 +194,7 @@ export const useSteps = ( { fromUrl, migrationKey, onComplete }: StepsOptions ):
 				content: step.content,
 				isOpen: currentStep === index,
 				action: {
-					label: index === array.length - 1 ? translate( 'Done' ) : translate( 'Next' ),
+					label: isMigrationKeyStep ? translate( 'Done' ) : translate( 'Next' ),
 					onClick: onActionClick,
 				},
 			},
