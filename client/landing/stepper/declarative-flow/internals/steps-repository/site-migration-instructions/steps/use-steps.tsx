@@ -2,6 +2,7 @@ import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { MigrationKeyInput } from '../migration-key-input';
 import type { Task, Expandable } from '@automattic/launchpad';
 
 const removeDuplicatedSlashes = ( url: string ) => url.replace( /(https?:\/\/)|(\/)+/g, '$1$2' );
@@ -144,6 +145,7 @@ const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData 
 							args: { migrateLabel: 'Migrate' },
 						} ) }
 					</p>
+					{ '' !== migrationKey && <MigrationKeyInput value={ migrationKey } /> }
 				</>
 			),
 		},

@@ -11,7 +11,7 @@ interface Props {
 	value: string;
 	className?: string;
 }
-export const ShowHideInput: FC< Props > = ( { value, className } ) => {
+export const MigrationKeyInput: FC< Props > = ( { value, className } ) => {
 	const [ hide, setHide ] = useState( true );
 	const [ copied, setCopied ] = useState( false );
 	const inputRef = useRef< HTMLInputElement >( null );
@@ -47,35 +47,35 @@ export const ShowHideInput: FC< Props > = ( { value, className } ) => {
 
 	return (
 		<div
-			className={ clsx( 'show-hide-input', className, {
-				'show-hide-input--hidden': hide,
+			className={ clsx( 'migration-key-input', className, {
+				'migration-key-input--hidden': hide,
 			} ) }
 		>
 			<input
 				type="text"
-				className="show-hide-input__value"
+				className="migration-key-input__value"
 				readOnly
 				disabled={ hide }
 				value={ hide ? hiddenValue : value }
 				ref={ inputRef }
 			/>
-			<div className="show-hide-input__actions">
+			<div className="migration-key-input__actions">
 				<Button
 					transparent
 					borderless
 					compact
 					onClick={ toggleShowHide }
-					className="show-hide-input__visibility-button"
+					className="migration-key-input__visibility-button"
 					title={ hide ? translate( 'Show key' ) : translate( 'Hide key' ) }
 				>
 					<Icon icon={ hide ? unseen : seen } size={ 20 } />
 				</Button>
 				<ClipboardButton
 					text={ value }
-					className="show-hide-input__copy-button is-secondary"
+					className="migration-key-input__copy-button is-secondary"
 					onCopy={ onCopy }
 				>
-					{ copied ? translate( 'copied!' ) : translate( 'copy' ) }
+					{ copied ? translate( 'Copied!' ) : translate( 'Copy' ) }
 				</ClipboardButton>
 			</div>
 		</div>
