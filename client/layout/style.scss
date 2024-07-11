@@ -169,12 +169,6 @@ body.is-mobile-app-view {
 	}
 }
 
-.is-section-themes.is-global-sidebar-visible {
-	.layout__content {
-		padding: calc(var(--masterbar-height) + 16px) 16px 16px calc(var(--sidebar-width-max));
-		min-height: 100vh;
-	}
-}
 // Setup the secondary element, which contains the sidebar and
 // the site-selector elements.
 .layout__secondary {
