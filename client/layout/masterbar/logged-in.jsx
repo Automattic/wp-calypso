@@ -8,7 +8,7 @@ import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
@@ -99,6 +99,11 @@ class MasterbarLoggedIn extends Component {
 		loadHelpCenterIcon: PropTypes.bool,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.mbRef = React.createRef();
+	}
+
 	subscribeToViewPortChanges() {
 		this.unsubscribeToViewPortChanges = subscribeIsWithinBreakpoint(
 			MOBILE_BREAKPOINT,
@@ -135,13 +140,70 @@ class MasterbarLoggedIn extends Component {
 		};
 		document.addEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.subscribeToViewPortChanges();
+		window.addEventListener( 'resize', this.adjustVisibility );
+		screen.orientation.addEventListener( 'change', this.adjustVisibility );
+		this.adjustVisibility();
 	}
 
 	componentWillUnmount() {
 		document.removeEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.unsubscribeToViewPortChanges?.();
 		this.unsubscribeResponsiveMenuViewPortChanges?.();
+		window.removeEventListener( 'resize', this.adjustVisibility );
+		screen.orientation.removeEventListener( 'change', this.adjustVisibility );
 	}
+
+	adjustVisibility = () => {
+		if ( ! this.mbRef?.current ) {
+			return;
+		}
+
+		const container = this.mbRef.current;
+
+		const leftSection = container.querySelector( '.masterbar__section--left' );
+		const rightSection = container.querySelector( '.masterbar__section--right' );
+
+		const leftItems = Array.from( leftSection.children );
+		const rightItems = Array.from( rightSection.children );
+
+		let totalLeftWidth = 0;
+		let totalRightWidth = 0;
+
+		// Make all items visible initially
+		leftItems.forEach( ( item ) => ( item.style.display = 'flex' ) );
+		rightItems.forEach( ( item ) => ( item.style.display = 'flex' ) );
+
+		// Calculate total width
+		leftItems.forEach( ( item ) => ( totalLeftWidth += item.clientWidth ) );
+		rightItems.forEach( ( item ) => ( totalRightWidth += item.clientWidth ) );
+
+		let totalWidth = totalLeftWidth + totalRightWidth;
+		const containerWidth = container.clientWidth;
+
+		if ( totalWidth > containerWidth ) {
+			// debugger;
+		}
+		// Hide items alternately from both sections
+		let leftIndex = leftItems.length - 1;
+		let rightIndex = 0;
+		while ( totalWidth > containerWidth && ( leftIndex >= 0 || rightIndex < rightItems.length ) ) {
+			if ( leftIndex >= 0 ) {
+				totalWidth -= leftItems[ leftIndex ].clientWidth;
+				leftItems[ leftIndex ].style.display = 'none';
+				leftIndex--;
+			}
+
+			if ( totalWidth <= containerWidth ) {
+				break;
+			}
+
+			if ( rightIndex < rightItems.length ) {
+				totalWidth -= rightItems[ rightIndex ].clientWidth;
+				rightItems[ rightIndex ].style.display = 'none';
+				rightIndex++;
+			}
+		}
+	};
 
 	handleToggleMobileMenu = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_menu_clicked' );
@@ -603,6 +665,7 @@ class MasterbarLoggedIn extends Component {
 				onRemoveCoupon={ this.onRemoveCartProduct }
 				selectedSiteSlug={ currentSelectedSiteSlug }
 				selectedSiteId={ currentSelectedSiteId }
+				onLoad={ this.adjustVisibility }
 			/>
 		);
 	}
@@ -746,6 +809,7 @@ class MasterbarLoggedIn extends Component {
 				siteId={ currentSelectedSiteId }
 				tooltip={ translate( 'Help' ) }
 				placeholder={ null }
+				onLoad={ this.adjustVisibility }
 			/>
 		);
 	}
@@ -811,7 +875,7 @@ class MasterbarLoggedIn extends Component {
 		if ( config.isEnabled( 'layout/mb' ) ) {
 			if ( isMobile && isInEditor && loadHelpCenterIcon ) {
 				return (
-					<Masterbar>
+					<Masterbar innerRef={ this.mbRef }>
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderMySites() }
 						</div>
@@ -825,7 +889,7 @@ class MasterbarLoggedIn extends Component {
 			return (
 				<>
 					{ this.renderPopupSearch() }
-					<Masterbar>
+					<Masterbar innerRef={ this.mbRef }>
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderSidebarMobileMenu() }
 							{ this.renderMySites() }

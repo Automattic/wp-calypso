@@ -6,14 +6,14 @@ import {
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
 import clsx from 'clsx';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const MasterbarHelpCenter = ( { tooltip } ) => {
+const MasterbarHelpCenter = ( { tooltip, onLoad } ) => {
 	const helpIconRef = useRef();
 	const sectionName = useSelector( getSectionName );
 
@@ -31,6 +31,10 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 
 		setShowHelpCenter( ! helpCenterVisible );
 	};
+
+	useEffect( () => {
+		onLoad();
+	}, [ onLoad ] );
 
 	return (
 		<>
