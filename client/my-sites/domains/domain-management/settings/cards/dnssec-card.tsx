@@ -6,11 +6,17 @@ import Accordion from 'calypso/components/domains/accordion';
 import useDisableDnssecMutation from 'calypso/data/domains/dnssec/use-disable-dnssec-mutation';
 import useEnableDnssecMutation from 'calypso/data/domains/dnssec/use-enable-dnssec-mutation';
 import { useDispatch, useSelector } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { disableDnssecAction, enableDnssecAction } from 'calypso/state/sites/domains/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
+
+const noticeOptions = {
+	duration: 5000,
+	id: `dnssec-notification`,
+};
 
 export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 	const dispatch = useDispatch();
@@ -29,8 +35,9 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 			setIsEnabled( false );
 			dispatch( disableDnssecAction( selectedSiteId, domain.name ) );
 		},
-		onError() {
+		onError( error ) {
 			setIsUpdating( false );
+			dispatch( errorNotice( error.message, noticeOptions ) );
 		},
 	} );
 
@@ -53,8 +60,9 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 			setIsUpdating( false );
 			setIsEnabled( true );
 		},
-		onError() {
+		onError( error ) {
 			setIsUpdating( false );
+			dispatch( errorNotice( error.message, noticeOptions ) );
 		},
 	} );
 
