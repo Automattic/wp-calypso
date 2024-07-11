@@ -40,11 +40,11 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 
 	const steps = [
 		{
-			title: translate( 'Migrate Guru plugin' ),
+			title: translate( 'Install the Migrate Guru plugin' ),
 			content: (
 				<p>
 					{ translate(
-						'Install and activate the {{a}}Migrate Guru plugin{{/a}} on your site. Once done, click {{strong}}Next{{/strong}} to progress.',
+						"First you'll need to install and activate the {{a}}Migrate Guru plugin{{/a}} on the site you want to migrate. Click {{strong}}Next{{/strong}} when you're ready.",
 						{
 							components: {
 								strong: <strong />,
@@ -63,7 +63,7 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 			),
 		},
 		{
-			title: translate( 'Set up migration key' ),
+			title: translate( 'Get your site ready' ),
 			content: (
 				<>
 					<p>
@@ -87,9 +87,7 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 						) }
 					</p>
 					<p>
-						<strong>
-							{ translate( 'When asked to select a destination host, pick WordPress.com.' ) }
-						</strong>
+						<strong>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</strong>
 					</p>
 					<p>
 						{ translate(
@@ -105,19 +103,23 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 			),
 		},
 		{
-			title: translate( 'Enter your migration Key' ),
+			title: translate( 'Add your migration key' ),
 			content: (
-				<p>
-					{ translate(
-						'Paste the migration key below in Migrate Guru’s Migration key field and click {{strong}}%(migrateLabel)s{{/strong}}.',
-						{
+				<>
+					<p>
+						{ translate(
+							'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the Migration key field.'
+						) }
+					</p>
+					<p>
+						{ translate( 'Click {{strong}}%(migrateLabel)s{{/strong}} to finish.', {
 							components: {
 								strong: <strong />,
 							},
 							args: { migrateLabel: 'Migrate' },
-						}
-					) }
-				</p>
+						} ) }
+					</p>
+				</>
 			),
 		},
 	];
