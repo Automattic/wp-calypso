@@ -136,6 +136,10 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	};
 
 	closeMenuOnOutsideTouch = ( event: TouchEvent ) => {
+		if ( ! this.props.subItems ) {
+			return;
+		}
+
 		const isInComponentButtonRef = this.componentButtonRef.current?.contains(
 			event.target as Node
 		);
@@ -168,15 +172,13 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 
 		if ( this.props.url && ! this.props.subItems ) {
 			return (
-				<div ref={ this.componentDivRef }>
-					<a
-						{ ...attributes }
-						href={ this.props.url }
-						ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
-					>
-						{ this.renderChildren() }
-					</a>
-				</div>
+				<a
+					{ ...attributes }
+					href={ this.props.url }
+					ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
+				>
+					{ this.renderChildren() }
+				</a>
 			);
 		}
 
