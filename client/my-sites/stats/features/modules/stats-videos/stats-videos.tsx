@@ -60,6 +60,7 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 					statType="statsVideoPlays"
 					showSummaryLink
 					className={ className }
+					skipQuery
 				/>
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
