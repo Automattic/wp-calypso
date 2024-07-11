@@ -16,7 +16,7 @@ import { SUPPORT_URL } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-// import StatsEmptyActionVideo from '../shared/stats-empty-action-video';
+import StatsEmptyActionVideo from '../shared/stats-empty-action-video';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
@@ -80,7 +80,7 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 									context: 'Stats: Info box label when the Videos module is empty',
 								}
 							) }
-							// cards={ <StatsEmptyActionVideo from="module_videos" /> }
+							cards={ <StatsEmptyActionVideo from="module_videos" /> }
 						/>
 					}
 				/>
