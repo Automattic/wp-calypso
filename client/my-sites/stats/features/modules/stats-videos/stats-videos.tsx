@@ -27,7 +27,7 @@ const StatVideos: React.FC< StatsDefaultModuleProps > = ( {
 }: StatsDefaultModuleProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsVideosSummary';
+	const statType = 'statsVideoPlays';
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
