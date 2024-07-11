@@ -8,13 +8,22 @@ export const getRandomSiteBaseUrl = async ( title: string ) => {
 			apiNamespace: 'rest/v1.1',
 			path: `/domains/suggestions?http_envelope=1&query=${ title }&quantity=1&include_wordpressdotcom=true&include_dotblogsubdomain=false&vendor=dot`,
 		} );
+		// eslint-disable-next-line no-console
+		console.log( 'debuglog urlSuggestions line 12', urlSuggestions );
 		const validUrlWpComUrl = urlSuggestions.find( ( suggestion: { domain_name: string } ) =>
 			suggestion.domain_name.includes( 'wordpress.com' )
 		);
+		// eslint-disable-next-line no-console
+		console.log( 'debuglog validUrlWpComUrl line 17', validUrlWpComUrl );
 		if ( validUrlWpComUrl ) {
 			return validUrlWpComUrl.domain_name.split( '.' )[ 0 ];
 		}
-	} catch ( error ) {}
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.log( 'debuglog error line 23', error );
+	}
+	// eslint-disable-next-line no-console
+	console.log( 'debuglog siteName line 26', siteName );
 	return siteName;
 };
 

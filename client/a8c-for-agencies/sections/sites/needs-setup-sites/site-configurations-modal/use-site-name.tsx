@@ -27,6 +27,9 @@ const checkSiteAvailability = async ( agencyId: number, siteId: number, siteName
 		return { siteNameSuggestion, valid: false };
 	}
 
+	// eslint-disable-next-line no-console
+	console.log( 'debuglog response line 31', response );
+
 	return response;
 };
 
@@ -82,6 +85,9 @@ const useCheckSiteAvailability = (
 			siteNameSuggestion: await getRandomSiteBaseUrl( siteName ),
 		} );
 	};
+
+	// eslint-disable-next-line no-console
+	console.log( 'debuglog availabilityState line 86', availabilityState );
 
 	return { ...availabilityState, revalidateCurrentSiteName };
 };

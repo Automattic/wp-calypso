@@ -37,6 +37,8 @@ export default function SiteConfigurationsModal( {
 	const { phpVersions } = usePhpVersions();
 	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading, siteId );
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
+	// eslint-disable-next-line no-console
+	console.log( 'debuglog siteName line 40', siteName );
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
 		setAllowClientsToUseSiteHelpCenter( ! allowClientsToUseSiteHelpCenter );
