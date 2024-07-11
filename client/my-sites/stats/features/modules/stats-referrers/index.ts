@@ -1,1 +1,1 @@
-export { default } from './stats-videos';
+export { default } from './stats-referrers';
