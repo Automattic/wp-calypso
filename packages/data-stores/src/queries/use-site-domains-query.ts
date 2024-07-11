@@ -2,8 +2,8 @@ import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
 interface DnssecRecords {
-	dnskey: string;
-	dsData: Array< string >;
+	dnskey?: string;
+	dsData?: Array< string >;
 }
 
 export interface DomainData {
