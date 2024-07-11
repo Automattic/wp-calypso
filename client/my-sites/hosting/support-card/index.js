@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from '@wordpress/data';
 import { HostingCard } from 'calypso/components/hosting-card';
 import {
 	composeAnalytics,
@@ -8,6 +9,7 @@ import {
 	recordGoogleEvent,
 	bumpStat,
 } from 'calypso/state/analytics/actions';
+import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
 
 import './style.scss';
 
@@ -19,16 +21,22 @@ function trackNavigateToContactSupport() {
 	);
 }
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 export default function SupportCard() {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
+	const { setShowHelpCenter, setInitialRoute } = useDispatch( HELP_CENTER_STORE );
+	const { url } = useStillNeedHelpURL();
+
+	const onClick = () => {
+		setInitialRoute( url );
+		setShowHelpCenter( true );
+	};
 
 	return (
 		<HostingCard className="support-card" title={ translate( 'Need some help?' ) }>
 			<p>{ translate( 'Our AI assistant can help, or connect you to our support team.' ) }</p>
-			<Button onClick={ () => dispatch( trackNavigateToContactSupport() ) } href="/help/contact">
-				{ translate( 'Get help' ) }
-			</Button>
+			<Button onClick={ onClick }>{ translate( 'Get help' ) }</Button>
 		</HostingCard>
 	);
 }
