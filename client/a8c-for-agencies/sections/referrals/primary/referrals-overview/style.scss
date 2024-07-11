@@ -51,6 +51,44 @@ $data-view-border-color: #f1f1f1;
 }
 
 .referrals-layout--automated {
+	@media (min-width: $break-large) {
+		background: inherit;
+
+		.dataviews-view-table thead {
+			position: sticky;
+			top: 0;
+			z-index: 2;
+		}
+
+		.dataviews-wrapper tr.dataviews-view-table__row th {
+			text-wrap: nowrap;
+		}
+
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
+			padding-inline-start: 64px;
+		}
+		.dataviews-view-table tr {
+			th:last-child,
+			td:last-child {
+				padding-inline-end: 64px;
+				width: 20px;
+				white-space: nowrap;
+				position: sticky;
+				right: 0;
+				z-index: 1;
+				background: linear-gradient(to right, transparent 0%, #fff 25%);
+			}
+
+			&:hover {
+				th:last-child,
+				td:last-child {
+					background: linear-gradient(to right, transparent 0%, var(--color-neutral-0) 25%);
+				}
+			}
+		}
+	}
+
 	.referrals-overview__section-container {
 		gap: 32px;
 	}
