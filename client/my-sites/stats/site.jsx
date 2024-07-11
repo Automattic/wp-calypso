@@ -57,6 +57,7 @@ import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
+import StatsModuleVideos from './features/modules/stats-videos';
 import HighlightsSection from './highlights-section';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
@@ -648,7 +649,6 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.search }
 								period={ this.props.period }
 								query={ query }
-								showSummaryLink
 								className={ clsx(
 									{
 										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
@@ -699,11 +699,10 @@ class StatsSite extends Component {
 						) }
 
 						{ isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
-							<StatsModule
+							<StatsModuleVideos
 								moduleStrings={ moduleStrings.videoplays }
 								period={ this.props.period }
 								query={ query }
-								showSummaryLink
 								className={ clsx(
 									{
 										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack

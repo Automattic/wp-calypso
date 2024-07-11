@@ -53,29 +53,13 @@ const StatVideos: React.FC< StatsDefaultModuleProps > = ( {
 			) }
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
 				<StatsModule
-					additionalColumns={ {
-						header: (
-							<>
-								<span>{ translate( 'Opens' ) }</span>
-							</>
-						),
-						body: ( item: { opens: number } ) => (
-							<>
-								<span>{ item.opens }</span>
-							</>
-						),
-					} }
-					path="videos"
+					path="videoplays"
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
-					statType="statsVideosSummary"
-					mainItemLabel={ translate( 'Latest Videos' ) }
-					metricLabel={ translate( 'Clicks' ) }
+					statType="statsVideoPlays"
 					showSummaryLink
 					className={ className }
-					hasNoBackground
-					skipQuery
 				/>
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
