@@ -596,10 +596,9 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderWordPressIcon() {
-		const { siteAdminUrl } = this.props;
 		return (
 			<Item
-				url={ siteAdminUrl }
+				url="/sites"
 				className="masterbar__item-wordpress"
 				icon={ <span className="dashicons-before dashicons-wordpress" /> }
 			/>
@@ -673,7 +672,7 @@ class MasterbarLoggedIn extends Component {
 						{ this.state.isResponsiveMenu
 							? this.renderSidebarMobileMenu()
 							: this.renderWordPressIcon() }
-						{ this.renderAllSites() }
+						{ this.renderReader() }
 						{ this.renderCurrentSite() }
 					</div>
 					<div className="masterbar__section masterbar__section--right">
