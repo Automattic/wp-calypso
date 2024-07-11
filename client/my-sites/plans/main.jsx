@@ -26,6 +26,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -444,6 +445,8 @@ class Plans extends Component {
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
+				{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
+				<QueryProducts />
 				<TrackComponentView eventName="calypso_plans_view" />
 				{ ( isDomainUpsell || domainFromHomeUpsellFlow ) && (
 					<DomainUpsellDialog domain={ selectedSite.slug } />

@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
+import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -697,6 +698,8 @@ class CancelPurchaseForm extends Component {
 
 		return (
 			<>
+				{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
+				<QueryProducts />
 				{ site && <QuerySitePlans siteId={ site.ID } /> }
 				{ this.props.isVisible && (
 					<BlankCanvas className="cancel-purchase-form">
