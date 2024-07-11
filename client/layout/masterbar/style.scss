@@ -883,10 +883,7 @@ body.is-mobile-app-view {
 	}
 
 	.gravatar {
-		border: 2px solid #fff;
-		border-radius: 50%;
-		width: 18px;
-		height: 18px;
+		border-radius: unset;
 
 		@media only screen and (max-width: 782px) {
 			width: 22px;
@@ -900,11 +897,6 @@ body.is-mobile-app-view {
 		}
 	}
 
-	&:hover {
-		.gravatar {
-			border-color: var(--color-masterbar-highlight);
-		}
-	}
 }
 
 .masterbar__login-links {
