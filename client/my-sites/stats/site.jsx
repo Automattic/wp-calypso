@@ -644,6 +644,33 @@ class StatsSite extends Component {
 
 						{ isNewStateEnabled && (
 							<StatsModuleSearch
+								moduleStrings={ moduleStrings.search }
+								period={ this.props.period }
+								query={ query }
+								statType="statsSearchTerms"
+								showSummaryLink
+								className={ clsx(
+									{
+										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! isJetpack && ! this.isModuleHidden( 'videos' ),
+									},
+									{
+										'stats__flexible-grid-item--full--large':
+											isJetpack && this.isModuleHidden( 'videos' ),
+									},
+									{
+										// 1/2 for all other cases to stack with Devices or empty space
+										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										// Avoid 1/3 on smaller screen if Videos is visible
+										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+						{ ! isNewStateEnabled && (
+							<StatsModule
 								path="searchterms"
 								moduleStrings={ moduleStrings.search }
 								period={ this.props.period }
@@ -670,33 +697,6 @@ class StatsSite extends Component {
 								) }
 							/>
 						) }
-
-						<StatsModule
-							path="searchterms"
-							moduleStrings={ moduleStrings.search }
-							period={ this.props.period }
-							query={ query }
-							statType="statsSearchTerms"
-							showSummaryLink
-							className={ clsx(
-								{
-									// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
-									'stats__flexible-grid-item--one-third--two-spaces':
-										! isJetpack && ! this.isModuleHidden( 'videos' ),
-								},
-								{
-									'stats__flexible-grid-item--full--large':
-										isJetpack && this.isModuleHidden( 'videos' ),
-								},
-								{
-									// 1/2 for all other cases to stack with Devices or empty space
-									'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-									// Avoid 1/3 on smaller screen if Videos is visible
-									'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-								},
-								'stats__flexible-grid-item--full--medium'
-							) }
-						/>
 
 						{ ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
