@@ -7,6 +7,7 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import CommissionsColumn from './commissions-column';
 import SubscriptionStatus from './subscription-status';
 import type { Referral } from '../types';
 
@@ -114,6 +115,16 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode =>
 								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
+							id: 'commissions',
+							header: translate( 'Commissions' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: Referral } ): ReactNode => {
+								return <CommissionsColumn referral={ item } />;
+							},
 							enableHiding: false,
 							enableSorting: false,
 						},

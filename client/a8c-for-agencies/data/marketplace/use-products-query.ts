@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, UseQueryResult, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import getProductsRaw from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-products-raw';
@@ -64,20 +64,40 @@ export function usePublicProductsQuery(): UseQueryResult< APIProductFamilyProduc
 	return useProductsQuery( true );
 }
 
+const getProductsQueryKey = ( isPublicFacing: boolean, agencyId?: number ) => [
+	'a4a',
+	'marketplace',
+	'products',
+	isPublicFacing,
+	agencyId,
+];
+
 export default function useProductsQuery(
 	isPublicFacing = false,
-	includeRawData = false
+	includeRawData = false,
+	useStaleData = false
 ): UseQueryResult< APIProductFamilyProduct[], unknown > {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const agencyId = useSelector( getActiveAgencyId );
 
+	const queryClient = useQueryClient();
+	const data = queryClient.getQueryData( getProductsQueryKey( isPublicFacing, agencyId ) );
+
+	let staleTime = 0;
+
+	// If we have data and we want to use stale data, set the stale time to Infinity to prevent refetching.
+	if ( useStaleData && data ) {
+		staleTime = Infinity;
+	}
+
 	const query = useQuery( {
-		queryKey: [ 'a4a', 'marketplace', 'products', isPublicFacing, agencyId ],
+		queryKey: getProductsQueryKey( isPublicFacing, agencyId ),
 		queryFn: () => queryProducts( isPublicFacing, agencyId ),
 		select: includeRawData ? getProductsRaw : selectAlphabeticallySortedProductOptions,
 		enabled: isPublicFacing || !! agencyId,
 		refetchOnWindowFocus: false,
+		staleTime,
 	} );
 
 	const { isError } = query;

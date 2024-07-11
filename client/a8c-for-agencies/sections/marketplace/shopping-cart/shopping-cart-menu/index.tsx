@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import CommissionsInfo from '../../commissions-info';
 import { MarketplaceTypeContext } from '../../context';
 import { useTotalInvoiceValue } from '../../wpcom-overview/hooks/use-total-invoice-value';
 import ShoppingCartMenuItem from './item';
@@ -73,6 +74,8 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 							} ) }
 						</span>
 					</div>
+
+					{ marketplaceType === 'referral' && <CommissionsInfo items={ items } /> }
 
 					<Button
 						className="shopping-cart__menu-checkout-button"

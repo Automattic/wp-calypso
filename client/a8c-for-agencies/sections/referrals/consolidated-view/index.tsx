@@ -1,41 +1,54 @@
 import { Card } from '@automattic/components';
+import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import { getConsolidatedData } from '../lib/commissions';
 import type { Referral } from '../types';
 
 import './style.scss';
-
-const getConsolidatedData = ( referrals: Referral[] ) => {
-	const consolidatedData = {
-		allTimeCommissions: 0,
-		pendingOrders: 0,
-		pendingCommission: 0,
-	};
-
-	referrals.forEach( ( referral ) => {
-		consolidatedData.pendingOrders += referral.purchaseStatuses.filter(
-			( status ) => status === 'pending'
-		).length;
-	} );
-
-	return consolidatedData;
-};
 
 export default function ConsolidatedViews( { referrals }: { referrals: Referral[] } ) {
 	const translate = useTranslate();
 
 	const date = new Date();
 	const month = date.toLocaleString( 'default', { month: 'long' } );
+	const { data, isFetching } = useProductsQuery( false, false, true );
 
-	const { allTimeCommissions, pendingOrders, pendingCommission } = getConsolidatedData( referrals );
+	const [ consolidatedData, setConsolidatedData ] = useState( {
+		allTimeCommissions: 0,
+		pendingOrders: 0,
+		pendingCommission: 0,
+	} );
+
+	useEffect( () => {
+		if ( data?.length ) {
+			const consolidatedData = getConsolidatedData( referrals, data || [] );
+			setConsolidatedData( consolidatedData );
+		}
+	}, [ referrals, data ] );
 
 	return (
 		<div className="consolidated-view">
 			<Card compact>
-				<div className="consolidated-view__value">{ `$${ allTimeCommissions }` }</div>
+				<div className="consolidated-view__value">
+					{ isFetching ? (
+						<TextPlaceholder />
+					) : (
+						formatCurrency( consolidatedData.allTimeCommissions, 'USD' )
+					) }
+				</div>
 				<div className="consolidated-view__label">{ translate( 'All time commissions' ) }</div>
 			</Card>
 			<Card compact>
-				<div className="consolidated-view__value">{ `$${ pendingCommission }` }</div>
+				<div className="consolidated-view__value">
+					{ isFetching ? (
+						<TextPlaceholder />
+					) : (
+						formatCurrency( consolidatedData.pendingCommission, 'USD' )
+					) }
+				</div>
 				<div className="consolidated-view__label">
 					{ translate( 'Commissions expected in %(month)s', {
 						args: { month },
@@ -44,7 +57,7 @@ export default function ConsolidatedViews( { referrals }: { referrals: Referral[
 				</div>
 			</Card>
 			<Card compact>
-				<div className="consolidated-view__value">{ pendingOrders }</div>
+				<div className="consolidated-view__value">{ consolidatedData.pendingOrders }</div>
 				<div className="consolidated-view__label">{ translate( 'Pending orders' ) }</div>
 			</Card>
 		</div>
