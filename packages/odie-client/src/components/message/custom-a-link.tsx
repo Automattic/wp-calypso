@@ -32,7 +32,7 @@ const CustomALink = ( {
 			<a
 				className="odie-sources-link"
 				href={ transformedHref }
-				target="_blank"
+				target={ inline ? '_blank' : '_self' }
 				rel="noopener noreferrer"
 				onClick={ () => {
 					trackEvent( 'chat_message_action_click', {
