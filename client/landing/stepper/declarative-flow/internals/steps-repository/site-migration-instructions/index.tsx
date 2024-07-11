@@ -63,7 +63,11 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	}, [ deleteMigrationSticker, siteId ] );
 
 	// Site preparation.
-	const { detailedStatus, completed: preparationCompleted } = usePrepareSiteForMigration( siteId );
+	const {
+		detailedStatus,
+		completed: preparationCompleted,
+		migrationKey,
+	} = usePrepareSiteForMigration( siteId );
 	usePreparationEvents( {
 		migrationKeyStatus: detailedStatus.migrationKey,
 		preparationCompleted,
@@ -78,7 +82,11 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	const onCompleteSteps = () => {
 		navigation.submit?.( { destination: 'migration-started' } );
 	};
-	const { steps, completedSteps } = useSteps( { fromUrl, onComplete: onCompleteSteps } );
+	const { steps, completedSteps } = useSteps( {
+		fromUrl,
+		migrationKey: migrationKey ?? '',
+		onComplete: onCompleteSteps,
+	} );
 
 	const withPreview = fromUrl !== '';
 

@@ -27,6 +27,7 @@ const recordInstructionsLinkClick = ( linkname: string ) => {
 
 interface StepsDataOptions {
 	fromUrl: string;
+	migrationKey: string;
 }
 
 interface StepData {
@@ -38,6 +39,7 @@ type StepsData = StepData[];
 
 interface StepsOptions {
 	fromUrl: string;
+	migrationKey: string;
 	onComplete: () => void;
 }
 
@@ -54,7 +56,7 @@ interface StepsObject {
 	completedSteps: number;
 }
 
-const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
+const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
 
 	return [
@@ -148,11 +150,11 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 	];
 };
 
-export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): StepsObject => {
+export const useSteps = ( { fromUrl, migrationKey, onComplete }: StepsOptions ): StepsObject => {
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
-	const stepsData = useStepsData( { fromUrl } );
+	const stepsData = useStepsData( { fromUrl, migrationKey } );
 
 	const steps: Steps = stepsData.map( ( step, index, array ) => {
 		const onActionClick = () => {
