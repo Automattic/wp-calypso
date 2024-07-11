@@ -8,7 +8,7 @@ import { Gridicon, JetpackLogo } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useMemo } from '@wordpress/element';
+import { useRef, useMemo } from '@wordpress/element';
 import { Icon, chevronRightSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -23,7 +23,8 @@ import {
 } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { plansGridMediumLarge } from '../../css-mixins';
-import { usePlansGridContext } from '../../grid-context';
+import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
+import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
@@ -39,6 +40,7 @@ import { PlanStorage } from '../shared/storage';
 import { StickyContainer } from '../sticky-container';
 import type {
 	GridPlan,
+	ComparisonGridExternalProps,
 	ComparisonGridProps,
 	PlanActionOverrides,
 	TransformedFeatureObject,
@@ -1125,4 +1127,86 @@ const ComparisonGrid = ( {
 	);
 };
 
-export default ComparisonGrid;
+// TODO
+// Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
+// More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
+const WrappedComparisonGrid = ( {
+	siteId,
+	intent,
+	gridPlans,
+	useCheckPlanAvailabilityForPurchase,
+	useAction,
+	recordTracksEvent,
+	allFeaturesList,
+	intervalType,
+	isInSignup,
+	currentSitePlanSlug,
+	selectedPlan,
+	selectedFeature,
+	showUpgradeableStorage,
+	onStorageAddOnClick,
+	stickyRowOffset,
+	coupon,
+	className,
+	hideUnsupportedFeatures,
+	enableFeatureTooltips,
+	featureGroupMap,
+	...otherProps
+}: ComparisonGridExternalProps ) => {
+	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+
+	// TODO: this will be deprecated along side removing the wrapper component
+	const gridSize = useGridSize( {
+		containerRef: gridContainerRef,
+		containerBreakpoints: new Map( [
+			[ 'small', 0 ],
+			[ 'smedium', 686 ],
+			[ 'medium', 835 ], // enough to fit Enterpreneur plan. was 686
+			[ 'large', 1005 ], // enough to fit Enterpreneur plan. was 870
+			[ 'xlarge', 1180 ],
+		] ),
+	} );
+
+	const classNames = clsx( 'plans-grid-next', className, {
+		'is-small': 'small' === gridSize,
+		'is-smedium': 'smedium' === gridSize,
+		'is-medium': 'medium' === gridSize,
+		'is-large': 'large' === gridSize,
+		'is-xlarge': 'xlarge' === gridSize,
+		'is-visible': true,
+	} );
+
+	return (
+		<div ref={ gridContainerRef } className={ classNames }>
+			<PlansGridContextProvider
+				intent={ intent }
+				siteId={ siteId }
+				gridPlans={ gridPlans }
+				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useAction={ useAction }
+				recordTracksEvent={ recordTracksEvent }
+				allFeaturesList={ allFeaturesList }
+				coupon={ coupon }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				featureGroupMap={ featureGroupMap }
+				hideUnsupportedFeatures={ hideUnsupportedFeatures }
+			>
+				<ComparisonGrid
+					intervalType={ intervalType }
+					isInSignup={ isInSignup }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					siteId={ siteId }
+					selectedPlan={ selectedPlan }
+					selectedFeature={ selectedFeature }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					stickyRowOffset={ stickyRowOffset }
+					onStorageAddOnClick={ onStorageAddOnClick }
+					gridSize={ gridSize ?? undefined }
+					{ ...otherProps }
+				/>
+			</PlansGridContextProvider>
+		</div>
+	);
+};
+
+export default WrappedComparisonGrid;

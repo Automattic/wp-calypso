@@ -7,10 +7,11 @@ import {
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
-import { useMemo } from '@wordpress/element';
+import { useRef, useMemo } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../../grid-context';
+import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
+import useGridSize from '../../hooks/use-grid-size';
 import { PlanFeaturesItem } from '../item';
 import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
@@ -25,7 +26,13 @@ import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import SpotlightPlan from './spotlight-plan';
 import Table from './table';
 import TopButtons from './top-buttons';
-import type { DataResponse, FeaturesGridProps, GridPlan, PlanActionOverrides } from '../../types';
+import type {
+	DataResponse,
+	FeaturesGridExternalProps,
+	FeaturesGridProps,
+	GridPlan,
+	PlanActionOverrides,
+} from '../../types';
 
 type MobileViewProps = {
 	currentSitePlanSlug?: string | null;
@@ -250,6 +257,9 @@ const TabletView = ( {
 	);
 };
 
+// TODO
+// Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
+// More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
 const FeaturesGrid = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
@@ -317,4 +327,60 @@ const FeaturesGrid = ( {
 	);
 };
 
-export default FeaturesGrid;
+const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
+	const {
+		siteId,
+		intent,
+		gridPlans,
+		useCheckPlanAvailabilityForPurchase,
+		useAction,
+		recordTracksEvent,
+		allFeaturesList,
+		coupon,
+		isInAdmin,
+		className,
+		enableFeatureTooltips,
+		enableCategorisedFeatures,
+		featureGroupMap = {},
+	} = props;
+
+	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+
+	// TODO: this will be deprecated along side removing the wrapper component
+	const gridSize = useGridSize( {
+		containerRef: gridContainerRef,
+		containerBreakpoints: new Map( [
+			[ 'small', 0 ],
+			[ 'medium', 740 ],
+			[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin
+		] ),
+	} );
+
+	const classNames = clsx( 'plans-grid-next', className, {
+		'is-small': 'small' === gridSize,
+		'is-medium': 'medium' === gridSize,
+		'is-large': 'large' === gridSize,
+	} );
+
+	return (
+		<div ref={ gridContainerRef } className={ classNames }>
+			<PlansGridContextProvider
+				intent={ intent }
+				siteId={ siteId }
+				gridPlans={ gridPlans }
+				coupon={ coupon }
+				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useAction={ useAction }
+				recordTracksEvent={ recordTracksEvent }
+				allFeaturesList={ allFeaturesList }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				enableCategorisedFeatures={ enableCategorisedFeatures }
+				featureGroupMap={ featureGroupMap }
+			>
+				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
+			</PlansGridContextProvider>
+		</div>
+	);
+};
+
+export default WrappedFeaturesGrid;
