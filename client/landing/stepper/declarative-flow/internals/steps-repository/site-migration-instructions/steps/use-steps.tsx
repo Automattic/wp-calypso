@@ -104,9 +104,7 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 							}
 						) }
 					</p>
-					<p>
-						<strong>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</strong>
-					</p>
+					<p>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</p>
 					<p>
 						{ translate( 'All set? Click {{strong}}Next{{/strong}} below.', {
 							components: {
