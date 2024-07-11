@@ -180,9 +180,6 @@ class MasterbarLoggedIn extends Component {
 		let totalWidth = totalLeftWidth + totalRightWidth;
 		const containerWidth = container.clientWidth;
 
-		if ( totalWidth > containerWidth ) {
-			// debugger;
-		}
 		// Hide items alternately from both sections
 		let leftIndex = leftItems.length - 1;
 		let rightIndex = 0;
