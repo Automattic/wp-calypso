@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import withErrorHandling from '../hoc/with-error-handling';
 
 import './style.scss';
 
@@ -14,7 +15,7 @@ type Props = {
 	error?: string;
 };
 
-export default function FormField( {
+function FormField( {
 	label,
 	sub,
 	children,
@@ -58,3 +59,5 @@ export default function FormField( {
 		</div>
 	);
 }
+
+export default withErrorHandling( FormField );

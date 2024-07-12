@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
+import { areURLsUnique, isValidUrl } from 'calypso/a8c-for-agencies/components/form/utils';
 import { AgencyDirectoryApplication, DirectoryApplicationType } from '../../types';
-import { isValidUrl, areURLsUnique } from '../../utils/tools';
 
 type Props = {
 	initialFormData?: AgencyDirectoryApplication | null;
