@@ -15,8 +15,8 @@ import EmptyModuleCard from '../../../components/empty-module-card/empty-module-
 import { SUPPORT_URL } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
+import { StatsEmptyActionVideo } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import StatsEmptyActionVideo from '../shared/stats-empty-action-video';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {

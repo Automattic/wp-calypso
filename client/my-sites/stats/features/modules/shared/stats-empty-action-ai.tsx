@@ -1,19 +1,20 @@
+import config from '@automattic/calypso-config';
 import { sparkles } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import EmptyStateAction from '../../../components/empty-state-action';
+import EmptyStateAction from 'calypso/my-sites/stats/components/empty-state-action';
+import { JETPACK_SUPPORT_AI_URL } from 'calypso/my-sites/stats/const';
+import { useSelector } from 'calypso/state';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { StatsEmptyActionProps } from './';
 
-type StatsEmptyActionAIProps = {
-	from: string;
-};
-
-// TODO: move to a shared file if this is the final URL
-const JETPACK_SUPPORT_AI_URL =
-	'https://jetpack.com/support/jetpack-blocks/jetpack-ai-assistant-block/';
-
-const StatsEmptyActionAI: React.FC< StatsEmptyActionAIProps > = ( { from } ) => {
+const StatsEmptyActionAI: React.FC< StatsEmptyActionProps > = ( { from } ) => {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const siteId = useSelector( getSelectedSiteId );
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	return (
 		<EmptyStateAction
@@ -26,7 +27,11 @@ const StatsEmptyActionAI: React.FC< StatsEmptyActionAIProps > = ( { from } ) => 
 			onClick={ () => {
 				// analytics event tracting handled in EmptyStateAction component
 
-				setTimeout( () => ( window.location.href = localizeUrl( JETPACK_SUPPORT_AI_URL ) ), 250 );
+				const redirectUrl = isOdysseyStats
+					? `${ siteAdminUrl }admin.php?page=my-jetpack#/jetpack-ai` // For Jetpack go to the plugin page.
+					: localizeUrl( JETPACK_SUPPORT_AI_URL );
+
+				setTimeout( () => ( window.location.href = redirectUrl ), 250 );
 			} }
 		/>
 	);

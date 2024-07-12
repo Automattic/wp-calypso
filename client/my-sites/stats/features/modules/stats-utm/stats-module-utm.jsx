@@ -15,8 +15,8 @@ import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
 import UTMBuilder from '../../../stats-module-utm-builder/';
+import { StatsEmptyActionUTMBuilder } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import StatsEmptyActionUTMBuilder from '../shared/stats-empty-action-utm-builder';
 import UTMDropdown from './stats-module-utm-dropdown';
 import UTMExportButton from './utm-export-button';
 
