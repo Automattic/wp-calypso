@@ -127,13 +127,15 @@ class DomainSearch extends Component< DomainSearchProps > {
 	};
 
 	handleAddMapping = ( domain: string ) => {
-		if ( this.props.selectedSiteSlug ) {
-			const domainMappingUrl = domainUseMyDomain( this.props.selectedSiteSlug, {
-				domain,
-				initialMode: useMyDomainInputMode.transferOrConnect,
-			} );
-			this.isMounted && page( domainMappingUrl );
+		// Just a TS typing fix, we always have selectedSiteSlug
+		if ( ! this.props.selectedSiteSlug ) {
+			return;
 		}
+		const domainMappingUrl = domainUseMyDomain( this.props.selectedSiteSlug, {
+			domain,
+			initialMode: useMyDomainInputMode.transferOrConnect,
+		} );
+		this.isMounted && page( domainMappingUrl );
 	};
 
 	handleAddTransfer = async ( domain: string ) => {
