@@ -203,7 +203,7 @@ function useGenerateActionCallback( {
 			}
 
 			/* 3. Handle plan downgrades and plan downgrade tracks events */
-			if ( sitePlanSlug && ! availableForPurchase ) {
+			if ( sitePlanSlug && intent !== 'plans-blog-onboarding' && ! availableForPurchase ) {
 				recordTracksEvent?.( 'calypso_plan_features_downgrade_click', {
 					current_plan: sitePlanSlug,
 					downgrading_to: planSlug,
