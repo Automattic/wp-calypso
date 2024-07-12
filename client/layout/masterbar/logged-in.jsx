@@ -12,6 +12,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
+import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -738,15 +739,25 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	getHomeUrl() {
+		const { hasNoSites, siteSlug, isCustomerHomeEnabled, isSiteTrialExpired } = this.props;
+		// eslint-disable-next-line no-nested-ternary
+		return hasNoSites || isSiteTrialExpired
+			? '/sites'
+			: isCustomerHomeEnabled
+			? `/home/${ siteSlug }`
+			: getStatsPathForTab( 'day', siteSlug );
+	}
+
 	renderBackHomeButton() {
-		const { siteSlug, translate } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<Item
 				className="masterbar__item-back"
 				icon="chevron-left"
 				tooltip={ translate( 'Back' ) }
-				url={ `/home/${ siteSlug }` }
+				url={ this.getHomeUrl() }
 			/>
 		);
 	}
