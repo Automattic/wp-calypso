@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon, Button } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -102,7 +101,6 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			'has-unseen': this.props.hasUnseen,
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
 			'has-subitems': this.props.subItems,
-			mb: isEnabled( 'layout/mb' ),
 		} );
 
 		const attributes = {
