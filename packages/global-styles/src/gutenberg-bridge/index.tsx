@@ -3,7 +3,6 @@
  * on our own as this kind of internal apis might be drastically changed from time to time.
  * See https://github.com/Automattic/wp-calypso/issues/77048
  */
-import { isEnabled } from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { privateApis as blockEditorPrivateApis, transformStyles } from '@wordpress/block-editor';
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -31,13 +30,11 @@ const GlobalStylesContext: React.Context< GlobalStylesContextObject > = UntypedG
 const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user?: GlobalStylesObject ) => {
 	const mergedConfig = user ? deepmerge( base, user, { isMergeableObject: isPlainObject } ) : base;
 
-	if ( ! isEnabled( 'pattern-assembler/debug' ) ) {
-		// Remove section style variations until we handle them
-		if ( mergedConfig?.styles?.blocks ) {
-			delete mergedConfig.styles.blocks.variations;
-			for ( const key in mergedConfig.styles.blocks ) {
-				delete mergedConfig.styles.blocks[ key ].variations;
-			}
+	// Remove section style variations until we handle them
+	if ( mergedConfig?.styles?.blocks ) {
+		delete mergedConfig.styles.blocks.variations;
+		for ( const key in mergedConfig.styles.blocks ) {
+			delete mergedConfig.styles.blocks[ key ].variations;
 		}
 	}
 
