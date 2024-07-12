@@ -542,7 +542,7 @@
 				box-shadow: 0 0 0 1px var(--color-border-subtle), 0 1px 2px var(--color-border-subtle);
 				// Fix the weird box-shadow on the top when the action buttons are wrapped into the newline;
 				padding-top: 1px;
-				clip-path: inset(2px -1px -1px -1px);
+				clip-path: inset(2px 0 -1px 0);
 			}
 		}
 
