@@ -4,7 +4,6 @@ import page from '@automattic/calypso-router';
 import { PromptIcon } from '@automattic/command-palette';
 import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
@@ -24,10 +23,7 @@ import {
 	getCurrentUserDate,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
-import {
-	getShouldShowGlobalSidebar,
-	getShouldShowUnifiedSiteSidebar,
-} from 'calypso/state/global-sidebar/selectors';
+import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -612,43 +608,22 @@ class MasterbarLoggedIn extends Component {
 		return null;
 	}
 
-	renderWordPressIcon() {
-		const { siteAdminUrl } = this.props;
-		return (
-			<Item
-				url={ siteAdminUrl }
-				className="masterbar__item-wordpress"
-				icon={ <span className="dashicons-before dashicons-wordpress" /> }
-			/>
-		);
-	}
+	renderSiteMenu( showLabel = true ) {
+		const { sectionGroup, currentSelectedSiteSlug, translate, siteTitle, siteUrl } = this.props;
 
-	renderAllSites() {
-		const { translate } = this.props;
-		return (
-			<Item
-				url="/sites"
-				className="masterbar__item-all-sites"
-				tipTarget="my-sites"
-				icon={ <Icon icon={ category } /> }
-				tooltip={ translate( 'Manage your sites' ) }
-				preloadSection={ this.preloadAllSites }
-			>
-				{ translate( 'All Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-			</Item>
-		);
-	}
+		// Only display on site-specific pages.
+		if ( sectionGroup !== 'sites' || ! currentSelectedSiteSlug ) {
+			return null;
+		}
 
-	renderCurrentSite() {
-		const { translate, siteTitle, siteUrl } = this.props;
 		return (
 			<Item
-				className="masterbar__item-current-site"
+				className="masterbar__item-my-site"
 				url={ siteUrl }
 				icon={ <span className="dashicons-before dashicons-admin-home" /> }
-				tooltip={ translate( 'Visit your site' ) }
+				subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl } ] }
 			>
-				{ siteTitle }
+				{ showLabel && siteTitle }
 			</Item>
 		);
 	}
@@ -683,26 +658,6 @@ class MasterbarLoggedIn extends Component {
 			);
 		}
 
-		if ( this.props.isUnifiedSiteView ) {
-			return (
-				<Masterbar className="masterbar__unified">
-					<div className="masterbar__section masterbar__section--left">
-						{ this.state.isResponsiveMenu
-							? this.renderSidebarMobileMenu()
-							: this.renderWordPressIcon() }
-						{ this.renderAllSites() }
-						{ this.renderCurrentSite() }
-					</div>
-					<div className="masterbar__section masterbar__section--right">
-						{ this.renderCart() }
-						{ loadHelpCenterIcon && this.renderHelpCenter() }
-						{ this.renderNotifications() }
-						{ this.renderMe() }
-					</div>
-				</Masterbar>
-			);
-		}
-
 		if ( isMobile ) {
 			if ( isInEditor && loadHelpCenterIcon ) {
 				return (
@@ -724,6 +679,7 @@ class MasterbarLoggedIn extends Component {
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderMySites() }
 							{ this.renderReader( false ) }
+							{ this.renderSiteMenu( false ) }
 							{ this.renderLanguageSwitcher() }
 							{ this.renderSearch() }
 						</div>
@@ -744,6 +700,7 @@ class MasterbarLoggedIn extends Component {
 					<div className="masterbar__section masterbar__section--left">
 						{ this.renderMySites() }
 						{ this.renderReader() }
+						{ this.renderSiteMenu() }
 						{ this.renderLanguageSwitcher() }
 						{ this.renderSearch() }
 					</div>
@@ -784,12 +741,6 @@ export default connect(
 			sectionGroup,
 			sectionName
 		);
-		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
-			state,
-			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
-		);
 		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
@@ -824,7 +775,6 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
-			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
 		};
 	},
