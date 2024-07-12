@@ -98,6 +98,8 @@ export const MarketplaceFooter = () => {
 		sectionName === 'plugins' ? '/start/business' : '/start'
 	);
 
+	return null;
+
 	return (
 		<MarketplaceContainer isloggedIn={ isLoggedIn }>
 			<Section
