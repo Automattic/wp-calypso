@@ -28,7 +28,9 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 	}
 
 	const copyLayout = () => {
-		navigator.clipboard.writeText( readymadeTemplate.content );
+		navigator.clipboard.writeText(
+			readymadeTemplate.home.header + readymadeTemplate.home.content + readymadeTemplate.home.footer
+		);
 		setIsCopied( true );
 	};
 
@@ -63,7 +65,10 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 								</div>
 							</div>
 							<div className="readymade-template-details-preview-mobile">
-								<img src={ readymadeTemplate.screenshot } alt="" />
+								<img
+									src="https://s0.wp.com/wp-content/rest-api-plugins/endpoints/themes/ready-made-templates-data/neonfit.webp"
+									alt=""
+								/>
 							</div>
 							<div
 								className="readymade-template-details-description"

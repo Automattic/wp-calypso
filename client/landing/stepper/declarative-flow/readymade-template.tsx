@@ -243,7 +243,10 @@ const readymadeTemplateFlow: Flow = {
 function enableAssemblerThemeAndConfigureTemplates(
 	themeId: string,
 	siteId: number,
-	readymadeTemplate: { content: string; globalStyles: GlobalStylesObject },
+	readymadeTemplate: {
+		home: { header: string; content: string; footer: string };
+		globalStyles: GlobalStylesObject;
+	},
 	assembleSite: (
 		arg0: any,
 		arg1: string,
@@ -292,9 +295,9 @@ function enableAssemblerThemeAndConfigureTemplates(
 					 *
 					 * For now we piggyback on Site Assembler's API endpoint to apply the template on the site.
 					 */
-					homeHtml: readymadeTemplate.content,
-					headerHtml: '',
-					footerHtml: '',
+					homeHtml: readymadeTemplate.home.content,
+					headerHtml: readymadeTemplate.home.header,
+					footerHtml: readymadeTemplate.home.footer,
 					pages: [],
 					globalStyles: readymadeTemplate.globalStyles,
 					canReplaceContent: true,
@@ -322,7 +325,7 @@ function useReadymadeTemplate( templateId: number, options: object = { enabled: 
 	Object.values( readymadeTemplate.styles ?? [] ).forEach( ( readymadeTemplateStyleVariation ) => {
 		const styleVariation = assemblerTheme.style_variations.find(
 			( assemblerStyleVariation ) =>
-				assemblerStyleVariation.title === readymadeTemplateStyleVariation
+				assemblerStyleVariation.slug === readymadeTemplateStyleVariation
 		);
 		if ( styleVariation ) {
 			styleVariations.push( styleVariation );

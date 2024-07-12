@@ -78,7 +78,11 @@ export const ReadymadeTemplates = () => {
 						key={ readymadeTemplate.template_id }
 					>
 						<div className="readymade-template__content">
-							<img src={ readymadeTemplate.screenshot } alt="" />
+							{ /*Replace this with the preview*/ }
+							<img
+								src="https://s0.wp.com/wp-content/rest-api-plugins/endpoints/themes/ready-made-templates-data/neonfit.webp"
+								alt=""
+							/>
 						</div>
 						<div className="readymade-template__title">{ readymadeTemplate.title }</div>
 					</a>
