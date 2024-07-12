@@ -10,7 +10,7 @@ type Props = {
 export default function useManagedSitesMap( { size = 100 }: Props ) {
 	const agencyId = useSelector( getActiveAgencyId );
 
-	const { data, isPending, isFetching } = useFetchDashboardSites( {
+	const { data, isPending } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
 		searchQuery: '',
 		currentPage: 1,
@@ -33,7 +33,7 @@ export default function useManagedSitesMap( { size = 100 }: Props ) {
 				map[ site.blog_id ] = true;
 				return map;
 			}, {} ),
-			isPending: isPending || isFetching,
+			isPending,
 		};
-	}, [ data?.sites, isFetching, isPending ] );
+	}, [ data?.sites, isPending ] );
 }

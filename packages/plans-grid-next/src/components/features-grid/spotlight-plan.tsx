@@ -16,7 +16,6 @@ type SpotlightPlanProps = {
 	isInSignup: boolean;
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
-	planUpgradeCreditsApplicable?: number | null;
 	showUpgradeableStorage: boolean;
 	options?: {
 		isTableCell?: boolean;
@@ -29,7 +28,6 @@ const SpotlightPlan = ( {
 	isInSignup,
 	onStorageAddOnClick,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	showUpgradeableStorage,
 }: SpotlightPlanProps ) => {
 	if ( ! gridPlanForSpotlight ) {
@@ -51,7 +49,6 @@ const SpotlightPlan = ( {
 			{ isNotFreePlan && (
 				<PlanPrice
 					renderedGridPlans={ [ gridPlanForSpotlight ] }
-					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 					currentSitePlanSlug={ currentSitePlanSlug }
 				/>
 			) }

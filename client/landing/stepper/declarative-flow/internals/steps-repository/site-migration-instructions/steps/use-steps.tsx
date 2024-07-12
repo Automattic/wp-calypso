@@ -70,6 +70,8 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 								a: (
 									<ExternalLink
 										href={ getPluginInstallationPage( fromUrl ) }
+										icon
+										iconSize="14"
 										target="_blank"
 										onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
 									/>
@@ -93,6 +95,8 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 									a: fromUrl ? (
 										<ExternalLink
 											href={ getMigrateGuruPageURL( fromUrl ) }
+											icon
+											iconSize="14"
 											target="_blank"
 											onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
 										/>
@@ -121,11 +125,12 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 				<>
 					<p>
 						{ translate(
-							'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the {{strong}}Migration key{{/strong}} field.',
+							'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the {{strong}}%(migrationKeyLabel)s{{/strong}} field.',
 							{
 								components: {
 									strong: <strong />,
 								},
+								args: { migrationKeyLabel: 'Migrate Guru Migration Key' },
 							}
 						) }
 					</p>

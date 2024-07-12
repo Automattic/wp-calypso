@@ -74,7 +74,6 @@ import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
-import { usePlanUpgradeCreditsApplicable } from './hooks/use-plan-upgrade-credits-applicable';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -627,10 +626,6 @@ const PlansFeaturesMain = ( {
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
 		? stickyPlanTypeSelectorHeight + masterbarHeight
 		: masterbarHeight;
-	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable(
-		siteId,
-		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
-	);
 
 	const {
 		primary: { callback: onFreePlanCTAClick },
@@ -763,7 +758,6 @@ const PlansFeaturesMain = ( {
 										isInSignup={ isInSignup }
 										onStorageAddOnClick={ handleStorageAddOnClick }
 										paidDomainName={ paidDomainName }
-										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 										recordTracksEvent={ recordTracksEvent }
 										selectedFeature={ selectedFeature }
 										showLegacyStorageFeature={ showLegacyStorageFeature }
@@ -833,7 +827,6 @@ const PlansFeaturesMain = ( {
 															? { ...planTypeSelectorProps, plans: gridPlansForPlanTypeSelector }
 															: undefined
 													}
-													planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 													recordTracksEvent={ recordTracksEvent }
 													selectedFeature={ selectedFeature }
 													selectedPlan={ selectedPlan }

@@ -48,6 +48,7 @@ function usePlans( {
 							planSlug: plan.product_slug,
 							productSlug: plan.product_slug,
 							productId: plan.product_id,
+							pathSlug: plan.path_slug,
 							productNameShort: plan.product_name_short,
 							pricing: {
 								billPeriod: plan.bill_period,

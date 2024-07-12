@@ -97,7 +97,6 @@ $brand-text: "SF Pro Text", $sans;
 
 		.global-sidebar {
 			overflow: unset;
-			border-right: 1px solid var(--color-sidebar-border);
 		}
 	}
 }
@@ -224,15 +223,19 @@ $font-size: rem(14px);
 
 				&:hover,
 				&:focus {
-					background-color: var(--color-sidebar-menu-hover-background);
-					color: var(--color-sidebar-menu-hover-text);
+					background-color: var(--color-sidebar-submenu-hover-background);
+					color: var(--color-sidebar-submenu-hover-text);
 				}
 			}
 
 			.selected .sidebar__menu-link {
-				background-color: var(--color-sidebar-menu-selected-background);
-				color: var(--color-sidebar-menu-selected-text);
+				background-color: var(--color-sidebar-submenu-selected-background);
+				color: var(--color-sidebar-submenu-selected-text);
 				font-weight: 600;
+
+				&:hover {
+					color: var(--color-sidebar-submenu-selected-hover-text);
+				}
 			}
 
 			.sidebar__menu-link-text {
@@ -314,7 +317,8 @@ $font-size: rem(14px);
 		// Is toggled open
 		.sidebar__menu.sidebar__menu--selected {
 			.sidebar__heading {
-				background: var(--color-sidebar-menu-hover-background);
+				background: var(--color-sidebar-menu-selected-background);
+				color: var(--color-sidebar-menu-selected-text);
 
 				&::after {
 					display: block;
@@ -633,6 +637,11 @@ $font-size: rem(14px);
 				background-color: revert;
 				color: var(--color-navredesign-sidebar-submenu-selected-text);
 				font-weight: 600;
+
+				&:hover,
+				&:focus {
+					color: var(--color-navredesign-sidebar-submenu-selected-hover-text);
+				}
 			}
 			.sidebar__menu-link {
 				color: var(--color-navredesign-sidebar-submenu-text);
@@ -866,17 +875,24 @@ $font-size: rem(14px);
 	.collapse-sidebar__toggle {
 		.sidebar__menu-link {
 			cursor: pointer;
-			color: var(--color-sidebar-text-alternative);
+			color: var(--color-collapse-menu-text);
 			font-size: rem(13px);
 
 			&:hover,
 			&:focus {
+				color: var(--color-sidebar-submenu-hover-text);
 				background-color: transparent;
+				box-shadow: none;
+
+				.sidebar__menu-icon {
+					color: var(--color-sidebar-submenu-hover-text);
+				}
 			}
 		}
 
 		.sidebar__menu-icon {
 			margin-top: 1px;
+			color: var(--color-collapse-menu-text);
 		}
 	}
 

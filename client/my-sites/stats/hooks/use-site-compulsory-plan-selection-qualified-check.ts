@@ -3,7 +3,7 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import usePlanUsageQuery from './use-plan-usage-query';
 
-const MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL = 1000;
+export const MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL = 1000;
 
 // Targeting new sites
 export const isSiteNew = ( state: object, siteId: number | null ) => {

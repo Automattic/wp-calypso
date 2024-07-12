@@ -33,7 +33,12 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	return <Draggable { ...props } />;
 };
 
-const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, currentRoute } ) => {
+const HelpCenterContainer: React.FC< Container > = ( {
+	handleClose,
+	hidden,
+	currentRoute,
+	openingCoordinates,
+} ) => {
 	const { show, isMinimized, initialRoute } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -43,8 +48,9 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		};
 	}, [] );
 
-	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
+	const nodeRef = useRef< HTMLDivElement >( null );
 
+	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
@@ -54,7 +60,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	const onDismiss = useCallback( () => {
 		setIsVisible( false );
 		recordTracksEvent( `calypso_inlinehelp_close` );
-	}, [ setIsVisible, recordTracksEvent ] );
+	}, [ setIsVisible ] );
 
 	const toggleVisible = () => {
 		if ( ! isVisible ) {
@@ -66,13 +72,13 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 
 	const animationProps = {
 		style: {
-			animation: `${ isVisible ? 'fadeIn' : 'fadeOut' } .5s`,
+			animation: isMobile
+				? `${ isVisible ? 'fadeIn' : 'fadeOut' } .25s ease-out`
+				: `${ isVisible ? 'slideIn' : 'fadeOut' } .25s ease-out`,
+			...openingCoordinates,
 		},
 		onAnimationEnd: toggleVisible,
 	};
-	// This is a workaround for an issue with Draggable in StrictMode
-	// https://github.com/react-grid-layout/react-draggable/blob/781ef77c86be9486400da9837f43b96186166e38/README.md
-	const nodeRef = useRef( null );
 
 	const focusReturnRef = useFocusReturn();
 
