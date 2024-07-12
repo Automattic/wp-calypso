@@ -860,9 +860,65 @@ body.is-mobile-app-view {
 		}
 	}
 
+	.masterbar__item-howdy-account-wrapper {
+		display: flex;
+		flex-direction: row;
+
+		.masterbar__item-howdy-account-gravatar {
+			flex-basis: auto;
+			max-width: 50%;
+		}
+
+		.masterbar__item-howdy-account-details {
+			flex-basis: auto;
+			max-width: 50%;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			padding: 0 0 0 15px;
+			margin: 0;
+		}
+	}
+
+	.masterbar__item-subitems-item {
+		min-width: 264px !important;
+		position: relative;
+		float: left;
+		margin-right: 10px;
+
+		&.account-link {
+			top: -25px;
+			left: 80px;
+		}
+
+		&.logout-link {
+			top: -25px;
+			left: 80px;
+		}
+	}
+
 	@media only screen and (max-width: 782px) {
-		.masterbar__item-howdy-howdy {
+		.masterbar__item-howdy-howdy,
+		.masterbar__item-howdy-account-gravatar {
 			display: none;
+		}
+
+		.masterbar__item-howdy-account-details {
+			padding: 0 !important;
+		}
+
+		.masterbar__item-subitems-item {
+
+			min-width: 100% !important;
+			&.account-link {
+				top: -10px;
+				left: 0;
+			}
+
+			&.logout-link {
+				top: -10px;
+				left: 0;
+			}
 		}
 	}
 

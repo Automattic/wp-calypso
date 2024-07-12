@@ -11,6 +11,7 @@ interface MasterbarSubItemProps {
 	label: string;
 	url?: string;
 	onClick?: () => void;
+	className?: string;
 }
 interface MasterbarItemProps {
 	url?: string;
@@ -82,7 +83,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		return (
 			<ul className="masterbar__item-subitems">
 				{ subItems.map( ( item, i ) => (
-					<li key={ i } className="masterbar__item-subitems-item">
+					<li key={ i } className={ clsx( 'masterbar__item-subitems-item', item.className ) }>
 						{ item.onClick && (
 							<Button className="is-link" onClick={ item.onClick }>
 								{ item.label }

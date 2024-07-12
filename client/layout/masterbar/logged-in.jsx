@@ -429,17 +429,32 @@ class MasterbarLoggedIn extends Component {
 			: false;
 		const profileActions = [
 			{
-				label: translate( 'Edit Profile' ),
+				label: (
+					<div className="masterbar__item-howdy-account-wrapper">
+						<Gravatar
+							className="masterbar__item-howdy-account-gravatar"
+							alt=" "
+							user={ user }
+							size={ 64 }
+						/>
+						<div className="masterbar__item-howdy-account-details">
+							<span className="display-name">{ user.display_name }</span>
+							<span className="display-name edit-profile">{ translate( 'Edit Profile' ) }</span>
+						</div>
+					</div>
+				),
 				url: isClassicView ? siteUrl + '/wp-admin/profile.php' : '/me/profile',
 			},
 			{
 				label: translate( 'My Account' ),
 				url: '/me/account',
+				className: 'account-link',
 			},
 			{
 				label: translate( 'Log Out' ),
 				onClick: () => this.props.redirectToLogout(),
 				tooltip: translate( 'Log out of WordPress.com' ),
+				className: 'logout-link',
 			},
 		];
 
