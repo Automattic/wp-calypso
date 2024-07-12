@@ -102,11 +102,12 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 				<>
 					<p>
 						{ translate(
-							'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the {{strong}}Migration key{{/strong}} field.',
+							'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the {{strong}}%(migrationKeyLabel)s{{/strong}} field.',
 							{
 								components: {
 									strong: <strong />,
 								},
+								args: { migrationKeyLabel: 'Migrate Guru Migration Key' },
 							}
 						) }
 					</p>
