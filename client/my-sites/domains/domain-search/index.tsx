@@ -2,11 +2,10 @@ import { isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { BackButton, ECOMMERCE_FLOW } from '@automattic/onboarding';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { UseShoppingCart, withShoppingCart } from '@automattic/shopping-cart';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -23,6 +22,7 @@ import {
 	domainTransfer,
 	domainRegistration,
 	updatePrivacyForDomain,
+	ObjectWithProducts,
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -53,29 +53,54 @@ import {
 	isSiteOnWooExpress,
 	isSiteOnEcommerce,
 } from 'calypso/state/sites/plans/selectors';
+import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import type { Context } from '@automattic/calypso-router';
+import type { DomainSuggestion, SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
 
-class DomainSearch extends Component {
-	static propTypes = {
-		basePath: PropTypes.string.isRequired,
-		context: PropTypes.object.isRequired,
-		domainsWithPlansOnly: PropTypes.bool.isRequired,
-		isSiteUpgradeable: PropTypes.bool,
-		productsList: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object,
-		selectedSiteId: PropTypes.number,
-		selectedSiteSlug: PropTypes.string,
-		domainAndPlanUpsellFlow: PropTypes.bool,
-		isDomainAndPlanPackageFlow: PropTypes.bool,
-	};
+type DomainSearchProps = {
+	basePath: string;
+	context: Context;
+	domainsWithPlansOnly: boolean;
+	isSiteUpgradeable: boolean | null;
+	productsList: object;
+	selectedSite?: SiteDetails | null;
+	selectedSiteId?: number;
+	selectedSiteSlug: string | null;
+	domainAndPlanUpsellFlow?: boolean;
+	isDomainAndPlanPackageFlow?: boolean;
+	cart: ObjectWithProducts;
+	shoppingCartManager: UseShoppingCart;
+	isAddNewDomainContext: boolean;
+	setCurrentFlowName: ( flowName: string ) => void;
+	recordAddDomainButtonClick: (
+		domainName: string,
+		section: string,
+		position: number,
+		isPremium?: boolean
+	) => void;
+	recordRemoveDomainButtonClick: ( domainName: string ) => void;
+	isSiteOnFreePlan?: boolean;
+	isSiteOnMonthlyPlan: boolean;
+	isDomainUpsell: boolean;
+	currentRoute: string;
+	isFromMyHome: boolean;
+	translate: ReturnType< typeof useTranslate >;
+	isManagingAllDomains: boolean;
+	isEcommerceSite: boolean;
+	preferredView: ReturnType< typeof getSiteOption >;
+	wpAdminUrl: ReturnType< typeof getSiteAdminUrl >;
+};
 
+class DomainSearch extends Component< DomainSearchProps > {
 	isMounted = false;
 
 	state = {
@@ -83,14 +108,17 @@ class DomainSearch extends Component {
 		domainRegistrationMaintenanceEndTime: null,
 	};
 
-	handleDomainsAvailabilityChange = ( isAvailable, maintenanceEndTime = null ) => {
+	handleDomainsAvailabilityChange = (
+		isAvailable: boolean,
+		maintenanceEndTime: number | null = null
+	) => {
 		this.setState( {
 			domainRegistrationAvailable: isAvailable,
 			domainRegistrationMaintenanceEndTime: maintenanceEndTime,
 		} );
 	};
 
-	handleAddRemoveDomain = ( suggestion, position ) => {
+	handleAddRemoveDomain = ( suggestion: DomainSuggestion, position: number ) => {
 		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
 			this.addDomain( suggestion, position );
 		} else {
@@ -98,7 +126,11 @@ class DomainSearch extends Component {
 		}
 	};
 
-	handleAddMapping = ( domain ) => {
+	handleAddMapping = ( domain: string ) => {
+		// Just a TS typing fix, we always have selectedSiteSlug
+		if ( ! this.props.selectedSiteSlug ) {
+			return;
+		}
 		const domainMappingUrl = domainUseMyDomain( this.props.selectedSiteSlug, {
 			domain,
 			initialMode: useMyDomainInputMode.transferOrConnect,
@@ -106,7 +138,7 @@ class DomainSearch extends Component {
 		this.isMounted && page( domainMappingUrl );
 	};
 
-	handleAddTransfer = async ( domain ) => {
+	handleAddTransfer = async ( domain: string ) => {
 		try {
 			await this.props.shoppingCartManager.addProductsToCart( [ domainTransfer( { domain } ) ] );
 		} catch {
@@ -121,7 +153,6 @@ class DomainSearch extends Component {
 			document.body.classList.add( 'is-domain-plan-package-flow' );
 		}
 		this.checkSiteIsUpgradeable();
-
 		if ( this.props.isAddNewDomainContext ) {
 			this.props.setCurrentFlowName( 'domains' );
 		}
@@ -129,7 +160,7 @@ class DomainSearch extends Component {
 		this.isMounted = true;
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps: DomainSearchProps ) {
 		if ( prevProps.selectedSiteId !== this.props.selectedSiteId ) {
 			this.checkSiteIsUpgradeable();
 		}
@@ -161,7 +192,7 @@ class DomainSearch extends Component {
 		}
 	}
 
-	async addDomain( suggestion, position ) {
+	async addDomain( suggestion: DomainSuggestion, position: number ) {
 		const {
 			domain_name: domain,
 			product_slug: productSlug,
@@ -173,7 +204,7 @@ class DomainSearch extends Component {
 
 		let registration = domainRegistration( {
 			domain,
-			productSlug,
+			productSlug: productSlug as string,
 			extra: { privacy_available: supportsPrivacy },
 		} );
 
@@ -215,7 +246,7 @@ class DomainSearch extends Component {
 		page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) );
 	}
 
-	removeDomain( suggestion ) {
+	removeDomain( suggestion: DomainSuggestion ) {
 		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
 
 		const productToRemove = this.props.cart.products.find(
@@ -238,8 +269,8 @@ class DomainSearch extends Component {
 
 		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
 		const [ , strippedHostname ] =
-			selectedSite.domain.match( wpcomSubdomainWithRandomNumberSuffix ) || [];
-		return strippedHostname ?? selectedSite.domain.split( '.' )[ 0 ];
+			selectedSite?.domain.match( wpcomSubdomainWithRandomNumberSuffix ) || [];
+		return strippedHostname ?? selectedSite?.domain.split( '.' )[ 0 ];
 	}
 
 	getBackButtonHref() {
@@ -257,13 +288,14 @@ class DomainSearch extends Component {
 			return query.redirect_to;
 		}
 
-		return domainManagementList( selectedSiteSlug, currentRoute );
+		return domainManagementList( selectedSiteSlug ?? undefined, currentRoute );
 	}
 
 	render() {
 		const {
 			selectedSite,
 			selectedSiteSlug,
+			selectedSiteId,
 			translate,
 			isManagingAllDomains,
 			cart,
@@ -272,7 +304,7 @@ class DomainSearch extends Component {
 			isEcommerceSite,
 		} = this.props;
 
-		if ( ! selectedSite ) {
+		if ( ! selectedSite || ! selectedSiteId ) {
 			return null;
 		}
 
@@ -323,9 +355,11 @@ class DomainSearch extends Component {
 							goBackLink: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`,
 					  }
 					: {
-							goBackLink: `/home/${ selectedSiteSlug }`,
+							goBackLink:
+								this.props.preferredView === 'wp-admin' && !! this.props.wpAdminUrl
+									? this.props.wpAdminUrl
+									: `/home/${ selectedSiteSlug }`,
 					  };
-
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -416,7 +450,7 @@ class DomainSearch extends Component {
 		return (
 			<Main className={ classes } wideLayout>
 				<QueryProductsList />
-				<QuerySiteDomains siteId={ this.props.selectedSiteId } />
+				<QuerySiteDomains siteId={ selectedSiteId } />
 				{ content }
 			</Main>
 		);
@@ -424,9 +458,9 @@ class DomainSearch extends Component {
 }
 
 export default connect(
-	( state ) => {
+	( state: IAppState ) => {
 		const site = getSelectedSite( state );
-		const siteId = getSelectedSiteId( state );
+		const siteId = getSelectedSiteId( state ) ?? undefined;
 
 		return {
 			currentRoute: getCurrentRoute( state ),
@@ -435,20 +469,23 @@ export default connect(
 			selectedSiteId: siteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-			isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
-			isSiteOnMonthlyPlan: isSiteOnMonthlyPlan( state, siteId ),
+			isSiteUpgradeable: !! siteId && isSiteUpgradeable( state, siteId ),
+			isSiteOnMonthlyPlan: !! siteId && isSiteOnMonthlyPlan( state, siteId ),
 			productsList: getProductsList( state ),
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 			isDomainUpsell:
 				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
 				!! getCurrentQueryArguments( state )?.domain,
-			isSiteOnFreePlan: site && isFreePlanProduct( site.plan ),
+			isSiteOnFreePlan: !! site && !! site.plan && isFreePlanProduct( site.plan ),
 			isEcommerceSite:
-				isSiteOnECommerceTrial( state, siteId ) ||
-				isSiteOnWooExpress( state, siteId ) ||
-				isSiteOnEcommerce( state, siteId ),
+				!! siteId &&
+				( isSiteOnECommerceTrial( state, siteId ) ||
+					isSiteOnWooExpress( state, siteId ) ||
+					isSiteOnEcommerce( state, siteId ) ),
 			isFromMyHome: getCurrentQueryArguments( state )?.from === 'my-home',
+			preferredView: getSiteOption( state, siteId, 'wpcom_admin_interface' ),
+			wpAdminUrl: getSiteAdminUrl( state, siteId ),
 		};
 	},
 	{
