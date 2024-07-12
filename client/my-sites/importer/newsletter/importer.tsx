@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import StepProgress from 'calypso/components/step-progress';
 import { useSelector } from 'calypso/state';
@@ -28,15 +27,14 @@ const steps = [ Content, Subscribers, PaidSubscribers, Summary ];
 const stepSlugs = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
 
 export default function NewsletterImporter( { siteSlug, engine, step } ) {
-	const translate = useTranslate();
 
 	const selectedSite = useSelector( getSelectedSite );
 
 	const stepsProgress = [
-		translate( 'Content' ),
-		translate( 'Subscribers' ),
-		translate( 'Paid Subscribers' ),
-		translate( 'Summary' ),
+		'Content',
+		'Subscribers',
+		'Paid Subscribers',
+		'Summary',
 	];
 
 	let stepIndex = 0;
@@ -60,7 +58,7 @@ export default function NewsletterImporter( { siteSlug, engine, step } ) {
 				] }
 			/>
 
-			<FormattedHeader headerText={ translate( 'Import your newsletter' ) } />
+			<FormattedHeader headerText="Import your newsletter" />
 			<StepProgress steps={ stepsProgress } currentStep={ stepIndex } />
 			<Step siteSlug={ siteSlug } nextStepUrl={ nextStepUrl } selectedSite={ selectedSite } />
 		</div>
