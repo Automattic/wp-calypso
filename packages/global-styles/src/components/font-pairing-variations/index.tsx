@@ -45,9 +45,9 @@ const FontPairingVariation = ( {
 			user: fontPairingVariation,
 			base,
 			// When font paring isn't passed, it should be available on the base.
-			merged: mergeBaseAndUserConfigs( base, fontPairingVariation ),
+			merged: fontPairingVariation ? base : mergeBaseAndUserConfigs( base, fontPairingVariation ),
 		};
-	}, [ fontPairingVariation.slug, base ] );
+	}, [ fontPairingVariation?.slug, base ] );
 	return (
 		<CompositeItem
 			role="option"
