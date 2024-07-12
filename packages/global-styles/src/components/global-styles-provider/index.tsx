@@ -52,12 +52,15 @@ const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) =
 		stylesheet
 	);
 	const mergedConfig = useMemo( () => {
+		console.log( 'mergedConfig:', { userConfig, baseConfig } );
 		if ( ! baseConfig || ! userConfig ) {
 			return DEFAULT_GLOBAL_STYLES;
 		}
 		return mergeBaseAndUserConfigs( baseConfig, userConfig );
 	}, [ userConfig, baseConfig ] );
 	const context = useMemo( () => {
+		console.log( 'many:' );
+
 		return {
 			isReady: isUserConfigReady && isBaseConfigReady,
 			user: userConfig,

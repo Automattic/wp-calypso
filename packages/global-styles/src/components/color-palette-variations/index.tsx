@@ -41,6 +41,7 @@ const ColorPaletteVariation = ( {
 }: ColorPaletteVariationProps ) => {
 	const { base } = useContext( GlobalStylesContext );
 	const context = useMemo( () => {
+		console.log( 'useMemo:', { colorPaletteVariation, base } );
 		return {
 			user: colorPaletteVariation,
 			base,

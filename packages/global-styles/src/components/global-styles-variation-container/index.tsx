@@ -28,6 +28,8 @@ const GlobalStylesVariationContainer = ( {
 	const [ styles ] = useSafeGlobalStylesOutput();
 	// Reset leaked styles from WP common.css and remove main content layout padding and border.
 	const editorStyles = useMemo( () => {
+		console.log( 'editorStyles:', { styles } );
+
 		if ( styles ) {
 			return [
 				...styles,

@@ -46,6 +46,8 @@ const GlobalStylesVariation = ( {
 	const [ isFocused, setIsFocused ] = useState( false );
 	const { base } = useContext( GlobalStylesContext );
 	const context = useMemo( () => {
+		console.log( 'context:', { globalStylesVariation, base } );
+
 		const { inline_css: globalStylesVariationInlineCss = '' } = globalStylesVariation;
 		const baseInlineCss = base.inline_css || '';
 		return {
@@ -110,20 +112,22 @@ const GlobalStylesVariations = ( {
 		{ args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' } }
 	);
 
-	const baseGlobalStyles = useMemo(
-		() =>
+	const baseGlobalStyles = useMemo( () => {
+		console.log( 'baseGlobalStyles:', { globalStylesVariations } );
+
+		return (
 			globalStylesVariations.find( ( globalStylesVariation ) =>
 				isDefaultGlobalStyleVariationSlug( globalStylesVariation )
-			) ?? ( {} as GlobalStylesObject ),
-		[ globalStylesVariations ]
-	);
-	const globalStylesVariationsWithoutDefault = useMemo(
-		() =>
-			globalStylesVariations.filter(
-				( globalStylesVariation ) => ! isDefaultGlobalStyleVariationSlug( globalStylesVariation )
-			),
-		[ globalStylesVariations ]
-	);
+			) ?? ( {} as GlobalStylesObject )
+		);
+	}, [ globalStylesVariations ] );
+	const globalStylesVariationsWithoutDefault = useMemo( () => {
+		console.log( 'globalStylesVariationsWithoutDefault:', { globalStylesVariations } );
+
+		return globalStylesVariations.filter(
+			( globalStylesVariation ) => ! isDefaultGlobalStyleVariationSlug( globalStylesVariation )
+		);
+	}, [ globalStylesVariations ] );
 
 	const nonDefaultStylesDescription = description ?? premiumStylesDescription;
 	const nonDefaultStyles = globalStylesVariationsWithoutDefault.map(
