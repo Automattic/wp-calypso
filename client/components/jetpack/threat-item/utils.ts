@@ -42,7 +42,7 @@ export const getThreatMessage = ( threat: Threat ): string | TranslateResult => 
 			} );
 
 		case 'file':
-			return translate( 'Malicious code found in file: %s', {
+			return translate( 'Malicious code found in a file: %s', {
 				args: [ basename ],
 			} );
 
@@ -130,13 +130,13 @@ export const getThreatVulnerability = ( threat: Threat ): string | TranslateResu
 			} );
 
 		case 'plugin':
-			return translate( 'Vulnerability found in plugin' );
+			return translate( 'Vulnerability found in a plugin' );
 
 		case 'theme':
-			return translate( 'Vulnerability found in theme' );
+			return translate( 'Vulnerability found in a theme' );
 
 		case 'database':
-			return 'Vulnerability found in database table';
+			return 'Vulnerability found in a database table';
 
 		case 'none':
 		default:
@@ -199,7 +199,7 @@ export const getThreatPayloadSubtitle = ( threat: Threat ): TranslateResult | un
 			);
 		case 'dropper':
 			return translate(
-				'A malicious code known to upload malware to servers was found on your site. Please take immediate action.'
+				'Malicious code known to upload malware to servers was found on your site. Please take immediate action.'
 			);
 		case 'generic':
 			return translate(
@@ -212,10 +212,10 @@ export const getThreatPayloadSubtitle = ( threat: Threat ): TranslateResult | un
 				'A misconfigured or a potentially vulnerable tool was found on your site. Please take immediate action.'
 			);
 		case 'malware':
-			return translate( 'A malware was found on your site. Please take immediate action.' );
+			return translate( 'Malware was found on your site. Please take immediate action.' );
 		case 'malvertising':
 			return translate(
-				'A file loading malicious ad was found on your site. Please take immediate action.'
+				'A file loading a malicious ad was found on your site. Please take immediate action.'
 			);
 		case 'phishing':
 			return translate( 'A phishing page was found on your site. Please take immediate action.' );
@@ -227,7 +227,7 @@ export const getThreatPayloadSubtitle = ( threat: Threat ): TranslateResult | un
 			return translate( 'SEO spam was found on your site. Please take immediate action.' );
 		case 'suspicious':
 			return translate(
-				'A suspicious code was found on your site. We recommend you review it and take proper action.'
+				'Suspicious code was found on your site. We recommend you review it and take proper action.'
 			);
 		case 'uploader':
 			return translate(
