@@ -863,6 +863,7 @@ body.is-mobile-app-view {
 	.masterbar__item-howdy-account-wrapper {
 		display: flex;
 		flex-direction: row;
+		gap: 12px;
 
 		.masterbar__item-howdy-account-gravatar {
 			flex-basis: auto;
@@ -871,29 +872,36 @@ body.is-mobile-app-view {
 
 		.masterbar__item-howdy-account-details {
 			flex-basis: auto;
+			flex-grow: 0;
+			flex-shrink: 0;
 			max-width: 50%;
 			display: flex;
 			flex-direction: column;
 			align-items: flex-start;
-			padding: 0 0 0 15px;
+			padding: 0;
 			margin: 0;
+			line-height: 18px;
+		}
+	}
+
+	.masterbar__item-subitems {
+		min-width: 264px !important;
+		max-height: 90px;
+		padding: 12px 0 0 0;
+
+		@media only screen and (max-width: 782px) {
+			min-width: 100% !important;
+			max-height: 100%;
 		}
 	}
 
 	.masterbar__item-subitems-item {
-		min-width: 264px !important;
-		position: relative;
-		float: left;
-		margin-right: 10px;
-
-		&.account-link {
-			top: -25px;
-			left: 80px;
-		}
-
+		&.account-link,
 		&.logout-link {
-			top: -25px;
-			left: 80px;
+			position: relative;
+			float: left;
+			top: -35px;
+			left: 77px;
 		}
 	}
 
