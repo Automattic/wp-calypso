@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import clsx from 'clsx';
+import { STATS_TYPE_DEVICE_STATS } from 'calypso/my-sites/stats/constants';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { default as usePlanUsageQuery } from '../../../hooks/use-plan-usage-query';
 import useStatsPurchases from '../../../hooks/use-stats-purchases';
 import StatsModulePlaceholder from '../../../stats-module/placeholder';
@@ -20,7 +22,9 @@ const StatsModuleDevicesWrapper: React.FC< StatsAdvancedModuleWrapperProps > = (
 	className,
 } ) => {
 	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
+	const isGatedByShouldGateStats = config.isEnabled( 'stats/restricted-dashboard' );
 	const { devices: devicesStrings } = statsStrings();
+	const shouldGateStats = useShouldGateStats( STATS_TYPE_DEVICE_STATS );
 
 	// Check if blog is internal.
 	const { isPending: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
@@ -28,7 +32,9 @@ const StatsModuleDevicesWrapper: React.FC< StatsAdvancedModuleWrapperProps > = (
 
 	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
 	const isFetching = isFetchingUsage || isLoadingFeatureCheck; // This is not fetching Devices data.
-	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
+
+	const isAdvancedFeatureEnabled =
+		isSiteInternal || ( isGatedByShouldGateStats ? ! shouldGateStats : supportCommercialUse );
 
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {

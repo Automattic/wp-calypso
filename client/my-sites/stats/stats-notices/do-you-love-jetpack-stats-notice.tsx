@@ -136,8 +136,8 @@ const DoYouLoveJetpackStatsNotice = ( {
 				title={ hasFreeStats ? freeTitle : noPurchaseTitle }
 				onClose={ dismissNotice }
 			>
-				<p>{ description }</p>
-				<p>
+				<p key="desc">{ description }</p>
+				<p key="cta">
 					<button type="button" className="notice-banner__action-button" onClick={ handleCTAClick }>
 						{ CTAText }
 					</button>

@@ -142,10 +142,10 @@ Primary+Accent is studio blue.
 	--color-sidebar-gridicon-fill: var(--theme-icon-color);
 
 	/* Sidebar Selected */
-	--color-sidebar-menu-selected-background: #888;
-	--color-sidebar-menu-selected-background-rgb: 136, 136, 136;
-	--color-sidebar-menu-selected-text: #fff;
-	--color-sidebar-menu-selected-text-rgb: 255, 255, 255;
+	--color-sidebar-menu-selected-background: #fff;
+	--color-sidebar-menu-selected-background-rgb: 255, 255, 255;
+	--color-sidebar-menu-selected-text: #333;
+	--color-sidebar-menu-selected-text-rgb: 51, 51, 51;
 
 	/* Sidebar Hover */
 	--color-sidebar-menu-hover-background: #888;
@@ -160,12 +160,16 @@ Primary+Accent is studio blue.
 	--color-sidebar-submenu-hover-background: transparent;
 	--color-sidebar-submenu-hover-text: var(--theme-highlight-color);
 	--color-sidebar-submenu-selected-text: #333;
+	--color-sidebar-submenu-selected-hover-text: var(--theme-highlight-color);
 
 	/* Sidebar Submenu - Nav Redesign */
 	--color-navredesign-sidebar-submenu-text: var(--color-sidebar-submenu-text);
-	--color-navredesign-sidebar-menu-selected-text: var(--theme-submenu-background-color);
 	--color-navredesign-sidebar-submenu-selected-text: var(--theme-text-color);
 	--color-navredesign-sidebar-submenu-hover-text: var(--theme-highlight-color);
+	--color-navredesign-sidebar-submenu-selected-hover-text: var(--theme-highlight-color);
+
+	/* Collapse Menu Button */
+	--color-collapse-menu-text: #777;
 
 	/* Fix for notification bell */
 	.masterbar__item-notifications {

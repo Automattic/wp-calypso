@@ -127,6 +127,14 @@
 	--color-sidebar-submenu-hover-text: var(--studio-blue-60);
 	--color-sidebar-submenu-selected-text: var(--studio-gray-80);
 
+	/* Sidebar Submenu - Nav Redesign */
+	--color-navredesign-sidebar-submenu-text: var(--studio-gray-80);
+	--color-navredesign-sidebar-submenu-selected-text: var(--studio-gray-80);
+	--color-navredesign-sidebar-submenu-hover-text: var(--studio-blue-60);
+
+	/* Collapse Menu Button */
+	--color-collapse-menu-text: var(--color-sidebar-text-alternative);
+
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--studio-blue-50);
 }

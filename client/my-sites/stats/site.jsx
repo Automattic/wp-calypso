@@ -51,9 +51,13 @@ import StatsModuleCountries from './features/modules/stats-countries';
 import StatsModuleDevices, {
 	StatsModuleUpgradeDevicesOverlay,
 } from './features/modules/stats-devices';
+import StatsModuleDownloads from './features/modules/stats-downloads';
+import StatsModuleEmails from './features/modules/stats-emails';
 import StatsModuleReferrers from './features/modules/stats-referrers';
+import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
+import StatsModuleVideos from './features/modules/stats-videos';
 import HighlightsSection from './highlights-section';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
@@ -64,7 +68,7 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
-import StatsModuleEmails from './stats-module-emails';
+import StatsModuleEmailsOld from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -596,8 +600,8 @@ class StatsSite extends Component {
 						) }
 
 						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ supportsEmailStats && (
-							<StatsModuleEmails
+						{ supportsEmailStats && ! isNewStateEnabled && (
+							<StatsModuleEmailsOld // This is the old component & location. Remove and consolidate once stats/empty-module-traffic flag is removed
 								period={ this.props.period }
 								query={ query }
 								className={ clsx(
@@ -617,34 +621,100 @@ class StatsSite extends Component {
 							/>
 						) }
 
-						<StatsModule
-							path="searchterms"
-							moduleStrings={ moduleStrings.search }
-							period={ this.props.period }
-							query={ query }
-							statType="statsSearchTerms"
-							showSummaryLink
-							className={ clsx(
-								{
-									// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
-									'stats__flexible-grid-item--one-third--two-spaces':
-										! isJetpack && ! this.isModuleHidden( 'videos' ),
-								},
-								{
-									'stats__flexible-grid-item--full--large':
-										isJetpack && this.isModuleHidden( 'videos' ),
-								},
-								{
-									// 1/2 for all other cases to stack with Devices or empty space
-									'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-									// Avoid 1/3 on smaller screen if Videos is visible
-									'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-								},
-								'stats__flexible-grid-item--full--medium'
-							) }
-						/>
+						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
+						{ supportsEmailStats && isNewStateEnabled && (
+							<StatsModuleEmails
+								period={ this.props.period }
+								moduleStrings={ moduleStrings.emails }
+								query={ query }
+								className={ clsx(
+									{
+										// half if odd number of modules after countries - UTM + Clicks + Authors or Clicks
+										'stats__flexible-grid-item--half':
+											( supportsUTMStats && ! this.isModuleHidden( 'authors' ) ) ||
+											( ! supportsUTMStats && this.isModuleHidden( 'authors' ) ),
+										// full if even number of modules after countries - UTM + Clicks or Authors + Clicks
+										'stats__flexible-grid-item--full':
+											( supportsUTMStats && this.isModuleHidden( 'authors' ) ) ||
+											( ! supportsUTMStats && ! this.isModuleHidden( 'authors' ) ),
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 
-						{ ! this.isModuleHidden( 'videos' ) && (
+						{ isNewStateEnabled && (
+							<StatsModuleSearch
+								moduleStrings={ moduleStrings.search }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									{
+										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! isJetpack && ! this.isModuleHidden( 'videos' ),
+									},
+									{
+										'stats__flexible-grid-item--full--large':
+											isJetpack && this.isModuleHidden( 'videos' ),
+									},
+									{
+										// 1/2 for all other cases to stack with Devices or empty space
+										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										// Avoid 1/3 on smaller screen if Videos is visible
+										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+						{ ! isNewStateEnabled && (
+							<StatsModule
+								path="searchterms"
+								moduleStrings={ moduleStrings.search }
+								period={ this.props.period }
+								query={ query }
+								statType="statsSearchTerms"
+								showSummaryLink
+								className={ clsx(
+									{
+										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! isJetpack && ! this.isModuleHidden( 'videos' ),
+									},
+									{
+										'stats__flexible-grid-item--full--large':
+											isJetpack && this.isModuleHidden( 'videos' ),
+									},
+									{
+										// 1/2 for all other cases to stack with Devices or empty space
+										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										// Avoid 1/3 on smaller screen if Videos is visible
+										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+
+						{ isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
+							<StatsModuleVideos
+								moduleStrings={ moduleStrings.videoplays }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									{
+										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
+										'stats__flexible-grid-item--half': isJetpack,
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+
+						{ ! isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
 								path="videoplays"
 								moduleStrings={ moduleStrings.videoplays }
@@ -662,10 +732,36 @@ class StatsSite extends Component {
 								) }
 							/>
 						) }
+
 						{
-							// File downloads are not yet supported in Jetpack Stats
+							// File downloads are not yet supported in Jetpack environment
+							isNewStateEnabled && ! isJetpack && (
+								<StatsModuleDownloads
+									moduleStrings={ moduleStrings.filedownloads }
+									period={ this.props.period }
+									query={ query }
+									className={ clsx(
+										{
+											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										},
+										{
+											'stats__flexible-grid-item--one-third--two-spaces':
+												! this.isModuleHidden( 'videos' ),
+										},
+
+										{
+											// Avoid 1/3 on smaller screen if Videos is visible
+											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+										},
+										'stats__flexible-grid-item--full--medium'
+									) }
+								/>
+							)
+						}
+						{
+							// File downloads are not yet supported in Jetpack environment
 							// TODO: Confirm the above statement.
-							! isJetpack && (
+							! isNewStateEnabled && ! isJetpack && (
 								<StatsModule
 									path="filedownloads"
 									metricLabel={ translate( 'Downloads' ) }

@@ -27,6 +27,8 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { GoogleAnalyticsForm } from '../analytics/form-google-analytics';
 import GoogleAnalyticsJetpackForm from '../analytics/form-google-analytics-jetpack';
@@ -44,6 +46,8 @@ const props = {
 	fields: {},
 	setDisplayForm: () => {},
 };
+
+const store = createStore( ( state ) => state );
 
 describe( 'GoogleAnalyticsForm basic tests', () => {
 	beforeAll( () => {
@@ -78,7 +82,11 @@ describe( 'GoogleAnalyticsForm basic tests', () => {
 		expect( screen.queryByRole( 'form', { name: /analytics/i } ) ).toBeVisible();
 	} );
 	test( 'jetpack form should not blow up and have proper CSS class', () => {
-		render( <GoogleAnalyticsJetpackForm { ...props } /> );
+		render(
+			<Provider store={ store }>
+				<GoogleAnalyticsJetpackForm { ...props } />
+			</Provider>
+		);
 		expect( screen.queryByRole( 'form', { name: /analytics/i } ) ).toBeVisible();
 	} );
 	test( 'simple form should not show upgrade nudge if disabled', () => {
@@ -86,7 +94,11 @@ describe( 'GoogleAnalyticsForm basic tests', () => {
 		expect( screen.queryByTestId( 'UpsellNudge' ) ).not.toBeInTheDocument();
 	} );
 	test( 'jetpack form should not show upgrade nudge if disabled', () => {
-		render( <GoogleAnalyticsJetpackForm { ...props } showUpgradeNudge={ false } /> );
+		render(
+			<Provider store={ store }>
+				<GoogleAnalyticsJetpackForm { ...props } showUpgradeNudge={ false } />
+			</Provider>
+		);
 		expect( screen.queryByTestId( 'UpsellNudge' ) ).not.toBeInTheDocument();
 	} );
 } );
@@ -125,7 +137,11 @@ describe( 'UpsellNudge should get appropriate plan constant for both forms', () 
 	test.each( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ] )(
 		`Jetpack Security for (%s)`,
 		( product_slug ) => {
-			render( <GoogleAnalyticsJetpackForm { ...myProps } site={ { plan: { product_slug } } } /> );
+			render(
+				<Provider store={ store }>
+					<GoogleAnalyticsJetpackForm { ...myProps } site={ { plan: { product_slug } } } />
+				</Provider>
+			);
 			expect( screen.queryByTestId( 'UpsellNudge' ) ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalledWith(
 				expect.objectContaining( { plan: PLAN_JETPACK_SECURITY_DAILY } ),

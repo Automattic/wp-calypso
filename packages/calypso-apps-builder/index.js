@@ -74,10 +74,13 @@ async function runBuilder( args ) {
 	await Promise.all( [
 		runAll( [ `build:*${ watch ? ' --watch' : '' }` ], runOpts ).then( () => {
 			console.log( 'Build completed!' );
-			if ( ! watch && sync ) {
-				// In non-watch + sync mode, we sync only once after the build has finished.
-				setupRemoteSync( localPath, remotePath );
-			}
+			const translate = runAll( 'translate', runOpts ).catch( () => {} );
+			translate.then( () => {
+				if ( ! watch && sync ) {
+					// In non-watch + sync mode, we sync only once after the build has finished.
+					setupRemoteSync( localPath, remotePath );
+				}
+			} );
 		} ),
 		// In watch + sync mode, we start watching to sync while the webpack build is happening.
 		watch && sync && setupRemoteSync( localPath, remotePath, true ),

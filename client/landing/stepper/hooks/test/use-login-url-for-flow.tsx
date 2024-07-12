@@ -37,6 +37,31 @@ describe( 'useLoginUrlForFlow', () => {
 		);
 	} );
 
+	it( 'returns the login with custom login path', () => {
+		const flowWithCustomLoginPath = {
+			...flow,
+			useLoginParams: () => ( {
+				customLoginPath: '/custom-login-path',
+			} ),
+		} as Flow;
+
+		const { result } = renderHookWithProvider(
+			() => useLoginUrlForFlow( { flow: flowWithCustomLoginPath } ),
+			{
+				wrapper: Wrapper( 'setup' ),
+			}
+		);
+
+		expect( result.current ).toEqual(
+			addQueryArgs( '/custom-login-path', {
+				variationName: 'some-flow',
+				redirect_to: '/setup/site-migration-flow',
+				pageTitle: 'some-title',
+				toStepper: true,
+			} )
+		);
+	} );
+
 	it( 'returns the login with with extra params', () => {
 		const flowWithExtraParams = {
 			...flow,

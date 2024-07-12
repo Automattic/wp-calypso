@@ -74,7 +74,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 						<EmptyModuleCard
 							icon={ postList }
 							description={ translate(
-								'Your top {{link}}posts and pages{{/link}} will display here and you can learn what content resonates the most. Start creating and sharing!',
+								'Your top {{link}}posts and pages{{/link}} will display here to learn what content resonates the most. Start creating and sharing!',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {

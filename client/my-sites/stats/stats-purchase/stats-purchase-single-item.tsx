@@ -147,7 +147,7 @@ const StatsCommercialPurchase = ( {
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
-	const { isCommercialOwned } = useStatsPurchases( siteId );
+	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
@@ -214,7 +214,7 @@ const StatsCommercialPurchase = ( {
 									redirectUri,
 									price: undefined,
 									quantity: purchaseTierQuantity,
-									isUpgrade: isCommercialOwned,
+									isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
 								} )
 							}
 						>
@@ -241,6 +241,7 @@ const StatsPersonalPurchase = ( {
 	disableFreeProduct = false,
 }: StatsPersonalPurchaseProps ) => {
 	const translate = useTranslate();
+
 	const sliderStepPrice = pwywProduct.cost / MIN_STEP_SPLITS;
 
 	const steps = Math.floor( maxSliderPrice / sliderStepPrice );
@@ -256,10 +257,9 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		const queryFrom = isOdysseyStats ? '&from=jetpack-my-jetpack' : '';
 		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial` );
 
-		page( `/stats/purchase/${ siteSlug }?productType=commercial${ queryFrom }` );
+		page( `/stats/purchase/${ siteSlug }?productType=commercial&from=switch-from-personal` );
 	};
 
 	return (
@@ -407,7 +407,11 @@ function StatsCommercialFlowOptOutForm( {
 	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked` );
-		setTimeout( () => page( `/stats/purchase/${ siteSlug }?productType=personal` ), 250 );
+		setTimeout(
+			() =>
+				page( `/stats/purchase/${ siteSlug }?productType=personal&from=switch-from-commercial` ),
+			250
+		);
 	};
 
 	const handleRequestUpdateClick = () => {

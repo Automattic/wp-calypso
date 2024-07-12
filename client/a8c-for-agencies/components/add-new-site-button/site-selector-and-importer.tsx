@@ -118,12 +118,12 @@ export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMI
 				<div className="site-selector-and-importer__popover-content">
 					<div className="site-selector-and-importer__popover-column">
 						<div className="site-selector-and-importer__popover-column-heading">
-							{ translate( 'Import existing sites' ).toUpperCase() }
+							{ translate( 'Add existing sites' ).toUpperCase() }
 						</div>
 						{ menuItem( {
 							icon: <WordPressLogo />,
 							heading: translate( 'Via WordPress.com' ),
-							description: translate( 'Import sites bought on{{nbsp/}}WordPress.com', {
+							description: translate( 'Add sites bought on{{nbsp/}}WordPress.com', {
 								components: { nbsp: <>&nbsp;</> },
 								comment: 'nbsp is a non-breaking space character',
 							} ),
@@ -164,7 +164,7 @@ export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMI
 						{ menuItem( {
 							icon: <WordPressLogo />,
 							heading: translate( 'WordPress.com' ),
-							description: translate( 'Best for large-scale businesses and major eCommerce sites' ),
+							description: translate( 'Optimized and hassle-free hosting for business websites' ),
 							buttonProps: {
 								href: hasPendingWPCOMSites
 									? A4A_SITES_LINK_NEEDS_SETUP
@@ -189,7 +189,7 @@ export default function SiteSelectorAndImporter( { showMainButtonLabel, onWPCOMI
 						{ menuItem( {
 							icon: <img src={ pressableIcon } alt="" />,
 							heading: translate( 'Pressable' ),
-							description: translate( 'Optimized and hassle-free hosting for business websites' ),
+							description: translate( 'Best for large-scale businesses and major eCommerce sites' ),
 							buttonProps: {
 								href:
 									pressableOwnership === 'regular'
