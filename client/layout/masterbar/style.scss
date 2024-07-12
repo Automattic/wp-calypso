@@ -519,7 +519,6 @@ body.is-mobile-app-view {
 				@media only screen and (max-width: 782px) {
 					width: 32px;
 					height: 32px;
-
 				}
 			}
 		}
@@ -604,7 +603,8 @@ body.is-mobile-app-view {
 
 		@media only screen and (max-width: 480px) {
 			&.masterbar__item-my-site,
-			&.masterbar__item-my-site-actions {
+			&.masterbar__item-my-site-actions,
+			&.masterbar-cart-button {
 				display: none;
 			}
 		}
