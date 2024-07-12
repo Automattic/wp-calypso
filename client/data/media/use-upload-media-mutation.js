@@ -13,7 +13,8 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const mutation = useMutation( {
-		mutationFn: ( { file, siteId, postId, uploader } ) => uploader( file, siteId, postId ),
+		mutationFn: ( { file, siteId, postId, uploader, apiMetadata } ) =>
+			uploader( file, siteId, postId, apiMetadata ),
 		onSuccess( { media: [ uploadedMedia ], found }, { siteId, transientMedia } ) {
 			const uploadedMediaWithTransientId = {
 				...uploadedMedia,
@@ -36,7 +37,7 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 	const { mutateAsync } = mutation;
 
 	const uploadMediaAsync = useCallback(
-		async ( files, site, postId, uploader ) => {
+		async ( files, site, postId, uploader, apiMetadata ) => {
 			// https://stackoverflow.com/questions/25333488/why-isnt-the-filelist-object-an-array
 			if ( isFileList( files ) ) {
 				files = Array.from( files );
@@ -56,7 +57,14 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 					continue;
 				}
 
-				const response = await mutateAsync( { file, siteId, postId, uploader, transientMedia } );
+				const response = await mutateAsync( {
+					file,
+					siteId,
+					postId,
+					uploader,
+					apiMetadata,
+					transientMedia,
+				} );
 
 				uploadedItems.push( response.media[ 0 ] );
 			}

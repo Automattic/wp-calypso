@@ -3,7 +3,7 @@ import wpcom from 'calypso/lib/wp';
 
 const debug = debugFactory( 'calypso:media' );
 
-export const getFileUploader = ( file, siteId, postId ) => {
+export const getFileUploader = ( file, siteId, postId, apiMetadata ) => {
 	// Determine upload mechanism by object type
 	const isUrl = 'string' === typeof file;
 
@@ -31,5 +31,10 @@ export const getFileUploader = ( file, siteId, postId ) => {
 		return wpcom.site( siteId ).addMediaUrls( {}, file );
 	}
 
-	return wpcom.site( siteId ).addMediaFiles( {}, file );
+	return wpcom.site( siteId ).addMediaFiles(
+		{
+			...( apiMetadata && { ...apiMetadata } ),
+		},
+		file
+	);
 };

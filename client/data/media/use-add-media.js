@@ -3,7 +3,7 @@ import { getFileUploader, canUseVideoPress } from 'calypso/lib/media/utils';
 import { isFileList } from 'calypso/state/media/utils/is-file-list';
 import { useUploadMediaMutation } from './use-upload-media-mutation';
 
-export const useAddMedia = () => {
+export const useAddMedia = ( apiMetadata ) => {
 	const { uploadMediaAsync } = useUploadMediaMutation();
 	const addVideopressStatusToFile = ( file, site ) => {
 		const siteCanUseVideoPress = canUseVideoPress( site );
@@ -29,7 +29,8 @@ export const useAddMedia = () => {
 				addVideopressStatusToFile( file, site ),
 				site,
 				postId,
-				getFileUploader
+				getFileUploader,
+				apiMetadata
 			);
 		},
 		[ uploadMediaAsync ]
