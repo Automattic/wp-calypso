@@ -136,6 +136,10 @@
 	--color-sidebar-submenu-text: var(--studio-gray-10);
 	--color-sidebar-submenu-hover-text: var(--color-masterbar-unread-dot-background);
 	--color-sidebar-submenu-selected-text: var(--studio-white);
+	--color-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-selected-text);
+
+	/* Sidebar Submenu - Nav Redesign */
+	--color-navredesign-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-selected-text);
 
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--studio-blue-70);
