@@ -127,36 +127,6 @@ function load_starter_page_templates() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
 
 /**
- * Load Global Styles plugin.
- */
-function load_global_styles() {
-	if ( defined( 'MU_WPCOM_JETPACK_GLOBAL_STYLES' ) && MU_WPCOM_JETPACK_GLOBAL_STYLES ) {
-		return;
-	}
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
-
-/**
- * Load Event Countdown Block.
- */
-function load_countdown_block() {
-	if ( defined( 'MU_WPCOM_JETPACK_COUNTDOWN_BLOCK' ) && MU_WPCOM_JETPACK_COUNTDOWN_BLOCK ) {
-		return;
-	}
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_countdown_block' );
-
-/**
- * Load Timeline Block.
- */
-function load_timeline_block() {
-	if ( defined( 'MU_WPCOM_JETPACK_TIMELINE_BLOCK' ) && MU_WPCOM_JETPACK_TIMELINE_BLOCK ) {
-		return;
-	}
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
-
-/**
  * Add front-end CoBlocks gallery block scripts.
  *
  * This function performs the same enqueueing duties as `CoBlocks_Block_Assets::frontend_scripts`,
@@ -258,16 +228,6 @@ function load_wpcom_block_editor_nux() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 
 /**
- * Load Block Inserter Modifications module.
- */
-function load_block_inserter_modifications() {
-	if ( defined( 'MU_WPCOM_BLOCK_INSERTER_MODIFICATIONS' ) && MU_WPCOM_BLOCK_INSERTER_MODIFICATIONS ) {
-		return;
-	}
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );
-
-/**
  * Load Mailerlite module.
  */
 function load_mailerlite() {
@@ -280,54 +240,17 @@ function load_mailerlite() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_mailerlite' );
 
 /**
- * What's New section of the Tools menu.
+ * Load WPCOM block editor nav sidebar.
  */
-function load_whats_new() {
-	if ( defined( 'MU_WPCOM_WHATS_NEW' ) && MU_WPCOM_WHATS_NEW ) {
-		return;
+function load_wpcom_block_editor_sidebar() {
+	if (
+		( defined( 'WPCOM_BLOCK_EDITOR_SIDEBAR' ) && WPCOM_BLOCK_EDITOR_SIDEBAR ) ||
+		apply_filters( 'a8c_enable_nav_sidebar', false )
+	) {
+		require_once __DIR__ . '/wpcom-block-editor-nav-sidebar/class-wpcom-block-editor-nav-sidebar.php';
 	}
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
-
-/**
- * Tags Education
- */
-function load_tags_education() {
-	if ( defined( 'MU_WPCOM_TAGS_EDUCATION' ) && MU_WPCOM_TAGS_EDUCATION ) {
-		return;
-	}
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
-
-/**
- * Load paragraph block
- */
-function load_paragraph_block() {
-	if ( defined( 'MU_WPCOM_PARAGRAPH_BLOCK' ) && MU_WPCOM_PARAGRAPH_BLOCK ) {
-		return;
-	}
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_paragraph_block' );
-
-/**
- * Override org documentation links.
- */
-function load_wpcom_documentation_links() {
-	if ( defined( 'MU_WPCOM_DOCUMENTATION_LINKS' ) && MU_WPCOM_DOCUMENTATION_LINKS ) {
-		return;
-	}
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_documentation_links' );
-
-/**
- * Add support links to block description.
- */
-function load_block_description_links() {
-	if ( defined( 'MU_WPCOM_BLOCK_DESCRIPTION_LINKS' ) && MU_WPCOM_BLOCK_DESCRIPTION_LINKS ) {
-		return;
-	}
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
 
 /**
  * Load WP.com Global Styles.
