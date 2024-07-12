@@ -311,12 +311,8 @@ const SitesDashboard = ( {
 								) }
 								target="_blank"
 								title={
-									hasEnTranslation(
-										'Building sites for customers? Earn more with our agency program.'
-									)
-										? translate(
-												'Building sites for customers? Earn more with our agency program.'
-										  )
+									hasEnTranslation( "Building sites for customers? Here's how to earn more." )
+										? translate( "Building sites for customers? Here's how to earn more." )
 										: translate( 'Managing multiple sites? Meet our agency hosting' )
 								}
 								tracksClickName="calypso_sites_dashboard_a4a_banner_click"
