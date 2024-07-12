@@ -253,7 +253,11 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 	const { productName, productSlug, purchaseRenewalQuantity } = purchase;
 	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames( 'full' );
 
-	if ( isJetpackAISlug( purchase.productSlug ) && purchase.purchaseRenewalQuantity ) {
+	if (
+		isJetpackAISlug( purchase.productSlug ) &&
+		purchase.purchaseRenewalQuantity &&
+		purchase.priceTierList?.length
+	) {
 		return i18n.translate( '%(productName)s (%(quantity)s requests per month)', {
 			args: {
 				productName: jetpackProductsDisplayNames[ productSlug ],
@@ -262,7 +266,11 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 		} );
 	}
 
-	if ( isJetpackStatsPaidProductSlug( purchase.productSlug ) && purchase.purchaseRenewalQuantity ) {
+	if (
+		isJetpackStatsPaidProductSlug( purchase.productSlug ) &&
+		purchase.purchaseRenewalQuantity &&
+		purchase.priceTierList?.length
+	) {
 		return i18n.translate( '%(productName)s (%(quantity)s views per month)', {
 			args: {
 				productName: jetpackProductsDisplayNames[ productSlug ],

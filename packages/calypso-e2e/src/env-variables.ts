@@ -240,9 +240,8 @@ class EnvVariables implements SupportedEnvVariables {
 function getAtomicVariationInMixedRun() {
 	const allVariations: AtomicVariation[] = [
 		'default',
-		// Disable pending rename of the blogs. p1720019588866209-slack-C05Q5HSS013
-		//'php-old',
-		//'php-new',
+		'php-old',
+		'php-new',
 		'wp-beta',
 		'wp-previous',
 		'private',

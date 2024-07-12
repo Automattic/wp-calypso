@@ -4,21 +4,32 @@ import { useState, useEffect } from 'react';
 const AESTHETIC_OFFSET = 20;
 
 /**
- * This function calculates the position of the Help Center based on the last click event
- *
+ * This function calculates the position of the Help Center based on the last click event.
  * @param element The element that was clicked
  * @returns object with left and top properties
  */
 export const calculateOpeningPosition = ( element: HTMLElement ) => {
-	const { x, y, width, height } = element.getBoundingClientRect();
 	const { innerWidth, innerHeight } = window;
-	const helpCenterWidth = 410;
 	const helpCenterHeight = Math.min( 800, innerHeight * 0.8 );
+	const helpCenterWidth = 410;
 
-	// Return an empty object in mobile view
+	const defaultPosition = {
+		left: innerWidth - helpCenterWidth - AESTHETIC_OFFSET,
+		top: 100,
+		transformOrigin: 'center',
+	};
+
+	// To prevent Help Center from not being shown if an element is not found.
+	if ( ! element ) {
+		return defaultPosition;
+	}
+
+	// Return an empty object in mobile view.
 	if ( innerWidth <= 480 ) {
 		return {};
 	}
+
+	const { x, y, width, height } = element.getBoundingClientRect();
 
 	const buttonLeftEdge = x;
 	const buttonRightEdge = x + width;
@@ -26,7 +37,7 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	const buttonTopEdge = y;
 	const buttonBottomEdge = y + height;
 
-	const coords = { left: 0, top: 0, bottom: undefined, transformOrigin: `${ x }px ${ y }px` };
+	const coords = { ...defaultPosition };
 
 	if ( buttonTopEdge + helpCenterHeight + AESTHETIC_OFFSET > innerHeight ) {
 		// Align the bottom edge of the help center with the top edge of the button
@@ -55,9 +66,7 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 		coords.left + helpCenterWidth > innerWidth ||
 		coords.top + helpCenterHeight > innerHeight
 	) {
-		coords.top = 100;
-		coords.left = innerWidth - helpCenterWidth - AESTHETIC_OFFSET;
-		coords.transformOrigin = 'center';
+		return defaultPosition;
 	}
 
 	return coords;
@@ -78,19 +87,15 @@ export function useOpeningCoordinates( disabled: boolean = false, isMinimized: b
 			if ( ! disabled ) {
 				try {
 					const path = event.composedPath();
-					const closestButtonOrAnchor = path.find(
+
+					// Find the first button or anchor element in the path
+					// If none is found, use the first element in the path
+					const openingElement = ( path.find(
 						( element ) =>
 							element instanceof HTMLButtonElement || element instanceof HTMLAnchorElement
-					);
-					// If the user clicked an icon inside a button or an anchor, consider the button or the anchor.
-					if ( closestButtonOrAnchor ) {
-						setOpeningCoordinates(
-							calculateOpeningPosition( closestButtonOrAnchor as HTMLElement )
-						);
-					} else if ( path[ 0 ] instanceof HTMLElement ) {
-						// Just pick the deepest element.
-						setOpeningCoordinates( calculateOpeningPosition( path[ 0 ] as HTMLElement ) );
-					}
+					) || path[ 0 ] ) as HTMLElement;
+
+					setOpeningCoordinates( calculateOpeningPosition( openingElement ) );
 				} catch ( e ) {
 					// In case something weird is clicked. e.g something without `getBoundingClientRect`.
 				}

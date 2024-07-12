@@ -9,6 +9,7 @@ import {
 	getSubtotalWithoutDiscounts,
 	getTotalDiscountsWithoutCredits,
 	filterAndGroupCostOverridesForDisplay,
+	isBillingInfoEmpty,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -67,8 +68,27 @@ const NonTotalPrices = styled.div`
 `;
 const TotalPrice = styled.div`
 	font-size: 14px;
-	padding: 16px 0;
+	padding: 16px 0 6px;
 `;
+
+const TaxNotCalculatedLineItemWrapper = styled.div`
+	font-size: 14px;
+	text-wrap: pretty;
+	line-height: 1em;
+	color: ${ ( { theme } ) => theme.colors.textColorLight };
+	margin-bottom: 8px;
+`;
+
+export function TaxNotCalculatedLineItem() {
+	const translate = useTranslate();
+	return (
+		<TaxNotCalculatedLineItemWrapper>
+			{ translate( 'Tax: to be calculated', {
+				textOnly: true,
+			} ) }
+		</TaxNotCalculatedLineItemWrapper>
+	);
+}
 
 export default function BeforeSubmitCheckoutHeader() {
 	const cartKey = useCartKey();
@@ -108,7 +128,6 @@ export default function BeforeSubmitCheckoutHeader() {
 			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
-
 			<WPOrderReviewSection>
 				<NonTotalPrices>
 					<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
@@ -125,6 +144,7 @@ export default function BeforeSubmitCheckoutHeader() {
 				<TotalPrice>
 					<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
 				</TotalPrice>
+				{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
 			</WPOrderReviewSection>
 		</>
 	);
