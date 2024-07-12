@@ -1366,7 +1366,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 			args: { socialNetworksList },
 			comment: 'Comma separated list of social networks like "Facebook, Mastodon and Tumblr".',
 		} ),
-		translate( 'Attach custom images or videos' ),
+		translate( 'Upload custom images or videos with your posts' ),
 		translate( 'Recycle content' ),
 		translate( 'Automatically generate images for posts' ),
 	];
