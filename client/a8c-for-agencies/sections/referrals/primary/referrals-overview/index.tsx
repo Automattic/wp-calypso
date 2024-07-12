@@ -1,15 +1,16 @@
 import { Button } from '@automattic/components';
-import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
+import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -29,7 +30,6 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
-import { getAccountStatus } from '../../lib/get-account-status';
 import ReferralDetails from '../../referral-details';
 import ReferralsFooter from '../footer';
 import AutomatedReferralComingSoonBanner from './automated-referral-coming-soon-banner';
@@ -47,7 +47,6 @@ export default function ReferralsOverview( {
 	const dispatch = useDispatch();
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
-	const [ requiredNoticeClose, setRequiredNoticeClosed ] = useState( false );
 
 	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
 		REFERRAL_EMAIL_QUERY_PARAM_KEY
@@ -63,15 +62,16 @@ export default function ReferralsOverview( {
 			: translate( 'Referrals' );
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
-	const accountStatus = getAccountStatus( tipaltiData, translate );
-	const referralsAvailable = accountStatus?.statusType === 'success';
-	const actionRequiredNotice =
-		! requiredNoticeClose && ! isFetching && accountStatus?.statusType === 'warning';
+	const isPayable = !! tipaltiData?.IsPayable;
+	const [ showPopover, setShowPopover ] = useState( false );
+	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
 	const { data: referrals, isFetching: isFetchingReferrals } =
 		useFetchReferrals( isAutomatedReferral );
 
 	const hasReferrals = !! referrals?.length;
+
+	const actionRequiredNotice = ! isFetching && ! isPayable && ! isFetchingReferrals && hasReferrals;
 
 	const makeAReferral = useCallback( () => {
 		sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REFERRAL );
@@ -102,10 +102,10 @@ export default function ReferralsOverview( {
 					) }
 					{ actionRequiredNotice && (
 						<div className="referrals-overview__notice">
-							<NoticeBanner
+							<LayoutBanner
 								level="warning"
 								title={ translate( 'Your payment settings require action' ) }
-								onClose={ () => setRequiredNoticeClosed( true ) }
+								preferenceName="a4a-automated-referral-payment-settings-action-required"
 							>
 								<div>
 									{ translate(
@@ -118,7 +118,7 @@ export default function ReferralsOverview( {
 								>
 									{ translate( 'Go to payment settings' ) }
 								</Button>
-							</NoticeBanner>
+							</LayoutBanner>
 						</div>
 					) }
 
@@ -129,14 +129,40 @@ export default function ReferralsOverview( {
 						{ isAutomatedReferral && (
 							<Actions>
 								<MobileSidebarNavigation />
-								<Button
-									primary
-									href={ A4A_MARKETPLACE_PRODUCTS_LINK }
-									onClick={ makeAReferral }
-									disabled={ ! referralsAvailable }
+								<span
+									onMouseEnter={ () => {
+										! isPayable && setShowPopover( true );
+									} }
 								>
-									{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
-								</Button>
+									<Button
+										primary
+										href={ A4A_MARKETPLACE_PRODUCTS_LINK }
+										onClick={ makeAReferral }
+										disabled={ ! isPayable }
+										ref={ wrapperRef }
+									>
+										{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
+									</Button>
+									{ showPopover && (
+										<A4APopover
+											// className="referral-toggle__notice"
+											title={ translate( 'Your payment settings require action' ) }
+											offset={ 12 }
+											position="bottom left"
+											wrapperRef={ wrapperRef }
+											onFocusOutside={ () => setShowPopover( false ) }
+										>
+											<div className="referral-toggle__notice-description">
+												{ translate(
+													'Please confirm your details before referring products to your clients.'
+												) }
+											</div>
+											<Button href="/referrals/payment-settings">
+												{ translate( 'Go to payment settings' ) }
+											</Button>
+										</A4APopover>
+									) }
+								</span>
 							</Actions>
 						) }
 					</LayoutHeader>
