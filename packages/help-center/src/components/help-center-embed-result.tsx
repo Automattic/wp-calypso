@@ -17,7 +17,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 
 	const params = new URLSearchParams( search );
 	const postId = params.get( 'postId' );
-	const blogId = params.get( 'blogId' );
+	const blogId = params.get( 'blogId' ) ?? undefined;
 	const canNavigateBack = params.get( 'canNavigateBack' ) === 'true';
 	const link = params.get( 'link' );
 	const query = params.get( 'query' );

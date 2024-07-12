@@ -12,6 +12,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
+import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -20,7 +21,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { getCurrentUser, getCurrentUserDate } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserDate,
+	getCurrentUserSiteCount,
+} from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowGlobalSidebar,
 	getShouldShowUnifiedSiteSidebar,
@@ -38,6 +43,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
+import { isTrialExpired } from 'calypso/state/sites/plans/selectors/trials/trials-expiration';
 import {
 	getSiteSlug,
 	isJetpackSite,
@@ -46,6 +52,7 @@ import {
 	getSiteUrl,
 	getSiteAdminUrl,
 } from 'calypso/state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -151,11 +158,6 @@ class MasterbarLoggedIn extends Component {
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
 
-		if ( config.isEnabled( 'layout/mb' ) || this.props.isMobileGlobalNavVisible ) {
-			// Fall through to navigate to /sites
-			return;
-		}
-
 		this.handleLayoutFocus( 'sites' );
 		this.props.activateNextLayoutFocus();
 
@@ -256,6 +258,7 @@ class MasterbarLoggedIn extends Component {
 	 */
 	renderSidebarMobileMenu() {
 		const { translate } = this.props;
+
 		return (
 			<Item
 				tipTarget="Menu"
@@ -268,45 +271,15 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderGlobalMySites() {
-		const { translate, section } = this.props;
-		const { isResponsiveMenu } = this.state;
-
-		let mySitesUrl = '/sites';
-
-		const icon =
-			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
-
-		if ( 'sites-dashboard' === section && isResponsiveMenu ) {
-			mySitesUrl = '';
-		}
-
-		return (
-			<Item
-				url={ mySitesUrl }
-				tipTarget="my-sites"
-				icon={ icon }
-				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites-dashboard' ) && ! this.isSidebarOpen() }
-				tooltip={ translate( 'Manage your sites' ) }
-			/>
-		);
-	}
-
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
 		const { isMenuOpen } = this.state;
 
-		let mySitesUrl = domainOnlySite
+		const mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
 			: '/sites';
-		let icon = this.wordpressIcon();
-
-		if ( this.state.isMobile && this.props.isInEditor ) {
-			mySitesUrl = `/home/${ siteSlug }`;
-			icon = 'chevron-left';
-		}
+		const icon = this.wordpressIcon();
 
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
 			// we are the /sites page but there is no site. Disable the home link
@@ -457,7 +430,7 @@ class MasterbarLoggedIn extends Component {
 		const profileActions = [
 			{
 				label: translate( 'Edit Profile' ),
-				url: isClassicView ? siteUrl + '/wp-admin/profile.php' : '/me',
+				url: isClassicView ? siteUrl + '/wp-admin/profile.php' : '/me/profile',
 			},
 			{
 				label: translate( 'My Account' ),
@@ -473,7 +446,7 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<Item
 				tipTarget="me"
-				url="/me"
+				url="/me/profile"
 				onClick={ this.clickMe }
 				isActive={ this.isActive( 'me' ) }
 				className="masterbar__item-howdy"
@@ -497,7 +470,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				tipTarget="reader"
 				className="masterbar__reader"
-				url="/read"
+				url="/read/feeds"
 				icon="reader"
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader' ) }
@@ -766,151 +739,74 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	getHomeUrl() {
+		const { hasNoSites, siteSlug, isCustomerHomeEnabled, isSiteTrialExpired } = this.props;
+		// eslint-disable-next-line no-nested-ternary
+		return hasNoSites || isSiteTrialExpired
+			? '/sites'
+			: isCustomerHomeEnabled
+			? `/home/${ siteSlug }`
+			: getStatsPathForTab( 'day', siteSlug );
+	}
+
+	renderBackHomeButton() {
+		const { translate } = this.props;
+
+		return (
+			<Item
+				className="masterbar__item-back"
+				icon="chevron-left"
+				tooltip={ translate( 'Back' ) }
+				url={ this.getHomeUrl() }
+			/>
+		);
+	}
+
 	render() {
 		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
 			this.props;
-		const { isMobile } = this.state;
+		const { isMobile, isResponsiveMenu } = this.state;
 
+		// Checkout flow uses it's own version of the masterbar
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return this.renderCheckout();
 		}
 
-		if ( config.isEnabled( 'layout/mb' ) ) {
-			if ( isMobile && isInEditor && loadHelpCenterIcon ) {
-				return (
-					<Masterbar>
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderMySites() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderCart() }
-							{ this.renderNotifications() }
-						</div>
-					</Masterbar>
-				);
-			}
+		// Editor specific masterbar, only shows back to home button and help center as these are hidden on mobile views
+		// from the desktop version of the editor.
+		// The desktop version of the editor has no masterbar at all so we only do this for mobile.
+		if ( isInEditor && ( isMobile || isResponsiveMenu ) ) {
 			return (
-				<>
-					{ this.renderPopupSearch() }
-					<Masterbar>
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderSidebarMobileMenu() }
-							{ this.renderMySites() }
-							{ this.renderReader( ! isMobile ) }
-							{ this.renderSiteMenu() }
-							{ this.renderSiteActionMenu() }
-							{ this.renderLanguageSwitcher() }
-							{ this.renderSearch() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderCart() }
-							{ this.renderLaunchpadNavigator() }
-							{ loadHelpCenterIcon && this.renderHelpCenter() }
-							{ this.renderNotifications() }
-							{ this.renderProfileMenu() }
-						</div>
-					</Masterbar>
-				</>
-			);
-		}
-
-		if ( this.props.isMobileGlobalNavVisible ) {
-			return (
-				<>
-					<Masterbar className="masterbar__global-nav">
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderSidebarMobileMenu() }
-							{ this.renderGlobalMySites() }
-							{ this.renderReader() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderSearch() }
-							{ this.renderCart() }
-							{ this.renderMe() }
-							{ loadHelpCenterIcon && this.renderHelpCenter() }
-							{ this.renderNotifications() }
-						</div>
-					</Masterbar>
-				</>
-			);
-		}
-
-		if ( this.props.isUnifiedSiteView ) {
-			return (
-				<Masterbar className="masterbar__unified">
-					<div className="masterbar__section masterbar__section--left">
-						{ this.state.isResponsiveMenu
-							? this.renderSidebarMobileMenu()
-							: this.renderWordPressIcon() }
-						{ this.renderAllSites() }
-						{ this.renderCurrentSite() }
-					</div>
-					<div className="masterbar__section masterbar__section--right">
-						{ this.renderCart() }
-						{ loadHelpCenterIcon && this.renderHelpCenter() }
-						{ this.renderNotifications() }
-						{ this.renderMe() }
-					</div>
-				</Masterbar>
-			);
-		}
-
-		if ( isMobile ) {
-			if ( isInEditor && loadHelpCenterIcon ) {
-				return (
-					<Masterbar>
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderMySites() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderCart() }
-							{ this.renderNotifications() }
-						</div>
-					</Masterbar>
-				);
-			}
-			return (
-				<>
-					{ this.renderPopupSearch() }
-					<Masterbar>
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderMySites() }
-							{ this.renderReader( false ) }
-							{ this.renderLanguageSwitcher() }
-							{ this.renderSearch() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderCart() }
-							{ this.renderNotifications() }
-							{ loadHelpCenterIcon && this.renderHelpCenter() }
-							{ this.renderMenu() }
-						</div>
-					</Masterbar>
-				</>
-			);
-		}
-		return (
-			<>
-				{ this.renderPopupSearch() }
 				<Masterbar>
 					<div className="masterbar__section masterbar__section--left">
-						{ this.renderMySites() }
-						{ this.renderReader() }
-						{ this.renderLanguageSwitcher() }
-						{ this.renderSearch() }
-					</div>
-					<div className="masterbar__section masterbar__section--center">
-						{ this.renderPublish() }
+						{ this.renderBackHomeButton() }
 					</div>
 					<div className="masterbar__section masterbar__section--right">
-						{ this.renderCart() }
-						{ this.renderMe() }
 						{ loadHelpCenterIcon && this.renderHelpCenter() }
-						{ this.renderLaunchpadNavigator() }
-						{ this.renderNotifications() }
 					</div>
 				</Masterbar>
-			</>
+			);
+		}
+
+		return (
+			<Masterbar>
+				<div className="masterbar__section masterbar__section--left">
+					{ this.renderSidebarMobileMenu() }
+					{ this.renderMySites() }
+					{ this.renderReader( ! isMobile ) }
+					{ this.renderSiteMenu() }
+					{ this.renderSiteActionMenu() }
+					{ this.renderLanguageSwitcher() }
+					{ this.renderSearch() }
+				</div>
+				<div className="masterbar__section masterbar__section--right">
+					{ this.renderCart() }
+					{ this.renderLaunchpadNavigator() }
+					{ loadHelpCenterIcon && this.renderHelpCenter() }
+					{ this.renderNotifications() }
+					{ this.renderProfileMenu() }
+				</div>
+			</Masterbar>
 		);
 	}
 }
@@ -929,6 +825,7 @@ export default connect(
 			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
 			isSiteMigrationActiveRoute( state );
 
+		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 			state,
 			currentSelectedSiteId,
@@ -943,6 +840,7 @@ export default connect(
 		);
 		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
+			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
 			siteSlug: getSiteSlug( state, siteId ),
@@ -951,6 +849,7 @@ export default connect(
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
+			hasNoSites: siteCount === 0,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
 			isInEditor: getSectionName( state ) === 'gutenberg-editor',
@@ -972,6 +871,7 @@ export default connect(
 			isUserNewerThanNewNavigation:
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
+			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
 			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),

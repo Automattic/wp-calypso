@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
@@ -38,10 +39,6 @@ type NeedsSetupSite = {
 	};
 	id: number;
 };
-
-const isA4aSiteCreationConfigurationsEnabled = config.isEnabled(
-	'a4a-site-creation-configurations'
-);
 
 export default function NeedSetup( { licenseKey }: Props ) {
 	const { randomSiteName, isRandomSiteNameLoading } = useRandomSiteName();
@@ -146,16 +143,12 @@ export default function NeedSetup( { licenseKey }: Props ) {
 		[ refetchPendingSites ]
 	);
 
-	const onCreateSite = useCallback(
+	const onCreateSiteWithConfig = useCallback(
 		( id: number ) => {
-			createWPCOMSite(
-				{ id },
-				{
-					onSuccess: () => onCreateSiteSuccess( id ),
-				}
-			);
+			recordTracksEvent( 'calypso_a4a_create_site_config' );
+			setCurrentSiteConfigurationId( id );
 		},
-		[ createWPCOMSite, onCreateSiteSuccess ]
+		[ setCurrentSiteConfigurationId ]
 	);
 
 	const onMigrateSite = useCallback(
@@ -209,9 +202,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 					availablePlans={ availablePlans }
 					isLoading={ isFetching }
 					provisioning={ isProvisioning }
-					onCreateSite={
-						isA4aSiteCreationConfigurationsEnabled ? setCurrentSiteConfigurationId : onCreateSite
-					}
+					onCreateSite={ onCreateSiteWithConfig }
 					onMigrateSite={ onMigrateSite }
 				/>
 			</LayoutColumn>
