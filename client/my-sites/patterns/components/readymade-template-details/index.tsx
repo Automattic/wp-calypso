@@ -77,7 +77,10 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 							/>
 						</div>
 						<div className="readymade-template-details-preview">
-							<img src={ readymadeTemplate.screenshot } alt="" />
+							<img
+								src="https://s0.wp.com/wp-content/rest-api-plugins/endpoints/themes/ready-made-templates-data/neonfit.webp"
+								alt=""
+							/>
 						</div>
 					</div>
 				</div>
