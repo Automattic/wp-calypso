@@ -268,31 +268,6 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderGlobalMySites() {
-		const { translate, section } = this.props;
-		const { isResponsiveMenu } = this.state;
-
-		let mySitesUrl = '/sites';
-
-		const icon =
-			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
-
-		if ( 'sites-dashboard' === section && isResponsiveMenu ) {
-			mySitesUrl = '';
-		}
-
-		return (
-			<Item
-				url={ mySitesUrl }
-				tipTarget="my-sites"
-				icon={ icon }
-				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites-dashboard' ) && ! this.isSidebarOpen() }
-				tooltip={ translate( 'Manage your sites' ) }
-			/>
-		);
-	}
-
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
@@ -775,139 +750,37 @@ class MasterbarLoggedIn extends Component {
 			return this.renderCheckout();
 		}
 
-		if ( config.isEnabled( 'layout/mb' ) ) {
-			if ( isMobile && isInEditor && loadHelpCenterIcon ) {
-				return (
-					<Masterbar>
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderMySites() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderCart() }
-							{ this.renderNotifications() }
-						</div>
-					</Masterbar>
-				);
-			}
+		if ( isMobile && isInEditor && loadHelpCenterIcon ) {
 			return (
-				<>
-					{ this.renderPopupSearch() }
-					<Masterbar>
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderSidebarMobileMenu() }
-							{ this.renderMySites() }
-							{ this.renderReader( ! isMobile ) }
-							{ this.renderSiteMenu() }
-							{ this.renderSiteActionMenu() }
-							{ this.renderLanguageSwitcher() }
-							{ this.renderSearch() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderCart() }
-							{ this.renderLaunchpadNavigator() }
-							{ loadHelpCenterIcon && this.renderHelpCenter() }
-							{ this.renderNotifications() }
-							{ this.renderProfileMenu() }
-						</div>
-					</Masterbar>
-				</>
-			);
-		}
-
-		if ( this.props.isMobileGlobalNavVisible ) {
-			return (
-				<>
-					<Masterbar className="masterbar__global-nav">
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderSidebarMobileMenu() }
-							{ this.renderGlobalMySites() }
-							{ this.renderReader() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderSearch() }
-							{ this.renderCart() }
-							{ this.renderMe() }
-							{ loadHelpCenterIcon && this.renderHelpCenter() }
-							{ this.renderNotifications() }
-						</div>
-					</Masterbar>
-				</>
-			);
-		}
-
-		if ( this.props.isUnifiedSiteView ) {
-			return (
-				<Masterbar className="masterbar__unified">
+				<Masterbar>
 					<div className="masterbar__section masterbar__section--left">
-						{ this.state.isResponsiveMenu
-							? this.renderSidebarMobileMenu()
-							: this.renderWordPressIcon() }
-						{ this.renderAllSites() }
-						{ this.renderCurrentSite() }
+						{ this.renderMySites() }
 					</div>
 					<div className="masterbar__section masterbar__section--right">
 						{ this.renderCart() }
-						{ loadHelpCenterIcon && this.renderHelpCenter() }
 						{ this.renderNotifications() }
-						{ this.renderMe() }
 					</div>
 				</Masterbar>
 			);
 		}
-
-		if ( isMobile ) {
-			if ( isInEditor && loadHelpCenterIcon ) {
-				return (
-					<Masterbar>
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderMySites() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderCart() }
-							{ this.renderNotifications() }
-						</div>
-					</Masterbar>
-				);
-			}
-			return (
-				<>
-					{ this.renderPopupSearch() }
-					<Masterbar>
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderMySites() }
-							{ this.renderReader( false ) }
-							{ this.renderLanguageSwitcher() }
-							{ this.renderSearch() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderCart() }
-							{ this.renderNotifications() }
-							{ loadHelpCenterIcon && this.renderHelpCenter() }
-							{ this.renderMenu() }
-						</div>
-					</Masterbar>
-				</>
-			);
-		}
 		return (
 			<>
-				{ this.renderPopupSearch() }
 				<Masterbar>
 					<div className="masterbar__section masterbar__section--left">
+						{ this.renderSidebarMobileMenu() }
 						{ this.renderMySites() }
-						{ this.renderReader() }
+						{ this.renderReader( ! isMobile ) }
+						{ this.renderSiteMenu() }
+						{ this.renderSiteActionMenu() }
 						{ this.renderLanguageSwitcher() }
 						{ this.renderSearch() }
 					</div>
-					<div className="masterbar__section masterbar__section--center">
-						{ this.renderPublish() }
-					</div>
 					<div className="masterbar__section masterbar__section--right">
 						{ this.renderCart() }
-						{ this.renderMe() }
-						{ loadHelpCenterIcon && this.renderHelpCenter() }
 						{ this.renderLaunchpadNavigator() }
+						{ loadHelpCenterIcon && this.renderHelpCenter() }
 						{ this.renderNotifications() }
+						{ this.renderProfileMenu() }
 					</div>
 				</Masterbar>
 			</>

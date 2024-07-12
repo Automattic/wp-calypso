@@ -330,7 +330,6 @@ body.is-mobile-app-view {
 		}
 	}
 
-
 	.masterbar--is-checkout & {
 		height: var(--masterbar-height);
 		line-height: var(--masterbar-height);
@@ -358,9 +357,14 @@ body.is-mobile-app-view {
 		}
 	}
 
-	.gridicon {
-		fill: var(--color-masterbar-icon); // only because safari gets currentColor wrong
+	.gridicon,
+	svg {
+		fill: var(--color-masterbar-icon);
+		width: 20px;
+		height: 20px;
+	}
 
+	.gridicon {
 		.masterbar--is-checkout & {
 			fill: var(--color-checkout-masterbar-text);
 		}
@@ -370,17 +374,21 @@ body.is-mobile-app-view {
 		padding: 0 0 0 6px;
 	}
 
-	svg {
-		fill: var(--color-masterbar-text);
-	}
-
 	.dashicons-before {
 		height: 20px;
 		color: var(--color-masterbar-icon);
 	}
+	.dashicons-plus {
+		padding-top: 2px;
+	}
 
 	// The hover colors are supposed to be the same as those in wp-admin.
 	&:hover {
+		svg path,
+		.gridicon {
+			fill: var(--color-masterbar-highlight);
+		}
+
 		.masterbar__item-subitems {
 			display: block;
 			z-index: 99999;
@@ -399,16 +407,6 @@ body.is-mobile-app-view {
 			}
 			.dashicons-before {
 				color: var(--color-masterbar-highlight);
-			}
-		}
-	}
-	// Reader icon is only available on Default interface sites, so we apply the Calypso color for consistency.
-	// https://github.com/Automattic/wp-calypso/pull/90136#issuecomment-2089512298
-	&.masterbar__reader:hover {
-		@include breakpoint-deprecated( ">480px" ) {
-			color: var(--color-masterbar-text);
-			.masterbar__item-content {
-				color: var(--color-masterbar-text);
 			}
 		}
 	}
@@ -457,20 +455,66 @@ body.is-mobile-app-view {
 		}
 	}
 
-	&.masterbar__item-help {
-		cursor: pointer;
-		flex: 0;
-	}
-
 	.is-support-session &.is-active {
 		background: var(--studio-orange-70);
 	}
 
 	@media only screen and (max-width: 782px) {
 		font-size: $masterbar-mobile-font-size;
+		width: 52px;
+		padding: 0;
+
+		// Show gravatar content
+		&:not(.masterbar__item-howdy) .masterbar__item-content {
+			display: none;
+		}
+
+		.masterbar__item-howdy-howdy {
+			display: none;
+		}
+
+		svg,
+		svg path,
+		.gridicon {
+			height: 32px;
+			width: 32px;
+		}
+
+		.dashicons-plus {
+			padding-top: 0;
+			&::before {
+				font-size: 38px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			}
+		}
+
+		.dashicons-menu-alt {
+			padding-top: 0;
+			&::before {
+				top: 0;
+				font-size: unset;
+			}
+		}
+
+		.dashicons-before {
+			height: unset;
+			&::before {
+				width: 52px;
+				display: inline-block;
+				position: relative;
+				font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				text-align: center;
+				top: 7px;
+				height: unset;
+			}
+
+			&:hover {
+				color: var(--color-masterbar-highlight);
+			}
+		}
 	}
 
-	@include breakpoint-deprecated( "<480px" ) {
+
+	@media only screen and (max-width: 480px) {
 		width: 48px;
 		// reset flex value on mobile
 		flex: 0 1 auto;
@@ -479,9 +523,16 @@ body.is-mobile-app-view {
 		.masterbar__item-content {
 			display: none;
 		}
+
 		&.masterbar__item--always-show-content .masterbar__item-content,
 		&.masterbar__item-me .masterbar__item-content {
 			display: block;
+		}
+
+		&.masterbar__item-my-site,
+		&.masterbar__item-my-site-actions,
+		&.masterbar-cart-button {
+			display: none;
 		}
 	}
 
@@ -499,115 +550,26 @@ body.is-mobile-app-view {
 		}
 	}
 
-	// layout/mb overrides
-	&.mb {
-		// Override the reader override
-		&.masterbar__reader:hover {
-			@include breakpoint-deprecated( ">480px" ) {
-				color: var(--color-masterbar-highlight);
-				.masterbar__item-content {
-					color: var(--color-masterbar-highlight);
-				}
-			}
-		}
 
-		&.masterbar__item-my-sites {
-			padding: 0 6px; // trying to match core's 35px width
-			.gridicon {
-				width: 24px;
-				height: 24px;
-				@media only screen and (max-width: 782px) {
-					width: 32px;
-					height: 32px;
-				}
-			}
-		}
-
-		.gridicon,
-		svg {
-			width: 20px;
-			height: 20px;
-		}
-
-		.dashicons-plus {
-			padding-top: 2px;
-		}
-
-		&:hover {
-			svg path,
-			.gridicon {
-				fill: var(--color-masterbar-highlight);
-			}
-		}
-
-		&.masterbar__item-notifications {
-			margin-right: 0;
-		}
-
-		&.masterbar__item-help {
-			flex: unset;
-		}
-
-		@media only screen and (max-width: 782px) {
-			width: 52px;
-			padding: 0;
-
-			// Show gravatar content
-			&:not(.masterbar__item-howdy) .masterbar__item-content {
-				display: none;
-			}
-
-			.masterbar__item-howdy-howdy {
-				display: none;
-			}
-
-			svg,
-			svg path,
-			.gridicon {
-				height: 32px;
+	&.masterbar__item-my-sites {
+		padding: 0 6px; // trying to match core's 35px width
+		.gridicon {
+			width: 24px;
+			height: 24px;
+			@media only screen and (max-width: 782px) {
 				width: 32px;
-			}
-
-			.dashicons-plus {
-				padding-top: 0;
-				&::before {
-					font-size: 38px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
-				}
-			}
-
-			.dashicons-menu-alt {
-				padding-top: 0;
-				&::before {
-					top: 0;
-					font-size: unset;
-				}
-			}
-
-			.dashicons-before {
-				height: unset;
-				&::before {
-					width: 52px;
-					display: inline-block;
-					position: relative;
-					font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-					text-align: center;
-					top: 7px;
-					height: unset;
-				}
-
-				&:hover {
-					color: var(--color-masterbar-highlight);
-				}
+				height: 32px;
 			}
 		}
+	}
 
-		@media only screen and (max-width: 480px) {
-			&.masterbar__item-my-site,
-			&.masterbar__item-my-site-actions,
-			&.masterbar-cart-button {
-				display: none;
-			}
-		}
+	&.masterbar__item-notifications {
+		margin-right: 0;
+	}
+
+	&.masterbar__item-help {
+		cursor: pointer;
+		// todo may need flex: unset
 	}
 }
 
