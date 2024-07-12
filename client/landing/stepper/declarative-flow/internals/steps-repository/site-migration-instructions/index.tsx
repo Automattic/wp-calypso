@@ -1,3 +1,4 @@
+import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import React, { useEffect } from 'react';
@@ -13,13 +14,20 @@ import { Questions } from './questions';
 import { Sidebar } from './sidebar';
 import { SitePreview } from './site-preview';
 import { Steps } from './steps';
+import { useSteps } from './steps/use-steps';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteMigrationInstructions: Step = function () {
+const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	const site = useSite();
 	const siteId = site?.ID;
 	const { deleteMigrationSticker } = useMigrationStickerMutation();
+
+	useEffect( () => {
+		if ( siteId ) {
+			deleteMigrationSticker( siteId );
+		}
+	}, [ deleteMigrationSticker, siteId ] );
 
 	const queryParams = useQuery();
 	const importSiteQueryParam = queryParams.get( 'from' ) ?? '';
@@ -28,9 +36,24 @@ const SiteMigrationInstructions: Step = function () {
 
 	const { detailedStatus } = usePrepareSiteForMigration( siteId );
 
+	const onComplete = () => {
+		navigation.submit?.( { destination: 'migration-started' } );
+	};
+
+	const { steps, completedSteps } = useSteps( { fromUrl: importSiteQueryParam, onComplete } );
+
 	const sidebar = (
-		<Sidebar>
-			<Steps fromUrl={ importSiteQueryParam } />
+		<Sidebar
+			progress={
+				<CircularProgressBar
+					size={ 40 }
+					enableDesktopScaling
+					numberOfSteps={ steps.length }
+					currentStep={ completedSteps }
+				/>
+			}
+		>
+			<Steps steps={ steps } />
 			<Provisioning status={ detailedStatus } />
 		</Sidebar>
 	);
@@ -42,12 +65,6 @@ const SiteMigrationInstructions: Step = function () {
 			<SitePreview />
 		</LaunchpadContainer>
 	);
-
-	useEffect( () => {
-		if ( siteId ) {
-			deleteMigrationSticker( siteId );
-		}
-	}, [ deleteMigrationSticker, siteId ] );
 
 	const questions = <Questions />;
 

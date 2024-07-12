@@ -1,5 +1,6 @@
 import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Task, Expandable } from '@automattic/launchpad';
 
@@ -24,21 +25,39 @@ const recordInstructionsLinkClick = ( linkname: string ) => {
 	} );
 };
 
-interface Options {
+interface StepsDataOptions {
 	fromUrl: string;
+}
+
+interface StepData {
+	title: string;
+	content: JSX.Element;
+}
+
+type StepsData = StepData[];
+
+interface StepsOptions {
+	fromUrl: string;
+	onComplete: () => void;
 }
 
 interface Step {
 	task: Task;
 	expandable?: Expandable;
+	onClick?: () => void;
 }
 
-type Steps = Step[];
+export type Steps = Step[];
 
-export const useSteps = ( { fromUrl }: Options ): Steps => {
+interface StepsObject {
+	steps: Steps;
+	completedSteps: number;
+}
+
+const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
 
-	const steps = [
+	return [
 		{
 			title: translate( 'Install the Migrate Guru plugin' ),
 			content: (
@@ -51,6 +70,8 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 								a: (
 									<ExternalLink
 										href={ getPluginInstallationPage( fromUrl ) }
+										icon
+										iconSize={ 14 }
 										target="_blank"
 										onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
 									/>
@@ -74,6 +95,8 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 									a: fromUrl ? (
 										<ExternalLink
 											href={ getMigrateGuruPageURL( fromUrl ) }
+											icon
+											iconSize={ 14 }
 											target="_blank"
 											onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
 										/>
@@ -123,23 +146,58 @@ export const useSteps = ( { fromUrl }: Options ): Steps => {
 			),
 		},
 	];
+};
 
-	return steps.map( ( step, index ) => {
+export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): StepsObject => {
+	const translate = useTranslate();
+	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
+	const stepsData = useStepsData( { fromUrl } );
+
+	const steps: Steps = stepsData.map( ( step, index, array ) => {
+		const onActionClick = () => {
+			setCurrentStep( index + 1 );
+
+			// When completing a step that wasn't completed yet.
+			if ( lastCompleteStep < index ) {
+				setLastCompleteStep( index );
+			}
+
+			// When clicking on the last step.
+			if ( index === array.length - 1 ) {
+				onComplete();
+			}
+		};
+
+		// Allow clicking on visited steps only, so users can see the previous steps again.
+		const onItemClick =
+			index > lastCompleteStep + 1 || index === currentStep
+				? undefined
+				: () => {
+						setCurrentStep( index );
+				  };
+
 		return {
 			task: {
 				id: step.title,
 				title: step.title,
-				completed: false,
+				completed: lastCompleteStep >= index,
 				disabled: false,
 			},
 			expandable: {
 				content: step.content,
-				isOpen: true,
+				isOpen: currentStep === index,
 				action: {
-					label: index === steps.length - 1 ? translate( 'Done' ) : translate( 'Next' ),
-					onClick: () => {},
+					label: index === array.length - 1 ? translate( 'Done' ) : translate( 'Next' ),
+					onClick: onActionClick,
 				},
 			},
+			onClick: onItemClick,
 		};
 	} );
+
+	return {
+		steps,
+		completedSteps: lastCompleteStep + 1,
+	};
 };
