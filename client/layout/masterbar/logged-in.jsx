@@ -251,6 +251,7 @@ class MasterbarLoggedIn extends Component {
 	 */
 	renderSidebarMobileMenu() {
 		const { translate } = this.props;
+
 		return (
 			<Item
 				tipTarget="Menu"
@@ -268,15 +269,10 @@ class MasterbarLoggedIn extends Component {
 		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
 		const { isMenuOpen } = this.state;
 
-		let mySitesUrl = domainOnlySite
+		const mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
 			: '/sites';
-		let icon = this.wordpressIcon();
-
-		if ( this.state.isMobile && this.props.isInEditor ) {
-			mySitesUrl = `/home/${ siteSlug }`;
-			icon = 'chevron-left';
-		}
+		const icon = this.wordpressIcon();
 
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
 			// we are the /sites page but there is no site. Disable the home link
@@ -736,49 +732,64 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderBackHomeButton() {
+		const { siteSlug, translate } = this.props;
+
+		return (
+			<Item
+				className="masterbar__item-back"
+				icon="chevron-left"
+				tooltip={ translate( 'Back' ) }
+				url={ `/home/${ siteSlug }` }
+			/>
+		);
+	}
+
 	render() {
 		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
 			this.props;
-		const { isMobile } = this.state;
+		const { isMobile, isResponsiveMenu } = this.state;
 
+		// Checkout flow uses it's own version of the masterbar
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return this.renderCheckout();
 		}
 
-		if ( isMobile && isInEditor && loadHelpCenterIcon ) {
+		// Editor specific masterbar, only shows back to home button and help center as these are hidden on mobile views
+		// from the desktop version of the editor.
+		// The desktop version of the editor has no masterbar at all so we only do this for mobile.
+		if ( isInEditor && ( isMobile || isResponsiveMenu ) ) {
 			return (
 				<Masterbar>
 					<div className="masterbar__section masterbar__section--left">
-						{ this.renderMySites() }
+						{ this.renderBackHomeButton() }
 					</div>
 					<div className="masterbar__section masterbar__section--right">
-						{ this.renderCart() }
-						{ this.renderNotifications() }
+						{ loadHelpCenterIcon && this.renderHelpCenter() }
 					</div>
 				</Masterbar>
 			);
 		}
+
 		return (
-			<>
-				<Masterbar>
-					<div className="masterbar__section masterbar__section--left">
-						{ this.renderSidebarMobileMenu() }
-						{ this.renderMySites() }
-						{ this.renderReader( ! isMobile ) }
-						{ this.renderSiteMenu() }
-						{ this.renderSiteActionMenu() }
-						{ this.renderLanguageSwitcher() }
-						{ this.renderSearch() }
-					</div>
-					<div className="masterbar__section masterbar__section--right">
-						{ this.renderCart() }
-						{ this.renderLaunchpadNavigator() }
-						{ loadHelpCenterIcon && this.renderHelpCenter() }
-						{ this.renderNotifications() }
-						{ this.renderProfileMenu() }
-					</div>
-				</Masterbar>
-			</>
+			<Masterbar>
+				<div className="masterbar__section masterbar__section--left">
+					{ this.renderSidebarMobileMenu() }
+					{ this.renderMySites() }
+					{ this.renderReader( ! isMobile ) }
+					{ this.renderSiteMenu() }
+					{ this.renderSiteActionMenu() }
+					{ this.renderLanguageSwitcher() }
+					{ this.renderSearch() }
+				</div>
+				<div className="masterbar__section masterbar__section--right">
+					{ this.renderCart() }
+					{ this.renderLaunchpadNavigator() }
+					{ loadHelpCenterIcon && this.renderHelpCenter() }
+					{ this.renderNotifications() }
+					{ this.renderProfileMenu() }
+				</div>
+			</Masterbar>
 		);
 	}
 }
