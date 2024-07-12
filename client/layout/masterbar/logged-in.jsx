@@ -470,7 +470,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				tipTarget="reader"
 				className="masterbar__reader"
-				url="/read"
+				url="/read/feeds"
 				icon="reader"
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader' ) }
