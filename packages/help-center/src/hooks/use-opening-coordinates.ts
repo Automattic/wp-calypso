@@ -2,6 +2,8 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useState, useEffect } from 'react';
 
 const AESTHETIC_OFFSET = 20;
+const DEFAULT_OFFSET = 45;
+const HELP_CENTER_WIDTH = 410;
 
 /**
  * This function calculates the position of the Help Center based on the last click event.
@@ -11,10 +13,10 @@ const AESTHETIC_OFFSET = 20;
 export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	const { innerWidth, innerHeight } = window;
 	const helpCenterHeight = Math.min( 800, innerHeight * 0.8 );
-	const helpCenterWidth = 410;
+	HELP_CENTER_WIDTH;
 
 	const defaultPosition = {
-		left: innerWidth - helpCenterWidth - AESTHETIC_OFFSET,
+		left: innerWidth - HELP_CENTER_WIDTH - AESTHETIC_OFFSET,
 		top: 100,
 		transformOrigin: 'center',
 	};
@@ -49,9 +51,9 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 		coords.transformOrigin = 'top';
 	}
 
-	if ( buttonLeftEdge + helpCenterWidth + AESTHETIC_OFFSET > innerWidth ) {
+	if ( buttonLeftEdge + HELP_CENTER_WIDTH + AESTHETIC_OFFSET > innerWidth ) {
 		// Align right edge of the help center with the right edge of the button
-		coords.left = buttonRightEdge - helpCenterWidth;
+		coords.left = buttonRightEdge - HELP_CENTER_WIDTH;
 		coords.transformOrigin += ' right';
 	} else {
 		// Align left edge of the help center with the left edge of the button
@@ -63,7 +65,7 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	if (
 		coords.top < 0 ||
 		coords.left < 0 ||
-		coords.left + helpCenterWidth > innerWidth ||
+		coords.left + HELP_CENTER_WIDTH > innerWidth ||
 		coords.top + helpCenterHeight > innerHeight
 	) {
 		return defaultPosition;
@@ -72,15 +74,28 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	return coords;
 };
 
-export function useOpeningCoordinates( disabled: boolean = false, isMinimized: boolean ) {
+export function useOpeningCoordinates(
+	isMinimized: boolean,
+	disabled: boolean = false,
+	useDefaultOpeningPosition = false
+) {
 	const isMobile = useMobileBreakpoint();
+	const { innerWidth } = window;
 
 	// Store the last click event to be used for the opening position
 	const [ openingCoordinates, setOpeningCoordinates ] = useState< {
 		top?: number;
 		left?: number;
 		transformOrigin?: string;
-	} >( {} );
+	} >(
+		useDefaultOpeningPosition
+			? {
+					top: 100,
+					left: innerWidth - HELP_CENTER_WIDTH - DEFAULT_OFFSET,
+					transformOrigin: 'top right',
+			  }
+			: {}
+	);
 
 	useEffect( () => {
 		function handler( event: MouseEvent ) {
