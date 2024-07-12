@@ -430,7 +430,7 @@ class MasterbarLoggedIn extends Component {
 		const profileActions = [
 			{
 				label: translate( 'Edit Profile' ),
-				url: isClassicView ? siteUrl + '/wp-admin/profile.php' : '/me',
+				url: isClassicView ? siteUrl + '/wp-admin/profile.php' : '/me/profile',
 			},
 			{
 				label: translate( 'My Account' ),
@@ -446,7 +446,7 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<Item
 				tipTarget="me"
-				url="/me"
+				url="/me/profile"
 				onClick={ this.clickMe }
 				isActive={ this.isActive( 'me' ) }
 				className="masterbar__item-howdy"
