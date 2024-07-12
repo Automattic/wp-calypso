@@ -40,7 +40,6 @@ class ThreatDescription extends PureComponent< Props > {
 					return translate( 'How will we fix it?' );
 				}
 				return translate( 'How to resolve or handle this detection?' );
-
 				break;
 
 			default:
@@ -58,7 +57,7 @@ class ThreatDescription extends PureComponent< Props > {
 		return (
 			<>
 				<p className="threat-description__section-text">
-					{ translate( 'Threat found in file:', {
+					{ translate( 'Threat found in a file:', {
 						comment: 'filename follows in separate line; e.g. "PHP.Injection.5 in: `post.php`"',
 					} ) }
 				</p>
