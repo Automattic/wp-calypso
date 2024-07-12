@@ -537,6 +537,10 @@ body.is-mobile-app-view {
 		&.masterbar-cart-button {
 			display: none;
 		}
+
+		&.masterbar__item-help {
+			width: 54px;
+		}
 	}
 
 	&:disabled {
