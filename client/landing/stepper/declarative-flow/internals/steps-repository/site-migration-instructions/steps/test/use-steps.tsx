@@ -7,6 +7,7 @@ import { useSteps } from '../use-steps';
 describe( 'useSteps', () => {
 	const baseStepsOptions = {
 		fromUrl: 'https://mytestsite.com',
+		migrationKey: '123',
 		onComplete: jest.fn(),
 	};
 
