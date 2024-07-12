@@ -75,7 +75,7 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#search` ) } />,
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#search-terms` ) } />,
 									},
 									context: 'Stats: Info box label when the Search module is empty',
 								}

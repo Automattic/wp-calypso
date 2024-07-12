@@ -15,8 +15,8 @@ import EmptyModuleCard from '../../../components/empty-module-card/empty-module-
 import { SUPPORT_URL } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
+import { StatsEmptyActionEmail } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
-import StatsEmptyActionEmail from '../shared/stats-empty-action-email';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
@@ -87,7 +87,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						<EmptyModuleCard
 							icon={ mail }
 							description={ translate(
-								'Learn about your {{link}}latest emails sent{{/link}} to better understand how they performed. Start sending!',
+								'Your {{link}}latest emails sent{{/link}} will display here to better understand how they performed. Start sending!',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
