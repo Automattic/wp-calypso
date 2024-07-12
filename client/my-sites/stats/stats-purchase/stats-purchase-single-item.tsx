@@ -257,10 +257,9 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		const queryFrom = isOdysseyStats ? '&from=jetpack-my-jetpack' : '';
 		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial` );
 
-		page( `/stats/purchase/${ siteSlug }?productType=commercial${ queryFrom }` );
+		page( `/stats/purchase/${ siteSlug }?productType=commercial&from=switch-from-personal` );
 	};
 
 	return (
@@ -408,7 +407,11 @@ function StatsCommercialFlowOptOutForm( {
 	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked` );
-		setTimeout( () => page( `/stats/purchase/${ siteSlug }?productType=personal` ), 250 );
+		setTimeout(
+			() =>
+				page( `/stats/purchase/${ siteSlug }?productType=personal&from=switch-from-commercial` ),
+			250
+		);
 	};
 
 	const handleRequestUpdateClick = () => {

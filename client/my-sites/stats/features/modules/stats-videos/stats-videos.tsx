@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { search } from '@wordpress/icons';
+import { video } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -15,10 +15,11 @@ import EmptyModuleCard from '../../../components/empty-module-card/empty-module-
 import { SUPPORT_URL } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
+import { StatsEmptyActionVideo } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
+const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
@@ -26,7 +27,7 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 }: StatsDefaultModuleProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsSearchTerms';
+	const statType = 'statsVideoPlays';
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
@@ -52,11 +53,11 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 			) }
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
 				<StatsModule
-					path="searchterms"
+					path="videoplays"
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
-					statType={ statType }
+					statType="statsVideoPlays"
 					showSummaryLink
 					className={ className }
 					skipQuery
@@ -65,21 +66,22 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) }
-					title={ translate( 'Search' ) }
+					title={ translate( 'Videos' ) }
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ search }
+							icon={ video }
 							description={ translate(
-								'Learn about {{link}}popular terms{{/link}} visitors use to find your site content on search engines.',
+								'Your {{link}}most popular videos{{/link}} will display here to better understand how they performed. Start uploading!',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#search-terms` ) } />,
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />,
 									},
-									context: 'Stats: Info box label when the Search module is empty',
+									context: 'Stats: Info box label when the Videos module is empty',
 								}
 							) }
+							cards={ <StatsEmptyActionVideo from="module_videos" /> }
 						/>
 					}
 				/>
@@ -88,4 +90,4 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 	);
 };
 
-export default StatSearch;
+export default StatsVideos;

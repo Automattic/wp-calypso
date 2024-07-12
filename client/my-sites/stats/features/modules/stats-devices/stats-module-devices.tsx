@@ -174,7 +174,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 									<EmptyModuleCard
 										icon={ mobile }
 										description={ translate(
-											'Stats on visitors and {{link}}their viewing device{{/link}} will appear here.',
+											'The {{link}}devices and browsers{{/link}} your visitors use to access your site will display here.',
 											{
 												comment: '{{link}} links to support documentation.',
 												components: {

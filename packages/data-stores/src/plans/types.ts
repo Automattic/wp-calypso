@@ -7,7 +7,13 @@ import type { PlanSlug as PlanSlugFromProducts } from '@automattic/calypso-produ
 export type StorePlanSlug = ( typeof plansProductSlugs )[ number ];
 export type PlanSlug = ( typeof plansSlugs )[ number ];
 
-// at the moment possible plan paths are identical with plan slugs
+/**
+ * at the moment possible plan paths are identical with plan slugs
+ *
+ * Update 2024/07/10:
+ *   - it looks like the above is no longer the reality
+ *   - the type should either be removed (widened to string) or compiled to a list of all possible paths
+ */
 export type PlanPath = PlanSlug;
 
 export type PlanBillingPeriod = 'MONTHLY' | 'ANNUALLY';
@@ -51,7 +57,7 @@ export interface PlanProduct {
 	storeSlug: StorePlanSlug;
 	annualDiscount?: number;
 	periodAgnosticSlug: PlanSlug;
-	pathSlug?: PlanPath;
+	pathSlug?: string;
 	/**
 	 * Useful for two cases:
 	 * 1) to show how much we bill the users for annual plans ($8/mo billed $96)
@@ -163,6 +169,7 @@ export interface PlanNext {
 	pricing: PlanPricing;
 	/* END: Same SitePlan/PlanNext props */
 	productNameShort: string;
+	pathSlug?: string;
 }
 
 export interface PricedAPIPlanIntroductoryOffer {
@@ -216,7 +223,7 @@ export interface PricedAPISitePlanPricing
 export interface PricedAPIPlan extends PricedAPIPlanPricing, PricedAPIPlanIntroductoryOffer {
 	product_id: number;
 	product_name: string;
-	path_slug?: PlanPath;
+	path_slug?: string;
 	product_slug: StorePlanSlug;
 	product_name_short: string;
 	product_type?: string;
@@ -270,7 +277,7 @@ export interface PricedAPIPlanFree extends PricedAPIPlan {
 	raw_price_integer: 0;
 }
 export interface PricedAPIPlanPaidAnnually extends PricedAPIPlan {
-	path_slug: PlanPath;
+	path_slug: string;
 	bill_period: 365;
 }
 export interface PricedAPIPlanPaidMonthly extends PricedAPIPlan {

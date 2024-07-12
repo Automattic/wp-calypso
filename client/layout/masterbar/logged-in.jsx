@@ -312,18 +312,20 @@ class MasterbarLoggedIn extends Component {
 		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
-		const homeUrl = this.getHomeUrl();
-
 		let mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
-			: homeUrl;
-
-		const icon =
-			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
+			: '/sites';
+		let icon = this.wordpressIcon();
 
 		if ( 'sites' === section && isResponsiveMenu ) {
 			mySitesUrl = '';
 		}
+
+		if ( this.state.isMobile && this.props.isInEditor ) {
+			mySitesUrl = this.getHomeUrl();
+			icon = 'chevron-left';
+		}
+
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
 			// we are the /sites page but there is no site. Disable the home link
 			return <Item icon={ icon } disabled />;
@@ -335,7 +337,7 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="my-sites"
 				icon={ icon }
 				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
+				isActive={ this.isActive( 'sites-dashboard' ) && ! isMenuOpen }
 				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
 			/>

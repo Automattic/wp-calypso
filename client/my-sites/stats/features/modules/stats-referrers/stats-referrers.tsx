@@ -74,7 +74,7 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 						<EmptyModuleCard
 							icon={ megaphone }
 							description={ translate(
-								"We'll show you which websites are {{link}}referring visitors{{/link}} to your site.",
+								"We'll show you which websites are {{link}}referring visitors{{/link}} to your site so you can discover where your audience comes from. Start sharing!",
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
