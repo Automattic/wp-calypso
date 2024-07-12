@@ -97,7 +97,7 @@ export function importerList( context, next ) {
 	next();
 }
 
-export function importNewsletterSite( context, next ) {
+export function importSubstackSite( context, next ) {
 	if ( ! config.isEnabled( 'importers/newsletter' ) ) {
 		page.redirect( '/import' );
 		return;
