@@ -477,12 +477,12 @@ export default connect(
 			isDomainUpsell:
 				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
 				!! getCurrentQueryArguments( state )?.domain,
-			isSiteOnFreePlan: !! site && site.plan && isFreePlanProduct( site.plan ),
-			isEcommerceSite: siteId
-				? isSiteOnECommerceTrial( state, siteId ) ||
+			isSiteOnFreePlan: !! site && !! site.plan && isFreePlanProduct( site.plan ),
+			isEcommerceSite: !! siteId && (
+				isSiteOnECommerceTrial( state, siteId ) ||
 				  isSiteOnWooExpress( state, siteId ) ||
 				  isSiteOnEcommerce( state, siteId )
-				: false,
+			),
 			isFromMyHome: getCurrentQueryArguments( state )?.from === 'my-home',
 			preferredView: getSiteOption( state, siteId, 'wpcom_admin_interface' ),
 			wpAdminUrl: getSiteAdminUrl( state, siteId ),
