@@ -146,11 +146,17 @@ const StatsModuleUTM = ( {
 									<EmptyModuleCard
 										icon={ trendingUp }
 										description={ translate(
-											'If you use UTM codes, your {{link}}campaign performance data{{/link}} will show here.',
+											'Your {{link}}campaign UTM performance data{{/link}} will display here once readers click on your URLs with UTM codes. Get started!',
 											{
 												comment: '{{link}} links to support documentation.',
 												components: {
-													link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#utm-stats` ) } />,
+													link: (
+														<a
+															href={ localizeUrl(
+																`${ JETPACK_SUPPORT_URL }#harnessing-utm-stats-for-precision-tracking`
+															) }
+														/>
+													),
 												},
 												context: 'Stats: Info box label when the UTM module is empty',
 											}

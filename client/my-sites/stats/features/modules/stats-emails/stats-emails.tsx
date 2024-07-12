@@ -87,7 +87,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						<EmptyModuleCard
 							icon={ mail }
 							description={ translate(
-								'Learn about your {{link}}latest emails sent{{/link}} to better understand how they performed. Start sending!',
+								'Your {{link}}latest emails sent{{/link}} will display here to better understand how they performed. Start sending!',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {

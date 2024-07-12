@@ -72,7 +72,7 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 						<EmptyModuleCard
 							icon={ video }
 							description={ translate(
-								'Learn about your {{link}}most popular videos{{/link}} to better understand how they performed. Start uploading!',
+								'Your {{link}}most popular videos{{/link}} will display here to better understand how they performed. Start uploading!',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
