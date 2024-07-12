@@ -50,7 +50,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 	const nodeRef = useRef< HTMLDivElement >( null );
 
-	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
+	const { setIsMinimized, setShowHelpCenter, setInitialRoute } = useDispatch( HELP_CENTER_STORE );
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
@@ -87,6 +87,18 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	const shouldCloseOnEscapeRef = useRef( false );
 
 	shouldCloseOnEscapeRef.current = !! show && ! hidden && ! isMinimized;
+
+	const shouldOpenWapuu = new URLSearchParams( window.location.search ).has( 'wapuu' );
+	useEffect( () => {
+		if ( shouldOpenWapuu && setShowHelpCenter && setInitialRoute ) {
+			setShowHelpCenter( true );
+			setInitialRoute( '/odie' );
+			// Remove the wapuu query param from the URL
+			const url = new URL( window.location.href );
+			url.searchParams.delete( 'wapuu' );
+			window.history.replaceState( null, '', url.toString() );
+		}
+	}, [ shouldOpenWapuu, setShowHelpCenter, setInitialRoute ] );
 
 	useEffect( () => {
 		const handleKeydown = ( e: KeyboardEvent ) => {
