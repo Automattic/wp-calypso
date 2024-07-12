@@ -140,9 +140,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 
 	handleAddTransfer = async ( domain: string ) => {
 		try {
-			await this.props.shoppingCartManager.addProductsToCart( [
-				domainTransfer( { domain, extra: {} } ),
-			] );
+			await this.props.shoppingCartManager.addProductsToCart( [ domainTransfer( { domain } ) ] );
 		} catch {
 			// Nothing needs to be done here. CartMessages will display the error to the user.
 			return;
