@@ -151,11 +151,6 @@ class MasterbarLoggedIn extends Component {
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
 
-		if ( config.isEnabled( 'layout/mb' ) || this.props.isMobileGlobalNavVisible ) {
-			// Fall through to navigate to /sites
-			return;
-		}
-
 		this.handleLayoutFocus( 'sites' );
 		this.props.activateNextLayoutFocus();
 
