@@ -1004,6 +1004,13 @@ body.is-mobile-app-view {
 .masterbar-notifications {
 	svg {
 		overflow: overlay;
+		width: 24px;
+		height: 24px;
+
+		@media only screen and (max-width: 782px) {
+			width: 32px;
+			height: 32px;
+		}
 	}
 
 	.notifications-bell-icon__bubble {
