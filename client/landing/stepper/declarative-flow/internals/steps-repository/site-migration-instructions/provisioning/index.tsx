@@ -34,9 +34,7 @@ export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
 		return;
 	}
 
-	let text: ReactNode = translate(
-		"Meanwhile, we're preparing everything to ensure your site is ready."
-	);
+	let text: ReactNode = translate( "We're preparing everything to ensure your new site is ready." );
 	let icon = <Spinner />;
 
 	// Error handler.
