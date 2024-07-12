@@ -206,7 +206,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 				<button
 					{ ...attributes }
 					ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }
-					onTouchEnd={ this.toggleMenuByTouch }
+					onTouchEnd={ this.props.subItems && this.toggleMenuByTouch }
 				>
 					{ this.renderChildren() }
 					{ this.renderSubItems() }
