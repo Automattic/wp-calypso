@@ -15,7 +15,7 @@ export const Questions: FC = () => {
 			<ExternalLink
 				href="https://wordpress.com/help/contact/"
 				icon
-				iconSize="12"
+				iconSize={ 12 }
 				target="_blank"
 				onClick={ () => {
 					recordTracksEvent(
