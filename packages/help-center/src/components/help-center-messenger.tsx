@@ -23,7 +23,7 @@ export function HelpCenterMessenger(): JSX.Element {
 			<div className="help-center__container-odie-header">
 				<BackButton className="help-center__container-odie-back-button" />
 			</div>
-			<div id="messenger-container"></div>
+			<div style={ { width: '100%', height: '100%' } } id="messenger-container"></div>
 		</div>
 	);
 }
