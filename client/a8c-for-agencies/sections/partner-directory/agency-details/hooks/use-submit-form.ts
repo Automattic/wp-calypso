@@ -19,7 +19,10 @@ const getImageFile = async ( agencyId: number, blobURL: string ) => {
 
 export default function useSubmitForm( { formData, onSubmitSuccess, onSubmitError }: Props ) {
 	const agencyId = useSelector( getActiveAgencyId );
-	const addMedia = useAddMedia();
+	const addMedia = useAddMedia( {
+		apiNamespace: 'wpcom/v2',
+		apiPath: `/agency/${ agencyId }/profile/logo`,
+	} );
 
 	const [ isUploadingImage, setIsUploadingImage ] = useState( false );
 
