@@ -478,11 +478,11 @@ export default connect(
 				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
 				!! getCurrentQueryArguments( state )?.domain,
 			isSiteOnFreePlan: !! site && !! site.plan && isFreePlanProduct( site.plan ),
-			isEcommerceSite: !! siteId && (
-				isSiteOnECommerceTrial( state, siteId ) ||
-				  isSiteOnWooExpress( state, siteId ) ||
-				  isSiteOnEcommerce( state, siteId )
-			),
+			isEcommerceSite:
+				!! siteId &&
+				( isSiteOnECommerceTrial( state, siteId ) ||
+					isSiteOnWooExpress( state, siteId ) ||
+					isSiteOnEcommerce( state, siteId ) ),
 			isFromMyHome: getCurrentQueryArguments( state )?.from === 'my-home',
 			preferredView: getSiteOption( state, siteId, 'wpcom_admin_interface' ),
 			wpAdminUrl: getSiteAdminUrl( state, siteId ),
