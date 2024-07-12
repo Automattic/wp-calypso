@@ -26,7 +26,6 @@ type TableProps = {
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
-	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
 	showRefundPeriod?: boolean;
@@ -47,7 +46,6 @@ const Table = ( {
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	renderedGridPlans,
 	selectedFeature,
 	showRefundPeriod,
@@ -111,7 +109,6 @@ const Table = ( {
 					<PlanPrice
 						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
-						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						currentSitePlanSlug={ currentSitePlanSlug }
 					/>
 				</tr>

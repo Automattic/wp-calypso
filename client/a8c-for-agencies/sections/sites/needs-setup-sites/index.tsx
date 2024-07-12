@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
@@ -20,7 +21,7 @@ import ClientSite from './client-site';
 import { AvailablePlans } from './plan-field';
 import PurchaseConfirmationMessage from './purchase-confirmation-message';
 import SiteConfigurationsModal from './site-configurations-modal';
-import { useRandomSiteName } from './site-configurations-modal/use-site-name';
+import { useRandomSiteName } from './site-configurations-modal/use-random-site-name';
 import NeedSetupTable from './table';
 import type { ReferralAPIResponse } from '../../referrals/types';
 
@@ -39,16 +40,14 @@ type NeedsSetupSite = {
 	id: number;
 };
 
-const isA4aSiteCreationConfigurationsEnabled = config.isEnabled(
-	'a4a-site-creation-configurations'
-);
-
 export default function NeedSetup( { licenseKey }: Props ) {
 	const { randomSiteName, isRandomSiteNameLoading } = useRandomSiteName();
 	const translate = useTranslate();
-	const [ displaySiteConfigurationModal, setDisplaySiteConfigurationModal ] = useState( false );
+	const [ currentSiteConfigurationId, setCurrentSiteConfigurationId ] = useState< number | null >(
+		null
+	);
 
-	const toggleModal = () => setDisplaySiteConfigurationModal( ! displaySiteConfigurationModal );
+	const closeModal = () => setCurrentSiteConfigurationId( null );
 
 	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
 
@@ -136,19 +135,20 @@ export default function NeedSetup( { licenseKey }: Props ) {
 				features.wpcom_atomic.state === 'provisioning' && !! features.wpcom_atomic.license_key
 		);
 
-	const onCreateSite = useCallback(
+	const onCreateSiteSuccess = useCallback(
 		( id: number ) => {
-			createWPCOMSite(
-				{ id },
-				{
-					onSuccess: () => {
-						refetchPendingSites();
-						page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
-					},
-				}
-			);
+			refetchPendingSites();
+			page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
 		},
-		[ createWPCOMSite, refetchPendingSites ]
+		[ refetchPendingSites ]
+	);
+
+	const onCreateSiteWithConfig = useCallback(
+		( id: number ) => {
+			recordTracksEvent( 'calypso_a4a_create_site_config' );
+			setCurrentSiteConfigurationId( id );
+		},
+		[ setCurrentSiteConfigurationId ]
 	);
 
 	const onMigrateSite = useCallback(
@@ -189,18 +189,20 @@ export default function NeedSetup( { licenseKey }: Props ) {
 						</Actions>
 					</LayoutHeader>
 				</LayoutTop>
-				{ displaySiteConfigurationModal && (
+				{ currentSiteConfigurationId && (
 					<SiteConfigurationsModal
-						toggleModal={ toggleModal }
+						closeModal={ closeModal }
 						randomSiteName={ randomSiteName }
 						isRandomSiteNameLoading={ isRandomSiteNameLoading }
+						siteId={ currentSiteConfigurationId }
+						onCreateSiteSuccess={ onCreateSiteSuccess }
 					/>
 				) }
 				<NeedSetupTable
 					availablePlans={ availablePlans }
 					isLoading={ isFetching }
 					provisioning={ isProvisioning }
-					onCreateSite={ isA4aSiteCreationConfigurationsEnabled ? toggleModal : onCreateSite }
+					onCreateSite={ onCreateSiteWithConfig }
 					onMigrateSite={ onMigrateSite }
 				/>
 			</LayoutColumn>

@@ -52,7 +52,6 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { useExperiment } from 'calypso/lib/explat';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { shouldForceDefaultPlansBasedOnIntent } from 'calypso/my-sites/plans-features-main/components/utils/utils';
@@ -75,7 +74,6 @@ import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
-import { usePlanUpgradeCreditsApplicable } from './hooks/use-plan-upgrade-credits-applicable';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -250,6 +248,10 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
+		if ( ! showPlansComparisonGrid ) {
+			recordTracksEvent( 'calypso_signup_onboarding_plans_compare_all' );
+		}
+
 		setShowPlansComparisonGrid( ! showPlansComparisonGrid );
 	};
 
@@ -612,11 +614,9 @@ const PlansFeaturesMain = ( {
 	const comparisonGridContainerClasses = clsx( 'plans-features-main__comparison-grid-container', {
 		'is-hidden': ! showPlansComparisonGrid,
 	} );
-	const [ isExperimentLoading ] = useExperiment(
-		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
-	);
+
 	const isLoadingGridPlans = Boolean(
-		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid || isExperimentLoading
+		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid
 	);
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
@@ -626,10 +626,6 @@ const PlansFeaturesMain = ( {
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
 		? stickyPlanTypeSelectorHeight + masterbarHeight
 		: masterbarHeight;
-	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable(
-		siteId,
-		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
-	);
 
 	const {
 		primary: { callback: onFreePlanCTAClick },
@@ -762,7 +758,6 @@ const PlansFeaturesMain = ( {
 										isInSignup={ isInSignup }
 										onStorageAddOnClick={ handleStorageAddOnClick }
 										paidDomainName={ paidDomainName }
-										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 										recordTracksEvent={ recordTracksEvent }
 										selectedFeature={ selectedFeature }
 										showLegacyStorageFeature={ showLegacyStorageFeature }
@@ -832,7 +827,6 @@ const PlansFeaturesMain = ( {
 															? { ...planTypeSelectorProps, plans: gridPlansForPlanTypeSelector }
 															: undefined
 													}
-													planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 													recordTracksEvent={ recordTracksEvent }
 													selectedFeature={ selectedFeature }
 													selectedPlan={ selectedPlan }

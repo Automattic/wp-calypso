@@ -288,19 +288,6 @@ function load_mailerlite() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_mailerlite' );
 
 /**
- * Load WPCOM block editor nav sidebar.
- */
-function load_wpcom_block_editor_sidebar() {
-	if (
-		( defined( 'WPCOM_BLOCK_EDITOR_SIDEBAR' ) && WPCOM_BLOCK_EDITOR_SIDEBAR ) ||
-		apply_filters( 'a8c_enable_nav_sidebar', false )
-	) {
-		require_once __DIR__ . '/wpcom-block-editor-nav-sidebar/class-wpcom-block-editor-nav-sidebar.php';
-	}
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
-
-/**
  * What's New section of the Tools menu.
  */
 function load_whats_new() {
@@ -323,43 +310,6 @@ function load_tags_education() {
 	require_once __DIR__ . '/tags-education/class-tags-education.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
-
-/**
- * Help center
- */
-function load_help_center() {
-	// Only load the help center if it hasn't been loaded already by Jetpack.
-	if ( class_exists( 'A8C\FSE\Help_Center' ) ) {
-		return;
-	}
-
-	// disable help center in P2s.
-	if (
-		defined( 'IS_WPCOM' )
-		&& IS_WPCOM
-		&& \WPForTeams\is_wpforteams_site( get_current_blog_id() )
-	) {
-		return false;
-	}
-
-	// disable help center if Jetpack isn't active.
-	if ( ! defined( 'IS_WPCOM' ) ) {
-		// Make sure the function have been loaded.
-		if ( ! function_exists( 'is_plugin_active' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		// This should still work if Jetpack is an mu-plugin.
-		// Since this isn't running in WPCOM this shouldn't matter.
-		if ( ! defined( 'JETPACK__VERSION' ) ) {
-			return false;
-		}
-	}
-
-	require_once __DIR__ . '/help-center/class-help-center.php';
-}
-
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_help_center', 100 );
 
 /**
  * Load paragraph block

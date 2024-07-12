@@ -6,6 +6,7 @@ import type { AppState, PlanSlug } from 'calypso/types';
 import 'calypso/state/plans/init';
 
 /**
+ * @deprecated use Plan data-store instead
  * Return WordPress plans getting from state object
  */
 export const getPlans = ( state: AppState ): PricedAPIPlan[] | undefined => {
@@ -13,6 +14,7 @@ export const getPlans = ( state: AppState ): PricedAPIPlan[] | undefined => {
 };
 
 /**
+ * @deprecated use Plan data-store instead
  * Return requesting state
  */
 export const isRequestingPlans = ( state: AppState ): boolean => {
@@ -20,6 +22,7 @@ export const isRequestingPlans = ( state: AppState ): boolean => {
 };
 
 /**
+ * @deprecated use Plan data-store instead
  * Returns a plan
  */
 export const getPlan = createSelector(
@@ -29,6 +32,7 @@ export const getPlan = createSelector(
 );
 
 /**
+ * @deprecated use Plan data-store instead
  * Returns a plan searched by its slug
  * @param  {Object} state      global state
  * @param  {string} planSlug the plan slug
@@ -40,6 +44,7 @@ export const getPlanBySlug = createSelector(
 );
 
 /**
+ * @deprecated use Plan data-store instead
  * Returns a plan product_slug. Useful for getting a cartItem for a plan.
  * @param  {Object}  state     global state
  * @param  {number}  productId the plan productId
@@ -52,6 +57,7 @@ export function getPlanSlug( state: AppState, productId: string | number ): stri
 }
 
 /**
+ * @deprecated use Plan data-store instead
  * Returns a plan bill_period. Useful for comparing plan billing periods
  * @param {Object} state global state
  * @param {PlanSlug} planSlug the plan slug

@@ -542,7 +542,7 @@
 				box-shadow: 0 0 0 1px var(--color-border-subtle), 0 1px 2px var(--color-border-subtle);
 				// Fix the weird box-shadow on the top when the action buttons are wrapped into the newline;
 				padding-top: 1px;
-				clip-path: inset(2px -1px -1px -1px);
+				clip-path: inset(2px 0 -1px 0);
 			}
 		}
 
@@ -1118,16 +1118,21 @@
 	}
 }
 
-/* See wp-calypso/client/layout/style.scss for the original style - this is removed on sites dashboard to enable pagination to display properly. */
-.layout__primary .preview-hidden {
-	@include breakpoint-deprecated( ">960px" ) {
-		padding-bottom: 0 !important;
+// Styles need to ensure they do not bleed into other areas of calypso once loaded.
+// If we only apply to layout__primary, etc., we will have bleed going from the dashboard to site level calypso.
+.is-global-sidebar-visible.is-group-sites-dashboard,
+.is-global-sidebar-visible.is-group-sites {
+	/* See wp-calypso/client/layout/style.scss for the original style - this is removed on sites dashboard to enable pagination to display properly. */
+	.layout__primary .preview-hidden {
+		@include breakpoint-deprecated( ">960px" ) {
+			padding-bottom: 0 !important;
+		}
 	}
-}
 
-.layout__content {
-	@include breakpoint-deprecated( "<960px" ) {
-		padding: 70px 24px 24px calc(var(--sidebar-width-min) + 1px);
+	.layout__content {
+		@include breakpoint-deprecated( "<960px" ) {
+			padding: 70px 24px 24px calc(var(--sidebar-width-min) + 1px);
+		}
 	}
 }
 

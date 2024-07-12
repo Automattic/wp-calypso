@@ -580,7 +580,7 @@ class MagicLogin extends Component {
 	};
 
 	renderGravPoweredSecondaryEmailOptions() {
-		const { oauth2Client, translate } = this.props;
+		const { oauth2Client, translate, query } = this.props;
 		const {
 			usernameOrEmail,
 			isNewAccount,
@@ -590,6 +590,8 @@ class MagicLogin extends Component {
 			hashedEmail,
 		} = this.state;
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
+		const isFromGravatar3rdPartyApp =
+			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party';
 
 		this.emailToSha256( usernameOrEmail ).then( ( email ) =>
 			this.setState( { hashedEmail: email } )
@@ -691,9 +693,11 @@ class MagicLogin extends Component {
 					{ translate( 'Continue' ) }
 				</FormButton>
 				<footer className="grav-powered-magic-login__footer">
-					<button onClick={ this.handleGravPoweredEmailSwitch }>
-						{ translate( 'Switch email' ) }
-					</button>
+					{ ! isFromGravatar3rdPartyApp && (
+						<button onClick={ this.handleGravPoweredEmailSwitch }>
+							{ translate( 'Switch email' ) }
+						</button>
+					) }
 					<a href="https://gravatar.com/support" target="_blank" rel="noreferrer">
 						{ translate( 'Need help logging in?' ) }
 					</a>
@@ -720,8 +724,8 @@ class MagicLogin extends Component {
 			verificationCodeInputValue,
 			resendEmailCountdown,
 		} = this.state;
-		const is3rdPartyApp =
-			isGravatarOAuth2Client( oauth2Client ) && query.gravatar_from === '3rd-party';
+		const isFromGravatar3rdPartyApp =
+			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party';
 		const isProcessingCode = isValidatingCode || isCodeValidated;
 		let errorText = translate( 'Something went wrong. Please try again.' );
 
@@ -796,7 +800,7 @@ class MagicLogin extends Component {
 				</form>
 				<footer
 					className={ clsx( 'grav-powered-magic-login__footer', {
-						'grav-powered-magic-login__footer--vertical': ! is3rdPartyApp,
+						'grav-powered-magic-login__footer--vertical': ! isFromGravatar3rdPartyApp,
 					} ) }
 				>
 					<button
@@ -816,7 +820,7 @@ class MagicLogin extends Component {
 									args: { countdown: resendEmailCountdown },
 							  } ) }
 					</button>
-					{ ! is3rdPartyApp && (
+					{ ! isFromGravatar3rdPartyApp && (
 						<button
 							onClick={ () => {
 								this.resetResendEmailCountdown();
@@ -919,6 +923,7 @@ class MagicLogin extends Component {
 		const { isRequestingEmail, requestEmailErrorMessage } = this.state;
 
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
+		const isFromGravatarSignup = isGravatar && query?.gravatar_from === 'signup';
 		const submitButtonLabel = isGravatar
 			? translate( 'Continue' )
 			: translate( 'Send me sign in link' );
@@ -926,14 +931,22 @@ class MagicLogin extends Component {
 			locale,
 			redirectTo: query?.redirect_to,
 			oauth2ClientId: query?.client_id,
+			gravatarFrom: query?.gravatar_from,
 		} );
 		let headerText = translate( 'Sign in with your email' );
+		let isEmailInputDisabled = isRequestingEmail;
 
 		if ( isGravatar ) {
-			headerText =
-				query?.gravatar_from === 'signup'
-					? translate( 'Create your Profile' )
-					: translate( 'Edit your Profile' );
+			const isFromSignup = query?.gravatar_from === 'signup';
+			const isFrom3rdPartyApp = query?.gravatar_from === '3rd-party';
+
+			headerText = isFromSignup
+				? translate( 'Create your Profile' )
+				: translate( 'Edit your Profile' );
+
+			if ( isFrom3rdPartyApp ) {
+				isEmailInputDisabled = true;
+			}
 		}
 
 		return (
@@ -954,7 +967,7 @@ class MagicLogin extends Component {
 						createAccountForNewUser
 						errorMessage={ requestEmailErrorMessage }
 						onErrorDismiss={ () => this.setState( { requestEmailErrorMessage: null } ) }
-						isEmailInputDisabled={ isRequestingEmail }
+						isEmailInputDisabled={ isEmailInputDisabled }
 						isEmailInputError={ !! requestEmailErrorMessage }
 						isSubmitButtonDisabled={ isRequestingEmail || !! requestEmailErrorMessage }
 						isSubmitButtonBusy={ isRequestingEmail }
@@ -1067,23 +1080,25 @@ class MagicLogin extends Component {
 					{ ! isGravatar && (
 						<hr className="grav-powered-magic-login__divider grav-powered-magic-login__divider--email-form" />
 					) }
-					<footer className="grav-powered-magic-login__footer grav-powered-magic-login__footer--email-form">
-						{ translate( '{{a}}Sign in another way{{/a}}', {
-							components: {
-								a: (
-									<a
-										href={ loginUrl }
-										onClick={ () =>
-											this.props.recordTracksEvent(
-												'calypso_gravatar_powered_magic_login_click_login_page_link',
-												{ client_id: oauth2Client.id, client_name: oauth2Client.name }
-											)
-										}
-									/>
-								),
-							},
-						} ) }
-					</footer>
+					{ ! isFromGravatarSignup && (
+						<footer className="grav-powered-magic-login__footer grav-powered-magic-login__footer--email-form">
+							{ translate( '{{a}}Sign in another way{{/a}}', {
+								components: {
+									a: (
+										<a
+											href={ loginUrl }
+											onClick={ () =>
+												this.props.recordTracksEvent(
+													'calypso_gravatar_powered_magic_login_click_login_page_link',
+													{ client_id: oauth2Client.id, client_name: oauth2Client.name }
+												)
+											}
+										/>
+									),
+								},
+							} ) }
+						</footer>
+					) }
 				</div>
 				{ ! isGravatar && (
 					<div className="grav-powered-magic-login__gravatar-info">

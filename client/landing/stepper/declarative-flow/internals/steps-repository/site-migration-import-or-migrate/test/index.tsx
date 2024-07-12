@@ -4,6 +4,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import SiteMigrationImportOrMigrate from '..';
@@ -17,6 +18,12 @@ const render = ( props?: Partial< StepProps > ) => {
 
 jest.mock( 'calypso/data/site-profiler/use-hosting-provider-url-details' );
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
+jest.mock( 'calypso/data/site-migration/use-migration-sticker' );
+
+( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
+	addMigrationSticker: jest.fn(),
+	deleteMigrationSticker: jest.fn(),
+} );
 
 ( useSite as jest.Mock ).mockReturnValue( {
 	plan: { features: { active: [ 'install-plugins' ] } },
@@ -79,7 +86,7 @@ describe( 'Site Migration Import or Migrate Step', () => {
 
 		const { container, queryByText } = render();
 
-		expect( container.querySelectorAll( '.onboarding-subtitle' ) ).toHaveLength( 1 );
+		expect( container.querySelectorAll( '.formatted-header__subtitle' ) ).toHaveLength( 1 );
 		expect( queryByText( /WP Engine/ ) ).toBeInTheDocument();
 	} );
 
@@ -111,5 +118,22 @@ describe( 'Site Migration Import or Migrate Step', () => {
 
 		expect( container.querySelectorAll( '.onboarding-subtitle' ) ).toHaveLength( 0 );
 		expect( queryByText( /unknown/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'calls the deleteMigrationSticker function to delete migration sticker when import button is clicked', async () => {
+		const deleteMigrationSticker = jest.fn();
+		( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
+			deleteMigrationSticker,
+		} );
+
+		( useSite as jest.Mock ).mockReturnValue( {
+			ID: 123,
+		} );
+
+		render();
+
+		await userEvent.click( screen.getByRole( 'heading', { name: /Import content only/ } ) );
+
+		expect( deleteMigrationSticker ).toHaveBeenCalledWith( 123 );
 	} );
 } );

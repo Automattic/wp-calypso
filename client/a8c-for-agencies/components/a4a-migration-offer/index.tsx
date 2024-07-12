@@ -22,7 +22,7 @@ const MigrationOfferHeader = ( { withIcon }: { withIcon?: boolean } ) => {
 const MigrationOfferBody = () => {
 	const translate = useTranslate();
 	const description = translate(
-		'Migrate your clients sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2024. You’ll also receive an additional $100 for each migrated site—up to $3,000 until July 31, 2024.'
+		"Migrate your clients' sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2025. You'll also receive an additional $100 for each migrated site—up to $3,000 until July 31, 2024."
 	);
 
 	return (

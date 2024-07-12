@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { ArticleContentProps } from '../types';
+import { getPostKey } from './use-support-article-alternates-query';
 
-function fetchForKey( postKey: { blogId: number; postId: number } ) {
+function fetchForKey( postKey: ReturnType< typeof getPostKey > ) {
 	return canAccessWpcomApis()
 		? wpcomRequest< ArticleContentProps >( {
 				path: `help/article/${ encodeURIComponent( postKey.blogId ) }/${ encodeURIComponent(
@@ -19,7 +20,7 @@ function fetchForKey( postKey: { blogId: number; postId: number } ) {
 		  } );
 }
 
-export function usePostByKey( postKey: { blogId: number; postId: number } | null ) {
+export function usePostByKey( postKey: ReturnType< typeof getPostKey > | null ) {
 	return useQuery( {
 		queryKey: [ 'support-status', postKey ],
 		queryFn: () => postKey && fetchForKey( postKey ),

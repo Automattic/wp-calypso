@@ -3,6 +3,7 @@ import { UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { RelatedPlugin } from 'calypso/data/marketplace/types';
@@ -44,6 +45,7 @@ export function RelatedPluginsPage( {
 
 	return (
 		<MainComponent wideLayout className="related-plugins-page">
+			<QueryProductsList />
 			<NavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 			<PluginsBrowserList
 				title={ translate( 'Related Plugins' ) }

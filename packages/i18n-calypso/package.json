@@ -20,7 +20,7 @@
 		"@automattic/interpolate-components": "workspace:^",
 		"@babel/runtime": "^7.24.5",
 		"@tannin/sprintf": "^1.1.0",
-		"@wordpress/compose": "^7.0.0",
+		"@wordpress/compose": "^7.2.0",
 		"debug": "^4.3.3",
 		"events": "^3.0.0",
 		"hash.js": "^1.1.5",

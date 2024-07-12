@@ -1,7 +1,7 @@
 import { link } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import EmptyStateAction from '../../../components/empty-state-action';
+import EmptyStateAction from 'calypso/my-sites/stats/components/empty-state-action';
 
 type StatsEmptyActionUTMBuilderProps = {
 	from: string;

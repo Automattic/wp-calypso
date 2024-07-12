@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
@@ -15,6 +15,7 @@ interface RnaActionCardProps {
 	onCtaButtonClick?: () => void;
 	ctaButtonURL?: string;
 	ctaButtonLabel: TranslateResult;
+	ctaButtonExternal?: boolean;
 	ctaTracksEvent?: string;
 	cardImage?: string;
 	cardImageAlt?: string;
@@ -22,6 +23,8 @@ interface RnaActionCardProps {
 	secondaryCtaURL?: string;
 	secondaryCtaLabel?: string;
 	secondaryCtaTracksEvent?: string;
+	secondaryCtaExternal?: boolean;
+	wrapperClass?: string;
 }
 
 const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
@@ -31,6 +34,7 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 	onCtaButtonClick,
 	ctaButtonURL,
 	ctaButtonLabel,
+	ctaButtonExternal,
 	ctaTracksEvent,
 	cardImage = DefaultImage,
 	cardImageAlt,
@@ -38,6 +42,8 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 	secondaryCtaURL,
 	secondaryCtaLabel,
 	secondaryCtaTracksEvent,
+	secondaryCtaExternal,
+	wrapperClass,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -56,7 +62,7 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 	};
 	return (
 		<div
-			className={ clsx( 'jetpack-rna-action-card', {
+			className={ clsx( wrapperClass, 'jetpack-rna-action-card', {
 				'is-placeholder': isPlaceholder,
 			} ) }
 			{ ...( ! isPlaceholder && {
@@ -79,13 +85,22 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 						onClick={ handleCtaButtonClick }
 						href={ ctaButtonURL ? ctaButtonURL : '#' }
 						disabled={ ! ctaButtonURL }
+						target={ ctaButtonExternal ? '_blank' : '_self' }
+						rel={ ctaButtonExternal ? 'noopener noreferrer' : '' }
 					>
 						{ ctaButtonLabel }
+						{ ctaButtonExternal && <Gridicon icon="external" size={ 16 } /> }
 					</Button>
 					{ secondaryCtaURL && (
 						<div className="jetpack-rna-action-card__secondary-cta">
-							<a href={ secondaryCtaURL } onClick={ handleSecondaryCtaButtonClick }>
+							<a
+								href={ secondaryCtaURL }
+								onClick={ handleSecondaryCtaButtonClick }
+								target={ secondaryCtaExternal ? '_blank' : '_self' }
+								rel={ secondaryCtaExternal ? 'noopener noreferrer' : '' }
+							>
 								{ secondaryCtaLabel }
+								{ secondaryCtaExternal && <Gridicon icon="external" size={ 16 } /> }
 							</a>
 						</div>
 					) }

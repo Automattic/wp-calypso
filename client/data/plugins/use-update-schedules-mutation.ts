@@ -1,8 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import type { ScheduleUpdates } from './use-update-schedules-query';
-import type { SiteSlug } from 'calypso/types';
+import type {
+	MultisiteSchedulesUpdatesResponse,
+	ScheduleUpdates,
+} from './use-update-schedules-query';
+import type { SiteId, SiteSlug } from 'calypso/types';
 
 export type CreateRequestParams = {
 	plugins: string[];
@@ -61,7 +64,11 @@ export function useCreateUpdateScheduleMutation( siteSlug: SiteSlug, queryOption
 	return { createUpdateSchedule, ...mutation };
 }
 
-export function useBatchCreateUpdateScheduleMutation( siteSlugs: SiteSlug[], queryOptions = {} ) {
+export function useBatchCreateUpdateScheduleMutation(
+	siteSlugs: SiteSlug[],
+	siteIds: SiteId[] = [],
+	queryOptions = {}
+) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation( {
@@ -86,13 +93,31 @@ export function useBatchCreateUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 
 			return results;
 		},
-		onSettled: () => {
-			queryClient.removeQueries( { queryKey: [ 'multisite-schedules-update' ] } );
+		onMutate: ( params: CreateRequestParams ) => {
+			const prevSiteSchedules = queryClient.getQueryData( [
+				'multisite-schedules-update',
+			] ) as MultisiteSchedulesUpdatesResponse;
+			const nextSiteSchedules = JSON.parse( JSON.stringify( prevSiteSchedules || {} ) ); // deep copy
 
-			siteSlugs.forEach( ( siteSlug ) => {
-				queryClient.removeQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
+			siteIds.forEach( ( siteId ) => {
+				nextSiteSchedules.sites[ siteId ] = nextSiteSchedules.sites[ siteId ] || {};
+				nextSiteSchedules.sites[ siteId ][ 'temp-id' ] = {
+					args: params.plugins,
+					last_run_status: null,
+					last_run_timestamp: null,
+					timestamp: params.schedule.timestamp,
+					schedule: params.schedule.interval,
+					interval: params.schedule.timestamp,
+				};
 			} );
+
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], nextSiteSchedules );
+
+			return { prevSiteSchedules };
 		},
+		onError: ( err, params, context ) =>
+			// Set previous value on error
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], context?.prevSiteSchedules ),
 		...queryOptions,
 	} );
 
@@ -234,7 +259,11 @@ export function useDeleteUpdateScheduleMutation( siteSlug: SiteSlug, queryOption
 	return { deleteUpdateSchedule, ...mutation };
 }
 
-export function useBatchDeleteUpdateScheduleMutation( siteSlugs: SiteSlug[], queryOptions = {} ) {
+export function useBatchDeleteUpdateScheduleMutation(
+	siteSlugs: SiteSlug[],
+	siteIds: SiteId[] = [],
+	queryOptions = {}
+) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation( {
@@ -257,12 +286,23 @@ export function useBatchDeleteUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 
 			return results;
 		},
-		onSettled: () => {
-			queryClient.removeQueries( { queryKey: [ 'multisite-schedules-update' ] } );
+		onMutate: ( id: string ) => {
+			// Optimistically update the cache
+			const data = queryClient.getQueryData( [
+				'multisite-schedules-update',
+			] ) as MultisiteSchedulesUpdatesResponse;
+			const prevSiteSchedules = JSON.parse( JSON.stringify( data || {} ) ); // deep copy
+			const sites = prevSiteSchedules?.sites || [];
+			siteIds.forEach( ( siteId ) => sites[ siteId ] && delete sites[ siteId ][ id ] );
 
-			siteSlugs.forEach( ( siteSlug ) => {
-				queryClient.removeQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
-			} );
+			const newSiteSchedules = { sites };
+
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], newSiteSchedules );
+			return { prevSiteSchedules };
+		},
+		onError: ( err, id, context ) => {
+			// Set previous value on error
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], context?.prevSiteSchedules );
 		},
 		...queryOptions,
 	} );

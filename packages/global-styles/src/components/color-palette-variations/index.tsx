@@ -46,7 +46,7 @@ const ColorPaletteVariation = ( {
 			base,
 			merged: mergeBaseAndUserConfigs( base, colorPaletteVariation ),
 		};
-	}, [ colorPaletteVariation, base ] );
+	}, [ colorPaletteVariation.slug, base ] );
 	return (
 		<CompositeItem
 			role="option"

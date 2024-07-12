@@ -1,16 +1,10 @@
 @import "@wordpress/base-styles/mixins";
 
 .configure-your-site-modal-form {
-	max-width: 600px;
+	max-width: 650px;
 
 	select {
 		width: fit-content;
-	}
-	.components-modal__content {
-		padding: 0;
-	}
-	.configure-your-site-modal-form__main {
-		padding: 0 30px;
 	}
 
 	.configure-your-site-modal-form__php-version-select {
@@ -26,10 +20,8 @@
 	}
 
 	.configure-your-site-modal-form__footer {
-		padding: 24px 40px;
+		margin-top: 42px;
 		text-align: right;
-		background-color: var(--color-neutral-0);
-		border-radius: 4px;
 	}
 
 	.configure-your-site-modal-form__site-name-placeholder {
@@ -43,18 +35,39 @@
 		display: flex;
 		align-items: center;
 
+		.form-text-input-with-affixes {
+			.configure-your-site-modal-form__input {
+				border-top-left-radius: 2px;
+				border-bottom-left-radius: 2px;
+			}
+
+			.form-text-input-with-affixes__suffix {
+				border-top-right-radius: 2px;
+				border-bottom-right-radius: 2px;
+			}
+		}
+
 		.configure-your-site-modal-form__site-name-icon-wrapper {
 			display: flex;
-			width: 24px;
+			justify-content: space-around;
 			margin-left: 5px;
+			width: 28px;
 		}
 
 		.configure-your-site-modal-form__site-name-success {
+			margin-right: -5px;
 			fill: var(--color-success);
 		}
 
 		.configure-your-site-modal-form__site-name-fail {
-			color: var(--color-error);
+			margin-right: -5px;
+			fill: var(--color-error);
+		}
+
+		.configure-your-site-modal-form__site-name-loading {
+			display: flex;
+			justify-content: space-around;
+			margin: 0;
 		}
 	}
 
@@ -64,6 +77,14 @@
 		font-size: rem(14px);
 		line-height: 1.5;
 		color: var(--color-error);
+		margin-top: 4px;
+
+		.configure-your-site-modal-form__site-name-suggestion {
+			text-decoration: underline;
+			font-weight: bold;
+			color: var(--color-error);
+			cursor: pointer;
+		}
 
 		svg {
 			margin-right: 5px;

@@ -36,6 +36,7 @@ export interface Agency {
 		};
 		listing_details: {
 			is_available: boolean;
+			is_global: boolean;
 			industries: string[];
 			services: string[];
 			products: string[];
@@ -60,6 +61,7 @@ export interface Agency {
 			is_published?: boolean;
 		};
 	};
+	partner_directory_allowed: boolean;
 }
 
 export interface AgencyStore {

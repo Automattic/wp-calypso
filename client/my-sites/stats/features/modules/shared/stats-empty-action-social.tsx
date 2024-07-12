@@ -1,18 +1,19 @@
+import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { megaphone } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import EmptyStateAction from '../../../components/empty-state-action';
+import EmptyStateAction from 'calypso/my-sites/stats/components/empty-state-action';
+import {
+	JETPACK_SUPPORT_SOCIAL_URL,
+	JETPACK_SOCIAL_LANDING_PAGE_URL,
+} from 'calypso/my-sites/stats/const';
+import type { StatsEmptyActionProps } from './';
 
-type StatsEmptyActionSocialProps = {
-	from: string;
-};
-
-// TODO: move to a shared file if this is the final URL
-const JETPACK_SUPPORT_SOCIAL_URL = 'https://jetpack.com/support/jetpack-social/';
-
-const StatsEmptyActionSocial: React.FC< StatsEmptyActionSocialProps > = ( { from } ) => {
+const StatsEmptyActionSocial: React.FC< StatsEmptyActionProps > = ( { from } ) => {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	return (
 		<EmptyStateAction
 			icon={ megaphone }
@@ -24,10 +25,11 @@ const StatsEmptyActionSocial: React.FC< StatsEmptyActionSocialProps > = ( { from
 			onClick={ () => {
 				// analytics event tracting handled in EmptyStateAction component
 
-				setTimeout(
-					() => ( window.location.href = localizeUrl( JETPACK_SUPPORT_SOCIAL_URL ) ),
-					250
-				);
+				const redirectUrl = isOdysseyStats
+					? localizeUrl( JETPACK_SUPPORT_SOCIAL_URL )
+					: localizeUrl( JETPACK_SOCIAL_LANDING_PAGE_URL );
+
+				setTimeout( () => ( window.location.href = redirectUrl ), 250 );
 			} }
 		/>
 	);

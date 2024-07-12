@@ -149,10 +149,6 @@ const PartnerDirectoryDashboard = () => {
 		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_edit_profile_click' ) );
 	}, [ dispatch ] );
 
-	const onAgencyProfileClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_partner_directory_dashboard_agency_profile_click' ) );
-	}, [ dispatch ] );
-
 	// We want to scroll to the top of the page when the component is rendered
 	useEffect( () => {
 		document.querySelector( '.partner-directory__body' )?.scrollTo( 0, 0 );
@@ -176,7 +172,7 @@ const PartnerDirectoryDashboard = () => {
 
 	const { availableDirectories } = useFormSelectors();
 
-	const directoryApplicationStatuses =
+	const directoryApplicationStatuses: DirectoryApplicationStatus[] =
 		applicationData?.directories?.reduce( ( statuses: DirectoryApplicationStatus[], directory ) => {
 			statuses.push( {
 				brand: availableDirectories[ directory.directory ],
@@ -210,29 +206,33 @@ const PartnerDirectoryDashboard = () => {
 		return 0;
 	}, [ isCompleted, hasDirectoryApproval, isValidFormData, applicationWasSubmitted ] );
 
-	// todo: to remove this when we have the links.
-	const displayProgramLinks = false;
+	// todo: to remove this when we the KB links are published.
+	const displayProgramLinks = true;
 
 	const programLinks = (
 		<StepSection
 			className="partner-directory-dashboard__learn-more-section"
 			heading={ translate( 'Learn more about the program' ) }
 		>
-			{
-				// FIXME: Add link
-				<Button className="a8c-blue-link" borderless href="#">
-					{ translate( 'How does the approval process work?' ) }
-					<Icon icon={ external } size={ 18 } />
-				</Button>
-			}
+			<Button
+				className="a8c-blue-link"
+				borderless
+				target="_blank"
+				href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings"
+			>
+				{ translate( 'How does the approval process work?' ) }
+				<Icon icon={ external } size={ 18 } />
+			</Button>
 			<br />
-			{
-				// FIXME: Add link
-				<Button className="a8c-blue-link" borderless href="#">
-					{ translate( 'What can I put on my public profile?' ) }
-					<Icon icon={ external } size={ 18 } />
-				</Button>
-			}
+			<Button
+				className="a8c-blue-link"
+				borderless
+				target="_blank"
+				href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings/#profile-content"
+			>
+				{ translate( 'What can I put on my public profile?' ) }
+				<Icon icon={ external } size={ 18 } />
+			</Button>
 		</StepSection>
 	);
 
@@ -252,7 +252,7 @@ const PartnerDirectoryDashboard = () => {
 				</div>
 				{ directoryApplicationStatuses.length > 0 &&
 					directoryApplicationStatuses.map( ( { brand, status, type, key } ) => {
-						const brandMeta = getBrandMeta( brand );
+						const brandMeta = getBrandMeta( brand, agency );
 						const showPopoverOnLoad =
 							directoryApplicationStatuses.filter( ( { key } ) => key === 'rejected' ).length === 1;
 						return (
@@ -279,11 +279,12 @@ const PartnerDirectoryDashboard = () => {
 											<br />
 											<Button
 												className="a8c-blue-link"
-												onClick={ onAgencyProfileClick }
-												href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }` }
 												borderless
+												href={ brandMeta.urlProfile }
+												target="_blank"
 											>
 												{ translate( `Your agency's profile` ) }
+												<Icon icon={ external } size={ 18 } />
 											</Button>
 										</>
 									) : (

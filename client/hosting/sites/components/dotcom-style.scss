@@ -61,7 +61,7 @@
 
 	height: calc(100vh - var(--masterbar-height));
 
-	@media (min-width: 782px) {
+	@include break-small {
 		height: calc(100vh - var(--masterbar-height) - 32px);
 	}
 
@@ -275,15 +275,9 @@
 	}
 }
 
-.wpcom-site .is-group-sites.is-global-sidebar-collapsed,
-.wpcom-site .is-group-sites.is-global-sidebar-visible:has(.sites-dashboard.sites-dashboard__layout),
-.wpcom-site .is-group-sites.is-global-sidebar-visible.is-section-plugins {
+.wpcom-site {
 	.layout__content {
 		min-height: 100vh;
-
-		@include break-medium {
-			padding: 16px 16px 16px calc(var(--sidebar-width-max));
-		}
 	}
 
 	.layout__secondary .global-sidebar {
@@ -292,9 +286,10 @@
 }
 
 // Styles collapsed site list.
-.wpcom-site {
+.wpcom-site .is-global-sidebar-visible {
 	.layout__content {
 		transition: padding-left 220ms ease-out;
+		min-height: 100vh;
 	}
 	.layout__secondary {
 		transition: width 220ms ease-out;
@@ -327,7 +322,7 @@
 			}
 		}
 	}
-	.is-global-sidebar-collapsed {
+	&.is-global-sidebar-collapsed {
 		@media (min-width: 661px) {
 			.layout__secondary {
 				transition: all 220ms ease-out;
@@ -521,6 +516,7 @@
 			overflow-y: initial;
 			max-height: initial;
 			max-width: 1400px;
+			width: 100%;
 
 			main {
 				max-width: 100%;
@@ -567,7 +563,8 @@
 	}
 }
 
-.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout,
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .a4a-layout-with-columns__container .a4a-layout-column {
 	.a4a-layout-column__container {
 		display: flex;
 		flex-direction: column;
@@ -628,6 +625,13 @@
 
 // Use flexbox to structure of fly-out panel.
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
+	&.a4a-layout,
+	.a4a-layout-column,
+	.a4a-layout-with-columns__container {
+		overflow: visible;
+		height: calc(100vh - 32px - var(--masterbar-height));
+	}
+
 	.a4a-layout-column__container {
 		display: flex;
 		flex-direction: column;
@@ -680,29 +684,31 @@
 }
 
 // Override styles from my-sites/sidebar
-.wpcom-site div.is-group-sites:not(.has-no-masterbar),
-.wpcom-site div.is-group-sites-dashboard:not(.has-no-masterbar),
-.wpcom-site div.is-section-plugins:not(.has-no-masterbar) {
+.wpcom-site div.is-group-sites.is-global-sidebar-visible,
+.wpcom-site div.is-group-sites-dashboard.is-global-sidebar-visible,
+.wpcom-site div.is-section-domains.is-global-sidebar-visible,
+.wpcom-site div.is-section-plugins.is-global-sidebar-visible {
 	&.focus-content .layout__content,
 	&.focus-sidebar .layout__content {
-		padding-bottom: 0;
-		padding-top: var(--masterbar-height);
+		padding-bottom: 16px;
+		min-height: 100vh;
 
 		@include break-small {
-			padding-top: calc(var(--masterbar-height) + 24px);
+			padding-top: calc(var(--masterbar-height) + 16px);
 		}
 
-		.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
-			height: calc(100vh - var(--masterbar-height));
+		@include break-medium {
+			padding-left: calc(var(--sidebar-width-max));
+			padding-right: 16px;
 
-			@include break-small {
-				height: calc(100vh - var(--masterbar-height) - 48px);
+			.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+				height: calc(100vh - var(--masterbar-height) - 32px);
 			}
 		}
-	}
 
-	// Prevent the content pushed out via translateX(100%) creating a scrollbar
-	&.focus-sidebar .layout__content .layout__primary {
-		overflow-x: hidden;
+		// Prevent the content pushed out via translateX(100%) creating a scrollbar
+		&.focus-sidebar .layout__content .layout__primary {
+			overflow-x: hidden;
+		}
 	}
 }

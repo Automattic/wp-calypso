@@ -143,7 +143,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit, onRecordSuccessEvent
 	const siteSlugsToUpdate = siteIdsToSlugs( sitesInInitialData );
 
 	const { mutateAsync: createUpdateScheduleAsync, isPending: createUpdateSchedulePending } =
-		useBatchCreateUpdateScheduleMutation( siteSlugsToCreate );
+		useBatchCreateUpdateScheduleMutation( siteSlugsToCreate, sitesNotInInitialData );
 
 	const { mutateAsync: editUpdateScheduleAsync, isPending: editUpdateSchedulePending } =
 		useBatchEditUpdateScheduleMutation( siteSlugsToUpdate );
