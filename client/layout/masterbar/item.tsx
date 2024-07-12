@@ -121,6 +121,10 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	}
 
 	toggleMenuByTouch = ( event: React.TouchEvent ) => {
+		// If there are no subItems, there is nothing to toggle.
+		if ( ! this.props.subItems ) {
+			return;
+		}
 		// Prevent navigation by touching the parent menu item, and trigger toggling the menu instead.
 		event.preventDefault();
 		this.setState( { isOpenByTouch: ! this.state.isOpenByTouch } );
