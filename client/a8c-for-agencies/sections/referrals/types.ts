@@ -21,7 +21,8 @@ export interface Referral {
 	id: number;
 	client: ReferralClient;
 	purchases: ReferralPurchase[];
-	statuses: string[];
+	purchaseStatuses: string[];
+	referralStatuses: string[];
 }
 
 export interface ReferralAPIResponse {

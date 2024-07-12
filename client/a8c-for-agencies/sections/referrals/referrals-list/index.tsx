@@ -100,19 +100,20 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							enableSorting: false,
 						},
 						{
-							id: 'purchases',
-							header: translate( 'Purchases' ).toUpperCase(),
-							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => item.purchases.length,
-							enableHiding: false,
-							enableSorting: false,
-						},
-						{
 							id: 'pending-orders',
 							header: translate( 'Pending Orders' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode =>
-								item.statuses.filter( ( status ) => status === 'pending' ).length,
+								item.referralStatuses.filter( ( status ) => status === 'pending' ).length,
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
+							id: 'completed-orders',
+							header: translate( 'Completed Orders' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: Referral } ): ReactNode =>
+								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
 							enableHiding: false,
 							enableSorting: false,
 						},
