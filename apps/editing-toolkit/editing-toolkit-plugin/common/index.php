@@ -41,29 +41,6 @@ function is_block_editor_screen() {
 }
 
 /**
- * Detects if the current page is the homepage post editor, and if the homepage
- * title is hidden.
- *
- * @return bool True if the homepage title features should be used. (See above.)
- */
-function is_homepage_title_hidden() {
-	global $post;
-
-	// Handle the case where we are not rendering a post.
-	if ( ! isset( $post ) ) {
-		return false;
-	}
-
-	if ( defined( 'MU_WPCOM_HOMEPAGE_TITLE_HIDDEN' ) && MU_WPCOM_HOMEPAGE_TITLE_HIDDEN ) {
-		return;
-	}
-
-	$hide_homepage_title = (bool) get_theme_mod( 'hide_front_page_title', false );
-	$is_homepage         = ( (int) get_option( 'page_on_front' ) === $post->ID );
-	return (bool) is_block_editor_screen() && $hide_homepage_title && $is_homepage;
-}
-
-/**
  * Detects if the site is using Gutenberg 9.2 or above, which contains a bug in the
  * interface package, causing some "slider" blocks (such as Jetpack's Slideshow) to
  * incorrectly calculate their width as 33554400px when set at full width.
@@ -88,86 +65,6 @@ function needs_slider_width_workaround() {
 	}
 	return false;
 }
-
-/**
- * Determines whether the user should be included in trialing a new font-smoothing rule.
- *
- * @return bool True if antialiased font-smoothing rule should be applied.
- */
-function use_font_smooth_antialiased() {
-	if ( defined( 'A8C_USE_FONT_SMOOTHING_ANTIALIASED' ) ) {
-		return (bool) A8C_USE_FONT_SMOOTHING_ANTIALIASED;
-	}
-
-	return true;
-}
-
-/**
- * Detects if assets for the common module should be loaded.
- *
- * It should return true if any of the features added to the common module need
- * to be loaded. To accomplish this, please create separate functions if you add
- * other small features to this file. The separate function should detect if your
- * individual feature ought to be loaded. Then, "or" (||) that together with the
- * return value here.
- *
- * @return bool True if the common module assets should be loaded.
- */
-function should_load_assets() {
-	return (bool) is_homepage_title_hidden() || use_font_smooth_antialiased();
-}
-
-/**
- * Adds custom classes to the admin body classes.
- *
- * @param string $classes Classes for the body element.
- * @return string
- */
-function admin_body_classes( $classes ) {
-	if ( is_homepage_title_hidden() ) {
-		$classes .= ' hide-homepage-title';
-	}
-
-	if ( use_font_smooth_antialiased() && ! is_network_admin() ) {
-		// Extra space needed because the `legacy-color-*` class isn't adding
-		// a leading space and breaking this class string.
-		$classes .= ' font-smoothing-antialiased ';
-	}
-
-	return $classes;
-}
-add_filter( 'admin_body_class', __NAMESPACE__ . '\admin_body_classes' );
-
-/**
- * Enqueue script and style for the common package.
- */
-function enqueue_script_and_style() {
-	// Avoid loading assets if possible.
-	if ( ! should_load_assets() ) {
-		return;
-	}
-
-	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/common.asset.php';
-	$script_dependencies = $asset_file['dependencies'];
-	wp_enqueue_script(
-		'a8c-fse-common-script',
-		plugins_url( 'dist/common.min.js', __FILE__ ),
-		is_array( $script_dependencies ) ? $script_dependencies : array(),
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/common.min.js' ),
-		true
-	);
-
-	$style_file = is_rtl()
-		? 'common.rtl.css'
-		: 'common.css';
-	wp_enqueue_style(
-		'a8c-fse-common-style',
-		plugins_url( 'dist/' . $style_file, __FILE__ ),
-		'wp-edit-post',
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
-	);
-}
-add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_script_and_style' );
 
 /**
  * Enable line-height settings for all themes with Gutenberg.
