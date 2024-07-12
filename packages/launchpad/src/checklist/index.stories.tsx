@@ -17,14 +17,17 @@ const meta: Meta< typeof Checklist > = {
 			<ChecklistItem
 				key="1"
 				task={ { id: '1', title: 'Task 1', completed: true, disabled: true } }
+				onClick={ () => {} }
 			/>,
 			<ChecklistItem
 				key="2"
 				task={ { id: '2', title: 'Task 2', disabled: false, completed: false } }
+				onClick={ () => {} }
 			/>,
 			<ChecklistItem
 				key="3"
 				task={ { id: '3', title: 'Task 3', disabled: false, completed: false } }
+				onClick={ () => {} }
 			/>,
 		],
 	},
