@@ -1,3 +1,4 @@
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import FormattedHeader from 'calypso/components/formatted-header';
 import StepProgress from 'calypso/components/step-progress';
 import { useSelector } from 'calypso/state';
@@ -5,6 +6,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ImporterLogo from '../importer-logo';
 import Content from './content';
 import PaidSubscribers from './paid-subscribers';
+import SelectNewsletterForm from './select-newsletter-form.tsx';
 import Subscribers from './subscribers';
 import Summary from './summary';
 
@@ -27,26 +29,22 @@ const steps = [ Content, Subscribers, PaidSubscribers, Summary ];
 const stepSlugs = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
 
 export default function NewsletterImporter( { siteSlug, engine, step } ) {
-
 	const selectedSite = useSelector( getSelectedSite );
 
-	const stepsProgress = [
-		'Content',
-		'Subscribers',
-		'Paid Subscribers',
-		'Summary',
-	];
+	const stepsProgress = [ 'Content', 'Subscribers', 'Paid Subscribers', 'Summary' ];
 
 	let stepIndex = 0;
-	let nextStep = stepSlugs[ 1 ];
+	let nextStep = stepSlugs[ 0 ];
 	stepSlugs.forEach( ( stepName, index ) => {
 		if ( stepName === step ) {
 			stepIndex = index;
 			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
 	} );
-
-	const nextStepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`;
+	const newsletterUrl = getQueryArg( window.location.href, 'newsletter' );
+	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
+		newsletter: newsletterUrl,
+	} );
 
 	const Step = steps[ stepIndex ] || steps[ 0 ];
 	return (
@@ -59,8 +57,16 @@ export default function NewsletterImporter( { siteSlug, engine, step } ) {
 			/>
 
 			<FormattedHeader headerText="Import your newsletter" />
-			<StepProgress steps={ stepsProgress } currentStep={ stepIndex } />
-			<Step siteSlug={ siteSlug } nextStepUrl={ nextStepUrl } selectedSite={ selectedSite } />
+			{ ! step && <SelectNewsletterForm nextStepUrl={ nextStepUrl } /> }
+			{ step && <StepProgress steps={ stepsProgress } currentStep={ stepIndex } /> }
+			{ step && (
+				<Step
+					siteSlug={ siteSlug }
+					nextStepUrl={ nextStepUrl }
+					selectedSite={ selectedSite }
+					newsletterUrl={ newsletterUrl }
+				/>
+			) }
 		</div>
 	);
 }

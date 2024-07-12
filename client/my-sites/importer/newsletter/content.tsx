@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
 
-export default function Content( { nextStepUrl, selectedSite, siteSlug } ) {
+export default function Content( { nextStepUrl, selectedSite, siteSlug, newsletterUrl } ) {
 	const siteTitle = selectedSite.title;
 	const siteId = selectedSite.ID;
 
@@ -37,9 +37,9 @@ export default function Content( { nextStepUrl, selectedSite, siteSlug } ) {
 				To generate a ZIP file of all your Substack posts, go to Settings { '>' } Exports and click
 				'Create a new export.' Once the ZIP file is downloaded, upload it in the next step.
 			</p>
-			<Button href="https://substack.com/home">Export content</Button>
+			<Button href={ `https://${ newsletterUrl }/publish/settings#exports` }>Export content</Button>
 			<hr />
-			<h2>Step 2: Import your content to WordPress.com (2/2)</h2>
+			<h2>Step 2: Import your content to WordPress.com</h2>
 			{ importerStatus && (
 				<SubstackImporter
 					site={ selectedSite }
