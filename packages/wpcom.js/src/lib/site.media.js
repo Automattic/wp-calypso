@@ -158,9 +158,11 @@ Media.prototype.addFiles = function ( query, files, fn ) {
 	}
 
 	const params = {
-		path: '/sites/' + this._sid + '/media/new',
+		path: query.apiPath ?? `/sites/${ this._sid }/media/new`,
 		formData: buildFormData( files ),
 	};
+
+	query.apiPath && delete query.apiPath;
 
 	return this.wpcom.req.post( params, query, null, fn );
 };
