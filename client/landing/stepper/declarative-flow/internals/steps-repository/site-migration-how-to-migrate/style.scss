@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .how-to-migrate {
-	max-width: 602px;
+	max-width: 620px;
 	padding: 0 12px;
 
 	.onboarding-title {
@@ -19,28 +19,17 @@
 	}
 
 	.how-to-migrate__list {
-		margin-top: 50px;
-		padding-bottom: 108px;
+		text-align: center;
 
-		@include break-mobile {
-			margin-top: 80px;
-			padding-bottom: revert;
-		}
-
-		.card {
-			svg {
-				fill: #1e1e1e;
-			}
+		.flow-question {
+			max-width: none;
+			width: 100%;
 		}
 	}
 
-	.how-to-migrate__header {
-		align-items: center;
-		margin-bottom: 8px;
-
-		@include break-mobile {
-			display: flex;
-			margin-bottom: 0;
+	#how-to-migrate-header {
+		.formatted-header__subtitle {
+			text-align: center;
 		}
 	}
 

@@ -53,8 +53,18 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		} );
 
 		describe( 'Add and configure blocks in the editor', function () {
+			const used = new Set();
 			for ( const blockFlow of blockFlows ) {
-				it( `${ blockFlow.blockSidebarName }: Add the block from the sidebar`, async function () {
+				const prefix = blockFlow.blockTestName ?? blockFlow.blockSidebarName;
+
+				if ( used.has( prefix ) ) {
+					throw new Error(
+						`Test name prefix "${ prefix }" is used by multiple BlockFlows! Set \`blockTestName\` to disambiguate.`
+					);
+				}
+				used.add( prefix );
+
+				it( `${ prefix }: Add the block from the sidebar`, async function () {
 					const blockHandle = await editorPage.addBlockFromSidebar(
 						blockFlow.blockSidebarName,
 						blockFlow.blockEditorSelector,
@@ -70,13 +80,13 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 					};
 				} );
 
-				it( `${ blockFlow.blockSidebarName }: Configure the block`, async function () {
+				it( `${ prefix }: Configure the block`, async function () {
 					if ( blockFlow.configure ) {
 						await blockFlow.configure( editorContext );
 					}
 				} );
 
-				it( `${ blockFlow.blockSidebarName }: There are no block warnings or errors in the editor`, async function () {
+				it( `${ prefix }: There are no block warnings or errors in the editor`, async function () {
 					expect( await editorPage.editorHasBlockWarnings() ).toBe( false );
 				} );
 			}
@@ -94,7 +104,9 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		describe( 'Validating blocks in published post.', function () {
 			for ( const blockFlow of blockFlows ) {
-				it( `${ blockFlow.blockSidebarName }: Expected content is in published post`, async function () {
+				const prefix = blockFlow.blockTestName ?? blockFlow.blockSidebarName;
+
+				it( `${ prefix }: Expected content is in published post`, async function () {
 					if ( blockFlow.validateAfterPublish ) {
 						await blockFlow.validateAfterPublish( publishedPostContext );
 					}
