@@ -4,9 +4,12 @@ $masterbar-mobile-font-size: 14px;
 $masterbar-color-primary: #23282d;
 $masterbar-color-secondary: #101517;
 
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/shared/animation";
+@import url( //s1.wp.com/wp-includes/css/dashicons.css?v=20150727 );
+@import "@automattic/typography/styles/variables";
 
 // Hide the masterbar on WP Mobile App views.
 body.is-mobile-app-view {
