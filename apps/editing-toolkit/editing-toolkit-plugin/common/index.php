@@ -32,41 +32,6 @@ function register_data_stores() {
 add_action( 'init', __NAMESPACE__ . '\register_data_stores' );
 
 /**
- * Can be used to determine if the current screen is the block editor.
- *
- * @return bool True if the current screen is a block editor screen. False otherwise.
- */
-function is_block_editor_screen() {
-	return is_callable( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor();
-}
-
-/**
- * Detects if the site is using Gutenberg 9.2 or above, which contains a bug in the
- * interface package, causing some "slider" blocks (such as Jetpack's Slideshow) to
- * incorrectly calculate their width as 33554400px when set at full width.
- *
- * @see https://github.com/WordPress/gutenberg/pull/26552
- *
- * @return bool True if the site needs a temporary fix for the incorrect slider width.
- */
-function needs_slider_width_workaround() {
-	global $post;
-
-	if ( defined( 'MU_WPCOM_SLIDER_WIDTH' ) && MU_WPCOM_SLIDER_WIDTH ) {
-		return;
-	}
-
-	if (
-		( defined( 'GUTENBERG_DEVELOPMENT_MODE' ) && GUTENBERG_DEVELOPMENT_MODE ) ||
-		( defined( 'GUTENBERG_VERSION' ) && version_compare( GUTENBERG_VERSION, '9.2', '>=' ) )
-	) {
-		// Workaround only needed when in the editor.
-		return isset( $post );
-	}
-	return false;
-}
-
-/**
  * Enable line-height settings for all themes with Gutenberg.
  *
  * Prior to Gutenberg 8.6, line-height was always enabled, which meant that wpcom
