@@ -12,8 +12,6 @@ export default function Content( { nextStepUrl, selectedSite, siteSlug } ) {
 
 	const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 
-	useEffect( () => {} );
-
 	const dispatch = useDispatch();
 	function fetchImporters() {
 		siteId && dispatch( fetchImporterState( siteId ) );
