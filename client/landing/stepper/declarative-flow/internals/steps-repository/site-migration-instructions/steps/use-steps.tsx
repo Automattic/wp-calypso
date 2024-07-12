@@ -70,6 +70,8 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 								a: (
 									<ExternalLink
 										href={ getPluginInstallationPage( fromUrl ) }
+										icon
+										iconSize="14"
 										target="_blank"
 										onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
 									/>
@@ -93,6 +95,8 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 									a: fromUrl ? (
 										<ExternalLink
 											href={ getMigrateGuruPageURL( fromUrl ) }
+											icon
+											iconSize="14"
 											target="_blank"
 											onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
 										/>
