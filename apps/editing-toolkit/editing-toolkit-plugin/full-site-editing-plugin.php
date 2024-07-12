@@ -133,8 +133,6 @@ function load_global_styles() {
 	if ( defined( 'MU_WPCOM_JETPACK_GLOBAL_STYLES' ) && MU_WPCOM_JETPACK_GLOBAL_STYLES ) {
 		return;
 	}
-
-	require_once __DIR__ . '/global-styles/class-global-styles.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 
@@ -145,8 +143,6 @@ function load_countdown_block() {
 	if ( defined( 'MU_WPCOM_JETPACK_COUNTDOWN_BLOCK' ) && MU_WPCOM_JETPACK_COUNTDOWN_BLOCK ) {
 		return;
 	}
-
-	require_once __DIR__ . '/event-countdown-block/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_countdown_block' );
 
@@ -157,8 +153,6 @@ function load_timeline_block() {
 	if ( defined( 'MU_WPCOM_JETPACK_TIMELINE_BLOCK' ) && MU_WPCOM_JETPACK_TIMELINE_BLOCK ) {
 		return;
 	}
-
-	require_once __DIR__ . '/jetpack-timeline/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
 
@@ -270,8 +264,6 @@ function load_block_inserter_modifications() {
 	if ( defined( 'MU_WPCOM_BLOCK_INSERTER_MODIFICATIONS' ) && MU_WPCOM_BLOCK_INSERTER_MODIFICATIONS ) {
 		return;
 	}
-
-	require_once __DIR__ . '/block-inserter-modifications/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );
 
@@ -294,8 +286,6 @@ function load_whats_new() {
 	if ( defined( 'MU_WPCOM_WHATS_NEW' ) && MU_WPCOM_WHATS_NEW ) {
 		return;
 	}
-
-	require_once __DIR__ . '/whats-new/class-whats-new.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
 
@@ -306,8 +296,6 @@ function load_tags_education() {
 	if ( defined( 'MU_WPCOM_TAGS_EDUCATION' ) && MU_WPCOM_TAGS_EDUCATION ) {
 		return;
 	}
-
-	require_once __DIR__ . '/tags-education/class-tags-education.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
 
@@ -318,8 +306,6 @@ function load_paragraph_block() {
 	if ( defined( 'MU_WPCOM_PARAGRAPH_BLOCK' ) && MU_WPCOM_PARAGRAPH_BLOCK ) {
 		return;
 	}
-
-	require_once __DIR__ . '/paragraph-block/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_paragraph_block' );
 
@@ -330,8 +316,6 @@ function load_wpcom_documentation_links() {
 	if ( defined( 'MU_WPCOM_DOCUMENTATION_LINKS' ) && MU_WPCOM_DOCUMENTATION_LINKS ) {
 		return;
 	}
-
-	require_once __DIR__ . '/wpcom-documentation-links/class-wpcom-documentation-links.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_documentation_links' );
 
@@ -342,8 +326,6 @@ function load_block_description_links() {
 	if ( defined( 'MU_WPCOM_BLOCK_DESCRIPTION_LINKS' ) && MU_WPCOM_BLOCK_DESCRIPTION_LINKS ) {
 		return;
 	}
-
-	require_once __DIR__ . '/wpcom-block-description-links/class-wpcom-block-description-links.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
 

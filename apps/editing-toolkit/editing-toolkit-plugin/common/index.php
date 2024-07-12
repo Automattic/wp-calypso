@@ -72,33 +72,3 @@ function get_iso_639_locale( $language ) {
 
 	return $language;
 }
-
-/**
- * Overrides the block editor preview button url with one that accounts for third party cookie
- * blocking.
- */
-function enqueue_override_preview_button_url() {
-	if ( defined( 'MU_WPCOM_OVERRIDE_PREVIEW_BUTTON_URL' ) && MU_WPCOM_OVERRIDE_PREVIEW_BUTTON_URL ) {
-		return;
-	}
-
-	if ( ! function_exists( 'is_blog_atomic' ) ) {
-		return;
-	};
-
-	$blog_details = get_blog_details( get_current_blog_id() );
-
-	if ( is_blog_atomic( $blog_details ) ) {
-		return;
-	}
-
-	wp_enqueue_script(
-		'a8c_override_preview_button_url',
-		plugins_url( 'dist/override-preview-button-url.min.js', __FILE__ ),
-		array(),
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/override-preview-button-url.min.js' ),
-		true
-	);
-}
-
-add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_override_preview_button_url' );
