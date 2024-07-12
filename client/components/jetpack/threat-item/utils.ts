@@ -42,7 +42,7 @@ export const getThreatMessage = ( threat: Threat ): string | TranslateResult => 
 			} );
 
 		case 'file':
-			return translate( 'Malicious code found in a file: %s', {
+			return translate( 'Malicious code found in file: %s', {
 				args: [ basename ],
 			} );
 
