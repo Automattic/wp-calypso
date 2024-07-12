@@ -16,6 +16,12 @@
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+
+	&.is-error {
+		input {
+			border-color: var(--color-error) !important;
+		}
+	}
 }
 
 h3.partner-directory-agency-expertise__client-samples-label {
@@ -23,4 +29,16 @@ h3.partner-directory-agency-expertise__client-samples-label {
 	line-height: 1.5;
 	font-weight: 500;
 	margin-block-end: 8px;
+}
+
+.partner-directory-agency-expertise__error {
+	margin-block-start: 0.25rem;
+	color: var(--color-scary-40);
+	font-style: italic;
+	font-size: 0.875rem;
+	line-height: 14px;
+
+	&.hidden {
+		display: none;
+	}
 }
