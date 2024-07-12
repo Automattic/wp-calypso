@@ -219,6 +219,7 @@
 		"react-modal": "^3.16.1",
 		"redux": "^4.2.1",
 		"request": "^2.88.2",
+		"smooch": "^5.6.2",
 		"swiper": "^10.1.0",
 		"workspace": "^0.0.1-preview.1",
 		"wpcom": "workspace:^"

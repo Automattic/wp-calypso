@@ -9,7 +9,7 @@ export function useStillNeedHelpURL() {
 	const isEligibleForSupport = Boolean( supportStatus?.eligibility?.is_user_eligible );
 
 	if ( isEligibleForSupport ) {
-		const url = shouldUseWapuu ? '/odie' : '/contact-options';
+		const url = shouldUseWapuu ? '/messenger' : '/contact-options';
 		return { url, isLoading: false };
 	}
 
