@@ -15,6 +15,9 @@ export function HelpCenterMessenger(): JSX.Element {
 			embedded: true,
 			configBaseUrl: 'https://wpcomsupport.zendesk.com/sc/sdk',
 			businessIconUrl: 'https://wpcomsupport.zendesk.com/embeddable/avatars/19034438422164',
+			customColors: {
+				brandColor: '0675C4',
+			},
 		} );
 		const messengerContainer = document.getElementById( 'messenger-container' );
 		if ( messengerContainer ) {
