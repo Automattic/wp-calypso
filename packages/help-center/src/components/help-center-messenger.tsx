@@ -10,7 +10,12 @@ import { BackButton } from './back-button';
 
 export function HelpCenterMessenger(): JSX.Element {
 	useEffect( () => {
-		Smooch.init( { integrationId: '6453b7fc45cea5c267e60fed', embedded: true } );
+		Smooch.init( {
+			integrationId: '6453b7fc45cea5c267e60fed',
+			embedded: true,
+			configBaseUrl: 'https://wpcomsupport.zendesk.com/sc/sdk',
+			businessIconUrl: 'https://wpcomsupport.zendesk.com/embeddable/avatars/19034438422164',
+		} );
 		const messengerContainer = document.getElementById( 'messenger-container' );
 		if ( messengerContainer ) {
 			Smooch.render( messengerContainer );
