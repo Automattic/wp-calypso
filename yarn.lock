@@ -1062,7 +1062,7 @@ __metadata:
     "@wordpress/plugins": "npm:^7.2.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:3.0.0"
     copy-webpack-plugin: "npm:^10.2.4"
-    smooch: "npm:^5.6.2"
+    smooch: "npm:5.6.0"
     typescript: "npm:^5.3.3"
     webpack: "npm:^5.91.0"
   peerDependencies:
@@ -1099,7 +1099,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-draggable: "npm:^4.4.4"
-    smooch: "npm:^5.6.2"
+    smooch: "npm:5.6.0"
     typescript: "npm:^5.3.3"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
@@ -30210,15 +30210,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"smooch@npm:^5.6.2":
+"smooch@npm:5.6.0":
   version: 5.6.2
-  resolution: "smooch@npm:5.6.2"
+  resolution: "smooch@npm:5.6.0"
   dependencies:
     chai-as-promised: "npm:7.1.2"
     node-polyfill-webpack-plugin: "npm:3.0.0"
     path-browserify: "npm:1.0.1"
     timers-browserify: "npm:2.0.12"
-  checksum: 78dba04c6cb8029bbfa471c383194a90adf1986a9ff9ccbbe118b96ceb44c50a114f092f76cc4217bb7462ee178ba558e8a79003c92023f9e0cf3338cb5fc22b
+  checksum: 3a1c4cd17a136903443372a92e197752a80423fe8d8f299d96853dba4af6f51f43a6b573b23fbc04fc558b0b707a679361edce17e3e9f8ae9809a03cfccc0978
   languageName: node
   linkType: hard
 
@@ -34066,7 +34066,7 @@ __metadata:
     request: "npm:^2.88.2"
     sass: "npm:^1.37.5"
     sass-loader: "npm:^12.1.0"
-    smooch: "npm:^5.6.2"
+    smooch: "npm:5.6.0"
     source-map: "npm:^0.7.3"
     stackframe: "npm:^1.1.1"
     stacktrace-gps: "npm:^3.0.3"

@@ -39,7 +39,7 @@
 		"@wordpress/components": "^28.2.0",
 		"@wordpress/compose": "^7.2.0",
 		"@wordpress/plugins": "^7.2.0",
-		"smooch": "^5.6.2"
+		"smooch": "5.6.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
