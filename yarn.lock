@@ -34630,7 +34630,7 @@ __metadata:
     request: "npm:^2.88.2"
     sass: "npm:^1.37.5"
     sass-loader: "npm:^12.1.0"
-    source-map: "npm:^0.7.3"
+    source-map: "npm:^0.7.4"
     stackframe: "npm:^1.1.1"
     stacktrace-gps: "npm:^3.0.3"
     stylelint: "npm:^14.16.1"

@@ -304,7 +304,7 @@
 		"replace": "^1.1.5",
 		"sass": "^1.37.5",
 		"sass-loader": "^12.1.0",
-		"source-map": "^0.7.3",
+		"source-map": "^0.7.4",
 		"stackframe": "^1.1.1",
 		"stacktrace-gps": "^3.0.3",
 		"stylelint": "^14.16.1",
