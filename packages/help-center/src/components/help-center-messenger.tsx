@@ -18,7 +18,7 @@ export function HelpCenterMessenger(): JSX.Element {
 			customColors: {
 				brandColor: '0675C4',
 			},
-		} );
+		} as InitOptions );
 		const messengerContainer = document.getElementById( 'messenger-container' );
 		if ( messengerContainer ) {
 			Smooch.render( messengerContainer );
