@@ -27129,14 +27129,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"punycode@npm:^2.1.0, punycode@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "punycode@npm:2.1.1"
-  checksum: 83815ca9b9177f055771f31980cbec7ffaef10257d50a95ab99b4a30f0404846e85fa6887ee1bbc0aaddb7bad6d96e2fa150a016051ff0f6b92be4ad613ddca8
-  languageName: node
-  linkType: hard
-
-"punycode@npm:^2.3.0":
+"punycode@npm:^2.1.0, punycode@npm:^2.1.1, punycode@npm:^2.3.0":
   version: 2.3.1
   resolution: "punycode@npm:2.3.1"
   checksum: 14f76a8206bc3464f794fb2e3d3cc665ae416c01893ad7a02b23766eb07159144ee612ad67af5e84fa4479ccfe67678c4feb126b0485651b302babf66f04f9e9
@@ -27940,22 +27933,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:^2.0.0, readable-stream@npm:^2.0.1, readable-stream@npm:^2.0.5, readable-stream@npm:^2.0.6, readable-stream@npm:^2.2.2, readable-stream@npm:^2.3.5, readable-stream@npm:^2.3.6, readable-stream@npm:^2.3.7, readable-stream@npm:~2.3.6":
-  version: 2.3.7
-  resolution: "readable-stream@npm:2.3.7"
-  dependencies:
-    core-util-is: "npm:~1.0.0"
-    inherits: "npm:~2.0.3"
-    isarray: "npm:~1.0.0"
-    process-nextick-args: "npm:~2.0.0"
-    safe-buffer: "npm:~5.1.1"
-    string_decoder: "npm:~1.1.1"
-    util-deprecate: "npm:~1.0.1"
-  checksum: 1708755e6cf9daff6ff60fa5b4575636472289c5b95d38058a91f94732b8d024a940a0d4d955639195ce42c22cab16973ee8fea8deedd24b5fec3dd596465f86
-  languageName: node
-  linkType: hard
-
-"readable-stream@npm:^2.3.8":
+"readable-stream@npm:^2.0.0, readable-stream@npm:^2.0.1, readable-stream@npm:^2.0.5, readable-stream@npm:^2.0.6, readable-stream@npm:^2.2.2, readable-stream@npm:^2.3.5, readable-stream@npm:^2.3.6, readable-stream@npm:^2.3.7, readable-stream@npm:^2.3.8, readable-stream@npm:~2.3.6":
   version: 2.3.8
   resolution: "readable-stream@npm:2.3.8"
   dependencies:
@@ -27981,19 +27959,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:^4.1.0":
-  version: 4.3.0
-  resolution: "readable-stream@npm:4.3.0"
-  dependencies:
-    abort-controller: "npm:^3.0.0"
-    buffer: "npm:^6.0.3"
-    events: "npm:^3.3.0"
-    process: "npm:^0.11.10"
-  checksum: c74b8bfdfa09b0295e3cf031c17358ce6638e04498299c9c85ff922cd786e44b4098e79961d0c7ac9aa5a8279b335b8eb2f97d41fb0661bebce643be0ec3f49b
-  languageName: node
-  linkType: hard
-
-"readable-stream@npm:^4.4.2":
+"readable-stream@npm:^4.1.0, readable-stream@npm:^4.4.2":
   version: 4.5.2
   resolution: "readable-stream@npm:4.5.2"
   dependencies:
@@ -32207,17 +32173,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^4.4.0":
+"type-fest@npm:^4.4.0, type-fest@npm:^4.9.0":
   version: 4.21.0
   resolution: "type-fest@npm:4.21.0"
   checksum: 60c09995336ea15a405caa76a9ad9238e7ea324d945519880c560e4ee0845479889c45a51810ca81b0f37abd46229a06d2e17ab9b12d1a5cbe335af56819c92b
-  languageName: node
-  linkType: hard
-
-"type-fest@npm:^4.9.0":
-  version: 4.10.2
-  resolution: "type-fest@npm:4.10.2"
-  checksum: 740f7d30da742ff413e8690ec10a24df054bfd87575cf92691b77f5a6b8185c582da529b84ceb13771482599e085712beec51492feaef2a1adc8661c0a47ecba
   languageName: node
   linkType: hard
 
