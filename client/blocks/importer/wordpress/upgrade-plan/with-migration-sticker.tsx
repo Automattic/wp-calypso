@@ -12,7 +12,7 @@ const withMigrationSticker =
 
 		const {
 			addMigrationSticker,
-			addMutationRest: { isPending },
+			addMutationRest: { isIdle, isPending },
 			deleteMigrationSticker,
 		} = useMigrationStickerMutation();
 
@@ -32,7 +32,7 @@ const withMigrationSticker =
 			};
 		}, [ addMigrationSticker, deleteMigrationSticker, siteId ] );
 
-		if ( isPending ) {
+		if ( isIdle || isPending ) {
 			return <Skeleton />;
 		}
 
