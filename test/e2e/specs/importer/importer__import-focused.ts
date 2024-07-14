@@ -2,11 +2,25 @@
  * @group calypso-pr
  */
 
-import { DataHelper, StartImportFlow, TestAccount, SecretsManager } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	RestAPIClient,
+	StartImportFlow,
+	TestAccount,
+	SecretsManager,
+} from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 import type { TestAccountName } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
+
+const deleteMigrationSticker = async ( testUser: TestAccount, siteId: number ) => {
+	const restAPIClient = new RestAPIClient( testUser );
+	await restAPIClient.sendRequest(
+		restAPIClient.getRequestURL( '2', `/sites/${ siteId }/migration-flow`, 'wpcom' ),
+		{ method: 'DELETE' }
+	);
+};
 
 describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => {
 	const credentials = {
@@ -20,6 +34,13 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		startImportFlow = new StartImportFlow( page );
+	} );
+
+	beforeEach( async () => {
+		const simpleSiteId = credentials.simpleSiteFreePlanUser?.testSites?.primary?.id as number;
+		const jetpackSiteId = credentials.jetpackRemoteSiteUser?.testSites?.primary?.id as number;
+		await deleteMigrationSticker( credentials.simpleSiteFreePlanUser, simpleSiteId );
+		await deleteMigrationSticker( credentials.jetpackRemoteSiteUser, jetpackSiteId );
 	} );
 
 	const loginAsUser = ( user: TestAccountName ) => {
