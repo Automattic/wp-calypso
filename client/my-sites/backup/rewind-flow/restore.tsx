@@ -337,7 +337,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
-		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
+		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) ) ||
+		( userHasRequestedRestore && inProgressRewindStatus === 'failed' );
 	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 
 	useEffect( () => {
@@ -346,15 +347,24 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
 		}
-	}, [ dispatch, inProgressRewindStatus, isFinished, restoreInitiated, userHasRequestedRestore ] );
+
+		if ( ! isRestoreInProgress && restoreInitiated && inProgressRewindStatus === 'failed' ) {
+			setRestoreInitiated( false );
+			setUserHasRequestedRestore( false );
+		}
+	}, [
+		dispatch,
+		inProgressRewindStatus,
+		isFinished,
+		isRestoreInProgress,
+		restoreInitiated,
+		userHasRequestedRestore,
+	] );
 
 	const render = () => {
 		if ( loading ) {
 			return <Loading />;
-		} else if (
-			( ! inProgressRewindStatus && ! userHasRequestedRestore ) ||
-			( inProgressRewindStatus === 'failed' && showConfirm )
-		) {
+		} else if ( ( ! inProgressRewindStatus && ! userHasRequestedRestore ) || showConfirm ) {
 			return renderConfirm();
 		} else if ( ! inProgressRewindStatus && needCredentials ) {
 			return (
