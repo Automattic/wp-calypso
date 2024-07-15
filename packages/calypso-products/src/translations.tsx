@@ -1267,6 +1267,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Paywall access' ),
 		translate( 'Newsletter' ),
 		translate( 'Priority support' ),
+		translate( '2% transaction fees' ),
 	];
 	const antiSpamIncludesInfo = [
 		translate( 'Comment and form spam protection' ),
