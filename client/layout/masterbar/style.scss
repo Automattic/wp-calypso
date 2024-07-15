@@ -372,7 +372,8 @@ body.is-mobile-app-view {
 	}
 
 	// The hover colors are supposed to be the same as those in wp-admin.
-	&:hover {
+	&:hover,
+	&.is-open {
 		.masterbar__item-subitems {
 			display: block;
 			z-index: 99999;
