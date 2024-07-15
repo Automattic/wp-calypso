@@ -37,7 +37,13 @@ const mShotConfigs: Record< string, MShotConfig > = {
 	},
 };
 
-export const useSitePreviewMShotImageHandler = () => {
+const sendScreenshotRequest = ( screenShotUrl: string ) => {
+	const http = new XMLHttpRequest();
+	http.open( 'GET', screenShotUrl );
+	http.send();
+};
+
+export const useSitePreviewMShotImageHandler = ( url: string = '' ) => {
 	const [ mShotsOption, setMShotsOption ] = useState< MShotConfig | undefined >( undefined );
 	const [ currentSegment, setCurrentSegment ] = useState( '' );
 
@@ -70,12 +76,6 @@ export const useSitePreviewMShotImageHandler = () => {
 		}
 	};
 
-	const sendScreenshotRequest = ( screenShotUrl: string ) => {
-		const http = new XMLHttpRequest();
-		http.open( 'GET', screenShotUrl );
-		http.send();
-	};
-
 	useEffect( () => {
 		if ( ! previewRef?.current ) {
 			return;
@@ -99,6 +99,12 @@ export const useSitePreviewMShotImageHandler = () => {
 			sendScreenshotRequest( screenShotUrl );
 		} );
 	};
+
+	useEffect( () => {
+		if ( url ) {
+			createScreenshots( url );
+		}
+	}, [ url ] );
 
 	return {
 		createScreenshots,

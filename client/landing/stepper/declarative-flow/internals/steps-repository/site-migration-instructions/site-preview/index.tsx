@@ -9,7 +9,7 @@ export const SitePreview: FC = () => {
 	const translate = useTranslate();
 	const fromUrl = useQuery().get( 'from' ) || '';
 
-	const { mShotsOption, previewRef } = useSitePreviewMShotImageHandler();
+	const { mShotsOption, previewRef } = useSitePreviewMShotImageHandler( fromUrl );
 
 	return (
 		<div className="migration-instructions-from-preview" ref={ previewRef }>
