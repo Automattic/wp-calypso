@@ -7,12 +7,16 @@ import {
 } from '@automattic/calypso-products';
 import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
+import { isMobile } from '@automattic/viewport';
+import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
+import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
 import PlanButton from './plan-button';
+import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { useDefaultStorageOption } from './shared/storage';
 import type { GridPlan, PlanActionOverrides } from '../types';
 
@@ -29,6 +33,18 @@ type PlanFeaturesActionsButtonProps = {
 	isStuck: boolean;
 	visibleGridPlans: GridPlan[];
 };
+
+const DummyDisabledButton = styled.div`
+	background-color: var( --studio-white );
+	color: var( --studio-gray-5 );
+	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
+	font-weight: 500;
+	line-height: 20px;
+	border-radius: 4px;
+	padding: 10px 14px;
+	border: unset;
+	text-align: center;
+`;
 
 const PlanFeatures2023GridActions = ( {
 	planSlug,
@@ -80,7 +96,7 @@ const PlanFeatures2023GridActions = ( {
 	);
 
 	const {
-		primary: { callback, text, status, variant },
+		primary: { callback, text, status },
 		postButtonText,
 	} = useAction( {
 		availableForPurchase,
@@ -94,6 +110,7 @@ const PlanFeatures2023GridActions = ( {
 		currentPlanBillingPeriod,
 		selectedStorageAddOn,
 	} );
+
 	const {
 		primary: { callback: freeTrialCallback, text: freeTrialText },
 	} = useAction( {
@@ -111,6 +128,7 @@ const PlanFeatures2023GridActions = ( {
 	} );
 
 	const busy = isFreePlan( planSlug ) && status === 'blocked';
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
 	const canPurchaseStorageAddOns = storageAddOns?.some(
@@ -125,15 +143,20 @@ const PlanFeatures2023GridActions = ( {
 		selectedStorageOptionForPlan && defaultStorageOption !== selectedStorageOptionForPlan;
 
 	let actionButton = (
-		<PlanButton
-			planSlug={ planSlug }
-			onClick={ callback }
-			busy={ busy }
-			disabled={ status !== 'enabled' }
-			classes={ variant === 'secondary' ? 'is-secondary' : '' }
+		<Plans2023Tooltip
+			text={ translate( 'Please contact support to downgrade your plan.' ) }
+			setActiveTooltipId={ setActiveTooltipId }
+			activeTooltipId={ activeTooltipId }
+			showOnMobile={ false }
+			id="downgrade"
 		>
-			{ text }
-		</PlanButton>
+			<DummyDisabledButton>{ text }</DummyDisabledButton>
+			{ isMobile() && (
+				<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
+					{ translate( 'Please contact support to downgrade your plan.' ) }
+				</div>
+			) }
+		</Plans2023Tooltip>
 	);
 
 	if (
