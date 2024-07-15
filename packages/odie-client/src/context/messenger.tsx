@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { useMessagingAuth } from '@automattic/help-center/src/hooks';
+import useMessagingAuth from '@automattic/help-center/src/hooks/use-messaging-auth';
 import { useEffect, useState, createContext, useContext } from 'react';
 import Smooch from 'smooch';
 import { Message as OdieMessage } from '../types/';
