@@ -54,12 +54,6 @@ $data-view-border-color: #f1f1f1;
 	@media (min-width: $break-large) {
 		background: inherit;
 
-		.dataviews-view-table thead {
-			position: sticky;
-			top: 0;
-			z-index: 2;
-		}
-
 		.dataviews-wrapper tr.dataviews-view-table__row th {
 			text-wrap: nowrap;
 		}
