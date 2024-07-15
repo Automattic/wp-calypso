@@ -3,31 +3,36 @@ import { getPlan } from '@automattic/calypso-products';
 import { FormInputValidation } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { useGetOdieStorage, useSetOdieStorage } from '@automattic/odie-client';
+import { useGetOdieStorage } from '@automattic/odie-client';
+import { useOpenZendeskMessaging } from '@automattic/zendesk-client';
+import { useDispatch } from '@wordpress/data';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import useChatStatus from '../hooks/use-chat-status';
-import useChatWidget from '../hooks/use-chat-widget';
+import { HELP_CENTER_STORE } from '../stores';
 import { generateContactOnClickEvent } from './utils';
 
-import './help-center-chat-option.scss';
+import './help-center-contact-support-option.scss';
 
-interface HelpCenterChatOptionProps {
+interface HelpCenterContactSupportOptionProps {
 	trackEventName?: string;
 }
 
-const HelpCenterChatOption = ( { trackEventName }: HelpCenterChatOptionProps ) => {
+const HelpCenterContactSupportOption = ( {
+	trackEventName,
+}: HelpCenterContactSupportOptionProps ) => {
 	const { __ } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
 	const { sectionName, site } = useHelpCenterContext();
 	const wapuuChatId = useGetOdieStorage( 'chat_id' );
-	const setWapuuChatId = useSetOdieStorage( 'chat_id' );
 	const { hasActiveChats, isEligibleForChat } = useChatStatus();
+	const { resetStore, setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
+	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
+		sectionName,
 		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats
 	);
@@ -66,18 +71,20 @@ const HelpCenterChatOption = ( { trackEventName }: HelpCenterChatOptionProps ) =
 
 		const escapedWapuuChatId = encodeURIComponent( wapuuChatId || '' );
 
-		openChatWidget( {
+		openZendeskWidget( {
 			aiChatId: escapedWapuuChatId,
 			siteUrl: site?.URL,
 			onError: () => setHasSubmittingError( true ),
-			// Reset Odie chat after passing to support
-			onSuccess: () => setWapuuChatId( null ),
+			onSuccess: () => {
+				resetStore();
+				setShowHelpCenter( false );
+			},
 		} );
 	};
 
 	return (
 		<div className="help-center-contact-support">
-			<button disabled={ isOpeningChatWidget } onClick={ handleOnClick }>
+			<button disabled={ isOpeningZendeskWidget } onClick={ handleOnClick }>
 				<div className="help-center-contact-support__box chat" role="button" tabIndex={ 0 }>
 					<div className="help-center-contact-support__box-icon">
 						<Icon icon={ comment } />
@@ -98,4 +105,4 @@ const HelpCenterChatOption = ( { trackEventName }: HelpCenterChatOptionProps ) =
 	);
 };
 
-export default HelpCenterChatOption;
+export default HelpCenterContactSupportOption;

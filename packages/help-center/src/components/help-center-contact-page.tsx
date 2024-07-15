@@ -5,9 +5,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
-import { useGetOdieStorage } from '@automattic/odie-client';
-import { useLoadZendeskMessaging, useOpenZendeskMessaging } from '@automattic/zendesk-client';
-import { useDispatch } from '@wordpress/data';
+import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
@@ -23,8 +21,7 @@ import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus, useShouldRenderEmailOption, useStillNeedHelpURL } from '../hooks';
 import { Mail } from '../icons';
-import { HELP_CENTER_STORE } from '../stores';
-import HelpCenterChatOption from './help-center-chat-option';
+import HelpCenterContactSupportOption from './help-center-contact-support-option';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { generateContactOnClickEvent } from './utils';
 
@@ -57,21 +54,9 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		isLoading: isLoadingChatStatus,
 		supportActivity,
 	} = useChatStatus();
-	const { resetStore, setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats,
-		isEligibleForChat || hasActiveChats
-	);
-
-	const { sectionName, site } = useHelpCenterContext();
-	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
-
-	const wapuuChatId = useGetOdieStorage( 'chat_id' );
-
-	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
-		sectionName,
-		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats
 	);
 
@@ -88,14 +73,6 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 			email_available: renderEmail.render,
 		} );
 	}, [ isLoading, renderEmail.render ] );
-
-	const liveChatHeaderText = useMemo( () => {
-		if ( isEnglishLocale || ! hasTranslation( 'Contact WordPress.com Support (English)' ) ) {
-			return __( 'Contact WordPress.com Support', __i18n_text_domain__ );
-		}
-
-		return __( 'Contact WordPress.com Support (English)', __i18n_text_domain__ );
-	}, [ __, isEnglishLocale ] );
 
 	const emailHeaderText = useMemo( () => {
 		if ( isEnglishLocale ) {
@@ -139,70 +116,6 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	} );
 	const emailUrl = `/contact-form?${ emailUrlSearchParams.toString() }`;
 
-	const contactOptionsEventMap: Record< ContactOption, () => void > = {
-		chat: generateContactOnClickEvent( 'chat', trackEventName ),
-		email: generateContactOnClickEvent( 'email', trackEventName ),
-	};
-
-	const renderChatOption = () => {
-		const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
-		const plan = getPlan( productSlug );
-		const productId = plan?.getProductId();
-
-		const handleOnClick = () => {
-			contactOptionsEventMap.chat();
-
-			recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-				support_variation: 'messaging',
-				force_site_id: true,
-				location: 'help-center',
-				section: sectionName,
-			} );
-
-			recordTracksEvent( 'calypso_help_live_chat_begin', {
-				site_plan_product_id: productId,
-				is_automated_transfer: site?.is_wpcom_atomic,
-				force_site_id: true,
-				location: 'help-center',
-				section: sectionName,
-			} );
-
-			const escapedWapuuChatId = encodeURIComponent( wapuuChatId || '' );
-
-			openZendeskWidget( {
-				aiChatId: escapedWapuuChatId,
-				siteUrl: site?.URL,
-				onError: () => setHasSubmittingError( true ),
-				onSuccess: () => {
-					resetStore();
-					setShowHelpCenter( false );
-				},
-			} );
-		};
-
-		return (
-			<div>
-				<button disabled={ isOpeningZendeskWidget } onClick={ handleOnClick }>
-					<div className="help-center-contact-page__box chat" role="button" tabIndex={ 0 }>
-						<div className="help-center-contact-page__box-icon">
-							<Icon icon={ comment } />
-						</div>
-						<div>
-							<h2>{ liveChatHeaderText }</h2>
-							<p>{ __( 'Our Happiness team will get back to you soon', __i18n_text_domain__ ) }</p>
-						</div>
-					</div>
-				</button>
-				{ hasSubmittingError && (
-					<FormInputValidation
-						isError
-						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
-					/>
-				) }
-			</div>
-		);
-	};
-
 	const renderEmailOption = () => {
 		return (
 			<div className="help-center-contact-support">
@@ -245,7 +158,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 				{ renderEmail.render ? (
 					renderEmailOption()
 				) : (
-					<HelpCenterChatOption trackEventName={ trackEventName } />
+					<HelpCenterContactSupportOption trackEventName={ trackEventName } />
 				) }
 			</div>
 		</div>

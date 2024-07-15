@@ -4,7 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import React, { useState } from 'react';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 import './help-center-feedback-form.scss';
-import HelpCenterChatOption from './help-center-chat-option';
+import HelpCenterContactSupportOption from './help-center-contact-support-option';
 interface HelpCenterFeedbackFormProps {
 	postId: number;
 	blogId?: string | null;
@@ -73,7 +73,7 @@ const HelpCenterFeedbackForm = ( { postId, blogId, slug }: HelpCenterFeedbackFor
 			{ startedFeedback === null && <FeedbackButtons /> }
 			{ startedFeedback !== null && answerValue === 1 && <FeedbackTextArea /> }
 			{ startedFeedback !== null && answerValue === 2 && (
-				<HelpCenterChatOption trackEventName="calypso_helpcenter_feedback_contact_support" />
+				<HelpCenterContactSupportOption trackEventName="calypso_helpcenter_feedback_contact_support" />
 			) }
 		</div>
 	);
