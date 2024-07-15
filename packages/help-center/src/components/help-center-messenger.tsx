@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { useMessagingAuth } from '@automattic/help-center/src/hooks';
 import { useEffect } from 'react';
 import Smooch from 'smooch';
 /**
@@ -9,7 +10,12 @@ import Smooch from 'smooch';
 import { BackButton } from './back-button';
 
 export function HelpCenterMessenger(): JSX.Element {
+	const { data: authData } = useMessagingAuth( true, 'messenger' );
 	useEffect( () => {
+		if ( ! authData?.jwt ) {
+			return;
+		}
+
 		Smooch.init( {
 			integrationId: '6453b7fc45cea5c267e60fed',
 			embedded: true,
@@ -18,12 +24,15 @@ export function HelpCenterMessenger(): JSX.Element {
 			customColors: {
 				brandColor: '0675C4',
 			},
+			externalId: authData?.externalId,
+			jwt: authData?.jwt,
 		} as InitOptions );
 		const messengerContainer = document.getElementById( 'messenger-container' );
 		if ( messengerContainer ) {
 			Smooch.render( messengerContainer );
 		}
-	}, [] );
+	}, [ authData?.jwt, authData?.externalId ] );
+
 	return (
 		<div className="help-center__container-content-odie">
 			<div className="help-center__container-odie-header">

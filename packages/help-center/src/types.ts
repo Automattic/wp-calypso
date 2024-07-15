@@ -78,7 +78,8 @@ export interface SupportTicket {
 
 export interface MessagingAuth {
 	user: {
-		jwt: string;
+		external_id: string;
+		jwt: string | null;
 	};
 }
 

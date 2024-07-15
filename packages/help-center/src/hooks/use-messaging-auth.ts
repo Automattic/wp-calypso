@@ -13,8 +13,8 @@ interface APIFetchOptions {
 let isLoggedIn = false;
 
 function requestMessagingAuth( { queryKey }: QueryFunctionContext ) {
-	const [ , isTestMode ] = queryKey;
-	const params = { type: 'zendesk', test_mode: String( isTestMode ) };
+	const [ , type, isTestMode ] = queryKey;
+	const params = { type: type as string, test_mode: String( isTestMode ) };
 	const wpcomParams = new URLSearchParams( params );
 	return canAccessWpcomApis()
 		? wpcomRequest< MessagingAuth >( {
@@ -31,27 +31,28 @@ function requestMessagingAuth( { queryKey }: QueryFunctionContext ) {
 		  } as APIFetchOptions );
 }
 
-export default function useMessagingAuth( enabled: boolean ) {
+export default function useMessagingAuth(
+	enabled: boolean,
+	type: 'zendesk' | 'messenger' = 'zendesk'
+) {
 	const currentEnvironment = config( 'env_id' );
 	const isTestMode = currentEnvironment === 'development';
 	return useQuery( {
-		queryKey: [ 'getMessagingAuth', isTestMode ],
+		queryKey: [ 'getMessagingAuth', type, isTestMode ],
 		queryFn: requestMessagingAuth,
 		staleTime: 7 * 24 * 60 * 60 * 1000, // 1 week (JWT is actually 2 weeks, but lets be on the safe side)
 		enabled,
 		select: ( messagingAuth ) => {
+			const jwt = messagingAuth?.user.jwt;
 			if ( ! isLoggedIn ) {
-				const jwt = messagingAuth?.user.jwt;
-				if ( typeof window.zE !== 'function' || ! jwt ) {
-					return;
+				if ( typeof window.zE === 'function' && jwt ) {
+					window.zE( 'messenger', 'loginUser', function ( callback ) {
+						isLoggedIn = true;
+						callback( jwt );
+					} );
 				}
-
-				window.zE( 'messenger', 'loginUser', function ( callback ) {
-					isLoggedIn = true;
-					callback( jwt );
-				} );
 			}
-			return { isLoggedIn };
+			return { isLoggedIn, jwt, externalId: messagingAuth?.user.external_id };
 		},
 	} );
 }
