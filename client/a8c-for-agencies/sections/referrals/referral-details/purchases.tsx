@@ -79,11 +79,5 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 		[ translate, data, isFetching, handleAssignToSite ]
 	);
 
-	return (
-		<ReferralDetailsTable
-			heading={ translate( 'Purchases' ) }
-			items={ purchases }
-			fields={ fields }
-		/>
-	);
+	return <ReferralDetailsTable items={ purchases } fields={ fields } />;
 }

@@ -43,7 +43,7 @@ export const getConsolidatedData = (
 
 	referrals.forEach( ( referral ) => {
 		const commissions = calculateCommissions( referral, products );
-		consolidatedData.pendingOrders += referral.statuses.filter(
+		consolidatedData.pendingOrders += referral.referralStatuses.filter(
 			( status ) => status === 'pending'
 		).length;
 		consolidatedData.pendingCommission += commissions;
