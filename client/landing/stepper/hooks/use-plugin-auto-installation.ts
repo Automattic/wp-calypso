@@ -1,5 +1,6 @@
 import { useMutation, useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import type { SitePlugin } from 'calypso/data/plugins/types';
 
@@ -153,6 +154,11 @@ export const usePluginAutoInstallation = (
 		}
 
 		if ( error ) {
+			recordTracksEvent( 'calypso_onboarding_plugin_installation_error', {
+				plugin,
+				error,
+				siteId: siteId,
+			} );
 			return 'error';
 		}
 
