@@ -43,6 +43,7 @@ export function OverviewPreviewPane( {
 	className,
 	isSmallScreen = false,
 	hasError = false,
+	onRefetchSite,
 }: PreviewPaneProps ) {
 	const translate = useTranslate();
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], ! isSmallScreen );
@@ -79,10 +80,22 @@ export function OverviewPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<SiteErrorPreview site={ site } trackEvent={ trackEvent } />
+				<SiteErrorPreview
+					site={ site }
+					trackEvent={ trackEvent }
+					onRefetchSite={ onRefetchSite }
+					closeSitePreviewPane={ closeSitePreviewPane }
+				/>
 			),
 		],
-		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent ]
+		[
+			closeSitePreviewPane,
+			onRefetchSite,
+			selectedSiteFeature,
+			setSelectedSiteFeature,
+			site,
+			trackEvent,
+		]
 	);
 
 	// Jetpack features: Boost, Backup, Monitor, Stats

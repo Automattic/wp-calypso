@@ -1,7 +1,12 @@
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useState } from 'react';
+import useRemoveSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-remove-site';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { SiteRemoveConfirmationDialog } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-remove-confirmation-dialog';
+import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import type { Site } from '../../../types';
 
 import './style.scss';
@@ -12,11 +17,47 @@ const JETPACK_PLUGIN_SLUG = 'jetpack';
 export default function SiteErrorPreview( {
 	site,
 	trackEvent,
+	onRefetchSite,
+	closeSitePreviewPane,
 }: {
 	site: Site;
 	trackEvent: ( eventName: string ) => void;
+	onRefetchSite?: () => Promise< unknown >;
+	closeSitePreviewPane?: () => void;
 } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const [ showRemoveSiteDialog, setShowRemoveSiteDialog ] = useState( false );
+	const [ isPendingRefetch, setIsPendingRefetch ] = useState( false );
+
+	const { mutate: removeSite, isPending } = useRemoveSiteMutation();
+
+	const onRemoveSite = useCallback( () => {
+		if ( site.a4a_site_id ) {
+			removeSite(
+				{ siteId: site.a4a_site_id },
+				{
+					onSuccess: () => {
+						setIsPendingRefetch( true );
+						// Add 1 second delay to refetch sites to give time for site profile to be reindexed properly.
+						setTimeout( () => {
+							onRefetchSite?.()?.then( () => {
+								setIsPendingRefetch( false );
+								setShowRemoveSiteDialog( false );
+								dispatch(
+									successNotice( translate( 'The site has been successfully removed.' ), {
+										displayOnNextPage: true,
+									} )
+								);
+								closeSitePreviewPane?.();
+							} );
+						}, 1000 );
+					},
+				}
+			);
+		}
+	}, [ closeSitePreviewPane, dispatch, onRefetchSite, removeSite, site.a4a_site_id, translate ] );
 
 	const isA4APluginInstalled = site.enabled_plugin_slugs?.includes( A4A_PLUGIN_SLUG );
 
@@ -29,6 +70,11 @@ export default function SiteErrorPreview( {
 	const page = isA4APluginInstalled ? A4A_PLUGIN_SLUG : JETPACK_PLUGIN_SLUG;
 
 	const disconnectHref = `${ site.url_with_scheme }/wp-admin/options-general.php?page=${ page }`;
+
+	const handleRemoveSite = () => {
+		trackEvent( 'calypso_a4a_site_indicator_disconnect_remove_site' );
+		setShowRemoveSiteDialog( true );
+	};
 
 	return (
 		<>
@@ -127,7 +173,28 @@ export default function SiteErrorPreview( {
 						</Button>
 					</FormattedHeader>
 				</CompactCard>
+				<CompactCard>
+					<FormattedHeader
+						isSecondary
+						align="left"
+						headerText={ translate( 'Remove site' ) }
+						subHeaderText={ translate( 'Remove this site from the dashboard.' ) }
+					>
+						<Button onClick={ handleRemoveSite }>
+							{ translate( 'Remove' ) }
+							<Gridicon icon="trash" />
+						</Button>
+					</FormattedHeader>
+				</CompactCard>
 			</div>
+			{ showRemoveSiteDialog && (
+				<SiteRemoveConfirmationDialog
+					siteName={ site.url }
+					onClose={ () => setShowRemoveSiteDialog( false ) }
+					onConfirm={ onRemoveSite }
+					busy={ isPending || isPendingRefetch }
+				/>
+			) }
 		</>
 	);
 }
