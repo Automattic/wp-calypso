@@ -1,0 +1,37 @@
+@import "@automattic/typography/styles/fonts";
+
+// We need to compensate the spacing because `enableDesktopScaling` on the progress element uses scale
+$progress-element-offset: 6px;
+
+.migration-instructions {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.migration-instructions--without-preview {
+	flex-direction: row;
+	gap: 24px;
+}
+
+.migration-instructions__content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.migration-instructions__progress {
+	margin: $progress-element-offset $progress-element-offset calc(2rem + $progress-element-offset);
+}
+
+.migration-instructions__title {
+	font-family: $brand-serif;
+	font-size: 2.75rem;
+	line-height: 1.3;
+	margin-bottom: 0.5rem;
+}
+
+.migration-instructions__description {
+	font-size: 0.875rem;
+	margin-bottom: 1rem;
+}

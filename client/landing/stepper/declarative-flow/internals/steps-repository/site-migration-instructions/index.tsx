@@ -9,9 +9,9 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { HostingBadge } from './hosting-badge';
+import { MigrationInstructions } from './migration-instructions';
 import { Provisioning } from './provisioning';
 import { Questions } from './questions';
-import { Sidebar } from './sidebar';
 import { SitePreview } from './site-preview';
 import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
@@ -80,8 +80,11 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	};
 	const { steps, completedSteps } = useSteps( { fromUrl, onComplete: onCompleteSteps } );
 
-	const sidebar = (
-		<Sidebar
+	const withoutPreview = fromUrl === '';
+
+	const migrationInstructions = (
+		<MigrationInstructions
+			withoutPreview={ withoutPreview }
 			progress={
 				<CircularProgressBar
 					size={ 40 }
@@ -95,11 +98,15 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 				<Steps steps={ steps } />
 			</div>
 			<Provisioning status={ detailedStatus } />
-		</Sidebar>
+		</MigrationInstructions>
 	);
 
-	const stepContent = (
-		<LaunchpadContainer sidebar={ sidebar }>
+	const stepContent = withoutPreview ? (
+		<div className="site-migration-instructions__container-without-preview">
+			{ migrationInstructions }
+		</div>
+	) : (
+		<LaunchpadContainer sidebar={ migrationInstructions }>
 			{ showHostingBadge && <HostingBadge hostingName={ hostingDetails.name } /> }
 
 			<SitePreview />
