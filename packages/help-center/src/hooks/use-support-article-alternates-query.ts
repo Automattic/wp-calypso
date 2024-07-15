@@ -1,8 +1,10 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { SUPPORT_BLOG_ID } from '../constants';
 
 export function useSupportArticleAlternatesQuery(
-	blogId: number,
+	blogId: number | string,
 	postId: number,
 	locale: string,
 	queryOptions = {}
@@ -23,3 +25,25 @@ export function useSupportArticleAlternatesQuery(
 		},
 	} );
 }
+
+export const getPostKey = ( blogId: number | string, postId: number ) => ( { blogId, postId } );
+
+export const useSupportArticleAlternatePostKey = (
+	blogId: number | string = SUPPORT_BLOG_ID,
+	postId: number = 0
+) => {
+	const locale = useLocale();
+	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId, locale, {
+		enabled: canAccessWpcomApis(),
+	} );
+	// Alternates don't work on Atomic.
+	if ( supportArticleAlternates.isInitialLoading && canAccessWpcomApis() ) {
+		return null;
+	}
+
+	if ( ! supportArticleAlternates.data ) {
+		return getPostKey( blogId, postId );
+	}
+
+	return getPostKey( supportArticleAlternates.data.blog_id, supportArticleAlternates.data.page_id );
+};

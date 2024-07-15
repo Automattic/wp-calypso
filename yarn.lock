@@ -1085,6 +1085,7 @@ __metadata:
     "@automattic/odie-client": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
+    "@automattic/zendesk-client": "workspace:^"
     "@popperjs/core": "npm:^2.11.8"
     "@storybook/addon-backgrounds": "npm:^7.6.19"
     "@tanstack/react-query": "npm:^5.15.5"
@@ -2316,6 +2317,22 @@ __metadata:
     "@wordpress/data": ^10.2.0
     react: ^18.2.0
     react-dom: ^18.2.0
+  languageName: unknown
+  linkType: soft
+
+"@automattic/zendesk-client@workspace:^, @automattic/zendesk-client@workspace:packages/zendesk-client":
+  version: 0.0.0-use.local
+  resolution: "@automattic/zendesk-client@workspace:packages/zendesk-client"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@tanstack/react-query": "npm:^5.15.5"
+    "@wordpress/api-fetch": "npm:^7.2.0"
+    "@wordpress/element": "npm:^6.2.0"
+    "@wordpress/url": "npm:^4.2.0"
+    typescript: "npm:^5.3.3"
+    wpcom-proxy-request: "workspace:^"
+  peerDependencies:
+    react: ^18.2.0
   languageName: unknown
   linkType: soft
 
@@ -12407,6 +12424,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wpcom-checkout": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
+    "@automattic/zendesk-client": "workspace:^"
     "@babel/core": "npm:^7.24.5"
     "@emotion/css": "npm:^11.11.2"
     "@emotion/jest": "npm:^11.11.0"
@@ -33373,6 +33391,7 @@ __metadata:
     "@automattic/whats-new": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
+    "@automattic/zendesk-client": "workspace:^"
     "@babel/core": "npm:^7.24.5"
     "@babel/eslint-parser": "npm:^7.24.5"
     "@babel/register": "npm:^7.23.7"

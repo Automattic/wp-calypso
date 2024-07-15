@@ -23,7 +23,7 @@ const useNavigatorScreens = ( screens: NavigatorScreenObject[] ) => {
 			onSubmit,
 			onBack,
 		} ) => (
-			<NavigatorScreen key={ path } path={ path }>
+			<NavigatorScreen key={ path } path={ path } style={ { animationDuration: '0s' } }>
 				<>
 					<NavigatorHeader
 						title={ <>{ title ?? label }</> }

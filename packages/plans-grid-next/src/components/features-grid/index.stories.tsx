@@ -69,7 +69,6 @@ const defaultProps = {
 	isInSignup: true,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,
-	planUpgradeCreditsApplicable: undefined,
 	recordTracksEvent: () => {},
 	showLegacyStorageFeature: false,
 	showRefundPeriod: false,

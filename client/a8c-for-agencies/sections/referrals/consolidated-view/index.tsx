@@ -12,7 +12,7 @@ const getConsolidatedData = ( referrals: Referral[] ) => {
 	};
 
 	referrals.forEach( ( referral ) => {
-		consolidatedData.pendingOrders += referral.statuses.filter(
+		consolidatedData.pendingOrders += referral.purchaseStatuses.filter(
 			( status ) => status === 'pending'
 		).length;
 	} );

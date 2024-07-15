@@ -99,6 +99,7 @@ export const createSiteDomainObject = ( domain ) => {
 		gdprConsentStatus: getGdprConsentStatus( domain ),
 		googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
 		titanMailSubscription: assembleGoogleAppsSubscription( domain.titan_mail_subscription ),
+		hasPendingContactUpdate: Boolean( domain.has_pending_contact_update ),
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),

@@ -12,7 +12,6 @@ import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import TransferRestrictionMessage from 'calypso/components/domains/transfer-domain-step/transfer-restriction-message';
@@ -242,7 +241,6 @@ class TransferDomainStep extends Component {
 		return (
 			<div>
 				<QueryProducts />
-				<QueryPlans />
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">

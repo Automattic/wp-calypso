@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, useRef } from 'react';
 import { connect } from 'react-redux';
-import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import {
@@ -351,14 +350,7 @@ export class PluginInstallButton extends Component {
 	}
 
 	render() {
-		const { siteId } = this.props;
-
-		return (
-			<div>
-				<QuerySiteConnectionStatus siteId={ siteId } />
-				{ this.renderNoticeOrButton() }
-			</div>
-		);
+		return <div>{ this.renderNoticeOrButton() }</div>;
 	}
 }
 

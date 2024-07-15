@@ -11,6 +11,7 @@ type Site = {
 	features: {
 		wpcom_atomic: {
 			state: string;
+			blog_id: number;
 		};
 	};
 };

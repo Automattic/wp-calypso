@@ -4,19 +4,13 @@ import PlanDivOrTdContainer from '../plan-div-td-container';
 
 type PlanPriceProps = {
 	currentSitePlanSlug?: string | null;
-	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	options?: {
 		isTableCell?: boolean;
 	};
 };
 
-const PlanPrice = ( {
-	currentSitePlanSlug,
-	options,
-	planUpgradeCreditsApplicable,
-	renderedGridPlans,
-}: PlanPriceProps ) => {
+const PlanPrice = ( { currentSitePlanSlug, options, renderedGridPlans }: PlanPriceProps ) => {
 	return renderedGridPlans.map( ( { planSlug } ) => {
 		return (
 			<PlanDivOrTdContainer
@@ -27,7 +21,6 @@ const PlanPrice = ( {
 			>
 				<PlanFeatures2023GridHeaderPrice
 					planSlug={ planSlug }
-					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					visibleGridPlans={ renderedGridPlans }
 				/>

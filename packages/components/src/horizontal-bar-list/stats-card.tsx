@@ -63,7 +63,7 @@ const StatsCard = ( {
 			</div>
 			{ ! isEmpty && (
 				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
-					<div className={ `${ BASE_CLASS_NAME }--column-header__left` }>
+					<div className={ `${ BASE_CLASS_NAME }--column-header__left` } key="left">
 						{ splitHeader && mainItemLabel }
 						{ additionalHeaderColumns && (
 							<div className={ `${ BASE_CLASS_NAME }-header__additional` }>
@@ -72,7 +72,7 @@ const StatsCard = ( {
 						) }
 					</div>
 					{ ! isEmpty && (
-						<div className={ `${ BASE_CLASS_NAME }--column-header__right` }>
+						<div className={ `${ BASE_CLASS_NAME }--column-header__right` } key="right">
 							{ metricLabel ?? translate( 'Views' ) }
 						</div>
 					) }
