@@ -29,6 +29,7 @@ export class FormAiFlow implements BlockFlow {
 	}
 
 	blockSidebarName = 'Form';
+	blockTestName = 'Form (AI)';
 	blockEditorSelector = makeSelectorFromBlockName( 'Form' );
 
 	/**
@@ -46,12 +47,9 @@ export class FormAiFlow implements BlockFlow {
 			aiInputParentLocator = context.addedBlockLocator;
 		}
 
-		const aiInputReadyLocator = aiInputParentLocator.getByPlaceholder(
-			'Ask Jetpack AI to create your form'
-		);
-		const aiInputBusyLocator = aiInputParentLocator.getByRole( 'textbox', {
-			name: 'Creating your form. Please wait a few moments.',
-			disabled: true,
+		const aiInputReadyLocator = aiInputParentLocator.getByPlaceholder( 'Ask Jetpack AI to edit…' );
+		const aiInputBusyLocator = aiInputParentLocator.getByRole( 'button', {
+			name: 'Stop request',
 		} );
 		const sendButtonLocator = aiInputParentLocator.getByRole( 'button', {
 			name: 'Send request',

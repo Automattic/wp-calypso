@@ -728,7 +728,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES_COLORS }>
+				<NavigatorScreen
+					path={ NAVIGATOR_PATHS.STYLES_COLORS }
+					style={ { animationDuration: '0s' } }
+				>
 					<ScreenColorPalettes
 						siteId={ site?.ID }
 						stylesheet={ stylesheet }
@@ -736,7 +739,10 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 						onSelect={ onScreenColorsSelect }
 					/>
 				</NavigatorScreen>
-				<NavigatorScreen path={ NAVIGATOR_PATHS.STYLES_FONTS }>
+				<NavigatorScreen
+					path={ NAVIGATOR_PATHS.STYLES_FONTS }
+					style={ { animationDuration: '0s' } }
+				>
 					<ScreenFontPairings
 						siteId={ site?.ID }
 						stylesheet={ stylesheet }

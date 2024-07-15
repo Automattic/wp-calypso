@@ -139,19 +139,22 @@ Well use studio-orange for both the primary and accent colors
 	--color-sidebar-menu-hover-background-rgb: var(--theme-highlight-color-rgb);
 	--color-sidebar-menu-hover-text: var(--theme-text-color);
 
-	/* Sidebar Hover - Nav unification */
-
 	/* Sidebar Submenu - Nav Unification */
 	--color-sidebar-submenu-background: var(--theme-submenu-background-color);
 	--color-sidebar-submenu-text: var(--theme-submenu-text-color);
 	--color-sidebar-submenu-hover-background: transparent;
 	--color-sidebar-submenu-hover-text: var(--theme-submenu-hover-text-color);
+	--color-sidebar-submenu-selected-hover-text: var(--theme-submenu-hover-text-color);
 
 	/* Sidebar Submenu - Nav Redesign */
 	--color-navredesign-sidebar-submenu-text: var(--color-sidebar-submenu-text);
 	--color-navredesign-sidebar-menu-selected-text: var(--theme-text-color);
 	--color-navredesign-sidebar-submenu-selected-text: var(--theme-text-color);
 	--color-navredesign-sidebar-submenu-hover-text: var(--theme-submenu-hover-text-color);
+	--color-navredesign-sidebar-submenu-selected-hover-text: var(--theme-submenu-hover-text-color);
+
+	/* Collapse Menu Button */
+	--color-collapse-menu-text: var(--theme-icon-color);
 
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--theme-highlight-color);

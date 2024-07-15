@@ -1,10 +1,15 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { CheckboxControl, TextControl } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
+import withErrorHandling from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling';
+import validateNonEmpty from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/non-empty';
+import validateUniqueUrls from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/unique-urls';
+import validateUrl from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/url';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
 import {
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
@@ -29,9 +34,15 @@ type DirectoryClientSamplesProps = {
 	label: string | ReactNode;
 	samples: string[];
 	onChange: ( samples: string[] ) => void;
+	error?: string;
 };
 
-const DirectoryClientSamples = ( { label, samples, onChange }: DirectoryClientSamplesProps ) => {
+const DirectoryClientSamples = ( {
+	label,
+	samples,
+	onChange,
+	error,
+}: DirectoryClientSamplesProps ) => {
 	const translate = useTranslate();
 
 	const onSampleChange = ( index: number, value: string ) => {
@@ -41,7 +52,11 @@ const DirectoryClientSamples = ( { label, samples, onChange }: DirectoryClientSa
 	return (
 		<div className="partner-directory-agency-expertise__directory-client-site">
 			<h3 className="partner-directory-agency-expertise__client-samples-label">{ label }</h3>
-			<div className="partner-directory-agency-expertise__client-samples">
+			<div
+				className={ clsx( 'partner-directory-agency-expertise__client-samples', {
+					'is-error': !! error,
+				} ) }
+			>
 				{ samples.map( ( sample, index ) => (
 					<TextControl
 						key={ `client-sample-${ index }` }
@@ -52,9 +67,19 @@ const DirectoryClientSamples = ( { label, samples, onChange }: DirectoryClientSa
 					/>
 				) ) }
 			</div>
+			<div
+				className={ clsx( 'partner-directory-agency-expertise__error', {
+					hidden: ! error,
+				} ) }
+				role="alert"
+			>
+				{ error }
+			</div>
 		</div>
 	);
 };
+
+const EnhancedDirectoryClientSamples = withErrorHandling( DirectoryClientSamples );
 
 type Props = {
 	initialFormData: AgencyDirectoryApplication | null;
@@ -136,6 +161,8 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 						'We allow each agency to offer up to five services to help you focus on what you do best.'
 					) }
 					error={ validationError.services }
+					field={ services }
+					checks={ [ validateNonEmpty() ] }
 					isRequired
 				>
 					<ServicesSelector
@@ -153,6 +180,8 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 				<FormField
 					label={ translate( 'What products do you work with?' ) }
 					error={ validationError.products }
+					field={ formData.products }
+					checks={ [ validateNonEmpty() ] }
 					isRequired
 				>
 					<ProductsSelector
@@ -173,6 +202,8 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					label={ translate( 'Automattic Partner Directories' ) }
 					sub={ translate( 'Select the Automattic directories you would like to appear on.' ) }
 					error={ validationError.directories }
+					field={ formData.directories }
+					checks={ [ validateNonEmpty() ] }
 					isRequired
 				>
 					<div className="partner-directory-agency-expertise__directory-options">
@@ -201,8 +232,10 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 						isRequired
 					>
 						<div className="partner-directory-agency-expertise__directory-client-sites">
-							{ directories.map( ( { directory } ) => (
-								<DirectoryClientSamples
+							{ directories.map( ( { directory, urls } ) => (
+								<EnhancedDirectoryClientSamples
+									checks={ [ validateNonEmpty(), validateUniqueUrls() ] }
+									field={ urls }
 									key={ `directory-samples-${ directory }` }
 									label={ translate( 'Relevant examples for %(directory)s', {
 										args: {
@@ -227,6 +260,8 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 						'Share a link to your customer feedback from Google, Clutch, Facebook, etc., or testimonials featured on your website. If you don’t have online reviews, provide a link to client references or case studies.'
 					) }
 					error={ validationError.feedbackUrl }
+					checks={ [ validateNonEmpty(), validateUrl() ] }
+					field={ feedbackUrl }
 					isRequired
 				>
 					<TextControl

@@ -74,7 +74,7 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 						<EmptyModuleCard
 							icon={ customLink }
 							description={ translate(
-								'Learn about your most {{link}}clicked external links{{/link}} to track engaging content.',
+								'Your most {{link}}clicked external links{{/link}} will display here to track engaging content.',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {

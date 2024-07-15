@@ -15,12 +15,12 @@ const getClientReferrals = ( referrals: ReferralAPIResponse[] ) => {
 			...product,
 			referral_id: referral.id,
 		} ) );
-		const statuses = purchases.map( ( purchase ) => purchase.status );
 		return {
 			id: referral.client.id,
 			client: referral.client,
 			purchases,
-			statuses,
+			purchaseStatuses: purchases.map( ( purchase ) => purchase.status ),
+			referralStatuses: [ referral.status ],
 		};
 	} );
 
@@ -28,7 +28,8 @@ const getClientReferrals = ( referrals: ReferralAPIResponse[] ) => {
 		const existing = acc.find( ( item ) => item.id === current.id );
 		if ( existing ) {
 			existing.purchases.push( ...current.purchases );
-			existing.statuses.push( ...current.statuses );
+			existing.purchaseStatuses.push( ...current.purchaseStatuses );
+			existing.referralStatuses.push( ...current.referralStatuses );
 		} else {
 			acc.push( current );
 		}

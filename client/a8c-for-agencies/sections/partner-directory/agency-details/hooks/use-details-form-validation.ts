@@ -1,8 +1,8 @@
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import { isValidUrl } from 'calypso/a8c-for-agencies/components/form/utils';
 import { AgencyDetails } from '../../types';
-import { isValidUrl } from '../../utils/tools';
 
 type ValidationState = {
 	name?: string;

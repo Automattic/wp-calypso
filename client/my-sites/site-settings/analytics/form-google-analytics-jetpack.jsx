@@ -65,6 +65,7 @@ const GoogleAnalyticsJetpackForm = ( {
 	const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
 	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.sites[ siteId ].active : false;
 	const dispatch = useDispatch();
+	const trackTracksEvent = ( name, props ) => dispatch( recordTracksEvent( name, props ) );
 
 	useEffect( () => {
 		// Show the form if GA module is active, or it's been removed but GA is activated via the Legacy Plugin.
@@ -83,7 +84,7 @@ const GoogleAnalyticsJetpackForm = ( {
 
 	const handleToggleChange = ( key ) => {
 		const value = fields.wga ? ! fields.wga[ key ] : false;
-		recordTracksEvent( 'calypso_google_analytics_setting_changed', { key, path } );
+		trackTracksEvent( 'calypso_google_analytics_setting_changed', { key, path } );
 		handleFieldChange( key, value );
 	};
 
@@ -100,8 +101,12 @@ const GoogleAnalyticsJetpackForm = ( {
 		handleSubmitForm();
 	};
 
+	const trackActiveToggle = () => {
+		trackTracksEvent( 'calypso_google_analytics_setting_changed', { key: 'is_active', path } );
+	};
+
 	const handleSettingsToggleChange = ( value ) => {
-		recordTracksEvent( 'calypso_google_analytics_setting_changed', { key: 'is_active', path } );
+		trackActiveToggle();
 		handleFieldChange( 'is_active', value, handleSubmitForm );
 	};
 
@@ -272,6 +277,7 @@ const GoogleAnalyticsJetpackForm = ( {
 										moduleSlug="google-analytics"
 										label={ translate( 'Add Google' ) }
 										disabled={ isRequestingSettings || isSavingSettings }
+										onChange={ trackActiveToggle }
 									/>
 								) : (
 									renderSettingsToggle()

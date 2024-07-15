@@ -30,7 +30,7 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 			<div className="referral-details__subtitle">
 				{ translate( 'Payment status {{badge}}%(status)s{{/badge}}', {
 					args: {
-						status: referral.statuses[ 0 ],
+						status: referral.purchaseStatuses[ 0 ],
 					},
 					comment: '%(status) is subscription status',
 					components: {
