@@ -3,6 +3,7 @@ import {
 	isAkismetProduct,
 	isJetpackPurchasableItem,
 	AKISMET_PRO_500_PRODUCTS,
+	isDomainMapping,
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isCopySiteFlow } from '@automattic/onboarding';
@@ -266,6 +267,7 @@ function LineItemWrapper( {
 	akQuantityOpenId: string | null;
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
+	const isDomainConnection = isDomainMapping( product );
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
@@ -283,6 +285,10 @@ function LineItemWrapper( {
 		}
 
 		if ( isRenewal && ! product.is_domain_registration ) {
+			return false;
+		}
+
+		if ( isDomainConnection ) {
 			return false;
 		}
 
