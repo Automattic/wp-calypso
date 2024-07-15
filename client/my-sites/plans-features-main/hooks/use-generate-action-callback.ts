@@ -153,6 +153,8 @@ function useGenerateActionCallback( {
 	sitePlanSlug,
 	siteSlug,
 	withDiscount,
+	isInSignup,
+	isLaunchPage,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
@@ -163,6 +165,8 @@ function useGenerateActionCallback( {
 	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	withDiscount?: string;
+	isInSignup: boolean;
+	isLaunchPage: boolean | null;
 } ): UseActionCallback {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
