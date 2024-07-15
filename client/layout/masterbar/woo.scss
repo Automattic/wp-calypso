@@ -1785,6 +1785,12 @@ $breakpoint-mobile: 660px;
 			text-align: center;
 		}
 
+		.jetpack-connect__main-logo {
+			@media (max-width: $break-mobile) {
+				padding-top: 0;
+			}
+		}
+
 		.formatted-header__subtitle,
 		.login__header-subtitle {
 			color: #757575;
@@ -1796,6 +1802,10 @@ $breakpoint-mobile: 660px;
 			a {
 				font-weight: inherit;
 				font-size: inherit;
+			}
+
+			@media (max-width: $break-mobile) {
+				text-align: start;
 			}
 		}
 		input[type="text"].form-text-input,
