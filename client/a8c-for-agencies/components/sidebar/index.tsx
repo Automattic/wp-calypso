@@ -65,7 +65,9 @@ const A4ASidebar = ( {
 		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_share_product_feedback_click' ) );
 	}, [ dispatch ] );
 
-	const contactUsText = isClient ? translate( 'Contact support' ) : translate( 'Contact sales' );
+	const contactUsText = isClient
+		? translate( 'Contact support' )
+		: translate( 'Contact sales & support' );
 
 	return (
 		<Sidebar className={ clsx( 'a4a-sidebar', className ) }>
