@@ -80,6 +80,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 	const [ restoreInitiated, setRestoreInitiated ] = useState( false );
+	const [ restoreFailed, setRestoreFailed ] = useState( false );
 	const [ showConfirm, setShowConfirm ] = useState( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
@@ -161,6 +162,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const onRetryClick = useCallback( () => {
 		// Reset the restore state
 		setRestoreInitiated( false );
+		setRestoreFailed( false );
 		setUserHasRequestedRestore( false );
 
 		// Show the restore confirmation screen
@@ -338,7 +340,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) ) ||
-		( userHasRequestedRestore && inProgressRewindStatus === 'failed' );
+		( userHasRequestedRestore && inProgressRewindStatus === 'failed' && ! restoreFailed );
 	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 
 	useEffect( () => {
@@ -346,11 +348,13 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_completed' ) );
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
+			setRestoreFailed( false );
 		}
 
 		if ( ! isRestoreInProgress && restoreInitiated && inProgressRewindStatus === 'failed' ) {
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
+			setRestoreFailed( true );
 		}
 	}, [
 		dispatch,
@@ -392,6 +396,15 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			) }
 			<Card>{ render() }</Card>
 			{ ( isInProgress || isFinished ) && <JetpackReviewPrompt align="center" type="restore" /> }
+			<ul>
+				<li>inProgressRewindStatus: { JSON.stringify( inProgressRewindStatus ) }</li>
+				<li>isInProgress: { JSON.stringify( isInProgress ) }</li>
+				<li>userHasRequestedRestore: { JSON.stringify( userHasRequestedRestore ) }</li>
+				<li>restoreInitiated: { JSON.stringify( restoreInitiated ) }</li>
+				<li>restoreFailed: { JSON.stringify( restoreFailed ) }</li>
+				<li>showConfirm: { JSON.stringify( showConfirm ) }</li>
+				<li>isRestoreInProgress: { JSON.stringify( isRestoreInProgress ) }</li>
+			</ul>
 		</>
 	);
 };
