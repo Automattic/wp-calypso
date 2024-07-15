@@ -172,39 +172,37 @@ const StatsCommercialPurchase = ( {
 				</>
 			) }
 			{ isCommercialOwned && <StatsUpgradeInstructions /> }
-			<>
-				<p>{ translate( 'Pick your Stats tier below:' ) }</p>
-				<StatsCommercialUpgradeSlider
-					currencyCode={ currencyCode }
-					analyticsEventName={ `${
-						isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
-					}_stats_purchase_commercial_slider_clicked` }
-					onSliderChange={ handleSliderChanged }
-				/>
-				<div className="stats-purchase-wizard__actions">
-					<ButtonComponent
-						variant="primary"
-						primary={ isWPCOMSite ? true : undefined }
-						onClick={ () =>
-							gotoCheckoutPage( {
-								from,
-								type: 'commercial',
-								siteSlug,
-								adminUrl,
-								redirectUri,
-								price: undefined,
-								quantity: purchaseTierQuantity,
-								isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
-							} )
-						}
-					>
-						{ continueButtonText }
-					</ButtonComponent>
-				</div>
-				<div className="stats-purchase-page__footnotes">
-					<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>
-				</div>
-			</>
+			<p>{ translate( 'Pick your Stats tier below:' ) }</p>
+			<StatsCommercialUpgradeSlider
+				currencyCode={ currencyCode }
+				analyticsEventName={ `${
+					isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
+				}_stats_purchase_commercial_slider_clicked` }
+				onSliderChange={ handleSliderChanged }
+			/>
+			<div className="stats-purchase-wizard__actions">
+				<ButtonComponent
+					variant="primary"
+					primary={ isWPCOMSite ? true : undefined }
+					onClick={ () =>
+						gotoCheckoutPage( {
+							from,
+							type: 'commercial',
+							siteSlug,
+							adminUrl,
+							redirectUri,
+							price: undefined,
+							quantity: purchaseTierQuantity,
+							isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
+						} )
+					}
+				>
+					{ continueButtonText }
+				</ButtonComponent>
+			</div>
+			<div className="stats-purchase-page__footnotes">
+				<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>
+			</div>
 		</>
 	);
 };
