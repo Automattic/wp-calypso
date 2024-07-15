@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { NoticeIdType } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
@@ -113,7 +112,6 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			return !! (
 				! isWpcom &&
 				( showTierUpgradeNoticeOnOdyssey || showTierUpgradeNoticeForJetpackNotAtomic ) &&
-				config.isEnabled( 'stats/tier-upgrade-slider' ) &&
 				isCommercialOwned
 			);
 		},
