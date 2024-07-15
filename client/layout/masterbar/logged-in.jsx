@@ -684,7 +684,14 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderPopupSearch() }
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
-							{ this.renderMySites() }
+							{ this.props.isUnifiedSiteView ? (
+								<>
+									{ this.renderSidebarMobileMenu() }
+									{ this.renderGlobalMySites() }
+								</>
+							) : (
+								this.renderMySites()
+							) }
 							{ this.renderReader( false ) }
 							{ this.renderSiteMenu( false ) }
 							{ this.renderLanguageSwitcher() }
@@ -705,7 +712,14 @@ class MasterbarLoggedIn extends Component {
 				{ this.renderPopupSearch() }
 				<Masterbar>
 					<div className="masterbar__section masterbar__section--left">
-						{ this.renderMySites() }
+						{ this.props.isUnifiedSiteView && this.state.isResponsiveMenu ? (
+							<>
+								{ this.renderSidebarMobileMenu() }
+								{ this.renderGlobalMySites() }
+							</>
+						) : (
+							this.renderMySites()
+						) }
 						{ this.renderReader() }
 						{ this.renderSiteMenu() }
 						{ this.renderLanguageSwitcher() }
