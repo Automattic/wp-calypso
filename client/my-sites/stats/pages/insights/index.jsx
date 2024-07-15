@@ -78,7 +78,7 @@ const StatsInsights = ( props ) => {
 							) }
 						/>
 					) }
-					{ isEmptyStateV2 && (
+					{ ! isEmptyStateV2 && (
 						<StatsModule
 							path="tags-categories"
 							moduleStrings={ moduleStrings.tags }
