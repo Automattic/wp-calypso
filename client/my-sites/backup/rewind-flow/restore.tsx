@@ -396,15 +396,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			) }
 			<Card>{ render() }</Card>
 			{ ( isInProgress || isFinished ) && <JetpackReviewPrompt align="center" type="restore" /> }
-			<ul>
-				<li>inProgressRewindStatus: { JSON.stringify( inProgressRewindStatus ) }</li>
-				<li>isInProgress: { JSON.stringify( isInProgress ) }</li>
-				<li>userHasRequestedRestore: { JSON.stringify( userHasRequestedRestore ) }</li>
-				<li>restoreInitiated: { JSON.stringify( restoreInitiated ) }</li>
-				<li>restoreFailed: { JSON.stringify( restoreFailed ) }</li>
-				<li>showConfirm: { JSON.stringify( showConfirm ) }</li>
-				<li>isRestoreInProgress: { JSON.stringify( isRestoreInProgress ) }</li>
-			</ul>
 		</>
 	);
 };
