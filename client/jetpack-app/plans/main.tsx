@@ -3,7 +3,6 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import QueryPlans from 'calypso/components/data/query-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
@@ -96,7 +95,6 @@ const JetpackAppPlans: React.FC< JetpackAppPlansProps > = ( { paidDomainName, or
 
 	return (
 		<Main className="jetpack-app__plans">
-			<QueryPlans />
 			<Header paidDomainName={ paidDomainName } />
 			<PlansFeaturesMain
 				paidDomainName={ paidDomainName }
