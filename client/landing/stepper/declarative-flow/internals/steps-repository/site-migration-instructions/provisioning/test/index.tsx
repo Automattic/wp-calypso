@@ -41,7 +41,7 @@ describe( 'Provisioning', () => {
 		const message = container.querySelector( '.migration-instructions-provisioning__message' );
 
 		expect( message?.textContent ).toBe(
-			'Sorry, we couldn’t finish setting up your site. Please, contact support.'
+			'Sorry, we couldn’t finish setting up your site. Please contact support.'
 		);
 	} );
 

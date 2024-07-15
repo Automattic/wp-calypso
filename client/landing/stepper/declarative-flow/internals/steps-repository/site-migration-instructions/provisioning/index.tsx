@@ -44,7 +44,7 @@ export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
 		};
 
 		text = translate(
-			'Sorry, we couldn’t finish setting up your site. {{link}}Please, contact support{{/link}}.',
+			'Sorry, we couldn’t finish setting up your site. {{link}}Please contact support{{/link}}.',
 			{
 				components: {
 					link: (
