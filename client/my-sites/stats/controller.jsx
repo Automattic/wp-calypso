@@ -202,15 +202,13 @@ export function site( context, next ) {
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'views';
 
 	context.primary = (
-		<LoadStatsPage>
-			<StatsSite
-				path={ context.pathname }
-				date={ date }
-				chartTab={ chartTab }
-				context={ context }
-				period={ rangeOfPeriod( activeFilter.period, date ) }
-			/>
-		</LoadStatsPage>
+		<StatsSite
+			path={ context.pathname }
+			date={ date }
+			chartTab={ chartTab }
+			context={ context }
+			period={ rangeOfPeriod( activeFilter.period, date ) }
+		/>
 	);
 
 	next();
