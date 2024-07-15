@@ -68,15 +68,12 @@ type StatsCommercialUpgradeSliderProps = {
 	onSliderChange: ( quantity: number ) => void;
 };
 
-const getTierQuentity = ( tiers: StatsPlanTierUI, isTierUpgradeSliderEnabled: boolean ) => {
-	if ( isTierUpgradeSliderEnabled ) {
-		if ( tiers?.views === null && tiers?.transform_quantity_divide_by ) {
-			// handle extension an tier by muliplying the limit of the highest tier
-			return EXTENSION_THRESHOLD_IN_MILLION * tiers.transform_quantity_divide_by; // TODO: this will use a dynamic multiplier (#85246)
-		}
-		return tiers?.views;
+const getTierQuentity = ( tiers: StatsPlanTierUI ) => {
+	if ( tiers?.views === null && tiers?.transform_quantity_divide_by ) {
+		// handle extension an tier by muliplying the limit of the highest tier
+		return EXTENSION_THRESHOLD_IN_MILLION * tiers.transform_quantity_divide_by; // TODO: this will use a dynamic multiplier (#85246)
 	}
-	return 0;
+	return tiers?.views;
 };
 
 function StatsCommercialUpgradeSlider( {
@@ -133,7 +130,7 @@ function StatsCommercialUpgradeSlider( {
 	const steps = getStepsForTiers( tiers, currencyCode );
 
 	const handleSliderChanged = ( index: number ) => {
-		const quantity = getTierQuentity( tiers[ index ], true );
+		const quantity = getTierQuentity( tiers[ index ] );
 
 		if ( analyticsEventName ) {
 			recordTracksEvent( analyticsEventName, {
@@ -147,7 +144,7 @@ function StatsCommercialUpgradeSlider( {
 
 	useEffect( () => {
 		// Update fetched tier quantity of the first step back to the parent component for checkout.
-		const firstStepQuantity = getTierQuentity( tiers[ 0 ], true );
+		const firstStepQuantity = getTierQuentity( tiers[ 0 ] );
 		onSliderChange( firstStepQuantity as number );
 	}, [ JSON.stringify( tiers ), onSliderChange ] );
 

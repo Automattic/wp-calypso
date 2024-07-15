@@ -140,8 +140,6 @@ const gotoCheckoutPage = ( {
 	let eventName = '';
 	let product: string;
 
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
-
 	switch ( type ) {
 		case 'pwyw':
 			eventName = 'pwyw';
@@ -154,15 +152,9 @@ const gotoCheckoutPage = ( {
 			product = PRODUCT_JETPACK_STATS_FREE;
 			break;
 		case 'commercial':
-			// Default to yearly/annual billing
-			eventName = 'commercial';
-			product = PRODUCT_JETPACK_STATS_YEARLY;
-
-			if ( isTierUpgradeSliderEnabled ) {
-				product = quantity
-					? `${ PRODUCT_JETPACK_STATS_YEARLY }:-q-${ quantity }`
-					: PRODUCT_JETPACK_STATS_YEARLY;
-			}
+			product = quantity
+				? `${ PRODUCT_JETPACK_STATS_YEARLY }:-q-${ quantity }`
+				: PRODUCT_JETPACK_STATS_YEARLY;
 
 			break;
 	}
