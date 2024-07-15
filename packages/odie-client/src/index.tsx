@@ -3,6 +3,7 @@ import { useInView } from 'react-intersection-observer';
 import ChatMessage, { ChatMessageProps } from './components/message';
 import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext, OdieAssistantProvider } from './context';
+import { SupportMessenger, useSupportMessenger } from './context/messenger';
 
 import './style.scss';
 
@@ -11,8 +12,9 @@ export const ODIE_THUMBS_UP_RATING_VALUE = 1;
 
 const ForwardedChatMessage = forwardRef< HTMLDivElement, ChatMessageProps >( ChatMessage );
 
-export const OdieAssistant: React.FC = () => {
+export const OdieAssistantComponent: React.FC = () => {
 	const { chat, trackEvent, currentUser } = useOdieAssistantContext();
+	const { conversations, isLoading } = useSupportMessenger();
 	const chatboxMessagesRef = useRef< HTMLDivElement | null >( null );
 	const { ref: bottomRef, entry: lastMessageElement, inView } = useInView( { threshold: 0 } );
 	const [ stickToBottom, setStickToBottom ] = useState( true );
@@ -75,17 +77,38 @@ export const OdieAssistant: React.FC = () => {
 						}
 					} }
 				>
-					{ chat.messages.map( ( message, index ) => {
-						return (
-							<ForwardedChatMessage
-								message={ message }
-								key={ index }
-								currentUser={ currentUser }
-								scrollToBottom={ scrollToBottom }
-								ref={ chat.messages.length - 1 === index ? bottomRef : undefined }
-							/>
-						);
-					} ) }
+					{ isLoading ? (
+						'Loading'
+					) : (
+						<>
+							{ chat.messages.map( ( message, index ) => {
+								return (
+									<ForwardedChatMessage
+										message={ message }
+										key={ index }
+										currentUser={ currentUser }
+										scrollToBottom={ scrollToBottom }
+										ref={
+											conversations.length === 0 && chat.messages.length - 1 === index
+												? bottomRef
+												: undefined
+										}
+									/>
+								);
+							} ) }
+							{ conversations.map( ( message, index ) => {
+								return (
+									<ForwardedChatMessage
+										message={ message }
+										key={ chat.messages.length + index }
+										currentUser={ currentUser }
+										scrollToBottom={ scrollToBottom }
+										ref={ conversations.length - 1 === index ? bottomRef : undefined }
+									/>
+								);
+							} ) }
+						</>
+					) }
 				</div>
 				<OdieSendMessageButton
 					scrollToBottom={ scrollToBottom }
@@ -95,6 +118,14 @@ export const OdieAssistant: React.FC = () => {
 				/>
 			</div>
 		</div>
+	);
+};
+
+export const OdieAssistant: React.FC = () => {
+	return (
+		<SupportMessenger>
+			<OdieAssistantComponent />
+		</SupportMessenger>
 	);
 };
 

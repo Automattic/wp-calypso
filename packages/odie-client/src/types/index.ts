@@ -61,7 +61,7 @@ export type Nudge = {
 	context?: Record< string, unknown >;
 };
 
-export type MessageRole = 'user' | 'bot';
+export type MessageRole = 'user' | 'bot' | 'agent';
 
 export type MessageType =
 	| 'message'

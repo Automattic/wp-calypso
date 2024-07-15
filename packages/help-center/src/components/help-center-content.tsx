@@ -18,7 +18,6 @@ import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
 import { HelpCenterEmbedResult } from './help-center-embed-result';
-import { HelpCenterMessenger } from './help-center-messenger';
 import { HelpCenterOdie } from './help-center-odie';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
@@ -114,7 +113,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 						element={ <HelpCenterContactForm onSubmit={ () => setOdieStorage( null ) } /> }
 					/>
 					<Route path="/success" element={ <SuccessScreen /> } />
-					<Route path="/messenger" element={ <HelpCenterMessenger /> } />
 					<Route
 						path="/odie"
 						element={
@@ -128,12 +126,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								logger={ trackEvent }
 								loggerEventNamePrefix="calypso_odie"
 								selectedSiteId={ site?.ID as number }
-								extraContactOptions={
-									<HelpCenterContactPage
-										hideHeaders
-										trackEventName="calypso_odie_extra_contact_option"
-									/>
-								}
 							>
 								<HelpCenterOdie />
 							</OdieAssistantProvider>
