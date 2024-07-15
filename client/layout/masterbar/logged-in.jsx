@@ -23,7 +23,10 @@ import {
 	getCurrentUserDate,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
-import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
+import {
+	getShouldShowGlobalSidebar,
+	getShouldShowUnifiedSiteSidebar,
+} from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -609,6 +612,10 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderSiteMenu( showLabel = true ) {
+		if ( ! this.props.isUnifiedSiteView ) {
+			return null;
+		}
+
 		const { sectionGroup, currentSelectedSiteSlug, translate, siteTitle, siteUrl } = this.props;
 
 		// Only display on site-specific pages.
@@ -741,6 +748,12 @@ export default connect(
 			sectionGroup,
 			sectionName
 		);
+		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
+			state,
+			currentSelectedSiteId,
+			sectionGroup,
+			sectionName
+		);
 		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
@@ -775,6 +788,7 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
+			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
 		};
 	},
