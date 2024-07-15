@@ -3,7 +3,10 @@ import { useMigrationStickerMutation } from './use-migration-sticker';
 
 const REF_PATHS_WITH_INTRODUCTORY_OFFER = [ 'move-lp' ];
 
-export const useCheckoutMigrationIntroductoryOfferSticker = ( siteId, onSuccessCallback ) => {
+export const useCheckoutMigrationIntroductoryOfferSticker = (
+	siteId: number | undefined,
+	onSuccessCallback: ( () => void ) | null | undefined
+) => {
 	const urlQueryParams = new URLSearchParams( window.location.search );
 	const refPath = urlQueryParams?.get( 'ref' ) ?? '';
 	const checkoutBackPath = urlQueryParams?.get( 'checkoutBackUrl' ) ?? '';
