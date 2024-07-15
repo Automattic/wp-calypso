@@ -74,6 +74,8 @@ function useGenerateActionHook( {
 		sitePlanSlug,
 		siteSlug,
 		withDiscount,
+		isInSignup,
+		isLaunchPage,
 	} );
 
 	const useActionHook = ( {

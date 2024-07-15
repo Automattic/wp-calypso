@@ -146,6 +146,8 @@ function useGenerateActionCallback( {
 	sitePlanSlug,
 	siteSlug,
 	withDiscount,
+	isInSignup,
+	isLaunchPage,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
@@ -156,6 +158,8 @@ function useGenerateActionCallback( {
 	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	withDiscount?: string;
+	isInSignup: boolean;
+	isLaunchPage: boolean | null;
 } ): UseActionCallback {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
@@ -203,7 +207,13 @@ function useGenerateActionCallback( {
 			}
 
 			/* 3. Handle plan downgrades and plan downgrade tracks events */
-			if ( sitePlanSlug && intent !== 'plans-blog-onboarding' && ! availableForPurchase ) {
+			if (
+				sitePlanSlug &&
+				! isInSignup &&
+				! isLaunchPage &&
+				intent !== 'plans-blog-onboarding' &&
+				! availableForPurchase
+			) {
 				recordTracksEvent?.( 'calypso_plan_features_downgrade_click', {
 					current_plan: sitePlanSlug,
 					downgrading_to: planSlug,
