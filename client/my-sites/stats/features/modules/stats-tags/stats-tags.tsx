@@ -12,7 +12,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { INSIGHTS_SUPPORT_URL } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
@@ -77,7 +77,9 @@ const StatsTags: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#tags-categories` ) } />,
+										link: (
+											<a href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#all-time-insights` ) } />
+										),
 									},
 									context: 'Stats: Info box label when the Tags & Categories module is empty',
 								}
