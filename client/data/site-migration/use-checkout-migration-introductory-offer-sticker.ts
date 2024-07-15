@@ -43,7 +43,7 @@ export const useCheckoutMigrationIntroductoryOfferSticker = (
 
 	useEffect( () => {
 		if ( shouldSetMigrationSticker && isMigrationStickerSettingSuccess && onSuccessCallback ) {
-			onSuccessCallback();
+			setTimeout( onSuccessCallback, 0 );
 		}
 	}, [ isMigrationStickerSettingSuccess, onSuccessCallback, shouldSetMigrationSticker ] );
 
