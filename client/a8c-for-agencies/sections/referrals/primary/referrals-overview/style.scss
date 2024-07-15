@@ -26,9 +26,15 @@ $data-view-border-color: #f1f1f1;
 			@include a4a-font-body-md;
 		}
 
+
 		.button {
 			background-color: var(--color-accent-100);
 			color: var(--color-surface);
+
+			&:hover,
+			&:focus-visible {
+				background-color: var(--color-accent-100);
+			}
 		}
 	}
 }
