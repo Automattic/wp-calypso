@@ -181,6 +181,9 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 				await saveSiteSettings( siteSlug, { migration_source_site_domain: data.from } );
 			}
 
+			// If we have a URL of the source, we send reqeusts to the mShots API to create screenshots
+			// early in the flow to avoid long loading times in the migration instructions step.
+			// Because mShots API can often take a long time to generate screenshots.
 			if ( data?.from ) {
 				createScreenshots( data?.from );
 			}
