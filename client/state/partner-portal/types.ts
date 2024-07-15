@@ -94,6 +94,7 @@ export interface APILicense {
 	parent_jetpack_license_id: string | null;
 	issued_at: string;
 	revoked_at: string | null;
+	code?: string | null;
 }
 
 export interface APIProductFamilyProductBundlePrice {
