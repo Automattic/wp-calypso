@@ -13,6 +13,7 @@ import MaximizeIcon from '../../assets/maximize-icon.svg';
 import MinimizeIcon from '../../assets/minimize-icon.svg';
 import WapuuAvatar from '../../assets/wapuu-squared-avatar.svg';
 import WapuuThinking from '../../assets/wapuu-thinking.svg';
+import AgentAvatar from '../../assets/wordpress-agent-avatar.svg';
 import { useOdieAssistantContext } from '../../context';
 import useTyper from '../../utils/user-typer';
 import Button from '../button';
@@ -35,16 +36,21 @@ const ChatMessage = (
 	ref: React.Ref< HTMLDivElement >
 ) => {
 	const isUser = message.role === 'user';
+	const isAgent = message.role === 'agent';
 	const { botName, extraContactOptions, addMessage, trackEvent } = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const { __, _x } = useI18n();
 
-	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
-		delayBetweenCharacters: 66,
-		randomDelayBetweenCharacters: true,
-		charactersPerInterval: 5,
-	} );
+	const realTimeMessage = useTyper(
+		message.content,
+		! ( isUser || isAgent ) && message.type === 'message',
+		{
+			delayBetweenCharacters: 66,
+			randomDelayBetweenCharacters: true,
+			charactersPerInterval: 5,
+		}
+	);
 
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	const hasFeedback = !! message?.rating_value;
@@ -140,68 +146,97 @@ const ChatMessage = (
 		'odie-chatbox-message-avatar-wapuu-liked': message.liked,
 	} );
 
-	const messageAvatarHeader = isUser ? (
-		<>
-			<Gravatar
-				user={ currentUser }
-				size={ 32 }
-				alt={ _x( 'User profile display picture', 'html alt tag', __i18n_text_domain__ ) }
-			/>
-			<strong className="message-header-name">{ currentUser.display_name }</strong>
-		</>
-	) : (
-		<>
-			<img
-				src={ WapuuAvatar }
-				alt={ sprintf(
-					/* translators: %s is bot name, like Wapuu */
-					_x( '%(botName)s profile picture', 'html alt tag', __i18n_text_domain__ ),
-					botName
-				) }
-				className={ wapuuAvatarClasses }
-			/>
-			{ message.type === 'placeholder' ? (
-				<img
-					src={ WapuuThinking }
-					alt={ sprintf(
-						/* translators: %s is bot name, like Wapuu */
-						_x(
-							'Loading state, awaiting response from %(botName)s',
-							'html alt tag',
-							__i18n_text_domain__
-						),
-						botName
-					) }
-					className="odie-chatbox-thinking-icon"
-				/>
-			) : (
-				<strong className="message-header-name">{ botName }</strong>
-			) }
-
-			<div className="message-header-buttons">
-				{ message.content?.length > 600 && (
-					<Button compact borderless onClick={ handleFullscreenToggle }>
+	let messageAvatarHeader;
+	switch ( message.role ) {
+		case 'user':
+			messageAvatarHeader = (
+				<>
+					<Gravatar
+						user={ currentUser }
+						size={ 32 }
+						alt={ _x( 'User profile display picture', 'html alt tag', __i18n_text_domain__ ) }
+					/>
+					<strong className="message-header-name">{ currentUser.display_name }</strong>
+				</>
+			);
+			break;
+		case 'agent':
+			messageAvatarHeader = (
+				<>
+					<img
+						src={ AgentAvatar }
+						alt={ _x( 'Support agent profile picture', 'html alt tag', __i18n_text_domain__ ) }
+						className={ wapuuAvatarClasses }
+					/>
+					<strong className="message-header-name">
+						{ _x( 'WordPress.com Support', 'Support message header', __i18n_text_domain__ ) }
+					</strong>
+				</>
+			);
+			break;
+		case 'bot':
+		default:
+			messageAvatarHeader = (
+				<>
+					<img
+						src={ WapuuAvatar }
+						alt={ sprintf(
+							/* translators: %s is bot name, like Wapuu */
+							_x( '%(botName)s profile picture', 'html alt tag', __i18n_text_domain__ ),
+							botName
+						) }
+						className={ wapuuAvatarClasses }
+					/>
+					{ message.type === 'placeholder' ? (
 						<img
-							src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
+							src={ WapuuThinking }
 							alt={ sprintf(
 								/* translators: %s is bot name, like Wapuu */
 								_x(
-									'Icon to expand or collapse %(botName)s messages',
+									'Loading state, awaiting response from %(botName)s',
 									'html alt tag',
 									__i18n_text_domain__
 								),
 								botName
 							) }
+							className="odie-chatbox-thinking-icon"
 						/>
-					</Button>
-				) }
-			</div>
-		</>
-	);
+					) : (
+						<strong className="message-header-name">{ botName }</strong>
+					) }
 
-	const messageHeader = (
-		<div className={ `message-header ${ isUser ? 'user' : 'bot' }` }>{ messageAvatarHeader }</div>
-	);
+					<div className="message-header-buttons">
+						{ message.content?.length > 600 && (
+							<Button compact borderless onClick={ handleFullscreenToggle }>
+								<img
+									src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
+									alt={ sprintf(
+										/* translators: %s is bot name, like Wapuu */
+										_x(
+											'Icon to expand or collapse %(botName)s messages',
+											'html alt tag',
+											__i18n_text_domain__
+										),
+										botName
+									) }
+								/>
+							</Button>
+						) }
+					</div>
+				</>
+			);
+	}
+
+	let messageHeaderClass = 'message-header';
+	if ( isUser ) {
+		messageHeaderClass += ' user';
+	} else if ( isAgent ) {
+		messageHeaderClass += ' agent';
+	} else {
+		messageHeaderClass += ' bot';
+	}
+
+	const messageHeader = <div className={ messageHeaderClass }>{ messageAvatarHeader }</div>;
 
 	const shouldRenderExtraContactOptions = isRequestingHumanSupport && messageFullyTyped;
 
@@ -247,13 +282,13 @@ const ChatMessage = (
 								a: CustomALink,
 							} }
 						>
-							{ isUser || ! message.simulateTyping ? message.content : realTimeMessage }
+							{ isUser || isAgent || ! message.simulateTyping ? message.content : realTimeMessage }
 						</Markdown>
-						{ ! hasFeedback && ! isUser && messageFullyTyped && (
+						{ ! hasFeedback && ! ( isUser || isAgent ) && messageFullyTyped && (
 							<WasThisHelpfulButtons message={ message } onDislike={ onDislike } />
 						) }
 						{ hasFeedback && messageFullyTyped && ! isPositiveFeedback && extraContactOptions }
-						{ ! isUser && (
+						{ ! ( isUser || isAgent ) && (
 							<div className="disclaimer">
 								{ __(
 									"Generated by WordPress.com's Support AI. AI-generated responses may contain inaccurate information.",
