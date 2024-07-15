@@ -182,4 +182,28 @@ describe( 'useSteps', () => {
 
 		expect( text.tagName ).toEqual( 'STRONG' );
 	} );
+
+	it( 'Should display the migration key field when the key is ready', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+
+		const { getByRole } = render( result.current.steps[ 2 ].expandable.content );
+
+		expect( getByRole( 'textbox', { name: 'Migration key' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'Should display waiting message when migration key is not ready', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+
+		const { getByText } = render( result.current.steps[ 2 ].expandable.content );
+
+		expect(
+			getByText( 'The key will be available here when your new site is ready.' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'Should not display done button when migration key is not ready yet', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+
+		expect( result.current.steps[ 2 ].expandable.action ).toBeUndefined();
+	} );
 } );

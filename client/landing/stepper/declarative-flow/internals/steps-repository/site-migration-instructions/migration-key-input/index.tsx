@@ -58,6 +58,7 @@ export const MigrationKeyInput: FC< Props > = ( { value, className } ) => {
 				disabled={ hide }
 				value={ hide ? hiddenValue : value }
 				ref={ inputRef }
+				aria-label={ translate( 'Migration key' ) }
 			/>
 			<div className="migration-key-input__actions">
 				<Button
