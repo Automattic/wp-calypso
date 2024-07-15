@@ -706,7 +706,10 @@ test( 'when current user is the owner, they can bulk update contact info', () =>
 	render(
 		<DomainsTable
 			currentUserCanBulkUpdateContactInfo
-			domains={ [ testPartialDomain( { domain: 'example1.com', current_user_is_owner: true } ) ] }
+			domains={ [
+				testPartialDomain( { domain: 'example1.com', current_user_is_owner: true } ),
+				testPartialDomain( { domain: 'example2.com', current_user_is_owner: true } ),
+			] }
 			isAllSitesView
 		/>
 	);
@@ -744,7 +747,11 @@ test( 'when the current user is not allowed to bulk update the contact info, dis
 		<DomainsTable
 			currentUserCanBulkUpdateContactInfo={ false }
 			isAllSitesView
-			domains={ [ testPartialDomain( { domain: 'example1.com' } ) ] }
+			domains={ [
+				testPartialDomain( { domain: 'example1.com' } ),
+				testPartialDomain( { domain: 'example2.com' } ),
+				testPartialDomain( { domain: 'example3.com' } ),
+			] }
 		/>
 	);
 
