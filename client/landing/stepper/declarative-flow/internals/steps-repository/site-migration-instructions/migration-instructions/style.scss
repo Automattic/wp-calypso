@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/fonts";
 
 // We need to compensate the spacing because `enableDesktopScaling` on the progress element uses scale
@@ -10,8 +12,10 @@ $progress-element-offset: 6px;
 }
 
 .migration-instructions--without-preview {
-	flex-direction: row;
-	gap: 24px;
+	@include break-large {
+		flex-direction: row;
+		gap: 24px;
+	}
 }
 
 .migration-instructions__content {

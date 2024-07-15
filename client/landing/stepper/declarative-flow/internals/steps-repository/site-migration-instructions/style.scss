@@ -17,7 +17,11 @@
 }
 
 .site-migration-instructions__container-without-preview {
-	max-width: 562px;
-	margin: 60px auto;
-	padding-right: 52px;
+	margin: 16px;
+
+	@include break-large {
+		max-width: 562px;
+		margin: 60px auto;
+		padding-right: 52px;
+	}
 }
