@@ -1,6 +1,6 @@
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { mapMarker } from '@wordpress/icons';
+import { tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -71,15 +71,15 @@ const StatsTags: React.FC< StatsDefaultModuleProps > = ( {
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
-							icon={ mapMarker }
+							icon={ tag }
 							description={ translate(
-								'Stats on visitors and their {{link}}viewing location{{/link}} will appear here to learn from where you are getting visits.',
+								'Learn about your most visited {{link}}tags & categories{{/link}} to track engaging topics. ',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
 										link: <a href={ localizeUrl( `${ SUPPORT_URL }#tags-categories` ) } />,
 									},
-									context: 'Stats: Info box label when the Tags and Categories module is empty',
+									context: 'Stats: Info box label when the Tags & Categories module is empty',
 								}
 							) }
 						/>
