@@ -139,4 +139,26 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 			} );
 		} );
 	} );
+
+	it( 'should call the mShot endpoint for each config during mount if URL is provided', async () => {
+		const url = 'http://example.com';
+
+		const expectedUrls = [
+			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=1600&vph=1600&w=1600&h=1624&screen_height=1600&scale=2',
+			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=767&vph=1600&w=767&h=1600&screen_height=1600&scale=2',
+			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=479&vph=1200&w=479&h=1200&screen_height=1200&scale=2',
+		];
+
+		const scopes = expectedUrls.map( ( expectedUrl ) =>
+			nock( 'https://s0.wp.com' ).get( expectedUrl ).reply( 200, {} )
+		);
+
+		renderHook( () => useSitePreviewMShotImageHandler( url ) );
+
+		await waitFor( () => {
+			scopes.forEach( ( scope ) => {
+				expect( scope.isDone() ).toBe( true );
+			} );
+		} );
+	} );
 } );
