@@ -145,14 +145,14 @@ export default function ReferralsOverview( {
 									</Button>
 									{ showPopover && (
 										<A4APopover
-											// className="referral-toggle__notice"
+											className="referrals-overview__button-popover"
 											title={ translate( 'Your payment settings require action' ) }
 											offset={ 12 }
 											position="bottom left"
 											wrapperRef={ wrapperRef }
 											onFocusOutside={ () => setShowPopover( false ) }
 										>
-											<div className="referral-toggle__notice-description">
+											<div className="referrals-overview__button-popover-description">
 												{ translate(
 													'Please confirm your details before referring products to your clients.'
 												) }

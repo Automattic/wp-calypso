@@ -1,4 +1,5 @@
 import { Popover } from '@wordpress/components';
+import clsx from 'clsx';
 
 import './style.scss';
 
@@ -8,6 +9,7 @@ interface Props {
 	position?: React.ComponentProps< typeof Popover >[ 'position' ];
 	wrapperRef: React.MutableRefObject< HTMLElement | null >;
 	title: string;
+	className?: string;
 	onFocusOutside: ( event: React.SyntheticEvent ) => void;
 	children: React.ReactNode;
 }
@@ -18,6 +20,7 @@ export default function A4APopover( {
 	position = 'bottom',
 	wrapperRef,
 	title,
+	className,
 	onFocusOutside,
 	children,
 }: Props ) {
@@ -26,7 +29,7 @@ export default function A4APopover( {
 			isVisible
 			noArrow={ noArrow }
 			offset={ offset }
-			className="a4a-popover"
+			className={ clsx( 'a4a-popover', className ) }
 			context={ wrapperRef.current }
 			position={ position }
 			onFocusOutside={ onFocusOutside }
