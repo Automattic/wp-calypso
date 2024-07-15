@@ -152,6 +152,7 @@ const gotoCheckoutPage = ( {
 			product = PRODUCT_JETPACK_STATS_FREE;
 			break;
 		case 'commercial':
+			eventName = 'commercial';
 			product = quantity
 				? `${ PRODUCT_JETPACK_STATS_YEARLY }:-q-${ quantity }`
 				: PRODUCT_JETPACK_STATS_YEARLY;
