@@ -1,15 +1,15 @@
-import {
-	useMessagingAvailability,
-	useZendeskMessaging,
-	useCanConnectToZendesk,
-} from '@automattic/help-center/src/hooks';
-import { ZENDESK_SOURCE_URL_TICKET_FIELD_ID } from '@automattic/help-center/src/hooks/use-chat-widget';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import {
+	useZendeskMessagingAvailability,
+	useLoadZendeskMessaging,
+	useCanConnectToZendeskMessaging,
+	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
+} from '@automattic/zendesk-client';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
+import type { ZendeskConfigName } from '@automattic/zendesk-client';
 
 export type KeyType = 'akismet' | 'jpAgency' | 'jpCheckout' | 'jpGeneral' | 'wpcom';
 
@@ -58,23 +58,21 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 	const isWpMobileAppUser = isWpMobileApp();
 	const group = getGroupName( keyType );
 
-	const { data: canConnectToZendesk } = useCanConnectToZendesk(
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging(
 		enabled && ! skipAvailabilityCheck
 	);
 	const isEligibleForPresalesChat =
-		enabled && isEnglishLocale && canConnectToZendesk && ! isWpMobileAppUser;
+		enabled && isEnglishLocale && canConnectToZendeskMessaging && ! isWpMobileAppUser;
 
-	const { data: chatAvailability, isLoading: isLoadingAvailability } = useMessagingAvailability(
-		group,
-		isEligibleForPresalesChat && ! skipAvailabilityCheck
-	);
+	const { data: chatAvailability, isLoading: isLoadingAvailability } =
+		useZendeskMessagingAvailability( group, isEligibleForPresalesChat && ! skipAvailabilityCheck );
 
 	const isPresalesChatAvailable =
 		skipAvailabilityCheck || Boolean( chatAvailability?.is_available );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const zendeskKeyName = getConfigName( keyType );
-	const { isMessagingScriptLoaded } = useZendeskMessaging(
+	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		zendeskKeyName,
 		isEligibleForPresalesChat && isPresalesChatAvailable,
 		isLoggedIn

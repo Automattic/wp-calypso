@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { MaterialIcon } from '@automattic/components';
-import { useChatWidget } from '@automattic/help-center/src/hooks';
 import { useHasEnTranslation, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useOpenZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -74,7 +74,8 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const localizeUrl = useLocalizeUrl();
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget();
+	const { isOpeningZendeskWidget, openZendeskWidget } =
+		useOpenZendeskMessaging( 'pre-cancellation' );
 
 	switch ( type ) {
 		case 'education:loading-time':
@@ -254,11 +255,11 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 												),
 												chat: (
 													<Button
-														isBusy={ isOpeningChatWidget }
-														disabled={ isOpeningChatWidget }
+														isBusy={ isOpeningZendeskWidget }
+														disabled={ isOpeningZendeskWidget }
 														onClick={ () => {
 															page( `/domains/manage/${ site.slug }` );
-															openChatWidget( {
+															openZendeskWidget( {
 																message:
 																	"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 																	props.cancellationReason,
@@ -285,11 +286,11 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 												),
 												chat: (
 													<Button
-														isBusy={ isOpeningChatWidget }
-														disabled={ isOpeningChatWidget }
+														isBusy={ isOpeningZendeskWidget }
+														disabled={ isOpeningZendeskWidget }
 														onClick={ () => {
 															page( `/domains/manage/${ site.slug }` );
-															openChatWidget( {
+															openZendeskWidget( {
 																message:
 																	"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 																	props.cancellationReason,

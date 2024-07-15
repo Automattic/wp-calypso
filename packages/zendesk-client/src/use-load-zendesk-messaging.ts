@@ -7,25 +7,20 @@ import { useEffect, useState } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
-import { useMessagingAuth } from './';
+import { ZENDESK_SCRIPT_ID } from './constants';
+import { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
+import type { ZendeskConfigName } from './types';
 
-export type ZendeskConfigName =
-	| 'zendesk_support_chat_key'
-	| 'zendesk_presales_chat_key'
-	| 'zendesk_presales_chat_key_akismet'
-	| 'zendesk_presales_chat_key_jp_checkout'
-	| 'zendesk_presales_chat_key_jp_agency_dashboard';
-
-const ZENDESK_SCRIPT_ID = 'ze-snippet';
-
-export default function useZendeskMessaging(
+export function useLoadZendeskMessaging(
 	keyConfigName: ZendeskConfigName,
 	enabled = true,
 	tryAuthenticating = true
 ) {
 	const [ isMessagingScriptLoaded, setMessagingScriptLoaded ] = useState( false );
 	const zendeskKey: string = config( keyConfigName );
-	const { data: authData } = useMessagingAuth( isMessagingScriptLoaded && tryAuthenticating );
+	const { data: authData } = useAuthenticateZendeskMessaging(
+		isMessagingScriptLoaded && tryAuthenticating
+	);
 	useEffect( () => {
 		if ( ! enabled || isMessagingScriptLoaded ) {
 			return;
