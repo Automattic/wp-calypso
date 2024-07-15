@@ -102,6 +102,9 @@ export const useSitePreviewMShotImageHandler = ( url: string = '' ) => {
 
 	useEffect( () => {
 		if ( url ) {
+			// In case the screenshots were not created before (for example, the site-identify step), we send a request
+			// generate all the responsive screenshots. Otherwise if the user resizes the window to check the responsiveness,
+			// it will take a long loading time each time.
 			createScreenshots( url );
 		}
 	}, [ url ] );
