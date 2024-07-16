@@ -25,6 +25,10 @@
 		.consolidated-view__label {
 			color: var(--color-accent);
 			font-size: rem(12px);
+
+			&.consolidated-view__label--all-time {
+				text-wrap: nowrap;
+			}
 		}
 	}
 }
