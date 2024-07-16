@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
+import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -243,10 +244,7 @@ const readymadeTemplateFlow: Flow = {
 function enableAssemblerThemeAndConfigureTemplates(
 	themeId: string,
 	siteId: number,
-	readymadeTemplate: {
-		home: { header: string; content: string; footer: string };
-		globalStyles: GlobalStylesObject;
-	},
+	readymadeTemplate: ReadymadeTemplate & { globalStyles: GlobalStylesObject },
 	assembleSite: (
 		arg0: any,
 		arg1: string,
