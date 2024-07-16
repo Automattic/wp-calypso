@@ -271,6 +271,16 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	getHomeUrl() {
+		const { hasNoSites, siteSlug, isCustomerHomeEnabled, isSiteTrialExpired } = this.props;
+		// eslint-disable-next-line no-nested-ternary
+		return hasNoSites || isSiteTrialExpired
+			? '/sites'
+			: isCustomerHomeEnabled
+			? `/home/${ siteSlug }`
+			: getStatsPathForTab( 'day', siteSlug );
+	}
+
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
@@ -752,16 +762,6 @@ class MasterbarLoggedIn extends Component {
 				{ siteTitle }
 			</Item>
 		);
-	}
-
-	getHomeUrl() {
-		const { hasNoSites, siteSlug, isCustomerHomeEnabled, isSiteTrialExpired } = this.props;
-		// eslint-disable-next-line no-nested-ternary
-		return hasNoSites || isSiteTrialExpired
-			? '/sites'
-			: isCustomerHomeEnabled
-			? `/home/${ siteSlug }`
-			: getStatsPathForTab( 'day', siteSlug );
 	}
 
 	renderBackHomeButton() {
