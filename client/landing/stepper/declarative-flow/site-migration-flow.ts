@@ -392,7 +392,7 @@ const siteMigration: Flow = {
 				}
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					if ( urlQueryParams.get( 'ref' ) === GUIDED_ONBOARDING_FLOW_REFERRER ) {
-						window.location.assign( '/start/guided/initial-intent' );
+						return exitFlow( '/start/initial-intent' );
 					}
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}
