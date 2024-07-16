@@ -80,11 +80,11 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	};
 	const { steps, completedSteps } = useSteps( { fromUrl, onComplete: onCompleteSteps } );
 
-	const withoutPreview = fromUrl === '';
+	const withPreview = fromUrl !== '';
 
 	const migrationInstructions = (
 		<MigrationInstructions
-			withoutPreview={ withoutPreview }
+			withoutPreview={ ! withPreview }
 			progress={
 				<CircularProgressBar
 					size={ 40 }
@@ -101,16 +101,16 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 		</MigrationInstructions>
 	);
 
-	const stepContent = withoutPreview ? (
-		<div className="site-migration-instructions__container-without-preview">
-			{ migrationInstructions }
-		</div>
-	) : (
+	const stepContent = withPreview ? (
 		<LaunchpadContainer sidebar={ migrationInstructions }>
 			{ showHostingBadge && <HostingBadge hostingName={ hostingDetails.name } /> }
 
 			<SitePreview />
 		</LaunchpadContainer>
+	) : (
+		<div className="site-migration-instructions__container-without-preview">
+			{ migrationInstructions }
+		</div>
 	);
 
 	const questions = <Questions />;
