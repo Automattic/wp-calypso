@@ -11,21 +11,40 @@ export default function SubscriptionStatus( { item }: { item: Referral } ): Reac
 	): {
 		status: string | null;
 		type: 'warning' | 'success' | 'info' | null;
+		tooltip?: string | JSX.Element;
 	} => {
-		if ( ! item.statuses.length ) {
+		if ( ! item.purchaseStatuses.length ) {
 			return {
 				status: null,
 				type: null,
 			};
 		}
 
-		const status = item.statuses.reduce( ( prev, curr ) => {
-			if ( prev === curr ) {
-				return curr;
-			}
+		const { pendingCount, activeCount, canceledCount, overallStatus } =
+			item.purchaseStatuses.reduce(
+				( acc, status ) => {
+					if ( status === 'pending' ) {
+						acc.pendingCount++;
+					}
+					if ( status === 'active' ) {
+						acc.activeCount++;
+					}
+					if ( status === 'canceled' ) {
+						acc.canceledCount++;
+					}
 
-			return 'mixed';
-		}, item.statuses[ 0 ] );
+					if ( ! acc.overallStatus ) {
+						acc.overallStatus = status;
+					} else if ( acc.overallStatus !== status ) {
+						acc.overallStatus = 'mixed';
+					}
+
+					return acc;
+				},
+				{ pendingCount: 0, activeCount: 0, canceledCount: 0, overallStatus: '' }
+			);
+
+		const status = overallStatus || 'mixed';
 
 		switch ( status ) {
 			case 'active':
@@ -47,11 +66,34 @@ export default function SubscriptionStatus( { item }: { item: Referral } ): Reac
 				return {
 					status: translate( 'Mixed' ),
 					type: 'warning',
+					tooltip: (
+						<div>
+							<ul>
+								<li>
+									{ translate( 'Active: %(activeCount)d', {
+										args: { activeCount },
+									} ) }
+								</li>
+								<li>
+									{ translate( 'Pending: %(pendingCount)d', {
+										args: { pendingCount },
+									} ) }
+								</li>
+								<li>
+									{ translate( 'Canceled: %(canceledCount)d', {
+										args: { canceledCount },
+									} ) }
+								</li>
+							</ul>
+						</div>
+					),
 				};
 		}
 	};
 
-	const { status, type } = getStatus( item );
+	const { status, type, tooltip } = getStatus( item );
 
-	return status && type ? <StatusBadge statusProps={ { children: status, type } } /> : null;
+	return status && type ? (
+		<StatusBadge statusProps={ { children: status, type, tooltip } } />
+	) : null;
 }

@@ -59,6 +59,7 @@ const PrecancellationChatButton: FC< Props > = ( {
 			siteUrl={ siteUrl }
 			className={ clsx( 'precancellation-chat-button__main-button', className ) }
 			onClick={ handleClick }
+			section="pre-cancellation"
 		>
 			{ icon && <MaterialIcon icon={ icon } /> }
 			{ hasEnTranslation( 'Need help? Contact us' )

@@ -24,7 +24,6 @@ import {
 } from './stats-purchase-consts';
 import PersonalPurchase from './stats-purchase-personal';
 import {
-	StatsCommercialPriceDisplay,
 	StatsBenefitsCommercial,
 	StatsSingleItemPagePurchaseFrame,
 	StatsSingleItemCard,
@@ -137,7 +136,6 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 const StatsCommercialPurchase = ( {
 	siteId,
 	siteSlug,
-	planValue,
 	currencyCode,
 	from,
 	adminUrl,
@@ -145,13 +143,12 @@ const StatsCommercialPurchase = ( {
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
-	const startingTierQuantity = getTierQuentity( tiers[ 0 ], isTierUpgradeSliderEnabled );
+	const startingTierQuantity = getTierQuentity( tiers[ 0 ] );
 	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( startingTierQuantity ?? 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
@@ -165,8 +162,6 @@ const StatsCommercialPurchase = ( {
 	) as boolean;
 	const { pageTitle, infoText, continueButtonText } = useLocalizedStrings( isCommercial );
 
-	// TODO: Remove isTierUpgradeSliderEnabled code paths.
-
 	return (
 		<>
 			<h1>{ pageTitle }</h1>
@@ -177,55 +172,37 @@ const StatsCommercialPurchase = ( {
 				</>
 			) }
 			{ isCommercialOwned && <StatsUpgradeInstructions /> }
-			{ ! isTierUpgradeSliderEnabled && (
-				<>
-					<StatsCommercialPriceDisplay planValue={ planValue } currencyCode={ currencyCode } />
-					<ButtonComponent
-						variant="primary"
-						primary={ isWPCOMSite ? true : undefined }
-						onClick={ () =>
-							gotoCheckoutPage( { from, type: 'commercial', siteSlug, adminUrl, redirectUri } )
-						}
-					>
-						{ translate( 'Get Stats' ) }
-					</ButtonComponent>
-				</>
-			) }
-			{ isTierUpgradeSliderEnabled && (
-				<>
-					<p>{ translate( 'Pick your Stats tier below:' ) }</p>
-					<StatsCommercialUpgradeSlider
-						currencyCode={ currencyCode }
-						analyticsEventName={ `${
-							isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
-						}_stats_purchase_commercial_slider_clicked` }
-						onSliderChange={ handleSliderChanged }
-					/>
-					<div className="stats-purchase-wizard__actions">
-						<ButtonComponent
-							variant="primary"
-							primary={ isWPCOMSite ? true : undefined }
-							onClick={ () =>
-								gotoCheckoutPage( {
-									from,
-									type: 'commercial',
-									siteSlug,
-									adminUrl,
-									redirectUri,
-									price: undefined,
-									quantity: purchaseTierQuantity,
-									isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
-								} )
-							}
-						>
-							{ continueButtonText }
-						</ButtonComponent>
-					</div>
-					<div className="stats-purchase-page__footnotes">
-						<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>
-					</div>
-				</>
-			) }
+			<p>{ translate( 'Pick your Stats tier below:' ) }</p>
+			<StatsCommercialUpgradeSlider
+				currencyCode={ currencyCode }
+				analyticsEventName={ `${
+					isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
+				}_stats_purchase_commercial_slider_clicked` }
+				onSliderChange={ handleSliderChanged }
+			/>
+			<div className="stats-purchase-wizard__actions">
+				<ButtonComponent
+					variant="primary"
+					primary={ isWPCOMSite ? true : undefined }
+					onClick={ () =>
+						gotoCheckoutPage( {
+							from,
+							type: 'commercial',
+							siteSlug,
+							adminUrl,
+							redirectUri,
+							price: undefined,
+							quantity: purchaseTierQuantity,
+							isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
+						} )
+					}
+				>
+					{ continueButtonText }
+				</ButtonComponent>
+			</div>
+			<div className="stats-purchase-page__footnotes">
+				<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>
+			</div>
 		</>
 	);
 };
@@ -257,10 +234,9 @@ const StatsPersonalPurchase = ( {
 		e.preventDefault();
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		const queryFrom = isOdysseyStats ? '&from=jetpack-my-jetpack' : '';
 		recordTracksEvent( `${ event_from }_stats_plan_switched_from_personal_to_commercial` );
 
-		page( `/stats/purchase/${ siteSlug }?productType=commercial${ queryFrom }` );
+		page( `/stats/purchase/${ siteSlug }?productType=commercial&from=switch-from-personal` );
 	};
 
 	return (
@@ -408,7 +384,11 @@ function StatsCommercialFlowOptOutForm( {
 	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_switch_to_personal_clicked` );
-		setTimeout( () => page( `/stats/purchase/${ siteSlug }?productType=personal` ), 250 );
+		setTimeout(
+			() =>
+				page( `/stats/purchase/${ siteSlug }?productType=personal&from=switch-from-commercial` ),
+			250
+		);
 	};
 
 	const handleRequestUpdateClick = () => {

@@ -6,7 +6,7 @@ import './style.scss';
 export default function StatusBadge( {
 	statusProps,
 }: {
-	statusProps?: ComponentProps< typeof Badge > & { tooltip?: string };
+	statusProps?: ComponentProps< typeof Badge > & { tooltip?: string | JSX.Element };
 } ) {
 	const [ showPopover, setShowPopover ] = useState( false );
 

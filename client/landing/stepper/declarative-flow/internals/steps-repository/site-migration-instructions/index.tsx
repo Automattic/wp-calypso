@@ -1,3 +1,4 @@
+import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import React, { useEffect } from 'react';
@@ -12,23 +13,87 @@ import { Provisioning } from './provisioning';
 import { Questions } from './questions';
 import { Sidebar } from './sidebar';
 import { SitePreview } from './site-preview';
+import { Steps } from './steps';
+import { useSteps } from './steps/use-steps';
+import type { Status } from './provisioning';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteMigrationInstructions: Step = function () {
+interface PreparationEventsHookOptions {
+	migrationKeyStatus: Status;
+	preparationCompleted: boolean;
+	fromUrl: string;
+}
+
+const usePreparationEvents = ( {
+	migrationKeyStatus,
+	preparationCompleted,
+	fromUrl,
+}: PreparationEventsHookOptions ) => {
+	useEffect( () => {
+		if ( 'error' === migrationKeyStatus ) {
+			recordTracksEvent(
+				'calypso_onboarding_site_migration_instructions_unable_to_get_migration_key',
+				{
+					from: fromUrl,
+				}
+			);
+		}
+	}, [ migrationKeyStatus, fromUrl ] );
+
+	useEffect( () => {
+		if ( preparationCompleted ) {
+			recordTracksEvent( 'calypso_site_migration_instructions_preparation_complete' );
+		}
+	}, [ preparationCompleted ] );
+};
+
+const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	const site = useSite();
 	const siteId = site?.ID;
-	const { deleteMigrationSticker } = useMigrationStickerMutation();
-
 	const queryParams = useQuery();
-	const importSiteQueryParam = queryParams.get( 'from' ) ?? '';
-	const { data: hostingDetails } = useHostingProviderUrlDetails( importSiteQueryParam );
+	const fromUrl = queryParams.get( 'from' ) ?? '';
+
+	// Delete migration sticker.
+	const { deleteMigrationSticker } = useMigrationStickerMutation();
+	useEffect( () => {
+		if ( siteId ) {
+			deleteMigrationSticker( siteId );
+		}
+	}, [ deleteMigrationSticker, siteId ] );
+
+	// Site preparation.
+	const { detailedStatus, completed: preparationCompleted } = usePrepareSiteForMigration( siteId );
+	usePreparationEvents( {
+		migrationKeyStatus: detailedStatus.migrationKey,
+		preparationCompleted,
+		fromUrl,
+	} );
+
+	// Hosting details.
+	const { data: hostingDetails } = useHostingProviderUrlDetails( fromUrl );
 	const showHostingBadge = ! hostingDetails.is_unknown && ! hostingDetails.is_a8c;
 
-	const { detailedStatus } = usePrepareSiteForMigration( siteId );
+	// Steps.
+	const onCompleteSteps = () => {
+		navigation.submit?.( { destination: 'migration-started' } );
+	};
+	const { steps, completedSteps } = useSteps( { fromUrl, onComplete: onCompleteSteps } );
 
 	const sidebar = (
-		<Sidebar>
+		<Sidebar
+			progress={
+				<CircularProgressBar
+					size={ 40 }
+					enableDesktopScaling
+					numberOfSteps={ steps.length }
+					currentStep={ completedSteps }
+				/>
+			}
+		>
+			<div className="site-migration-instructions__steps">
+				<Steps steps={ steps } />
+			</div>
 			<Provisioning status={ detailedStatus } />
 		</Sidebar>
 	);
@@ -40,12 +105,6 @@ const SiteMigrationInstructions: Step = function () {
 			<SitePreview />
 		</LaunchpadContainer>
 	);
-
-	useEffect( () => {
-		if ( siteId ) {
-			deleteMigrationSticker( siteId );
-		}
-	}, [ deleteMigrationSticker, siteId ] );
 
 	const questions = <Questions />;
 

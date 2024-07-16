@@ -20,7 +20,7 @@ interface StatsPlanUsageProps {
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/tier-upgrade-slider&from=${ from }-stats-tier-upgrade-usage-section&productType=commercial`;
+	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-stats-tier-upgrade-usage-section&productType=commercial`;
 
 	return purchasePath;
 };
@@ -77,12 +77,13 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 	return (
 		<div className="plan-usage">
 			<h3 className="plan-usage-heading">{ translate( 'Your Stats plan usage' ) }</h3>
-			<div className={ progressClassNames }>
+			<div className={ progressClassNames } key="progress">
 				<div
 					className="plan-usage-progress-bar"
 					style={ { width: `${ progressWidthInPercentage }%` } }
+					key="bar"
 				></div>
-				<div>
+				<div key="usage">
 					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views', {
 						args: {
 							numberOfUsage: formattedNumber( usage ),
@@ -90,7 +91,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 						},
 					} ) }
 				</div>
-				<div>
+				<div key="message">
 					{ translate( 'Restarts in %(numberOfDays)d day', 'Restarts in %(numberOfDays)d days', {
 						count: daysToReset,
 						args: {
@@ -99,7 +100,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 					} ) }
 				</div>
 			</div>
-			<div className="plan-usage-note">
+			<div className="plan-usage-note" key="upgrade">
 				<span>
 					{ overLimitMonthsText } { upgradeNote }
 				</span>

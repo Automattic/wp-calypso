@@ -1,4 +1,3 @@
-import { isWithinBreakpoint } from '@automattic/viewport';
 import isScheduledUpdatesMultisiteRoute, {
 	isScheduledUpdatesMultisiteCreateRoute,
 	isScheduledUpdatesMultisiteEditRoute,
@@ -84,15 +83,8 @@ export const getShouldShowCollapsedGlobalSidebar = (
 		isScheduledUpdatesMultisiteCreateRoute( state ) ||
 		isScheduledUpdatesMultisiteEditRoute( state );
 
-	const isBulkDomainsDashboard = isInRoute( state, [ '/domains/manage' ] );
-	const isSmallScreenDashboard =
-		( isSitesDashboard || isBulkDomainsDashboard ) && isWithinBreakpoint( '<782px' );
-
 	return (
-		isSiteJustSelectedFromSitesDashboard ||
-		isSiteDashboard ||
-		isPluginsScheduledUpdatesEditMode ||
-		isSmallScreenDashboard
+		isSiteJustSelectedFromSitesDashboard || isSiteDashboard || isPluginsScheduledUpdatesEditMode
 	);
 };
 

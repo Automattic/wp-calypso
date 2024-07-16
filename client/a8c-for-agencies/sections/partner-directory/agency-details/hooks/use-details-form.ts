@@ -1,7 +1,7 @@
 import emailValidator from 'email-validator';
 import { useMemo, useState } from 'react';
+import { isValidUrl } from 'calypso/a8c-for-agencies/components/form/utils';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
-import { isValidUrl } from '../../utils/tools';
 
 type Props = {
 	initialFormData?: AgencyDetails | null;

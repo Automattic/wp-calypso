@@ -39,6 +39,14 @@ export async function maybeRedirect( context, next ) {
 		return;
 	}
 
+	const { verified, courseSlug } = getQueryArgs() || {};
+
+	// The courseSlug is to display pages with onboarding videos for learning,
+	// so we should not redirect the page to launchpad.
+	if ( courseSlug ) {
+		return next();
+	}
+
 	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
@@ -66,8 +74,7 @@ export async function maybeRedirect( context, next ) {
 			// The new stepper launchpad onboarding flow isn't registered within the "page"
 			// client-side router, so page.redirect won't work. We need to use the
 			// traditional window.location Web API.
-			const verifiedParam = getQueryArgs()?.verified;
-			redirectToLaunchpad( slug, siteIntentOption, verifiedParam );
+			redirectToLaunchpad( slug, siteIntentOption, verified );
 			return;
 		}
 	} catch ( error ) {}

@@ -9,7 +9,6 @@ import { Button, Modal } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-import QueryPlans from 'calypso/components/data/query-plans';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
@@ -71,7 +70,6 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 					stat_type: statType,
 				} }
 			/>
-			<QueryPlans />
 			<Button
 				className="stats-upsell-modal__close-button"
 				onClick={ closeModal }

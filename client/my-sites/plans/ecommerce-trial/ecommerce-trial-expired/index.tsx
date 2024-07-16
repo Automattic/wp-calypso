@@ -5,7 +5,6 @@ import { Button, Gridicon } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useMemo, useState } from 'react';
-import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
@@ -82,7 +81,6 @@ const ECommerceTrialExpired = (): JSX.Element => {
 
 	return (
 		<>
-			<QueryPlans />
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
 

@@ -16,6 +16,7 @@ export class EmailVerificationGate extends Component {
 		allowUnlaunched: PropTypes.bool,
 		noticeText: PropTypes.node,
 		noticeStatus: PropTypes.string,
+		children: PropTypes.Node,
 		//connected
 		userEmail: PropTypes.string,
 		needsVerification: PropTypes.bool,
