@@ -26,6 +26,7 @@ import {
 	PLAN_CENTENNIAL_PERIOD,
 	TERM_CENTENNIALLY,
 } from './constants';
+import { BillingTerm } from './types';
 
 export { getPlanSlugForTermVariant } from './get-plan-term-variant';
 export { getPlanMultipleTermsVariantSlugs } from './get-plan-multiple-terms-variant-slugs';
@@ -73,7 +74,7 @@ export function getTermDuration( term: string ): number | undefined {
  * @param {number} days Term duration in days
  * @returns {string} TERM_ constant
  */
-export function getTermFromDuration( days: number ): string | undefined {
+export function getTermFromDuration( days: number ): BillingTerm[ 'term' ] | undefined {
 	switch ( days ) {
 		case PLAN_MONTHLY_PERIOD:
 			return TERM_MONTHLY;
