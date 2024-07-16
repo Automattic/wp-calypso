@@ -14,6 +14,7 @@ export function useSyncSelectedSite(
 
 	// Update selected site globally as soon as it is clicked from the table.
 	useEffect( () => {
+		// Prevent clearing the selected site on initial load.
 		if ( isInitialLoad.current && ! dataViewsState.selectedItem ) {
 			isInitialLoad.current = false;
 			return;
