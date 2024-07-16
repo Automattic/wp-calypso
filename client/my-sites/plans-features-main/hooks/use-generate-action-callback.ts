@@ -146,8 +146,6 @@ function useGenerateActionCallback( {
 	sitePlanSlug,
 	siteSlug,
 	withDiscount,
-	isInSignup,
-	isLaunchPage,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
@@ -158,8 +156,6 @@ function useGenerateActionCallback( {
 	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	withDiscount?: string;
-	isInSignup: boolean;
-	isLaunchPage: boolean | null;
 } ): UseActionCallback {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
@@ -206,11 +202,11 @@ function useGenerateActionCallback( {
 				return;
 			}
 
-			/* 3. Handle plan downgrades and plan downgrade tracks events */
+			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
 			if (
 				sitePlanSlug &&
-				! isInSignup &&
-				! isLaunchPage &&
+				! flowName &&
+				intent !== 'plans-p2' &&
 				intent !== 'plans-blog-onboarding' &&
 				! availableForPurchase
 			) {
@@ -223,14 +219,14 @@ function useGenerateActionCallback( {
 			}
 
 			/* 4. Handle plan upgrade and plan upgrade tracks events */
-			if ( ! isFreePlan( planSlug ) ) {
+			if ( isFreePlan( planSlug ) ) {
+				recordTracksEvent( 'calypso_signup_free_plan_click' );
+			} else {
 				recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
 					current_plan: sitePlanSlug,
 					upgrading_to: planSlug,
 					saw_free_trial_offer: !! freeTrialPlanSlug,
 				} );
-			} else {
-				recordTracksEvent( 'calypso_signup_free_plan_click' );
 			}
 			handleUpgrade( {
 				cartItemForPlan,
