@@ -378,45 +378,62 @@ class MasterbarLoggedIn extends Component {
 		} = this.props;
 
 		// Only display on site-specific pages.
-		if (
-			sectionGroup !== 'sites' ||
-			! currentSelectedSiteSlug ||
-			domainOnlySite ||
-			isMigrationInProgress ||
-			isEcommerce
-		) {
+		// domainOnlySite's still get currentSelectedSiteSlug, removing this check would require changing checks below.
+		if ( domainOnlySite || isMigrationInProgress || isEcommerce ) {
 			return null;
 		}
 
-		const isClassicView = siteUsesWpAdminInterface( currentSelectedSite );
+		let siteActions = [];
 
-		const siteActions = [
-			{
-				label: translate( 'Post' ),
-				url: newPostUrl,
-			},
-			{
-				label: translate( 'Media' ),
-				url: isClassicView
-					? `${ siteAdminUrl }media-new.php`
-					: `/media/${ currentSelectedSiteSlug }`,
-			},
-			{
-				label: translate( 'Page' ),
-				url: newPageUrl,
-			},
-			{
-				label: translate( 'User' ),
-				url: isClassicView
-					? `${ siteAdminUrl }user-new.php`
-					: `/people/new/${ currentSelectedSiteSlug }`,
-			},
-		];
+		if ( currentSelectedSiteSlug && sectionGroup === 'sites' ) {
+			const isClassicView = siteUsesWpAdminInterface( currentSelectedSite );
+			siteActions = [
+				{
+					label: translate( 'Post' ),
+					url: newPostUrl,
+				},
+				{
+					label: translate( 'Media' ),
+					url: isClassicView
+						? `${ siteAdminUrl }media-new.php`
+						: `/media/${ currentSelectedSiteSlug }`,
+				},
+				{
+					label: translate( 'Page' ),
+					url: newPageUrl,
+				},
+				{
+					label: translate( 'User' ),
+					url: isClassicView
+						? `${ siteAdminUrl }user-new.php`
+						: `/people/new/${ currentSelectedSiteSlug }`,
+				},
+			];
+		} else {
+			siteActions = [
+				{
+					label: translate( 'Post' ),
+					url: '/post',
+				},
+				{
+					label: translate( 'Media' ),
+					url: '/media',
+				},
+				{
+					label: translate( 'Page' ),
+					url: '/page',
+				},
+				{
+					label: translate( 'User' ),
+					url: '/people/new',
+				},
+			];
+		}
 		return (
 			<>
 				<Item
 					className="masterbar__item-my-site-actions"
-					url={ newPostUrl }
+					url={ currentSelectedSiteSlug && sectionGroup === 'sites' ? newPostUrl : '/post' }
 					subItems={ siteActions }
 					icon={ <span className="dashicons-before dashicons-plus" /> }
 					tooltip={ translate( 'New' ) }
