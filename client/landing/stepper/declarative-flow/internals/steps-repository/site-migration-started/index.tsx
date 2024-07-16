@@ -34,6 +34,9 @@ const SiteMigrationStarted: Step = function () {
 					className="migration-started-card__cta"
 					href="https://automattic.com/for-agencies/"
 					target="_blank"
+					onClick={ () =>
+						recordTracksEvent( 'calypso_onboarding_site_migration_started_agencies_cta_click' )
+					}
 				>
 					{ translate( 'Discover Automattic for Agencies' ) }
 				</ExternalLink>
