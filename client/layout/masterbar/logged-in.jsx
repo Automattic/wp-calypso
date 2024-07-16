@@ -453,7 +453,7 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
-				url: isClassicView ? siteUrl + '/wp-admin/profile.php' : '/me/profile',
+				url: isClassicView ? siteUrl + '/wp-admin/profile.php' : '/me',
 			},
 			{
 				label: translate( 'My Account' ),
@@ -471,7 +471,7 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<Item
 				tipTarget="me"
-				url="/me/profile"
+				url="/me"
 				onClick={ this.clickMe }
 				isActive={ this.isActive( 'me' ) }
 				className="masterbar__item-howdy"
@@ -495,7 +495,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				tipTarget="reader"
 				className="masterbar__reader"
-				url="/read/feeds"
+				url="/read"
 				icon="reader"
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader' ) }
