@@ -57,6 +57,7 @@ const getEmailSubscriptionFlow = () => {
 						'first_name',
 						'last_name',
 					],
+					optionalDependenciesInQuery: [ 'last_name' ],
 					hideProgressIndicator: true,
 				},
 		  ]
