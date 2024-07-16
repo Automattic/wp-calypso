@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import { hasReachedPaywallMonthlyViews } from '../hooks/use-stats-purchases';
 import { trackStatsAnalyticsEvent } from '../utils';
 import { StatsNoticeProps } from './types';
 
@@ -19,6 +20,9 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	const hasReachedMonthlyViewsToApplyPaywall = useSelector( ( state ) => {
+		return hasReachedPaywallMonthlyViews( state, siteId );
+	} );
 
 	const gotoJetpackStatsProduct = () => {
 		isOdysseyStats
@@ -45,6 +49,36 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
+	const bannerBody = hasReachedMonthlyViewsToApplyPaywall
+		? translate(
+				'Commercial sites with a significant number of visitors require a commercial license. Upgrade to get access to all the stats features and priority support.'
+		  )
+		: translate(
+				'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+				{
+					components: {
+						p: <p />,
+						jetpackStatsProductLink: (
+							<button
+								type="button"
+								className="notice-banner__action-button"
+								onClick={ gotoJetpackStatsProduct }
+							/>
+						),
+						commercialUpgradeLink: (
+							<a
+								className="notice-banner__action-link"
+								href={ localizeUrl( learnMoreLink ) }
+								target="_blank"
+								rel="noreferrer"
+							/>
+						),
+						commercialUpgradeLinkText: <span />,
+						externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
+					},
+				}
+		  );
+
 	return (
 		<div
 			className={ `inner-notice-container has-odyssey-stats-bg-color ${
@@ -57,31 +91,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 				onClose={ () => {} }
 				hideCloseButton
 			>
-				{ translate(
-					'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
-					{
-						components: {
-							p: <p />,
-							jetpackStatsProductLink: (
-								<button
-									type="button"
-									className="notice-banner__action-button"
-									onClick={ gotoJetpackStatsProduct }
-								/>
-							),
-							commercialUpgradeLink: (
-								<a
-									className="notice-banner__action-link"
-									href={ localizeUrl( learnMoreLink ) }
-									target="_blank"
-									rel="noreferrer"
-								/>
-							),
-							commercialUpgradeLinkText: <span />,
-							externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
-						},
-					}
-				) }
+				{ bannerBody }
 			</NoticeBanner>
 		</div>
 	);
