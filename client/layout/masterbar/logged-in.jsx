@@ -433,7 +433,7 @@ class MasterbarLoggedIn extends Component {
 			<>
 				<Item
 					className="masterbar__item-my-site-actions"
-					url={ currentSelectedSiteSlug && sectionGroup === 'sites' ? newPostUrl : '/post' }
+					url={ siteActions[ 0 ].url }
 					subItems={ siteActions }
 					icon={ <span className="dashicons-before dashicons-plus" /> }
 					tooltip={ translate( 'New' ) }
