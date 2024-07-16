@@ -3,6 +3,7 @@ import { Page } from 'playwright';
 const selectors = {
 	// Buttons on navbar
 	mySiteButton: '[data-tip-target="my-sites"]',
+	mobileMenuButton: '[data-tip-target="Menu"]',
 	writeButton: '.masterbar__item-new',
 	notificationsButton: 'a[href="/notifications"]',
 	meButton: 'a[data-tip-target="me"]',
@@ -38,6 +39,15 @@ export class NavbarComponent {
 	 */
 	async clickMySites(): Promise< void > {
 		await this.page.click( selectors.mySiteButton );
+	}
+
+	/**
+	 * Clicks on `My Sites` on the top left of Home dashboard.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickMobileMenu(): Promise< void > {
+		await this.page.click( selectors.mobileMenuButton );
 	}
 
 	/**
