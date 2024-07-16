@@ -103,7 +103,7 @@ export default function DnssecCard( { domain }: { domain: ResponseDomain } ) {
 
 		return (
 			<fieldset>
-				<legend>{ translate( 'DS records' ) } </legend>
+				<legend>{ translate( 'Delegation Signer (DS) records' ) } </legend>
 				{ dsData.map( ( dsRecord ) => {
 					return (
 						<div key={ dsRecord } className="domain-dnssec-card__record">
