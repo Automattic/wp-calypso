@@ -55,7 +55,7 @@ export default function useProductFilterOptions() {
 			{ key: PRODUCT_PRICE_FREE, label: translate( 'Free' ) },
 			{
 				key: PRODUCT_PRICE_PAID,
-				label: translate( 'Paid', { context: 'Refers to paid service, such as paid theme' } ),
+				label: translate( 'Paid', { context: 'Label for a paid subscription plan' } ),
 			},
 		],
 	};
