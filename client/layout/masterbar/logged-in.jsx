@@ -257,7 +257,7 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<Item
-				tipTarget="Menu"
+				tipTarget="mobile-menu"
 				icon={ <span className="dashicons-before dashicons-menu-alt" /> }
 				onClick={ this.handleToggleMobileMenu }
 				isActive={ this.isSidebarOpen() }
@@ -354,7 +354,7 @@ class MasterbarLoggedIn extends Component {
 					className="masterbar__item-my-site"
 					url={ siteUrl }
 					icon={ <span className="dashicons-before dashicons-admin-home" /> }
-					tipTarget="Menu"
+					tipTarget="visit-site"
 					subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl } ] }
 				>
 					{ siteTitle }
@@ -420,7 +420,7 @@ class MasterbarLoggedIn extends Component {
 					subItems={ siteActions }
 					icon={ <span className="dashicons-before dashicons-plus" /> }
 					tooltip={ translate( 'New' ) }
-					tipTarget="Menu"
+					tipTarget="new-menu"
 				>
 					{ translate( 'New' ) }
 				</Item>
