@@ -72,8 +72,9 @@
 		}
 	}
 
-	.button .gridicon {
+	.button svg {
+		position: relative;
 		inset-block-start: 1px;
-		inset-inline-start: 6px;
+		inset-inline-start: 4px;
 	}
 }

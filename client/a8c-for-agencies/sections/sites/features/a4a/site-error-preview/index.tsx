@@ -1,5 +1,6 @@
-import { Button, CompactCard, Gridicon } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Icon, external, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import useRemoveSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-remove-site';
@@ -109,7 +110,7 @@ export default function SiteErrorPreview( {
 							onClick={ () => trackEvent( 'calypso_a4a_site_indicator_disconnect_confirm' ) }
 						>
 							{ translate( 'Confirm now' ) }
-							<Gridicon icon="external" />
+							<Icon icon={ external } />
 						</Button>
 					</FormattedHeader>
 				</CompactCard>
@@ -139,7 +140,7 @@ export default function SiteErrorPreview( {
 							onClick={ () => trackEvent( 'calypso_a4a_site_indicator_disconnect_troubleshoot' ) }
 						>
 							{ translate( 'View guide' ) }
-							<Gridicon icon="external" />
+							<Icon icon={ external } />
 						</Button>
 					</FormattedHeader>
 				</CompactCard>
@@ -169,7 +170,7 @@ export default function SiteErrorPreview( {
 							onClick={ () => trackEvent( 'calypso_a4a_site_indicator_disconnect_disconnect' ) }
 						>
 							{ translate( 'Disconnect' ) }
-							<Gridicon icon="external" />
+							<Icon icon={ external } />
 						</Button>
 					</FormattedHeader>
 				</CompactCard>
@@ -182,7 +183,7 @@ export default function SiteErrorPreview( {
 					>
 						<Button onClick={ handleRemoveSite }>
 							{ translate( 'Remove' ) }
-							<Gridicon icon="trash" />
+							<Icon icon={ trash } />
 						</Button>
 					</FormattedHeader>
 				</CompactCard>
