@@ -267,6 +267,10 @@ body.is-mobile-app-view {
 		padding: 0 7px 0 4px;
 	}
 
+	&.masterbar__item-my-site-actions {
+		padding-left: 7px;
+	}
+
 	&.has-subitems {
 		display: block;
 	}
@@ -278,6 +282,7 @@ body.is-mobile-app-view {
 		gap: 5px;
 	}
 
+	&.masterbar__item-my-site-actions > a,
 	&.masterbar__item-my-site > a {
 		gap: 6px;
 	}
@@ -390,7 +395,7 @@ body.is-mobile-app-view {
 		color: var(--color-masterbar-icon);
 	}
 	.dashicons-plus {
-		padding-top: 2px;
+		padding-top: 4px;
 	}
 
 	// The hover colors are supposed to be the same as those in wp-admin.
