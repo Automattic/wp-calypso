@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { ContactOption } from '../types';
+import type { ContactOption } from '../types';
 
 export const generateContactOnClickEvent = (
 	contactOption: ContactOption,
