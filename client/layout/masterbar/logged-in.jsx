@@ -26,10 +26,6 @@ import {
 	getCurrentUserDate,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
-import {
-	getShouldShowGlobalSidebar,
-	getShouldShowUnifiedSiteSidebar,
-} from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -830,7 +826,6 @@ class MasterbarLoggedIn extends Component {
 export default connect(
 	( state ) => {
 		const sectionGroup = getSectionGroup( state );
-		const sectionName = getSectionName( state );
 
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
@@ -842,19 +837,6 @@ export default connect(
 			isSiteMigrationActiveRoute( state );
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
-		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
-			state,
-			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
-		);
-		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
-			state,
-			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
-		);
-		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
@@ -888,8 +870,6 @@ export default connect(
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
-			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
-			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
 			newPostUrl: getEditorUrl( state, currentSelectedSiteId, null, 'post' ),
 			newPageUrl: getEditorUrl( state, currentSelectedSiteId, null, 'page' ),
