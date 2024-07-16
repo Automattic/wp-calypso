@@ -263,6 +263,10 @@ body.is-mobile-app-view {
 	transition: all 0.2s ease-in-out;
 	justify-content: center;
 
+	&.masterbar__reader {
+		padding: 0 7px 0 4px;
+	}
+
 	&.has-subitems {
 		display: block;
 	}
