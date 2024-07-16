@@ -1,7 +1,9 @@
 import { Button } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
+import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch } from 'react-redux';
 import { HostingCard } from 'calypso/components/hosting-card';
 import {
 	composeAnalytics,
@@ -9,11 +11,10 @@ import {
 	recordGoogleEvent,
 	bumpStat,
 } from 'calypso/state/analytics/actions';
-import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
 
 import './style.scss';
 
-function trackNavigateToContactSupport() {
+function trackNavigateGetHelpClick() {
 	return composeAnalytics(
 		recordGoogleEvent( 'Hosting Configuration', 'Clicked "Contact us" Button in Support card' ),
 		recordTracksEvent( 'calypso_hosting_configuration_contact_support' ),
@@ -25,12 +26,14 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 export default function SupportCard() {
 	const translate = useTranslate();
-	const { setShowHelpCenter, setInitialRoute } = useDispatch( HELP_CENTER_STORE );
+	const dispatch = useDispatch();
+	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { url } = useStillNeedHelpURL();
 
 	const onClick = () => {
 		setInitialRoute( url );
 		setShowHelpCenter( true );
+		dispatch( trackNavigateGetHelpClick() );
 	};
 
 	return (
