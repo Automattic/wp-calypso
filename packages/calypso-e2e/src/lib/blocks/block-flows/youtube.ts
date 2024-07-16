@@ -9,7 +9,7 @@ const blockParentSelector = '[aria-label="Block: YouTube"]:has-text("YouTube URL
 const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
-	editorYouTubeIframe: 'iframe[title="Embedded content from youtube.com"]',
+	editorYouTubeIframe: 'iframe[title="Embedded content from www.youtube.com"]',
 	publishedYouTubeIframe: `iframe.youtube-player`,
 };
 
