@@ -44,11 +44,16 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isCommercial,
 			hasPWYWPlanOnly,
 		}: StatsNoticeProps ) => {
+			// Show the notice only if the site is commercial.
+			if ( ! isCommercial ) {
+				return false;
+			}
+
 			const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
 			const showUpgradeNoticeForJetpackSites = isOdysseyStats || isSiteJetpackNotAtomic;
 
 			// Test specific to commercial self-hosted sites with PWYW plans.
-			if ( showUpgradeNoticeForJetpackSites && isCommercial && hasPWYWPlanOnly ) {
+			if ( showUpgradeNoticeForJetpackSites && hasPWYWPlanOnly ) {
 				return true;
 			}
 
@@ -56,8 +61,6 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) &&
 				// Show the notice if the site has not purchased the paid stats product.
 				! hasPaidStats &&
-				// Show the notice only if the site is commercial.
-				isCommercial &&
 				! isVip
 			);
 		},
