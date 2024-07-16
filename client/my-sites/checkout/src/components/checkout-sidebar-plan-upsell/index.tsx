@@ -208,7 +208,9 @@ export function CheckoutSidebarPlanUpsell() {
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
 					{ isComparisonWithIntroOffer && (
 						<>
-							<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
+							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+								<strong>{ __( 'Plan' ) }</strong>
+							</div>
 							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 								<strong>{ cellLabel }</strong>
 							</div>
