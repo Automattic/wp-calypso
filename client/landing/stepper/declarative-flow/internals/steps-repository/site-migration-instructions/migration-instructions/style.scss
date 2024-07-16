@@ -2,9 +2,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/fonts";
 
-// We need to compensate the spacing because `enableDesktopScaling` on the progress element uses scale
-$progress-element-offset: 6px;
-
 .migration-instructions {
 	display: flex;
 	flex-direction: column;
@@ -25,7 +22,8 @@ $progress-element-offset: 6px;
 }
 
 .migration-instructions__progress {
-	margin: $progress-element-offset $progress-element-offset calc(2rem + $progress-element-offset);
+	padding: 6px; // We need to compensate the spacing because `enableDesktopScaling` on the progress element uses scale.
+	margin-bottom: 2rem;
 }
 
 .migration-instructions__title {
