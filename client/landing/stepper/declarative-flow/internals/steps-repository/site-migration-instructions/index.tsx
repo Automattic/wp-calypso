@@ -104,7 +104,6 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	const stepContent = withPreview ? (
 		<LaunchpadContainer sidebar={ migrationInstructions }>
 			{ showHostingBadge && <HostingBadge hostingName={ hostingDetails.name } /> }
-
 			<SitePreview />
 		</LaunchpadContainer>
 	) : (

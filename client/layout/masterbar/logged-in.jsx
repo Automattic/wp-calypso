@@ -16,21 +16,20 @@ import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
+import { siteUsesWpAdminInterface } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import {
 	getCurrentUser,
 	getCurrentUserDate,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
-import {
-	getShouldShowGlobalSidebar,
-	getShouldShowUnifiedSiteSidebar,
-} from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
@@ -53,7 +52,12 @@ import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-cur
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSectionGroup, getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSectionGroup,
+	getSectionName,
+	getSelectedSite,
+	getSelectedSiteId,
+} from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import { MasterBarMobileMenu } from './masterbar-menu';
@@ -149,11 +153,6 @@ class MasterbarLoggedIn extends Component {
 
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
-
-		if ( this.props.isMobileGlobalNavVisible ) {
-			// Fall through to navigate to /sites
-			return;
-		}
 
 		this.handleLayoutFocus( 'sites' );
 		this.props.activateNextLayoutFocus();
@@ -254,45 +253,16 @@ class MasterbarLoggedIn extends Component {
 	 * In nav unification, the menu is openned with the Sites button
 	 */
 	renderSidebarMobileMenu() {
-		const { isResponsiveMenu } = this.state;
 		const { translate } = this.props;
-
-		if ( isResponsiveMenu ) {
-			return (
-				<Item
-					tipTarget="Menu"
-					icon="menu"
-					onClick={ this.handleToggleMobileMenu }
-					isActive={ this.isSidebarOpen() }
-					className="masterbar__item-menu"
-					tooltip={ translate( 'Menu' ) }
-				/>
-			);
-		}
-		return null;
-	}
-
-	renderGlobalMySites() {
-		const { translate, section } = this.props;
-		const { isResponsiveMenu } = this.state;
-
-		let mySitesUrl = '/sites';
-
-		const icon =
-			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
-
-		if ( 'sites-dashboard' === section && isResponsiveMenu ) {
-			mySitesUrl = '';
-		}
 
 		return (
 			<Item
-				url={ mySitesUrl }
-				tipTarget="my-sites"
-				icon={ icon }
-				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites-dashboard' ) && ! this.isSidebarOpen() }
-				tooltip={ translate( 'Manage your sites' ) }
+				tipTarget="mobile-menu"
+				icon={ <span className="dashicons-before dashicons-menu-alt" /> }
+				onClick={ this.handleToggleMobileMenu }
+				isActive={ this.isSidebarOpen() }
+				className="masterbar__item-sidebar-menu"
+				tooltip={ translate( 'Menu' ) }
 			/>
 		);
 	}
@@ -310,21 +280,12 @@ class MasterbarLoggedIn extends Component {
 	// will render as back button on mobile and in editor
 	renderMySites() {
 		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
-		const { isMenuOpen, isResponsiveMenu } = this.state;
+		const { isMenuOpen } = this.state;
 
-		let mySitesUrl = domainOnlySite
+		const mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
 			: '/sites';
-		let icon = this.wordpressIcon();
-
-		if ( 'sites' === section && isResponsiveMenu ) {
-			mySitesUrl = '';
-		}
-
-		if ( this.state.isMobile && this.props.isInEditor ) {
-			mySitesUrl = this.getHomeUrl();
-			icon = 'chevron-left';
-		}
+		const icon = this.wordpressIcon();
 
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
 			// we are the /sites page but there is no site. Disable the home link
@@ -333,6 +294,7 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<Item
+				className="masterbar__item-my-sites"
 				url={ mySitesUrl }
 				tipTarget="my-sites"
 				icon={ icon }
@@ -375,6 +337,164 @@ class MasterbarLoggedIn extends Component {
 				shouldClearCartWhenLeaving={ ! isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
 			/>
+		);
+	}
+
+	renderSiteMenu() {
+		const { sectionGroup, currentSelectedSiteSlug, translate, siteTitle, siteUrl } = this.props;
+
+		// Only display on site-specific pages.
+		if ( sectionGroup !== 'sites' || ! currentSelectedSiteSlug ) {
+			return null;
+		}
+
+		return (
+			<Item
+				className="masterbar__item-my-site"
+				url={ siteUrl }
+				icon={ <span className="dashicons-before dashicons-admin-home" /> }
+				tipTarget="visit-site"
+				subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl } ] }
+			>
+				{ siteTitle }
+			</Item>
+		);
+	}
+
+	renderSiteActionMenu() {
+		const {
+			sectionGroup,
+			currentSelectedSiteSlug,
+			currentSelectedSite,
+			translate,
+			siteAdminUrl,
+			newPostUrl,
+			newPageUrl,
+			domainOnlySite,
+			isMigrationInProgress,
+			isEcommerce,
+		} = this.props;
+
+		// Only display on site-specific pages.
+		// domainOnlySite's still get currentSelectedSiteSlug, removing this check would require changing checks below.
+		if ( domainOnlySite || isMigrationInProgress || isEcommerce ) {
+			return null;
+		}
+
+		let siteActions = [];
+
+		if ( currentSelectedSiteSlug && sectionGroup === 'sites' ) {
+			const isClassicView = siteUsesWpAdminInterface( currentSelectedSite );
+			siteActions = [
+				{
+					label: translate( 'Post' ),
+					url: newPostUrl,
+				},
+				{
+					label: translate( 'Media' ),
+					url: isClassicView
+						? `${ siteAdminUrl }media-new.php`
+						: `/media/${ currentSelectedSiteSlug }`,
+				},
+				{
+					label: translate( 'Page' ),
+					url: newPageUrl,
+				},
+				{
+					label: translate( 'User' ),
+					url: isClassicView
+						? `${ siteAdminUrl }user-new.php`
+						: `/people/new/${ currentSelectedSiteSlug }`,
+				},
+			];
+		} else {
+			siteActions = [
+				{
+					label: translate( 'Post' ),
+					url: '/post',
+				},
+				{
+					label: translate( 'Media' ),
+					url: '/media',
+				},
+				{
+					label: translate( 'Page' ),
+					url: '/page',
+				},
+				{
+					label: translate( 'User' ),
+					url: '/people/new',
+				},
+			];
+		}
+		return (
+			<Item
+				className="masterbar__item-my-site-actions"
+				url={ siteActions[ 0 ].url }
+				subItems={ siteActions }
+				icon={ <span className="dashicons-before dashicons-plus" /> }
+				tooltip={ translate( 'New' ) }
+				tipTarget="new-menu"
+			>
+				{ translate( 'New' ) }
+			</Item>
+		);
+	}
+
+	renderProfileMenu() {
+		const { translate, user, siteUrl, currentSelectedSite } = this.props;
+		const isClassicView = currentSelectedSite
+			? siteUsesWpAdminInterface( currentSelectedSite )
+			: false;
+		const profileActions = [
+			{
+				label: (
+					<div className="masterbar__item-howdy-account-wrapper">
+						<Gravatar
+							className="masterbar__item-howdy-account-gravatar"
+							alt=" "
+							user={ user }
+							size={ 64 }
+						/>
+						<div className="masterbar__item-howdy-account-details">
+							<span className="display-name">{ user.display_name }</span>
+							<span className="display-name edit-profile">{ translate( 'Edit Profile' ) }</span>
+						</div>
+					</div>
+				),
+				url: isClassicView ? siteUrl + '/wp-admin/profile.php' : '/me',
+			},
+			{
+				label: translate( 'My Account' ),
+				url: '/me/account',
+				className: 'account-link',
+			},
+			{
+				label: translate( 'Log Out' ),
+				onClick: () => this.props.redirectToLogout(),
+				tooltip: translate( 'Log out of WordPress.com' ),
+				className: 'logout-link',
+			},
+		];
+
+		return (
+			<Item
+				tipTarget="me"
+				url="/me"
+				onClick={ this.clickMe }
+				isActive={ this.isActive( 'me' ) }
+				className="masterbar__item-howdy"
+				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
+				preloadSection={ this.preloadMe }
+				subItems={ profileActions }
+			>
+				<span className="masterbar__item-howdy-howdy">
+					{ translate( 'Howdy, %(display_name)s', {
+						args: { display_name: user.display_name },
+					} ) }
+				</span>
+				<Gravatar className="masterbar__item-howdy-gravatar" alt=" " user={ user } size={ 18 } />
+			</Item>
 		);
 	}
 
@@ -612,17 +732,6 @@ class MasterbarLoggedIn extends Component {
 		return null;
 	}
 
-	renderWordPressIcon() {
-		const { siteAdminUrl } = this.props;
-		return (
-			<Item
-				url={ siteAdminUrl }
-				className="masterbar__item-wordpress"
-				icon={ <span className="dashicons-before dashicons-wordpress" /> }
-			/>
-		);
-	}
-
 	renderAllSites() {
 		const { translate } = this.props;
 		return (
@@ -653,112 +762,65 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderBackHomeButton() {
+		const { translate } = this.props;
+
+		return (
+			<Item
+				tipTarget="back-home"
+				className="masterbar__item-back"
+				icon="chevron-left"
+				tooltip={ translate( 'Back' ) }
+				url={ this.getHomeUrl() }
+			/>
+		);
+	}
+
 	render() {
 		const { isInEditor, isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } =
 			this.props;
-		const { isMobile } = this.state;
+		const { isMobile, isResponsiveMenu } = this.state;
 
+		// Checkout flow uses it's own version of the masterbar
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return this.renderCheckout();
 		}
 
-		if ( this.props.isMobileGlobalNavVisible ) {
+		// Editor specific masterbar, only shows back to home button and help center as these are hidden on mobile views
+		// from the desktop version of the editor.
+		// The desktop version of the editor has no masterbar at all so we only do this for mobile.
+		if ( isInEditor && ( isMobile || isResponsiveMenu ) ) {
 			return (
-				<>
-					<Masterbar className="masterbar__global-nav">
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderSidebarMobileMenu() }
-							{ this.renderGlobalMySites() }
-							{ this.renderReader() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderSearch() }
-							{ this.renderCart() }
-							{ this.renderMe() }
-							{ loadHelpCenterIcon && this.renderHelpCenter() }
-							{ this.renderNotifications() }
-						</div>
-					</Masterbar>
-				</>
-			);
-		}
-
-		if ( this.props.isUnifiedSiteView ) {
-			return (
-				<Masterbar className="masterbar__unified">
-					<div className="masterbar__section masterbar__section--left">
-						{ this.state.isResponsiveMenu
-							? this.renderSidebarMobileMenu()
-							: this.renderWordPressIcon() }
-						{ this.renderAllSites() }
-						{ this.renderCurrentSite() }
-					</div>
-					<div className="masterbar__section masterbar__section--right">
-						{ this.renderCart() }
-						{ loadHelpCenterIcon && this.renderHelpCenter() }
-						{ this.renderNotifications() }
-						{ this.renderMe() }
-					</div>
-				</Masterbar>
-			);
-		}
-
-		if ( isMobile ) {
-			if ( isInEditor && loadHelpCenterIcon ) {
-				return (
-					<Masterbar>
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderMySites() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderCart() }
-							{ this.renderNotifications() }
-						</div>
-					</Masterbar>
-				);
-			}
-			return (
-				<>
-					{ this.renderPopupSearch() }
-					<Masterbar>
-						<div className="masterbar__section masterbar__section--left">
-							{ this.renderMySites() }
-							{ this.renderReader( false ) }
-							{ this.renderLanguageSwitcher() }
-							{ this.renderSearch() }
-						</div>
-						<div className="masterbar__section masterbar__section--right">
-							{ this.renderCart() }
-							{ this.renderNotifications() }
-							{ loadHelpCenterIcon && this.renderHelpCenter() }
-							{ this.renderMenu() }
-						</div>
-					</Masterbar>
-				</>
-			);
-		}
-		return (
-			<>
-				{ this.renderPopupSearch() }
 				<Masterbar>
 					<div className="masterbar__section masterbar__section--left">
-						{ this.renderMySites() }
-						{ this.renderReader() }
-						{ this.renderLanguageSwitcher() }
-						{ this.renderSearch() }
-					</div>
-					<div className="masterbar__section masterbar__section--center">
-						{ this.renderPublish() }
+						{ this.renderBackHomeButton() }
 					</div>
 					<div className="masterbar__section masterbar__section--right">
-						{ this.renderCart() }
-						{ this.renderMe() }
 						{ loadHelpCenterIcon && this.renderHelpCenter() }
-						{ this.renderLaunchpadNavigator() }
-						{ this.renderNotifications() }
 					</div>
 				</Masterbar>
-			</>
+			);
+		}
+
+		return (
+			<Masterbar>
+				<div className="masterbar__section masterbar__section--left">
+					{ this.renderSidebarMobileMenu() }
+					{ this.renderMySites() }
+					{ this.renderReader( ! isMobile ) }
+					{ this.renderSiteMenu() }
+					{ this.renderSiteActionMenu() }
+					{ this.renderLanguageSwitcher() }
+					{ this.renderSearch() }
+				</div>
+				<div className="masterbar__section masterbar__section--right">
+					{ this.renderCart() }
+					{ this.renderLaunchpadNavigator() }
+					{ loadHelpCenterIcon && this.renderHelpCenter() }
+					{ this.renderNotifications() }
+					{ this.renderProfileMenu() }
+				</div>
+			</Masterbar>
 		);
 	}
 }
@@ -766,7 +828,6 @@ class MasterbarLoggedIn extends Component {
 export default connect(
 	( state ) => {
 		const sectionGroup = getSectionGroup( state );
-		const sectionName = getSectionName( state );
 
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
@@ -778,19 +839,6 @@ export default connect(
 			isSiteMigrationActiveRoute( state );
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
-		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
-			state,
-			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
-		);
-		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
-			state,
-			currentSelectedSiteId,
-			sectionGroup,
-			sectionName
-		);
-		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
@@ -808,6 +856,7 @@ export default connect(
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
+			currentSelectedSite: getSelectedSite( state ),
 			currentSelectedSiteSlug: currentSelectedSiteId
 				? getSiteSlug( state, currentSelectedSiteId )
 				: undefined,
@@ -823,9 +872,9 @@ export default connect(
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
-			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
-			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
+			newPostUrl: getEditorUrl( state, currentSelectedSiteId, null, 'post' ),
+			newPageUrl: getEditorUrl( state, currentSelectedSiteId, null, 'page' ),
 		};
 	},
 	{
@@ -835,5 +884,6 @@ export default connect(
 		activateNextLayoutFocus,
 		savePreference,
 		openCommandPalette,
+		redirectToLogout,
 	}
 )( localize( MasterbarLoggedIn ) );

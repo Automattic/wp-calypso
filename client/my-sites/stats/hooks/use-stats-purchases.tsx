@@ -40,24 +40,23 @@ const areProductsOwned = ( ownedPurchases: Purchase[], searchedProducts: string[
 	return filterPurchasesByProducts( ownedPurchases, searchedProducts ).length > 0;
 };
 
-// TODO: Consolidate this with the useStatsPurchases hook.
-const isCommercialOwned = ( ownedPurchases: Purchase[] ) => {
+const isCommercialPurchaseOwned = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [
 		PRODUCT_JETPACK_STATS_MONTHLY,
 		PRODUCT_JETPACK_STATS_YEARLY,
 		PRODUCT_JETPACK_STATS_BI_YEARLY,
 	] );
 };
-// TODO: Consolidate this with the useStatsPurchases hook.
-const supportCommercialUse = ( ownedPurchases: Purchase[] ) => {
+
+const supportCommercialPurchaseUse = ( ownedPurchases: Purchase[] ) => {
 	return (
-		isCommercialOwned( ownedPurchases ) ||
+		isCommercialPurchaseOwned( ownedPurchases ) ||
 		[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, ...JETPACK_COMPLETE_PLANS ].some(
 			( plan ) => isProductOwned( ownedPurchases, plan )
 		)
 	);
 };
-// TODO: Refactor this to a comprehensive function that checks single module products.
+
 const isVideoPressOwned = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_VIDEOPRESS_PRODUCTS ] );
 };
@@ -65,7 +64,7 @@ const isVideoPressOwned = ( ownedPurchases: Purchase[] ) => {
 export const hasSupportedCommercialUse = ( state: object, siteId: number | null ) => {
 	const sitePurchases = getSitePurchases( state, siteId );
 
-	return supportCommercialUse( sitePurchases );
+	return supportCommercialPurchaseUse( sitePurchases );
 };
 
 export const hasSupportedVideoPressUse = ( state: object, siteId: number | null ) => {
@@ -89,27 +88,18 @@ export default function useStatsPurchases( siteId: number | null ) {
 		return isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_FREE );
 	}, [ sitePurchases ] );
 
-	const isCommercialOwned = useMemo( () => {
-		return areProductsOwned( sitePurchases, [
-			// TODO: Remove the VideoPress products after releasing the feature flag `stats/restricted-dashboard`.
-			...JETPACK_VIDEOPRESS_PRODUCTS,
-			PRODUCT_JETPACK_STATS_MONTHLY,
-			PRODUCT_JETPACK_STATS_YEARLY,
-			PRODUCT_JETPACK_STATS_BI_YEARLY,
-		] );
-	}, [ sitePurchases ] );
+	const isCommercialOwned = useMemo(
+		() => isCommercialPurchaseOwned( sitePurchases ),
+		[ sitePurchases ]
+	);
 
 	const isPWYWOwned = useMemo( () => {
 		return isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
 	}, [ sitePurchases ] );
 
 	const supportCommercialUse = useMemo(
-		() =>
-			isCommercialOwned ||
-			[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, ...JETPACK_COMPLETE_PLANS ].some(
-				( plan ) => isProductOwned( sitePurchases, plan )
-			),
-		[ sitePurchases, isCommercialOwned ]
+		() => supportCommercialPurchaseUse( sitePurchases ),
+		[ sitePurchases ]
 	);
 
 	const isLegacyCommercialLicense = useMemo( () => {
