@@ -7,6 +7,10 @@
 	gap: 16px;
 
 	& > button {
+		border: none;
+		background: none;
+		padding: 0;
+
 		&:disabled {
 			cursor: auto;
 
