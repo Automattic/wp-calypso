@@ -27,5 +27,10 @@
 	.button {
 		background-color: var(--color-accent-100);
 		color: var(--color-surface);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-accent-100);
+		}
 	}
 }
