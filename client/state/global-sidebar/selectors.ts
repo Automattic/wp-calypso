@@ -61,6 +61,16 @@ export const getShouldShowGlobalSidebar = (
 	);
 };
 
+interface CollapsedDataHelper {
+	isJustSelected: boolean;
+	currentSiteId: number | null | undefined;
+}
+
+const collapsedDataHelper: CollapsedDataHelper = {
+	isJustSelected: false,
+	currentSiteId: null,
+};
+
 export const getShouldShowCollapsedGlobalSidebar = (
 	state: AppState,
 	siteId: number | null,
@@ -70,22 +80,22 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	const isSitesDashboard = sectionGroup === 'sites-dashboard';
 	const isSiteDashboard = getShouldShowSiteDashboard( state, siteId, sectionGroup, sectionName );
 
-	// A site is just clicked and the global sidebar is in collapsing animation.
-	const isSiteJustSelectedFromSitesDashboard =
-		isSitesDashboard &&
-		!! siteId &&
-		isInRoute( state, [
-			'/sites', // started collapsing when still in sites dashboard
-			...Object.values( SITE_DASHBOARD_ROUTES ), // has just stopped collapsing when in one of the paths in site dashboard
-		] );
+	// If we change the siteId, set just selected to true.
+	if ( collapsedDataHelper.currentSiteId !== siteId ) {
+		collapsedDataHelper.isJustSelected = true;
+		collapsedDataHelper.currentSiteId = siteId;
+	}
+
+	// Clear the flag once we aren't in sites group.
+	if ( ! isSitesDashboard ) {
+		collapsedDataHelper.isJustSelected = false;
+	}
 
 	const isPluginsScheduledUpdatesEditMode =
 		isScheduledUpdatesMultisiteCreateRoute( state ) ||
 		isScheduledUpdatesMultisiteEditRoute( state );
 
-	return (
-		isSiteJustSelectedFromSitesDashboard || isSiteDashboard || isPluginsScheduledUpdatesEditMode
-	);
+	return collapsedDataHelper.isJustSelected || isSiteDashboard || isPluginsScheduledUpdatesEditMode;
 };
 
 export const getShouldShowUnifiedSiteSidebar = (
