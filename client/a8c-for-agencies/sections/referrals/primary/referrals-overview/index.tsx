@@ -47,6 +47,7 @@ export default function ReferralsOverview( {
 	const dispatch = useDispatch();
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+	const [ requiredNoticeClose, setRequiredNoticeClosed ] = useState( false );
 
 	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
 		REFERRAL_EMAIL_QUERY_PARAM_KEY
@@ -71,7 +72,8 @@ export default function ReferralsOverview( {
 
 	const hasReferrals = !! referrals?.length;
 
-	const actionRequiredNotice = ! isFetching && ! isPayable && ! isFetchingReferrals && hasReferrals;
+	const actionRequiredNotice =
+		! isFetching && ! isPayable && ! isFetchingReferrals && hasReferrals && ! requiredNoticeClose;
 
 	const makeAReferral = useCallback( () => {
 		sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REFERRAL );
@@ -105,7 +107,7 @@ export default function ReferralsOverview( {
 							<LayoutBanner
 								level="warning"
 								title={ translate( 'Your payment settings require action' ) }
-								preferenceName="a4a-automated-referral-payment-settings-action-required"
+								onClose={ () => setRequiredNoticeClosed( true ) }
 							>
 								<div>
 									{ translate(
