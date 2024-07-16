@@ -278,6 +278,10 @@ body.is-mobile-app-view {
 		gap: 5px;
 	}
 
+	&.masterbar__item-my-site > a {
+		gap: 6px;
+	}
+
 	.masterbar__item-subitems {
 		margin: 0;
 		padding: 6px 0;
