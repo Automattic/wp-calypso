@@ -71,7 +71,7 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 			<FormattedHeader headerText="Import your newsletter" />
 			{ ( ! step || ! newsletterUrl ) && <SelectNewsletterForm nextStepUrl={ nextStepUrl } /> }
 			{ step && <StepProgress steps={ stepsProgress } currentStep={ stepIndex } /> }
-			{ step && (
+			{ step && newsletterUrl && (
 				<Step
 					siteSlug={ siteSlug }
 					nextStepUrl={ nextStepUrl }
