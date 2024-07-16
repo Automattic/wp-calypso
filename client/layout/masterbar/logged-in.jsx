@@ -349,17 +349,15 @@ class MasterbarLoggedIn extends Component {
 		}
 
 		return (
-			<>
-				<Item
-					className="masterbar__item-my-site"
-					url={ siteUrl }
-					icon={ <span className="dashicons-before dashicons-admin-home" /> }
-					tipTarget="visit-site"
-					subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl } ] }
-				>
-					{ siteTitle }
-				</Item>
-			</>
+			<Item
+				className="masterbar__item-my-site"
+				url={ siteUrl }
+				icon={ <span className="dashicons-before dashicons-admin-home" /> }
+				tipTarget="visit-site"
+				subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl } ] }
+			>
+				{ siteTitle }
+			</Item>
 		);
 	}
 
@@ -430,18 +428,16 @@ class MasterbarLoggedIn extends Component {
 			];
 		}
 		return (
-			<>
-				<Item
-					className="masterbar__item-my-site-actions"
-					url={ siteActions[ 0 ].url }
-					subItems={ siteActions }
-					icon={ <span className="dashicons-before dashicons-plus" /> }
-					tooltip={ translate( 'New' ) }
-					tipTarget="new-menu"
-				>
-					{ translate( 'New' ) }
-				</Item>
-			</>
+			<Item
+				className="masterbar__item-my-site-actions"
+				url={ siteActions[ 0 ].url }
+				subItems={ siteActions }
+				icon={ <span className="dashicons-before dashicons-plus" /> }
+				tooltip={ translate( 'New' ) }
+				tipTarget="new-menu"
+			>
+				{ translate( 'New' ) }
+			</Item>
 		);
 	}
 
