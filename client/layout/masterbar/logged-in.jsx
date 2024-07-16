@@ -719,17 +719,6 @@ class MasterbarLoggedIn extends Component {
 		return null;
 	}
 
-	renderWordPressIcon() {
-		const { siteAdminUrl } = this.props;
-		return (
-			<Item
-				url={ siteAdminUrl }
-				className="masterbar__item-wordpress"
-				icon={ <span className="dashicons-before dashicons-wordpress" /> }
-			/>
-		);
-	}
-
 	renderAllSites() {
 		const { translate } = this.props;
 		return (
