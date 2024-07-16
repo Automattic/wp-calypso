@@ -123,6 +123,7 @@
 }
 
 .theme-a8c-for-agencies {
+	.components-button,
 	.button {
 		display: inline-flex;
 		align-items: center;
@@ -156,6 +157,7 @@
 		border-radius: 4px 0 0 4px;
 	}
 
+	.components-button.is-primary,
 	.button.is-primary {
 		background-color: var(--color-primary-50);
 		border-color: var(--color-primary-50);
