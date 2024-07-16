@@ -1,12 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
+import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import { useIsEligibleSubscriberImporter } from 'calypso/landing/stepper/hooks/use-is-eligible-subscriber-importer';
 import type { SiteDetails } from '@automattic/data-stores';
 type Props = {
 	nextStepUrl: string;
-	selectedSite: null | SiteDetails;
-	newsletterUrl: string;
+	selectedSite?: SiteDetails;
+	newsletterUrl: QueryArgParsed;
 };
 
 export default function Subscribers( { nextStepUrl, selectedSite, newsletterUrl }: Props ) {

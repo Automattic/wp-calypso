@@ -1,4 +1,5 @@
 import { Card, Button } from '@automattic/components';
+import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import { useEffect } from 'react';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
@@ -6,14 +7,20 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
-type Props = {
+
+type ContentProps = {
 	nextStepUrl: string;
-	selectedSite: null | SiteDetails;
+	selectedSite?: SiteDetails;
 	siteSlug: string;
-	newsletterUrl?: string;
+	newsletterUrl: QueryArgParsed;
 };
 
-export default function Content( { nextStepUrl, selectedSite, siteSlug, newsletterUrl }: Props ) {
+export default function Content( {
+	nextStepUrl,
+	selectedSite,
+	siteSlug,
+	newsletterUrl,
+}: ContentProps ) {
 	const siteTitle = selectedSite?.title;
 	const siteId = selectedSite?.ID;
 

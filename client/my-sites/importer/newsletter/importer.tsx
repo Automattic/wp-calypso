@@ -6,13 +6,20 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ImporterLogo from '../importer-logo';
 import Content from './content';
 import PaidSubscribers from './paid-subscribers';
-import SelectNewsletterForm from './select-newsletter-form.tsx';
+import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
 import Summary from './summary';
 
 import './importer.scss';
 
-function LogoChain( { logos } ) {
+type Logo = {
+	name: string;
+	color: string;
+};
+type LogoChainProps = {
+	logos: Logo[];
+};
+function LogoChain( { logos }: LogoChainProps ) {
 	return (
 		<div className="logo-chain">
 			{ logos.map( ( logo ) => (
@@ -28,8 +35,14 @@ const steps = [ Content, Subscribers, PaidSubscribers, Summary ];
 
 const stepSlugs = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
 
-export default function NewsletterImporter( { siteSlug, engine, step } ) {
-	const selectedSite = useSelector( getSelectedSite );
+type NewsletterImporterProps = {
+	siteSlug: string;
+	engine: string;
+	step: string;
+};
+
+export default function NewsletterImporter( { siteSlug, engine, step }: NewsletterImporterProps ) {
+	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
 
 	const stepsProgress = [ 'Content', 'Subscribers', 'Paid Subscribers', 'Summary' ];
 
@@ -41,11 +54,10 @@ export default function NewsletterImporter( { siteSlug, engine, step } ) {
 			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
 	} );
-	const newsletterUrl = getQueryArg( window.location.href, 'newsletter' );
+	const newsletterUrl = getQueryArg( window.location.href, 'newsletter' ) ?? undefined;
 	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
 		newsletter: newsletterUrl,
 	} );
-
 	const Step = steps[ stepIndex ] || steps[ 0 ];
 	return (
 		<div className="newsletter-importer">
