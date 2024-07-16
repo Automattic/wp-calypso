@@ -1,7 +1,8 @@
 import { Gridicon, Button } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { Component, Fragment, forwardRef } from 'react';
+import React, { Component, Fragment, forwardRef } from 'react';
+import { navigate } from 'calypso/lib/navigate';
 import type { ReactNode, LegacyRef } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -52,7 +53,19 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		url: '',
 	};
 
+	state = {
+		isOpenByTouch: false,
+	};
+
+	componentButtonRef = React.createRef< HTMLButtonElement >();
+	componentDivRef = React.createRef< HTMLDivElement >();
+
 	_preloaded = false;
+
+	componentDidMount() {
+		document.addEventListener( 'touchstart', this.closeMenuOnOutsideTouch );
+		return () => document.removeEventListener( 'touchstart', this.closeMenuOnOutsideTouch );
+	}
 
 	preload = () => {
 		if ( ! this._preloaded && typeof this.props.preloadSection === 'function' ) {
@@ -85,16 +98,67 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 				{ subItems.map( ( item, i ) => (
 					<li key={ i } className={ clsx( 'masterbar__item-subitems-item', item.className ) }>
 						{ item.onClick && (
-							<Button className="is-link" onClick={ item.onClick }>
+							<Button
+								className="is-link"
+								onClick={ item.onClick }
+								onTouchEnd={ ( ev: React.TouchEvent ) => {
+									ev.preventDefault();
+									this.setState( { isOpenByTouch: false } );
+									item.onClick && item.onClick();
+								} }
+							>
 								{ item.label }
 							</Button>
 						) }
-						{ ! item.onClick && item.url && <a href={ item.url }>{ item.label }</a> }
+						{ ! item.onClick && item.url && (
+							<a href={ item.url } onTouchEnd={ this.navigateSubAnchorTouch }>
+								{ item.label }
+							</a>
+						) }
 					</li>
 				) ) }
 			</ul>
 		);
 	}
+
+	toggleMenuByTouch = ( event: React.TouchEvent ) => {
+		// If there are no subItems, there is nothing to toggle.
+		if ( ! this.props.subItems ) {
+			return;
+		}
+		// Prevent navigation by touching the parent menu item, and trigger toggling the menu instead.
+		event.preventDefault();
+		this.setState( { isOpenByTouch: ! this.state.isOpenByTouch } );
+	};
+
+	navigateSubAnchorTouch = ( event: React.TouchEvent ) => {
+		// We must prevent the default anchor behavior and navigate manually. Otherwise there is a
+		// race condition between the click on the anchor firing and the menu closing before that
+		// can happen.
+		event.preventDefault();
+		const url = event.currentTarget.getAttribute( 'href' );
+		if ( url ) {
+			navigate( url );
+		}
+		this.setState( { isOpenByTouch: false } );
+	};
+
+	closeMenuOnOutsideTouch = ( event: TouchEvent ) => {
+		// If no subItems or the menu is already closed, there is nothing to close.
+		if ( ! this.props.subItems || ! this.state.isOpenByTouch ) {
+			return;
+		}
+
+		// Check refs to see if the touch event started inside our component, if it didn't, close the menu.
+		const isInComponentButtonRef = this.componentButtonRef.current?.contains(
+			event.target as Node
+		);
+		const isInComponentDivRef = this.componentDivRef.current?.contains( event.target as Node );
+
+		if ( ! isInComponentButtonRef && ! isInComponentDivRef ) {
+			this.setState( { isOpenByTouch: false } );
+		}
+	};
 
 	render() {
 		const itemClasses = clsx( 'masterbar__item', this.props.className, {
@@ -102,6 +166,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			'has-unseen': this.props.hasUnseen,
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
 			'has-subitems': this.props.subItems,
+			'is-open': this.state.isOpenByTouch,
 		} );
 
 		const attributes = {
@@ -128,8 +193,12 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 
 		if ( this.props.url && this.props.subItems ) {
 			return (
-				<button { ...attributes }>
-					<a href={ this.props.url } ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }>
+				<button { ...attributes } ref={ this.componentButtonRef }>
+					<a
+						href={ this.props.url }
+						ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
+						onTouchEnd={ this.toggleMenuByTouch }
+					>
 						{ this.renderChildren() }
 					</a>
 					{ this.renderSubItems() }
@@ -138,10 +207,16 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		}
 
 		return (
-			<button { ...attributes } ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }>
-				{ this.renderChildren() }
-				{ this.renderSubItems() }
-			</button>
+			<div ref={ this.componentDivRef }>
+				<button
+					{ ...attributes }
+					ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }
+					onTouchEnd={ this.props.subItems && this.toggleMenuByTouch }
+				>
+					{ this.renderChildren() }
+					{ this.renderSubItems() }
+				</button>
+			</div>
 		);
 	}
 }
