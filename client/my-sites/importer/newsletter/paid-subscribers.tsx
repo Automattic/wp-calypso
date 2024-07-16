@@ -1,6 +1,10 @@
 import { Card, Button } from '@automattic/components';
 
-export default function PaidSubscribers( { nextStepUrl } ) {
+type Props = {
+	nextStepUrl: string;
+};
+
+export default function PaidSubscribers( { nextStepUrl }: Props ) {
 	return (
 		<Card>
 			<h2>Connect your Stripe account</h2>

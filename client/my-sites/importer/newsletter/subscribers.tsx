@@ -2,9 +2,19 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { useIsEligibleSubscriberImporter } from 'calypso/landing/stepper/hooks/use-is-eligible-subscriber-importer';
+import type { SiteDetails } from '@automattic/data-stores';
+type Props = {
+	nextStepUrl: string;
+	selectedSite: null | SiteDetails;
+	newsletterUrl: string;
+};
 
-export default function Subscribers( { nextStepUrl, newsletterUrl, selectedSite } ) {
+export default function Subscribers( { nextStepUrl, selectedSite, newsletterUrl }: Props ) {
 	const isUserEligibleForSubscriberImporter = useIsEligibleSubscriberImporter();
+
+	if ( selectedSite === null ) {
+		return null;
+	}
 	return (
 		<Card>
 			<h2>Step 1: Export your subscribers from Substack</h2>

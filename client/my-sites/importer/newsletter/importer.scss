@@ -37,6 +37,11 @@
 		margin: 0;
 		box-shadow: none;
 	}
+
+	.summary__content p {
+		display: flex;
+		gap: 8px;
+	}
 }
 
 .logo-chain {

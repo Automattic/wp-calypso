@@ -5,7 +5,10 @@ import { useState } from 'react';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 
-export default function SelectNewsletterForm( { nextStepUrl } ) {
+type Props = {
+	nextStepUrl: string;
+};
+export default function SelectNewsletterForm( { nextStepUrl }: Props ) {
 	const [ hasError, setHasError ] = useState( false );
 
 	const handleAction = ( newsletterUrl: string ) => {

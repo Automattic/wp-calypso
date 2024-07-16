@@ -5,10 +5,17 @@ import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
+import type { SiteDetails } from '@automattic/data-stores';
+type Props = {
+	nextStepUrl: string;
+	selectedSite: null | SiteDetails;
+	siteSlug: string;
+	newsletterUrl?: string;
+};
 
-export default function Content( { nextStepUrl, selectedSite, siteSlug, newsletterUrl } ) {
-	const siteTitle = selectedSite.title;
-	const siteId = selectedSite.ID;
+export default function Content( { nextStepUrl, selectedSite, siteSlug, newsletterUrl }: Props ) {
+	const siteTitle = selectedSite?.title;
+	const siteId = selectedSite?.ID;
 
 	const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 
@@ -19,6 +26,10 @@ export default function Content( { nextStepUrl, selectedSite, siteSlug, newslett
 
 	useEffect( fetchImporters, [ siteId, dispatch ] );
 	useEffect( startImporting, [ siteId, dispatch, siteImports ] );
+
+	if ( ! selectedSite ) {
+		return null;
+	}
 
 	function startImporting() {
 		siteId && siteImports.length === 0 && dispatch( startImport( siteId ) );
