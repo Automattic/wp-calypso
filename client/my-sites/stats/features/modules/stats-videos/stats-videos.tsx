@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
@@ -54,10 +55,24 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
 				<StatsModule
 					path="videoplays"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate(
+								'Your {{link}}most popular videos{{/link}} will display here to better understand how they performed. Start uploading!',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />,
+									},
+									context: 'Stats: Info box label when the Videos module is empty',
+								}
+							) }
+						</StatsInfoArea>
+					}
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
-					statType="statsVideoPlays"
+					statType={ statType }
 					showSummaryLink
 					className={ className }
 					skipQuery

@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
@@ -53,23 +54,29 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 			) }
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
 				<StatsModule
-					additionalColumns={ {
-						header: (
-							<>
-								<span>{ translate( 'Opens' ) }</span>
-							</>
-						),
-						body: ( item: { opens: number } ) => (
-							<>
-								<span>{ item.opens }</span>
-							</>
-						),
-					} }
 					path="emails"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate(
+								'Your {{link}}latest emails sent{{/link}} will display here to better understand how they performed. Start sending!',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#emails` ) } />,
+									},
+									context: 'Stats: Info box label when the Emails module is empty',
+								}
+							) }
+						</StatsInfoArea>
+					}
+					additionalColumns={ {
+						header: <span>{ translate( 'Opens' ) }</span>,
+						body: ( item: { opens: number } ) => <span>{ item.opens }</span>,
+					} }
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
-					statType="statsEmailsSummary"
+					statType={ statType }
 					mainItemLabel={ translate( 'Latest Emails' ) }
 					metricLabel={ translate( 'Clicks' ) }
 					showSummaryLink

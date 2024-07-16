@@ -4,6 +4,7 @@ import { tag } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector } from 'calypso/state';
 import {
@@ -55,6 +56,22 @@ const StatsTags: React.FC< StatsDefaultModuleProps > = ( {
 				// show data or an overlay
 				<StatsModule
 					path="tags-categories"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate(
+								'Learn about your most visited {{link}}tags & categories{{/link}} to track engaging topics. ',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: (
+											<a href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#all-time-insights` ) } />
+										),
+									},
+									context: 'Stats: Info box label when the Tags & Categories module is empty',
+								}
+							) }
+						</StatsInfoArea>
+					}
 					moduleStrings={ moduleStrings }
 					period={ period }
 					statType={ statType }

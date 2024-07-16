@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import {
 	isRequestingSiteStatsForQuery,
@@ -55,6 +56,21 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 				// show data or an overlay
 				<StatsModule
 					path="referrers"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate(
+								"We'll show you which websites are {{link}}referring visitors{{/link}} to your site so you can discover where your audience comes from. Start sharing!",
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#referrers` ) } />,
+									},
+									context:
+										'Stats: Link in a popover for the Posts & Pages when the module has data',
+								}
+							) }
+						</StatsInfoArea>
+					}
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
