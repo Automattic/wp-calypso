@@ -205,7 +205,7 @@ export default function UserContactSupportModalForm( {
 						<FormTextarea
 							name="message"
 							id="message"
-							placeholder="Add your message here"
+							placeholder={ translate( 'Add your message here' ) }
 							value={ message }
 							onChange={ onMessageChange }
 							onClick={ () =>
