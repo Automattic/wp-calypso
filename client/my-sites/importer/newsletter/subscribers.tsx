@@ -13,7 +13,7 @@ type Props = {
 export default function Subscribers( { nextStepUrl, selectedSite, newsletterUrl }: Props ) {
 	const isUserEligibleForSubscriberImporter = useIsEligibleSubscriberImporter();
 
-	if ( selectedSite === null ) {
+	if ( ! selectedSite ) {
 		return null;
 	}
 	return (
