@@ -866,6 +866,7 @@ body.is-mobile-app-view {
 	}
 
 	.gravatar {
+		border: 1px solid var(--color-masterbar-border);
 		border-radius: unset;
 
 		@media only screen and (max-width: 782px) {
