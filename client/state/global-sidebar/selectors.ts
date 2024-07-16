@@ -62,13 +62,15 @@ export const getShouldShowGlobalSidebar = (
 };
 
 interface CollapsedDataHelper {
-	isJustSelected: boolean;
-	currentSiteId: number | null | undefined;
+	shouldShowForAnimation: boolean;
+	selectedSiteId: number | null | undefined;
+	sectionGroup: string;
 }
 
 const collapsedDataHelper: CollapsedDataHelper = {
-	isJustSelected: false,
-	currentSiteId: null,
+	shouldShowForAnimation: false,
+	selectedSiteId: null,
+	sectionGroup: '',
 };
 
 export const getShouldShowCollapsedGlobalSidebar = (
@@ -80,22 +82,38 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	const isSitesDashboard = sectionGroup === 'sites-dashboard';
 	const isSiteDashboard = getShouldShowSiteDashboard( state, siteId, sectionGroup, sectionName );
 
-	// If we change the siteId, set just selected to true.
-	if ( collapsedDataHelper.currentSiteId !== siteId ) {
-		collapsedDataHelper.isJustSelected = true;
-		collapsedDataHelper.currentSiteId = siteId;
+	if ( collapsedDataHelper.sectionGroup !== sectionGroup ) {
+		if ( isSitesDashboard ) {
+			// Set or refresh the initial value when loading into the dashboard.
+			collapsedDataHelper.selectedSiteId = siteId;
+		} else {
+			// Clear this once we are off the sites dashboard.
+			collapsedDataHelper.shouldShowForAnimation = false;
+		}
+		// Keep track of section group to evaluate things when this changes.
+		collapsedDataHelper.sectionGroup = sectionGroup;
 	}
 
-	// Clear the flag once we aren't in sites group.
-	if ( ! isSitesDashboard ) {
-		collapsedDataHelper.isJustSelected = false;
+	// When selected site changes on the dashboard, show for animation.
+	if (
+		isSitesDashboard &&
+		!! siteId &&
+		collapsedDataHelper.selectedSiteId !== siteId &&
+		! collapsedDataHelper.shouldShowForAnimation
+	) {
+		collapsedDataHelper.shouldShowForAnimation = true;
+		collapsedDataHelper.selectedSiteId = siteId;
 	}
 
 	const isPluginsScheduledUpdatesEditMode =
 		isScheduledUpdatesMultisiteCreateRoute( state ) ||
 		isScheduledUpdatesMultisiteEditRoute( state );
 
-	return collapsedDataHelper.isJustSelected || isSiteDashboard || isPluginsScheduledUpdatesEditMode;
+	return (
+		collapsedDataHelper.shouldShowForAnimation ||
+		isSiteDashboard ||
+		isPluginsScheduledUpdatesEditMode
+	);
 };
 
 export const getShouldShowUnifiedSiteSidebar = (
