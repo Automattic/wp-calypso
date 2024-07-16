@@ -363,7 +363,6 @@ class MasterbarLoggedIn extends Component {
 
 	renderSiteActionMenu() {
 		const {
-			sectionGroup,
 			currentSelectedSiteSlug,
 			currentSelectedSite,
 			translate,
@@ -383,7 +382,7 @@ class MasterbarLoggedIn extends Component {
 
 		let siteActions = [];
 
-		if ( currentSelectedSiteSlug && sectionGroup === 'sites' ) {
+		if ( currentSelectedSiteSlug ) {
 			const isClassicView = siteUsesWpAdminInterface( currentSelectedSite );
 			siteActions = [
 				{
