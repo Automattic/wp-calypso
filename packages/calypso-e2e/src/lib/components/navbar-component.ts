@@ -4,6 +4,7 @@ const selectors = {
 	// Buttons on navbar
 	mySiteButton: '[data-tip-target="my-sites"]',
 	mobileMenuButton: '[data-tip-target="Menu"]',
+	editorBackButton: '[data-tip-target="back-home"]',
 	writeButton: '.masterbar__item-new',
 	notificationsButton: 'a[href="/notifications"]',
 	meButton: 'a[data-tip-target="me"]',
@@ -42,12 +43,21 @@ export class NavbarComponent {
 	}
 
 	/**
-	 * Clicks on `My Sites` on the top left of Home dashboard.
+	 * Clicks on hamburger menu icon in the top left of the masterbar shown only to mobile users of calypso.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickMobileMenu(): Promise< void > {
 		await this.page.click( selectors.mobileMenuButton );
+	}
+
+	/**
+	 * Clicks on `<` back button on the top left of the masterbar shown only to mobile users of the editor.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickEditorBackButton(): Promise< void > {
+		await this.page.click( selectors.editorBackButton );
 	}
 
 	/**

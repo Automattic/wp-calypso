@@ -769,6 +769,7 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<Item
+				tipTarget="back-home"
 				className="masterbar__item-back"
 				icon="chevron-left"
 				tooltip={ translate( 'Back' ) }
