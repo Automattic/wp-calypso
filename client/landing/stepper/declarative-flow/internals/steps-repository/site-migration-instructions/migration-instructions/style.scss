@@ -5,19 +5,20 @@
 .migration-instructions {
 	display: flex;
 	flex-direction: column;
-	height: 100%;
-
-	@include break-large {
-		width: 344px;
-	}
-}
-
-.migration-instructions--without-preview {
-	width: auto;
 
 	@include break-large {
 		flex-direction: row;
 		gap: 24px;
+	}
+}
+
+.migration-instructions--with-preview {
+	flex-direction: column;
+	height: 100%;
+
+	@include break-large {
+		width: 344px;
+		gap: 0;
 	}
 }
 

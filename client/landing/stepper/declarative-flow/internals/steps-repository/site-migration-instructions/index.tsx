@@ -84,7 +84,7 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 
 	const migrationInstructions = (
 		<MigrationInstructions
-			withoutPreview={ ! withPreview }
+			withPreview={ withPreview }
 			progress={
 				<CircularProgressBar
 					size={ 40 }

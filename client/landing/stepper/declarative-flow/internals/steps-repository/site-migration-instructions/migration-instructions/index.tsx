@@ -5,13 +5,13 @@ import './style.scss';
 
 interface Props {
 	progress: ReactNode;
-	withoutPreview?: boolean;
+	withPreview?: boolean;
 	children: ReactNode;
 }
 
 export const MigrationInstructions: FC< Props > = ( {
 	progress,
-	withoutPreview = false,
+	withPreview = false,
 	children,
 } ) => {
 	const translate = useTranslate();
@@ -19,7 +19,7 @@ export const MigrationInstructions: FC< Props > = ( {
 	return (
 		<div
 			className={ clsx( 'migration-instructions', {
-				'migration-instructions--without-preview': withoutPreview,
+				'migration-instructions--with-preview': withPreview,
 			} ) }
 		>
 			<div className="migration-instructions__progress">{ progress }</div>
