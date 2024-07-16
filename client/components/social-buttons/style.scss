@@ -12,8 +12,8 @@
 	}
 }
 
-.google__sign-in-container:has(iframe[style*="230px"]) {
-	transform: scale(1.55);
+.google__sign-in-container:has(iframe[style*="width: 2"]) {
+	transform: scale(1.5);
 	transform-origin: top left;
 	margin-bottom: 20px;
 }

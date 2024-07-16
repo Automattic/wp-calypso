@@ -75,6 +75,7 @@ class GoogleSocialButton extends Component {
 			ux_mode: this.props.uxMode,
 			redirect_uri: this.props.redirectUri,
 			state: state,
+			locale: getLocaleSlug(),
 			callback: ( response ) => {
 				if ( response.error ) {
 					this.props.recordTracksEvent( 'calypso_social_button_failure', {
@@ -177,7 +178,7 @@ class GoogleSocialButton extends Component {
 				id="g-id-signin"
 				data-type="standard"
 				data-theme="outline"
-				data-text="sign_in_with"
+				data-text="sign_up_with"
 				data-shape="rectangular"
 				data-locale={ getLocaleSlug() }
 				data-logo_alignment="left"
