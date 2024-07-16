@@ -28,6 +28,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import StepSection from '../../common/step-section';
 import StepSectionItem from '../../common/step-section-item';
+import ConsolidatedViews from '../../consolidated-view';
 import { getAccountStatus } from '../../lib/get-account-status';
 import tipaltiLogo from '../../lib/tipalti-logo';
 import ReferralList from '../../referrals-list';
@@ -115,6 +116,7 @@ export default function LayoutBodyContent( {
 	if ( isAutomatedReferral && referrals?.length ) {
 		return (
 			<>
+				{ ! dataViewsState.selectedItem && <ConsolidatedViews referrals={ referrals } /> }
 				<ReferralList
 					referrals={ referrals }
 					dataViewsState={ dataViewsState }

@@ -124,7 +124,11 @@ $data-view-border-color: #f1f1f1;
 	}
 
 	.consolidated-view {
-		padding-block: 16px 48px;
+		padding: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			padding: 16px 64px 48px;
+		}
 	}
 
 	.referrals-overview__section-heading {

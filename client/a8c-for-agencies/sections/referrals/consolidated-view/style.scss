@@ -28,3 +28,29 @@
 		}
 	}
 }
+
+.consolidated-view__popover-content {
+	padding: 12px;
+	min-width: 200px;
+	@include a4a-font-body-md;
+
+	@include break-mobile {
+		min-width: 300px;
+	}
+
+	a,
+	a:visited {
+		color: var(--color-neutral-100);
+		text-decoration: underline;
+	}
+	a:focus {
+		outline: none;
+	}
+}
+
+.consolidated-view__info-icon {
+	cursor: pointer;
+	position: relative;
+	inset-block-start: 4px;
+	inset-inline-start: 4px;
+}

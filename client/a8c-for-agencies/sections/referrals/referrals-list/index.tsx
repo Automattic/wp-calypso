@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { formatCurrency } from '@automattic/format-currency';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, ReactNode, useEffect } from 'react';
@@ -7,6 +8,7 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import CommissionsColumn from './commissions-column';
 import SubscriptionStatus from './subscription-status';
 import type { Referral } from '../types';
 
@@ -34,6 +36,9 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 		},
 		[ dispatch, setDataViewsState ]
 	);
+
+	// FIXME: Remove this flag once the API is enabled
+	const isAPIEnabled = false;
 
 	const fields = useMemo(
 		() =>
@@ -114,6 +119,20 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode =>
 								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
+							id: 'commissions',
+							header: translate( 'Commissions' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: Referral } ): ReactNode => {
+								return isAPIEnabled ? (
+									<CommissionsColumn referral={ item } />
+								) : (
+									formatCurrency( 0, 'USD' )
+								);
+							},
 							enableHiding: false,
 							enableSorting: false,
 						},
