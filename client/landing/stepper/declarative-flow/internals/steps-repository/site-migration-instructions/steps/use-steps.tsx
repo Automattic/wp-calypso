@@ -30,6 +30,7 @@ interface StepsDataOptions {
 }
 
 interface StepData {
+	key: string;
 	title: string;
 	content: JSX.Element;
 }
@@ -59,6 +60,7 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 
 	return [
 		{
+			key: 'install-the-migrate-guru-plugin',
 			title: translate( 'Install the Migrate Guru plugin' ),
 			content: (
 				<p>
@@ -83,6 +85,7 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 			),
 		},
 		{
+			key: 'get-your-site-ready',
 			title: translate( 'Get your site ready' ),
 			content: (
 				<>
@@ -120,6 +123,7 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 			),
 		},
 		{
+			key: 'add-your-migration-key',
 			title: translate( 'Add your migration key' ),
 			content: (
 				<>
@@ -179,7 +183,7 @@ export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): StepsObject =
 
 		return {
 			task: {
-				id: step.title,
+				id: step.key,
 				title: step.title,
 				completed: lastCompleteStep >= index,
 				disabled: false,
