@@ -19,6 +19,7 @@ export interface ArticleContentProps {
 	postId: number;
 	blogId?: string | null;
 	slug?: string;
+	articleUrl?: string | null | undefined;
 }
 
 export interface Header {
@@ -127,3 +128,5 @@ export type AnalysisReport = {
 	siteURL: string | undefined;
 	isWpcom: boolean;
 };
+
+export type ContactOption = 'chat' | 'email';
