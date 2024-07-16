@@ -165,6 +165,10 @@ export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): StepsObject =
 			// When completing a step that wasn't completed yet.
 			if ( lastCompleteStep < index ) {
 				setLastCompleteStep( index );
+
+				recordTracksEvent( 'calypso_site_migration_instructions_step_complete', {
+					step: step.key,
+				} );
 			}
 
 			// When clicking on the last step.
