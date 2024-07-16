@@ -1,16 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getPlan } from '@automattic/calypso-products';
 import { FormInputValidation } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { useGetOdieStorage } from '@automattic/odie-client';
 import { useOpenZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch } from '@wordpress/data';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import useChatStatus from '../hooks/use-chat-status';
 import { HELP_CENTER_STORE } from '../stores';
 import { generateContactOnClickEvent } from './utils';
@@ -18,16 +15,26 @@ import { generateContactOnClickEvent } from './utils';
 import './help-center-contact-support-option.scss';
 
 interface HelpCenterContactSupportOptionProps {
+	productId: number | undefined;
+	wapuuChatId: string | undefined;
+	sectionName: string;
+	site: HelpCenterSite;
+	triggerSource?: string;
+	articleUrl?: string | null | undefined;
 	trackEventName?: string;
 }
 
 const HelpCenterContactSupportOption = ( {
+	productId,
+	wapuuChatId,
+	sectionName,
+	site,
+	triggerSource,
+	articleUrl,
 	trackEventName,
 }: HelpCenterContactSupportOptionProps ) => {
 	const { __ } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
-	const { sectionName, site } = useHelpCenterContext();
-	const wapuuChatId = useGetOdieStorage( 'chat_id' );
 	const { hasActiveChats, isEligibleForChat } = useChatStatus();
 	const { resetStore, setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 
@@ -39,11 +46,7 @@ const HelpCenterContactSupportOption = ( {
 
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 
-	const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
-	const plan = getPlan( productSlug );
-	const productId = plan?.getProductId();
-
-	const liveChatHeaderText = useMemo( () => {
+	const supportHeaderText = useMemo( () => {
 		if ( isEnglishLocale || ! hasTranslation( 'Contact WordPress.com Support (English)' ) ) {
 			return __( 'Contact WordPress.com Support', __i18n_text_domain__ );
 		}
@@ -71,7 +74,7 @@ const HelpCenterContactSupportOption = ( {
 
 		const escapedWapuuChatId = encodeURIComponent( wapuuChatId || '' );
 
-		openZendeskWidget( {
+		const zendeskWidgetProps = {
 			aiChatId: escapedWapuuChatId,
 			siteUrl: site?.URL,
 			onError: () => setHasSubmittingError( true ),
@@ -79,18 +82,30 @@ const HelpCenterContactSupportOption = ( {
 				resetStore();
 				setShowHelpCenter( false );
 			},
-		} );
+			message: '',
+		};
+
+		if ( triggerSource === 'article-feedback-form' ) {
+			let zendeskWidgetMessage = 'The user is contacting support from the article feedback form';
+			if ( articleUrl ) {
+				zendeskWidgetMessage += '<br/><br/>';
+				zendeskWidgetMessage += 'They were viewing the article at: ' + articleUrl;
+			}
+			zendeskWidgetProps.message = zendeskWidgetMessage;
+		}
+
+		openZendeskWidget( zendeskWidgetProps );
 	};
 
 	return (
 		<div className="help-center-contact-support">
 			<button disabled={ isOpeningZendeskWidget } onClick={ handleOnClick }>
-				<div className="help-center-contact-support__box chat" role="button" tabIndex={ 0 }>
+				<div className="help-center-contact-support__box support" role="button" tabIndex={ 0 }>
 					<div className="help-center-contact-support__box-icon">
 						<Icon icon={ comment } />
 					</div>
 					<div>
-						<h2>{ liveChatHeaderText }</h2>
+						<h2>{ supportHeaderText }</h2>
 						<p>{ __( 'Our Happiness team will get back to you soon', __i18n_text_domain__ ) }</p>
 					</div>
 				</div>

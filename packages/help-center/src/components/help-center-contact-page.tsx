@@ -3,8 +3,11 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getPlan } from '@automattic/calypso-products';
 import { Spinner, GMClosureNotice } from '@automattic/components';
+import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
+import { useGetOdieStorage } from '@automattic/odie-client';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
@@ -59,6 +62,12 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		isEligibleForChat || hasActiveChats,
 		isEligibleForChat || hasActiveChats
 	);
+
+	const { sectionName, site } = useHelpCenterContext();
+	const wapuuChatId = useGetOdieStorage( 'chat_id' );
+	const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
+	const plan = getPlan( productSlug );
+	const productId = plan?.getProductId();
 
 	const isLoading = renderEmail.isLoading || isLoadingChatStatus;
 
@@ -155,11 +164,17 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					reopensAt="2024-01-02 07:00Z"
 					enabled={ ! renderEmail.render }
 				/>
-				{ renderEmail.render ? (
-					renderEmailOption()
-				) : (
-					<HelpCenterContactSupportOption trackEventName={ trackEventName } />
-				) }
+				{ renderEmail.render
+					? renderEmailOption()
+					: site && (
+							<HelpCenterContactSupportOption
+								wapuuChatId={ wapuuChatId }
+								sectionName={ sectionName }
+								productId={ productId }
+								site={ site }
+								trackEventName={ trackEventName }
+							/>
+					  ) }
 			</div>
 		</div>
 	);

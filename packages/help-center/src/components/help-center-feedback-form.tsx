@@ -1,19 +1,35 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getPlan } from '@automattic/calypso-products';
+import { HelpCenterSite } from '@automattic/data-stores';
+import { useGetOdieStorage } from '@automattic/odie-client';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import React, { useState } from 'react';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
-import './help-center-feedback-form.scss';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
+import './help-center-feedback-form.scss';
 interface HelpCenterFeedbackFormProps {
 	postId: number;
 	blogId?: string | null;
 	slug?: string;
+	articleUrl?: string | null | undefined;
 }
-const HelpCenterFeedbackForm = ( { postId, blogId, slug }: HelpCenterFeedbackFormProps ) => {
+const HelpCenterFeedbackForm = ( {
+	postId,
+	blogId,
+	slug,
+	articleUrl,
+}: HelpCenterFeedbackFormProps ) => {
 	const { __ } = useI18n();
 	const [ startedFeedback, setStartedFeedback ] = useState< boolean | null >( null );
 	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
+
+	const { sectionName, site } = useHelpCenterContext();
+	const wapuuChatId = useGetOdieStorage( 'chat_id' );
+	const productSlug = ( site as HelpCenterSite )?.plan?.product_slug;
+	const plan = getPlan( productSlug );
+	const productId = plan?.getProductId();
 
 	const handleFeedbackClick = ( value: number ) => {
 		setStartedFeedback( true );
@@ -72,8 +88,16 @@ const HelpCenterFeedbackForm = ( { postId, blogId, slug }: HelpCenterFeedbackFor
 		<div className="help-center-feedback__form">
 			{ startedFeedback === null && <FeedbackButtons /> }
 			{ startedFeedback !== null && answerValue === 1 && <FeedbackTextArea /> }
-			{ startedFeedback !== null && answerValue === 2 && (
-				<HelpCenterContactSupportOption trackEventName="calypso_helpcenter_feedback_contact_support" />
+			{ startedFeedback !== null && answerValue === 2 && site && (
+				<HelpCenterContactSupportOption
+					wapuuChatId={ wapuuChatId }
+					sectionName={ sectionName }
+					productId={ productId }
+					site={ site }
+					triggerSource="article-feedback-form"
+					articleUrl={ articleUrl }
+					trackEventName="calypso_helpcenter_feedback_contact_support"
+				/>
 			) }
 		</div>
 	);
