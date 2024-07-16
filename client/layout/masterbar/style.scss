@@ -504,14 +504,6 @@ body.is-mobile-app-view {
 			}
 		}
 
-		.dashicons-menu-alt {
-			padding-top: 0;
-			&::before {
-				top: 0;
-				font-size: unset;
-			}
-		}
-
 		.dashicons-before {
 			height: unset;
 			&::before {
@@ -526,6 +518,14 @@ body.is-mobile-app-view {
 
 			&:hover {
 				color: var(--color-masterbar-highlight);
+			}
+		}
+
+		.dashicons-menu-alt {
+			padding-top: 0;
+			&::before {
+				font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				top: 4px;
 			}
 		}
 	}
