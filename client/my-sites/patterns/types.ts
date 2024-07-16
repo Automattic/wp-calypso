@@ -72,6 +72,11 @@ type ReadymadeTemplatePattern = {
 	source_site_sid: number;
 };
 
+type ReadymadeTemplateStyles = {
+	colors?: string;
+	typography?: string;
+};
+
 export type ReadymadeTemplate = {
 	template_id: number;
 	title: string;
@@ -79,4 +84,5 @@ export type ReadymadeTemplate = {
 	content: string;
 	screenshot: string;
 	patterns: ReadymadeTemplatePattern[];
+	styles: ReadymadeTemplateStyles;
 };

@@ -1,10 +1,35 @@
+import {
+	PatternsRendererContext,
+	PatternRenderer,
+	BlockRendererProvider,
+} from '@automattic/block-renderer';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
+import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
 import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
+import { useRenderReadymadeTemplate } from 'calypso/my-sites/patterns/hooks/use-render-readymade-template';
+import type { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
+
+const ReadymadeTemplatePreview = ( {
+	readymadeTemplate,
+}: {
+	readymadeTemplate: ReadymadeTemplate;
+} ) => {
+	const { data: renderedPatterns = {} } = useRenderReadymadeTemplate( readymadeTemplate );
+	return (
+		<BlockRendererProvider siteId={ RENDERER_SITE_ID }>
+			<PatternsRendererContext.Provider value={ { renderedPatterns, shouldShufflePosts: false } }>
+				{ Object.keys( renderedPatterns ).map( ( pattern ) => (
+					<PatternRenderer patternId={ pattern } viewportWidth={ 1200 } key={ pattern } />
+				) ) }
+			</PatternsRendererContext.Provider>
+		</BlockRendererProvider>
+	);
+};
 
 export const ReadymadeTemplates = () => {
 	const translate = useTranslate();
@@ -78,7 +103,7 @@ export const ReadymadeTemplates = () => {
 						key={ readymadeTemplate.template_id }
 					>
 						<div className="readymade-template__content">
-							<img src={ readymadeTemplate.screenshot } alt="" />
+							<ReadymadeTemplatePreview readymadeTemplate={ readymadeTemplate } />
 						</div>
 						<div className="readymade-template__title">{ readymadeTemplate.title }</div>
 					</a>
