@@ -49,7 +49,6 @@ const StatsTags: React.FC< StatsDefaultModuleProps > = ( {
 					className={ className }
 					title={ moduleStrings.title }
 					type={ 3 }
-					withHero
 				/>
 			) }
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
