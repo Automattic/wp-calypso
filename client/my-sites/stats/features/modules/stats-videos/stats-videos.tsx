@@ -58,13 +58,14 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 					titleNodes={
 						<StatsInfoArea>
 							{ translate(
-								'Your {{link}}most popular videos{{/link}} will display here to better understand how they performed. Start uploading!',
+								'Most {{link}}popular videos{{/link}} uploaded to your site. Learn more about their performance.',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
 										link: <a href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />,
 									},
-									context: 'Stats: Info box label when the Videos module is empty',
+									context:
+										'Stats: Header popover with information when the Videos module has data.',
 								}
 							) }
 						</StatsInfoArea>

@@ -59,7 +59,7 @@ const StatsTags: React.FC< StatsDefaultModuleProps > = ( {
 					titleNodes={
 						<StatsInfoArea>
 							{ translate(
-								'Learn about your most visited {{link}}tags & categories{{/link}} to track engaging topics. ',
+								'Most visited {{link}}tags & categories{{/link}}. Learn about the most engaging topics. ',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
@@ -67,7 +67,7 @@ const StatsTags: React.FC< StatsDefaultModuleProps > = ( {
 											<a href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#all-time-insights` ) } />
 										),
 									},
-									context: 'Stats: Info box label when the Tags & Categories module is empty',
+									context: 'Stats: Info box label when the Tags & Categories module has data',
 								}
 							) }
 						</StatsInfoArea>

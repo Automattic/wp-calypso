@@ -61,12 +61,12 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 					path="filedownloads"
 					titleNodes={
 						<StatsInfoArea>
-							{ translate( 'Your most {{link}}downloaded files{{/link}} will display here.', {
+							{ translate( 'Most {{link}}downloaded files{{/link}} from your site.', {
 								comment: '{{link}} links to support documentation.',
 								components: {
 									link: <a href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) } />,
 								},
-								context: 'Stats: Info box label when the file downloads module is empty',
+								context: 'Stats: Info popover content when the file downloads module has data.',
 							} ) }
 						</StatsInfoArea>
 					}

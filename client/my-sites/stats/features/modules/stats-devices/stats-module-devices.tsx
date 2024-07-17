@@ -154,13 +154,13 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 	const titleNodes = (
 		<StatsInfoArea isNew>
 			{ translate(
-				'The {{link}}devices and browsers{{/link}} your visitors use to access your site will display here.',
+				'The {{link}}devices and browsers{{/link}} your visitors use to access your website.',
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
 						link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#devices-stats` ) } />,
 					},
-					context: 'Stats: Info box label when the Devices module is empty',
+					context: 'Stats: Info popover content when the Devices module has data.',
 				}
 			) }
 		</StatsInfoArea>
