@@ -128,7 +128,7 @@ const StatsModuleUTM = ( {
 	const titleNodes = (
 		<StatsInfoArea isNew>
 			{ translate(
-				'Your {{link}}campaign UTM performance data{{/link}} will display here once readers click on your URLs with UTM codes. Get started!',
+				'Track your campaign {{link}}UTM performance data{{/link}}. Generate URL codes with our builder.',
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
@@ -140,7 +140,7 @@ const StatsModuleUTM = ( {
 							/>
 						),
 					},
-					context: 'Stats: Info box label when the UTM module is empty',
+					context: 'Stats: Popover information when the UTM module has data',
 				}
 			) }
 		</StatsInfoArea>

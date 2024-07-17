@@ -57,16 +57,13 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					path="emails"
 					titleNodes={
 						<StatsInfoArea>
-							{ translate(
-								'Your {{link}}latest emails sent{{/link}} will display here to better understand how they performed. Start sending!',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#emails` ) } />,
-									},
-									context: 'Stats: Info box label when the Emails module is empty',
-								}
-							) }
+							{ translate( '{{link}}Latest emails sent{{/link}} and their performance.', {
+								comment: '{{link}} links to support documentation.',
+								components: {
+									link: <a href={ localizeUrl( `${ SUPPORT_URL }#emails` ) } />,
+								},
+								context: 'Stats: Header popower information when the Emails module has data.',
+							} ) }
 						</StatsInfoArea>
 					}
 					additionalColumns={ {

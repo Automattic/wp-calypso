@@ -59,14 +59,13 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 					titleNodes={
 						<StatsInfoArea>
 							{ translate(
-								"We'll show you which websites are {{link}}referring visitors{{/link}} to your site so you can discover where your audience comes from. Start sharing!",
+								'Websites {{link}}referring visitors{{/link}} sorted by most clicked. Learn about where your audience comes from.',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
 										link: <a href={ localizeUrl( `${ SUPPORT_URL }#referrers` ) } />,
 									},
-									context:
-										'Stats: Link in a popover for the Posts & Pages when the module has data',
+									context: 'Stats: Link in a popover for the Referrers when the module has data',
 								}
 							) }
 						</StatsInfoArea>

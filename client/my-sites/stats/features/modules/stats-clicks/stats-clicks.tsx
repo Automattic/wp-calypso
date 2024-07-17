@@ -59,14 +59,13 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 					titleNodes={
 						<StatsInfoArea>
 							{ translate(
-								'Your most {{link}}clicked external links{{/link}} will display here to track engaging content.',
+								'Most {{link}}clicked external links{{/link}} to track engaging content.',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
 										link: <a href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />,
 									},
-									context:
-										'Stats: Link in a popover for the Posts & Pages when the module has data',
+									context: 'Stats: Link in a popover for the Clicks module when it has data',
 								}
 							) }
 						</StatsInfoArea>

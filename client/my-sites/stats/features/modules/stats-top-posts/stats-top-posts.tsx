@@ -59,7 +59,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					titleNodes={
 						<StatsInfoArea>
 							{ translate(
-								'Your top {{link}}posts and pages{{/link}} will display here to learn what content resonates the most. Start creating and sharing!',
+								'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {

@@ -59,17 +59,13 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 					path="countryviews"
 					titleNodes={
 						<StatsInfoArea>
-							{ translate(
-								'Stats on visitors and their {{link}}viewing location{{/link}} will appear here to learn from where you are getting visits.',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
-									},
-									context:
-										'Stats: Link in a popover for the Posts & Pages when the module has data',
-								}
-							) }
+							{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
+								comment: '{{link}} links to support documentation.',
+								components: {
+									link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
+								},
+								context: 'Stats: Link in a popover for Countries module when the module has data',
+							} ) }
 						</StatsInfoArea>
 					}
 					moduleStrings={ moduleStrings }
