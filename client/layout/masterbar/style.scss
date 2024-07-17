@@ -500,14 +500,14 @@ body.is-mobile-app-view {
 		svg,
 		svg path,
 		.gridicon {
-			height: 32px;
-			width: 32px;
+			height: 36px;
+			width: 36px;
 		}
 
 		.dashicons-plus {
 			padding-top: 0;
 			&::before {
-				font-size: 38px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 40px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			}
 		}
 
