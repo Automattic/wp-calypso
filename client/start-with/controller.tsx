@@ -21,11 +21,6 @@ export function startWithSquarePaymentsContext( context: Context, next: () => vo
 }
 
 export const notFound = ( context: Context, next: () => void ) => {
-	if ( ! config.isEnabled( 'start-with/square-payments' ) ) {
-		page.redirect( '/' );
-		return;
-	}
-
 	context.primary = (
 		<EmptyContent
 			className="content-404"

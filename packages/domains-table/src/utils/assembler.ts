@@ -4,6 +4,7 @@ import { getDomainType } from './get-domain-type';
 import { getGdprConsentStatus } from './get-gdpr-consent-status';
 import { getTransferStatus } from './get-transfer-status';
 import {
+	DnssecRecords,
 	DomainType,
 	GDPRConsentStatus,
 	GoogleEmailSubscription,
@@ -40,6 +41,17 @@ function assembleCurrentUserCannotAddEmailReason( reason: {
 		return null;
 	}
 	return errorDetails[ 0 ];
+}
+
+function assembleDnssecRecords( dnssecRecords?: DnssecRecords ) {
+	if ( ! dnssecRecords ) {
+		return {};
+	}
+
+	return {
+		dnskey: dnssecRecords.dnskey,
+		dsData: dnssecRecords.dsData,
+	};
 }
 
 export const createSiteDomainObject = ( domain: DomainData ) => {
@@ -89,6 +101,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 			domain.current_user_cannot_add_email_reason
 		),
 		currentUserIsOwner: Boolean( domain.current_user_is_owner ),
+		dnssecRecords: assembleDnssecRecords( domain.dnssec_records ),
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),
 		domainRegistrationAgreementUrl: domain.domain_registration_agreement_url ?? null,
@@ -107,6 +120,8 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
+		isDnssecEnabled: Boolean( domain.is_dnssec_enabled ),
+		isDnssecSupported: Boolean( domain.is_dnssec_supported ),
 		isGravatarDomain: Boolean( domain.is_gravatar_domain ),
 		isLocked: Boolean( domain.is_locked ),
 		isRenewable: Boolean( domain.is_renewable ),

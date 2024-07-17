@@ -47,6 +47,7 @@ import {
 	getSiteTitle,
 	getSiteUrl,
 	getSiteAdminUrl,
+	getSiteHomeUrl,
 } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -341,12 +342,30 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderSiteMenu() {
-		const { sectionGroup, currentSelectedSiteSlug, translate, siteTitle, siteUrl } = this.props;
+		const {
+			currentSelectedSiteSlug,
+			translate,
+			siteTitle,
+			siteUrl,
+			isClassicView,
+			siteAdminUrl,
+			siteHomeUrl,
+		} = this.props;
 
-		// Only display on site-specific pages.
-		if ( sectionGroup !== 'sites' || ! currentSelectedSiteSlug ) {
+		// Only display when a site is selected.
+		if ( ! currentSelectedSiteSlug ) {
 			return null;
 		}
+
+		const siteHomeOrAdminItem = isClassicView
+			? {
+					label: translate( 'Dashboard' ),
+					url: siteAdminUrl,
+			  }
+			: {
+					label: translate( 'My Home' ),
+					url: siteHomeUrl,
+			  };
 
 		return (
 			<Item
@@ -354,7 +373,7 @@ class MasterbarLoggedIn extends Component {
 				url={ siteUrl }
 				icon={ <span className="dashicons-before dashicons-admin-home" /> }
 				tipTarget="visit-site"
-				subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl } ] }
+				subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ] }
 			>
 				{ siteTitle }
 			</Item>
@@ -363,9 +382,8 @@ class MasterbarLoggedIn extends Component {
 
 	renderSiteActionMenu() {
 		const {
-			sectionGroup,
 			currentSelectedSiteSlug,
-			currentSelectedSite,
+			isClassicView,
 			translate,
 			siteAdminUrl,
 			newPostUrl,
@@ -383,8 +401,7 @@ class MasterbarLoggedIn extends Component {
 
 		let siteActions = [];
 
-		if ( currentSelectedSiteSlug && sectionGroup === 'sites' ) {
-			const isClassicView = siteUsesWpAdminInterface( currentSelectedSite );
+		if ( currentSelectedSiteSlug ) {
 			siteActions = [
 				{
 					label: translate( 'Post' ),
@@ -442,10 +459,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderProfileMenu() {
-		const { translate, user, siteUrl, currentSelectedSite } = this.props;
-		const isClassicView = currentSelectedSite
-			? siteUsesWpAdminInterface( currentSelectedSite )
-			: false;
+		const { translate, user, siteUrl, isClassicView } = this.props;
 		const profileActions = [
 			{
 				label: (
@@ -493,7 +507,7 @@ class MasterbarLoggedIn extends Component {
 						args: { display_name: user.display_name },
 					} ) }
 				</span>
-				<Gravatar className="masterbar__item-howdy-gravatar" alt=" " user={ user } size={ 18 } />
+				<Gravatar className="masterbar__item-howdy-gravatar" alt=" " user={ user } size={ 16 } />
 			</Item>
 		);
 	}
@@ -839,6 +853,9 @@ export default connect(
 			isSiteMigrationActiveRoute( state );
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
+		const currentSelectedSite = getSelectedSite( state );
+		const isClassicView = currentSelectedSite && siteUsesWpAdminInterface( currentSelectedSite );
+
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
@@ -847,6 +864,7 @@ export default connect(
 			siteTitle: getSiteTitle( state, siteId ),
 			siteUrl: getSiteUrl( state, siteId ),
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
+			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
@@ -856,7 +874,8 @@ export default connect(
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
-			currentSelectedSite: getSelectedSite( state ),
+			currentSelectedSite,
+			isClassicView,
 			currentSelectedSiteSlug: currentSelectedSiteId
 				? getSiteSlug( state, currentSelectedSiteId )
 				: undefined,

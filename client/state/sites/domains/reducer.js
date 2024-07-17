@@ -6,6 +6,8 @@ import {
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
+	DOMAIN_DNSSEC_DISABLE_SUCCESS,
+	DOMAIN_DNSSEC_ENABLE_SUCCESS,
 	DOMAIN_PRIVACY_ENABLE,
 	DOMAIN_PRIVACY_DISABLE,
 	DOMAIN_PRIVACY_ENABLE_SUCCESS,
@@ -83,6 +85,16 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 		case DOMAIN_MARK_AS_PENDING_MOVE:
 			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
 				isMoveToNewSitePending: true,
+			} );
+		case DOMAIN_DNSSEC_DISABLE_SUCCESS:
+			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
+				isDnssecEnabled: false,
+				dnssecRecords: null,
+			} );
+		case DOMAIN_DNSSEC_ENABLE_SUCCESS:
+			return modifySiteDomainObjectImmutable( state, siteId, action.domain, {
+				isDnssecEnabled: true,
+				dnssecRecords: action.dnssecRecords,
 			} );
 	}
 
