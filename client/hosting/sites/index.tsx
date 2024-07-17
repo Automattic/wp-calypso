@@ -38,6 +38,7 @@ function checkReferrerForSiteSelection( context, next ) {
 	// accurate for what we want, but on initial inspection it seems promising.
 	if ( ! context.init || ! referrer ) {
 		next();
+		return;
 	}
 
 	const potentialSiteSlug = new URL( referrer ).hostname || '';
