@@ -7,6 +7,7 @@ import { useSteps } from '../use-steps';
 describe( 'useSteps', () => {
 	const baseStepsOptions = {
 		fromUrl: 'https://mytestsite.com',
+		migrationKey: '123',
 		onComplete: jest.fn(),
 	};
 
@@ -19,15 +20,15 @@ describe( 'useSteps', () => {
 	it( 'Should have the action labels as "Next" for the 2 first steps', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
-		expect( result.current.steps[ 0 ].expandable.action.label ).toEqual( 'Next' );
-		expect( result.current.steps[ 1 ].expandable.action.label ).toEqual( 'Next' );
+		expect( result.current.steps[ 0 ].expandable?.action?.label ).toEqual( 'Next' );
+		expect( result.current.steps[ 1 ].expandable?.action?.label ).toEqual( 'Next' );
 	} );
 
 	it( 'Should have the last step action label as "Done"', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
 		expect(
-			result.current.steps[ result.current.steps.length - 1 ].expandable.action.label
+			result.current.steps[ result.current.steps.length - 1 ].expandable?.action?.label
 		).toEqual( 'Done' );
 	} );
 
@@ -41,7 +42,7 @@ describe( 'useSteps', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
 		act( () => {
-			result.current.steps[ 0 ].expandable.action.onClick();
+			result.current.steps[ 0 ].expandable?.action?.onClick();
 		} );
 
 		expect( result.current.steps[ 0 ].task.completed ).toBeTruthy();
@@ -57,7 +58,7 @@ describe( 'useSteps', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
 		act( () => {
-			result.current.steps[ 0 ].expandable.action.onClick();
+			result.current.steps[ 0 ].expandable?.action?.onClick();
 		} );
 
 		expect( result.current.completedSteps ).toEqual( 1 );
@@ -74,7 +75,7 @@ describe( 'useSteps', () => {
 		const { result } = renderHook( () => useSteps( options ) );
 
 		act( () => {
-			result.current.steps[ 2 ].expandable.action.onClick();
+			result.current.steps[ 2 ].expandable?.action?.onClick();
 		} );
 
 		expect( onCompleteMock ).toHaveBeenCalled();
@@ -83,21 +84,21 @@ describe( 'useSteps', () => {
 	it( 'Should start with the first step open', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
-		expect( result.current.steps[ 0 ].expandable.isOpen ).toBeTruthy();
+		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeTruthy();
 	} );
 
 	it( 'Should have only the current step as open', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
-		expect( result.current.steps[ 0 ].expandable.isOpen ).toBeTruthy();
-		expect( result.current.steps[ 1 ].expandable.isOpen ).toBeFalsy();
+		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeTruthy();
+		expect( result.current.steps[ 1 ].expandable?.isOpen ).toBeFalsy();
 
 		act( () => {
-			result.current.steps[ 0 ].expandable.action.onClick();
+			result.current.steps[ 0 ].expandable?.action?.onClick();
 		} );
 
-		expect( result.current.steps[ 0 ].expandable.isOpen ).toBeFalsy();
-		expect( result.current.steps[ 1 ].expandable.isOpen ).toBeTruthy();
+		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeFalsy();
+		expect( result.current.steps[ 1 ].expandable?.isOpen ).toBeTruthy();
 	} );
 
 	it( 'Should not allow navigate directly to a step when it was not completed yet', () => {
@@ -112,30 +113,30 @@ describe( 'useSteps', () => {
 
 		// Navigate through the action button to the next step.
 		act( () => {
-			result.current.steps[ 0 ].expandable.action.onClick();
+			result.current.steps[ 0 ].expandable?.action?.onClick();
 		} );
 
-		expect( result.current.steps[ 0 ].expandable.isOpen ).toBeFalsy();
+		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeFalsy();
 
 		// Navigate directly to the first step.
 		act( () => {
 			result.current.steps[ 0 ].onClick!();
 		} );
 
-		expect( result.current.steps[ 0 ].expandable.isOpen ).toBeTruthy();
+		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeTruthy();
 
 		// Navigate directly to the second which was already visited.
 		act( () => {
 			result.current.steps[ 1 ].onClick!();
 		} );
 
-		expect( result.current.steps[ 1 ].expandable.isOpen ).toBeTruthy();
+		expect( result.current.steps[ 1 ].expandable?.isOpen ).toBeTruthy();
 	} );
 
 	it( 'Should have a link to migrate guru plugin on the source site on the first step', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
-		const { getByRole } = render( result.current.steps[ 0 ].expandable.content );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
 		const link = getByRole( 'link', {
 			name: /Migrate Guru plugin/,
@@ -149,7 +150,7 @@ describe( 'useSteps', () => {
 	it( 'Should have generic link to migrate guru plugin on the first step when the from is empty', () => {
 		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
 
-		const { getByRole } = render( result.current.steps[ 0 ].expandable.content );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
 		const link = getByRole( 'link', {
 			name: /Migrate Guru plugin/,
@@ -161,7 +162,7 @@ describe( 'useSteps', () => {
 	it( 'Should have a link to migrate guru screen on the source site on the second step', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
-		const { getByRole } = render( result.current.steps[ 1 ].expandable.content );
+		const { getByRole } = render( result.current.steps[ 1 ].expandable?.content );
 
 		const link = getByRole( 'link', {
 			name: /Migrate Guru plugin screen on your source site/,
@@ -175,10 +176,34 @@ describe( 'useSteps', () => {
 	it( 'Should have a text about migrate guru screen on the source site on the second step when the from is empty', () => {
 		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
 
-		const { getByText } = render( result.current.steps[ 1 ].expandable.content );
+		const { getByText } = render( result.current.steps[ 1 ].expandable?.content );
 
 		const text = getByText( 'Migrate Guru plugin screen on your source site' );
 
 		expect( text.tagName ).toEqual( 'STRONG' );
+	} );
+
+	it( 'Should display the migration key field when the key is ready', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( getByRole( 'textbox', { name: 'Migration key' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'Should display waiting message when migration key is not ready', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+
+		const { getByText } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect(
+			getByText( 'The key will be available here when your new site is ready.' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'Should not display done button when migration key is not ready yet', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+
+		expect( result.current.steps[ 2 ].expandable?.action ).toBeUndefined();
 	} );
 } );

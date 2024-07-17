@@ -1,3 +1,4 @@
+import { captureException } from '@automattic/calypso-sentry';
 import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
@@ -23,12 +24,18 @@ interface PreparationEventsHookOptions {
 	migrationKeyStatus: Status;
 	preparationCompleted: boolean;
 	fromUrl: string;
+	flow: string;
+	setupError: Error | null;
+	siteId: number;
 }
 
-const usePreparationEvents = ( {
+const usePreparationEventsAndLogs = ( {
 	migrationKeyStatus,
 	preparationCompleted,
 	fromUrl,
+	flow,
+	setupError,
+	siteId,
 }: PreparationEventsHookOptions ) => {
 	useEffect( () => {
 		if ( 'error' === migrationKeyStatus ) {
@@ -46,11 +53,31 @@ const usePreparationEvents = ( {
 			recordTracksEvent( 'calypso_site_migration_instructions_preparation_complete' );
 		}
 	}, [ preparationCompleted ] );
+
+	useEffect( () => {
+		if ( setupError ) {
+			const logError = setupError as unknown as { path: string; message: string };
+
+			captureException( setupError, {
+				extra: {
+					message: logError?.message,
+					path: logError?.path,
+				},
+				tags: {
+					blog_id: siteId,
+					calypso_section: 'setup',
+					flow,
+					stepName: 'site-migration-instructions',
+					context: 'failed_to_prepare_site_for_migration',
+				},
+			} );
+		}
+	}, [ flow, setupError, siteId ] );
 };
 
-const SiteMigrationInstructions: Step = function ( { navigation } ) {
+const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const site = useSite();
-	const siteId = site?.ID;
+	const siteId = site?.ID ?? 0;
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
 
@@ -63,11 +90,19 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	}, [ deleteMigrationSticker, siteId ] );
 
 	// Site preparation.
-	const { detailedStatus, completed: preparationCompleted } = usePrepareSiteForMigration( siteId );
-	usePreparationEvents( {
+	const {
+		detailedStatus,
+		completed: preparationCompleted,
+		migrationKey,
+		error: setupError,
+	} = usePrepareSiteForMigration( siteId );
+	usePreparationEventsAndLogs( {
 		migrationKeyStatus: detailedStatus.migrationKey,
 		preparationCompleted,
 		fromUrl,
+		flow,
+		setupError,
+		siteId,
 	} );
 
 	// Hosting details.
@@ -78,7 +113,11 @@ const SiteMigrationInstructions: Step = function ( { navigation } ) {
 	const onCompleteSteps = () => {
 		navigation.submit?.( { destination: 'migration-started' } );
 	};
-	const { steps, completedSteps } = useSteps( { fromUrl, onComplete: onCompleteSteps } );
+	const { steps, completedSteps } = useSteps( {
+		fromUrl,
+		migrationKey: migrationKey ?? '',
+		onComplete: onCompleteSteps,
+	} );
 
 	const withPreview = fromUrl !== '';
 
