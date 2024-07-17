@@ -1,5 +1,5 @@
-import config from '@automattic/calypso-config';
 import { useEffect, useRef, useState } from '@wordpress/element';
+import { getLocaleSlug } from 'i18n-calypso';
 import { throttle } from 'lodash';
 
 interface MShotConfig {
@@ -89,7 +89,7 @@ export const useSitePreviewMShotImageHandler = ( url: string = '' ) => {
 	}, [ previewRef ] );
 
 	const createScreenshots = ( url: string ) => {
-		const isEnabled = config.isEnabled( 'migration-flow/new-migration-instructions-step' );
+		const isEnabled = getLocaleSlug()?.startsWith( 'en' ); // Previous 'migration-flow/new-migration-instructions-step'.
 
 		if ( ! isEnabled ) {
 			return;
