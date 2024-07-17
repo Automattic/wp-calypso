@@ -76,7 +76,10 @@ export type ReadymadeTemplate = {
 	template_id: number;
 	title: string;
 	description: string;
-	content: string;
-	screenshot: string;
+	home: {
+		header: string;
+		content: string;
+		footer: string;
+	};
 	patterns: ReadymadeTemplatePattern[];
 };

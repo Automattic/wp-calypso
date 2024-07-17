@@ -159,7 +159,10 @@ export default function ReferralsOverview( {
 													'Please confirm your details before referring products to your clients.'
 												) }
 											</div>
-											<Button href="/referrals/payment-settings">
+											<Button
+												className="referrals-overview__notice-button"
+												href="/referrals/payment-settings"
+											>
 												{ translate( 'Go to payment settings' ) }
 											</Button>
 										</A4APopover>

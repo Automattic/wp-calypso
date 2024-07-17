@@ -114,7 +114,7 @@ const SitesDashboardHeader = () => {
 					className="sites-add-new-site-split-button"
 					primary
 					whiteSeparator
-					label={ isMobile ? undefined : __( 'Add new site' ) }
+					label={ __( 'Add new site' ) }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
 					} }

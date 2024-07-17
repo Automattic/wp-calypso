@@ -35,7 +35,7 @@ export default function A4APopover( {
 			onFocusOutside={ onFocusOutside }
 		>
 			<div className="a4a-popover__content">
-				<div className="a4a-popover__title">{ title }</div>
+				{ title && <div className="a4a-popover__title">{ title }</div> }
 				{ children }
 			</div>
 		</Popover>

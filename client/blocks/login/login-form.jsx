@@ -111,6 +111,7 @@ export class LoginForm extends Component {
 		sendMagicLoginLink: PropTypes.func,
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
+		isJetpack: PropTypes.bool,
 	};
 
 	state = {
@@ -744,6 +745,7 @@ export class LoginForm extends Component {
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
 			isP2Login,
+			isJetpack,
 			isJetpackWooDnaFlow,
 			currentQuery,
 			showSocialLoginFormOnly,
@@ -892,6 +894,14 @@ export class LoginForm extends Component {
 							value={ this.state.usernameOrEmail }
 							disabled={ isFormDisabled || this.isPasswordView() || isFromGravatar3rdPartyApp }
 						/>
+
+						{ isJetpack && (
+							<p className="login__form-account-tip">
+								{ this.props.translate(
+									'If you don’t have an account, we’ll use this email to create it.'
+								) }
+							</p>
+						) }
 
 						{ requestError && requestError.field === 'usernameOrEmail' && (
 							<Fragment>

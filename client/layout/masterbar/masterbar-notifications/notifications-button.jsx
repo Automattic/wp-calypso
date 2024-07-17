@@ -94,7 +94,13 @@ class MasterbarItemNotifications extends Component {
 			<>
 				<MasterbarItem
 					url="/notifications"
-					icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
+					icon={
+						<BellIcon
+							newItems={ this.state.newNote }
+							active={ this.props.isActive }
+							strokeWidth={ 1 }
+						/>
+					}
 					onClick={ this.toggleNotesFrame }
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }

@@ -22,13 +22,15 @@ export interface Task {
 	actionUrl?: string;
 }
 
+export interface ExpandableAction {
+	label: string;
+	onClick: () => void;
+}
+
 export interface Expandable {
 	isOpen: boolean;
 	content: JSX.Element;
-	action?: {
-		label: string;
-		onClick: () => void;
-	};
+	action?: ExpandableAction;
 }
 
 export type LaunchpadChecklist = Task[];

@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
+import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -243,7 +244,7 @@ const readymadeTemplateFlow: Flow = {
 function enableAssemblerThemeAndConfigureTemplates(
 	themeId: string,
 	siteId: number,
-	readymadeTemplate: { content: string; globalStyles: GlobalStylesObject },
+	readymadeTemplate: ReadymadeTemplate & { globalStyles: GlobalStylesObject },
 	assembleSite: (
 		arg0: any,
 		arg1: string,
@@ -292,9 +293,9 @@ function enableAssemblerThemeAndConfigureTemplates(
 					 *
 					 * For now we piggyback on Site Assembler's API endpoint to apply the template on the site.
 					 */
-					homeHtml: readymadeTemplate.content,
-					headerHtml: '',
-					footerHtml: '',
+					homeHtml: readymadeTemplate.home.content,
+					headerHtml: readymadeTemplate.home.header,
+					footerHtml: readymadeTemplate.home.footer,
 					pages: [],
 					globalStyles: readymadeTemplate.globalStyles,
 					canReplaceContent: true,
@@ -322,7 +323,7 @@ function useReadymadeTemplate( templateId: number, options: object = { enabled: 
 	Object.values( readymadeTemplate.styles ?? [] ).forEach( ( readymadeTemplateStyleVariation ) => {
 		const styleVariation = assemblerTheme.style_variations.find(
 			( assemblerStyleVariation ) =>
-				assemblerStyleVariation.title === readymadeTemplateStyleVariation
+				assemblerStyleVariation.slug === readymadeTemplateStyleVariation
 		);
 		if ( styleVariation ) {
 			styleVariations.push( styleVariation );

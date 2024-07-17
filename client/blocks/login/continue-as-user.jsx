@@ -1,14 +1,8 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
 import { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import wpcom from 'calypso/lib/wp';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
-import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import SocialToS from '../authentication/social/social-tos';
 
 import './continue-as-user.scss';
@@ -38,23 +32,18 @@ function useValidatedURL( redirectUrl ) {
 	return { url, loading: isLoading && !! redirectUrl };
 }
 
-function ContinueAsUser( {
+export default function ContinueAsUser( {
 	currentUser,
-	redirectUrlFromQuery,
 	onChangeAccount,
 	redirectPath,
-	isWooOAuth2Client,
+	isWoo,
 	isWooPasswordless,
 	isBlazePro,
 	notYouText,
 } ) {
 	const translate = useTranslate();
-	const { url: validatedRedirectUrlFromQuery, loading: validatingQueryURL } =
-		useValidatedURL( redirectUrlFromQuery );
 
-	const { url: validatedRedirectPath, loading: validatingPath } = useValidatedURL( redirectPath );
-
-	const isLoading = validatingQueryURL || validatingPath;
+	const { url: validatedPath, loading: validatingPath } = useValidatedURL( redirectPath );
 
 	const userName = currentUser.display_name || currentUser.username;
 
@@ -94,7 +83,7 @@ function ContinueAsUser( {
 		</div>
 	);
 
-	if ( isWooOAuth2Client ) {
+	if ( isWoo ) {
 		if ( isWooPasswordless ) {
 			return (
 				<div className="continue-as-user">
@@ -113,9 +102,9 @@ function ContinueAsUser( {
 					</div>
 					<Button
 						primary
-						busy={ isLoading }
 						className="continue-as-user__continue-button"
-						href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
+						busy={ validatingPath }
+						href={ validatedPath || '/' }
 					>
 						{ `${ translate( 'Continue as', {
 							context: 'Continue as an existing WordPress.com user',
@@ -139,11 +128,7 @@ function ContinueAsUser( {
 							{ translate( 'Log in with a different WordPress.com account' ) }
 						</button>
 					</div>
-					<Button
-						busy={ isLoading }
-						primary
-						href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
-					>
+					<Button primary busy={ validatingPath } href={ validatedPath || '/' }>
 						{ `${ translate( 'Continue as', {
 							context: 'Continue as an existing WordPress.com user',
 						} ) } ${ userName }` }
@@ -171,9 +156,9 @@ function ContinueAsUser( {
 				</div>
 				<Button
 					primary
-					busy={ isLoading }
 					className="continue-as-user__continue-button"
-					href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
+					busy={ validatingPath }
+					href={ validatedPath || '/' }
 				>
 					{ `${ translate( 'Continue as', {
 						context: 'Continue as an existing WordPress.com user',
@@ -188,11 +173,7 @@ function ContinueAsUser( {
 		<div className="continue-as-user">
 			<div className="continue-as-user__user-info">
 				{ gravatarLink }
-				<Button
-					busy={ isLoading }
-					primary
-					href={ validatedRedirectPath || validatedRedirectUrlFromQuery || '/' }
-				>
+				<Button primary busy={ validatingPath } href={ validatedPath || '/' }>
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
@@ -200,10 +181,3 @@ function ContinueAsUser( {
 		</div>
 	);
 }
-
-export default connect( ( state ) => ( {
-	currentUser: getCurrentUser( state ),
-	redirectUrlFromQuery: get( getCurrentQueryArguments( state ), 'redirect_to', null ),
-	isWooPasswordless: getIsWooPasswordless( state ),
-	isBlazePro: getIsBlazePro( state ),
-} ) )( ContinueAsUser );

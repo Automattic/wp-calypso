@@ -155,9 +155,9 @@ export const usePluginAutoInstallation = (
 
 		if ( error ) {
 			recordTracksEvent( 'calypso_onboarding_plugin_installation_error', {
-				plugin: JSON.stringify( plugin ),
-				error,
-				siteId: siteId,
+				plugin: plugin.slug,
+				error: error.message,
+				site_id: siteId,
 			} );
 			return 'error';
 		}
