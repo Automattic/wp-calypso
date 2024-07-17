@@ -16,7 +16,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { data, isFetching } = useProductsQuery();
+	const { data, isFetching } = useProductsQuery( false, false, true );
 
 	const handleAssignToSite = useCallback(
 		( url: string ) => {
@@ -79,11 +79,5 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 		[ translate, data, isFetching, handleAssignToSite ]
 	);
 
-	return (
-		<ReferralDetailsTable
-			heading={ translate( 'Purchases' ) }
-			items={ purchases }
-			fields={ fields }
-		/>
-	);
+	return <ReferralDetailsTable items={ purchases } fields={ fields } />;
 }

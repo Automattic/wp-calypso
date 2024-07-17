@@ -1,11 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import {
-	PricingSlider,
-	RenderThumbFunction,
-	Button as CalypsoButton,
-} from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
+import { Button as CalypsoButton } from '@automattic/components';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -53,49 +48,12 @@ const PersonalPurchase = ( {
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
 	const [ isPostponeBusy, setPostponeBusy ] = useState( false );
-	const {
-		sliderStepPrice,
-		minSliderPrice,
-		maxSliderPrice,
-		uiEmojiHeartTier,
-		uiImageCelebrationTier,
-	} = sliderSettings;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isTierUpgradeSliderEnabled = config.isEnabled( 'stats/tier-upgrade-slider' );
 	const { hasAnyStatsPlan } = useStatsPurchases( siteId );
-
-	const sliderLabel = ( ( props, state ) => {
-		let emoji;
-
-		if ( subscriptionValue < uiEmojiHeartTier ) {
-			emoji = String.fromCodePoint( 0x1f60a ); /* Smiling face emoji */
-		} else if ( subscriptionValue < uiImageCelebrationTier ) {
-			emoji = String.fromCodePoint( 0x2764, 0xfe0f ); /* Heart emoji */
-		} else if ( subscriptionValue >= uiImageCelebrationTier ) {
-			emoji = String.fromCodePoint( 0x1f525 ); /* Fire emoji */
-		}
-
-		return (
-			<div { ...props }>
-				{ translate( '%(value)s/month', {
-					args: {
-						value: formatCurrency(
-							( state?.valueNow || subscriptionValue ) * sliderStepPrice,
-							currencyCode
-						),
-					},
-					comment: 'Price per month selected by the user via the pricing slider',
-				} ) }
-				{ ` ${ subscriptionValue > 0 ? emoji : '' }` }
-			</div>
-		);
-	} ) as RenderThumbFunction;
 
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
-	// TODO: Remove old slider code paths.
-	const showOldSlider = ! isTierUpgradeSliderEnabled;
 
 	const continueButtonText = translate( 'Contribute now and continue' );
 	const { refetch: refetchNotices } = useNoticeVisibilityQuery( siteId, 'focus_jetpack_purchase' );
@@ -164,38 +122,15 @@ const PersonalPurchase = ( {
 				) }
 			</div>
 
-			{ showOldSlider && (
-				<>
-					<PricingSlider
-						className={ `${ COMPONENT_CLASS_NAME }__slider` }
-						value={ subscriptionValue }
-						renderThumb={ sliderLabel }
-						onChange={ setSubscriptionValue }
-						maxValue={ Math.floor( maxSliderPrice / sliderStepPrice ) }
-						minValue={ Math.round( minSliderPrice / sliderStepPrice ) }
-					/>
-
-					<p className={ `${ COMPONENT_CLASS_NAME }__average-price` }>
-						{ translate( 'Our users pay %(value)s per month on average', {
-							args: {
-								value: formatCurrency( defaultStartingValue * sliderStepPrice, currencyCode ),
-							},
-						} ) }
-					</p>
-				</>
-			) }
-
-			{ isTierUpgradeSliderEnabled && (
-				<StatsPWYWUpgradeSlider
-					settings={ sliderSettings }
-					currencyCode={ currencyCode }
-					analyticsEventName={ `${
-						isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
-					}_stats_purchase_pwyw_slider_clicked` }
-					defaultStartingValue={ defaultStartingValue }
-					onSliderChange={ handleSliderChanged }
-				/>
-			) }
+			<StatsPWYWUpgradeSlider
+				settings={ sliderSettings }
+				currencyCode={ currencyCode }
+				analyticsEventName={ `${
+					isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
+				}_stats_purchase_pwyw_slider_clicked` }
+				defaultStartingValue={ defaultStartingValue }
+				onSliderChange={ handleSliderChanged }
+			/>
 
 			{ subscriptionValue === 0 && (
 				<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist` }>

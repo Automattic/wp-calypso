@@ -15,6 +15,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import AllTimeHighlightsSection from '../../all-time-highlights-section';
 import AllTimeViewsSection from '../../all-time-views-section';
 import AnnualHighlightsSection from '../../annual-highlights-section';
+import StatsModuleTags from '../../features/modules/stats-tags';
 import PostingActivity from '../../post-trends';
 import Comments from '../../stats-comments';
 import StatsModule from '../../stats-module';
@@ -25,6 +26,7 @@ import statsStrings from '../../stats-strings';
 const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 	const moduleStrings = statsStrings();
+	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
 
 	const statsModuleListClass = clsx(
 		'stats__module-list--insights',
@@ -61,21 +63,38 @@ const StatsInsights = ( props ) => {
 				<PostingActivity siteId={ siteId } />
 				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
 				<div className={ statsModuleListClass }>
-					<StatsModule
-						path="tags-categories"
-						moduleStrings={ moduleStrings.tags }
-						statType="statsTags"
-						hideSummaryLink
-						className={ clsx(
-							{
-								'stats__flexible-grid-item--half': isJetpack,
-								'stats__flexible-grid-item--full--large': isJetpack,
-							},
-							{
-								'stats__flexible-grid-item--full': ! isJetpack,
-							}
-						) }
-					/>
+					{ isEmptyStateV2 && (
+						<StatsModuleTags
+							moduleStrings={ moduleStrings.tags }
+							hideSummaryLink
+							className={ clsx(
+								{
+									'stats__flexible-grid-item--half': isJetpack,
+									'stats__flexible-grid-item--full--large': isJetpack,
+								},
+								{
+									'stats__flexible-grid-item--full': ! isJetpack,
+								}
+							) }
+						/>
+					) }
+					{ ! isEmptyStateV2 && (
+						<StatsModule
+							path="tags-categories"
+							moduleStrings={ moduleStrings.tags }
+							statType="statsTags"
+							hideSummaryLink
+							className={ clsx(
+								{
+									'stats__flexible-grid-item--half': isJetpack,
+									'stats__flexible-grid-item--full--large': isJetpack,
+								},
+								{
+									'stats__flexible-grid-item--full': ! isJetpack,
+								}
+							) }
+						/>
+					) }
 					<Comments
 						path="comments"
 						className={ clsx(

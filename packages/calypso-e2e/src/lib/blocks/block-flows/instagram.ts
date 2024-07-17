@@ -42,7 +42,7 @@ export class InstagramBlockFlow implements BlockFlow {
 			} )
 			.click();
 
-		await editorCanvas.getByTitle( 'Embedded content from instagram.com' ).waitFor();
+		await editorCanvas.getByTitle( 'Embedded content from www.instagram.com' ).waitFor();
 	}
 
 	/**

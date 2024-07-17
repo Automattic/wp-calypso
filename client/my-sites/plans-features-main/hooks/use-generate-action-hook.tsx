@@ -228,6 +228,8 @@ function useGenerateActionHook( {
 		 */
 		let text = translate( 'Upgrade', { context: 'verb' } );
 		let status: 'enabled' | 'disabled' | 'blocked' | undefined;
+		let variant: GridAction[ 'primary' ][ 'variant' ] = 'primary';
+
 		const current = sitePlanSlug === planSlug;
 		const isTrialPlan =
 			sitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
@@ -253,14 +255,9 @@ function useGenerateActionHook( {
 			} );
 		}
 
-		if ( isFreePlan( planSlug ) ) {
-			text = translate( 'Contact support', { context: 'verb' } );
-			status = 'disabled';
-
-			if ( current ) {
-				text = translate( 'Manage add-ons', { context: 'verb' } );
-				status = 'enabled';
-			}
+		if ( isFreePlan( planSlug ) && current ) {
+			text = translate( 'Manage add-ons', { context: 'verb' } );
+			status = 'enabled';
 		} else if (
 			availableForPurchase &&
 			sitePlanSlug &&
@@ -270,9 +267,8 @@ function useGenerateActionHook( {
 			billingPeriod &&
 			currentPlanBillingPeriod > billingPeriod
 		) {
-			// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
-			// TODO: We should revisit this. The plan term selector never allows selection of lower term plans so is this condition ever met?
 			text = translate( 'Contact support', { context: 'verb' } );
+			status = 'enabled';
 		} else if (
 			availableForPurchase &&
 			sitePlanSlug &&
@@ -331,14 +327,23 @@ function useGenerateActionHook( {
 				} );
 			}
 		} else if ( ! availableForPurchase ) {
+			/** Downgrade plan buttons */
+			status = 'enabled';
 			text = translate( 'Downgrade', { context: 'verb' } );
+			variant = 'secondary';
 		}
 
 		return {
 			primary: {
-				callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
+				callback: getActionCallback( {
+					planSlug,
+					cartItemForPlan,
+					selectedStorageAddOn,
+					availableForPurchase,
+				} ),
 				status,
 				text,
+				variant,
 			},
 		};
 	};

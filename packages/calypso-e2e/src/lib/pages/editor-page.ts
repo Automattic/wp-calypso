@@ -929,9 +929,9 @@ export class EditorPage {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			// Mobile viewports do not use an EditorNavSidebar.
 			// Instead, the regular NavBar is used, and the
-			// `My Sites` button exits the editor.
+			// `<` button exits the editor.
 			const navbarComponent = new NavbarComponent( this.page );
-			actions.push( navbarComponent.clickMySites() );
+			actions.push( navbarComponent.clickEditorBackButton() );
 		} else {
 			actions.push( this.editorToolbarComponent.closeEditor() );
 		}

@@ -33,6 +33,7 @@ import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
+import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
 
@@ -87,6 +88,9 @@ window.AppBoot = async () => {
 		// Stop the boot process if we can't determine the flow, reducing the number of edge cases
 		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
 	}
+
+	// Start tracking performance, bearing in mind this is a full page load.
+	startStepperPerformanceTracking( { fullPageLoad: true } );
 
 	initializeHotJar( flowName );
 	// put the proxy iframe in "all blog access" mode

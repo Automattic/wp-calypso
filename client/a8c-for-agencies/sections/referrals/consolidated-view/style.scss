@@ -25,6 +25,35 @@
 		.consolidated-view__label {
 			color: var(--color-accent);
 			font-size: rem(12px);
+
+			&.consolidated-view__label--all-time {
+				text-wrap: nowrap;
+			}
 		}
 	}
+}
+
+.consolidated-view__popover-content {
+	min-width: 200px;
+	@include a4a-font-body-md;
+
+	@include break-mobile {
+		min-width: 300px;
+	}
+
+	a,
+	a:visited {
+		color: var(--color-neutral-100);
+		text-decoration: underline;
+	}
+	a:focus {
+		outline: none;
+	}
+}
+
+.consolidated-view__info-icon {
+	cursor: pointer;
+	position: relative;
+	inset-block-start: 4px;
+	inset-inline-start: 4px;
 }
