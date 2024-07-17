@@ -163,6 +163,7 @@
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
 		"start-with/square-payments": true,
+		"start-with/stripe": false,
 		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,

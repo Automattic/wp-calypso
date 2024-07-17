@@ -208,8 +208,7 @@ const LayoutLoggedOut = ( {
 		const className = clsx( {
 			'is-style-monochrome':
 				isEnabled( 'site-profiler/metrics' ) && ! nonMonochromeSections.includes( sectionName ),
-			'is-style-white':
-				isEnabled( 'start-with/square-payments' ) && whiteNavbarSections.includes( sectionName ),
+			'is-style-white': whiteNavbarSections.includes( sectionName ),
 		} );
 
 		masterbar = (
@@ -221,10 +220,9 @@ const LayoutLoggedOut = ( {
 					! nonMonochromeSections.includes( sectionName ) && {
 						logoColor: 'white',
 					} ) }
-				{ ...( isEnabled( 'start-with/square-payments' ) &&
-					whiteNavbarSections.includes( sectionName ) && {
-						logoColor: 'black',
-					} ) }
+				{ ...( whiteNavbarSections.includes( sectionName ) && {
+					logoColor: 'black',
+				} ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
 					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),
