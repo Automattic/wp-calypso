@@ -94,7 +94,10 @@ export function useGetProductVariants(
 					const term = getBillingTermForMonths( variant.bill_period_in_months );
 					const introductoryTerms = variant.introductory_offer_terms;
 					return {
-						variantLabel: getTermText( term, translate ),
+						variantLabel: {
+							noun: getTermText( term, translate, 'noun' ),
+							adjective: getTermText( term, translate, 'adjective' ),
+						},
 						productSlug: variant.product_slug,
 						productId: variant.product_id,
 						priceInteger: variant.price_integer,
@@ -143,43 +146,93 @@ function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVaria
 	return 0;
 }
 
-function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
+function getTermText(
+	term: string,
+	translate: ReturnType< typeof useTranslate >,
+	type: 'noun' | 'adjective' = 'noun'
+): string {
+	const asAdjective = type === 'adjective';
+
 	switch ( term ) {
 		case TERM_CENTENNIALLY:
 			return String( translate( 'Hundred years' ) );
 
 		case TERM_DECENNIALLY:
-			return String( translate( 'Ten years' ) );
+			return String(
+				asAdjective
+					? translate( 'Ten-year', { context: 'adjective' } )
+					: translate( 'Ten years', { context: 'noun' } )
+			);
 
 		case TERM_NOVENNIALLY:
-			return String( translate( 'Nine years' ) );
+			return String(
+				asAdjective
+					? translate( 'Nine-year', { context: 'adjective' } )
+					: translate( 'Nine years', { context: 'noun' } )
+			);
 
 		case TERM_OCTENNIALLY:
-			return String( translate( 'Eight years' ) );
+			return String(
+				asAdjective
+					? translate( 'Eight-year', { context: 'adjective' } )
+					: translate( 'Eight years', { context: 'noun' } )
+			);
 
 		case TERM_SEPTENNIALLY:
-			return String( translate( 'Seven years' ) );
+			return String(
+				asAdjective
+					? translate( 'Seven-year', { context: 'adjective' } )
+					: translate( 'Seven years', { context: 'noun' } )
+			);
 
 		case TERM_SEXENNIALLY:
-			return String( translate( 'Six years' ) );
+			return String(
+				asAdjective
+					? translate( 'Six-year', { context: 'adjective' } )
+					: translate( 'Six years', { context: 'noun' } )
+			);
 
 		case TERM_QUINQUENNIALLY:
-			return String( translate( 'Five years' ) );
+			return String(
+				asAdjective
+					? translate( 'Five-year', { context: 'adjective' } )
+					: translate( 'Five years', { context: 'noun' } )
+			);
 
 		case TERM_QUADRENNIALLY:
-			return String( translate( 'Four years' ) );
+			return String(
+				asAdjective
+					? translate( 'Four-year', { context: 'adjective' } )
+					: translate( 'Four years', { context: 'noun' } )
+			);
 
 		case TERM_TRIENNIALLY:
-			return String( translate( 'Three years' ) );
+			return String(
+				asAdjective
+					? translate( 'Three-year', { context: 'adjective' } )
+					: translate( 'Three years', { context: 'noun' } )
+			);
 
 		case TERM_BIENNIALLY:
-			return String( translate( 'Two years' ) );
+			return String(
+				asAdjective
+					? translate( 'Two-year', { context: 'adjective' } )
+					: translate( 'Two years', { context: 'noun' } )
+			);
 
 		case TERM_ANNUALLY:
-			return String( translate( 'One year' ) );
+			return String(
+				asAdjective
+					? translate( 'One-year', { context: 'adjective' } )
+					: translate( 'One year', { context: 'noun' } )
+			);
 
 		case TERM_MONTHLY:
-			return String( translate( 'One month' ) );
+			return String(
+				asAdjective
+					? translate( 'One-month', { context: 'adjective' } )
+					: translate( 'One month', { context: 'noun' } )
+			);
 
 		default:
 			return '';

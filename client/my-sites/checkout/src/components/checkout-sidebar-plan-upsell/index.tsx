@@ -213,7 +213,7 @@ export function CheckoutSidebarPlanUpsell() {
 						<strong>{ isComparisonWithIntroOffer ? cellLabel : __( 'Cost' ) }</strong>
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ currentVariant.variantLabel }
+						{ currentVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ formatCurrency(
@@ -227,7 +227,7 @@ export function CheckoutSidebarPlanUpsell() {
 						) }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ upsellVariant.variantLabel }
+						{ upsellVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ compareToPriceForVariantTerm && (
