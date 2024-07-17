@@ -13,19 +13,15 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { INSIGHTS_SUPPORT_URL } from '../../../const';
-import StatsModule from '../../../stats-module';
+import Comments from '../../../stats-comments';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatsComments: React.FC< StatsDefaultModuleProps > = ( {
-	period,
-	query,
-	moduleStrings,
-	className,
-} ) => {
+const StatsComments: React.FC< StatsDefaultModuleProps > = ( { query, className } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsComments';
+	const moduleTitle = translate( 'Comments' );
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -46,28 +42,20 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( {
 				<StatsCardSkeleton
 					isLoading={ isRequestingData }
 					className={ className }
-					title={ moduleStrings.title }
+					title={ moduleTitle }
 					type={ 3 }
 					withHero
 				/>
 			) }
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
 				// show data or an overlay
-				<StatsModule
-					path="comments"
-					moduleStrings={ moduleStrings }
-					period={ period }
-					statType={ statType }
-					hideSummaryLink
-					className={ className }
-					skipQuery
-				/>
+				<Comments path="comments" className={ className } />
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
 				// show empty state
 				<StatsCard
 					className={ className }
-					title={ translate( 'Comments' ) }
+					title={ moduleTitle }
 					isEmpty
 					emptyMessage={
 						<EmptyModuleCard
