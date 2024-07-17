@@ -341,10 +341,10 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderSiteMenu() {
-		const { sectionGroup, currentSelectedSiteSlug, translate, siteTitle, siteUrl } = this.props;
+		const { currentSelectedSiteSlug, translate, siteTitle, siteUrl } = this.props;
 
-		// Only display on site-specific pages.
-		if ( sectionGroup !== 'sites' || ! currentSelectedSiteSlug ) {
+		// Only display when a site is selected.
+		if ( ! currentSelectedSiteSlug ) {
 			return null;
 		}
 
@@ -363,7 +363,6 @@ class MasterbarLoggedIn extends Component {
 
 	renderSiteActionMenu() {
 		const {
-			sectionGroup,
 			currentSelectedSiteSlug,
 			currentSelectedSite,
 			translate,
@@ -383,7 +382,7 @@ class MasterbarLoggedIn extends Component {
 
 		let siteActions = [];
 
-		if ( currentSelectedSiteSlug && sectionGroup === 'sites' ) {
+		if ( currentSelectedSiteSlug ) {
 			const isClassicView = siteUsesWpAdminInterface( currentSelectedSite );
 			siteActions = [
 				{
