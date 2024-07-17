@@ -1,6 +1,6 @@
 import '@automattic/calypso-polyfills';
 import { useState, useEffect, useCallback } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import { createClient } from './client';
 import { receiveMessage, sendMessage } from './messaging';
@@ -197,7 +197,7 @@ const NotesWrapper = () => {
 
 	if ( hasAccess === false ) {
 		return (
-			<div style={ { background: '#f6f7f7', padding: '10px' } }>
+			<div className="wpnc__note-list wpnc__loading">
 				<button
 					className="wpnc__button"
 					style={ { margin: '0px auto' } }
@@ -210,7 +210,7 @@ const NotesWrapper = () => {
 	}
 
 	if ( ! wpcom ) {
-		return null;
+		return <div className="wpnc__note-list wpnc__loading">Loading wpcom</div>;
 	}
 
 	return (
@@ -230,7 +230,8 @@ const NotesWrapper = () => {
 const render = () => {
 	document.body.classList.add( 'font-smoothing-antialiased' );
 
-	ReactDOM.render( <NotesWrapper />, document.getElementsByClassName( 'wpnc__main' )[ 0 ] );
+	const root = ReactDOM.createRoot( document.querySelector( '.wpnc__main' ) );
+	root.render( <NotesWrapper /> );
 };
 
 render();
