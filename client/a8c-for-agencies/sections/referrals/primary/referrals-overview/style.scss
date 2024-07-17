@@ -7,6 +7,38 @@ $data-view-border-color: #f1f1f1;
 	margin-block-end: 48px;
 }
 
+.theme-a8c-for-agencies {
+	.button.referrals-overview__notice-button {
+		margin-block-start: 1rem;
+		background-color: var(--color-accent-100);
+		color: var(--color-surface);
+	}
+}
+
+.referrals-overview__button-popover {
+	.a4a-popover__content {
+		.a4a-popover__title {
+			@include a4a-font-heading-md;
+			color: var(--studio-gray-80);
+		}
+
+		.referrals-overview__button-popover-description {
+			@include a4a-font-body-md;
+		}
+
+
+		.button {
+			background-color: var(--color-accent-100);
+			color: var(--color-surface);
+
+			&:hover,
+			&:focus-visible {
+				background-color: var(--color-accent-100);
+			}
+		}
+	}
+}
+
 .referrals-overview__section-heading {
 	margin-block-start: 24px;
 	font-size: rem(24px);
