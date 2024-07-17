@@ -1,3 +1,4 @@
+import { ExternalLink } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
 import { Icon, closeSmall } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
@@ -48,11 +49,12 @@ export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
 			{
 				components: {
 					link: (
-						<a
+						<ExternalLink
 							href="https://wordpress.com/help/contact"
-							onClick={ contactClickHandler }
+							icon
+							iconSize={ 14 }
 							target="_blank"
-							rel="noreferrer"
+							onClick={ contactClickHandler }
 						/>
 					),
 				},
