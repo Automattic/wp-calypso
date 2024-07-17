@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GithubSocialButton from 'calypso/components/social-buttons/github';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
+import GoogleOneTapButton from 'calypso/components/social-buttons/google-one-tap';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isWpccFlow } from 'calypso/signup/is-flow';
@@ -16,6 +17,8 @@ import SocialToS from './social-tos';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
+
+const GoogleButton = config.isEnabled( 'google_one_tap' ) ? GoogleOneTapButton : GoogleSocialButton;
 
 interface SocialAuthenticationFormProps {
 	compact?: boolean;
@@ -97,7 +100,7 @@ const SocialAuthenticationForm = ( {
 
 				<div className="auth-form__social-buttons">
 					<div className="auth-form__social-buttons-container">
-						<GoogleSocialButton
+						<GoogleButton
 							clientId={ config( 'google_oauth_client_id' ) }
 							responseHandler={ handleGoogleResponse }
 							uxMode={ uxMode }

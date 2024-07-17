@@ -10,8 +10,8 @@ import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-
 import './style.scss';
+import { OneTapLoading } from './one-tap-loading';
 
 const noop = () => {};
 
@@ -100,12 +100,16 @@ class GoogleSocialButton extends Component {
 			for ( const entry of entries ) {
 				const { width, height } = entry.contentRect;
 				if ( width > 0 && height > 0 ) {
-					const buttonSize = this.buttonRef.current.getBoundingClientRect();
-					const ratio = buttonSize.width / ( width - 20 );
-					iframe.style.transform = `scale(${ ratio })`;
-					iframe.style.marginLeft = `${ Math.floor( -10 * ratio ) }px`;
-					iframe.style.marginBottom = '20px';
-					this.setState( { googleOneTapLoaded: true } );
+					setTimeout( () => {
+						const buttonSize = this.buttonRef.current.getBoundingClientRect();
+						const ratio = buttonSize.width / ( width - 20 );
+						iframe.style.transform = `scale(${ ratio })`;
+						iframe.style.marginLeft = `${ Math.floor( -10 * ratio ) }px`;
+						iframe.style.marginBottom = '20px';
+						setTimeout( () => {
+							this.setState( { googleOneTapLoaded: true } );
+						}, 100 );
+					}, 20 );
 				}
 			}
 		} );
@@ -192,18 +196,20 @@ class GoogleSocialButton extends Component {
 		const { googleOneTapLoaded } = this.state;
 
 		return (
-			<div
-				ref={ this.buttonRef }
-				className="google__one-tap-sign-in-container"
-				data-type="standard"
-				data-disabled={ isDisabled }
-				data-theme="outline"
-				data-text="sign_up_with"
-				data-shape="rectangular"
-				data-locale={ getLocaleSlug() }
-				data-logo_alignment="left"
-				data-loaded={ googleOneTapLoaded }
-			></div>
+			<>
+				<div
+					ref={ this.buttonRef }
+					className="google__one-tap-sign-in-container"
+					data-type="standard"
+					data-disabled={ isDisabled }
+					data-theme="outline"
+					data-text="sign_up_with"
+					data-shape="rectangular"
+					data-locale={ getLocaleSlug() }
+					data-logo_alignment="left"
+				></div>
+				{ ! googleOneTapLoaded && <OneTapLoading /> }
+			</>
 		);
 	}
 }

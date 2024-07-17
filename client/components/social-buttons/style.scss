@@ -12,14 +12,12 @@
 	}
 }
 
+.google__one-tap-loading {
+	position: absolute;
+}
+
 .google__one-tap-sign-in-container {
 	min-height: 62px;
-	opacity: 0;
-	transition: opacity 0.3s ease-in-out;
-
-	&[data-loaded="true"] {
-		opacity: 1;
-	}
 }
 
 .google__one-tap-sign-in-container iframe {
