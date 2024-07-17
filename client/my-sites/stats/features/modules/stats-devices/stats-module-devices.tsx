@@ -185,7 +185,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 							<StatsCard
 								className={ className }
 								title={ devicesStrings.title }
-								titleNodes={ titleNodes }
+								titleNodes={ <StatsInfoArea isNew /> }
 								isEmpty
 								emptyMessage={
 									<EmptyModuleCard
