@@ -245,7 +245,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 								onClick={ openFixAllThreatsDialog }
 								disabled={ ! hasFixableThreats || updatingThreats.length > 0 }
 							>
-								{ translate( 'Show fixable threats' ) }
+								{ translate( 'Show auto fixers' ) }
 							</Button>
 							<Button className="scan-threats__scan-secondary-button" onClick={ dispatchScanRun }>
 								{ translate( 'Scan now' ) }
