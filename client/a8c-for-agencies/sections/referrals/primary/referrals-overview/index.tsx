@@ -30,6 +30,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
+import { getAccountStatus } from '../../lib/get-account-status';
 import ReferralDetails from '../../referral-details';
 import ReferralsFooter from '../footer';
 import AutomatedReferralComingSoonBanner from './automated-referral-coming-soon-banner';
@@ -63,6 +64,8 @@ export default function ReferralsOverview( {
 			: translate( 'Referrals' );
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
+	const accountStatus = getAccountStatus( tipaltiData, translate );
+
 	const isPayable = !! tipaltiData?.IsPayable;
 	const [ showPopover, setShowPopover ] = useState( false );
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
@@ -73,7 +76,7 @@ export default function ReferralsOverview( {
 	const hasReferrals = !! referrals?.length;
 
 	const actionRequiredNotice =
-		! isFetching && ! isPayable && ! isFetchingReferrals && hasReferrals && ! requiredNoticeClose;
+		hasReferrals && accountStatus?.actionRequired && ! requiredNoticeClose;
 
 	const makeAReferral = useCallback( () => {
 		sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REFERRAL );
