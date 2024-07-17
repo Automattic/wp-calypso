@@ -2,8 +2,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import formatCurrency from '@automattic/format-currency';
-import { useChatWidget } from '@automattic/help-center/src/hooks';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { useOpenZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useState } from 'react';
@@ -116,7 +116,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const couponCode = 'BIZWPC25';
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
-	const { openChatWidget } = useChatWidget();
+	const { openZendeskWidget } = useOpenZendeskMessaging( 'pre-cancellation-upsell' );
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	switch ( upsell ) {
@@ -142,7 +142,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						} );
 						page( getLiveChatUrl( upsell, site, purchase ) );
 
-						openChatWidget( {
+						openZendeskWidget( {
 							message:
 								"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 								props.cancellationReason,

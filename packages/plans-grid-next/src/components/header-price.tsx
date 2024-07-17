@@ -9,7 +9,6 @@ import type { GridPlan } from '../types';
 
 interface PlanFeatures2023GridHeaderPriceProps {
 	planSlug: PlanSlug;
-	planUpgradeCreditsApplicable?: number | null;
 	currentSitePlanSlug?: string | null;
 	visibleGridPlans: GridPlan[];
 }

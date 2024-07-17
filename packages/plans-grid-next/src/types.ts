@@ -115,7 +115,6 @@ export interface CommonGridProps {
 	showRefundPeriod?: boolean;
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	planUpgradeCreditsApplicable?: number | null;
 	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
 	gridSize?: string;
 }
@@ -140,10 +139,12 @@ export type UseActionCallback = ( {
 	planSlug,
 	cartItemForPlan,
 	selectedStorageAddOn,
+	availableForPurchase,
 }: {
 	planSlug: PlanSlug;
 	cartItemForPlan?: MinimalRequestCartProduct | null;
 	selectedStorageAddOn?: AddOns.AddOnMeta | null;
+	availableForPurchase?: boolean;
 } ) => () => void;
 
 export interface GridAction {
@@ -152,6 +153,7 @@ export interface GridAction {
 		callback: () => void;
 		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
 		status?: 'disabled' | 'blocked' | 'enabled';
+		variant?: 'primary' | 'secondary';
 	};
 	postButtonText?: TranslateResult;
 }

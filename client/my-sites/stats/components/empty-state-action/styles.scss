@@ -4,21 +4,24 @@
 @import "@automattic/components/src/styles/typography";
 
 .stats-empty-action__cta {
-	height: 52px;
-	margin-bottom: 12px;
-	border: 1px solid $studio-gray-5;
-	border-radius: 4px;
-	box-shadow: none;
-	width: 100%;
-	cursor: pointer;
+	// this needs an extra class because it' sometimes overwritten by build CSS file order
+	&.stats-empty-action__cta-parent {
+		height: 52px;
+		margin-bottom: 12px;
+		border: 1px solid $studio-gray-5;
+		border-radius: 4px;
+		box-shadow: none;
+		width: 100%;
+		cursor: pointer;
 
-	&:hover {
-		background: $studio-gray-0;
-		border: 1px solid $studio-gray-80;
-	}
+		&:hover {
+			background: $studio-gray-0;
+			border: 1px solid $studio-gray-80;
+		}
 
-	&:last-child {
-		margin-bottom: 0;
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	.stats-empty-action__card-body {
@@ -32,11 +35,11 @@
 	}
 
 	.stats-empty-action__cta-link-text {
-		color: $studio-gray-80 !important;
+		color: $studio-gray-80;
 		flex-grow: 1;
 	}
 
 	.stats-empty-action__cta-link-icon {
-		color: $studio-gray-90 !important;
+		color: $studio-gray-90;
 	}
 }

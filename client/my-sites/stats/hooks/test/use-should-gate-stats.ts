@@ -263,7 +263,7 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		expect( isGatedStats ).toBe( false );
 	} );
 
-	it( 'should gate basic stats for commercial jetpack sites without Stats commercial purchase', () => {
+	it( 'should gate basic stats for commercial jetpack sites having 1k views count without Stats commercial purchase', () => {
 		const mockState = {
 			sites: {
 				features: {
@@ -285,6 +285,25 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 			},
 			purchases: {
 				data: [],
+			},
+			stats: {
+				planUsage: {
+					data: {
+						[ siteId ]: {
+							recent_usages: [
+								{
+									views_count: 1000,
+								},
+								{
+									views_count: 1001,
+								},
+								{
+									views_count: 1002,
+								},
+							],
+						},
+					},
+				},
 			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );

@@ -51,10 +51,13 @@ import StatsModuleCountries from './features/modules/stats-countries';
 import StatsModuleDevices, {
 	StatsModuleUpgradeDevicesOverlay,
 } from './features/modules/stats-devices';
+import StatsModuleDownloads from './features/modules/stats-downloads';
 import StatsModuleEmails from './features/modules/stats-emails';
 import StatsModuleReferrers from './features/modules/stats-referrers';
+import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
 import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
+import StatsModuleVideos from './features/modules/stats-videos';
 import HighlightsSection from './highlights-section';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
@@ -641,34 +644,77 @@ class StatsSite extends Component {
 							/>
 						) }
 
-						<StatsModule
-							path="searchterms"
-							moduleStrings={ moduleStrings.search }
-							period={ this.props.period }
-							query={ query }
-							statType="statsSearchTerms"
-							showSummaryLink
-							className={ clsx(
-								{
-									// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
-									'stats__flexible-grid-item--one-third--two-spaces':
-										! isJetpack && ! this.isModuleHidden( 'videos' ),
-								},
-								{
-									'stats__flexible-grid-item--full--large':
-										isJetpack && this.isModuleHidden( 'videos' ),
-								},
-								{
-									// 1/2 for all other cases to stack with Devices or empty space
-									'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-									// Avoid 1/3 on smaller screen if Videos is visible
-									'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-								},
-								'stats__flexible-grid-item--full--medium'
-							) }
-						/>
+						{ isNewStateEnabled && (
+							<StatsModuleSearch
+								moduleStrings={ moduleStrings.search }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									{
+										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! isJetpack && ! this.isModuleHidden( 'videos' ),
+									},
+									{
+										'stats__flexible-grid-item--full--large':
+											isJetpack && this.isModuleHidden( 'videos' ),
+									},
+									{
+										// 1/2 for all other cases to stack with Devices or empty space
+										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										// Avoid 1/3 on smaller screen if Videos is visible
+										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+						{ ! isNewStateEnabled && (
+							<StatsModule
+								path="searchterms"
+								moduleStrings={ moduleStrings.search }
+								period={ this.props.period }
+								query={ query }
+								statType="statsSearchTerms"
+								showSummaryLink
+								className={ clsx(
+									{
+										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! isJetpack && ! this.isModuleHidden( 'videos' ),
+									},
+									{
+										'stats__flexible-grid-item--full--large':
+											isJetpack && this.isModuleHidden( 'videos' ),
+									},
+									{
+										// 1/2 for all other cases to stack with Devices or empty space
+										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										// Avoid 1/3 on smaller screen if Videos is visible
+										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 
-						{ ! this.isModuleHidden( 'videos' ) && (
+						{ isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
+							<StatsModuleVideos
+								moduleStrings={ moduleStrings.videoplays }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									{
+										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
+										'stats__flexible-grid-item--half': isJetpack,
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+
+						{ ! isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
 								path="videoplays"
 								moduleStrings={ moduleStrings.videoplays }
@@ -686,10 +732,36 @@ class StatsSite extends Component {
 								) }
 							/>
 						) }
+
 						{
-							// File downloads are not yet supported in Jetpack Stats
+							// File downloads are not yet supported in Jetpack environment
+							isNewStateEnabled && ! isJetpack && (
+								<StatsModuleDownloads
+									moduleStrings={ moduleStrings.filedownloads }
+									period={ this.props.period }
+									query={ query }
+									className={ clsx(
+										{
+											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										},
+										{
+											'stats__flexible-grid-item--one-third--two-spaces':
+												! this.isModuleHidden( 'videos' ),
+										},
+
+										{
+											// Avoid 1/3 on smaller screen if Videos is visible
+											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+										},
+										'stats__flexible-grid-item--full--medium'
+									) }
+								/>
+							)
+						}
+						{
+							// File downloads are not yet supported in Jetpack environment
 							// TODO: Confirm the above statement.
-							! isJetpack && (
+							! isNewStateEnabled && ! isJetpack && (
 								<StatsModule
 									path="filedownloads"
 									metricLabel={ translate( 'Downloads' ) }

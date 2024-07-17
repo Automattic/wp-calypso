@@ -4,9 +4,12 @@ $masterbar-mobile-font-size: 14px;
 $masterbar-color-primary: #23282d;
 $masterbar-color-secondary: #101517;
 
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/shared/animation";
+@import url( //s1.wp.com/wp-includes/css/dashicons.css?v=20150727 );
+@import "@automattic/typography/styles/variables";
 
 // Hide the masterbar on WP Mobile App views.
 body.is-mobile-app-view {
@@ -207,6 +210,11 @@ body.is-mobile-app-view {
 	}
 
 	&--left {
+		.masterbar__item-subitems {
+			left: 0;
+		}
+
+
 		@include breakpoint-deprecated( "<660px" ) {
 			a .masterbar__item-content {
 				display: none;
@@ -218,6 +226,9 @@ body.is-mobile-app-view {
 		flex: 1;
 		justify-content: flex-end;
 
+		.masterbar__item-subitems {
+			right: 0;
+		}
 		@include breakpoint-deprecated( ">480px" ) {
 			flex-grow: 0;
 		}
@@ -252,6 +263,96 @@ body.is-mobile-app-view {
 	transition: all 0.2s ease-in-out;
 	justify-content: center;
 
+	&.masterbar__reader {
+		padding: 0 7px 0 4px;
+	}
+
+	&.masterbar__item-my-site-actions {
+		padding-left: 7px;
+	}
+
+	@media only screen and (max-width: 782px) {
+		&.masterbar__reader,
+		&.masterbar__item-my-site-actions {
+			padding: 0;
+		}
+	}
+
+	&.has-subitems {
+		display: block;
+	}
+
+	> a {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 5px;
+	}
+
+	&.masterbar__item-my-site-actions > a,
+	&.masterbar__item-my-site > a {
+		gap: 6px;
+	}
+
+	.masterbar__item-subitems {
+		margin: 0;
+		padding: 6px 0;
+		box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+		display: none;
+		position: absolute;
+		float: none;
+		min-width: 100%;
+		text-align: left;
+		top: var(--masterbar-height);
+		background: var(--color-masterbar-item-hover-background);
+		list-style: none;
+		clear: none;
+		text-indent: 0;
+
+		.masterbar__item-subitems-item {
+			margin-right: 6px;
+			padding-left: 6px;
+			white-space: nowrap;
+			min-width: 140px;
+			line-height: 2;
+			a,
+			button {
+				display: inline-block;
+				width: 100%;
+				padding: 0 0 0 6px;
+				color: var(--color-masterbar-text);
+			}
+
+			.is-link {
+				border: none;
+				background: none;
+				text-decoration: none;
+				outline: none;
+				margin: 0;
+				text-align: left;
+
+				&:hover {
+					color: var(--color-masterbar-highlight);
+				}
+			}
+
+			&:hover {
+				background: var(--color-masterbar-item-hover-background);
+				a {
+					color: var(--color-masterbar-highlight);
+				}
+			}
+
+		}
+
+		@media only screen and (max-width: 782px) {
+			position: fixed;
+			.masterbar__item-subitems-item {
+				padding: 8px 16px;
+			}
+		}
+	}
+
 	.masterbar--is-checkout & {
 		height: var(--masterbar-height);
 		line-height: var(--masterbar-height);
@@ -279,9 +380,14 @@ body.is-mobile-app-view {
 		}
 	}
 
-	.gridicon {
-		fill: var(--color-masterbar-text); // only because safari gets currentColor wrong
+	.gridicon,
+	svg {
+		fill: var(--color-masterbar-icon);
+		width: 24px;
+		height: 24px;
+	}
 
+	.gridicon {
 		.masterbar--is-checkout & {
 			fill: var(--color-checkout-masterbar-text);
 		}
@@ -291,17 +397,34 @@ body.is-mobile-app-view {
 		padding: 0 0 0 6px;
 	}
 
-	svg {
-		fill: var(--color-masterbar-text);
-	}
-
 	.dashicons-before {
 		height: 20px;
 		color: var(--color-masterbar-icon);
 	}
+	.dashicons-plus {
+		padding-top: 4px;
+	}
 
 	// The hover colors are supposed to be the same as those in wp-admin.
-	&:hover {
+	&:hover,
+	&.is-open {
+		svg path,
+		.gridicon {
+			fill: var(--color-masterbar-highlight);
+		}
+
+		// Fix for light color scheme
+		.sidebar_svg-notifications path {
+			stroke: var(--color-masterbar-highlight);
+		}
+
+
+		.masterbar__item-subitems {
+			display: block;
+			z-index: 99999;
+		}
+
+
 		@include breakpoint-deprecated( ">480px" ) {
 			background: var(--color-masterbar-item-hover-background);
 			color: var(--color-masterbar-highlight);
@@ -314,16 +437,6 @@ body.is-mobile-app-view {
 			}
 			.dashicons-before {
 				color: var(--color-masterbar-highlight);
-			}
-		}
-	}
-	// Reader icon is only available on Default interface sites, so we apply the Calypso color for consistency.
-	// https://github.com/Automattic/wp-calypso/pull/90136#issuecomment-2089512298
-	&.masterbar__reader:hover {
-		@include breakpoint-deprecated( ">480px" ) {
-			color: var(--color-masterbar-text);
-			.masterbar__item-content {
-				color: var(--color-masterbar-text);
 			}
 		}
 	}
@@ -372,20 +485,66 @@ body.is-mobile-app-view {
 		}
 	}
 
-	&.masterbar__item-help {
-		cursor: pointer;
-		flex: 0;
-	}
-
 	.is-support-session &.is-active {
 		background: var(--studio-orange-70);
 	}
 
 	@media only screen and (max-width: 782px) {
 		font-size: $masterbar-mobile-font-size;
+		width: 52px;
+		padding: 0;
+
+		// Show gravatar content
+		&:not(.masterbar__item-howdy) .masterbar__item-content {
+			display: none;
+		}
+
+		.masterbar__item-howdy-howdy {
+			display: none;
+		}
+
+		svg,
+		svg path,
+		.gridicon {
+			height: 36px;
+			width: 36px;
+		}
+
+		.dashicons-plus {
+			padding-top: 0;
+			&::before {
+				font-size: 40px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			}
+		}
+
+		.dashicons-before {
+			height: unset;
+			&::before {
+				width: 52px;
+				display: inline-block;
+				position: relative;
+				font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				text-align: center;
+				top: 7px;
+				height: unset;
+			}
+
+			&:hover {
+				color: var(--color-masterbar-highlight);
+			}
+		}
+
+		.dashicons-menu-alt {
+			padding-top: 0;
+			&::before {
+				font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				top: 4px;
+			}
+		}
 	}
 
-	@include breakpoint-deprecated( "<480px" ) {
+
+	@media only screen and (max-width: 480px) {
 		width: 48px;
 		// reset flex value on mobile
 		flex: 0 1 auto;
@@ -394,9 +553,20 @@ body.is-mobile-app-view {
 		.masterbar__item-content {
 			display: none;
 		}
+
 		&.masterbar__item--always-show-content .masterbar__item-content,
 		&.masterbar__item-me .masterbar__item-content {
 			display: block;
+		}
+
+		&.masterbar__item-my-site,
+		&.masterbar__item-my-site-actions,
+		&.masterbar-cart-button {
+			display: none;
+		}
+
+		&.masterbar__item-help {
+			width: 54px;
 		}
 	}
 
@@ -405,6 +575,40 @@ body.is-mobile-app-view {
 			background: initial;
 			color: initial;
 		}
+	}
+
+	&.masterbar__item-sidebar-menu {
+		display: none;
+		@media only screen and (max-width: 782px) {
+			display: inline-block;
+		}
+	}
+
+
+	&.masterbar__item-my-sites {
+		padding: 0 6px; // trying to match core's 35px width
+
+		@media only screen and (max-width: 782px) {
+			padding: 0;
+		}
+
+		.gridicon {
+			width: 24px;
+			height: 24px;
+			@media only screen and (max-width: 782px) {
+				width: 32px;
+				height: 32px;
+			}
+		}
+	}
+
+	&.masterbar__item-notifications {
+		margin-right: 0;
+	}
+
+	&.masterbar__item-help {
+		cursor: pointer;
+		// todo may need flex: unset
 	}
 }
 
@@ -672,6 +876,95 @@ body.is-mobile-app-view {
 	}
 }
 
+.masterbar__item-howdy {
+	.masterbar__item-content {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+	}
+
+	.gravatar {
+		border: 1px solid var(--color-masterbar-border);
+		border-radius: unset;
+
+		@media only screen and (max-width: 782px) {
+			width: 26px;
+			height: 26px;
+		}
+	}
+
+	.masterbar__item-howdy-account-wrapper {
+		display: flex;
+		flex-direction: row;
+		gap: 12px;
+
+		.masterbar__item-howdy-account-gravatar {
+			flex-basis: auto;
+			max-width: 50%;
+		}
+
+		.masterbar__item-howdy-account-details {
+			flex-basis: auto;
+			flex-grow: 0;
+			flex-shrink: 0;
+			max-width: 50%;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			padding: 0;
+			margin: 0;
+			line-height: 18px;
+		}
+	}
+
+	.masterbar__item-subitems {
+		min-width: 264px !important;
+		max-height: 90px;
+		padding: 12px 0 0 0;
+
+		@media only screen and (max-width: 782px) {
+			min-width: 100% !important;
+			max-height: 100%;
+		}
+	}
+
+	.masterbar__item-subitems-item {
+		&.account-link,
+		&.logout-link {
+			position: relative;
+			float: left;
+			top: -35px;
+			left: 77px;
+		}
+	}
+
+	@media only screen and (max-width: 782px) {
+		.masterbar__item-howdy-howdy,
+		.masterbar__item-howdy-account-gravatar {
+			display: none;
+		}
+
+		.masterbar__item-howdy-account-details {
+			padding: 0 !important;
+		}
+
+		.masterbar__item-subitems-item {
+
+			min-width: 100% !important;
+			&.account-link {
+				top: -10px;
+				left: 0;
+			}
+
+			&.logout-link {
+				top: -10px;
+				left: 0;
+			}
+		}
+	}
+
+}
+
 .masterbar__login-links {
 	display: flex;
 	margin-left: auto;
@@ -689,10 +982,6 @@ body.is-mobile-app-view {
 }
 
 .masterbar__reader {
-	@include breakpoint-deprecated( ">480px" ) {
-		margin-right: auto;
-	}
-
 	@media only screen and (max-width: 782px) {
 		.gridicon + .masterbar__item-content {
 			padding-left: 6px;
@@ -816,6 +1105,13 @@ body.is-mobile-app-view {
 .masterbar-notifications {
 	svg {
 		overflow: overlay;
+		width: 27px;
+		height: 27px;
+
+		@media only screen and (max-width: 782px) {
+			width: 32px;
+			height: 32px;
+		}
 	}
 
 	.notifications-bell-icon__bubble {
@@ -997,7 +1293,14 @@ a.masterbar__quick-language-switcher {
 	padding: 0 11px;
 
 	svg {
-		fill: var(--color-masterbar-text);
+		fill: var(--color-masterbar-icon);
+		width: 24px;
+		height: 24px;
+
+		@media only screen and (max-width: 782px) {
+			width: 32px;
+			height: 32px;
+		}
 	}
 }
 
@@ -1008,79 +1311,5 @@ a.masterbar__quick-language-switcher {
 
 	100% {
 		opacity: 1;
-	}
-}
-
-.masterbar__global-nav {
-	background: var(--color-global-masterbar-background);
-	border-bottom: 1 px solid var(--color-global-masterbar-background);
-
-	.masterbar__section--left {
-		flex: 10;
-	}
-	.masterbar__item.is-active {
-		background-color: var(--color-global-masterbar-background);
-	}
-
-	.masterbar__item .gridicon {
-		fill: var(--color-global-masterbar-gridicon-fill);
-	}
-
-	.masterbar__item,
-	.site {
-		color: var(--color-global-masterbar-text);
-		&:hover {
-			background-color: var(--color-global-masterbar-hover-background);
-		}
-		.site__info .site__domain-and-badges .site__badge {
-			&::before {
-				color: var(--color-global-masterbar-text);
-			}
-		}
-	}
-
-	.site {
-		.site-icon {
-			align-self: center;
-		}
-		.site__title,
-		.site__domain {
-			color: var(--color-global-masterbar-text);
-		}
-	}
-}
-
-.masterbar__unified {
-	.masterbar__item {
-		gap: 6px;
-		padding: 0 7px;
-	}
-
-	.masterbar__item-me {
-		gap: 0;
-	}
-
-	.masterbar__item-all-sites {
-		gap: 2px;
-
-		@media only screen and (min-width: 783px) {
-			padding: 0 8px 0 4px;
-		}
-
-		svg {
-			fill: var(--color-masterbar-icon);
-			width: 20px;
-			padding-inline: 2px;
-		}
-
-		&:hover {
-			svg {
-				fill: var(--color-masterbar-highlight);
-			}
-		}
-	}
-
-	.masterbar__item-notifications {
-		margin-right: 0;
 	}
 }

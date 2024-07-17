@@ -85,6 +85,18 @@ function transmitDraftId( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostTrash( calypsoPort ) {
+	/**
+	 * As of Gutenberg 18.2, posts are trashed with code that we cannot override
+	 * via the actions registry, so we need to change the behavior overriding the
+	 * onClick event.
+	 *
+	 * See https://github.com/WordPress/gutenberg/blob/379e5f42d11a46dfa29fe4c595ba43f1f3ba9b17/packages/editor/src/components/post-actions/actions.js#L122-L220
+	 */
+	addEditorListener( '.editor-action-modal__move-to-trash button.is-primary', ( e ) => {
+		e.preventDefault();
+		calypsoPort.postMessage( { action: 'trashPost' } );
+	} );
+
 	use( ( registry ) => {
 		return {
 			dispatch: ( store ) => {
@@ -113,49 +125,13 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
-	// For Gutenberg <= 18.4
-	// For Gutenberg >= 18.5.1 (see: https://github.com/WordPress/gutenberg/pull/62323)
 	addEditorListener( '[href*="revision.php"]', ( e ) => {
 		e.preventDefault();
-		openRevisions();
-	} );
-
-	// For Gutenberg >= 18.5 (see: https://github.com/WordPress/gutenberg/pull/61867)
-	// Hacky solution to identify View Revisions menu item.
-	const viewRevisionsLabel =
-		/View revisions|Revisionen anzeigen|Visualizza revisioni|リビジョンを表示|수정본 보기|Bekijk revisies|Vezi reviziile|Visa versioner/gi;
-
-	// We target the menu item manually when the dropdown button is clicked.
-	// This is because we cannot rely on event.preventDefault() to prevent an event handler
-	// that was attached on core's side from executing.
-	addEditorListener( '.editor-all-actions-button', () => {
-		document.querySelectorAll( 'div[id^=portal] [role=menuitem]' ).forEach( ( menuItem ) => {
-			if ( ( menuItem.innerText || '' ).match( viewRevisionsLabel ) ) {
-				// Replace original menu item with a clone
-				const replacementMenuItem = menuItem.cloneNode( true );
-				menuItem.replaceWith( replacementMenuItem );
-				replacementMenuItem.addEventListener( 'click', openRevisions );
-
-				// Add a class to uniquely identify the cloned menu item
-				replacementMenuItem.className += ' view-revisions-modal-button';
-
-				// Replicate hovering effect
-				replacementMenuItem.addEventListener( 'mouseover', () => {
-					replacementMenuItem.setAttribute( 'data-active-item', '' );
-				} );
-				replacementMenuItem.addEventListener( 'mouseout', () => {
-					replacementMenuItem.removeAttribute( 'data-active-item' );
-				} );
-			}
-		} );
-	} );
-
-	function openRevisions() {
 		calypsoPort.postMessage( { action: 'openRevisions' } );
 
 		calypsoPort.addEventListener( 'message', onLoadRevision, false );
 		calypsoPort.start();
-	}
+	} );
 
 	function onLoadRevision( message ) {
 		const action = get( message, 'data.action', '' );

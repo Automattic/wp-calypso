@@ -1,18 +1,18 @@
+import config from '@automattic/calypso-config';
 import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import EmptyStateAction from '../../../components/empty-state-action';
+import EmptyStateAction from 'calypso/my-sites/stats/components/empty-state-action';
+import {
+	JETPACK_SUPPORT_NEWSLETTER_URL,
+	JETPACK_NEWSLETTER_LANDING_PAGE_URL,
+} from 'calypso/my-sites/stats/const';
+import type { StatsEmptyActionProps } from './';
 
-type StatsEmptyActionEmailProps = {
-	from: string;
-};
-
-// TODO: move to a shared file if this is the final URL
-const JETPACK_SUPPORT_NEWSLETTER_URL = 'https://jetpack.com/support/newsletter';
-
-const StatsEmptyActionEmail: React.FC< StatsEmptyActionEmailProps > = ( { from } ) => {
+const StatsEmptyActionEmail: React.FC< StatsEmptyActionProps > = ( { from } ) => {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	return (
 		<EmptyStateAction
@@ -25,10 +25,11 @@ const StatsEmptyActionEmail: React.FC< StatsEmptyActionEmailProps > = ( { from }
 			onClick={ () => {
 				// analytics event tracting handled in EmptyStateAction component
 
-				setTimeout(
-					() => ( window.location.href = localizeUrl( JETPACK_SUPPORT_NEWSLETTER_URL ) ),
-					250
-				);
+				const redirectUrl = isOdysseyStats
+					? localizeUrl( JETPACK_SUPPORT_NEWSLETTER_URL )
+					: localizeUrl( JETPACK_NEWSLETTER_LANDING_PAGE_URL );
+
+				setTimeout( () => ( window.location.href = redirectUrl ), 250 );
 			} }
 		/>
 	);

@@ -19,6 +19,7 @@ export interface ArticleContentProps {
 	postId: number;
 	blogId?: string | null;
 	slug?: string;
+	articleUrl?: string | null | undefined;
 }
 
 export interface Header {
@@ -76,16 +77,6 @@ export interface SupportTicket {
 	when: string;
 }
 
-export interface MessagingAuth {
-	user: {
-		jwt: string;
-	};
-}
-
-export interface MessagingAvailability {
-	is_available: boolean;
-}
-
 export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 interface Availability {
@@ -137,3 +128,5 @@ export type AnalysisReport = {
 	siteURL: string | undefined;
 	isWpcom: boolean;
 };
+
+export type ContactOption = 'chat' | 'email';

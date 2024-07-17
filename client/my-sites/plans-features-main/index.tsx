@@ -45,7 +45,6 @@ import { localize, useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -74,7 +73,6 @@ import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
-import { usePlanUpgradeCreditsApplicable } from './hooks/use-plan-upgrade-credits-applicable';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -627,10 +625,6 @@ const PlansFeaturesMain = ( {
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
 		? stickyPlanTypeSelectorHeight + masterbarHeight
 		: masterbarHeight;
-	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable(
-		siteId,
-		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
-	);
 
 	const {
 		primary: { callback: onFreePlanCTAClick },
@@ -673,7 +667,6 @@ const PlansFeaturesMain = ( {
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
-				<QueryPlans coupon={ coupon } />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				<QueryActivePromotions />
@@ -763,7 +756,6 @@ const PlansFeaturesMain = ( {
 										isInSignup={ isInSignup }
 										onStorageAddOnClick={ handleStorageAddOnClick }
 										paidDomainName={ paidDomainName }
-										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 										recordTracksEvent={ recordTracksEvent }
 										selectedFeature={ selectedFeature }
 										showLegacyStorageFeature={ showLegacyStorageFeature }
@@ -833,7 +825,6 @@ const PlansFeaturesMain = ( {
 															? { ...planTypeSelectorProps, plans: gridPlansForPlanTypeSelector }
 															: undefined
 													}
-													planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 													recordTracksEvent={ recordTracksEvent }
 													selectedFeature={ selectedFeature }
 													selectedPlan={ selectedPlan }

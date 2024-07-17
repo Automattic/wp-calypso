@@ -1267,6 +1267,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Paywall access' ),
 		translate( 'Newsletter' ),
 		translate( 'Priority support' ),
+		translate( '2% transaction fees' ),
 	];
 	const antiSpamIncludesInfo = [
 		translate( 'Comment and form spam protection' ),
@@ -1334,6 +1335,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	const socialNetworksForSharing = [
 		translate( 'Facebook' ),
 		translate( 'Instagram' ),
+		translate( 'Threads' ),
 		translate( 'LinkedIn' ),
 		translate( 'Mastodon' ),
 		translate( 'Tumblr' ),
@@ -1365,9 +1367,9 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 			args: { socialNetworksList },
 			comment: 'Comma separated list of social networks like "Facebook, Mastodon and Tumblr".',
 		} ),
-		translate( 'Engagement Optimizer' ),
+		translate( 'Upload custom images or videos with your posts' ),
 		translate( 'Recycle content' ),
-		translate( 'Image generator' ),
+		translate( 'Automatically generate images for posts' ),
 	];
 	const socialIncludesInfo = socialAdvancedIncludesInfo;
 	const statsCommercialIncludesInfo = [

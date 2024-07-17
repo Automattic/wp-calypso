@@ -19,6 +19,7 @@ import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
+import { getSiteIdParam } from './internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
@@ -44,6 +45,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			MIGRATION_INSTRUCTIONS_STEP,
+			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
@@ -133,7 +135,7 @@ const siteMigration: Flow = {
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep, variantSlug );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
-			const siteId = getSiteIdBySlug( siteSlug );
+			const siteId = getSiteIdBySlug( siteSlug ) || getSiteIdParam( urlQueryParams );
 
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
@@ -367,6 +369,16 @@ const siteMigration: Flow = {
 						return;
 					}
 				}
+
+				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
+					// Take the user to the migration started step.
+					if ( providedDependencies?.destination === 'migration-started' ) {
+						return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
+				}
 			}
 		}
 
@@ -380,7 +392,7 @@ const siteMigration: Flow = {
 				}
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					if ( urlQueryParams.get( 'ref' ) === GUIDED_ONBOARDING_FLOW_REFERRER ) {
-						window.location.assign( '/start/guided/initial-intent' );
+						return exitFlow( '/start/initial-intent' );
 					}
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}

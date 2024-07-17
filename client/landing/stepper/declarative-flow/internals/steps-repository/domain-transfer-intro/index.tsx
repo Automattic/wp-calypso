@@ -56,6 +56,7 @@ const Intro: Step = function Intro( { navigation, variantSlug } ) {
 					initialMessage="User is contacting us from the domains-transfer flow"
 					className="domains-transfer-chat-button"
 					withHelpCenter={ false }
+					section="domains-transfer"
 				>
 					<MaterialIcon icon="chat_bubble" />
 					{ hasEnTranslation( 'Need help? Contact us' )

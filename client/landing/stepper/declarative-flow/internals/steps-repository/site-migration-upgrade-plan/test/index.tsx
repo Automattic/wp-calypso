@@ -16,7 +16,6 @@ import { useUpgradePlanHostingDetailsList } from 'calypso/blocks/importer/wordpr
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import plansReducer from 'calypso/state/plans/reducer';
 import SiteMigrationUpgradePlan from '../';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
@@ -122,9 +121,6 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		};
 
 		return renderStep( <SiteMigrationUpgradePlan { ...combinedProps } />, {
-			reducers: {
-				plans: plansReducer,
-			},
 			initialState: {
 				sites: {
 					plans: {

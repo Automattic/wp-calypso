@@ -923,6 +923,7 @@ class MagicLogin extends Component {
 		const { isRequestingEmail, requestEmailErrorMessage } = this.state;
 
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
+		const isFromGravatarSignup = isGravatar && query?.gravatar_from === 'signup';
 		const submitButtonLabel = isGravatar
 			? translate( 'Continue' )
 			: translate( 'Send me sign in link' );
@@ -1079,23 +1080,25 @@ class MagicLogin extends Component {
 					{ ! isGravatar && (
 						<hr className="grav-powered-magic-login__divider grav-powered-magic-login__divider--email-form" />
 					) }
-					<footer className="grav-powered-magic-login__footer grav-powered-magic-login__footer--email-form">
-						{ translate( '{{a}}Sign in another way{{/a}}', {
-							components: {
-								a: (
-									<a
-										href={ loginUrl }
-										onClick={ () =>
-											this.props.recordTracksEvent(
-												'calypso_gravatar_powered_magic_login_click_login_page_link',
-												{ client_id: oauth2Client.id, client_name: oauth2Client.name }
-											)
-										}
-									/>
-								),
-							},
-						} ) }
-					</footer>
+					{ ! isFromGravatarSignup && (
+						<footer className="grav-powered-magic-login__footer grav-powered-magic-login__footer--email-form">
+							{ translate( '{{a}}Sign in another way{{/a}}', {
+								components: {
+									a: (
+										<a
+											href={ loginUrl }
+											onClick={ () =>
+												this.props.recordTracksEvent(
+													'calypso_gravatar_powered_magic_login_click_login_page_link',
+													{ client_id: oauth2Client.id, client_name: oauth2Client.name }
+												)
+											}
+										/>
+									),
+								},
+							} ) }
+						</footer>
+					) }
 				</div>
 				{ ! isGravatar && (
 					<div className="grav-powered-magic-login__gravatar-info">

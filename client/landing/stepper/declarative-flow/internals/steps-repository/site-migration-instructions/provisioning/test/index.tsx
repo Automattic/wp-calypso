@@ -30,7 +30,7 @@ describe( 'Provisioning', () => {
 		expect( screen.getByText( '2/3' ) ).toBeVisible();
 	} );
 
-	it( "shouldn't render when an action failed", () => {
+	it( 'should render error message when an action failed', () => {
 		const status = {
 			siteTransfer: 'success',
 			pluginInstallation: 'success',
@@ -38,11 +38,11 @@ describe( 'Provisioning', () => {
 		};
 
 		const { container } = render( <Provisioning status={ status } /> );
-		const provisioningElement = container.getElementsByClassName(
-			'migration-instructions-provisioning'
-		);
+		const message = container.querySelector( '.migration-instructions-provisioning__message' );
 
-		expect( provisioningElement.length ).toBe( 0 );
+		expect( message?.textContent ).toBe(
+			'Sorry, we couldn’t finish setting up your site. Please, contact support.'
+		);
 	} );
 
 	it( "shouldn't render when all actions are done", () => {

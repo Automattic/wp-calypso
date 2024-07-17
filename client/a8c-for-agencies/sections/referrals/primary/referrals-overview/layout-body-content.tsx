@@ -28,6 +28,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import StepSection from '../../common/step-section';
 import StepSectionItem from '../../common/step-section-item';
+import ConsolidatedViews from '../../consolidated-view';
 import { getAccountStatus } from '../../lib/get-account-status';
 import tipaltiLogo from '../../lib/tipalti-logo';
 import ReferralList from '../../referrals-list';
@@ -67,6 +68,7 @@ export default function LayoutBodyContent( {
 	}, [ dispatch ] );
 
 	const accountStatus = getAccountStatus( tipaltiData, translate );
+	const isPayable = !! tipaltiData?.IsPayable;
 
 	const hasPayeeAccount = !! accountStatus?.status;
 	let bankAccountCTAText = hasPayeeAccount
@@ -115,6 +117,7 @@ export default function LayoutBodyContent( {
 	if ( isAutomatedReferral && referrals?.length ) {
 		return (
 			<>
+				{ ! dataViewsState.selectedItem && <ConsolidatedViews referrals={ referrals } /> }
 				<ReferralList
 					referrals={ referrals }
 					dataViewsState={ dataViewsState }
@@ -261,6 +264,7 @@ export default function LayoutBodyContent( {
 										children: translate( 'Get started' ),
 										compact: true,
 										primary: hasPayeeAccount,
+										disabled: ! isPayable,
 										href: A4A_MARKETPLACE_PRODUCTS_LINK,
 										onClick: onGetStartedClick,
 									} }

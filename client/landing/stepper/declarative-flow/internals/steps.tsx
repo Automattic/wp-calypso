@@ -235,6 +235,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-instructions-i2' ),
 	},
 
+	SITE_MIGRATION_STARTED: {
+		slug: 'site-migration-started',
+		asyncComponent: () => import( './steps-repository/site-migration-started' ),
+	},
+
 	SITE_MIGRATION_ASSISTED_MIGRATION: {
 		slug: 'migrateMessage',
 		asyncComponent: () => import( './steps-repository/importer-migrate-message' ),
