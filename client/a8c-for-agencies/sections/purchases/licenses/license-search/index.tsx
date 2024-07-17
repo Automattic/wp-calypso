@@ -29,7 +29,7 @@ const LicenseSearch = ( { doSearch }: Props ) => {
 			initialValue={ search }
 			hideClose={ ! search }
 			onSearch={ onSearch }
-			placeholder={ translate( 'Search by license code' ) }
+			placeholder={ translate( 'Search by product name or license code' ) }
 			delaySearch
 		/>
 	);
