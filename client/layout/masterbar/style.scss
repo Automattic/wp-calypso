@@ -271,6 +271,13 @@ body.is-mobile-app-view {
 		padding-left: 7px;
 	}
 
+	@media only screen and (max-width: 782px) {
+		&.masterbar__reader,
+		&.masterbar__item-my-site-actions {
+			padding: 0;
+		}
+	}
+
 	&.has-subitems {
 		display: block;
 	}
@@ -574,6 +581,11 @@ body.is-mobile-app-view {
 
 	&.masterbar__item-my-sites {
 		padding: 0 6px; // trying to match core's 35px width
+
+		@media only screen and (max-width: 782px) {
+			padding: 0;
+		}
+
 		.gridicon {
 			width: 24px;
 			height: 24px;
