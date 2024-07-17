@@ -24,6 +24,7 @@ import {
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from '../../use-cart-key';
+import { isCouponDisplayHidden } from '../../utils';
 import type { Theme } from '@automattic/composite-checkout';
 import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
 
@@ -320,7 +321,11 @@ export function CouponCostOverride( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
-	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
+	if (
+		! responseCart.coupon ||
+		! responseCart.coupon_savings_total_integer ||
+		isCouponDisplayHidden()
+	) {
 		return null;
 	}
 	// translators: The label of the coupon line item in checkout, including the coupon code
