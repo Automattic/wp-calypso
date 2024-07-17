@@ -32,6 +32,7 @@ interface StepsDataOptions {
 }
 
 interface StepData {
+	key: string;
 	title: string;
 	content: JSX.Element;
 }
@@ -62,6 +63,7 @@ const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData 
 
 	return [
 		{
+			key: 'install-the-migrate-guru-plugin',
 			title: translate( 'Install the Migrate Guru plugin' ),
 			content: (
 				<p>
@@ -86,6 +88,7 @@ const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData 
 			),
 		},
 		{
+			key: 'get-your-site-ready',
 			title: translate( 'Get your site ready' ),
 			content: (
 				<>
@@ -123,6 +126,7 @@ const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData 
 			),
 		},
 		{
+			key: 'add-your-migration-key',
 			title: translate( 'Add your migration key' ),
 			content:
 				'' === migrationKey ? (
@@ -171,6 +175,10 @@ export const useSteps = ( { fromUrl, migrationKey, onComplete }: StepsOptions ):
 			// When completing a step that wasn't completed yet.
 			if ( lastCompleteStep < index ) {
 				setLastCompleteStep( index );
+
+				recordTracksEvent( 'calypso_site_migration_instructions_step_complete', {
+					step: step.key,
+				} );
 			}
 		};
 
@@ -209,7 +217,7 @@ export const useSteps = ( { fromUrl, migrationKey, onComplete }: StepsOptions ):
 
 		return {
 			task: {
-				id: step.title,
+				id: step.key,
 				title: step.title,
 				completed: lastCompleteStep >= index,
 				disabled: false,
