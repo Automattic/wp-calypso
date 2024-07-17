@@ -16,7 +16,7 @@ import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
-import { isNotAtomicJetpack, siteUsesWpAdminInterface } from 'calypso/sites-dashboard/utils';
+import { siteUsesWpAdminInterface } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
@@ -459,10 +459,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderProfileMenu() {
-		const { translate, user, siteUrl, currentSelectedSite } = this.props;
-		const isClassicView = currentSelectedSite
-			? siteUsesWpAdminInterface( currentSelectedSite )
-			: false;
+		const { translate, user, siteUrl, isClassicView } = this.props;
 		const profileActions = [
 			{
 				label: (
@@ -857,10 +854,8 @@ export default connect(
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
 		const currentSelectedSite = getSelectedSite( state );
-		const isJetpackNotAtomic = currentSelectedSite && isNotAtomicJetpack( currentSelectedSite );
-		const isClassicView =
-			( currentSelectedSite && siteUsesWpAdminInterface( currentSelectedSite ) ) ||
-			isJetpackNotAtomic;
+		const isClassicView = currentSelectedSite && siteUsesWpAdminInterface( currentSelectedSite );
+
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
