@@ -12,10 +12,8 @@
 	}
 }
 
-.google__sign-in-container:has(iframe[style*="width: 2"]) {
-	transform: scale(1.5);
+.google__sign-in-container iframe {
 	transform-origin: top left;
-	margin-bottom: 20px;
 }
 
 .social-buttons__service-name {
