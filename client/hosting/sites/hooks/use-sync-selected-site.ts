@@ -1,5 +1,5 @@
 import { SiteDetails } from '@automattic/data-stores';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import type { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
@@ -10,16 +10,13 @@ export function useSyncSelectedSite(
 	selectedSite: SiteDetails | null | undefined
 ) {
 	const dispatch = useDispatch();
-	const isInitialLoad = useRef( true );
 
 	// Update selected site globally as soon as it is clicked from the table.
 	useEffect( () => {
-		// Prevent clearing the selected site on initial load.
-		if ( isInitialLoad.current && ! dataViewsState.selectedItem ) {
-			isInitialLoad.current = false;
+		// Prevent clearing the selected site
+		if ( ! dataViewsState.selectedItem ) {
 			return;
 		}
-		isInitialLoad.current = false;
 		dispatch( setSelectedSiteId( dataViewsState.selectedItem?.ID ) );
 	}, [ dispatch, dataViewsState.selectedItem ] );
 
