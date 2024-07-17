@@ -49,61 +49,44 @@ const CommercialSiteUpgradeNotice = ( {
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
-	let bannerBody = translate(
-		'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
-		{
-			components: {
-				p: <p />,
-				jetpackStatsProductLink: (
-					<button
-						type="button"
-						className="notice-banner__action-button"
-						onClick={ gotoJetpackStatsProduct }
-					/>
-				),
-				commercialUpgradeLink: (
-					<a
-						className="notice-banner__action-link"
-						href={ localizeUrl( learnMoreLink ) }
-						target="_blank"
-						rel="noreferrer"
-					/>
-				),
-				commercialUpgradeLinkText: <span />,
-				externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
-			},
-		}
-	);
-
-	// Paywall notice content.
 	if ( shouldShowPaywallNotice ) {
 		learnMoreLink = 'https://jetpack.com/support/jetpack-stats/free-or-paid/';
-		bannerBody = translate(
-			'{{p}}Commercial sites with a significant number of visitors require a commercial license. Upgrade to get access to all the stats features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
-			{
-				components: {
-					p: <p />,
-					jetpackStatsProductLink: (
-						<button
-							type="button"
-							className="notice-banner__action-button"
-							onClick={ gotoJetpackStatsProduct }
-						/>
-					),
-					commercialUpgradeLink: (
-						<a
-							className="notice-banner__action-link"
-							href={ localizeUrl( learnMoreLink ) }
-							target="_blank"
-							rel="noreferrer"
-						/>
-					),
-					commercialUpgradeLinkText: <span />,
-					externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
-				},
-			}
-		);
 	}
+
+	const sharedTranslationComponents = {
+		p: <p />,
+		jetpackStatsProductLink: (
+			<button
+				type="button"
+				className="notice-banner__action-button"
+				onClick={ gotoJetpackStatsProduct }
+			/>
+		),
+		commercialUpgradeLink: (
+			<a
+				className="notice-banner__action-link"
+				href={ localizeUrl( learnMoreLink ) }
+				target="_blank"
+				rel="noreferrer"
+			/>
+		),
+		commercialUpgradeLinkText: <span />,
+		externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
+	};
+
+	const bannerBody = shouldShowPaywallNotice
+		? translate(
+				'{{p}}Commercial sites with a significant number of visitors require a commercial license. Upgrade to get access to all the stats features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+				{
+					components: sharedTranslationComponents,
+				}
+		  ) // Paywall notice content.
+		: translate(
+				'{{p}}Upgrade to get priority support and access to upcoming advanced features. You’ll need to purchase a commercial license based on your site type. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+				{
+					components: sharedTranslationComponents,
+				}
+		  );
 
 	return (
 		<div
