@@ -363,7 +363,7 @@ class MasterbarLoggedIn extends Component {
 					url: siteAdminUrl,
 			  }
 			: {
-					label: translate( 'Site Home' ),
+					label: translate( 'My Home' ),
 					url: siteHomeUrl,
 			  };
 
