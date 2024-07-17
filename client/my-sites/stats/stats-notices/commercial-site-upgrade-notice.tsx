@@ -7,7 +7,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import { hasReachedPaywallMonthlyViews } from '../hooks/use-stats-purchases';
 import { trackStatsAnalyticsEvent } from '../utils';
 import { StatsNoticeProps } from './types';
 
@@ -17,12 +16,13 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 	return purchasePath;
 };
 
-const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
+const CommercialSiteUpgradeNotice = ( {
+	siteId,
+	isOdysseyStats,
+	shouldShowPaywallNotice,
+}: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
-	const hasReachedMonthlyViewsToApplyPaywall = useSelector( ( state ) => {
-		return hasReachedPaywallMonthlyViews( state, siteId );
-	} );
 
 	const gotoJetpackStatsProduct = () => {
 		isOdysseyStats
@@ -49,7 +49,7 @@ const CommercialSiteUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticePro
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
-	const bannerBody = hasReachedMonthlyViewsToApplyPaywall
+	const bannerBody = shouldShowPaywallNotice
 		? translate(
 				'Commercial sites with a significant number of visitors require a commercial license. Upgrade to get access to all the stats features and priority support.'
 		  )

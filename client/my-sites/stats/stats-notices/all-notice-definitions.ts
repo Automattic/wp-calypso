@@ -43,10 +43,16 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isSiteJetpackNotAtomic,
 			isCommercial,
 			hasPWYWPlanOnly,
+			shouldShowPaywallNotice,
 		}: StatsNoticeProps ) => {
 			// Show the notice only if the site is commercial.
 			if ( ! isCommercial ) {
 				return false;
+			}
+
+			// Show the upgrade notice with the coming paywall communication.
+			if ( shouldShowPaywallNotice ) {
+				return true;
 			}
 
 			const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;

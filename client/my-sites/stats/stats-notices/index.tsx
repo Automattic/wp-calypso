@@ -21,7 +21,7 @@ import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-si
 import hasSiteProductJetpackStatsPWYWOnly from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-pwyw-only';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import useStatsPurchases from '../hooks/use-stats-purchases';
+import useStatsPurchases, { hasReachedPaywallMonthlyViews } from '../hooks/use-stats-purchases';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
@@ -96,6 +96,10 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		hasSiteProductJetpackStatsPWYWOnly( state, siteId )
 	);
 
+	const shouldShowPaywallNotice = useSelector( ( state ) => {
+		return hasReachedPaywallMonthlyViews( state, siteId );
+	} );
+
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
@@ -110,6 +114,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isCommercial,
 		isCommercialOwned,
 		hasPWYWPlanOnly,
+		shouldShowPaywallNotice,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
