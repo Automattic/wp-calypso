@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { useHelpCenterMessenger } from '@automattic/help-center/src/components/help-center-messenger';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
@@ -25,6 +26,7 @@ export const OdieSendMessageButton = ( {
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const { initialUserMessage, chat, isLoading, trackEvent } = useOdieAssistantContext();
+	const { sendMessage: sendHelpCenterMessage } = useHelpCenterMessenger();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 
 	useEffect( () => {
@@ -43,7 +45,11 @@ export const OdieSendMessageButton = ( {
 				type: 'message',
 			} as Message;
 
-			await sendOdieMessage( { message } );
+			if ( chat.type === 'ai' ) {
+				await sendOdieMessage( { message } );
+			} else {
+				sendHelpCenterMessage( messageString, chat.chat_id );
+			}
 
 			trackEvent( 'chat_message_action_receive' );
 		} catch ( e ) {

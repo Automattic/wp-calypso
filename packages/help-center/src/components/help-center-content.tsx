@@ -18,6 +18,7 @@ import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
 import { HelpCenterEmbedResult } from './help-center-embed-result';
+import { HelpCenterMessenger } from './help-center-messenger';
 import { HelpCenterOdie } from './help-center-odie';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
@@ -116,19 +117,21 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/odie"
 						element={
-							<OdieAssistantProvider
-								botNameSlug="wpcom-support-chat"
-								botName="Wapuu"
-								enabled={ shouldUseWapuu }
-								currentUser={ currentUser }
-								isMinimized={ isMinimized }
-								initialUserMessage={ searchTerm }
-								logger={ trackEvent }
-								loggerEventNamePrefix="calypso_odie"
-								selectedSiteId={ site?.ID as number }
-							>
-								<HelpCenterOdie />
-							</OdieAssistantProvider>
+							<HelpCenterMessenger>
+								<OdieAssistantProvider
+									botNameSlug="wpcom-support-chat"
+									botName="Wapuu"
+									enabled={ shouldUseWapuu }
+									currentUser={ currentUser }
+									isMinimized={ isMinimized }
+									initialUserMessage={ searchTerm }
+									logger={ trackEvent }
+									loggerEventNamePrefix="calypso_odie"
+									selectedSiteId={ site?.ID as number }
+								>
+									<HelpCenterOdie />
+								</OdieAssistantProvider>
+							</HelpCenterMessenger>
 						}
 					/>
 				</Routes>

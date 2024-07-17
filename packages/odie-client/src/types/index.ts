@@ -89,6 +89,7 @@ export type Message = {
 export type Chat = {
 	chat_id?: number | null;
 	messages: Message[];
+	type: 'ai' | 'human';
 };
 
 export type OdieAllowedSectionNames =

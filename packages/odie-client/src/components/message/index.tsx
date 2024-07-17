@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Gravatar } from '@automattic/components';
+import { useHelpCenterMessenger } from '@automattic/help-center/src/components/help-center-messenger';
 import { ExternalLink } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -15,6 +16,7 @@ import WapuuAvatar from '../../assets/wapuu-squared-avatar.svg';
 import WapuuThinking from '../../assets/wapuu-thinking.svg';
 import AgentAvatar from '../../assets/wordpress-agent-avatar.svg';
 import { useOdieAssistantContext } from '../../context';
+import { getConversationMetadada } from '../../utils/conversation-utils';
 import useTyper from '../../utils/user-typer';
 import Button from '../button';
 import FoldableCard from '../foldable';
@@ -37,7 +39,8 @@ const ChatMessage = (
 ) => {
 	const isUser = message.role === 'user';
 	const isAgent = message.role === 'agent';
-	const { botName, extraContactOptions, addMessage, trackEvent } = useOdieAssistantContext();
+	const { chat, botName, extraContactOptions, addMessage, trackEvent } = useOdieAssistantContext();
+	const { createConversation } = useHelpCenterMessenger();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const { __, _x } = useI18n();
@@ -241,9 +244,10 @@ const ChatMessage = (
 	const shouldRenderExtraContactOptions = isRequestingHumanSupport && messageFullyTyped;
 
 	const onDislike = () => {
-		if ( shouldRenderExtraContactOptions ) {
+		if ( chat.type === 'human' ) {
 			return;
 		}
+		createConversation( getConversationMetadada( chat.chat_id ) );
 		setTimeout( () => {
 			addMessage( {
 				content: '...',
@@ -318,7 +322,7 @@ const ChatMessage = (
 							{
 								/* translators: Message displayed when the user dislikes a message from the bot */
 								_x(
-									'I’m sorry my last response didn’t meet your expectations! Here’s some other ways to get more in-depth help:',
+									"I’m sorry my last response didn’t meet your expectations! I've sent your request to my human friends. They will get back to you soon.",
 									'Message displayed when the user dislikes a message from the bot',
 									__i18n_text_domain__
 								)

@@ -1,3 +1,4 @@
+import { useHelpCenterMessenger } from '@automattic/help-center/src/components/help-center-messenger';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
 	broadcastChatClearance,
@@ -9,6 +10,7 @@ import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
 import type { Chat, Context, CurrentUser, Message, Nudge, OdieAllowedBots } from '../types/';
 import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
+import { translateMessage } from '../utils/conversation-utils';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const noop = () => {};
@@ -52,7 +54,7 @@ const defaultContextInterfaceValues = {
 	addMessage: noop,
 	botName: 'Wapuu',
 	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
-	chat: { context: { section_name: '', site_id: null }, messages: [] },
+	chat: { context: { section_name: '', site_id: null }, messages: [], type: 'ai' as const },
 	clearChat: noop,
 	initialUserMessage: null,
 	isLoadingChat: false,
@@ -120,6 +122,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
+	const { addMessengerListener } = useHelpCenterMessenger();
 
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
 	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId );
@@ -153,6 +156,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		setOdieStorage( null );
 		setChat( {
 			chat_id: null,
+			type: 'ai',
 			messages: [ getOdieInitialMessage( botNameSlug ) ],
 		} );
 		trackEvent( 'chat_cleared', {} );
@@ -188,12 +192,20 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				// Append new messages at the end
 				return {
 					chat_id: prevChat.chat_id,
+					type: newMessages.find( ( m ) => m.role === 'agent' ) ? 'human' : prevChat.type,
 					messages: [ ...filteredMessages, ...newMessages ],
 				};
 			} );
 		},
 		[ setChat ]
 	);
+
+	useEffect( () => {
+		addMessengerListener( ( message: any ) => {
+			const translatedMessage = translateMessage( message );
+			addMessage( translatedMessage );
+		} );
+	}, [ addMessage, addMessengerListener ] );
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
