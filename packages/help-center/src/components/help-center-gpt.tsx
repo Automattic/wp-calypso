@@ -15,7 +15,9 @@ import './help-center-article-content.scss';
 import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useTyper } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
+import HelpCenterSearchResults from './help-center-search-results';
 import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
+import type { SearchResult } from '../types';
 
 const GPTResponsePlaceholder = styled( LoadingPlaceholder )< { width?: string } >`
 	:not( :last-child ) {
@@ -49,6 +51,10 @@ const LoadingPlaceholders: React.FC< LoadingPlaceholderProps > = ( { loadingMess
 
 interface Props {
 	onResponseReceived: ( response: JetpackSearchAIResult ) => void;
+	redirectToArticle: (
+		event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
+		result: SearchResult
+	) => void;
 }
 
 const handleContentClick = ( event: React.MouseEvent ) => {
@@ -62,7 +68,7 @@ const handleContentClick = ( event: React.MouseEvent ) => {
 	}
 };
 
-export function HelpCenterGPT( { onResponseReceived }: Props ) {
+export function HelpCenterGPT( { onResponseReceived, redirectToArticle }: Props ) {
 	const { __ } = useI18n();
 
 	const [ feedbackGiven, setFeedbackGiven ] = useState< boolean >( false );
@@ -144,8 +150,15 @@ export function HelpCenterGPT( { onResponseReceived }: Props ) {
 
 	return (
 		<div className="help-center-gpt__container">
+			<HelpCenterSearchResults
+				onSelect={ redirectToArticle }
+				searchQuery={ message || '' }
+				openAdminInNewTab
+				placeholderLines={ 4 }
+				location="help-center-contact-form"
+			/>
 			<h1 id="help-center--contextual_help" className="help-center__section-title">
-				{ __( 'Quick response:', __i18n_text_domain__ ) }
+				{ __( 'AI Generated Response:', __i18n_text_domain__ ) }
 			</h1>
 			{ isGPTError && (
 				<div className="help-center-gpt-error">

@@ -75,6 +75,7 @@ type HelpCenterContactFormProps = {
 
 export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const { search } = useLocation();
+	const location = useLocation();
 	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
@@ -189,6 +190,9 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
 			event.preventDefault();
 
+			const currentRoute = location.pathname + location.search;
+			const navigatingFromGPTResponse = currentRoute === '/contact-form?mode=FORUM&show-gpt=true';
+
 			// if result.post_id isn't set then open in a new window
 			if ( ! result.post_id ) {
 				const tracksData = {
@@ -209,6 +213,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 				postId: String( result.post_id ),
 				query: debouncedMessage || '',
 				title: preventWidows( decodeEntities( result.title ) ),
+				...( navigatingFromGPTResponse ? { canNavigateBack: 'true' } : {} ),
 			} );
 
 			if ( result.blog_id ) {
@@ -217,7 +222,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 			navigate( `/post/?${ params }` );
 		},
-		[ navigate, debouncedMessage ]
+		[ navigate, debouncedMessage, location.pathname, location.search ]
 	);
 
 	// this indicates the user was happy with the GPT response
@@ -548,8 +553,11 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	if ( enableGPTResponse && showingGPTResponse ) {
 		return (
 			<div className="help-center__articles-page">
-				<BackButton />
-				<HelpCenterGPT onResponseReceived={ setGptResponse } />
+				<BackButton onClick={ () => navigate( -1 ) } />
+				<HelpCenterGPT
+					redirectToArticle={ redirectToArticle }
+					onResponseReceived={ setGptResponse }
+				/>
 				<section className="contact-form-submit">
 					<Button
 						isBusy={ isFetchingGPTResponse }
@@ -690,13 +698,15 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 				) }
 			</section>
 			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
-			<HelpCenterSearchResults
-				onSelect={ redirectToArticle }
-				searchQuery={ message || '' }
-				openAdminInNewTab
-				placeholderLines={ 4 }
-				location="help-center-contact-form"
-			/>
+			{ ! [ 'FORUM' ].includes( mode ) && (
+				<HelpCenterSearchResults
+					onSelect={ redirectToArticle }
+					searchQuery={ message || '' }
+					openAdminInNewTab
+					placeholderLines={ 4 }
+					location="help-center-contact-form"
+				/>
+			) }
 		</main>
 	);
 };
