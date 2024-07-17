@@ -8,6 +8,7 @@ interface PeriodUsage {
 	next_start: string | null;
 	views_count: number;
 	days_to_reset: number;
+	past_days: number;
 }
 
 export interface PlanUsage {

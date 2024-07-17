@@ -36,7 +36,11 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
 } from '../constants';
 import { MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL } from './use-site-compulsory-plan-selection-qualified-check';
-import { hasSupportedCommercialUse, hasSupportedVideoPressUse } from './use-stats-purchases';
+import {
+	hasSupportedCommercialUse,
+	hasSupportedVideoPressUse,
+	hasCurrentUsageOverGracePeriod,
+} from './use-stats-purchases';
 
 // If Jetpack sites don't have any purchase that supports commercial use, gate advanced modules accordingly.
 const jetpackStatsAdvancedPaywall = [ STATS_TYPE_DEVICE_STATS, STATS_FEATURE_UTM_STATS ];
@@ -135,8 +139,13 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 		const isSiteCommercial = getSiteOption( state, siteId, 'is_commercial' ) || false;
 		if ( isSiteCommercial ) {
 			const billableMonthlyViews = getPlanUsageBillableMonthlyViews( state, siteId );
-			// Paywall basic stats for commercial sites with monthly views of more than 1k.
-			if ( billableMonthlyViews >= MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL ) {
+			// Paywall basic stats for commercial sites with:
+			// 1. Monthly views reaching the paywall threshold.
+			// 2. Current usage passed over grace period days.
+			if (
+				billableMonthlyViews >= MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL &&
+				hasCurrentUsageOverGracePeriod( state, siteId )
+			) {
 				return [
 					...jetpackStatsCommercialPaywall,
 					...granularControlForJetpackStatsCommercialPaywall,
