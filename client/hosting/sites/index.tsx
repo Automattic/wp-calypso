@@ -33,8 +33,7 @@ export default function () {
 }
 
 function checkReferrerForSiteSelection( context, next ) {
-	// const { referrer } = document;
-	const referrer = 'https://atomicblog20240228.wpcomstaging.com/';
+	const { referrer } = document;
 	// Only evluate this on initialization. Note im not 100% sure if this init value is fully
 	// accurate for what we want, but on initial inspection it seems promising.
 	if ( ! context.init || ! referrer ) {
