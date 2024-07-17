@@ -16,7 +16,7 @@ import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
-import { siteUsesWpAdminInterface } from 'calypso/sites-dashboard/utils';
+import { isNotAtomicJetpack, siteUsesWpAdminInterface } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
@@ -857,7 +857,10 @@ export default connect(
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
 		const currentSelectedSite = getSelectedSite( state );
-		const isClassicView = currentSelectedSite && siteUsesWpAdminInterface( currentSelectedSite );
+		const isJetpackNotAtomic = currentSelectedSite && isNotAtomicJetpack( currentSelectedSite );
+		const isClassicView =
+			( currentSelectedSite && siteUsesWpAdminInterface( currentSelectedSite ) ) ||
+			isJetpackNotAtomic;
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
