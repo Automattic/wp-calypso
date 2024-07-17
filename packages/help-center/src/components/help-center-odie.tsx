@@ -18,7 +18,7 @@ export function HelpCenterOdie(): JSX.Element {
 	return (
 		<div className="help-center__container-content-odie">
 			<div className="help-center__container-odie-header">
-				<BackButton className="help-center__container-odie-back-button" />
+				<BackButton className="help-center__container-odie-back-button" backToRoot />
 				<EllipsisMenu popoverClassName="help-center__container-header-menu" position="bottom">
 					<PopoverMenuItem
 						onClick={ clearChat }
