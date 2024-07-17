@@ -163,7 +163,7 @@ export function CheckoutSidebarPlanUpsell() {
 						<strong>{ isComparisonWithIntroOffer ? __( 'Two-year cost' ) : __( 'Cost' ) }</strong>
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ currentVariant.variantLabel }
+						{ currentVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ formatCurrency(
@@ -177,7 +177,7 @@ export function CheckoutSidebarPlanUpsell() {
 						) }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ biennialVariant.variantLabel }
+						{ biennialVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ compareToPriceForVariantTerm && (

@@ -171,7 +171,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	return (
 		<Variant>
 			<Label>
-				{ variant.variantLabel }
+				{ variant.variantLabel.noun }
 				{ hasDiscount && isMobile && <DiscountPercentage percent={ discountPercentage } /> }
 			</Label>
 			<PriceTextContainer>

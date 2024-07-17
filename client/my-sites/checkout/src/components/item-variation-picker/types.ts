@@ -2,6 +2,11 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export type WPCOMProductSlug = string;
 
+export type WPCOMProductVariantLabel = {
+	noun: string;
+	adjective: string;
+};
+
 export type WPCOMProductVariant = {
 	priceInteger: number;
 	termIntervalInMonths: number;
@@ -9,7 +14,7 @@ export type WPCOMProductVariant = {
 	currency: string;
 	productId: number;
 	productSlug: WPCOMProductSlug;
-	variantLabel: string;
+	variantLabel: WPCOMProductVariantLabel;
 	introductoryTerm: string;
 	introductoryInterval: number;
 	priceBeforeDiscounts: number;
