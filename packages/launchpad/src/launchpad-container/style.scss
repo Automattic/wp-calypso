@@ -50,5 +50,10 @@
 
 	@include break-large {
 		padding: 40px;
+
+		// Exception for the sidebar.
+		&.launchpad-container__sidebar {
+			padding-right: 32px;
+		}
 	}
 }
