@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const BellIcon = ( { newItems } ) => {
+export const BellIcon = ( { newItems, strokeWidth = 1.5 } ) => {
 	if ( newItems ) {
 		return (
 			<svg
@@ -38,7 +38,7 @@ export const BellIcon = ( { newItems } ) => {
 			<path
 				d="M12 19.25C11.3997 19.25 10.8926 18.8177 10.7755 18.25H13.2245C13.1074 18.8177 12.6003 19.25 12 19.25ZM16.25 9V11.5C16.25 12.4151 16.3207 13.3148 16.6888 14.0672C16.9282 14.5563 17.2751 14.9495 17.7374 15.25H6.2626C6.72492 14.9495 7.07181 14.5563 7.31116 14.0672C7.67934 13.3148 7.75 12.4151 7.75 11.5V9C7.75 6.61421 9.61421 4.75 12 4.75C14.3858 4.75 16.25 6.61421 16.25 9Z"
 				stroke="#fff"
-				strokeWidth="1.5"
+				strokeWidth={ strokeWidth }
 			/>
 		</svg>
 	);
