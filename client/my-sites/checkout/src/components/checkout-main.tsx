@@ -9,6 +9,7 @@ import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
+import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
@@ -222,7 +223,11 @@ export default function CheckoutMain( {
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
+		reloadFromServer,
 	} = useShoppingCart( cartKey );
+
+	const { shouldSetMigrationSticker, isLoading: isStickerLoading } =
+		useCheckoutMigrationIntroductoryOfferSticker( siteId, reloadFromServer );
 
 	// For site-less checkouts, get the blog ID from the cart response
 	const updatedSiteId = isSiteless ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
@@ -560,6 +565,14 @@ export default function CheckoutMain( {
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
 		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
 	];
+
+	if ( shouldSetMigrationSticker ) {
+		checkoutLoadingConditions.push( {
+			name: translate( 'Setting introductory offer' ),
+			isLoading: isStickerLoading,
+		} );
+	}
+
 	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
 		( condition ) => condition.isLoading
 	);
