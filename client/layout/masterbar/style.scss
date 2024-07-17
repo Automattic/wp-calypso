@@ -413,6 +413,12 @@ body.is-mobile-app-view {
 			fill: var(--color-masterbar-highlight);
 		}
 
+		// Fix for light color scheme
+		.sidebar_svg-notifications path {
+			stroke: var(--color-masterbar-highlight);
+		}
+
+
 		.masterbar__item-subitems {
 			display: block;
 			z-index: 99999;
@@ -1287,7 +1293,7 @@ a.masterbar__quick-language-switcher {
 	padding: 0 11px;
 
 	svg {
-		fill: var(--color-masterbar-text);
+		fill: var(--color-masterbar-icon);
 		width: 24px;
 		height: 24px;
 

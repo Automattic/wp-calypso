@@ -5,48 +5,77 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SiteMigrationInstructions from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
 import { SitePreview } from '../site-preview';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
+jest.mock( 'calypso/landing/stepper/hooks/use-query' );
 jest.mock( 'calypso/data/site-migration/use-migration-sticker' );
 jest.mock( 'calypso/data/site-profiler/use-hosting-provider-url-details' );
-( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
-	deleteMigrationSticker: jest.fn(),
-} );
-
-( useSite as jest.Mock ).mockReturnValue( {
-	ID: 123,
-} );
-
-// Mock the hooks and components
 jest.mock( '../site-preview' );
+jest.mock( 'calypso/lib/analytics/tracks' );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => {
-	return {
-		recordTracksEvent: jest.fn(),
-	};
-} );
-
-( useSite as jest.Mock ).mockReturnValue( {
-	ID: 123,
-} );
+const mockGetQuery = ( from ) => {
+	( useQuery as jest.Mock ).mockReturnValue( {
+		get: () => {
+			return from;
+		},
+	} );
+};
 
 const render = ( props?: Partial< StepProps > ) => {
 	const combinedProps = { ...mockStepProps( props ) };
 	return renderStep( <SiteMigrationInstructions { ...combinedProps } /> );
 };
 
-( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
-	deleteMigrationSticker: jest.fn(),
-} );
-
-( SitePreview as jest.Mock ).mockImplementation( () => <div>SitePreview Component</div> );
-
 describe( 'SiteMigrationInstructions', () => {
+	beforeAll( () => {
+		( useHostingProviderUrlDetails as jest.Mock ).mockReturnValue( {
+			data: {
+				name: 'Unknown',
+				is_unknown: true,
+				is_a8c: false,
+			},
+		} );
+
+		( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
+			deleteMigrationSticker: jest.fn(),
+		} );
+
+		( SitePreview as jest.Mock ).mockImplementation( () => <div>SitePreview Component</div> );
+
+		( useSite as jest.Mock ).mockReturnValue( {
+			ID: 123,
+		} );
+
+		( recordTracksEvent as jest.Mock ).mockImplementation( () => {} );
+	} );
+
+	beforeEach( () => {
+		mockGetQuery( 'http://example.com/' );
+	} );
+
+	it( 'should render preview column', async () => {
+		const { container } = render();
+
+		expect( container.querySelector( '.launchpad-container__main-content' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should not render preview column if from is not informed', async () => {
+		mockGetQuery( null );
+
+		const { container } = render();
+
+		expect(
+			container.querySelector( '.launchpad-container__main-content' )
+		).not.toBeInTheDocument();
+	} );
+
 	it.each( [
 		{ hostingName: 'WP Engine', isUnknown: false, isA8c: false, expected: true },
 		{ hostingName: 'WordPress.com', isUnknown: false, isA8c: true, expected: false },

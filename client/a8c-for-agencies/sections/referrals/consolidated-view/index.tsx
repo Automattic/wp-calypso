@@ -45,7 +45,7 @@ export default function ConsolidatedViews( { referrals }: { referrals: Referral[
 						formatCurrency( consolidatedData.allTimeCommissions, 'USD' )
 					) }
 				</div>
-				<div className="consolidated-view__label">
+				<div className="consolidated-view__label consolidated-view__label--all-time">
 					{ translate( 'All time commissions' ) }
 					<span
 						className="consolidated-view__info-icon"

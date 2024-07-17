@@ -25,12 +25,15 @@
 		.consolidated-view__label {
 			color: var(--color-accent);
 			font-size: rem(12px);
+
+			&.consolidated-view__label--all-time {
+				text-wrap: nowrap;
+			}
 		}
 	}
 }
 
 .consolidated-view__popover-content {
-	padding: 12px;
 	min-width: 200px;
 	@include a4a-font-body-md;
 
