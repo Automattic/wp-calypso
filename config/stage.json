@@ -54,6 +54,7 @@
 		"i18n/empathy-mode": true,
 		"importer/site-backups": true,
 		"importer/unified": true,
+		"importers/newsletter": false,
 		"importers/substack": true,
 		"individual-subscriber-stats": true,
 		"jetpack/agency-dashboard": true,
