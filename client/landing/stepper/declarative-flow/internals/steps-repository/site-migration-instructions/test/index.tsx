@@ -19,12 +19,6 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site' );
 jest.mock( 'calypso/landing/stepper/hooks/use-query' );
 jest.mock( 'calypso/data/site-migration/use-migration-sticker' );
 jest.mock( 'calypso/data/site-profiler/use-hosting-provider-url-details' );
-
-( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
-	deleteMigrationSticker: jest.fn(),
-} );
-
-// Mock the hooks and components
 jest.mock( '../site-preview' );
 jest.mock( 'calypso/lib/analytics/tracks' );
 
