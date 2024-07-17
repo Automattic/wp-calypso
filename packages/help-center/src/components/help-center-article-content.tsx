@@ -14,6 +14,7 @@ const ArticleContent = ( {
 	blogId,
 	isLoading = false,
 	slug,
+	articleUrl,
 }: ArticleContentProps ) => {
 	const post = { title, link };
 	return (
@@ -29,7 +30,12 @@ const ArticleContent = ( {
 							// eslint-disable-next-line react/no-danger
 							dangerouslySetInnerHTML={ { __html: content } }
 						/>
-						<HelpCenterFeedbackForm postId={ postId } blogId={ blogId } slug={ slug } />
+						<HelpCenterFeedbackForm
+							postId={ postId }
+							blogId={ blogId }
+							slug={ slug }
+							articleUrl={ articleUrl }
+						/>
 					</EmbedContainer>
 				</>
 			) }

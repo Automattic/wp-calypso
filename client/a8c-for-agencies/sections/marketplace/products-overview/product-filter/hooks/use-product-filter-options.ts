@@ -53,7 +53,10 @@ export default function useProductFilterOptions() {
 		],
 		[ PRODUCT_FILTER_KEY_PRICES ]: [
 			{ key: PRODUCT_PRICE_FREE, label: translate( 'Free' ) },
-			{ key: PRODUCT_PRICE_PAID, label: translate( 'Paid' ) },
+			{
+				key: PRODUCT_PRICE_PAID,
+				label: translate( 'Paid', { context: 'Label for a paid subscription plan' } ),
+			},
 		],
 	};
 }
