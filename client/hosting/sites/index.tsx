@@ -25,20 +25,26 @@ export default function () {
 		maybeRemoveCheckoutSuccessNotice,
 		sanitizeQueryParameters,
 		navigation,
-		checkReferrerForSiteSelection,
 		sitesDashboard,
 		makeLayout,
+		checkReferrerForSiteSelection,
 		clientRender
 	);
 }
 
 function checkReferrerForSiteSelection( context, next ) {
-	// this would change the selected site back to the referrer every time we load back to the dashboard.
-	// we will likely need to manage this somehow, maybe setting and clearing an initial referrer in the store?
-	const { referrer } = document;
-	const referringSite = referrer && getSiteIdBySlug( context.store.getState(), referrer );
-	if ( referringSite ) {
-		context.store.dispatch( setSelectedSiteId( referringSite ) );
+	// const { referrer } = document;
+	const referrer = 'https://atomicblog20240228.wpcomstaging.com/';
+	// Only evluate this on initialization. Note im not 100% sure if this init value is fully
+	// accurate for what we want, but on initial inspection it seems promising.
+	if ( ! context.init || ! referrer ) {
+		next();
+	}
+
+	const potentialSiteSlug = new URL( referrer ).hostname || '';
+	const referringSiteId = getSiteIdBySlug( context.store.getState(), potentialSiteSlug );
+	if ( referringSiteId ) {
+		context.store.dispatch( setSelectedSiteId( referringSiteId ) );
 	}
 
 	next();
