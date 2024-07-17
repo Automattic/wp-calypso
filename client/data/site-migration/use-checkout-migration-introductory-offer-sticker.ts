@@ -32,7 +32,7 @@ export const useCheckoutMigrationIntroductoryOfferSticker = (
 			tempRefPath = backUrl.searchParams.get( 'ref' ) ?? '';
 		}
 
-		return REF_PATHS_WITH_INTRODUCTORY_OFFER.includes( tempRefPath );
+		return REF_PATHS_WITH_INTRODUCTORY_OFFER.some( ( path ) => tempRefPath.includes( path ) );
 	}, [ refPath, checkoutBackPath, siteId ] );
 
 	useEffect( () => {
