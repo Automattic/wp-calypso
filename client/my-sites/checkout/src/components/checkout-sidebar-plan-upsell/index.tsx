@@ -206,16 +206,12 @@ export function CheckoutSidebarPlanUpsell() {
 		<>
 			<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
-					{ isComparisonWithIntroOffer && (
-						<>
-							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-								<strong>{ __( 'Plan' ) }</strong>
-							</div>
-							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-								<strong>{ cellLabel }</strong>
-							</div>
-						</>
-					) }
+					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+						<strong>{ __( 'Plan' ) }</strong>
+					</div>
+					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+						<strong>{ isComparisonWithIntroOffer ? cellLabel : __( 'Cost' ) }</strong>
+					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ currentVariant.variantLabel }
 					</div>
