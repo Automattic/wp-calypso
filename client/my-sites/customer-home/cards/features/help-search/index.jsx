@@ -1,7 +1,7 @@
 import { Card, Gridicon } from '@automattic/components';
-import { Button } from '@wordpress/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
+import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';

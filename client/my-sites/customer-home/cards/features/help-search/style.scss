@@ -42,6 +42,7 @@ $min_results_height: 180px;
 		color: var(--color-text);
 		line-height: 1;
 		font-size: inherit;
+		height: auto; /* necessary to reset @wordpress/components button height */
 
 		@include break-mobile {
 			padding: 10px $card_padding_large;
