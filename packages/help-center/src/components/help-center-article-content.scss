@@ -226,6 +226,10 @@
 		& > button {
 			display: none;
 		}
+		+ h2 {
+			// fix scrolling issues due to sticky header
+			scroll-margin-top: 69px;
+		}
 	}
 
 	.wp-block-wpsupport3-update-plan-cta {
