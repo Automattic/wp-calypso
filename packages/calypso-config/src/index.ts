@@ -81,6 +81,7 @@ const flagEnvironments = [
 	'stage',
 	'jetpack-cloud-stage',
 	'a8c-for-agencies-stage',
+	'a8c-for-hosts-stage',
 ];
 
 if (

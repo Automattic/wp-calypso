@@ -1,0 +1,26 @@
+{
+	"env": "development",
+	"env_id": "a8c-for-hosts-development",
+	"favicon_url": "/calypso/images/favicons/favicon-a4a-dev.ico",
+	"client_slug": "browser",
+	"protocol": "http",
+	"hostname": "hosts.localhost",
+	"i18n_default_locale_slug": "en",
+	"port": 3000,
+	"site_name": "Automattic Partner Portal",
+	"features": {
+		"a8c-for-hosts": true,
+		"always_use_logout_url": true,
+		"dev/auth-helper": true,
+		"dev/preferences-helper": true
+	},
+	"enable_all_sections": false,
+	"sections": {
+		"a8c-for-hosts": true
+	},
+	"site_filter": [],
+	"theme": "a8c-for-agencies",
+	"restricted_me_access": false,
+	"theme_color": "#029CD7",
+	"hotjar_enabled": true
+}

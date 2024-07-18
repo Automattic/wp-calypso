@@ -853,6 +853,13 @@ const sections = [
 		module: 'calypso/a8c-for-agencies/sections/client',
 		group: 'a8c-for-agencies',
 	},
+	{
+		name: 'a8c-for-hosts',
+		paths: [ '/' ],
+		module: 'calypso/a8c-for-hosts',
+		group: 'a8c-for-hosts',
+		enableLoggedOut: true,
+	},
 ];
 
 module.exports = sections;
