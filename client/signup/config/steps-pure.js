@@ -359,6 +359,7 @@ export function generateSteps( {
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				useEmailOnboardingSubheader: true,
+				hideFreePlan: true,
 			},
 		},
 
