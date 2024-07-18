@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
@@ -55,6 +56,21 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 				// show data or an overlay
 				<StatsModule
 					path="authors"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate(
+								'Learn about your most {{link}}popular authors{{/link}} to better understand how they contribute to grow your site.',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#authors` ) } />,
+									},
+									context:
+										'Stats: Link in a popover for the Posts & Pages when the module has data',
+								}
+							) }
+						</StatsInfoArea>
+					}
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }

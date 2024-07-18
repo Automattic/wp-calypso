@@ -68,6 +68,10 @@ export type StatsCardProps = {
 	title: string;
 	titleURL?: string;
 	titleAriaLevel?: number;
+	/**
+	 * @property {React.ReactNode} titleNodes - additional nodes to be displayed next to the title - use TitleExtras component for unified resutl.
+	 */
+	titleNodes?: React.ReactNode;
 	footerAction?: {
 		label?: string;
 		url?: string;
