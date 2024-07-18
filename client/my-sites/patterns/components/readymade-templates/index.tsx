@@ -72,7 +72,7 @@ export const ReadymadeTemplates = ( {
 			{ ...props }
 			bodyFullWidth
 			description={ translate(
-				'Explore our beautiful site layouts made with patterns that you can fully customize to fit your needs.'
+				'Explore a collection of beautiful site layouts made with our patterns.'
 			) }
 			id="readymade-templates-section"
 			theme="dark"
