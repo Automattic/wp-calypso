@@ -41,9 +41,7 @@ $min_results_height: 180px;
 		padding: 10px $card_padding_small;
 		color: var(--color-text);
 		line-height: 1;
-		font-size: $font-body;
-		font-weight: 400;
-		text-rendering: optimizeLegibility; /* match rest of inline help */
+		font-size: inherit;
 
 		@include break-mobile {
 			padding: 10px $card_padding_large;
@@ -52,13 +50,6 @@ $min_results_height: 180px;
 		&:hover,
 		&:focus {
 			background: var(--color-neutral-0);
-		}
-
-		// Resetting these values for proper Gridicon
-		// placement while nested in a Button.
-		&.button .gridicon {
-			top: inherit;
-			margin-top: inherit;
 		}
 	}
 

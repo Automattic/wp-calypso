@@ -1,4 +1,5 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
@@ -79,7 +80,7 @@ export default function HelpSearch() {
 					</div>
 				</div>
 				<div className="help-search__footer">
-					<Button borderless className="help-search__cta" onClick={ onClick }>
+					<Button className="help-search__cta" onClick={ onClick }>
 						<span className="help-search__help-icon">
 							<Gridicon icon="help" size={ 36 } />
 						</span>
