@@ -456,6 +456,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 		const annualPrice = getRenewalPrice( purchase ) / 12;
+		// TODO clk this breaks due to comparing integer (plan) with non-integer (purchase) pricing
 		const savings = Math.floor(
 			( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
 		);
