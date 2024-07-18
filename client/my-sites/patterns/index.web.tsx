@@ -39,6 +39,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 				value={ {
 					category: context.params.category ?? '',
 					isGridView: !! context.query.grid,
+					section: context.hashstring,
 					patternPermalinkId: extractPatternIdFromHash(),
 					patternTypeFilter:
 						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,

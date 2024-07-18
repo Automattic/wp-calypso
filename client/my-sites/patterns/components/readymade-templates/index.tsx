@@ -1,12 +1,16 @@
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
 
 import './style.scss';
 
-export const ReadymadeTemplates = () => {
+export const ReadymadeTemplates = ( {
+	forwardRef,
+}: {
+	forwardRef: RefObject< HTMLDivElement > | null;
+} ) => {
 	const translate = useTranslate();
 	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -61,12 +65,16 @@ export const ReadymadeTemplates = () => {
 		return;
 	}
 
+	const props = forwardRef ? { forwardRef } : {};
+
 	return (
 		<PatternsSection
+			{ ...props }
 			bodyFullWidth
 			description={ translate(
-				'Explore a collection of beautiful site layouts made with our patterns.'
+				'Explore our beautiful site layouts made with patterns that you can fully customize to fit your needs.'
 			) }
+			id="readymade-templates-section"
 			theme="dark"
 			title={ translate( 'Ready-to-use site layouts' ) }
 		>

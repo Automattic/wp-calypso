@@ -48,6 +48,7 @@ a.readymade-template-details-back {
 
 .readymade-template-details-content {
 	width: 45%;
+	line-height: 26px;
 
 	@media (max-width: $break-wide) {
 		width: 50%;
@@ -55,6 +56,24 @@ a.readymade-template-details-back {
 
 	@media (max-width: $break-large) {
 		width: 100%;
+	}
+
+	color: var(--studio-gray-20);
+
+	a {
+		text-decoration: underline;
+		text-underline-offset: 4px;
+		color: var(--studio-white);
+	}
+}
+
+.readymade-template-details-info {
+	margin-top: 32px;
+
+	.readymade-template-details-subheading {
+		color: var(--studio-white);
+		font-weight: 500;
+		margin-bottom: 8px;
 	}
 }
 
@@ -108,6 +127,7 @@ a.readymade-template-details-back {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	color: var(--studio-white);
 }
 
 .readymade-template-details-actions {

@@ -39,7 +39,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 			<section className="readymade-template-details-wrapper">
 				<div className="readymade-template-details-section">
 					<a
-						href={ addLocaleToPathLocaleInFront( '/patterns' ) }
+						href={ addLocaleToPathLocaleInFront( '/patterns' ) + '#readymade-templates-section' }
 						className="readymade-template-details-back"
 					>
 						<Icon icon={ arrowLeft } size={ 24 } /> { translate( 'Back' ) }
@@ -75,6 +75,28 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 								// eslint-disable-next-line react/no-danger
 								dangerouslySetInnerHTML={ { __html: readymadeTemplate.description } }
 							/>
+
+							<div className="readymade-template-details-info">
+								<div className="readymade-template-details-subheading">
+									{ translate( 'Customize it to your heart’s content' ) }
+								</div>
+
+								<p>
+									{ translate(
+										'Begin with this layout and transform it using our powerful site editing tools.'
+									) }
+								</p>
+								<p>
+									{ translate(
+										'Modify the layout, colors, typography, and content to fit your unique style and needs. Plus, use any pattern from our <a href="/patterns">pattern library</a> to enhance and tailor your site ensuring it truly stands out.'
+									) }
+								</p>
+								<p>
+									<a href="/support/site-editor">
+										{ translate( 'Learn more about how the site editor works.' ) }
+									</a>
+								</p>
+							</div>
 						</div>
 						<div className="readymade-template-details-preview">
 							<img

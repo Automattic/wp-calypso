@@ -49,7 +49,11 @@ const PatternLibraryBody = styled.div``;
 export const patternFiltersClassName = 'pattern-library__filters';
 
 // Scroll to anchoring position of category pill navigation element
-function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowThreshold = false ) {
+function scrollToPatternView(
+	stickyFiltersElement: HTMLDivElement,
+	onlyIfBelowThreshold = false,
+	scrollBehavior: ScrollBehavior = 'smooth'
+) {
 	const coords = stickyFiltersElement.getBoundingClientRect();
 	const style = getComputedStyle( stickyFiltersElement );
 	const parsedTop = /(\d+(\.\d+)?)px/.exec( style.top );
@@ -66,7 +70,7 @@ function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowT
 		stickyFiltersElement.style.removeProperty( 'position' );
 
 		window.scrollBy( {
-			behavior: 'smooth',
+			behavior: scrollBehavior,
 			top: staticCoords.top,
 		} );
 	} );
@@ -87,7 +91,7 @@ export const PatternLibrary = ( {
 	const navRef = useRef< HTMLDivElement >( null );
 
 	const { recordPatternsEvent } = useRecordPatternsEvent();
-	const { category, searchTerm, isGridView, patternTypeFilter, patternPermalinkId } =
+	const { category, searchTerm, section, isGridView, patternTypeFilter, patternPermalinkId } =
 		usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
@@ -140,7 +144,13 @@ export const PatternLibrary = ( {
 		if ( navRef.current && searchTerm ) {
 			scrollToPatternView( navRef.current );
 		}
-	}, [ searchTerm ] );
+	}, [ searchTerm, section ] );
+
+	useEffect( () => {
+		if ( navRef.current && section ) {
+			scrollToPatternView( navRef.current, false, 'instant' );
+		}
+	}, [ section ] );
 
 	const [ isSticky, setIsSticky ] = useState( false );
 	const prevNavTopValue = useRef( 0 );
@@ -259,7 +269,7 @@ export const PatternLibrary = ( {
 					className={ clsx( patternFiltersClassName, {
 						'pattern-library__filters--sticky': isSticky,
 					} ) }
-					ref={ navRef }
+					ref={ ! section ? navRef : null }
 				>
 					<div className="pattern-library__filters-inner">
 						<CategoryPillNavigation
@@ -359,7 +369,11 @@ export const PatternLibrary = ( {
 					</PatternLibraryBody>
 				) }
 
-				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && <ReadymadeTemplates /> }
+				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
+					<ReadymadeTemplates
+						forwardRef={ 'readymade-templates-section' === section ? navRef : null }
+					/>
+				) }
 
 				{ ! isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
 					<PatternsCopyPasteInfo theme="dark" />
