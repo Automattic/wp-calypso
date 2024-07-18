@@ -13,6 +13,7 @@ import {
 	removeLocaleFromPathLocaleInFront,
 } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { removeQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -38,6 +39,7 @@ import {
 } from 'calypso/state/immediate-login/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { hydrate, render } from './web-util.js';
@@ -385,5 +387,17 @@ export const notFound = ( context, next ) => {
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
+	next();
+};
+
+/**
+ * Middleware to set the selected site ID based on the `origin_site_id` query parameter.
+ */
+export const setSelectedSiteIdByOrigin = ( context, next ) => {
+	const originSiteId = ( context.query.origin_site_id ?? '' ).trim();
+	if ( originSiteId ) {
+		context.store.dispatch( setSelectedSiteId( originSiteId ) );
+		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_site_id' ) );
+	}
 	next();
 };

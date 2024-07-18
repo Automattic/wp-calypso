@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { StatsCard } from '@automattic/components';
+import { StatsCard, StatsCardTitleExtras } from '@automattic/components';
 import clsx from 'clsx';
 import React from 'react';
 import { STATS_FEATURE_UTM_STATS } from 'calypso/my-sites/stats/constants';
@@ -57,7 +57,7 @@ const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 				<StatsCard
 					title="UTM"
 					className={ clsx( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
-					isNew
+					titleNodes={ <StatsCardTitleExtras isNew /> }
 				>
 					<StatsModulePlaceholder isLoading />
 				</StatsCard>

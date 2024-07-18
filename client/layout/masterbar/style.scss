@@ -320,7 +320,7 @@ body.is-mobile-app-view {
 				display: inline-block;
 				width: 100%;
 				padding: 0 0 0 6px;
-				color: var(--color-masterbar-text);
+				color: var(--color-masterbar-submenu-text, var(--color-masterbar-text));
 			}
 
 			.is-link {
@@ -332,14 +332,14 @@ body.is-mobile-app-view {
 				text-align: left;
 
 				&:hover {
-					color: var(--color-masterbar-highlight);
+					color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
 				}
 			}
 
 			&:hover {
 				background: var(--color-masterbar-item-hover-background);
 				a {
-					color: var(--color-masterbar-highlight);
+					color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
 				}
 			}
 

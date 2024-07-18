@@ -1,4 +1,8 @@
 import { Card, Gridicon } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
+import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
+import { Button } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -11,6 +15,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
 const HELP_COMPONENT_LOCATION = 'customer-home';
+const HELP_CENTER_STORE = HelpCenter.register();
 
 const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
@@ -42,6 +47,14 @@ export default function HelpSearch() {
 
 		dispatch( recordTracksEvent( `calypso_inlinehelp_${ type }_open`, tracksData ) );
 	};
+	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { url } = useStillNeedHelpURL();
+
+	const onClick = () => {
+		setInitialRoute( url );
+		setShowHelpCenter( true );
+		dispatch( recordTracksEvent( 'calypso_inlinehelp_get_help_click' ) );
+	};
 
 	return (
 		<>
@@ -67,12 +80,12 @@ export default function HelpSearch() {
 					</div>
 				</div>
 				<div className="help-search__footer">
-					<a className="help-search__cta" href="/help/contact">
+					<Button className="help-search__cta" onClick={ onClick }>
 						<span className="help-search__help-icon">
 							<Gridicon icon="help" size={ 36 } />
 						</span>
-						{ translate( 'Contact support' ) }
-					</a>
+						{ translate( 'Get help' ) }
+					</Button>
 				</div>
 			</Card>
 		</>

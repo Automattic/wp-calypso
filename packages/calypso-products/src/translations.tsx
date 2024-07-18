@@ -547,6 +547,14 @@ export const getJetpackProductsTaglines = (): Record<
 			default: backupAddonTagLine,
 			owned: backupAddonOwnedTagLine,
 		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY ]: {
 			default: backupAddonTagLine,
 			owned: backupAddonOwnedTagLine,
@@ -556,6 +564,14 @@ export const getJetpackProductsTaglines = (): Record<
 			owned: backupAddonOwnedTagLine,
 		},
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY ]: {
 			default: backupAddonTagLine,
 			owned: backupAddonOwnedTagLine,
 		},

@@ -5,6 +5,7 @@ import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -124,6 +125,27 @@ const StatsModuleUTM = ( {
 		? generateFileNameForDownload( siteSlug, period )
 		: '';
 
+	const titleNodes = (
+		<StatsInfoArea isNew>
+			{ translate(
+				'Track your campaign {{link}}UTM performance data{{/link}}. Generate URL codes with our builder.',
+				{
+					comment: '{{link}} links to support documentation.',
+					components: {
+						link: (
+							<a
+								href={ localizeUrl(
+									`${ JETPACK_SUPPORT_URL }#harnessing-utm-stats-for-precision-tracking`
+								) }
+							/>
+						),
+					},
+					context: 'Stats: Popover information when the UTM module has data',
+				}
+			) }
+		</StatsInfoArea>
+	);
+
 	return (
 		<>
 			{ isNewEmptyStateEnabled && (
@@ -141,6 +163,7 @@ const StatsModuleUTM = ( {
 							<StatsCard
 								className={ className }
 								title={ moduleStrings.title }
+								titleNodes={ <StatsInfoArea isNew /> }
 								isEmpty
 								emptyMessage={
 									<EmptyModuleCard
@@ -175,6 +198,7 @@ const StatsModuleUTM = ( {
 									data={ data }
 									useShortLabel={ useShortLabel }
 									title={ moduleStrings?.title }
+									titleNodes={ titleNodes }
 									emptyMessage={ <div>{ moduleStrings.empty }</div> }
 									metricLabel={ metricLabel }
 									showMore={

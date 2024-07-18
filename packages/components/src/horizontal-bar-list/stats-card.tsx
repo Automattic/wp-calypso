@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import BadgeNew from './sideElements/badge-new';
 import type { StatsCardProps } from './types';
 
 import './stats-card.scss';
@@ -13,9 +12,9 @@ const StatsCard = ( {
 	title,
 	titleURL,
 	titleAriaLevel = 4,
+	titleNodes,
 	footerAction,
 	isEmpty,
-	isNew,
 	emptyMessage,
 	heroElement,
 	splitHeader,
@@ -38,8 +37,8 @@ const StatsCard = ( {
 			role="heading"
 			aria-level={ titleAriaLevel }
 		>
-			{ title }
-			{ isNew && <BadgeNew /> }
+			<div>{ title }</div>
+			<div className={ `${ BASE_CLASS_NAME }-header__title-nodes` }>{ titleNodes }</div>
 		</div>
 	);
 
