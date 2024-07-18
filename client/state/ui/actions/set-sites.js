@@ -14,7 +14,7 @@ export const setSelectedSiteId = ( siteId ) => {
 
 		dispatch( {
 			type: PREV_SELECTED_SITE_SET,
-			value: getSelectedSiteId( currentState ),
+			siteId: getSelectedSiteId( currentState ),
 		} );
 
 		dispatch( {
@@ -35,7 +35,7 @@ export const setAllSitesSelected = () => {
 
 		dispatch( {
 			type: PREV_SELECTED_SITE_SET,
-			value: getSelectedSiteId( currentState ),
+			siteId: getSelectedSiteId( currentState ),
 		} );
 
 		// Then dispatch SELECTED_SITE_SET
