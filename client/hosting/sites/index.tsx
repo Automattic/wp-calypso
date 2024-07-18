@@ -1,7 +1,9 @@
 import page from '@automattic/calypso-router';
+import { getSiteIdBySlug } from '@automattic/data-stores/src/site/selectors';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation } from 'calypso/my-sites/controller';
 import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	maybeRemoveCheckoutSuccessNotice,
 	sanitizeQueryParameters,
@@ -25,6 +27,25 @@ export default function () {
 		navigation,
 		sitesDashboard,
 		makeLayout,
+		checkReferrerForSiteSelection,
 		clientRender
 	);
+}
+
+function checkReferrerForSiteSelection( context, next ) {
+	const { referrer } = document;
+	// Only evluate this on initialization. Note im not 100% sure if this init value is fully
+	// accurate for what we want, but on initial inspection it seems promising.
+	if ( ! context.init || ! referrer ) {
+		next();
+		return;
+	}
+
+	const potentialSiteSlug = new URL( referrer ).hostname || '';
+	const referringSiteId = getSiteIdBySlug( context.store.getState(), potentialSiteSlug );
+	if ( referringSiteId ) {
+		context.store.dispatch( setSelectedSiteId( referringSiteId ) );
+	}
+
+	next();
 }
