@@ -96,9 +96,12 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		hasSiteProductJetpackStatsPWYWOnly( state, siteId )
 	);
 
-	const shouldShowPaywallNotice = useSelector( ( state ) => {
-		return hasReachedPaywallMonthlyViews( state, siteId );
-	} );
+	// Show the paywall notice if the site has reached the monthly views limit
+	// and no commercial purchase.
+	const shouldShowPaywallNotice =
+		useSelector( ( state ) => {
+			return hasReachedPaywallMonthlyViews( state, siteId );
+		} ) && ! isCommercialOwned;
 
 	const noticeOptions = {
 		siteId,
