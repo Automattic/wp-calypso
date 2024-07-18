@@ -3,6 +3,7 @@ import {
 	SELECTED_SITE_SET,
 	SECTION_LOADING_SET,
 	NOTIFICATIONS_PANEL_TOGGLE,
+	PREV_SELECTED_SITE_SET,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
@@ -29,6 +30,22 @@ export const selectedSiteId = withSchemaValidation(
 		switch ( action.type ) {
 			case SELECTED_SITE_SET:
 				return action.siteId || null;
+		}
+
+		return state;
+	}
+);
+
+export const prevSelectedSiteId = withSchemaValidation(
+	{ type: [ 'number', 'null' ] },
+	( state = null, action ) => {
+		switch ( action.type ) {
+			case PREV_SELECTED_SITE_SET:
+				// Don't set nullish values for this. No selection is not a valid previous selection.
+				if ( action.siteId ) {
+					return action.siteId;
+				}
+				return state;
 		}
 
 		return state;
@@ -82,6 +99,7 @@ const reducer = combineReducers( {
 	mediaModal,
 	postTypeList,
 	preview,
+	prevSelectedSiteId,
 	section,
 	selectedSiteId,
 	siteSelectionInitialized,
