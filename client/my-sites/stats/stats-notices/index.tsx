@@ -90,7 +90,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		wpcomSiteHasPaidStatsFeature;
 	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 
-	const { isRequestingSitePurchases, isCommercialOwned } = useStatsPurchases( siteId );
+	const { isRequestingSitePurchases, isCommercialOwned, supportCommercialUse } =
+		useStatsPurchases( siteId );
 
 	const hasPWYWPlanOnly = useSelector( ( state ) =>
 		hasSiteProductJetpackStatsPWYWOnly( state, siteId )
@@ -101,7 +102,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const shouldShowPaywallNotice =
 		useSelector( ( state ) => {
 			return hasReachedPaywallMonthlyViews( state, siteId );
-		} ) && ! isCommercialOwned;
+		} ) && ! supportCommercialUse;
 
 	const noticeOptions = {
 		siteId,
