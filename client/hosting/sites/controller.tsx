@@ -7,7 +7,6 @@ import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { removeNotice } from 'calypso/state/notices/actions';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SitesDashboard from './components/sites-dashboard';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
