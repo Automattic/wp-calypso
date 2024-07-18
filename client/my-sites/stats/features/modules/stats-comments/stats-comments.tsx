@@ -17,7 +17,7 @@ import Comments from '../../../stats-comments';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatsComments: React.FC< StatsDefaultModuleProps > = ( { query, className } ) => {
+const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsComments';
@@ -27,10 +27,10 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { query, className 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
 	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
-		isRequestingSiteStatsForQuery( state, siteId, statType, query )
+		isRequestingSiteStatsForQuery( state, siteId, statType, {} )
 	);
 	const data = useSelector( ( state ) =>
-		getSiteStatsNormalizedData( state, siteId, statType, query )
+		getSiteStatsNormalizedData( state, siteId, statType, {} )
 	) as [ id: number, label: string ];
 
 	return (
