@@ -286,18 +286,23 @@ export const PatternLibrary = ( {
 				</div>
 
 				{ isHomePage && (
-					<CategoryGallery
-						title={ translate( 'Ship faster, ship more', {
-							comment:
-								'Heading text for a section in the Pattern Library with links to block pattern categories',
-							textOnly: true,
-						} ) }
-						description={ translate(
-							'Choose from a library of beautiful, functional design patterns to build exactly the pages you need—or your client needs—in no time.'
+					<>
+						<CategoryGallery
+							title={ translate( 'Build anything with patterns', {
+								comment:
+									'Heading text for a section in the Pattern Library with links to block pattern categories',
+								textOnly: true,
+							} ) }
+							description={ translate(
+								'Choose from a library of beautiful, functional design patterns to build exactly the pages you need—or your client needs—in no time.'
+							) }
+							categories={ categories }
+							patternTypeFilter={ PatternTypeFilter.REGULAR }
+						/>
+						{ isEnabled( 'readymade-templates/showcase' ) && (
+							<PatternsCopyPasteInfo theme="gray" />
 						) }
-						categories={ categories }
-						patternTypeFilter={ PatternTypeFilter.REGULAR }
-					/>
+					</>
 				) }
 
 				{ ! isHomePage && (
@@ -359,27 +364,26 @@ export const PatternLibrary = ( {
 					</PatternLibraryBody>
 				) }
 
-				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && <ReadymadeTemplates /> }
-
 				{ ! isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
 					<PatternsCopyPasteInfo theme="dark" />
 				) }
 
 				{ isHomePage && (
-					<CategoryGallery
-						title={ pageLayoutsHeading }
-						description={ translate(
-							'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
-						) }
-						categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
-						patternTypeFilter={ PatternTypeFilter.PAGES }
-					/>
+					<>
+						<CategoryGallery
+							title={ pageLayoutsHeading }
+							description={ translate(
+								'Our page layouts are exactly what you need to easily create professional-looking pages using preassembled patterns.'
+							) }
+							categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
+							patternTypeFilter={ PatternTypeFilter.PAGES }
+						/>
+						{ isEnabled( 'readymade-templates/showcase' ) && <ReadymadeTemplates /> }
+					</>
 				) }
-
-				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && <PatternsCopyPasteInfo /> }
 			</div>
 
-			<PatternsGetStarted theme="dark" />
+			<PatternsGetStarted theme={ isEnabled( 'readymade-templates/showcase' ) ? 'blue' : 'dark' } />
 		</>
 	);
 };
