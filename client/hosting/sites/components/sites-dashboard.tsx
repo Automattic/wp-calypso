@@ -84,7 +84,6 @@ const SitesDashboard = ( {
 	// Note - control params (eg. search, page, perPage, status...) are currently meant for
 	// initializing the dataViewsState. Further calculations should reference the dataViewsState.
 	queryParams: {
-		originSite,
 		page = 1,
 		perPage = DEFAULT_PER_PAGE,
 		search,
