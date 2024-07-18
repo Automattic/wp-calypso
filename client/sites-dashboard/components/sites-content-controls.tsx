@@ -13,6 +13,7 @@ import { SitesSearch } from './sites-search';
 import { SitesSortingDropdown } from './sites-sorting-dropdown';
 
 export interface SitesDashboardQueryParams {
+	originSite?: number;
 	page?: number;
 	perPage?: number;
 	search?: string;

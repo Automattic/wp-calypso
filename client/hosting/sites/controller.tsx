@@ -17,6 +17,7 @@ const getStatusFilterValue = ( status?: string ) => {
 
 function getQueryParams( context: Context ) {
 	return {
+		originSite: context.query.origin_site,
 		page: context.query.page ? parseInt( context.query.page ) : undefined,
 		perPage: context.query[ 'per-page' ] ? parseInt( context.query[ 'per-page' ] ) : undefined,
 		search: context.query.search,

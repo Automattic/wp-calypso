@@ -84,6 +84,7 @@ const SitesDashboard = ( {
 	// Note - control params (eg. search, page, perPage, status...) are currently meant for
 	// initializing the dataViewsState. Further calculations should reference the dataViewsState.
 	queryParams: {
+		originSite,
 		page = 1,
 		perPage = DEFAULT_PER_PAGE,
 		search,
@@ -94,6 +95,8 @@ const SitesDashboard = ( {
 	initialSiteFeature = DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
+	const dispatch = useDispatch();
+
 	const { __ } = useI18n();
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 
@@ -134,6 +137,9 @@ const SitesDashboard = ( {
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
 
 	useSyncSelectedSite( dataViewsState, setDataViewsState, selectedSite );
+	if ( originSite ) {
+		dispatch( setSelectedSiteId( originSite ) );
+	}
 
 	const { selectedSiteFeature, setSelectedSiteFeature } = useSyncSelectedSiteFeature( {
 		selectedSite,
