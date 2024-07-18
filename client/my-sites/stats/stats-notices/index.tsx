@@ -102,7 +102,10 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const shouldShowPaywallNotice =
 		useSelector( ( state ) => {
 			return hasReachedPaywallMonthlyViews( state, siteId );
-		} ) && ! supportCommercialUse;
+		} ) &&
+		! supportCommercialUse &&
+		isSiteJetpackNotAtomic &&
+		! isVip;
 
 	const noticeOptions = {
 		siteId,
