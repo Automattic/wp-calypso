@@ -1,23 +1,32 @@
-import { RenderedPattern } from '@automattic/block-renderer';
+import { RenderedContent } from '@automattic/block-renderer';
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
 import type { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 
-export const useRenderReadymadeTemplate = ( readymadeTemplate: ReadymadeTemplate ) =>
-	useQuery< { [ key: string ]: RenderedPattern } >( {
+export const useRenderReadymadeTemplate = (
+	readymadeTemplate: ReadymadeTemplate
+): RenderedContent =>
+	useQuery( {
 		queryKey: [ 'pattern-library', 'readymade-template', readymadeTemplate.template_id, 'render' ],
 		queryFn() {
-			return wpcom.req.get(
+			const x = wpcom.req.post(
 				{
-					path: `/sites/${ RENDERER_SITE_ID }/block-renderer/patterns/render`,
+					path: `/sites/${ RENDERER_SITE_ID }/block-renderer/content/render`,
 					apiNamespace: 'wpcom/v2',
+					method: 'POST',
 				},
 				{
-					pattern_ids: readymadeTemplate.patterns.map( ( { id } ) => id ).join( ',' ),
 					site_title: readymadeTemplate.title,
+				},
+				{
+					content:
+						readymadeTemplate.home?.header +
+						readymadeTemplate.home?.content +
+						readymadeTemplate.home?.footer,
 				}
 			);
+			return x;
 		},
 		staleTime: 5 * 60 * 1000,
 	} );

@@ -63,6 +63,10 @@ export type ReadymadeTemplateDetailsProps = {
 	id: number;
 };
 export type ReadymadeTemplateDetailsFC = React.FC< ReadymadeTemplateDetailsProps >;
+export type ReadymadeTemplatesProps = {
+	readymadeTemplates: ReadymadeTemplate[];
+};
+export type ReadymadeTemplatesFC = React.FC< ReadymadeTemplatesProps >;
 
 export type PatternType = 'pattern' | 'page-layout';
 export type PatternView = 'grid' | 'list';
