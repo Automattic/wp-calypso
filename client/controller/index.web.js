@@ -390,6 +390,9 @@ export const notFound = ( context, next ) => {
 	next();
 };
 
+/**
+ * Middleware to set the selected site ID based on the `origin_site` query parameter.
+ */
 export const setSelectSiteIdByOrigin = ( context, next ) => {
 	const originSite = ( context.query.origin_site ?? '' ).trim();
 	if ( originSite ) {
