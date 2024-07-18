@@ -20,6 +20,10 @@
 	.sidebar__menu-icon {
 		margin: 0;
 	}
+
+	.sidebar-v2__navigator-sub-menu .components-navigator-back-button {
+		background: none;
+	}
 }
 
 .a4a-sidebar__header {
@@ -59,9 +63,4 @@
 .a4a-sidebar__footer ul {
 	list-style: none;
 	margin: 0;
-}
-
-.theme-a8c-for-agencies .components-button,
-.theme-a8c-for-agencies .button .sidebar-v2__navigator-sub-menu .components-navigator-back-button {
-	background: none;
 }
