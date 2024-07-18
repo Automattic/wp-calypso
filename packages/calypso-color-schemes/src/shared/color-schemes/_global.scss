@@ -22,13 +22,13 @@ Uses custom theme highlight monochromatic palette for primary + accent
 
 .color-scheme.is-global {
 	/* Variables used in Calypso Modern */
-	--theme-text-color: #fff; /* Direct from wp-admin */
-	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
-	--theme-base-color: #1e1e1e; /* Direct from wp-admin */
-	--theme-base-color-rgb: 30, 30, 30; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-	--theme-submenu-text-color: #bcbcbc; /* mix( $base-color, $text-color, 30% ) */
-	--theme-submenu-background-color: #0c0c0c; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
-	--theme-icon-color: #ece6f6; /* Direct from wp-admin */
+	--theme-text-color: #f6f7f7; /* Direct from wp-admin */
+	--theme-text-color-rgb: 44, 51, 56; /* Manual conversion */
+	--theme-base-color: #2c3338; /* Direct from wp-admin */
+	--theme-base-color-rgb: 246, 247, 247; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-submenu-text-color: #f6f7f7; /* mix( $base-color, $text-color, 30% ) */
+	--theme-submenu-background-color: #1e1e1e; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
+	--theme-icon-color: #f6f7f7; /* Direct from wp-admin */
 	--theme-highlight-color: #3858e9; /* Direct from wp-admin */
 	--theme-highlight-color-rgb: 56, 88, 233; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
 	--theme-notification-color: #3858e9; /* Direct from wp-admin */
@@ -133,11 +133,13 @@ Uses custom theme highlight monochromatic palette for primary + accent
 	--color-masterbar-border: var(--theme-submenu-background-color);
 	--color-masterbar-text: var(--theme-text-color);
 	--color-masterbar-icon: var(--theme-icon-color);
-	--color-masterbar-highlight: var(--theme-highlight-color);
+	--color-masterbar-highlight: var(--theme-text-color);
 	--color-masterbar-unread-dot-background: var(--theme-notification-color);
-
 	--color-masterbar-item-hover-background: var(--theme-submenu-background-color);
 	--color-masterbar-item-active-background: var(--theme-submenu-background-color);
+	--color-masterbar-submenu-text: var(--studio-gray-10);
+	--color-masterbar-submenu-hover-text: var(--theme-text-color);
+
 	--color-masterbar-item-new-editor-background: var(--studio-gray-50);
 	--color-masterbar-item-new-editor-hover-background: var(--studio-gray-60);
 
