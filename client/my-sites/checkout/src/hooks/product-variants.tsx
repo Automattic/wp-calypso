@@ -46,8 +46,6 @@ export interface SitePlanData {
 	hasRedeemedDomainCredit?: boolean;
 	id: number;
 	interval: number;
-	introductoryOfferFormattedPrice?: string;
-	introductoryOfferRawPrice?: number;
 	isDomainUpgrade?: boolean;
 	productDisplayPrice?: string;
 	productName: string;

@@ -19,8 +19,6 @@ export const createSitePlanObject = ( plan ) => {
 		hasDomainCredit: Boolean( plan.has_domain_credit ),
 		id: Number( plan.id ),
 		interval: Number( plan.interval ),
-		introductoryOfferFormattedPrice: plan.introductory_offer_formatted_price,
-		introductoryOfferRawPrice: plan.introductory_offer_raw_price,
 		isDomainUpgrade: Boolean( plan.is_domain_upgrade ),
 		productName: plan.product_name,
 		productSlug: plan.product_slug,
