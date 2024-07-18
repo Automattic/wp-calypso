@@ -111,12 +111,6 @@ export function sitesDashboard( context: Context, next: () => void ) {
 		}
 	`;
 
-	const originSite = ( context.query.origin_site ?? '' ).trim();
-	if ( originSite ) {
-		context.store.dispatch( setSelectedSiteId( originSite ) );
-		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_site' ) );
-	}
-
 	context.primary = (
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />

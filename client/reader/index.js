@@ -6,6 +6,7 @@ import {
 	redirectLoggedOut,
 	redirectLoggedOutToSignup,
 	render as clientRender,
+	setSelectSiteIdByOrigin,
 } from 'calypso/controller';
 import {
 	blogListing,
@@ -52,6 +53,7 @@ export default async function () {
 			redirectLoggedOutToDiscover,
 			updateLastRoute,
 			sidebar,
+			setSelectSiteIdByOrigin,
 			following,
 			makeLayout,
 			clientRender
