@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender, setSelectSiteIdByOrigin } from 'calypso/controller';
+import { makeLayout, render as clientRender, setSelectedSiteIdByOrigin } from 'calypso/controller';
 import * as controller from './controller';
 
 import './style.scss';
@@ -8,7 +8,7 @@ export default function () {
 	page(
 		'/me',
 		controller.sidebar,
-		setSelectSiteIdByOrigin,
+		setSelectedSiteIdByOrigin,
 		controller.profile,
 		makeLayout,
 		clientRender
@@ -25,7 +25,7 @@ export default function () {
 	page(
 		'/me/get-apps',
 		controller.sidebar,
-		setSelectSiteIdByOrigin,
+		setSelectedSiteIdByOrigin,
 		controller.apps,
 		makeLayout,
 		clientRender

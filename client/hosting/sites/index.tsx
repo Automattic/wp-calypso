@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender, setSelectSiteIdByOrigin } from 'calypso/controller';
+import { makeLayout, render as clientRender, setSelectedSiteIdByOrigin } from 'calypso/controller';
 import { navigation } from 'calypso/my-sites/controller';
 import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
 import {
@@ -23,7 +23,7 @@ export default function () {
 		maybeRemoveCheckoutSuccessNotice,
 		sanitizeQueryParameters,
 		navigation,
-		setSelectSiteIdByOrigin,
+		setSelectedSiteIdByOrigin,
 		sitesDashboard,
 		makeLayout,
 		clientRender

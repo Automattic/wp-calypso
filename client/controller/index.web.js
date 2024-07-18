@@ -393,7 +393,7 @@ export const notFound = ( context, next ) => {
 /**
  * Middleware to set the selected site ID based on the `origin_site` query parameter.
  */
-export const setSelectSiteIdByOrigin = ( context, next ) => {
+export const setSelectedSiteIdByOrigin = ( context, next ) => {
 	const originSite = ( context.query.origin_site ?? '' ).trim();
 	if ( originSite ) {
 		context.store.dispatch( setSelectedSiteId( originSite ) );
