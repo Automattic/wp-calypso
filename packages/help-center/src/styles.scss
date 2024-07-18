@@ -32,6 +32,13 @@ $head-foot-height: 50px;
 			height: $head-foot-height;
 			padding: 16px 8px 16px 16px;
 
+			> div {
+				display: flex;
+				align-items: center;
+				justify-content: start;
+				gap: 0;
+			}
+
 			.help-center-header__maximize,
 			.help-center-header__minimize,
 			.help-center-header__close {
@@ -47,12 +54,17 @@ $head-foot-height: 50px;
 				transform-origin: center;
 			}
 
+			.help-center__drag-icon {
+				margin-right: 6px;
+			}
+
 			.help-center-header__text {
 				max-width: 300px;
 				font-size: $font-body-small;
 				font-weight: 500;
 				display: flex;
 				align-items: center;
+				flex: 1;
 
 				svg {
 					margin-right: 3px;

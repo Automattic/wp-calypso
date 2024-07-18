@@ -134,6 +134,7 @@ class StatsModule extends Component {
 			gateDownloads,
 			hasNoBackground,
 			skipQuery,
+			titleNodes,
 		} = this.props;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
@@ -159,6 +160,7 @@ class StatsModule extends Component {
 					data={ data }
 					useShortLabel={ useShortLabel }
 					title={ this.props.moduleStrings?.title }
+					titleNodes={ titleNodes }
 					emptyMessage={ moduleStrings.empty }
 					metricLabel={ metricLabel }
 					showMore={

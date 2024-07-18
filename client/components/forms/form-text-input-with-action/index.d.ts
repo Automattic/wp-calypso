@@ -9,7 +9,7 @@ export interface FormTextInputWithActionProps {
 	onBlur?: () => void;
 	onKeyDown?: () => void;
 	onChange?: ( param: string ) => void;
-	onAction?: () => void;
+	onAction?: ( param: string ) => void;
 	defaultValue?: string;
 	disabled?: boolean;
 	isError?: boolean;

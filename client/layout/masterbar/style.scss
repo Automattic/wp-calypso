@@ -263,6 +263,21 @@ body.is-mobile-app-view {
 	transition: all 0.2s ease-in-out;
 	justify-content: center;
 
+	&.masterbar__reader {
+		padding: 0 7px 0 4px;
+	}
+
+	&.masterbar__item-my-site-actions {
+		padding-left: 7px;
+	}
+
+	@media only screen and (max-width: 782px) {
+		&.masterbar__reader,
+		&.masterbar__item-my-site-actions {
+			padding: 0;
+		}
+	}
+
 	&.has-subitems {
 		display: block;
 	}
@@ -272,6 +287,11 @@ body.is-mobile-app-view {
 		align-items: center;
 		justify-content: center;
 		gap: 5px;
+	}
+
+	&.masterbar__item-my-site-actions > a,
+	&.masterbar__item-my-site > a {
+		gap: 6px;
 	}
 
 	.masterbar__item-subitems {
@@ -300,7 +320,7 @@ body.is-mobile-app-view {
 				display: inline-block;
 				width: 100%;
 				padding: 0 0 0 6px;
-				color: var(--color-masterbar-text);
+				color: var(--color-masterbar-submenu-text, var(--color-masterbar-text));
 			}
 
 			.is-link {
@@ -312,14 +332,14 @@ body.is-mobile-app-view {
 				text-align: left;
 
 				&:hover {
-					color: var(--color-masterbar-highlight);
+					color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
 				}
 			}
 
 			&:hover {
 				background: var(--color-masterbar-item-hover-background);
 				a {
-					color: var(--color-masterbar-highlight);
+					color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
 				}
 			}
 
@@ -363,8 +383,8 @@ body.is-mobile-app-view {
 	.gridicon,
 	svg {
 		fill: var(--color-masterbar-icon);
-		width: 20px;
-		height: 20px;
+		width: 24px;
+		height: 24px;
 	}
 
 	.gridicon {
@@ -382,7 +402,7 @@ body.is-mobile-app-view {
 		color: var(--color-masterbar-icon);
 	}
 	.dashicons-plus {
-		padding-top: 2px;
+		padding-top: 4px;
 	}
 
 	// The hover colors are supposed to be the same as those in wp-admin.
@@ -392,6 +412,12 @@ body.is-mobile-app-view {
 		.gridicon {
 			fill: var(--color-masterbar-highlight);
 		}
+
+		// Fix for light color scheme
+		.sidebar_svg-notifications path {
+			stroke: var(--color-masterbar-highlight);
+		}
+
 
 		.masterbar__item-subitems {
 			display: block;
@@ -480,22 +506,14 @@ body.is-mobile-app-view {
 		svg,
 		svg path,
 		.gridicon {
-			height: 32px;
-			width: 32px;
+			height: 36px;
+			width: 36px;
 		}
 
 		.dashicons-plus {
 			padding-top: 0;
 			&::before {
-				font-size: 38px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
-			}
-		}
-
-		.dashicons-menu-alt {
-			padding-top: 0;
-			&::before {
-				top: 0;
-				font-size: unset;
+				font-size: 40px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			}
 		}
 
@@ -513,6 +531,14 @@ body.is-mobile-app-view {
 
 			&:hover {
 				color: var(--color-masterbar-highlight);
+			}
+		}
+
+		.dashicons-menu-alt {
+			padding-top: 0;
+			&::before {
+				font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				top: 4px;
 			}
 		}
 	}
@@ -561,6 +587,11 @@ body.is-mobile-app-view {
 
 	&.masterbar__item-my-sites {
 		padding: 0 6px; // trying to match core's 35px width
+
+		@media only screen and (max-width: 782px) {
+			padding: 0;
+		}
+
 		.gridicon {
 			width: 24px;
 			height: 24px;
@@ -853,11 +884,12 @@ body.is-mobile-app-view {
 	}
 
 	.gravatar {
+		border: 1px solid var(--color-masterbar-border);
 		border-radius: unset;
 
 		@media only screen and (max-width: 782px) {
-			width: 22px;
-			height: 22px;
+			width: 26px;
+			height: 26px;
 		}
 	}
 
@@ -1073,8 +1105,8 @@ body.is-mobile-app-view {
 .masterbar-notifications {
 	svg {
 		overflow: overlay;
-		width: 24px;
-		height: 24px;
+		width: 27px;
+		height: 27px;
 
 		@media only screen and (max-width: 782px) {
 			width: 32px;
@@ -1261,7 +1293,7 @@ a.masterbar__quick-language-switcher {
 	padding: 0 11px;
 
 	svg {
-		fill: var(--color-masterbar-text);
+		fill: var(--color-masterbar-icon);
 		width: 24px;
 		height: 24px;
 
