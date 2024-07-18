@@ -39,8 +39,8 @@ import {
 } from 'calypso/state/immediate-login/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
-import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { setGloballySelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { hydrate, render } from './web-util.js';
 
@@ -393,11 +393,27 @@ export const notFound = ( context, next ) => {
 /**
  * Middleware to set the selected site ID based on the `origin_site_id` query parameter.
  */
-export const setSelectedSiteIdByOrigin = ( context, next ) => {
+export const setGloballySelectedSiteIdByOrigin = ( context, next ) => {
+	/**
+	 * The `origin_site_id` query parameter overrides the selected site ID.
+	 * This param is passed from wp-admin.
+	 */
 	const originSiteId = ( context.query.origin_site_id ?? '' ).trim();
 	if ( originSiteId ) {
-		context.store.dispatch( setSelectedSiteId( originSiteId ) );
+		context.store.dispatch( setGloballySelectedSiteId( originSiteId ) );
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_site_id' ) );
+		next();
+		return;
 	}
+
+	/**
+	 * Set selected site ID globally to use it on /domains/*, /themes, and /plugins, as well,
+	 * since The selected site ID is cleared on on /domains/*, /themes, /plugins, as those pages are aimed for non-site-specific context.
+	 */
+	const selectedSiteId = getSelectedSiteId( context.store.getState() );
+	if ( selectedSiteId ) {
+		context.store.dispatch( setGloballySelectedSiteId( selectedSiteId ) );
+	}
+
 	next();
 };

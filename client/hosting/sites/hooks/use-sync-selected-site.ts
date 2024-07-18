@@ -2,6 +2,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { setGloballySelectedSiteId } from 'calypso/state/ui/actions/set-sites';
 import type { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 
 export function useSyncSelectedSite(
@@ -21,6 +22,7 @@ export function useSyncSelectedSite(
 		}
 		isInitialLoad.current = false;
 		dispatch( setSelectedSiteId( dataViewsState.selectedItem?.ID ) );
+		dispatch( setGloballySelectedSiteId( dataViewsState.selectedItem?.ID ) );
 	}, [ dispatch, dataViewsState.selectedItem ] );
 
 	// If calypso state changes the selected site, ensure the dataViewsState is updated as well.

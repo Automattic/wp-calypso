@@ -92,4 +92,4 @@ export const redirectToHostingPromoIfNotAtomic = () => {};
 export const render = ( context ) => {};
 export const ProviderWrappedLayout = () => null;
 export const notFound = () => null;
-export const setSelectedSiteIdByOrigin = () => {};
+export const setGloballySelectedSiteIdByOrigin = () => {};

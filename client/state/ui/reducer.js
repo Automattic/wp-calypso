@@ -3,6 +3,7 @@ import {
 	SELECTED_SITE_SET,
 	SECTION_LOADING_SET,
 	NOTIFICATIONS_PANEL_TOGGLE,
+	GLOBALLY_SELECTED_SITE_SET,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
@@ -28,6 +29,24 @@ export const selectedSiteId = withSchemaValidation(
 	( state = null, action ) => {
 		switch ( action.type ) {
 			case SELECTED_SITE_SET:
+				return action.siteId || null;
+		}
+
+		return state;
+	}
+);
+
+/**
+ * Tracks the currently globally selected site ID.
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
+ */
+export const globallySelectedSiteId = withSchemaValidation(
+	{ type: [ 'number', 'null' ] },
+	( state = null, action ) => {
+		switch ( action.type ) {
+			case GLOBALLY_SELECTED_SITE_SET:
 				return action.siteId || null;
 		}
 
@@ -74,6 +93,7 @@ const reducer = combineReducers( {
 	appBannerVisibility,
 	appBannerDismissed,
 	checkout,
+	globallySelectedSiteId,
 	isSectionLoading,
 	isNotificationsOpen,
 	language,
