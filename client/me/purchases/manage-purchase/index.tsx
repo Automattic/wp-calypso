@@ -1271,7 +1271,6 @@ class ManagePurchase extends Component<
 						isProductOwner={ isProductOwner }
 					/>
 				) }
-
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }

@@ -939,6 +939,7 @@ export function purchaseType( purchase: Purchase ) {
 }
 
 export function getRenewalPrice( purchase: Purchase ) {
+	// TODO clk this returns non-integer values, which breaks comparisons/operations with plan integer-based pricing
 	return purchase.saleAmount || purchase.amount;
 }
 
