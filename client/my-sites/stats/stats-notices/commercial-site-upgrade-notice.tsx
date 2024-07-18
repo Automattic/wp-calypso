@@ -95,7 +95,7 @@ const CommercialSiteUpgradeNotice = ( {
 			}` }
 		>
 			<NoticeBanner
-				level="info"
+				level={ shouldShowPaywallNotice ? 'error' : 'info' }
 				title={ translate( 'Upgrade to Stats Commercial' ) }
 				onClose={ () => {} }
 				hideCloseButton
