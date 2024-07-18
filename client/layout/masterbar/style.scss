@@ -1260,6 +1260,12 @@ a.masterbar__quick-language-switcher {
 		@include breakpoint-deprecated( ">480px" ) {
 			padding: 1.5em;
 		}
+
+		&:hover {
+			.gridicon {
+				fill: var(--studio-gray-90);
+			}
+		}
 	}
 
 	.masterbar__secure-checkout-text {
