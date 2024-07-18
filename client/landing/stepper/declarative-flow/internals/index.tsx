@@ -16,6 +16,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
+import { useStartStepperPerformanceTracking } from '../../utils/performance-tracking';
 import { StepRoute, StepperLoader } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
@@ -42,6 +43,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const { navigate, params } = useFlowNavigation();
 	const currentStepRoute = params.step || '';
+
+	// Start tracking performance for this step.
+	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
 
 	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
 		() =>

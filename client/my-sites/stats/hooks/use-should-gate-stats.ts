@@ -5,7 +5,6 @@ import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
-import { getPlanUsageBillableMonthlyViews } from 'calypso/state/stats/plan-usage/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	STATS_FEATURE_DOWNLOAD_CSV,
@@ -35,10 +34,10 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_YEAR,
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
 } from '../constants';
-import { MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL } from './use-site-compulsory-plan-selection-qualified-check';
 import {
 	hasSupportedCommercialUse,
 	hasSupportedVideoPressUse,
+	hasReachedPaywallMonthlyViews,
 	hasCurrentUsageOverGracePeriod,
 } from './use-stats-purchases';
 
@@ -138,12 +137,11 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 
 		const isSiteCommercial = getSiteOption( state, siteId, 'is_commercial' ) || false;
 		if ( isSiteCommercial ) {
-			const billableMonthlyViews = getPlanUsageBillableMonthlyViews( state, siteId );
 			// Paywall basic stats for commercial sites with:
 			// 1. Monthly views reaching the paywall threshold.
 			// 2. Current usage passed over grace period days.
 			if (
-				billableMonthlyViews >= MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL &&
+				hasReachedPaywallMonthlyViews( state, siteId ) &&
 				hasCurrentUsageOverGracePeriod( state, siteId )
 			) {
 				return [

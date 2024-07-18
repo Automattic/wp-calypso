@@ -1182,8 +1182,12 @@ class SignupForm extends Component {
 		if ( this.props.currentUser && ! this.props.disableContinueAsUser ) {
 			return (
 				<ContinueAsUser
-					redirectPath={ this.props.redirectToAfterLoginUrl }
+					currentUser={ this.props.currentUser }
 					onChangeAccount={ this.handleOnChangeAccount }
+					redirectPath={ this.props.redirectToAfterLoginUrl }
+					isWoo={ this.props.isWoo }
+					isWooPasswordless={ this.props.isWooPasswordless }
+					isBlazePro={ this.props.isBlazePro }
 					notYouText={
 						this.props.notYouText ||
 						this.props.translate(
