@@ -1,13 +1,18 @@
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { Icon, arrowLeft, check, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { createElement, useEffect, useState } from 'react';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
 import { ReadymadeTemplateDetailsFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
+
+const PatternLibraryLink = ( { children }: { children: React.ReactNode } ) => (
+	<a href={ addLocaleToPathLocaleInFront( '/patterns' ) }>{ children }</a>
+);
 
 export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) => {
 	const translate = useTranslate();
@@ -87,8 +92,13 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 									) }
 								</p>
 								<p>
-									{ translate(
-										'Modify the layout, colors, typography, and content to fit your unique style and needs. Plus, use any pattern from our <a href="/patterns">pattern library</a> to enhance and tailor your site ensuring it truly stands out.'
+									{ createInterpolateElement(
+										translate(
+											'Modify the layout, colors, typography, and content to fit your unique style and needs. Plus, use any pattern from our <Link>pattern library</Link> to enhance and tailor your site ensuring it truly stands out.'
+										),
+										{
+											Link: createElement( PatternLibraryLink ),
+										}
 									) }
 								</p>
 								<p>
