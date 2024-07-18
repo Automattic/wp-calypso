@@ -48,15 +48,16 @@ import {
 	getSiteUrl,
 	getSiteAdminUrl,
 	getSiteHomeUrl,
+	getSite,
 } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
+	getPrevSelectedSiteId,
 	getSectionGroup,
 	getSectionName,
-	getSelectedSite,
 	getSelectedSiteId,
 } from 'calypso/state/ui/selectors';
 import Item from './item';
@@ -342,18 +343,11 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderSiteMenu() {
-		const {
-			currentSelectedSiteSlug,
-			translate,
-			siteTitle,
-			siteUrl,
-			isClassicView,
-			siteAdminUrl,
-			siteHomeUrl,
-		} = this.props;
+		const { siteSlug, translate, siteTitle, siteUrl, isClassicView, siteAdminUrl, siteHomeUrl } =
+			this.props;
 
 		// Only display when a site is selected.
-		if ( ! currentSelectedSiteSlug ) {
+		if ( ! siteSlug ) {
 			return null;
 		}
 
@@ -382,7 +376,7 @@ class MasterbarLoggedIn extends Component {
 
 	renderSiteActionMenu() {
 		const {
-			currentSelectedSiteSlug,
+			siteSlug,
 			isClassicView,
 			translate,
 			siteAdminUrl,
@@ -401,7 +395,7 @@ class MasterbarLoggedIn extends Component {
 
 		let siteActions = [];
 
-		if ( currentSelectedSiteSlug ) {
+		if ( siteSlug ) {
 			siteActions = [
 				{
 					label: translate( 'Post' ),
@@ -409,9 +403,7 @@ class MasterbarLoggedIn extends Component {
 				},
 				{
 					label: translate( 'Media' ),
-					url: isClassicView
-						? `${ siteAdminUrl }media-new.php`
-						: `/media/${ currentSelectedSiteSlug }`,
+					url: isClassicView ? `${ siteAdminUrl }media-new.php` : `/media/${ siteSlug }`,
 				},
 				{
 					label: translate( 'Page' ),
@@ -419,9 +411,7 @@ class MasterbarLoggedIn extends Component {
 				},
 				{
 					label: translate( 'User' ),
-					url: isClassicView
-						? `${ siteAdminUrl }user-new.php`
-						: `/people/new/${ currentSelectedSiteSlug }`,
+					url: isClassicView ? `${ siteAdminUrl }user-new.php` : `/people/new/${ siteSlug }`,
 				},
 			];
 		} else {
@@ -577,7 +567,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderCart() {
-		const { currentSelectedSiteSlug, currentSelectedSiteId, sectionGroup } = this.props;
+		const { siteSlug, siteId, sectionGroup } = this.props;
 		// Only display the masterbar cart when we are viewing a site-specific page.
 		if ( sectionGroup !== 'sites' ) {
 			return null;
@@ -589,8 +579,8 @@ class MasterbarLoggedIn extends Component {
 				goToCheckout={ this.goToCheckout }
 				onRemoveProduct={ this.onRemoveCartProduct }
 				onRemoveCoupon={ this.onRemoveCartProduct }
-				selectedSiteSlug={ currentSelectedSiteSlug }
-				selectedSiteId={ currentSelectedSiteId }
+				selectedSiteSlug={ siteSlug }
+				selectedSiteId={ siteId }
 			/>
 		);
 	}
@@ -846,15 +836,16 @@ export default connect(
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
 		const currentSelectedSiteId = getSelectedSiteId( state );
-		const siteId = currentSelectedSiteId || getPrimarySiteId( state );
+		const siteId =
+			currentSelectedSiteId || getPrevSelectedSiteId( state ) || getPrimarySiteId( state );
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
 			isSiteMigrationActiveRoute( state );
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
-		const currentSelectedSite = getSelectedSite( state );
-		const isClassicView = currentSelectedSite && siteUsesWpAdminInterface( currentSelectedSite );
+		const site = getSite( state, siteId );
+		const isClassicView = site && siteUsesWpAdminInterface( site );
 
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
@@ -874,7 +865,6 @@ export default connect(
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
-			currentSelectedSite,
 			isClassicView,
 			currentSelectedSiteSlug: currentSelectedSiteId
 				? getSiteSlug( state, currentSelectedSiteId )
@@ -892,8 +882,8 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
-			newPostUrl: getEditorUrl( state, currentSelectedSiteId, null, 'post' ),
-			newPageUrl: getEditorUrl( state, currentSelectedSiteId, null, 'page' ),
+			newPostUrl: getEditorUrl( state, siteId, null, 'post' ),
+			newPageUrl: getEditorUrl( state, siteId, null, 'page' ),
 		};
 	},
 	{
