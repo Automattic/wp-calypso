@@ -77,8 +77,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 				: `${ isVisible ? 'slideIn' : 'fadeOut' } .25s ease-out`,
 			// These are overwritten by the openingCoordinates.
 			// They are set to avoid Help Center from not loading on the page.
-			top: 70,
-			left: 'calc( 100vw - 500px )',
+			...( ! isMobile && { top: 70, left: 'calc( 100vw - 500px )' } ),
 			...openingCoordinates,
 		},
 		onAnimationEnd: toggleVisible,
