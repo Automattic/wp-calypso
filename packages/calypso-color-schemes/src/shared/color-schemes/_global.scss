@@ -1,34 +1,16 @@
 /*
-WP Admin Unthemed definitions:
-
-$text-color: #fff !default;
-$base-color: #23282d !default;
-$icon-color: hsl( hue( $base-color ), 7%, 95% ) !default;
-$highlight-color: #0073aa !default;
-$notification-color: #d54e21 !default;
-
-WP Admin Modern Definition:
-
-$base-color: #1e1e1e;
-$highlight-color: #3858e9;
-$menu-submenu-focus-text: #33f078;     <-- Applied to --color-sidebar-submenu-hover-text.
-$notification-color: $highlight-color;
-
-$link: $highlight-color;
-$link-focus: darken($highlight-color, 10%);
-
-Uses custom theme highlight monochromatic palette for primary + accent
+WPCom Global theme, Modern theme adjusted for use in calypso non site contexts
 */
 
 .color-scheme.is-global {
 	/* Variables used in Calypso Modern */
-	--theme-text-color: #f6f7f7; /* Direct from wp-admin */
-	--theme-text-color-rgb: 44, 51, 56; /* Manual conversion */
-	--theme-base-color: #2c3338; /* Direct from wp-admin */
-	--theme-base-color-rgb: 246, 247, 247; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-	--theme-submenu-text-color: #f6f7f7; /* mix( $base-color, $text-color, 30% ) */
-	--theme-submenu-background-color: #1e1e1e; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
-	--theme-icon-color: #f6f7f7; /* Direct from wp-admin */
+	--theme-text-color: #fff; /* Direct from wp-admin */
+	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
+	--theme-base-color: #1e1e1e; /* Direct from wp-admin */
+	--theme-base-color-rgb: 30, 30, 30; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-submenu-text-color: #bcbcbc; /* mix( $base-color, $text-color, 30% ) */
+	--theme-submenu-background-color: #0c0c0c; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
+	--theme-icon-color: #ece6f6; /* Direct from wp-admin */
 	--theme-highlight-color: #3858e9; /* Direct from wp-admin */
 	--theme-highlight-color-rgb: 56, 88, 233; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
 	--theme-notification-color: #3858e9; /* Direct from wp-admin */
