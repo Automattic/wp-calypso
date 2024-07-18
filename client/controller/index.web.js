@@ -391,13 +391,13 @@ export const notFound = ( context, next ) => {
 };
 
 /**
- * Middleware to set the selected site ID based on the `origin_site` query parameter.
+ * Middleware to set the selected site ID based on the `origin_site_id` query parameter.
  */
 export const setSelectedSiteIdByOrigin = ( context, next ) => {
-	const originSite = ( context.query.origin_site ?? '' ).trim();
-	if ( originSite ) {
-		context.store.dispatch( setSelectedSiteId( originSite ) );
-		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_site' ) );
+	const originSiteId = ( context.query.origin_site_id ?? '' ).trim();
+	if ( originSiteId ) {
+		context.store.dispatch( setSelectedSiteId( originSiteId ) );
+		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_site_id' ) );
 	}
 	next();
 };
