@@ -7,7 +7,13 @@ export const isCrowdsignalOAuth2Client = ( oauth2Client ) => {
 };
 
 export const isGravatarOAuth2Client = ( oauth2Client ) => {
-	return oauth2Client?.id === 1854;
+	if ( oauth2Client?.id === 1854 ) {
+		return true;
+	} else if ( oauth2Client?.source === 'gravatar' ) {
+		return true;
+	}
+
+	return false;
 };
 
 export const isWPJobManagerOAuth2Client = ( oauth2Client ) => {

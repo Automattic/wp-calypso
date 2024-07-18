@@ -51,6 +51,8 @@ class ConnectedApplicationItem extends Component {
 			meta = this.props.translate( 'Authentication' );
 		} else if ( 'global' === scope ) {
 			meta = this.props.translate( 'Global' );
+		} else if ( 'gravatar' === scope ) {
+			meta = this.props.translate( 'Gravatar' );
 		} else if ( site ) {
 			meta = site.site_name;
 		}
@@ -75,6 +77,10 @@ class ConnectedApplicationItem extends Component {
 					'including any Jetpack blogs that are connected to your WordPress.com account.'
 			);
 		} else if ( 'auth' === scope ) {
+			message = this.props.translate(
+				'This connection is not allowed to manage any of your blogs.'
+			);
+		} else if ( 'gravatar' === scope ) {
 			message = this.props.translate(
 				'This connection is not allowed to manage any of your blogs.'
 			);
