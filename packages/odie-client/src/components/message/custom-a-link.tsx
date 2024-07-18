@@ -27,7 +27,7 @@ const CustomALink = ( {
 		let urlHref = uriTransformer( href ?? '' );
 		try {
 			const url = new URL( urlHref, window.location.origin );
-			url.searchParams.set( 'wapuu', 'true' );
+			url.searchParams.set( 'help-center', 'wapuu' );
 			urlHref = url.toString();
 		} finally {
 			setTransformedHref( urlHref );

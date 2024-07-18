@@ -55,12 +55,7 @@ const HelpCenter: React.FC< Container > = ( {
 
 	useZendeskMessagingBindings( HELP_CENTER_STORE, hasActiveChats, isMessagingScriptLoaded );
 
-	const hasDefaultCoordinates = new URLSearchParams( window.location.search ).has( 'wapuu' );
-	const openingCoordinates = useOpeningCoordinates(
-		isMinimized,
-		isHelpCenterShown,
-		hasDefaultCoordinates
-	);
+	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
