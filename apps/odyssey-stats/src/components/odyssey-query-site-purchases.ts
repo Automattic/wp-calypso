@@ -47,18 +47,56 @@ async function queryOdysseyQuerySitePurchases(
 			.catch( ( error: APIError ) => error )
 	);
 }
+
 /**
  * Update site products in the Redux store by fetching purchases via API for Odyssey Stats.
  */
-
 const useOdysseyQuerySitePurchases = (
 	siteId: number | null,
 	shouldUseStatsBuiltInPurchasesApi = false
 ) => {
 	return useQuery( {
 		...getDefaultQueryParams(),
-		queryKey: [ 'odyssey-stats', 'site-purchases', siteId ],
+		queryKey: [ 'odyssey-stats', 'site-purchases', shouldUseStatsBuiltInPurchasesApi, siteId ],
 		queryFn: () => queryOdysseyQuerySitePurchases( siteId, shouldUseStatsBuiltInPurchasesApi ),
+		staleTime: 10 * 1000,
+		// If the module is not active, we don't want to retry the query.
+		retry: false,
+	} );
+};
+
+async function queryOdysseyQuerySitePurchasesFromMyJetpack(
+	siteId: number | null,
+	shouldUseStatsBuiltInPurchasesApi: boolean
+) {
+	if ( ! siteId || shouldUseStatsBuiltInPurchasesApi ) {
+		return;
+	}
+	return wpcom.req
+		.get( {
+			path: getApiPath( '/site/purchases', { siteId } ),
+			apiNamespace: getApiNamespace( 'my-jetpack/v1' ),
+		} )
+		.catch( ( error: APIError ) => error );
+}
+/**
+ * Update site products in the Redux store by fetching purchases via API for Odyssey Stats.
+ */
+const useOdysseyQuerySitePurchasesFromMyJetpack = (
+	siteId: number | null,
+	shouldUseStatsBuiltInPurchasesApi = false
+) => {
+	return useQuery( {
+		...getDefaultQueryParams< Array< object > >(),
+		queryKey: [
+			'odyssey-stats',
+			'site-purchases',
+			'my-jetapck',
+			shouldUseStatsBuiltInPurchasesApi,
+			siteId,
+		],
+		queryFn: () =>
+			queryOdysseyQuerySitePurchasesFromMyJetpack( siteId, shouldUseStatsBuiltInPurchasesApi ),
 		staleTime: 10 * 1000,
 		// If the module is not active, we don't want to retry the query.
 		retry: false,
@@ -71,9 +109,12 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 	);
 	const {
 		data: purchases,
-		isFetching,
+		isFetching: isFetchingSitePurchases,
 		isError: hasOtherErrors,
 	} = useOdysseyQuerySitePurchases( siteId, shouldUseStatsBuiltInPurchasesApi );
+	const { data: purchasesFromMyJetpack, isFetching: isFetchingSitePurchasesFromMyJetpack } =
+		useOdysseyQuerySitePurchasesFromMyJetpack( siteId, shouldUseStatsBuiltInPurchasesApi );
+	const isFetching = isFetchingSitePurchases || isFetchingSitePurchasesFromMyJetpack;
 	const reduxDispatch = useDispatch();
 
 	useEffect( () => {
@@ -96,6 +137,15 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 					error: 'purchase_fetch_failed',
 				} );
 			} else {
+				if ( purchasesFromMyJetpack && purchasesFromMyJetpack.length > 0 ) {
+					// Use My Jetpack response as a fallback.
+					reduxDispatch( {
+						type: PURCHASES_SITE_FETCH_COMPLETED,
+						siteId,
+						purchases: purchasesFromMyJetpack,
+					} );
+					return;
+				}
 				// TODO: Remove this after fixing the API permission issue from Jetpack.
 				reduxDispatch( {
 					type: PURCHASES_SITE_FETCH_COMPLETED,
@@ -117,7 +167,7 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 				purchases,
 			} );
 		}
-	}, [ purchases, isFetching, reduxDispatch, hasOtherErrors, siteId ] );
+	}, [ purchases, isFetching, reduxDispatch, hasOtherErrors, siteId, purchasesFromMyJetpack ] );
 
 	return null;
 }
