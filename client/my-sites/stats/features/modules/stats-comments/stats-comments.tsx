@@ -2,7 +2,7 @@ import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { comment } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useMemo } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector } from 'calypso/state';
@@ -29,9 +29,12 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, {} )
 	);
-	const data = useSelector( ( state ) =>
+
+	const data = useSelector( ( state: StatsStateProps ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, {} )
-	) as [ id: number, label: string ];
+	);
+
+	const hasPosts = useMemo( () => ( data?.posts?.length ?? 0 ) > 0, [ data ] );
 
 	return (
 		<>
@@ -47,11 +50,11 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 					withHero
 				/>
 			) }
-			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
+			{ ( ( ! isRequestingData && hasPosts ) || shouldGateStatsModule ) && (
 				// show data or an overlay
 				<Comments path="comments" className={ className } />
 			) }
-			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
+			{ ! isRequestingData && ! hasPosts && ! shouldGateStatsModule && (
 				// show empty state
 				<StatsCard
 					className={ className }
@@ -61,7 +64,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 						<EmptyModuleCard
 							icon={ comment }
 							description={ translate(
-								'Learn about the {{link}}comments{{/link}} your site recieves by authors, posts, and pages.',
+								'Learn about the {{link}}comments{{/link}} your site receives by authors, posts, and pages.',
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
