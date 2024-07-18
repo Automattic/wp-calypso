@@ -2,7 +2,7 @@ import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { comment } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React, { useMemo } from 'react';
+import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector } from 'calypso/state';
@@ -34,7 +34,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 		getSiteStatsNormalizedData( state, siteId, statType, {} )
 	);
 
-	const hasPosts = useMemo( () => ( data?.posts?.length ?? 0 ) > 0, [ data ] );
+	const hasPosts = data?.posts?.length ?? 0;
 
 	return (
 		<>
@@ -52,7 +52,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 			) }
 			{ ( ( ! isRequestingData && hasPosts ) || shouldGateStatsModule ) && (
 				// show data or an overlay
-				<Comments path="comments" className={ className } />
+				<Comments path="comments" className={ className } skipQuery />
 			) }
 			{ ! isRequestingData && ! hasPosts && ! shouldGateStatsModule && (
 				// show empty state
