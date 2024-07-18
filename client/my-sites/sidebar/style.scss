@@ -1122,6 +1122,10 @@ $font-size: rem(14px);
 			padding-bottom: 120px;
 		}
 
+		.global-sidebar .sidebar {
+			top: 12px;
+		}
+
 		.is-unified-site-sidebar-visible {
 			.upsell-nudge.banner.card.is-compact {
 				margin-top: 8px;
