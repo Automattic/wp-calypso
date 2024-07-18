@@ -913,7 +913,7 @@ body.is-mobile-app-view {
 
 	.masterbar__item-subitems {
 		min-width: 264px !important;
-		max-height: 90px;
+		max-height: 94px;
 		padding: 12px 0 0 0;
 
 		@media only screen and (max-width: 782px) {
@@ -1253,6 +1253,12 @@ a.masterbar__quick-language-switcher {
 
 		@include breakpoint-deprecated( ">480px" ) {
 			padding: 1.5em;
+		}
+
+		&:hover {
+			.gridicon {
+				fill: var(--studio-gray-90);
+			}
 		}
 	}
 
