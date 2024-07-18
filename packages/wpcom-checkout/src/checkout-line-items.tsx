@@ -28,7 +28,7 @@ import {
 } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
-import { translate, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import {
@@ -687,7 +687,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		isTitanMail( product )
 	) {
 		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
-			const billingInterval = getBillingIntervalLabel( { product } );
+			const billingInterval = GetBillingIntervalLabel( { product } );
 			return (
 				<>
 					<DefaultLineItemSublabel product={ product } />: { billingInterval }
@@ -761,7 +761,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			<>
 				{ premiumLabel } <DefaultLineItemSublabel product={ product } />
 				{ ! product.is_included_for_100yearplan && (
-					<>: { getBillingIntervalLabel( { product } ) }</>
+					<>: { GetBillingIntervalLabel( { product } ) }</>
 				) }
 			</>
 		);
@@ -819,7 +819,8 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	return <DefaultLineItemSublabel product={ product } />;
 }
 
-function getBillingIntervalLabel( { product }: { product: ResponseCartProduct } ) {
+function GetBillingIntervalLabel( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
 	if ( product.volume > 1 ) {
 		return translate( 'billed %(total_years)s years, then annually', {
 			args: { total_years: product.volume },
