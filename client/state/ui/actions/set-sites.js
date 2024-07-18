@@ -3,10 +3,11 @@ import 'calypso/state/ui/init';
 import { getSelectedSiteId } from '../selectors';
 
 /**
- * Returns an action object to be used in signalling that a site has been set
- * as selected.
- * @param {number | null} siteId Site ID
- * @returns {{type: string, siteId: number}} Action object
+ * Returns a thunk function that dispatches two actions related to the selected site ID. The
+ * dispatched actions have type of PREV_SELECTED_SITE_SET and includes the currently selected site
+ * ID from the state, and SELECTED_SITE_SET including the new site ID to select.
+ * @param {number | null} siteId - The ID of the site to be set as selected.
+ * @returns {Function} A Redux thunk function.
  */
 export const setSelectedSiteId = ( siteId ) => {
 	return ( dispatch, getState ) => {
@@ -25,9 +26,10 @@ export const setSelectedSiteId = ( siteId ) => {
 };
 
 /**
- * Returns an action object to be used in signalling that all sites have been
- * set as selected.
- * @returns {Object} Action object
+ * Returns a thunk function that dispatches actions for setting all sites as selected. The
+ * dispatched actions have type of PREV_SELECTED_SITE_SET and includes the currently selected site
+ * ID from the state, and SELECTED_SITE_SET including a null value for site ID.
+ * @returns {Function} A Redux thunk function.
  */
 export const setAllSitesSelected = () => {
 	return ( dispatch, getState ) => {
