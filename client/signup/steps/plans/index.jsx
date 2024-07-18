@@ -229,15 +229,8 @@ export class PlansStep extends Component {
 			);
 		}
 
-		const freePlanButton = (
-			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
-		);
-
 		if ( useEmailOnboardingSubheader ) {
-			return translate(
-				'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
-				{ components: { link: freePlanButton } }
-			);
+			return translate( 'Add more features to your professional website with a plan.' );
 		}
 	}
 
