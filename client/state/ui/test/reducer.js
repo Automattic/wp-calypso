@@ -1,5 +1,14 @@
-import { SELECTED_SITE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'calypso/state/action-types';
-import { isNotificationsOpen, selectedSiteId, siteSelectionInitialized } from '../reducer';
+import {
+	SELECTED_SITE_SET,
+	NOTIFICATIONS_PANEL_TOGGLE,
+	PREV_SELECTED_SITE_SET,
+} from 'calypso/state/action-types';
+import {
+	isNotificationsOpen,
+	prevSelectedSiteId,
+	selectedSiteId,
+	siteSelectionInitialized,
+} from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#selectedSiteId()', () => {
@@ -25,6 +34,35 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).toBeNull();
+		} );
+	} );
+
+	describe( '#prevSelectedSiteId()', () => {
+		test( 'should default to null', () => {
+			const state = prevSelectedSiteId( undefined, {} );
+			expect( state ).toBeNull();
+		} );
+
+		test( 'should set the actions site ID', () => {
+			const state = prevSelectedSiteId( null, {
+				type: PREV_SELECTED_SITE_SET,
+				siteId: 2916284,
+			} );
+
+			expect( state ).toEqual( 2916284 );
+		} );
+
+		test( 'should not set nullish values', () => {
+			let state = prevSelectedSiteId( null, {
+				type: PREV_SELECTED_SITE_SET,
+				siteId: 2916284,
+			} );
+			state = prevSelectedSiteId( state, {
+				type: PREV_SELECTED_SITE_SET,
+				siteId: null,
+			} );
+
+			expect( state ).toEqual( 2916284 );
 		} );
 	} );
 
