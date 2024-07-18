@@ -158,19 +158,7 @@ export interface GridAction {
 	postButtonText?: TranslateResult;
 }
 
-export type UseAction = ( {
-	availableForPurchase,
-	billingPeriod,
-	cartItemForPlan,
-	currentPlanBillingPeriod,
-	isFreeTrialAction,
-	isLargeCurrency,
-	isStuck,
-	planSlug,
-	planTitle,
-	priceString,
-	selectedStorageAddOn,
-}: {
+export type UseActionProps = {
 	availableForPurchase?: boolean;
 	billingPeriod?: PlanPricing[ 'billPeriod' ];
 	cartItemForPlan?: MinimalRequestCartProduct | null;
@@ -182,7 +170,10 @@ export type UseAction = ( {
 	planTitle?: TranslateResult;
 	priceString?: string;
 	selectedStorageAddOn?: AddOns.AddOnMeta | null;
-} ) => GridAction;
+	isMonthlyPlan?: boolean;
+};
+
+export type UseAction = ( props: UseActionProps ) => GridAction;
 
 export type GridContextProps = {
 	gridPlans: GridPlan[];

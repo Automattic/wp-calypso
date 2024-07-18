@@ -13,6 +13,12 @@ jest.mock( '@automattic/data-stores', () => ( {
 		useCurrentPlan: jest.fn(),
 		useCurrentPlanExpiryDate: jest.fn(),
 	},
+	AddOns: {
+		useStorageAddOns: jest.fn(),
+	},
+	HelpCenter: {
+		register: jest.fn(),
+	},
 } ) );
 jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => jest.fn( ( text ) => text ),
@@ -21,6 +27,9 @@ jest.mock( 'i18n-calypso', () => ( {
 } ) );
 jest.mock( '@wordpress/data' );
 jest.mock( '../use-generate-action-callback', () => () => jest.fn() );
+jest.mock(
+	'@automattic/plans-grid-next/src/components/shared/storage/hooks/use-default-storage-option'
+);
 
 import {
 	PLAN_BUSINESS,
@@ -35,8 +44,10 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_SMALL,
 } from '@automattic/calypso-products';
-import { Plans } from '@automattic/data-stores';
+import { AddOns, Plans } from '@automattic/data-stores';
+import { useDefaultStorageOption } from '@automattic/plans-grid-next/src/components/shared/storage';
 import { renderHook } from '@testing-library/react';
+import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import useGenerateActionHook from '../use-generate-action-hook';
 
@@ -108,7 +119,6 @@ describe( 'useGenerateActionHook', () => {
 				},
 			} )
 		);
-
 		( Plans.useCurrentPlan as jest.Mock ).mockImplementation( () => null );
 	} );
 
@@ -342,6 +352,34 @@ describe( 'useGenerateActionHook', () => {
 		const action = result.current( { planSlug: PLAN_BUSINESS } );
 
 		expect( action.primary.text ).toBe( 'View plan' );
+	} );
+
+	it( 'should handle storage addon selection', () => {
+		( AddOns.useStorageAddOns as jest.Mock ).mockReturnValue( [
+			{
+				purchased: false,
+				exceedsSiteStorageLimits: false,
+				addOnSlug: '100gb-storage-add-on',
+				checkoutLink: 'mockcheckoutlink',
+			},
+		] );
+		( useSelect as jest.Mock ).mockReturnValue( '100gb-storage-add-on' ); // Mocking getSelectedStorageOptionForPlan
+		( useDefaultStorageOption as jest.Mock ).mockReturnValue( '50gb-storage-add-on' );
+		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+			planSlug: PLAN_BUSINESS,
+		} );
+		( useSelector as jest.Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
+
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: false,
+				isLaunchPage: false,
+				siteId: mockSiteId,
+			} )
+		);
+		const action = result.current( { planSlug: PLAN_BUSINESS, isMonthlyPlan: false } );
+		expect( action.primary.text ).toBe( 'Upgrade' );
+		expect( action.primary.href ).toEqual( 'mockcheckoutlink' );
 	} );
 
 	it( 'should handle expired current plan for plan owner', () => {

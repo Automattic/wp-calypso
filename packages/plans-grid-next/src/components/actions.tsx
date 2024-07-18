@@ -1,19 +1,11 @@
-import {
-	type PlanSlug,
-	isP2FreePlan,
-	isFreePlan,
-	PLAN_FREE,
-	isWpcomEnterpriseGridPlan,
-} from '@automattic/calypso-products';
+import { type PlanSlug, PLAN_FREE } from '@automattic/calypso-products';
 import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useSelect } from '@wordpress/data';
-import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
 import PlanButton from './plan-button';
-import { useDefaultStorageOption } from './shared/storage';
 import type { GridPlan, PlanActionOverrides } from '../types';
 
 type PlanFeaturesActionsButtonProps = {
@@ -39,7 +31,6 @@ const PlanFeatures2023GridActions = ( {
 	isInSignup,
 	isMonthlyPlan,
 }: PlanFeaturesActionsButtonProps ) => {
-	const translate = useTranslate();
 	const {
 		gridPlansIndex,
 		siteId,
@@ -93,6 +84,7 @@ const PlanFeatures2023GridActions = ( {
 		cartItemForPlan,
 		currentPlanBillingPeriod,
 		selectedStorageAddOn,
+		isMonthlyPlan,
 	} );
 	const {
 		primary: { callback: freeTrialCallback, text: freeTrialText },
@@ -108,98 +100,54 @@ const PlanFeatures2023GridActions = ( {
 		cartItemForPlan: { product_slug: freeTrialPlanSlug ?? PLAN_FREE },
 		currentPlanBillingPeriod,
 		selectedStorageAddOn,
+		isMonthlyPlan,
 	} );
 
-	const busy = status === 'blocked';
-
-	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
-	const canPurchaseStorageAddOns = storageAddOns?.some(
-		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
-	);
-
-	const storageAddOnCheckoutHref = storageAddOns?.find(
-		( addOn ) => selectedStorageOptionForPlan && addOn?.addOnSlug === selectedStorageOptionForPlan
-	)?.checkoutLink;
-
-	const nonDefaultStorageOptionSelected =
-		selectedStorageOptionForPlan && defaultStorageOption !== selectedStorageOptionForPlan;
-
-	let actionButton = (
-		<PlanButton
-			planSlug={ planSlug }
-			onClick={ callback }
-			busy={ busy }
-			disabled={ status !== 'enabled' }
-			classes={ variant === 'secondary' ? 'is-secondary' : '' }
-		>
-			{ text }
-		</PlanButton>
-	);
-
-	if (
-		( isFreePlan( planSlug ) ||
-			( storageAddOns && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
-		isP2FreePlan( planSlug ) &&
-		current
-	) {
+	if ( ! callback ) {
 		return null;
 	}
 
-	if ( availableForPurchase || current || isWpcomEnterpriseGridPlan( planSlug ) ) {
-		// TODO: Move the condition below into the useAction hook
-		if (
-			current &&
-			canPurchaseStorageAddOns &&
-			nonDefaultStorageOptionSelected &&
-			! isMonthlyPlan
-		) {
-			actionButton = (
+	let actionButton = (
+		<>
+			<PlanButton
+				planSlug={ planSlug }
+				disabled={ ! callback || 'disabled' === status }
+				classes={ variant === 'secondary' ? 'is-secondary' : '' }
+				{ ...( callback && { onClick: callback } ) }
+			>
+				{ text }
+			</PlanButton>
+			{ postButtonText && (
+				<span className="plan-features-2023-grid__actions-post-button-text">
+					{ postButtonText }
+				</span>
+			) }
+		</>
+	);
+
+	const hasFreeTrialPlan = isInSignup ? !! freeTrialPlanSlug : false;
+
+	if ( ( availableForPurchase || current ) && hasFreeTrialPlan ) {
+		actionButton = (
+			<div className="plan-features-2023-grid__multiple-actions-container">
 				<PlanButton
 					planSlug={ planSlug }
-					classes="is-storage-upgradeable"
-					href={ storageAddOnCheckoutHref }
-					busy={ busy }
+					{ ...( freeTrialCallback && { onClick: freeTrialCallback } ) }
 				>
-					{ translate( 'Upgrade' ) }
+					{ freeTrialText }
 				</PlanButton>
-			);
-		} else {
-			const hasFreeTrialPlan = isInSignup ? !! freeTrialPlanSlug : false;
-			actionButton = hasFreeTrialPlan ? (
-				<div className="plan-features-2023-grid__multiple-actions-container">
-					<PlanButton planSlug={ planSlug } onClick={ () => freeTrialCallback() } busy={ busy }>
-						{ freeTrialText }
-					</PlanButton>
-					{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-						<PlanButton planSlug={ planSlug } onClick={ callback } busy={ busy } borderless>
-							{ text }
-						</PlanButton>
-					) }
-				</div>
-			) : (
-				<>
-					<PlanButton
-						planSlug={ planSlug }
-						disabled={ ! callback || 'disabled' === status }
-						busy={ busy }
-						onClick={ callback }
-						current={ current }
-					>
+				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
+					<PlanButton planSlug={ planSlug } { ...( callback && { onClick: callback } ) } borderless>
 						{ text }
 					</PlanButton>
-					{ postButtonText && (
-						<span className="plan-features-2023-grid__actions-post-button-text">
-							{ postButtonText }
-						</span>
-					) }
-				</>
-			);
-		}
+				) }
+			</div>
+		);
 	}
 
 	return (
-		<div className="plan-features-2023-gridrison__actions">
-			<div className="plan-features-2023-gridrison__actions-buttons">{ actionButton }</div>
+		<div className="plan-features-2023-grid__actions">
+			<div className="plan-features-2023-grid__actions-buttons">{ actionButton }</div>
 		</div>
 	);
 };

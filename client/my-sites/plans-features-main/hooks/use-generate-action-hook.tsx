@@ -15,8 +15,13 @@ import {
 	isWooExpressSmallPlan,
 	isBusinessTrial,
 	getPlan,
+	WPComPlanStorageFeatureSlug,
+	isP2FreePlan,
 } from '@automattic/calypso-products';
-import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
+import page from '@automattic/calypso-router';
+import { AddOns, Plans, WpcomPlansUI } from '@automattic/data-stores';
+import { useDefaultStorageOption } from '@automattic/plans-grid-next/src/components/shared/storage';
+import { useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { type LocalizeProps, type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
@@ -31,29 +36,9 @@ import type {
 	PlansIntent,
 	UseAction,
 	UseActionCallback,
+	UseActionProps,
 } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-
-type UseActionHookProps = {
-	availableForPurchase?: boolean;
-	cartItemForPlan?: MinimalRequestCartProduct | null;
-	isFreeTrialAction?: boolean;
-	isLargeCurrency?: boolean;
-	isStuck?: boolean;
-	planSlug: PlanSlug;
-	priceString?: string;
-	selectedStorageAddOn?: AddOns.AddOnMeta | null;
-	/**
-	 * We could derive `billingPeriod` directly from here (via `usePricingMetaForGridPlans`),
-	 * although it will be ambiguous since we can't know how it was called from consuming end (what props were passed in).
-	 */
-	billingPeriod?: PlanPricing[ 'billPeriod' ];
-	currentPlanBillingPeriod?: PlanPricing[ 'billPeriod' ];
-	/**
-	 * We can safely derive `planTitle` from one of the data-store or calypso-products hooks/selectors.
-	 */
-	planTitle?: TranslateResult;
-};
 
 export default function useGenerateActionHook( {
 	siteId,
@@ -91,6 +76,7 @@ export default function useGenerateActionHook( {
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	const [ isLoading, setIsLoading ] = useState( false );
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 
 	// TODO: Remove this hook call and inline the logic into respective functions
 	const getActionCallback = useGenerateActionCallback( {
@@ -105,7 +91,7 @@ export default function useGenerateActionHook( {
 		withDiscount,
 	} );
 
-	const useActionHook = ( {
+	const useActionHook: UseAction = ( {
 		availableForPurchase,
 		cartItemForPlan,
 		isFreeTrialAction,
@@ -114,10 +100,25 @@ export default function useGenerateActionHook( {
 		planSlug,
 		priceString,
 		selectedStorageAddOn,
+		/**
+		 * We could derive `billingPeriod` directly from here (via `usePricingMetaForGridPlans`),
+		 * although it will be ambiguous since we can't know how it was called from consuming end (what props were passed in).
+		 */
 		billingPeriod,
 		currentPlanBillingPeriod,
+		/**
+		 * We can safely derive `planTitle` from one of the data-store or calypso-products hooks/selectors.
+		 */
 		planTitle,
-	}: UseActionHookProps ): GridAction => {
+		isMonthlyPlan,
+	} ) => {
+		const selectedStorageOptionForPlan = useSelect(
+			( select ) =>
+				select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
+			[ planSlug ]
+		);
+		const defaultStorageOption = useDefaultStorageOption( { planSlug } );
+
 		/**
 		 * 1. Enterprise Plan actions
 		 */
@@ -190,6 +191,10 @@ export default function useGenerateActionHook( {
 			billingPeriod,
 			setIsLoading,
 			isLoading,
+			storageAddOns,
+			selectedStorageOptionForPlan,
+			defaultStorageOption,
+			isMonthlyPlan,
 		} );
 	};
 
@@ -210,7 +215,7 @@ function getLaunchPageAction( {
 	getActionCallback: UseActionCallback;
 	planSlug: PlanSlug;
 	translate: LocalizeProps[ 'translate' ];
-} & UseActionHookProps ) {
+} & UseActionProps ) {
 	const createLaunchPageAction = ( text: TranslateResult ) => ( {
 		primary: {
 			callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
@@ -271,7 +276,7 @@ function getSignupAction( {
 	translate: LocalizeProps[ 'translate' ];
 	eligibleForFreeHostingTrial: boolean;
 	plansIntent?: PlansIntent | null;
-} & UseActionHookProps ): GridAction {
+} & UseActionProps ): GridAction {
 	const createSignupAction = ( text: TranslateResult, postButtonText?: TranslateResult ) => ( {
 		primary: {
 			callback: getActionCallback( { planSlug, cartItemForPlan, selectedStorageAddOn } ),
@@ -359,6 +364,10 @@ function getLoggedInPlansAction( {
 	billingPeriod,
 	isLoading,
 	setIsLoading,
+	storageAddOns,
+	selectedStorageOptionForPlan,
+	defaultStorageOption,
+	isMonthlyPlan,
 }: {
 	getActionCallback: UseActionCallback;
 	planSlug: PlanSlug;
@@ -369,7 +378,10 @@ function getLoggedInPlansAction( {
 	canUserManageCurrentPlan: boolean | null;
 	isLoading: boolean;
 	setIsLoading: ( value: boolean ) => void;
-} & UseActionHookProps ): GridAction {
+	storageAddOns: ( AddOns.AddOnMeta | null )[];
+	selectedStorageOptionForPlan: any;
+	defaultStorageOption: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug | undefined;
+} & UseActionProps ): GridAction {
 	const current = sitePlanSlug === planSlug;
 	const isTrialPlan =
 		sitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
@@ -405,11 +417,48 @@ function getLoggedInPlansAction( {
 	// All actions for the current plan
 	if ( current ) {
 		if ( isFreePlan( planSlug ) ) {
-			return createLoggedInPlansAction( translate( 'Manage add-ons', { context: 'verb' } ) );
+			return createLoggedInPlansAction(
+				translate( 'Manage add-ons', { context: 'verb' } ),
+				'secondary'
+			);
 		}
+
+		// No CTA if the current plan is the P2 free plan
+		if ( isP2FreePlan( planSlug ) ) {
+			return {
+				primary: { text: '', callback: () => {} },
+			};
+		}
+
 		if ( domainFromHomeUpsellFlow ) {
 			return createLoggedInPlansAction( translate( 'Keep my plan', { context: 'verb' } ) );
 		}
+
+		const canPurchaseStorageAddOns = storageAddOns?.some(
+			( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
+		);
+		const nonDefaultStorageOptionSelected =
+			selectedStorageOptionForPlan && defaultStorageOption !== selectedStorageOptionForPlan;
+		if ( canPurchaseStorageAddOns && nonDefaultStorageOptionSelected && ! isMonthlyPlan ) {
+			const storageAddOnCheckoutHref = storageAddOns?.find(
+				( addOn ) =>
+					selectedStorageOptionForPlan && addOn?.addOnSlug === selectedStorageOptionForPlan
+			)?.checkoutLink;
+
+			return {
+				primary: {
+					callback: () => {
+						if ( storageAddOnCheckoutHref ) {
+							page.redirect( storageAddOnCheckoutHref );
+						}
+					},
+					status: 'enabled' as GridAction[ 'primary' ][ 'status' ],
+					text: translate( 'Upgrade' ),
+					variant: 'primary',
+				},
+			};
+		}
+
 		if ( canUserManageCurrentPlan && isPlanExpired ) {
 			return createLoggedInPlansAction( translate( 'Renew plan' ) );
 		}

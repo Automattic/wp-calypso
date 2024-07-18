@@ -14,7 +14,6 @@ const PlanButton = ( {
 	onClick = () => {},
 	busy = false,
 	borderless = false,
-	current = false,
 	disabled = false,
 	isStuck = false,
 	isLargeCurrency = false,
@@ -26,7 +25,6 @@ const PlanButton = ( {
 	onClick?: () => void;
 	busy?: boolean;
 	borderless?: boolean;
-	current?: boolean;
 	disabled?: boolean;
 	isStuck?: boolean;
 	isLargeCurrency?: boolean;
@@ -36,7 +34,6 @@ const PlanButton = ( {
 		'plan-features-2023-grid__actions-button',
 		planSlug ? getPlanClass( planSlug ) : 'is-default',
 		{
-			'is-current-plan': current,
 			'is-stuck': isStuck,
 			'is-large-currency': isLargeCurrency,
 		}

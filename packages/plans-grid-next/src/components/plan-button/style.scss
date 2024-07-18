@@ -120,7 +120,6 @@
 	// since it's too early to say the current plan button will always
 	// be the default style, i.e. the secondary CTA button style
 	&.is-secondary,
-	&.is-current-plan,
 	&.is-default {
 		background-color: var(--studio-white);
 		color: var(--studio-gray-100);

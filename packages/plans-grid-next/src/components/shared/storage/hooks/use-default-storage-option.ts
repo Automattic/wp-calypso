@@ -17,10 +17,13 @@ export default function useDefaultStorageOption( {
 	planSlug,
 }: Props ): AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug | undefined {
 	const { siteId, gridPlansIndex } = usePlansGridContext();
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
+	if ( ! gridPlansIndex?.features ) {
+		return;
+	}
 	const {
 		features: { storageFeature },
 	} = gridPlansIndex[ planSlug ];
-	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const purchasedAddOn = storageAddOns?.find( ( storageAddOn ) => storageAddOn?.purchased );
 
 	return purchasedAddOn && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
