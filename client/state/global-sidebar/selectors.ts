@@ -2,7 +2,6 @@ import isScheduledUpdatesMultisiteRoute, {
 	isScheduledUpdatesMultisiteCreateRoute,
 	isScheduledUpdatesMultisiteEditRoute,
 } from 'calypso/state/selectors/is-scheduled-updates-multisite-route';
-import getCurrentQueryArguments from '../selectors/get-current-query-arguments';
 import { isAdminInterfaceWPAdmin } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -95,18 +94,12 @@ export const getShouldShowCollapsedGlobalSidebar = (
 		collapsedDataHelper.sectionGroup = sectionGroup;
 	}
 
-	const query = getCurrentQueryArguments( state );
-
 	// When selected site changes on the dashboard, show for animation.
 	if (
 		isSitesDashboard &&
 		!! siteId &&
 		collapsedDataHelper.selectedSiteId !== siteId &&
-		! collapsedDataHelper.shouldShowForAnimation &&
-		// if URL query `origin_site` is present, don't show for animation
-		query &&
-		! query.origin_site
-		// ! originSite
+		! collapsedDataHelper.shouldShowForAnimation
 	) {
 		collapsedDataHelper.shouldShowForAnimation = true;
 		collapsedDataHelper.selectedSiteId = siteId;

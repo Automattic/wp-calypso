@@ -95,8 +95,6 @@ const SitesDashboard = ( {
 	initialSiteFeature = DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
-	const dispatch = useDispatch();
-
 	const { __ } = useI18n();
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 
@@ -137,9 +135,6 @@ const SitesDashboard = ( {
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
 
 	useSyncSelectedSite( dataViewsState, setDataViewsState, selectedSite );
-	if ( originSite ) {
-		dispatch( setSelectedSiteId( originSite ) );
-	}
 
 	const { selectedSiteFeature, setSelectedSiteFeature } = useSyncSelectedSiteFeature( {
 		selectedSite,
