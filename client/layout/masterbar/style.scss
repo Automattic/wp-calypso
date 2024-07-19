@@ -483,6 +483,10 @@ body.is-mobile-app-view {
 		background: var(--studio-orange-70);
 	}
 
+	&.masterbar__item-notifications {
+		margin-right: 0;
+	}
+
 	@media only screen and (max-width: 782px) {
 		font-size: $masterbar-mobile-font-size;
 		width: 52px;
@@ -553,14 +557,10 @@ body.is-mobile-app-view {
 			display: block;
 		}
 
-		&.masterbar__item-my-site,
-		&.masterbar__item-my-site-actions,
+		&.masterbar__item-notifications,
+		&.masterbar__item-help,
 		&.masterbar-cart-button {
 			display: none;
-		}
-
-		&.masterbar__item-help {
-			width: 54px;
 		}
 	}
 
@@ -594,10 +594,6 @@ body.is-mobile-app-view {
 				height: 32px;
 			}
 		}
-	}
-
-	&.masterbar__item-notifications {
-		margin-right: 0;
 	}
 
 	&.masterbar__item-help {
