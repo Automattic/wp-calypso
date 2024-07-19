@@ -175,7 +175,11 @@ export const PatternLibrary = ( {
 	}, [] );
 
 	useEffect( () => {
-		if ( section && readymadeTemplateSectionRef.current && ! searchTerm ) {
+		if (
+			'readymade-templates-section' === section &&
+			readymadeTemplateSectionRef.current &&
+			! searchTerm
+		) {
 			scrollToSection( readymadeTemplateSectionRef.current, 'instant' );
 		}
 	}, [ searchTerm, section ] );
