@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MigrationKeyInput } from '../migration-key-input';
+import { recordMigrationInstructionsLinkClick } from '../tracking';
 import type { Task, Expandable, ExpandableAction } from '@automattic/launchpad';
 
 const removeDuplicatedSlashes = ( url: string ) => url.replace( /(https?:\/\/)|(\/)+/g, '$1$2' );
@@ -19,12 +20,6 @@ const getPluginInstallationPage = ( fromUrl: string ) => {
 
 const getMigrateGuruPageURL = ( siteURL: string ) =>
 	removeDuplicatedSlashes( `${ siteURL }/wp-admin/admin.php?page=migrateguru` );
-
-const recordInstructionsLinkClick = ( linkname: string ) => {
-	recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
-		linkname,
-	} );
-};
 
 interface StepsDataOptions {
 	fromUrl: string;
@@ -78,7 +73,7 @@ const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData 
 										icon
 										iconSize={ 14 }
 										target="_blank"
-										onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
+										onClick={ () => recordMigrationInstructionsLinkClick( 'install-plugin' ) }
 									/>
 								),
 							},
@@ -104,7 +99,7 @@ const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData 
 											icon
 											iconSize={ 14 }
 											target="_blank"
-											onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
+											onClick={ () => recordMigrationInstructionsLinkClick( 'go-to-plugin-page' ) }
 										/>
 									) : (
 										<strong />
