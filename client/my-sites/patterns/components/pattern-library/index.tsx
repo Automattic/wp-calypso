@@ -76,6 +76,15 @@ function scrollToPatternView(
 	} );
 }
 
+function scrollToSection( element: HTMLDivElement, scrollBehavior: ScrollBehavior = 'smooth' ) {
+	requestAnimationFrame( () => {
+		element.scrollIntoView( {
+			behavior: scrollBehavior,
+			block: 'center',
+		} );
+	} );
+}
+
 type PatternLibraryProps = {
 	categoryGallery: CategoryGalleryFC;
 	patternGallery: PatternGalleryFC;
@@ -89,6 +98,7 @@ export const PatternLibrary = ( {
 	const translate = useTranslate();
 	const hasTranslation = useHasEnTranslation();
 	const navRef = useRef< HTMLDivElement >( null );
+	const navigationElementRef = useRef< HTMLDivElement >( null );
 
 	const { recordPatternsEvent } = useRecordPatternsEvent();
 	const { category, searchTerm, section, isGridView, patternTypeFilter, patternPermalinkId } =
@@ -146,12 +156,6 @@ export const PatternLibrary = ( {
 		}
 	}, [ searchTerm, section ] );
 
-	useEffect( () => {
-		if ( navRef.current && section ) {
-			scrollToPatternView( navRef.current, false, 'instant' );
-		}
-	}, [ section ] );
-
 	const [ isSticky, setIsSticky ] = useState( false );
 	const prevNavTopValue = useRef( 0 );
 
@@ -173,6 +177,12 @@ export const PatternLibrary = ( {
 			window.removeEventListener( 'scroll', handleScroll );
 		};
 	}, [] );
+
+	useEffect( () => {
+		if ( navigationElementRef.current && section && ! searchTerm ) {
+			scrollToSection( navigationElementRef.current, 'instant' );
+		}
+	}, [ searchTerm, section ] );
 
 	// `calypso-router` has trouble with the onboarding URL we use. This code prevents click
 	// events on onboarding links from propagating to the `calypso-router` event listener,
@@ -269,7 +279,7 @@ export const PatternLibrary = ( {
 					className={ clsx( patternFiltersClassName, {
 						'pattern-library__filters--sticky': isSticky,
 					} ) }
-					ref={ ! section ? navRef : null }
+					ref={ navRef }
 				>
 					<div className="pattern-library__filters-inner">
 						<CategoryPillNavigation
@@ -370,9 +380,7 @@ export const PatternLibrary = ( {
 				) }
 
 				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
-					<ReadymadeTemplates
-						forwardRef={ 'readymade-templates-section' === section ? navRef : null }
-					/>
+					<ReadymadeTemplates forwardRef={ navigationElementRef } />
 				) }
 
 				{ ! isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
