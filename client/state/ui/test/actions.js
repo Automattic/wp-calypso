@@ -14,15 +14,9 @@ import {
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {
 		test( 'should dispatch actions for clearing the selected site ID', () => {
-			const mostRecentlySelectedSiteId = 123;
 			const dispatch = jest.fn();
-			const getState = jest.fn().mockReturnValue( {
-				ui: {
-					selectedSiteId: mostRecentlySelectedSiteId,
-				},
-			} );
 
-			setAllSitesSelected()( dispatch, getState );
+			setAllSitesSelected()( dispatch );
 
 			expect( dispatch ).not.toHaveBeenCalledWith( {
 				type: MOST_RECENTLY_SELECTED_SITE_SET,
@@ -49,15 +43,9 @@ describe( 'actions', () => {
 	describe( 'setSelectedSiteId()', () => {
 		test( 'should dispatch actions for selected site IDs', () => {
 			const siteId = 2916284;
-			const mostRecentlySelectedSiteId = 123;
 			const dispatch = jest.fn();
-			const getState = jest.fn().mockReturnValue( {
-				ui: {
-					selectedSiteId: mostRecentlySelectedSiteId,
-				},
-			} );
 
-			setSelectedSiteId( siteId )( dispatch, getState );
+			setSelectedSiteId( siteId )( dispatch );
 
 			expect( dispatch ).toHaveBeenCalledWith( {
 				type: MOST_RECENTLY_SELECTED_SITE_SET,
