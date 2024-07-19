@@ -557,13 +557,14 @@ body.is-mobile-app-view {
 			display: block;
 		}
 
-		&.masterbar__item-help {
+		&.masterbar__item-my-site-actions {
 			display: none;
 		}
 	}
 
 	@media only screen and (max-width: 400px) {
-		&.masterbar__item-my-site-actions {
+		&.masterbar__item-my-site-actions,
+		&.masterbar__reader {
 			display: none;
 		}
 	}
