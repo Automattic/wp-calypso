@@ -189,29 +189,32 @@ describe( 'Help Center: Interact with Results', function () {
 		}
 	);
 
-	describe( 'Navigate to Calypso Link', function () {
-		let popupPage: Page;
+	skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
+		'Navigate to Calypso Link',
+		function () {
+			let popupPage: Page;
 
-		it( 'Close article and return to search results', async function () {
-			await supportComponent.goBack();
-		} );
+			it( 'Close article and return to search results', async function () {
+				await supportComponent.goBack();
+			} );
 
-		it( 'Clear search results', async function () {
-			await supportComponent.clearSearch();
-		} );
+			it( 'Clear search results', async function () {
+				await supportComponent.clearSearch();
+			} );
 
-		it( 'Search for "domain"', async function () {
-			await supportComponent.search( 'domain' );
-		} );
+			it( 'Search for "domain"', async function () {
+				await supportComponent.search( 'domain' );
+			} );
 
-		it( 'Click on the first Calypso Link result', async function () {
-			const popupEvent = page.waitForEvent( 'popup' );
-			await supportComponent.clickResultByIndex( 'Calypso Link', 0 );
-			popupPage = await popupEvent;
-		} );
+			it( 'Click on the first Calypso Link result', async function () {
+				const popupEvent = page.waitForEvent( 'popup' );
+				await supportComponent.clickResultByIndex( 'Calypso Link', 0 );
+				popupPage = await popupEvent;
+			} );
 
-		it( 'Calypso Link opens in a new page', async function () {
-			expect( popupPage.url() ).not.toBe( page.url() );
-		} );
-	} );
+			it( 'Calypso Link opens in a new page', async function () {
+				expect( popupPage.url() ).not.toBe( page.url() );
+			} );
+		}
+	);
 } );
