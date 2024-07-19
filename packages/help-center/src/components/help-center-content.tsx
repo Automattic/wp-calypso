@@ -56,6 +56,15 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		};
 	}, [] );
 
+	const navigateToSupportDocs = useCallback(
+		( blogId: string, postId: string, title: string, link: string ) => {
+			navigate(
+				`/post?blogId=${ blogId }&postId=${ postId }&title=${ title }&link=${ link }&backUrl=/odie`
+			);
+		},
+		[ navigate ]
+	);
+
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
 			pathname: location.pathname,
@@ -142,6 +151,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 									/>
 								}
 								navigateToContactOptions={ navigateToContactOptions }
+								navigateToSupportDocs={ navigateToSupportDocs }
 							>
 								<HelpCenterOdie />
 							</OdieAssistantProvider>

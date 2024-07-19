@@ -37,6 +37,7 @@ const CustomALink = ( {
 				onClick={ () => {
 					trackEvent( 'chat_message_action_click', {
 						action: 'link',
+						in_chat_view: false,
 						href: transformedHref,
 					} );
 				} }
