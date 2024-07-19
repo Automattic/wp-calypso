@@ -17,6 +17,30 @@ import Comments from '../../../stats-comments';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
+interface CommentData {
+	authors: Array< {
+		label: string;
+		value: string;
+		iconClassName: string;
+		icon: string;
+		link: string;
+		className: string;
+		actions: Array< {
+			type: string;
+			data: boolean;
+		} >;
+	} >;
+	posts: Array< {
+		label: string;
+		value: string;
+		page: string;
+		actions: Array< {
+			type: string;
+			data: string;
+		} >;
+	} >;
+}
+
 const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -29,12 +53,11 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, statType, {} )
 	);
-
 	const data = useSelector( ( state: StatsStateProps ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, {} )
-	);
+	) as CommentData;
 
-	const hasPosts = data.posts?.length > 0;
+	const hasPosts = data?.posts?.length > 0;
 
 	return (
 		<>
