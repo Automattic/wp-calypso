@@ -3,6 +3,7 @@ import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useSelect } from '@wordpress/data';
+import { getLocaleSlug } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -25,9 +26,7 @@ import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const MIGRATION_INSTRUCTIONS_STEP = config.isEnabled(
-	'migration-flow/new-migration-instructions-step'
-)
+const MIGRATION_INSTRUCTIONS_STEP = getLocaleSlug()?.startsWith( 'en' ) // Previous 'migration-flow/new-migration-instructions-step'.
 	? STEPS.SITE_MIGRATION_INSTRUCTIONS
 	: STEPS.SITE_MIGRATION_INSTRUCTIONS_I2;
 

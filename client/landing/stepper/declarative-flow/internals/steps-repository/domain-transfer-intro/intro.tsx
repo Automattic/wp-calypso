@@ -4,7 +4,6 @@ import { Button } from '@wordpress/components';
 import { Icon, unlock, plus, payment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { preventWidows } from 'calypso/lib/formatting';
-import GoogleDomainsModal from '../../components/google-domains-transfer-instructions';
 
 interface Props {
 	onSubmit: () => void;
@@ -31,7 +30,13 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 									) }
 								</p>
 								{ isGoogleDomainsTransferFlow && (
-									<GoogleDomainsModal>{ __( 'Show me how' ) }</GoogleDomainsModal>
+									<a
+										href="https://support.squarespace.com/hc/en-us/articles/205812338-Transferring-a-domain-away-from-Squarespace"
+										target="_blank"
+										rel="noreferrer"
+									>
+										{ __( 'Show me how' ) }
+									</a>
 								) }
 							</>
 						),
@@ -63,10 +68,10 @@ const Intro: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 							<p>
 								{ isEnglishLocale ||
 								hasTranslation(
-									"Review your payment and contact details. If you're transferring a domain from Google or Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
+									"Review your payment and contact details. If you're transferring a domain from Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
 								)
 									? __(
-											"Review your payment and contact details. If you're transferring a domain from Google or Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
+											"Review your payment and contact details. If you're transferring a domain from Squarespace, we'll pay for an additional year of registration if your domain was registered before July 1, 2023."
 									  )
 									: __(
 											"Review your payment and contact details. If you're transferring a domain from Google, we'll pay for an additional year of registration."
