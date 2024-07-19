@@ -10,7 +10,7 @@ WPCom Global theme, Modern theme adjusted for use in calypso non site contexts
 	--theme-base-color-rgb: 30, 30, 30; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
 	--theme-submenu-text-color: #bcbcbc; /* mix( $base-color, $text-color, 30% ) */
 	--theme-submenu-background-color: #0c0c0c; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
-	--theme-icon-color: #ece6f6; /* Direct from wp-admin */
+	--theme-icon-color: #fff; /* Override from Modern */
 	--theme-highlight-color: #3858e9; /* Direct from wp-admin */
 	--theme-highlight-color-rgb: 56, 88, 233; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
 	--theme-notification-color: #3858e9; /* Direct from wp-admin */
