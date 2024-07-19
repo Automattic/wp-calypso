@@ -94,7 +94,7 @@ export const PatternLibrary = ( {
 	const translate = useTranslate();
 	const hasTranslation = useHasEnTranslation();
 	const navRef = useRef< HTMLDivElement >( null );
-	const navigationElementRef = useRef< HTMLDivElement >( null );
+	const readymadeTemplateSectionRef = useRef< HTMLDivElement >( null );
 
 	const { recordPatternsEvent } = useRecordPatternsEvent();
 	const { category, searchTerm, section, isGridView, patternTypeFilter, patternPermalinkId } =
@@ -175,12 +175,8 @@ export const PatternLibrary = ( {
 	}, [] );
 
 	useEffect( () => {
-		if (
-			section === 'readymade-templates-section' &&
-			navigationElementRef.current &&
-			! searchTerm
-		) {
-			scrollToSection( navigationElementRef.current, 'instant' );
+		if ( section && readymadeTemplateSectionRef.current && ! searchTerm ) {
+			scrollToSection( readymadeTemplateSectionRef.current, 'instant' );
 		}
 	}, [ searchTerm, section ] );
 
@@ -396,7 +392,7 @@ export const PatternLibrary = ( {
 							patternTypeFilter={ PatternTypeFilter.PAGES }
 						/>
 						{ isEnabled( 'readymade-templates/showcase' ) && (
-							<ReadymadeTemplates forwardRef={ navigationElementRef } />
+							<ReadymadeTemplates forwardRef={ readymadeTemplateSectionRef } />
 						) }
 					</>
 				) }
