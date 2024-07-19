@@ -299,9 +299,6 @@ export const PatternLibrary = ( {
 							categories={ categories }
 							patternTypeFilter={ PatternTypeFilter.REGULAR }
 						/>
-						{ isEnabled( 'readymade-templates/showcase' ) && (
-							<PatternsCopyPasteInfo theme="gray" />
-						) }
 					</>
 				) }
 
@@ -364,8 +361,10 @@ export const PatternLibrary = ( {
 					</PatternLibraryBody>
 				) }
 
-				{ ! isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
-					<PatternsCopyPasteInfo theme="dark" />
+				{ isHomePage && (
+					<PatternsCopyPasteInfo
+						theme={ isEnabled( 'readymade-template/showcase' ) ? 'gray' : 'dark' }
+					/>
 				) }
 
 				{ isHomePage && (
