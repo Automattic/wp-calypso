@@ -34,7 +34,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 		getSiteStatsNormalizedData( state, siteId, statType, {} )
 	);
 
-	const hasPosts = data?.posts?.length ?? 0;
+	const hasPosts = data.posts?.length > 0;
 
 	return (
 		<>
