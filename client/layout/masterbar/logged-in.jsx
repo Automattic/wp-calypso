@@ -838,12 +838,6 @@ export default connect(
 		const currentSelectedSiteId = getSelectedSiteId( state );
 		const siteId =
 			currentSelectedSiteId || getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
-		console.log( {
-			currentSelectedSiteId,
-			mostRecentlySelectedSiteId: getMostRecentlySelectedSiteId( state ),
-			primarySiteId: getPrimarySiteId( state ),
-			siteId,
-		} );
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
