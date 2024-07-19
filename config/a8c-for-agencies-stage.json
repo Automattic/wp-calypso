@@ -29,7 +29,6 @@
 	"features": {
 		"ad-tracking": false,
 		"a8c-for-agencies": true,
-		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
 		"a8c-for-agencies/import-site-from-wpcom": true,
 		"cookie-banner": false,
 		"oauth": true,
