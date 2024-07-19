@@ -18,9 +18,9 @@ export const Questions: FC = () => {
 				iconSize={ 12 }
 				target="_blank"
 				onClick={ () => {
-					recordTracksEvent(
-						'calypso_onboarding_site_migration_instructions_questions_happiness_engineer'
-					);
+					recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
+						linkname: 'questions_happiness_engineer',
+					} );
 				} }
 			>
 				{ translate( 'Ask a Happiness Engineer' ) }
