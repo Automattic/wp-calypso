@@ -55,7 +55,7 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
-	getPrevSelectedSiteId,
+	getMostRecentlySelectedSiteId,
 	getSectionGroup,
 	getSectionName,
 	getSelectedSiteId,
@@ -837,7 +837,7 @@ export default connect(
 		// by the user yet
 		const currentSelectedSiteId = getSelectedSiteId( state );
 		const siteId =
-			currentSelectedSiteId || getPrevSelectedSiteId( state ) || getPrimarySiteId( state );
+			currentSelectedSiteId || getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||

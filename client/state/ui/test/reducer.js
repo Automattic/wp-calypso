@@ -1,11 +1,11 @@
 import {
 	SELECTED_SITE_SET,
 	NOTIFICATIONS_PANEL_TOGGLE,
-	PREV_SELECTED_SITE_SET,
+	MOST_RECENTLY_SELECTED_SITE_SET,
 } from 'calypso/state/action-types';
 import {
 	isNotificationsOpen,
-	prevSelectedSiteId,
+	mostRecentlySelectedSiteId,
 	selectedSiteId,
 	siteSelectionInitialized,
 } from '../reducer';
@@ -37,15 +37,15 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#prevSelectedSiteId()', () => {
+	describe( '#mostRecentlySelectedSiteId()', () => {
 		test( 'should default to null', () => {
-			const state = prevSelectedSiteId( undefined, {} );
+			const state = mostRecentlySelectedSiteId( undefined, {} );
 			expect( state ).toBeNull();
 		} );
 
 		test( 'should set the actions site ID', () => {
-			const state = prevSelectedSiteId( null, {
-				type: PREV_SELECTED_SITE_SET,
+			const state = mostRecentlySelectedSiteId( null, {
+				type: MOST_RECENTLY_SELECTED_SITE_SET,
 				siteId: 2916284,
 			} );
 
@@ -53,12 +53,12 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not set nullish values', () => {
-			let state = prevSelectedSiteId( null, {
-				type: PREV_SELECTED_SITE_SET,
+			let state = mostRecentlySelectedSiteId( null, {
+				type: MOST_RECENTLY_SELECTED_SITE_SET,
 				siteId: 2916284,
 			} );
-			state = prevSelectedSiteId( state, {
-				type: PREV_SELECTED_SITE_SET,
+			state = mostRecentlySelectedSiteId( state, {
+				type: MOST_RECENTLY_SELECTED_SITE_SET,
 				siteId: null,
 			} );
 

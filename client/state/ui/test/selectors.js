@@ -7,7 +7,7 @@ import {
 	getSectionName,
 	getSectionGroup,
 	isSiteSection,
-	getPrevSelectedSiteId,
+	getMostRecentlySelectedSiteId,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -77,12 +77,12 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getPrevSelectedSiteId()', () => {
+	describe( '#getMostRecentlySelectedSiteId()', () => {
 		test( 'should return null if no site was previously selected', () => {
-			const selected = getPrevSelectedSiteId( {
+			const selected = getMostRecentlySelectedSiteId( {
 				...userState,
 				ui: {
-					prevSelectedSiteId: null,
+					mostRecentlySelectedSiteId: null,
 				},
 			} );
 
@@ -90,9 +90,9 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return ID for the previously selected site', () => {
-			const selected = getPrevSelectedSiteId( {
+			const selected = getMostRecentlySelectedSiteId( {
 				ui: {
-					prevSelectedSiteId: 2916284,
+					mostRecentlySelectedSiteId: 2916284,
 				},
 			} );
 
