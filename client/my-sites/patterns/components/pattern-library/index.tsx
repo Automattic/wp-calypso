@@ -49,11 +49,7 @@ const PatternLibraryBody = styled.div``;
 export const patternFiltersClassName = 'pattern-library__filters';
 
 // Scroll to anchoring position of category pill navigation element
-function scrollToPatternView(
-	stickyFiltersElement: HTMLDivElement,
-	onlyIfBelowThreshold = false,
-	scrollBehavior: ScrollBehavior = 'smooth'
-) {
+function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowThreshold = false ) {
 	const coords = stickyFiltersElement.getBoundingClientRect();
 	const style = getComputedStyle( stickyFiltersElement );
 	const parsedTop = /(\d+(\.\d+)?)px/.exec( style.top );
@@ -70,7 +66,7 @@ function scrollToPatternView(
 		stickyFiltersElement.style.removeProperty( 'position' );
 
 		window.scrollBy( {
-			behavior: scrollBehavior,
+			behavior: 'smooth',
 			top: staticCoords.top,
 		} );
 	} );
