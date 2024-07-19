@@ -42,7 +42,7 @@ export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
 	if ( currentAction.status === 'error' ) {
 		const contactClickHandler = () => {
 			recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
-				linkname: 'error_contact_support',
+				linkname: 'error-contact-support',
 			} );
 		};
 

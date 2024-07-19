@@ -19,7 +19,7 @@ export const Questions: FC = () => {
 				target="_blank"
 				onClick={ () => {
 					recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
-						linkname: 'questions_happiness_engineer',
+						linkname: 'questions-happiness-engineer',
 					} );
 				} }
 			>
