@@ -103,7 +103,7 @@ describe( 'Migration Signup Flow', () => {
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination: `/setup/migration-signup/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&siteId=123`,
+				destination: `/setup/migration-signup/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }?siteSlug=example.wordpress.com&siteId=123`,
 				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 				flowName: 'migration-signup',
 				siteSlug: 'example.wordpress.com',
