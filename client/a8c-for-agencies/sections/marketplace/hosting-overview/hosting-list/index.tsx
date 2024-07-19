@@ -46,8 +46,6 @@ export default function HostingList( { selectedSite }: Props ) {
 		selectedSite,
 	} );
 
-	const isWPCOMOptionEnabled = isEnabled( 'a8c-for-agencies/wpcom-creator-plan-purchase-flow' );
-
 	const cheapestPressablePlan = useMemo(
 		() => ( pressablePlans.length ? getCheapestPlan( pressablePlans ) : null ),
 		[ pressablePlans ]
@@ -55,7 +53,7 @@ export default function HostingList( { selectedSite }: Props ) {
 
 	const highestDiscountPressable = 70; // FIXME: compute this value based on the actual data
 
-	const creatorPlan = isWPCOMOptionEnabled ? getWPCOMCreatorPlan( wpcomPlans ) : null;
+	const creatorPlan = getWPCOMCreatorPlan( wpcomPlans );
 
 	const highestDiscountWPCOM = useMemo(
 		() =>
@@ -132,7 +130,7 @@ export default function HostingList( { selectedSite }: Props ) {
 					/>
 				) }
 
-				{ isWPCOMOptionEnabled && ! hideSection && (
+				{ ! hideSection && (
 					<HostingCard
 						plan={ vipPlan }
 						className="hosting-list__vip-card"
@@ -140,7 +138,7 @@ export default function HostingList( { selectedSite }: Props ) {
 					/>
 				) }
 			</ListingSection>
-			{ isWPCOMOptionEnabled && ! hideSection && (
+			{ ! hideSection && (
 				<Card className="hosting-list__features">
 					<h3 className="hosting-list__features-heading">
 						{ translate( 'Included with Standard & Premier hosting' ) }

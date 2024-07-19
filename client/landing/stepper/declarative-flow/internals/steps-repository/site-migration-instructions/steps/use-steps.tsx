@@ -2,7 +2,8 @@ import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import type { Task, Expandable } from '@automattic/launchpad';
+import { MigrationKeyInput } from '../migration-key-input';
+import type { Task, Expandable, ExpandableAction } from '@automattic/launchpad';
 
 const removeDuplicatedSlashes = ( url: string ) => url.replace( /(https?:\/\/)|(\/)+/g, '$1$2' );
 
@@ -27,9 +28,11 @@ const recordInstructionsLinkClick = ( linkname: string ) => {
 
 interface StepsDataOptions {
 	fromUrl: string;
+	migrationKey: string;
 }
 
 interface StepData {
+	key: string;
 	title: string;
 	content: JSX.Element;
 }
@@ -38,6 +41,7 @@ type StepsData = StepData[];
 
 interface StepsOptions {
 	fromUrl: string;
+	migrationKey: string;
 	onComplete: () => void;
 }
 
@@ -54,11 +58,12 @@ interface StepsObject {
 	completedSteps: number;
 }
 
-const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
+const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
 
 	return [
 		{
+			key: 'install-the-migrate-guru-plugin',
 			title: translate( 'Install the Migrate Guru plugin' ),
 			content: (
 				<p>
@@ -83,6 +88,7 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 			),
 		},
 		{
+			key: 'get-your-site-ready',
 			title: translate( 'Get your site ready' ),
 			content: (
 				<>
@@ -120,53 +126,68 @@ const useStepsData = ( { fromUrl }: StepsDataOptions ): StepsData => {
 			),
 		},
 		{
+			key: 'add-your-migration-key',
 			title: translate( 'Add your migration key' ),
-			content: (
-				<>
-					<p>
-						{ translate(
-							'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the {{strong}}%(migrationKeyLabel)s{{/strong}} field.',
-							{
+			content:
+				'' === migrationKey ? (
+					<>
+						<p>{ translate( 'The key will be available here when your new site is ready.' ) }</p>
+						<div className="migration-key-placeholder" />
+					</>
+				) : (
+					<>
+						<p>
+							{ translate(
+								'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the {{strong}}%(migrationKeyLabel)s{{/strong}} field.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: { migrationKeyLabel: 'Migrate Guru Migration Key' },
+								}
+							) }
+						</p>
+						<p>
+							{ translate( 'Click {{strong}}%(migrateLabel)s{{/strong}} to finish.', {
 								components: {
 									strong: <strong />,
 								},
-								args: { migrationKeyLabel: 'Migrate Guru Migration Key' },
-							}
-						) }
-					</p>
-					<p>
-						{ translate( 'Click {{strong}}%(migrateLabel)s{{/strong}} to finish.', {
-							components: {
-								strong: <strong />,
-							},
-							args: { migrateLabel: 'Migrate' },
-						} ) }
-					</p>
-				</>
-			),
+								args: { migrateLabel: 'Migrate' },
+							} ) }
+						</p>
+						<MigrationKeyInput value={ migrationKey } />
+					</>
+				),
 		},
 	];
 };
 
-export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): StepsObject => {
+export const useSteps = ( { fromUrl, migrationKey, onComplete }: StepsOptions ): StepsObject => {
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
-	const stepsData = useStepsData( { fromUrl } );
+	const stepsData = useStepsData( { fromUrl, migrationKey } );
 
 	const steps: Steps = stepsData.map( ( step, index, array ) => {
-		const onActionClick = () => {
+		const recordCompletedStepEvent = () => {
+			recordTracksEvent( 'calypso_site_migration_instructions_substep_complete', {
+				step: step.key,
+			} );
+		};
+
+		const onNextClick = () => {
 			setCurrentStep( index + 1 );
 
 			// When completing a step that wasn't completed yet.
 			if ( lastCompleteStep < index ) {
 				setLastCompleteStep( index );
+				recordCompletedStepEvent();
 			}
+		};
 
-			// When clicking on the last step.
-			if ( index === array.length - 1 ) {
-				onComplete();
-			}
+		const onDoneClick = () => {
+			onComplete();
+			recordCompletedStepEvent();
 		};
 
 		// Allow clicking on visited steps only, so users can see the previous steps again.
@@ -177,9 +198,30 @@ export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): StepsObject =
 						setCurrentStep( index );
 				  };
 
+		const isMigrationKeyStep = index === array.length - 1;
+
+		let action: ExpandableAction | undefined;
+
+		if ( ! isMigrationKeyStep ) {
+			// Next action.
+			action = {
+				label: translate( 'Next' ),
+				onClick: onNextClick,
+			};
+		} else if ( migrationKey ) {
+			// Done action for the migration key step.
+			action = {
+				label: translate( 'Done' ),
+				onClick: onDoneClick,
+			};
+		} else {
+			// No action for migration key step when migration key is not available.
+			action = undefined;
+		}
+
 		return {
 			task: {
-				id: step.title,
+				id: step.key,
 				title: step.title,
 				completed: lastCompleteStep >= index,
 				disabled: false,
@@ -187,10 +229,7 @@ export const useSteps = ( { fromUrl, onComplete }: StepsOptions ): StepsObject =
 			expandable: {
 				content: step.content,
 				isOpen: currentStep === index,
-				action: {
-					label: index === array.length - 1 ? translate( 'Done' ) : translate( 'Next' ),
-					onClick: onActionClick,
-				},
+				action,
 			},
 			onClick: onItemClick,
 		};

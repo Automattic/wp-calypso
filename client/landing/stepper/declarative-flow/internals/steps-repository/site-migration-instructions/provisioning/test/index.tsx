@@ -40,8 +40,8 @@ describe( 'Provisioning', () => {
 		const { container } = render( <Provisioning status={ status } /> );
 		const message = container.querySelector( '.migration-instructions-provisioning__message' );
 
-		expect( message?.textContent ).toBe(
-			'Sorry, we couldn’t finish setting up your site. Please, contact support.'
+		expect( message?.textContent ).toMatch(
+			/Sorry, we couldn’t finish setting up your site. Please contact support./
 		);
 	} );
 

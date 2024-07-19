@@ -6,7 +6,7 @@ import './style.scss';
 type PatternsSectionProps = {
 	title: string;
 	description: string;
-	theme?: 'dark';
+	theme?: 'blue' | 'dark' | 'gray';
 	bodyFullWidth?: boolean;
 	children: React.ReactNode;
 };
@@ -21,7 +21,9 @@ export const PatternsSection = ( {
 	return (
 		<section
 			className={ clsx( 'patterns-section', {
+				'patterns-section--blue': theme === 'blue',
 				'patterns-section--dark': theme === 'dark',
+				'patterns-section--gray': theme === 'gray',
 				'patterns-section--full-width-body': bodyFullWidth,
 			} ) }
 		>

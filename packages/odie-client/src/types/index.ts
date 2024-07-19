@@ -84,6 +84,7 @@ export type Message = {
 	role: MessageRole;
 	simulateTyping?: boolean;
 	type: MessageType;
+	directEscalationSupport?: boolean;
 };
 
 export type Chat = {
