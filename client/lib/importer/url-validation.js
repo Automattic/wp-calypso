@@ -15,19 +15,11 @@ export const hasTld = function ( hostname ) {
 };
 
 export function validateImportUrl( value ) {
-	let parsedUrl;
-	try {
-		parsedUrl = parseUrl( value );
-	} catch ( error ) {
+	if ( ! isValidUrl( value ) ) {
 		return translate( 'Please enter a valid URL.' );
 	}
 
-	// `isURL` considers `http://a` valid, so check for a top level domain name as well.
-	if ( ! parsedUrl || ! hasTld( parsedUrl.hostname ) ) {
-		return translate( 'Please enter a valid URL.' );
-	}
-
-	const { hostname, pathname } = parsedUrl;
+	const { hostname, pathname } = parseUrl( value );
 
 	if ( hostname === 'editor.wix.com' || hostname === 'www.wix.com' ) {
 		return translate(
@@ -47,4 +39,20 @@ export function validateImportUrl( value ) {
 	}
 
 	return null;
+}
+
+export function isValidUrl( value ) {
+	let parsedUrl;
+	try {
+		parsedUrl = parseUrl( value );
+	} catch ( error ) {
+		return false;
+	}
+
+	// `isURL` considers `http://a` valid, so check for a top level domain name as well.
+	if ( ! parsedUrl || ! hasTld( parsedUrl.hostname ) ) {
+		return false;
+	}
+
+	return true;
 }

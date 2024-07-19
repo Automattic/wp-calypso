@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
+import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -13,6 +14,7 @@ import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
 import { SitePreview } from '../site-preview';
 
+jest.mock( 'calypso/landing/stepper/hooks/use-prepare-site-for-migration' );
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
 jest.mock( 'calypso/landing/stepper/hooks/use-query' );
 jest.mock( 'calypso/data/site-migration/use-migration-sticker' );
@@ -45,6 +47,13 @@ describe( 'SiteMigrationInstructions', () => {
 
 		( useMigrationStickerMutation as jest.Mock ).mockReturnValue( {
 			deleteMigrationSticker: jest.fn(),
+		} );
+
+		( usePrepareSiteForMigration as jest.Mock ).mockReturnValue( {
+			detailedStatus: {},
+			completed: false,
+			migrationKey: 'migration-key-here',
+			error: null,
 		} );
 
 		( SitePreview as jest.Mock ).mockImplementation( () => <div>SitePreview Component</div> );

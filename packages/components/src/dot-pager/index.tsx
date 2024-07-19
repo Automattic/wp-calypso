@@ -1,10 +1,9 @@
+import { Button } from '@wordpress/components';
 import { Icon, arrowRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
 import { Children, useState, useEffect, ReactNode } from 'react';
-// REPLACE ME WITH WP BUTTON. THIS BUTTON IS BAD (has aggressive styles with generic class names).
-import Button from '../button';
 import { Swipeable } from '../swipeable';
 
 import './style.scss';

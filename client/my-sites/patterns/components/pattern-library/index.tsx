@@ -303,7 +303,7 @@ export const PatternLibrary = ( {
 
 				{ isHomePage && (
 					<CategoryGallery
-						title={ translate( 'Ship faster, ship more', {
+						title={ translate( 'Build anything with patterns', {
 							comment:
 								'Heading text for a section in the Pattern Library with links to block pattern categories',
 							textOnly: true,
@@ -375,29 +375,30 @@ export const PatternLibrary = ( {
 					</PatternLibraryBody>
 				) }
 
-				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
-					<ReadymadeTemplates forwardRef={ navigationElementRef } />
-				) }
-
-				{ ! isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
-					<PatternsCopyPasteInfo theme="dark" />
-				) }
-
 				{ isHomePage && (
-					<CategoryGallery
-						title={ pageLayoutsHeading }
-						description={ translate(
-							'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
-						) }
-						categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
-						patternTypeFilter={ PatternTypeFilter.PAGES }
+					<PatternsCopyPasteInfo
+						theme={ isEnabled( 'readymade-templates/showcase' ) ? 'gray' : 'dark' }
 					/>
 				) }
 
-				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && <PatternsCopyPasteInfo /> }
+				{ isHomePage && (
+					<>
+						<CategoryGallery
+							title={ pageLayoutsHeading }
+							description={ translate(
+								'Our page layouts are exactly what you need to easily create professional-looking pages using preassembled patterns.'
+							) }
+							categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
+							patternTypeFilter={ PatternTypeFilter.PAGES }
+						/>
+						{ isEnabled( 'readymade-templates/showcase' ) && (
+							<ReadymadeTemplates forwardRef={ navigationElementRef } />
+						) }
+					</>
+				) }
 			</div>
 
-			<PatternsGetStarted theme="dark" />
+			<PatternsGetStarted theme={ isEnabled( 'readymade-templates/showcase' ) ? 'blue' : 'dark' } />
 		</>
 	);
 };

@@ -47,15 +47,17 @@ import {
 	getSiteTitle,
 	getSiteUrl,
 	getSiteAdminUrl,
+	getSiteHomeUrl,
+	getSite,
 } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
+	getMostRecentlySelectedSiteId,
 	getSectionGroup,
 	getSectionName,
-	getSelectedSite,
 	getSelectedSiteId,
 } from 'calypso/state/ui/selectors';
 import Item from './item';
@@ -341,12 +343,23 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderSiteMenu() {
-		const { currentSelectedSiteSlug, translate, siteTitle, siteUrl } = this.props;
+		const { siteSlug, translate, siteTitle, siteUrl, isClassicView, siteAdminUrl, siteHomeUrl } =
+			this.props;
 
 		// Only display when a site is selected.
-		if ( ! currentSelectedSiteSlug ) {
+		if ( ! siteSlug ) {
 			return null;
 		}
+
+		const siteHomeOrAdminItem = isClassicView
+			? {
+					label: translate( 'Dashboard' ),
+					url: siteAdminUrl,
+			  }
+			: {
+					label: translate( 'My Home' ),
+					url: siteHomeUrl,
+			  };
 
 		return (
 			<Item
@@ -354,7 +367,7 @@ class MasterbarLoggedIn extends Component {
 				url={ siteUrl }
 				icon={ <span className="dashicons-before dashicons-admin-home" /> }
 				tipTarget="visit-site"
-				subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl } ] }
+				subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ] }
 			>
 				{ siteTitle }
 			</Item>
@@ -363,8 +376,8 @@ class MasterbarLoggedIn extends Component {
 
 	renderSiteActionMenu() {
 		const {
-			currentSelectedSiteSlug,
-			currentSelectedSite,
+			siteSlug,
+			isClassicView,
 			translate,
 			siteAdminUrl,
 			newPostUrl,
@@ -382,8 +395,7 @@ class MasterbarLoggedIn extends Component {
 
 		let siteActions = [];
 
-		if ( currentSelectedSiteSlug ) {
-			const isClassicView = siteUsesWpAdminInterface( currentSelectedSite );
+		if ( siteSlug ) {
 			siteActions = [
 				{
 					label: translate( 'Post' ),
@@ -391,9 +403,7 @@ class MasterbarLoggedIn extends Component {
 				},
 				{
 					label: translate( 'Media' ),
-					url: isClassicView
-						? `${ siteAdminUrl }media-new.php`
-						: `/media/${ currentSelectedSiteSlug }`,
+					url: isClassicView ? `${ siteAdminUrl }media-new.php` : `/media/${ siteSlug }`,
 				},
 				{
 					label: translate( 'Page' ),
@@ -401,9 +411,7 @@ class MasterbarLoggedIn extends Component {
 				},
 				{
 					label: translate( 'User' ),
-					url: isClassicView
-						? `${ siteAdminUrl }user-new.php`
-						: `/people/new/${ currentSelectedSiteSlug }`,
+					url: isClassicView ? `${ siteAdminUrl }user-new.php` : `/people/new/${ siteSlug }`,
 				},
 			];
 		} else {
@@ -441,10 +449,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderProfileMenu() {
-		const { translate, user, siteUrl, currentSelectedSite } = this.props;
-		const isClassicView = currentSelectedSite
-			? siteUsesWpAdminInterface( currentSelectedSite )
-			: false;
+		const { translate, user, siteUrl, isClassicView } = this.props;
 		const profileActions = [
 			{
 				label: (
@@ -562,7 +567,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderCart() {
-		const { currentSelectedSiteSlug, currentSelectedSiteId, sectionGroup } = this.props;
+		const { siteSlug, siteId, sectionGroup } = this.props;
 		// Only display the masterbar cart when we are viewing a site-specific page.
 		if ( sectionGroup !== 'sites' ) {
 			return null;
@@ -574,8 +579,8 @@ class MasterbarLoggedIn extends Component {
 				goToCheckout={ this.goToCheckout }
 				onRemoveProduct={ this.onRemoveCartProduct }
 				onRemoveCoupon={ this.onRemoveCartProduct }
-				selectedSiteSlug={ currentSelectedSiteSlug }
-				selectedSiteId={ currentSelectedSiteId }
+				selectedSiteSlug={ siteSlug }
+				selectedSiteId={ siteId }
 			/>
 		);
 	}
@@ -831,21 +836,27 @@ export default connect(
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
 		const currentSelectedSiteId = getSelectedSiteId( state );
-		const siteId = currentSelectedSiteId || getPrimarySiteId( state );
+		const siteId =
+			currentSelectedSiteId || getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
 			isSiteMigrationActiveRoute( state );
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
+		const site = getSite( state, siteId );
+		const isClassicView = site && siteUsesWpAdminInterface( site );
+
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
+			siteId: siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			siteTitle: getSiteTitle( state, siteId ),
 			siteUrl: getSiteUrl( state, siteId ),
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
+			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
@@ -855,7 +866,7 @@ export default connect(
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
-			currentSelectedSite: getSelectedSite( state ),
+			isClassicView,
 			currentSelectedSiteSlug: currentSelectedSiteId
 				? getSiteSlug( state, currentSelectedSiteId )
 				: undefined,
@@ -872,8 +883,8 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
-			newPostUrl: getEditorUrl( state, currentSelectedSiteId, null, 'post' ),
-			newPageUrl: getEditorUrl( state, currentSelectedSiteId, null, 'page' ),
+			newPostUrl: getEditorUrl( state, siteId, null, 'post' ),
+			newPageUrl: getEditorUrl( state, siteId, null, 'page' ),
 		};
 	},
 	{

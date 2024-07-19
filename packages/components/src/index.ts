@@ -37,6 +37,7 @@ export {
 	HorizontalBarListItem,
 	StatsCard,
 	StatsCardAvatar,
+	StatsCardTitleExtras,
 } from './horizontal-bar-list';
 export {
 	default as CountComparisonCard,

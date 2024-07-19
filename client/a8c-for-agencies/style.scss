@@ -123,6 +123,8 @@
 }
 
 .theme-a8c-for-agencies {
+
+	.components-button,
 	.button {
 		display: inline-flex;
 		align-items: center;
@@ -143,11 +145,19 @@
 		&:focus-visible {
 			background-color: var(--color-accent-0);
 		}
+
+		&.is-borderless.is-primary.is-active,
+		&.is-borderless.is-primary:active,
+		&.is-borderless.is-primary:focus,
+		&.is-borderless.is-primary:hover {
+			color: var(--color-primary-60);
+		}
 	}
 
 	.button.split-button__toggle {
 		border-radius: 0 4px 4px 0;
-		@include breakpoint-deprecated( "<660px" ) {
+
+		@include breakpoint-deprecated("<660px") {
 			border-radius: 4px;
 		}
 	}
@@ -156,6 +166,7 @@
 		border-radius: 4px 0 0 4px;
 	}
 
+	.components-button.is-primary,
 	.button.is-primary {
 		background-color: var(--color-primary-50);
 		border-color: var(--color-primary-50);
@@ -276,6 +287,7 @@
 		min-height: 36px;
 
 		:not(.components-form-token-field__input-container) {
+
 			&.is-active,
 			&:focus {
 				border-color: var(--color-primary);
@@ -315,20 +327,14 @@
 			border-radius: 4px;
 		}
 
-		> * {
+		>* {
 			margin: 0;
 			padding: 0;
 		}
 	}
 
-	.button.is-borderless.is-primary.is-active,
-	.button.is-borderless.is-primary:active,
-	.button.is-borderless.is-primary:focus,
-	.button.is-borderless.is-primary:hover {
-		color: var(--color-primary-60);
-	}
-
 	.search {
+
 		&,
 		& > *,
 		input[type="search"] {
@@ -360,7 +366,7 @@
 		padding: 16px;
 	}
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		padding-block-start: 0;
 
 		.layout__content {
@@ -435,7 +441,7 @@ html {
 		font-weight: 600;
 		line-height: 32px;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated(">660px") {
 			font-size: $font-headline-small;
 			line-height: 40px;
 		}
@@ -446,7 +452,7 @@ html {
 		font-weight: 600;
 		line-height: 23px;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated(">660px") {
 			font-size: $font-title-small;
 			line-height: 23px;
 		}
@@ -456,7 +462,7 @@ html {
 		font-size: $font-body;
 		line-height: 24px;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated(">660px") {
 			font-size: $font-title-small;
 			line-height: 24px;
 		}
@@ -542,6 +548,7 @@ html {
 			inset-block-start: 1px;
 		}
 	}
+
 	.popover__inner {
 		background: var(--color-accent-60);
 		color: var(--color-text-white);
@@ -563,6 +570,7 @@ html {
 	}
 
 	.dataviews-view-table tr {
+
 		td,
 		th {
 			.action-button {
@@ -576,11 +584,13 @@ html {
 					top: 0;
 				}
 			}
+
 			&:first-child {
 				text-align: left;
 				padding-inline-start: 16px;
 			}
 		}
+
 		th[data-field-id="actions"] {
 			text-align: right;
 			padding-inline-end: 16px;
@@ -604,18 +614,21 @@ html {
 	}
 
 	.redesigned-a8c-table .dataviews-view-table tr {
+
 		td:first-child,
 		th:first-child {
 			padding-inline-start: 16px;
 
-			@include breakpoint-deprecated( ">660px" ) {
+			@include breakpoint-deprecated(">660px") {
 				padding-inline-start: 64px;
 			}
 		}
+
 		td:last-child,
 		th:last-child {
 			padding-inline-end: 16px;
-			@include breakpoint-deprecated( ">660px" ) {
+
+			@include breakpoint-deprecated(">660px") {
 				padding-inline-end: 64px;
 			}
 		}

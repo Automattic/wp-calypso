@@ -24,19 +24,7 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 	return (
 		<div className="sites-header__actions">
 			<div ref={ ( ref ) => setTourStepRef( ref ) }>
-				<AddNewSiteButton
-					showMainButtonLabel={ ! isMobile }
-					onClickAddNewSite={ () =>
-						dispatch( recordTracksEvent( 'calypso_a4a_sites_add_new_site_click' ) )
-					}
-					onClickA4APluginMenuItem={ () =>
-						dispatch( recordTracksEvent( 'calypso_a4a_sites_download_a4a_plugin_click' ) )
-					}
-					onClickUrlMenuItem={ () =>
-						dispatch( recordTracksEvent( 'calypso_a4a_sites_connect_url_site_click' ) )
-					}
-					onWPCOMImport={ onWPCOMImport }
-				/>
+				<AddNewSiteButton showMainButtonLabel={ ! isMobile } onWPCOMImport={ onWPCOMImport } />
 			</div>
 			<GuidedTourStep id="add-new-site" tourId="addSiteStep1" context={ tourStepRef } />
 			<Button

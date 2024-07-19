@@ -80,6 +80,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 	const [ restoreInitiated, setRestoreInitiated ] = useState( false );
+	const [ restoreFailed, setRestoreFailed ] = useState( false );
+	const [ showConfirm, setShowConfirm ] = useState( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) =>
@@ -112,9 +114,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 		if ( userHasRequestedRestore && ! isRestoreInProgress && ! restoreInitiated ) {
 			if ( credentialsAreValid || preflightPassed ) {
+				setRestoreInitiated( true );
 				dispatch( setValidFrom( 'restore', Date.now() ) );
 				requestRestore();
-				setRestoreInitiated( true );
 			}
 		}
 	}, [
@@ -143,6 +145,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		// Mark that the user has requested a restore
 		setUserHasRequestedRestore( true );
 
+		// Show the confirmation screen
+		setShowConfirm( false );
+
 		// Track the restore confirmation event.
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_confirm' ) );
 	}, [
@@ -153,6 +158,19 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		siteId,
 		refetchPreflightStatus,
 	] );
+
+	const onRetryClick = useCallback( () => {
+		// Reset the restore state
+		setRestoreInitiated( false );
+		setRestoreFailed( false );
+		setUserHasRequestedRestore( false );
+
+		// Show the restore confirmation screen
+		setShowConfirm( true );
+
+		// Track the restore retry event.
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_failed_retry' ) );
+	}, [ dispatch ] );
 
 	const onGoBack = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_goback' ) );
@@ -309,7 +327,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					'An error occurred while restoring your site. Please {{button}}try your restore again{{/button}} or contact our support team to resolve the issue.',
 					{
 						components: {
-							button: <Button className="rewind-flow__error-retry-button" onClick={ onConfirm } />,
+							button: (
+								<Button className="rewind-flow__error-retry-button" onClick={ onRetryClick } />
+							),
 						},
 					}
 				) }
@@ -319,7 +339,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
-		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
+		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) ) ||
+		( userHasRequestedRestore && inProgressRewindStatus === 'failed' && ! restoreFailed );
 	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 
 	useEffect( () => {
@@ -327,13 +348,27 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_completed' ) );
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
+			setRestoreFailed( false );
 		}
-	}, [ dispatch, isFinished ] );
+
+		if ( ! isRestoreInProgress && restoreInitiated && inProgressRewindStatus === 'failed' ) {
+			setRestoreInitiated( false );
+			setUserHasRequestedRestore( false );
+			setRestoreFailed( true );
+		}
+	}, [
+		dispatch,
+		inProgressRewindStatus,
+		isFinished,
+		isRestoreInProgress,
+		restoreInitiated,
+		userHasRequestedRestore,
+	] );
 
 	const render = () => {
 		if ( loading ) {
 			return <Loading />;
-		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
+		} else if ( ( ! inProgressRewindStatus && ! userHasRequestedRestore ) || showConfirm ) {
 			return renderConfirm();
 		} else if ( ! inProgressRewindStatus && needCredentials ) {
 			return (
