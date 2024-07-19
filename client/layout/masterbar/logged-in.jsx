@@ -851,6 +851,7 @@ export default connect(
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
+			siteId: siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			siteTitle: getSiteTitle( state, siteId ),
 			siteUrl: getSiteUrl( state, siteId ),
