@@ -557,11 +557,17 @@ body.is-mobile-app-view {
 			display: block;
 		}
 
-		&.masterbar__item-notifications,
 		&.masterbar__item-help {
 			display: none;
 		}
 	}
+
+	@media only screen and (max-width: 400px) {
+		&.masterbar__item-my-site-actions {
+			display: none;
+		}
+	}
+
 
 	&:disabled {
 		&:hover {
