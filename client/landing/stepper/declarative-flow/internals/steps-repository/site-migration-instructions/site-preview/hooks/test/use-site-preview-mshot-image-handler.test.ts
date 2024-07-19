@@ -14,6 +14,16 @@ jest.mock( 'react', () => {
 	};
 } );
 
+jest.mock( '@automattic/calypso-config', () => ( {
+	...jest.requireActual( '@automattic/calypso-config' ),
+	isEnabled: ( feature: string ) => {
+		if ( 'migration-flow/new-migration-instructions-step' === feature ) {
+			return true;
+		}
+		return jest.requireActual( '@automattic/calypso-config' ).isEnabled( feature );
+	},
+} ) );
+
 describe( 'useSitePreviewMShotImageHandler', () => {
 	let mockRef: { current: HTMLDivElement | null };
 	const mockElement = document.createElement( 'div' );
