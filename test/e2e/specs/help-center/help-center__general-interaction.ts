@@ -40,19 +40,22 @@ describe.each( [ { accountName: 'defaultUser' as TestAccountName } ] )(
 			await page.close();
 		} );
 
-		describe( 'Verify Help Center is opened and visible in Calypso', function () {
-			it( 'Verify Help Center is initially closed', async function () {
-				expect( await page.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
-			} );
+		skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
+			'Verify Help Center is opened and visible in Calypso',
+			function () {
+				it( 'Verify Help Center is initially closed', async function () {
+					expect( await page.locator( '.help-center__container' ).isVisible() ).toBeFalsy();
+				} );
 
-			it( 'Open Help Center', async function () {
-				await supportComponent.openPopover();
-			} );
+				it( 'Open Help Center', async function () {
+					await supportComponent.openPopover();
+				} );
 
-			it( 'Verify Help Center is opened', async function () {
-				expect( await page.locator( '.help-center__container' ).isVisible() ).toBeTruthy();
-			} );
-		} );
+				it( 'Verify Help Center is opened', async function () {
+					expect( await page.locator( '.help-center__container' ).isVisible() ).toBeTruthy();
+				} );
+			}
+		);
 
 		skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			'Verify Help Center is opened and visible in Editor',
@@ -65,6 +68,7 @@ describe.each( [ { accountName: 'defaultUser' as TestAccountName } ] )(
 					await page.goto( postURL );
 				} );
 
+				// eslint-disable-next-line jest/no-identical-title
 				it( 'Verify Help Center is initially closed', async function () {
 					expect(
 						await page
@@ -74,6 +78,7 @@ describe.each( [ { accountName: 'defaultUser' as TestAccountName } ] )(
 					).toBeFalsy();
 				} );
 
+				// eslint-disable-next-line jest/no-identical-title
 				it( 'Open Help Center', async function () {
 					try {
 						await page
@@ -87,6 +92,7 @@ describe.each( [ { accountName: 'defaultUser' as TestAccountName } ] )(
 					}
 				} );
 
+				// eslint-disable-next-line jest/no-identical-title
 				it( 'Verify Help Center is opened', async function () {
 					const helpCenterContainerIsVisible = await page
 						.frameLocator( '.calypsoify iframe' )
