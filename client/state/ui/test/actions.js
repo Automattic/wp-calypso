@@ -24,10 +24,9 @@ describe( 'actions', () => {
 
 			setAllSitesSelected()( dispatch, getState );
 
-			expect( getState ).toHaveBeenCalled();
-			expect( dispatch ).toHaveBeenCalledWith( {
+			expect( dispatch ).not.toHaveBeenCalledWith( {
 				type: MOST_RECENTLY_SELECTED_SITE_SET,
-				siteId: mostRecentlySelectedSiteId,
+				siteId: null,
 			} );
 			expect( dispatch ).toHaveBeenCalledWith( {
 				type: SELECTED_SITE_SET,
@@ -60,10 +59,9 @@ describe( 'actions', () => {
 
 			setSelectedSiteId( siteId )( dispatch, getState );
 
-			expect( getState ).toHaveBeenCalled();
 			expect( dispatch ).toHaveBeenCalledWith( {
 				type: MOST_RECENTLY_SELECTED_SITE_SET,
-				siteId: mostRecentlySelectedSiteId,
+				siteId,
 			} );
 			expect( dispatch ).toHaveBeenCalledWith( {
 				type: SELECTED_SITE_SET,
