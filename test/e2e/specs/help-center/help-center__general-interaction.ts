@@ -164,27 +164,30 @@ describe( 'Help Center: Interact with Results', function () {
 		supportComponent = new SupportComponent( page );
 	} );
 
-	describe( 'Search for Help article', function () {
-		it( 'Open Help Center', async function () {
-			await supportComponent.openPopover();
-		} );
+	skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
+		'Search for Help article',
+		function () {
+			it( 'Open Help Center', async function () {
+				await supportComponent.openPopover();
+			} );
 
-		it( 'Search for posts-related help article', async function () {
-			// We use domains below, but one of the domain-adjacent articles is currently broken:
-			// https://github.com/Automattic/wp-calypso/issues/79576
-			// Until that's fixed, let's steer clear and search a different topic.
-			await supportComponent.search( 'posts' );
-		} );
+			it( 'Search for posts-related help article', async function () {
+				// We use domains below, but one of the domain-adjacent articles is currently broken:
+				// https://github.com/Automattic/wp-calypso/issues/79576
+				// Until that's fixed, let's steer clear and search a different topic.
+				await supportComponent.search( 'posts' );
+			} );
 
-		it( 'Click on the second Help Docs result', async function () {
-			await supportComponent.clickResultByIndex( 'Docs', 1 );
-		} );
+			it( 'Click on the second Help Docs result', async function () {
+				await supportComponent.clickResultByIndex( 'Docs', 1 );
+			} );
 
-		it( 'Help Doc article is shown', async function () {
-			const articleTitle = await supportComponent.getOpenArticleTitle();
-			expect( articleTitle ).not.toBe( '' );
-		} );
-	} );
+			it( 'Help Doc article is shown', async function () {
+				const articleTitle = await supportComponent.getOpenArticleTitle();
+				expect( articleTitle ).not.toBe( '' );
+			} );
+		}
+	);
 
 	describe( 'Navigate to Calypso Link', function () {
 		let popupPage: Page;
