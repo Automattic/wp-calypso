@@ -287,6 +287,12 @@ body.is-mobile-app-view {
 		&.masterbar__item-my-site-actions {
 			padding: 0;
 		}
+
+		&.masterbar__reader {
+			.masterbar_svg-reader {
+				padding: 0;
+			}
+		}
 	}
 
 	&.has-subitems {
