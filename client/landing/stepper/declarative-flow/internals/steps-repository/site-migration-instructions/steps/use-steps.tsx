@@ -169,21 +169,25 @@ export const useSteps = ( { fromUrl, migrationKey, onComplete }: StepsOptions ):
 	const stepsData = useStepsData( { fromUrl, migrationKey } );
 
 	const steps: Steps = stepsData.map( ( step, index, array ) => {
+		const recordCompletedStepEvent = () => {
+			recordTracksEvent( 'calypso_site_migration_instructions_substep_complete', {
+				step: step.key,
+			} );
+		};
+
 		const onNextClick = () => {
 			setCurrentStep( index + 1 );
 
 			// When completing a step that wasn't completed yet.
 			if ( lastCompleteStep < index ) {
 				setLastCompleteStep( index );
-
-				recordTracksEvent( 'calypso_site_migration_instructions_step_complete', {
-					step: step.key,
-				} );
+				recordCompletedStepEvent();
 			}
 		};
 
 		const onDoneClick = () => {
 			onComplete();
+			recordCompletedStepEvent();
 		};
 
 		// Allow clicking on visited steps only, so users can see the previous steps again.
