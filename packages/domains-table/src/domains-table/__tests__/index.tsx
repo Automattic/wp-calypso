@@ -110,10 +110,10 @@ test( 'when isAllSitesView is true, the primary domain label is displayed if a d
 		const [ , rowOne, rowTwo ] = screen.getAllByRole( 'row' );
 
 		expect( within( rowOne ).queryByText( 'example.com' ) ).toBeInTheDocument();
-		expect( within( rowOne ).queryByText( 'Primary domain' ) ).toBeInTheDocument();
+		expect( within( rowOne ).queryByText( 'Primary site address' ) ).toBeInTheDocument();
 
 		expect( within( rowTwo ).queryByText( 'example.wordpress.com' ) ).toBeInTheDocument();
-		expect( within( rowTwo ).queryByText( 'Primary domain' ) ).not.toBeInTheDocument();
+		expect( within( rowTwo ).queryByText( 'Primary site address' ) ).not.toBeInTheDocument();
 	} );
 
 	// Test that the label is not displayed when displayPrimaryDomainLabel is false
@@ -125,7 +125,7 @@ test( 'when isAllSitesView is true, the primary domain label is displayed if a d
 		/>
 	);
 
-	expect( screen.queryByText( 'Primary domain' ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( 'Primary site address' ) ).not.toBeInTheDocument();
 } );
 
 test( 'when the user has no selected domains, all checkboxes are unchecked', () => {
