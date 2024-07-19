@@ -3,7 +3,7 @@ import { Spinner } from '@wordpress/components';
 import { Icon, closeSmall } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordMigrationInstructionsLinkClick } from '../tracking';
 import './style.scss';
 
 export type Status = 'idle' | 'pending' | 'success' | 'error';
@@ -41,9 +41,7 @@ export const Provisioning: FC< ProvisioningProps > = ( { status } ) => {
 	// Error handler.
 	if ( currentAction.status === 'error' ) {
 		const contactClickHandler = () => {
-			recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
-				linkname: 'error-contact-support',
-			} );
+			recordMigrationInstructionsLinkClick( 'error-contact-support' );
 		};
 
 		text = translate(
