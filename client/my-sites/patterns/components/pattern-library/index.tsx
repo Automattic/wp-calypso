@@ -150,7 +150,7 @@ export const PatternLibrary = ( {
 		if ( navRef.current && searchTerm ) {
 			scrollToPatternView( navRef.current );
 		}
-	}, [ searchTerm, section ] );
+	}, [ searchTerm ] );
 
 	const [ isSticky, setIsSticky ] = useState( false );
 	const prevNavTopValue = useRef( 0 );
@@ -175,7 +175,11 @@ export const PatternLibrary = ( {
 	}, [] );
 
 	useEffect( () => {
-		if ( navigationElementRef.current && section && ! searchTerm ) {
+		if (
+			section === 'readymade-templates-section' &&
+			navigationElementRef.current &&
+			! searchTerm
+		) {
 			scrollToSection( navigationElementRef.current, 'instant' );
 		}
 	}, [ searchTerm, section ] );
