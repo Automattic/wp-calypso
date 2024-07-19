@@ -1,4 +1,5 @@
 import { doesStringResembleDomain } from '@automattic/onboarding';
+import { translate } from 'i18n-calypso';
 import { untrailingslashit } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -130,12 +131,7 @@ export function isContextSourceMyJetpack( context: Context ): boolean {
 	return context.query?.source === 'my-jetpack';
 }
 
-export function isCouponDisplayHidden(): boolean {
-	const location = window.location;
-	const searchParams = new URLSearchParams( location.search );
-	const ref = searchParams.get( 'ref' );
-	const isAffiliateLP = ( referer: string | null ): boolean => {
-		return referer ? referer.includes( 'aff' ) : false;
-	};
-	return searchParams.has( 'coupon' ) || isAffiliateLP( ref );
+export function getAffiliateCouponLabel(): string {
+	// translators: The label of the coupon line item in checkout
+	return translate( 'Exclusive Offer Applied' );
 }

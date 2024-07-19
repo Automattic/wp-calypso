@@ -23,8 +23,10 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'calypso/state';
+import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';
-import { isCouponDisplayHidden } from '../../utils';
+import { getAffiliateCouponLabel } from '../../utils';
 import type { Theme } from '@automattic/composite-checkout';
 import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
 
@@ -320,18 +322,18 @@ export function CouponCostOverride( {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 
-	if (
-		! responseCart.coupon ||
-		! responseCart.coupon_savings_total_integer ||
-		isCouponDisplayHidden()
-	) {
+	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;
 	}
+
 	// translators: The label of the coupon line item in checkout, including the coupon code
-	const label = translate( 'Coupon: %(couponCode)s', {
-		args: { couponCode: responseCart.coupon },
-	} );
+	const label = isOnboardingAffiliateFlow
+		? getAffiliateCouponLabel()
+		: translate( 'Coupon: %(couponCode)s', {
+				args: { couponCode: responseCart.coupon },
+		  } );
 	return (
 		<CostOverridesListStyle>
 			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">

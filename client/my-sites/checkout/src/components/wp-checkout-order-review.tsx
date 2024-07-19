@@ -14,8 +14,8 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import { isCouponDisplayHidden } from '../../utils';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -195,6 +195,7 @@ export function CouponFieldArea( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 	const { setCouponFieldValue } = couponFieldStateProps;
+	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 
 	useEffect( () => {
 		if ( couponStatus === 'applied' ) {
@@ -203,7 +204,7 @@ export function CouponFieldArea( {
 		}
 	}, [ couponStatus, setCouponFieldValue ] );
 
-	if ( isPurchaseFree || couponStatus === 'applied' || isCouponDisplayHidden() ) {
+	if ( isPurchaseFree || couponStatus === 'applied' || isOnboardingAffiliateFlow ) {
 		return null;
 	}
 
