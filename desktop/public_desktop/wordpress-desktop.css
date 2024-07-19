@@ -5,7 +5,7 @@ body {
 #title-bar {
 	-webkit-app-region: drag;
 	display: block;
-	background-color: #24282d;
+	background-color: #1e1e1e;
 	position: absolute;
 	height: 38px;
 	top: 0;
@@ -34,12 +34,12 @@ body {
 }
 
 .nav-button:hover {
-	background-color: #1a1e23;
+	background-color: #0c0c0c;
 }
 
 .nav-button svg {
 	margin: auto;
-	fill: #8f93a3;
+	fill: #fff;
 }
 
 /**
