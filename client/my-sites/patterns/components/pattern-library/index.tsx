@@ -361,7 +361,7 @@ export const PatternLibrary = ( {
 
 				{ isHomePage && (
 					<PatternsCopyPasteInfo
-						theme={ isEnabled( 'readymade-template/showcase' ) ? 'gray' : 'dark' }
+						theme={ isEnabled( 'readymade-templates/showcase' ) ? 'gray' : 'dark' }
 					/>
 				) }
 
