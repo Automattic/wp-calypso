@@ -75,6 +75,10 @@ type ReadymadeTemplatePattern = {
 	id: number;
 	source_site_sid: number;
 };
+type ReadymadeTemplateStyles = {
+	colors?: string;
+	typography?: string;
+};
 
 export type ReadymadeTemplate = {
 	template_id: number;
@@ -86,4 +90,5 @@ export type ReadymadeTemplate = {
 		footer: string;
 	};
 	patterns: ReadymadeTemplatePattern[];
+	styles: ReadymadeTemplateStyles;
 };
