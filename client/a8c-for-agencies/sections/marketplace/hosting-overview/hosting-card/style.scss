@@ -10,10 +10,6 @@
 		position: relative;
 		padding-bottom: 46px;
 
-		display: flex;
-		flex-direction: column;
-		min-height: 100%;
-
 		.button {
 			width: 100%;
 			text-wrap: balance;
@@ -89,13 +85,12 @@
 		@include a4a-font-body-lg;
 		margin: 0;
 		color: var(--studio-gray-80, #2c3338);
-		word-break: break-word;
 
 		@include break-large {
-			height: 85px;
+			height: 125px;
 		}
 		@include break-huge {
-			height: 65px;
+			height: 105px;
 		}
 	}
 
