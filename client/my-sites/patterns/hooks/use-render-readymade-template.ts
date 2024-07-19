@@ -1,12 +1,9 @@
-import { RenderedContent } from '@automattic/block-renderer';
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
 import type { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 
-export const useRenderReadymadeTemplate = (
-	readymadeTemplate: ReadymadeTemplate
-): RenderedContent =>
+export const useRenderReadymadeTemplate = ( readymadeTemplate: ReadymadeTemplate ) =>
 	useQuery( {
 		queryKey: [ 'pattern-library', 'readymade-template', readymadeTemplate.template_id, 'render' ],
 		queryFn() {
