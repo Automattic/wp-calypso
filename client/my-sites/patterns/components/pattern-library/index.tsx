@@ -286,20 +286,18 @@ export const PatternLibrary = ( {
 				</div>
 
 				{ isHomePage && (
-					<>
-						<CategoryGallery
-							title={ translate( 'Build anything with patterns', {
-								comment:
-									'Heading text for a section in the Pattern Library with links to block pattern categories',
-								textOnly: true,
-							} ) }
-							description={ translate(
-								'Choose from a library of beautiful, functional design patterns to build exactly the pages you need—or your client needs—in no time.'
-							) }
-							categories={ categories }
-							patternTypeFilter={ PatternTypeFilter.REGULAR }
-						/>
-					</>
+					<CategoryGallery
+						title={ translate( 'Build anything with patterns', {
+							comment:
+								'Heading text for a section in the Pattern Library with links to block pattern categories',
+							textOnly: true,
+						} ) }
+						description={ translate(
+							'Choose from a library of beautiful, functional design patterns to build exactly the pages you need—or your client needs—in no time.'
+						) }
+						categories={ categories }
+						patternTypeFilter={ PatternTypeFilter.REGULAR }
+					/>
 				) }
 
 				{ ! isHomePage && (
