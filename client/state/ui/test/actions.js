@@ -1,5 +1,6 @@
 import {
 	NOTIFICATIONS_PANEL_TOGGLE,
+	PREV_SELECTED_SITE_SET,
 	SECTION_SET,
 	SELECTED_SITE_SET,
 } from 'calypso/state/action-types';
@@ -12,10 +13,23 @@ import {
 
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {
-		test( 'should return an action object with a null siteId', () => {
-			const action = setAllSitesSelected();
+		test( 'should dispatch actions for clearing the selected site ID', () => {
+			const prevSelectedSiteId = 123;
+			const dispatch = jest.fn();
+			const getState = jest.fn().mockReturnValue( {
+				ui: {
+					selectedSiteId: prevSelectedSiteId,
+				},
+			} );
 
-			expect( action ).toEqual( {
+			setAllSitesSelected()( dispatch, getState );
+
+			expect( getState ).toHaveBeenCalled();
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: PREV_SELECTED_SITE_SET,
+				siteId: prevSelectedSiteId,
+			} );
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: SELECTED_SITE_SET,
 				siteId: null,
 			} );
@@ -34,11 +48,24 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'setSelectedSiteId()', () => {
-		test( 'should return an action object with the siteId set', () => {
+		test( 'should dispatch actions for selected site IDs', () => {
 			const siteId = 2916284;
-			const action = setSelectedSiteId( siteId );
+			const prevSelectedSiteId = 123;
+			const dispatch = jest.fn();
+			const getState = jest.fn().mockReturnValue( {
+				ui: {
+					selectedSiteId: prevSelectedSiteId,
+				},
+			} );
 
-			expect( action ).toEqual( {
+			setSelectedSiteId( siteId )( dispatch, getState );
+
+			expect( getState ).toHaveBeenCalled();
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: PREV_SELECTED_SITE_SET,
+				siteId: prevSelectedSiteId,
+			} );
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: SELECTED_SITE_SET,
 				siteId,
 			} );
