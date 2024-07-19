@@ -45,7 +45,7 @@ function showAppWindow() {
 	}
 
 	if ( process.platform === 'linux' ) {
-		windowConfig.icon = getPath( 'app-logo.png' );
+		windowConfig.icon = getPath( 'linux-icon.png' );
 	}
 
 	mainWindow = new BrowserWindow( {
