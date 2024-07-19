@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
+import { MaterialIcon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -36,7 +36,8 @@ export class TranslatorInvite extends Component {
 		if ( localizedLanguageNames && localizedLanguageNames[ locale ] ) {
 			return (
 				<div className="translator-invite__content">
-					<Gridicon className="translator-invite__gridicon" icon="globe" size={ 18 } />
+					<MaterialIcon icon="emoji_language" /> <br />
+					<h2>{ translate( 'Translate WordPress.com' ) }</h2>
 					{ translate(
 						'Would you like to help us translate WordPress.com into {{a}}%(language)s{{/a}}?',
 						{
