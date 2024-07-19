@@ -272,6 +272,10 @@ body.is-mobile-app-view {
 
 	&.masterbar__reader {
 		padding: 0 7px 0 4px;
+
+		.masterbar_svg-reader {
+			padding: 0 6px 0 0;
+		}
 	}
 
 	&.masterbar__item-my-site-actions {
