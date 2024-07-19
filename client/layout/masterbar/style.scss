@@ -232,6 +232,13 @@ body.is-mobile-app-view {
 		@include breakpoint-deprecated( ">480px" ) {
 			flex-grow: 0;
 		}
+
+		@media only screen and (max-width: 480px) {
+			position: absolute;
+			top: 0;
+			right: 0;
+			background: var(--color-masterbar-background);
+		}
 	}
 }
 
@@ -555,17 +562,6 @@ body.is-mobile-app-view {
 		&.masterbar__item--always-show-content .masterbar__item-content,
 		&.masterbar__item-me .masterbar__item-content {
 			display: block;
-		}
-
-		&.masterbar__item-my-site-actions {
-			display: none;
-		}
-	}
-
-	@media only screen and (max-width: 400px) {
-		&.masterbar__item-my-site-actions,
-		&.masterbar__reader {
-			display: none;
 		}
 	}
 
