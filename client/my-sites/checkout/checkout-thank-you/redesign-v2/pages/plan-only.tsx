@@ -1,5 +1,7 @@
 import { isP2Plus, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
+import { useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
@@ -39,6 +41,8 @@ const isMonthsOld = ( months: number, rawDate?: string ) => {
 	const parsedDate = moment( rawDate );
 	return moment().diff( parsedDate, 'months' ) > months;
 };
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 const PlanOnlyThankYou = ( {
 	primaryPurchase,
@@ -145,6 +149,8 @@ const PlanOnlyThankYou = ( {
 
 	const footerDetails = [];
 
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+
 	if ( isP2Plus( primaryPurchase ) ) {
 		footerDetails.push( {
 			key: 'footer-add-members',
@@ -183,10 +189,10 @@ const PlanOnlyThankYou = ( {
 	footerDetails.push( {
 		key: 'footer-support',
 		title: translate( 'Everything you need to know' ),
-		description: translate( 'Explore our support guides and find an answer to every question.' ),
+		description: translate( 'Visit Help Center and find an answer to every question.' ),
 		buttonText: translate( 'Explore support resources' ),
-		buttonHref: '/support',
 		buttonOnClick: () => {
+			setShowHelpCenter( true );
 			recordTracksEvent( 'calypso_thank_you_footer_link_click', {
 				context: 'plan-only',
 				type: 'support',
