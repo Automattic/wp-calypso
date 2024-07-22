@@ -69,10 +69,11 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 export const setShowHelpCenter = function* ( show: boolean ) {
 	if ( ! show ) {
 		yield setInitialRoute( undefined );
-		yield setIsMinimized( false );
 	} else {
 		yield setShowMessagingWidget( false );
 	}
+
+	yield setIsMinimized( false );
 
 	return {
 		type: 'HELP_CENTER_SET_SHOW',
