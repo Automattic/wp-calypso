@@ -1,6 +1,28 @@
-.migration-key-placeholder {
-	display: block;
+@import "~@automattic/color-studio/dist/color-variables";
+@import "~@wordpress/base-styles/colors";
+
+@keyframes migration-key-skeleton__animation {
+	0% {
+		opacity: 0.5;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0.5;
+	}
+}
+
+.migration-key-skeleton {
+	background-color: $studio-gray-5;
+	width: 100%;
 	height: 40px;
-	background-color: #f6f7f7;
-	cursor: text;
+	border-radius: 4px;
+	animation: migration-key-skeleton__animation 1.6s ease-in-out infinite;
+
+	&::after {
+		content: "";
+	}
 }

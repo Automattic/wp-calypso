@@ -127,7 +127,7 @@ const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData 
 				'' === migrationKey ? (
 					<>
 						<p>{ translate( 'The key will be available here when your new site is ready.' ) }</p>
-						<div className="migration-key-placeholder" />
+						<div className="migration-key-skeleton" />
 					</>
 				) : (
 					<>
