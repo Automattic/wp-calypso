@@ -18,8 +18,7 @@ interface Props {
 	siteId?: number | null;
 }
 
-export const UpgradeToPremiumNudgePure = ( props: Props ) => {
-	const { siteId } = props;
+export const UpgradeToPremiumNudge = ( { siteId }: Props ) => {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const canUserUpgrade = useSelector( ( state ) =>
