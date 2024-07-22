@@ -593,7 +593,7 @@ body.is-mobile-app-view {
 
 
 	&.masterbar__item-my-sites {
-		padding: 0 6px; // trying to match core's 35px width
+		padding: 0 7px 0 5px; // trying to match core's 35px width
 
 		@media only screen and (max-width: 782px) {
 			padding: 0;
@@ -889,6 +889,7 @@ body.is-mobile-app-view {
 	.gravatar {
 		border: 1px solid var(--color-masterbar-border);
 		border-radius: unset;
+		margin-left: 1px;
 
 		@media only screen and (max-width: 782px) {
 			width: 26px;
