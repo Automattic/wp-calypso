@@ -70,7 +70,6 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 					className={ className }
 					title={ moduleTitle }
 					type={ 3 }
-					withHero
 				/>
 			) }
 			{ ( ( ! isRequestingData && hasPosts ) || shouldGateStatsModule ) && (
