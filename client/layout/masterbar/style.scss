@@ -458,6 +458,11 @@ body.is-mobile-app-view {
 
 	&.is-active {
 		background: var(--color-masterbar-item-active-background);
+		color: var(--color-masterbar-text-active, var(--color-masterbar-text));
+		svg path,
+		.gridicon {
+			fill: var(--color-masterbar-icon-active, var(--color-masterbar-icon));
+		}
 	}
 
 	&:hover .masterbar__item-bubble {
