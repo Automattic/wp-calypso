@@ -17,10 +17,11 @@ import { useOdieAssistantContext } from '../../context';
 import useTyper from '../../utils/user-typer';
 import Button from '../button';
 import FoldableCard from '../foldable';
+import SupportDocLink from '../support-link';
 import CustomALink from './custom-a-link';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
-import type { CurrentUser, Message, Source } from '../../types/';
+import type { CurrentUser, Message } from '../../types/';
 
 import './style.scss';
 
@@ -35,8 +36,14 @@ const ChatMessage = (
 	ref: React.Ref< HTMLDivElement >
 ) => {
 	const isUser = message.role === 'user';
-	const { botName, extraContactOptions, addMessage, trackEvent, navigateToContactOptions } =
-		useOdieAssistantContext();
+	const {
+		botName,
+		extraContactOptions,
+		addMessage,
+		trackEvent,
+		navigateToContactOptions,
+		navigateToSupportDocs,
+	} = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const { __, _x } = useI18n();
@@ -343,10 +350,34 @@ const ChatMessage = (
 				>
 					<div className="odie-chatbox-message-sources">
 						{ sources.length > 0 &&
-							sources.map( ( source: Source, index: number ) => (
-								<CustomALink key={ index } href={ source.url } inline={ false }>
-									{ source?.title }
-								</CustomALink>
+							sources.map( ( source, index ) => (
+								<>
+									{ navigateToSupportDocs && (
+										<SupportDocLink
+											key={ index }
+											link={ source.url }
+											onLinkClickHandler={ () => {
+												trackEvent( 'chat_message_action_click', {
+													action: 'link',
+													in_chat_view: true,
+													href: source.url,
+												} );
+												navigateToSupportDocs(
+													String( source.blog_id ),
+													String( source.post_id ),
+													source.url,
+													source.title
+												);
+											} }
+											title={ source.title }
+										/>
+									) }
+									{ ! navigateToSupportDocs && (
+										<CustomALink key={ index } href={ source.url } inline={ false }>
+											{ source?.title }
+										</CustomALink>
+									) }
+								</>
 							) ) }
 					</div>
 				</FoldableCard>
