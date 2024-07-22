@@ -189,8 +189,6 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
 			event.preventDefault();
 
-			const navigatingFromGPTResponse = mode === 'FORUM' && showingGPTResponse;
-
 			// if result.post_id isn't set then open in a new window
 			if ( ! result.post_id ) {
 				const tracksData = {
@@ -211,7 +209,6 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 				postId: String( result.post_id ),
 				query: debouncedMessage || '',
 				title: preventWidows( decodeEntities( result.title ) ),
-				...( navigatingFromGPTResponse ? { canNavigateBack: 'true' } : {} ),
 			} );
 
 			if ( result.blog_id ) {
