@@ -28,6 +28,7 @@ export interface SiteMetricsParams {
 	end: number;
 	metric?: MetricsParams[ 'metric' ]; // Use MetricsParams['metric'] instead of MetricsParams
 	dimension?: DimensionParams;
+	summarize?: boolean;
 }
 
 export type DimensionParams =
@@ -67,6 +68,7 @@ export function useSiteMetricsQuery(
 					end: params.end,
 					metric: params.metric,
 					dimension: params.dimension,
+					summarize: !! params.summarize,
 				}
 			);
 		},

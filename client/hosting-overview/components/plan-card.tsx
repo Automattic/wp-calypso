@@ -16,6 +16,8 @@ import PlanStorage from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { HostingCard, HostingCardLinkButton } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { PlanBandwidth } from 'calypso/hosting-overview/components/plan-bandwidth';
+import { PlanSiteVisits } from 'calypso/hosting-overview/components/plan-site-visits';
 import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
@@ -264,6 +266,8 @@ const PlanCard: FC = () => {
 								) }
 							</PlanStorage>
 						) }
+						{ site && <PlanBandwidth siteId={ site.ID } /> }
+						{ site && <PlanSiteVisits siteId={ site.ID } /> }
 					</>
 				) }
 			</HostingCard>

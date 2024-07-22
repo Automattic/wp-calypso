@@ -40,6 +40,7 @@
 		"a4a/site-migration": true,
 		"a4a-logged-out-signup": true,
 		"a4a-automated-referrals": true,
+		"hosting-overview-refinements": false,
 		"a4a-partner-directory": true
 	},
 	"enable_all_sections": false,

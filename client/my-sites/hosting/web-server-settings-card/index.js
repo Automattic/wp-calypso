@@ -203,6 +203,7 @@ const WebServerSettingsCard = ( {
 		return (
 			<FormFieldset>
 				<FormLabel>{ translate( 'PHP version' ) }</FormLabel>
+				111
 				<FormSelect
 					disabled={ disabled || isUpdatingPhpVersion }
 					className="web-server-settings-card__php-version-select"

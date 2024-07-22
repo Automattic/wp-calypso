@@ -42,6 +42,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 	const statType = 'statsVisits';
 	const [ chartOption, setChartOption ] = useState( 'total' );
 	const viewData = useSelector( ( state ) => getSiteStatsViewSummary( state, siteId ) );
+
 	const monthViewOptions = useMemo( () => {
 		return [
 			{ value: 'total', label: translate( 'Months and years' ) },
