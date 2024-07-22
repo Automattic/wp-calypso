@@ -35,6 +35,7 @@ export const UpgradeToPremiumNudge = ( { siteId }: Props ) => {
 		storageAddOns: null,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
+		withProratedDiscounts: true,
 	} )?.[ proposedPlanSlug as PlanSlug ];
 
 	const price = pricing?.discountedPrice.monthly ?? pricing?.originalPrice.monthly;
