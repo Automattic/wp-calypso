@@ -531,6 +531,8 @@ body.is-mobile-app-view {
 			padding-top: 0;
 			&::before {
 				font-size: 40px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				vertical-align: middle;
+				top: 2px !important;
 			}
 		}
 
@@ -554,9 +556,12 @@ body.is-mobile-app-view {
 
 		.dashicons-menu-alt {
 			padding-top: 0;
+			position: relative;
+			float: left;
 			&::before {
 				font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-				top: 4px;
+				top: -1px;
+				vertical-align: middle;
 			}
 		}
 	}
@@ -588,6 +593,8 @@ body.is-mobile-app-view {
 		display: none;
 		@media only screen and (max-width: 782px) {
 			display: inline-block;
+			margin-right: 2px;
+			margin-left: -1px;
 		}
 	}
 
@@ -887,13 +894,14 @@ body.is-mobile-app-view {
 	}
 
 	.gravatar {
-		border: 1px solid var(--color-masterbar-border);
+		border: 1px solid var(--color-sidebar-submenu-background);
 		border-radius: unset;
 		margin-left: 1px;
 
 		@media only screen and (max-width: 782px) {
 			width: 26px;
 			height: 26px;
+			margin-left: 4px;
 		}
 	}
 
@@ -1115,6 +1123,7 @@ body.is-mobile-app-view {
 		@media only screen and (max-width: 782px) {
 			width: 36px;
 			height: 36px;
+			padding: 3px 8px 5px;
 		}
 	}
 
@@ -1320,6 +1329,7 @@ a.masterbar__quick-language-switcher {
 			fill: var(--color-masterbar-highlight);
 			width: 36px;
 			height: 36px;
+			padding: 3px 8px 5px;
 		}
 	}
 }
