@@ -4,13 +4,13 @@ WPCom Global theme, Modern theme adjusted for use in calypso non site contexts
 
 .color-scheme.is-global {
 	/* Variables used in Calypso Modern */
-	--theme-text-color: #2c3338; /* Direct from wp-admin */
+	--theme-text-color: var(--studio-gray-60); /* Direct from wp-admin */
 	--theme-text-color-rgb: 44, 51, 56; /* Manual conversion */
 	--theme-base-color: #f6f7f7; /* Direct from wp-admin */
 	--theme-base-color-rgb: 246, 247, 247; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-	--theme-submenu-text-color: #1e1e1e; /* mix( $base-color, $text-color, 30% ) */
+	--theme-submenu-text-color: var(--studio-gray-60); /* mix( $base-color, $text-color, 30% ) */
 	--theme-submenu-background-color: #f6f7f7; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
-	--theme-icon-color: #1e1e1e; /* Direct from wp-admin */
+	--theme-icon-color: var(--studio-gray-60);  /* Direct from wp-admin */
 	--theme-highlight-color: #3858e9; /* Direct from wp-admin */
 	--theme-highlight-color-rgb: 56, 88, 233; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
 	--theme-notification-color: #3858e9; /* Direct from wp-admin */
