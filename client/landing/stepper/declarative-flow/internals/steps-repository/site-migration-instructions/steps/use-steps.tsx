@@ -219,7 +219,7 @@ export const useSteps = ( { fromUrl, migrationKey, onComplete }: StepsOptions ):
 				id: step.key,
 				title: step.title,
 				completed: lastCompleteStep >= index,
-				disabled: false,
+				disabled: lastCompleteStep < index - 1,
 			},
 			expandable: {
 				content: step.content,

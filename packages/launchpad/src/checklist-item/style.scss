@@ -227,7 +227,7 @@
 // pending disabled tasks
 .checklist-item__task.pending.disabled {
 	.checklist-item__text {
-		color: inherit;
+		color: var(--color-neutral-40);
 	}
 }
 
