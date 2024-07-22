@@ -8,10 +8,10 @@ import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dash
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSites from 'calypso/state/selectors/get-sites';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isA4AClientSite from 'calypso/state/sites/selectors/is-a4a-client-site';
 import A4ALogo from '../../a4a-logo';
 import useManagedSitesMap from './hooks/use-managed-sites-map';
 import WPCOMSitesTableContent from './table-content';
@@ -27,7 +27,7 @@ export type SiteItem = {
 const TypeIcon = ( { siteId }: { siteId: number } ) => {
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isA4AClient = useSelector( ( state ) => getRawSite( state, siteId )?.is_a4a_client );
+	const isA4AClient = useSelector( ( state ) => isA4AClientSite( state, siteId ) );
 
 	if ( isWPCOM ) {
 		return <Icon className="wpcom-sites-table__icon" icon={ <WordPressLogo /> } />;
