@@ -45,12 +45,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			hasPWYWPlanOnly,
 			shouldShowPaywallNotice,
 		}: StatsNoticeProps ) => {
-			// Show the notice only if the site is commercial.
-			if ( ! isCommercial ) {
-				return false;
-			}
-
-			if ( isVip ) {
+			if ( ! isCommercial || isVip || hasPaidStats ) {
 				return false;
 			}
 
@@ -67,12 +62,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				return true;
 			}
 
-			return !! (
-				( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) &&
-				// Show the notice if the site has not purchased the paid stats product.
-				! hasPaidStats &&
-				! isVip
-			);
+			return !! ( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites );
 		},
 		disabled: false,
 	},
