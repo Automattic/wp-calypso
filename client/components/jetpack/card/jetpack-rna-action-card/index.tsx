@@ -89,6 +89,7 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 						rel={ ctaButtonExternal ? 'noopener noreferrer' : '' }
 					>
 						{ ctaButtonLabel }
+						{ ctaButtonExternal && ' ' }
 						{ ctaButtonExternal && <Gridicon icon="external" size={ 16 } /> }
 					</Button>
 					{ secondaryCtaURL && (
