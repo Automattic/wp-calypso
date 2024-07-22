@@ -40,10 +40,13 @@ const wooexpress: Flow = {
 		const vendorId = searchParams.get( 'vid' );
 
 		return {
-			...( oauth2ClientId ? { oauth2ClientId } : {} ),
-			...( wccomFrom ? { wccomFrom } : {} ),
-			...( aff ? { aff } : {} ),
-			...( vendorId ? { vendorId } : {} ),
+			customLoginPath: '/log-in',
+			extraQueryParams: {
+				...( oauth2ClientId ? { oauth2ClientId } : {} ),
+				...( wccomFrom ? { wccomFrom } : {} ),
+				...( aff ? { aff } : {} ),
+				...( vendorId ? { vendorId } : {} ),
+			},
 		};
 	},
 
