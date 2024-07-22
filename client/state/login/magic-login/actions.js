@@ -71,9 +71,24 @@ export const fetchMagicLoginAuthenticate =
 	( dispatch ) => {
 		dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
+		const getCookieValue = ( key ) => {
+			if ( document.cookie ) {
+				const pairs = document.cookie.split( ';' );
+				const filtered = pairs.filter( ( pair ) => {
+					const [ pairKey ] = pair.split( '=' );
+					return key === pairKey.trim();
+				} );
+				if ( filtered.length === 1 ) {
+					return filtered[ 0 ].split( '=' )[ 1 ].trim();
+				}
+			}
+			return '';
+		};
+
 		postMagicLoginRequest( AUTHENTICATE_URL, {
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
+			nteui: getCookieValue( 'netui' ),
 			token,
 			redirect_to: redirectTo,
 			flow,
