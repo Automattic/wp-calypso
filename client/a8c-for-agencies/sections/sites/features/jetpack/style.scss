@@ -8,4 +8,13 @@
 		background: initial;
 	}
 
+	.sites-overview__plugins-wrapper {
+		display: inline-flex;
+		align-items: center;
+
+		.icon-info {
+			margin-inline-start: 4px;
+			fill: currentColor;
+		}
+	}
 }

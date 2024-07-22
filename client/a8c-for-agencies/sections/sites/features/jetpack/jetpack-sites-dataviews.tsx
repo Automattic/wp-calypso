@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { Icon, starFilled } from '@wordpress/icons';
+import { Tooltip } from '@wordpress/components';
+import { Icon, info, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useContext, useMemo, useState, ReactNode } from 'react';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
@@ -23,6 +24,12 @@ import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-o
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import {
+	AUTOMOMANAGED_PLUGINS,
+	ECOMMERCE_BUNDLED_PLUGINS,
+	PREINSTALLED_PLUGINS,
+	PREINSTALLED_PREMIUM_PLUGINS,
+} from 'calypso/my-sites/plugins/constants';
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';
 import { AllowedTypes, Site, SiteData } from '../../types';
@@ -326,7 +333,38 @@ export const JetpackSitesDataViews = ( {
 					</>
 				),
 				getValue: () => '-',
-				render: ( { item }: { item: SiteInfo } ) => renderField( 'plugin', item ),
+				render: ( { item }: { item: SiteInfo } ) => {
+					const hasManagedPlugins = item.site.value.is_atomic
+						? item.site.value.awaiting_plugin_updates.some(
+								( plugin ) =>
+									PREINSTALLED_PLUGINS.includes( plugin ) ||
+									AUTOMOMANAGED_PLUGINS.includes( plugin ) ||
+									ECOMMERCE_BUNDLED_PLUGINS.includes( plugin ) ||
+									Object.keys( PREINSTALLED_PREMIUM_PLUGINS ).includes( plugin )
+						  )
+						: false;
+
+					if ( item.site.type === 'error' ) {
+						return <div className="sites-dataview__site-error"></div>;
+					}
+
+					return (
+						<span className="sites-overview__plugins-wrapper">
+							{ renderField( 'plugin', item ) }
+							{ hasManagedPlugins && (
+								<Tooltip
+									text={ translate(
+										'Some plugins are managed by the host and cannot be autoupdated'
+									) }
+									delay={ 0 }
+									hideOnClick={ false }
+								>
+									<Icon className="icon-info sites-overview__grey-icon" icon={ info } size={ 22 } />
+								</Tooltip>
+							) }
+						</span>
+					);
+				},
 				enableHiding: false,
 				enableSorting: false,
 			},
