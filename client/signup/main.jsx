@@ -585,7 +585,14 @@ class Signup extends Component {
 
 		// When this state is available, it will be the login form component's job to handle the redirect.
 		if ( ! this.state.redirectTo ) {
-			window.location.href = destination;
+			if ( flowName === 'email-subscription' ) {
+				// For the 'email-subscription' flow, if a user subscribes and then navigates back
+				// in their browser, we want to redirect them to the landing page where they
+				// subscribed from rather than to the flow itself.
+				window.location.replace( destination );
+			} else {
+				window.location.href = destination;
+			}
 		}
 	}
 
