@@ -139,3 +139,14 @@ export function getJetpackSiteCollisions( siteList ) {
 		} )
 		.map( ( siteItem ) => siteItem.ID );
 }
+
+const P2_THEMES = [ 'pub/p2', 'pub/p2-breathe', 'pub/p2-hub', 'pub/p2020' ];
+
+/**
+ * Returns whether the theme is a P2 theme
+ * @param {string} themeSlug The slug of the theme to check
+ * @returns {boolean} Whether the theme is a P2 theme
+ */
+export function isP2Theme( themeSlug ) {
+	return P2_THEMES.includes( themeSlug );
+}
