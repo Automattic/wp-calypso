@@ -7,14 +7,11 @@ export default function useAddNewSiteTour() {
 		{
 			id: 'add-new-site',
 			popoverPosition: 'bottom left',
-			title: translate( 'Click the arrow button' ),
+			title: translate( 'Manage all your agency’s sites' ),
 			description: (
 				<>
-					{ translate( 'Click the arrow button and select "Connect a site to Jetpack".' ) }
-					<br />
-					<br />
 					{ translate(
-						'Sites with Jetpack installed will automatically appear in the site management view.'
+						'The Add sites menu is your hub. Add sites you manage or create new ones. All sites will show in this site management view.'
 					) }
 				</>
 			),

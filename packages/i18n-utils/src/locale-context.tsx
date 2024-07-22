@@ -36,11 +36,20 @@ function mapWpI18nLangToLocaleSlug( locale: Locale = '' ): Locale {
 }
 
 /**
- * Get the current locale slug from the @wordpress/i18n locale data
+ * Get the lang from the @wordpress/i18n locale data
+ * @returns lang e.g. "en_US"
  */
-function getWpI18nLocaleSlug(): string | undefined {
-	const language = i18n.getLocaleData ? i18n.getLocaleData()?.[ '' ]?.language : '';
+function getWpI18nLocaleLang(): string | undefined {
+	const localeData = i18n.getLocaleData() || {};
+	return localeData[ '' ]?.lang || localeData[ '' ]?.language || '';
+}
 
+/**
+ * Get the lang from the @wordpress/i18n locale data and map the value to the locale slug
+ * @returns lang e.g. "en", "pt-br", "zh-tw"
+ */
+export function getWpI18nLocaleSlug(): string | undefined {
+	const language = getWpI18nLocaleLang();
 	return mapWpI18nLangToLocaleSlug( language );
 }
 

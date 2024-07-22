@@ -1,0 +1,120 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.sites-dataviews__site {
+	display: flex;
+	flex-direction: row;
+	padding-bottom: 8px;
+	padding-top: 8px;
+
+	.button {
+		margin: 0;
+		padding: 0;
+	}
+}
+
+.sites-dataviews__site-name {
+	align-self: flex-start;
+	display: inline-block;
+	text-align: left;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	padding: 0 8px;
+	white-space: nowrap;
+	font-weight: 500;
+	font-size: rem(14px);
+}
+
+.sites-dataviews__site-urls {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.sites-dataviews__site-url,
+.sites-dataviews__site-wp-admin-url {
+	color: var(--color-neutral-70);
+	font-size: rem(14px);
+	font-weight: 400;
+
+	&:focus {
+		border-radius: 2px;
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
+
+	&:visited {
+		color: var(--color-neutral-70);
+	}
+
+	&:hover,
+	&:hover:visited {
+		color: var(--color-link);
+	}
+
+	svg {
+		vertical-align: sub;
+	}
+}
+
+.is-section-a8c-for-agencies-sites {
+	a.site-actions__menu-item {
+		&:hover,
+		&:focus {
+			background: var(--wp-components-color-accent);
+			color: var(--color-text-inverted);
+		}
+	}
+
+	.components-dropdown-menu {
+		padding: 8px;
+		border-radius: 4px;
+
+		[role="menuitem"],
+		[role="menuitemradio"] {
+			border-radius: 4px;
+		}
+	}
+}
+
+.sites-dashboard__layout:not(.preview-hidden) {
+	.sites-dataviews__preview-trigger {
+		flex-shrink: 0;
+	}
+
+	.sites-dataviews__site-name {
+		padding: 0;
+	}
+
+	.dataviews-pagination {
+		.components-base-control {
+			width: unset !important;
+			margin-right: 0 !important;
+		}
+	}
+}
+
+.main.sites-dashboard.sites-dashboard__layout:has(.dataviews-pagination) {
+	.dataviews-view-table {
+		margin: 0;
+	}
+}
+
+.site-sort__clickable {
+	cursor: pointer;
+	// Inline block to ensure focus outline is rectangular.
+	display: inline-block;
+	// 5px right padding so focus border doesnt overlap icon.
+	padding-right: 5px;
+	border-radius: 2px;
+	.accessible-focus &:focus {
+		outline-style: solid;
+		outline-color: var(--color-primary-light);
+		outline-width: 2px;
+		outline-offset: 2px;
+	}
+}
+
+// Hide the reset filters button
+.sites-overview__content .dataviews-wrapper .dataviews-filters__view-actions .components-h-stack button:nth-of-type(3) {
+	display: none;
+}

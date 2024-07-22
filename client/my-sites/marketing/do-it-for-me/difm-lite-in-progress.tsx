@@ -20,10 +20,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-get-website-content-query';
-import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { AppState, SiteId, SiteSlug } from 'calypso/types';
-import type { PropsWithChildren } from 'react';
 
 import './difm-lite-in-progress.scss';
 
@@ -37,13 +36,11 @@ type Props = {
 	siteId?: SiteId;
 };
 
-function SupportLink( { siteId, children }: PropsWithChildren< { siteId?: number } > ) {
+function SupportLink( { children }: { children?: JSX.Element } ) {
 	const translate = useTranslate();
 	// Create URLSearchParams for send feedback by email command
-	const { setInitialRoute, setShowHelpCenter, setSubject, setSite } =
+	const { setInitialRoute, setShowHelpCenter, setSubject } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
-
-	const site = useSelector( ( state ) => getSite( state, siteId ) );
 
 	const emailUrl = `/contact-form?${ new URLSearchParams( {
 		mode: 'EMAIL',
@@ -57,7 +54,6 @@ function SupportLink( { siteId, children }: PropsWithChildren< { siteId?: number
 			className="difm-lite-in-progress__help-button"
 			onClick={ () => {
 				setInitialRoute( emailUrl );
-				setSite( site );
 				setSubject( translate( 'I have a question about my project' ) );
 				setShowHelpCenter( true );
 			} }
@@ -109,7 +105,7 @@ function WebsiteContentSubmissionPending( { siteId, siteSlug }: Props ) {
 						'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
 						{
 							components: {
-								SupportLink: <SupportLink siteId={ siteId } />,
+								SupportLink: <SupportLink />,
 							},
 						}
 					) }
@@ -124,7 +120,7 @@ function WebsiteContentSubmissionPending( { siteId, siteSlug }: Props ) {
 	);
 }
 
-function WebsiteContentSubmitted( { primaryDomain, siteSlug, siteId }: Props ) {
+function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { currentRoute } = useCurrentRoute();
@@ -159,7 +155,7 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug, siteId }: Props ) {
 						'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
 						{
 							components: {
-								SupportLink: <SupportLink siteId={ siteId } />,
+								SupportLink: <SupportLink />,
 							},
 						}
 					) }
@@ -205,13 +201,7 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 	}
 
 	if ( websiteContentQueryResult?.isWebsiteContentSubmitted ) {
-		return (
-			<WebsiteContentSubmitted
-				primaryDomain={ primaryDomain }
-				siteSlug={ siteSlug }
-				siteId={ siteId }
-			/>
-		);
+		return <WebsiteContentSubmitted primaryDomain={ primaryDomain } siteSlug={ siteSlug } />;
 	}
 
 	return (

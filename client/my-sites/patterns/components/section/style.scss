@@ -12,12 +12,6 @@
 		padding: 40px 0 48px;
 	}
 
-	&.patterns-section--full-width-body {
-		.patterns-section__body {
-			padding: 0;
-		}
-	}
-
 	&.patterns-section--dark {
 		background: #1d2327;
 		color: var(--studio-white);
@@ -25,6 +19,27 @@
 		.patterns-section__header {
 			.patterns-section__header-description {
 				color: #c3c4c7;
+			}
+		}
+	}
+
+	&.patterns-section--gray {
+		background: var(--studio-gray-0);
+
+		.patterns-section__header {
+			.patterns-section__header-description {
+				color: var(--studio-gray-100);
+			}
+		}
+	}
+
+	&.patterns-section--blue {
+		background: var(--studio-blue-80);
+		color: var(--studio-white);
+
+		.patterns-section__header {
+			.patterns-section__header-description {
+				color: var(--studio-gray-10);
 			}
 		}
 	}
@@ -57,4 +72,9 @@
 
 .patterns-section__body {
 	@include patterns-page-width;
+
+	.patterns-section--full-width-body & {
+		padding: 0;
+		max-width: none;
+	}
 }

@@ -95,7 +95,11 @@ interface Props {
 
 const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
-	const { items, mobileItem, compact = false, hideWhenOnlyOneLevel } = props;
+	const { items = [], mobileItem, compact = false, hideWhenOnlyOneLevel } = props;
+
+	if ( items.length === 0 ) {
+		return null;
+	}
 
 	if ( items.length === 1 ) {
 		if ( hideWhenOnlyOneLevel ) {
@@ -110,7 +114,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
-	if ( compact && items.length > 1 ) {
+	if ( compact ) {
 		const urlBack = mobileItem?.href ?? items[ items.length - 2 ].href;
 		const label = mobileItem?.label ?? translate( 'Back' );
 		return (
@@ -121,29 +125,21 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
-	if ( items.length > 1 ) {
-		return (
-			<StyledUl className="breadcrumbs">
-				{ items.map( ( item: { href?: string; label: string }, index: Key ) => (
-					<StyledLi key={ index }>
-						{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 14 } /> }
-						{ item.href && index !== items.length - 1 ? (
-							<a href={ item.href }>{ item.label }</a>
-						) : (
-							<span>{ item.label }</span>
-						) }
-						{ renderHelpBubble( item ) }
-					</StyledLi>
-				) ) }
-			</StyledUl>
-		);
-	}
-	// Default case -> items: []
-	return null;
-};
-
-Breadcrumb.defaultProps = {
-	items: [],
+	return (
+		<StyledUl className="breadcrumbs">
+			{ items.map( ( item: { href?: string; label: string }, index: Key ) => (
+				<StyledLi key={ index }>
+					{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 14 } /> }
+					{ item.href && index !== items.length - 1 ? (
+						<a href={ item.href }>{ item.label }</a>
+					) : (
+						<span>{ item.label }</span>
+					) }
+					{ renderHelpBubble( item ) }
+				</StyledLi>
+			) ) }
+		</StyledUl>
+	);
 };
 
 export default Breadcrumb;

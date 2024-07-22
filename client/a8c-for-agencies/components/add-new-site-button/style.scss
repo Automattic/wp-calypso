@@ -1,0 +1,117 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-selector-and-importer__button {
+	.gridicon {
+		margin-left: 6px;
+		top: 2px;
+		transition: transform 100ms ease-in-out;
+
+		&.reverse {
+			transform: rotate(180deg);
+		}
+	}
+}
+.popover.site-selector-and-importer__popover {
+	animation: fadeIn 0.2s ease-out;
+	margin-inline-start: 32px;
+
+	.popover__inner {
+		width: 280px;
+		text-align: unset;
+
+		@include break-large {
+			width: 650px;
+		}
+	}
+}
+
+.site-selector-and-importer__popover-content {
+	display: flex;
+	flex-direction: column;
+	padding: 28px 32px;
+	gap: 32px;
+
+	@include break-large {
+		flex-direction: row;
+	}
+
+	.site-selector-and-importer__popover-column {
+		&:first-child {
+			flex: 1.4;
+		}
+		&:last-child {
+			flex: 1;
+		}
+	}
+}
+
+.site-selector-and-importer__popover-column-heading {
+	color: var(--color-accent-40);
+	font-size: rem(12px);
+	font-weight: 500;
+	margin-block-end: 8px;
+}
+
+.theme-a8c-for-agencies  .button.is-borderless.site-selector-and-importer__popover-button {
+	padding: 8px;
+	white-space: unset;
+	text-align: unset;
+	margin-block: 0;
+	width: 100%;
+	border-radius: 4px;
+
+	&:hover {
+		background-color: var(--color-neutral-0);
+	}
+
+	@include break-large {
+		display: flex;
+		gap: 8px;
+		align-items: unset;
+		justify-content: unset;
+	}
+
+	.site-selector-and-importer__popover-button-icon {
+		display: none;
+
+		@include break-large {
+			display: block;
+		}
+
+		.sidebar__menu-icon {
+			width: 24px;
+			height: 24px;
+			max-width: fit-content;
+		}
+	}
+
+	// This is a workaround to make all the buttons the same dimensions
+	.site-selector-and-importer__popover-button-wp-icon {
+		.sidebar__menu-icon {
+			width: 36px;
+			height: 36px;
+			position: relative;
+			left: 6px;
+			top: -6px;
+			margin-left: -12px;
+		}
+	}
+
+	.site-selector-and-importer__popover-button-heading {
+		font-size: rem(14px);
+		font-weight: 600;
+	}
+
+	.site-selector-and-importer__popover-button-description {
+		font-size: rem(12px);
+		line-height: 1.7;
+		color: var(--color-accent);
+	}
+}
+
+.site-selector-and-importer__popover-site-count {
+	font-size: rem(12px);
+	font-style: italic;
+	color: var(--color-accent-100);
+}

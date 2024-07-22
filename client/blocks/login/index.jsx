@@ -23,6 +23,7 @@ import {
 	isA4AOAuth2Client,
 	isWooOAuth2Client,
 	isBlazeProOAuth2Client,
+	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -176,7 +177,7 @@ class Login extends Component {
 				locale: this.props.locale,
 				twoFactorAuthType: 'link',
 				oauth2ClientId: this.props.currentQuery?.client_id,
-				redirectTo: this.props.currentQuery?.redirect_to,
+				redirectTo: this.props.redirectTo,
 				usernameOnly: true,
 			} );
 
@@ -575,11 +576,16 @@ class Login extends Component {
 				} );
 
 				if ( isGravPoweredLoginPage ) {
+					const isFromGravatar3rdPartyApp =
+						isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+
 					postHeader = (
 						<p className="login__header-subtitle">
-							{ translate(
-								'If you prefer logging in with a password, or a social media account, choose below:'
-							) }
+							{ isFromGravatar3rdPartyApp
+								? translate( 'Please log in with your email and password.' )
+								: translate(
+										'If you prefer logging in with a password, or a social media account, choose below:'
+								  ) }
 						</p>
 					);
 				}
@@ -819,6 +825,7 @@ class Login extends Component {
 			handleUsernameChange,
 			signupUrl,
 			isWoo,
+			isWooPasswordless,
 			isBlazePro,
 			translate,
 			isPartnerSignup,
@@ -830,6 +837,8 @@ class Login extends Component {
 			isSocialFirst,
 			isFromAutomatticForAgenciesPlugin,
 			loginButtons,
+			currentUser,
+			redirectTo,
 		} = this.props;
 
 		const signupLink = this.getSignupLinkComponent();
@@ -933,9 +942,11 @@ class Login extends Component {
 				return (
 					<div className="login__body login__body--continue-as-user">
 						<ContinueAsUser
+							currentUser={ currentUser }
 							onChangeAccount={ this.handleContinueAsAnotherUser }
-							isWooOAuth2Client={ isWoo }
-							isBlazePro={ isBlazePro }
+							redirectPath={ redirectTo }
+							isWoo={ isWoo }
+							isWooPasswordless={ isWooPasswordless }
 						/>
 						<LoginForm
 							disableAutoFocus={ disableAutoFocus }
@@ -960,7 +971,9 @@ class Login extends Component {
 				return (
 					<div className="login__body login__body--continue-as-user">
 						<ContinueAsUser
+							currentUser={ currentUser }
 							onChangeAccount={ this.handleContinueAsAnotherUser }
+							redirectPath={ redirectTo }
 							isBlazePro={ isBlazePro }
 						/>
 						<LoginForm
@@ -984,7 +997,13 @@ class Login extends Component {
 			}
 
 			// someone is already logged in, offer to proceed to the app without a new login
-			return <ContinueAsUser onChangeAccount={ this.handleContinueAsAnotherUser } />;
+			return (
+				<ContinueAsUser
+					currentUser={ currentUser }
+					onChangeAccount={ this.handleContinueAsAnotherUser }
+					redirectPath={ redirectTo }
+				/>
+			);
 		}
 
 		return (
@@ -1006,6 +1025,7 @@ class Login extends Component {
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst }
 				loginButtons={ loginButtons }
+				isJetpack={ isJetpack }
 				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 			/>
 		);

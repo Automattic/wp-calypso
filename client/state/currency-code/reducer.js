@@ -1,7 +1,6 @@
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	SITE_PLANS_FETCH_COMPLETED,
-	PLANS_RECEIVE,
 	PRODUCTS_LIST_RECEIVE,
 	SITE_PRODUCTS_FETCH_COMPLETED,
 } from 'calypso/state/action-types';
@@ -13,9 +12,6 @@ function reducer( state = null, action ) {
 	switch ( action.type ) {
 		case PRODUCTS_LIST_RECEIVE:
 			return Object.values( action.productsList )[ 0 ]?.currency_code ?? state;
-
-		case PLANS_RECEIVE:
-			return action.plans[ 0 ]?.currency_code ?? state;
 
 		case SITE_PLANS_FETCH_COMPLETED:
 			return action.plans[ 0 ]?.currencyCode ?? state;

@@ -359,6 +359,7 @@ export function generateSteps( {
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				useEmailOnboardingSubheader: true,
+				hideFreePlan: true,
 			},
 		},
 
@@ -391,12 +392,10 @@ export function generateSteps( {
 			},
 			delayApiRequestUntilComplete: true,
 		},
-		'subscribing-email': {
-			stepName: 'subscribing-email',
-			// apiRequestFunction: createSiteWithCart,
-			dependencies: [ 'email', 'redirect_to', 'mailing_list' ],
-			providesDependencies: [],
-			optionalDependencies: [],
+		subscribe: {
+			stepName: 'subscribe',
+			providesDependencies: [ 'redirect', 'username', 'marketing_price_group', 'bearer_token' ],
+			optionalDependencies: [ 'username', 'marketing_price_group', 'bearer_token' ],
 		},
 		mailbox: {
 			stepName: 'mailbox',
@@ -931,7 +930,11 @@ export function generateSteps( {
 		'initial-intent': {
 			stepName: 'initial-intent',
 			fulfilledStepCallback: excludeSegmentSurveyStepIfInactive,
-			providesDependencies: [ 'segmentationSurveyAnswers', 'onboardingSegment' ],
+			providesDependencies: [
+				'segmentationSurveyAnswers',
+				'onboardingSegment',
+				'trailMapExperimentVariant',
+			],
 		},
 	};
 }

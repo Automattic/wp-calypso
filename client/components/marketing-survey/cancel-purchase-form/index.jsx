@@ -4,6 +4,7 @@ import {
 	isWpComMonthlyPlan,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products/src';
+import { Plans } from '@automattic/data-stores';
 import { Button as GutenbergButton, CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
@@ -11,7 +12,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
-import QueryPlans from 'calypso/components/data/query-plans';
+import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -20,12 +21,13 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { isAgencyPartnerType, isPartnerPurchase, isRefundable } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import {
-	getDowngradePlanRawPrice,
-	getDowngradePlanToMonthlyRawPrice,
 	willAtomicSiteRevertAfterPurchaseDeactivation,
+	getDowngradePlanFromPurchase,
+	getDowngradePlanToMonthlyFromPurchase,
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
@@ -47,6 +49,7 @@ import FeedbackStep from './step-components/feedback-step';
 import NextAdventureStep from './step-components/next-adventure-step';
 import UpsellStep from './step-components/upsell-step';
 import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP } from './steps';
+
 import './style.scss';
 
 class CancelPurchaseForm extends Component {
@@ -695,7 +698,8 @@ class CancelPurchaseForm extends Component {
 
 		return (
 			<>
-				<QueryPlans />
+				{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
+				<QueryProducts />
 				{ site && <QuerySitePlans siteId={ site.ID } /> }
 				{ this.props.isVisible && (
 					<BlankCanvas className="cancel-purchase-form">
@@ -725,12 +729,10 @@ class CancelPurchaseForm extends Component {
 	}
 }
 
-export default connect(
+const ConnectedCancelPurchaseForm = connect(
 	( state, { purchase, linkedPurchases } ) => ( {
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
-		downgradePlanToPersonalPrice: getDowngradePlanRawPrice( state, purchase ),
-		downgradePlanToMonthlyPrice: getDowngradePlanToMonthlyRawPrice( state, purchase ),
 		site: getSite( state, purchase.siteId ),
 		willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation(
 			state,
@@ -746,3 +748,29 @@ export default connect(
 		submitSurvey,
 	}
 )( localize( withLocalizedMoment( CancelPurchaseForm ) ) );
+
+const WrappedCancelPurchaseForm = ( props ) => {
+	const personalDowngradePlan = getDowngradePlanFromPurchase( props.purchase );
+	const monthlyDowngradePlan = getDowngradePlanToMonthlyFromPurchase( props.purchase );
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ personalDowngradePlan?.getStoreSlug(), monthlyDowngradePlan?.getStoreSlug() ],
+		coupon: undefined,
+		siteId: null,
+		storageAddOns: null,
+		useCheckPlanAvailabilityForPurchase,
+	} );
+
+	return (
+		<ConnectedCancelPurchaseForm
+			{ ...props }
+			downgradePlanToPersonalPrice={
+				pricingMeta?.[ personalDowngradePlan?.getStoreSlug() ]?.originalPrice?.full
+			}
+			downgradePlanToMonthlyPrice={
+				pricingMeta?.[ monthlyDowngradePlan?.getStoreSlug() ]?.originalPrice?.full
+			}
+		/>
+	);
+};
+
+export default WrappedCancelPurchaseForm;

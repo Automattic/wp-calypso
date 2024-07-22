@@ -3,7 +3,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
-import type { APIFetchOptions, HelpCenterSite } from './types';
+import type { APIFetchOptions } from './types';
 
 export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
 	( {
@@ -35,12 +35,6 @@ export function* setHasSeenWhatsNewModal( value: boolean ) {
 
 	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
 }
-
-export const setSite = ( site: HelpCenterSite | undefined ) =>
-	( {
-		type: 'HELP_CENTER_SET_SITE',
-		site,
-	} ) as const;
 
 export const setUnreadCount = ( count: number ) =>
 	( {
@@ -75,10 +69,11 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 export const setShowHelpCenter = function* ( show: boolean ) {
 	if ( ! show ) {
 		yield setInitialRoute( undefined );
-		yield setIsMinimized( false );
 	} else {
 		yield setShowMessagingWidget( false );
 	}
+
+	yield setIsMinimized( false );
 
 	return {
 		type: 'HELP_CENTER_SET_SHOW',
@@ -115,13 +110,6 @@ export const resetStore = () =>
 		type: 'HELP_CENTER_RESET_STORE',
 	} ) as const;
 
-export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {
-	yield setInitialRoute( '/contact-form?mode=CHAT' );
-	yield setSite( site );
-	yield setMessage( message );
-	yield setShowHelpCenter( true );
-};
-
 export const setShowMessagingChat = function* () {
 	yield setShowHelpCenter( false );
 	yield setShowMessagingLauncher( true );
@@ -137,6 +125,7 @@ export const setShowSupportDoc = function* ( link: string, postId: number, blogI
 		cacheBuster: String( Date.now() ),
 	} );
 	yield setInitialRoute( `/post/?${ params }` );
+	yield setIsMinimized( false );
 	yield setShowHelpCenter( true );
 };
 
@@ -144,7 +133,6 @@ export type HelpCenterAction =
 	| ReturnType<
 			| typeof setShowMessagingLauncher
 			| typeof setShowMessagingWidget
-			| typeof setSite
 			| typeof setSubject
 			| typeof resetStore
 			| typeof receiveHasSeenWhatsNewModal

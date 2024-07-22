@@ -1,5 +1,5 @@
+import { DotPager } from '@automattic/components';
 import { createElement, useEffect } from 'react';
-import DotPager from 'calypso/components/dot-pager';
 import {
 	SECTION_BLOGGING_PROMPT,
 	SECTION_BLOGANUARY_BLOGGING_PROMPT,

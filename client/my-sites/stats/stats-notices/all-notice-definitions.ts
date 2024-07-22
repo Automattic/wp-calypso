@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { NoticeIdType } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
@@ -34,7 +33,43 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: CommercialSiteUpgradeNotice,
 		noticeId: 'commercial_site_upgrade',
-		isVisibleFunc: shouldShowCommercialSiteUpgradeNotice,
+		isVisibleFunc: ( {
+			isOdysseyStats,
+			isWpcom,
+			isVip,
+			isP2,
+			isOwnedByTeam51,
+			hasPaidStats,
+			isSiteJetpackNotAtomic,
+			isCommercial,
+			hasPWYWPlanOnly,
+			shouldShowPaywallNotice,
+		}: StatsNoticeProps ) => {
+			// Show the notice only if the site is commercial.
+			if ( ! isCommercial ) {
+				return false;
+			}
+
+			// Show the upgrade notice with the coming paywall communication.
+			if ( shouldShowPaywallNotice ) {
+				return true;
+			}
+
+			const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
+			const showUpgradeNoticeForJetpackSites = isOdysseyStats || isSiteJetpackNotAtomic;
+
+			// Test specific to commercial self-hosted sites with PWYW plans.
+			if ( showUpgradeNoticeForJetpackSites && hasPWYWPlanOnly ) {
+				return true;
+			}
+
+			return !! (
+				( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) &&
+				// Show the notice if the site has not purchased the paid stats product.
+				! hasPaidStats &&
+				! isVip
+			);
+		},
 		disabled: false,
 	},
 	{
@@ -86,7 +121,6 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			return !! (
 				! isWpcom &&
 				( showTierUpgradeNoticeOnOdyssey || showTierUpgradeNoticeForJetpackNotAtomic ) &&
-				config.isEnabled( 'stats/tier-upgrade-slider' ) &&
 				isCommercialOwned
 			);
 		},
@@ -102,40 +136,5 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		disabled: false,
 	},
 ];
-
-function shouldShowCommercialSiteUpgradeNotice( {
-	isOdysseyStats,
-	isWpcom,
-	isVip,
-	isP2,
-	isOwnedByTeam51,
-	hasPaidStats,
-	isSiteJetpackNotAtomic,
-	isCommercial,
-	hasPWYWPlanOnly,
-}: StatsNoticeProps ) {
-	const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
-	const showUpgradeNoticeOnOdyssey = isOdysseyStats;
-	const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
-
-	// Test specific to commercial self-hosted sites with PWYW plans.
-	// They should see the upgrade notice!
-	if ( showUpgradeNoticeOnOdyssey || showUpgradeNoticeForJetpackNotAtomic ) {
-		if ( isCommercial && hasPWYWPlanOnly ) {
-			return true;
-		}
-	}
-
-	return !! (
-		( showUpgradeNoticeOnOdyssey ||
-			showUpgradeNoticeForJetpackNotAtomic ||
-			showUpgradeNoticeForWpcomSites ) &&
-		// Show the notice if the site has not purchased the paid stats product.
-		! hasPaidStats &&
-		// Show the notice only if the site is commercial.
-		isCommercial &&
-		! isVip
-	);
-}
 
 export default ALL_STATS_NOTICES;

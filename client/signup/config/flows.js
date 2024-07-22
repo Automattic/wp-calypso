@@ -8,15 +8,27 @@ import {
 	isAssemblerSupported,
 } from '@automattic/design-picker';
 import { isOnboardingGuidedFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
+import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
-import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
 
-function getCheckoutUrl( dependencies, localeSlug, flowName ) {
+function constructBackUrlFromPath( path ) {
+	if ( config( 'env' ) !== 'production' ) {
+		const protocol = config( 'protocol' ) ?? 'https';
+		const port = config( 'port' ) ? ':' + config( 'port' ) : '';
+		const hostName = config( 'hostname' );
+
+		return `${ protocol }://${ hostName }${ port }${ path }`;
+	}
+
+	return `https://${ config( 'hostname' ) }${ path }`;
+}
+
+function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
 	// Append the locale slug for the userless checkout page.
@@ -24,24 +36,26 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 		checkoutURL += `/${ localeSlug }`;
 	}
 
-	let checkoutBackUrl = `https://${ config( 'hostname' ) }/start/${ flowName }/domain-only`;
-	if ( config( 'env' ) !== 'production' ) {
-		const protocol = config( 'protocol' ) ?? 'https';
-		const port = config( 'port' ) ? ':' + config( 'port' ) : '';
-		const hostName = config( 'hostname' );
+	const isDomainOnly = [ 'domain', 'domain-for-gravatar' ].includes( flowName );
 
-		checkoutBackUrl = `${ protocol }://${ hostName }${ port }/start/${ flowName }/domain-only`;
-	}
+	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
+	// Due to historical reason, `destination` can be either a path or a complete URL.
+	// Thus, if it is determined as not an URL, we assume it as a path here. We can surely make it more comprehensive,
+	// but the required effort and computation cost might outweigh the gain.
+	//
+	// TODO:
+	// the domain only flow has special rule. Ideally they should also be configurable in flows-pure.
+	const checkoutBackUrl = isURL( destination )
+		? destination
+		: constructBackUrlFromPath( isDomainOnly ? `/start/${ flowName }/domain-only` : destination );
 
 	return addQueryArgs(
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
 			...( dependencies.coupon && { coupon: dependencies.coupon } ),
-			...( [ 'domain', 'domain-for-gravatar' ].includes( flowName ) && {
-				isDomainOnly: 1,
-				checkoutBackUrl,
-			} ),
+			...( isDomainOnly && { isDomainOnly: 1 } ),
+			checkoutBackUrl: addQueryArgs( { skippedCheckout: 1 }, checkoutBackUrl ),
 		},
 		checkoutURL
 	);
@@ -352,7 +366,7 @@ function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	}
 
 	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies, localeSlug, flowName );
+		return getCheckoutUrl( dependencies, localeSlug, flowName, destination );
 	}
 
 	return destination;
@@ -386,14 +400,10 @@ const Flows = {
 		}
 
 		if ( isUserLoggedIn ) {
-			const urlParams = new URLSearchParams( window.location.search );
-			const param = urlParams.get( 'user_completed' );
 			const isUserStepOnly = flow.steps.length === 1 && stepConfig[ flow.steps[ 0 ] ].providesToken;
 
-			// Remove the user step unless the user has just completed the step
-			// and then clicked the back button.
-			// If the user step is the only step in the whole flow, e.g. /start/account, don't remove it as well.
-			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() && ! isUserStepOnly ) {
+			// Remove the user step unless it is the only step in the whole flow, e.g., `/start/account`
+			if ( ! isUserStepOnly ) {
 				flow = removeUserStepFromFlow( flow );
 			}
 		}

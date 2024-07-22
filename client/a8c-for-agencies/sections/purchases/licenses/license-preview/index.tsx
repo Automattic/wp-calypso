@@ -202,7 +202,7 @@ export default function LicensePreview( {
 								</a>
 							) }
 							{ ! domain && licenseState === LicenseState.Detached && (
-								<span>
+								<span className="license-preview__unassigned">
 									<Badge type="warning">{ translate( 'Unassigned' ) }</Badge>
 									{ licenseType === LicenseType.Partner && (
 										<Button

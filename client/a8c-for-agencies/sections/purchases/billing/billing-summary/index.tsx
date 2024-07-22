@@ -104,8 +104,12 @@ export default function BillingSummary() {
 				<span className="billing-summary__label">
 					{ billing.isSuccess && <CostTooltip /> }
 					{ billing.isSuccess &&
-						translate( 'Cost for %(date)s', {
-							args: { date: moment( billing.data.date ).format( 'MMMM, YYYY' ) },
+						/* translators: fullMonth (e.g. "January") and fullYear (e.g. "2024") */
+						translate( 'Cost for %(fullMonth)s, %(fullYear)s', {
+							args: {
+								fullMonth: moment( billing.data.date ).format( 'MMMM' ),
+								fullYear: moment( billing.data.date ).format( 'YYYY' ),
+							},
 						} ) }
 
 					{ ! billing.isSuccess && <br /> }

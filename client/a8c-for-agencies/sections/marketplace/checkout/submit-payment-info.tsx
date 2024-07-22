@@ -14,6 +14,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import useSubmitPaymentInfoMutation from '../hooks/use-submit-payment-info-mutation';
 import { getClientReferralQueryArgs } from '../lib/get-client-referral-query-args';
+import NoticeSummary from './notice-summary';
 
 export default function SubmitPaymentInfo( { disableButton }: { disableButton?: boolean } ) {
 	const translate = useTranslate();
@@ -38,12 +39,6 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 			clearInterval( refetchInterval );
 		};
 	}, [ paymentMethodAdded, refetchInterval ] );
-
-	const termsLink = 'https://automattic.com/for-agencies/platform-agreement/';
-
-	const handleTermsClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_terms_click' ) );
-	}, [ dispatch ] );
 
 	const handleSubmitPaymentInfo = useCallback( () => {
 		dispatch(
@@ -103,50 +98,18 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 
 	return (
 		<>
-			{ paymentMethodRequired ? (
-				<div className="checkout__summary-client-payment-notice">
-					{ translate( 'Before making a payment, add your payment{{nbsp/}}method.', {
-						components: {
-							nbsp: <>&nbsp;</>,
-						},
-					} ) }
-				</div>
-			) : (
-				<div className="checkout__summary-notice">
-					{ translate(
-						'By submitting your payment information you agree to the {{br/}} {{a}}Terms and Conditions{{/a}}',
-						{
-							components: {
-								a: (
-									<a
-										href={ termsLink }
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={ handleTermsClick }
-									/>
-								),
-								br: <br />,
-							},
-						}
-					) }
-					<div>
-						{ translate( `Note: You won't pay for the first 30 days.` ) }
-						<br />
-						{ translate( `After that, we'll charge your card every 30 days.` ) }
-					</div>
-				</div>
-			) }
+			<NoticeSummary
+				type={ paymentMethodRequired ? 'request-payment-method' : 'client-purchase' }
+			/>
 
 			<div className="checkout__aside-actions">
 				<Button
-					primary={ ! paymentMethodRequired }
 					onClick={ handleSubmitPaymentInfo }
 					disabled={ isPending || disableButton }
 					busy={ isPending }
+					primary
 				>
-					{ paymentMethodRequired
-						? translate( 'Add my payment method' )
-						: translate( 'Submit purchase' ) }
+					{ paymentMethodRequired ? translate( 'Add payment method' ) : translate( 'Purchase' ) }
 				</Button>
 			</div>
 			<div className="checkout__aside-footer">

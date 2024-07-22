@@ -2,8 +2,7 @@
 @import "@automattic/typography/styles/variables";
 @import "../styles/clear-fix";
 
-// Multisite
-.foldable-card.card {
+.odie-foldable-card.card {
 	@include a8c-clear-fix;
 	position: relative;
 	transition: margin 0.15s linear;
@@ -14,7 +13,7 @@
 	}
 }
 
-.foldable-card__header {
+.odie-foldable-card__header {
 	min-height: 64px;
 	width: 100%;
 	padding: 16px;
@@ -29,60 +28,68 @@
 	}
 
 	&.has-border {
-		.foldable-card__summary,
-		.foldable-card__summary-expanded {
+		.odie-foldable-card__summary,
+		.odie-foldable-card__summary-expanded {
 			margin-right: 48px;
 		}
 
-		.foldable-card__expand {
+		.odie-foldable-card__expand {
 			border-left: 1px var(--color-neutral-5) solid;
 		}
 	}
 }
 
-.foldable-card.is-compact .foldable-card__header {
+.odie-foldable-card.is-compact .odie-foldable-card__header {
 	padding: 8px 16px;
 	min-height: 40px;
 }
 
-.foldable-card.is-expanded .foldable-card__header {
+.odie-foldable-card.is-expanded .odie-foldable-card__header {
 	margin-bottom: 0;
 	height: inherit;
 	min-height: 64px;
 }
 
-.foldable-card.is-expanded.is-compact .foldable-card__header {
+.odie-foldable-card.is-expanded.is-compact .odie-foldable-card__header {
 	min-height: 40px;
 }
 
-.foldable-card.is-disabled .foldable-card__header {
+.odie-foldable-card.is-disabled .odie-foldable-card__header {
 	opacity: 0.2;
 }
 
-.foldable-card__action {
+.odie-foldable-card__action {
 	position: absolute;
 	top: 0;
 	right: 0;
 	height: 100%;
 }
 
-.foldable-card.is-expanded .foldable-card__action {
+.odie-foldable-card.is-expanded .odie-foldable-card__action {
 	height: 100%;
 }
 
-.foldable-card.is-disabled .foldable-card__action {
+.odie-foldable-card.is-disabled .odie-foldable-card__action {
 	cursor: default;
 }
 
-.accessible-focus .foldable-card__action:focus {
+.accessible-focus .odie-foldable-card__action:focus {
 	outline: thin dotted;
 }
 
-button.foldable-card__action {
+button.odie-foldable-card__action {
 	cursor: pointer;
+	// Reset button styles to protect against wp-admin styles.
+	background: #0000;
+	appearance: none;
+	border: none;
+	font-size: inherit;
+	outline: 0;
+	padding: 0;
+	vertical-align: initial;
 }
 
-.foldable-card__main {
+.odie-foldable-card__main {
 	max-width: calc(100% - 36px);
 	display: flex;
 	align-items: center;
@@ -94,7 +101,7 @@ button.foldable-card__action {
 	}
 }
 
-.foldable-card__secondary {
+.odie-foldable-card__secondary {
 	display: flex;
 	align-items: center;
 	flex: 1 1;
@@ -105,7 +112,7 @@ button.foldable-card__action {
 	}
 }
 
-.foldable-card__expand {
+.odie-foldable-card__expand {
 	width: 48px;
 
 	.gridicon {
@@ -127,15 +134,15 @@ button.foldable-card__action {
 	}
 }
 
-.foldable-card.is-expanded > .foldable-card__header .foldable-card__expand .gridicon {
+.odie-foldable-card.is-expanded > .odie-foldable-card__header .odie-foldable-card__expand .gridicon {
 	transform: rotate(180deg);
 }
 
-.foldable-card__content {
+.odie-foldable-card__content {
 	display: none;
 }
 
-.foldable-card.is-smooth .foldable-card__content {
+.odie-foldable-card.is-smooth .odie-foldable-card__content {
 	display: block;
 	overflow: hidden;
 
@@ -143,25 +150,24 @@ button.foldable-card__action {
 	max-height: 0;
 }
 
-.foldable-card.is-expanded.is-smooth .foldable-card__content {
+.odie-foldable-card.is-expanded.is-smooth .odie-foldable-card__content {
 	height: auto;
 	max-height: 250px; // fallback if not set inline with js
 	transition: max-height 0.25s ease;
 	padding: 0;
 }
 
-.foldable-card.is-expanded .foldable-card__content {
+.odie-foldable-card.is-expanded .odie-foldable-card__content {
 	display: block;
-	padding: 16px;
 	border-top: 1px solid var(--color-neutral-5);
 }
 
-.foldable-card.is-compact .foldable-card.is-expanded .foldable-card__content {
+.odie-foldable-card.is-compact .odie-foldable-card.is-expanded .odie-foldable-card__content {
 	padding: 8px;
 }
 
-.foldable-card__summary,
-.foldable-card__summary-expanded {
+.odie-foldable-card__summary,
+.odie-foldable-card__summary-expanded {
 	margin-right: 40px;
 	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
@@ -173,30 +179,30 @@ button.foldable-card__action {
 	}
 }
 
-.foldable-card.has-expanded-summary .foldable-card__summary,
-.foldable-card.has-expanded-summary .foldable-card__summary-expanded {
+.odie-foldable-card.has-expanded-summary .odie-foldable-card__summary,
+.odie-foldable-card.has-expanded-summary .odie-foldable-card__summary-expanded {
 	transition: none;
 	flex: 2;
 	text-align: right;
 }
 
-.foldable-card__summary {
+.odie-foldable-card__summary {
 	opacity: 1;
 	display: inline-block;
 }
 
-.foldable-card.is-expanded .foldable-card__summary {
+.odie-foldable-card.is-expanded .odie-foldable-card__summary {
 	display: none;
 }
 
-.has-expanded-summary .foldable-card.is-expanded .foldable-card__summary {
+.has-expanded-summary .odie-foldable-card.is-expanded .odie-foldable-card__summary {
 	display: none;
 }
 
-.foldable-card__summary-expanded {
+.odie-foldable-card__summary-expanded {
 	display: none;
 }
 
-.foldable-card.is-expanded .foldable-card__summary-expanded {
+.odie-foldable-card.is-expanded .odie-foldable-card__summary-expanded {
 	display: inline-block;
 }

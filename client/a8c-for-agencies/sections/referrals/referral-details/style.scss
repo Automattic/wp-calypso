@@ -14,9 +14,18 @@
 
 .item-preview__pane.referral-details-items {
 	.item-preview__content {
+		display: block;
 		@media (max-width: $break-mobile) {
 			height: 75vh;
 			padding: 18px;
 		}
+
+		.consolidated-view {
+			padding: 0;
+		}
+	}
+
+	.section-nav-tabs__list {
+		width: auto;
 	}
 }

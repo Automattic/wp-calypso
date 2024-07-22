@@ -35,7 +35,6 @@ import type {
 } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
-const { goalsToIntent } = Onboard.utils;
 
 type ExitFlowOptions = {
 	skipLaunchpad?: boolean;
@@ -61,25 +60,6 @@ const siteSetupFlow: Flow = {
 				navigate( 'goals' );
 			}
 		}, [] );
-
-		const { site } = useSiteData();
-		const { setIntent, setGoals } = useDispatch( ONBOARD_STORE );
-
-		const goals = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
-			[]
-		);
-
-		useEffect( () => {
-			if ( goals.length ) {
-				return;
-			}
-
-			if ( site?.options?.site_goals?.length ) {
-				setIntent( goalsToIntent( site.options.site_goals ) );
-				setGoals( site.options.site_goals );
-			}
-		}, [ site, setIntent, setGoals, goals ] );
 	},
 
 	useSteps() {
@@ -153,6 +133,7 @@ const siteSetupFlow: Flow = {
 		const from = urlQueryParams.get( 'from' );
 		const backToStep = urlQueryParams.get( 'backToStep' );
 		const backToFlow = urlQueryParams.get( 'backToFlow' );
+		const skippedCheckout = urlQueryParams.get( 'skippedCheckout' );
 
 		const adminUrl = useSelect(
 			( select ) =>
@@ -226,7 +207,13 @@ const siteSetupFlow: Flow = {
 
 					// Forcing cache invalidation to retrieve latest launchpad_screen option value
 					if ( isLaunchpadIntent( siteIntent ) ) {
-						redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
+						redirectionUrl = addQueryArgs(
+							{
+								showLaunchpad: true,
+								...( skippedCheckout && { skippedCheckout: 1 } ),
+							},
+							to
+						);
 					}
 
 					formData.push( [ 'settings', JSON.stringify( settings ) ] );

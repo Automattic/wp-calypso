@@ -5,15 +5,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import OdieAssistantProvider, { useSetOdieStorage } from '@automattic/odie-client';
 import { CardBody, Disabled } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import React, { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useShouldUseWapuu } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterContactForm } from './help-center-contact-form';
@@ -45,9 +44,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 } ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const location = useLocation();
-	const navigate = useNavigate();
 	const containerRef = useRef< HTMLDivElement >( null );
-	const section = useSelector( getSectionName );
+	const navigate = useNavigate();
+	const { setInitialRoute } = useDispatch( HELP_CENTER_STORE );
+	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const { isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -55,17 +55,25 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
-	const selectedSiteId = useSelector( getSelectedSiteId );
+
+	const navigateToSupportDocs = useCallback(
+		( blogId: string, postId: string, title: string, link: string ) => {
+			navigate(
+				`/post?blogId=${ blogId }&postId=${ postId }&title=${ title }&link=${ link }&backUrl=/odie`
+			);
+		},
+		[ navigate ]
+	);
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
 			pathname: location.pathname,
 			search: location.search,
-			section,
+			section: sectionName,
 			force_site_id: true,
 			location: 'help-center',
 		} );
-	}, [ location, section ] );
+	}, [ location, sectionName ] );
 
 	const { initialRoute } = useSelect(
 		( select ) => ( {
@@ -74,12 +82,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		[]
 	);
 
-	useEffect( () => {
-		if ( initialRoute ) {
-			navigate( initialRoute );
-		}
-	}, [ initialRoute ] );
-
 	// reset the scroll location on navigation, TODO: unless there's an anchor
 	useEffect( () => {
 		setSearchTerm( '' );
@@ -87,6 +89,13 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			containerRef.current.scrollTo( 0, 0 );
 		}
 	}, [ location ] );
+
+	// reset the initial route after it's been used
+	useEffect( () => {
+		if ( initialRoute ) {
+			setInitialRoute( null );
+		}
+	}, [ initialRoute, setInitialRoute ] );
 
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
@@ -97,6 +106,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
+	const navigateToContactOptions = useCallback( () => {
+		navigate( '/contact-options' );
+	}, [ navigate ] );
+
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
 			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
@@ -104,7 +117,11 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/"
 						element={
-							<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
+							initialRoute ? (
+								<Navigate to={ initialRoute } />
+							) : (
+								<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
+							)
 						}
 					/>
 					<Route path="/post" element={ <HelpCenterEmbedResult /> } />
@@ -121,17 +138,20 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								botNameSlug="wpcom-support-chat"
 								botName="Wapuu"
 								enabled={ shouldUseWapuu }
+								currentUser={ currentUser }
 								isMinimized={ isMinimized }
 								initialUserMessage={ searchTerm }
 								logger={ trackEvent }
 								loggerEventNamePrefix="calypso_odie"
-								selectedSiteId={ selectedSiteId }
+								selectedSiteId={ site?.ID as number }
 								extraContactOptions={
 									<HelpCenterContactPage
 										hideHeaders
 										trackEventName="calypso_odie_extra_contact_option"
 									/>
 								}
+								navigateToContactOptions={ navigateToContactOptions }
+								navigateToSupportDocs={ navigateToSupportDocs }
 							>
 								<HelpCenterOdie />
 							</OdieAssistantProvider>

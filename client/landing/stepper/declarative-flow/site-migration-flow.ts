@@ -3,6 +3,7 @@ import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useSelect } from '@wordpress/data';
+import { getLocaleSlug } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -11,6 +12,7 @@ import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from 'calypso/lib/url';
 import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
+import { HOW_TO_MIGRATE_OPTIONS } from '../constants';
 import { useIsSiteAdmin } from '../hooks/use-is-site-admin';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
@@ -18,14 +20,13 @@ import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
+import { getSiteIdParam } from './internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const MIGRATION_INSTRUCTIONS_STEP = config.isEnabled(
-	'migration-flow/new-migration-instructions-step'
-)
+const MIGRATION_INSTRUCTIONS_STEP = getLocaleSlug()?.startsWith( 'en' ) // Previous 'migration-flow/new-migration-instructions-step'.
 	? STEPS.SITE_MIGRATION_INSTRUCTIONS
 	: STEPS.SITE_MIGRATION_INSTRUCTIONS_I2;
 
@@ -39,9 +40,11 @@ const siteMigration: Flow = {
 		const baseSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+			STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			MIGRATION_INSTRUCTIONS_STEP,
+			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
@@ -131,7 +134,7 @@ const siteMigration: Flow = {
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep, variantSlug );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
-			const siteId = getSiteIdBySlug( siteSlug );
+			const siteId = getSiteIdBySlug( siteSlug ) || getSiteIdParam( urlQueryParams );
 
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
@@ -261,9 +264,48 @@ const siteMigration: Flow = {
 						);
 					}
 
+					if ( config.isEnabled( 'migration-flow/enable-migration-assistant' ) ) {
+						return navigate( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
+
 					// Take the user to the upgrade plan step.
 					if ( providedDependencies?.destination === 'upgrade' ) {
 						return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
+
+					// Continue with the migration flow.
+					return navigate( MIGRATION_INSTRUCTIONS_STEP.slug, {
+						siteId,
+						siteSlug,
+					} );
+				}
+
+				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
+					// Take the user to the upgrade plan step.
+					if ( providedDependencies?.destination === 'upgrade' ) {
+						return navigate(
+							addQueryArgs(
+								{
+									siteId,
+									siteSlug,
+									from: fromQueryParam,
+									destination: providedDependencies?.destination,
+									how: providedDependencies?.how as string,
+								},
+								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+							)
+						);
+					}
+
+					// Do it for me option.
+					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+						return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
 							siteId,
 							siteSlug,
 						} );
@@ -289,9 +331,14 @@ const siteMigration: Flow = {
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.goToCheckout ) {
-						const redirectAfterCheckout = providedDependencies?.userAcceptedDeal
-							? STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-							: MIGRATION_INSTRUCTIONS_STEP.slug;
+						let redirectAfterCheckout = MIGRATION_INSTRUCTIONS_STEP.slug;
+
+						if (
+							providedDependencies?.userAcceptedDeal ||
+							urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
+						) {
+							redirectAfterCheckout = STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug;
+						}
 
 						const destination = addQueryArgs(
 							{
@@ -321,6 +368,16 @@ const siteMigration: Flow = {
 						return;
 					}
 				}
+
+				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
+					// Take the user to the migration started step.
+					if ( providedDependencies?.destination === 'migration-started' ) {
+						return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
+				}
 			}
 		}
 
@@ -329,9 +386,12 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 				}
+				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
+					return navigate( STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug );
+				}
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					if ( urlQueryParams.get( 'ref' ) === GUIDED_ONBOARDING_FLOW_REFERRER ) {
-						window.location.assign( '/start/guided/initial-intent' );
+						return exitFlow( '/start/initial-intent' );
 					}
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}
@@ -339,9 +399,24 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( urlQueryParams.has( 'showModal' ) || ! isFromSiteWordPress ) {
 						urlQueryParams.delete( 'showModal' );
+						if ( config.isEnabled( 'migration-flow/enable-migration-assistant' ) ) {
+							return navigate(
+								`${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }`
+							);
+						}
+
 						return navigate(
 							`${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }`
 						);
+					}
+
+					// If the user selected the "Do it for me" option, we should take them back to the how to migrate step skipping
+					// the modal.
+					if (
+						config.isEnabled( 'migration-flow/enable-migration-assistant' ) &&
+						urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
+					) {
+						return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 					}
 
 					if ( isFromSiteWordPress ) {

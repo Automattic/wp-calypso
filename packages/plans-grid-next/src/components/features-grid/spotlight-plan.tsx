@@ -1,9 +1,5 @@
-import {
-	FEATURE_GROUP_STORAGE,
-	WPComStorageAddOnSlug,
-	getPlanClass,
-	isFreePlan,
-} from '@automattic/calypso-products';
+import { FEATURE_GROUP_STORAGE, getPlanClass, isFreePlan } from '@automattic/calypso-products';
+import { AddOns } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { GridPlan, PlanActionOverrides } from '../../types';
 import BillingTimeframes from './billing-timeframes';
@@ -17,11 +13,9 @@ import TopButtons from './top-buttons';
 type SpotlightPlanProps = {
 	currentSitePlanSlug?: string | null;
 	gridPlanForSpotlight?: GridPlan;
-	intervalType: string;
 	isInSignup: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
-	planUpgradeCreditsApplicable?: number | null;
 	showUpgradeableStorage: boolean;
 	options?: {
 		isTableCell?: boolean;
@@ -31,11 +25,9 @@ type SpotlightPlanProps = {
 const SpotlightPlan = ( {
 	currentSitePlanSlug,
 	gridPlanForSpotlight,
-	intervalType,
 	isInSignup,
 	onStorageAddOnClick,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	showUpgradeableStorage,
 }: SpotlightPlanProps ) => {
 	if ( ! gridPlanForSpotlight ) {
@@ -57,7 +49,6 @@ const SpotlightPlan = ( {
 			{ isNotFreePlan && (
 				<PlanPrice
 					renderedGridPlans={ [ gridPlanForSpotlight ] }
-					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 					currentSitePlanSlug={ currentSitePlanSlug }
 				/>
 			) }
@@ -65,7 +56,6 @@ const SpotlightPlan = ( {
 			<PlanFeaturesList
 				renderedGridPlans={ [ gridPlanForSpotlight ] }
 				featureGroupSlug={ FEATURE_GROUP_STORAGE }
-				intervalType={ intervalType }
 				onStorageAddOnClick={ onStorageAddOnClick }
 				showUpgradeableStorage={ showUpgradeableStorage }
 			/>

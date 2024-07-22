@@ -9,9 +9,10 @@ import StatsUtmBuilderForm from './stats-module-utm-builder-form';
 
 interface Props {
 	modalClassName: string;
+	trigger?: React.ReactElement;
 }
 
-const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
+const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
@@ -24,19 +25,25 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
 		openModal();
 	};
 
+	const triggerNode = trigger ? (
+		React.cloneElement( trigger, { onClick: handleClick } )
+	) : (
+		<Button
+			icon={ link }
+			className="stats-utm-builder__trigger"
+			onClick={ handleClick }
+			variant="secondary"
+		>
+			{ translate( 'URL Builder' ) }
+		</Button>
+	);
+
 	return (
 		<>
-			<Button
-				icon={ link }
-				className="stats-utm-builder__trigger"
-				onClick={ handleClick }
-				variant="secondary"
-			>
-				{ translate( 'URL Builder' ) }
-			</Button>
+			{ triggerNode }
 			{ isOpen && (
 				<Modal
-					title={ translate( 'UTM Builder' ) }
+					title={ translate( 'URL Builder' ) }
 					onRequestClose={ closeModal }
 					overlayClassName="stats-utm-builder__overlay"
 				>
@@ -50,7 +57,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName } ) => {
 						<div className="stats-utm-builder__help">
 							<div className="stats-utm-builder__help-bg"></div>
 							<div className="stats-utm-builder__description">
-								{ translate( 'More information and parameter example.' ) }
+								{ translate( 'Parameter descriptions and examples.' ) }
 							</div>
 							<section>
 								<div className="stats-utm-builder__label">{ translate( 'Campaign Source' ) }</div>

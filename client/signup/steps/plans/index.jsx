@@ -349,7 +349,6 @@ PlansStep.propTypes = {
 		'plans-plugins',
 		'plans-jetpack-app',
 		'plans-import',
-		'plans-paid-media',
 		'default',
 	] ),
 };

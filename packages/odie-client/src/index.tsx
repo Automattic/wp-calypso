@@ -1,4 +1,3 @@
-import i18n from 'i18n-calypso';
 import { forwardRef, WheelEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import ChatMessage, { ChatMessageProps } from './components/message';
@@ -7,18 +6,13 @@ import { useOdieAssistantContext, OdieAssistantProvider } from './context';
 
 import './style.scss';
 
-export const WAPUU_ERROR_MESSAGE = i18n.translate(
-	"Wapuu oopsie! 😺 I'm in snooze mode and can't chat just now. Don't fret, just browse through the buttons below to connect with WordPress.com support.",
-	{ comment: 'Error message when Wapuu fails to send a message', textOnly: true }
-);
-
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
 
 const ForwardedChatMessage = forwardRef< HTMLDivElement, ChatMessageProps >( ChatMessage );
 
 export const OdieAssistant: React.FC = () => {
-	const { chat, trackEvent } = useOdieAssistantContext();
+	const { chat, trackEvent, currentUser } = useOdieAssistantContext();
 	const chatboxMessagesRef = useRef< HTMLDivElement | null >( null );
 	const { ref: bottomRef, entry: lastMessageElement, inView } = useInView( { threshold: 0 } );
 	const [ stickToBottom, setStickToBottom ] = useState( true );
@@ -86,6 +80,7 @@ export const OdieAssistant: React.FC = () => {
 							<ForwardedChatMessage
 								message={ message }
 								key={ index }
+								currentUser={ currentUser }
 								scrollToBottom={ scrollToBottom }
 								ref={ chat.messages.length - 1 === index ? bottomRef : undefined }
 							/>

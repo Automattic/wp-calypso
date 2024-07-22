@@ -21,32 +21,29 @@ const TopButtons = ( {
 	planActionOverrides,
 	renderedGridPlans,
 }: TopButtonsProps ) => {
-	return renderedGridPlans.map(
-		( { planSlug, availableForPurchase, isMonthlyPlan, features: { storageOptions } } ) => {
-			const classes = clsx( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
+	return renderedGridPlans.map( ( { planSlug, availableForPurchase, isMonthlyPlan } ) => {
+		const classes = clsx( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
-			return (
-				<PlanDivOrTdContainer
-					key={ planSlug }
-					className={ classes }
-					isTableCell={ options?.isTableCell }
-				>
-					<PlanFeatures2023GridActions
-						availableForPurchase={ availableForPurchase }
-						isInSignup={ isInSignup }
-						isMonthlyPlan={ isMonthlyPlan }
-						planSlug={ planSlug }
-						currentSitePlanSlug={ currentSitePlanSlug }
-						planActionOverrides={ planActionOverrides }
-						showMonthlyPrice
-						isStuck={ options?.isStuck || false }
-						storageOptions={ storageOptions }
-						visibleGridPlans={ renderedGridPlans }
-					/>
-				</PlanDivOrTdContainer>
-			);
-		}
-	);
+		return (
+			<PlanDivOrTdContainer
+				key={ planSlug }
+				className={ classes }
+				isTableCell={ options?.isTableCell }
+			>
+				<PlanFeatures2023GridActions
+					availableForPurchase={ availableForPurchase }
+					isInSignup={ isInSignup }
+					isMonthlyPlan={ isMonthlyPlan }
+					planSlug={ planSlug }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					planActionOverrides={ planActionOverrides }
+					showMonthlyPrice
+					isStuck={ options?.isStuck || false }
+					visibleGridPlans={ renderedGridPlans }
+				/>
+			</PlanDivOrTdContainer>
+		);
+	} );
 };
 
 export default TopButtons;

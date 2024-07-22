@@ -1,8 +1,8 @@
 import formatCurrency from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import CommissionsInfo from '../commissions-info';
 import ShoppingCartMenuItem from '../shopping-cart/shopping-cart-menu/item';
 import { useTotalInvoiceValue } from '../wpcom-overview/hooks/use-total-invoice-value';
 import type { ShoppingCartItem } from '../types';
@@ -77,54 +77,7 @@ export default function PricingSummary( {
 					} ) }
 				</span>
 			</div>
-
-			{
-				// Show the notice only if it is agency checkout
-				isAgencyCheckout && (
-					<div className="checkout__summary-notice">
-						<h3>{ translate( 'When you purchase:' ) }</h3>
-						<div className="checkout__summary-notice-item">
-							{ translate(
-								'You agree to our {{a}}Terms of Service{{/a}}, and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time.',
-								{
-									components: {
-										a: (
-											<a
-												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-												target="_blank"
-												rel="noreferrer"
-											/>
-										),
-									},
-								}
-							) }
-						</div>
-						<div className="checkout__summary-notice-item">
-							{ translate(
-								'You understand {{a}}how your subscription works{{/a}} and {{a}}how to cancel{{/a}}.',
-								{
-									components: {
-										a: (
-											<a
-												href={ localizeUrl(
-													'https://agencieshelp.automattic.com/knowledge-base/billing-and-payments/'
-												) }
-												target="_blank"
-												rel="noreferrer"
-											/>
-										),
-									},
-								}
-							) }
-						</div>
-						<div className="checkout__summary-notice-item">
-							{ translate(
-								'You will be billed on the first of every month. Your first bill will include a prorated amount for the current month, depending on which day you purchased these products.'
-							) }
-						</div>
-					</div>
-				)
-			}
+			{ isAutomatedReferrals && <CommissionsInfo items={ items } /> }
 		</div>
 	);
 }

@@ -1,4 +1,8 @@
-import { pathWithLeadingSlash, getSignupUrl } from 'calypso/lib/login';
+/**
+ * @jest-environment jsdom
+ */
+
+import { pathWithLeadingSlash, getSignupUrl, isRecognizedLogin } from 'calypso/lib/login';
 
 describe( 'pathWithLeadingSlash', () => {
 	test( 'should add leading slash', () => {
@@ -110,7 +114,7 @@ describe( 'getSignupUrl', () => {
 			url: 'https://gravatar.com/',
 		};
 		expect( getSignupUrl( currentQuery, currentRoute, oauth2Client, 'en', '' ) ).toEqual(
-			'/log-in/link?redirect_to=https%3A%2F%2Fpublic-api.wordpress.com%2Foauth2%2Fauthorize%3Fclient_id%3D1854%26response_type%3Dcode%26blog_id%3D0%26state%3D1234%26redirect_uri%3Dhttps%253A%252F%252Fgravatar.com%252Fconnect%252F%253Faction%253Drequest_access_token%26from-calypso%3D1&client_id=1854'
+			'/log-in/link?redirect_to=https%3A%2F%2Fpublic-api.wordpress.com%2Foauth2%2Fauthorize%3Fclient_id%3D1854%26response_type%3Dcode%26blog_id%3D0%26state%3D1234%26redirect_uri%3Dhttps%253A%252F%252Fgravatar.com%252Fconnect%252F%253Faction%253Drequest_access_token%26from-calypso%3D1&client_id=1854&gravatar_from=signup'
 		);
 	} );
 
@@ -212,5 +216,17 @@ describe( 'getSignupUrl', () => {
 		).toEqual(
 			'/start/account?redirect_to=https%3A%2F%2Fpublic-api.wordpress.com%2Fpublic.api%2Fconnect%2F%3Faction%3Dverify'
 		);
+	} );
+} );
+
+describe( 'isRecognizedLogin', () => {
+	it( 'should return false when the `recognized_logins` cookie is not set', () => {
+		expect( isRecognizedLogin() ).toBe( false );
+	} );
+
+	it( 'should return true when the `recognized_logins` cookie is set', () => {
+		document.cookie = 'recognized_logins=foo';
+
+		expect( isRecognizedLogin() ).toBe( true );
 	} );
 } );

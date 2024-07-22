@@ -243,7 +243,7 @@ describe( 'selectors', () => {
 			expect( plan ).toBeNull();
 		} );
 	} );
-	describe( '#getPlanRawPrice()', () => {
+	describe( '#getSitePlanRawPrice()', () => {
 		const plans = {
 			data: [
 				{

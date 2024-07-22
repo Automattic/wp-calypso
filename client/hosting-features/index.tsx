@@ -1,8 +1,8 @@
 import page, { Context as PageJSContext } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender, redirectIfP2 } from 'calypso/controller';
+import { DOTCOM_HOSTING_FEATURES } from 'calypso/hosting/sites/components/site-preview-pane/constants';
+import { siteDashboard } from 'calypso/hosting/sites/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { siteDashboard } from 'calypso/sites-dashboard-v2/controller';
-import { DOTCOM_HOSTING_FEATURES } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { hostingFeatures } from './controller';
 

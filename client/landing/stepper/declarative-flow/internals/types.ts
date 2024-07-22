@@ -117,10 +117,17 @@ export type Flow = {
 	useSignupStartEventProps?: () => Record< string, string | number >;
 
 	/**
-	 *  You can use this hook to add extra params to the login url.
-	 * @returns An object describing extra params should be sent to the login page.
+	 *  You can use this hook to configure the login url.
+	 * @returns An object describing the configuration.
+	 * For now only extraQueryParams is supported.
 	 */
-	useLoginParams?: () => Record< string, string | number >;
+	useLoginParams?: () => {
+		/**
+		 * A custom login path to use instead of the default login path.
+		 */
+		customLoginPath?: string;
+		extraQueryParams: Record< string, string | number >;
+	};
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;

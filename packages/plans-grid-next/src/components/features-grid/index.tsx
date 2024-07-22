@@ -2,17 +2,18 @@ import {
 	getPlanClass,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	type WPComStorageAddOnSlug,
 	type FeatureGroupSlug,
 	FEATURE_GROUP_STORAGE,
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
-import { useMemo } from '@wordpress/element';
+import { AddOns } from '@automattic/data-stores';
+import { useRef, useMemo } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../../grid-context';
+import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
+import useGridSize from '../../hooks/use-grid-size';
 import { PlanFeaturesItem } from '../item';
-import { StorageFeature } from '../shared/storage';
+import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
 import PartnerLogos from './partner-logos';
@@ -25,20 +26,26 @@ import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import SpotlightPlan from './spotlight-plan';
 import Table from './table';
 import TopButtons from './top-buttons';
-import type { DataResponse, FeaturesGridProps, GridPlan, PlanActionOverrides } from '../../types';
+import type {
+	DataResponse,
+	FeaturesGridExternalProps,
+	FeaturesGridProps,
+	GridPlan,
+	PlanActionOverrides,
+} from '../../types';
+
+import './style.scss';
 
 type MobileViewProps = {
 	currentSitePlanSlug?: string | null;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	hideUnavailableFeatures?: boolean;
-	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
-	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
 	showUpgradeableStorage: boolean;
@@ -64,13 +71,11 @@ const MobileView = ( {
 	gridPlanForSpotlight,
 	renderedGridPlans,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	selectedFeature,
 	showUpgradeableStorage,
 }: MobileViewProps ) => {
@@ -109,7 +114,6 @@ const MobileView = ( {
 					{ isNotFreePlan && (
 						<PlanPrice
 							renderedGridPlans={ [ gridPlan ] }
-							planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 							currentSitePlanSlug={ currentSitePlanSlug }
 						/>
 					) }
@@ -124,9 +128,8 @@ const MobileView = ( {
 							</PlanFeaturesItem>
 							<div className="plan-features-2023-grid__highlighted-feature">
 								<PlanFeaturesItem>
-									<StorageFeature
+									<PlanStorage
 										planSlug={ gridPlan.planSlug }
-										intervalType={ intervalType }
 										onStorageAddOnClick={ onStorageAddOnClick }
 										showUpgradeableStorage={ showUpgradeableStorage }
 									/>
@@ -169,7 +172,6 @@ const MobileView = ( {
 									generatedWPComSubdomain={ generatedWPComSubdomain }
 									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 									featureGroupSlug={ featureGroupSlug }
-									intervalType={ intervalType }
 									onStorageAddOnClick={ onStorageAddOnClick }
 									showUpgradeableStorage={ showUpgradeableStorage }
 								/>
@@ -187,13 +189,11 @@ type TabletViewProps = {
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	gridPlanForSpotlight?: GridPlan;
 	hideUnavailableFeatures?: boolean;
-	intervalType: string;
 	isCustomDomainAllowedOnFreePlan: boolean;
 	isInSignup: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
-	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
 	showRefundPeriod?: boolean;
@@ -206,13 +206,11 @@ const TabletView = ( {
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	renderedGridPlans,
 	selectedFeature,
 	showRefundPeriod,
@@ -230,13 +228,11 @@ const TabletView = ( {
 		generatedWPComSubdomain,
 		gridPlanForSpotlight,
 		hideUnavailableFeatures,
-		intervalType,
 		isCustomDomainAllowedOnFreePlan,
 		isInSignup,
 		onStorageAddOnClick,
 		paidDomainName,
 		planActionOverrides,
-		planUpgradeCreditsApplicable,
 		selectedFeature,
 		showRefundPeriod,
 		showUpgradeableStorage,
@@ -257,6 +253,9 @@ const TabletView = ( {
 	);
 };
 
+// TODO
+// Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
+// More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
 const FeaturesGrid = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
@@ -264,13 +263,11 @@ const FeaturesGrid = ( {
 	gridPlans,
 	gridSize,
 	hideUnavailableFeatures,
-	intervalType,
 	isCustomDomainAllowedOnFreePlan,
 	isInSignup,
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	selectedFeature,
 	showRefundPeriod,
 	showUpgradeableStorage,
@@ -279,11 +276,9 @@ const FeaturesGrid = ( {
 	const spotlightPlanProps = {
 		currentSitePlanSlug,
 		gridPlanForSpotlight,
-		intervalType,
 		isInSignup,
 		onStorageAddOnClick,
 		planActionOverrides,
-		planUpgradeCreditsApplicable,
 		selectedFeature,
 		showUpgradeableStorage,
 	};
@@ -326,4 +321,60 @@ const FeaturesGrid = ( {
 	);
 };
 
-export default FeaturesGrid;
+const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
+	const {
+		siteId,
+		intent,
+		gridPlans,
+		useCheckPlanAvailabilityForPurchase,
+		useAction,
+		recordTracksEvent,
+		allFeaturesList,
+		coupon,
+		isInAdmin,
+		className,
+		enableFeatureTooltips,
+		enableCategorisedFeatures,
+		featureGroupMap = {},
+	} = props;
+
+	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+
+	// TODO: this will be deprecated along side removing the wrapper component
+	const gridSize = useGridSize( {
+		containerRef: gridContainerRef,
+		containerBreakpoints: new Map( [
+			[ 'small', 0 ],
+			[ 'medium', 740 ],
+			[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin
+		] ),
+	} );
+
+	const classNames = clsx( 'plans-grid-next', className, {
+		'is-small': 'small' === gridSize,
+		'is-medium': 'medium' === gridSize,
+		'is-large': 'large' === gridSize,
+	} );
+
+	return (
+		<div ref={ gridContainerRef } className={ classNames }>
+			<PlansGridContextProvider
+				intent={ intent }
+				siteId={ siteId }
+				gridPlans={ gridPlans }
+				coupon={ coupon }
+				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useAction={ useAction }
+				recordTracksEvent={ recordTracksEvent }
+				allFeaturesList={ allFeaturesList }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				enableCategorisedFeatures={ enableCategorisedFeatures }
+				featureGroupMap={ featureGroupMap }
+			>
+				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
+			</PlansGridContextProvider>
+		</div>
+	);
+};
+
+export default WrappedFeaturesGrid;

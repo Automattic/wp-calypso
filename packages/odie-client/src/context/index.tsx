@@ -7,7 +7,7 @@ import {
 } from '../data';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
-import type { Chat, Context, Message, Nudge, OdieAllowedBots } from '../types';
+import type { Chat, Context, CurrentUser, Message, Nudge, OdieAllowedBots } from '../types/';
 import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -24,6 +24,7 @@ type OdieAssistantContextInterface = {
 	botNameSlug: OdieAllowedBots;
 	chat: Chat;
 	clearChat: () => void;
+	currentUser: CurrentUser;
 	initialUserMessage: string | null | undefined;
 	isLoadingChat: boolean;
 	isLoading: boolean;
@@ -32,6 +33,8 @@ type OdieAssistantContextInterface = {
 	isVisible: boolean;
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
+	navigateToContactOptions?: () => void;
+	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
@@ -60,7 +63,10 @@ const defaultContextInterfaceValues = {
 	isNudging: false,
 	isVisible: false,
 	lastNudge: null,
+	navigateToContactOptions: noop,
+	navigateToSupportDocs: noop,
 	odieClientId: '',
+	currentUser: { display_name: 'Me' },
 	sendNudge: noop,
 	setChat: noop,
 	setIsLoadingChat: noop,
@@ -90,9 +96,12 @@ type OdieAssistantProviderProps = {
 	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
 	isMinimized?: boolean;
+	currentUser: CurrentUser;
 	extraContactOptions?: ReactNode;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
 	loggerEventNamePrefix?: string;
+	navigateToContactOptions?: () => void;
+	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	selectedSiteId?: number | null;
 	version?: string | null;
 	children?: ReactNode;
@@ -107,8 +116,11 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	enabled = true,
 	logger,
 	loggerEventNamePrefix,
+	navigateToContactOptions,
+	navigateToSupportDocs,
 	selectedSiteId,
 	version = null,
+	currentUser,
 	children,
 } ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
@@ -224,6 +236,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				botNameSlug,
 				chat,
 				clearChat,
+				currentUser,
 				extraContactOptions,
 				initialUserMessage,
 				isLoadingChat: false,
@@ -232,6 +245,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isNudging,
 				isVisible,
 				lastNudge,
+				navigateToContactOptions,
+				navigateToSupportDocs,
 				odieClientId,
 				selectedSiteId,
 				sendNudge: setLastNudge,

@@ -13,3 +13,24 @@
 		cursor: pointer;
 	}
 }
+
+.referral-toggle__notice {
+	.a4a-popover__title {
+		@include a4a-font-heading-md;
+		color: var(--studio-gray-80);
+	}
+
+	.referral-toggle__notice-description {
+		@include a4a-font-body-md;
+	}
+
+	.button {
+		background-color: var(--color-accent-100);
+		color: var(--color-surface);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-accent-100);
+		}
+	}
+}

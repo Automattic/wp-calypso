@@ -1,3 +1,4 @@
+import type { useOpeningCoordinates } from './hooks/use-opening-coordinates';
 import type { HelpCenterSite, SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
@@ -7,6 +8,18 @@ export interface Container {
 	isLoading?: boolean;
 	hidden?: boolean;
 	currentRoute?: string;
+	openingCoordinates?: ReturnType< typeof useOpeningCoordinates >;
+}
+
+export interface ArticleContentProps {
+	content: string | undefined;
+	title: string | undefined;
+	link: string | undefined;
+	isLoading?: boolean;
+	postId: number;
+	blogId?: string | null;
+	slug?: string;
+	articleUrl?: string | null | undefined;
 }
 
 export interface Header {
@@ -18,11 +31,8 @@ export interface Header {
 
 export interface SitePicker {
 	ownershipResult: AnalysisReport;
-	setSitePickerChoice: any;
-	sitePickerChoice: string;
-	currentSite: HelpCenterSite | undefined;
-	siteId: string | number | null | undefined;
-	sitePickerEnabled: boolean;
+	isSelfDeclaredSite: boolean;
+	onSelfDeclaredSite: ( selfDeclared: boolean ) => void;
 }
 
 export interface Article {
@@ -65,16 +75,6 @@ export interface SupportTicket {
 	type: string;
 	url: string;
 	when: string;
-}
-
-export interface MessagingAuth {
-	user: {
-		jwt: string;
-	};
-}
-
-export interface MessagingAvailability {
-	is_available: boolean;
 }
 
 export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
@@ -128,3 +128,5 @@ export type AnalysisReport = {
 	siteURL: string | undefined;
 	isWpcom: boolean;
 };
+
+export type ContactOption = 'chat' | 'email';

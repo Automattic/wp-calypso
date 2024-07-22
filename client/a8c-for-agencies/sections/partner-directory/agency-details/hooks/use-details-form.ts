@@ -1,4 +1,6 @@
+import emailValidator from 'email-validator';
 import { useMemo, useState } from 'react';
+import { isValidUrl } from 'calypso/a8c-for-agencies/components/form/utils';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 
 type Props = {
@@ -15,8 +17,9 @@ export default function useDetailsForm( { initialFormData }: Props ) {
 			logoUrl: '',
 			landingPageUrl: '',
 			country: '',
+			isGlobal: false,
 			isAvailable: true,
-			industry: '',
+			industries: [],
 			languagesSpoken: [],
 			budgetLowerRange: '0',
 			services: [],
@@ -28,11 +31,13 @@ export default function useDetailsForm( { initialFormData }: Props ) {
 		(): boolean =>
 			formData.name.length > 0 &&
 			formData.email.length > 0 &&
-			formData.website.length > 0 &&
+			emailValidator.validate( formData.email ) &&
+			isValidUrl( formData.website ) &&
 			formData.bioDescription.length > 0 &&
-			formData.logoUrl.length > 0 &&
+			// landingPageUrl is optional
+			( formData.landingPageUrl.length === 0 || isValidUrl( formData.landingPageUrl ) ) &&
 			formData.country?.length > 0 &&
-			formData.industry.length > 0 &&
+			formData.industries.length > 0 &&
 			formData.services.length > 0 &&
 			formData.products.length > 0 &&
 			formData.languagesSpoken.length > 0,

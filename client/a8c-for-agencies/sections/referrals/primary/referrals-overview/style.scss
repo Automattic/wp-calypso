@@ -7,6 +7,35 @@ $data-view-border-color: #f1f1f1;
 	margin-block-end: 48px;
 }
 
+.theme-a8c-for-agencies .button.referrals-overview__notice-button {
+	background-color: var(--color-accent-100);
+	color: var(--color-surface);
+
+	&:hover,
+	&:focus-visible {
+		background-color: var(--color-accent-100);
+	}
+}
+
+.referrals-overview__notice {
+	.button.referrals-overview__notice-button {
+		margin-block-start: 1rem;
+	}
+}
+
+.referrals-overview__button-popover {
+	.a4a-popover__content {
+		.a4a-popover__title {
+			@include a4a-font-heading-md;
+			color: var(--studio-gray-80);
+		}
+
+		.referrals-overview__button-popover-description {
+			@include a4a-font-body-md;
+		}
+	}
+}
+
 .referrals-overview__section-heading {
 	margin-block-start: 24px;
 	font-size: rem(24px);
@@ -51,6 +80,38 @@ $data-view-border-color: #f1f1f1;
 }
 
 .referrals-layout--automated {
+	@media (min-width: $break-large) {
+		background: inherit;
+
+		.dataviews-wrapper tr.dataviews-view-table__row th {
+			text-wrap: nowrap;
+		}
+
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
+			padding-inline-start: 64px;
+		}
+		.dataviews-view-table tr {
+			th:last-child,
+			td:last-child {
+				padding-inline-end: 64px;
+				width: 20px;
+				white-space: nowrap;
+				position: sticky;
+				right: 0;
+				z-index: 1;
+				background: linear-gradient(to right, transparent 0%, #fff 25%);
+			}
+
+			&:hover {
+				th:last-child,
+				td:last-child {
+					background: linear-gradient(to right, transparent 0%, var(--color-neutral-0) 25%);
+				}
+			}
+		}
+	}
+
 	.referrals-overview__section-container {
 		gap: 32px;
 	}
@@ -92,7 +153,11 @@ $data-view-border-color: #f1f1f1;
 	}
 
 	.consolidated-view {
-		padding-block: 16px 48px;
+		padding: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			padding: 16px 64px 48px;
+		}
 	}
 
 	.referrals-overview__section-heading {

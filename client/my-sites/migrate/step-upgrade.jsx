@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	getPlan,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -5,17 +6,14 @@ import {
 	PLAN_WOOEXPRESS_SMALL,
 } from '@automattic/calypso-products';
 import { CompactCard, ProductIcon, Gridicon, PlanPrice } from '@automattic/components';
+import { Plans } from '@automattic/data-stores';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import QueryPlans from 'calypso/components/data/query-plans';
 import HeaderCake from 'calypso/components/header-cake';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import MigrateButton from './migrate-button.jsx';
 
 import './section-migrate.scss';
@@ -26,10 +24,11 @@ class StepUpgrade extends Component {
 		sourceSite: PropTypes.object.isRequired,
 		startMigration: PropTypes.func.isRequired,
 		targetSite: PropTypes.object.isRequired,
+		isEcommerceTrial: PropTypes.bool.isRequired,
 	};
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_site_migration_business_viewed' );
+		recordTracksEvent( 'calypso_site_migration_business_viewed' );
 	}
 
 	getHeadingText( isEcommerceTrial, upsellPlanName ) {
@@ -53,7 +52,7 @@ class StepUpgrade extends Component {
 	render() {
 		const {
 			billingTimeFrame,
-			currency,
+			currencyCode,
 			planPrice,
 			plugins,
 			sourceSite,
@@ -62,19 +61,17 @@ class StepUpgrade extends Component {
 			targetSiteSlug,
 			themes,
 			translate,
+			isEcommerceTrial,
 		} = this.props;
 		const sourceSiteDomain = get( sourceSite, 'domain' );
 		const targetSiteDomain = get( targetSite, 'domain' );
 		const backHref = `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }`;
-		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
-		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		const upsellPlanName = isEcommerceTrial
 			? getPlan( PLAN_WOOEXPRESS_SMALL )?.getTitle()
 			: getPlan( PLAN_BUSINESS )?.getTitle();
 
 		return (
 			<>
-				<QueryPlans />
 				<HeaderCake backHref={ backHref }>{ translate( 'Import Everything' ) }</HeaderCake>
 
 				<CompactCard>
@@ -141,7 +138,7 @@ class StepUpgrade extends Component {
 									}
 								</div>
 								<div className="migrate__plan-price">
-									<PlanPrice rawPrice={ planPrice } currencyCode={ currency } />
+									<PlanPrice rawPrice={ planPrice } currencyCode={ currencyCode } isSmallestUnit />
 								</div>
 								<div className="migrate__plan-billing-time-frame">{ billingTimeFrame }</div>
 							</div>
@@ -159,18 +156,32 @@ class StepUpgrade extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const { targetSite } = ownProps;
-		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
-		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-		const plan = isEcommerceTrial ? getPlan( PLAN_WOOEXPRESS_SMALL ) : getPlan( PLAN_BUSINESS );
-		const planId = plan.getProductId();
-		return {
-			billingTimeFrame: plan.getBillingTimeFrame(),
-			currency: getCurrentUserCurrencyCode( state ),
-			planPrice: getPlanRawPrice( state, planId, true ),
-		};
-	},
-	{ recordTracksEvent }
-)( localize( StepUpgrade ) );
+const WrappedStepUpgrade = ( props ) => {
+	const { targetSite } = props;
+	const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+	const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+	const plan = isEcommerceTrial ? getPlan( PLAN_WOOEXPRESS_SMALL ) : getPlan( PLAN_BUSINESS );
+	const planSlug = plan.getStoreSlug();
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ planSlug ],
+		coupon: undefined,
+		siteId: targetSite.ID,
+		storageAddOns: null,
+		useCheckPlanAvailabilityForPurchase,
+	} );
+
+	return (
+		<StepUpgrade
+			{ ...props }
+			isEcommerceTrial={ isEcommerceTrial }
+			billingTimeFrame={ plan.getBillingTimeFrame() }
+			currencyCode={ pricingMeta[ planSlug ]?.currencyCode }
+			planPrice={
+				pricingMeta[ planSlug ]?.discountedPrice?.monthly ??
+				pricingMeta[ planSlug ]?.originalPrice?.monthly
+			}
+		/>
+	);
+};
+
+export default localize( WrappedStepUpgrade );

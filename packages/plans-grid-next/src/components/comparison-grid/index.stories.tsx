@@ -1,17 +1,11 @@
 import {
-	TrailMapVariantType,
 	getFeaturesList,
 	getPlanFeaturesGroupedForComparisonGrid,
-	setTrailMapExperiment,
 } from '@automattic/calypso-products';
 import { ComparisonGrid, ComparisonGridExternalProps, useGridPlansForComparisonGrid } from '../..';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const ComponentWrapper = (
-	props: Omit< ComparisonGridExternalProps, 'gridPlans' > & {
-		trailMapVariant?: TrailMapVariantType;
-	}
-) => {
+const ComponentWrapper = ( props: Omit< ComparisonGridExternalProps, 'gridPlans' > ) => {
 	const gridPlans = useGridPlansForComparisonGrid( {
 		eligibleForFreeHostingTrial: true,
 		hasRedeemedDomainCredit: undefined,
@@ -56,7 +50,6 @@ const defaultProps = {
 	isInSignup: true,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,
-	planUpgradeCreditsApplicable: undefined,
 	recordTracksEvent: () => {},
 	showRefundPeriod: false,
 	showUpgradeableStorage: true,
@@ -76,37 +69,23 @@ const defaultProps = {
 const meta = {
 	title: 'ComparisonGrid',
 	component: ComponentWrapper,
-	decorators: [
-		( Story, { args: { trailMapVariant } } ) => {
-			trailMapVariant && setTrailMapExperiment( trailMapVariant );
-			return <Story />;
-		},
-	],
 } satisfies Meta< typeof ComponentWrapper >;
 
 export default meta;
 
 type Story = StoryObj< typeof meta >;
 
-export const Start = {
-	name: '/start',
+export const DefaultComparisonGrid = {
+	name: 'Default',
 	args: {
 		...defaultProps,
-		intent: 'plans-default-wpcom',
 	},
 } satisfies Story;
 
-export const TrailMapControl = {
+export const HideUnsupportedFeatures = {
+	name: 'Hide unsupported features',
 	args: {
-		...Start.args,
-		trailMapVariant: 'control',
-	},
-} satisfies Story;
-
-export const TrailMapCopyAndStructure = {
-	args: {
-		...TrailMapControl.args,
-		trailMapVariant: 'treatment',
+		...defaultProps,
 		hideUnsupportedFeatures: true,
 	},
 } satisfies Story;

@@ -40,7 +40,9 @@ export default function useFetchLicenses(
 				},
 				{
 					...( agencyId && { agency_id: agencyId } ),
-					...( search ? { search: search } : { filter: filter, page: page } ),
+					...( search && { search: search } ),
+					filter: filter,
+					page: page,
 					sort_field: sortField,
 					sort_direction: sortDirection,
 					per_page: LICENSES_PER_PAGE,

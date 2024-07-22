@@ -26,6 +26,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
+import { STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from 'calypso/my-sites/stats/constants';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -44,21 +45,30 @@ import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModuleAuthors from './features/modules/stats-authors';
+import StatsModuleClicks from './features/modules/stats-clicks';
+import StatsModuleCountries from './features/modules/stats-countries';
+import StatsModuleDevices, {
+	StatsModuleUpgradeDevicesOverlay,
+} from './features/modules/stats-devices';
+import StatsModuleDownloads from './features/modules/stats-downloads';
+import StatsModuleEmails from './features/modules/stats-emails';
+import StatsModuleReferrers from './features/modules/stats-referrers';
+import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
+import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-utm';
+import StatsModuleVideos from './features/modules/stats-videos';
 import HighlightsSection from './highlights-section';
+import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import PromoCards from './promo-cards';
-import StatsCardUpgradeJepackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
+import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
-import StatsModuleDevices from './stats-module-devices';
-import StatsModuleUpgradeOverlay from './stats-module-devices/stats-module-upgrade-overlay';
-import StatsModuleEmails from './stats-module-emails';
-import StatsModuleUTM from './stats-module-utm';
-import StatsModuleUTMOverlay from './stats-module-utm/stats-module-utm-overlay';
+import StatsModuleEmailsOld from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -217,6 +227,7 @@ class StatsSite extends Component {
 			supportsUTMStatsFeature,
 			supportsDevicesStatsFeature,
 			isOldJetpack,
+			shouldForceDefaultDateRange,
 		} = this.props;
 		const isNewStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -271,11 +282,22 @@ class StatsSite extends Component {
 				? moment( customChartRange.chartEnd )
 				: moment( customChartRange.chartEnd ).endOf( period );
 
-		const customChartQuantity = Math.ceil(
+		let customChartQuantity = Math.ceil(
 			adjustedChartEndDate.diff( moment( customChartRange.chartStart ), period, true )
 		);
 
 		customChartRange.daysInRange = daysInRange;
+
+		// Force the default date range to be 7 days if the 30-day option is locked.
+		if ( shouldForceDefaultDateRange ) {
+			// For ChartTabs
+			customChartQuantity = 7;
+
+			// For StatsDateControl
+			customChartRange.daysInRange = 7;
+			customChartRange.chartEnd = moment().format( 'YYYY-MM-DD' );
+			customChartRange.chartStart = moment().subtract( 7, 'days' ).format( 'YYYY-MM-DD' );
+		}
 
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 
@@ -416,27 +438,52 @@ class StatsSite extends Component {
 								) }
 							/>
 						) }
-						<StatsModule
-							path="referrers"
-							moduleStrings={ moduleStrings.referrers }
-							period={ this.props.period }
-							query={ query }
-							statType="statsReferrers"
-							showSummaryLink
-							className={ clsx(
-								'stats__flexible-grid-item--40--once-space',
-								'stats__flexible-grid-item--full--large',
-								'stats__flexible-grid-item--full--medium'
-							) }
-						/>
+						{ ! isNewStateEnabled && (
+							<StatsModule
+								path="referrers"
+								moduleStrings={ moduleStrings.referrers }
+								period={ this.props.period }
+								query={ query }
+								statType="statsReferrers"
+								showSummaryLink
+								className={ clsx(
+									'stats__flexible-grid-item--40--once-space',
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+						{ isNewStateEnabled && (
+							<StatsModuleReferrers
+								moduleStrings={ moduleStrings.referrers }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									'stats__flexible-grid-item--40--once-space',
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 
-						<Countries
-							path="countries"
-							period={ this.props.period }
-							query={ query }
-							summary={ false }
-							className={ clsx( 'stats__flexible-grid-item--full' ) }
-						/>
+						{ ! isNewStateEnabled && (
+							<Countries
+								path="countries"
+								period={ this.props.period }
+								query={ query }
+								summary={ false }
+								className={ clsx( 'stats__flexible-grid-item--full' ) }
+							/>
+						) }
+						{ isNewStateEnabled && (
+							<StatsModuleCountries
+								moduleStrings={ moduleStrings.countries }
+								period={ this.props.period }
+								query={ query }
+								summary={ false }
+								className={ clsx( 'stats__flexible-grid-item--full' ) }
+							/>
+						) }
 
 						{ /* If UTM if supported display the module or update Jetpack plugin card */ }
 						{ supportsUTMStats && ! isOldJetpack && (
@@ -444,6 +491,7 @@ class StatsSite extends Component {
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
+								summary={ false }
 								className={ clsx(
 									'stats__flexible-grid-item--60',
 									'stats__flexible-grid-item--full--large',
@@ -461,7 +509,7 @@ class StatsSite extends Component {
 									'stats__flexible-grid-item--full--medium'
 								) }
 								overlay={
-									<StatsCardUpgradeJepackVersion
+									<StatsCardUpdateJetpackVersion
 										className="stats-module__upsell stats-module__upgrade"
 										siteId={ siteId }
 										statType="utm"
@@ -471,29 +519,53 @@ class StatsSite extends Component {
 						) }
 
 						{ /* If UTM card or update card is not visible, shift "Clicks" and reduct to 1/2 for easier stacking */ }
-						<StatsModule
-							path="clicks"
-							moduleStrings={ moduleStrings.clicks }
-							period={ this.props.period }
-							query={ query }
-							statType="statsClicks"
-							showSummaryLink
-							className={ clsx(
-								{
-									'stats__flexible-grid-item--40--once-space': supportsUTMStats,
-									'stats__flexible-grid-item--full--large': supportsUTMStats,
-									'stats__flexible-grid-item--full--medium': supportsUTMStats,
-								},
-								{
-									'stats__flexible-grid-item--half': ! supportsUTMStats,
-									'stats__flexible-grid-item--full--large': ! supportsUTMStats,
-								},
-								'stats__flexible-grid-item--full--medium'
-							) }
-						/>
+						{ isNewStateEnabled && (
+							<StatsModuleClicks
+								path="clicks"
+								moduleStrings={ moduleStrings.clicks }
+								period={ this.props.period }
+								query={ query }
+								statType="statsClicks"
+								showSummaryLink
+								className={ clsx(
+									{
+										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
+										'stats__flexible-grid-item--full--large': supportsUTMStats,
+										'stats__flexible-grid-item--full--medium': supportsUTMStats,
+									},
+									{
+										'stats__flexible-grid-item--half': ! supportsUTMStats,
+										'stats__flexible-grid-item--full--large': ! supportsUTMStats,
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 
+						{ ! isNewStateEnabled && (
+							<StatsModule
+								path="clicks"
+								moduleStrings={ moduleStrings.clicks }
+								period={ this.props.period }
+								query={ query }
+								statType="statsClicks"
+								showSummaryLink
+								className={ clsx(
+									{
+										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
+										'stats__flexible-grid-item--full--large': supportsUTMStats,
+										'stats__flexible-grid-item--full--medium': supportsUTMStats,
+									},
+									{
+										'stats__flexible-grid-item--half': ! supportsUTMStats,
+										'stats__flexible-grid-item--full--large': ! supportsUTMStats,
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
-						{ ! this.isModuleHidden( 'authors' ) && (
+						{ ! this.isModuleHidden( 'authors' ) && ! isNewStateEnabled && (
 							<StatsModule
 								path="authors"
 								moduleStrings={ moduleStrings.authors }
@@ -511,9 +583,25 @@ class StatsSite extends Component {
 							/>
 						) }
 
+						{ /* Either stacks with Clicks or with Emails depending on UTM */ }
+						{ ! this.isModuleHidden( 'authors' ) && isNewStateEnabled && (
+							<StatsModuleAuthors
+								moduleStrings={ moduleStrings.authors }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									{
+										'stats__author-views': ! supportsUTMStats,
+									},
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large'
+								) }
+							/>
+						) }
+
 						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ supportsEmailStats && (
-							<StatsModuleEmails
+						{ supportsEmailStats && ! isNewStateEnabled && (
+							<StatsModuleEmailsOld // This is the old component & location. Remove and consolidate once stats/empty-module-traffic flag is removed
 								period={ this.props.period }
 								query={ query }
 								className={ clsx(
@@ -533,34 +621,100 @@ class StatsSite extends Component {
 							/>
 						) }
 
-						<StatsModule
-							path="searchterms"
-							moduleStrings={ moduleStrings.search }
-							period={ this.props.period }
-							query={ query }
-							statType="statsSearchTerms"
-							showSummaryLink
-							className={ clsx(
-								{
-									// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
-									'stats__flexible-grid-item--one-third--two-spaces':
-										! isJetpack && ! this.isModuleHidden( 'videos' ),
-								},
-								{
-									'stats__flexible-grid-item--full--large':
-										isJetpack && this.isModuleHidden( 'videos' ),
-								},
-								{
-									// 1/2 for all other cases to stack with Devices or empty space
-									'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
-									// Avoid 1/3 on smaller screen if Videos is visible
-									'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
-								},
-								'stats__flexible-grid-item--full--medium'
-							) }
-						/>
+						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
+						{ supportsEmailStats && isNewStateEnabled && (
+							<StatsModuleEmails
+								period={ this.props.period }
+								moduleStrings={ moduleStrings.emails }
+								query={ query }
+								className={ clsx(
+									{
+										// half if odd number of modules after countries - UTM + Clicks + Authors or Clicks
+										'stats__flexible-grid-item--half':
+											( supportsUTMStats && ! this.isModuleHidden( 'authors' ) ) ||
+											( ! supportsUTMStats && this.isModuleHidden( 'authors' ) ),
+										// full if even number of modules after countries - UTM + Clicks or Authors + Clicks
+										'stats__flexible-grid-item--full':
+											( supportsUTMStats && this.isModuleHidden( 'authors' ) ) ||
+											( ! supportsUTMStats && ! this.isModuleHidden( 'authors' ) ),
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 
-						{ ! this.isModuleHidden( 'videos' ) && (
+						{ isNewStateEnabled && (
+							<StatsModuleSearch
+								moduleStrings={ moduleStrings.search }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									{
+										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! isJetpack && ! this.isModuleHidden( 'videos' ),
+									},
+									{
+										'stats__flexible-grid-item--full--large':
+											isJetpack && this.isModuleHidden( 'videos' ),
+									},
+									{
+										// 1/2 for all other cases to stack with Devices or empty space
+										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										// Avoid 1/3 on smaller screen if Videos is visible
+										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+						{ ! isNewStateEnabled && (
+							<StatsModule
+								path="searchterms"
+								moduleStrings={ moduleStrings.search }
+								period={ this.props.period }
+								query={ query }
+								statType="statsSearchTerms"
+								showSummaryLink
+								className={ clsx(
+									{
+										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! isJetpack && ! this.isModuleHidden( 'videos' ),
+									},
+									{
+										'stats__flexible-grid-item--full--large':
+											isJetpack && this.isModuleHidden( 'videos' ),
+									},
+									{
+										// 1/2 for all other cases to stack with Devices or empty space
+										'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										// Avoid 1/3 on smaller screen if Videos is visible
+										'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+
+						{ isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
+							<StatsModuleVideos
+								moduleStrings={ moduleStrings.videoplays }
+								period={ this.props.period }
+								query={ query }
+								className={ clsx(
+									{
+										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
+										'stats__flexible-grid-item--half': isJetpack,
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
+
+						{ ! isNewStateEnabled && ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
 								path="videoplays"
 								moduleStrings={ moduleStrings.videoplays }
@@ -578,10 +732,36 @@ class StatsSite extends Component {
 								) }
 							/>
 						) }
+
 						{
-							// File downloads are not yet supported in Jetpack Stats
+							// File downloads are not yet supported in Jetpack environment
+							isNewStateEnabled && ! isJetpack && (
+								<StatsModuleDownloads
+									moduleStrings={ moduleStrings.filedownloads }
+									period={ this.props.period }
+									query={ query }
+									className={ clsx(
+										{
+											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),
+										},
+										{
+											'stats__flexible-grid-item--one-third--two-spaces':
+												! this.isModuleHidden( 'videos' ),
+										},
+
+										{
+											// Avoid 1/3 on smaller screen if Videos is visible
+											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
+										},
+										'stats__flexible-grid-item--full--medium'
+									) }
+								/>
+							)
+						}
+						{
+							// File downloads are not yet supported in Jetpack environment
 							// TODO: Confirm the above statement.
-							! isJetpack && (
+							! isNewStateEnabled && ! isJetpack && (
 								<StatsModule
 									path="filedownloads"
 									metricLabel={ translate( 'Downloads' ) }
@@ -621,14 +801,14 @@ class StatsSite extends Component {
 							/>
 						) }
 						{ ! supportsDevicesStats && isOldJetpack && (
-							<StatsModuleUpgradeOverlay
+							<StatsModuleUpgradeDevicesOverlay
 								className={ clsx(
 									'stats__flexible-grid-item--half',
 									'stats__flexible-grid-item--full--large'
 								) }
 								siteId={ siteId }
 								overlay={
-									<StatsCardUpgradeJepackVersion
+									<StatsCardUpdateJetpackVersion
 										className="stats-module__upsell stats-module__upgrade"
 										siteId={ siteId }
 										statType="devices"
@@ -788,6 +968,13 @@ export default connect(
 			isOldJetpack,
 		} = getEnvStatsFeatureSupportChecks( state, siteId );
 
+		// Determine if the default date range should be forced to 7 days.
+		const shouldForceDefaultDateRange = shouldGateStats(
+			state,
+			siteId,
+			STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS
+		);
+
 		return {
 			canUserViewStats,
 			isAtomic: isAtomicSite( state, siteId ),
@@ -807,6 +994,7 @@ export default connect(
 			supportsUTMStatsFeature: supportsUTMStats,
 			supportsDevicesStatsFeature: supportsDevicesStats,
 			isOldJetpack,
+			shouldForceDefaultDateRange,
 		};
 	},
 	{

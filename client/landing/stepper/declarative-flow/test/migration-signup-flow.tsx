@@ -4,7 +4,6 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
-import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
@@ -16,7 +15,6 @@ const originalLocation = window.location;
 jest.mock( '../../utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
-jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
 
 describe( 'Migration Signup Flow', () => {
 	beforeAll( () => {
@@ -35,41 +33,6 @@ describe( 'Migration Signup Flow', () => {
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
 		( useIsSiteOwner as jest.Mock ).mockReturnValue( {
 			isOwner: true,
-		} );
-	} );
-
-	describe( 'useAssertConditions', () => {
-		it( 'redirects the user to the login page when they are not logged in', () => {
-			( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( false );
-			const searchValue = '?ref=logged-out-homepage&aff=aff123&vid=vid321';
-			window.location.search = searchValue;
-
-			const { runUseAssertionCondition } = renderFlow( migrationSignupFlow );
-			runUseAssertionCondition( {
-				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-				currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }${ searchValue }`,
-			} );
-
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				`/start/account/user-social?variationName=migration-signup&toStepper=true&redirect_to=/setup/migration-signup&vid=vid321&aff=aff123&ref=logged-out-homepage`
-			);
-		} );
-
-		it( 'redirects the user to the login page with the correct locale when they are not logged in', () => {
-			( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( false );
-			( useFlowLocale as jest.Mock ).mockReturnValue( 'fr' );
-			const searchValue = '?ref=logged-out-homepage&aff=aff123&vid=vid321&locale=fr';
-			window.location.search = searchValue;
-
-			const { runUseAssertionCondition } = renderFlow( migrationSignupFlow );
-			runUseAssertionCondition( {
-				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-				currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }${ searchValue }`,
-			} );
-
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				`/start/account/user-social/fr?variationName=migration-signup&toStepper=true&redirect_to=/setup/migration-signup%3Flocale%3Dfr&vid=vid321&aff=aff123&ref=logged-out-homepage`
-			);
 		} );
 	} );
 
@@ -130,7 +93,7 @@ describe( 'Migration Signup Flow', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
 
 			runUseStepNavigationSubmit( {
-				currentURL: `/setup/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com`,
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&siteId=123`,
 				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 				dependencies: {
 					goToCheckout: true,
@@ -140,7 +103,7 @@ describe( 'Migration Signup Flow', () => {
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination: `/setup/migration-signup/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }?siteSlug=example.wordpress.com`,
+				destination: `/setup/migration-signup/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&siteId=123`,
 				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 				flowName: 'migration-signup',
 				siteSlug: 'example.wordpress.com',

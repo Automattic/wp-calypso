@@ -17,6 +17,20 @@ const fetch = require( 'node-fetch' );
 const { hideBin } = require( 'yargs/helpers' );
 const yargs = require( 'yargs/yargs' );
 
+/**
+ * Wraps translations with the code needed to inject them in a WP context. This allows us to enqueue the translations via HTTPS (not via filesystem).
+ * @param {Object} translations the translations object.
+ * @param {string} domain the textdomain. Defauts to 'default'.
+ * @returns {string} the wrapped translations.
+ */
+function wrapWithJS( translations, domain = 'default' ) {
+	return `( function( domain, translations ) {
+	const { localeData } = translations;
+	localeData[""].domain = domain;
+	wp.i18n.setLocaleData( localeData, domain );
+} )( "${ domain }", { localeData: ${ JSON.stringify( translations ) } } )`;
+}
+
 // Configure command-line options
 const argv = yargs( hideBin( process.argv ) )
 	.option( 'languagesBaseUrl', {
@@ -49,6 +63,11 @@ const argv = yargs( hideBin( process.argv ) )
 		type: 'string',
 		default: './dist/languages',
 	} )
+	.option( 'outputFormat', {
+		describe: 'Output format for the built language files',
+		type: 'string',
+		default: 'JSON',
+	} )
 	.option( 'verbose', {
 		describe: 'Enable verbose logging',
 		type: 'boolean',
@@ -63,6 +82,7 @@ const {
 	stringsFilePath,
 	chunksMapPattern,
 	stringsPath,
+	outputFormat,
 	outputPath,
 	verbose,
 } = argv;
@@ -233,11 +253,22 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 				languageTranslations[ THOUSANDS_SEPARATOR_TRANSLATION ];
 			cmdPaletteTranslations[ '' ] = languageTranslations[ '' ];
 
-			const output = resolve( process.cwd(), outputPath, `${ langSlug }-v1.1.json` );
-			if ( verbose ) {
-				console.log( `Writing ${ output }...` );
+			if ( outputFormat === 'JSON' ) {
+				const output = resolve( process.cwd(), outputPath, `${ langSlug }-v1.1.json` );
+				if ( verbose ) {
+					console.log( `Writing ${ output }...` );
+				}
+				fs.writeFileSync( output, JSON.stringify( cmdPaletteTranslations ) );
+			} else if ( outputFormat === 'JS' ) {
+				const output = resolve( process.cwd(), outputPath, `${ langSlug }-v1.js` );
+				if ( verbose ) {
+					console.log( `Writing ${ output }...` );
+				}
+				fs.writeFileSync( output, wrapWithJS( cmdPaletteTranslations ) );
+			} else {
+				console.error( 'Invalid output format' );
+				process.exit( 1 );
 			}
-			fs.writeFileSync( output, JSON.stringify( cmdPaletteTranslations ) );
 		} );
 
 		if ( verbose ) {

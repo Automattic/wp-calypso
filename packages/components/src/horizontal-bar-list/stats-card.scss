@@ -35,10 +35,6 @@
 		.stats-card-header__title {
 			display: flex;
 			align-items: center;
-
-			& > :first-child {
-				margin-left: 10px;
-			}
 		}
 
 		.stats-card-header__title,
@@ -46,6 +42,14 @@
 			font-size: $header-font-size;
 			line-height: $header-line-height;
 			color: var(--color-text);
+		}
+
+		.stats-card-header__title-nodes {
+			margin-left: 10px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 8px;
 		}
 
 		&.stats-card-header--split {
@@ -131,6 +135,24 @@
 		flex-direction: column;
 		justify-content: space-between;
 		height: 100%;
+	}
+}
+
+// TODO: update when cleaning stats/empty-module-traffic feature flag
+// (stats-card--empty-variant should be added to the root of the card when isEmpty is passed = className shouldn't
+// continue to set it - it's not compatible with footer actions)
+.stats-card--empty-variant {
+	.stats-card--header-and-body {
+		display: flex;
+		flex-direction: column;
+		min-height: 100%;
+	}
+
+	.stats-card--body-empty {
+		display: flex;
+		flex: 1 0 auto;
+		align-items: center;
+		justify-content: center;
 	}
 }
 

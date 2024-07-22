@@ -1,9 +1,4 @@
-import {
-	FEATURE_SOCIAL_INSTAGRAM_CONNECTION,
-	FEATURE_SOCIAL_MASTODON_CONNECTION,
-	FEATURE_SOCIAL_NEXTDOOR_CONNECTION,
-	FEATURE_SOCIAL_THREADS_CONNECTION,
-} from '@automattic/calypso-products';
+import { FEATURE_SOCIAL_THREADS_CONNECTION } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { get, find, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -30,7 +25,6 @@ import {
 	getPostImage,
 	getExcerptForPost,
 	getSummaryForPost,
-	getPostCustomImage,
 	getSigImageUrl,
 	getPostCustomMedia,
 } from './utils';
@@ -101,7 +95,7 @@ class SharingPreviewPane extends PureComponent {
 		const articleContent = getExcerptForPost( post );
 		const articleSummary = getSummaryForPost( post, translate );
 		const siteDomain = get( site, 'domain', '' );
-		const imageUrl = getSigImageUrl( post ) || getPostCustomImage( post ) || getPostImage( post );
+		const imageUrl = getSigImageUrl( post ) || getPostImage( post );
 		const media = getPostCustomMedia( post );
 
 		const connection = find( connections, { service: selectedService } ) ?? {};
@@ -224,20 +218,8 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	const disabledServices = [];
 
-	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_INSTAGRAM_CONNECTION ) ) {
-		disabledServices.push( 'instagram-business' );
-	}
-
-	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_NEXTDOOR_CONNECTION ) ) {
-		disabledServices.push( 'nextdoor' );
-	}
-
 	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_THREADS_CONNECTION ) ) {
 		disabledServices.push( 'threads' );
-	}
-
-	if ( ! siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ) ) {
-		disabledServices.push( 'mastodon' );
 	}
 
 	return {

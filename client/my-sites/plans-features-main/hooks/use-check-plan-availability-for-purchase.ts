@@ -6,6 +6,7 @@ import type { PlanSlug } from '@automattic/calypso-products';
 
 interface Props {
 	planSlugs: PlanSlug[];
+	siteId?: number | null;
 }
 
 type PlanAvailabilityForPurchase = {
@@ -21,8 +22,11 @@ type PlanAvailabilityForPurchase = {
  */
 const useCheckPlanAvailabilityForPurchase = ( {
 	planSlugs,
+	siteId,
 }: Props ): PlanAvailabilityForPurchase => {
-	const selectedSiteId = useSelector( getSelectedSiteId );
+	// In some cases, we may not have the selected site ID available, so we fallback to the siteId prop.
+	// For example, when the user is redirected to the domain upsell page from the free signup flow.
+	const selectedSiteId = useSelector( getSelectedSiteId ) || siteId;
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
 
 	return useSelector( ( state ) =>

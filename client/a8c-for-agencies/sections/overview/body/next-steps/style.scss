@@ -7,17 +7,14 @@
 		margin-bottom: 16px;
 
 		h2 {
-			font-size: rem(16px);
-			font-weight: 500;
+			@include a4a-font-heading-md;
 			color: var(--color-neutral-100);
 		}
 		.circular__progress-bar {
 			margin-right: 8px;
 
 			.circular__progress-bar-text {
-				font-size: rem(10px);
-				font-weight: 500;
-				line-height: 20px;
+				@include a4a-font-label-button($font-size: rem(10px));
 				color: var(--color-neutral-100);
 			}
 
@@ -29,8 +26,7 @@
 
 	p,
 	button {
-		font-size: rem(14px);
-		font-weight: 400;
+		@include a4a-font-body-md;
 		color: var(--color-neutral-80);
 	}
 
@@ -46,8 +42,7 @@
 	.checklist-item__task {
 
 		.checklist-item__text {
-			font-size: rem(14px);
-			font-weight: 400;
+			@include a4a-font-body-md;
 			color: var(--color-neutral-80);
 		}
 

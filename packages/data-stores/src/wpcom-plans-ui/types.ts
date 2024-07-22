@@ -1,4 +1,5 @@
-import type { PlanSlug, WPComStorageAddOnSlug } from '@automattic/calypso-products';
+import type { StorageAddOnSlug } from '../add-ons/types';
+import type { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
 
 export interface DomainUpsellDialog {
 	show: boolean;
@@ -6,8 +7,8 @@ export interface DomainUpsellDialog {
 
 type SiteId = string;
 
-export interface SelectedStorageOptionForPlans {
+export interface SelectedStorageOptionForPlan {
 	[ key: SiteId ]: {
-		[ key in PlanSlug ]: WPComStorageAddOnSlug;
+		[ key in PlanSlug ]: StorageAddOnSlug | WPComPlanStorageFeatureSlug;
 	};
 }

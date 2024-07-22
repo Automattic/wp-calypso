@@ -59,18 +59,31 @@ type StatsActions = {
 };
 
 export type StatsCardProps = {
-	children: React.ReactNode;
+	/**
+	 * @property {React.ReactNode} children - the content of the card - not renders when isEmpty is true
+	 */
+	children?: React.ReactNode;
 	className?: string;
 	headerClassName?: string;
 	title: string;
 	titleURL?: string;
 	titleAriaLevel?: number;
+	/**
+	 * @property {React.ReactNode} titleNodes - additional nodes to be displayed next to the title - use TitleExtras component for unified resutl.
+	 */
+	titleNodes?: React.ReactNode;
 	footerAction?: {
 		label?: string;
 		url?: string;
 	};
+	/**
+	 * @property {boolean} isEmpty - renders an empty card with a message (`emptyMessage`) when true. It doesn't render column labels.
+	 */
 	isEmpty?: boolean;
 	isNew?: boolean;
+	/**
+	 * @property {string | React.ReactNode} emptyMessage - a message (or compoents) to display when the card is empty
+	 */
 	emptyMessage?: string | React.ReactNode;
 	/**
 	 * @property {string} metricLabel - a label to use for the values on the right side of the bars - `Views` by default

@@ -19,7 +19,7 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import {
 	getSiteSlug,
-	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
+	isAdminInterfaceWPAdmin,
 	isJetpackSite,
 	getSiteAdminUrl,
 } from 'calypso/state/sites/selectors';
@@ -41,10 +41,10 @@ export const Sharing = ( {
 	translate,
 	premiumPlanName,
 } ) => {
-	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
-		getIsGlobalSiteViewEnabled( state, siteId )
+	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+		isAdminInterfaceWPAdmin( state, siteId )
 	);
-	const isJetpackClassic = isJetpack && isGlobalSiteViewEnabled;
+	const isJetpackClassic = isJetpack && adminInterfaceIsWPAdmin;
 
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
@@ -136,7 +136,7 @@ export const Sharing = ( {
 
 	let titleHeader = translate( 'Marketing and Integrations' );
 
-	if ( isGlobalSiteViewEnabled ) {
+	if ( adminInterfaceIsWPAdmin ) {
 		titleHeader = translate( 'Marketing' );
 	}
 

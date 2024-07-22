@@ -5,6 +5,7 @@ import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import SubscriptionStatus from '../referrals-list/subscription-status';
+import ReferralCommissions from './commissions';
 import ReferralPurchasesMobile from './mobile/purchases-mobile';
 import ReferralPurchases from './purchases';
 import type { Referral } from '../types';
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const REFERRAL_PURCHASES_ID = 'referral-purchases';
+const REFERRAL_COMMISSIONS_ID = 'referral-commissions';
 
 export default function ReferralDetails( { referral, closeSitePreviewPane }: Props ) {
 	const translate = useTranslate();
@@ -30,7 +32,7 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 			<div className="referral-details__subtitle">
 				{ translate( 'Payment status {{badge}}%(status)s{{/badge}}', {
 					args: {
-						status: referral.statuses[ 0 ],
+						status: referral.purchaseStatuses[ 0 ],
 					},
 					comment: '%(status) is subscription status',
 					components: {
@@ -57,6 +59,14 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 				) : (
 					<ReferralPurchases purchases={ referral.purchases } />
 				)
+			),
+			createFeaturePreview(
+				REFERRAL_COMMISSIONS_ID,
+				translate( 'Commissions' ),
+				true,
+				selectedReferralTab,
+				setSelectedReferralTab,
+				<ReferralCommissions referral={ referral } />
 			),
 		],
 		[ referral, selectedReferralTab, translate, isDesktop ]

@@ -10,7 +10,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
-export default function SitesHeaderActions() {
+type Props = {
+	onWPCOMImport?: ( blogIds: number[] ) => void;
+};
+
+export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
@@ -20,18 +24,7 @@ export default function SitesHeaderActions() {
 	return (
 		<div className="sites-header__actions">
 			<div ref={ ( ref ) => setTourStepRef( ref ) }>
-				<AddNewSiteButton
-					showMainButtonLabel={ ! isMobile }
-					onClickAddNewSite={ () =>
-						dispatch( recordTracksEvent( 'calypso_a4a_sites_add_new_site_click' ) )
-					}
-					onClickA4APluginMenuItem={ () =>
-						dispatch( recordTracksEvent( 'calypso_a4a_sites_download_a4a_plugin_click' ) )
-					}
-					onClickUrlMenuItem={ () =>
-						dispatch( recordTracksEvent( 'calypso_a4a_sites_connect_url_site_click' ) )
-					}
-				/>
+				<AddNewSiteButton showMainButtonLabel={ ! isMobile } onWPCOMImport={ onWPCOMImport } />
 			</div>
 			<GuidedTourStep id="add-new-site" tourId="addSiteStep1" context={ tourStepRef } />
 			<Button

@@ -1,5 +1,6 @@
 import {
 	NOTIFICATIONS_PANEL_TOGGLE,
+	MOST_RECENTLY_SELECTED_SITE_SET,
 	SECTION_SET,
 	SELECTED_SITE_SET,
 } from 'calypso/state/action-types';
@@ -12,10 +13,16 @@ import {
 
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {
-		test( 'should return an action object with a null siteId', () => {
-			const action = setAllSitesSelected();
+		test( 'should dispatch actions for clearing the selected site ID', () => {
+			const dispatch = jest.fn();
 
-			expect( action ).toEqual( {
+			setAllSitesSelected()( dispatch );
+
+			expect( dispatch ).not.toHaveBeenCalledWith( {
+				type: MOST_RECENTLY_SELECTED_SITE_SET,
+				siteId: null,
+			} );
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: SELECTED_SITE_SET,
 				siteId: null,
 			} );
@@ -34,11 +41,17 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'setSelectedSiteId()', () => {
-		test( 'should return an action object with the siteId set', () => {
+		test( 'should dispatch actions for selected site IDs', () => {
 			const siteId = 2916284;
-			const action = setSelectedSiteId( siteId );
+			const dispatch = jest.fn();
 
-			expect( action ).toEqual( {
+			setSelectedSiteId( siteId )( dispatch );
+
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: MOST_RECENTLY_SELECTED_SITE_SET,
+				siteId,
+			} );
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: SELECTED_SITE_SET,
 				siteId,
 			} );

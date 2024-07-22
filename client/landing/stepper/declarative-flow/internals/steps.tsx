@@ -133,6 +133,10 @@ export const STEPS = {
 	},
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
+	MIGRATION_HANDLER: {
+		slug: 'migrationHandler',
+		asyncComponent: () => import( './steps-repository/migration-handler' ),
+	},
 
 	OPTIONS: {
 		slug: 'options',
@@ -231,6 +235,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-instructions-i2' ),
 	},
 
+	SITE_MIGRATION_STARTED: {
+		slug: 'site-migration-started',
+		asyncComponent: () => import( './steps-repository/site-migration-started' ),
+	},
+
 	SITE_MIGRATION_ASSISTED_MIGRATION: {
 		slug: 'migrateMessage',
 		asyncComponent: () => import( './steps-repository/importer-migrate-message' ),
@@ -244,6 +253,11 @@ export const STEPS = {
 	SITE_MIGRATION_IMPORT_OR_MIGRATE: {
 		slug: 'site-migration-import-or-migrate',
 		asyncComponent: () => import( './steps-repository/site-migration-import-or-migrate' ),
+	},
+
+	SITE_MIGRATION_HOW_TO_MIGRATE: {
+		slug: 'site-migration-how-to-migrate',
+		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
 	},
 
 	SITE_MIGRATION_UPGRADE_PLAN: {

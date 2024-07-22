@@ -6,4 +6,4 @@ export { default as useDefaultStorageOption } from './hooks/use-default-storage-
 /**
  * Components
  */
-export { default as StorageFeature } from './components/storage-feature';
+export { default as PlanStorage } from './components/plan-storage';

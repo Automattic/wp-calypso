@@ -9,30 +9,32 @@ export const getReferralsQueryKey = ( agencyId?: number ) => {
 };
 
 const getClientReferrals = ( referrals: ReferralAPIResponse[] ) => {
-	const clients = referrals.reduce< { [ key: string ]: Referral } >( ( acc, referral ) => {
+	const sortedReferrals = referrals.slice().reverse();
+	const clientReferrals = sortedReferrals.map( ( referral ) => {
 		const purchases = referral.products.map( ( product ) => ( {
 			...product,
-			referral_id: referral.id, // referral id is needed for the purchase to be unique
+			referral_id: referral.id,
 		} ) );
-		const statuses = purchases.map( ( purchase ) => purchase.status );
-		if ( ! acc[ referral.client.id ] ) {
-			acc[ referral.client.id ] = {
-				// id is a combination of client id and referral id to make it unique
-				id: `${ referral.client.id }${ referral.id }`,
-				client: referral.client,
-				purchases: [ ...purchases ],
-				commissions: referral.commission,
-				statuses: [ ...statuses ],
-			};
+		return {
+			id: referral.client.id,
+			client: referral.client,
+			purchases,
+			purchaseStatuses: purchases.map( ( purchase ) => purchase.status ),
+			referralStatuses: [ referral.status ],
+		};
+	} );
+
+	return clientReferrals.reduce( ( acc: Referral[], current ) => {
+		const existing = acc.find( ( item ) => item.id === current.id );
+		if ( existing ) {
+			existing.purchases.push( ...current.purchases );
+			existing.purchaseStatuses.push( ...current.purchaseStatuses );
+			existing.referralStatuses.push( ...current.referralStatuses );
 		} else {
-			acc[ referral.client.id ].purchases.push( ...purchases );
-			acc[ referral.client.id ].commissions += referral.commission;
-			acc[ referral.client.id ].statuses.push( ...statuses );
+			acc.push( current );
 		}
 		return acc;
-	}, {} );
-
-	return Object.values( clients );
+	}, [] );
 };
 
 export default function useFetchReferrals( isEnabled: boolean ) {

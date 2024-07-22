@@ -1,27 +1,23 @@
-import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { MIGRATION_SIGNUP_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { getLocaleSlug } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
-import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
-import { getLoginUrl } from '../utils/path';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
-import { AssertConditionState } from './internals/types';
-import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
+import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const MIGRATION_INSTRUCTIONS_STEP = config.isEnabled(
-	'migration-flow/new-migration-instructions-step'
-)
+const MIGRATION_INSTRUCTIONS_STEP = getLocaleSlug()?.startsWith( 'en' ) // Previous 'migration-flow/new-migration-instructions-step'.
 	? STEPS.SITE_MIGRATION_INSTRUCTIONS
 	: STEPS.SITE_MIGRATION_INSTRUCTIONS_I2;
 
@@ -38,87 +34,15 @@ const migrationSignup: Flow = {
 			resetOnboardStore();
 		}, [] );
 
-		return [
+		return stepsWithRequiredLogin( [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			MIGRATION_INSTRUCTIONS_STEP,
+			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
-		];
-	},
-	useAssertConditions(): AssertConditionResult {
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
-
-		const flowName = this.name;
-
-		const locale = useFlowLocale();
-
-		const queryParams = new URLSearchParams( window.location.search );
-		const aff = queryParams.get( 'aff' );
-		const vendorId = queryParams.get( 'vid' );
-		const ref = queryParams.get( 'ref' );
-
-		const getStartUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
-			const queryParams = new URLSearchParams();
-
-			if ( vendorId ) {
-				queryParams.set( 'vid', vendorId );
-			}
-
-			if ( aff ) {
-				queryParams.set( 'aff', aff );
-			}
-
-			if ( ref ) {
-				queryParams.set( 'ref', ref );
-			}
-
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				`/setup/${ FLOW_NAME }` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-
-			let queryString = `redirect_to=${ redirectTarget }`;
-
-			if ( queryParams.toString() ) {
-				queryString = `${ queryString }&${ queryParams.toString() }`;
-			}
-
-			const logInUrl = getLoginUrl( {
-				variationName: flowName,
-				locale,
-			} );
-
-			return `${ logInUrl }&${ queryString }`;
-		};
-
-		useEffect( () => {
-			if ( ! userIsLoggedIn ) {
-				const logInUrl = getStartUrl();
-				window.location.assign( logInUrl );
-			}
-		}, [] );
-
-		if ( ! userIsLoggedIn ) {
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'migration-signup requires a logged in user',
-			};
-		}
-
-		return result;
+		] );
 	},
 
 	useSideEffect( currentStep, navigate ) {
@@ -170,7 +94,7 @@ const migrationSignup: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
-			const siteId = getSiteIdBySlug( siteSlug );
+			const siteId = getSiteIdBySlug( siteSlug ) || urlQueryParams.get( 'siteId' );
 
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
@@ -236,6 +160,7 @@ const migrationSignup: Flow = {
 							{
 								siteSlug,
 								from: fromQueryParam,
+								siteId,
 							},
 							`/setup/${ FLOW_NAME }/${ MIGRATION_INSTRUCTIONS_STEP.slug }`
 						);
@@ -252,6 +177,16 @@ const migrationSignup: Flow = {
 									: {},
 						} );
 						return;
+					}
+				}
+
+				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
+					// Take the user to the migration started step.
+					if ( providedDependencies?.destination === 'migration-started' ) {
+						return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
+							siteId,
+							siteSlug,
+						} );
 					}
 				}
 			}
