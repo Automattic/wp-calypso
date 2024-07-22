@@ -4,9 +4,10 @@ import type { MouseEvent, KeyboardEvent } from 'react';
 
 type Props = {
 	site: SiteExcerptData;
+	size?: number;
 };
 
-const ActionsField = ( { site }: Props ) => {
+const ActionsField = ( { site, size }: Props ) => {
 	const handleClickOrKeyDown = ( event: MouseEvent | KeyboardEvent ) => {
 		const target = event.target as HTMLElement;
 
@@ -23,7 +24,7 @@ const ActionsField = ( { site }: Props ) => {
 			onClick={ handleClickOrKeyDown }
 			onKeyDown={ handleClickOrKeyDown }
 		>
-			<SiteActions site={ site } />
+			<SiteActions site={ site } size={ size } />
 		</div>
 	);
 };

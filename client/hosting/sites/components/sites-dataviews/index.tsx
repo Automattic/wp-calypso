@@ -180,7 +180,7 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'actions',
 				header: <span>{ __( 'Actions' ) }</span>,
-				render: ( { item }: { item: SiteInfo } ) => <ActionsField site={ item } />,
+				render: ( { item }: { item: SiteInfo } ) => <ActionsField site={ item } size={ 48 } />,
 				enableHiding: false,
 				enableSorting: false,
 				width: '48px',

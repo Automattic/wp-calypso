@@ -261,17 +261,6 @@ const SiteMenuGroup = styled( MenuGroup )( {
 	},
 } );
 
-const SiteDropdownMenu = styled( DropdownMenu )( {
-	'> .components-button': {
-		padding: 8,
-		margin: -8,
-		minWidth: 0,
-		color: 'var( --color-text-subtle )',
-		height: 'auto',
-		verticalAlign: 'middle',
-	},
-} );
-
 const siteDropdownMenuPopoverClassName = css( {
 	// modalOverlayClassName has z-index: 178
 	zIndex: 177,
@@ -476,9 +465,11 @@ function JetpackSiteItems( { site, recordTracks }: SitesMenuItemProps ) {
 export const SitesEllipsisMenu = ( {
 	className,
 	site,
+	size,
 }: {
 	className?: string;
 	site: SiteExcerptData;
+	size?: number;
 } ) => {
 	const dispatch = useReduxDispatch();
 	const { __ } = useI18n();
@@ -499,6 +490,19 @@ export const SitesEllipsisMenu = ( {
 		wpAdminUrl,
 		recordTracks,
 	};
+
+	const SiteDropdownMenu = styled( DropdownMenu )( {
+		'> .components-button': {
+			padding: 8,
+			margin: -8,
+			minWidth: 0,
+			color: 'var( --color-text-subtle )',
+			width: size ? `${ size }px` : 'auto',
+			height: size ? `${ size }px` : 'auto',
+			verticalAlign: 'middle',
+			justifyContent: 'end',
+		},
+	} );
 
 	const isSiteJetpackNotAtomic = isNotAtomicJetpack( site );
 	const hasHostingFeatures = ! isSiteJetpackNotAtomic && ! isP2Site( site );
