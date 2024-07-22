@@ -272,6 +272,10 @@ body.is-mobile-app-view {
 
 	&.masterbar__reader {
 		padding: 0 7px 0 4px;
+
+		.masterbar_svg-reader {
+			padding: 0 8px 0 3px;
+		}
 	}
 
 	&.masterbar__item-my-site-actions {
@@ -282,6 +286,12 @@ body.is-mobile-app-view {
 		&.masterbar__reader,
 		&.masterbar__item-my-site-actions {
 			padding: 0;
+		}
+
+		&.masterbar__reader {
+			.masterbar_svg-reader {
+				padding: 0;
+			}
 		}
 	}
 
