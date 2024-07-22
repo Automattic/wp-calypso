@@ -1132,6 +1132,13 @@ body.is-mobile-app-view {
 		transition: all 150ms ease-in;
 		fill: var(--color-masterbar-item-active-background);
 	}
+
+	@media only screen and (max-width: 782px) {
+		&:not(.has-unread) svg path {
+			stroke: var(--color-masterbar-highlight);
+			fill: none;
+		}
+	}
 }
 
 @keyframes bubble-unread-indication {
