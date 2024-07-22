@@ -32,7 +32,7 @@ import ConsolidatedViews from '../../consolidated-view';
 import { getAccountStatus } from '../../lib/get-account-status';
 import tipaltiLogo from '../../lib/tipalti-logo';
 import ReferralList from '../../referrals-list';
-import type { Referral } from '../../types';
+import type { Referral, ReferralInvoice } from '../../types';
 
 interface Props {
 	isAutomatedReferral?: boolean;
@@ -41,6 +41,8 @@ interface Props {
 	isLoading: boolean;
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	referralInvoices: ReferralInvoice[];
+	isFetchingInvoices: boolean;
 }
 
 export default function LayoutBodyContent( {
@@ -50,6 +52,8 @@ export default function LayoutBodyContent( {
 	isLoading,
 	dataViewsState,
 	setDataViewsState,
+	referralInvoices,
+	isFetchingInvoices,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -117,9 +121,16 @@ export default function LayoutBodyContent( {
 	if ( isAutomatedReferral && referrals?.length ) {
 		return (
 			<>
-				{ ! dataViewsState.selectedItem && <ConsolidatedViews referrals={ referrals } /> }
+				{ ! dataViewsState.selectedItem && (
+					<ConsolidatedViews
+						referrals={ referrals }
+						referralInvoices={ referralInvoices }
+						isFetchingInvoices={ isFetchingInvoices }
+					/>
+				) }
 				<ReferralList
 					referrals={ referrals }
+					referralInvoices={ referralInvoices }
 					dataViewsState={ dataViewsState }
 					setDataViewsState={ setDataViewsState }
 				/>
