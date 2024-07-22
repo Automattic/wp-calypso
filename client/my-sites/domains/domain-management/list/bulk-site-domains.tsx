@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
-import { DomainsTable, ResponseDomain, useDomainsTable } from '@automattic/domains-table';
+import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
@@ -34,11 +34,10 @@ import {
 } from '../domains-table-fetch-functions';
 import EmptyDomainsListCard from './empty-domains-list-card';
 import GoogleDomainOwnerBanner from './google-domain-owner-banner';
-import { ManageAllDomainsCTA } from './manage-domains-cta';
+import ManageAllDomainsButton from './manage-all-domains-button';
 import OptionsDomainButton from './options-domain-button';
 import { usePurchaseActions } from './use-purchase-actions';
 import { filterOutWpcomDomains } from './utils';
-
 import './style.scss';
 
 interface BulkSiteDomainsProps {
@@ -77,16 +76,13 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 
 	const purchaseActions = usePurchaseActions();
 
-	const buttons = [ <OptionsDomainButton key="breadcrumb_button_1" /> ];
+	const buttons = [
+		<ManageAllDomainsButton key="manage_all_domains_button" />,
+		<OptionsDomainButton key="options_domain_button" />,
+	];
 
 	const [ changeSiteAddressSourceDomain, setChangeSiteAddressSourceDomain ] =
 		useState< ResponseDomain | null >( null );
-
-	// If user has more than 1 domain on more than 1 site, show manage all domains CTA.
-	const { domains: allDomains } = useDomainsTable( fetchAllDomains );
-	const showManageAllDomainsCTA =
-		( allDomains || [] ).length > 1 &&
-		[ ...new Set( ( allDomains || [] ).map( ( domain ) => domain.blog_id ) ) ].length > 1;
 
 	const onSetPrimaryDomain = async (
 		domain: string,
@@ -174,9 +170,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 									isCompact={ hasNonWpcomDomains }
 									hasNonWpcomDomains={ hasNonWpcomDomains }
 								/>
-							) }
-							{ showManageAllDomainsCTA && (
-								<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
 							) }
 						</>
 					}
