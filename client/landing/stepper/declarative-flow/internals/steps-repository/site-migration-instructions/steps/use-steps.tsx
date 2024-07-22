@@ -133,22 +133,17 @@ const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData 
 					<>
 						<p>
 							{ translate(
-								'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the {{strong}}%(migrationKeyLabel)s{{/strong}} field.',
+								'Copy and paste the migration key below in the {{strong}}%(migrationKeyLabel)s{{/strong}} field, customize any of the following migration options, and click {{strong}}%(migrateLabel)s{{/strong}}.',
 								{
 									components: {
 										strong: <strong />,
 									},
-									args: { migrationKeyLabel: 'Migrate Guru Migration Key' },
+									args: {
+										migrationKeyLabel: 'Migrate Guru Migration Key',
+										migrateLabel: 'Migrate',
+									},
 								}
 							) }
-						</p>
-						<p>
-							{ translate( 'Click {{strong}}%(migrateLabel)s{{/strong}} to finish.', {
-								components: {
-									strong: <strong />,
-								},
-								args: { migrateLabel: 'Migrate' },
-							} ) }
 						</p>
 						<MigrationKeyInput value={ migrationKey } />
 					</>
