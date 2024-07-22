@@ -19,6 +19,8 @@ jest.mock( 'i18n-calypso', () => ( {
 	localize: jest.fn(),
 	translate: jest.fn(),
 } ) );
+jest.mock( '@wordpress/data' );
+jest.mock( '../use-generate-action-callback', () => () => jest.fn() );
 
 import {
 	PLAN_BUSINESS,
@@ -105,7 +107,7 @@ describe( 'useGenerateActionHook', () => {
 				},
 			} )
 		);
-		jest.mock( '../use-generate-action-callback', () => jest.fn( () => jest.fn() ) );
+
 		( Plans.useCurrentPlan as jest.Mock ).mockImplementation( () => null );
 	} );
 
