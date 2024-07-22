@@ -83,18 +83,9 @@ function SubscribeEmailStep( props ) {
 				email_address,
 				mailing_list_category: queryArguments.mailing_list,
 				from: queryArguments.from,
-				first_name: queryArguments.first_name,
-				last_name: queryArguments.last_name,
 			} );
 		},
-		[
-			email,
-			queryArguments.first_name,
-			queryArguments.from,
-			queryArguments.last_name,
-			queryArguments.mailing_list,
-			subscribeToMailingList,
-		]
+		[ email, queryArguments.from, queryArguments.mailing_list, subscribeToMailingList ]
 	);
 
 	const handlerecordRegistration = useCallback(
@@ -134,6 +125,10 @@ function SubscribeEmailStep( props ) {
 			createNewAccount( {
 				userData: {
 					email,
+					extra: {
+						first_name: queryArguments.first_name,
+						last_name: queryArguments.last_name,
+					},
 				},
 				flowName,
 				isPasswordless: true,
@@ -144,7 +139,15 @@ function SubscribeEmailStep( props ) {
 		if ( currentUser?.email === email ) {
 			handleSubscribeToMailingList();
 		}
-	}, [ createNewAccount, currentUser, email, flowName, handleSubscribeToMailingList ] );
+	}, [
+		createNewAccount,
+		currentUser,
+		email,
+		flowName,
+		handleSubscribeToMailingList,
+		queryArguments.first_name,
+		queryArguments.last_name,
+	] );
 
 	return (
 		<div className="subscribe-email">
