@@ -96,14 +96,6 @@ describe( 'UpgradeToPremiumNudge basic tests', () => {
 		render( <UpgradeToPremiumNudge { ...props } />, { wrapper: Wrapper } );
 		expect( screen.queryByTestId( 'upsell-nudge-plan' ) ).not.toBeInTheDocument();
 	} );
-} );
-
-describe( 'UpgradeToPremiumNudge.render()', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-		Plans.useCurrentPlan.mockImplementation( () => ( { planSlug: PLAN_PERSONAL } ) );
-		canCurrentUser.mockReturnValue( true );
-	} );
 
 	[
 		PLAN_JETPACK_FREE,
@@ -132,6 +124,7 @@ describe( 'UpgradeToPremiumNudge.render()', () => {
 			 * bypassing findFirstSimilarPlanKey logic (which is an imported utility)
 			 */
 			findFirstSimilarPlanKey.mockImplementation( () => plan );
+			canCurrentUser.mockReturnValue( true );
 			Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
 				[ plan ]: {
 					originalPrice: { full: 24000, monthly: 2000 },
