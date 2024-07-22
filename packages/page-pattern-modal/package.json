@@ -54,9 +54,8 @@
 		"redux": "^4.2.1"
 	},
 	"scripts": {
-		"copy-assets": "../calypso-build/bin/copy-assets.js",
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run copy-assets",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets",
 		"prepack": "yarn run clean && yarn run build"
 	}
 }
