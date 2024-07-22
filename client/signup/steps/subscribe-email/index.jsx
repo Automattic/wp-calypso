@@ -122,12 +122,17 @@ function SubscribeEmailStep( props ) {
 	useEffect( () => {
 		// 1. User is not logged in and the email submitted to the flow is valid
 		if ( ! currentUser && emailValidator.validate( email ) ) {
+			// Last name is an optional field in the subscription form, and an empty value may be
+			// submitted. However the API will deem an empty last name invalid and return an error,
+			// so we only include it in the API request if it's a non-empty string.
+			const includeLastName = queryArguments.last_name?.length > 0;
+
 			createNewAccount( {
 				userData: {
 					email,
 					extra: {
 						first_name: queryArguments.first_name,
-						last_name: queryArguments.last_name,
+						...( includeLastName && { last_name: queryArguments.last_name } ),
 					},
 				},
 				flowName,
