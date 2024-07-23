@@ -58,7 +58,6 @@ import {
 	getMostRecentlySelectedSiteId,
 	getSectionGroup,
 	getSectionName,
-	getSelectedSiteId,
 } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
@@ -167,20 +166,20 @@ class MasterbarLoggedIn extends Component {
 		 *
 		 * This code makes it possible to reset the failed migration state when clicking My Sites too.
 		 */
-		const { migrationStatus, currentSelectedSiteId } = this.props;
+		const { migrationStatus, siteId } = this.props;
 
-		if ( currentSelectedSiteId && migrationStatus === 'error' ) {
+		if ( siteId && migrationStatus === 'error' ) {
 			/**
 			 * Reset the in-memory site lock for the currently selected site
 			 */
-			this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null, null );
+			this.props.updateSiteMigrationMeta( siteId, 'inactive', null, null );
 
 			/**
 			 * Reset the migration on the backend
 			 */
 			wpcom.req
 				.post( {
-					path: `/sites/${ currentSelectedSiteId }/reset-migration`,
+					path: `/sites/${ siteId }/reset-migration`,
 					apiNamespace: 'wpcom/v2',
 				} )
 				.catch( () => {} );
@@ -727,12 +726,12 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderHelpCenter() {
-		const { currentSelectedSiteId, translate } = this.props;
+		const { siteId, translate } = this.props;
 
 		return (
 			<AsyncLoad
 				require="./masterbar-help-center"
-				siteId={ currentSelectedSiteId }
+				siteId={ siteId }
 				tooltip={ translate( 'Help' ) }
 				placeholder={ null }
 			/>
@@ -846,13 +845,10 @@ export default connect(
 
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
-		const currentSelectedSiteId = getSelectedSiteId( state );
-		const siteId =
-			currentSelectedSiteId || getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
+		const siteId = getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isMigrationInProgress =
-			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
-			isSiteMigrationActiveRoute( state );
+			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
 		const site = getSite( state, siteId );
@@ -875,16 +871,11 @@ export default connect(
 			isSupportSession: isSupportSession( state ),
 			isInEditor: getSectionName( state ) === 'gutenberg-editor',
 			isMigrationInProgress,
-			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
-			currentSelectedSiteId,
+			migrationStatus: getSiteMigrationStatus( state, siteId ),
 			isClassicView,
-			currentSelectedSiteSlug: currentSelectedSiteId
-				? getSiteSlug( state, currentSelectedSiteId )
-				: undefined,
+			currentSelectedSiteSlug: siteId ? getSiteSlug( state, siteId ) : undefined,
 			previousPath: getPreviousRoute( state ),
-			isJetpackNotAtomic:
-				isJetpackSite( state, currentSelectedSiteId ) &&
-				! isAtomicSite( state, currentSelectedSiteId ),
+			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
 			isFetchingPrefs: isFetchingPreferences( state ),
