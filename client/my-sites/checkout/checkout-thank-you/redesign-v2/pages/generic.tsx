@@ -95,7 +95,14 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 			);
 		} else if ( isTitanMail( purchase ) ) {
 			footerDetails = footerDetails.concat(
-				getTitanFooterDetails( siteSlug as string, purchase.meta, currentRoute, 'generic', 1 )
+				getTitanFooterDetails(
+					siteSlug as string,
+					purchase.meta,
+					currentRoute,
+					'generic',
+					setShowSupportDoc,
+					1
+				)
 			);
 		}
 
