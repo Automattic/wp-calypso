@@ -27,6 +27,8 @@ export default function HostingList( { selectedSite }: Props ) {
 	const { data } = useProductsQuery( false, true );
 
 	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
+	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
+
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 
 	// Hide the section if it's automated referrals marketplace
@@ -106,10 +108,18 @@ export default function HostingList( { selectedSite }: Props ) {
 	return (
 		<div className="hosting-list">
 			<ListingSection
-				title={ translate( 'Hosting' ) }
-				description={ translate(
-					'Choose from a variety of world-class managed hosting that will scale with your business.'
-				) }
+				title={
+					isNewHostingPage
+						? translate( "Choose the hosting tailored for your client's needs." )
+						: translate( 'Hosting' )
+				}
+				description={
+					isNewHostingPage
+						? ''
+						: translate(
+								'Choose from a variety of world-class managed hosting that will scale with your business.'
+						  )
+				}
 				isTwoColumns
 				extraContent={ <MigrationOffer foldable /> }
 			>
