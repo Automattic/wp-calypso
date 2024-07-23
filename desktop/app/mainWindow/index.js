@@ -35,7 +35,7 @@ function showAppWindow() {
 	windowConfig.webPreferences.nativeWindowOpen = true;
 
 	const bounds = {
-		...{ width: 800, height: 600 },
+		...{ width: 1200, height: 800 },
 		...Settings.getSettingGroup( {}, 'window', [ 'x', 'y', 'width', 'height' ] ),
 	};
 
