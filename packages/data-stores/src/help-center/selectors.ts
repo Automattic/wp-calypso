@@ -10,5 +10,4 @@ export const getUserDeclaredSite = ( state: State ) => state.userDeclaredSite;
 export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getHasSeenWhatsNewModal = ( state: State ) => state.hasSeenWhatsNewModal;
-export const getInitialRoute = ( state: State ) => state.initialRoute;
 export const getNavigateToRoute = ( state: State ) => state.navigateToRoute;

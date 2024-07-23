@@ -1,10 +1,8 @@
-import { select } from '@wordpress/data';
 import { apiFetch } from '@wordpress/data-controls';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { STORE_KEY } from './constants';
 import type { APIFetchOptions } from './types';
 
 export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
@@ -38,16 +36,16 @@ export function* setHasSeenWhatsNewModal( value: boolean ) {
 	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
 }
 
+export const setNavigateToRoute = ( route?: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
+		route,
+	} ) as const;
+
 export const setUnreadCount = ( count: number ) =>
 	( {
 		type: 'HELP_CENTER_SET_UNREAD_COUNT',
 		count,
-	} ) as const;
-
-export const setInitialRoute = ( route?: string ) =>
-	( {
-		type: 'HELP_CENTER_SET_INITIAL_ROUTE',
-		route,
 	} ) as const;
 
 export const setIsMinimized = ( minimized: boolean ) =>
@@ -70,7 +68,7 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 
 export const setShowHelpCenter = function* ( show: boolean ) {
 	if ( ! show ) {
-		yield setInitialRoute( undefined );
+		yield setNavigateToRoute( undefined );
 	} else {
 		yield setShowMessagingWidget( false );
 	}
@@ -119,12 +117,6 @@ export const setShowMessagingChat = function* () {
 	yield resetStore();
 };
 
-export const setNavigateToRoute = ( route: string ) =>
-	( {
-		type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
-		route,
-	} ) as const;
-
 export const setShowSupportDoc = function* ( link: string, postId: number, blogId?: number ) {
 	const params = new URLSearchParams( {
 		link,
@@ -133,14 +125,8 @@ export const setShowSupportDoc = function* ( link: string, postId: number, blogI
 		cacheBuster: String( Date.now() ),
 	} );
 
-	const showHelpCenter = select( STORE_KEY ).isHelpCenterShown();
-
-	if ( showHelpCenter ) {
-		yield setNavigateToRoute( `/post/?${ params }` );
-	} else {
-		yield setInitialRoute( `/post/?${ params }` );
-		yield setShowHelpCenter( true );
-	}
+	yield setNavigateToRoute( `/post/?${ params }` );
+	yield setShowHelpCenter( true );
 	yield setIsMinimized( false );
 };
 
@@ -156,7 +142,6 @@ export type HelpCenterAction =
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
 			| typeof setIsMinimized
-			| typeof setInitialRoute
 			| typeof setNavigateToRoute
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

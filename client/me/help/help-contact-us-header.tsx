@@ -7,17 +7,16 @@ import { useI18n } from '@wordpress/react-i18n';
 import type { FC } from 'react';
 
 import './style.scss';
-
 const HELP_CENTER_STORE = HelpCenter.register();
 
 const HelpContactUsHeader: FC = () => {
 	const { __ } = useI18n();
-	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { url } = useStillNeedHelpURL();
 
 	const onClick = () => {
 		recordTracksEvent( 'calypso_help_header_button_click' );
-		setInitialRoute( url );
+		setNavigateToRoute( url );
 		setShowHelpCenter( true );
 	};
 
