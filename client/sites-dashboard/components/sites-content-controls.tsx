@@ -12,6 +12,8 @@ import { MEDIA_QUERIES } from '../utils';
 import { SitesSearch } from './sites-search';
 import { SitesSortingDropdown } from './sites-sorting-dropdown';
 
+type SiteTypes = 'p2' | 'all';
+
 export interface SitesDashboardQueryParams {
 	page?: number;
 	perPage?: number;
@@ -19,6 +21,7 @@ export interface SitesDashboardQueryParams {
 	showHidden?: boolean;
 	status?: GroupableSiteLaunchStatuses;
 	newSiteID?: number;
+	type?: SiteTypes;
 }
 
 const FilterBar = styled.div( {

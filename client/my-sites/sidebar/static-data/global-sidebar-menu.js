@@ -1,5 +1,6 @@
 import { category, Icon, brush } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
+import ReaderP2Icon from 'calypso/reader/components/icons/p2-icon';
 
 export const SidebarIconPlugins = () => (
 	<svg
@@ -30,6 +31,14 @@ export default function globalSidebarMenu() {
 			navigationLabel: translate( 'Manage all my sites' ),
 			type: 'menu-item',
 			url: '/sites',
+		},
+		{
+			icon: <ReaderP2Icon />,
+			slug: 'sites-p2',
+			title: translate( 'P2s' ),
+			navigationLabel: translate( 'Manage all my P2 sites' ),
+			type: 'menu-item',
+			url: '/sites?type=p2',
 		},
 		{
 			icon: 'dashicons-admin-site-alt3',

@@ -79,6 +79,7 @@ const siteSortingKeys = [
 
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_STATUS_GROUP = 'all';
+const DEFAULT_SITE_TYPE = 'all';
 
 const SitesDashboard = ( {
 	// Note - control params (eg. search, page, perPage, status...) are currently meant for
@@ -89,6 +90,7 @@ const SitesDashboard = ( {
 		search,
 		newSiteID,
 		status = DEFAULT_STATUS_GROUP,
+		type = DEFAULT_SITE_TYPE,
 	},
 	selectedSite,
 	initialSiteFeature = DOTCOM_OVERVIEW,
@@ -98,10 +100,20 @@ const SitesDashboard = ( {
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
+	const sitesFilterCallback = ( site: SiteExcerptData ) => {
+		return ! site.options?.is_domain_only;
+	};
+
+	const getFilterArgs = ( type: string ): string[] => {
+		if ( type === 'all' ) {
+			return [ 'non-p2' ];
+		}
+		return [ 'p2' ];
+	};
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
-		[],
-		( site ) => ! site.options?.is_domain_only,
+		getFilterArgs( type ),
+		sitesFilterCallback,
 		'all',
 		[],
 		[ 'theme_slug' ]
@@ -143,7 +155,7 @@ const SitesDashboard = ( {
 		initialSiteFeature,
 		dataViewsState,
 		featureToRouteMap: FEATURE_TO_ROUTE_MAP,
-		queryParamKeys: [ 'page', 'per-page', 'status', 'search' ],
+		queryParamKeys: [ 'page', 'per-page', 'status', 'search', 'type' ],
 	} );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
@@ -166,7 +178,13 @@ const SitesDashboard = ( {
 
 			setInitialSortApplied( true );
 		}
-	}, [ hasSitesSortingPreferenceLoaded, sitesSorting, dataViewsState.sort, initialSortApplied ] );
+	}, [
+		hasSitesSortingPreferenceLoaded,
+		sitesSorting,
+		dataViewsState.sort,
+		initialSortApplied,
+		type,
+	] );
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {

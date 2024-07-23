@@ -21,10 +21,15 @@ function getQueryParams( context: Context ) {
 		perPage: context.query[ 'per-page' ] ? parseInt( context.query[ 'per-page' ] ) : undefined,
 		search: context.query.search,
 		status: context.query.status,
+		type: context.query.type,
 	};
 }
 
 export function sanitizeQueryParameters( context: PageJSContext, next: () => void ) {
+	const siteType = context.query?.type?.trim();
+	if ( siteType ) {
+		context.query.type = siteType;
+	}
 	/**
 	 * We need a base case because `page.replace` triggers a re-render for every middleware
 	 * in the route.
