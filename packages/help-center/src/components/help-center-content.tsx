@@ -46,7 +46,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const location = useLocation();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
-	const { setInitialRoute } = useDispatch( HELP_CENTER_STORE );
+	const { setInitialRoute, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const { isMinimized } = useSelect( ( select ) => {
@@ -81,6 +81,20 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		} ),
 		[]
 	);
+
+	const { navigateToRoute } = useSelect(
+		( select ) => ( {
+			navigateToRoute: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getNavigateToRoute(),
+		} ),
+		[]
+	);
+
+	useEffect( () => {
+		if ( navigateToRoute ) {
+			navigate( navigateToRoute );
+			setNavigateToRoute( null );
+		}
+	}, [ navigate, navigateToRoute, setNavigateToRoute ] );
 
 	// reset the scroll location on navigation, TODO: unless there's an anchor
 	useEffect( () => {

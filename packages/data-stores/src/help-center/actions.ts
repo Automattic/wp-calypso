@@ -1,8 +1,10 @@
+import { select } from '@wordpress/data';
 import { apiFetch } from '@wordpress/data-controls';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
+import { STORE_KEY } from './constants';
 import type { APIFetchOptions } from './types';
 
 export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
@@ -117,6 +119,12 @@ export const setShowMessagingChat = function* () {
 	yield resetStore();
 };
 
+export const setNavigateToRoute = ( route: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
+		route,
+	} ) as const;
+
 export const setShowSupportDoc = function* ( link: string, postId: number, blogId?: number ) {
 	const params = new URLSearchParams( {
 		link,
@@ -124,9 +132,16 @@ export const setShowSupportDoc = function* ( link: string, postId: number, blogI
 		...( blogId && { blogId: String( blogId ) } ), // Conditionally add blogId if it exists, the default is support blog
 		cacheBuster: String( Date.now() ),
 	} );
-	yield setInitialRoute( `/post/?${ params }` );
+
+	const showHelpCenter = select( STORE_KEY ).isHelpCenterShown();
+
+	if ( showHelpCenter ) {
+		yield setNavigateToRoute( `/post/?${ params }` );
+	} else {
+		yield setInitialRoute( `/post/?${ params }` );
+		yield setShowHelpCenter( true );
+	}
 	yield setIsMinimized( false );
-	yield setShowHelpCenter( true );
 };
 
 export type HelpCenterAction =
@@ -142,5 +157,6 @@ export type HelpCenterAction =
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 			| typeof setInitialRoute
+			| typeof setNavigateToRoute
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

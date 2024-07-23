@@ -104,6 +104,13 @@ const initialRoute: Reducer< string | undefined, HelpCenterAction > = ( state, a
 	return state;
 };
 
+const navigateToRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE' ) {
+		return action.route;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	showHelpCenter,
 	showMessagingLauncher,
@@ -116,6 +123,7 @@ const reducer = combineReducers( {
 	isMinimized,
 	unreadCount,
 	initialRoute,
+	navigateToRoute,
 } );
 
 export type State = ReturnType< typeof reducer >;
