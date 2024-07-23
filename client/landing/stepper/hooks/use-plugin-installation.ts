@@ -8,13 +8,14 @@ interface WPError {
 
 const installPlugin = async ( siteId: number, pluginSlug: string ) => {
 	try {
-		await wpcom.req.post(
+		const response = await wpcom.req.post(
 			{
 				path: `/sites/${ siteId }/plugins/${ pluginSlug }/install`,
 			},
 			{ apiVersion: '1.2', http_envelope: 1 },
 			{}
 		);
+		return response;
 	} catch ( error ) {
 		if ( ( error as WPError ).name === 'PluginAlreadyInstalledError' ) {
 			return 'success';
