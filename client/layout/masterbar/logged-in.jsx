@@ -4,6 +4,7 @@ import page from '@automattic/calypso-router';
 import { PromptIcon } from '@automattic/command-palette';
 import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Button as WPButton } from '@wordpress/components';
 import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -67,6 +68,7 @@ import Notifications from './masterbar-notifications/notifications-button';
 
 const NEW_MASTERBAR_SHIPPING_DATE = new Date( 2022, 3, 14 ).getTime();
 const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu-popover';
+const ALL_SITES_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-all-sites-popover';
 
 const MOBILE_BREAKPOINT = '<480px';
 const IS_RESPONSIVE_MENU_BREAKPOINT = '<782px';
@@ -79,6 +81,7 @@ class MasterbarLoggedIn extends Component {
 		isResponsiveMenu: isWithinBreakpoint( IS_RESPONSIVE_MENU_BREAKPOINT ),
 		// making the ref a state triggers a re-render when it changes (needed for popover)
 		menuBtnRef: null,
+		allSitesBtnRef: null,
 	};
 
 	static propTypes = {
@@ -94,8 +97,10 @@ class MasterbarLoggedIn extends Component {
 		isCheckoutFailed: PropTypes.bool,
 		isInEditor: PropTypes.bool,
 		hasDismissedThePopover: PropTypes.bool,
+		hasDismissedAllSitesPopover: PropTypes.bool,
 		isUserNewerThanNewNavigation: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
+		isGlobalSidebarVisible: PropTypes.bool,
 	};
 
 	subscribeToViewPortChanges() {
@@ -281,8 +286,17 @@ class MasterbarLoggedIn extends Component {
 
 	// will render as back button on mobile and in editor
 	renderMySites() {
-		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
-		const { isMenuOpen } = this.state;
+		const {
+			domainOnlySite,
+			siteSlug,
+			translate,
+			section,
+			currentRoute,
+			isFetchingPrefs,
+			hasDismissedAllSitesPopover,
+			isGlobalSidebarVisible,
+		} = this.props;
+		const { isMenuOpen, allSitesBtnRef } = this.state;
 
 		const mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
@@ -295,16 +309,47 @@ class MasterbarLoggedIn extends Component {
 		}
 
 		return (
-			<Item
-				className="masterbar__item-my-sites"
-				url={ mySitesUrl }
-				tipTarget="my-sites"
-				icon={ icon }
-				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites-dashboard' ) && ! isMenuOpen }
-				tooltip={ translate( 'Manage your sites' ) }
-				preloadSection={ this.preloadMySites }
-			/>
+			<>
+				<Item
+					className="masterbar__item-my-sites"
+					url={ mySitesUrl }
+					tipTarget="my-sites"
+					icon={ icon }
+					onClick={ this.clickMySites }
+					isActive={ this.isActive( 'sites-dashboard' ) && ! isMenuOpen }
+					tooltip={ translate( 'Manage your sites' ) }
+					preloadSection={ this.preloadMySites }
+					ref={ ( ref ) => ref !== allSitesBtnRef && this.setState( { allSitesBtnRef: ref } ) }
+				/>
+				{ allSitesBtnRef && (
+					<Popover
+						className="masterbar__all-sites-popover"
+						isVisible={
+							! isGlobalSidebarVisible && ! isFetchingPrefs && ! hasDismissedAllSitesPopover
+						}
+						context={ allSitesBtnRef }
+						position="bottom left"
+						showDelay={ 500 }
+						offset={ 24 }
+					>
+						<h1 className="masterbar__all-sites-popover-heading">
+							{ translate( 'All your sites', {
+								comment: 'This is a popover title under the masterbar',
+							} ) }
+						</h1>
+						<p className="masterbar__all-sites-popover-description">
+							{ translate(
+								'Click on the WordPress.com logo to access your sites, domains, Reader, account settings, and more.'
+							) }
+						</p>
+						<div className="masterbar__all-sites-popover-actions">
+							<WPButton isPrimary onClick={ this.dismissLogoPopover }>
+								{ translate( 'Got it', { comment: 'Got it, as in OK' } ) }
+							</WPButton>
+						</div>
+					</Popover>
+				) }
+			</>
 		);
 	}
 
@@ -314,6 +359,10 @@ class MasterbarLoggedIn extends Component {
 
 	dismissPopover = () => {
 		this.props.savePreference( MENU_POPOVER_PREFERENCE_KEY, true );
+	};
+
+	dismissLogoPopover = () => {
+		this.props.savePreference( ALL_SITES_POPOVER_PREFERENCE_KEY, true );
 	};
 
 	renderCheckout() {
@@ -887,6 +936,7 @@ export default connect(
 				! isAtomicSite( state, currentSelectedSiteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
+			hasDismissedAllSitesPopover: getPreference( state, ALL_SITES_POPOVER_PREFERENCE_KEY ),
 			isFetchingPrefs: isFetchingPreferences( state ),
 			// If the user is newer than new navigation shipping date, don't tell them this nav is new. Everything is new to them.
 			isUserNewerThanNewNavigation:
