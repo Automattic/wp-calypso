@@ -19,12 +19,12 @@ import {
 	SitesDataViewsProps,
 } from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
-import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';
+import SiteActions from '../../site-actions';
 import { AllowedTypes, Site, SiteData } from '../../types';
 import SiteErrorColumn from '../a4a/site-error-column';
 import { A4A_PLUGIN_SLUG } from '../a4a/site-error-preview';
