@@ -19,11 +19,12 @@ import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
-const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
+const StatAuthors: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -101,10 +102,18 @@ const StatClicks: React.FC< StatsDefaultModuleProps > = ( {
 							) }
 						/>
 					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
+					}
 				/>
 			) }
 		</>
 	);
 };
 
-export default StatClicks;
+export default StatAuthors;

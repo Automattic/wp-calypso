@@ -20,6 +20,7 @@ const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 	query,
 	summary,
 	className,
+	summaryUrl,
 } ) => {
 	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 	const isGatedByShouldGateStats = config.isEnabled( 'stats/restricted-dashboard' );
@@ -77,6 +78,7 @@ const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 					hideSummaryLink={ hideSummaryLink }
 					postId={ postId }
 					summary={ summary }
+					summaryUrl={ summaryUrl }
 				/>
 			) }
 		</>
