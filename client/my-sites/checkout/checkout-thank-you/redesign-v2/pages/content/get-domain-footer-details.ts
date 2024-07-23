@@ -19,7 +19,7 @@ export default function getDomainFooterDetails(
 			description: translate(
 				'Check out our support documentation for step-by-step instructions and expert guidance on your domain set up.'
 			),
-			buttonText: translate( 'Learn the domain basics' ),
+			buttonText: translate( 'Learn the basics of domains' ),
 			buttonOnClick: () => {
 				setShowSupportDoc(
 					localizeUrl( 'https://wordpress.com/support/domains/' ),
