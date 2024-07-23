@@ -5,4 +5,15 @@ jobs:
   CheckCalypsoChannelStatus:
     runs-on: ubuntu-latest
     steps:
-      - run: curl https://api.aruljohn.com/ip
+      - run: 
+        STATUS=$(curl -s https://public-api.wordpress.com/rest/v1.1/internal/calypso-slack-channel)
+        if [ "$STATUS" = "GREEN" ]; then
+          echo "Calypso Slack channel is green."
+          exit 0
+        elif [ "$STATUS" = "RED" ]; then
+          echo "Calypso Slack channel is red."
+          exit 1
+        else
+          echo "Calypso Slack channel status is unknown."
+          exit 1
+        fi
