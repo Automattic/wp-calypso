@@ -9,6 +9,7 @@ const get30DaysRange = () => {
 	const now = new Date();
 
 	const today = new Date();
+	today.setDate( now.getDate() + 1 ); // +1 since looks like backend works as if it's exclusive
 	const end = Math.floor( today.getTime() / 1000 );
 
 	const thirtyDaysAgo = new Date();
