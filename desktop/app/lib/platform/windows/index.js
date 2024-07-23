@@ -82,7 +82,17 @@ WindowsPlatform.prototype.restore = function () {
 };
 
 WindowsPlatform.prototype.getIcon = function ( filename ) {
-	return assets.getPath( ( platform.isWindows10() ? 'win10' : 'win7' ) + filename );
+	let windowsVersion = 'win7';
+
+	if ( platform.isWindows10() ) {
+		windowsVersion = 'win10';
+	}
+
+	if ( platform.isWindows11() ) {
+		windowsVersion = 'win11';
+	}
+
+	return assets.getPath( windowsVersion + filename );
 };
 
 WindowsPlatform.prototype.showNotificationsBadge = function () {
