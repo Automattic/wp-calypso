@@ -1,0 +1,8 @@
+name: Calypso Channel Status
+run-name: ${{ github.actor }} Checking Calypso Slack Channel Status
+on: [push]
+jobs:
+  CheckCalypsoChannelStatus:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl https://api.aruljohn.com/ip
