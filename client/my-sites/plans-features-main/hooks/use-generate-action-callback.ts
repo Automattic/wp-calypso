@@ -8,17 +8,11 @@ import {
 	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { AddOns, Member, Plans } from '@automattic/data-stores';
-import usePurchasesQueryKeysFactory from '@automattic/data-stores/src/purchases/queries/lib/use-query-keys-factory';
-import { getUseSitePurchasesOptions } from '@automattic/data-stores/src/purchases/queries/use-site-purchases';
-import useSiteQueryKeysFactory from '@automattic/data-stores/src/site/queries/lib/use-query-keys-factory';
-import { getUseSiteUserQueryOptions } from '@automattic/data-stores/src/site/queries/use-site-user-query';
-import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
+import { AddOns, Plans } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
-import { useTranslate, type LocalizeProps } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
@@ -28,6 +22,7 @@ import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selecto
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
+import { useNonOwnerHandler } from './use-non-owner-handler';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -109,134 +104,6 @@ function useUpgradeHandler( {
 			return;
 		},
 		[ processCartItems ]
-	);
-}
-
-function getOdieInitialPromptForPlan( {
-	siteOwner,
-	translate,
-	availableForPurchase,
-}: {
-	siteOwner: Member;
-	translate: LocalizeProps[ 'translate' ];
-	// `availableForPurchase` is true for upgrades and false for downgrades
-	availableForPurchase: boolean;
-} ) {
-	return `
-${ translate( "Hello, I am Wapuu, WordPress.com's AI assistant!" ) }
-
-${
-	availableForPurchase
-		? translate(
-				"I noticed you're trying to upgrade your plan, but only the account owner can make these changes. The owner of this account is %(name)s (%(niceName)s).",
-				{
-					args: {
-						name: siteOwner.name,
-						niceName: siteOwner.nice_name,
-					},
-				}
-		  )
-		: translate(
-				"I noticed you're trying to downgrade your plan, but only the account owner can make these changes. The owner of this account is %(name)s (%(niceName)s).",
-				{
-					args: {
-						name: siteOwner.name,
-						niceName: siteOwner.nice_name,
-					},
-				}
-		  )
-}
-
-${
-	availableForPurchase
-		? translate(
-				'If you need to upgrade, please reach out to %(name)s at %(email)s for help. They have the necessary permissions to make plan changes.',
-				{
-					args: {
-						name: siteOwner.name,
-						email: typeof siteOwner.email === 'string' ? siteOwner.email : '',
-					},
-				}
-		  )
-		: translate(
-				'If you need to downgrade, please reach out to %(name)s at %(email)s for help. They have the necessary permissions to make plan changes.',
-				{
-					args: {
-						name: siteOwner.name,
-						email: typeof siteOwner.email === 'string' ? siteOwner.email : '',
-					},
-				}
-		  )
-}
-
-${ translate(
-	'Is there anything else I can help you with regarding your account? Please get in touch with our support team.'
-) }
-			`;
-}
-
-function useNonOwnerHandler( {
-	siteId,
-	currentPlan,
-}: {
-	siteId?: number | null;
-	currentPlan: Plans.SitePlan | undefined;
-} ) {
-	const { setShowHelpCenter, setInitialRoute, setOdieBotNameSlug, setOdieInitialPromptText } =
-		useDispatch( HELP_CENTER_STORE );
-	const translate = useTranslate();
-
-	const { url: stillNeedHelpUrl, isLoading: isStillNeedHelpUrlLoading } = useStillNeedHelpURL();
-	const queryClient = useQueryClient();
-	const purchasesQueryKeys = usePurchasesQueryKeysFactory();
-	const siteQueryKeys = useSiteQueryKeysFactory();
-
-	return useCallback(
-		async ( { availableForPurchase }: { availableForPurchase?: boolean } ) => {
-			const sitePurchases = await queryClient.ensureQueryData(
-				getUseSitePurchasesOptions( { siteId }, purchasesQueryKeys.sitePurchases( siteId ) )
-			);
-			const currentSitePurchase = currentPlan?.purchaseId
-				? sitePurchases[ currentPlan?.purchaseId ]
-				: undefined;
-			const siteOwner = await queryClient.ensureQueryData(
-				getUseSiteUserQueryOptions(
-					siteId,
-					currentSitePurchase?.userId,
-					siteQueryKeys.siteUser( siteId, currentSitePurchase?.userId )
-				)
-			);
-
-			if ( isStillNeedHelpUrlLoading || ! siteOwner ) {
-				return;
-			}
-			//open help
-			setOdieBotNameSlug( 'wpcom-plan-support' );
-			setOdieInitialPromptText(
-				getOdieInitialPromptForPlan( {
-					translate,
-					siteOwner,
-					availableForPurchase: !! availableForPurchase,
-				} )
-			);
-			setInitialRoute( stillNeedHelpUrl );
-			setShowHelpCenter( true );
-			return;
-		},
-		[
-			currentPlan?.purchaseId,
-			isStillNeedHelpUrlLoading,
-			purchasesQueryKeys,
-			queryClient,
-			setInitialRoute,
-			setOdieBotNameSlug,
-			setOdieInitialPromptText,
-			setShowHelpCenter,
-			siteId,
-			siteQueryKeys,
-			stillNeedHelpUrl,
-			translate,
-		]
 	);
 }
 
