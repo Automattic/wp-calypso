@@ -505,6 +505,7 @@ body.is-mobile-app-view {
 	}
 
 	@media only screen and (max-width: 782px) {
+		color: var(--color-masterbar-highlight);
 		font-size: $masterbar-mobile-font-size;
 		width: 52px;
 		padding: 0;
@@ -521,6 +522,7 @@ body.is-mobile-app-view {
 		svg,
 		svg path,
 		.gridicon {
+			fill: var(--color-masterbar-highlight);
 			height: 36px;
 			width: 36px;
 		}
@@ -529,10 +531,13 @@ body.is-mobile-app-view {
 			padding-top: 0;
 			&::before {
 				font-size: 40px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				vertical-align: middle;
+				top: 2px !important;
 			}
 		}
 
 		.dashicons-before {
+			color: var(--color-masterbar-highlight);
 			height: unset;
 			&::before {
 				width: 52px;
@@ -551,9 +556,12 @@ body.is-mobile-app-view {
 
 		.dashicons-menu-alt {
 			padding-top: 0;
+			position: relative;
+			float: left;
 			&::before {
 				font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-				top: 4px;
+				top: -1px;
+				vertical-align: middle;
 			}
 		}
 	}
@@ -585,12 +593,14 @@ body.is-mobile-app-view {
 		display: none;
 		@media only screen and (max-width: 782px) {
 			display: inline-block;
+			margin-right: 2px;
+			margin-left: -1px;
 		}
 	}
 
 
 	&.masterbar__item-my-sites {
-		padding: 0 6px; // trying to match core's 35px width
+		padding: 0 7px 0 5px; // trying to match core's 35px width
 
 		@media only screen and (max-width: 782px) {
 			padding: 0;
@@ -884,12 +894,14 @@ body.is-mobile-app-view {
 	}
 
 	.gravatar {
-		border: 1px solid var(--color-masterbar-border);
+		border: 1px solid var(--color-sidebar-submenu-background);
 		border-radius: unset;
+		margin-left: 1px;
 
 		@media only screen and (max-width: 782px) {
 			width: 26px;
 			height: 26px;
+			margin-left: 4px;
 		}
 	}
 
@@ -1111,6 +1123,7 @@ body.is-mobile-app-view {
 		@media only screen and (max-width: 782px) {
 			width: 36px;
 			height: 36px;
+			padding: 3px 8px 5px;
 		}
 	}
 
@@ -1128,6 +1141,13 @@ body.is-mobile-app-view {
 	&:hover use.border {
 		transition: all 150ms ease-in;
 		fill: var(--color-masterbar-item-active-background);
+	}
+
+	@media only screen and (max-width: 782px) {
+		&:not(.has-unread) svg path {
+			stroke: var(--color-masterbar-highlight);
+			fill: none;
+		}
 	}
 }
 
@@ -1306,8 +1326,10 @@ a.masterbar__quick-language-switcher {
 		height: 24px;
 
 		@media only screen and (max-width: 782px) {
+			fill: var(--color-masterbar-highlight);
 			width: 36px;
 			height: 36px;
+			padding: 3px 8px 5px;
 		}
 	}
 }

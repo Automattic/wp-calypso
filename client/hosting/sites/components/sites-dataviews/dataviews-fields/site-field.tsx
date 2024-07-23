@@ -8,6 +8,7 @@ import * as React from 'react';
 //import { useInView } from 'react-intersection-observer';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
 import { navigate } from 'calypso/lib/navigate';
+import { isP2Theme } from 'calypso/lib/site/utils';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
 import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
@@ -73,7 +74,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const title = __( 'View Site Details' );
 	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( site.ID );
 
-	const isP2Site = site.options?.is_wpforteams_site;
+	const isP2Site = site.options?.theme_slug && isP2Theme( site.options?.theme_slug );
 	const isWpcomStagingSite = isStagingSite( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
 

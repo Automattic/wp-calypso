@@ -101,7 +101,10 @@ const SitesDashboard = ( {
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
-		( site ) => ! site.options?.is_domain_only
+		( site ) => ! site.options?.is_domain_only,
+		'all',
+		[],
+		[ 'theme_slug' ]
 	);
 
 	const hasEnTranslation = useHasEnTranslation();
