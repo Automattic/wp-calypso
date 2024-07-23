@@ -20,7 +20,10 @@ jest.mock( 'i18n-calypso', () => ( {
 	translate: jest.fn(),
 } ) );
 jest.mock( '@wordpress/data' );
-jest.mock( '../use-generate-action-callback', () => () => jest.fn() );
+jest.mock( '../use-generate-action-callback', () => () => ( {
+	isLoading: false,
+	getActionCallback: jest.fn(),
+} ) );
 
 import {
 	PLAN_BUSINESS,
