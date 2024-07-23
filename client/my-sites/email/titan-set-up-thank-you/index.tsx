@@ -1,4 +1,3 @@
-import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import getTitanFooterDetails from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/pages/content/get-titan-footer-details';
@@ -52,8 +51,6 @@ const TitanSetUpThankYou = ( {
 		/>
 	);
 
-	const { setShowSupportDoc } = useDispatch( 'automattic/help-center' );
-
 	return (
 		<>
 			<ThankYouV2
@@ -64,8 +61,7 @@ const TitanSetUpThankYou = ( {
 					selectedSiteSlug,
 					domainName,
 					currentRoute,
-					'titan-setup',
-					setShowSupportDoc
+					'titan-setup'
 				) }
 			/>
 		</>

@@ -1,5 +1,4 @@
 import { Button, SelectControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import emailImage from 'calypso/assets/images/thank-you-upsell/email.jpg';
@@ -112,8 +111,6 @@ export default function DomainOnlyThankYou( {
 		);
 	} );
 
-	const { setShowSupportDoc } = useDispatch( 'automattic/help-center' );
-
 	return (
 		<>
 			<QuerySites siteId={ domainPurchases[ 0 ]?.blogId } />
@@ -128,7 +125,7 @@ export default function DomainOnlyThankYou( {
 					}
 				) }
 				products={ products }
-				footerDetails={ getDomainFooterDetails( 'domain-only', setShowSupportDoc ) }
+				footerDetails={ getDomainFooterDetails( 'domain-only' ) }
 				upsellProps={ upsellProps }
 				isGravatarDomain={ isGravatarDomain }
 			/>

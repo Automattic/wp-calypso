@@ -1,8 +1,18 @@
+import { HelpCenter } from '@automattic/data-stores';
+import { useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { ThankYouFooterDetailProps } from 'calypso/components/thank-you-v2/footer';
 
-export default function getDefaultFooterDetails(
+const HELP_CENTER_STORE = HelpCenter.register();
+
+export default function useGetDomainFooterDetails( context: string ) {
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+
+	return getDefaultFooterDetails( context, setShowHelpCenter );
+}
+
+function getDefaultFooterDetails(
 	context: string,
 	setShowHelpCenter: ( showHelpCenter: boolean ) => void
 ): ThankYouFooterDetailProps[] {

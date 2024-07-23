@@ -19,8 +19,7 @@ const PLUGINS_SUPPORT_PAGE_ID = 206930;
 
 export default function JetpackSearchThankYou( { purchase }: JetpackSearchThankYouProps ) {
 	const siteId = useSelector( getSelectedSiteId );
-	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const { setShowSupportDoc } = useDispatch( 'automattic/help-center' );
+	const { setShowHelpCenter, setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
 
 	const footerDetails = [
 		{

@@ -1,7 +1,5 @@
 import { isDomainProduct, isPlan, isTitanMail } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { HelpCenter } from '@automattic/data-stores';
-import { useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
@@ -17,8 +15,6 @@ import getDomainFooterDetails from './content/get-domain-footer-details';
 import getTitanFooterDetails from './content/get-titan-footer-details';
 import type { ThankYouFooterDetailProps } from 'calypso/components/thank-you-v2/footer';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
-
-const HELP_CENTER_STORE = HelpCenter.register();
 
 interface GenericThankYouProps {
 	purchases: ReceiptPurchase[];
@@ -82,27 +78,16 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 		);
 	} );
 
-	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const { setShowSupportDoc } = useDispatch( 'automattic/help-center' );
 	let footerDetails: ThankYouFooterDetailProps[] = [];
 
 	// Footer details should contain at most two support blurbs. The first support blurb for
 	// each product will be used to populate the footer, with the exception of plan products.
 	filteredPurchases.some( ( purchase ) => {
 		if ( isDomainProduct( purchase ) ) {
-			footerDetails = footerDetails.concat(
-				getDomainFooterDetails( 'generic', setShowSupportDoc, 1 )
-			);
+			footerDetails = footerDetails.concat( getDomainFooterDetails( 'generic', 1 ) );
 		} else if ( isTitanMail( purchase ) ) {
 			footerDetails = footerDetails.concat(
-				getTitanFooterDetails(
-					siteSlug as string,
-					purchase.meta,
-					currentRoute,
-					'generic',
-					setShowSupportDoc,
-					1
-				)
+				getTitanFooterDetails( siteSlug as string, purchase.meta, currentRoute, 'generic', 1 )
 			);
 		}
 
@@ -113,7 +98,7 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 
 	// Fallback to the default generic support blurb if there less than two support blurbs in the footer.
 	if ( footerDetails.length < 2 ) {
-		footerDetails = footerDetails.concat( getDefaultFooterDetails( 'generic', setShowHelpCenter ) );
+		footerDetails = footerDetails.concat( getDefaultFooterDetails( 'generic' ) );
 	}
 
 	const title =

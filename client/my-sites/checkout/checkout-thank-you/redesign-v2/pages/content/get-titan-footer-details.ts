@@ -1,4 +1,6 @@
+import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
@@ -6,10 +8,30 @@ import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-manageme
 import { getTitanControlPanelRedirectPath } from 'calypso/my-sites/email/paths';
 import type { ThankYouFooterDetailProps } from 'calypso/components/thank-you-v2/footer';
 
+const HELP_CENTER_STORE = HelpCenter.register();
 const SUPPORT_SITE_ID = 9619154;
 const TITAN_SUPPORT_PAGE_ID = 370395;
 
-export default function getTitanFooterDetails(
+export default function useGetTitanFooterDetails(
+	selectedSiteSlug: string | null,
+	domainName: string,
+	currentRoute: string,
+	context: string,
+	limit?: number
+) {
+	const { setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
+
+	return getTitanFooterDetails(
+		selectedSiteSlug,
+		domainName,
+		currentRoute,
+		context,
+		setShowSupportDoc,
+		limit
+	);
+}
+
+function getTitanFooterDetails(
 	selectedSiteSlug: string | null,
 	domainName: string,
 	currentRoute: string,
