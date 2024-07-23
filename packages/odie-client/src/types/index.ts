@@ -104,4 +104,5 @@ export type OdieAllowedSectionNames =
 	| 'checkout'
 	| 'help-center';
 
-export type OdieAllowedBots = 'wpcom-support-chat' | 'wpcom-plan-support';
+export const odieAllowedBots = [ 'wpcom-support-chat', 'wpcom-plan-support' ] as const;
+export type OdieAllowedBots = ( typeof odieAllowedBots )[ number ];
