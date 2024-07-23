@@ -83,7 +83,7 @@ export default function useSiteActions( { site, isLargeScreen, siteError, onSele
 				name: translate( 'View activity' ),
 				href: isWPCOMSite
 					? `https://wordpress.com/activity-log/${ blog_id }`
-					: `/sites/overview/${ siteSlug }/jetpack-activity-log`,
+					: `/sites/overview/${ siteSlug }/jetpack-activity`,
 				onClick: () => handleClickMenuItem( 'view_activity' ),
 				isExternalLink: isWPCOMSite,
 				isEnabled: ! siteError && ! isUrlOnly,
