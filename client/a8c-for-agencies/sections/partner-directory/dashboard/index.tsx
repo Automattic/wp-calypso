@@ -101,7 +101,7 @@ const PartnerDirectoryDashboard = () => {
 			response && reduxDispatch( setActiveAgency( response ) );
 
 			reduxDispatch(
-				successNotice( translate( 'Your profile has been published!' ), {
+				successNotice( translate( 'Your profile has been saved!!' ), {
 					duration: 6000,
 				} )
 			);
