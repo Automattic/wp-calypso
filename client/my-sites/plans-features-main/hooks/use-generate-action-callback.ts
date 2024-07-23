@@ -112,7 +112,6 @@ function useDowngradeHandler( {
 	currentPlan,
 }: {
 	siteSlug?: string | null;
-	siteId?: number | null;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
 	const { setShowHelpCenter, setNavigateToRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
@@ -120,10 +119,6 @@ function useDowngradeHandler( {
 
 	return useCallback(
 		( planSlug: PlanSlug ) => {
-			if ( ! siteSlug || ! currentPlan?.planSlug ) {
-				return;
-			}
-
 			// A downgrade to the free plan is essentially cancelling the current plan.
 			if ( isFreePlan( planSlug ) ) {
 				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
@@ -140,7 +135,6 @@ function useDowngradeHandler( {
 			setShowHelpCenter( true );
 		},
 		[
-			currentPlan?.planSlug,
 			currentPlan?.purchaseId,
 			setNavigateToRoute,
 			setMessage,
@@ -187,7 +181,6 @@ function useGenerateActionCallback( {
 	const handleDowngradeClick = useDowngradeHandler( {
 		siteSlug,
 		currentPlan,
-		siteId,
 	} );
 	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
 
