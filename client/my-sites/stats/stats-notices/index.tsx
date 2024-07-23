@@ -104,8 +104,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 			return hasReachedPaywallMonthlyViews( state, siteId );
 		} ) &&
 		! supportCommercialUse &&
-		isSiteJetpackNotAtomic &&
-		! isVip;
+		isSiteJetpackNotAtomic;
 
 	const noticeOptions = {
 		siteId,
