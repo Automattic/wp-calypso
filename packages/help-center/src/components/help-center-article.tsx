@@ -27,7 +27,7 @@ export const HelpCenterArticle: React.FC = () => {
 
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
-		if ( articleUrl && articleUrl.indexOf( '#' ) !== -1 && post?.content ) {
+		if ( articleUrl?.includes( '#' ) && post?.content ) {
 			setTimeout( () => {
 				const anchorId = articleUrl.split( '#' ).pop();
 				if ( anchorId ) {
@@ -113,7 +113,7 @@ export const HelpCenterArticle: React.FC = () => {
 					blogId={ blogId }
 					slug={ post?.slug }
 					articleUrl={ articleUrl }
-				/>{ ' ' }
+				/>
 			</div>
 			<BackToTopButton />
 		</>
