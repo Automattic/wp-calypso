@@ -32,6 +32,10 @@ const siteMigration: Flow = {
 	isSignupFlow: false,
 
 	useSteps() {
+		const siteCount = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count ?? 0,
+			[]
+		);
 		const baseSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
@@ -46,8 +50,12 @@ const siteMigration: Flow = {
 		];
 
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
-			? [ STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
+			? [ STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
 			: [];
+
+		if ( isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) && siteCount > 0 ) {
+			hostedVariantSteps.unshift( STEPS.PICK_SITE );
+		}
 
 		return stepsWithRequiredLogin( [ ...baseSteps, ...hostedVariantSteps ] );
 	},
