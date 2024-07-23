@@ -616,7 +616,7 @@ export class SharingService extends Component {
 											icon
 											iconSize={ 14 }
 											href={ localizeUrl(
-												'https://jetpack.com/support/jetpack-social/jetpack-social-manual-sharing-posts/'
+												'https://jetpack.com/redirect/?source=jetpack-social-manual-sharing-help'
 											) }
 										/>
 									),
