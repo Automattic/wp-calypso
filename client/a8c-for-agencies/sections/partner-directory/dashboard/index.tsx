@@ -20,7 +20,7 @@ import {
 	PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG,
 	PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
 } from '../constants';
-import { getBrandMeta } from '../lib/get-brand-meta';
+import { getBrandMeta, BrandMeta } from '../lib/get-brand-meta';
 import { AgencyDirectoryApplication } from '../types';
 import {
 	mapAgencyDetailsFormData,
@@ -238,12 +238,67 @@ const PartnerDirectoryDashboard = () => {
 
 	// The Agency application is completed: At least a directory was approved and published
 	if ( isCompleted ) {
+		const getDirectoryDescription = (
+			brandMeta: BrandMeta,
+			application: DirectoryApplicationStatus
+		) => {
+			const showPopoverOnLoad =
+				directoryApplicationStatuses.filter( ( { key } ) => key === 'rejected' ).length === 1;
+
+			if ( application.key === 'approved' && brandMeta.isAvailable ) {
+				// Application approved and visible in the directory
+				return (
+					<>
+						<Button className="a8c-blue-link" borderless href={ brandMeta.url } target="_blank">
+							{ translate( '%(brand)s Partner Directory', {
+								args: { brand: brandMeta.brand },
+							} ) }
+							<Icon icon={ external } size={ 18 } />
+						</Button>
+						<br />
+						<Button
+							className="a8c-blue-link"
+							borderless
+							href={ brandMeta.urlProfile }
+							target="_blank"
+						>
+							{ translate( `Your agency's profile` ) }
+							<Icon icon={ external } size={ 18 } />
+						</Button>
+					</>
+				);
+			}
+			// Application pending or rejected
+			return (
+				<>
+					<DashboardStatusBadge
+						statusProps={ {
+							status: application.status,
+							type: application.type,
+						} }
+						showPopoverOnLoad={ showPopoverOnLoad }
+					/>
+					<div>
+						{
+							// Application approved, but the Directory page is not available yet
+							application.key === 'approved' && ! brandMeta.isAvailable
+								? translate( 'This partner directory is launching soon.' )
+								: ''
+						}
+					</div>
+				</>
+			);
+		};
+
 		return (
 			<div className="partner-directory-dashboard__completed-section">
 				<div className="partner-directory-dashboard__heading">
 					{ translate(
-						'Congratulations! Your agency is now listed in our partner directory.',
-						'Congratulations! Your agency is now listed in our partner directories.',
+						'Thank you! You’ll be notified when the partner directory is live.',
+						'Thank you! You’ll be notified when the partner directories are live.',
+						// todo: Once the partner directory are live use the copy below:
+						//'Congratulations! Your agency is now listed in our partner directory.',
+						//'Congratulations! Your agency is now listed in our partner directories.',
 						{
 							count: directoryApplicationStatuses.filter( ( { key } ) => key === 'approved' )
 								.length,
@@ -251,52 +306,17 @@ const PartnerDirectoryDashboard = () => {
 					) }
 				</div>
 				{ directoryApplicationStatuses.length > 0 &&
-					directoryApplicationStatuses.map( ( { brand, status, type, key } ) => {
-						const brandMeta = getBrandMeta( brand, agency );
-						const showPopoverOnLoad =
-							directoryApplicationStatuses.filter( ( { key } ) => key === 'rejected' ).length === 1;
+					directoryApplicationStatuses.map( ( application: DirectoryApplicationStatus ) => {
+						const brandMeta = getBrandMeta( application.brand, agency );
+
 						return (
 							<StepSectionItem
-								key={ brand }
+								key={ application.brand }
 								isNewLayout
 								iconClassName={ clsx( brandMeta.className ) }
 								icon={ brandMeta.icon }
-								heading={ brand }
-								description={
-									key === 'approved' ? (
-										<>
-											<Button
-												className="a8c-blue-link"
-												borderless
-												href={ brandMeta.url }
-												target="_blank"
-											>
-												{ translate( '%(brand)s Partner Directory', {
-													args: { brand },
-												} ) }
-												<Icon icon={ external } size={ 18 } />
-											</Button>
-											<br />
-											<Button
-												className="a8c-blue-link"
-												borderless
-												href={ brandMeta.urlProfile }
-												target="_blank"
-											>
-												{ translate( `Your agency's profile` ) }
-												<Icon icon={ external } size={ 18 } />
-											</Button>
-										</>
-									) : (
-										<DashboardStatusBadge
-											statusProps={ {
-												status,
-												type,
-											} }
-											showPopoverOnLoad={ showPopoverOnLoad }
-										/>
-									)
-								}
+								heading={ application.brand }
+								description={ getDirectoryDescription( brandMeta, application ) }
 							/>
 						);
 					} ) }
@@ -334,7 +354,7 @@ const PartnerDirectoryDashboard = () => {
 	return (
 		<>
 			<div className="partner-directory-dashboard__heading">
-				{ translate( `Boost your agency's visibility across Automattic platforms.` ) }
+				{ translate( `Boost your agency’s visibility across Automattic listings.` ) }
 			</div>
 
 			<div className="partner-directory-dashboard__subtitle">
@@ -413,11 +433,17 @@ const PartnerDirectoryDashboard = () => {
 					stepNumber={ currentApplicationStep > 2 ? undefined : 3 }
 					icon={ currentApplicationStep > 2 ? check : undefined }
 					heading={ translate( 'New clients will find you' ) }
-					description={ translate(
-						'Your agency will appear in the partner directories you select and get approved for, including WordPress.com, Woo.com, Pressable.com, and Jetpack.com.'
-					) }
+					description={
+						<>
+							{ translate(
+								'Your agency will appear in the partner directories you select and get approved for, including WordPress.com, Woo.com, Pressable.com, and Jetpack.com.'
+							) }
+							<br />
+							{ translate( 'These partner directories are launching soon.' ) }
+						</>
+					}
 					buttonProps={ {
-						children: translate( 'Publish' ),
+						children: translate( 'Done' ),
 						onClick: onPublishProfileClick,
 						primary: applicationWasSubmitted,
 						disabled:
