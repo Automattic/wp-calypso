@@ -286,13 +286,18 @@
 }
 
 // Styles collapsed site list.
-.wpcom-site .is-global-sidebar-visible {
+.wpcom-site .is-global-sidebar-visible.is-group-sites-dashboard,
+.wpcom-site .is-global-sidebar-visible.is-group-sites {
 	.layout__content {
 		transition: padding-left 220ms ease-out;
 		min-height: 100vh;
 	}
 	.layout__secondary {
-		transition: width 220ms ease-out;
+		transition: transform 0.15s ease-in-out, width 220ms ease-out;
+
+		@media (max-width: $break-mobile) {
+			transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
+		}
 
 		.sidebar__header,
 		.sidebar__body,
