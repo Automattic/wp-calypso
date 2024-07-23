@@ -506,6 +506,7 @@ const WrappedUpsellNudge = (
 		useCheckPlanAvailabilityForPurchase,
 		coupon: undefined,
 		storageAddOns: null,
+		withProratedDiscounts: true,
 	} );
 
 	return (
