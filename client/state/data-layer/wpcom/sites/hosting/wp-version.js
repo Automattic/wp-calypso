@@ -16,7 +16,7 @@ const getWpVersion = ( action ) =>
 	http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/hosting/wp-version1`,
+			path: `/sites/${ action.siteId }/hosting/wp-version`,
 			apiNamespace: 'wpcom/v2',
 			body: {},
 		},
