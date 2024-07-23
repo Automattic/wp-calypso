@@ -54,6 +54,7 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from './components/celebrate-launch-modal';
 
 import './style.scss';
+import { BusinessMerchantLaunchSurveyModal } from './components/business-merchant-launch-survey-modal';
 
 const Home = ( {
 	canUserUseCustomerHome,
@@ -293,6 +294,7 @@ const Home = ( {
 					</div>
 				</>
 			) : null }
+			<BusinessMerchantLaunchSurveyModal />
 			{ celebrateLaunchModalIsOpen && (
 				<CelebrateLaunchModal
 					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
