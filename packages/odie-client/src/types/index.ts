@@ -4,6 +4,9 @@ export type Source = {
 	title: string;
 	url: string;
 	heading: string;
+	blog_id: number;
+	post_id: number;
+	content: string;
 };
 
 export type CurrentUser = {
@@ -84,6 +87,7 @@ export type Message = {
 	role: MessageRole;
 	simulateTyping?: boolean;
 	type: MessageType;
+	directEscalationSupport?: boolean;
 };
 
 export type Chat = {

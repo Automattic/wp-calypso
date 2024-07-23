@@ -29,12 +29,10 @@
 	"features": {
 		"ad-tracking": true,
 		"a8c-for-agencies": true,
-		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
 		"cookie-banner": true,
 		"oauth": true,
 		"a4a-logged-out-signup": true,
 		"a4a-automated-referrals": true,
-		"a4a-site-selector-and-importer": true,
 		"a4a-partner-directory": false
 	},
 	"enable_all_sections": false,

@@ -8,16 +8,16 @@ import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import React, { useCallback, useState } from 'react';
-import { Route, Routes, useLocation, Navigate } from 'react-router-dom';
+import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useShouldUseWapuu } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
+import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
-import { HelpCenterEmbedResult } from './help-center-embed-result';
 import { HelpCenterOdie } from './help-center-odie';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
@@ -45,7 +45,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const location = useLocation();
 	const containerRef = useRef< HTMLDivElement >( null );
-
+	const navigate = useNavigate();
 	const { setInitialRoute } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const shouldUseWapuu = useShouldUseWapuu();
@@ -55,6 +55,15 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
+
+	const navigateToSupportDocs = useCallback(
+		( blogId: string, postId: string, title: string, link: string ) => {
+			navigate(
+				`/post?blogId=${ blogId }&postId=${ postId }&title=${ title }&link=${ link }&backUrl=/odie`
+			);
+		},
+		[ navigate ]
+	);
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -97,6 +106,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
+	const navigateToContactOptions = useCallback( () => {
+		navigate( '/contact-options' );
+	}, [ navigate ] );
+
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
 			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
@@ -111,7 +124,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 							)
 						}
 					/>
-					<Route path="/post" element={ <HelpCenterEmbedResult /> } />
+					<Route path="/post" element={ <HelpCenterArticle /> } />
 					<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 					<Route
 						path="/contact-form"
@@ -137,6 +150,8 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 										trackEventName="calypso_odie_extra_contact_option"
 									/>
 								}
+								navigateToContactOptions={ navigateToContactOptions }
+								navigateToSupportDocs={ navigateToSupportDocs }
 							>
 								<HelpCenterOdie />
 							</OdieAssistantProvider>

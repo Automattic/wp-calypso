@@ -15,18 +15,7 @@ export default function OverviewHeaderActions() {
 
 	return (
 		<div className="overview-header__actions">
-			<AddNewSiteButton
-				showMainButtonLabel={ ! isNarrowView }
-				onClickAddNewSite={ () =>
-					dispatch( recordTracksEvent( 'calypso_a4a_overview_add_new_site_click' ) )
-				}
-				onClickA4APluginMenuItem={ () =>
-					dispatch( recordTracksEvent( 'calypso_a4a_overview_download_a4a_plugin_click' ) )
-				}
-				onClickUrlMenuItem={ () =>
-					dispatch( recordTracksEvent( 'calypso_a4a_overview_connect_url_site_click' ) )
-				}
-			/>
+			<AddNewSiteButton showMainButtonLabel={ ! isNarrowView } />
 			{ ! isNarrowView && (
 				<Button
 					primary

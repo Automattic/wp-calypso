@@ -29,6 +29,7 @@ import SiteLanguagePicker from 'calypso/components/language-picker/site-language
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Timezone from 'calypso/components/timezone';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { preventWidows } from 'calypso/lib/formatting';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
@@ -577,6 +578,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isWpcomStagingSite,
 			isUnlaunchedSite: propsisUnlaunchedSite,
 			adminInterfaceIsWPAdmin,
+			hasBlockTheme,
 		} = this.props;
 		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
@@ -625,7 +627,7 @@ export class SiteSettingsFormGeneral extends Component {
 				/>
 				{ this.renderAdminInterface() }
 				{ ! isWpcomStagingSite && this.giftOptions() }
-				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
+				{ ! hasBlockTheme && ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
 							title={ translate( 'Footer credit' ) }
@@ -753,11 +755,14 @@ const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
 	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus(
 		props.site?.ID
 	);
+	const { data: activeThemeData } = useActiveThemeQuery( props.site?.ID ?? -1, !! props.site );
+	const hasBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
 
 	return (
 		<SiteSettingsFormGeneral
 			{ ...props }
 			shouldShowPremiumStylesNotice={ globalStylesInUse && shouldLimitGlobalStyles }
+			hasBlockTheme={ hasBlockTheme }
 		/>
 	);
 };

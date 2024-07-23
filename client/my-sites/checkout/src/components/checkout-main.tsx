@@ -142,7 +142,10 @@ export default function CheckoutMain( {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
-	const isSiteless = sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet';
+	const isSiteless =
+		sitelessCheckoutType === 'jetpack' ||
+		sitelessCheckoutType === 'akismet' ||
+		sitelessCheckoutType === 'marketplace';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =

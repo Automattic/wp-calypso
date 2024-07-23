@@ -14,7 +14,7 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
-import { useChatStatus, useStillNeedHelpURL } from '../hooks';
+import { useChatStatus, useStillNeedHelpURL, useActionHooks } from '../hooks';
 import { useOpeningCoordinates } from '../hooks/use-opening-coordinates';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
@@ -45,6 +45,7 @@ const HelpCenter: React.FC< Container > = ( {
 	}, [ currentUser ] );
 
 	useStillNeedHelpURL();
+	useActionHooks();
 
 	const { hasActiveChats, isEligibleForChat } = useChatStatus();
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(

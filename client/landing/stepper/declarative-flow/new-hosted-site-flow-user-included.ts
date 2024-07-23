@@ -4,14 +4,13 @@ import { NEW_HOSTED_SITE_FLOW_USER_INCLUDED } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
-import { useDispatch as reduxUseDispatch } from 'react-redux';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSelector } from 'calypso/state';
+import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions/index';
 import { useQuery } from '../hooks/use-query';

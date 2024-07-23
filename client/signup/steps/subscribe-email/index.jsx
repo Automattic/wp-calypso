@@ -83,18 +83,9 @@ function SubscribeEmailStep( props ) {
 				email_address,
 				mailing_list_category: queryArguments.mailing_list,
 				from: queryArguments.from,
-				first_name: queryArguments.first_name,
-				last_name: queryArguments.last_name,
 			} );
 		},
-		[
-			email,
-			queryArguments.first_name,
-			queryArguments.from,
-			queryArguments.last_name,
-			queryArguments.mailing_list,
-			subscribeToMailingList,
-		]
+		[ email, queryArguments.from, queryArguments.mailing_list, subscribeToMailingList ]
 	);
 
 	const handlerecordRegistration = useCallback(
@@ -131,9 +122,18 @@ function SubscribeEmailStep( props ) {
 	useEffect( () => {
 		// 1. User is not logged in and the email submitted to the flow is valid
 		if ( ! currentUser && emailValidator.validate( email ) ) {
+			// Last name is an optional field in the subscription form, and an empty value may be
+			// submitted. However the API will deem an empty last name invalid and return an error,
+			// so we only include it in the API request if it's a non-empty string.
+			const includeLastName = queryArguments.last_name?.length > 0;
+
 			createNewAccount( {
 				userData: {
 					email,
+					extra: {
+						first_name: queryArguments.first_name,
+						...( includeLastName && { last_name: queryArguments.last_name } ),
+					},
 				},
 				flowName,
 				isPasswordless: true,
@@ -144,7 +144,15 @@ function SubscribeEmailStep( props ) {
 		if ( currentUser?.email === email ) {
 			handleSubscribeToMailingList();
 		}
-	}, [ createNewAccount, currentUser, email, flowName, handleSubscribeToMailingList ] );
+	}, [
+		createNewAccount,
+		currentUser,
+		email,
+		flowName,
+		handleSubscribeToMailingList,
+		queryArguments.first_name,
+		queryArguments.last_name,
+	] );
 
 	return (
 		<div className="subscribe-email">

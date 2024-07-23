@@ -172,7 +172,7 @@ describe( 'Hosted site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }`,
+				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }`,
 				state: {
 					siteSlug: 'example.wordpress.com',
 				},
@@ -229,7 +229,7 @@ describe( 'Hosted site Migration Flow', () => {
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination: `/setup/hosted-site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+				destination: `/setup/hosted-site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 				flowName: 'hosted-site-migration',
 				siteSlug: 'example.wordpress.com',
@@ -263,7 +263,7 @@ describe( 'Hosted site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/site-migration-instructions-i2',
+				path: '/site-migration-instructions',
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );

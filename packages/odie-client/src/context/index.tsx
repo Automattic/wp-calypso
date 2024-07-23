@@ -33,6 +33,8 @@ type OdieAssistantContextInterface = {
 	isVisible: boolean;
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
+	navigateToContactOptions?: () => void;
+	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
@@ -61,6 +63,8 @@ const defaultContextInterfaceValues = {
 	isNudging: false,
 	isVisible: false,
 	lastNudge: null,
+	navigateToContactOptions: noop,
+	navigateToSupportDocs: noop,
 	odieClientId: '',
 	currentUser: { display_name: 'Me' },
 	sendNudge: noop,
@@ -96,6 +100,8 @@ type OdieAssistantProviderProps = {
 	extraContactOptions?: ReactNode;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
 	loggerEventNamePrefix?: string;
+	navigateToContactOptions?: () => void;
+	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	selectedSiteId?: number | null;
 	version?: string | null;
 	children?: ReactNode;
@@ -110,6 +116,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	enabled = true,
 	logger,
 	loggerEventNamePrefix,
+	navigateToContactOptions,
+	navigateToSupportDocs,
 	selectedSiteId,
 	version = null,
 	currentUser,
@@ -237,6 +245,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isNudging,
 				isVisible,
 				lastNudge,
+				navigateToContactOptions,
+				navigateToSupportDocs,
 				odieClientId,
 				selectedSiteId,
 				sendNudge: setLastNudge,

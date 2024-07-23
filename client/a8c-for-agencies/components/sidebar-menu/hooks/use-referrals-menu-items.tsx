@@ -1,6 +1,9 @@
 import { category, cog, help } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import StatusBadge from 'calypso/a8c-for-agencies/sections/referrals/common/step-section-item/status-badge';
+import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hooks/use-get-tipalti-payee';
+import { getAccountStatus } from 'calypso/a8c-for-agencies/sections/referrals/lib/get-account-status';
 import {
 	A4A_REFERRALS_LINK,
 	A4A_REFERRALS_DASHBOARD,
@@ -11,6 +14,12 @@ import { createItem } from '../lib/utils';
 
 const useReferralsMenuItems = ( path: string ) => {
 	const translate = useTranslate();
+
+	const { data } = useGetTipaltiPayee();
+	const accountStatus = getAccountStatus( data, translate );
+
+	const showIndicator = accountStatus?.actionRequired;
+
 	const menuItems = useMemo( () => {
 		return [
 			createItem(
@@ -34,6 +43,18 @@ const useReferralsMenuItems = ( path: string ) => {
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Referrals / Payment Settings',
 					},
+					...( showIndicator && {
+						extraContent: (
+							<StatusBadge
+								statusProps={ {
+									children: 1,
+									type: accountStatus.statusType,
+									isRounded: true,
+									tooltip: accountStatus.statusReason,
+								} }
+							/>
+						),
+					} ),
 				},
 				path
 			),
@@ -55,7 +76,7 @@ const useReferralsMenuItems = ( path: string ) => {
 				...item,
 				isSelected: item.link === path,
 			} ) ); //FIXME: Fix this once we enable the automated referrals feature flag
-	}, [ path, translate ] );
+	}, [ accountStatus, path, showIndicator, translate ] );
 	return menuItems;
 };
 

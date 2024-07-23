@@ -65,7 +65,7 @@ export const ReadymadeTemplates = () => {
 		<PatternsSection
 			bodyFullWidth
 			description={ translate(
-				'Explore a collection of beautiful site layouts made with our patterns.'
+				'Explore our beautiful, customizable site layouts, designed for quick setup and tailored to fit your needs.'
 			) }
 			theme="dark"
 			title={ translate( 'Ready-to-use site layouts' ) }

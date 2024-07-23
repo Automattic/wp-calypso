@@ -11,6 +11,8 @@ import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selecto
 import getSites from 'calypso/state/selectors/get-sites';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isA4AClientSite from 'calypso/state/sites/selectors/is-a4a-client-site';
+import A4ALogo from '../../a4a-logo';
 import useManagedSitesMap from './hooks/use-managed-sites-map';
 import WPCOMSitesTableContent from './table-content';
 import WPCOMSitesTablePlaceholder from './table-placeholder';
@@ -25,9 +27,13 @@ export type SiteItem = {
 const TypeIcon = ( { siteId }: { siteId: number } ) => {
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isA4AClient = useSelector( ( state ) => isA4AClientSite( state, siteId ) );
 
 	if ( isWPCOM ) {
 		return <Icon className="wpcom-sites-table__icon" icon={ <WordPressLogo /> } />;
+	}
+	if ( isA4AClient ) {
+		return <Icon className="wpcom-sites-table__icon" icon={ <A4ALogo /> } />;
 	}
 	if ( isJetpack ) {
 		return <Icon className="wpcom-sites-table__icon" icon={ <JetpackLogo /> } />;
@@ -75,7 +81,7 @@ export default function WPCOMSitesTable( {
 				( site ) =>
 					site &&
 					! site.is_wpcom_staging_site &&
-					( site.is_wpcom_atomic || site.jetpack ) &&
+					( site.is_wpcom_atomic || site.jetpack || site.is_a4a_client ) &&
 					! managedSitesMap?.[ site.ID as number ]
 			)
 			.map( ( site ) =>

@@ -23,6 +23,7 @@ interface Props {
 	isExternalLink?: boolean;
 	isSelected?: boolean;
 	openInSameTab?: boolean;
+	extraContent?: JSX.Element;
 }
 
 export const SidebarNavigatorMenuItem = ( {
@@ -36,6 +37,7 @@ export const SidebarNavigatorMenuItem = ( {
 	isExternalLink = false,
 	isSelected = false,
 	openInSameTab = false,
+	extraContent,
 }: Props ) => {
 	const SidebarItem = ( { children }: { children?: JSX.Element } ) => {
 		return (
@@ -63,6 +65,7 @@ export const SidebarNavigatorMenuItem = ( {
 					{ isExternalLink && (
 						<Icon className="sidebar-v2__external-icon" icon={ external } size={ ICON_SIZE } />
 					) }
+					{ extraContent }
 				</HStack>
 			</Item>
 		);
