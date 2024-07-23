@@ -260,6 +260,7 @@ const useGridPlans: UseGridPlansType = ( {
 	const plansAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
 		planSlugs: availablePlanSlugs,
 		siteId,
+		shouldIgnorePlanOwnership: true,
 	} );
 
 	// only fetch highlights for the plans that are available for the intent

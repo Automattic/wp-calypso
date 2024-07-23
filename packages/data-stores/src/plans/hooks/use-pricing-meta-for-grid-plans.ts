@@ -14,9 +14,11 @@ import type { AddOnMeta } from '../../add-ons/types';
 export type UseCheckPlanAvailabilityForPurchase = ( {
 	planSlugs,
 	siteId,
+	shouldIgnorePlanOwnership,
 }: {
 	planSlugs: PlanSlug[];
 	siteId?: number | null;
+	shouldIgnorePlanOwnership?: boolean;
 } ) => {
 	[ planSlug in PlanSlug ]?: boolean;
 };
@@ -78,7 +80,11 @@ const usePricingMetaForGridPlans = ( {
 	storageAddOns,
 	withProratedDiscounts,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
-	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs, siteId } );
+	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
+		planSlugs,
+		siteId,
+		shouldIgnorePlanOwnership: true,
+	} );
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included

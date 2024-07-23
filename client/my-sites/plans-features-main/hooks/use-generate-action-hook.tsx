@@ -90,7 +90,7 @@ export default function useGenerateActionHook( {
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	// TODO: Remove this hook call and inline the logic into respective functions
-	const getActionCallback = useGenerateActionCallback( {
+	const { isLoading, getActionCallback } = useGenerateActionCallback( {
 		currentPlan,
 		eligibleForFreeHostingTrial,
 		cartHandler,
@@ -142,6 +142,7 @@ export default function useGenerateActionHook( {
 				isStuck,
 				planTitle,
 				priceString,
+				isLoading,
 			} );
 		}
 
@@ -162,6 +163,7 @@ export default function useGenerateActionHook( {
 				isFreeTrialAction,
 				eligibleForFreeHostingTrial,
 				plansIntent,
+				isLoading,
 			} );
 		}
 
@@ -185,6 +187,7 @@ export default function useGenerateActionHook( {
 			isPlanExpired,
 			currentPlanBillingPeriod,
 			billingPeriod,
+			isLoading,
 		} );
 	};
 
@@ -202,7 +205,8 @@ function getLaunchPageAction( {
 	planTitle,
 	priceString,
 }: {
-	getActionCallback: UseActionCallback;
+	getActionCallback: UseActionCallback[ 'getActionCallback' ];
+	isLoading: boolean;
 	planSlug: PlanSlug;
 	translate: LocalizeProps[ 'translate' ];
 } & UseActionHookProps ) {
@@ -261,7 +265,8 @@ function getSignupAction( {
 	eligibleForFreeHostingTrial,
 	plansIntent,
 }: {
-	getActionCallback: UseActionCallback;
+	getActionCallback: UseActionCallback[ 'getActionCallback' ];
+	isLoading: boolean;
 	planSlug: PlanSlug;
 	translate: LocalizeProps[ 'translate' ];
 	eligibleForFreeHostingTrial: boolean;
@@ -352,8 +357,10 @@ function getLoggedInPlansAction( {
 	isPlanExpired,
 	currentPlanBillingPeriod,
 	billingPeriod,
+	isLoading,
 }: {
-	getActionCallback: UseActionCallback;
+	getActionCallback: UseActionCallback[ 'getActionCallback' ];
+	isLoading: boolean;
 	planSlug: PlanSlug;
 	translate: LocalizeProps[ 'translate' ];
 	sitePlanSlug: PlanSlug | undefined;
@@ -378,7 +385,7 @@ function getLoggedInPlansAction( {
 				selectedStorageAddOn,
 				availableForPurchase,
 			} ),
-			status: 'enabled' as GridAction[ 'primary' ][ 'status' ],
+			status: ( isLoading ? 'blocked' : 'enabled' ) as GridAction[ 'primary' ][ 'status' ],
 			text,
 			variant,
 		},
@@ -397,10 +404,10 @@ function getLoggedInPlansAction( {
 		}
 
 		if ( canUserManageCurrentPlan ) {
-			return createLoggedInPlansAction( translate( 'Manage plan' ) );
+			return createLoggedInPlansAction( translate( 'Manage plan' ), 'secondary' );
 		}
 
-		return createLoggedInPlansAction( translate( 'View plan' ) );
+		return createLoggedInPlansAction( translate( 'View plan' ), 'secondary' );
 	}
 
 	// Downgrade action if the plan is not available for purchase
@@ -421,7 +428,10 @@ function getLoggedInPlansAction( {
 		billingPeriod &&
 		currentPlanBillingPeriod > billingPeriod
 	) {
-		return createLoggedInPlansAction( translate( 'Contact support', { context: 'verb' } ) );
+		return createLoggedInPlansAction(
+			translate( 'Contact support', { context: 'verb' } ),
+			'secondary'
+		);
 	}
 
 	/**

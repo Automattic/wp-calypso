@@ -8,12 +8,16 @@ import {
 	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { AddOns, Member, Plans, Site } from '@automattic/data-stores';
-import { useSitePurchaseById } from '@automattic/data-stores/src/purchases';
+import { AddOns, Member, Plans } from '@automattic/data-stores';
+import usePurchasesQueryKeysFactory from '@automattic/data-stores/src/purchases/queries/lib/use-query-keys-factory';
+import { getUseSitePurchasesOptions } from '@automattic/data-stores/src/purchases/queries/use-site-purchases';
+import useSiteQueryKeysFactory from '@automattic/data-stores/src/site/queries/lib/use-query-keys-factory';
+import { getUseSiteUserQueryOptions } from '@automattic/data-stores/src/site/queries/use-site-user-query';
 import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 import { useTranslate, type LocalizeProps } from 'i18n-calypso';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -111,32 +115,59 @@ function useUpgradeHandler( {
 function getOdieInitialPromptForPlan( {
 	siteOwner,
 	translate,
+	availableForPurchase,
 }: {
 	siteOwner: Member;
 	translate: LocalizeProps[ 'translate' ];
+	// `availableForPurchase` is true for upgrades and false for downgrades
+	availableForPurchase: boolean;
 } ) {
 	return `
 ${ translate( "Hello, I am Wapuu, WordPress.com's AI assistant!" ) }
 
-${ translate(
-	"I noticed you're trying to upgrade your plan, but only the account owner can make these changes. The owner of this account is %(name)s (%(niceName)s).",
-	{
-		args: {
-			name: siteOwner.name,
-			niceName: siteOwner.nice_name,
-		},
-	}
-) }
+${
+	availableForPurchase
+		? translate(
+				"I noticed you're trying to upgrade your plan, but only the account owner can make these changes. The owner of this account is %(name)s (%(niceName)s).",
+				{
+					args: {
+						name: siteOwner.name,
+						niceName: siteOwner.nice_name,
+					},
+				}
+		  )
+		: translate(
+				"I noticed you're trying to downgrade your plan, but only the account owner can make these changes. The owner of this account is %(name)s (%(niceName)s).",
+				{
+					args: {
+						name: siteOwner.name,
+						niceName: siteOwner.nice_name,
+					},
+				}
+		  )
+}
 
-${ translate(
-	'If you need to upgrade, please reach out to %(name)s at %(email)s for help. They have the necessary permissions to make plan changes.',
-	{
-		args: {
-			name: siteOwner.name,
-			email: typeof siteOwner.email === 'string' ? siteOwner.email : '',
-		},
-	}
-) }
+${
+	availableForPurchase
+		? translate(
+				'If you need to upgrade, please reach out to %(name)s at %(email)s for help. They have the necessary permissions to make plan changes.',
+				{
+					args: {
+						name: siteOwner.name,
+						email: typeof siteOwner.email === 'string' ? siteOwner.email : '',
+					},
+				}
+		  )
+		: translate(
+				'If you need to downgrade, please reach out to %(name)s at %(email)s for help. They have the necessary permissions to make plan changes.',
+				{
+					args: {
+						name: siteOwner.name,
+						email: typeof siteOwner.email === 'string' ? siteOwner.email : '',
+					},
+				}
+		  )
+}
 
 ${ translate(
 	'Is there anything else I can help you with regarding your account? Please get in touch with our support team.'
@@ -144,48 +175,85 @@ ${ translate(
 			`;
 }
 
+function useNonOwnerHandler( {
+	siteId,
+	currentPlan,
+}: {
+	siteId?: number | null;
+	currentPlan: Plans.SitePlan | undefined;
+} ) {
+	const { setShowHelpCenter, setInitialRoute, setOdieBotNameSlug, setOdieInitialPromptText } =
+		useDispatch( HELP_CENTER_STORE );
+	const translate = useTranslate();
+
+	const { url: stillNeedHelpUrl, isLoading: isStillNeedHelpUrlLoading } = useStillNeedHelpURL();
+	const queryClient = useQueryClient();
+	const purchasesQueryKeys = usePurchasesQueryKeysFactory();
+	const siteQueryKeys = useSiteQueryKeysFactory();
+
+	return useCallback(
+		async ( { availableForPurchase }: { availableForPurchase?: boolean } ) => {
+			const sitePurchases = await queryClient.ensureQueryData(
+				getUseSitePurchasesOptions( { siteId }, purchasesQueryKeys.sitePurchases( siteId ) )
+			);
+			const currentSitePurchase = currentPlan?.purchaseId
+				? sitePurchases[ currentPlan?.purchaseId ]
+				: undefined;
+			const siteOwner = await queryClient.ensureQueryData(
+				getUseSiteUserQueryOptions(
+					siteId,
+					currentSitePurchase?.userId,
+					siteQueryKeys.siteUser( siteId, currentSitePurchase?.userId )
+				)
+			);
+
+			if ( isStillNeedHelpUrlLoading || ! siteOwner ) {
+				return;
+			}
+			//open help
+			setOdieBotNameSlug( 'wpcom-plan-support' );
+			setOdieInitialPromptText(
+				getOdieInitialPromptForPlan( {
+					translate,
+					siteOwner,
+					availableForPurchase: !! availableForPurchase,
+				} )
+			);
+			setInitialRoute( stillNeedHelpUrl );
+			setShowHelpCenter( true );
+			return;
+		},
+		[
+			currentPlan?.purchaseId,
+			isStillNeedHelpUrlLoading,
+			purchasesQueryKeys,
+			queryClient,
+			setInitialRoute,
+			setOdieBotNameSlug,
+			setOdieInitialPromptText,
+			setShowHelpCenter,
+			siteId,
+			siteQueryKeys,
+			stillNeedHelpUrl,
+			translate,
+		]
+	);
+}
+
 function useDowngradeHandler( {
 	siteSlug,
-	siteId,
 	currentPlan,
 }: {
 	siteSlug?: string | null;
 	siteId?: number | null;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
-	const {
-		setShowHelpCenter,
-		setNavigateToRoute,
-		setOdieBotNameSlug,
-		setOdieInitialPromptText,
-		setMessage,
-	} = useDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
 	const translate = useTranslate();
-	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
-		siteId
-			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
-			: null
-	);
-	const { url: stillNeedHelpUrl, isLoading: isStillNeedHelpUrlLoading } = useStillNeedHelpURL();
-	const sitePurchase = useSitePurchaseById( { siteId, purchaseId: currentPlan?.purchaseId } );
-	const siteOwnerId = sitePurchase?.userId;
-	const { data: siteOwner } = Site.useSiteUser( siteId, siteOwnerId );
 
 	return useCallback(
 		( planSlug: PlanSlug ) => {
 			if ( ! siteSlug || ! currentPlan?.planSlug ) {
-				return;
-			}
-
-			if ( ! canUserManageCurrentPlan ) {
-				if ( isStillNeedHelpUrlLoading || ! siteOwner ) {
-					return;
-				}
-				//open help
-				setOdieBotNameSlug( 'wpcom-downgrade' );
-				setOdieInitialPromptText( getOdieInitialPromptForPlan( { translate, siteOwner } ) );
-				setInitialRoute( stillNeedHelpUrl );
-				setShowHelpCenter( true );
 				return;
 			}
 
@@ -205,18 +273,12 @@ function useDowngradeHandler( {
 			setShowHelpCenter( true );
 		},
 		[
-			canUserManageCurrentPlan,
 			currentPlan?.planSlug,
 			currentPlan?.purchaseId,
-			isStillNeedHelpUrlLoading,
 			setNavigateToRoute,
 			setMessage,
-			setOdieBotNameSlug,
-			setOdieInitialPromptText,
 			setShowHelpCenter,
-			siteOwner,
 			siteSlug,
-			stillNeedHelpUrl,
 			translate,
 		]
 	);
@@ -249,81 +311,110 @@ function useGenerateActionCallback( {
 		eligibleForFreeHostingTrial,
 	} );
 	const currentPlanManageHref = useCurrentPlanManageHref();
-	const handleUpgrade = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
+	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
+		siteId
+			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+			: null
+	);
+	const handleUpgradeClick = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
 	const handleDowngradeClick = useDowngradeHandler( {
 		siteSlug,
 		currentPlan,
 		siteId,
 	} );
+	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
 
-	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) => {
-		return () => {
-			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
-			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
+	const [ isLoading, setIsLoading ] = useState( false );
 
-			const earlyReturn = showModalAndExit?.( planSlug );
-			if ( earlyReturn ) {
-				return;
-			}
+	return {
+		isLoading,
+		getActionCallback: ( {
+			planSlug,
+			cartItemForPlan,
+			selectedStorageAddOn,
+			availableForPurchase,
+		} ) => {
+			return async () => {
+				const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
+				const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
 
-			/* 1. Send user to VIP if it's an enterprise plan */
-			if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
-				const vipLandingPageURL = 'https://wpvip.com/wordpress-vip-agile-content-platform';
-				window.open(
-					`${ vipLandingPageURL }/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=calypso_signup`,
-					'_blank'
-				);
-			}
-
-			/* 2. In the logged-in plans dashboard, send user to either manage add-ons or manage plan in case of current plan selection */
-			if (
-				sitePlanSlug &&
-				currentPlan?.productSlug === planSlug &&
-				! flowName &&
-				intent !== 'plans-p2' &&
-				intent !== 'plans-blog-onboarding'
-			) {
-				if ( isFreePlan( planSlug ) ) {
-					page.redirect( `/add-ons/${ siteSlug }` );
-				} else {
-					page.redirect( currentPlanManageHref );
+				const earlyReturn = showModalAndExit?.( planSlug );
+				if ( earlyReturn ) {
+					return;
 				}
-				return;
-			}
 
-			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
-			if (
-				sitePlanSlug &&
-				! flowName &&
-				intent !== 'plans-p2' &&
-				intent !== 'plans-blog-onboarding' &&
-				! availableForPurchase
-			) {
-				recordTracksEvent?.( 'calypso_plan_features_downgrade_click', {
-					current_plan: sitePlanSlug,
-					downgrading_to: planSlug,
-				} );
-				handleDowngradeClick( planSlug );
-				return;
-			}
+				/* 1. Send user to VIP if it's an enterprise plan */
+				if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+					recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
+					const vipLandingPageURL = 'https://wpvip.com/wordpress-vip-agile-content-platform';
+					window.open(
+						`${ vipLandingPageURL }/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=calypso_signup`,
+						'_blank'
+					);
+				}
 
-			/* 4. Handle plan upgrade and plan upgrade tracks events */
-			if ( isFreePlan( planSlug ) ) {
-				recordTracksEvent( 'calypso_signup_free_plan_click' );
-			} else {
-				recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
-					current_plan: sitePlanSlug,
-					upgrading_to: planSlug,
-					saw_free_trial_offer: !! freeTrialPlanSlug,
+				/* 2. In the logged-in plans dashboard, send user to either manage add-ons or manage plan in case of current plan selection */
+				if (
+					sitePlanSlug &&
+					currentPlan?.productSlug === planSlug &&
+					! flowName &&
+					intent !== 'plans-p2' &&
+					intent !== 'plans-blog-onboarding'
+				) {
+					if ( isFreePlan( planSlug ) ) {
+						page.redirect( `/add-ons/${ siteSlug }` );
+					} else {
+						page.redirect( currentPlanManageHref );
+					}
+					return;
+				}
+
+				if (
+					sitePlanSlug &&
+					! flowName &&
+					intent !== 'plans-p2' &&
+					intent !== 'plans-blog-onboarding' &&
+					! canUserManageCurrentPlan
+				) {
+					setIsLoading( true );
+					await handleNonOwnerClick( { availableForPurchase } );
+					setIsLoading( false );
+					return;
+				}
+
+				/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
+				if (
+					sitePlanSlug &&
+					! flowName &&
+					intent !== 'plans-p2' &&
+					intent !== 'plans-blog-onboarding' &&
+					! availableForPurchase
+				) {
+					recordTracksEvent?.( 'calypso_plan_features_downgrade_click', {
+						current_plan: sitePlanSlug,
+						downgrading_to: planSlug,
+					} );
+					handleDowngradeClick( planSlug );
+					return;
+				}
+
+				/* 4. Handle plan upgrade and plan upgrade tracks events */
+				if ( isFreePlan( planSlug ) ) {
+					recordTracksEvent( 'calypso_signup_free_plan_click' );
+				} else {
+					recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
+						current_plan: sitePlanSlug,
+						upgrading_to: planSlug,
+						saw_free_trial_offer: !! freeTrialPlanSlug,
+					} );
+				}
+				handleUpgradeClick( {
+					cartItemForPlan,
+					selectedStorageAddOn,
 				} );
-			}
-			handleUpgrade( {
-				cartItemForPlan,
-				selectedStorageAddOn,
-			} );
-			return;
-		};
+				return;
+			};
+		},
 	};
 }
 

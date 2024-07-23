@@ -135,17 +135,20 @@ export interface ComparisonGridProps extends CommonGridProps {
 	intervalType: string;
 }
 
-export type UseActionCallback = ( {
-	planSlug,
-	cartItemForPlan,
-	selectedStorageAddOn,
-	availableForPurchase,
-}: {
-	planSlug: PlanSlug;
-	cartItemForPlan?: MinimalRequestCartProduct | null;
-	selectedStorageAddOn?: AddOns.AddOnMeta | null;
-	availableForPurchase?: boolean;
-} ) => () => void;
+export type UseActionCallback = {
+	getActionCallback: ( {
+		planSlug,
+		cartItemForPlan,
+		selectedStorageAddOn,
+		availableForPurchase,
+	}: {
+		planSlug: PlanSlug;
+		cartItemForPlan?: MinimalRequestCartProduct | null;
+		selectedStorageAddOn?: AddOns.AddOnMeta | null;
+		availableForPurchase?: boolean;
+	} ) => () => void;
+	isLoading: boolean;
+};
 
 export interface GridAction {
 	primary: {
