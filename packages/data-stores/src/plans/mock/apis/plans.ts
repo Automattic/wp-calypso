@@ -79,7 +79,7 @@ export const API_PLAN_DETAILS: MockDetailsAPIResponse = {
 			name: 'WordPress.com Premium',
 			short_name: 'Premium',
 			nonlocalized_short_name: 'Premium',
-			tagline: 'Mock Premium plan',
+			tagline: 'Mock premium plan',
 			description:
 				'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, and the ability to monetize your site with ads.',
 			features: [ 'custom-domain', 'support-live', 'recurring-payments', 'wordads' ],
