@@ -1,14 +1,9 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { useSelector } from 'calypso/state';
-import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
-import { getAtomicHostingWpVersion } from 'calypso/state/selectors/get-atomic-hosting-wp-version';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ItemPreviewPaneContent from './item-preview-pane-content';
 import ItemPreviewPaneHeader from './item-preview-pane-header';
 import { FeaturePreviewInterface, PreviewPaneProps } from './types';
@@ -44,19 +39,8 @@ export default function ItemPreviewPane( {
 	addTourDetails,
 	itemPreviewPaneHeaderExtraProps,
 	hideNavIfSingleTab,
+	navTail,
 }: PreviewPaneProps ) {
-	const qqq = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state );
-		if ( ! siteId ) {
-			return null;
-		}
-
-		return {
-			phpVersion: getAtomicHostingPhpVersion( state, siteId ),
-			wpVersion: getAtomicHostingWpVersion( state, siteId ),
-		};
-	} );
-
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
 	// Ensure we have features
@@ -96,10 +80,7 @@ export default function ItemPreviewPane( {
 		);
 	} );
 
-	const shouldHideNav =
-		hideNavIfSingleTab &&
-		featureTabs.length <= 1 &&
-		! config.isEnabled( 'hosting-overview-refinements' );
+	const shouldHideNav = hideNavIfSingleTab && featureTabs.length <= 1 && ! navTail;
 
 	return (
 		<div className={ clsx( 'item-preview__pane', className ) }>
@@ -117,15 +98,8 @@ export default function ItemPreviewPane( {
 					{ navItems && navItems.length > 0 ? (
 						<NavTabs hasHorizontalScroll>{ navItems }</NavTabs>
 					) : null }
-					{ config.isEnabled( 'hosting-overview-refinements' ) && (
-						<>
-							<div style={ { display: 'none' } }>
-								Hello world - hosting-overview-refinements feature
-							</div>
-							{ qqq?.wpVersion && <div> WordPress version: { qqq.wpVersion }</div> }
-							{ qqq?.phpVersion && <div>PHP version: { qqq.phpVersion }</div> }
-						</>
-					) }
+
+					{ navTail }
 				</SectionNav>
 			</div>
 			{ addTourDetails && (

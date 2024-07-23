@@ -1,11 +1,16 @@
+import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
+import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
+import QuerySiteWpVersion from 'calypso/components/data/query-site-wp-version';
 import HostingFeaturesIcon from 'calypso/hosting-features/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { useSelector } from 'calypso/state';
+import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
+import { getAtomicHostingWpVersion } from 'calypso/state/selectors/get-atomic-hosting-wp-version';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import {
@@ -177,22 +182,46 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.NONE ||
 		stagingStatus === StagingSiteStatus.UNSET;
 
+	const qqq = useSelector( ( state ) => {
+		return {
+			phpVersion: getAtomicHostingPhpVersion( state, site.ID ),
+			wpVersion: getAtomicHostingWpVersion( state, site.ID ),
+		};
+	} );
+
 	return (
-		<ItemPreviewPane
-			itemData={ itemData }
-			closeItemPreviewPane={ closeSitePreviewPane }
-			features={ features }
-			className={ site.is_wpcom_staging_site ? 'is-staging-site' : '' }
-			itemPreviewPaneHeaderExtraProps={ {
-				externalIconSize: 16,
-				siteIconFallback: 'first-grapheme',
-				headerButtons: PreviewPaneHeaderButtons,
-				subtitleExtra: () =>
-					( site.is_wpcom_staging_site || isStagingStatusFinished ) && (
-						<SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />
-					),
-			} }
-		/>
+		<>
+			<QuerySitePhpVersion siteId={ site.ID } />
+			<QuerySiteWpVersion siteId={ site.ID } />
+			<ItemPreviewPane
+				itemData={ itemData }
+				closeItemPreviewPane={ closeSitePreviewPane }
+				features={ features }
+				className={ site.is_wpcom_staging_site ? 'is-staging-site' : '' }
+				itemPreviewPaneHeaderExtraProps={ {
+					externalIconSize: 16,
+					siteIconFallback: 'first-grapheme',
+					headerButtons: PreviewPaneHeaderButtons,
+					subtitleExtra: () =>
+						( site.is_wpcom_staging_site || isStagingStatusFinished ) && (
+							<SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />
+						),
+				} }
+				navTail={
+					<div>
+						{ config.isEnabled( 'hosting-overview-refinements' ) && (
+							<>
+								<div style={ { display: 'none' } }>
+									Hello world - hosting-overview-refinements feature
+								</div>
+								{ qqq?.wpVersion && <div> WordPress version: { qqq.wpVersion }</div> }
+								{ qqq?.phpVersion && <div>PHP version: { qqq.phpVersion }</div> }
+							</>
+						) }
+					</div>
+				}
+			/>
+		</>
 	);
 };
 

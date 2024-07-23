@@ -39,6 +39,7 @@ export interface PreviewPaneProps {
 	addTourDetails?: { id: string; tourId: string };
 	itemPreviewPaneHeaderExtraProps?: ItemPreviewPaneHeaderExtraProps;
 	hideNavIfSingleTab?: boolean;
+	navTail?: React.ReactNode;
 }
 
 export interface ItemPreviewPaneHeaderExtraProps {
