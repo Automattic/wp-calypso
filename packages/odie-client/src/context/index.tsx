@@ -167,7 +167,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		broadcastChatClearance( odieClientId );
 	}, [ botNameSlug, trackEvent, setOdieStorage ] );
 
-	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
+	const setMessageLikedStatus = useCallback( ( message: Message, liked: boolean ) => {
 		setChat( ( prevChat ) => {
 			const messageIndex = prevChat.messages.findIndex( ( m ) => m === message );
 			const updatedMessage = { ...message, liked };
@@ -180,7 +180,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				],
 			};
 		} );
-	};
+	}, [] );
 
 	const addMessage = useCallback(
 		( message: Message | Message[] ) => {
