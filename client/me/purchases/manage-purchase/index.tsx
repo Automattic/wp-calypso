@@ -76,7 +76,7 @@ import {
 	getDomainRegistrationAgreementUrl,
 	getDisplayName,
 	getPartnerName,
-	getRenewalPrice,
+	getRenewalPriceInSmallestUnit,
 	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
@@ -455,11 +455,11 @@ class ManagePurchase extends Component<
 		if ( ! purchase ) {
 			return null;
 		}
-		const annualPrice = getRenewalPrice( purchase ) / 12;
-		// TODO clk this breaks due to comparing integer (plan) with non-integer (purchase) pricing
+		const annualPrice = getRenewalPriceInSmallestUnit( purchase ) / 12;
 		const savings = Math.floor(
 			( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
 		);
+
 		return this.renderRenewalNavItem(
 			<div>
 				{ translate( 'Renew annually' ) }
