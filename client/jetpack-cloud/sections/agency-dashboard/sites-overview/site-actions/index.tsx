@@ -62,10 +62,9 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 							isExternalLink={ action.isExternalLink }
 							onClick={ action.onClick }
 							href={ action.href }
-							className={ clsx( 'site-actions__menu-item', action.className ) }
+							className="site-actions__menu-item"
 						>
 							{ action.name }
-							{ action.icon && <Gridicon icon={ action.icon } size={ 18 } /> }
 						</PopoverMenuItem>
 					) ) }
 			</PopoverMenu>
