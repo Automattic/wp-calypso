@@ -16,8 +16,8 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const updateNoticeId = 'hosting-php-version';
 
-const getPhpVersion = async ( action ) => {
-	return await http(
+const getPhpVersion = ( action ) =>
+	http(
 		{
 			method: 'GET',
 			path: `/sites/${ action.siteId }/hosting/php-version`,
@@ -26,7 +26,6 @@ const getPhpVersion = async ( action ) => {
 		},
 		action
 	);
-};
 
 const getPhpVersionSuccess = ( action, version ) => {
 	return {

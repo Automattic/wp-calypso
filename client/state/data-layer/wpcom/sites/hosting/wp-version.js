@@ -12,8 +12,8 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const updateNoticeId = 'hosting-wp-version';
 
-const getWpVersion = ( action ) => {
-	return http(
+const getWpVersion = ( action ) =>
+	http(
 		{
 			method: 'GET',
 			path: `/sites/${ action.siteId }/hosting/wp-version1`,
@@ -22,7 +22,6 @@ const getWpVersion = ( action ) => {
 		},
 		action
 	);
-};
 const getWpVersionSuccess = ( action, version ) => {
 	return {
 		type: HOSTING_WP_VERSION_SET,
