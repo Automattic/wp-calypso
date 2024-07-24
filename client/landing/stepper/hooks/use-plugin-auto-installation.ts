@@ -80,17 +80,19 @@ export const usePluginAutoInstallation = (
 		mutate: install,
 		error: installationError,
 		status: installationRequestStatus,
+		isSuccess: isInstalled,
 	} = usePluginInstallation( plugin.slug, siteId, options );
 
 	const {
 		mutate: activatePlugin,
 		status: activationRequestStatus,
 		error: activationError,
+		isSuccess: isActivated,
 	} = usePluginActivation( plugin.name, siteId, options );
 
 	const skipped: SkipStatus = {
-		installation: status?.isInstalled,
-		activation: status?.isActive,
+		installation: status?.isInstalled || isInstalled,
+		activation: status?.isActive || isActivated,
 	} as SkipStatus;
 
 	useEffect( () => {
@@ -107,12 +109,7 @@ export const usePluginAutoInstallation = (
 		if ( ! status || skipped?.activation ) {
 			return;
 		}
-
-		if ( activationRequestStatus !== 'idle' ) {
-			return;
-		}
-
-		if ( installationRequestStatus === 'success' || status.isInstalled ) {
+		if ( activationRequestStatus === 'idle' ) {
 			activatePlugin();
 		}
 	}, [
