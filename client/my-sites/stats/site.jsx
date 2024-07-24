@@ -211,6 +211,19 @@ class StatsSite extends Component {
 		}
 	}
 
+	getStatHref( period, path, siteSlug ) {
+		return period && path && siteSlug
+			? '/stats/' +
+					period?.period +
+					'/' +
+					path +
+					'/' +
+					siteSlug +
+					'?startDate=' +
+					period?.startOf?.format( 'YYYY-MM-DD' )
+			: undefined;
+	}
+
 	renderStats( isInternal ) {
 		const {
 			date,
@@ -431,6 +444,7 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.posts }
 								period={ this.props.period }
 								query={ query }
+								summaryUrl={ this.getStatHref( this.props.period, 'posts', slug ) }
 								className={ clsx(
 									'stats__flexible-grid-item--60',
 									'stats__flexible-grid-item--full--large',
@@ -458,6 +472,7 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.referrers }
 								period={ this.props.period }
 								query={ query }
+								summaryUrl={ this.getStatHref( this.props.period, 'referrers', slug ) }
 								className={ clsx(
 									'stats__flexible-grid-item--40--once-space',
 									'stats__flexible-grid-item--full--large',
@@ -480,7 +495,7 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.countries }
 								period={ this.props.period }
 								query={ query }
-								summary={ false }
+								summaryUrl={ this.getStatHref( this.props.period, 'countryviews', slug ) }
 								className={ clsx( 'stats__flexible-grid-item--full' ) }
 							/>
 						) }
@@ -491,6 +506,7 @@ class StatsSite extends Component {
 								siteId={ siteId }
 								period={ this.props.period }
 								query={ query }
+								summaryUrl={ this.getStatHref( this.props.period, 'utm', slug ) }
 								summary={ false }
 								className={ clsx(
 									'stats__flexible-grid-item--60',
@@ -521,12 +537,10 @@ class StatsSite extends Component {
 						{ /* If UTM card or update card is not visible, shift "Clicks" and reduct to 1/2 for easier stacking */ }
 						{ isNewStateEnabled && (
 							<StatsModuleClicks
-								path="clicks"
 								moduleStrings={ moduleStrings.clicks }
 								period={ this.props.period }
 								query={ query }
-								statType="statsClicks"
-								showSummaryLink
+								summaryUrl={ this.getStatHref( this.props.period, 'clicks', slug ) }
 								className={ clsx(
 									{
 										'stats__flexible-grid-item--40--once-space': supportsUTMStats,
@@ -589,6 +603,7 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.authors }
 								period={ this.props.period }
 								query={ query }
+								summaryUrl={ this.getStatHref( this.props.period, 'authors', slug ) }
 								className={ clsx(
 									{
 										'stats__author-views': ! supportsUTMStats,
@@ -627,6 +642,7 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								moduleStrings={ moduleStrings.emails }
 								query={ query }
+								summaryUrl={ this.getStatHref( this.props.period, 'emails', slug ) }
 								className={ clsx(
 									{
 										// half if odd number of modules after countries - UTM + Clicks + Authors or Clicks
@@ -649,6 +665,7 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.search }
 								period={ this.props.period }
 								query={ query }
+								summaryUrl={ this.getStatHref( this.props.period, 'searchterms', slug ) }
 								className={ clsx(
 									{
 										// Show "Search terms" as 1/3 when it's not Jetpack ("Downloads" visible) + "Videos" is visible
@@ -703,6 +720,7 @@ class StatsSite extends Component {
 								moduleStrings={ moduleStrings.videoplays }
 								period={ this.props.period }
 								query={ query }
+								summaryUrl={ this.getStatHref( this.props.period, 'videoplays', slug ) }
 								className={ clsx(
 									{
 										'stats__flexible-grid-item--one-third--two-spaces': ! isJetpack, // 1/3 when Downloads is supported, 1/2 for Jetpack
@@ -740,6 +758,7 @@ class StatsSite extends Component {
 									moduleStrings={ moduleStrings.filedownloads }
 									period={ this.props.period }
 									query={ query }
+									summaryUrl={ this.getStatHref( this.props.period, 'filedownloads', slug ) }
 									className={ clsx(
 										{
 											'stats__flexible-grid-item--half': this.isModuleHidden( 'videos' ),

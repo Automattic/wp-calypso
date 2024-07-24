@@ -10,7 +10,7 @@ const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
 	// @todo Remove first option once Gutenberg v18.8.0 is deployed everywhere.
-	editorTwitterIframe: `iframe[title="Embedded content from twitter"],iframe[title="Embedded content from twitter.com"]`,
+	editorTwitterIframe: `iframe[title="Embedded content from twitter.com"]`,
 	publishedTwitterIframe: `iframe[title="X Post"]`,
 };
 
