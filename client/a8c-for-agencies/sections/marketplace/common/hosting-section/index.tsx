@@ -22,7 +22,11 @@ export default function HostingSection( {
 	return (
 		<div
 			className="hosting-section-wrapper"
-			style={ { backgroundColor: background?.color, backgroundImage: background?.image } }
+			style={ {
+				backgroundColor: background?.color,
+				backgroundImage: background?.image,
+				backgroundSize: background?.size,
+			} }
 		>
 			<div className="hosting-section">
 				<div className="hosting-section__sub-header">

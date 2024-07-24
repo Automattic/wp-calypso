@@ -5,11 +5,13 @@ import Background3Image from './background-3.svg';
 export type SectionBackground = {
 	image: string;
 	color: string;
+	size?: string;
 };
 
 export const BackgroundType1: SectionBackground = {
 	image: `url(${ Background1Image })`,
 	color: '#EBF4FA',
+	size: 'auto 100%',
 };
 
 export const BackgroundType2: SectionBackground = {
@@ -20,4 +22,5 @@ export const BackgroundType2: SectionBackground = {
 export const BackgroundType3: SectionBackground = {
 	image: `url(${ Background3Image })`,
 	color: '#EBF4FA',
+	size: 'auto 100%',
 };
