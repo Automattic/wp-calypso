@@ -135,6 +135,14 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 			return false;
 		}
 
+		// Do not paywall VIP sites.
+		// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
+		const isVip =
+			isVipSite( state as object, siteId as number ) || getSiteOption( state, siteId, 'is_vip' );
+		if ( isVip ) {
+			return false;
+		}
+
 		const isSiteCommercial = getSiteOption( state, siteId, 'is_commercial' ) || false;
 		if ( isSiteCommercial ) {
 			// Paywall basic stats for commercial sites with monthly views reaching the paywall threshold.
@@ -177,17 +185,6 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 export const useShouldGateStats = ( statType: string ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isGatedStats = useSelector( ( state ) => shouldGateStats( state, siteId, statType ) );
-
-	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
-	const isVip = useSelector(
-		( state ) =>
-			!! isVipSite( state as object, siteId as number ) ||
-			!! getSiteOption( state, siteId, 'is_vip' )
-	);
-
-	if ( isVip ) {
-		return false;
-	}
 
 	return isGatedStats;
 };
