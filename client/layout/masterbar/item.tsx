@@ -22,6 +22,7 @@ interface MasterbarItemProps {
 	tooltip?: string;
 	icon?: ReactNode;
 	className?: string;
+	wrapperClassName?: string;
 	isActive?: boolean;
 	preloadSection?: () => void;
 	hasUnseen?: boolean;
@@ -207,7 +208,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		}
 
 		return (
-			<div ref={ this.componentDivRef }>
+			<div className={ this.props.wrapperClassName } ref={ this.componentDivRef }>
 				<button
 					{ ...attributes }
 					ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }
