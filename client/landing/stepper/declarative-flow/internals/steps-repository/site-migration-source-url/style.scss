@@ -56,22 +56,6 @@
 			}
 		}
 	}
-
-	.action-buttons__importer-list {
-		font-size: 0.875rem;
-		font-weight: 400;
-		text-align: center;
-		text-decoration: none;
-		color: var(--studio-gray-90);
-		margin-top: 1rem;
-
-		button {
-			text-decoration: underline;
-			color: inherit;
-			margin: 0;
-			padding: 0;
-		}
-	}
 }
 
 .import__capture-wrapper {
