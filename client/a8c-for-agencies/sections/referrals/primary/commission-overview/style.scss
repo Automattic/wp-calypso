@@ -55,6 +55,11 @@
 			display: flex;
 			gap: 8px;
 			margin-block-end: 4px;
+
+			.pressable-icon {
+				width: 24px;
+				height: 24px;
+			}
 		}
 	}
 }
