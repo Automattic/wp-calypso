@@ -32,11 +32,13 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 			{ isOpen && (
 				<Modal
 					className="google-domains-transfer-instructions__modal"
-					title="How to unlock your Google domains"
+					title="How to unlock your Squarespace domains"
 					onRequestClose={ closeModal }
 				>
 					<p>
-						{ __( 'Follow these steps to transfer your domain from Google to WordPress.com:' ) }
+						{ __(
+							'Follow these steps to transfer your domain from Squarespace to WordPress.com:'
+						) }
 					</p>
 					<details open={ 1 === focusedStep }>
 						<summary>
