@@ -47,8 +47,7 @@ export class FormAiFlow implements BlockFlow {
 		} );
 		await aiInputReadyLocator.fill( this.configurationData.prompt );
 		await sendButtonLocator.click();
-		await aiInputBusyLocator.waitFor();
-		await aiInputReadyLocator.waitFor( { timeout: 30 * 1000 } );
+		await aiInputBusyLocator.waitFor( { state: 'detached' } );
 		// Grab a first sample input label and submit button text to use for validation.
 		this.validationData = {
 			sampleInputLabel: await this.getFirstTextFieldLabel( context ),
