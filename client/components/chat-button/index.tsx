@@ -23,6 +23,7 @@ type Props = {
 	onError?: () => void;
 	primary?: boolean;
 	siteUrl?: string;
+	siteId?: string | number;
 	children?: React.ReactNode;
 	withHelpCenter?: boolean;
 	section?: string;
@@ -62,6 +63,7 @@ const ChatButton: FC< Props > = ( {
 	initialMessage,
 	onClick,
 	onError,
+	siteId = null,
 	primary = false,
 	siteUrl,
 	withHelpCenter = true,
@@ -119,6 +121,7 @@ const ChatButton: FC< Props > = ( {
 			openZendeskWidget( {
 				message: initialMessage,
 				siteUrl,
+				siteId,
 				onError,
 				onSuccess: () => {
 					onClick?.();

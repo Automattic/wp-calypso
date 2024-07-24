@@ -22,7 +22,9 @@ const HelpContactUsHeader: FC = () => {
 
 	return (
 		<div className="help__contact-us-header-button">
-			<Button onClick={ onClick }>{ __( 'Contact support' ) }</Button>
+			<Button primary onClick={ onClick }>
+				{ __( 'Get help' ) }
+			</Button>
 		</div>
 	);
 };
