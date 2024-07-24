@@ -24,6 +24,11 @@
 			width: 650px;
 		}
 	}
+
+	&.dev-site .popover__inner {
+		width: 280px;
+		text-align: unset;
+	}
 }
 
 .site-selector-and-importer__popover-content {

@@ -23,6 +23,7 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 
 	return (
 		<div className="sites-header__actions">
+			<AddNewSiteButton showMainButtonLabel={ ! isMobile } devSite />
 			<div ref={ ( ref ) => setTourStepRef( ref ) }>
 				<AddNewSiteButton showMainButtonLabel={ ! isMobile } onWPCOMImport={ onWPCOMImport } />
 			</div>
