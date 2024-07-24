@@ -8,10 +8,11 @@ import { connect } from 'react-redux';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { isRedirectAllowed } from 'calypso/lib/url/is-redirect-allowed';
+import wpcom from 'calypso/lib/wp';
 import useCreateNewAccountMutation from 'calypso/signup/hooks/use-create-new-account';
 import useSubscribeToMailingList from 'calypso/signup/hooks/use-subscribe-to-mailing-list';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { fetchCurrentUser, redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -56,7 +57,16 @@ function getRedirectUrl( redirect ) {
  * into a single step.
  */
 function SubscribeEmailStep( props ) {
-	const { currentUser, flowName, goToNextStep, queryArguments, stepName, translate } = props;
+	const {
+		currentUser,
+		flowName,
+		goToNextStep,
+		queryArguments,
+		stepName,
+		translate,
+		fetchCurrentUser,
+		redirectToLogout,
+	} = props;
 
 	const email = sanitizeEmail( queryArguments.user_email );
 
@@ -72,14 +82,12 @@ function SubscribeEmailStep( props ) {
 				recordTracksEvent( 'calypso_signup_email_subscription_success', {
 					mailing_list: queryArguments.mailing_list,
 				} );
-				props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
-				goToNextStep();
 			},
 		} );
 
 	const handleSubscribeToMailingList = useCallback(
 		( { email_address } = { email_address: email } ) => {
-			subscribeToMailingList( {
+			return subscribeToMailingList( {
 				email_address,
 				mailing_list_category: queryArguments.mailing_list,
 				from: queryArguments.from,
@@ -101,7 +109,7 @@ function SubscribeEmailStep( props ) {
 
 	const { mutate: createNewAccount, isPending: isCreateNewAccountPending } =
 		useCreateNewAccountMutation( {
-			onSuccess: ( response ) => {
+			onSuccess: async ( response ) => {
 				const userData = {
 					ID: ( response && response.signup_sandbox_user_id ) || ( response && response.user_id ),
 					username:
@@ -110,7 +118,10 @@ function SubscribeEmailStep( props ) {
 				};
 
 				handlerecordRegistration( userData );
-				handleSubscribeToMailingList();
+				wpcom.loadToken( response.bearer_token );
+				await fetchCurrentUser();
+				await handleSubscribeToMailingList();
+				redirectToLogout( redirectUrl );
 			},
 			onError: ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
@@ -141,18 +152,14 @@ function SubscribeEmailStep( props ) {
 		}
 
 		// 2. User is logged in and their email matches the email submitted to the flow
-		if ( currentUser?.email === email ) {
+		if (
+			currentUser?.email === email &&
+			! isCreateNewAccountPending &&
+			! isSubscribeToMailingListPending
+		) {
 			handleSubscribeToMailingList();
 		}
-	}, [
-		createNewAccount,
-		currentUser,
-		email,
-		flowName,
-		handleSubscribeToMailingList,
-		queryArguments.first_name,
-		queryArguments.last_name,
-	] );
+	}, [] );
 
 	return (
 		<div className="subscribe-email">
@@ -197,5 +204,5 @@ export default connect(
 			queryArguments: queryArguments,
 		};
 	},
-	{ redirectToLogout, submitSignupStep }
+	{ redirectToLogout, submitSignupStep, fetchCurrentUser }
 )( localize( SubscribeEmailStep ) );
