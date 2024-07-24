@@ -86,7 +86,7 @@ function getConfig( {
 			}
 		),
 		overrideDestination:
-			'/setup/site-migration?siteSlug=%SITE_SLUG%&siteId=%SITE_ID%&ref=calypso-importer',
+			'/setup/site-migration/site-migration-import-or-migrate?siteSlug=%SITE_SLUG%&siteId=%SITE_ID%&ref=calypso-importer',
 		weight: 1,
 	};
 
