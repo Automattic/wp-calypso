@@ -41,7 +41,7 @@ export const MySitesSidebarUnifiedBody = ( {
 					const isSelected =
 						( item?.url && itemLinkMatches( item.url, path ) ) ||
 						// Keep the Sites icon selected when there is a selected site.
-						( item.slug === 'sites' && site );
+						( item.slug === 'sites' && site && ! path.includes( 'p2s' ) );
 
 					if ( 'current-site' === item?.type ) {
 						return (
