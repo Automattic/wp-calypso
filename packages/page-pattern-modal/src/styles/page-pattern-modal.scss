@@ -1,9 +1,9 @@
-@import "node_modules/@automattic/color-studio/dist/color-variables";
+@import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/fonts";
 @import "@automattic/typography/styles/variables";
-@import "node_modules/@wordpress/base-styles/mixins";
-@import "node_modules/@wordpress/base-styles/variables";
-@import "node_modules/@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 @mixin screen-reader-text() {
 	border: 0;
