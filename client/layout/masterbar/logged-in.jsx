@@ -334,7 +334,7 @@ class MasterbarLoggedIn extends Component {
 						context={ allSitesBtnRef }
 						position="bottom left"
 						showDelay={ 500 }
-						offset={ 24 }
+						ignoreViewportSize
 					>
 						<h1 className="masterbar__all-sites-popover-heading">
 							{ translate( 'All your sites', {
