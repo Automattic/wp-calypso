@@ -32,6 +32,7 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 		case 'WPCOM_Billing_Stripe_Source_Eps':
 			return 'eps';
 		case 'WPCOM_Billing_Stripe_Source_Ideal':
+		case 'WPCOM_Billing_Stripe_IDeal':
 			return 'ideal';
 		case 'WPCOM_Billing_Stripe_Source_P24':
 		case 'WPCOM_Billing_Stripe_P24':
@@ -84,7 +85,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'eps':
 			return 'WPCOM_Billing_Stripe_Source_Eps';
 		case 'ideal':
-			return 'WPCOM_Billing_Stripe_Source_Ideal';
+			return 'WPCOM_Billing_Stripe_IDeal';
 		case 'p24':
 			if ( isP24RedirectEnabled ) {
 				return 'WPCOM_Billing_Stripe_P24';
@@ -122,6 +123,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Stripe_Source_Bancontact':
 		case 'WPCOM_Billing_Stripe_Source_Eps':
 		case 'WPCOM_Billing_Stripe_Source_Ideal':
+		case 'WPCOM_Billing_Stripe_IDeal':
 		case 'WPCOM_Billing_Stripe_Source_P24':
 		case 'WPCOM_Billing_Stripe_Source_Sofort':
 		case 'WPCOM_Billing_Stripe_Source_Three_D_Secure':
