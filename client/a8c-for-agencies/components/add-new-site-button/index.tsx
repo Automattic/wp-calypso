@@ -93,6 +93,11 @@ export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport, 
 		) ?? [];
 
 	const hasPendingWPCOMSites = allAvailableSites.length > 0;
+
+	// TODO: Replace with actual available dev sites count logic, similar to allAvailableSites above
+	const availableDevSites = [ 'site1', 'site2', 'site3' ];
+	const hasAvailableDevSites = allAvailableSites.length > 0;
+
 	const mainButtonLabel = devSite
 		? translate( 'Start developing for free' )
 		: translate( 'Add sites' );
@@ -189,7 +194,17 @@ export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport, 
 					icon: <WordPressLogo />,
 					heading: translate( 'WordPress.com' ),
 					description: translate( 'Create a site and try our hosting features for free' ),
-					extraContent: undefined,
+					extraContent: hasAvailableDevSites ? (
+						<div className="site-selector-and-importer__popover-site-count">
+							{ translate( '%(pendingSites)d site available', '%(pendingSites)d sites available', {
+								args: {
+									pendingSites: availableDevSites.length,
+								},
+								count: availableDevSites.length,
+								comment: '%(pendingSites)s is the number of sites available.',
+							} ) }
+						</div>
+					) : undefined,
 				} ) }
 			</div>
 		</div>
