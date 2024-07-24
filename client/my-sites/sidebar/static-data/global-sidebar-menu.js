@@ -38,7 +38,7 @@ export default function globalSidebarMenu() {
 			title: translate( 'P2s' ),
 			navigationLabel: translate( 'Manage all my P2 sites' ),
 			type: 'menu-item',
-			url: '/sites?type=p2',
+			url: '/p2s',
 		},
 		{
 			icon: 'dashicons-admin-site-alt3',

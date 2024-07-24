@@ -90,7 +90,7 @@ const SitesDashboard = ( {
 		search,
 		newSiteID,
 		status = DEFAULT_STATUS_GROUP,
-		type = DEFAULT_SITE_TYPE,
+		siteType = DEFAULT_SITE_TYPE,
 	},
 	selectedSite,
 	initialSiteFeature = DOTCOM_OVERVIEW,
@@ -104,15 +104,15 @@ const SitesDashboard = ( {
 		return ! site.options?.is_domain_only;
 	};
 
-	const getFilterArgs = ( type: string ): string[] => {
-		if ( type === 'all' ) {
+	const getFilterArgs = ( siteType: string ): string[] => {
+		if ( siteType === 'all' ) {
 			return [ 'non-p2' ];
 		}
 		return [ 'p2' ];
 	};
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
-		getFilterArgs( type ),
+		getFilterArgs( siteType ),
 		sitesFilterCallback,
 		'all',
 		[],
@@ -183,7 +183,7 @@ const SitesDashboard = ( {
 		sitesSorting,
 		dataViewsState.sort,
 		initialSortApplied,
-		type,
+		siteType,
 	] );
 
 	// Get the status group slug.

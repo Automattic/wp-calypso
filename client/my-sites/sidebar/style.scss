@@ -256,6 +256,12 @@ $font-size: rem(14px);
 			background-size: contain;
 			color: var(--color-sidebar-gridicon-fill);
 			margin-right: 8px;
+
+			&.sidebar_svg-p2 {
+				path {
+					fill: var(--color-sidebar-gridicon-fill);
+				}
+			}
 		}
 
 		img.sidebar__menu-icon {
@@ -283,6 +289,12 @@ $font-size: rem(14px);
 
 			.sidebar__menu-icon {
 				color: var(--color-sidebar-menu-selected-text);
+
+				&.sidebar_svg-p2 {
+					path {
+						fill: var(--color-sidebar-menu-selected-text);
+					}
+				}
 			}
 
 			img.sidebar__menu-icon {
@@ -349,6 +361,12 @@ $font-size: rem(14px);
 
 				.sidebar__menu-icon {
 					color: var(--color-sidebar-menu-selected-text);
+
+					&.sidebar_svg-p2 {
+						path {
+							fill: var(--color-sidebar-menu-selected-text);
+						}
+					}
 				}
 				img.sidebar__menu-icon {
 					opacity: 1;
