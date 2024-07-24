@@ -16,7 +16,7 @@ interface Props {
 	onComplete: ( siteInfo: UrlData ) => void;
 }
 
-export const Analyzer: FC< Props > = ( { onComplete } ) => {
+export const SourceSiteInput: FC< Props > = ( { onComplete } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 
@@ -74,7 +74,7 @@ const SiteMigrationSourceUrl: Step = function ( { navigation } ) {
 		async ( action: string, data?: { platform: string; from: string } ) => {
 			// If we have a site and URL, and we're coming from a WordPress site,
 			// record the migration source domain.
-			// @todo: should we include the source URL for sites that aren't WP-based?
+			// @todo: do we need the platform?
 			if ( siteSlug && 'wordpress' === data?.platform && data?.from ) {
 				await saveSiteSettings( siteSlug, { migration_source_site_domain: data.from } );
 			}
@@ -97,7 +97,7 @@ const SiteMigrationSourceUrl: Step = function ( { navigation } ) {
 				goNext={ navigation?.submit }
 				isFullLayout
 				stepContent={
-					<Analyzer
+					<SourceSiteInput
 						onComplete={ ( { platform, url } ) =>
 							handleSubmit( 'skip_platform_identification', { platform, from: url } )
 						}
