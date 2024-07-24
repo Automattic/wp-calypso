@@ -23,18 +23,18 @@ import './style.scss';
 interface PreparationEventsHookOptions {
 	migrationKeyStatus: Status;
 	preparationCompleted: boolean;
+	preparationError: Error | null;
 	fromUrl: string;
 	flow: string;
-	setupError: Error | null;
 	siteId: number;
 }
 
 const usePreparationEventsAndLogs = ( {
 	migrationKeyStatus,
 	preparationCompleted,
+	preparationError,
 	fromUrl,
 	flow,
-	setupError,
 	siteId,
 }: PreparationEventsHookOptions ) => {
 	useEffect( () => {
@@ -55,10 +55,10 @@ const usePreparationEventsAndLogs = ( {
 	}, [ preparationCompleted ] );
 
 	useEffect( () => {
-		if ( setupError ) {
-			const logError = setupError as unknown as { path: string; message: string };
+		if ( preparationError ) {
+			const logError = preparationError as unknown as { path: string; message: string };
 
-			captureException( setupError, {
+			captureException( preparationError, {
 				extra: {
 					message: logError?.message,
 					path: logError?.path,
@@ -72,7 +72,7 @@ const usePreparationEventsAndLogs = ( {
 				},
 			} );
 		}
-	}, [ flow, setupError, siteId ] );
+	}, [ flow, preparationError, siteId ] );
 };
 
 const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
@@ -93,8 +93,8 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const {
 		detailedStatus,
 		completed: preparationCompleted,
+		error: preparationError,
 		migrationKey,
-		error: setupError,
 	} = usePrepareSiteForMigration( siteId );
 	const migrationKeyStatus = detailedStatus.migrationKey;
 
@@ -102,9 +102,9 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	usePreparationEventsAndLogs( {
 		migrationKeyStatus,
 		preparationCompleted,
+		preparationError,
 		fromUrl,
 		flow,
-		setupError,
 		siteId,
 	} );
 
