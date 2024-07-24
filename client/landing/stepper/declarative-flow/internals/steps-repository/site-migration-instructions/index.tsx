@@ -122,6 +122,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const { steps, completedSteps } = useSteps( {
 		fromUrl,
 		migrationKey: migrationKey ?? '',
+		preparationError,
 		showMigrationKeyFallback,
 		onComplete: onCompleteSteps,
 	} );

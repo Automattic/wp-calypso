@@ -10,6 +10,7 @@ import type { Task, Expandable, ExpandableAction } from '@automattic/launchpad';
 interface StepsDataOptions {
 	fromUrl: string;
 	migrationKey: string;
+	preparationError: Error | null;
 	showMigrationKeyFallback: boolean;
 }
 
@@ -24,6 +25,7 @@ type StepsData = StepData[];
 interface StepsOptions {
 	fromUrl: string;
 	migrationKey: string;
+	preparationError: Error | null;
 	showMigrationKeyFallback: boolean;
 	onComplete: () => void;
 }
@@ -44,6 +46,7 @@ interface StepsObject {
 const useStepsData = ( {
 	fromUrl,
 	migrationKey,
+	preparationError,
 	showMigrationKeyFallback,
 }: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
@@ -65,7 +68,7 @@ const useStepsData = ( {
 			content: showMigrationKeyFallback ? (
 				<StepAddMigrationKeyFallback />
 			) : (
-				<StepAddMigrationKey migrationKey={ migrationKey } />
+				<StepAddMigrationKey migrationKey={ migrationKey } preparationError={ preparationError } />
 			),
 		},
 	];
@@ -74,13 +77,19 @@ const useStepsData = ( {
 export const useSteps = ( {
 	fromUrl,
 	migrationKey,
+	preparationError,
 	showMigrationKeyFallback,
 	onComplete,
 }: StepsOptions ): StepsObject => {
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
-	const stepsData = useStepsData( { fromUrl, migrationKey, showMigrationKeyFallback } );
+	const stepsData = useStepsData( {
+		fromUrl,
+		migrationKey,
+		preparationError,
+		showMigrationKeyFallback,
+	} );
 
 	const steps: Steps = stepsData.map( ( step, index, array ) => {
 		const recordCompletedStepEvent = () => {

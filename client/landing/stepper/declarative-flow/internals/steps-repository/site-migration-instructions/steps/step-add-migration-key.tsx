@@ -1,19 +1,25 @@
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { MigrationKeyInput } from '../migration-key-input';
 import type { FC } from 'react';
 
 interface Props {
 	migrationKey: string;
+	preparationError: Error | null;
 }
 
-export const StepAddMigrationKey: FC< Props > = ( { migrationKey } ) => {
+export const StepAddMigrationKey: FC< Props > = ( { migrationKey, preparationError } ) => {
 	const translate = useTranslate();
 
 	if ( '' === migrationKey ) {
 		return (
 			<>
 				<p>{ translate( 'The key will be available here when your new site is ready.' ) }</p>
-				<div className="migration-key-skeleton" />
+				<div
+					className={ clsx( 'migration-key-skeleton', {
+						'migration-key-skeleton--animate': ! preparationError,
+					} ) }
+				/>
 			</>
 		);
 	}
