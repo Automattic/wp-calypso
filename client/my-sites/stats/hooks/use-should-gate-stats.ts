@@ -3,6 +3,7 @@ import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -176,6 +177,17 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 export const useShouldGateStats = ( statType: string ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isGatedStats = useSelector( ( state ) => shouldGateStats( state, siteId, statType ) );
+
+	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
+	const isVip = useSelector(
+		( state ) =>
+			!! isVipSite( state as object, siteId as number ) ||
+			!! getSiteOption( state, siteId, 'is_vip' )
+	);
+
+	if ( isVip ) {
+		return false;
+	}
 
 	return isGatedStats;
 };
