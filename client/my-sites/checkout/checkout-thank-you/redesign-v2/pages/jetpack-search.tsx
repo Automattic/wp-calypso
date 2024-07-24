@@ -1,6 +1,4 @@
-import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -13,13 +11,10 @@ export type JetpackSearchThankYouProps = {
 	purchase: ReceiptPurchase;
 };
 
-const HELP_CENTER_STORE = HelpCenter.register();
-const SUPPORT_SITE_ID = 9619154;
 const PLUGINS_SUPPORT_PAGE_ID = 206930;
 
 export default function JetpackSearchThankYou( { purchase }: JetpackSearchThankYouProps ) {
 	const siteId = useSelector( getSelectedSiteId );
-	const { setShowHelpCenter, setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
 
 	const footerDetails = [
 		{
@@ -27,8 +22,8 @@ export default function JetpackSearchThankYou( { purchase }: JetpackSearchThankY
 			title: translate( 'Everything you need to know' ),
 			description: translate( 'Visit Help Center and find an answer to every question.' ),
 			buttonText: translate( 'Explore support resources' ),
+			showHelpCenterOnClick: true,
 			buttonOnClick: () => {
-				setShowHelpCenter( true );
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
 					context: 'jetpack-search',
 					type: 'generic-support',
@@ -42,12 +37,11 @@ export default function JetpackSearchThankYou( { purchase }: JetpackSearchThankY
 				"Unlock your plugin's potential with our comprehensive support documentation."
 			),
 			buttonText: translate( 'Plugin documentation' ),
+			supportDoc: {
+				url: localizeUrl( 'https://wordpress.com/support/use-your-plugins/' ),
+				id: PLUGINS_SUPPORT_PAGE_ID,
+			},
 			buttonOnClick: () => {
-				setShowSupportDoc(
-					localizeUrl( 'https://wordpress.com/support/use-your-plugins/' ),
-					PLUGINS_SUPPORT_PAGE_ID,
-					SUPPORT_SITE_ID
-				);
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
 					context: 'jetpack-search',
 					type: 'plugin-support',
