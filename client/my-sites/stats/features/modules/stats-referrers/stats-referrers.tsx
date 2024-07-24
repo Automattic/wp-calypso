@@ -24,6 +24,7 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -100,6 +101,14 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 							) }
 							cards={ <StatsEmptyActionSocial from="module_referrers" /> }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }
