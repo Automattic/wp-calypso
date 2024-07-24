@@ -3,7 +3,6 @@ import usePurchasesQueryKeysFactory from '@automattic/data-stores/src/purchases/
 import { getUseSitePurchasesOptions } from '@automattic/data-stores/src/purchases/queries/use-site-purchases';
 import useSiteQueryKeysFactory from '@automattic/data-stores/src/site/queries/lib/use-query-keys-factory';
 import { getUseSiteUserQueryOptions } from '@automattic/data-stores/src/site/queries/use-site-user-query';
-import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
@@ -21,7 +20,6 @@ export function useNonOwnerHandler( {
 		useDispatch( HELP_CENTER_STORE );
 	const translate = useTranslate();
 
-	const { url: stillNeedHelpUrl } = useStillNeedHelpURL();
 	const queryClient = useQueryClient();
 	const purchasesQueryKeys = usePurchasesQueryKeysFactory();
 	const siteQueryKeys = useSiteQueryKeysFactory();
@@ -55,7 +53,7 @@ export function useNonOwnerHandler( {
 					availableForPurchase: !! availableForPurchase,
 				} )
 			);
-			setInitialRoute( stillNeedHelpUrl );
+			setInitialRoute( '/odie' );
 			setShowHelpCenter( true );
 			return;
 		},
@@ -69,7 +67,6 @@ export function useNonOwnerHandler( {
 			setShowHelpCenter,
 			siteId,
 			siteQueryKeys,
-			stillNeedHelpUrl,
 			translate,
 		]
 	);
@@ -91,7 +88,7 @@ ${ translate( "Hello, I am Wapuu, WordPress.com's AI assistant!" ) }
 ${
 	availableForPurchase
 		? translate(
-				"I noticed you're trying to upgrade your plan, but only the account owner can make these changes. The owner of this account is %(name)s (%(niceName)s).",
+				"I noticed you're trying to upgrade your plan, but only the plan owner can make these changes. The owner of this plan is %(name)s (%(niceName)s).",
 				{
 					args: {
 						name: siteOwner.name,
@@ -100,7 +97,7 @@ ${
 				}
 		  )
 		: translate(
-				"I noticed you're trying to downgrade your plan, but only the account owner can make these changes. The owner of this account is %(name)s (%(niceName)s).",
+				"I noticed you're trying to downgrade your plan, but only the plan owner can make these changes. The owner of this plan is %(name)s (%(niceName)s).",
 				{
 					args: {
 						name: siteOwner.name,

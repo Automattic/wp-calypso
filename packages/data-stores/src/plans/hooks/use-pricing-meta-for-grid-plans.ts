@@ -80,11 +80,6 @@ const usePricingMetaForGridPlans = ( {
 	storageAddOns,
 	withProratedDiscounts,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
-	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
-		planSlugs,
-		siteId,
-		shouldIgnorePlanOwnership: true,
-	} );
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
@@ -99,6 +94,11 @@ const usePricingMetaForGridPlans = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptions( siteId ),
 		[]
 	);
+	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
+		planSlugs,
+		siteId,
+		shouldIgnorePlanOwnership: !! currentPlan?.purchaseId, // Ignore plan ownership only if the site is on a paid plan
+	} );
 
 	let planPrices:
 		| {
