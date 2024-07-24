@@ -1,49 +1,51 @@
 import { convertBytes } from 'calypso/my-sites/backup/backup-contents-page/file-browser/util';
 import { useSiteMetricsQuery } from 'calypso/my-sites/site-monitoring/use-metrics-query';
+import { useSelector } from 'calypso/state';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface PlanBandwidthProps {
 	siteId: number;
 }
 
-const get30DaysRange = () => {
+const getCurrentMonthRangeTimestamps = () => {
 	const now = new Date();
+	const firstDayOfMonth = new Date( now.getFullYear(), now.getMonth(), 1 );
+	const startInSeconds = Math.floor( firstDayOfMonth.getTime() / 1000 );
 
 	const today = new Date();
-	today.setDate( now.getDate() + 1 ); // +1 since looks like backend works as if it's exclusive
-	const end = Math.floor( today.getTime() / 1000 );
-
-	const thirtyDaysAgo = new Date();
-	thirtyDaysAgo.setDate( now.getDate() - 30 );
-	const start = Math.floor( thirtyDaysAgo.getTime() / 1000 );
+	const endInSeconds = Math.floor( today.getTime() / 1000 );
 
 	return {
-		start,
-		end,
+		startInSeconds,
+		endInSeconds,
 	};
 };
 
 export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
-	const { start, end } = get30DaysRange();
+	const selectedSiteData = useSelector( getSelectedSite );
+	const selectedSiteDomain = selectedSiteData?.domain;
+
+	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
 
 	const { data } = useSiteMetricsQuery( siteId, {
-		start,
-		end,
+		start: startInSeconds,
+		end: endInSeconds,
 		metric: 'response_bytes_persec',
-		summarize: true,
 	} );
 
-	if ( ! data ) {
+	if ( ! data || ! selectedSiteDomain ) {
 		return;
 	}
 
 	const valueInBytes = data.data.periods.reduce(
-		( acc, curr ) => acc + ( curr.dimension[ 'nightnei-test-gw-transfer-1.blog' ] || 0 ),
+		( acc, curr ) => acc + ( curr.dimension[ selectedSiteDomain ] || 0 ),
 		0
 	);
+
 	const { unitAmount, unit } = convertBytes( valueInBytes );
 
-	const startFormatted = new Date( start * 1000 ).toLocaleDateString();
-	const endFormatted = new Date( end * 1000 ).toLocaleDateString();
+	const startFormatted = new Date( startInSeconds * 1000 ).toLocaleDateString();
+	const endFormatted = new Date( endInSeconds * 1000 ).toLocaleDateString();
 
 	return (
 		<div>

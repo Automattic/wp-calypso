@@ -56,9 +56,9 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 				<div
 					title={
 						'From ' +
-						moment().startOf( 'month' ).format( 'YYYY-MM-DD' ) +
+						moment().startOf( 'month' ).format( 'DD/MM/YYYY' ) +
 						' to ' +
-						moment().format( 'YYYY-MM-DD' )
+						moment().format( 'DD/MM/YYYY' )
 					}
 				>
 					{ visitsNumber } views this month
