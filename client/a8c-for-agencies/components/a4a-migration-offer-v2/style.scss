@@ -9,12 +9,16 @@
 	border-radius: 4px;
 	border: 1px solid var(--color-primary-5);
 	background-color: var(--color-primary-0);
-	padding: 20px 32px 24px;
+	padding: 20px 32px;
 	transition: padding 0.15s linear;
 
 	&.is-expanded {
-		padding: 20px 32px;
+		padding: 20px 32px 24px;
 	}
+}
+
+.a4a-migration-offer-v2__side {
+	height: 48px;
 }
 
 .a4a-migration-offer-v2__icon {
