@@ -49,13 +49,10 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_SOURCE_URL,
 		];
 
+		const maybeSitePickerStep = siteCount > 0 ? [ STEPS.PICK_SITE ] : [];
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
-			? [ STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
+			? maybeSitePickerStep.concat( [ STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ] )
 			: [];
-
-		if ( isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME ) && siteCount > 0 ) {
-			hostedVariantSteps.unshift( STEPS.PICK_SITE );
-		}
 
 		return stepsWithRequiredLogin( [ ...baseSteps, ...hostedVariantSteps ] );
 	},
