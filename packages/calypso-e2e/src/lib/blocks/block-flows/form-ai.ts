@@ -47,23 +47,8 @@ export class FormAiFlow implements BlockFlow {
 		} );
 		await aiInputReadyLocator.fill( this.configurationData.prompt );
 		await sendButtonLocator.click();
-		await aiInputBusyLocator.waitFor( { state: 'detached' } );
-
-		// Check if we got an error_unclear_prompt and try it again
-		// TODO: Remove this when this bug is fixed: https://github.com/Automattic/wp-calypso/issues/92927
-		for ( let i = 0; i < 5; i++ ) {
-			const errorLocator = await aiInputParentLocator.getByText(
-				'Error: Your request was unclear. Mind trying again?'
-			);
-
-			if ( await errorLocator.count() ) {
-				await sendButtonLocator.click();
-				await aiInputBusyLocator.waitFor( { state: 'detached' } );
-			} else {
-				break;
-			}
-		}
-
+		await aiInputBusyLocator.waitFor();
+		await aiInputReadyLocator.waitFor( { timeout: 30 * 1000 } );
 		// Grab a first sample input label and submit button text to use for validation.
 		this.validationData = {
 			sampleInputLabel: await this.getFirstTextFieldLabel( context ),

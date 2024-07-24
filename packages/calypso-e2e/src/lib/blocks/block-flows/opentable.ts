@@ -48,7 +48,7 @@ export class OpenTableFlow implements BlockFlow {
 		 * Due to API inconsistency of OpenTable, we need to try a few times to get the correct restaurant.
 		 * https://github.com/Automattic/wp-calypso/issues/92836
 		 */
-		for ( let i = 0; i < 10; i++ ) {
+		for ( let i = 0; i < 5; i++ ) {
 			try {
 				await searchLocator.fill( restaurant );
 				const suggestionLocator = editorCanvas
