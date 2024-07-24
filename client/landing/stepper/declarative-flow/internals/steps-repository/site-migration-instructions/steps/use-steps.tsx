@@ -1,6 +1,7 @@
 import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MigrationKeyInput } from '../migration-key-input';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
@@ -24,6 +25,7 @@ const getMigrateGuruPageURL = ( siteURL: string ) =>
 interface StepsDataOptions {
 	fromUrl: string;
 	migrationKey: string;
+	showMigrationKeyFallback: boolean;
 }
 
 interface StepData {
@@ -37,6 +39,7 @@ type StepsData = StepData[];
 interface StepsOptions {
 	fromUrl: string;
 	migrationKey: string;
+	showMigrationKeyFallback: boolean;
 	onComplete: () => void;
 }
 
@@ -53,8 +56,14 @@ interface StepsObject {
 	completedSteps: number;
 }
 
-const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData => {
+const useStepsData = ( {
+	fromUrl,
+	migrationKey,
+	showMigrationKeyFallback,
+}: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
+	const site = useSite();
+	const siteUrl = site?.URL ?? '';
 
 	return [
 		{
@@ -123,40 +132,64 @@ const useStepsData = ( { fromUrl, migrationKey }: StepsDataOptions ): StepsData 
 		{
 			key: 'add-your-migration-key',
 			title: translate( 'Add your migration key' ),
-			content:
-				'' === migrationKey ? (
-					<>
-						<p>{ translate( 'The key will be available here when your new site is ready.' ) }</p>
-						<div className="migration-key-skeleton" />
-					</>
-				) : (
-					<>
-						<p>
-							{ translate(
-								'Copy and paste the migration key below in the {{strong}}%(migrationKeyLabel)s{{/strong}} field, customize any of the following migration options, and click {{strong}}%(migrateLabel)s{{/strong}}.',
-								{
-									components: {
-										strong: <strong />,
-									},
-									args: {
-										migrationKeyLabel: 'Migrate Guru Migration Key',
-										migrateLabel: 'Migrate',
-									},
-								}
-							) }
-						</p>
-						<MigrationKeyInput value={ migrationKey } />
-					</>
-				),
+			content: showMigrationKeyFallback ? (
+				<p>
+					{ translate(
+						'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{strong}}%(migrationKeyLabel)s{{/strong}} field of your existing site and click {{strong}}%(migrateLabel)s{{/strong}}.',
+						{
+							components: {
+								a: (
+									<ExternalLink
+										href={ getMigrateGuruPageURL( siteUrl ) }
+										icon
+										iconSize={ 14 }
+										target="_blank"
+									/>
+								),
+								strong: <strong />,
+							},
+							args: {
+								migrationKeyLabel: 'Migrate Guru Migration Key',
+								migrateLabel: 'Migrate',
+							},
+						}
+					) }
+				</p>
+			) : '' === migrationKey ? (
+				<>
+					<p>{ translate( 'The key will be available here when your new site is ready.' ) }</p>
+					<div className="migration-key-placeholder" />
+				</>
+			) : (
+				<>
+					<p>
+						{ translate(
+							'Copy and paste the migration key below in the {{strong}}%(migrationKeyLabel)s{{/strong}} field, customize any of the following migration options, and click {{strong}}%(migrateLabel)s{{/strong}}.',
+							{
+								components: {
+									strong: <strong />,
+								},
+								args: { migrationKeyLabel: 'Migrate Guru Migration Key', migrateLabel: 'Migrate' },
+							}
+						) }
+					</p>
+					<MigrationKeyInput value={ migrationKey } />
+				</>
+			),
 		},
 	];
 };
 
-export const useSteps = ( { fromUrl, migrationKey, onComplete }: StepsOptions ): StepsObject => {
+export const useSteps = ( {
+	fromUrl,
+	migrationKey,
+	showMigrationKeyFallback,
+	onComplete,
+}: StepsOptions ): StepsObject => {
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
-	const stepsData = useStepsData( { fromUrl, migrationKey } );
+	const stepsData = useStepsData( { fromUrl, migrationKey, showMigrationKeyFallback } );
 
 	const steps: Steps = stepsData.map( ( step, index, array ) => {
 		const recordCompletedStepEvent = () => {
@@ -198,7 +231,7 @@ export const useSteps = ( { fromUrl, migrationKey, onComplete }: StepsOptions ):
 				label: translate( 'Next' ),
 				onClick: onNextClick,
 			};
-		} else if ( migrationKey ) {
+		} else if ( migrationKey || showMigrationKeyFallback ) {
 			// Done action for the migration key step.
 			action = {
 				label: translate( 'Done' ),

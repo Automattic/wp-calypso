@@ -96,8 +96,11 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		migrationKey,
 		error: setupError,
 	} = usePrepareSiteForMigration( siteId );
+	const migrationKeyStatus = detailedStatus.migrationKey;
+
+	// Register events and logs.
 	usePreparationEventsAndLogs( {
-		migrationKeyStatus: detailedStatus.migrationKey,
+		migrationKeyStatus,
 		preparationCompleted,
 		fromUrl,
 		flow,
@@ -113,9 +116,13 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const onCompleteSteps = () => {
 		navigation.submit?.( { destination: 'migration-started' } );
 	};
+
+	const showMigrationKeyFallback = migrationKeyStatus === 'error' && preparationCompleted;
+
 	const { steps, completedSteps } = useSteps( {
 		fromUrl,
 		migrationKey: migrationKey ?? '',
+		showMigrationKeyFallback,
 		onComplete: onCompleteSteps,
 	} );
 
