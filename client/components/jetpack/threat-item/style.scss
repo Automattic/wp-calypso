@@ -47,7 +47,8 @@
 .button {
 	&.threat-item__fix-button,
 	&.threat-item__codeable-button,
-	&.threat-item__ignore-button {
+	&.threat-item__ignore-button,
+	&.threat-item__unignore-button {
 		margin-inline-start: 5px;
 		margin-inline-end: 5px;
 		border-width: 1px;
@@ -60,7 +61,8 @@
 		line-height: 24px;
 	}
 
-	&.threat-item__ignore-button {
+	&.threat-item__ignore-button,
+	&.threat-item__unignore-button {
 		margin-inline-start: 5px;
 		margin-inline-end: 5px;
 		border-width: 1px;

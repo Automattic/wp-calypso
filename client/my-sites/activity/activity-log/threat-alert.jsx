@@ -14,7 +14,11 @@ import SplitButton from 'calypso/components/split-button';
 import TimeSince from 'calypso/components/time-since';
 import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-import { fixThreatAlert, ignoreThreatAlert } from 'calypso/state/jetpack/site-alerts/actions';
+import {
+	fixThreatAlert,
+	ignoreThreatAlert,
+	unignoreThreatAlert,
+} from 'calypso/state/jetpack/site-alerts/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActivityIcon from '../activity-log-item/activity-icon';
@@ -53,6 +57,11 @@ export class ThreatAlert extends Component {
 	handleIgnore = () => {
 		this.setState( { requesting: true } );
 		this.props.ignoreThreat( this.props.siteId, this.props.threat.id );
+	};
+
+	handleUnignore = () => {
+		this.setState( { requesting: true } );
+		this.props.unignoreThreat( this.props.siteId, this.props.threat.id );
 	};
 
 	handleGetHelp = () => {
@@ -389,6 +398,7 @@ export class ThreatAlert extends Component {
 											>
 												<span>{ translate( 'Ignore threat' ) }</span>
 											</PopoverMenuItem>
+											{ /* TODO: Do we need a "Unignore threat" option here? */ }
 										</SplitButton>
 									</div>
 									<span className="activity-log__threat-alert-type">{ this.renderSubtitle() }</span>
@@ -425,6 +435,11 @@ export default connect( mapStateToProps, {
 		withAnalytics(
 			recordTracksEvent( 'calypso_activitylog_threat_ignore', { threat_id: threatId } ),
 			ignoreThreatAlert( siteId, threatId )
+		),
+	unignoreThreat: ( siteId, threatId ) =>
+		withAnalytics(
+			recordTracksEvent( 'calypso_activitylog_threat_unignore', { threat_id: threatId } ),
+			unignoreThreatAlert( siteId, threatId )
 		),
 	trackGetHelp: ( threatId ) =>
 		recordTracksEvent( 'calypso_activitylog_threat_gethelp', { threat_id: threatId } ),

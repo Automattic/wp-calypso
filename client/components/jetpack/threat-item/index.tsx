@@ -20,8 +20,9 @@ import './style.scss';
 interface Props {
 	threat: Threat;
 	isPlaceholder: boolean;
-	onFixThreat?: ( threat: Threat ) => void;
+	onFixThreat?: () => void;
 	onIgnoreThreat?: () => void;
+	onUnignoreThreat?: () => void;
 	isFixing: boolean;
 	contactSupportUrl?: string;
 }
@@ -39,6 +40,7 @@ const ThreatItem: React.FC< Props > = ( {
 	isPlaceholder,
 	onFixThreat,
 	onIgnoreThreat,
+	onUnignoreThreat,
 	isFixing,
 } ) => {
 	const dispatch = useDispatch();
@@ -196,8 +198,8 @@ const ThreatItem: React.FC< Props > = ( {
 				{ threat.status === 'ignored' && (
 					<Button
 						scary
-						className="threat-item__ignore-button"
-						onClick={ onIgnoreThreat }
+						className="threat-item__unignore-button"
+						onClick={ onUnignoreThreat }
 						disabled={ isFixing }
 					>
 						{ translate( 'Unignore threat' ) }

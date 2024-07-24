@@ -3,6 +3,7 @@ import {
 	JETPACK_SCAN_THREATS_FIX_ALL,
 	JETPACK_SCAN_THREAT_FIX,
 	JETPACK_SCAN_THREAT_IGNORE,
+	JETPACK_SCAN_THREAT_UNIGNORE,
 	JETPACK_SCAN_UPDATE_THREAT,
 	JETPACK_SCAN_UPDATE_THREAT_COMPLETED,
 } from 'calypso/state/action-types';
@@ -32,6 +33,12 @@ export const getFixThreatsStatus = ( siteId, threatIds ) => ( {
 
 export const ignoreThreat = ( siteId, threatId ) => ( {
 	type: JETPACK_SCAN_THREAT_IGNORE,
+	siteId,
+	threatId,
+} );
+
+export const unignoreThreat = ( siteId, threatId ) => ( {
+	type: JETPACK_SCAN_THREAT_UNIGNORE,
 	siteId,
 	threatId,
 } );

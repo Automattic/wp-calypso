@@ -12,7 +12,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import type { Threat } from 'calypso/components/jetpack/threat-item/types';
+import type { Threat, ThreatAction } from 'calypso/components/jetpack/threat-item/types';
 
 const trackOpenThreatDialog = ( siteId: number, threatSignature: string ) =>
 	recordTracksEvent( 'calypso_jetpack_scan_fixthreat_dialogopen', {
@@ -31,22 +31,26 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 		siteId ?? 0
 	);
 	const [ showThreatDialog, setShowThreatDialog ] = useState( false );
+	const [ actionToPerform, setActionToPerform ] = useState< ThreatAction >( 'fix' );
 
 	const openDialog = useCallback(
-		( threat: Threat ) => {
+		( action: ThreatAction, threat: Threat ) => {
 			dispatch( trackOpenThreatDialog( siteId ?? 0, threat.signature ) );
 			setSelectedThreat( threat );
+			setActionToPerform( action );
 			setShowThreatDialog( true );
 		},
 		[ dispatch, setSelectedThreat, siteId ]
 	);
+
 	const closeDialog = useCallback( () => {
 		setShowThreatDialog( false );
 	}, [ setShowThreatDialog ] );
-	const fixThreat = useCallback( () => {
+
+	const confirmAction = useCallback( () => {
 		closeDialog();
-		updateThreat( 'fix' );
-	}, [ closeDialog, updateThreat ] );
+		updateThreat( actionToPerform );
+	}, [ actionToPerform, closeDialog, updateThreat ] );
 
 	return (
 		<>
@@ -55,7 +59,8 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 					key={ threat.id }
 					isPlaceholder={ false }
 					threat={ threat }
-					onFixThreat={ openDialog }
+					onFixThreat={ () => openDialog( 'fix', threat ) }
+					onUnignoreThreat={ () => openDialog( 'unignore', threat ) }
 					isFixing={ !! updatingThreats.find( ( threatId ) => threatId === threat.id ) }
 					contactSupportUrl={ contactSupportUrl( siteSlug ) }
 				/>
@@ -64,10 +69,10 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 				<ThreatDialog
 					showDialog={ showThreatDialog }
 					onCloseDialog={ closeDialog }
-					onConfirmation={ fixThreat }
+					onConfirmation={ confirmAction }
 					siteName={ siteName ?? '' }
 					threat={ selectedThreat }
-					action="fix"
+					action={ actionToPerform }
 				/>
 			) }
 		</>

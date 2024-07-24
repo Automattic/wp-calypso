@@ -9,7 +9,7 @@ import './style.scss';
 
 interface Props {
 	threat: Threat;
-	action: 'fix' | 'ignore';
+	action: 'fix' | 'ignore' | 'unignore';
 	siteName: string;
 	showDialog: boolean;
 	onCloseDialog: ( action?: string | React.MouseEvent ) => void;
@@ -23,39 +23,62 @@ const ThreatDialog: React.FC< Props > = ( {
 	showDialog,
 	threat,
 } ) => {
-	const buttons = React.useMemo(
-		() => [
+	const buttons = React.useMemo( () => {
+		let primaryButtonText;
+		let isScary;
+
+		switch ( action ) {
+			case 'fix':
+				primaryButtonText = translate( 'Fix threat' );
+				isScary = false;
+				break;
+			case 'ignore':
+				primaryButtonText = translate( 'Ignore threat' );
+				isScary = true;
+				break;
+			case 'unignore':
+				primaryButtonText = translate( 'Unignore threat' );
+				isScary = true;
+				break;
+		}
+
+		return [
 			<Button className="threat-dialog__btn" onClick={ onCloseDialog }>
 				{ translate( 'Go back' ) }
 			</Button>,
-			<Button
-				primary
-				scary={ action !== 'fix' }
-				className="threat-dialog__btn"
-				onClick={ onConfirmation }
-			>
-				{ action === 'fix' ? translate( 'Fix threat' ) : translate( 'Ignore threat' ) }
+			<Button primary scary={ isScary } className="threat-dialog__btn" onClick={ onConfirmation }>
+				{ primaryButtonText }
 			</Button>,
-		],
-		[ action, onCloseDialog, onConfirmation ]
-	);
+		];
+	}, [ action, onCloseDialog, onConfirmation ] );
 
-	const titleProps = React.useMemo(
-		() => ( {
-			title:
-				action === 'fix'
-					? translate( 'Fix threat' )
-					: translate( 'Do you really want to ignore this threat?' ),
-			titleClassName: `threat-dialog__header--${ action }-threat`,
-		} ),
-		[ action ]
-	);
+	const titleProps = React.useMemo( () => {
+		let title;
+		const titleClassName = `threat-dialog__header--${ action }-threat`;
+
+		switch ( action ) {
+			case 'fix':
+				title = translate( 'Fix threat' );
+				break;
+			case 'ignore':
+				title = translate( 'Do you really want to ignore this threat?' );
+				break;
+			case 'unignore':
+				title = translate( 'Do you really want to unignore this threat?' );
+				break;
+		}
+
+		return {
+			title,
+			titleClassName,
+		};
+	}, [ action ] );
 
 	return (
 		<ServerCredentialsWizardDialog
 			showDialog={ showDialog }
 			onCloseDialog={ onCloseDialog }
-			skipServerCredentials={ action === 'ignore' }
+			skipServerCredentials={ action === 'ignore' || action === 'unignore' }
 			buttons={ buttons }
 			{ ...titleProps }
 			baseDialogClassName="threat-dialog"
@@ -63,13 +86,17 @@ const ThreatDialog: React.FC< Props > = ( {
 			<>
 				<p>
 					{ action === 'fix' && translate( 'Jetpack will fix the threat:' ) }
-
 					{ action === 'ignore' && translate( 'Jetpack will ignore the threat:' ) }
+					{ action === 'unignore' && translate( 'Jetpack will unignore the threat:' ) }
 				</p>
 				<h3 className="threat-dialog__threat-title">
 					<ThreatFixHeader threat={ threat } action={ action } />
 				</h3>
 				{ action === 'ignore' &&
+					translate(
+						'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with Codeable.'
+					) }
+				{ action === 'unignore' &&
 					translate(
 						'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with Codeable.'
 					) }
