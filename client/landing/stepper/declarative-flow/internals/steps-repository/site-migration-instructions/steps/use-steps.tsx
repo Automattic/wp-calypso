@@ -1,26 +1,11 @@
-import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { MigrationKeyInput } from '../migration-key-input';
-import { recordMigrationInstructionsLinkClick } from '../tracking';
+import { StepAddMigrationKey } from './step-add-migration-key';
+import { StepAddMigrationKeyFallback } from './step-add-migration-key-fallback';
+import { StepGetYourSiteReady } from './step-get-your-site-ready';
+import { StepInstallMigrationGuru } from './step-install-migation-guru';
 import type { Task, Expandable, ExpandableAction } from '@automattic/launchpad';
-
-const removeDuplicatedSlashes = ( url: string ) => url.replace( /(https?:\/\/)|(\/)+/g, '$1$2' );
-
-const getPluginInstallationPage = ( fromUrl: string ) => {
-	if ( fromUrl !== '' ) {
-		return removeDuplicatedSlashes(
-			`${ fromUrl }/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term`
-		);
-	}
-
-	return 'https://wordpress.org/plugins/migrate-guru/';
-};
-
-const getMigrateGuruPageURL = ( siteURL: string ) =>
-	removeDuplicatedSlashes( `${ siteURL }/wp-admin/admin.php?page=migrateguru` );
 
 interface StepsDataOptions {
 	fromUrl: string;
@@ -62,119 +47,25 @@ const useStepsData = ( {
 	showMigrationKeyFallback,
 }: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
-	const site = useSite();
-	const siteUrl = site?.URL ?? '';
 
 	return [
 		{
 			key: 'install-the-migrate-guru-plugin',
 			title: translate( 'Install the Migrate Guru plugin' ),
-			content: (
-				<p>
-					{ translate(
-						"First you'll need to install and activate the {{a}}Migrate Guru plugin{{/a}} on the site you want to migrate. Click {{strong}}Next{{/strong}} when you're ready.",
-						{
-							components: {
-								strong: <strong />,
-								a: (
-									<ExternalLink
-										href={ getPluginInstallationPage( fromUrl ) }
-										icon
-										iconSize={ 14 }
-										target="_blank"
-										onClick={ () => recordMigrationInstructionsLinkClick( 'install-plugin' ) }
-									/>
-								),
-							},
-						}
-					) }
-				</p>
-			),
+			content: <StepInstallMigrationGuru fromUrl={ fromUrl } />,
 		},
 		{
 			key: 'get-your-site-ready',
 			title: translate( 'Get your site ready' ),
-			content: (
-				<>
-					<p>
-						{ translate(
-							'Head to the {{a}}Migrate Guru plugin screen on your source site{{/a}}, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
-							{
-								components: {
-									strong: <strong />,
-									a: fromUrl ? (
-										<ExternalLink
-											href={ getMigrateGuruPageURL( fromUrl ) }
-											icon
-											iconSize={ 14 }
-											target="_blank"
-											onClick={ () => recordMigrationInstructionsLinkClick( 'go-to-plugin-page' ) }
-										/>
-									) : (
-										<strong />
-									),
-								},
-								args: { migrateLabel: 'Migrate' },
-							}
-						) }
-					</p>
-					<p>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</p>
-					<p>
-						{ translate( 'All set? Click {{strong}}Next{{/strong}} below.', {
-							components: {
-								strong: <strong />,
-							},
-						} ) }
-					</p>
-				</>
-			),
+			content: <StepGetYourSiteReady fromUrl={ fromUrl } />,
 		},
 		{
 			key: 'add-your-migration-key',
 			title: translate( 'Add your migration key' ),
 			content: showMigrationKeyFallback ? (
-				<p>
-					{ translate(
-						'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{strong}}%(migrationKeyLabel)s{{/strong}} field of your existing site and click {{strong}}%(migrateLabel)s{{/strong}}.',
-						{
-							components: {
-								a: (
-									<ExternalLink
-										href={ getMigrateGuruPageURL( siteUrl ) }
-										icon
-										iconSize={ 14 }
-										target="_blank"
-									/>
-								),
-								strong: <strong />,
-							},
-							args: {
-								migrationKeyLabel: 'Migrate Guru Migration Key',
-								migrateLabel: 'Migrate',
-							},
-						}
-					) }
-				</p>
-			) : '' === migrationKey ? (
-				<>
-					<p>{ translate( 'The key will be available here when your new site is ready.' ) }</p>
-					<div className="migration-key-placeholder" />
-				</>
+				<StepAddMigrationKeyFallback />
 			) : (
-				<>
-					<p>
-						{ translate(
-							'Copy and paste the migration key below in the {{strong}}%(migrationKeyLabel)s{{/strong}} field, customize any of the following migration options, and click {{strong}}%(migrateLabel)s{{/strong}}.',
-							{
-								components: {
-									strong: <strong />,
-								},
-								args: { migrationKeyLabel: 'Migrate Guru Migration Key', migrateLabel: 'Migrate' },
-							}
-						) }
-					</p>
-					<MigrationKeyInput value={ migrationKey } />
-				</>
+				<StepAddMigrationKey migrationKey={ migrationKey } />
 			),
 		},
 	];
