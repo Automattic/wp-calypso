@@ -18,9 +18,7 @@ export const OdieAssistant: React.FC = () => {
 		inView,
 	} = useInView( {
 		threshold: 0,
-		root: containerRef?.current,
-		delay: 600,
-		trackVisibility: true,
+		delay: 1000,
 	} );
 
 	const target = useMemo( () => lastMessageEntry?.target, [ lastMessageEntry ] );

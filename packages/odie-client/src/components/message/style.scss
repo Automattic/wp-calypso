@@ -265,6 +265,13 @@ $feedback-button-size: 28px;
 
 $custom-border-corner-size: 16px;
 
+.odie-referenced-message {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 100%;
+}
+
 .odie-gradient-to-white {
 	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 50%);
 	display: flex;
@@ -281,8 +288,8 @@ $custom-border-corner-size: 16px;
 		opacity: 0;
 		bottom: 0 !important;
 		transition:
-			opacity 0.3s ease,
-			bottom 0.3s ease;
+			opacity 0.3s ease 0.6s,
+			bottom 0.3s ease 0.6s;
 
 		.odie-jump-to-recent-message-button {
 			pointer-events: none;
@@ -293,8 +300,8 @@ $custom-border-corner-size: 16px;
 		opacity: 1;
 		bottom: 24px;
 		transition:
-			opacity 0.3s ease 0.6s,
-			bottom 0.3s ease 0.6s;
+			opacity 0.3s ease 1s,
+			bottom 0.3s ease 1s;
 	}
 
 	.odie-jump-to-recent-message-button {

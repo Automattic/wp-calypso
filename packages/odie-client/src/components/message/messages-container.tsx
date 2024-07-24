@@ -11,19 +11,25 @@ interface ChatMessagesProps {
 
 export const MessagesContainer = forwardRef(
 	( { chat, currentUser }: ChatMessagesProps, ref: ForwardedRef< HTMLDivElement > ) => {
-		const lastMessageIndex = useMemo( () => chat.messages.length - 1, [ chat.messages ] );
+		const targetMessageIndex = useMemo( () => {
+			return chat.messages.length >= 2 ? chat.messages.length - 2 : chat.messages.length - 1;
+		}, [ chat.messages ] );
+
 		if ( chat.messages.length === 0 ) {
-			return null;
+			return <div ref={ ref } className="odie-referenced-message"></div>;
 		}
 
 		return (
 			<>
-				{ chat.messages.slice( 0, lastMessageIndex ).map( ( message, index ) => (
-					<ChatMessage message={ message } key={ index } currentUser={ currentUser } />
-				) ) }
-				<div ref={ ref } style={ { margin: 0, padding: 0, border: 0 } }>
-					<ChatMessage message={ chat.messages[ lastMessageIndex ] } currentUser={ currentUser } />
-				</div>
+				{ chat.messages.map( ( message, index ) =>
+					index === targetMessageIndex ? (
+						<div ref={ ref } className="odie-referenced-message" key={ index }>
+							<ChatMessage message={ message } currentUser={ currentUser } />
+						</div>
+					) : (
+						<ChatMessage message={ message } key={ index } currentUser={ currentUser } />
+					)
+				) }
 			</>
 		);
 	}

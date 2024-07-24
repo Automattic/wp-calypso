@@ -158,12 +158,8 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 		}, 1200 );
 	};
 
-	const odieChatBoxMessageSourcesContainerClass = clsx( 'odie-chatbox-message-sources-container', {
-		'odie-chatbox-message-sources-container-fullscreen': isFullscreen,
-	} );
-
 	const messageContent = (
-		<div className={ odieChatBoxMessageSourcesContainerClass } ref={ fullscreenRef }>
+		<div className="odie-chatbox-message-sources-container" ref={ fullscreenRef }>
 			<div className={ messageClasses }>
 				{ messageHeader }
 				{ message.type === 'error' && (
@@ -330,7 +326,7 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 			</>
 		);
 	}
-	return <div className={ odieChatBoxMessageSourcesContainerClass }>{ messageContent }</div>;
+	return messageContent;
 };
 
 export default ChatMessage;
