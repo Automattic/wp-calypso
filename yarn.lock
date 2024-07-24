@@ -1523,6 +1523,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/onboarding@workspace:packages/onboarding"
   dependencies:
+    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
@@ -1557,7 +1558,6 @@ __metadata:
   resolution: "@automattic/page-pattern-modal@workspace:packages/page-pattern-modal"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@testing-library/react": "npm:^15.0.7"
     "@wordpress/block-editor": "npm:^13.2.0"
