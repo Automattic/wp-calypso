@@ -1,11 +1,10 @@
 import { useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-const isThisASupportArticleLink = ( href: string ) =>
-	/wordpress\.com(\/\w\w)?(?=\/support\/)|support\.wordpress\.com/.test( href );
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export const useContainerClick = ( node: HTMLDivElement | null ) => {
 	const navigate = useNavigate();
+	const [ searchParams ] = useSearchParams();
+	const link = searchParams.get( 'link' ) || '';
 
 	const filters = useMemo(
 		() => [
@@ -13,42 +12,46 @@ export const useContainerClick = ( node: HTMLDivElement | null ) => {
 			 * Make support article links open within Help Center.
 			 */
 			{
-				condition: ( target: HTMLElement ) =>
-					target.tagName === 'A' &&
-					isThisASupportArticleLink( target.getAttribute( 'href' ) || '' ),
-				action: ( event: MouseEvent, target: HTMLElement ) => {
-					event.preventDefault();
-					const href = target.getAttribute( 'href' );
-					navigate( `/post?link=${ href }` );
+				pattern: '.toc-parent-list a',
+				action: ( element ) => {
+					const href = element.getAttribute( 'href' );
+					if ( href.startsWith( '#' ) ) {
+						element.onclick = ( event ) => {
+							event.preventDefault();
+							const target = node?.querySelector( href );
+							if ( target ) {
+								target.scrollIntoView();
+							}
+						};
+					}
 				},
 			},
-
-			/**
-			 * Fix table of content links.
-			 */
 			{
-				condition: ( target: HTMLElement ) =>
-					target.tagName === 'A' && target.closest( '.a8c-table-of-contents' ),
-				action: ( event: MouseEvent, target: HTMLElement ) => {
-					event.preventDefault();
-					const href = target.getAttribute( 'href' );
-					const hash = href?.split( '#' )[ 1 ];
-					node?.querySelector( `#${ hash }` )?.scrollIntoView();
+				pattern: 'a[href^="/"]',
+				action: ( element ) => {
+					const href = element.getAttribute( 'href' );
+					const fixedUrl = new URL( href, link ).href;
+
+					element.href = fixedUrl;
+					element.onclick = ( event ) => {
+						event.preventDefault();
+						navigate( `/post?link=${ fixedUrl }` );
+					};
 				},
 			},
 		],
-		[ node, navigate ]
+		[ node, link ]
 	);
 
 	useEffect( () => {
-		node?.addEventListener( 'click', ( event: MouseEvent ) => {
-			const target = event.target as HTMLElement;
+		if ( node ) {
+			const timeout = setTimeout( () => {
+				filters.forEach( ( { pattern, action } ) => {
+					node.querySelectorAll( pattern ).forEach( action );
+				} );
+			}, 0 );
 
-			filters.forEach( ( { condition, action } ) => {
-				if ( condition( target ) ) {
-					action( event, target );
-				}
-			} );
-		} );
-	}, [ node ] );
+			return () => clearTimeout( timeout );
+		}
+	}, [ node, filters ] );
 };
