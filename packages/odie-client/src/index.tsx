@@ -12,23 +12,19 @@ export const ODIE_THUMBS_UP_RATING_VALUE = 1;
 export const OdieAssistant: React.FC = () => {
 	const { chat, trackEvent, currentUser } = useOdieAssistantContext();
 	const containerRef = useRef< HTMLDivElement >( null );
-	const {
-		ref: bottomRef,
-		entry: lastMessageEntry,
-		inView,
-	} = useInView( {
+	const { ref: secondToLastMessageRef, entry: secondToLastMessageEntry } = useInView( {
 		threshold: 0,
 		delay: 1000,
 	} );
 
-	const target = useMemo( () => lastMessageEntry?.target, [ lastMessageEntry ] );
+	const target = useMemo( () => secondToLastMessageEntry?.target, [ secondToLastMessageEntry ] );
 	const lastMessage = useMemo( () => chat.messages[ chat.messages.length - 1 ], [ chat.messages ] );
 
 	useEffect( () => {
 		trackEvent( 'chatbox_view' );
 	}, [ trackEvent ] );
 
-	const scrollToBottom = useCallback( () => {
+	const scrollToSecondToLastMessage = useCallback( () => {
 		if ( target && lastMessage ) {
 			target.scrollIntoView( { behavior: 'smooth', block: 'start', inline: 'nearest' } );
 		}
@@ -36,7 +32,7 @@ export const OdieAssistant: React.FC = () => {
 
 	useEffect( () => {
 		if ( target && lastMessage ) {
-			scrollToBottom();
+			scrollToSecondToLastMessage();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ lastMessage, target ] );
@@ -45,9 +41,13 @@ export const OdieAssistant: React.FC = () => {
 		<div className="chatbox" ref={ containerRef }>
 			<div className="chat-box-message-container">
 				<div className="chatbox-messages">
-					<MessagesContainer ref={ bottomRef } chat={ chat } currentUser={ currentUser } />
+					<MessagesContainer
+						ref={ secondToLastMessageRef }
+						chat={ chat }
+						currentUser={ currentUser }
+					/>
 				</div>
-				<OdieSendMessageButton scrollToRecent={ scrollToBottom } enableJumpToRecent={ ! inView } />
+				<OdieSendMessageButton scrollToRecent={ scrollToSecondToLastMessage } />
 			</div>
 		</div>
 	);

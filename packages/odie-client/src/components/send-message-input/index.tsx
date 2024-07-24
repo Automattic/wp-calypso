@@ -19,13 +19,7 @@ import { JumpToRecent } from '../message/jump-to-recent';
 
 import './style.scss';
 
-export const OdieSendMessageButton = ( {
-	scrollToRecent,
-	enableJumpToRecent,
-}: {
-	scrollToRecent: () => void;
-	enableJumpToRecent: boolean;
-} ) => {
+export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () => void } ) => {
 	const { _x } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
@@ -128,7 +122,7 @@ export const OdieSendMessageButton = ( {
 
 	return (
 		<>
-			<JumpToRecent scrollToBottom={ scrollToRecent } enableJumpToRecent={ enableJumpToRecent } />
+			<JumpToRecent scrollToRecent={ scrollToRecent } />
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
 					<TextareaAutosize

@@ -1,4 +1,6 @@
-import { ForwardedRef, forwardRef, useMemo } from 'react';
+import { ForwardedRef, forwardRef, useEffect, useMemo } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { useOdieAssistantContext } from '../../context';
 import ChatMessage from '.';
 import type { CurrentUser, Message } from '../../types/';
 
@@ -14,22 +16,49 @@ export const MessagesContainer = forwardRef(
 		const targetMessageIndex = useMemo( () => {
 			return chat.messages.length >= 2 ? chat.messages.length - 2 : chat.messages.length - 1;
 		}, [ chat.messages ] );
+		const { setLastMessageInView } = useOdieAssistantContext();
+		const { inView: lastMessageEntryInView, ref: lastMessageWapuuRef } = useInView( {
+			threshold: 0,
+			delay: 1000,
+		} );
+
+		const lastMessageInView = useMemo( () => lastMessageEntryInView, [ lastMessageEntryInView ] );
+
+		useEffect( () => {
+			if ( setLastMessageInView ) {
+				setLastMessageInView( lastMessageInView );
+			}
+		}, [ lastMessageInView, setLastMessageInView ] );
+
+		const lastMessageIndex = chat.messages.length - 1;
 
 		if ( chat.messages.length === 0 ) {
-			return <div ref={ ref } className="odie-referenced-message"></div>;
+			return (
+				<>
+					<div ref={ ref } className="odie-referenced-message"></div>;
+					<div className="odie-last-message" ref={ lastMessageWapuuRef }></div>
+				</>
+			);
 		}
 
 		return (
 			<>
-				{ chat.messages.map( ( message, index ) =>
-					index === targetMessageIndex ? (
-						<div ref={ ref } className="odie-referenced-message" key={ index }>
-							<ChatMessage message={ message } currentUser={ currentUser } />
-						</div>
-					) : (
-						<ChatMessage message={ message } key={ index } currentUser={ currentUser } />
-					)
-				) }
+				{ chat.messages.map( ( message, index ) => {
+					if ( index === targetMessageIndex ) {
+						return (
+							<div ref={ ref } className="odie-referenced-message" key={ index }>
+								<ChatMessage message={ message } currentUser={ currentUser } />
+							</div>
+						);
+					} else if ( index === lastMessageIndex ) {
+						return (
+							<div className="odie-last-message" key={ index } ref={ lastMessageWapuuRef }>
+								<ChatMessage message={ message } currentUser={ currentUser } />
+							</div>
+						);
+					}
+					return <ChatMessage message={ message } key={ index } currentUser={ currentUser } />;
+				} ) }
 			</>
 		);
 	}
