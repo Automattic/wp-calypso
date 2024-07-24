@@ -22,7 +22,7 @@ export const SidebarIconPlugins = () => (
 /**
  * Menu items that support all sites screen.
  */
-export default function globalSidebarMenu() {
+export default function globalSidebarMenu( { showP2s = false } = {} ) {
 	return [
 		{
 			icon: <Icon icon={ category } className="sidebar__menu-icon svg_all-sites" size={ 24 } />,
@@ -32,14 +32,18 @@ export default function globalSidebarMenu() {
 			type: 'menu-item',
 			url: '/sites',
 		},
-		{
-			icon: <ReaderP2Icon />,
-			slug: 'sites-p2',
-			title: translate( 'P2s' ),
-			navigationLabel: translate( 'Manage all my P2 sites' ),
-			type: 'menu-item',
-			url: '/p2s',
-		},
+		...( showP2s
+			? [
+					{
+						icon: <ReaderP2Icon />,
+						slug: 'sites-p2',
+						title: translate( 'P2s' ),
+						navigationLabel: translate( 'Manage all my P2 sites' ),
+						type: 'menu-item',
+						url: '/p2s',
+					},
+			  ]
+			: [] ),
 		{
 			icon: 'dashicons-admin-site-alt3',
 			slug: 'domains',

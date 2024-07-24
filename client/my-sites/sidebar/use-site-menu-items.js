@@ -7,6 +7,7 @@ import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import { canAnySiteHaveP2 } from 'calypso/state/selectors/can-any-site-have-p2';
 import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -72,11 +73,12 @@ const useSiteMenuItems = () => {
 	const shouldShowAddOns = isEnabled( 'my-sites/add-ons' ) && ! isAtomic && ! isStagingSite;
 
 	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
+	const hasSiteWithP2 = useSelector( canAnySiteHaveP2 );
 
 	const hasUnifiedImporter = isEnabled( 'importer/unified' );
 
 	if ( shouldShowGlobalSidebar ) {
-		return globalSidebarMenu();
+		return globalSidebarMenu( { showP2s: hasSiteWithP2 } );
 	}
 
 	/**
