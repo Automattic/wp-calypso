@@ -110,6 +110,11 @@ export const initialClientsData = {
 		name: 'blaze-pro',
 		title: 'Blaze Pro',
 	},
+	102832: {
+		id: 102832,
+		name: 'a8c-for-hosts',
+		title: 'A8C for Hosts',
+	},
 };
 
 export function clients( state = initialClientsData, action ) {

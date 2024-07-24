@@ -1,0 +1,151 @@
+// Rules in this file inspired by:
+// client/components/jetpack/profile-dropdown/style.scss
+
+.a4a-sidebar__header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.a4a-sidebar__profile-dropdown {
+	position: relative;
+}
+
+.a4a-sidebar__profile-dropdown-button {
+	position: relative;
+	z-index: 1;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 12px;
+
+	height: 100%;
+
+	cursor: pointer;
+}
+
+.a4a-sidebar__profile-dropdown-button-label {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 4px;
+	color: var(--color-sidebar-text);
+}
+
+.a4a-sidebar__profile-dropdown-button-label-text {
+	max-width: 160px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: relative;
+}
+
+html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
+	box-shadow: inset 0 0 0 2px var(--color-primary-light);
+}
+
+.a4a-sidebar__profile-dropdown-menu {
+	// Required for older browsers
+	&[hidden] {
+		display: none;
+	}
+
+	position: absolute;
+	// 4px below the bottom of the icon
+	inset-block-start: calc(100% + 4px);
+
+	// Float the dropdown to the left on small screens,
+	// and to the right on larger screens
+	inset-inline-end: 0;
+	@include breakpoint-deprecated( ">660px" ) {
+		inset-inline-end: initial;
+	}
+
+	// The menu should render "on top" of the profile picture & site switcher
+	z-index: 20;
+
+	width: 220px;
+	margin: 0;
+	padding: 8px;
+
+	background: var(--color-surface);
+	border: 1px solid var(--color-accent-0);
+	border-radius: 4px;
+	box-shadow:
+		0 4px 6px rgba(var(--color-accent-100-rgb), 0.1),
+		0 1px 2px rgba(var(--color-accent-100-rgb), 0.1);
+	list-style-type: none;
+
+	@include a4a-font-body-md;
+}
+
+.a4a-sidebar__profile-dropdown.is-align-menu-up .a4a-sidebar__profile-dropdown-menu {
+	inset-block-start: calc(-100% + -48px);
+}
+
+
+.a4a-sidebar__profile-dropdown-menu-item {
+	padding: 1px 0;
+	border-radius: 4px;
+
+	&:hover,
+	&:focus {
+		background: var(--wp-components-color-accent);
+
+		a.button.is-borderless,
+		button.button.is-borderless {
+			color: var(--color-text-inverted);
+			fill: var(--color-text-inverted);
+		}
+	}
+
+	a,
+	a:visited,
+	a:hover,
+	a:focus {
+		display: block;
+		width: 100%;
+		height: 100%;
+
+		color: var(--color-sidebar-text);
+	}
+
+	.button {
+		width: 100%;
+		height: 100%;
+		text-align: start;
+	}
+
+	a,
+	.button {
+		&.is-borderless {
+			display: block;
+			padding-inline: 8px;
+		}
+	}
+
+	a svg.gridicon.gridicons-external {
+		width: 18px;
+		height: 18px;
+		top: 2px;
+	}
+}
+
+a.a4a-sidebar__external-link {
+	display: inline-flex;
+
+	&:hover,
+	&:focus {
+		display: inline-flex;
+	}
+
+	svg {
+		position: absolute;
+		inset-inline-end: 16px;
+	}
+}
+
+.a4a-sidebar__profile-dropdown-button-label svg {
+	fill: var(--color-sidebar-text);
+}

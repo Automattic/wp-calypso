@@ -8,15 +8,27 @@
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
 	"site_name": "Automattic Partner Portal",
+	"oauth_client_id": 102832,
 	"features": {
 		"a8c-for-hosts": true,
 		"always_use_logout_url": true,
 		"dev/auth-helper": true,
-		"dev/preferences-helper": true
+		"dev/preferences-helper": true,
+		"oauth": true
 	},
 	"enable_all_sections": false,
 	"sections": {
-		"a8c-for-hosts": true
+		"a8c-for-hosts": true,
+		"a8c-for-hosts-auth": true,
+		"a8c-for-hosts-wpcloud-signup": true,
+		"a8c-for-hosts-wpcloud-overview": true,
+		"a8c-for-hosts-wpcloud-inventory": true,
+		"a8c-for-hosts-wpcloud-field-guide": true,
+		"a8c-for-hosts-wpcloud-api-documentation": true,
+		"a8c-for-hosts-wpcloud-api-access": true,
+		"a8c-for-hosts-wpcloud-insights": true,
+		"a8c-for-hosts-wpcloud-billing": true,
+		"a8c-for-hosts-wpcloud-support": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

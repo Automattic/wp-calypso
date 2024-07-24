@@ -13,6 +13,7 @@ import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
 import { ProviderWrappedLayout } from 'calypso/controller';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import isA8CForHosts from 'calypso/lib/a8c-for-hosts/is-a8c-for-hosts';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { tracksEvents } from 'calypso/lib/analytics/tracks';
@@ -135,7 +136,9 @@ function saveOauthFlags() {
 
 function authorizePath() {
 	const redirectUri = new URL(
-		isJetpackCloud() || isA8CForAgencies() ? '/connect/oauth/token' : '/api/oauth/token',
+		isJetpackCloud() || isA8CForAgencies() || isA8CForHosts()
+			? '/connect/oauth/token'
+			: '/api/oauth/token',
 		window.location
 	);
 	redirectUri.search = new URLSearchParams( {

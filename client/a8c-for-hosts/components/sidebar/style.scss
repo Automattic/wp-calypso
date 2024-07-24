@@ -1,0 +1,62 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+// This file is meant to house style rules that all implementations of the base
+// sidebar will implement by default.
+.a4a-sidebar {
+	--color-sidebar-background: var(--color-primary-100);
+	--color-sidebar-menu-hover-background: var(--color-primary-80);
+	--color-sidebar-menu-hover-text: var(--color-text-inverted);
+	--color-sidebar-menu-selected-background: var(--color-primary-80);
+	--color-sidebar-menu-selected-text: var(--color-text-inverted);
+	--color-sidebar-text: var(--color-text-inverted);
+	--color-sidebar-text-alternative: var(--color-primary-5);
+	--color-sidebar-gridicon-fill: var(--color-primary-5);
+
+	.a4a-sidebar__site-selector {
+		background-color: var(--color-sidebar-background);
+	}
+
+	.sidebar__menu-icon {
+		margin: 0;
+	}
+}
+
+.a4a-sidebar__header {
+	display: flex;
+	align-items: center;
+	padding: 16px 8px;
+	gap: 12px;
+	min-height: 48px;
+
+	.all-sites:hover {
+		background-color: unset;
+	}
+
+	.all-sites .all-sites__content,
+	.site .site__content {
+		padding: initial;
+		align-items: center;
+
+		cursor: pointer;
+
+		.all-sites__icon-container,
+		.site-icon {
+			border-radius: 2px;
+			margin-inline-end: 12px;
+		}
+	}
+
+	.site__domain {
+		display: none;
+	}
+
+	.site__title {
+		font-weight: 500;
+	}
+}
+
+.a4a-sidebar__footer ul {
+	list-style: none;
+	margin: 0;
+}
