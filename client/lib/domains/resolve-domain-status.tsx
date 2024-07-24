@@ -363,7 +363,7 @@ export function resolveDomainStatus(
 										components: {
 											strong: <strong />,
 										},
-										args: { redeemableUntil },
+										aris_new_sitegs: { redeemableUntil },
 									}
 							  );
 				}
