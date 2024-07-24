@@ -31,7 +31,7 @@ interface Props {
 }
 
 export const MigrationError = ( props: Props ) => {
-	const { setShowHelpCenter, setInitialRoute, resetStore } =
+	const { setShowHelpCenter, setNavigateToRoute, resetStore } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
 	const {
 		sourceSiteUrl,
@@ -69,7 +69,7 @@ export const MigrationError = ( props: Props ) => {
 				},
 			} );
 		} else {
-			setInitialRoute( '/contact-form?mode=CHAT' );
+			setNavigateToRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );
 		}
 	}, [
@@ -80,7 +80,7 @@ export const MigrationError = ( props: Props ) => {
 		isMessagingAvailable,
 		targetSiteID,
 		canConnectToZendeskMessaging,
-		setInitialRoute,
+		setNavigateToRoute,
 		setShowHelpCenter,
 	] );
 

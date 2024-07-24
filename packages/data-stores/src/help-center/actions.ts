@@ -36,16 +36,16 @@ export function* setHasSeenWhatsNewModal( value: boolean ) {
 	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
 }
 
+export const setNavigateToRoute = ( route?: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
+		route,
+	} ) as const;
+
 export const setUnreadCount = ( count: number ) =>
 	( {
 		type: 'HELP_CENTER_SET_UNREAD_COUNT',
 		count,
-	} ) as const;
-
-export const setInitialRoute = ( route?: string ) =>
-	( {
-		type: 'HELP_CENTER_SET_INITIAL_ROUTE',
-		route,
 	} ) as const;
 
 export const setIsMinimized = ( minimized: boolean ) =>
@@ -68,7 +68,7 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 
 export const setShowHelpCenter = function* ( show: boolean ) {
 	if ( ! show ) {
-		yield setInitialRoute( undefined );
+		yield setNavigateToRoute( undefined );
 	} else {
 		yield setShowMessagingWidget( false );
 	}
@@ -124,9 +124,10 @@ export const setShowSupportDoc = function* ( link: string, postId: number, blogI
 		...( blogId && { blogId: String( blogId ) } ), // Conditionally add blogId if it exists, the default is support blog
 		cacheBuster: String( Date.now() ),
 	} );
-	yield setInitialRoute( `/post/?${ params }` );
-	yield setIsMinimized( false );
+
+	yield setNavigateToRoute( `/post/?${ params }` );
 	yield setShowHelpCenter( true );
+	yield setIsMinimized( false );
 };
 
 export type HelpCenterAction =
@@ -141,6 +142,6 @@ export type HelpCenterAction =
 			| typeof setUserDeclaredSiteUrl
 			| typeof setUnreadCount
 			| typeof setIsMinimized
-			| typeof setInitialRoute
+			| typeof setNavigateToRoute
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;
