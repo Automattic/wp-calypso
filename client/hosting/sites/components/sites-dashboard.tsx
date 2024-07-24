@@ -155,7 +155,7 @@ const SitesDashboard = ( {
 		initialSiteFeature,
 		dataViewsState,
 		featureToRouteMap: FEATURE_TO_ROUTE_MAP,
-		queryParamKeys: [ 'page', 'per-page', 'status', 'search', 'type' ],
+		queryParamKeys: [ 'page', 'per-page', 'status', 'search', 'siteType' ],
 	} );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
