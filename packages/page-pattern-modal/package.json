@@ -27,7 +27,6 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@wordpress/block-editor": "^13.2.0",
 		"@wordpress/blocks": "^13.2.0",
