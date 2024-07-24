@@ -9,15 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-        STATUS=$(curl -s https://public-api.wordpress.com/rest/v1.1/internal/calypso-slack-channel --header "Authorization: ${{ secrets.CALYPSO_CHANNEL_STATUS_API_SECRET }}")
-        if [ "$STATUS" = "GREEN" ]; then
-          echo "Calypso Slack channel is green."
-          exit 0
-        elif [ "$STATUS" = "RED" ]; then
-          echo "Calypso Slack channel is red."
-          exit 1
-        else
-          echo "Calypso Slack channel status is unknown."
-          exit 1
-        fi
-      shell: bash
+          STATUS=$(curl -s https://public-api.wordpress.com/rest/v1.1/internal/calypso-slack-channel --header "Authorization: ${{ secrets.CALYPSO_CHANNEL_STATUS_API_SECRET }}")
+          if [ "$STATUS" = "GREEN" ]; then
+            echo "Calypso Slack channel is green."
+            exit 0
+          elif [ "$STATUS" = "RED" ]; then
+            echo "Calypso Slack channel is red."
+            exit 1
+          else
+            echo "Calypso Slack channel status is unknown."
+            exit 1
+          fi
+        shell: bash
