@@ -28,35 +28,28 @@ export class TranslatorInvite extends Component {
 	recordClick = () =>
 		this.props.recordTracksEvent( 'calypso_translator_invitation', {
 			language: this.props.localizedLanguageNames[ this.props.locale ].en,
+			location: this.props.path,
 		} );
 
 	renderNoticeLabelText() {
 		const { locale, localizedLanguageNames, translate } = this.props;
-
 		if ( localizedLanguageNames && localizedLanguageNames[ locale ] ) {
 			return (
-				<div className="translator-invite__content">
+				<>
 					<MaterialIcon icon="emoji_language" /> <br />
-					<h2>{ translate( 'Translate WordPress.com' ) }</h2>
-					{ translate(
-						'Would you like to help us translate WordPress.com into {{a}}%(language)s{{/a}}?',
+					<h2 className="card-heading card-heading-20">
+						{ translate( 'Translate WordPress.com' ) }
+					</h2>
+					<div className="language-picker__modal-incomplete-locale-notice-info">
 						{
-							args: { language: localizedLanguageNames[ locale ].localized },
-							comment:
-								'The language variable can be any major spoken language that WordPress.com supports',
-							components: {
-								a: (
-									<a
-										href={ `https://translate.wordpress.com/projects/wpcom/${ locale }/default/` }
-										onClick={ this.recordClick }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</div>
+							/* translators: %(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%. */
+							// sprintf( __( '%(languageName)s is only %(percentTranslated)d%% translated' ), {
+							// 	languageName,
+							// 	percentTranslated,
+							// } )
+						 }
+					</div>
+				</>
 			);
 		}
 
