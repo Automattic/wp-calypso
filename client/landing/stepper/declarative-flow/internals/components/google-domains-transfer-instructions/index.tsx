@@ -79,7 +79,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 						{ /* eslint-disable jsx-a11y/media-has-caption */ }
 						<video autoPlay loop width={ 1188 } height={ 720 } style={ { aspectRatio: '1.65' } }>
 							<source
-								src="https://videos.files.wordpress.com/alp24Xtk/unlock-domain-instructions-squarespace_mov_hd.mp4"
+								src="https://videos.files.wordpress.com/3QODom8G/step-03-squarespace_mov_hd.mp4"
 								type="video/mp4"
 							/>
 						</video>
@@ -100,7 +100,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 							style={ { aspectRatio: '1.64444444' } }
 						>
 							<source
-								src="https://videos.files.wordpress.com/dZY2deS5/step-04-720p.mp4"
+								src="https://videos.files.wordpress.com/4CMqAGDh/step-04-squarespace_mov_hd.mp4"
 								type="video/mp4"
 							/>
 							<track />
