@@ -1,7 +1,5 @@
-import { useSelector } from 'calypso/state';
-import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
-import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors/get-site-plan-raw-price';
-import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
+import { Plans } from '@automattic/data-stores';
+import useCheckPlanAvailabilityForPurchase from './use-check-plan-availability-for-purchase';
 import type { PlanSlug } from '@automattic/calypso-products';
 
 interface Props {
@@ -15,30 +13,37 @@ interface Props {
  * @returns {number} The maximum amount of credits possible for a given set of plans
  */
 export function useMaxPlanUpgradeCredits( { siteId, plans }: Props ): number {
-	const plansDetails = useSelector( ( state ) =>
-		plans.map( ( planName ) => ( {
-			isPlanAvailableForPurchase: isPlanAvailableForPurchase( state, siteId ?? 0, planName ),
-			planDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId ?? 0, planName ),
-			sitePlanRawPrice: getSitePlanRawPrice( state, siteId ?? 0, planName ),
-		} ) )
-	);
+	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
+		planSlugs: plans,
+		siteId,
+	} );
+	const pricing = Plans.usePricingMetaForGridPlans( {
+		siteId,
+		planSlugs: plans,
+		storageAddOns: null,
+		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+		withProratedDiscounts: true,
+	} );
 
-	if ( ! siteId ) {
+	if ( ! siteId || ! pricing ) {
 		return 0;
 	}
 
-	const creditsPerPlan = plansDetails.map(
-		( { isPlanAvailableForPurchase, planDiscountedRawPrice, sitePlanRawPrice } ) => {
-			if ( ! isPlanAvailableForPurchase ) {
-				return 0;
-			}
-			if ( typeof planDiscountedRawPrice !== 'number' || typeof sitePlanRawPrice !== 'number' ) {
-				return 0;
-			}
+	const creditsPerPlan = plans.map( ( planSlug ) => {
+		const discountedPrice = pricing?.[ planSlug ]?.discountedPrice.full;
+		const originalPrice = pricing?.[ planSlug ]?.originalPrice.full;
 
-			return sitePlanRawPrice - planDiscountedRawPrice;
+		if (
+			! planAvailabilityForPurchase[ planSlug ] ||
+			typeof discountedPrice !== 'number' ||
+			typeof originalPrice !== 'number'
+		) {
+			return 0;
 		}
-	);
+
+		return discountedPrice - originalPrice;
+	} );
 
 	return Math.max( ...creditsPerPlan );
 }
