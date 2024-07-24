@@ -24,7 +24,9 @@ import {
 	AssertConditionResult,
 	AssertConditionState,
 	Flow,
+	Navigate,
 	ProvidedDependencies,
+	StepperStep,
 } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { GlobalStylesObject } from '@automattic/global-styles';
@@ -54,6 +56,11 @@ const readymadeTemplateFlow: Flow = {
 			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
+			{
+				slug: 'generateContent',
+				asyncComponent: () =>
+					import( './internals/steps-repository/readymade-template-generate-content' ),
+			},
 		] );
 	},
 
@@ -66,23 +73,10 @@ const readymadeTemplateFlow: Flow = {
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite, assembleSite } = useDispatch( SITE_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
-
 		const reduxDispatch = useReduxDispatch();
-
 		const selectedTheme = getAssemblerDesign().slug;
-
 		const { value: readymadeTemplateId } = useUrlQueryParam( 'readymadeTemplateId' );
 		const readymadeTemplate = useReadymadeTemplate( readymadeTemplateId );
-
-		const exitFlow = ( to: string ) => {
-			setPendingAction( () => {
-				return new Promise( () => {
-					window.location.assign( to );
-				} );
-			} );
-
-			return navigate( 'processing' );
-		};
 
 		const handleSelectSite = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const selectedSiteSlug = providedDependencies?.siteSlug as string;
@@ -95,7 +89,9 @@ const readymadeTemplateFlow: Flow = {
 				enableAssemblerThemeAndConfigureTemplates(
 					selectedTheme,
 					selectedSiteId,
+					selectedSiteSlug,
 					readymadeTemplate,
+					navigate,
 					assembleSite,
 					reduxDispatch
 				)
@@ -147,17 +143,7 @@ const readymadeTemplateFlow: Flow = {
 						return navigate( 'celebration-step' );
 					}
 
-					if ( providedDependencies?.goToCheckout ) {
-						// Do nothing and wait for checkout redirect
-						return;
-					}
-
-					const params = new URLSearchParams( {
-						canvas: 'edit',
-						assembler: '1',
-					} );
-
-					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
+					return;
 				}
 
 				case 'launchpad': {
@@ -244,7 +230,9 @@ const readymadeTemplateFlow: Flow = {
 function enableAssemblerThemeAndConfigureTemplates(
 	themeId: string,
 	siteId: number,
+	siteSlug: string,
 	readymadeTemplate: ReadymadeTemplate & { globalStyles: GlobalStylesObject },
+	navigate: Navigate< StepperStep[] >,
 	assembleSite: (
 		arg0: any,
 		arg1: string,
@@ -302,7 +290,7 @@ function enableAssemblerThemeAndConfigureTemplates(
 					siteSetupOption: 'readymade-template',
 				} )
 			)
-			.then( () => window.location.assign( `/site-editor/${ siteId }?canvas=edit&assembler=1` ) );
+			.then( () => navigate( `launchpad?siteSlug=${ siteSlug }` ) );
 }
 
 function useReadymadeTemplate( templateId: number, options: object = { enabled: true } ) {
