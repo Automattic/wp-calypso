@@ -44,7 +44,7 @@ const ThankYouFooterDetail = ( {
 		buttonOnClick?.();
 	};
 
-	if ( buttonText && ( buttonHref || buttonOnClick || supportDoc || showHelpCenterOnClick) ) {
+	if ( buttonText && ( buttonHref || buttonOnClick || supportDoc || showHelpCenterOnClick ) ) {
 		const isExternal = buttonHref && isOutsideCalypso( buttonHref );
 		button = (
 			<Button
