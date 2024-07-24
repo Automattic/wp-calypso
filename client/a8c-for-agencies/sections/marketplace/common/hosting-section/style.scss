@@ -1,0 +1,40 @@
+.hosting-section-wrapper {
+	margin-inline: 0;
+
+	> * {
+		padding-inline: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			max-width: 1500px;
+			margin-inline: auto !important;
+			padding-inline: 64px;
+		}
+	}
+}
+
+.hosting-section__sub-header {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+}
+
+.hosting-section__sub-header-title {
+	@include a4a-font-body-md;
+}
+
+
+.hosting-section__header {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-block-end: 32px;
+}
+
+.hosting-section__header-title {
+	@include a4a-font-heading-xxl;
+}
+
+.hosting-section__header-description {
+	@include a4a-font-body-lg;
+	margin: 0;
+}
