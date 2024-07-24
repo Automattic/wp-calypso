@@ -49,7 +49,7 @@ import {
 import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
-import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
+import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination, addDummyDataViewPrefix } from './sites-dataviews/utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -101,13 +101,18 @@ const SitesDashboard = ( {
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
-		( site ) => ! site.options?.is_domain_only
+		( site ) => ! site.options?.is_domain_only,
+		'all',
+		[],
+		[ 'theme_slug' ]
 	);
 
 	const hasEnTranslation = useHasEnTranslation();
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
+
+	const siteStatusGroups = useSiteStatusGroups();
 
 	// Create the DataViews state based on initial values
 	const defaultDataViewsState = {
@@ -173,7 +178,7 @@ const SitesDashboard = ( {
 		const statusNumber = statusFilter?.value || 1;
 		return ( siteStatusGroups.find( ( status ) => status.value === statusNumber )?.slug ||
 			'all' ) as GroupableSiteLaunchStatuses;
-	}, [ dataViewsState.filters ] );
+	}, [ dataViewsState.filters, siteStatusGroups ] );
 
 	// Filter sites list by status group.
 	const { currentStatusGroup } = useSitesListGrouping( allSites, {

@@ -8,7 +8,7 @@ import ImgStyle from './images/style.svg';
 
 import './style.scss';
 
-export function PatternsCopyPasteInfo( { theme }: { theme?: 'dark' } ) {
+export function PatternsCopyPasteInfo( { theme }: { theme?: 'dark' | 'gray' } ) {
 	const translate = useTranslate();
 	return (
 		<PatternsSection

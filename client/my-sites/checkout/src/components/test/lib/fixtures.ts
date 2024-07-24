@@ -286,18 +286,12 @@ export const storeData = () => ( {
 				data: [
 					{
 						autoRenew: false,
-						canStartTrial: false,
 						currentPlan: false,
 						currencyCode: 'USD',
-						discountReason: null,
-						formattedDiscount: '$0',
-						formattedOriginalPrice: '$0',
-						formattedPrice: '$0',
 						freeTrial: false,
 						hasDomainCredit: false,
 						id: null,
 						interval: -1,
-						isDomainUpgrade: false,
 						productName: 'WordPress.com Free',
 						productSlug: 'free_plan',
 						rawDiscount: 0,

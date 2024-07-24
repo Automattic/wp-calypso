@@ -55,7 +55,6 @@ const getEmailSubscriptionFlow = () => {
 						'mailing_list',
 						'from',
 						'first_name',
-						'last_name',
 					],
 					hideProgressIndicator: true,
 				},

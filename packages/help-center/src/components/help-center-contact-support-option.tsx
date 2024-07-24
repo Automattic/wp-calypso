@@ -77,6 +77,7 @@ const HelpCenterContactSupportOption = ( {
 		const zendeskWidgetProps = {
 			aiChatId: escapedWapuuChatId,
 			siteUrl: site?.URL,
+			siteId: site?.ID,
 			onError: () => setHasSubmittingError( true ),
 			onSuccess: () => {
 				resetStore();

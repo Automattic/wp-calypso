@@ -28,6 +28,6 @@ export function useSupportStatus( enabled = true ) {
 		enabled,
 		refetchOnWindowFocus: false,
 		placeholderData: keepPreviousData,
-		staleTime: 120 * 1000, // 2 mins. It has to be short, because the user can change the plan to access support.
+		staleTime: 100, // 100  ms, just to prevent refreshing the data on every render.
 	} );
 }

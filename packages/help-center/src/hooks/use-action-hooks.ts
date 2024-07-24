@@ -5,15 +5,18 @@ import { useEffect } from '@wordpress/element';
 /**
  * Add your conditions here to open the Help Center automatically when they're met.
  */
-const useActionHooks = () => {
-	const { setShowHelpCenter, setShowSupportDoc } = useDispatch( 'automattic/help-center' );
+export const useActionHooks = () => {
+	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute } =
+		useDispatch( 'automattic/help-center' );
+	const queryParams = new URLSearchParams( window.location.search );
 
 	const actionHooks = [
+		/**
+		 * Open to the support doc for the Subscribe block.
+		 */
 		{
 			condition() {
-				return (
-					new URLSearchParams( window.location.search ).get( 'help-center' ) === 'subscribe-block'
-				);
+				return queryParams.get( 'help-center' ) === 'subscribe-block';
 			},
 			action() {
 				setShowHelpCenter( true );
@@ -21,6 +24,18 @@ const useActionHooks = () => {
 					localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/' ),
 					170164 // post id of subscribe block support doc page
 				);
+			},
+		},
+		/**
+		 * Open to Wapuu chat.
+		 */
+		{
+			condition() {
+				return queryParams.get( 'help-center' ) === 'wapuu';
+			},
+			action() {
+				setNavigateToRoute( '/odie' );
+				setShowHelpCenter( true );
 			},
 		},
 	];
@@ -38,5 +53,3 @@ const useActionHooks = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 };
-
-export default useActionHooks;

@@ -39,7 +39,7 @@ type Props = {
 function SupportLink( { children }: { children?: JSX.Element } ) {
 	const translate = useTranslate();
 	// Create URLSearchParams for send feedback by email command
-	const { setInitialRoute, setShowHelpCenter, setSubject } =
+	const { setNavigateToRoute, setShowHelpCenter, setSubject } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const emailUrl = `/contact-form?${ new URLSearchParams( {
@@ -53,7 +53,7 @@ function SupportLink( { children }: { children?: JSX.Element } ) {
 			variant="link"
 			className="difm-lite-in-progress__help-button"
 			onClick={ () => {
-				setInitialRoute( emailUrl );
+				setNavigateToRoute( emailUrl );
 				setSubject( translate( 'I have a question about my project' ) );
 				setShowHelpCenter( true );
 			} }

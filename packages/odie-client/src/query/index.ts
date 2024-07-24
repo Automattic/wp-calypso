@@ -97,6 +97,12 @@ export const useOdieSendMessage = (): UseMutationResult<
 		__i18n_text_domain__
 	);
 
+	/* translators: Error message when Wapuu user's exceed free messages limit */
+	const wapuuRateLimitMessage = __(
+		"Hi there! You've hit your AI usage limit. Upgrade your plan for unlimited Wapuu support! You can still get user support using the buttons below.",
+		__i18n_text_domain__
+	);
+
 	return useMutation<
 		{ chat_id: string; messages: Message[] },
 		unknown,
@@ -200,13 +206,17 @@ export const useOdieSendMessage = (): UseMutationResult<
 		onSettled: () => {
 			setIsLoading( false );
 		},
-		onError: ( _, __, context ) => {
+		onError: ( response, __, context ) => {
 			if ( ! context ) {
 				throw new Error( 'Context is undefined' );
 			}
+
+			const { data } = response as { data: { status: number } };
+			const isRateLimitError = data.status === 429;
+
 			const { internal_message_id } = context;
 			const message = {
-				content: wapuuErrorMessage,
+				content: isRateLimitError ? wapuuRateLimitMessage : wapuuErrorMessage,
 				internal_message_id,
 				role: 'bot',
 				type: 'error',

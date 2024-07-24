@@ -109,7 +109,7 @@ function useDowngradeHandler( {
 	siteSlug: string | null | undefined;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
-	const { setShowHelpCenter, setInitialRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
 	const translate = useTranslate();
 	return useCallback(
 		( planSlug: PlanSlug ) => {
@@ -129,10 +129,17 @@ function useDowngradeHandler( {
 				'skip-resources': 'true',
 			} ).toString() }`;
 			setMessage( translate( 'I want to downgrade my plan.' ) );
-			setInitialRoute( chatUrl );
+			setNavigateToRoute( chatUrl );
 			setShowHelpCenter( true );
 		},
-		[ currentPlan?.purchaseId, setInitialRoute, setMessage, setShowHelpCenter, siteSlug, translate ]
+		[
+			currentPlan?.purchaseId,
+			setNavigateToRoute,
+			setMessage,
+			setShowHelpCenter,
+			siteSlug,
+			translate,
+		]
 	);
 }
 

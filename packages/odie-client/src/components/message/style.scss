@@ -35,6 +35,22 @@
 	}
 }
 
+.odie-button-link {
+	background: none;
+	border: none;
+	color: var(--color-link);
+	text-decoration: underline;
+	cursor: pointer;
+	padding: 0;
+	font-family: inherit;
+	font-size: inherit;
+}
+
+.odie-button-link:hover {
+	text-decoration: none;
+	color: var(--color-link-dark);
+}
+
 .odie-sources-foldable-card {
 	overflow-x: hidden !important;
 }
@@ -114,7 +130,6 @@
 	background-color: rgba(0, 0, 0, 0.1);
 
 	.odie-fullscreen-backdrop {
-
 		.odie-chatbox-message {
 			box-shadow: 0 0 0 1px var(--color-border-subtle);
 			width: auto;
@@ -265,7 +280,9 @@ $custom-border-corner-size: 16px;
 	&.is-hidden {
 		opacity: 0;
 		bottom: 0 !important;
-		transition: opacity 0.3s ease, bottom 0.3s ease;
+		transition:
+			opacity 0.3s ease,
+			bottom 0.3s ease;
 
 		.odie-jump-to-recent-message-button {
 			pointer-events: none;
@@ -275,7 +292,9 @@ $custom-border-corner-size: 16px;
 	&.is-visible {
 		opacity: 1;
 		bottom: 24px;
-		transition: opacity 0.3s ease 0.3s, bottom 0.3s ease 0.3s;
+		transition:
+			opacity 0.3s ease 0.3s,
+			bottom 0.3s ease 0.3s;
 	}
 
 	.odie-jump-to-recent-message-button {
@@ -380,7 +399,6 @@ $custom-border-corner-size: 16px;
 		opacity: 0;
 	}
 
-
 	.odie-thanks-in {
 		animation: thanks-in-animation 0.3s ease-out both;
 	}
@@ -428,7 +446,6 @@ $custom-border-corner-size: 16px;
 }
 
 .odie-chatbox-message-sources-container {
-
 	.foldable-card {
 		margin: 0 !important;
 		width: 100% !important;

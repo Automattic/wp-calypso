@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	Badge,
 	BloombergLogo,
@@ -250,14 +249,10 @@ export default function HostingCard( {
 				{ exploreButton }
 			</div>
 
-			{ isEnabled( 'a8c-for-agencies/wpcom-creator-plan-purchase-flow' ) && (
-				<>
-					{ features.length > 0 && (
-						<div className="hosting-card__section hosting-card__feature-section">
-							<SimpleList items={ features } />
-						</div>
-					) }
-				</>
+			{ features.length > 0 && (
+				<div className="hosting-card__section hosting-card__feature-section">
+					<SimpleList items={ features } />
+				</div>
 			) }
 
 			<div className="hosting-card__footer">

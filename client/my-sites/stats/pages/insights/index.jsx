@@ -15,6 +15,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import AllTimeHighlightsSection from '../../all-time-highlights-section';
 import AllTimeViewsSection from '../../all-time-views-section';
 import AnnualHighlightsSection from '../../annual-highlights-section';
+import StatsModuleComments from '../../features/modules/stats-comments';
 import StatsModuleTags from '../../features/modules/stats-tags';
 import PostingActivity from '../../post-trends';
 import Comments from '../../stats-comments';
@@ -95,13 +96,24 @@ const StatsInsights = ( props ) => {
 							) }
 						/>
 					) }
-					<Comments
-						path="comments"
-						className={ clsx(
-							'stats__flexible-grid-item--half',
-							'stats__flexible-grid-item--full--large'
-						) }
-					/>
+					{ isEmptyStateV2 && (
+						<StatsModuleComments
+							className={ clsx(
+								'stats__flexible-grid-item--half',
+								'stats__flexible-grid-item--full--large'
+							) }
+						/>
+					) }
+
+					{ ! isEmptyStateV2 && (
+						<Comments
+							path="comments"
+							className={ clsx(
+								'stats__flexible-grid-item--half',
+								'stats__flexible-grid-item--full--large'
+							) }
+						/>
+					) }
 
 					{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
 					{ ! isJetpack && (

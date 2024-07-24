@@ -126,7 +126,7 @@ export type Flow = {
 		 * A custom login path to use instead of the default login path.
 		 */
 		customLoginPath?: string;
-		extraQueryParams: Record< string, string | number >;
+		extraQueryParams?: Record< string, string | number >;
 	};
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
