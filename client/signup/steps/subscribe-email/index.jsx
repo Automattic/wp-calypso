@@ -67,7 +67,7 @@ function SubscribeEmailStep( props ) {
 		? addQueryArgs( window.location.href, { user_email: currentUser?.email } )
 		: '';
 
-	const { mutate: subscribeToMailingList, isPending: isSubscribeToMailingListPending } =
+	const { mutateAsync: subscribeToMailingList, isPending: isSubscribeToMailingListPending } =
 		useSubscribeToMailingList( {
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_signup_email_subscription_success', {
@@ -114,9 +114,9 @@ function SubscribeEmailStep( props ) {
 				await handleSubscribeToMailingList();
 				props.redirectToLogout( redirectUrl );
 			},
-			onError: ( error ) => {
+			onError: async ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
-					handleSubscribeToMailingList();
+					await handleSubscribeToMailingList();
 					props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
 					goToNextStep();
 				}
@@ -154,7 +154,7 @@ function SubscribeEmailStep( props ) {
 			props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
 			goToNextStep();
 		}
-	}, [] );
+	}, [ email ] );
 
 	return (
 		<div className="subscribe-email">
@@ -173,16 +173,16 @@ function SubscribeEmailStep( props ) {
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 						redirectUrl={ redirectUrl }
 						subscribeToMailingList={ subscribeToMailingList }
-						handleCreateAccountError={ ( error, submittedEmail ) => {
+						handleCreateAccountError={ async ( error, submittedEmail ) => {
 							if ( isExistingAccountError( error.error ) ) {
-								handleSubscribeToMailingList( { email_address: submittedEmail } );
+								await handleSubscribeToMailingList( { email_address: submittedEmail } );
 								props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
 								goToNextStep();
 							}
 						} }
-						handleCreateAccountSuccess={ ( userData ) => {
+						handleCreateAccountSuccess={ async ( userData ) => {
 							handlerecordRegistration( userData );
-							handleSubscribeToMailingList( { email_address: userData.email } );
+							await handleSubscribeToMailingList( { email_address: userData.email } );
 							props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
 							goToNextStep();
 						} }
