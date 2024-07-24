@@ -17,7 +17,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
 	const step2Text = __(
-		'Click on the name of the domain that you\'d like to transfer in the "My domains" section.'
+		'Click on the name of the domain that you\'d like to transfer in the "Domains" section.'
 	);
 
 	return (
@@ -41,10 +41,10 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 					<details open={ 1 === focusedStep }>
 						<summary>
 							{ createInterpolateElement(
-								__( 'Step 1: Visit your <a>Google Domains dashboard</a>' ),
+								__( 'Step 1: Visit your <a>Squarespace domains dashboard</a>' ),
 								{
 									a: createElement( 'a', {
-										href: 'https://domains.google.com/registrar/',
+										href: 'https://account.squarespace.com/domains/',
 										target: '_blank',
 										rel: 'noreferrer',
 									} ),
@@ -53,7 +53,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 						</summary>
 						<p>
 							{ __(
-								'Log in to your Google Domains dashboard to see a list of all of your registered domains.'
+								'Log in to your Squarespace domains dashboard to see a list of all of your registered domains.'
 							) }
 						</p>
 					</details>
@@ -73,7 +73,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 						<summary>{ __( 'Step 3: Unlock domain' ) }</summary>
 						<p>
 							{ __(
-								'In the "Registration settings" section, ensure that your domain is unlocked.'
+								"Once you've opened your domain's settings, ensure that your domain is unlocked."
 							) }
 						</p>
 						{ /* eslint-disable jsx-a11y/media-has-caption */ }
@@ -88,7 +88,7 @@ const GoogleDomainsModal: React.FC< Props > = ( { children, className, focusedSt
 						<summary>{ __( 'Step 4: Get auth code' ) }</summary>
 						<p>
 							{ __(
-								'Click "Get auth code" and then copy the code that is shown to your clipboard.'
+								"Request your transfer code. You'll find this at the bottom of your domain's settings page. Squarespace will email you the code (may take several hours) for you to copy to your clipboard."
 							) }
 						</p>
 						{ /* eslint-disable jsx-a11y/media-has-caption */ }
