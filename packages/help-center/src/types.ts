@@ -11,15 +11,18 @@ export interface Container {
 	openingCoordinates?: ReturnType< typeof useOpeningCoordinates >;
 }
 
+export interface PostObject {
+	content: string;
+	title: string;
+	URL: string;
+	ID: number;
+	site_ID: number;
+	slug: string;
+}
+
 export interface ArticleContentProps {
-	content: string | undefined;
-	title: string | undefined;
-	link: string | undefined;
+	post?: PostObject;
 	isLoading?: boolean;
-	postId: number;
-	blogId?: string | null;
-	slug?: string;
-	articleUrl?: string | null | undefined;
 }
 
 export interface Header {

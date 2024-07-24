@@ -6,17 +6,7 @@ import { SupportArticleHeader } from './help-center-support-article-header';
 import Placeholders from './placeholder-lines';
 import './help-center-article-content.scss';
 
-const ArticleContent = ( {
-	content = '',
-	title = '',
-	link = '',
-	postId,
-	blogId,
-	isLoading = false,
-	slug,
-	articleUrl,
-}: ArticleContentProps ) => {
-	const post = { title, link };
+const ArticleContent = ( { isLoading = false, post }: ArticleContentProps ) => {
 	return (
 		<article className="help-center-article-content">
 			{ isLoading || ! post ? (
@@ -28,13 +18,13 @@ const ArticleContent = ( {
 						<div
 							className="help-center-article-content__main"
 							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ { __html: content } }
+							dangerouslySetInnerHTML={ { __html: post.content } }
 						/>
 						<HelpCenterFeedbackForm
-							postId={ postId }
-							blogId={ blogId }
-							slug={ slug }
-							articleUrl={ articleUrl }
+							postId={ post.ID }
+							blogId={ post.site_ID }
+							slug={ post.slug }
+							articleUrl={ post.URL }
 						/>
 					</EmbedContainer>
 				</>
