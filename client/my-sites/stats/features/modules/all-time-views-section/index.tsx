@@ -11,21 +11,21 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import EmptyModuleCard from 'calypso/my-sites/stats/components/empty-module-card/empty-module-card';
+import { STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS } from 'calypso/my-sites/stats/constants';
 import {
 	StatsEmptyActionAI,
 	StatsEmptyActionSocial,
 } from 'calypso/my-sites/stats/features/modules/shared';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
+import StatsHeatMapLegend from 'calypso/my-sites/stats/stats-heap-map/legend';
+import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import Months from 'calypso/my-sites/stats/stats-views/months';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsViewSummary,
 } from 'calypso/state/stats/lists/selectors';
-import { STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS } from '../constants';
-import { useShouldGateStats } from '../hooks/use-should-gate-stats';
-import StatsCardUpsell from '../stats-card-upsell';
-import StatsHeatMapLegend from '../stats-heap-map/legend';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import Months from '../stats-views/months';
 import type { StatsStateProps } from 'calypso/my-sites/stats/features/modules/types';
 
 import './style.scss';
