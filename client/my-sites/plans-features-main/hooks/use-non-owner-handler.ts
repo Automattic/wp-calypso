@@ -16,7 +16,7 @@ export function useNonOwnerHandler( {
 	siteId?: number | null;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
-	const { setShowHelpCenter, setInitialRoute, setOdieBotNameSlug, setOdieInitialPromptText } =
+	const { setShowHelpCenter, setNavigateToRoute, setOdieBotNameSlug, setOdieInitialPromptText } =
 		useDispatch( HELP_CENTER_STORE );
 	const translate = useTranslate();
 
@@ -53,7 +53,7 @@ export function useNonOwnerHandler( {
 					availableForPurchase: !! availableForPurchase,
 				} )
 			);
-			setInitialRoute( '/odie' );
+			setNavigateToRoute( '/odie' );
 			setShowHelpCenter( true );
 			return;
 		},
@@ -61,7 +61,7 @@ export function useNonOwnerHandler( {
 			currentPlan?.purchaseId,
 			purchasesQueryKeys,
 			queryClient,
-			setInitialRoute,
+			setNavigateToRoute,
 			setOdieBotNameSlug,
 			setOdieInitialPromptText,
 			setShowHelpCenter,
