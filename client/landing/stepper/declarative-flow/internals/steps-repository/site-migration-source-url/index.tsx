@@ -54,8 +54,6 @@ export const Analyzer: FC< Props > = ( { onComplete } ) => {
 	);
 };
 
-export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
-
 const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unknown > ) => {
 	return wpcom.req.post(
 		`/sites/${ siteSlug }/settings`,
@@ -68,14 +66,15 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 	);
 };
 
-const SiteMigrationIdentify: Step = function ( { navigation } ) {
+const SiteMigrationSourceUrl: Step = function ( { navigation } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 
 	const handleSubmit = useCallback(
-		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
+		async ( action: string, data?: { platform: string; from: string } ) => {
 			// If we have a site and URL, and we're coming from a WordPress site,
 			// record the migration source domain.
+			// @todo: should we include the source URL for sites that aren't WP-based?
 			if ( siteSlug && 'wordpress' === data?.platform && data?.from ) {
 				await saveSiteSettings( siteSlug, { migration_source_site_domain: data.from } );
 			}
@@ -92,16 +91,15 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 				stepName="site-migration-identify"
 				flowName="site-migration"
 				className="import__onboarding-page"
-				hideBack={ false }
+				hideBack
 				hideSkip
 				hideFormattedHeader
-				goBack={ navigation?.goBack }
 				goNext={ navigation?.submit }
 				isFullLayout
 				stepContent={
 					<Analyzer
 						onComplete={ ( { platform, url } ) =>
-							handleSubmit( 'continue', { platform, from: url } )
+							handleSubmit( 'skip_platform_identification', { platform, from: url } )
 						}
 					/>
 				}
@@ -111,4 +109,4 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 	);
 };
 
-export default SiteMigrationIdentify;
+export default SiteMigrationSourceUrl;
