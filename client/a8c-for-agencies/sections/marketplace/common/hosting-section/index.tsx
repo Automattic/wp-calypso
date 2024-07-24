@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import './style.scss';
+import { SectionBackground } from './backgrounds';
 
 type Props = {
 	children: ReactNode;
@@ -7,6 +8,7 @@ type Props = {
 	subheading?: string;
 	icon?: ReactNode;
 	description?: string;
+	background?: SectionBackground;
 };
 
 export default function HostingSection( {
@@ -15,9 +17,13 @@ export default function HostingSection( {
 	subheading,
 	description,
 	children,
+	background,
 }: Props ) {
 	return (
-		<div className="hosting-section-wrapper">
+		<div
+			className="hosting-section-wrapper"
+			style={ { backgroundColor: background?.color, backgroundImage: background?.image } }
+		>
 			<div className="hosting-section">
 				<div className="hosting-section__sub-header">
 					{ icon && <div className="hosting-section__icon">{ icon }</div> }
