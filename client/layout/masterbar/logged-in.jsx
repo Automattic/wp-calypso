@@ -291,6 +291,7 @@ class MasterbarLoggedIn extends Component {
 			siteSlug,
 			translate,
 			section,
+			sectionGroup,
 			currentRoute,
 			isFetchingPrefs,
 			hasDismissedAllSitesPopover,
@@ -325,7 +326,10 @@ class MasterbarLoggedIn extends Component {
 					<Popover
 						className="masterbar__all-sites-popover"
 						isVisible={
-							! isGlobalSidebarVisible && ! isFetchingPrefs && ! hasDismissedAllSitesPopover
+							sectionGroup === 'sites' &&
+							! isGlobalSidebarVisible &&
+							! isFetchingPrefs &&
+							! hasDismissedAllSitesPopover
 						}
 						context={ allSitesBtnRef }
 						position="bottom left"
@@ -339,7 +343,7 @@ class MasterbarLoggedIn extends Component {
 						</h1>
 						<p className="masterbar__all-sites-popover-description">
 							{ translate(
-								'Click on the WordPress.com logo to access your sites, domains, Reader, account settings, and more.'
+								'Click on the WordPress.com logo to access your sites, domains, account settings, and more.'
 							) }
 						</p>
 						<div className="masterbar__all-sites-popover-actions">
