@@ -10,6 +10,11 @@
 		&.reverse {
 			transform: rotate(180deg);
 		}
+
+		&.mobile {
+			margin-left: 0;
+			top: 2px;
+		}
 	}
 }
 .popover.site-selector-and-importer__popover {

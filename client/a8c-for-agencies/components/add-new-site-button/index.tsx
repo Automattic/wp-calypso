@@ -223,7 +223,10 @@ export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport, 
 			>
 				{ showMainButtonLabel ? mainButtonLabel : null }
 				<Gridicon
-					className={ clsx( { reverse: showMainButtonLabel && isMenuVisible } ) }
+					className={ clsx(
+						{ reverse: showMainButtonLabel && isMenuVisible },
+						{ mobile: ! showMainButtonLabel }
+					) }
 					icon={ showMainButtonLabel ? 'chevron-down' : 'plus' }
 				/>
 			</Button>
