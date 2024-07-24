@@ -57,16 +57,7 @@ function getRedirectUrl( redirect ) {
  * into a single step.
  */
 function SubscribeEmailStep( props ) {
-	const {
-		currentUser,
-		flowName,
-		goToNextStep,
-		queryArguments,
-		stepName,
-		translate,
-		fetchCurrentUser,
-		redirectToLogout,
-	} = props;
+	const { currentUser, flowName, goToNextStep, queryArguments, stepName, translate } = props;
 
 	const email = sanitizeEmail( queryArguments.user_email );
 
@@ -119,13 +110,15 @@ function SubscribeEmailStep( props ) {
 
 				handlerecordRegistration( userData );
 				wpcom.loadToken( response.bearer_token );
-				await fetchCurrentUser();
+				await props.fetchCurrentUser();
 				await handleSubscribeToMailingList();
-				redirectToLogout( redirectUrl );
+				props.redirectToLogout( redirectUrl );
 			},
 			onError: ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
 					handleSubscribeToMailingList();
+					props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
+					goToNextStep();
 				}
 			},
 		} );
@@ -158,6 +151,8 @@ function SubscribeEmailStep( props ) {
 			! isSubscribeToMailingListPending
 		) {
 			handleSubscribeToMailingList();
+			props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
+			goToNextStep();
 		}
 	}, [] );
 
@@ -181,11 +176,15 @@ function SubscribeEmailStep( props ) {
 						handleCreateAccountError={ ( error, submittedEmail ) => {
 							if ( isExistingAccountError( error.error ) ) {
 								handleSubscribeToMailingList( { email_address: submittedEmail } );
+								props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
+								goToNextStep();
 							}
 						} }
 						handleCreateAccountSuccess={ ( userData ) => {
 							handlerecordRegistration( userData );
 							handleSubscribeToMailingList( { email_address: userData.email } );
+							props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
+							goToNextStep();
 						} }
 					/>
 				}
