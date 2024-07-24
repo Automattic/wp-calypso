@@ -193,6 +193,16 @@ const ThreatItem: React.FC< Props > = ( {
 						{ translate( 'Ignore threat' ) }
 					</Button>
 				) }
+				{ threat.status === 'ignored' && (
+					<Button
+						scary
+						className="threat-item__ignore-button"
+						onClick={ onIgnoreThreat }
+						disabled={ isFixing }
+					>
+						{ translate( 'Unignore threat' ) }
+					</Button>
+				) }
 				{ ! threat.fixable && 'current' === threat.status && (
 					<ExternalLinkWithTracking
 						className="button is-primary threat-item__codeable-button"
