@@ -7,10 +7,10 @@ import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
-import { canAnySiteHaveP2 } from 'calypso/state/selectors/can-any-site-have-p2';
 import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import { hasSiteWithP2 } from 'calypso/state/selectors/has-site-with-p2';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -73,12 +73,12 @@ const useSiteMenuItems = () => {
 	const shouldShowAddOns = isEnabled( 'my-sites/add-ons' ) && ! isAtomic && ! isStagingSite;
 
 	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
-	const hasSiteWithP2 = useSelector( canAnySiteHaveP2 );
+	const showP2s = useSelector( hasSiteWithP2 );
 
 	const hasUnifiedImporter = isEnabled( 'importer/unified' );
 
 	if ( shouldShowGlobalSidebar ) {
-		return globalSidebarMenu( { showP2s: hasSiteWithP2 } );
+		return globalSidebarMenu( { showP2s: showP2s } );
 	}
 
 	/**

@@ -26,7 +26,7 @@ function getQueryParams( context: Context ) {
 }
 
 export function sanitizeQueryParameters( context: PageJSContext, next: () => void ) {
-	if ( context.pathname.includes( '/p2s' ) ) {
+	if ( context.pathname.startsWith( '/p2s' ) ) {
 		context.query.siteType = 'p2';
 	}
 	/**

@@ -12,7 +12,7 @@ import { MEDIA_QUERIES } from '../utils';
 import { SitesSearch } from './sites-search';
 import { SitesSortingDropdown } from './sites-sorting-dropdown';
 
-type SiteTypes = 'p2' | 'all';
+type SiteTypes = 'p2' | 'non-p2';
 
 export interface SitesDashboardQueryParams {
 	page?: number;

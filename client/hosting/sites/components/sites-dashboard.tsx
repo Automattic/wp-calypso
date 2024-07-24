@@ -30,6 +30,7 @@ import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { isP2Theme } from 'calypso/lib/site/utils';
 import {
 	SitesDashboardQueryParams,
 	handleQueryParamChange,
@@ -79,7 +80,7 @@ const siteSortingKeys = [
 
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_STATUS_GROUP = 'all';
-const DEFAULT_SITE_TYPE = 'all';
+const DEFAULT_SITE_TYPE = 'non-p2';
 
 const SitesDashboard = ( {
 	// Note - control params (eg. search, page, perPage, status...) are currently meant for
@@ -101,18 +102,30 @@ const SitesDashboard = ( {
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
-		return ! site.options?.is_domain_only;
-	};
+		const { options } = site || {};
 
-	const getFilterArgs = ( siteType: string ): string[] => {
-		if ( siteType === 'all' ) {
-			return [ 'non-p2' ];
+		// Early return if the site is domain-only
+		if ( options?.is_domain_only ) {
+			return false;
 		}
-		return [ 'p2' ];
+
+		// siteType is 'all' - filter out sites that are P2 sites
+		if ( siteType === DEFAULT_SITE_TYPE ) {
+			return (
+				! options?.is_wpforteams_site &&
+				( ! options?.theme_slug || ! isP2Theme( options.theme_slug ) )
+			);
+		}
+
+		// siteType is 'p2' - filter out sites that are not P2
+		return (
+			!! options?.is_wpforteams_site ||
+			!! ( options?.theme_slug && isP2Theme( options.theme_slug ) )
+		);
 	};
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
-		getFilterArgs( siteType ),
+		[],
 		sitesFilterCallback,
 		'all',
 		[],
