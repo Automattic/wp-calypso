@@ -1,8 +1,8 @@
 import { BlockRendererProvider, ReadymadeTemplateRenderer } from '@automattic/block-renderer';
-import { ReadymadeTemplatesSection } from 'calypso/my-sites/patterns/components/readymade-templates/section';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
 import { useRenderReadymadeTemplate } from 'calypso/my-sites/patterns/hooks/use-render-readymade-template';
-import { ReadymadeTemplate, ReadymadeTemplatesFC } from 'calypso/my-sites/patterns/types';
+import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
+import { ReadymadeTemplateDetails } from './index';
 
 const ReadymadeTemplatePreview = ( {
 	readymadeTemplate,
@@ -19,13 +19,15 @@ const ReadymadeTemplatePreview = ( {
 	);
 };
 
-export const ReadymadeTemplatesClient: ReadymadeTemplatesFC = ( { readymadeTemplates } ) => (
-	<BlockRendererProvider siteId={ RENDERER_SITE_ID }>
-		<ReadymadeTemplatesSection
-			readymadeTemplates={ readymadeTemplates }
-			renderPreview={ ( template: ReadymadeTemplate ) => (
-				<ReadymadeTemplatePreview readymadeTemplate={ template } />
-			) }
-		/>
-	</BlockRendererProvider>
-);
+export const ReadymadeTemplateDetailsClient = ( { id }: { id: number } ) => {
+	return (
+		<BlockRendererProvider siteId={ RENDERER_SITE_ID }>
+			<ReadymadeTemplateDetails
+				id={ id }
+				renderPreview={ ( template: ReadymadeTemplate ) => (
+					<ReadymadeTemplatePreview readymadeTemplate={ template } />
+				) }
+			/>
+		</BlockRendererProvider>
+	);
+};

@@ -8,7 +8,7 @@ import {
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
-import { ReadymadeTemplateDetails } from 'calypso/my-sites/patterns/components/readymade-template-details';
+import { ReadymadeTemplateDetailsServer } from 'calypso/my-sites/patterns/components/readymade-template-details/server';
 import { ReadymadeTemplatesServer } from 'calypso/my-sites/patterns/components/readymade-templates/server';
 import { PatternsContext } from 'calypso/my-sites/patterns/context';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
@@ -103,7 +103,7 @@ function renderReadymadeTemplateDetails( context: RouterContext, next: RouterNex
 
 	context.primary = (
 		<PatternsWrapper>
-			<ReadymadeTemplateDetails id={ parseInt( context.params.id ) } />
+			<ReadymadeTemplateDetailsServer id={ parseInt( context.params.id ) } />
 		</PatternsWrapper>
 	);
 
