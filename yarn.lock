@@ -1558,8 +1558,10 @@ __metadata:
   resolution: "@automattic/page-pattern-modal@workspace:packages/page-pattern-modal"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/typography": "workspace:^"
+    "@automattic/color-studio": "npm:2.6.0"
+    "@automattic/typography": "npm:1.0.0"
     "@testing-library/react": "npm:^15.0.7"
+    "@wordpress/base-styles": "npm:5.2.0"
     "@wordpress/block-editor": "npm:^13.2.0"
     "@wordpress/blocks": "npm:^13.2.0"
     "@wordpress/components": "npm:^28.2.0"
@@ -1903,7 +1905,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/typography@workspace:^, @automattic/typography@workspace:packages/typography":
+"@automattic/typography@npm:1.0.0, @automattic/typography@workspace:^, @automattic/typography@workspace:packages/typography":
   version: 0.0.0-use.local
   resolution: "@automattic/typography@workspace:packages/typography"
   dependencies:
