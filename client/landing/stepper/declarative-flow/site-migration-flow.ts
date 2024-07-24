@@ -32,6 +32,7 @@ const siteMigration: Flow = {
 	isSignupFlow: false,
 
 	useSteps() {
+		// We'll assume the user has no sites until we know otherwise.
 		const siteCount = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count ?? 0,
 			[]
