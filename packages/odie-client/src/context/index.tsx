@@ -138,7 +138,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ scrollToLastMessage, setScrollToLastMessage ] =
 		useState< ScrollToLastMessageType | null >( null );
 
-	const [ lastMessageInView, setLastMessageInView ] = useState( false );
+	const [ lastMessageInView, setLastMessageInView ] = useState( true );
 
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
 

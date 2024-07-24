@@ -14,7 +14,7 @@ export const OdieAssistant: React.FC = () => {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const { ref: secondToLastMessageRef, entry: secondToLastMessageEntry } = useInView( {
 		threshold: 0,
-		delay: 1000,
+		delay: 800,
 	} );
 
 	const target = useMemo( () => secondToLastMessageEntry?.target, [ secondToLastMessageEntry ] );

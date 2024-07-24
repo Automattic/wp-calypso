@@ -289,8 +289,8 @@ $custom-border-corner-size: 16px;
 		opacity: 0;
 		bottom: 0 !important;
 		transition:
-			opacity 0.3s ease 0.6s,
-			bottom 0.3s ease 0.6s;
+			opacity 0.3s ease 0.3s,
+			bottom 0.3s ease 0.3s;
 
 		.odie-jump-to-recent-message-button {
 			pointer-events: none;
@@ -301,8 +301,8 @@ $custom-border-corner-size: 16px;
 		opacity: 1;
 		bottom: 24px;
 		transition:
-			opacity 0.3s ease 1s,
-			bottom 0.3s ease 1s;
+			opacity 0.3s ease 1.2s,
+			bottom 0.3s ease 1.2s;
 	}
 
 	.odie-jump-to-recent-message-button {

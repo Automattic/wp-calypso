@@ -17,18 +17,16 @@ export const MessagesContainer = forwardRef(
 			return chat.messages.length >= 2 ? chat.messages.length - 2 : chat.messages.length - 1;
 		}, [ chat.messages ] );
 		const { setLastMessageInView } = useOdieAssistantContext();
-		const { inView: lastMessageEntryInView, ref: lastMessageWapuuRef } = useInView( {
+		const { inView: lastMessageInView, ref: lastMessageWapuuRef } = useInView( {
 			threshold: 0,
-			delay: 1000,
+			delay: 800,
 		} );
-
-		const lastMessageInView = useMemo( () => lastMessageEntryInView, [ lastMessageEntryInView ] );
 
 		useEffect( () => {
 			if ( setLastMessageInView ) {
-				setLastMessageInView( lastMessageInView );
+				setLastMessageInView( lastMessageInView || chat.messages.length < 2 );
 			}
-		}, [ lastMessageInView, setLastMessageInView ] );
+		}, [ chat.messages.length, lastMessageInView, setLastMessageInView ] );
 
 		const lastMessageIndex = chat.messages.length - 1;
 
