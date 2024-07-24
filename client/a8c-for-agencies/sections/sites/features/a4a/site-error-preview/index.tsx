@@ -63,7 +63,9 @@ export default function SiteErrorPreview( {
 	const isA4APluginInstalled = site.enabled_plugin_slugs?.includes( A4A_PLUGIN_SLUG );
 
 	const troubleshootingHref = isA4APluginInstalled
-		? localizeUrl( 'https://agencieshelp.automattic.com/knowledge-base/' )
+		? localizeUrl(
+				'https://agencieshelp.automattic.com/knowledge-base/fix-automattic-for-agencies-plugin-issues/'
+		  )
 		: localizeUrl(
 				'https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/'
 		  );
