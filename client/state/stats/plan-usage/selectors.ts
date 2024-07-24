@@ -10,7 +10,8 @@ export function getShouldShowPaywallNotice( state: object, siteId: number | null
 
 	const data = get( state, [ 'stats', 'planUsage', 'data', siteId ], null ) as PlanUsage;
 
-	// Sites with a paywall_date_from means they have a paywall mark regardless of the grace period.
+	// Sites with a `paywall_date_from` have a paywall sticker,
+	// and the date is when the sticker is added, not when the paywall is in effect.
 	return !! data?.paywall_date_from;
 }
 
