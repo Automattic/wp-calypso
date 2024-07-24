@@ -46,3 +46,12 @@ $iframe-background-color: #f7f7f7;
 		padding-block-end: 0;
 	}
 }
+
+.bank-details__status {
+	@include a4a-font-label-button;
+	color: var(--color-accent-80);
+
+	.badge {
+		margin-inline-start: 6px;
+	}
+}

@@ -25,6 +25,7 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
 }: StatsDefaultModuleProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -99,6 +100,14 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 							) }
 							cards={ <StatsEmptyActionVideo from="module_videos" /> }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

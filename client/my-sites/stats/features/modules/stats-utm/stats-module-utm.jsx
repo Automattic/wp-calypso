@@ -65,6 +65,7 @@ const StatsModuleUTM = ( {
 	isLoading,
 	query,
 	postId,
+	summaryUrl,
 } ) => {
 	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 	const siteId = useSelector( getSelectedSiteId );
@@ -161,7 +162,7 @@ const StatsModuleUTM = ( {
 					{ ! showLoader &&
 						! data?.length && ( // no data and new empty state enabled
 							<StatsCard
-								className={ className }
+								className={ clsx( 'stats-card--empty-variant', className ) }
 								title={ moduleStrings.title }
 								titleNodes={ <StatsInfoArea isNew /> }
 								isEmpty
@@ -186,6 +187,14 @@ const StatsModuleUTM = ( {
 										) }
 										cards={ <UTMBuilder trigger={ <StatsEmptyActionUTMBuilder /> } /> }
 									/>
+								}
+								footerAction={
+									summaryUrl
+										? {
+												url: summaryUrl,
+												label: translate( 'View more' ),
+										  }
+										: undefined
 								}
 							/>
 						) }

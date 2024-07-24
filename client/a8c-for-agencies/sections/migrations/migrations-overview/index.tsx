@@ -31,8 +31,8 @@ export default function MigrationsOverview() {
 	const title = translate( 'Migrations' );
 
 	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
+	const { data } = useGetTipaltiPayee( true );
 
-	const { data } = useGetTipaltiPayee();
 	const accountStatus = getAccountStatus( data, translate );
 	const statusProps = {
 		children: accountStatus?.status,

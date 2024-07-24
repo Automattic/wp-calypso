@@ -6,21 +6,39 @@ import { Icon, external } from '@wordpress/icons';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { usePostByKey, useSupportArticleAlternatePostKey } from '../hooks';
 import { BackButton } from './back-button';
 import { BackToTopButton } from './back-to-top-button';
-import ArticleFetchingContent from './help-center-article-fetching-content';
+import ArticleContent from './help-center-article-content';
 
-export const HelpCenterEmbedResult: React.FC = () => {
-	const { search } = useLocation();
+export const HelpCenterArticle: React.FC = () => {
+	const { search, key } = useLocation();
 	const navigate = useNavigate();
 	const { sectionName } = useHelpCenterContext();
 
 	const params = new URLSearchParams( search );
-	const postId = params.get( 'postId' );
+	const postId = Number( params.get( 'postId' ) );
 	const blogId = params.get( 'blogId' ) ?? undefined;
-	const canNavigateBack = params.get( 'canNavigateBack' ) === 'true';
-	const link = params.get( 'link' );
+	const articleUrl = params.get( 'link' ) ?? undefined;
 	const query = params.get( 'query' );
+	const postKey = useSupportArticleAlternatePostKey( blogId, postId );
+	const post = usePostByKey( postKey ).data;
+	const isLoading = ! post?.content || ! postKey;
+
+	useEffect( () => {
+		//If a url includes an anchor, let's scroll this into view!
+		if ( articleUrl?.includes( '#' ) && post?.content ) {
+			setTimeout( () => {
+				const anchorId = articleUrl.split( '#' ).pop();
+				if ( anchorId ) {
+					const element = document.getElementById( anchorId );
+					if ( element ) {
+						element.scrollIntoView();
+					}
+				}
+			}, 0 );
+		}
+	}, [ articleUrl, post ] );
 
 	useEffect( () => {
 		const tracksData = {
@@ -28,22 +46,22 @@ export const HelpCenterEmbedResult: React.FC = () => {
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
-			result_url: link,
+			result_url: articleUrl,
 			post_id: postId,
 			blog_id: blogId,
 		};
 
 		recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
-	}, [ query, link, sectionName, postId, blogId ] );
+	}, [ query, articleUrl, sectionName, postId, blogId ] );
 
 	const redirectBack = () => {
 		recordTracksEvent( `calypso_inlinehelp_navigate_back`, {
-			result_url: link,
+			result_url: articleUrl,
 			post_id: postId,
 			blog_id: blogId,
 			search_query: query,
 		} );
-		if ( canNavigateBack ) {
+		if ( key === 'default' ) {
 			navigate( -1 );
 		} else if ( query ) {
 			navigate( `/?query=${ query }` );
@@ -58,7 +76,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
-			result_url: link,
+			result_url: articleUrl,
 			post_id: postId,
 			blog_id: blogId,
 		};
@@ -68,25 +86,34 @@ export const HelpCenterEmbedResult: React.FC = () => {
 
 	return (
 		<>
-			<div className="help-center-embed-result__header">
+			<div className="help-center-article__header">
 				<Flex justify="space-between">
 					<FlexItem>
 						<BackButton onClick={ redirectBack } />
 					</FlexItem>
 					<FlexItem>
 						<Button
-							href={ link ?? '' }
+							href={ articleUrl }
 							target="_blank"
 							onClick={ recordTracksAndRedirect }
-							className="help-center-embed-result__external-button"
+							className="help-center-article__external-button"
 						>
 							<Icon icon={ external } size={ 20 } />
 						</Button>
 					</FlexItem>
 				</Flex>
 			</div>
-			<div className="help-center-embed-result">
-				<ArticleFetchingContent articleUrl={ link } postId={ +( postId || 0 ) } blogId={ blogId } />
+			<div className="help-center-article">
+				<ArticleContent
+					content={ post?.content }
+					title={ post?.title }
+					link={ post?.link }
+					isLoading={ isLoading }
+					postId={ postId }
+					blogId={ blogId }
+					slug={ post?.slug }
+					articleUrl={ articleUrl }
+				/>
 			</div>
 			<BackToTopButton />
 		</>

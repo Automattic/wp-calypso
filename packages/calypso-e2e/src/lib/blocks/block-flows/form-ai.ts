@@ -1,5 +1,3 @@
-import { Locator } from 'playwright';
-import { envVariables } from '../../..';
 import { makeSelectorFromBlockName, validatePublishedFormFields } from './shared';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
@@ -38,27 +36,33 @@ export class FormAiFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		let aiInputParentLocator: Locator;
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// On mobile, it's attached to the editor block toolbar, which is apart from the block DOM.
-			aiInputParentLocator = await context.editorPage.getEditorParent();
-		} else {
-			// On desktop, it's within the block DOM node.
-			aiInputParentLocator = context.addedBlockLocator;
-		}
-
-		const aiInputReadyLocator = aiInputParentLocator.getByPlaceholder( 'Ask Jetpack AI to edit…' );
-		const aiInputBusyLocator = aiInputParentLocator.getByRole( 'button', {
+		const aiInputParentLocator = context.addedBlockLocator;
+		const aiInputReadyLocator =
+			await aiInputParentLocator.getByPlaceholder( 'Ask Jetpack AI to edit…' );
+		const aiInputBusyLocator = await aiInputParentLocator.getByRole( 'button', {
 			name: 'Stop request',
 		} );
 		const sendButtonLocator = aiInputParentLocator.getByRole( 'button', {
 			name: 'Send request',
 		} );
-
 		await aiInputReadyLocator.fill( this.configurationData.prompt );
 		await sendButtonLocator.click();
-		await aiInputBusyLocator.waitFor();
-		await aiInputReadyLocator.waitFor( { timeout: 30 * 1000 } );
+		await aiInputBusyLocator.waitFor( { state: 'detached' } );
+
+		// Check if we got an error_unclear_prompt and try it again
+		// TODO: Remove this when this bug is fixed: https://github.com/Automattic/wp-calypso/issues/92927
+		for ( let i = 0; i < 5; i++ ) {
+			const errorLocator = await aiInputParentLocator.getByText(
+				'Error: Your request was unclear. Mind trying again?'
+			);
+
+			if ( await errorLocator.count() ) {
+				await sendButtonLocator.click();
+				await aiInputBusyLocator.waitFor( { state: 'detached' } );
+			} else {
+				break;
+			}
+		}
 
 		// Grab a first sample input label and submit button text to use for validation.
 		this.validationData = {

@@ -12,11 +12,25 @@ export const BackButton = ( { onClick, backToRoot = false, className }: Props ) 
 	const location = useLocation();
 	const navigate = useNavigate();
 	const buttonClassName = clsx( 'back-button__help-center', className );
+	const queryParams = new URLSearchParams( location.search );
+	const backUrl = queryParams.get( 'backUrl' );
 
-	function defaultOnClick() {
-		if ( backToRoot ) {
+	function handleOnClick() {
+		const currentPath = location.pathname;
+		if ( currentPath === '/odie' ) {
 			navigate( '/' );
-		} else if ( location.key === 'default' ) {
+			return;
+		}
+
+		if ( backUrl ) {
+			navigate( backUrl );
+			return;
+		}
+		if ( onClick ) {
+			onClick();
+			return;
+		}
+		if ( backToRoot || location.key === 'default' ) {
 			// Workaround to detect when we don't have prior history
 			// https://github.com/remix-run/react-router/discussions/9922#discussioncomment-4722480
 			navigate( '/' );
@@ -30,7 +44,7 @@ export const BackButton = ( { onClick, backToRoot = false, className }: Props ) 
 			className={ buttonClassName }
 			/* eslint-disable-next-line jsx-a11y/no-autofocus */
 			autoFocus
-			onClick={ onClick || defaultOnClick }
+			onClick={ handleOnClick }
 		>
 			<Icon icon={ chevronLeft } size={ 18 } />
 			{ __( 'Back', __i18n_text_domain__ ) }

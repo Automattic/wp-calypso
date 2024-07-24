@@ -10,6 +10,7 @@ type StatsDefaultModuleProps = {
 		value: string;
 		empty: string;
 	};
+	summaryUrl?: string;
 };
 
 type StatsAdvancedModuleWrapperProps = {
@@ -19,6 +20,7 @@ type StatsAdvancedModuleWrapperProps = {
 	query: StatsQueryType;
 	summary?: boolean;
 	className?: string;
+	summaryUrl?: string;
 };
 
 type StatsPeriodType = {

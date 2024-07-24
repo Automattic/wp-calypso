@@ -41,10 +41,6 @@ class StatsComments extends Component {
 		skipQuery: PropTypes.bool,
 	};
 
-	static defaultProps = {
-		skipQuery: false,
-	};
-
 	state = {
 		activeFilter: 'top-authors',
 	};

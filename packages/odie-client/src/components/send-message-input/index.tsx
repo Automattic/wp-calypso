@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
@@ -24,7 +25,7 @@ export const OdieSendMessageButton = ( {
 	const { _x } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { initialUserMessage, chat, isLoading, trackEvent } = useOdieAssistantContext();
+	const { initialUserMessage, chat, trackEvent, isLoading } = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 
 	useEffect( () => {
@@ -85,26 +86,39 @@ export const OdieSendMessageButton = ( {
 	);
 	const userHasNegativeFeedback = chat.messages.some( ( message ) => message.liked === false );
 
+	const getPlaceholderText = () => {
+		const placeholderText = _x(
+			'Please wait…',
+			'Placeholder text for the message input field (chat)',
+			__i18n_text_domain__
+		);
+
+		// If not loading, decide based on user actions
+		if ( ! isLoading ) {
+			if ( userHasAskedToContactHE || userHasNegativeFeedback ) {
+				return _x(
+					'Continue chatting with Wapuu',
+					'Placeholder text for the message input field (chat)',
+					__i18n_text_domain__
+				);
+			}
+			return _x(
+				'Ask your question',
+				'Placeholder text for the message input field (chat)',
+				__i18n_text_domain__
+			);
+		}
+
+		return placeholderText;
+	};
+
 	return (
 		<>
 			<JumpToRecent scrollToBottom={ scrollToRecent } enableJumpToRecent={ enableJumpToRecent } />
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
 					<TextareaAutosize
-						placeholder={
-							userHasAskedToContactHE || userHasNegativeFeedback
-								? // translators: Placeholder text for the message input field (chat) */
-								  _x(
-										'Continue chatting with Wapuu',
-										'Placeholder text for the message input field (chat)',
-										__i18n_text_domain__
-								  )
-								: _x(
-										'Ask your question',
-										'Placeholder text for the message input field (chat)',
-										__i18n_text_domain__
-								  )
-						}
+						placeholder={ getPlaceholderText() }
 						className="odie-send-message-input"
 						rows={ 1 }
 						value={ messageString }
@@ -113,6 +127,7 @@ export const OdieSendMessageButton = ( {
 						}
 						onKeyPress={ handleKeyPress }
 					/>
+					{ isLoading && <Spinner className="odie-send-message-input-spinner" /> }
 					<button
 						type="submit"
 						className="odie-send-message-inner-button"

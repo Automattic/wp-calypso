@@ -50,6 +50,10 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				return false;
 			}
 
+			if ( isVip ) {
+				return false;
+			}
+
 			// Show the upgrade notice with the coming paywall communication.
 			if ( shouldShowPaywallNotice ) {
 				return true;

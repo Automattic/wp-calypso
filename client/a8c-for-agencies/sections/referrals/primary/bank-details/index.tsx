@@ -6,12 +6,16 @@ import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
+	LayoutHeaderActions as Actions,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_REFERRALS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import StatusBadge from '../../common/step-section-item/status-badge';
 import useGetTipaltiIFrameURL from '../../hooks/use-get-tipalti-iframe-url';
+import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
+import { getAccountStatus } from '../../lib/get-account-status';
 
 import './style.scss';
 
@@ -34,6 +38,9 @@ export default function ReferralsBankDetails( {
 		: translate( 'Referrals: Add bank details' );
 
 	const { data, isFetching } = useGetTipaltiIFrameURL();
+	const { data: tipaltiData } = useGetTipaltiPayee();
+
+	const accountStatus = getAccountStatus( tipaltiData, translate );
 
 	const iFrameSrc = data?.iframe_url || '';
 
@@ -78,6 +85,29 @@ export default function ReferralsBankDetails( {
 							},
 						] }
 					/>
+					{ accountStatus && (
+						<Actions>
+							<div className="bank-details__status">
+								{ translate( 'Payment status: {{badge}}%(status)s{{/badge}}', {
+									args: {
+										status: accountStatus.status,
+									},
+									comment: '%(status) is subscription status',
+									components: {
+										badge: (
+											<StatusBadge
+												statusProps={ {
+													children: accountStatus.status,
+													type: accountStatus.statusType,
+													tooltip: accountStatus.statusReason,
+												} }
+											/>
+										),
+									},
+								} ) }
+							</div>
+						</Actions>
+					) }
 				</LayoutHeader>
 			</LayoutTop>
 
