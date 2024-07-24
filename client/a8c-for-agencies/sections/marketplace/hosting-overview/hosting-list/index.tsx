@@ -27,6 +27,7 @@ export default function HostingList( { selectedSite }: Props ) {
 	const { data } = useProductsQuery( false, true );
 
 	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
+
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 
 	// Hide the section if it's automated referrals marketplace
