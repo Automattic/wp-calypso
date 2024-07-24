@@ -1,5 +1,6 @@
 import { TranslateResult, translate as RawTranslateFn, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import {
 	AllowedStatusTypes as AllowedStatusType,
 	AllowedTypes as AllowedRowType,
@@ -67,7 +68,8 @@ const useTooltip = ( type: AllowedRowType, rows: SiteData ): TranslateResult | u
 			return translate( 'Not supported on multisite' );
 		}
 
-		if ( type === 'plugin' && hasManagedPlugins ) {
+		// Display different message only for A4A. Jetpack Manage filters out the plugins.
+		if ( type === 'plugin' && isA8CForAgencies() && hasManagedPlugins ) {
 			return translate( 'Some plugins are managed by the host and cannot be autoupdated' );
 		}
 
