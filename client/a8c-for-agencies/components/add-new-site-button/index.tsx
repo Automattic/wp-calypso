@@ -101,6 +101,7 @@ export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport, 
 	const mainButtonLabel = devSite
 		? translate( 'Start developing for free' )
 		: translate( 'Add sites' );
+
 	const newSitePopoverContent = (
 		<div className="site-selector-and-importer__popover-content">
 			<div className="site-selector-and-importer__popover-column">
@@ -184,6 +185,7 @@ export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport, 
 			</div>
 		</div>
 	);
+
 	const newDevSitePopoverContent = (
 		<div className="site-selector-and-importer__popover-content">
 			<div className="site-selector-and-importer__popover-column">
@@ -209,6 +211,7 @@ export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport, 
 			</div>
 		</div>
 	);
+
 	const popoverContent = devSite ? newDevSitePopoverContent : newSitePopoverContent;
 
 	return (
