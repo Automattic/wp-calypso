@@ -10,7 +10,7 @@ import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
-import { backupPath } from 'calypso/lib/jetpack/paths';
+import { backupPath, settingsPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -314,14 +314,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		</>
 	);
 
-	const renderError = () => (
-		<Error
-			errorText={ translate( 'Restore failed: %s', {
-				args: [ backupDisplayDate ],
-				comment: '%s is a time/date string',
-			} ) }
-			siteUrl={ siteUrl }
-		>
+	const ErrorDetails = () => {
+		return (
 			<p className="rewind-flow__info">
 				{ translate(
 					'An error occurred while restoring your site. Please {{button}}try your restore again{{/button}} or contact our support team to resolve the issue.',
@@ -334,8 +328,59 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-		</Error>
-	);
+		);
+	};
+
+	const ErrorDetailsAddCredentials = () => {
+		return (
+			<>
+				<p className="rewind-flow__info">
+					{ translate(
+						'An error occurred while restoring your site. You may need to {{linkCredentials}}add your server credentials{{/linkCredentials}}. You can follow the steps in {{linkGuide}}our guide{{/linkGuide}} to add SSH, SFTP, or FTP credentials, and then try to restore again.',
+						{
+							components: {
+								linkCredentials: (
+									<a
+										href={
+											rewindState.canAutoconfigure
+												? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+												: `${ settingsPath( siteSlug ) }#credentials`
+										}
+									/>
+								),
+								linkGuide: (
+									<a
+										href="https://jetpack.com/support/adding-credentials-to-jetpack/"
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</p>
+				<p className="rewind-flow__info">
+					{ translate(
+						'If the issue persists, contact our support team to help you resolve the issue.'
+					) }
+				</p>
+			</>
+		);
+	};
+
+	const renderError = () => {
+		return (
+			<Error
+				errorText={ translate( 'Restore failed: %s', {
+					args: [ backupDisplayDate ],
+					comment: '%s is a time/date string',
+				} ) }
+				siteUrl={ siteUrl }
+			>
+				{ credentialsAreValid ? <ErrorDetails /> : <ErrorDetailsAddCredentials /> }
+			</Error>
+		);
+	};
 
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
