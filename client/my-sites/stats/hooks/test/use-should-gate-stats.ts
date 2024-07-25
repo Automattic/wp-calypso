@@ -290,17 +290,7 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 				planUsage: {
 					data: {
 						[ siteId ]: {
-							recent_usages: [
-								{
-									views_count: 1000,
-								},
-								{
-									views_count: 1001,
-								},
-								{
-									views_count: 1002,
-								},
-							],
+							should_show_paywall: true,
 						},
 					},
 				},

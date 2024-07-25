@@ -4,6 +4,7 @@ import { mapMarker } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector } from 'calypso/state';
 import {
@@ -23,6 +24,7 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -56,6 +58,17 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 				// show data or an overlay
 				<StatsModule
 					path="countryviews"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
+								comment: '{{link}} links to support documentation.',
+								components: {
+									link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
+								},
+								context: 'Stats: Link in a popover for Countries module when the module has data',
+							} ) }
+						</StatsInfoArea>
+					}
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
@@ -87,6 +100,14 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 								}
 							) }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

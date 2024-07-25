@@ -8,7 +8,6 @@ import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
-import useActionHooks from './use-action-hooks';
 import './help-center.scss';
 
 const queryClient = new QueryClient();
@@ -35,8 +34,6 @@ function HelpCenterContent() {
 		const timeout = setTimeout( () => setShowHelpIcon( true ), 0 );
 		return () => clearTimeout( timeout );
 	}, [] );
-
-	useActionHooks();
 
 	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
 

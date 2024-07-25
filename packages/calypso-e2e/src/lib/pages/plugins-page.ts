@@ -184,7 +184,7 @@ export class PluginsPage {
 		if ( isDesktop ) {
 			categoryLocator = this.page.getByRole( 'radio', { name: category } );
 		} else {
-			await this.page.getByRole( 'button', { name: 'More' } ).click();
+			await this.page.getByRole( 'button', { name: 'More', exact: true } ).click();
 			categoryLocator = this.page.getByRole( 'menuitem', { name: category } );
 		}
 		await categoryLocator.click();
@@ -371,7 +371,7 @@ export class PluginsPage {
 	 * Open the categories dropdown, shown on mobile
 	 */
 	async openCategoriesDropdown(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'More' } ).click();
+		await this.page.getByRole( 'button', { name: 'More', exact: true } ).click();
 	}
 
 	/**

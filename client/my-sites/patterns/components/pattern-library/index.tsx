@@ -17,13 +17,13 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
-import { ReadymadeTemplates } from 'calypso/my-sites/patterns/components/readymade-templates';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { TypeToggle } from 'calypso/my-sites/patterns/components/type-toggle';
 import { ViewToggle } from 'calypso/my-sites/patterns/components/view-toggle';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
 import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import { filterPatternsByType } from 'calypso/my-sites/patterns/lib/filter-patterns-by-type';
@@ -35,6 +35,7 @@ import {
 	PatternView,
 	CategoryGalleryFC,
 	PatternGalleryFC,
+	ReadymadeTemplatesFC,
 } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -75,11 +76,13 @@ function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowT
 type PatternLibraryProps = {
 	categoryGallery: CategoryGalleryFC;
 	patternGallery: PatternGalleryFC;
+	readymadeTemplates: ReadymadeTemplatesFC;
 };
 
 export const PatternLibrary = ( {
 	categoryGallery: CategoryGallery,
 	patternGallery: PatternGallery,
+	readymadeTemplates: ReadymadeTemplates,
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
 	const translate = useTranslate();
@@ -96,6 +99,7 @@ export const PatternLibrary = ( {
 		category,
 		{ enabled: Boolean( category || searchTerm ) }
 	);
+	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
 
 	const patterns = searchTerm
 		? filterPatternsByTerm( rawPatterns, searchTerm )
@@ -287,7 +291,7 @@ export const PatternLibrary = ( {
 
 				{ isHomePage && (
 					<CategoryGallery
-						title={ translate( 'Ship faster, ship more', {
+						title={ translate( 'Build anything with patterns', {
 							comment:
 								'Heading text for a section in the Pattern Library with links to block pattern categories',
 							textOnly: true,
@@ -359,27 +363,30 @@ export const PatternLibrary = ( {
 					</PatternLibraryBody>
 				) }
 
-				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && <ReadymadeTemplates /> }
-
-				{ ! isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
-					<PatternsCopyPasteInfo theme="dark" />
-				) }
-
 				{ isHomePage && (
-					<CategoryGallery
-						title={ pageLayoutsHeading }
-						description={ translate(
-							'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
-						) }
-						categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
-						patternTypeFilter={ PatternTypeFilter.PAGES }
+					<PatternsCopyPasteInfo
+						theme={ isEnabled( 'readymade-templates/showcase' ) ? 'gray' : 'dark' }
 					/>
 				) }
 
-				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && <PatternsCopyPasteInfo /> }
+				{ isHomePage && (
+					<>
+						<CategoryGallery
+							title={ pageLayoutsHeading }
+							description={ translate(
+								'Our page layouts are exactly what you need to easily create professional-looking pages using preassembled patterns.'
+							) }
+							categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
+							patternTypeFilter={ PatternTypeFilter.PAGES }
+						/>
+						{ isEnabled( 'readymade-templates/showcase' ) && (
+							<ReadymadeTemplates readymadeTemplates={ readymadeTemplates } />
+						) }
+					</>
+				) }
 			</div>
 
-			<PatternsGetStarted theme="dark" />
+			<PatternsGetStarted theme={ isEnabled( 'readymade-templates/showcase' ) ? 'blue' : 'dark' } />
 		</>
 	);
 };

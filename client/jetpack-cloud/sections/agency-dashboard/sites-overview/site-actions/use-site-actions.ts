@@ -131,7 +131,7 @@ export default function useSiteActions( { site, isLargeScreen, siteError, onSele
 			{
 				name: translate( 'Remove site' ),
 				onClick: () => handleClickMenuItem( 'remove_site' ),
-				isEnabled: isA8CForAgencies() && isEnabled( 'a4a-site-selector-and-importer' ),
+				isEnabled: isA8CForAgencies(),
 				icon: 'trash',
 				className: 'is-error',
 			},

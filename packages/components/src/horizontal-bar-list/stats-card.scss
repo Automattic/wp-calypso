@@ -35,10 +35,6 @@
 		.stats-card-header__title {
 			display: flex;
 			align-items: center;
-
-			& > :first-child {
-				margin-left: 10px;
-			}
 		}
 
 		.stats-card-header__title,
@@ -46,6 +42,14 @@
 			font-size: $header-font-size;
 			line-height: $header-line-height;
 			color: var(--color-text);
+		}
+
+		.stats-card-header__title-nodes {
+			margin-left: 10px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 8px;
 		}
 
 		&.stats-card-header--split {
@@ -141,7 +145,12 @@
 	.stats-card--header-and-body {
 		display: flex;
 		flex-direction: column;
-		min-height: 100%;
+		justify-content: space-between;
+		flex-grow: 1;
+	}
+
+	.stats-card--footer {
+		margin-top: 2px;
 	}
 
 	.stats-card--body-empty {

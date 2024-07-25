@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import {
 	isRequestingSiteStatsForQuery,
@@ -23,6 +24,7 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -55,6 +57,20 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 				// show data or an overlay
 				<StatsModule
 					path="referrers"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate(
+								'Websites {{link}}referring visitors{{/link}} sorted by most clicked. Learn about where your audience comes from.',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ SUPPORT_URL }#referrers` ) } />,
+									},
+									context: 'Stats: Link in a popover for the Referrers when the module has data',
+								}
+							) }
+						</StatsInfoArea>
+					}
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
@@ -85,6 +101,14 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 							) }
 							cards={ <StatsEmptyActionSocial from="module_referrers" /> }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

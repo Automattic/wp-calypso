@@ -21,6 +21,7 @@ const StatsListCard = ( {
 	moduleType,
 	showMore,
 	title,
+	titleNodes,
 	emptyMessage,
 	loader,
 	useShortLabel,
@@ -135,7 +136,7 @@ const StatsListCard = ( {
 			}
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
-			isNew={ [ 'utm', 'devices' ].includes( moduleType ) }
+			titleNodes={ titleNodes }
 			className={ clsx( `list-${ moduleType }`, className ) }
 			headerClassName={ listItemClassName }
 			metricLabel={ metricLabel }

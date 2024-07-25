@@ -74,6 +74,7 @@
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
 		"@automattic/wpcom-checkout": "workspace:^",
 		"@automattic/wpcom-template-parts": "workspace:^",
+		"@automattic/zendesk-client": "workspace:^",
 		"@babel/core": "^7.24.5",
 		"@emotion/css": "^11.11.2",
 		"@emotion/jest": "^11.11.0",

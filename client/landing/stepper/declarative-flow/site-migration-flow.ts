@@ -3,6 +3,7 @@ import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useSelect } from '@wordpress/data';
+import { getLocaleSlug } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -25,9 +26,7 @@ import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const MIGRATION_INSTRUCTIONS_STEP = config.isEnabled(
-	'migration-flow/new-migration-instructions-step'
-)
+const MIGRATION_INSTRUCTIONS_STEP = getLocaleSlug()?.startsWith( 'en' ) // Previous 'migration-flow/new-migration-instructions-step'.
 	? STEPS.SITE_MIGRATION_INSTRUCTIONS
 	: STEPS.SITE_MIGRATION_INSTRUCTIONS_I2;
 
@@ -45,6 +44,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			MIGRATION_INSTRUCTIONS_STEP,
+			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 		];
@@ -368,6 +368,16 @@ const siteMigration: Flow = {
 						return;
 					}
 				}
+
+				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
+					// Take the user to the migration started step.
+					if ( providedDependencies?.destination === 'migration-started' ) {
+						return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
+				}
 			}
 		}
 
@@ -381,7 +391,7 @@ const siteMigration: Flow = {
 				}
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					if ( urlQueryParams.get( 'ref' ) === GUIDED_ONBOARDING_FLOW_REFERRER ) {
-						window.location.assign( '/start/guided/initial-intent' );
+						return exitFlow( '/start/initial-intent' );
 					}
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}

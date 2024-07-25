@@ -8,14 +8,14 @@ export const SupportArticleHeader = ( {
 	isLoading: boolean;
 } ) =>
 	isLoading || ! post ? (
-		<div className="support-article-dialog__header is-placeholder">
-			<h1 className="support-article-dialog__header-title is-placeholder">Post loading…</h1>
+		<div className="help-center-article-content__header is-placeholder">
+			<h1 className="help-center-article-content__header-title is-placeholder">Post loading…</h1>
 		</div>
 	) : (
-		<div className="support-article-dialog__header">
-			<h1 className="support-article-dialog__header-title">
+		<div className="help-center-article-content__header">
+			<h1 className="help-center-article-content__header-title">
 				<ExternalLink
-					className="support-article-dialog__header-title-link"
+					className="help-center-article-content__header-title-link"
 					href={ post.link }
 					target="_blank"
 					icon={ false }

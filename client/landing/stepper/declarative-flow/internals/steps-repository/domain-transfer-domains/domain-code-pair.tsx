@@ -254,7 +254,7 @@ export function DomainCodePair( {
 							} ) }
 							htmlFor={ id + '-auth' }
 						>
-							{ __( 'Authorization code' ) }
+							{ isGoogleDomainsTransferFlow ? __( 'Transfer code' ) : __( 'Authorization code' ) }
 							{ isGoogleDomainsTransferFlow ? renderGoogleDomainsModal() : renderInfoPopover() }
 						</FormLabel>
 

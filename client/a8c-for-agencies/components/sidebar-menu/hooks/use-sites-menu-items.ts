@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { category, starEmpty, tool, warning } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -15,16 +14,13 @@ import { createItem } from '../lib/utils';
 const useSitesMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 	const noActiveSite = useNoActiveSite();
-	const isWPCOMPurchaseOptionEnabled = isEnabled(
-		'a8c-for-agencies/wpcom-creator-plan-purchase-flow'
-	);
 	const { data } = useFetchPendingSites();
 	const totalAvailableSites =
 		data?.filter(
 			( { features }: { features: { wpcom_atomic: { state: string; license_key: string } } } ) =>
 				features.wpcom_atomic.state === 'pending' && !! features.wpcom_atomic.license_key
 		).length || 0;
-	const shouldAddNeedsSetup = isWPCOMPurchaseOptionEnabled && totalAvailableSites > 0;
+	const shouldAddNeedsSetup = totalAvailableSites > 0;
 
 	return useMemo( () => {
 		if ( noActiveSite ) {

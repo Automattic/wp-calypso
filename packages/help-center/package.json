@@ -34,6 +34,7 @@
 		"@automattic/odie-client": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
+		"@automattic/zendesk-client": "workspace:^",
 		"@popperjs/core": "^2.11.8",
 		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/base-styles": "^5.2.0",

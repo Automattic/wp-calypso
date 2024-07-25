@@ -109,7 +109,7 @@ function useDowngradeHandler( {
 	siteSlug: string | null | undefined;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
-	const { setShowHelpCenter, setInitialRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
 	const translate = useTranslate();
 	return useCallback(
 		( planSlug: PlanSlug ) => {
@@ -129,10 +129,17 @@ function useDowngradeHandler( {
 				'skip-resources': 'true',
 			} ).toString() }`;
 			setMessage( translate( 'I want to downgrade my plan.' ) );
-			setInitialRoute( chatUrl );
+			setNavigateToRoute( chatUrl );
 			setShowHelpCenter( true );
 		},
-		[ currentPlan?.purchaseId, setInitialRoute, setMessage, setShowHelpCenter, siteSlug, translate ]
+		[
+			currentPlan?.purchaseId,
+			setNavigateToRoute,
+			setMessage,
+			setShowHelpCenter,
+			siteSlug,
+			translate,
+		]
 	);
 }
 
@@ -202,8 +209,14 @@ function useGenerateActionCallback( {
 				return;
 			}
 
-			/* 3. Handle plan downgrades and plan downgrade tracks events */
-			if ( sitePlanSlug && intent !== 'plans-blog-onboarding' && ! availableForPurchase ) {
+			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
+			if (
+				sitePlanSlug &&
+				! flowName &&
+				intent !== 'plans-p2' &&
+				intent !== 'plans-blog-onboarding' &&
+				! availableForPurchase
+			) {
 				recordTracksEvent?.( 'calypso_plan_features_downgrade_click', {
 					current_plan: sitePlanSlug,
 					downgrading_to: planSlug,
@@ -213,14 +226,14 @@ function useGenerateActionCallback( {
 			}
 
 			/* 4. Handle plan upgrade and plan upgrade tracks events */
-			if ( ! isFreePlan( planSlug ) ) {
+			if ( isFreePlan( planSlug ) ) {
+				recordTracksEvent( 'calypso_signup_free_plan_click' );
+			} else {
 				recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
 					current_plan: sitePlanSlug,
 					upgrading_to: planSlug,
 					saw_free_trial_offer: !! freeTrialPlanSlug,
 				} );
-			} else {
-				recordTracksEvent( 'calypso_signup_free_plan_click' );
 			}
 			handleUpgrade( {
 				cartItemForPlan,

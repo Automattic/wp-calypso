@@ -8,7 +8,10 @@ import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useGetOdieStorage } from '@automattic/odie-client';
-import { useQueryClient } from '@tanstack/react-query';
+import {
+	useCanConnectToZendeskMessaging,
+	useOpenZendeskMessaging,
+} from '@automattic/zendesk-client';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -30,12 +33,8 @@ import { useSiteAnalysis } from '../data/use-site-analysis';
 import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
 import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
 import { useUserSites } from '../data/use-user-sites';
-import {
-	useChatStatus,
-	useContactFormTitle,
-	useChatWidget,
-	useCanConnectToZendesk,
-} from '../hooks';
+import { useChatStatus, useContactFormTitle } from '../hooks';
+import { queryClient } from '../query-client';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SearchResult } from '../types';
@@ -90,7 +89,6 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const { isPending: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
 	const { data: userSites } = useUserSites( currentUser.ID );
 	const userWithNoSites = userSites?.sites.length === 0;
-	const queryClient = useQueryClient();
 	const [ isSelfDeclaredSite, setIsSelfDeclaredSite ] = useState< boolean >( false );
 	const [ gptResponse, setGptResponse ] = useState< JetpackSearchAIResult >();
 	const { subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
@@ -102,12 +100,19 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		};
 	}, [] );
 
-	const { resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
-		useDispatch( HELP_CENTER_STORE );
+	const {
+		resetStore,
+		setShowHelpCenter,
+		setUserDeclaredSite,
+		setShowMessagingChat,
+		setSubject,
+		setMessage,
+	} = useDispatch( HELP_CENTER_STORE );
 
-	const { data: canConnectToZendesk } = useCanConnectToZendesk();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { hasActiveChats, isEligibleForChat, isLoading: isLoadingChatStatus } = useChatStatus();
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
+	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
+		sectionName,
 		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats
 	);
@@ -140,7 +145,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	);
 
 	const ownershipStatusLoading = ownershipResult?.result === 'LOADING';
-	const isSubmitting = submittingTicket || submittingTopic || isOpeningChatWidget;
+	const isSubmitting = submittingTicket || submittingTopic || isOpeningZendeskWidget;
 
 	// if the user picked a site from the picker, we don't need to analyze the ownership
 	if ( site && ! isSelfDeclaredSite ) {
@@ -212,7 +217,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 			navigate( `/post/?${ params }` );
 		},
-		[ navigate, debouncedMessage ]
+		[ mode, showingGPTResponse, debouncedMessage, navigate ]
 	);
 
 	// this indicates the user was happy with the GPT response
@@ -317,11 +322,16 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 						initialChatMessage += 'User was chatting with Wapuu before they started chat<br />';
 					}
 
-					openChatWidget( {
+					openZendeskWidget( {
 						aiChatId: aiChatId,
 						message: initialChatMessage,
 						siteUrl: supportSite.URL,
+						siteId: supportSite.ID,
 						onError: () => setHasSubmittingError( true ),
+						onSuccess: () => {
+							resetStore();
+							setShowHelpCenter( false );
+						},
 					} );
 					break;
 				}
@@ -539,8 +549,11 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	if ( enableGPTResponse && showingGPTResponse ) {
 		return (
 			<div className="help-center__articles-page">
-				<BackButton />
-				<HelpCenterGPT onResponseReceived={ setGptResponse } />
+				<BackButton onClick={ () => navigate( -1 ) } />
+				<HelpCenterGPT
+					redirectToArticle={ redirectToArticle }
+					onResponseReceived={ setGptResponse }
+				/>
 				<section className="contact-form-submit">
 					<Button
 						isBusy={ isFetchingGPTResponse }
@@ -681,13 +694,15 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 				) }
 			</section>
 			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
-			<HelpCenterSearchResults
-				onSelect={ redirectToArticle }
-				searchQuery={ message || '' }
-				openAdminInNewTab
-				placeholderLines={ 4 }
-				location="help-center-contact-form"
-			/>
+			{ ! [ 'FORUM' ].includes( mode ) && (
+				<HelpCenterSearchResults
+					onSelect={ redirectToArticle }
+					searchQuery={ message || '' }
+					openAdminInNewTab
+					placeholderLines={ 4 }
+					location="help-center-contact-form"
+				/>
+			) }
 		</main>
 	);
 };

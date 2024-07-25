@@ -1,6 +1,7 @@
+import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { FC } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordMigrationInstructionsLinkClick } from '../tracking';
 import './style.scss';
 
 export const Questions: FC = () => {
@@ -11,18 +12,17 @@ export const Questions: FC = () => {
 			<span className="site-migration-instructions-questions__label">
 				{ translate( 'Questions?' ) }
 			</span>
-			<a
+			<ExternalLink
 				href="https://wordpress.com/help/contact/"
+				icon
+				iconSize={ 12 }
 				target="_blank"
-				rel="noopener noreferrer"
 				onClick={ () => {
-					recordTracksEvent(
-						'calypso_onboarding_site_migration_instructions_questions_happiness_engineer'
-					);
+					recordMigrationInstructionsLinkClick( 'questions-happiness-engineer' );
 				} }
 			>
 				{ translate( 'Ask a Happiness Engineer' ) }
-			</a>
+			</ExternalLink>
 		</div>
 	);
 };

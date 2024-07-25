@@ -16,7 +16,7 @@ import USATodayImage from 'calypso/assets/images/start-with/USA_Today.svg';
 import DotcomWooSquareImage from 'calypso/assets/images/start-with/dotcom-woo-square.png';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import 'calypso/start-with/style.scss';
+import './style.scss';
 
 export const StartWithSquarePayments: React.FC = () => {
 	const translate = useTranslate();

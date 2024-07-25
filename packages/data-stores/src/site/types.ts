@@ -131,6 +131,7 @@ export interface SiteDetails {
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
 	is_wpcom_staging_site?: boolean;
+	is_a4a_client?: boolean;
 	jetpack: boolean;
 	lang?: string;
 	launch_status: string;
@@ -351,6 +352,7 @@ export interface Domain {
 	private_domain: boolean;
 	partner_domain: boolean;
 	wpcom_domain: boolean;
+	has_pending_contact_update: boolean;
 	has_zone: boolean;
 	is_renewable: boolean;
 	is_redeemable: boolean;

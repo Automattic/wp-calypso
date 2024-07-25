@@ -28,6 +28,7 @@ export { default as usePlans } from './queries/use-plans';
 export { default as useSitePlans } from './queries/use-site-plans';
 /** Hooks/Selectors */
 export { default as useCurrentPlan } from './hooks/use-current-plan';
+export { default as useCurrentPlanTerm } from './hooks/use-current-plan-term';
 export { default as useIntroOffers } from './hooks/use-intro-offers';
 export { default as useIntroOffersForWooExpress } from './hooks/use-intro-offers-for-woo-express';
 export { default as usePricingMetaForGridPlans } from './hooks/use-pricing-meta-for-grid-plans';

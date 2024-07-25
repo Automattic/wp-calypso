@@ -3,17 +3,11 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useOdieAssistantContext } from '../../context';
 
-export const JumpToRecent = ( {
-	scrollToBottom,
-	enableJumpToRecent,
-}: {
-	scrollToBottom: () => void;
-	enableJumpToRecent: boolean;
-} ) => {
-	const { trackEvent, isMinimized } = useOdieAssistantContext();
+export const JumpToRecent = ( { scrollToRecent }: { scrollToRecent: () => void } ) => {
+	const { trackEvent, isMinimized, lastMessageInView } = useOdieAssistantContext();
 	const { _x } = useI18n();
 	const jumpToRecent = () => {
-		scrollToBottom();
+		scrollToRecent();
 		trackEvent( 'chat_jump_to_recent_click' );
 	};
 
@@ -22,15 +16,15 @@ export const JumpToRecent = ( {
 	}
 
 	const className = clsx( 'odie-gradient-to-white', {
-		'is-visible': enableJumpToRecent,
-		'is-hidden': ! enableJumpToRecent,
+		'is-visible': ! lastMessageInView,
+		'is-hidden': lastMessageInView,
 	} );
 
 	return (
 		<div className={ className }>
 			<button
 				className="odie-jump-to-recent-message-button"
-				disabled={ ! enableJumpToRecent }
+				disabled={ lastMessageInView }
 				onClick={ jumpToRecent }
 			>
 				{

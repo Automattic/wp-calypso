@@ -3,14 +3,13 @@ import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
-import { useDispatch as reduxUseDispatch } from 'react-redux';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSelector } from 'calypso/state';
+import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../hooks/use-query';
@@ -43,9 +42,13 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+		const { setPlanCartItem, resetCouponCode } = useDispatch( ONBOARD_STORE );
 		const planCartItem = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			[]
+		);
+		const couponCode = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 			[]
 		);
 		const flowName = this.name;
@@ -101,12 +104,13 @@ const hosting: Flow = {
 					}
 
 					if ( providedDependencies.goToCheckout ) {
+						couponCode && resetCouponCode();
 						return window.location.assign(
 							addQueryArgs(
 								`/checkout/${ encodeURIComponent(
 									( providedDependencies?.siteSlug as string ) ?? ''
 								) }`,
-								{ redirect_to: destination }
+								{ redirect_to: destination, coupon: couponCode }
 							)
 						);
 					}

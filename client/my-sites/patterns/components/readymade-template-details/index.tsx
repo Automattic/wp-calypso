@@ -9,7 +9,7 @@ import { ReadymadeTemplateDetailsFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
-export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) => {
+export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, renderPreview } ) => {
 	const translate = useTranslate();
 	const [ isCopied, setIsCopied ] = useState( false );
 
@@ -28,7 +28,9 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 	}
 
 	const copyLayout = () => {
-		navigator.clipboard.writeText( readymadeTemplate.content );
+		navigator.clipboard.writeText(
+			readymadeTemplate.home.header + readymadeTemplate.home.content + readymadeTemplate.home.footer
+		);
 		setIsCopied( true );
 	};
 
@@ -63,7 +65,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 								</div>
 							</div>
 							<div className="readymade-template-details-preview-mobile">
-								<img src={ readymadeTemplate.screenshot } alt="" />
+								{ renderPreview?.( readymadeTemplate ) }
 							</div>
 							<div
 								className="readymade-template-details-description"
@@ -72,7 +74,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id } ) =
 							/>
 						</div>
 						<div className="readymade-template-details-preview">
-							<img src={ readymadeTemplate.screenshot } alt="" />
+							{ renderPreview?.( readymadeTemplate ) }
 						</div>
 					</div>
 				</div>

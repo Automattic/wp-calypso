@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -18,16 +19,20 @@ import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import HostingList from './hosting-list';
+import HostingV2 from './hosting-v2';
+
+import './style.scss';
 
 function Hosting() {
 	const translate = useTranslate();
+	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
 	const { selectedCartItems, onRemoveCartItem, showCart, setShowCart, toggleCart } =
 		useShoppingCart();
 
 	return (
 		<Layout
-			className={ clsx( 'hosting-overview' ) }
+			className="hosting-overview"
 			title={ translate( 'Hosting Marketplace' ) }
 			wide
 			withBorder
@@ -64,8 +69,8 @@ function Hosting() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>
-				<HostingList />
+			<LayoutBody className={ clsx( { 'is-full-width': isNewHostingPage } ) }>
+				{ isNewHostingPage ? <HostingV2 /> : <HostingList /> }
 			</LayoutBody>
 		</Layout>
 	);

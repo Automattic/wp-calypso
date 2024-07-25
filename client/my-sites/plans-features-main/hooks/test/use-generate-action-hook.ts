@@ -20,8 +20,6 @@ jest.mock( 'i18n-calypso', () => ( {
 	translate: jest.fn(),
 } ) );
 
-jest.mock( '../use-generate-action-callback', () => jest.fn( () => jest.fn() ) );
-
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -35,38 +33,109 @@ import {
 	PLAN_WOOEXPRESS_SMALL,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
 import useGenerateActionHook from '../use-generate-action-hook';
 
 describe( 'useGenerateActionHook', () => {
+	const mockSiteId = 100;
+	const currentPlanIsOwnerMockSelector = ( selector ) =>
+		selector( {
+			ui: {},
+			sites: {
+				items: {
+					[ mockSiteId ]: {
+						plan: {
+							product_id: 1000,
+						},
+					},
+				},
+				plans: {
+					[ mockSiteId ]: {
+						data: [
+							{
+								currentPlan: true,
+								userIsOwner: true,
+							},
+						],
+					},
+				},
+			},
+		} );
+
+	const currentPlanIsNotOwnerMockSelector = ( selector ) =>
+		selector( {
+			ui: {},
+			sites: {
+				items: {
+					[ mockSiteId ]: {
+						plan: {
+							product_id: 1000,
+						},
+					},
+				},
+				plans: {
+					[ mockSiteId ]: {
+						data: [
+							{
+								currentPlan: true,
+								userIsOwner: false,
+							},
+						],
+					},
+				},
+			},
+		} );
+
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( useSelector as jest.Mock ).mockReturnValue( 'mock-site-slug' );
-		( Plans.useCurrentPlan as jest.Mock ).mockImplementation( () => ( { [ PLAN_FREE ]: {} } ) );
+		jest.resetAllMocks();
+
+		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+			selector( {
+				ui: {},
+				sites: {
+					items: [],
+				},
+				route: {
+					query: {
+						current: {
+							get_domain: null,
+						},
+					},
+				},
+			} )
+		);
+		jest.mock( '../use-generate-action-callback', () => jest.fn( () => jest.fn() ) );
 		( Plans.useCurrentPlan as jest.Mock ).mockImplementation( () => null );
 	} );
 
 	it( 'should handle enterprise plans', () => {
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+		);
 
-		const action = result( { planSlug: PLAN_ENTERPRISE_GRID_WPCOM } );
+		const action = result.current( { planSlug: PLAN_ENTERPRISE_GRID_WPCOM } );
 
 		expect( action.primary.text ).toBe( 'Learn more' );
 		expect( action.primary.status ).toBe( 'enabled' );
 	} );
 
 	it( 'should handle launch page actions for free plan', () => {
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: true } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: true } )
+		);
 
-		const action = result( { planSlug: PLAN_FREE } );
+		const action = result.current( { planSlug: PLAN_FREE } );
 
 		expect( action.primary.text ).toBe( 'Keep this plan' );
 	} );
 
 	it( 'should handle launch page actions for paid plans with sticky buttons', () => {
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: true } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: true } )
+		);
 
-		const action = result( {
+		const action = result.current( {
 			planSlug: PLAN_BUSINESS,
 			isStuck: true,
 			isLargeCurrency: false,
@@ -79,24 +148,29 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle signup actions for free trial', () => {
-		const result = useGenerateActionHook( { isInSignup: true, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: true, isLaunchPage: false } )
+		);
 
-		const action = result( { planSlug: PLAN_BUSINESS, isFreeTrialAction: true } );
+		const action = result.current( { planSlug: PLAN_BUSINESS, isFreeTrialAction: true } );
 
 		expect( action.primary.text ).toBe( 'Try for free' );
 	} );
 
 	it( 'should handle signup actions for free plan', () => {
-		const result = useGenerateActionHook( { isInSignup: true, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: true, isLaunchPage: false } )
+		);
 
-		const action = result( { planSlug: PLAN_FREE } );
+		const action = result.current( { planSlug: PLAN_FREE } );
 
 		expect( action.primary.text ).toBe( 'Start with Free' );
 	} );
 
 	it( 'should handle signup actions for business plan with ineligible free hosting trial', () => {
-		useSelector.mockImplementation( ( selector ) =>
+		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
 			selector( {
+				ui: {},
 				current_user: {
 					had_hosting_trial: true,
 				},
@@ -105,29 +179,43 @@ describe( 'useGenerateActionHook', () => {
 				},
 			} )
 		);
-		const result = useGenerateActionHook( {
-			isInSignup: true,
-			isLaunchPage: false,
-			plansIntent: 'plans-new-hosted-site',
-		} );
-		const action = result( { planSlug: PLAN_BUSINESS } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: true,
+				isLaunchPage: false,
+				plansIntent: 'plans-new-hosted-site',
+			} )
+		);
+		const action = result.current( { planSlug: PLAN_BUSINESS } );
 
 		expect( action.postButtonText ).toBe( "You've already used your free trial! Thanks!" );
 	} );
 
 	it( 'should handle signup actions for plans with sticky buttons and isLargeCurrency as false', () => {
-		const result = useGenerateActionHook( { isInSignup: true, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: true, isLaunchPage: false } )
+		);
 
-		const action = result( { planSlug: PLAN_BUSINESS, isStuck: true, isLargeCurrency: false } );
+		const action = result.current( {
+			planSlug: PLAN_BUSINESS,
+			isStuck: true,
+			isLargeCurrency: false,
+		} );
 
 		// The assertion is okay since we don't actually run the translate function
 		expect( action.primary.text ).toBe( 'Get %(plan)s – %(priceString)s' );
 	} );
 
 	it( 'should handle signup actions for plans with sticky buttons and isLargeCurrency as true', () => {
-		const result = useGenerateActionHook( { isInSignup: true, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: true, isLaunchPage: false } )
+		);
 
-		const action = result( { planSlug: PLAN_BUSINESS, isStuck: true, isLargeCurrency: true } );
+		const action = result.current( {
+			planSlug: PLAN_BUSINESS,
+			isStuck: true,
+			isLargeCurrency: true,
+		} );
 
 		expect( action.primary.text ).toBe( 'Get %(plan)s {{span}}%(priceString)s{{/span}}' );
 	} );
@@ -135,9 +223,11 @@ describe( 'useGenerateActionHook', () => {
 	it( 'should handle current free plan', () => {
 		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( { planSlug: PLAN_FREE } );
 
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+		);
 
-		const action = result( { planSlug: PLAN_FREE } );
+		const action = result.current( { planSlug: PLAN_FREE } );
 
 		expect( action.primary.text ).toBe( 'Manage add-ons' );
 		expect( action.primary.status ).toBe( 'enabled' );
@@ -148,9 +238,11 @@ describe( 'useGenerateActionHook', () => {
 			planSlug: PLAN_PERSONAL,
 		} );
 
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+		);
 
-		const action = result( {
+		const action = result.current( {
 			planSlug: PLAN_BUSINESS,
 			availableForPurchase: true,
 			isStuck: true,
@@ -165,9 +257,11 @@ describe( 'useGenerateActionHook', () => {
 			planSlug: PLAN_BUSINESS_MONTHLY,
 		} );
 
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+		);
 
-		const action = result( {
+		const action = result.current( {
 			planSlug: PLAN_BUSINESS,
 			availableForPurchase: true,
 		} );
@@ -180,9 +274,11 @@ describe( 'useGenerateActionHook', () => {
 			planSlug: PLAN_BUSINESS_MONTHLY,
 		} );
 
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+		);
 
-		const action = result( {
+		const action = result.current( {
 			planSlug: PLAN_BUSINESS_2_YEARS,
 			availableForPurchase: true,
 		} );
@@ -195,9 +291,11 @@ describe( 'useGenerateActionHook', () => {
 			planSlug: PLAN_BUSINESS_MONTHLY,
 		} );
 
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+		);
 
-		const action = result( {
+		const action = result.current( {
 			planSlug: PLAN_BUSINESS_3_YEARS,
 			availableForPurchase: true,
 		} );
@@ -209,27 +307,58 @@ describe( 'useGenerateActionHook', () => {
 		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
 			planSlug: PLAN_BUSINESS,
 		} );
-		( useSelector as jest.Mock ).mockReturnValue( true ); // mocking isCurrentUserCurrentPlanOwner
+		( useSelector as jest.Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
 
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: false,
+				isLaunchPage: false,
+				siteId: mockSiteId,
+			} )
+		);
 
-		const action = result( { planSlug: PLAN_BUSINESS } );
+		const action = result.current( { planSlug: PLAN_BUSINESS } );
 
 		expect( action.primary.text ).toBe( 'Manage plan' );
+	} );
+
+	it( 'should handle current plan for non-plan owner', () => {
+		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+			planSlug: PLAN_BUSINESS,
+		} );
+		( useSelector as jest.Mock ).mockImplementation( currentPlanIsNotOwnerMockSelector );
+
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: false,
+				isLaunchPage: false,
+				siteId: mockSiteId,
+			} )
+		);
+
+		const action = result.current( { planSlug: PLAN_BUSINESS } );
+
+		expect( action.primary.text ).toBe( 'View plan' );
 	} );
 
 	it( 'should handle expired current plan for plan owner', () => {
 		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
 			planSlug: PLAN_BUSINESS,
 		} );
+		( useSelector as jest.Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
 		( Plans.useCurrentPlanExpiryDate as jest.Mock ).mockReturnValue(
 			new Date( Date.now() - 86400000 )
 		); // yesterday
-		( useSelector as jest.Mock ).mockReturnValue( true ); // mocking isCurrentUserCurrentPlanOwner
 
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: false,
+				isLaunchPage: false,
+				siteId: mockSiteId,
+			} )
+		);
 
-		const action = result( { planSlug: PLAN_BUSINESS } );
+		const action = result.current( { planSlug: PLAN_BUSINESS } );
 
 		expect( action.primary.text ).toBe( 'Renew plan' );
 	} );
@@ -238,8 +367,9 @@ describe( 'useGenerateActionHook', () => {
 		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
 			planSlug: PLAN_BUSINESS,
 		} );
-		useSelector.mockImplementation( ( selector ) =>
+		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
 			selector( {
+				ui: {},
 				sites: {
 					items: [],
 				},
@@ -253,25 +383,37 @@ describe( 'useGenerateActionHook', () => {
 			} )
 		);
 
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+		);
 
-		const action = result( { planSlug: PLAN_BUSINESS } );
+		const action = result.current( { planSlug: PLAN_BUSINESS } );
 
 		expect( action.primary.text ).toBe( 'Keep my plan' );
 	} );
 
 	it( 'should handle WooExpress Medium plan upgrade', () => {
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+		);
 
-		const action = result( { planSlug: PLAN_WOOEXPRESS_MEDIUM } );
+		const action = result.current( {
+			planSlug: PLAN_WOOEXPRESS_MEDIUM,
+			availableForPurchase: true,
+		} );
 
 		expect( action.primary.text ).toBe( 'Get Performance' );
 	} );
 
 	it( 'should handle WooExpress Small plan upgrade', () => {
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+		);
 
-		const action = result( { planSlug: PLAN_WOOEXPRESS_SMALL } );
+		const action = result.current( {
+			planSlug: PLAN_WOOEXPRESS_SMALL,
+			availableForPurchase: true,
+		} );
 
 		expect( action.primary.text ).toBe( 'Get Essential' );
 	} );
@@ -281,17 +423,21 @@ describe( 'useGenerateActionHook', () => {
 			planSlug: PLAN_HOSTING_TRIAL_MONTHLY,
 		} );
 
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+		);
 
-		const action = result( { planSlug: PLAN_BUSINESS } );
+		const action = result.current( { planSlug: PLAN_BUSINESS, availableForPurchase: true } );
 
 		expect( action.primary.text ).toBe( 'Get %(plan)s' );
 	} );
 
 	it( 'should handle downgrade actions', () => {
-		const result = useGenerateActionHook( { isInSignup: false, isLaunchPage: false } );
+		const { result } = renderHook( () =>
+			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+		);
 
-		const action = result( { planSlug: PLAN_PERSONAL, availableForPurchase: false } );
+		const action = result.current( { planSlug: PLAN_PERSONAL, availableForPurchase: false } );
 
 		expect( action.primary.text ).toBe( 'Downgrade' );
 		expect( action.primary.variant ).toBe( 'secondary' );

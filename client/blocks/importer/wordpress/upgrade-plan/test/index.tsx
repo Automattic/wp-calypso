@@ -172,7 +172,10 @@ describe( 'UpgradePlan', () => {
 	it( 'should call onCtaClick when the user clicks on the Continue button', async () => {
 		const mockOnCtaClick = jest.fn();
 
-		renderUpgradePlanComponent( getUpgradePlanProps( { onCtaClick: mockOnCtaClick } ) );
+		renderUpgradePlanComponent(
+			getUpgradePlanProps( { onCtaClick: mockOnCtaClick } ),
+			UnwrappedUpgradePlan
+		);
 
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 
@@ -183,7 +186,8 @@ describe( 'UpgradePlan', () => {
 		const mockOnCtaClick = jest.fn();
 
 		renderUpgradePlanComponent(
-			getUpgradePlanProps( { ctaText: 'My Custom CTA', onCtaClick: mockOnCtaClick } )
+			getUpgradePlanProps( { ctaText: 'My Custom CTA', onCtaClick: mockOnCtaClick } ),
+			UnwrappedUpgradePlan
 		);
 
 		await userEvent.click( screen.getByRole( 'button', { name: /My Custom CTA/ } ) );

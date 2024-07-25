@@ -8,6 +8,7 @@ import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import EmptyModuleCard from 'calypso/my-sites/stats/components/empty-module-card/empty-module-card';
 import { SUPPORT_URL } from 'calypso/my-sites/stats/const';
 import StatsCardSkeleton from 'calypso/my-sites/stats/features/modules/shared/stats-card-skeleton';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import StatsModule from 'calypso/my-sites/stats/stats-module';
 import { useSelector } from 'calypso/state';
@@ -26,6 +27,7 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -57,9 +59,20 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
 				// show data or an overlay
 				<StatsModule
+					path="filedownloads"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate( 'Most {{link}}downloaded files{{/link}} from your site.', {
+								comment: '{{link}} links to support documentation.',
+								components: {
+									link: <a href={ localizeUrl( `${ SUPPORT_URL }#file-downloads` ) } />,
+								},
+								context: 'Stats: Info popover content when the file downloads module has data.',
+							} ) }
+						</StatsInfoArea>
+					}
 					metricLabel={ translate( 'Downloads' ) }
 					useShortLabel
-					path="filedownloads"
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
@@ -89,6 +102,14 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 								}
 							) }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

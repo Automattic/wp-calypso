@@ -12,8 +12,8 @@
 		background: var(--studio-gray-0);
 
 		.layout__content {
-			padding: calc(var(--masterbar-height) + 16px) 16px 16px calc(var(--sidebar-width-max));
 			min-height: 100vh;
+			padding: calc(var(--masterbar-height) + 16px) 16px 16px var(--sidebar-width-max);
 		}
 
 		.layout__primary > * {

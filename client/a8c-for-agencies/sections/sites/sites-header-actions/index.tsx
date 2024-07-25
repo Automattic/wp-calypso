@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -23,20 +24,11 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 
 	return (
 		<div className="sites-header__actions">
+			{ config.isEnabled( 'a4a-dev-sites' ) && (
+				<AddNewSiteButton showMainButtonLabel={ ! isMobile } devSite />
+			) }
 			<div ref={ ( ref ) => setTourStepRef( ref ) }>
-				<AddNewSiteButton
-					showMainButtonLabel={ ! isMobile }
-					onClickAddNewSite={ () =>
-						dispatch( recordTracksEvent( 'calypso_a4a_sites_add_new_site_click' ) )
-					}
-					onClickA4APluginMenuItem={ () =>
-						dispatch( recordTracksEvent( 'calypso_a4a_sites_download_a4a_plugin_click' ) )
-					}
-					onClickUrlMenuItem={ () =>
-						dispatch( recordTracksEvent( 'calypso_a4a_sites_connect_url_site_click' ) )
-					}
-					onWPCOMImport={ onWPCOMImport }
-				/>
+				<AddNewSiteButton showMainButtonLabel={ ! isMobile } onWPCOMImport={ onWPCOMImport } />
 			</div>
 			<GuidedTourStep id="add-new-site" tourId="addSiteStep1" context={ tourStepRef } />
 			<Button

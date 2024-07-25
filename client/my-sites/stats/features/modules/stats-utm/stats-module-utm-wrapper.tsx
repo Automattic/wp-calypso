@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { StatsCard } from '@automattic/components';
+import { StatsCard, StatsCardTitleExtras } from '@automattic/components';
 import clsx from 'clsx';
 import React from 'react';
 import { STATS_FEATURE_UTM_STATS } from 'calypso/my-sites/stats/constants';
@@ -20,6 +20,7 @@ const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 	query,
 	summary,
 	className,
+	summaryUrl,
 } ) => {
 	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 	const isGatedByShouldGateStats = config.isEnabled( 'stats/restricted-dashboard' );
@@ -57,7 +58,7 @@ const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 				<StatsCard
 					title="UTM"
 					className={ clsx( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
-					isNew
+					titleNodes={ <StatsCardTitleExtras isNew /> }
 				>
 					<StatsModulePlaceholder isLoading />
 				</StatsCard>
@@ -77,6 +78,7 @@ const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 					hideSummaryLink={ hideSummaryLink }
 					postId={ postId }
 					summary={ summary }
+					summaryUrl={ summaryUrl }
 				/>
 			) }
 		</>

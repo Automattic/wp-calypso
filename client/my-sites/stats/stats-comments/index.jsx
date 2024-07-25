@@ -37,6 +37,8 @@ class StatsComments extends Component {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		className: PropTypes.string,
+		gateStatsComments: PropTypes.bool,
+		skipQuery: PropTypes.bool,
 	};
 
 	state = {
@@ -111,6 +113,7 @@ class StatsComments extends Component {
 			translate,
 			className,
 			gateStatsComments,
+			skipQuery,
 		} = this.props;
 		const commentsAuthors = get( commentsStatsData, 'authors' );
 		const commentsPosts = get( commentsStatsData, 'posts' );
@@ -133,8 +136,10 @@ class StatsComments extends Component {
 
 		return (
 			<>
-				{ siteId && <QuerySiteStats statType={ STAT_TYPE_COMMENTS } siteId={ siteId } /> }
-				{ siteId && (
+				{ ! skipQuery && siteId && (
+					<QuerySiteStats statType={ STAT_TYPE_COMMENTS } siteId={ siteId } />
+				) }
+				{ ! skipQuery && siteId && (
 					<QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ { max: 7 } } />
 				) }
 				<StatsListCard
@@ -191,7 +196,7 @@ class StatsComments extends Component {
 }
 
 const connectComponent = connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 		const gateStatsComments = shouldGateStats( state, siteId, STAT_TYPE_COMMENTS );
@@ -212,6 +217,7 @@ const connectComponent = connect(
 			siteId,
 			siteSlug,
 			gateStatsComments,
+			skipQuery: ownProps.skipQuery,
 		};
 	},
 	{ recordGoogleEvent }

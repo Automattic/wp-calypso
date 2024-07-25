@@ -104,7 +104,10 @@ const Button: ForwardRefRenderFunction<
 		<button { ...buttonProps } className={ classes } ref={ ref as Ref< HTMLButtonElement > } />
 	);
 };
-
+/**
+ * @deprecated This button has been deprecated in favor of the `Button` component from `@wordpress/components`.
+ * Please use the `Button` component from `@wordpress/components` instead. This button has aggressive and generic CSS that breaks many other buttons when imported.
+ */
 const ButtonWithForwardedRef = forwardRef( Button );
 
 ButtonWithForwardedRef.defaultProps = {

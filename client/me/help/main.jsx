@@ -241,7 +241,7 @@ class Help extends PureComponent {
 				<NavigationHeader
 					navigationItems={ [] }
 					title={ translate( 'Support' ) }
-					subtitle={ translate( 'Get help with your WordPress.com site' ) }
+					subtitle={ translate( 'Get help with your WordPress.com site.' ) }
 				>
 					<HelpContactUsHeader />
 				</NavigationHeader>
