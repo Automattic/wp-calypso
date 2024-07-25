@@ -664,6 +664,7 @@ export interface AssembleSiteOptions {
 	globalStyles?: GlobalStyles;
 	canReplaceContent?: boolean;
 	siteSetupOption?: string;
+	wrapMainHtmlInMainGroup?: boolean;
 }
 
 /**

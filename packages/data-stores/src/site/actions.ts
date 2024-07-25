@@ -471,6 +471,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			globalStyles,
 			canReplaceContent,
 			siteSetupOption,
+			wrapMainHtmlInMainGroup = true,
 		}: AssembleSiteOptions = {}
 	) {
 		const templates = [
@@ -483,7 +484,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 					!! headerHtml,
 					!! footerHtml,
 					!! homeHtml,
-					homeHtml
+					homeHtml,
+					wrapMainHtmlInMainGroup
 				),
 			},
 			headerHtml && {

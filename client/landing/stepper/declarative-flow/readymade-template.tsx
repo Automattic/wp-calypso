@@ -262,6 +262,7 @@ function enableAssemblerThemeAndConfigureTemplates(
 			canReplaceContent: boolean;
 			// All sites using the assembler set the option wpcom_site_setup
 			siteSetupOption: string;
+			wrapMainHtmlInMainGroup: boolean;
 		}
 	) => Promise< never >,
 	reduxDispatch: CalypsoDispatch
@@ -300,6 +301,7 @@ function enableAssemblerThemeAndConfigureTemplates(
 					globalStyles: readymadeTemplate.globalStyles,
 					canReplaceContent: true,
 					siteSetupOption: 'readymade-template',
+					wrapMainHtmlInMainGroup: false,
 				} )
 			)
 			.then( () => window.location.assign( `/site-editor/${ siteId }?canvas=edit&assembler=1` ) );
