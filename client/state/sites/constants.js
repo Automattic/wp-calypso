@@ -79,6 +79,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'site_source_slug',
 	'is_difm_lite_in_progress',
 	'site_intent',
+	'theme_slug',
 	'launchpad_screen',
 	'launchpad_checklist_tasks_statuses',
 	'wpcom_production_blog_id',
