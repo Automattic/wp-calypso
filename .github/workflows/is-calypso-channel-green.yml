@@ -1,15 +1,17 @@
-name: Calypso Channel Status
+name: Is Calypso Channel Green?
 run-name: ${{ github.actor }} Checking Calypso Slack Channel Status
 
 on:
   merge_group:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  CheckCalypsoChannelStatus:
+  Check if Calypso Slack channel is green:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          STATUS=$(curl -s https://public-api.wordpress.com/wpcom/v2/calypso-slack-channel-status --header "Authorization: ${{ secrets.CALYPSO_CHANNEL_STATUS_API_SECRET }}")
+          STATUS=$(curl -s https://public-api.wordpress.com/wpcom/v2/calypso-slack-channel-status --header "Authorization: ${{ secrets.CALYPSO_CHANNEL_STATUS_API_SECRET }}" | xargs)
           if [ "$STATUS" = "GREEN" ]; then
             echo "Calypso Slack channel is green."
             exit 0
