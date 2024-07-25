@@ -52,6 +52,7 @@
 		"google-my-business": true,
 		"help": true,
 		"help/gpt-response": true,
+		"hosting-overview-refinements": false,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
 		"importer/site-backups": true,
