@@ -516,6 +516,12 @@ body.is-mobile-app-view {
 		}
 	}
 
+	.accessible-focus & a:focus,
+	.accessible-focus & button:focus {
+		box-shadow: inset 0 0 0 2px var(--color-primary-light);
+		outline: none;
+	}
+
 	&.is-active {
 		background: var(--color-masterbar-item-active-background);
 	}
