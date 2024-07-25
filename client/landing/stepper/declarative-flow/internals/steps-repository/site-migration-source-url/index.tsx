@@ -71,11 +71,9 @@ const SiteMigrationSourceUrl: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 
 	const handleSubmit = useCallback(
-		async ( action: string, data?: { platform: string; from: string } ) => {
-			// If we have a site and URL, and we're coming from a WordPress site,
-			// record the migration source domain.
-			// @todo: do we need the platform?
-			if ( siteSlug && 'wordpress' === data?.platform && data?.from ) {
+		async ( action: string, data?: { from: string } ) => {
+			// If we have a site and URL, record the migration source domain.
+			if ( siteSlug && data?.from ) {
 				await saveSiteSettings( siteSlug, { migration_source_site_domain: data.from } );
 			}
 
@@ -98,8 +96,8 @@ const SiteMigrationSourceUrl: Step = function ( { navigation } ) {
 				isFullLayout
 				stepContent={
 					<SourceSiteInput
-						onComplete={ ( { platform, url } ) =>
-							handleSubmit( 'skip_platform_identification', { platform, from: url } )
+						onComplete={ ( { url } ) =>
+							handleSubmit( 'skip_platform_identification', { from: url } )
 						}
 					/>
 				}
