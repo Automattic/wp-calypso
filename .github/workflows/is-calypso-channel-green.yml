@@ -3,8 +3,6 @@ run-name: ${{ github.actor }} Checking Calypso Slack Channel Status
 
 on:
   merge_group:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
   check-channel-status:
