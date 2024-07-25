@@ -1,14 +1,19 @@
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, ReactNode } from 'react';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
-
+import { ReadymadeTemplate, ReadymadeTemplatesProps } from 'calypso/my-sites/patterns/types';
 import './style.scss';
 
-export const ReadymadeTemplates = () => {
+type ReadymadeTemplatesSectionProps = ReadymadeTemplatesProps & {
+	renderPreview?: ( readymadeTemplate: ReadymadeTemplate ) => ReactNode;
+};
+
+export const ReadymadeTemplatesSection = ( {
+	readymadeTemplates,
+	renderPreview,
+}: ReadymadeTemplatesSectionProps ) => {
 	const translate = useTranslate();
-	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const [ currentScrollLeft, setCurrentScrollLeft ] = useState( 0 );
 	const [ maxScrollLeft, setMaxScrollLeft ] = useState( 0 );
@@ -78,11 +83,7 @@ export const ReadymadeTemplates = () => {
 						key={ readymadeTemplate.template_id }
 					>
 						<div className="readymade-template__content">
-							{ /*Replace this with the preview*/ }
-							<img
-								src="https://s0.wp.com/wp-content/rest-api-plugins/endpoints/themes/ready-made-templates-data/neonfit.webp"
-								alt=""
-							/>
+							{ renderPreview?.( readymadeTemplate ) }
 						</div>
 						<div className="readymade-template__title">{ readymadeTemplate.title }</div>
 					</a>
