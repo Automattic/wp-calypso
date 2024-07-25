@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import './style.scss';
 import { SectionBackground } from './backgrounds';
 
-type Props = {
+export type HostingSectionProps = {
 	children: ReactNode;
 	heading: string;
 	subheading?: string;
@@ -18,7 +18,7 @@ export default function HostingSection( {
 	description,
 	children,
 	background,
-}: Props ) {
+}: HostingSectionProps ) {
 	return (
 		<div
 			className="hosting-section-wrapper"
