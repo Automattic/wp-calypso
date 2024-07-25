@@ -19,7 +19,7 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 const CommercialSiteUpgradeNotice = ( {
 	siteId,
 	isOdysseyStats,
-	shouldShowPaywallNotice,
+	showPaywallNotice,
 }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -49,7 +49,7 @@ const CommercialSiteUpgradeNotice = ( {
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
-	if ( shouldShowPaywallNotice ) {
+	if ( showPaywallNotice ) {
 		learnMoreLink = 'https://jetpack.com/support/jetpack-stats/free-or-paid/';
 	}
 
@@ -74,7 +74,7 @@ const CommercialSiteUpgradeNotice = ( {
 		externalIcon: <Icon className="stats-icon" icon={ external } size={ 24 } />,
 	};
 
-	const bannerBody = shouldShowPaywallNotice
+	const bannerBody = showPaywallNotice
 		? translate(
 				'{{p}}Commercial sites with a significant number of visitors require a commercial license. Upgrade to get access to all the stats features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
 				{
@@ -95,7 +95,7 @@ const CommercialSiteUpgradeNotice = ( {
 			}` }
 		>
 			<NoticeBanner
-				level={ shouldShowPaywallNotice ? 'error' : 'info' }
+				level={ showPaywallNotice ? 'error' : 'info' }
 				title={ translate( 'Upgrade to Stats Commercial' ) }
 				onClose={ () => {} }
 				hideCloseButton

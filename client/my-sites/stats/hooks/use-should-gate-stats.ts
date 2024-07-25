@@ -38,7 +38,7 @@ import {
 import {
 	hasSupportedCommercialUse,
 	hasSupportedVideoPressUse,
-	hasReachedPaywallMonthlyViews,
+	shouldShowPaywallAfterGracePeriod,
 } from './use-stats-purchases';
 
 // If Jetpack sites don't have any purchase that supports commercial use, gate advanced modules accordingly.
@@ -145,8 +145,10 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 
 		const isSiteCommercial = getSiteOption( state, siteId, 'is_commercial' ) || false;
 		if ( isSiteCommercial ) {
-			// Paywall basic stats for commercial sites with monthly views reaching the paywall threshold.
-			if ( hasReachedPaywallMonthlyViews( state, siteId ) ) {
+			// Paywall basic stats for commercial sites with:
+			// 1. Monthly views reached the paywall threshold.
+			// 2. Current usage passed over grace period days.
+			if ( shouldShowPaywallAfterGracePeriod( state, siteId ) ) {
 				return [
 					...jetpackStatsCommercialPaywall,
 					...granularControlForJetpackStatsCommercialPaywall,

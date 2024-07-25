@@ -43,7 +43,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isSiteJetpackNotAtomic,
 			isCommercial,
 			hasPWYWPlanOnly,
-			shouldShowPaywallNotice,
+			showPaywallNotice,
 		}: StatsNoticeProps ) => {
 			// Show the notice only if the site is commercial.
 			if ( ! isCommercial ) {
@@ -55,7 +55,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			}
 
 			// Show the upgrade notice with the coming paywall communication.
-			if ( shouldShowPaywallNotice ) {
+			if ( showPaywallNotice ) {
 				return true;
 			}
 
