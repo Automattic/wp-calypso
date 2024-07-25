@@ -31,17 +31,6 @@ export class TranslatorInvite extends Component {
 			location: this.props.path,
 		} );
 
-	renderIcon() {
-		return <MaterialIcon icon="emoji_language" />;
-	}
-
-	renderHeader() {
-		const { translate } = this.props;
-		return (
-			<p className="card-heading card-heading-20">{ translate( 'Translate WordPress.com' ) }</p>
-		);
-	}
-
 	renderLearnMoreLink = ( isInline = false ) => {
 		const { locale, translate } = this.props;
 		const link = (
