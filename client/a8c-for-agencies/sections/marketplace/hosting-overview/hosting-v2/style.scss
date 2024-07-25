@@ -1,0 +1,75 @@
+$tab-background-color: #f4fbff;
+
+.hosting-v2 {
+	.hosting-v2__hero {
+		background-image: url(calypso/assets/images/a8c-for-agencies/hosting-illustration-1.svg);
+		background-repeat: no-repeat;
+		background-position: right top;
+		background-color: var(--color-primary-0);
+		margin: -32px -64px;
+		padding-inline: 64px;
+		border-block-end: 1px solid var(--color-accent-5);
+
+		.hosting-v2__container {
+			padding-block-start: 32px;
+		}
+
+		.hosting-v2__heading {
+			@include a4a-font-heading-xxl;
+			margin-block-end: 32px;
+		}
+
+		.section-nav-tabs {
+			width: auto;
+			margin: 39px 0 0;
+			box-shadow: none;
+		}
+
+		.section-nav-tabs__list {
+			justify-content: space-between;
+			gap: 4px;
+			position: relative;
+			inset-block-start: 1px;
+		}
+
+		.section-nav-tab {
+			flex: 1;
+			border-radius: 4px 4px 2px 2px;
+			border: 1px solid var(--color-primary-5);
+			background: $tab-background-color;
+
+			&:hover:not(.is-selected) {
+				border-color: var(--color-primary-5);
+			}
+
+			&.is-selected {
+				border-color: var(--color-accent-5);
+				border-block-end: none;
+				background: var(--color-light-backdrop);
+
+				.section-nav-tab__link:hover {
+					background: none;
+				}
+			}
+
+			.section-nav-tab__link:hover {
+				background-color: $tab-background-color;
+			}
+		}
+
+		.hosting-v2__nav-item-label {
+			color: var(--color-accent-90);
+			@include a4a-font-heading-md($font-weight: 600);
+		}
+
+		.hosting-v2__nav-item-subtitle {
+			color: var(--color-accent-90);
+			@include a4a-font-body-md;
+		}
+
+	}
+
+	.hosting-v2__content {
+		padding-block-start: 64px;
+	}
+}
