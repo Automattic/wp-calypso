@@ -52,20 +52,18 @@ export default function CommissionsColumn( {
 				{ allTimeCommissions }
 			</span>
 			<Tooltip context={ wrapperRef.current } isVisible={ showPopover } position="bottom">
-				<div>
-					<ul>
-						<li>
-							{ translate( 'All time: %(allTimeCommissions)s', {
-								args: { allTimeCommissions },
-							} ) }
-						</li>
-						<li>
-							{ translate( 'Expected: %(pendingCommission)s', {
-								args: { pendingCommission },
-							} ) }
-						</li>
-					</ul>
-				</div>
+				<ul>
+					<li>
+						{ translate( 'All time: %(allTimeCommissions)s', {
+							args: { allTimeCommissions },
+						} ) }
+					</li>
+					<li>
+						{ translate( 'Expected: %(pendingCommission)s', {
+							args: { pendingCommission },
+						} ) }
+					</li>
+				</ul>
 			</Tooltip>
 		</>
 	);
