@@ -55,7 +55,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	};
 
 	state = {
-		isOpenByTouch: false,
+		isOpenForNonMouseFlow: false,
 	};
 
 	componentButtonRef = React.createRef< HTMLButtonElement >();
@@ -66,9 +66,11 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	componentDidMount() {
 		document.addEventListener( 'touchstart', this.closeMenuOnOutsideInteraction );
 		document.addEventListener( 'keydown', this.closeMenuOnOutsideInteraction );
+		document.addEventListener( 'click', this.closeMenuOnOutsideInteraction );
 		return () => {
 			document.removeEventListener( 'touchstart', this.closeMenuOnOutsideInteraction );
 			document.removeEventListener( 'keydown', this.closeMenuOnOutsideInteraction );
+			document.addEventListener( 'click', this.closeMenuOnOutsideInteraction );
 		};
 	}
 
@@ -138,7 +140,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		}
 		// Prevent navigation by touching the parent menu item, and trigger toggling the menu instead.
 		event.preventDefault();
-		this.setState( { isOpenByTouch: ! this.state.isOpenByTouch } );
+		this.setState( { isOpenForNonMouseFlow: ! this.state.isOpenForNonMouseFlow } );
 	};
 
 	toggleMenuByKey = ( event: React.KeyboardEvent ) => {
@@ -156,7 +158,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		if ( url ) {
 			navigate( url );
 		}
-		this.setState( { isOpenByTouch: false } );
+		this.setState( { isOpenForNonMouseFlow: false } );
 	};
 
 	navigateSubAnchorByKey = ( event: React.KeyboardEvent ) => {
@@ -170,7 +172,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		onClick: ( () => void ) | undefined
 	) => {
 		event.preventDefault();
-		this.setState( { isOpenByTouch: false } );
+		this.setState( { isOpenForNonMouseFlow: false } );
 		onClick && onClick();
 	};
 
@@ -180,9 +182,9 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		}
 	};
 
-	closeMenuOnOutsideInteraction = ( event: TouchEvent | KeyboardEvent ) => {
+	closeMenuOnOutsideInteraction = ( event: TouchEvent | KeyboardEvent | MouseEvent ) => {
 		// If no subItems or the menu is already closed, there is nothing to close.
-		if ( ! this.props.subItems || ! this.state.isOpenByTouch ) {
+		if ( ! this.props.subItems || ! this.state.isOpenForNonMouseFlow ) {
 			return;
 		}
 
@@ -193,7 +195,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		const isInComponentDivRef = this.componentDivRef.current?.contains( event.target as Node );
 
 		if ( ! isInComponentButtonRef && ! isInComponentDivRef ) {
-			this.setState( { isOpenByTouch: false } );
+			this.setState( { isOpenForNonMouseFlow: false } );
 		}
 	};
 
@@ -203,7 +205,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			'has-unseen': this.props.hasUnseen,
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
 			'has-subitems': this.props.subItems,
-			'is-open': this.state.isOpenByTouch,
+			'is-open': this.state.isOpenForNonMouseFlow,
 		} );
 
 		const attributes = {
