@@ -94,6 +94,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 				// show data or an overlay
 				<StatsModule
 					skipQuery
+					path="comments"
 					moduleStrings={ moduleString }
 					className={ className }
 					data={ filteredData }
