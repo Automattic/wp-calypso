@@ -7,7 +7,7 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  Check if Calypso Slack channel is green:
+  check-channel-status:
     runs-on: ubuntu-latest
     steps:
       - run: |
