@@ -68,6 +68,8 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 
+	const hasData = viewData && Object.keys( viewData ).length !== 0;
+
 	return (
 		<div className="stats__all-time-views-section stats__modernized-stats-table">
 			{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
@@ -89,7 +91,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 						</Card>
 					</div>
 				) }
-				{ isEmptyStateV2 && ! isRequestingData && ! viewData && ! shouldGateStats && (
+				{ isEmptyStateV2 && ! isRequestingData && ! hasData && ! shouldGateStats && (
 					<StatsCard
 						className={ clsx( 'stats-card--empty-variant' ) }
 						title={ translate( 'Total views' ) }
@@ -111,7 +113,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 					/>
 				) }
 
-				{ ( ( ! isRequestingData && viewData ) || ! isEmptyStateV2 ) && (
+				{ ( ( ! isRequestingData && hasData ) || ! isEmptyStateV2 ) && (
 					<div className="highlight-cards-list">
 						{ /*
 								TODO: Refactor this card along with other similar structure cards to a component
