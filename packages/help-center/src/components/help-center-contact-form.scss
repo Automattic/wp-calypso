@@ -121,13 +121,10 @@ section.contact-form-submit {
 		display: block;
 		height: unset;
 
-		&:hover,
-		&:focus {
+		&:hover:enabled,
+		&:focus:enabled {
 			box-shadow: inset 0 0 0 1px !important;
-		}
-
-		&.is-primary:hover {
-			color: var(--studio-gray-0) !important;
+			color: var(--color-text-inverted) !important;
 		}
 
 		&:disabled {
