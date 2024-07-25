@@ -16,6 +16,7 @@ import {
 	StatsEmptyActionAI,
 	StatsEmptyActionSocial,
 } from 'calypso/my-sites/stats/features/modules/shared';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import StatsHeatMapLegend from 'calypso/my-sites/stats/stats-heap-map/legend';
@@ -118,7 +119,16 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 							*/ }
 						<Card className={ cardWrapperClassName }>
 							<div className="highlight-card-heading">
-								<h4>{ translate( 'Total views' ) }</h4>
+								<h4 className="highlight-card-heading__title">
+									<span>{ translate( 'Total views' ) }</span>
+									{ isEmptyStateV2 && (
+										<StatsInfoArea>
+											{ translate(
+												'Learn about views patterns by analysing total and average daily views to your site.'
+											) }
+										</StatsInfoArea>
+									) }
+								</h4>
 								{ viewData && (
 									<SimplifiedSegmentedControl
 										options={ monthViewOptions }
