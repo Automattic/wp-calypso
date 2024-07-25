@@ -102,25 +102,25 @@ function SubscribeEmailStep( props ) {
 		useCreateNewAccountMutation( {
 			onSuccess: async ( response ) => {
 				const userData = {
-					ID: ( response && response.signup_sandbox_user_id ) || ( response && response.user_id ),
-					username:
-						( response && response.signup_sandbox_username ) || ( response && response.username ),
+					ID: response?.signup_sandbox_user_id || response?.user_id,
+					username: response?.signup_sandbox_username || response?.username,
 					email,
 				};
 
 				handlerecordRegistration( userData );
 
-				// User data is stale now that a new account has been created. Refresh user data
-				// so that we can log out the new user properly.
+				// User data is stale now that a new account has been created. We need to
+				// refresh user data because we log them out after email subscription, which
+				// requires an updated logout nonce.
 				wpcom.loadToken( response.bearer_token );
 				await props.fetchCurrentUser();
 
 				await handleSubscribeToMailingList();
 
-				// Log out new users after their account is created. This is meant to make email
-				// capture at conferences more seamless. Logged in users will see an "Is it you?"
-				// page. Because we log out new users, we will skip over this prompt entirely which
-				// is better when multiple users are signing up on one device in succession.
+				// Logged in users will see an "Is it you?" page. Logged out users will skip the page.
+				// To make email capture more seamless at conferences we keep users logged out after
+				// new user creation. This allows us to capture multiple signups on one device without
+				// showing the "Is it you?" page to each subsequent person.
 				props.redirectToLogout( redirectUrl );
 			},
 			onError: async ( error ) => {
@@ -195,6 +195,27 @@ function SubscribeEmailStep( props ) {
 							props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
 							goToNextStep();
 						} }
+						notYouText={ translate(
+							'Not you?{{br/}}Log out and {{link}}subscribe with %(email)s{{/link}}',
+							{
+								components: {
+									br: <br />,
+									link: (
+										<button
+											type="button"
+											id="subscribeDifferentEmail"
+											className="continue-as-user__change-user-link"
+											onClick={ () => {
+												recordTracksEvent( 'calypso_signup_click_on_change_account' );
+												props.redirectToLogout( window.location.href );
+											} }
+										/>
+									),
+								},
+								args: { email },
+								comment: 'Link to continue subscribe to email list as different user',
+							}
+						) }
 					/>
 				}
 				stepName={ stepName }
