@@ -1,5 +1,5 @@
-import config from '@automattic/calypso-config';
 import { MaterialIcon } from '@automattic/components';
+import languages from '@automattic/languages';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -31,41 +31,107 @@ export class TranslatorInvite extends Component {
 			location: this.props.path,
 		} );
 
-	renderNoticeLabelText() {
-		const { locale, localizedLanguageNames, translate } = this.props;
-		if ( localizedLanguageNames && localizedLanguageNames[ locale ] ) {
-			return (
-				<>
-					<MaterialIcon icon="emoji_language" /> <br />
-					<h2 className="card-heading card-heading-20">
-						{ translate( 'Translate WordPress.com' ) }
-					</h2>
-					<div className="language-picker__modal-incomplete-locale-notice-info">
-						{
-							/* translators: %(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%. */
-							// sprintf( __( '%(languageName)s is only %(percentTranslated)d%% translated' ), {
-							// 	languageName,
-							// 	percentTranslated,
-							// } )
-						 }
-					</div>
-				</>
-			);
+	renderIcon() {
+		return <MaterialIcon icon="emoji_language" />;
+	}
+
+	renderHeader() {
+		const { translate } = this.props;
+		return (
+			<p className="card-heading card-heading-20">{ translate( 'Translate WordPress.com' ) }</p>
+		);
+	}
+
+	renderLearnMoreLink = ( isInline = false ) => {
+		const { locale, translate } = this.props;
+		const link = (
+			<a
+				className="language-picker__modal-incomplete-locale-notice-learn-more"
+				href={ `https://translate.wordpress.com/projects/wpcom/${ locale }/default/` }
+				target="_blank"
+				rel="noopener noreferrer"
+				onClick={ this.recordClick }
+			>
+				{ translate( 'Learn more' ) }
+			</a>
+		);
+
+		if ( ! isInline ) {
+			return <div>{ link }</div>;
 		}
 
-		return null;
+		return link;
+	};
+
+	renderIconAndHeader = () => {
+		const { path, translate } = this.props;
+
+		switch ( path ) {
+			case '/home':
+				return (
+					<>
+						<MaterialIcon icon="emoji_language" />
+						<p className="card-heading card-heading-20">
+							{ translate( 'Translate WordPress.com' ) }
+						</p>
+					</>
+				);
+			case '/language-switcher':
+				return (
+					<span className="language-picker__modal-incomplete-locale-notice">
+						<MaterialIcon icon="emoji_language" />
+					</span>
+				);
+			default:
+				return null;
+		}
+	};
+
+	renderNoticeLabelText() {
+		const { locale, path, localizedLanguageNames, translate } = this.props;
+
+		if ( ! localizedLanguageNames || ! localizedLanguageNames[ locale ] ) {
+			return null;
+		}
+
+		const languageName = localizedLanguageNames[ locale ].localized;
+		const currentLanguage = languages.find( ( language ) => language.langSlug === locale );
+		const percentTranslated = currentLanguage?.calypsoPercentTranslated || 0;
+
+		let noticeText;
+		if ( path === '/home' ) {
+			// translators: '%(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%'
+			noticeText = translate(
+				'%(languageName)s is only %(percentTranslated)d%% translated. Help translate WordPress into your language.',
+				{
+					args: { languageName, percentTranslated },
+				}
+			);
+		} else if ( path === '/language-switcher' ) {
+			noticeText = translate( 'You can help translate WordPress.com into your language.' );
+		} else {
+			return null;
+		}
+
+		return (
+			<div className="language-picker__modal-incomplete-locale-notice-info">{ noticeText }</div>
+		);
 	}
 
 	render() {
 		const { locale } = this.props;
+		const currentLanguage = languages.find( ( language ) => language.langSlug === locale );
+		const percentTranslated = currentLanguage?.calypsoPercentTranslated || 0;
 
-		if ( config( 'i18n_default_locale_slug' ) === locale ) {
+		if ( percentTranslated >= 85 ) {
 			return null;
 		}
 
 		return (
 			<div className="translator-invite">
+				{ this.renderIconAndHeader() }
 				{ this.renderNoticeLabelText() }
+				{ this.renderLearnMoreLink() }
 				<QueryLanguageNames />
 			</div>
 		);
