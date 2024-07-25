@@ -1,6 +1,5 @@
 import HostingOverviewFeatures from '../hosting-overview-features';
 import HostingSection, { HostingSectionProps } from '../hosting-section';
-import { BackgroundType2 } from '../hosting-section/backgrounds';
 
 type Props = Omit< HostingSectionProps, 'children' > & {
 	items: {
@@ -11,14 +10,16 @@ type Props = Omit< HostingSectionProps, 'children' > & {
 };
 
 export default function HostingFeaturesSection( {
+	icon,
 	heading,
 	subheading,
-	background = BackgroundType2,
+	background,
 	description,
 	items,
 }: Props ) {
 	return (
 		<HostingSection
+			icon={ icon }
 			heading={ heading }
 			subheading={ subheading }
 			background={ background }

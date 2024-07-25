@@ -16,6 +16,7 @@ type Props = Omit< HostingSectionProps, 'children' > & {
 };
 
 export default function HostingTestimonialsSection( {
+	icon,
 	heading,
 	subheading,
 	background,
@@ -24,6 +25,7 @@ export default function HostingTestimonialsSection( {
 }: Props ) {
 	return (
 		<HostingSection
+			icon={ icon }
 			heading={ heading }
 			subheading={ subheading }
 			background={ background }
