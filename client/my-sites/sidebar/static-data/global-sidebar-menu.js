@@ -1,6 +1,6 @@
 import { category, Icon, brush } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
-import ReaderP2Icon from 'calypso/reader/components/icons/p2-icon';
+import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
 
 export const SidebarIconPlugins = () => (
 	<svg
@@ -35,7 +35,7 @@ export default function globalSidebarMenu( { showP2s = false } = {} ) {
 		...( showP2s
 			? [
 					{
-						icon: <ReaderP2Icon />,
+						icon: <ReaderA8cIcon size={ 24 } />,
 						slug: 'sites-p2',
 						title: translate( 'P2s' ),
 						navigationLabel: translate( 'Manage all my P2 sites' ),
