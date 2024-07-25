@@ -16,6 +16,10 @@
 		display: block !important;
 	}
 
+	.wp-block-heading {
+		scroll-margin-top: 69px;
+	}
+
 	h1 {
 		font-size: $font-title-large;
 		font-weight: 600;
@@ -38,7 +42,6 @@
 		font-size: $font-title-small;
 		font-weight: 600;
 		margin: 0 0 8px;
-		scroll-margin-top: 69px;
 	}
 
 	h5 {
