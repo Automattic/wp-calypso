@@ -18,8 +18,10 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	getPurchases,
 } from 'calypso/state/purchases/selectors';
-import { getPlanUsageBillableMonthlyViews } from 'calypso/state/stats/plan-usage/selectors';
-import { MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL } from './use-site-compulsory-plan-selection-qualified-check';
+import {
+	getShouldShowPaywallNotice,
+	getShouldShowPaywallAfterGracePeriod,
+} from 'calypso/state/stats/plan-usage/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 const JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04 = '2024-01-04T05:30:00+00:00';
@@ -75,10 +77,21 @@ export const hasSupportedVideoPressUse = ( state: object, siteId: number | null 
 	return isVideoPressOwned( sitePurchases );
 };
 
-export const hasReachedPaywallMonthlyViews = ( state: object, siteId: number | null ): boolean => {
-	const billableMonthlyViews = getPlanUsageBillableMonthlyViews( state, siteId );
+export const shouldShowPaywallNotice = ( state: object, siteId: number | null ): boolean => {
+	return (
+		! hasSupportedCommercialUse( state, siteId ) && getShouldShowPaywallNotice( state, siteId )
+	);
+};
 
-	return billableMonthlyViews >= MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL;
+export const shouldShowPaywallAfterGracePeriod = (
+	state: object,
+	siteId: number | null
+): boolean => {
+	// Make the paywall check more robust by checking the purchase.
+	return (
+		! hasSupportedCommercialUse( state, siteId ) &&
+		getShouldShowPaywallAfterGracePeriod( state, siteId )
+	);
 };
 
 const getPurchasesBySiteId = createSelector(

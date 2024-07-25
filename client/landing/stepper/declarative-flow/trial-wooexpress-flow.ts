@@ -1,47 +1,59 @@
 import config from '@automattic/calypso-config';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { useSearchParams } from 'react-router-dom';
+import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { login } from 'calypso/lib/paths';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
 const wooexpress: Flow = {
 	name: 'wooexpress',
 	isSignupFlow: true,
 
 	useSteps() {
-		return [
+		return stepsWithRequiredLogin( [
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.ASSIGN_TRIAL_PLAN,
 			STEPS.WAIT_FOR_ATOMIC,
 			STEPS.WAIT_FOR_PLUGIN_INSTALL,
 			STEPS.ERROR,
-		];
+		] );
 	},
+
+	useLoginParams() {
+		const [ searchParams ] = useSearchParams();
+
+		const oauth2ClientId = searchParams.get( 'client_id' );
+		const wccomFrom = searchParams.get( 'wccom-from' );
+		const aff = searchParams.get( 'aff' );
+		const vendorId = searchParams.get( 'vid' );
+
+		return {
+			customLoginPath: '/log-in',
+			extraQueryParams: {
+				...( oauth2ClientId ? { oauth2ClientId } : {} ),
+				...( wccomFrom ? { wccomFrom } : {} ),
+				...( aff ? { aff } : {} ),
+				...( vendorId ? { vendorId } : {} ),
+			},
+		};
+	},
+
 	useAssertConditions(): AssertConditionResult {
 		const { setProfilerData } = useDispatch( ONBOARD_STORE );
 		const { setSiteSetupError } = useDispatch( SITE_STORE );
 		const translate = useTranslate();
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
-
-		const locale = useFlowLocale();
 
 		setSiteSetupError(
 			undefined,
@@ -52,8 +64,6 @@ const wooexpress: Flow = {
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
-		const aff = queryParams.get( 'aff' );
-		const vendorId = queryParams.get( 'vid' );
 
 		if ( profilerData ) {
 			try {
@@ -65,33 +75,6 @@ const wooexpress: Flow = {
 				// Ignore any bad/invalid data and prevent it from causing downstream issues.
 			} catch {}
 		}
-
-		const getLoginUrl = () => {
-			const redirectTo = addQueryArgs(
-				`${ window.location.protocol }//${ window.location.host }/setup/wooexpress`,
-				{
-					...Object.fromEntries( queryParams ),
-				}
-			);
-
-			let logInUrl = login( {
-				locale,
-				redirectTo,
-				oauth2ClientId: queryParams.get( 'client_id' ) || undefined,
-				wccomFrom: queryParams.get( 'wccom-from' ) || undefined,
-			} );
-
-			if ( aff ) {
-				logInUrl = addQueryArgs( logInUrl, { aff } );
-			}
-
-			if ( vendorId ) {
-				logInUrl = addQueryArgs( logInUrl, {
-					vid: vendorId,
-				} );
-			}
-			return logInUrl;
-		};
 
 		// Despite sending a CHECKING state, this function gets called again with the
 		// /setup/wooexpress/create-site route which has no locale in the path so we need to
@@ -122,22 +105,11 @@ const wooexpress: Flow = {
 					},
 				} );
 			}
-
-			if ( ! userIsLoggedIn ) {
-				const logInUrl = getLoginUrl();
-				window.location.assign( logInUrl );
-			}
 		}, [] );
 
-		if ( ! userIsLoggedIn ) {
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'wooexpress-trial requires a logged in user',
-			};
-		}
-
-		return result;
+		return { state: AssertConditionState.SUCCESS };
 	},
+
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const intent = useSelect(

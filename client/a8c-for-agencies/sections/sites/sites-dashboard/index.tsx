@@ -285,6 +285,7 @@ export default function SitesDashboard() {
 						closeSitePreviewPane={ closeSitePreviewPane }
 						isSmallScreen={ ! isLargeScreen }
 						hasError={ isError }
+						onRefetchSite={ refetch }
 					/>
 				</LayoutColumn>
 			) }

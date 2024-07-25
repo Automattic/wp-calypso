@@ -33,7 +33,8 @@
 		"oauth": true,
 		"a4a-logged-out-signup": true,
 		"a4a-automated-referrals": true,
-		"a4a-partner-directory": false
+		"a4a-partner-directory": false,
+		"a4a-dev-sites": false
 	},
 	"enable_all_sections": false,
 	"sections": {

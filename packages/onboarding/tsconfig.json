@@ -7,5 +7,9 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../components" }, { "path": "../data-stores" } ]
+	"references": [
+		{ "path": "../components" },
+		{ "path": "../data-stores" },
+		{ "path": "../calypso-config" }
+	]
 }

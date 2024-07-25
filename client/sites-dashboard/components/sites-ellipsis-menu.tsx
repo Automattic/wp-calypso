@@ -262,17 +262,13 @@ const SiteMenuGroup = styled( MenuGroup )( {
 } );
 
 const SiteDropdownMenu = styled( DropdownMenu )( {
-	display: 'block',
-
 	'> .components-button': {
-		padding: '8px 0',
-		margin: '8px 0',
+		height: '44px',
+		width: '44px',
+		marginRight: '-12px',
 		minWidth: 0,
 		color: 'var( --color-text-subtle )',
-		height: 'auto',
 		verticalAlign: 'middle',
-		width: '100%',
-		justifyContent: 'end',
 	},
 } );
 

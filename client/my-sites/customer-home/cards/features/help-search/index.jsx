@@ -47,11 +47,11 @@ export default function HelpSearch() {
 
 		dispatch( recordTracksEvent( `calypso_inlinehelp_${ type }_open`, tracksData ) );
 	};
-	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { url } = useStillNeedHelpURL();
 
 	const onClick = () => {
-		setInitialRoute( url );
+		setNavigateToRoute( url );
 		setShowHelpCenter( true );
 		dispatch( recordTracksEvent( 'calypso_inlinehelp_get_help_click' ) );
 	};

@@ -27,11 +27,11 @@ const HELP_CENTER_STORE = HelpCenter.register();
 export default function SupportCard() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { url } = useStillNeedHelpURL();
 
 	const onClick = () => {
-		setInitialRoute( url );
+		setNavigateToRoute( url );
 		setShowHelpCenter( true );
 		dispatch( trackNavigateGetHelpClick() );
 	};
