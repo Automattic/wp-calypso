@@ -2,6 +2,9 @@ name: Is Calypso Channel Green?
 run-name: ${{ github.actor }} Checking Calypso Slack Channel Status
 
 on:
+  pull_request:
+    branches:
+      - trunk
   merge_group:
 
 jobs:
