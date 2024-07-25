@@ -1,8 +1,8 @@
-import { StatsCard } from '@automattic/components';
+import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { comment } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector } from 'calypso/state';
@@ -13,7 +13,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { INSIGHTS_SUPPORT_URL } from '../../../const';
-import Comments from '../../../stats-comments';
+import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
@@ -46,6 +46,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsComments';
 	const moduleTitle = translate( 'Comments' );
+	const [ activeFilter, setActiveFilter ] = useState( 'top-authors' );
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -58,6 +59,23 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 	) as CommentData;
 
 	const hasPosts = data?.posts?.length > 0;
+	let filteredData = activeFilter === 'top-authors' ? data?.authors : data?.posts;
+
+	filteredData = filteredData?.map( ( item ) => ( {
+		...item,
+		value: item.value, // Keep value as string
+	} ) );
+
+	const handleFilterChange = ( selection: { value: React.SetStateAction< string > } ) => {
+		setActiveFilter( selection.value );
+	};
+
+	const moduleString = {
+		title: '',
+		item: '',
+		value: '',
+		empty: '',
+	};
 
 	return (
 		<>
@@ -74,7 +92,25 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 			) }
 			{ ( ( ! isRequestingData && hasPosts ) || shouldGateStatsModule ) && (
 				// show data or an overlay
-				<Comments path="comments" className={ className } skipQuery />
+				<StatsModule
+					skipQuery
+					moduleStrings={ moduleString }
+					className={ className }
+					data={ filteredData }
+					statType={ statType }
+					query={ {} }
+					isLoading={ isRequestingData }
+					gateStats={ shouldGateStatsModule }
+					toggleControl={
+						<SimplifiedSegmentedControl
+							options={ [
+								{ value: 'top-authors', label: translate( 'By authors' ) },
+								{ value: 'top-content', label: translate( 'By posts & pages' ) },
+							] }
+							onSelect={ () => handleFilterChange }
+						/>
+					}
+				/>
 			) }
 			{ ! isRequestingData && ! hasPosts && ! shouldGateStatsModule && (
 				// show empty state
