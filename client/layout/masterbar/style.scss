@@ -587,6 +587,12 @@ body.is-mobile-app-view {
 		}
 	}
 
+	@media only screen and (max-width: 360px) {
+		&.masterbar__reader {
+			display: none;
+		}
+	}
+
 	&:disabled {
 		&:hover {
 			background: initial;
