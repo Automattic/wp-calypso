@@ -65,7 +65,11 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 
 	componentDidMount() {
 		document.addEventListener( 'touchstart', this.closeMenuOnOutsideTouch );
-		return () => document.removeEventListener( 'touchstart', this.closeMenuOnOutsideTouch );
+		document.addEventListener( 'keydown', this.closeMenuOnOutsideTouch );
+		return () => {
+			document.removeEventListener( 'touchstart', this.closeMenuOnOutsideTouch );
+			document.removeEventListener( 'keydown', this.closeMenuOnOutsideTouch );
+		};
 	}
 
 	preload = () => {
@@ -107,12 +111,23 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 									this.setState( { isOpenByTouch: false } );
 									item.onClick && item.onClick();
 								} }
+								onKeyDown={ ( ev: React.KeyboardEvent ) => {
+									if ( ev.key === 'Enter' || ev.key === ' ' ) {
+										ev.preventDefault();
+										this.setState( { isOpenByTouch: false } );
+										item.onClick && item.onClick();
+									}
+								} }
 							>
 								{ item.label }
 							</Button>
 						) }
 						{ ! item.onClick && item.url && (
-							<a href={ item.url } onTouchEnd={ this.navigateSubAnchorTouch }>
+							<a
+								href={ item.url }
+								onTouchEnd={ this.navigateSubAnchorTouch }
+								onKeyDown={ this.navigateSubAnchorByKey }
+							>
 								{ item.label }
 							</a>
 						) }
@@ -122,7 +137,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		);
 	}
 
-	toggleMenuByTouch = ( event: React.TouchEvent ) => {
+	toggleMenuByTouch = ( event: React.TouchEvent | React.KeyboardEvent ) => {
 		// If there are no subItems, there is nothing to toggle.
 		if ( ! this.props.subItems ) {
 			return;
@@ -132,7 +147,13 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		this.setState( { isOpenByTouch: ! this.state.isOpenByTouch } );
 	};
 
-	navigateSubAnchorTouch = ( event: React.TouchEvent ) => {
+	toggleMenuByKey = ( event: React.KeyboardEvent ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			this.toggleMenuByTouch( event );
+		}
+	};
+
+	navigateSubAnchorTouch = ( event: React.TouchEvent | React.KeyboardEvent ) => {
 		// We must prevent the default anchor behavior and navigate manually. Otherwise there is a
 		// race condition between the click on the anchor firing and the menu closing before that
 		// can happen.
@@ -144,7 +165,13 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		this.setState( { isOpenByTouch: false } );
 	};
 
-	closeMenuOnOutsideTouch = ( event: TouchEvent ) => {
+	navigateSubAnchorByKey = ( event: React.KeyboardEvent ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			this.navigateSubAnchorTouch( event );
+		}
+	};
+
+	closeMenuOnOutsideTouch = ( event: TouchEvent | KeyboardEvent ) => {
 		// If no subItems or the menu is already closed, there is nothing to close.
 		if ( ! this.props.subItems || ! this.state.isOpenByTouch ) {
 			return;
@@ -194,11 +221,16 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 
 		if ( this.props.url && this.props.subItems ) {
 			return (
-				<button { ...attributes } ref={ this.componentButtonRef }>
+				<button
+					{ ...attributes }
+					ref={ this.componentButtonRef }
+					onKeyDown={ this.toggleMenuByKey }
+				>
 					<a
 						href={ this.props.url }
 						ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
 						onTouchEnd={ this.toggleMenuByTouch }
+						tabIndex={ -1 }
 					>
 						{ this.renderChildren() }
 					</a>
@@ -212,6 +244,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 				<button
 					{ ...attributes }
 					ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }
+					onKeyDown={ this.props.subItems && this.toggleMenuByKey }
 					onTouchEnd={ this.props.subItems && this.toggleMenuByTouch }
 				>
 					{ this.renderChildren() }
