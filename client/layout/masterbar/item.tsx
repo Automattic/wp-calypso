@@ -64,11 +64,11 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	_preloaded = false;
 
 	componentDidMount() {
-		document.addEventListener( 'touchstart', this.closeMenuOnOutsideTouch );
-		document.addEventListener( 'keydown', this.closeMenuOnOutsideTouch );
+		document.addEventListener( 'touchstart', this.closeMenuOnOutsideInteraction );
+		document.addEventListener( 'keydown', this.closeMenuOnOutsideInteraction );
 		return () => {
-			document.removeEventListener( 'touchstart', this.closeMenuOnOutsideTouch );
-			document.removeEventListener( 'keydown', this.closeMenuOnOutsideTouch );
+			document.removeEventListener( 'touchstart', this.closeMenuOnOutsideInteraction );
+			document.removeEventListener( 'keydown', this.closeMenuOnOutsideInteraction );
 		};
 	}
 
@@ -106,18 +106,12 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 							<Button
 								className="is-link"
 								onClick={ item.onClick }
-								onTouchEnd={ ( ev: React.TouchEvent ) => {
-									ev.preventDefault();
-									this.setState( { isOpenByTouch: false } );
-									item.onClick && item.onClick();
-								} }
-								onKeyDown={ ( ev: React.KeyboardEvent ) => {
-									if ( ev.key === 'Enter' || ev.key === ' ' ) {
-										ev.preventDefault();
-										this.setState( { isOpenByTouch: false } );
-										item.onClick && item.onClick();
-									}
-								} }
+								onTouchEnd={ ( ev: React.TouchEvent ) =>
+									this.submenuButtonTouch( ev, item.onClick )
+								}
+								onKeyDown={ ( ev: React.KeyboardEvent ) =>
+									this.submenuButtonByKey( ev, item.onClick )
+								}
 							>
 								{ item.label }
 							</Button>
@@ -171,7 +165,22 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		}
 	};
 
-	closeMenuOnOutsideTouch = ( event: TouchEvent | KeyboardEvent ) => {
+	submenuButtonTouch = (
+		event: React.TouchEvent | React.KeyboardEvent,
+		onClick: ( () => void ) | undefined
+	) => {
+		event.preventDefault();
+		this.setState( { isOpenByTouch: false } );
+		onClick && onClick();
+	};
+
+	submenuButtonByKey = ( event: React.KeyboardEvent, onClick: ( () => void ) | undefined ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			this.submenuButtonTouch( event, onClick );
+		}
+	};
+
+	closeMenuOnOutsideInteraction = ( event: TouchEvent | KeyboardEvent ) => {
 		// If no subItems or the menu is already closed, there is nothing to close.
 		if ( ! this.props.subItems || ! this.state.isOpenByTouch ) {
 			return;
