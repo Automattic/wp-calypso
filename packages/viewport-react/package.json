@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/viewport-react",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "React helpers for tracking viewport changes.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
