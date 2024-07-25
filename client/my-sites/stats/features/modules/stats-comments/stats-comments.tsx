@@ -63,7 +63,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 
 	filteredData = filteredData?.map( ( item ) => ( {
 		...item,
-		value: item.value, // Keep value as string
+		value: parseInt( item.value, 10 ),
 	} ) );
 
 	const handleFilterChange = ( selection: { value: React.SetStateAction< string > } ) => {
@@ -71,10 +71,10 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 	};
 
 	const moduleString = {
-		title: '',
-		item: '',
-		value: '',
-		empty: '',
+		title: translate( 'Comments' ),
+		item: translate( 'Comments' ),
+		value: translate( 'Comments' ),
+		empty: translate( 'Comments' ),
 	};
 
 	return (
@@ -108,7 +108,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 								{ value: 'top-authors', label: translate( 'By authors' ) },
 								{ value: 'top-content', label: translate( 'By posts & pages' ) },
 							] }
-							onSelect={ () => handleFilterChange }
+							onSelect={ handleFilterChange }
 						/>
 					}
 				/>
