@@ -42,7 +42,7 @@ export function useMaxPlanUpgradeCredits( { siteId, plans }: Props ): number {
 			return 0;
 		}
 
-		return discountedPrice - originalPrice;
+		return originalPrice - discountedPrice;
 	} );
 
 	return Math.max( ...creditsPerPlan );
