@@ -10,7 +10,7 @@ import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-e
 import { isRedirectAllowed } from 'calypso/lib/url/is-redirect-allowed';
 import wpcom from 'calypso/lib/wp';
 import useCreateNewAccountMutation from 'calypso/signup/hooks/use-create-new-account';
-import useSubscribeToMailingList from 'calypso/signup/hooks/use-subscribe-to-mailing-list';
+import useSubscribeEmail from 'calypso/signup/hooks/use-subscribe-email';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { fetchCurrentUser, redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -69,14 +69,13 @@ function SubscribeEmailStep( props ) {
 
 	const [ isRedirectingToLogout, setIsRedirectingToLogout ] = useState( false );
 
-	const { mutate: subscribeEmail, isPending: isSubscribeToMailingListPending } =
-		useSubscribeToMailingList( {
-			onSuccess: () => {
-				recordTracksEvent( 'calypso_signup_email_subscription_success', {
-					mailing_list: queryArguments.mailing_list,
-				} );
-			},
-		} );
+	const { mutate: subscribeEmail, isPending: isSubscribingEmail } = useSubscribeEmail( {
+		onSuccess: () => {
+			recordTracksEvent( 'calypso_signup_email_subscription_success', {
+				mailing_list: queryArguments.mailing_list,
+			} );
+		},
+	} );
 
 	const handleSubscribeToMailingList = useCallback(
 		( { email_address } = { email_address: email } ) => {
@@ -100,8 +99,8 @@ function SubscribeEmailStep( props ) {
 		[ flowName ]
 	);
 
-	const { mutate: createNewAccount, isPending: isCreateNewAccountPending } =
-		useCreateNewAccountMutation( {
+	const { mutate: createNewAccount, isPending: isCreatingNewAccount } = useCreateNewAccountMutation(
+		{
 			onSuccess: async ( response ) => {
 				const userData = {
 					ID: response?.signup_sandbox_user_id || response?.user_id,
@@ -146,7 +145,8 @@ function SubscribeEmailStep( props ) {
 					goToNextStep();
 				}
 			},
-		} );
+		}
+	);
 
 	useEffect( () => {
 		// 1. Handle subscription if user is logged out and email is valid
@@ -172,19 +172,14 @@ function SubscribeEmailStep( props ) {
 		}
 
 		// 2. Handle subscription if user is logged in and account email matches the submitted email
-		if (
-			currentUser?.email === email &&
-			! isCreateNewAccountPending &&
-			! isSubscribeToMailingListPending
-		) {
+		if ( currentUser?.email === email && ! isCreatingNewAccount && ! isSubscribingEmail ) {
 			handleSubscribeToMailingList();
 			props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
 			goToNextStep();
 		}
 	}, [ email ] );
 
-	const isPending =
-		isCreateNewAccountPending || isSubscribeToMailingListPending || isRedirectingToLogout;
+	const isPending = isCreatingNewAccount || isSubscribingEmail || isRedirectingToLogout;
 
 	return (
 		<div className="subscribe-email">
