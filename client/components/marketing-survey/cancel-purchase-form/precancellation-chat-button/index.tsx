@@ -57,6 +57,7 @@ const PrecancellationChatButton: FC< Props > = ( {
 			chatIntent="PRECANCELLATION"
 			initialMessage={ initialMessage }
 			siteUrl={ siteUrl }
+			siteId={ purchase?.siteId }
 			className={ clsx( 'precancellation-chat-button__main-button', className ) }
 			onClick={ handleClick }
 			section="pre-cancellation"

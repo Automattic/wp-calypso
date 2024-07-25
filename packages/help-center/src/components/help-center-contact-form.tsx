@@ -326,6 +326,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 						aiChatId: aiChatId,
 						message: initialChatMessage,
 						siteUrl: supportSite.URL,
+						siteId: supportSite.ID,
 						onError: () => setHasSubmittingError( true ),
 						onSuccess: () => {
 							resetStore();

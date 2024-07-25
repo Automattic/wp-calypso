@@ -1,17 +1,16 @@
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { SiteNode } from '../types';
 
 import './style.scss';
 
 type Props = {
-	site: SiteNode;
+	siteName: string;
 	onClose: () => void;
 	onConfirm?: () => void;
 	busy?: boolean;
 };
 
-export function SiteRemoveConfirmationDialog( { site, onConfirm, onClose, busy }: Props ) {
+export function SiteRemoveConfirmationDialog( { siteName, onConfirm, onClose, busy }: Props ) {
 	const translate = useTranslate();
 
 	const title = translate( 'Remove site' );
@@ -44,7 +43,7 @@ export function SiteRemoveConfirmationDialog( { site, onConfirm, onClose, busy }
 			{ translate(
 				'Are you sure you want to remove the site {{b}}%(siteName)s{{/b}} from the dashboard?',
 				{
-					args: { siteName: site.value?.url },
+					args: { siteName },
 					components: {
 						b: <b />,
 					},

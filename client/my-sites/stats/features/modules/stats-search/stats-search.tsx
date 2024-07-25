@@ -24,6 +24,7 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
 }: StatsDefaultModuleProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -96,6 +97,14 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 								}
 							) }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

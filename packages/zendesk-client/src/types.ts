@@ -16,6 +16,10 @@ export type UserFields = {
 	messaging_plan?: string;
 	messaging_source?: string;
 	messaging_url?: string;
+	/**
+	 * Site ID of the site the user is currently on.
+	 */
+	messaging_site_id: string | number | null;
 };
 
 export type MessagingAuth = {
@@ -34,6 +38,7 @@ export type MessagingMetadata = {
 	aiChatId?: string;
 	message?: string;
 	siteUrl?: string;
+	siteId?: string | number | null;
 	onError?: () => void;
 	onSuccess?: () => void;
 };

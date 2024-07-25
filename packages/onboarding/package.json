@@ -24,11 +24,12 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets && npx copyfiles ./styles/** dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets && npx copyfiles ./styles/** dist",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@wordpress/components": "^28.2.0",
@@ -58,6 +59,5 @@
 	"peerDependencies": {
 		"@wordpress/i18n": "^5.2.0",
 		"react": "^18.2.0"
-	},
-	"private": true
+	}
 }
