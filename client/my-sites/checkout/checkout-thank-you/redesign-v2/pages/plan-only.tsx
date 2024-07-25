@@ -180,20 +180,6 @@ const PlanOnlyThankYou = ( {
 		} );
 	}
 
-	footerDetails.push( {
-		key: 'footer-support',
-		title: translate( 'Everything you need to know' ),
-		description: translate( 'Visit Help Center and find an answer to every question.' ),
-		buttonText: translate( 'Explore support resources' ),
-		showHelpCenterOnClick: true,
-		buttonOnClick: () => {
-			recordTracksEvent( 'calypso_thank_you_footer_link_click', {
-				context: 'plan-only',
-				type: 'support',
-			} );
-		},
-	} );
-
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId as number ) );
 
 	return (

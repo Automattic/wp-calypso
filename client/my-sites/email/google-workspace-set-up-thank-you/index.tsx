@@ -28,19 +28,6 @@ export const GoogleWorkspaceSetUpThankYou = ( { purchase }: GoogleWorkspaceSetUp
 
 	const footerDetails = [
 		{
-			key: 'footer-extra-info',
-			title: translate( 'Everything you need to know' ),
-			description: translate( 'Visit Help Center and find an answer to every question.' ),
-			buttonText: translate( 'Explore support resources' ),
-			showHelpCenterOnClick: true,
-			buttonOnClick: () => {
-				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
-					context: 'google-workspace',
-					type: 'generic-support',
-				} );
-			},
-		},
-		{
 			key: 'footer-email',
 			title: translate( 'Email questions? We have the answers' ),
 			description: translate(
