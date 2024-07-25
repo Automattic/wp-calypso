@@ -290,7 +290,7 @@ class MasterbarLoggedIn extends Component {
 
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
 			// we are the /sites page but there is no site. Disable the home link
-			return <Item icon={ icon } disabled />;
+			return <Item icon={ icon } className="masterbar__item-no-sites" disabled />;
 		}
 
 		return (
@@ -342,11 +342,19 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderSiteMenu() {
-		const { siteSlug, translate, siteTitle, siteUrl, isClassicView, siteAdminUrl, siteHomeUrl } =
-			this.props;
+		const {
+			siteSlug,
+			translate,
+			siteTitle,
+			siteUrl,
+			isClassicView,
+			siteAdminUrl,
+			siteHomeUrl,
+			domainOnlySite,
+		} = this.props;
 
-		// Only display when a site is selected.
-		if ( ! siteSlug ) {
+		// Only display when a site is selected and is not domain-only site.
+		if ( ! siteSlug || domainOnlySite ) {
 			return null;
 		}
 
@@ -384,11 +392,12 @@ class MasterbarLoggedIn extends Component {
 			domainOnlySite,
 			isMigrationInProgress,
 			isEcommerce,
+			hasNoSites,
 		} = this.props;
 
 		// Only display on site-specific pages.
 		// domainOnlySite's still get currentSelectedSiteSlug, removing this check would require changing checks below.
-		if ( domainOnlySite || isMigrationInProgress || isEcommerce ) {
+		if ( domainOnlySite || isMigrationInProgress || isEcommerce || hasNoSites ) {
 			return null;
 		}
 

@@ -599,7 +599,8 @@ body.is-mobile-app-view {
 	}
 
 
-	&.masterbar__item-my-sites {
+	&.masterbar__item-my-sites,
+	&.masterbar__item-no-sites {
 		padding: 0 7px 0 5px; // trying to match core's 35px width
 
 		@media only screen and (max-width: 782px) {
