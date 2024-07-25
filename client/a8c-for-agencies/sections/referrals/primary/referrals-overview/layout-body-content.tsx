@@ -142,7 +142,7 @@ export default function LayoutBodyContent( {
 				<div className="referrals-overview__section-icons">
 					<JetpackLogo className="jetpack-logo" size={ 24 } />
 					<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
-					<img className="pressable-logo" src={ pressableIcon } alt="Pressable" />
+					<img className="pressable-icon" src={ pressableIcon } alt="Pressable" />
 					<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
 				</div>
 			) }
