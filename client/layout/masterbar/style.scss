@@ -581,6 +581,10 @@ body.is-mobile-app-view {
 		&.masterbar__item-me .masterbar__item-content {
 			display: block;
 		}
+
+		&.masterbar__item-my-site-actions {
+			display: none;
+		}
 	}
 
 	&:disabled {
