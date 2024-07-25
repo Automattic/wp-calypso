@@ -42,9 +42,13 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+		const { setPlanCartItem, resetCouponCode } = useDispatch( ONBOARD_STORE );
 		const planCartItem = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			[]
+		);
+		const couponCode = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 			[]
 		);
 		const flowName = this.name;
@@ -100,12 +104,13 @@ const hosting: Flow = {
 					}
 
 					if ( providedDependencies.goToCheckout ) {
+						couponCode && resetCouponCode();
 						return window.location.assign(
 							addQueryArgs(
 								`/checkout/${ encodeURIComponent(
 									( providedDependencies?.siteSlug as string ) ?? ''
 								) }`,
-								{ redirect_to: destination }
+								{ redirect_to: destination, coupon: couponCode }
 							)
 						);
 					}
