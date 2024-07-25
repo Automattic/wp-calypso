@@ -8,7 +8,6 @@ import {
 	useSitesListSorting,
 } from '@automattic/sites';
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
-import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -97,7 +96,6 @@ const SitesDashboard = ( {
 	initialSiteFeature = DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
-	const { __ } = useI18n();
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
@@ -292,6 +290,8 @@ const SitesDashboard = ( {
 
 	const showA8CForAgenciesBanner = paginatedSites.length >= 5;
 
+	const dashboardTitle = siteType === 'p2' ? translate( 'P2s' ) : translate( 'Sites' );
+
 	return (
 		<Layout
 			className={ clsx(
@@ -300,23 +300,23 @@ const SitesDashboard = ( {
 				! dataViewsState.selectedItem && 'preview-hidden'
 			) }
 			wide
-			title={ dataViewsState.selectedItem ? null : translate( 'Sites' ) }
+			title={ dataViewsState.selectedItem ? null : dashboardTitle }
 			disableGuidedTour
 		>
-			<DocumentHead title={ __( 'Sites' ) } />
+			<DocumentHead title={ dashboardTitle } />
 
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ false }>
 						<LayoutHeader>
-							{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
+							{ ! isNarrowView && <Title>{ dashboardTitle }</Title> }
 							<Actions>
 								<SitesDashboardHeader />
 							</Actions>
 						</LayoutHeader>
 					</LayoutTop>
 
-					<DocumentHead title={ __( 'Sites' ) } />
+					<DocumentHead title={ dashboardTitle } />
 					{ showA8CForAgenciesBanner && (
 						<div className="sites-a8c-for-agencies-banner-container">
 							<Banner
