@@ -143,20 +143,12 @@ class MasterbarLoggedIn extends Component {
 
 	handleToggleMobileMenu = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_menu_clicked' );
-		// this.handleLayoutFocus( 'sites' );
-		if ( 'sidebar' === this.props.currentLayoutFocus ) {
-			this.props.setNextLayoutFocus( 'content' );
-		} else {
-			this.props.setNextLayoutFocus( 'sidebar' );
-		}
+		this.handleLayoutFocus( this.props.section );
 		this.props.activateNextLayoutFocus();
 	};
 
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
-
-		this.handleLayoutFocus( 'sites' );
-		this.props.activateNextLayoutFocus();
 
 		/**
 		 * Site Migration: Reset a failed migration when clicking on My Sites
@@ -188,18 +180,15 @@ class MasterbarLoggedIn extends Component {
 
 	clickReader = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_reader_clicked' );
-		this.handleLayoutFocus( 'reader' );
 	};
 
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
 		window.scrollTo( 0, 0 );
-		this.handleLayoutFocus( 'me' );
 	};
 
 	clickSearchActions = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_search_actions_clicked' );
-		this.handleLayoutFocus( 'search-actions' );
 		this.setState( { isActionSearchVisible: true } );
 	};
 
