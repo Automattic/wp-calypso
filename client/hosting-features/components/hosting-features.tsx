@@ -4,12 +4,16 @@ import { Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { AnyAction } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
+import { transferStates } from 'calypso/state/atomic-transfer/constants';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -52,6 +56,39 @@ const HostingFeatures = () => {
 			: `/overview/${ siteId }`
 	);
 	const hasEnTranslation = useHasEnTranslation();
+
+	const transfer = useSelector( ( state ) => getAtomicTransfer( state, siteId ) );
+	const isTransferInProgress = [
+		transferStates.PENDING,
+		transferStates.ACTIVE,
+		transferStates.PROVISIONED,
+	].includes( transfer.status );
+
+	useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
+
+		if ( transfer.status === transferStates.COMPLETED ) {
+			window.location.href = `/overview/${ siteSlug }`;
+			return;
+		}
+
+		// console.log( 'useEffect' );
+		// console.log( transfer.status );
+		dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
+		// A user can keep one tab open and start transfer in the second tab
+		// se we always run interval to check the status, to avoid case with rendering "Activate" button on old tabs of a browser
+		const interval = setInterval( () => {
+			// console.log( 'interval' );
+			dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
+		}, 10000 );
+
+		return () => {
+			// console.log( 'clear' );
+			clearInterval( interval );
+		};
+	}, [ siteSlug, siteId, transfer.status, dispatch ] );
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const promoCards = [
@@ -153,6 +190,7 @@ const HostingFeatures = () => {
 	return (
 		<div className="hosting-features">
 			<div className="hosting-features__hero">
+				{ isTransferInProgress && <h1>transfer in progress</h1> }
 				<h1>{ showActivationButton ? activateTitle : unlockTitle }</h1>
 				<p>{ showActivationButton ? activateDescription : unlockDescription }</p>
 				{ showActivationButton ? (
