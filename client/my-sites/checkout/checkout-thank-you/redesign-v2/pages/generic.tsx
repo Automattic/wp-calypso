@@ -95,10 +95,6 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 		}
 	} );
 
-	// Note: We've disabled the default support blurb, because it's now
-	// redundant with the Help Center link in the header of Thank You pages.
-	// See https://github.com/Automattic/dotcom-forge/issues/8175 for related discussion.
-
 	const title =
 		filteredPurchases.length > 1 ? translate( 'Great Choices!' ) : translate( 'Great Choice!' );
 
