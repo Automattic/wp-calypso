@@ -143,6 +143,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 				// Append new messages at the end
 				return {
 					chat_id: prevChat.chat_id,
+					type: prevChat.type,
 					messages: [ ...filteredMessages, ...newMessages ],
 				};
 			} );

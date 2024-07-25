@@ -3,7 +3,7 @@
  */
 import { useEffect, useState, createContext, useContext, useCallback } from 'react';
 import Smooch from 'smooch';
-import useMessagingAuth from '../hooks/use-messaging-auth';
+// import useMessagingAuth from '../hooks/use-messaging-auth';
 
 const MessengerContext = createContext<
 	| {
@@ -26,7 +26,8 @@ export function useHelpCenterMessenger() {
 export const HelpCenterMessenger: React.FC< Props > = ( { children } ) => {
 	const [ init, setInit ] = useState( false );
 	const [ addMessage, setAddMessage ] = useState< ( message: any ) => void >();
-	const { data: authData } = useMessagingAuth( true, 'messenger' );
+	// const { data: authData } = useMessagingAuth( true, 'messenger' );
+	const authData = { externalId: '', jwt: '' };
 
 	useEffect( () => {
 		if ( authData?.jwt && authData?.externalId ) {
