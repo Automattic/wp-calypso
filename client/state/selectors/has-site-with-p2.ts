@@ -12,6 +12,13 @@ import 'calypso/state/ui/init';
 
 export const hasSiteWithP2 = createSelector(
 	( state: AppState ): boolean =>
-		getSites( state ).some( ( site ) => site && !! ( site?.options?.is_wpforteams_site || ( site?.options?.theme_slug && isP2Theme( site?.options?.theme_slug ) ) ) ),
+		getSites( state ).some(
+			( site ) =>
+				site &&
+				!! (
+					site?.options?.is_wpforteams_site ||
+					( site?.options?.theme_slug && isP2Theme( site?.options?.theme_slug ) )
+				)
+		),
 	( state ) => [ state.sites.items ]
 );
