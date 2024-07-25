@@ -370,6 +370,10 @@ object RunAllUnitTests : BuildType({
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
+		branchFilter = """
+			+:*
+			-:*gh-readonly-queue*
+		""".trimIndent()
 	}
 
 	steps {
