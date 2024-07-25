@@ -8,17 +8,21 @@ import { FC, PropsWithChildren } from 'react';
 interface Props {
 	mediaStorage: SiteMediaStorage;
 }
+const MINIMUM_DISPLAYED_USAGE = 1;
 
 const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStorage } ) => {
 	const translate = useTranslate();
+	const { storageUsedBytes, maxStorageBytes } = mediaStorage;
 
-	const percent = Math.min(
-		Math.round( ( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10 ),
-		100
+	// Ensure that the displayed usage is never fully empty to avoid a confusing UI
+	const displayedUsage = Math.max(
+		MINIMUM_DISPLAYED_USAGE,
+		Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 )
 	);
+	const percent = Math.min( displayedUsage, 100 );
 
-	const used = filesize( mediaStorage.storageUsedBytes, { round: 0 } );
-	const max = filesize( mediaStorage.maxStorageBytes, { round: 0 } );
+	const used = filesize( storageUsedBytes, { round: 0 } );
+	const max = filesize( maxStorageBytes, { round: 0 } );
 
 	return (
 		<>
