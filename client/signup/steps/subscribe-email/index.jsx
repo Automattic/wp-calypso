@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useCallback, useEffect } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import DOMPurify from 'dompurify';
 import emailValidator from 'email-validator';
@@ -67,6 +67,8 @@ function SubscribeEmailStep( props ) {
 		? addQueryArgs( window.location.href, { user_email: currentUser?.email } )
 		: '';
 
+	const [ isRedirectingToLogout, setIsRedirectingToLogout ] = useState( false );
+
 	const { mutate: subscribeEmail, isPending: isSubscribeToMailingListPending } =
 		useSubscribeToMailingList( {
 			onSuccess: () => {
@@ -125,6 +127,7 @@ function SubscribeEmailStep( props ) {
 					},
 					{
 						onSuccess: () => {
+							setIsRedirectingToLogout( true );
 							/**
 							 * Logged in users will see an "Is it you?" page. Logged out users will skip the page.
 							 * To make email capture more seamless at conferences we keep users logged out after
@@ -180,6 +183,9 @@ function SubscribeEmailStep( props ) {
 		}
 	}, [ email ] );
 
+	const isPending =
+		isCreateNewAccountPending || isSubscribeToMailingListPending || isRedirectingToLogout;
+
 	return (
 		<div className="subscribe-email">
 			<StepWrapper
@@ -187,13 +193,13 @@ function SubscribeEmailStep( props ) {
 				fallbackHeaderText={
 					currentUser ? translate( 'Is this you?' ) : translate( 'Subscribe to our email list' )
 				}
-				hideFormattedHeader={ isCreateNewAccountPending || isSubscribeToMailingListPending }
+				hideFormattedHeader={ isPending }
 				hideBack
 				stepContent={
 					<SubscribeEmailStepContent
 						{ ...props }
 						email={ email }
-						isPending={ isCreateNewAccountPending || isSubscribeToMailingListPending }
+						isPending={ isPending }
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 						redirectUrl={ redirectUrl }
 						handleCreateAccountError={ ( error, submittedEmail ) => {
