@@ -370,108 +370,106 @@ object RunAllUnitTests : BuildType({
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
-		branchFilter = """
-			+:*
-			-:*gh-readonly-queue*
-		""".trimIndent()
 	}
 
 	steps {
-		mergeTrunk()
-		bashNodeScript {
-			name = "Prepare environment"
-			scriptContent = """
-				export NODE_ENV="test"
-				echo -n "Node version: " && node --version
-				echo -n "Yarn version: " && yarn --version
-				echo -n "NPM version: " && npm --version
+		if ( !"%teamcity.build.branch%".contains("gh-readonly-queue" ) ) {
+			mergeTrunk()
+			bashNodeScript {
+				name = "Prepare environment"
+				scriptContent = """
+					export NODE_ENV="test"
+					echo -n "Node version: " && node --version
+					echo -n "Yarn version: " && yarn --version
+					echo -n "NPM version: " && npm --version
 
-				# Install modules
-				${_self.yarn_install_cmd}
+					# Install modules
+					${_self.yarn_install_cmd}
 
-				# The "name" property refers to the code of the message (like YN0002).
+					# The "name" property refers to the code of the message (like YN0002).
 
-				# Generate a JSON array of the errors we care about:
-				# 1. Select warning YN0002 (Missing peer dependencies.)
-				# 2. Select warning ZN0060 (Invalid peer dependency.)
-				# 3. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
-				# 4. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
-				yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 60 or .name == 68 or (.type == "error" and .name != 0)) ]')
+					# Generate a JSON array of the errors we care about:
+					# 1. Select warning YN0002 (Missing peer dependencies.)
+					# 2. Select warning ZN0060 (Invalid peer dependency.)
+					# 3. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
+					# 4. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
+					yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 60 or .name == 68 or (.type == "error" and .name != 0)) ]')
 
-				num_errors=${'$'}(jq length <<< "${'$'}yarn_errors")
-				if [ "${'$'}num_errors" -gt 0 ] ; then
-					# Construct warning strings from the JSON array of yarn problems.
-					err_string=${'$'}(jq '.[] | "Yarn error \(.displayName): \(.data)"' <<< "${'$'}yarn_errors")
+					num_errors=${'$'}(jq length <<< "${'$'}yarn_errors")
+					if [ "${'$'}num_errors" -gt 0 ] ; then
+						# Construct warning strings from the JSON array of yarn problems.
+						err_string=${'$'}(jq '.[] | "Yarn error \(.displayName): \(.data)"' <<< "${'$'}yarn_errors")
 
-					# Remove quotes which had to be added in the jq expression:
-					err_string=${'$'}(sed 's/^"//g;s/"${'$'}//g' <<< "${'$'}err_string")
+						# Remove quotes which had to be added in the jq expression:
+						err_string=${'$'}(sed 's/^"//g;s/"${'$'}//g' <<< "${'$'}err_string")
 
-					# Escape values as needed for TeamCity: https://www.jetbrains.com/help/teamcity/service-messages.html#Escaped+values
-					# Specifically, add | before every [, ], |, and '.
-					err_string=${'$'}(sed "s/\([][|']\)/|\1/g" <<< "${'$'}err_string")
+						# Escape values as needed for TeamCity: https://www.jetbrains.com/help/teamcity/service-messages.html#Escaped+values
+						# Specifically, add | before every [, ], |, and '.
+						err_string=${'$'}(sed "s/\([][|']\)/|\1/g" <<< "${'$'}err_string")
 
-					# Output each yarn problem as a TeamCity service message for easier debugging.
-					while read -r err ; do
-						echo "##teamcity[message text='${'$'}err' status='ERROR']"
-					done <<< "${'$'}err_string"
+						# Output each yarn problem as a TeamCity service message for easier debugging.
+						while read -r err ; do
+							echo "##teamcity[message text='${'$'}err' status='ERROR']"
+						done <<< "${'$'}err_string"
 
-					# Quick plural handling because why not.
-					if [ "${'$'}num_errors" -gt 1 ]; then s='s'; else s=''; fi
+						# Quick plural handling because why not.
+						if [ "${'$'}num_errors" -gt 1 ]; then s='s'; else s=''; fi
 
-					echo "##teamcity[buildProblem description='${'$'}num_errors error${'$'}s occurred during yarn install.' identity='yarn_problem']"
-					exit 1
-				fi
-			"""
-		}
-		bashNodeScript {
-			name = "Check for yarn.lock changes and duplicated packages"
-			scriptContent = """
-				function prevent_uncommitted_changes {
-					DIRTY_FILES=${'$'}(git status --porcelain 2>/dev/null)
-					if [ ! -z "${'$'}DIRTY_FILES" ]; then
-						echo "Repository contains uncommitted changes: "
-						echo "${'$'}DIRTY_FILES"
-						echo "You need to checkout the branch, run 'yarn' and commit those files."
-						return 1
+						echo "##teamcity[buildProblem description='${'$'}num_errors error${'$'}s occurred during yarn install.' identity='yarn_problem']"
+						exit 1
 					fi
-				}
+				"""
+			}
+			bashNodeScript {
+				name = "Check for yarn.lock changes and duplicated packages"
+				scriptContent = """
+					function prevent_uncommitted_changes {
+						DIRTY_FILES=${'$'}(git status --porcelain 2>/dev/null)
+						if [ ! -z "${'$'}DIRTY_FILES" ]; then
+							echo "Repository contains uncommitted changes: "
+							echo "${'$'}DIRTY_FILES"
+							echo "You need to checkout the branch, run 'yarn' and commit those files."
+							return 1
+						fi
+					}
 
-				function prevent_duplicated_packages {
-					if ! DUPLICATED_PACKAGES=${'$'}(
-						set +e
-						yarn dedupe --check
-					); then
-						echo "Repository contains duplicated packages: "
-						echo ""
-						echo "${'$'}DUPLICATED_PACKAGES"
-						echo ""
-						echo "To fix them, you need to checkout the branch, run 'yarn dedupe',"
-						echo "verify that the new packages work and commit the changes in 'yarn.lock'."
-						return 1
-					else
-						echo "No duplicated packages found."
+					function prevent_duplicated_packages {
+						if ! DUPLICATED_PACKAGES=${'$'}(
+							set +e
+							yarn dedupe --check
+						); then
+							echo "Repository contains duplicated packages: "
+							echo ""
+							echo "${'$'}DUPLICATED_PACKAGES"
+							echo ""
+							echo "To fix them, you need to checkout the branch, run 'yarn dedupe',"
+							echo "verify that the new packages work and commit the changes in 'yarn.lock'."
+							return 1
+						else
+							echo "No duplicated packages found."
+						fi
+					}
+
+					prevent_uncommitted_changes & prevent_duplicated_packages
+					wait
+				""".trimIndent()
+			}
+			bashNodeScript {
+				name = "Run parallelized tests"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				scriptContent = "./bin/unit-test-suite.mjs"
+			}
+			bashNodeScript {
+				name = "Tag build"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+				scriptContent = """
+					set -x
+
+					if [[ "%teamcity.build.branch.is_default%" == "true" ]] ; then
+						curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
 					fi
-				}
-
-				prevent_uncommitted_changes & prevent_duplicated_packages
-				wait
-			""".trimIndent()
-		}
-		bashNodeScript {
-			name = "Run parallelized tests"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = "./bin/unit-test-suite.mjs"
-		}
-		bashNodeScript {
-			name = "Tag build"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-			scriptContent = """
-				set -x
-
-				if [[ "%teamcity.build.branch.is_default%" == "true" ]] ; then
-					curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
-				fi
-			""".trimIndent()
+				""".trimIndent()
+			}
 		}
 	}
 
