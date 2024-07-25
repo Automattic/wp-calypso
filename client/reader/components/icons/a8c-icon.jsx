@@ -4,7 +4,7 @@ export default function ReaderA8cIcon( { size = 20 } ) {
 			className="sidebar__menu-icon sidebar_svg-a8c"
 			fill="none"
 			height={ size }
-			viewBox={ `0 0 ${ size } ${ size }` }
+			viewBox="0 0 20 20"
 			width={ size }
 			xmlns="http://www.w3.org/2000/svg"
 		>
