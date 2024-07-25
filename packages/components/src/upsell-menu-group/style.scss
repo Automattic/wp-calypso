@@ -1,0 +1,33 @@
+
+.upsell-menu-group__row {
+	display: flex;
+	flex-direction: row;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	gap: 8px;
+}
+
+.upsell-menu-group__content {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 210px;
+	white-space: break-spaces;
+	max-width: 80vw;
+}
+
+
+.upsell-menu-group__upsell-icon {
+	background-color: var(--color-accent);
+	width: 16;
+	height: 16;
+	border-radius: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 1px;
+}
+
+.upsell-menu-group__star-icon {
+	color: #fff;
+}

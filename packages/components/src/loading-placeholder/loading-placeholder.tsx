@@ -1,7 +1,8 @@
-import { keyframes } from '@emotion/react';
-import styled from '@emotion/styled';
+import * as React from 'react';
+import './loading-placeholder.scss';
 
 interface LoadingPlaceholderProps {
+	style?: React.CSSProperties;
 	delayMS?: number;
 	display?: 'block' | 'inline-block';
 	width?: string | number;
@@ -10,20 +11,29 @@ interface LoadingPlaceholderProps {
 	borderRadius?: string;
 }
 
-const pulseLightKeyframes = keyframes`
-	50% {
-		background-color: var( --color-neutral-0 );
-	}`;
-
-const LoadingPlaceholder = styled.div< LoadingPlaceholderProps >`
-	animation: ${ pulseLightKeyframes } 1.8s ease-in-out infinite;
-	background-color: var( --color-neutral-10 );
-	min-height: ${ ( { minHeight = '18px' } ) => minHeight };
-	${ ( { height } ) => height && `height: ${ height }` };
-	width: ${ ( { width = '100%' } ) => width };
-	border-radius: ${ ( { borderRadius = '0' } ) => borderRadius };
-	animation-delay: ${ ( { delayMS = 0 } ) => delayMS }ms;
-	display: ${ ( { display = 'block' } ) => display };
-`;
+const LoadingPlaceholder = ( {
+	style = {},
+	delayMS = 0,
+	display = 'block',
+	width = '100%',
+	height,
+	minHeight,
+	borderRadius,
+}: LoadingPlaceholderProps ) => {
+	return (
+		<div
+			className="loading-placeholder"
+			style={ {
+				...style,
+				animationDelay: `${ delayMS }ms`,
+				...( display && { display } ),
+				...( width && { width } ),
+				...( height && { height } ),
+				...( minHeight && { minHeight } ),
+				...( borderRadius && { borderRadius } ),
+			} }
+		/>
+	);
+};
 
 export default LoadingPlaceholder;

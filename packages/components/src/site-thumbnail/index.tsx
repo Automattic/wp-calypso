@@ -1,4 +1,3 @@
-import { css } from '@emotion/css';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
 import './style.scss';
@@ -8,8 +7,6 @@ import { getTextColorFromBackground } from './utils';
 export type SizeCss = { width: number; height: number };
 
 export const DEFAULT_THUMBNAIL_SIZE = { width: 106, height: 76.55 };
-
-const DEFAULT_CLASSNAME = css( DEFAULT_THUMBNAIL_SIZE );
 
 const VIEWPORT_BASE = 1200;
 
@@ -59,7 +56,6 @@ export const SiteThumbnail = ( {
 	const classes = clsx(
 		'site-thumbnail',
 		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
-		DEFAULT_CLASSNAME,
 		className
 	);
 

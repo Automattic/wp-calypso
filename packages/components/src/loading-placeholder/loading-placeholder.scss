@@ -1,0 +1,15 @@
+@keyframes pulse-light-animation {
+	50% {
+		background-color: var(--color-neutral-0);
+	}
+}
+
+.loading-placeholder {
+	animation: pulse-light-animation 1.8s ease-in-out infinite;
+	background-color: var(--color-neutral-10);
+	min-height: 18px;
+	width: 100%;
+	border-radius: 0;
+	animation-delay: 0;
+	display: block;
+}
