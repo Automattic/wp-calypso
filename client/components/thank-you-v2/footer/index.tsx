@@ -15,7 +15,6 @@ export type ThankYouFooterDetailProps = {
 	buttonHref?: string;
 	buttonOnClick?: () => void;
 	supportDoc?: { url: string; id: number };
-	showHelpCenterOnClick?: boolean;
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -27,24 +26,21 @@ const ThankYouFooterDetail = ( {
 	buttonHref,
 	buttonOnClick,
 	supportDoc,
-	showHelpCenterOnClick,
 }: ThankYouFooterDetailProps ) => {
 	let button = null;
 
-	const { setShowHelpCenter, setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
+	const { setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
 	const SUPPORT_SITE_ID = 9619154;
 
 	const onClick = () => {
 		if ( supportDoc ) {
 			setShowSupportDoc( supportDoc.url, supportDoc.id, SUPPORT_SITE_ID );
-		} else if ( showHelpCenterOnClick ) {
-			setShowHelpCenter( true );
 		}
 
 		buttonOnClick?.();
 	};
 
-	if ( buttonText && ( buttonHref || buttonOnClick || supportDoc || showHelpCenterOnClick ) ) {
+	if ( buttonText && ( buttonHref || buttonOnClick || supportDoc ) ) {
 		const isExternal = buttonHref && isOutsideCalypso( buttonHref );
 		button = (
 			<Button
