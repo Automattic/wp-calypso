@@ -1,7 +1,7 @@
 import { BlockRendererProvider, ReadymadeTemplateRenderer } from '@automattic/block-renderer';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
 import { useRenderReadymadeTemplate } from 'calypso/my-sites/patterns/hooks/use-render-readymade-template';
-import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
+import { ReadymadeTemplate, ReadymadeTemplateDetailsFC } from 'calypso/my-sites/patterns/types';
 import { ReadymadeTemplateDetails } from './index';
 
 const ReadymadeTemplatePreview = ( {
@@ -19,7 +19,7 @@ const ReadymadeTemplatePreview = ( {
 	);
 };
 
-export const ReadymadeTemplateDetailsClient = ( { id }: { id: number } ) => {
+export const ReadymadeTemplateDetailsClient: ReadymadeTemplateDetailsFC = ( { id } ) => {
 	return (
 		<BlockRendererProvider siteId={ RENDERER_SITE_ID }>
 			<ReadymadeTemplateDetails

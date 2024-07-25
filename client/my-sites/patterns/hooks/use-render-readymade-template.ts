@@ -16,7 +16,7 @@ export const useRenderReadymadeTemplate = ( readymadeTemplate: ReadymadeTemplate
 	useQuery( {
 		queryKey: [ 'pattern-library', 'readymade-template', readymadeTemplate.template_id, 'render' ],
 		queryFn() {
-			const x = wpcom.req.post(
+			return wpcom.req.post(
 				{
 					path: `/sites/${ RENDERER_SITE_ID }/block-renderer/content/render`,
 					apiNamespace: 'wpcom/v2',
@@ -35,7 +35,6 @@ export const useRenderReadymadeTemplate = ( readymadeTemplate: ReadymadeTemplate
 						readymadeTemplate.home?.footer,
 				}
 			);
-			return x;
 		},
 		staleTime: 5 * 60 * 1000,
 	} );
