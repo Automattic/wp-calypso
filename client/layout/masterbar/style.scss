@@ -159,12 +159,6 @@ body.is-mobile-app-view {
 			}
 		}
 	}
-	.masterbar__item-notifications {
-		svg.sidebar_svg-notifications {
-			margin: 0;
-			fill: none;
-		}
-	}
 }
 
 .masterbar__new-menu-popover {
@@ -1182,8 +1176,8 @@ body.is-mobile-app-view {
 .masterbar-notifications {
 	svg {
 		overflow: overlay;
-		width: 27px;
-		height: 27px;
+		width: 24px;
+		height: 24px;
 
 		@media only screen and (max-width: 782px) {
 			width: 36px;
@@ -1195,11 +1189,11 @@ body.is-mobile-app-view {
 	.notifications-bell-icon__bubble {
 		animation: bubble-unread-indication 0.5s linear both;
 		transition: all 150ms ease-in;
-		transform-origin: 8px 4px;
+		transform-origin: 20px 4px;
 
 		use {
 			transition: all 150ms ease-in;
-			transform-origin: 8px 4px;
+			transform-origin: 20px 4px;
 		}
 	}
 
