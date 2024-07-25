@@ -1,5 +1,7 @@
 import { Button } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import { isOutsideCalypso } from 'calypso/lib/url';
 
@@ -12,7 +14,11 @@ export type ThankYouFooterDetailProps = {
 	buttonText?: string;
 	buttonHref?: string;
 	buttonOnClick?: () => void;
+	supportDoc?: { url: string; id: number };
+	showHelpCenterOnClick?: boolean;
 };
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 const ThankYouFooterDetail = ( {
 	title,
@@ -20,16 +26,31 @@ const ThankYouFooterDetail = ( {
 	buttonText,
 	buttonHref,
 	buttonOnClick,
+	supportDoc,
+	showHelpCenterOnClick,
 }: ThankYouFooterDetailProps ) => {
 	let button = null;
 
-	if ( buttonText && ( buttonHref || buttonOnClick ) ) {
+	const { setShowHelpCenter, setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
+	const SUPPORT_SITE_ID = 9619154;
+
+	const onClick = () => {
+		if ( supportDoc ) {
+			setShowSupportDoc( supportDoc.url, supportDoc.id, SUPPORT_SITE_ID );
+		} else if ( showHelpCenterOnClick ) {
+			setShowHelpCenter( true );
+		}
+
+		buttonOnClick?.();
+	};
+
+	if ( buttonText && ( buttonHref || buttonOnClick || supportDoc || showHelpCenterOnClick ) ) {
 		const isExternal = buttonHref && isOutsideCalypso( buttonHref );
 		button = (
 			<Button
 				className="thank-you__footer-detail-button"
 				href={ buttonHref && localizeUrl( buttonHref ) }
-				onClick={ buttonOnClick }
+				onClick={ onClick }
 				target={ isExternal ? '_blank' : '_self' }
 				rel={ isExternal ? 'noreferrer noopener' : '' }
 			>
