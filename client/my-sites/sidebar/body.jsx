@@ -31,7 +31,6 @@ export const MySitesSidebarUnifiedBody = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
-	// TODO: This doesn't work as I'd expect - the options aren't available for some reason
 	const isP2Site =
 		useSelector( ( state ) => isSiteWPForTeams( state, siteId ) ) ||
 		( site?.options?.theme_slug && isP2Theme( site?.options?.theme_slug ) );
