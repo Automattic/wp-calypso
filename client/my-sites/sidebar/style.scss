@@ -666,23 +666,6 @@ $font-size: rem(14px);
 		}
 	}
 
-	// client/my-sites/current-site/style.scss
-	.current-site__switch-sites:hover .button.is-borderless:hover {
-		background-color: var(--color-sidebar-menu-hover-background);
-	}
-
-	.current-site__switch-sites .button.is-borderless {
-		color: var(--color-sidebar-text-alternative);
-		padding: 6px 8px 6px 36px;
-	}
-
-	.current-site__switch-sites .button.is-borderless .gridicon {
-		height: 20px;
-		width: 20px;
-		top: 9px;
-		left: 8px;
-	}
-
 	.all-sites .dashicons-admin-site-alt3 {
 		height: 18px;
 	}
@@ -742,18 +725,9 @@ $font-size: rem(14px);
 			transform: rotate(180deg);
 		}
 
-		// client/my-sites/current-site/style.scss
-		.current-site__switch-sites .button.is-borderless {
-			height: 34px;
-			padding: 0;
-		}
 
 		.site-selector .search .search__open-icon {
 			width: auto;
-		}
-
-		.current-site__switch-sites-label {
-			display: none;
 		}
 
 		.current-site .site .site__info {
@@ -1041,17 +1015,9 @@ $font-size: rem(14px);
 				padding: 18px 0 18px 12px;
 			}
 
-			.current-site__switch-sites .button.is-borderless {
-				padding: 11px 8px 11px 38px;
-			}
-
 			.site__home {
 				left: 12px;
 				top: 18px;
-			}
-
-			.current-site__switch-sites .button.is-borderless .gridicon {
-				top: 14px;
 			}
 
 			.sidebar__separator {
