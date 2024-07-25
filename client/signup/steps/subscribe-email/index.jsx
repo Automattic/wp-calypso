@@ -67,7 +67,7 @@ function SubscribeEmailStep( props ) {
 		? addQueryArgs( window.location.href, { user_email: currentUser?.email } )
 		: '';
 
-	const { mutateAsync: subscribeToMailingList, isPending: isSubscribeToMailingListPending } =
+	const { mutate: subscribeEmail, isPending: isSubscribeToMailingListPending } =
 		useSubscribeToMailingList( {
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_signup_email_subscription_success', {
@@ -78,16 +78,16 @@ function SubscribeEmailStep( props ) {
 
 	const handleSubscribeToMailingList = useCallback(
 		( { email_address } = { email_address: email } ) => {
-			return subscribeToMailingList( {
+			return subscribeEmail( {
 				email_address,
 				mailing_list_category: queryArguments.mailing_list,
 				from: queryArguments.from,
 			} );
 		},
-		[ email, queryArguments.from, queryArguments.mailing_list, subscribeToMailingList ]
+		[ email, queryArguments.from, queryArguments.mailing_list, subscribeEmail ]
 	);
 
-	const handlerecordRegistration = useCallback(
+	const handleRecordRegistration = useCallback(
 		( userData ) => {
 			recordRegistration( {
 				userData,
@@ -107,21 +107,34 @@ function SubscribeEmailStep( props ) {
 					email,
 				};
 
-				handlerecordRegistration( userData );
+				handleRecordRegistration( userData );
 
-				// User data is stale now that a new account has been created. We need to
-				// refresh user data because we log them out after email subscription, which
-				// requires an updated logout nonce.
+				/**
+				 * User data is stale now that a new account has been created. We need to
+				 * refresh user data because we log them out after email subscription, which
+				 * requires an updated logout nonce.
+				 */
 				wpcom.loadToken( response.bearer_token );
 				await props.fetchCurrentUser();
 
-				await handleSubscribeToMailingList();
-
-				// Logged in users will see an "Is it you?" page. Logged out users will skip the page.
-				// To make email capture more seamless at conferences we keep users logged out after
-				// new user creation. This allows us to capture multiple signups on one device without
-				// showing the "Is it you?" page to each subsequent person.
-				props.redirectToLogout( redirectUrl );
+				subscribeEmail(
+					{
+						email_address: email,
+						mailing_list_category: queryArguments.mailing_list,
+						from: queryArguments.from,
+					},
+					{
+						onSuccess: () => {
+							/**
+							 * Logged in users will see an "Is it you?" page. Logged out users will skip the page.
+							 * To make email capture more seamless at conferences we keep users logged out after
+							 * new user creation. This allows us to capture multiple signups on one device without
+							 * showing the "Is it you?" page to each subsequent person.
+							 */
+							props.redirectToLogout( redirectUrl );
+						},
+					}
+				);
 			},
 			onError: async ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
@@ -133,11 +146,13 @@ function SubscribeEmailStep( props ) {
 		} );
 
 	useEffect( () => {
-		// 1. User is not logged in and the email submitted to the flow is valid
+		// 1. Handle subscription if user is logged out and email is valid
 		if ( ! currentUser && emailValidator.validate( email ) ) {
-			// Last name is an optional field in the subscription form, and an empty value may be
-			// submitted. However the API will deem an empty last name invalid and return an error,
-			// so we only include it in the API request if it's a non-empty string.
+			/**
+			 * Last name is an optional field in the subscription form, and an empty value may be
+			 * submitted. However the API will deem an empty last name invalid and return an error,
+			 * so we only include it in the API request if it's a non-empty string.
+			 */
 			const includeLastName = queryArguments.last_name?.length > 0;
 
 			createNewAccount( {
@@ -153,7 +168,7 @@ function SubscribeEmailStep( props ) {
 			} );
 		}
 
-		// 2. User is logged in and their email matches the email submitted to the flow
+		// 2. Handle subscription if user is logged in and account email matches the submitted email
 		if (
 			currentUser?.email === email &&
 			! isCreateNewAccountPending &&
@@ -181,19 +196,14 @@ function SubscribeEmailStep( props ) {
 						isPending={ isCreateNewAccountPending || isSubscribeToMailingListPending }
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 						redirectUrl={ redirectUrl }
-						subscribeToMailingList={ subscribeToMailingList }
-						handleCreateAccountError={ async ( error, submittedEmail ) => {
+						handleCreateAccountError={ ( error, submittedEmail ) => {
 							if ( isExistingAccountError( error.error ) ) {
-								await handleSubscribeToMailingList( { email_address: submittedEmail } );
-								props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
-								goToNextStep();
+								subscribeEmail( { email_address: submittedEmail } );
 							}
 						} }
-						handleCreateAccountSuccess={ async ( userData ) => {
-							handlerecordRegistration( userData );
-							await handleSubscribeToMailingList( { email_address: userData.email } );
-							props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
-							goToNextStep();
+						handleCreateAccountSuccess={ ( userData ) => {
+							handleRecordRegistration( userData );
+							subscribeEmail( { email_address: userData.email } );
 						} }
 						notYouText={ translate(
 							'Not you?{{br/}}Log out and {{link}}subscribe with %(email)s{{/link}}',
