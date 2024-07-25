@@ -109,9 +109,18 @@ function SubscribeEmailStep( props ) {
 				};
 
 				handlerecordRegistration( userData );
+
+				// User data is stale now that a new account has been created. Refresh user data
+				// so that we can log out the new user properly.
 				wpcom.loadToken( response.bearer_token );
 				await props.fetchCurrentUser();
+
 				await handleSubscribeToMailingList();
+
+				// Log out new users after their account is created. This is meant to make email
+				// capture at conferences more seamless. Logged in users will see an "Is it you?"
+				// page. Because we log out new users, we will skip over this prompt entirely which
+				// is better when multiple users are signing up on one device in succession.
 				props.redirectToLogout( redirectUrl );
 			},
 			onError: async ( error ) => {
