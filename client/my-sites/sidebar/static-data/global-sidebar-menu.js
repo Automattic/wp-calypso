@@ -35,7 +35,7 @@ export default function globalSidebarMenu( { showP2s = false } = {} ) {
 		...( showP2s
 			? [
 					{
-						icon: <ReaderA8cIcon size={ 24 } />,
+						icon: <ReaderA8cIcon size={ 22 } />,
 						slug: 'sites-p2',
 						title: translate( 'P2s' ),
 						navigationLabel: translate( 'Manage all my P2 sites' ),
