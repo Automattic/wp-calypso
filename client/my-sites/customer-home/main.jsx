@@ -51,10 +51,10 @@ import {
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { BusinessMerchantLaunchSurveyModal } from './components/business-merchant-launch-survey-modal';
 import CelebrateLaunchModal from './components/celebrate-launch-modal';
 
 import './style.scss';
-import { BusinessMerchantLaunchSurveyModal } from './components/business-merchant-launch-survey-modal';
 
 const Home = ( {
 	canUserUseCustomerHome,
