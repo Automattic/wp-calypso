@@ -1000,11 +1000,10 @@ body.is-mobile-app-view {
 	.masterbar__item-subitems-item {
 		&.account-link,
 		&.logout-link {
-			background-color: transparent !important;
 			position: relative;
 			float: left;
 			top: -35px;
-			left: 77px;
+			left: 79px;
 		}
 	}
 
