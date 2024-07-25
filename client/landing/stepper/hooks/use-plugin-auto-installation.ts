@@ -8,10 +8,7 @@ import type { SitePlugin } from 'calypso/data/plugins/types';
 interface Response {
 	plugins: SitePlugin[];
 }
-interface SkipStatus {
-	installation: boolean;
-	activation: boolean;
-}
+
 type SitePluginParam = Pick< SitePlugin, 'slug' | 'name' >;
 type Status = 'idle' | 'pending' | 'success' | 'error';
 
@@ -84,49 +81,43 @@ export const usePluginAutoInstallation = (
 	} = usePluginInstallation( plugin.slug, siteId, options );
 
 	const {
-		mutate: activatePlugin,
+		mutate: activate,
 		status: activationRequestStatus,
 		error: activationError,
 		isSuccess: isActivated,
 	} = usePluginActivation( plugin.name, siteId, options );
 
-	const skipped: SkipStatus = {
-		installation: status?.isInstalled || isInstalled,
-		activation: status?.isActive || isActivated,
-	} as SkipStatus;
+	const isPluginInstalled = status?.isInstalled || isInstalled;
+	const isPluginActivated = status?.isActive || isActivated;
 
-	useEffect( () => {
-		if ( ! status || skipped?.installation ) {
-			return;
-		}
+	const shouldInstall =
+		( status && ! isPluginInstalled && installationRequestStatus === 'idle' ) ?? false;
+	const shouldActivate =
+		( status && isPluginInstalled && ! isPluginActivated && activationRequestStatus === 'idle' ) ??
+		false;
 
-		if ( installationRequestStatus === 'idle' ) {
-			install();
-		}
-	}, [ install, installationRequestStatus, skipped?.installation, status ] );
-
-	useEffect( () => {
-		if ( ! status || skipped?.activation ) {
-			return;
-		}
-		if ( activationRequestStatus === 'idle' ) {
-			activatePlugin();
-		}
-	}, [
-		activatePlugin,
-		installationRequestStatus,
-		activationRequestStatus,
-		skipped?.activation,
-		status,
-	] );
-
+	const completed = ( status && isPluginInstalled && isPluginActivated ) ?? false;
 	const error = statusError || installationError || activationError;
-	const installationStatus = skipped?.installation ? 'skipped' : installationRequestStatus;
-	const activationStatus = skipped?.activation ? 'skipped' : activationRequestStatus;
-	const completed = activationStatus === 'success' || ( skipped?.activation ?? false );
-	const isPending = [ installationStatus, activationStatus, pluginStatus ].some(
+
+	const isPending = [ installationRequestStatus, activationRequestStatus, pluginStatus ].some(
 		( status ) => status === 'pending' || status === 'fetching'
 	);
+
+	useEffect( () => {
+		if ( ! shouldInstall ) {
+			return;
+		}
+
+		install();
+	}, [ install, shouldInstall ] );
+
+	useEffect( () => {
+		if ( ! shouldActivate ) {
+			return;
+		}
+
+		activate();
+	}, [ activatePlugin, shouldActivate ] );
 
 	const getStatus = (): Status => {
 		if ( completed ) {

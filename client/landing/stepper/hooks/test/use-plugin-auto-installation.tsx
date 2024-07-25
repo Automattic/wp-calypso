@@ -70,10 +70,10 @@ describe( 'usePluginAutoInstallation', () => {
 
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( getSitePluginsEndpoint( siteId ) )
-			.times( 2 )
+			.times( 4 )
 			.reply( 500, new Error( 'Error fetching plugins list' ) );
 
-		const { result } = render( { retry: 1 } );
+		const { result } = render( { retry: 4 } );
 
 		await waitFor(
 			() => {
@@ -177,13 +177,14 @@ describe( 'usePluginAutoInstallation', () => {
 		);
 	} );
 
-	it( 'returns error after all fetching plugin installation retries', async () => {
+	it( 'returns error after all installation retries', async () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( getSitePluginsEndpoint( SITE_ID ) )
 			.once()
 			.reply( 200, { plugins: [] } )
 			.post( getPluginInstallationEndpoint( SITE_ID ) )
-			.reply( installationWithSuccess )
+			.times( 4 )
+			.reply( installationWithGenericError )
 			.post( getPluginActivationEndpoint( SITE_ID ) )
 			.reply( 200 );
 
