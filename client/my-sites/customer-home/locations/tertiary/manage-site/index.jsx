@@ -1,5 +1,6 @@
 import { createElement, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import TranslatorInvite from 'calypso/components/translator-invite';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import QuickLinks from 'calypso/my-sites/customer-home/cards/actions/quick-links';
 import QuickLinksForEcommerceSites from 'calypso/my-sites/customer-home/cards/actions/quick-links-for-ecommerce-sites';
@@ -63,6 +64,7 @@ const ManageSite = () => {
 						key: index,
 					} )
 			) }
+			<TranslatorInvite path="/home" />
 		</>
 	);
 };

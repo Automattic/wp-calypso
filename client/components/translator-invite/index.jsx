@@ -31,11 +31,11 @@ export class TranslatorInvite extends Component {
 			location: this.props.path,
 		} );
 
-	renderLearnMoreLink = ( isInline = false ) => {
+	renderLearnMoreLink = () => {
 		const { locale, translate } = this.props;
-		const link = (
+		return (
 			<a
-				className="language-picker__modal-incomplete-locale-notice-learn-more"
+				className="translator-invite__link is-link"
 				href={ `https://translate.wordpress.com/projects/wpcom/${ locale }/default/` }
 				target="_blank"
 				rel="noopener noreferrer"
@@ -44,40 +44,23 @@ export class TranslatorInvite extends Component {
 				{ translate( 'Learn more' ) }
 			</a>
 		);
-
-		if ( ! isInline ) {
-			return <div>{ link }</div>;
-		}
-
-		return link;
 	};
 
 	renderIconAndHeader = () => {
-		const { path, translate } = this.props;
+		const { translate } = this.props;
 
-		switch ( path ) {
-			case '/home':
-				return (
-					<>
-						<MaterialIcon icon="emoji_language" />
-						<p className="card-heading card-heading-20">
-							{ translate( 'Translate WordPress.com' ) }
-						</p>
-					</>
-				);
-			case '/language-switcher':
-				return (
-					<span className="language-picker__modal-incomplete-locale-notice">
-						<MaterialIcon icon="emoji_language" />
-					</span>
-				);
-			default:
-				return null;
-		}
+		return (
+			<>
+				<MaterialIcon icon="emoji_language" />
+				<h2 className="translator-invite__content notice-header">
+					{ translate( 'Translate WordPress.com' ) }
+				</h2>
+			</>
+		);
 	};
 
 	renderNoticeLabelText() {
-		const { locale, path, localizedLanguageNames, translate } = this.props;
+		const { locale, localizedLanguageNames, translate } = this.props;
 
 		if ( ! localizedLanguageNames || ! localizedLanguageNames[ locale ] ) {
 			return null;
@@ -87,24 +70,15 @@ export class TranslatorInvite extends Component {
 		const currentLanguage = languages.find( ( language ) => language.langSlug === locale );
 		const percentTranslated = currentLanguage?.calypsoPercentTranslated || 0;
 
-		let noticeText;
-		if ( path === '/home' ) {
-			// translators: '%(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%'
-			noticeText = translate(
-				'%(languageName)s is only %(percentTranslated)d%% translated. Help translate WordPress into your language.',
-				{
-					args: { languageName, percentTranslated },
-				}
-			);
-		} else if ( path === '/language-switcher' ) {
-			noticeText = translate( 'You can help translate WordPress.com into your language.' );
-		} else {
-			return null;
-		}
-
-		return (
-			<div className="language-picker__modal-incomplete-locale-notice-info">{ noticeText }</div>
+		// translators: '%(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%'
+		const noticeText = translate(
+			'%(languageName)s is only %(percentTranslated)d%% translated. Help translate WordPress into your language.',
+			{
+				args: { languageName, percentTranslated },
+			}
 		);
+
+		return <div className="translator-invite__content notice-description">{ noticeText }</div>;
 	}
 
 	render() {

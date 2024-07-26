@@ -1,20 +1,26 @@
 .translator-invite__content {
-	margin: 15px auto;
+	margin: 0 0 8px 0;
 	font-size: $font-body-extra-small;
-	font-style: italic;
+	font-style: normal;
 	max-width: 75%;
-	text-align: center;
-}
+	text-align: left;
 
-.is-section-signup .translator-invite__content,
-.is-section-signup .translator-invite__content a {
-	color: var(--color-text-inverted);
-}
+	&.notice-header {
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 1.125rem; //typography-exception
+		font-weight: 500;
+	}
 
-.is-section-signup .translator-invite__content a {
+	&.notice-description {
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 0.9375rem; //typography-exception
+		line-height: 1.3;
+		color: var(--color-text-subtle);
+	}
+}
+.translator-invite .is-link {
 	text-decoration: underline;
 }
-
-.translator-invite__gridicon {
+.translator-invite .material-icon {
 	margin: 0 2px -4px 0;
 }

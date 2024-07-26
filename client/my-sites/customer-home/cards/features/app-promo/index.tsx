@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import AppPromo from 'calypso/blocks/app-promo';
-import TranslatorInvite from 'calypso/components/translator-invite';
 
 const AppPromoHome = () => {
 	const translate = useTranslate();
@@ -14,7 +13,6 @@ const AppPromoHome = () => {
 				) }
 				campaign="calypso-customer-home"
 			/>
-			<TranslatorInvite path="/home" />
 		</>
 	);
 };
