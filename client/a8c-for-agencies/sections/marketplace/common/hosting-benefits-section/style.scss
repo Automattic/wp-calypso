@@ -1,0 +1,61 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.hosting-benefits {
+	display: grid;
+
+	grid-template-rows: 1fr;
+	gap: 24px;
+
+	@include break-medium {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@include break-huge {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.hosting-benefits-card {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 24px;
+	padding: 32px;
+	border-radius: 4px;
+	border: 1px solid var(--color-neutral-5);
+	background-color: var(--color-surface);
+}
+
+.hosting-benefits-card__title {
+	@include a4a-font-heading-xl;
+	margin-block-end: 24px;
+}
+
+.hosting-benefits-card__description {
+	@include a4a-font-body-lg;
+}
+
+.hosting-benefits-card__list {
+	margin-block-start: auto;
+	display: flex;
+	flex-direction: column;
+	list-style-type: none;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+
+	li {
+		@include a4a-font-body-lg;
+
+		display: flex;
+		flex-direction: row;
+		align-content: center;
+		margin: 0;
+		padding: 0;
+	}
+
+	.gridicon {
+		fill: var(--color-primary-50);
+	}
+}
