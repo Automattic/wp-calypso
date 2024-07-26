@@ -65,6 +65,22 @@ $brand-text: "SF Pro Text", $sans;
 	.is-global-sidebar-collapsed {
 		--sidebar-width-max: 69px;
 		--sidebar-width-min: 69px;
+
+		.sidebar {
+			.sidebar__menu-icon {
+				&.sidebar_svg-brush {
+					margin-left: 0;
+				}
+
+				&.sidebar_svg-a8c {
+					padding: 0 2px;
+				}
+
+				&.dashicons-admin-site-alt3 {
+					padding: 0 1px;
+				}
+			}
+		}
 	}
 
 	.is-unified-site-sidebar-visible {
@@ -257,7 +273,13 @@ $font-size: rem(14px);
 			color: var(--color-sidebar-gridicon-fill);
 			margin-right: 8px;
 
+			&.sidebar_svg-brush {
+				margin-left: -2px;
+			}
+
 			&.sidebar_svg-a8c {
+				margin-right: 10px;
+				margin-left: 0;
 				path {
 					stroke: var(--color-sidebar-gridicon-fill);
 					fill: none;
@@ -440,6 +462,7 @@ $font-size: rem(14px);
 			padding: 12px 10px;
 			margin: 0 12px;
 			border-radius: 4px;
+			max-height: 44px;
 		}
 
 		.sidebar__expandable-content .sidebar__menu-link {

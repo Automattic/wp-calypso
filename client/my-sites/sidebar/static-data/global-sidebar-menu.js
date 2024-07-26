@@ -35,7 +35,7 @@ export default function globalSidebarMenu( { showP2s = false } = {} ) {
 		...( showP2s
 			? [
 					{
-						icon: <ReaderA8cIcon size={ 22 } />,
+						icon: <ReaderA8cIcon />,
 						slug: 'sites-p2',
 						title: translate( 'P2s' ),
 						navigationLabel: translate( 'Manage all my P2 sites' ),
@@ -53,7 +53,7 @@ export default function globalSidebarMenu( { showP2s = false } = {} ) {
 			url: '/domains/manage',
 		},
 		{
-			icon: <Icon icon={ brush } size={ 24 } className="sidebar__menu-icon" />,
+			icon: <Icon icon={ brush } size={ 24 } className="sidebar__menu-icon sidebar_svg-brush" />,
 			slug: 'themes',
 			title: translate( 'Themes' ),
 			navigationLabel: translate( 'Themes' ),
