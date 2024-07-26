@@ -276,7 +276,8 @@ export class EditGravatar extends Component {
 					</p>
 					<InfoPopover className="edit-gravatar__pop-over" position="left">
 						{ translate(
-							'{{p}}The avatar you upload here is synced with {{ExternalLink}}Gravatar{{/ExternalLink}}. If you do not have a Gravatar account, one will be created for you when you upload your first image.{{/p}}',
+							'{{p}}The avatar you upload here is synced with {{ExternalLink}}Gravatar{{/ExternalLink}}.' +
+								' If you do not have a Gravatar account, one will be created for you when you upload your first image.{{/p}}',
 							{
 								components: {
 									ExternalLink: (
