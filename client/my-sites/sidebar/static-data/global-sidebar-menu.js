@@ -1,5 +1,6 @@
 import { category, Icon, brush } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
+import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
 
 export const SidebarIconPlugins = () => (
 	<svg
@@ -21,7 +22,7 @@ export const SidebarIconPlugins = () => (
 /**
  * Menu items that support all sites screen.
  */
-export default function globalSidebarMenu() {
+export default function globalSidebarMenu( { showP2s = false } = {} ) {
 	return [
 		{
 			icon: <Icon icon={ category } className="sidebar__menu-icon svg_all-sites" size={ 24 } />,
@@ -31,6 +32,18 @@ export default function globalSidebarMenu() {
 			type: 'menu-item',
 			url: '/sites',
 		},
+		...( showP2s
+			? [
+					{
+						icon: <ReaderA8cIcon size={ 22 } />,
+						slug: 'sites-p2',
+						title: translate( 'P2s' ),
+						navigationLabel: translate( 'Manage all my P2 sites' ),
+						type: 'menu-item',
+						url: '/p2s',
+					},
+			  ]
+			: [] ),
 		{
 			icon: 'dashicons-admin-site-alt3',
 			slug: 'domains',

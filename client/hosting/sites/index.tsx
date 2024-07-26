@@ -19,6 +19,17 @@ export default function () {
 	} );
 
 	page(
+		'/p2s',
+		maybeRemoveCheckoutSuccessNotice,
+		sanitizeQueryParameters,
+		navigation,
+		setSelectedSiteIdByOrigin,
+		sitesDashboard,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/sites',
 		maybeRemoveCheckoutSuccessNotice,
 		sanitizeQueryParameters,
