@@ -38,7 +38,6 @@ class Profile extends Component {
 	};
 
 	openGravatarQuickEditor = () => {
-		const locale = this.props.getSetting( 'language' );
 		const email = this.props.getSetting( 'user_email' );
 		const width = 400;
 		const height = 720;
@@ -46,7 +45,7 @@ class Profile extends Component {
 		const top = window.screenTop + ( window.outerHeight - height ) / 2;
 
 		window.open(
-			`https://${ locale }.gravatar.com/profile?is_quick_editor=true&email=${ email }`,
+			`https://gravatar.com/profile?is_quick_editor=true&email=${ email }`,
 			'_blank',
 			`width=${ width },height=${ height },left=${ left },top=${ top }`
 		);
