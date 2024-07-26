@@ -60,7 +60,8 @@ class DomainPromotionalPricingRestrictions extends Component<
 	render() {
 		const { cart } = this.props;
 		if (
-			! ( hasDomainRegistration( cart ) || hasTransferProduct( cart ) ) &&
+			! hasDomainRegistration( cart ) &&
+			! hasTransferProduct( cart ) &&
 			! this.hasAnyDomainWithPromotionalPrice( cart )
 		) {
 			return null;
