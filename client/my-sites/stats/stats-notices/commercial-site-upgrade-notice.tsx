@@ -88,6 +88,10 @@ const CommercialSiteUpgradeNotice = ( {
 				}
 		  );
 
+	const bannerTitle = showPaywallNotice
+		? translate( 'You need to upgrade to a commercial license to continue using Jetpack Stats' )
+		: translate( 'Upgrade to Stats Commercial' );
+
 	return (
 		<div
 			className={ `inner-notice-container has-odyssey-stats-bg-color ${
@@ -96,7 +100,7 @@ const CommercialSiteUpgradeNotice = ( {
 		>
 			<NoticeBanner
 				level={ showPaywallNotice ? 'error' : 'info' }
-				title={ translate( 'Upgrade to Stats Commercial' ) }
+				title={ bannerTitle }
 				onClose={ () => {} }
 				hideCloseButton
 			>
