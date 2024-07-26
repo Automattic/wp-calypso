@@ -70,6 +70,10 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 		} );
 	}, [ planName, quantity, referralMode, translate ] );
 
+	if ( ! plan ) {
+		return;
+	}
+
 	return (
 		<div className="wpcom-plan-selector">
 			<div className="wpcom-plan-selector__slider-container">

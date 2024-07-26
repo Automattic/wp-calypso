@@ -8,9 +8,13 @@
 }
 
 .wpcom-plan-selector__slider-container {
-	max-width: 800px;
+	max-width: 900px;
 	width: 100%;
 	margin: 0 auto;
+
+	.a4a-slider {
+		margin-inline-start: -93px;
+	}
 }
 
 .wpcom-plan-selector__card {
