@@ -22,5 +22,4 @@ export const BackgroundType2: SectionBackground = {
 export const BackgroundType3: SectionBackground = {
 	image: `url(${ Background3Image })`,
 	color: '#EBF4FA',
-	size: 'auto 100%',
 };

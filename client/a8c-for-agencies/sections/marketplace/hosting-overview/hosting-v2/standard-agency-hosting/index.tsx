@@ -2,8 +2,13 @@ import { JetpackLogo } from '@automattic/components';
 import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
+import HostingBenefitsSection from '../../../common/hosting-benefits-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
-import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
+import {
+	BackgroundType1,
+	BackgroundType2,
+	BackgroundType3,
+} from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import ProfileAvatar1 from './profile-1.jpeg';
 import ProfileAvatar2 from './profile-2.png';
@@ -126,6 +131,32 @@ export default function StandardAgencyHosting() {
 						},
 						testimonial:
 							'This should be another WordPress.com specific testimonial. Let’s make sure it touches upon how they love the hosting, the support service, and especially the UI. This is just dummy text.',
+					},
+				] }
+			/>
+
+			<HostingBenefitsSection
+				heading="How can Automattic help"
+				subheading="Improve your client relationships with our hosting"
+				background={ BackgroundType3 }
+				items={ [
+					{
+						title: 'Create trust',
+						description:
+							'With over 15 years of experience running hundreds of millions of sites on WordPress.com, including the highest-trafficked sites globally, we’ve developed a platform we confidently put up against any cloud service.',
+						benefits: [ '99.999% Uptime', 'High availability with automated scaling' ],
+					},
+					{
+						title: 'Minimize risk',
+						description:
+							'Automattic hosting plans offer exceptional security from day one, with the option to include or sell additional client-facing security features like real-time backups, anti-spam, and malware scanning.',
+						benefits: [ 'Web Application Firewall', 'DDoS protection' ],
+					},
+					{
+						title: 'Increase speed',
+						description:
+							'We’re the only cloud platform team fully dedicated to optimizing WordPress. Your customers will feel the difference.',
+						benefits: [ 'Incredibly low page speed index', 'Automated WordPress edge caching' ],
 					},
 				] }
 			/>
