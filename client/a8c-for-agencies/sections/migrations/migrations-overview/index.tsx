@@ -61,7 +61,7 @@ export default function MigrationsOverview() {
 				</div>
 				<div className="migrations-overview__section-intro">
 					{ translate(
-						"Migrate your clients' sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2025. You'll also receive an additional $100 for each migrated site—up to $3,000 until July 31, 2024."
+						"Migrate your clients' sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2025. You'll also receive an additional $100 for each migrated site—up to $3,000 until September 30, 2024."
 					) }
 				</div>
 				<div className="migrations-overview__section-subtitle">
