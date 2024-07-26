@@ -11,21 +11,22 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import EmptyModuleCard from 'calypso/my-sites/stats/components/empty-module-card/empty-module-card';
+import { STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS } from 'calypso/my-sites/stats/constants';
 import {
 	StatsEmptyActionAI,
 	StatsEmptyActionSocial,
 } from 'calypso/my-sites/stats/features/modules/shared';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
+import StatsHeatMapLegend from 'calypso/my-sites/stats/stats-heap-map/legend';
+import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import Months from 'calypso/my-sites/stats/stats-views/months';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsViewSummary,
 } from 'calypso/state/stats/lists/selectors';
-import { STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS } from '../constants';
-import { useShouldGateStats } from '../hooks/use-should-gate-stats';
-import StatsCardUpsell from '../stats-card-upsell';
-import StatsHeatMapLegend from '../stats-heap-map/legend';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import Months from '../stats-views/months';
 import type { StatsStateProps } from 'calypso/my-sites/stats/features/modules/types';
 
 import './style.scss';
@@ -67,6 +68,8 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 		isRequestingSiteStatsForQuery( state, siteId, statType, query )
 	);
 
+	const hasData = viewData && Object.keys( viewData ).length !== 0;
+
 	return (
 		<div className="stats__all-time-views-section stats__modernized-stats-table">
 			{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
@@ -88,7 +91,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 						</Card>
 					</div>
 				) }
-				{ isEmptyStateV2 && ! isRequestingData && ! viewData && ! shouldGateStats && (
+				{ isEmptyStateV2 && ! isRequestingData && ! hasData && ! shouldGateStats && (
 					<StatsCard
 						className={ clsx( 'stats-card--empty-variant' ) }
 						title={ translate( 'Total views' ) }
@@ -110,7 +113,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 					/>
 				) }
 
-				{ ( ( ! isRequestingData && viewData ) || ! isEmptyStateV2 ) && (
+				{ ( ( ! isRequestingData && hasData ) || ! isEmptyStateV2 ) && (
 					<div className="highlight-cards-list">
 						{ /*
 								TODO: Refactor this card along with other similar structure cards to a component
@@ -118,7 +121,16 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 							*/ }
 						<Card className={ cardWrapperClassName }>
 							<div className="highlight-card-heading">
-								<h4>{ translate( 'Total views' ) }</h4>
+								<h4 className="highlight-card-heading__title">
+									<span>{ translate( 'Total views' ) }</span>
+									{ isEmptyStateV2 && (
+										<StatsInfoArea>
+											{ translate(
+												'Learn about views patterns by analysing total and average daily views to your site.'
+											) }
+										</StatsInfoArea>
+									) }
+								</h4>
 								{ viewData && (
 									<SimplifiedSegmentedControl
 										options={ monthViewOptions }

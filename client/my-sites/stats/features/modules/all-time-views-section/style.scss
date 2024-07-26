@@ -17,3 +17,10 @@
 		z-index: 1;
 	}
 }
+
+.highlight-card-heading__title {
+	display: flex;
+	align-items: center;
+	vertical-align: middle;
+	gap: 8px;
+}
