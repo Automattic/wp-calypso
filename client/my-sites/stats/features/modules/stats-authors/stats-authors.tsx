@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { blockPostAuthor } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -13,7 +14,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
@@ -29,6 +30,8 @@ const StatAuthors: React.FC< StatsDefaultModuleProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsTopAuthors';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -64,7 +67,7 @@ const StatAuthors: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#authors` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#authors` ) } />,
 									},
 									context:
 										'Stats: Link in a popover for the Posts & Pages when the module has data',
@@ -95,7 +98,7 @@ const StatAuthors: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#authors` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#authors` ) } />,
 									},
 									context: 'Stats: Info box label when the Authors module is empty',
 								}
