@@ -21,46 +21,46 @@ export default function StandardAgencyHosting() {
 			{ /* Sample Hosting sections */ }
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
-				heading="Supercharge your clients’ sites"
-				subheading="Premium Jetpack features included"
+				heading={ translate( 'Supercharge your clients’ sites' ) }
+				subheading={ translate( 'Premium Jetpack features included' ) }
 				background={ BackgroundType1 }
 				items={ [
-					'Real-time backups',
-					'One-click restores',
-					'Site downtime monitoring',
-					'Brute-force protection',
-					'Elastic-powered search',
-					'Optional plugin auto-updates',
-					'4K, unbranded VideoPress player',
-					'Unlimited auto-shares to social networks',
-					'Site activity log',
-					'Advanced site stats',
-					'Paid subscriptions to site content',
-					'Donation / tip buttons',
-					'Form and comment spam protection',
-					'Custom forms',
+					translate( 'Real-time backups' ),
+					translate( 'One-click restores' ),
+					translate( 'Site downtime monitoring' ),
+					translate( 'Brute-force protection' ),
+					translate( 'Elastic-powered search' ),
+					translate( 'Optional plugin auto-updates' ),
+					translate( '4K, unbranded VideoPress player' ),
+					translate( 'Unlimited auto-shares to social networks' ),
+					translate( 'Site activity log' ),
+					translate( 'Advanced site stats' ),
+					translate( 'Paid subscriptions to site content' ),
+					translate( 'Donation / tip buttons' ),
+					translate( 'Form and comment spam protection' ),
+					translate( 'Custom forms' ),
 				] }
 				fiveRows
 			/>
 			<HostingAdditionalFeaturesSection
-				heading="Just for Agencies"
-				subheading="Included with all plans and sites"
+				heading={ translate( 'Just for Agencies' ) }
+				subheading={ translate( 'Included with all plans and sites' ) }
 				items={ [
-					'Global edge caching',
-					'Global CDN with 28+ locations',
-					'Automated datacenter failover',
-					'Free managed migrations',
-					'Automated malware scanning via Jetpack',
-					'Plugin update manager',
-					'24/7 expert support',
-					'Free staging sites with sync tools',
-					'SFTP/SHH, WP-CLI, Git tools',
-					'Resource isolation across every site',
+					translate( 'Global edge caching' ),
+					translate( 'Global CDN with 28+ locations' ),
+					translate( 'Automated datacenter failover' ),
+					translate( 'Free managed migrations' ),
+					translate( 'Automated malware scanning via Jetpack' ),
+					translate( 'Plugin update manager' ),
+					translate( '24/7 expert support' ),
+					translate( 'Free staging sites with sync tools' ),
+					translate( 'SFTP/SHH, WP-CLI, Git tools' ),
+					translate( 'Resource isolation across every site' ),
 				] }
 			/>
 			<HostingFeaturesSection
-				heading="Specialized workflows"
-				subheading="Built for developers, by developers"
+				heading={ translate( 'Specialized workflows' ) }
+				subheading={ translate( 'Built for developers, by developers' ) }
 				background={ BackgroundType2 }
 				items={ [
 					{
@@ -108,8 +108,8 @@ export default function StandardAgencyHosting() {
 				] }
 			/>
 			<HostingTestimonialsSection
-				heading="What agencies say"
-				subheading="Love for WordPress.com hosting"
+				heading={ translate( 'What agencies say' ) }
+				subheading={ translate( 'Love for WordPress.com hosting' ) }
 				items={ [
 					{
 						profile: {
@@ -118,8 +118,9 @@ export default function StandardAgencyHosting() {
 							title: 'Founder - LUBUS',
 							site: 'lubus.in',
 						},
-						testimonial:
-							'We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com.',
+						testimonial: translate(
+							'We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com.'
+						),
 					},
 
 					{
@@ -130,33 +131,43 @@ export default function StandardAgencyHosting() {
 							site: 'multidots.com',
 						},
 						testimonial:
-							'This should be another WordPress.com specific testimonial. Let’s make sure it touches upon how they love the hosting, the support service, and especially the UI. This is just dummy text.',
+							// TODO: Change this to a real testimonial
+							"This should be another WordPress.com specific testimonial. Let's make sure it touches upon how they love the hosting, the support service, and especially the UI. This is just dummy text.",
 					},
 				] }
 			/>
 
 			<HostingBenefitsSection
-				heading="How can Automattic help"
-				subheading="Improve your client relationships with our hosting"
+				heading={ translate( 'How can Automattic help' ) }
+				subheading={ translate( 'Improve your client relationships with our hosting' ) }
 				background={ BackgroundType3 }
 				items={ [
 					{
-						title: 'Create trust',
-						description:
-							'With over 15 years of experience running hundreds of millions of sites on WordPress.com, including the highest-trafficked sites globally, we’ve developed a platform we confidently put up against any cloud service.',
-						benefits: [ '99.999% Uptime', 'High availability with automated scaling' ],
+						title: translate( 'Create trust' ),
+						description: translate(
+							"With over 15 years of experience running hundreds of millions of sites on WordPress.com, including the highest-trafficked sites globally, we've developed a platform we confidently put up against any cloud service."
+						),
+						benefits: [
+							translate( '99.999% Uptime' ),
+							translate( 'High availability with automated scaling' ),
+						],
 					},
 					{
-						title: 'Minimize risk',
-						description:
-							'Automattic hosting plans offer exceptional security from day one, with the option to include or sell additional client-facing security features like real-time backups, anti-spam, and malware scanning.',
-						benefits: [ 'Web Application Firewall', 'DDoS protection' ],
+						title: translate( 'Minimize risk' ),
+						description: translate(
+							'Automattic hosting plans offer exceptional security from day one, with the option to include or sell additional client-facing security features like real-time backups, anti-spam, and malware scanning.'
+						),
+						benefits: [ translate( 'Web Application Firewall' ), translate( 'DDoS protection' ) ],
 					},
 					{
-						title: 'Increase speed',
-						description:
-							'We’re the only cloud platform team fully dedicated to optimizing WordPress. Your customers will feel the difference.',
-						benefits: [ 'Incredibly low page speed index', 'Automated WordPress edge caching' ],
+						title: translate( 'Increase speed' ),
+						description: translate(
+							"We're the only cloud platform team fully dedicated to optimizing WordPress. Your customers will feel the difference."
+						),
+						benefits: [
+							translate( 'Incredibly low page speed index' ),
+							'Automated WordPress edge caching',
+						],
 					},
 				] }
 			/>
