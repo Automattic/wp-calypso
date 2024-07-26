@@ -10,7 +10,7 @@ import { BackButton } from './back-button';
 import { BackToTopButton } from './back-to-top-button';
 import ArticleContent from './help-center-article-content';
 
-export const HelpCenterArticle = ( { initialRoute }: { initialRoute: string } ) => {
+export const HelpCenterArticle = ( { navigateToRoute }: { navigateToRoute: string } ) => {
 	const [ searchParams ] = useSearchParams();
 	const { sectionName } = useHelpCenterContext();
 	const { pathname, search, hash } = useLocation();
@@ -38,10 +38,10 @@ export const HelpCenterArticle = ( { initialRoute }: { initialRoute: string } ) 
 
 	// Handle redirecting to new routes
 	useEffect( () => {
-		if ( initialRoute && initialRoute !== pathname + search + hash ) {
-			navigate( initialRoute );
+		if ( navigateToRoute && navigateToRoute !== pathname + search + hash ) {
+			navigate( navigateToRoute );
 		}
-	}, [ initialRoute, pathname, search, hash, navigate ] );
+	}, [ navigateToRoute, pathname, search, hash, navigate ] );
 
 	useEffect( () => {
 		if ( post ) {
