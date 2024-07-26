@@ -1,6 +1,15 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.dataviews-view-table__row td:last-of-type {
+	pointer-events: none;
+
+	button,
+	a {
+		pointer-events: auto;
+	}
+}
+
 .sites-dataviews__site {
 	display: flex;
 	flex-direction: row;

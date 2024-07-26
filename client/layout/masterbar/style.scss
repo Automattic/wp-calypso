@@ -199,6 +199,56 @@ body.is-mobile-app-view {
 	right: 16px;
 }
 
+.masterbar__all-sites-popover {
+	.popover__arrow::before {
+		--color-border-inverted: var(--color-neutral-100);
+	}
+
+	.popover__arrow {
+		border: 10px dashed var(--color-neutral-70) !important;
+		border-bottom-style: solid !important;
+		border-top: none !important;
+		border-left-color: transparent !important;
+		border-right-color: transparent !important;
+	}
+	.popover__inner {
+		display: flex;
+		gap: 16px;
+		padding: 16px;
+		flex-direction: column;
+		align-items: flex-start;
+		border-radius: 4px !important;
+		background-color: var(--color-neutral-100) !important;
+		border: 1px solid var(--color-neutral-70) !important;
+		left: 0 !important;
+	}
+
+	.masterbar__all-sites-popover-heading {
+		font-size: rem(16px);
+		color: var(--color-text-inverted);
+		font-weight: 500;
+	}
+
+	.masterbar__all-sites-popover-description {
+		max-width: 325px;
+		margin-top: -8px;
+		font-size: rem(13px);
+		color: var(--color-neutral-0);
+		text-align: left;
+	}
+
+	.masterbar__all-sites-popover-actions {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		width: 100%;
+		button {
+			padding: 4px 8px;
+			font-size: rem(13px);
+		}
+	}
+}
+
 .masterbar__section {
 	display: flex;
 
@@ -466,6 +516,12 @@ body.is-mobile-app-view {
 		}
 	}
 
+	.accessible-focus & a:focus,
+	.accessible-focus & button:focus {
+		box-shadow: inset 0 0 0 2px var(--color-primary-light);
+		outline: none;
+	}
+
 	&.is-active {
 		background: var(--color-masterbar-item-active-background);
 	}
@@ -571,6 +627,7 @@ body.is-mobile-app-view {
 		// reset flex value on mobile
 		flex: 0 1 auto;
 		padding: 0;
+		width: 46px;
 
 		.masterbar__item-content {
 			display: none;
@@ -579,6 +636,16 @@ body.is-mobile-app-view {
 		&.masterbar__item--always-show-content .masterbar__item-content,
 		&.masterbar__item-me .masterbar__item-content {
 			display: block;
+		}
+
+		&.masterbar__item-my-site-actions {
+			display: none;
+		}
+	}
+
+	@media only screen and (max-width: 360px) {
+		&.masterbar__reader {
+			display: none;
 		}
 	}
 
@@ -599,7 +666,8 @@ body.is-mobile-app-view {
 	}
 
 
-	&.masterbar__item-my-sites {
+	&.masterbar__item-my-sites,
+	&.masterbar__item-no-sites {
 		padding: 0 7px 0 5px; // trying to match core's 35px width
 
 		@media only screen and (max-width: 782px) {
@@ -946,7 +1014,7 @@ body.is-mobile-app-view {
 			position: relative;
 			float: left;
 			top: -35px;
-			left: 77px;
+			left: 79px;
 		}
 	}
 

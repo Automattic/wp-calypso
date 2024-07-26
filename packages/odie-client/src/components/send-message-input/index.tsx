@@ -1,7 +1,15 @@
 /* eslint-disable no-restricted-imports */
 import { Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
+import React, {
+	useCallback,
+	useMemo,
+	useState,
+	KeyboardEvent,
+	FormEvent,
+	useRef,
+	useEffect,
+} from 'react';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import ArrowUp from '../../assets/arrow-up.svg';
 import { useOdieAssistantContext } from '../../context';
@@ -11,17 +19,7 @@ import { JumpToRecent } from '../message/jump-to-recent';
 
 import './style.scss';
 
-export const OdieSendMessageButton = ( {
-	scrollToRecent,
-	scrollToBottom,
-	enableStickToBottom,
-	enableJumpToRecent,
-}: {
-	scrollToRecent: () => void;
-	scrollToBottom: ( force?: boolean ) => void;
-	enableStickToBottom: () => void;
-	enableJumpToRecent: boolean;
-} ) => {
+export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () => void } ) => {
 	const { _x } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
@@ -34,7 +32,7 @@ export const OdieSendMessageButton = ( {
 		}
 	}, [ initialUserMessage, chat.chat_id ] );
 
-	const sendMessage = async () => {
+	const sendMessage = useCallback( async () => {
 		try {
 			trackEvent( 'chat_message_action_send' );
 
@@ -53,47 +51,57 @@ export const OdieSendMessageButton = ( {
 				error: error?.message,
 			} );
 		}
-	};
+	}, [ messageString, sendOdieMessage, trackEvent ] );
 
-	const sendMessageIfNotEmpty = async () => {
+	const sendMessageIfNotEmpty = useCallback( async () => {
 		if ( messageString.trim() === '' ) {
 			return;
 		}
 		setMessageString( '' );
-		enableStickToBottom();
 		await sendMessage();
-		scrollToBottom( true );
-	};
+	}, [ messageString, sendMessage ] );
 
-	const handleKeyPress = async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
-		scrollToBottom( false );
-		if ( isLoading ) {
-			return;
-		}
-		if ( event.key === 'Enter' && ! event.shiftKey ) {
+	const handleKeyPress = useCallback(
+		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+			if ( isLoading ) {
+				return;
+			}
+			if ( event.key === 'Enter' && ! event.shiftKey ) {
+				event.preventDefault();
+				await sendMessageIfNotEmpty();
+			}
+		},
+		[ isLoading, sendMessageIfNotEmpty ]
+	);
+
+	const handleSubmit = useCallback(
+		async ( event: FormEvent< HTMLFormElement > ) => {
 			event.preventDefault();
 			await sendMessageIfNotEmpty();
-		}
-	};
-
-	const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
-		event.preventDefault();
-		await sendMessageIfNotEmpty();
-	};
-
-	const userHasAskedToContactHE = chat.messages.some(
-		( message ) => message.context?.flags?.forward_to_human_support === true
+		},
+		[ sendMessageIfNotEmpty ]
 	);
-	const userHasNegativeFeedback = chat.messages.some( ( message ) => message.liked === false );
 
-	const getPlaceholderText = () => {
+	const userHasAskedToContactHE = useMemo(
+		() =>
+			chat.messages.some(
+				( message ) => message.context?.flags?.forward_to_human_support === true
+			),
+		[ chat.messages ]
+	);
+
+	const userHasNegativeFeedback = useMemo(
+		() => chat.messages.some( ( message ) => message.liked === false ),
+		[ chat.messages ]
+	);
+
+	const getPlaceholderText = useCallback( () => {
 		const placeholderText = _x(
 			'Please wait…',
 			'Placeholder text for the message input field (chat)',
 			__i18n_text_domain__
 		);
 
-		// If not loading, decide based on user actions
 		if ( ! isLoading ) {
 			if ( userHasAskedToContactHE || userHasNegativeFeedback ) {
 				return _x(
@@ -110,11 +118,11 @@ export const OdieSendMessageButton = ( {
 		}
 
 		return placeholderText;
-	};
+	}, [ isLoading, userHasAskedToContactHE, userHasNegativeFeedback, _x ] );
 
 	return (
 		<>
-			<JumpToRecent scrollToBottom={ scrollToRecent } enableJumpToRecent={ enableJumpToRecent } />
+			<JumpToRecent scrollToRecent={ scrollToRecent } />
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
 					<TextareaAutosize

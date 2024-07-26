@@ -21,6 +21,8 @@ import ShoppingCart from '../shopping-cart';
 import HostingList from './hosting-list';
 import HostingV2 from './hosting-v2';
 
+import './style.scss';
+
 function Hosting() {
 	const translate = useTranslate();
 	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
@@ -30,7 +32,7 @@ function Hosting() {
 
 	return (
 		<Layout
-			className={ clsx( 'hosting-overview' ) }
+			className="hosting-overview"
 			title={ translate( 'Hosting Marketplace' ) }
 			wide
 			withBorder
@@ -67,7 +69,9 @@ function Hosting() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>{ isNewHostingPage ? <HostingV2 /> : <HostingList /> }</LayoutBody>
+			<LayoutBody className={ clsx( { 'is-full-width': isNewHostingPage } ) }>
+				{ isNewHostingPage ? <HostingV2 /> : <HostingList /> }
+			</LayoutBody>
 		</Layout>
 	);
 }

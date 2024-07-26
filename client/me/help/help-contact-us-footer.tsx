@@ -12,12 +12,12 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 const HelpContactUsFooter: FC = () => {
 	const { __ } = useI18n();
-	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { url } = useStillNeedHelpURL();
 
 	const onClick = () => {
 		recordTracksEvent( 'calypso_help_footer_button_click' );
-		setInitialRoute( url );
+		setNavigateToRoute( url );
 		setShowHelpCenter( true );
 	};
 
