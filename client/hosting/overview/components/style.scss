@@ -196,7 +196,8 @@ $blueberry-color: #3858e9;
 	margin-top: 8px;
 }
 
-.hosting-overview__plan-storage {
+.hosting-overview__plan-storage,
+.hosting-overview__plan-bandwidth {
 	border-radius: 4px;
 	border: 1px solid var(--studio-gray-0);
 	background: var(--studio-gray-0);
@@ -221,12 +222,15 @@ $blueberry-color: #3858e9;
 }
 
 .hosting-overview__plan-storage-title-wrapper,
-.hosting-overview__plan-storage-title {
+.hosting-overview__plan-storage-title,
+.hosting-overview__plan-bandwidth-title-wrapper,
+.hosting-overview__plan-bandwidth-title {
 	display: flex;
 	align-items: center;
 }
 
-.hosting-overview__plan-storage-title {
+.hosting-overview__plan-storage-title,
+.hosting-overview__plan-bandwidth-title {
 	flex: 1;
 	text-transform: uppercase;
 }
