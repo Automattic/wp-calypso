@@ -561,7 +561,6 @@ body.is-mobile-app-view {
 	}
 
 	@media only screen and (max-width: 782px) {
-		color: var(--color-masterbar-highlight);
 		font-size: $masterbar-mobile-font-size;
 		width: 52px;
 		padding: 0;
@@ -578,7 +577,6 @@ body.is-mobile-app-view {
 		svg,
 		svg path,
 		.gridicon {
-			fill: var(--color-masterbar-highlight);
 			height: 36px;
 			width: 36px;
 		}
@@ -593,7 +591,6 @@ body.is-mobile-app-view {
 		}
 
 		.dashicons-before {
-			color: var(--color-masterbar-highlight);
 			height: unset;
 			&::before {
 				width: 52px;
@@ -1210,13 +1207,6 @@ body.is-mobile-app-view {
 		transition: all 150ms ease-in;
 		fill: var(--color-masterbar-item-active-background);
 	}
-
-	@media only screen and (max-width: 782px) {
-		&:not(.has-unread) svg path {
-			stroke: var(--color-masterbar-highlight);
-			fill: none;
-		}
-	}
 }
 
 @keyframes bubble-unread-indication {
@@ -1394,7 +1384,6 @@ a.masterbar__quick-language-switcher {
 		height: 24px;
 
 		@media only screen and (max-width: 782px) {
-			fill: var(--color-masterbar-highlight);
 			width: 36px;
 			height: 36px;
 			padding: 3px 8px 5px;
