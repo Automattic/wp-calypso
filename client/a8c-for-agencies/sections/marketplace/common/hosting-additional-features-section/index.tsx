@@ -7,6 +7,7 @@ import './style.scss';
 type Props = Omit< HostingSectionProps, 'children' > & {
 	items: string[];
 	fiveRows?: boolean;
+	threeRows?: boolean;
 };
 
 export default function HostingAdditionalFeaturesSection( {
@@ -17,6 +18,7 @@ export default function HostingAdditionalFeaturesSection( {
 	description,
 	items,
 	fiveRows,
+	threeRows,
 }: Props ) {
 	return (
 		<HostingSection
@@ -26,7 +28,12 @@ export default function HostingAdditionalFeaturesSection( {
 			background={ background }
 			description={ description }
 		>
-			<ul className={ clsx( 'hosting-additional-features', { 'is-five-rows': fiveRows } ) }>
+			<ul
+				className={ clsx( 'hosting-additional-features', {
+					'is-five-rows': fiveRows,
+					'is-three-rows': threeRows,
+				} ) }
+			>
 				{ items.map( ( item, itemIndex ) => (
 					<li key={ `additional-features-item-${ itemIndex }` }>
 						<Icon className="gridicon" icon={ check } size={ 24 } /> { item }
