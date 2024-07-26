@@ -69,6 +69,7 @@ const CommercialSiteUpgradeNotice = ( {
 
 	const sharedTranslationComponents = {
 		p: <p />,
+		b: <strong />,
 		jetpackStatsProductLink: (
 			<button
 				type="button"
@@ -90,7 +91,7 @@ const CommercialSiteUpgradeNotice = ( {
 
 	const bannerBody = showPaywallNotice
 		? translate(
-				'{{p}}Commercial sites require a commercial license. You will lose access to core Stats features on %(date)s.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+				'{{p}}Commercial sites require a commercial license. You will lose access to core Stats features on {{b}}%(date)s{{/b}}.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
 				{
 					args: { date: paywallFromDate },
 					components: sharedTranslationComponents,
