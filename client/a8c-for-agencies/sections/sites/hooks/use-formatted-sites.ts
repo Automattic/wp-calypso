@@ -161,7 +161,9 @@ const useFormatPluginData = () => {
 				};
 			}
 			return {
-				value: `${ pluginUpdates?.length } ${ translate( 'Available' ) }`,
+				value: `${ pluginUpdates?.length } ${
+					pluginUpdates?.length === 1 ? translate( 'Update' ) : translate( 'Updates' )
+				}`,
 				status: pluginUpdates?.length > 0 ? 'warning' : 'success',
 				type: 'plugin',
 				updates: pluginUpdates?.length,
