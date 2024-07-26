@@ -1,5 +1,8 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
+import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -7,6 +10,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isA4AClientSite from 'calypso/state/sites/selectors/is-a4a-client-site';
+import { JETPACK_ACTIVITY_ID, JETPACK_BACKUP_ID } from '../features/features';
+import SitesDashboardContext from '../sites-dashboard-context';
 import getActionEventName from './get-action-event-name';
 import type { SiteNode, AllowedActionTypes } from '../types';
 
@@ -22,6 +27,8 @@ export default function useSiteActions( { site, isLargeScreen, siteError, onSele
 	const dispatch = useDispatch();
 
 	const siteValue = site?.value;
+
+	const { setSelectedSiteFeature, setDataViewsState } = useContext( SitesDashboardContext );
 
 	const isWPCOMAtomicSite = useSelector( ( state ) => isAtomicSite( state, siteValue?.blog_id ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteValue?.blog_id ) );
@@ -74,26 +81,44 @@ export default function useSiteActions( { site, isLargeScreen, siteError, onSele
 			},
 			{
 				name: translate( 'Issue new license' ),
-				href: A4A_MARKETPLACE_LINK,
-				onClick: () => handleClickMenuItem( 'issue_license' ),
+				onClick: () => {
+					page( A4A_MARKETPLACE_LINK );
+					handleClickMenuItem( 'issue_license' );
+				},
 				isExternalLink: false,
 				isEnabled: ! siteError && ! isWPCOMSite && ! isUrlOnly,
 			},
 			{
 				name: translate( 'View activity' ),
-				href: isWPCOMSite
-					? `https://wordpress.com/activity-log/${ blog_id }`
-					: `/sites/overview/${ siteSlug }/jetpack-activity`,
-				onClick: () => handleClickMenuItem( 'view_activity' ),
+				href: isWPCOMSite ? `https://wordpress.com/activity-log/${ blog_id }` : null,
+				onClick: () => {
+					if ( ! isWPCOMSite ) {
+						setDataViewsState( ( prevState: DataViewsState ) => ( {
+							...prevState,
+							selectedItem: site?.value,
+							type: DATAVIEWS_LIST,
+						} ) );
+						setSelectedSiteFeature( JETPACK_ACTIVITY_ID );
+					}
+					handleClickMenuItem( 'view_activity' );
+				},
 				isExternalLink: isWPCOMSite,
 				isEnabled: ! siteError && ! isUrlOnly,
 			},
 			{
 				name: translate( 'Copy this site' ),
-				href: isWPCOMSite
-					? `https://wordpress.com/backup/${ siteSlug }/clone`
-					: `/sites/overview/${ siteSlug }/backup`,
-				onClick: () => handleClickMenuItem( 'clone_site' ),
+				href: isWPCOMSite ? `https://wordpress.com/backup/${ siteSlug }/clone` : null,
+				onClick: () => {
+					if ( ! isWPCOMSite ) {
+						setDataViewsState( ( prevState: DataViewsState ) => ( {
+							...prevState,
+							selectedItem: site?.value,
+							type: DATAVIEWS_LIST,
+						} ) );
+						setSelectedSiteFeature( JETPACK_BACKUP_ID );
+					}
+					handleClickMenuItem( 'clone_site' );
+				},
 				isExternalLink: isWPCOMSite,
 				isEnabled: has_backup && ! isUrlOnly,
 			},
@@ -132,6 +157,7 @@ export default function useSiteActions( { site, isLargeScreen, siteError, onSele
 		isWPCOMSimpleSite,
 		isWPCOMSite,
 		onSelect,
+		setSelectedSiteFeature,
 		site?.value?.sticker,
 		siteError,
 		siteValue,
