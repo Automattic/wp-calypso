@@ -12,8 +12,10 @@
 	width: 100%;
 	margin: 0 auto;
 
-	.a4a-slider {
-		margin-inline-start: -93px;
+	@include break-huge {
+		.a4a-slider {
+			margin-inline-start: -93px;
+		}
 	}
 }
 

@@ -28,11 +28,11 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 					<div className="standard-agency-hosting__banner-logo">
 						{ getHostingLogo( 'wpcom-hosting' ) }
 					</div>
-					<h1 className="standard-agency-hosting__banner-description">
+					<div className="standard-agency-hosting__banner-description">
 						{ translate(
 							'Optimized and hassle-free hosting for business websites, local merchants, and small online retailers.'
 						) }
-					</h1>
+					</div>
 				</div>
 
 				<WPCOMPlanSelector onSelect={ onAddToCart } />
