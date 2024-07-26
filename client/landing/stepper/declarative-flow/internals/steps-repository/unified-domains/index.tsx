@@ -107,6 +107,7 @@ export default function DomainStepAdaptor( props: StepProps ) {
 				<DomainsStep
 					{ ...props }
 					step={ stepState }
+					page={ ( url: string ) => window.location.assign( url ) }
 					saveSignupStep={ setStepState }
 					submitSignupStep={ () => props.navigation.submit?.( stepState ) }
 					goToNextStep={ () => {} }

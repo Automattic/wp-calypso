@@ -359,7 +359,9 @@ export class RenderDomainsStep extends Component {
 	};
 
 	handleUseYourDomainClick = () => {
-		page( this.getUseYourDomainUrl() );
+		// Stepper doesn't support page.js
+		const navigate = this.props.page || page;
+		navigate( this.getUseYourDomainUrl() );
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
 	};
 
