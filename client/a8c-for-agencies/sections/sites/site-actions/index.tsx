@@ -118,7 +118,7 @@ export default function SiteActions( {
 
 			{ showRemoveSiteDialog && (
 				<SiteRemoveConfirmationDialog
-					site={ site }
+					siteName={ site.value?.url || '' }
 					onClose={ () => setShowRemoveSiteDialog( false ) }
 					onConfirm={ onRemoveSite }
 					busy={ isPending || isPendingRefetch }
