@@ -5,26 +5,41 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 .stats__empty-state {
 	.empty-state-card {
+		display: flex;
 		padding: 24px;
 		min-width: 320px;
 		margin: 0;
 		background-color: rgba(255, 255, 255, 0.85);
-	}
 
-	.empty-state-card-heading {
-		font-family: $font-sf-pro-display;
-		font-size: $font-title-small;
-		line-height: 26px;
-		font-weight: 500;
-		color: var(--color-neutral-100);
-	}
+		&__icon {
+			flex-shrink: 0;
+			margin-right: 20px;
+			align-self: center;
+			color: var(--color-gray-40);
+			width: 40px;
+			height: 40px;
+		}
 
-	.empty-state-card-info {
-		margin-top: 16px;
-		font-family: $font-sf-pro-text;
-		font-size: $font-body-small;
-		line-height: 20px;
-		letter-spacing: -0.24px;
-		color: var(--color-neutral-80);
+
+		&__content {
+			flex-grow: 1;
+		}
+
+		.empty-state-card-heading {
+			font-family: $font-sf-pro-display;
+			font-size: $font-title-small;
+			line-height: 26px;
+			font-weight: 500;
+			color: var(--color-neutral-100);
+			margin-bottom: 8px;
+		}
+
+		.empty-state-card-info {
+			font-family: $font-sf-pro-text;
+			font-size: $font-body-small;
+			line-height: 20px;
+			letter-spacing: -0.24px;
+			color: var(--color-neutral-80);
+		}
 	}
 }

@@ -8,3 +8,4 @@ export { default as sparkles } from './sparkles';
 export { default as mail } from './mail';
 export { default as blockPostAuthor } from './block-post-author';
 export { default as commentContent } from './comment-content';
+export { default as manualBook } from './manual-book';
