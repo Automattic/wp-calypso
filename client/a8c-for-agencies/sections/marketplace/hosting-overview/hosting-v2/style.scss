@@ -83,4 +83,15 @@ $tab-background-color: #f4fbff;
 	.hosting-v2__content {
 		padding-block-start: 64px;
 	}
+
+	.hosting-overview-features__item {
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	.hosting-overview-features__item-icon {
+		min-width: 32px;
+		max-width: 32px;
+		height: 32px;
+	}
 }
