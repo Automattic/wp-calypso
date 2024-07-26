@@ -9,6 +9,7 @@ import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-tri
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
+import { recordMigrationStart } from 'calypso/lib/analytics/ad-tracking/ad-track-migration-start';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { addQueryArgs } from 'calypso/lib/url';
 import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
@@ -125,6 +126,9 @@ const siteMigration: Flow = {
 			window.location.assign( to );
 		};
 
+		if ( urlQueryParams.get( 'ref' ) === 'move-lp' ) {
+			recordMigrationStart();
+		}
 		// Call triggerGuidesForStep for the current step
 		useEffect( () => {
 			triggerGuidesForStep( flowName, currentStep, siteId );
