@@ -56,11 +56,7 @@ const readymadeTemplateFlow: Flow = {
 			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
-			{
-				slug: 'generateContent',
-				asyncComponent: () =>
-					import( './internals/steps-repository/readymade-template-generate-content' ),
-			},
+			STEPS.GENERATE_CONTENT,
 		] );
 	},
 
