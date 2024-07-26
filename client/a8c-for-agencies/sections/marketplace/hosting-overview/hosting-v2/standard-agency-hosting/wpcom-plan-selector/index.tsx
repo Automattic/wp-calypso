@@ -60,21 +60,14 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 			return translate( 'Add to referral' );
 		}
 
-		return quantity > 1
-			? translate( 'Add %(quantity)s %(planName)s sites to cart', {
-					args: {
-						quantity,
-						planName,
-					},
-					comment:
-						'%(quantity)s is the quantity of plans and %(planName)s is the name of the plan.',
-			  } )
-			: translate( 'Add %(planName)s to cart', {
-					args: {
-						planName,
-					},
-					comment: '%(planName)s is the name of the plan.',
-			  } );
+		return translate( 'Add %(quantity)s site to cart', 'Add %(quantity)s sites to cart', {
+			args: {
+				quantity,
+				planName,
+			},
+			count: quantity,
+			comment: '%(quantity)s is the quantity of plans and %(planName)s is the name of the plan.',
+		} );
 	}, [ planName, quantity, referralMode, translate ] );
 
 	return (
@@ -93,6 +86,18 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 
 			<div className="wpcom-plan-selector__card">
 				<div className="wpcom-plan-selector__details">
+					{ ownedPlans && (
+						<div className="wpcom-plan-selector__owned-plan">
+							{ translate( 'You own %(count)s site', 'You own %(count)s sites', {
+								args: {
+									count: ownedPlans,
+								},
+								count: ownedPlans,
+								comment: '%(count)s is the number of WordPress.com sites owned by the user',
+							} ) }
+						</div>
+					) }
+
 					<h2 className="wpcom-plan-selector__plan-name">{ planName }</h2>
 
 					{ ! isLicenseCountsReady && (
