@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+
 .profile__settings .edit-gravatar {
 	text-align: center;
 
@@ -21,8 +23,7 @@
 	}
 }
 
-.profile__gravatar-fieldset-is-loading,
-.profile__is_dev_account-fieldset-is-loading, {
+.profile__is_dev_account-fieldset-is-loading {
 	.components-form-toggle {
 		> * {
 			visibility: hidden;
@@ -38,6 +39,25 @@
 		a {
 			color: inherit;
 		}
+	}
+}
+
+.profile__gravatar-profile-description {
+	font-size: $font-body-small;
+	word-break: break-word;
+}
+
+.profile__gravatar-profile-button {
+	color: var(--color-link);
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		color: var(--color-link-dark);
+	}
+
+	&:focus {
+		outline: thin dotted;
 	}
 }
 

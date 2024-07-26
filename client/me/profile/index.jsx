@@ -1,6 +1,4 @@
 import { Card, FormLabel } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
-import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
@@ -23,7 +21,6 @@ import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import UpdatedGravatarString from './updated-gravatar-string';
 
 import './style.scss';
 
@@ -36,17 +33,26 @@ class Profile extends Component {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	}
 
-	toggleGravatarHidden = ( isHidden ) => {
-		this.props.setUserSetting( 'gravatar_profile_hidden', isHidden );
-	};
-
 	toggleIsDevAccount = ( isDevAccount ) => {
 		this.props.setUserSetting( 'is_dev_account', isDevAccount );
 	};
 
-	render() {
-		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
+	openGravatarQuickEditor = () => {
+		const locale = this.props.getSetting( 'language' );
+		const email = this.props.getSetting( 'user_email' );
+		const width = 400;
+		const height = 720;
+		const left = window.screenLeft + ( window.outerWidth - width ) / 2;
+		const top = window.screenTop + ( window.outerHeight - height ) / 2;
 
+		window.open(
+			`https://${ locale }.gravatar.com/profile?is_quick_editor=true&email=${ email }`,
+			'_blank',
+			`width=${ width },height=${ height },left=${ left },top=${ top }`
+		);
+	};
+
+	render() {
 		return (
 			<Main wideLayout className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
@@ -121,18 +127,29 @@ class Profile extends Component {
 							/>
 						</FormFieldset>
 
-						<FormFieldset
-							className={ clsx( {
-								'profile__gravatar-fieldset-is-loading': this.props.isFetchingUserSettings,
-							} ) }
-						>
-							<ToggleControl
-								disabled={ this.props.getDisabledState() || this.props.isFetchingUserSettings }
-								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
-								onChange={ this.toggleGravatarHidden }
-								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
-							/>
-						</FormFieldset>
+						<div>
+							<p className="profile__gravatar-profile-description">
+								{ this.props.translate(
+									'Your profile is powered by Gravatar. Your Gravatar is public by default and may appear on any site using Gravatar when you’re logged in with {{strong}}%(email)s{{/strong}}.' +
+										' To manage your profile and privacy settings, {{button}}visit your Gravatar profile here{{/button}}.',
+									{
+										components: {
+											strong: <strong />,
+											button: (
+												<button
+													className="profile__gravatar-profile-button"
+													onClick={ this.openGravatarQuickEditor }
+												/>
+											),
+										},
+										args: {
+											email: this.props.getSetting( 'user_email' ),
+										},
+									}
+								) }
+							</p>
+							{ /* TODO: WP.com x Gravatar logo. */ }
+						</div>
 
 						<p className="profile__submit-button-wrapper">
 							<FormButton
