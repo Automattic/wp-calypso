@@ -131,6 +131,8 @@ const getFormSettings = ( settings ) =>
 		'protect',
 		'jetpack_protect_global_whitelist',
 		'jetpack_waf_automatic_rules',
+		'jetpack_waf_ip_allow_list',
+		'jetpack_waf_ip_allow_list_enabled',
 		'jetpack_waf_ip_block_list',
 		'jetpack_waf_ip_block_list_enabled',
 		'jetpack_waf_automatic_rules_last_updated_timestamp',

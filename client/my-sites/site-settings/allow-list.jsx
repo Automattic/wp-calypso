@@ -10,7 +10,7 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 
 class AllowList extends Component {
 	static propTypes = {
-		fields: PropTypes.object,
+		fields: PropTypes.object.isRequired,
 		isRequestingSettings: PropTypes.bool,
 		isSavingSettings: PropTypes.bool,
 		onChangeField: PropTypes.func.isRequired,
