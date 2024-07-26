@@ -41,7 +41,7 @@ import { StickyContainer } from '../sticky-container';
 import type {
 	GridPlan,
 	ComparisonGridExternalProps,
-	ComparisonGridProps,
+	// ComparisonGridProps,
 	PlanActionOverrides,
 	TransformedFeatureObject,
 	PlanTypeSelectorProps,
@@ -915,22 +915,46 @@ const FeatureGroup = ( {
 };
 
 const ComparisonGrid = ( {
+	siteId,
+	intent,
+	gridPlans,
+	useCheckPlanAvailabilityForPurchase,
+	useAction,
+	recordTracksEvent,
+	allFeaturesList,
 	intervalType,
 	isInSignup,
 	currentSitePlanSlug,
-	planActionOverrides,
 	selectedPlan,
 	selectedFeature,
 	showUpgradeableStorage,
-	stickyRowOffset,
 	onStorageAddOnClick,
+	stickyRowOffset,
+	coupon,
+	className,
+	hideUnsupportedFeatures,
+	enableFeatureTooltips,
+	featureGroupMap,
+	planActionOverrides,
 	showRefundPeriod,
 	planTypeSelectorProps,
-	gridSize,
-}: ComparisonGridProps ) => {
-	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
+}: ComparisonGridExternalProps ) => {
+	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
+
+	// TODO: this will be deprecated along side removing the wrapper component
+	const gridSize = useGridSize( {
+		containerRef: gridContainerRef,
+		containerBreakpoints: new Map( [
+			[ 'small', 0 ],
+			[ 'smedium', 686 ],
+			[ 'medium', 835 ], // enough to fit Enterpreneur plan. was 686
+			[ 'large', 1005 ], // enough to fit Enterpreneur plan. was 870
+			[ 'xlarge', 1180 ],
+		] ),
+	} );
 
 	const displayedGridPlans = useMemo( () => {
 		return sortPlans( gridPlans, currentSitePlanSlug, 'small' === gridSize );
@@ -960,7 +984,8 @@ const ComparisonGrid = ( {
 
 			// prev state out of sync with current gridPlans (e.g. gridPlans updated to a different term)
 			// - we care about previous order
-			const isPrevStale = prev.some( ( planSlug ) => ! gridPlansIndex[ planSlug ] );
+			// const isPrevStale = prev.some( ( planSlug ) => ! gridPlansIndex[ planSlug ] );
+			const isPrevStale = false;
 			if ( isPrevStale ) {
 				return prev.map( ( planSlug ) => {
 					const gridPlan = displayedGridPlans.find(
@@ -974,7 +999,8 @@ const ComparisonGrid = ( {
 			// nothing to update
 			return prev;
 		} );
-	}, [ gridSize, displayedGridPlans, gridPlansIndex ] );
+		// }, [ gridSize, displayedGridPlans, gridPlansIndex ] );
+	}, [ gridSize, displayedGridPlans ] );
 
 	const visibleGridPlans = useMemo(
 		() =>
@@ -1003,6 +1029,15 @@ const ComparisonGrid = ( {
 		},
 		[ visiblePlans ]
 	);
+
+	const containerClassNames = clsx( 'plans-grid-next', className, {
+		'is-small': 'small' === gridSize,
+		'is-smedium': 'smedium' === gridSize,
+		'is-medium': 'medium' === gridSize,
+		'is-large': 'large' === gridSize,
+		'is-xlarge': 'xlarge' === gridSize,
+		'is-visible': true,
+	} );
 
 	const planFeatureFootnotes = useMemo( () => {
 		// This is the main list of all footnotes. It is displayed at the bottom of the comparison grid.
@@ -1046,132 +1081,13 @@ const ComparisonGrid = ( {
 	 * Some padding is applied in the stylesheet to cover the badges/labels.
 	 */
 	const hasHighlightedPlan = gridPlans.some( ( { highlightLabel } ) => !! highlightLabel );
-	const classes = clsx( 'plans-grid-next-comparison-grid', {
+
+	const comparisonGridClassNames = clsx( 'plans-grid-next-comparison-grid', {
 		'has-highlighted-plan': hasHighlightedPlan,
 	} );
 
 	return (
-		<div className={ classes }>
-			<Grid visiblePlans={ visiblePlans.length }>
-				<StickyContainer
-					disabled={ isBottomHeaderInView }
-					stickyClass="is-sticky-header-row"
-					stickyOffset={ stickyRowOffset }
-					zIndex={ 1 }
-				>
-					{ ( isStuck: boolean ) => (
-						<ComparisonGridHeader
-							displayedGridPlans={ displayedGridPlans }
-							visibleGridPlans={ visibleGridPlans }
-							isInSignup={ isInSignup }
-							onPlanChange={ onPlanChange }
-							currentSitePlanSlug={ currentSitePlanSlug }
-							planActionOverrides={ planActionOverrides }
-							selectedPlan={ selectedPlan }
-							showRefundPeriod={ showRefundPeriod }
-							isStuck={ isStuck }
-							planTypeSelectorProps={ planTypeSelectorProps }
-						/>
-					) }
-				</StickyContainer>
-				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
-					<FeatureGroup
-						key={ featureGroup.slug }
-						featureGroup={ featureGroup }
-						visibleGridPlans={ visibleGridPlans }
-						featureGroupMap={ featureGroupMap }
-						selectedFeature={ selectedFeature }
-						intervalType={ intervalType }
-						activeTooltipId={ activeTooltipId }
-						setActiveTooltipId={ setActiveTooltipId }
-						showUpgradeableStorage={ showUpgradeableStorage }
-						onStorageAddOnClick={ onStorageAddOnClick }
-						planFeatureFootnotes={ planFeatureFootnotes }
-					/>
-				) ) }
-				<ComparisonGridHeader
-					displayedGridPlans={ displayedGridPlans }
-					visibleGridPlans={ visibleGridPlans }
-					isInSignup={ isInSignup }
-					isFooter
-					onPlanChange={ onPlanChange }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					planActionOverrides={ planActionOverrides }
-					selectedPlan={ selectedPlan }
-					showRefundPeriod={ showRefundPeriod }
-					isStuck={ false }
-					isHiddenInMobile
-					ref={ bottomHeaderRef }
-					planTypeSelectorProps={ planTypeSelectorProps }
-				/>
-			</Grid>
-
-			<div className="plan-comparison-grid__footer">
-				{ planFeatureFootnotes?.footnoteList && (
-					<FeatureFootnotes>
-						<ol>
-							{ planFeatureFootnotes?.footnoteList?.map( ( footnote, index ) => {
-								return <li key={ `${ footnote }-${ index }` }>{ footnote }</li>;
-							} ) }
-						</ol>
-					</FeatureFootnotes>
-				) }
-			</div>
-		</div>
-	);
-};
-
-// TODO
-// Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
-// More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
-const WrappedComparisonGrid = ( {
-	siteId,
-	intent,
-	gridPlans,
-	useCheckPlanAvailabilityForPurchase,
-	useAction,
-	recordTracksEvent,
-	allFeaturesList,
-	intervalType,
-	isInSignup,
-	currentSitePlanSlug,
-	selectedPlan,
-	selectedFeature,
-	showUpgradeableStorage,
-	onStorageAddOnClick,
-	stickyRowOffset,
-	coupon,
-	className,
-	hideUnsupportedFeatures,
-	enableFeatureTooltips,
-	featureGroupMap,
-	...otherProps
-}: ComparisonGridExternalProps ) => {
-	const gridContainerRef = useRef< HTMLDivElement | null >( null );
-
-	// TODO: this will be deprecated along side removing the wrapper component
-	const gridSize = useGridSize( {
-		containerRef: gridContainerRef,
-		containerBreakpoints: new Map( [
-			[ 'small', 0 ],
-			[ 'smedium', 686 ],
-			[ 'medium', 835 ], // enough to fit Enterpreneur plan. was 686
-			[ 'large', 1005 ], // enough to fit Enterpreneur plan. was 870
-			[ 'xlarge', 1180 ],
-		] ),
-	} );
-
-	const classNames = clsx( 'plans-grid-next', className, {
-		'is-small': 'small' === gridSize,
-		'is-smedium': 'smedium' === gridSize,
-		'is-medium': 'medium' === gridSize,
-		'is-large': 'large' === gridSize,
-		'is-xlarge': 'xlarge' === gridSize,
-		'is-visible': true,
-	} );
-
-	return (
-		<div ref={ gridContainerRef } className={ classNames }>
+		<div ref={ gridContainerRef } className={ containerClassNames }>
 			<PlansGridContextProvider
 				intent={ intent }
 				siteId={ siteId }
@@ -1185,22 +1101,76 @@ const WrappedComparisonGrid = ( {
 				featureGroupMap={ featureGroupMap }
 				hideUnsupportedFeatures={ hideUnsupportedFeatures }
 			>
-				<ComparisonGrid
-					intervalType={ intervalType }
-					isInSignup={ isInSignup }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					siteId={ siteId }
-					selectedPlan={ selectedPlan }
-					selectedFeature={ selectedFeature }
-					showUpgradeableStorage={ showUpgradeableStorage }
-					stickyRowOffset={ stickyRowOffset }
-					onStorageAddOnClick={ onStorageAddOnClick }
-					gridSize={ gridSize ?? undefined }
-					{ ...otherProps }
-				/>
+				<div className={ comparisonGridClassNames }>
+					<Grid visiblePlans={ visiblePlans.length }>
+						<StickyContainer
+							disabled={ isBottomHeaderInView }
+							stickyClass="is-sticky-header-row"
+							stickyOffset={ stickyRowOffset }
+							zIndex={ 1 }
+						>
+							{ ( isStuck: boolean ) => (
+								<ComparisonGridHeader
+									displayedGridPlans={ displayedGridPlans }
+									visibleGridPlans={ visibleGridPlans }
+									isInSignup={ isInSignup }
+									onPlanChange={ onPlanChange }
+									currentSitePlanSlug={ currentSitePlanSlug }
+									planActionOverrides={ planActionOverrides }
+									selectedPlan={ selectedPlan }
+									showRefundPeriod={ showRefundPeriod }
+									isStuck={ isStuck }
+									planTypeSelectorProps={ planTypeSelectorProps }
+								/>
+							) }
+						</StickyContainer>
+						{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
+							<FeatureGroup
+								key={ featureGroup.slug }
+								featureGroup={ featureGroup }
+								visibleGridPlans={ visibleGridPlans }
+								featureGroupMap={ featureGroupMap }
+								selectedFeature={ selectedFeature }
+								intervalType={ intervalType }
+								activeTooltipId={ activeTooltipId }
+								setActiveTooltipId={ setActiveTooltipId }
+								showUpgradeableStorage={ showUpgradeableStorage }
+								onStorageAddOnClick={ onStorageAddOnClick }
+								planFeatureFootnotes={ planFeatureFootnotes }
+							/>
+						) ) }
+						<ComparisonGridHeader
+							displayedGridPlans={ displayedGridPlans }
+							visibleGridPlans={ visibleGridPlans }
+							isInSignup={ isInSignup }
+							isFooter
+							onPlanChange={ onPlanChange }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							planActionOverrides={ planActionOverrides }
+							selectedPlan={ selectedPlan }
+							showRefundPeriod={ showRefundPeriod }
+							isStuck={ false }
+							isHiddenInMobile
+							ref={ bottomHeaderRef }
+							planTypeSelectorProps={ planTypeSelectorProps }
+						/>
+					</Grid>
+
+					<div className="plan-comparison-grid__footer">
+						{ planFeatureFootnotes?.footnoteList && (
+							<FeatureFootnotes>
+								<ol>
+									{ planFeatureFootnotes?.footnoteList?.map( ( footnote, index ) => {
+										return <li key={ `${ footnote }-${ index }` }>{ footnote }</li>;
+									} ) }
+								</ol>
+							</FeatureFootnotes>
+						) }
+					</div>
+				</div>
 			</PlansGridContextProvider>
 		</div>
 	);
 };
 
-export default WrappedComparisonGrid;
+export default ComparisonGrid;
