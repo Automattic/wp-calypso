@@ -7,4 +7,4 @@ export { useShouldUseWapuu } from './use-should-use-wapuu';
 export { filterListBySearchTerm } from './use-admin-results';
 export { useActionHooks } from './use-action-hooks';
 export { usePostByUrl } from './use-post-by-url';
-export { useContainerClick } from './use-container-click';
+export { useContentFilter } from './use-content-filter';

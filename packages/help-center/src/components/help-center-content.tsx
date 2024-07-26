@@ -13,7 +13,7 @@ import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-
  * Internal Dependencies
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useShouldUseWapuu, useContainerClick } from '../hooks';
+import { useShouldUseWapuu } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterContactForm } from './help-center-contact-form';
@@ -56,7 +56,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		};
 	}, [] );
 
-	useContainerClick( containerRef.current );
 	const navigateToSupportDocs = useCallback(
 		( blogId: string, postId: string, title: string, link: string ) => {
 			navigate(
