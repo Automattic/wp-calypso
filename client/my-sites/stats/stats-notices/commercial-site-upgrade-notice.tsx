@@ -5,10 +5,14 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { trackStatsAnalyticsEvent } from '../utils';
 import { StatsNoticeProps } from './types';
+
+const STATS_GRACE_PERIOD_DAYS = 7;
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
@@ -23,6 +27,16 @@ const CommercialSiteUpgradeNotice = ( {
 }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+
+	// Determine date that paywall will go into effect (if applicable).
+	// The paywall_date_from is the date the blog sticker was added.
+	// Grace period is paywall_date_from value plus STATS_GRACE_PERIOD_DAYS.
+	const moment = useLocalizedMoment();
+	const { data } = usePlanUsageQuery( siteId );
+	const dateFlagged = data?.paywall_date_from || moment().format( 'YYYY-MM-DD' );
+	const paywallFromDate = moment( dateFlagged )
+		.add( STATS_GRACE_PERIOD_DAYS, 'days' )
+		.format( 'YYYY-MM-DD' );
 
 	const gotoJetpackStatsProduct = () => {
 		isOdysseyStats
@@ -76,8 +90,9 @@ const CommercialSiteUpgradeNotice = ( {
 
 	const bannerBody = showPaywallNotice
 		? translate(
-				'{{p}}Commercial sites with a significant number of visitors require a commercial license. Upgrade to get access to all the stats features and priority support.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+				'{{p}}Commercial sites require a commercial license. You will lose access to core Stats features on %(date)s.{{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
 				{
+					args: { date: paywallFromDate },
 					components: sharedTranslationComponents,
 				}
 		  ) // Paywall notice content.
