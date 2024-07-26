@@ -99,13 +99,15 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	// Show the paywall notice if the site has reached the monthly views limit
 	// and no commercial purchase.
-	const showPaywallNotice =
+	let showPaywallNotice =
 		useSelector( ( state ) => {
 			return shouldShowPaywallNotice( state, siteId );
 		} ) &&
 		! supportCommercialUse &&
 		isSiteJetpackNotAtomic &&
 		! isVip;
+	showPaywallNotice = true; // override for testing
+	// TODO: Revert this change before shipping.
 
 	const noticeOptions = {
 		siteId,
