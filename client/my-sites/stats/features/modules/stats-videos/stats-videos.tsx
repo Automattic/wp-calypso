@@ -98,7 +98,7 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />,
+										link: <a href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Videos module is empty',
 								}
