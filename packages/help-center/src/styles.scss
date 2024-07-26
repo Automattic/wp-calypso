@@ -169,7 +169,8 @@ $head-foot-height: 50px;
 			}
 		}
 
-		.components-button {
+		components-button,
+		&:not(.contact-form-submit.button) {
 			&:hover {
 				box-shadow: none;
 				color: inherit;
