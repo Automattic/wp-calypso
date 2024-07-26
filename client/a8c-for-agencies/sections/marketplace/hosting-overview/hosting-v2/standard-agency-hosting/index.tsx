@@ -3,29 +3,39 @@ import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpres
 import { useTranslate } from 'i18n-calypso';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.png';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
 import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import { getHostingLogo } from '../../../lib/hosting';
 import CommonHostingBenefits from '../common-hosting-benefits';
+import WPCOMPlanSelector from './wpcom-plan-selector';
 
 import './style.scss';
 
-export default function StandardAgencyHosting() {
+type Props = {
+	onAddToCart: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+};
+
+export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 
 	return (
 		<div className="standard-agency-hosting">
 			<section className="standard-agency-hosting__banner">
-				<div className="standard-agency-hosting__banner-logo">
-					{ getHostingLogo( 'wpcom-hosting' ) }
+				<div className="standard-agency-hosting__banner-heading">
+					<div className="standard-agency-hosting__banner-logo">
+						{ getHostingLogo( 'wpcom-hosting' ) }
+					</div>
+					<h1 className="standard-agency-hosting__banner-description">
+						{ translate(
+							'Optimized and hassle-free hosting for business websites, local merchants, and small online retailers.'
+						) }
+					</h1>
 				</div>
-				<h1 className="standard-agency-hosting__banner-description">
-					{ translate(
-						'Optimized and hassle-free hosting for business websites, local merchants, and small online retailers.'
-					) }
-				</h1>
+
+				<WPCOMPlanSelector onSelect={ onAddToCart } />
 			</section>
 
 			<HostingAdditionalFeaturesSection
