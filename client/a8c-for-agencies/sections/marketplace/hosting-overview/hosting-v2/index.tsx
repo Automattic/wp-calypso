@@ -80,7 +80,7 @@ export default function HostingV2( { onAddToCart }: Props ) {
 				content: <EnterpriseAgencyHosting />,
 			},
 		],
-		[ isLargeScreen, selectedFeatureId, translate ]
+		[ isLargeScreen, onAddToCart, selectedFeatureId, translate ]
 	);
 
 	const navItems = featureTabs.map( ( featureTab ) => {

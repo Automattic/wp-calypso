@@ -86,6 +86,8 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 					onSelectTier={ onSelectTier }
 					ownedPlans={ ownedPlans }
 					isLoading={ ! isLicenseCountsReady }
+					hideOwnedPlansBadge
+					readOnly
 				/>
 			</div>
 
