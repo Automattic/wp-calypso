@@ -69,23 +69,37 @@ function SubscribeEmailStep( props ) {
 
 	const [ isRedirectingToLogout, setIsRedirectingToLogout ] = useState( false );
 
-	const { mutate: subscribeEmail, isPending: isSubscribingEmail } = useSubscribeEmail( {
-		onSuccess: () => {
-			recordTracksEvent( 'calypso_signup_email_subscription_success', {
-				mailing_list: queryArguments.mailing_list,
-			} );
-		},
-	} );
+	const { mutate: subscribeEmail, isPending: isSubscribingEmail } = useSubscribeEmail();
 
-	const handleSubscribeToMailingList = useCallback(
+	const subscribeEmailAndCompleteFlow = useCallback(
 		( { email_address } = { email_address: email } ) => {
-			return subscribeEmail( {
-				email_address,
-				mailing_list_category: queryArguments.mailing_list,
-				from: queryArguments.from,
-			} );
+			return subscribeEmail(
+				{
+					email_address,
+					mailing_list_category: queryArguments.mailing_list,
+					from: queryArguments.from,
+				},
+				{
+					onSuccess: () => {
+						recordTracksEvent( 'calypso_signup_email_subscription_success', {
+							mailing_list: queryArguments.mailing_list,
+						} );
+
+						props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
+						goToNextStep();
+					},
+				}
+			);
 		},
-		[ email, queryArguments.from, queryArguments.mailing_list, subscribeEmail ]
+		[
+			email,
+			queryArguments.from,
+			queryArguments.mailing_list,
+			subscribeEmail,
+			goToNextStep,
+			redirectUrl,
+			props.submitSignupStep,
+		]
 	);
 
 	const handleRecordRegistration = useCallback(
@@ -138,11 +152,9 @@ function SubscribeEmailStep( props ) {
 					}
 				);
 			},
-			onError: async ( error ) => {
+			onError: ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
-					await handleSubscribeToMailingList();
-					props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
-					goToNextStep();
+					subscribeEmailAndCompleteFlow();
 				}
 			},
 		}
@@ -173,9 +185,7 @@ function SubscribeEmailStep( props ) {
 
 		// 2. Handle subscription if user is logged in and account email matches the submitted email
 		if ( currentUser?.email === email && ! isCreatingNewAccount && ! isSubscribingEmail ) {
-			handleSubscribeToMailingList();
-			props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
-			goToNextStep();
+			subscribeEmailAndCompleteFlow();
 		}
 	}, [ email ] );
 
