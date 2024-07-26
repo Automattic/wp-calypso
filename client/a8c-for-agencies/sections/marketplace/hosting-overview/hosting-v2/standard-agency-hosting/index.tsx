@@ -7,14 +7,27 @@ import HostingAdditionalFeaturesSection from '../../../common/hosting-additional
 import HostingFeaturesSection from '../../../common/hosting-features-section';
 import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
+import { getHostingLogo } from '../../../lib/hosting';
 import CommonHostingBenefits from '../common-hosting-benefits';
+
+import './style.scss';
 
 export default function StandardAgencyHosting() {
 	const translate = useTranslate();
 
 	return (
-		<div>
-			{ /* Sample Hosting sections */ }
+		<div className="standard-agency-hosting">
+			<section className="standard-agency-hosting__banner">
+				<div className="standard-agency-hosting__banner-logo">
+					{ getHostingLogo( 'wpcom-hosting' ) }
+				</div>
+				<h1 className="standard-agency-hosting__banner-description">
+					{ translate(
+						'Optimized and hassle-free hosting for business websites, local merchants, and small online retailers.'
+					) }
+				</h1>
+			</section>
+
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
 				heading={ translate( 'Supercharge your clients’ sites' ) }

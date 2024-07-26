@@ -1,0 +1,11 @@
+.standard-agency-hosting__banner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	margin-block-end: 32px;
+}
+
+.standard-agency-hosting__banner-description {
+	@include a4a-font-body-md;
+}
