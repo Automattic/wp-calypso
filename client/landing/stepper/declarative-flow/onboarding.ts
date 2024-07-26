@@ -19,7 +19,7 @@ const onboarding: Flow = {
 		return stepsWithRequiredLogin( [
 			{
 				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/domains' ),
+				asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
 			},
 			{
 				slug: 'plans',

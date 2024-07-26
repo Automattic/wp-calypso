@@ -67,6 +67,13 @@
 		}
 	}
 
+	.is-section-stepper & {
+		@include breakpoint-deprecated(">480px") {
+			flex-direction: row;
+			align-items: center;
+		}
+	}
+
 	.is-section-domains & {
 		@include breakpoint-deprecated( ">800px" ) {
 			flex-direction: row;
@@ -331,6 +338,8 @@
 	}
 }
 
+
+body.is-section-stepper,
 body.is-section-signup.is-white-signup {
 	svg {
 		padding-top: 0;

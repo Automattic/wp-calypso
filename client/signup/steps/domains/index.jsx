@@ -1429,7 +1429,7 @@ export class RenderDomainsStep extends Component {
 	}
 }
 
-const submitDomainStepSelection = ( suggestion, section ) => {
+export const submitDomainStepSelection = ( suggestion, section ) => {
 	let domainType = 'domain_reg';
 	if ( suggestion.is_free ) {
 		domainType = 'wpcom_subdomain';
@@ -1462,7 +1462,7 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 const RenderDomainsStepConnect = connect(
-	( state, { steps, flowName, stepName } ) => {
+	( state, { steps, flowName, stepName, previousStepName } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
@@ -1483,7 +1483,7 @@ const RenderDomainsStepConnect = connect(
 				[ 'pro', 'starter' ].includes( flowName ),
 			userLoggedIn,
 			multiDomainDefaultPlan,
-			previousStepName: getPreviousStepName( flowName, stepName, userLoggedIn ),
+			previousStepName: previousStepName || getPreviousStepName( flowName, stepName, userLoggedIn ),
 		};
 	},
 	{
