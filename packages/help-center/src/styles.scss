@@ -169,8 +169,7 @@ $head-foot-height: 50px;
 			}
 		}
 
-		components-button,
-		&:not(.contact-form-submit.button) {
+		components-button:not(.help-center-contact-form__site-picker-cta) {
 			&:hover {
 				box-shadow: none;
 				color: inherit;
