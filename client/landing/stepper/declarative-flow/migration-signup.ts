@@ -1,7 +1,6 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { MIGRATION_SIGNUP_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { getLocaleSlug } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -16,10 +15,6 @@ import { STEPS } from './internals/steps';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
-
-const MIGRATION_INSTRUCTIONS_STEP = getLocaleSlug()?.startsWith( 'en' ) // Previous 'migration-flow/new-migration-instructions-step'.
-	? STEPS.SITE_MIGRATION_INSTRUCTIONS
-	: STEPS.SITE_MIGRATION_INSTRUCTIONS_I2;
 
 const FLOW_NAME = MIGRATION_SIGNUP_FLOW;
 
@@ -39,7 +34,7 @@ const migrationSignup: Flow = {
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-			MIGRATION_INSTRUCTIONS_STEP,
+			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
 		] );
@@ -162,7 +157,7 @@ const migrationSignup: Flow = {
 								from: fromQueryParam,
 								siteId,
 							},
-							`/setup/${ FLOW_NAME }/${ MIGRATION_INSTRUCTIONS_STEP.slug }`
+							`/setup/${ FLOW_NAME }/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }`
 						);
 						goToCheckout( {
 							flowName: FLOW_NAME,
