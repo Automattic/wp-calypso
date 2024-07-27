@@ -1,4 +1,4 @@
-import { useHelpCenterMessenger } from '@automattic/help-center/src/components/help-center-messenger';
+import { useSmooch, SMOOCH_CONTAINER_ID } from '@automattic/zendesk-client';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
 	broadcastChatClearance,
@@ -14,6 +14,7 @@ import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const noop = () => {};
+const asyncNoop = async () => {};
 type ScrollToLastMessageType = () => void;
 
 /*
@@ -37,7 +38,6 @@ type OdieAssistantContextInterface = {
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
 	lastMessageInView?: boolean;
-	navigateToContactOptions?: () => void;
 	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
@@ -71,7 +71,6 @@ const defaultContextInterfaceValues = {
 	isVisible: false,
 	lastNudge: null,
 	lastMessageRef: null,
-	navigateToContactOptions: noop,
 	navigateToSupportDocs: noop,
 	odieClientId: '',
 	currentUser: { display_name: 'Me' },
@@ -87,12 +86,17 @@ const defaultContextInterfaceValues = {
 	scrollToLastMessage: noop,
 	trackEvent: noop,
 	updateMessage: noop,
+	destroy: noop,
+	getConversation: asyncNoop,
+	createConversation: asyncNoop,
+	addMessengerListener: noop,
+	sendMessage: noop,
 };
 
 // Create a default new context
-const OdieAssistantContext = createContext< OdieAssistantContextInterface >(
-	defaultContextInterfaceValues
-);
+const OdieAssistantContext = createContext<
+	OdieAssistantContextInterface & ReturnType< typeof useSmooch >
+>( defaultContextInterfaceValues );
 
 // Custom hook to access the OdieAssistantContext
 const useOdieAssistantContext = () => useContext( OdieAssistantContext );
@@ -110,7 +114,6 @@ type OdieAssistantProviderProps = {
 	extraContactOptions?: ReactNode;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
 	loggerEventNamePrefix?: string;
-	navigateToContactOptions?: () => void;
 	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	selectedSiteId?: number | null;
 	version?: string | null;
@@ -126,7 +129,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	enabled = true,
 	logger,
 	loggerEventNamePrefix,
-	navigateToContactOptions,
 	navigateToSupportDocs,
 	selectedSiteId,
 	version = null,
@@ -139,19 +141,24 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const [ scrollToLastMessage, setScrollToLastMessage ] =
 		useState< ScrollToLastMessageType | null >( null );
+	const { addMessengerListener, destroy, getConversation, init, ...smoochOps } = useSmooch();
 
 	const [ lastMessageInView, setLastMessageInView ] = useState( true );
 
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
-	const { addMessengerListener } = useHelpCenterMessenger();
 
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
-	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId );
+	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId, getConversation, init );
 
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const versionParams = urlSearchParams.get( 'version' );
 
 	const [ chat, setChat ] = useState< Chat >( existingChat );
+
+	// ToDo: Remove this when we find another way to keep smooch up
+	useEffect( () => {
+		return destroy();
+	}, [ destroy ] );
 
 	useEffect( () => {
 		if ( existingChat.chat_id ) {
@@ -222,7 +229,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	);
 
 	useEffect( () => {
-		addMessengerListener( ( message: any ) => {
+		addMessengerListener( ( message: Parameters< typeof translateMessage >[ 0 ] ) => {
 			const translatedMessage = translateMessage( message );
 			addMessage( translatedMessage );
 		} );
@@ -271,7 +278,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isVisible,
 				lastNudge,
 				lastMessageInView,
-				navigateToContactOptions,
 				navigateToSupportDocs,
 				odieClientId,
 				selectedSiteId,
@@ -289,9 +295,15 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				trackEvent,
 				updateMessage,
 				version: overridenVersion,
+				addMessengerListener,
+				destroy,
+				getConversation,
+				init,
+				...smoochOps,
 			} }
 		>
 			{ children }
+			<div style={ { display: 'none' } } id={ SMOOCH_CONTAINER_ID }></div>
 		</OdieAssistantContext.Provider>
 	);
 };

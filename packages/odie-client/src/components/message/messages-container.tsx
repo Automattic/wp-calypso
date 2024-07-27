@@ -1,3 +1,4 @@
+import { Spinner } from '@automattic/components';
 import { ForwardedRef, forwardRef, useEffect, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useOdieAssistantContext } from '../../context';
@@ -7,6 +8,7 @@ import type { CurrentUser, Message } from '../../types/';
 interface ChatMessagesProps {
 	chat: {
 		messages: Message[];
+		loading?: boolean;
 	};
 	currentUser: CurrentUser;
 }
@@ -29,6 +31,14 @@ export const MessagesContainer = forwardRef(
 		}, [ chat.messages.length, lastMessageInView, setLastMessageInView ] );
 
 		const lastMessageIndex = chat.messages.length - 1;
+
+		if ( chat.loading ) {
+			return (
+				<div className="odie-loading-container" ref={ lastMessageWapuuRef }>
+					<Spinner />
+				</div>
+			);
+		}
 
 		if ( chat.messages.length === 0 ) {
 			return (

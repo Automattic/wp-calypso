@@ -94,6 +94,7 @@ export type Chat = {
 	chat_id?: number | null;
 	messages: Message[];
 	type: 'ai' | 'human';
+	loading?: boolean;
 };
 
 export type OdieAllowedSectionNames =

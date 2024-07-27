@@ -1,16 +1,7 @@
 /* eslint-disable no-restricted-imports */
-import { useHelpCenterMessenger } from '@automattic/help-center/src/components/help-center-messenger';
 import { Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import React, {
-	useCallback,
-	useMemo,
-	useState,
-	KeyboardEvent,
-	FormEvent,
-	useRef,
-	useEffect,
-} from 'react';
+import React, { useCallback, useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import ArrowUp from '../../assets/arrow-up.svg';
 import { useOdieAssistantContext } from '../../context';
@@ -24,8 +15,13 @@ export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () 
 	const { _x } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { initialUserMessage, chat, trackEvent, isLoading } = useOdieAssistantContext();
-	const { sendMessage: sendHelpCenterMessage } = useHelpCenterMessenger();
+	const {
+		initialUserMessage,
+		chat,
+		trackEvent,
+		isLoading,
+		sendMessage: sendHelpCenterMessage,
+	} = useOdieAssistantContext();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 
 	useEffect( () => {
@@ -44,10 +40,10 @@ export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () 
 				type: 'message',
 			} as Message;
 
-			if ( chat.type === 'ai' ) {
-				await sendOdieMessage( { message } );
-			} else {
+			if ( chat.type === 'human' ) {
 				sendHelpCenterMessage( messageString, chat.chat_id );
+			} else {
+				await sendOdieMessage( { message } );
 			}
 
 			trackEvent( 'chat_message_action_receive' );
@@ -57,7 +53,14 @@ export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () 
 				error: error?.message,
 			} );
 		}
-	}, [ messageString, sendOdieMessage, trackEvent ] );
+	}, [
+		chat.chat_id,
+		chat.type,
+		messageString,
+		sendHelpCenterMessage,
+		sendOdieMessage,
+		trackEvent,
+	] );
 
 	const sendMessageIfNotEmpty = useCallback( async () => {
 		if ( messageString.trim() === '' ) {
@@ -88,19 +91,6 @@ export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () 
 		[ sendMessageIfNotEmpty ]
 	);
 
-	const userHasAskedToContactHE = useMemo(
-		() =>
-			chat.messages.some(
-				( message ) => message.context?.flags?.forward_to_human_support === true
-			),
-		[ chat.messages ]
-	);
-
-	const userHasNegativeFeedback = useMemo(
-		() => chat.messages.some( ( message ) => message.liked === false ),
-		[ chat.messages ]
-	);
-
 	const getPlaceholderText = useCallback( () => {
 		const placeholderText = _x(
 			'Please wait…',
@@ -109,13 +99,6 @@ export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () 
 		);
 
 		if ( ! isLoading ) {
-			if ( userHasAskedToContactHE || userHasNegativeFeedback ) {
-				return _x(
-					'Continue chatting with Wapuu',
-					'Placeholder text for the message input field (chat)',
-					__i18n_text_domain__
-				);
-			}
 			return _x(
 				'Ask your question',
 				'Placeholder text for the message input field (chat)',
@@ -124,7 +107,7 @@ export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () 
 		}
 
 		return placeholderText;
-	}, [ isLoading, userHasAskedToContactHE, userHasNegativeFeedback, _x ] );
+	}, [ isLoading, _x ] );
 
 	return (
 		<>

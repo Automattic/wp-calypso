@@ -7,6 +7,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import { useOdieAssistantContext } from '../context';
 import { broadcastOdieMessage, useSetOdieStorage } from '../data';
+import { getConversationMetadada } from '../utils/conversation-utils';
 import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types/';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
@@ -85,6 +86,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 		odieClientId,
 		selectedSiteId,
 		version,
+		createConversation,
 	} = useOdieAssistantContext();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
@@ -185,6 +187,10 @@ export const useOdieSendMessage = (): UseMutationResult<
 			broadcastOdieMessage( message, odieClientId );
 			storeChatId( data.chat_id );
 			const queryKey = [ 'chat', botNameSlug, data.chat_id, 1, 30, true ];
+
+			if ( message.context?.flags?.forward_to_human_support && chat.type !== 'human' ) {
+				createConversation( getConversationMetadada( chat.chat_id ) );
+			}
 
 			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
 				if ( ! currentChatCache ) {

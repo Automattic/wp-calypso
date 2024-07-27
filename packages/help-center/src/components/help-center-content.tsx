@@ -18,7 +18,6 @@ import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
-import { HelpCenterMessenger } from './help-center-messenger';
 import { HelpCenterOdie } from './help-center-odie';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
@@ -107,10 +106,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
-	const navigateToContactOptions = useCallback( () => {
-		navigate( '/contact-options' );
-	}, [ navigate ] );
-
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
 			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
@@ -135,23 +130,20 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/odie"
 						element={
-							<HelpCenterMessenger>
-								<OdieAssistantProvider
-									botNameSlug="wpcom-support-chat"
-									botName="Wapuu"
-									enabled={ shouldUseWapuu }
-									currentUser={ currentUser }
-									isMinimized={ isMinimized }
-									initialUserMessage={ searchTerm }
-									logger={ trackEvent }
-									loggerEventNamePrefix="calypso_odie"
-									selectedSiteId={ site?.ID as number }
-									navigateToContactOptions={ navigateToContactOptions }
-									navigateToSupportDocs={ navigateToSupportDocs }
-								>
-									<HelpCenterOdie />
-								</OdieAssistantProvider>
-							</HelpCenterMessenger>
+							<OdieAssistantProvider
+								botNameSlug="wpcom-support-chat"
+								botName="Wapuu"
+								enabled={ shouldUseWapuu }
+								currentUser={ currentUser }
+								isMinimized={ isMinimized }
+								initialUserMessage={ searchTerm }
+								logger={ trackEvent }
+								loggerEventNamePrefix="calypso_odie"
+								selectedSiteId={ site?.ID as number }
+								navigateToSupportDocs={ navigateToSupportDocs }
+							>
+								<HelpCenterOdie />
+							</OdieAssistantProvider>
 						}
 					/>
 				</Routes>

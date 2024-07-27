@@ -77,17 +77,6 @@ export interface SupportTicket {
 	when: string;
 }
 
-export interface MessagingAuth {
-	user: {
-		external_id: string;
-		jwt: string | null;
-	};
-}
-
-export interface MessagingAvailability {
-	is_available: boolean;
-}
-
 export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 interface Availability {

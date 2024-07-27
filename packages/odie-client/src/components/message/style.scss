@@ -473,3 +473,11 @@ $custom-border-corner-size: 16px;
 		}
 	}
 }
+
+.odie-loading-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+}

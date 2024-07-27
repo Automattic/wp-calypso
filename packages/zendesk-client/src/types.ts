@@ -22,15 +22,18 @@ export type UserFields = {
 	messaging_site_id: string | number | null;
 };
 
-export type MessagingAuth = {
-	user: {
-		jwt: string;
-	};
-};
+export type ZendeskAuthType = 'zendesk' | 'messenger';
 
-export type MessagingAvailability = {
+export interface MessagingAuth {
+	user: {
+		external_id: string;
+		jwt: string | null;
+	};
+}
+
+export interface MessagingAvailability {
 	is_available: boolean;
-};
+}
 
 export type MessagingGroup = 'jp_presales' | 'wpcom_messaging' | 'wpcom_presales';
 

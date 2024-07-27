@@ -30,6 +30,7 @@
 	},
 	"dependencies": {
 		"@automattic/components": "^2.0.1",
+		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
 		"@types/react": "^18.2.6",
 		"@wordpress/api-fetch": "7.2.0",

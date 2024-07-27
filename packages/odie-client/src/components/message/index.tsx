@@ -2,7 +2,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Gravatar } from '@automattic/components';
-import { useHelpCenterMessenger } from '@automattic/help-center/src/components/help-center-messenger';
 import { ExternalLink } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -41,10 +40,9 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 		extraContactOptions,
 		addMessage,
 		trackEvent,
-		navigateToContactOptions,
 		navigateToSupportDocs,
+		createConversation,
 	} = useOdieAssistantContext();
-	const { createConversation } = useHelpCenterMessenger();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const { __, _x } = useI18n();
 
@@ -181,7 +179,7 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 	const messageHeader = <div className={ messageHeaderClass }>{ messageAvatarHeader }</div>;
 
 	const onDislike = () => {
-		if ( isRequestingHumanSupport ) {
+		if ( chat.type === 'human' ) {
 			return;
 		}
 		createConversation( getConversationMetadada( chat.chat_id ) );
@@ -225,7 +223,7 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 							<WasThisHelpfulButtons message={ message } onDislike={ onDislike } />
 						) }
 						{ hasFeedback && ! isPositiveFeedback && extraContactOptions }
-						{ ! isUser && (
+						{ ! isUser && ! isAgent && (
 							<>
 								{ message.directEscalationSupport && (
 									<div className="disclaimer">
@@ -235,8 +233,8 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 												trackEvent( 'chat_message_direct_escalation_link_click', {
 													message_id: message.message_id,
 												} );
-												if ( navigateToContactOptions ) {
-													navigateToContactOptions();
+												if ( chat.type !== 'human' ) {
+													createConversation( getConversationMetadada( chat.chat_id ) );
 												}
 											} }
 											className="odie-button-link"

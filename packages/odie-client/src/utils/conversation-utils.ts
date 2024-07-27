@@ -1,5 +1,14 @@
 import { Message as OdieMessage } from '../types/';
 
+interface Message {
+	role: 'user' | unknown;
+	userId: string;
+	id: string;
+	type: string;
+	received: number;
+	text: string;
+}
+
 export const ODIE_CHAT_KEY = 'odieChatId';
 
 export function translateMessages( originalMessages: Message[] ): OdieMessage[] {
