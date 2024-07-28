@@ -71,7 +71,9 @@ class Firewall extends Component {
 	};
 
 	automaticRulesLastUpdated = () => {
-		const timestamp = this.props.settings.jetpack_waf_automatic_rules_last_updated_timestamp;
+		const timestamp = parseInt(
+			this.props.settings.jetpack_waf_automatic_rules_last_updated_timestamp
+		);
 		if ( timestamp ) {
 			return moment( timestamp * 1000 ).format( 'MMMM D, YYYY h:mm A' );
 		}
