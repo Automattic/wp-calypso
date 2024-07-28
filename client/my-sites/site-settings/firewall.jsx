@@ -12,6 +12,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
@@ -125,7 +126,7 @@ class Firewall extends Component {
 					<Card>
 						<FormFieldset>
 							<ToggleControl
-								disabled={ this.disableForm() || this.disableWafForm() }
+								disabled={ this.disableWafForm() }
 								onChange={ this.handleAutomaticRulesToggle }
 								checked={ hasRequiredFeature ? !! fields.jetpack_waf_automatic_rules : false }
 								label={ translate( 'Enable automatic firewall protection' ) }
@@ -186,7 +187,7 @@ class Firewall extends Component {
 					<Card>
 						<FormFieldset>
 							<ToggleControl
-								disabled={ this.disableForm() || this.disableWafForm() }
+								disabled={ this.disableWafForm() }
 								onChange={ this.handleBlockListToggle }
 								checked={ !! fields.jetpack_waf_ip_block_list_enabled }
 								label={ translate( 'Block specific IP addresses' ) }
@@ -202,7 +203,7 @@ class Firewall extends Component {
 										id="jetpack_waf_ip_block_list"
 										value={ fields.jetpack_waf_ip_block_list }
 										onChange={ onChangeField( 'jetpack_waf_ip_block_list' ) }
-										disabled={ this.disableForm() || ! fields.jetpack_waf_ip_block_list_enabled }
+										disabled={ this.disableWafForm() || ! fields.jetpack_waf_ip_block_list_enabled }
 										placeholder={ translate( 'Example: 12.12.12.1-12.12.12.100' ) }
 									/>
 								</div>
@@ -229,6 +230,8 @@ export default connect(
 	( state ) => {
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const selectedSiteId = getSelectedSiteId( state );
+		const moduleDetails = getJetpackModule( state, selectedSiteId, 'waf' );
+		const moduleDetailsNotLoaded = moduleDetails === null;
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 			state,
@@ -241,7 +244,8 @@ export default connect(
 			selectedSiteId,
 			selectedSiteSlug,
 			firewallModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'waf' ),
-			firewallModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+			firewallModuleUnavailable:
+				moduleDetailsNotLoaded || ( siteInDevMode && moduleUnavailableInDevMode ),
 			hasRequiredFeature,
 		};
 	},
