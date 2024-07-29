@@ -1403,7 +1403,54 @@ a.masterbar__quick-language-switcher {
 }
 
 .is-global-sidebar-visible .masterbar__item.is-active {
+	background: var(--studio-gray-0);
+	color: #fff;
+	-webkit-border-top-left-radius: 15px;
+	-webkit-border-top-right-radius: 15px;
+	-moz-border-radius-topleft: 15px;
+	-moz-border-radius-topright: 15px;
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+	z-index: 3;
+
+	&:before, &:after {
+		content: "";
+  		position: absolute;
+  		bottom: 0;
+		background: var(--color-masterbar-background);
+		width: 10px;
+		height: 10px;
+		z-index: 1;
+	}
+
+	&:before {
+		left: -10px;
+	}
+
+	&:after {
+		right: -10px;
+	}
+
 	.masterbar__item-inner {
-		background: #fff;
+		&:before, &:after {
+			content: "";
+			position: absolute;
+  			bottom: 0;
+			width: 20px;
+			height: 20px;
+			-webkit-border-radius: 10px;
+			-moz-border-radius:    10px;
+			border-radius:         10px;
+			background: var(--color-masterbar-background);
+			z-index: 2;
+		}
+
+		&:before {
+			left: -10px;
+		}
+
+		&:after {
+			right: -10px;
+		}
 	}
 }
