@@ -209,7 +209,7 @@ class MeSidebar extends Component {
 					<SidebarItem
 						selected={ itemLinkMatches( '/help', path ) }
 						link="/help"
-						label={ translate( 'Get help' ) }
+						label={ translate( 'Get Help' ) }
 						icon="help"
 						onNavigate={ this.onNavigate }
 					/>
