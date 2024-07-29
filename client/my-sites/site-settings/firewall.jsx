@@ -13,6 +13,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
@@ -48,13 +49,16 @@ class Firewall extends Component {
 	}
 
 	wafModuleSupported = () => {
-		return ! this.props.isAtomic && ! this.props.isVip && ! this.props.isSimple;
+		return (
+			! this.props.firewallModuleUnavailable &&
+			! this.props.isAtomic &&
+			! this.props.isVip &&
+			! this.props.isSimple
+		);
 	};
 
 	disableWafForm = () => {
-		return (
-			this.disableForm() || ! this.wafModuleSupported() || this.props.firewallModuleUnavailable
-		);
+		return this.disableForm() || ! this.wafModuleSupported();
 	};
 
 	ensureWafModuleActive = () => {
@@ -236,6 +240,7 @@ export default connect(
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const selectedSiteId = getSelectedSiteId( state );
 		const moduleDetails = getJetpackModule( state, selectedSiteId, 'waf' );
+		const moduleDetailsLoading = isFetchingJetpackModules( state, selectedSiteId );
 		const moduleDetailsNotLoaded = moduleDetails === null;
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
@@ -250,7 +255,8 @@ export default connect(
 			selectedSiteSlug,
 			firewallModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'waf' ),
 			firewallModuleUnavailable:
-				moduleDetailsNotLoaded || ( siteInDevMode && moduleUnavailableInDevMode ),
+				( moduleDetailsNotLoaded && ! moduleDetailsLoading ) ||
+				( siteInDevMode && moduleUnavailableInDevMode ),
 			hasRequiredFeature,
 		};
 	},
