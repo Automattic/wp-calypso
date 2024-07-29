@@ -87,6 +87,7 @@ interface Availability {
 
 interface Eligibility {
 	is_user_eligible: boolean;
+	wapuu_assistant_enabled: boolean;
 	support_level:
 		| 'free'
 		| 'personal'
