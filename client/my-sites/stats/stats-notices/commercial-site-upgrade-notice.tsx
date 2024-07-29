@@ -26,13 +26,15 @@ const CommercialSiteUpgradeNotice = ( {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 
-	// Determine date that paywall will go into effect (if applicable).
-	// The paywall_date_from is the date the blog sticker was added.
-	// Grace period is paywall_date_from value plus STATS_GRACE_PERIOD_DAYS.
+	// Determine when the paywall will go into effect (if applicable).
+	// The upgrade_deadline_date is the actual date the paywall will be applied.
+	// TODO: Handle null API value?!
 	const moment = useLocalizedMoment();
 	const { data } = usePlanUsageQuery( siteId );
-	const dateFlagged = data?.upgrade_deadline_date ? moment( data.upgrade_deadline_date ) : moment();
-	const paywallFromDate = dateFlagged.format( 'LL' );
+	const paywallMoment = data?.upgrade_deadline_date
+		? moment( data.upgrade_deadline_date )
+		: moment();
+	const paywallFromDate = paywallMoment.format( 'LL' );
 
 	const gotoJetpackStatsProduct = () => {
 		isOdysseyStats
