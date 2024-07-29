@@ -118,7 +118,7 @@ export default function ReferralsOverview( {
 									) }
 								</div>
 								<Button
-									className="referrals-overview__notice-button"
+									className="referrals-overview__notice-button is-dark"
 									href="/referrals/payment-settings"
 								>
 									{ translate( 'Go to payment settings' ) }
@@ -163,7 +163,7 @@ export default function ReferralsOverview( {
 												) }
 											</div>
 											<Button
-												className="referrals-overview__notice-button"
+												className="referrals-overview__notice-button is-dark"
 												href="/referrals/payment-settings"
 											>
 												{ translate( 'Go to payment settings' ) }
