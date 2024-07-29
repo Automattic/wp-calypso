@@ -177,6 +177,14 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_goback' ) );
 	}, [ dispatch ] );
 
+	const onAddingCredentialsClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_adding_credentials' ) );
+	}, [ dispatch ] );
+
+	const onLearnAddingCredentialsClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_learn_adding_credentials' ) );
+	}, [ dispatch ] );
+
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const loading = rewindState.state === 'uninitialized';
@@ -347,12 +355,14 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 												? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
 												: `${ settingsPath( siteSlug ) }#credentials`
 										}
+										onClick={ onAddingCredentialsClick }
 									/>
 								),
 								linkGuide: (
 									<ExternalLink
 										href="https://jetpack.com/support/adding-credentials-to-jetpack/"
 										target="_blank"
+										onClick={ onLearnAddingCredentialsClick }
 									/>
 								),
 							},
