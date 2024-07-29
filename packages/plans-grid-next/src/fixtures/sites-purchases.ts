@@ -23,7 +23,6 @@ export default [
 		partner_type: null,
 		partner_key_id: null,
 		subscription_status: 'active',
-		product_name: 'Jetpack AI Assistant',
 		product_slug: 'jetpack_ai_yearly',
 		product_type: 'jetpack',
 		blog_created_date: '2023-08-21T09:11:23+00:00',
