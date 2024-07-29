@@ -222,6 +222,17 @@
 		}
 	}
 
+	.button.is-dark,
+	.components-button.is-dark {
+		background-color: var(--color-accent-100);
+		color: var(--color-surface);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-accent-100);
+		}
+	}
+
 	.split-button .button {
 		@include a4a-font-label-button;
 		height: 40px;

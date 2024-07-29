@@ -148,7 +148,7 @@
 	}
 }
 
-.components-button.pressable-overview-plan-selection__filter-button {
+.theme-a8c-for-agencies .components-button.pressable-overview-plan-selection__filter-button {
 	border: 1.5px solid var(--color-surface-backdrop);
 	font-size: 0.875rem;
 	font-weight: 600;
@@ -157,11 +157,6 @@
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 29px;
 	padding: 6px 12px;
-
-	&.is-selected {
-		background: var(--color-surface-backdrop);
-		color: var(--color-text-inverted);
-	}
 
 	&:focus {
 		box-shadow: none;

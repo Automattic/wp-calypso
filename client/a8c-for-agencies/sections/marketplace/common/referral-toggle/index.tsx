@@ -70,7 +70,7 @@ const ReferralToggle = () => {
 								'Please confirm your details before referring products to your clients.'
 							) }
 						</div>
-						<Button href="/referrals/payment-settings">
+						<Button className="is-dark" href="/referrals/payment-settings">
 							{ translate( 'Go to payment settings' ) }
 						</Button>
 					</A4APopover>
