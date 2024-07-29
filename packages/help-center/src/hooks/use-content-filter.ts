@@ -15,13 +15,21 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 			 * Make support article links open within the Help Center.
 			 */
 			{
-				pattern: 'a[href*="wordpress.com"]:not(:has(img)), a[href^="/"]',
+				pattern: 'a[href*="wordpress.com"], a[href^="/"]',
 				action: ( element: HTMLAnchorElement ) => {
 					const href = element.getAttribute( 'href' ) as string;
+
 					if ( ! href.startsWith( '/' ) && ! isThisASupportArticleLink( href ) ) {
 						return;
 					}
 
+					// Remove links from the image.
+					const image = element.querySelector( 'img' );
+					if ( image ) {
+						element.parentNode?.replaceChild( image, element );
+					}
+
+					// Make the href absolute to the support guide.
 					if ( href.startsWith( '/' ) ) {
 						element.setAttribute( 'href', new URL( href, link ).href );
 					}
