@@ -54,10 +54,6 @@
 	font-weight: 600;
 }
 
-.pressable-overview-plan-selection__details-card-header-subtitle {
-	@include a4a-font-body-md;
-}
-
 .pressable-overview-plan-selection__details-card-header-price {
 	display: flex;
 	flex-direction: column;
@@ -222,43 +218,5 @@
 		border-radius: 4px;
 		max-width: 350px;
 		height: 256px;
-	}
-}
-
-.is-new-hosting-page.pressable-overview-plan-selection {
-
-	@include break-huge {
-		width: 1000px;
-	}
-
-	.pressable-overview-plan-selection__filter-owned-plan {
-		margin-block-start: 32px;
-	}
-
-	.pressable-overview-plan-selection__details-card {
-		flex: 1;
-		border: 1px solid var(--color-neutral-5);
-		justify-content: space-between;
-	}
-
-	.pressable-overview-plan-selection__details-card-header-title {
-		@include a4a-font-heading-lg;
-
-		&.plan-name {
-			margin-block-end: 8px;
-			@include a4a-font-heading-xl;
-		}
-	}
-
-	.pressable-overview-plan-selection__details-card-header-price {
-		gap: 8px;
-	}
-
-	.pressable-overview-plan-selection__details-card-header-price-value {
-		@include a4a-font-heading-xl;
-	}
-
-	.pressable-overview-plan-selection__details > * {
-		gap: 24px;
 	}
 }

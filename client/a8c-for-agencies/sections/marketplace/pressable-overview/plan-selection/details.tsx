@@ -1,7 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
-import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -23,8 +22,6 @@ type Props = {
 export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLoading }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
 	const info = selectedPlan?.slug ? getPressablePlan( selectedPlan?.slug ) : null;
 
@@ -56,7 +53,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 		<section className="pressable-overview-plan-selection__details">
 			<div className="pressable-overview-plan-selection__details-card">
 				<div className="pressable-overview-plan-selection__details-card-header">
-					<h3 className="pressable-overview-plan-selection__details-card-header-title plan-name">
+					<h3 className="pressable-overview-plan-selection__details-card-header-title">
 						{ translate( '%(planName)s plan', {
 							args: {
 								planName: selectedPlan ? getPressableShortName( selectedPlan.name ) : customString,
@@ -108,10 +105,6 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 							components: { b: <b /> },
 							comment: '%(size)s is the amount of storage in gigabytes.',
 						} ),
-						isNewHostingPage &&
-							translate( '{{b}}Unmetered{{/b}} bandwidth', {
-								components: { b: <b /> },
-							} ),
 					] }
 				/>
 
@@ -119,7 +112,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 					<Button
 						className="pressable-overview-plan-selection__details-card-cta-button"
 						onClick={ onSelectPlan }
-						variant="primary"
+						primary
 					>
 						{ translate( 'Select %(planName)s plan', {
 							args: {
@@ -136,58 +129,27 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 						onClick={ onContactUs }
 						href={ PRESSABLE_CONTACT_LINK }
 						target="_blank"
-						variant="primary"
+						primary
 					>
 						{ translate( 'Contact us' ) } <Icon icon={ external } size={ 16 } />
 					</Button>
 				) }
 			</div>
 
-			{ isNewHostingPage ? (
-				<div className="pressable-overview-plan-selection__details-card is-aside">
-					<h3 className="pressable-overview-plan-selection__details-card-header-title">
-						{ translate( 'Schedule a demo and personal consultation' ) }
-					</h3>
-					<div className="pressable-overview-plan-selection__details-card-header-subtitle">
-						{ translate(
-							'One of our friendly experts would be happy to give you a one-on-one tour of our platform and discuss:'
-						) }
-					</div>
+			<div className="pressable-overview-plan-selection__details-card is-aside">
+				<h3 className="pressable-overview-plan-selection__details-card-header-title">
+					{ translate( 'All plans include:' ) }{ ' ' }
+				</h3>
 
-					<SimpleList
-						items={ [
-							translate( 'Our support, service, and pricing flexibility' ),
-							translate( 'The best hosting plan for your needs' ),
-							translate( 'How to launch and manage WordPress sites' ),
-							translate( 'The free perks that come with Pressable' ),
-						] }
-					/>
-					<Button
-						className="pressable-overview-plan-selection__details-card-cta-button"
-						onClick={ onContactUs }
-						href={ PRESSABLE_CONTACT_LINK }
-						target="_blank"
-						variant="secondary"
-					>
-						{ translate( 'Schedule a Demo' ) } <Icon icon={ external } size={ 18 } />
-					</Button>
-				</div>
-			) : (
-				<div className="pressable-overview-plan-selection__details-card is-aside">
-					<h3 className="pressable-overview-plan-selection__details-card-header-title">
-						{ translate( 'All plans include:' ) }
-					</h3>
-
-					<SimpleList
-						items={ [
-							translate( '24/7 WordPress hosting support' ),
-							translate( 'WP Cloud platform' ),
-							translate( 'Jetpack Security (optional)' ),
-							translate( 'Free site migrations' ),
-						] }
-					/>
-				</div>
-			) }
+				<SimpleList
+					items={ [
+						translate( '24/7 WordPress hosting support' ),
+						translate( 'WP Cloud platform' ),
+						translate( 'Jetpack Security (optional)' ),
+						translate( 'Free site migrations' ),
+					] }
+				/>
+			</div>
 		</section>
 	);
 }
