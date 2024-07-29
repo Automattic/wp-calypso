@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import clsx from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -19,8 +17,6 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 	const dispatch = useDispatch();
 
 	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
-
-	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
 	const onSelectPlan = useCallback(
 		( plan: APIProductFamilyProduct | null ) => {
@@ -56,11 +52,7 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 	}, [ dispatch, onAddToCart, selectedPlan ] );
 
 	return (
-		<div
-			className={ clsx( 'pressable-overview-plan-selection', {
-				'is-new-hosting-page': isNewHostingPage,
-			} ) }
-		>
+		<div className="pressable-overview-plan-selection">
 			<PlanSelectionFilter
 				selectedPlan={ selectedPlan }
 				plans={ pressablePlans }
