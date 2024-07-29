@@ -13,7 +13,7 @@ import DataSource from './data-source';
 // These source supply very large images, and there are instances such as
 // the site icon editor, where we want to disable them because the editor
 // can't handle the large images.
-const largeImageSources = [ 'google_photos', 'openverse', 'pexels' ];
+const largeImageSources = [ 'google_photos_picker', 'openverse', 'pexels' ];
 
 const noop = () => {};
 
@@ -104,7 +104,7 @@ export class MediaLibraryFilterBar extends Component {
 			return [];
 		}
 
-		if ( source === 'google_photos' ) {
+		if ( source === 'google_photos_picker' ) {
 			return [ '', 'images', 'videos' ];
 		}
 
@@ -145,7 +145,7 @@ export class MediaLibraryFilterBar extends Component {
 			return null;
 		}
 
-		if ( source === 'google_photos' ) {
+		if ( source === 'google_photos_picker' ) {
 			return null;
 		}
 

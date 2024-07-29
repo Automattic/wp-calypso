@@ -52,7 +52,7 @@ export class MediaLibraryDataSource extends Component {
 		];
 		if ( config.isEnabled( 'external-media/google-photos' ) && includeExternalMedia ) {
 			sources.push( {
-				value: 'google_photos',
+				value: 'google_photos_picker',
 				label: translate( 'Google Photos' ),
 				icon: <Gridicon icon="image-multiple" size={ 24 } />,
 			} );
