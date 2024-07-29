@@ -6,7 +6,7 @@ import {
 	useOdieBroadcastWithCallbacks,
 	useGetOdieStorage,
 } from '../data';
-import { translateMessage } from '../utils/conversation-utils';
+import { transformMessage } from '../utils/conversation-utils';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
 import type { Chat, Context, CurrentUser, Message, Nudge, OdieAllowedBots } from '../types/';
@@ -229,8 +229,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	);
 
 	useEffect( () => {
-		addMessengerListener( ( message: Parameters< typeof translateMessage >[ 0 ] ) => {
-			const translatedMessage = translateMessage( message );
+		addMessengerListener( ( message: Parameters< typeof transformMessage >[ 0 ] ) => {
+			const translatedMessage = transformMessage( message );
 			addMessage( translatedMessage );
 		} );
 	}, [ addMessage, addMessengerListener ] );
@@ -298,7 +298,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				addMessengerListener,
 				destroy,
 				getConversation,
-				init,
 				...smoochOps,
 			} }
 		>

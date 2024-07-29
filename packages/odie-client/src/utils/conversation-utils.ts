@@ -11,11 +11,11 @@ interface Message {
 
 export const ODIE_CHAT_KEY = 'odieChatId';
 
-export function translateMessages( originalMessages: Message[] ): OdieMessage[] {
-	return originalMessages.filter( ( message ) => message.type === 'text' ).map( translateMessage );
+export function transformMessages( originalMessages: Message[] ): OdieMessage[] {
+	return originalMessages.filter( ( message ) => message.type === 'text' ).map( transformMessage );
 }
 
-export function translateMessage( originalMessage: Message ): OdieMessage {
+export function transformMessage( originalMessage: Message ): OdieMessage {
 	if ( ! originalMessage ) {
 		return {
 			content: '',

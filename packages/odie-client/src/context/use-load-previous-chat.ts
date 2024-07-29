@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useOdieGetChat } from '../query';
 import { Chat, OdieAllowedBots } from '../types/';
-import { translateMessages } from '../utils/conversation-utils';
+import { transformMessages } from '../utils/conversation-utils';
 import { getOdieInitialMessage } from './get-odie-initial-message';
-
-const LOADING_DELAY = 1000;
 
 export const useLoadPreviousChat = (
 	botNameSlug: OdieAllowedBots,
@@ -25,7 +23,7 @@ export const useLoadPreviousChat = (
 			if ( existingChat ) {
 				const initialMessage = getOdieInitialMessage( botNameSlug );
 				const conversation = await getConversation( existingChat.chat_id );
-				const conversationMessages = translateMessages( conversation?.messages || [] );
+				const conversationMessages = transformMessages( conversation?.messages || [] );
 				const messages = [ initialMessage, ...existingChat.messages, ...conversationMessages ];
 				setChat( {
 					...existingChat,

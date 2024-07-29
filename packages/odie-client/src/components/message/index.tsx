@@ -167,14 +167,11 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 			);
 	}
 
-	let messageHeaderClass = 'message-header';
-	if ( isUser ) {
-		messageHeaderClass += ' user';
-	} else if ( isAgent ) {
-		messageHeaderClass += ' agent';
-	} else {
-		messageHeaderClass += ' bot';
-	}
+	const messageHeaderClass = clsx( 'message-header', {
+		user: isUser,
+		agent: isAgent,
+		bot: ! isUser && ! isAgent,
+	} );
 
 	const messageHeader = <div className={ messageHeaderClass }>{ messageAvatarHeader }</div>;
 

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Smooch from 'smooch';
-import { SMOOCH_CONTAINER_ID } from './constants';
+import { SMOOCH_CONTAINER_ID, SMOOCH_INTEGRATION_ID } from './constants';
 import { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
 
 export const useSmooch = () => {
@@ -15,14 +15,10 @@ export const useSmooch = () => {
 		const messengerContainer = document.getElementById( SMOOCH_CONTAINER_ID );
 		if ( authData?.jwt && authData?.externalId && ! init ) {
 			Smooch.init( {
-				integrationId: '6453b7fc45cea5c267e60fed',
+				integrationId: SMOOCH_INTEGRATION_ID,
 				embedded: true,
-				businessIconUrl: 'https://wpcomsupport.zendesk.com/embeddable/avatars/19034438422164',
-				customColors: {
-					brandColor: '0675C4',
-				},
-				externalId: authData?.externalId,
-				jwt: authData?.jwt,
+				externalId: authData.externalId,
+				jwt: authData.jwt,
 			} ).then( () => {
 				setInit( true );
 			} );
@@ -32,68 +28,61 @@ export const useSmooch = () => {
 		}
 	}, [ authData?.externalId, authData?.jwt, init ] );
 
-	const destroy = useCallback( () => {
-		if ( init ) {
-			Smooch.destroy?.();
+	if ( ! init ) {
+		return {
+			init: false,
+			destroy: () => {},
+			getConversation: () => undefined,
+			createConversation: () => {},
+			addMessengerListener: () => {},
+			sendMessage: () => {},
+		};
+	}
+
+	const getConversation = async ( chatId?: number ): Promise< Conversation | undefined > => {
+		if ( init && chatId ) {
+			const existingConversation = Smooch.getConversations().find( ( conversation ) => {
+				return conversation.metadata[ 'odieChatId' ] === chatId;
+			} );
+			if ( ! existingConversation ) {
+				return;
+			}
+			const result = await Smooch.getConversationById( existingConversation.id );
+			await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
+			return result;
 		}
-	}, [ init ] );
+		return;
+	};
 
-	const getConversation = useCallback(
-		async ( chatId?: number ): Promise< Conversation | undefined > => {
-			if ( init && chatId ) {
-				const existingConversation = Smooch.getConversations().find( ( conversation ) => {
-					return conversation.metadata[ 'odieChatId' ] === chatId;
-				} );
-				if ( ! existingConversation ) {
-					return;
-				}
-				const result = await Smooch.getConversationById( existingConversation.id );
-				await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
-				return result;
-			}
-			return;
-		},
-		[ init ]
-	);
+	const createConversation = async ( metadata: Conversation[ 'metadata' ] ) => {
+		if ( init ) {
+			await Smooch.createConversation( { metadata } );
+		}
+	};
 
-	const createConversation = useCallback(
-		async ( metadata: Conversation[ 'metadata' ] ) => {
-			if ( init ) {
-				await Smooch.createConversation( { metadata } );
-			}
-		},
-		[ init ]
-	);
+	const addMessengerListener = ( callback: ( message: Message ) => void ) => {
+		if ( init ) {
+			Smooch.on( 'message:received', callback );
+		}
+		setAddMessage( () => callback );
+	};
 
-	const addMessengerListener = useCallback(
-		( callback: ( message: Message ) => void ) => {
-			if ( init ) {
-				Smooch.on( 'message:received', callback );
+	const sendMessage = ( message: string, chatId?: number | null ) => {
+		if ( chatId && init ) {
+			const conversation = Smooch.getConversations().find( ( conversation ) => {
+				return conversation.metadata[ 'odieChatId' ] === chatId;
+			} );
+			if ( ! conversation ) {
+				return;
 			}
-			setAddMessage( () => callback );
-		},
-		[ init ]
-	);
-
-	const sendMessage = useCallback(
-		( message: string, chatId?: number | null ) => {
-			if ( chatId && init ) {
-				const conversation = Smooch.getConversations().find( ( conversation ) => {
-					return conversation.metadata[ 'odieChatId' ] === chatId;
-				} );
-				if ( ! conversation ) {
-					return;
-				}
-				Smooch.sendMessage( { type: 'text', text: message }, conversation.id );
-				addMessage?.( { text: message, role: 'user' } );
-			}
-		},
-		[ addMessage, init ]
-	);
+			Smooch.sendMessage( { type: 'text', text: message }, conversation.id );
+			addMessage?.( { text: message, role: 'user' } );
+		}
+	};
 
 	return {
 		init,
-		destroy,
+		destroy: Smooch.destroy,
 		getConversation,
 		createConversation,
 		addMessengerListener,
