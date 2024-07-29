@@ -29,6 +29,7 @@ class Firewall extends Component {
 		isAtomic: PropTypes.bool.isRequired,
 		isRequestingSettings: PropTypes.bool.isRequired,
 		isSavingSettings: PropTypes.bool.isRequired,
+		isSimple: PropTypes.bool.isRequired,
 		isVip: PropTypes.bool.isRequired,
 		onChangeField: PropTypes.func.isRequired,
 		setFieldValue: PropTypes.func.isRequired,
@@ -47,7 +48,7 @@ class Firewall extends Component {
 	}
 
 	wafModuleSupported = () => {
-		return ! this.props.isAtomic && ! this.props.isVip;
+		return ! this.props.isAtomic && ! this.props.isVip && ! this.props.isSimple;
 	};
 
 	disableWafForm = () => {

@@ -10,6 +10,7 @@ import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Firewall from './firewall';
 import SpamFilteringSettings from './spam-filtering-settings';
@@ -25,6 +26,7 @@ class SiteSettingsFormSecurity extends Component {
 			handleAutosavingToggle,
 			handleSubmitForm,
 			isAtomic,
+			isSimple,
 			isVip,
 			isRequestingSettings,
 			isSavingSettings,
@@ -62,6 +64,7 @@ class SiteSettingsFormSecurity extends Component {
 					disableProtect={ disableProtect }
 					activateModule={ activateModule }
 					isAtomic={ isAtomic }
+					isSimple={ isSimple }
 					isVip={ isVip }
 				/>
 
@@ -101,6 +104,7 @@ class SiteSettingsFormSecurity extends Component {
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
+	const isSimple = isSimpleSite( state, siteId );
 	const isVip = isVipSite( state, siteId );
 	const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
@@ -118,6 +122,7 @@ const connectComponent = connect( ( state ) => {
 	return {
 		siteId,
 		isAtomic,
+		isSimple,
 		isVip,
 		protectModuleActive,
 		protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
