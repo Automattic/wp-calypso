@@ -65,7 +65,7 @@ export default function HostingV2( { onAddToCart }: Props ) {
 					setSelectedFeatureId( 'premier' );
 					page.show( '/marketplace/hosting?hosting=premier' );
 				},
-				content: <PremierAgencyHosting />,
+				content: <PremierAgencyHosting onAddToCart={ ( product ) => onAddToCart( product, 1 ) } />,
 			},
 			{
 				key: 'enterprise',

@@ -41,9 +41,10 @@ function Hosting() {
 	const onAddToCart = useCallback(
 		( plan: APIProductFamilyProduct, quantity: number ) => {
 			if ( plan ) {
-				const items = selectedCartItems?.filter(
-					( cartItem ) => cartItem.family_slug !== 'wpcom-hosting'
-				);
+				const items =
+					plan.family_slug === 'wpcom-hosting' || plan.family_slug === 'pressable-hosting'
+						? selectedCartItems?.filter( ( cartItem ) => cartItem.family_slug !== plan.family_slug )
+						: selectedCartItems;
 
 				setSelectedCartItems( [ ...items, { ...plan, quantity } ] );
 				setShowCart( true );
