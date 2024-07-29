@@ -159,12 +159,6 @@ body.is-mobile-app-view {
 			}
 		}
 	}
-	.masterbar__item-notifications {
-		svg.sidebar_svg-notifications {
-			margin: 0;
-			fill: none;
-		}
-	}
 }
 
 .masterbar__new-menu-popover {
@@ -197,6 +191,56 @@ body.is-mobile-app-view {
 
 .masterbar__new-menu-popover.is-bottom-left {
 	right: 16px;
+}
+
+.masterbar__all-sites-popover {
+	.popover__arrow::before {
+		--color-border-inverted: var(--color-neutral-100);
+	}
+
+	.popover__arrow {
+		border: 10px dashed var(--color-neutral-70) !important;
+		border-bottom-style: solid !important;
+		border-top: none !important;
+		border-left-color: transparent !important;
+		border-right-color: transparent !important;
+	}
+	.popover__inner {
+		display: flex;
+		gap: 16px;
+		padding: 16px;
+		flex-direction: column;
+		align-items: flex-start;
+		border-radius: 4px !important;
+		background-color: var(--color-neutral-100) !important;
+		border: 1px solid var(--color-neutral-70) !important;
+		left: 0 !important;
+	}
+
+	.masterbar__all-sites-popover-heading {
+		font-size: rem(16px);
+		color: var(--color-text-inverted);
+		font-weight: 500;
+	}
+
+	.masterbar__all-sites-popover-description {
+		max-width: 325px;
+		margin-top: -8px;
+		font-size: rem(13px);
+		color: var(--color-neutral-0);
+		text-align: left;
+	}
+
+	.masterbar__all-sites-popover-actions {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		width: 100%;
+		button {
+			padding: 4px 8px;
+			font-size: rem(13px);
+		}
+	}
 }
 
 .masterbar__section {
@@ -466,6 +510,12 @@ body.is-mobile-app-view {
 		}
 	}
 
+	.accessible-focus & a:focus,
+	.accessible-focus & button:focus {
+		box-shadow: inset 0 0 0 2px var(--color-primary-light);
+		outline: none;
+	}
+
 	&.is-active {
 		background: var(--color-masterbar-item-active-background);
 	}
@@ -505,7 +555,6 @@ body.is-mobile-app-view {
 	}
 
 	@media only screen and (max-width: 782px) {
-		color: var(--color-masterbar-highlight);
 		font-size: $masterbar-mobile-font-size;
 		width: 52px;
 		padding: 0;
@@ -522,7 +571,6 @@ body.is-mobile-app-view {
 		svg,
 		svg path,
 		.gridicon {
-			fill: var(--color-masterbar-highlight);
 			height: 36px;
 			width: 36px;
 		}
@@ -537,7 +585,6 @@ body.is-mobile-app-view {
 		}
 
 		.dashicons-before {
-			color: var(--color-masterbar-highlight);
 			height: unset;
 			&::before {
 				width: 52px;
@@ -571,6 +618,7 @@ body.is-mobile-app-view {
 		// reset flex value on mobile
 		flex: 0 1 auto;
 		padding: 0;
+		width: 46px;
 
 		.masterbar__item-content {
 			display: none;
@@ -579,6 +627,16 @@ body.is-mobile-app-view {
 		&.masterbar__item--always-show-content .masterbar__item-content,
 		&.masterbar__item-me .masterbar__item-content {
 			display: block;
+		}
+
+		&.masterbar__item-my-site-actions {
+			display: none;
+		}
+	}
+
+	@media only screen and (max-width: 360px) {
+		&.masterbar__reader {
+			display: none;
 		}
 	}
 
@@ -895,7 +953,7 @@ body.is-mobile-app-view {
 	}
 
 	.gravatar {
-		border: 1px solid var(--color-sidebar-submenu-background);
+		border: 1px solid var(--color-masterbar-border);
 		border-radius: unset;
 		margin-left: 1px;
 
@@ -947,7 +1005,7 @@ body.is-mobile-app-view {
 			position: relative;
 			float: left;
 			top: -35px;
-			left: 77px;
+			left: 79px;
 		}
 	}
 
@@ -1115,40 +1173,41 @@ body.is-mobile-app-view {
 	}
 }
 
+.masterbar-cart-button {
+	svg {
+		@media only screen and (max-width: 782px) {
+			width: 32px;
+			height: 32px;
+		}
+	}
+}
+
 .masterbar-notifications {
 	svg {
 		overflow: overlay;
-		width: 27px;
-		height: 27px;
+		width: 24px;
+		height: 24px;
 
 		@media only screen and (max-width: 782px) {
-			width: 36px;
-			height: 36px;
-			padding: 3px 8px 5px;
+			width: 32px;
+			height: 32px;
 		}
 	}
 
 	.notifications-bell-icon__bubble {
 		animation: bubble-unread-indication 0.5s linear both;
 		transition: all 150ms ease-in;
-		transform-origin: 8px 4px;
+		transform-origin: 20px 4px;
 
 		use {
 			transition: all 150ms ease-in;
-			transform-origin: 8px 4px;
+			transform-origin: 20px 4px;
 		}
 	}
 
 	&:hover use.border {
 		transition: all 150ms ease-in;
 		fill: var(--color-masterbar-item-active-background);
-	}
-
-	@media only screen and (max-width: 782px) {
-		&:not(.has-unread) svg path {
-			stroke: var(--color-masterbar-highlight);
-			fill: none;
-		}
 	}
 }
 
@@ -1323,14 +1382,12 @@ a.masterbar__quick-language-switcher {
 
 	svg {
 		fill: var(--color-masterbar-icon);
-		width: 24px;
-		height: 24px;
+		width: 22px;
+		height: 22px;
 
 		@media only screen and (max-width: 782px) {
-			fill: var(--color-masterbar-highlight);
-			width: 36px;
-			height: 36px;
-			padding: 3px 8px 5px;
+			width: 30px;
+			height: 30px;
 		}
 	}
 }

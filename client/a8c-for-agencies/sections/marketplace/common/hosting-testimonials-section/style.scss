@@ -1,0 +1,64 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.hosting-testimonials {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 24px;
+
+	@include break-large {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.hosting-testimonials__item {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	border-radius: 4px;
+	border: 1px solid var(--color-neutral-5);
+	background-color: var(--color-neutral-0);
+	padding: 32px;
+	justify-content: space-between;
+}
+
+.hosting-testimonials__item-message {
+	@include a4a-font-body-lg;
+	margin: 0;
+}
+
+.hosting-testimonials__item-profile {
+	display: flex;
+	flex-direction: row;
+	gap: 16px;
+}
+
+.hosting-testimonials__item-profile-avatar {
+	width: 48px;
+	height: 48px;
+}
+
+
+.hosting-testimonials__item-details {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.hosting-testimonials__item-profile-name {
+	@include a4a-font-heading-md;
+}
+
+.hosting-testimonials__item-profile-title {
+	@include a4a-font-body-lg;
+}
+
+.hosting-testimonials__item-profile-link {
+	@include a4a-font-body-lg;
+
+	a {
+		color: var(--color-text);
+		text-decoration: underline;
+	}
+}

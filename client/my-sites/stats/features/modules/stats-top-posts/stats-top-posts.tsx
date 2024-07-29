@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { postList } from '@wordpress/icons';
@@ -12,7 +13,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
@@ -29,6 +30,10 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsTopPosts';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats
+		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
+		: `${ SUPPORT_URL }#posts-amp-pages`;
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -64,7 +69,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#posts-amp-pages` ) } />,
+										link: <a href={ localizeUrl( supportUrl ) } />,
 									},
 									context:
 										'Stats: Link in a popover for the Posts & Pages when the module has data',
@@ -95,7 +100,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#posts-amp-pages` ) } />,
+										link: <a href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Posts & Pages module is empty',
 								}

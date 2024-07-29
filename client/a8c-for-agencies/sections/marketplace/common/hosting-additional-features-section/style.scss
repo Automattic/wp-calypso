@@ -1,0 +1,67 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+ul.hosting-additional-features {
+	display: grid;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	column-gap: 48px;
+	row-gap: 4px;
+
+	grid-template-rows: 1fr;
+	grid-auto-flow: row;
+
+
+	@include break-xlarge {
+		grid-template-rows: repeat(8, 1fr);
+		grid-auto-flow: column;
+	}
+
+	@include break-wide {
+		grid-template-rows: repeat(4, 1fr);
+		grid-auto-flow: column;
+	}
+
+	@include break-huge {
+		max-width: 80%;
+	}
+
+	li {
+		@include a4a-font-body-lg;
+		display: flex;
+		align-content: center;
+		gap: 4px;
+		white-space: nowrap;
+	}
+
+	.gridicon {
+		fill: var(--color-primary-50);
+	}
+}
+
+
+ul.hosting-additional-features.is-five-rows {
+	@include break-xlarge {
+		grid-template-rows: repeat(10, 1fr);
+		grid-auto-flow: column;
+	}
+
+	@include break-wide {
+		grid-template-rows: repeat(5, 1fr);
+		grid-auto-flow: column;
+	}
+}
+
+ul.hosting-additional-features.is-three-rows {
+	@include break-xlarge {
+		grid-template-rows: repeat(6, 1fr);
+		grid-auto-flow: column;
+	}
+
+	@include break-wide {
+		grid-template-rows: repeat(3, 1fr);
+		grid-auto-flow: column;
+	}
+}

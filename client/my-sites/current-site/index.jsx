@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -41,23 +41,6 @@ class CurrentSite extends Component {
 		this.props.recordTracksEvent( 'calypso_sidebar_all_sites_click' );
 	};
 
-	renderSiteSwitcher = () => {
-		const { translate, isRtl } = this.props;
-		const arrowDirection = isRtl ? 'right' : 'left';
-
-		return (
-			<span className="current-site__switch-sites">
-				<Button borderless href="/sites" onClick={ this.onAllSitesClick }>
-					<span
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
-					></span>
-					<span className="current-site__switch-sites-label">{ translate( 'All Sites' ) }</span>
-				</Button>
-			</span>
-		);
-	};
-
 	render() {
 		const { selectedSite, translate, anySiteSelected } = this.props;
 
@@ -89,8 +72,6 @@ class CurrentSite extends Component {
 		return (
 			<Card className="current-site">
 				<div role="button" tabIndex="0" aria-hidden="true" onClick={ this.expandUnifiedNavSidebar }>
-					{ this.renderSiteSwitcher() }
-
 					{ selectedSite && (
 						<div>
 							<Site site={ selectedSite } homeLink />
