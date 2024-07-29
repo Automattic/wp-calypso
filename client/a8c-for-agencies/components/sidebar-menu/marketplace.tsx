@@ -1,16 +1,9 @@
 import page from '@automattic/calypso-router';
-import { chevronLeft, plugins, tool } from '@wordpress/icons';
+import { chevronLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import Sidebar from '../sidebar';
-import {
-	A4A_OVERVIEW_LINK,
-	A4A_PURCHASES_LINK,
-	A4A_MARKETPLACE_LINK,
-	A4A_MARKETPLACE_PRODUCTS_LINK,
-	A4A_MARKETPLACE_HOSTING_LINK,
-} from './lib/constants';
-import { createItem } from './lib/utils';
+import useMarketplaceMenuItems from './hooks/use-marketplace-menu-items';
+import { A4A_OVERVIEW_LINK, A4A_PURCHASES_LINK } from './lib/constants';
 
 type Props = {
 	path: string;
@@ -18,40 +11,15 @@ type Props = {
 
 export default function ( { path }: Props ) {
 	const translate = useTranslate();
-
-	const menuItems = useMemo( () => {
-		return [
-			createItem(
-				{
-					icon: plugins,
-					path: A4A_MARKETPLACE_LINK,
-					link: A4A_MARKETPLACE_PRODUCTS_LINK,
-					title: translate( 'Products' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Marketplace / Products',
-					},
-				},
-				path
-			),
-			createItem(
-				{
-					icon: tool,
-					path: A4A_MARKETPLACE_LINK,
-					link: A4A_MARKETPLACE_HOSTING_LINK,
-					title: translate( 'Hosting' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Marketplace / Hosting',
-					},
-				},
-				path
-			),
-		].map( ( item ) => createItem( item, path ) );
-	}, [ path, translate ] );
+	const menuItems = useMarketplaceMenuItems( path );
 
 	return (
 		<Sidebar
 			path={ A4A_PURCHASES_LINK }
 			title={ translate( 'Marketplace' ) }
+			description={ translate(
+				'Choose from a variety of hosting, or à la carte products for your sites.'
+			) }
 			backButtonProps={ {
 				label: translate( 'Back to overview' ),
 				icon: chevronLeft,
@@ -60,8 +28,7 @@ export default function ( { path }: Props ) {
 				},
 			} }
 			menuItems={ menuItems }
-			withSiteSelector
-			withGetHelpLink
+			withUserProfileFooter
 		/>
 	);
 }

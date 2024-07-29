@@ -11,7 +11,7 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 	}
 
 	.main.is-wide-layout {
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			padding-left: 1.25rem;
 			padding-right: 1.25rem;
 		}
@@ -20,14 +20,14 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 	.ecommerce-trial-expired__content {
 		text-align: center;
 
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			padding-top: 2.5rem;
 		}
 
 		.ecommerce-trial-expired__title {
 			font-size: $woo-font-title-medium;
 
-			@media ( min-width: $break-medium ) {
+			@media (min-width: $break-medium) {
 				font-size: $woo-font-title-large;
 			}
 		}
@@ -35,7 +35,7 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 		.ecommerce-trial-expired__subtitle {
 			margin: 16px auto 0;
 
-			@media ( min-width: $break-medium ) {
+			@media (min-width: $break-medium) {
 				max-width: 580px;
 			}
 		}
@@ -44,6 +44,12 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 			font-size: $woo-font-body-extra-small;
 			margin-top: 16px;
 		}
+	}
+
+	.ecommerce-trial-expired__spinner {
+		width: 100%;
+		height: 64px;
+		margin: 64px auto;
 	}
 
 	.ecommerce-trial-expired__footer {
@@ -56,7 +62,7 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 		max-width: 800px;
 		padding: 1.5em;
 
-		@media ( min-width: $break-small ) {
+		@media (min-width: $break-small) {
 			flex-direction: row;
 		}
 	}

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import i18n from 'i18n-calypso';
 import { find, pick } from 'lodash';
@@ -16,8 +15,6 @@ import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
 import LoadStatsPage from './stats-redirect/load-stats-page';
-
-const isPurchaseFlowEnabled = config.isEnabled( 'stats/checkout-flows-v2' );
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
@@ -143,7 +140,7 @@ export function overview( context, next ) {
 	const siteId = getSelectedSiteId( context.store.getState() );
 
 	context.primary =
-		isPurchaseFlowEnabled && siteId !== null ? (
+		siteId !== null ? (
 			<LoadStatsPage>
 				<AsyncLoad
 					require="calypso/my-sites/stats/overview"
@@ -204,7 +201,7 @@ export function site( context, next ) {
 	const validTabs = [ 'views', 'visitors', 'likes', 'comments' ];
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'views';
 
-	context.primary = isPurchaseFlowEnabled ? (
+	context.primary = (
 		<LoadStatsPage>
 			<StatsSite
 				path={ context.pathname }
@@ -214,14 +211,6 @@ export function site( context, next ) {
 				period={ rangeOfPeriod( activeFilter.period, date ) }
 			/>
 		</LoadStatsPage>
-	) : (
-		<StatsSite
-			path={ context.pathname }
-			date={ date }
-			chartTab={ chartTab }
-			context={ context }
-			period={ rangeOfPeriod( activeFilter.period, date ) }
-		/>
 	);
 
 	next();
@@ -255,6 +244,7 @@ export function summary( context, next ) {
 		'searchterms',
 		'annualstats',
 		'utm',
+		'devices',
 	];
 	let momentSiteZone = moment();
 
@@ -295,7 +285,7 @@ export function summary( context, next ) {
 		statsQueryOptions.period = 'day';
 	}
 
-	context.primary = isPurchaseFlowEnabled ? (
+	context.primary = (
 		<LoadStatsPage>
 			<AsyncLoad
 				require="calypso/my-sites/stats/summary"
@@ -308,17 +298,6 @@ export function summary( context, next ) {
 				{ ...extraProps }
 			/>
 		</LoadStatsPage>
-	) : (
-		<AsyncLoad
-			require="calypso/my-sites/stats/summary"
-			placeholder={ PageLoading }
-			path={ context.pathname }
-			statsQueryOptions={ statsQueryOptions }
-			date={ date }
-			context={ context }
-			period={ period }
-			{ ...extraProps }
-		/>
 	);
 
 	next();
@@ -335,7 +314,7 @@ export function post( context, next ) {
 		return next();
 	}
 
-	context.primary = isPurchaseFlowEnabled ? (
+	context.primary = (
 		<LoadStatsPage>
 			<AsyncLoad
 				require="calypso/my-sites/stats/stats-post-detail"
@@ -345,14 +324,6 @@ export function post( context, next ) {
 				context={ context }
 			/>
 		</LoadStatsPage>
-	) : (
-		<AsyncLoad
-			require="calypso/my-sites/stats/stats-post-detail"
-			placeholder={ PageLoading }
-			path={ context.path }
-			postId={ postId }
-			context={ context }
-		/>
 	);
 
 	next();
@@ -381,7 +352,7 @@ export function follows( context, next ) {
 		pageNum = 1;
 	}
 
-	context.primary = isPurchaseFlowEnabled ? (
+	context.primary = (
 		<LoadStatsPage>
 			<AsyncLoad
 				require="calypso/my-sites/stats/comment-follows"
@@ -394,17 +365,6 @@ export function follows( context, next ) {
 				siteId={ siteId }
 			/>
 		</LoadStatsPage>
-	) : (
-		<AsyncLoad
-			require="calypso/my-sites/stats/comment-follows"
-			placeholder={ PageLoading }
-			path={ context.path }
-			page={ pageNum }
-			perPage="20"
-			total="10"
-			domain={ siteDomain }
-			siteId={ siteId }
-		/>
 	);
 
 	next();
@@ -439,19 +399,7 @@ export function wordAds( context, next ) {
 
 	bumpStat( 'calypso_wordads_stats_site_period', activeFilter.period + numPeriodAgo );
 
-	context.primary = isPurchaseFlowEnabled ? (
-		<LoadStatsPage>
-			<AsyncLoad
-				require="calypso/my-sites/stats/wordads"
-				placeholder={ PageLoading }
-				path={ context.pathname }
-				date={ date }
-				chartTab={ queryOptions.tab || 'impressions' }
-				context={ context }
-				period={ rangeOfPeriod( activeFilter.period, date ) }
-			/>
-		</LoadStatsPage>
-	) : (
+	context.primary = (
 		<AsyncLoad
 			require="calypso/my-sites/stats/wordads"
 			placeholder={ PageLoading }
@@ -498,21 +446,7 @@ export function emailStats( context, next ) {
 	const validTabs = statType === 'opens' ? [ 'opens_count' ] : [ 'clicks_count' ];
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : validTabs[ 0 ];
 
-	context.primary = isPurchaseFlowEnabled ? (
-		<LoadStatsPage>
-			<StatsEmailDetail
-				path={ context.path }
-				postId={ postId }
-				statType={ statType }
-				chartTab={ chartTab }
-				context={ context }
-				givenSiteId={ givenSiteId }
-				period={ rangeOfPeriod( activeFilter.period, date ) }
-				date={ date }
-				isValidStartDate={ isValidStartDate }
-			/>
-		</LoadStatsPage>
-	) : (
+	context.primary = (
 		<StatsEmailDetail
 			path={ context.path }
 			postId={ postId }
@@ -550,13 +484,7 @@ export function emailSummary( context, next ) {
 
 	const date = moment().locale( 'en' );
 
-	context.primary = isPurchaseFlowEnabled ? (
-		<LoadStatsPage>
-			<StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />
-		</LoadStatsPage>
-	) : (
-		<StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />
-	);
+	context.primary = <StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />;
 
 	next();
 }

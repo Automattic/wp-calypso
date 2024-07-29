@@ -1,10 +1,8 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
@@ -18,16 +16,17 @@ import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useSiteData } from '../hooks/use-site-data';
-import { useLoginUrl } from '../utils/path';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
 	get title() {
-		return translate( 'Blog' );
+		return translate( 'Start writing' );
 	},
 	isSignupFlow: true,
 	useSteps() {
-		return [
+		//TODO: Migrate to use the STEPS from the steps.ts file
+		return stepsWithRequiredLogin( [
 			{
 				slug: 'check-sites',
 				asyncComponent: () => import( './internals/steps-repository/sites-checker' ),
@@ -73,7 +72,7 @@ const startWriting: Flow = {
 				slug: 'celebration-step',
 				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
 			},
-		];
+		] );
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -234,43 +233,15 @@ const startWriting: Flow = {
 			currentPath.includes( 'setup/start-writing/check-sites' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
-
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }`,
-			pageTitle: translate( 'Start writing' ),
-			locale,
-		} );
-		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/start-writing/create-site route which has no locale in the path so we need to
-		// redirect off of the first render.
-		// This effects both /setup/start-writing/<locale> starting points and /setup/start-writing/create-site/<locale> urls.
-		// The double call also hapens on urls without locale.
 		useEffect( () => {
-			if ( ! isLoggedIn ) {
-				redirect( logInUrl );
-			} else if ( isCreateSite && ! userAlreadyHasSites ) {
+			if ( isLoggedIn && isCreateSite && ! userAlreadyHasSites ) {
 				redirect( '/setup/start-writing/create-site' );
 			}
 		}, [] );
 
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		if ( ! isLoggedIn ) {
-			result = {
-				state: AssertConditionState.CHECKING,
-				message: `${ flowName } requires a logged in user`,
-			};
-		} else if ( isCreateSite && ! userAlreadyHasSites ) {
+		if ( isLoggedIn && isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } with no preexisting sites`,

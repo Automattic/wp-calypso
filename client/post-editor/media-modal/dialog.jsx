@@ -1,10 +1,10 @@
 import { Dialog } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import './dialog.scss';
 
 export default ( { additionalClassNames, ...props } ) => (
 	<Dialog
-		additionalClassNames={ classNames( 'editor-media-modal', additionalClassNames ) }
+		additionalClassNames={ clsx( 'editor-media-modal', additionalClassNames ) }
 		{ ...props }
 	/>
 );

@@ -3,6 +3,7 @@ import globalPageInstance from '@automattic/calypso-router';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import getIsSubscriptionOnly from 'calypso/state/selectors/get-is-subscription-only';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
 import { canCurrentUserUseCustomerHome, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -88,6 +89,9 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
 
 	if ( ! primarySiteSlug ) {
+		if ( getIsSubscriptionOnly( getState() ) ) {
+			return '/read';
+		}
 		// there is no primary site or the site info couldn't be fetched. Redirect to Sites Dashboard.
 		return '/sites';
 	}

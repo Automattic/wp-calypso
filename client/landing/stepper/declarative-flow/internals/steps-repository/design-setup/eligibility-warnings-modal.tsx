@@ -21,7 +21,7 @@ export const EligibilityWarningsModal = ( {
 			additionalClassNames="eligibility-warnings-modal__dialog-content"
 			isVisible={ isOpen }
 			onClose={ handleClose }
-			showCloseIcon={ true }
+			showCloseIcon
 		>
 			<EligibilityWarnings
 				siteId={ site?.ID }

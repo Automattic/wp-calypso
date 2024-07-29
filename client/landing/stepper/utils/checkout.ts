@@ -15,6 +15,7 @@ interface GoToCheckoutProps {
 	cancelDestination?: string;
 	extraProducts?: string[];
 	forceRedirection?: boolean;
+	extraQueryParams?: Record< string, string >;
 }
 
 export const goToCheckout = ( {
@@ -26,13 +27,15 @@ export const goToCheckout = ( {
 	cancelDestination,
 	extraProducts = [],
 	forceRedirection = false,
+	extraQueryParams: extraParams = {},
 }: GoToCheckoutProps ) => {
 	const relativeCurrentPath = window.location.href.replace( window.location.origin, '' );
-	const params = new URLSearchParams( {
+	const params = {
 		redirect_to: destination,
 		cancel_to: cancelDestination || relativeCurrentPath,
 		signup: '1',
-	} );
+		...extraParams,
+	};
 
 	persistSignupDestination( destination );
 	setSignupCompleteSlug( siteSlug );
@@ -43,7 +46,7 @@ export const goToCheckout = ( {
 	const hasProducts = products.length > 0;
 
 	if ( hasProducts && ! forceRedirection ) {
-		openCheckoutModal( products, { redirect_to: destination } );
+		openCheckoutModal( products, params );
 	} else {
 		// If no products are provided, we might have added plan to the cart so we just go to the checkout page directly.
 		// If the flag forceRedirection is true, we also go to the checkout page via redirection.
@@ -51,6 +54,6 @@ export const goToCheckout = ( {
 		// See https://github.com/Automattic/wp-calypso/pull/64899
 		window.location.href = `/checkout/${ encodeURIComponent( siteSlug ) }${
 			hasProducts ? `/${ products.join( ',' ) }` : ''
-		}?${ params }`;
+		}?${ new URLSearchParams( params ) }`;
 	}
 };

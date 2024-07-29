@@ -1,6 +1,6 @@
 import { Badge, Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import './style.scss';
 import { TranslateResult } from 'i18n-calypso';
 
@@ -27,7 +27,7 @@ interface Props< T > {
 
 function SelectItems< T >( { className, items, onSelect, preventWidows }: Props< T > ) {
 	return (
-		<div className={ classnames( 'select-items', className ) }>
+		<div className={ clsx( 'select-items', className ) }>
 			{ items.map(
 				( {
 					key,

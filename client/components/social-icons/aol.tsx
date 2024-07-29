@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { FC } from 'react';
 import './style.scss';
 
@@ -9,7 +9,7 @@ interface AOLIconProps {
 const AOLIcon: FC< AOLIconProps > = ( { isEnabled = true, ...rest } ) => {
 	return (
 		<svg
-			className={ classNames( 'social-icons social-icons__aol', {
+			className={ clsx( 'social-icons social-icons__aol', {
 				'social-icons--disabled': ! isEnabled,
 			} ) }
 			width="31"

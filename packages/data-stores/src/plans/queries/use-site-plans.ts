@@ -1,6 +1,7 @@
 import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import unpackCostOverrides from './lib/unpack-cost-overrides';
 import unpackIntroOffer from './lib/unpack-intro-offer';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { PricedAPISitePlan, SitePlan } from '../types';
@@ -48,10 +49,12 @@ function useSitePlans( { siteId }: Props ): UseQueryResult< SitePlansIndex > {
 							productId: Number( productId ),
 							expiry: plan.expiry,
 							currentPlan: plan.current_plan,
+							hasRedeemedDomainCredit: plan?.has_redeemed_domain_credit,
 							purchaseId: plan.id ? Number( plan.id ) : undefined,
 							pricing: {
 								currencyCode: plan.currency_code,
 								introOffer: unpackIntroOffer( plan ),
+								costOverrides: unpackCostOverrides( plan ),
 								originalPrice: {
 									monthly:
 										typeof originalPriceFull === 'number'

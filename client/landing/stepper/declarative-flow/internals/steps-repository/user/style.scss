@@ -1,0 +1,159 @@
+@import "calypso/signup/style.scss";
+body.is-section-stepper .step-route {
+	--color-accent: #117ac9;
+	--color-accent-60: #0e64a5;
+}
+
+
+.step-route.user {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: calc(100vh - 96px);
+	margin: 48px 0 0;
+
+	a.step-wrapper__navigation-link {
+		color: #1d2327;
+		font-family: "SF Pro Text", sans-serif;
+		font-size: 0.875rem;
+		font-style: normal;
+		font-weight: 500;
+		line-height: 20px;
+		text-underline-offset: 5px;
+		margin-left: auto;
+	}
+
+	.signup-header .wordpress-logo {
+		position: absolute;
+		inset-inline-start: 20px;
+		inset-block-start: 20px;
+		fill: var(--color-text);
+		transform-origin: 0 0;
+	}
+	.formatted-header__title {
+		line-height: 3.25;
+		font-size: 2rem;
+	}
+	.signup-form-social-first {
+		width: 327px;
+		margin: 0 auto;
+
+		.signup-form__notice {
+			width: 327px;
+			margin-left: 0;
+			margin-right: 0;
+
+			&.is-transparent-info {
+				color: var(--studio-gray-80, #2c3338);
+			}
+		}
+
+		.auth-form__social {
+			padding: 0 !important;
+		}
+
+		.signup-form-social-first__tos-link,
+		.signup-form-social-first__email-tos-link {
+			color: var(--studio-gray-50, #646970);
+			font-family: "SF Pro Text", sans-serif;
+			font-size: 0.75rem;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 18px;
+			margin-top: 24px;
+			margin-bottom: 12px;
+
+			a {
+				color: var(--studio-gray-50, #646970);
+				text-decoration-line: underline;
+			}
+		}
+
+		.signup-form-social-first__tos-link {
+			margin-top: 32px;
+			text-align: center;
+		}
+	}
+
+	.signup-form-social-first-email {
+		.card {
+			box-shadow: none;
+			padding-left: 0;
+			padding-right: 0;
+
+			button:not(.is-borderless, .signup-form__domain-suggestion-confirmation) {
+				display: block;
+				max-width: 327px;
+				margin: 0 auto;
+			}
+
+			button.signup-form__domain-suggestion-confirmation {
+				color: var(--color-link);
+				cursor: pointer;
+				text-decoration: none;
+
+				&:hover {
+					color: var(--color-link-dark);
+				}
+			}
+
+			button.is-borderless {
+				color: var(--color-link);
+				padding: 0;
+
+				&:hover {
+					color: var(--color-link-dark);
+				}
+			}
+		}
+
+		.form-label {
+			color: var(--studio-gray-60, #50575e);
+			font-family: "SF Pro Text", sans-serif;
+			font-size: 0.875rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 20px;
+		}
+
+		.logged-out-form__footer {
+			margin-top: 12px;
+			padding-top: 0;
+		}
+
+		button.back-button {
+			color: #1d2327;
+			text-align: center;
+			font-family: "SF Pro Text", sans-serif;
+			font-size: 0.875rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 20px;
+			display: block;
+			margin: 0 auto;
+			text-underline-offset: 5px;
+
+			&:hover {
+				color: var(--studio-blue-50, #0675c4);
+			}
+
+			&:focus {
+				outline: 1px dashed var(--studio-blue-50, #0675c4);
+				outline-offset: 3px;
+				box-shadow: none;
+				border-radius: 0;
+			}
+		}
+
+		button.button:not(.is-borderless) {
+			border-radius: 4px;
+
+			&:focus {
+				box-shadow: none;
+				outline: 2px solid var(--studio-blue-60, #055d9c);
+				outline-offset: 1px;
+			}
+		}
+	}
+}

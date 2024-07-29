@@ -179,11 +179,7 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 					) }
 					{ onSiteSelectBtnClick && (
 						<div className={ selectAction }>
-							<Button
-								compact={ true }
-								primary={ true }
-								onClick={ () => onSiteSelectBtnClick( site ) }
-							>
+							<Button compact primary onClick={ () => onSiteSelectBtnClick( site ) }>
 								{ __( 'Select this site' ) }
 							</Button>
 						</div>

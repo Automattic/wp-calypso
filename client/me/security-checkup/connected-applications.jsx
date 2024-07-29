@@ -46,7 +46,7 @@ class SecurityCheckupConnectedApplications extends Component {
 		const { connectedApps } = this.props;
 		let content;
 		if ( connectedApps === null ) {
-			content = <SecurityCheckupNavigationItem isPlaceholder={ true } />;
+			content = <SecurityCheckupNavigationItem isPlaceholder />;
 		} else {
 			content = this.renderConnectedApplications();
 		}

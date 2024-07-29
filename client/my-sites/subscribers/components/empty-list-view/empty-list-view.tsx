@@ -81,7 +81,7 @@ const EmptyListView = () => {
 				url={ localizeUrl( importSubscribersUrl ) }
 				eventName="calypso_subscribers_empty_view_import_subscribers_clicked"
 			/>
-			{ ! isWPCOMSite && (
+			{ isWPCOMSite && (
 				<EmptyListCTALink
 					icon={ trendingUp }
 					text={ translate( 'Grow your audience' ) }

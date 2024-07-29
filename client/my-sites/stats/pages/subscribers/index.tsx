@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
@@ -10,7 +10,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite, getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -46,7 +45,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	);
 	const today = new Date().toISOString().slice( 0, 10 );
 
-	const statsModuleListClass = classNames(
+	const statsModuleListClass = clsx(
 		'stats__module-list stats__module--unified',
 		'stats__module-list',
 		'stats__flexible-grid-container',
@@ -60,18 +59,16 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	// TODO: Pass subscribersTotals as props to SubscribersHighlightSection to avoid duplicate queries.
 	const { data: subscribersTotals, isLoading } = useSubscribersTotalsQueries( siteId );
 	const isSimple = useSelector( isSimpleSite );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const hasNoSubscriberOtherThanAdmin =
 		! subscribersTotals?.total ||
 		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
 	const showLaunchpad = ! isLoading && hasNoSubscriberOtherThanAdmin;
 
-	const emptyComponent =
-		isSimple || isAtomic ? (
-			<SubscriberLaunchpad launchpadContext="subscriber-stats" />
-		) : (
-			<EmptyListView />
-		);
+	const emptyComponent = isSimple ? (
+		<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+	) : (
+		<EmptyListView />
+	);
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -91,7 +88,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 				<NavigationHeader
 					className="stats__section-header modernized-header"
 					title={ translate( 'Jetpack Stats' ) }
-					subtitle={ translate( "View your site's performance and learn from trends." ) }
+					subtitle={ translate( 'Track your subscriber growth and engagement.' ) }
 					screenReader={ navItems.subscribers?.label }
 					navigationItems={ [] }
 				></NavigationHeader>
@@ -116,7 +113,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 							<div className={ statsModuleListClass }>
 								<Followers
 									path="followers"
-									className={ classNames(
+									className={ clsx(
 										{
 											'stats__flexible-grid-item--half': supportsEmailStats,
 											'stats__flexible-grid-item--full': ! supportsEmailStats,
@@ -128,7 +125,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 									<StatsModuleEmails
 										period={ period }
 										query={ { period, date: today } }
-										className={ classNames(
+										className={ clsx(
 											'stats__flexible-grid-item--half',
 											'stats__flexible-grid-item--full--large'
 										) }

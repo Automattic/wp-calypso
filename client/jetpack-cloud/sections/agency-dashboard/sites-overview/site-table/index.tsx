@@ -1,5 +1,5 @@
 import { Icon, starFilled, info } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useContext, useState, forwardRef, Ref } from 'react';
 import AddNewSiteTourStep2 from 'calypso/jetpack-cloud/sections/onboarding-tours/add-new-site-tour-step-2';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -66,7 +66,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 													icon={ starFilled }
 												/>
 											) }
-											<span className={ classNames( index === 0 && 'site-table-site-title' ) }>
+											<span className={ clsx( index === 0 && 'site-table-site-title' ) }>
 												{ column.title }
 
 												{ column.showInfo && (

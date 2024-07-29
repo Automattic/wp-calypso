@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import { Icon, info } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
@@ -14,10 +15,18 @@ import { FilterType } from '../types';
 type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
 	plans: APIProductFamilyProduct[];
+	existingPlan?: APIProductFamilyProduct | null;
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
+	isLoading?: boolean;
 };
 
-export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan }: Props ) {
+export default function PlanSelectionFilter( {
+	selectedPlan,
+	plans,
+	onSelectPlan,
+	existingPlan,
+	isLoading,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -40,12 +49,14 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 	const onSelectOption = useCallback(
 		( option: Option ) => {
 			const plan = plans.find( ( plan ) => plan.slug === option.value ) ?? null;
-			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_select_plan', {
-				slug: plan?.slug,
-			} );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_select_plan', {
+					slug: plan?.slug,
+				} )
+			);
 			onSelectPlan( plan );
 		},
-		[ onSelectPlan, plans ]
+		[ dispatch, onSelectPlan, plans ]
 	);
 
 	const selectedOption = options.findIndex(
@@ -70,21 +81,51 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 		filterType === FILTER_TYPE_INSTALL
 			? 'a4a-pressable-filter-wrapper-install'
 			: 'a4a-pressable-filter-wrapper-visits';
-	const wrapperClass = classNames(
-		additionalWrapperClass,
-		'pressable-overview-plan-selection__filter'
-	);
+	const wrapperClass = clsx( additionalWrapperClass, 'pressable-overview-plan-selection__filter' );
+
+	const minimum = existingPlan
+		? options.findIndex( ( { value } ) => value === existingPlan.slug ) + 1
+		: 0;
+
+	if ( isLoading ) {
+		return (
+			<div className="pressable-overview-plan-selection__filter is-placeholder">
+				<div className="pressable-overview-plan-selection__filter-type"></div>
+				<div className="pressable-overview-plan-selection__filter-slider"></div>
+			</div>
+		);
+	}
 
 	return (
 		<section className={ wrapperClass }>
+			{ !! existingPlan && (
+				<div className="pressable-overview-plan-selection__filter-owned-plan">
+					<div className="badge">
+						<Icon icon={ info } size={ 24 } />
+
+						<span>
+							{ translate( 'You own {{b}}%(planName)s plan{{/b}}', {
+								args: {
+									planName: existingPlan.name,
+								},
+								components: {
+									b: <strong />,
+								},
+								comment: '%(planName)s is the name of the Pressable plan the user owns.',
+							} ) }
+						</span>
+					</div>
+				</div>
+			) }
+
 			<div className="pressable-overview-plan-selection__filter-type">
 				<p className="pressable-overview-plan-selection__filter-label">
 					{ translate( 'Filter by:' ) }
 				</p>
 				<div className="pressable-overview-plan-selection__filter-buttons">
 					<Button
-						className={ classNames( 'pressable-overview-plan-selection__filter-button', {
-							'is-selected': filterType === FILTER_TYPE_INSTALL,
+						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
+							'is-dark': filterType === FILTER_TYPE_INSTALL,
 						} ) }
 						onClick={ onSelectInstallFilterType }
 					>
@@ -92,8 +133,8 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 					</Button>
 
 					<Button
-						className={ classNames( 'pressable-overview-plan-selection__filter-button', {
-							'is-selected': filterType === FILTER_TYPE_VISITS,
+						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
+							'is-dark': filterType === FILTER_TYPE_VISITS,
 						} ) }
 						onClick={ onSelectVisitFilterType }
 					>
@@ -102,7 +143,12 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 				</div>
 			</div>
 
-			<A4ASlider value={ selectedOption } onChange={ onSelectOption } options={ options } />
+			<A4ASlider
+				value={ selectedOption }
+				onChange={ onSelectOption }
+				options={ options }
+				minimum={ minimum }
+			/>
 		</section>
 	);
 }

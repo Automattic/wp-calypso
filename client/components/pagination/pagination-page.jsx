@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -65,7 +65,7 @@ class PaginationPage extends Component {
 					</li>
 				);
 			case 'previous': {
-				const listClass = classNames( 'pagination__list-item pagination__arrow', 'is-left', {
+				const listClass = clsx( 'pagination__list-item pagination__arrow', 'is-left', {
 					'is-active': currentPage > 1,
 				} );
 				return (
@@ -83,7 +83,7 @@ class PaginationPage extends Component {
 				);
 			}
 			case 'next': {
-				const listClass = classNames( 'pagination__list-item pagination__arrow', 'is-right', {
+				const listClass = clsx( 'pagination__list-item pagination__arrow', 'is-right', {
 					'is-active': currentPage < totalPages,
 				} );
 				return (
@@ -101,7 +101,7 @@ class PaginationPage extends Component {
 				);
 			}
 			default: {
-				const listClass = classNames( 'pagination__list-item pagination__page-number', {
+				const listClass = clsx( 'pagination__list-item pagination__page-number', {
 					'is-selected': currentPage === pageNumber,
 				} );
 				return (

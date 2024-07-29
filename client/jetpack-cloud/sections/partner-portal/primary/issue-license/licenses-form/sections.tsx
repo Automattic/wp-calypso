@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 
 type Props = {
@@ -15,7 +15,7 @@ export default function LicensesFormSection( {
 	isTwoColumns,
 }: Props ) {
 	return (
-		<div className={ classNames( 'licenses-form__section', { 'is-two-columns': isTwoColumns } ) }>
+		<div className={ clsx( 'licenses-form__section', { 'is-two-columns': isTwoColumns } ) }>
 			<h2 className="licenses-form__section-title">
 				<span>{ title }</span>
 				<hr />

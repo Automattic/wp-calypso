@@ -1,3 +1,4 @@
+import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { useTranslate } from 'i18n-calypso';
@@ -12,11 +13,13 @@ import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
 import type { FollowersQuery } from './types';
 import type { Member } from '@automattic/data-stores';
 import './style.scss';
+import type { AppState } from 'calypso/types';
 
 interface Props {
 	filter: string;
@@ -28,6 +31,9 @@ function Subscribers( props: Props ) {
 	const dispatch = useDispatch();
 	const { search, followersQuery } = props;
 	const site = useSelector( getSelectedSite );
+	const hasUnlimitedSubscribers = useSelector( ( state: AppState ) =>
+		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
+	);
 
 	const listKey = [ 'subscribers', site?.ID, 'all', search ].join( '-' );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage, refetch } =
@@ -83,7 +89,7 @@ function Subscribers( props: Props ) {
 
 	const isFreeSite = site?.plan?.is_free ?? false;
 	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
-	const hasSubscriberLimit = isFreeSite || isBusinessTrial;
+	const hasSubscriberLimit = ( isFreeSite || isBusinessTrial ) && ! hasUnlimitedSubscribers;
 
 	switch ( templateState ) {
 		case 'default':
@@ -143,7 +149,7 @@ function Subscribers( props: Props ) {
 							>
 								<AddSubscriberForm
 									siteId={ site?.ID }
-									submitBtnAlwaysEnable={ true }
+									submitBtnAlwaysEnable
 									onImportFinished={ refetch }
 									hasSubscriberLimit={ hasSubscriberLimit }
 								/>

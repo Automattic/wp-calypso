@@ -8,9 +8,16 @@ import { useSelect } from '@wordpress/data';
 import * as Plans from '../';
 import * as Purchases from '../../purchases';
 import * as WpcomPlansUI from '../../wpcom-plans-ui';
+import { COST_OVERRIDE_REASONS } from '../constants';
 import type { AddOnMeta } from '../../add-ons/types';
 
-export type UseCheckPlanAvailabilityForPurchase = ( { planSlugs }: { planSlugs: PlanSlug[] } ) => {
+export type UseCheckPlanAvailabilityForPurchase = ( {
+	planSlugs,
+	siteId,
+}: {
+	planSlugs: PlanSlug[];
+	siteId?: number | null;
+} ) => {
 	[ planSlug in PlanSlug ]?: boolean;
 };
 
@@ -18,9 +25,9 @@ interface Props {
 	planSlugs: PlanSlug[];
 
 	/**
-	 * `selectedSiteId` required on purpose to mitigate risk with not passing something through when we should
+	 * `siteId` required on purpose to mitigate risk with not passing something through when we should
 	 */
-	selectedSiteId: number | null | undefined;
+	siteId: number | null | undefined;
 
 	/**
 	 * `coupon` required on purpose to mitigate risk with not passing somethiing through when we should
@@ -40,6 +47,13 @@ interface Props {
 	 * `storageAddOmns` TODO: should become a required prop.
 	 */
 	storageAddOns: ( AddOnMeta | null )[] | null;
+
+	/**
+	 * Whether to include discounts from plan proration.
+	 * This is applicable only if a siteId is passed to this hook.
+	 * If true, the pricing includes discounts from upgrade credits.
+	 */
+	withProratedDiscounts?: boolean;
 }
 
 function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
@@ -58,24 +72,25 @@ function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): 
  */
 const usePricingMetaForGridPlans = ( {
 	planSlugs,
-	selectedSiteId,
+	siteId,
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
 	storageAddOns,
+	withProratedDiscounts,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
-	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs } );
+	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs, siteId } );
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
-	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
-	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
-	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId, coupon } );
+	const sitePlans = Plans.useSitePlans( { siteId } );
+	const currentPlan = Plans.useCurrentPlan( { siteId } );
+	const introOffers = Plans.useIntroOffers( { siteId, coupon } );
 	const purchasedPlan = Purchases.useSitePurchaseById( {
-		siteId: selectedSiteId,
+		siteId,
 		purchaseId: currentPlan?.purchaseId,
 	} );
 	const selectedStorageOptions = useSelect(
-		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptions( selectedSiteId ),
+		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptions( siteId ),
 		[]
 	);
 
@@ -84,11 +99,12 @@ const usePricingMetaForGridPlans = ( {
 				[ planSlug in PlanSlug ]?: {
 					originalPrice: Plans.PlanPricing[ 'originalPrice' ];
 					discountedPrice: Plans.PlanPricing[ 'discountedPrice' ];
+					currencyCode: Plans.PlanPricing[ 'currencyCode' ];
 				};
 		  }
 		| null = null;
 
-	if ( ( selectedSiteId && sitePlans.isLoading ) || plans.isLoading ) {
+	if ( ( siteId && sitePlans.isLoading ) || plans.isLoading ) {
 		/**
 		 * Null until all data is ready, at least in initial state.
 		 * - For now a simple loader is shown until these are resolved
@@ -98,26 +114,22 @@ const usePricingMetaForGridPlans = ( {
 	} else {
 		planPrices = Object.fromEntries(
 			planSlugs.map( ( planSlug ) => {
-				const availableForPurchase = planAvailabilityForPurchase[ planSlug ];
-				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-				const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
-					return selectedStorageOption && addOn?.featureSlugs?.includes( selectedStorageOption );
-				} );
-				const storageAddOnPrices =
-					selectedStorageAddOn?.purchased || selectedStorageAddOn?.exceedsSiteStorageLimits
-						? null
-						: selectedStorageAddOn?.prices;
-				const storageAddOnPriceMonthly = storageAddOnPrices?.monthlyPrice || 0;
-				const storageAddOnPriceYearly = storageAddOnPrices?.yearlyPrice || 0;
-
 				const plan = plans.data?.[ planSlug ];
 				const sitePlan = sitePlans.data?.[ planSlug ];
+				const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
+				const selectedStorageAddOn = selectedStorageOption
+					? storageAddOns?.find( ( addOn ) => {
+							return addOn?.addOnSlug === selectedStorageOption;
+					  } )
+					: null;
+				const storageAddOnPriceMonthly = selectedStorageAddOn?.prices?.monthlyPrice || 0;
+				const storageAddOnPriceYearly = selectedStorageAddOn?.prices?.yearlyPrice || 0;
 
 				/**
 				 * 0. No plan or sitePlan (when selected site exists): planSlug is for a priceless plan.
 				 * TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
 				 */
-				if ( ! plan?.pricing || ( selectedSiteId && ! sitePlan?.pricing ) ) {
+				if ( ! plan?.pricing || ( siteId && ! sitePlan?.pricing ) ) {
 					return [
 						planSlug,
 						{
@@ -129,6 +141,7 @@ const usePricingMetaForGridPlans = ( {
 								monthly: null,
 								full: null,
 							},
+							currencyCode: plans.data?.[ planSlug ]?.pricing?.currencyCode,
 						},
 					];
 				}
@@ -138,7 +151,7 @@ const usePricingMetaForGridPlans = ( {
 				 *   - The current site's plan gets the price with which the plan was purchased
 				 *     (so may not be the most recent billing plan's).
 				 */
-				if ( selectedSiteId && currentPlan?.planSlug === planSlug ) {
+				if ( siteId && currentPlan?.planSlug === planSlug ) {
 					let monthlyPrice = sitePlan?.pricing.originalPrice.monthly;
 					let fullPrice = sitePlan?.pricing.originalPrice.full;
 
@@ -169,14 +182,66 @@ const usePricingMetaForGridPlans = ( {
 								monthly: null,
 								full: null,
 							},
+							currencyCode: purchasedPlan
+								? purchasedPlan?.currencyCode
+								: plan?.pricing?.currencyCode,
 						},
 					];
 				}
 
 				/**
-				 * 2. Original and Discounted prices for plan available for purchase.
+				 * 2. Original and Discounted prices for site-specific plans available for purchase
 				 */
-				if ( availableForPurchase ) {
+				if ( siteId && planAvailabilityForPurchase[ planSlug ] ) {
+					const originalPrice = {
+						monthly: getTotalPrice(
+							sitePlan?.pricing.originalPrice.monthly,
+							storageAddOnPriceMonthly
+						),
+						full: getTotalPrice( sitePlan?.pricing.originalPrice.full, storageAddOnPriceYearly ),
+					};
+
+					// Do not return discounted prices if discount is due to plan proration
+					if (
+						! withProratedDiscounts &&
+						sitePlan?.pricing?.costOverrides?.[ 0 ]?.overrideCode ===
+							COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION
+					) {
+						return [
+							planSlug,
+							{
+								originalPrice,
+								discountedPrice: {
+									monthly: null,
+									full: null,
+								},
+								currencyCode: sitePlan?.pricing?.currencyCode,
+							},
+						];
+					}
+
+					const discountedPrice = {
+						monthly: getTotalPrice(
+							sitePlan?.pricing.discountedPrice.monthly,
+							storageAddOnPriceMonthly
+						),
+						full: getTotalPrice( sitePlan?.pricing.discountedPrice.full, storageAddOnPriceYearly ),
+					};
+
+					return [
+						planSlug,
+						{
+							originalPrice,
+							discountedPrice,
+							currencyCode: sitePlan?.pricing?.currencyCode,
+						},
+					];
+				}
+
+				/**
+				 * 3. Original and Discounted prices for plan available for purchase.
+				 */
+				if ( planAvailabilityForPurchase[ planSlug ] ) {
 					const originalPrice = {
 						monthly: getTotalPrice( plan.pricing.originalPrice.monthly, storageAddOnPriceMonthly ),
 						full: getTotalPrice( plan.pricing.originalPrice.full, storageAddOnPriceYearly ),
@@ -194,6 +259,7 @@ const usePricingMetaForGridPlans = ( {
 						{
 							originalPrice,
 							discountedPrice,
+							currencyCode: plan?.pricing?.currencyCode,
 						},
 					];
 				}
@@ -215,6 +281,7 @@ const usePricingMetaForGridPlans = ( {
 							monthly: null,
 							full: null,
 						},
+						currencyCode: plan?.pricing?.currencyCode,
 					},
 				];
 			} )
@@ -233,7 +300,7 @@ const usePricingMetaForGridPlans = ( {
 					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
 					billingPeriod: plans.data?.[ planSlug ]?.pricing?.billPeriod,
 					// TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
-					currencyCode: plans.data?.[ planSlug ]?.pricing?.currencyCode,
+					currencyCode: planPrices?.[ planSlug ]?.currencyCode,
 					expiry: sitePlans.data?.[ planSlug ]?.expiry,
 					introOffer: introOffers?.[ planSlug ],
 				},

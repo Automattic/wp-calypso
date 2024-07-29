@@ -19,6 +19,8 @@ export interface StatsNoticeProps {
 	statsPurchaseSuccess?: string;
 	isCommercial?: boolean;
 	isCommercialOwned?: boolean;
+	hasPWYWPlanOnly?: boolean;
+	showPaywallNotice?: boolean;
 }
 
 export interface NoticeBodyProps {

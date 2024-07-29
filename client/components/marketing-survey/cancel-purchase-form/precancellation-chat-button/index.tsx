@@ -1,8 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import { MaterialIcon } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import ChatButton from 'calypso/components/chat-button';
 import { hasIncludedDomain } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
@@ -27,6 +28,7 @@ const PrecancellationChatButton: FC< Props > = ( {
 	className,
 } ) => {
 	const { __ } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 	const siteUrl =
 		useSelector( ( state ) => getSiteUrl( state, purchase.siteId ) ) || 'Unknown site';
 
@@ -55,11 +57,15 @@ const PrecancellationChatButton: FC< Props > = ( {
 			chatIntent="PRECANCELLATION"
 			initialMessage={ initialMessage }
 			siteUrl={ siteUrl }
-			className={ classNames( 'precancellation-chat-button__main-button', className ) }
+			siteId={ purchase?.siteId }
+			className={ clsx( 'precancellation-chat-button__main-button', className ) }
 			onClick={ handleClick }
+			section="pre-cancellation"
 		>
 			{ icon && <MaterialIcon icon={ icon } /> }
-			{ __( 'Need help? Chat with us' ) }
+			{ hasEnTranslation( 'Need help? Contact us' )
+				? __( 'Need help? Contact us' )
+				: __( 'Need help? Chat with us' ) }
 		</ChatButton>
 	);
 };

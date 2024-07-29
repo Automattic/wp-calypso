@@ -100,7 +100,9 @@ The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35
 	/* Masterbar */
 	--color-masterbar-background: var(--theme-base-color);
 	--color-masterbar-border: var(--theme-submenu-background-color);
-	--color-masterbar-text: var(--studio-white);
+	--color-masterbar-text: var(--theme-text-color);
+	--color-masterbar-icon: var(--theme-icon-color);
+	--color-masterbar-highlight: var(--theme-highlight-color);
 	--color-masterbar-unread-dot-background: var(--theme-notification-color);
 
 	--color-masterbar-item-hover-background: var(--theme-submenu-background-color);
@@ -132,14 +134,20 @@ The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35
 	--color-sidebar-menu-hover-background-rgb: var(--theme-highlight-color-rgb);
 	--color-sidebar-menu-hover-text: var(--theme-text-color);
 
-	/* Sidebar Hover - Nav unification */
-	--color-sidebar-menu-hover: var(--theme-text-color);
-
 	/* Sidebar Submenu - Nav Unification */
 	--color-sidebar-submenu-background: var(--theme-submenu-background-color);
 	--color-sidebar-submenu-text: var(--theme-submenu-text-color);
 	--color-sidebar-submenu-hover-background: transparent;
 	--color-sidebar-submenu-hover-text: var(--theme-highlight-color);
+	--color-sidebar-submenu-selected-hover-text: var(--color-accent);
+	--color-sidebar-menu-hover: var(--theme-text-color);
+
+	/* Sidebar Submenu - Nav Redesign */
+	--color-navredesign-sidebar-submenu-text: var(--color-sidebar-submenu-text);
+	--color-navredesign-sidebar-menu-selected-text: var(--theme-text-color);
+	--color-navredesign-sidebar-submenu-selected-text: var(--theme-text-color);
+	--color-navredesign-sidebar-submenu-hover-text: var(--theme-highlight-color);
+	--color-navredesign-sidebar-submenu-selected-hover-text: var(--color-accent);
 
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--theme-base-color);

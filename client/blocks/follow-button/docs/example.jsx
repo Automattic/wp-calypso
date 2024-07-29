@@ -12,10 +12,10 @@ export default class FollowButtonExample extends PureComponent {
 					<FollowButton following={ false } />
 				</Card>
 				<Card compact>
-					<FollowButton following={ true } />
+					<FollowButton following />
 				</Card>
 				<Card compact>
-					<FollowButton disabled={ true } />
+					<FollowButton disabled />
 				</Card>
 				<Card compact>
 					<h3>With custom label</h3>

@@ -1,6 +1,6 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { get, forEach, uniqBy } from 'lodash';
@@ -179,7 +179,7 @@ class CrossPost extends PureComponent {
 		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
 			isSeen = post?.is_seen;
 		}
-		const articleClasses = classnames( {
+		const articleClasses = clsx( {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
@@ -202,7 +202,7 @@ class CrossPost extends PureComponent {
 					feedIcon={ feedIcon }
 					author={ post.author }
 					onClick={ this.handleTitleClick }
-					isCompact={ true }
+					isCompact
 				/>
 				<div className="reader__x-post">
 					{ post.title && (

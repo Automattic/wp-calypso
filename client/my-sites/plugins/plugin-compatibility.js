@@ -51,7 +51,6 @@ const incompatiblePlugins = new Set( [
 	'backup-wd',
 	'backupwordpress',
 	'backwpup',
-	'jetpack-backup',
 	'wp-db-backup',
 
 	// caching

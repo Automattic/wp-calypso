@@ -23,7 +23,7 @@
 }
 
 /* Media Queries */
-@media ( max-width: $break-large ) {
+@media (max-width: $break-large) {
 	.subscriber-stats__list {
 		flex-flow: column;
 		padding: 0;

@@ -3,14 +3,32 @@
 
 $colophon-height: 50px; // wpcomColophon element at the bottom
 
-.jetpack-connect__main:not(.is-woocommerce):not(.is-wpcom-migration),
-.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wpcom-migration):not(.is-woocommerce-core-profiler-flow) {
+.jetpack-connect__main:not(.is-woocommerce):not(.is-wpcom-migration):not(.is-automattic-for-agencies-flow),
+.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wpcom-migration):not(.is-woocommerce-core-profiler-flow):not(.is-automattic-for-agencies-flow) {
 	@include jetpack-connect-colors();
 }
 
 .layout.is-jetpack-woocommerce-flow,
 .layout.is-jetpack-woo-dna-flow {
 	@include woocommerce-colors();
+}
+
+.is-automattic-for-agencies-flow,
+.layout.is-automattic-for-agencies-flow {
+	@include automattic-for-agencies-colors();
+
+	.formatted-header__title {
+		margin: 32px 0;
+		font-size: 1.25rem;
+	}
+
+	.jetpack-connect__tos-link {
+		font-size: 0.875rem;
+	}
+}
+
+.jetpack-connect__main.main.is-automattic-for-agencies-flow {
+	max-width: 426px;
 }
 
 .is-section-jetpack-connect,

@@ -11,12 +11,14 @@ import { Spinner } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import Sidebar from 'calypso/layout/sidebar';
 import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import CurrentSite from 'calypso/my-sites/current-site';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddNewSite from './add-new-site';
 import useDomainsViewStatus from './use-domains-view-status';
 import useSiteMenuItems from './use-site-menu-items';
@@ -28,6 +30,7 @@ export const MySitesSidebarUnified = ( { path, isUnifiedSiteSidebarVisible } ) =
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
+	const selectedSite = useSelector( getSelectedSite );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -42,12 +45,24 @@ export const MySitesSidebarUnified = ( { path, isUnifiedSiteSidebarVisible } ) =
 	return (
 		<Fragment>
 			<Sidebar>
+				{ isUnifiedSiteSidebarVisible && selectedSite && ! isAllDomainsView && (
+					<SidebarRegion>
+						<AsyncLoad
+							require="calypso/my-sites/current-site/notice"
+							placeholder={ null }
+							site={ selectedSite }
+						/>
+					</SidebarRegion>
+				) }
 				{ ! isUnifiedSiteSidebarVisible && (
 					<SidebarRegion>
 						<CurrentSite forceAllSitesView={ isAllDomainsView } />
 					</SidebarRegion>
 				) }
-				<MySitesSidebarUnifiedBody path={ path } />
+				<MySitesSidebarUnifiedBody
+					path={ path }
+					isUnifiedSiteSidebarVisible={ isUnifiedSiteSidebarVisible }
+				/>
 				<CollapseSidebar
 					key="collapse"
 					title={ translate( 'Collapse menu' ) }

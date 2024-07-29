@@ -47,6 +47,10 @@ export type DeprecatedStepperStep = {
 	 */
 	slug: string;
 	/**
+	 * Does the step require a logged-in user?
+	 */
+	requiresLoggedInUser?: boolean;
+	/**
 	 * @deprecated Use asyncComponent instead. The component that will be rendered for this step. This variation is deprecated and will be removed in the future. Please use async loaded steps instead
 	 *
 	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
@@ -60,6 +64,10 @@ export type AsyncStepperStep = {
 	 */
 	slug: string;
 	/**
+	 * Does the step require a logged-in user?
+	 */
+	requiresLoggedInUser?: boolean;
+	/**
 	 * The Async loaded component that will be rendered for this step
 	 *
 	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
@@ -71,7 +79,11 @@ export type StepperStep = DeprecatedStepperStep | AsyncStepperStep;
 
 export type Navigate< FlowSteps extends StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
-	extraData?: any
+	extraData?: any,
+	/**
+	 * If true, the current step will be replaced in the history stack.
+	 */
+	replace?: boolean
 ) => void;
 
 /**
@@ -107,6 +119,19 @@ export type Flow = {
 	 */
 	isSignupFlow: boolean;
 	useSignupStartEventProps?: () => Record< string, string | number >;
+
+	/**
+	 *  You can use this hook to configure the login url.
+	 * @returns An object describing the configuration.
+	 * For now only extraQueryParams is supported.
+	 */
+	useLoginParams?: () => {
+		/**
+		 * A custom login path to use instead of the default login path.
+		 */
+		customLoginPath?: string;
+		extraQueryParams?: Record< string, string | number >;
+	};
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;

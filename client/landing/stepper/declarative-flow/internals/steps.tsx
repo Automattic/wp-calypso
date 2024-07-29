@@ -60,6 +60,11 @@ export const STEPS = {
 
 	GOALS: { slug: 'goals', asyncComponent: () => import( './steps-repository/goals' ) },
 
+	GENERATE_CONTENT: {
+		slug: 'generateContent',
+		asyncComponent: () => import( './steps-repository/readymade-template-generate-content' ),
+	},
+
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
 
 	IMPORT_LIGHT: {
@@ -127,7 +132,16 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/new-or-existing-site' ),
 	},
 
+	LAUNCH_BIG_SKY: {
+		slug: 'launch-big-sky',
+		asyncComponent: () => import( './steps-repository/launch-big-sky' ),
+	},
+
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
+	MIGRATION_HANDLER: {
+		slug: 'migrationHandler',
+		asyncComponent: () => import( './steps-repository/migration-handler' ),
+	},
 
 	OPTIONS: {
 		slug: 'options',
@@ -211,9 +225,24 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/assign-trial-plan' ),
 	},
 
+	SITE_MIGRATION_ASSIGN_TRIAL_PLAN: {
+		slug: 'site-migration-assign-trial-plan',
+		asyncComponent: () => import( './steps-repository/site-migration-assign-trial-plan' ),
+	},
+
 	SITE_MIGRATION_INSTRUCTIONS: {
 		slug: 'site-migration-instructions',
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
+	},
+
+	SITE_MIGRATION_STARTED: {
+		slug: 'site-migration-started',
+		asyncComponent: () => import( './steps-repository/site-migration-started' ),
+	},
+
+	SITE_MIGRATION_ASSISTED_MIGRATION: {
+		slug: 'migrateMessage',
+		asyncComponent: () => import( './steps-repository/importer-migrate-message' ),
 	},
 
 	SITE_MIGRATION_IDENTIFY: {
@@ -226,6 +255,16 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-import-or-migrate' ),
 	},
 
+	SITE_MIGRATION_HOW_TO_MIGRATE: {
+		slug: 'site-migration-how-to-migrate',
+		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
+	},
+
+	SITE_MIGRATION_SOURCE_URL: {
+		slug: 'site-migration-source-url',
+		asyncComponent: () => import( './steps-repository/site-migration-source-url' ),
+	},
+
 	SITE_MIGRATION_UPGRADE_PLAN: {
 		slug: 'site-migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-upgrade-plan' ),
@@ -234,5 +273,15 @@ export const STEPS = {
 	SITE_MIGRATION_PLUGIN_INSTALL: {
 		slug: 'site-migration-plugin-install',
 		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
+	},
+
+	PICK_SITE: {
+		slug: 'sitePicker',
+		asyncComponent: () => import( './steps-repository/site-picker' ),
+	},
+
+	SEGMENTATION_SURVEY: {
+		slug: 'segmentation-survey',
+		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
 	},
 };

@@ -6,7 +6,7 @@ import {
 	StatsCardAvatar,
 } from '@automattic/components';
 import { Icon, tag, file } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
@@ -21,6 +21,7 @@ const StatsListCard = ( {
 	moduleType,
 	showMore,
 	title,
+	titleNodes,
 	emptyMessage,
 	loader,
 	useShortLabel,
@@ -135,8 +136,8 @@ const StatsListCard = ( {
 			}
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
-			isNew={ [ 'utm' ].includes( moduleType ) }
-			className={ classNames( `list-${ moduleType }`, className ) }
+			titleNodes={ titleNodes }
+			className={ clsx( `list-${ moduleType }`, className ) }
 			headerClassName={ listItemClassName }
 			metricLabel={ metricLabel }
 			heroElement={ heroElement }
@@ -153,7 +154,7 @@ const StatsListCard = ( {
 					{ data?.map( ( item, index ) => {
 						const leftSideItem = generateLeftItem( item );
 						const isInteractive = item?.link || item?.page || item?.children;
-						const key = item?.id || index; // not every item has an id
+						const key = item?.id ?? index; // not every item has an id
 
 						return (
 							<HorizontalBarListItem

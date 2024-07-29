@@ -26,11 +26,19 @@ This package can be utilized in two primary ways:
   1. Navigate to the package's directory: `cd package/verbum-block-editor`.
   2. Execute `yarn dev --sync`.
   3. Changes are synchronized to `/home/wpcom/public_html/widgets.wp.com/verbum-block-editor` on your sandbox.
+  4. **This this version, `wp.i18n` global is expected to be present**.
+
 
 ### Deploying Changes
 
 To deploy modifications to the package:
 1. Ensure your sandbox is in a clean git state.
-2. Run `yarn build --sync`.
+2. Run `yarn upload`. This will upload the production-built files as well as the translations to your sandbox.
 3. Create a patch.
 4. Deploy the patch.
+
+### Translations
+
+This project uses .org's GlotPress translations as a source. 
+
+To translate simply run `yarn translate`. 

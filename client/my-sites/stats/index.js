@@ -42,6 +42,7 @@ export default function () {
 		'searchterms',
 		'annualstats',
 		'utm',
+		'devices',
 	].join( '|' );
 
 	// Redirect this to default /stats/day view in order to keep

@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -68,11 +68,11 @@ class EllipsisMenu extends Component {
 			popoverClassName,
 		} = this.props;
 		const { isMenuVisible } = this.state;
-		const classes = classnames( 'ellipsis-menu', className, {
+		const classes = clsx( 'ellipsis-menu', className, {
 			'is-menu-visible': isMenuVisible,
 			'is-disabled': disabled,
 		} );
-		const popoverClasses = classnames( 'ellipsis-menu__menu', 'popover', popoverClassName );
+		const popoverClasses = clsx( 'ellipsis-menu__menu', 'popover', popoverClassName );
 
 		return (
 			<span className={ classes }>

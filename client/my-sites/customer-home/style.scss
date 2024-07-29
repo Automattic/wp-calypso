@@ -258,7 +258,7 @@ body.is-section-home.theme-default.color-scheme {
 	.task {
 		margin: 32px;
 
-		@media ( min-width: ( $break-wide + 1 ) ) {
+		@media (min-width: ($break-wide + 1)) {
 			margin: 0 32px 32px;
 		}
 	}

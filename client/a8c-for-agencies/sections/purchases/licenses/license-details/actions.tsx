@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
+import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import {
 	LicenseRole,
 	LicenseState,
@@ -36,6 +37,8 @@ export default function LicenseDetailsActions( {
 	const translate = useTranslate();
 
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
+	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
 	const downloadUrl = useLicenseDownloadUrlMutation( licenseKey );
@@ -79,15 +82,27 @@ export default function LicenseDetailsActions( {
 					</Button>
 				) }
 
-			{ licenseState === LicenseState.Attached && siteUrl && (
+			{ ! isPressableLicense && licenseState === LicenseState.Attached && siteUrl && (
 				<Button compact href={ siteUrl } target="_blank" rel="noopener noreferrer">
 					{ translate( 'View site' ) }
 				</Button>
 			) }
 
-			{ licenseState === LicenseState.Attached && debugUrl && (
+			{ ! isPressableLicense && licenseState === LicenseState.Attached && debugUrl && (
 				<Button compact href={ debugUrl } target="_blank" rel="noopener noreferrer">
 					{ translate( 'Debug site' ) }
+				</Button>
+			) }
+
+			{ isPressableLicense && licenseState === LicenseState.Attached && (
+				<Button
+					primary
+					compact
+					href={ pressableManageUrl }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{ translate( 'Manage in Pressable' ) }
 				</Button>
 			) }
 

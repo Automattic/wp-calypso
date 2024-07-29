@@ -86,7 +86,7 @@ export default function GiftThankYou( { site }: { site: number | string } ) {
 				<ThankYou
 					containerClassName="gift-thank-you__container"
 					sections={ sections }
-					showSupportSection={ true }
+					showSupportSection
 					thankYouImage={ {
 						alt: '',
 						src: successImage,

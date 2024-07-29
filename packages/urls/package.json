@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/urls",
 	"version": "1.0.0",
-	"description": "URLs shared across Automattic products",
+	"description": "URLs shared across Automattic products.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",

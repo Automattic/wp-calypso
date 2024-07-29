@@ -41,7 +41,7 @@ export default function CloneFlowSuggestionSearch( {
 				onChange={ onSearchChange }
 			/>
 			<div className="clone-flow-suggestion-search__add-new-button">
-				<Button borderless={ true } onClick={ onAddNewClick }>
+				<Button borderless onClick={ onAddNewClick }>
 					{ addNewDestinationLabel }
 					<Gridicon icon="plus-small" size={ 12 } />
 				</Button>

@@ -81,7 +81,7 @@ class TitanRedirector extends Component {
 		if ( ! loaded || ! hasAllSitesLoaded ) {
 			return (
 				<>
-					{ ! hasAllSitesLoaded && <QuerySites allSites={ true } /> }
+					{ ! hasAllSitesLoaded && <QuerySites allSites /> }
 
 					<EmptyContent title={ translate( 'Redirecting…' ) } />
 				</>

@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
@@ -71,7 +71,7 @@ const StatsPostDetailWeeks = ( props ) => {
 
 			const dayCells = week.days.map( ( event, dayIndex ) => {
 				const day = moment( event.day, 'YYYY-MM-DD' );
-				const cellClass = classNames( {
+				const cellClass = clsx( {
 					'highest-count': 0 !== highest && event.count === highest,
 				} );
 
@@ -95,7 +95,7 @@ const StatsPostDetailWeeks = ( props ) => {
 			cells.push( <td key={ 'total' + index }>{ numberFormat( week.total ) }</td> );
 
 			if ( 'number' === typeof week.change ) {
-				const changeClass = classNames( {
+				const changeClass = clsx( {
 					'is-rising': week.change > 0,
 					'is-falling': week.change < 0,
 					'is-same': week.change === 0,
@@ -137,7 +137,7 @@ const StatsPostDetailWeeks = ( props ) => {
 	}
 
 	return (
-		<div className={ classNames( 'is-detail-weeks', classes ) }>
+		<div className={ clsx( 'is-detail-weeks', classes ) }>
 			<QueryPostStats siteId={ siteId } postId={ postId } />
 			<QueryPosts siteId={ siteId } postId={ postId } />
 			<StatsModulePlaceholder isLoading={ isLoading } />

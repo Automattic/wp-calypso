@@ -1,22 +1,33 @@
 import { ReactNode, createContext, useCallback, useMemo, useState } from 'react';
-import useGuidedTour, { type TourId } from './use-guided-tours';
 
-type TourStep = {
+export type TourStep = {
 	id: string;
 	popoverPosition: string;
 	title: string;
 	description: JSX.Element | string;
 	nextStepOnTargetClick?: boolean;
 	forceShowSkipButton?: boolean;
+	classNames?: {
+		nextStepButton?: string;
+	};
 };
 
 type GuidedTourContextType = {
-	currentTourId: TourId | null;
-	startTour: ( id: TourId ) => void;
+	currentTourId: string | null;
+	startTour: ( id: string ) => void;
 	currentStep: TourStep | null;
 	currentStepCount: number;
 	stepsCount: number;
-	nextStep: () => void;
+	nextStep: ( completedStep: TourStep | null ) => void;
+	preferenceNames: Record< string, string >;
+	eventNames: Record< string, string >;
+};
+
+type GuidedTourContextProviderProps = {
+	children: ReactNode;
+	guidedTours: Record< string, TourStep[] >;
+	preferenceNames: Record< string, string >;
+	eventNames: Record< string, string >;
 };
 
 const defaultGuidedTourContextValue = {
@@ -26,6 +37,9 @@ const defaultGuidedTourContextValue = {
 	currentStepCount: 0,
 	stepsCount: 0,
 	nextStep: () => {},
+	guidedTours: {},
+	preferenceNames: {},
+	eventNames: {},
 };
 
 export const GuidedTourContext = createContext< GuidedTourContextType >(
@@ -36,11 +50,15 @@ export const GuidedTourContext = createContext< GuidedTourContextType >(
  * Guided Tour Context Provider
  * Provides access to interact with the contextually relevant guided tour.
  */
-export const GuidedTourContextProvider = ( { children }: { children?: ReactNode } ) => {
-	const [ currentTourId, setCurrentTourId ] = useState< TourId | null >( null );
+export const GuidedTourContextProvider = ( {
+	children,
+	guidedTours,
+	preferenceNames,
+	eventNames,
+}: GuidedTourContextProviderProps ) => {
+	const [ currentTourId, setCurrentTourId ] = useState< string >( '' );
 	const [ completedSteps, setCompletedSteps ] = useState< string[] >( [] );
-
-	const currentTour: TourStep[] = useGuidedTour( currentTourId );
+	const currentTour: TourStep[] = guidedTours[ currentTourId ] ?? [];
 
 	/**
 	 * Derive current tour state from the available vs completed steps.
@@ -71,18 +89,18 @@ export const GuidedTourContextProvider = ( { children }: { children?: ReactNode 
 	/**
 	 * Set the active guided tour.
 	 */
-	const startTour = useCallback( ( id: TourId ) => {
+	const startTour = useCallback( ( id: string ) => {
 		setCurrentTourId( id );
 	}, [] );
 
 	/**
 	 * Proceed to the next available step in the active tour.
 	 */
-	const nextStep = useCallback( () => {
-		if ( currentStep ) {
-			setCompletedSteps( ( currentSteps ) => [ ...currentSteps, currentStep.id ] );
+	const nextStep = useCallback( ( completedStep: TourStep | null ) => {
+		if ( completedStep ) {
+			setCompletedSteps( ( currentSteps ) => [ ...currentSteps, completedStep.id ] );
 		}
-	}, [ currentStep ] );
+	}, [] );
 
 	const contextValue = useMemo(
 		() => ( {
@@ -92,8 +110,19 @@ export const GuidedTourContextProvider = ( { children }: { children?: ReactNode 
 			stepsCount,
 			currentStep,
 			currentStepCount,
+			preferenceNames,
+			eventNames,
 		} ),
-		[ startTour, nextStep, currentTourId, stepsCount, currentStep, currentStepCount ]
+		[
+			startTour,
+			nextStep,
+			currentTourId,
+			stepsCount,
+			currentStep,
+			currentStepCount,
+			preferenceNames,
+			eventNames,
+		]
 	);
 
 	return (

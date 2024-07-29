@@ -66,7 +66,7 @@ const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone }
 				headline={ translate( 'Site Scan' ) }
 				description={ translate( 'Waiting for scan status' ) }
 				stat={ translate( 'Loading' ) }
-				placeholder={ true }
+				placeholder
 			/>
 		);
 	}

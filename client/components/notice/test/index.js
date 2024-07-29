@@ -13,7 +13,7 @@ describe( 'Notice', () => {
 	} );
 
 	test( 'should have dismiss button when showDismiss passed as true', () => {
-		render( <Notice showDismiss={ true } translate={ translate } /> );
+		render( <Notice showDismiss translate={ translate } /> );
 		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'is-dismissable' );
 	} );
 
@@ -23,17 +23,17 @@ describe( 'Notice', () => {
 	} );
 
 	test( 'should have compact look when isCompact passed as true', () => {
-		render( <Notice isCompact={ true } translate={ translate } /> );
+		render( <Notice isCompact translate={ translate } /> );
 		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'is-compact' );
 	} );
 
 	test( 'should not have dismiss button by default if isCompact is true', () => {
-		render( <Notice isCompact={ true } translate={ translate } /> );
+		render( <Notice isCompact translate={ translate } /> );
 		expect( screen.queryByRole( 'status' ) ).not.toHaveClass( 'is-dismissable' );
 	} );
 
 	test( 'should have dismiss button when showDismiss is true and isCompact is true', () => {
-		render( <Notice isCompact={ true } showDismiss={ true } translate={ translate } /> );
+		render( <Notice isCompact showDismiss translate={ translate } /> );
 		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'is-dismissable' );
 	} );
 

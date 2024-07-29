@@ -4,7 +4,7 @@ import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -12,7 +12,6 @@ import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import TransferRestrictionMessage from 'calypso/components/domains/transfer-domain-step/transfer-restriction-message';
@@ -220,7 +219,7 @@ class TransferDomainStep extends Component {
 
 		return (
 			<div
-				className={ classnames( 'transfer-domain-step__price', {
+				className={ clsx( 'transfer-domain-step__price', {
 					'is-free-with-plan': isFreewithPlan || domainsWithPlansOnlyButNoPlan,
 					'is-sale-price':
 						domainProductSalePrice && ! ( isFreewithPlan || domainsWithPlansOnlyButNoPlan ),
@@ -242,7 +241,6 @@ class TransferDomainStep extends Component {
 		return (
 			<div>
 				<QueryProducts />
-				<QueryPlans />
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
@@ -255,7 +253,7 @@ class TransferDomainStep extends Component {
 					<div className="transfer-domain-step__add-domain" role="group">
 						<FormTextInput
 							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus={ true }
+							autoFocus
 							value={ searchQuery }
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
@@ -426,7 +424,7 @@ class TransferDomainStep extends Component {
 								},
 							} )
 						}
-						showIcon={ true }
+						showIcon
 						event="domains_transfer_plan_required"
 					/>
 					{ content }

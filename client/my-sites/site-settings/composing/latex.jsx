@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -26,7 +27,7 @@ function Latex( {
 				) }
 				link={
 					isAtomic
-						? 'https://wordpress.com/support/latex/'
+						? localizeUrl( 'https://wordpress.com/support/latex/' )
 						: 'https://jetpack.com/support/beautiful-math-with-latex/'
 				}
 				privacyLink={ ! isAtomic }

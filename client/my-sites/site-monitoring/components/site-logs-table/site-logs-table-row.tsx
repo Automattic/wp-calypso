@@ -1,7 +1,7 @@
 import { Button, Badge } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import moment from 'moment';
 import { Fragment, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -36,7 +36,7 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 	return (
 		<Fragment>
 			<tr
-				className={ classNames( firstColumnValue, 'site-logs-table__table-row', {
+				className={ clsx( firstColumnValue, 'site-logs-table__table-row', {
 					'site-logs-table__summary-expanded': isExpanded,
 				} ) }
 				onClick={ () => setIsExpanded( ! isExpanded ) }

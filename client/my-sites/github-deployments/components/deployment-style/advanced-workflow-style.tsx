@@ -1,3 +1,6 @@
+import { ExternalLink } from '@automattic/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { translate } from 'i18n-calypso';
 import { useWorkflowTemplate } from 'calypso/my-sites/github-deployments/components/deployment-style/use-get-workflow-template-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { NewWorkflowWizard } from './new-workflow-wizard';
@@ -68,6 +71,22 @@ export const AdvancedWorkflowStyle = ( {
 				onChange={ onChooseWorkflow }
 				value={ workflowPath }
 			/>
+
+			<p
+				css={ { marginTop: 16, marginBottom: 0 } }
+				className="github-deployments-deployment-style__workflow-recipes"
+			>
+				{ createInterpolateElement(
+					translate(
+						'You can start with our basic workflow file and extend it. Looking for inspiration? Check out our <a>workflow recipes</a>.'
+					),
+					{
+						a: (
+							<ExternalLink href="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/" />
+						),
+					}
+				) }
+			</p>
 
 			{ isLoading ? null : <div css={ { marginTop: '16px' } }>{ getContent() }</div> }
 		</div>

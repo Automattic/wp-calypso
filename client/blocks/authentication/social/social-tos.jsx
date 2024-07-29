@@ -2,7 +2,8 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 
 const toSLinks = {
 	components: {
@@ -31,9 +32,24 @@ function SocialAuthToS( props ) {
 	if ( props.isWooPasswordless ) {
 		return getToSComponent(
 			props.translate(
-				'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 				toSLinks
 			)
+		);
+	}
+
+	if ( props.isBlazePro ) {
+		return getToSComponent(
+			<>
+				{ props.translate(
+					'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+					toSLinks
+				) }
+				<br />
+				{ props.translate(
+					'Blaze Pro uses WordPress.com accounts under the hood. Tumblr, Blaze Pro, and WordPress.com are properties of Automattic, Inc.'
+				) }
+			</>
 		);
 	}
 
@@ -47,5 +63,6 @@ function SocialAuthToS( props ) {
 
 export default connect( ( state ) => ( {
 	oauth2Client: getCurrentOAuth2Client( state ),
-	isWooPasswordless: !! getWooPasswordless( state ),
+	isWooPasswordless: getIsWooPasswordless( state ),
+	isBlazePro: getIsBlazePro( state ),
 } ) )( localize( SocialAuthToS ) );

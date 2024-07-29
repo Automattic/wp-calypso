@@ -2,7 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .listing-section {
-	margin-block-end: 32px;
+	margin-block-end: 20px;
+	scroll-margin-block-start: 16px;
 }
 
 h2.listing-section-title {
@@ -39,13 +40,13 @@ p.listing-section-description {
 		grid-template-columns: repeat(2, 1fr);
 	}
 
-	@include break-wide {
+	@include break-huge {
 		grid-template-columns: repeat(3, 1fr);
 	}
 }
 
 .listing-section.is-two-columns .listing-section-content {
 	@include break-wide {
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(3, 1fr);
 	}
 }

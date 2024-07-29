@@ -78,7 +78,8 @@ class MeSidebar extends Component {
 		const { context } = this.props;
 		const props = {
 			path: context.path,
-			requireBackLink: true,
+			requireBackLink: false,
+			siteTitle: this.props.translate( 'Profile' ),
 		};
 		return <GlobalSidebar { ...props }>{ this.renderMenu( { isGlobal: true } ) }</GlobalSidebar>;
 	}
@@ -204,6 +205,14 @@ class MeSidebar extends Component {
 						icon="plans"
 						onNavigate={ this.onNavigate }
 					/>
+
+					<SidebarItem
+						selected={ itemLinkMatches( '/help', path ) }
+						link="/help"
+						label={ translate( 'Support' ) }
+						icon="help"
+						onNavigate={ this.onNavigate }
+					/>
 				</SidebarMenu>
 			</>
 		);
@@ -229,8 +238,14 @@ export default withCurrentRoute(
 	connect(
 		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
 			const siteId = getSelectedSiteId( state );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
+			);
 			return {
 				currentUser: getCurrentUser( state ),
 				shouldShowGlobalSidebar,

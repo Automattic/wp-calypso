@@ -57,7 +57,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 					basePath=""
 					initialQuery={ getInitialQuery() }
 					initialMode={ inputMode.domainInput }
-					isSignupStep={ true }
+					isSignupStep
 					showHeader={ false }
 					onTransfer={ handleOnTransfer }
 					onConnect={ ( { domain } ) => handleOnConnect( domain ) }
@@ -85,7 +85,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }
-				isWideLayout={ true }
+				isWideLayout
 				isLargeSkipLayout={ false }
 				stepContent={ getStepContent() }
 				recordTracksEvent={ recordTracksEvent }

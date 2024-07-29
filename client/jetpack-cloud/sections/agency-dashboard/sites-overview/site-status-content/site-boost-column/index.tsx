@@ -1,10 +1,10 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import { Button, Gridicon } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useState } from 'react';
 import { useSelector } from 'calypso/state';
-import { getJetpackAdminUrl } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../../hooks';
 import DashboardDataContext from '../../dashboard-data-context';
 import { getBoostRating, getBoostRatingClass } from '../../lib/boost';
@@ -13,9 +13,10 @@ import type { Site } from '../../types';
 
 interface Props {
 	site: Site;
+	siteError?: boolean;
 }
 
-export default function SiteBoostColumn( { site }: Props ) {
+export default function SiteBoostColumn( { site, siteError }: Props ) {
 	const translate = useTranslate();
 
 	const { isLargeScreen } = useContext( DashboardDataContext );
@@ -23,7 +24,16 @@ export default function SiteBoostColumn( { site }: Props ) {
 
 	const overallScore = site.jetpack_boost_scores?.overall;
 	const hasBoost = site.has_boost;
-	const adminUrl = useSelector( ( state ) => getJetpackAdminUrl( state, site.blog_id ) );
+	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.blog_id ) );
+
+	const { origin, pathname } = getUrlParts( adminUrl ?? '' );
+	const baseUrl = adminUrl
+		? `${ origin }${ pathname }admin.php`
+		: `https://${ site.url }/wp-admin/admin.php`;
+
+	const jetpackHref = `${ baseUrl }?page=jetpack`;
+	const jetpackBoostHref = `${ baseUrl }?page=jetpack-boost`;
+	const addBoostHref = `${ baseUrl }?page=my-jetpack#/add-boost`;
 
 	const [ showBoostModal, setShowBoostModal ] = useState( false );
 
@@ -32,22 +42,50 @@ export default function SiteBoostColumn( { site }: Props ) {
 		recordEvent( 'boost_column_get_score_click' );
 	};
 
-	const { origin, pathname } = getUrlParts( adminUrl ?? '' );
+	const isSiteMigrationInProgress = site.sticker?.includes( 'migration-in-progress' );
 
-	const href = adminUrl
-		? `${ origin }${ pathname }?page=jetpack-boost`
-		: `https://${ site.url }/wp-admin/admin.php?page=jetpack`;
+	const noBoostHrefOption = site.is_atomic ? jetpackHref : addBoostHref;
+	if ( overallScore && ! hasBoost ) {
+		return (
+			<Button
+				borderless
+				className={
+					siteError
+						? clsx(
+								'sites-overview__boost-score sites-overview__disabled',
+								getBoostRatingClass( overallScore )
+						  )
+						: clsx( 'sites-overview__boost-score', getBoostRatingClass( overallScore ) )
+				}
+				href={ siteError ? '' : noBoostHrefOption }
+				target="_blank"
+				disabled={ siteError || isSiteMigrationInProgress }
+				onClick={ () =>
+					recordEvent( 'boost_column_score_click', {
+						score: overallScore,
+					} )
+				}
+			>
+				{ getBoostRating( overallScore ) }
+			</Button>
+		);
+	}
 
 	if ( overallScore ) {
 		return (
 			<Button
 				borderless
-				className={ classNames(
-					'sites-overview__boost-score',
-					getBoostRatingClass( overallScore )
-				) }
-				href={ href }
+				className={
+					siteError
+						? clsx(
+								'sites-overview__boost-score sites-overview__disabled',
+								getBoostRatingClass( overallScore )
+						  )
+						: clsx( 'sites-overview__boost-score', getBoostRatingClass( overallScore ) )
+				}
+				href={ siteError ? '' : jetpackBoostHref }
 				target="_blank"
+				disabled={ siteError }
 				onClick={ () =>
 					recordEvent( 'boost_column_score_click', {
 						score: overallScore,
@@ -61,26 +99,45 @@ export default function SiteBoostColumn( { site }: Props ) {
 
 	if ( hasBoost ) {
 		return (
-			<a
-				className="sites-overview__column-action-button is-link"
-				href={ href }
-				target="_blank"
-				rel="noreferrer"
-				onClick={ () => recordEvent( 'boost_column_configure_click' ) }
+			<span
+				className={
+					siteError
+						? 'sites-overview__disabled sites-overview__row-status'
+						: 'sites-overview__row-status'
+				}
 			>
-				{ translate( 'Configure Boost' ) }
-			</a>
+				<Button
+					borderless
+					className="sites-overview__column-action-button is-link"
+					href={ siteError ? '' : jetpackBoostHref }
+					target="_blank"
+					disabled={ siteError }
+					onClick={ () => recordEvent( 'boost_column_configure_click' ) }
+				>
+					{ translate( 'Configure Boost' ) }
+				</Button>
+			</span>
 		);
 	}
 
 	return (
 		<>
-			<button
-				className="sites-overview__column-action-button is-link"
-				onClick={ handleGetBoostScoreAction }
+			<span
+				className={
+					siteError || isSiteMigrationInProgress
+						? 'sites-overview__disabled sites-overview__row-status'
+						: 'sites-overview__row-status'
+				}
 			>
-				{ translate( 'Get Score' ) }
-			</button>
+				<button
+					className="sites-overview__column-action-button"
+					onClick={ handleGetBoostScoreAction }
+					disabled={ siteError || isSiteMigrationInProgress }
+				>
+					<Gridicon icon="plus-small" size={ 16 } />
+					<span>{ translate( 'Add' ) }</span>
+				</button>
+			</span>
 			{ showBoostModal && (
 				<BoostLicenseInfoModal onClose={ () => setShowBoostModal( false ) } site={ site } />
 			) }

@@ -1,11 +1,10 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import dividerPattern from 'calypso/assets/images/hosting/divider-pattern.svg';
-import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import { navigate } from 'calypso/lib/navigate';
@@ -26,16 +25,10 @@ import { usePullFromStagingMutation, usePushToStagingMutation } from './use-stag
 
 const ProductionCard = styled( Card )( {
 	paddingTop: '0',
-	backgroundImage: `url(${ dividerPattern })`,
-	backgroundRepeat: 'repeat-x',
-} );
 
-const ProductionCardIcon = styled( Gridicon )( {
-	marginTop: '36px',
-} );
-
-const ProductionCardHeading = styled( CardHeading )( {
-	marginTop: '36px!important',
+	'&.is-borderless': {
+		boxShadow: 'none',
+	},
 } );
 
 const ActionButtons = styled.div( {
@@ -51,12 +44,13 @@ const SyncActionsContainer = styled( ActionButtons )( {
 } );
 
 type CardProps = {
-	disabled: boolean;
+	disabled?: boolean;
 	siteId: number;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
+	isBorderless?: boolean;
 };
 
-function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps ) {
+function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless }: CardProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ syncError, setSyncError ] = useState< string | null >( null );
@@ -140,7 +134,15 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				<ActionButtons>
 					<Button
 						primary
-						onClick={ () => navigate( `/hosting-config/${ urlToSlug( productionSite.url ) }` ) }
+						onClick={ () => {
+							navigate(
+								`/overview/${ urlToSlug( productionSite.url ) }?search=${ urlToSlug(
+									productionSite.url
+								) }`,
+								false,
+								true
+							);
+						} }
 						disabled={ disabled || isSyncInProgress }
 					>
 						<span>{ __( 'Switch to production site' ) }</span>
@@ -176,13 +178,14 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 			)
 		);
 	}
+
 	return (
-		<ProductionCard className="staging-site-card">
-			{
-				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<ProductionCardIcon icon="science" size={ 32 } />
-			}
-			<ProductionCardHeading id="staging-site">{ __( 'Staging site' ) }</ProductionCardHeading>
+		<ProductionCard
+			className={ clsx( 'hosting-card staging-site-card', { 'is-borderless': isBorderless } ) }
+		>
+			<h3 id="staging-site" className="hosting-card__title">
+				{ __( 'Staging site' ) }
+			</h3>
 			{ cardContent }
 		</ProductionCard>
 	);

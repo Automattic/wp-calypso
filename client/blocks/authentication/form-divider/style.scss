@@ -74,7 +74,8 @@ $breakpoint-mobile: 660px;
 // In this case we want the separator to be vertical
 .signup-form,
 .is-white-login .is-social-first,
-.login form.is-woo-passwordless {
+.login form.is-woo-passwordless,
+.login form.is-blaze-pro {
 	.auth-form__separator {
 		@include horizontal-separator;
 		width: calc(100% - 32px);

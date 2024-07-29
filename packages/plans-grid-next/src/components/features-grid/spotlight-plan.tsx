@@ -1,29 +1,21 @@
-import {
-	PlanSlug,
-	WPComStorageAddOnSlug,
-	getPlanClass,
-	isFreePlan,
-} from '@automattic/calypso-products';
-import classNames from 'classnames';
+import { FEATURE_GROUP_STORAGE, getPlanClass, isFreePlan } from '@automattic/calypso-products';
+import { AddOns } from '@automattic/data-stores';
+import clsx from 'clsx';
 import { GridPlan, PlanActionOverrides } from '../../types';
 import BillingTimeframes from './billing-timeframes';
+import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
 import PlanPrice from './plan-price';
-import PlanStorageOptions from './plan-storage-options';
 import PlanTagline from './plan-tagline';
 import TopButtons from './top-buttons';
 
 type SpotlightPlanProps = {
 	currentSitePlanSlug?: string | null;
 	gridPlanForSpotlight?: GridPlan;
-	intervalType: string;
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
-	planUpgradeCreditsApplicable?: number | null;
 	showUpgradeableStorage: boolean;
 	options?: {
 		isTableCell?: boolean;
@@ -33,20 +25,16 @@ type SpotlightPlanProps = {
 const SpotlightPlan = ( {
 	currentSitePlanSlug,
 	gridPlanForSpotlight,
-	intervalType,
 	isInSignup,
-	isLaunchPage,
 	onStorageAddOnClick,
-	onUpgradeClick,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	showUpgradeableStorage,
 }: SpotlightPlanProps ) => {
 	if ( ! gridPlanForSpotlight ) {
 		return null;
 	}
 
-	const spotlightPlanClasses = classNames(
+	const spotlightPlanClasses = clsx(
 		'plan-features-2023-grid__plan-spotlight',
 		getPlanClass( gridPlanForSpotlight.planSlug )
 	);
@@ -61,24 +49,21 @@ const SpotlightPlan = ( {
 			{ isNotFreePlan && (
 				<PlanPrice
 					renderedGridPlans={ [ gridPlanForSpotlight ] }
-					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 					currentSitePlanSlug={ currentSitePlanSlug }
 				/>
 			) }
 			{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
-			<PlanStorageOptions
+			<PlanFeaturesList
 				renderedGridPlans={ [ gridPlanForSpotlight ] }
-				intervalType={ intervalType }
+				featureGroupSlug={ FEATURE_GROUP_STORAGE }
 				onStorageAddOnClick={ onStorageAddOnClick }
 				showUpgradeableStorage={ showUpgradeableStorage }
 			/>
 			<TopButtons
 				renderedGridPlans={ [ gridPlanForSpotlight ] }
 				isInSignup={ isInSignup }
-				isLaunchPage={ isLaunchPage }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				planActionOverrides={ planActionOverrides }
-				onUpgradeClick={ onUpgradeClick }
 			/>
 		</div>
 	);

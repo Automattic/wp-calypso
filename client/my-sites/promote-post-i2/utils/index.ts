@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { SiteDetails } from '@automattic/data-stores';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { InfiniteData } from '@tanstack/react-query';
 import { __, _x } from '@wordpress/i18n';
@@ -144,6 +145,16 @@ export const getCampaignDurationFormatted = (
 	// Else show start -> end
 	const dateEndFormatted = moment.utc( end_date ).format( format );
 	return `${ dateStartFormatted } - ${ dateEndFormatted }`;
+};
+
+export const getCampaignStartDateFormatted = ( start_date?: string ) => {
+	if ( ! start_date ) {
+		return '-';
+	}
+
+	// translators: Moment.js date format. LLL: June 7, 2024 9:27 AM
+	const format = _x( 'LLL', 'datetime format' );
+	return moment.utc( start_date ).format( format );
 };
 
 export const getCampaignActiveDays = ( start_date?: string, end_date?: string ) => {
@@ -319,4 +330,13 @@ export const formatAmount = ( amount: number, currencyCode: string ) => {
 	}
 	const money = getCurrencyObject( amount, currencyCode, { stripZeros: false } );
 	return `${ money.symbol }${ money.integer }${ money.fraction }`;
+};
+
+export const isRunningInWpAdmin = ( site: SiteDetails | null | undefined ): boolean => {
+	if ( ! site ) {
+		return false;
+	}
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isRunningInClassicSimple = site?.options?.is_wpcom_simple;
+	return isRunningInClassicSimple || isRunningInJetpack;
 };

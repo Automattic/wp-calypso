@@ -151,13 +151,13 @@ open class E2EBuildType(
 					set +o errexit
 
 					# Run suite.
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup
+					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=$testGroup
 
 					# Restore exit on error.
 					set -o errexit
 
 					# Retry failed tests only.
-					RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup --onlyFailures
+					RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=$testGroup --onlyFailures
 				"""
 				dockerImage = "%docker_image_e2e%"
 				dockerRunParameters = "-u %env.UID% --shm-size=4g"

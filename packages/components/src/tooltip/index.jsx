@@ -1,5 +1,5 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import Popover from '../popover';
 
@@ -12,7 +12,7 @@ function Tooltip( props ) {
 		return null;
 	}
 
-	const classes = classnames( [ 'tooltip', props.className ], {
+	const classes = clsx( [ 'tooltip', props.className ], {
 		[ `is-${ props.status }` ]: props.status,
 	} );
 

@@ -1,8 +1,8 @@
-import { PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
 	ECOMMERCE_FLOW,
+	ENTREPRENEUR_FLOW,
 	StepContainer,
 	WOOEXPRESS_FLOW,
 	addPlanToCart,
@@ -13,13 +13,17 @@ import {
 	isFreeFlow,
 	isLinkInBioFlow,
 	isMigrationFlow,
+	isMigrationSignupFlow,
 	isStartWritingFlow,
 	isWooExpressFlow,
+	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
 	isSiteAssemblerFlow,
+	isReadymadeFlow,
 	setThemeOnSite,
+	AI_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -28,7 +32,7 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -50,6 +54,7 @@ import './styles.scss';
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
+const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 const DEFAULT_START_WRITING_THEME = 'pub/hey';
 
@@ -63,7 +68,11 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
+	const partnerBundle = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPartnerBundle(),
+		[]
+	);
+	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 
 	const urlData = useSelector( getUrlData );
 
@@ -89,12 +98,16 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_SITE_MIGRATION_THEME;
 	} else if ( isWooExpressFlow( flow ) ) {
 		theme = DEFAULT_WOOEXPRESS_FLOW;
+	} else if ( isEntrepreneurFlow( flow ) ) {
+		theme = DEFAULT_ENTREPRENEUR_FLOW;
 	} else if ( isStartWritingFlow( flow ) ) {
 		theme = DEFAULT_START_WRITING_THEME;
 	} else if ( isLinkInBioFlow( flow ) ) {
 		theme = DEFAULT_LINK_IN_BIO_THEME;
 	} else if ( isNewsletterFlow( flow ) ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
+	} else if ( flow === AI_ASSEMBLER_FLOW ) {
+		theme = 'pub/assembler';
 	}
 
 	let preselectedThemeSlug = '';
@@ -124,7 +137,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
-	const wooFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
+	const wooFlows = [ ECOMMERCE_FLOW, ENTREPRENEUR_FLOW, WOOEXPRESS_FLOW ];
 
 	// These flows default to "Coming Soon"
 	if (
@@ -135,6 +148,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isSiteAssemblerFlow( flow ) ||
+		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
@@ -154,13 +168,15 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const useThemeHeadstart =
 		! isStartWritingFlow( flow ) &&
 		! isNewHostedSiteCreationFlow( flow ) &&
-		! isSiteAssemblerFlow( flow );
+		! isSiteAssemblerFlow( flow ) &&
+		! isMigrationSignupFlow( flow );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
 			return {
 				siteSlug: getSignupCompleteSlug(),
 				goToCheckout: true,
+				siteCreated: true,
 			};
 		}
 
@@ -187,13 +203,14 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			await setThemeOnSite( site.siteSlug, preselectedThemeSlug, preselectedThemeStyleVariation );
 		}
 
-		if ( planCartItem?.product_slug === PLAN_HOSTING_TRIAL_MONTHLY && site ) {
-			await addHostingTrial( { siteId: site.siteId, planSlug: PLAN_HOSTING_TRIAL_MONTHLY } );
+		if ( isEntrepreneurFlow( flow ) && site ) {
+			await addEcommerceTrial( { siteId: site.siteId } );
 
 			return {
 				siteId: site.siteId,
 				siteSlug: site.siteSlug,
 				goToCheckout: false,
+				siteCreated: true,
 			};
 		}
 
@@ -215,6 +232,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteSlug: site?.siteSlug,
 			goToCheckout: Boolean( planCartItem ),
 			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
+			siteCreated: true,
 		};
 	}
 
@@ -250,10 +268,10 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		<>
 			<DocumentHead title={ getCurrentMessage() } />
 			<StepContainer
-				shouldHideNavButtons={ true }
-				hideFormattedHeader={ true }
+				shouldHideNavButtons
+				hideFormattedHeader
 				stepName="create-site"
-				isHorizontalLayout={ true }
+				isHorizontalLayout
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
 					<>

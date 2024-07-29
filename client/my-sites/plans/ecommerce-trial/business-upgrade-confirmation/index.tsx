@@ -69,7 +69,7 @@ const BusinessUpgradeConfirmation = () => {
 							</div>
 							<div className="trial-upgrade-confirmation__tasks">
 								<BusinessTrialIncluded
-									displayAll={ true }
+									displayAll
 									displayOnlyActionableItems
 									tracksContext="upgrade_confirmation"
 								/>

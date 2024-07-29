@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -54,7 +54,7 @@ class ReaderPostOptionsMenu extends Component {
 			return null;
 		}
 
-		const classes = classnames( 'reader-post-options-menu', this.props.className );
+		const classes = clsx( 'reader-post-options-menu', this.props.className );
 
 		return (
 			<span className={ classes }>

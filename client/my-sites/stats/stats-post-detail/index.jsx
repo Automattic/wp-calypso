@@ -20,11 +20,11 @@ import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sit
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatsModuleUTM from '../features/modules/stats-utm';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
-import StatsModuleUTM from '../stats-module-utm';
 import PageViewTracker from '../stats-page-view-tracker';
 import PostSummary from '../stats-post-summary';
 

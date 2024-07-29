@@ -1,7 +1,7 @@
 import { CompactCard } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { getRole, getRoleBadgeText, getNameOrEmail } from './utils';
 import type { Member } from '@automattic/data-stores';
@@ -51,9 +51,7 @@ const ImportedUserItem = ( {
 
 		if ( role && roleText ) {
 			roleBadge = (
-				<div className={ classNames( 'imported-user-item__role', `role-${ role }` ) }>
-					{ roleText }
-				</div>
+				<div className={ clsx( 'imported-user-item__role', `role-${ role }` ) }>{ roleText }</div>
 			);
 		}
 

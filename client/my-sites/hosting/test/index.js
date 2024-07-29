@@ -6,16 +6,6 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'page-view-tracker' 
 jest.mock( 'calypso/components/feature-example', () => ( { children } ) => {
 	return <div data-testid="feature-example-wrapper">{ children }</div>;
 } );
-jest.mock( '../staging-site-card', () => () => (
-	<div data-testid="staging-site-card">
-		<span>Staging site</span>
-	</div>
-) );
-jest.mock( '../staging-site-card/staging-site-production-card', () => () => (
-	<div data-testid="staging-site-production-card">
-		<span>Staging site</span>
-	</div>
-) );
 jest.mock( 'calypso/lib/wp', () => ( {
 	req: {
 		get: jest.fn(),
@@ -161,10 +151,6 @@ const getExpectedStringsForTestConfig = ( testConfig, { enabledOnly = false } = 
 		}
 	} else {
 		expectedStrings = stringsForAllAtomicFeatureCards;
-	}
-
-	if ( testConfig.siteFeatures.includes( FEATURE_SITE_STAGING_SITES ) ) {
-		expectedStrings.push( 'Staging site' );
 	}
 
 	return expectedStrings;
@@ -343,28 +329,6 @@ describe( 'Hosting Configuration', () => {
 				expect( elementForString ).toBeVisible();
 				expect( mainFeatureExampleElement ).not.toContainElement( elementForString );
 			} );
-		} );
-	} );
-
-	describe( 'Staging site', () => {
-		it( 'should show the primary site card and not show the upsell nudge', async () => {
-			const testConfig = getTestConfig( {
-				isAtomicSite: true,
-				isWpcomStagingSite: true,
-				planSlug: PLAN_BUSINESS_MONTHLY,
-				siteFeatures: [ WPCOM_FEATURES_ATOMIC, FEATURE_SFTP, FEATURE_SITE_STAGING_SITES ],
-				transferStatus: transferStates.COMPLETE,
-			} );
-
-			renderComponentWithStoreAndQueryClient( createTestStore( testConfig ) );
-			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
-
-			expect(
-				screen.queryByText( 'Upgrade to the Creator plan to access all hosting features:' )
-			).toBeNull();
-			expect( screen.queryByText( 'Upgrade to Creator Plan' ) ).toBeNull();
-
-			expect( screen.getByTestId( 'staging-site-production-card' ) ).toBeVisible();
 		} );
 	} );
 } );

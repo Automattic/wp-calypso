@@ -107,7 +107,7 @@
 	minimumReleaseAge: '10 days',
 	// Note that security PRs are opened immediately regardless of how many other
 	// renovate PRs are open. This keeps our queue of deps to update more manageable.
-	prConcurrentLimit: 10,
+	prConcurrentLimit: 20,
 	// Avoid overwhelming reviewers with a constant stream of updates. We'll get
 	// some new updates to handle each weekend, but throughout the week, any new
 	// PR notifications should always be actionable.
@@ -121,7 +121,7 @@
 
 	// --- Metadata settings for git ---
 	labels: [ 'Framework', '[Type] Task', 'dependencies' ],
-	reviewers: [ 'team:team-calypso' ],
+	reviewers: [ 'team:@automattic/calypso-dependency-updates' ],
 	branchPrefix: 'renovate/',
 	gitAuthor: 'Renovate Bot (self-hosted) <bot@renovateapp.com>',
 	platform: 'github',

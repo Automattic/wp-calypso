@@ -1,0 +1,199 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$search-categories-padding-top: 40px;
+
+.search-categories {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding-top: $search-categories-padding-top;
+
+	@media (max-width: 660px) {
+		padding: 0 16px;
+	}
+
+	.search-categories__searchbox {
+		max-width: 245px;
+		width: 100%;
+		height: 36px;
+		z-index: 0;
+		margin: 0;
+		border-radius: 4px;
+
+		&.search-categories__searchbox--mobile {
+			max-width: none;
+		}
+
+		box-shadow: 0 0 0 1px var(--studio-gray-10);
+
+		.search-component__icon-navigation:focus {
+			box-shadow: none;
+		}
+
+		.search-component__open-icon,
+		.search-component__close-icon {
+			color: var(--studio-gray-30);
+
+			&:hover {
+				color: var(--studio-gray-60);
+			}
+		}
+
+		.search-component__icon-navigation {
+			margin-right: 2px;
+		}
+
+		.search-component__icon-navigation-separator {
+			user-select: none;
+			color: var(--studio-gray-5);
+			margin-bottom: 3px;
+		}
+
+		&.is-searching {
+			.components-spinner {
+				margin: 5px -9px 5px 0;
+				width: 50px;
+			}
+		}
+
+		.search-component__input-fade {
+			font-size: $font-body-small !important;
+			padding-left: 8px !important;
+		}
+
+		.search-component__open-icon {
+			height: 24px;
+			margin-right: -9px;
+		}
+
+		.search-component__close-icon {
+			height: 20px;
+			margin-left: -9px;
+			margin-right: -10px;
+		}
+	}
+
+	.search-categories__vertical-separator {
+		border: 0.5px solid var(--studio-gray-5);
+		height: 14px;
+	}
+
+	.search-categories__categories {
+		flex: 1;
+		margin: 0;
+		max-width: none;
+
+		.scrollable-horizontal-navigation__left-button-wrapper,
+		.scrollable-horizontal-navigation__right-button-wrapper {
+			margin: 0;
+
+			&:not(.display-none) {
+				display: flex;
+				align-items: center;
+			}
+
+			button {
+				display: flex;
+				align-items: center;
+				border: 0;
+				padding-top: 0;
+				padding-bottom: 0;
+				position: static;
+
+				.gridicon {
+					top: 0;
+					margin: 0;
+				}
+			}
+		}
+
+		.scrollable-horizontal-navigation__tabs {
+			position: static;
+			border: 0;
+			margin: 0;
+			padding: 0;
+		}
+
+		.segmented-control__link {
+			border: 0 !important;
+			margin: 0 2px !important;
+			padding-top: 7px;
+			padding-bottom: 7px;
+			transition: none;
+
+			&:focus-visible {
+				box-shadow: 0 0 0 1px var(--color-primary-light) inset;
+			}
+			&:active {
+				box-shadow: none;
+			}
+		}
+
+		.segmented-control__item:first-child .segmented-control__link {
+			margin-left: 0 !important;
+		}
+
+		.segmented-control__item:last-child .segmented-control__link {
+			margin-right: 0 !important;
+		}
+
+		.segmented-control__item.is-selected .segmented-control__link {
+			&,
+			&:focus,
+			&:hover {
+				background-color: var(--studio-gray-80) !important;
+				color: var(--studio-gray-0) !important;
+			}
+		}
+	}
+
+	.categories__menu {
+		padding: 0;
+	}
+
+	&.fixed-top {
+		@include break-medium {
+			position: fixed;
+			z-index: 20;
+			top: calc(var(--masterbar-height) + 16px);
+			padding: 10px 32px;
+			box-sizing: border-box;
+			border-top-left-radius: 4px;
+			border-bottom: 1px solid var(--studio-gray-5);
+			background-color: var(--studio-white);
+
+			.layout__secondary ~ .layout__primary & {
+				left: var(--sidebar-width-max);
+				width: calc(100% - var(--sidebar-width-max) - 31px);
+			}
+		}
+	}
+
+	.plugins-browser--site-view &.fixed-top {
+		top: var(--masterbar-height);
+		box-sizing: content-box;
+
+		@include break-medium {
+			padding: 10px max(2rem, calc((100% - var(--sidebar-width-max) - (1040px - 2 * 2rem)) / 2));
+
+			.layout__secondary ~ .layout__primary & {
+				width: calc(100vw - var(--sidebar-width-max) - 2 * 2rem);
+			}
+		}
+
+		@include break-wide {
+			padding: 10px calc((100% - var(--sidebar-width-max) - (1040px - 2 * 2rem)) / 2);
+
+			.layout__secondary ~ .layout__primary & {
+				width: calc(1040px - 2 * 2rem);
+			}
+		}
+	}
+}
+
+.search-categories__sticky-placeholder {
+	// This is the height + padding of the .search-categories box when it's not fixed to the top
+	// We add this whitespace so the content doesn't jump when the search box becomes fixed
+	height: calc(#{$search-categories-padding-top} + 16px);
+}

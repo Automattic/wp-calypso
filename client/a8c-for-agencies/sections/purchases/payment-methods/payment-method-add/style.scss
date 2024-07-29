@@ -39,3 +39,13 @@
 		max-width: 380px;
 	}
 }
+
+.payment-method-add.is-client-checkout {
+	.payment-method-form {
+		max-width: 600px;
+	}
+	.payment-method-stripe-info {
+		margin-block-start: 0;
+		text-align: left;
+	}
+}

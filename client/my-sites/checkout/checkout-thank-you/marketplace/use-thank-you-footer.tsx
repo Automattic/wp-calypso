@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
-import { useI18n } from '@wordpress/react-i18n';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'calypso/state';
@@ -43,19 +42,10 @@ export function useThankYouFoooter(
 function usePluginSteps(): FooterStep[] {
 	const localizeUrl = useLocalizeUrl();
 	const translate = useTranslate();
-	const { hasTranslation } = useI18n();
-	const locale = useLocale();
-	const newText =
-		'Check out our support documentation for step-by-step instructions and expert guidance on your plugin setup.';
 
-	const descriptionText =
-		locale.startsWith( 'en' ) || hasTranslation?.( newText )
-			? translate(
-					'Check out our support documentation for step-by-step instructions and expert guidance on your plugin setup.'
-			  )
-			: translate(
-					'Check out our support documentation for step-by-step instructions and expert guidance on your plugin set up.'
-			  );
+	const descriptionText = translate(
+		'Check out our support documentation for step-by-step instructions and expert guidance on your plugin setup.'
+	);
 
 	return [
 		{

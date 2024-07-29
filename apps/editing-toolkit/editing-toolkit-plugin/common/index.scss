@@ -6,12 +6,6 @@ body.hide-homepage-title {
 	}
 }
 
-body.slider-width-workaround {
-	.interface-interface-skeleton__editor {
-		max-width: 100%;
-	}
-}
-
 /*
  * Override bottom padding on post-publish footer
  * to account for inline help FAB
@@ -28,7 +22,7 @@ body.slider-width-workaround {
 }
 
 /* stylelint-disable-next-line unit-allowed-list */
-@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
 	body.font-smoothing-antialiased {
 		@include font-smoothing-antialiased;
 

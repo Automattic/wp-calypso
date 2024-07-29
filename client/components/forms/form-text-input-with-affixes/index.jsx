@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -18,7 +18,7 @@ export default class extends Component {
 		const { noWrap, prefix, suffix, ...rest } = this.props;
 
 		return (
-			<div className={ classNames( 'form-text-input-with-affixes', { 'no-wrap': noWrap } ) }>
+			<div className={ clsx( 'form-text-input-with-affixes', { 'no-wrap': noWrap } ) }>
 				{ prefix && <span className="form-text-input-with-affixes__prefix">{ prefix }</span> }
 
 				<FormTextInput { ...rest } />

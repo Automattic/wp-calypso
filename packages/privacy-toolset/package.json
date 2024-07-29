@@ -34,7 +34,7 @@
 		"storybook": "sb dev"
 	},
 	"dependencies": {
-		"classnames": "^2.3.2"
+		"clsx": "^2.1.1"
 	},
 	"peerDependencies": {
 		"react": "^18.2.0",
@@ -44,15 +44,14 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^7.6.17",
-		"@storybook/cli": "^7.6.17",
-		"@storybook/react": "^7.6.17",
-		"@testing-library/jest-dom": "^6.4.2",
-		"@testing-library/react": "^14.2.1",
-		"@types/classnames": "^2.3.1",
+		"@storybook/addon-actions": "^7.6.19",
+		"@storybook/cli": "^7.6.19",
+		"@storybook/react": "^7.6.19",
+		"@testing-library/jest-dom": "^6.4.5",
+		"@testing-library/react": "^15.0.7",
 		"postcss": "^8.4.5",
 		"require-from-string": "^2.0.2",
 		"typescript": "^5.3.3",
-		"webpack": "^5.90.3"
+		"webpack": "^5.91.0"
 	}
 }

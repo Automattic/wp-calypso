@@ -7,7 +7,7 @@
 		display: flex;
 		padding: 56px 0;
 
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			width: 100%;
 			padding: 24px 24px 120px;
 		}
@@ -23,11 +23,11 @@
 		h1 {
 			width: 60%;
 
-			@media ( max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				width: 100%;
 			}
 		}
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			margin: 0 auto;
 			padding: 0;
 			width: 100%;
@@ -39,7 +39,7 @@
 		.green {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-1.png);
 
-			@media ( max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-1-small.png);
 			}
 		}
@@ -47,7 +47,7 @@
 		.blue {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-2.png);
 
-			@media ( max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-2-small.png);
 			}
 		}
@@ -55,7 +55,7 @@
 		.dark {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-3.png);
 
-			@media ( max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-3-small.png);
 			}
 		}
@@ -63,7 +63,7 @@
 		.gold {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-4.png);
 
-			@media ( max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-4-small.png);
 			}
 		}
@@ -75,7 +75,7 @@
 		margin: 24px 0;
 		gap: 20px;
 
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			grid-template-columns: 1fr 1fr 1fr 1fr;
 			column-gap: 15px;
 		}
@@ -111,7 +111,7 @@
 		height: 110px;
 		margin: 0;
 
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			width: 100%;
 			height: auto;
 			aspect-ratio: 76/60;
@@ -127,16 +127,16 @@
 		width: $preview-desktop-width + ( $preview-border-width * 2 );
 		height: $preview-desktop-height + ( $preview-border-width * 2 );
 
-		@media ( max-width: $break-huge ) {
+		@media (max-width: $break-huge) {
 			width: $preview-tablet-width + ( $preview-border-width * 2 );
 			height: $preview-tablet-height + ( $preview-border-width * 2 );
 		}
-		@media ( max-width: $break-wide ) {
+		@media (max-width: $break-wide) {
 			width: $preview-mobile-width + ( $preview-border-width * 2 );
 			height: $preview-mobile-height + ( $preview-border-width * 2 );
 		}
 
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			box-sizing: border-box;
 			width: 100%;
 			height: auto;
@@ -147,7 +147,7 @@
 			border-radius: 36px 36px 0 0; /* stylelint-disable-line scales/radii */
 			padding: 0;
 		}
-		@media ( max-width: $break-mobile ) {
+		@media (max-width: $break-mobile) {
 			width: 90%;
 		}
 
@@ -158,7 +158,7 @@
 		&:not(.selected) {
 			display: none;
 		}
-		@media ( min-width: $break-large ) {
+		@media (min-width: $break-large) {
 			transition: all 0.36s ease-in-out;
 			&:not(.selected) {
 				transform: scale(0.75);
@@ -174,7 +174,7 @@
 		white-space: nowrap;
 		line-height: 0;
 
-		@media ( min-width: $break-large ) {
+		@media (min-width: $break-large) {
 			transition: all 0.36s ease-in-out;
 			left: calc((var(--index) - 1) * -100%);
 			height: 100%;
@@ -199,10 +199,10 @@
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-green.jpg);
 			background-color: #f2ede7;
 
-			@media ( max-width: $break-huge ) {
+			@media (max-width: $break-huge) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-green-1200.jpg);
 			}
-			@media ( max-width: $break-wide ) {
+			@media (max-width: $break-wide) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-green-1080.jpg);
 			}
 		}
@@ -211,10 +211,10 @@
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-blue.jpg);
 			background-color: #fcfdff;
 
-			@media ( max-width: $break-huge ) {
+			@media (max-width: $break-huge) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-blue-1200.jpg);
 			}
-			@media ( max-width: $break-wide ) {
+			@media (max-width: $break-wide) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-blue-1080.jpg);
 			}
 		}
@@ -223,10 +223,10 @@
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-dark.jpg);
 			background-color: #fbfbfb;
 
-			@media ( max-width: $break-huge ) {
+			@media (max-width: $break-huge) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-dark-1200.jpg);
 			}
-			@media ( max-width: $break-wide ) {
+			@media (max-width: $break-wide) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-dark-1080.jpg);
 			}
 		}
@@ -235,15 +235,15 @@
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-gold.jpg);
 			background-color: #ffeacb;
 
-			@media ( max-width: $break-huge ) {
+			@media (max-width: $break-huge) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-gold-1200.jpg);
 			}
-			@media ( max-width: $break-wide ) {
+			@media (max-width: $break-wide) {
 				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-gold-1080.jpg);
 			}
 		}
 
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			height: auto;
 			aspect-ratio: 464/779;
 		}
@@ -255,7 +255,7 @@
 		flex-direction: column;
 		justify-content: flex-end;
 
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			align-items: center;
 			position: fixed;
 			bottom: 0;
@@ -269,7 +269,7 @@
 			display: flex;
 			flex-direction: column;
 
-			@media ( max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				width: 100%;
 				max-width: 335px;
 			}
@@ -292,7 +292,7 @@
 
 	button {
 
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			margin-top: 20px;
 		}
 	}

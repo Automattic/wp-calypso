@@ -1,6 +1,6 @@
 import { Gridicon, Button } from '@automattic/components';
-import classNames from 'classnames';
-import { useState, useRef } from 'react';
+import clsx from 'clsx';
+import { useState, useRef, useCallback } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import useSiteActions from './use-site-actions';
@@ -19,15 +19,19 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
-	const showActions = () => {
+	const showActions = useCallback( () => {
 		setIsOpen( true );
-	};
+	}, [] );
 
-	const closeDropdown = () => {
+	const closeDropdown = useCallback( () => {
 		setIsOpen( false );
-	};
+	}, [] );
 
-	const siteActions = useSiteActions( site, isLargeScreen, siteError );
+	const siteActions = useSiteActions( {
+		site,
+		isLargeScreen,
+		siteError,
+	} );
 
 	return (
 		<>
@@ -36,7 +40,7 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 				compact
 				onClick={ showActions }
 				ref={ buttonActionRef }
-				className={ classNames(
+				className={ clsx(
 					isLargeScreen
 						? 'site-actions__actions-large-screen'
 						: 'site-actions__actions-small-screen'

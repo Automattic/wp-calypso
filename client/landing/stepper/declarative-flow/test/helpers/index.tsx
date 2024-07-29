@@ -15,11 +15,16 @@ export const getFlowLocation = () => {
 	};
 };
 
+export const getAssertionConditionResult = () => {
+	return JSON.parse( screen.getByTestId( 'assertionConditionResult' ).textContent || '{}' );
+};
+
 interface RenderFlowParams {
 	currentStep: string;
 	dependencies?: ProvidedDependencies;
 	currentURL?: string;
-	method: 'submit' | 'goBack';
+	method: 'submit' | 'goBack' | null;
+	cancelDestination?: string;
 }
 /** Utility to render a flow for testing purposes */
 export const renderFlow = ( flow: Flow ) => {
@@ -28,6 +33,7 @@ export const renderFlow = ( flow: Flow ) => {
 		const location = useLocation();
 		const fakeNavigate = ( pathname, state ) => navigate( pathname, { state } );
 		const { submit, goBack } = flow.useStepNavigation( currentStep, fakeNavigate );
+		const assertionConditionResult = flow.useAssertConditions?.() || {};
 
 		useEffect( () => {
 			switch ( method ) {
@@ -45,6 +51,11 @@ export const renderFlow = ( flow: Flow ) => {
 				<p data-testid="pathname">{ `${ location.pathname }${ location.search }` }</p>
 				<p data-testid="search">{ location.search }</p>
 				<p data-testid="state">{ JSON.stringify( location.state ) }</p>
+				{ assertionConditionResult && (
+					<p data-testid="assertionConditionResult">
+						{ JSON.stringify( assertionConditionResult ) }
+					</p>
+				) }
 			</>
 		);
 	};
@@ -65,7 +76,7 @@ export const renderFlow = ( flow: Flow ) => {
 				/>
 			</MemoryRouter>,
 			{
-				initialState: { themes: { queries: [] } },
+				initialState: { themes: { queries: [] }, currentUser: { id: 'some-id' } },
 				reducers: {
 					themes: themeReducer,
 				},
@@ -79,8 +90,14 @@ export const renderFlow = ( flow: Flow ) => {
 	const runUseStepNavigationGoBack = ( params: Omit< RenderFlowParams, 'method' > ) =>
 		runUseStepNavigation( { ...params, method: 'goBack' } );
 
+	const runUseAssertionCondition = ( params: Omit< RenderFlowParams, 'method' > ) => {
+		runUseStepNavigation( { ...params, method: null } );
+		return getAssertionConditionResult();
+	};
+
 	return {
 		runUseStepNavigationSubmit,
 		runUseStepNavigationGoBack,
+		runUseAssertionCondition,
 	};
 };

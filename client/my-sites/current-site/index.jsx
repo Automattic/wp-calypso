@@ -1,11 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button, Card } from '@automattic/components';
-import classnames from 'classnames';
+import { Card } from '@automattic/components';
+import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -42,23 +41,6 @@ class CurrentSite extends Component {
 		this.props.recordTracksEvent( 'calypso_sidebar_all_sites_click' );
 	};
 
-	renderSiteSwitcher = () => {
-		const { translate, isRtl } = this.props;
-		const arrowDirection = isRtl ? 'right' : 'left';
-
-		return (
-			<span className="current-site__switch-sites">
-				<Button borderless href="/sites" onClick={ this.onAllSitesClick }>
-					<span
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
-					></span>
-					<span className="current-site__switch-sites-label">{ translate( 'All Sites' ) }</span>
-				</Button>
-			</span>
-		);
-	};
-
 	render() {
 		const { selectedSite, translate, anySiteSelected } = this.props;
 
@@ -67,7 +49,7 @@ class CurrentSite extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 			return (
 				<Card
-					className={ classnames( 'current-site', {
+					className={ clsx( 'current-site', {
 						'is-no-sites': hasNoSites,
 						'is-loading': ! this.props.hasAllSitesList,
 					} ) }
@@ -90,14 +72,10 @@ class CurrentSite extends Component {
 		return (
 			<Card className="current-site">
 				<div role="button" tabIndex="0" aria-hidden="true" onClick={ this.expandUnifiedNavSidebar }>
-					{ this.renderSiteSwitcher() }
-
-					{ selectedSite ? (
+					{ selectedSite && (
 						<div>
-							<Site site={ selectedSite } homeLink={ true } />
+							<Site site={ selectedSite } homeLink />
 						</div>
-					) : (
-						<AllSites href="/sites" onSelect={ this.onAllSitesClick } />
 					) }
 					{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
 						<AsyncLoad

@@ -5,7 +5,7 @@ import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf, hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { noop } from 'lodash';
 import { useMemo } from 'react';
 import {
@@ -91,13 +91,15 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
 
-	const badgeType = design.is_premium ? 'premium' : 'none';
+	const isPremiumDesign = design?.design_tier !== 'free';
+
+	const badgeType = isPremiumDesign ? 'premium' : 'none';
 
 	const badgeContainer = (
 		<BadgeContainer badgeType={ badgeType } isPremiumThemeAvailable={ isPremiumThemeAvailable } />
 	);
 
-	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
+	const shouldUpgrade = isPremiumDesign && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	function getPricingDescription() {
 		if ( hideDescription ) {
@@ -106,7 +108,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 		let text: React.ReactNode = null;
 
-		if ( design.is_premium && shouldUpgrade ) {
+		if ( isPremiumDesign && shouldUpgrade ) {
 			text = (
 				<Button
 					variant="link"
@@ -121,11 +123,11 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						: __( 'Upgrade to Premium' ) }
 				</Button>
 			);
-		} else if ( design.is_premium && ! shouldUpgrade && hasPurchasedTheme ) {
+		} else if ( isPremiumDesign && ! shouldUpgrade && hasPurchasedTheme ) {
 			text = __( 'Purchased on an annual subscription' );
-		} else if ( design.is_premium && ! shouldUpgrade && ! hasPurchasedTheme ) {
+		} else if ( isPremiumDesign && ! shouldUpgrade && ! hasPurchasedTheme ) {
 			text = __( 'Included in your plan' );
-		} else if ( ! design.is_premium ) {
+		} else if ( ! isPremiumDesign ) {
 			text = __( 'Free' );
 		}
 
@@ -136,7 +138,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		<button
 			className="design-picker__design-option"
 			disabled={ disabled }
-			data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
+			data-e2e-button={ isPremiumDesign ? 'paidOption' : 'freeOption' }
 			onClick={ () => onSelect( design ) }
 		>
 			{ hasDesignOptionHeader && (
@@ -151,7 +153,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				</span>
 			) }
 			<span
-				className={ classnames(
+				className={ clsx(
 					'design-picker__image-frame',
 					'design-picker__image-frame-landscape',
 					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
@@ -200,7 +202,7 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 	onUpgrade,
 } ) => {
 	const { __ } = useI18n();
-	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable;
+	const shouldUpgrade = design?.design_tier === 'premium' && ! isPremiumThemeAvailable;
 
 	return (
 		<div className="design-button-cover">
@@ -353,7 +355,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 	return (
 		<div
-			className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className, {
+			className={ clsx( 'design-picker', `design-picker--theme-${ theme }`, className, {
 				'design-picker--has-categories': hasCategories,
 			} ) }
 		>

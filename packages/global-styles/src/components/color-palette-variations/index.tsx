@@ -4,7 +4,7 @@ import {
 	__unstableUseCompositeState as useCompositeState,
 	__unstableCompositeItem as CompositeItem,
 } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { InView, IntersectionObserverProps } from 'react-intersection-observer';
@@ -46,13 +46,13 @@ const ColorPaletteVariation = ( {
 			base,
 			merged: mergeBaseAndUserConfigs( base, colorPaletteVariation ),
 		};
-	}, [ colorPaletteVariation, base ] );
+	}, [ colorPaletteVariation.slug, base ] );
 	return (
 		<CompositeItem
 			role="option"
 			as="button"
 			{ ...composite }
-			className={ classnames( 'global-styles-variation__item', {
+			className={ clsx( 'global-styles-variation__item', {
 				'is-active': isActive,
 			} ) }
 			onClick={ onSelect }

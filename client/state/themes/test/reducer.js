@@ -21,7 +21,6 @@ import {
 	RECOMMENDED_THEMES_SUCCESS,
 	RECOMMENDED_THEMES_FAIL,
 	THEMES_LOADING_CART,
-	THEME_TIERS_UPDATE,
 } from 'calypso/state/themes/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import reducer, {
@@ -38,7 +37,6 @@ import reducer, {
 	completedActivationRequests,
 	recommendedThemes,
 	isLoadingCart,
-	themeTiers,
 } from '../reducer';
 
 const twentysixteen = {
@@ -1042,17 +1040,6 @@ describe( 'reducer', () => {
 		test( 'should be true when we define it', () => {
 			const state = isLoadingCart( undefined, { type: THEMES_LOADING_CART, isLoading: true } );
 			expect( state ).toBe( true );
-		} );
-	} );
-
-	describe( '#themeTiers', () => {
-		test( 'should be an empty object by default', () => {
-			const state = themeTiers( undefined, {} );
-			expect( state ).toEqual( {} );
-		} );
-		test( 'should be the tiers object if provided', () => {
-			const state = themeTiers( undefined, { type: THEME_TIERS_UPDATE, tiers: { free: {} } } );
-			expect( state ).toEqual( { free: {} } );
 		} );
 	} );
 } );

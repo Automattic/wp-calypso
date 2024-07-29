@@ -40,3 +40,34 @@
 	aspect-ratio: 16 / 9;
 	object-fit: cover;
 }
+
+.mastodon-preview__media {
+
+	margin-top: 8px;
+	min-height: 64px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px;
+
+	&.as-grid {
+		display: grid;
+		gap: 2px;
+		grid-template-columns: 50% 50%;
+		width: 100%;
+		overflow: hidden;
+	}
+
+	&-item {
+		display: flex;
+		border: 0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
+		overflow: hidden;
+
+		img,
+		video {
+			width: 100%;
+			object-fit: cover;
+		}
+	}
+
+}

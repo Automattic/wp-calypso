@@ -13,40 +13,73 @@ export default function JetpackSiteConnected() {
 
 	const jetpackConnectedSite = ( getQueryArg( window.location.href, 'site_connected' ) ??
 		'' ) as string;
+
+	const alreadyConnectedSite = ( getQueryArg( window.location.href, 'site_already_connected' ) ??
+		'' ) as string;
+
 	const [ successNotification, setSuccessNotification ] = useState< React.ReactNode >( null );
-	const { setMostRecentConnectedSite } = useContext( SitesDashboardContext );
+	const [ siteAlreadyConnected, setSiteAlreadyConnected ] = useState< boolean >( false );
+
+	const { mostRecentConnectedSite, setMostRecentConnectedSite } =
+		useContext( SitesDashboardContext );
+
 	// Set the success notification when the site is connected and remove the query arg from the URL
 	useEffect( () => {
-		if ( jetpackConnectedSite ) {
+		if ( jetpackConnectedSite || alreadyConnectedSite ) {
 			setSuccessNotification( () =>
-				translate( '{{em}}%(jetpackConnectedSite)s{{/em}} was successfully connected', {
-					args: {
-						jetpackConnectedSite,
-					},
-					comment: '%(jetpackConnectedSite) is the site URL that was connected to Jetpack',
-					components: {
-						em: <em />,
-					},
-				} )
+				jetpackConnectedSite
+					? translate( '{{em}}%(jetpackConnectedSite)s{{/em}} was successfully connected', {
+							args: {
+								jetpackConnectedSite,
+							},
+							comment: '%(jetpackConnectedSite) is the site URL that was connected to Jetpack',
+							components: {
+								em: <em />,
+							},
+					  } )
+					: translate( '{{em}}%(alreadyConnectedSite)s{{/em}} is already connected', {
+							args: {
+								alreadyConnectedSite,
+							},
+							comment: '%(alreadyConnectedSite) is the site URL that is connected to Jetpack',
+							components: {
+								em: <em />,
+							},
+					  } )
 			);
-			setMostRecentConnectedSite( jetpackConnectedSite );
+			setMostRecentConnectedSite( jetpackConnectedSite || alreadyConnectedSite );
+			setSiteAlreadyConnected( !! alreadyConnectedSite );
 			page(
-				removeQueryArgs( window.location.pathname + window.location.search, 'site_connected' )
+				jetpackConnectedSite
+					? removeQueryArgs( window.location.pathname + window.location.search, 'site_connected' )
+					: removeQueryArgs(
+							window.location.pathname + window.location.search,
+							'site_already_connected'
+					  )
 			);
 		}
-	}, [ jetpackConnectedSite, translate, setSuccessNotification, setMostRecentConnectedSite ] );
+	}, [
+		jetpackConnectedSite,
+		alreadyConnectedSite,
+		translate,
+		setSuccessNotification,
+		setMostRecentConnectedSite,
+	] );
 
 	// Show the success notification when the site is connected and record the event
 	useEffect( () => {
 		if ( successNotification ) {
+			const eventName = siteAlreadyConnected
+				? 'calypso_a4a_sites_jetpack_already_connected'
+				: 'calypso_a4a_sites_jetpack_connected';
 			dispatch( successNotice( successNotification ) );
 			dispatch(
-				recordTracksEvent( 'calypso_a4a_sites_jetpack_connected_notice_shown', {
-					siteUrl: jetpackConnectedSite,
+				recordTracksEvent( eventName, {
+					siteUrl: mostRecentConnectedSite,
 				} )
 			);
 		}
-	}, [ dispatch, jetpackConnectedSite, successNotification ] );
+	}, [ dispatch, successNotification, mostRecentConnectedSite, siteAlreadyConnected ] );
 
 	return null;
 }

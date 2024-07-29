@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import Main from 'calypso/components/main';
 import ActionHeader from '../../components/action-header';
@@ -8,7 +8,7 @@ function Dashboard( className ) {
 	const translate = useTranslate();
 
 	return (
-		<Main className={ classNames( 'dashboard', className ) } wideLayout>
+		<Main className={ clsx( 'dashboard', className ) } wideLayout>
 			<ActionHeader breadcrumbs={ translate( 'Store' ) } />
 			<StoreMoveNoticeView />
 		</Main>

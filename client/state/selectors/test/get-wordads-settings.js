@@ -90,6 +90,7 @@ describe( 'getWordadsSettings()', () => {
 						wordads_display_archive: 'wordads_display_archive-test',
 						enable_header_ad: 'enable_header_ad-test',
 						wordads_second_belowpost: 'wordads_second_belowpost-test',
+						wordads_inline_enabled: 'wordads_inline_enabled-test',
 						wordads_ccpa_enabled: 'wordads_ccpa_enabled-test',
 						wordads_ccpa_privacy_policy_url: 'wordads_ccpa_privacy_policy_url-test',
 						wordads_custom_adstxt_enabled: 'wordads_custom_adstxt_enabled-test',
@@ -116,6 +117,10 @@ describe( 'getWordadsSettings()', () => {
 		expect( output ).toHaveProperty(
 			'display_options.second_belowpost',
 			'wordads_second_belowpost-test'
+		);
+		expect( output ).toHaveProperty(
+			'display_options.inline_enabled',
+			'wordads_inline_enabled-test'
 		);
 		expect( output ).toHaveProperty( 'ccpa_enabled', 'wordads_ccpa_enabled-test' );
 		expect( output ).toHaveProperty(

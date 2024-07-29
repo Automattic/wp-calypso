@@ -1,0 +1,22 @@
+.a4a-popover__content {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	border-radius: 4px;
+	width: 300px;
+
+	.button {
+		margin-inline-end: 8px;
+	}
+
+	.a4a-popover__title {
+		@include a4a-font-body-md;
+		color: var(--color-accent-60);
+	}
+}
+
+.a4a-popover {
+	.components-popover__content {
+		padding: 16px;
+	}
+}

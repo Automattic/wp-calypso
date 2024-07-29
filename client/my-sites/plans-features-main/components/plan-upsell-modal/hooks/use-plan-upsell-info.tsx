@@ -1,44 +1,46 @@
 import { getPlan, type PlanSlug } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
-import { getPlanPrices } from 'calypso/state/plans/selectors/get-plan-prices';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import type { TranslateResult } from 'i18n-calypso';
 
-export type PlanUpsellInfo = {
-	planSlug: PlanSlug;
+type PlanUpsellInfo = {
 	title: TranslateResult;
 	formattedPriceMonthly: string;
 	formattedPriceFull: string;
 };
 
-// TODO:
-// Replace `getPlanPrices` with the selectors from the Plans datastore.
-export const usePlanUpsellInfo = ( planSlug: PlanSlug, currencyCode: string ): PlanUpsellInfo => {
+export const usePlanUpsellInfo = ( { planSlug }: { planSlug: PlanSlug } ): PlanUpsellInfo => {
 	const title = getPlan( planSlug )?.getTitle() || '';
-	const priceMonthly = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state ) ?? null;
-		const rawPlanPrices = getPlanPrices( state, {
-			planSlug,
-			siteId,
-			returnMonthly: true,
-		} );
-		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
+	const siteId = useSelector( getSelectedSiteId );
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ planSlug ],
+		siteId,
+		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
 	} );
-	const priceFull = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state ) ?? null;
-		const rawPlanPrices = getPlanPrices( state, {
-			planSlug,
-			siteId,
-			returnMonthly: false,
-		} );
-		return ( rawPlanPrices.discountedRawPrice || rawPlanPrices.rawPrice ) ?? 0;
-	} );
+	const currencyCode = pricingMeta?.[ planSlug ].currencyCode ?? 'USD';
+	const priceMonthly =
+		( pricingMeta?.[ planSlug ].discountedPrice.monthly ||
+			pricingMeta?.[ planSlug ].originalPrice.monthly ) ??
+		0;
+	const priceFull =
+		( pricingMeta?.[ planSlug ].discountedPrice.full ||
+			pricingMeta?.[ planSlug ].originalPrice.full ) ??
+		0;
 
 	return {
-		planSlug,
 		title,
-		formattedPriceMonthly: formatCurrency( priceMonthly, currencyCode, { stripZeros: true } ),
-		formattedPriceFull: formatCurrency( priceFull, currencyCode, { stripZeros: true } ),
+		formattedPriceMonthly: formatCurrency( priceMonthly, currencyCode, {
+			stripZeros: true,
+			isSmallestUnit: true,
+		} ),
+		formattedPriceFull: formatCurrency( priceFull, currencyCode, {
+			stripZeros: true,
+			isSmallestUnit: true,
+		} ),
 	};
 };

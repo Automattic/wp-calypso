@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import { getThreatType } from 'calypso/components/jetpack/threat-item/utils';
@@ -93,7 +93,7 @@ const ThreatItemHeader: React.FC< Props > = ( { threat } ) => {
 				<div className="threat-item-header__titles">
 					<div className="threat-item-header__card-top">{ getThreatMessage( threat ) }</div>
 					<div
-						className={ classnames(
+						className={ clsx(
 							'threat-item-header__card-bottom',
 							severityClassNames( threat.severity )
 						) }

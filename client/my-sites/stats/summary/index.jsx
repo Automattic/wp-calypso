@@ -15,12 +15,12 @@ import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModuleUTM from '../features/modules/stats-utm';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import Countries from '../stats-countries';
 import DownloadCsv from '../stats-download-csv';
 import StatsModule from '../stats-module';
 import AllTimeNav from '../stats-module/all-time-nav';
-import StatsModuleUTM from '../stats-module-utm';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
 import StatsUpsellModal from '../stats-upsell-modal';
@@ -157,7 +157,7 @@ class StatsSummary extends Component {
 								plan={ PLAN_PREMIUM }
 								tracksImpressionName="calypso_upgrade_nudge_impression"
 								tracksClickName="calypso_upgrade_nudge_cta_click"
-								showIcon={ true }
+								showIcon
 							/>
 						</div>
 					</Fragment>
@@ -327,6 +327,15 @@ class StatsSummary extends Component {
 				path = 'utm';
 				statType = 'statsUTM';
 				summaryView = <></>; // done inline to use context values
+				break;
+			}
+			case 'devices': {
+				// TODO: finish after the Traffic page.
+				title = translate( 'Devices' );
+				path = 'devices';
+				statType = 'statsDevices';
+
+				summaryView = <></>;
 				break;
 			}
 		}

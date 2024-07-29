@@ -206,6 +206,7 @@
 	--color-border-shadow-rgb: var(--color-neutral-0-rgb);
 	--color-border-inverted: var(--studio-white);
 	--color-border-inverted-rgb: var(--studio-white-rgb);
+	--color-border-secondary: #f1f1f1;
 
 	--color-link: var(--studio-blue-50);
 	--color-link-rgb: var(--studio-blue-50-rgb);
@@ -255,6 +256,8 @@
 	--color-masterbar-background: #101517;
 	--color-masterbar-border: #333;
 	--color-masterbar-text: var(--studio-white);
+	--color-masterbar-icon: var(--studio-white);
+	--color-masterbar-highlight: #00b9eb;
 	--color-masterbar-item-hover-background: #333;
 	--color-masterbar-item-active-background: #23282d;
 	--color-masterbar-item-new-editor-background: var(--studio-gray-50);
@@ -336,6 +339,13 @@
 	--color-sidebar-submenu-text: #b4b9be;
 	--color-sidebar-submenu-hover-text: #00b9eb;
 	--color-sidebar-submenu-selected-text: var(--studio-white);
+
+	/* Sidebar Submenu - Nav Redesign */
+	--color-navredesign-sidebar-submenu-hover-text: var(--color-sidebar-submenu-hover-text);
+	--color-navredesign-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-text);
+
+	/* Collapse Menu Button */
+	--color-collapse-menu-text: var(--color-sidebar-text-alternative);
 
 	/* Command Palette Items */
 	--wp-admin-theme-color: var(--studio-pink-50);

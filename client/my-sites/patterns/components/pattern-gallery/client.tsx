@@ -1,15 +1,17 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import {
-	DESKTOP_VIEWPORT_WIDTH,
+	GRID_VIEW_VIEWPORT_WIDTH,
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
+import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
+import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { PatternTypeFilter, type PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
@@ -112,16 +114,30 @@ const PATTERNS_PER_PAGE_COUNT = 9;
 
 export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	const {
-		category,
+		displayPlaceholder = false,
 		getPatternPermalink,
 		isGridView = false,
 		patterns = [],
-		patternTypeFilter,
 	} = props;
 
+	const {
+		category,
+		patternTypeFilter: patternTypeFilterFromContext,
+		searchTerm,
+	} = usePatternsContext();
+	// For search results, we want a non-masonry display and also some specific
+	// tracks data, so we always treat search results as  "regular" patterns
+	const patternTypeFilter = searchTerm ? PatternTypeFilter.REGULAR : patternTypeFilterFromContext;
 	const translate = useTranslate();
-	const [ currentPage, setCurrentPage ] = useState( 1 );
+	const [ currentPage, setCurrentPage ] = useState( () => {
+		if ( /#pattern-/.test( window.location.hash ) ) {
+			return Infinity;
+		}
+
+		return 1;
+	} );
 	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	const patternIdsByCategory = {
 		first: patterns.map( ( { ID } ) => `${ ID }` ) ?? [],
 	};
@@ -146,31 +162,36 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 				siteId={ RENDERER_SITE_ID }
 			>
 				<MasonryGallery
-					className={ classNames( 'pattern-gallery', {
+					className={ clsx( 'pattern-gallery', {
 						'pattern-gallery--grid': isGridView,
 						'pattern-gallery--pages': isPageLayouts,
 					} ) }
 					enableMasonry={ isGridView && isPageLayouts }
 					itemSelector=".pattern-preview"
 				>
+					{ displayPlaceholder && (
+						<PatternPreviewPlaceholder
+							className={ clsx( {
+								'pattern-preview--grid': isGridView,
+								'pattern-preview--list': ! isGridView,
+							} ) }
+							title=""
+						/>
+					) }
 					{ patternsToDisplay.map( ( pattern ) => (
 						<PatternPreview
 							canCopy={ isLoggedIn || pattern.can_be_copied_without_account }
-							category={ category }
-							className={ classNames( {
+							className={ clsx( {
 								'pattern-preview--grid': isGridView,
 								'pattern-preview--list': ! isGridView,
 							} ) }
 							getPatternPermalink={ getPatternPermalink }
-							isGridView={ isGridView }
 							isResizable={ ! isGridView }
 							key={ pattern.ID }
 							pattern={ pattern }
-							patternTypeFilter={ patternTypeFilter }
-							viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
+							viewportWidth={ isGridView ? GRID_VIEW_VIEWPORT_WIDTH : undefined }
 						/>
 					) ) }
-
 					{ shouldDisplayPaginationButton && (
 						<div className="pattern-gallery__pagination-button-wrapper">
 							<Button
@@ -179,11 +200,12 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 									setCurrentPage( currentPage + 1 );
 
 									recordTracksEvent( 'calypso_pattern_library_load_more', {
-										category,
+										category: category || undefined,
 										is_logged_in: isLoggedIn,
 										type: getTracksPatternType( patternTypeFilter ),
 										view: isGridView ? 'grid' : 'list',
 										load_more_page: currentPage,
+										search_term: searchTerm || undefined,
 									} );
 								} }
 								transparent

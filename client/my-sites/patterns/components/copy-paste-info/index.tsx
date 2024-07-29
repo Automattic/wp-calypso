@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { preventWidows } from 'calypso/lib/formatting';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import ImgCopyPaste from './images/copy-paste.svg';
 import ImgEdit from './images/edit.svg';
@@ -7,7 +8,7 @@ import ImgStyle from './images/style.svg';
 
 import './style.scss';
 
-export function PatternsCopyPasteInfo() {
+export function PatternsCopyPasteInfo( { theme }: { theme?: 'dark' | 'gray' } ) {
 	const translate = useTranslate();
 	return (
 		<PatternsSection
@@ -19,7 +20,7 @@ export function PatternsCopyPasteInfo() {
 					textOnly: true,
 				}
 			) }
-			theme="dark"
+			theme={ theme }
 			title={ translate( 'Copy, paste, customize—it’s easy like that', {
 				comment:
 					'Heading text in a section that contains info about block patterns built by WordPress.com',
@@ -38,8 +39,10 @@ export function PatternsCopyPasteInfo() {
 						} ) }
 					</div>
 					<div className="section-patterns-info__item-description">
-						{ translate(
-							'Paste patterns directly into the WordPress editor to fully customize them.'
+						{ preventWidows(
+							translate(
+								'Paste patterns directly into the WordPress editor to fully customize them.'
+							)
 						) }
 					</div>
 				</div>
@@ -56,8 +59,10 @@ export function PatternsCopyPasteInfo() {
 						} ) }
 					</div>
 					<div className="section-patterns-info__item-description">
-						{ translate(
-							'Patterns replicate the typography and color palette from your site to ensure every page is on-brand.'
+						{ preventWidows(
+							translate(
+								'Patterns replicate the typography and color palette from your site to ensure every page is on-brand.'
+							)
 						) }
 					</div>
 				</div>
@@ -74,8 +79,10 @@ export function PatternsCopyPasteInfo() {
 						} ) }
 					</div>
 					<div className="section-patterns-info__item-description">
-						{ translate(
-							'Patterns are collections of regular WordPress blocks, so you can edit every detail, however you want.'
+						{ preventWidows(
+							translate(
+								'Patterns are collections of regular WordPress blocks, so you can edit every detail, however you want.'
+							)
 						) }
 					</div>
 				</div>
@@ -92,12 +99,14 @@ export function PatternsCopyPasteInfo() {
 						} ) }
 					</div>
 					<div className="section-patterns-info__item-description">
-						{ translate(
-							'All patterns are fully responsive to ensure they look fantastic on any device or screen.',
-							{
-								comment:
-									'Refers to block patterns built by WordPress.com, and their built-in responsiveness.',
-							}
+						{ preventWidows(
+							translate(
+								'All patterns are fully responsive to ensure they look fantastic on any device or screen.',
+								{
+									comment:
+										'Refers to block patterns built by WordPress.com, and their built-in responsiveness.',
+								}
+							)
 						) }
 					</div>
 				</div>

@@ -1,5 +1,5 @@
 import { Button, FormLabel, Spinner } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { isEqual } from 'lodash';
@@ -180,7 +180,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 96 );
 		const isTransient = !! transientMediaId;
 
-		const classNames = classnames( 'podcast-cover-image-setting__preview', {
+		const classNames = clsx( 'podcast-cover-image-setting__preview', {
 			'is-blank': ! imageSrc,
 			'is-transient': isTransient,
 			'is-disabled': isDisabled,
@@ -232,7 +232,7 @@ class PodcastCoverImageSetting extends PureComponent {
 					labels={ {
 						confirm: translate( 'Continue' ),
 					} }
-					disableLargeImageSources={ true }
+					disableLargeImageSources
 					single
 				/>
 			)

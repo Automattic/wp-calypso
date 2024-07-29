@@ -1,13 +1,13 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { getLocaleSlug } from 'i18n-calypso';
 import { useCallback, ComponentType } from 'react';
-import { useLocale } from './locale-context';
+import { useLocale, getWpI18nLocaleSlug } from './locale-context';
 import {
 	localesWithBlog,
 	localesWithGoBlog,
 	localesWithPrivacyPolicy,
 	localesWithCookiePolicy,
 	localesToSubdomains,
+	localesWithLearn,
 	supportSiteLocales,
 	forumLocales,
 	magnificentNonEnLocales,
@@ -19,7 +19,7 @@ import {
 const INVALID_URL = `http://__domain__.invalid`;
 
 function getDefaultLocale(): Locale {
-	return getLocaleSlug?.() ?? 'en';
+	return getWpI18nLocaleSlug() ?? 'en';
 }
 
 const setLocalizedUrlHost =
@@ -125,6 +125,7 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 		}
 		return prefixLocalizedUrlPath( localesWithGoBlog )( url, localeSlug );
 	},
+	'wordpress.com/pricing/': prefixLocalizedUrlPath( localesForPricePlans ),
 	'wordpress.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
@@ -168,6 +169,14 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	},
 	'wordpress.com/start/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
+	'wordpress.com/learn/': ( url: URL, localeSlug: Locale ) => {
+		const webinars = url.pathname.includes( '/learn/webinars/' );
+		if ( webinars && 'es' === localeSlug ) {
+			url.pathname = url.pathname.replace( '/learn/webinars/', '/learn/es/webinars/' );
+			return url;
+		}
+		return suffixLocalizedUrlPath( localesWithLearn )( url, localeSlug );
 	},
 	'wordpress.com/plans/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		// if logged in, or url.pathname contains characters after `/plans/`, don't rewrite

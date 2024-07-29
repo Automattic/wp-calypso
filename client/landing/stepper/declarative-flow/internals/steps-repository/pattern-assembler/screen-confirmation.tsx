@@ -6,7 +6,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { Icon, image, verse, layout } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { useScreen } from './hooks';
@@ -37,6 +37,7 @@ const ScreenConfirmation = ( {
 
 	const currentThemeId = useSelector( ( state: IAppState ) => getActiveTheme( state, siteId ) );
 	const willThemeChange = currentThemeId !== selectedDesign?.slug;
+	const isEnglishLocale = getLocaleSlug()?.startsWith( 'en' );
 
 	const description =
 		currentThemeId && willThemeChange && ! isNewSite
@@ -89,12 +90,8 @@ const ScreenConfirmation = ( {
 						</HStack>
 					) ) }
 				</VStack>
-				{ ! surveyDismissed && (
-					<Survey
-						eventName="assembler-january-2024"
-						eventUrl="https://automattic.survey.fm/assembler-simple-survey"
-						setSurveyDismissed={ setSurveyDismissed }
-					/>
+				{ ! surveyDismissed && isEnglishLocale && (
+					<Survey setSurveyDismissed={ setSurveyDismissed } />
 				) }
 			</div>
 			<div className="screen-container__footer">

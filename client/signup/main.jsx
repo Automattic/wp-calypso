@@ -40,7 +40,11 @@ import {
 	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
-import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isWooOAuth2Client,
+	isGravatarOAuth2Client,
+	isBlazeProOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
@@ -71,6 +75,7 @@ import {
 	getSitePlanName,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import BlazeProSignupProcessingScreen from './blaze-pro-processing-screen';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
@@ -245,9 +250,7 @@ class Signup extends Component {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 
-		if (
-			[ 'website-design-services', 'site-content-collection' ].includes( this.props.flowName )
-		) {
+		if ( flows.getFlow( this.props.flowName, this.props.isLoggedIn )?.enableHotjar ) {
 			addHotJarScript();
 		}
 
@@ -310,7 +313,7 @@ class Signup extends Component {
 				this.props.locale
 			);
 			this.handleLogin( this.props.signupDependencies, stepUrl, false );
-			this.handleDestination( this.props.signupDependencies, stepUrl );
+			this.handleDestination( this.props.signupDependencies, stepUrl, this.props.flowName );
 		}
 	}
 
@@ -409,7 +412,7 @@ class Signup extends Component {
 
 		await this.handlePostFlowCallbacks( dependencies );
 
-		this.handleDestination( dependencies, filteredDestination );
+		this.handleDestination( dependencies, filteredDestination, this.props.flowName );
 	};
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
@@ -559,7 +562,7 @@ class Signup extends Component {
 		}
 	};
 
-	handleDestination( dependencies, destination ) {
+	handleDestination( dependencies, destination, flowName ) {
 		if ( this.props.isLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
 			if ( /^https?:\/\//.test( destination ) ) {
@@ -569,6 +572,11 @@ class Signup extends Component {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
 			defer( () => {
 				debug( `Redirecting you to "${ destination }"` );
+				// Experimental: added the flowName check to restrict this functionality only for the 'website-design-services' flow.
+				if ( destination?.startsWith( '/checkout/' ) && 'website-design-services' === flowName ) {
+					page( destination );
+					return;
+				}
 				window.location.href = destination;
 			} );
 
@@ -788,6 +796,10 @@ class Signup extends Component {
 					isDestinationSetupSiteFlow={ destination.startsWith( '/setup' ) }
 				/>
 			);
+		}
+
+		if ( isBlazeProOAuth2Client( this.props.oauth2Client ) ) {
+			return <BlazeProSignupProcessingScreen />;
 		}
 
 		return <SignupProcessingScreen flowName={ this.props.flowName } />;

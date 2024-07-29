@@ -1,19 +1,38 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.checkout .a4a-layout__container,
 .checkout .a4a-layout__body,
 .checkout .a4a-layout__body-wrapper {
-	height: 100%;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px;
 }
 
+.checkout .a4a-layout__container {
+	height: 100%;
+}
+
 .checkout .a4a-layout__body {
 	padding: 0;
+	flex-grow: 1;
 
 	@include break-large {
 		background: linear-gradient(to right, var(--color-surface) 0%, var(--color-surface) 70%, var(--color-neutral-0) 70%, var(--color-neutral-0) 100%);
+	}
+}
+
+.checkout .a4a-layout__body-wrapper {
+	height: 100%;
+}
+
+.checkout__client-referral-form-footer-error {
+	margin-block-start: 0.25rem;
+	color: var(--color-scary-40);
+	font-style: italic;
+	font-size: 0.875rem;
+	line-height: 14px;
+
+	&.hidden {
+		display: none;
 	}
 }
 
@@ -22,12 +41,10 @@
 	flex-direction: column;
 	align-items: stretch;
 
-
 	@include break-large {
 		flex-direction: row;
-		height: 100%;
+		min-height: 100%;
 	}
-
 }
 
 .checkout__main {
@@ -40,9 +57,12 @@
 
 .checkout__main-title {
 	margin-block-end: 64px;
-	font-size: 2.25rem;
-	line-height: 1.1;
-	font-weight: 600;
+	margin-block-start: 32px;
+	@include a4a-font-heading-xxl;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		margin-block-start: 0;
+	}
 }
 
 .checkout__main-list {
@@ -56,8 +76,13 @@
 
 	@include break-large {
 		max-width: 443px;
-		padding: 128px 48px;
+		padding: 128px 48px 48px;
 		background: var(--color-neutral-0);
+	}
+
+	&.checkout__aside--referral,
+	&.checkout__aside--client {
+		padding-block-start: 64px;
 	}
 }
 
@@ -80,7 +105,7 @@
 	border: 1px solid var(--color-link);
 	padding: 1rem;
 
-	@media only screen and ( min-width: 782px ) {
+	@media only screen and (min-width: 782px) {
 		margin-block-start: 32px;
 	}
 
@@ -89,28 +114,23 @@
 	}
 
 	.checkout__summary-pricing-discounted {
-		font-size: 1.25rem;
-		font-weight: 600;
+		@include a4a-font-heading-lg;
 		color: var(--color-neutral-80);
-		line-height: 1;
 
 		@include break-xlarge {
-			font-size: 1.5rem;
-			font-weight: 700;
+			@include a4a-font-heading-xl;
 			color: var(--color-black);
 		}
 	}
 
 	.checkout__summary-pricing-original {
+		@include a4a-font-body-lg;
 		text-decoration: line-through;
-		font-weight: 400;
-		font-size: 1rem;
 		margin-inline-start: 8px;
 	}
 
 	.checkout__summary-pricing-interval {
-		font-size: 0.75rem;
-		font-weight: 400;
+		@include a4a-font-body-sm;
 		color: var(--color-neutral-60);
 		line-height: 2;
 	}
@@ -124,25 +144,39 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	font-weight: 500;
-	font-size: 1rem;
-	line-height: 1.5;
+	@include a4a-font-heading-md;
 }
 
 
 .checkout__summary-notice {
-	color: var(--color-neutral-50);
-	font-size: rem(12px);
+	@include a4a-font-body-sm;
 	margin-block-end: 16px;
+	color: var(--color-neutral-50);
 
 	a {
 		text-decoration: underline;
-		color: var(--color-black);
+		color: var(--color-text-black);
+	}
+
+	&.margin-top {
+		margin-block-start: 16px;
+	}
+
+	h3 {
+		margin-block: 24px;
+		font-weight: 500;
+		font-size: 1rem;
+		color: var(--color-neutral-70);
+	}
+
+	.checkout__summary-notice-item {
+		font-size: 0.75rem;
+		color: var(--color-neutral-50);
+		margin-block-end: 0.5rem;
 	}
 }
 
 .checkout__aside-actions {
-	margin-block-start: 32px;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
@@ -155,13 +189,11 @@
 		justify-content: center;
 		border-radius: 4px;
 		min-height: 40px;
-		font-weight: 600;
 	}
 
 	> .button.is-link {
 		color: var(--color-black);
 		text-decoration: underline;
-		font-weight: 400;
 	}
 }
 
@@ -177,7 +209,7 @@
 		background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
 		border-radius: 4px;
 
-		@media only screen and ( min-width: 821px ) {
+		@media only screen and (min-width: 821px) {
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -201,8 +233,7 @@
 	}
 
 	.product-info__label {
-		font-size: rem(16px);
-		font-weight: 700;
+		@include a4a-font-heading-md;
 	}
 
 	.product-info__count {
@@ -214,9 +245,65 @@
 	}
 
 	.product-info__description {
-		color: var(--color-neutral-70);
-		font-size: rem(16px);
-		font-weight: 400;
+		@include a4a-font-body-lg;
 		margin-block: 4px 0;
+		color: var(--color-neutral-70);
 	}
 }
+
+.checkout__client-referral-form {
+	padding-block-start: 48px;
+}
+
+.checkout__aside--client {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding-block-end: 0;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		width: 400px;
+	}
+
+
+	.checkout__aside-actions {
+		margin-block-start: 16px;
+	}
+	.checkout__summary-client-payment-notice {
+		margin-block-start: 48px;
+		color: var(--color-neutral-70);
+		font-size: rem(16px);
+		font-weight: 600;
+	}
+
+	.checkout__summary-notice {
+		margin-block-start: 48px;
+
+		div {
+
+			margin-block-start: 8px;
+		}
+	}
+
+	.checkout__aside-footer {
+		margin-block-start: 32px;
+		padding-block-end: 16px;
+
+		@include breakpoint-deprecated( ">960px" ) {
+			margin-block-start: auto;
+		}
+
+		.checkout__aside-powered-by {
+			div {
+				color: var(--color-neutral-70);
+				font-size: rem(12px);
+			}
+
+			img {
+				margin-block-start: 8px;
+				width: 150px;
+			}
+		}
+	}
+}
+

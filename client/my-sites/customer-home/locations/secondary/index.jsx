@@ -1,5 +1,5 @@
-import { createElement } from 'react';
-import DotPager from 'calypso/components/dot-pager';
+import { DotPager } from '@automattic/components';
+import { createElement, useEffect } from 'react';
 import {
 	SECTION_BLOGGING_PROMPT,
 	SECTION_BLOGANUARY_BLOGGING_PROMPT,
@@ -9,6 +9,9 @@ import {
 	CARD_COMPONENTS,
 	PRIMARY_CARD_COMPONENTS,
 } from 'calypso/my-sites/customer-home/locations/card-components';
+import trackMyHomeCardImpression, {
+	CardLocation,
+} from 'calypso/my-sites/customer-home/track-my-home-card-impression';
 
 const getAdditionalPropsForCard = ( { card, siteId } ) => {
 	if ( card === SECTION_BLOGGING_PROMPT || card === SECTION_BLOGANUARY_BLOGGING_PROMPT ) {
@@ -41,7 +44,30 @@ const SecondaryCard = ( { card, siteId } ) => {
 	return null;
 };
 
-const Secondary = ( { cards, siteId } ) => {
+const Secondary = ( { cards, siteId, trackFirstCardAsPrimary = false } ) => {
+	let shouldTrackCardAsPrimary = trackFirstCardAsPrimary;
+
+	const trackMyHomeCardImpressionWithFlexibleLocation = ( card ) => {
+		const location = shouldTrackCardAsPrimary ? CardLocation.PRIMARY : CardLocation.SECONDARY;
+		shouldTrackCardAsPrimary = false;
+
+		trackMyHomeCardImpression( { card, location } );
+	};
+
+	useEffect( () => {
+		if ( ! cards || ! cards.length ) {
+			return;
+		}
+
+		cards.forEach( ( card ) => {
+			if ( Array.isArray( card ) && card.length > 0 ) {
+				return;
+			}
+
+			trackMyHomeCardImpressionWithFlexibleLocation( card );
+		} );
+	}, [ cards ] );
+
 	if ( ! cards || ! cards.length ) {
 		return null;
 	}
@@ -50,12 +76,16 @@ const Secondary = ( { cards, siteId } ) => {
 		<>
 			{ cards.map( ( card, index ) => {
 				if ( Array.isArray( card ) && card.length > 0 ) {
+					const trackInnerCardImpression = ( innerCardIndex ) =>
+						trackMyHomeCardImpressionWithFlexibleLocation( card[ innerCardIndex ] );
+
 					return (
 						<DotPager
 							key={ 'my_home_secondary_pager_' + index }
 							className="secondary__customer-home-location-content"
 							showControlLabels="true"
 							hasDynamicHeight
+							onPageSelected={ trackInnerCardImpression }
 						>
 							{ card.map( ( innerCard, innerIndex ) => {
 								return (

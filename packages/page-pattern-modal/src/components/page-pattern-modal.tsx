@@ -9,7 +9,7 @@ import {
 import { withInstanceId } from '@wordpress/compose';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { memoize } from 'lodash';
 import containsMissingBlock from '../utils/contains-missing-block';
 import { sortGroupNames } from '../utils/group-utils';
@@ -355,7 +355,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 					<div className="page-pattern-modal__sidebar">
 						<h1
 							id={ `page-pattern-modal__heading-${ instanceId }` }
-							className={ classnames( 'page-pattern-modal__heading', {
+							className={ clsx( 'page-pattern-modal__heading', {
 								'page-pattern-modal__heading--default': ! this.props.title,
 							} ) }
 						>

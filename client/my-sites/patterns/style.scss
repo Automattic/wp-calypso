@@ -1,4 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "calypso/my-sites/patterns/mixins";
 
 .is-section-patterns {
 	.layout__content {
@@ -21,9 +22,25 @@
 		.lpc-header-nav-wrapper {
 			padding-top: 32px;
 
-			@media ( max-width: $break-medium ) {
+			@media (max-width: $break-medium) {
 				padding-top: 46px;
 			}
+		}
+
+		.lp-footer-language {
+			display: none;
+		}
+
+		.lpc-footer-nav,
+		.lpc-footer-automattic-nav {
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		.lpc-footer-nav-wrapper,
+		.lpc-footer-automattic-nav-wrapper,
+		.lp-link-work-m {
+			@include patterns-page-width;
 		}
 	}
 
@@ -43,5 +60,10 @@
 	.x-nav-item,
 	.x-nav-link-chevron::before {
 		color: var(--studio-white);
+	}
+
+	.x-nav-item .cta-btn-nav {
+		background: var(--studio-white) !important;
+		color: var(--studio-black) !important;
 	}
 }

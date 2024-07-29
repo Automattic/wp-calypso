@@ -1,11 +1,14 @@
+import config from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import { LicenseState, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import LicenseDetailsActions from './actions';
+import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
 
 import './style.scss';
 
@@ -21,6 +24,7 @@ interface Props {
 	onCopyLicense?: () => void;
 	licenseType: LicenseType;
 	isChildLicense?: boolean;
+	referral?: ReferralAPIResponse | null;
 }
 
 const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
@@ -38,34 +42,46 @@ export default function LicenseDetails( {
 	onCopyLicense = noop,
 	licenseType,
 	isChildLicense,
+	referral,
 }: Props ) {
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
+	const isPressableLicense = isPressableHostingProduct( licenseKey );
+
+	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
 
 	return (
 		<Card
-			className={ classNames( 'license-details', {
+			className={ clsx( 'license-details', {
 				'license-details--child-license': isChildLicense,
 			} ) }
 		>
 			<ul className="license-details__list">
-				<li className="license-details__list-item">
-					<h4 className="license-details__label">{ translate( 'License code' ) }</h4>
+				{ /* FIXME: This of a better handling without conditions */ }
+				{ ! isPressableLicense && (
+					<li className="license-details__list-item">
+						<h4 className="license-details__label">{ translate( 'License code' ) }</h4>
 
-					<div className="license-details__license-key-row">
-						<code className="license-details__license-key">{ licenseKey }</code>
+						<div className="license-details__license-key-row">
+							<code className="license-details__license-key">{ licenseKey }</code>
 
-						<ClipboardButton
-							text={ licenseKey }
-							className="license-details__clipboard-button"
-							borderless
-							compact
-							onCopy={ onCopyLicense }
-						>
-							<Gridicon icon="clipboard" />
-						</ClipboardButton>
-					</div>
-				</li>
+							<ClipboardButton
+								text={ licenseKey }
+								className="license-details__clipboard-button"
+								borderless
+								compact
+								onCopy={ onCopyLicense }
+							>
+								<Gridicon icon="clipboard" />
+							</ClipboardButton>
+						</div>
+					</li>
+				) }
+				{ isPressableLicense && licenseState !== LicenseState.Revoked && (
+					<h4 className="license-details__label">
+						{ translate( 'Manage your Pressable licenses' ) }
+					</h4>
+				) }
 
 				<li className="license-details__list-item-small">
 					<h4 className="license-details__label">{ translate( 'Issued on' ) }</h4>
@@ -79,7 +95,14 @@ export default function LicenseDetails( {
 					</li>
 				) }
 
-				{ licenseState === LicenseState.Attached && (
+				{ isAutomatedReferralsEnabled && referral && (
+					<li className="license-details__list-item-small">
+						<h4 className="license-details__label">{ translate( 'Owned by' ) }</h4>
+						{ referral.client.email }
+					</li>
+				) }
+
+				{ ! isPressableLicense && licenseState === LicenseState.Attached && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Site ID' ) }</h4>
 						{ blogId ? <span>{ blogId }</span> : <Gridicon icon="minus" /> }

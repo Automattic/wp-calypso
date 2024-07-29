@@ -60,10 +60,10 @@ export const MarketplaceReviewsCards = ( props: MarketplaceReviewsCardsProps ) =
 				{ reviews.map( ( review ) => (
 					<MarketplaceReviewCard review={ review } key={ review.id } />
 				) ) }
-				{ addEmptyCard && <MarketplaceReviewCard empty={ true } key="empty-card" /> }
+				{ addEmptyCard && <MarketplaceReviewCard empty key="empty-card" /> }
 				{ addLeaveAReviewCard && (
 					<MarketplaceReviewCard
-						leaveAReview={ true }
+						leaveAReview
 						key="leave-a-review-card"
 						showMarketplaceReviews={ props.showMarketplaceReviews }
 					/>

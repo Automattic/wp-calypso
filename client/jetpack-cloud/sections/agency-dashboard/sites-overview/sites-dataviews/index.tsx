@@ -1,12 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, Spinner } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import A4ASiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
-import A4ASiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
@@ -36,7 +33,6 @@ const SitesDataViews = ( {
 	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );
-	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
@@ -99,19 +95,11 @@ const SitesDataViews = ( {
 				id: 'site',
 				header: (
 					<>
-						{ isA4AEnabled ? (
-							<A4ASiteSort isSortable={ true } columnKey="site">
-								<span className="sites-dataview__site-header">
-									{ translate( 'Site' ).toUpperCase() }
-								</span>
-							</A4ASiteSort>
-						) : (
-							<SiteSort isSortable={ true } columnKey="site">
-								<span className="sites-dataview__site-header">
-									{ translate( 'Site' ).toUpperCase() }
-								</span>
-							</SiteSort>
-						) }
+						<SiteSort isSortable columnKey="site">
+							<span className="sites-dataview__site-header">
+								{ translate( 'Site' ).toUpperCase() }
+							</span>
+						</SiteSort>
 					</>
 				),
 				getValue: ( { item }: { item: SiteInfo } ) => item.site.value.url,
@@ -195,19 +183,11 @@ const SitesDataViews = ( {
 					}
 					return (
 						<span className="sites-dataviews__favorite-btn-wrapper">
-							{ isA4AEnabled ? (
-								<A4ASiteSetFavorite
-									isFavorite={ item.isFavorite || false }
-									siteId={ item.site.value.blog_id }
-									siteUrl={ item.site.value.url }
-								/>
-							) : (
-								<SiteSetFavorite
-									isFavorite={ item.isFavorite || false }
-									siteId={ item.site.value.blog_id }
-									siteUrl={ item.site.value.url }
-								/>
-							) }
+							<SiteSetFavorite
+								isFavorite={ item.isFavorite || false }
+								siteId={ item.site.value.blog_id }
+								siteUrl={ item.site.value.url }
+							/>
 						</span>
 					);
 				},
@@ -335,7 +315,7 @@ const SitesDataViews = ( {
 				paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
 				fields={ fields }
 				view={ sitesViewState }
-				search={ true }
+				search
 				searchLabel={ translate( 'Search for sites' ) }
 				getItemId={ ( item: SiteInfo ) => {
 					item.id = item.site.value.blog_id; // setting the id because of a issue with the DataViews component

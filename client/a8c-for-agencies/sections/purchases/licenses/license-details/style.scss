@@ -110,13 +110,14 @@
 	&,
 	.license-details__actions a:not(.license-details__assign-button),
 	.license-details__actions button {
-		background-color: #fafafa;
+		background-color: var(--color-accent-0);
 	}
 }
 
 .license-details__actions .button.is-compact {
 	padding: 8px 14px;
 	font-size: 1rem;
+	font-weight: 500;
 	line-height: 1.375;
 
 	@include break-large {

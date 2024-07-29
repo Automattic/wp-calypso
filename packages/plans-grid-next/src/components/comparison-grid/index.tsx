@@ -1,19 +1,16 @@
 import {
 	getPlanClass,
-	isWooExpressPlan,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
-	getPlanFeaturesGrouped,
-	getWooExpressFeaturesGrouped,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
-	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
+import { AddOns } from '@automattic/data-stores';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useMemo } from '@wordpress/element';
+import { useRef, useMemo } from '@wordpress/element';
 import { Icon, chevronRightSmall } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import {
 	useState,
@@ -26,25 +23,24 @@ import {
 } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { plansGridMediumLarge } from '../../css-mixins';
-import { usePlansGridContext } from '../../grid-context';
+import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
+import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
-import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
-import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { sortPlans } from '../../lib/sort-plan-properties';
-import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import BillingTimeframe from '../shared/billing-timeframe';
+import { PlanStorage } from '../shared/storage';
 import { StickyContainer } from '../sticky-container';
-import StorageAddOnDropdown from '../storage-add-on-dropdown';
 import type {
 	GridPlan,
+	ComparisonGridExternalProps,
 	ComparisonGridProps,
 	PlanActionOverrides,
 	TransformedFeatureObject,
@@ -55,9 +51,10 @@ import type {
 	Feature,
 	FeatureGroup,
 	PlanSlug,
-	WPComStorageAddOnSlug,
 	FeatureGroupMap,
 } from '@automattic/calypso-products';
+
+import './style.scss';
 
 const featureGroupRowTitleCellMaxWidth = 450;
 const rowCellMaxWidth = 290;
@@ -301,25 +298,6 @@ const PlanSelector = styled.header`
 	}
 `;
 
-const StorageButton = styled.div`
-	background: #f2f2f2;
-	border-radius: 5px;
-	padding: 4px 0;
-	width: -moz-fit-content;
-	width: fit-content;
-	text-align: center;
-	font-size: 0.75rem;
-	font-weight: 400;
-	line-height: 20px;
-	color: var( --studio-gray-90 );
-	min-width: 64px;
-	margin-top: 10px;
-
-	${ plansGridMediumLarge( css`
-		margin-top: 0;
-	` ) }
-`;
-
 const FeatureFootnotes = styled.div`
 	ol {
 		margin: 2em 0 0 1em;
@@ -347,18 +325,15 @@ type ComparisonGridHeaderProps = {
 	displayedGridPlans: GridPlan[];
 	visibleGridPlans: GridPlan[];
 	isInSignup: boolean;
-	isLaunchPage?: boolean | null;
 	isFooter?: boolean;
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
 	selectedPlan?: string;
 	showRefundPeriod?: boolean;
 	isStuck: boolean;
 	isHiddenInMobile?: boolean;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	planUpgradeCreditsApplicable?: number | null;
 };
 
 type ComparisonGridHeaderCellProps = Omit< ComparisonGridHeaderProps, 'planTypeSelectorProps' > & {
@@ -382,10 +357,7 @@ const ComparisonGridHeaderCell = ( {
 	onPlanChange,
 	displayedGridPlans,
 	currentSitePlanSlug,
-	isLaunchPage,
-	onUpgradeClick,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	showRefundPeriod,
 	isStuck,
 }: ComparisonGridHeaderCellProps ) => {
@@ -399,7 +371,7 @@ const ComparisonGridHeaderCell = ( {
 		return null;
 	}
 
-	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planSlug ), {
+	const headerClasses = clsx( 'plan-comparison-grid__header-cell', getPlanClass( planSlug ), {
 		'popular-plan-parent-class': gridPlan.highlightLabel,
 		'is-last-in-row': isLastInRow,
 		'plan-is-footer': isFooter,
@@ -409,7 +381,7 @@ const ComparisonGridHeaderCell = ( {
 		'is-current-plan': gridPlan.current,
 		'is-stuck': isStuck,
 	} );
-	const popularBadgeClasses = classNames( {
+	const popularBadgeClasses = clsx( {
 		'is-current-plan': gridPlan.current,
 		'popular-badge-is-stuck': isStuck,
 	} );
@@ -424,10 +396,7 @@ const ComparisonGridHeaderCell = ( {
 			/>
 			<PlanSelector>
 				<h4
-					className={ classNames(
-						'plan-comparison-grid__title',
-						showPlanSelect && 'is-select-trigger'
-					) }
+					className={ clsx( 'plan-comparison-grid__title', showPlanSelect && 'is-select-trigger' ) }
 				>
 					<span className="plan-comparison-grid__title-label">{ gridPlan.planTitle }</span>
 					{ showPlanSelect && (
@@ -464,7 +433,6 @@ const ComparisonGridHeaderCell = ( {
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
 				planSlug={ planSlug }
-				planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				visibleGridPlans={ visibleGridPlans }
 			/>
@@ -475,9 +443,7 @@ const ComparisonGridHeaderCell = ( {
 				currentSitePlanSlug={ currentSitePlanSlug }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				isInSignup={ isInSignup }
-				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
-				onUpgradeClick={ ( overridePlanSlug ) => onUpgradeClick( overridePlanSlug ?? planSlug ) }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
 				isStuck={ false }
@@ -500,18 +466,15 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			displayedGridPlans,
 			visibleGridPlans,
 			isInSignup,
-			isLaunchPage,
 			isFooter,
 			onPlanChange,
 			currentSitePlanSlug,
-			onUpgradeClick,
 			planActionOverrides,
 			selectedPlan,
 			isHiddenInMobile,
 			showRefundPeriod,
 			isStuck,
 			planTypeSelectorProps,
-			planUpgradeCreditsApplicable,
 		},
 		ref
 	) => {
@@ -524,14 +487,14 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 				<RowTitleCell
 					key="feature-name"
 					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
-					isPlaceholderHeaderCell={ true }
+					isPlaceholderHeaderCell
 				>
 					{ isStuck && planTypeSelectorProps && (
 						<PlanTypeSelectorWrapper>
 							<PlanTypeSelector
 								{ ...planTypeSelectorProps }
 								title={ translate( 'Billing Cycle' ) }
-								hideDiscount={ true }
+								hideDiscount
 								coupon={ coupon }
 							/>
 						</PlanTypeSelectorWrapper>
@@ -540,7 +503,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 				{ visibleGridPlans.map( ( { planSlug }, index ) => (
 					<ComparisonGridHeaderCell
 						planSlug={ planSlug }
-						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						key={ planSlug }
 						isLastInRow={ index === visibleGridPlans.length - 1 }
 						isFooter={ isFooter }
@@ -550,8 +512,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						onPlanChange={ onPlanChange }
 						displayedGridPlans={ displayedGridPlans }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						onUpgradeClick={ onUpgradeClick }
-						isLaunchPage={ isLaunchPage }
 						planActionOverrides={ planActionOverrides }
 						selectedPlan={ selectedPlan }
 						showRefundPeriod={ showRefundPeriod }
@@ -573,7 +533,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 } > = ( {
 	feature,
 	visibleGridPlans,
@@ -581,11 +541,11 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	isStorageFeature,
 	intervalType,
 	activeTooltipId,
-	showUpgradeableStorage,
 	setActiveTooltipId,
+	showUpgradeableStorage,
 	onStorageAddOnClick,
 } ) => {
-	const { gridPlansIndex } = usePlansGridContext();
+	const { gridPlansIndex, enableFeatureTooltips, hideUnsupportedFeatures } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
@@ -608,27 +568,19 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 					.some( ( feature ) => feature.getSlug() === featureSlug )
 			: false );
 
-	const hasConditionalFeature = featureSlug
-		? gridPlan.features.conditionalFeatures?.some(
-				( feature ) => feature.getSlug() === featureSlug
-		  )
-		: false;
-	const storageOptions = gridPlan.features.storageOptions;
-	const defaultStorageOption = storageOptions.find( ( option ) => ! option.isAddOn );
-	const canUpgradeStorageForPlan = isStorageUpgradeableForPlan( {
-		intervalType,
-		showUpgradeableStorage,
-		storageOptions,
-	} );
+	const featureLabel = featureSlug
+		? gridPlan?.features?.comparisonGridFeatureLabels?.[ featureSlug ]
+		: undefined;
 
-	const cellClasses = classNames(
+	const cellClasses = clsx(
 		'plan-comparison-grid__feature-group-row-cell',
 		'plan-comparison-grid__plan',
 		getPlanClass( planSlug ),
 		{
 			'popular-plan-parent-class': gridPlan.highlightLabel,
 			'has-feature': hasFeature,
-			'has-conditional-feature': hasConditionalFeature,
+			'has-feature-label': !! featureLabel,
+			'hide-unsupported-feature': hideUnsupportedFeatures && ! hasFeature && ! featureLabel,
 			'title-is-subtitle': 'live-chat-support' === featureSlug,
 			'is-left-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.leftOfHighlight,
 			'is-right-of-highlight': highlightAdjacencyMatrix[ planSlug ]?.rightOfHighlight,
@@ -644,18 +596,12 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
-					{ canUpgradeStorageForPlan ? (
-						<StorageAddOnDropdown
-							planSlug={ planSlug }
-							storageOptions={ gridPlan.features.storageOptions }
-							onStorageAddOnClick={ onStorageAddOnClick }
-							priceOnSeparateLine
-						/>
-					) : (
-						<StorageButton className="plan-features-2023-grid__storage-button" key={ planSlug }>
-							{ getStorageStringFromFeature( defaultStorageOption?.slug || '' ) }
-						</StorageButton>
-					) }
+					<PlanStorage
+						planSlug={ planSlug }
+						onStorageAddOnClick={ onStorageAddOnClick }
+						showUpgradeableStorage={ showUpgradeableStorage }
+						priceOnSeparateLine
+					/>
 				</>
 			) : (
 				<>
@@ -664,7 +610,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							{ planPaymentTransactionFees ? (
 								<>
 									<Plans2023Tooltip
-										text={ feature?.getDescription?.() }
+										text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 										setActiveTooltipId={ setActiveTooltipId }
 										activeTooltipId={ activeTooltipId }
 										id={ `${ planSlug }-${ featureSlug }` }
@@ -690,7 +636,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 								</span>
 							) }
 							<Plans2023Tooltip
-								text={ feature?.getDescription?.() }
+								text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
 								id={ `${ planSlug }-${ featureSlug }` }
@@ -704,9 +650,9 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getCompareTitle() }
 								</span>
 							) }
-							{ hasConditionalFeature && feature?.getConditionalTitle && (
+							{ featureLabel && (
 								<span className="plan-comparison-grid__plan-conditional-title">
-									{ feature?.getConditionalTitle( planSlug ) }
+									{ featureLabel }
 								</span>
 							) }
 							{ hasFeature && feature?.getCompareSubtitle && (
@@ -714,12 +660,8 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getCompareSubtitle() }
 								</span>
 							) }
-							{ hasFeature && ! hasConditionalFeature && (
-								<Gridicon icon="checkmark" color="#0675C4" />
-							) }
-							{ ! hasFeature && ! hasConditionalFeature && (
-								<Gridicon icon="minus-small" color="#C3C4C7" />
-							) }
+							{ hasFeature && ! featureLabel && <Gridicon icon="checkmark" color="#0675C4" /> }
+							{ ! hasFeature && ! featureLabel && <Gridicon icon="minus-small" color="#C3C4C7" /> }
 						</>
 					) }
 				</>
@@ -740,7 +682,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -756,15 +698,14 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	onStorageAddOnClick,
 } ) => {
 	const translate = useTranslate();
-	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
+	const rowClasses = clsx( 'plan-comparison-grid__feature-group-row', {
 		'is-storage-feature': isStorageFeature,
 	} );
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
-	const hasWooExpressPlans = visibleGridPlans.some( ( { planSlug } ) =>
-		isWooExpressPlan( planSlug )
-	);
+
+	const { enableFeatureTooltips } = usePlansGridContext();
 
 	return (
 		<Row
@@ -775,11 +716,15 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 			<RowTitleCell
 				key="feature-name"
 				className="is-feature-group-row-title-cell"
-				isFeatureGroupRowTitleCell={ true }
+				isFeatureGroupRowTitleCell
 			>
 				{ isStorageFeature ? (
 					<Plans2023Tooltip
-						text={ translate( 'Space to store your photos, media, and more.' ) }
+						text={
+							enableFeatureTooltips
+								? translate( 'Space to store your photos, media, and more.' )
+								: undefined
+						}
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 						id={ tooltipId }
@@ -791,16 +736,12 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 						{ feature && (
 							<>
 								<Plans2023Tooltip
-									text={ feature.getDescription?.( {
-										planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
-									} ) }
+									text={ enableFeatureTooltips ? feature.getDescription?.() : undefined }
 									setActiveTooltipId={ setActiveTooltipId }
 									activeTooltipId={ activeTooltipId }
 									id={ tooltipId }
 								>
-									{ feature.getTitle( {
-										planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
-									} ) }
+									{ feature.getTitle() }
 									{ footnote && (
 										<FeatureFootnote>
 											<sup>{ footnote }</sup>
@@ -863,7 +804,7 @@ const FeatureGroup = ( {
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	visibleGridPlans: GridPlan[];
 	planFeatureFootnotes: {
@@ -876,7 +817,7 @@ const FeatureGroup = ( {
 	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
 		firstSetOfFeatures,
 	] );
-	const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
+	const features = featureGroup.getFeatures();
 	const featureObjects = filterUnusedFeaturesObject(
 		visibleGridPlans,
 		getPlanFeaturesObject( allFeaturesList, features )
@@ -960,7 +901,7 @@ const FeatureGroup = ( {
 					allJetpackFeatures={ allJetpackFeatures }
 					visibleGridPlans={ visibleGridPlans }
 					planFeatureFootnotes={ planFeatureFootnotes }
-					isStorageFeature={ true }
+					isStorageFeature
 					isHighlighted={ false }
 					intervalType={ intervalType }
 					activeTooltipId={ activeTooltipId }
@@ -976,9 +917,7 @@ const FeatureGroup = ( {
 const ComparisonGrid = ( {
 	intervalType,
 	isInSignup,
-	isLaunchPage,
 	currentSitePlanSlug,
-	onUpgradeClick,
 	planActionOverrides,
 	selectedPlan,
 	selectedFeature,
@@ -987,26 +926,10 @@ const ComparisonGrid = ( {
 	onStorageAddOnClick,
 	showRefundPeriod,
 	planTypeSelectorProps,
-	planUpgradeCreditsApplicable,
 	gridSize,
 }: ComparisonGridProps ) => {
-	const { gridPlans, selectedSiteId } = usePlansGridContext();
+	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
-
-	// Check to see if we have at least one Woo Express plan we're comparing.
-	const hasWooExpressFeatures = useMemo( () => {
-		const wooExpressPlans = gridPlans.filter(
-			( { planSlug, isVisible } ) => isVisible && isWooExpressPlan( planSlug )
-		);
-
-		return wooExpressPlans.length > 0;
-	}, [ gridPlans ] );
-
-	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
-	const featureGroupMap = hasWooExpressFeatures
-		? getWooExpressFeaturesGrouped()
-		: getPlanFeaturesGrouped();
-
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
 	const displayedGridPlans = useMemo( () => {
@@ -1014,28 +937,44 @@ const ComparisonGrid = ( {
 	}, [ gridPlans, currentSitePlanSlug, gridSize ] );
 
 	useEffect( () => {
-		let newVisiblePlans = displayedGridPlans.map( ( { planSlug } ) => planSlug );
-		let visibleLength = newVisiblePlans.length;
+		setVisiblePlans( ( prev ) => {
+			let visibleLength = displayedGridPlans.length;
+			switch ( gridSize ) {
+				case 'large':
+					visibleLength = 4;
+					break;
+				case 'medium':
+					visibleLength = 3;
+					break;
+				case 'smedium':
+				case 'small':
+					visibleLength = 2;
+					break;
+			}
 
-		switch ( gridSize ) {
-			case 'large':
-				visibleLength = 4;
-				break;
-			case 'medium':
-				visibleLength = 3;
-				break;
-			case 'smedium':
-			case 'small':
-				visibleLength = 2;
-				break;
-		}
+			// visible length changed, update with the current gridPlans
+			// - we don't care about previous order
+			if ( prev.length !== visibleLength ) {
+				return displayedGridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
+			}
 
-		if ( newVisiblePlans.length !== visibleLength ) {
-			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
-		}
+			// prev state out of sync with current gridPlans (e.g. gridPlans updated to a different term)
+			// - we care about previous order
+			const isPrevStale = prev.some( ( planSlug ) => ! gridPlansIndex[ planSlug ] );
+			if ( isPrevStale ) {
+				return prev.map( ( planSlug ) => {
+					const gridPlan = displayedGridPlans.find(
+						( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
+					);
 
-		setVisiblePlans( newVisiblePlans );
-	}, [ gridSize, displayedGridPlans, isInSignup ] );
+					return gridPlan?.planSlug ?? planSlug;
+				} );
+			}
+
+			// nothing to update
+			return prev;
+		} );
+	}, [ gridSize, displayedGridPlans, gridPlansIndex ] );
 
 	const visibleGridPlans = useMemo(
 		() =>
@@ -1101,19 +1040,13 @@ const ComparisonGrid = ( {
 	// 100px is the padding of the footer row
 	const [ bottomHeaderRef, isBottomHeaderInView ] = useInView( { rootMargin: '-100px' } );
 
-	const handleUpgradeClick = useUpgradeClickHandler( {
-		gridPlans,
-		onUpgradeClick,
-		selectedSiteId: selectedSiteId,
-	} );
-
 	/**
 	 * Search for "any" plan with a highlight label, not just the visible ones.
 	 * This will keep the grid static while user interacts (selects different plans to compare).
 	 * Some padding is applied in the stylesheet to cover the badges/labels.
 	 */
 	const hasHighlightedPlan = gridPlans.some( ( { highlightLabel } ) => !! highlightLabel );
-	const classes = classNames( 'plans-grid-next-comparison-grid', {
+	const classes = clsx( 'plans-grid-next-comparison-grid', {
 		'has-highlighted-plan': hasHighlightedPlan,
 	} );
 
@@ -1131,16 +1064,13 @@ const ComparisonGrid = ( {
 							displayedGridPlans={ displayedGridPlans }
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
-							onUpgradeClick={ handleUpgradeClick }
 							planActionOverrides={ planActionOverrides }
 							selectedPlan={ selectedPlan }
 							showRefundPeriod={ showRefundPeriod }
 							isStuck={ isStuck }
 							planTypeSelectorProps={ planTypeSelectorProps }
-							planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						/>
 					) }
 				</StickyContainer>
@@ -1163,19 +1093,16 @@ const ComparisonGrid = ( {
 					displayedGridPlans={ displayedGridPlans }
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
-					isFooter={ true }
+					isFooter
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					onUpgradeClick={ handleUpgradeClick }
 					planActionOverrides={ planActionOverrides }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }
 					isStuck={ false }
-					isHiddenInMobile={ true }
+					isHiddenInMobile
 					ref={ bottomHeaderRef }
 					planTypeSelectorProps={ planTypeSelectorProps }
-					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 				/>
 			</Grid>
 
@@ -1194,4 +1121,86 @@ const ComparisonGrid = ( {
 	);
 };
 
-export default ComparisonGrid;
+// TODO
+// Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
+// More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
+const WrappedComparisonGrid = ( {
+	siteId,
+	intent,
+	gridPlans,
+	useCheckPlanAvailabilityForPurchase,
+	useAction,
+	recordTracksEvent,
+	allFeaturesList,
+	intervalType,
+	isInSignup,
+	currentSitePlanSlug,
+	selectedPlan,
+	selectedFeature,
+	showUpgradeableStorage,
+	onStorageAddOnClick,
+	stickyRowOffset,
+	coupon,
+	className,
+	hideUnsupportedFeatures,
+	enableFeatureTooltips,
+	featureGroupMap,
+	...otherProps
+}: ComparisonGridExternalProps ) => {
+	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+
+	// TODO: this will be deprecated along side removing the wrapper component
+	const gridSize = useGridSize( {
+		containerRef: gridContainerRef,
+		containerBreakpoints: new Map( [
+			[ 'small', 0 ],
+			[ 'smedium', 686 ],
+			[ 'medium', 835 ], // enough to fit Enterpreneur plan. was 686
+			[ 'large', 1005 ], // enough to fit Enterpreneur plan. was 870
+			[ 'xlarge', 1180 ],
+		] ),
+	} );
+
+	const classNames = clsx( 'plans-grid-next', className, {
+		'is-small': 'small' === gridSize,
+		'is-smedium': 'smedium' === gridSize,
+		'is-medium': 'medium' === gridSize,
+		'is-large': 'large' === gridSize,
+		'is-xlarge': 'xlarge' === gridSize,
+		'is-visible': true,
+	} );
+
+	return (
+		<div ref={ gridContainerRef } className={ classNames }>
+			<PlansGridContextProvider
+				intent={ intent }
+				siteId={ siteId }
+				gridPlans={ gridPlans }
+				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useAction={ useAction }
+				recordTracksEvent={ recordTracksEvent }
+				allFeaturesList={ allFeaturesList }
+				coupon={ coupon }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				featureGroupMap={ featureGroupMap }
+				hideUnsupportedFeatures={ hideUnsupportedFeatures }
+			>
+				<ComparisonGrid
+					intervalType={ intervalType }
+					isInSignup={ isInSignup }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					siteId={ siteId }
+					selectedPlan={ selectedPlan }
+					selectedFeature={ selectedFeature }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					stickyRowOffset={ stickyRowOffset }
+					onStorageAddOnClick={ onStorageAddOnClick }
+					gridSize={ gridSize ?? undefined }
+					{ ...otherProps }
+				/>
+			</PlansGridContextProvider>
+		</div>
+	);
+};
+
+export default WrappedComparisonGrid;

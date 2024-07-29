@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 
 /**
@@ -46,12 +45,12 @@ export const TRACKING_IDS = {
 	facebookInit: '823166884443641',
 	facebookJetpackInit: '919484458159593',
 	facebookAkismetInit: '485349158311379',
+	logRocket: 'fsw5w8/jetpack-logrocket-trial',
 	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
 	pinterestInit: '2613194105266',
 	quantcast: 'p-3Ma3jHaQMB_bS',
 	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 	twitterPixelId: 'nvzbs',
-	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ), // google_analytics_key is only used in wpcom env
 	wpcomFloodlightGtag: 'DC-6355556',
 	wpcomGoogleAdsGtag: 'AW-946162814',
 	wpcomGoogleAdsGtagSignupStart: 'AW-946162814/baDICKzQiq4BEP6YlcMD', // "WordPress.com Signup Start"
@@ -62,13 +61,12 @@ export const TRACKING_IDS = {
 	wpcomGoogleAdsGtagDomainTransferPurchase: 'AW-946162814/8T2PCL3d7rsYEP6YlcMD',
 	wpcomGoogleGA4Gtag: 'G-1H4VG5F5JF',
 	jetpackGoogleTagManagerId: 'GTM-MWWK6WM',
-	jetpackGoogleAnalyticsGtag: 'UA-52447-43', // Jetpack Gtag (Analytics) for use in Jetpack x WordPress.com Flows
 	jetpackGoogleGA4Gtag: 'G-K8CRH0LL00',
 	jetpackGoogleAdsGtagPurchase: 'AW-946162814/kIF1CL3ApfsBEP6YlcMD',
 	akismetGoogleGA4Gtag: 'G-V8X5PZE9F8',
 	akismetGoogleTagManagerId: 'GTM-NLFBXG5',
-	akismetGoogleAnalyticsGtag: 'UA-19309600-2', // Akismet Gtag (Analytics) for use in Akismet x WordPress.com Flows
 	akismetGoogleAdsGtagPurchase: 'AW-10778599042/U-01CImL14MDEIK90ZMo', // "Akismet.com Purchase Gtag"
+	a8cForAgenciesGA4Gtag: 'G-8V8PCRJ142',
 	jetpackLinkedinId: '4537722',
 	jetpackTwitterPixelId: 'odlje',
 	wooGoogleTagManagerId: 'GTM-W64W8Q',

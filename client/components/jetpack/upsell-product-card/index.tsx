@@ -4,19 +4,24 @@ import {
 	isJetpackBackupSlug,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
+	isJetpackSocialSlug,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo, useState } from 'react';
+import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
 import ScanImage from 'calypso/assets/images/jetpack/rna-image-scan.png';
 import SearchImage from 'calypso/assets/images/jetpack/rna-image-search.png';
+import SocialImage from 'calypso/assets/images/jetpack/rna-image-social.png';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import QueryJetpackPartnerKey from 'calypso/components/data/query-jetpack-partner-portal-partner-key';
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
 import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/single-site-upsell-lightbox';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import productAboveButtonText from 'calypso/my-sites/plans/jetpack-plans/product-card/product-above-button-text';
 import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
@@ -64,6 +69,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	const siteProduct: SiteProduct | undefined = useSelector( ( state ) =>
 		getSiteAvailableProduct( state, siteId, item.productSlug )
 	);
+	const isA4AEnabled = isA8CForAgencies();
 
 	let aboveButtonText: TranslateResult | null;
 	let billingTerm: Duration;
@@ -101,8 +107,14 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 			currencyCode = manageProduct.currency;
 			originalPrice = parseFloat( manageProduct.amount );
 			onCtaButtonClickInternal = () => {
-				setShowLightbox( true );
 				onCtaButtonClick();
+				if ( isA4AEnabled ) {
+					page.redirect(
+						`${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }`
+					);
+					return;
+				}
+				setShowLightbox( true );
 			};
 		}
 	} else {
@@ -171,6 +183,9 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		if ( isJetpackSearchSlug( nonManageProductSlug ) ) {
 			return SearchImage;
 		}
+		if ( isJetpackSocialSlug( nonManageProductSlug ) ) {
+			return SocialImage;
+		}
 		return DefaultImage;
 	}, [ nonManageProductSlug ] );
 
@@ -189,7 +204,13 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 							</li>
 						) ) }
 				</ul>
-				{ hasJetpackPartnerAccess && <b>{ translate( 'Price per Jetpack Manage license:' ) }</b> }
+				{ hasJetpackPartnerAccess && (
+					<b>
+						{ isA4AEnabled
+							? translate( 'Price per license:' )
+							: translate( 'Price per Jetpack Manage license:' ) }
+					</b>
+				) }
 				<div className="upsell-product-card__price-container">
 					<DisplayPrice
 						isFree={ ! isFetchingPrices && originalPrice === 0 }
@@ -216,7 +237,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 						onClose={ () => setShowLightbox( false ) }
 						nonManageProductSlug={ nonManageProductSlug }
 						nonManageProductPrice={ nonManageProductPrice }
-						partnerCanIssueLicense={ true }
+						partnerCanIssueLicense
 						siteId={ siteId }
 					/>
 				) }
@@ -269,7 +290,7 @@ export const UpsellProductCardPlaceholder: React.FC = () => {
 
 			<div className="upsell-product-card__price-container">
 				<DisplayPrice
-					pricesAreFetching={ true }
+					pricesAreFetching
 					billingTerm={ TERM_ANNUALLY }
 					productName="Placeholder product"
 				/>

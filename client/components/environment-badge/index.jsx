@@ -24,6 +24,10 @@ export function AuthHelper() {
 	return <div className="environment is-auth" />;
 }
 
+export function StoreSandboxHelper() {
+	return <div className="environment is-store-sandbox" />;
+}
+
 export function Branch( { branchName, commitChecksum } ) {
 	return branchName === 'trunk' ? null : (
 		<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>

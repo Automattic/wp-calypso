@@ -25,14 +25,17 @@ class Example extends Component {
 				) ) }
 			</TableRow>
 		);
+		// eslint-disable-next-line jsx-a11y/anchor-is-valid
 		const link = <a href="#">An internal Link!</a>;
 		const externalLink = (
+			// eslint-disable-next-line jsx-a11y/anchor-is-valid
 			<a href="#">
 				<Gridicon icon="external" size={ 18 } />
 			</a>
 		);
 		const placeholder = '';
 		const values = [
+			// eslint-disable-next-line jsx-a11y/anchor-is-valid
 			[ 'one', placeholder, <a href="#">222</a>, 45 ],
 			[ 'really really really really really really long name', placeholder, 55, 777 ],
 			[ 'three', externalLink, <div>9</div>, 45 ],

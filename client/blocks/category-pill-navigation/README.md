@@ -5,8 +5,8 @@ This component can be used to display a set of categories or tags as pills in an
 ## How to use
 
 ```js
-import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import { Icon, starEmpty as iconStar, category as iconCategory } from '@wordpress/icons';
+import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 
 function render() {
 	return (
@@ -19,11 +19,13 @@ function render() {
 			selectedCategory="category-2"
 			buttons={ [
 				{
+					id: 'discover',
 					icon: <Icon icon={ iconStar } size={ 30 } />,
 					label: 'Discover',
 					link: '/',
 				},
 				{
+					id: 'all',
 					icon: <Icon icon={ iconCategory } size={ 26 } />,
 					label: 'All categories',
 					link: '/',
@@ -60,6 +62,7 @@ This property should match the `id` of one of the items in the `categories` arra
 An optional array of additional link objects to prepend to the main list of links:
 ```
 {
+	id: string; // The identifier of the button, typically used for click tracking
 	icon: string; // The icon displayed before the label
 	label: string; // The text displayed on the link
 	link: string; // The URL that the link points to

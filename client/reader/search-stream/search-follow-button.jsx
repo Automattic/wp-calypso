@@ -62,7 +62,7 @@ class SearchFollowButton extends Component {
 		// If we find a feed then set the feed object
 		let feed;
 		if ( resemblesUrl( query ) ) {
-			feed = feeds?.find( ( f ) => f.feed_URL.includes( urlToDomainAndPath( query ) ) );
+			feed = feeds?.find( ( f ) => f?.feed_URL?.includes( urlToDomainAndPath( query ) ) );
 		}
 
 		// If no feed found, then don't show the follow button

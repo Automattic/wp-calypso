@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { SelectDropdown } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { keys } from 'lodash';
 import { Component } from 'react';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
@@ -103,7 +103,7 @@ export default class DesignAssets extends Component {
 	}
 
 	render() {
-		const className = classnames( 'devdocs', 'devdocs__components', {
+		const className = clsx( 'devdocs', 'devdocs__components', {
 			'is-single': true,
 			'is-list': ! this.props.component,
 		} );

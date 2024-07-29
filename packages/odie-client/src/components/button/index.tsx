@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { PropsWithChildren, MouseEvent, forwardRef } from 'react';
 
 import './style.scss';
@@ -14,7 +14,7 @@ type ButtonProps = {
 
 const Button = forwardRef< HTMLButtonElement, ButtonProps >(
 	( { compact, borderless, onClick, className: externalClassName, children, disabled }, ref ) => {
-		const className = classNames( 'odie-button-default', externalClassName, {
+		const className = clsx( 'odie-button-default', externalClassName, {
 			'odie-button-compact': compact,
 			'odie-button-borderless': borderless,
 		} );

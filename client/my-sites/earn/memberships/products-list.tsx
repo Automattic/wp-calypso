@@ -15,7 +15,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { useDispatch, useSelector } from 'calypso/state';
-import { bumpStat } from 'calypso/state/analytics/actions';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -85,6 +85,11 @@ function ProductsList() {
 		);
 	}
 
+	function onAddNewPaymentPlanButtonClick() {
+		dispatch( recordTracksEvent( 'calypso_memberships_add_payment_plan_click' ) );
+		openAddEditDialog();
+	}
+
 	function openAddEditDialog( productId?: number ) {
 		if ( productId ) {
 			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
@@ -147,7 +152,7 @@ function ProductsList() {
 				<UpsellNudge
 					title={ translate( 'Upgrade to modify payment plans or add new plans' ) }
 					href={ '/plans/' + site?.slug }
-					showIcon={ true }
+					showIcon
 					onClick={ () => trackUpgrade() }
 					// This could be any stripe payment features (see `hasStripeFeature`) but UpsellNudge only
 					// supports 1. They're all available on the same plans anyway, so practically it's ok to pick 1.
@@ -160,7 +165,7 @@ function ProductsList() {
 
 			{ hasLoadedFeatures && hasStripeFeature && (
 				<SectionHeader label={ translate( 'Manage plans' ) }>
-					<Button primary compact onClick={ () => openAddEditDialog() }>
+					<Button primary compact onClick={ onAddNewPaymentPlanButtonClick }>
 						{ translate( 'Add a new payment plan' ) }
 					</Button>
 				</SectionHeader>

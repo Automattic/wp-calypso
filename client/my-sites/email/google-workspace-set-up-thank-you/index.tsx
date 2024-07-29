@@ -5,6 +5,7 @@ import {
 import { CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { ThankYouGoogleWorkspaceProduct } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/products/google-workspace-product';
 import { useSelector } from 'calypso/state';
@@ -16,6 +17,8 @@ type GoogleWorkspaceSetUpThankYouProps = {
 	purchase: ReceiptPurchase;
 };
 
+const GOOGLE_WORKSPACE_SUPPORT_DOC_ID = 92531;
+
 export const GoogleWorkspaceSetUpThankYou = ( { purchase }: GoogleWorkspaceSetUpThankYouProps ) => {
 	const domainName = purchase.meta;
 	const productFamily = getGoogleMailServiceFamily( purchase?.productSlug );
@@ -25,20 +28,22 @@ export const GoogleWorkspaceSetUpThankYou = ( { purchase }: GoogleWorkspaceSetUp
 
 	const footerDetails = [
 		{
-			key: 'footer-extra-info',
-			title: translate( 'Everything you need to know' ),
-			description: translate( 'Explore our support guides and find an answer to every question.' ),
-			buttonText: translate( 'Explore support resources' ),
-			buttonHref: '/support/',
-		},
-		{
 			key: 'footer-email',
 			title: translate( 'Email questions? We have the answers' ),
 			description: translate(
 				'Explore our comprehensive support guides and find solutions to all your email-related questions.'
 			),
 			buttonText: translate( 'Email support resources' ),
-			buttonHref: '/support/add-email/adding-google-workspace-to-your-site/',
+			supportDoc: {
+				url: '/support/add-email/adding-google-workspace-to-your-site/',
+				id: GOOGLE_WORKSPACE_SUPPORT_DOC_ID,
+			},
+			buttonOnClick: () => {
+				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
+					context: 'google-workspace',
+					type: 'google-workspace-support',
+				} );
+			},
 		},
 	];
 

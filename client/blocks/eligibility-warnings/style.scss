@@ -12,7 +12,7 @@
 		display: flex;
 		justify-content: space-between;
 
-		@media ( max-width: 660px ) {
+		@media (max-width: 660px) {
 			display: block;
 
 			.button {
@@ -176,6 +176,7 @@
 
 .eligibility-warnings__action a,
 .eligibility-warnings__hold-action a {
+	text-wrap: nowrap;
 	.gridicons-help-outline {
 		color: var(--color-neutral-light);
 	}
@@ -235,7 +236,7 @@
 	margin: 0 24px;
 	border-radius: 4px;
 
-	@media ( max-width: 480px ) {
+	@media (max-width: 480px) {
 		margin: 0 16px;
 	}
 

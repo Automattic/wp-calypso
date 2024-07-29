@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { isEmpty, map } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -15,7 +15,7 @@ const renderOperation = ( operation, operationIndex, splitLines ) => {
 	const { orig, final, value, op } = operation;
 	const content = orig || final || value;
 
-	const classnames = classNames( {
+	const classnames = clsx( {
 		'text-diff__additions': op === 'add',
 		'text-diff__context': op === 'copy',
 		'text-diff__deletions': op === 'del',

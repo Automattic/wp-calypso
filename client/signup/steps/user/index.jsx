@@ -4,7 +4,7 @@ import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { WPCC } from '@automattic/urls';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -15,10 +15,10 @@ import SignupForm from 'calypso/blocks/signup-form';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
-import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isA4AOAuth2Client,
+	isBlazeProOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -40,12 +40,15 @@ import {
 import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { loginSocialUser } from 'calypso/state/login/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
+import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
@@ -144,21 +147,12 @@ export class UserStep extends Component {
 		recaptchaClientId: null,
 	};
 
-	componentDidUpdate() {
-		if ( this.props.step?.status === 'completed' ) {
+	componentDidUpdate( prevProps ) {
+		if (
+			prevProps.step?.status !== this.props.step?.status &&
+			this.props.step?.status === 'completed'
+		) {
 			this.props.goToNextStep();
-			return;
-		}
-
-		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
-			// It looks like the user just completed the User Registartion Step
-			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
-			const url = new URL( window.location );
-			const searchParams = url.searchParams;
-			searchParams.set( 'user_completed', true );
-			url.search = searchParams.toString();
-			// Redirect to itself and append ?user_completed
-			window.location.replace( url.toString() );
 		}
 	}
 
@@ -206,6 +200,7 @@ export class UserStep extends Component {
 			userLoggedIn,
 			wccomFrom,
 			isReskinned,
+			isOnboardingAffiliateFlow,
 		} = this.props;
 
 		let subHeaderText = this.props.subHeaderText;
@@ -273,6 +268,8 @@ export class UserStep extends Component {
 						},
 					}
 				);
+			} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+				subHeaderText = translate( 'Create your new Blaze Pro account.' );
 			} else {
 				subHeaderText = translate(
 					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
@@ -326,6 +323,12 @@ export class UserStep extends Component {
 					);
 				}
 			}
+		}
+
+		if ( isOnboardingAffiliateFlow ) {
+			subHeaderText = translate(
+				"Thanks for stopping by! You're a few steps away from building your perfect website. Let's do this."
+			);
 		}
 
 		if ( this.props.userLoggedIn ) {
@@ -447,21 +450,26 @@ export class UserStep extends Component {
 			query.redirect_to = window.sessionStorage.getItem( 'signup_redirect_to' );
 			window.sessionStorage.removeItem( 'signup_redirect_to' );
 		}
-		this.submit( {
-			service,
-			access_token,
-			id_token,
-			userData,
-			queryArgs: query,
+
+		const socialInfo = {
+			service: service,
+			access_token: access_token,
+			id_token: id_token,
+		};
+
+		this.props.loginSocialUser( socialInfo, '' ).finally( () => {
+			this.submit( {
+				service,
+				access_token,
+				id_token,
+				userData,
+				queryArgs: query,
+			} );
 		} );
 	};
 
 	userCreationComplete() {
 		return this.props.step && 'completed' === this.props.step.status;
-	}
-
-	userCreationCompletedAndHasHistory( props ) {
-		return 'completed' === props.step?.status && detectHistoryNavigation.loadedViaHistory();
 	}
 
 	userCreationPending() {
@@ -481,9 +489,13 @@ export class UserStep extends Component {
 			wccomFrom,
 			isSocialFirst,
 			userLoggedIn,
+			isBlazePro,
 		} = this.props;
 
 		if ( userLoggedIn ) {
+			if ( isBlazePro ) {
+				return translate( 'Log in to your Blaze Pro account' );
+			}
 			return translate( 'Is this you?' );
 		}
 
@@ -497,7 +509,7 @@ export class UserStep extends Component {
 			}
 
 			return (
-				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
+				<div className={ clsx( 'signup-form__woo-wrapper' ) }>
 					<h3>{ translate( 'Create an account' ) }</h3>
 				</div>
 			);
@@ -505,7 +517,7 @@ export class UserStep extends Component {
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 			return (
-				<div className={ classNames( 'signup-form__wrapper' ) }>
+				<div className={ clsx( 'signup-form__wrapper' ) }>
 					<JetpackLogo full={ false } size={ 60 } />
 					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
 				</div>
@@ -514,13 +526,21 @@ export class UserStep extends Component {
 
 		if ( isA4AOAuth2Client( oauth2Client ) ) {
 			return (
-				<div className={ classNames( 'signup-form__wrapper' ) }>
+				<div className={ clsx( 'signup-form__wrapper' ) }>
 					<A4ALogo size={ 60 } />
 					<h3>
 						{ translate( 'Sign up to Automattic for Agencies with a WordPress.com account.' ) }
 					</h3>
 				</div>
 			);
+		}
+
+		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+			return translate( 'Welcome to %(clientTitle)s', {
+				args: { clientTitle: oauth2Client.title },
+				comment:
+					"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
+			} );
 		}
 
 		if ( flowName === 'wpcc' && oauth2Client ) {
@@ -562,10 +582,6 @@ export class UserStep extends Component {
 			return translate( 'Creating Your Account…' );
 		}
 
-		if ( this.userCreationComplete() ) {
-			return translate( 'Account created - Go to next step' );
-		}
-
 		return translate( 'Create your account' );
 	}
 
@@ -584,6 +600,10 @@ export class UserStep extends Component {
 			isSocialSignupEnabled = true;
 		}
 
+		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+			isSocialSignupEnabled = false;
+		}
+
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
 		if ( isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
 			const clientId = hashObject.client_id;
@@ -592,11 +612,11 @@ export class UserStep extends Component {
 				socialServiceResponse = hashObject;
 			}
 		}
-
 		return (
 			<>
 				<SignupForm
 					{ ...omit( this.props, [ 'translate' ] ) }
+					step={ this.props.step }
 					email={ this.props.queryObject?.email_address || '' }
 					redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
 					disabled={ this.userCreationStarted() }
@@ -614,7 +634,9 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
-					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
+					shouldDisplayUserExistsError={
+						! isWooOAuth2Client( oauth2Client ) && ! isBlazeProOAuth2Client( oauth2Client )
+					}
 					isSocialFirst={ this.props.isSocialFirst }
 					labelText={ this.props.isWooPasswordless ? this.props.translate( 'Your email' ) : null }
 				/>
@@ -709,6 +731,10 @@ export class UserStep extends Component {
 	}
 
 	render() {
+		if ( this.userCreationComplete() ) {
+			return null; // return nothing so that we don't see the completed signup form flash.
+		}
+
 		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
 		}
@@ -719,10 +745,6 @@ export class UserStep extends Component {
 
 		if ( isGravatarOAuth2Client( this.props.oauth2Client ) && ! this.props.userLoggedIn ) {
 			return this.renderGravatarSignupStep();
-		}
-
-		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
-			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
 		// TODO: decouple hideBack flag from the flow name.
@@ -748,9 +770,11 @@ const ConnectedUser = connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
-			isWooPasswordless: !! getWooPasswordless( state ),
+			isWooPasswordless: getIsWooPasswordless( state ),
+			isBlazePro: getIsBlazePro( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
+			isOnboardingAffiliateFlow: getIsOnboardingAffiliateFlow( state ),
 		};
 	},
 	{
@@ -759,6 +783,7 @@ const ConnectedUser = connect(
 		fetchOAuth2ClientData,
 		saveSignupStep,
 		submitSignupStep,
+		loginSocialUser,
 	}
 )( localize( UserStep ) );
 

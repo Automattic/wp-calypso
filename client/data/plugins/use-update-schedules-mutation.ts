@@ -1,8 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import type { ScheduleUpdates } from './use-update-schedules-query';
-import type { SiteSlug } from 'calypso/types';
+import type {
+	MultisiteSchedulesUpdatesResponse,
+	ScheduleUpdates,
+} from './use-update-schedules-query';
+import type { SiteId, SiteSlug } from 'calypso/types';
 
 export type CreateRequestParams = {
 	plugins: string[];
@@ -49,6 +52,72 @@ export function useCreateUpdateScheduleMutation( siteSlug: SiteSlug, queryOption
 		onSettled: () =>
 			// Re-fetch after error or success
 			queryClient.invalidateQueries( { queryKey: [ 'schedule-updates', siteSlug ] } ),
+		...queryOptions,
+	} );
+
+	const { mutate } = mutation;
+	const createUpdateSchedule = useCallback(
+		( params: CreateRequestParams ) => mutate( params ),
+		[ mutate ]
+	);
+
+	return { createUpdateSchedule, ...mutation };
+}
+
+export function useBatchCreateUpdateScheduleMutation(
+	siteSlugs: SiteSlug[],
+	siteIds: SiteId[] = [],
+	queryOptions = {}
+) {
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation( {
+		mutationKey: [ 'batch-create-update-schedule', ...siteSlugs ],
+		mutationFn: async ( params: object ) => {
+			const results: { siteSlug: string; response?: unknown; error?: unknown }[] =
+				await Promise.all(
+					siteSlugs.map( async ( siteSlug ) => {
+						try {
+							const response = await wpcomRequest( {
+								path: `/sites/${ siteSlug }/update-schedules`,
+								apiNamespace: 'wpcom/v2',
+								method: 'POST',
+								body: params,
+							} );
+							return { siteSlug, response };
+						} catch ( error ) {
+							return { siteSlug, error };
+						}
+					} )
+				);
+
+			return results;
+		},
+		onMutate: ( params: CreateRequestParams ) => {
+			const prevSiteSchedules = queryClient.getQueryData( [
+				'multisite-schedules-update',
+			] ) as MultisiteSchedulesUpdatesResponse;
+			const nextSiteSchedules = JSON.parse( JSON.stringify( prevSiteSchedules || {} ) ); // deep copy
+
+			siteIds.forEach( ( siteId ) => {
+				nextSiteSchedules.sites[ siteId ] = nextSiteSchedules.sites[ siteId ] || {};
+				nextSiteSchedules.sites[ siteId ][ 'temp-id' ] = {
+					args: params.plugins,
+					last_run_status: null,
+					last_run_timestamp: null,
+					timestamp: params.schedule.timestamp,
+					schedule: params.schedule.interval,
+					interval: params.schedule.timestamp,
+				};
+			} );
+
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], nextSiteSchedules );
+
+			return { prevSiteSchedules };
+		},
+		onError: ( err, params, context ) =>
+			// Set previous value on error
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], context?.prevSiteSchedules ),
 		...queryOptions,
 	} );
 
@@ -118,6 +187,52 @@ export function useEditUpdateScheduleMutation( siteSlug: SiteSlug, queryOptions 
 	return { editUpdateSchedule, ...mutation };
 }
 
+export function useBatchEditUpdateScheduleMutation( siteSlugs: SiteSlug[], queryOptions = {} ) {
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation( {
+		mutationKey: [ 'batch-edit-update-schedule', ...siteSlugs ],
+		mutationFn: async ( obj: { id: string; params: object } ) => {
+			const { id, params } = obj;
+
+			const results: { siteSlug: string; response?: unknown; error?: unknown }[] =
+				await Promise.all(
+					siteSlugs.map( async ( siteSlug ) => {
+						try {
+							const response = await wpcomRequest( {
+								path: `/sites/${ siteSlug }/update-schedules/${ id }`,
+								apiNamespace: 'wpcom/v2',
+								method: 'PUT',
+								body: params,
+							} );
+							return { siteSlug, response };
+						} catch ( error ) {
+							return { siteSlug, error };
+						}
+					} )
+				);
+
+			return results;
+		},
+		onSettled: () => {
+			queryClient.removeQueries( { queryKey: [ 'multisite-schedules-update' ] } );
+
+			siteSlugs.forEach( ( siteSlug ) => {
+				queryClient.removeQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
+			} );
+		},
+		...queryOptions,
+	} );
+
+	const { mutate } = mutation;
+	const editUpdateSchedule = useCallback(
+		( id: string, params: object ) => mutate( { id, params } ),
+		[ mutate ]
+	);
+
+	return { editUpdateSchedule, ...mutation };
+}
+
 export function useDeleteUpdateScheduleMutation( siteSlug: SiteSlug, queryOptions = {} ) {
 	const queryClient = useQueryClient();
 
@@ -134,6 +249,60 @@ export function useDeleteUpdateScheduleMutation( siteSlug: SiteSlug, queryOption
 				queryClient.getQueryData( [ 'schedule-updates', siteSlug ] ) || [];
 			const schedules = prevSchedules.filter( ( x ) => x.id !== id );
 			queryClient.setQueryData( [ 'schedule-updates', siteSlug ], schedules );
+		},
+		...queryOptions,
+	} );
+
+	const { mutate } = mutation;
+	const deleteUpdateSchedule = useCallback( ( id: string ) => mutate( id ), [ mutate ] );
+
+	return { deleteUpdateSchedule, ...mutation };
+}
+
+export function useBatchDeleteUpdateScheduleMutation(
+	siteSlugs: SiteSlug[],
+	siteIds: SiteId[] = [],
+	queryOptions = {}
+) {
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation( {
+		mutationFn: async ( id: string ) => {
+			const results: { siteSlug: string; response?: unknown; error?: unknown }[] =
+				await Promise.all(
+					siteSlugs.map( async ( siteSlug ) => {
+						try {
+							const response = await wpcomRequest( {
+								path: `/sites/${ siteSlug }/update-schedules/${ id }`,
+								apiNamespace: 'wpcom/v2',
+								method: 'DELETE',
+							} );
+							return { siteSlug, response };
+						} catch ( error ) {
+							return { siteSlug, error };
+						}
+					} )
+				);
+
+			return results;
+		},
+		onMutate: ( id: string ) => {
+			// Optimistically update the cache
+			const data = queryClient.getQueryData( [
+				'multisite-schedules-update',
+			] ) as MultisiteSchedulesUpdatesResponse;
+			const prevSiteSchedules = JSON.parse( JSON.stringify( data || {} ) ); // deep copy
+			const sites = prevSiteSchedules?.sites || [];
+			siteIds.forEach( ( siteId ) => sites[ siteId ] && delete sites[ siteId ][ id ] );
+
+			const newSiteSchedules = { sites };
+
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], newSiteSchedules );
+			return { prevSiteSchedules };
+		},
+		onError: ( err, id, context ) => {
+			// Set previous value on error
+			queryClient.setQueryData( [ 'multisite-schedules-update' ], context?.prevSiteSchedules );
 		},
 		...queryOptions,
 	} );

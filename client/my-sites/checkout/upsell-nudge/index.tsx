@@ -1,22 +1,22 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	isMonthly,
 	getPlanByPathSlug,
 	TERM_MONTHLY,
-	Product,
 	isPlan,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
+import { Plans, ProductsList } from '@automattic/data-stores';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 import { isURL } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize, useTranslate } from 'i18n-calypso';
-import { pick } from 'lodash';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -27,29 +27,18 @@ import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url
 import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 	persistSignupDestination,
 } from 'calypso/signup/storageUtils';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import {
-	getProductsList,
-	getProductDisplayCost,
-	getProductBySlug,
-	isProductsListFetching,
-} from 'calypso/state/products-list/selectors';
-import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
+import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
-import {
-	isRequestingSitePlans,
-	getPlansBySiteId,
-	getSitePlanRawPrice,
-	getPlanDiscountedRawPrice,
-} from 'calypso/state/sites/plans/selectors';
-import { getSitePlan, getSiteSlug } from 'calypso/state/sites/selectors';
+import { isRequestingSitePlans, getPlansBySiteId } from 'calypso/state/sites/plans/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PurchaseModal from '../purchase-modal';
 import {
@@ -59,8 +48,6 @@ import {
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
 import type { WithShoppingCartProps, MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { IAppState } from 'calypso/state/types';
-
 import './style.scss';
 
 const debug = debugFactory( 'calypso:upsell-nudge' );
@@ -84,20 +71,17 @@ export interface UpsellNudgeManualProps {
 
 // Below are provided by HOCs
 export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
-	currencyCode: string | null;
+	currencyCode: string | undefined;
 	isLoading?: boolean;
 	hasProductsList?: boolean;
 	hasSitePlans?: boolean;
 	product: MinimalRequestCartProduct | undefined;
-	productDisplayCost?: string | null;
 	planRawPrice?: number | null;
 	planDiscountedRawPrice?: number | null;
 	isLoggedIn?: boolean;
 	siteSlug?: string | null;
-	currentProduct?: Product | Record< string, never >;
 	selectedSiteId: string | number | undefined | null;
 	hasSevenDayRefundPeriod?: boolean;
-	trackUpsellButtonClick: ( key: string ) => void;
 	translate: ReturnType< typeof useTranslate >;
 	currentPlanTerm: string;
 }
@@ -110,6 +94,12 @@ interface UpsellNudgeState {
 	cartItem: MinimalRequestCartProduct | null;
 	showPurchaseModal: boolean;
 }
+
+const trackUpsellButtonClick = ( eventName: string ) => {
+	// Track upsell get started / accept / decline events
+	recordTracksEvent( eventName, { section: 'checkout' } );
+	return;
+};
 
 export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState > {
 	state: UpsellNudgeState = {
@@ -135,7 +125,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				: parseInt( String( selectedSiteId ), 10 );
 		return (
 			<Main
-				className={ classnames( styleClass, {
+				className={ clsx( styleClass, {
 					'is-wide-layout': BUSINESS_PLAN_UPGRADE_UPSELL === upsellType,
 				} ) }
 			>
@@ -231,9 +221,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				);
 
 			case BUSINESS_PLAN_UPGRADE_UPSELL:
-				return isLoading ? (
-					this.renderGenericPlaceholder()
-				) : (
+				return (
 					<BusinessPlanUpgradeUpsell
 						currencyCode={ currencyCode }
 						planRawPrice={ planRawPrice }
@@ -243,6 +231,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+						isLoading={ isLoading }
 					/>
 				);
 			case PROFESSIONAL_EMAIL_UPSELL:
@@ -278,7 +267,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	};
 
 	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
-		const { trackUpsellButtonClick, upsellType } = this.props;
+		const { upsellType } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
 
@@ -309,7 +298,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	};
 
 	handleClickAccept = async ( buttonAction: string ) => {
-		const { siteSlug, trackUpsellButtonClick, upgradeItem, upsellType } = this.props;
+		const { siteSlug, upgradeItem, upsellType } = this.props;
 		debug( 'accept upsell clicked' );
 
 		trackUpsellButtonClick(
@@ -449,11 +438,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	};
 }
 
-const trackUpsellButtonClick = ( eventName: string ) => {
-	// Track upsell get started / accept / decline events
-	return recordTracksEvent( eventName, { section: 'checkout' } );
-};
-
 const getProductSlug = ( upsellType: string, productAlias: string, planTerm: string ) => {
 	switch ( upsellType ) {
 		case BUSINESS_PLAN_UPGRADE_UPSELL:
@@ -469,62 +453,82 @@ const getProductSlug = ( upsellType: string, productAlias: string, planTerm: str
 	}
 };
 
-export default connect(
-	( state: IAppState, props: UpsellNudgeManualProps ) => {
-		const { siteSlugParam, upgradeItem, upsellType } = props;
-		const selectedSiteId = getSelectedSiteId( state );
-		const productsList = getProductsList( state );
-		const sitePlans = getPlansBySiteId( state, undefined ).data;
-		const siteSlug = selectedSiteId ? getSiteSlug( state, selectedSiteId ) : siteSlugParam;
-		const planSlug = getUpgradePlanSlugFromPath(
-			state,
-			selectedSiteId ?? 0,
-			props.upgradeItem ?? ''
-		);
-		const annualDiscountPrice = getPlanDiscountedRawPrice( state, selectedSiteId ?? 0, planSlug, {
-			returnMonthly: false,
-		} );
-		const annualPrice = getSitePlanRawPrice( state, selectedSiteId ?? 0, planSlug, {
-			returnMonthly: false,
-		} );
+const WrappedUpsellNudge = (
+	props: UpsellNudgeManualProps & WithIsEligibleForOneClickCheckoutProps & WithShoppingCartProps
+) => {
+	const { siteSlugParam, upgradeItem, upsellType } = props;
+	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const products = ProductsList.useProducts();
+	const currentPlanTerm = Plans.useCurrentPlanTerm( { siteId: selectedSiteId } );
+	const upsellProductSlug = getProductSlug(
+		upsellType,
+		upgradeItem ?? '',
+		currentPlanTerm ?? TERM_MONTHLY
+	);
+	const upsellProduct =
+		upsellProductSlug && products.data?.[ upsellProductSlug as ProductsList.StoreProductSlug ];
+	const cartProduct =
+		upsellProduct?.productSlug && upsellProduct?.id
+			? createRequestCartProduct( {
+					product_slug: upsellProduct.productSlug,
+					product_id: upsellProduct.id,
+			  } )
+			: undefined;
+	const planSlug = useSelector( ( state ) =>
+		getUpgradePlanSlugFromPath( state, selectedSiteId ?? 0, upgradeItem ?? '' )
+	);
+	const siteSlug =
+		useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) ) ?? siteSlugParam;
 
-		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ?? 0 ) ?? TERM_MONTHLY;
-		const currentSitePlan = getSitePlan( state, selectedSiteId ?? 0 );
-		const currentProduct = getProductBySlug( state, currentSitePlan?.product_slug ?? '' ) || {};
-		const productSlug = getProductSlug( upsellType, upgradeItem ?? '', currentPlanTerm );
-		const productProperties = pick( getProductBySlug( state, productSlug ?? '' ), [
-			'product_slug',
-			'product_id',
-		] );
-		const product =
-			productProperties.product_slug && productProperties.product_id
-				? createRequestCartProduct( {
-						product_slug: productProperties.product_slug,
-						product_id: productProperties.product_id,
-				  } )
-				: undefined;
+	/**
+	 * Redux site-plans replaceable by data-store `Plans.useSitePlans`
+	 *  - Needs confirmation whether consumed later
+	 */
+	const sitePlans = useSelector(
+		( state ) => getPlansBySiteId( state, selectedSiteId ?? undefined ).data // (the beauty of inconsistency / .data)
+	);
+	const isLoadingSitePlans = useSelector( ( state ) =>
+		isRequestingSitePlans( state, selectedSiteId )
+	);
 
-		return {
-			currencyCode: getCurrentUserCurrencyCode( state ),
-			currentPlanTerm,
-			currentProduct,
-			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
-			hasProductsList: Object.keys( productsList ).length > 0,
-			hasSitePlans: sitePlans ? sitePlans.length > 0 : undefined,
-			product,
-			productDisplayCost: getProductDisplayCost( state, productSlug ?? '' ),
-			planRawPrice: annualPrice,
-			planDiscountedRawPrice: annualDiscountPrice,
-			isLoggedIn: isUserLoggedIn( state ),
-			siteSlug,
-			selectedSiteId,
-			hasSevenDayRefundPeriod: isMonthly( planSlug ),
-			productSlug,
-		};
-	},
-	{
-		trackUpsellButtonClick,
-	}
-)(
-	withIsEligibleForOneClickCheckout( withCartKey( withShoppingCart( localize( UpsellNudge ) ) ) )
+	/**
+	 * Redux products-list replaceable by data-store `Products.useProducts`
+	 *  - Needs confirmation whether consumed later
+	 */
+	const productsList = useSelector( getProductsList ); // (the beauty of inconsistency / no .data)
+	const isLoadingProductsList = useSelector( isProductsListFetching );
+
+	const pricing = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ planSlug as PlanSlug ],
+		siteId: selectedSiteId,
+		useCheckPlanAvailabilityForPurchase,
+		coupon: undefined,
+		storageAddOns: null,
+		withProratedDiscounts: true,
+	} );
+
+	return (
+		<UpsellNudge
+			{ ...props }
+			hasSevenDayRefundPeriod={ isMonthly( planSlug ) }
+			currencyCode={ pricing?.[ planSlug ]?.currencyCode }
+			planRawPrice={ pricing?.[ planSlug ]?.originalPrice.full ?? 0 }
+			planDiscountedRawPrice={ pricing?.[ planSlug ]?.discountedPrice.full ?? 0 }
+			isLoading={ ! pricing || products.isLoading || isLoadingProductsList || isLoadingSitePlans }
+			hasSitePlans={ sitePlans ? sitePlans.length > 0 : undefined }
+			hasProductsList={ Object.keys( productsList ).length > 0 }
+			currentPlanTerm={ currentPlanTerm ?? TERM_MONTHLY }
+			product={ cartProduct }
+			isLoggedIn={ isLoggedIn }
+			siteSlug={ siteSlug }
+			selectedSiteId={ selectedSiteId }
+			translate={ translate }
+		/>
+	);
+};
+
+export default withIsEligibleForOneClickCheckout(
+	withCartKey( withShoppingCart( localize( WrappedUpsellNudge ) ) )
 );

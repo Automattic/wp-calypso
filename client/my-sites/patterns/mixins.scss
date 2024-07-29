@@ -5,4 +5,9 @@
 	padding-left: 110px;
 	padding-right: 110px;
 	box-sizing: border-box;
+
+	@media (max-width: $break-wide) {
+		padding-left: 24px;
+		padding-right: 24px;
+	}
 }

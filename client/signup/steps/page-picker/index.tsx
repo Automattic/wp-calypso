@@ -161,7 +161,7 @@ function PageCell( { pageId, popular, required, selectedPages, context, onClick 
 				<div>{ title }</div>
 				{ popular ? <PageCellBadge>{ translate( 'Popular' ) }</PageCellBadge> : null }
 				{ required ? <PageCellBadge>{ translate( 'Required' ) }</PageCellBadge> : null }
-				<InfoPopover showOnHover={ true } position={ isMobile() ? 'left' : 'top left' }>
+				<InfoPopover showOnHover position={ isMobile() ? 'left' : 'top left' }>
 					{ description }
 				</InfoPopover>
 			</CellLabelContainer>
@@ -380,12 +380,14 @@ function OneClickPurchaseModal( {
 	selectedPages,
 	isStoreFlow,
 	flowName,
+	coupon,
 }: {
 	onClose: () => void;
 	siteSlug: SiteSlug;
 	selectedPages: string[];
 	isStoreFlow: boolean;
 	flowName: string;
+	coupon?: string;
 } ) {
 	const translate = useTranslate();
 	const signupDependencies = useSelector( getSignupDependencyStore );
@@ -414,6 +416,7 @@ function OneClickPurchaseModal( {
 				<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
 					<PurchaseModal
 						productToAdd={ product }
+						coupon={ coupon }
 						onClose={ onClose }
 						showFeatureList={ false }
 						siteSlug={ siteSlug }
@@ -428,7 +431,12 @@ function DIFMPagePicker( props: StepProps ) {
 	const {
 		stepName,
 		goToNextStep,
-		signupDependencies: { siteId: siteIdFromDependencies, siteSlug, newOrExistingSiteChoice },
+		signupDependencies: {
+			siteId: siteIdFromDependencies,
+			siteSlug,
+			newOrExistingSiteChoice,
+			coupon,
+		},
 		flowName,
 	} = props;
 	const translate = useTranslate();
@@ -576,6 +584,7 @@ function DIFMPagePicker( props: StepProps ) {
 							selectedPages={ selectedPages }
 							isStoreFlow={ isStoreFlow }
 							flowName={ flowName }
+							coupon={ coupon }
 						/>
 					) }
 					<PageSelector
@@ -587,7 +596,7 @@ function DIFMPagePicker( props: StepProps ) {
 			}
 			hideSkip
 			align="left"
-			isHorizontalLayout={ true }
+			isHorizontalLayout
 			isWideLayout={ false }
 			headerButton={
 				<StyledButton

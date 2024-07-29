@@ -18,11 +18,7 @@ export const CredentialsCta = ( props: Props ) => {
 					components: {
 						br: <br />,
 						button: (
-							<Button
-								borderless={ true }
-								className="action-buttons__borderless"
-								onClick={ onButtonClick }
-							/>
+							<Button borderless className="action-buttons__borderless" onClick={ onButtonClick } />
 						),
 					},
 				}

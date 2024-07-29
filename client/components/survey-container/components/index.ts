@@ -1,2 +1,2 @@
-export { default as QuestionMultiple } from './question-multiple-selection';
-export { default as QuestionSingle } from './question-single-selection';
+export { default as SurveyCheckboxControl } from './survey-checkbox-control';
+export { default as SurveyRadioControl } from './survey-radio-control';

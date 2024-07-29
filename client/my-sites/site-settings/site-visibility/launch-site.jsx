@@ -1,6 +1,6 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SitePreviewLink from 'calypso/components/site-preview-link';
@@ -45,7 +45,7 @@ const LaunchSite = () => {
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 
-	const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
+	const launchSiteClasses = clsx( 'site-settings__general-settings-launch-site-button', {
 		'site-settings__disable-privacy-settings': ! siteDomains.length,
 	} );
 	const btnText = translate( 'Launch site' );

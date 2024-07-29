@@ -5,14 +5,27 @@
 
 	.button {
 		border-radius: 4px;
+		border: 1px solid var(--color-neutral-10);
 	}
 
-	.split-button__main {
+	.button.split-button__main {
 		border-radius: 4px 0 0 4px;
+		border-right: none;
+		height: 40px;
 	}
 
-	.split-button__toggle {
-		border-radius: 0 4px 4px 0;
+	.button.split-button__toggle {
+		svg {
+			fill: #000;
+		}
+
+		.gridicon {
+			height: 18px;
+			margin-top: -2px;
+			position: relative;
+			top: 2px;
+			width: 18px;
+		}
 	}
 
 }

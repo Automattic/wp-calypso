@@ -194,7 +194,11 @@ export function useCartForDIFM( {
 	// [Effect] Loads required initial data
 	useEffect( () => {
 		if ( ! difmLiteProduct || ! currencyCode ) {
-			dispatch( requestProductsList() );
+			const query = {
+				type: 'partial',
+				product_slugs: [ WPCOM_DIFM_LITE, PLAN_BUSINESS, PLAN_PREMIUM ],
+			};
+			dispatch( requestProductsList( query ) );
 		}
 	}, [ dispatch, difmLiteProduct, currencyCode ] );
 

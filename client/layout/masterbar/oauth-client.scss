@@ -483,11 +483,6 @@
 		margin-top: 24px;
 	}
 
-	input:focus:hover[type],
-	input:focus[type] {
-		box-shadow: 0 0 0 2px var(--studio-jetpack-green-10);
-	}
-
 	.login__form-header-wrapper,
 	.signup-form__wrapper {
 		padding: 32px 0 0;
@@ -639,6 +634,13 @@
 		border: none;
 		box-shadow: none;
 	}
+}
+
+.jetpack-cloud {
+	input:focus:hover[type],
+	input:focus[type] {
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+	}
 
 	.button:not(.social-buttons__button) {
 		color: var(--studio-jetpack-green-60);
@@ -702,6 +704,78 @@
 		&:hover,
 		&:focus {
 			color: var(--studio-jetpack-green-60);
+		}
+	}
+}
+
+.a8c-for-agencies {
+	input:focus:hover[type],
+	input:focus[type] {
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+	}
+
+	.button:not(.social-buttons__button) {
+		color: var(--color-primary-60);
+		background: var(--studio-white);
+		border: 1px solid var(--color-primary-40);
+		border-radius: 2px;
+
+		&:hover,
+		&:focus {
+			background: var(--color-primary-0);
+		}
+
+		&:active {
+			background: var(--color-primary-5);
+			border-color: var(--color-primary-40);
+			border-width: 1px;
+		}
+
+		&[disabled]:active {
+			border-width: 1px;
+		}
+
+		&[disabled],
+		&:disabled {
+			color: var(--studio-gray-10);
+			border-color: var(--color-gray-10);
+			background: var(--studio-white);
+		}
+	}
+
+	.button.is-primary {
+		color: var(--studio-white);
+		background: var(--color-primary-40);
+		border-color: var(--color-primary-40);
+
+		&:hover,
+		&:focus {
+			background: var(--color-primary-30);
+			border-color: var(--color-primary-30);
+		}
+
+		&:active {
+			background: var(--color-primary-50);
+			border-color: var(--color-primary-50);
+		}
+
+		&[disabled],
+		&:disabled {
+			color: var(--studio-white);
+			background: var(--studio-gray-10);
+			border-color: var(--studio-gray-10);
+		}
+	}
+
+	a,
+	a:visited,
+	.login__form-change-username,
+	.wp-login__links button {
+		color: var(--color-primary-40);
+
+		&:hover,
+		&:focus {
+			color: var(--color-primary-60);
 		}
 	}
 }

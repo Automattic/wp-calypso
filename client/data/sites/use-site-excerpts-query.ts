@@ -10,17 +10,21 @@ import type { SiteExcerptData, SiteExcerptNetworkData } from '@automattic/sites'
 
 export const USE_SITE_EXCERPTS_QUERY_KEY = 'sites-dashboard-sites-data';
 
+export type SiteVisibility = 'all' | 'deleted';
+
 const fetchSites = (
-	site_visibility = 'all',
-	siteFilter = config< string[] >( 'site_filter' )
+	site_visibility: SiteVisibility = 'all',
+	siteFilter = config< string[] >( 'site_filter' ),
+	additional_fields: string[] = [],
+	additional_options: string[] = []
 ): Promise< { sites: SiteExcerptNetworkData[] } > => {
 	return wpcom.me().sites( {
 		apiVersion: '1.2',
 		site_visibility,
 		include_domain_only: true,
 		site_activity: 'active',
-		fields: SITE_EXCERPT_REQUEST_FIELDS.join( ',' ),
-		options: SITE_EXCERPT_REQUEST_OPTIONS.join( ',' ),
+		fields: additional_fields.concat( SITE_EXCERPT_REQUEST_FIELDS ).join( ',' ),
+		options: additional_options.concat( SITE_EXCERPT_REQUEST_OPTIONS ).join( ',' ),
 		filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 	} );
 };
@@ -28,7 +32,9 @@ const fetchSites = (
 export const useSiteExcerptsQuery = (
 	fetchFilter?: string[],
 	sitesFilterFn?: ( site: SiteExcerptData ) => boolean,
-	site_visibility = 'all'
+	site_visibility: SiteVisibility = 'all',
+	additional_fields: string[] = [],
+	additional_options: string[] = []
 ) => {
 	const store = useStore();
 
@@ -39,17 +45,13 @@ export const useSiteExcerptsQuery = (
 			SITE_EXCERPT_REQUEST_OPTIONS,
 			fetchFilter,
 			site_visibility,
+			additional_fields,
+			additional_options,
 		],
-		queryFn: () => fetchSites( site_visibility, fetchFilter ),
+		queryFn: () =>
+			fetchSites( site_visibility, fetchFilter, additional_fields, additional_options ),
 		select: ( data ) => {
 			const sites = data?.sites.map( computeFields( data?.sites ) ) || [];
-
-			if ( site_visibility === 'deleted' ) {
-				sites.forEach( ( site ) => {
-					site.is_deleted = true;
-				} );
-			}
-
 			return sitesFilterFn ? sites.filter( sitesFilterFn ) : sites;
 		},
 		initialData: () => {

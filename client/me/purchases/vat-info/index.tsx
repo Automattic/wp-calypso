@@ -1,7 +1,7 @@
 import { CompactCard, Button, Card, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -69,10 +69,7 @@ export default function VatInfoPage() {
 	const genericTaxName =
 		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
 		translate( 'tax (VAT/GST/CT)' );
-	const fallbackTaxName =
-		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax (VAT/GST/CT)' )
-			? genericTaxName
-			: translate( 'VAT', { textOnly: true } );
+	const fallbackTaxName = genericTaxName;
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const title = translate( 'Add %s details', {
 		textOnly: true,
@@ -94,7 +91,7 @@ export default function VatInfoPage() {
 			</Column>
 			<Column type="sidebar">
 				<Card className="vat-info__sidebar-card">
-					<CardHeading tagName="h1" size={ 16 } isBold={ true } className="vat-info__sidebar-title">
+					<CardHeading tagName="h1" size={ 16 } isBold className="vat-info__sidebar-title">
 						{ title }
 					</CardHeading>
 					<p className="vat-info__sidebar-paragraph">
@@ -143,7 +140,7 @@ export default function VatInfoPage() {
 									learnMoreLink: (
 										<InlineSupportLink
 											supportLink={ taxSupportPageURL }
-											showText={ true }
+											showText
 											showIcon={ false }
 											supportPostId={ 234670 } //This is what makes the document appear in a dialogue
 											linkTitle={ taxSupportPageLinkTitle }

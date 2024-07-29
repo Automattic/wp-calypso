@@ -1,8 +1,8 @@
-import { Button } from '@wordpress/components';
+import { Button } from '@automattic/components';
 import { Icon, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import {
@@ -21,6 +21,7 @@ import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import '../product-card/style.scss';
 
 interface Props {
+	asReferral?: boolean;
 	products: APIProductFamilyProduct[];
 	isSelected: boolean;
 	isDisabled?: boolean;
@@ -37,6 +38,7 @@ interface Props {
 
 export default function MultiProductCard( props: Props ) {
 	const {
+		asReferral,
 		products,
 		isSelected,
 		isDisabled,
@@ -147,10 +149,17 @@ export default function MultiProductCard( props: Props ) {
 		}
 	}, [ selectedOption ] );
 
+	const ctaLabel = useMemo( () => {
+		if ( asReferral ) {
+			return isSelected ? translate( 'Added to referral' ) : translate( 'Add to referral' );
+		}
+		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
+	}, [ asReferral, isSelected, translate ] );
+
 	return (
 		<>
 			<div
-				className={ classNames( 'product-card', 'product-card--with-variant', {
+				className={ clsx( 'product-card', 'product-card--with-variant', {
 					selected: isSelected,
 					disabled: isDisabled,
 				} ) }
@@ -185,24 +194,25 @@ export default function MultiProductCard( props: Props ) {
 								</div>
 
 								<div className="product-card__description">{ productDescription }</div>
-
-								{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
-									<LicenseLightboxLink
-										productName={ getProductShortTitle( product ) }
-										onClick={ onShowLightbox }
-									/>
-								) }
 							</div>
-
-							<Button
-								className="product-card__select-button"
-								variant={ isSelected ? 'secondary' : 'primary' }
-								tabIndex={ -1 }
-							>
-								{ isSelected && <Icon icon={ check } /> }
-								{ isSelected ? translate( 'Added' ) : translate( 'Add to cart' ) }
-							</Button>
 						</div>
+					</div>
+					<div className="product-card__buttons">
+						<Button
+							className="product-card__select-button"
+							primary={ ! isSelected }
+							tabIndex={ -1 }
+						>
+							{ isSelected && <Icon icon={ check } /> }
+							{ ctaLabel }
+						</Button>
+						{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
+							<LicenseLightboxLink
+								customText={ translate( 'View details' ) }
+								productName={ getProductShortTitle( product ) }
+								onClick={ onShowLightbox }
+							/>
+						) }
 					</div>
 				</div>
 			</div>

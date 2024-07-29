@@ -8,7 +8,7 @@
 .theme-jetpack-cloud,
 .color-scheme.is-jetpack-cloud {
 	// Masterbar
-	@media only screen and ( min-width: 782px ) {
+	@media only screen and (min-width: 782px) {
 		--masterbar-height: 46px;
 	}
 
@@ -25,7 +25,9 @@
 
 // New navigation will not include a masterbar
 .theme-jetpack-cloud .layout.has-no-masterbar {
-	--masterbar-height: 0;
+	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-height: 0px;
 
 	// By default, there's 32px of top padding on the layout component.
 	// On mobile views this accommodates the masterbar, but we don't have one;
@@ -80,6 +82,7 @@
 	}
 }
 
+.components-button,
 .button {
 	color: var(--color-accent);
 	background: var(--studio-white);
@@ -112,6 +115,7 @@
 	}
 }
 
+.components-button.is-primary,
 .button.is-primary {
 	background-color: var(--studio-jetpack-green-50);
 	border-color: var(--studio-jetpack-green-50);
@@ -341,7 +345,7 @@ html {
 }
 
 .layout.focus-content .layout__secondary {
-	@media only screen and ( max-width: 782px ) and ( min-width: 660px ) {
+	@media only screen and (max-width: 782px) and (min-width: 660px) {
 		transform: none;
 		padding: 0;
 	}

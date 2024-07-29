@@ -36,6 +36,15 @@
 				height: 18px;
 			}
 		}
+
+		.action-button {
+			color: var(--color-link);
+			cursor: pointer;
+
+			&.set-as-primary {
+				display: contents;
+			}
+		}
 	}
 
 	& &__domain-input {
@@ -46,8 +55,11 @@
 		max-width: 370px;
 
 		.form-text-input {
-			padding: 9px 14px 9px 68px;
+			padding: 9px 28px 9px 68px;
 			margin-bottom: 9px;
+
+			text-overflow: ellipsis;
+			overflow: hidden;
 
 			&::placeholder {
 				color: #c3c4c7;

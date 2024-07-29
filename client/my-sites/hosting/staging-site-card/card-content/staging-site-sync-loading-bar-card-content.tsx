@@ -23,13 +23,25 @@ export const StagingSiteSyncLoadingBarCardContent = ( {
 	const currentUserId = useSelector( getCurrentUserId );
 	const isOwner = siteOwnerId === currentUserId;
 
-	const message = isOwner
-		? translate( 'We are updating your %s site. We’ll email you once it is ready.', {
-				args: [ siteToSync ?? '' ],
-		  } )
-		: translate( 'We are updating the %s site. We’ll email the site owner once it is ready.', {
-				args: [ siteToSync ?? '' ],
-		  } );
+	let message;
+	if ( siteToSync === 'production' ) {
+		message = isOwner
+			? translate( 'We are updating your production site. We’ll email you once it is ready.' )
+			: translate(
+					'We are updating the production site. We’ll email the site owner once it is ready.'
+			  );
+	} else if ( siteToSync === 'staging' ) {
+		message = isOwner
+			? translate( 'We are updating your staging site. We’ll email you once it is ready.' )
+			: translate(
+					'We are updating the staging site. We’ll email the site owner once it is ready.'
+			  );
+	} else {
+		message = isOwner
+			? translate( 'We are updating your site. We’ll email you once it is ready.' )
+			: translate( 'We are updating the site. We’ll email the site owner once it is ready.' );
+	}
+
 	return (
 		<div data-testid="syncing-site-content">
 			<StyledLoadingBar progress={ progress } />

@@ -74,7 +74,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	it( 'Template content loads into editor', async function () {
 		const editorCanvas = await editorPage.getEditorCanvas();
-		await editorCanvas.locator( `h1:text-is('${ pageTemplateToSelect }')` ).waitFor();
+		await editorCanvas.locator( `h1.wp-block:text-is('${ pageTemplateToSelect }')` ).waitFor();
 	} );
 
 	it( 'Open setting sidebar', async function () {

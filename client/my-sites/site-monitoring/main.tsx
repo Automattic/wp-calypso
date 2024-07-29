@@ -4,9 +4,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useSelector } from 'calypso/state';
-import { isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringTabPanel } from './components/site-monitoring-tab-panel';
 import { LogsTab } from './logs-tab';
 import { MetricsTab } from './metrics-tab';
@@ -19,14 +16,7 @@ interface SiteMetricsProps {
 }
 
 export function SiteMetrics( { tab = 'metrics' }: SiteMetricsProps ) {
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
-		getIsGlobalSiteViewEnabled( state, siteId )
-	);
-
-	const titleHeader = isGlobalSiteViewEnabled
-		? translate( 'Monitoring' )
-		: translate( 'Site Monitoring' );
+	const titleHeader = translate( 'Monitoring' );
 
 	return (
 		<Main className="site-monitoring" fullWidthLayout>

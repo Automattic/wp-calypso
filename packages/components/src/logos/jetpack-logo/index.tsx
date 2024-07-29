@@ -1,5 +1,5 @@
 import colorStudio from '@automattic/color-studio';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 /**
  * Module constants
@@ -64,7 +64,7 @@ const JetpackLogo: React.FunctionComponent< JetpackLogoProps > = ( {
 	className,
 	...props
 } ) => {
-	const classes = classNames( 'jetpack-logo', className );
+	const classes = clsx( 'jetpack-logo', className );
 
 	if ( full === true ) {
 		return (

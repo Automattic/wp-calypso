@@ -8,7 +8,7 @@
 
 	padding: 20px;
 
-	@media ( min-width: 625px ) {
+	@media (min-width: 625px) {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
@@ -91,7 +91,7 @@
 
 	color: var(--studio-gray-50);
 
-	@media ( max-width: 625px ) {
+	@media (max-width: 625px) {
 		margin-bottom: 20px;
 	}
 }

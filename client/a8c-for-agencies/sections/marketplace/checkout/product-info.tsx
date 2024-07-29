@@ -1,5 +1,6 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import { useTranslate } from 'i18n-calypso';
+import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useLicenseLightboxData } from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/hooks/use-license-lightbox-data';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
@@ -14,7 +15,7 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 	let productIcon =
 		productInfo?.productSlug && getProductIcon( { productSlug: productInfo?.productSlug } );
 	let productTitle = title;
-	let productDescription = productInfo?.lightboxDescription;
+	let productDescription = productInfo?.lightboxDescription || productInfo?.tagline;
 
 	if ( product.family_slug === 'pressable-hosting' ) {
 		const presablePlan = getPressablePlan( product.slug );
@@ -25,6 +26,7 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 		productIcon = pressableIcon;
 		productTitle = product.name;
 		productDescription = translate(
+			'Plan with %(install)d WordPress install, %(visits)s visits per month, and %(storage)dGB of storage per month.',
 			'Plan with %(install)d WordPress installs, %(visits)s visits per month, and %(storage)dGB of storage per month.',
 			{
 				args: {
@@ -32,8 +34,28 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 					visits: formatNumber( presablePlan.visits ),
 					storage: presablePlan.storage,
 				},
+				count: presablePlan.install,
 				comment:
 					'The `install`, `visits` & `storage` are the count of WordPress installs, visits per month, and storage per month in the plan description.',
+			}
+		);
+	}
+
+	if ( product.family_slug === 'wpcom-hosting' ) {
+		productIcon = wpcomIcon;
+		// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
+		//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
+		productTitle =
+			product.slug === 'wpcom-hosting-business' ? translate( 'WordPress.com Site' ) : product.name;
+		productDescription = translate(
+			'Plan with %(install)d managed WordPress install, with 50GB of storage.',
+			'Plan with %(install)d managed WordPress installs, with 50GB of storage each.',
+			{
+				args: {
+					install: product.quantity,
+				},
+				count: product.quantity,
+				comment: 'The `install` are the count of WordPress installs.',
 			}
 		);
 	}
@@ -41,6 +63,22 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 	if ( ! productDescription ) {
 		return null;
 	}
+	const countInfo =
+		product.family_slug === 'wpcom-hosting'
+			? translate( '%(numLicenses)d site', '%(numLicenses)d sites', {
+					context: 'button label',
+					count: product.quantity,
+					args: {
+						numLicenses: product.quantity,
+					},
+			  } )
+			: translate( '%(numLicenses)d plan', '%(numLicenses)d plans', {
+					context: 'button label',
+					count: product.quantity,
+					args: {
+						numLicenses: product.quantity,
+					},
+			  } );
 
 	return (
 		<div className="product-info">
@@ -52,15 +90,7 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 					<label htmlFor={ productTitle } className="product-info__label">
 						{ productTitle }
 					</label>
-					<span className="product-info__count">
-						{ translate( '%(numLicenses)d plan', '%(numLicenses)d plans', {
-							context: 'button label',
-							count: product.quantity,
-							args: {
-								numLicenses: product.quantity,
-							},
-						} ) }
-					</span>
+					<span className="product-info__count">{ countInfo }</span>
 				</div>
 				<p className="product-info__description">{ productDescription }</p>
 			</div>

@@ -61,11 +61,21 @@ function ConnectDomainStep( {
 	const [ loadingDomainSetupInfo, setLoadingDomainSetupInfo ] = useState( false );
 
 	const baseClassName = 'connect-domain-step';
-	const isStepStart = stepType.START === stepsDefinition[ pageSlug ].step;
-	const mode = stepsDefinition[ pageSlug ].mode;
-	const step = stepsDefinition[ pageSlug ].step;
-	const prevPageSlug = stepsDefinition[ pageSlug ].prev;
-	const isTwoColumnLayout = ! stepsDefinition[ pageSlug ].singleColumnLayout;
+	if ( stepsDefinition[ pageSlug ] === undefined ) {
+		// eslint-disable-next-line no-console
+		console.error(
+			'Tried to set invalid pageSlug in ConnectDomainStep',
+			pageSlug,
+			firstStep,
+			domain
+		);
+	}
+	const currentStep = stepsDefinition[ pageSlug ] || stepsDefinition[ firstStep ];
+	const isStepStart = stepType.START === currentStep.step;
+	const mode = currentStep.mode;
+	const step = currentStep.step;
+	const prevPageSlug = currentStep.prev;
+	const isTwoColumnLayout = ! currentStep.singleColumnLayout;
 
 	const statusRef = useRef( {} );
 
@@ -236,14 +246,14 @@ function ConnectDomainStep( {
 			},
 			{
 				label: __( 'Transfer or connect' ),
-				href: domainUseMyDomain( selectedSite.slug, domain ),
+				href: domainUseMyDomain( selectedSite.slug, { domain } ),
 			},
 			{ label: __( 'Connect' ) },
 		];
 
 		let mobileItem = {
 			label: __( 'Back to transfer or connect' ),
-			href: domainUseMyDomain( selectedSite.slug, domain ),
+			href: domainUseMyDomain( selectedSite.slug, { domain } ),
 			showBackArrow: true,
 		};
 

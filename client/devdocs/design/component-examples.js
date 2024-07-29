@@ -21,7 +21,7 @@ export { default as DiffViewerExample } from 'calypso/components/diff-viewer/doc
 export { default as DropZones } from 'calypso/components/drop-zone/docs/example';
 export { default as EllipsisMenu } from 'calypso/components/ellipsis-menu/docs/example';
 export { default as EmptyContent } from 'calypso/components/empty-content/docs/example';
-export { default as ExternalLink } from 'calypso/components/external-link/docs/example';
+export { default as ExternalLink } from '@automattic/components/src/external-link/docs/example';
 export { default as FAQ } from 'calypso/components/faq/docs/example';
 export { default as FeatureGate } from 'calypso/components/feature-example/docs/example';
 export { default as FilePickers } from 'calypso/components/file-picker/docs/example';

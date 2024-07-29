@@ -13,11 +13,15 @@ import userAgent from 'calypso/lib/user-agent';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const PLATFORM_MAC_SILICON = 'MacSilicon';
+
+/* eslint-disable wpcalypso/i18n-unlocalized-url */
 const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
 const MAC_INTEL_LINK = 'https://apps.wordpress.com/d/osx?ref=getapps';
 const MAC_SILICON_LINK = 'https://apps.wordpress.com/d/osx-silicon?ref=getapps';
 const LINUX_TAR_LINK = 'https://apps.wordpress.com/d/linux?ref=getapps';
 const LINUX_DEB_LINK = 'https://apps.wordpress.com/d/linux-deb?ref=getapps';
+/* eslint-enable wpcalypso/i18n-unlocalized-url */
+
 const noop = () => {};
 
 class DesktopDownloadCard extends Component {

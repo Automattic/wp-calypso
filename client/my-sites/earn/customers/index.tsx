@@ -1,10 +1,10 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { saveAs } from 'browser-filesaver';
+import { Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
-import { useState, useEffect, useCallback, MouseEvent } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { shallowEqual } from 'react-redux';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
@@ -17,6 +17,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { decodeEntities } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestSubscribers } from 'calypso/state/memberships/subscribers/actions';
 import {
@@ -29,15 +30,19 @@ import {
 	PLAN_MONTHLY_FREQUENCY,
 	PLAN_ONE_TIME_FREQUENCY,
 } from '../memberships/constants';
-import { Subscriber } from '../types';
+import { Query, Subscriber } from '../types';
 import CancelDialog from './cancel-dialog';
 import Customer from './customer/index';
 
-function CustomerSection() {
+type CustomerSectionProps = {
+	query?: Query;
+};
+
+const CustomerSection = ( { query }: CustomerSectionProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
-	const subscriberId = new URLSearchParams( window.location.search ).get( 'subscriber' );
+	const subscriberId = query?.subscriber;
 	const [ subscriberToCancel, setSubscriberToCancel ] = useState< Subscriber | null >( null );
 	const site = useSelector( getSelectedSite );
 
@@ -60,54 +65,15 @@ function CustomerSection() {
 		[ dispatch, site, subscribers, totalSubscribers ]
 	);
 
-	function downloadSubscriberList( event: MouseEvent< HTMLButtonElement > ) {
-		event.preventDefault();
-		const fileName = [ site?.slug, 'memberships', 'subscribers' ].join( '_' ) + '.csv';
-
-		const csvData = [
-			[
-				'ID',
-				'status',
-				'start_date',
-				'end_date',
-				'user_name',
-				'user_email',
-				'plan_id',
-				'plan_title',
-				'renewal_price',
-				'currency',
-				'renew_interval',
-				'All time total',
-			]
-				.map( ( field ) => '"' + field + '"' )
-				.join( ',' ),
-		]
-			.concat(
-				Object.values( subscribers ).map( ( row ) =>
-					[
-						row.id,
-						row.status,
-						row.start_date,
-						row.end_date,
-						row.user.name,
-						row.user.user_email,
-						row.plan.connected_account_product_id,
-						row.plan.title,
-						row.plan.renewal_price,
-						row.plan.currency,
-						row.renew_interval,
-						row.all_time_total,
-					]
-						.map( ( field ) => ( field ? '"' + field + '"' : '""' ) )
-						.join( ',' )
-				)
-			)
-			.join( '\n' );
-
-		const blob = new window.Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
-
-		saveAs( blob, fileName );
-	}
+	const downloadCsvLink = addQueryArgs(
+		{
+			page: 'subscribers',
+			blog: site?.ID,
+			blog_subscribers: 'csv',
+			type: 'paid-supporter',
+		},
+		'https://dashboard.wordpress.com/wp-admin/index.php'
+	);
 
 	function renderSubscriberList() {
 		return (
@@ -150,7 +116,11 @@ function CustomerSection() {
 								<span className="supporters-list__since-column" role="columnheader">
 									{ translate( 'Since' ) }
 								</span>
-								<span className="supporters-list__menu-column" role="columnheader"></span>
+								<span className="supporters-list__menu-column" role="columnheader">
+									<Tooltip text={ translate( 'Download list as CSV' ) } delay={ 0 }>
+										<Button href={ downloadCsvLink }>{ translate( 'Export' ) }</Button>
+									</Tooltip>
+								</span>
 							</li>
 							{ orderBy( Object.values( subscribers ), [ 'id' ], [ 'desc' ] ).map( ( sub ) =>
 								renderSubscriber( sub )
@@ -162,9 +132,7 @@ function CustomerSection() {
 							setSubscriberToCancel={ setSubscriberToCancel }
 						/>
 						<div className="memberships__module-footer">
-							<Button onClick={ downloadSubscriberList }>
-								{ translate( 'Download list as CSV' ) }
-							</Button>
+							<Button href={ downloadCsvLink }>{ translate( 'Export as CSV' ) }</Button>
 						</div>
 					</>
 				) }
@@ -199,11 +167,14 @@ function CustomerSection() {
 			} );
 		}
 	}
+	const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
 
 	function renderSubscriberActions( subscriber: Subscriber ) {
 		return (
 			<EllipsisMenu position="bottom left" className="memberships__subscriber-actions">
-				<PopoverMenuItem href={ `/earn/supporters/${ site?.slug }?subscriber=${ subscriber.id }` }>
+				<PopoverMenuItem
+					href={ `${ earnPath }/supporters/${ site?.slug }?subscriber=${ subscriber.id }` }
+				>
 					<Gridicon size={ 18 } icon="visible" />
 					{ translate( 'View' ) }
 				</PopoverMenuItem>
@@ -281,6 +252,6 @@ function CustomerSection() {
 			<div>{ renderSubscriberList() }</div>
 		</div>
 	);
-}
+};
 
 export default CustomerSection;

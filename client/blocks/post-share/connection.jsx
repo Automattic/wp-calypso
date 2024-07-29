@@ -1,5 +1,5 @@
 import { FormToggle, BaseControl } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import SocialLogo from 'calypso/components/social-logo';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 
@@ -25,7 +25,7 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 
 	const toggle = () => onToggle( keyring_connection_ID );
 
-	const classes = classNames( {
+	const classes = clsx( {
 		'post-share__service': true,
 		[ service ]: true,
 		'is-active': isActive,
@@ -48,7 +48,7 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 			</div>
 
 			<div
-				className={ classNames( 'post-share__service-account-social-logo', {
+				className={ clsx( 'post-share__service-account-social-logo', {
 					'is-round': hasRoundIcon( service ),
 				} ) }
 			>
@@ -58,7 +58,7 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 			<div className="post-share__service-account-name">
 				<label id={ id }>{ external_display }</label>
 			</div>
-			<BaseControl className={ classNames( 'components-toggle-control' ) }>
+			<BaseControl className={ clsx( 'components-toggle-control' ) }>
 				<FormToggle checked={ isActive } aria-describedby={ id } />
 			</BaseControl>
 		</div>

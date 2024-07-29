@@ -39,11 +39,6 @@ import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
-import {
-	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
-	doesIntroductoryOfferHavePriceIncrease,
-	getSubtotalWithoutDiscountsForProduct,
-} from './transformations';
 import type { LineItemType } from './types';
 import type {
 	GSuiteProductUser,
@@ -59,7 +54,6 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	tax?: boolean;
 	coupon?: boolean;
 	subtotal?: boolean;
-	shouldUseCheckoutV2?: boolean;
 } >`
 	display: flex;
 	flex-wrap: wrap;
@@ -85,25 +79,11 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 
 export const LineItem = styled( CheckoutLineItem )< {
 	theme?: Theme;
-	shouldUseCheckoutV2?: boolean;
 } >`
-	${ ( props ) =>
-		props.shouldUseCheckoutV2
-			? `display: grid;
-	grid-template-columns: 1fr min-content;
-	grid-template-rows: auto;
-	grid-template-areas:
-		'label price'
-		'term remove'
-		'meta meta'
-		'discounts discounts';
-	gap: 6px 4px;
-	margin-bottom: 8px;
-	padding: 10px 0;`
-			: `display: flex;
-			flex-wrap: wrap;
-			justify-content: space-between;
-			padding: 20px 0;` }
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 20px 0;
 
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
 	color: ${ ( { theme } ) => theme.colors.textColorDark };
@@ -113,13 +93,6 @@ export const LineItem = styled( CheckoutLineItem )< {
 	.checkout-line-item__price {
 		position: relative;
 	}
-`;
-const LineItemBillingIntervalWrapper = styled( LineItemBillingInterval )< { theme?: Theme } >`
-	display: block;
-`;
-
-const LineItemMetaInfoWrapper = styled( LineItemMetaInfo )< { theme?: Theme } >`
-	display: block;
 `;
 
 export const CouponLineItem = styled( WPCouponLineItem )< {
@@ -140,19 +113,17 @@ const GiftBadge = styled.span`
 	font-size: small;
 `;
 
-const LineItemMeta = styled.div< { theme?: Theme; shouldUseCheckoutV2?: boolean } >`
+const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
+	overflow-wrap: anywhere;
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
-	overflow-wrap: anywhere;
-
-	${ ( props ) =>
-		props.shouldUseCheckoutV2
-			? `grid-area: meta; flex-direction: column; align-content: flex-start; `
-			: 'flex-direction: row; align-content: center; gap: 2px 10px;' }
+	flex-direction: row;
+	align-content: center;
+	gap: 2px 10px;
 `;
 
 const UpgradeCreditInformationLineItem = styled( LineItemMeta )< { theme?: Theme } >`
@@ -191,88 +162,49 @@ const NotApplicableCallout = styled.div< { theme?: Theme } >`
 const LineItemTitle = styled.div< {
 	theme?: Theme;
 	isSummary?: boolean;
-	shouldUseCheckoutV2?: boolean;
 } >`
 	word-break: break-word;
 	font-weight: ${ ( { theme } ) => theme.weights.bold };
-
-	${ ( props ) =>
-		props.shouldUseCheckoutV2
-			? `grid-area: label;
-		   font-size: 14px;
-		   align-self: center;`
-			: `flex: 1;
-		   display: flex;
-		   gap: 0.5em;
-		   font-size: inherit;` }
+	flex: 1;
+	display: flex;
+	gap: 0.5em;
+	font-size: inherit;
 `;
 
-const LineItemPriceWrapper = styled.span< {
-	shouldUseCheckoutV2?: boolean;
-} >`
+const LineItemPriceWrapper = styled.span`
 	display: flex;
+	flex: 0 0 auto;
 	gap: 4px;
+	margin-left: 12px;
+	font-size: inherit;
 
-	${ ( props ) =>
-		props.shouldUseCheckoutV2
-			? `margin-left: 0px;
-		   font-size: 14px;
-		   grid-area: price;
-		   justify-self: flex-end;`
-			: `
-		margin-left: 12px;
-		font-size: inherit;` }
 	.rtl & {
 		margin-right: 12px;
 		margin-left: 0;
 	}
 `;
 
-const BillingInterval = styled.div< { theme?: Theme } >`
-	grid-area: term;
-	color: ${ ( props ) => props.theme.colors.textColorLight };
-	font-size: 14px;
+const DeleteButtonWrapper = styled.div`
 	width: 100%;
-	display: flex;
-	justify-content: space-between;
-	flex-wrap: wrap;
-	overflow-wrap: anywhere;
-	flex-direction: column;
-	align-content: flex-start;
+	display: inherit;
+	justify-content: inherit;
 `;
 
-const DeleteButtonWrapper = styled.div< { shouldUseCheckoutV2?: boolean } >`
-	width: 100%;
-
-	${ ( props ) =>
-		props.shouldUseCheckoutV2
-			? `
-	grid-area: remove;
-	display: grid;
-	align-items: center;
-	justify-content: end;
-	`
-			: `display: inherit };
-	justify-content: 'inherit' }` };
-`;
-
-const DeleteButton = styled( Button )< { theme?: Theme; shouldUseCheckoutV2?: boolean } >`
+const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
-	${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-size:  12px;` : `font-size: 0.75rem` ) };
+	font-size: 0.75rem;
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
-function LineItemPrice( {
+export function LineItemPrice( {
 	actualAmount,
 	crossedOutAmount,
-	shouldUseCheckoutV2,
 }: {
 	actualAmount?: string;
 	crossedOutAmount?: string;
-	shouldUseCheckoutV2?: boolean;
 } ) {
 	return (
-		<LineItemPriceWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+		<LineItemPriceWrapper>
 			{ crossedOutAmount && <s>{ crossedOutAmount }</s> }
 			<span>{ actualAmount }</span>
 		</LineItemPriceWrapper>
@@ -287,7 +219,6 @@ function WPNonProductLineItem( {
 	removeProductFromCart,
 	createUserAndSiteBeforeTransaction,
 	isPwpoUser,
-	shouldUseCheckoutV2,
 }: {
 	lineItem: LineItemType;
 	className?: string | null;
@@ -296,7 +227,6 @@ function WPNonProductLineItem( {
 	removeProductFromCart?: () => void;
 	createUserAndSiteBeforeTransaction?: boolean;
 	isPwpoUser?: boolean;
-	shouldUseCheckoutV2?: boolean;
 } ) {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -320,28 +250,17 @@ function WPNonProductLineItem( {
 			data-e2e-product-slug={ lineItem.id }
 			data-product-type={ lineItem.type }
 		>
-			<LineItemTitle
-				id={ itemSpanId }
-				isSummary={ isSummary }
-				shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-			>
+			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
 			</LineItemTitle>
 
-			{ shouldUseCheckoutV2 ? (
-				<LineItemPrice
-					aria-labelledby={ itemSpanId }
-					actualAmount={ actualAmountDisplay }
-					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-				/>
-			) : (
-				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-					<LineItemPrice actualAmount={ actualAmountDisplay } />
-				</span>
-			) }
+			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
+				<LineItemPrice actualAmount={ actualAmountDisplay } />
+			</span>
+
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
-					<DeleteButtonWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+					<DeleteButtonWrapper>
 						<DeleteButton
 							className="checkout-line-item__remove-product"
 							buttonType="text-button"
@@ -354,9 +273,8 @@ function WPNonProductLineItem( {
 							onClick={ () => {
 								setIsModalVisible( true );
 							} }
-							shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 						>
-							{ shouldUseCheckoutV2 ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
+							{ translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 
@@ -419,15 +337,7 @@ function WPCouponLineItem( {
 	);
 }
 
-function EmailMeta( {
-	product,
-	isRenewal,
-	shouldUseCheckoutV2,
-}: {
-	product: ResponseCartProduct;
-	isRenewal: boolean;
-	shouldUseCheckoutV2?: boolean;
-} ) {
+function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRenewal: boolean } ) {
 	const translate = useTranslate();
 
 	if ( isRenewal ) {
@@ -446,7 +356,7 @@ function EmailMeta( {
 		}
 
 		return (
-			<LineItemMeta shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+			<LineItemMeta>
 				{ translate(
 					'%(numberOfMailboxes)d mailbox for %(domainName)s',
 					'%(numberOfMailboxes)d mailboxes for %(domainName)s',
@@ -479,7 +389,7 @@ function EmailMeta( {
 		<>
 			{ mailboxes.map( ( mailbox, index ) => {
 				return (
-					<LineItemMeta key={ mailbox.email } shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+					<LineItemMeta key={ mailbox.email }>
 						<div key={ mailbox.email }>{ mailbox.email }</div>
 
 						{ index === 0 && <GSuiteDiscountCallout product={ product } /> }
@@ -698,13 +608,7 @@ function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ) {
 	return <ProductTier product={ product } />;
 }
 
-function ProductTier( {
-	product,
-	shouldUseCheckoutV2,
-}: {
-	product: ResponseCartProduct;
-	shouldUseCheckoutV2?: boolean;
-} ) {
+function ProductTier( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	if ( isJetpackSearch( product ) && product.price_tier_transform_quantity_divide_by ) {
 		const currentQuantity = product.current_quantity || 1;
@@ -717,7 +621,7 @@ function ProductTier( {
 		const purchaseQuantityDividedByThousand =
 			( units_used * product.price_tier_transform_quantity_divide_by ) / 1000;
 		return (
-			<LineItemMeta shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+			<LineItemMeta>
 				{ translate(
 					'Up to %(purchaseQuantityDividedByThousand)sk records and/or requests per month',
 					{ args: { purchaseQuantityDividedByThousand } }
@@ -783,7 +687,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		isTitanMail( product )
 	) {
 		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
-			const billingInterval = translate( 'billed annually' );
+			const billingInterval = GetBillingIntervalLabel( { product } );
 			return (
 				<>
 					<DefaultLineItemSublabel product={ product } />: { billingInterval }
@@ -853,11 +757,12 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 
 	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
 		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
-
 		return (
 			<>
 				{ premiumLabel } <DefaultLineItemSublabel product={ product } />
-				{ ! product.is_included_for_100yearplan && <>: { translate( 'billed annually' ) }</> }
+				{ ! product.is_included_for_100yearplan && (
+					<>: { GetBillingIntervalLabel( { product } ) }</>
+				) }
 			</>
 		);
 	}
@@ -914,6 +819,16 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	return <DefaultLineItemSublabel product={ product } />;
 }
 
+function GetBillingIntervalLabel( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+	if ( product.volume > 1 ) {
+		return translate( 'billed %(total_years)s years, then annually', {
+			args: { total_years: product.volume },
+		} );
+	}
+	return translate( 'billed annually' );
+}
+
 export function LineItemBillingInterval( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
@@ -942,91 +857,6 @@ export function LineItemBillingInterval( { product }: { product: ResponseCartPro
 	}
 }
 
-/**
- * This new component manages all of the 'additional' info we tend to tack onto line items.
- * We can look at this as just a list of 'non billing interval' related things.
- * Each condition should match a specific product, and all of its additional items stored within.
- * @param { ResponseCartProduct } product
- *
- * return { string | null }
- */
-
-function LineItemMetaInfo( { product }: { product: ResponseCartProduct } ) {
-	const translate = useTranslate();
-	const productSlug = product.product_slug;
-
-	if ( isDIFMProduct( product ) ) {
-		const numberOfExtraPages =
-			product.quantity && product.price_tier_maximum_units
-				? product.quantity - product.price_tier_maximum_units
-				: 0;
-
-		if ( numberOfExtraPages > 0 ) {
-			const costOfExtraPages = formatCurrency(
-				product.item_original_cost_integer - product.item_original_cost_for_quantity_one_integer,
-				product.currency,
-				{
-					stripZeros: true,
-					isSmallestUnit: true,
-				}
-			);
-
-			return translate(
-				'%(numberOfExtraPages)d Extra Page: %(costOfExtraPages)s one-time fee',
-				'%(numberOfExtraPages)d Extra Pages: %(costOfExtraPages)s one-time fee',
-				{
-					args: {
-						numberOfExtraPages,
-						costOfExtraPages,
-					},
-					count: numberOfExtraPages,
-				}
-			);
-		}
-	}
-
-	if ( isP2Plus( product ) ) {
-		// This is the price for one item for products with a quantity (eg. seats in a license).
-		const itemPrice = formatCurrency(
-			product.item_original_cost_for_quantity_one_integer,
-			product.currency,
-			{ isSmallestUnit: true, stripZeros: true }
-		);
-		const members = product?.current_quantity || 1;
-		const p2Options = {
-			args: {
-				itemPrice,
-				members,
-			},
-			count: members,
-		};
-
-		return translate(
-			'%(itemPrice)s x %(members)s member',
-			'%(itemPrice)s x %(members)s members',
-			p2Options
-		);
-	}
-
-	const isDomainRegistration = product.is_domain_registration;
-	const isDomainMapping = productSlug === 'domain_map';
-	const isDomainTransfer = productSlug === 'domain_transfer';
-
-	if ( ( isDomainRegistration || isDomainMapping || isDomainTransfer ) && product.extra?.premium ) {
-		return translate( 'Premium Domain' );
-	}
-
-	if ( isTieredVolumeSpaceAddon( product ) ) {
-		const productQuantity = product?.quantity ?? 1;
-		const currentQuantity = product?.current_quantity ?? 1;
-		const spaceQuantity = productQuantity > 1 ? productQuantity : currentQuantity;
-
-		return translate( '%(quantity)s GB extra space', {
-			args: { quantity: spaceQuantity },
-		} );
-	}
-}
-
 function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
 	return coupon_savings_integer > 0;
 }
@@ -1051,10 +881,10 @@ const UpgradeCreditHelpIconLink = () => {
 				<Gridicon icon="help-outline" size={ 18 } />
 			</span>
 			<UpgradeCreditPopover
-				autoPosition={ true }
+				autoPosition
 				context={ ref.current }
 				isVisible={ isPopoverOpen }
-				hideArrow={ true }
+				hideArrow
 			>
 				{ translate(
 					'Upgrade now and we’ll automatically apply the remaining credit from your current plan. Remember, upgrade credit can only be used toward plan upgrades for the same website.'
@@ -1200,21 +1030,12 @@ function JetpackAkismetSaleCouponCallout( { product }: { product: ResponseCartPr
 	return <DiscountCallout>{ discountText }</DiscountCallout>;
 }
 
-function PartnerLogo( {
-	className,
-	shouldUseCheckoutV2,
-}: {
-	className?: string;
-	shouldUseCheckoutV2?: boolean;
-} ) {
+function PartnerLogo( { className }: { className?: string } ) {
 	const translate = useTranslate();
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<LineItemMeta
-			className={ joinClasses( [ className, 'jetpack-partner-logo' ] ) }
-			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-		>
+		<LineItemMeta className={ joinClasses( [ className, 'jetpack-partner-logo' ] ) }>
 			<div>{ translate( 'Included in your IONOS plan' ) }</div>
 			<div className="checkout-line-item__partner-logo-image">
 				<IonosLogo />
@@ -1291,8 +1112,6 @@ function CheckoutLineItem( {
 	onRemoveProductClick,
 	onRemoveProductCancel,
 	isAkPro500Cart,
-	shouldShowBillingInterval,
-	shouldUseCheckoutV2,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1307,7 +1126,6 @@ function CheckoutLineItem( {
 	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
 	shouldShowBillingInterval?: boolean;
-	shouldUseCheckoutV2?: boolean;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -1352,8 +1170,6 @@ function CheckoutLineItem( {
 			? product.item_subtotal_integer / product.quantity
 			: product.item_subtotal_integer;
 
-	const costBeforeDiscounts = getSubtotalWithoutDiscountsForProduct( product );
-
 	const actualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
 		isSmallestUnit: true,
 		stripZeros: true,
@@ -1371,44 +1187,6 @@ function CheckoutLineItem( {
 		coupon: responseCart.coupon,
 	} );
 
-	const isIntroductoryOfferWithDifferentLength =
-		doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product );
-	const amountWithIntroductoryOfferOnly = product.cost_overrides?.reduce(
-		( total, costOverride ) =>
-			costOverride.override_code === 'introductory-offer'
-				? total + costOverride.new_subtotal_integer
-				: total,
-		0
-	);
-	const formattedAmountWithIntroductoryOfferOnly = amountWithIntroductoryOfferOnly
-		? formatCurrency( amountWithIntroductoryOfferOnly, product.currency, {
-				isSmallestUnit: true,
-				stripZeros: true,
-		  } )
-		: undefined;
-
-	const isPriceIncrease = doesIntroductoryOfferHavePriceIncrease( product );
-
-	const formattedAmountToDisplayV2 = ( () => {
-		if ( isIntroductoryOfferWithDifferentLength ) {
-			return formattedAmountWithIntroductoryOfferOnly;
-		}
-		if ( isPriceIncrease ) {
-			return actualAmountDisplay;
-		}
-		return formatCurrency( costBeforeDiscounts, product.currency, {
-			isSmallestUnit: true,
-			stripZeros: true,
-		} );
-	} )();
-
-	const crossedOutAmountToDisplayV2 = isIntroductoryOfferWithDifferentLength
-		? formatCurrency( costBeforeDiscounts, product.currency, {
-				isSmallestUnit: true,
-				stripZeros: true,
-		  } )
-		: undefined;
-
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
@@ -1420,87 +1198,53 @@ function CheckoutLineItem( {
 					<GiftBadgeWithText />
 				</MobileGiftWrapper>
 			) }
-			<LineItemTitle
-				id={ itemSpanId }
-				isSummary={ isSummary }
-				shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-			>
-				{ shouldUseCheckoutV2 && isRenewal ? `${ label } Renewal` : label }
+			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
+				{ label }
 				{ responseCart.is_gift_purchase && (
 					<DesktopGiftWrapper>
 						<GiftBadgeWithText />
 					</DesktopGiftWrapper>
 				) }
 			</LineItemTitle>
-			{ shouldUseCheckoutV2 ? (
+
+			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice
-					actualAmount={ formattedAmountToDisplayV2 }
-					crossedOutAmount={ crossedOutAmountToDisplayV2 }
-					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
+					actualAmount={ actualAmountDisplay }
+					crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
 				/>
-			) : (
-				<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-					<LineItemPrice
-						actualAmount={ actualAmountDisplay }
-						crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
-					/>
-				</span>
-			) }
+			</span>
 
 			{ ! containsPartnerCoupon && (
 				<>
-					{ shouldUseCheckoutV2 ? (
-						<>
-							{ shouldShowBillingInterval && (
-								<BillingInterval>
-									<LineItemBillingIntervalWrapper product={ product } />
-								</BillingInterval>
-							) }
-							<LineItemMeta shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
-								<LineItemMetaInfoWrapper product={ product } />
-								{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
-								{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
-							</LineItemMeta>
-						</>
-					) : (
-						<>
-							<UpgradeCreditInformationLineItem shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
-								<UpgradeCreditInformation product={ product } />
-							</UpgradeCreditInformationLineItem>
-							<LineItemMeta shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
-								<LineItemSublabelAndPrice product={ product } />
-								<DomainDiscountCallout product={ product } />
-								<IntroductoryOfferCallout product={ product } />
-								<JetpackAkismetSaleCouponCallout product={ product } />
-							</LineItemMeta>
-						</>
-					) }
+					<>
+						<UpgradeCreditInformationLineItem>
+							<UpgradeCreditInformation product={ product } />
+						</UpgradeCreditInformationLineItem>
+						<LineItemMeta>
+							<LineItemSublabelAndPrice product={ product } />
+							<DomainDiscountCallout product={ product } />
+							<IntroductoryOfferCallout product={ product } />
+							<JetpackAkismetSaleCouponCallout product={ product } />
+						</LineItemMeta>
+					</>
 				</>
 			) }
 
 			{ containsPartnerCoupon && (
-				<LineItemMeta shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
-					{ shouldUseCheckoutV2 ? (
-						<LineItemBillingInterval product={ product } />
-					) : (
-						<LineItemSublabelAndPrice product={ product } />
-					) }
+				<LineItemMeta>
+					<LineItemSublabelAndPrice product={ product } />
 				</LineItemMeta>
 			) }
 
-			{ ! shouldUseCheckoutV2 && isJetpackSearch( product ) && (
-				<JetpackSearchMeta product={ product } />
-			) }
+			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 
-			{ ! shouldUseCheckoutV2 && isEmail && (
-				<EmailMeta product={ product } isRenewal={ isRenewal } />
-			) }
+			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
 
 			{ children }
 
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
-					<DeleteButtonWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+					<DeleteButtonWrapper>
 						<DeleteButton
 							className="checkout-line-item__remove-product"
 							buttonType="text-button"
@@ -1514,9 +1258,8 @@ function CheckoutLineItem( {
 								setIsModalVisible( true );
 								onRemoveProductClick?.( label );
 							} }
-							shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 						>
-							{ shouldUseCheckoutV2 ? translate( 'Remove' ) : translate( 'Remove from cart' ) }
+							{ translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
 

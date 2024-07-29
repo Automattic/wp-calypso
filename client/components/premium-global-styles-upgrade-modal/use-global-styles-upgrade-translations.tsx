@@ -1,5 +1,6 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 
 const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: Props ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const plans = Plans.usePlans( { coupon: undefined } );
 	const planTitle = plans?.data?.[ PLAN_PREMIUM ]?.productNameShort ?? '';
 
@@ -15,7 +17,9 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 		<strong>{ translate( 'Free domain for one year' ) }</strong>,
 		<strong>{ translate( 'Premium themes' ) }</strong>,
 		translate( 'Style customization' ),
-		translate( 'Live chat support' ),
+		hasEnTranslation( 'Fast support' )
+			? translate( 'Fast support' )
+			: translate( 'Live chat support' ),
 		translate( 'Ad-free experience' ),
 		translate( 'Earn with WordAds' ),
 	];

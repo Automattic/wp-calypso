@@ -55,7 +55,7 @@ export default function HostingProviderName( props: Props ) {
 				<VerifiedProvider
 					hostingProvider={ hostingProvider }
 					urlData={ urlData }
-					showHostingProvider={ true }
+					showHostingProvider
 				/>
 			) }
 		</div>

@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -111,7 +111,7 @@ export default function LicenseProductCard( props: Props ) {
 				tabIndex={ 0 }
 				aria-checked={ isSelected }
 				aria-disabled={ isDisabled }
-				className={ classNames( {
+				className={ clsx( {
 					'license-product-card': true,
 					selected: isSelected,
 					disabled: isDisabled,
@@ -140,7 +140,7 @@ export default function LicenseProductCard( props: Props ) {
 							</div>
 
 							<div
-								className={ classNames( 'license-product-card__select-button', {
+								className={ clsx( 'license-product-card__select-button', {
 									'license-product-card_multi-select': isMultiSelect,
 								} ) }
 							>

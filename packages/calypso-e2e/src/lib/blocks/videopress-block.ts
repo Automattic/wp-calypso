@@ -34,7 +34,9 @@ export class VideoPressBlock {
 
 		await block.locator( 'input' ).setInputFiles( path );
 
-		await block.getByText( 'Upload Complete!' ).waitFor( { timeout: 50 * 1000 } );
+		// We reduced it to 10 seconds because it is taking too long when it fails and is causing
+		// some execution timeout tests. (p1716579913775549/1716577210.067319-slack-CBTN58FTJ)
+		await block.getByText( 'Upload Complete!' ).waitFor( { timeout: 10 * 1000 } );
 		await block.getByRole( 'button', { name: 'Done' } ).click();
 
 		await block.getByText( 'We are converting this video for optimal playback' ).waitFor( {

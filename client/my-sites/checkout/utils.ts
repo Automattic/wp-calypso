@@ -1,4 +1,5 @@
 import { doesStringResembleDomain } from '@automattic/onboarding';
+import { translate } from 'i18n-calypso';
 import { untrailingslashit } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -124,4 +125,13 @@ export function isContextJetpackSitelessCheckout( context: Context ): boolean {
 		return false;
 	}
 	return true;
+}
+
+export function isContextSourceMyJetpack( context: Context ): boolean {
+	return context.query?.source === 'my-jetpack';
+}
+
+export function getAffiliateCouponLabel(): string {
+	// translators: The label of the coupon line item in checkout
+	return translate( 'Exclusive Offer Applied' );
 }

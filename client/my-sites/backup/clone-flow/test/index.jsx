@@ -6,7 +6,7 @@ import Modal from 'react-modal';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import documentHead from 'calypso/state/document-head/reducer';
 import preferences from 'calypso/state/preferences/reducer';
-import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
+import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import ui from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -71,8 +71,8 @@ jest.mock( 'calypso/state/rewind/selectors/get-backup-staging-sites', () =>
 jest.mock( 'calypso/state/rewind/selectors/has-fetched-staging-sites-list' );
 jest.mock( 'calypso/state/rewind/selectors/is-fetching-staging-sites-list' );
 jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query' );
-jest.mock( 'calypso/state/selectors/get-in-progress-rewind-status' );
 jest.mock( 'calypso/state/selectors/get-rewind-state' );
+jest.mock( 'calypso/state/selectors/get-restore-progress' );
 jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
 jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
 jest.mock( 'calypso/state/selectors/get-jetpack-credentials-test-status' );
@@ -182,7 +182,6 @@ function progressThroughFlow() {
 describe( 'BackupCloneFlow render', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		getInProgressRewindStatus.mockImplementation( () => undefined );
 	} );
 
 	test( 'Render RewindFlowLoading if state is not initialized', () => {
@@ -216,7 +215,7 @@ describe( 'BackupCloneFlow render', () => {
 
 	test( 'Render finished text if the clone is finished', () => {
 		getRewindState.mockImplementation( () => ( { state: 'active' } ) );
-		getInProgressRewindStatus.mockImplementation( () => 'finished' );
+		getRestoreProgress.mockImplementation( () => ( { status: 'finished' } ) );
 		render( <BackupCloneFlow /> );
 
 		progressThroughFlow();
@@ -225,7 +224,7 @@ describe( 'BackupCloneFlow render', () => {
 
 	test( 'Render error if it is in the wrong status', () => {
 		getRewindState.mockImplementation( () => ( { state: 'active' } ) );
-		getInProgressRewindStatus.mockImplementation( () => 'wrong-status' );
+		getRestoreProgress.mockImplementation( () => ( { status: 'wrong-status' } ) );
 		render( <BackupCloneFlow /> );
 
 		progressThroughFlow();

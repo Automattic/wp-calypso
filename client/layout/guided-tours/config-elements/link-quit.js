@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -29,7 +29,7 @@ export default class LinkQuit extends Component {
 
 	render() {
 		const { children, primary, subtle, href, target } = this.props;
-		const classes = classNames( 'guided-tours__button-link', {
+		const classes = clsx( 'guided-tours__button-link', {
 			'guided-tours__subtle-button': subtle,
 		} );
 

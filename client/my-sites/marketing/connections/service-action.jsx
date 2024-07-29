@@ -1,4 +1,3 @@
-import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -6,7 +5,6 @@ import { connect } from 'react-redux';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const SharingServiceAction = ( {
@@ -21,7 +19,6 @@ const SharingServiceAction = ( {
 	recordTracksEvent,
 	path,
 	isExpanded,
-	isMastodonEligible,
 } ) => {
 	let warning = false;
 	let label;
@@ -68,7 +65,7 @@ const SharingServiceAction = ( {
 			context: 'Sharing: Publicize connect unavailable button label',
 		} );
 		return (
-			<Button compact disabled={ true }>
+			<Button compact disabled>
 				{ label }
 			</Button>
 		);
@@ -109,7 +106,7 @@ const SharingServiceAction = ( {
 		);
 	}
 
-	if ( 'mastodon' === service.ID && isMastodonEligible ) {
+	if ( 'mastodon' === service.ID ) {
 		return (
 			<Button
 				scary={ warning }
@@ -171,7 +168,6 @@ export default connect(
 		return {
 			removableConnections: getRemovableConnections( state, service.ID ),
 			path: getCurrentRouteParameterized( state, siteId ),
-			isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }

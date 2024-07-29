@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackComMasterbar from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';
@@ -12,7 +12,7 @@ export default function Header() {
 	return (
 		<>
 			<JetpackComMasterbar />
-			<div className={ classNames( 'header' ) }>
+			<div className={ clsx( 'header' ) }>
 				<FormattedHeader
 					className="header__main-title"
 					headerText={ preventWidows( title ) }

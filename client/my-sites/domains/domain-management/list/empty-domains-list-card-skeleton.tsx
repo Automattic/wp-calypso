@@ -1,5 +1,5 @@
 import { Card, Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -43,9 +43,9 @@ export const EmptyDomainsListCardSkeleton = ( {
 		};
 
 	return (
-		<Card className={ classNames( 'empty-domains-list-card', className ) }>
+		<Card className={ clsx( 'empty-domains-list-card', className ) }>
 			<div
-				className={ classNames( 'empty-domains-list-card__wrapper', {
+				className={ clsx( 'empty-domains-list-card__wrapper', {
 					'is-compact': isCompact,
 					'has-title-only': title && ! line,
 				} ) }

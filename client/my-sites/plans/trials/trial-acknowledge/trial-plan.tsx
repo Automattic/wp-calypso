@@ -8,7 +8,7 @@ import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 interface TrialPlanProps {
 	subtitle: ReactNode;
 	supportingCopy: ReactNode;
-	trialLimitations: string[];
+	trialLimitations?: string[];
 	planFeatures: string[];
 	callToAction: ReactNode;
 }
@@ -22,10 +22,12 @@ export const TrialPlan = ( {
 }: TrialPlanProps ) => {
 	const { __ } = useI18n();
 
-	const formats = new Intl.ListFormat( i18n.getLocaleSlug() ?? 'en', {
-		style: 'long',
-		type: 'conjunction',
-	} ).format( trialLimitations );
+	const formats =
+		trialLimitations &&
+		new Intl.ListFormat( i18n.getLocaleSlug() ?? 'en', {
+			style: 'long',
+			type: 'conjunction',
+		} ).format( trialLimitations );
 
 	return (
 		<div className="trial-plan--container">
@@ -47,14 +49,16 @@ export const TrialPlan = ( {
 				</div>
 			) }
 
-			<div className="trial-plan--details-limitation">
-				<img src={ clockIcon } alt={ __( 'Limit' ) } />
-				<p>
-					<strong>{ __( 'Trial limitations' ) }</strong>
-					<br />
-					<small>{ formats }</small>
-				</p>
-			</div>
+			{ trialLimitations && (
+				<div className="trial-plan--details-limitation">
+					<img src={ clockIcon } alt={ __( 'Limit' ) } />
+					<p>
+						<strong>{ __( 'Trial limitations' ) }</strong>
+						<br />
+						<small>{ formats }</small>
+					</p>
+				</div>
+			) }
 
 			{ callToAction }
 		</div>

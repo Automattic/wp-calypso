@@ -16,7 +16,6 @@
 	margin: 0;
 	color: var(--color-neutral-100);
 	height: auto;
-	cursor: pointer;
 	font-family: $sans;
 	font-size: $font-body-small;
 	line-height: 22px;
@@ -24,6 +23,14 @@
 	overflow: hidden;
 	text-decoration: none;
 	padding-left: 2px;
+
+	&:is(button, a) {
+		cursor: pointer;
+	}
+
+	&:is(div) {
+		cursor: default;
+	}
 
 	&:visited {
 		color: var(--color-neutral-100);
@@ -80,8 +87,10 @@
 
 .checklist-item__task-content.components-button:hover:not([disabled]),
 .checklist-item__task-content.components-button:focus:not([disabled]) {
-	fill: var(--studio-blue-50);
-	color: var(--studio-blue-50);
+	&:is(button, a) {
+		fill: var(--studio-blue-50);
+		color: var(--studio-blue-50);
+	}
 	border-bottom: 1px solid var(--studio-gray-5);
 }
 
@@ -160,6 +169,18 @@
 	}
 }
 
+.checklist-item__task.expanded {
+	.checklist-item__task-content,
+	.checklist-item__task-content:hover,
+	.checklist-item__task-content:focus {
+		border-bottom: none;
+	}
+
+	.checklist-item__task-content {
+		padding-bottom: 0;
+	}
+}
+
 // completed tasks (both enabled and disabled)
 .checklist-item__task.completed.disabled,
 .checklist-item__task.completed.enabled {
@@ -180,8 +201,8 @@
 }
 
 // pending tasks and completed enabled
-.checklist-item__task.completed.enabled:hover,
-.checklist-item__task.pending:hover,
+.checklist-item__task.completed.enabled > button:hover,
+.checklist-item__task.pending > button:hover,
 .checklist-item__task.completed.enabled > a:focus,
 .checklist-item__task.pending > a:focus {
 	.checklist-item__text {
@@ -206,7 +227,7 @@
 // pending disabled tasks
 .checklist-item__task.pending.disabled {
 	.checklist-item__text {
-		color: inherit;
+		color: var(--color-neutral-20);
 	}
 }
 
@@ -226,6 +247,7 @@
 	font-weight: 600;
 }
 
+.checklist-item__checklist-expanded-action-button.components-button,
 .checklist-item__checklist-primary-button.components-button {
 	width: 100%;
 	font-weight: 500;
@@ -257,5 +279,20 @@
 		&:hover {
 			color: var(--color-text-inverted);
 		}
+	}
+}
+
+.checklist-item__checklist-expanded-action-button.components-button {
+	display: block;
+	margin: 16px 0;
+}
+
+.checklist-item__expanded-content {
+	padding-left: 2px;
+	font-family: $sans;
+	font-size: $font-body-small;
+
+	p {
+		margin: 12px 0;
 	}
 }

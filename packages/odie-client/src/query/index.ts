@@ -1,13 +1,13 @@
 import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useI18n } from '@wordpress/react-i18n';
 import { useRef } from 'react';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 // eslint-disable-next-line no-restricted-imports
 import wpcom from 'calypso/lib/wp';
-import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
-import { broadcastOdieMessage, setOdieStorage } from '../data';
-import type { Chat, Message, OdieAllowedBots } from '../types';
+import { broadcastOdieMessage, useSetOdieStorage } from '../data';
+import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types/';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
 const buildSendChatMessage = async (
@@ -35,7 +35,7 @@ const buildSendChatMessage = async (
 		: apiFetch( {
 				path: apiPathWithIds,
 				method: 'POST',
-				data: { message, version, context: { selectedSiteId } },
+				data: { message: message.content, version, context: { selectedSiteId } },
 		  } );
 };
 
@@ -80,7 +80,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 		chat,
 		botNameSlug,
 		setIsLoading,
-		addMessage,
+		setChat,
 		updateMessage,
 		odieClientId,
 		selectedSiteId,
@@ -88,6 +88,20 @@ export const useOdieSendMessage = (): UseMutationResult<
 	} = useOdieAssistantContext();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
+	const storeChatId = useSetOdieStorage( 'chat_id' );
+	const { __ } = useI18n();
+
+	/* translators: Error message when Wapuu fails to send a message */
+	const wapuuErrorMessage = __(
+		"Wapuu oopsie! 😺 I'm in snooze mode and can't chat just now. Don't fret, just browse through the buttons below to connect with WordPress.com support.",
+		__i18n_text_domain__
+	);
+
+	/* translators: Error message when Wapuu user's exceed free messages limit */
+	const wapuuRateLimitMessage = __(
+		"Hi there! You've hit your AI usage limit. Upgrade your plan for unlimited Wapuu support! You can still get user support using the buttons below.",
+		__i18n_text_domain__
+	);
 
 	return useMutation<
 		{ chat_id: string; messages: Message[] },
@@ -107,15 +121,31 @@ export const useOdieSendMessage = (): UseMutationResult<
 		},
 		onMutate: ( { message } ) => {
 			const internal_message_id = uuid();
-			addMessage( [
+			const messages = [
 				message,
 				{
 					internal_message_id,
 					content: '...',
-					role: 'bot',
-					type: 'placeholder',
+					role: 'bot' as MessageRole,
+					type: 'placeholder' as MessageType,
 				},
-			] );
+			];
+
+			setChat( ( prevChat: Chat ) => {
+				// Normalize message to always be an array
+				const newMessages = messages;
+
+				// Filter out 'placeholder' messages if new message is not 'dislike-feedback'
+				const filteredMessages = newMessages.some( ( msg ) => msg.type === 'dislike-feedback' )
+					? prevChat.messages
+					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
+
+				// Append new messages at the end
+				return {
+					chat_id: prevChat.chat_id,
+					messages: [ ...filteredMessages, ...newMessages ],
+				};
+			} );
 			setIsLoading( true );
 			userMessage.current = message;
 
@@ -129,7 +159,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 
 			if ( ! data.messages || ! data.messages[ 0 ].content ) {
 				const message = {
-					content: WAPUU_ERROR_MESSAGE,
+					content: wapuuErrorMessage,
 					internal_message_id,
 					role: 'bot',
 					type: 'error',
@@ -152,7 +182,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 			updateMessage( message );
 
 			broadcastOdieMessage( message, odieClientId );
-			setOdieStorage( 'chat_id', data.chat_id );
+			storeChatId( data.chat_id );
 			const queryKey = [ 'chat', botNameSlug, data.chat_id, 1, 30, true ];
 
 			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
@@ -176,13 +206,17 @@ export const useOdieSendMessage = (): UseMutationResult<
 		onSettled: () => {
 			setIsLoading( false );
 		},
-		onError: ( _, __, context ) => {
+		onError: ( response, __, context ) => {
 			if ( ! context ) {
 				throw new Error( 'Context is undefined' );
 			}
+
+			const { data } = response as { data: { status: number } };
+			const isRateLimitError = data.status === 429;
+
 			const { internal_message_id } = context;
 			const message = {
-				content: WAPUU_ERROR_MESSAGE,
+				content: isRateLimitError ? wapuuRateLimitMessage : wapuuErrorMessage,
 				internal_message_id,
 				role: 'bot',
 				type: 'error',

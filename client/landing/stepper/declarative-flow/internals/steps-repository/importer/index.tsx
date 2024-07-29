@@ -3,7 +3,7 @@ import { MigrationStatus } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
@@ -204,7 +204,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 				<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
 				<StepContainer
-					className={ classnames(
+					className={ clsx(
 						'import__onboarding-page',
 						'importer-wrapper',
 						'import__onboarding-page--redesign',
@@ -213,11 +213,11 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 						}
 					) }
 					stepName="importer-step"
-					hideSkip={ true }
+					hideSkip
 					hideBack={ isMigrationInProgress }
-					hideFormattedHeader={ true }
+					hideFormattedHeader
 					goBack={ onGoBack }
-					isWideLayout={ true }
+					isWideLayout
 					stepContent={ renderStepContent() }
 					recordTracksEvent={ recordTracksEvent }
 				/>

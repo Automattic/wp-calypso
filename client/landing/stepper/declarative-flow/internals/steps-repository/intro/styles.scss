@@ -13,7 +13,7 @@
 			background-position-y: bottom;
 			background-size: contain;
 
-			@media screen and ( max-height: 512px ) and ( orientation: landscape ) {
+			@media screen and (max-height: 512px) and (orientation: landscape) {
 				background-size: cover;
 				background-position-y: 35vh;
 			}
@@ -352,7 +352,7 @@
 			border-color: revert;
 		}
 
-		@media screen and ( max-width: 512px ) and ( orientation: portrait ) {
+		@media screen and (max-width: 512px) and (orientation: portrait) {
 			flex-direction: column;
 			align-items: center;
 

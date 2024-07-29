@@ -5,7 +5,7 @@ import {
 	FlexBlock,
 } from '@wordpress/components';
 import { Icon, chevronRightSmall, external } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
@@ -23,6 +23,7 @@ interface Props {
 	isExternalLink?: boolean;
 	isSelected?: boolean;
 	openInSameTab?: boolean;
+	extraContent?: JSX.Element;
 }
 
 export const SidebarNavigatorMenuItem = ( {
@@ -36,11 +37,12 @@ export const SidebarNavigatorMenuItem = ( {
 	isExternalLink = false,
 	isSelected = false,
 	openInSameTab = false,
+	extraContent,
 }: Props ) => {
 	const SidebarItem = ( { children }: { children?: JSX.Element } ) => {
 		return (
 			<Item
-				className={ classnames( 'sidebar-v2__menu-item', {
+				className={ clsx( 'sidebar-v2__menu-item', {
 					'is-active': isSelected,
 				} ) }
 				onClick={ () => onClickMenuItem( link ) }
@@ -63,6 +65,7 @@ export const SidebarNavigatorMenuItem = ( {
 					{ isExternalLink && (
 						<Icon className="sidebar-v2__external-icon" icon={ external } size={ ICON_SIZE } />
 					) }
+					{ extraContent }
 				</HStack>
 			</Item>
 		);

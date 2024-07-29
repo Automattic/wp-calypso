@@ -1,9 +1,6 @@
 import { type PlanSlug, PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { usePlanUpsellInfo } from '../hooks/use-plan-upsell-info';
 import PlanUpsellButton from './plan-upsell-button';
 import { DomainName } from '.';
 
@@ -15,19 +12,13 @@ const FreeDomainText = styled.div`
 	margin-top: 4px;
 `;
 
-export default function SuggestedPlanSection( {
-	paidDomainName,
-	onPlanSelected,
-	isBusy,
-}: {
+export default function SuggestedPlanSection( props: {
 	paidDomainName?: string;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
 	isBusy: boolean;
 } ) {
 	const translate = useTranslate();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? 'USD';
-	const basicPlanUpsellInfo = usePlanUpsellInfo( PLAN_PERSONAL, currencyCode );
-	const advancePlanUpsellInfo = usePlanUpsellInfo( PLAN_PREMIUM, currencyCode );
+	const { paidDomainName, onPlanSelected, isBusy } = props;
 
 	return (
 		<>
@@ -38,7 +29,7 @@ export default function SuggestedPlanSection( {
 				</DomainName>
 			) }
 			<PlanUpsellButton
-				planUpsellInfo={ basicPlanUpsellInfo }
+				planSlug={ PLAN_PERSONAL }
 				onPlanSelected={ onPlanSelected }
 				isBusy={ isBusy }
 			/>
@@ -51,7 +42,7 @@ export default function SuggestedPlanSection( {
 				</DomainName>
 			) }
 			<PlanUpsellButton
-				planUpsellInfo={ advancePlanUpsellInfo }
+				planSlug={ PLAN_PREMIUM }
 				onPlanSelected={ onPlanSelected }
 				isBusy={ isBusy }
 			/>

@@ -20,19 +20,19 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		overflow: visible;
 		height: auto;
 
-		@media ( max-width: $modal-breakpoint ) {
+		@media (max-width: $modal-breakpoint) {
 			width: 90vw;
 			min-width: 90vw;
 			left: 5vw;
 			right: 5vw;
 		}
 
-		@media ( min-width: $modal-breakpoint ) {
+		@media (min-width: $modal-breakpoint) {
 			width: 720px;
 			max-height: 80vh;
 		}
 
-		@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
+		@media (min-width: $modal-breakpoint) and (max-height: $modal-breakpoint-phone-height) {
 			max-height: $modal-content-min-height-landscape;
 		}
 	}
@@ -55,7 +55,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 			filter: none;
 		}
 
-		@media ( min-width: $modal-breakpoint ) {
+		@media (min-width: $modal-breakpoint) {
 			position: fixed;
 		}
 	}
@@ -76,13 +76,13 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	width: 100%;
 	overflow: hidden;
 
-	@media ( min-width: $modal-breakpoint ) {
+	@media (min-width: $modal-breakpoint) {
 		flex-direction: row;
 		justify-content: flex-start;
 		height: 100%;
 	}
 
-	@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
+	@media (min-width: $modal-breakpoint) and (max-height: $modal-breakpoint-phone-height) {
 		min-height: $modal-content-min-height-landscape;
 	}
 }
@@ -95,7 +95,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 .announcement-modal__text,
 .announcement-modal__visual {
-	@media ( min-width: $modal-breakpoint ) {
+	@media (min-width: $modal-breakpoint) {
 		flex: 1 auto;
 		min-width: 310px;
 	}
@@ -105,12 +105,12 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	padding: 25px;
 	height: 60%;
 
-	@media ( min-width: $modal-breakpoint ) {
+	@media (min-width: $modal-breakpoint) {
 		height: auto;
 		padding: $modal-padding-v $modal-padding-h;
 	}
 
-	@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
+	@media (min-width: $modal-breakpoint) and (max-height: $modal-breakpoint-phone-height) {
 		padding: 25px;
 	}
 }
@@ -124,7 +124,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	overflow: hidden;
 	position: relative;
 
-	@media ( min-width: $modal-breakpoint ) {
+	@media (min-width: $modal-breakpoint) {
 		height: auto;
 	}
 }
@@ -132,7 +132,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 .announcement-modal__picture {
 	max-height: 100%;
 
-	@media ( min-width: $modal-breakpoint ) {
+	@media (min-width: $modal-breakpoint) {
 		margin-top: 0;
 		width: 90%;
 	}
@@ -145,7 +145,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	line-height: 1.19;
 	margin: 12px 0;
 
-	@media ( min-width: $modal-breakpoint ) {
+	@media (min-width: $modal-breakpoint) {
 		font-size: 32px;
 	}
 }
@@ -155,7 +155,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	line-height: 22px;
 	color: var(--studio-gray-60);
 
-	@media ( min-width: $modal-breakpoint ) {
+	@media (min-width: $modal-breakpoint) {
 		font-size: 17px;
 		line-height: 26px;
 	}
@@ -172,7 +172,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		align-self: flex-end;
 	}
 
-	@media ( min-width: $modal-breakpoint ) {
+	@media (min-width: $modal-breakpoint) {
 		max-height: none;
 	}
 }

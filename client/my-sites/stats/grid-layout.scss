@@ -19,7 +19,6 @@ $grid-vertical-gutters: 32px;
 	overflow-x: auto;
 
 	.stats-card--header-and-body {
-		width: fit-content;
 		min-width: 100%;
 	}
 }
@@ -61,7 +60,7 @@ $grid-vertical-gutters: 32px;
 			margin-bottom: $grid-vertical-gutters;
 			gap: $grid-vertical-gutters $grid-horizontal-gutters;
 
-			@media (max-width: $break-medium ) {
+			@media (max-width: $break-medium) {
 				gap: 0;
 			}
 
@@ -123,8 +122,16 @@ $grid-vertical-gutters: 32px;
 				max-width: calc(60% - #{gutter-offset(2, 1)});
 			}
 
+			// sidebar + content // wide(2xl) is the max value so the classe is for an xlarge screen
+			@media (max-width: $break-wide) {
+				.stats__flexible-grid-item--full--xlarge {
+					flex: 0 1 100%;
+					max-width: 100%;
+				}
+			}
+
 			// sidebar + content // xlarge is the max value so the classes are for a large screen
-			@media (max-width: $break-xlarge ) {
+			@media (max-width: $break-xlarge) {
 				// move 2/3 and 1/2 to full
 				.stats__flexible-grid-item--full--large {
 					flex: 0 1 100%;
@@ -140,7 +147,7 @@ $grid-vertical-gutters: 32px;
 			}
 
 			// large breakpoint is the max width applicable so the CSS rule applies for a medium screen
-			@media (max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				/* Full row */
 				.stats__flexible-grid-item--full--medium {
 					flex: 0 1 100%;
@@ -149,7 +156,7 @@ $grid-vertical-gutters: 32px;
 			}
 
 			// no sidebar // medium breakpoint is the max width applicable so the CSS rule applies for a small screen
-			@media (max-width: $break-medium ) {
+			@media (max-width: $break-medium) {
 				/* Full row */
 				.stats__flexible-grid-item--full--small {
 					flex: 0 1 100%;

@@ -34,8 +34,9 @@
 	line-height: 1.5;
 
 	@include break-mobile {
-		font-size: rem(35px);
+		font-size: rem(28px);
 		padding-block-start: 65px;
+		text-wrap: nowrap;
 	}
 }
 
@@ -58,7 +59,7 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	margin-block-start: 24px;
+	margin-block-start: 35px;
 }
 
 .stored-credit-card__payment-logo {
@@ -118,27 +119,7 @@ button.button.stored-credit-card__card-footer-actions {
 }
 
 .stored-credit-card__card-footer-actions-popover {
-	.popover__menu-item {
-		padding-block: 12px;
-
-		&:hover,
-		&:focus {
-			background: var(--color-sidebar-text-alternative);
-			color: var(--color-text);
-			fill: var(--color-text);
-
-			.gridicon {
-				fill: var(--color-text);
-			}
-		}
-	}
-
-
 	.popover__menu-item.stored-credit-card__card-footer-actions-delete {
-		&,
-		&:hover,
-		&:focus {
-			color: var(--color-error);
-		}
+		color: var(--color-error);
 	}
 }

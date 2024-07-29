@@ -28,13 +28,14 @@
 		overflow: hidden;
 	}
 
-	@media ( max-width: $break-wide ) {
+	@media (max-width: $break-wide) {
 		.pattern-library__filters-inner {
-			padding: 24px;
+			padding-top: 24px;
+			padding-bottom: 24px;
 		}
 	}
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		position: static;
 
 		.category-pill-navigation {
@@ -58,7 +59,7 @@
 	display: flex;
 	margin-left: 16px;
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		display: none;
 	}
 
@@ -117,8 +118,9 @@
 	@include patterns-page-width;
 	padding-bottom: 96px;
 
-	@media ( max-width: $break-wide ) {
-		padding: 24px;
+	@media (max-width: $break-xlarge) {
+		padding-top: 24px;
+		padding-bottom: 24px;
 	}
 }
 
@@ -128,7 +130,7 @@
 	gap: 24px;
 	padding: 56px 0 48px;
 
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		align-items: initial;
 		flex-direction: column;
 		padding: 0 0 24px;
@@ -143,46 +145,9 @@
 		letter-spacing: 0.185px;
 	}
 
-	.components-base-control {
-		flex: none;
-		white-space: nowrap;
-	}
-
-	.components-base-control__field,
-	.components-base-control__label {
-		margin-bottom: 0;
-	}
-
-	.pattern-library__toggle-option {
-		min-width: 118px;
-
-		&:disabled {
-			cursor: default;
-			opacity: 0.5;
-		}
-	}
-
-	.pattern-library__toggle-option--list-view,
-	.pattern-library__toggle-option--grid-view {
-		padding: 0 8px;
-		color: var(--studio-black);
-
-		&[aria-checked="true"] {
-			color: var(--studio-white);
-		}
-	}
-
-	@media ( max-width: $break-medium ) {
+	@media (max-width: $break-medium) {
 		.pattern-library__title:not(.pattern-library__title--search) {
 			display: none;
-		}
-
-		.components-base-control:has(.pattern-library__toggle--view) {
-			display: none;
-		}
-
-		.pattern-library__toggle-option {
-			height: 40px;
 		}
 	}
 }

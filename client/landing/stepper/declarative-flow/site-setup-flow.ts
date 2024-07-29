@@ -1,12 +1,12 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
-import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { ImporterMainPlatform } from 'calypso/blocks/import/types';
+import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -84,6 +84,7 @@ const siteSetupFlow: Flow = {
 			STEPS.IMPORTER_MEDIUM,
 			STEPS.IMPORTER_SQUARESPACE,
 			STEPS.IMPORTER_WORDPRESS,
+			STEPS.LAUNCH_BIG_SKY,
 			STEPS.VERIFY_EMAIL,
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.PROCESSING,
@@ -117,6 +118,7 @@ const siteSetupFlow: Flow = {
 		);
 
 		const { site, siteSlug, siteId } = useSiteData();
+		const isSitePlanCompatible = site && isTargetSitePlanCompatible( site );
 		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
@@ -129,6 +131,9 @@ const siteSetupFlow: Flow = {
 
 		const origin = urlQueryParams.get( 'origin' );
 		const from = urlQueryParams.get( 'from' );
+		const backToStep = urlQueryParams.get( 'backToStep' );
+		const backToFlow = urlQueryParams.get( 'backToFlow' );
+		const skippedCheckout = urlQueryParams.get( 'skippedCheckout' );
 
 		const adminUrl = useSelect(
 			( select ) =>
@@ -147,7 +152,14 @@ const siteSetupFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
-		const locale = useLocale();
+
+		const goToFlow = ( fullStepPath: string ) => {
+			const path = `/setup/${ fullStepPath }`.replace( /([^:])(\/\/+)/g, '$1/' );
+
+			return window.location.assign(
+				addQueryArgs( { siteSlug, from, origin: `site-setup/${ currentStep }` }, path )
+			);
+		};
 
 		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
 			setPendingAction( () => {
@@ -195,7 +207,13 @@ const siteSetupFlow: Flow = {
 
 					// Forcing cache invalidation to retrieve latest launchpad_screen option value
 					if ( isLaunchpadIntent( siteIntent ) ) {
-						redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
+						redirectionUrl = addQueryArgs(
+							{
+								showLaunchpad: true,
+								...( skippedCheckout && { skippedCheckout: 1 } ),
+							},
+							to
+						);
 					}
 
 					formData.push( [ 'settings', JSON.stringify( settings ) ] );
@@ -327,24 +345,15 @@ const siteSetupFlow: Flow = {
 
 					switch ( intent ) {
 						case SiteIntent.Import:
-							// Temporarily enabled only for English locales while we wait for UI translations.
-							if (
-								config.isEnabled( 'onboarding/new-migration-flow' ) &&
-								englishLocales.includes( locale )
-							) {
-								return exitFlow(
-									`/setup/site-migration?siteSlug=${ siteSlug }&flags=onboarding/new-migration-flow`
-								);
-							}
+							return exitFlow( `/setup/site-migration?siteSlug=${ siteSlug }&ref=goals` );
 
-							return navigate( 'import' );
 						case SiteIntent.DIFM:
 							return navigate( 'difmStartingPoint' );
 						case SiteIntent.Write:
 						case SiteIntent.Sell:
 							return navigate( 'options' );
 						default: {
-							if ( config.isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'designSetup' );
@@ -392,7 +401,7 @@ const siteSetupFlow: Flow = {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 					const { platform } = providedDependencies as { platform: ImporterMainPlatform };
 
-					if ( shouldRedirectToSiteMigration( currentStep, platform, locale, origin ) ) {
+					if ( shouldRedirectToSiteMigration( currentStep, platform, origin ) ) {
 						return window.location.assign(
 							addQueryArgs(
 								{ siteSlug, siteId, from },
@@ -487,7 +496,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Write:
 							return navigate( 'bloggerStartingPoint' );
 						default: {
-							if ( config.isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'goals' );
@@ -507,11 +516,12 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'importList':
-					// eslint-disable-next-line no-case-declarations
-					const backToStep = urlQueryParams.get( 'backToStep' );
-
 					if ( backToStep ) {
 						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
+					}
+
+					if ( backToFlow ) {
+						return goToFlow( backToFlow );
 					}
 
 					return navigate( `import?siteSlug=${ siteSlug }` );
@@ -519,14 +529,33 @@ const siteSetupFlow: Flow = {
 				case 'importerBlogger':
 				case 'importerMedium':
 				case 'importerSquarespace':
+					if ( backToFlow ) {
+						return navigate( `importList?siteSlug=${ siteSlug }&backToFlow=${ backToFlow }` );
+					}
 					return navigate( `importList?siteSlug=${ siteSlug }` );
 
 				case 'importerWordpress':
+					if ( backToFlow ) {
+						return goToFlow( backToFlow );
+					}
+
 					if ( urlQueryParams.get( 'option' ) === 'content' ) {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}
-					return navigate( `import?siteSlug=${ siteSlug }` );
 
+					if ( urlQueryParams.has( 'showModal' ) ) {
+						// remove the siteSlug in case they want to change the destination site
+						urlQueryParams.delete( 'siteSlug' );
+						urlQueryParams.delete( 'showModal' );
+						return navigate( `import?siteSlug=${ siteSlug }` );
+					}
+
+					if ( ! isSitePlanCompatible ) {
+						urlQueryParams.set( 'showModal', 'true' );
+						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					}
+
+					return navigate( `import?siteSlug=${ siteSlug }` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':

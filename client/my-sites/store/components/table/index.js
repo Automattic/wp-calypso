@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 const Table = ( {
@@ -10,7 +10,7 @@ const Table = ( {
 	children,
 	...props
 } ) => {
-	const classes = classnames(
+	const classes = clsx(
 		{
 			table: true,
 			'is-compact-table': compact,

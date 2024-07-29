@@ -1,14 +1,19 @@
+import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
-import { Button, Popover } from '@wordpress/components';
+import { Popover } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { getTotalInvoiceValue } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
+import { useContext } from 'react';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import CommissionsInfo from '../../commissions-info';
+import { MarketplaceTypeContext } from '../../context';
+import { useTotalInvoiceValue } from '../../wpcom-overview/hooks/use-total-invoice-value';
 import ShoppingCartMenuItem from './item';
 import type { ShoppingCartItem } from '../../types';
 
 import './style.scss';
+
 type Props = {
 	onClose: () => void;
 	onRemoveItem: ( item: ShoppingCartItem ) => void;
@@ -20,11 +25,13 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 	const translate = useTranslate();
 
 	const userProducts = useSelector( getProductsList );
+	const { getTotalInvoiceValue } = useTotalInvoiceValue();
 	const { discountedCost } = getTotalInvoiceValue( userProducts, items );
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
 
 	return (
 		<Popover
-			isVisible={ true }
+			isVisible
 			onClose={ onClose }
 			noArrow={ false }
 			offset={ 24 }
@@ -35,7 +42,11 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 				<div className="shopping-cart__menu-header">
 					<h2 className="shopping-cart__menu-header-title">{ translate( 'Your cart' ) }</h2>
 
-					<Button className="shopping-cart__menu-header-close-button" onClick={ onClose }>
+					<Button
+						className="shopping-cart__menu-header-close-button"
+						onClick={ onClose }
+						borderless
+					>
 						<Icon icon={ close } size={ 24 } />
 					</Button>
 				</div>
@@ -52,7 +63,11 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 
 				<div className="shopping-cart__menu-footer">
 					<div className="shopping-cart__menu-total">
-						<span>{ translate( 'Total:' ) }</span>
+						<span>
+							{ marketplaceType === 'regular'
+								? translate( 'Total:' )
+								: translate( 'Total your client will pay:' ) }
+						</span>
 						<span>
 							{ translate( '%(total)s/mo', {
 								args: { total: formatCurrency( discountedCost, items[ 0 ]?.currency ?? 'USD' ) },
@@ -60,11 +75,13 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 						</span>
 					</div>
 
+					{ marketplaceType === 'referral' && <CommissionsInfo items={ items } /> }
+
 					<Button
 						className="shopping-cart__menu-checkout-button"
 						onClick={ onCheckout }
 						disabled={ ! items.length }
-						variant="primary"
+						primary
 					>
 						{ translate( 'Checkout' ) }
 					</Button>

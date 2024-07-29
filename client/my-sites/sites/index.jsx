@@ -1,5 +1,5 @@
 import { Card, Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -147,6 +147,9 @@ class Sites extends Component {
 			case 'hosting-config':
 				path = translate( 'Hosting Configuration' );
 				break;
+			case 'hosting-overview':
+				path = translate( 'Hosting Overview' );
+				break;
 			case 'jetpack-search':
 				path = 'Jetpack Search';
 				break;
@@ -219,7 +222,7 @@ class Sites extends Component {
 		return (
 			<>
 				{ clearPageTitle && <DocumentHead title="" /> }
-				<Main className={ classNames( 'sites', { 'sites__main-empty': showEmptyContent } ) }>
+				<Main className={ clsx( 'sites', { 'sites__main-empty': showEmptyContent } ) }>
 					{ showEmptyContent ? (
 						<div className="sites__empty-state">
 							<h1 className="card-heading-36">{ translate( 'Add a site' ) }</h1>

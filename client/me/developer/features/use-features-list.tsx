@@ -1,9 +1,10 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useHandleClickLink } from './use-handle-click-link';
 
 export const useFeaturesList = () => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const handleClickLink = useHandleClickLink();
 
 	return [
@@ -34,6 +35,32 @@ export const useFeaturesList = () => {
 			linkLearnMore: localizeUrl(
 				'https://developer.wordpress.com/docs/developer-tools/staging-sites/'
 			),
+		},
+		{
+			id: 'multi-site-management',
+			title: hasEnTranslation( 'Agency Hosting' )
+				? translate( 'Agency Hosting', {
+						comment: 'Feature title',
+				  } )
+				: translate( 'Multiple site management', {
+						comment: 'Feature title',
+				  } ),
+			description: hasEnTranslation(
+				"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients."
+			)
+				? translate(
+						"Earn up to 50% revenue share and get volume discounts on WordPress.com hosting when you migrate sites to our platform and promote Automattic's products to clients.",
+						{
+							comment: 'Feature description',
+						}
+				  )
+				: translate(
+						'Manage multiple WordPress sites from one place, get volume discounts on hosting products, and earn up to 50% revenue share when you migrate sites to our platform and refer our products to clients.',
+						{
+							comment: 'Feature description',
+						}
+				  ),
+			linkLearnMore: localizeUrl( 'https://wordpress.com/for-agencies?ref=wpcom-dev-dashboard' ),
 		},
 		{
 			id: 'code',

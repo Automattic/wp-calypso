@@ -15,7 +15,6 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import LicenseList from '../license-list';
@@ -62,15 +61,10 @@ export default function LicensesOverview( {
 
 	const { data, isFetched } = useFetchLicenseCounts();
 
-	const showEmptyStateContent = isFetched && data?.[ LicenseFilter.NotRevoked ] === 0;
+	const showEmptyStateContent = isFetched && data?.all === 0;
 
 	return (
 		<Layout className="licenses-overview" title={ title } wide withBorder>
-			<PageViewTracker
-				title="Purchases > Licenses"
-				path="/purchases/licenses/:filter"
-				properties={ { filter } }
-			/>
 			<LicensesOverviewContext.Provider value={ context }>
 				<LayoutTop withNavigation>
 					<LayoutHeader>

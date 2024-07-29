@@ -4,6 +4,7 @@ import { getDomainType } from './get-domain-type';
 import { getGdprConsentStatus } from './get-gdpr-consent-status';
 import { getTransferStatus } from './get-transfer-status';
 import {
+	DnssecRecords,
 	DomainType,
 	GDPRConsentStatus,
 	GoogleEmailSubscription,
@@ -42,6 +43,17 @@ function assembleCurrentUserCannotAddEmailReason( reason: {
 	return errorDetails[ 0 ];
 }
 
+function assembleDnssecRecords( dnssecRecords?: DnssecRecords ) {
+	if ( ! dnssecRecords ) {
+		return {};
+	}
+
+	return {
+		dnskey: dnssecRecords.dnskey,
+		dsData: dnssecRecords.dsData,
+	};
+}
+
 export const createSiteDomainObject = ( domain: DomainData ) => {
 	let transferEndDate = null;
 	if ( domain.transfer_start_date ) {
@@ -75,6 +87,8 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		cannotUpdateContactInfoReason: domain.cannot_update_contact_info_reason
 			? String( domain.cannot_update_contact_info_reason )
 			: null,
+		canTransferToAnyUser: Boolean( domain.can_transfer_to_any_user ),
+		canTransferToOtherSite: Boolean( domain.can_transfer_to_other_site ),
 		connectionMode: String( domain.connection_mode ),
 		contactInfoDisclosureAvailable: Boolean( domain.contact_info_disclosure_available ),
 		contactInfoDisclosed: Boolean( domain.contact_info_disclosed ),
@@ -87,6 +101,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 			domain.current_user_cannot_add_email_reason
 		),
 		currentUserIsOwner: Boolean( domain.current_user_is_owner ),
+		dnssecRecords: assembleDnssecRecords( domain.dnssec_records ),
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),
 		domainRegistrationAgreementUrl: domain.domain_registration_agreement_url ?? null,
@@ -101,9 +116,13 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		titanMailSubscription: assembleGoogleAppsSubscription(
 			domain.titan_mail_subscription
 		) as TitanEmailSubscription,
+		hasPendingContactUpdate: Boolean( domain.has_pending_contact_update ),
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
+		isDnssecEnabled: Boolean( domain.is_dnssec_enabled ),
+		isDnssecSupported: Boolean( domain.is_dnssec_supported ),
+		isGravatarDomain: Boolean( domain.is_gravatar_domain ),
 		isLocked: Boolean( domain.is_locked ),
 		isRenewable: Boolean( domain.is_renewable ),
 		isRedeemable: Boolean( domain.is_redeemable ),

@@ -1,3 +1,4 @@
+import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
 import type { Purchase, TaxVendorInfo } from '@automattic/wpcom-checkout';
 
 export interface IndividualReceipt {
@@ -77,11 +78,15 @@ export interface BillingTransactionItem {
 	site_id: string;
 
 	/**
+	 * The receipt item's total before taxes in a locale and currency formatted
+	 * string.
 	 * @deprecated use subtotal_integer
 	 */
 	subtotal: string;
 
 	/**
+	 * The receipt item's total before taxes in the currency's standard unit as
+	 * a decimal, floating point number.
 	 * @deprecated use subtotal_integer
 	 */
 	raw_subtotal: number;
@@ -107,11 +112,14 @@ export interface BillingTransactionItem {
 	tax_integer: number;
 
 	/**
+	 * The receipt item's total as a locale and currency formatted string.
 	 * @deprecated use amount_integer
 	 */
 	amount: string;
 
 	/**
+	 * The receipt item's total in the currency's standard unit as a decimal,
+	 * floating point number.
 	 * @deprecated use amount_integer
 	 */
 	raw_amount: number;
@@ -121,15 +129,55 @@ export interface BillingTransactionItem {
 	 */
 	amount_integer: number;
 
+	/**
+	 * Every price change that was made to this receipt item. Only exists for
+	 * receipt items made after October 2023.
+	 */
+	cost_overrides: ReceiptCostOverride[];
+
+	/**
+	 * The details of any introductory offer that was applied to this receipt,
+	 * assuming we have that data stored. Will only be available for receipts
+	 * made after `cost_overrides` became available on receipt items and after
+	 * we began using cost overrides for introductory offers in D134600-code
+	 * (February 2024).
+	 */
+	introductory_offer_terms?: IntroductoryOfferTerms;
+
 	currency: string;
 	licensed_quantity: number | null;
 	new_quantity: number | null;
+	volume: number | null;
 	product: string;
 	product_slug: string;
 	variation: string;
 	variation_slug: string;
 	months_per_renewal_interval: number;
 	wpcom_product_slug: string;
+}
+
+export interface ReceiptCostOverride {
+	id: string;
+	human_readable_reason: string;
+	override_code: string;
+
+	/**
+	 * If this is true, the override is not a discount but a reset for the base
+	 * price of the product.
+	 */
+	does_override_original_cost: boolean;
+
+	/**
+	 * The price as it was before this price change was applied. It is a number
+	 * in the curreny's smallest unit.
+	 */
+	old_price_integer: number;
+
+	/**
+	 * The price as it was after this price change was applied. It is a number
+	 * in the currency's smallest unit.
+	 */
+	new_price_integer: number;
 }
 
 export interface UpcomingCharge {

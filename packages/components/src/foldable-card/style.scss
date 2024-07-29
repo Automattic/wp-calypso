@@ -89,7 +89,7 @@ button.foldable-card__action {
 	flex: 2 1;
 	margin-right: 5px;
 
-	@media ( max-width: #{ ($break-mobile) } ) {
+	@media (max-width: #{ ($break-mobile) }) {
 		flex: 1 1;
 	}
 }
@@ -100,7 +100,7 @@ button.foldable-card__action {
 	flex: 1 1;
 	justify-content: flex-end;
 
-	@media ( max-width: #{ ($break-mobile) } ) {
+	@media (max-width: #{ ($break-mobile) }) {
 		flex: 0 1;
 	}
 }
@@ -168,7 +168,7 @@ button.foldable-card__action {
 	transition: opacity 0.2s linear;
 	display: inline-block;
 
-	@media ( max-width: #{ ($break-mobile) } ) {
+	@media (max-width: #{ ($break-mobile) }) {
 		display: none;
 	}
 }

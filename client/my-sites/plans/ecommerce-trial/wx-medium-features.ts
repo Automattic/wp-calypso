@@ -20,7 +20,6 @@ type WooExpressMediumFeatureSetProps = {
 
 export const getWooExpressMediumFeatureSets = ( {
 	translate,
-	interval,
 }: WooExpressMediumFeatureSetProps ): WooExpressMediumPlanFeatureSet[] => {
 	return [
 		{
@@ -43,10 +42,7 @@ export const getWooExpressMediumFeatureSets = ( {
 				},
 				{
 					title: translate( 'Get support 24/7', { textOnly: true } ),
-					subtitle:
-						interval === 'yearly'
-							? translate( 'Need help? Reach out anytime via email or chat.' )
-							: translate( 'Need help? Reach out anytime via email.' ),
+					subtitle: translate( 'Need help? Reach out anytime.' ),
 				},
 				{
 					title: translate( 'Have unlimited admin accounts', { textOnly: true } ),
@@ -258,9 +254,7 @@ export const getExpiredTrialWooExpressMediumFeatureSets = ( {
 				},
 				{
 					title: translate( 'Priority support 24/7', { textOnly: true } ),
-					subtitle: translate(
-						'Need help? Reach out to our Woo specialists anytime via email or chat.'
-					),
+					subtitle: translate( 'Need help? Reach out to our Woo specialists anytime.' ),
 				},
 				{
 					title: translate( 'Get unlimited admin accounts', { textOnly: true } ),

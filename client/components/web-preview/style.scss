@@ -172,7 +172,7 @@ a.web-preview__external.button {
 		color: var(--color-neutral-70);
 	}
 
-	@media ( max-width: $break-small ) {
+	@media (max-width: $break-small) {
 		display: none;
 	}
 }

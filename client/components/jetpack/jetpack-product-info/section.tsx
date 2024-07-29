@@ -37,7 +37,7 @@ const JetpackProductInfoSection: FunctionComponent< Props > = ( {
 				<FoldableCard
 					hideSummary
 					header={ title }
-					clickableHeader={ true }
+					clickableHeader
 					smooth
 					contentExpandedStyle={ contentStyle }
 				>

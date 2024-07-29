@@ -1,5 +1,5 @@
 import { Card, CompactCard, ScreenReaderText, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { FC, useState, useEffect, useCallback, PropsWithChildren } from 'react';
 import './style.scss';
 
@@ -89,7 +89,7 @@ const FoldableCard: FC< FoldableCardProps > = ( {
 		const clickAction = ! clickableHeader ? getClickAction() : undefined;
 		if ( actionButton ) {
 			return (
-				<div className="foldable-card__action" role="presentation" onClick={ clickAction }>
+				<div className="odie-foldable-card__action" role="presentation" onClick={ clickAction }>
 					{ getActionButton() }
 				</div>
 			);
@@ -100,7 +100,7 @@ const FoldableCard: FC< FoldableCardProps > = ( {
 				<button
 					disabled={ disabled }
 					type="button"
-					className="foldable-card__action foldable-card__expand"
+					className="odie-foldable-card__action odie-foldable-card__expand"
 					aria-expanded={ isExpanded }
 					onClick={ clickAction }
 				>
@@ -114,14 +114,14 @@ const FoldableCard: FC< FoldableCardProps > = ( {
 	const renderContent = () => {
 		const additionalStyle = isExpanded ? contentExpandedStyle : contentCollapsedStyle;
 		return (
-			<div className="foldable-card__content" style={ additionalStyle }>
+			<div className="odie-foldable-card__content" style={ additionalStyle }>
 				{ children }
 			</div>
 		);
 	};
 
 	const Container = compact ? CompactCard : Card;
-	const itemSiteClasses = classNames( 'foldable-card', className, {
+	const itemSiteClasses = clsx( 'odie-foldable-card', className, {
 		'is-disabled': disabled,
 		'is-expanded': isExpanded,
 		'has-expanded-summary': !! expandedSummary,
@@ -131,11 +131,11 @@ const FoldableCard: FC< FoldableCardProps > = ( {
 	return (
 		<Container className={ itemSiteClasses } highlight={ highlight }>
 			<div
-				className="foldable-card__header is-clickable"
+				className="odie-foldable-card__header is-clickable"
 				role="presentation"
 				onClick={ getClickAction() }
 			>
-				<span className="foldable-card__main">{ header }</span>
+				<span className="odie-foldable-card__main">{ header }</span>
 				{ renderActionButton() }
 			</div>
 			{ ( isExpanded || smooth ) && renderContent() }

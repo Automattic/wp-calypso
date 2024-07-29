@@ -20,6 +20,11 @@ interface DateControlPickerProps {
 	onShortcut: ( shortcut: DateControlPickerShortcut ) => void;
 	onApply: ( startDate: string, endDate: string ) => void;
 	overlay?: JSX.Element;
+	onGatedHandler: (
+		events: { name: string; params?: object }[],
+		event_from: string,
+		stat_type: string
+	) => void;
 }
 
 interface DateControlPickerShortcutsProps {

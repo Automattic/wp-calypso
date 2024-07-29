@@ -18,6 +18,7 @@ class StatsOverviewPlaceholder extends Component {
 		if ( ! this.props.insights ) {
 			icon = (
 				<div className="module-header__site-icon">
+					{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
 					<img width="24" height="24" />
 				</div>
 			);
@@ -27,6 +28,7 @@ class StatsOverviewPlaceholder extends Component {
 			<Card className="stats-module is-loading">
 				<div className="module-header">
 					<h3 className="module-header-title">
+						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 						<a href="#" className="module-header__link">
 							{ icon }
 							<span className="module-header__right-icon">
@@ -39,25 +41,25 @@ class StatsOverviewPlaceholder extends Component {
 
 				<StatsTabs>
 					<StatsTab
-						isLoading={ true }
+						isLoading
 						gridicon="visible"
 						label={ this.props.translate( 'Views', { context: 'noun' } ) }
 						value={ null }
 					/>
 					<StatsTab
-						isLoading={ true }
+						isLoading
 						gridicon="user"
 						label={ this.props.translate( 'Visitors', { context: 'noun' } ) }
 						value={ null }
 					/>
 					<StatsTab
-						isLoading={ true }
+						isLoading
 						gridicon="star"
 						label={ this.props.translate( 'Likes', { context: 'noun' } ) }
 						value={ null }
 					/>
 					<StatsTab
-						isLoading={ true }
+						isLoading
 						gridicon="comment"
 						label={ this.props.translate( 'Comments', { context: 'noun' } ) }
 						value={ null }

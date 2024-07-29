@@ -8,7 +8,7 @@
 		align-items: center;
 
 		// Add gap for not open .section-nav on tablet and mobile.
-		@media ( max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			padding-right: 16px;
 		}
 
@@ -40,7 +40,7 @@
 	.subscribers-count .button {
 		margin-left: 16px;
 
-		@media ( max-width: $break-mobile ) {
+		@media (max-width: $break-mobile) {
 			display: none;
 		}
 	}
@@ -71,7 +71,7 @@
 			box-shadow: inset 0 -1px 0 #0000000d;
 
 			&.is-open {
-				@media ( max-width: $break-mobile ) {
+				@media (max-width: $break-mobile) {
 					.subscribers-count {
 						&:hover,
 						&:focus {
@@ -107,7 +107,7 @@
 		.section-nav__panel {
 			padding: 0;
 
-			@media ( max-width: $break-small ) {
+			@media (max-width: $break-small) {
 				padding: 0 16px;
 			}
 		}
@@ -116,7 +116,7 @@
 			&:not(:first-child) {
 				margin-left: 16px;
 
-				@media ( max-width: $break-mobile ) {
+				@media (max-width: $break-mobile) {
 					margin-left: 0;
 				}
 			}
@@ -126,7 +126,7 @@
 				font-size: $font-body-small;
 				line-height: 20px;
 
-				@media ( min-width: $break-mobile ) {
+				@media (min-width: $break-mobile) {
 					&:hover,
 					&:focus {
 						color: var(--color-neutral-60);
@@ -134,16 +134,16 @@
 					}
 				}
 
-				@media ( max-width: $break-medium ) {
+				@media (max-width: $break-medium) {
 					padding: 8px 0;
 				}
 
-				@media ( max-width: $break-mobile ) {
+				@media (max-width: $break-mobile) {
 					padding: 8px;
 				}
 			}
 
-			@media ( max-width: $break-mobile ) {
+			@media (max-width: $break-mobile) {
 				& + .section-nav-tab {
 					margin-top: 1px;
 				}
@@ -182,7 +182,7 @@
 				padding: 7px 12px;
 			}
 
-			@media ( max-width: $break-mobile ) {
+			@media (max-width: $break-mobile) {
 				margin-top: 1px; // TODO: remove this after enabling Subscribers page and all nav items are of the same type
 
 				&:hover,

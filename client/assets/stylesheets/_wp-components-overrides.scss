@@ -98,3 +98,11 @@
 		}
 	}
 }
+
+.components-external-link__contents {
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}

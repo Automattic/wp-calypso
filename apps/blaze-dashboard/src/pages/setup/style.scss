@@ -1,19 +1,125 @@
 @import "@automattic/color-studio/dist/color-variables";
 
 .promote-post-i2 {
+
+	.promote-post-i2__outer-wrapper {
+		background-color: $studio-gray-0;
+		width: 100%;
+	}
+
+	.promote-post-i2__inner-container {
+		display: flex;
+		flex-direction: column;
+		padding-bottom: 95px;
+
+		.setup-pages__title {
+			font-weight: 400;
+			font-size: 2.75rem;
+			margin: 0 auto 20px;
+
+			&.width-fix {
+				max-width: 470px;
+			}
+		}
+
+		.setup-pages__body {
+			font-size: $font-body;
+			text-wrap: balance;
+		}
+	}
+
+	.promote-post-i2__footer-text {
+		margin-bottom: 0;
+		padding-top: 32px;
+	}
+
 	.empty-promotion-list__container.promote-post-i2__setup-container {
 		display: flex;
 		flex-direction: column;
-		margin-top: 40px;
+		margin-top: 30px;
+		min-height: calc(100vh - 180px); // the size of the top bar and footer
+
+
+		.promote-post-i2__setup-icon {
+			margin: 95px 0 30px;
+
+			img {
+				max-width: 200px;
+				width: 100%;
+			}
+		}
 
 		.promote-post-i2__active-steps {
 			align-self: center;
-			text-align: justify;
+			margin: 0;
+			width: 100%;
 
 			li {
+				align-items: center;
+				background-color: $studio-white;
+				border-radius: 4px;
+				box-sizing: border-box;
+				display: flex;
 				font-size: $font-body;
-				color: $studio-gray-50;
+				margin: 0 auto 8px;
+				max-width: 520px;
+				padding: 16px;
+				text-align: left;
+				width: 100%;
+
+				span {
+					align-items: center;
+					border-radius: 100%;
+					color: $studio-white;
+					display: inline-flex;
+					height: 32px;
+					justify-content: center;
+					line-height: 1;
+					margin-right: 16px;
+					min-width: 32px;
+					width: 32px;
+				}
+
+				&:nth-child(1) {
+					span {
+						background-color: #b99ad3;
+					}
+				}
+
+				&:nth-child(2) {
+					span {
+						background-color: #814bb0;
+					}
+				}
+
+				&:nth-child(3) {
+					span {
+						background-color: #492a63;
+					}
+				}
+
+				h4 {
+					font-size: 1rem;
+					font-weight: 700;
+					margin: 5px 0 9px;
+				}
+				button {
+					margin-bottom: 1.5rem;
+				}
 			}
+
+			.promote-post-i2__step-icon-container {
+				align-items: center;
+				align-self: flex-start;
+				display: flex;
+				flex-direction: column;
+				height: 33px;
+				justify-content: center;
+				margin-right: 20px;
+				min-width: 32px;
+				width: 32px;
+			}
+
 		}
 	}
 }

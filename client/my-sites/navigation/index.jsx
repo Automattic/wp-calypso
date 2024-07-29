@@ -8,6 +8,7 @@ import SitePicker from 'calypso/my-sites/picker';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
+	getShouldShowCollapsedGlobalSidebar,
 	getShouldShowGlobalSidebar,
 	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
@@ -91,6 +92,7 @@ class MySitesNavigation extends Component {
 		return (
 			<GlobalSidebar { ...asyncProps }>
 				<MySitesSidebarUnifiedBody
+					isGlobalSidebarCollapsed={ this.props.isGlobalSidebarCollapsed }
 					path={ this.props.path }
 					onMenuItemClick={ this.handleGlobalSidebarMenuItemClick }
 				/>
@@ -110,7 +112,18 @@ export default withCurrentRoute(
 			const sectionName = currentSection?.name ?? null;
 			const siteId = getSelectedSiteId( state );
 			const siteDomain = getSiteDomain( state, siteId );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
+			);
+			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
+			);
 			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
 				siteId,
@@ -120,6 +133,7 @@ export default withCurrentRoute(
 			return {
 				siteDomain,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar,
+				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar,
 				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar,
 			};
 		},

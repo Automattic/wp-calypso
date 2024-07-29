@@ -1,0 +1,43 @@
+.site-sort__icon {
+	position: relative;
+	inset-block-start: 3px;
+	inset-inline-start: 8px;
+}
+
+.site-sort__icon-large_screen {
+	&.site-sort {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		display: inline-flex;
+		align-items: center;
+		margin-inline-start: -16px;
+		padding-inline: 16px;
+	}
+
+	.site-sort__icon {
+		position: absolute;
+		inset-inline-end: 16px;
+		inset-block-start: unset;
+		inset-inline-start: unset;
+	}
+}
+
+.site-sort__icon-hidden {
+	visibility: hidden;
+}
+
+.site-sort__clickable {
+	cursor: pointer;
+	// Inline block to ensure focus outline is rectangular.
+	display: inline-block;
+	// 5px right padding so focus border doesnt overlap icon.
+	padding-right: 5px;
+	border-radius: 2px;
+	.accessible-focus &:focus {
+		outline-style: solid;
+		outline-color: var(--color-primary-light);
+		outline-width: 2px;
+		outline-offset: 2px;
+	}
+}

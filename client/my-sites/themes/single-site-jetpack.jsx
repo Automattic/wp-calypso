@@ -43,7 +43,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 					feature={ FEATURE_UPLOAD_THEMES }
 					title={ translate( 'Upgrade to a plan to upload your own themes!' ) }
 					callToAction={ translate( 'Upgrade now' ) }
-					showIcon={ true }
+					showIcon
 				/>
 			);
 		}
@@ -67,7 +67,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 					)
 				}
 				callToAction={ translate( 'Upgrade now' ) }
-				showIcon={ true }
+				showIcon
 			/>
 		);
 	};
@@ -97,7 +97,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 				{ ...props }
 				upsellUrl={ upsellUrl() }
 				siteId={ siteId }
-				isJetpackSite={ true }
+				isJetpackSite
 				upsellBanner={ displayUpsellBanner ? upsellBanner() : null }
 			/>
 		</Main>

@@ -25,7 +25,7 @@ const TextSelector: FunctionComponent< Props > = ( { siteId, filter } ) => {
 	return (
 		<Search
 			compact
-			delaySearch={ true }
+			delaySearch
 			hideFocus
 			initialValue={ filter.textSearch || null }
 			isOpen={ false }

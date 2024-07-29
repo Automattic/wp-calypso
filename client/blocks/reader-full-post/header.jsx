@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -27,7 +27,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 
 	/* eslint-disable react/jsx-no-target-blank */
 	return (
-		<div className={ classNames( classes ) }>
+		<div className={ clsx( classes ) }>
 			{ post.title ? (
 				<AutoDirection>
 					<h1 className="reader-full-post__header-title">

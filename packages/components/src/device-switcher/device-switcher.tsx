@@ -1,5 +1,5 @@
 import { useResizeObserver } from '@wordpress/compose';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useState, useEffect, useRef } from 'react';
 import { DEVICE_TYPES } from './constants';
 import FixedViewport from './fixed-viewport';
@@ -100,7 +100,7 @@ const DeviceSwitcher = ( {
 
 	return (
 		<div
-			className={ classnames( className, 'device-switcher__container', {
+			className={ clsx( className, 'device-switcher__container', {
 				'device-switcher__container--frame-fixed-viewport': isFixedViewport,
 				'device-switcher__container--frame-shadow': isShowFrameShadow,
 				'device-switcher__container--frame-bordered': isShowFrameBorder,

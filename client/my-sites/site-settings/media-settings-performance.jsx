@@ -123,7 +123,7 @@ class MediaSettingsPerformance extends Component {
 					title={ upsellMessage }
 					event="jetpack_video_settings"
 					feature={ WPCOM_FEATURES_VIDEOPRESS }
-					showIcon={ true }
+					showIcon
 					href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_VIDEOPRESS }` }
 				/>
 			)

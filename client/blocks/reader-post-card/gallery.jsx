@@ -1,6 +1,6 @@
+import { DotPager } from '@automattic/components';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
-import DotPager from 'calypso/components/dot-pager';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
@@ -53,7 +53,7 @@ function PostGallery( { post, children } ) {
 				<ReaderExcerpt post={ post } />
 			</div>
 			<div onClick={ handleClick } role="presentation">
-				<DotPager isClickEnabled={ true }>{ listItems }</DotPager>
+				<DotPager isClickEnabled>{ listItems }</DotPager>
 			</div>
 			<div className="reader-post-card__post-details">{ children }</div>
 		</div>

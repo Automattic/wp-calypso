@@ -139,7 +139,7 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 					ref={ inputRef }
 					contentEditable={ ! isBusy && ! requireUpgrade }
 					// The content editable div is expected to be updated by the enhance prompt, so warnings are suppressed
-					suppressContentEditableWarning={ true }
+					suppressContentEditableWarning
 					className="prompt-query__input"
 					onInput={ onPromptInput }
 					onPaste={ onPromptPaste }

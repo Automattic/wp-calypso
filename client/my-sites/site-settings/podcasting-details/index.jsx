@@ -4,7 +4,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Button, Card, FormLabel } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { pick, flowRight } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -180,7 +180,7 @@ class PodcastingDetails extends Component {
 
 		const error = this.renderSettingsError();
 
-		const classes = classNames( 'podcasting-details__wrapper', {
+		const classes = clsx( 'podcasting-details__wrapper', {
 			'is-disabled': ! error && ! isPodcastingEnabled,
 		} );
 
@@ -214,7 +214,7 @@ class PodcastingDetails extends Component {
 							event="podcasting_details_upload_audio"
 							tracksImpressionName="calypso_upgrade_nudge_impression"
 							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
+							showIcon
 						/>
 					) }
 					{ ! error && (
@@ -279,7 +279,7 @@ class PodcastingDetails extends Component {
 						selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
 						podcastingCategoryId={ podcastingCategoryId }
 						onChange={ this.onCategorySelected }
-						addTerm={ true }
+						addTerm
 						onAddTermSuccess={ this.onCategorySelected }
 						height={ 200 }
 					/>

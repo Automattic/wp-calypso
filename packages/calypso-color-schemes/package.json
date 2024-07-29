@@ -28,7 +28,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@automattic/color-studio": "2.5.0",
+		"@automattic/color-studio": "2.6.0",
 		"postcss": "^8.4.5",
 		"postcss-custom-properties": "^11.0.0",
 		"sass": "^1.37.5"

@@ -130,7 +130,7 @@ const AddOnCard = ( {
 	return (
 		<Container>
 			<Card className="add-ons-card">
-				<CardHeader isBorderless={ true } className="add-ons-card__header">
+				<CardHeader isBorderless className="add-ons-card__header">
 					<div className="add-ons-card__icon">
 						<Icon icon={ addOnMeta.icon } size={ 44 } />
 					</div>
@@ -147,7 +147,7 @@ const AddOnCard = ( {
 					</div>
 				</CardHeader>
 				<CardBody className="add-ons-card__body">{ addOnMeta.description }</CardBody>
-				<CardFooter isBorderless={ true } className="add-ons-card__footer">
+				<CardFooter isBorderless className="add-ons-card__footer">
 					{ shouldRenderLoadingState && (
 						<Spinner size={ 24 } className="spinner-button__spinner" />
 					) }

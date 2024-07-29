@@ -7,7 +7,7 @@ import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { ToggleControl, PanelBody } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { BlockAppender } from './block-appender';
 import { TimelineIcon } from './icon';
 
@@ -83,7 +83,7 @@ export function registerTimelineBlock() {
 
 			const toggleAlternate = () => setAttributes( { isAlternating: ! isAlternating } );
 
-			const classes = classnames( 'wp-block-jetpack-timeline', {
+			const classes = clsx( 'wp-block-jetpack-timeline', {
 				'is-alternating': isAlternating,
 			} );
 
@@ -112,7 +112,7 @@ export function registerTimelineBlock() {
 		save: ( props ) => {
 			const { attributes } = props;
 			const { isAlternating } = attributes;
-			const classes = classnames( 'wp-block-jetpack-timeline', {
+			const classes = clsx( 'wp-block-jetpack-timeline', {
 				'is-alternating': isAlternating,
 			} );
 

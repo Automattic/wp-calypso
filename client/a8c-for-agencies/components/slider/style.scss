@@ -31,11 +31,11 @@
 	@mixin slider-thumb-style {
 		-webkit-appearance: none;
 		appearance: none;
-		background-color: var(--studio-black);
+		background-color: var(--color-surface-backdrop);
 		height: 16px;
 		width: 16px;
 		border-radius: 50%;
-		border: 2.62px solid var(--studio-white);
+		border: 2.62px solid var(--color-border-light);
 		margin-block-start: -5px;
 		cursor: pointer;
 		z-index: 2;
@@ -98,8 +98,7 @@
 .a4a-slider__label,
 .a4a-slider__sub,
 .a4a-slider__marker {
-	font-size: 0.875rem;
-	font-weight: 500;
+	@include a4a-font-label-button;
 	line-height: 1.1;
 }
 
@@ -107,4 +106,14 @@
 .a4a-slider__sub,
 .a4a-slider__marker-sub {
 	color: var(--color-success);
+}
+
+.a4a-slider__input-disabled-area {
+	min-height: 6px;
+	width: 0;
+	background-color: var(--color-primary-0);
+	position: absolute;
+	top: 22px;
+	left: -1px;
+	border-radius: 4px 0 0 4px;
 }

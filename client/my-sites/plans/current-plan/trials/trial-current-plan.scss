@@ -62,6 +62,9 @@ body.is-section-plans.is-business-trial-plan {
 			margin-left: 12px;
 			margin-bottom: 24px;
 			padding: 48px 24px 24px;
+			&.reduced-padding {
+				padding: 16px 16px 8px 16px;
+			}
 		}
 
 		@media (min-width: $break-wide) {

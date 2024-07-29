@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
 import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
@@ -11,18 +11,18 @@ export const PatternGalleryServer: PatternGalleryFC = ( { isGridView, patterns =
 
 	return (
 		<div
-			className={ classNames( 'pattern-gallery', {
+			className={ clsx( 'pattern-gallery', {
 				'pattern-gallery--grid': isGridView,
 			} ) }
 		>
 			{ patternsToDisplay.map( ( pattern ) => (
 				<PatternPreviewPlaceholder
-					className={ classNames( {
+					className={ clsx( {
 						'pattern-preview--grid': isGridView,
 						'pattern-preview--list': ! isGridView,
 					} ) }
 					key={ pattern.ID }
-					pattern={ pattern }
+					title={ pattern.title }
 				/>
 			) ) }
 		</div>

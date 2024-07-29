@@ -7,15 +7,52 @@
 	"hostname": "agencies.automattic.com",
 	"i18n_default_locale_slug": "en",
 	"logout_url": "https://automattic.com/for/agencies",
+	"wpcom_signup_url": "https://wordpress.com/start",
+	"wpcom_login_url": "https://wordpress.com/log-in",
+	"wpcom_authorize_endpoint": "https://public-api.wordpress.com/oauth2/authorize",
 	"site_name": "Automattic For Agencies",
+	"meta": [
+		{
+			"name": "description",
+			"content": "Welcome to a new era of partnership with Automattic"
+		},
+		{
+			"property": "og:description",
+			"content": "Welcome to a new era of partnership with Automattic"
+		},
+		{
+			"property": "og:image",
+			"content": "https://agencies.automattic.com/calypso/images/a8c-for-agencies/a8c-logo.jpeg"
+		}
+	],
 	"oauth_client_id": 95932,
 	"features": {
-		"a8c-for-agencies": false,
-		"oauth": false
+		"ad-tracking": true,
+		"a8c-for-agencies": true,
+		"cookie-banner": true,
+		"oauth": true,
+		"a4a-logged-out-signup": true,
+		"a4a-automated-referrals": true,
+		"a4a-partner-directory": false,
+		"a4a-dev-sites": false,
+		"hosting-overview-refinements": false
 	},
 	"enable_all_sections": false,
 	"sections": {
-		"a8c-for-agencies": true
+		"a8c-for-agencies": true,
+		"a8c-for-agencies-auth": true,
+		"a8c-for-agencies-landing": true,
+		"a8c-for-agencies-overview": true,
+		"a8c-for-agencies-plugins": true,
+		"a8c-for-agencies-sites": true,
+		"a8c-for-agencies-marketplace": true,
+		"a8c-for-agencies-purchases": true,
+		"a8c-for-agencies-signup": true,
+		"a8c-for-agencies-referrals": true,
+		"a8c-for-agencies-settings": false,
+		"a8c-for-agencies-partner-directory": true,
+		"a8c-for-agencies-migrations": true,
+		"a8c-for-agencies-client": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

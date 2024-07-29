@@ -11,7 +11,7 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 
 .woocommerce {
 	.main {
-		@media ( max-width: 660px ) {
+		@media (max-width: 660px) {
 			padding-left: 15px;
 			padding-right: 15px;
 		}
@@ -96,7 +96,7 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 					padding-right: 0;
 					width: 90%;
 
-					@media ( min-width: $break-wide ) {
+					@media (min-width: $break-wide) {
 						width: calc(30%);
 						padding-left: 0;
 						padding-right: 10px;

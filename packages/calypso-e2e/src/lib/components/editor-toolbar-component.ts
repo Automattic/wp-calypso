@@ -16,6 +16,10 @@ const selectors = {
 
 	// Preview
 	previewButton: `${ panel } :text("View"):visible, [aria-label="View"]:visible`,
+
+	// Post status
+	postStatusButton: `.editor-post-status > button`,
+
 	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
 		`button[role="menuitem"] span:text("${ target }")`,
 	previewPane: `.edit-post-visual-editor`,
@@ -157,7 +161,6 @@ export class EditorToolbarComponent {
 		// be able to perform the click action.
 		// See https://github.com/Automattic/wp-calypso/pull/76987
 		await Promise.any( [
-			editorParent.locator( '.wpcom-domain-upsell-callout__dismiss-icon' ).click(),
 			editorParent.getByRole( 'button', { name: 'Save draft' } ).click( { trial: true } ),
 		] );
 
@@ -249,15 +252,15 @@ export class EditorToolbarComponent {
 	/* Publish and unpublish */
 
 	/**
-	 * Returns the text present for the save/publish button.
+	 * Waits for the save/publish button.
 	 *
 	 * @returns {Promise<string>} String found on the button.
 	 */
-	async getPublishButtonText(): Promise< string > {
+	async waitForPublishButton(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		const publishButtonLocator = editorParent.locator( selectors.publishButton( 'enabled' ) );
 
-		return await publishButtonLocator.innerText();
+		await publishButtonLocator.waitFor();
 	}
 
 	/**
@@ -265,7 +268,7 @@ export class EditorToolbarComponent {
 	 *
 	 * This is applicable for the following scenarios:
 	 * 	- publish of a new article (Publish)
-	 * 	- update an existing article (Update)
+	 * 	- update/save an existing article (Update)
 	 * 	- schedule a post (Schedule)
 	 */
 	async clickPublish(): Promise< void > {
@@ -282,6 +285,11 @@ export class EditorToolbarComponent {
 		const editorParent = await this.editor.parent();
 
 		await Promise.race( [
+			( async () => {
+				// Works with Gutenberg >=v18.2.0
+				await editorParent.locator( selectors.postStatusButton ).click();
+				await editorParent.getByRole( 'radio', { name: 'Draft' } ).click();
+			} )(),
 			( async () => {
 				// Works with Gutenberg >=v15.8.0
 				await this.openSettings( 'Settings' );
@@ -304,7 +312,9 @@ export class EditorToolbarComponent {
 
 		// To support i18n tests.
 		const translatedTargetName = await this.translateFromPage( target );
-		const button = editorParent.getByRole( 'button', { name: translatedTargetName, exact: true } );
+		const button = editorParent
+			.locator( '.editor-header__settings, .edit-post-header__settings' )
+			.getByLabel( translatedTargetName );
 
 		if ( await this.targetIsOpen( button ) ) {
 			return;
@@ -325,10 +335,13 @@ export class EditorToolbarComponent {
 		const translatedCloseSettingsName = await this.translateFromPage( 'Close Settings' );
 		const translatedCloseJetpackSettingsName = await this.translateFromPage( 'Close plugin' );
 
+		const buttonNames =
+			envVariables.VIEWPORT_NAME === 'mobile'
+				? `Settings`
+				: `${ translatedCloseJetpackSettingsName }|${ translatedCloseSettingsName }`;
+
 		const button = editorParent.getByRole( 'button', {
-			name: new RegExp(
-				`${ translatedCloseJetpackSettingsName }|${ translatedCloseSettingsName }`
-			),
+			name: new RegExp( buttonNames ),
 		} );
 
 		if ( ! ( await this.targetIsOpen( button ) ) ) {
@@ -338,35 +351,18 @@ export class EditorToolbarComponent {
 		await button.click();
 	}
 
-	/* Navigation sidebar */
-
 	/**
-	 * Opens the nav sidebar.
+	 * Closes the editor.
+	 *
+	 * Clicks the `W` logo in the corner to close the editor.
 	 */
-	async openNavSidebar(): Promise< void > {
+	async closeEditor(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const target = editorParent.getByRole( 'button', {
-			name: 'Block editor sidebar',
+		const target = editorParent.getByRole( 'link', {
+			name: 'View Posts',
 		} );
 		if ( await this.targetIsOpen( target ) ) {
-			return;
-		}
-
-		await target.click();
-	}
-
-	/**
-	 * Closes the nav sidebar.
-	 */
-	async closeNavSidebar(): Promise< void > {
-		const editorParent = await this.editor.parent();
-
-		const target = editorParent.getByRole( 'button', {
-			name: 'Block editor sidebar',
-		} );
-
-		if ( ! ( await this.targetIsOpen( target ) ) ) {
 			return;
 		}
 

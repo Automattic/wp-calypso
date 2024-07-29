@@ -1,6 +1,6 @@
 import { getPlan, getPlanClass } from '@automattic/calypso-products';
 import { ProductIcon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -93,7 +93,7 @@ class PlanThankYouCard extends Component {
 		const description = this.renderDescription();
 
 		return (
-			<div className={ classnames( 'plan-thank-you-card', this.getPlanClass() ) }>
+			<div className={ clsx( 'plan-thank-you-card', this.getPlanClass() ) }>
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 

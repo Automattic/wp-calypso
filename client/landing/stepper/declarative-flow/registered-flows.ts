@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
 	AI_ASSEMBLER_FLOW,
-	LINK_IN_BIO_DOMAIN_FLOW,
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -14,12 +13,19 @@ import {
 	GOOGLE_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
+	MIGRATION_SIGNUP_FLOW,
+	ENTREPRENEUR_FLOW,
+	HOSTED_SITE_MIGRATION_FLOW,
+	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
+	ONBOARDING_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ '../declarative-flow/site-setup-flow' ),
+	'site-setup-wg': () =>
+		import( /* webpackChunkName: "site-setup-wg" */ '../declarative-flow/site-setup-wg-flow' ),
 
 	'copy-site': () =>
 		import( /* webpackChunkName: "copy-site-flow" */ '../declarative-flow/copy-site' ),
@@ -35,16 +41,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'link-in-bio': () =>
 		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
-
-	[ LINK_IN_BIO_DOMAIN_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "link-in-bio-flow-domain" */ '../declarative-flow/link-in-bio-domain'
-		),
-
 	'link-in-bio-tld': () =>
 		import( /* webpackChunkName: "link-in-bio-tld-flow" */ '../declarative-flow/link-in-bio-tld' ),
-
-	podcasts: () => import( /* webpackChunkName: "podcasts-flow" */ '../declarative-flow/podcasts' ),
 
 	'link-in-bio-post-setup': () =>
 		import(
@@ -61,6 +59,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 			/* webpackChunkName: "tailored-ecommerce-flow" */ '../declarative-flow/tailored-ecommerce-flow'
 		),
 
+	[ ENTREPRENEUR_FLOW ]: () =>
+		import( /* webpackChunkName: "entrepreneur-flow" */ '../declarative-flow/entrepreneur-flow' ),
+
 	wooexpress: () =>
 		import(
 			/* webpackChunkName: "trial-wooexpress-flow" */ '../declarative-flow/trial-wooexpress-flow'
@@ -73,6 +74,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'assembler-first': () =>
 		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
+
+	'readymade-template': () =>
+		import( /* webpackChunkName: "readymade-template-flow" */ './readymade-template' ),
 
 	[ AI_ASSEMBLER_FLOW ]: () =>
 		import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
@@ -108,6 +112,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ NEW_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "new-hosted-site-flow" */ './new-hosted-site-flow' ),
 
+	[ NEW_HOSTED_SITE_FLOW_USER_INCLUDED ]: () =>
+		import(
+			/* webpackChunkName: "new-hosted-site-flow-user-included" */ './new-hosted-site-flow-user-included'
+		),
+
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "transferring-hosted-site-flow" */ './transferring-hosted-site-flow'
@@ -121,6 +130,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ GOOGLE_TRANSFER ]: () =>
 		import( /* webpackChunkName: "google-transfer" */ './google-transfer' ),
 
+	[ ONBOARDING_FLOW ]: () => import( /* webpackChunkName: "onboarding-flow" */ './onboarding' ),
+
 	[ 'plugin-bundle' ]: () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),
 
@@ -132,6 +143,13 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ REBLOGGING_FLOW ]: () =>
 		import( /* webpackChunkName: "reblogging-flow" */ '../declarative-flow/reblogging' ),
+
+	[ MIGRATION_SIGNUP_FLOW ]: () =>
+		import( /* webpackChunkName: "migration-signup" */ '../declarative-flow/migration-signup' ),
+	[ SITE_MIGRATION_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
+		),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
@@ -149,15 +167,15 @@ const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = 
 	  }
 	: {};
 
-const siteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
-	'onboarding/new-migration-flow'
-)
-	? {
-			[ SITE_MIGRATION_FLOW ]: () =>
-				import(
-					/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
-				),
-	  }
-	: {};
+const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
+	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "hosted-site-migration-flow" */ '../declarative-flow/hosted-site-migration-flow'
+		),
+};
 
-export default { ...availableFlows, ...videoPressTvFlows, ...siteMigrationFlow };
+export default {
+	...availableFlows,
+	...videoPressTvFlows,
+	...hostedSiteMigrationFlow,
+};

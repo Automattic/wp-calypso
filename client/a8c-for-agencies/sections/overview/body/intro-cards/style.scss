@@ -2,15 +2,11 @@
 	.dot-pager__page {
 		p,
 		li {
-			font-size: rem(16px);
-			font-weight: 400;
-			line-height: 24px;
+			@include a4a-font-body-lg;
 		}
 
 		h1 {
-			font-size: rem(32px);
-			font-weight: 700;
-			line-height: 48px;
+			@include a4a-font-heading-xxl;
 			margin-bottom: 16px;
 		}
 
@@ -23,7 +19,14 @@
 
 .a4a-intro-cards__wrapper {
 	border-radius: 4px;
+
 	.button {
+		border-radius: 4px;
+	}
+
+	.dot-pager__control-prev:focus-visible,
+	.dot-pager__control-next:focus-visible,
+	.dot-pager__control-choose-page:focus-visible {
 		border-radius: 4px;
 	}
 }

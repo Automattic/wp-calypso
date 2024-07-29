@@ -32,7 +32,7 @@ describe( 'NewsletterCategoriesSettings', () => {
 	it( 'displays the term tree selector when toggleValue is true', () => {
 		render(
 			<NewsletterCategoriesSection
-				newsletterCategoriesEnabled={ true }
+				newsletterCategoriesEnabled
 				updateFields={ jest.fn() }
 				newsletterCategoryIds={ [] }
 				handleToggle={ jest.fn() }
@@ -64,7 +64,7 @@ describe( 'NewsletterCategoriesSettings', () => {
 
 		render(
 			<NewsletterCategoriesSection
-				newsletterCategoriesEnabled={ true }
+				newsletterCategoriesEnabled
 				handleToggle={ mockHandleToggle }
 				updateFields={ jest.fn() }
 				newsletterCategoryIds={ [] }

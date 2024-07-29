@@ -311,10 +311,10 @@ export default function SearchBar( props: Props ) {
 				searchIcon={ <SearchIcon /> }
 				className="promote-post-i2__search-bar-search"
 				defaultValue={ searchInput }
-				disableAutocorrect={ true }
+				disableAutocorrect
 				value={ searchInput }
 				placeholder={ translate( 'Search…' ) }
-				delaySearch={ true }
+				delaySearch
 				delayTimeout={ 500 }
 				isReskinned
 				onSearch={ ( inputValue: string ) => {

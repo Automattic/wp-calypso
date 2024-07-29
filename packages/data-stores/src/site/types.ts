@@ -1,3 +1,4 @@
+import { SiteGoal } from '../onboard';
 import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
@@ -129,8 +130,8 @@ export interface SiteDetails {
 	is_deleted?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
-	is_wpcom_simple?: boolean;
 	is_wpcom_staging_site?: boolean;
+	is_a4a_client?: boolean;
 	jetpack: boolean;
 	lang?: string;
 	launch_status: string;
@@ -208,6 +209,7 @@ export interface SiteDetailsCapabilities {
 	publish_posts: boolean;
 	remove_users: boolean;
 	upload_files: boolean;
+	update_plugins: boolean;
 	view_hosting: boolean;
 	view_stats: boolean;
 }
@@ -253,6 +255,7 @@ export interface SiteDetailsOptions {
 	is_pending_plan?: boolean;
 	is_redirect?: boolean;
 	is_wpcom_atomic?: boolean;
+	is_wpcom_simple?: boolean;
 	is_wpcom_store?: boolean;
 	is_wpforteams_site?: boolean;
 	jetpack_connection_active_plugins?: string[];
@@ -269,6 +272,7 @@ export interface SiteDetailsOptions {
 	selected_features?: FeatureId[];
 	show_on_front?: string;
 	site_intent?: string;
+	site_goals?: SiteGoal[];
 	site_segment?: string | null;
 	site_vertical_id?: string | null;
 	software_version?: string;
@@ -348,6 +352,7 @@ export interface Domain {
 	private_domain: boolean;
 	partner_domain: boolean;
 	wpcom_domain: boolean;
+	has_pending_contact_update: boolean;
 	has_zone: boolean;
 	is_renewable: boolean;
 	is_redeemable: boolean;

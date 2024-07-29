@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import './style.scss';
 import { MShotsOptions, useMshotsImg } from './use-mshots-img';
@@ -56,7 +56,7 @@ export const SiteThumbnail = ( {
 
 	const color = backgroundColor && getTextColorFromBackground( backgroundColor );
 
-	const classes = classnames(
+	const classes = clsx(
 		'site-thumbnail',
 		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
 		DEFAULT_CLASSNAME,
@@ -77,9 +77,7 @@ export const SiteThumbnail = ( {
 				></div>
 			) }
 			{ ( isLoading || isError ) && (
-				<div
-					className={ classnames( { 'site-thumbnail-loader': showLoader }, 'site-thumbnail-icon' ) }
-				>
+				<div className={ clsx( { 'site-thumbnail-loader': showLoader }, 'site-thumbnail-icon' ) }>
 					{ children }
 				</div>
 			) }

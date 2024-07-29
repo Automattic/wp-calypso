@@ -19,6 +19,12 @@
 			}
 		}
 
+		&.details-card__section-actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 16px;
+		}
+
 		.details-card__date {
 			display: block;
 			margin-top: 16px;
@@ -45,9 +51,6 @@
 
 		& .button:not(.is-primary):not(:disabled) {
 			color: var(--studio-gray-80);
-		}
-		& .button:not(:first-child) {
-			margin-left: 16px;
 		}
 	}
 }
@@ -488,5 +491,37 @@
 		padding: 16px;
 		font-size: $font-body-small;
 		background-color: var(--studio-gray-0);
+	}
+}
+
+.domain-dnssec-card__accordion {
+	color: var(--studio-gray-50);
+
+	form,
+	fieldset {
+		background-color: var(--studio-gray-0);
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+	}
+
+	form {
+		padding: 20px;
+	}
+
+	fieldset {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		line-break: anywhere;
+	}
+
+	legend {
+		margin-bottom: 0.5em;
+	}
+
+	.domain-dnssec-card__record {
+		border: 1px solid var(--studio-gray-10);
+		padding: 7px 14px;
 	}
 }

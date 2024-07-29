@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
@@ -92,10 +92,7 @@ export default function PortalNav( { className = '' }: Props ) {
 			<QueryJetpackPartnerPortalPartner />
 
 			{ hasJetpackPartnerAccess && (
-				<SectionNav
-					selectedText={ selectedText }
-					className={ classnames( 'portal-nav', className ) }
-				>
+				<SectionNav selectedText={ selectedText } className={ clsx( 'portal-nav', className ) }>
 					<NavTabs label={ translate( 'Portal' ) }>
 						{ showDashboard && (
 							<NavItem

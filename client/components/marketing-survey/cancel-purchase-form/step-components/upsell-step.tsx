@@ -2,7 +2,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import formatCurrency from '@automattic/format-currency';
-import { useChatWidget } from '@automattic/help-center/src/hooks';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { useOpenZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useState } from 'react';
@@ -108,13 +109,14 @@ type StepProps = {
 
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = 25;
 	const couponCode = 'BIZWPC25';
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
-	const { openChatWidget } = useChatWidget();
+	const { openZendeskWidget } = useOpenZendeskMessaging( 'pre-cancellation-upsell' );
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	switch ( upsell ) {
@@ -124,32 +126,52 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 		case 'live-chat:domains':
 			return (
 				<Upsell
-					title={ translate( 'Chat with a real person right now' ) }
-					acceptButtonText={ translate( 'Let’s have a chat' ) }
+					title={
+						hasEnTranslation( 'Connect with our Happiness Engineers' )
+							? translate( 'Connect with our Happiness Engineers' )
+							: translate( 'Chat with a real person right now' )
+					}
+					acceptButtonText={
+						hasEnTranslation( 'Connect with a Happiness Engineer' )
+							? translate( 'Connect with a Happiness Engineer' )
+							: translate( 'Let’s have a chat' )
+					}
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upsell_step_live_chat_click', {
 							type: upsell,
 						} );
 						page( getLiveChatUrl( upsell, site, purchase ) );
 
-						openChatWidget( {
+						openZendeskWidget( {
 							message:
 								"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 								props.cancellationReason,
 							siteUrl: site.URL,
+							siteId: site.ID,
 						} );
 						props.closeDialog();
 					} }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgLiveChat }
 				>
-					{ translate(
-						'If you’re feeling a bit stuck with your site, our expert {{b}}Happiness Engineers{{/b}} are always ready to chat. ' +
-							'Whatever you’re struggling with - from customizing your design to sorting out your domain - they’ll listen, guide you, and get you the advice you need to make it happen.',
-						{
-							components: { b: <strong /> },
-						}
-					) }
+					{ hasEnTranslation(
+						'If you’re feeling a bit stuck with your site, our expert {{b}}Happiness Engineers{{/b}} are always ready to help. ' +
+							'Whatever you’re struggling with - from customizing your design to sorting out your domain - they’ll listen, guide you, and get you the advice you need to make it happen.'
+					)
+						? translate(
+								'If you’re feeling a bit stuck with your site, our expert {{b}}Happiness Engineers{{/b}} are always ready to help. ' +
+									'Whatever you’re struggling with - from customizing your design to sorting out your domain - they’ll listen, guide you, and get you the advice you need to make it happen.',
+								{
+									components: { b: <strong /> },
+								}
+						  )
+						: translate(
+								'If you’re feeling a bit stuck with your site, our expert {{b}}Happiness Engineers{{/b}} are always ready to chat. ' +
+									'Whatever you’re struggling with - from customizing your design to sorting out your domain - they’ll listen, guide you, and get you the advice you need to make it happen.',
+								{
+									components: { b: <strong /> },
+								}
+						  ) }
 				</Upsell>
 			);
 		case 'built-by':
@@ -220,7 +242,9 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							'By switching to monthly payments, you will keep most of the features for %(planCost)s per month.',
 							{
 								args: {
-									planCost: formatCurrency( props.downgradePlanPrice ?? 0, currencyCode ),
+									planCost: formatCurrency( props.downgradePlanPrice ?? 0, currencyCode, {
+										isSmallestUnit: true,
+									} ),
 								},
 							}
 						) }{ ' ' }
@@ -255,15 +279,22 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					image={ imgSwitchPlan }
 				>
 					<>
-						{
-							/* translators: %(plan)s is WordPress.com Personal or another plan */
-							translate(
-								'%(plan)s still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.',
-								{
-									args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
-								}
-							)
-						}{ ' ' }
+						{ hasEnTranslation(
+							'%(plan)s still gives you access to fast support, removal of ads, and more — and for 50% of the cost of your current plan.'
+						)
+							? translate(
+									'%(plan)s still gives you access to fast support, removal of ads, and more — and for 50% of the cost of your current plan.',
+									{
+										args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+										comment: '%(plan)s is WordPress.com Personal or another plan',
+									}
+							  )
+							: translate(
+									'%(plan)s still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.',
+									{
+										args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+									}
+							  ) }{ ' ' }
 						{ refundAmount &&
 							translate(
 								'You can downgrade and get a partial refund of %(amount)s or ' +

@@ -28,14 +28,24 @@ $head-foot-height: 50px;
 			flex-direction: column;
 		}
 
-		button.components-button:focus {
-			box-shadow: none;
-			outline: none;
-		}
-
 		.help-center__container-header {
 			height: $head-foot-height;
 			padding: 16px 8px 16px 16px;
+
+			> div {
+				display: flex;
+				align-items: center;
+				justify-content: start;
+				gap: 0;
+			}
+
+			.help-center-header__maximize,
+			.help-center-header__minimize,
+			.help-center-header__close {
+				&:focus {
+					outline: var(--color-primary-light) solid 2px;
+				}
+			}
 
 			// This icon does not accept size prop due to a bug - https://github.com/WordPress/gutenberg/pull/40315
 			// We can remove this when the bug is fixed
@@ -44,12 +54,17 @@ $head-foot-height: 50px;
 				transform-origin: center;
 			}
 
+			.help-center__drag-icon {
+				margin-right: 6px;
+			}
+
 			.help-center-header__text {
 				max-width: 300px;
 				font-size: $font-body-small;
 				font-weight: 500;
 				display: flex;
 				align-items: center;
+				flex: 1;
 
 				svg {
 					margin-right: 3px;
@@ -64,9 +79,28 @@ $head-foot-height: 50px;
 			}
 		}
 
+		.help-center__container-content-wrapper {
+			height: 100%;
+		}
+
 		.help-center__container-content {
 			overflow-y: auto;
 			padding: 16px;
+
+			.search-card div.has-focus[role="search"] {
+				outline: var(--color-primary-light) solid 2px;
+				transition: none;
+			}
+
+			.help-center-search-results__results .help-center-search-results__item,
+			.inline-help__more-resources .inline-help__resource-item {
+
+				a:focus,
+				button:focus {
+					outline: var(--color-primary-light) solid 2px;
+					outline-offset: 2px;
+				}
+			}
 		}
 
 		.help-center__container-footer {
@@ -80,12 +114,10 @@ $head-foot-height: 50px;
 		}
 
 		&.is-desktop {
-			top: calc(#{$header-height} + 16px);
-			right: 16px;
 			width: 410px;
 			height: 80vh;
 			max-height: 800px;
-			box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.25);
+			box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 1px 0 rgba(0, 0, 0, 0.04);
 
 			.help-center__container-header {
 				cursor: move;
@@ -99,10 +131,15 @@ $head-foot-height: 50px;
 			&.is-minimized {
 				min-height: $head-foot-height;
 				top: unset;
+				right: 50px;
 				bottom: calc(#{$header-height} + 16px);
 
 				.help-center__container-header {
 					cursor: pointer;
+				}
+
+				.help-center__container-content {
+					display: none;
 				}
 			}
 		}
@@ -126,13 +163,13 @@ $head-foot-height: 50px;
 				min-height: $head-foot-height;
 				top: calc(100vh - #{$head-foot-height});
 
-				@supports ( height: 100dvh ) {
+				@supports (height: 100dvh) {
 					top: calc(100dvh - #{$head-foot-height});
 				}
 			}
 		}
 
-		.components-button {
+		:not(.contact-form-submit) > .components-button {
 			&:hover {
 				box-shadow: none;
 				color: inherit;
@@ -175,6 +212,7 @@ $head-foot-height: 50px;
 			margin: 16px;
 			font-weight: 400;
 		}
+
 		.ticket-success-screen__help-center-message {
 			font-size: $font-body-small;
 			color: $studio-gray-50;
@@ -192,6 +230,18 @@ $head-foot-height: 50px;
 		}
 	}
 
+	@keyframes slideIn {
+		0% {
+			opacity: 0;
+			transform: scale(0);
+		}
+
+		100% {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
 	@keyframes fadeOut {
 		0% {
 			opacity: 1;
@@ -206,12 +256,12 @@ $head-foot-height: 50px;
 		display: flex;
 		color: #000;
 		font-size: $font-body-small;
-		padding: 0;
+		padding: 0 4px 0 0;
 
 		&:focus {
 			color: #043959;
-			box-shadow: 0 0 0 1px #4f94d4, 0 0 2px 1px rgba(79, 148, 212, 0.8);
-			outline: 1px solid transparent;
+			box-shadow: none;
+			outline: var(--color-primary-light) solid 2px;
 			border-color: inherit;
 		}
 
@@ -236,22 +286,25 @@ $head-foot-height: 50px;
 		max-width: 410px;
 
 		.help-center__container-odie-header {
-			border-bottom-width: 1px;
-			border-style: solid;
-			border-color: rgba(0, 0, 0, 0.1);
+			border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 			height: 69px;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
 			padding: 16px;
 			box-sizing: border-box;
+
+			.odie-button-default:focus {
+				border-radius: 2px;
+				outline: var(--color-primary-light) solid 2px;
+			}
 		}
 	}
 
 	.help-center__container-content {
 		padding: 0 !important;
 
-		> *:not(iframe):not(.help-center__container-content-odie) {
+		>div > *:not(iframe):not(.help-center__container-content-odie) {
 			padding: 16px;
 			box-sizing: border-box;
 		}
@@ -263,10 +316,10 @@ $head-foot-height: 50px;
 		padding: 0;
 		margin: 0;
 
-		> li {
+		>li {
 			padding: 0;
 
-			> a {
+			>a {
 				display: flex;
 				align-items: center;
 				text-decoration: none;
@@ -278,7 +331,7 @@ $head-foot-height: 50px;
 					background: var(--color-neutral-0);
 				}
 
-				> svg:last-child {
+				>svg:last-child {
 					margin-left: auto;
 					margin-right: 0;
 					background: unset;
@@ -366,6 +419,7 @@ $head-foot-height: 50px;
 		.spinner__outer {
 			border-top-color: var(--wp-admin-theme-color);
 		}
+
 		.spinner__inner {
 			border-top-color: var(--wp-admin-theme-color);
 			border-right-color: var(--wp-admin-theme-color);
@@ -374,6 +428,7 @@ $head-foot-height: 50px;
 
 	.help-center-contact-page__staging-notice {
 		margin: 5px 0;
+
 		.components-notice__content {
 			display: flex;
 			justify-content: space-between;
@@ -389,6 +444,7 @@ $head-foot-height: 50px;
 	body[class*="is-section-"],
 	body[class^="is-section-"] {
 		.help-center {
+
 			button,
 			input,
 			textarea,
@@ -414,10 +470,6 @@ $head-foot-height: 50px;
 
 			label {
 				cursor: pointer;
-			}
-
-			.help-center__container.is-desktop {
-				top: calc(var(--masterbar-height) + 16px);
 			}
 
 			.search-card {
@@ -481,19 +533,23 @@ $head-foot-height: 50px;
 	text-align: initial;
 	padding: 16px;
 	box-sizing: border-box;
+
 	h1 {
 		font-weight: 500;
 		font-size: $font-body;
 		margin: 5px 0;
 	}
+
 	p {
 		font-size: $font-body-small;
 		margin-top: 4px;
 	}
+
 	.help-center__promotion-popover-actions {
 		display: flex;
 		justify-content: flex-end;
 		margin-top: 24px;
+
 		.button {
 			font-size: $font-body-small;
 		}
@@ -502,6 +558,7 @@ $head-foot-height: 50px;
 
 .help-center__container-header-menu {
 	z-index: 99999;
+
 	.popover__menu {
 		.help-center__container-header-menu-item {
 			display: flex;

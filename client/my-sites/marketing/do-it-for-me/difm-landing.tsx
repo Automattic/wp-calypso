@@ -12,6 +12,7 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -74,7 +75,6 @@ const ImageSection = styled.div`
 	}
 `;
 
-// @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component
 const Header = styled( FormattedHeader )`
 	.formatted-header__title {
 		font-size: 2.25rem;
@@ -285,7 +285,9 @@ export default function DIFMLanding( {
 	siteId?: number | null;
 	isStoreFlow: boolean;
 } ) {
+	const requiredProductSlugs = [ PLAN_PREMIUM, WPCOM_DIFM_LITE, PLAN_BUSINESS ];
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const productCost = product?.cost;
@@ -294,7 +296,7 @@ export default function DIFMLanding( {
 	const planObject = getPlan( planSlug );
 	const planTitle = planObject?.getTitle();
 	const planCostInteger = useSelector( ( state ) => getProductCost( state, planSlug ) );
-	const planStorageSlug = planObject?.get2023PricingGridSignupStorageOptions?.()?.[ 0 ].slug;
+	const planStorageSlug = planObject?.getStorageFeature?.();
 	const planStorageString = planStorageSlug ? getFeatureByKey( planStorageSlug )?.getTitle() : '';
 
 	const difmTieredPriceDetails = getDIFMTieredPriceDetails( product );
@@ -394,12 +396,74 @@ export default function DIFMLanding( {
 				}
 		  );
 
+	const faqPlanCostOldCopy = translate(
+		'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and live chat support.',
+		{
+			args: {
+				displayCost,
+				planTitle: planTitle ?? '',
+				planCost,
+				storage: planStorageString,
+			},
+		}
+	);
+	const faqPlanCostNewCopy = translate(
+		'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and expert support from our team.',
+		{
+			args: {
+				displayCost,
+				planTitle: planTitle ?? '',
+				planCost,
+				storage: planStorageString,
+			},
+		}
+	);
+
+	let faqRevisionsAnswer = translate(
+		'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+			'Furthermore, our %s plan offers live chat and priority email support if you need assistance.',
+		{
+			args: [ planTitle || '' ],
+		}
+	);
+	if ( planSlug === PLAN_BUSINESS ) {
+		const isCopyTranslated = hasEnTranslation(
+			'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+				'Furthermore, our %s plan offers 24X7 priority support from our experts if you need assistance.'
+		);
+		if ( isCopyTranslated ) {
+			faqRevisionsAnswer = translate(
+				'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+					'Furthermore, our %s plan offers 24X7 priority support from our experts if you need assistance.',
+				{
+					args: [ planTitle || '' ],
+				}
+			);
+		}
+	}
+	if ( planSlug === PLAN_PREMIUM ) {
+		const isCopyTranslated = hasEnTranslation(
+			'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+				'Furthermore, our %s plan offers fast support from our experts if you need assistance.'
+		);
+		if ( isCopyTranslated ) {
+			faqRevisionsAnswer = translate(
+				'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+					'Furthermore, our %s plan offers fast support from our experts if you need assistance.',
+				{
+					args: [ planTitle || '' ],
+				}
+			);
+		}
+	}
+
 	return (
 		<>
-			{ ! hasPriceDataLoaded && <QueryProductsList /> }
+			{ ! hasPriceDataLoaded && (
+				<QueryProductsList productSlugList={ requiredProductSlugs } type="partial" />
+			) }
 			<Wrapper>
 				<ContentSection>
-					{ /* @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component */ }
 					<Header
 						brandFont
 						align="left"
@@ -493,7 +557,7 @@ export default function DIFMLanding( {
 						</FAQHeader>
 						<FoldableFAQ
 							id="faq-1"
-							expanded={ true }
+							expanded
 							question={ translate(
 								'What is the Express Website Design Service, and who is it for?'
 							) }
@@ -508,17 +572,11 @@ export default function DIFMLanding( {
 						</FoldableFAQ>
 						<FoldableFAQ id="faq-2" question={ translate( 'How much does it cost?' ) }>
 							<p>
-								{ translate(
-									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and live chat support.',
-									{
-										args: {
-											displayCost,
-											planTitle: planTitle ?? '',
-											planCost,
-											storage: planStorageString,
-										},
-									}
-								) }
+								{ hasEnTranslation(
+									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and fast support from our expert team.'
+								)
+									? faqPlanCostNewCopy
+									: faqPlanCostOldCopy }
 							</p>
 						</FoldableFAQ>
 						{ isStoreFlow && (
@@ -584,15 +642,7 @@ export default function DIFMLanding( {
 							</p>
 						</FoldableFAQ>
 						<FoldableFAQ id="faq-7" question={ translate( 'How many revisions are included?' ) }>
-							<p>
-								{ translate(
-									'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
-										'Furthermore, our %s plan offers live chat and priority email support if you need assistance.',
-									{
-										args: [ planTitle || '' ],
-									}
-								) }
-							</p>
+							<p>{ faqRevisionsAnswer }</p>
 						</FoldableFAQ>
 						<FoldableFAQ
 							id="faq-8"

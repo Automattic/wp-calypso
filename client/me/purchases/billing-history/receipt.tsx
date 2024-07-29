@@ -2,7 +2,14 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
-import classNames from 'classnames';
+import { IntroductoryOfferTerms } from '@automattic/shopping-cart';
+import {
+	LineItemCostOverrideForDisplay,
+	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
+	getIntroductoryOfferIntervalDisplay,
+	isUserVisibleCostOverride,
+} from '@automattic/wpcom-checkout';
+import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import { Component, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
@@ -18,6 +25,7 @@ import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { sendBillingReceiptEmail } from 'calypso/state/billing-transactions/actions';
@@ -30,11 +38,16 @@ import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billi
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
-	TransactionAmount,
 	renderTransactionQuantitySummary,
+	renderDomainTransactionVolumeSummary,
+	transactionIncludesTax,
 } from './utils';
 import { VatVendorDetails } from './vat-vendor-details';
-import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
+import type {
+	BillingTransaction,
+	BillingTransactionItem,
+	ReceiptCostOverride,
+} from 'calypso/state/billing-transactions/types';
 import type { IAppState } from 'calypso/state/types';
 import type { LocalizeProps } from 'i18n-calypso';
 import type { FormEvent } from 'react';
@@ -277,36 +290,279 @@ function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	);
 }
 
-function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } ) {
-	const translate = useTranslate();
-	const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
+function getDiscountReasonForIntroductoryOffer(
+	product: BillingTransactionItem,
+	terms: IntroductoryOfferTerms,
+	translate: ReturnType< typeof useTranslate >,
+	allowFreeText: boolean,
+	isPriceIncrease: boolean
+): string {
+	return getIntroductoryOfferIntervalDisplay( {
+		translate,
+		intervalUnit: terms.interval_unit,
+		intervalCount: terms.interval_count,
+		isFreeTrial: product.amount_integer === 0 && allowFreeText,
+		isPriceIncrease,
+		context: 'checkout',
+		remainingRenewalsUsingOffer: terms.transition_after_renewal_count,
+	} );
+}
 
-	const items = groupedTransactionItems.map( ( item ) => {
-		const termLabel = getTransactionTermLabel( item, translate );
-		return (
-			<tr key={ item.id }>
+function makeIntroductoryOfferCostOverrideUnique(
+	costOverride: ReceiptCostOverride,
+	product: BillingTransactionItem,
+	translate: ReturnType< typeof useTranslate >
+): ReceiptCostOverride {
+	// Replace introductory offer cost override text with wording specific to
+	// that offer.
+	if ( 'introductory-offer' === costOverride.override_code && product.introductory_offer_terms ) {
+		return {
+			...costOverride,
+			human_readable_reason: getDiscountReasonForIntroductoryOffer(
+				product,
+				product.introductory_offer_terms,
+				translate,
+				true,
+				costOverride.new_price_integer > costOverride.old_price_integer
+			),
+		};
+	}
+	return costOverride;
+}
+
+function filterCostOverridesForReceiptItem(
+	item: BillingTransactionItem,
+	translate: ReturnType< typeof useTranslate >
+): LineItemCostOverrideForDisplay[] {
+	return item.cost_overrides
+		.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride ) )
+		.map( ( costOverride ) =>
+			makeIntroductoryOfferCostOverrideUnique( costOverride, item, translate )
+		)
+		.map( ( costOverride ) => {
+			// Introductory offer discounts with term lengths that differ from
+			// the term length of the product (eg: a 3 month discount for an
+			// annual plan) need to be displayed differently because the
+			// discount is only temporary and the user will still be charged
+			// the remainder before the next renewal.
+			if (
+				doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+					item.cost_overrides,
+					item.introductory_offer_terms,
+					item.months_per_renewal_interval
+				)
+			) {
+				return {
+					humanReadableReason: costOverride.human_readable_reason,
+					overrideCode: costOverride.override_code,
+				};
+			}
+			return {
+				humanReadableReason: costOverride.human_readable_reason,
+				overrideCode: costOverride.override_code,
+				discountAmount: costOverride.old_price_integer - costOverride.new_price_integer,
+			};
+		} );
+}
+
+function areReceiptItemDiscountsAccurate( receiptDate: string ): boolean {
+	const date = new Date( receiptDate );
+	const receiptDateUnix = date.getTime() / 1000;
+	// D129863-code and D133350-code fixed volume discounts. Before that, cost
+	// override tags may be incomplete. The latter was merged on Jan 2, 2024,
+	// 17:54 UTC.
+	const receiptTagsAccurateAsOf = 1704218040;
+	return receiptDateUnix > receiptTagsAccurateAsOf;
+}
+
+function ReceiptItemDiscountIntroductoryOfferDate( { item }: { item: BillingTransactionItem } ) {
+	const translate = useTranslate();
+	if ( ! item.introductory_offer_terms?.enabled ) {
+		return null;
+	}
+	if (
+		! doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+			item.cost_overrides,
+			item.introductory_offer_terms,
+			item.months_per_renewal_interval
+		)
+	) {
+		return null;
+	}
+
+	return (
+		<div>
+			<div>
+				{ translate( 'Amount paid in transaction: %(price)s', {
+					args: {
+						price: formatCurrency( item.amount_integer, item.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+				} ) }
+			</div>
+		</div>
+	);
+}
+
+function ReceiptItemDiscounts( {
+	item,
+	receiptDate,
+}: {
+	item: BillingTransactionItem;
+	receiptDate: string;
+} ) {
+	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receiptDate );
+	const translate = useTranslate();
+	return (
+		<ul className="billing-history__receipt-item-discounts-list">
+			{ filterCostOverridesForReceiptItem( item, translate ).map( ( costOverride ) => {
+				const formattedDiscountAmount =
+					shouldShowDiscount && costOverride.discountAmount
+						? formatCurrency( -costOverride.discountAmount, item.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+						  } )
+						: '';
+				if (
+					doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+						item.cost_overrides,
+						item.introductory_offer_terms,
+						item.months_per_renewal_interval
+					)
+				) {
+					return (
+						<li
+							key={ costOverride.humanReadableReason }
+							className="billing-history__receipt-item-discount billing-history__receipt-item-discount--different-term"
+						>
+							<div>{ costOverride.humanReadableReason }</div>
+							<ReceiptItemDiscountIntroductoryOfferDate item={ item } />
+						</li>
+					);
+				}
+				return (
+					<li
+						key={ costOverride.humanReadableReason }
+						className="billing-history__receipt-item-discount"
+					>
+						<span>{ costOverride.humanReadableReason }</span>
+						<span>{ formattedDiscountAmount }</span>
+					</li>
+				);
+			} ) }
+		</ul>
+	);
+}
+
+/**
+ * Calculate the original cost for a receipt item by looking at any cost
+ * overrides.
+ *
+ * Returns the number in the currency's smallest unit.
+ */
+function getReceiptItemOriginalCost( item: BillingTransactionItem ): number {
+	if ( item.type === 'refund' ) {
+		return item.subtotal_integer;
+	}
+	const originalCostOverrides = item.cost_overrides.filter(
+		( override ) => override.does_override_original_cost
+	);
+	if ( originalCostOverrides.length > 0 ) {
+		const lastOriginalCostOverride = originalCostOverrides.pop();
+		if ( lastOriginalCostOverride ) {
+			return lastOriginalCostOverride.new_price_integer;
+		}
+	}
+	if ( item.cost_overrides.length > 0 ) {
+		const firstOverride = item.cost_overrides[ 0 ];
+		if ( firstOverride ) {
+			return firstOverride.old_price_integer;
+		}
+	}
+	return item.subtotal_integer;
+}
+
+function ReceiptItemTaxes( { transaction }: { transaction: BillingTransaction } ) {
+	const translate = useTranslate();
+	const taxName = useTaxName( transaction.tax_country_code );
+
+	if ( ! transactionIncludesTax( transaction ) ) {
+		return null;
+	}
+
+	return (
+		<div className="billing-history__transaction-tax-amount">
+			<span>{ taxName ?? translate( 'Tax' ) }</span>
+			<span>
+				{ formatCurrency( transaction.tax_integer, transaction.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
+			</span>
+		</div>
+	);
+}
+
+function ReceiptLineItem( {
+	item,
+	transaction,
+}: {
+	item: BillingTransactionItem;
+	transaction: BillingTransaction;
+} ) {
+	const translate = useTranslate();
+	const termLabel = getTransactionTermLabel( item, translate );
+	const shouldShowDiscount = areReceiptItemDiscountsAccurate( transaction.date );
+	const formattedAmount = formatCurrency(
+		shouldShowDiscount ? getReceiptItemOriginalCost( item ) : item.subtotal_integer,
+		item.currency,
+		{
+			isSmallestUnit: true,
+			stripZeros: true,
+		}
+	);
+	return (
+		<>
+			<tr>
 				<td className="billing-history__receipt-item-name">
 					<span>{ item.variation }</span>
 					<small>({ item.type_localized })</small>
 					{ termLabel && <em>{ termLabel }</em> }
-					<br />
 					{ item.domain && <em>{ item.domain }</em> }
 					{ item.licensed_quantity && (
 						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
 					) }
+					{ item.volume && <em>{ renderDomainTransactionVolumeSummary( item, translate ) }</em> }
 				</td>
-				<td className={ 'billing-history__receipt-amount ' + transaction.credit }>
-					{ formatCurrency( item.amount_integer, item.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ) }
+				<td className="billing-history__receipt-amount">
+					{ doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+						item.cost_overrides,
+						item.introductory_offer_terms,
+						item.months_per_renewal_interval
+					) ? (
+						<s>{ formattedAmount }</s>
+					) : (
+						formattedAmount
+					) }
 					{ transaction.credit && (
 						<span className="billing-history__credit-badge">{ translate( 'Refund' ) }</span>
 					) }
 				</td>
 			</tr>
-		);
-	} );
+			<tr>
+				<td className="billing-history__receipt-item-discounts" colSpan={ 2 }>
+					<ReceiptItemDiscounts item={ item } receiptDate={ transaction.date } />
+				</td>
+			</tr>
+		</>
+	);
+}
+
+function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } ) {
+	const translate = useTranslate();
+	const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
 
 	return (
 		<div className="billing-history__receipt">
@@ -318,6 +574,16 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 						<th className="billing-history__receipt-amount">{ translate( 'Amount' ) }</th>
 					</tr>
 				</thead>
+				<tbody>
+					{ groupedTransactionItems.map( ( item ) => (
+						<ReceiptLineItem key={ item.id } transaction={ transaction } item={ item } />
+					) ) }
+					<tr>
+						<td colSpan={ 2 }>
+							<ReceiptItemTaxes transaction={ transaction } />
+						</td>
+					</tr>
+				</tbody>
 				<tfoot>
 					<tr>
 						<td className="billing-history__receipt-desc">
@@ -331,11 +597,13 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 								transaction.credit
 							}
 						>
-							<TransactionAmount transaction={ transaction } />
+							{ formatCurrency( transaction.amount_integer, transaction.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ) }
 						</td>
 					</tr>
 				</tfoot>
-				<tbody>{ items }</tbody>
 			</table>
 		</div>
 	);
@@ -420,7 +688,7 @@ function ReceiptLabels( { hideDetailsLabelOnPrint }: { hideDetailsLabelOnPrint?:
 		<div>
 			<FormLabel
 				htmlFor="billing-history__billing-details-textarea"
-				className={ classNames( { 'receipt__no-print': hideDetailsLabelOnPrint } ) }
+				className={ clsx( { 'receipt__no-print': hideDetailsLabelOnPrint } ) }
 			>
 				{ translate( 'Billing Details' ) }
 			</FormLabel>

@@ -19,8 +19,9 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import {
 	getSiteSlug,
-	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
+	isAdminInterfaceWPAdmin,
 	isJetpackSite,
+	getSiteAdminUrl,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
@@ -40,6 +41,13 @@ export const Sharing = ( {
 	translate,
 	premiumPlanName,
 } ) => {
+	const adminInterfaceIsWPAdmin = useSelector( ( state ) =>
+		isAdminInterfaceWPAdmin( state, siteId )
+	);
+	const isJetpackClassic = isJetpack && adminInterfaceIsWPAdmin;
+
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 	let filters = [];
 
@@ -49,23 +57,13 @@ export const Sharing = ( {
 		title: translate( 'Marketing Tools' ),
 	} );
 
-	// Include SEO link if a site is selected and the
-	// required Jetpack module is active
-	if ( showTraffic ) {
+	// Include Business Tools link if a site is selected and the
+	// site is not VIP
+	if ( ! isVip && showBusinessTools ) {
 		filters.push( {
-			id: 'traffic',
-			route: '/marketing/traffic' + pathSuffix,
-			title: translate( 'Traffic' ),
-			description: translate(
-				'Manage settings and tools related to the traffic your website receives. {{learnMoreLink/}}',
-				{
-					components: {
-						learnMoreLink: (
-							<InlineSupportLink key="traffic" supportContext="traffic" showIcon={ false } />
-						),
-					},
-				}
-			),
+			id: 'business-buttons',
+			route: '/marketing/business-tools' + pathSuffix,
+			title: translate( 'Business Tools' ),
 		} );
 	}
 
@@ -90,12 +88,38 @@ export const Sharing = ( {
 		filters.push( connectionsFilter );
 	}
 
+	// Include SEO link if a site is selected and the
+	// required Jetpack module is active
+	if ( showTraffic ) {
+		filters.push( {
+			id: 'traffic',
+			route: isJetpackClassic
+				? siteAdminUrl + 'admin.php?page=jetpack#/traffic'
+				: '/marketing/traffic' + pathSuffix,
+			isExternalLink: isJetpackClassic,
+			title: translate( 'Traffic' ),
+			description: translate(
+				'Manage settings and tools related to the traffic your website receives. {{learnMoreLink/}}',
+				{
+					components: {
+						learnMoreLink: (
+							<InlineSupportLink key="traffic" supportContext="traffic" showIcon={ false } />
+						),
+					},
+				}
+			),
+		} );
+	}
+
 	// Include Sharing Buttons link if a site is selected and the
 	// required Jetpack module is active
 	if ( showButtons ) {
 		filters.push( {
 			id: 'sharing-buttons',
-			route: '/marketing/sharing-buttons' + pathSuffix,
+			route: isJetpackClassic
+				? siteAdminUrl + 'admin.php?page=jetpack#/sharing'
+				: '/marketing/sharing-buttons' + pathSuffix,
+			isExternalLink: isJetpackClassic,
 			title: translate( 'Sharing Buttons' ),
 			description: translate(
 				'Make it easy for your readers to share your content online. {{learnMoreLink/}}',
@@ -110,25 +134,10 @@ export const Sharing = ( {
 		} );
 	}
 
-	// Include Business Tools link if a site is selected and the
-	// site is not VIP
-	if ( ! isVip && showBusinessTools ) {
-		filters.push( {
-			id: 'business-buttons',
-			route: '/marketing/business-tools' + pathSuffix,
-			title: translate( 'Business Tools' ),
-		} );
-	}
-
 	let titleHeader = translate( 'Marketing and Integrations' );
 
-	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
-		getIsGlobalSiteViewEnabled( state, siteId )
-	);
-
-	if ( isGlobalSiteViewEnabled ) {
-		filters = [];
-		titleHeader = translate( 'Connections' );
+	if ( adminInterfaceIsWPAdmin ) {
+		titleHeader = translate( 'Marketing' );
 	}
 
 	if ( isP2Hub ) {
@@ -156,8 +165,13 @@ export const Sharing = ( {
 			{ filters.length > 0 && (
 				<SectionNav selectedText={ selected?.title ?? '' }>
 					<NavTabs>
-						{ filters.map( ( { id, route, title } ) => (
-							<NavItem key={ id } path={ route } selected={ pathname === route }>
+						{ filters.map( ( { id, route, isExternalLink, title } ) => (
+							<NavItem
+								key={ id }
+								path={ route }
+								isExternalLink={ isExternalLink }
+								selected={ pathname === route }
+							>
 								{ title }
 							</NavItem>
 						) ) }
@@ -167,6 +181,7 @@ export const Sharing = ( {
 			{ ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
+					plan={ PLAN_PREMIUM }
 					feature={ WPCOM_FEATURES_NO_ADVERTS }
 					description={ translate( 'Prevent ads from showing on your site.' ) }
 					title={ translate( 'No ads with WordPress.com %(premiumPlanName)s', {
@@ -174,7 +189,7 @@ export const Sharing = ( {
 					} ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
-					showIcon={ true }
+					showIcon
 				/>
 			) }
 			{ contentComponent }

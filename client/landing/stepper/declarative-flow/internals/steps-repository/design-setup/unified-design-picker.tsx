@@ -1,16 +1,10 @@
 import {
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_BUSINESS_3_YEARS,
-	PLAN_PERSONAL,
 	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
 	TERM_MONTHLY,
-	TERM_TRIENNIALLY,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	getPlan,
 	isFreePlan,
+	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -43,15 +37,23 @@ import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import {
+	THEME_TIERS,
+	THEME_TIER_PARTNER,
+	THEME_TIER_PREMIUM,
+} from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { urlToSlug } from 'calypso/lib/url';
-import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
-import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
+import {
+	getProductBillingSlugByThemeId,
+	getProductsByBillingSlug,
+} from 'calypso/state/products-list/selectors';
 import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purchased-domain';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -101,6 +103,13 @@ const EMPTY_ARRAY: Design[] = [];
 const EMPTY_OBJECT = {};
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
+	// imageOptimizationExperimentAssignment, exerimentAssignment
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calypso_design_picker_image_optimization_202406'
+	);
+	const variantName = experimentAssignment?.variationName;
+	const oldHighResImageLoading = ! isLoadingExperiment && variantName === 'treatment';
+
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
 
@@ -168,8 +177,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				.filter(
 					( design ) =>
 						! (
-							design.is_premium ||
-							design.is_externally_managed ||
+							design?.design_tier === THEME_TIER_PREMIUM ||
+							design?.design_tier === THEME_TIER_PARTNER ||
 							( design.software_sets && design.software_sets.length > 0 )
 						)
 				)
@@ -371,16 +380,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const marketplaceThemeProducts =
 		useSelector( ( state ) =>
-			getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( selectedDesignThemeId ) )
+			getProductsByBillingSlug(
+				state,
+				getProductBillingSlugByThemeId( state, selectedDesignThemeId ?? '' )
+			)
 		) || [];
 	const marketplaceProductSlug =
 		marketplaceThemeProducts.length !== 0
 			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts )
 			: null;
-	const currentPlanTerm = ! isFreePlan( site?.plan?.product_slug || '' )
-		? getPlan( site?.plan?.product_slug || '' )?.term || ''
-		: TERM_MONTHLY;
 
+	const requiredPlanSlug = getRequiredPlan( selectedDesign, site?.plan?.product_slug || '' );
 	const selectedMarketplaceProduct =
 		marketplaceThemeProducts.find(
 			( product ) => product.product_slug === marketplaceProductSlug
@@ -416,7 +426,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const isLockedTheme =
 		! canSiteActivateTheme ||
-		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
+		( selectedDesign?.design_tier === THEME_TIER_PREMIUM &&
+			! isPremiumThemeAvailable &&
+			! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
 		( ! isPluginBundleEligible && isBundled );
@@ -462,21 +474,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 		setShowUpgradeModal( false );
 	}
+
 	function navigateToCheckout() {
-		const themeHasBundle = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
-
-		let plan;
-		if ( themeHasBundle ) {
-			plan = 'business-bundle';
-		} else if ( selectedDesign?.is_externally_managed ) {
-			const businessPlan = getBusinessPlanByTerm( currentPlanTerm );
-			plan = ! isExternallyManagedThemeAvailable ? businessPlan : '';
-		} else if ( selectedDesign?.design_tier === PERSONAL_THEME ) {
-			plan = PLAN_PERSONAL;
-		} else {
-			plan = 'premium';
-		}
-
 		// When the user is done with checkout, send them back to the current url
 		// If the theme is externally managed, send them to the marketplace thank you page
 		const destination = selectedDesign?.is_externally_managed
@@ -490,7 +489,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			stepName,
 			siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 			destination,
-			plan,
+			plan: requiredPlanSlug,
 			extraProducts:
 				selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
 					? [ marketplaceProductSlug ]
@@ -799,16 +798,18 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 		const stepContent = (
 			<>
-				<UpgradeModal
-					slug={ selectedDesign.slug }
-					isOpen={ showUpgradeModal }
-					isMarketplacePlanSubscriptionNeeeded={ ! isExternallyManagedThemeAvailable }
-					isMarketplaceThemeSubscriptionNeeded={ isMarketplaceThemeSubscriptionNeeded }
-					marketplaceProduct={ selectedMarketplaceProduct }
-					currentPlanTerm={ currentPlanTerm }
-					closeModal={ closeUpgradeModal }
-					checkout={ handleCheckout }
-				/>
+				{ requiredPlanSlug && (
+					<UpgradeModal
+						slug={ selectedDesign.slug }
+						isOpen={ showUpgradeModal }
+						isMarketplacePlanSubscriptionNeeeded={ ! isExternallyManagedThemeAvailable }
+						isMarketplaceThemeSubscriptionNeeded={ isMarketplaceThemeSubscriptionNeeded }
+						marketplaceProduct={ selectedMarketplaceProduct }
+						requiredPlan={ requiredPlanSlug }
+						closeModal={ closeUpgradeModal }
+						checkout={ handleCheckout }
+					/>
+				) }
 				<QueryEligibility siteId={ site?.ID } />
 				<EligibilityWarningsModal
 					site={ site }
@@ -838,7 +839,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					placeholder={ null }
 					previewUrl={ previewUrl }
 					splitDefaultVariation={
-						! selectedDesign.is_premium &&
+						! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
 						! isBundled &&
 						! isPremiumThemeAvailable &&
 						! didPurchaseSelectedTheme &&
@@ -920,6 +921,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 			getBadge={ getBadge }
+			oldHighResImageLoading={ oldHighResImageLoading }
 		/>
 	);
 
@@ -939,18 +941,26 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 };
 
-function getBusinessPlanByTerm( term: string ) {
-	switch ( term ) {
-		case TERM_TRIENNIALLY:
-			return PLAN_BUSINESS_3_YEARS;
-		case TERM_BIENNIALLY:
-			return PLAN_BUSINESS_2_YEARS;
-		case TERM_ANNUALLY:
-			return PLAN_BUSINESS;
-		case TERM_MONTHLY:
-		default:
-			return PLAN_BUSINESS_MONTHLY;
+function getRequiredPlan( selectedDesign: Design | undefined, currentPlanSlug: string ) {
+	if ( ! selectedDesign?.design_tier ) {
+		return;
 	}
+	// Different designs require different plans to unlock them, additionally the terms required can vary.
+	// A site with a plan of a given length cannot upgrade a plan of a shorter length. For example,
+	// if a site is on a 2 year starter plan and want to buy an explorer theme, they must buy a 2 year explorer plan
+	// not a 1 year explorer plan.
+	const tierMinimumUpsellPlan =
+		THEME_TIERS[ selectedDesign.design_tier as keyof typeof THEME_TIERS ]?.minimumUpsellPlan;
+
+	let requiredTerm;
+	if ( ! currentPlanSlug || isFreePlan( currentPlanSlug ) ) {
+		// Marketplace themes require upgrading to a monthly business plan or higher, everything else requires an annual plan.
+		requiredTerm = selectedDesign?.is_externally_managed ? TERM_MONTHLY : TERM_ANNUALLY;
+	} else {
+		requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
+	}
+
+	return findFirstSimilarPlanKey( tierMinimumUpsellPlan, { term: requiredTerm } );
 }
 
 export default UnifiedDesignPickerStep;

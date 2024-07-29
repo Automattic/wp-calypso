@@ -1,24 +1,8 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import { decodeEntitiesFromPlugins } from './helpers';
+import { decodeEntitiesFromPlugins, mapPluginExtension } from './helpers';
+import type { CorePlugin } from './types';
 import type { SiteId, SiteSlug } from 'calypso/types';
-
-export type CorePlugin = {
-	plugin: string;
-	status: 'active' | 'inactive';
-	name: string;
-	plugin_uri: string;
-	author: string;
-	author_uri: string;
-	description: string;
-	version: string;
-	network_only: boolean;
-	requires_wp: string;
-	requires_php: string;
-	textdomain: string;
-	is_managed?: boolean;
-	_links: { self: { [ key: number ]: { href: string } } };
-};
 
 export type CorePluginsResponse = CorePlugin[];
 
@@ -39,10 +23,7 @@ export const useCorePluginsQuery = (
 		}
 
 		if ( addPluginExtension ) {
-			_plugins = _plugins.map( ( plugin ) => ( {
-				...plugin,
-				plugin: plugin.plugin.endsWith( ext ) ? plugin.plugin : `${ plugin.plugin }${ ext }`,
-			} ) );
+			_plugins = _plugins.map( ( plugin ) => mapPluginExtension( plugin, ext ) );
 		}
 
 		return _plugins;

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { createElement } from 'react';
@@ -172,16 +173,21 @@ export function noSite( siteFragment: string | undefined, context: PageJSContext
 	const { getState } = context.store;
 	const currentUser = getCurrentUser( getState() ) as UserData;
 
-	if ( 0 === currentUser?.jetpack_site_count && 0 === currentUser?.atomic_site_count ) {
+	const hasNoJetpackSites = isEnabled( 'jetpack/manage-simple-sites' )
+		? 0 === currentUser?.site_count
+		: 0 === currentUser?.jetpack_site_count && 0 === currentUser?.atomic_site_count;
+
+	if ( hasNoJetpackSites ) {
 		renderNoJetpackSites( context, currentUser.primarySiteSlug );
 		recordNoJetpackSitesPageView( context, siteFragment );
 		return true;
 	}
 
-	if (
-		0 === currentUser?.jetpack_visible_site_count &&
-		0 === currentUser?.atomic_visible_site_count
-	) {
+	const hasNoVisibleSites = isEnabled( 'jetpack/manage-simple-sites' )
+		? 0 === currentUser?.visible_site_count
+		: 0 === currentUser?.jetpack_visible_site_count && 0 === currentUser?.atomic_visible_site_count;
+
+	if ( hasNoVisibleSites ) {
 		renderNoVisibleSites( context );
 		recordNoVisibleJetpackSitesPageView( context, siteFragment );
 		return true;

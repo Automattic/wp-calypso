@@ -204,7 +204,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return '';
 		}
 
-		if ( flow === NEWSLETTER_FLOW || DESIGN_FIRST_FLOW ) {
+		if ( flow === DESIGN_FIRST_FLOW || flow === NEWSLETTER_FLOW ) {
 			return __( 'Your domain. Your identity.' );
 		}
 
@@ -303,10 +303,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	return (
 		<Container
 			stepName="domains"
-			isWideLayout={ true }
+			isWideLayout
 			hideBack={ shouldHideBackButton() }
 			backLabelText={ getBackLabelText() }
-			hideSkip={ true }
+			hideSkip
 			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
@@ -316,7 +316,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				<FormattedHeader
 					id="domains-header"
 					align={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
-					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : null }
+					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : undefined }
 					headerText={ getHeaderText() }
 					subHeaderText={ getSubHeaderText() }
 				/>

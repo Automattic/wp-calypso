@@ -1,7 +1,7 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 const ActionPanelTitle = ( { children, className = '' } ) => {
-	return <h2 className={ classnames( 'action-panel__title', className ) }>{ children }</h2>;
+	return <h2 className={ clsx( 'action-panel__title', className ) }>{ children }</h2>;
 };
 
 export default ActionPanelTitle;

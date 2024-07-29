@@ -1,17 +1,14 @@
 /* eslint-disable no-restricted-imports */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import WhatsNewGuide from '@automattic/whats-new';
+import WhatsNewGuide, { useWhatsNewAnnouncementsQuery } from '@automattic/whats-new';
 import { Button, SVG, Circle } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { Icon, captureVideo, formatListNumbered, external, institution } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelector } from 'react-redux';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { NewReleases } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -28,14 +25,10 @@ type CoreDataPlaceholder = {
 
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
-	const sectionName = useSelector( getSectionName );
-	const purchases = useSelector( getUserPurchases );
-	const siteId = useSelector( getSelectedSiteId );
-	const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
-	const isBusinessOrEcomPlanUser = !! (
-		purchaseSlugs &&
-		( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
-	);
+	const { sectionName, site } = useHelpCenterContext();
+	const { data } = useWhatsNewAnnouncementsQuery( site?.ID );
+
+	const showWhatsNewItem = data && data.length > 0;
 
 	const { hasSeenWhatsNewModal, doneLoading } = useSelect(
 		( select ) => ( {
@@ -59,7 +52,6 @@ export const HelpCenterMoreResources = () => {
 
 	const trackMoreResourcesButtonClick = ( resource: string ) => {
 		recordTracksEvent( 'calypso_help_moreresources_click', {
-			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 			resource: resource,
 			force_site_id: true,
 			location: 'help-center',
@@ -69,7 +61,6 @@ export const HelpCenterMoreResources = () => {
 
 	const trackLearnButtonClick = ( resourceType: string ) => {
 		recordTracksEvent( 'calypso_help_courses_click', {
-			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
@@ -136,27 +127,26 @@ export const HelpCenterMoreResources = () => {
 						</a>
 					</div>
 				</li>
-				<li className="inline-help__resource-item">
-					<div className="inline-help__resource-cell">
-						<Button
-							variant="link"
-							onClick={ handleWhatsNewClick }
-							className="inline-help__new-releases"
-						>
-							<Icon icon={ <NewReleases /> } size={ 24 } />
-							<span>{ __( "What's New", __i18n_text_domain__ ) }</span>
-							{ showWhatsNewDot && (
-								<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
-							) }
-						</Button>
-					</div>
-				</li>
+				{ showWhatsNewItem && (
+					<li className="inline-help__resource-item">
+						<div className="inline-help__resource-cell">
+							<Button
+								variant="link"
+								onClick={ handleWhatsNewClick }
+								className="inline-help__new-releases"
+							>
+								<Icon icon={ <NewReleases /> } size={ 24 } />
+								<span>{ __( "What's New", __i18n_text_domain__ ) }</span>
+								{ showWhatsNewDot && (
+									<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
+								) }
+							</Button>
+						</div>
+					</li>
+				) }
 			</ul>
-			{ showGuide && (
-				<WhatsNewGuide
-					onClose={ () => setShowGuide( false ) }
-					siteId={ siteId?.toString() || '' }
-				/>
+			{ showGuide && site && (
+				<WhatsNewGuide onClose={ () => setShowGuide( false ) } siteId={ site.ID } />
 			) }
 		</>
 	);

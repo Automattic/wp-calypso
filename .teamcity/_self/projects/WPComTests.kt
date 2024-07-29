@@ -19,6 +19,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.exec
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -52,8 +53,6 @@ object WPComTests : Project({
 	// Gutenberg Atomic Nightly
 	buildType(gutenbergPlaywrightBuildType("desktop", "a3f58555-56bb-42c6-8543-ab27213d3085" , atomic=true, nightly=true));
 	buildType(gutenbergPlaywrightBuildType("mobile", "8191e677-0682-4709-9201-66a7788980f0", atomic=true, nightly=true));
-	// Gutenberg Core
-	buildType(gutenbergCoreE2eBuildType());
 
 	// E2E Tests for Jetpack Simple Deployment
 	buildType(jetpackSimpleDeploymentE2eBuildType("desktop", "3007d7a1-5642-4dbf-9935-d93f3cdb4dcc"));
@@ -70,77 +69,6 @@ object WPComTests : Project({
 	buildType(I18NTests);
 	buildType(P2E2ETests)
 })
-
-fun gutenbergCoreE2eBuildType(): BuildType {
-	return BuildType ({
-		id("WPComTests_gutenberg_core_e2e")
-		name = "Gutenberg Core E2E Tests"
-		description = "Runs Gutenberg core E2E tests against a Dotcom environment."
-
-		artifactRules = """
-			gutenberg/artifacts => artifacts
-		""".trimIndent()
-
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
-
-		params {
-			// WP.com URL of the site to test against.
-			password("WP_BASE_URL", "credentialsJSON:5cc9ce44-c31a-4591-9f02-cda749351bff");
-			// WP.com username and password to use for logging in.
-			password("WP_USERNAME", "credentialsJSON:ab140672-6955-4206-9ae4-df940896992d");
-			password("WP_PASSWORD", "credentialsJSON:1b787674-1c6f-41c5-9b39-41768fa1aa0c");
-			// Calypso client ID and secret for remote logging in.
-			password("WP_CLIENT_ID", "credentialsJSON:7bcd18c5-7ebe-42ab-9f85-45abcea3f21b");
-			password("WP_CLIENT_SECRET", "credentialsJSON:87a99f9c-2bf6-43c2-bd43-903f28bec4fb");
-			// Application password for authenticating REST API requests.
-			password("WP_APP_PASSWORD", "credentialsJSON:2f191dbd-7341-4ff9-acab-f5dd0111e364");
-		}
-
-		steps {
-			bashNodeScript {
-				name = "Prepare environment"
-				scriptContent = """
-					# Clone Gutenberg
-					mkdir gutenberg
-					cd gutenberg
-					git init
-					git remote add origin https://github.com/WordPress/gutenberg.git
-					git fetch --depth=1 origin try/run-e2e-tests-against-wpcom
-					git checkout try/run-e2e-tests-against-wpcom
-
-					# Install deps
-					npm ci
-
-					# Build packages
-					npm run build:packages
-				""".trimIndent()
-				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
-			}
-
-			bashNodeScript {
-				name = "Run Playwright E2E tests"
-				scriptContent = """
-					cd gutenberg
-
-					# Export env vars
-					export WP_BASE_URL="%WP_BASE_URL%"
-					export WP_USERNAME="%WP_USERNAME%"
-					export WP_PASSWORD="%WP_PASSWORD%"
-					export WP_APP_PASSWORD="%WP_APP_PASSWORD%"
-					export WP_CLIENT_ID="%WP_CLIENT_ID%"
-					export WP_CLIENT_SECRET="%WP_CLIENT_SECRET%"
-
-					# Run suite.
-					npm run test:e2e:playwright
-				""".trimIndent()
-				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
-			}
-		}
-	})
-}
 
 fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): E2EBuildType {
 	var siteType = if (atomic) "atomic" else "simple";
@@ -375,7 +303,8 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			defaultE2eFailureConditions()
 			// These are long-running tests, and we have to scale back the parallelization too.
 			// Let's give them some more breathing room.
-			executionTimeoutMin = 25
+			// This number is arbitrary, but tests in mid-2024 tend to run longer than 25 minutes.
+			executionTimeoutMin = 31
 		}
 	});
 }

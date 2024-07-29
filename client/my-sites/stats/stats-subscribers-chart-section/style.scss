@@ -34,7 +34,7 @@
 .subscribers-section-legend {
 	display: flex;
 
-	@media ( max-width: $custom-mobile-breakpoint ) {
+	@media (max-width: $custom-mobile-breakpoint) {
 		margin-left: $font-body-small;
 		margin-right: $font-body-small;
 
@@ -46,6 +46,11 @@
 	.u-legend {
 		display: flex;
 		justify-content: right;
+	}
+
+	.u-value {
+		vertical-align: middle;
+		display: inline-block;
 	}
 }
 

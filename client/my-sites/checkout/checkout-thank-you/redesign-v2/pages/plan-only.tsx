@@ -104,7 +104,7 @@ const PlanOnlyThankYou = ( {
 			subtitle = translate( "With the plan sorted, it's time to start setting up your store." );
 			headerButtons = typeof siteAdminUrl === 'string' && (
 				<Button href={ siteAdminUrl } primary>
-					Create your store
+					{ translate( 'Create your store' ) }
 				</Button>
 			);
 		} else {
@@ -179,20 +179,6 @@ const PlanOnlyThankYou = ( {
 			},
 		} );
 	}
-
-	footerDetails.push( {
-		key: 'footer-support',
-		title: translate( 'Everything you need to know' ),
-		description: translate( 'Explore our support guides and find an answer to every question.' ),
-		buttonText: translate( 'Explore support resources' ),
-		buttonHref: '/support',
-		buttonOnClick: () => {
-			recordTracksEvent( 'calypso_thank_you_footer_link_click', {
-				context: 'plan-only',
-				type: 'support',
-			} );
-		},
-	} );
 
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId as number ) );
 

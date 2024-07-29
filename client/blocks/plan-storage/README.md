@@ -20,8 +20,8 @@ media storage limits are fetched.
 ## Usage
 
 ```javascript
-import PlanStorageBar from 'calypso/blocks/plan-storage/bar';
 import { Site } from '@automattic/data-stores';
+import PlanStorageBar from 'calypso/blocks/plan-storage/bar';
 
 function MyComponent( { site, siteId } ) {
 	const planName = site.plan.product_name_short;

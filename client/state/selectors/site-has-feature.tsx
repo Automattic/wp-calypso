@@ -12,7 +12,7 @@ import type { AppState } from 'calypso/types';
  */
 export default function siteHasFeature(
 	state: AppState,
-	siteId: number | null,
+	siteId: number | null | undefined,
 	featureSlug: string
 ) {
 	const siteFeatures = getSiteFeatures( state, siteId );

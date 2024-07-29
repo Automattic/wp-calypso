@@ -5,7 +5,6 @@ import { formatCurrency } from '@automattic/format-currency';
 import { NavigatorHeader } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import QueryPlans from 'calypso/components/data/query-plans';
 import useGlobalStylesUpgradeTranslations from 'calypso/components/premium-global-styles-upgrade-modal/use-global-styles-upgrade-translations';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -26,7 +25,7 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
-		selectedSiteId,
+		siteId: selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
@@ -37,7 +36,6 @@ const ScreenUpsell = ( { numOfSelectedGlobalStyles = 1, onCheckout, onTryStyle }
 
 	return (
 		<>
-			<QueryPlans />
 			<NavigatorHeader
 				title={ <NavigatorTitle title={ title } /> }
 				description={ description }

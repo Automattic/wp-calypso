@@ -3,11 +3,11 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	getPlanPath,
-	getPlans,
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { Plans } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -16,8 +16,7 @@ import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/components/plan-interval-selector';
-import { useSelector } from 'calypso/state';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 import './style.scss';
@@ -49,14 +48,18 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 
-	const mediumPlanAnnual = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
-	const mediumPlanMonthly = getPlans()[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ];
-	const annualPlanMonthlyPrice = useSelector(
-		( state ) => getPlanRawPrice( state, mediumPlanAnnual.getProductId(), true ) || 0
-	);
-	const monthlyPlanPrice = useSelector(
-		( state ) => getPlanRawPrice( state, mediumPlanMonthly.getProductId() ) || 0
-	);
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ PLAN_WOOEXPRESS_MEDIUM, PLAN_WOOEXPRESS_MEDIUM_MONTHLY ],
+		siteId,
+		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
+	} );
+
+	const annualPlanMonthlyPrice =
+		pricingMeta?.[ PLAN_WOOEXPRESS_MEDIUM ]?.originalPrice?.monthly ?? 0;
+	const monthlyPlanPrice =
+		pricingMeta?.[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]?.originalPrice?.full ?? 0;
 	const percentageSavings = Math.floor( ( 1 - annualPlanMonthlyPrice / monthlyPlanPrice ) * 100 );
 
 	const planIntervals = useMemo( () => {
@@ -119,7 +122,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					<PlanIntervalSelector
 						className="wooexpress-plans__interval-toggle price-toggle"
 						intervals={ planIntervals }
-						use2023PricingGridStyles={ true }
+						use2023PricingGridStyles
 					/>
 				</div>
 			) }
@@ -128,8 +131,8 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					siteId={ siteId }
 					onUpgradeClick={ onUpgradeClick }
 					intervalType={ interval }
-					hidePlanTypeSelector={ true }
-					hideUnavailableFeatures={ true }
+					hidePlanTypeSelector
+					hideUnavailableFeatures
 					intent="plans-woocommerce"
 				/>
 			</div>

@@ -4,6 +4,7 @@ import { JETPACK_CONTACT_SUPPORT, CALYPSO_CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
@@ -54,7 +55,7 @@ const NoBackupsYet = () => {
 							strong: <strong />,
 							support: (
 								<a
-									{ ...( isJetpackCloud()
+									{ ...( isJetpackCloud() || isA8CForAgencies()
 										? {
 												href: addQueryArgs(
 													{ url: siteUrl },

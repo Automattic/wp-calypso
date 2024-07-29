@@ -1,6 +1,6 @@
 import { decodeEntities } from '@wordpress/html-entities';
 import { Icon, chevronDown, chevronUp, tag, file } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat } from 'i18n-calypso';
 import React, { Fragment, useState } from 'react';
 import ShortenedNumber from '../number-formatters';
@@ -106,7 +106,7 @@ const HorizontalBarListItem = ( {
 	return (
 		<>
 			<li
-				className={ classnames(
+				className={ clsx(
 					`${ BASE_CLASS_NAME }-item`,
 					{
 						[ `${ BASE_CLASS_NAME }-item--indicated` ]: hasIndicator,
@@ -137,7 +137,7 @@ const HorizontalBarListItem = ( {
 						</span>
 					) }
 					<TagName
-						className={ classnames(
+						className={ clsx(
 							`${ BASE_CLASS_NAME }-label`,
 							hasChildren && `${ BASE_CLASS_NAME }-label--group-header`
 						) }
@@ -173,7 +173,7 @@ const HorizontalBarListItem = ( {
 
 							return (
 								<HorizontalBarListItem
-									key={ `group-${ child?.id || index }` }
+									key={ `group-${ child?.id ?? index }` }
 									data={ child }
 									className={ className }
 									maxValue={ maxValue }

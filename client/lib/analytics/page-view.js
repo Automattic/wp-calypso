@@ -23,7 +23,8 @@ export function recordPageView( urlPath, pageTitle, params = {}, options = {} ) 
 			urlPath,
 			pageTitle,
 			options?.useJetpackGoogleAnalytics,
-			options?.useAkismetGoogleAnalytics
+			options?.useAkismetGoogleAnalytics,
+			options?.useA8CForAgenciesGoogleAnalytics
 		);
 		referRecordPageView();
 		saveImpactAffiliateClickId();
@@ -42,8 +43,15 @@ async function safeGoogleAnalyticsPageView(
 	urlPath,
 	pageTitle,
 	useJetpackGoogleAnalytics = false,
-	useAkismetGoogleAnalytics = false
+	useAkismetGoogleAnalytics = false,
+	useA8CForAgenciesGoogleAnalytics = false
 ) {
 	await refreshCountryCodeCookieGdpr();
-	gaRecordPageView( urlPath, pageTitle, useJetpackGoogleAnalytics, useAkismetGoogleAnalytics );
+	gaRecordPageView(
+		urlPath,
+		pageTitle,
+		useJetpackGoogleAnalytics,
+		useAkismetGoogleAnalytics,
+		useA8CForAgenciesGoogleAnalytics
+	);
 }

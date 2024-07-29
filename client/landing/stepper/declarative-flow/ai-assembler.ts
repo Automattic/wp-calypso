@@ -1,19 +1,17 @@
 import config from '@automattic/calypso-config';
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
-import { isAssemblerSupported, getAssemblerDesign } from '@automattic/design-picker';
-import { useLocale } from '@automattic/i18n-utils';
+import { getAssemblerDesign } from '@automattic/design-picker';
 import { AI_ASSEMBLER_FLOW } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import wpcomRequest from 'wpcom-proxy-request';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getTheme } from 'calypso/state/themes/selectors';
-import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
@@ -65,22 +63,20 @@ const withAIAssemblerFlow: Flow = {
 	},
 
 	useSteps() {
-		return [
+		return stepsWithRequiredLogin( [
 			STEPS.CHECK_SITES,
 			STEPS.NEW_OR_EXISTING_SITE,
 			STEPS.SITE_PICKER,
 			STEPS.SITE_CREATION_STEP,
-			STEPS.SITE_PROMPT,
-			STEPS.PATTERN_ASSEMBLER,
 			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
-			STEPS.ERROR,
 			STEPS.LAUNCHPAD,
+			STEPS.ERROR,
 			STEPS.PLANS,
 			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
-		];
+		] );
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -89,15 +85,60 @@ const withAIAssemblerFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
 		);
+		const siteId = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSite(),
+			[]
+		);
 
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
-		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
-		const { site, siteSlug, siteId } = useSiteData();
 
-		const exitFlow = ( to: string ) => {
+		const { saveSiteSettings, setIntentOnSite, setDesignOnSite, setStaticHomepageOnSite } =
+			useDispatch( SITE_STORE );
+
+		const exitFlow = ( selectedSiteId: string, selectedSiteSlug: string ) => {
 			setPendingAction( () => {
 				return new Promise( () => {
-					window.location.assign( to );
+					if ( ! selectedSiteId || ! selectedSiteSlug ) {
+						return;
+					}
+
+					const pendingActions = [
+						resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
+					];
+
+					// TODO: Query if we are indeed missing home page before creating new one.
+					// Create the homepage.
+					pendingActions.push(
+						wpcomRequest( {
+							path: '/sites/' + selectedSiteId + '/pages',
+							method: 'POST',
+							apiNamespace: 'wp/v2',
+							body: {
+								title: 'Home',
+								status: 'publish',
+							},
+						} )
+					);
+
+					// Set the assembler theme
+					pendingActions.push(
+						setDesignOnSite( selectedSiteSlug, {
+							theme: 'assembler',
+						} )
+					);
+
+					Promise.all( pendingActions ).then( ( results ) => {
+						// URL is in the results from the first promise.
+						const siteURL = results[ 0 ].URL;
+						const homePagePostId = results[ 1 ].id;
+						// This will redirect and we will never resolve.
+						setStaticHomepageOnSite( selectedSiteId, homePagePostId ).then( () =>
+							window.location.assign(
+								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&postType=page&postId=${ homePagePostId }`
+							)
+						);
+						return Promise.resolve();
+					} );
 				} );
 			} );
 
@@ -112,30 +153,16 @@ const withAIAssemblerFlow: Flow = {
 			setIntentOnSite( selectedSiteSlug, SiteIntent.AIAssembler );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
 
-			// Check whether to go to the assembler. If not, go to the site editor directly
-			let params;
-			if ( ! isAssemblerSupported() ) {
-				params = new URLSearchParams( {
-					canvas: 'edit',
-					assembler: '1',
-				} );
-
-				return `/site-editor/${ selectedSiteSlug }?${ params }`;
-			}
-
-			params = new URLSearchParams( {
+			const params = new URLSearchParams( {
 				siteSlug: selectedSiteSlug,
 				siteId: selectedSiteId,
 			} );
-			if ( config.isEnabled( 'pattern-assembler/v2' ) ) {
-				params.set( 'flags', 'pattern-assembler/v2' );
-			}
 
 			if ( isNewSite ) {
 				params.set( 'isNewSite', 'true' );
 			}
 
-			return navigate( `site-prompt?${ params }` );
+			return exitFlow( selectedSiteId, selectedSiteSlug );
 		};
 
 		const submit = async (
@@ -143,6 +170,8 @@ const withAIAssemblerFlow: Flow = {
 			...results: string[]
 		) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
+			const selectedSiteSlug = providedDependencies?.siteSlug as string;
+			const selectedSiteId = providedDependencies?.siteId as string;
 
 			switch ( _currentStep ) {
 				case 'check-sites': {
@@ -174,16 +203,6 @@ const withAIAssemblerFlow: Flow = {
 					return navigate( 'launchpad' );
 				}
 
-				case 'site-prompt': {
-					if ( providedDependencies?.aiSitePrompt ) {
-						await saveSiteSettings( siteId, {
-							wpcom_ai_site_prompt: providedDependencies.aiSitePrompt,
-						} );
-					}
-
-					return navigate( 'pattern-assembler' );
-				}
-
 				case 'processing': {
 					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
 						return navigate( 'error' );
@@ -210,12 +229,7 @@ const withAIAssemblerFlow: Flow = {
 						return;
 					}
 
-					const params = new URLSearchParams( {
-						canvas: 'edit',
-						assembler: '1',
-					} );
-
-					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
+					return exitFlow( selectedSiteId, selectedSiteSlug );
 				}
 
 				case 'pattern-assembler': {
@@ -227,7 +241,7 @@ const withAIAssemblerFlow: Flow = {
 				}
 
 				case 'plans': {
-					await updateLaunchpadSettings( siteId, {
+					await updateLaunchpadSettings( selectedSiteId, {
 						checklist_statuses: { plan_completed: true },
 					} );
 
@@ -235,13 +249,13 @@ const withAIAssemblerFlow: Flow = {
 				}
 
 				case 'domains': {
-					await updateLaunchpadSettings( siteId, {
+					await updateLaunchpadSettings( selectedSiteId, {
 						checklist_statuses: { domain_upsell_deferred: true },
 					} );
 
 					if ( providedDependencies?.freeDomain && providedDependencies?.domainName ) {
 						// We have to use the site id since the domain is changed.
-						return navigate( `launchpad?siteId=${ site?.ID }` );
+						return navigate( `launchpad?siteId=${ selectedSiteId }` );
 					}
 
 					return navigate( 'launchpad' );
@@ -282,8 +296,8 @@ const withAIAssemblerFlow: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: AI_ASSEMBLER_FLOW,
-						siteId,
-						siteSlug,
+						siteId: siteId || null,
+						siteSlug: null,
 					} );
 					return;
 			}
@@ -307,36 +321,15 @@ const withAIAssemblerFlow: Flow = {
 			currentPath.includes( `setup/${ flowName }/check-sites` );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: window.location.href.replace( window.location.origin, '' ),
-			locale,
-		} );
-
 		useEffect( () => {
-			if ( ! isLoggedIn ) {
-				window.location.assign( logInUrl );
-			} else if ( isCreateSite && ! userAlreadyHasSites ) {
+			if ( isLoggedIn && isCreateSite && ! userAlreadyHasSites ) {
 				window.location.assign( `/setup/${ flowName }/create-site` );
 			}
 		}, [] );
 
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		if ( ! isLoggedIn ) {
-			result = {
-				state: AssertConditionState.CHECKING,
-				message: `${ flowName } requires a logged in user`,
-			};
-		} else if ( isCreateSite && ! userAlreadyHasSites ) {
+		if ( isLoggedIn && isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } with no preexisting sites`,

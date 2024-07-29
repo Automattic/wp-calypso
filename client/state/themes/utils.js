@@ -77,10 +77,11 @@ export function normalizeWpcomTheme( theme ) {
 
 /**
  * Normalizes a theme obtained from the WordPress.org REST API
- * @param  {Object} theme  Theme object
+ * @param   {Object} theme   Theme object
+ * @param   {Object} tier     Theme tier that wporg themes belong to.
  * @returns {Object}        Normalized theme object
  */
-export function normalizeWporgTheme( theme ) {
+export function normalizeWporgTheme( theme, tier ) {
 	if ( ! theme ) {
 		return {};
 	}
@@ -109,9 +110,7 @@ export function normalizeWporgTheme( theme ) {
 		normalizedTheme.author = author;
 	}
 
-	// Manually add the theme_tier for tracking purposes.
-	// @TODO: Replace this with the real tier definition from a new endpoint.
-	normalizedTheme.theme_tier = { slug: 'community' };
+	normalizedTheme.theme_tier = tier ?? { slug: 'community' };
 
 	if ( ! normalizedTheme.tags ) {
 		return normalizedTheme;

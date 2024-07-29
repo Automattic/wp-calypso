@@ -296,7 +296,7 @@
 	$white: #fff;
 
 	@mixin break-small() {
-		@media ( min-width: #{ ( $break-small ) } ) {
+		@media (min-width: #{ ($break-small) }) {
 			@content;
 		}
 	}

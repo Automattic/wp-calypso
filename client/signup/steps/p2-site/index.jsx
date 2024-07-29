@@ -460,7 +460,7 @@ class P2Site extends Component {
 					id="site-address-input"
 					autoCapitalize="off"
 					className="p2-site__site-suggested-url"
-					disabled={ true }
+					disabled
 					name="suggested-site"
 					value={ site ? `https://${ site }.wordpress.com` : '' }
 				/>
@@ -544,7 +544,7 @@ class P2Site extends Component {
 					</FormLabel>
 					<FormTextInput
 						id="site-title-input"
-						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						autoCapitalize="off"
 						className="p2-site__site-title"
 						disabled={ submitting }

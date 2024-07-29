@@ -11,6 +11,18 @@
 		margin: 0 20px;
 	}
 
+	&.entrepreneur-trial {
+		color: var(--studio-black);
+		background-color: #ebeefd;
+		.trial-banner__content {
+			.banner__content {
+				.trial-banner__subtitle {
+					color: var(--studio-black);
+				}
+			}
+		}
+	}
+
 	.trial-banner__content {
 		flex: 1;
 		padding-right: 25%;

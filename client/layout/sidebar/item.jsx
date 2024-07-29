@@ -1,5 +1,6 @@
 import { Count, Badge, Gridicon, MaterialIcon } from '@automattic/components';
-import classnames from 'classnames';
+import { Icon, chevronRightSmall } from '@wordpress/icons';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -12,9 +13,10 @@ import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
 	const showAsExternal = ( isExternalLink && ! props.forceInternalLink ) || props.forceExternalLink;
-	const classes = classnames( props.className, props.tipTarget, {
+	const classes = clsx( props.className, props.tipTarget, {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
+		'tooltip tooltip-right': !! props.tooltip,
 	} );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
@@ -45,7 +47,12 @@ export default function SidebarItem( props ) {
 	const linkProps = showAsExternal ? { target: '_blank', rel: 'noreferrer' } : {};
 
 	return (
-		<li className={ classes } data-tip-target={ props.tipTarget } data-post-type={ props.postType }>
+		<li
+			className={ classes }
+			data-tip-target={ props.tipTarget }
+			data-tooltip={ props.tooltip }
+			data-post-type={ props.postType }
+		>
 			<a
 				className="sidebar__menu-link"
 				onClick={ handleNavigate }
@@ -83,6 +90,7 @@ export default function SidebarItem( props ) {
 				{ ( showAsExternal || props.forceShowExternalIcon ) && ! sidebarIsCollapsed && (
 					<Gridicon icon="external" size={ 24 } />
 				) }
+				{ props.forceChevronIcon && <Icon icon={ chevronRightSmall } size={ 24 } /> }
 				{ props.children }
 			</a>
 		</li>
@@ -91,6 +99,7 @@ export default function SidebarItem( props ) {
 
 SidebarItem.propTypes = {
 	label: TranslatableString.isRequired,
+	tooltip: TranslatableString,
 	className: PropTypes.string,
 	link: PropTypes.string.isRequired,
 	onNavigate: PropTypes.func,

@@ -1,4 +1,5 @@
-import { License } from 'calypso/state/partner-portal/types';
+import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
+import type { License } from 'calypso/state/partner-portal/types';
 
 interface APILicense {
 	license_id: number;
@@ -16,6 +17,7 @@ interface APILicense {
 	owner_type: string | null;
 	quantity: number | null;
 	parent_license_id: number | null;
+	referral: ReferralAPIResponse;
 }
 
 export default function formatLicenses( items: APILicense[] ): License[] {
@@ -35,5 +37,6 @@ export default function formatLicenses( items: APILicense[] ): License[] {
 		ownerType: item.owner_type,
 		quantity: item.quantity,
 		parentLicenseId: item.parent_license_id,
+		referral: item.referral,
 	} ) );
 }

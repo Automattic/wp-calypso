@@ -93,12 +93,7 @@ export const ORDERED_PATTERN_PAGES_CATEGORIES = [
 	'contact',
 ];
 
-// From URL params for testing
-const searchParams = new URLSearchParams( window.location.search );
-const viewportWidth = searchParams.get( 'viewportWidth' );
-const placeholderHeight = searchParams.get( 'placeholderHeight' );
-
 // Pattern rendering
 export const DEFAULT_VIEWPORT_HEIGHT = 500;
-export const DEFAULT_VIEWPORT_WIDTH = Number( viewportWidth ) || 1200;
-export const PLACEHOLDER_HEIGHT = Number( placeholderHeight ) || 150;
+export const DEFAULT_VIEWPORT_WIDTH = 1200;
+export const PLACEHOLDER_HEIGHT = 150;

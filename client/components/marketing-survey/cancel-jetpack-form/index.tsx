@@ -351,7 +351,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			</Button>
 		);
 		const loading = (
-			<Button disabled={ true } busy={ true } primary>
+			<Button disabled busy primary>
 				{ translate( 'Loading' ) }
 			</Button>
 		);
@@ -413,7 +413,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 							)
 						}
 						align="center"
-						isSecondary={ true }
+						isSecondary
 					/>
 				</>
 			);

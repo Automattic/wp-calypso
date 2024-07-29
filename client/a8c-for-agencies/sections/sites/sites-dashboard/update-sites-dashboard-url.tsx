@@ -1,4 +1,4 @@
-import page from '@automattic/calypso-router';
+import { DataViewsFilter } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { Filter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
@@ -68,7 +68,7 @@ export const updateSitesDashboardUrl = ( {
 }: {
 	category?: string;
 	setCategory: ( category: string ) => void;
-	filters: Filter[];
+	filters: DataViewsFilter[];
 	selectedSite?: Site;
 	selectedSiteFeature?: string;
 	search: string;
@@ -114,8 +114,5 @@ export const updateSitesDashboardUrl = ( {
 	if ( shouldAddQueryArgs ) {
 		url += queryString;
 	}
-
-	if ( page.current !== url ) {
-		page.replace( url );
-	}
+	return url;
 };

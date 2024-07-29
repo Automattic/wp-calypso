@@ -27,7 +27,6 @@ test-results*.xml
 /client/stats-server.json
 /client/chart.json
 /client/style.json
-spec-xunit-reporter-0.0.1.tgz
 *xunit_*.xml
 /vendor
 checkstyle.xml
@@ -122,7 +121,9 @@ yarn-json-output.json
 
 # Storybook
 storybook-static
+packages/plans-grid-next/static/mockServiceWorker.js
 
 # PHPUnit cache
 .phpunit.result.cache
 .phpunit.cache
+

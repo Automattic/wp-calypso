@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_PREMIUM, getPlan, isFreePlan, isPersonalPlan } from '@automattic/calypso-products';
+import { DotPager } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -8,12 +9,11 @@ import YoastLogo from 'calypso/assets/images/icons/yoast-logo.svg';
 import GoogleAnalyticsLogo from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import writePost from 'calypso/assets/images/onboarding/site-options.svg';
 import BlazeLogo from 'calypso/components/blaze-logo';
-import DotPager from 'calypso/components/dot-pager';
 import { useHasNeverPublishedPost } from 'calypso/data/stats/use-has-never-published-post';
 import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MiniCarouselBlock from './mini-carousel-block';
 import { isBlockDismissed } from './selectors';
@@ -46,6 +46,9 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	const jetpackNonAtomic = useSelector(
 		( state ) => isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
 	);
+	const isSimpleClassic = useSelector( ( state ) =>
+		getSiteOption( state, selectedSiteId, 'is_wpcom_simple' )
+	);
 
 	const currentPlanSlug = useSelector( ( state ) =>
 		getCurrentPlan( state, selectedSiteId )
@@ -75,7 +78,9 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
 	const showYoastPromo =
-		! useSelector( isBlockDismissed( EVENT_YOAST_PROMO_DISMISS ) ) && ! jetpackNonAtomic;
+		! useSelector( isBlockDismissed( EVENT_YOAST_PROMO_DISMISS ) ) &&
+		! jetpackNonAtomic &&
+		! isSimpleClassic;
 
 	const showGoogleAnalyticsPromo =
 		! useSelector( isBlockDismissed( EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS ) ) &&
@@ -97,6 +102,12 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 		showYoastPromo,
 		showGoogleAnalyticsPromo,
 	] );
+
+	// In case of Odyssey Stats, ensure that we return the absolute URL for redirect.
+	const getCalypsoUrl = ( href ) => {
+		const baseUrl = window?.location?.hostname === slug ? 'https://wordpress.com' : '';
+		return baseUrl + href;
+	};
 
 	// Handle view events upon initial mount and upon paging DotPager.
 	useEffect( () => {
@@ -125,7 +136,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Changing your site from private to public helps people find you and get more visitors. Don’t worry, you can keep working on your site.'
 				) }
 				ctaText={ translate( 'Launch your site' ) }
-				href={ `/settings/general/${ slug }` }
+				href={ getCalypsoUrl( `/settings/general/${ slug }` ) }
 				key="launch-your-site"
 			/>
 		);
@@ -142,7 +153,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Sites with content get more visitors. We’ve found that adding some personality and introducing yourself is a great start to click with your audience.'
 				) }
 				ctaText={ translate( 'Write a post' ) }
-				href={ `/post/${ slug }` }
+				href={ getCalypsoUrl( `/post/${ slug }` ) }
 				key="write-a-post"
 			/>
 		);
@@ -159,7 +170,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Grow your audience by promoting your content. Reach millions of users across Tumblr and WordPress.com'
 				) }
 				ctaText={ translate( 'Create campaign' ) }
-				href={ `/advertising/${ slug || '' }` }
+				href={ getCalypsoUrl( `/advertising/${ slug || '' }` ) }
 				key="blaze"
 			/>
 		);
@@ -176,7 +187,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
 				) }
 				ctaText={ translate( 'Get Yoast' ) }
-				href={ `/plugins/wordpress-seo-premium/${ slug || '' }` }
+				href={ getCalypsoUrl( `/plugins/wordpress-seo-premium/${ slug || '' }` ) }
 				key="yoast"
 			/>
 		);
@@ -200,7 +211,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					// Translators: %(plan) is the name of a plan, e.g. "Explorer" or "Premium"
 					translate( 'Get %(plan)s', { args: { plan: premiumPlanName } } )
 				}
-				href={ `/checkout/premium/${ slug || '' }` }
+				href={ getCalypsoUrl( `/checkout/premium/${ slug || '' }` ) }
 				key="google-analytics"
 			/>
 		);

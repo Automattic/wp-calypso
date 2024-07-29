@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { trackStatsAnalyticsEvent } from '../utils';
 import {
 	StatsBenefitsCommercial,
 	StatsBenefitsPersonal,
@@ -12,7 +13,7 @@ import {
 import './styles.scss';
 
 const getStatsPurchaseURL = ( siteId, productType = 'commercial' ) =>
-	`/stats/purchase/${ siteId }?productType=${ productType }&flags=stats/type-detection`;
+	`/stats/purchase/${ siteId }?productType=${ productType }`;
 
 const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
 	event.preventDefault();
@@ -20,6 +21,10 @@ const handleUpgradeClick = ( event, upgradeUrl, isOdysseyStats ) => {
 	isOdysseyStats
 		? recordTracksEvent( 'jetpack_odyssey_stats_purchase_summary_screen_upgrade_clicked' )
 		: recordTracksEvent( 'calypso_stats_purchase_summary_screen_upgrade_clicked' );
+
+	trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
+		type: 'summary-screen',
+	} );
 
 	setTimeout( () => page( upgradeUrl ), 250 );
 };
@@ -103,7 +108,7 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 	};
 
 	return (
-		<StatsSingleItemPagePurchaseFrame isFree>
+		<StatsSingleItemPagePurchaseFrame>
 			<h1>{ translate( 'You already have a free license for Jetpack Stats.' ) }</h1>
 			<p>
 				{ translate(

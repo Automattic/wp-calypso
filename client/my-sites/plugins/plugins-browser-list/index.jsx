@@ -97,7 +97,7 @@ const PluginsBrowserList = ( {
 
 	const SpotlightPlaceholder = (
 		<Spotlight
-			isPlaceholder={ true }
+			isPlaceholder
 			taglineText="Calypso placeholder"
 			illustrationSrc="https://wordpress.com/wp-content/lib/marketplace-images/sensei-pro.svg"
 			onClick={ () => {} }

@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { ENTER } from '@wordpress/keycodes';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import NoSupport from './no-support';
 
 export default ( { fontPairings, fontBase, fontHeadings, update } ) => {
@@ -15,7 +15,7 @@ export default ( { fontPairings, fontBase, fontHeadings, update } ) => {
 							const isSelected = headings === fontHeadings && base === fontBase;
 							return (
 								<Button
-									className={ classnames( 'style-preview__font-option', {
+									className={ clsx( 'style-preview__font-option', {
 										'is-selected': isSelected,
 									} ) }
 									onClick={ () => update( { headings, base } ) }

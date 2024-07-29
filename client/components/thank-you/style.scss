@@ -4,7 +4,7 @@
 .thank-you__container-header img {
 	max-width: 260px;
 
-	@media ( max-width: 782px ) {
+	@media (max-width: 782px) {
 		max-width: 150px;
 	}
 }
@@ -33,7 +33,7 @@
 .thank-you__step-cta {
 	margin-left: auto;
 	margin-top: 6px;
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		margin: 0 auto 20px 0;
 	}
 }

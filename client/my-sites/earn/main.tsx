@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -14,13 +15,13 @@ import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
 import WordAdsHighlightsSection from 'calypso/my-sites/stats/wordads/highlights-section';
 import { useSelector } from 'calypso/state';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
 import CustomersSection from './customers';
 import Home from './home';
 import MembershipsSection from './memberships/section';
-import ReferAFriendSection from './refer-a-friend';
 import { Query } from './types';
 
 type EarningsMainProps = {
@@ -43,7 +44,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
-	const subscriberId = new URLSearchParams( window.location.search ).get( 'subscriber' );
+	const subscriberId = query?.subscriber;
+	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site?.ID ) );
+	const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
 
 	const layoutTitles = {
 		'ads-earnings': translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
@@ -154,10 +157,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				return <MembershipsSection query={ query } />;
 
 			case 'supporters':
-				return <CustomersSection />;
-
-			case 'refer-a-friend':
-				return <ReferAFriendSection />;
+				return <CustomersSection query={ query } />;
 
 			default:
 				return <Home />;
@@ -238,8 +238,11 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		);
 	};
 
+	const atomicLearnMoreLink = localizeUrl( 'https://wordpress.com/support/monetize-your-site/' );
+	const jetpackLearnMoreLink = localizeUrl( 'https://jetpack.com/support/monetize-your-site/' );
+
 	return (
-		<Main wideLayout={ true } className="earn">
+		<Main wideLayout className="earn">
 			<PageViewTracker
 				path={ section ? `${ earnPath }/${ section }/:site` : `${ earnPath }/:site` }
 				title={ `${ adsProgramName } ${ capitalize( section ) }` }
@@ -256,7 +259,15 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 							'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 							{
 								components: {
-									learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
+									learnMoreLink: isJetpackCloud() ? (
+										<a
+											href={ isJetpackNotAtomic ? jetpackLearnMoreLink : atomicLearnMoreLink }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									) : (
+										<InlineSupportLink supportContext="earn" showIcon={ false } />
+									),
 								},
 							}
 						) }

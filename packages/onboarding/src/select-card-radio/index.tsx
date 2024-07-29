@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useId, type FC, type ReactNode, ReactElement, useCallback } from 'react';
 import './style.scss';
 
@@ -35,7 +35,7 @@ export const SelectCardRadio: FC< SelectCardRadioProps > = ( {
 		<label
 			htmlFor={ `${ id }-radio` }
 			aria-labelledby={ `${ id }-info` }
-			className={ classNames( 'select-card-radio', className ) }
+			className={ clsx( 'select-card-radio', className ) }
 		>
 			<input
 				type="radio"
@@ -60,5 +60,5 @@ interface SelectCardRadioListProps {
 }
 
 export const SelectCardRadioList: FC< SelectCardRadioListProps > = ( { children, className } ) => {
-	return <div className={ classNames( 'select-card-radio__list', className ) }>{ children }</div>;
+	return <div className={ clsx( 'select-card-radio__list', className ) }>{ children }</div>;
 };

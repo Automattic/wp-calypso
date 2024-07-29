@@ -55,7 +55,7 @@
 	background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
 	border-radius: 4px;
 
-	@media only screen and ( min-width: 821px ) {
+	@media only screen and (min-width: 821px) {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -99,9 +99,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-shrink: 0;
 	font-size: $font-body;
 	min-width: 5.7rem;
 	border-width: 0;
+	white-space: nowrap;
+
 	.gridicon.gridicons-checkmark {
 		transform: rotate(-8.37deg);
 		margin-right: 11.46px;

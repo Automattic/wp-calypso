@@ -25,18 +25,32 @@
 		font-family: "SF Pro Display", $sans;
 	}
 
+	.earn__launchpad-title {
+		font-size: $font-size-header-small;
+	}
+
 	.promo-section {
-		.promo-card {
-			.gridicon {
-				background: none;
-			}
-		}
 		.action-panel__body {
 			p {
-				font-size: 1rem;
+				font-size: $font-body-small;
 			}
 		}
 	}
+	.highlight-card-tooltip-content {
+		p {
+			font-size: $font-body-small;
+			font-weight: normal;
+		}
+	}
+	.earn__cancel-dialog {
+		h1 {
+			font-size: $font-title-small;
+		}
+		p {
+			font-size: $font-body;
+		}
+	}
+
 }
 
 .earn__launchpad {
@@ -47,8 +61,17 @@
 	gap: 30px;
 	background: #fff;
 
+	@media (max-width: $break-xlarge) {
+		flex-direction: column;
+		gap: 10px;
+	}
+
 	.earn__launchpad-header {
 		padding: 20px 0;
+
+		@media (max-width: $break-xlarge) {
+			padding-bottom: 0;
+		}
 		.earn__launchpad-progress-bar-container {
 			margin: 0 0 10px 6px;
 		}
@@ -102,6 +125,40 @@
 .earn .promo-section__promos .promo-card {
 	@include breakpoint-deprecated( ">1280px" ) {
 		width: calc(100%/3 - 1em);
+	}
+}
+
+.earn__ads-header {
+	margin: 20px 0;
+
+	h2.formatted-header__title {
+		margin: 0 0 12px;
+		font-size: $font-size-header-small;
+	}
+
+	.section-nav {
+		box-shadow: none;
+		background: none;
+	}
+
+	.section-nav-tab {
+		&:hover:not(.is-selected) {
+			border-bottom-color: transparent;
+		}
+		&.is-selected {
+			border-bottom: none;
+			.section-nav-tab__link {
+				color: var(--color-text);
+			}
+		}
+	}
+	.section-nav-tab__link {
+		padding: 0 20px 10px 0;
+		color: var(--color-link);
+		&:hover {
+			background-color: transparent;
+			color: var(--color-link);
+		}
 	}
 }
 
@@ -177,7 +234,7 @@ body:not(.theme-jetpack-cloud) {
 }
 
 /* Media Queries */
-@media ( max-width: $break-large ) {
+@media (max-width: $break-large) {
 	.earn.main {
 		padding: 20px;
 	}

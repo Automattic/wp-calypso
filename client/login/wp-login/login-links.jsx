@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -179,7 +179,7 @@ export class LoginLinks extends Component {
 		return (
 			<ExternalLink
 				key="help-link"
-				icon={ true }
+				icon
 				onClick={ this.recordHelpLinkClick }
 				target="_blank"
 				href={ localizeUrl( 'https://wordpress.com/support/security/two-step-authentication/' ) }
@@ -275,7 +275,7 @@ export class LoginLinks extends Component {
 	render() {
 		return (
 			<div
-				className={ classnames( 'wp-login__links', {
+				className={ clsx( 'wp-login__links', {
 					'has-2fa-links': this.props.twoFactorAuthType,
 				} ) }
 			>

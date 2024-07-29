@@ -7,9 +7,10 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import { JETPACK_ADMIN_PATH } from 'calypso/jetpack-connect/constants';
+import { JETPACK_ADMIN_PATH, JPC_A4A_PATH } from 'calypso/jetpack-connect/constants';
 import { navigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
+import { urlToSlug } from 'calypso/lib/url';
 import versionCompare from 'calypso/lib/version-compare';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
@@ -103,8 +104,15 @@ const jetpackConnection = ( WrappedComponent ) => {
 			if ( status === ALREADY_CONNECTED && ! this.state.redirecting ) {
 				const currentPlan = retrievePlan();
 				clearPlan();
-				if ( source === 'jetpack-manage' || source === 'a8c-for-agencies' ) {
+				if ( source === 'jetpack-manage' ) {
 					this.setState( { status: ALREADY_CONNECTED } );
+				} else if ( source === 'a8c-for-agencies' ) {
+					const urlRedirect = addQueryArgs(
+						{ site_already_connected: urlToSlug( this.props.siteHomeUrl ) },
+						JPC_A4A_PATH
+					);
+					navigate( urlRedirect );
+					return;
 				} else if ( currentPlan ) {
 					if ( currentPlan === PLAN_JETPACK_FREE ) {
 						debug( `Redirecting to wpadmin` );

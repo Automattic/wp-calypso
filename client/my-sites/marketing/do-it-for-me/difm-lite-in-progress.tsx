@@ -1,4 +1,7 @@
 import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { Button } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import SiteBuildInProgressIllustration from 'calypso/assets/images/difm/site-build-in-progress.svg';
@@ -33,7 +36,34 @@ type Props = {
 	siteId?: SiteId;
 };
 
-function WebsiteContentSubmissionPending( { primaryDomain, siteId, siteSlug }: Props ) {
+function SupportLink( { children }: { children?: JSX.Element } ) {
+	const translate = useTranslate();
+	// Create URLSearchParams for send feedback by email command
+	const { setNavigateToRoute, setShowHelpCenter, setSubject } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
+
+	const emailUrl = `/contact-form?${ new URLSearchParams( {
+		mode: 'EMAIL',
+		'disable-gpt': 'true',
+		'skip-resources': 'true',
+	} ).toString() }`;
+
+	return (
+		<Button
+			variant="link"
+			className="difm-lite-in-progress__help-button"
+			onClick={ () => {
+				setNavigateToRoute( emailUrl );
+				setSubject( translate( 'I have a question about my project' ) );
+				setShowHelpCenter( true );
+			} }
+		>
+			{ children }
+		</Button>
+	);
+}
+
+function WebsiteContentSubmissionPending( { siteId, siteSlug }: Props ) {
 	const translate = useTranslate();
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const difmPurchase = sitePurchases.find(
@@ -53,40 +83,34 @@ function WebsiteContentSubmissionPending( { primaryDomain, siteId, siteSlug }: P
 		}
 	}
 
-	const lineTextTranslateOptions = {
-		components: {
-			br: <br />,
-			SupportLink: (
-				<a
-					href={ `mailto:services+express@wordpress.com?subject=${ encodeURIComponent(
-						`I need help with my site: ${ primaryDomain.domain }`
-					) }` }
-				/>
-			),
-		},
-	};
-
 	const lineText = contentSubmissionDueDate
 		? translate(
-				'Click the button below to provide the content we need to build your site by %(contentSubmissionDueDate)s.{{br}}{{/br}}' +
-					'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
+				'Click the button below to provide the content we need to build your site by %(contentSubmissionDueDate)s.',
 				{
-					...lineTextTranslateOptions,
 					args: {
 						contentSubmissionDueDate: moment( contentSubmissionDueDate ).format( 'MMMM Do, YYYY' ),
 					},
 				}
 		  )
-		: translate(
-				'Click the button below to provide the content we need to build your site.{{br}}{{/br}}' +
-					'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
-				lineTextTranslateOptions
-		  );
+		: translate( 'Click the button below to provide the content we need to build your site.' );
 
 	return (
 		<EmptyContent
 			title={ translate( 'Website content not submitted' ) }
-			line={ <h3 className="empty-content__line">{ lineText }</h3> }
+			line={
+				<h3 className="empty-content__line">
+					{ lineText }
+					<br />
+					{ translate(
+						'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
+						{
+							components: {
+								SupportLink: <SupportLink />,
+							},
+						}
+					) }
+				</h3>
+			}
 			action={ translate( 'Provide website content' ) }
 			actionURL={ `/start/site-content-collection/website-content?siteSlug=${ siteSlug }` }
 			illustration={ WebsiteContentRequiredIllustration }
@@ -121,20 +145,18 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 			line={
 				<h3 className="empty-content__line">
 					{ translate(
-						"We are currently building your site and will send you an email when it's ready, within %d business days.{{br}}{{/br}}" +
-							'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
+						"We are currently building your site and will send you an email when it's ready, within %d business days.",
+						{
+							args: [ 4 ],
+						}
+					) }
+					<br />
+					{ translate(
+						'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
 						{
 							components: {
-								br: <br />,
-								SupportLink: (
-									<a
-										href={ `mailto:services+express@wordpress.com?subject=${ encodeURIComponent(
-											`I need help with my site: ${ primaryDomain.domain }`
-										) }` }
-									/>
-								),
+								SupportLink: <SupportLink />,
 							},
-							args: [ 4 ],
 						}
 					) }
 				</h3>

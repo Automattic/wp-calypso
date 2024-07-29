@@ -31,6 +31,7 @@ function querySubscribers(
 		unit: period,
 		quantity,
 		date: formattedDate,
+		stat_fields: 'subscribers,subscribers_paid',
 	};
 
 	return wpcom.req.get(
@@ -53,9 +54,12 @@ function selectSubscribers( payload: SubscriberPayload ): SubscribersData {
 		unit: payload.unit,
 		data: payload.data.map( ( dataSet ) => {
 			return {
+				// period
 				[ payload.fields[ 0 ] ]:
 					payload.unit !== 'week' ? dataSet[ 0 ] : dataSet[ 0 ].replaceAll( 'W', '-' ),
+				// subscribers
 				[ payload.fields[ 1 ] ]: dataSet[ 1 ],
+				// subscribers_paid
 				[ payload.fields[ 2 ] ]: dataSet[ 2 ],
 			};
 		} ),

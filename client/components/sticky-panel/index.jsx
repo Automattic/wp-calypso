@@ -1,5 +1,5 @@
 import { isMobile } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { throttle, debounce, defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
@@ -53,7 +53,7 @@ export function getDimensionUpdates( node, previous ) {
 }
 
 function renderStickyPanel( props, state ) {
-	const classes = classNames( 'sticky-panel', props.className, {
+	const classes = clsx( 'sticky-panel', props.className, {
 		'is-sticky': state.isSticky,
 	} );
 

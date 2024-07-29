@@ -1,39 +1,218 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
-import { CloudLogo, Button, PlanPrice } from '@automattic/components';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import {
+	calculateMonthlyPriceForPlan,
+	getPlan,
+	Plan,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_MONTHLY,
+	isMonthly,
+} from '@automattic/calypso-products';
+import { Badge, CloudLogo, Button, PlanPrice } from '@automattic/components';
+import { PricingMetaForGridPlan } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/format-currency';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
-import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
-import React, { useState, useEffect } from 'react';
+import clsx from 'clsx';
+import { type TranslateResult, useTranslate } from 'i18n-calypso';
+import { useState, useEffect, type PropsWithChildren } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
-import QueryPlans from 'calypso/components/data/query-plans';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import { UpgradePlanDetailsProps } from './types';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
-interface Props {
-	children: React.ReactNode;
+interface SwitcherProps {
+	selectedPlan: string;
+	onMonthlyPlanClick: () => void;
+	onAnnualPlanClick: () => void;
 }
 
-export const UpgradePlanDetails = ( props: Props ) => {
-	const { __ } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
-	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
+const UpgradePlanPeriodSwitcher = ( props: SwitcherProps ) => {
+	const translate = useTranslate();
+	const { selectedPlan, onMonthlyPlanClick, onAnnualPlanClick } = props;
 
-	const { children } = props;
+	return (
+		<div className="import__upgrade-plan-period-switcher">
+			<ButtonGroup>
+				<Button
+					borderless
+					className={ clsx( { selected: selectedPlan === PLAN_BUSINESS_MONTHLY } ) }
+					onClick={ onMonthlyPlanClick }
+				>
+					{ translate( 'Pay monthly' ) }
+				</Button>
+				<Button
+					borderless
+					className={ clsx( { selected: selectedPlan === PLAN_BUSINESS } ) }
+					onClick={ onAnnualPlanClick }
+				>
+					{ translate( 'Pay annually' ) }
+				</Button>
+			</ButtonGroup>
+		</div>
+	);
+};
+
+interface UpgradePlanPriceProps {
+	billingTimeFrame: TranslateResult | undefined;
+}
+
+const UpgradePlanPrice = ( props: PropsWithChildren< UpgradePlanPriceProps > ) => {
+	const { billingTimeFrame, children } = props;
+	return (
+		<div className="import__upgrade-plan-price">
+			{ ' ' }
+			{ children }{ ' ' }
+			<span className="plan-time-frame">
+				{ ' ' }
+				<small>{ billingTimeFrame ?? '' }</small>{ ' ' }
+			</span>{ ' ' }
+		</div>
+	);
+};
+
+interface PlanPriceOfferProps {
+	plan?: Plan;
+	currencyCode?: string;
+	originalMonthlyPrice?: number;
+	introOfferMonthlyPrice?: number;
+	originalFullPrice?: number;
+	introOfferFullPrice?: number;
+	introOfferAvailable: boolean;
+}
+
+const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
+	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
+
+	const {
+		plan,
+		originalFullPrice,
+		introOfferFullPrice,
+		introOfferAvailable,
+		introOfferMonthlyPrice,
+		originalMonthlyPrice,
+		currencyCode,
+	} = props;
+
+	const showOriginalPrice =
+		! introOfferAvailable || ! introOfferFullPrice || ! originalFullPrice || ! currencyCode;
+
+	if ( showOriginalPrice ) {
+		return (
+			<UpgradePlanPrice billingTimeFrame={ plan?.getBillingTimeFrame() }>
+				<PlanPrice rawPrice={ originalMonthlyPrice } currencyCode={ currencyCode } isSmallestUnit />
+			</UpgradePlanPrice>
+		);
+	}
+
+	const billingTimeFrame = hasEnTranslation(
+		'per month, %(discountedPrice)s billed annually for the first year, %(originalPrice)s per year afterwards, excl. taxes'
+	)
+		? translate(
+				'per month, %(discountedPrice)s billed annually for the first year, %(originalPrice)s per year afterwards, excl. taxes',
+				{
+					args: {
+						discountedPrice: formatCurrency( introOfferFullPrice, currencyCode, {
+							stripZeros: true,
+						} ),
+						originalPrice: formatCurrency( originalFullPrice, currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					},
+					comment:
+						'excl. taxes stands for excluding taxes; discountedPrice is a formatted price like $150; originalPrice is a formatted price like $200',
+				}
+		  )
+		: translate(
+				'per month, for your first %(introOfferIntervalUnit)s,{{br/}}' +
+					'then %(rawPrice)s billed annually, excl. taxes',
+				{
+					args: {
+						rawPrice: formatCurrency( originalFullPrice, currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+						introOfferIntervalUnit: translate( 'year' ),
+					},
+					components: { br: <br /> },
+					comment: 'excl. taxes is short for excluding taxes',
+				}
+		  );
+
+	const badgeText = hasEnTranslation( 'One time offer' )
+		? translate( 'One time offer' )
+		: translate( 'One time discount' );
+
+	return (
+		<UpgradePlanPrice billingTimeFrame={ billingTimeFrame }>
+			<Badge type="info-purple" className="import__upgrade-plan-price-badge">
+				{ badgeText }
+			</Badge>
+			<div className="import__upgrade-plan-price-group">
+				<PlanPrice
+					rawPrice={ originalMonthlyPrice }
+					currencyCode={ currencyCode }
+					original
+					isSmallestUnit
+				/>
+				<PlanPrice
+					className="improt__upgrade-plan-price-discounted"
+					rawPrice={ introOfferMonthlyPrice }
+					currencyCode={ currencyCode }
+				/>
+			</div>
+		</UpgradePlanPrice>
+	);
+};
+
+const preparePlanPriceOfferProps = (
+	selectedPlan: string,
+	introOfferAvailable: boolean,
+	plan?: Plan,
+	pricing?: PricingMetaForGridPlan
+): PlanPriceOfferProps => {
+	const currencyCode = pricing?.currencyCode;
+	const originalMonthlyPrice = pricing?.originalPrice.monthly ?? undefined;
+
+	const introOfferFullPrice = pricing?.introOffer?.rawPrice ?? undefined;
+	const introOfferMonthlyPrice = introOfferFullPrice
+		? calculateMonthlyPriceForPlan( selectedPlan, introOfferFullPrice )
+		: undefined;
+
+	const originalFullPrice = pricing?.originalPrice.full ?? undefined;
+
+	return {
+		plan,
+		currencyCode,
+		originalMonthlyPrice,
+		introOfferMonthlyPrice,
+		originalFullPrice,
+		introOfferFullPrice,
+		introOfferAvailable,
+	};
+};
+
+export const UpgradePlanDetails = ( props: UpgradePlanDetailsProps ) => {
+	const translate = useTranslate();
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
+	const [ showFeatures, setShowFeatures ] = useState( false );
 	const [ selectedPlan, setSelectedPlan ] = useState<
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
 	>( PLAN_BUSINESS );
-	const plan = getPlan( selectedPlan );
-	const planId = plan?.getProductId();
 
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planId as number, true ) );
+	const { children, pricing, introOfferAvailable, upgradePlanHostingDetailsList } = props;
+
+	const plan = getPlan( selectedPlan );
+
+	const planPriceOfferProps = preparePlanPriceOfferProps(
+		selectedPlan,
+		introOfferAvailable,
+		plan,
+		pricing
+	);
 
 	const { mutate: setSelectedPlanSlug } = useSelectedPlanUpgradeMutation();
 
@@ -46,33 +225,20 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	}, [ plan ] );
 
 	return (
-		<div className={ classnames( 'import__upgrade-plan-details' ) }>
-			<QueryPlans />
+		<div className="import__upgrade-plan-details">
+			{ ! introOfferAvailable && (
+				<UpgradePlanPeriodSwitcher
+					selectedPlan={ selectedPlan }
+					onMonthlyPlanClick={ () => setSelectedPlan( PLAN_BUSINESS_MONTHLY ) }
+					onAnnualPlanClick={ () => setSelectedPlan( PLAN_BUSINESS ) }
+				/>
+			) }
 
-			<div className={ classnames( 'import__upgrade-plan-period-switcher' ) }>
-				<ButtonGroup>
-					<Button
-						borderless={ true }
-						className={ classnames( { selected: selectedPlan === PLAN_BUSINESS_MONTHLY } ) }
-						onClick={ () => setSelectedPlan( PLAN_BUSINESS_MONTHLY ) }
-					>
-						{ __( 'Pay monthly' ) }
-					</Button>
-					<Button
-						borderless={ true }
-						className={ classnames( { selected: selectedPlan === PLAN_BUSINESS } ) }
-						onClick={ () => setSelectedPlan( PLAN_BUSINESS ) }
-					>
-						{ __( 'Pay annually' ) }
-					</Button>
-				</ButtonGroup>
-			</div>
-
-			<div className={ classnames( 'import__upgrade-plan-container' ) }>
-				<div className={ classnames( 'import__upgrade-plan-features-container' ) }>
-					<div className={ classnames( 'import__upgrade-plan-header' ) }>
+			<div className="import__upgrade-plan-container">
+				<div className="import__upgrade-plan-features-container">
+					<div className="import__upgrade-plan-header">
 						<Plans2023Tooltip
-							text={ __(
+							text={ translate(
 								'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
 							) }
 							id="wp-cloud-logo"
@@ -84,24 +250,30 @@ export const UpgradePlanDetails = ( props: Props ) => {
 						<Title className="plan-title" tagName="h2">
 							{ plan?.getTitle() }
 						</Title>
-						<small>{ __( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</small>
+						<p>{ translate( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</p>
 					</div>
 
-					<div className={ classnames( 'import__upgrade-plan-price' ) }>
-						<PlanPrice rawPrice={ rawPrice ?? undefined } currencyCode={ currencyCode } />
-						<span className={ classnames( 'plan-time-frame' ) }>
-							<small>{ plan?.getBillingTimeFrame() }</small>
-							<small>{ __( 'Refundable within 14 days. No questions asked.' ) }</small>
-						</span>
+					<PlanPriceOffer { ...planPriceOfferProps } />
+
+					<div>
+						<div className="import__upgrade-plan-cta">{ children }</div>
+						<div className="import__upgrade-plan-refund-sub-text">
+							{ plan && ! isMonthly( plan.getStoreSlug() )
+								? translate( 'Refundable within 14 days. No questions asked.' )
+								: translate( 'Refundable within 7 days. No questions asked.' ) }
+						</div>
 					</div>
-
-					<div className={ classnames( 'import__upgrade-plan-cta' ) }>{ children }</div>
-
-					<div className={ classnames( 'import__upgrade-plan-features-list' ) }>
-						<UpgradePlanFeatureList plan={ plan } />
+					<div className="import__upgrade-plan-features-list">
+						<UpgradePlanFeatureList
+							plan={ plan }
+							showFeatures={ showFeatures }
+							setShowFeatures={ setShowFeatures }
+						/>
 					</div>
 				</div>
-				{ isEnglishLocale && <UpgradePlanHostingDetails /> }
+				<UpgradePlanHostingDetails
+					upgradePlanHostingDetailsList={ upgradePlanHostingDetailsList }
+				/>
 			</div>
 		</div>
 	);

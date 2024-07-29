@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -19,7 +19,7 @@ class StatsError extends PureComponent {
 			message || translate( "Some stats didn't load in time. Please try again later." );
 
 		return (
-			<div className={ classNames( 'module-content-text', 'is-error', className ) }>
+			<div className={ clsx( 'module-content-text', 'is-error', className ) }>
 				<p key="primary">{ displayedMessage }</p>
 				{ children }
 			</div>

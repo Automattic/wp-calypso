@@ -1,0 +1,91 @@
+
+.commission-overview {
+	.commission-overview__section-container {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+		margin-block: 32px 0;
+	}
+
+	.jetpack-logo {
+		fill: var(--color-jetpack);
+	}
+
+	.woocommerce-logo {
+		fill: var(--color-woocommerce);
+	}
+
+	.a4a-layout__body-wrapper {
+		max-width: 700px;
+	}
+
+	.foldable-card.card,
+	.foldable-card.card.is-expanded {
+		border: none;
+		border-radius: 4px;
+		margin-block-start: 0;
+		margin-block-end: 24px;
+	}
+
+	.foldable-card__header,
+	.foldable-card.is-expanded .foldable-card__content {
+		border: none;
+	}
+
+
+	.foldable-card__header {
+		padding: 24px 24px 16px;
+		font-size: rem(16px);
+		font-weight: 600;
+	}
+
+
+	.foldable-card.foldable-card__content,
+	.foldable-card.is-expanded .foldable-card__content {
+		font-size: rem(14px);
+		color: var(--color-neutral-50);
+		font-weight: 400;
+		padding: 0 24px 24px;
+	}
+
+	.foldable-card__main {
+		display: block;
+
+		.a4a-overview-hosting__logo-container {
+			display: flex;
+			gap: 8px;
+			margin-block-end: 4px;
+
+			.pressable-icon {
+				width: 24px;
+				height: 24px;
+			}
+		}
+	}
+}
+
+.commission-overview__layout-automated {
+	.a4a-layout__top-wrapper {
+		padding-block: 24px 0;
+	}
+
+	.commission-overview .commission-overview__section-container {
+		margin-block: 24px 0;
+	}
+}
+
+.commission-overview__section-heading {
+	font-size: rem(24px);
+	margin-block-end: 8px;
+	font-weight: 600;
+}
+.commission-overview__section-subtitle {
+	font-size: rem(14px);
+	font-weight: 400;
+	color: var(--color-neutral-50);
+}
+
+.a4a-overview-hosting__wp-logo {
+	fill: var(--color-primary-50);
+	margin: 0;
+}

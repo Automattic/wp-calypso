@@ -153,13 +153,13 @@ class DnsRecords extends Component {
 				key="mobile-add-new-record-button"
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
-				isMobile={ true }
+				isMobile
 			/>,
 			<DnsImportBindFileButton
 				key="import-bind-file-button"
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
-				isMobile={ true }
+				isMobile
 			/>,
 			optionsButton,
 		];
@@ -271,6 +271,7 @@ class DnsRecords extends Component {
 						<DnsRecordsList
 							dns={ dns }
 							selectedSite={ selectedSite }
+							selectedDomain={ selectedDomain }
 							selectedDomainName={ selectedDomainName }
 						/>
 						<EmailSetup selectedDomainName={ selectedDomainName } />

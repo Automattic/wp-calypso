@@ -78,7 +78,7 @@ class PurchasesList extends Component {
 				<>
 					{ this.renderConciergeBanner() }
 
-					<PurchasesListHeader showSite={ true } />
+					<PurchasesListHeader showSite />
 
 					{ getPurchasesBySite( purchases, sites ).map( ( site ) => (
 						<PurchasesSite
@@ -87,7 +87,7 @@ class PurchasesList extends Component {
 							name={ site.name }
 							slug={ site.slug }
 							purchases={ site.purchases }
-							showSite={ true }
+							showSite
 							cards={ this.props.paymentMethodsState.paymentMethods }
 						/>
 					) ) }

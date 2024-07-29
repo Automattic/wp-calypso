@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import './style.scss';
 
 const BaseBanner = ( {
@@ -24,7 +24,7 @@ const BaseBanner = ( {
 	children?: React.ReactNode;
 } ) => {
 	return (
-		<div className={ classNames( 'woocommerce-customize-store-banner', bannerClass ) }>
+		<div className={ clsx( 'woocommerce-customize-store-banner', bannerClass ) }>
 			<div className="woocommerce-customize-store-banner-content">
 				<div className="banner-actions">
 					<h1>{ bannerTitle }</h1>

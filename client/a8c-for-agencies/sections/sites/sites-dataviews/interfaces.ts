@@ -1,3 +1,4 @@
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { Site, SiteData } from '../types';
 
 export interface SitesDataResponse {
@@ -13,31 +14,9 @@ export interface SitesDataViewsProps {
 	forceTourExampleSite?: boolean;
 	isLargeScreen: boolean;
 	isLoading: boolean;
-	onSitesViewChange: ( view: SitesViewState ) => void;
-	sitesViewState: SitesViewState;
-}
-
-export interface Sort {
-	field: string;
-	direction: 'asc' | 'desc' | '';
-}
-
-export interface Filter {
-	field: string;
-	operator: string;
-	value: number;
-}
-
-export interface SitesViewState {
-	type: 'table' | 'list' | 'grid';
-	perPage: number;
-	page: number;
-	sort: Sort;
-	search: string;
-	filters: Filter[];
-	hiddenFields: string[];
-	layout: object;
-	selectedSite?: Site | undefined;
+	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	dataViewsState: DataViewsState;
+	onRefetchSite?: () => Promise< unknown >;
 }
 
 export interface SiteInfo extends SiteData {

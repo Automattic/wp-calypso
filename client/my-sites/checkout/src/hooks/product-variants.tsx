@@ -22,7 +22,6 @@ import { useMemo } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useStableCallback } from 'calypso/lib/use-stable-callback';
 import { convertErrorToString } from '../lib/analytics';
-import { useCheckoutV2 } from './use-checkout-v2';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
 
@@ -33,23 +32,15 @@ const isError = ( err: unknown ): err is Error => err instanceof Error;
 export interface SitePlanData {
 	autoRenew?: boolean;
 	autoRenewDate?: string;
-	canStartTrial?: boolean;
 	currencyCode: string;
 	currentPlan?: boolean;
-	discountReason?: string | null;
 	expiry?: string;
 	expiryDate?: string;
-	formattedDiscount: string;
-	formattedOriginalPrice: string;
-	formattedPrice: string;
 	freeTrial?: boolean;
 	hasDomainCredit?: boolean;
+	hasRedeemedDomainCredit?: boolean;
 	id: number;
 	interval: number;
-	introductoryOfferFormattedPrice?: string;
-	introductoryOfferRawPrice?: number;
-	isDomainUpgrade?: boolean;
-	productDisplayPrice?: string;
 	productName: string;
 	productSlug: string;
 	rawDiscount: string;
@@ -90,7 +81,6 @@ export function useGetProductVariants(
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
 	const filterCallbackMemoized = useStableCallback( filterCallback ?? fallbackFilter );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	const variants = product?.product_variants ?? fallbackVariants;
 	const variantProductSlugs = variants.map( ( variant ) => variant.product_slug );
 	debug( 'variantProductSlugs', variantProductSlugs );
@@ -103,7 +93,7 @@ export function useGetProductVariants(
 					const term = getBillingTermForMonths( variant.bill_period_in_months );
 					const introductoryTerms = variant.introductory_offer_terms;
 					return {
-						variantLabel: getTermText( term, translate, shouldUseCheckoutV2 ),
+						variantLabel: getTermText( term, translate ),
 						productSlug: variant.product_slug,
 						productId: variant.product_id,
 						priceInteger: variant.price_integer,
@@ -137,7 +127,7 @@ export function useGetProductVariants(
 			.filter( isValueTruthy );
 
 		return convertedVariants.filter( ( product ) => filterCallbackMemoized( product ) );
-	}, [ variants, translate, shouldUseCheckoutV2, filterCallbackMemoized ] );
+	}, [ variants, translate, filterCallbackMemoized ] );
 
 	return filteredVariants;
 }
@@ -152,66 +142,40 @@ function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVaria
 	return 0;
 }
 
-function getTermText(
-	term: string,
-	translate: ReturnType< typeof useTranslate >,
-	shouldUseCheckoutV2: boolean
-): string {
+function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
 	switch ( term ) {
 		case TERM_DECENNIALLY:
-			return String(
-				! shouldUseCheckoutV2 ? translate( 'Ten years' ) : translate( 'Renews every ten years' )
-			);
+			return String( translate( 'Ten years' ) );
 
 		case TERM_NOVENNIALLY:
-			return String(
-				! shouldUseCheckoutV2 ? translate( 'Nine years' ) : translate( 'Renews every nine years' )
-			);
+			return String( translate( 'Nine years' ) );
 
 		case TERM_OCTENNIALLY:
-			return String(
-				! shouldUseCheckoutV2 ? translate( 'Eight years' ) : translate( 'Renews every eight years' )
-			);
+			return String( translate( 'Eight years' ) );
 
 		case TERM_SEPTENNIALLY:
-			return String(
-				! shouldUseCheckoutV2 ? translate( 'Seven years' ) : translate( 'Renews every seven years' )
-			);
+			return String( translate( 'Seven years' ) );
 
 		case TERM_SEXENNIALLY:
-			return String(
-				! shouldUseCheckoutV2 ? translate( 'Six years' ) : translate( 'Renews every six years' )
-			);
+			return String( translate( 'Six years' ) );
 
 		case TERM_QUINQUENNIALLY:
-			return String(
-				! shouldUseCheckoutV2 ? translate( 'Five years' ) : translate( 'Renews every five years' )
-			);
+			return String( translate( 'Five years' ) );
 
 		case TERM_QUADRENNIALLY:
-			return String(
-				! shouldUseCheckoutV2 ? translate( 'Four years' ) : translate( 'Renews every four years' )
-			);
+			return String( translate( 'Four years' ) );
 
 		case TERM_TRIENNIALLY:
-			return String(
-				! shouldUseCheckoutV2 ? translate( 'Three years' ) : translate( 'Renews every three years' )
-			);
+			return String( translate( 'Three years' ) );
 
 		case TERM_BIENNIALLY:
-			return String(
-				! shouldUseCheckoutV2 ? translate( 'Two years' ) : translate( 'Renews every two years' )
-			);
+			return String( translate( 'Two years' ) );
 
 		case TERM_ANNUALLY:
-			return String(
-				! shouldUseCheckoutV2 ? translate( 'One year' ) : translate( 'Renews every year' )
-			);
+			return String( translate( 'One year' ) );
 
 		case TERM_MONTHLY:
-			return String(
-				! shouldUseCheckoutV2 ? translate( 'One month' ) : translate( 'Renews every month' )
-			);
+			return String( translate( 'One month' ) );
 
 		default:
 			return '';

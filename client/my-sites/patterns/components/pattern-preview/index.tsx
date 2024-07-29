@@ -1,12 +1,14 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
 import { Button } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { Icon, lock } from '@wordpress/icons';
-import classNames from 'classnames';
+import { Icon, check, copy, lock } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -14,26 +16,24 @@ import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/intern
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
 import { patternFiltersClassName } from 'calypso/my-sites/patterns/components/pattern-library';
+import { usePatternsContext } from 'calypso/my-sites/patterns/context';
+import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import type {
-	Pattern,
-	PatternGalleryProps,
-	PatternTypeFilter,
-} from 'calypso/my-sites/patterns/types';
+import type { Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
 import type { Dispatch, SetStateAction } from 'react';
 
 import './style.scss';
 
-export const DESKTOP_VIEWPORT_WIDTH = 1200;
+export const GRID_VIEW_VIEWPORT_WIDTH = 1200;
 export const ASPECT_RATIO = 7 / 4;
 
 // This style is injected into pattern preview iframes to prevent users from navigating away from
 // the pattern preview page and from submitting forms.
 const noClickStyle = {
-	css: 'a, button, input { pointer-events: none; }',
+	css: 'a[href], button, input, textarea { pointer-events: none; }',
 	isGlobalStyles: true,
 };
 
@@ -82,26 +82,23 @@ function useTimeoutToResetBoolean(
 
 type PatternPreviewProps = {
 	canCopy?: boolean;
-	category?: string;
 	className?: string;
 	getPatternPermalink?: PatternGalleryProps[ 'getPatternPermalink' ];
 	isResizable?: boolean;
 	pattern: Pattern | null;
-	patternTypeFilter?: PatternTypeFilter;
-	isGridView?: boolean;
 	viewportWidth?: number;
 };
 
 function PatternPreviewFragment( {
 	canCopy = true,
-	category,
 	className,
 	getPatternPermalink = () => '',
 	pattern,
-	patternTypeFilter,
-	isGridView,
-	viewportWidth,
+	viewportWidth: fixedViewportWidth,
 }: PatternPreviewProps ) {
+	const { category, patternTypeFilter, isGridView } = usePatternsContext();
+
+	const { recordPatternsEvent } = useRecordPatternsEvent();
 	const ref = useRef< HTMLDivElement >( null );
 	const hasScrolledToAnchorRef = useRef< boolean >( false );
 
@@ -118,7 +115,17 @@ function PatternPreviewFragment( {
 
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
+	let viewportWidth: number | undefined = undefined;
+
+	if ( fixedViewportWidth ) {
+		viewportWidth = fixedViewportWidth;
+	} else if ( nodeSize.width ) {
+		viewportWidth = nodeSize.width * 1.16;
+	}
+
 	const translate = useTranslate();
+	const isEnglish = useIsEnglishLocale();
+	const { hasTranslation } = useI18n();
 
 	const titleTooltipText = isPermalinkCopied
 		? translate( 'Copied link to pattern', {
@@ -141,11 +148,19 @@ function PatternPreviewFragment( {
 		  } );
 
 	if ( isPatternCopied ) {
+		const patternCopiedText =
+			isEnglish || hasTranslation( 'Pattern copied' )
+				? translate( 'Pattern copied', {
+						comment: 'Button label for when a pattern was just copied',
+						textOnly: true,
+				  } )
+				: translate( 'Pattern copied!', {
+						comment: 'Button label for when a pattern was just copied',
+						textOnly: true,
+				  } );
+
 		copyButtonText = isPreviewLarge
-			? translate( 'Pattern copied!', {
-					comment: 'Button label for when a pattern was just copied',
-					textOnly: true,
-			  } )
+			? patternCopiedText
 			: translate( 'Copied', {
 					comment: 'Button label for when a pattern was just copied',
 					textOnly: true,
@@ -216,6 +231,62 @@ function PatternPreviewFragment( {
 		};
 	}, [ renderedPattern, idAttr ] );
 
+	// When an iframe loses focus, browsers will scroll them back into view. This behavior can be
+	// annoying and make for a glitchy impression. This callback continuously stores the latest
+	// window scroll position and restores it just after this preview iframe loses focus
+	useEffect( () => {
+		const iframe = ref.current?.querySelector( 'iframe' );
+
+		if ( ! iframe ) {
+			return;
+		}
+
+		let lastScrollPosition = window.scrollY;
+
+		function onWindowScroll() {
+			lastScrollPosition = window.scrollY;
+		}
+
+		function onIframeBlur() {
+			const storedLastScrollPosition = lastScrollPosition;
+
+			requestAnimationFrame( () => {
+				window.scrollTo( { top: storedLastScrollPosition } );
+			} );
+		}
+
+		window.addEventListener( 'scroll', onWindowScroll, { passive: true } );
+		iframe.contentWindow?.addEventListener( 'blur', onIframeBlur );
+
+		return () => {
+			window.removeEventListener( 'scroll', onWindowScroll );
+			iframe.contentWindow?.removeEventListener( 'blur', onIframeBlur );
+		};
+	} );
+
+	// This fetches forms and adds a listener that disables submission
+	useEffect( () => {
+		const iframe = ref.current?.querySelector( 'iframe' );
+
+		if ( ! iframe?.contentDocument ) {
+			return;
+		}
+
+		const forms = iframe.contentDocument.querySelectorAll( 'form' );
+
+		if ( ! forms.length ) {
+			return;
+		}
+
+		const onFormSubmit = ( event: SubmitEvent ) => event.preventDefault();
+
+		forms.forEach( ( form ) => form.addEventListener( 'submit', onFormSubmit ) );
+
+		return () => {
+			forms.forEach( ( form ) => form.removeEventListener( 'submit', onFormSubmit ) );
+		};
+	} );
+
 	if ( ! pattern ) {
 		return null;
 	}
@@ -231,7 +302,7 @@ function PatternPreviewFragment( {
 
 	return (
 		<div
-			className={ classNames( 'pattern-preview', className, {
+			className={ clsx( 'pattern-preview', className, {
 				'is-loading': ! renderedPattern,
 				// For some reason, the CSS `:target` selector has trouble with the transition from
 				// SSR markup to client-side React code, which is why we need the `is-targeted` class
@@ -243,6 +314,7 @@ function PatternPreviewFragment( {
 
 			<div className="pattern-preview__renderer">
 				<PatternRenderer
+					maxHeight="none"
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
 					scripts={ redrawScript }
@@ -257,6 +329,9 @@ function PatternPreviewFragment( {
 						borderless
 						className="pattern-preview__title"
 						onCopy={ () => {
+							recordPatternsEvent( 'calypso_pattern_library_permalink_copy', {
+								name: pattern.name,
+							} );
 							setIsPermalinkCopied( true );
 						} }
 						text={ getPatternPermalink( pattern ) }
@@ -276,6 +351,7 @@ function PatternPreviewFragment( {
 						text={ pattern?.html ?? '' }
 						primary
 					>
+						<Icon height={ 18 } icon={ isPatternCopied ? check : copy } width={ 18 } />{ ' ' }
 						{ copyButtonText }
 					</ClipboardButton>
 				) }
@@ -309,7 +385,9 @@ function PatternPreviewFragment( {
 }
 
 export function PatternPreview( props: PatternPreviewProps ) {
-	const { category, isResizable, pattern, patternTypeFilter } = props;
+	const { isResizable, pattern } = props;
+	const { category, patternTypeFilter } = usePatternsContext();
+
 	const isMobile = useMobileBreakpoint();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
@@ -346,7 +424,7 @@ export function PatternPreview( props: PatternPreviewProps ) {
 				topLeft: false,
 			} }
 			handleWrapperClass="pattern-preview__resizer"
-			minWidth={ 375 }
+			minWidth={ 335 }
 			maxWidth="100%"
 			onResizeStop={ () => {
 				recordResizeEvent( 'calypso_pattern_library_resize' );

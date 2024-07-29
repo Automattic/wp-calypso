@@ -47,6 +47,6 @@ export class StoryBlock {
 	 * @param {Page} page Page on which to verify the presence of the block.
 	 */
 	static async validatePublishedContent( page: Page ) {
-		await page.locator( '.wp-block-jetpack-story' ).waitFor();
+		await page.locator( 'main .wp-block-jetpack-story' ).waitFor();
 	}
 }

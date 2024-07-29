@@ -8,14 +8,13 @@
 	padding: 0 0 24px 0;
 	margin-bottom: 0;
 
-	@media (max-width: $break-small ) {
+	@media (max-width: $break-small) {
 		padding: 16px;
 	}
 
 	.breadcrumbs {
 		li {
 			color: var(--studio-gray-60, #50575e);
-			font-family: "SF Pro Text", $sans;
 			font-size: $font-body-small;
 			font-style: normal;
 			font-weight: 400;
@@ -58,7 +57,6 @@
 	}
 
 	.formatted-header__title {
-		font-family: "SF Pro Display", $sans;
 		font-size: $font-title-small;
 		font-weight: 500;
 		line-height: 26px;
@@ -66,14 +64,14 @@
 	}
 
 	.formatted-header__subtitle {
-		color: var(--color-neutral-60);
+		color: var(--studio-gray-50);
 		margin: 0;
 		line-height: 20px;
 		letter-spacing: -0.15px;
 
 		// Hide subtitle text on small screens
 		display: none;
-		@media ( min-width: $break-small ) {
+		@media (min-width: $break-small) {
 			display: inline-block;
 		}
 	}
@@ -86,7 +84,7 @@
 	.info-popover {
 		// Show subtitle text on small screens under help icon
 		display: inline-block;
-		@media ( min-width: $break-small ) {
+		@media (min-width: $break-small) {
 			display: none;
 		}
 	}

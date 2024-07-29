@@ -3,10 +3,12 @@ import { translate } from 'i18n-calypso';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import {
 	isJetpackSite,
 	isJetpackModuleActive,
 	isJetpackConnectionPluginActive,
+	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectionsPage from './connections';
@@ -17,8 +19,16 @@ export const connections: Callback = ( context, next ) => {
 	const { dispatch } = store;
 	const state = store.getState();
 	const site = getSelectedSite( state );
-	const isJetpack = site?.ID && isJetpackSite( state, site.ID );
+	const isSimple = isSimpleSite( state, site?.ID );
+	const isAJetpackSite =
+		site?.ID && isJetpackSite( state, site.ID, { treatAtomicAsJetpackSite: false } );
+	const isAtomic = site?.ID && isAtomicSite( state, site.ID );
 	const isPublicizeActive = site?.ID && isJetpackModuleActive( state, site.ID, 'publicize' );
+
+	const isSocialActive =
+		site?.ID && isJetpackConnectionPluginActive( state, site?.ID, 'jetpack-social' );
+	const isJetpackActive =
+		site?.ID && isJetpackSite( state, site?.ID, { considerStandaloneProducts: false } );
 
 	if ( site?.ID && ! canCurrentUser( state, site.ID, 'publish_posts' ) ) {
 		dispatch(
@@ -28,16 +38,14 @@ export const connections: Callback = ( context, next ) => {
 		);
 	}
 
-	if ( isJetpack || isPublicizeActive ) {
+	// Publicize can remain enabled even if the plugins are not active,
+	// So we need to check if any of the plugins are active.
+	const hasSocialSharingEnabled = isPublicizeActive && ( isSocialActive || isJetpackActive );
+
+	if ( isAtomic || isSimple || ( isAJetpackSite && hasSocialSharingEnabled ) ) {
 		context.primary = <ConnectionsPage />;
 	} else {
-		context.primary = (
-			<PromoPage
-				isSocialActive={
-					site?.ID && !! isJetpackConnectionPluginActive( state, site.ID, 'jetpack-social' )
-				}
-			/>
-		);
+		context.primary = <PromoPage />;
 	}
 	next();
 };

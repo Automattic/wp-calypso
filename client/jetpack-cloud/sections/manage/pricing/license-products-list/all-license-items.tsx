@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { SimpleLicenseItemCard } from './simple-license-item-card';
 import { SimpleLicenseMultiItemCard } from './simple-license-multi-item-card';
@@ -20,7 +20,7 @@ export const AllLicenseItems = ( {
 	items,
 	bundleSize,
 }: AllLicenseItemsProps ) => {
-	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
+	const wrapperClassName = clsx( 'jetpack-product-store__all-items', className );
 
 	return (
 		<div className={ wrapperClassName }>
@@ -41,7 +41,7 @@ export const AllLicenseItems = ( {
 								<SimpleLicenseMultiItemCard
 									variants={ item }
 									bundleSize={ supportedBundleSize }
-									ctaAsPrimary={ true }
+									ctaAsPrimary
 									isCtaDisabled={ false }
 									isCtaExternal={ false }
 								/>
@@ -49,7 +49,7 @@ export const AllLicenseItems = ( {
 								<SimpleLicenseItemCard
 									item={ item }
 									bundleSize={ supportedBundleSize }
-									ctaAsPrimary={ true }
+									ctaAsPrimary
 									isCtaDisabled={ false }
 									isCtaExternal={ false }
 								/>

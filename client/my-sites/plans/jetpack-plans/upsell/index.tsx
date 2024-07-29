@@ -8,7 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, Button, PlanPrice } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useCallback } from 'react';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
@@ -184,7 +184,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 
 					<div className="jetpack-upsell__card">
 						<div className="jetpack-upsell__card-header">
-							<Gridicon icon="star" size={ 18 } aria-hidden={ true } />
+							<Gridicon icon="star" size={ 18 } aria-hidden />
 							{ translate( 'Best value' ) }
 						</div>
 						<div className="jetpack-upsell__card-body">
@@ -196,15 +196,12 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 										const isProductSelected = slug === productSlug;
 
 										return (
-											<li
-												className={ classNames( { 'is-selected': isProductSelected } ) }
-												key={ slug }
-											>
+											<li className={ clsx( { 'is-selected': isProductSelected } ) } key={ slug }>
 												<span className="jetpack-upsell__icon-ctn">
 													<Gridicon
 														icon={ isProductSelected ? 'checkmark' : 'plus' }
 														size={ 18 }
-														aria-hidden={ true }
+														aria-hidden
 													/>
 												</span>
 												<span className="jetpack-upsell__features-product">

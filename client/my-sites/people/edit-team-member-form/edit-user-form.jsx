@@ -207,7 +207,7 @@ class EditUserForm extends Component {
 					<RoleSelect
 						key="role-select"
 						formControlType={ this.props.roleSelectControlType }
-						explanation={ true }
+						explanation
 						id={ fieldKeys.roles }
 						name={ fieldKeys.roles }
 						siteId={ this.props.siteId }

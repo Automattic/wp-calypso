@@ -1,9 +1,8 @@
 import config from '@automattic/calypso-config';
-import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
 import { Badge, FoldableCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -12,6 +11,7 @@ import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Notice from 'calypso/components/notice';
 import SocialLogo from 'calypso/components/social-logo';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices/actions';
@@ -532,7 +532,7 @@ export class SharingService extends Component {
 		const serviceStatus = this.props.service.status ?? 'ok';
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID, serviceStatus );
 		const earliestExpiry = this.getConnectionExpiry();
-		const classNames = classnames( 'sharing-service', this.props.service.ID, connectionStatus, {
+		const classNames = clsx( 'sharing-service', this.props.service.ID, connectionStatus, {
 			'is-open': this.state.isOpen,
 		} );
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
@@ -595,18 +595,28 @@ export class SharingService extends Component {
 					/>
 					<Notice isCompact status="is-error" className="sharing-service__unsupported">
 						{ this.props.translate(
-							'Twitter is no longer supported. {{a}}Learn more about this{{/a}}',
+							'X (Twitter) is {{a}}no longer supported{{/a}}. You can still use our quick {{a2}}manual sharing{{/a2}} feature from the post editor to share to it!',
 							{
 								components: {
 									a: (
 										<ExternalLink
 											target="_blank"
-											icon={ true }
+											icon
 											iconSize={ 14 }
 											href={ localizeUrl(
-												this.props.isJetpack
+												this.props.isJetpack || isJetpackCloud()
 													? 'https://jetpack.com/2023/04/29/the-end-of-twitter-auto-sharing/'
 													: 'https://wordpress.com/blog/2023/04/29/why-twitter-auto-sharing-is-coming-to-an-end/'
+											) }
+										/>
+									),
+									a2: (
+										<ExternalLink
+											target="_blank"
+											icon
+											iconSize={ 14 }
+											href={ localizeUrl(
+												'https://jetpack.com/redirect/?source=jetpack-social-manual-sharing-help'
 											) }
 										/>
 									),
@@ -636,13 +646,13 @@ export class SharingService extends Component {
 					compact
 					summary={ action }
 					expandedSummary={
-						this.props.isMastodonEligible && this.props.service.ID === 'mastodon'
+						this.props.service.ID === 'mastodon'
 							? cloneElement( action, { isExpanded: true } )
 							: action
 					}
 				>
 					<div
-						className={ classnames( 'sharing-service__content', {
+						className={ clsx( 'sharing-service__content', {
 							'is-placeholder': this.props.isFetching,
 						} ) }
 					>
@@ -725,7 +735,6 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				isP2HubSite: isSiteP2Hub( state, siteId ),
 				isJetpack: isJetpackSite( state, siteId ),
 				hasMultiConnections: siteHasFeature( state, siteId, 'social-multi-connections' ),
-				isMastodonEligible: siteHasFeature( state, siteId, FEATURE_SOCIAL_MASTODON_CONNECTION ),
 			};
 			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},

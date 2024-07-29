@@ -14,6 +14,7 @@ import {
 	isJetpackAISlug,
 	isJetpackCreatorSlug,
 	PRODUCT_JETPACK_CREATOR_MONTHLY,
+	isJetpackStatsPaidTieredProductSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { createElement } from 'react';
@@ -35,7 +36,8 @@ type featureString =
 	| 'videopress'
 	| 'creator'
 	| 'creator-promo'
-	| 'complete';
+	| 'complete'
+	| 'support-if-eligible';
 
 function getFeatureStrings(
 	feature: featureString,
@@ -118,12 +120,11 @@ function getFeatureStrings(
 				translate( 'View weekly and yearly trends' ),
 			];
 		case 'stats':
-			return [
-				translate( 'Instant access to upcoming features' ),
-				translate( 'Ad-free experience' ),
-			];
+			return [ translate( 'Instant access to upcoming features' ), translate( 'UTM Tracking' ) ];
 		case 'support':
 			return [ translate( 'Priority support' ) ];
+		case 'support-if-eligible':
+			return [ translate( 'Priority support if eligible' ) ];
 		case 'videopress':
 			return [
 				translate( '1TB of cloud-hosted video' ),
@@ -244,7 +245,18 @@ export default function getJetpackProductFeatures(
 		return [ ...getFeatureStrings( 'stats-free', translate ) ];
 	}
 
-	if ( isJetpackStatsPaidProductSlug( product.product_slug ) ) {
+	/** Stats PWYW has the same feature set with Stats Free, only with support when paying above certain amount */
+	if (
+		isJetpackStatsPaidProductSlug( product.product_slug ) &&
+		! isJetpackStatsPaidTieredProductSlug( product.product_slug )
+	) {
+		return [
+			...getFeatureStrings( 'stats-free', translate ),
+			...getFeatureStrings( 'support-if-eligible', translate ),
+		];
+	}
+
+	if ( isJetpackStatsPaidTieredProductSlug( product.product_slug ) ) {
 		return [
 			...getFeatureStrings( 'stats-free', translate ),
 			...getFeatureStrings( 'stats', translate ),

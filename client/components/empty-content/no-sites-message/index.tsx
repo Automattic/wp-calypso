@@ -1,5 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import EmptyContent from 'calypso/components/empty-content';
@@ -14,6 +14,7 @@ interface NoSitesMessageProps {
 	actionURL?: string;
 	actionCallback?: () => void;
 	illustration?: false;
+	hideAction?: boolean;
 }
 
 const NoSitesMessage = ( {
@@ -23,12 +24,13 @@ const NoSitesMessage = ( {
 	actionURL,
 	actionCallback,
 	illustration,
+	hideAction = false,
 }: NoSitesMessageProps ) => {
 	const { __ } = useI18n();
 
 	return (
 		<EmptyContent
-			className={ classNames( 'no-sites-message', {
+			className={ clsx( 'no-sites-message', {
 				'no-sites-message--no-illustration': illustration === false,
 			} ) }
 			title={
@@ -44,9 +46,9 @@ const NoSitesMessage = ( {
 						) }
 				</p>
 			}
-			action={ action ?? __( 'Create a site' ) }
-			actionURL={ actionURL ?? onboardingUrl() + '?ref=calypso-nosites' }
-			actionCallback={ actionCallback }
+			action={ hideAction ? undefined : action ?? __( 'Create a site' ) }
+			actionURL={ hideAction ? undefined : actionURL ?? onboardingUrl() + '?ref=calypso-nosites' }
+			actionCallback={ hideAction ? undefined : actionCallback }
 			illustration={ illustration === false ? null : noSitesIllustration }
 			illustrationWidth={ 124 }
 			illustrationHeight={ 101 }

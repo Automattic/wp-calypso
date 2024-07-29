@@ -64,6 +64,8 @@
 	}
 }
 
+.is-woo-passwordless .auth-form__social,
+.is-blaze-pro .auth-form__social,
 .auth-form__social.is-social-first {
 	.auth-form__social-buttons-container {
 		gap: 16px;
@@ -115,5 +117,13 @@
 
 	&.is-login {
 		padding: 0 0 0 1px;
+	}
+}
+
+.is-blaze-pro .auth-form__social,
+.auth-form__social.is-social-first {
+	.social-buttons__button {
+		border-color: #ccc !important;
+		height: 40px !important; // Override previous declaration
 	}
 }

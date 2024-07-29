@@ -1,17 +1,19 @@
 import {
 	PLAN_BUSINESS_MONTHLY,
-	isWpComMonthlyPlan,
 	PLAN_BUSINESS,
+	TERM_MONTHLY,
+	findFirstSimilarPlanKey,
+	getPlan,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import 'calypso/state/themes/init';
 import { marketplaceThemeProduct } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
-import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getProductBillingSlugByThemeId } from 'calypso/state/products-list/selectors/get-product-billing-slug-by-theme-id';
+import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -60,15 +62,22 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 
 		const products = getProductsByBillingSlug(
 			state,
-			marketplaceThemeBillingProductSlug( themeId )
+			getProductBillingSlugByThemeId( state, themeId )
 		);
 
 		if ( undefined === products || products.length === 0 ) {
 			throw new Error( 'No products available' );
 		}
 
-		const currentPlan = getCurrentPlan( state, siteId );
-		const productSlug = getPreferredBillingCycleProductSlug( products, currentPlan );
+		const currentPlanSlug = getSitePlanSlug( state, siteId );
+		let requiredTerm = TERM_MONTHLY;
+		if ( currentPlanSlug && ! isFreePlan( currentPlanSlug ) ) {
+			requiredTerm = getPlan( currentPlanSlug )?.term || TERM_MONTHLY;
+		}
+		const requiredPlanSlug =
+			findFirstSimilarPlanKey( PLAN_BUSINESS, { term: requiredTerm } ) || PLAN_BUSINESS_MONTHLY;
+
+		const productSlug = getPreferredBillingCycleProductSlug( products, requiredPlanSlug );
 
 		const externalManagedThemeProduct = marketplaceThemeProduct( productSlug );
 
@@ -89,10 +98,7 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 
 		if ( ! isSiteEligibleForManagedExternalThemes ) {
 			cartItems.push( {
-				product_slug:
-					currentPlan && ! isWpComMonthlyPlan( currentPlan.productSlug )
-						? PLAN_BUSINESS
-						: PLAN_BUSINESS_MONTHLY,
+				product_slug: requiredPlanSlug,
 			} );
 		}
 

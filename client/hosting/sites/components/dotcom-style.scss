@@ -1,0 +1,719 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/global-styles/src/components/search-control-styles";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+// Add new Dotcom specific styles to this file.
+.wpcom-site .layout__primary .main {
+	padding-bottom: 0;
+}
+
+.wpcom-site .a4a-layout-with-columns__container {
+	background: var(--color-sidebar-background);
+}
+
+.wpcom-site .main.a4a-layout.sites-dashboard {
+	.a4a-layout__top-wrapper,
+	.a4a-layout__body {
+		> * {
+			padding-inline: 8px;
+
+			@include breakpoint-deprecated(">660px") {
+				padding-inline: 8px;
+			}
+
+			@include breakpoint-deprecated(">960px") {
+				padding-inline: 26px;
+			}
+
+			@include break-huge {
+				padding-inline: 64px;
+			}
+		}
+	}
+
+	.a4a-layout__header {
+		align-items: center;
+	}
+
+	.a4a-layout__header-main {
+		display: block;
+	}
+
+	.a4a-layout__header-title {
+		display: block;
+	}
+
+	.a4a-layout__header-subtitle {
+		font-size: 0.875rem;
+		margin: 4px 0 0 0;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+	}
+
+	.a4a-layout__header-actions {
+		width: auto;
+		a {
+			font-weight: normal;
+		}
+	}
+
+	height: calc(100vh - var(--masterbar-height));
+
+	@include break-small {
+		height: calc(100vh - var(--masterbar-height) - 32px);
+	}
+
+	.sites-site-favicon {
+		margin-right: 0;
+	}
+}
+
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
+	background: var(--studio-white);
+
+	.a4a-layout__top-wrapper {
+		border-block-end: none;
+
+		@include break-medium {
+			border-block-end: 1px solid var(--color-border-secondary);
+			margin-bottom: 24px;
+		}
+	}
+
+	.sites-a8c-for-agencies-banner-container {
+		display: flex;
+		justify-content: center;
+	}
+
+	.sites-a8c-for-agencies-banner {
+		margin-inline: 16px;
+
+		.banner__action {
+			a {
+				display: flex;
+				white-space: nowrap;
+			}
+		}
+
+		@include break-large {
+			margin-inline: 26px;
+		}
+
+		@include break-huge {
+			margin-inline: 64px;
+			width: 100%;
+			max-width: 1400px;
+		}
+	}
+
+	.dataviews-filters__view-actions {
+		border-bottom: 0;
+		align-items: center;
+	}
+
+	.a4a-layout__header {
+		flex-wrap: nowrap;
+	}
+
+	.dataviews-wrapper {
+		thead tr.dataviews-view-table__row {
+			cursor: default;
+		}
+
+		thead tr.dataviews-view-table__row:hover {
+			background: var(--studio-white);
+		}
+
+		tr.dataviews-view-table__row {
+			cursor: pointer;
+
+			&:hover {
+				background-color: #f7faff;
+			}
+		}
+
+		tbody tr.dataviews-view-table__row {
+			cursor: pointer;
+		}
+	}
+
+	table.dataviews-view-table {
+		table-layout: fixed;
+	}
+
+	table.dataviews-view-table th,
+	table.dataviews-view-table td {
+		white-space: nowrap; /* Optional: ensures text in cells does not wrap */
+	}
+
+	table.dataviews-view-table thead .dataviews-view-table__row th {
+		border-bottom-color: var(--color-border-secondary);
+		padding-left: 16px;
+		@include break-large {
+			padding-left: 26px;
+		}
+		@include break-huge {
+			&:first-child {
+				padding-left: 64px;
+			}
+		}
+
+		&:nth-child(4) {
+			.site-sort {
+				display: inline-block;
+				font-size: $font-body-small;
+				max-width: calc(100% - 14px);
+				overflow-wrap: anywhere;
+				white-space: normal;
+
+				span {
+					display: inline-block;
+					max-width: calc(100% - 14px);
+					vertical-align: middle;
+				}
+			}
+
+			svg.site-sort__icon {
+				display: inline-block;
+			}
+		}
+
+		span,
+		.dataviews-view-table-header-button {
+			color: inherit;
+		}
+	}
+
+	table.dataviews-view-table .dataviews-view-table__row td {
+		border-bottom-color: var(--color-border-secondary);
+		@include break-large {
+			padding-left: 26px;
+		}
+		@include break-huge {
+			&:first-child {
+				padding-left: 64px;
+			}
+		}
+		&:nth-child(2) {
+			white-space: wrap;
+			overflow-wrap: anywhere;
+		}
+	}
+
+	table.dataviews-view-table th:first-child,
+	table.dataviews-view-table td:first-child,
+	table.dataviews-view-table th:last-child,
+	table.dataviews-view-table td:last-child {
+		display: table-cell; /* ensures these cells are always shown */
+	}
+
+	.sites-overview__content {
+		margin-top: 11px;
+	}
+
+	@media (max-width: $break-wide) {
+		table.dataviews-view-table th:nth-child(5),
+		table.dataviews-view-table td:nth-child(5) {
+			display: none;
+		}
+	}
+
+	@media (max-width: $break-wide - 100px) {
+		table.dataviews-view-table th:nth-child(4),
+		table.dataviews-view-table td:nth-child(4) {
+			display: none;
+		}
+	}
+
+	@media (max-width: $break-xlarge) {
+		table.dataviews-view-table th:nth-child(3),
+		table.dataviews-view-table td:nth-child(3) {
+			display: none;
+		}
+	}
+}
+
+// Styles for actions (search, filters).
+.dataviews-filters__view-actions {
+	@include search-control-wpcom-styles;
+
+	.components-search-control .components-input-control__container {
+		width: 100%;
+		height: 40px;
+		flex: 1 1 auto;
+		flex-direction: row;
+		align-items: center;
+		// Places search above filters
+		z-index: 1;
+		margin-top: 2px;
+
+		.components-input-control__input {
+			padding: 0 0 0 10px;
+			font-size: $font-body-small;
+
+			&::placeholder {
+				color: var(--studio-gray-40);
+			}
+		}
+
+		// Search icon
+		.components-input-control__suffix {
+			margin-right: 4px;
+		}
+	}
+}
+
+// Style the sortable table headers.
+.wpcom-site .dataviews-view-table .components-button.is-tertiary {
+	&:active:not(:disabled),
+	&:hover:not(:disabled) {
+		box-shadow: none;
+		background-color: inherit;
+		color: var(--color-accent) !important;
+	}
+}
+
+.wpcom-site {
+	.layout__content {
+		min-height: 100vh;
+	}
+
+	.layout__secondary .global-sidebar {
+		border: none;
+	}
+}
+
+// Styles collapsed site list.
+.wpcom-site .is-global-sidebar-visible.is-group-sites-dashboard,
+.wpcom-site .is-global-sidebar-visible.is-group-sites {
+	.layout__content {
+		transition: padding-left 220ms ease-out;
+		min-height: 100vh;
+	}
+	.layout__secondary {
+		transition: transform 0.15s ease-in-out, width 220ms ease-out;
+
+		@media (max-width: $break-mobile) {
+			transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
+		}
+
+		.sidebar__header,
+		.sidebar__body,
+		.sidebar__footer {
+			transition: all 220ms ease-out;
+			> * {
+				transition: all 220ms ease-out;
+			}
+		}
+		.sidebar__header {
+			flex-direction: row !important;
+			transition: none;
+			.dotcom {
+				transition: width 220ms ease-out;
+				background-position: left;
+			}
+			.sidebar__menu-link {
+				transition: all 220ms ease-out;
+				min-width: 40px;
+				margin: 0 12px;
+			}
+		}
+		.sidebar__footer {
+			flex-wrap: wrap;
+			.sidebar__footer-profile img {
+				max-width: none;
+			}
+		}
+	}
+	&.is-global-sidebar-collapsed {
+		@media (min-width: 661px) {
+			.layout__secondary {
+				transition: all 220ms ease-out;
+
+				.global-sidebar {
+					.sidebar__header,
+					.sidebar__body,
+					.sidebar__footer {
+						transition: all 220ms ease-out;
+						> * {
+							transition: all 220ms ease-out;
+						}
+					}
+					.sidebar__header {
+						padding-inline: 19px;
+					}
+					.sidebar__body {
+						.sidebar__menu-link-text {
+							transition: all 100ms ease-out;
+							transition-delay: 120ms;
+							opacity: 0;
+							display: block !important;
+							width: 0;
+							white-space: nowrap;
+						}
+						.sidebar__menu-link {
+							width: fit-content;
+							min-width: calc(100% - 30px);
+
+							> :first-child {
+								transition: all 220ms ease-out;
+								margin-right: 0;
+							}
+						}
+					}
+					.sidebar__footer {
+						flex-direction: row !important;
+						padding: 16px;
+						align-items: center;
+						justify-content: center;
+					}
+				}
+			}
+		}
+	}
+	.sites-dashboard.preview-hidden {
+		.dataviews-filters__view-actions {
+			// Sort action icon
+			> .components-button:has(.preview-hidden) {
+				// Since we changed the original height of the search input, we need to adjust the position of this icon.
+				margin-top: 5px;
+			}
+
+			.components-button.is-compact.has-icon:not(.has-text) {
+				@media (max-width: 961px) {
+					margin-inline-end: 8px;
+				}
+			}
+		}
+	}
+
+	.sites-dashboard:not(.preview-hidden) {
+		.a4a-layout__header {
+			align-items: center !important;
+		}
+
+		.sites-manage-all-domains-button,
+		.a4a-layout__header-subtitle {
+			display: none;
+		}
+
+		.a4a-layout__viewport {
+			width: 360px;
+			justify-content: space-between;
+		}
+
+		.a4a-layout__viewport > div:first-child {
+			width: 100%;
+		}
+
+		.list-tile__leading {
+			margin-right: 12px;
+		}
+
+		.dataviews-filters__view-actions {
+			align-items: center;
+			display: flex;
+		}
+
+		ul.dataviews-view-list {
+			.components-h-stack {
+				gap: 0;
+			}
+
+			li {
+				border-bottom: 1px solid #f1f1f1 !important;
+				cursor: pointer;
+			}
+
+			li.is-selected,
+			li.is-selected:hover {
+				background-color: #ebf2fc;
+			}
+			li:hover {
+				background-color: #f7faff;
+			}
+		}
+	}
+}
+
+// Styles for site preview pane.
+.wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
+	.hosting-features__icon {
+		display: inline-block;
+		height: 18px;
+		vertical-align: top;
+		margin-left: 4px;
+	}
+
+	.section-nav-tabs__list {
+		box-sizing: border-box;
+		overflow-x: auto;
+
+		@media (max-width: $break-large) {
+			padding: 0 8px;
+		}
+	}
+
+	.item-preview__header {
+		.item-preview__header-title {
+			font-family: Recoleta, sans-serif;
+			font-weight: 400;
+			line-height: 1;
+			letter-spacing: normal;
+		}
+
+		.item-preview__header-content {
+			.item-preview__header-info {
+				flex-wrap: wrap;
+			}
+
+			@media (max-width: $break-large) {
+				padding: 0;
+			}
+		}
+
+		.item-preview__header-content .item-preview__header-title-summary .item-preview__header-summary {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			.item-preview__header-summary-link {
+				color: var(--studio-gray-70, #3c434a);
+				text-decoration: none;
+				&:hover {
+					color: var(--color-accent, #3858e9);
+				}
+			}
+		}
+
+		.item-preview__header-actions .button {
+			border-radius: 4px;
+		}
+
+		.item-preview__header-content .item-preview__close-preview {
+			height: 16px;
+			padding-left: 0;
+			padding-right: 0;
+			color: var(--color-link);
+
+			@include break-medium {
+				height: 32px;
+			}
+		}
+	}
+	.item-preview__content {
+		padding: 32px 48px 48px;
+		font-size: rem(14px);
+		color: var(--studio-gray-100);
+
+		.navigation-header {
+			padding: 0;
+		}
+
+		> * {
+			margin-top: 0;
+			margin-left: 0;
+			margin-right: 0;
+			padding-top: 0;
+			padding-left: 0;
+			padding-right: 0;
+			overflow-y: initial;
+			max-height: initial;
+			max-width: 1400px;
+			width: 100%;
+
+			main {
+				max-width: 100%;
+			}
+		}
+
+		@media (max-width: $break-large) {
+			padding-top: 24px;
+			padding-left: 24px;
+			padding-right: 24px;
+		}
+	}
+
+	.is-staging-site {
+		position: relative;
+
+		.item-preview__admin-button {
+			background-color: var(--studio-yellow-20);
+			color: var(--studio-yellow-80);
+			border: 0;
+		}
+	}
+
+	.is-staging-site::before {
+		content: "";
+		position: absolute;
+		z-index: 300;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: inherit;
+		pointer-events: none;
+		box-shadow: inset 0 0 0 3px var(--studio-yellow-20);
+	}
+
+	.domains-table-header .list__header-column {
+		font-style: normal;
+		font-weight: 400;
+		font-size: rem(13px);
+		line-height: 20px;
+		color: var(--studio-gray-50);
+		text-transform: capitalize;
+	}
+}
+
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout,
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .a4a-layout-with-columns__container .a4a-layout-column {
+	.a4a-layout-column__container {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+
+		.dataviews-wrapper {
+			display: flex;
+			height: 100%;
+			overflow: hidden;
+			position: relative;
+
+			.dataviews-pagination {
+				margin: 0;
+				position: relative;
+				width: 100%;
+			}
+
+			.spinner-wrapper {
+				position: absolute;
+				left: 50%;
+				top: 70px;
+				z-index: 2;
+			}
+		}
+	}
+}
+
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout.preview-hidden {
+	@media (min-width: $break-xhuge) {
+		div.a4a-layout__viewport {
+			margin: 0 auto;
+			max-width: 1400px;
+			box-sizing: border-box;
+		}
+		.dataviews-wrapper {
+			margin: 0 auto;
+			max-width: 1400px;
+			box-sizing: border-box;
+		}
+	}
+
+	.a4a-layout-column__container {
+		.dataviews-wrapper {
+			.dataviews-pagination {
+				@include break-large {
+					padding-left: 26px;
+					padding-right: 26px;
+				}
+
+				@include break-huge {
+					padding-left: 64px;
+					padding-right: 64px;
+				}
+			}
+		}
+	}
+}
+
+// Use flexbox to structure of fly-out panel.
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
+	&.a4a-layout,
+	.a4a-layout-column,
+	.a4a-layout-with-columns__container {
+		overflow: visible;
+		height: calc(100vh - 32px - var(--masterbar-height));
+	}
+
+	.a4a-layout-column__container {
+		display: flex;
+		flex-direction: column;
+		height: calc(100vh - 32px);
+
+		.a4a-layout__top-wrapper {
+			display: flex;
+			margin-bottom: 0;
+			padding: 0;
+
+			.a4a-layout__viewport {
+				display: flex;
+				margin: 0;
+				padding: 16px;
+			}
+
+			.a4a-layout__header {
+				margin: 0;
+			}
+		}
+
+		.sites-overview__content {
+			flex-grow: 1;
+			margin-top: 0;
+			overflow: hidden;
+			padding-bottom: 0 !important;
+		}
+
+		.dataviews-wrapper {
+			width: 100%;
+
+			> * {
+				flex-grow: 1;
+			}
+
+			.dataviews-view-list {
+				flex: 1;
+				max-height: none;
+			}
+
+			.components-base-control {
+				width: 85%;
+			}
+		}
+
+		.sites-a8c-for-agencies-banner-container {
+			display: none;
+		}
+	}
+}
+
+// Override styles from my-sites/sidebar
+.wpcom-site div.is-group-sites.is-global-sidebar-visible,
+.wpcom-site div.is-group-sites-dashboard.is-global-sidebar-visible,
+.wpcom-site div.is-section-domains.is-global-sidebar-visible,
+.wpcom-site div.is-section-plugins.is-global-sidebar-visible {
+	&.focus-content .layout__content,
+	&.focus-sidebar .layout__content {
+		padding-bottom: 16px;
+		min-height: 100vh;
+
+		@include break-small {
+			padding-top: calc(var(--masterbar-height) + 16px);
+		}
+
+		@include break-medium {
+			padding-left: calc(var(--sidebar-width-max));
+			padding-right: 16px;
+
+			.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
+				height: calc(100vh - var(--masterbar-height) - 32px);
+			}
+		}
+
+		// Prevent the content pushed out via translateX(100%) creating a scrollbar
+		&.focus-sidebar .layout__content .layout__primary {
+			overflow-x: hidden;
+		}
+	}
+}

@@ -157,10 +157,10 @@ export function* createSenseiSite( {
 			lang_id: lang_id,
 			site_creation_flow: 'sensei',
 			enable_fse: true,
-			theme: 'pub/course',
 			timezone_string: guessTimezone(),
 			use_patterns: true,
 			site_intent: 'sensei',
+			launchpad_screen: 'off',
 			selected_features: selectedFeatures,
 			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
@@ -449,6 +449,10 @@ export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
 	paidSubscribers,
 } );
 
+export const setPartnerBundle = ( partnerBundle: string | null ) => ( {
+	type: 'SET_PARTNER_BUNDLE' as const,
+	partnerBundle,
+} );
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -505,4 +509,5 @@ export type OnboardAction = ReturnType<
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
 	| typeof setPaidSubscribers
+	| typeof setPartnerBundle
 >;

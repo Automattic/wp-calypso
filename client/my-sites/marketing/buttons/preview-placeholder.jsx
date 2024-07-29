@@ -9,7 +9,7 @@ class SharingButtonsPreviewPlaceholder extends Component {
 	render() {
 		return (
 			<div className="sharing-buttons-preview is-placeholder">
-				<ButtonsPreviewAction icon="pencil" position="top-left" disabled={ true }>
+				<ButtonsPreviewAction icon="pencil" position="top-left" disabled>
 					{ this.props.translate( 'Edit label text', {
 						context: 'Sharing: Buttons edit label',
 					} ) }
@@ -21,6 +21,7 @@ class SharingButtonsPreviewPlaceholder extends Component {
 					<div className="sharing-buttons-preview__buttons" />
 
 					<div className="sharing-buttons-preview__reblog-like">
+						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 						<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							{ /* 16 is used in the preview to match the buttons on the frontend of the website. */ }
@@ -29,6 +30,7 @@ class SharingButtonsPreviewPlaceholder extends Component {
 							{ this.props.translate( 'Like' ) }
 						</a>
 						<div className="sharing-buttons-preview__fake-user">
+							{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
 							<img src="https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60" />
 						</div>
 						<div className="sharing-buttons-preview__fake-like">
@@ -38,12 +40,12 @@ class SharingButtonsPreviewPlaceholder extends Component {
 				</div>
 
 				<div className="sharing-buttons-preview__button-tray-actions">
-					<ButtonsPreviewAction icon="pencil" position="bottom-left" disabled={ true }>
+					<ButtonsPreviewAction icon="pencil" position="bottom-left" disabled>
 						{ this.props.translate( 'Edit visible buttons', {
 							context: 'Sharing: Buttons edit label',
 						} ) }
 					</ButtonsPreviewAction>
-					<ButtonsPreviewAction icon="pencil" position="bottom-left" disabled={ true }>
+					<ButtonsPreviewAction icon="pencil" position="bottom-left" disabled>
 						{ this.props.translate( 'Edit “More” buttons', {
 							context: 'Sharing: Buttons edit label',
 						} ) }

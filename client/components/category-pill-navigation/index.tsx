@@ -4,7 +4,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useRtl } from 'i18n-calypso';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 
@@ -14,6 +14,7 @@ type CategoryPillNavigationProps = {
 	buttons?: {
 		icon: React.ReactElement< typeof Icon >;
 		label: string;
+		id: string;
 		link: string;
 		isActive?: boolean;
 	}[];
@@ -23,12 +24,14 @@ type CategoryPillNavigationProps = {
 		link: string;
 	}[];
 	selectedCategoryId: string;
+	onSelect?: ( selectedId: string ) => void;
 };
 
 export const CategoryPillNavigation = ( {
 	buttons,
 	categories,
 	selectedCategoryId,
+	onSelect = () => {},
 }: CategoryPillNavigationProps ) => {
 	const locale = useLocale();
 	const isMobile = useMobileBreakpoint();
@@ -43,8 +46,12 @@ export const CategoryPillNavigation = ( {
 		}
 
 		const { scrollLeft, scrollWidth, clientWidth } = listInnerRef.current;
-		setShowLeftArrow( scrollLeft > 0 );
-		setShowRightArrow( Math.ceil( scrollLeft ) < scrollWidth - clientWidth );
+
+		const roundedScrollLeft = Math.floor( scrollLeft );
+		const scrollLeftAbs = Math.abs( roundedScrollLeft ); // adjust RTL negative values
+
+		setShowLeftArrow( scrollLeftAbs > 0 );
+		setShowRightArrow( scrollLeftAbs + 1 < scrollWidth - clientWidth ); // +1 to account for rounding errors
 	};
 
 	const scrollTo = ( direction: 'right' | 'left' ) => {
@@ -97,6 +104,7 @@ export const CategoryPillNavigation = ( {
 					{ buttons?.map( ( button ) => (
 						<SelectDropdown.Item
 							key={ button.label }
+							onClick={ () => onSelect( button.id ) }
 							path={ addLocaleToPathLocaleInFront( button.link, locale ) }
 							selected={ button.isActive }
 						>
@@ -106,6 +114,7 @@ export const CategoryPillNavigation = ( {
 					{ categories?.map( ( category ) => (
 						<SelectDropdown.Item
 							key={ category.id }
+							onClick={ () => onSelect( category.id ) }
 							path={ addLocaleToPathLocaleInFront( category.link, locale ) }
 							selected={ category.id === selectedCategoryId }
 						>
@@ -119,9 +128,31 @@ export const CategoryPillNavigation = ( {
 
 	return (
 		<div className="category-pill-navigation">
+			{ buttons && (
+				<>
+					{ buttons.map( ( button ) => (
+						<LocalizedLink
+							key={ button.label }
+							href={ button.link }
+							onClick={ () => onSelect( button.id ) }
+							className={ clsx( 'category-pill-navigation__button', {
+								'is-active': button.isActive,
+							} ) }
+						>
+							{ button.icon }
+							{ button.label }
+						</LocalizedLink>
+					) ) }
+					<div className="category-pill-navigation__button-divider" />
+				</>
+			) }
+
 			<div className="category-pill-navigation__list">
 				{ showLeftArrow && (
-					<Button className="category-pill-navigation__arrow" onClick={ () => scrollTo( 'left' ) }>
+					<Button
+						className="category-pill-navigation__arrow"
+						onClick={ () => scrollTo( ! isRtl ? 'left' : 'right' ) }
+					>
 						<Icon icon={ isRtl ? chevronLeft : chevronRight } size={ 28 } />
 					</Button>
 				) }
@@ -129,7 +160,7 @@ export const CategoryPillNavigation = ( {
 				{ showRightArrow && (
 					<Button
 						className="category-pill-navigation__arrow right"
-						onClick={ () => scrollTo( 'right' ) }
+						onClick={ () => scrollTo( ! isRtl ? 'right' : 'left' ) }
 					>
 						<Icon icon={ isRtl ? chevronLeft : chevronRight } size={ 28 } />
 					</Button>
@@ -140,29 +171,12 @@ export const CategoryPillNavigation = ( {
 					ref={ listInnerRef }
 					onScroll={ checkScrollArrows }
 				>
-					{ buttons && (
-						<>
-							{ buttons.map( ( button ) => (
-								<LocalizedLink
-									key={ button.label }
-									href={ button.link }
-									className={ classnames( 'category-pill-navigation__button', {
-										'is-active': button.isActive,
-									} ) }
-								>
-									{ button.icon }
-									{ button.label }
-								</LocalizedLink>
-							) ) }
-							<div className="category-pill-navigation__button-divider" />
-						</>
-					) }
-
 					{ categories.map( ( category ) => (
 						<LocalizedLink
 							key={ category.id }
 							href={ category.link }
-							className={ classnames( 'category-pill-navigation__button', {
+							onClick={ () => onSelect( category.id ) }
+							className={ clsx( 'category-pill-navigation__button', {
 								'is-active': category.id === selectedCategoryId,
 							} ) }
 						>

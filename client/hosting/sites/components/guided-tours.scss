@@ -1,0 +1,31 @@
+body:has(.wpcom-site .main.a4a-layout.sites-dashboard) .guided-tour__popover {
+	z-index: z-index("root", ".layout__secondary") - 1;
+
+	.popover__arrow::before {
+		--color-border-inverted: var(--color-neutral-100);
+	}
+
+	.popover__inner {
+		border-radius: 4px;
+		background-color: var(--color-neutral-100);
+	}
+
+	.guided-tour__popover-heading {
+		font-size: rem(16px);
+		color: var(--color-text-inverted);
+	}
+
+	.guided-tour__popover-description {
+		max-width: 325px;
+		margin-top: -8px;
+		font-size: rem(13px);
+		color: var(--color-neutral-0);
+	}
+
+	.guided-tour__popover-footer-right-content {
+		button {
+			padding: 8px 12px;
+			font-size: rem(13px);
+		}
+	}
+}

@@ -65,28 +65,34 @@ const exported = {
 		context.renderHeaderSection = renderHeaderSection;
 
 		context.primary = (
-			<AsyncLoad
-				require="calypso/reader/search-stream"
-				key="search"
-				streamKey={ streamKey }
-				isSuggestion={ isQuerySuggestion }
-				query={ searchSlug }
-				sort={ sort }
-				trackScrollPage={ trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				) }
-				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-				showBack={ false }
-				autoFocusInput={ autoFocusInput }
-				onQueryChange={ reportQueryChange }
-				onSortChange={ reportSortChange }
-				searchType={ show }
-				trendingTags={ context.params.trendingTags }
-			/>
+			<>
+				<div>
+					<div>
+						<AsyncLoad
+							require="calypso/reader/search-stream"
+							key="search"
+							streamKey={ streamKey }
+							isSuggestion={ isQuerySuggestion }
+							query={ searchSlug }
+							sort={ sort }
+							trackScrollPage={ trackScrollPage.bind(
+								null,
+								basePath,
+								fullAnalyticsPageTitle,
+								analyticsPageTitle,
+								mcKey
+							) }
+							onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+							showBack={ false }
+							autoFocusInput={ autoFocusInput }
+							onQueryChange={ reportQueryChange }
+							onSortChange={ reportSortChange }
+							searchType={ show }
+							trendingTags={ context.params.trendingTags }
+						/>
+					</div>
+				</div>
+			</>
 		);
 		next();
 	},

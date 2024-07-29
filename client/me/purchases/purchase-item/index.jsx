@@ -13,12 +13,13 @@ import formatCurrency from '@automattic/format-currency';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
-import classNames from 'classnames';
-import i18n, { localize, getLocaleSlug, useTranslate } from 'i18n-calypso';
+import clsx from 'clsx';
+import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
+import upiImage from 'calypso/assets/images/upgrades/upi.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -65,16 +66,16 @@ class PurchaseItem extends Component {
 	}
 
 	getStatus() {
-		const { purchase, translate, locale, moment, name, isJetpack, isDisconnectedSite } = this.props;
+		const { purchase, translate, moment, name, isJetpack, isDisconnectedSite } = this.props;
 		const expiry = moment( purchase.expiryDate );
-		// To-do: There isn't currently a way to get the taxName based on the country.
-		// The country is not included in the purchase information envelope
-		// We should add this information so we can utilize useTaxName to retrieve the correct taxName
-		// For now, we are using a fallback tax name
-		const taxName =
-			getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax' )
-				? translate( 'tax' )
-				: translate( 'tax (VAT/GST/CT)' );
+		// @todo: There isn't currently a way to get the taxName based on the
+		// country. The country is not included in the purchase information
+		// envelope. We should add this information so we can utilize useTaxName
+		// to retrieve the correct taxName. For now, we are using a fallback tax
+		// name with context, to prevent mis-translation.
+		const taxName = translate( 'tax', {
+			context: "Shortened form of 'Sales Tax', not a country-specific tax name",
+		} );
 
 		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 		const excludeTaxStringAbbreviation = translate( '(excludes %s)', {
@@ -170,13 +171,7 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isWithinIntroductoryOfferPeriod( purchase ) && isIntroductoryOfferFreeTrial( purchase ) ) {
-			if (
-				isRenewing( purchase ) &&
-				( locale === 'en' ||
-					i18n.hasTranslation(
-						'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s'
-					) )
-			) {
+			if ( isRenewing( purchase ) ) {
 				return translate(
 					'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}}',
 					{
@@ -196,29 +191,24 @@ class PurchaseItem extends Component {
 				);
 			}
 
-			if (
-				locale === 'en' ||
-				i18n.hasTranslation( 'Free trial ends on {{span}}%(date)s{{/span}}' )
-			) {
-				const expiryClass =
-					expiry < moment().add( 7, 'days' )
-						? 'purchase-item__is-error'
-						: 'purchase-item__is-warning';
+			const expiryClass =
+				expiry < moment().add( 7, 'days' )
+					? 'purchase-item__is-error'
+					: 'purchase-item__is-warning';
 
-				return (
-					<span className={ expiryClass }>
-						{ translate( 'Free trial ends on {{span}}%(date)s{{/span}}', {
-							args: {
-								date: expiry.format( 'LL' ),
-							},
-							components: {
-								span: <span className="purchase-item__date" />,
-							},
-						} ) }
-						{ this.trackImpression( 'purchase-expiring' ) }
-					</span>
-				);
-			}
+			return (
+				<span className={ expiryClass }>
+					{ translate( 'Free trial ends on {{span}}%(date)s{{/span}}', {
+						args: {
+							date: expiry.format( 'LL' ),
+						},
+						components: {
+							span: <span className="purchase-item__date" />,
+						},
+					} ) }
+					{ this.trackImpression( 'purchase-expiring' ) }
+				</span>
+			);
 		}
 
 		if ( isRenewing( purchase ) && purchase.renewDate ) {
@@ -269,49 +259,25 @@ class PurchaseItem extends Component {
 				};
 				switch ( purchase.billPeriodDays ) {
 					case PLAN_MONTHLY_PERIOD:
-						if (
-							locale === 'en' ||
-							i18n.hasTranslation( 'Renews monthly at %(amount)s on {{span}}%(date)s{{/span}}' )
-						) {
-							return translate(
-								'Renews monthly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-								translateOptions
-							);
-						}
+						return translate(
+							'Renews monthly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+							translateOptions
+						);
 					case PLAN_ANNUAL_PERIOD:
-						if (
-							locale === 'en' ||
-							i18n.hasTranslation( 'Renews yearly at %(amount)s on {{span}}%(date)s{{/span}}' )
-						) {
-							return translate(
-								'Renews yearly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-								translateOptions
-							);
-						}
+						return translate(
+							'Renews yearly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+							translateOptions
+						);
 					case PLAN_BIENNIAL_PERIOD:
-						if (
-							locale === 'en' ||
-							i18n.hasTranslation(
-								'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}'
-							)
-						) {
-							return translate(
-								'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-								translateOptions
-							);
-						}
+						return translate(
+							'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+							translateOptions
+						);
 					case PLAN_TRIENNIAL_PERIOD:
-						if (
-							locale === 'en' ||
-							i18n.hasTranslation(
-								'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}'
-							)
-						) {
-							return translate(
-								'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-								translateOptions
-							);
-						}
+						return translate(
+							'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+							translateOptions
+						);
 				}
 			}
 
@@ -540,6 +506,10 @@ class PurchaseItem extends Component {
 				);
 			}
 
+			if ( purchase.payment.type === 'upi' ) {
+				return <img src={ upiImage } alt={ purchase.payment.type } />;
+			}
+
 			return null;
 		}
 	}
@@ -609,7 +579,7 @@ class PurchaseItem extends Component {
 			isJetpack,
 		} = this.props;
 
-		const classes = classNames( 'purchase-item', {
+		const classes = clsx( 'purchase-item', {
 			'purchase-item--disconnected': isDisconnectedSite,
 		} );
 

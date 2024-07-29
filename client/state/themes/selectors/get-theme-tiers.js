@@ -1,5 +1,5 @@
 import 'calypso/state/themes/init';
 
 export function getThemeTiers( state ) {
-	return state?.themes?.themeTiers || {};
+	return state?.themes?.themeFilters?.tier || {};
 }

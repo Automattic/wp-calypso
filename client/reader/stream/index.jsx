@@ -1,4 +1,5 @@
-import classnames from 'classnames';
+import { isDefaultLocale } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { findLast, times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -41,6 +42,7 @@ import {
 } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ReaderPerformanceTrackerStop } from '../reader-performance-tracker';
@@ -49,9 +51,10 @@ import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import './style.scss';
 
-export const WIDE_DISPLAY_CUTOFF = 900;
+// minimal size for the two-column layout to show without cut off
+// 64 is padding, 8 is margin
+export const WIDE_DISPLAY_CUTOFF = 950 + 64 * 2 + 8 * 2;
 const GUESSED_POST_HEIGHT = 600;
-const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
@@ -102,14 +105,25 @@ class ReaderStream extends Component {
 
 	isMounted = false;
 
+	/**
+	 * A mutation observer to watch whether the target exists
+	 */
+	observer = null;
+
+	// We can use to keep track of whether we need to scroll to the selected post in the update
+	// cycle.
+	wasSelectedByOpeningPost = false;
+
+	listRef = createRef();
+	overlayRef = createRef();
+	mountTimeout = null;
+
 	handlePostsSelected = () => {
 		this.setState( { selectedTab: 'posts' } );
 	};
 	handleSitesSelected = () => {
 		this.setState( { selectedTab: 'sites' } );
 	};
-
-	listRef = createRef();
 
 	componentDidUpdate( { selectedPostKey, streamKey } ) {
 		if ( streamKey !== this.props.streamKey ) {
@@ -119,7 +133,13 @@ class ReaderStream extends Component {
 		}
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
-			this.scrollToSelectedPost( true );
+			// Don't scroll to the post if it was clicked for selection. This causes the scroll to
+			// propagate into the full post screen the first time you click select an item in the
+			// reader, meaning the full post screen opens halfway scrolled down the post.
+			if ( ! this.wasSelectedByOpeningPost ) {
+				this.scrollToSelectedPost( true );
+			}
+			this.wasSelectedByOpeningPost = false;
 			this.focusSelectedPost( this.props.selectedPostKey );
 		}
 
@@ -127,6 +147,7 @@ class ReaderStream extends Component {
 			this.props.requestPage( {
 				streamKey: this.props.recsStreamKey,
 				pageHandle: this.props.recsStream.pageHandle,
+				localeSlug: this.props.localeSlug,
 			} );
 		}
 	}
@@ -153,23 +174,28 @@ class ReaderStream extends Component {
 	};
 
 	scrollToSelectedPost( animate ) {
-		const HEADER_OFFSET = -32; // a fixed position header means we can't just scroll the element into view.
+		const scrollContainer = this.state.listContext || window;
+		const containerOffset = scrollContainer.getBoundingClientRect?.().top || 0;
+		const headerOffset = -1 * this.props.fixedHeaderHeight || 0; // a fixed position header means we can't just scroll the element into view.
+		const totalOffset = headerOffset - containerOffset - 20; // 20px of constant offset to ensure the post isnt cramped against the top container or header border.
 		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
-			const documentElement = document.documentElement;
 			selectedNode.focus();
-			const windowTop =
-				( window.pageYOffset || documentElement.scrollTop ) - ( documentElement.clientTop || 0 );
+			const scrollContainerPosition = scrollContainer.scrollTop;
 			const boundingClientRect = selectedNode.getBoundingClientRect();
-			const scrollY = parseInt( windowTop + boundingClientRect.top + HEADER_OFFSET, 10 );
+			const scrollY = parseInt(
+				scrollContainerPosition + boundingClientRect.top + totalOffset,
+				10
+			);
 			if ( animate ) {
 				scrollTo( {
 					x: 0,
 					y: scrollY,
 					duration: 200,
+					container: scrollContainer,
 				} );
 			} else {
-				window.scrollTo( 0, scrollY );
+				scrollContainer.scrollTo( 0, scrollY );
 			}
 		}
 	}
@@ -187,12 +213,40 @@ class ReaderStream extends Component {
 		}
 
 		if ( this.props.selectedPostKey ) {
-			setTimeout( () => {
+			// Show an overlay while we are handling initial scroll and focus to prevent flashing
+			// content.
+			if ( this.overlayRef.current ) {
+				this.overlayRef.current.classList.add( 'stream__init-overlay-enabled' );
+			}
+			this.mountTimeout = setTimeout( () => {
+				this.scrollToSelectedPost( false );
 				this.focusSelectedPost( this.props.selectedPostKey );
+				if ( this.overlayRef.current ) {
+					this.overlayRef.current.classList.remove( 'stream__init-overlay-enabled' );
+				}
 			}, 100 );
 		}
 
 		document.addEventListener( 'keydown', this.handleKeydown, true );
+
+		/**
+		 * Observe the class list of the body element because the scroll container depends on it.
+		 */
+		this.observer = new window.MutationObserver( () => {
+			if ( ! this.listRef.current ) {
+				return;
+			}
+
+			const scrollContainer = this.getScrollContainer(
+				ReactDom.findDOMNode( this.listRef.current )
+			);
+			if ( scrollContainer !== this.state.listContext ) {
+				this.setState( {
+					listContext: scrollContainer,
+				} );
+			}
+		} );
+		this.observer.observe( document.body, { attributeFilter: [ 'class' ] } );
 	}
 
 	componentWillUnmount() {
@@ -202,6 +256,14 @@ class ReaderStream extends Component {
 		}
 
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
+
+		if ( this.observer ) {
+			this.observer.disconnect();
+		}
+
+		if ( this.mountTimeout ) {
+			clearTimeout( this.mountTimeout );
+		}
 	}
 
 	handleKeydown = ( event ) => {
@@ -302,7 +364,7 @@ class ReaderStream extends Component {
 	getVisibleItemIndexes() {
 		return (
 			this.listRef.current &&
-			this.listRef.current.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } )
+			this.listRef.current.getVisibleItemIndexes( { offsetTop: this.props.fixedHeaderHeight || 0 } )
 		);
 	}
 
@@ -314,8 +376,14 @@ class ReaderStream extends Component {
 			stream: { items },
 		} = this.props;
 
+		// This should already be false but this is a safety.
+		this.wasSelectedByOpeningPost = false;
+
+		// If the currently selected item is too far away in scroll position to be rendered by the
+		// infinite list, lets fall back to the magic selection functionality noted below.
+		const selectedItem = this.state.listContext?.querySelector( '.card.is-selected' );
 		// do we have a selected item? if so, just move to the next one
-		if ( this.props.selectedPostKey ) {
+		if ( this.props.selectedPostKey && selectedItem ) {
 			this.props.selectNextItem( { streamKey, items } );
 			return;
 		}
@@ -365,6 +433,10 @@ class ReaderStream extends Component {
 			selectedPostKey,
 			stream: { items },
 		} = this.props;
+
+		// This should already be false but this is a safety.
+		this.wasSelectedByOpeningPost = false;
+
 		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.
@@ -374,8 +446,8 @@ class ReaderStream extends Component {
 	};
 
 	poll = () => {
-		const { streamKey } = this.props;
-		this.props.requestPage( { streamKey, isPoll: true } );
+		const { streamKey, localeSlug } = this.props;
+		this.props.requestPage( { streamKey, isPoll: true, localeSlug: localeSlug } );
 	};
 
 	getPageHandle = ( pageHandle, startDate ) => {
@@ -388,7 +460,7 @@ class ReaderStream extends Component {
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
-		const { streamKey, stream, startDate } = props;
+		const { streamKey, stream, startDate, localeSlug } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
@@ -396,7 +468,7 @@ class ReaderStream extends Component {
 			props.trackScrollPage( pageId );
 		}
 		const pageHandle = this.getPageHandle( stream.pageHandle, startDate );
-		props.requestPage( { streamKey, pageHandle } );
+		props.requestPage( { streamKey, pageHandle, localeSlug } );
 	};
 
 	showUpdates = () => {
@@ -437,7 +509,7 @@ class ReaderStream extends Component {
 					iconSize={ 40 }
 					campaign="calypso-reader-stream"
 					title={ this.props.translate( 'Read on the go with the Jetpack Mobile App' ) }
-					hasQRCode={ true }
+					hasQRCode
 					hasGetAppButton={ false }
 				/>
 			)
@@ -453,12 +525,22 @@ class ReaderStream extends Component {
 		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
 
 		const itemKey = this.getPostRef( postKey );
-		const showPost = ( args ) =>
+		const showPost = ( args ) => {
+			// Ensure the post selected becomes the selected item. It may already be the selected
+			// item through shortkeys, or not if using a mouse clicking flow. Setting the selected
+			// item this way adds consistency to scroll position when coming back from the full post
+			// view, as well as avoids conflict between our systems for preserving scroll position
+			// and scrolling to selected posts when users use a mix of shortkeys and mouse clicks.
+			if ( ! isSelected ) {
+				this.props.selectItem( { streamKey: this.props.streamKey, postKey } );
+				this.wasSelectedByOpeningPost = true;
+			}
 			this.props.showSelectedPost( {
 				...args,
 				postKey: postKey,
 				streamKey,
 			} );
+		};
 
 		return (
 			<Fragment key={ itemKey }>
@@ -488,8 +570,36 @@ class ReaderStream extends Component {
 		);
 	};
 
+	setListContext = ( component ) => {
+		if ( ! component ) {
+			return;
+		}
+
+		this.listRef.current = component;
+		this.setState( {
+			listContext: this.getScrollContainer( ReactDom.findDOMNode( component ) ),
+		} );
+	};
+
+	getScrollContainer = ( node ) => {
+		// Leave it to the default scroll container if we cannot find it or its the root element.
+		if ( ! node || node.ownerDocument === node.parentNode ) {
+			return false;
+		}
+
+		// Return when overflow is defined to either auto or scroll.
+		const { overflowY } = getComputedStyle( node );
+		if ( /(auto|scroll)/.test( overflowY ) ) {
+			return node;
+		}
+
+		// Continue traversing.
+		return this.getScrollContainer( node.parentNode );
+	};
+
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
+			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		let body;
@@ -507,7 +617,7 @@ class ReaderStream extends Component {
 
 		// TODO: `following` probably shouldn't be added as a class to every stream, but style selectors need
 		// to be updated before we can remove it.
-		let baseClassnames = classnames( 'following', this.props.className );
+		let baseClassnames = clsx( 'following', this.props.className );
 
 		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
@@ -520,7 +630,7 @@ class ReaderStream extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			const bodyContent = (
 				<InfiniteList
-					ref={ this.listRef }
+					ref={ this.setListContext }
 					items={ items }
 					lastPage={ lastPage }
 					fetchingNextPage={ isRequesting }
@@ -530,6 +640,8 @@ class ReaderStream extends Component {
 					renderItem={ this.renderPost }
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 					className="stream__list"
+					context={ this.state.listContext }
+					selectedItem={ selectedPostKey }
 				/>
 			);
 
@@ -548,7 +660,7 @@ class ReaderStream extends Component {
 						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
 					</div>
 				);
-				baseClassnames = classnames( 'reader-two-column', baseClassnames );
+				baseClassnames = clsx( 'reader-two-column', baseClassnames );
 			} else {
 				body = (
 					<>
@@ -593,6 +705,7 @@ class ReaderStream extends Component {
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
 			<TopLevel className={ baseClassnames }>
+				<div ref={ this.overlayRef } className="stream__init-overlay" />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
@@ -609,6 +722,11 @@ export default connect(
 	( state, { streamKey, recsStreamKey } ) => {
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
+
+		let localeSlug = getCurrentLocaleSlug( state );
+		if ( isDefaultLocale( localeSlug ) ) {
+			localeSlug = null;
+		}
 
 		return {
 			blockedSites: getBlockedSites( state ),
@@ -627,6 +745,7 @@ export default connect(
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
+			localeSlug,
 		};
 	},
 	{

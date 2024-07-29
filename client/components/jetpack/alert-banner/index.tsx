@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, { ReactNode } from 'react';
 
 import './style.scss';
@@ -9,7 +9,7 @@ type AlertBannerProps = {
 };
 
 const AlertBanner: React.FC< AlertBannerProps > = ( { type, children } ) => {
-	const alertBannerClasses = classNames( 'alert-banner', {
+	const alertBannerClasses = clsx( 'alert-banner', {
 		'alert-banner__warning': type === 'warning',
 		'alert-banner__error': type === 'error',
 		'alert-banner__success': type === 'success',

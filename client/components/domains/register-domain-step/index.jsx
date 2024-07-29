@@ -5,7 +5,7 @@ import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/compone
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import {
@@ -468,11 +468,11 @@ class RegisterDomainStep extends Component {
 			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData )
 			: {};
 
-		const containerDivClassName = classNames( 'register-domain-step', {
+		const containerDivClassName = clsx( 'register-domain-step', {
 			'register-domain-step__signup': this.props.isSignupStep,
 		} );
 
-		const searchBoxClassName = classNames( 'register-domain-step__search', {
+		const searchBoxClassName = clsx( 'register-domain-step__search', {
 			'register-domain-step__search-domain-step': this.props.isSignupStep,
 		} );
 
@@ -514,7 +514,7 @@ class RegisterDomainStep extends Component {
 						<Notice
 							status="is-error"
 							text={ replaceDomainFailedMessage }
-							showDismiss={ true }
+							showDismiss
 							onDismissClick={ dismissReplaceDomainFailed }
 						/>
 					) }
@@ -697,7 +697,7 @@ class RegisterDomainStep extends Component {
 			return null;
 		}
 
-		const className = classNames( 'register-domain-step__next-page', {
+		const className = clsx( 'register-domain-step__next-page', {
 			'register-domain-step__next-page--is-loading': isLoading,
 		} );
 		return (
@@ -1055,6 +1055,17 @@ class RegisterDomainStep extends Component {
 		if ( this.props.promoTlds && ! this.props.promoTlds.includes( getTld( domain ) ) ) {
 			// We don't want to run an availability check if promoTlds are set
 			// and the searched domain is not one of those TLDs
+			return;
+		}
+
+		// Skips availability check for the Gravatar flow - so TLDs that are
+		// available but not eligible for Gravatar won't be displayed
+		if ( this.props.flowName === 'domain-for-gravatar' ) {
+			// Also, we want to error messages for unavailable TLDs in Gravatar.
+			// Since only .link is enabled for now, we show the message for all other TLDs.
+			if ( getTld( domain ) !== 'link' ) {
+				this.showSuggestionErrorMessage( domain, 'gravatar_tld_restriction', {} );
+			}
 			return;
 		}
 
@@ -1679,10 +1690,9 @@ class RegisterDomainStep extends Component {
 		} else {
 			useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;
 			if ( this.props.selectedSite ) {
-				useYourDomainUrl = domainUseMyDomain(
-					this.props.selectedSite.slug,
-					this.state.lastQuery.trim()
-				);
+				useYourDomainUrl = domainUseMyDomain( this.props.selectedSite.slug, {
+					domain: this.state.lastQuery.trim(),
+				} );
 			}
 		}
 
@@ -1722,16 +1732,20 @@ class RegisterDomainStep extends Component {
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE,
 			REGISTERED_OTHER_SITE_SAME_USER,
+			REGISTERED_SAME_SITE,
 		} = domainAvailability;
 
 		const { isSignupStep, includeOwnedDomainInSuggestions } = this.props;
+		const isGravatarFlow = this.props.flowName === 'domain-for-gravatar';
 
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
 			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE === error ||
 			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE === error ||
 			( isSignupStep && DOTBLOG_SUBDOMAIN === error ) ||
-			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error )
+			( includeOwnedDomainInSuggestions && REGISTERED_OTHER_SITE_SAME_USER === error ) ||
+			( isGravatarFlow &&
+				[ REGISTERED_OTHER_SITE_SAME_USER, REGISTERED_SAME_SITE ].includes( error ) )
 		) {
 			return;
 		}

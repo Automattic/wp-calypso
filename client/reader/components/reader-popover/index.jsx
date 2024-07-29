@@ -1,10 +1,10 @@
 import { Popover } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { omit } from 'lodash';
 import './style.scss';
 
 const ReaderPopover = ( props ) => {
-	const classes = classnames( 'reader-popover', props.className );
+	const classes = clsx( 'reader-popover', props.className );
 	const popoverProps = omit( props, 'className' );
 	return (
 		<Popover className={ classes } { ...popoverProps }>

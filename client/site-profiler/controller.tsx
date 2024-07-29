@@ -1,17 +1,16 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import Main from 'calypso/components/main';
-import SiteProfiler from 'calypso/site-profiler/components/site-profiler';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import SiteProfiler from './components/site-profiler';
+import SiteProfilerV2 from './components/site-profiler-v2';
 
-export const featureFlagFirewall: Callback = ( _context, next ) => {
-	if ( config.isEnabled( 'site-profiler' ) ) {
-		next();
-	} else {
-		page.redirect( '/' );
-	}
-};
+let SiteProfilerComponent = SiteProfiler;
+
+if ( isEnabled( 'site-profiler/metrics' ) ) {
+	SiteProfilerComponent = SiteProfilerV2;
+}
 
 export const handleDomainQueryParam: Callback = ( context, next ) => {
 	const { querystring } = context;
@@ -45,7 +44,30 @@ export const siteProfilerContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<Main fullWidthLayout>
-				<SiteProfiler routerDomain={ routerDomain } />
+				<SiteProfilerComponent routerDomain={ routerDomain } />
+			</Main>
+
+			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } />
+		</>
+	);
+
+	next();
+};
+
+export const siteProfilerReportContext: Callback = ( context, next ) => {
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+	const pathName = context.pathname || '';
+	const routerParams = pathName.split( '/site-profiler/report/' )[ 1 ]?.trim() || '';
+	const routerDomain = routerParams.split( '/' ).slice( 1 ).join( '/' );
+
+	context.primary = (
+		<>
+			<Main fullWidthLayout>
+				<SiteProfilerComponent
+					routerDomain={ routerDomain }
+					hash={ context.params.hash }
+					routerOrigin={ context.query?.ref }
+				/>
 			</Main>
 
 			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } />

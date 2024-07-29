@@ -1,5 +1,5 @@
 import { FormInputValidation } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { values } from 'lodash';
 import { Component } from 'react';
@@ -11,7 +11,7 @@ export default class ValidationFieldset extends Component {
 	renderValidationNotice() {
 		const validationElement = this.props.errorMessages && (
 			<FormInputValidation
-				isError={ true }
+				isError
 				isValid={ false }
 				text={ values( this.props.errorMessages )[ 0 ] }
 			/>
@@ -21,7 +21,7 @@ export default class ValidationFieldset extends Component {
 	}
 
 	render() {
-		const classes = classNames( 'validation-fieldset', this.props.className );
+		const classes = clsx( 'validation-fieldset', this.props.className );
 
 		debug( 'render validation fieldset' );
 

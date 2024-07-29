@@ -1,6 +1,5 @@
-import { Card } from '@automattic/components';
+import { Card, DotPager } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import DotPager from 'calypso/components/dot-pager';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -10,7 +9,7 @@ const Card1 = () => {
 	const translate = useTranslate();
 	return (
 		<>
-			<h1>{ translate( 'Welcome to the Automattic for Agencies beta' ) }</h1>
+			<h1>{ translate( 'Welcome to Automattic for Agencies' ) }</h1>
 			<p>
 				{ translate(
 					'Automattic for Agencies is a new agency program that brings together all of Automattic’s brands under one roof, enabling you to get the best deals on our products and services. We’ll also provide you with tooling to help you be more efficient in your work and grow your business.'
@@ -18,7 +17,7 @@ const Card1 = () => {
 			</p>
 			<p>
 				{ translate(
-					'This is only just the beginning. Soon, we’ll add referral commissions, partner directory listings across our brands, bonus incentives, and much more.'
+					'This is only just the beginning. Soon, we’ll add partner directory listings across our brands, multiple user support, WooPayments commissions, and much more.'
 				) }
 			</p>
 		</>

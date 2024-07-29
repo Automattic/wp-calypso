@@ -12,8 +12,8 @@
 		padding-bottom: 64px;
 		background-image: url(./images/background@3x.png);
 		background-repeat: no-repeat;
-		background-position: bottom right 110px;
-		background-size: auto 100%;
+		background-position: 87% top;
+		background-size: 45% auto;
 		color: var(--studio-white);
 
 		h1 {
@@ -31,7 +31,6 @@
 			letter-spacing: 0.4px;
 			line-height: 1.4;
 			padding-bottom: 32px;
-			text-wrap: pretty;
 			width: 450px;
 		}
 
@@ -55,9 +54,10 @@
 		}
 	}
 
-	@media ( max-width: $break-wide ) {
+	@media (max-width: $break-xlarge) {
 		.patterns-header__inner {
-			padding: 90px 24px 24px;
+			padding-top: 90px;
+			padding-bottom: 24px;
 			background: none;
 
 			h1 {

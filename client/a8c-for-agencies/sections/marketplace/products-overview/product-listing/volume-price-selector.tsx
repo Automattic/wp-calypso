@@ -11,11 +11,11 @@ const getDiscountPercentage = ( bundleSize: number ) => {
 	// FIXME: Need to calculate based on average discount per bundle size.
 	return {
 		1: '',
-		5: '8%',
-		10: '20%',
-		20: '40%',
-		50: '70%',
-		100: '80%',
+		5: '10%',
+		10: '15%',
+		20: '20%',
+		50: '40%',
+		100: '50%',
 	}[ bundleSize ];
 };
 

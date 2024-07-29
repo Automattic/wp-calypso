@@ -1,15 +1,15 @@
 /* eslint-disable no-restricted-imports */
 
-import { useSupportAvailability } from '../data/use-support-availability';
-import { useIsWapuuEnabled } from './use-is-wapuu-enabled';
+import { useSupportStatus } from '../data/use-support-status';
+import { useShouldUseWapuu } from './use-should-use-wapuu';
 
 export function useStillNeedHelpURL() {
-	const { data: supportAvailability, isLoading } = useSupportAvailability( 'OTHER' );
-	const isWapuuEnabled = useIsWapuuEnabled();
-	const isFreeUser = ! supportAvailability?.is_user_eligible_for_tickets;
+	const { data: supportStatus, isLoading } = useSupportStatus();
+	const shouldUseWapuu = useShouldUseWapuu();
+	const isEligibleForSupport = Boolean( supportStatus?.eligibility?.is_user_eligible );
 
-	if ( ! isFreeUser ) {
-		const url = isWapuuEnabled ? '/odie' : '/contact-options';
+	if ( isEligibleForSupport || shouldUseWapuu ) {
+		const url = shouldUseWapuu ? '/odie' : '/contact-options';
 		return { url, isLoading: false };
 	}
 

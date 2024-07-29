@@ -5,22 +5,25 @@ import {
 	URL_FRIENDLY_TERMS_MAPPING,
 	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
-import { PlansIntent } from '@automattic/plans-grid-next';
 import { useMemo } from 'react';
+import { useFCCARestrictions } from './use-fcca-restrictions';
 
 interface Props {
-	intent?: PlansIntent;
+	flowName?: string | null;
 	displayedIntervals: UrlFriendlyTermType[];
 	paidDomainName?: string;
 	productSlug?: string;
 }
 
 const useFilteredDisplayedIntervals = ( {
-	intent,
+	flowName,
 	displayedIntervals,
 	paidDomainName,
 	productSlug,
 }: Props ) => {
+	const { shouldRestrict3YearPlans } = useFCCARestrictions();
+	const is3yearlyRestricted = shouldRestrict3YearPlans();
+
 	return useMemo( () => {
 		let filteredIntervals = displayedIntervals;
 
@@ -39,7 +42,7 @@ const useFilteredDisplayedIntervals = ( {
 			} );
 		}
 
-		if ( intent === 'plans-paid-media' ) {
+		if ( 'onboarding-pm' === flowName ) {
 			// Monetizing free domain users is hard. From experience, users who choose a free domain
 			// have very low intent to purchase something during signup. We show a cheaper and flexible
 			// monthly option for this specific segment, but hide it if a custom domain is selected.
@@ -48,8 +51,12 @@ const useFilteredDisplayedIntervals = ( {
 			}
 		}
 
+		if ( is3yearlyRestricted ) {
+			filteredIntervals = filteredIntervals.filter( ( item ) => item !== '3yearly' );
+		}
+
 		return filteredIntervals;
-	}, [ productSlug, displayedIntervals, intent, paidDomainName ] );
+	}, [ productSlug, displayedIntervals, flowName, paidDomainName, is3yearlyRestricted ] );
 };
 
 export default useFilteredDisplayedIntervals;

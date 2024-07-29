@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
@@ -18,7 +18,7 @@ export default class AppleIcon extends PureComponent {
 
 		return (
 			<svg
-				className={ classNames( 'social-icons social-icons__mail', {
+				className={ clsx( 'social-icons social-icons__mail', {
 					'social-icons--enabled': ! isDisabled,
 					'social-icons--disabled': !! isDisabled,
 				} ) }

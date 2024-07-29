@@ -199,8 +199,8 @@ class Starter_Page_Templates {
 			}
 		}
 
-		// Hide non-user-facing categories (Pages & Virtual Theme) in modal
-		$hidden_categories = array( 'page', 'virtual-theme' );
+		// Hide non-user-facing categories (Pages, Virtual Theme, and wordpress.com/patterns homepage) in modal
+		$hidden_categories = array( 'page', 'virtual-theme', '_public_library_homepage' );
 		foreach ( $page_templates as &$page_template ) {
 			if ( ! isset( $page_template['categories'] ) ) {
 				continue;
@@ -248,7 +248,7 @@ class Starter_Page_Templates {
 		$config = apply_filters(
 			'fse_starter_page_templates_config',
 			array(
-				'templates'    => array_merge( $default_templates, $page_templates, $registered_page_templates ),
+				'templates'    => array_merge( $default_templates, $registered_page_templates, $page_templates ),
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'screenAction' => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
 			)
@@ -419,7 +419,7 @@ class Starter_Page_Templates {
 	 * Custom styles are safe because they are overwritten by local block styles, global styles, or theme stylesheets.
 	 **/
 	public function add_default_editor_styles_for_classic_themes( $editor_settings, $editor_context ) {
-		$theme = wp_get_theme( normalize_theme_slug( get_stylesheet() ) );
+		$theme = wp_get_theme( get_stylesheet() );
 		if ( $theme->is_block_theme() ) {
 			// Only for classic themes
 			return $editor_settings;

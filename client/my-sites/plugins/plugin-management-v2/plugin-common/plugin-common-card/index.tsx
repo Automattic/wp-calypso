@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { Icon, plugins } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import PluginCommonActions from '../plugin-common-actions';
 import type { Columns, RowFormatterArgs } from '../../types';
@@ -43,7 +43,7 @@ export default function PluginCommonCard( {
 									id={ item.slug }
 									onClick={ item.onClick }
 									checked={ item.isSelected }
-									readOnly={ true }
+									readOnly
 								/>
 							) }
 						</div>
@@ -65,7 +65,7 @@ export default function PluginCommonCard( {
 					</>
 				) }
 				<div
-					className={ classNames( 'plugin-common-card__main-content', {
+					className={ clsx( 'plugin-common-card__main-content', {
 						'no-padding': ! showLeftContent,
 					} ) }
 				>

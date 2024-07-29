@@ -196,7 +196,7 @@ export function feedListing( context, next ) {
 				mcKey
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-			suppressSiteNameLink={ true }
+			suppressSiteNameLink
 			showBack={ userHasHistory( context ) }
 			placeholder={ null }
 		/>
@@ -230,7 +230,7 @@ export function blogListing( context, next ) {
 				mcKey
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-			suppressSiteNameLink={ true }
+			suppressSiteNameLink
 			showBack={ userHasHistory( context ) }
 			placeholder={ null }
 		/>

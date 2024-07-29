@@ -74,6 +74,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 			planDiscountedRawPrice,
 			currencyCode,
 			hasSevenDayRefundPeriod,
+			isLoading,
 		} = this.props;
 		return (
 			<>
@@ -148,15 +149,22 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 					</p>
 					<p>
 						{ translate(
-							'Simply click below to upgrade. You’ll only have to pay the difference to the %(planName)s Plan ({{del}}%(fullPrice)s{{/del}} %(discountPrice)s).',
+							'Simply click below to upgrade. You’ll only have to pay the difference to the %(planName)s Plan {{PriceWrapper}}({{del}}%(fullPrice)s{{/del}} %(discountPrice)s).{{/PriceWrapper}}',
 							{
 								components: {
 									del: <del />,
+									PriceWrapper: (
+										<span className={ isLoading ? 'upsell-nudge__small-placeholder' : '' } />
+									),
 								},
 								args: {
-									fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
+									fullPrice: formatCurrency( planRawPrice, currencyCode, {
+										stripZeros: true,
+										isSmallestUnit: true,
+									} ),
 									discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
 										stripZeros: true,
+										isSmallestUnit: true,
 									} ),
 									planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
 									comment: 'A monetary value at the end, e.g. $25',
@@ -170,15 +178,16 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 	}
 
 	footer() {
-		const { translate, handleClickAccept, handleClickDecline } = this.props;
+		const { translate, handleClickAccept, handleClickDecline, isLoading } = this.props;
 		return (
 			<footer>
 				<Button
 					primary
 					className="business-plan-upgrade-upsell-new-design__accept-offer-button"
+					busy={ isLoading }
 					onClick={ () => handleClickAccept( 'accept' ) }
 				>
-					{ translate( 'Upgrade Now' ) }
+					{ isLoading ? translate( 'Loading' ) : translate( 'Upgrade Now' ) }
 				</Button>
 				<Button
 					data-e2e-button="decline"

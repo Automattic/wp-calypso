@@ -12,31 +12,11 @@ if ( ! isset( $args ) ) {
 }
 
 //phpcs:ignore WPCOM.I18nRules.LocalizedUrl.LocalizedUrlAssignedToVariable
-$image_dir       = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/support-content-footer/build/assets';
 $subscribe_block = '[wpcom_guides_learn_button is_unsubscribed_caption="' . __( 'Subscribe now!', 'happy-blocks' ) . '" is_subscribed_caption="' . __( 'Unsubscribe', 'happy-blocks' ) . '" busy_caption="' . __( 'Just a moment...', 'happy-blocks' ) . '"]';
 $signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fwordpress.com%2Flearn%23support-content-subscribe' );
 ?>
 
 <div class="happy-blocks-support-content-footer">
-	<div class="support-content-cta">
-		<div class="support-content-cta-left">
-			<h4 class="support-content-resource__title">
-				<?php esc_html_e( 'Your site, built for you', 'happy-blocks' ); ?>
-			</h4>
-			<p>
-				<?php esc_html_e( 'Sit back as our team of experts builds a site you\'ll fall in love with. From single page sites to full stores, they\'ll help you make it happen.', 'happy-blocks' ); ?>
-			</p>
-			<div class="resource-link">
-				<a href="<?php echo esc_url( 'https://wordpress.com/website-design-service/?ref=banner-learn' ); ?>">
-					<?php esc_html_e( 'Get Started', 'happy-blocks' ); ?>
-				</a>
-			</div>
-		</div>
-
-		<div class="support-content-cta-right">
-			<img src="<?php echo esc_url( $image_dir . '/let-us-build-your-website.png' ); ?>" alt=""/>
-		</div>
-	</div>
 	<div class="support-content-resources alignwide" style="border-radius:0px; margin-bottom:0px">
 		<div class="support-content-resource">
 			<h4 class="support-content-resource__title">
@@ -101,7 +81,7 @@ $signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_t
 			<p class="support-content-subscribe-disclaimer">
 				<?php
 					// translators: %s: 'WordPress.com privacy policy'.
-					echo sprintf( esc_html__( 'Your information will be used in accordance with %s.', 'happy-blocks' ), '<a href="https://automattic.com/privacy/">' . esc_html__( 'WordPress.com privacy policy', 'happy-blocks' ) . '</a>' );
+					printf( esc_html__( 'Your information will be used in accordance with %s.', 'happy-blocks' ), '<a href="https://automattic.com/privacy/">' . esc_html__( 'WordPress.com privacy policy', 'happy-blocks' ) . '</a>' );
 				?>
 			</p>
 		</div>

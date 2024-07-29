@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -19,6 +19,7 @@ interface Props {
 	paymentPartner?: string;
 	selected?: boolean;
 	isExpired?: boolean;
+	razorpayVpa?: string;
 }
 
 const PaymentMethodDetails: FunctionComponent< Props > = ( {
@@ -29,6 +30,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	email,
 	paymentPartner,
 	isExpired,
+	razorpayVpa,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -62,7 +64,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 
 				{ isExpired && (
 					<span
-						className={ classnames( 'payment-method-details__expiration-notice', {
+						className={ clsx( 'payment-method-details__expiration-notice', {
 							'is-expired': isExpired,
 						} ) }
 					>
@@ -70,6 +72,9 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 						{ translate( 'Credit card expired' ) }
 					</span>
 				) }
+
+				{ razorpayVpa && <span className="payment-method-details__vpa">{ razorpayVpa }</span> }
+
 				<span className="payment-method-details__name">{ name }</span>
 			</div>
 		</div>

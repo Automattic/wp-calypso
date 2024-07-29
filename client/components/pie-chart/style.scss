@@ -1,3 +1,57 @@
+/**
+ * Pie Chart Tooltip styles section
+ */
+.pie-chart__chart-container {
+	position: relative;
+
+	.pie-chart__chart-drawing {
+		max-width: unset;
+	}
+}
+
+.pie-chart__tooltip {
+	display: flex;
+	align-items: center;
+	visibility: hidden;
+	box-sizing: border-box;
+	position: absolute;
+	width: 244px;
+	background-color: var(--studio-gray-100);
+	color: var(--studio-white);
+	padding: 16px 24px;
+	border-radius: 4px;
+	pointer-events: none;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: -12px;
+		right: 30px;
+		border-top: 7px solid transparent;
+		border-bottom: 7px solid var(--studio-gray-100);
+		border-left: 7px solid transparent;
+		border-right: 7px solid transparent;
+	}
+
+	& > svg {
+		margin-right: 8px;
+	}
+
+	.pie-chart__tooltip-content {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		font-family: Inter, $sans;
+		font-size: $font-body-small;
+		font-weight: 500;
+		line-height: 20px;
+	}
+}
+/**
+ * Pie Chart Tooltip styles section
+ */
+
 .pie-chart__placeholder,
 .pie-chart {
 	display: flex;

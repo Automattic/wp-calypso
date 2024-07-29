@@ -1,5 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import ItemPreviewPane, {
+	createFeaturePreview,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
+import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import {
 	JETPACK_ACTIVITY_ID,
 	JETPACK_BACKUP_ID,
@@ -11,18 +15,17 @@ import {
 } from 'calypso/a8c-for-agencies/sections/sites/features/features';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
-import { A4A_SITES_DASHBOARD_DEFAULT_FEATURE } from '../../constants';
-import SitePreviewPane, { createFeaturePreview } from '../../site-preview-pane';
 import { PreviewPaneProps } from '../../site-preview-pane/types';
 import { JetpackActivityPreview } from './activity';
-import { JetpackBackupPreview } from './jetpack-backup';
+import { JetpackBackupPreview } from './backup';
 import { JetpackBoostPreview } from './jetpack-boost';
 import { JetpackMonitorPreview } from './jetpack-monitor';
 import { JetpackPluginsPreview } from './jetpack-plugins';
-import { JetpackScanPreview } from './jetpack-scan';
 import { JetpackStatsPreview } from './jetpack-stats';
+import { JetpackScanPreview } from './scan';
 
 import './style.scss';
+import '../../site-preview-pane/a4a-style.scss';
 
 export function JetpackPreviewPane( {
 	site,
@@ -45,8 +48,9 @@ export function JetpackPreviewPane( {
 
 	useEffect( () => {
 		if ( selectedSiteFeature === undefined ) {
-			setSelectedSiteFeature( A4A_SITES_DASHBOARD_DEFAULT_FEATURE );
+			setSelectedSiteFeature( JETPACK_BOOST_ID );
 		}
+
 		return () => {
 			setSelectedSiteFeature( undefined );
 		};
@@ -69,7 +73,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackBackupPreview siteId={ site.blog_id } />
+				<JetpackBackupPreview site={ site } />
 			),
 			createFeaturePreview(
 				JETPACK_SCAN_ID,
@@ -77,7 +81,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackScanPreview siteId={ site.blog_id } />
+				<JetpackScanPreview site={ site } />
 			),
 			createFeaturePreview(
 				JETPACK_MONITOR_ID,
@@ -118,16 +122,24 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackActivityPreview siteId={ site.blog_id } />
+				<JetpackActivityPreview site={ site } />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
 	);
 
+	const itemData: ItemData = {
+		title: site.blogname,
+		subtitle: site.url,
+		url: site.url_with_scheme,
+		blogId: site.blog_id,
+		isDotcomSite: site.is_atomic,
+	};
+
 	return (
-		<SitePreviewPane
-			site={ site }
-			closeSitePreviewPane={ closeSitePreviewPane }
+		<ItemPreviewPane
+			itemData={ itemData }
+			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
 			className={ className }
 		/>

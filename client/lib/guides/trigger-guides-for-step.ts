@@ -7,8 +7,8 @@ import wpcom from 'calypso/lib/wp';
 const previousRequests = new Set< string >();
 
 // trigger guides on step movement, we don't care about failures or response
-export function triggerGuidesForStep( flowName: string, stepName?: string ) {
-	const key = flowName + ':' + ( stepName || '' );
+export function triggerGuidesForStep( flowName: string, stepName?: string, siteId?: number ) {
+	const key = flowName + ':' + ( stepName || '' ) + ':' + ( siteId || 'no-id' );
 	if ( previousRequests.has( key ) ) {
 		return;
 	}
@@ -22,6 +22,7 @@ export function triggerGuidesForStep( flowName: string, stepName?: string ) {
 			{
 				flow: flowName,
 				step: stepName,
+				siteId: siteId,
 			}
 		)
 		.then()

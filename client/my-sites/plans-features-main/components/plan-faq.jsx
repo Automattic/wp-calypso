@@ -5,6 +5,8 @@ import {
 	PLAN_ECOMMERCE,
 	getPlan,
 } from '@automattic/calypso-products';
+import { ExternalLink } from '@automattic/components';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -28,6 +30,7 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const onFaqToggle = useCallback(
 		( faqArgs ) => {
 			const { id, isExpanded } = faqArgs;
@@ -52,7 +55,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 			<FoldableFAQ
 				id="faq-1"
 				question={ translate( 'Is hosting included?' ) }
-				expanded={ true }
+				expanded
 				onToggle={ onFaqToggle }
 			>
 				{ translate(
@@ -64,10 +67,33 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 				question={ translate( 'Can I import content from another service?' ) }
 				onToggle={ onFaqToggle }
 			>
-				{ translate(
-					'It is possible to import your blog content from a variety of other blogging platforms, including Blogger, ' +
-						'GoDaddy, Wix, Squarespace, and more. You can also easily import your content from a self-hosted WordPress site.'
-				) }
+				<>
+					{ translate(
+						'It is possible to import your blog content from a variety of other blogging platforms, including Blogger, ' +
+							'GoDaddy, Wix, Squarespace, and more. You can also easily import your content from a self-hosted WordPress site.'
+					) }
+					{ hasEnTranslation(
+						'Want a Happiness Engineer to do a free migration of your WordPress site to WordPress.com? ' +
+							'{{ExternalLink}}Request a Happiness Engineer{{/ExternalLink}} to handle your migration for free!'
+					)
+						? translate(
+								'{{br /}}{{br /}}Want a Happiness Engineer to do a free migration of your WordPress site to WordPress.com? ' +
+									'{{ExternalLink}}Request a Happiness Engineer{{/ExternalLink}} to handle your migration for free!',
+								{
+									components: {
+										br: <br />,
+										ExternalLink: (
+											<ExternalLink
+												href={ localizeUrl(
+													'https://wordpress.com/support/request-a-free-migration/'
+												) }
+											/>
+										),
+									},
+								}
+						  )
+						: null }
+				</>
 			</FoldableFAQ>
 			<FoldableFAQ
 				id="faq-3"
@@ -131,16 +157,44 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 				) }
 				onToggle={ onFaqToggle }
 			>
-				{ translate(
+				{ hasEnTranslation(
 					'No it won’t! You’re welcome to create your new site with us before pointing the domain here. ' +
 						'That way your current site can stay “live” until your new one is ready.{{br /}}{{br /}}' +
 						'We recommend getting a plan now because they have other features you might find useful, ' +
-						'including direct live chat and email support. Just avoid using the domain options until ' +
-						'you’re ready, and then you can connect or transfer the domain.',
-					{
-						components: { br: <br /> },
-					}
-				) }
+						'including expert support from our team. Just avoid using the domain options until ' +
+						'you’re ready, and then you can connect or transfer the domain.{{br /}}{{br /}}' +
+						'Our Happiness Engineers can also do the migration for you. {{ExternalLink}}Request a Happiness Engineer{{/ExternalLink}} to migrate your site for free!'
+				)
+					? translate(
+							'No it won’t! You’re welcome to create your new site with us before pointing the domain here. ' +
+								'That way your current site can stay “live” until your new one is ready.{{br /}}{{br /}}' +
+								'We recommend getting a plan now because they have other features you might find useful, ' +
+								'including expert support from our team. Just avoid using the domain options until ' +
+								'you’re ready, and then you can connect or transfer the domain.{{br /}}{{br /}}' +
+								'Our Happiness Engineers can also do the migration for you. {{ExternalLink}}Request a Happiness Engineer{{/ExternalLink}} to migrate your site for free!',
+							{
+								components: {
+									br: <br />,
+									ExternalLink: (
+										<ExternalLink
+											href={ localizeUrl(
+												'https://wordpress.com/support/request-a-free-migration/'
+											) }
+										/>
+									),
+								},
+							}
+					  )
+					: translate(
+							'No it won’t! You’re welcome to create your new site with us before pointing the domain here. ' +
+								'That way your current site can stay “live” until your new one is ready.{{br /}}{{br /}}' +
+								'We recommend getting a plan now because they have other features you might find useful, ' +
+								'including direct live chat and email support. Just avoid using the domain options until ' +
+								'you’re ready, and then you can connect or transfer the domain.',
+							{
+								components: { br: <br /> },
+							}
+					  ) }
 			</FoldableFAQ>
 			<FoldableFAQ
 				id="faq-8"
@@ -216,7 +270,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 						components: {
 							ExternalLinkWithTracking: (
 								<ExternalLinkWithTracking
-									icon={ true }
+									icon
 									href="https://wordpress.com/website-design-service/"
 									tracksEventName="calypso_signup_step_plans_faq_difm_lp"
 								/>
@@ -230,21 +284,38 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 				question={ translate( 'Can I talk to a live person?' ) }
 				onToggle={ onFaqToggle }
 			>
-				{ translate(
-					'We’d love to chat with you! All paid plans include access to one-on-one support from our ' +
-						'team of WordPress experts (we call them Happiness Engineers). The %(personalPlanName)s plan includes ' +
-						'email support while the %(premiumPlanName)s plan and above all include live chat support.{{br /}}{{br /}}' +
-						'If you have pre-purchase questions, we offer live chat on the checkout page. Select the plan ' +
+				{ hasEnTranslation(
+					'We’d love to talk with you! All paid plans include access to support from our ' +
+						'team of WordPress experts (we call them Happiness Engineers).{{br /}}{{br /}}' +
+						'And if you have pre-purchase questions, we can talk at the checkout page. Select the plan ' +
 						'that looks like the best fit for you and click the “Questions? Ask a Happiness Engineer” ' +
-						'link on the next page.',
-					{
-						args: {
-							personalPlanName: getPlan( PLAN_PERSONAL ).getTitle(),
-							premiumPlanName: getPlan( PLAN_PREMIUM ).getTitle(),
-						},
-						components: { br: <br /> },
-					}
-				) }
+						'link on the next page.'
+				)
+					? translate(
+							'We’d love to talk with you! All paid plans include access to support from our ' +
+								'team of WordPress experts (we call them Happiness Engineers).{{br /}}{{br /}}' +
+								'And if you have pre-purchase questions, we can talk at the checkout page. Select the plan ' +
+								'that looks like the best fit for you and click the “Questions? Ask a Happiness Engineer” ' +
+								'link on the next page.',
+							{
+								components: { br: <br /> },
+							}
+					  )
+					: translate(
+							'We’d love to chat with you! All paid plans include access to one-on-one support from our ' +
+								'team of WordPress experts (we call them Happiness Engineers). The %(personalPlanName)s plan includes ' +
+								'email support while the %(premiumPlanName)s plan and above all include live chat support.{{br /}}{{br /}}' +
+								'If you have pre-purchase questions, we offer live chat on the checkout page. Select the plan ' +
+								'that looks like the best fit for you and click the “Questions? Ask a Happiness Engineer” ' +
+								'link on the next page.',
+							{
+								args: {
+									personalPlanName: getPlan( PLAN_PERSONAL ).getTitle(),
+									premiumPlanName: getPlan( PLAN_PREMIUM ).getTitle(),
+								},
+								components: { br: <br /> },
+							}
+					  ) }
 			</FoldableFAQ>
 		</div>
 	);

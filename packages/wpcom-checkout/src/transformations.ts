@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { translate, useTranslate } from 'i18n-calypso';
+import { getContactDetailsType } from './get-contact-details-type';
 import { getIntroductoryOfferIntervalDisplay } from './introductory-offer';
 import type { LineItemType } from './types';
 import type {
@@ -181,7 +182,10 @@ export interface LineItemCostOverrideForDisplay {
 	discountAmount?: number;
 }
 
-function isUserVisibleCostOverride( costOverride: ResponseCartCostOverride ): boolean {
+export function isUserVisibleCostOverride( costOverride: {
+	does_override_original_cost: boolean;
+	override_code: string;
+} ): boolean {
 	if ( costOverride.does_override_original_cost ) {
 		// We won't display original cost overrides since they are
 		// included in the original cost that's being displayed. They
@@ -272,22 +276,23 @@ function getBillPeriodMonthsForIntroductoryOfferInterval(
  * discount for an annual plan).
  */
 export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
-	product: ResponseCartProduct
+	costOverrides: { override_code: string }[] | undefined,
+	introductoryOfferTerms: ResponseCartProduct[ 'introductory_offer_terms' ] | undefined,
+	monthsPerBillPeriodForProduct: number | undefined | null
 ): boolean {
 	if (
-		product.cost_overrides?.some(
-			( costOverride ) => costOverride.override_code !== 'introductory-offer'
-		)
+		costOverrides?.some( ( costOverride ) => {
+			! isOverrideCodeIntroductoryOffer( costOverride.override_code );
+		} )
 	) {
 		return false;
 	}
-	if ( ! product.introductory_offer_terms?.enabled ) {
+	if ( ! introductoryOfferTerms?.enabled ) {
 		return false;
 	}
 	if (
-		getBillPeriodMonthsForIntroductoryOfferInterval(
-			product.introductory_offer_terms.interval_unit
-		) === product.months_per_bill_period
+		getBillPeriodMonthsForIntroductoryOfferInterval( introductoryOfferTerms.interval_unit ) ===
+		monthsPerBillPeriodForProduct
 	) {
 		return false;
 	}
@@ -297,7 +302,7 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 function doesIntroductoryOfferCostOverrideHavePriceIncrease(
 	costOverride: ResponseCartCostOverride
 ): boolean {
-	if ( costOverride.override_code !== 'introductory-offer' ) {
+	if ( ! isOverrideCodeIntroductoryOffer( costOverride.override_code ) ) {
 		return false;
 	}
 	if ( costOverride.old_subtotal_integer >= costOverride.new_subtotal_integer ) {
@@ -350,7 +355,14 @@ export function filterCostOverridesForLineItem(
 				// annual plan) need to be displayed differently because the
 				// discount is only temporary and the user will still be charged
 				// the remainder before the next renewal.
-				if ( doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
+				if (
+					isOverrideCodeIntroductoryOffer( costOverride.override_code ) &&
+					doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+						product.cost_overrides,
+						product.introductory_offer_terms,
+						product.months_per_bill_period
+					)
+				) {
 					return {
 						humanReadableReason: costOverride.human_readable_reason,
 						overrideCode: costOverride.override_code,
@@ -625,4 +637,30 @@ export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {
 	const taxes = cart.total_tax_integer;
 	const totalBeforeCredits = subtotal + taxes;
 	return credits > 0 && totalBeforeCredits > 0 && credits >= totalBeforeCredits;
+}
+
+export function isOverrideCodeIntroductoryOffer( overrideCode: string ): boolean {
+	switch ( overrideCode ) {
+		case 'introductory-offer':
+			return true;
+		case 'prorated-introductory-offer':
+			return true;
+		case 'quantity-upgrade-introductory-offer':
+			return true;
+	}
+	return false;
+}
+
+/**
+ * True if the billing/contact info is not filled in on a shopping cart (and it
+ * needs to be filled in).
+ */
+export function isBillingInfoEmpty( responseCart: ResponseCart ): boolean {
+	if ( getContactDetailsType( responseCart ) === 'none' ) {
+		return false;
+	}
+	if ( responseCart.tax.location.country_code ) {
+		return false;
+	}
+	return true;
 }

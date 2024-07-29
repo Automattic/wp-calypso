@@ -1,66 +1,112 @@
 import { type Callback } from '@automattic/calypso-router';
 import page from '@automattic/calypso-router';
-import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import getSites from 'calypso/state/selectors/get-sites';
+import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
+import { A4A_MARKETPLACE_HOSTING_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import HostingOverview from './hosting-overview';
+import { getValidBrand } from './lib/product-brand';
 import PressableOverview from './pressable-overview';
 import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
 import WpcomOverview from './wpcom-overview';
 
 export const marketplaceContext: Callback = () => {
-	page.redirect( A4A_MARKETPLACE_PRODUCTS_LINK );
+	page.redirect( A4A_MARKETPLACE_HOSTING_LINK );
 };
 
 export const marketplaceProductsContext: Callback = ( context, next ) => {
-	const { site_id, product_slug } = context.query;
+	const { site_id, product_slug, purchase_type, search_query } = context.query;
+	const productBrand = context.params.brand;
+
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = <ProductsOverview siteId={ site_id } suggestedProduct={ product_slug } />;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+	context.primary = (
+		<>
+			<PageViewTracker title="Marketplace > Products" path={ context.path } />
+			<ProductsOverview
+				siteId={ site_id }
+				suggestedProduct={ product_slug }
+				defaultMarketplaceType={ purchaseType }
+				productBrand={ getValidBrand( productBrand ) }
+				searchQuery={ search_query }
+			/>
+		</>
+	);
 	next();
 };
 
 export const marketplaceHostingContext: Callback = ( context, next ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = <HostingOverview />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
+			<HostingOverview defaultMarketplaceType={ purchaseType } />
+		</>
+	);
 	next();
 };
 
 export const marketplacePressableContext: Callback = ( context, next ) => {
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = <PressableOverview />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Marketplace > Hosting > Pressable" path={ context.path } />
+			<PressableOverview />
+		</>
+	);
 	next();
 };
 
 export const marketplaceWpcomContext: Callback = ( context, next ) => {
+	const { purchase_type } = context.query;
+	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = <WpcomOverview />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Marketplace > Hosting > WordPress.com" path={ context.path } />
+			<WpcomOverview defaultMarketplaceType={ purchaseType } />
+		</>
+	);
 	next();
 };
 
 export const checkoutContext: Callback = ( context, next ) => {
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = <Checkout />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Marketplace > Checkout" path={ context.path } />
+			<Checkout />
+		</>
+	);
 	next();
 };
 
 export const assignLicenseContext: Callback = ( context, next ) => {
 	const { page, search } = context.query;
-	const state = context.store.getState();
-	const sites = getSites( state );
-	const currentPage = parseInt( page ) || 1;
+	const initialPage = parseInt( page ) || 1;
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
-		<AssignLicense sites={ sites } currentPage={ currentPage } search={ search || '' } />
+		<>
+			<PageViewTracker title="Marketplace > Assign License" path={ context.path } />
+			<AssignLicense initialPage={ initialPage } initialSearch={ search || '' } />
+		</>
 	);
 	next();
 };
 
 export const downloadProductsContext: Callback = ( context, next ) => {
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
-	context.primary = <DownloadProducts />;
+	context.primary = (
+		<>
+			<PageViewTracker title="Marketplace > Download Products" path={ context.path } />
+			<DownloadProducts />
+		</>
+	);
 	next();
 };

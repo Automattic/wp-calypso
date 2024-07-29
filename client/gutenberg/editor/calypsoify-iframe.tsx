@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { getQueryArg } from '@wordpress/url';
+import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map, pickBy, flowRight } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -218,7 +218,11 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		if ( this.disableRedirects ) {
 			return;
 		}
-		window.location.replace( this.props.iframeUrl );
+
+		// We have to remove the `frame-nonce` after the redirection to prevent it
+		// from being thought to be embedded in an iframe.
+		const redirectUrl = removeQueryArgs( this.props.iframeUrl, 'frame-nonce' );
+		window.location.replace( redirectUrl );
 	};
 
 	onMessage = ( { data, origin }: MessageEvent ) => {

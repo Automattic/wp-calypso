@@ -23,13 +23,12 @@ import {
 	usePaymentMethod,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
-import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { styled, joinClasses, getContactDetailsType } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -53,18 +52,19 @@ import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-val
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
+import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
-import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
@@ -82,7 +82,7 @@ import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
-import { CheckoutSummaryFeaturedList, WPCheckoutOrderSummary } from './wp-checkout-order-summary';
+import { WPCheckoutOrderSummary } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -226,26 +226,17 @@ const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
 
 /* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
 function CheckoutSidebarNudge( {
-	responseCart,
-	siteId,
-	formStatus,
-	changeSelection,
 	addItemToCart,
-	isCartPendingUpdate,
 	areThereDomainProductsInCart,
 }: {
-	responseCart: ResponseCart;
-	siteId: number | undefined;
-	formStatus: FormStatus;
-	changeSelection: OnChangeItemVariant;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
-	isCartPendingUpdate: boolean;
 	areThereDomainProductsInCart: boolean;
 } ) {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const isWcMobile = isWcMobileApp();
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -264,15 +255,6 @@ function CheckoutSidebarNudge( {
 		return (
 			<CheckoutSidebarNudgeWrapper>
 				<CheckoutNextSteps responseCart={ responseCart } />
-
-				{ shouldUseCheckoutV2 && (
-					<CheckoutSummaryFeaturedList
-						responseCart={ responseCart }
-						siteId={ siteId }
-						isCartUpdating={ FormStatus.VALIDATING === formStatus }
-						onChangeSelection={ changeSelection }
-					/>
-				) }
 			</CheckoutSidebarNudgeWrapper>
 		);
 	}
@@ -294,16 +276,7 @@ function CheckoutSidebarNudge( {
 				<SecondaryCartPromotions
 					responseCart={ responseCart }
 					addItemToCart={ addItemToCart }
-					isCartPendingUpdate={ isCartPendingUpdate }
 					isPurchaseRenewal={ isPurchaseRenewal }
-				/>
-			) }
-			{ shouldUseCheckoutV2 && (
-				<CheckoutSummaryFeaturedList
-					responseCart={ responseCart }
-					siteId={ siteId }
-					isCartUpdating={ FormStatus.VALIDATING === formStatus }
-					onChangeSelection={ changeSelection }
 				/>
 			) }
 		</CheckoutSidebarNudgeWrapper>
@@ -328,6 +301,7 @@ export default function CheckoutMainContent( {
 	customizedPreviousPath,
 	loadingHeader,
 	onStepChanged,
+	showSitePreview = false,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changeSelection: OnChangeItemVariant;
@@ -346,8 +320,9 @@ export default function CheckoutMainContent( {
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
+	showSitePreview?: boolean;
 } ) {
-	const locale = useLocale();
+	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const {
 		responseCart,
@@ -358,10 +333,25 @@ export default function CheckoutMainContent( {
 		removeCoupon,
 		couponStatus,
 	} = useShoppingCart( cartKey );
-	const translate = useTranslate();
+
+	const searchParams = new URLSearchParams( window.location.search );
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
+	const selectedSiteData = useSelector( getSelectedSite );
+	const wpcomDomain = useSelector( ( state ) =>
+		getWpComDomainBySiteId( state, selectedSiteData?.ID )
+	);
+
+	// Only show the site preview for WPCOM domains that have a site connected to the site id
+	const shouldShowSitePreview =
+		showSitePreview && selectedSiteData && wpcomDomain && ! isSignupCheckout && ! isDIFMInCart;
+
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const reduxDispatch = useReduxDispatch();
-	usePresalesChat( getPresalesChatKey( responseCart ), responseCart?.products?.length > 0 );
+
+	const isPresalesChatEnabled =
+		! useSelector( getIsOnboardingAffiliateFlow ) && responseCart?.products?.length > 0;
+	usePresalesChat( getPresalesChatKey( responseCart ), isPresalesChatEnabled );
 
 	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
@@ -381,8 +371,6 @@ export default function CheckoutMainContent( {
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );
-
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -519,10 +507,7 @@ export default function CheckoutMainContent( {
 		);
 	}
 
-	const nextStepButtonText =
-		locale.startsWith( 'en' ) || i18n.hasTranslation( 'Continue to payment' )
-			? translate( 'Continue to payment', { textOnly: true } )
-			: translate( 'Continue', { textOnly: true } );
+	const nextStepButtonText = translate( 'Continue to payment', { textOnly: true } );
 
 	return (
 		<WPCheckoutWrapper>
@@ -549,32 +534,23 @@ export default function CheckoutMainContent( {
 									</CheckoutSummaryTitlePrice>
 								</CheckoutSummaryTitleContent>
 							</CheckoutSummaryTitleLink>
-							<CheckoutSummaryBody
-								className="checkout__summary-body"
-								shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-							>
-								{ shouldUseCheckoutV2 && (
-									<WPCheckoutOrderReview
-										removeProductFromCart={ removeProductFromCart }
-										replaceProductInCart={ replaceProductInCart }
-										couponFieldStateProps={ couponFieldStateProps }
-										removeCouponAndClearField={ removeCouponAndClearField }
-										isCouponFieldVisible={ isCouponFieldVisible }
-										setCouponFieldVisible={ setCouponFieldVisible }
-										onChangeSelection={ changeSelection }
-										siteUrl={ siteUrl }
-										createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-									/>
+
+							<CheckoutSummaryBody className="checkout__summary-body">
+								{ shouldShowSitePreview && (
+									<div className="checkout-site-preview">
+										<SitePreviewWrapper>
+											<SitePreview showEditSite={ false } showSiteDetails={ false } />
+										</SitePreviewWrapper>
+									</div>
 								) }
 
-								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
-								<CheckoutSidebarNudge
-									responseCart={ responseCart }
+								<WPCheckoutOrderSummary
 									siteId={ siteId }
-									formStatus={ formStatus }
-									changeSelection={ changeSelection }
+									onChangeSelection={ changeSelection }
+									showFeaturesList
+								/>
+								<CheckoutSidebarNudge
 									addItemToCart={ addItemToCart }
-									isCartPendingUpdate={ isCartPendingUpdate }
 									areThereDomainProductsInCart={ areThereDomainProductsInCart }
 								/>
 							</CheckoutSummaryBody>
@@ -589,30 +565,30 @@ export default function CheckoutMainContent( {
 				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
-					{ ! shouldUseCheckoutV2 && (
-						<CheckoutStepBody
-							onError={ onReviewError }
-							className="wp-checkout__review-order-step"
-							stepId="review-order-step"
-							isStepActive={ false }
-							isStepComplete={ true }
-							titleContent={ <OrderReviewTitle /> }
-							completeStepContent={
-								<WPCheckoutOrderReview
-									removeProductFromCart={ removeProductFromCart }
-									replaceProductInCart={ replaceProductInCart }
-									couponFieldStateProps={ couponFieldStateProps }
-									removeCouponAndClearField={ removeCouponAndClearField }
-									isCouponFieldVisible={ isCouponFieldVisible }
-									setCouponFieldVisible={ setCouponFieldVisible }
-									onChangeSelection={ changeSelection }
-									siteUrl={ siteUrl }
-									createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-								/>
-							}
-							formStatus={ formStatus }
-						/>
-					) }
+
+					<CheckoutStepBody
+						onError={ onReviewError }
+						className="wp-checkout__review-order-step"
+						stepId="review-order-step"
+						isStepActive={ false }
+						isStepComplete
+						titleContent={ <OrderReviewTitle /> }
+						completeStepContent={
+							<WPCheckoutOrderReview
+								removeProductFromCart={ removeProductFromCart }
+								replaceProductInCart={ replaceProductInCart }
+								couponFieldStateProps={ couponFieldStateProps }
+								removeCouponAndClearField={ removeCouponAndClearField }
+								isCouponFieldVisible={ isCouponFieldVisible }
+								setCouponFieldVisible={ setCouponFieldVisible }
+								onChangeSelection={ changeSelection }
+								siteUrl={ siteUrl }
+								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							/>
+						}
+						formStatus={ formStatus }
+					/>
+
 					{ contactDetailsType !== 'none' && (
 						<CheckoutStep
 							className="checkout-contact-form-step"
@@ -736,15 +712,15 @@ export default function CheckoutMainContent( {
 							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
 						} }
 					/>
-					{ ! isAkismetCheckout() && ! shouldUseCheckoutV2 && (
-						<CouponFieldArea
-							isCouponFieldVisible={ isCouponFieldVisible }
-							setCouponFieldVisible={ setCouponFieldVisible }
-							isPurchaseFree={ isPurchaseFree }
-							couponStatus={ couponStatus }
-							couponFieldStateProps={ couponFieldStateProps }
-						/>
-					) }
+
+					<CouponFieldArea
+						isCouponFieldVisible={ isCouponFieldVisible }
+						setCouponFieldVisible={ setCouponFieldVisible }
+						isPurchaseFree={ isPurchaseFree }
+						couponStatus={ couponStatus }
+						couponFieldStateProps={ couponFieldStateProps }
+					/>
+
 					<CheckoutTermsAndCheckboxes
 						is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
 						setIs3PDAccountConsentAccepted={ setIs3PDAccountConsentAccepted }
@@ -866,27 +842,16 @@ const CheckoutSummaryTitlePrice = styled.span`
 	}
 `;
 
-const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
+const CheckoutSummaryBody = styled.div`
 	box-sizing: border-box;
 	margin: 0 auto;
 	max-width: 600px;
 	width: 100%;
 	display: none;
-
-	${ ( props ) =>
-		props.shouldUseCheckoutV2 ? `padding: 32px 24px 24px 24px;` : 'padding: 24px;' }
+	padding: 24px;
 
 	.is-visible & {
-		${ ( props ) =>
-			props.shouldUseCheckoutV2
-				? ` display: grid;
-			grid-template-areas:
-			"preview"
-			"review"
-			"summary"
-			"nudge"
-			"features";`
-				: `display: block;` };
+		display: block;
 	}
 
 	& .checkout-site-preview {
@@ -899,19 +864,7 @@ const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		${ ( props ) =>
-			props.shouldUseCheckoutV2 ? `padding: 50px 24px 24px 24px;` : 'padding: 24px;' }
-
-		.is-visible & {
-			${ ( props ) =>
-				props.shouldUseCheckoutV2 &&
-				`grid-template-areas:
-			"preview preview"
-			"review review"
-			"summary summary"
-			"features nudge"
-			` };
-		}
+		padding: 24px;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -920,17 +873,7 @@ const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 
 		.is-visible &,
 		& {
-			${ ( props ) =>
-				props.shouldUseCheckoutV2
-					? `grid-template-areas:
-					"preview"
-					"review"
-					"summary"
-					"nudge"
-					"features";
-					display: grid;
-			`
-					: `display: block;` };
+			display: block;
 		}
 
 		& .card {
@@ -1218,6 +1161,31 @@ const WPCheckoutSidebarContent = styled.div`
 
 		.rtl & {
 			padding: 144px 64px 0 24px;
+		}
+	}
+`;
+const SitePreviewWrapper = styled.div`
+	.home-site-preview {
+		margin-bottom: 1.5em;
+		padding: 0.5em;
+		box-shadow:
+			0 0 0 1px var( --color-border-subtle ),
+			rgba( 0, 0, 0, 0.2 ) 0 7px 30px -10px;
+		border-radius: 6px;
+		& .home-site-preview__thumbnail-wrapper {
+			aspect-ratio: 16 / 9;
+			border-radius: 6px;
+			box-shadow: none;
+			min-width: 100%;
+			&:hover {
+				box-shadow: unset;
+				& .home-site-preview__thumbnail {
+					opacity: unset;
+				}
+			}
+		}
+		& home-site-preview__thumbnail {
+			opacity: 1;
 		}
 	}
 `;

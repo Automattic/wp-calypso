@@ -1,11 +1,12 @@
 import { Button, FormInputValidation, FormLabel, Spinner } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { HostingCardHeading, HostingCardDescription } from 'calypso/components/hosting-card';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { useGithubRepositoryChecksQuery } from 'calypso/my-sites/github-deployments/use-github-repository-checks-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
@@ -140,10 +141,18 @@ export const GitHubConnectionForm = ( {
 		>
 			<div className="github-deployments-connect-repository__content">
 				<div className="github-deployments-connect-repository__configs">
+					<HostingCardHeading
+						title={ deploymentId ? __( 'Manage a repository' ) : __( 'Connect a repository' ) }
+					/>
+					<HostingCardDescription>
+						{ __(
+							'Configure a repository connection to deploy a GitHub repository to your WordPress.com site.'
+						) }
+					</HostingCardDescription>
 					<FormFieldset className="github-deployments-connect-repository__repository">
 						<FormLabel>{ __( 'Repository' ) }</FormLabel>
 						<div
-							className={ classNames( 'github-deployments-connect-repository__repository-input', {
+							className={ clsx( 'github-deployments-connect-repository__repository-input', {
 								'github-deployments-connect-repository__repository-input--has-error':
 									displayMissingRepositoryError,
 							} ) }

@@ -1,7 +1,6 @@
 import { Button } from '@wordpress/components';
 import { Icon, check, lock } from '@wordpress/icons';
-import classNames from 'classnames';
-import React from 'react';
+import clsx from 'clsx';
 import { DateControlPickerShortcutsProps } from './types';
 
 const DateControlPickerShortcuts = ( {
@@ -17,7 +16,7 @@ const DateControlPickerShortcuts = ( {
 
 					return (
 						<li
-							className={ classNames( 'date-control-picker-shortcuts__shortcut', {
+							className={ clsx( 'date-control-picker-shortcuts__shortcut', {
 								[ 'is-selected' ]: isSelected,
 							} ) }
 							key={ shortcut.id || idx }

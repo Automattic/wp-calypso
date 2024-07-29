@@ -3,7 +3,6 @@ import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automatti
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
-import SupportIcon from './assets/images/support.svg';
 import Theme2Image from './assets/images/theme-2.jpg';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
@@ -53,11 +52,6 @@ import {
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
 	FEATURE_ECOMMERCE_MARKETING,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-	FEATURE_EMAIL_SUPPORT,
-	FEATURE_EMAIL_SUPPORT_SIGNUP,
 	FEATURE_FILTERING_V2,
 	FEATURE_FREE_BLOG_DOMAIN,
 	FEATURE_FREE_DOMAIN,
@@ -77,9 +71,6 @@ import {
 	FEATURE_JETPACK_VIDEOPRESS_STORAGE,
 	FEATURE_JETPACK_VIDEOPRESS_UNBRANDED,
 	FEATURE_LANGUAGE_SUPPORT_V2,
-	FEATURE_LIVE_CHAT_SUPPORT,
-	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
-	FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 	FEATURE_MALWARE_SCANNING_DAILY,
 	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 	FEATURE_MANAGE,
@@ -186,7 +177,6 @@ import {
 	FEATURE_ALWAYS_ONLINE,
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
-	FEATURE_SUPPORT_EMAIL,
 	FEATURE_DESIGN_TOOLS,
 	FEATURE_PREMIUM_THEMES,
 	FEATURE_WORDADS,
@@ -288,7 +278,6 @@ import {
 	FEATURE_DISPLAY_PRODUCTS_BRAND,
 	FEATURE_PRODUCT_ADD_ONS,
 	FEATURE_ASSEMBLED_KITS,
-	FEATURE_MIN_MAX_QTY,
 	FEATURE_STOCK_NOTIFS,
 	FEATURE_DYNAMIC_UPSELLS,
 	FEATURE_LOYALTY_PROG,
@@ -319,54 +308,56 @@ import {
 	FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
 	FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
 	FEATURE_WOOCOMMERCE_HOSTING,
+	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+	FEATURE_PRIORITY_24_7_SUPPORT,
+	FEATURE_SOCIAL_AUTO_SHARE,
+	FEATURE_SOCIAL_SHARES_1000,
+	FEATURE_SOCIAL_ENHANCED_PUBLISHING,
+	FEATURE_SOCIAL_IMAGE_GENERATOR,
 } from './constants';
-import {
-	isPersonalPlan,
-	isPremiumPlan,
-	isEcommercePlan,
-	isBusinessPlan,
-	isFreePlan,
-	isWooExpressPlan,
-} from './main';
 import type { FeatureList } from './types';
 
 const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	switch ( variation ) {
 		case 'woo':
 			return i18n.translate(
-				'%(commission)d%% transaction fee for standard WooCommerce payments (+ standard processing fee)',
+				'%(commission)d%% transaction fee for standard WooCommerce payments {{br}}{{/br}}(+ standard processing fee)',
 				{
+					components: { br: <br /> },
 					args: { commission },
 				}
 			);
 
 		case 'all':
 			return i18n.translate(
-				'%(commission)d%% transaction fee for all payment features (+ standard processing fee)',
+				'%(commission)d%% transaction fee for all payment features {{br}}{{/br}}(+ standard processing fee)',
 				{
+					components: { br: <br /> },
 					args: { commission },
 				}
 			);
 
 		case 'regular':
 			return i18n.translate(
-				'%(commission)d%% transaction fee for standard payments (+ standard processing fee)',
+				'%(commission)d%% transaction fee for standard payments {{br}}{{/br}}(+ standard processing fee)',
 				{
+					components: { br: <br /> },
 					args: { commission },
 				}
 			);
 
 		default:
 			return i18n.translate(
-				'%(commission)d%% transaction fee for payments (+ standard processing fee)',
+				'%(commission)d%% transaction fee for payments {{br}}{{/br}}(+ standard processing fee)',
 				{
+					components: { br: <br /> },
 					args: { commission },
 				}
 			);
 	}
 };
 
-export const FEATURES_LIST: FeatureList = {
+const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BLANK ]: {
 		getSlug: () => FEATURE_BLANK,
 		getTitle: () => '',
@@ -522,36 +513,14 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Premium themes' ),
 		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
-		getConditionalTitle: ( planSlug ) => {
-			if ( ! planSlug ) {
-				return '';
-			}
-			if ( isPersonalPlan( planSlug ) ) {
-				return i18n.translate( 'Dozens of premium themes' );
-			}
-			if (
-				isPremiumPlan( planSlug ) ||
-				isBusinessPlan( planSlug ) ||
-				isEcommercePlan( planSlug )
-			) {
-				return i18n.translate( 'Unlimited premium themes' );
-			}
-			return '—';
-		},
 	},
 
 	[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-		getTitle: ( { planSlug = undefined } = {} ) => {
-			if ( planSlug && isWooExpressPlan( planSlug ) ) {
-				return i18n.translate( 'Beautiful themes' );
-			}
+		getTitle: () => {
 			return i18n.translate( 'Access to all premium themes' );
 		},
-		getDescription: ( { planSlug = undefined } = {} ) => {
-			if ( planSlug && isWooExpressPlan( planSlug ) ) {
-				return i18n.translate( 'Switch between a collection of beautiful themes.' );
-			}
+		getDescription: () => {
 			return i18n.translate( 'Switch between all of our premium design themes.' );
 		},
 	},
@@ -586,12 +555,6 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Cloudflare Web Analytics' ),
 	},
 
-	[ FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP,
-		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
-		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
-	},
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
 		getSlug: () => FEATURE_FREE_THEMES_SIGNUP,
 		getTitle: () => i18n.translate( 'Dozens of free themes' ),
@@ -940,47 +903,6 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () => i18n.translate( 'Get support through our ' + 'user community forums.' ),
 	},
 
-	[ FEATURE_EMAIL_SUPPORT ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
-		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
-	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate( 'Live chat support to help you get started with your site.' ),
-	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Live chat is available 24 hours a day from Monday through Friday. ' +
-					'You can also email us any day of the week for personalized support.'
-			),
-	},
-
-	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		getTitle: () => i18n.translate( 'Email & live chat support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Live chat is available 24/7. ' +
-					'You can also email us any day of the week for personalized support.'
-			),
-	},
-
-	[ FEATURE_LIVE_CHAT_SUPPORT ]: {
-		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT,
-		getTitle: () => i18n.translate( 'Live chat support' ),
-		getDescription: () =>
-			i18n.translate( 'Realtime help and guidance from professional WordPress experts.' ),
-	},
-
 	[ FEATURE_PREMIUM_SUPPORT ]: {
 		getSlug: () => FEATURE_PREMIUM_SUPPORT,
 		getTitle: () => i18n.translate( 'Priority Support' ),
@@ -1146,7 +1068,6 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Ship physical products in a snap and show live rates from shipping carriers like UPS and other shipping options.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 
@@ -1579,18 +1500,6 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () => i18n.translate( '24/7 expert support' ),
 	},
 
-	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
-		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		getTitle: () => i18n.translate( 'Live chat support' ),
-		getDescription: () => i18n.translate( 'Live chat support' ),
-	},
-
-	[ FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		getTitle: () => i18n.translate( 'Live chat support' ),
-		getDescription: () => i18n.translate( 'Live chat support' ),
-	},
-
 	[ FEATURE_JETPACK_VIDEOPRESS ]: {
 		getSlug: () => FEATURE_JETPACK_VIDEOPRESS,
 		getTitle: () => i18n.translate( 'Unlimited users' ),
@@ -1755,31 +1664,6 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Commission fee for standard payment features (plus standard processing\u00A0fee)'
 			),
-		getConditionalTitle: ( planSlug ) => {
-			if ( ! planSlug ) {
-				return '—';
-			}
-
-			if ( isFreePlan( planSlug ) ) {
-				return '10%';
-			}
-			if ( isPersonalPlan( planSlug ) ) {
-				return '8%';
-			}
-
-			if ( isPremiumPlan( planSlug ) ) {
-				return '4%';
-			}
-
-			if ( isBusinessPlan( planSlug ) ) {
-				return '2%';
-			}
-
-			if ( isEcommercePlan( planSlug ) ) {
-				return '0%';
-			}
-			return '—';
-		},
 	},
 	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_WOO_FEATURES,
@@ -1787,16 +1671,6 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Commission fee for standard WooCommerce payment features (plus standard processing\u00A0fee)'
 			),
-		getConditionalTitle: ( planSlug ) => {
-			if ( ! planSlug ) {
-				return '';
-			}
-
-			if ( isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ) {
-				return '0%';
-			}
-			return '—';
-		},
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
@@ -1952,15 +1826,6 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
 	},
-	[ FEATURE_SUPPORT_EMAIL ]: {
-		getSlug: () => FEATURE_SUPPORT_EMAIL,
-		getTitle: () => i18n.translate( 'Support via email' ),
-		getIcon: () => <img src={ SupportIcon } alt={ i18n.translate( 'Customer support' ) } />,
-		getAlternativeTitle: () => i18n.translate( 'Customer support' ),
-		getCompareTitle: () => i18n.translate( 'Unlimited support via emails.' ),
-		getDescription: () =>
-			i18n.translate( 'Fast, friendly, expert WordPress help, whenever you need it.' ),
-	},
 	[ FEATURE_DESIGN_TOOLS ]: {
 		getSlug: () => FEATURE_DESIGN_TOOLS,
 		getTitle: () => i18n.translate( 'Avant-garde design tools' ),
@@ -2011,8 +1876,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
-		getTitle: () => i18n.translate( 'Global CDN with 28+ locations' ),
-		getAlternativeTitle: () => i18n.translate( 'Global CDN' ),
+		getTitle: () => i18n.translate( 'Global CDN' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Rely on ultra-fast site speeds, from any location on earth.' ),
 		getDescription: () =>
@@ -2040,8 +1904,9 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SECURITY_MALWARE ]: {
 		getSlug: () => FEATURE_SECURITY_MALWARE,
-		getTitle: () => i18n.translate( 'Managed malware protection' ),
-		getDescription: () => i18n.translate( 'Stay safe with automated malware scanning.' ),
+		getTitle: () => i18n.translate( 'Malware detection & removal' ),
+		getDescription: () =>
+			i18n.translate( 'Stay safe with automated malware scanning and removal.' ),
 	},
 	[ FEATURE_REAL_TIME_SECURITY_SCANS ]: {
 		getSlug: () => FEATURE_REAL_TIME_SECURITY_SCANS,
@@ -2067,16 +1932,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
-		getTitle: () => {
-			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowNewString =
-				( localeSlug && englishLocales.includes( localeSlug ) ) ||
-				i18n.hasTranslation( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' );
-
-			return shouldShowNewString
-				? i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' )
-				: i18n.translate( 'SFTP/SSH, WP-CLI, Git tools' );
-		},
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
@@ -2110,7 +1966,6 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SELL_SHIP,
 		getTitle: () => i18n.translate( 'Sell and ship products' ),
 		getDescription: () => i18n.translate( 'Sell and ship out physical goods from your site.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SELL_INTERNATIONALLY ]: {
@@ -2218,11 +2073,10 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
 		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
-		getTitle: () => i18n.translate( 'Min/max order quantity' ),
+		getTitle: () => i18n.translate( 'Min/max order quantities' ),
 		getDescription: () =>
-			i18n.translate(
-				'Set minimum and maximum quantity limits for orders to prevent over-ordering or under-ordering.'
-			),
+			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CUSTOM_STORE ]: {
 		getSlug: () => FEATURE_CUSTOM_STORE,
@@ -2231,7 +2085,6 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Offer customers a personalized shopping experience that they cannot find anywhere else.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins and themes' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_INVENTORY ]: {
@@ -2239,7 +2092,6 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Inventory management' ),
 		getDescription: () =>
 			i18n.translate( 'Stay on top of your stock with inventory management tools.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CHECKOUT ]: {
@@ -2249,7 +2101,6 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Reduce cart abandonment and increase sales with a fast, low-friction checkout.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_ACCEPT_PAYMENTS_V2 ]: {
@@ -2257,7 +2108,6 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Payments in 60+ countries' ),
 		getDescription: () =>
 			i18n.translate( 'Accept payments for goods and services, just about anywhere.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SALES_REPORTS ]: {
@@ -2267,7 +2117,6 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Stay up to date on sales and identify trends with intuitive sales reports.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_EXTENSIONS ]: {
@@ -2275,7 +2124,6 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Extensions marketplace' ),
 		getDescription: () =>
 			i18n.translate( 'Find and install powerful add-ons for your site, all in one place.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	// FOLLOWING ARE JETPACK FEATURES BUNDLED IN WPCOM
@@ -2306,22 +2154,32 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Shares on social media' ),
 		getDescription: () =>
 			i18n.translate( 'Automatically share your latest post on Facebook, Tumblr, and more.' ),
-		getConditionalTitle: ( planSlug ) => {
-			if ( ! planSlug ) {
-				return '';
-			}
-			if ( isPersonalPlan( planSlug ) || isFreePlan( planSlug ) ) {
-				return i18n.translate( '%d shares per month', { args: [ 30 ] } );
-			}
-			if (
-				isPremiumPlan( planSlug ) ||
-				isBusinessPlan( planSlug ) ||
-				isEcommercePlan( planSlug )
-			) {
-				return i18n.translate( 'Unlimited shares' );
-			}
-			return '';
-		},
+	},
+	[ FEATURE_SOCIAL_AUTO_SHARE ]: {
+		getSlug: () => FEATURE_SOCIAL_AUTO_SHARE,
+		getTitle: () => i18n.translate( 'Automatically share your posts and products on social media' ),
+		getDescription: () =>
+			i18n.translate(
+				'Automatically share to Facebook, Instagram, Threads, LinkedIn, Mastodon, Tumblr, and Nextdoor.'
+			),
+	},
+	[ FEATURE_SOCIAL_SHARES_1000 ]: {
+		getSlug: () => FEATURE_SOCIAL_SHARES_1000,
+		getTitle: () => i18n.translate( 'Share an unlimited number of posts' ),
+		getDescription: () => i18n.translate( 'Share an unlimited number of posts.' ),
+	},
+	[ FEATURE_SOCIAL_ENHANCED_PUBLISHING ]: {
+		getSlug: () => FEATURE_SOCIAL_ENHANCED_PUBLISHING,
+		getTitle: () => i18n.translate( 'Upload custom images or videos with your posts' ),
+		getDescription: () => i18n.translate( 'Upload custom images or videos with your posts.' ),
+	},
+	[ FEATURE_SOCIAL_IMAGE_GENERATOR ]: {
+		getSlug: () => FEATURE_SOCIAL_IMAGE_GENERATOR,
+		getTitle: () => i18n.translate( 'Automatically generate images for posts' ),
+		getDescription: () =>
+			i18n.translate(
+				'Automatically generate custom images for posts using a template or a custom text.'
+			),
 	},
 	[ FEATURE_CONTACT_FORM_JP ]: {
 		getSlug: () => FEATURE_CONTACT_FORM_JP,
@@ -2438,7 +2296,6 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Premium store themes' ),
 		getDescription: () =>
 			i18n.translate( 'Jumpstart your store’s design with a professionally designed theme.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_STORE_DESIGN ]: {
@@ -2448,150 +2305,140 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Fine-tune your store’s design with on-brand styles and drag and drop layout editing.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_UNLIMITED_PRODUCTS ]: {
 		getSlug: () => FEATURE_UNLIMITED_PRODUCTS,
 		getTitle: () => i18n.translate( 'Unlimited products' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Grow your store as big as you want with the ability to add unlimited products and services.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_DISPLAY_PRODUCTS_BRAND ]: {
 		getSlug: () => FEATURE_DISPLAY_PRODUCTS_BRAND,
 		getTitle: () => i18n.translate( 'Display products by brand' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Create, assign and list brands for products, and allow customers to view by brand.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_PRODUCT_ADD_ONS ]: {
 		getSlug: () => FEATURE_PRODUCT_ADD_ONS,
 		getTitle: () => i18n.translate( 'Product add-ons' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Increase your revenue with add-ons like gift wrapping or personalizations like engraving.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_ASSEMBLED_KITS ]: {
 		getSlug: () => FEATURE_ASSEMBLED_KITS,
 		getTitle: () => i18n.translate( 'Assembled products and kits' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Give customers the freedom to build their own products utilizing your existing items.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
-		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
-	},
-	[ FEATURE_MIN_MAX_QTY ]: {
-		getSlug: () => FEATURE_MIN_MAX_QTY,
-		getTitle: () => i18n.translate( 'Min/max order quantities' ),
-
-		getDescription: () =>
-			i18n.translate( 'Specify the minimum and maximum allowed product quantities for orders.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_STOCK_NOTIFS ]: {
 		getSlug: () => FEATURE_STOCK_NOTIFS,
 		getTitle: () => i18n.translate( 'Back-in-stock notifications' ),
-
 		getDescription: () =>
 			i18n.translate( 'Automatically notify customers when your products are restocked.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_DYNAMIC_UPSELLS ]: {
 		getSlug: () => FEATURE_DYNAMIC_UPSELLS,
 		getTitle: () => i18n.translate( 'Dynamic product upsells' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Earn more revenue with automated upsell and cross-sell product recommendations.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_LOYALTY_PROG ]: {
 		getSlug: () => FEATURE_LOYALTY_PROG,
 		getTitle: () => i18n.translate( 'Referral and loyalty programs' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Boost organic sales with a customer referral program and offer free gifts or coupons as a reward.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CUSTOM_MARKETING_AUTOMATION ]: {
 		getSlug: () => FEATURE_CUSTOM_MARKETING_AUTOMATION,
 		getTitle: () => i18n.translate( 'Custom marketing automation' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Advanced email marketing functionality, including subscriber segmentation, advanced analytics, and automation.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_BULK_DISCOUNTS ]: {
 		getSlug: () => FEATURE_BULK_DISCOUNTS,
 		getTitle: () => i18n.translate( 'Offer bulk discounts' ),
-
 		getDescription: () => i18n.translate( 'Offer personalized packages and bulk discounts.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_INVENTORY_MGMT ]: {
 		getSlug: () => FEATURE_INVENTORY_MGMT,
 		getTitle: () => i18n.translate( 'Inventory management' ),
-
 		getDescription: () =>
 			i18n.translate( 'Keep inventory up-to-date with POS integrations and real-time tracking.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_STREAMLINED_CHECKOUT ]: {
 		getSlug: () => FEATURE_STREAMLINED_CHECKOUT,
 		getTitle: () => i18n.translate( 'Streamlined, extendable checkout' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Remove the friction from checkout by giving your customers multiple ways to pay.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SELL_60_COUNTRIES ]: {
 		getSlug: () => FEATURE_SELL_60_COUNTRIES,
 		getTitle: () => i18n.translate( 'Sell in 60+ countries' ),
-
 		getDescription: () => i18n.translate( 'Grow globally by accepting 135+ currencies.' ),
-		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SHIPPING_INTEGRATIONS ]: {
 		getSlug: () => FEATURE_SHIPPING_INTEGRATIONS,
 		getTitle: () => i18n.translate( 'Integrations with top shipping carriers' ),
-
 		getDescription: () =>
 			i18n.translate(
 				'Get real-time shipping prices, print labels and give your customers tracking codes.'
 			),
-		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
+		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+		getTitle: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'Fast support from our expert team' )
+				? i18n.translate( 'Fast support from our expert team' )
+				: i18n.translate( 'Expert support' ),
+		getDescription: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'Prompt support from our expert, friendly Happiness team' )
+				? i18n.translate( 'Prompt support from our expert, friendly Happiness team' )
+				: i18n.translate( 'Expert support' ),
+	},
+	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
+		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
+		getTitle: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'Priority 24/7 support from our expert team' )
+				? i18n.translate( 'Priority 24/7 support from our expert team' )
+				: i18n.translate( '24/7 priority support' ),
+		getDescription: () =>
+			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
+			i18n.hasTranslation( 'The fastest 24/7 support from our expert, friendly Happiness team' )
+				? i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' )
+				: i18n.translate( '24/7 priority support' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 
@@ -2768,3 +2615,5 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	/* END: Sensei Features */
 };
+
+export { FEATURES_LIST };

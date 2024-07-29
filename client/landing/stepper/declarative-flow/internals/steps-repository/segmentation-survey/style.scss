@@ -1,0 +1,7 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.segmentation-survey-step {
+	@media (max-width: $break-medium) {
+		margin: 0 24px;
+	}
+}

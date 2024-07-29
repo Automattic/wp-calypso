@@ -9,7 +9,6 @@ import type { GridPlan } from '../types';
 
 interface PlanFeatures2023GridHeaderPriceProps {
 	planSlug: PlanSlug;
-	planUpgradeCreditsApplicable?: number | null;
 	currentSitePlanSlug?: string | null;
 	visibleGridPlans: GridPlan[];
 }
@@ -133,7 +132,6 @@ const HeaderPriceContainer = styled.div`
 
 const PlanFeatures2023GridHeaderPrice = ( {
 	planSlug,
-	planUpgradeCreditsApplicable,
 	visibleGridPlans,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
 	const translate = useTranslate();
@@ -149,11 +147,10 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	 * then we do not show any discount messaging as per Automattic/martech#1927
 	 * We currently only support the `One time discount` in some currencies
 	 */
-	const isGridPlanOneTimeDiscounted =
-		Boolean( discountedPrice.monthly ) && ! planUpgradeCreditsApplicable;
-	const isAnyVisibleGridPlanOneTimeDiscounted =
-		visibleGridPlans.some( ( { pricing } ) => pricing.discountedPrice.monthly ) &&
-		! planUpgradeCreditsApplicable;
+	const isGridPlanOneTimeDiscounted = Boolean( discountedPrice.monthly );
+	const isAnyVisibleGridPlanOneTimeDiscounted = visibleGridPlans.some(
+		( { pricing } ) => pricing.discountedPrice.monthly
+	);
 
 	const isGridPlanOnIntroOffer = introOffer && ! introOffer.isOfferComplete;
 	const isAnyVisibleGridPlanOnIntroOffer = visibleGridPlans.some(
@@ -175,7 +172,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 		return (
 			<HeaderPriceContainer>
 				{ ! current && (
-					<Badge className="plan-features-2023-grid__badge" isForIntroOffer={ true }>
+					<Badge className="plan-features-2023-grid__badge" isForIntroOffer>
 						{ translate( 'Limited Time Offer' ) }
 					</Badge>
 				) }
@@ -186,7 +183,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							rawPrice={ 0 }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
-							isSmallestUnit={ true }
+							isSmallestUnit
 							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							className="is-placeholder-price" // This is a placeholder price to keep the layout consistent
 							original
@@ -227,7 +224,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						rawPrice={ originalPrice.monthly }
 						displayPerMonthNotation={ false }
 						isLargeCurrency={ isLargeCurrency }
-						isSmallestUnit={ true }
+						isSmallestUnit
 						priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 						original
 					/>
@@ -236,7 +233,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						rawPrice={ discountedPrice.monthly }
 						displayPerMonthNotation={ false }
 						isLargeCurrency={ isLargeCurrency }
-						isSmallestUnit={ true }
+						isSmallestUnit
 						priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 						discounted
 					/>
@@ -248,7 +245,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	if ( isAnyVisibleGridPlanOneTimeDiscounted || isAnyVisibleGridPlanOnIntroOffer ) {
 		return (
 			<HeaderPriceContainer>
-				<Badge className="plan-features-2023-grid__badge" isHidden={ true }>
+				<Badge className="plan-features-2023-grid__badge" isHidden>
 					' '
 				</Badge>
 				{ isLargeCurrency ? (
@@ -258,7 +255,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							rawPrice={ 0 }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
-							isSmallestUnit={ true }
+							isSmallestUnit
 							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							className="is-placeholder-price" // This is a placeholder price to keep the layout consistent
 							original
@@ -268,7 +265,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							rawPrice={ originalPrice.monthly }
 							displayPerMonthNotation={ false }
 							isLargeCurrency={ isLargeCurrency }
-							isSmallestUnit={ true }
+							isSmallestUnit
 							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							discounted
 						/>
@@ -279,7 +276,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						rawPrice={ originalPrice.monthly }
 						displayPerMonthNotation={ false }
 						isLargeCurrency={ isLargeCurrency }
-						isSmallestUnit={ true }
+						isSmallestUnit
 						priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 					/>
 				) }
@@ -294,7 +291,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 				rawPrice={ originalPrice.monthly }
 				displayPerMonthNotation={ false }
 				isLargeCurrency={ isLargeCurrency }
-				isSmallestUnit={ true }
+				isSmallestUnit
 				priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 			/>
 		</HeaderPriceContainer>

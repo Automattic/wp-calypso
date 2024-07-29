@@ -1,7 +1,7 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 export default function ReaderLikeIcon( { liked, iconSize } ) {
-	const className = classnames( {
+	const className = clsx( {
 		'needs-offset': iconSize % 18 === 0,
 		'reader-star': true,
 	} );

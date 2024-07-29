@@ -1,4 +1,5 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
+import { useState, useEffect } from 'react';
 import { useOdieAssistantContext } from '../../context';
 import { uriTransformer } from './uri-transformer';
 
@@ -15,28 +16,39 @@ const CustomALink = ( {
 	children,
 	inline = true,
 }: {
-	href: string;
-	children: React.ReactNode;
+	href?: string;
+	children?: React.ReactNode;
 	inline?: boolean;
 } ) => {
 	const { trackEvent } = useOdieAssistantContext();
+	const [ transformedHref, setTransformedHref ] = useState( '' );
 
-	const classNames = classnames( 'odie-sources', {
+	useEffect( () => {
+		let urlHref = uriTransformer( href ?? '' );
+		try {
+			const url = new URL( urlHref, window.location.origin );
+			url.searchParams.set( 'help-center', 'wapuu' );
+			urlHref = url.toString();
+		} finally {
+			setTransformedHref( urlHref );
+		}
+	}, [ href ] );
+
+	const classNames = clsx( 'odie-sources', {
 		'odie-sources-inline': inline,
 	} );
-
-	const transformedHref = uriTransformer( href );
 
 	return (
 		<span className={ classNames }>
 			<a
 				className="odie-sources-link"
 				href={ transformedHref }
-				target="_blank"
+				target="_self"
 				rel="noopener noreferrer"
 				onClick={ () => {
 					trackEvent( 'chat_message_action_click', {
 						action: 'link',
+						in_chat_view: false,
 						href: transformedHref,
 					} );
 				} }

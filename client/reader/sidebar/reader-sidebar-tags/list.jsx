@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -36,7 +36,7 @@ export class ReaderSidebarTagsList extends Component {
 			<li className="reader-sidebar-tags__list">
 				<ul>{ this.renderItems() }</ul>
 				<a
-					className={ classnames( 'sidebar__menu-link', 'sidebar__menu-item--see-all-tags-link' ) }
+					className={ clsx( 'sidebar__menu-link', 'sidebar__menu-item--see-all-tags-link' ) }
 					href="/tags"
 					onClick={ this.trackTagsPageClick }
 				>

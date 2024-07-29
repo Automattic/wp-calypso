@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { MaterialIcon } from '@automattic/components';
-import { useChatWidget } from '@automattic/help-center/src/hooks';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { useHasEnTranslation, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useOpenZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -72,8 +72,10 @@ type StepProps = {
 
 export default function EducationalCotnentStep( { type, site, ...props }: StepProps ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const localizeUrl = useLocalizeUrl();
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget();
+	const { isOpeningZendeskWidget, openZendeskWidget } =
+		useOpenZendeskMessaging( 'pre-cancellation' );
 
 	switch ( type ) {
 		case 'education:loading-time':
@@ -236,37 +238,73 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 							) }
 						</li>
 						<li>
-							{ translate(
-								'Read more about domain connection {{link}}here{{/link}} or {{chat}}chat with a real person{{/chat}} right now.',
-								{
-									components: {
-										link: (
-											<Button
-												href={ localizeUrl(
-													'https://wordpress.com/support/domains/connect-existing-domain/'
-												) }
-												variant="link"
-											/>
-										),
-										chat: (
-											<Button
-												isBusy={ isOpeningChatWidget }
-												disabled={ isOpeningChatWidget }
-												onClick={ () => {
-													page( `/domains/manage/${ site.slug }` );
-													openChatWidget( {
-														message:
-															"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
-															props.cancellationReason,
-														siteUrl: site.URL,
-													} );
-												} }
-												variant="link"
-											/>
-										),
-									},
-								}
-							) }
+							{ hasEnTranslation(
+								'Read more about domain connection {{link}}here{{/link}} or {{chat}}contact us{{/chat}} right now.'
+							)
+								? translate(
+										'Read more about domain connection {{link}}here{{/link}} or {{chat}}contact us{{/chat}} right now.',
+										{
+											components: {
+												link: (
+													<Button
+														href={ localizeUrl(
+															'https://wordpress.com/support/domains/connect-existing-domain/'
+														) }
+														variant="link"
+													/>
+												),
+												chat: (
+													<Button
+														isBusy={ isOpeningZendeskWidget }
+														disabled={ isOpeningZendeskWidget }
+														onClick={ () => {
+															page( `/domains/manage/${ site.slug }` );
+															openZendeskWidget( {
+																message:
+																	"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
+																	props.cancellationReason,
+																siteUrl: site.URL,
+																siteId: site.ID,
+															} );
+														} }
+														variant="link"
+													/>
+												),
+											},
+										}
+								  )
+								: translate(
+										'Read more about domain connection {{link}}here{{/link}} or {{chat}}chat with a real person{{/chat}} right now.',
+										{
+											components: {
+												link: (
+													<Button
+														href={ localizeUrl(
+															'https://wordpress.com/support/domains/connect-existing-domain/'
+														) }
+														variant="link"
+													/>
+												),
+												chat: (
+													<Button
+														isBusy={ isOpeningZendeskWidget }
+														disabled={ isOpeningZendeskWidget }
+														onClick={ () => {
+															page( `/domains/manage/${ site.slug }` );
+															openZendeskWidget( {
+																message:
+																	"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
+																	props.cancellationReason,
+																siteUrl: site.URL,
+																siteId: site.ID,
+															} );
+														} }
+														variant="link"
+													/>
+												),
+											},
+										}
+								  ) }
 						</li>
 					</ul>
 				</Content>

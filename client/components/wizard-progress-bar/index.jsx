@@ -47,7 +47,7 @@ class WizardProgressBar extends Component {
 				<ProgressBar
 					value={ this.props.currentStep }
 					total={ this.props.numberOfSteps }
-					canGoBackwards={ true }
+					canGoBackwards
 				/>
 
 				{ this.renderNextButton() }

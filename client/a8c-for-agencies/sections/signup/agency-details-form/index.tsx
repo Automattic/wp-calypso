@@ -1,4 +1,6 @@
 import { Button, Gridicon, FormLabel } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import SearchableDropdown from 'calypso/a8c-for-agencies/components/searchable-dropdown';
@@ -8,6 +10,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MultiCheckbox, { ChangeList } from 'calypso/components/forms/multi-checkbox';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
+import useSignupFormValidation from './hooks/use-signup-form-validation';
 import { AgencyDetailsPayload } from './types';
 import type { FormEventHandler } from 'react';
 
@@ -32,43 +35,39 @@ interface Props {
 	isLoading: boolean;
 	onSubmit: ( payload: AgencyDetailsPayload ) => void;
 	referer?: string | null;
-	initialValues?: {
-		agencyName?: string;
-		agencyUrl?: string;
-		managedSites?: string;
-		servicesOffered?: string[];
-		city?: string;
-		line1?: string;
-		line2?: string;
-		country?: string;
-		postalCode?: string;
-		state?: string;
-	};
+	initialValues?: AgencyDetailsPayload;
 	submitLabel: string;
 }
 
 export default function AgencyDetailsForm( {
 	includeTermsOfService = false,
 	isLoading,
-	initialValues = {},
+	initialValues,
 	onSubmit,
 	referer,
 	submitLabel,
 }: Props ) {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
+
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
 	const showCountryFields = countryOptions.length > 0;
 
-	const [ countryValue, setCountryValue ] = useState( initialValues.country ?? '' );
-	const [ city, setCity ] = useState( initialValues.city ?? '' );
-	const [ line1, setLine1 ] = useState( initialValues.line1 ?? '' );
-	const [ line2, setLine2 ] = useState( initialValues.line2 ?? '' );
-	const [ postalCode, setPostalCode ] = useState( initialValues.postalCode ?? '' );
-	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
-	const [ agencyName, setAgencyName ] = useState( initialValues.agencyName ?? '' );
-	const [ agencyUrl, setAgencyUrl ] = useState( initialValues.agencyUrl ?? '' );
-	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '1-20' );
-	const [ servicesOffered, setServicesOffered ] = useState( initialValues.servicesOffered ?? [] );
+	const [ countryValue, setCountryValue ] = useState( initialValues?.country ?? '' );
+	const [ city, setCity ] = useState( initialValues?.city ?? '' );
+	const [ line1, setLine1 ] = useState( initialValues?.line1 ?? '' );
+	const [ line2, setLine2 ] = useState( initialValues?.line2 ?? '' );
+	const [ postalCode, setPostalCode ] = useState( initialValues?.postalCode ?? '' );
+	const [ addressState, setAddressState ] = useState( initialValues?.state ?? '' );
+	const [ agencyName, setAgencyName ] = useState( initialValues?.agencyName ?? '' );
+	const [ firstName, setFirstName ] = useState( initialValues?.firstName ?? '' );
+	const [ lastName, setLastName ] = useState( initialValues?.lastName ?? '' );
+	const [ agencyUrl, setAgencyUrl ] = useState( initialValues?.agencyUrl ?? '' );
+	const [ managedSites, setManagedSites ] = useState( initialValues?.managedSites ?? '1-5' );
+	const [ servicesOffered, setServicesOffered ] = useState( initialValues?.servicesOffered ?? [] );
+	const [ productsOffered, setProductsOffered ] = useState( initialValues?.productsOffered ?? [] );
+
+	const { validate, validationError, updateValidationError } = useSignupFormValidation();
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
@@ -80,10 +79,13 @@ export default function AgencyDetailsForm( {
 
 	const payload: AgencyDetailsPayload = useMemo(
 		() => ( {
+			firstName,
+			lastName,
 			agencyName,
 			agencyUrl,
 			managedSites,
 			servicesOffered,
+			productsOffered,
 			city,
 			line1,
 			line2,
@@ -94,10 +96,13 @@ export default function AgencyDetailsForm( {
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
 		[
+			firstName,
+			lastName,
 			agencyName,
 			agencyUrl,
 			managedSites,
 			servicesOffered,
+			productsOffered,
 			city,
 			line1,
 			line2,
@@ -117,9 +122,18 @@ export default function AgencyDetailsForm( {
 				return;
 			}
 
+			const error = validate( payload );
+			if ( error ) {
+				// Scrolling only for fields positioned on top
+				if ( error.firstName || error.lastName || error.agencyName || error.agencyUrl ) {
+					window?.scrollTo( { behavior: 'smooth', top: 0 } );
+				}
+				return;
+			}
+
 			onSubmit( payload );
 		},
-		[ showCountryFields, isLoading, onSubmit, payload ]
+		[ showCountryFields, isLoading, onSubmit, payload, validate ]
 	);
 
 	const getServicesOfferedOptions = () => {
@@ -129,6 +143,16 @@ export default function AgencyDetailsForm( {
 			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
 			{ value: 'digital_strategy_marketing', label: translate( 'Digital strategy & marketing' ) },
 			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
+		];
+	};
+
+	const getProductsOfferedOptions = () => {
+		return [
+			{ value: 'WordPress.com', label: translate( 'WordPress.com' ) },
+			{ value: 'WooCommerce', label: translate( 'WooCommerce' ) },
+			{ value: 'Jetpack', label: translate( 'Jetpack' ) },
+			{ value: 'Pressable', label: translate( 'Pressable' ) },
+			{ value: 'WordPress VIP', label: translate( 'WordPress VIP' ) },
 		];
 	};
 
@@ -144,20 +168,80 @@ export default function AgencyDetailsForm( {
 		setServicesOffered( services.value );
 	};
 
+	const handleSetProductsOffered = ( products: ChangeList< string > ) => {
+		setProductsOffered( products.value );
+	};
+
 	return (
 		<div className="agency-details-form">
 			<form onSubmit={ handleSubmit }>
+				<div className="agency-details-form__fullname-container">
+					<FormFieldset>
+						<FormLabel htmlFor="firstName">{ translate( 'First name' ) }</FormLabel>
+						<FormTextInput
+							id="firstName"
+							name="firstName"
+							value={ firstName }
+							isError={ !! validationError.firstName }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								setFirstName( event.target.value );
+								updateValidationError( { firstName: undefined } );
+							} }
+							disabled={ isLoading }
+						/>
+						<div
+							className={ clsx( 'agency-details-form__footer-error', {
+								hidden: ! validationError?.firstName,
+							} ) }
+							role="alert"
+						>
+							{ validationError.firstName }
+						</div>
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="lastName">{ translate( 'Last name' ) }</FormLabel>
+						<FormTextInput
+							id="lastName"
+							name="lastName"
+							value={ lastName }
+							isError={ !! validationError.lastName }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								setLastName( event.target.value );
+								updateValidationError( { lastName: undefined } );
+							} }
+							disabled={ isLoading }
+						/>
+						<div
+							className={ clsx( 'agency-details-form__footer-error', {
+								hidden: ! validationError?.lastName,
+							} ) }
+							role="alert"
+						>
+							{ validationError.lastName }
+						</div>
+					</FormFieldset>
+				</div>
 				<FormFieldset>
 					<FormLabel htmlFor="agencyName">{ translate( 'Agency name' ) }</FormLabel>
 					<FormTextInput
 						id="agencyName"
 						name="agencyName"
 						value={ agencyName }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setAgencyName( event.target.value )
-						}
+						isError={ !! validationError.agencyName }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							setAgencyName( event.target.value );
+							updateValidationError( { agencyName: undefined } );
+						} }
 						disabled={ isLoading }
 					/>
+					<div
+						className={ clsx( 'agency-details-form__footer-error', {
+							hidden: ! validationError?.agencyName,
+						} ) }
+						role="alert"
+					>
+						{ validationError.agencyName }
+					</div>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="agencyUrl">{ translate( 'Business URL' ) }</FormLabel>
@@ -165,11 +249,21 @@ export default function AgencyDetailsForm( {
 						id="agencyUrl"
 						name="agencyUrl"
 						value={ agencyUrl }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setAgencyUrl( event.target.value )
-						}
+						isError={ !! validationError.agencyUrl }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							setAgencyUrl( event.target.value );
+							updateValidationError( { agencyUrl: undefined } );
+						} }
 						disabled={ isLoading }
 					/>
+					<div
+						className={ clsx( 'agency-details-form__footer-error', {
+							hidden: ! validationError?.agencyUrl,
+						} ) }
+						role="alert"
+					>
+						{ validationError.agencyUrl }
+					</div>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="managed_sites">
@@ -181,9 +275,12 @@ export default function AgencyDetailsForm( {
 						value={ managedSites }
 						onChange={ handleSetManagedSites }
 					>
-						<option value="1-20">{ translate( '1-20' ) }</option>
-						<option value="21-100">{ translate( '21–100' ) }</option>
-						<option value="101+">{ translate( '101+' ) }</option>
+						<option value="1-5">{ translate( '1-5' ) }</option>
+						<option value="6-20">{ translate( '6-20' ) }</option>
+						<option value="21-50">{ translate( '21-50' ) }</option>
+						<option value="51-100">{ translate( '51-100' ) }</option>
+						<option value="101-500">{ translate( '101-500' ) }</option>
+						<option value="500+">{ translate( '500+' ) }</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
@@ -204,12 +301,27 @@ export default function AgencyDetailsForm( {
 					/>
 				</FormFieldset>
 				<FormFieldset>
+					<FormLabel htmlFor="products_offered">
+						{ translate( 'What Automattic products do you currently offer your customers?' ) }
+					</FormLabel>
+					<MultiCheckbox
+						id="products_offered"
+						name="products_offered"
+						checked={ productsOffered }
+						options={ getProductsOfferedOptions() }
+						// // Using 'as any' to bypass TypeScript type checks due to a known and intentional type mismatch between
+						// the expected custom event type for `onChange` and the standard event types.
+						onChange={ handleSetProductsOffered as any }
+					/>
+				</FormFieldset>
+				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
 						<SearchableDropdown
 							value={ countryValue }
 							onChange={ ( value ) => {
 								setCountryValue( value ?? '' );
+								updateValidationError( { country: undefined } );
 							} }
 							options={ countryOptions }
 							disabled={ isLoading }
@@ -217,6 +329,14 @@ export default function AgencyDetailsForm( {
 					) }
 
 					{ ! showCountryFields && <TextPlaceholder /> }
+					<div
+						className={ clsx( 'agency-details-form__footer-error', {
+							hidden: ! validationError?.country,
+						} ) }
+						role="alert"
+					>
+						{ validationError.country }
+					</div>
 				</FormFieldset>
 				{ showCountryFields && stateOptions && (
 					<FormFieldset>
@@ -237,11 +357,22 @@ export default function AgencyDetailsForm( {
 						name="line1"
 						placeholder={ translate( 'Street name and house number' ) }
 						value={ line1 }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setLine1( event.target.value )
-						}
+						isError={ !! validationError.line1 }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							setLine1( event.target.value );
+							updateValidationError( { line1: undefined } );
+						} }
 						disabled={ isLoading }
 					/>
+					<div
+						className={ clsx( 'agency-details-form__footer-error', {
+							hidden: ! validationError?.line1,
+							'line-separated': !! validationError?.line1,
+						} ) }
+						role="alert"
+					>
+						{ validationError.line1 }
+					</div>
 					<FormTextInput
 						id="line2"
 						name="line2"
@@ -259,12 +390,24 @@ export default function AgencyDetailsForm( {
 						id="city"
 						name="city"
 						value={ city }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => setCity( event.target.value ) }
+						isError={ !! validationError.city }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							setCity( event.target.value );
+							updateValidationError( { city: undefined } );
+						} }
 						disabled={ isLoading }
 					/>
+
+					{ !! validationError?.city && (
+						<div className="agency-details-form__footer-error" role="alert">
+							{ validationError.city }
+						</div>
+					) }
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
+					<FormLabel optional htmlFor="postalCode">
+						{ translate( 'Postal code' ) }
+					</FormLabel>
 					<FormTextInput
 						id="postalCode"
 						name="postalCode"
@@ -279,20 +422,21 @@ export default function AgencyDetailsForm( {
 					<div className="company-details-form__tos">
 						<p>
 							{ translate(
-								'By clicking ‘Continue’, you agree to the{{break}}{{/break}}{{link}}%(link_text)s{{icon}}{{/icon}}{{/link}}.',
+								"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement{{icon}}{{/icon}}{{/link}}.",
 								{
 									components: {
 										break: <br />,
 										link: (
 											<a
-												href="https://jetpack.com/platform-agreement/"
+												href={ localizeUrl(
+													'https://automattic.com/for-agencies/platform-agreement/'
+												) }
 												target="_blank"
 												rel="noopener noreferrer"
 											></a>
 										),
 										icon: <Gridicon icon="external" size={ 18 } />,
 									},
-									args: { link_text: 'Terms of the Jetpack Agency Platform Agreement' },
 								}
 							) }
 						</p>

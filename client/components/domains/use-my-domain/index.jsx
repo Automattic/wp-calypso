@@ -1,15 +1,16 @@
 import { Gridicon } from '@automattic/components';
+import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { BackButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useState, useRef, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/connect-domain-steps';
 import {
-	stepSlug,
 	domainLockStatusType,
+	stepSlug,
 	useMyDomainInputMode as inputMode,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import {
@@ -22,10 +23,14 @@ import {
 	getDomainNameValidationErrorMessage,
 } from 'calypso/components/domains/use-my-domain/utilities';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { getWpcomRegistrationStatus } from 'calypso/lib/domains/get-wpcom-registration-status';
 import wpcom from 'calypso/lib/wp';
+import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
+import { isUpdatingPrimaryDomain } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
 import DomainTransferOrConnect from './transfer-or-connect';
+
 import './style.scss';
 
 function UseMyDomain( props ) {
@@ -40,6 +45,7 @@ function UseMyDomain( props ) {
 		initialMode,
 		onNextStep,
 		onSkip,
+		updatingPrimaryDomain,
 	} = props;
 
 	const { __ } = useI18n();
@@ -63,6 +69,11 @@ function UseMyDomain( props ) {
 		stepSlug.TRANSFER_START
 	);
 	const initialValidation = useRef( null );
+	const { isFetchingSiteDomains } = useSiteDomainsQuery( selectedSite?.ID, {
+		queryFn: () => fetchSiteDomains( selectedSite?.ID ),
+	} );
+
+	const isBusy = isFetchingAvailability || isFetchingSiteDomains || updatingPrimaryDomain;
 
 	const baseClassName = 'use-my-domain';
 
@@ -113,6 +124,49 @@ function UseMyDomain( props ) {
 	const filterDomainName = useCallback( ( domain ) => {
 		return domain.replace( /(?:^http(?:s)?:)?(?:[/]*)(?:www\.)?([^/?]*)(?:.*)$/gi, '$1' );
 	}, [] );
+
+	const getWpcomAvailabilityErrors = useCallback( async () => {
+		const filteredDomainName = filterDomainName( domainName );
+		const wpRegistrationCheckData = await getWpcomRegistrationStatus(
+			filteredDomainName,
+			selectedSite?.ID
+		);
+
+		if ( ! wpRegistrationCheckData ) {
+			return null;
+		}
+
+		return {
+			availabilityData: wpRegistrationCheckData,
+			errorMessage: getAvailabilityErrorMessage( {
+				availabilityData: wpRegistrationCheckData,
+				domainName: filteredDomainName,
+				selectedSite,
+			} ),
+		};
+	}, [ filterDomainName, domainName, selectedSite ] );
+
+	const getAvailability = useCallback( async () => {
+		const filteredDomainName = filterDomainName( domainName );
+		const wpcomAvailabilityErrors = await getWpcomAvailabilityErrors();
+
+		if ( wpcomAvailabilityErrors ) {
+			return wpcomAvailabilityErrors;
+		}
+
+		const availabilityData = await wpcom
+			.domain( filteredDomainName )
+			.isAvailable( { apiVersion: '1.3', blog_id: selectedSite?.ID, is_cart_pre_check: false } );
+
+		return {
+			availabilityData,
+			errorMessage: getAvailabilityErrorMessage( {
+				availabilityData,
+				domainName: filteredDomainName,
+				selectedSite,
+			} ),
+		};
+	}, [ filterDomainName, domainName, getWpcomAvailabilityErrors, selectedSite ] );
 
 	const setTransferStepsAndLockStatus = useCallback(
 		( isDomainUnlocked ) => {
@@ -172,21 +226,13 @@ function UseMyDomain( props ) {
 		setDomainAvailabilityData( null );
 
 		try {
-			const availabilityData = await wpcom
-				.domain( filteredDomainName )
-				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite?.ID, is_cart_pre_check: false } );
+			const { availabilityData, errorMessage } = await getAvailability();
 
 			setDomainName( filteredDomainName );
 			await setDomainTransferData();
 
-			const availabilityErrorMessage = getAvailabilityErrorMessage( {
-				availabilityData,
-				domainName: filteredDomainName,
-				selectedSite,
-			} );
-
-			if ( availabilityErrorMessage ) {
-				setDomainNameValidationError( availabilityErrorMessage );
+			if ( errorMessage ) {
+				setDomainNameValidationError( errorMessage );
 			} else {
 				onNextStep?.( { mode: inputMode.transferOrConnect, domain: filteredDomainName } );
 				setMode( inputMode.transferOrConnect );
@@ -249,7 +295,7 @@ function UseMyDomain( props ) {
 			<UseMyDomainInput
 				baseClassName={ baseClassName }
 				domainName={ domainName }
-				isBusy={ isFetchingAvailability }
+				isBusy={ isBusy }
 				isSignupStep={ isSignupStep }
 				onChange={ onDomainNameChange }
 				onClear={ onClearInput }
@@ -285,7 +331,7 @@ function UseMyDomain( props ) {
 				baseClassName="connect-domain-step"
 				domain={ domainName }
 				initialPageSlug={ ownershipVerificationFlowPageSlug }
-				isOwnershipVerificationFlow={ true }
+				isOwnershipVerificationFlow
 				onConnect={ onConnect }
 				onSetPage={ setOwnershipVerificationFlowPageSlug }
 				stepsDefinition={ connectADomainOwnershipVerificationStepsDefinition }
@@ -400,6 +446,7 @@ UseMyDomain.propTypes = {
 	onSkip: PropTypes.func,
 };
 
-export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(
-	UseMyDomain
-);
+export default connect( ( state ) => ( {
+	selectedSite: getSelectedSite( state ),
+	updatingPrimaryDomain: isUpdatingPrimaryDomain( state, getSelectedSite( state )?.ID ),
+} ) )( UseMyDomain );

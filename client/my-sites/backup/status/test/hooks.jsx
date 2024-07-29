@@ -35,7 +35,11 @@ describe( 'useDatesWithNoSuccessfulBackups', () => {
 		useMatchingBackupAttemptsInRange.mockImplementation( () => {
 			return {
 				isLoading: false,
-				backups: [ { activityDate: '2021-12-01' }, { activityDate: '2021-12-04' } ],
+				backups: [
+					{ activityDate: '2021-12-01', activityIsRewindable: true },
+					{ activityDate: '2021-12-04', activityIsRewindable: true },
+					{ activityDate: '2021-12-05', activityIsRewindable: false },
+				],
 			};
 		} );
 	} );

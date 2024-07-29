@@ -1,7 +1,6 @@
 import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
 import type { SelectFromMap } from '../mapped-types';
-
 export interface CurrentUser {
 	ID: number;
 	display_name: string;

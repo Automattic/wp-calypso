@@ -1,16 +1,16 @@
 # Command Palette
 
-The Command Palette is a UI element that displays a searchable list of commands. It can be accessed in Calypso using the shortcut `cmd+k`.
+The Command Palette is a UI element that displays a searchable list of commands. It can be accessed in WordPress.com using the shortcut `cmd+k`.
 
 This command palette is inspired by [Core's implementation](https://github.com/WordPress/gutenberg/blob/trunk/packages/commands/README.md) used in the Gutenberg editor. We use the same CSS and similar markup, the commands share the same basic props that we extended to support the following differences:
 
-- The Calypso version supports multisite commands with the sites as second step commands.
+- The WordPress.com version supports multisite commands with the sites as second step commands.
 - Users can go back to root commands with the `esc` and `backspace` keys, or the back button.
 - We change the search placeholder to inform the user about the current command.
 - In addition to icons, we also support images for the commands.
 - We support two lines of text for the commands.
 
-This differences were highlighted in <https://github.com/WordPress/gutenberg/issues/55514> . We can replace our command palette with the Core one, once we can use all these differences.
+These differences were highlighted in <https://github.com/WordPress/gutenberg/issues/55514>. We can replace our command palette with the Core one, once we can use all these differences.
 
 ## Add a command
 
@@ -28,7 +28,17 @@ Every command has a set of properties that can be used to customize its behavior
 - `context`?: Type `string[]`, a list of URL paths for which the command will have priority when displayed. Example: `['/sites', '/manage/domains']`.
 - `icon`?: Type `JSX.Element`, used to display an icon for the command. It's visible in the command palette.
 - `image`?: Type `JSX.Element`, used to display an image for the command, instead of an icon. It's visible in the command palette.
-- `siteFunctions`?: Type `object`, used for nested commands that need to execute a function when a site is selected in the command palette as a second step. The behaviour for nested commands is the same independently of the page we are.
+- `siteSelector`?: Type `boolean`, used to indicate whether the command should display a site selector.
+- `siteSelectorLabel`?: Type `string`, used as a placeholder for the search input displayed above the site selector.
+- `capability`?: Type `string`, used to indicate the required capability for the command to be available.
+- `siteType`?: Type `string`, used to indicate the required site type (Simple, Atomic, Jetpack) for the command to be available.
+- `publicOnly`?: Type `boolean`, used to indicate whether the command should be available on public sites only.
+- `isCustomDomain`?: Type `boolean`, used to indicate whether the command should be available only on sites with a custom domain.
+- `filterP2`?: Type `boolean`, used to indicate whether the command should be excluded from P2 sites.
+- `filterStaging`?: Type `boolean`, used to indicate whether the command should be excluded from staging sites.
+- `filterSelfHosted`?: Type `boolean`, used to indicate whether the command should be excluded from self-hosted sites.
+- `filterNotice`?: Type `string`, used as label shown below the site selector to explain why some sites might not appear.
+- `emptyListNotice`?: Type `string`, used as label shown below the site selector to explain why there are no sites available.
 
 ### Best practices for defining a command
 
@@ -45,13 +55,37 @@ Please consider carefully before adding a new command to the palette. We aim to 
 
 ## Usage
 
-Embed the command example. This is already done for all WPcom calypso pages using `client/layout/index.jsx`.
+Embed the command example. This is already done for all WordPress.com pages in `client/layout/index.jsx` (Calypso) and `apps/command-palette-wp-admin/src/index.js` (WP Admin).
+
+The `CommandPalette` component requires the following properties:
+
+- `navigate`: Type `function`, used to execute the callback of the commands that need to navigate to a different page.
+- `currentRoute`: Type `string`, used to indicate the path of the current page.
+- `useCommands`: Type `function`, used to return the list of commands to register in the command palette.
+- `currentSiteId`: Type `number`, used to indicate the ID of the current site (if any).
+- `useSites`: Type `function`, used to return the list of sites to include in the site selector.
+- `userCapabilities`: Type `object`, used to indicate the capabilities of the user on all the sites.
 
 ```tsx
-import { WpcomCommandPalette } from 'calypso/components/command-palette/wpcom-command-palette';
+import CommandPalette, { COMMANDS } from '@automattic/command-palette';
+import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export default function MyComponent() {
-	return <WpcomCommandPalette />;
+	const navigate = ( url, openInNewTab ) => window.open( url, openInNewTab ? '_blank' : '_self' );
+	const currentRoute = window.location.pathname;
+	const currentSiteId = useSelector( getSelectedSiteId );
+	const userCapabilities = useSelector( ( state ) => state.currentUser.capabilities );
+
+	return <CommandPalette
+		navigate={ navigate }
+		currentRoute={ currentRoute }
+		useCommands={ () => COMMANDS }
+		currentSiteId={ siteId }
+		useSites={ useSiteExcerptsSorted }
+		userCapabilities={ userCapabilities }
+	/>;
 }
 ```
 

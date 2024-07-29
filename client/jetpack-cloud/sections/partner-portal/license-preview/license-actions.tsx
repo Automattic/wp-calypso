@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useState, useRef } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -65,7 +65,7 @@ export default function LicenseActions( {
 							isExternalLink={ action?.isExternalLink }
 							onClick={ () => handleActionClick( action ) }
 							href={ action?.href }
-							className={ classnames( 'license-actions__menu-item', action?.className ) }
+							className={ clsx( 'license-actions__menu-item', action?.className ) }
 						>
 							{ action.name }
 						</PopoverMenuItem>

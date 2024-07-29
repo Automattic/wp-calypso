@@ -468,7 +468,7 @@ $accent-blue: #117ac9;
 
 	// When in mobile, domain categories appear above
 	// the list of domain suggestions.
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		display: block;
 
 		.domain-picker__aside {

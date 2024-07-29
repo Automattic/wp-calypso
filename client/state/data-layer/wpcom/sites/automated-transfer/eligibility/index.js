@@ -29,6 +29,7 @@ const statusMapping = {
 	no_ssl_certificate: eligibilityHolds.NO_SSL_CERTIFICATE,
 	email_unverified: eligibilityHolds.EMAIL_UNVERIFIED,
 	excessive_disk_space: eligibilityHolds.EXCESSIVE_DISK_SPACE,
+	is_staging_blog: eligibilityHolds.IS_STAGING_SITE,
 };
 
 /**

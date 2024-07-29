@@ -1,3 +1,4 @@
+import type { useOpeningCoordinates } from './hooks/use-opening-coordinates';
 import type { HelpCenterSite, SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
@@ -7,6 +8,18 @@ export interface Container {
 	isLoading?: boolean;
 	hidden?: boolean;
 	currentRoute?: string;
+	openingCoordinates?: ReturnType< typeof useOpeningCoordinates >;
+}
+
+export interface ArticleContentProps {
+	content: string | undefined;
+	title: string | undefined;
+	link: string | undefined;
+	isLoading?: boolean;
+	postId: number;
+	blogId?: string | null;
+	slug?: string;
+	articleUrl?: string | null | undefined;
 }
 
 export interface Header {
@@ -18,11 +31,8 @@ export interface Header {
 
 export interface SitePicker {
 	ownershipResult: AnalysisReport;
-	setSitePickerChoice: any;
-	sitePickerChoice: string;
-	currentSite: HelpCenterSite | undefined;
-	siteId: string | number | null | undefined;
-	sitePickerEnabled: boolean;
+	isSelfDeclaredSite: boolean;
+	onSelfDeclaredSite: ( selfDeclared: boolean ) => void;
 }
 
 export interface Article {
@@ -34,6 +44,12 @@ export interface Article {
 	blog_id?: string;
 	url?: { pathname: string; search: string } | string;
 	is_external?: boolean;
+}
+
+export interface TailoredArticles {
+	post_ids: Array< number >;
+	blog_id: number;
+	locale: string;
 }
 
 export interface FeatureFlags {
@@ -61,27 +77,18 @@ export interface SupportTicket {
 	when: string;
 }
 
-export interface MessagingAuth {
-	user: {
-		jwt: string;
-	};
-}
-
-export interface MessagingAvailability {
-	is_available: boolean;
-}
-
 export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 interface Availability {
-	presale: boolean;
-	precancellation: boolean;
+	is_presales_chat_open: boolean;
+	is_precancellation_chat_open: boolean;
+	force_email_support: boolean;
 }
 
-export interface ChatAvailability {
-	locale: string;
+interface Eligibility {
 	is_user_eligible: boolean;
-	supportLevel:
+	wapuu_assistant_enabled: boolean;
+	support_level:
 		| 'free'
 		| 'personal'
 		| 'personal-with-legacy-chat'
@@ -92,17 +99,11 @@ export interface ChatAvailability {
 		| 'ecommerce'
 		| 'jetpack-paid'
 		| 'p2-plus';
-	nickname: string;
-	availability: Availability;
-	is_presales_chat_open: boolean;
-	is_precancellation_chat_open: boolean;
-	wapuu_assistant_enabled: boolean;
 }
 
-export interface OtherSupportAvailability {
-	is_user_eligible_for_upwork: boolean;
-	is_user_eligible_for_tickets: boolean;
-	is_user_eligible_for_chat: boolean;
+export interface SupportStatus {
+	eligibility: Eligibility;
+	availability: Availability;
 }
 
 export interface SupportActivity {
@@ -128,3 +129,5 @@ export type AnalysisReport = {
 	siteURL: string | undefined;
 	isWpcom: boolean;
 };
+
+export type ContactOption = 'chat' | 'email';

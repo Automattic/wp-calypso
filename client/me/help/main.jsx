@@ -139,7 +139,7 @@ class Help extends PureComponent {
 				{ this.getCoursesTeaser() }
 				<CompactCard
 					className="help__support-link"
-					href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
+					href="https://www.youtube.com/@WordPressdotcom"
 					target="_blank"
 				>
 					<Gridicon icon="video" size={ 36 } />
@@ -163,9 +163,7 @@ class Help extends PureComponent {
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">{ this.props.translate( 'Courses' ) }</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
-								'Enroll in a course taught by WordPress experts, and become a part of its community.'
-							) }
+							{ this.props.translate( 'Enroll in a course taught by WordPress experts.' ) }
 						</p>
 					</div>
 				</CompactCard>
@@ -243,7 +241,7 @@ class Help extends PureComponent {
 				<NavigationHeader
 					navigationItems={ [] }
 					title={ translate( 'Support' ) }
-					subtitle={ translate( 'Get help with your WordPress.com site' ) }
+					subtitle={ translate( 'Get help with your WordPress.com site.' ) }
 				>
 					<HelpContactUsHeader />
 				</NavigationHeader>

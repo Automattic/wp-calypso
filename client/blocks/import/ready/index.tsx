@@ -6,11 +6,12 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { UrlData, GoToStep, RecordTracksEvent, ImporterPlatform } from '../types';
+import { UrlData, GoToStep, RecordTracksEvent } from '../types';
 import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import './style.scss';
 
 const trackEventName = 'calypso_signup_step_start';

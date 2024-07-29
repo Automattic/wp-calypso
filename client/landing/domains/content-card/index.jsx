@@ -1,5 +1,5 @@
 import { Button, CompactCard } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -65,7 +65,7 @@ class DomainsLandingContentCard extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const messageClasses = classNames( 'content-card__message', {
+		const messageClasses = clsx( 'content-card__message', {
 			message_align_center: messageAlignCenter,
 		} );
 

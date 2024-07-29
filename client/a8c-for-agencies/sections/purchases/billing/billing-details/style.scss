@@ -36,7 +36,7 @@
 	* {
 		font-weight: 400;
 		font-size: 0.875rem;
-		color: var(--studio-gray-70);
+		color: var(--color-accent-70);
 	}
 
 	@include break-xlarge() {
@@ -77,7 +77,7 @@
 	margin-block-end: 8px;
 	font-size: 1.25rem;
 
-	@media ( min-width: 661px ) and ( max-width: 781px ) {
+	@media (min-width: 661px) and (max-width: 781px) {
 		// Accounts for unbreakable long cost numbers breaking the layout due to the sidebar taking up
 		// a lot of the available space.
 		font-size: 1rem;

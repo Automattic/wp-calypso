@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -26,7 +26,7 @@ class Focusable extends Component {
 		return (
 			<div
 				{ ...passProps }
-				className={ classNames( 'focusable', className ) }
+				className={ clsx( 'focusable', className ) }
 				role="button"
 				tabIndex="0"
 				onKeyDown={ this.onKeyDown }

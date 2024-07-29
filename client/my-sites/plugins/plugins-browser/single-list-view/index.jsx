@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Module variables
  */
-export const SHORT_LIST_LENGTH = 4;
+export const SHORT_LIST_LENGTH = 6;
 
 const PLUGIN_SLUGS_BLOCKLIST = [];
 
@@ -49,7 +49,7 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHea
 
 	plugins = plugins
 		.filter( isNotBlocked )
-		.filter( ( plugin ) => isNotInstalled( plugin, installedPlugins ) );
+		.filter( ( plugin ) => ! siteId || isNotInstalled( plugin, installedPlugins ) );
 
 	let listLink = '/plugins/browse/' + category;
 	if ( domain ) {

@@ -9,7 +9,11 @@ import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/cate
 import { PatternsCategoryNotFound } from 'calypso/my-sites/patterns/components/category-not-found';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
+import { ReadymadeTemplateDetailsClient } from 'calypso/my-sites/patterns/components/readymade-template-details/client';
+import { ReadymadeTemplatesClient } from 'calypso/my-sites/patterns/components/readymade-templates/client';
 import { PatternsContext } from 'calypso/my-sites/patterns/context';
+import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
+import { extractPatternIdFromHash } from 'calypso/my-sites/patterns/lib/extract-pattern-id-from-hash';
 import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import {
 	PatternTypeFilter,
@@ -18,15 +22,11 @@ import {
 } from 'calypso/my-sites/patterns/types';
 import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getPatternCategoriesQueryOptions } from './hooks/use-pattern-categories';
 
 function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
 	context.primary = (
 		<PatternsWrapper>
-			<PatternsCategoryNotFound
-				category={ context.params.category }
-				referrer={ context.query.ref }
-			/>
+			<PatternsCategoryNotFound />
 		</PatternsWrapper>
 	);
 
@@ -38,18 +38,20 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 		context.primary = (
 			<PatternsContext.Provider
 				value={ {
-					searchTerm: context.query[ QUERY_PARAM_SEARCH ] ?? '',
 					category: context.params.category ?? '',
 					isGridView: !! context.query.grid,
+					patternPermalinkId: extractPatternIdFromHash(),
 					patternTypeFilter:
 						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
 					referrer: context.query.ref,
+					searchTerm: context.query[ QUERY_PARAM_SEARCH ] ?? '',
 				} }
 			>
 				<PatternsWrapper>
 					<PatternLibrary
 						categoryGallery={ CategoryGalleryClient }
 						patternGallery={ PatternGalleryClient }
+						readymadeTemplates={ ReadymadeTemplatesClient }
 					/>
 				</PatternsWrapper>
 			</PatternsContext.Provider>
@@ -83,6 +85,18 @@ function checkCategorySlug( context: RouterContext, next: RouterNext ) {
 		} );
 }
 
+function renderReadymadeTemplateDetails( context: RouterContext, next: RouterNext ) {
+	if ( ! context.primary ) {
+		context.primary = (
+			<PatternsWrapper>
+				<ReadymadeTemplateDetailsClient id={ parseInt( context.params.id ) } />
+			</PatternsWrapper>
+		);
+	}
+
+	next();
+}
+
 export default function ( router: typeof clientRouter ) {
 	const langParam = getLanguageRouteParam();
 	const middleware = [ checkCategorySlug, renderPatterns, makeLayout, clientRender ];
@@ -101,4 +115,11 @@ export default function ( router: typeof clientRouter ) {
 
 	router( `/patterns/:category?`, ...middleware );
 	router( `/patterns/:type(layouts)/:category?`, ...middleware );
+
+	router(
+		'/patterns/:type(site-layouts)/:id',
+		renderReadymadeTemplateDetails,
+		makeLayout,
+		clientRender
+	);
 }

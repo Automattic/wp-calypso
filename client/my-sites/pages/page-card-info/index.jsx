@@ -65,7 +65,7 @@ function PageCardInfo( {
 						link={ contentLink.contentLinkURL }
 						target={ contentLink.contentLinkTarget }
 						gridiconSize={ ICON_SIZE }
-						includeBasicStatus={ true }
+						includeBasicStatus
 					/>
 				) }
 				{ isFront && <PageCardInfoBadge icon="house" text={ translate( 'Homepage' ) } /> }

@@ -1,25 +1,23 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
-	AssertConditionResult,
+	type AssertConditionResult,
 	AssertConditionState,
-	Flow,
-	ProvidedDependencies,
+	type Flow,
+	type ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useSiteData } from '../hooks/use-site-data';
-import { useLoginUrl } from '../utils/path';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
@@ -28,7 +26,7 @@ const designFirst: Flow = {
 	},
 	isSignupFlow: true,
 	useSteps() {
-		return [
+		return stepsWithRequiredLogin( [
 			{
 				slug: 'check-sites',
 				asyncComponent: () => import( './internals/steps-repository/sites-checker' ),
@@ -74,7 +72,7 @@ const designFirst: Flow = {
 				slug: 'celebration-step',
 				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
 			},
-		];
+		] );
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -249,32 +247,14 @@ const designFirst: Flow = {
 			currentPath.includes( 'setup/design-first/check-sites' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
-
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: window.location.href.replace( window.location.origin, '' ),
-			pageTitle: translate( 'Pick a design' ),
-			locale,
-		} );
-
 		// Despite sending a CHECKING state, this function gets called again with the
 		// /setup/design-first/create-site route which has no locale in the path so we need to
 		// redirect off of the first render.
 		// This effects both /setup/design-first/<locale> starting points and /setup/design-first/create-site/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
-			if ( ! isLoggedIn ) {
-				redirect( logInUrl );
-			} else if (
+			if (
+				isLoggedIn &&
 				isCreateSite &&
 				( ! userAlreadyHasSites || getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' )
 			) {
@@ -284,12 +264,7 @@ const designFirst: Flow = {
 
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		if ( ! isLoggedIn ) {
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: `${ flowName } requires a logged in user`,
-			};
-		} else if ( isCreateSite && ! userAlreadyHasSites ) {
+		if ( isLoggedIn && isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } with no preexisting sites`,

@@ -1,12 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
-import { HelpIcon } from '@automattic/help-center';
 import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
-import classnames from 'classnames';
-import { useRef } from 'react';
+import { helpFilled } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
@@ -14,7 +13,6 @@ import Item from './item';
 const HELP_CENTER_STORE = HelpCenter.register();
 
 const MasterbarHelpCenter = ( { tooltip } ) => {
-	const helpIconRef = useRef();
 	const sectionName = useSelector( getSectionName );
 
 	const helpCenterVisible = useDateStoreSelect( ( select ) =>
@@ -36,11 +34,11 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 		<>
 			<Item
 				onClick={ handleToggleHelpCenter }
-				className={ classnames( 'masterbar__item-help', {
+				className={ clsx( 'masterbar__item-help', {
 					'is-active': helpCenterVisible,
 				} ) }
 				tooltip={ tooltip }
-				icon={ <HelpIcon ref={ helpIconRef } /> }
+				icon={ helpFilled }
 			/>
 		</>
 	);

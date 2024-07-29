@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import i18n from 'i18n-calypso';
 import { keys } from 'lodash';
 import PropTypes from 'prop-types';
@@ -10,6 +10,7 @@ import creditCardJCBImage from 'calypso/assets/images/upgrades/cc-jcb.svg';
 import creditCardMasterCardImage from 'calypso/assets/images/upgrades/cc-mastercard.svg';
 import creditCardUnionPayImage from 'calypso/assets/images/upgrades/cc-unionpay.svg';
 import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
+import upiImage from 'calypso/assets/images/upgrades/upi.svg';
 
 import './style.scss';
 
@@ -21,6 +22,7 @@ const LOGO_PATHS = {
 	mastercard: creditCardMasterCardImage,
 	unionpay: creditCardUnionPayImage,
 	visa: creditCardVisaImage,
+	upi: upiImage,
 };
 
 const ALT_TEXT = {
@@ -31,7 +33,6 @@ const ALT_TEXT = {
 	diners: 'Diners Club',
 	discover: 'Discover',
 	eps: 'eps',
-	giropay: 'Giropay',
 	ideal: 'iDEAL',
 	jcb: 'JCB',
 	mastercard: 'Mastercard',
@@ -39,6 +40,7 @@ const ALT_TEXT = {
 	p24: 'Przelewy24',
 	paypal: 'PayPal',
 	placeholder: 'Payment logo',
+	upi: 'UPI',
 	unionpay: 'UnionPay',
 	visa: 'Visa',
 	wechat: i18n.translate( 'WeChat Pay', {
@@ -61,7 +63,7 @@ class PaymentLogo extends Component {
 	render() {
 		const { altText, className, isCompact, type, disabled } = this.props;
 
-		const classes = classNames(
+		const classes = clsx(
 			'payment-logo',
 			`is-${ type }`,
 			{ 'is-compact': isCompact },

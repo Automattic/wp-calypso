@@ -7,6 +7,13 @@ body.is-focus-sites {
 	overflow: hidden;
 }
 
+html.command-palette-modal-open {
+	overflow: visible;
+}
+body.command-palette-modal-open {
+	overflow: hidden;
+}
+
 /**
  * /*
  * 	Layout Elements
@@ -68,18 +75,30 @@ body.is-focus-sites {
 
 	// Themes sets it own padding/margin
 	.is-section-theme &,
-	.is-section-themes.has-no-sidebar & {
+	.is-section-themes.has-no-sidebar &,
+	.theme-default .layout.is-section-theme &,
+	.theme-default .layout.is-section-themes.has-no-sidebar &,
+	.theme-default .layout.is-section-themes:not(.is-logged-in) & {
 		padding: 0;
 		margin: 0;
 	}
 
-	.is-section-themes.has-no-sidebar.is-logged-in & {
+	.is-section-themes.has-no-sidebar.is-logged-in &,
+	.theme-default .is-section-themes.has-no-sidebar.is-logged-in & {
 		padding: 79px 32px 32px;
 	}
 
 	.is-section-theme & {
 		.sites.main {
 			padding-top: calc(79px - var(--masterbar-height));
+		}
+	}
+
+	.is-logged-in & {
+		// The plugins site view needs the header to be full width, so the padding
+		// is added on the header and .plugins-browser__content-wrapper instead
+		.is-section-plugins & {
+			padding: 47px 0 32px calc(var(--sidebar-width-max) + 1px);
 		}
 	}
 
@@ -132,8 +151,9 @@ body.is-focus-sites {
 // Add extra bottom padding for smaller screens to prevent
 // floating inline help from overlapping content.
 .layout__primary .main {
+	// The height is set to 100% in /sites page so we want to ensure that padding doesn't take us over 100% total height.
+	box-sizing: border-box;
 	padding-bottom: 88px;
-
 	@include breakpoint-deprecated( ">1400px" ) {
 		padding-bottom: 0;
 	}
@@ -318,7 +338,7 @@ body.is-mobile-app-view {
 // Move the secondary element off screen when focused
 // on the content. This only applies to small screens.
 .layout.focus-content .layout__secondary {
-	@media only screen and ( max-width: 781px ) {
+	@media only screen and (max-width: 781px) {
 		transform: translateX(-100%);
 	}
 }
@@ -370,9 +390,10 @@ body.is-mobile-app-view {
 // This is done since most has-no-masterbar section have their own padding set already that we don't want to overwrite
 .layout.has-no-masterbar.is-group-me,
 .layout.has-no-masterbar.is-group-sites,
-.layout.has-no-masterbar.is-group-sites-dashboard,
 .layout.has-no-masterbar.is-section-reader {
-	--masterbar-height: 0;
+	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-height: 0px;
 
 	.layout__content {
 		padding-top: 32px;
@@ -391,9 +412,24 @@ body.is-mobile-app-view {
 
 // Ensure reader streams have the neutral background.
 .layout.is-section-reader {
-	background: var(--color-neutral-0);
 	min-height: 100vh;
-	.layout__content {
-		background: var(--color-neutral-0);
+
+	&.has-header-section {
+		background: var(--studio-white);
+	}
+	.section-header.card {
+		box-shadow: none;
+		margin-bottom: 24px;
+		padding: 0;
+
+		.section-header__label-text {
+			font-size: 1.25rem;
+			font-weight: 500;
+			line-height: 26px;
+		}
+
+		@include breakpoint-deprecated( "<660px" ) {
+			margin: 0 16px;
+		}
 	}
 }

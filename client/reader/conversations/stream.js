@@ -28,22 +28,22 @@ export default function ( props ) {
 
 	return (
 		<>
-			<NavigationHeader
-				title={ translate( 'Conversations' ) }
-				subtitle={ translate( 'Monitor all of your ongoing discussions.' ) }
-				className="conversations__header"
-			/>
 			<Stream
 				key="conversations"
 				streamKey={ props.streamKey }
 				className="conversations__stream"
 				followSource="conversations"
-				useCompactCards={ true }
+				useCompactCards
 				trackScrollPage={ props.trackScrollPage }
 				emptyContent={ emptyContent }
 				intro={ intro }
 			>
 				<ConversationTitle title={ props.title } />
+				<NavigationHeader
+					title={ translate( 'Conversations' ) }
+					subtitle={ translate( 'Monitor all of your ongoing discussions.' ) }
+					className="conversations__header"
+				/>
 			</Stream>
 		</>
 	);

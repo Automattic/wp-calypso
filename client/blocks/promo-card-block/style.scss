@@ -7,7 +7,7 @@
 	padding: 30px;
 	margin-top: 25px;
 
-	@media screen and ( max-width: 910px ) {
+	@media screen and (max-width: 910px) {
 		flex-direction: column;
 	}
 
@@ -18,7 +18,7 @@
 	.formatted-header__title {
 		font-size: $font-title-large;
 
-		@media screen and ( max-width: 910px ) {
+		@media screen and (max-width: 910px) {
 			text-align: center;
 		}
 	}
@@ -28,7 +28,7 @@
 		max-width: 70%;
 		margin-right: 15px;
 
-		@media screen and ( max-width: 910px ) {
+		@media screen and (max-width: 910px) {
 			margin-right: 0;
 			text-align: center;
 		}
@@ -40,7 +40,7 @@
 		height: auto;
 		margin-right: 58px;
 
-		@media screen and ( max-width: 910px ) {
+		@media screen and (max-width: 910px) {
 			margin-right: 0;
 			margin-bottom: 20px;
 		}

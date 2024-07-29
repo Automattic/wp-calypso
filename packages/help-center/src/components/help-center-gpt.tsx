@@ -3,19 +3,22 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Button, ExternalLink } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import stripTags from 'striptags';
 import './help-center-article-content.scss';
 import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useTyper } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
+import HelpCenterSearchResults from './help-center-search-results';
 import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
+import type { SearchResult } from '../types';
 
 const GPTResponsePlaceholder = styled( LoadingPlaceholder )< { width?: string } >`
 	:not( :last-child ) {
@@ -49,10 +52,26 @@ const LoadingPlaceholders: React.FC< LoadingPlaceholderProps > = ( { loadingMess
 
 interface Props {
 	onResponseReceived: ( response: JetpackSearchAIResult ) => void;
+	redirectToArticle: (
+		event: React.MouseEvent< HTMLAnchorElement, MouseEvent >,
+		result: SearchResult
+	) => void;
 }
 
-export function HelpCenterGPT( { onResponseReceived }: Props ) {
+const handleContentClick = ( event: React.MouseEvent ) => {
+	// Check if the clicked element is a link
+	if ( event.target instanceof HTMLAnchorElement ) {
+		const url = event.target.getAttribute( 'href' );
+		if ( url ) {
+			event.preventDefault();
+			window.open( url, '_blank' );
+		}
+	}
+};
+
+export function HelpCenterGPT( { onResponseReceived, redirectToArticle }: Props ) {
 	const { __ } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const [ feedbackGiven, setFeedbackGiven ] = useState< boolean >( false );
 
@@ -131,10 +150,25 @@ export function HelpCenterGPT( { onResponseReceived }: Props ) {
 		};
 	};
 
+	const aiResponseHeader = useMemo( () => {
+		if ( isEnglishLocale || hasTranslation( 'AI Generated Response:' ) ) {
+			return __( 'AI Generated Response:', __i18n_text_domain__ );
+		}
+
+		return __( 'Quick response:', __i18n_text_domain__ );
+	}, [ __, isEnglishLocale ] );
+
 	return (
 		<div className="help-center-gpt__container">
+			<HelpCenterSearchResults
+				onSelect={ redirectToArticle }
+				searchQuery={ message || '' }
+				openAdminInNewTab
+				placeholderLines={ 4 }
+				location="help-center-contact-form"
+			/>
 			<h1 id="help-center--contextual_help" className="help-center__section-title">
-				{ __( 'Quick response:', __i18n_text_domain__ ) }
+				{ aiResponseHeader }
 			</h1>
 			{ isGPTError && (
 				<div className="help-center-gpt-error">
@@ -174,12 +208,14 @@ export function HelpCenterGPT( { onResponseReceived }: Props ) {
 						{ ! data?.response && LoadingPlaceholders( { loadingMessage } ) }
 						{ data?.response && (
 							<>
+								{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events */ }
 								<div
 									className="help-center-gpt-response__content"
 									// eslint-disable-next-line react/no-danger
 									dangerouslySetInnerHTML={ {
 										__html: stripTags( data.response, allowedTags ),
 									} }
+									onClick={ handleContentClick }
 								/>
 								<div className="help-center-gpt-response__actions">
 									{ feedbackGiven ? (

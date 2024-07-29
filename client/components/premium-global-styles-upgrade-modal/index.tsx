@@ -2,9 +2,8 @@ import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Button, Gridicon, Dialog, ScreenReaderText, PlanPrice } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
@@ -40,7 +39,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		coupon: undefined,
 		planSlugs: [ PLAN_PREMIUM ],
-		selectedSiteId,
+		siteId: selectedSiteId,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
@@ -67,10 +66,9 @@ export default function PremiumGlobalStylesUpgradeModal( {
 
 	return (
 		<>
-			<QueryPlans />
 			<QueryProductsList />
 			<Dialog
-				className={ classNames( 'upgrade-modal', 'premium-global-styles-upgrade-modal', {
+				className={ clsx( 'upgrade-modal', 'premium-global-styles-upgrade-modal', {
 					loading: ! isLoaded,
 				} ) }
 				isFullScreen

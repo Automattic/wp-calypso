@@ -190,7 +190,7 @@ class SiteVerification extends Component {
 
 		return (
 			<FormInputValidation
-				isError={ true }
+				isError
 				text={
 					isPasteError
 						? translate( 'Verification code should be copied and pasted into this field.' )

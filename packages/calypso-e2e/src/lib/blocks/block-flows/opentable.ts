@@ -43,10 +43,23 @@ export class OpenTableFlow implements BlockFlow {
 		const editorCanvas = await context.editorPage.getEditorCanvas();
 		const restaurant = this.configurationData.restaurant.toString();
 		const searchLocator = editorCanvas.locator( selectors.searchInput );
-		await searchLocator.fill( restaurant );
 
-		const suggestionLocator = editorCanvas.locator( selectors.suggestion( restaurant ) ).first(); // There are many restaurants out there, let's grab the first if the name wasn't specific enough.
-		await suggestionLocator.click();
+		/**
+		 * Due to API inconsistency of OpenTable, we need to try a few times to get the correct restaurant.
+		 * https://github.com/Automattic/wp-calypso/issues/92836
+		 */
+		for ( let i = 0; i < 10; i++ ) {
+			try {
+				await searchLocator.fill( restaurant );
+				const suggestionLocator = editorCanvas
+					.locator( selectors.suggestion( restaurant ) )
+					.first(); // There are many restaurants out there, let's grab the first if the name wasn't specific enough.
+				await suggestionLocator.click();
+				break;
+			} catch ( e ) {
+				await searchLocator.fill( '' );
+			}
+		}
 
 		const embedButtonLocator = editorCanvas.locator( selectors.embedButton );
 		await embedButtonLocator.click();

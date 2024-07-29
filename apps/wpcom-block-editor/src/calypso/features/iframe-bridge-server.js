@@ -85,6 +85,18 @@ function transmitDraftId( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePostTrash( calypsoPort ) {
+	/**
+	 * As of Gutenberg 18.2, posts are trashed with code that we cannot override
+	 * via the actions registry, so we need to change the behavior overriding the
+	 * onClick event.
+	 *
+	 * See https://github.com/WordPress/gutenberg/blob/379e5f42d11a46dfa29fe4c595ba43f1f3ba9b17/packages/editor/src/components/post-actions/actions.js#L122-L220
+	 */
+	addEditorListener( '.editor-action-modal__move-to-trash button.is-primary', ( e ) => {
+		e.preventDefault();
+		calypsoPort.postMessage( { action: 'trashPost' } );
+	} );
+
 	use( ( registry ) => {
 		return {
 			dispatch: ( store ) => {
@@ -1020,39 +1032,6 @@ function handleCheckoutModal( calypsoPort ) {
 }
 
 /**
- * Handles the back to Dashboard link after the removal of the previously-used Portal in Gutenberg 14.5
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
- */
-function handleSiteEditorBackButton( calypsoPort ) {
-	// We use the traversal helper because the target element may be the SVG or an SVG element inside.
-	function traverseToFindLink( element, link, depth = 2 ) {
-		let foundLink = false;
-		while ( depth >= 0 ) {
-			if ( element.tagName.toLowerCase() === 'a' && element?.href === link ) {
-				foundLink = true;
-				break;
-			}
-			element = element.parentElement;
-			depth--;
-		}
-		return foundLink;
-	}
-
-	// have to do this event delegation style because the Editor isn't fully initialized yet.
-	document.getElementById( 'wpwrap' ).addEventListener( 'click', ( event ) => {
-		const dashboardLink = select( 'core/edit-site' )?.getSettings?.().__experimentalDashboardLink;
-		// The link has changed. Pray it doesn't change any further.
-		// This is how to find it in Gutenberg 15.2.
-		const isDashboardLink = traverseToFindLink( event.target, dashboardLink );
-
-		if ( isDashboardLink ) {
-			event.preventDefault();
-			calypsoPort.postMessage( { action: 'navigateToHome' } );
-		}
-	} );
-}
-
-/**
  * If WelcomeTour is set to show, check if the App Banner is visible.
  * If App Banner is visible, we set the Welcome Tour to not show.
  * When the App Banner gets dismissed, we set the Welcome Tour to show.
@@ -1184,8 +1163,6 @@ function initPort( message ) {
 		handleCheckoutModal( calypsoPort );
 
 		handleAppBannerShowing( calypsoPort );
-
-		handleSiteEditorBackButton( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

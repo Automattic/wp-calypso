@@ -38,7 +38,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -77,7 +77,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -116,7 +116,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -155,7 +155,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -194,7 +194,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -233,7 +233,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -272,7 +272,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -312,7 +312,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -352,7 +352,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }
@@ -394,7 +394,7 @@ describe( 'PurchaseMeta', () => {
 			<QueryClientProvider client={ queryClient }>
 				<ReduxProvider store={ store }>
 					<PurchaseMeta
-						hasLoadedPurchasesFromServer={ true }
+						hasLoadedPurchasesFromServer
 						purchaseId={ 1 }
 						siteSlug="test"
 						isDataLoading={ false }

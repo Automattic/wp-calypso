@@ -1,6 +1,6 @@
 import { FormLabel } from '@automattic/components';
 import { AutoSizer, List } from '@automattic/react-virtualized';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import {
 	debounce,
@@ -382,7 +382,7 @@ class TermTreeSelectorList extends Component {
 			( searchLength > 0 || ! isSmall ) &&
 			( this.props.terms || ( ! this.props.terms && searchLength > 0 ) );
 		const { className, isError, loading, siteId, taxonomy, query, height } = this.props;
-		const classes = classNames( 'term-tree-selector', className, {
+		const classes = clsx( 'term-tree-selector', className, {
 			'is-loading': loading,
 			'is-small': isSmall,
 			'is-error': isError,

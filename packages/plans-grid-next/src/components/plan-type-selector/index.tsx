@@ -1,5 +1,5 @@
 import { useEffect } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 import { StickyContainer } from '../sticky-container';
 import { IntervalTypeSelector } from './components/interval-type-selector';
@@ -19,6 +19,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 			kind,
 		} );
 	}, [] );
+
 	if ( kind === 'interval' ) {
 		return (
 			<StickyContainer
@@ -28,7 +29,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 				zIndex={ 2 }
 			>
 				{ () => (
-					<div className={ classNames( layoutClassName ) }>
+					<div className={ clsx( layoutClassName ) }>
 						<div className="plan-type-selector">
 							<IntervalTypeSelector { ...props } />
 						</div>

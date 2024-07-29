@@ -1,6 +1,6 @@
 import { Modal } from '@wordpress/components';
 import { useEffect, useRef } from '@wordpress/element';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import './style.scss';
 
@@ -41,7 +41,7 @@ const NuxModal: React.FC< Props > = ( {
 
 	return (
 		<Modal
-			className={ classnames( 'wpcom-block-editor-nux-modal', className ) }
+			className={ clsx( 'wpcom-block-editor-nux-modal', className ) }
 			title=""
 			onRequestClose={ onRequestClose }
 		>

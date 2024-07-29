@@ -1,7 +1,7 @@
 import { Icon, starEmpty } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
@@ -11,9 +11,9 @@ import Sidebar, {
 	SidebarNavigatorMenuItem,
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
-import { getJetpackAdminUrl } from 'calypso/state/sites/selectors';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UserFeedbackModalForm from '../user-feedback-modal-form';
 import SidebarHeader from './header';
@@ -60,7 +60,7 @@ const JetpackCloudSidebar = ( {
 	const isAgency = useSelector( isAgencyUser );
 	const siteId = useSelector( getSelectedSiteId );
 	const jetpackAdminUrl = useSelector( ( state ) =>
-		siteId ? getJetpackAdminUrl( state, siteId ) : null
+		siteId ? getSiteAdminUrl( state, siteId ) : null
 	);
 
 	const translate = useTranslate();
@@ -82,8 +82,12 @@ const JetpackCloudSidebar = ( {
 		setShowUserFeedbackForm( false );
 	}, [] );
 
+	useEffect( () => {
+		dispatch( loadTrackingTool( 'LogRocket' ) );
+	}, [ dispatch ] );
+
 	return (
-		<Sidebar className={ classNames( 'jetpack-cloud-sidebar', className ) }>
+		<Sidebar className={ clsx( 'jetpack-cloud-sidebar', className ) }>
 			<SidebarHeader forceAllSitesView={ isJetpackManage } />
 
 			<SidebarMain>

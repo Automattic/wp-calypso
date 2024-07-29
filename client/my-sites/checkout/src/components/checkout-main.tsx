@@ -3,11 +3,13 @@ import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { isValueTruthy, getContactDetailsType } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
+import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
+import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
@@ -25,7 +27,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
@@ -41,7 +42,6 @@ import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
-import getContactDetailsType from '../lib/get-contact-details-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { pixProcessor } from '../lib/pix-processor';
@@ -103,6 +103,7 @@ export interface CheckoutMainProps {
 	 */
 	fromSiteSlug?: string;
 	adminUrl?: string;
+	hostingIntent?: string | undefined;
 }
 
 export default function CheckoutMain( {
@@ -132,6 +133,7 @@ export default function CheckoutMain( {
 	connectAfterCheckout,
 	fromSiteSlug,
 	adminUrl,
+	hostingIntent,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
@@ -140,7 +142,10 @@ export default function CheckoutMain( {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
-	const isSiteless = sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet';
+	const isSiteless =
+		sitelessCheckoutType === 'jetpack' ||
+		sitelessCheckoutType === 'akismet' ||
+		sitelessCheckoutType === 'marketplace';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
@@ -208,6 +213,7 @@ export default function CheckoutMain( {
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
 		isGiftPurchase,
+		hostingIntent,
 	} );
 
 	const cartKey = useCartKey();
@@ -220,7 +226,11 @@ export default function CheckoutMain( {
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
+		reloadFromServer,
 	} = useShoppingCart( cartKey );
+
+	const { shouldSetMigrationSticker, isLoading: isStickerLoading } =
+		useCheckoutMigrationIntroductoryOfferSticker( siteId, reloadFromServer );
 
 	// For site-less checkouts, get the blog ID from the cart response
 	const updatedSiteId = isSiteless ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
@@ -496,8 +506,6 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'p24', transactionData, dataForProcessor ),
 			bancontact: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'bancontact', transactionData, dataForProcessor ),
-			giropay: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'giropay', transactionData, dataForProcessor ),
 			wechat: ( transactionData: unknown ) =>
 				weChatProcessor( transactionData, dataForProcessor, translate ),
 			netbanking: ( transactionData: unknown ) =>
@@ -533,7 +541,7 @@ export default function CheckoutMain( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
-	const isCheckoutV2ExperimentLoading = useCheckoutV2() === 'loading';
+	const isCheckoutV2ExperimentLoading = false;
 
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
@@ -560,6 +568,14 @@ export default function CheckoutMain( {
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
 		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
 	];
+
+	if ( shouldSetMigrationSticker ) {
+		checkoutLoadingConditions.push( {
+			name: translate( 'Setting introductory offer' ),
+			isLoading: isStickerLoading,
+		} );
+	}
+
 	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
 		( condition ) => condition.isLoading
 	);
@@ -691,9 +707,13 @@ export default function CheckoutMain( {
 			transactionError: string | null;
 			paymentMethodId: string | null;
 		} ) => {
-			reduxDispatch(
-				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+			const errorNoticeText = transactionError ? (
+				<div dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( transactionError ) } } /> // eslint-disable-line react/no-danger -- The API response can contain anchor elements that we need to parse so they are rendered properly
+			) : (
+				translate( 'An error occurred during your purchase.' )
 			);
+
+			reduxDispatch( errorNotice( errorNoticeText ) );
 
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_payment_error', {

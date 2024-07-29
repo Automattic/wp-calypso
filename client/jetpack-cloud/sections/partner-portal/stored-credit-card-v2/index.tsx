@@ -1,5 +1,5 @@
 import { PaymentLogo } from '@automattic/wpcom-checkout';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PaymentMethodDeleteDialog from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-delete-dialog';
 import { useDispatch } from 'calypso/state';
@@ -75,7 +75,7 @@ export default function StoredCreditCardV2( {
 	return (
 		<>
 			<div
-				className={ classNames( 'stored-credit-card-v2__card', {
+				className={ clsx( 'stored-credit-card-v2__card', {
 					'is-loading': isLoading,
 				} ) }
 			>
@@ -114,18 +114,18 @@ export default function StoredCreditCardV2( {
 					</span>
 				</div>
 				<div
-					className={ classNames(
+					className={ clsx(
 						'stored-credit-card-v2__payment-logo',
 						`stored-credit-card-v2__payment-logo-${ cardBrand }`
 					) }
 				>
-					<PaymentLogo brand={ cardBrand } isSummary={ true } />
+					<PaymentLogo brand={ cardBrand } isSummary />
 				</div>
 			</div>
 			{ isDeleteDialogVisible && (
 				<PaymentMethodDeleteDialog
 					paymentMethod={ creditCard }
-					isVisible={ true }
+					isVisible
 					onClose={ closeDialog }
 					onConfirm={ handleDelete }
 				/>

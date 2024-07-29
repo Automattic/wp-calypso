@@ -12,7 +12,7 @@ import {
 	useState,
 } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useCanvas } from './use-canvas';
 import { useGlobalStylesConfig } from './use-global-styles-config';
 import { usePreview } from './use-preview';
@@ -148,7 +148,7 @@ function GlobalStylesEditNotice() {
 				onClick: upgradePlan,
 				variant: 'primary',
 				noDefaultClasses: true,
-				className: classnames(
+				className: clsx(
 					'wpcom-global-styles-action-is-upgrade',
 					'wpcom-global-styles-action-has-icon',
 					'wpcom-global-styles-action-is-external'

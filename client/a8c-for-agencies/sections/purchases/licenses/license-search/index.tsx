@@ -1,3 +1,5 @@
+import page from '@automattic/calypso-router';
+import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import Search from 'calypso/components/search';
@@ -18,6 +20,7 @@ const LicenseSearch = ( { doSearch }: Props ) => {
 
 	const onSearch = ( query: string ) => {
 		dispatch( recordTracksEvent( 'calypso_a4a_license_list_search', { query } ) );
+		page( removeQueryArgs( window.location.pathname, 'page' ) ); // remove page query param before searching
 		doSearch( query );
 	};
 
@@ -29,8 +32,8 @@ const LicenseSearch = ( { doSearch }: Props ) => {
 			initialValue={ search }
 			hideClose={ ! search }
 			onSearch={ onSearch }
-			placeholder={ translate( 'Search by license code' ) }
-			delaySearch={ true }
+			placeholder={ translate( 'Search by product name or license code' ) }
+			delaySearch
 		/>
 	);
 };

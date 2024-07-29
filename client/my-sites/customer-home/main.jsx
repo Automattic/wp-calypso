@@ -9,7 +9,6 @@ import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
-import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
@@ -36,6 +35,7 @@ import {
 	getPluginOnSite,
 	isRequesting as isRequestingInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getRequest from 'calypso/state/selectors/get-request';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
@@ -48,7 +48,6 @@ import {
 	canCurrentUserUseCustomerHome,
 	getSitePlan,
 	getSiteOption,
-	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -70,14 +69,13 @@ const Home = ( {
 	ssoModuleActive,
 	fetchingJetpackModules,
 	handleVerifyIcannEmail,
+	isAdmin,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
-	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
-		getIsGlobalSiteViewEnabled( state, siteId )
-	);
+	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
 
@@ -127,6 +125,12 @@ const Home = ( {
 		}
 	}, [ emailDnsDiagnostics ] );
 
+	const isFirstSecondaryCardInPrimaryLocation =
+		Array.isArray( layout?.primary ) &&
+		layout.primary.length === 0 &&
+		Array.isArray( layout?.secondary ) &&
+		layout.secondary.length > 0;
+
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
 		return (
@@ -150,8 +154,13 @@ const Home = ( {
 	const headerActions = (
 		<>
 			<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
-				{ isGlobalSiteViewEnabled ? translate( 'View site' ) : translate( 'Visit site' ) }
+				{ translate( 'View site' ) }
 			</Button>
+			{ isAdmin && ! isP2 && (
+				<Button primary href={ `/overview/${ site.slug }` }>
+					{ translate( 'Hosting Overview' ) }
+				</Button>
+			) }
 		</>
 	);
 	const header = (
@@ -233,7 +242,7 @@ const Home = ( {
 					}
 				) }
 				icon="cross-circle"
-				showDismiss={ true }
+				showDismiss
 				onDismissClick={ () => {
 					setDismissedEmailDnsDiagnostics( true );
 					setDomainNotice( primaryDomain.name, 'email-dns-records-diagnostics', 'ignored', () => {
@@ -249,7 +258,6 @@ const Home = ( {
 		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
-			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
@@ -273,7 +281,11 @@ const Home = ( {
 					<Primary cards={ layout?.primary } />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
-							<Secondary cards={ layout?.secondary } siteId={ siteId } />
+							<Secondary
+								cards={ layout?.secondary }
+								siteId={ siteId }
+								trackFirstCardAsPrimary={ isFirstSecondaryCardInPrimaryLocation }
+							/>
 						</div>
 						<div className="customer-home__layout-col customer-home__layout-col-right">
 							<Tertiary cards={ layout?.tertiary } />
@@ -313,6 +325,7 @@ const mapStateToProps = ( state ) => {
 		ssoModuleActive: !! isJetpackModuleActive( state, siteId, 'sso' ),
 		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 		isSiteLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
+		isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 };
 

@@ -1,4 +1,5 @@
 import { isFreePlan } from '@automattic/calypso-products';
+import { ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
 import { useCallback } from '@wordpress/element';
 import {
 	FREE_PLAN_FREE_DOMAIN_DIALOG,
@@ -35,7 +36,8 @@ export function useModalResolutionCallback( {
 				// TODO: look into decoupling the flowName from here as well.
 				if (
 					paidDomainName &&
-					( flowName === 'onboarding' || intent === 'plans-jetpack-app-site-creation' )
+					( ( flowName && [ ONBOARDING_GUIDED_FLOW, 'onboarding' ].includes( flowName ) ) ||
+						intent === 'plans-jetpack-app-site-creation' )
 				) {
 					return PAID_PLAN_IS_REQUIRED_DIALOG;
 				}

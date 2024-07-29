@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 
@@ -12,7 +12,7 @@ const FormTextarea = ( {
 } ) => (
 	<textarea
 		{ ...otherProps }
-		className={ classnames( className, 'form-textarea', {
+		className={ clsx( className, 'form-textarea', {
 			'is-error': isError,
 			'is-valid': isValid,
 		} ) }

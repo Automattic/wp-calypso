@@ -4,6 +4,7 @@ export {
 	Card,
 	Count,
 	CompactCard,
+	ExternalLink,
 	FormInputValidation,
 	Gridicon,
 	MaterialIcon,
@@ -41,7 +42,6 @@ export { default as DiffViewer } from 'calypso/components/diff-viewer';
 export { default as DropZones } from 'calypso/components/drop-zone';
 export { default as EllipsisMenu } from 'calypso/components/ellipsis-menu';
 export { default as EmptyContent } from 'calypso/components/empty-content';
-export { default as ExternalLink } from 'calypso/components/external-link';
 export { default as FAQ } from 'calypso/components/faq';
 export { default as FeatureGate } from 'calypso/components/feature-example';
 export { default as FilePickers } from 'calypso/components/file-picker';

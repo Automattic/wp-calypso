@@ -56,7 +56,7 @@ export const hasPaidDesign = ( state: State ): boolean => {
 	if ( ! state.selectedDesign ) {
 		return false;
 	}
-	return state.selectedDesign.is_premium;
+	return state.selectedDesign?.design_tier !== 'free';
 };
 export const hasPaidDomain = ( state: State ): boolean => {
 	if ( ! state.domain ) {
@@ -77,3 +77,4 @@ export const getIsMigrateFromWp = ( state: State ) => state.isMigrateFromWp;
 export const getPluginsToVerify = ( state: State ) => state.pluginsToVerify;
 export const getProfilerData = ( state: State ) => state.profilerData;
 export const getPaidSubscribers = ( state: State ) => state.paidSubscribers;
+export const getPartnerBundle = ( state: State ) => state.partnerBundle;

@@ -16,6 +16,7 @@ export type WPCOMTransactionEndpointResponseSuccess = {
 	price_integer: number;
 	price_float: number;
 	currency: string;
+	is_gravatar_domain: boolean;
 };
 
 export type WPCOMTransactionEndpointResponseFailed = {
@@ -31,6 +32,7 @@ export type WPCOMTransactionEndpointResponseFailed = {
 	price_integer: number;
 	price_float: number;
 	currency: string;
+	is_gravatar_domain: boolean;
 };
 
 export type WPCOMTransactionEndpointResponseRedirect = {
@@ -314,7 +316,6 @@ export type CheckoutPaymentMethodSlug =
 	| 'ebanx'
 	| 'netbanking'
 	| 'eps'
-	| 'giropay'
 	| 'ideal'
 	| 'p24'
 	| 'paypal'
@@ -346,7 +347,6 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Source_Alipay'
 	| 'WPCOM_Billing_Stripe_Source_Bancontact'
 	| 'WPCOM_Billing_Stripe_Source_Eps'
-	| 'WPCOM_Billing_Stripe_Source_Giropay'
 	| 'WPCOM_Billing_Stripe_Source_Ideal'
 	| 'WPCOM_Billing_Stripe_Source_P24'
 	| 'WPCOM_Billing_Stripe_Source_Sofort'

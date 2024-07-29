@@ -1,23 +1,33 @@
 import { HelpCenter } from '@automattic/data-stores';
+import { HelpIcon } from '@automattic/help-center';
 import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
-import { Icon, help } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
+import { useRef } from 'react';
 import SidebarMenuItem from '../menu-item';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SidebarHelpCenter = ( { tooltip, tooltipPlacement, onClick } ) => {
-	const helpCenterVisible = useDateStoreSelect(
-		( select ) => select( HELP_CENTER_STORE ).isHelpCenterShown(),
-		[]
-	);
-	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+const SidebarHelpCenter = ( { tooltip, onClick } ) => {
+	const helpIconRef = useRef();
+	const { show, isMinimized } = useDateStoreSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE );
+		return {
+			show: store.isHelpCenterShown(),
+			isMinimized: store.getIsMinimized(),
+		};
+	}, [] );
+
+	const { setShowHelpCenter, setIsMinimized } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const handleToggleHelpCenter = () => {
-		setShowHelpCenter( ! helpCenterVisible );
+		if ( isMinimized ) {
+			setIsMinimized( false );
+		} else {
+			setShowHelpCenter( ! show );
+		}
 		onClick();
 	};
 
@@ -25,12 +35,12 @@ const SidebarHelpCenter = ( { tooltip, tooltipPlacement, onClick } ) => {
 		<>
 			<SidebarMenuItem
 				onClick={ handleToggleHelpCenter }
-				className={ classnames( 'sidebar__item-help', {
-					'is-active': helpCenterVisible,
+				className={ clsx( 'sidebar__item-help', {
+					'is-active': show,
 				} ) }
 				tooltip={ tooltip }
-				tooltipPlacement={ tooltipPlacement }
-				icon={ <Icon icon={ help } size={ 28 } /> }
+				tooltipPlacement="top"
+				icon={ <HelpIcon ref={ helpIconRef } /> }
 			/>
 		</>
 	);

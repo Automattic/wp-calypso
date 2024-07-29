@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { initialSitesViewState } from './constants';
+import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import type { SitesDashboardContextInterface } from './types';
 
 const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
@@ -15,13 +15,13 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	showOnlyFavorites: undefined,
 	setShowOnlyFavorites: () => {},
 
-	sitesViewState: initialSitesViewState,
-	setSitesViewState: () => {},
+	dataViewsState: initialDataViewsState,
+	setDataViewsState: () => {},
 
 	initialSelectedSiteUrl: '',
 	currentPage: 1,
 	path: '',
-	showSitesDashboardV2: false,
+	featurePreview: null,
 
 	isBulkManagementActive: false,
 	setIsBulkManagementActive: () => {},

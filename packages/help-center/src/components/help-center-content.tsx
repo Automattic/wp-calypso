@@ -3,66 +3,91 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import OdieAssistantProvider, { clearOdieStorage } from '@automattic/odie-client';
-import { CardBody } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import OdieAssistantProvider, { useSetOdieStorage } from '@automattic/odie-client';
+import { CardBody, Disabled } from '@wordpress/components';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
-import { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import React, { useCallback, useState } from 'react';
+import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
-import { useIsWapuuEnabled } from '../hooks';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useShouldUseWapuu } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
+import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
-import { HelpCenterEmbedResult } from './help-center-embed-result';
 import { HelpCenterOdie } from './help-center-odie';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
+
+// Disabled component only applies the class if isDisabled is true, we want it always.
+function Wrapper( {
+	isDisabled,
+	className,
+	children,
+}: React.PropsWithChildren< { isDisabled: boolean; className: string } > ) {
+	if ( isDisabled ) {
+		return (
+			<Disabled isDisabled={ isDisabled } className={ className }>
+				{ children }
+			</Disabled>
+		);
+	}
+	return <div className={ className }>{ children }</div>;
+}
 
 const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string } > = ( {
 	currentRoute,
 } ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const location = useLocation();
-	const navigate = useNavigate();
 	const containerRef = useRef< HTMLDivElement >( null );
-	const section = useSelector( getSectionName );
-	const isWapuuEnabled = useIsWapuuEnabled();
+	const navigate = useNavigate();
+	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
+	const { sectionName, currentUser, site } = useHelpCenterContext();
+	const shouldUseWapuu = useShouldUseWapuu();
 	const { isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
-	const selectedSiteId = useSelector( getSelectedSiteId );
+
+	const navigateToSupportDocs = useCallback(
+		( blogId: string, postId: string, title: string, link: string ) => {
+			navigate(
+				`/post?blogId=${ blogId }&postId=${ postId }&title=${ title }&link=${ link }&backUrl=/odie`
+			);
+		},
+		[ navigate ]
+	);
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
 			pathname: location.pathname,
 			search: location.search,
-			section,
+			section: sectionName,
 			force_site_id: true,
 			location: 'help-center',
 		} );
-	}, [ location, section ] );
+	}, [ location, sectionName ] );
 
-	const { initialRoute } = useSelect(
+	const { navigateToRoute } = useSelect(
 		( select ) => ( {
-			initialRoute: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getInitialRoute(),
+			navigateToRoute: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getNavigateToRoute(),
 		} ),
 		[]
 	);
 
 	useEffect( () => {
-		if ( initialRoute ) {
-			navigate( initialRoute );
+		if ( navigateToRoute ) {
+			navigate( navigateToRoute );
+			setNavigateToRoute( null );
 		}
-	}, [ initialRoute ] );
+	}, [ navigate, navigateToRoute, setNavigateToRoute ] );
 
 	// reset the scroll location on navigation, TODO: unless there's an anchor
 	useEffect( () => {
@@ -79,46 +104,61 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		[]
 	);
 
+	const setOdieStorage = useSetOdieStorage( 'chat_id' );
+
+	const navigateToContactOptions = useCallback( () => {
+		navigate( '/contact-options' );
+	}, [ navigate ] );
+
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
-			<Routes>
-				<Route
-					path="/"
-					element={
-						<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
-					}
-				/>
-				<Route path="/post" element={ <HelpCenterEmbedResult /> } />
-				<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
-				<Route
-					path="/contact-form"
-					element={ <HelpCenterContactForm onSubmit={ () => clearOdieStorage( 'chat_id' ) } /> }
-				/>
-				<Route path="/success" element={ <SuccessScreen /> } />
-				<Route
-					path="/odie"
-					element={
-						<OdieAssistantProvider
-							botNameSlug="wpcom-support-chat"
-							botName="Wapuu"
-							enabled={ isWapuuEnabled }
-							isMinimized={ isMinimized }
-							initialUserMessage={ searchTerm }
-							logger={ trackEvent }
-							loggerEventNamePrefix="calypso_odie"
-							selectedSiteId={ selectedSiteId }
-							extraContactOptions={
-								<HelpCenterContactPage
-									hideHeaders
-									trackEventName="calypso_odie_extra_contact_option"
-								/>
-							}
-						>
-							<HelpCenterOdie />
-						</OdieAssistantProvider>
-					}
-				/>
-			</Routes>
+			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
+				<Routes>
+					<Route
+						path="/"
+						element={
+							navigateToRoute ? (
+								<Navigate to={ navigateToRoute } />
+							) : (
+								<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
+							)
+						}
+					/>
+					<Route path="/post" element={ <HelpCenterArticle /> } />
+					<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
+					<Route
+						path="/contact-form"
+						element={ <HelpCenterContactForm onSubmit={ () => setOdieStorage( null ) } /> }
+					/>
+					<Route path="/success" element={ <SuccessScreen /> } />
+					<Route
+						path="/odie"
+						element={
+							<OdieAssistantProvider
+								botNameSlug="wpcom-support-chat"
+								botName="Wapuu"
+								enabled={ shouldUseWapuu }
+								currentUser={ currentUser }
+								isMinimized={ isMinimized }
+								initialUserMessage={ searchTerm }
+								logger={ trackEvent }
+								loggerEventNamePrefix="calypso_odie"
+								selectedSiteId={ site?.ID as number }
+								extraContactOptions={
+									<HelpCenterContactPage
+										hideHeaders
+										trackEventName="calypso_odie_extra_contact_option"
+									/>
+								}
+								navigateToContactOptions={ navigateToContactOptions }
+								navigateToSupportDocs={ navigateToSupportDocs }
+							>
+								<HelpCenterOdie />
+							</OdieAssistantProvider>
+						}
+					/>
+				</Routes>
+			</Wrapper>
 		</CardBody>
 	);
 };

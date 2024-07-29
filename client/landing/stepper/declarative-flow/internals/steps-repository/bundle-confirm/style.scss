@@ -5,32 +5,32 @@
 body.is-section-stepper {
 	// Two column layout.
 	.step-container.bundle-confirm {
-		@media ( min-width: 660px ) {
+		@media (min-width: 660px) {
 			display: flex;
 		}
 
 		.step-container__header {
-			@media ( min-width: 660px ) {
+			@media (min-width: 660px) {
 				margin-top: 0 !important;
 			}
 
 			.formatted-header {
 				text-align: inherit;
 
-				@media ( min-width: 1024px ) {
+				@media (min-width: 1024px) {
 					margin-left: 24px;
 				}
 
 				.formatted-header__title {
 					text-align: inherit;
 
-					@media ( max-width: 660px ) {
+					@media (max-width: 660px) {
 						padding: 0 10px 0 0;
 					}
 				}
 
 				.formatted-header__subtitle {
-					@media ( max-width: 660px ) {
+					@media (max-width: 660px) {
 						margin-top: 8px;
 						padding: 0 10px 0 0;
 					}
@@ -43,7 +43,7 @@ body.is-section-stepper {
 		}
 
 		.step-container__content {
-			@media ( min-width: 660px ) {
+			@media (min-width: 660px) {
 				display: flex;
 				margin: 0 24px;
 			}
@@ -55,7 +55,7 @@ body.is-section-stepper {
 				flex-direction: column;
 				max-width: 520px;
 
-				@media ( max-width: 660px ) {
+				@media (max-width: 660px) {
 					max-width: 90vw;
 				}
 

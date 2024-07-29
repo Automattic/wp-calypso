@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -85,7 +85,7 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className 
 	}, [ statType, counts, translate, isRequesting ] );
 
 	return (
-		<div className={ classNames( 'stats-email-open-top-row', className ?? null ) }>
+		<div className={ clsx( 'stats-email-open-top-row', className ?? null ) }>
 			<div className="highlight-cards-list">{ boxes }</div>
 		</div>
 	);

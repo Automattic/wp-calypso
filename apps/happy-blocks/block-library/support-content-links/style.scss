@@ -4,7 +4,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 		font-size: 1rem;
 		line-height: 24px;
 		margin: 8px 0;
-		@media ( max-width: $breakpoint-mobile ) {
+		@media (max-width: $breakpoint-mobile) {
 			display: grid;
 			margin: 16px 0;
 		}

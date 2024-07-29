@@ -25,3 +25,8 @@ export function isFetchingAgency( state: A4AStore ): boolean {
 export function getAgencyRequestError( state: A4AStore ): APIError | null {
 	return state.a8cForAgencies.agencies.error;
 }
+
+export function hasAgency( state: A4AStore ): boolean {
+	const agencies = state.a8cForAgencies.agencies.agencies;
+	return Array.isArray( agencies ) && agencies.length > 0;
+}

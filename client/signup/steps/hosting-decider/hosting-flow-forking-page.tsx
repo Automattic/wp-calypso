@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { IMPORT_HOSTED_SITE_FLOW, NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
+import { HOSTED_SITE_MIGRATION_FLOW, NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { MEDIA_QUERIES } from '../../../sites-dashboard/utils';
 import { StepProps } from '.';
@@ -50,7 +50,7 @@ export const HostingFlowCTA = ( { description, label, onClick }: HostingFlowCTAP
 export const HostingFlowForkingPage = ( props: StepProps ) => {
 	const translate = useTranslate();
 	const onClick = (
-		stepperHostingFlow: typeof NEW_HOSTED_SITE_FLOW | typeof IMPORT_HOSTED_SITE_FLOW
+		stepperHostingFlow: typeof NEW_HOSTED_SITE_FLOW | typeof HOSTED_SITE_MIGRATION_FLOW
 	) => {
 		props.submitSignupStep(
 			{
@@ -104,7 +104,7 @@ export const HostingFlowForkingPage = ( props: StepProps ) => {
 				<HostingFlowCTA
 					description={ translate( 'Bring a site to WordPress.com' ) }
 					label={ translate( 'Migrate a site' ) }
-					onClick={ () => onClick( IMPORT_HOSTED_SITE_FLOW ) }
+					onClick={ () => onClick( HOSTED_SITE_MIGRATION_FLOW ) }
 				/>
 			</div>
 		</div>

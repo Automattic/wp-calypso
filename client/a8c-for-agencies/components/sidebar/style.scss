@@ -4,14 +4,14 @@
 // This file is meant to house style rules that all implementations of the base
 // sidebar will implement by default.
 .a4a-sidebar {
-	--color-sidebar-background: #021a23;
-	--color-sidebar-menu-hover-background: #02395c;
-	--color-sidebar-menu-hover-text: #fff;
-	--color-sidebar-menu-selected-background: #02395c;
-	--color-sidebar-menu-selected-text: #fff;
-	--color-sidebar-text: #fff;
-	--color-sidebar-text-alternative: #bbe0fa;
-	--color-sidebar-gridicon-fill: #bbe0fa;
+	--color-sidebar-background: var(--color-primary-100);
+	--color-sidebar-menu-hover-background: var(--color-primary-80);
+	--color-sidebar-menu-hover-text: var(--color-text-inverted);
+	--color-sidebar-menu-selected-background: var(--color-primary-80);
+	--color-sidebar-menu-selected-text: var(--color-text-inverted);
+	--color-sidebar-text: var(--color-text-inverted);
+	--color-sidebar-text-alternative: var(--color-primary-5);
+	--color-sidebar-gridicon-fill: var(--color-primary-5);
 
 	.a4a-sidebar__site-selector {
 		background-color: var(--color-sidebar-background);
@@ -19,6 +19,15 @@
 
 	.sidebar__menu-icon {
 		margin: 0;
+	}
+
+	.sidebar-v2__navigator-sub-menu .components-navigator-back-button {
+		background: none;
+
+		&:hover {
+			background: var(--color-primary-80);
+			color: var(--color-text-inverted);
+		}
 	}
 }
 
@@ -52,8 +61,6 @@
 	}
 
 	.site__title {
-		// TODO: Value taken directly from designs;
-		// confirm this weight is correct and refactor as necessary
 		font-weight: 500;
 	}
 }

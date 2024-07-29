@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 export type ItemPriceMessageProps = {
 	active?: boolean;
@@ -11,7 +11,7 @@ const ItemPriceMessage: React.FC< ItemPriceMessageProps > = ( {
 	error = false,
 	message,
 } ) => {
-	const messageClass = classNames( 'item-price__message', {
+	const messageClass = clsx( 'item-price__message', {
 		'item-price__message--active': active && ! error,
 		'item-price__message--error': error,
 	} );

@@ -49,7 +49,7 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	gap: 4px;
 	margin-block-end: 8px;
 }
@@ -62,10 +62,6 @@
 	font-size: 0.875rem;
 	line-height: 1.7;
 	font-weight: 400;
-
-	@include break-medium {
-		flex-direction: row;
-	}
 }
 
 .shopping-cart__menu-list-item-price-actual {
@@ -81,7 +77,7 @@
 .shopping-cart__menu-footer {
 	display: flex;
 	flex-direction: column;
-	gap: 24px;
+	gap: 4px;
 	border-block-start: 1px solid var(--color-neutral-10);
 	padding-block-start: 16px;
 	align-items: stretch;
@@ -104,4 +100,5 @@
 	font-size: rem(14px);
 	font-weight: 600;
 	border-radius: 4px;
+	margin-block-start: 20px;
 }

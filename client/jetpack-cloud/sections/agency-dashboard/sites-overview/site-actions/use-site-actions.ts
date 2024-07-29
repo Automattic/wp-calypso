@@ -8,11 +8,13 @@ import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selector
 import getActionEventName from './get-action-event-name';
 import type { SiteNode, AllowedActionTypes } from '../types';
 
-export default function useSiteActions(
-	site: SiteNode,
-	isLargeScreen: boolean,
-	siteError?: boolean
-) {
+type Props = {
+	site: SiteNode;
+	isLargeScreen: boolean;
+	siteError?: boolean;
+};
+
+export default function useSiteActions( { site, isLargeScreen, siteError }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );
@@ -26,6 +28,12 @@ export default function useSiteActions(
 		}
 
 		const { url, url_with_scheme, blog_id, has_backup, is_atomic } = siteValue;
+
+		let issueLicenseURL = undefined;
+
+		if ( partnerCanIssueLicense ) {
+			issueLicenseURL = `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`;
+		}
 
 		const siteSlug = urlToSlug( url );
 
@@ -63,9 +71,7 @@ export default function useSiteActions(
 			},
 			{
 				name: translate( 'Issue new license' ),
-				href: partnerCanIssueLicense
-					? `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`
-					: undefined,
+				href: issueLicenseURL,
 				onClick: () => handleClickMenuItem( 'issue_license' ),
 				isExternalLink: false,
 				isEnabled: partnerCanIssueLicense && ! siteError && ! is_atomic && ! isUrlOnly,
@@ -112,5 +118,13 @@ export default function useSiteActions(
 				isEnabled: true && ! isUrlOnly,
 			},
 		];
-	}, [ dispatch, isLargeScreen, partnerCanIssueLicense, siteError, siteValue, translate ] );
+	}, [
+		dispatch,
+		isLargeScreen,
+		partnerCanIssueLicense,
+		site?.value?.sticker,
+		siteError,
+		siteValue,
+		translate,
+	] );
 }

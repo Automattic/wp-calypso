@@ -206,6 +206,7 @@
 	--color-border-shadow-rgb: var(--color-neutral-0-rgb);
 	--color-border-inverted: var(--studio-white);
 	--color-border-inverted-rgb: var(--studio-white-rgb);
+	--color-border-secondary: #f1f1f1;
 
 	--color-link: var(--studio-blue-50);
 	--color-link-rgb: var(--studio-blue-50-rgb);
@@ -254,7 +255,9 @@
 
 	--color-masterbar-background: #101517;
 	--color-masterbar-border: #333;
-	--color-masterbar-text: var(--studio-white);
+	--color-masterbar-text: #f0f0f1; /* Direct from wp-admin */
+	--color-masterbar-icon: rgba(240, 246, 252, 0.6); /* Direct from wp-admin */
+	--color-masterbar-highlight: #72aee6; /* Direct from wp-admin */
 	--color-masterbar-item-hover-background: #333;
 	--color-masterbar-item-active-background: #23282d;
 	--color-masterbar-item-new-editor-background: var(--studio-gray-50);
@@ -347,4 +350,10 @@
 	--color-sidebar-submenu-text: var(--studio-blue-70);
 	--color-sidebar-submenu-hover-text: var(--color-accent);
 	--color-sidebar-submenu-selected-text: var(--color-accent);
+
+	/* Sidebar Submenu - Nav Redesign */
+	--color-navredesign-sidebar-submenu-text: rgba(240, 246, 252, 0.7); /* Direct from wp-admin */
+	--color-navredesign-sidebar-menu-selected-text: var(--theme-text-color);
+	--color-navredesign-sidebar-submenu-selected-text: var(--theme-text-color);
+	--color-navredesign-sidebar-submenu-hover-text: #72aee6; /* Direct from wp-admin */
 }

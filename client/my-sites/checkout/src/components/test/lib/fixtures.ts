@@ -1,8 +1,9 @@
-import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import moment from 'moment';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-export const responseCartWithRenewal: Pick< ResponseCart, 'products' > = {
+export const responseCartWithRenewal: ResponseCart = {
+	...getEmptyResponseCart(),
 	products: [
 		{
 			...getEmptyResponseCartProduct(),
@@ -285,18 +286,12 @@ export const storeData = () => ( {
 				data: [
 					{
 						autoRenew: false,
-						canStartTrial: false,
 						currentPlan: false,
 						currencyCode: 'USD',
-						discountReason: null,
-						formattedDiscount: '$0',
-						formattedOriginalPrice: '$0',
-						formattedPrice: '$0',
 						freeTrial: false,
 						hasDomainCredit: false,
 						id: null,
 						interval: -1,
-						isDomainUpgrade: false,
 						productName: 'WordPress.com Free',
 						productSlug: 'free_plan',
 						rawDiscount: 0,

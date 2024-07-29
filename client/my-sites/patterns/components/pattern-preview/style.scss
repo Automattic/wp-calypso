@@ -1,6 +1,6 @@
+@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@automattic/components/src/styles/typography";
 
 @keyframes pattern-preview-target {
 	from {
@@ -35,7 +35,6 @@
 		overflow: hidden;
 	}
 
-	&:target .pattern-preview__renderer,
 	&.is-targeted .pattern-preview__renderer {
 		animation: 0.8s linear 3.5s backwards pattern-preview-target;
 	}
@@ -76,16 +75,40 @@
 		font-size: rem(13px);
 		line-height: 1.6;
 		padding: 4px 8px;
+
+		&:lang(en) {
+			text-transform: capitalize;
+		}
 	}
 
 	.pattern-preview__copy {
+		align-items: center;
 		background-color: var(--button-color-default);
 		border-color: var(--button-color-default);
+		display: flex;
+		gap: 8px;
+
+		&.is-placeholder {
+			pointer-events: none;
+			user-select: none;
+		}
 
 		&:enabled:hover,
 		&:focus {
 			background-color: var(--button-color-hover);
 			border-color: var(--button-color-hover);
+		}
+
+		path {
+			fill: currentColor;
+		}
+	}
+
+	&.is-server .pattern-preview__copy {
+		visibility: hidden;
+
+		@include break-medium {
+			visibility: visible;
 		}
 	}
 
@@ -111,13 +134,15 @@
 }
 
 .pattern-preview--list {
+	flex-direction: column-reverse;
+
 	.pattern-preview__header {
+		align-items: center;
 		min-height: auto;
 	}
 
 	.pattern-preview__title {
-		padding-top: 8px;
-
+		padding-top: 0;
 		@include break-huge {
 			font-size: rem(20px);
 		}
@@ -130,6 +155,12 @@
 
 	.pattern-preview__get-access {
 		padding-left: 12px;
+	}
+}
+
+.pattern-preview--grid {
+	.pattern-preview__copy {
+		gap: 6px;
 	}
 }
 
@@ -147,18 +178,20 @@
 .pattern-preview__resizer {
 	.components-resizable-box__handle-left,
 	.components-resizable-box__handle-right {
-		bottom: 3rem;
+		bottom: 0;
 		height: auto;
 		left: 100%;
 		right: initial;
+		top: 3.4rem;
 
 		&::after {
 			background-color: #a7aaad;
 			border-radius: 3px;
 			box-shadow: none;
 			height: 50px;
-			right: calc(50% - 3px);
-			top: calc(50% - 8px);
+			right: 50%;
+			top: 50%;
+			transform: translate(50%, -50%);
 			width: 6px;
 		}
 
@@ -167,4 +200,3 @@
 		}
 	}
 }
-

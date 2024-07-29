@@ -22,7 +22,7 @@ productionConfig.features.is_running_in_jetpack_site =
 // Set is is_running_in_woo_site to true if the dashboard is running on the Woo Blaze plugin
 productionConfig.features.is_running_in_woo_site = isWooStore;
 
-productionConfig.features.blaze_setup_mode = needSetup;
+productionConfig.features.blaze_setup_mode = !! needSetup;
 
 // The option enables loading of the whole translation file, and could be optimized by setting it to `true`, which needs the translation chunks in place.
 // @see https://github.com/Automattic/wp-calypso/blob/trunk/docs/translation-chunks.md

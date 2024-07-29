@@ -43,7 +43,7 @@
 			margin-bottom: 20px;
 		}
 		.customer__stats-list {
-			@media ( max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				flex-flow: column;
 				gap: 24px;
 				padding-left: 0;
@@ -77,7 +77,7 @@
 			flex: 1 1 0;
 			overflow: hidden;
 			word-wrap: break-word;
-			@media ( max-width: $break-large ) {
+			@media (max-width: $break-large) {
 				flex: auto;
 			}
 		}
@@ -100,7 +100,7 @@
 			letter-spacing: -0.15px;
 		}
 
-		@media ( max-width: $break-large ) {
+		@media (max-width: $break-large) {
 			flex-direction: column;
 		}
 	}

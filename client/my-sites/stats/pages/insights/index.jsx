@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -10,11 +10,13 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import AllTimeViewsSection from 'calypso/my-sites/stats/features/modules/all-time-views-section';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimeHighlightsSection from '../../all-time-highlights-section';
-import AllTimeViewsSection from '../../all-time-views-section';
 import AnnualHighlightsSection from '../../annual-highlights-section';
+import StatsModuleComments from '../../features/modules/stats-comments';
+import StatsModuleTags from '../../features/modules/stats-tags';
 import PostingActivity from '../../post-trends';
 import Comments from '../../stats-comments';
 import StatsModule from '../../stats-module';
@@ -25,8 +27,9 @@ import statsStrings from '../../stats-strings';
 const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 	const moduleStrings = statsStrings();
+	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
 
-	const statsModuleListClass = classNames(
+	const statsModuleListClass = clsx(
 		'stats__module-list--insights',
 		'stats__module--unified',
 		'stats__module-list',
@@ -61,34 +64,62 @@ const StatsInsights = ( props ) => {
 				<PostingActivity siteId={ siteId } />
 				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
 				<div className={ statsModuleListClass }>
-					<StatsModule
-						path="tags-categories"
-						moduleStrings={ moduleStrings.tags }
-						statType="statsTags"
-						hideSummaryLink
-						className={ classNames(
-							{
-								'stats__flexible-grid-item--half': isJetpack,
-								'stats__flexible-grid-item--full--large': isJetpack,
-							},
-							{
-								'stats__flexible-grid-item--full': ! isJetpack,
-							}
-						) }
-					/>
-					<Comments
-						path="comments"
-						className={ classNames(
-							'stats__flexible-grid-item--half',
-							'stats__flexible-grid-item--full--large'
-						) }
-					/>
+					{ isEmptyStateV2 && (
+						<StatsModuleTags
+							moduleStrings={ moduleStrings.tags }
+							hideSummaryLink
+							className={ clsx(
+								{
+									'stats__flexible-grid-item--half': isJetpack,
+									'stats__flexible-grid-item--full--large': isJetpack,
+								},
+								{
+									'stats__flexible-grid-item--full': ! isJetpack,
+								}
+							) }
+						/>
+					) }
+					{ ! isEmptyStateV2 && (
+						<StatsModule
+							path="tags-categories"
+							moduleStrings={ moduleStrings.tags }
+							statType="statsTags"
+							hideSummaryLink
+							className={ clsx(
+								{
+									'stats__flexible-grid-item--half': isJetpack,
+									'stats__flexible-grid-item--full--large': isJetpack,
+								},
+								{
+									'stats__flexible-grid-item--full': ! isJetpack,
+								}
+							) }
+						/>
+					) }
+					{ isEmptyStateV2 && (
+						<StatsModuleComments
+							className={ clsx(
+								'stats__flexible-grid-item--half',
+								'stats__flexible-grid-item--full--large'
+							) }
+						/>
+					) }
+
+					{ ! isEmptyStateV2 && (
+						<Comments
+							path="comments"
+							className={ clsx(
+								'stats__flexible-grid-item--half',
+								'stats__flexible-grid-item--full--large'
+							) }
+						/>
+					) }
 
 					{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
 					{ ! isJetpack && (
 						<StatShares
 							siteId={ siteId }
-							className={ classNames(
+							className={ clsx(
 								'stats__flexible-grid-item--half',
 								'stats__flexible-grid-item--full--large'
 							) }

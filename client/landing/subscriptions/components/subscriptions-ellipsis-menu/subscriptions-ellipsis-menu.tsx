@@ -1,6 +1,6 @@
 import { Gridicon, Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useRef } from 'react';
 import usePopoverToggle from 'calypso/landing/subscriptions/hooks/use-popover-toggle';
 import './styles.scss';
@@ -24,7 +24,7 @@ const SubscriptionsEllipsisMenu = ( {
 	return (
 		<div className="subscriptions-ellipsis-menu">
 			<Button
-				className={ classNames( 'subscriptions-ellipsis-menu__toggle', {
+				className={ clsx( 'subscriptions-ellipsis-menu__toggle', {
 					'is-popover-visible': showPopover,
 					'has-vertical-toggle': verticalToggle,
 				} ) }
@@ -40,7 +40,7 @@ const SubscriptionsEllipsisMenu = ( {
 				onClose={ onClose }
 				isVisible={ showPopover }
 				context={ buttonRef.current }
-				className={ classNames( 'subscriptions-ellipsis-menu__popover', popoverClassName ) }
+				className={ clsx( 'subscriptions-ellipsis-menu__popover', popoverClassName ) }
 			>
 				{ typeof children === 'function' ? children( onClose ) : children }
 			</Popover>

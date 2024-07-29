@@ -7,6 +7,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
@@ -19,6 +20,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const Cloudflare = () => {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
 	const dispatch = useDispatch();
 	const showCloudflare = config.isEnabled( 'cloudflare' );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
@@ -59,7 +61,9 @@ const Cloudflare = () => {
 								<p>
 									<a
 										onClick={ recordClick }
-										href="https://jetpack.com/features/design/content-delivery-network/"
+										href={ localizeUrl(
+											'https://jetpack.com/features/design/content-delivery-network/'
+										) }
 										target="_blank"
 										rel="noreferrer"
 									>
@@ -76,7 +80,7 @@ const Cloudflare = () => {
 							} ) }
 							feature={ WPCOM_FEATURES_CDN }
 							event="calypso_settings_cloudflare_cdn_upsell_nudge_click"
-							showIcon={ true }
+							showIcon
 							forceDisplay
 						/>
 					) }
@@ -117,7 +121,7 @@ const Cloudflare = () => {
 							) }
 							feature={ WPCOM_FEATURES_CLOUDFLARE_CDN }
 							event="calypso_settings_cloudflare_cdn_upsell_nudge_click"
-							showIcon={ true }
+							showIcon
 							forceDisplay
 						/>
 					) }

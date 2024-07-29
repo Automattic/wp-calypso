@@ -32,7 +32,7 @@ Default `interval: 700`
 ## Example
 
 ```javascript
-import classnames from 'classnames';
+import clsx from 'clsx';
 import HoverIntent from 'calypso/lib/hover-intent';
 
 class App extends Component {
@@ -59,7 +59,7 @@ class App extends Component {
 				>
 					<button>Hover</button>
 				</HoverIntent>
-				<span className={ classnames( 'popover', { open: mouseover } ) }>Hover</span>
+				<span className={ clsx( 'popover', { open: mouseover } ) }>Hover</span>
 			</div>
 		);
 	}

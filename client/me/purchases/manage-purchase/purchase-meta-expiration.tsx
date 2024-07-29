@@ -6,9 +6,8 @@ import {
 	isJetpackProduct,
 	JETPACK_LEGACY_PLANS,
 } from '@automattic/calypso-products';
-import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
-import { useTranslate, getLocaleSlug } from 'i18n-calypso';
+import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -52,9 +51,7 @@ function PurchaseMetaExpiration( {
 	renderRenewsOrExpiresOnLabel,
 }: ExpirationProps ) {
 	const translate = useTranslate();
-	const { hasTranslation } = useI18n();
 	const moment = useLocalizedMoment();
-	const locale = getLocaleSlug();
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
 	const isJetpackPurchase = isJetpackPlan( purchase ) || isJetpackProduct( purchase );
 	const isCancellableSitelessPurchase = isAkismetTemporarySitePurchase( purchase );
@@ -87,7 +84,7 @@ function PurchaseMetaExpiration( {
 				siteSlug={ site && ! isCancellableSitelessPurchase ? site.slug : '' }
 				purchase={ purchase }
 				toggleSource="manage-purchase"
-				showLink={ true }
+				showLink
 				getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 			/>
 		) : (
@@ -154,11 +151,6 @@ function PurchaseMetaExpiration( {
 			return false;
 		};
 
-		// TODO - remove this once the translation is available in all languages - see https://translate.wordpress.com/deliverables/overview/9768580/
-		const hasToolTipTextBeenTranslated = hasTranslation(
-			'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date. {{inlineSupportLink}}Learn more{{/inlineSupportLink}}'
-		);
-
 		return (
 			<li className="manage-purchase__meta-expiration">
 				<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
@@ -170,12 +162,12 @@ function PurchaseMetaExpiration( {
 					</div>
 				) }
 				<span
-					className={ classNames( 'manage-purchase__detail', {
+					className={ clsx( 'manage-purchase__detail', {
 						'is-expiring': isCloseToExpiration( purchase ),
 					} ) }
 				>
 					{ subsBillingText }
-					{ shouldShowTooltip() && ( locale === 'en' || hasToolTipTextBeenTranslated ) && (
+					{ shouldShowTooltip() && (
 						<InfoPopover position="bottom right">
 							{ translate(
 								'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date. {{inlineSupportLink}}Learn more{{/inlineSupportLink}}',

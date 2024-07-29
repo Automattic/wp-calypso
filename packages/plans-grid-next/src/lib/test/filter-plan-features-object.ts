@@ -15,7 +15,6 @@ const planA = {
 	features: {
 		wpcomFeatures: [ feature1, feature2 ],
 		jetpackFeatures: [ feature5, feature6 ],
-		conditionalFeatures: [ feature7 ],
 	},
 } as GridPlan;
 
@@ -23,7 +22,6 @@ const planB = {
 	features: {
 		wpcomFeatures: [ feature2, feature3 ],
 		jetpackFeatures: [ feature5, feature6 ],
-		conditionalFeatures: [ feature7 ],
 	},
 } as GridPlan;
 
@@ -38,7 +36,7 @@ describe( 'filterUnusedFeaturesObject', () => {
 			[ planA, planB ],
 			[ feature1, feature2, feature3, feature4, feature5, feature7 ]
 		);
-		expect( filteredFeatures ).toEqual( [ feature1, feature2, feature3, feature5, feature7 ] );
+		expect( filteredFeatures ).toEqual( [ feature1, feature2, feature3, feature5 ] );
 	} );
 
 	it( 'should return an empty array when no features are used in plans', () => {
@@ -51,14 +49,13 @@ describe( 'filterUnusedFeaturesObject', () => {
 			features: {
 				wpcomFeatures: [ feature1, feature1 ],
 				jetpackFeatures: [ feature5, feature6, feature6 ],
-				conditionalFeatures: [ feature7, feature7 ],
 			},
 		} as GridPlan;
 		const filteredFeatures = filterUnusedFeaturesObject(
 			[ planC ],
 			[ feature1, feature2, feature6, feature7 ]
 		);
-		expect( filteredFeatures ).toEqual( [ feature1, feature6, feature7 ] );
+		expect( filteredFeatures ).toEqual( [ feature1, feature6 ] );
 	} );
 
 	it( 'should handle invalid input gracefully', () => {

@@ -23,7 +23,7 @@ const NavigatorHeader = ( { title, description, hideBack, onBack }: Props ) => {
 					<NavigatorBackButton
 						as={ Button }
 						title={ translate( 'Back' ) }
-						borderless={ true }
+						borderless
 						aria-label={ translate( 'Navigate to the previous view' ) }
 						onClick={ onBack }
 					>

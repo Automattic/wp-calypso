@@ -25,12 +25,12 @@
 	"license": "GPL-2.0-or-later",
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"css-loader": "^6.10.0",
+		"css-loader": "^6.11.0",
 		"mini-css-extract-plugin": "^1.6.2",
-		"webpack": "^5.90.3"
+		"webpack": "^5.91.0"
 	},
 	"peerDependencies": {
-		"webpack": "^5.90.3"
+		"webpack": "^5.91.0"
 	},
 	"dependencies": {
 		"rtlcss": "^3.1.2"

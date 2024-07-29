@@ -79,10 +79,17 @@
 	}
 }
 
-.billing-history__transaction-tax-amount {
+.transaction-amount__tax-amount {
 	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	white-space: nowrap;
+}
+
+.billing-history__transaction-tax-amount {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+	display: flex;
+	justify-content: space-between;
 }
 
 .billing-history__header-row {
@@ -349,7 +356,6 @@ textarea.billing-history__billing-details-editable {
 		tbody tr {
 			td {
 				color: var(--color-neutral);
-				border-bottom: 1px solid var(--color-border-subtle);
 			}
 
 			&:last-child td {
@@ -368,6 +374,25 @@ textarea.billing-history__billing-details-editable {
 			}
 		}
 	}
+}
+
+.billing-history__receipt tr td.billing-history__receipt-item-discounts {
+	padding: 4px 0;
+}
+
+ul.billing-history__receipt-item-discounts-list {
+	list-style-type: none;
+	margin: 0 0 0 30px;
+	font-size: $font-body-small;
+}
+
+li.billing-history__receipt-item-discount {
+	display: flex;
+	justify-content: space-between;
+}
+
+li.billing-history__receipt-item-discount--different-term {
+	display: block;
 }
 
 .billing-history__receipt-links {
@@ -476,7 +501,7 @@ textarea.billing-history__billing-details-editable {
 	}
 }
 
-@media ( min-width: 480px ) {
+@media (min-width: 480px) {
 	.billing-history__tax-receipt-link {
 		margin-top: 16px;
 	}

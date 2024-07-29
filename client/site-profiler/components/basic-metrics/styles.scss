@@ -1,0 +1,86 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.basic-metric-details {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(2, 1fr);
+	grid-column-gap: 72px;
+	grid-row-gap: 72px;
+
+	@media (max-width: $break-large) {
+		grid-template-columns: 1fr;
+	}
+}
+
+
+.basic-metrics__card {
+	.basic-metrics__header {
+		padding-left: 28px;
+		padding-top: 12px;
+		padding-bottom: 8px;
+		margin-bottom: 24px;
+		border-left: 5px solid;
+
+		.basic-metrics__name {
+			color: var(--studio-gray-20);
+			display: flex;
+			gap: 4px;
+		}
+
+		.basic-metrics__value {
+			display: inline-block;
+			background-clip: text;
+			color: transparent;
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-color: var(--studio-gray-30);
+		}
+
+		&.good {
+			border-color: var(--studio-green-30);
+
+			.basic-metrics__name svg {
+				color: var(--studio-green-30);
+			}
+
+			.basic-metrics__value {
+				background-image: linear-gradient(90deg, #3858e9, #349f4b);
+			}
+		}
+
+		&.poor {
+			border-color: var(--studio-red-50);
+
+			.basic-metrics__name svg {
+				color: var(--studio-red-50);
+			}
+
+			.basic-metrics__value {
+				background-image: linear-gradient(90deg, #ff0094, #d63638);
+			}
+		}
+	}
+
+	h3 {
+		color: var(--studio-white);
+	}
+
+	h4 {
+		color: var(--studio-gray-20);
+	}
+
+	a {
+		color: var(--studio-white) !important;
+		font-weight: 500;
+	}
+}
+
+.basic-metrics__value {
+	font-family: "SF Pro Text", $sans;
+	/* stylelint-disable-next-line */
+	font-size: 3.75rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}

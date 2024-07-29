@@ -95,7 +95,7 @@ const RegisteredDomainDetails = ( {
 					planName={ selectedSite.plan?.product_name_short }
 					siteDomain={ selectedSite.domain }
 					purchase={ purchase }
-					withTextStatus={ true }
+					withTextStatus
 					toggleSource="registered-domain-status"
 				/>
 				{ autoRenewAdditionalText && (
@@ -154,7 +154,7 @@ const RegisteredDomainDetails = ( {
 		<div className="details-card">
 			<div className="details-card__section dates">{ renderDates() }</div>
 			<div className="details-card__section">{ renderAutoRenewToggle() }</div>
-			<div className="details-card__section">
+			<div className="details-card__section details-card__section-actions">
 				{ renderRenewButton() }
 				{ renderPaymentDetailsButton() }
 			</div>

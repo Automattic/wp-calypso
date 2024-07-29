@@ -5,6 +5,8 @@ import Badge from '@automattic/components/src/badge/docs/example';
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
 import Count from '@automattic/components/src/count/docs/example';
+import DotPager from '@automattic/components/src/dot-pager/docs/example';
+import ExternalLink from '@automattic/components/src/external-link/docs/example';
 import FoldableCard from '@automattic/components/src/foldable-card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
 import ProductLogoExample from '@automattic/components/src/logos/docs/example';
@@ -16,8 +18,9 @@ import SegmentedControl from '@automattic/components/src/segmented-control/docs/
 import SelectDropdown from '@automattic/components/src/select-dropdown/docs/example';
 import SiteThumbnail from '@automattic/components/src/site-thumbnail/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
+import Swipeable from '@automattic/components/src/swipeable/docs/example';
 import Tooltip from '@automattic/components/src/tooltip/docs/example';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { trim } from 'lodash';
 import { Component, Fragment } from 'react';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
@@ -38,11 +41,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import DatePicker from 'calypso/components/date-picker/docs/example';
 import DateRange from 'calypso/components/date-range/docs/example';
 import DiffViewerExample from 'calypso/components/diff-viewer/docs/example';
-import DotPager from 'calypso/components/dot-pager/docs/example';
 import DropZones from 'calypso/components/drop-zone/docs/example';
 import EllipsisMenu from 'calypso/components/ellipsis-menu/docs/example';
 import EmptyContent from 'calypso/components/empty-content/docs/example';
-import ExternalLink from 'calypso/components/external-link/docs/example';
 import FAQ from 'calypso/components/faq/docs/example';
 import FeatureGate from 'calypso/components/feature-example/docs/example';
 import FeatureItem from 'calypso/components/feature-item/docs/example';
@@ -104,7 +105,6 @@ import Spotlight from 'calypso/components/spotlight/docs/example';
 import StepProgress from 'calypso/components/step-progress/docs/example';
 import SuggestionSearchExample from 'calypso/components/suggestion-search/docs/example';
 import SupportInfoExample from 'calypso/components/support-info/docs/example';
-import Swipeable from 'calypso/components/swipeable/docs/example';
 import TextDiff from 'calypso/components/text-diff/docs/example';
 import TextareaAutosize from 'calypso/components/textarea-autosize/docs/example';
 import TileGrid from 'calypso/components/tile-grid/docs/example';
@@ -122,7 +122,6 @@ import Collection from 'calypso/devdocs/design/search-collection';
 import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
 import SitesGridItemExample from 'calypso/sites-dashboard/components/sites-grid-item/docs/example';
 import SitesGridItemSelectExample from 'calypso/sites-dashboard/components/sites-grid-item-select/docs/example';
-import SitesTableRowExample from 'calypso/sites-dashboard/components/sites-table-row/docs/example';
 
 export default class DesignAssets extends Component {
 	static displayName = 'DesignAssets';
@@ -140,7 +139,7 @@ export default class DesignAssets extends Component {
 		const { component } = this.props;
 		const { filter } = this.state;
 
-		const className = classnames( 'devdocs', 'devdocs__components', {
+		const className = clsx( 'devdocs', 'devdocs__components', {
 			'is-single': this.props.component,
 			'is-list': ! this.props.component,
 		} );
@@ -269,7 +268,6 @@ export default class DesignAssets extends Component {
 					<SiteThumbnail readmeFilePath="/packages/components/src/site-thumbnail" />
 					<SitesGridItemExample readmeFilePath="/client/sites-dashboard/components/sites-grid-item" />
 					<SitesGridItemSelectExample readmeFilePath="/client/sites-dashboard/components/sites-grid-item-select" />
-					<SitesTableRowExample readmeFilePath="/client/sites-dashboard/components/sites-table-row" />
 					<StepProgress readmeFilePath="step-progress" />
 					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />

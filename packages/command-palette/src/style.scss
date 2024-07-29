@@ -1,3 +1,20 @@
 .commands-command-menu__overlay {
 	z-index: z-index("root", ".commands-commands-menu__overlay");
 }
+
+div.commands-command-menu {
+	width: min(100% - 32px, 640px);
+	max-width: 640px;
+}
+
+.command-palette__footer-all-sites:focus,
+.command-palette__footer-current-site:focus {
+	outline: thin dotted;
+	color: var(--studio-gray-50);
+	text-decoration: none;
+	box-shadow: inherit;
+}
+
+.commands-command-menu__header svg {
+	fill: #1e1e1e;
+}

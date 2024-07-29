@@ -11,8 +11,6 @@ import {
 } from './controller';
 
 export default function () {
-	// FIXME: check access, TOS consent, and partner key selection
-
 	// Purchases
 	page( '/purchases', requireAccessContext, purchasesContext, makeLayout, clientRender );
 

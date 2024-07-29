@@ -24,27 +24,28 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets && npx copyfiles ./styles/** dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets && npx copyfiles ./styles/** dist",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@wordpress/components": "^27.2.0",
-		"@wordpress/data": "^9.24.0",
-		"@wordpress/icons": "^9.45.0",
-		"@wordpress/react-i18n": "^3.52.0",
-		"classnames": "^2.3.2",
-		"react-router-dom": "^6.10.0",
+		"@wordpress/components": "^28.2.0",
+		"@wordpress/data": "^10.2.0",
+		"@wordpress/icons": "^10.2.0",
+		"@wordpress/react-i18n": "^4.2.0",
+		"clsx": "^2.1.1",
+		"react-router-dom": "^6.23.1",
 		"tslib": "^2.5.0",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@testing-library/react": "^14.2.1",
-		"@wordpress/base-styles": "^4.45.0",
+		"@testing-library/react": "^15.0.7",
+		"@wordpress/base-styles": "^5.2.0",
 		"copyfiles": "^2.3.0",
 		"css-loader": "^3.6.0",
 		"react": "^18.2.0",
@@ -53,11 +54,10 @@
 		"sass-loader": "^10.1.1",
 		"style-loader": "^1.3.0",
 		"typescript": "^5.3.3",
-		"webpack": "^5.90.3"
+		"webpack": "^5.91.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^4.54.0",
+		"@wordpress/i18n": "^5.2.0",
 		"react": "^18.2.0"
-	},
-	"private": true
+	}
 }

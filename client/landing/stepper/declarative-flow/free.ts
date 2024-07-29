@@ -1,12 +1,10 @@
-import { type OnboardSelect, type UserSelect } from '@automattic/data-stores';
+import { type OnboardSelect } from '@automattic/data-stores';
 import { isAssemblerDesign } from '@automattic/design-picker';
-import { useLocale } from '@automattic/i18n-utils';
 import { FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
@@ -16,17 +14,12 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
-import { getLoginUrl } from '../utils/path';
+import { ONBOARD_STORE } from '../stores';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
-import {
-	AssertConditionResult,
-	AssertConditionState,
-	Flow,
-	ProvidedDependencies,
-} from './internals/types';
+import { Flow, ProvidedDependencies } from './internals/types';
 
 const free: Flow = {
 	name: FREE_FLOW,
@@ -41,7 +34,7 @@ const free: Flow = {
 			resetOnboardStore();
 		}, [] );
 
-		return [
+		return stepsWithRequiredLogin( [
 			STEPS.FREE_SETUP,
 			STEPS.PROCESSING,
 			STEPS.SITE_CREATION_STEP,
@@ -49,7 +42,7 @@ const free: Flow = {
 			STEPS.DESIGN_SETUP,
 			STEPS.PATTERN_ASSEMBLER,
 			STEPS.ERROR,
-		];
+		] );
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -174,80 +167,6 @@ const free: Flow = {
 		};
 
 		return { goNext, goBack, goToStep, submit };
-	},
-
-	useAssertConditions(): AssertConditionResult {
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
-
-		const queryParams = new URLSearchParams( window.location.search );
-		const flowName = this.name;
-
-		// There is a race condition where useLocale is reporting english,
-		// despite there being a locale in the URL so we need to look it up manually.
-		// We also need to support both query param and path suffix localized urls
-		// depending on where the user is coming from.
-		const useLocaleSlug = useLocale();
-		// Query param support can be removed after dotcom-forge/issues/2960 and 2961 are closed.
-		const queryLocaleSlug = getLocaleFromQueryParam();
-		const pathLocaleSlug = getLocaleFromPathname();
-		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
-
-		const flags = queryParams.get( 'flags' );
-		const siteSlug = queryParams.get( 'siteSlug' );
-
-		const getStartUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
-
-			if ( siteSlug ) {
-				flowParams.set( 'siteSlug', siteSlug );
-				hasFlowParams = true;
-			}
-
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				window?.location?.pathname +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-
-			const logInUrl = getLoginUrl( {
-				variationName: flowName,
-				redirectTo: redirectTarget,
-				locale,
-			} );
-
-			return logInUrl + ( flags ? `&flags=${ flags }` : '' );
-		};
-
-		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/blog/blogger-intent route which has no locale in the path so we need to
-		// redirect off of the first render.
-		// This effects both /setup/blog/<locale> starting points and /setup/blog/blogger-intent/<locale> urls.
-		// The double call also hapens on urls without locale.
-		useEffect( () => {
-			if ( ! userIsLoggedIn ) {
-				const logInUrl = getStartUrl();
-				window.location.assign( logInUrl );
-			}
-		}, [] );
-
-		if ( ! userIsLoggedIn ) {
-			const logInUrl = getStartUrl();
-			window.location.assign( logInUrl );
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'free-flow requires a logged in user',
-			};
-		}
-
-		return result;
 	},
 };
 

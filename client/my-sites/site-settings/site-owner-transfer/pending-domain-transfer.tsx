@@ -30,7 +30,7 @@ const PendingDomainTransfer = ( { domain }: { domain: ResponseDomain } ) => {
 				</p>
 			</ActionPanelBody>
 			<ActionPanelFooter>
-				<Button primary={ true } href={ `/domains/manage/${ domain.name }` }>
+				<Button primary href={ `/domains/manage/${ domain.name }` }>
 					{ translate( 'Manage domain transfers' ) }
 				</Button>
 			</ActionPanelFooter>

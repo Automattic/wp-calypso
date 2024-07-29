@@ -6,6 +6,12 @@
 	--color-accent: #3858e9;
 
 	background: var(--studio-white);
+	display: flex;
+	align-items: center;
+
+	@media (max-width: $break-mobile) {
+		display: block;
+	}
 }
 
 .category-pill-navigation__button-divider {
@@ -15,6 +21,7 @@
 	display: block;
 	border-radius: 2px;
 	background: #2c3338;
+	margin-left: 16px;
 }
 
 .category-pill-navigation__list {
@@ -33,6 +40,10 @@
 		&::-webkit-scrollbar {
 			display: none;
 		}
+
+		.category-pill-navigation__button:first-child {
+			margin-left: 16px;
+		}
 	}
 
 	.category-pill-navigation__arrow {
@@ -43,7 +54,6 @@
 		left: 0;
 		top: 0;
 		z-index: 2;
-		background: var(--studio-white);
 		transform: rotate(180deg);
 		cursor: pointer;
 
@@ -55,12 +65,17 @@
 			content: "";
 			position: absolute;
 			top: 0;
-			right: 100%;
-			width: 58px;
+			right: 0;
+			width: 68px;
 			height: 44px;
-			background: linear-gradient(270deg, var(--studio-white) 40.38%, transparent 100%);
+			background: linear-gradient(270deg, var(--studio-white) 45.38%, transparent 100%);
 			cursor: none;
 			pointer-events: none;
+		}
+
+		svg {
+			z-index: 2;
+			position: relative;
 		}
 
 		&.right {
@@ -69,7 +84,7 @@
 			transform: rotate(0);
 		}
 
-		@media ( max-width: $break-wide ) {
+		@media (max-width: $break-large) {
 			width: 0;
 			padding: 0;
 		}

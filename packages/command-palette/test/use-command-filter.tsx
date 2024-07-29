@@ -1,4 +1,4 @@
-import { COMMAND_SEPARATOR, useCommandFilter } from '../src/use-command-filter';
+import { COMMAND_SEPARATOR, KEYWORD_SEPARATOR, useCommandFilter } from '../src/use-command-filter';
 
 describe( 'useCommandFilter', () => {
 	const commandFilter = useCommandFilter();
@@ -49,5 +49,21 @@ describe( 'useCommandFilter', () => {
 		const afterSeparator = 'hosting manage';
 		const value = beforeSeparator + COMMAND_SEPARATOR + afterSeparator;
 		expect( commandFilter( value, search ) ).toBe( 0 );
+	} );
+
+	test( 'Should return 0.5 for an exact match on a wildcard term', () => {
+		const search = 'wp post';
+		const beforeSeparator = 'Manage posts';
+		const value =
+			beforeSeparator + COMMAND_SEPARATOR + 'edit posts' + KEYWORD_SEPARATOR + 'wp post*';
+		expect( commandFilter( value, search ) ).toBe( 0.5 );
+	} );
+
+	test( 'Should return 0.4 where there is a wildcard match', () => {
+		const search = 'wp post get';
+		const beforeSeparator = 'Manage posts';
+		const value =
+			beforeSeparator + COMMAND_SEPARATOR + 'edit posts' + KEYWORD_SEPARATOR + 'wp post*';
+		expect( commandFilter( value, search ) ).toBe( 0.4 );
 	} );
 } );

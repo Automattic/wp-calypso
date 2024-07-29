@@ -5,6 +5,7 @@ type PatternsContextProps = {
 	searchTerm: string;
 	category: string;
 	isGridView: boolean;
+	patternPermalinkId?: number;
 	patternTypeFilter: PatternTypeFilter;
 	referrer?: string;
 };
@@ -13,6 +14,7 @@ export const PatternsContext = createContext< PatternsContextProps >( {
 	searchTerm: '',
 	category: '',
 	isGridView: false,
+	patternPermalinkId: undefined,
 	patternTypeFilter: PatternTypeFilter.REGULAR,
 	referrer: undefined,
 } );

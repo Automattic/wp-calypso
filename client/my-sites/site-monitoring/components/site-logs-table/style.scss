@@ -5,7 +5,6 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 	white-space: normal;
 	border-collapse: collapse;
 	background-color: var(--studio-white);
-	color: var(--studio-gray-100);
 	margin: 0 0 1.5rem;
 	font-family: "SF Pro Text", $sans;
 	table-layout: fixed;
@@ -33,7 +32,7 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 
 /* Remove padding on the left for the first item in the row */
 .site-logs-table tr td:first-child {
-	padding-left: 0;
+	padding-inline-start: 0 !important;
 }
 
 /* Remove padding on the right for the last item in the row */
@@ -43,7 +42,7 @@ $border-color:#eeeeee; /* stylelint-disable-line color-hex-length */
 
 .site-logs-table th {
 	font-family: "SF Pro Text", $sans;
-	color: var(--color-neutral-60);
+	color: var(--studio-gray-50);
 	font-weight: 400;
 
 	&:first-child {
@@ -200,7 +199,6 @@ td.timestamp {
 
 td.message {
 	font-size: 0.875rem;
-	color: var(--studio-gray-100);
 }
 
 @media (max-width: 600px) {

@@ -1,6 +1,14 @@
 // Styles targeted at story content
 @import "./content";
 
+// Since we cannot use css variables in media queries, we need to define the valuess in scss.
+$reader-full-post-sidebar-width: 220px;
+$reader-full-post-story-padding: 24px;
+$reader-full-post-story-max-width: 720px;
+// 295 for sidebar and 16 for the right frame padding.
+$global-sidebar-and-frame-width: 295px + 16px;
+$reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-post-story-max-width + ( $reader-full-post-story-padding * 2 ) + $global-sidebar-and-frame-width;
+
 .is-group-reader.has-no-sidebar {
 	.masterbar {
 		@include breakpoint-deprecated( "<660px" ) {
@@ -15,40 +23,24 @@
 	// This allows our fixed positioned elements to be positioned relative to the main html document
 	backface-visibility: visible;
 	perspective: none;
+	// Full post horizontal paddings/widths to use for knowing breakpoints.
+	--reader-full-post-sidebar-width: #{$reader-full-post-sidebar-width};
+	--reader-full-post-story-padding: #{$reader-full-post-story-padding};
+	--reader-full-post-story-max-width: #{$reader-full-post-story-max-width};
 }
 
 .reader-full-post__content {
+	@media (min-width: $reader-full-post-desktop-min) {
+		display: flex;
+		justify-content: space-around;
+		flex-wrap: wrap;
+	}
+	max-width: 1200px;
 	margin: 0 auto;
 
 	.comment-button__icon path,
 	.conversation-follow-button path {
 		fill: var(--color-neutral-0);
-	}
-
-	@include breakpoint-deprecated( ">1280px" ) {
-		width: 720px;
-		padding-left: 260px;
-	}
-
-	@include breakpoint-deprecated( "1040px-1280px" ) {
-		width: 720px;
-		padding-left: 240px;
-	}
-
-	@include breakpoint-deprecated( "660px-1040px" ) {
-		width: auto;
-		margin: 0;
-		padding-left: 240px;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		width: auto;
-		padding: 0 20px;
-
-		.reader-post-card__tags {
-			margin-left: 0;
-			width: 100%;
-		}
 	}
 }
 
@@ -102,23 +94,12 @@
 }
 
 .reader-full-post__sidebar {
-	width: 220px;
-	position: fixed;
+	width: var(--reader-full-post-sidebar-width);
 	text-align: center;
+	margin-top: 55px;
 
-	@include breakpoint-deprecated( ">1280px" ) {
-		left: calc(50% - 490px);
-	}
-
-	@include breakpoint-deprecated( "1040px-1280px" ) {
-		left: calc(50% - 480px);
-	}
-
-	@include breakpoint-deprecated( "660px-1040px" ) {
-		left: 20px;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
+	// hide the sidebar when it cannot fit to the side of the content.
+	@media (max-width: $reader-full-post-desktop-min) {
 		display: none;
 	}
 }
@@ -139,16 +120,18 @@
 }
 
 .reader-full-post__story {
-	max-width: 720px;
+	max-width: var(--reader-full-post-story-max-width);
+	padding: 32px var(--reader-full-post-story-padding);
+	margin: 0 auto;
+	@media (min-width: $reader-full-post-desktop-min) {
+		margin: 0;
+	}
 
 	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body;
 		line-height: 24px;
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
-		margin-top: -35px;
-	}
 	.comment-button__label {
 		position: relative;
 		top: -1px;
@@ -189,8 +172,23 @@
 }
 
 .reader-full-post .back-button {
+	border: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: unset;
+	background-color: transparent;
+
+	button.is-compact.is-borderless {
+		margin: 2px;
+		@media (max-width: 781px) {
+			padding-top: 12px;
+			padding-bottom: 12px;
+		}
+	}
+
 	@include breakpoint-deprecated( "<660px" ) {
-		display: none;
+		left: 14px;
 	}
 }
 
@@ -475,14 +473,14 @@
 .reader-full-post__header-title {
 	clear: none;
 	color: var(--color-neutral-70);
-	font-family: $serif;
+	font-family: $sans;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-size: $font-title-medium;
 	font-weight: 700;
 	line-height: 34px;
-	margin: 56px 0 0;
 	max-width: 750px;
+
 
 	@include breakpoint-deprecated( ">960px" ) {
 		font-size: $font-headline-small;
@@ -494,9 +492,6 @@
 		line-height: 40px;
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
-		margin-top: 8px;
-	}
 
 	.reader-full-post__header-title-link {
 		display: block;
@@ -665,4 +660,8 @@
 
 .wp-block-latest-posts__post-date::before {
 	content: " - ";
+}
+
+.is-reader-full-post {
+	background: var(--color-surface);
 }

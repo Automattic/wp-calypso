@@ -1,0 +1,22 @@
+.agency-site-tag.badge {
+	background: var(--studio-gray-5);
+	border-radius: 4px;
+	padding: 5px 14px 11px 11px;
+}
+
+.agency-site-tag__text,
+.agency-site-tag__close {
+	display: inline;
+	vertical-align: middle;
+}
+
+.agency-site-tag__text {
+	font-size: 0.875rem;
+}
+
+.agency-site-tag__close {
+	cursor: pointer;
+	position: relative;
+	left: 9px;
+	top: 1px;
+}

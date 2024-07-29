@@ -1,7 +1,7 @@
-import { Filter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
+import { DataViewsFilter } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { filtersMap } from '../constants';
 
-export function getSelectedFilters( filters: Filter[] ) {
+export function getSelectedFilters( filters: DataViewsFilter[] = [] ) {
 	return (
 		filters?.map( ( filter ) => {
 			const filterType =

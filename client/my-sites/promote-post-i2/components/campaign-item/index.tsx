@@ -1,15 +1,15 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { safeImageUrl } from '@automattic/calypso-url';
-import { Badge } from '@automattic/components';
+import { Badge, Tooltip } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
-import { Moment } from 'moment';
-import { Fragment, useMemo } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import moment from 'moment';
+import { Fragment, useMemo, useRef, useState } from 'react';
 import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
@@ -18,6 +18,7 @@ import {
 	formatNumber,
 	getAdvertisingDashboardPath,
 	getCampaignBudgetData,
+	getCampaignStartDateFormatted,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
 } from '../../utils';
@@ -26,18 +27,16 @@ import './style.scss';
 interface Props {
 	campaign: Campaign;
 }
-const getCampaignEndText = ( end_date: Moment, status: string, is_evergreen = 0 ) => {
-	if (
-		[ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.REJECTED ].includes( status )
-	) {
+
+const getCampaignEndText = ( end_date: string, status: string, is_evergreen = 0 ) => {
+	if ( is_evergreen && [ campaignStatus.APPROVED, campaignStatus.ACTIVE ].includes( status ) ) {
+		return __( 'Until stopped' );
+	} else if ( ! end_date ) {
 		return '-';
-	} else if ( [ campaignStatus.APPROVED, campaignStatus.ACTIVE ].includes( status ) ) {
-		return is_evergreen ? __( 'Until stopped' ) : __( 'Ongoing' );
-	} else if ( [ campaignStatus.CANCELED, campaignStatus.FINISHED ].includes( status ) ) {
-		// return moment in format similar to 27 June
-		return end_date.format( 'D MMMM' );
 	}
-	return '-';
+
+	// return moment in format similar to 27 June
+	return moment( end_date ).format( 'D MMMM' );
 };
 
 export default function CampaignItem( props: Props ) {
@@ -64,7 +63,6 @@ export default function CampaignItem( props: Props ) {
 		? `${ conversion_rate_percentage.toFixed( 2 ) }%`
 		: '-';
 
-	const moment = useLocalizedMoment();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const safeUrl = safeImageUrl( content_config.imageUrl );
@@ -127,6 +125,11 @@ export default function CampaignItem( props: Props ) {
 		event.stopPropagation();
 		page.show( openCampaignURL );
 	};
+
+	const campaignIdString = campaign.campaign_id.toString();
+	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
+	const tooltipRef = useRef< HTMLDivElement >( null );
+	const isTouch = hasTouch();
 
 	function getMobileStats() {
 		const statElements = [];
@@ -197,17 +200,32 @@ export default function CampaignItem( props: Props ) {
 				</div>
 			</td>
 			<td className="campaign-item__status">
-				<div>{ statusBadge }</div>
+				{ ui_status === campaignStatus.SCHEDULED ? (
+					<>
+						<div
+							ref={ tooltipRef }
+							onMouseEnter={ () => ! isTouch && setActiveTooltipId( campaignIdString ) }
+							onMouseLeave={ () => ! isTouch && setActiveTooltipId( '' ) }
+						>
+							{ statusBadge }
+						</div>
+						<Tooltip
+							className="import__campaign-schedule-tooptip"
+							position="bottom"
+							hideArrow
+							context={ tooltipRef.current }
+							isVisible={ activeTooltipId === campaignIdString }
+						>
+							<div>{ getCampaignStartDateFormatted( start_date ) }</div>
+						</Tooltip>
+					</>
+				) : (
+					<div>{ statusBadge }</div>
+				) }
 			</td>
 			<td className="campaign-item__ends">
 				<div>
-					{ campaign.end_date
-						? getCampaignEndText(
-								moment( campaign.end_date ),
-								campaign.status,
-								campaign?.is_evergreen
-						  )
-						: '-' }
+					{ getCampaignEndText( campaign.end_date, campaign.status, campaign?.is_evergreen ) }
 				</div>
 			</td>
 			<td className="campaign-item__budget">

@@ -1,10 +1,10 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 export default function JetpackIcons( props ) {
 	const { className, icon, size = 28 } = props;
 
-	const classes = classnames( 'sidebar__menu-icon', className );
+	const classes = clsx( 'sidebar__menu-icon', className );
 
 	const iconAssets = {
 		'activity-log':

@@ -26,6 +26,27 @@
 		}
 	}
 }
+.activity-card-list__date-group-upsell {
+	.activity-card__actor,
+	.activity-card__activity-description,
+	.activity-card__activity-title {
+		filter: blur(10px);
+	}
+	.activity-card__activity-overlay {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		padding: 12px 0;
+		text-align: center;
+		width: 100%;
+
+		p.activity-card__activity-overlay-text {
+			font-size: $font-body;
+			margin-bottom: 0.5rem;
+		}
+	}
+}
 
 @include breakpoint-deprecated( "<660px" ) {
 	.activity-card-list .filterbar__wrap.card {

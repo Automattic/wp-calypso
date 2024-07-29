@@ -107,7 +107,7 @@ describe( 'DoNotSellDialog', () => {
 		const { getByText } = render(
 			<DoNotSellDialog
 				content={ genericContent }
-				isActive={ true }
+				isActive
 				onToggleActive={ onToggleActive }
 				onClose={ jest.fn() }
 				isOpen

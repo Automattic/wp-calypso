@@ -31,6 +31,7 @@ import {
 } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import useIsRunningInWpAdmin from '../../hooks/use-is-running-in-wpadmin';
 import {
 	formatCents,
 	formatNumber,
@@ -87,7 +88,7 @@ const getExternalTabletIcon = ( fillColor = '#A7AAAD' ) => (
 );
 
 export default function CampaignItemDetails( props: Props ) {
-	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const translate = useTranslate();
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
@@ -152,6 +153,10 @@ export default function CampaignItemDetails( props: Props ) {
 	} = audience_list || {};
 
 	// Formatted labels
+	const cpcFormatted =
+		total_budget_used && clicks_total && clicks_total > 0
+			? `$${ formatCents( total_budget_used / clicks_total, 2 ) }`
+			: '-';
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
 	const clicksFormatted = clicks_total && clicks_total > 0 ? clicks_total : '-';
 	const weeklyBudget = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
@@ -443,7 +448,7 @@ export default function CampaignItemDetails( props: Props ) {
 			<Main wideLayout className="campaign-item-details">
 				{ status === 'rejected' && (
 					<Notice
-						isReskinned={ true }
+						isReskinned
 						showDismiss={ false }
 						status="is-error"
 						icon="notice-outline"
@@ -497,22 +502,17 @@ export default function CampaignItemDetails( props: Props ) {
 										</div>
 										<div>
 											<span className="campaign-item-details__label">
-												{ __( 'Click-through rate' ) }
-												<InfoPopover
-													className="campaign-item-data__info-button"
-													position="bottom right"
-												>
-													{ __( 'Click-through rate:' ) }
-													<br />
-													<span className="popover-title">
-														{ __(
-															'a metric used to measure the ratio of users who click on your ad to the number of total users view it.'
-														) }
-													</span>
-												</InfoPopover>
+												{ __( 'Cost-Per-Click' ) }
 											</span>
 											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
+												{ ! isLoading ? cpcFormatted : <FlexibleSkeleton /> }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? (
+													`${ ctrFormatted } ${ __( 'Click-through rate' ) }`
+												) : (
+													<FlexibleSkeleton />
+												) }
 											</span>
 										</div>
 										{ isWooStore && status !== 'created' && (
@@ -788,9 +788,13 @@ export default function CampaignItemDetails( props: Props ) {
 														const originalDate = moment( createdAt );
 
 														// We only have the "created at" date stored, so we need to subtract a week to match the billing cycle
-														const weekBefore = originalDate.clone().subtract( 7, 'days' );
+														let periodStart = originalDate.clone().subtract( 7, 'days' );
 
-														return `${ weekBefore.format( 'MMM, D' ) } - ${ originalDate.format(
+														if ( periodStart.isBefore( moment( start_date ) ) ) {
+															periodStart = moment( start_date );
+														}
+
+														return `${ periodStart.format( 'MMM, D' ) } - ${ originalDate.format(
 															'MMM, D'
 														) }`;
 													};
@@ -931,7 +935,7 @@ export default function CampaignItemDetails( props: Props ) {
 									className="is-link components-button campaign-item-details__support-link"
 									supportContext="advertising"
 									showIcon={ false }
-									showSupportModal={ ! isRunningInJetpack }
+									showSupportModal={ ! isRunningInWpAdmin }
 								>
 									{ translate( 'View documentation' ) }
 									{ getExternalLinkIcon() }

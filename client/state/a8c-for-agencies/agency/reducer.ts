@@ -18,7 +18,6 @@ export const initialState = {
 export const hasFetched = ( state = initialState.isFetching, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_GET_AGENCIES_SUCCESS:
-		case JETPACK_GET_AGENCIES_ERROR:
 			return true;
 	}
 

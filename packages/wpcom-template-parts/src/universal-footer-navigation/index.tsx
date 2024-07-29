@@ -122,14 +122,6 @@ export const PureUniversalNavbarFooter = ( {
 									</a>
 								</li>
 								<li>
-									<a href="https://wpvip.com/" data-is_external="1" target="_self">
-										{ __( 'Enterprise', __i18n_text_domain__ ) }{ ' ' }
-										<span className="lp-link-chevron-external">
-											{ __( 'Solutions', __i18n_text_domain__ ) }
-										</span>
-									</a>
-								</li>
-								<li>
 									<a
 										href={ localizeUrl(
 											'https://wordpress.com/website-design-service/?ref=footer_pricing'
@@ -138,6 +130,13 @@ export const PureUniversalNavbarFooter = ( {
 										target="_self"
 									>
 										{ __( 'Website Design Services', __i18n_text_domain__ ) }
+									</a>
+								</li>
+								<li>
+									<a href="https://wpvip.com/" data-is_external="1" target="_self">
+										<span className="lp-link-chevron-external">
+											{ __( 'Enterprise', __i18n_text_domain__ ) }
+										</span>
 									</a>
 								</li>
 							</ul>
@@ -168,6 +167,14 @@ export const PureUniversalNavbarFooter = ( {
 										target="_self"
 									>
 										{ __( 'WordPress Plugins', __i18n_text_domain__ ) }
+									</a>
+								</li>
+								<li>
+									<a
+										href={ localizeUrl( 'https://wordpress.com/patterns/', locale, isLoggedIn ) }
+										target="_self"
+									>
+										{ __( 'WordPress Patterns', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
@@ -245,9 +252,8 @@ export const PureUniversalNavbarFooter = ( {
 										href={ localizeUrl( 'https://developer.wordpress.com/' ) }
 										data-is_external="1"
 									>
-										{ __( 'Developer', __i18n_text_domain__ ) }{ ' ' }
 										<span className="lp-link-chevron-external">
-											{ __( 'Resources', __i18n_text_domain__ ) }
+											{ __( 'Developer Resources', __i18n_text_domain__ ) }
 										</span>
 									</a>
 								</li>
@@ -280,9 +286,8 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://automattic.com/privacy/' ) } data-is_external="1">
-										{ __( 'Privacy', __i18n_text_domain__ ) }{ ' ' }
 										<span className="lp-link-chevron-external">
-											{ __( 'Policy', __i18n_text_domain__ ) }
+											{ __( 'Privacy Policy', __i18n_text_domain__ ) }
 										</span>
 									</a>
 								</li>

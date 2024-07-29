@@ -23,13 +23,16 @@ import {
 	isAkismetProduct,
 	isTieredVolumeSpaceAddon,
 	is100Year,
+	isJetpackAISlug,
+	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-import i18n, { TranslateResult } from 'i18n-calypso';
+import i18n, { numberFormat, type TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -248,8 +251,34 @@ export function getName( purchase: Purchase ): string {
 
 export function getDisplayName( purchase: Purchase ): TranslateResult {
 	const { productName, productSlug, purchaseRenewalQuantity } = purchase;
+	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames( 'full' );
 
-	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
+	if (
+		isJetpackAISlug( purchase.productSlug ) &&
+		purchase.purchaseRenewalQuantity &&
+		purchase.priceTierList?.length
+	) {
+		return i18n.translate( '%(productName)s (%(quantity)s requests per month)', {
+			args: {
+				productName: jetpackProductsDisplayNames[ productSlug ],
+				quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
+			},
+		} );
+	}
+
+	if (
+		isJetpackStatsPaidProductSlug( purchase.productSlug ) &&
+		purchase.purchaseRenewalQuantity &&
+		purchase.priceTierList?.length
+	) {
+		return i18n.translate( '%(productName)s (%(quantity)s views per month)', {
+			args: {
+				productName: jetpackProductsDisplayNames[ productSlug ],
+				quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
+			},
+		} );
+	}
+
 	if ( jetpackProductsDisplayNames[ productSlug ] ) {
 		return jetpackProductsDisplayNames[ productSlug ];
 	}
@@ -323,7 +352,9 @@ export function handleRenewNowClick(
 			}
 			debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
-			page( isJetpackCloud() ? `https://wordpress.com${ renewalUrl }` : renewalUrl );
+			page(
+				isJetpackCloud() || isA8CForAgencies() ? `https://wordpress.com${ renewalUrl }` : renewalUrl
+			);
 		} catch ( error ) {
 			dispatch( errorNotice( ( error as Error ).message ) );
 		}
@@ -683,7 +714,9 @@ export function isRemovable( purchase: Purchase ): boolean {
 	);
 }
 
-export function isPartnerPurchase( purchase: Purchase ): boolean {
+export function isPartnerPurchase(
+	purchase: Purchase
+): purchase is Purchase & { partnerType: string } {
 	return !! purchase.partnerName;
 }
 
@@ -833,6 +866,14 @@ export function paymentLogoType( purchase: Purchase ): string | null | undefined
 	return purchase.payment.type || null;
 }
 
+export function isAgencyPartnerType( partnerType: string ) {
+	if ( ! partnerType ) {
+		return false;
+	}
+
+	return [ 'agency', 'agency_beta', 'a4a_agency' ].includes( partnerType );
+}
+
 export function purchaseType( purchase: Purchase ) {
 	if ( isThemePurchase( purchase ) ) {
 		return i18n.translate( 'Premium Theme' );
@@ -843,15 +884,11 @@ export function purchaseType( purchase: Purchase ) {
 	}
 
 	if ( isPartnerPurchase( purchase ) ) {
-		switch ( purchase.partnerType ) {
-			case 'agency':
-			case 'agency_beta':
-			case 'a4a_agency':
-				return i18n.translate( 'Agency Managed Plan' );
-
-			default:
-				return i18n.translate( 'Host Managed Plan' );
+		if ( isAgencyPartnerType( purchase.partnerType ) ) {
+			return i18n.translate( 'Agency Managed Plan' );
 		}
+
+		return i18n.translate( 'Host Managed Plan' );
 	}
 
 	if ( isPlan( purchase ) ) {

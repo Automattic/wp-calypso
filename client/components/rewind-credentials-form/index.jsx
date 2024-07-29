@@ -2,7 +2,7 @@
  * External dependendies
  */
 import { Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -186,7 +186,7 @@ export class RewindCredentialsForm extends Component {
 							disabled={ formIsSubmitting }
 							isError={ !! formErrors.host }
 						/>
-						{ formErrors.host && <FormInputValidation isError={ true } text={ formErrors.host } /> }
+						{ formErrors.host && <FormInputValidation isError text={ formErrors.host } /> }
 					</FormFieldset>
 
 					<FormFieldset className="rewind-credentials-form__port-number">
@@ -202,7 +202,7 @@ export class RewindCredentialsForm extends Component {
 							disabled={ formIsSubmitting }
 							isError={ !! formErrors.port }
 						/>
-						{ formErrors.port && <FormInputValidation isError={ true } text={ formErrors.port } /> }
+						{ formErrors.port && <FormInputValidation isError text={ formErrors.port } /> }
 					</FormFieldset>
 				</div>
 
@@ -222,7 +222,7 @@ export class RewindCredentialsForm extends Component {
 							// Hint to LastPass not to attempt autofill
 							data-lpignore="true"
 						/>
-						{ formErrors.user && <FormInputValidation isError={ true } text={ formErrors.user } /> }
+						{ formErrors.user && <FormInputValidation isError text={ formErrors.user } /> }
 					</FormFieldset>
 
 					<FormFieldset className="rewind-credentials-form__password">
@@ -240,7 +240,7 @@ export class RewindCredentialsForm extends Component {
 							// Hint to LastPass not to attempt autofill
 							data-lpignore="true"
 						/>
-						{ formErrors.pass && <FormInputValidation isError={ true } text={ formErrors.pass } /> }
+						{ formErrors.pass && <FormInputValidation isError text={ formErrors.pass } /> }
 					</FormFieldset>
 				</div>
 
@@ -250,7 +250,7 @@ export class RewindCredentialsForm extends Component {
 							borderless
 							disabled={ formIsSubmitting }
 							onClick={ this.toggleAdvancedSettings }
-							className={ classNames( 'rewind-credentials-form__advanced-button', {
+							className={ clsx( 'rewind-credentials-form__advanced-button', {
 								'is-expanded': showAdvancedSettings,
 							} ) }
 						>
@@ -260,7 +260,7 @@ export class RewindCredentialsForm extends Component {
 					) }
 					{ ( showAdvancedSettings || requirePath ) && (
 						<div
-							className={ classNames( {
+							className={ clsx( {
 								'rewind-credentials-form__advanced-settings': ! requirePath,
 							} ) }
 						>
@@ -277,9 +277,7 @@ export class RewindCredentialsForm extends Component {
 									disabled={ formIsSubmitting }
 									isError={ !! formErrors.path }
 								/>
-								{ formErrors.path && (
-									<FormInputValidation isError={ true } text={ formErrors.path } />
-								) }
+								{ formErrors.path && <FormInputValidation isError text={ formErrors.path } /> }
 							</FormFieldset>
 
 							<FormFieldset className="rewind-credentials-form__kpri">

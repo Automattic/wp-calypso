@@ -2,14 +2,14 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { Icon, starFilled, starEmpty } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useState } from 'react';
 import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import type {
@@ -27,34 +27,33 @@ interface Props {
 	siteUrl: string;
 }
 
-export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Props ) {
+export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const agency = useSelector( getActiveAgency );
-	const agencyId = agency ? agency.id : undefined;
-	const { sitesViewState, showOnlyFavorites, currentPage } = useContext( SitesDashboardContext );
+	const agencyId = useSelector( getActiveAgencyId );
+	const { dataViewsState, showOnlyFavorites, currentPage } = useContext( SitesDashboardContext );
 	const [ filter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],
 		showOnlyFavorites: showOnlyFavorites || false,
 	} );
 	useEffect( () => {
-		const selectedFilters = getSelectedFilters( sitesViewState.filters );
+		const selectedFilters = getSelectedFilters( dataViewsState.filters );
 
 		setAgencyDashboardFilter( {
 			issueTypes: selectedFilters,
 			showOnlyFavorites: showOnlyFavorites || false,
 		} );
-	}, [ sitesViewState.filters, showOnlyFavorites ] );
-	const search = sitesViewState.search;
+	}, [ dataViewsState.filters, showOnlyFavorites ] );
+	const search = dataViewsState.search;
 
 	const queryKey = [
 		'jetpack-agency-dashboard-sites',
 		search,
 		currentPage,
 		filter,
-		sitesViewState.sort,
-		sitesViewState.perPage,
+		dataViewsState.sort,
+		dataViewsState.perPage,
 		...( agencyId ? [ agencyId ] : [] ),
 	];
 
@@ -62,7 +61,7 @@ export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Pro
 		'jetpack-agency-dashboard-sites',
 		search,
 		currentPage,
-		{ ...filter, ...sitesViewState.sort, showOnlyFavorites: ! showOnlyFavorites },
+		{ ...filter, ...dataViewsState.sort, showOnlyFavorites: ! showOnlyFavorites },
 		...( agencyId ? [ agencyId ] : [] ),
 	];
 	const successNoticeId = 'success-notice';
@@ -185,7 +184,7 @@ export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Pro
 			compact
 			disabled={ isPending }
 			onClick={ handleFavoriteChange }
-			className={ classNames(
+			className={ clsx(
 				'site-set-favorite__favorite-icon',
 				'disable-card-expand',
 				isFavorite && 'site-set-favorite__favorite-icon-active'

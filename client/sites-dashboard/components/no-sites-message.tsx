@@ -86,6 +86,32 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 		);
 	}
 
+	if ( status === 'deleted' ) {
+		return (
+			<NoSitesMessageLayout
+				title={ __( 'You have no deleted sites' ) }
+				line={ createInterpolateElement(
+					__(
+						'Sites that are deleted can be restored within the first 30 days of deletion. Read more about restoring your site <a>here</a>.'
+					),
+					{
+						a: (
+							<a
+								href={ localizeUrl(
+									'https://wordpress.com/support/delete-site/#restore-a-deleted-site'
+								) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					}
+				) }
+				illustration={ false }
+				hideAction
+			/>
+		);
+	}
+
 	if ( status === 'redirect' ) {
 		return (
 			<NoSitesMessageLayout

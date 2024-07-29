@@ -31,9 +31,9 @@
 	"dependencies": {
 		"@automattic/global-styles": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/block-editor": "^12.22.0",
-		"@wordpress/compose": "^6.31.0",
-		"classnames": "^2.3.2",
+		"@wordpress/block-editor": "^13.2.0",
+		"@wordpress/compose": "^7.2.0",
+		"clsx": "^2.1.1",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0",
 		"wpcom-proxy-request": "workspace:^"
@@ -45,9 +45,9 @@
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.24.0",
-		"@wordpress/element": "^5.31.0",
-		"@wordpress/i18n": "^4.54.0",
+		"@wordpress/data": "^10.2.0",
+		"@wordpress/element": "^6.2.0",
+		"@wordpress/i18n": "^5.2.0",
 		"debug": "^4.3.3",
 		"redux": "^4.2.1"
 	},

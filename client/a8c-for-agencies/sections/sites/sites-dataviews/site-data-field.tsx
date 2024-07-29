@@ -1,6 +1,7 @@
-import { Button } from '@automattic/components';
+import { Badge, Button } from '@automattic/components';
+import { translate } from 'i18n-calypso';
+import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import SiteFavicon from '../site-favicon';
 import { Site } from '../types';
 
 interface SiteDataFieldProps {
@@ -14,12 +15,27 @@ const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProp
 		return <TextPlaceholder />;
 	}
 
+	const migrationInProgress = site.sticker?.includes( 'migration-in-progress' );
+
 	return (
-		<Button className="sites-dataviews__site" onClick={ () => onSiteTitleClick( site ) } borderless>
-			<SiteFavicon site={ site } />
+		<Button
+			disabled={ migrationInProgress }
+			className="sites-dataviews__site"
+			onClick={ () => onSiteTitleClick( site ) }
+			borderless
+		>
+			<SiteFavicon
+				blogId={ site.blog_id }
+				fallback={ site.is_atomic ? 'wordpress-logo' : 'color' }
+			/>
 			<div className="sites-dataviews__site-name">
-				{ site.blogname }
-				<div className="sites-dataviews__site-url">{ site.url }</div>
+				<div>{ site.blogname }</div>
+				{ ! migrationInProgress && <div className="sites-dataviews__site-url">{ site.url }</div> }
+				{ migrationInProgress && (
+					<Badge className="migration-badge" type="info-blue">
+						{ translate( 'Migration in progress' ) }
+					</Badge>
+				) }
 			</div>
 		</Button>
 	);

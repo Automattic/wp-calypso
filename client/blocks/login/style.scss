@@ -2,10 +2,12 @@
 @import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/p2-extends";
 
+@import "~@automattic/color-studio/dist/color-variables";
+
 $breakpoint-mobile: 782px; //Mobile size.
 
 .layout:not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
-	.login.is-jetpack {
+	.login.is-jetpack:not(.is-automattic-for-agencies-flow) {
 		.button.is-primary {
 			background-color: var(--studio-jetpack-green-50);
 			border-color: var(--studio-jetpack-green-70);
@@ -19,6 +21,24 @@ $breakpoint-mobile: 782px; //Mobile size.
 				box-shadow: 0 0 0 2px var(--studio-jetpack-green-30);
 			}
 		}
+	}
+}
+
+.is-automattic-for-agencies-flow {
+	// Override accent variables with A4A colors
+	--color-accent: #{$studio-automattic-blue};
+	--color-accent-light: #{$studio-automattic-blue-20};
+	--color-accent-dark: #{$studio-automattic-blue-50};
+	--color-accent-60: #{$studio-automattic-blue-40};
+
+	// Override global colors with accent variables
+	--color-primary: #{$studio-automattic-blue};
+	--color-primary-light: #{$studio-automattic-blue-40};
+	--color-primary-dark: #{$studio-automattic-blue-50};
+
+	::selection {
+		color: var(--color-text-inverted);
+		background: var(--color-accent);
 	}
 }
 
@@ -145,6 +165,16 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 		&.is-error {
 			margin-bottom: 0;
+		}
+	}
+
+	.login__form-suggested-email {
+		color: var(--color-link);
+		cursor: pointer;
+		text-decoration: none;
+
+		&:hover {
+			color: var(--color-link-dark);
 		}
 	}
 }
@@ -556,7 +586,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	.is-social-first {
 		.login__form-subheader-terms {
 			display: block;
-			max-width: 420px;
+			max-width: 450px;
 			margin: 0 auto;
 
 			color: var(--studio-gray-50, #646970);
@@ -578,6 +608,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
+.is-grav-powered-client,
 .is-gravatar {
 	.login__form-terms {
 		display: block;

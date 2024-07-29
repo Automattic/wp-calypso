@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	redirectLoggedOut,
+	redirectMyJetpack,
 	render as clientRender,
 	setLocaleMiddleware,
 } from 'calypso/controller';
@@ -299,6 +300,7 @@ export default function () {
 	page(
 		`/checkout/:domainOrProduct`,
 		setLocaleMiddleware(),
+		redirectMyJetpack,
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,
@@ -310,6 +312,7 @@ export default function () {
 	page(
 		`/checkout/:product/:domainOrProduct`,
 		setLocaleMiddleware(),
+		redirectMyJetpack,
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,

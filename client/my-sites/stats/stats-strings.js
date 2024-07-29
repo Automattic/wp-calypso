@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { SUPPORT_URL, INSIGHTS_SUPPORT_URL, JETPACK_SUPPORT_URL } from './const';
+import { SUPPORT_URL, INSIGHTS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from './const';
 
 export default function () {
 	const statsStrings = {};
@@ -83,7 +83,7 @@ export default function () {
 			{
 				comment: '{{link}} links to support documentation.',
 				components: {
-					link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#utm-stats` ) } />,
+					link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#utm-stats` ) } />,
 				},
 				context: 'Stats: Info box label when the UTM module is empty',
 			}
@@ -210,9 +210,16 @@ export default function () {
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views from a country.',
 		} ),
-		empty: translate( 'No devices recorded', {
-			context: 'Stats: Info box label when the Devices module is empty',
-		} ),
+		empty: translate(
+			'Stats on visitors and {{link}}their viewing device{{/link}} will appear here.',
+			{
+				comment: '{{link}} links to support documentation.',
+				components: {
+					link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` ) } />,
+				},
+				context: 'Stats: Info box label when the Devices module is empty',
+			}
+		),
 	};
 
 	statsStrings.clients = {

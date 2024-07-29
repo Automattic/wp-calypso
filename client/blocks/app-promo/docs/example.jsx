@@ -6,7 +6,7 @@ export default function AppPromoExample() {
 			<AppPromo />
 			<AppPromo title="This is the title" />
 			<AppPromo iconSize="199" />
-			<AppPromo iconSize="32" subheader="this is a subheader" hasQRCode={ true } />
+			<AppPromo iconSize="32" subheader="this is a subheader" hasQRCode />
 		</>
 	);
 }

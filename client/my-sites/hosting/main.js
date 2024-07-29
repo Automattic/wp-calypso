@@ -1,7 +1,6 @@
 import {
 	FEATURE_SFTP,
 	FEATURE_SFTP_DATABASE,
-	FEATURE_SITE_STAGING_SITES,
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
@@ -14,7 +13,6 @@ import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QuerySites from 'calypso/components/data/query-sites';
 import FeatureExample from 'calypso/components/feature-example';
 import Layout from 'calypso/components/layout';
-import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
@@ -45,16 +43,11 @@ import { TrialAcknowledgeModal } from '../plans/trials/trial-acknowledge/acknowl
 import { WithOnclickTrialRequest } from '../plans/trials/trial-acknowledge/with-onclick-trial-request';
 import SiteAdminInterface from '../site-settings/site-admin-interface';
 import CacheCard from './cache-card';
-import { GitHubDeploymentsCard } from './github-deployments-card';
 import HostingActivateStatus from './hosting-activate-status';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
-import SiteBackupCard from './site-backup-card';
-import StagingSiteCard from './staging-site-card';
-import StagingSiteProductionCard from './staging-site-card/staging-site-production-card';
-import SupportCard from './support-card';
 import WebServerSettingsCard from './web-server-settings-card';
 import './style.scss';
 
@@ -84,20 +77,8 @@ const ShowEnabledFeatureCards = ( { availableTypes, cards, showDisabledCards = t
 	);
 };
 
-const MainCards = ( {
-	hasStagingSitesFeature,
-	isAdvancedHostingDisabled,
-	isBasicHostingDisabled,
-	isWpcomStagingSite,
-	isBusinessTrial,
-	siteId,
-} ) => {
-	const mainCards = [
-		{
-			feature: 'github-deployments',
-			content: <GitHubDeploymentsCard />,
-			type: 'advanced',
-		},
+const AllCards = ( { isAdvancedHostingDisabled, isBasicHostingDisabled, siteId, siteSlug } ) => {
+	const allCards = [
 		{
 			feature: 'sftp',
 			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
@@ -108,22 +89,6 @@ const MainCards = ( {
 			content: <PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />,
 			type: 'advanced',
 		},
-		! isWpcomStagingSite && hasStagingSitesFeature
-			? {
-					feature: 'staging-site',
-					content: <StagingSiteCard disabled={ isAdvancedHostingDisabled } />,
-					type: 'advanced',
-			  }
-			: null,
-		isWpcomStagingSite && siteId
-			? {
-					feature: 'staging-production-site',
-					content: (
-						<StagingSiteProductionCard siteId={ siteId } disabled={ isAdvancedHostingDisabled } />
-					),
-					type: 'advanced',
-			  }
-			: null,
 		{
 			feature: 'web-server-settings',
 			content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
@@ -141,7 +106,7 @@ const MainCards = ( {
 		},
 		siteId && {
 			feature: 'wp-admin',
-			content: <SiteAdminInterface siteId={ siteId } isHosting />,
+			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
 			type: 'basic',
 		},
 	].filter( ( card ) => card !== null );
@@ -151,31 +116,7 @@ const MainCards = ( {
 		! isBasicHostingDisabled ? 'basic' : null,
 	].filter( ( type ) => type !== null );
 
-	return (
-		<ShowEnabledFeatureCards
-			cards={ mainCards }
-			availableTypes={ availableTypes }
-			showDisabledCards={ ! isBusinessTrial }
-		/>
-	);
-};
-
-const SidebarCards = ( { isBasicHostingDisabled } ) => {
-	const sidebarCards = [
-		{
-			feature: 'site-backup',
-			content: <SiteBackupCard disabled={ isBasicHostingDisabled } />,
-			type: 'basic',
-		},
-		{
-			feature: 'support',
-			content: <SupportCard />,
-		},
-	];
-
-	const availableTypes = isBasicHostingDisabled ? [] : [ 'basic' ];
-
-	return <ShowEnabledFeatureCards cards={ sidebarCards } availableTypes={ availableTypes } />;
+	return <ShowEnabledFeatureCards cards={ allCards } availableTypes={ availableTypes } />;
 };
 
 const Hosting = ( props ) => {
@@ -190,7 +131,6 @@ const Hosting = ( props ) => {
 		isLoadingSftpData,
 		hasAtomicFeature,
 		hasSftpFeature,
-		hasStagingSitesFeature,
 		isJetpack,
 		isEligibleForHostingTrial,
 		fetchUpdatedData,
@@ -234,6 +174,10 @@ const Hosting = ( props ) => {
 		},
 		[ hasTransfer ]
 	);
+
+	const getPageTitle = () => {
+		return translate( 'Server Settings' );
+	};
 
 	const getUpgradeBanner = () => {
 		if ( hasTransfer ) {
@@ -279,19 +223,13 @@ const Hosting = ( props ) => {
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<WrapperComponent>
 					<Layout className="hosting__layout">
-						<Column type="main" className="hosting__main-layout-col">
-							<MainCards
-								hasStagingSitesFeature={ hasStagingSitesFeature }
-								isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
-								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
-								isWpcomStagingSite={ isWpcomStagingSite }
-								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
-								siteId={ siteId }
-							/>
-						</Column>
-						<Column type="sidebar">
-							<SidebarCards isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic } />
-						</Column>
+						<AllCards
+							isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
+							isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
+							isBusinessTrial={ isBusinessTrial && ! hasTransfer }
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+						/>
 					</Layout>
 				</WrapperComponent>
 			</>
@@ -308,13 +246,19 @@ const Hosting = ( props ) => {
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
 	return (
-		<Main wideLayout className="hosting">
-			{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
+		<Main wideLayout className="hosting hosting--is-two-columns">
+			{ ! isLoadingSftpData && (
+				<ScrollToAnchorOnMount
+					offset={ HEADING_OFFSET }
+					timeout={ 250 }
+					container={ document.querySelector( '.item-preview__content' ) }
+				/>
+			) }
 			<PageViewTracker path="/hosting-config/:site" title="Hosting" />
-			<DocumentHead title={ translate( 'Hosting' ) } />
+			<DocumentHead title={ getPageTitle() } />
 			<NavigationHeader
 				navigationItems={ [] }
-				title={ translate( 'Hosting' ) }
+				title={ getPageTitle() }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
 			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (
@@ -351,7 +295,6 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
-		const hasStagingSitesFeature = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
 		const site = getSelectedSite( state );
 		const isEligibleForHostingTrial =
 			isUserEligibleForFreeHostingTrial( state ) && site && site.plan?.is_free;
@@ -369,7 +312,6 @@ export default connect(
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
 			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
-			hasStagingSitesFeature,
 			isEligibleForHostingTrial,
 			isSiteAtomic,
 		};

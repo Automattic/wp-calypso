@@ -23,7 +23,7 @@ const P2InviteAcceptLoggedOut = ( props ) => {
 			<div className="invite-accept-logged-out__form-container">
 				{ P2InviteAcceptHeader( { site: props.invite.site, translate: props.translate } ) }
 				<SignupForm
-					isPasswordless={ true }
+					isPasswordless
 					redirectToAfterLoginUrl={ window.location.href }
 					disabled={ props.isSubmitting }
 					formHeader=""

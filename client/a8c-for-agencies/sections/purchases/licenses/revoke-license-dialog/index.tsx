@@ -143,23 +143,29 @@ export default function RevokeLicenseDialog( {
 			);
 		}
 
+		const showLearnMoreLink = false; // FIXME: Remove this once the correct link is added
+
 		return (
 			<>
 				<p>
 					{ translate(
 						'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
 					) }
-					&nbsp;
-					<a
-						className="revoke-license-dialog__learn-more"
-						href="https://" // FIXME: Add URL
-						target="_blank"
-						rel="noreferrer noopener"
-					>
-						{ translate( 'Learn more about revoking licenses' ) }
-						&nbsp;
-						<Gridicon icon="external" size={ 18 } />
-					</a>
+					{ showLearnMoreLink && (
+						<>
+							&nbsp;
+							<a
+								className="revoke-license-dialog__learn-more"
+								href="https://" // FIXME: Add URL
+								target="_blank"
+								rel="noreferrer noopener"
+							>
+								{ translate( 'Learn more about revoking licenses' ) }
+								&nbsp;
+								<Gridicon icon="external" size={ 18 } />
+							</a>
+						</>
+					) }
 				</p>
 				<ul>
 					{ siteUrl && (
@@ -180,7 +186,7 @@ export default function RevokeLicenseDialog( {
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			buttons={ buttons }
 			additionalClassNames="revoke-license-dialog"
 			onClose={ close }

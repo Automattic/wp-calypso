@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import DashboardModal, { DashboardModalProps } from '../dashboard-modal';
 
 import './style.scss';
@@ -26,7 +26,7 @@ export default function DashboardModalForm( {
 			title={ title }
 			subtitle={ subtitle }
 			onClose={ onClose }
-			className={ classNames( 'dashboard-modal-form', className ) }
+			className={ clsx( 'dashboard-modal-form', className ) }
 		>
 			<form onSubmit={ handleOnSubmit }>{ children }</form>
 		</DashboardModal>

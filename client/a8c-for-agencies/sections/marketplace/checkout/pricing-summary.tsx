@@ -1,42 +1,55 @@
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
-import { getTotalInvoiceValue } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import CommissionsInfo from '../commissions-info';
 import ShoppingCartMenuItem from '../shopping-cart/shopping-cart-menu/item';
+import { useTotalInvoiceValue } from '../wpcom-overview/hooks/use-total-invoice-value';
 import type { ShoppingCartItem } from '../types';
 
 type Props = {
 	items: ShoppingCartItem[];
-	onRemoveItem: ( item: ShoppingCartItem ) => void;
+	isAutomatedReferrals?: boolean;
+	onRemoveItem?: ( item: ShoppingCartItem ) => void;
+	isClient?: boolean;
 };
 
-export default function PricingSummary( { items, onRemoveItem }: Props ) {
+export default function PricingSummary( {
+	items,
+	onRemoveItem,
+	isAutomatedReferrals,
+	isClient,
+}: Props ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const userProducts = useSelector( getProductsList );
+
+	const { getTotalInvoiceValue } = useTotalInvoiceValue();
+
 	const { discountedCost, actualCost } = getTotalInvoiceValue( userProducts, items );
 
 	const currency = items[ 0 ]?.currency ?? 'USD'; // FIXME: Fix if multiple currencies are supported
 
-	const learnMoreLink = ''; //FIXME: Add link for A4A;
+	// Show actual cost if the agency is referring a client
+	const totalCost = isAutomatedReferrals ? actualCost : discountedCost;
 
-	const onClickLearnMore = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_learn_more_click' ) );
-	}, [ dispatch ] );
+	// Agency checkout is when the user is not purchasing automated referrals and not a client
+	const isAgencyCheckout = ! isAutomatedReferrals && ! isClient;
 
 	return (
 		<div className="checkout__summary">
 			<div className="checkout__summary-pricing">
 				<span className="checkout__summary-pricing-discounted">
-					{ formatCurrency( discountedCost, currency ) }
+					{ formatCurrency( totalCost, currency ) }
 				</span>
-				<span className="checkout__summary-pricing-original">
-					{ formatCurrency( actualCost, currency ) }
-				</span>
+				{
+					// Show the discounted price only if it is agency checkout
+					isAgencyCheckout && (
+						<span className="checkout__summary-pricing-original">
+							{ formatCurrency( actualCost, currency ) }
+						</span>
+					)
+				}
 				<div className="checkout__summary-pricing-interval">{ translate( '/month' ) }</div>
 			</div>
 
@@ -53,31 +66,18 @@ export default function PricingSummary( { items, onRemoveItem }: Props ) {
 			<hr />
 
 			<div className="checkout__summary-total">
-				<span>{ translate( 'Total:' ) }</span>
+				<span>
+					{ isAutomatedReferrals
+						? translate( 'Total your client will pay:' )
+						: translate( 'Total:' ) }
+				</span>
 				<span>
 					{ translate( '%(total)s/mo', {
-						args: { total: formatCurrency( discountedCost, currency ) },
+						args: { total: formatCurrency( totalCost, currency ) },
 					} ) }
 				</span>
 			</div>
-
-			<div className="checkout__summary-notice">
-				{ translate(
-					'You will be billed at the end of every month. Your first month may be less than the above amount. {{a}}Learn more{{/a}}',
-					{
-						components: {
-							a: (
-								<a
-									href={ learnMoreLink }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ onClickLearnMore }
-								/>
-							),
-						},
-					}
-				) }
-			</div>
+			{ isAutomatedReferrals && <CommissionsInfo items={ items } /> }
 		</div>
 	);
 }

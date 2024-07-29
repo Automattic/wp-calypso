@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { chevronUp, chevronDown, edit, shuffle, trash } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -47,7 +47,7 @@ const PatternActionBar = ( {
 	return (
 		// eslint-disable-next-line jsx-a11y/interactive-supports-focus
 		<div
-			className={ classnames( 'pattern-assembler__pattern-action-bar', {
+			className={ clsx( 'pattern-assembler__pattern-action-bar', {
 				'pattern-assembler__pattern-action-bar--overflow': isOverflow,
 			} ) }
 			role="menubar"

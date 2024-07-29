@@ -1,0 +1,10 @@
+.is-section-switch-site {
+	.commands-command-menu__overlay {
+		background-color: transparent;
+	}
+
+	.commands-command-menu {
+		box-shadow: none;
+		border: 1px solid var(--color-neutral-10);
+	}
+}

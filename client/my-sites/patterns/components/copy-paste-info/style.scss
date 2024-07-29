@@ -5,13 +5,11 @@
 	display: flex;
 	gap: 24px;
 	overflow: auto;
-	padding: 0 110px;
 	scroll-snap-type: x proximity;
 	scroll-padding-left: 24px;
-
-	@media ( max-width: $break-wide ) {
-		padding: 0 24px;
-	}
+	max-width: 1220px;
+	margin: 0 auto;
+	padding: 0 24px;
 }
 
 .section-patterns-info__item {
@@ -23,7 +21,7 @@
 	padding: 32px 24px 48px;
 	scroll-snap-align: start;
 
-	@media ( max-width: $break-wide ) {
+	@media (max-width: $break-xlarge) {
 		padding: 32px 24px 24px;
 	}
 
@@ -44,6 +42,7 @@
 		color: var(--studio-white);
 		line-height: 1.25;
 		letter-spacing: -0.32px;
+		min-height: 2.5em;
 		padding-bottom: 12px;
 	}
 

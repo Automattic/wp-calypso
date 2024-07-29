@@ -11,16 +11,21 @@ import type { Reducer } from 'redux';
 export interface RenderStepOptions {
 	initialEntry?: string;
 	reducers?: Record< string, Reducer >;
+	initialState?: unknown;
 }
 
 /** Utility to render a step for testing purposes */
 export const renderStep = ( step: ReactElement< Step >, options?: RenderStepOptions ) => {
-	const { initialEntry = '/some-path?siteId=123', reducers = [] } = options ?? {};
+	const {
+		initialEntry = '/some-path?siteId=123',
+		reducers = [],
+		initialState = {},
+	} = options ?? {};
 
 	return renderWithProvider(
 		<MemoryRouter initialEntries={ [ initialEntry ] }>{ step }</MemoryRouter>,
 		{
-			initialState: {},
+			initialState,
 			reducers: {
 				ui: uiReducer,
 				documentHead: documentHeadReducer,

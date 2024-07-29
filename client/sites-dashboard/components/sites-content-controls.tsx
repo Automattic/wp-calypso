@@ -12,6 +12,8 @@ import { MEDIA_QUERIES } from '../utils';
 import { SitesSearch } from './sites-search';
 import { SitesSortingDropdown } from './sites-sorting-dropdown';
 
+type SiteTypes = 'p2' | 'non-p2';
+
 export interface SitesDashboardQueryParams {
 	page?: number;
 	perPage?: number;
@@ -19,6 +21,7 @@ export interface SitesDashboardQueryParams {
 	showHidden?: boolean;
 	status?: GroupableSiteLaunchStatuses;
 	newSiteID?: number;
+	siteType?: SiteTypes;
 }
 
 const FilterBar = styled.div( {
@@ -110,7 +113,7 @@ export function handleQueryParamChange( queryParams: SitesDashboardQueryParams )
 	} );
 
 	// Use relative URL to avoid full page refresh.
-	page.replace( url.pathname + url.search );
+	page.replace( url.pathname + url.search + url.hash );
 }
 
 export const SitesContentControls = ( {
@@ -154,7 +157,7 @@ export const SitesContentControls = ( {
 				onSearch={ handleSearch }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
-				disableAutocorrect={ true }
+				disableAutocorrect
 				defaultValue={ initialSearch }
 				ref={ searchRef }
 			/>

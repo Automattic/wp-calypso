@@ -6,4 +6,12 @@
 		padding-left: 12px;
 		padding-right: 12px;
 	}
+
+	.sidebar-v2__menu-item {
+		&:hover {
+			svg.sidebar-v2__external-icon {
+				color: var(--color-text-inverted);
+			}
+		}
+	}
 }

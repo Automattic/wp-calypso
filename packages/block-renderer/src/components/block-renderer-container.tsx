@@ -16,11 +16,17 @@ import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I know using unstable features means my theme or plugin will inevitably break in the next version of WordPress.',
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
 	'@wordpress/block-editor'
 );
 
 const { getDuotoneFilter } = unlock( blockEditorPrivateApis );
+
+const isSafari =
+	window?.navigator.userAgent &&
+	window.navigator.userAgent.includes( 'Safari' ) &&
+	! window.navigator.userAgent.includes( 'Chrome' ) &&
+	! window.navigator.userAgent.includes( 'Chromium' );
 
 interface BlockRendererContainerProps {
 	children: ReactNode;
@@ -50,11 +56,31 @@ const ScaledBlockRendererContainer = ( {
 	const { settings } = useContext( BlockRendererContext );
 	const { styles, assets, duotone } = useMemo(
 		() => ( {
-			styles: settings.styles,
+			styles: settings.styles.map( ( styles: RenderedStyle ) => {
+				if ( ! isSafari || ! styles.css || ! styles.css.includes( 'body' ) ) {
+					return styles;
+				}
+
+				// The Iframe component injects the CSS rule body{ background: white } to <head>.
+				// In Safari, this creates a specificity issue that prevents other background colors
+				// to be applied to the body.
+				// As a solution, we use regex to add !important to these background colors.
+				//
+				// TODO: Remove this workaround when https://github.com/WordPress/gutenberg/pull/60106
+				// lands in Calypso's @wordpress/block-editor, which should be 12.23.0.
+				const regex = /(body\s*{[\s\S]*?\bbackground-color\s*:\s*([^;}]+)\s*;[\s\S]*?})/g;
+				styles.css = styles.css.replace( regex, ( match, cssRule, bgColor ) => {
+					return ! bgColor.includes( '!important' )
+						? cssRule.replace( bgColor, bgColor + ' !important' )
+						: cssRule;
+				} );
+
+				return styles;
+			} ),
 			assets: settings.__unstableResolvedAssets,
 			duotone: settings.__experimentalFeatures?.color?.duotone,
 		} ),
-		[ settings ]
+		[ settings, isSafari ]
 	);
 
 	const styleAssets = useParsedAssets( assets?.styles ) as HTMLLinkElement[];

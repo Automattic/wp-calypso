@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 // Returns React component with a localized label and optional icon
 function button( label, icon ) {
 	return () => {
+		// eslint-disable-next-line wpcalypso/i18n-translate-identifier
 		const tr = useTranslate();
 		return (
 			<strong>

@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, translate, numberFormat } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
@@ -158,7 +158,7 @@ class WordAds extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ wordads.path }/{{ interval }}${ slugPath }`;
 
-		const statsWrapperClass = classNames( 'wordads stats-content', {
+		const statsWrapperClass = clsx( 'wordads stats-content', {
 			'is-period-year': period === 'year',
 		} );
 

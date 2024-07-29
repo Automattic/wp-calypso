@@ -1,3 +1,4 @@
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import {
 	MigrationStatus,
 	type MigrationStatusError,
@@ -153,6 +154,13 @@ export class ImportEverything extends SectionMigrate {
 		}
 	};
 
+	handleFreeTrial = () => {
+		this.props.stepNavigator?.goToCheckoutPage?.( 'everything', {
+			siteSlug: this.props.targetSiteSlug,
+			plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+		} );
+	};
+
 	renderLoading() {
 		return (
 			<div className="import-layout__center">
@@ -201,6 +209,7 @@ export class ImportEverything extends SectionMigrate {
 					startImport={ this.startMigration }
 					navigateToVerifyEmailStep={ () => stepNavigator.goToVerifyEmailPage?.() }
 					onContentOnlyClick={ onContentOnlySelection }
+					onFreeTrialClick={ this.handleFreeTrial }
 				/>
 			</>
 		);
@@ -234,6 +243,7 @@ export class ImportEverything extends SectionMigrate {
 					<MigrationError
 						sourceSiteUrl={ this.props.sourceSite?.URL }
 						targetSiteUrl={ this.props.targetSite.URL }
+						targetSiteID={ this.props.targetSite.ID }
 						status={ status || this.state.migrationErrorStatus }
 						resetMigration={ this.resetMigration }
 						goToImportCapturePage={ () => stepNavigator?.goToImportCapturePage?.() }

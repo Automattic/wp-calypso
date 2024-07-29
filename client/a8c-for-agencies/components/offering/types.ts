@@ -2,6 +2,7 @@ export type OfferingCardProps = {
 	title: string;
 	description: string;
 	items?: OfferingItemProps[];
+	children?: React.ReactNode;
 };
 
 export type OfferingItemProps = {

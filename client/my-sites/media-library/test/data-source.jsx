@@ -29,7 +29,7 @@ describe( 'MediaLibraryDataSource', () => {
 			setStore( store );
 			render(
 				<ReduxProvider store={ store }>
-					<MediaLibraryDataSource source="" onSourceChange={ noop } ignorePermissions={ true } />
+					<MediaLibraryDataSource source="" onSourceChange={ noop } ignorePermissions />
 				</ReduxProvider>
 			);
 
@@ -46,7 +46,7 @@ describe( 'MediaLibraryDataSource', () => {
 						source=""
 						onSourceChange={ noop }
 						disabledSources={ [ 'pexels' ] }
-						ignorePermissions={ true }
+						ignorePermissions
 					/>
 				</ReduxProvider>
 			);

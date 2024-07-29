@@ -100,11 +100,18 @@ class SocialSignupForm extends Component {
 
 	getRedirectUri = ( socialService ) => {
 		const origin = typeof window !== 'undefined' && window.location.origin;
+		const pathname = typeof window !== 'undefined' && window.location.pathname;
 
 		// If the user is in the WPCC flow, we want to redirect user to login callback so that we can automatically log them in.
-		return isWpccFlow( this.props.flowName )
-			? `${ origin + login( { socialService } ) }`
-			: `${ origin }/start/user`;
+		if ( isWpccFlow( this.props.flowName ) ) {
+			return `${ origin + login( { socialService } ) }`;
+		}
+
+		if ( socialService === 'github' ) {
+			return `${ origin }${ pathname }`;
+		}
+
+		return `${ origin }/start/user`;
 	};
 
 	trackLoginAndRememberRedirect = ( service ) => {
@@ -158,11 +165,12 @@ class SocialSignupForm extends Component {
 export default connect(
 	( state ) => {
 		const query = getCurrentQueryArguments( state );
+		const isDevAccount = query?.ref === 'hosting-lp' || query?.ref === 'developer-lp';
 
 		return {
 			currentRoute: getCurrentRoute( state ),
 			oauth2Client: getCurrentOAuth2Client( state ),
-			isDevAccount: query?.ref === 'developer-lp',
+			isDevAccount: isDevAccount,
 			isWoo:
 				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
 				isWooCommerceCoreProfilerFlow( state ),

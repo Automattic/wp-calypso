@@ -7,7 +7,7 @@
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.ts",
+	"calypso:src": "src/index.tsx",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -32,9 +32,10 @@
 		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook": "sb dev"
+		"storybook": "yarn msw init && sb dev"
 	},
 	"dependencies": {
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
@@ -44,19 +45,19 @@
 		"@automattic/viewport": "workspace:^",
 		"@emotion/react": "11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/data": "^9.24.0",
-		"@wordpress/element": "^5.31.0",
-		"@wordpress/icons": "^9.45.0",
-		"@wordpress/primitives": "^3.52.0",
-		"@wordpress/url": "^3.55.0",
-		"@wordpress/warning": "^2.54.0",
-		"classnames": "^2.3.2",
+		"@wordpress/data": "^10.2.0",
+		"@wordpress/element": "^6.2.0",
+		"@wordpress/icons": "^10.2.0",
+		"@wordpress/primitives": "^4.2.0",
+		"@wordpress/url": "^4.2.0",
+		"@wordpress/warning": "^3.2.0",
+		"clsx": "^2.1.1",
 		"i18n-calypso": "workspace:^",
 		"react-intersection-observer": "^9.4.3",
 		"react-transition-group": "^4.3.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^4.54.0",
+		"@wordpress/i18n": "^5.2.0",
 		"postcss": "^8.4.5",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
@@ -66,15 +67,20 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^7.6.17",
-		"@storybook/cli": "^7.6.17",
-		"@storybook/react": "^7.6.17",
-		"@testing-library/dom": "^9.3.4",
-		"@testing-library/jest-dom": "^6.4.2",
-		"@testing-library/react": "^14.2.1",
+		"@storybook/addon-actions": "^7.6.19",
+		"@storybook/cli": "^7.6.19",
+		"@storybook/react": "^7.6.19",
+		"@testing-library/dom": "^10.1.0",
+		"@testing-library/jest-dom": "^6.4.5",
+		"@testing-library/react": "^15.0.7",
 		"@testing-library/user-event": "^14.5.2",
+		"msw": "^2.2.14",
+		"msw-storybook-addon": "^2.0.2",
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^5.3.3",
-		"webpack": "^5.90.3"
+		"webpack": "^5.91.0"
+	},
+	"msw": {
+		"workerDirectory": "static"
 	}
 }

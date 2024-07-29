@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { handleRenewNowClick, getRenewalPrice } from 'calypso/lib/purchases';
 import { useDispatch } from 'calypso/state';
@@ -52,7 +52,7 @@ function RenewButton( {
 		loading = false;
 	}
 
-	const buttonClasses = classNames( 'renew-button', { 'is-loading': loading } );
+	const buttonClasses = clsx( 'renew-button', { 'is-loading': loading } );
 	let buttonLabel;
 	if ( reactivate ) {
 		buttonLabel = translate( 'Reactivate for {{strong}}%(price)s{{/strong}}', {

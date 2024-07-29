@@ -35,6 +35,22 @@
 	}
 }
 
+.odie-button-link {
+	background: none;
+	border: none;
+	color: var(--color-link);
+	text-decoration: underline;
+	cursor: pointer;
+	padding: 0;
+	font-family: inherit;
+	font-size: inherit;
+}
+
+.odie-button-link:hover {
+	text-decoration: none;
+	color: var(--color-link-dark);
+}
+
 .odie-sources-foldable-card {
 	overflow-x: hidden !important;
 }
@@ -47,12 +63,20 @@
 	background-color: var(--studio-gray-0);
 }
 
+.odie-chatbox-message.odie-chatbox-message-user p {
+	font-size: 1rem;
+}
+
 .odie-chatbox-message.odie-chatbox-message-user > :last-child {
 	margin-bottom: 0;
 }
 
 .odie-chatbox-message.odie-chatbox-message-wapuu {
 	background-color: var(--studio-white);
+}
+
+.odie-chatbox-message.odie-chatbox-message-wapuu p {
+	font-size: 1rem;
 }
 
 .odie-introduction-message-content {
@@ -106,7 +130,6 @@
 	background-color: rgba(0, 0, 0, 0.1);
 
 	.odie-fullscreen-backdrop {
-
 		.odie-chatbox-message {
 			box-shadow: 0 0 0 1px var(--color-border-subtle);
 			width: auto;
@@ -166,6 +189,7 @@
 }
 
 $feedback-button-size: 28px;
+
 .odie-feedback-component-container {
 	display: flex;
 	justify-content: space-between;
@@ -241,29 +265,44 @@ $feedback-button-size: 28px;
 
 $custom-border-corner-size: 16px;
 
+.odie-referenced-message,
+.odie-last-message {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 100%;
+}
+
 .odie-gradient-to-white {
-	position: absolute;
-	left: 0;
-	right: 0;
 	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 50%);
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	height: 96px;
+	height: 100px;
 	justify-content: center;
 	z-index: 5;
 	pointer-events: none;
+	position: fixed;
+	width: 100%;
 
 	&.is-hidden {
 		opacity: 0;
 		bottom: 0 !important;
-		transition: opacity 0.3s ease, bottom 0.3s ease;
+		transition:
+			opacity 0.3s ease 0.3s,
+			bottom 0.3s ease 0.3s;
+
+		.odie-jump-to-recent-message-button {
+			pointer-events: none;
+		}
 	}
 
 	&.is-visible {
 		opacity: 1;
 		bottom: 24px;
-		transition: opacity 0.3s ease 0.3s, bottom 0.3s ease 0.3s;
+		transition:
+			opacity 0.3s ease 1.2s,
+			bottom 0.3s ease 1.2s;
 	}
 
 	.odie-jump-to-recent-message-button {
@@ -312,31 +351,38 @@ $custom-border-corner-size: 16px;
 		-webkit-transform: scale3d(1, 1, 1);
 		transform: scale3d(1, 1, 1);
 	}
+
 	30% {
 		-webkit-transform: scale3d(1.25, 0.75, 1);
 		transform: scale3d(1.25, 0.75, 1);
 	}
+
 	40% {
 		-webkit-transform: scale3d(0.75, 1.25, 1);
 		transform: scale3d(0.75, 1.25, 1);
 	}
+
 	50% {
 		-webkit-transform: scale3d(1.15, 0.85, 1);
 		transform: scale3d(1.15, 0.85, 1);
 	}
+
 	65% {
 		-webkit-transform: scale3d(0.95, 1.05, 1);
 		transform: scale3d(0.95, 1.05, 1);
 	}
+
 	75% {
 		-webkit-transform: scale3d(1.05, 0.95, 1);
 		transform: scale3d(1.05, 0.95, 1);
 	}
+
 	100% {
 		-webkit-transform: scale3d(1, 1, 1);
 		transform: scale3d(1, 1, 1);
 	}
 }
+
 .odie-feedback-message {
 	position: relative;
 	font-weight: 600;
@@ -361,7 +407,6 @@ $custom-border-corner-size: 16px;
 		opacity: 0;
 	}
 
-
 	.odie-thanks-in {
 		animation: thanks-in-animation 0.3s ease-out both;
 	}
@@ -380,6 +425,7 @@ $custom-border-corner-size: 16px;
 	0% {
 		height: $feedback-button-size;
 	}
+
 	100% {
 		height: 0;
 	}
@@ -389,6 +435,7 @@ $custom-border-corner-size: 16px;
 	0% {
 		opacity: 1;
 	}
+
 	100% {
 		opacity: 0;
 	}
@@ -399,6 +446,7 @@ $custom-border-corner-size: 16px;
 		transform: translateY(1rem);
 		opacity: 0;
 	}
+
 	100% {
 		transform: translateY(0);
 		opacity: 1;
@@ -406,7 +454,6 @@ $custom-border-corner-size: 16px;
 }
 
 .odie-chatbox-message-sources-container {
-
 	.foldable-card {
 		margin: 0 !important;
 		width: 100% !important;

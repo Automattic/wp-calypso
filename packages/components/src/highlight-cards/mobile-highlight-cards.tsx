@@ -8,17 +8,28 @@ type MobileHighlightCardProps = {
 	count: number | null;
 	previousCount?: number | null;
 	icon?: React.ReactElement;
+	preformattedValue?: string;
 };
 
-function MobileHighlightCard( { heading, count, previousCount, icon }: MobileHighlightCardProps ) {
-	// We require at minimum a heading and a count.
-	const isValidHighlight = count !== null && heading.length > 0;
-	if ( ! isValidHighlight ) {
+function MobileHighlightCard( {
+	heading,
+	count,
+	previousCount,
+	icon,
+	preformattedValue,
+}: MobileHighlightCardProps ) {
+	// We'll accept a count or a preformatted string as our value.
+	// If both are provided, we'll use the preformatted string for display.
+	if ( ! preformattedValue && count === null ) {
 		return null;
 	}
-	// We require two counts to display a trendline.
-	// The icon is optional.
-	const displayTrendline = previousCount !== null && previousCount !== undefined;
+	// We require a heading to go with our value.
+	if ( ! heading ) {
+		return null;
+	}
+	// The icon and trendline are optional.
+	// Trendline depends on having a previous count value.
+	const displayTrendline = Number.isFinite( previousCount );
 	const displayIcon = icon !== undefined;
 	return (
 		<div className="mobile-highlight-cards__item">
@@ -34,7 +45,7 @@ function MobileHighlightCard( { heading, count, previousCount, icon }: MobileHig
 				</span>
 			) }
 			<span className="mobile-highlight-cards__item-count">
-				<ShortenedNumber value={ count } />
+				{ preformattedValue ? preformattedValue : <ShortenedNumber value={ count } /> }
 			</span>
 		</div>
 	);
@@ -56,6 +67,7 @@ export default function MobileHighlightCardListing( {
 					count={ highlight.count }
 					previousCount={ highlight.previousCount }
 					icon={ highlight.icon }
+					preformattedValue={ highlight.preformattedValue }
 				/>
 			) ) }
 		</div>

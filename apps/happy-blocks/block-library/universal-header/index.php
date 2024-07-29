@@ -234,6 +234,13 @@ if ( isset( $args['website'] ) ) {
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
+							   href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/patterns' ) ); ?>"
+							   tabindex="-1">
+								<?php echo esc_html( fixme__( 'WordPress Patterns', __( 'Patterns', 'happy-blocks' ) ) ); ?>
+							</a>
+						</li>
+						<li>
+							<a role="menuitem" class="x-dropdown-link x-link"
 								href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/google/' ) ); ?>"
 								tabindex="-1">
 								<?php esc_html_e( 'Google Apps', 'happy-blocks' ); ?>
@@ -496,6 +503,13 @@ if ( isset( $args['website'] ) ) {
 									href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/plugins' ) ); ?>"
 									tabindex="-1">
 									<?php echo esc_html( fixme__( 'WordPress Plugins', __( 'Plugins', 'happy-blocks' ) ) ); ?>
+								</a>
+							</li>
+							<li class="x-menu-grid-item">
+								<a role="menuitem" class="x-menu-link x-link"
+								   href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/patterns' ) ); ?>"
+								   tabindex="-1">
+									<?php echo esc_html( fixme__( 'WordPress Patterns', __( 'Patterns', 'happy-blocks' ) ) ); ?>
 								</a>
 							</li>
 							<li class="x-menu-grid-item">

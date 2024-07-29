@@ -4,26 +4,17 @@
 	--a4a-corners-sharp: 0;
 	--a4a-corners-soft: 4px;
 
-	// FIXME: Remove this when we have a proper color scheme
-	--studio-automattic-0: #ebf4fa;
-	--studio-automattic-5: #c4e2f5;
-	--studio-automattic-10: #88ccf2;
-	--studio-automattic-20: #5ab7e8;
-	--studio-automattic-30: #24a3e0;
-	--studio-automattic-40: #1490c7;
-	--studio-automattic-50: #0277a8;
-	--studio-automattic-60: #036085;
-	--studio-automattic-70: #02506e;
-	--studio-automattic-80: #02384d;
-	--studio-automattic-90: #022836;
-	--studio-automattic-100: #021b24;
-	--studio-automattic: #24a3e0;
-
 	--color-surface-backdrop: #021a23;
+	--color-light-backdrop: var(--studio-white);
+
+	--color-border-light: var(--studio-white);
 
 	--color-text-gray: "#333";
-	--color-sidebar-text-alternative: #bbe0fa;
+	--color-text-white: var(--studio-white);
+	--color-text-black: var(--studio-black);
+	--wp-components-color-accent: var(--studio-automattic-blue-50);
 
+	// FIXME: Need to move this colors to a color scheme file
 	--color-scary-0: var(--studio-red-0);
 	--color-scary-5: var(--studio-red-5);
 	--color-scary-40: var(--studio-red-40);
@@ -31,74 +22,362 @@
 	--color-scary-60: var(--studio-red-60);
 	--color-scary-70: var(--studio-red-70);
 
-	--color-primary: var(--studio-automattic-60);
-	--color-primary-40: var(--studio-automattic-40);
-	--color-accent: var(--studio-automattic-40);
-	--color-accent-60: var(--studio-automattic-60);
-	--color-accent-70: var(--studio-automattic-70);
+	--color-primary: var(--studio-automattic-blue-50);
+	--color-primary-rgb: var(--studio-automattic-blue-50-rgb);
+	--color-primary-dark: var(--studio-automattic-blue-70);
+	--color-primary-dark-rgb: var(--studio-automattic-blue-70-rgb);
+	--color-primary-light: var(--studio-automattic-blue-30);
+	--color-primary-light-rgb: var(--studio-automattic-blue-30-rgb);
+	--color-primary-0: var(--studio-automattic-blue-0);
+	--color-primary-0-rgb: var(--studio-automattic-blue-0-rgb);
+	--color-primary-5: var(--studio-automattic-blue-5);
+	--color-primary-5-rgb: var(--studio-automattic-blue-5-rgb);
+	--color-primary-10: var(--studio-automattic-blue-10);
+	--color-primary-10-rgb: var(--studio-automattic-blue-10-rgb);
+	--color-primary-20: var(--studio-automattic-blue-20);
+	--color-primary-20-rgb: var(--studio-automattic-blue-20-rgb);
+	--color-primary-30: var(--studio-automattic-blue-30);
+	--color-primary-30-rgb: var(--studio-automattic-blue-30-rgb);
+	--color-primary-40: var(--studio-automattic-blue-40);
+	--color-primary-40-rgb: var(--studio-automattic-blue-40-rgb);
+	--color-primary-50: var(--studio-automattic-blue-50);
+	--color-primary-50-rgb: var(--studio-automattic-blue-50-rgb);
+	--color-primary-60: var(--studio-automattic-blue-60);
+	--color-primary-60-rgb: var(--studio-automattic-blue-60-rgb);
+	--color-primary-70: var(--studio-automattic-blue-70);
+	--color-primary-70-rgb: var(--studio-automattic-blue-70-rgb);
+	--color-primary-80: var(--studio-automattic-blue-80);
+	--color-primary-80-rgb: var(--studio-automattic-blue-80-rgb);
+	--color-primary-90: var(--studio-automattic-blue-90);
+	--color-primary-90-rgb: var(--studio-automattic-blue-90-rgb);
+	--color-primary-100: var(--studio-automattic-blue-100);
+	--color-primary-100-rgb: var(--studio-automattic-blue-100-rgb);
+
+	--color-accent: var(--studio-gray-50);
+	--color-accent-rgb: var(--studio-gray-50-rgb);
+	--color-accent-dark: var(--studio-gray-70);
+	--color-accent-dark-rgb: var(--studio-gray-70-rgb);
+	--color-accent-light: var(--studio-gray-30);
+	--color-accent-light-rgb: var(--studio-gray-30-rgb);
+	--color-accent-0: var(--studio-gray-0);
+	--color-accent-0-rgb: var(--studio-gray-0-rgb);
+	--color-accent-5: var(--studio-gray-5);
+	--color-accent-5-rgb: var(--studio-gray-5-rgb);
+	--color-accent-10: var(--studio-gray-10);
+	--color-accent-10-rgb: var(--studio-gray-10-rgb);
+	--color-accent-20: var(--studio-gray-20);
+	--color-accent-20-rgb: var(--studio-gray-20-rgb);
+	--color-accent-30: var(--studio-gray-30);
+	--color-accent-30-rgb: var(--studio-gray-30-rgb);
+	--color-accent-40: var(--studio-gray-40);
+	--color-accent-40-rgb: var(--studio-gray-40-rgb);
+	--color-accent-50: var(--studio-gray-50);
+	--color-accent-50-rgb: var(--studio-gray-50-rgb);
+	--color-accent-60: var(--studio-gray-60);
+	--color-accent-60-rgb: var(--studio-gray-60-rgb);
+	--color-accent-70: var(--studio-gray-70);
+	--color-accent-70-rgb: var(--studio-gray-70-rgb);
+	--color-accent-80: var(--studio-gray-80);
+	--color-accent-80-rgb: var(--studio-gray-80-rgb);
+	--color-accent-90: var(--studio-gray-90);
+	--color-accent-90-rgb: var(--studio-gray-90-rgb);
+	--color-accent-100: var(--studio-gray-100);
+	--color-accent-100-rgb: var(--studio-gray-100-rgb);
+
+	--color-jetpack: var(--studio-jetpack-green);
+	--color-jetpack-rgb: var(--studio-jetpack-green-rgb);
+	--color-jetpack-dark: var(--studio-jetpack-green-70);
+	--color-jetpack-dark-rgb: var(--studio-jetpack-green-70-rgb);
+	--color-jetpack-light: var(--studio-jetpack-green-30);
+	--color-jetpack-light-rgb: var(--studio-jetpack-green-30-rgb);
+	--color-jetpack-0: var(--studio-jetpack-green-0);
+	--color-jetpack-0-rgb: var(--studio-jetpack-green-0-rgb);
+	--color-jetpack-5: var(--studio-jetpack-green-5);
+	--color-jetpack-5-rgb: var(--studio-jetpack-green-5-rgb);
+	--color-jetpack-10: var(--studio-jetpack-green-10);
+	--color-jetpack-10-rgb: var(--studio-jetpack-green-10-rgb);
+	--color-jetpack-20: var(--studio-jetpack-green-20);
+	--color-jetpack-20-rgb: var(--studio-jetpack-green-20-rgb);
+	--color-jetpack-30: var(--studio-jetpack-green-30);
+	--color-jetpack-30-rgb: var(--studio-jetpack-green-30-rgb);
+	--color-jetpack-40: var(--studio-jetpack-green-40);
+	--color-jetpack-40-rgb: var(--studio-jetpack-green-40-rgb);
+	--color-jetpack-50: var(--studio-jetpack-green-50);
+	--color-jetpack-50-rgb: var(--studio-jetpack-green-rgb);
+	--color-jetpack-60: var(--studio-jetpack-green-60);
+	--color-jetpack-60-rgb: var(--studio-jetpack-green-60-rgb);
+	--color-jetpack-70: var(--studio-jetpack-green-70);
+	--color-jetpack-70-rgb: var(--studio-jetpack-green-70-rgb);
+	--color-jetpack-80: var(--studio-jetpack-green-80);
+	--color-jetpack-80-rgb: var(--studio-jetpack-green-80-rgb);
+	--color-jetpack-90: var(--studio-jetpack-green-90);
+	--color-jetpack-90-rgb: var(--studio-jetpack-green-90-rgb);
+	--color-jetpack-100: var(--studio-jetpack-green-100);
+	--color-jetpack-100-rgb: var(--studio-jetpack-green-100-rgb);
+
+	--color-orange-40: var(--studio-orange-40);
+
+	--color-yellow-0: var(--studio-yellow-0);
+	--color-yellow-20: var(--studio-yellow-20);
+	--color-yellow-50: var(--studio-yellow-50);
 }
 
 .theme-a8c-for-agencies {
+
+	.components-button,
 	.button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		white-space: nowrap;
+
+		@include a4a-font-label-button;
+
+		box-sizing: border-box;
 		border-radius: 4px;
+
+		background-color: var(--color-surface);
+		border-color: var(--color-accent-5);
+		fill: var(--color-accent-100);
+		color: var(--color-accent-100);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-accent-0);
+		}
+
+		&.is-borderless.is-primary.is-active,
+		&.is-borderless.is-primary:active,
+		&.is-borderless.is-primary:focus,
+		&.is-borderless.is-primary:hover {
+			color: var(--color-primary-60);
+		}
 	}
 
 	.button.split-button__toggle {
 		border-radius: 0 4px 4px 0;
+
+		@include breakpoint-deprecated("<660px") {
+			border-radius: 4px;
+		}
 	}
 
 	.button.split-button__main {
 		border-radius: 4px 0 0 4px;
 	}
 
+	.components-button.is-primary,
 	.button.is-primary {
-		background-color: var(--studio-automattic-40);
-		border-color: var(--studio-automattic-40);
+		background-color: var(--color-primary-50);
+		border-color: var(--color-primary-50);
+		fill: var(--color-text-inverted);
+		color: var(--color-text-inverted);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-primary-70);
+			border-color: var(--color-primary-70);
+			fill: var(--color-text-inverted);
+			color: var(--color-text-inverted);
+			box-shadow: none;
+		}
+	}
+
+	.button.is-scary {
+		color: var(--color-scary-50);
+		border-color: var(--color-scary-50);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-scary-0);
+			border-color: var(--color-scary-60);
+			color: var(--color-scary-60);
+		}
+	}
+
+	.button.is-primary.is-scary {
+		background-color: var(--color-scary-50);
+		color: var(--color-text-inverted);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-scary-60);
+		}
 	}
 
 	.button.is-borderless:focus,
 	.button.is-borderless:hover,
 	.button.is-borderless {
 		background: none;
+		color: var(--color-accent-80);
+
+		&.a8c-blue-link {
+			color: var(--color-primary-50);
+			text-decoration: underline;
+
+			svg {
+				fill: var(--color-primary-50);
+				margin-inline-start: 4px;
+			}
+		}
+	}
+
+	.button.is-dark,
+	.components-button.is-dark {
+		background-color: var(--color-accent-100);
+		color: var(--color-surface);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-accent-100);
+		}
+	}
+
+	.split-button .button {
+		@include a4a-font-label-button;
+		height: 40px;
 	}
 
 	.components-form-toggle.is-checked .components-form-toggle__track {
-		background-color: var(--studio-automattic-60);
-		border-color: var(--studio-automattic-60);
+		background-color: var(--color-primary-50);
+		border-color: var(--color-primary-50);
+	}
+
+	.components-checkbox-control__input {
+		border-radius: 4px;
+		border-color: var(--color-neutral-10);
+		margin: 0;
+	}
+
+	.components-checkbox-control__input-container {
+		margin: 0 8px 0 0;
 	}
 
 	.components-checkbox-control__input[type="checkbox"]:checked,
 	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--studio-automattic-60);
-		border-color: var(--studio-automattic-60);
+		background: var(--color-primary-50);
+		border-color: var(--color-primary-50);
+	}
+
+	.components-checkbox-control__input[type="checkbox"]:focus {
+		box-shadow: none;
+		outline: none;
+
+		&:not(.components-checkbox-control__input[type="checkbox"]:checked) {
+			border-color: var(--color-neutral-10);
+		}
+	}
+
+	.components-checkbox-control__input[type="checkbox"]:focus-visible {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		outline: none;
 	}
 
 	.components-button.is-tertiary {
-		color: var(--studio-automattic-60);
+		color: var(--color-primary-60);
 	}
 
-	.button.is-borderless.is-primary.is-active,
-	.button.is-borderless.is-primary:active,
-	.button.is-borderless.is-primary:focus,
-	.button.is-borderless.is-primary:hover {
-		color: var(--studio-automattic-60);
+	.components-base-control__field {
+		margin: 0;
+	}
+
+	.components-form-token-field__input-container,
+	.components-text-control__input {
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 2px;
+		box-sizing: border-box;
+		color: var(--color-neutral-70);
+		font-size: rem(14px);
+		line-height: 1.5;
+		margin: 0;
+		padding: 8px 12px;
+		transition: all 0.15s ease-in-out;
+		width: 100%;
+		min-height: 36px;
+
+		:not(.components-form-token-field__input-container) {
+
+			&.is-active,
+			&:focus {
+				border-color: var(--color-primary);
+				box-shadow: 0 0 0 2px var(--color-primary-5);
+				outline: none;
+			}
+		}
+	}
+
+	.components-form-token-field__input-container {
+		position: relative;
+
+		&.is-active,
+		&:focus {
+			box-shadow: none;
+			outline: none;
+			border-color: var(--color-primary-50);
+		}
+
+		.components-form-token-field__suggestions-list {
+			box-sizing: border-box;
+			position: absolute;
+			margin-block-start: 7px;
+			margin-inline-start: -13px;
+			background-color: var(--color-surface);
+			border: 1px solid var(--color-neutral-10);
+			z-index: 10;
+			box-shadow: none;
+			width: calc(100% + 2px);
+			border-block-start-color: var(--color-primary-50);
+		}
+
+		.components-form-token-field__token,
+		.components-form-token-field__token-text,
+		.components-form-token-field__remove-token.components-button {
+			background-color: var(--color-neutral-5);
+			border-radius: 4px;
+		}
+
+		>* {
+			margin: 0;
+			padding: 0;
+		}
+	}
+
+	.search {
+
+		&,
+		& > *,
+		input[type="search"] {
+			border-radius: 4px;
+		}
 	}
 
 	// Masterbar
-	@media only screen and ( min-width: 782px ) {
+	@media only screen and (min-width: 782px) {
 		--masterbar-height: 46px;
+	}
+
+	.button[disabled],
+	.button:disabled,
+	.button.disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		pointer-events: none;
 	}
 }
 
 // New navigation will not include a masterbar
 .theme-a8c-for-agencies .layout.has-no-masterbar {
-	--masterbar-height: 0;
+	/* We are ignoring these lines because without the px value the calc function does not work as expected */
+	/* stylelint-disable-next-line length-zero-no-unit */
+	--masterbar-height: 0px;
 
 	.layout__content {
 		padding: 16px;
 	}
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		padding-block-start: 0;
 
 		.layout__content {
@@ -157,6 +436,15 @@
 	margin: 0;
 }
 
+.theme-a8c-for-agencies .dialog.card {
+	border-radius: 4px;
+
+	.dialog__action-buttons {
+		border: none;
+		background: var(--color-surface);
+	}
+}
+
 // Universal Text Styles
 html {
 	h2 {
@@ -164,7 +452,7 @@ html {
 		font-weight: 600;
 		line-height: 32px;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated(">660px") {
 			font-size: $font-headline-small;
 			line-height: 40px;
 		}
@@ -175,7 +463,7 @@ html {
 		font-weight: 600;
 		line-height: 23px;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated(">660px") {
 			font-size: $font-title-small;
 			line-height: 23px;
 		}
@@ -185,7 +473,7 @@ html {
 		font-size: $font-body;
 		line-height: 24px;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated(">660px") {
 			font-size: $font-title-small;
 			line-height: 24px;
 		}
@@ -197,7 +485,7 @@ html {
 }
 
 .layout.focus-content .layout__secondary {
-	@media only screen and ( max-width: 782px ) and ( min-width: 660px ) {
+	@media only screen and (max-width: 782px) and (min-width: 660px) {
 		transform: none;
 		padding: 0;
 	}
@@ -211,9 +499,149 @@ html {
 	padding: 16px;
 }
 
-.button.is-primary:hover,
-.button.is-primary:focus {
-	background-color: var(--studio-automattic-70);
-	border-color: var(--studio-automattic-70);
-	color: var(--color-text-inverted);
+.popover {
+	font-size: rem(14px);
+	font-weight: 400;
+	border-radius: 4px;
+
+	.popover__arrow {
+		display: none;
+	}
+
+
+	.popover__inner {
+		border-radius: 4px;
+	}
+
+	.popover__menu {
+		padding: 8px;
+	}
+
+	.popover__menu-item {
+		display: flex;
+		align-items: center;
+		border: none;
+		outline: none;
+		margin-block: 0;
+		min-height: 40px;
+		box-sizing: border-box;
+		border-radius: 4px;
+		gap: 8px;
+	}
+
+	.popover__menu-item .gridicon {
+		margin: 0;
+	}
+
+	button.popover__menu-item:hover,
+	button.popover__menu-item:focus {
+		background: var(--wp-components-color-accent);
+		color: var(--color-text-inverted);
+
+		.gridicon {
+			fill: var(--color-text-inverted);
+		}
+	}
+
+	.popover__menu-item.is-destructive {
+		color: var(--color-scary-50);
+
+		.gridicon {
+			fill: var(--color-error-50);
+		}
+	}
+}
+
+.popover.tooltip.gray-tooltip {
+	.popover__arrow {
+		&::before {
+			border-bottom-color: var(--color-accent-60);
+			inset-block-start: 1px;
+		}
+	}
+
+	.popover__inner {
+		background: var(--color-accent-60);
+		color: var(--color-text-white);
+		padding: 10px 12px;
+		border: none;
+	}
+}
+
+.redesigned-a8c-table {
+	thead .dataviews-view-table__row th {
+		font-size: 0.75rem;
+		font-weight: 500;
+		line-height: 20px;
+		color: var(--color-accent-80);
+	}
+
+	.dataviews-filters__view-actions {
+		display: none;
+	}
+
+	.dataviews-view-table tr {
+
+		td,
+		th {
+			.action-button {
+				display: flex;
+				justify-content: flex-end;
+				width: 100%;
+				padding-inline-end: 12px;
+
+				.gridicon {
+					margin-top: 0;
+					top: 0;
+				}
+			}
+
+			&:first-child {
+				text-align: left;
+				padding-inline-start: 16px;
+			}
+		}
+
+		th[data-field-id="actions"] {
+			text-align: right;
+			padding-inline-end: 16px;
+		}
+	}
+
+	.dataviews-view-list li {
+		cursor: pointer;
+	}
+
+	.dataviews-view-list li .components-h-stack {
+		display: block;
+		width: 100%;
+	}
+}
+
+.full-width-layout-with-table {
+	.a4a-layout__body-wrapper {
+		max-width: 100%;
+		padding-inline: 0;
+	}
+
+	.redesigned-a8c-table .dataviews-view-table tr {
+
+		td:first-child,
+		th:first-child {
+			padding-inline-start: 16px;
+
+			@include breakpoint-deprecated(">660px") {
+				padding-inline-start: 64px;
+			}
+		}
+
+		td:last-child,
+		th:last-child {
+			padding-inline-end: 16px;
+
+			@include breakpoint-deprecated(">660px") {
+				padding-inline-end: 64px;
+			}
+		}
+	}
 }

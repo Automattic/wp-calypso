@@ -34,6 +34,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -41,6 +42,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import {
 	JETPACK_CLOUD_ACTIVITY_LOG_LINK,
 	JETPACK_CLOUD_MONETIZE_LINK,
+	JETPACK_CLOUD_SCAN_HISTORY_LINK,
 	JETPACK_CLOUD_SEARCH_LINK,
 	JETPACK_CLOUD_SOCIAL_LINK,
 	JETPACK_CLOUD_SUBSCRIBERS_LINK,
@@ -68,6 +70,8 @@ const useMenuItems = ( {
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 
 	const isWPForTeamsSite = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
+
+	const showScanHistory = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
 	const shouldShowSettings =
 		useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) ) &&
@@ -117,6 +121,16 @@ const useMenuItems = ( {
 					trackEventName: 'calypso_jetpack_sidebar_scan_clicked',
 					enabled: isAdmin && ! isWPCOM && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, scanPath( siteSlug ) ),
+				},
+				// Scan history is mutually exclusive with the scan item above and should only be shown for atomic sites
+				{
+					icon: shield,
+					path: '/',
+					link: `${ JETPACK_CLOUD_SCAN_HISTORY_LINK }/${ siteSlug }`,
+					title: translate( 'Scan' ),
+					trackEventName: 'calypso_jetpack_sidebar_scan_history_clicked',
+					enabled: isAdmin && showScanHistory && ! isWPForTeamsSite,
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SCAN_HISTORY_LINK }/${ siteSlug }` ),
 				},
 				{
 					icon: search,

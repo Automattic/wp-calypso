@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 /**
  * Internal dependencies
  */
@@ -16,7 +16,7 @@ export const ImageLoader: React.FC< { className?: string } > = ( { className = n
 		<img
 			src={ loader }
 			alt="Loading"
-			className={ classnames( 'jetpack-ai-logo-generator-modal__loader', className ) }
+			className={ clsx( 'jetpack-ai-logo-generator-modal__loader', className ) }
 		/>
 	);
 };

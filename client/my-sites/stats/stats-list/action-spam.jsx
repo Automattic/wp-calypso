@@ -1,6 +1,6 @@
 import { Dialog } from '@automattic/components';
 import { Icon, warning } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -79,7 +79,7 @@ class StatsActionSpam extends Component {
 					context: 'Stats: Action to mark an item as spam',
 			  } );
 
-		const wrapperClass = classNames( 'module-content-list-item-action-wrapper', 'is-link', {
+		const wrapperClass = clsx( 'module-content-list-item-action-wrapper', 'is-link', {
 			spam: ! this.state.spammed,
 			unspam: this.state.spammed,
 		} );

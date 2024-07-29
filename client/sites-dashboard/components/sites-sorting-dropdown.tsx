@@ -8,6 +8,9 @@ import {
 	stringifySitesSorting,
 	parseSitesSorting,
 	useSitesSorting,
+	ALPHABETICAL_SORTING,
+	MAGIC_SORTING,
+	LAST_PUBLISHED_SORTING,
 } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { SMALL_MEDIA_QUERY } from '../utils';
 
@@ -42,31 +45,26 @@ export const SitesSortingDropdown = ( {
 
 	const choices = [
 		{
-			value: stringifySitesSorting( {
-				sortKey: 'alphabetically',
-				sortOrder: 'asc',
-			} ),
+			...ALPHABETICAL_SORTING,
+			value: stringifySitesSorting( ALPHABETICAL_SORTING ),
 			label: __( 'Name' ),
 		},
 		{
-			value: stringifySitesSorting( {
-				sortKey: 'lastInteractedWith',
-				sortOrder: 'desc',
-			} ),
+			...MAGIC_SORTING,
+			value: stringifySitesSorting( MAGIC_SORTING ),
 			/* translators: name of sorting mode where the details about how best to sort sites are left up to the software */
 			label: __( 'Magic' ),
 		},
 		{
-			value: stringifySitesSorting( {
-				sortKey: 'updatedAt',
-				sortOrder: 'desc',
-			} ),
+			...LAST_PUBLISHED_SORTING,
+			value: stringifySitesSorting( LAST_PUBLISHED_SORTING ),
 			label: __( 'Last published' ),
 		},
 	];
 
 	const currentSortingValue = stringifySitesSorting( sitesSorting );
-	const currentSortingLabel = choices.find( ( { value } ) => value === currentSortingValue )?.label;
+	const currentSortingLabel = choices.find( ( { sortKey } ) => sortKey === sitesSorting.sortKey )
+		?.label;
 
 	if ( currentSortingLabel === undefined ) {
 		throw new Error( `invalid sort value ${ sitesSorting }` );

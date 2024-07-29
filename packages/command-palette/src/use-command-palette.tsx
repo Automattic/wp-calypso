@@ -1,10 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
-import { useCommandMenuGroupContext, useCommandPaletteContext } from './context';
+import { SiteType } from './commands';
+import { useCommandPaletteContext } from './context';
 import { isCustomDomain } from './utils';
+import type { Command, CommandCallBackParams } from './commands';
 import type { SiteExcerptData } from '@automattic/sites';
 
 const FillDefaultIconWhite = styled.div( {
@@ -28,67 +30,22 @@ const EmptySiteIcon = styled.div( {
 	alignItems: 'center',
 } );
 
-type CloseFunction = ( commandName?: string, isExecuted?: boolean ) => void;
-type OnClickSiteFunction = ( {
-	close,
-	site,
-	command,
-}: {
-	close: CloseFunction;
-	site: SiteExcerptData;
-	command: Command;
-} ) => void;
-interface SiteFunctions {
-	capabilityFilter?: string;
-	onClick: OnClickSiteFunction;
-	filter?: ( site: SiteExcerptData ) => boolean | undefined | null;
-	filterNotice?: string;
-	emptyListNotice?: string;
-}
-export interface CommandCallBackParams {
-	close: CloseFunction;
-	setSearch: ( search: string ) => void;
-	setPlaceholderOverride: ( placeholder: string ) => void;
-	command: Command;
+interface SiteToCommandParameters {
+	selectedCommand: Command;
+	filteredSitesLength: number;
+	listVisibleCount: number;
+	search: string;
 }
 
-export interface Command {
-	name: string;
-	label: string;
-	subLabel?: string;
-	searchLabel?: string;
-	callback: ( params: CommandCallBackParams ) => void;
-	context?: string[] | { path: string; match: string }[];
-	icon?: JSX.Element;
-	image?: JSX.Element;
-	siteFunctions?: SiteFunctions;
-}
-
-export interface useExtraCommandsParams {
-	setSelectedCommandName: ( name: string ) => void;
-}
-
-interface SiteToActionParameters {
-	onClickSite: OnClickSiteFunction;
-	properties: {
-		selectedCommand: Command;
-		filteredSitesLength: number;
-		listVisibleCount: number;
-		search: string;
-	};
-}
-
-const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) => {
-	const siteToAction = useCallback(
-		(
-			onClickSite: SiteToActionParameters[ 'onClickSite' ],
-			{
-				selectedCommand,
-				filteredSitesLength,
-				listVisibleCount,
-				search,
-			}: SiteToActionParameters[ 'properties' ]
-		) =>
+const useSiteToCommand = () => {
+	const { currentRoute } = useCommandPaletteContext();
+	return useCallback(
+		( {
+			selectedCommand,
+			filteredSitesLength,
+			listVisibleCount,
+			search,
+		}: SiteToCommandParameters ) =>
 			( site: SiteExcerptData ): Command => {
 				const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
 				return {
@@ -96,7 +53,7 @@ const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) =>
 					label: `${ siteName }`,
 					subLabel: `${ site.URL }`,
 					searchLabel: `${ site.ID } ${ siteName } ${ site.URL }`,
-					callback: ( { close } ) => {
+					callback: ( params ) => {
 						recordTracksEvent( 'calypso_hosting_command_palette_site_select', {
 							command: selectedCommand.name,
 							list_count: filteredSitesLength,
@@ -107,7 +64,7 @@ const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) =>
 							command_site_has_custom_domain: isCustomDomain( site.slug ),
 							command_site_plan_id: site.plan?.product_id,
 						} );
-						onClickSite( { site, close, command: selectedCommand } );
+						selectedCommand.callback( { ...params, site, command: selectedCommand } );
 					},
 					image: (
 						<FillDefaultIconWhite>
@@ -134,45 +91,90 @@ const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) =>
 			},
 		[ currentRoute ]
 	);
+};
 
-	return siteToAction;
+const isCommandAvailableOnSite = (
+	command: Command,
+	site: SiteExcerptData,
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } }
+): boolean => {
+	const isAtomic = !! site.is_wpcom_atomic;
+	const isJetpack = !! site.jetpack;
+	const isSelfHosted = isJetpack && ! isAtomic;
+
+	if ( command?.capability && ! userCapabilities[ site.ID ]?.[ command.capability ] ) {
+		return false;
+	}
+
+	if ( command.siteType === SiteType.ATOMIC && ! isAtomic ) {
+		return false;
+	}
+
+	if ( command.siteType === SiteType.JETPACK && ! isJetpack ) {
+		return false;
+	}
+
+	if ( command?.isCustomDomain && ! isCustomDomain( site.slug ) ) {
+		return false;
+	}
+
+	if ( command?.publicOnly && ( site.is_coming_soon || site.is_private ) ) {
+		return false;
+	}
+
+	if ( command?.filterP2 && site.options?.is_wpforteams_site ) {
+		return false;
+	}
+
+	if ( command?.filterStaging && site.is_wpcom_staging_site ) {
+		return false;
+	}
+
+	if ( command?.filterSelfHosted && isSelfHosted ) {
+		return false;
+	}
+
+	if (
+		command?.adminInterface &&
+		! isSelfHosted &&
+		site.options?.wpcom_admin_interface !== command.adminInterface
+	) {
+		return false;
+	}
+
+	return true;
 };
 
 export const useCommandPalette = (): {
 	commands: Command[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
+	inSiteContext: boolean | undefined;
 } => {
-	const { search, selectedCommandName, setSelectedCommandName } = useCommandMenuGroupContext();
-	const { currentSiteId, navigate, useCommands, currentRoute, useSites, userCapabilities } =
-		useCommandPaletteContext();
-	const siteToAction = useSiteToAction( { currentRoute } );
+	const {
+		currentSiteId,
+		useCommands,
+		currentRoute,
+		useSites,
+		userCapabilities,
+		search,
+		selectedCommandName,
+		setSelectedCommandName,
+	} = useCommandPaletteContext();
+	const siteToCommand = useSiteToCommand();
 
 	const listVisibleCount = useCommandState( ( state ) => state.filtered.count );
 
-	const sites = useSites?.() || [];
+	const sites = useSites();
 
-	// Call the generateCommandsArray function to get the commands array
-	const commands = useCommands( {
-		setSelectedCommandName,
-		navigate,
-		currentRoute,
-	} ) as Command[];
+	const commands = useCommands();
 
-	const filterCurrentSiteCommands = ( site: SiteExcerptData, command: Command ) => {
-		const { capabilityFilter = false, filter = () => true } = command?.siteFunctions ?? {};
-		let hasCapability = true;
-		if ( capabilityFilter ) {
-			hasCapability = userCapabilities?.[ site.ID ]?.[ capabilityFilter ] ?? false;
-		}
-
-		return filter?.( site ) && hasCapability;
-	};
+	const { __ } = useI18n();
 
 	const trackSelectedCommand = ( command: Command ) => {
 		recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
 			command: command.name,
-			has_nested_commands: !! command.siteFunctions,
+			has_nested_commands: !! command.siteSelector,
 			list_count: commands.length,
 			list_visible_count: listVisibleCount,
 			current_route: currentRoute,
@@ -180,15 +182,9 @@ export const useCommandPalette = (): {
 		} );
 	};
 
-	const trackCompletedCommand = ( command: Command ) => {
-		recordTracksEvent( 'calypso_hosting_command_palette_command_complete', {
-			command: command.name,
-			list_count: commands.length,
-			list_visible_count: listVisibleCount,
-			current_route: currentRoute,
-			search_text: search,
-		} );
-	};
+	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
+	const inSiteContext =
+		currentSite && ( currentRoute.includes( ':site' ) || currentRoute.startsWith( '/wp-admin' ) );
 
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
@@ -196,46 +192,43 @@ export const useCommandPalette = (): {
 		let sitesToPick = null;
 		let filterNotice = undefined;
 		let emptyListNotice = undefined;
-		if ( selectedCommand?.siteFunctions ) {
-			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
-
-			const onClickSite: OnClickSiteFunction = ( { close, command, site } ) => {
-				onClick( { close, command, site } );
-				trackCompletedCommand( command );
-			};
-
-			let filteredSites = filter ? sites.filter( filter ) : sites;
-			if ( capabilityFilter ) {
-				filteredSites = filteredSites.filter( ( site ) => {
-					const siteCapabilities = userCapabilities?.[ site.ID ];
-					return siteCapabilities?.[ capabilityFilter ];
-				} );
-			}
+		if ( selectedCommand?.siteSelector ) {
+			let filteredSites = sites.filter( ( site ) =>
+				isCommandAvailableOnSite( selectedCommand, site, userCapabilities )
+			);
 			if ( sites.length === 0 ) {
 				emptyListNotice = __( "You don't have any sites yet.", __i18n_text_domain__ );
 			} else if ( filteredSites.length === 0 ) {
-				emptyListNotice = selectedCommand.siteFunctions?.emptyListNotice;
+				emptyListNotice = selectedCommand.emptyListNotice;
 			}
 			// Only show the filterNotice if there are some sites in the first place.
 			if ( filteredSites.length > 0 ) {
-				filterNotice = selectedCommand.siteFunctions?.filterNotice;
+				filterNotice = selectedCommand.filterNotice;
 			}
 
 			if ( currentSiteId ) {
 				const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
 
 				if ( currentSite ) {
-					// Move current site to the top of the list
-					filteredSites = [
-						currentSite,
-						...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
-					];
+					if ( selectedCommand.name === 'switchSite' ) {
+						// Exclude the current site from the "Switch site" command;
+						filteredSites = filteredSites.filter( ( site ) => site.ID !== currentSiteId );
+						if ( filteredSites.length === 0 ) {
+							emptyListNotice = selectedCommand.emptyListNotice;
+						}
+					} else {
+						// Move current site to the top of the list
+						filteredSites = [
+							currentSite,
+							...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
+						];
+					}
 				}
 			}
 
-			// Map filtered sites to actions using the onClick function
+			// Map filtered sites to commands using the callback of the selected command.
 			sitesToPick = filteredSites.map(
-				siteToAction( onClickSite, {
+				siteToCommand( {
 					selectedCommand,
 					filteredSitesLength: filteredSites.length,
 					listVisibleCount,
@@ -244,27 +237,27 @@ export const useCommandPalette = (): {
 			);
 		}
 
-		return { commands: sitesToPick ?? [], filterNotice, emptyListNotice };
+		return { commands: sitesToPick ?? [], filterNotice, emptyListNotice, inSiteContext };
 	}
 
 	// Logic for root commands
 	// Filter out commands that have context
 	const commandHasContext = (
-		paths: string[] | { path: string; match: string }[] = []
+		paths: ( string | { path: string; match: string } )[] = []
 	): boolean => {
 		return paths.some( ( pathItem ) => {
 			if ( typeof pathItem === 'string' ) {
-				return currentRoute?.includes( pathItem ) ?? false;
+				return currentRoute.includes( pathItem ) ?? false;
 			}
 
 			return pathItem.match === 'exact'
 				? currentRoute === pathItem.path
-				: currentRoute?.includes( pathItem.path ) ?? false;
+				: currentRoute.includes( pathItem.path ) ?? false;
 		} );
 	};
 
 	// Sort commands with contextual commands ranking higher than general in a given context
-	const sortedCommands = commands.sort( ( a, b ) => {
+	let sortedCommands = commands.sort( ( a, b ) => {
 		const hasContextCommand = commandHasContext( a.context );
 		const hasNoContext = commandHasContext( b.context );
 
@@ -277,17 +270,50 @@ export const useCommandPalette = (): {
 		return 0; // no change in order
 	} );
 
-	// Inject a tracks event on the callback of each command
-	let finalSortedCommands = sortedCommands.map( ( command ) => ( {
-		...command,
-		callback: ( params: CommandCallBackParams ) => {
-			trackSelectedCommand( command );
-			if ( ! command.siteFunctions ) {
-				trackCompletedCommand( command );
+	// If we are on a current site context, filter and map the commands for single site use.
+	if ( inSiteContext ) {
+		sortedCommands = sortedCommands.filter( ( command ) =>
+			isCommandAvailableOnSite( command, currentSite, userCapabilities )
+		);
+
+		sortedCommands = sortedCommands.map( ( command: Command ) => {
+			if ( command?.alwaysUseSiteSelector ) {
+				return command;
 			}
-			command.callback( params );
-		},
-	} ) );
+
+			return {
+				...command,
+				siteSelector: false,
+				callback: ( params ) => {
+					command.callback( {
+						...params,
+						site: currentSite,
+					} );
+				},
+			};
+		} );
+	}
+
+	const finalSortedCommands = sortedCommands.map( ( command ) => {
+		return {
+			...command,
+			callback: ( params: CommandCallBackParams ) => {
+				// Inject a tracks event on the callback of each command.
+				trackSelectedCommand( command );
+
+				// Change the label when the site selector shows up and bail (the actual
+				// callback should be executed only after a site has been selected).
+				if ( command.siteSelector ) {
+					params.setSearch( '' );
+					setSelectedCommandName( command.name );
+					params.setPlaceholderOverride( command.siteSelectorLabel || '' );
+					return;
+				}
+
+				command.callback( params );
+			},
+		};
+	} ) as Command[];
 
 	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
 	if ( currentRoute !== '/sites' ) {
@@ -298,45 +324,10 @@ export const useCommandPalette = (): {
 		}
 	}
 
-	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
-
-	// If we have a current site and the route includes the site slug, filter and map the commands for single site use.
-	if ( currentSite && currentRoute?.includes( ':site' ) ) {
-		finalSortedCommands = finalSortedCommands.filter( ( command ) =>
-			filterCurrentSiteCommands( currentSite, command )
-		);
-
-		finalSortedCommands = finalSortedCommands.map( ( command: Command ) => {
-			const callback = ( params: CommandCallBackParams ) => {
-				const targetFunction = command?.siteFunctions?.onClick || command.callback;
-				if ( command?.siteFunctions ) {
-					// We need to track the events here because `command.siteFunctions.onClick`
-					// does not track anything (and it's not meant to).
-					trackSelectedCommand( command );
-					trackCompletedCommand( command );
-				}
-
-				return targetFunction( {
-					close: params.close,
-					site: currentSite,
-					setSearch: params.setSearch,
-					setPlaceholderOverride: params.setPlaceholderOverride,
-					command,
-				} );
-			};
-
-			return {
-				name: command.name,
-				label: command.label,
-				...( command.subLabel ? { subLabel: command.subLabel } : {} ),
-				...( command.searchLabel ? { searchLabel: command.searchLabel } : {} ),
-				...( command.context ? { context: command.context } : {} ),
-				...( command.icon ? { icon: command.icon } : {} ),
-				...( command.image ? { image: command.image } : {} ),
-				callback,
-			};
-		} );
-	}
-
-	return { commands: finalSortedCommands, filterNotice: undefined, emptyListNotice: undefined };
+	return {
+		commands: finalSortedCommands,
+		filterNotice: undefined,
+		emptyListNotice: undefined,
+		inSiteContext,
+	};
 };

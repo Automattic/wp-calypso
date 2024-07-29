@@ -1,10 +1,11 @@
 import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
 import { Spinner } from '@wordpress/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
+import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import { TimeRange } from '../../metrics-tab';
 import { TIME_RANGE_OPTIONS } from '../time-range-picker';
 
@@ -15,7 +16,7 @@ const DEFAULT_DIMENSIONS = {
 
 interface UplotChartProps {
 	title?: string;
-	subtitle?: string | React.ReactNode;
+	subtitle: string;
 	tooltip?: string | React.ReactNode;
 	className?: string;
 	data: uPlot.AlignedData;
@@ -267,11 +268,8 @@ export const SiteMonitoringLineChart = ( {
 	}
 
 	return (
-		<div className={ classnames( classes ) }>
-			<header className="site-monitoring__chart-header">
-				<h2 className="site-monitoring__chart-title">{ title }</h2>
-				{ subtitle && <p className="site-monitoring__chart-subtitle">{ subtitle }</p> }
-			</header>
+		<HostingCard className={ clsx( classes ) } title={ title }>
+			<HostingCardDescription>{ subtitle }</HostingCardDescription>
 			<div ref={ uplotContainer }>
 				{ isLoading && <Spinner /> }
 				<UplotReact
@@ -280,6 +278,6 @@ export const SiteMonitoringLineChart = ( {
 					options={ options }
 				/>
 			</div>
-		</div>
+		</HostingCard>
 	);
 };

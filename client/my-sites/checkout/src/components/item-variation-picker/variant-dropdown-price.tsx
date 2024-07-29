@@ -1,9 +1,9 @@
+import { isMultiYearDomainProduct } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import {
 	Discount,
 	DoNotPayThis,
@@ -16,6 +16,7 @@ import {
 } from './styles';
 import { getItemVariantDiscountPercentage, getItemVariantCompareToPrice } from './util';
 import type { WPCOMProductVariant } from './types';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
 	const translate = useTranslate();
@@ -33,7 +34,8 @@ const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent
 export const ItemVariantDropDownPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
-} > = ( { variant, compareTo } ) => {
+	product: ResponseCartProduct;
+} > = ( { variant, compareTo, product } ) => {
 	const isMobile = useMobileBreakpoint();
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
 	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
@@ -61,7 +63,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const productBillingTermInMonths = variant.productBillingTermInMonths;
 	const isIntroductoryOffer = introCount > 0;
 	const translate = useTranslate();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const isMultiYearDomain = isMultiYearDomainProduct( product );
 
 	const translatedIntroOfferDetails = () => {
 		const args = {
@@ -167,25 +169,26 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const canDisplayDiscountPercentage = ! isIntroductoryOffer;
 
 	return (
-		<Variant shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
-			<Label shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+		<Variant>
+			<Label>
 				{ variant.variantLabel }
 				{ hasDiscount && isMobile && <DiscountPercentage percent={ discountPercentage } /> }
 			</Label>
-			<PriceTextContainer shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+			<PriceTextContainer>
 				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ ! shouldUseCheckoutV2 && hasDiscount && ! isIntroductoryOffer && (
+				{ hasDiscount && ! isIntroductoryOffer && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
-				{ ! shouldUseCheckoutV2 && (
-					<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
-				) }
+
+				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
 				<IntroPricing>
-					<IntroPricingText>
-						{ isIntroductoryOffer && translatedIntroOfferDetails() }
-					</IntroPricingText>
+					{ ! isMultiYearDomain && (
+						<IntroPricingText>
+							{ isIntroductoryOffer && translatedIntroOfferDetails() }
+						</IntroPricingText>
+					) }
 				</IntroPricing>
 			</PriceTextContainer>
 		</Variant>

@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { Substitution, useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useEffect, FormEvent } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FormButton from 'calypso/components/forms/form-button';
@@ -66,7 +66,8 @@ const PrimaryDomainSelector = ( {
 		);
 	};
 
-	let validPrimaryDomains = domains.filter( ( domain ) => {
+	// All domains that can be set as primary, except the current primary domain
+	let otherValidPrimaryDomains = domains.filter( ( domain ) => {
 		return (
 			domain.can_set_as_primary &&
 			! domain.aftermarket_auction &&
@@ -78,7 +79,7 @@ const PrimaryDomainSelector = ( {
 	const hasWpcomStagingDomain = domains.find( ( domain ) => domain.is_wpcom_staging_domain );
 
 	if ( hasWpcomStagingDomain ) {
-		validPrimaryDomains = validPrimaryDomains.filter( ( domain ) => {
+		otherValidPrimaryDomains = otherValidPrimaryDomains.filter( ( domain ) => {
 			if ( domain.wpcom_domain ) {
 				return domain.is_wpcom_staging_domain;
 			}
@@ -116,86 +117,81 @@ const PrimaryDomainSelector = ( {
 		} );
 	};
 
+	let message: Substitution;
+
+	if ( ! canUserSetPrimaryDomainOnThisSite ) {
+		// The user can't set a primary domain on this site because they need to upgrade their plan
+		message = translate(
+			"Your site plan doesn't allow to set a custom domain as a primary site address. {{planUpgradeLink}}Upgrade your plan{{/planUpgradeLink}} and get a free one-year domain registration or transfer with any annual paid plan. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
+			{
+				components: {
+					planUpgradeLink: (
+						<a href={ '/plans/' + primaryDomain } onClick={ () => trackUpgradeClick( true ) } />
+					),
+					learnMoreLink: (
+						<InlineSupportLink supportContext="primary-site-address" showIcon={ false } />
+					),
+				},
+			}
+		);
+	} else if ( otherValidPrimaryDomains.length < 1 ) {
+		// The user can't set a primary domain because they don't have any other valid domains
+		message = translate(
+			'Before changing your primary site address you must {{domainSearchLink}}register{{/domainSearchLink}} or {{mapDomainLink}}connect{{/mapDomainLink}} a new custom domain. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+			{
+				components: {
+					domainSearchLink: (
+						<a
+							href={ '/domains/add/' + primaryDomain }
+							onClick={ () => trackUpgradeClick( false ) }
+						/>
+					),
+					mapDomainLink: (
+						<a
+							href={ '/domains/add/use-my-domain/' + primaryDomain }
+							onClick={ () => trackUpgradeClick( false ) }
+						/>
+					),
+					learnMoreLink: (
+						<InlineSupportLink supportContext="primary-site-address" showIcon={ false } />
+					),
+				},
+			}
+		);
+	} else {
+		// The user has at least one domain that can be set as primary and the site is on a plan that allows it
+		message = translate(
+			'The current primary address set for this site is: {{strong}}%(selectedDomain)s{{/strong}}. You can change it by selecting a different address from the list below. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+			{
+				args: { selectedDomain: primaryDomain as string },
+				components: {
+					strong: <strong />,
+					learnMoreLink: (
+						<InlineSupportLink supportContext="primary-site-address" showIcon={ false } />
+					),
+				},
+			}
+		);
+	}
+
 	return (
 		<Card className="domains-set-primary-address">
-			<CardHeading
-				className="domains-set-primary-address__title"
-				isBold={ true }
-				size={ 16 }
-				tagName="h2"
-			>
+			<CardHeading className="domains-set-primary-address__title" isBold size={ 16 } tagName="h2">
 				{ translate( 'Primary site address' ) }
 			</CardHeading>
 			<>
-				<p className="domains-set-primary-address__subtitle">
-					{ translate(
-						'The current primary address set for this site is: {{strong}}%(selectedDomain)s{{/strong}}.',
-						{
-							args: { selectedDomain: primaryDomain as string },
-							components: {
-								strong: <strong />,
-							},
-						}
-					) }{ ' ' }
-					{ ! canUserSetPrimaryDomainOnThisSite &&
-						translate(
-							"Your site plan doesn't allow to set a custom domain as a primary site address. {{planUpgradeLink}}Upgrade your plan{{/planUpgradeLink}}.",
-							{
-								components: {
-									planUpgradeLink: (
-										<a
-											href={ '/plans/' + primaryDomain }
-											onClick={ () => trackUpgradeClick( true ) }
-										/>
-									),
-								},
-							}
-						) }
-					{ validPrimaryDomains.length > 0 &&
-						canUserSetPrimaryDomainOnThisSite &&
-						translate(
-							'You can change it by selecting a different address from the list below. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: (
-										<InlineSupportLink supportContext="primary-site-address" showIcon={ false } />
-									),
-								},
-							}
-						) }
-					{ validPrimaryDomains.length < 1 &&
-						canUserSetPrimaryDomainOnThisSite &&
-						translate(
-							'Before changing your primary site address you must {{domainSearchLink}}register{{/domainSearchLink}} or {{mapDomainLink}}connect{{/mapDomainLink}} a new custom domain.',
-							{
-								components: {
-									domainSearchLink: (
-										<a
-											href={ '/domains/add/' + primaryDomain }
-											onClick={ () => trackUpgradeClick( false ) }
-										/>
-									),
-									mapDomainLink: (
-										<a
-											href={ '/domains/add/use-my-domain/' + primaryDomain }
-											onClick={ () => trackUpgradeClick( false ) }
-										/>
-									),
-								},
-							}
-						) }
-				</p>
-				{ validPrimaryDomains.length > 0 && (
+				<p className="domains-set-primary-address__subtitle">{ message }</p>
+				{ otherValidPrimaryDomains.length > 0 && canUserSetPrimaryDomainOnThisSite && (
 					<FormFieldset className="domains-set-primary-address__fieldset">
 						<FormSelect
 							className="domains-set-primary-address__select"
-							disabled={ isSettingPrimaryDomain || ! canUserSetPrimaryDomainOnThisSite }
+							disabled={ isSettingPrimaryDomain }
 							id="primary-domain-selector"
 							onChange={ onSelectChange }
 							value={ selectedDomain }
 						>
 							<option value="">{ translate( 'Select a domain' ) }</option>
-							{ validPrimaryDomains.map( ( domain ) => (
+							{ otherValidPrimaryDomains.map( ( domain ) => (
 								<option key={ domain.domain } value={ domain.domain }>
 									{ domain.domain }
 								</option>
@@ -205,9 +201,7 @@ const PrimaryDomainSelector = ( {
 							className="domains-set-primary-address__submit"
 							primary
 							busy={ isSettingPrimaryDomain }
-							disabled={
-								isSettingPrimaryDomain || ! canUserSetPrimaryDomainOnThisSite || ! selectedDomain
-							}
+							disabled={ isSettingPrimaryDomain || ! selectedDomain }
 							onClick={ onSubmit }
 						>
 							{ translate( 'Set as primary' ) }

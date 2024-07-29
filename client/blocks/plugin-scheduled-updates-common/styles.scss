@@ -1,0 +1,181 @@
+@import "~@automattic/color-studio/dist/color-variables";
+@import "@automattic/global-styles/src/components/search-control-styles";
+@import "@wordpress/base-styles/breakpoints";
+
+$brand-display: "SF Pro Display", sans-serif;
+
+.plugins-update-manager:not(.plugins-update-manager-multisite) {
+	.empty-state {
+		max-width: 80%;
+	}
+}
+
+.plugins-update-manager,
+.plugins-update-manager-multisite {
+	// Table cells style based on the screen size
+	@media screen and (min-width: $break-wide) {
+		&-table {
+			td {
+				&.last-update,
+				&.next-update {
+					min-width: 210px;
+				}
+
+				&.name {
+					min-width: 180px;
+				}
+
+				&.sites {
+					min-width: 80px;
+				}
+			}
+		}
+	}
+
+	@media screen and (max-width: $break-wide) {
+		&-table {
+			.frequency {
+				display: none;
+			}
+		}
+	}
+
+	h1 {
+		font-size: 2rem;
+		margin-bottom: 1rem;
+	}
+
+	&__header {
+		align-items: center;
+		border-block-end: 1px solid var(--color-border-secondary);
+		display: flex;
+		flex-wrap: wrap;
+		row-gap: 1rem;
+		font-family: $brand-display;
+		justify-content: space-between;
+		padding-bottom: 1.5rem;
+
+		&.no-border {
+			border-block-end: none;
+		}
+
+		h1 {
+			font-size: 1.5rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 1.2;
+			margin-bottom: 0;
+			flex: 1;
+		}
+
+		button {
+			font-size: rem(14px);
+		}
+
+		.buttons {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			gap: rem(10px);
+		}
+	}
+
+	.empty-state {
+		max-width: 50%;
+		text-align: left;
+		padding: 0;
+
+		@media screen and (max-width: $break-large) {
+			max-width: 100%;
+		}
+
+		p {
+			color: var(--studio-gray-80);
+			margin: 1.5rem auto;
+		}
+	}
+
+	.empty-state__center {
+		margin: auto;
+
+		p {
+			text-align: center;
+		}
+
+		button {
+			display: flex;
+			margin: auto;
+		}
+	}
+
+	&-table {
+		th,
+		td {
+			font-size: 0.875rem;
+			padding: 1rem 0.125rem;
+			color: var(--studio-gray-60);
+			border-bottom: solid 1px var(--studio-gray-0);
+		}
+
+		th {
+			font-size: rem(11px);
+			font-weight: 500;
+			text-transform: uppercase;
+			color: var(--studio-gray-80);
+
+			&.expand {
+				width: 4rem;
+			}
+		}
+
+		td {
+			padding: 0.5rem 0.125rem;
+			vertical-align: middle;
+
+			.badge-component {
+				line-height: 2;
+			}
+
+			&.expand {
+				text-align: center;
+				line-height: 1;
+
+				button {
+					margin-top: rem(2px);
+				}
+			}
+
+			&.menu {
+				text-align: center;
+			}
+		}
+	}
+
+	.schedule-form {
+		margin-bottom: 1.25rem;
+
+		& > .form-control-container {
+			margin-bottom: 1.25rem;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+
+			& > .components-flex {
+				gap: 2rem;
+
+				& > .components-flex-item {
+					flex-basis: 100%;
+					width: 100%;
+				}
+			}
+		}
+	}
+
+	@include search-control-wpcom-styles;
+
+	.components-search-control {
+		max-width: 300px;
+		margin-bottom: 1.5rem;
+	}
+}

@@ -13,3 +13,6 @@ export function getPreviousFlowName( state ) {
 export function getExcludedSteps( state ) {
 	return get( state, 'signup.flow.excludedSteps', [] );
 }
+
+export const getIsOnboardingAffiliateFlow = ( state ) =>
+	'onboarding-affiliate' === getCurrentFlowName( state );

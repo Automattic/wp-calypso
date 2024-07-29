@@ -2,14 +2,13 @@ import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SiteUrl, Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 import { SitePreviewEllipsisMenu } from './site-preview-ellipsis-menu';
@@ -20,7 +19,7 @@ interface ThumbnailWrapperProps {
 	children?: ReactNode;
 }
 const ThumbnailWrapper = ( { showEditSite, editSiteURL, children }: ThumbnailWrapperProps ) => {
-	const classes = classnames( 'home-site-preview__thumbnail-wrapper', {
+	const classes = clsx( 'home-site-preview__thumbnail-wrapper', {
 		'home-site-preview__remove-pointer': ! showEditSite,
 	} );
 
@@ -64,7 +63,6 @@ const SitePreview = ( {
 		canCurrentUser( state, selectedSite?.ID ?? 0, 'manage_options' )
 	);
 	const isMobile = useMobileBreakpoint();
-	const wpcomDomain = useSelector( ( state ) => getWpComDomainBySiteId( state, selectedSite?.ID ) );
 
 	if ( isMobile ) {
 		return <></>;
@@ -80,8 +78,8 @@ const SitePreview = ( {
 		: '#';
 
 	// We use an iframe rather than mShot to not cache changes.
-	const iframeSrcKeepHomepage = wpcomDomain
-		? `//${ wpcomDomain.domain }/?hide_banners=true&preview_overlay=true&preview=true`
+	const iframeSrcKeepHomepage = selectedSite
+		? `//${ selectedSite.slug }/?hide_banners=true&preview_overlay=true&preview=true`
 		: '#';
 
 	const selectedSiteURL = selectedSite ? selectedSite.URL : '#';
@@ -97,7 +95,7 @@ const SitePreview = ( {
 					</Button>
 				) }
 				<div className="home-site-preview__thumbnail">
-					{ wpcomDomain ? (
+					{ selectedSite ? (
 						<iframe
 							scrolling="no"
 							loading="lazy"

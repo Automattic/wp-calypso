@@ -1,3 +1,5 @@
+import { SiteData } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+
 /**
  * Constant holding all preference names for our onboarding tours.
  */
@@ -10,7 +12,7 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME: Record< string, st
 	pluginOverview: 'jetpack-manage-plugin-management-v2-plugin-overview-tour',
 };
 
-export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE = [
+export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE: SiteData[] = [
 	{
 		site: {
 			value: {
@@ -18,13 +20,10 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE = [
 				url_with_scheme: 'https://example.jetpack.com',
 				blogname: 'Example WordPress Site',
 				monitor_settings: {
-					monitor_deferment_time: 5,
-					check_interval: null,
-					last_down_time: null,
+					check_interval: 0,
+					last_down_time: '',
 					monitor_active: false,
-					monitor_site_status: null,
-					monitor_site_status_raw: null,
-					monitor_notify_users_emails: [],
+					monitor_site_status: false,
 					monitor_user_emails: [],
 					monitor_user_email_notifications: true,
 					monitor_user_wp_note_notifications: true,
@@ -32,9 +31,8 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE = [
 					monitor_notify_additional_user_emails: [],
 					monitor_notify_additional_user_sms: [],
 					sms_sent_count: 0,
-					sms_remaining_count: 0,
 					sms_monthly_limit: 20,
-					is_over_limit: null,
+					is_over_limit: false,
 				},
 				site_stats: {
 					visitors: {
@@ -48,6 +46,35 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE = [
 						trend_change: 0,
 					},
 				},
+				sticker: [],
+				blog_id: 0,
+				monitor_active: false,
+				monitor_site_status: false,
+				has_scan: false,
+				has_backup: false,
+				has_boost: false,
+				latest_scan_threats_found: [],
+				latest_backup_status: '',
+				is_connection_healthy: false,
+				awaiting_plugin_updates: [],
+				is_favorite: false,
+				monitor_last_status_change: '',
+				jetpack_boost_scores: {
+					overall: 0,
+					mobile: 0,
+					desktop: 0,
+				},
+				php_version_num: 0,
+				php_version: '',
+				wordpress_version: '',
+				hosting_provider_guess: '',
+				has_paid_agency_monitor: false,
+				is_atomic: false,
+				has_pending_boost_one_time_score: false,
+				has_vulnerable_plugins: false,
+				latest_scan_has_threats_found: false,
+				active_paid_subscription_slugs: [],
+				multisite: false,
 			},
 			error: false,
 			status: 'active',
@@ -73,9 +100,9 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE = [
 			status: 'active',
 			type: 'boost',
 			value: {
-				desktop: null,
-				mobile: null,
-				overall: null,
+				desktop: 0,
+				mobile: 0,
+				overall: 0,
 			},
 		},
 		backup: {
@@ -95,13 +122,10 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE = [
 			type: 'monitor',
 			error: false,
 			settings: {
-				monitor_deferment_time: 5,
-				check_interval: null,
-				last_down_time: null,
+				check_interval: 0,
+				last_down_time: '',
 				monitor_active: false,
-				monitor_site_status: null,
-				monitor_site_status_raw: null,
-				monitor_notify_users_emails: [ 'example@example.jetpack.com' ],
+				monitor_site_status: false,
 				monitor_user_emails: [ 'diego.rodrigues@automattic.com' ],
 				monitor_user_email_notifications: true,
 				monitor_user_wp_note_notifications: true,
@@ -109,9 +133,8 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE = [
 				monitor_notify_additional_user_emails: [],
 				monitor_notify_additional_user_sms: [],
 				sms_sent_count: 0,
-				sms_remaining_count: 0,
 				sms_monthly_limit: 20,
-				is_over_limit: null,
+				is_over_limit: false,
 			},
 		},
 		plugin: {
@@ -119,6 +142,11 @@ export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE = [
 			status: 'success',
 			type: 'plugin',
 			updates: 0,
+		},
+		error: {
+			value: '',
+			status: 'failed',
+			type: 'error',
 		},
 		isFavorite: false,
 	},

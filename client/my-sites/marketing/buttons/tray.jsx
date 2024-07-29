@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { filter, find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -183,9 +183,7 @@ class SharingButtonsTray extends Component {
 	getButtonElements = () => {
 		if ( this.state.isReordering ) {
 			const buttons = this.getButtonsOfCurrentVisibility().map( function ( button ) {
-				return (
-					<ButtonsPreviewButton key={ button.ID } button={ button } enabled={ true } style="text" />
-				);
+				return <ButtonsPreviewButton key={ button.ID } button={ button } enabled style="text" />;
 			}, this );
 
 			return <SortableList onChange={ this.onButtonsReordered }>{ buttons }</SortableList>;
@@ -202,7 +200,7 @@ class SharingButtonsTray extends Component {
 	};
 
 	render() {
-		const classes = classNames(
+		const classes = clsx(
 			'sharing-buttons-preview__panel',
 			'is-bottom',
 			'sharing-buttons-tray',

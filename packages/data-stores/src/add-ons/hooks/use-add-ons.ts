@@ -4,13 +4,22 @@ import {
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 	PRODUCT_1GB_SPACE,
 	WPCOM_FEATURES_AI_ASSISTANT,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+	WPCOM_FEATURES_CUSTOM_DESIGN,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import * as ProductsList from '../../products-list';
 import * as Purchases from '../../purchases';
 import * as Site from '../../site';
-import { STORAGE_LIMIT } from '../constants';
+import {
+	ADD_ON_100GB_STORAGE,
+	ADD_ON_50GB_STORAGE,
+	ADD_ON_CUSTOM_DESIGN,
+	ADD_ON_JETPACK_AI_MONTHLY,
+	ADD_ON_UNLIMITED_THEMES,
+	STORAGE_LIMIT,
+} from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
 import spaceUpgradeIcon from '../icons/space-upgrade';
@@ -18,24 +27,12 @@ import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../lib/is-storage-addon-enabled';
 import useAddOnCheckoutLink from './use-add-on-checkout-link';
 import useAddOnDisplayCost from './use-add-on-display-cost';
-import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 import useAddOnPrices from './use-add-on-prices';
 import type { AddOnMeta } from '../types';
 
 const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	const translate = useTranslate();
 	const checkoutLink = useAddOnCheckoutLink();
-	const selectedSite = Site.useSite( { siteIdOrSlug: selectedSiteId } );
-	const selectedSiteSlug = selectedSite.data?.slug;
-
-	/*
-	 * TODO: `useAddOnFeatureSlugs` be refactored instead to return an index of `{ [ slug ]: featureSlug[] }`
-	 */
-	const featureSlugsJetpackAIMonthly = useAddOnFeatureSlugs( PRODUCT_JETPACK_AI_MONTHLY );
-	const featureSlugsUnlimitedThemes = useAddOnFeatureSlugs( PRODUCT_WPCOM_UNLIMITED_THEMES );
-	const featureSlugsCustomDesign = useAddOnFeatureSlugs( PRODUCT_WPCOM_CUSTOM_DESIGN );
-	const featureSlugs1GBSpace50 = useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 50 );
-	const featureSlugs1GBSpace100 = useAddOnFeatureSlugs( PRODUCT_1GB_SPACE, 100 );
 
 	/*
 	 * TODO: `useAddOnDisplayCost` be refactored instead to return an index of `{ [ slug ]: "display cost" }`
@@ -56,8 +53,9 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 		() =>
 			[
 				{
+					addOnSlug: ADD_ON_JETPACK_AI_MONTHLY,
 					productSlug: PRODUCT_JETPACK_AI_MONTHLY,
-					featureSlugs: featureSlugsJetpackAIMonthly,
+					featureSlugs: null,
 					icon: jetpackAIIcon,
 					overrides: null,
 					displayCost: displayCostJetpackAIMonthly,
@@ -68,8 +66,9 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 					name: undefined,
 				},
 				{
+					addOnSlug: ADD_ON_UNLIMITED_THEMES,
 					productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
-					featureSlugs: featureSlugsUnlimitedThemes,
+					featureSlugs: [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ] as string[],
 					icon: unlimitedThemesIcon,
 					overrides: null,
 					displayCost: displayCostUnlimitedThemes,
@@ -78,8 +77,9 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 					description: undefined,
 				},
 				{
+					addOnSlug: ADD_ON_CUSTOM_DESIGN,
 					productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
-					featureSlugs: featureSlugsCustomDesign,
+					featureSlugs: [ WPCOM_FEATURES_CUSTOM_DESIGN ] as string[],
 					icon: customDesignIcon,
 					overrides: null,
 					displayCost: displayCostCustomDesign,
@@ -88,8 +88,9 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 					description: undefined,
 				},
 				{
+					addOnSlug: ADD_ON_50GB_STORAGE,
 					productSlug: PRODUCT_1GB_SPACE,
-					featureSlugs: featureSlugs1GBSpace50,
+					featureSlugs: null,
 					icon: spaceUpgradeIcon,
 					quantity: 50,
 					name: translate( '50 GB Storage' ),
@@ -100,11 +101,12 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 					),
 					featured: false,
 					purchased: false,
-					checkoutLink: checkoutLink( selectedSiteSlug ?? null, PRODUCT_1GB_SPACE, 50 ),
+					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 50 ),
 				},
 				{
+					addOnSlug: ADD_ON_100GB_STORAGE,
 					productSlug: PRODUCT_1GB_SPACE,
-					featureSlugs: featureSlugs1GBSpace100,
+					featureSlugs: null,
 					icon: spaceUpgradeIcon,
 					quantity: 100,
 					name: translate( '100 GB Storage' ),
@@ -115,7 +117,7 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 					),
 					featured: false,
 					purchased: false,
-					checkoutLink: checkoutLink( selectedSiteSlug ?? null, PRODUCT_1GB_SPACE, 100 ),
+					checkoutLink: checkoutLink( selectedSiteId ?? null, PRODUCT_1GB_SPACE, 100 ),
 				},
 			] as const,
 		[
@@ -127,12 +129,7 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 			displayCostCustomDesign,
 			displayCostJetpackAIMonthly,
 			displayCostUnlimitedThemes,
-			featureSlugs1GBSpace100,
-			featureSlugs1GBSpace50,
-			featureSlugsCustomDesign,
-			featureSlugsJetpackAIMonthly,
-			featureSlugsUnlimitedThemes,
-			selectedSiteSlug,
+			selectedSiteId,
 			translate,
 		]
 	);
@@ -148,7 +145,8 @@ const useAddOns = ( {
 	enableStorageAddOns,
 }: Props = {} ): ( AddOnMeta | null )[] => {
 	const activeAddOns = useActiveAddOnsDefs( selectedSiteId );
-	const productsList = ProductsList.useProducts();
+	const productSlugs = activeAddOns.map( ( item ) => item.productSlug );
+	const productsList = ProductsList.useProducts( productSlugs );
 	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
 	const siteFeatures = Site.useSiteFeatures( { siteIdOrSlug: selectedSiteId } );
 	const sitePurchases = Purchases.useSitePurchases( { siteId: selectedSiteId } );

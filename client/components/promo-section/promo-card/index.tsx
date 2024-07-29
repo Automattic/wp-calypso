@@ -1,5 +1,5 @@
 import { Badge, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 import { Children, cloneElement, FunctionComponent, isValidElement } from 'react';
 import ActionPanel from 'calypso/components/action-panel';
@@ -57,7 +57,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 } ) => {
 	const isCompact = variation === PromoCardVariation.Compact;
 
-	const classes = classNames(
+	const classes = clsx(
 		{
 			'promo-card': true,
 			'is-primary': isPrimary,
@@ -100,7 +100,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 			) }
 			<ActionPanelBody>
 				{ title && (
-					<ActionPanelTitle className={ classNames( { 'is-primary': isPrimary } ) }>
+					<ActionPanelTitle className={ clsx( { 'is-primary': isPrimary } ) }>
 						{ icon && isCompact && <Gridicon icon={ icon } size={ 32 } /> }
 						{ title }
 						{ badgeComponent }

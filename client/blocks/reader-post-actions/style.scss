@@ -5,16 +5,12 @@
 	font-family: $sans;
 	flex-direction: row;
 	height: auto;
-	justify-content: flex-end;
+	justify-content: flex-start;
 	list-style-type: none;
 	margin: 10px 0 0;
 
-	&.space-items-apart {
-		justify-content: space-between;
-	}
-
 	@include breakpoint-deprecated( "<660px" ) {
-		justify-content: space-evenly;
+		justify-content: space-around;
 	}
 }
 
@@ -79,6 +75,19 @@
 			display: flex;
 			flex-direction: column;
 			height: auto;
+		}
+
+		.like-button {
+			gap: 0;
+			.like-button__like-icons {
+				margin-top: -1px;
+				margin-bottom: 1px;
+			}
+		}
+
+		.comment-button svg {
+			margin-top: -1px;
+			margin-bottom: 1px;
 		}
 	}
 }

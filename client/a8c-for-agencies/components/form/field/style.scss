@@ -1,0 +1,50 @@
+.a4a-form__section-field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.a4a-form__section-field-label,
+.a4a-form__section-field-sub,
+.a4a-form__section-field-description {
+	@include a4a-font-body-md;
+}
+
+.a4a-form__section-field-label {
+	font-weight: 500;
+}
+
+.a4a-form__section-field-sub,
+.a4a-form__section-field-description,
+.a4a-form__section-field-optional {
+	font-weight: 400;
+	color: var(--color-neutral-50);
+}
+
+.a4a-form__section-field-optional {
+	margin-inline-start: 4px;
+}
+
+.a4a-form__section-field-required {
+	color: var(--color-neutral-50);
+}
+
+.a4a-form__error {
+	margin-block-start: 0.25rem;
+	color: var(--color-scary-40);
+	font-style: italic;
+	font-size: 0.875rem;
+	line-height: 14px;
+
+	&.hidden {
+		display: none;
+	}
+}
+
+.a4a-form__content-wrapper {
+	&.is-error {
+		input {
+			border-color: var(--color-error) !important;
+		}
+	}
+}

@@ -228,14 +228,38 @@ export const useComparisonData = () => {
 						icon: StatsIcon,
 						info: {
 							FREE: {
-								content: translate( 'Basic Stats' ),
+								content: (
+									<>
+										{ translate( 'Basic stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(Personal sites only)' ) }
+									</>
+								),
 							},
 							SECURITY: {
-								content: translate( 'Basic Stats' ),
+								content: (
+									<>
+										{ translate( 'Basic stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(Personal sites only)' ) }
+									</>
+								),
 							},
 							COMPLETE: {
 								highlight: true,
-								content: translate( 'All Stats' ),
+								content: (
+									<>
+										{ translate( 'Advanced stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(100k page views)' ) }
+									</>
+								),
 							},
 						},
 					},
@@ -284,7 +308,17 @@ export const useComparisonData = () => {
 						name: translate( 'AI' ),
 						url: links.ai,
 						icon: AIIcon,
-						info: allChecked,
+						info: {
+							FREE: {
+								content: translate( '20 free requests' ),
+							},
+							SECURITY: {
+								content: translate( '20 free requests' ),
+							},
+							COMPLETE: {
+								content: translate( '20 free requests' ),
+							},
+						},
 					},
 					{
 						id: 'blaze',

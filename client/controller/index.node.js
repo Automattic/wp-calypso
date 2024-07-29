@@ -80,9 +80,16 @@ export const redirectWithoutLocaleParamInFrontIfLoggedIn = () => {};
 export const redirectInvalidLanguage = () => {};
 export const redirectLoggedOut = () => {};
 export const redirectLoggedOutToSignup = () => {};
+export const redirectToDashboard = () => {};
+export const redirectMyJetpack = () => {};
 export const redirectWithoutLocaleParamIfLoggedIn = () => {};
-export const redirectIfCurrentUserCannot = () => {};
+// eslint-disable-next-line no-unused-vars
+export const redirectIfCurrentUserCannot = ( capability ) => () => {};
+export const redirectIfP2 = () => {};
+export const redirectIfJetpackNonAtomic = () => {};
+export const redirectToHostingPromoIfNotAtomic = () => {};
 // eslint-disable-next-line no-unused-vars
 export const render = ( context ) => {};
 export const ProviderWrappedLayout = () => null;
 export const notFound = () => null;
+export const setSelectedSiteIdByOrigin = () => {};

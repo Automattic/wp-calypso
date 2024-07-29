@@ -35,6 +35,7 @@ export interface Purchase {
 	isRefundable: boolean;
 	isRenewable: boolean;
 	isRenewal: boolean;
+	isWooExpressTrial: boolean;
 	meta?: string;
 	mostRecentRenewDate?: string;
 	ownershipId?: number;
@@ -208,6 +209,7 @@ export interface RawPurchase {
 	is_refundable: boolean;
 	is_renewable: boolean;
 	is_renewal: boolean;
+	is_woo_express_trial: boolean;
 	meta: string | undefined;
 	ownership_id: number | undefined;
 	partner_name: string | undefined;
