@@ -3,7 +3,7 @@ const path = require( 'path' );
 module.exports = [
 	{
 		path: path.join( __dirname, 'dist/build.min.js' ),
-		limit: '500 KiB',
+		limit: '400 KiB',
 	},
 	{
 		path: path.join( __dirname, 'dist/widget-loader.min.js' ),

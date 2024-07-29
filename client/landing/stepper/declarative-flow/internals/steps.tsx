@@ -60,6 +60,11 @@ export const STEPS = {
 
 	GOALS: { slug: 'goals', asyncComponent: () => import( './steps-repository/goals' ) },
 
+	GENERATE_CONTENT: {
+		slug: 'generateContent',
+		asyncComponent: () => import( './steps-repository/readymade-template-generate-content' ),
+	},
+
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
 
 	IMPORT_LIGHT: {
@@ -228,11 +233,6 @@ export const STEPS = {
 	SITE_MIGRATION_INSTRUCTIONS: {
 		slug: 'site-migration-instructions',
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
-	},
-
-	SITE_MIGRATION_INSTRUCTIONS_I2: {
-		slug: 'site-migration-instructions-i2',
-		asyncComponent: () => import( './steps-repository/site-migration-instructions-i2' ),
 	},
 
 	SITE_MIGRATION_STARTED: {

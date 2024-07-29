@@ -21,6 +21,12 @@ const sections = [
 		group: 'sites-dashboard',
 	},
 	{
+		name: 'sites-dashboard',
+		paths: [ '/p2s' ],
+		module: 'calypso/hosting/sites',
+		group: 'sites-dashboard',
+	},
+	{
 		name: 'switch-site',
 		paths: [ '/switch-site' ],
 		module: 'calypso/switch-site',
