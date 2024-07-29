@@ -108,10 +108,13 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 							components: { b: <b /> },
 							comment: '%(size)s is the amount of storage in gigabytes.',
 						} ),
-						isNewHostingPage &&
-							translate( '{{b}}Unmetered{{/b}} bandwidth', {
-								components: { b: <b /> },
-							} ),
+						...( isNewHostingPage
+							? [
+									translate( '{{b}}Unmetered{{/b}} bandwidth', {
+										components: { b: <b /> },
+									} ),
+							  ]
+							: [] ),
 					] }
 				/>
 
