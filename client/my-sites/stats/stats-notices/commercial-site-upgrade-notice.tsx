@@ -12,8 +12,6 @@ import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { trackStatsAnalyticsEvent } from '../utils';
 import { StatsNoticeProps } from './types';
 
-const STATS_GRACE_PERIOD_DAYS = 7;
-
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
 	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-stats-commercial-site-upgrade-notice&productType=commercial`;
@@ -33,8 +31,8 @@ const CommercialSiteUpgradeNotice = ( {
 	// Grace period is paywall_date_from value plus STATS_GRACE_PERIOD_DAYS.
 	const moment = useLocalizedMoment();
 	const { data } = usePlanUsageQuery( siteId );
-	const dateFlagged = data?.paywall_date_from ? moment( data.paywall_date_from ) : moment();
-	const paywallFromDate = dateFlagged.add( STATS_GRACE_PERIOD_DAYS, 'days' ).format( 'LL' );
+	const dateFlagged = data?.upgrade_deadline_date ? moment( data.upgrade_deadline_date ) : moment();
+	const paywallFromDate = dateFlagged.format( 'LL' );
 
 	const gotoJetpackStatsProduct = () => {
 		isOdysseyStats
