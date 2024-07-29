@@ -5,7 +5,6 @@ import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premi
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
-import HostingOverview from '../../../common/hosting-overview';
 import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import PressableOverviewPlanSelection from '../../../pressable-overview/plan-selection';
@@ -20,13 +19,6 @@ export default function PremierAgencyHosting() {
 
 	return (
 		<div>
-			<HostingOverview
-				title=""
-				slug="pressable-hosting"
-				subtitle={ translate(
-					'Premier Agency hosting best for large-scale businesses and major eCommerce sites.'
-				) }
-			/>
 			<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
