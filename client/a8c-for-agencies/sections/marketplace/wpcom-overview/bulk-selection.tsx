@@ -9,7 +9,7 @@ import A4AWPCOMSlider from './wpcom-slider';
 
 type Props = {
 	selectedTier: DiscountTier;
-	onSelectTier: ( value: DiscountTier ) => void;
+	onSelectTier?: ( value: DiscountTier ) => void;
 	ownedPlans: number;
 	isLoading?: boolean;
 	hideOwnedPlansBadge?: boolean;
@@ -41,7 +41,7 @@ export default function WPCOMBulkSelector( {
 
 	const onSelectOption = useCallback(
 		( option: number ) => {
-			onSelectTier( calculateTier( options, option ) );
+			onSelectTier?.( calculateTier( options, option ) );
 		},
 		[ onSelectTier, options ]
 	);
@@ -53,7 +53,7 @@ export default function WPCOMBulkSelector( {
 	const minimumQuantity = ownedPlans + 1;
 
 	useEffect( () => {
-		onSelectTier( calculateTier( options, minimumQuantity ) );
+		onSelectTier?.( calculateTier( options, minimumQuantity ) );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ ownedPlans, options ] );
 

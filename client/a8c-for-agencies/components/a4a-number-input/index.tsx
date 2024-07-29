@@ -15,16 +15,16 @@ type Props = {
 export default function A4ANumberInput( {
 	value,
 	onChange,
-	minimum = 0,
+	minimum = 1,
 	maximum,
 	increment = 1,
 }: Props ) {
 	const onDecrement = useCallback( () => {
-		onChange( Math.min( value - increment, minimum ) );
+		onChange( Math.max( value - increment, minimum ) );
 	}, [ increment, minimum, onChange, value ] );
 
 	const onIncrement = useCallback( () => {
-		onChange( maximum ? Math.max( value + increment, maximum ) : value + increment );
+		onChange( maximum ? Math.min( value + increment, maximum ) : value + increment );
 	}, [ increment, maximum, onChange, value ] );
 
 	return (

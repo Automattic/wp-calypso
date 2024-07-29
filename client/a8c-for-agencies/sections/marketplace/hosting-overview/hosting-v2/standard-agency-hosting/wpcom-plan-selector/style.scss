@@ -94,3 +94,13 @@
 	border-radius: 16px;
 	margin-block-end: 8px;
 }
+
+.wpcom-plan-selector__cta-component {
+	display: flex;
+	flex-direction: row;
+	gap: 16px;
+}
+
+.wpcom-plan-selector__cta-button {
+	min-width: 260px;
+}
