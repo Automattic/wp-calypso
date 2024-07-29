@@ -381,8 +381,15 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_SOURCE_URL.slug: {
+					const { from } = providedDependencies as {
+						from: string;
+					};
+					const nextStepUrl = addQueryArgs(
+						{ from, siteSlug, siteId },
+						STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+					);
 					// Navigate to the assisted migration step.
-					return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
+					return navigate( nextStepUrl, {
 						siteId,
 						siteSlug,
 					} );
