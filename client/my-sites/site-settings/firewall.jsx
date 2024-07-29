@@ -97,18 +97,19 @@ class Firewall extends Component {
 
 	render() {
 		const {
-			selectedSiteId,
-			selectedSiteSlug,
-			translate,
-			hasRequiredFeature,
+			dirtyFields,
 			disableProtect,
 			fields,
-			isSavingSettings,
-			isRequestingSettings,
-			onChangeField,
-			setFieldValue,
-			dirtyFields,
 			handleAutosavingToggle,
+			hasRequiredFeature,
+			isRequestingSettings,
+			isSavingSettings,
+			onChangeField,
+			selectedSiteId,
+			selectedSiteSlug,
+			setFieldValue,
+			settings,
+			translate,
 		} = this.props;
 
 		return (
@@ -185,34 +186,37 @@ class Firewall extends Component {
 				/>
 
 				{ /* IP Block List */ }
-				{ this.wafModuleSupported() && (
-					<Card>
-						<FormFieldset>
-							<ToggleControl
-								disabled={ this.disableWafForm() }
-								onChange={ this.handleBlockListToggle }
-								checked={ !! fields.jetpack_waf_ip_block_list_enabled }
-								label={ translate( 'Block specific IP addresses' ) }
-							/>
-							<FormSettingExplanation isIndented>
-								{ translate(
-									'IP addresses added to this list will be blocked from accessing your site.'
+				{ this.wafModuleSupported() &&
+					this.props.settings.jetpack_waf_ip_block_list_enabled !== undefined && (
+						<Card>
+							<FormFieldset>
+								<ToggleControl
+									disabled={ this.disableWafForm() }
+									onChange={ this.handleBlockListToggle }
+									checked={ !! fields.jetpack_waf_ip_block_list_enabled }
+									label={ translate( 'Block specific IP addresses' ) }
+								/>
+								<FormSettingExplanation isIndented>
+									{ translate(
+										'IP addresses added to this list will be blocked from accessing your site.'
+									) }
+								</FormSettingExplanation>
+								{ fields.jetpack_waf_ip_block_list_enabled && (
+									<div className="site-settings__child-settings">
+										<FormTextarea
+											id="jetpack_waf_ip_block_list"
+											value={ fields.jetpack_waf_ip_block_list }
+											onChange={ onChangeField( 'jetpack_waf_ip_block_list' ) }
+											disabled={
+												this.disableWafForm() || ! fields.jetpack_waf_ip_block_list_enabled
+											}
+											placeholder={ translate( 'Example: 12.12.12.1-12.12.12.100' ) }
+										/>
+									</div>
 								) }
-							</FormSettingExplanation>
-							{ fields.jetpack_waf_ip_block_list_enabled && (
-								<div className="site-settings__child-settings">
-									<FormTextarea
-										id="jetpack_waf_ip_block_list"
-										value={ fields.jetpack_waf_ip_block_list }
-										onChange={ onChangeField( 'jetpack_waf_ip_block_list' ) }
-										disabled={ this.disableWafForm() || ! fields.jetpack_waf_ip_block_list_enabled }
-										placeholder={ translate( 'Example: 12.12.12.1-12.12.12.100' ) }
-									/>
-								</div>
-							) }
-						</FormFieldset>
-					</Card>
-				) }
+							</FormFieldset>
+						</Card>
+					) }
 
 				{ /* IP Allow List */ }
 				<AllowList
@@ -222,6 +226,7 @@ class Firewall extends Component {
 					isSavingSettings={ isSavingSettings }
 					onChangeField={ onChangeField }
 					setFieldValue={ setFieldValue }
+					settings={ settings }
 				/>
 			</div>
 		);

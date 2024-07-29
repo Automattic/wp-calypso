@@ -5,6 +5,7 @@ import { includes, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 
@@ -21,6 +22,16 @@ class AllowList extends Component {
 		fields: {},
 		isRequestingSettings: true,
 		isSavingSettings: false,
+	};
+
+	togglingAllowListSupported = () => {
+		return this.props.settings.jetpack_waf_ip_allow_list_enabled !== undefined;
+	};
+
+	showAllowList = () => {
+		return (
+			! this.togglingAllowListSupported() || this.props.fields.jetpack_waf_ip_allow_list_enabled
+		);
 	};
 
 	handleAddToAllowedList = () => {
@@ -81,19 +92,29 @@ class AllowList extends Component {
 			<div className="site-settings__allow-list-settings">
 				<Card>
 					<FormFieldset>
-						<ToggleControl
-							disabled={ this.disableForm() }
-							onChange={ this.props.handleAutosavingToggle( 'jetpack_waf_ip_allow_list_enabled' ) }
-							checked={ !! this.props.fields.jetpack_waf_ip_allow_list_enabled }
-							label={ translate( 'Always allow specific IP addresses' ) }
-						/>
-						<FormSettingExplanation isIndented>
+						{ this.togglingAllowListSupported() ? (
+							<ToggleControl
+								disabled={ this.disableForm() }
+								onChange={ this.props.handleAutosavingToggle(
+									'jetpack_waf_ip_allow_list_enabled'
+								) }
+								checked={ !! this.props.fields.jetpack_waf_ip_allow_list_enabled }
+								label={ translate( 'Always allow specific IP addresses' ) }
+							/>
+						) : (
+							<FormLegend>{ translate( 'Always allow specific IP addresses' ) }</FormLegend>
+						) }{ ' ' }
+						<FormSettingExplanation isIndented={ !! this.togglingAllowListSupported() }>
 							{ translate(
 								"IP addresses added to this list will never be blocked by Jetpack's security features."
 							) }
 						</FormSettingExplanation>
-						{ !! this.props.fields.jetpack_waf_ip_allow_list_enabled && (
-							<div className="protect__module-settings site-settings__child-settings">
+						{ this.showAllowList() && (
+							<div
+								className={ `protect__module-settings ${
+									this.togglingAllowListSupported() ? 'site-settings__child-settings' : ''
+								}` }
+							>
 								<FormTextarea
 									id="jetpack_waf_ip_allow_list"
 									value={ this.getProtectAllowedIps() }
