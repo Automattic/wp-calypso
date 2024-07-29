@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
@@ -9,7 +10,6 @@ import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import ExternalLink from 'calypso/components/external-link';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { backupPath, settingsPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -361,8 +361,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 								linkGuide: (
 									<ExternalLink
 										href="https://jetpack.com/support/adding-credentials-to-jetpack/"
-										target="_blank"
 										onClick={ onLearnAddingCredentialsClick }
+										children={ null }
 									/>
 								),
 							},
