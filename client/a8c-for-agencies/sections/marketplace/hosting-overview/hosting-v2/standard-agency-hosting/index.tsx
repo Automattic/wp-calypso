@@ -8,7 +8,6 @@ import HostingAdditionalFeaturesSection from '../../../common/hosting-additional
 import HostingFeaturesSection from '../../../common/hosting-features-section';
 import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
-import { getHostingLogo } from '../../../lib/hosting';
 import CommonHostingBenefits from '../common-hosting-benefits';
 import WPCOMPlanSelector from './wpcom-plan-selector';
 
@@ -23,18 +22,7 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 
 	return (
 		<div className="standard-agency-hosting">
-			<section className="standard-agency-hosting__banner">
-				<div className="standard-agency-hosting__banner-heading">
-					<div className="standard-agency-hosting__banner-logo">
-						{ getHostingLogo( 'wpcom-hosting' ) }
-					</div>
-					<div className="standard-agency-hosting__banner-description">
-						{ translate(
-							'Optimized and hassle-free hosting for business websites, local merchants, and small online retailers.'
-						) }
-					</div>
-				</div>
-
+			<section className="standard-agency-hosting__plan-selector-container">
 				<WPCOMPlanSelector onSelect={ onAddToCart } />
 			</section>
 

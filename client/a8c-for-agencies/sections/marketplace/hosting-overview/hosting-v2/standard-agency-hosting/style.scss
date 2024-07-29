@@ -1,13 +1,9 @@
-.standard-agency-hosting__banner {
-	display: flex;
-	flex-direction: column;
-	gap: 32px;
-
+.standard-agency-hosting__plan-selector-container {
 	padding: 0 0 48px;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		max-width: 1500px;
-		margin-inline: auto !important;
+		margin-inline: auto;
 		padding-inline: 40px;
 	}
 }
