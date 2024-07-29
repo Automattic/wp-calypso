@@ -116,8 +116,8 @@ class Profile extends Component {
 						<p className="profile__gravatar-profile-description">
 							<span>
 								{ this.props.translate(
-									'Your WordPress.com profile is powered by Gravatar. Your Gravatar is public by default and may appear on any site using Gravatar when you’re logged in with {{strong}}%(email)s{{/strong}}.' +
-										' To manage your profile and privacy settings, {{a}}visit your Gravatar profile here{{/a}}.',
+									'Your WordPress.com profile is connected to Gravatar. Your Gravatar is public by default and may appear on any site using Gravatar when you’re logged in with {{strong}}%(email)s{{/strong}}.' +
+										' To manage your Gravatar profile and visibility settings, {{a}}visit your Gravatar profile{{/a}}.',
 									{
 										components: {
 											strong: <strong />,
