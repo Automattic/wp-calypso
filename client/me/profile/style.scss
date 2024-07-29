@@ -45,28 +45,13 @@
 .profile__gravatar-profile-description {
 	display: flex;
 	flex-direction: column-reverse;
-	font-size: $font-body-extra-small;
+	font-size: $font-body-small;
 	line-height: 20px;
 	word-break: break-word;
 
 	@include breakpoint-deprecated(">960px") {
 		flex-direction: row;
 		gap: 60px;
-	}
-}
-
-.profile__gravatar-profile-button {
-	font-size: inherit;
-	color: var(--color-link);
-	cursor: pointer;
-
-	&:hover,
-	&:focus {
-		color: var(--color-link-dark);
-	}
-
-	&:focus {
-		outline: thin dotted;
 	}
 }
 

@@ -38,20 +38,6 @@ class Profile extends Component {
 		this.props.setUserSetting( 'is_dev_account', isDevAccount );
 	};
 
-	openGravatarQuickEditor = () => {
-		const email = encodeURIComponent( this.props.getSetting( 'user_email' ) );
-		const width = 400;
-		const height = 720;
-		const left = window.screenLeft + ( window.outerWidth - width ) / 2;
-		const top = window.screenTop + ( window.outerHeight - height ) / 2;
-
-		window.open(
-			`https://gravatar.com/profile?is_quick_editor=true&email=${ email }`,
-			'_blank',
-			`width=${ width },height=${ height },left=${ left },top=${ top }`
-		);
-	};
-
 	render() {
 		return (
 			<Main wideLayout className="profile">
@@ -130,17 +116,12 @@ class Profile extends Component {
 						<p className="profile__gravatar-profile-description">
 							<span>
 								{ this.props.translate(
-									'Your profile is powered by Gravatar. Your Gravatar is public by default and may appear on any site using Gravatar when you’re logged in with {{strong}}%(email)s{{/strong}}.' +
-										' To manage your profile and privacy settings, {{button}}visit your Gravatar profile here{{/button}}.',
+									'Your WordPress.com profile is powered by Gravatar. Your Gravatar is public by default and may appear on any site using Gravatar when you’re logged in with {{strong}}%(email)s{{/strong}}.' +
+										' To manage your profile and privacy settings, {{a}}visit your Gravatar profile here{{/a}}.',
 									{
 										components: {
 											strong: <strong />,
-											button: (
-												<button
-													className="profile__gravatar-profile-button"
-													onClick={ this.openGravatarQuickEditor }
-												/>
-											),
+											a: <a href="https://gravatar.com/profile" target="_blank" rel="noreferrer" />,
 										},
 										args: {
 											email: this.props.getSetting( 'user_email' ),
