@@ -602,12 +602,12 @@ export function siteSelection( context, next ) {
 
 	const siteId = getSiteId( getState(), siteFragment );
 
-	const site = getSite( getState(), siteId );
+	// const site = getSite( getState(), siteId );
 
-	if ( site && site.is_deleted ) {
-		dispatch( setSelectedSiteId( null ) );
-		return next();
-	}
+	// if ( site && site.is_deleted ) {
+	// 	dispatch( setSelectedSiteId( null ) );
+	// 	return next();
+	// }
 
 	if ( siteId && ! isUnlinkedCheckout ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
@@ -870,7 +870,19 @@ export function selectSite( context ) {
 	// Logged in: Terminate the regular handler path by not calling next()
 	// and render the site selection screen, redirecting the user if they
 	// only have one site.
-	composeHandlers( siteSelection, sites, makeLayout, render )( context );
+	composeHandlers( siteSelection, selectSiteIfNotDeleted, sites, makeLayout, render )( context );
+}
+
+export function selectSiteIfNotDeleted( context, next ) {
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( selectedSite && selectedSite.is_deleted ) {
+		context.store.dispatch( setSelectedSiteId( null ) );
+		return;
+	}
+
+	return next();
 }
 
 export function selectSiteIfLoggedIn( context, next ) {
