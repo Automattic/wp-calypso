@@ -271,6 +271,8 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	}
 
 	const startsWithPaths = [
+		'/themes',
+		'/plugins',
 		'/checkout/',
 		`/me/purchases/${ slug }`,
 		`/purchases/add-payment-method/${ slug }`,
