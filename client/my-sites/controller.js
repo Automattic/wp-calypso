@@ -916,7 +916,7 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) > 0 ) {
+	if ( isUserLoggedIn( state ) ) {
 		navigation( context, next );
 	}
 	next();
