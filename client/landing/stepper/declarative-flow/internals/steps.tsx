@@ -260,6 +260,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
 	},
 
+	SITE_MIGRATION_SOURCE_URL: {
+		slug: 'site-migration-source-url',
+		asyncComponent: () => import( './steps-repository/site-migration-source-url' ),
+	},
+
 	SITE_MIGRATION_UPGRADE_PLAN: {
 		slug: 'site-migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-upgrade-plan' ),
