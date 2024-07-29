@@ -75,18 +75,14 @@ const HostingFeatures = () => {
 			return;
 		}
 
-		// console.log( 'useEffect' );
-		// console.log( transfer.status );
 		dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
 		// A user can keep one tab open and start transfer in the second tab
 		// se we always run interval to check the status, to avoid case with rendering "Activate" button on old tabs of a browser
 		const interval = setInterval( () => {
-			// console.log( 'interval' );
 			dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
 		}, 10000 );
 
 		return () => {
-			// console.log( 'clear' );
 			clearInterval( interval );
 		};
 	}, [ siteSlug, siteId, transfer.status, dispatch ] );
@@ -190,75 +186,71 @@ const HostingFeatures = () => {
 
 	let title;
 	let description;
-	let showActivateButton = true;
+	let buttons;
 	if ( isTransferInProgress && config.isEnabled( 'hosting-overview-refinements' ) ) {
 		title = translate( 'Activating hosting features' );
 		description = translate(
 			'Stay tuned, as we activate the following features included in your plan'
 		);
-		showActivateButton = true;
 	} else if ( showActivationButton ) {
 		title = activateTitle;
 		description = activateDescription;
+		buttons = (
+			<>
+				<Button
+					variant="primary"
+					className="hosting-features__button"
+					onClick={ () => {
+						if ( showActivationButton ) {
+							dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
+							return setShowEligibility( true );
+						}
+					} }
+				>
+					{ translate( 'Activate now' ) }
+				</Button>
+
+				<Dialog
+					additionalClassNames="plugin-details-cta__dialog-content"
+					additionalOverlayClassNames="plugin-details-cta__modal-overlay"
+					isVisible={ showEligibility }
+					onClose={ () => setShowEligibility( false ) }
+					showCloseIcon
+				>
+					<EligibilityWarnings
+						className="hosting__activating-warnings"
+						onProceed={ handleTransfer }
+						backUrl={ redirectUrl.current }
+						showDataCenterPicker
+						standaloneProceed
+						currentContext="hosting-features"
+					/>
+				</Dialog>
+			</>
+		);
 	} else {
 		title = unlockTitle;
 		description = unlockDescription;
+		buttons = (
+			<Button
+				variant="primary"
+				className="hosting-features__button"
+				href={ upgradeLink }
+				onClick={ () =>
+					dispatch( recordTracksEvent( 'calypso_hosting_features_upgrade_plan_click' ) )
+				}
+			>
+				{ translate( 'Upgrade now' ) }
+			</Button>
+		);
 	}
 
 	return (
 		<div className="hosting-features">
 			<div className="hosting-features__hero">
-				{ isTransferInProgress && <h1>transfer in progress</h1> }
 				<h1>{ title }</h1>
 				<p>{ description }</p>
-				{ showActivationButton ? (
-					<>
-						{ showActivateButton && (
-							<Button
-								variant="primary"
-								className="hosting-features__button"
-								onClick={ () => {
-									if ( showActivationButton ) {
-										dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
-										return setShowEligibility( true );
-									}
-								} }
-							>
-								{ translate( 'Activate now' ) }
-							</Button>
-						) }
-
-						<Dialog
-							additionalClassNames="plugin-details-cta__dialog-content"
-							additionalOverlayClassNames="plugin-details-cta__modal-overlay"
-							isVisible={ showEligibility }
-							onClose={ () => setShowEligibility( false ) }
-							showCloseIcon
-						>
-							<EligibilityWarnings
-								className="hosting__activating-warnings"
-								onProceed={ handleTransfer }
-								backUrl={ redirectUrl.current }
-								showDataCenterPicker
-								standaloneProceed
-								currentContext="hosting-features"
-							/>
-						</Dialog>
-					</>
-				) : (
-					<>
-						<Button
-							variant="primary"
-							className="hosting-features__button"
-							href={ upgradeLink }
-							onClick={ () =>
-								dispatch( recordTracksEvent( 'calypso_hosting_features_upgrade_plan_click' ) )
-							}
-						>
-							{ translate( 'Upgrade now' ) }
-						</Button>
-					</>
-				) }
+				{ buttons }
 			</div>
 			<div className="hosting-features__cards">
 				{ promoCards.map( ( card ) => (
