@@ -1401,3 +1401,9 @@ a.masterbar__quick-language-switcher {
 		opacity: 1;
 	}
 }
+
+.is-global-sidebar-visible .masterbar__item.is-active {
+	.masterbar__item-inner {
+		background: #fff;
+	}
+}

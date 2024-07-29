@@ -225,7 +225,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 					href={ this.props.url }
 					ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
 				>
-					{ this.renderChildren() }
+					<span className="masterbar__item-inner">{ this.renderChildren() }</span>
 				</a>
 			);
 		}
