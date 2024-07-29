@@ -42,6 +42,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+			STEPS.SITE_MIGRATION_SOURCE_URL,
 		];
 
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
@@ -332,7 +333,12 @@ const siteMigration: Flow = {
 							providedDependencies?.userAcceptedDeal ||
 							urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
 						) {
-							redirectAfterCheckout = STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug;
+							// If the user selected "Do it for me" but has not given us a source site, we should take them to the source URL step.
+							if ( ! fromQueryParam ) {
+								redirectAfterCheckout = STEPS.SITE_MIGRATION_SOURCE_URL.slug;
+							} else {
+								redirectAfterCheckout = STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug;
+							}
 						}
 
 						const destination = addQueryArgs(
@@ -372,6 +378,14 @@ const siteMigration: Flow = {
 							siteSlug,
 						} );
 					}
+				}
+
+				case STEPS.SITE_MIGRATION_SOURCE_URL.slug: {
+					// Navigate to the assisted migration step.
+					return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
+						siteId,
+						siteSlug,
+					} );
 				}
 			}
 		}
