@@ -12,10 +12,10 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 	const filters = useMemo(
 		() => [
 			/**
-			 * Make support article links open within Help Center.
+			 * Make support article links open within the Help Center.
 			 */
 			{
-				pattern: 'a[href*="wordpress.com"], a[href^="/"]',
+				pattern: 'a[href*="wordpress.com"]:not(:has(img)), a[href^="/"]',
 				action: ( element: HTMLAnchorElement ) => {
 					const href = element.getAttribute( 'href' ) as string;
 					if ( ! href.startsWith( '/' ) && ! isThisASupportArticleLink( href ) ) {
@@ -38,7 +38,7 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 			 * Fix table of content jump-to links.
 			 */
 			{
-				pattern: '.toc-parent-list a',
+				pattern: '.toc-parent-list a, a[href^="#"]',
 				action: ( element: HTMLAnchorElement ) => {
 					const hash = element.hash;
 
