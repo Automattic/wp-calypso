@@ -67,6 +67,19 @@
 	}
 }
 
+.language-picker__modal-incomplete-locale-nudge-text {
+	font-weight: normal;
+
+	.material-icon {
+		margin: 0 2px -4px 0;
+		transform: scale(0.8);
+	}
+}
+
+.language-picker__modal-incomplete-locale-nudge-link {
+	font-weight: normal;
+}
+
 .language-picker__modal-incomplete-locale-text {
 	margin-right: 8px;
 }

@@ -86,6 +86,7 @@ export class TranslatorInvite extends Component {
 		const currentLanguage = languages.find( ( language ) => language.langSlug === locale );
 		const percentTranslated = currentLanguage?.calypsoPercentTranslated || 0;
 
+		// 85% is the threshold for hiding the translator invite
 		if ( percentTranslated >= 85 ) {
 			return null;
 		}
