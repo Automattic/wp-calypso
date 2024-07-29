@@ -33,10 +33,8 @@ const CommercialSiteUpgradeNotice = ( {
 	// Grace period is paywall_date_from value plus STATS_GRACE_PERIOD_DAYS.
 	const moment = useLocalizedMoment();
 	const { data } = usePlanUsageQuery( siteId );
-	const dateFlagged = data?.paywall_date_from || moment().format( 'YYYY-MM-DD' );
-	const paywallFromDate = moment( dateFlagged )
-		.add( STATS_GRACE_PERIOD_DAYS, 'days' )
-		.format( 'YYYY-MM-DD' );
+	const dateFlagged = data?.paywall_date_from ? moment( data.paywall_date_from ) : moment();
+	const paywallFromDate = dateFlagged.add( STATS_GRACE_PERIOD_DAYS, 'days' ).format( 'LL' );
 
 	const gotoJetpackStatsProduct = () => {
 		isOdysseyStats
