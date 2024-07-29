@@ -354,7 +354,7 @@ class MagicLogin extends Component {
 					lang_id: getLanguage( locale ).value,
 					email,
 					redirect_to: query?.redirect_to,
-					flow: oauth2Client.name,
+					flow: oauth2Client.name ?? oauth2Client.source,
 					create_account: true,
 					tos: getToSAcceptancePayload(),
 					token_type: 'code',

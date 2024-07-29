@@ -81,23 +81,19 @@ const enhanceContextWithLogin = ( context ) => {
 	);
 };
 
-export async function login( context, next ) {
+/**
+ * Checks that the rediredt_to parameter is ok and hidrates the OauthClientData object if needed.
+ */
+const oauthInit = async ( context ) => {
 	const {
 		query: { client_id, redirect_to },
 	} = context;
-
-	// Remove id_token from the address bar and push social connect args into the state instead
-	if ( context.hash && context.hash.client_id ) {
-		page.replace( context.path, context.hash );
-
-		return;
-	}
 
 	if ( client_id ) {
 		if ( ! redirect_to ) {
 			const error = new Error( 'The `redirect_to` query parameter is missing.' );
 			error.status = 401;
-			return next( error );
+			return error;
 		}
 
 		const { searchParams: redirectParams } = getUrlParts( redirect_to );
@@ -113,7 +109,7 @@ export async function login( context, next ) {
 				'The `redirect_to` query parameter is invalid with the given `client_id`.'
 			);
 			error.status = 401;
-			return next( error );
+			return error;
 		}
 
 		const OAuth2Client = getOAuth2Client( context.store.getState(), client_id );
@@ -122,9 +118,23 @@ export async function login( context, next ) {
 			try {
 				await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
 			} catch ( error ) {
-				return next( error );
+				return error;
 			}
 		}
+	}
+};
+
+export async function login( context, next ) {
+	// Remove id_token from the address bar and push social connect args into the state instead
+	if ( context.hash && context.hash.client_id ) {
+		page.replace( context.path, context.hash );
+
+		return;
+	}
+
+	const error = await oauthInit( context );
+	if ( error ) {
+		return next( error );
 	}
 
 	enhanceContextWithLogin( context );
@@ -132,11 +142,22 @@ export async function login( context, next ) {
 	next();
 }
 
-export function magicLogin( context, next ) {
+export async function magicLogin( context, next ) {
 	const { path } = context;
 
 	if ( isUserLoggedIn( context.store.getState() ) ) {
 		return login( context, next );
+	}
+
+	const {
+		query: { gravatar_flow },
+	} = context;
+
+	if ( gravatar_flow && gravatar_flow === '1' ) {
+		const error = await oauthInit( context );
+		if ( error ) {
+			return next( error );
+		}
 	}
 
 	context.primary = <MagicLogin path={ path } />;
