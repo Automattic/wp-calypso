@@ -5,7 +5,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -28,10 +27,9 @@ const CommercialSiteUpgradeNotice = ( {
 
 	// Determine when the paywall will go into effect (if applicable).
 	// The upgrade_deadline_date is the actual date the paywall will be applied.
-	const moment = useLocalizedMoment();
 	const { data } = usePlanUsageQuery( siteId );
 	// Guard against empty value in the API response.
-	const paywallMoment = data?.upgrade_deadline_date ? moment( data.upgrade_deadline_date ) : null;
+	const paywallUpgradeDeadlineDate = data?.upgrade_deadline_date;
 
 	const gotoJetpackStatsProduct = () => {
 		isOdysseyStats
@@ -93,7 +91,7 @@ const CommercialSiteUpgradeNotice = ( {
 				components: sharedTranslationComponents,
 			}
 		);
-	} else if ( paywallMoment === null ) {
+	} else if ( ! paywallUpgradeDeadlineDate ) {
 		bannerBody = translate(
 			'{{p}}To ensure uninterrupted access to core Stats features, please upgrade to a Jetpack Stats Commercial license using the button below. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
 			{
@@ -104,7 +102,7 @@ const CommercialSiteUpgradeNotice = ( {
 		bannerBody = translate(
 			'{{p}}To ensure uninterrupted access to core Stats features, please upgrade to a Jetpack Stats Commercial license using the button below by {{b}}%(date)s{{/b}}. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
 			{
-				args: { date: paywallMoment.format( 'LL' ) },
+				args: { date: paywallUpgradeDeadlineDate },
 				components: sharedTranslationComponents,
 			}
 		);
