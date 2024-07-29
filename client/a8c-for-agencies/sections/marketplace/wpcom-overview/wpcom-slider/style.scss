@@ -27,6 +27,10 @@
 		cursor: default;
 	}
 
+	&:read-only::-moz-range-thumb {
+		cursor: default;
+	}
+
 	@mixin slider-track-style {
 		background: var(--color-primary-40);
 		height: 6px;
