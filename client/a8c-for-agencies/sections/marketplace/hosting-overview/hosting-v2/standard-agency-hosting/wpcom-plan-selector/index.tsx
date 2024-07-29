@@ -53,7 +53,7 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 	const originalPrice = Number( plan.amount ) * quantity;
 	const actualPrice = originalPrice - originalPrice * discount;
 
-	const { name: planName, features1, features2 } = useWPCOMPlanDescription( plan?.slug ?? '' );
+	const { name: planName } = useWPCOMPlanDescription( plan?.slug ?? '' );
 
 	const ctaLabel = useMemo( () => {
 		if ( referralMode ) {
@@ -152,8 +152,27 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 				</div>
 
 				<div className="wpcom-plan-selector__features">
-					{ !! features1.length && <SimpleList items={ features1 } /> }
-					{ !! features2.length && <SimpleList items={ features2 } /> }
+					<SimpleList
+						items={ [
+							translate( '50GB of storage' ),
+							translate( 'Unrestricted bandwidth' ),
+							translate( 'Install your own plugins & themes' ),
+							translate( 'High-burst capacity' ),
+							translate( 'Web Application Firewall' ),
+							translate( 'High-frequency CPUs' ),
+							translate( 'Expert live chat & email support' ),
+						] }
+					/>
+					<SimpleList
+						items={ [
+							translate( 'DDOS mitigation' ),
+							translate( 'Free staging environment' ),
+							translate( 'Managed malware protection' ),
+							translate( 'Extremely fast DNS with SSL' ),
+							translate( 'Centralized site management' ),
+							translate( '10 PHP workers with auto-scaling' ),
+						] }
+					/>
 				</div>
 			</div>
 		</div>
