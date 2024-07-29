@@ -76,6 +76,7 @@
 		"help/gpt-response": true,
 		"home/layout-dev": true,
 		"hosting/datacenter-picker": true,
+		"hosting-overview-refinements": false,
 		"i18n/community-translator": false,
 		"i18n/empathy-mode": true,
 		"i18n/translation-scanner": true,
