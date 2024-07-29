@@ -119,7 +119,7 @@
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
 		"stats/empty-module-traffic": true,
-		"stats/empty-module-v2": false,
+		"stats/empty-module-v2": true,
 		"stats/restricted-dashboard": true,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
