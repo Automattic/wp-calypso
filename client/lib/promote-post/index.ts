@@ -61,6 +61,7 @@ declare global {
 				showGetStartedMessage?: boolean;
 				onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void;
 				source?: string;
+				isRunningInBlazePlugin?: boolean;
 				isRunningInWooBlaze?: boolean;
 				isRunningInJetpack?: boolean;
 				jetpackXhrParams?: {
@@ -132,6 +133,8 @@ export const getDSPOrigin = ( originProps: DSPOriginProps | undefined ) => {
 	// We need to check for Woo first, because Woo Blaze is also running in Jetpack (At least in this iteration)
 	if ( config.isEnabled( 'is_running_in_woo_site' ) ) {
 		return 'wc-blaze-plugin';
+	} else if ( config.isEnabled( 'is_running_in_blaze_plugin' ) ) {
+		return 'wp-blaze-plugin';
 	} else if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
 		return isAtomic ? 'jetpack-atomic' : 'jetpack';
 	} else if ( isWpMobileApp() ) {
@@ -177,6 +180,7 @@ export async function showDSP(
 		try {
 			const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 			const isRunningInWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
+			const isRunningInBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 			const isMobileApp = isWpMobileApp() || isWcMobileApp();
 
 			window.BlazePress.render( {
@@ -206,6 +210,7 @@ export async function showDSP(
 				uploadImageLabel: isMobileApp ? __( 'Tap to add image' ) : undefined,
 				showGetStartedMessage: ! isMobileApp, // Don't show the GetStartedMessage in the mobile app.
 				source: source,
+				isRunningInBlazePlugin,
 				isRunningInWooBlaze,
 				isRunningInJetpack,
 				jetpackXhrParams: isRunningInJetpack
