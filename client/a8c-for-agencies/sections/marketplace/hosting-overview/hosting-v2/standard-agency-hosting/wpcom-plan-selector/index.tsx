@@ -78,13 +78,15 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 	return (
 		<div className="wpcom-plan-selector">
 			<div className="wpcom-plan-selector__slider-container">
-				<WPCOMBulkSelector
-					selectedTier={ discountTiers[ 0 ] }
-					ownedPlans={ ownedPlans }
-					isLoading={ ! isLicenseCountsReady }
-					hideOwnedPlansBadge
-					readOnly
-				/>
+				{ ! referralMode && (
+					<WPCOMBulkSelector
+						selectedTier={ discountTiers[ 0 ] }
+						ownedPlans={ ownedPlans }
+						isLoading={ ! isLicenseCountsReady }
+						hideOwnedPlansBadge
+						readOnly
+					/>
+				) }
 			</div>
 
 			<div className="wpcom-plan-selector__card">
@@ -150,7 +152,7 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 								{ ctaLabel }
 							</Button>
 
-							<A4ANumberInput value={ quantity } onChange={ setQuantity } />
+							{ ! referralMode && <A4ANumberInput value={ quantity } onChange={ setQuantity } /> }
 						</div>
 					</div>
 				</div>
