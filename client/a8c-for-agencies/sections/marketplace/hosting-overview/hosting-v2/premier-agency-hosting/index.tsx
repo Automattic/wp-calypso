@@ -7,13 +7,19 @@ import HostingAdditionalFeaturesSection from '../../../common/hosting-additional
 import HostingFeaturesSection from '../../../common/hosting-features-section';
 import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
+import PressableOverviewPlanSelection from '../../../pressable-overview/plan-selection';
 import CommonHostingBenefits from '../common-hosting-benefits';
 
 export default function PremierAgencyHosting() {
 	const translate = useTranslate();
 
+	const onAddToCart = () => {
+		// TODO: Implement this function
+	};
+
 	return (
 		<div>
+			<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
 				heading={ translate( "Supercharge your clients' sites" ) }

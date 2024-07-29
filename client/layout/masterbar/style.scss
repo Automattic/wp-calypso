@@ -159,12 +159,6 @@ body.is-mobile-app-view {
 			}
 		}
 	}
-	.masterbar__item-notifications {
-		svg.sidebar_svg-notifications {
-			margin: 0;
-			fill: none;
-		}
-	}
 }
 
 .masterbar__new-menu-popover {
@@ -959,7 +953,7 @@ body.is-mobile-app-view {
 	}
 
 	.gravatar {
-		border: 1px solid var(--color-sidebar-submenu-background);
+		border: 1px solid var(--color-masterbar-border);
 		border-radius: unset;
 		margin-left: 1px;
 
@@ -1179,27 +1173,35 @@ body.is-mobile-app-view {
 	}
 }
 
+.masterbar-cart-button {
+	svg {
+		@media only screen and (max-width: 782px) {
+			width: 32px;
+			height: 32px;
+		}
+	}
+}
+
 .masterbar-notifications {
 	svg {
 		overflow: overlay;
-		width: 27px;
-		height: 27px;
+		width: 24px;
+		height: 24px;
 
 		@media only screen and (max-width: 782px) {
-			width: 36px;
-			height: 36px;
-			padding: 3px 8px 5px;
+			width: 32px;
+			height: 32px;
 		}
 	}
 
 	.notifications-bell-icon__bubble {
 		animation: bubble-unread-indication 0.5s linear both;
 		transition: all 150ms ease-in;
-		transform-origin: 8px 4px;
+		transform-origin: 20px 4px;
 
 		use {
 			transition: all 150ms ease-in;
-			transform-origin: 8px 4px;
+			transform-origin: 20px 4px;
 		}
 	}
 
@@ -1380,13 +1382,12 @@ a.masterbar__quick-language-switcher {
 
 	svg {
 		fill: var(--color-masterbar-icon);
-		width: 24px;
-		height: 24px;
+		width: 22px;
+		height: 22px;
 
 		@media only screen and (max-width: 782px) {
-			width: 36px;
-			height: 36px;
-			padding: 3px 8px 5px;
+			width: 30px;
+			height: 30px;
 		}
 	}
 }
