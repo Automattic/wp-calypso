@@ -575,6 +575,7 @@ class MasterbarLoggedIn extends Component {
 				isActive={ this.isActive( 'reader' ) }
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
 				preloadSection={ this.preloadReader }
+				isSelected
 			>
 				{ showLabel &&
 					translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
