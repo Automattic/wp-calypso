@@ -78,13 +78,6 @@ function StatsCommercialUpgradeSlider( {
 	onSliderChange,
 	tiers,
 }: StatsCommercialUpgradeSliderProps ) {
-	// Responsible for:
-	// 1. Fetching the tiers from the API.
-	// 2. Transforming the tiers into a format that the slider can use.
-	// 3. Preparing the UI strings for the slider.
-	// 4. Rendering the slider.
-	// 5. Nofiying the parent component when the slider changes.
-
 	const translate = useTranslate();
 	const uiStrings = useTranslatedStrings();
 
