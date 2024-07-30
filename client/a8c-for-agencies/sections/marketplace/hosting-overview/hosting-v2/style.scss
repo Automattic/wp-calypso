@@ -80,6 +80,28 @@ $tab-background-color: #f4fbff;
 
 	}
 
+	.hosting-v2__content-header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+		padding: 0 0 48px;
+
+		.hosting-v2__content-header-title {
+			@include a4a-font-body-md;
+		}
+
+		.hosting-v2__content-logo {
+			.wordpress-vip-logo {
+				display: inline-flex;
+			}
+
+			img {
+				height: 32px;
+			}
+		}
+	}
+
 	.hosting-v2__content {
 		padding-block-start: 32px;
 	}

@@ -4,6 +4,9 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useMemo, useState } from 'react';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v2';
+import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
+import VIPLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
+import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { useURLQueryParams } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
@@ -16,6 +19,47 @@ import './style.scss';
 
 type Props = {
 	onAddToCart: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+};
+
+const HostingContent = ( {
+	selectedFeatureId,
+	onAddToCart,
+}: Props & { selectedFeatureId: string } ) => {
+	const translate = useTranslate();
+
+	let content;
+	let logo;
+	let title;
+	if ( selectedFeatureId === 'standard' ) {
+		content = <StandardAgencyHosting onAddToCart={ onAddToCart } />;
+		logo = <img src={ WPCOMLogo } alt="WPCOM" />;
+		title = translate(
+			'Optimized and hassle-free hosting for business websites, local merchants, and small online retailers.'
+		);
+	}
+	if ( selectedFeatureId === 'premier' ) {
+		content = <PremierAgencyHosting onAddToCart={ ( product ) => onAddToCart( product, 1 ) } />;
+		logo = <img src={ PressableLogo } alt="Pressable" />;
+		title = translate(
+			'Premier Agency hosting best for large-scale businesses and major eCommerce sites.'
+		);
+	}
+	if ( selectedFeatureId === 'enterprise' ) {
+		content = <EnterpriseAgencyHosting />;
+		logo = <img src={ VIPLogo } alt="VIP" />;
+		title = translate(
+			'Deliver unmatched performance with the highest security standards on our enterprise content platform.'
+		);
+	}
+	return (
+		<div className="hosting-v2__content">
+			<div className="hosting-v2__content-header">
+				<div className="hosting-v2__content-logo">{ logo }</div>
+				<div className="hosting-v2__content-header-title">{ title }</div>
+			</div>
+			{ content }
+		</div>
+	);
 };
 
 export default function HostingV2( { onAddToCart }: Props ) {
@@ -53,7 +97,6 @@ export default function HostingV2( { onAddToCart }: Props ) {
 					setSelectedFeatureId( 'standard' );
 					page.show( '/marketplace/hosting?hosting=standard' );
 				},
-				content: <StandardAgencyHosting onAddToCart={ onAddToCart } />,
 			},
 			{
 				key: 'premier',
@@ -65,7 +108,6 @@ export default function HostingV2( { onAddToCart }: Props ) {
 					setSelectedFeatureId( 'premier' );
 					page.show( '/marketplace/hosting?hosting=premier' );
 				},
-				content: <PremierAgencyHosting onAddToCart={ ( product ) => onAddToCart( product, 1 ) } />,
 			},
 			{
 				key: 'enterprise',
@@ -77,10 +119,9 @@ export default function HostingV2( { onAddToCart }: Props ) {
 					setSelectedFeatureId( 'enterprise' );
 					page.show( '/marketplace/hosting?hosting=enterprise' );
 				},
-				content: <EnterpriseAgencyHosting />,
 			},
 		],
-		[ isLargeScreen, onAddToCart, selectedFeatureId, translate ]
+		[ isLargeScreen, selectedFeatureId, translate ]
 	);
 
 	const navItems = featureTabs.map( ( featureTab ) => {
@@ -103,8 +144,6 @@ export default function HostingV2( { onAddToCart }: Props ) {
 		);
 	} );
 
-	const selectedFeature = featureTabs.find( ( featureTab ) => featureTab.selected );
-
 	return (
 		<div className="hosting-v2">
 			<div
@@ -126,7 +165,9 @@ export default function HostingV2( { onAddToCart }: Props ) {
 					<NavTabs>{ navItems }</NavTabs>
 				</div>
 			</div>
-			{ selectedFeature && <div className="hosting-v2__content">{ selectedFeature.content }</div> }
+			{ selectedFeatureId && (
+				<HostingContent selectedFeatureId={ selectedFeatureId } onAddToCart={ onAddToCart } />
+			) }
 		</div>
 	);
 }
