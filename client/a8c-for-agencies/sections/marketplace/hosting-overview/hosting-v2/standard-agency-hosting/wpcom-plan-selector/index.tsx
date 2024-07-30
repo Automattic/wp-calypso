@@ -90,26 +90,35 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 			</div>
 
 			<div className="wpcom-plan-selector__card">
-				<div className="wpcom-plan-selector__details">
-					{ ownedPlans && (
-						<div className="wpcom-plan-selector__owned-plan">
-							{ translate( 'You own %(count)s site', 'You own %(count)s sites', {
-								args: {
-									count: ownedPlans,
-								},
-								count: ownedPlans,
-								comment: '%(count)s is the number of WordPress.com sites owned by the user',
-							} ) }
+				{ ! isLicenseCountsReady && (
+					<div className="wpcom-plan-selector__details is-placeholder">
+						{ ownedPlans && <div className="wpcom-plan-selector__owned-plan"></div> }
+						<div className="wpcom-plan-selector__plan-name"></div>
+						<div className="wpcom-plan-selector__price"></div>
+						<div className="wpcom-plan-selector__price-interval"></div>
+						<div className="wpcom-plan-selector__cta">
+							<div className="wpcom-plan-selector__cta-label"></div>
+							<div className="wpcom-plan-selector__cta-component"></div>
 						</div>
-					) }
+					</div>
+				) }
 
-					<h2 className="wpcom-plan-selector__plan-name">{ planName }</h2>
+				{ isLicenseCountsReady && (
+					<div className="wpcom-plan-selector__details">
+						{ ownedPlans && (
+							<div className="wpcom-plan-selector__owned-plan">
+								{ translate( 'You own %(count)s site', 'You own %(count)s sites', {
+									args: {
+										count: ownedPlans,
+									},
+									count: ownedPlans,
+									comment: '%(count)s is the number of WordPress.com sites owned by the user',
+								} ) }
+							</div>
+						) }
 
-					{ ! isLicenseCountsReady && (
-						<div className="wpcom-plan-selector__price is-placeholder"></div>
-					) }
+						<h2 className="wpcom-plan-selector__plan-name">{ planName }</h2>
 
-					{ isLicenseCountsReady && (
 						<div className="wpcom-plan-selector__price">
 							<b className="wpcom-plan-selector__price-actual-value">
 								{ formatCurrency( actualPrice, plan.currency ) }
@@ -135,27 +144,27 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 								{ plan.price_interval === 'month' && translate( 'per month' ) }
 							</div>
 						</div>
-					) }
 
-					<div className="wpcom-plan-selector__cta">
-						<div className="wpcom-plan-selector__cta-label">
-							{ translate( 'How many sites would you like to buy?' ) }
-						</div>
+						<div className="wpcom-plan-selector__cta">
+							<div className="wpcom-plan-selector__cta-label">
+								{ translate( 'How many sites would you like to buy?' ) }
+							</div>
 
-						<div className="wpcom-plan-selector__cta-component">
-							<Button
-								className="wpcom-plan-selector__cta-button"
-								variant="primary"
-								onClick={ () => onSelect( plan, quantity ) }
-								disabled={ ! isLicenseCountsReady }
-							>
-								{ ctaLabel }
-							</Button>
+							<div className="wpcom-plan-selector__cta-component">
+								<Button
+									className="wpcom-plan-selector__cta-button"
+									variant="primary"
+									onClick={ () => onSelect( plan, quantity ) }
+									disabled={ ! isLicenseCountsReady }
+								>
+									{ ctaLabel }
+								</Button>
 
-							{ ! referralMode && <A4ANumberInput value={ quantity } onChange={ setQuantity } /> }
+								{ ! referralMode && <A4ANumberInput value={ quantity } onChange={ setQuantity } /> }
+							</div>
 						</div>
 					</div>
-				</div>
+				) }
 
 				<div className="wpcom-plan-selector__features">
 					<SimpleList
