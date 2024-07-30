@@ -6,6 +6,7 @@ import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 interface Props {
 	imgSrc?: string;
@@ -24,6 +25,7 @@ const RewindFlowError: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const siteId = useSelector( getSelectedSiteId );
 	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
 
 	useEffect( () => {
