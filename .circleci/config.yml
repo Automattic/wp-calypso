@@ -267,7 +267,9 @@ jobs:
       # yarn ourselves. So we run the command directly here.
       - run:
           name: Yarn Install
-          command: yarn install --immutable --inline-builds
+          command: |
+            yarn cache clean
+            yarn install --immutable --inline-builds
       - save_cache: *save-yarn-cache
       - run:
           name: Build Desktop Linux
