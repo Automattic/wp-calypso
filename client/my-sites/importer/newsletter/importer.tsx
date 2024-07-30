@@ -54,9 +54,9 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
 	} );
-	const newsletterUrl = getQueryArg( window.location.href, 'newsletter' ) ?? null;
+	const fromSite = getQueryArg( window.location.href, 'from' ) ?? null;
 	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
-		newsletter: newsletterUrl,
+		from: fromSite,
 	} );
 	const Step = steps[ stepIndex ] || steps[ 0 ];
 	return (
@@ -69,14 +69,14 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 			/>
 
 			<FormattedHeader headerText="Import your newsletter" />
-			{ ( ! step || ! newsletterUrl ) && <SelectNewsletterForm nextStepUrl={ nextStepUrl } /> }
-			{ step && <StepProgress steps={ stepsProgress } currentStep={ stepIndex } /> }
-			{ step && newsletterUrl && (
+			{ ( ! step || ! fromSite ) && <SelectNewsletterForm nextStepUrl={ nextStepUrl } /> }
+			{ step && fromSite && <StepProgress steps={ stepsProgress } currentStep={ stepIndex } /> }
+			{ step && fromSite && (
 				<Step
 					siteSlug={ siteSlug }
 					nextStepUrl={ nextStepUrl }
 					selectedSite={ selectedSite }
-					newsletterUrl={ newsletterUrl }
+					fromSite={ fromSite }
 				/>
 			) }
 		</div>

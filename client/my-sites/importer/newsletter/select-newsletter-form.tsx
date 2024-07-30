@@ -11,13 +11,13 @@ type Props = {
 export default function SelectNewsletterForm( { nextStepUrl }: Props ) {
 	const [ hasError, setHasError ] = useState( false );
 
-	const handleAction = ( newsletterUrl: string ) => {
-		if ( ! isValidUrl( newsletterUrl ) ) {
+	const handleAction = ( fromSite: string ) => {
+		if ( ! isValidUrl( fromSite ) ) {
 			setHasError( true );
 			return;
 		}
 
-		const { hostname } = parseUrl( newsletterUrl );
+		const { hostname } = parseUrl( fromSite );
 		page( addQueryArgs( nextStepUrl, { newsletter: hostname } ) );
 		return;
 	};
