@@ -398,7 +398,6 @@ export class ThreatAlert extends Component {
 											>
 												<span>{ translate( 'Ignore threat' ) }</span>
 											</PopoverMenuItem>
-											{ /* TODO: Do we need a "Unignore threat" option here? */ }
 										</SplitButton>
 									</div>
 									<span className="activity-log__threat-alert-type">{ this.renderSubtitle() }</span>
