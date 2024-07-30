@@ -81,10 +81,6 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
 
 	const onSiteClick = ( event: React.MouseEvent ) => {
-		if ( site.is_deleted ) {
-			return;
-		}
-
 		if ( isAdmin && ! isP2Site && ! isNotAtomicJetpack( site ) ) {
 			openSitePreviewPane && openSitePreviewPane( site );
 		} else {
@@ -104,7 +100,12 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 					`
 				) }
 				leading={
-					<Button className="sites-dataviews__preview-trigger" onClick={ onSiteClick } borderless>
+					<Button
+						className="sites-dataviews__preview-trigger"
+						onClick={ onSiteClick }
+						borderless
+						disabled={ site.is_deleted }
+					>
 						<ListTileLeading title={ title }>
 							<SiteFavicon
 								className="sites-site-favicon"
