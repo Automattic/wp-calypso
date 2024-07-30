@@ -43,7 +43,7 @@ body.is-mobile-app-view {
 	justify-content: space-between;
 	opacity: 1;
 	transition: all 0.3s ease-in-out;
-	--masterbar-item-active-border-radius: 7px; /* stylelint-disable-line scales/radii */
+	--masterbar-item-active-border-radius: 6px; /* stylelint-disable-line scales/radii */
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
