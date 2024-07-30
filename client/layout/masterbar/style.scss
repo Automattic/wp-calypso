@@ -1403,15 +1403,17 @@ a.masterbar__quick-language-switcher {
 }
 
 .item-border-wrapper {
-	position: relative;
+	position: absolute;
+	display: none;
 	--item-border-curve-height: 10px;
 
-	.item-border-wrapper__left,
-	.item-border-wrapper__right {
-		display: none;
-	}
-
 	&.is-active {
+		display: block;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: 0;
+
 		.item-border-wrapper__left,
 		.item-border-wrapper__right {
 			display: block;
