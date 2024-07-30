@@ -170,10 +170,11 @@ export class UploadingPane extends PureComponent {
 	};
 
 	initiateFromUploadButton = () => {
+		let url = this.state.urlInput;
 		if ( this.props.optionalUrl && this.props.fromSite ) {
-			this.setState( { urlInput: this.props.fromSite } );
+			url = this.props.fromSite;
 		}
-		this.startUpload( this.state.fileToBeUploaded, this.state.urlInput );
+		this.startUpload( this.state.fileToBeUploaded, url );
 	};
 
 	setupUpload = ( file ) => {
