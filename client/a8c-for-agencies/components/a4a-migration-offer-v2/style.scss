@@ -9,16 +9,24 @@
 	border-radius: 4px;
 	border: 1px solid var(--color-primary-5);
 	background-color: var(--color-primary-0);
-	padding: 20px 32px;
 	transition: padding 0.15s linear;
+	padding: 8px 16px 16px;
 
-	&.is-expanded {
-		padding: 20px 32px 24px;
+	@include break-medium {
+		padding: 20px 32px;
+		&.is-expanded {
+			padding: 20px 32px 24px;
+		}
 	}
 }
 
 .a4a-migration-offer-v2__side {
+	display: none;
 	height: 48px;
+
+	@include break-medium {
+		display: block;
+	}
 }
 
 .a4a-migration-offer-v2__icon {
@@ -34,29 +42,38 @@
 }
 
 .a4a-migration-offer-v2__title {
-	@include a4a-font-heading-lg;
-
+	@include a4a-font-heading-md;
 	margin-block-start: 10px;
+
+	@include break-medium {
+		@include a4a-font-heading-lg;
+	}
 }
 
 
 .a4a-migration-offer-v2__body {
 	display: flex;
-	gap: 40px;
+	gap: 16px;
 	align-content: center;
 	flex-direction: column;
 
-	@include break-large {
+	@include break-xlarge {
+		gap: 40px;
 		flex-direction: row;
 	}
 }
 
 .a4a-migration-offer-v2__description {
-	@include a4a-font-body-lg;
+	@include a4a-font-body-md;
+	margin: 0;
 
 	a {
 		color: var(--color-text);
 		text-decoration: underline;
+	}
+
+	@include break-medium {
+		@include a4a-font-body-lg;
 	}
 }
 
@@ -72,6 +89,9 @@
 }
 
 .theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle {
+	position: absolute;
+	inset-inline-end: 24px;
+
 	&,
 	&:hover,
 	&:focus,
@@ -86,6 +106,10 @@
 
 	svg {
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
+	}
+
+	@include break-medium {
+		position: relative;
 	}
 }
 
