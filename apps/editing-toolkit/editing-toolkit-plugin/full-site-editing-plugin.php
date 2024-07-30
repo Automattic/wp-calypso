@@ -50,6 +50,26 @@ require_once __DIR__ . '/dotcom-fse/helpers.php';
 // Enqueues the shared JS data stores and defines shared helper functions.
 require_once __DIR__ . '/common/index.php';
 
+function wpcom_track_load_full_site_editing() {
+	// Avoid sending the track event every time.
+	if ( get_option( 'wpcom_dotcom_fse_log', false ) ) {
+		return;
+	}
+
+	add_option( 'wpcom_dotcom_fse_log', true );
+	$event_props = array(
+		'theme' => get_stylesheet(),
+	);
+
+	// Invoke the correct function based on the underlying infrastructure.
+	if ( function_exists( 'wpcomsh_record_tracks_event' ) ) {
+		wpcomsh_record_tracks_event( 'wpcom_dotcom_fse_load', $event_props );
+	} elseif ( function_exists( 'require_lib' ) && function_exists( 'tracks_record_event' ) ) {
+		require_lib( 'tracks/client' );
+		tracks_record_event( get_current_user_id(), 'wpcom_dotcom_fse_load', $event_props );
+	}
+}
+
 /**
  * Load dotcom-FSE.
  */
@@ -59,6 +79,9 @@ function load_full_site_editing() {
 	if ( ! is_full_site_editing_active() ) {
 		return;
 	}
+
+	wpcom_track_load_full_site_editing();
+
 	// Not dangerous here since we have already checked for eligibility.
 	dangerously_load_full_site_editing_files();
 	Full_Site_Editing::get_instance();
