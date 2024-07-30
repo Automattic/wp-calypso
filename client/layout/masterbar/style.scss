@@ -966,6 +966,10 @@ body.is-mobile-app-view {
 }
 
 .masterbar__item-howdy {
+	a {
+		outline: none;
+	}
+
 	.masterbar__item-content {
 		display: flex;
 		align-items: center;
