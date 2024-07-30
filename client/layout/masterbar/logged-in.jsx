@@ -309,6 +309,7 @@ class MasterbarLoggedIn extends Component {
 					tooltip={ translate( 'Manage your sites' ) }
 					preloadSection={ this.preloadMySites }
 					ref={ ( ref ) => ref !== allSitesBtnRef && this.setState( { allSitesBtnRef: ref } ) }
+					hasGlobalBorderStyle
 				/>
 				{ allSitesBtnRef && (
 					<Popover
@@ -541,6 +542,7 @@ class MasterbarLoggedIn extends Component {
 				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 				preloadSection={ this.preloadMe }
 				subItems={ profileActions }
+				hasGlobalBorderStyle
 			>
 				<span className="masterbar__item-howdy-howdy">
 					{ translate( 'Howdy, %(display_name)s', {
@@ -575,6 +577,7 @@ class MasterbarLoggedIn extends Component {
 				isActive={ this.isActive( 'reader' ) }
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
 				preloadSection={ this.preloadReader }
+				hasGlobalBorderStyle
 			>
 				{ showLabel &&
 					translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }

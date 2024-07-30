@@ -31,6 +31,7 @@ interface MasterbarItemProps {
 	alwaysShowContent?: boolean;
 	disabled?: boolean;
 	subItems?: Array< MasterbarSubItemProps >;
+	hasGlobalBorderStyle?: boolean;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -46,6 +47,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		hasUnseen: PropTypes.bool,
 		alwaysShowContent: PropTypes.bool,
 		subItems: PropTypes.array,
+		hasGlobalBorderStyle: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -207,6 +209,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
 			'has-subitems': this.props.subItems,
 			'is-open': this.state.isOpenForNonMouseFlow,
+			'has-global-border': this.props.hasGlobalBorderStyle,
 		} );
 
 		const attributes = {
@@ -226,7 +229,9 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 					href={ this.props.url }
 					ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
 				>
-					<ItemBorderWrapper isActive={ this.props.isActive } />
+					{ this.props.hasGlobalBorderStyle && (
+						<ItemBorderWrapper isActive={ this.props.isActive } />
+					) }
 					{ this.renderChildren() }
 				</a>
 			);
@@ -239,7 +244,9 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 					ref={ this.componentButtonRef }
 					onKeyDown={ this.toggleMenuByKey }
 				>
-					<ItemBorderWrapper isActive={ this.props.isActive } />
+					{ this.props.hasGlobalBorderStyle && (
+						<ItemBorderWrapper isActive={ this.props.isActive } />
+					) }
 					<a
 						href={ this.props.url }
 						ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
@@ -255,7 +262,9 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 
 		return (
 			<div className={ this.props.wrapperClassName } ref={ this.componentDivRef }>
-				<ItemBorderWrapper isActive={ this.props.isActive } />
+				{ this.props.hasGlobalBorderStyle && (
+					<ItemBorderWrapper isActive={ this.props.isActive } />
+				) }
 				<button
 					{ ...attributes }
 					ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }
