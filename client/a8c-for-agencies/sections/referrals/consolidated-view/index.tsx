@@ -6,11 +6,19 @@ import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { getConsolidatedData } from '../lib/commissions';
-import type { Referral } from '../types';
+import type { Referral, ReferralInvoice } from '../types';
 
 import './style.scss';
 
-export default function ConsolidatedViews( { referrals }: { referrals: Referral[] } ) {
+export default function ConsolidatedViews( {
+	referrals,
+	referralInvoices,
+	isFetchingInvoices,
+}: {
+	referrals: Referral[];
+	referralInvoices: ReferralInvoice[];
+	isFetchingInvoices?: boolean;
+} ) {
 	const translate = useTranslate();
 
 	const date = new Date();
@@ -28,18 +36,20 @@ export default function ConsolidatedViews( { referrals }: { referrals: Referral[
 
 	useEffect( () => {
 		if ( data?.length ) {
-			const consolidatedData = getConsolidatedData( referrals, data || [] );
+			const consolidatedData = getConsolidatedData( referrals, data || [], referralInvoices );
 			setConsolidatedData( consolidatedData );
 		}
-	}, [ referrals, data ] );
+	}, [ referrals, data, referralInvoices ] );
 
 	const link = 'https://automattic.com/for-agencies/program-incentives/';
+
+	const showLoader = isFetching || isFetchingInvoices;
 
 	return (
 		<div className="consolidated-view">
 			<Card compact>
 				<div className="consolidated-view__value">
-					{ isFetching ? (
+					{ showLoader ? (
 						<TextPlaceholder />
 					) : (
 						formatCurrency( consolidatedData.allTimeCommissions, 'USD' )
@@ -85,7 +95,7 @@ export default function ConsolidatedViews( { referrals }: { referrals: Referral[
 			</Card>
 			<Card compact>
 				<div className="consolidated-view__value">
-					{ isFetching ? (
+					{ showLoader ? (
 						<TextPlaceholder />
 					) : (
 						formatCurrency( consolidatedData.pendingCommission, 'USD' )
