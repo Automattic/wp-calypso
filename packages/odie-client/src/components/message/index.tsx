@@ -191,7 +191,7 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 						{ hasFeedback && ! isPositiveFeedback && extraContactOptions }
 						{ ! isUser && (
 							<>
-								{ hasFeedback && ! isPositiveFeedback && (
+								{ ( ! hasFeedback || ( hasFeedback && ! isPositiveFeedback ) ) && (
 									<div className="disclaimer">
 										{ __( 'Feeling stuck?', __i18n_text_domain__ ) }{ ' ' }
 										<button
