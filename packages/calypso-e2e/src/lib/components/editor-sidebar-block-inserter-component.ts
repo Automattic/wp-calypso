@@ -76,7 +76,10 @@ export class EditorSidebarBlockInserterComponent {
 	 */
 	async selectBlockInserterResult(
 		name: string,
-		{ type = 'block' }: { type?: 'block' | 'pattern' } = {}
+		{
+			type = 'block',
+			blockFallBackName = '',
+		}: { type?: 'block' | 'pattern'; blockFallBackName?: string } = {}
 	): Promise< void > {
 		const editorParent = await this.editor.parent();
 		let locator;
@@ -92,13 +95,12 @@ export class EditorSidebarBlockInserterComponent {
 				.getByRole( 'option', { name, exact: true } )
 				.first();
 
-			const isExactMatchVisible = await locator.isVisible();
+			const isResultVisible = await locator.isVisible();
 
-			// If exact match is not found, use non-exact match
-			if ( ! isExactMatchVisible ) {
+			if ( ! isResultVisible && blockFallBackName ) {
 				locator = editorParent
 					.locator( `.block-editor-inserter__block-list,.block-editor-block-types-list` )
-					.getByRole( 'option', { name, exact: false } )
+					.getByRole( 'option', { name: blockFallBackName, exact: true } )
 					.first();
 			}
 		}
