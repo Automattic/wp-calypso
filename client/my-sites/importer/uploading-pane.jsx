@@ -48,6 +48,7 @@ export class UploadingPane extends PureComponent {
 			invalidDescription: PropTypes.string,
 			validate: PropTypes.func,
 		} ),
+		fromSite: PropTypes.string,
 	};
 
 	static defaultProps = { description: null, optionalUrl: null };
@@ -169,6 +170,9 @@ export class UploadingPane extends PureComponent {
 	};
 
 	initiateFromUploadButton = () => {
+		if ( this.props.optionalUrl && this.props.fromSite ) {
+			this.setState( { urlInput: this.props.fromSite } );
+		}
 		this.startUpload( this.state.fileToBeUploaded, this.state.urlInput );
 	};
 
@@ -236,7 +240,7 @@ export class UploadingPane extends PureComponent {
 	};
 
 	render() {
-		const { importerStatus, site, isEnabled } = this.props;
+		const { importerStatus, site, isEnabled, fromSite } = this.props;
 		const isReadyForImport = this.isReadyForImport();
 		const importerStatusClasses = clsx(
 			'importer__upload-content',
@@ -284,7 +288,7 @@ export class UploadingPane extends PureComponent {
 					) }
 					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 				</div>
-				{ this.props.optionalUrl && (
+				{ this.props.optionalUrl && ! fromSite && (
 					<div className="importer__uploading-pane-url-input">
 						<FormLabel>
 							{ this.props.optionalUrl.title }
