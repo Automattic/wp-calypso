@@ -28,7 +28,8 @@ export class YouTubeBlockFlow implements BlockFlow {
 		this.configurationData = configurationData;
 	}
 
-	blockSidebarName = 'YouTube';
+	blockSidebarName = 'YouTube Embed';
+	blockTestFallBackName = 'YouTube';
 	blockEditorSelector = blockParentSelector;
 
 	/**
