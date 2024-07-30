@@ -45,7 +45,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			hasPWYWPlanOnly,
 			shouldShowPaywallNotice,
 		}: StatsNoticeProps ) => {
-			if ( ! isCommercial || isVip || hasPaidStats ) {
+			if ( ! isCommercial || isVip ) {
 				return false;
 			}
 
@@ -62,7 +62,9 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				return true;
 			}
 
-			return !! ( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites );
+			return (
+				!! ( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) && ! hasPaidStats
+			);
 		},
 		disabled: false,
 	},
