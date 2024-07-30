@@ -32,11 +32,11 @@ export class TranslatorInvite extends Component {
 		} );
 
 	renderLearnMoreLink = () => {
-		const { locale, translate } = this.props;
+		const { translate } = this.props;
 		return (
 			<a
 				className="translator-invite__link is-link"
-				href={ `https://translate.wordpress.com/projects/wpcom/${ locale }/default/` }
+				href="https://translate.wordpress.com/faq/"
 				target="_blank"
 				rel="noopener noreferrer"
 				onClick={ this.recordClick }

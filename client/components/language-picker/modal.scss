@@ -69,15 +69,13 @@
 
 .language-picker__modal-incomplete-locale-nudge-text {
 	font-weight: normal;
-
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.9375rem; //typography-exception
+	margin-block-start: 6px;
 	.material-icon {
-		margin: 0 2px -4px 0;
-		transform: scale(0.8);
+		margin: 0 4px -2px 0;
+		fill: #2c3337;
 	}
-}
-
-.language-picker__modal-incomplete-locale-nudge-link {
-	font-weight: normal;
 }
 
 .language-picker__modal-incomplete-locale-text {
