@@ -332,6 +332,10 @@ const blockInfoMapping: { [ key: string ]: { link: string; postId: number } } = 
 		link: 'https://wordpress.com/support/likes/',
 		postId: 7294,
 	},
+	'jetpack/subscriber-login': {
+		link: 'https://wordpress.com/support/wordpress-editor/blocks/subscriber-login-block/',
+		postId: 380451,
+	},
 };
 
 export const blockInfoWithVariations: {
