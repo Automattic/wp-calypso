@@ -1401,3 +1401,36 @@ a.masterbar__quick-language-switcher {
 		opacity: 1;
 	}
 }
+
+.item-border-wrapper {
+	position: relative;
+	--item-border-curve-height: 5px;
+
+	.item-border-wrapper__left,
+	.item-border-wrapper__right {
+		display: none;
+	}
+
+	&.is-active {
+		.item-border-wrapper__left,
+		.item-border-wrapper__right {
+			display: block;
+			position: absolute;
+			height: calc(var(--item-border-curve-height) * 2);
+			width: calc(var(--item-border-curve-height) * 2);
+			background-color: var(--color-sidebar-background);
+			bottom: -1px;
+			z-index: 1;
+		}
+
+		.item-border-wrapper__left {
+			left: calc( -2 * var(--item-border-curve-height) );
+		}
+
+		.item-border-wrapper__right {
+			right: calc( -2 * var(--item-border-curve-height) );;
+		}
+
+
+	}
+}
