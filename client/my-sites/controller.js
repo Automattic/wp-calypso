@@ -271,6 +271,8 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	}
 
 	const startsWithPaths = [
+		'/themes',
+		'/plugins',
 		'/checkout/',
 		`/me/purchases/${ slug }`,
 		`/purchases/add-payment-method/${ slug }`,
@@ -916,7 +918,7 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) > 0 ) {
+	if ( isUserLoggedIn( state ) ) {
 		navigation( context, next );
 	}
 	next();
