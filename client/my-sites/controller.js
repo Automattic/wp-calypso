@@ -602,13 +602,6 @@ export function siteSelection( context, next ) {
 
 	const siteId = getSiteId( getState(), siteFragment );
 
-	// const site = getSite( getState(), siteId );
-
-	// if ( site && site.is_deleted ) {
-	// 	dispatch( setSelectedSiteId( null ) );
-	// 	return next();
-	// }
-
 	if ( siteId && ! isUnlinkedCheckout ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
