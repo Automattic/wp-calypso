@@ -43,6 +43,7 @@ body.is-mobile-app-view {
 	justify-content: space-between;
 	opacity: 1;
 	transition: all 0.3s ease-in-out;
+	--masterbar-item-active-border-radius: 7px; /* stylelint-disable-line scales/radii */
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
@@ -518,6 +519,25 @@ body.is-mobile-app-view {
 
 	&.is-active {
 		background: var(--color-masterbar-item-active-background);
+		.is-global-sidebar-visible & {
+			border-top-left-radius: var(--masterbar-item-active-border-radius);
+			border-top-right-radius: var(--masterbar-item-active-border-radius);
+			--color-masterbar-text: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-icon: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-highlight: var(--color-sidebar-menu-selected-text);
+		}
+	}
+
+	.is-global-sidebar-visible .masterbar__section--left &:first-of-type {
+		&.is-active {
+			border-top-left-radius: 0;
+		}
+	}
+
+	.is-global-sidebar-visible .masterbar__section--right &:last-of-type {
+		&.is-active {
+			border-top-right-radius: 0;
+		}
 	}
 
 	&:hover .masterbar__item-bubble {
@@ -1405,9 +1425,8 @@ a.masterbar__quick-language-switcher {
 .item-border-wrapper {
 	position: absolute;
 	display: none;
-	--item-border-curve-height: 10px;
 
-	&.is-active {
+	.is-global-sidebar-visible &.is-active {
 		display: block;
 		top: 0;
 		bottom: 0;
@@ -1418,8 +1437,8 @@ a.masterbar__quick-language-switcher {
 		.item-border-wrapper__right {
 			display: block;
 			position: absolute;
-			height: var(--item-border-curve-height);
-			width: var(--item-border-curve-height);
+			height: var(--masterbar-item-active-border-radius);
+			width: var(--masterbar-item-active-border-radius);
 			background-color: var(--color-sidebar-background);
 			bottom: 0;
 			z-index: 1;
@@ -1427,28 +1446,28 @@ a.masterbar__quick-language-switcher {
 		}
 
 		.item-border-wrapper__left {
-			left: calc(-1 * var(--item-border-curve-height));
+			left: calc(-1 * var(--masterbar-item-active-border-radius));
 		}
 
 		.item-border-wrapper__right {
-			right: calc(-1 * var(--item-border-curve-height));
+			right: calc(-1 * var(--masterbar-item-active-border-radius));
 		}
 
 		.item-border-wrapper__interior-circle {
 			position: absolute;
-			height: calc(var(--item-border-curve-height) * 2);
-			width: calc(var(--item-border-curve-height) * 2);
-			top: calc(-1 * var(--item-border-curve-height));
+			height: calc(var(--masterbar-item-active-border-radius) * 2);
+			width: calc(var(--masterbar-item-active-border-radius) * 2);
+			top: calc(-1 * var(--masterbar-item-active-border-radius));
 			background-color: var(--color-masterbar-background);
 			border-radius: 50%;
 		}
 
 		.item-border-wrapper__left .item-border-wrapper__interior-circle {
-			left: calc(-1 * var(--item-border-curve-height));
+			left: calc(-1 * var(--masterbar-item-active-border-radius));
 		}
 
 		.item-border-wrapper__right .item-border-wrapper__interior-circle {
-			right: calc(-1 * var(--item-border-curve-height));
+			right: calc(-1 * var(--masterbar-item-active-border-radius));
 		}
 	}
 }
