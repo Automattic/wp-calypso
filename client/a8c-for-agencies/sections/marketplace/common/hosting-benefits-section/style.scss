@@ -7,7 +7,7 @@
 	grid-template-rows: 1fr;
 	gap: 24px;
 
-	@include break-medium {
+	@include break-large {
 		grid-template-columns: repeat(2, 1fr);
 	}
 
