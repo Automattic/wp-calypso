@@ -12,6 +12,8 @@ type Props = {
 	onSelectTier: ( value: DiscountTier ) => void;
 	ownedPlans: number;
 	isLoading?: boolean;
+	hideOwnedPlansBadge?: boolean;
+	readOnly?: boolean;
 };
 
 export default function WPCOMBulkSelector( {
@@ -19,6 +21,8 @@ export default function WPCOMBulkSelector( {
 	onSelectTier,
 	ownedPlans,
 	isLoading,
+	hideOwnedPlansBadge,
+	readOnly,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -63,7 +67,7 @@ export default function WPCOMBulkSelector( {
 
 	return (
 		<div className="bulk-selection">
-			{ !! ownedPlans && (
+			{ !! ownedPlans && ! hideOwnedPlansBadge && (
 				<div className="bulk-selection__owned-plan">
 					<Icon icon={ info } size={ 24 } />
 
@@ -93,6 +97,7 @@ export default function WPCOMBulkSelector( {
 				onChange={ onSelectOption }
 				options={ options }
 				minimum={ minimumQuantity }
+				readOnly={ readOnly }
 			/>
 		</div>
 	);

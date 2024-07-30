@@ -7,13 +7,18 @@ import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-of
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { useURLQueryParams } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import EnterpriseAgencyHosting from './enterprise-agency-hosting';
 import PremierAgencyHosting from './premier-agency-hosting';
 import StandardAgencyHosting from './standard-agency-hosting';
 
 import './style.scss';
 
-export default function HostingV2() {
+type Props = {
+	onAddToCart: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+};
+
+export default function HostingV2( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 
 	const isLargeScreen = useBreakpoint( '>1280px' );
@@ -48,7 +53,7 @@ export default function HostingV2() {
 					setSelectedFeatureId( 'standard' );
 					page.show( '/marketplace/hosting?hosting=standard' );
 				},
-				content: <StandardAgencyHosting />,
+				content: <StandardAgencyHosting onAddToCart={ onAddToCart } />,
 			},
 			{
 				key: 'premier',
@@ -75,7 +80,7 @@ export default function HostingV2() {
 				content: <EnterpriseAgencyHosting />,
 			},
 		],
-		[ isLargeScreen, selectedFeatureId, translate ]
+		[ isLargeScreen, onAddToCart, selectedFeatureId, translate ]
 	);
 
 	const navItems = featureTabs.map( ( featureTab ) => {
