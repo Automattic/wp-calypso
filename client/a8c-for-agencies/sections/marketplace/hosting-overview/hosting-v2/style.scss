@@ -154,23 +154,28 @@ $tab-background-color: #f4fbff;
 	}
 
 	.hosting-v2__content-header {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 16px;
-		padding: 0 0 48px;
+		display: none;
 
-		.hosting-v2__content-header-title {
-			@include a4a-font-body-md;
-		}
+		@include break-medium {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			gap: 16px;
+			padding: 0 40px 48px;
 
-		.hosting-v2__content-logo {
-			.wordpress-vip-logo {
-				display: inline-flex;
+			.hosting-v2__content-header-title {
+				@include a4a-font-body-md;
 			}
 
-			img {
-				height: 32px;
+			.hosting-v2__content-logo {
+				.wordpress-vip-logo {
+					display: inline-flex;
+				}
+
+				img {
+					height: 32px;
+				}
 			}
 		}
 	}
