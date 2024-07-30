@@ -206,6 +206,14 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		);
 	}, [ dispatch, hasCredentials ] );
 
+	const onViewSiteClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_restore_completed_view_site', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
+
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const loading = rewindState.state === 'uninitialized';
@@ -333,13 +341,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				href={ siteUrl }
 				target="_blank"
 				className="rewind-flow__primary-button"
-				onClick={ () =>
-					dispatch(
-						recordTracksEvent( 'calypso_jetpack_restore_completed_view_site', {
-							has_credentials: hasCredentials,
-						} )
-					)
-				}
+				onClick={ onViewSiteClick }
 			>
 				{ translate( 'View your website {{externalIcon/}}', {
 					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
