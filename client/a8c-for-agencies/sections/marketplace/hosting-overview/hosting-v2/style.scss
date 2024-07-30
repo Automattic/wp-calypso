@@ -80,9 +80,9 @@ $tab-background-color: #f4fbff;
 		> * {
 			position: relative;
 			z-index: 1;
-			padding-inline: 0;
+			padding-inline: 16px;
 
-			@include breakpoint-deprecated( ">660px" ) {
+			@include break-large {
 				max-width: 1500px;
 				margin-inline: auto !important;
 				padding-inline: 40px;
@@ -95,15 +95,32 @@ $tab-background-color: #f4fbff;
 			padding-block-start: 32px;
 		}
 
+		.hosting-v2__container {
+			padding-block-start: 24px;
+
+			@include break-medium {
+				padding-block-start: 32px;
+			}
+		}
+
 		.hosting-v2__heading {
-			@include a4a-font-heading-xxl;
-			margin-block-end: 32px;
+			@include a4a-font-heading-xl;
+			margin-block-end: 24px;
+
+			@include break-medium {
+				@include a4a-font-heading-xxl;
+				margin-block-end: 32px;
+			}
 		}
 
 		.section-nav-tabs {
 			width: auto;
-			margin: 39px 0 0;
 			box-shadow: none;
+			margin: 24px 0 0;
+
+			@include break-medium {
+				margin: 39px 0 0;
+			}
 		}
 
 		.section-nav-tabs__list {
