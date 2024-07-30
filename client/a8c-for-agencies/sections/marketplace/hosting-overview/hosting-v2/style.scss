@@ -182,7 +182,11 @@ $tab-background-color: #f4fbff;
 
 	.hosting-overview-features__item {
 		align-items: flex-start;
-		gap: 16px;
+		gap: 4px;
+
+		@include break-medium {
+			gap: 16px;
+		}
 	}
 
 	.hosting-overview-features__item-icon {
