@@ -87,22 +87,19 @@ export class EditorSidebarBlockInserterComponent {
 		if ( type === 'pattern' ) {
 			locator = editorParent.locator( selectors.patternResultItem( name ) ).first();
 		} else {
+			const optionName = blockFallBackName
+				? new RegExp( `(${ name }|${ blockFallBackName })` )
+				: name;
 			locator = editorParent
 				// The DOM structure that hold the block options changes a LOT dependent on whether there's a search.
 				// This combined selector is not the slickest, but capture both cases.
 				// There's not an easy way to use "getByRole" to capture two cases without a lot of promise racing.
 				.locator( `.block-editor-inserter__block-list,.block-editor-block-types-list` )
-				.getByRole( 'option', { name, exact: true } )
+				.getByRole( 'option', {
+					name: optionName,
+					exact: true,
+				} )
 				.first();
-
-			const isResultVisible = await locator.isVisible();
-
-			if ( ! isResultVisible && blockFallBackName ) {
-				locator = editorParent
-					.locator( `.block-editor-inserter__block-list,.block-editor-block-types-list` )
-					.getByRole( 'option', { name: blockFallBackName, exact: true } )
-					.first();
-			}
 		}
 
 		await Promise.all( [ locator.hover(), locator.focus() ] );
