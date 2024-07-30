@@ -5,7 +5,7 @@ interface ConfigurationData {
 	expectedTweetText: string;
 }
 
-const blockParentSelector = '[aria-label="Block: Twitter"]:has-text("Twitter URL")';
+const blockParentSelector = '[aria-label*="Block: Twitter"]:has-text("Twitter")';
 const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
@@ -29,7 +29,8 @@ export class TwitterBlockFlow implements BlockFlow {
 		this.configurationData = configurationData;
 	}
 
-	blockSidebarName = 'Twitter';
+	// @todo Change to "YouTube Embed" once Gutenberg v18.9.0 is deployed everywhere.
+	blockSidebarName = /(Twitter Embed|Twitter)/;
 	blockEditorSelector = blockParentSelector;
 
 	/**
