@@ -1,16 +1,64 @@
-import { VIPLogo } from '@automattic/components';
+import { VIPLogo, SalesforceLogo, SlackLogo, CNNLogo } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-2.png';
+import CapeGeminiLogo from 'calypso/assets/images/logos/capgemini.svg';
+import MetaLogo from 'calypso/assets/images/logos/meta.svg';
+import NewYorkPostLogo from 'calypso/assets/images/logos/new-york-post.svg';
+import NewsCorpLogo from 'calypso/assets/images/logos/news-corp.svg';
+import SpotifyLogo from 'calypso/assets/images/logos/spotify.svg';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import { BackgroundType4 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
+import SimpleList from '../../../common/simple-list';
+
+import './style.scss';
 
 export default function EnterpriseAgencyHosting() {
 	const translate = useTranslate();
 
 	return (
 		<>
+			<div className="enterprise-agency-hosting__top-container">
+				<div className="enterprise-agency-hosting__details">
+					<div className="enterprise-agency-hosting__details-heading">
+						{ translate( 'Enterprise CMS' ) }
+					</div>
+					<SimpleList
+						items={ [
+							translate( 'Unmatched flexibility to build a customized web experience' ),
+							translate( 'Tools to increase customer engagement' ),
+							translate(
+								'Scalability to ensure top-notch site performance during campaigns or events'
+							),
+						] }
+					/>
+					<Button href="https://wpvip.com/contact/" target="_blank" variant="primary">
+						{ translate( 'Request a Demo' ) } <Icon icon={ external } size={ 16 } />
+					</Button>
+				</div>
+				<div className="enterprise-agency-hosting__details">
+					<div className="enterprise-agency-hosting__details-heading">
+						{ translate( 'The platform the biggest{{br/}}brands trust.', {
+							components: {
+								br: <br />,
+							},
+						} ) }
+					</div>
+					<div className="enterprise-agency-hosting__logos">
+						<SalesforceLogo />
+						<img src={ MetaLogo } alt="Meta" />
+						<SlackLogo />
+						<img src={ SpotifyLogo } alt="Spotify" />
+						<CNNLogo />
+						<img src={ NewsCorpLogo } alt="News Corp" />
+						<img src={ CapeGeminiLogo } alt="Capgemini" />
+						<img src={ NewYorkPostLogo } alt="New York Post" />
+					</div>
+				</div>
+			</div>
 			<HostingAdditionalFeaturesSection
 				icon={ <VIPLogo height={ 16 } width={ 35 } /> }
 				heading={ translate( 'VIP Capabilities ' ) }

@@ -21,6 +21,7 @@ type Props = {
 	label?: string;
 	sub?: string;
 	minimum?: number;
+	readOnly?: boolean;
 };
 
 export default function A4AWPCOMSlider( {
@@ -31,6 +32,7 @@ export default function A4AWPCOMSlider( {
 	label,
 	sub,
 	minimum = 0,
+	readOnly,
 }: Props ) {
 	const total = ( options.length + 1 ) * 20;
 	const mappedOptions = useMemo(
@@ -53,6 +55,10 @@ export default function A4AWPCOMSlider( {
 		const selected = sliderPosToValue( sliderPos, mappedOptions );
 
 		const next = selected < minimum ? minimum : selected;
+
+		if ( readOnly ) {
+			return;
+		}
 
 		onChange?.( next );
 		setCurrentValue( next );
@@ -78,7 +84,7 @@ export default function A4AWPCOMSlider( {
 	};
 
 	const onNumberSelect = ( value: number ) => {
-		if ( value >= minimum ) {
+		if ( value >= minimum && ! readOnly ) {
 			onChange?.( value );
 			setCurrentValue( value );
 			setCurrentSliderPos( valueToSliderPos( value, mappedOptions ) );
@@ -104,12 +110,14 @@ export default function A4AWPCOMSlider( {
 			) }
 
 			<div className="a4a-slider__input">
-				<div
-					className="a4a-slider__input-disabled-area"
-					style={ {
-						width: disabledAreaWidth,
-					} }
-				></div>
+				{ ! readOnly && (
+					<div
+						className="a4a-slider__input-disabled-area"
+						style={ {
+							width: disabledAreaWidth,
+						} }
+					></div>
+				) }
 
 				<input
 					ref={ rangeRef }
@@ -119,6 +127,7 @@ export default function A4AWPCOMSlider( {
 					onChange={ onSliderChange }
 					value={ currentSliderPos }
 					step="1"
+					readOnly={ readOnly }
 				/>
 
 				<div className="a4a-slider__marker-container">
@@ -149,13 +158,15 @@ export default function A4AWPCOMSlider( {
 					} ) }
 				</div>
 			</div>
-			<input
-				type="number"
-				className="a4a-slider__number-input"
-				value={ currentValue }
-				onChange={ onNumberInputChange }
-				onBlur={ onNumberInputBlur }
-			></input>
+			{ ! readOnly && (
+				<input
+					type="number"
+					className="a4a-slider__number-input"
+					value={ currentValue }
+					onChange={ onNumberInputChange }
+					onBlur={ onNumberInputBlur }
+				></input>
+			) }
 		</div>
 	);
 }

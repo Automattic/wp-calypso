@@ -20,7 +20,7 @@ export default function HostingSection( {
 	background,
 }: HostingSectionProps ) {
 	return (
-		<div
+		<section
 			className="hosting-section-wrapper"
 			style={ {
 				backgroundColor: background?.color,
@@ -43,6 +43,6 @@ export default function HostingSection( {
 				</div>
 				{ children }
 			</div>
-		</div>
+		</section>
 	);
 }

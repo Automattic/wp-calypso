@@ -16,7 +16,7 @@
 		"minWidth": 350,
 		"title": "WordPress.com",
 		"useContentSize": true,
-		"width": 900,
+		"width": 1200,
 		"webPreferences": {
 			"contextIsolation": true,
 			"enableRemoteModule": false,
