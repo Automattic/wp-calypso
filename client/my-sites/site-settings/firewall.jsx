@@ -45,12 +45,16 @@ class Firewall extends Component {
 	};
 
 	disableForm() {
-		return this.props.isRequestingSettings || this.props.isSavingSettings;
+		return (
+			this.props.moduleDetailsLoading ||
+			this.props.isRequestingSettings ||
+			this.props.isSavingSettings
+		);
 	}
 
 	wafModuleSupported = () => {
 		return (
-			! this.props.firewallModuleUnavailable &&
+			this.props.firewallModuleAvailable &&
 			! this.props.isAtomic &&
 			! this.props.isVip &&
 			! this.props.isSimple
@@ -239,9 +243,8 @@ export default connect(
 	( state ) => {
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const selectedSiteId = getSelectedSiteId( state );
-		const moduleDetails = getJetpackModule( state, selectedSiteId, 'waf' );
 		const moduleDetailsLoading = isFetchingJetpackModules( state, selectedSiteId );
-		const moduleDetailsNotLoaded = moduleDetails === null;
+		const firewallModuleDetails = getJetpackModule( state, selectedSiteId, 'waf' );
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
 			state,
@@ -254,9 +257,9 @@ export default connect(
 			selectedSiteId,
 			selectedSiteSlug,
 			firewallModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'waf' ),
-			firewallModuleUnavailable:
-				( moduleDetailsNotLoaded && ! moduleDetailsLoading ) ||
-				( siteInDevMode && moduleUnavailableInDevMode ),
+			firewallModuleAvailable:
+				firewallModuleDetails !== null && ( ! siteInDevMode || ! moduleUnavailableInDevMode ),
+			moduleDetailsLoading,
 			hasRequiredFeature,
 		};
 	},
