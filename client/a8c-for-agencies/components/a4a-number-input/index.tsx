@@ -30,7 +30,7 @@ export default function A4ANumberInput( {
 	return (
 		<div className="a4a-number-input">
 			<Button onMouseDown={ onDecrement }>
-				<Icon className="gridicon" icon={ lineSolid } size={ 18 } />
+				<Icon icon={ lineSolid } size={ 18 } />
 			</Button>
 			<TextControl
 				value={ value }
@@ -38,7 +38,7 @@ export default function A4ANumberInput( {
 				type="number"
 			/>
 			<Button onMouseDown={ onIncrement }>
-				<Icon className="gridicon" icon={ plus } size={ 18 } />
+				<Icon icon={ plus } size={ 18 } />
 			</Button>
 		</div>
 	);
