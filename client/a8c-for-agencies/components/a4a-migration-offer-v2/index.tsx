@@ -26,6 +26,10 @@ const MigrationOfferV2 = () => {
 			<div className="a4a-migration-offer-v2__main">
 				<h3 className="a4a-migration-offer-v2__title">
 					{ translate( 'Special limited time migration offer' ) }
+
+					<Button className="a4a-migration-offer-v2__view-toggle-mobile" onClick={ onToggleView }>
+						<Icon icon={ chevronDown } size={ 24 } />
+					</Button>
 				</h3>
 
 				{ isExpanded && (

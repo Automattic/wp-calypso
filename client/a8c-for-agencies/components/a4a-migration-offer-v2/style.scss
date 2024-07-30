@@ -10,7 +10,7 @@
 	border: 1px solid var(--color-primary-5);
 	background-color: var(--color-primary-0);
 	transition: padding 0.15s linear;
-	padding: 8px 16px 16px;
+	padding: 8px 16px;
 
 	@include break-medium {
 		padding: 20px 32px;
@@ -21,8 +21,12 @@
 }
 
 .a4a-migration-offer-v2__side {
-	display: none;
 	height: 48px;
+}
+
+.a4a-migration-offer-v2__side,
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle {
+	display: none;
 
 	@include break-medium {
 		display: block;
@@ -35,7 +39,6 @@
 }
 
 .a4a-migration-offer-v2__main {
-	display: flex;
 	flex-direction: column;
 	gap: 8px;
 	flex-grow: 1;
@@ -43,13 +46,18 @@
 
 .a4a-migration-offer-v2__title {
 	@include a4a-font-heading-md;
-	margin-block-start: 10px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+
+	margin-block-end: 0;
 
 	@include break-medium {
 		@include a4a-font-heading-lg;
+		margin-block-start: 10px;
 	}
 }
-
 
 .a4a-migration-offer-v2__body {
 	display: flex;
@@ -88,10 +96,16 @@
 	@include a4a-font-body-md;
 }
 
-.theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle {
-	position: absolute;
-	inset-inline-end: 24px;
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle-mobile {
+	display: block;
 
+	@include break-medium {
+		display: none;
+	}
+}
+
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle,
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle-mobile {
 	&,
 	&:hover,
 	&:focus,
@@ -107,12 +121,11 @@
 	svg {
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
-
-	@include break-medium {
-		position: relative;
-	}
 }
 
-.a4a-migration-offer-v2.is-expanded .components-button.a4a-migration-offer-v2__view-toggle svg {
-	transform: rotate(180deg);
+.a4a-migration-offer-v2.is-expanded {
+	.components-button.a4a-migration-offer-v2__view-toggle svg,
+	.components-button.a4a-migration-offer-v2__view-toggle-mobile svg {
+		transform: rotate(180deg);
+	}
 }
