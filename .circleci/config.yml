@@ -307,12 +307,16 @@ jobs:
             rm -rf desktop/release/linux-unpacked
             rm -rf desktop/release/.icon-set
             rm desktop/release/builder-debug.yml
+            cp /tmp/*/build.log /tmp/build_log
       - store_artifacts:
           when: always
           path: desktop/release
       - store_artifacts:
           when: always
           path: desktop/test/e2e/results/
+      - store_artifacts:
+          when: always
+          path: /tmp/build_log
       - persist_to_workspace:
           root: ~/wp-calypso
           paths:
