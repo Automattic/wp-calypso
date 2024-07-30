@@ -71,6 +71,7 @@
 		"jetpack/ai-assistant-request-limit": true,
 		"jetpack/ai-logo-generator": true,
 		"jetpack/api-cache": true,
+		"jetpack/backup-restore-preflight-checks": true,
 		"jetpack/backup-retention-settings": true,
 		"jetpack/cancel-through-main-flow": true,
 		"jetpack/concierge-sessions": false,

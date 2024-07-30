@@ -48,6 +48,7 @@
 		"importers/substack": true,
 		"individual-subscriber-stats": false,
 		"jetpack/agency-dashboard": true,
+		"jetpack/backup-restore-preflight-checks": true,
 		"jetpack/backup-retention-settings": true,
 		"jetpack/cancel-through-main-flow": true,
 		"jetpack/concierge-sessions": false,
