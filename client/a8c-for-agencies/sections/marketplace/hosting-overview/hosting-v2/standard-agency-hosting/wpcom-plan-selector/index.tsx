@@ -50,7 +50,7 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 	const quantity = referralMode ? 1 : ( selectedTier.value as number ) - ownedPlans;
 	const discount = referralMode ? options[ 0 ].discount : selectedTier.discount;
 
-	const originalPrice = Number( plan.amount ) * quantity;
+	const originalPrice = Number( plan?.amount ?? 0 ) * quantity;
 	const actualPrice = originalPrice - originalPrice * discount;
 
 	const { name: planName } = useWPCOMPlanDescription( plan?.slug ?? '' );
