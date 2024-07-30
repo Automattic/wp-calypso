@@ -340,18 +340,6 @@ function getConfig( {
 		weight: 0,
 	};
 
-	importerConfig.substack = {
-		engine: 'substack',
-		key: 'importer-type-substack',
-		type: 'url',
-		priority: 'secondary',
-		title: 'Substack',
-		icon: 'substack',
-		description: '',
-		uploadDescription: '',
-		weight: 0,
-	};
-
 	importerConfig.tumblr = {
 		engine: 'tumblr',
 		key: 'importer-type-tumblr',

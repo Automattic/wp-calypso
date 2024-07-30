@@ -3,17 +3,24 @@ import { layout, blockMeta, shuffle, help, keyboardReturn, tip } from '@wordpres
 import { useTranslate } from 'i18n-calypso';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
 import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
+import PressableOverviewPlanSelection from '../../../pressable-overview/plan-selection';
 import CommonHostingBenefits from '../common-hosting-benefits';
 
-export default function PremierAgencyHosting() {
+type Props = {
+	onAddToCart: ( plan: APIProductFamilyProduct ) => void;
+};
+
+export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 
 	return (
 		<div>
+			<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
 				heading={ translate( "Supercharge your clients' sites" ) }

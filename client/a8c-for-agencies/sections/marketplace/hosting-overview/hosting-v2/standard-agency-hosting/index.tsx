@@ -3,18 +3,29 @@ import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpres
 import { useTranslate } from 'i18n-calypso';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.png';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
 import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import CommonHostingBenefits from '../common-hosting-benefits';
+import WPCOMPlanSelector from './wpcom-plan-selector';
 
-export default function StandardAgencyHosting() {
+import './style.scss';
+
+type Props = {
+	onAddToCart: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+};
+
+export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 
 	return (
-		<div>
-			{ /* Sample Hosting sections */ }
+		<div className="standard-agency-hosting">
+			<section className="standard-agency-hosting__plan-selector-container">
+				<WPCOMPlanSelector onSelect={ onAddToCart } />
+			</section>
+
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
 				heading={ translate( 'Supercharge your clients’ sites' ) }
