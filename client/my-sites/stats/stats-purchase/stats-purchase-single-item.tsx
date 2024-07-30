@@ -167,6 +167,7 @@ const StatsCommercialPurchase = ( {
 		<>
 			<p>{ translate( 'Pick your Stats tier below:' ) }</p>
 			<StatsCommercialUpgradeSlider
+				tiers={ tiers }
 				currencyCode={ currencyCode }
 				analyticsEventName={ `${
 					isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
