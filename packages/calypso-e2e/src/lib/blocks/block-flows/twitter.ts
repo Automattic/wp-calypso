@@ -29,8 +29,7 @@ export class TwitterBlockFlow implements BlockFlow {
 		this.configurationData = configurationData;
 	}
 
-	// @todo Change to "YouTube Embed" once Gutenberg v18.9.0 is deployed everywhere.
-	blockSidebarName = /(Twitter Embed|Twitter)/;
+	blockSidebarName = 'Twitter';
 	blockEditorSelector = blockParentSelector;
 
 	/**
