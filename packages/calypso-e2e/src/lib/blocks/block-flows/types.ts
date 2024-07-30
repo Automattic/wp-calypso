@@ -5,7 +5,7 @@ import { EditorPage } from '../../pages';
  * An interface for block-based flows to enable iterating the same smoke test cases for a set of blocks.
  */
 export interface BlockFlow {
-	blockSidebarName: string | RegExp;
+	blockSidebarName: string;
 	blockTestName?: string;
 	blockEditorSelector: string;
 	configure?( context: EditorContext ): Promise< void >;

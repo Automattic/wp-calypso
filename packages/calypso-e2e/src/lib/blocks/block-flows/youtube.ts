@@ -28,8 +28,8 @@ export class YouTubeBlockFlow implements BlockFlow {
 		this.configurationData = configurationData;
 	}
 
-	// @todo Change to "YouTube Embed" once Gutenberg v18.9.0 is deployed everywhere.
-	blockSidebarName = /(YouTube Embed|YouTube)/;
+	blockSidebarName = 'YouTube';
+
 	blockEditorSelector = blockParentSelector;
 
 	/**
