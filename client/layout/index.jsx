@@ -328,6 +328,7 @@ class Layout extends Component {
 				isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
 				isCheckoutFailed={ isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
+				isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
 			/>
 		);
 	}

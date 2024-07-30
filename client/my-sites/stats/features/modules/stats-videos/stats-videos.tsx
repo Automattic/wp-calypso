@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { video } from '@wordpress/icons';
@@ -13,7 +14,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { SUPPORT_URL, JETPACK_SUPPORT_VIDEOPRESS_URL_STATS } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionVideo } from '../shared';
@@ -25,10 +26,15 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
 }: StatsDefaultModuleProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsVideoPlays';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats
+		? JETPACK_SUPPORT_VIDEOPRESS_URL_STATS
+		: `${ SUPPORT_URL }#videos`;
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
@@ -62,7 +68,7 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />,
+										link: <a href={ localizeUrl( supportUrl ) } />,
 									},
 									context:
 										'Stats: Header popover with information when the Videos module has data.',
@@ -92,13 +98,21 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#videos` ) } />,
+										link: <a href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Videos module is empty',
 								}
 							) }
 							cards={ <StatsEmptyActionVideo from="module_videos" /> }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

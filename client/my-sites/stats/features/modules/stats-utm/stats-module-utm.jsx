@@ -10,7 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL } from '../../../const';
+import { JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import useUTMMetricsQuery from '../../../hooks/use-utm-metrics-query';
 import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -65,6 +65,7 @@ const StatsModuleUTM = ( {
 	isLoading,
 	query,
 	postId,
+	summaryUrl,
 } ) => {
 	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
 	const siteId = useSelector( getSelectedSiteId );
@@ -135,7 +136,7 @@ const StatsModuleUTM = ( {
 						link: (
 							<a
 								href={ localizeUrl(
-									`${ JETPACK_SUPPORT_URL }#harnessing-utm-stats-for-precision-tracking`
+									`${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking`
 								) }
 							/>
 						),
@@ -161,7 +162,7 @@ const StatsModuleUTM = ( {
 					{ ! showLoader &&
 						! data?.length && ( // no data and new empty state enabled
 							<StatsCard
-								className={ className }
+								className={ clsx( 'stats-card--empty-variant', className ) }
 								title={ moduleStrings.title }
 								titleNodes={ <StatsInfoArea isNew /> }
 								isEmpty
@@ -176,7 +177,7 @@ const StatsModuleUTM = ( {
 													link: (
 														<a
 															href={ localizeUrl(
-																`${ JETPACK_SUPPORT_URL }#harnessing-utm-stats-for-precision-tracking`
+																`${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking`
 															) }
 														/>
 													),
@@ -186,6 +187,14 @@ const StatsModuleUTM = ( {
 										) }
 										cards={ <UTMBuilder trigger={ <StatsEmptyActionUTMBuilder /> } /> }
 									/>
+								}
+								footerAction={
+									summaryUrl
+										? {
+												url: summaryUrl,
+												label: translate( 'View more' ),
+										  }
+										: undefined
 								}
 							/>
 						) }

@@ -1,0 +1,26 @@
+@import "calypso/my-sites/stats/modernized-stats-table-styles.scss";
+
+// TODO: Consolidate the overlay styles back into the highlight card component.
+.highlight-card {
+	&.highlight-card--has-overlay {
+		.highlight-card-content {
+			filter: blur(10px);
+		}
+	}
+
+	.stats-card-upsell {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+	}
+}
+
+.highlight-card-heading__title {
+	display: flex;
+	align-items: center;
+	vertical-align: middle;
+	gap: 8px;
+}

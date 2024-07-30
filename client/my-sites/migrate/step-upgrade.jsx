@@ -175,10 +175,10 @@ const WrappedStepUpgrade = ( props ) => {
 			{ ...props }
 			isEcommerceTrial={ isEcommerceTrial }
 			billingTimeFrame={ plan.getBillingTimeFrame() }
-			currencyCode={ pricingMeta[ planSlug ]?.currencyCode }
+			currencyCode={ pricingMeta?.[ planSlug ]?.currencyCode }
 			planPrice={
-				pricingMeta[ planSlug ]?.discountedPrice?.monthly ??
-				pricingMeta[ planSlug ]?.originalPrice?.monthly
+				pricingMeta?.[ planSlug ]?.discountedPrice?.monthly ??
+				pricingMeta?.[ planSlug ]?.originalPrice?.monthly
 			}
 		/>
 	);

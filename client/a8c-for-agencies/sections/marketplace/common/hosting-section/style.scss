@@ -1,0 +1,43 @@
+.hosting-section-wrapper {
+	margin-inline: 0;
+	background-repeat: no-repeat;
+	background-position: top right;
+	padding: 80px 0;
+
+	> * {
+		padding-inline: 0;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			max-width: 1500px;
+			margin-inline: auto !important;
+			padding-inline: 40px;
+		}
+	}
+}
+
+.hosting-section__sub-header {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+}
+
+.hosting-section__sub-header-title {
+	@include a4a-font-body-md;
+}
+
+
+.hosting-section__header {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-block-end: 32px;
+}
+
+.hosting-section__header-title {
+	@include a4a-font-heading-xxl;
+}
+
+.hosting-section__header-description {
+	@include a4a-font-body-lg;
+	margin: 0;
+}

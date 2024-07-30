@@ -7,6 +7,7 @@ import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { removeNotice } from 'calypso/state/notices/actions';
+import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SitesDashboard from './components/sites-dashboard';
 import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
@@ -21,10 +22,14 @@ function getQueryParams( context: Context ) {
 		perPage: context.query[ 'per-page' ] ? parseInt( context.query[ 'per-page' ] ) : undefined,
 		search: context.query.search,
 		status: context.query.status,
+		siteType: context.query.siteType,
 	};
 }
 
 export function sanitizeQueryParameters( context: PageJSContext, next: () => void ) {
+	if ( context.pathname.startsWith( '/p2s' ) ) {
+		context.query.siteType = 'p2';
+	}
 	/**
 	 * We need a base case because `page.replace` triggers a re-render for every middleware
 	 * in the route.
@@ -118,6 +123,9 @@ export function sitesDashboard( context: Context, next: () => void ) {
 			<SitesDashboard queryParams={ getQueryParams( context ) } />
 		</>
 	);
+
+	// By definition, Sites Dashboard does not select any one specific site
+	context.store.dispatch( setAllSitesSelected() );
 
 	next();
 }

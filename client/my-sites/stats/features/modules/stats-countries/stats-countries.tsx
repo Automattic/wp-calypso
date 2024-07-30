@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { mapMarker } from '@wordpress/icons';
@@ -13,7 +14,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import Geochart from '../../../geochart';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
@@ -24,10 +25,13 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsCountryViews';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -62,7 +66,7 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 							{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
 								comment: '{{link}} links to support documentation.',
 								components: {
-									link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
+									link: <a href={ localizeUrl( `${ supportUrl }#countries` ) } />,
 								},
 								context: 'Stats: Link in a popover for Countries module when the module has data',
 							} ) }
@@ -93,12 +97,20 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#countries` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#countries` ) } />,
 									},
 									context: 'Stats: Info box label when the Countries module is empty',
 								}
 							) }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

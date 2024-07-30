@@ -27,9 +27,10 @@ type PendingSite = { features: { wpcom_atomic: { state: string; license_key: str
 type Props = {
 	onWPCOMImport?: ( blogIds: number[] ) => void;
 	showMainButtonLabel: boolean;
+	devSite?: boolean;
 };
 
-export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport }: Props ) {
+export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport, devSite }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -93,6 +94,126 @@ export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport }
 
 	const hasPendingWPCOMSites = allAvailableSites.length > 0;
 
+	// TODO: Replace with actual available dev sites count logic, similar to allAvailableSites above
+	const availableDevSites = [ 'site1', 'site2', 'site3' ];
+	const hasAvailableDevSites = allAvailableSites.length > 0;
+
+	const mainButtonLabel = devSite
+		? translate( 'Start developing for free' )
+		: translate( 'Add sites' );
+
+	const newSitePopoverContent = (
+		<div className="site-selector-and-importer__popover-content">
+			<div className="site-selector-and-importer__popover-column">
+				<div className="site-selector-and-importer__popover-column-heading">
+					{ translate( 'Add existing sites' ).toUpperCase() }
+				</div>
+				{ menuItem( {
+					icon: <WordPressLogo />,
+					heading: translate( 'Via WordPress.com' ),
+					description: translate( 'Add sites bought on{{nbsp/}}WordPress.com', {
+						components: { nbsp: <>&nbsp;</> },
+						comment: 'nbsp is a non-breaking space character',
+					} ),
+					buttonProps: {
+						onClick: handleImportFromWPCOM,
+					},
+				} ) }
+				{ menuItem( {
+					icon: <A4ALogo />,
+					heading: translate( 'Via the Automattic plugin' ),
+					description: translate( 'Connect with the Automattic for Agencies{{nbsp/}}plugin', {
+						components: { nbsp: <>&nbsp;</> },
+						comment: 'nbsp is a non-breaking space character',
+					} ),
+					buttonProps: {
+						onClick: () => {
+							setShowA4AConnectionModal( true );
+							setMenuVisible( false );
+						},
+					},
+				} ) }
+				{ menuItem( {
+					icon: <JetpackLogo />,
+					heading: translate( 'Via Jetpack' ),
+					description: translate( 'Import one or more Jetpack connected sites' ),
+					buttonProps: {
+						onClick: () => {
+							setShowJetpackConnectionModal( true );
+							setMenuVisible( false );
+						},
+					},
+				} ) }
+			</div>
+			<div className="site-selector-and-importer__popover-column">
+				<div className="site-selector-and-importer__popover-column-heading">
+					{ translate( 'Add a new site' ).toUpperCase() }
+				</div>
+				{ menuItem( {
+					icon: <WordPressLogo />,
+					heading: translate( 'WordPress.com' ),
+					description: translate( 'Optimized and hassle-free hosting for business websites' ),
+					buttonProps: {
+						href: hasPendingWPCOMSites
+							? A4A_SITES_LINK_NEEDS_SETUP
+							: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+					},
+					extraContent: hasPendingWPCOMSites ? (
+						<div className="site-selector-and-importer__popover-site-count">
+							{ translate( '%(pendingSites)d site available', '%(pendingSites)d sites available', {
+								args: {
+									pendingSites: allAvailableSites.length,
+								},
+								count: allAvailableSites.length,
+								comment: '%(pendingSites)s is the number of sites available.',
+							} ) }
+						</div>
+					) : undefined,
+				} ) }
+				{ menuItem( {
+					icon: <img src={ pressableIcon } alt="" />,
+					heading: translate( 'Pressable' ),
+					description: translate( 'Best for large-scale businesses and major eCommerce sites' ),
+					buttonProps: {
+						href:
+							pressableOwnership === 'regular'
+								? 'https://my.pressable.com/agency/auth'
+								: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+						target: pressableOwnership === 'regular' ? '_blank' : '_self',
+					},
+				} ) }
+			</div>
+		</div>
+	);
+
+	const newDevSitePopoverContent = (
+		<div className="site-selector-and-importer__popover-content">
+			<div className="site-selector-and-importer__popover-column">
+				<div className="site-selector-and-importer__popover-column-heading">
+					{ translate( 'Add a new development site' ).toUpperCase() }
+				</div>
+				{ menuItem( {
+					icon: <WordPressLogo />,
+					heading: translate( 'WordPress.com' ),
+					description: translate( 'Create a site and try our hosting features for free' ),
+					extraContent: hasAvailableDevSites ? (
+						<div className="site-selector-and-importer__popover-site-count">
+							{ translate( '%(pendingSites)d site available', '%(pendingSites)d sites available', {
+								args: {
+									pendingSites: availableDevSites.length,
+								},
+								count: availableDevSites.length,
+								comment: '%(pendingSites)s is the number of sites available.',
+							} ) }
+						</div>
+					) : undefined,
+				} ) }
+			</div>
+		</div>
+	);
+
+	const popoverContent = devSite ? newDevSitePopoverContent : newSitePopoverContent;
+
 	return (
 		<>
 			<Button
@@ -100,14 +221,17 @@ export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport }
 				ref={ popoverMenuContext }
 				onClick={ toggleMenu }
 			>
-				{ showMainButtonLabel ? translate( 'Add sites' ) : null }
+				{ showMainButtonLabel ? mainButtonLabel : null }
 				<Gridicon
-					className={ clsx( { reverse: showMainButtonLabel && isMenuVisible } ) }
+					className={ clsx(
+						{ reverse: showMainButtonLabel && isMenuVisible },
+						{ mobile: ! showMainButtonLabel }
+					) }
 					icon={ showMainButtonLabel ? 'chevron-down' : 'plus' }
 				/>
 			</Button>
 			<Popover
-				className="site-selector-and-importer__popover"
+				className={ clsx( 'site-selector-and-importer__popover', { 'dev-site': devSite } ) }
 				context={ popoverMenuContext?.current }
 				isVisible={ isMenuVisible }
 				closeOnEsc
@@ -115,91 +239,7 @@ export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport }
 				autoPosition={ false }
 				position="bottom left"
 			>
-				<div className="site-selector-and-importer__popover-content">
-					<div className="site-selector-and-importer__popover-column">
-						<div className="site-selector-and-importer__popover-column-heading">
-							{ translate( 'Add existing sites' ).toUpperCase() }
-						</div>
-						{ menuItem( {
-							icon: <WordPressLogo />,
-							heading: translate( 'Via WordPress.com' ),
-							description: translate( 'Add sites bought on{{nbsp/}}WordPress.com', {
-								components: { nbsp: <>&nbsp;</> },
-								comment: 'nbsp is a non-breaking space character',
-							} ),
-							buttonProps: {
-								onClick: handleImportFromWPCOM,
-							},
-						} ) }
-						{ menuItem( {
-							icon: <A4ALogo />,
-							heading: translate( 'Via the Automattic plugin' ),
-							description: translate( 'Connect with the Automattic for Agencies{{nbsp/}}plugin', {
-								components: { nbsp: <>&nbsp;</> },
-								comment: 'nbsp is a non-breaking space character',
-							} ),
-							buttonProps: {
-								onClick: () => {
-									setShowA4AConnectionModal( true );
-									setMenuVisible( false );
-								},
-							},
-						} ) }
-						{ menuItem( {
-							icon: <JetpackLogo />,
-							heading: translate( 'Via Jetpack' ),
-							description: translate( 'Import one or more Jetpack connected sites' ),
-							buttonProps: {
-								onClick: () => {
-									setShowJetpackConnectionModal( true );
-									setMenuVisible( false );
-								},
-							},
-						} ) }
-					</div>
-					<div className="site-selector-and-importer__popover-column">
-						<div className="site-selector-and-importer__popover-column-heading">
-							{ translate( 'Add a new site' ).toUpperCase() }
-						</div>
-						{ menuItem( {
-							icon: <WordPressLogo />,
-							heading: translate( 'WordPress.com' ),
-							description: translate( 'Optimized and hassle-free hosting for business websites' ),
-							buttonProps: {
-								href: hasPendingWPCOMSites
-									? A4A_SITES_LINK_NEEDS_SETUP
-									: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
-							},
-							extraContent: hasPendingWPCOMSites ? (
-								<div className="site-selector-and-importer__popover-site-count">
-									{ translate(
-										'%(pendingSites)d site available',
-										'%(pendingSites)d sites available',
-										{
-											args: {
-												pendingSites: allAvailableSites.length,
-											},
-											count: allAvailableSites.length,
-											comment: '%(pendingSites)s is the number of sites available.',
-										}
-									) }
-								</div>
-							) : undefined,
-						} ) }
-						{ menuItem( {
-							icon: <img src={ pressableIcon } alt="" />,
-							heading: translate( 'Pressable' ),
-							description: translate( 'Best for large-scale businesses and major eCommerce sites' ),
-							buttonProps: {
-								href:
-									pressableOwnership === 'regular'
-										? 'https://my.pressable.com/agency/auth'
-										: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
-								target: pressableOwnership === 'regular' ? '_blank' : '_self',
-							},
-						} ) }
-					</div>
-				</div>
+				{ popoverContent }
 			</Popover>
 
 			{ showA4AConnectionModal && (

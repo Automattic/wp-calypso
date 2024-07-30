@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { megaphone } from '@wordpress/icons';
@@ -13,7 +14,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionSocial } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
@@ -24,10 +25,13 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsReferrers';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -63,7 +67,7 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#referrers` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#referrers` ) } />,
 									},
 									context: 'Stats: Link in a popover for the Referrers when the module has data',
 								}
@@ -93,13 +97,21 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#referrers` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#referrers` ) } />,
 									},
 									context: 'Stats: Info box label when the Referrers module is empty',
 								}
 							) }
 							cards={ <StatsEmptyActionSocial from="module_referrers" /> }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

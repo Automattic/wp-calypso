@@ -709,7 +709,8 @@ const Settings = ( {
 			! domain ||
 			domain.type !== domainTypes.REGISTERED ||
 			domain.isSubdomain ||
-			! domain.isDnssecSupported
+			! domain.isDnssecSupported ||
+			! domain.canManageDnsRecords
 		) {
 			return null;
 		}

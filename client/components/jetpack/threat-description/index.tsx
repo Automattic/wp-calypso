@@ -40,7 +40,6 @@ class ThreatDescription extends PureComponent< Props > {
 					return translate( 'How will we fix it?' );
 				}
 				return translate( 'How to resolve or handle this detection?' );
-
 				break;
 
 			default:

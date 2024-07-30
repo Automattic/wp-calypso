@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
-import { BellIcon } from 'calypso/layout/global-sidebar/menu-items/notifications/icon';
 import { setUnseenCount } from 'calypso/state/notifications/actions';
 import getUnseenCount from 'calypso/state/selectors/get-notification-unseen-count';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import MasterbarItem from '../item';
+import { BellIcon } from './notifications-bell-icon';
 
 import './notifications-style.scss';
 
@@ -94,13 +94,7 @@ class MasterbarItemNotifications extends Component {
 			<>
 				<MasterbarItem
 					url="/notifications"
-					icon={
-						<BellIcon
-							newItems={ this.state.newNote }
-							active={ this.props.isActive }
-							strokeWidth={ 1 }
-						/>
-					}
+					icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
 					onClick={ this.toggleNotesFrame }
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }

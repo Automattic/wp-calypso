@@ -4,6 +4,7 @@ import page from '@automattic/calypso-router';
 import { PromptIcon } from '@automattic/command-palette';
 import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Button as WPButton } from '@wordpress/components';
 import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -58,7 +59,6 @@ import {
 	getMostRecentlySelectedSiteId,
 	getSectionGroup,
 	getSectionName,
-	getSelectedSiteId,
 } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
@@ -67,6 +67,7 @@ import Notifications from './masterbar-notifications/notifications-button';
 
 const NEW_MASTERBAR_SHIPPING_DATE = new Date( 2022, 3, 14 ).getTime();
 const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu-popover';
+const ALL_SITES_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-all-sites-popover';
 
 const MOBILE_BREAKPOINT = '<480px';
 const IS_RESPONSIVE_MENU_BREAKPOINT = '<782px';
@@ -79,6 +80,7 @@ class MasterbarLoggedIn extends Component {
 		isResponsiveMenu: isWithinBreakpoint( IS_RESPONSIVE_MENU_BREAKPOINT ),
 		// making the ref a state triggers a re-render when it changes (needed for popover)
 		menuBtnRef: null,
+		allSitesBtnRef: null,
 	};
 
 	static propTypes = {
@@ -94,8 +96,10 @@ class MasterbarLoggedIn extends Component {
 		isCheckoutFailed: PropTypes.bool,
 		isInEditor: PropTypes.bool,
 		hasDismissedThePopover: PropTypes.bool,
+		hasDismissedAllSitesPopover: PropTypes.bool,
 		isUserNewerThanNewNavigation: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
+		isGlobalSidebarVisible: PropTypes.bool,
 	};
 
 	subscribeToViewPortChanges() {
@@ -144,20 +148,12 @@ class MasterbarLoggedIn extends Component {
 
 	handleToggleMobileMenu = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_menu_clicked' );
-		// this.handleLayoutFocus( 'sites' );
-		if ( 'sidebar' === this.props.currentLayoutFocus ) {
-			this.props.setNextLayoutFocus( 'content' );
-		} else {
-			this.props.setNextLayoutFocus( 'sidebar' );
-		}
+		this.handleLayoutFocus( this.props.section );
 		this.props.activateNextLayoutFocus();
 	};
 
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
-
-		this.handleLayoutFocus( 'sites' );
-		this.props.activateNextLayoutFocus();
 
 		/**
 		 * Site Migration: Reset a failed migration when clicking on My Sites
@@ -167,20 +163,20 @@ class MasterbarLoggedIn extends Component {
 		 *
 		 * This code makes it possible to reset the failed migration state when clicking My Sites too.
 		 */
-		const { migrationStatus, currentSelectedSiteId } = this.props;
+		const { migrationStatus, siteId } = this.props;
 
-		if ( currentSelectedSiteId && migrationStatus === 'error' ) {
+		if ( siteId && migrationStatus === 'error' ) {
 			/**
 			 * Reset the in-memory site lock for the currently selected site
 			 */
-			this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null, null );
+			this.props.updateSiteMigrationMeta( siteId, 'inactive', null, null );
 
 			/**
 			 * Reset the migration on the backend
 			 */
 			wpcom.req
 				.post( {
-					path: `/sites/${ currentSelectedSiteId }/reset-migration`,
+					path: `/sites/${ siteId }/reset-migration`,
 					apiNamespace: 'wpcom/v2',
 				} )
 				.catch( () => {} );
@@ -189,18 +185,15 @@ class MasterbarLoggedIn extends Component {
 
 	clickReader = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_reader_clicked' );
-		this.handleLayoutFocus( 'reader' );
 	};
 
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
 		window.scrollTo( 0, 0 );
-		this.handleLayoutFocus( 'me' );
 	};
 
 	clickSearchActions = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_search_actions_clicked' );
-		this.handleLayoutFocus( 'search-actions' );
 		this.setState( { isActionSearchVisible: true } );
 	};
 
@@ -281,8 +274,18 @@ class MasterbarLoggedIn extends Component {
 
 	// will render as back button on mobile and in editor
 	renderMySites() {
-		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
-		const { isMenuOpen } = this.state;
+		const {
+			domainOnlySite,
+			siteSlug,
+			translate,
+			section,
+			sectionGroup,
+			currentRoute,
+			isFetchingPrefs,
+			hasDismissedAllSitesPopover,
+			isGlobalSidebarVisible,
+		} = this.props;
+		const { isMenuOpen, allSitesBtnRef } = this.state;
 
 		const mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
@@ -291,20 +294,54 @@ class MasterbarLoggedIn extends Component {
 
 		if ( ! siteSlug && section === 'sites-dashboard' ) {
 			// we are the /sites page but there is no site. Disable the home link
-			return <Item icon={ icon } disabled />;
+			return <Item icon={ icon } className="masterbar__item-no-sites" disabled />;
 		}
 
 		return (
-			<Item
-				className="masterbar__item-my-sites"
-				url={ mySitesUrl }
-				tipTarget="my-sites"
-				icon={ icon }
-				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites-dashboard' ) && ! isMenuOpen }
-				tooltip={ translate( 'Manage your sites' ) }
-				preloadSection={ this.preloadMySites }
-			/>
+			<>
+				<Item
+					className="masterbar__item-my-sites"
+					url={ mySitesUrl }
+					tipTarget="my-sites"
+					icon={ icon }
+					onClick={ this.clickMySites }
+					isActive={ this.isActive( 'sites-dashboard' ) && ! isMenuOpen }
+					tooltip={ translate( 'Manage your sites' ) }
+					preloadSection={ this.preloadMySites }
+					ref={ ( ref ) => ref !== allSitesBtnRef && this.setState( { allSitesBtnRef: ref } ) }
+				/>
+				{ allSitesBtnRef && (
+					<Popover
+						className="masterbar__all-sites-popover"
+						isVisible={
+							sectionGroup === 'sites' &&
+							! isGlobalSidebarVisible &&
+							! isFetchingPrefs &&
+							! hasDismissedAllSitesPopover
+						}
+						context={ allSitesBtnRef }
+						position="bottom left"
+						showDelay={ 500 }
+						ignoreViewportSize
+					>
+						<h1 className="masterbar__all-sites-popover-heading">
+							{ translate( 'All your sites', {
+								comment: 'This is a popover title under the masterbar',
+							} ) }
+						</h1>
+						<p className="masterbar__all-sites-popover-description">
+							{ translate(
+								'Click on the WordPress.com logo to access your sites, domains, account settings, and more.'
+							) }
+						</p>
+						<div className="masterbar__all-sites-popover-actions">
+							<WPButton isPrimary onClick={ this.dismissLogoPopover }>
+								{ translate( 'Got it', { comment: 'Got it, as in OK' } ) }
+							</WPButton>
+						</div>
+					</Popover>
+				) }
+			</>
 		);
 	}
 
@@ -314,6 +351,10 @@ class MasterbarLoggedIn extends Component {
 
 	dismissPopover = () => {
 		this.props.savePreference( MENU_POPOVER_PREFERENCE_KEY, true );
+	};
+
+	dismissLogoPopover = () => {
+		this.props.savePreference( ALL_SITES_POPOVER_PREFERENCE_KEY, true );
 	};
 
 	renderCheckout() {
@@ -343,11 +384,19 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderSiteMenu() {
-		const { siteSlug, translate, siteTitle, siteUrl, isClassicView, siteAdminUrl, siteHomeUrl } =
-			this.props;
+		const {
+			siteSlug,
+			translate,
+			siteTitle,
+			siteUrl,
+			isClassicView,
+			siteAdminUrl,
+			siteHomeUrl,
+			domainOnlySite,
+		} = this.props;
 
-		// Only display when a site is selected.
-		if ( ! siteSlug ) {
+		// Only display when a site is selected and is not domain-only site.
+		if ( ! siteSlug || domainOnlySite ) {
 			return null;
 		}
 
@@ -385,11 +434,12 @@ class MasterbarLoggedIn extends Component {
 			domainOnlySite,
 			isMigrationInProgress,
 			isEcommerce,
+			hasNoSites,
 		} = this.props;
 
 		// Only display on site-specific pages.
 		// domainOnlySite's still get currentSelectedSiteSlug, removing this check would require changing checks below.
-		if ( domainOnlySite || isMigrationInProgress || isEcommerce ) {
+		if ( domainOnlySite || isMigrationInProgress || isEcommerce || hasNoSites ) {
 			return null;
 		}
 
@@ -509,7 +559,18 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="reader"
 				className="masterbar__reader"
 				url="/read"
-				icon="reader"
+				icon={
+					<svg
+						width="24"
+						height="11"
+						viewBox="0 0 24 11"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+						className="masterbar__menu-icon masterbar_svg-reader"
+					>
+						<path d="M22.8746 4.60676L22.8197 4.3575C22.3347 2.17436 20.276 0.584279 17.9245 0.584279C16.6527 0.584279 15.4358 1.03122 14.5116 1.84775C14.1914 2.13139 13.9443 2.44081 13.743 2.74163C13.1849 2.63849 12.6085 2.56114 12.032 2.56114H12.0046C11.419 2.56114 10.8425 2.64709 10.2753 2.75023C10.0648 2.44081 9.82691 2.13139 9.49752 1.83915C8.57338 1.01403 7.35646 0.575684 6.08463 0.575684C3.72398 0.584279 1.66527 2.17436 1.18033 4.3575L1.12543 4.60676H0V6.00775H1.12543L1.18033 6.257C1.63782 8.44014 3.69653 10.0302 6.07548 10.0302C8.83873 10.0302 11.0804 7.91585 11.0804 5.31155C11.0804 5.31155 11.0896 4.72709 10.8517 3.97072C11.236 3.91915 11.6203 3.87618 12.0046 3.87618C12.3706 3.87618 12.7549 3.91056 13.1483 3.96213C12.9012 4.72709 12.9195 5.31155 12.9195 5.31155C12.9195 7.91585 15.1613 10.0302 17.9245 10.0302C20.3035 10.0302 22.3622 8.44874 22.8197 6.257L22.8746 6.00775H24V4.60676H22.8746ZM6.07548 8.62923C4.13572 8.62923 2.5528 7.14229 2.5528 5.30295C2.5528 3.46362 4.13572 1.97667 6.07548 1.97667C8.01524 1.97667 9.59816 3.46362 9.59816 5.30295C9.59816 7.14229 8.01524 8.62923 6.07548 8.62923ZM17.9245 8.62923C15.9847 8.62923 14.4018 7.14229 14.4018 5.30295C14.4018 3.46362 15.9847 1.97667 17.9245 1.97667C19.8643 1.97667 21.4472 3.46362 21.4472 5.30295C21.4472 7.14229 19.8643 8.62923 17.9245 8.62923Z" />
+					</svg>
+				}
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader' ) }
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
@@ -716,12 +777,12 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderHelpCenter() {
-		const { currentSelectedSiteId, translate } = this.props;
+		const { siteId, translate } = this.props;
 
 		return (
 			<AsyncLoad
 				require="./masterbar-help-center"
-				siteId={ currentSelectedSiteId }
+				siteId={ siteId }
 				tooltip={ translate( 'Help' ) }
 				placeholder={ null }
 			/>
@@ -835,13 +896,10 @@ export default connect(
 
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
-		const currentSelectedSiteId = getSelectedSiteId( state );
-		const siteId =
-			currentSelectedSiteId || getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
+		const siteId = getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isMigrationInProgress =
-			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
-			isSiteMigrationActiveRoute( state );
+			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
 
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
 		const site = getSite( state, siteId );
@@ -864,18 +922,14 @@ export default connect(
 			isSupportSession: isSupportSession( state ),
 			isInEditor: getSectionName( state ) === 'gutenberg-editor',
 			isMigrationInProgress,
-			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
-			currentSelectedSiteId,
+			migrationStatus: getSiteMigrationStatus( state, siteId ),
 			isClassicView,
-			currentSelectedSiteSlug: currentSelectedSiteId
-				? getSiteSlug( state, currentSelectedSiteId )
-				: undefined,
+			currentSelectedSiteSlug: siteId ? getSiteSlug( state, siteId ) : undefined,
 			previousPath: getPreviousRoute( state ),
-			isJetpackNotAtomic:
-				isJetpackSite( state, currentSelectedSiteId ) &&
-				! isAtomicSite( state, currentSelectedSiteId ),
+			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
+			hasDismissedAllSitesPopover: getPreference( state, ALL_SITES_POPOVER_PREFERENCE_KEY ),
 			isFetchingPrefs: isFetchingPreferences( state ),
 			// If the user is newer than new navigation shipping date, don't tell them this nav is new. Everything is new to them.
 			isUserNewerThanNewNavigation:

@@ -18,7 +18,7 @@ const ArticleContent = ( {
 }: ArticleContentProps ) => {
 	const post = { title, link };
 	return (
-		<article className="help-center-article-content__story">
+		<article className="help-center-article-content">
 			{ isLoading || ! post ? (
 				<Placeholders lines={ 8 } />
 			) : (
@@ -26,7 +26,7 @@ const ArticleContent = ( {
 					<SupportArticleHeader post={ post } isLoading={ false } />
 					<EmbedContainer>
 						<div
-							className="help-center-article-content__story-content"
+							className="help-center-article-content__main"
 							// eslint-disable-next-line react/no-danger
 							dangerouslySetInnerHTML={ { __html: content } }
 						/>
