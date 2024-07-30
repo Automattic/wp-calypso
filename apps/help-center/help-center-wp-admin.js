@@ -13,6 +13,10 @@ function AdminHelpCenterContent() {
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const button = document.getElementById( 'wp-admin-bar-help-center' );
+	const child = button.querySelector( '.ab-item' );
+	if ( child ) {
+		child.classList.add( 'ab-icon' );
+	}
 
 	useEffect( () => {
 		if ( show ) {
