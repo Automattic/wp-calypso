@@ -32,11 +32,6 @@ const siteMigration: Flow = {
 	isSignupFlow: false,
 
 	useSteps() {
-		// We'll assume the user has no sites until we know otherwise.
-		const siteCount = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count ?? 0,
-			[]
-		);
 		const baseSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
@@ -50,9 +45,8 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_SOURCE_URL,
 		];
 
-		const maybeSitePickerStep = siteCount > 0 ? [ STEPS.PICK_SITE ] : [];
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
-			? maybeSitePickerStep.concat( [ STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ] )
+			? [ STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
 			: [];
 
 		return stepsWithRequiredLogin( [ ...baseSteps, ...hostedVariantSteps ] );

@@ -7,6 +7,7 @@ import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	GroupableSiteLaunchStatuses,
 } from '@automattic/sites';
+import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { defer } from 'lodash';
@@ -15,10 +16,12 @@ import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import DocumentHead from 'calypso/components/data/document-head';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SitesDashboardQueryParams } from 'calypso/sites-dashboard/components/sites-content-controls';
 import SitePicker from './site-picker';
 import type { Step } from '../../types';
+import type { UserSelect } from '@automattic/data-stores';
 import type { SiteExcerptData } from '@automattic/sites';
 
 import './styles.scss';
@@ -35,8 +38,20 @@ const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 	const [ destinationSite, setDestinationSite ] = useState< SiteExcerptData >();
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const [ , setMigrationConfirmed ] = useMigrationConfirmation();
+	const siteCount = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count ?? 0,
+		[]
+	);
 
 	useEffect( () => setMigrationConfirmed( false ), [] );
+
+	useEffect( () => {
+		// If the user has no sites, we should skip the site picker and go straight to the site creation step
+		if ( siteCount === 0 ) {
+			navigation.submit?.( { action: 'create-site' } );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ siteCount ] );
 
 	const onQueryParamChange = ( params: Partial< SitesDashboardQueryParams > ) => {
 		recordTracksEvent( 'calypso_import_site_picker_query_param_change', params );
