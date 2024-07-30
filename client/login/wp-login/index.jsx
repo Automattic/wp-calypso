@@ -305,8 +305,10 @@ export class Login extends Component {
 		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
 			return null;
 		}
-
-		if ( isReactLostPasswordScreenEnabled() && ( this.props.isWoo || this.props.isBlazePro ) ) {
+		if (
+			isReactLostPasswordScreenEnabled() &&
+			( this.props.isWoo || this.props.isBlazePro || this.props.isWooCoreProfilerFlow )
+		) {
 			return (
 				<a
 					className="login__lost-password-link"
