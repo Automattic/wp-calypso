@@ -91,6 +91,16 @@ export class EditorSidebarBlockInserterComponent {
 				.locator( `.block-editor-inserter__block-list,.block-editor-block-types-list` )
 				.getByRole( 'option', { name, exact: true } )
 				.first();
+
+			const isExactMatchVisible = await locator.isVisible();
+
+			// If exact match is not found, use non-exact match
+			if ( ! isExactMatchVisible ) {
+				locator = editorParent
+					.locator( `.block-editor-inserter__block-list,.block-editor-block-types-list` )
+					.getByRole( 'option', { name, exact: false } )
+					.first();
+			}
 		}
 
 		await Promise.all( [ locator.hover(), locator.focus() ] );
