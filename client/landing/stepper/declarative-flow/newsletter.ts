@@ -17,6 +17,7 @@ import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
@@ -94,6 +95,8 @@ const newsletter: Flow = {
 		triggerGuidesForStep( flowName, _currentStep );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+
 			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
@@ -172,7 +175,6 @@ const newsletter: Flow = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
-	use__Temporary__ShouldTrackEvent: ( event ) => 'submit' === event,
 };
 
 export default newsletter;
