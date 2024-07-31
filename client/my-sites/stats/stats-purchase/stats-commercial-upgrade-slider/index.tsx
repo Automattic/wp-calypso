@@ -139,6 +139,7 @@ function StatsCommercialUpgradeSlider( {
 		const firstStepQuantity = getTierQuantity( tiers[ 0 ] );
 		onSliderChange( firstStepQuantity as number );
 	}, [ JSON.stringify( tiers ), onSliderChange ] );
+	// TODO: Investigate if we can remove the JSON.stringify() call above.
 
 	return (
 		<TierUpgradeSlider
