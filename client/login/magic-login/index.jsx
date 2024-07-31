@@ -124,7 +124,7 @@ class MagicLogin extends Component {
 		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
 			this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
 				client_id: this.props.oauth2Client.id,
-				client_name: this.props.oauth2Client.name,
+				client_name: this.props.oauth2Client.title,
 			} );
 		}
 	}
@@ -158,7 +158,7 @@ class MagicLogin extends Component {
 				}
 			}
 
-			const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
+			const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.title };
 
 			if (
 				( prevProps.showCheckYourEmail && ! showCheckYourEmail ) ||
@@ -332,7 +332,7 @@ class MagicLogin extends Component {
 		const { isSecondaryEmail, isNewAccount } = this.state;
 		const noticeId = 'email-code-notice';
 		const duration = 4000;
-		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
+		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.title };
 
 		this.setState( { isRequestingEmail: true } );
 
@@ -354,7 +354,7 @@ class MagicLogin extends Component {
 					lang_id: getLanguage( locale ).value,
 					email,
 					redirect_to: query?.redirect_to,
-					flow: oauth2Client.name,
+					flow: oauth2Client.name ?? oauth2Client.source,
 					create_account: true,
 					tos: getToSAcceptancePayload(),
 					token_type: 'code',
@@ -399,7 +399,7 @@ class MagicLogin extends Component {
 		e.preventDefault();
 
 		const { translate, oauth2Client } = this.props;
-		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
+		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.title };
 
 		if ( ! emailValidator.validate( usernameOrEmail ) ) {
 			return this.setState( { requestEmailErrorMessage: translate( 'Invalid email.' ) } );
@@ -479,7 +479,7 @@ class MagicLogin extends Component {
 		this.props.fetchMagicLoginAuthenticate(
 			`${ publicToken }:${ btoa( verificationCodeInputValue ) }`,
 			query?.redirect_to,
-			oauth2Client.name
+			oauth2Client.name ?? oauth2Client.source
 		);
 	};
 
@@ -491,7 +491,7 @@ class MagicLogin extends Component {
 
 		this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_click_switch_email', {
 			client_id: oauth2Client.id,
-			client_name: oauth2Client.name,
+			client_name: oauth2Client.title,
 		} );
 	};
 
@@ -589,7 +589,7 @@ class MagicLogin extends Component {
 			requestEmailErrorMessage,
 			hashedEmail,
 		} = this.state;
-		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.name };
+		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.title };
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party';
 
@@ -809,7 +809,7 @@ class MagicLogin extends Component {
 
 							this.props.recordTracksEvent(
 								'calypso_gravatar_powered_magic_login_click_resend_email',
-								{ type: 'code', client_id: oauth2Client.id, client_name: oauth2Client.name }
+								{ type: 'code', client_id: oauth2Client.id, client_name: oauth2Client.title }
 							);
 						} }
 						disabled={ isRequestingEmail || resendEmailCountdown }
@@ -858,13 +858,13 @@ class MagicLogin extends Component {
 								redirectTo: query?.redirect_to,
 								requestLoginEmailFormFlow: true,
 								createAccount: true,
-								flow: oauth2Client.name,
+								flow: oauth2Client.name ?? oauth2Client.source,
 								showGlobalNotices: true,
 							} );
 
 							this.props.recordTracksEvent(
 								'calypso_gravatar_powered_magic_login_click_resend_email',
-								{ type: 'link', client_id: oauth2Client.id, client_name: oauth2Client.name }
+								{ type: 'link', client_id: oauth2Client.id, client_name: oauth2Client.title }
 							);
 						} }
 						disabled={ isSendingEmail }
@@ -958,7 +958,7 @@ class MagicLogin extends Component {
 				<div className="grav-powered-magic-login__content">
 					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 					<RequestLoginEmailForm
-						flow={ oauth2Client.name }
+						flow={ oauth2Client.name ?? oauth2Client.source }
 						headerText={ headerText }
 						subHeaderText={
 							isGravatarFlow ? translate( 'Profiles and avatars are powered by Gravatar.' ) : ''
@@ -1095,7 +1095,7 @@ class MagicLogin extends Component {
 											onClick={ () =>
 												this.props.recordTracksEvent(
 													'calypso_gravatar_powered_magic_login_click_login_page_link',
-													{ client_id: oauth2Client.id, client_name: oauth2Client.name }
+													{ client_id: oauth2Client.id, client_name: oauth2Client.title }
 												)
 											}
 										/>
