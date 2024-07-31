@@ -52,9 +52,7 @@ export class TranslatorInvite extends Component {
 		return (
 			<>
 				<MaterialIcon icon="emoji_language" />
-				<h2 className="translator-invite__content notice-header">
-					{ translate( 'Translate WordPress.com' ) }
-				</h2>
+				<h2 className="translator-invite__heading">{ translate( 'Translate WordPress.com' ) }</h2>
 			</>
 		);
 	};
@@ -78,7 +76,7 @@ export class TranslatorInvite extends Component {
 			}
 		);
 
-		return <div className="translator-invite__content notice-description">{ noticeText }</div>;
+		return <div className="translator-invite__content">{ noticeText }</div>;
 	}
 
 	render() {
