@@ -223,9 +223,9 @@ function getConfig( {
 			</>
 		),
 		optionalUrl: {
-			title: translate( 'Substack Newsletter URL' ),
+			title: translate( 'Substack URL' ),
 			description: translate(
-				'Recommended: A Substack Newsletter URL to import comments and author information.'
+				'Recommended: Include the Substack URL to import comments and author information.'
 			),
 			invalidDescription: translate( 'Enter a valid Substack Newsletter URL (%(exampleUrl)s).', {
 				args: { exampleUrl: 'https://example-newsletter.substack.com/' },
