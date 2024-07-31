@@ -41,7 +41,7 @@ describe( 'TranslatorInvite', () => {
 		renderWithProvider( <TranslatorInvite { ...defaultProps } locale="tl" /> );
 		expect(
 			screen.getByText(
-				'Would you like to help us translate WordPress.com into {{a}}%(language)s{{/a}}?'
+				'%(languageName)s is only %(percentTranslated)d%% translated. Help translate WordPress into your language.'
 			)
 		).toBeVisible();
 	} );

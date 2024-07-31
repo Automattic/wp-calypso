@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { MaterialIcon } from '@automattic/components';
 import languages from '@automattic/languages';
 import { localize } from 'i18n-calypso';
@@ -31,32 +32,6 @@ export class TranslatorInvite extends Component {
 			location: this.props.path,
 		} );
 
-	renderLearnMoreLink = () => {
-		const { translate } = this.props;
-		return (
-			<a
-				className="translator-invite__link is-link"
-				href="https://translate.wordpress.com/faq/"
-				target="_blank"
-				rel="noopener noreferrer"
-				onClick={ this.recordClick }
-			>
-				{ translate( 'Learn more' ) }
-			</a>
-		);
-	};
-
-	renderIconAndHeader = () => {
-		const { translate } = this.props;
-
-		return (
-			<>
-				<MaterialIcon className="translator-invite__icon" icon="emoji_language" />
-				<h2 className="translator-invite__heading">{ translate( 'Translate WordPress.com' ) }</h2>
-			</>
-		);
-	};
-
 	renderNoticeLabelText() {
 		const { locale, localizedLanguageNames, translate } = this.props;
 
@@ -80,20 +55,37 @@ export class TranslatorInvite extends Component {
 	}
 
 	render() {
-		const { locale } = this.props;
-		const currentLanguage = languages.find( ( language ) => language.langSlug === locale );
-		const percentTranslated = currentLanguage?.calypsoPercentTranslated || 0;
-
-		// 85% is the threshold for hiding the translator invite
-		if ( percentTranslated >= 85 ) {
+		const { locale, translate } = this.props;
+		if ( config( 'i18n_default_locale_slug' ) === locale ) {
 			return null;
 		}
 
+		const currentLanguage = languages.find( ( language ) => language.langSlug === locale );
+		const isTranslatedIncompletely = currentLanguage?.isTranslatedIncompletely;
+
 		return (
 			<div className="translator-invite">
-				{ this.renderIconAndHeader() }
-				{ this.renderNoticeLabelText() }
-				{ this.renderLearnMoreLink() }
+				{ isTranslatedIncompletely && (
+					<>
+						<MaterialIcon className="translator-invite__icon" icon="emoji_language" />
+
+						<h2 className="translator-invite__heading">
+							{ translate( 'Translate WordPress.com' ) }
+						</h2>
+
+						{ this.renderNoticeLabelText() }
+
+						<a
+							className="translator-invite__link is-link"
+							href="https://translate.wordpress.com/faq/"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ this.recordClick }
+						>
+							{ translate( 'Learn more' ) }
+						</a>
+					</>
+				) }
 				<QueryLanguageNames />
 			</div>
 		);
