@@ -225,7 +225,16 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 				) }
 				{ message.type === 'introduction' && (
 					<div className="odie-introduction-message-content">
-						<div className="odie-chatbox-introduction-message">{ message.content }</div>
+						<div className="odie-chatbox-introduction-message">
+							<Markdown
+								urlTransform={ uriTransformer }
+								components={ {
+									a: CustomALink,
+								} }
+							>
+								{ message.content }
+							</Markdown>
+						</div>
 					</div>
 				) }
 				{ message.type === 'dislike-feedback' && (

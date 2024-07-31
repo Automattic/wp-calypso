@@ -8,15 +8,21 @@ import {
 	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { AddOns, Plans } from '@automattic/data-stores';
+import { AddOns, Member, Plans, Site } from '@automattic/data-stores';
+import { useSitePurchaseById } from '@automattic/data-stores/src/purchases';
+import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, type LocalizeProps } from 'i18n-calypso';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
+import { useSelector } from 'calypso/state';
+import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -102,24 +108,90 @@ function useUpgradeHandler( {
 	);
 }
 
+function getOdieInitialPromptForPlan( {
+	siteOwner,
+	translate,
+}: {
+	siteOwner: Member;
+	translate: LocalizeProps[ 'translate' ];
+} ) {
+	return `
+${ translate( "Hello, I am Wapuu, WordPress.com's AI assistant!" ) }
+
+${ translate(
+	"I noticed you're trying to upgrade your plan, but only the account owner can make these changes. The owner of this account is %(name)s (%(niceName)s).",
+	{
+		args: {
+			name: siteOwner.name,
+			niceName: siteOwner.nice_name,
+		},
+	}
+) }
+
+${ translate(
+	'If you need to upgrade, please reach out to %(name)s at %(email)s for help. They have the necessary permissions to make plan changes.',
+	{
+		args: {
+			name: siteOwner.name,
+			email: typeof siteOwner.email === 'string' ? siteOwner.email : '',
+		},
+	}
+) }
+
+${ translate(
+	'Is there anything else I can help you with regarding your account? Please get in touch with our support team.'
+) }
+			`;
+}
+
 function useDowngradeHandler( {
 	siteSlug,
+	siteId,
 	currentPlan,
 }: {
-	siteSlug: string | null | undefined;
+	siteSlug?: string | null;
+	siteId?: number | null;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
-	const { setShowHelpCenter, setNavigateToRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
+	const {
+		setShowHelpCenter,
+		setNavigateToRoute,
+		setOdieBotNameSlug,
+		setOdieInitialPromptText,
+		setMessage,
+	} = useDispatch( HELP_CENTER_STORE );
 	const translate = useTranslate();
+	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
+		siteId
+			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+			: null
+	);
+	const { url: stillNeedHelpUrl, isLoading: isStillNeedHelpUrlLoading } = useStillNeedHelpURL();
+	const sitePurchase = useSitePurchaseById( { siteId, purchaseId: currentPlan?.purchaseId } );
+	const siteOwnerId = sitePurchase?.userId;
+	const { data: siteOwner } = Site.useSiteUser( siteId, siteOwnerId );
+
 	return useCallback(
 		( planSlug: PlanSlug ) => {
-			// A downgrade to the free plan is essentially cancelling the current plan.
-			if ( isFreePlan( planSlug ) ) {
-				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
+			if ( ! siteSlug || ! currentPlan?.planSlug ) {
 				return;
 			}
 
-			if ( ! siteSlug ) {
+			if ( ! canUserManageCurrentPlan ) {
+				if ( isStillNeedHelpUrlLoading || ! siteOwner ) {
+					return;
+				}
+				//open help
+				setOdieBotNameSlug( 'wpcom-downgrade' );
+				setOdieInitialPromptText( getOdieInitialPromptForPlan( { translate, siteOwner } ) );
+				setInitialRoute( stillNeedHelpUrl );
+				setShowHelpCenter( true );
+				return;
+			}
+
+			// A downgrade to the free plan is essentially cancelling the current plan.
+			if ( isFreePlan( planSlug ) ) {
+				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
 				return;
 			}
 
@@ -133,11 +205,18 @@ function useDowngradeHandler( {
 			setShowHelpCenter( true );
 		},
 		[
+			canUserManageCurrentPlan,
+			currentPlan?.planSlug,
 			currentPlan?.purchaseId,
+			isStillNeedHelpUrlLoading,
 			setNavigateToRoute,
 			setMessage,
+			setOdieBotNameSlug,
+			setOdieInitialPromptText,
 			setShowHelpCenter,
+			siteOwner,
 			siteSlug,
+			stillNeedHelpUrl,
 			translate,
 		]
 	);
@@ -151,7 +230,7 @@ function useGenerateActionCallback( {
 	intent,
 	showModalAndExit,
 	sitePlanSlug,
-	siteSlug,
+	siteId,
 	withDiscount,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
@@ -161,16 +240,21 @@ function useGenerateActionCallback( {
 	intent?: PlansIntent | null;
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
 	sitePlanSlug?: PlanSlug | null;
-	siteSlug?: string | null;
+	siteId?: number | null;
 	withDiscount?: string;
 } ): UseActionCallback {
+	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
 	} );
 	const currentPlanManageHref = useCurrentPlanManageHref();
 	const handleUpgrade = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
-	const handleDowngradeClick = useDowngradeHandler( { siteSlug, currentPlan } );
+	const handleDowngradeClick = useDowngradeHandler( {
+		siteSlug,
+		currentPlan,
+		siteId,
+	} );
 
 	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) => {
 		return () => {
@@ -190,7 +274,6 @@ function useGenerateActionCallback( {
 					`${ vipLandingPageURL }/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=calypso_signup`,
 					'_blank'
 				);
-				return;
 			}
 
 			/* 2. In the logged-in plans dashboard, send user to either manage add-ons or manage plan in case of current plan selection */

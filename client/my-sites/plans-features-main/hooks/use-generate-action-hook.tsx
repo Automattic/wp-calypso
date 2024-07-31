@@ -22,7 +22,6 @@ import { useSelector } from 'calypso/state';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
 import useGenerateActionCallback from './use-generate-action-callback';
@@ -80,7 +79,7 @@ export default function useGenerateActionHook( {
 	const isPlanExpired = currentPlanExpiryDate
 		? currentPlanExpiryDate.getTime() < Date.now()
 		: false;
-	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
+
 	const sitePlanSlug = currentPlan?.planSlug;
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
@@ -99,7 +98,7 @@ export default function useGenerateActionHook( {
 		intent: plansIntent,
 		showModalAndExit,
 		sitePlanSlug,
-		siteSlug,
+		siteId,
 		withDiscount,
 	} );
 

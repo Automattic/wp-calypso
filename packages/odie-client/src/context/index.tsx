@@ -101,6 +101,7 @@ export const odieClientId = Math.random().toString( 36 ).substring( 2, 15 );
 type OdieAssistantProviderProps = {
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
+	odieInitialPromptText?: string;
 	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
 	isMinimized?: boolean;
@@ -118,6 +119,7 @@ type OdieAssistantProviderProps = {
 const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
 	botNameSlug = 'wpcom-support-chat',
+	odieInitialPromptText,
 	initialUserMessage,
 	isMinimized = false,
 	extraContactOptions,
@@ -143,7 +145,11 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
 
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
-	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId );
+	const existingChat = useLoadPreviousChat( {
+		botNameSlug,
+		chatId: existingChatId,
+		odieInitialPromptText,
+	} );
 
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const versionParams = urlSearchParams.get( 'version' );
@@ -174,11 +180,11 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		setOdieStorage( null );
 		setChat( {
 			chat_id: null,
-			messages: [ getOdieInitialMessage( botNameSlug ) ],
+			messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
 		} );
 		trackEvent( 'chat_cleared', {} );
 		broadcastChatClearance( odieClientId );
-	}, [ botNameSlug, trackEvent, setOdieStorage ] );
+	}, [ botNameSlug, odieInitialPromptText, trackEvent, setOdieStorage ] );
 
 	const setMessageLikedStatus = useCallback( ( message: Message, liked: boolean ) => {
 		setChat( ( prevChat ) => {

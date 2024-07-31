@@ -49,10 +49,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const shouldUseWapuu = useShouldUseWapuu();
-	const { isMinimized } = useSelect( ( select ) => {
+	const { isMinimized, odieInitialPromptText, odieBotNameSlug } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			isMinimized: store.getIsMinimized(),
+			odieInitialPromptText: store.getOdieInitialPromptText(),
+			odieBotNameSlug: store.getOdieBotNameSlug() || 'wpcom-support-chat',
 		};
 	}, [] );
 
@@ -135,8 +137,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 						path="/odie"
 						element={
 							<OdieAssistantProvider
-								botNameSlug="wpcom-support-chat"
+								botNameSlug={ odieBotNameSlug }
 								botName="Wapuu"
+								odieInitialPromptText={ odieInitialPromptText }
 								enabled={ shouldUseWapuu }
 								currentUser={ currentUser }
 								isMinimized={ isMinimized }
