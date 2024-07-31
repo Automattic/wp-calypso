@@ -216,19 +216,10 @@
 	}
 }
 
-.manage-purchase__refund-text-wrapper {
-	align-items: center;
-	display: flex;
-
-	.manage-purchase__refund-text {
-		display: block;
-		font-size: $font-body-extra-small;
-		font-weight: 400;
-	}
-
-	.info-popover {
-		margin: 1px 4px;
-	}
+.manage-purchase__refund-text {
+	display: block;
+	font-size: $font-body-extra-small;
+	font-weight: 400;
 }
 
 .manage-purchase__settings-link {

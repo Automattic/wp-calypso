@@ -65,8 +65,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedDate from 'calypso/components/formatted-date';
 import HeaderCake from 'calypso/components/header-cake';
-import InfoPopover from 'calypso/components/info-popover';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -655,36 +653,33 @@ class ManagePurchase extends Component<
 			lastRenewalDate.getTime() + purchase.refundPeriodInDays * ONE_DAY_IN_MILLISECONDS
 		);
 
-		return (
-			<div className="manage-purchase__refund-text-wrapper">
-				<span className="manage-purchase__refund-text">
-					{ translate( 'Eligible for a refund of %(refundAmount)s until {{refundDate/}}.', {
-						components: {
-							refundDate: <FormattedDate date={ refundPeriodEndDate } format="LL" />,
-						},
-						args: {
-							refundAmount: purchase.refundText,
-						},
-						context: 'refundAmount contains the currency and amount - eg. £20',
-					} ) }
-				</span>
-				<InfoPopover iconSize={ 16 } position="top left">
-					<span>
-						{ translate(
-							'The refund period for this purchase is %(refundPeriodInDays)s days. Questions? Check our {{link}}refund policy{{/link}}.',
-							{
-								components: {
-									link: <InlineSupportLink supportContext="refund-periods" showIcon={ false } />,
-								},
-								args: {
-									refundPeriodInDays: purchase.refundPeriodInDays,
-								},
-							}
-						) }
-					</span>
-				</InfoPopover>
-			</div>
-		);
+		// We use relative timing when the subscription expires that day for added clarity.
+		const today = new Date();
+		refundPeriodEndDate.setHours( 0, 0, 0, 0 );
+
+		today.setHours( 0, 0, 0, 0 );
+		refundPeriodEndDate.setHours( 0, 0, 0, 0 );
+
+		let refundText;
+
+		if ( today.getTime() === refundPeriodEndDate.getTime() ) {
+			refundText = translate( 'Refund window ends today', {
+				args: {
+					refundAmount: purchase.refundText,
+				},
+			} );
+		} else if ( today < refundPeriodEndDate ) {
+			refundText = translate( 'Refund available until {{refundDate/}}', {
+				components: {
+					refundDate: <FormattedDate date={ refundPeriodEndDate } format="LL" />,
+				},
+				args: {
+					refundAmount: purchase.refundText,
+				},
+			} );
+		}
+
+		return <span className="manage-purchase__refund-text">{ refundText }</span>;
 	}
 
 	renderRemovePurchaseNavItem() {
