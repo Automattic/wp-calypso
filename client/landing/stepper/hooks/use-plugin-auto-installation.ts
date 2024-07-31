@@ -22,14 +22,21 @@ export type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
 export const DEFAULT_RETRY = process.env.NODE_ENV === 'test' ? 1 : 20;
 const DEFAULT_RETRY_DELAY = process.env.NODE_ENV === 'test' ? 300 : 5000;
 
+const REFRESH_JETPACK_TOTAL_ATTEMPTS = process.env.NODE_ENV === 'test' ? 1 : 3;
+
 const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
 	wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {
 		apiNamespace: 'rest/v1.2',
 	} );
 
-const refreshJetpackConnecion = async () => {
-	return Promise.resolve( { status: 'ok' } );
-};
+const refreshJetpackConnecion = async ( siteId: number ) =>
+	wpcom.req.post(
+		{
+			path: `/sites/${ siteId }/migration-force-reconnection`,
+		},
+		{ apiVersion: '1.2' },
+		{}
+	);
 
 const activatePlugin = async ( siteId: number, pluginName: string ) =>
 	wpcom.req.post( {
@@ -39,8 +46,6 @@ const activatePlugin = async ( siteId: number, pluginName: string ) =>
 			active: true,
 		},
 	} );
-
-const REFRESH_JETPACK_TOTAL_ATTEMPTS = 3;
 
 const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options ) => {
 	const queryClient = useQueryClient();
@@ -62,10 +67,12 @@ const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options
 	} );
 
 	if ( response.isError && remainingAttempts.current >= 0 ) {
-		refreshJetpackConnecion();
+		refreshJetpackConnecion( siteId! );
+
 		queryClient.invalidateQueries( {
 			queryKey: [ 'onboarding-site-plugin-status', siteId, pluginSlug ],
 		} );
+
 		remainingAttempts.current--;
 
 		return {
