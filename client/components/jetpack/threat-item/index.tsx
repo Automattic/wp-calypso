@@ -132,7 +132,7 @@ const ThreatItem: React.FC< Props > = ( {
 	}, [ threat ] );
 
 	const isFixable = React.useMemo(
-		() => threat.fixable && ( threat.status === 'current' || threat.status === 'ignored' ),
+		() => threat.fixable && threat.status === 'current',
 		[ threat ]
 	);
 
