@@ -1180,6 +1180,11 @@ body.is-mobile-app-view {
 			height: 32px;
 		}
 	}
+	.cart-circle {
+		transform: translate(10%, 2%) scale(0.93);
+		stroke-width: 6%;
+		stroke: var(--color-masterbar-background);
+	}
 }
 
 .masterbar-notifications {
@@ -1202,6 +1207,9 @@ body.is-mobile-app-view {
 		use {
 			transition: all 150ms ease-in;
 			transform-origin: 20px 4px;
+			transform: translate(-2%, 2%) scale(0.93);
+			stroke-width: 6%;
+			stroke: var(--color-masterbar-background);
 		}
 	}
 
