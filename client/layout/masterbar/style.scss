@@ -519,14 +519,6 @@ body.is-mobile-app-view {
 
 	&.is-active {
 		background: var(--color-masterbar-item-active-background);
-		.is-global-sidebar-visible &.has-global-border {
-			border-top-left-radius: var(--masterbar-item-active-border-radius);
-			border-top-right-radius: var(--masterbar-item-active-border-radius);
-			--color-masterbar-text: var(--color-sidebar-menu-selected-text);
-			--color-masterbar-icon: var(--color-sidebar-menu-selected-text);
-			--color-masterbar-highlight: var(--color-sidebar-menu-selected-text);
-			--color-masterbar-item-active-background: var(--color-sidebar-background);
-		}
 	}
 
 	&:hover .masterbar__item-bubble {
@@ -687,6 +679,46 @@ body.is-mobile-app-view {
 	&.masterbar__item-help {
 		cursor: pointer;
 		// todo may need flex: unset
+	}
+
+	// Outward border styles for active global items.
+	.is-global-sidebar-visible &.has-global-border {
+		&::before,
+		&::after {
+			content: "";
+			position: absolute;
+			width: var(--masterbar-item-active-border-radius);
+			height: var(--masterbar-item-active-border-radius);
+			background-color: var(--color-sidebar-background);
+			opacity: 0;
+			transition: opacity 0.2s ease-in-out;
+			bottom: 0;
+			z-index: 1;
+		}
+
+		&::before {
+			left: calc(-1 * var(--masterbar-item-active-border-radius));
+			mask: radial-gradient(circle at 0 0, transparent var(--masterbar-item-active-border-radius), var(--color-sidebar-background) var(--masterbar-item-active-border-radius));
+		}
+
+		&::after {
+			right: calc(-1 * var(--masterbar-item-active-border-radius));
+			mask: radial-gradient(circle at 100% 0, transparent var(--masterbar-item-active-border-radius), var(--color-sidebar-background) var(--masterbar-item-active-border-radius));
+		}
+
+		&.is-active {
+			border-top-left-radius: var(--masterbar-item-active-border-radius);
+			border-top-right-radius: var(--masterbar-item-active-border-radius);
+			--color-masterbar-text: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-icon: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-highlight: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-item-active-background: var(--color-sidebar-background);
+
+			&::before,
+			&::after {
+				opacity: 1;
+			}
+		}
 	}
 }
 
@@ -1412,63 +1444,5 @@ a.masterbar__quick-language-switcher {
 
 	100% {
 		opacity: 1;
-	}
-}
-
-.masterbar__item.has-global-border .item-border-wrapper {
-	position: absolute;
-	opacity: 0;
-	pointer-events: none;
-
-	.item-border-wrapper__left,
-	.item-border-wrapper__right,
-	.item-border-wrapper__interior-circle {
-		background-color: transparent;
-		transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
-	}
-
-	.is-global-sidebar-visible &.is-active {
-		top: 0;
-		bottom: 0;
-		right: 0;
-		left: 0;
-		opacity: 1;
-
-		.item-border-wrapper__left,
-		.item-border-wrapper__right {
-			display: block;
-			position: absolute;
-			height: var(--masterbar-item-active-border-radius);
-			width: var(--masterbar-item-active-border-radius);
-			background-color: var(--color-sidebar-background);
-			bottom: 0;
-			z-index: 1;
-			overflow: hidden;
-		}
-
-		.item-border-wrapper__left {
-			left: calc(-1 * var(--masterbar-item-active-border-radius));
-		}
-
-		.item-border-wrapper__right {
-			right: calc(-1 * var(--masterbar-item-active-border-radius));
-		}
-
-		.item-border-wrapper__interior-circle {
-			position: absolute;
-			height: calc(var(--masterbar-item-active-border-radius) * 2);
-			width: calc(var(--masterbar-item-active-border-radius) * 2);
-			top: calc(-1 * var(--masterbar-item-active-border-radius));
-			background-color: var(--color-masterbar-background);
-			border-radius: 50%;
-		}
-
-		.item-border-wrapper__left .item-border-wrapper__interior-circle {
-			left: calc(-1 * var(--masterbar-item-active-border-radius));
-		}
-
-		.item-border-wrapper__right .item-border-wrapper__interior-circle {
-			right: calc(-1 * var(--masterbar-item-active-border-radius));
-		}
 	}
 }

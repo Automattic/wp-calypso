@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment, forwardRef } from 'react';
 import { navigate } from 'calypso/lib/navigate';
-import ItemBorderWrapper from './item-border-wrapper';
 import type { ReactNode, LegacyRef } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -229,9 +228,6 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 					href={ this.props.url }
 					ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
 				>
-					{ this.props.hasGlobalBorderStyle && (
-						<ItemBorderWrapper isActive={ this.props.isActive } />
-					) }
 					{ this.renderChildren() }
 				</a>
 			);
@@ -244,9 +240,6 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 					ref={ this.componentButtonRef }
 					onKeyDown={ this.toggleMenuByKey }
 				>
-					{ this.props.hasGlobalBorderStyle && (
-						<ItemBorderWrapper isActive={ this.props.isActive } />
-					) }
 					<a
 						href={ this.props.url }
 						ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
@@ -262,9 +255,6 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 
 		return (
 			<div className={ this.props.wrapperClassName } ref={ this.componentDivRef }>
-				{ this.props.hasGlobalBorderStyle && (
-					<ItemBorderWrapper isActive={ this.props.isActive } />
-				) }
 				<button
 					{ ...attributes }
 					ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }
