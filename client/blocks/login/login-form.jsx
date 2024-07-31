@@ -28,7 +28,6 @@ import {
 	getSignupUrl,
 	pathWithLeadingSlash,
 	isReactLostPasswordScreenEnabled,
-	isRecognizedLogin,
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
@@ -926,19 +925,17 @@ export class LoginForm extends Component {
 										) }
 								</FormInputValidation>
 
-								{ 'unknown_user' === requestError.code && ! isRecognizedLogin() && (
-									<Experiment
-										name="calypso_login_failed_show_migrate_cta_202407_v2"
-										defaultExperience={ null }
-										loadingExperience={ null }
-										treatmentExperience={
-											<MigrateNotice
-												translate={ this.props.translate }
-												recordTracksEvent={ this.props.recordTracksEvent }
-											/>
-										}
-									/>
-								) }
+								<Experiment
+									name="calypso_login_failed_show_migrate_cta_202406"
+									defaultExperience={ null }
+									loadingExperience={ null }
+									treatmentExperience={
+										<MigrateNotice
+											translate={ this.props.translate }
+											recordTracksEvent={ this.props.recordTracksEvent }
+										/>
+									}
+								/>
 							</Fragment>
 						) }
 
