@@ -22,7 +22,7 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
-import { initialClientsData, GRAVATAR_CLIENT_ID } from 'calypso/state/oauth2-clients/reducer';
+import { initialClientsData, gravatarClientData } from 'calypso/state/oauth2-clients/reducer';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
 import { chunkCssLinks } from './utils/chunk';
 
@@ -121,8 +121,8 @@ class Document extends Component {
 				headFaviconUrl = oauth2Client.favicon;
 			} else if ( query?.gravatar_flow ) {
 				// Use Gravatar's title and favicon for the Gravatar-related OAuth2 clients.
-				headTitle = initialClientsData[ GRAVATAR_CLIENT_ID ].title;
-				headFaviconUrl = initialClientsData[ GRAVATAR_CLIENT_ID ].favicon;
+				headTitle = gravatarClientData.title;
+				headFaviconUrl = gravatarClientData.favicon;
 			}
 		}
 
