@@ -248,10 +248,6 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/',
 		post_id: 111349,
 	},
-	'refund-periods': {
-		link: 'https://wordpress.com/support/refunds/#refund-periods',
-		post_id: 80135,
-	},
 	'reusable-blocks': {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/reusable-block/',
 		post_id: 157539,
