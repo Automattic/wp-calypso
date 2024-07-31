@@ -13,10 +13,10 @@ import './style.scss';
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
 
-const checkSiteAvailability = async ( agencyId: number, siteId: number, siteName: string ) => {
+const checkSiteAvailability = async ( agencyId: number, siteName: string ) => {
 	const response = await wpcom.req.post(
 		{
-			path: `/agency/${ agencyId }/sites/${ siteId }/provision/validate`,
+			path: `/agency/${ agencyId }/validate-site-address`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{ site_name: siteName, domain: 'wordpress.com', type: freeSiteAddressType.BLOG }
@@ -30,11 +30,7 @@ const checkSiteAvailability = async ( agencyId: number, siteId: number, siteName
 	return response;
 };
 
-const useCheckSiteAvailability = (
-	siteId: number,
-	siteName: string,
-	skipAvailability: boolean
-) => {
+const useCheckSiteAvailability = ( siteName: string, skipAvailability: boolean ) => {
 	const agencyId = useSelector( getActiveAgencyId );
 	const siteNameRef = useRef( '' );
 	const [ availabilityState, setAvailabilityState ] = useState( {
@@ -63,7 +59,7 @@ const useCheckSiteAvailability = (
 			siteNameSuggestion: '',
 		} );
 
-		checkSiteAvailability( agencyId, siteId, siteName ).then( ( result ) => {
+		checkSiteAvailability( agencyId, siteName ).then( ( result ) => {
 			if ( siteName === siteNameRef.current ) {
 				setAvailabilityState( {
 					isSiteNameAvailiable: result.valid,
@@ -73,7 +69,7 @@ const useCheckSiteAvailability = (
 			}
 		} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ agencyId, siteId, siteName, skipAvailability ] );
+	}, [ agencyId, siteName, skipAvailability ] );
 
 	const revalidateCurrentSiteName = async () => {
 		setAvailabilityState( {
@@ -86,11 +82,7 @@ const useCheckSiteAvailability = (
 	return { ...availabilityState, revalidateCurrentSiteName };
 };
 
-export const useSiteName = (
-	randomSiteName: string,
-	isRandomSiteNameLoading: boolean,
-	siteId: number
-) => {
+export const useSiteName = ( randomSiteName: string, isRandomSiteNameLoading: boolean ) => {
 	const translate = useTranslate();
 	const [ siteName, setSiteName ] = useState( randomSiteName );
 	const [ debouncedSiteName ] = useDebounce( siteName, 500 );
@@ -136,7 +128,7 @@ export const useSiteName = (
 		isSiteNameAvailiable,
 		siteNameSuggestion,
 		revalidateCurrentSiteName,
-	} = useCheckSiteAvailability( siteId, debouncedSiteName, !! skipAvailability );
+	} = useCheckSiteAvailability( debouncedSiteName, !! skipAvailability );
 
 	if ( ! isSiteNameAvailiable && ! isCheckingSiteAvailability && ! isDebouncingSiteName ) {
 		if ( siteNameSuggestion ) {
