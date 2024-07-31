@@ -12,6 +12,7 @@ import 'calypso/state/data-layer/wpcom/sites/scan/threats/fix-all-threats';
 import 'calypso/state/data-layer/wpcom/sites/alerts/fix-status';
 import 'calypso/state/data-layer/wpcom/sites/scan/threats/fix';
 import 'calypso/state/data-layer/wpcom/sites/scan/threats/ignore';
+import 'calypso/state/data-layer/wpcom/sites/scan/threats/unignore';
 
 export const fixThreat = ( siteId, threatId ) => ( {
 	type: JETPACK_SCAN_THREAT_FIX,
