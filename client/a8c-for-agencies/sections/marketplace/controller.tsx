@@ -6,6 +6,7 @@ import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import HostingOverview from './hosting-overview';
+import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import PressableOverview from './pressable-overview';
 import DownloadProducts from './primary/download-products';
@@ -41,11 +42,13 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 	const { purchase_type } = context.query;
 	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
 
+	const section = getValidHostingSection( context.params.section );
+
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
-			<HostingOverview defaultMarketplaceType={ purchaseType } />
+			<HostingOverview defaultMarketplaceType={ purchaseType } section={ section } />
 		</>
 	);
 	next();
