@@ -89,10 +89,14 @@ $tab-background-color: #f4fbff;
 			}
 		}
 
-
 		.hosting-v2__hero-content {
-			padding-inline: 64px;
-			padding-block-start: 32px;
+			padding: 16px 16px 0;
+
+			@include break-medium {
+				max-width: 1500px;
+				padding-inline: 40px;
+				padding-block-start: 32px;
+			}
 		}
 
 		.hosting-v2__container {
