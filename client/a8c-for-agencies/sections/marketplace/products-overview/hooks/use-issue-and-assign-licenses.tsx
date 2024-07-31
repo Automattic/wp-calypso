@@ -11,7 +11,7 @@ import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-prod
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
-import { successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { type APIError } from 'calypso/state/partner-portal/types';
 import useAssignLicensesToSite from './use-assign-licenses-to-site';
 import useIssueLicenses, {
@@ -33,29 +33,46 @@ const useGetLicenseIssuedMessage = () => {
 				return;
 			}
 
+			if (
+				licenses.some( ( item ) =>
+					item.licenses.some( ( licenseItem ) => licenseItem.code === 'issue_licenses_forbidden' )
+				)
+			) {
+				return {
+					isError: true,
+					message: translate(
+						'There was an error with your purchase. Please try again or contact support if the issue persists.'
+					),
+				};
+			}
+
 			// Only one individual license; let's be more specific
 			if ( licenses.length === 1 ) {
 				const productName =
 					products?.data?.find?.( ( p ) => p.slug === licenses[ 0 ].slug )?.name ?? '';
-				return translate(
-					'Thanks for your purchase! Below you can view and assign your new {{strong}}%(productName)s{{/strong}} license to a website.',
-					'Thanks for your purchase! Below you can view and assign your new {{strong}}%(productName)s{{/strong}} licenses to a website.',
-					{
-						args: {
-							productName,
-						},
-						count: licenses[ 0 ].licenses.length ?? 1,
-						components: {
-							strong: <strong />,
-						},
-					}
-				);
+				return {
+					message: translate(
+						'Thanks for your purchase! Below you can view and assign your new {{strong}}%(productName)s{{/strong}} license to a website.',
+						'Thanks for your purchase! Below you can view and assign your new {{strong}}%(productName)s{{/strong}} licenses to a website.',
+						{
+							args: {
+								productName,
+							},
+							count: licenses[ 0 ].licenses.length ?? 1,
+							components: {
+								strong: <strong />,
+							},
+						}
+					),
+				};
 			}
 
 			// Multiple licenses and/or bundles? A generic thanks will suffice.
-			return translate(
-				'Thanks for your purchase! Below you can view and assign your new product licenses to your websites.'
-			);
+			return {
+				message: translate(
+					'Thanks for your purchase! Below you can view and assign your new product licenses to your websites.'
+				),
+			};
 		},
 		[ products?.data, translate ]
 	);
@@ -130,7 +147,11 @@ function useIssueAndAssignLicenses(
 
 				if ( ! hasPurchaseWPCOMPlan ) {
 					const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
-					dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
+					if ( issuedMessage?.isError ) {
+						dispatch( errorNotice( issuedMessage?.message, { displayOnNextPage: true } ) );
+					} else {
+						dispatch( successNotice( issuedMessage?.message, { displayOnNextPage: true } ) );
+					}
 				}
 
 				page.redirect(
