@@ -135,7 +135,7 @@ const LanguagePickerModal: React.FC< Props > = ( {
 							</span>
 						</FormLabel>
 					) }
-					{ selectedLanguage.calypsoPercentTranslated < 85 && (
+					{ selectedLanguage.isTranslatedIncompletely && (
 						<div className="language-picker__modal-incomplete-locale-nudge-text">
 							<MaterialIcon size={ 16 } icon="emoji_language" />
 							{ __( 'You can help translate WordPress.com into your language.' ) }{ ' ' }
