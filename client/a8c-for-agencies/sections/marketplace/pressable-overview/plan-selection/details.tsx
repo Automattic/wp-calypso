@@ -18,9 +18,15 @@ type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
 	onSelectPlan: () => void;
 	isLoading?: boolean;
+	pressableOwnership?: 'regular' | 'none' | 'agency';
 };
 
-export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLoading }: Props ) {
+export default function PlanSelectionDetails( {
+	selectedPlan,
+	onSelectPlan,
+	isLoading,
+	pressableOwnership,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -129,18 +135,34 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 				/>
 
 				{ selectedPlan && (
-					<Button
-						className="pressable-overview-plan-selection__details-card-cta-button"
-						onClick={ onSelectPlan }
-						primary
-					>
-						{ translate( 'Select %(planName)s plan', {
-							args: {
-								planName: selectedPlan ? getPressableShortName( selectedPlan.name ) : customString,
-							},
-							comment: '%(planName)s is the name of the selected plan.',
-						} ) }
-					</Button>
+					<>
+						{ pressableOwnership === 'regular' ? (
+							<Button
+								target="_blank"
+								rel="norefferer nooppener"
+								href="https://my.pressable.com/agency/auth"
+								primary
+							>
+								{ translate( 'Manage in Pressable' ) }
+								<Icon icon={ external } size={ 18 } />
+							</Button>
+						) : (
+							<Button
+								className="pressable-overview-plan-selection__details-card-cta-button"
+								onClick={ onSelectPlan }
+								primary
+							>
+								{ translate( 'Select %(planName)s plan', {
+									args: {
+										planName: selectedPlan
+											? getPressableShortName( selectedPlan.name )
+											: customString,
+									},
+									comment: '%(planName)s is the name of the selected plan.',
+								} ) }
+							</Button>
+						) }
+					</>
 				) }
 
 				{ ! selectedPlan && (

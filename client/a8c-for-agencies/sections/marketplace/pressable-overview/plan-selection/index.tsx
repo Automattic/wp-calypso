@@ -5,6 +5,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
+import usePressableOwnershipType from '../../hosting-overview/hooks/use-pressable-ownership-type';
 import useExistingPressablePlan from '../hooks/use-existing-pressable-plan';
 import PlanSelectionDetails from './details';
 import PlanSelectionFilter from './filter';
@@ -55,6 +56,8 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 		}
 	}, [ dispatch, onAddToCart, selectedPlan ] );
 
+	const pressableOwnership = usePressableOwnershipType();
+
 	return (
 		<div
 			className={ clsx( 'pressable-overview-plan-selection', {
@@ -67,12 +70,14 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 				onSelectPlan={ onSelectPlan }
 				existingPlan={ existingPlan }
 				isLoading={ ! isExistingPlanFetched }
+				pressableOwnership={ pressableOwnership }
 			/>
 
 			<PlanSelectionDetails
 				selectedPlan={ selectedPlan }
 				onSelectPlan={ onPlanAddToCart }
 				isLoading={ ! isExistingPlanFetched }
+				pressableOwnership={ pressableOwnership }
 			/>
 		</div>
 	);
