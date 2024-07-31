@@ -43,7 +43,7 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 				</span>
 			</div>
 
-			<ProgressBar color="var(--studio-red-30)" value={ percent } total={ 100 } compact={ false } />
+			<ProgressBar value={ percent } total={ 100 } compact={ false } />
 
 			{ children }
 		</>
