@@ -298,7 +298,23 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'Uses the siteId param fallback', async () => {
+		it( 'redirects the user to the internal import flow if they are comming from the customer home', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
+				currentURL: `/setup/site-migration/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?ref=calypso-importer&siteSlug=site-to-be-migrated.com`,
+				dependencies: {
+					destination: 'import',
+				},
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'/import/site-to-be-migrated.com?engine=wordpress&ref=site-migration'
+			);
+		} );
+
+		it( 'uses the siteId param fallback', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {

@@ -251,6 +251,15 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					// Switch to the normal Import flow.
 					if ( providedDependencies?.destination === 'import' ) {
+						if ( urlQueryParams.get( 'ref' ) === 'calypso-importer' ) {
+							return exitFlow(
+								addQueryArgs(
+									{ engine: 'wordpress', ref: 'site-migration' },
+									`/import/${ siteSlug }`
+								)
+							);
+						}
+
 						return exitFlow(
 							addQueryArgs(
 								{
