@@ -17,6 +17,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { AddOns, PlanPricing, Plans } from '@automattic/data-stores';
+import { useState } from '@wordpress/element';
 import { type LocalizeProps, type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -89,8 +90,10 @@ export default function useGenerateActionHook( {
 	);
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
+	const [ isLoading, setIsLoading ] = useState( false );
+
 	// TODO: Remove this hook call and inline the logic into respective functions
-	const { isLoading, getActionCallback } = useGenerateActionCallback( {
+	const getActionCallback = useGenerateActionCallback( {
 		currentPlan,
 		eligibleForFreeHostingTrial,
 		cartHandler,
@@ -142,7 +145,6 @@ export default function useGenerateActionHook( {
 				isStuck,
 				planTitle,
 				priceString,
-				isLoading,
 			} );
 		}
 
@@ -163,7 +165,6 @@ export default function useGenerateActionHook( {
 				isFreeTrialAction,
 				eligibleForFreeHostingTrial,
 				plansIntent,
-				isLoading,
 			} );
 		}
 
@@ -187,6 +188,7 @@ export default function useGenerateActionHook( {
 			isPlanExpired,
 			currentPlanBillingPeriod,
 			billingPeriod,
+			setIsLoading,
 			isLoading,
 		} );
 	};
@@ -205,8 +207,7 @@ function getLaunchPageAction( {
 	planTitle,
 	priceString,
 }: {
-	getActionCallback: UseActionCallback[ 'getActionCallback' ];
-	isLoading: boolean;
+	getActionCallback: UseActionCallback;
 	planSlug: PlanSlug;
 	translate: LocalizeProps[ 'translate' ];
 } & UseActionHookProps ) {
@@ -265,8 +266,7 @@ function getSignupAction( {
 	eligibleForFreeHostingTrial,
 	plansIntent,
 }: {
-	getActionCallback: UseActionCallback[ 'getActionCallback' ];
-	isLoading: boolean;
+	getActionCallback: UseActionCallback;
 	planSlug: PlanSlug;
 	translate: LocalizeProps[ 'translate' ];
 	eligibleForFreeHostingTrial: boolean;
@@ -358,15 +358,17 @@ function getLoggedInPlansAction( {
 	currentPlanBillingPeriod,
 	billingPeriod,
 	isLoading,
+	setIsLoading,
 }: {
-	getActionCallback: UseActionCallback[ 'getActionCallback' ];
-	isLoading: boolean;
+	getActionCallback: UseActionCallback;
 	planSlug: PlanSlug;
 	translate: LocalizeProps[ 'translate' ];
 	sitePlanSlug: PlanSlug | undefined;
 	domainFromHomeUpsellFlow: string | null;
 	isPlanExpired: boolean;
 	canUserManageCurrentPlan: boolean | null;
+	isLoading: boolean;
+	setIsLoading: ( value: boolean ) => void;
 } & UseActionHookProps ): GridAction {
 	const current = sitePlanSlug === planSlug;
 	const isTrialPlan =
@@ -379,12 +381,21 @@ function getLoggedInPlansAction( {
 		variant: GridAction[ 'primary' ][ 'variant' ] = 'primary'
 	) => ( {
 		primary: {
-			callback: getActionCallback( {
-				planSlug,
-				cartItemForPlan,
-				selectedStorageAddOn,
-				availableForPurchase,
-			} ),
+			callback: async () => {
+				// FIXME:
+				// This callback is utilizing the implict knowledge that we know the only true async
+				// action happening in the logged-in plans grid. Once `useGenerateActionHook` and `UseGenerateActionCallback` are merged
+				// as described by Automattic/martech#3170, we will be able to clean this up.
+				setIsLoading( true );
+				await getActionCallback( {
+					planSlug,
+					cartItemForPlan,
+					selectedStorageAddOn,
+					availableForPurchase,
+				} )();
+				setIsLoading( false );
+				return;
+			},
 			status: ( isLoading ? 'blocked' : 'enabled' ) as GridAction[ 'primary' ][ 'status' ],
 			text,
 			variant,

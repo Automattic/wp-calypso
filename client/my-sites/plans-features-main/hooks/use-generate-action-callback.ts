@@ -11,7 +11,7 @@ import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch } from '@wordpress/data';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -184,98 +184,85 @@ function useGenerateActionCallback( {
 	} );
 	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
 
-	const [ isLoading, setIsLoading ] = useState( false );
+	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) =>
+		async () => {
+			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
+			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
 
-	return {
-		isLoading,
-		getActionCallback: ( {
-			planSlug,
-			cartItemForPlan,
-			selectedStorageAddOn,
-			availableForPurchase,
-		} ) => {
-			return async () => {
-				const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
-				const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
-
-				const earlyReturn = showModalAndExit?.( planSlug );
-				if ( earlyReturn ) {
-					return;
-				}
-
-				/* 1. Send user to VIP if it's an enterprise plan */
-				if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-					recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
-					const vipLandingPageURL = 'https://wpvip.com/wordpress-vip-agile-content-platform';
-					window.open(
-						`${ vipLandingPageURL }/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=calypso_signup`,
-						'_blank'
-					);
-				}
-
-				/* 2. In the logged-in plans dashboard, send user to either manage add-ons or manage plan in case of current plan selection */
-				if (
-					sitePlanSlug &&
-					currentPlan?.productSlug === planSlug &&
-					! flowName &&
-					intent !== 'plans-p2' &&
-					intent !== 'plans-blog-onboarding'
-				) {
-					if ( isFreePlan( planSlug ) ) {
-						page.redirect( `/add-ons/${ siteSlug }` );
-					} else {
-						page.redirect( currentPlanManageHref );
-					}
-					return;
-				}
-
-				if (
-					sitePlanSlug &&
-					! flowName &&
-					intent !== 'plans-p2' &&
-					intent !== 'plans-blog-onboarding' &&
-					! canUserManageCurrentPlan
-				) {
-					setIsLoading( true );
-					await handleNonOwnerClick( { availableForPurchase } );
-					setIsLoading( false );
-					return;
-				}
-
-				/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
-				if (
-					sitePlanSlug &&
-					! flowName &&
-					intent !== 'plans-p2' &&
-					intent !== 'plans-blog-onboarding' &&
-					! availableForPurchase
-				) {
-					recordTracksEvent?.( 'calypso_plan_features_downgrade_click', {
-						current_plan: sitePlanSlug,
-						downgrading_to: planSlug,
-					} );
-					handleDowngradeClick( planSlug );
-					return;
-				}
-
-				/* 4. Handle plan upgrade and plan upgrade tracks events */
-				if ( isFreePlan( planSlug ) ) {
-					recordTracksEvent( 'calypso_signup_free_plan_click' );
-				} else {
-					recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
-						current_plan: sitePlanSlug,
-						upgrading_to: planSlug,
-						saw_free_trial_offer: !! freeTrialPlanSlug,
-					} );
-				}
-				handleUpgradeClick( {
-					cartItemForPlan,
-					selectedStorageAddOn,
-				} );
+			const earlyReturn = showModalAndExit?.( planSlug );
+			if ( earlyReturn ) {
 				return;
-			};
-		},
-	};
+			}
+
+			/* 1. Send user to VIP if it's an enterprise plan */
+			if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
+				const vipLandingPageURL = 'https://wpvip.com/wordpress-vip-agile-content-platform';
+				window.open(
+					`${ vipLandingPageURL }/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=calypso_signup`,
+					'_blank'
+				);
+			}
+
+			/* 2. In the logged-in plans dashboard, send user to either manage add-ons or manage plan in case of current plan selection */
+			if (
+				sitePlanSlug &&
+				currentPlan?.productSlug === planSlug &&
+				! flowName &&
+				intent !== 'plans-p2' &&
+				intent !== 'plans-blog-onboarding'
+			) {
+				if ( isFreePlan( planSlug ) ) {
+					page.redirect( `/add-ons/${ siteSlug }` );
+				} else {
+					page.redirect( currentPlanManageHref );
+				}
+				return;
+			}
+
+			if (
+				sitePlanSlug &&
+				! flowName &&
+				intent !== 'plans-p2' &&
+				intent !== 'plans-blog-onboarding' &&
+				! canUserManageCurrentPlan
+			) {
+				await handleNonOwnerClick( { availableForPurchase } );
+				return;
+			}
+
+			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
+			if (
+				sitePlanSlug &&
+				! flowName &&
+				intent !== 'plans-p2' &&
+				intent !== 'plans-blog-onboarding' &&
+				! availableForPurchase
+			) {
+				recordTracksEvent?.( 'calypso_plan_features_downgrade_click', {
+					current_plan: sitePlanSlug,
+					downgrading_to: planSlug,
+				} );
+				handleDowngradeClick( planSlug );
+				return;
+			}
+
+			/* 4. Handle plan upgrade and plan upgrade tracks events */
+			if ( isFreePlan( planSlug ) ) {
+				recordTracksEvent( 'calypso_signup_free_plan_click' );
+			} else {
+				recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
+					current_plan: sitePlanSlug,
+					upgrading_to: planSlug,
+					saw_free_trial_offer: !! freeTrialPlanSlug,
+				} );
+			}
+			handleUpgradeClick( {
+				cartItemForPlan,
+				selectedStorageAddOn,
+			} );
+			return;
+		};
 }
 
 export default useGenerateActionCallback;

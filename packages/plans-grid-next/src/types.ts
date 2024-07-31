@@ -135,25 +135,22 @@ export interface ComparisonGridProps extends CommonGridProps {
 	intervalType: string;
 }
 
-export type UseActionCallback = {
-	getActionCallback: ( {
-		planSlug,
-		cartItemForPlan,
-		selectedStorageAddOn,
-		availableForPurchase,
-	}: {
-		planSlug: PlanSlug;
-		cartItemForPlan?: MinimalRequestCartProduct | null;
-		selectedStorageAddOn?: AddOns.AddOnMeta | null;
-		availableForPurchase?: boolean;
-	} ) => () => void;
-	isLoading: boolean;
-};
+export type UseActionCallback = ( {
+	planSlug,
+	cartItemForPlan,
+	selectedStorageAddOn,
+	availableForPurchase,
+}: {
+	planSlug: PlanSlug;
+	cartItemForPlan?: MinimalRequestCartProduct | null;
+	selectedStorageAddOn?: AddOns.AddOnMeta | null;
+	availableForPurchase?: boolean;
+} ) => () => Promise< void >;
 
 export interface GridAction {
 	primary: {
 		text: TranslateResult;
-		callback: () => void;
+		callback: () => Promise< void >;
 		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
 		status?: 'disabled' | 'blocked' | 'enabled';
 		variant?: 'primary' | 'secondary';
