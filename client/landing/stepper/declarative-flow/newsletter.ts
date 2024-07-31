@@ -1,4 +1,4 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -70,10 +70,11 @@ const newsletter: Flow = {
 		return [ ...publicSteps, ...privateSteps ];
 	},
 	useSideEffect() {
-		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
+		const { setHidePlansFeatureComparison, setIntent } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
 			setHidePlansFeatureComparison( true );
 			clearSignupDestinationCookie();
+			setIntent( Onboard.SiteIntent.Newsletter );
 		}, [] );
 	},
 	useStepNavigation( _currentStep, navigate ) {
