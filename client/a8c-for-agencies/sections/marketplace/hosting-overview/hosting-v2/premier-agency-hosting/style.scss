@@ -1,0 +1,34 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.premier-agency-hosting .pressable-overview-plan-selection {
+	padding: 0 16px;
+	box-sizing: border-box;
+	.pressable-overview-plan-selection__filter-owned-plan {
+		margin-block-start: 0;
+	}
+
+	.pressable-overview-plan-selection__details {
+		flex-direction: column;
+	}
+
+	.pressable-overview-plan-selection__details-card {
+		border: none;
+		padding: 0;
+	}
+
+	@include break-large {
+		max-width: 1000px;
+		width: 100%;
+
+
+		.pressable-overview-plan-selection__details {
+			flex-direction: row;
+		}
+
+		.pressable-overview-plan-selection__details-card {
+			border: 1px solid var(--color-neutral-5);
+			padding: 24px;
+		}
+	}
+}

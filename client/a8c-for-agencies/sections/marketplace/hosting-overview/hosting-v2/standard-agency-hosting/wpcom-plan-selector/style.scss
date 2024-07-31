@@ -20,18 +20,21 @@
 }
 
 .wpcom-plan-selector__card {
-	border: 1px solid var(--color-neutral-5);
-	border-radius: 4px;
-	padding: 32px;
-
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
 
-	@include break-large {
+	@include break-medium {
+		border: 1px solid var(--color-neutral-5);
+		border-radius: 4px;
+		padding: 32px;
+	}
+
+	@include break-xlarge {
 		flex-direction: row;
 		gap: 108px;
 	}
+
 }
 
 .wpcom-plan-selector__plan-name {
@@ -62,7 +65,7 @@
 .wpcom-plan-selector__cta {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: stretch;
 	gap: 16px;
 	margin-block-start: 24px;
 }
@@ -97,12 +100,18 @@
 
 .wpcom-plan-selector__cta-component {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column-reverse;
+	align-items: flex-start;
 	gap: 16px;
+
+	@include break-huge {
+		flex-direction: row;
+	}
 }
 
 .wpcom-plan-selector__cta-button {
 	min-width: 260px;
+	width: 100%;
 }
 
 .wpcom-plan-selector__details.is-placeholder {

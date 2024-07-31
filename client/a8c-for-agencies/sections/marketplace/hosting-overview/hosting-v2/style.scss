@@ -80,30 +80,51 @@ $tab-background-color: #f4fbff;
 		> * {
 			position: relative;
 			z-index: 1;
-			padding-inline: 0;
+			padding-inline: 16px;
 
-			@include breakpoint-deprecated( ">660px" ) {
+			@include break-large {
 				max-width: 1500px;
 				margin-inline: auto !important;
 				padding-inline: 40px;
 			}
 		}
 
-
 		.hosting-v2__hero-content {
-			padding-inline: 64px;
-			padding-block-start: 32px;
+			padding: 16px 16px 0;
+
+			@include break-medium {
+				max-width: 1500px;
+				padding-inline: 40px;
+				padding-block-start: 32px;
+			}
+		}
+
+		.hosting-v2__container {
+			padding-block-start: 24px;
+
+			@include break-medium {
+				padding-block-start: 32px;
+			}
 		}
 
 		.hosting-v2__heading {
-			@include a4a-font-heading-xxl;
-			margin-block-end: 32px;
+			@include a4a-font-heading-xl;
+			margin-block-end: 24px;
+
+			@include break-medium {
+				@include a4a-font-heading-xxl;
+				margin-block-end: 32px;
+			}
 		}
 
 		.section-nav-tabs {
 			width: auto;
-			margin: 39px 0 0;
 			box-shadow: none;
+			margin: 24px 0 0;
+
+			@include break-medium {
+				margin: 39px 0 0;
+			}
 		}
 
 		.section-nav-tabs__list {
@@ -154,23 +175,28 @@ $tab-background-color: #f4fbff;
 	}
 
 	.hosting-v2__content-header {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 16px;
-		padding: 0 0 48px;
+		display: none;
 
-		.hosting-v2__content-header-title {
-			@include a4a-font-body-md;
-		}
+		@include break-medium {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			gap: 16px;
+			padding: 0 40px 48px;
 
-		.hosting-v2__content-logo {
-			.wordpress-vip-logo {
-				display: inline-flex;
+			.hosting-v2__content-header-title {
+				@include a4a-font-body-md;
 			}
 
-			img {
-				height: 32px;
+			.hosting-v2__content-logo {
+				.wordpress-vip-logo {
+					display: inline-flex;
+				}
+
+				img {
+					height: 32px;
+				}
 			}
 		}
 	}
@@ -182,7 +208,11 @@ $tab-background-color: #f4fbff;
 
 	.hosting-overview-features__item {
 		align-items: flex-start;
-		gap: 16px;
+		gap: 4px;
+
+		@include break-medium {
+			gap: 16px;
+		}
 	}
 
 	.hosting-overview-features__item-icon {

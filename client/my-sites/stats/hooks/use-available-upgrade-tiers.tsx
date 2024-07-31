@@ -154,30 +154,29 @@ export function getAvailableUpgradeTiers(
 	usageData: PlanUsage | undefined,
 	shouldFilterPurchasedTiers: boolean
 ): StatsPlanTierUI[] {
-	// 1. Get the tiers. Default to yearly pricing.
+	// Get the tiers. Default is yearly pricing.
 	const commercialProduct = getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY );
-
 	if ( ! commercialProduct?.price_tier_list ) {
 		return [];
 	}
 
+	// Get tiers applicable for the current site.
+	// We return early if we don't have any usage data to filter/extend tiers.
 	const currentTierPrice = usageData?.current_tier?.minimum_price;
 	let tiersForUi = transformTiers( commercialProduct?.price_tier_list, currentTierPrice );
-
-	// If usage is not available then we return early, as without usage we can't filter / extend tiers.
 	if ( ! usageData ) {
 		return tiersForUi;
 	}
 
-	// 2. Filter based on current plan.
+	// Filter based on current plan.
 	if ( shouldFilterPurchasedTiers ) {
 		tiersForUi = filterLowerTiers( tiersForUi, usageData );
 	}
 
+	// Handle tiers beyond the default listing.
 	const currencyCode = commercialProduct.currency_code;
 	tiersForUi = extendTiersBeyondHighestTier( tiersForUi, currencyCode, usageData );
 
-	// 3. Return the relevant upgrade options as a list.
 	return tiersForUi;
 }
 
@@ -186,11 +185,9 @@ function useAvailableUpgradeTiers(
 	shouldFilterPurchasedTiers = true
 ): StatsPlanTierUI[] {
 	const { data: usageData } = usePlanUsageQuery( siteId );
-
 	const tiersForUi = useSelector( ( state ) =>
 		getAvailableUpgradeTiers( state, usageData, shouldFilterPurchasedTiers )
 	);
-	// 3. Return the relevant upgrade options as a list.
 	return tiersForUi;
 }
 
