@@ -391,8 +391,12 @@ const siteMigration: Flow = {
 		}
 
 		const goBack = () => {
+			const siteSlug = urlQueryParams.get( 'siteSlug' ) || '';
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
+					if ( urlQueryParams.get( 'ref' ) === 'calypso-importer' ) {
+						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/import/${ siteSlug }` ) );
+					}
 					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 				}
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
@@ -402,6 +406,7 @@ const siteMigration: Flow = {
 					if ( urlQueryParams.get( 'ref' ) === GUIDED_ONBOARDING_FLOW_REFERRER ) {
 						return exitFlow( '/start/initial-intent' );
 					}
+
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}
 

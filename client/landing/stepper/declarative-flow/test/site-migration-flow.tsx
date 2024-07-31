@@ -384,7 +384,33 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	describe( 'goBack', () => {
-		it( 'backs to the identify step', async () => {
+		it( 'redirect the user back to the identify step from how to migrate', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirect the user back to the customer home when the flow is started from there', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
+				currentURL: `/setup/site-migration/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?ref=calypso-importer&siteSlug=site-to-be-migrated.com`,
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				`/import/site-to-be-migrated.com?ref=site-migration`
+			);
+		} );
+
+		it( 'redirects the user back to the internal import list selection from migrate or import screen when they come from', async () => {
 			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationGoBack( {
