@@ -1,10 +1,11 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
-import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isGravPoweredOAuth2Client, isGravatarFlowOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
+import { GRAVATAR_CLIENT_ID } from 'calypso/state/oauth2-clients/reducer';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
@@ -51,9 +52,11 @@ const enhanceContextWithLogin = ( context ) => {
 	const isP2Login = query && query.from === 'p2';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
-	const isGravPoweredClient = isGravPoweredOAuth2Client( {
-		id: Number( clientId || oauth2ClientId ),
-	} );
+	// Enables Gravatar related OAuth2 clients to use the Gravatar login flow.
+	const maybeGravatarClientId = isGravatarFlowOAuth2Client()
+		? GRAVATAR_CLIENT_ID
+		: Number( clientId || oauth2ClientId );
+	const isGravPoweredClient = isGravPoweredOAuth2Client( { id: maybeGravatarClientId } );
 	const isWhiteLogin =
 		( ! isJetpackLogin &&
 			! isP2Login &&

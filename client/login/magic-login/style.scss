@@ -312,6 +312,12 @@
 	font-size: 14px;
 	line-height: 1.5;
 
+	&.grav-powered-magic-login--gravatar-flow {
+		.magic-login__form-header {
+			margin-bottom: 3px;
+		}
+	}
+
 	&.grav-powered-magic-login--wp-job-manager {
 		max-width: 560px;
 		font-size: 16px;
@@ -485,6 +491,12 @@
 
 	.magic-login__form-header {
 		margin: 30px 0;
+	}
+
+	p.magic-login__form-sub-header {
+		font-size: 13px;
+		color: #50575e;
+		margin-bottom: 30px;
 	}
 
 	.logged-out-form {
@@ -688,7 +700,8 @@
 			font-size: 40px;
 		}
 
-		.magic-login__form-header {
+		.magic-login__form-header,
+		p.magic-login__form-sub-header {
 			margin-bottom: 40px;
 		}
 

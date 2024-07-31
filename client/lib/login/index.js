@@ -5,6 +5,7 @@ import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
+	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -100,14 +101,16 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 
 	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 		const gravatarFrom = get( currentQuery, 'gravatar_from', 'signup' );
+		const oauth2ClientId = get( currentQuery, 'client_id', oauth2Client.id );
 
 		// Gravatar powered clients signup via the magic login page
 		return login( {
 			locale,
 			twoFactorAuthType: 'link',
-			oauth2ClientId: oauth2Client.id,
+			oauth2ClientId,
 			redirectTo: redirectTo,
 			gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && gravatarFrom,
+			gravatarFlow: isGravatarFlowOAuth2Client(),
 		} );
 	}
 
