@@ -66,13 +66,21 @@ const readymadeTemplateFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
 		);
-		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction, setSelectedSite, setSelectedReadymadeTemplateId } =
+			useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite, assembleSite } = useDispatch( SITE_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
 		const reduxDispatch = useReduxDispatch();
 		const selectedTheme = getAssemblerDesign().slug;
 		const { value: readymadeTemplateId } = useUrlQueryParam( 'readymadeTemplateId' );
 		const readymadeTemplate = useReadymadeTemplate( readymadeTemplateId );
+		setSelectedReadymadeTemplateId( readymadeTemplateId );
+		console.log( 'selectedReadymadeTemplateId', readymadeTemplateId );
+		const rti = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedReadymadeTemplateId(),
+			[]
+		);
+		console.log( 'Stored rt', rti );
 
 		const handleSelectSite = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const selectedSiteSlug = providedDependencies?.siteSlug as string;
@@ -178,6 +186,7 @@ const readymadeTemplateFlow: Flow = {
 		const goBack = () => {
 			switch ( _currentStep ) {
 				case 'freePostSetup':
+				case 'generateContent':
 				case 'domains': {
 					return navigate( 'launchpad' );
 				}

@@ -119,6 +119,22 @@ const selectedStyleVariation: Reducer< StyleVariation | undefined, OnboardAction
 	return state;
 };
 
+const readymadeTemplateId: Reducer< number | undefined, OnboardAction > = (
+	state = undefined, // Initial state is set to undefined
+	action
+) => {
+	switch ( action.type ) {
+		case 'SET_READYMADE_TEMPLATE_ID':
+			return action.readymadeTemplateId;
+
+		case 'RESET_ONBOARD_STORE':
+			return undefined;
+
+		default:
+			return state;
+	}
+};
+
 const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 	state: FeatureId[] = [],
 	action
@@ -591,6 +607,7 @@ const reducer = combineReducers( {
 	siteDescription,
 	siteLogo,
 	siteAccentColor,
+	readymadeTemplateId,
 	verticalId,
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,

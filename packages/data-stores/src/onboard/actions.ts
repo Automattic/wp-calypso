@@ -256,6 +256,11 @@ export const setSelectedStyleVariation = (
 	selectedStyleVariation,
 } );
 
+export const setSelectedReadymadeTemplateId = ( readymadeTemplateId: number ) => ( {
+	type: 'SET_READYMADE_TEMPLATE_ID' as const,
+	readymadeTemplateId,
+} );
+
 export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
 	type: 'SET_SELECTED_SITE' as const,
 	selectedSite,
@@ -478,6 +483,7 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
+	| typeof setSelectedReadymadeTemplateId
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof startOnboarding

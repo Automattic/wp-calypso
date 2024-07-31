@@ -40,6 +40,7 @@ export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
 export const getSelectedSiteLogo = ( state: State ) => state.siteLogo;
 export const getSelectedSiteDescription = ( state: State ) => state.siteDescription;
 export const getSelectedSiteAccentColor = ( state: State ) => state.siteAccentColor;
+export const getSelectedReadymadeTemplateId = ( state: State ) => state.readymadeTemplateId;
 export const getIntent = ( state: State ) => state.intent;
 export const getStartingPoint = ( state: State ) => state.startingPoint;
 export const getStoreType = ( state: State ) => state.storeType;
