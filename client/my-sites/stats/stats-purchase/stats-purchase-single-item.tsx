@@ -14,7 +14,7 @@ import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
-import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
+import { StatsCommercialUpgradeSlider, getTierQuantity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import {
 	MIN_STEP_SPLITS,
@@ -149,7 +149,7 @@ const StatsCommercialPurchase = ( {
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
-	const startingTierQuantity = haveTiers ? getTierQuentity( tiers[ 0 ] ) : 0;
+	const startingTierQuantity = haveTiers ? getTierQuantity( tiers[ 0 ] ) : 0;
 	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( startingTierQuantity ?? 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
