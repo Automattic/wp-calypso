@@ -1,7 +1,10 @@
+import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import React from 'react';
 import { convertBytes } from 'calypso/my-sites/backup/backup-contents-page/file-browser/util';
 import { useSiteMetricsQuery } from 'calypso/my-sites/site-monitoring/use-metrics-query';
 import { useSelector } from 'calypso/state';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface PlanBandwidthProps {
@@ -26,7 +29,11 @@ const getCurrentMonthRangeTimestamps = () => {
 
 export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	const selectedSiteData = useSelector( getSelectedSite );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteData?.ID ) );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteData?.ID ) );
+
 	const selectedSiteDomain = selectedSiteData?.domain;
+	const planDetails = selectedSiteData?.plan;
 
 	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
 
@@ -50,6 +57,25 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	const startFormatted = new Date( startInSeconds * 1000 ).toLocaleDateString();
 	const endFormatted = new Date( endInSeconds * 1000 ).toLocaleDateString();
 
+	const getBandwidthFooter = () => {
+		const eligibleForAtomic =
+			planDetails &&
+			( isBusinessPlan( planDetails?.product_slug ) ||
+				isEcommercePlan( planDetails?.product_slug ) );
+
+		if ( isAtomic ) {
+			return <a href={ `/site-monitoring/${ siteSlug }` }>Monitor your site's performance</a>;
+		}
+
+		return (
+			<a href={ `/hosting-features/${ siteSlug }` }>
+				{ eligibleForAtomic
+					? 'Activate hosting features to monitor site performance'
+					: "Want to monitor your site's performance?" }
+			</a>
+		);
+	};
+
 	return (
 		<div>
 			<div
@@ -64,7 +90,7 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 					{ unitAmount } { unit } used this month
 				</div>
 			</div>
-			Links
+			<div className="hosting-overview__plan-bandwidth-footer">{ getBandwidthFooter() }</div>
 		</div>
 	);
 }

@@ -254,7 +254,7 @@ const PlanCard: FC = () => {
 						) }
 						{ ! isAgencyPurchase && ! isStaging && <PricingSection /> }
 						{ ! isLoading && (
-							<>
+							<div className="hosting-overview__site-metrics">
 								<PlanStorage
 									className="hosting-overview__plan-storage"
 									hideWhenNoStorage
@@ -273,7 +273,7 @@ const PlanCard: FC = () => {
 										</div>
 									) }
 								</PlanStorage>
-							</>
+							</div>
 						) }
 						{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
 							<PlanSiteVisits siteId={ site.ID } />
