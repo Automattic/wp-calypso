@@ -342,6 +342,10 @@ body.is-mobile-app-view {
 
 	&.has-subitems {
 		display: block;
+		&:hover,
+		&.is-open {
+			z-index: 2;
+		}
 	}
 
 	> a {
