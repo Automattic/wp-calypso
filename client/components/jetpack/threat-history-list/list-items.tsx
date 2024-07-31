@@ -45,7 +45,7 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 		setShowThreatDialog( false );
 	}, [ setShowThreatDialog ] );
 
-	const confirmAction = useCallback( () => {
+	const unignoreThreat = useCallback( () => {
 		closeDialog();
 		updateThreat( 'unignore' );
 	}, [ closeDialog, updateThreat ] );
@@ -66,7 +66,7 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 				<ThreatDialog
 					showDialog={ showThreatDialog }
 					onCloseDialog={ closeDialog }
-					onConfirmation={ confirmAction }
+					onConfirmation={ unignoreThreat }
 					siteName={ siteName ?? '' }
 					threat={ selectedThreat }
 					action="unignore"
