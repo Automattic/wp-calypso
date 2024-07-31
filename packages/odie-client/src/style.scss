@@ -42,6 +42,10 @@
 
 	.odie-chatbox-message-sources-container {
 		width: 100%;
+
+		&:last-of-type > .odie-chatbox-message-sources-container {
+			margin-bottom: 64px;
+		}
 	}
 }
 

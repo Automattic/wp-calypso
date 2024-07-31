@@ -146,23 +146,25 @@ export default function HostingV2( { onAddToCart }: Props ) {
 
 	return (
 		<div className="hosting-v2">
-			<div
-				className={ clsx( 'hosting-v2__hero', {
-					'is-standard': selectedFeatureId === 'standard',
-					'is-premier': selectedFeatureId === 'premier',
-					'is-enterprise': selectedFeatureId === 'enterprise',
-				} ) }
-			>
-				<div className="hosting-v2__container">
-					<div className="hosting-v2__heading">
-						{ translate( "Choose the hosting tailored{{br/}}for your client's needs.", {
-							components: {
-								br: <br />,
-							},
-						} ) }
+			<div className="hosting-v2__hero-container">
+				<div
+					className={ clsx( 'hosting-v2__hero', {
+						'is-standard': selectedFeatureId === 'standard',
+						'is-premier': selectedFeatureId === 'premier',
+						'is-enterprise': selectedFeatureId === 'enterprise',
+					} ) }
+				>
+					<div className="hosting-v2__hero-content">
+						<div className="hosting-v2__heading">
+							{ translate( "Choose the hosting tailored{{br/}}for your client's needs.", {
+								components: {
+									br: <br />,
+								},
+							} ) }
+						</div>
+						<MigrationOffer />
+						<NavTabs enforceTabsView>{ navItems }</NavTabs>
 					</div>
-					<MigrationOffer />
-					<NavTabs>{ navItems }</NavTabs>
 				</div>
 			</div>
 			{ selectedFeatureId && (
