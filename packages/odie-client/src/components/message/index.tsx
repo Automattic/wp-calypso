@@ -6,7 +6,7 @@ import { ExternalLink } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Markdown from 'react-markdown';
 import MaximizeIcon from '../../assets/maximize-icon.svg';
@@ -14,7 +14,6 @@ import MinimizeIcon from '../../assets/minimize-icon.svg';
 import WapuuAvatar from '../../assets/wapuu-squared-avatar.svg';
 import WapuuThinking from '../../assets/wapuu-thinking.svg';
 import { useOdieAssistantContext } from '../../context';
-import useTyper from '../../utils/user-typer';
 import Button from '../button';
 import FoldableCard from '../foldable';
 import SupportDocLink from '../support-link';
@@ -27,14 +26,10 @@ import './style.scss';
 
 export type ChatMessageProps = {
 	message: Message;
-	scrollToBottom: () => void;
 	currentUser: CurrentUser;
 };
 
-const ChatMessage = (
-	{ message, scrollToBottom, currentUser }: ChatMessageProps,
-	ref: React.Ref< HTMLDivElement >
-) => {
+const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 	const isUser = message.role === 'user';
 	const {
 		botName,
@@ -44,15 +39,8 @@ const ChatMessage = (
 		navigateToContactOptions,
 		navigateToSupportDocs,
 	} = useOdieAssistantContext();
-	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const { __, _x } = useI18n();
-
-	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
-		delayBetweenCharacters: 66,
-		randomDelayBetweenCharacters: true,
-		charactersPerInterval: 5,
-	} );
 
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	const hasFeedback = !! message?.rating_value;
@@ -66,13 +54,8 @@ const ChatMessage = (
 		sources = [ ...new Map( sources.map( ( source ) => [ source.url, source ] ) ).values() ];
 	}
 
-	const isTypeMessageOrEmpty = ! message.type || message.type === 'message';
-	const isSimulatedTypingFinished = message.simulateTyping && message.content === realTimeMessage;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const fullscreenRef = useRef< HTMLDivElement >( null );
-
-	const messageFullyTyped =
-		isTypeMessageOrEmpty && ( ! message.simulateTyping || isSimulatedTypingFinished );
 
 	const handleBackdropClick = () => {
 		setIsFullscreen( false );
@@ -91,57 +74,8 @@ const ChatMessage = (
 		setIsFullscreen( ! isFullscreen );
 	};
 
-	const handleWheel = useCallback(
-		( event: WheelEvent ) => {
-			if ( ! isFullscreen ) {
-				return;
-			}
-
-			const element = fullscreenRef.current;
-
-			if ( element ) {
-				const { scrollTop, scrollHeight, clientHeight } = element;
-				const atTop = scrollTop <= 0;
-				const tolerance = 2;
-				const atBottom = scrollTop + clientHeight >= scrollHeight - tolerance;
-
-				// Prevent scrolling the parent element when at the bounds
-				if ( ( atTop && event.deltaY < 0 ) || ( atBottom && event.deltaY > 0 ) ) {
-					event.preventDefault();
-					event.stopPropagation();
-				}
-			}
-		},
-		[ isFullscreen ]
-	);
-
-	useEffect( () => {
-		const fullscreenElement = fullscreenRef.current;
-		if ( fullscreenElement ) {
-			fullscreenElement.addEventListener( 'wheel', handleWheel, { passive: false } );
-		}
-		return () => {
-			if ( fullscreenElement ) {
-				fullscreenElement.removeEventListener( 'wheel', handleWheel );
-			}
-		};
-	}, [ handleWheel ] );
-
-	useEffect( () => {
-		if ( message.content !== realTimeMessage && message.simulateTyping ) {
-			scrollToBottom();
-		}
-	}, [ message, realTimeMessage, scrollToBottom ] );
-
-	useEffect( () => {
-		if ( messageFullyTyped && ! scrolledToBottom ) {
-			scrollToBottom();
-			setScrolledToBottom( true );
-		}
-	}, [ messageFullyTyped, scrolledToBottom, scrollToBottom ] );
-
 	if ( ! currentUser || ! botName ) {
-		return <div ref={ ref } />;
+		return null;
 	}
 
 	const wapuuAvatarClasses = clsx( 'odie-chatbox-message-avatar', {
@@ -211,10 +145,8 @@ const ChatMessage = (
 		<div className={ `message-header ${ isUser ? 'user' : 'bot' }` }>{ messageAvatarHeader }</div>
 	);
 
-	const shouldRenderExtraContactOptions = isRequestingHumanSupport && messageFullyTyped;
-
 	const onDislike = () => {
-		if ( shouldRenderExtraContactOptions ) {
+		if ( isRequestingHumanSupport ) {
 			return;
 		}
 		setTimeout( () => {
@@ -226,12 +158,8 @@ const ChatMessage = (
 		}, 1200 );
 	};
 
-	const odieChatBoxMessageSourcesContainerClass = clsx( 'odie-chatbox-message-sources-container', {
-		'odie-chatbox-message-sources-container-fullscreen': isFullscreen,
-	} );
-
 	const messageContent = (
-		<div className={ odieChatBoxMessageSourcesContainerClass } ref={ fullscreenRef }>
+		<div className="odie-chatbox-message-sources-container" ref={ fullscreenRef }>
 			<div className={ messageClasses }>
 				{ messageHeader }
 				{ message.type === 'error' && (
@@ -255,15 +183,15 @@ const ChatMessage = (
 								a: CustomALink,
 							} }
 						>
-							{ isUser || ! message.simulateTyping ? message.content : realTimeMessage }
+							{ message.content }
 						</Markdown>
-						{ ! hasFeedback && ! isUser && messageFullyTyped && (
+						{ ! hasFeedback && ! isUser && (
 							<WasThisHelpfulButtons message={ message } onDislike={ onDislike } />
 						) }
-						{ hasFeedback && messageFullyTyped && ! isPositiveFeedback && extraContactOptions }
+						{ hasFeedback && ! isPositiveFeedback && extraContactOptions }
 						{ ! isUser && (
 							<>
-								{ message.directEscalationSupport && (
+								{ ( ! hasFeedback || ( hasFeedback && ! isPositiveFeedback ) ) && (
 									<div className="disclaimer">
 										{ __( 'Feeling stuck?', __i18n_text_domain__ ) }{ ' ' }
 										<button
@@ -320,9 +248,9 @@ const ChatMessage = (
 						{ extraContactOptions }
 					</>
 				) }
-				{ shouldRenderExtraContactOptions && extraContactOptions }
+				{ isRequestingHumanSupport && extraContactOptions }
 			</div>
-			{ hasSources && messageFullyTyped && (
+			{ hasSources && (
 				<FoldableCard
 					className="odie-sources-foldable-card"
 					clickableHeader
@@ -350,35 +278,32 @@ const ChatMessage = (
 				>
 					<div className="odie-chatbox-message-sources">
 						{ sources.length > 0 &&
-							sources.map( ( source, index ) => (
-								<>
-									{ navigateToSupportDocs && (
-										<SupportDocLink
-											key={ index }
-											link={ source.url }
-											onLinkClickHandler={ () => {
-												trackEvent( 'chat_message_action_click', {
-													action: 'link',
-													in_chat_view: true,
-													href: source.url,
-												} );
-												navigateToSupportDocs(
-													String( source.blog_id ),
-													String( source.post_id ),
-													source.url,
-													source.title
-												);
-											} }
-											title={ source.title }
-										/>
-									) }
-									{ ! navigateToSupportDocs && (
-										<CustomALink key={ index } href={ source.url } inline={ false }>
-											{ source?.title }
-										</CustomALink>
-									) }
-								</>
-							) ) }
+							sources.map( ( source, index ) =>
+								navigateToSupportDocs ? (
+									<SupportDocLink
+										key={ index }
+										link={ source.url }
+										onLinkClickHandler={ () => {
+											trackEvent( 'chat_message_action_click', {
+												action: 'link',
+												in_chat_view: true,
+												href: source.url,
+											} );
+											navigateToSupportDocs(
+												String( source.blog_id ),
+												String( source.post_id ),
+												source.url,
+												source.title
+											);
+										} }
+										title={ source.title }
+									/>
+								) : (
+									<CustomALink key={ index } href={ source.url } inline={ false }>
+										{ source?.title }
+									</CustomALink>
+								)
+							) }
 					</div>
 				</FoldableCard>
 			) }
@@ -401,11 +326,7 @@ const ChatMessage = (
 			</>
 		);
 	}
-	return (
-		<div className={ odieChatBoxMessageSourcesContainerClass } ref={ ref }>
-			{ messageContent }
-		</div>
-	);
+	return messageContent;
 };
 
 export default ChatMessage;

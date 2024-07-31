@@ -46,7 +46,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const location = useLocation();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
-	const { setInitialRoute } = useDispatch( HELP_CENTER_STORE );
+	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const { isMinimized } = useSelect( ( select ) => {
@@ -75,12 +75,18 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		} );
 	}, [ location, sectionName ] );
 
-	const { initialRoute } = useSelect(
+	const { navigateToRoute } = useSelect(
 		( select ) => ( {
-			initialRoute: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getInitialRoute(),
+			navigateToRoute: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getNavigateToRoute(),
 		} ),
 		[]
 	);
+
+	useEffect( () => {
+		if ( navigateToRoute ) {
+			setNavigateToRoute( null );
+		}
+	}, [ navigate, navigateToRoute, setNavigateToRoute ] );
 
 	// reset the scroll location on navigation, TODO: unless there's an anchor
 	useEffect( () => {
@@ -89,13 +95,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			containerRef.current.scrollTo( 0, 0 );
 		}
 	}, [ location ] );
-
-	// reset the initial route after it's been used
-	useEffect( () => {
-		if ( initialRoute ) {
-			setInitialRoute( null );
-		}
-	}, [ initialRoute, setInitialRoute ] );
 
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
@@ -117,14 +116,17 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/"
 						element={
-							initialRoute ? (
-								<Navigate to={ initialRoute } />
+							navigateToRoute ? (
+								<Navigate to={ navigateToRoute } />
 							) : (
 								<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
 							)
 						}
 					/>
-					<Route path="/post" element={ <HelpCenterArticle /> } />
+					<Route
+						path="/post"
+						element={ <HelpCenterArticle navigateToRoute={ navigateToRoute ?? '' } /> }
+					/>
 					<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 					<Route
 						path="/contact-form"

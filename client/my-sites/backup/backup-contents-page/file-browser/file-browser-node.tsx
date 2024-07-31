@@ -256,6 +256,7 @@ const FileBrowserNode: FunctionComponent< FileBrowserNodeProps > = ( {
 							onClick={ handleClick }
 							showTooltip={ isLabelTruncated }
 							label={ item.name }
+							variant="tertiary"
 						>
 							<FileTypeIcon type={ item.type } /> { label }
 						</Button>

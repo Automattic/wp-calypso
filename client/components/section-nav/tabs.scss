@@ -26,3 +26,15 @@
 		}
 	}
 }
+
+.enforce-tabs-view {
+	&.section-nav-group {
+		display: block;
+		border-top: none;
+		margin-block-start: 0;
+	}
+
+	.section-nav-tabs__list {
+		display: flex;
+	}
+}

@@ -1,12 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import {
-	AUTOMOMANAGED_PLUGINS,
-	ECOMMERCE_BUNDLED_PLUGINS,
-	PREINSTALLED_PLUGINS,
-	PREINSTALLED_PREMIUM_PLUGINS,
-} from 'calypso/my-sites/plugins/constants';
-import {
 	StatsNode,
 	BoostNode,
 	BackupNode,
@@ -156,15 +150,7 @@ const useFormatPluginData = () => {
 
 	return useCallback(
 		( site: Site ): PluginNode => {
-			const pluginUpdates = site.is_atomic
-				? site.awaiting_plugin_updates?.filter(
-						( plugin ) =>
-							! PREINSTALLED_PLUGINS.includes( plugin ) &&
-							! AUTOMOMANAGED_PLUGINS.includes( plugin ) &&
-							! ECOMMERCE_BUNDLED_PLUGINS.includes( plugin ) &&
-							! Object.keys( PREINSTALLED_PREMIUM_PLUGINS ).includes( plugin )
-				  )
-				: site.awaiting_plugin_updates;
+			const pluginUpdates = site.awaiting_plugin_updates;
 
 			if ( ! pluginUpdates ) {
 				return {
@@ -174,8 +160,15 @@ const useFormatPluginData = () => {
 					updates: 0,
 				};
 			}
+
 			return {
-				value: `${ pluginUpdates?.length } ${ translate( 'Available' ) }`,
+				value: translate( '%(count)d Update', '%(count)d Updates', {
+					count: pluginUpdates?.length,
+					args: {
+						count: pluginUpdates?.length,
+					},
+					comment: '%(count)d is the number of plugin updates available',
+				} ) as string,
 				status: pluginUpdates?.length > 0 ? 'warning' : 'success',
 				type: 'plugin',
 				updates: pluginUpdates?.length,

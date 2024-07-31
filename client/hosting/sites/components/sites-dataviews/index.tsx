@@ -1,6 +1,5 @@
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -34,14 +33,21 @@ type Props = {
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 };
 
-export const siteStatusGroups = [
-	{ value: 1, label: __( 'All sites' ), slug: 'all' },
-	{ value: 2, label: __( 'Public' ), slug: 'public' },
-	{ value: 3, label: __( 'Private' ), slug: 'private' },
-	{ value: 4, label: __( 'Coming soon' ), slug: 'coming-soon' },
-	{ value: 5, label: __( 'Redirect' ), slug: 'redirect' },
-	{ value: 6, label: __( 'Deleted' ), slug: 'deleted' },
-];
+export function useSiteStatusGroups() {
+	const { __ } = useI18n();
+
+	return useMemo(
+		() => [
+			{ value: 1, label: __( 'All sites' ), slug: 'all' },
+			{ value: 2, label: __( 'Public' ), slug: 'public' },
+			{ value: 3, label: __( 'Private' ), slug: 'private' },
+			{ value: 4, label: __( 'Coming soon' ), slug: 'coming-soon' },
+			{ value: 5, label: __( 'Redirect' ), slug: 'redirect' },
+			{ value: 6, label: __( 'Deleted' ), slug: 'deleted' },
+		],
+		[ __ ]
+	);
+}
 
 const DotcomSitesDataViews = ( {
 	sites,
@@ -106,6 +112,8 @@ const DotcomSitesDataViews = ( {
 			}
 		};
 	}, [] );
+
+	const siteStatusGroups = useSiteStatusGroups();
 
 	// Generate DataViews table field-columns
 	const fields = useMemo< DataViewsColumn[] >(
@@ -220,7 +228,16 @@ const DotcomSitesDataViews = ( {
 				enableSorting: false,
 			},
 		],
-		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, isWide, isDesktop ]
+		[
+			__,
+			openSitePreviewPane,
+			userId,
+			dataViewsState,
+			setDataViewsState,
+			isWide,
+			isDesktop,
+			siteStatusGroups,
+		]
 	);
 
 	// Create the itemData packet state

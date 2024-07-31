@@ -12,6 +12,7 @@ import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const noop = () => {};
+type ScrollToLastMessageType = () => void;
 
 /*
  * This is the interface for the context. It contains all the methods and values that are
@@ -33,6 +34,7 @@ type OdieAssistantContextInterface = {
 	isVisible: boolean;
 	extraContactOptions?: ReactNode;
 	lastNudge: Nudge | null;
+	lastMessageInView?: boolean;
 	navigateToContactOptions?: () => void;
 	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	odieClientId: string;
@@ -41,10 +43,13 @@ type OdieAssistantContextInterface = {
 	setChat: ( chat: SetStateAction< Chat > ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
+	setLastMessageInView?: ( lastMessageInView: boolean ) => void;
 	setContext: ( context: Context ) => void;
 	setIsNudging: ( isNudging: boolean ) => void;
 	setIsVisible: ( isVisible: boolean ) => void;
 	setIsLoading: ( isLoading: boolean ) => void;
+	setScrollToLastMessage: ( scrollToLastMessage: ScrollToLastMessageType ) => void;
+	scrollToLastMessage: ScrollToLastMessageType | null;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	updateMessage: ( message: Message ) => void;
 	version?: string | null;
@@ -63,6 +68,7 @@ const defaultContextInterfaceValues = {
 	isNudging: false,
 	isVisible: false,
 	lastNudge: null,
+	lastMessageRef: null,
 	navigateToContactOptions: noop,
 	navigateToSupportDocs: noop,
 	odieClientId: '',
@@ -75,6 +81,8 @@ const defaultContextInterfaceValues = {
 	setIsNudging: noop,
 	setIsVisible: noop,
 	setIsLoading: noop,
+	setScrollToLastMessage: noop,
+	scrollToLastMessage: noop,
 	trackEvent: noop,
 	updateMessage: noop,
 };
@@ -127,6 +135,11 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isNudging, setIsNudging ] = useState( false );
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
+	const [ scrollToLastMessage, setScrollToLastMessage ] =
+		useState< ScrollToLastMessageType | null >( null );
+
+	const [ lastMessageInView, setLastMessageInView ] = useState( true );
+
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
 
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
@@ -167,7 +180,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		broadcastChatClearance( odieClientId );
 	}, [ botNameSlug, trackEvent, setOdieStorage ] );
 
-	const setMessageLikedStatus = ( message: Message, liked: boolean ) => {
+	const setMessageLikedStatus = useCallback( ( message: Message, liked: boolean ) => {
 		setChat( ( prevChat ) => {
 			const messageIndex = prevChat.messages.findIndex( ( m ) => m === message );
 			const updatedMessage = { ...message, liked };
@@ -180,7 +193,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				],
 			};
 		} );
-	};
+	}, [] );
 
 	const addMessage = useCallback(
 		( message: Message | Message[] ) => {
@@ -245,6 +258,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isNudging,
 				isVisible,
 				lastNudge,
+				lastMessageInView,
 				navigateToContactOptions,
 				navigateToSupportDocs,
 				odieClientId,
@@ -253,10 +267,13 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				setChat,
 				setIsLoadingChat: noop,
 				setMessageLikedStatus,
+				setLastMessageInView,
 				setContext: noop,
 				setIsLoading,
 				setIsNudging,
 				setIsVisible,
+				setScrollToLastMessage: setScrollToLastMessage ?? noop,
+				scrollToLastMessage: scrollToLastMessage ?? noop,
 				trackEvent,
 				updateMessage,
 				version: overridenVersion,

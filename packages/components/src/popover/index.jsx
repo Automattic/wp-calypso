@@ -33,6 +33,7 @@ class PopoverInner extends Component {
 		onMouseLeave: noop,
 		hideArrow: false,
 		autoRepositionOnInitialLoad: false, // use with caution, read comment about autoRepositionOnInitialLoad below
+		ignoreViewportSize: false, // To avoid constraining the popover to the viewport that causes the arrow shows in the wrong place
 	};
 
 	/**
@@ -282,7 +283,8 @@ class PopoverInner extends Component {
 			{},
 			constrainLeft(
 				offset( suggestedPosition, domContainer, domContext, relativePosition ),
-				domContainer
+				domContainer,
+				this.props.ignoreViewportSize
 			),
 			{ positionClass: this.getPositionClass( suggestedPosition ) }
 		);

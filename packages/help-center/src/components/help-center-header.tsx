@@ -3,27 +3,26 @@ import { useSelect } from '@wordpress/data';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
-import { usePostByKey } from '../hooks/use-post-by-key';
-import { useSupportArticleAlternatePostKey } from '../hooks/use-support-article-alternates-query';
+import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { usePostByUrl } from '../hooks';
 import { DragIcon } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 import type { Header } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
 export function ArticleTitle() {
-	const { search } = useLocation();
-	const params = new URLSearchParams( search );
-	const postId = params.get( 'postId' );
-	const blogId = params.get( 'blogId' ) ?? undefined;
+	const { __ } = useI18n();
+	const [ searchParams ] = useSearchParams();
+	const postUrl = searchParams.get( 'link' ) || '';
 
-	const postKey = useSupportArticleAlternatePostKey( blogId, +( postId || 0 ) );
-	const post = usePostByKey( postKey ).data;
+	const { data: post } = usePostByUrl( postUrl );
 
 	return (
 		<>
 			<Icon icon={ page } />
-			<span className="help-center-header__article-title">{ post?.title }</span>
+			<span className="help-center-header__article-title">
+				{ ( post && post?.title ) ?? __( 'Help Center', __i18n_text_domain__ ) }
+			</span>
 		</>
 	);
 }

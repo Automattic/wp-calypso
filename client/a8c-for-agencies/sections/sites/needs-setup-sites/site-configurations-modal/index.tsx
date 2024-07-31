@@ -35,7 +35,7 @@ export default function SiteConfigurationsModal( {
 	const translate = useTranslate();
 	const dataCenterOptions = useDataCenterOptions();
 	const { phpVersions } = usePhpVersions();
-	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading, siteId );
+	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
