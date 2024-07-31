@@ -233,6 +233,11 @@ class MasterbarLoggedIn extends Component {
 		return section === this.props.section && ! this.props.isNotificationsShowing;
 	};
 
+	isMySitesActive = () => {
+		const { isGlobalSidebarVisible, section } = this.props;
+		return isGlobalSidebarVisible && ( 'sites' === section || 'sites-dashboard' === section );
+	};
+
 	isSidebarOpen = () => {
 		return 'sidebar' === this.props.currentLayoutFocus;
 	};
@@ -288,7 +293,7 @@ class MasterbarLoggedIn extends Component {
 			hasDismissedAllSitesPopover,
 			isGlobalSidebarVisible,
 		} = this.props;
-		const { isMenuOpen, allSitesBtnRef } = this.state;
+		const { allSitesBtnRef } = this.state;
 
 		const mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
@@ -308,7 +313,7 @@ class MasterbarLoggedIn extends Component {
 					tipTarget="my-sites"
 					icon={ icon }
 					onClick={ this.clickMySites }
-					isActive={ this.isActive( 'sites-dashboard', true ) && ! isMenuOpen }
+					isActive={ this.isMySitesActive() }
 					tooltip={ translate( 'Manage your sites' ) }
 					preloadSection={ this.preloadMySites }
 					ref={ ( ref ) => ref !== allSitesBtnRef && this.setState( { allSitesBtnRef: ref } ) }
