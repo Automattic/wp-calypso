@@ -24,7 +24,15 @@ export type ChatMessageProps = {
 	currentUser: CurrentUser;
 };
 
-const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
+export type MessageIndicators = {
+	isLastUserMessage: boolean;
+	isLastFeedbackMessage: boolean;
+	isLastErrorMessage: boolean;
+	isLastMessage: boolean;
+};
+
+const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
+	const { message, currentUser, ...messageIndicators } = props;
 	const isUser = message.role === 'user';
 	const { botName, addMessage } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
@@ -138,6 +146,7 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 					messageHeader={ messageHeader }
 					onDislike={ onDislike }
 					ref={ fullscreenRef }
+					{ ...messageIndicators }
 				/>
 			</div>
 		</div>
@@ -151,6 +160,7 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 					messageHeader={ messageHeader }
 					onDislike={ onDislike }
 					ref={ fullscreenRef }
+					{ ...messageIndicators }
 				/>
 				{ ReactDOM.createPortal( fullscreenContent, document.body ) }
 			</>
@@ -162,6 +172,7 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 			messageHeader={ messageHeader }
 			onDislike={ onDislike }
 			ref={ fullscreenRef }
+			{ ...messageIndicators }
 		/>
 	);
 };

@@ -36,7 +36,7 @@ export const UserMessage = ( {
 			{ hasFeedback && ! isPositiveFeedback && ! isRequestingHumanSupport && extraContactOptions }
 			{ ! isUser && (
 				<>
-					{ message.directEscalationSupport && (
+					{ ( ! hasFeedback || ( hasFeedback && ! isPositiveFeedback ) ) && (
 						<div className="disclaimer">
 							{ __( 'Feeling stuck?', __i18n_text_domain__ ) }{ ' ' }
 							<button

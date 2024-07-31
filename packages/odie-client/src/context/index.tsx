@@ -27,7 +27,6 @@ type OdieAssistantContextInterface = {
 	clearChat: () => void;
 	currentUser: CurrentUser;
 	initialUserMessage: string | null | undefined;
-	isLoadingChat: boolean;
 	isLoading: boolean;
 	isMinimized?: boolean;
 	isNudging: boolean;
@@ -41,7 +40,6 @@ type OdieAssistantContextInterface = {
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
 	setChat: ( chat: SetStateAction< Chat > ) => void;
-	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setLastMessageInView?: ( lastMessageInView: boolean ) => void;
 	setContext: ( context: Context ) => void;
@@ -62,7 +60,6 @@ const defaultContextInterfaceValues = {
 	chat: { context: { section_name: '', site_id: null }, messages: [] },
 	clearChat: noop,
 	initialUserMessage: null,
-	isLoadingChat: false,
 	isLoading: false,
 	isMinimized: false,
 	isNudging: false,
@@ -75,7 +72,6 @@ const defaultContextInterfaceValues = {
 	currentUser: { display_name: 'Me' },
 	sendNudge: noop,
 	setChat: noop,
-	setIsLoadingChat: noop,
 	setMessageLikedStatus: noop,
 	setContext: noop,
 	setIsNudging: noop,
@@ -258,7 +254,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				currentUser,
 				extraContactOptions,
 				initialUserMessage,
-				isLoadingChat: false,
 				isLoading: isLoading,
 				isMinimized,
 				isNudging,
@@ -271,7 +266,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				selectedSiteId,
 				sendNudge: setLastNudge,
 				setChat,
-				setIsLoadingChat: noop,
 				setMessageLikedStatus,
 				setLastMessageInView,
 				setContext: noop,
