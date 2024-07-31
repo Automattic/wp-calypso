@@ -1,5 +1,5 @@
-import { useMutation, useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useMutation, useQuery, UseQueryOptions, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useRef } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import { usePluginInstallation } from './use-plugin-installation';
@@ -19,13 +19,17 @@ interface SiteMigrationStatus {
 }
 
 export type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
-export const DEFAULT_RETRY = process.env.NODE_ENV === 'test' ? 1 : 100;
-const DEFAULT_RETRY_DELAY = process.env.NODE_ENV !== 'production' ? 300 : 3000;
+export const DEFAULT_RETRY = process.env.NODE_ENV === 'test' ? 1 : 20;
+const DEFAULT_RETRY_DELAY = process.env.NODE_ENV === 'test' ? 300 : 5000;
 
 const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
 	wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {
 		apiNamespace: 'rest/v1.2',
 	} );
+
+const refreshJetpackConnecion = async () => {
+	return Promise.resolve( { status: 'ok' } );
+};
 
 const activatePlugin = async ( siteId: number, pluginName: string ) =>
 	wpcom.req.post( {
@@ -36,8 +40,13 @@ const activatePlugin = async ( siteId: number, pluginName: string ) =>
 		},
 	} );
 
+const REFRESH_JETPACK_TOTAL_ATTEMPTS = 3;
+
 const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options ) => {
-	return useQuery( {
+	const queryClient = useQueryClient();
+	const remainingAttempts = useRef( REFRESH_JETPACK_TOTAL_ATTEMPTS );
+
+	const response = useQuery( {
 		queryKey: [ 'onboarding-site-plugin-status', siteId, pluginSlug ],
 		queryFn: () => fetchPluginsForSite( siteId! ),
 		enabled: !! siteId && ( options?.enabled ?? true ),
@@ -51,6 +60,22 @@ const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options
 			};
 		},
 	} );
+
+	if ( response.isError && remainingAttempts.current >= 0 ) {
+		refreshJetpackConnecion();
+		queryClient.invalidateQueries( {
+			queryKey: [ 'onboarding-site-plugin-status', siteId, pluginSlug ],
+		} );
+		remainingAttempts.current--;
+
+		return {
+			data: undefined,
+			error: null,
+			fetchStatus: 'pending',
+		};
+	}
+
+	return response;
 };
 
 const usePluginActivation = ( pluginName: string, siteId?: number, options?: Options ) => {
