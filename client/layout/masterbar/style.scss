@@ -370,14 +370,13 @@ body.is-mobile-app-view {
 		min-width: 100%;
 		text-align: left;
 		top: var(--masterbar-height);
-		background: var(--color-masterbar-item-hover-background);
+		background: var(--color-global-masterbar-submenu-background, var(--color-masterbar-item-hover-background));
 		list-style: none;
 		clear: none;
 		text-indent: 0;
 
 		.masterbar__item-subitems-item {
-			margin-right: 6px;
-			padding-left: 6px;
+			margin: 0 6px;
 			white-space: nowrap;
 			min-width: 140px;
 			line-height: 2;
@@ -403,7 +402,7 @@ body.is-mobile-app-view {
 			}
 
 			&:hover {
-				background: var(--color-masterbar-item-hover-background);
+				background: var(--color-global-masterbar-submenu-hover-background, var(--color-masterbar-item-hover-background));
 				a {
 					color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
 				}
@@ -414,7 +413,7 @@ body.is-mobile-app-view {
 		@media only screen and (max-width: 782px) {
 			position: fixed;
 			.masterbar__item-subitems-item {
-				padding: 8px 16px;
+				padding: 8px 10px;
 			}
 		}
 	}
