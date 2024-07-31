@@ -9,6 +9,10 @@ export type DetailsCardProps = {
 	selectedSite: SiteDetails;
 };
 
+export type SecurityCardProps = DetailsCardProps & {
+	isDisabled: boolean;
+};
+
 export type NameServersCardProps = {
 	domain: ResponseDomain;
 	isLoadingNameservers?: boolean;
