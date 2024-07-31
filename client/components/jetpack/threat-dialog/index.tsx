@@ -98,7 +98,7 @@ const ThreatDialog: React.FC< Props > = ( {
 					) }
 				{ action === 'unignore' &&
 					translate(
-						'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with Codeable.'
+						'By unignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with Codeable.'
 					) }
 			</>
 		</ServerCredentialsWizardDialog>

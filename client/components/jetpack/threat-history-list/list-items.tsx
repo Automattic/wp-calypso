@@ -12,10 +12,10 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import type { Threat, ThreatAction } from 'calypso/components/jetpack/threat-item/types';
+import type { Threat } from 'calypso/components/jetpack/threat-item/types';
 
 const trackOpenThreatDialog = ( siteId: number, threatSignature: string ) =>
-	recordTracksEvent( 'calypso_jetpack_scan_fixthreat_dialogopen', {
+	recordTracksEvent( 'calypso_jetpack_scan_unignorethreat_dialogopen', {
 		site_id: siteId,
 		threat_signature: threatSignature,
 	} );
@@ -31,13 +31,11 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 		siteId ?? 0
 	);
 	const [ showThreatDialog, setShowThreatDialog ] = useState( false );
-	const [ actionToPerform, setActionToPerform ] = useState< ThreatAction >( 'fix' );
 
 	const openDialog = useCallback(
-		( action: ThreatAction, threat: Threat ) => {
+		( threat: Threat ) => {
 			dispatch( trackOpenThreatDialog( siteId ?? 0, threat.signature ) );
 			setSelectedThreat( threat );
-			setActionToPerform( action );
 			setShowThreatDialog( true );
 		},
 		[ dispatch, setSelectedThreat, siteId ]
@@ -49,8 +47,8 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 
 	const confirmAction = useCallback( () => {
 		closeDialog();
-		updateThreat( actionToPerform );
-	}, [ actionToPerform, closeDialog, updateThreat ] );
+		updateThreat( 'unignore' );
+	}, [ closeDialog, updateThreat ] );
 
 	return (
 		<>
@@ -59,8 +57,7 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 					key={ threat.id }
 					isPlaceholder={ false }
 					threat={ threat }
-					onFixThreat={ () => openDialog( 'fix', threat ) }
-					onUnignoreThreat={ () => openDialog( 'unignore', threat ) }
+					onUnignoreThreat={ () => openDialog( threat ) }
 					isFixing={ !! updatingThreats.find( ( threatId ) => threatId === threat.id ) }
 					contactSupportUrl={ contactSupportUrl( siteSlug ) }
 				/>
@@ -72,7 +69,7 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 					onConfirmation={ confirmAction }
 					siteName={ siteName ?? '' }
 					threat={ selectedThreat }
-					action={ actionToPerform }
+					action="unignore"
 				/>
 			) }
 		</>
