@@ -202,6 +202,7 @@ function useGenerateActionCallback( {
 					`${ vipLandingPageURL }/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=calypso_signup`,
 					'_blank'
 				);
+				return;
 			}
 
 			/* 2. In the logged-in plans dashboard, send user to either manage add-ons or manage plan in case of current plan selection */
