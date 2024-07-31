@@ -163,7 +163,7 @@ export default function HostingV2( { onAddToCart }: Props ) {
 							} ) }
 						</div>
 						<MigrationOffer />
-						<NavTabs>{ navItems }</NavTabs>
+						<NavTabs enforceTabsView>{ navItems }</NavTabs>
 					</div>
 				</div>
 			</div>

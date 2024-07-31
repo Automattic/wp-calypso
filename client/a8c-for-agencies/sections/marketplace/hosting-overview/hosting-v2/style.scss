@@ -13,6 +13,7 @@ $tab-background-color: #f4fbff;
 	.hosting-v2__hero {
 		position: relative;
 		overflow: hidden;
+		inset-block-start: 1px;
 
 		&::before {
 			background: url(calypso/assets/images/a8c-for-agencies/hosting-illustration.svg) no-repeat center/contain;
@@ -108,8 +109,6 @@ $tab-background-color: #f4fbff;
 		.section-nav-tabs__list {
 			justify-content: space-between;
 			gap: 4px;
-			position: relative;
-			inset-block-start: 1px;
 		}
 
 		.section-nav-tab {
@@ -127,8 +126,9 @@ $tab-background-color: #f4fbff;
 				border-block-end: none;
 				background: var(--color-light-backdrop);
 
+				.section-nav-tab__link,
 				.section-nav-tab__link:hover {
-					background: none;
+					background: unset;
 				}
 			}
 
@@ -139,7 +139,11 @@ $tab-background-color: #f4fbff;
 
 		.hosting-v2__nav-item-label {
 			color: var(--color-accent-90);
-			@include a4a-font-heading-md($font-weight: 600);
+			@include a4a-font-body-sm($font-weight: 600);
+
+			@include break-mobile {
+				@include a4a-font-heading-md($font-weight: 600);
+			}
 		}
 
 		.hosting-v2__nav-item-subtitle {
@@ -185,5 +189,14 @@ $tab-background-color: #f4fbff;
 		min-width: 32px;
 		max-width: 32px;
 		height: 32px;
+	}
+
+	.section-nav-tab__link {
+		padding: 16px 8px;
+		text-align: center;
+
+		@include break-mobile {
+			padding: 16px;
+		}
 	}
 }
