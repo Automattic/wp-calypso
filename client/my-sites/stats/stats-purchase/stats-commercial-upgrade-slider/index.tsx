@@ -3,13 +3,8 @@ import formatCurrency from '@automattic/format-currency';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	EXTENSION_THRESHOLD_IN_MILLION,
-	default as useAvailableUpgradeTiers,
-} from 'calypso/my-sites/stats/hooks/use-available-upgrade-tiers';
+import { EXTENSION_THRESHOLD_IN_MILLION } from 'calypso/my-sites/stats/hooks/use-available-upgrade-tiers';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { StatsPlanTierUI } from '../types';
 
 import './styles.scss';
@@ -66,6 +61,7 @@ type StatsCommercialUpgradeSliderProps = {
 	currencyCode: string;
 	analyticsEventName?: string;
 	onSliderChange: ( quantity: number ) => void;
+	tiers: StatsPlanTierUI[];
 };
 
 const getTierQuentity = ( tiers: StatsPlanTierUI ) => {
@@ -80,18 +76,14 @@ function StatsCommercialUpgradeSlider( {
 	currencyCode,
 	analyticsEventName,
 	onSliderChange,
+	tiers,
 }: StatsCommercialUpgradeSliderProps ) {
-	// Responsible for:
-	// 1. Fetching the tiers from the API.
-	// 2. Transforming the tiers into a format that the slider can use.
-	// 3. Preparing the UI strings for the slider.
-	// 4. Rendering the slider.
-	// 5. Nofiying the parent component when the slider changes.
-
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
-	const tiers = useAvailableUpgradeTiers( siteId );
 	const uiStrings = useTranslatedStrings();
+
+	// TODO: Guard against bad data.
+	// The code below assumes we have a valid tier listing with at least one item.
+	// In practice, the caller currently tests for this but we shouldn't rely on that.
 
 	// Show a message with a tooltip for the first tier when it's over 10k views,
 	// which means the user is extending the limit based on the purchased tier or current usage.
