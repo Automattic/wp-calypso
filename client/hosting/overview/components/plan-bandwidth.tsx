@@ -54,9 +54,6 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 
 	const { unitAmount, unit } = convertBytes( valueInBytes );
 
-	const startFormatted = new Date( startInSeconds * 1000 ).toLocaleDateString();
-	const endFormatted = new Date( endInSeconds * 1000 ).toLocaleDateString();
-
 	const getBandwidthFooter = () => {
 		const eligibleForAtomic =
 			planDetails &&
@@ -77,18 +74,12 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	};
 
 	return (
-		<div>
-			<div
-				style={ {
-					display: 'flex',
-					justifyContent: 'space-between',
-					padding: '20px 0',
-				} }
-			>
-				<div>Unlimited Bandwidth</div>
-				<div title={ 'From ' + startFormatted + ' to ' + endFormatted }>
-					{ unitAmount } { unit } used this month
-				</div>
+		<div className="hosting-overview__plan-bandwidth-wrapper">
+			<div className="hosting-overview__plan-bandwidth-content">
+				{ 'Bandwidth: ' }
+				<span className="plan-bandwidth-content__value">
+					{ unitAmount } { unit } used
+				</span>
 			</div>
 			<div className="hosting-overview__plan-bandwidth-footer">{ getBandwidthFooter() }</div>
 		</div>

@@ -196,14 +196,10 @@ $blueberry-color: #3858e9;
 	margin-top: 8px;
 }
 
-.hosting-overview__plan-storage,
 .hosting-overview__site-metrics {
 	border-radius: 4px;
 	border: 1px solid var(--studio-gray-0);
 	background: var(--studio-gray-0);
-	display: flex;
-	flex-direction: column;
-	gap: var(--grid-unit-30, 24px);
 	padding: var(--grid-unit-30, 24px);
 	color: var(--studio-gray-80, #2c3338);
 	font-family: "SF Pro Text", $sans;
@@ -221,6 +217,18 @@ $blueberry-color: #3858e9;
 	}
 }
 
+.hosting-overview__site-metrics-footer {
+	display: flex;
+	justify-content: space-between;
+	gap: 1.5em;
+}
+
+.hosting-overview__plan-storage {
+	display: flex;
+	flex-direction: column;
+	gap: var(--grid-unit-30, 24px);
+}
+
 .hosting-overview__plan-storage-title-wrapper,
 .hosting-overview__plan-storage-title {
 	display: flex;
@@ -234,6 +242,20 @@ $blueberry-color: #3858e9;
 
 .hosting-overview__plan-storage-footer {
 	text-align: right;
+}
+
+.hosting-overview__plan-bandwidth-wrapper {
+	width: 50%;
+	border-right: 1px solid var(--color-neutral-10);
+	float: left;
+}
+
+.hosting-overview__plan-bandwidth-content {
+	margin-bottom: 8px;
+}
+
+.hosting-overview__plan-bandwidth-content .plan-bandwidth-content__value {
+	font-weight: 700;
 }
 
 @media (max-width: $break-xlarge) {
