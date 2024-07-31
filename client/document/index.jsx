@@ -23,7 +23,6 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { initialClientsData, GRAVATAR_CLIENT_ID } from 'calypso/state/oauth2-clients/reducer';
-import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
 import { chunkCssLinks } from './utils/chunk';
 
@@ -68,7 +67,6 @@ class Document extends Component {
 			target,
 			user,
 			useTranslationChunks,
-			store,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -115,14 +113,16 @@ class Document extends Component {
 		// To customize the page title and favicon for Gravatar-related login pages.
 		if ( sectionName === 'login' && typeof query?.redirect_to === 'string' ) {
 			const searchParams = new URLSearchParams( query.redirect_to.split( '?' )[ 1 ] );
-			const clientId = searchParams.get( 'client_id' );
 			// To cover the case where the `client_id` is not provided, e.g. /log-in/link/use
-			const oauth2Client = clientId ? getOAuth2Client( store.getState(), clientId ) || {} : {};
+			const oauth2Client = initialClientsData[ searchParams.get( 'client_id' ) ] || {};
 
 			if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 				headTitle = oauth2Client.title;
-				// Use the OAuth2 client's favicon if available, otherwise fallback to the default Gravatar favicon.
-				headFaviconUrl = oauth2Client.favicon ?? initialClientsData[ GRAVATAR_CLIENT_ID ].favicon;
+				headFaviconUrl = oauth2Client.favicon;
+			} else if ( query?.gravatar_flow ) {
+				// Use Gravatar's title and favicon for the Gravatar-related OAuth2 clients.
+				headTitle = initialClientsData[ GRAVATAR_CLIENT_ID ].title;
+				headFaviconUrl = initialClientsData[ GRAVATAR_CLIENT_ID ].favicon;
 			}
 		}
 
