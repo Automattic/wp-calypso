@@ -33,7 +33,10 @@ ul.hosting-additional-features {
 		display: flex;
 		align-content: center;
 		gap: 4px;
-		white-space: nowrap;
+
+		@include break-medium {
+			white-space: nowrap;
+		}
 	}
 
 	.gridicon {

@@ -11,6 +11,8 @@ import HostingTestimonialsSection from '../../../common/hosting-testimonials-sec
 import PressableOverviewPlanSelection from '../../../pressable-overview/plan-selection';
 import CommonHostingBenefits from '../common-hosting-benefits';
 
+import './style.scss';
+
 type Props = {
 	onAddToCart: ( plan: APIProductFamilyProduct ) => void;
 };
@@ -19,7 +21,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 
 	return (
-		<div>
+		<div className="premier-agency-hosting">
 			<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
