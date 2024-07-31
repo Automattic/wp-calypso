@@ -5,6 +5,7 @@ import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
+	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -100,7 +101,6 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 
 	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 		const gravatarFrom = get( currentQuery, 'gravatar_from', 'signup' );
-		const isGravatarFlow = !! get( currentQuery, 'gravatar_flow' );
 
 		// Gravatar powered clients signup via the magic login page
 		return login( {
@@ -109,7 +109,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2ClientId: oauth2Client.id,
 			redirectTo: redirectTo,
 			gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && gravatarFrom,
-			gravatarFlow: isGravatarFlow,
+			gravatarFlow: isGravatarFlowOAuth2Client( oauth2Client ),
 		} );
 	}
 

@@ -17,6 +17,7 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import {
+	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
@@ -922,9 +923,9 @@ class MagicLogin extends Component {
 		const { oauth2Client, translate, locale, query } = this.props;
 		const { isRequestingEmail, requestEmailErrorMessage } = this.state;
 
+		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isFromGravatarSignup = isGravatar && query?.gravatar_from === 'signup';
-		const isGravatarFlow = !! query?.gravatar_flow;
 		const submitButtonLabel = isGravatar
 			? translate( 'Continue' )
 			: translate( 'Send me sign in link' );
@@ -1195,7 +1196,7 @@ class MagicLogin extends Component {
 			return (
 				<Main
 					className={ clsx( 'grav-powered-magic-login', {
-						'grav-powered-magic-login--gravatar-flow': !! query?.gravatar_flow,
+						'grav-powered-magic-login--gravatar-flow': isGravatarFlowOAuth2Client( oauth2Client ),
 						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
