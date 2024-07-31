@@ -1,10 +1,13 @@
+import React from 'react';
 import { convertBytes } from 'calypso/my-sites/backup/backup-contents-page/file-browser/util';
 import { useSiteMetricsQuery } from 'calypso/my-sites/site-monitoring/use-metrics-query';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface PlanBandwidthProps {
+	children?: React.ReactNode;
 	siteId: number;
+	className?: string;
 }
 
 const getCurrentMonthRangeTimestamps = () => {
