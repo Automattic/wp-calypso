@@ -84,7 +84,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	useEffect( () => {
 		if ( navigateToRoute ) {
-			navigate( navigateToRoute );
 			setNavigateToRoute( null );
 		}
 	}, [ navigate, navigateToRoute, setNavigateToRoute ] );
@@ -124,7 +123,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 							)
 						}
 					/>
-					<Route path="/post" element={ <HelpCenterArticle /> } />
+					<Route
+						path="/post"
+						element={ <HelpCenterArticle navigateToRoute={ navigateToRoute ?? '' } /> }
+					/>
 					<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 					<Route
 						path="/contact-form"
