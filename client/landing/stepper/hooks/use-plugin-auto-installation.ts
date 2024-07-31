@@ -19,7 +19,7 @@ interface SiteMigrationStatus {
 }
 
 export type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
-export const DEFAULT_RETRY = process.env.NODE_ENV === 'test' ? 1 : 20;
+export const DEFAULT_RETRY = process.env.NODE_ENV === 'test' ? 1 : 10;
 const DEFAULT_RETRY_DELAY = process.env.NODE_ENV === 'test' ? 300 : 5000;
 
 const REFRESH_JETPACK_TOTAL_ATTEMPTS = process.env.NODE_ENV === 'test' ? 1 : 3;
