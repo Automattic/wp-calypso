@@ -161,7 +161,7 @@ const LayoutLoggedOut = ( {
 	}
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
-	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
+	if ( useOAuth2Layout && oauth2Client && ( oauth2Client.name ?? oauth2Client.source ) ) {
 		if ( isPartnerSignup && ! isPartnerSignupStart ) {
 			// Using localizeUrl directly to sidestep issue with useLocale use in SSR
 			masterbar = (

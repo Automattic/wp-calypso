@@ -109,7 +109,7 @@ class HandleEmailedLinkForm extends Component {
 
 		// To customize the login experience for Gravatar-powered clients in the backend, e.g. SMS messages
 		const flow = isGravPoweredOAuth2Client( this.props.oauth2Client )
-			? this.props.oauth2Client.name
+			? this.props.oauth2Client.name ?? this.props.oauth2Client.source
 			: null;
 
 		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToOriginal, flow );

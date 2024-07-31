@@ -1129,7 +1129,8 @@ export default connect(
 				showGlobalNotices: false,
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
-					( ownProps.isGravPoweredClient && ownProps.oauth2Client.name ) ||
+					( ownProps.isGravPoweredClient &&
+						( ownProps.oauth2Client.name ?? ownProps.oauth2Client.source ) ) ||
 					null,
 				...options,
 			} ),
