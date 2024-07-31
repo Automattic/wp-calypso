@@ -1417,15 +1417,22 @@ a.masterbar__quick-language-switcher {
 
 .masterbar__item.has-global-border .item-border-wrapper {
 	position: absolute;
-	display: none;
+	opacity: 0;
 	pointer-events: none;
 
+	.item-border-wrapper__left,
+	.item-border-wrapper__right,
+	.item-border-wrapper__interior-circle {
+		background-color: transparent;
+		transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+	}
+
 	.is-global-sidebar-visible &.is-active {
-		display: block;
 		top: 0;
 		bottom: 0;
 		right: 0;
 		left: 0;
+		opacity: 1;
 
 		.item-border-wrapper__left,
 		.item-border-wrapper__right {
