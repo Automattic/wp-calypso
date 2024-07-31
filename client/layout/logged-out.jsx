@@ -160,15 +160,15 @@ const LayoutLoggedOut = ( {
 		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
 	}
 
-	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
-	if ( useOAuth2Layout && oauth2Client && ( oauth2Client.name ?? oauth2Client.source ) ) {
+	if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
+		masterbar = null;
+	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
+		// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 		if ( isPartnerSignup && ! isPartnerSignupStart ) {
 			// Using localizeUrl directly to sidestep issue with useLocale use in SSR
 			masterbar = (
 				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
 			);
-		} else if ( isGravatar || isGravPoweredClient ) {
-			masterbar = null;
 		} else {
 			classes.dops = true;
 			classes[ oauth2Client.name ] = true;
