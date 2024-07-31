@@ -1,11 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
-import { isGravPoweredOAuth2Client, isGravatarFlowOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
-import { GRAVATAR_CLIENT_ID } from 'calypso/state/oauth2-clients/reducer';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
@@ -52,11 +51,10 @@ const enhanceContextWithLogin = ( context ) => {
 	const isP2Login = query && query.from === 'p2';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
-	// Enables Gravatar related OAuth2 clients to use the Gravatar login flow.
-	const maybeGravatarClientId = isGravatarFlowOAuth2Client()
-		? GRAVATAR_CLIENT_ID
-		: Number( clientId || oauth2ClientId );
-	const isGravPoweredClient = isGravPoweredOAuth2Client( { id: maybeGravatarClientId } );
+	const isGravPoweredClient = isGravPoweredOAuth2Client( {
+		id: Number( clientId || oauth2ClientId ),
+		source: query?.gravatar_flow && 'gravatar',
+	} );
 	const isWhiteLogin =
 		( ! isJetpackLogin &&
 			! isP2Login &&
@@ -135,11 +133,40 @@ export async function login( context, next ) {
 	next();
 }
 
-export function magicLogin( context, next ) {
+export async function magicLogin( context, next ) {
 	const { path } = context;
 
 	if ( isUserLoggedIn( context.store.getState() ) ) {
 		return login( context, next );
+	}
+
+	const {
+		query: { gravatar_flow, client_id, redirect_to },
+	} = context;
+
+	// For Gravatar-related OAuth2 clients, check the necessary URL parameters and fetch the client data if needed.
+	if ( gravatar_flow ) {
+		if ( ! client_id ) {
+			const error = new Error( 'The `client_id` query parameter is missing.' );
+			error.status = 401;
+			return next( error );
+		}
+
+		if ( ! redirect_to ) {
+			const error = new Error( 'The `redirect_to` query parameter is missing.' );
+			error.status = 401;
+			return next( error );
+		}
+
+		const OAuth2Client = getOAuth2Client( context.store.getState(), client_id );
+		if ( ! OAuth2Client ) {
+			// Only fetch the OAuth2 client data if it's not already in the store. This is to avoid unnecessary requests and re-renders.
+			try {
+				await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
+			} catch ( error ) {
+				return next( error );
+			}
+		}
 	}
 
 	context.primary = <MagicLogin path={ path } />;

@@ -17,7 +17,6 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import {
-	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
@@ -925,6 +924,7 @@ class MagicLogin extends Component {
 
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isFromGravatarSignup = isGravatar && query?.gravatar_from === 'signup';
+		const isGravatarFlow = !! query?.gravatar_flow;
 		const submitButtonLabel = isGravatar
 			? translate( 'Continue' )
 			: translate( 'Send me sign in link' );
@@ -933,7 +933,7 @@ class MagicLogin extends Component {
 			redirectTo: query?.redirect_to,
 			oauth2ClientId: query?.client_id,
 			gravatarFrom: query?.gravatar_from,
-			gravatarFlow: isGravatarFlowOAuth2Client(),
+			gravatarFlow: isGravatarFlow,
 		} );
 		let headerText = translate( 'Sign in with your email' );
 		let isEmailInputDisabled = isRequestingEmail;
@@ -961,11 +961,9 @@ class MagicLogin extends Component {
 						flow={ oauth2Client.name }
 						headerText={ headerText }
 						subHeaderText={
-							isGravatarFlowOAuth2Client()
-								? translate( 'Profiles and avatars are powered by Gravatar.' )
-								: ''
+							isGravatarFlow ? translate( 'Profiles and avatars are powered by Gravatar.' ) : ''
 						}
-						hideSubHeaderText={ ! isGravatarFlowOAuth2Client() }
+						hideSubHeaderText={ ! isGravatarFlow }
 						inputPlaceholder={ translate( 'Enter your email address' ) }
 						submitButtonLabel={ submitButtonLabel }
 						tosComponent={ ! isGravatar && this.renderGravPoweredMagicLoginTos() }
@@ -1197,7 +1195,7 @@ class MagicLogin extends Component {
 			return (
 				<Main
 					className={ clsx( 'grav-powered-magic-login', {
-						'grav-powered-magic-login--gravatar-flow': isGravatarFlowOAuth2Client(),
+						'grav-powered-magic-login--gravatar-flow': !! query?.gravatar_flow,
 						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>

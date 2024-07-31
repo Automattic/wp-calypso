@@ -26,7 +26,6 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
-	isGravatarFlowOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -251,7 +250,7 @@ export class Login extends Component {
 			oauth2ClientId: currentQuery?.client_id,
 			redirectTo: currentQuery?.redirect_to,
 			gravatarFrom: currentQuery?.gravatar_from,
-			gravatarFlow: isGravatarFlowOAuth2Client(),
+			gravatarFlow: !! currentQuery?.gravatar_flow,
 		} );
 		const currentUrl = new URL( window.location.href );
 		currentUrl.searchParams.append( 'lostpassword_flow', true );

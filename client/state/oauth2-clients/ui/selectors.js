@@ -1,5 +1,3 @@
-import { isGravatarFlowOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { GRAVATAR_CLIENT_ID } from 'calypso/state/oauth2-clients/reducer';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 
 import 'calypso/state/oauth2-clients/init';
@@ -19,12 +17,7 @@ export function getCurrentOAuth2ClientId( state ) {
  * @returns {Object}          OAuth2 client data
  */
 export const getCurrentOAuth2Client = ( state ) => {
-	let currentClientId = getCurrentOAuth2ClientId( state );
-
-	// Enables Gravatar related OAuth2 clients to use the Gravatar login flow.
-	if ( isGravatarFlowOAuth2Client() ) {
-		currentClientId = GRAVATAR_CLIENT_ID;
-	}
+	const currentClientId = getCurrentOAuth2ClientId( state );
 
 	if ( ! currentClientId ) {
 		return null;

@@ -3,8 +3,6 @@ import { OAUTH2_CLIENT_DATA_RECEIVE } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import ui from './ui/reducer';
 
-export const GRAVATAR_CLIENT_ID = 1854;
-
 export const initialClientsData = {
 	930: {
 		id: 930,
@@ -25,7 +23,7 @@ export const initialClientsData = {
 		icon: 'https://app.crowdsignal.com/images/logo-white.png',
 	},
 	1854: {
-		id: GRAVATAR_CLIENT_ID,
+		id: 1854,
 		name: 'gravatar',
 		title: 'Gravatar',
 		icon: 'https://gravatar.com/images/grav-logo-blue.svg',

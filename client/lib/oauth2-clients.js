@@ -6,15 +6,8 @@ export const isCrowdsignalOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 978;
 };
 
-export const isGravatarFlowOAuth2Client = () => {
-	const searchParams = new URLSearchParams( window.location.search );
-	const gravatarFlow = searchParams.get( 'gravatar_flow' );
-
-	return gravatarFlow === '1' || gravatarFlow === 'true';
-};
-
 export const isGravatarOAuth2Client = ( oauth2Client ) => {
-	return oauth2Client?.id === 1854;
+	return oauth2Client?.id === 1854 || oauth2Client?.source === 'gravatar';
 };
 
 export const isWPJobManagerOAuth2Client = ( oauth2Client ) => {
