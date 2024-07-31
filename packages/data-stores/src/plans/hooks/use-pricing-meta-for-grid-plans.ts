@@ -97,7 +97,13 @@ const usePricingMetaForGridPlans = ( {
 	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
 		planSlugs,
 		siteId,
-		shouldIgnorePlanOwnership: !! currentPlan?.purchaseId, // Ignore plan ownership only if the site is on a paid plan
+
+		// TODO:
+		// We need to ignore plan ownership only if the site is on a paid plan so the CTAs are enabled for non-owner actions.
+		// See https://github.com/Automattic/wp-calypso/issues/87479 for more details.
+		// However, it's technically "not available for purchase for the current user", so it'd be better if the state
+		// can express it more explicitly.
+		shouldIgnorePlanOwnership: !! currentPlan?.purchaseId,
 	} );
 
 	let planPrices:
