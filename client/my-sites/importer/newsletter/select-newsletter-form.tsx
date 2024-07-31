@@ -6,9 +6,9 @@ import FormTextInputWithAction from 'calypso/components/forms/form-text-input-wi
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 
 type Props = {
-	nextStepUrl: string;
+	stepUrl: string;
 };
-export default function SelectNewsletterForm( { nextStepUrl }: Props ) {
+export default function SelectNewsletterForm( { stepUrl }: Props ) {
 	const [ hasError, setHasError ] = useState( false );
 
 	const handleAction = ( fromSite: string ) => {
@@ -18,7 +18,7 @@ export default function SelectNewsletterForm( { nextStepUrl }: Props ) {
 		}
 
 		const { hostname } = parseUrl( fromSite );
-		page( addQueryArgs( nextStepUrl, { from: hostname } ) );
+		page( addQueryArgs( stepUrl, { from: hostname } ) );
 		return;
 	};
 
