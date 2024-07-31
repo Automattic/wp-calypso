@@ -8,7 +8,7 @@ import { FC, PropsWithChildren } from 'react';
 interface Props {
 	mediaStorage: SiteMediaStorage;
 }
-const MINIMUM_DISPLAYED_USAGE = 2;
+const MINIMUM_DISPLAYED_USAGE = 2.5;
 
 const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStorage } ) => {
 	const translate = useTranslate();
