@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from '@wordpress/element';
-import { getLocaleSlug } from 'i18n-calypso';
 import { throttle } from 'lodash';
 
 interface MShotConfig {
@@ -89,12 +88,6 @@ export const useSitePreviewMShotImageHandler = ( url: string = '' ) => {
 	}, [ previewRef ] );
 
 	const createScreenshots = ( url: string ) => {
-		const isEnabled = getLocaleSlug()?.startsWith( 'en' ); // Previous 'migration-flow/new-migration-instructions-step'.
-
-		if ( ! isEnabled ) {
-			return;
-		}
-
 		Object.entries( mShotConfigs ).forEach( ( mShotParams ) => {
 			const screenShotUrl = `https://s0.wp.com/mshots/v1/${ encodeURIComponent(
 				url

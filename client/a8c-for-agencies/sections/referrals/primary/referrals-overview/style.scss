@@ -7,16 +7,6 @@ $data-view-border-color: #f1f1f1;
 	margin-block-end: 48px;
 }
 
-.theme-a8c-for-agencies .button.referrals-overview__notice-button {
-	background-color: var(--color-accent-100);
-	color: var(--color-surface);
-
-	&:hover,
-	&:focus-visible {
-		background-color: var(--color-accent-100);
-	}
-}
-
 .referrals-overview__notice {
 	.button.referrals-overview__notice-button {
 		margin-block-start: 1rem;
@@ -239,6 +229,11 @@ $data-view-border-color: #f1f1f1;
 	flex-direction: row;
 	gap: 8px;
 	margin-block-start: 56px;
+
+	.pressable-icon {
+		width: 24px;
+		height: 24px;
+	}
 }
 
 .a4a-layout__header-actions {
