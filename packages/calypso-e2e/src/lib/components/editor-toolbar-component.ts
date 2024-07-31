@@ -20,8 +20,6 @@ const selectors = {
 	// Post status
 	postStatusButton: `.editor-post-status > button`,
 
-	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
-		`button[role="menuitem"] span:text("${ target }")`,
 	previewPane: `.edit-post-visual-editor`,
 
 	// Publish
@@ -196,10 +194,7 @@ export class EditorToolbarComponent {
 
 		// Locate and click on the intended preview target.
 		const editorParent = await this.editor.parent();
-		const desktopPreviewMenuItemLocator = editorParent.locator(
-			selectors.desktopPreviewMenuItem( target )
-		);
-		await desktopPreviewMenuItemLocator.click();
+		await editorParent.getByRole( 'menuitem', { name: target } ).click();
 
 		// Verify the editor panel is resized and stable.
 		const desktopPreviewPaneLocator = editorParent.locator( selectors.previewPane );
