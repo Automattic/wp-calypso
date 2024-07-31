@@ -298,7 +298,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirects the user to the internal import flow if they are comming from the customer home', () => {
+		it( 'redirects the user to the calypso import page when they come from there', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -397,7 +397,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirect the user back to the customer home when the flow is started from there', async () => {
+		it( 'redirects the user back the calypso import page when they come from there', async () => {
 			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationGoBack( {
