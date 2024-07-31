@@ -134,15 +134,14 @@ export async function login( context, next ) {
 }
 
 export async function magicLogin( context, next ) {
-	const { path } = context;
+	const {
+		path,
+		query: { gravatar_flow, client_id, redirect_to },
+	} = context;
 
 	if ( isUserLoggedIn( context.store.getState() ) ) {
 		return login( context, next );
 	}
-
-	const {
-		query: { gravatar_flow, client_id, redirect_to },
-	} = context;
 
 	// For Gravatar-related OAuth2 clients, check the necessary URL parameters and fetch the client data if needed.
 	if ( gravatar_flow ) {
@@ -158,9 +157,9 @@ export async function magicLogin( context, next ) {
 			return next( error );
 		}
 
-		const OAuth2Client = getOAuth2Client( context.store.getState(), client_id );
-		if ( ! OAuth2Client ) {
-			// Only fetch the OAuth2 client data if it's not already in the store. This is to avoid unnecessary requests and re-renders.
+		const oauth2Client = getOAuth2Client( context.store.getState(), client_id );
+		// Only fetch the data if it's not already in the store. This is to avoid unnecessary requests and re-renders.
+		if ( ! oauth2Client ) {
 			try {
 				await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
 			} catch ( error ) {
