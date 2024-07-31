@@ -1,16 +1,84 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 $tab-background-color: #f4fbff;
 
 .hosting-v2 {
-	.hosting-v2__hero {
-		background-image: url(calypso/assets/images/a8c-for-agencies/hosting-illustration-1.svg);
-		background-repeat: no-repeat;
-		background-position: right top;
+	.hosting-v2__hero-container {
+		position: relative;
 		background-color: var(--color-primary-0);
 		border-block-end: 1px solid var(--color-accent-5);
+	}
+
+	.hosting-v2__hero {
+		position: relative;
+		overflow: hidden;
+
+		&::before {
+			background: url(calypso/assets/images/a8c-for-agencies/hosting-illustration.svg) no-repeat center/contain;
+			content: "";
+			display: inline-block;
+			position: absolute;
+			right: -150px;
+			top: -100px;
+			transition: transform 0.6s ease-in-out;
+			width: 200px;
+			height: 200px;
+
+			@include break-mobile {
+				right: -50px;
+			}
+
+			@include break-medium {
+				top: 0;
+			}
+
+			@include break-large {
+				right: 0;
+				top: -100px;
+			}
+
+			@include break-xlarge {
+				width: 250px;
+				height: 250px;
+			}
+
+			@include break-wide {
+				width: 300px;
+				height: 300px;
+			}
+
+			@include break-huge {
+				top: -100px;
+				width: 350px;
+				height: 350px;
+			}
+		}
+
+		&.is-standard {
+			&::before {
+				transform: scale(2.2) rotate(-120deg);
+			}
+		}
+
+		&.is-premier {
+			&::before {
+				transform: scale(2.2) rotate(-10deg);
+			}
+		}
+
+		&.is-enterprise {
+			&::before {
+				transform: scale(2.2) rotate(80deg);
+			}
+		}
+
 
 		padding: 0;
 
 		> * {
+			position: relative;
+			z-index: 1;
 			padding-inline: 0;
 
 			@include breakpoint-deprecated( ">660px" ) {
@@ -21,7 +89,8 @@ $tab-background-color: #f4fbff;
 		}
 
 
-		.hosting-v2__container {
+		.hosting-v2__hero-content {
+			padding-inline: 64px;
 			padding-block-start: 32px;
 		}
 
@@ -104,6 +173,7 @@ $tab-background-color: #f4fbff;
 
 	.hosting-v2__content {
 		padding-block-start: 32px;
+		position: relative;
 	}
 
 	.hosting-overview-features__item {
