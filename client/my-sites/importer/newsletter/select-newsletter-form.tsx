@@ -18,7 +18,7 @@ export default function SelectNewsletterForm( { nextStepUrl }: Props ) {
 		}
 
 		const { hostname } = parseUrl( fromSite );
-		page( addQueryArgs( nextStepUrl, { newsletter: hostname } ) );
+		page( addQueryArgs( nextStepUrl, { from: hostname } ) );
 		return;
 	};
 
@@ -27,7 +27,7 @@ export default function SelectNewsletterForm( { nextStepUrl }: Props ) {
 			<div className="select-newsletter-form">
 				<FormTextInputWithAction
 					onAction={ handleAction }
-					placeholder="http://example.substack.com"
+					placeholder="https://example.substack.com"
 					action="Continue"
 					isError={ hasError }
 				/>
