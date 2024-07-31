@@ -1418,6 +1418,7 @@ a.masterbar__quick-language-switcher {
 .masterbar__item.has-global-border .item-border-wrapper {
 	position: absolute;
 	display: none;
+	pointer-events: none;
 
 	.is-global-sidebar-visible &.is-active {
 		display: block;
