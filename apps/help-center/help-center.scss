@@ -30,17 +30,10 @@
 /**
  * WP-ADMIN Masterbar Styling
  */
-
-body.is-nav-unification {
-	#wpadminbar #wp-toolbar #wp-admin-bar-help-center {
-		margin-right: 5px;
-	}
-}
-
 #wpadminbar #wp-toolbar {
 	#wp-admin-bar-help-center {
 		padding: 0;
-		width: 38px;
+		width: 43px;
 		display: none;
 
 		@include breakpoint-deprecated( ">960px" ) {
@@ -59,7 +52,7 @@ body.is-nav-unification {
 			left: 0;
 			right: 0;
 			bottom: 0;
-			padding: 4px 6px;
+			padding: 4px 11px;
 		}
 
 		@media (max-width: 782px) {
@@ -79,10 +72,6 @@ body.is-nav-unification {
 			}
 		}
 
-		.ab-icon {
-			width: 18px;
-		}
-
 		.ab-item.ab-empty-item {
 			transition: 250ms ease;
 		}
@@ -90,6 +79,10 @@ body.is-nav-unification {
 		.ab-item:hover {
 			cursor: pointer;
 		}
+	}
+
+	.ab-icon:hover {
+		color: inherit;
 	}
 
 
