@@ -13,17 +13,26 @@ const useAutoScroll = (
 			return;
 		}
 
-		const isLastMessageErrorOrFeedback = () => {
+		const isLastErrorMessage = () => {
 			if ( messagesContainerRef.current ) {
 				const children = messagesContainerRef.current.children;
 				const lastMessage = children[ children.length - 1 ];
 				if ( ! lastMessage ) {
 					return false;
 				}
-				return (
-					lastMessage.getAttribute( 'data-is-last-error-message' ) === 'true' ||
-					lastMessage.getAttribute( 'data-is-last-feedback-message' ) === 'true'
-				);
+				return lastMessage.getAttribute( 'data-is-last-error-message' ) === 'true';
+			}
+			return false;
+		};
+
+		const isLastFeedbackMessage = () => {
+			if ( messagesContainerRef.current ) {
+				const children = messagesContainerRef.current.children;
+				const lastMessage = children[ children.length - 1 ];
+				if ( ! lastMessage ) {
+					return false;
+				}
+				return lastMessage.getAttribute( 'data-is-last-feedback-message' ) === 'true';
 			}
 			return false;
 		};
@@ -54,7 +63,7 @@ const useAutoScroll = (
 			}
 		};
 
-		if ( isLastMessageErrorOrFeedback() ) {
+		if ( isLastErrorMessage() || isLastFeedbackMessage() ) {
 			scrollToLastMessage();
 		} else {
 			scrollToLastUserMessage();

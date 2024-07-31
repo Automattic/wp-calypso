@@ -11,10 +11,6 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 	( { currentUser }, ref ) => {
 		const { chat } = useOdieAssistantContext();
 
-		if ( chat.messages.length === 0 ) {
-			return <div ref={ ref } />;
-		}
-
 		let lastUserMessageIndex = -1;
 		let lastFeedbackMessageIndex = -1;
 		let lastErrorMessageIndex = -1;

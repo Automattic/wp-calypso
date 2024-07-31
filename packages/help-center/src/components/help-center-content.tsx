@@ -16,7 +16,7 @@ import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-
  * Internal Dependencies
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useShouldUseWapuu } from '../hooks';
+import { useChatStatus, useShouldRenderEmailOption, useShouldUseWapuu } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterContactForm } from './help-center-contact-form';
@@ -52,6 +52,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName, currentUser, site } = useHelpCenterContext();
+	const { isLoading: isLoadingEmailStatus } = useShouldRenderEmailOption();
+	const { isLoading: isLoadingChatStatus } = useChatStatus();
+	const isLoadingEnvironment = isLoadingEmailStatus || isLoadingChatStatus;
 	const shouldUseWapuu = useShouldUseWapuu();
 	const { isMinimized, odieInitialPromptText, odieBotNameSlug } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -148,6 +151,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 						path="/odie"
 						element={
 							<OdieAssistantProvider
+								isLoadingEnvironment={ isLoadingEnvironment }
 								botNameSlug={ odieBotNameSlug }
 								botName="Wapuu"
 								odieInitialPromptText={ odieInitialPromptText }

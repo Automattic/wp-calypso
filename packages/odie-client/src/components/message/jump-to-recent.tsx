@@ -26,7 +26,7 @@ export const JumpToRecent = ( {
 		trackEvent( 'chat_jump_to_recent_click' );
 	}, [ containerReference, trackEvent, chat.messages.length ] );
 
-	if ( isMinimized ) {
+	if ( isMinimized || chat.messages.length < 2 ) {
 		return null;
 	}
 

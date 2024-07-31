@@ -28,6 +28,8 @@ type OdieAssistantContextInterface = {
 	currentUser: CurrentUser;
 	initialUserMessage: string | null | undefined;
 	isLoading: boolean;
+	isLoadingEnvironment: boolean;
+	isLoadingExistingChat: boolean;
 	isMinimized?: boolean;
 	isNudging: boolean;
 	isVisible: boolean;
@@ -61,6 +63,8 @@ const defaultContextInterfaceValues = {
 	clearChat: noop,
 	initialUserMessage: null,
 	isLoading: false,
+	isLoadingEnvironment: false,
+	isLoadingExistingChat: false,
 	isMinimized: false,
 	isNudging: false,
 	isVisible: false,
@@ -101,6 +105,7 @@ type OdieAssistantProviderProps = {
 	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
 	isMinimized?: boolean;
+	isLoadingEnvironment?: boolean;
 	currentUser: CurrentUser;
 	extraContactOptions?: ReactNode;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
@@ -118,6 +123,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	odieInitialPromptText,
 	initialUserMessage,
 	isMinimized = false,
+	isLoadingEnvironment = false,
 	extraContactOptions,
 	enabled = true,
 	logger,
@@ -141,7 +147,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
 
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
-	const existingChat = useLoadPreviousChat( {
+	const { chat: existingChat, isLoading: isLoadingExistingChat } = useLoadPreviousChat( {
 		botNameSlug,
 		chatId: existingChatId,
 		odieInitialPromptText,
@@ -209,9 +215,10 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
 
 				// Append new messages at the end
+				const messages = [ ...filteredMessages, ...newMessages ];
 				return {
 					chat_id: prevChat.chat_id,
-					messages: [ ...filteredMessages, ...newMessages ],
+					messages,
 				};
 			} );
 		},
@@ -277,6 +284,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				trackEvent,
 				updateMessage,
 				version: overridenVersion,
+				isLoadingEnvironment,
+				isLoadingExistingChat,
 			} }
 		>
 			{ children }

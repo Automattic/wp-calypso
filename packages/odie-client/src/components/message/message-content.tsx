@@ -36,7 +36,8 @@ export const MessageContent = forwardRef<
 		const isUser = message.role === 'user';
 		const messageClasses = clsx(
 			'odie-chatbox-message',
-			isUser ? 'odie-chatbox-message-user' : 'odie-chatbox-message-wapuu'
+			isUser ? 'odie-chatbox-message-user' : 'odie-chatbox-message-wapuu',
+			`odie-chatbox-message-${ message.type }`
 		);
 
 		return (

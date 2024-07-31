@@ -12,13 +12,22 @@ export const useLoadPreviousChat = ( {
 	chatId: number | null | undefined;
 	odieInitialPromptText?: string;
 } ) => {
-	const { data: existingChat } = useOdieGetChat( botNameSlug, chatId, 1, 30 );
+	const { data: existingChat, isLoading: loadingChat } = useOdieGetChat(
+		botNameSlug,
+		chatId,
+		1,
+		30
+	);
 
 	const [ chat, setChat ] = useState< Chat >( {
 		chat_id: null,
 		messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
 	} );
+
+	const [ isLoading, setIsLoading ] = useState( true );
+
 	useEffect( () => {
+		setIsLoading( loadingChat );
 		if ( existingChat ) {
 			const initialMessage = getOdieInitialMessage( botNameSlug, odieInitialPromptText );
 			const messages = [ initialMessage, ...existingChat.messages ];
@@ -29,7 +38,7 @@ export const useLoadPreviousChat = ( {
 				messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
 			} );
 		}
-	}, [ botNameSlug, chatId, existingChat, odieInitialPromptText ] );
+	}, [ botNameSlug, chatId, existingChat, loadingChat, odieInitialPromptText ] );
 
-	return chat;
+	return { chat, isLoading };
 };
