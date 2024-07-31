@@ -93,7 +93,6 @@ export default function ConsolidatedViews( {
 								'Every 60 days, we pay out commissions. {{a}}Learn more about payouts and commissions{{/a}}.',
 								{
 									components: {
-										nbsp: <>&nbsp;</>,
 										a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
 									},
 								}
@@ -122,7 +121,6 @@ export default function ConsolidatedViews( {
 									' We estimate the commission based on the active use for the current month. {{a}}Learn more about payouts and commissions{{/a}}.',
 								{
 									components: {
-										nbsp: <>&nbsp;</>,
 										a: <a href={ link } target="_blank" rel="noreferrer noopener" />,
 									},
 									comment: 'This is a tooltip explaining how the commission is calculated',
