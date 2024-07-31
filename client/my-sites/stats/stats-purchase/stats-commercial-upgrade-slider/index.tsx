@@ -1,7 +1,6 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EXTENSION_THRESHOLD_IN_MILLION } from 'calypso/my-sites/stats/hooks/use-available-upgrade-tiers';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
@@ -133,13 +132,6 @@ function StatsCommercialUpgradeSlider( {
 
 		onSliderChange( quantity as number );
 	};
-
-	useEffect( () => {
-		// Update fetched tier quantity of the first step back to the parent component for checkout.
-		const firstStepQuantity = getTierQuantity( tiers[ 0 ] );
-		onSliderChange( firstStepQuantity as number );
-	}, [ JSON.stringify( tiers ), onSliderChange ] );
-	// TODO: Investigate if we can remove the JSON.stringify() call above.
 
 	return (
 		<TierUpgradeSlider
