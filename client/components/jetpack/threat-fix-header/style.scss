@@ -69,6 +69,9 @@
 	}
 
 	&__card-bottom {
+		display: flex;
+		align-items: center;
+		gap: 6px;
 		font-style: normal;
 		font-weight: normal;
 		font-size: $font-body-small;
