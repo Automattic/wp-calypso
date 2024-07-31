@@ -376,7 +376,8 @@ body.is-mobile-app-view {
 		text-indent: 0;
 
 		.masterbar__item-subitems-item {
-			margin: 0 6px;
+			margin-right: 6px;
+			padding-left: 6px;
 			white-space: nowrap;
 			min-width: 140px;
 			line-height: 2;
@@ -413,7 +414,7 @@ body.is-mobile-app-view {
 		@media only screen and (max-width: 782px) {
 			position: fixed;
 			.masterbar__item-subitems-item {
-				padding: 8px 10px;
+				padding: 8px 16px;
 			}
 		}
 	}
