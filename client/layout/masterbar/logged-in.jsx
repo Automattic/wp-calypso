@@ -227,6 +227,11 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	isActive = ( section ) => {
+		// Prevent global selected areas from losing special global item selected styles when
+		// opening notes/help.
+		if ( section === 'me' || section === 'reader' || section === 'sites-dashboard' ) {
+			return section === this.props.section;
+		}
 		return section === this.props.section && ! this.props.isNotificationsShowing;
 	};
 
