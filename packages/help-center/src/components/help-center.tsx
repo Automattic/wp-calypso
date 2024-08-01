@@ -4,7 +4,7 @@
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useLoadZendeskMessaging, useSmooch } from '@automattic/zendesk-client';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal Dependencies
@@ -35,6 +35,7 @@ const HelpCenter: React.FC< Container > = ( {
 			isMinimized: helpCenterSelect.getIsMinimized(),
 		};
 	}, [] );
+	const { setUnreadCount } = useDispatch( HELP_CENTER_STORE );
 
 	const { currentUser } = useHelpCenterContext();
 
@@ -52,7 +53,15 @@ const HelpCenter: React.FC< Container > = ( {
 		isHelpCenterShown && isEligibleForChat,
 		isEligibleForChat
 	);
-	useSmooch();
+	const { init, addUnreadCountListener } = useSmooch();
+
+	useEffect( () => {
+		if ( init ) {
+			addUnreadCountListener( ( unreadCount: number ) => {
+				setUnreadCount( unreadCount );
+			} );
+		}
+	}, [ init, setUnreadCount ] );
 
 	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 
@@ -86,8 +95,10 @@ export default function ContextualizedHelpCenter(
 	props: Container & HelpCenterRequiredInformation
 ) {
 	return (
-		<HelpCenterRequiredContextProvider value={ props }>
-			<HelpCenter { ...props } />
-		</HelpCenterRequiredContextProvider>
+		<>
+			<HelpCenterRequiredContextProvider value={ props }>
+				<HelpCenter { ...props } />
+			</HelpCenterRequiredContextProvider>
+		</>
 	);
 }

@@ -38,8 +38,9 @@ export const useSmooch = () => {
 			destroy,
 			getConversation: async () => undefined,
 			createConversation: async () => undefined,
-			addMessengerListener: async () => undefined,
-			sendMessage: async () => undefined,
+			addMessengerListener: () => undefined,
+			addUnreadCountListener: () => undefined,
+			sendMessage: () => undefined,
 		};
 	}
 
@@ -52,7 +53,10 @@ export const useSmooch = () => {
 				return;
 			}
 			const result = await Smooch.getConversationById( existingConversation.id );
-			return result;
+			if ( result ) {
+				Smooch.markAllAsRead( result.id );
+				return result;
+			}
 		}
 		return;
 	};
@@ -83,7 +87,14 @@ export const useSmooch = () => {
 	};
 
 	const addMessengerListener = ( callback: ( message: Message ) => void ) => {
-		Smooch.on( 'message:received', callback );
+		Smooch.on( 'message:received', ( message, data ) => {
+			callback( message );
+			Smooch.markAllAsRead( data.conversation.id );
+		} );
+	};
+
+	const addUnreadCountListener = ( callback: ( unreadCount: number ) => void ) => {
+		Smooch.on( 'unreadCount', callback );
 	};
 
 	return {
@@ -92,6 +103,7 @@ export const useSmooch = () => {
 		getConversation,
 		createConversation,
 		addMessengerListener,
+		addUnreadCountListener,
 		sendMessage,
 	};
 };

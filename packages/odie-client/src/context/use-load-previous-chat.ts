@@ -12,8 +12,16 @@ export const useLoadPreviousChat = ( botNameSlug: OdieAllowedBots, chatId?: numb
 		chat_id: null,
 		type: 'ai',
 		messages: [ getOdieInitialMessage( botNameSlug ) ],
-		loading: true,
 	} );
+
+	useEffect( () => {
+		if ( ! shouldLoadConversation ) {
+			setChat( ( currentChat ) => ( {
+				...currentChat,
+				loading: false,
+			} ) );
+		}
+	}, [ shouldLoadConversation ] );
 
 	useEffect( () => {
 		const loadConversation = async () => {

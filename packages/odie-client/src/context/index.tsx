@@ -141,7 +141,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const [ scrollToLastMessage, setScrollToLastMessage ] =
 		useState< ScrollToLastMessageType | null >( null );
-	const { addMessengerListener } = useSmooch();
+	const { init, addMessengerListener } = useSmooch();
 
 	const [ lastMessageInView, setLastMessageInView ] = useState( true );
 
@@ -224,11 +224,13 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	);
 
 	useEffect( () => {
-		addMessengerListener( ( message: Parameters< typeof transformMessage >[ 0 ] ) => {
-			const translatedMessage = transformMessage( message );
-			addMessage( translatedMessage );
-		} );
-	}, [ addMessage ] );
+		if ( init ) {
+			addMessengerListener( ( message: Parameters< typeof transformMessage >[ 0 ] ) => {
+				const translatedMessage = transformMessage( message );
+				addMessage( translatedMessage );
+			} );
+		}
+	}, [ addMessage, init ] );
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
