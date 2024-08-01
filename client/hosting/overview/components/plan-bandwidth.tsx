@@ -1,4 +1,5 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { convertBytes } from 'calypso/my-sites/backup/backup-contents-page/file-browser/util';
 import { useSiteMetricsQuery } from 'calypso/my-sites/site-monitoring/use-metrics-query';
@@ -35,6 +36,8 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	const selectedSiteDomain = selectedSiteData?.domain;
 	const planDetails = selectedSiteData?.plan;
 
+	const translate = useTranslate();
+
 	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
 
 	const { data } = useSiteMetricsQuery( siteId, {
@@ -61,14 +64,24 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 				isEcommercePlan( planDetails?.product_slug ) );
 
 		if ( isAtomic ) {
-			return <a href={ `/site-monitoring/${ siteSlug }` }>Monitor your site's performance</a>;
+			return (
+				<a href={ `/site-monitoring/${ siteSlug }` }>
+					{ translate( "Monitor your site's performance", {
+						comment: 'A link to the "Monitoring" tab of the Hosting Overview',
+					} ) }
+				</a>
+			);
 		}
 
 		return (
 			<a href={ `/hosting-features/${ siteSlug }` }>
 				{ eligibleForAtomic
-					? 'Activate hosting features to monitor site performance'
-					: "Want to monitor your site's performance?" }
+					? translate( 'Activate hosting features to monitor site performance', {
+							comment: 'A link to the Hosting Features page to click an activation button',
+					  } )
+					: translate( "Want to monitor your site's performance?", {
+							comment: 'A link to the Hosting Features page to click an upgrade button',
+					  } ) }
 			</a>
 		);
 	};
@@ -76,10 +89,14 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	return (
 		<div className="hosting-overview__plan-bandwidth-wrapper">
 			<div className="hosting-overview__plan-bandwidth-content">
-				{ 'Bandwidth: ' }
-				<span className="plan-bandwidth-content__value">
-					{ unitAmount } { unit } used
-				</span>
+				{ translate( 'Bandwidth: {{span}}%(value)s %(measure)s used{{/span}}', {
+					args: { value: unitAmount, measure: unit },
+					components: {
+						span: <span className="plan-bandwidth-content__value" />,
+					},
+					comment:
+						'A description of the amount of data that has been used by the site in the current month',
+				} ) }
 			</div>
 			<div className="hosting-overview__plan-bandwidth-footer">{ getBandwidthFooter() }</div>
 		</div>

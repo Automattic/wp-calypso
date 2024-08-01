@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
 import wpcom from 'calypso/lib/wp';
@@ -18,6 +19,8 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 	const [ visitsNumber, setVisitsNumber ] = useState< number | null >( null );
 	const selectedSiteData = useSelector( getSelectedSite );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteData?.ID ) );
+
+	const translate = useTranslate();
 
 	useEffect( () => {
 		// It's possible to go with `unit: month` and `quantity: 1` to get the last month's data
@@ -55,12 +58,25 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 	return (
 		<div className="hosting-overview__plan-site-visits-wrapper">
 			<div className="hosting-overview__plan-site-visits-content">
-				{ 'Visits: ' }
-				<span className="plan-site-visits-content__value">
-					{ visitsNumber || 'None yet' } this month
-				</span>
+				{ visitsNumber > 0
+					? translate( 'Visits: {{span}}%(visitCount)s this month{{/span}}', {
+							args: { visitCount: visitsNumber },
+							components: {
+								span: <span className="plan-site-visits-content__value" />,
+							},
+							comment:
+								'A description of the number of visits the site has received in the current month',
+					  } )
+					: translate( 'No visits so far this month', {
+							comment:
+								'A notice that the site has not yet received any visits during the current month',
+					  } ) }
 			</div>
-			<a href={ `/stats/month/${ siteSlug }` }>Go to Stats page</a>
+			<a href={ `/stats/month/${ siteSlug }` }>
+				{ translate( 'Go to Stats page', {
+					comment: 'A link taking the user to the stats page to view more detailed site statistics',
+				} ) }
+			</a>
 		</div>
 	);
 }
