@@ -36,7 +36,7 @@ const MigrationOfferV2 = () => {
 					<div className="a4a-migration-offer-v2__body">
 						<p className="a4a-migration-offer-v2__description">
 							{ translate(
-								'Migrate your clients’ sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2025. You’ll also receive an additional $100 for each migrated site—up to $3,000 until September 30, 2024. {{a}}See details{{/a}}',
+								'Migrate your clients’ sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2025. You’ll also receive an additional $100 for each migrated site—up to $3,000 until October 31, 2024. {{a}}See details{{/a}}',
 								{
 									components: {
 										a: (
