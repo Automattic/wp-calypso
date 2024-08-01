@@ -17,6 +17,7 @@ import PlanStorage from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { HostingCard, HostingCardLinkButton } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { PlanBandwidth } from 'calypso/hosting-overview/components/plan-bandwidth';
 import { PlanSiteVisits } from 'calypso/hosting-overview/components/plan-site-visits';
 import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
@@ -26,10 +27,12 @@ import { isStagingSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
+import { AppState } from 'calypso/types';
 
 const PricingSection: FC = () => {
 	const translate = useTranslate();
@@ -168,6 +171,7 @@ const PlanCard: FC = () => {
 		isJetpackSite( state, site?.ID, { treatAtomicAsJetpackSite: false } )
 	);
 	const isStaging = isStagingSite( site ?? undefined );
+	const isAtomic = useSelector( ( state: AppState ) => isAtomicSite( state, site?.ID ?? 0 ) );
 	const isOwner = planDetails?.user_is_owner;
 	const planPurchaseId = useSelector( ( state: IAppState ) =>
 		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
@@ -268,6 +272,9 @@ const PlanCard: FC = () => {
 						) }
 						{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
 							<PlanSiteVisits siteId={ site.ID } />
+						) }
+						{ config.isEnabled( 'hosting-overview-refinements' ) && isAtomic && site && (
+							<PlanBandwidth siteId={ site.ID } />
 						) }
 					</>
 				) }
