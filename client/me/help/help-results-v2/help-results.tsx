@@ -19,6 +19,7 @@ type HelpResultsV2Props = {
 	onClick?: ( event: React.MouseEvent< HTMLAnchorElement >, helpLink: HelpLink ) => void;
 	iconTypeDescription?: string;
 	compact?: boolean;
+	openInHelpCenter?: boolean;
 };
 
 const HelpResultsV2 = ( {
@@ -26,16 +27,18 @@ const HelpResultsV2 = ( {
 	onClick,
 	iconTypeDescription = 'book',
 	compact,
+	openInHelpCenter = false,
 }: HelpResultsV2Props ) => {
 	const { openArticleInHelpCenter } = useOpenArticleInHelpCenter();
 	const handleOnClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
-		event.preventDefault();
-		if ( ! helpLink || helpLink.disabled ) {
-			return;
+		if ( helpLink.disabled ) {
+			return event.preventDefault();
 		}
 
 		onClick?.( event, helpLink );
-		helpLink.link && openArticleInHelpCenter( helpLink.link );
+
+		helpLink.link && openInHelpCenter && event.preventDefault();
+		helpLink.link && openInHelpCenter && openArticleInHelpCenter( helpLink.link );
 	};
 
 	const getResultImage = () => {
