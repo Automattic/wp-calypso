@@ -931,6 +931,7 @@ class MagicLogin extends Component {
 		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isFromGravatarSignup = isGravatar && query?.gravatar_from === 'signup';
+		const isFromGravatar3rdPartyApp = isGravatar && query?.gravatar_from === '3rd-party';
 		const submitButtonLabel = isGravatar
 			? translate( 'Continue' )
 			: translate( 'Send me sign in link' );
@@ -942,17 +943,15 @@ class MagicLogin extends Component {
 			gravatarFlow: isGravatarFlow,
 		} );
 		let headerText = translate( 'Sign in with your email' );
+		const shouldShowSubHeader = isGravatarFlow || isFromGravatar3rdPartyApp;
 		let isEmailInputDisabled = isRequestingEmail;
 
 		if ( isGravatar ) {
-			const isFromSignup = query?.gravatar_from === 'signup';
-			const isFrom3rdPartyApp = query?.gravatar_from === '3rd-party';
-
-			headerText = isFromSignup
+			headerText = isFromGravatarSignup
 				? translate( 'Create your Profile' )
 				: translate( 'Edit your Profile' );
 
-			if ( isFrom3rdPartyApp ) {
+			if ( isFromGravatar3rdPartyApp ) {
 				isEmailInputDisabled = true;
 			}
 		}
@@ -967,9 +966,11 @@ class MagicLogin extends Component {
 						flow={ oauth2Client.name ?? oauth2Client.source }
 						headerText={ headerText }
 						subHeaderText={
-							isGravatarFlow ? translate( 'Profiles and avatars are powered by Gravatar.' ) : ''
+							shouldShowSubHeader
+								? translate( 'Profiles and avatars are powered by Gravatar.' )
+								: ''
 						}
-						hideSubHeaderText={ ! isGravatarFlow }
+						hideSubHeaderText={ ! shouldShowSubHeader }
 						inputPlaceholder={ translate( 'Enter your email address' ) }
 						submitButtonLabel={ submitButtonLabel }
 						tosComponent={ ! isGravatar && this.renderGravPoweredMagicLoginTos() }
@@ -1189,6 +1190,9 @@ class MagicLogin extends Component {
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			let renderContent = this.renderGravPoweredMagicLogin();
+			const hasSubHeader =
+				isGravatarFlowOAuth2Client( oauth2Client ) ||
+				( isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party' );
 
 			if ( showSecondaryEmailOptions ) {
 				renderContent = this.renderGravPoweredSecondaryEmailOptions();
@@ -1201,7 +1205,7 @@ class MagicLogin extends Component {
 			return (
 				<Main
 					className={ clsx( 'grav-powered-magic-login', {
-						'grav-powered-magic-login--gravatar-flow': isGravatarFlowOAuth2Client( oauth2Client ),
+						'grav-powered-magic-login--has-subheader': hasSubHeader,
 						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
