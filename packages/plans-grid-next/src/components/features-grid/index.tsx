@@ -15,8 +15,8 @@ import useGridSize from '../../hooks/use-grid-size';
 import { PlanFeaturesItem } from '../item';
 import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
+import EnterpriseFeatures from './enterprise-features';
 import MobileFreeDomain from './mobile-free-domain';
-import PartnerLogos from './partner-logos';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
@@ -155,7 +155,7 @@ const MobileView = ( {
 							)
 						}
 					>
-						<PartnerLogos renderedGridPlans={ [ gridPlan ] } />
+						<EnterpriseFeatures renderedGridPlans={ [ gridPlan ] } />
 						{ ! enableCategorisedFeatures && (
 							<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
 						) }

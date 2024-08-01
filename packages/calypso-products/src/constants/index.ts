@@ -1,5 +1,6 @@
 export * from './akismet';
 export * from './domain';
+export * from './enterprise';
 export * from './features';
 export * from './google';
 export * from './jetpack';
