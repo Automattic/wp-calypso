@@ -1,4 +1,5 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
+import { LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { convertBytes } from 'calypso/my-sites/backup/backup-contents-page/file-browser/util';
@@ -46,18 +47,7 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 		metric: 'response_bytes_persec',
 	} );
 
-	if ( ! data || ! selectedSiteDomain ) {
-		return;
-	}
-
-	const valueInBytes = data.data.periods.reduce(
-		( acc, curr ) => acc + ( curr.dimension[ selectedSiteDomain ] || 0 ),
-		0
-	);
-
-	const { unitAmount, unit } = convertBytes( valueInBytes );
-
-	const getBandwidthFooter = () => {
+	const getBandwidthFooterLink = () => {
 		const eligibleForAtomic =
 			planDetails &&
 			( isBusinessPlan( planDetails?.product_slug ) ||
@@ -86,6 +76,22 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 		);
 	};
 
+	if ( ! data || ! selectedSiteDomain ) {
+		return (
+			<div className="hosting-overview__plan-bandwidth-wrapper">
+				<LoadingPlaceholder className="hosting-overview__plan-bandwidth-placeholder" />
+				{ getBandwidthFooterLink() }
+			</div>
+		);
+	}
+
+	const valueInBytes = data.data.periods.reduce(
+		( acc, curr ) => acc + ( curr.dimension[ selectedSiteDomain ] || 0 ),
+		0
+	);
+
+	const { unitAmount, unit } = convertBytes( valueInBytes );
+
 	return (
 		<div className="hosting-overview__plan-bandwidth-wrapper">
 			<div className="hosting-overview__plan-bandwidth-content">
@@ -98,7 +104,7 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 						'A description of the amount of data that has been used by the site in the current month',
 				} ) }
 			</div>
-			{ getBandwidthFooter() }
+			{ getBandwidthFooterLink() }
 		</div>
 	);
 }

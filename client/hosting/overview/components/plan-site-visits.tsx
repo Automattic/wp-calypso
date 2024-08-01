@@ -1,3 +1,4 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
@@ -59,9 +60,7 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 		}
 
 		if ( ! visitsNumber ) {
-			return translate( "Site visit info isn't available right now, please try again later", {
-				comment: 'A notice that the number of visits could not be retrieved',
-			} );
+			return <LoadingPlaceholder className="hosting-overview__plan-site-visits-placeholder" />;
 		}
 
 		return translate( 'Visits: {{span}}%(visitCount)s this month{{/span}}', {
