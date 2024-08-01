@@ -48,6 +48,7 @@ import CancelPurchaseRefundInformation from './refund-information';
 
 import './style.scss';
 
+
 class CancelPurchase extends Component {
 	static propTypes = {
 		purchaseListUrl: PropTypes.string,
