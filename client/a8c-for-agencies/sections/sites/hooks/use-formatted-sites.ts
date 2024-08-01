@@ -160,8 +160,15 @@ const useFormatPluginData = () => {
 					updates: 0,
 				};
 			}
+
 			return {
-				value: `${ pluginUpdates?.length } ${ translate( 'Available' ) }`,
+				value: translate( '%(count)d Update', '%(count)d Updates', {
+					count: pluginUpdates?.length,
+					args: {
+						count: pluginUpdates?.length,
+					},
+					comment: '%(count)d is the number of plugin updates available',
+				} ) as string,
 				status: pluginUpdates?.length > 0 ? 'warning' : 'success',
 				type: 'plugin',
 				updates: pluginUpdates?.length,

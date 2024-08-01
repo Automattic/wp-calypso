@@ -5,8 +5,12 @@ import { getSimpleSortFunctionBy, getStatusSortFunctions } from '../utils';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { DomainsTableColumn } from '.';
 
-const domainLabel = ( count: number, isBulkSelection: boolean ) =>
-	isBulkSelection
+const domainLabel = ( count: number, isBulkSelection: boolean, showCount: boolean = true ) => {
+	if ( ! showCount ) {
+		return __( 'Domain', __i18n_text_domain__ );
+	}
+
+	return isBulkSelection
 		? sprintf(
 				/* translators: Heading which displays the number of selected domains in a table */
 				_n(
@@ -22,6 +26,7 @@ const domainLabel = ( count: number, isBulkSelection: boolean ) =>
 				_n( '%(count)d domain', '%(count)d domains', count, __i18n_text_domain__ ),
 				{ count }
 		  );
+};
 
 export const allSitesViewColumns = (
 	translate: I18N[ 'translate' ],
