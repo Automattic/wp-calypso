@@ -327,7 +327,7 @@ body.is-mobile-app-view {
 		padding-left: 7px;
 	}
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		&.masterbar__reader,
 		&.masterbar__item-my-site-actions {
 			padding: 0;
@@ -411,7 +411,7 @@ body.is-mobile-app-view {
 
 		}
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			position: fixed;
 			.masterbar__item-subitems-item {
 				padding: 8px 16px;
@@ -559,7 +559,7 @@ body.is-mobile-app-view {
 		margin-right: 0;
 	}
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		font-size: $masterbar-mobile-font-size;
 		width: 52px;
 		padding: 0;
@@ -654,7 +654,7 @@ body.is-mobile-app-view {
 
 	&.masterbar__item-sidebar-menu {
 		display: none;
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			display: inline-block;
 			margin-right: 2px;
 			margin-left: -1px;
@@ -666,14 +666,14 @@ body.is-mobile-app-view {
 	&.masterbar__item-no-sites {
 		padding: 0 7px 0 5px; // trying to match core's 35px width
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			padding: 0;
 		}
 
 		.gridicon {
 			width: 24px;
 			height: 24px;
-			@media only screen and (max-width: 782px) {
+			@media only screen and (max-width: 781px) {
 				width: 32px;
 				height: 32px;
 			}
@@ -797,7 +797,7 @@ body.is-mobile-app-view {
 	}
 }
 .masterbar__item-action-search {
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		display: none !important; //Mobile styles not yet handled
 	}
 
@@ -851,7 +851,7 @@ body.is-mobile-app-view {
 	transition: all 0.2s ease-out;
 	font-size: $masterbar-font-size;
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		height: 34px;
 		margin-top: 6px;
 		margin-right: 9px;
@@ -959,7 +959,7 @@ body.is-mobile-app-view {
 
 		border: 2px solid var(--color-border-inverted);
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 22px;
 			height: 22px;
 		}
@@ -971,7 +971,7 @@ body.is-mobile-app-view {
 	}
 
 	.gridicon {
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			position: relative;
 			left: 4px;
 		}
@@ -980,7 +980,7 @@ body.is-mobile-app-view {
 			display: block;
 			padding: 0;
 
-			@media only screen and (max-width: 782px) {
+			@media only screen and (max-width: 781px) {
 				padding-left: 8px;
 			}
 		}
@@ -1007,7 +1007,7 @@ body.is-mobile-app-view {
 		border-radius: unset;
 		margin-left: 1px;
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 26px;
 			height: 26px;
 			margin-left: 4px;
@@ -1043,7 +1043,7 @@ body.is-mobile-app-view {
 		max-height: 94px;
 		padding: 12px 0 0 0;
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			min-width: 100% !important;
 			max-height: 100%;
 		}
@@ -1059,7 +1059,7 @@ body.is-mobile-app-view {
 		}
 	}
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		.masterbar__item-howdy-howdy,
 		.masterbar__item-howdy-account-gravatar {
 			display: none;
@@ -1103,7 +1103,7 @@ body.is-mobile-app-view {
 }
 
 .masterbar__reader {
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		.gridicon + .masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -1121,7 +1121,7 @@ body.is-mobile-app-view {
 		border-bottom: 1px solid #646970;
 	}
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		.masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -1139,7 +1139,7 @@ body.is-mobile-app-view {
 	color: $masterbar-color-primary;
 	font-size: $masterbar-font-size;
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		height: 34px;
 		margin-top: 6px;
 		margin-right: 9px;
@@ -1225,7 +1225,7 @@ body.is-mobile-app-view {
 
 .masterbar-cart-button {
 	svg {
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 32px;
 			height: 32px;
 		}
@@ -1243,7 +1243,7 @@ body.is-mobile-app-view {
 		width: 24px;
 		height: 24px;
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 32px;
 			height: 32px;
 		}
@@ -1443,7 +1443,7 @@ a.masterbar__quick-language-switcher {
 		width: 22px;
 		height: 22px;
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 30px;
 			height: 30px;
 		}
