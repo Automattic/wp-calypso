@@ -4,8 +4,17 @@
 .premier-agency-hosting .pressable-overview-plan-selection {
 	padding: 0 16px;
 	box-sizing: border-box;
+
 	.pressable-overview-plan-selection__filter-owned-plan {
 		margin-block-start: 0;
+
+		.badge {
+			font-size: rem(12px);
+
+			@include break-mobile {
+				font-size: rem(14px);
+			}
+		}
 	}
 
 	.pressable-overview-plan-selection__details {
@@ -15,6 +24,14 @@
 	.pressable-overview-plan-selection__details-card {
 		border: none;
 		padding: 0;
+	}
+
+	.pressable-overview-plan-selection__filter-type {
+		padding-block-end: 32px;
+	}
+
+	.pressable-overview-plan-selection__filter-buttons {
+		display: flex;
 	}
 
 	@include break-large {
