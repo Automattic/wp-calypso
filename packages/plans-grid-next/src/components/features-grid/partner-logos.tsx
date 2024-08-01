@@ -1,14 +1,5 @@
 import { isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
-import {
-	BloombergLogo,
-	CNNLogo,
-	CondenastLogo,
-	DisneyLogo,
-	FacebookLogo,
-	SalesforceLogo,
-	SlackLogo,
-	TimeLogo,
-} from '@automattic/components';
+import { ClientLogoList } from '@automattic/components';
 import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
 import PlanDivOrTdContainer from '../plan-div-td-container';
@@ -49,15 +40,8 @@ const PartnerLogos = ( { renderedGridPlans, options }: PreviousFeaturesIncludedT
 				{ ...rowspanProp }
 			>
 				{ isWpcomEnterpriseGridPlan( planSlug ) && (
-					<div className="plan-features-2023-grid__item plan-features-2023-grid__enterprise-logo">
-						<TimeLogo />
-						<SlackLogo />
-						<DisneyLogo />
-						<CNNLogo />
-						<SalesforceLogo />
-						<FacebookLogo />
-						<CondenastLogo />
-						<BloombergLogo />
+					<div className="plan-features-2023-grid__item">
+						<ClientLogoList className="plan-features-2023-grid__item-logos" />
 					</div>
 				) }
 			</PlanDivOrTdContainer>

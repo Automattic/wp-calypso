@@ -415,19 +415,14 @@
 			display: flex;
 		}
 	}
+}
 
-	&.plan-features-2023-grid__enterprise-logo {
-		display: flex;
-		flex-wrap: wrap;
-		column-gap: 20px;
-		row-gap: 14px;
-		position: relative;
-		margin: 32px 0 0;
+.plan-features-2023-grid__item-logos {
+	padding-top: 28px;
 
-		@include plans-grid-medium-large {
-			margin: 0;
-			top: 14px;
-		}
+	@include plans-grid-medium-large {
+		margin-right: -16px;
+		padding-top: 18px;
 	}
 }
 
