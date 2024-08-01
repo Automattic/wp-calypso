@@ -77,7 +77,7 @@ const RenderDomainsStepConnect = connect(
 	}
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
-function DomainsStep( props: StepProps ) {
+export default function DomainsStep( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepperPersistedState< ProvidedDependencies >();
 
 	return (
@@ -89,23 +89,25 @@ function DomainsStep( props: StepProps ) {
 					setStepState( { ...stepState, ...state } )
 				}
 				submitSignupStep={ () => props.navigation.submit?.( stepState ) }
+				goToNextStep={ () => props.navigation.submit?.( stepState ) }
 				step={ stepState }
+				flowName={ props.flow }
+				CustomStepWrapper={ StepContainer }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
 }
 
-export default function DomainStepAdaptor( props: StepProps ) {
-	return (
-		<StepContainer
-			stepName="domains"
-			hideSkip
-			hideBack={ false }
-			hideFormattedHeader
-			goBack={ props.navigation.goBack }
-			isWideLayout={ false }
-			stepContent={ <DomainsStep { ...props } /> }
-			recordTracksEvent={ recordTracksEvent }
-		/>
-	);
-}
+// export default function DomainStepAdaptor( props: StepProps ) {
+// 	return (
+// 		<StepContainer
+// 			stepName="domains"
+// 			hideSkip
+// 			hideBack={ false }
+// 			goBack={ props.navigation.goBack }
+// 			isWideLayout={ false }
+// 			stepContent={ <DomainsStep { ...props } /> }
+// 			recordTracksEvent={ recordTracksEvent }
+// 		/>
+// 	);
+// }

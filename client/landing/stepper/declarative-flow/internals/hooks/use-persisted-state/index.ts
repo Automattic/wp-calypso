@@ -1,13 +1,24 @@
 import { useCallback, useId, useState } from 'react';
 import { useMatch } from 'react-router';
 
+const twentyMinutes = 20 * 60 * 1000;
+
 function setStepperState( key: string, state: unknown ) {
 	localStorage.setItem( key, JSON.stringify( state ) );
+	localStorage.setItem( key + 'time', Date.now().toString() );
 }
 
 function getStepperState( key: string ) {
 	const state = localStorage.getItem( key );
-	return state ? JSON.parse( state ) : null;
+	if ( state ) {
+		const time = parseInt( localStorage.getItem( key + 'time' ) || '0' );
+		if ( Date.now() - time > twentyMinutes ) {
+			localStorage.removeItem( key );
+			localStorage.removeItem( key + 'time' );
+		} else {
+			return JSON.parse( state );
+		}
+	}
 }
 
 /**

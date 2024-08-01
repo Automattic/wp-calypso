@@ -23,7 +23,7 @@ const onboarding: Flow = {
 			},
 			{
 				slug: 'plans',
-				asyncComponent: () => import( './internals/steps-repository/plans' ),
+				asyncComponent: () => import( './internals/steps-repository/unified-plans' ),
 			},
 			{
 				slug: 'create-site',

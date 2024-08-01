@@ -1206,7 +1206,7 @@ export class RenderDomainsStep extends Component {
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );
 		}
-
+debugger
 		if ( isReskinned ) {
 			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
 				return ! stepSectionName && translate( 'Choose your domains' );
@@ -1401,8 +1401,10 @@ export class RenderDomainsStep extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
+		const Wrapper = this.props.CustomStepWrapper || StepWrapper;
+
 		return (
-			<StepWrapper
+			<Wrapper
 				hideBack={ hideBack }
 				flowName={ flowName }
 				stepName={ stepName }
