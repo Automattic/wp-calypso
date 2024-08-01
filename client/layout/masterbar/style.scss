@@ -1239,7 +1239,9 @@ body.is-mobile-app-view {
 	}
 
 	&:hover .cart-circle {
-		stroke: var(--color-masterbar-item-hover-background);
+		@media only screen and (min-width: 481px) {
+			stroke: var(--color-masterbar-item-hover-background);
+		}
 	}
 }
 
@@ -1269,7 +1271,9 @@ body.is-mobile-app-view {
 	}
 
 	&:hover use {
-		stroke: var(--color-masterbar-item-hover-background);
+		@media only screen and (min-width: 481px) {
+			stroke: var(--color-masterbar-item-hover-background);
+		}
 	}
 }
 
