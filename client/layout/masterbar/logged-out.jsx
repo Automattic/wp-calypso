@@ -215,7 +215,7 @@ class MasterbarLoggedOut extends Component {
 		return (
 			<Masterbar className="masterbar__loggedout">
 				{ this.renderWordPressItem() }
-				<Item className="masterbar__item-title">{ title }</Item>
+				{ title && <Item className="masterbar__item-title">{ title }</Item> }
 				<div className="masterbar__login-links">
 					{ this.renderDiscoverItem() }
 					{ this.renderTagsItem() }
