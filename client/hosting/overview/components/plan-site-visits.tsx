@@ -56,7 +56,9 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 		<div className="hosting-overview__plan-site-visits-wrapper">
 			<div className="hosting-overview__plan-site-visits-content">
 				{ 'Visits: ' }
-				<span className="plan-site-visits-content__value">{ visitsNumber } this month</span>
+				<span className="plan-site-visits-content__value">
+					{ visitsNumber || 'None yet' } this month
+				</span>
 			</div>
 			<a href={ `/stats/month/${ siteSlug }` }>Go to Stats page</a>
 		</div>
