@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
-import { manualBook } from '@automattic/components/src/icons';
-import { Icon } from '@wordpress/icons';
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
@@ -22,7 +21,7 @@ export default function StatsEmptyState( {
 	return (
 		<div className="stats__empty-state">
 			<Card className="empty-state-card">
-				<Icon className="empty-state-card__icon" icon={ manualBook } size={ 20 } />
+				<Icon className="empty-state-card__icon" icon={ info } size={ 32 } />
 				<div className="empty-state-card__content">
 					<div className="empty-state-card-heading">{ headingText ?? defaultHeadingText }</div>
 					<div className="empty-state-card-info">{ infoText ?? defaultInfoText }</div>
