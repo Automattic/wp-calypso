@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import HelpResult from '../help-results-v2/help-results';
+import HelpResultItem from './help-result-item';
 
 import './style.scss';
 
@@ -23,7 +23,7 @@ export default function HelpResults( {
 			<h2 className="help__section-title">{ header }</h2>
 			<div className="help-results">
 				{ helpLinks.map( ( helpLink ) => (
-					<HelpResult
+					<HelpResultItem
 						key={ helpLink.link }
 						helpLink={ helpLink }
 						iconTypeDescription={ iconTypeDescription }

@@ -14,7 +14,7 @@ type HelpLink = {
 	disabled?: boolean;
 };
 
-type HelpResultsV2Props = {
+type HelpResultItemProps = {
 	helpLink: HelpLink;
 	onClick?: ( event: React.MouseEvent< HTMLAnchorElement >, helpLink: HelpLink ) => void;
 	iconTypeDescription?: string;
@@ -22,13 +22,13 @@ type HelpResultsV2Props = {
 	openInHelpCenter?: boolean;
 };
 
-const HelpResultsV2 = ( {
+const HelpResultItem = ( {
 	helpLink,
 	onClick,
 	iconTypeDescription = 'book',
 	compact,
 	openInHelpCenter = false,
-}: HelpResultsV2Props ) => {
+}: HelpResultItemProps ) => {
 	const { openArticleInHelpCenter } = useOpenArticleInHelpCenter();
 	const handleOnClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 		if ( helpLink.disabled ) {
@@ -101,4 +101,4 @@ const HelpResultsV2 = ( {
 	);
 };
 
-export default HelpResultsV2;
+export default HelpResultItem;

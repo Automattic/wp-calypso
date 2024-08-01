@@ -25,7 +25,7 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import HelpContactUsFooter from './help-contact-us-footer';
 import HelpContactUsHeader from './help-contact-us-header';
-import HelpResult from './help-results-v2/help-results';
+import HelpResultItem from './help-results/help-result-item';
 import HelpSearch from './help-search';
 import HelpUnverifiedWarning from './help-unverified-warning';
 
@@ -118,7 +118,7 @@ class Help extends PureComponent {
 						};
 
 						return (
-							<HelpResult
+							<HelpResultItem
 								key={ result.link }
 								helpLink={ result }
 								iconTypeDescription="book"
