@@ -25,7 +25,11 @@ import HostingV2 from './hosting-v2';
 
 import './style.scss';
 
-function Hosting() {
+type Props = {
+	section: 'wpcom' | 'pressable' | 'vip';
+};
+
+function Hosting( { section }: Props ) {
 	const translate = useTranslate();
 	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
@@ -93,7 +97,11 @@ function Hosting() {
 			</LayoutTop>
 
 			<LayoutBody className={ clsx( { 'is-full-width': isNewHostingPage } ) }>
-				{ isNewHostingPage ? <HostingV2 onAddToCart={ onAddToCart } /> : <HostingList /> }
+				{ isNewHostingPage ? (
+					<HostingV2 section={ section } onAddToCart={ onAddToCart } />
+				) : (
+					<HostingList />
+				) }
 			</LayoutBody>
 		</Layout>
 	);
