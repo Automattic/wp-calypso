@@ -1199,7 +1199,7 @@ class MagicLogin extends Component {
 			return (
 				<Main
 					className={ clsx( 'grav-powered-magic-login', {
-						'grav-powered-magic-login--has-subheader': hasSubHeader,
+						'grav-powered-magic-login--has-sub-header': hasSubHeader,
 						'grav-powered-magic-login--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
