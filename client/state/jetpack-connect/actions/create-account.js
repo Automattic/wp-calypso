@@ -27,6 +27,10 @@ export function createAccount( userData ) {
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
 			} );
+
+			// Preserve the original username in case the user's username is not available in userData
+			const username = data.username;
+
 			const bearerToken = makeJsonSchemaParser(
 				{
 					type: 'object',
@@ -39,7 +43,7 @@ export function createAccount( userData ) {
 			)( data );
 
 			dispatch( recordTracksEvent( 'calypso_jpc_create_account_success' ) );
-			return { username: userData.username, bearerToken };
+			return { username: userData.username ?? username, bearerToken };
 		} catch ( error ) {
 			dispatch(
 				recordTracksEvent( 'calypso_jpc_create_account_error', {
