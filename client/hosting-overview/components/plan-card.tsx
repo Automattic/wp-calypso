@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	getPlan,
 	PlanSlug,
@@ -16,6 +17,7 @@ import PlanStorage from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { HostingCard, HostingCardLinkButton } from 'calypso/components/hosting-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { PlanSiteVisits } from 'calypso/hosting-overview/components/plan-site-visits';
 import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
@@ -263,6 +265,9 @@ const PlanCard: FC = () => {
 									</div>
 								) }
 							</PlanStorage>
+						) }
+						{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
+							<PlanSiteVisits siteId={ site.ID } />
 						) }
 					</>
 				) }
