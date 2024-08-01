@@ -70,6 +70,7 @@ const safeLogToLogstash = ( message: string, properties: Record< string, unknown
 const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options ) => {
 	const queryClient = useQueryClient();
 	const remainingAttempts = useRef( REFRESH_JETPACK_TOTAL_ATTEMPTS );
+	const hasSuccessLogged = useRef( false );
 
 	const response = useQuery( {
 		queryKey: [ 'onboarding-site-plugin-status', siteId, pluginSlug ],
@@ -116,7 +117,11 @@ const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options
 	}
 
 	if ( response.isSuccess && remainingAttempts.current < REFRESH_JETPACK_TOTAL_ATTEMPTS ) {
-		safeLogToLogstash( 'jetpack connection restored', { site: siteId } );
+		//Temporary fix for the issue where the success message is logged multiple times
+		if ( ! hasSuccessLogged.current ) {
+			hasSuccessLogged.current = true;
+			safeLogToLogstash( 'jetpack connection restored', { site: siteId } );
+		}
 	}
 
 	return response;
