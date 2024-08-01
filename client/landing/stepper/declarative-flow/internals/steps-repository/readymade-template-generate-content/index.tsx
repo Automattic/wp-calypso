@@ -4,35 +4,37 @@ import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import React, { useState } from 'react';
+import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 import generateAIContentForTemplate from './api/generate-content';
 import ReadymadeTemplatePreview from './components/readymade-template-preview';
 import TextProgressBar from './components/text-progress-bar';
-import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 type ReadymadeTemplateGenerateContentProps = {
 	readymadeTemplate: ReadymadeTemplate;
+	siteId: number;
+	siteSlug: string;
 };
 
 const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateContentProps > = ( {
 	readymadeTemplate,
+	siteId,
+	siteSlug,
 } ) => {
 	const defaultContext = translate( 'Write an amazing description of your site.' );
 	const [ aiContext, setAiContext ] = useState( defaultContext );
 	const [ numberOfGenerations, setNumberOfGenerations ] = useState( 0 );
 	const [ isGeneratingContent, setIsGeneratingContent ] = useState( false );
-	const { ID: siteId, URL: url } = useSite() as SiteDetails;
 	const { assembleSite } = useDispatch( SITE_STORE );
-	const siteSlug = url ? url.split( '/' ).pop() : '';
 
 	const handleTextareaChange = ( event: { target: { value: string } } ) => {
 		setAiContext( event.target.value );
@@ -95,14 +97,24 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 const ReadymadeTemplateGenerateContentStep: Step = function ReadymadeTemplateGenerateContentStep( {
 	navigation,
 } ) {
-	const readymadeTemplate = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedReadymadeTemplate(),
-		[]
-	);
+	const { readymadeTemplate, siteId } = useSelect( ( select ) => {
+		const store = select( ONBOARD_STORE ) as OnboardSelect;
+		return {
+			readymadeTemplate: store.getSelectedReadymadeTemplate(),
+			siteId: store.getSelectedSite(),
+		};
+	}, [] );
+	const { value: siteSlug } = useUrlQueryParam( 'siteSlug' );
 
 	let content = <></>;
-	if ( readymadeTemplate ) {
-		content = <ReadymadeTemplateGenerateContent readymadeTemplate={ readymadeTemplate } />;
+	if ( readymadeTemplate && siteId && siteSlug ) {
+		content = (
+			<ReadymadeTemplateGenerateContent
+				readymadeTemplate={ readymadeTemplate }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+			/>
+		);
 	}
 
 	return (

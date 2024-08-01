@@ -292,12 +292,12 @@ function enableAssemblerThemeAndConfigureTemplates(
 			.then( () => navigate( `launchpad?siteSlug=${ siteSlug }` ) );
 }
 
-function useReadymadeTemplate( templateId: number, options: object = { enabled: true } ) {
+function useReadymadeTemplate( templateId: number ) {
 	const { data: readymadeTemplate } = useQuery( {
-		...options,
 		queryKey: [ 'readymade-templates', templateId ],
 		queryFn: async () =>
 			wpcom.req.get( `/themes/readymade-templates/${ templateId }`, { apiNamespace: 'wpcom/v2' } ),
+		enabled: !! templateId,
 	} );
 
 	const { data: assemblerTheme } = useThemeDetails( 'assembler' );
