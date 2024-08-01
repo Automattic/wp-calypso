@@ -145,12 +145,12 @@ export type UseActionCallback = ( {
 	cartItemForPlan?: MinimalRequestCartProduct | null;
 	selectedStorageAddOn?: AddOns.AddOnMeta | null;
 	availableForPurchase?: boolean;
-} ) => () => Promise< void >;
+} ) => () => Promise< void > | void;
 
 export interface GridAction {
 	primary: {
 		text: TranslateResult;
-		callback: () => Promise< void >;
+		callback: () => Promise< void > | void;
 		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
 		status?: 'disabled' | 'blocked' | 'enabled';
 		variant?: 'primary' | 'secondary';
