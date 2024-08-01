@@ -32,7 +32,7 @@ import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
+import { isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
 	getCurrentOAuth2Client,
@@ -339,15 +339,8 @@ export default withCurrentRoute(
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
-			const redirectToOriginal = getRedirectToOriginal( state ) || '';
 			const isBlazePro = getIsBlazePro( state );
-			const clientId = new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get(
-				'client_id'
-			);
-			const isGravPoweredClient =
-				isGravPoweredOAuth2Client( oauth2Client ) ||
-				// To cover the case of a login URL without the "client_id" parameter, e.g. /log-in/link/use
-				isGravPoweredOAuth2Client( { id: Number( clientId ) } );
+			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 			const isReskinLoginRoute =
 				currentRoute.startsWith( '/log-in' ) &&
 				! isJetpackLogin &&
