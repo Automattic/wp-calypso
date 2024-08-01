@@ -10,7 +10,8 @@ export const useOpenArticleInHelpCenter = () => {
 
 	const openArticleInHelpCenter = ( articleLink: string ) => {
 		if ( setShowHelpCenter && setNavigateToRoute ) {
-			setNavigateToRoute( articleLink );
+			const articleRoute = `/post/?link=${ articleLink }`;
+			setNavigateToRoute( articleRoute );
 			setShowHelpCenter( true );
 		} else {
 			// eslint-disable-next-line no-console
