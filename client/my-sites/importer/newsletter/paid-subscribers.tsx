@@ -1,19 +1,35 @@
 import { Card, Button } from '@automattic/components';
-
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import { useSelector } from 'calypso/state';
+import { getIsConnectedForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import ConnectStripe from './connect-stripe';
 type Props = {
 	nextStepUrl: string;
 };
 
 export default function PaidSubscribers( { nextStepUrl }: Props ) {
+	const site = useSelector( getSelectedSite );
+
+	const hasConnectedAccount = useSelector( ( state ) =>
+		getIsConnectedForSiteId( state, site?.ID )
+	);
+
+	if ( ! hasConnectedAccount ) {
+		return <ConnectStripe nextStepUrl={ nextStepUrl } />;
+	}
+
 	return (
 		<Card>
-			<h2>Connect your Stripe account</h2>
+			<QueryMembershipsSettings siteId={ site?.ID } source="calypso" />
+			<h2>Paid newsletter offering</h2>
 			<p>
-				To migrate your paid subscribers, ensure you're connecting the same Stripe account used with
-				your current provider.
+				<strong>
+					Review the plans retieved from Stripe and create euqivalent plans in WordPress.com
+				</strong>{ ' ' }
+				to prevent disruption to your current paid subscribers.
 			</p>
-			<Button primary>Connect with Stripe</Button>{ ' ' }
-			<Button href={ nextStepUrl }>Skip for now</Button>
+			<Button primary>Contieneue</Button> <Button href={ nextStepUrl }>Skip for now</Button>
 		</Card>
 	);
 }
