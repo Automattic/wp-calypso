@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react'; // eslint-disable-line no-unused-va
 import wpcom from 'calypso/lib/wp';
 import './style.scss';
 import { useSelector } from 'calypso/state';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface PlanSiteVisitsProps {
 	siteId: number;
@@ -18,8 +18,8 @@ interface VisitResponse {
 
 export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 	const [ visitsNumber, setVisitsNumber ] = useState< number | null >( null );
-	const selectedSiteData = useSelector( getSelectedSite );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteData?.ID ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const canViewStat = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
 
 	const translate = useTranslate();
 
@@ -51,6 +51,10 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 				setVisitsNumber( views );
 			} );
 	}, [ siteId ] );
+
+	if ( ! canViewStat ) {
+		return;
+	}
 
 	const getSiteVisitsContent = () => {
 		if ( visitsNumber === 0 ) {

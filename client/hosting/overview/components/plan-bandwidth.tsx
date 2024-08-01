@@ -5,6 +5,7 @@ import React from 'react';
 import { convertBytes } from 'calypso/my-sites/backup/backup-contents-page/file-browser/util';
 import { useSiteMetricsQuery } from 'calypso/my-sites/site-monitoring/use-metrics-query';
 import { useSelector } from 'calypso/state';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -31,8 +32,9 @@ const getCurrentMonthRangeTimestamps = () => {
 
 export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	const selectedSiteData = useSelector( getSelectedSite );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteData?.ID ) );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteData?.ID ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const canViewStat = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
 
 	const selectedSiteDomain = selectedSiteData?.domain;
 	const planDetails = selectedSiteData?.plan;
@@ -46,6 +48,10 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 		end: endInSeconds,
 		metric: 'response_bytes_persec',
 	} );
+
+	if ( ! canViewStat ) {
+		return;
+	}
 
 	const getBandwidthFooterLink = () => {
 		const eligibleForAtomic =
