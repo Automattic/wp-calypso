@@ -46,7 +46,6 @@ const ActiveDomainsCard: FC = () => {
 	if ( isJetpackNotAtomic ) {
 		return null;
 	}
-
 	return (
 		<HostingCard className="hosting-overview__active-domains">
 			<HostingCardHeading title={ translate( 'Active domains' ) }>
@@ -99,7 +98,14 @@ const ActiveDomainsCard: FC = () => {
 					currentDomainSuffix={ changeSiteAddressSourceDomain.name.match( /\.\w+\.\w+$/ )?.[ 0 ] }
 					isDialogVisible
 					onClose={ () => setChangeSiteAddressSourceDomain( null ) }
-					onSiteAddressChanged={ () => refetch() }
+					onSiteAddressChanged={ async () => {
+						await refetch();
+						setChangeSiteAddressSourceDomain( null );
+						if ( site?.slug ) {
+							page.replace( `/overview/${ site?.slug }` );
+						}
+					} }
+					skipRedirection
 				/>
 			) }
 		</HostingCard>

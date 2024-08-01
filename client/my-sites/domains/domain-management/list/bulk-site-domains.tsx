@@ -188,6 +188,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 						isDialogVisible
 						onClose={ () => setChangeSiteAddressSourceDomain( null ) }
 						onSiteAddressChanged={ () => refetch() }
+						skipRedirection={ false }
 					/>
 				) }
 			</Main>
