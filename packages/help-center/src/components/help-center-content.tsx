@@ -11,7 +11,7 @@ import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import React, { useCallback, useState } from 'react';
-import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -98,6 +98,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	useEffect( () => {
 		if ( navigateToRoute ) {
+			navigate( navigateToRoute );
 			setNavigateToRoute( null );
 		}
 	}, [ navigate, navigateToRoute, setNavigateToRoute ] );
@@ -130,11 +131,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/"
 						element={
-							navigateToRoute ? (
-								<Navigate to={ navigateToRoute } />
-							) : (
-								<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
-							)
+							<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
 						}
 					/>
 					<Route
