@@ -273,13 +273,16 @@ const PlanCard: FC = () => {
 										</div>
 									) }
 								</PlanStorage>
+								{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
+									<>
+										<hr />
+										<div className="hosting-overview__site-metrics-footer">
+											{ isAtomic && <PlanBandwidth siteId={ site.ID } /> }
+											<PlanSiteVisits siteId={ site.ID } />
+										</div>
+									</>
+								) }
 							</div>
-						) }
-						{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
-							<PlanSiteVisits siteId={ site.ID } />
-						) }
-						{ config.isEnabled( 'hosting-overview-refinements' ) && isAtomic && site && (
-							<PlanBandwidth siteId={ site.ID } />
 						) }
 					</>
 				) }
