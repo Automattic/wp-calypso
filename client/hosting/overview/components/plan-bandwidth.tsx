@@ -98,7 +98,7 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 						'A description of the amount of data that has been used by the site in the current month',
 				} ) }
 			</div>
-			<div className="hosting-overview__plan-bandwidth-footer">{ getBandwidthFooter() }</div>
+			{ getBandwidthFooter() }
 		</div>
 	);
 }

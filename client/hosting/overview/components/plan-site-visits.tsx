@@ -73,8 +73,8 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 					  } ) }
 			</div>
 			<a href={ `/stats/month/${ siteSlug }` }>
-				{ translate( 'Go to Stats page', {
-					comment: 'A link taking the user to the stats page to view more detailed site statistics',
+				{ translate( 'Visit your stats', {
+					comment: 'A link taking the user to more detailed site statistics',
 				} ) }
 			</a>
 		</div>
