@@ -244,16 +244,21 @@ $blueberry-color: #3858e9;
 }
 
 .hosting-overview__plan-bandwidth-wrapper {
-	width: 50%;
 	border-right: 1px solid var(--color-neutral-10);
-	float: left;
 }
 
-.hosting-overview__plan-bandwidth-content {
+.hosting-overview__plan-bandwidth-wrapper,
+.hosting-overview__plan-site-visits-wrapper {
+	width: 50%;
+}
+
+.hosting-overview__plan-bandwidth-content,
+.hosting-overview__plan-site-visits-content {
 	margin-bottom: 8px;
 }
 
-.hosting-overview__plan-bandwidth-content .plan-bandwidth-content__value {
+.hosting-overview__plan-bandwidth-content .plan-bandwidth-content__value,
+.hosting-overview__plan-site-visits-content .plan-site-visits-content__value {
 	font-weight: 700;
 }
 

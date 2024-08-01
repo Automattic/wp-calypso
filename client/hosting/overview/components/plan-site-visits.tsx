@@ -2,6 +2,9 @@ import moment from 'moment';
 import { useEffect, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
 import wpcom from 'calypso/lib/wp';
 import './style.scss';
+import { useSelector } from 'calypso/state';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface PlanSiteVisitsProps {
 	siteId: number;
@@ -13,6 +16,8 @@ interface VisitResponse {
 
 export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 	const [ visitsNumber, setVisitsNumber ] = useState< number | null >( null );
+	const selectedSiteData = useSelector( getSelectedSite );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteData?.ID ) );
 
 	useEffect( () => {
 		// It's possible to go with `unit: month` and `quantity: 1` to get the last month's data
@@ -48,27 +53,12 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 	}
 
 	return (
-		<div>
-			<div
-				style={ {
-					display: 'flex',
-					justifyContent: 'space-between',
-					padding: '20px 0',
-				} }
-			>
-				<div>Unlimited Site visits</div>
-				<div
-					title={
-						'From ' +
-						moment().startOf( 'month' ).format( 'DD/MM/YYYY' ) +
-						' to ' +
-						moment().format( 'DD/MM/YYYY' )
-					}
-				>
-					{ visitsNumber } views this month
-				</div>
+		<div className="hosting-overview__plan-site-visits-wrapper">
+			<div className="hosting-overview__plan-site-visits-content">
+				{ 'Visits: ' }
+				<span className="plan-site-visits-content__value">{ visitsNumber } this month</span>
 			</div>
-			Go to Stats page
+			<a href={ `/stats/month/${ siteSlug }` }>Go to Stats page</a>
 		</div>
 	);
 }
