@@ -38,7 +38,10 @@ const HelpResultItem = ( {
 		onClick?.( event, helpLink );
 
 		helpLink.link && openInHelpCenter && event.preventDefault();
-		helpLink.link && openInHelpCenter && openArticleInHelpCenter( helpLink.link );
+		helpLink.link &&
+			openInHelpCenter &&
+			openArticleInHelpCenter &&
+			openArticleInHelpCenter( helpLink.link );
 	};
 
 	const getResultImage = () => {
