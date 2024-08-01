@@ -16,7 +16,7 @@ import WapuuAvatar from '../../assets/wapuu-squared-avatar.svg';
 import WapuuThinking from '../../assets/wapuu-thinking.svg';
 import AgentAvatar from '../../assets/wordpress-agent-avatar.svg';
 import { useOdieAssistantContext } from '../../context';
-import { getConversationMetadada } from '../../utils/conversation-utils';
+import { getConversationMetadada, getConversationUserFields } from '../../utils/conversation-utils';
 import Button from '../button';
 import FoldableCard from '../foldable';
 import SupportDocLink from '../support-link';
@@ -35,8 +35,17 @@ export type ChatMessageProps = {
 const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 	const isUser = message.role === 'user';
 	const isAgent = message.role === 'agent';
-	const { chat, botName, extraContactOptions, addMessage, trackEvent, navigateToSupportDocs } =
-		useOdieAssistantContext();
+	const {
+		chat,
+		botName,
+		extraContactOptions,
+		addMessage,
+		trackEvent,
+		navigateToSupportDocs,
+		selectedSiteId,
+		selectedSiteUrl,
+		sectionName,
+	} = useOdieAssistantContext();
 	const { createConversation } = useSmooch();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const { __, _x } = useI18n();
@@ -170,11 +179,21 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 
 	const messageHeader = <div className={ messageHeaderClass }>{ messageAvatarHeader }</div>;
 
+	const newConversation = async () => {
+		if ( ! chat.chat_id ) {
+			return;
+		}
+		await createConversation(
+			getConversationUserFields( chat.chat_id, selectedSiteUrl, sectionName, selectedSiteId ),
+			getConversationMetadada( chat.chat_id )
+		);
+	};
+
 	const onDislike = () => {
 		if ( chat.type === 'human' ) {
 			return;
 		}
-		createConversation( getConversationMetadada( chat.chat_id ) );
+		newConversation();
 		setTimeout( () => {
 			addMessage( {
 				content: '...',
@@ -226,7 +245,7 @@ const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 													message_id: message.message_id,
 												} );
 												if ( chat.type !== 'human' ) {
-													createConversation( getConversationMetadada( chat.chat_id ) );
+													newConversation();
 												}
 											} }
 											className="odie-button-link"

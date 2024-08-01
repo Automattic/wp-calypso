@@ -140,6 +140,8 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								logger={ trackEvent }
 								loggerEventNamePrefix="calypso_odie"
 								selectedSiteId={ site?.ID as number }
+								siteUrl={ site?.URL as string }
+								sectionName={ sectionName }
 								navigateToSupportDocs={ navigateToSupportDocs }
 							>
 								<HelpCenterOdie />

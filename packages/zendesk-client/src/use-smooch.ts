@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
 import Smooch from 'smooch';
 import { SMOOCH_CONTAINER_ID, SMOOCH_INTEGRATION_ID } from './constants';
+import { UserFields } from './types';
 import { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
+import { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 
 export const useSmooch = () => {
 	const [ init, setInit ] = useState( !! Smooch.getConversations?.() );
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
+	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
+		useUpdateZendeskUserFields();
 
 	useEffect( () => {
 		if ( authData?.jwt && authData?.externalId && ! Smooch.getConversations ) {
@@ -42,8 +46,7 @@ export const useSmooch = () => {
 	const getConversation = async ( chatId?: number ): Promise< Conversation | undefined > => {
 		if ( chatId ) {
 			const existingConversation = Smooch.getConversations?.().find( ( conversation ) => {
-				// return conversation.metadata[ 'odieChatId' ] === chatId;
-				return conversation.metadata[ 'odieChatId' ] === 612050;
+				return conversation.metadata[ 'odieChatId' ] === chatId;
 			} );
 			if ( ! existingConversation ) {
 				return;
@@ -54,8 +57,15 @@ export const useSmooch = () => {
 		return;
 	};
 
-	const createConversation = async ( metadata: Conversation[ 'metadata' ] ) => {
+	const createConversation = async (
+		userfields: UserFields,
+		metadata: Conversation[ 'metadata' ]
+	) => {
+		if ( isSubmittingZendeskUserFields ) {
+			return;
+		}
 		if ( metadata.odieChatId ) {
+			await submitUserFields( userfields );
 			await Smooch.createConversation( { metadata } );
 		}
 	};

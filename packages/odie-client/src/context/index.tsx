@@ -41,6 +41,8 @@ type OdieAssistantContextInterface = {
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
+	selectedSiteUrl?: string | null;
+	sectionName?: string | null;
 	setChat: ( chat: SetStateAction< Chat > ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
@@ -110,6 +112,8 @@ type OdieAssistantProviderProps = {
 	loggerEventNamePrefix?: string;
 	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	selectedSiteId?: number | null;
+	selectedSiteUrl?: string | null;
+	sectionName?: string | null;
 	version?: string | null;
 	children?: ReactNode;
 } & PropsWithChildren;
@@ -125,6 +129,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	loggerEventNamePrefix,
 	navigateToSupportDocs,
 	selectedSiteId,
+	selectedSiteUrl,
+	sectionName,
 	version = null,
 	currentUser,
 	children,
@@ -270,6 +276,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				navigateToSupportDocs,
 				odieClientId,
 				selectedSiteId,
+				selectedSiteUrl,
+				sectionName,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,

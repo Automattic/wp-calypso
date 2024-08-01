@@ -35,11 +35,24 @@ export function transformMessage( originalMessage: Message ): OdieMessage {
 	};
 }
 
-export function getConversationMetadada( chatId?: number | null ): Record< string, any > {
-	if ( ! chatId ) {
-		return {};
-	}
+export function getConversationMetadada( chatId: number ): Record< string, any > {
 	return {
 		[ ODIE_CHAT_KEY ]: chatId,
+	};
+}
+
+export function getConversationUserFields(
+	chatId: number,
+	siteUrl: string | null = 'No site selected',
+	sectionName: string | null = '',
+	siteId: number | null = null
+) {
+	return {
+		messaging_ai_chat_id: chatId,
+		messaging_source: sectionName,
+		messaging_initial_message: '',
+		messaging_plan: '', // Will be filled out by backend
+		messaging_url: siteUrl,
+		messaging_site_id: siteId,
 	};
 }
