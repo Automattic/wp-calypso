@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -29,6 +30,8 @@ function Hosting() {
 	const translate = useTranslate();
 	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
+	const isNarrowView = useBreakpoint( '<660px' );
+
 	const {
 		selectedCartItems,
 		setSelectedCartItems,
@@ -56,7 +59,7 @@ function Hosting() {
 	return (
 		<Layout
 			className="hosting-overview"
-			title={ translate( 'Hosting Marketplace' ) }
+			title={ isNarrowView ? translate( 'Hosting' ) : translate( 'Hosting Marketplace' ) }
 			wide
 			withBorder
 			compact
