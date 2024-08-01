@@ -160,7 +160,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		if (
 			( field === 'price' || ! field ) &&
 			( ! isValidCurrencyAmount( currentCurrency, currentPrice ) ||
-				! isValidCurrencyAmount( currentCurrency, currentAnnualPrice ) )
+				( editedPostIsTier && ! isValidCurrencyAmount( currentCurrency, currentAnnualPrice ) ) )
 		) {
 			return false;
 		}
