@@ -22,8 +22,6 @@ describe( 'useFlowAnalytics', () => {
 		);
 	};
 
-	beforeAll( () => {} );
-
 	beforeEach( () => {
 		localStorage.clear();
 		jest.clearAllMocks();
