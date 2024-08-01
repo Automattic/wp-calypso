@@ -32,6 +32,7 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
+import { AppState } from 'calypso/types';
 
 const PricingSection: FC = () => {
 	const translate = useTranslate();
@@ -170,7 +171,7 @@ const PlanCard: FC = () => {
 		isJetpackSite( state, site?.ID, { treatAtomicAsJetpackSite: false } )
 	);
 	const isStaging = isStagingSite( site ?? undefined );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, site.ID ?? 0 ) );
+	const isAtomic = useSelector( ( state: AppState ) => isAtomicSite( state, site?.ID ?? 0 ) );
 	const isOwner = planDetails?.user_is_owner;
 	const planPurchaseId = useSelector( ( state: IAppState ) =>
 		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
