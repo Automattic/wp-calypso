@@ -250,6 +250,7 @@ $blueberry-color: #3858e9;
 .hosting-overview__plan-bandwidth-wrapper,
 .hosting-overview__plan-site-visits-wrapper {
 	width: 50%;
+	min-width: 0;
 }
 
 .hosting-overview__plan-bandwidth-content,

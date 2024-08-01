@@ -51,27 +51,31 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 			} );
 	}, [ siteId ] );
 
-	if ( ! visitsNumber && visitsNumber !== 0 ) {
-		return;
-	}
+	const getSiteVisitsContent = () => {
+		if ( visitsNumber === 0 ) {
+			return translate( 'No visits so far this month', {
+				comment: 'A notice that the site has not yet received any visits during the current month',
+			} );
+		}
+
+		if ( ! visitsNumber ) {
+			return translate( "Site visit info isn't available right now, please try again later", {
+				comment: 'A notice that the number of visits could not be retrieved',
+			} );
+		}
+
+		return translate( 'Visits: {{span}}%(visitCount)s this month{{/span}}', {
+			args: { visitCount: visitsNumber },
+			components: {
+				span: <span className="plan-site-visits-content__value" />,
+			},
+			comment: 'A description of the number of visits the site has received in the current month',
+		} );
+	};
 
 	return (
 		<div className="hosting-overview__plan-site-visits-wrapper">
-			<div className="hosting-overview__plan-site-visits-content">
-				{ visitsNumber > 0
-					? translate( 'Visits: {{span}}%(visitCount)s this month{{/span}}', {
-							args: { visitCount: visitsNumber },
-							components: {
-								span: <span className="plan-site-visits-content__value" />,
-							},
-							comment:
-								'A description of the number of visits the site has received in the current month',
-					  } )
-					: translate( 'No visits so far this month', {
-							comment:
-								'A notice that the site has not yet received any visits during the current month',
-					  } ) }
-			</div>
+			<div className="hosting-overview__plan-site-visits-content">{ getSiteVisitsContent() }</div>
 			<a href={ `/stats/month/${ siteSlug }` }>
 				{ translate( 'Visit your stats', {
 					comment: 'A link taking the user to more detailed site statistics',
