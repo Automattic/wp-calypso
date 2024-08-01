@@ -767,7 +767,6 @@ class StatsSite extends Component {
 											'stats__flexible-grid-item--one-third--two-spaces':
 												! this.isModuleHidden( 'videos' ),
 										},
-
 										{
 											// Avoid 1/3 on smaller screen if Videos is visible
 											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),
