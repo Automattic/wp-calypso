@@ -1,6 +1,8 @@
+import config from '@automattic/calypso-config';
 import { useMutation, useQuery, UseQueryOptions, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { usePluginInstallation } from './use-plugin-installation';
 import type { SitePlugin } from 'calypso/data/plugins/types';
@@ -47,6 +49,24 @@ const activatePlugin = async ( siteId: number, pluginName: string ) =>
 		},
 	} );
 
+const safeLogToLogstash = ( message: string, properties: Record< string, unknown > ) => {
+	try {
+		logToLogstash( {
+			feature: 'calypso_client',
+			message,
+			properties: {
+				env: config( 'env_id' ),
+				type: 'calypso_prepare_site_for_migration',
+				action: 'fetch_plugins_for_site',
+				...properties,
+			},
+		} );
+	} catch ( e ) {
+		// eslint-disable-next-line no-console
+		console.error( e );
+	}
+};
+
 const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options ) => {
 	const queryClient = useQueryClient();
 	const remainingAttempts = useRef( REFRESH_JETPACK_TOTAL_ATTEMPTS );
@@ -73,6 +93,12 @@ const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options
 			queryKey: [ 'onboarding-site-plugin-status', siteId, pluginSlug ],
 		} );
 
+		safeLogToLogstash( 'restoring jetpack connection', {
+			site: siteId,
+			attempts: remainingAttempts.current,
+			reason: response.error.message,
+		} );
+
 		remainingAttempts.current--;
 
 		return {
@@ -80,6 +106,17 @@ const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options
 			error: null,
 			fetchStatus: 'pending',
 		};
+	}
+
+	if ( response.isError && remainingAttempts.current <= 0 ) {
+		safeLogToLogstash( 'jetpack connection restoration attempts failed', {
+			site: siteId,
+			reason: response.error.message,
+		} );
+	}
+
+	if ( response.isSuccess && remainingAttempts.current < REFRESH_JETPACK_TOTAL_ATTEMPTS ) {
+		safeLogToLogstash( 'jetpack connection restored', { site: siteId } );
 	}
 
 	return response;
@@ -113,7 +150,7 @@ export const usePluginAutoInstallation = (
 	} = usePluginInstallation( plugin.slug, siteId, options );
 
 	const {
-		mutate: activate,
+		mutate: activatePlugin,
 		status: activationRequestStatus,
 		error: activationError,
 		isSuccess: isActivated,
@@ -148,7 +185,7 @@ export const usePluginAutoInstallation = (
 			return;
 		}
 
-		activate();
+		activatePlugin();
 	}, [ activatePlugin, shouldActivate ] );
 
 	const getStatus = (): Status => {

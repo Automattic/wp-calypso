@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { usePluginAutoInstallation } from '../use-plugin-auto-installation';
 import { replyWithEnvelope } from './helpers/nock';
 
@@ -46,6 +47,7 @@ const render = ( { retry = 0, enabled = true } = {} ) => {
 };
 const installationWithSuccess = replyWithEnvelope( 200 );
 const installationWithGenericError = replyWithEnvelope( 400, { error: 'any error' } );
+jest.mock( 'calypso/lib/logstash' );
 
 describe( 'usePluginAutoInstallation', () => {
 	beforeAll( () => {
@@ -213,6 +215,36 @@ describe( 'usePluginAutoInstallation', () => {
 					error: null,
 					completed: true,
 				} );
+
+				expect( logToLogstash ).toHaveBeenCalledWith(
+					expect.objectContaining( { message: 'restoring jetpack connection' } )
+				);
+				expect( logToLogstash ).toHaveBeenCalledWith(
+					expect.objectContaining( { message: 'jetpack connection restored' } )
+				);
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	it( 'logs to logstash when all jetpack connection were exhausted', async () => {
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( getSitePluginsEndpoint( SITE_ID ) )
+			.times( 9 )
+			.reply( 500, new Error( 'Error fetching plugins list' ) );
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.post( getJetpackReconnectionEndpoint( SITE_ID ) )
+			.times( 3 )
+			.reply( 200 );
+
+		render( { retry: 1 } );
+
+		await waitFor(
+			() => {
+				expect( logToLogstash ).toHaveBeenCalledWith(
+					expect.objectContaining( { message: 'jetpack connection restoration attempts failed' } )
+				);
 			},
 			{ timeout: 3000 }
 		);
