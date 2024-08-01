@@ -156,6 +156,10 @@ $tab-background-color: #f4fbff;
 			.section-nav-tab__link:hover {
 				background-color: $tab-background-color;
 			}
+
+			.section-nav-tab__link[disabled] {
+				opacity: 0.3;
+			}
 		}
 
 		.hosting-v2__nav-item-label {
@@ -168,8 +172,13 @@ $tab-background-color: #f4fbff;
 		}
 
 		.hosting-v2__nav-item-subtitle {
+			display: none;
 			color: var(--color-accent-90);
 			@include a4a-font-body-md;
+
+			@include break-wide {
+				display: block;
+			}
 		}
 
 	}

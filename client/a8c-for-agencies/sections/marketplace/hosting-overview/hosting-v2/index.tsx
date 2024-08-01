@@ -1,8 +1,9 @@
 import page from '@automattic/calypso-router';
+import { Tooltip } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useContext, useMemo, useRef, useState } from 'react';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v2';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import VIPLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
@@ -10,6 +11,7 @@ import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import { MarketplaceTypeContext } from '../../context';
 import EnterpriseAgencyHosting from './enterprise-agency-hosting';
 import PremierAgencyHosting from './premier-agency-hosting';
 import StandardAgencyHosting from './standard-agency-hosting';
@@ -19,6 +21,17 @@ import './style.scss';
 type Props = {
 	onAddToCart: ( plan: APIProductFamilyProduct, quantity: number ) => void;
 	section: 'wpcom' | 'pressable' | 'vip';
+};
+
+type FeatureTab = {
+	key: string;
+	label: string;
+	subtitle: string;
+	visible: boolean;
+	selected?: boolean;
+	disabled?: boolean;
+	disabledMessage?: string;
+	onClick: () => void;
 };
 
 const HostingContent = ( { section, onAddToCart }: Props ) => {
@@ -59,17 +72,66 @@ const HostingContent = ( { section, onAddToCart }: Props ) => {
 	);
 };
 
+const FeatureTabItem = ( { featureTab }: { featureTab: FeatureTab } ) => {
+	const ref = useRef( null );
+	const [ showTooltip, setShowTooltip ] = useState( false );
+
+	if ( ! featureTab.visible ) {
+		return null;
+	}
+
+	return (
+		<>
+			<NavItem
+				key={ featureTab.key }
+				selected={ featureTab.selected }
+				onClick={ featureTab.onClick }
+				disabled={ featureTab.disabled }
+			>
+				<div
+					role="button"
+					tabIndex={ 0 }
+					ref={ ref }
+					onMouseEnter={ () => setShowTooltip( true ) }
+					onMouseLeave={ () => setShowTooltip( false ) }
+					onMouseDown={ () => setShowTooltip( true ) }
+				>
+					{ featureTab.label && (
+						<div className="hosting-v2__nav-item-label">{ featureTab.label }</div>
+					) }
+					{ featureTab.subtitle && (
+						<div className="hosting-v2__nav-item-subtitle">{ featureTab.subtitle }</div>
+					) }
+				</div>
+			</NavItem>
+
+			{ showTooltip && featureTab.disabled && !! featureTab.disabledMessage && (
+				<Tooltip
+					context={ ref.current }
+					isVisible={ showTooltip }
+					position="bottom"
+					className="sites-overview__tooltip"
+				>
+					{ featureTab.disabledMessage }
+				</Tooltip>
+			) }
+		</>
+	);
+};
+
 export default function HostingV2( { onAddToCart, section }: Props ) {
 	const translate = useTranslate();
 
 	const isLargeScreen = useBreakpoint( '>1280px' );
+
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
 
 	const featureTabs = useMemo(
 		() => [
 			{
 				key: 'wpcom',
 				label: isLargeScreen ? translate( 'Standard Agency Hosting' ) : translate( 'Standard' ),
-				subtitle: isLargeScreen && translate( 'Optimized and hassle-free hosting' ),
+				subtitle: translate( 'Optimized and hassle-free hosting' ),
 				visible: true,
 				selected: section === 'wpcom',
 				onClick: () => {
@@ -79,9 +141,13 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 			{
 				key: 'pressable',
 				label: isLargeScreen ? translate( 'Premier Agency Hosting' ) : translate( 'Premier' ),
-				subtitle: isLargeScreen && translate( 'Best for large-scale businesses' ),
+				subtitle: translate( 'Best for large-scale businesses' ),
 				visible: true,
 				selected: section === 'pressable',
+				disabled: marketplaceType === 'referral',
+				disabledMessage: translate(
+					'Pressable hosting will be included in the referral program in the future.'
+				),
 				onClick: () => {
 					page.show( '/marketplace/hosting/pressable' );
 				},
@@ -89,7 +155,7 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 			{
 				key: 'vip',
 				label: translate( 'Enterprise' ),
-				subtitle: isLargeScreen && translate( 'WordPress for enterprise-level demands' ),
+				subtitle: translate( 'WordPress for enterprise-level demands' ),
 				visible: true,
 				selected: section === 'vip',
 				onClick: () => {
@@ -97,28 +163,12 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 				},
 			},
 		],
-		[ isLargeScreen, section, translate ]
+		[ isLargeScreen, marketplaceType, section, translate ]
 	);
 
-	const navItems = featureTabs.map( ( featureTab ) => {
-		if ( ! featureTab.visible ) {
-			return null;
-		}
-		return (
-			<NavItem
-				key={ featureTab.key }
-				selected={ featureTab.selected }
-				onClick={ featureTab.onClick }
-			>
-				{ featureTab.label && (
-					<div className="hosting-v2__nav-item-label">{ featureTab.label }</div>
-				) }
-				{ featureTab.subtitle && (
-					<div className="hosting-v2__nav-item-subtitle">{ featureTab.subtitle }</div>
-				) }
-			</NavItem>
-		);
-	} );
+	const navItems = featureTabs.map( ( featureTab ) => (
+		<FeatureTabItem key={ featureTab.key } featureTab={ featureTab } />
+	) );
 
 	return (
 		<div className="hosting-v2">
