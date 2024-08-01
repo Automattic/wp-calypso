@@ -105,6 +105,7 @@ const MobileView = ( {
 			);
 
 			const isNotFreePlan = ! isFreePlan( gridPlan.planSlug );
+			const isEnterprisePlan = isWpcomEnterpriseGridPlan( gridPlan.planSlug );
 
 			const planCardJsx = (
 				<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
@@ -119,7 +120,7 @@ const MobileView = ( {
 					) }
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
-					{ storageFeatureGroup && (
+					{ storageFeatureGroup && ! isEnterprisePlan && (
 						<>
 							<PlanFeaturesItem>
 								<h2 className="plans-grid-next-features-grid__feature-group-title">
