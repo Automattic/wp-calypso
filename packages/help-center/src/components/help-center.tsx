@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { useZendeskMessagingBindings, useLoadZendeskMessaging } from '@automattic/zendesk-client';
+import { useLoadZendeskMessaging, useSmooch } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
@@ -46,14 +46,13 @@ const HelpCenter: React.FC< Container > = ( {
 
 	useActionHooks();
 
-	const { hasActiveChats, isEligibleForChat } = useChatStatus();
-	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
+	const { isEligibleForChat } = useChatStatus();
+	useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
-		( isHelpCenterShown && isEligibleForChat ) || hasActiveChats,
-		isEligibleForChat || hasActiveChats
+		isHelpCenterShown && isEligibleForChat,
+		isEligibleForChat
 	);
-
-	useZendeskMessagingBindings( HELP_CENTER_STORE, hasActiveChats, isMessagingScriptLoaded );
+	useSmooch();
 
 	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 
