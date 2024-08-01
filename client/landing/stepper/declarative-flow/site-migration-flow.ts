@@ -15,15 +15,14 @@ import { HOW_TO_MIGRATE_OPTIONS } from '../constants';
 import { useIsSiteAdmin } from '../hooks/use-is-site-admin';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import { USER_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { getSiteIdParam } from './internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const FLOW_NAME = 'site-migration';
 
@@ -102,11 +101,6 @@ const siteMigration: Flow = {
 		const siteCount =
 			useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] )
 				?.site_count ?? 0;
-
-		const intent = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
-			[]
-		);
 		const siteSlugParam = useSiteSlugParam();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
@@ -128,7 +122,6 @@ const siteMigration: Flow = {
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, intent, flowName, currentStep, variantSlug );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug ) || getSiteIdParam( urlQueryParams );
 
