@@ -5,3 +5,4 @@
 // browsers.
 
 import 'core-js/stable';
+import 'core-js/proposals/iterator-helpers-stage-3';

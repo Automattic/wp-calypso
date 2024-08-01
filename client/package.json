@@ -120,7 +120,7 @@
 		"component-file-picker": "^0.2.1",
 		"cookie": "^0.4.1",
 		"cookie-parser": "^1.4.6",
-		"core-js-bundle": "^3.6.4",
+		"core-js-bundle": "^3.37.1",
 		"cpf_cnpj": "^0.2.0",
 		"creditcards": "^3.1.0",
 		"csv-parse": "^5.1.0",
