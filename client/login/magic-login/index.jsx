@@ -930,8 +930,11 @@ class MagicLogin extends Component {
 
 		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
+		const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 		const isFromGravatarSignup = isGravatar && query?.gravatar_from === 'signup';
 		const isFromGravatar3rdPartyApp = isGravatar && query?.gravatar_from === '3rd-party';
+		const isEmailInputDisabled = isFromGravatar3rdPartyApp || isRequestingEmail;
+		const shouldShowSubHeader = isFromGravatar3rdPartyApp || isGravatarFlow;
 		const submitButtonLabel = isGravatar
 			? translate( 'Continue' )
 			: translate( 'Send me sign in link' );
@@ -942,19 +945,10 @@ class MagicLogin extends Component {
 			gravatarFrom: query?.gravatar_from,
 			gravatarFlow: isGravatarFlow,
 		} );
-		let headerText = translate( 'Sign in with your email' );
-		const shouldShowSubHeader = isGravatarFlow || isFromGravatar3rdPartyApp;
-		let isEmailInputDisabled = isRequestingEmail;
-
-		if ( isGravatar ) {
-			headerText = isFromGravatarSignup
-				? translate( 'Create your Profile' )
-				: translate( 'Edit your Profile' );
-
-			if ( isFromGravatar3rdPartyApp ) {
-				isEmailInputDisabled = true;
-			}
-		}
+		let headerText = isFromGravatarSignup
+			? translate( 'Create your Profile' )
+			: translate( 'Edit your Profile' );
+		headerText = isWPJobManager ? translate( 'Sign in with your email' ) : headerText;
 
 		return (
 			<>
@@ -1089,7 +1083,7 @@ class MagicLogin extends Component {
 							</div>
 						</div>
 					) }
-					{ ! isGravatar && (
+					{ isWPJobManager && (
 						<hr className="grav-powered-magic-login__divider grav-powered-magic-login__divider--email-form" />
 					) }
 					{ ! isFromGravatarSignup && (
@@ -1112,7 +1106,7 @@ class MagicLogin extends Component {
 						</footer>
 					) }
 				</div>
-				{ ! isGravatar && (
+				{ isWPJobManager && (
 					<div className="grav-powered-magic-login__gravatar-info">
 						<div className="grav-powered-magic-login__gravatar-info-heading">
 							<img
