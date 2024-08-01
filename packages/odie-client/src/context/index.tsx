@@ -14,7 +14,6 @@ import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const noop = () => {};
-const asyncNoop = async () => {};
 type ScrollToLastMessageType = () => void;
 
 /*
@@ -86,17 +85,12 @@ const defaultContextInterfaceValues = {
 	scrollToLastMessage: noop,
 	trackEvent: noop,
 	updateMessage: noop,
-	destroy: noop,
-	getConversation: asyncNoop,
-	createConversation: asyncNoop,
-	addMessengerListener: noop,
-	sendMessage: noop,
 };
 
 // Create a default new context
-const OdieAssistantContext = createContext<
-	OdieAssistantContextInterface & ReturnType< typeof useSmooch >
->( defaultContextInterfaceValues );
+const OdieAssistantContext = createContext< OdieAssistantContextInterface >(
+	defaultContextInterfaceValues
+);
 
 // Custom hook to access the OdieAssistantContext
 const useOdieAssistantContext = () => useContext( OdieAssistantContext );
@@ -141,24 +135,19 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const [ scrollToLastMessage, setScrollToLastMessage ] =
 		useState< ScrollToLastMessageType | null >( null );
-	const { addMessengerListener, destroy, getConversation, init, ...smoochOps } = useSmooch();
+	const { addMessengerListener } = useSmooch();
 
 	const [ lastMessageInView, setLastMessageInView ] = useState( true );
 
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
 
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
-	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId, getConversation, init );
+	const existingChat = useLoadPreviousChat( botNameSlug, existingChatId );
 
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const versionParams = urlSearchParams.get( 'version' );
 
 	const [ chat, setChat ] = useState< Chat >( existingChat );
-
-	// ToDo: Remove this when we find another way to keep smooch up
-	useEffect( () => {
-		return destroy();
-	}, [ destroy ] );
 
 	useEffect( () => {
 		if ( existingChat.chat_id ) {
@@ -233,7 +222,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 			const translatedMessage = transformMessage( message );
 			addMessage( translatedMessage );
 		} );
-	}, [ addMessage, addMessengerListener ] );
+	}, [ addMessage ] );
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
@@ -295,10 +284,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				trackEvent,
 				updateMessage,
 				version: overridenVersion,
-				addMessengerListener,
-				destroy,
-				getConversation,
-				...smoochOps,
 			} }
 		>
 			{ children }

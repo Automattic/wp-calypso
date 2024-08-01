@@ -1,16 +1,13 @@
+import { useSmooch } from '@automattic/zendesk-client';
 import { useEffect, useState } from 'react';
 import { useOdieGetChat } from '../query';
 import { Chat, OdieAllowedBots } from '../types/';
 import { transformMessages } from '../utils/conversation-utils';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 
-export const useLoadPreviousChat = (
-	botNameSlug: OdieAllowedBots,
-	chatId: number | null | undefined,
-	getConversation: ( chatId?: number | null ) => Promise< any >,
-	canLoad: boolean
-) => {
+export const useLoadPreviousChat = ( botNameSlug: OdieAllowedBots, chatId?: number | null ) => {
 	const { data: existingChat } = useOdieGetChat( botNameSlug, chatId, 1, 30 );
+	const { init: shouldLoadConversation, getConversation } = useSmooch();
 	const [ chat, setChat ] = useState< Chat >( {
 		chat_id: null,
 		type: 'ai',
@@ -20,7 +17,7 @@ export const useLoadPreviousChat = (
 
 	useEffect( () => {
 		const loadConversation = async () => {
-			if ( existingChat ) {
+			if ( existingChat?.chat_id ) {
 				const initialMessage = getOdieInitialMessage( botNameSlug );
 				const conversation = await getConversation( existingChat.chat_id );
 				const conversationMessages = transformMessages( conversation?.messages || [] );
@@ -40,10 +37,14 @@ export const useLoadPreviousChat = (
 				} );
 			}
 		};
-		if ( canLoad ) {
+		if ( shouldLoadConversation ) {
+			setChat( ( currentChat ) => ( {
+				...currentChat,
+				loading: true,
+			} ) );
 			loadConversation();
 		}
-	}, [ botNameSlug, chatId, existingChat, getConversation, canLoad ] );
+	}, [ botNameSlug, chatId, existingChat, shouldLoadConversation ] );
 
 	return chat;
 };

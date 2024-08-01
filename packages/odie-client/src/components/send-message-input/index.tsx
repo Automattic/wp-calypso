@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { useSmooch } from '@automattic/zendesk-client';
 import { Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useCallback, useState, KeyboardEvent, FormEvent, useRef, useEffect } from 'react';
@@ -15,13 +16,8 @@ export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () 
 	const { _x } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const {
-		initialUserMessage,
-		chat,
-		trackEvent,
-		isLoading,
-		sendMessage: sendHelpCenterMessage,
-	} = useOdieAssistantContext();
+	const { addMessage, initialUserMessage, chat, trackEvent, isLoading } = useOdieAssistantContext();
+	const { sendMessage: sendHelpCenterMessage } = useSmooch();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 
 	useEffect( () => {
@@ -42,6 +38,7 @@ export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () 
 
 			if ( chat.type === 'human' ) {
 				sendHelpCenterMessage( messageString, chat.chat_id );
+				addMessage( message );
 			} else {
 				await sendOdieMessage( { message } );
 			}
@@ -59,6 +56,7 @@ export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () 
 		messageString,
 		sendHelpCenterMessage,
 		sendOdieMessage,
+		addMessage,
 		trackEvent,
 	] );
 

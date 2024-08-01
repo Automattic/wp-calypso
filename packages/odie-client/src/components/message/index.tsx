@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Gravatar } from '@automattic/components';
+import { useSmooch } from '@automattic/zendesk-client';
 import { ExternalLink } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -34,15 +35,9 @@ export type ChatMessageProps = {
 const ChatMessage = ( { message, currentUser }: ChatMessageProps ) => {
 	const isUser = message.role === 'user';
 	const isAgent = message.role === 'agent';
-	const {
-		chat,
-		botName,
-		extraContactOptions,
-		addMessage,
-		trackEvent,
-		navigateToSupportDocs,
-		createConversation,
-	} = useOdieAssistantContext();
+	const { chat, botName, extraContactOptions, addMessage, trackEvent, navigateToSupportDocs } =
+		useOdieAssistantContext();
+	const { createConversation } = useSmooch();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const { __, _x } = useI18n();
 

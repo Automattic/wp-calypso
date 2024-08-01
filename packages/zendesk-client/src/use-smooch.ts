@@ -4,21 +4,17 @@ import { SMOOCH_CONTAINER_ID, SMOOCH_INTEGRATION_ID } from './constants';
 import { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
 
 export const useSmooch = () => {
-	const [ init, setInit ] = useState(
-		!! document.getElementById( SMOOCH_CONTAINER_ID )?.querySelector( 'iframe' )
-	);
+	const [ init, setInit ] = useState( !! Smooch.getConversations?.() );
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
-	const [ addMessage, setAddMessage ] =
-		useState< ( message: { text: string; role: string } ) => void >();
 
 	useEffect( () => {
-		const messengerContainer = document.getElementById( SMOOCH_CONTAINER_ID );
-		if ( authData?.jwt && authData?.externalId && ! init ) {
+		if ( authData?.jwt && authData?.externalId && ! Smooch.getConversations ) {
+			const messengerContainer = document.getElementById( SMOOCH_CONTAINER_ID );
 			Smooch.init( {
 				integrationId: SMOOCH_INTEGRATION_ID,
 				embedded: true,
-				externalId: authData.externalId,
-				jwt: authData.jwt,
+				externalId: authData?.externalId,
+				jwt: authData?.jwt,
 			} ).then( () => {
 				setInit( true );
 			} );
@@ -28,47 +24,44 @@ export const useSmooch = () => {
 		}
 	}, [ authData?.externalId, authData?.jwt, init ] );
 
+	const destroy = () => {
+		Smooch.destroy();
+	};
+
 	if ( ! init ) {
 		return {
-			init: false,
-			destroy: () => {},
-			getConversation: () => undefined,
-			createConversation: () => {},
-			addMessengerListener: () => {},
-			sendMessage: () => {},
+			init,
+			destroy,
+			getConversation: async () => undefined,
+			createConversation: async () => undefined,
+			addMessengerListener: async () => undefined,
+			sendMessage: async () => undefined,
 		};
 	}
 
 	const getConversation = async ( chatId?: number ): Promise< Conversation | undefined > => {
-		if ( init && chatId ) {
-			const existingConversation = Smooch.getConversations().find( ( conversation ) => {
-				return conversation.metadata[ 'odieChatId' ] === chatId;
+		if ( chatId ) {
+			const existingConversation = Smooch.getConversations?.().find( ( conversation ) => {
+				// return conversation.metadata[ 'odieChatId' ] === chatId;
+				return conversation.metadata[ 'odieChatId' ] === 612050;
 			} );
 			if ( ! existingConversation ) {
 				return;
 			}
 			const result = await Smooch.getConversationById( existingConversation.id );
-			await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
 			return result;
 		}
 		return;
 	};
 
 	const createConversation = async ( metadata: Conversation[ 'metadata' ] ) => {
-		if ( init ) {
+		if ( metadata.odieChatId ) {
 			await Smooch.createConversation( { metadata } );
 		}
 	};
 
-	const addMessengerListener = ( callback: ( message: Message ) => void ) => {
-		if ( init ) {
-			Smooch.on( 'message:received', callback );
-		}
-		setAddMessage( () => callback );
-	};
-
 	const sendMessage = ( message: string, chatId?: number | null ) => {
-		if ( chatId && init ) {
+		if ( chatId ) {
 			const conversation = Smooch.getConversations().find( ( conversation ) => {
 				return conversation.metadata[ 'odieChatId' ] === chatId;
 			} );
@@ -76,13 +69,16 @@ export const useSmooch = () => {
 				return;
 			}
 			Smooch.sendMessage( { type: 'text', text: message }, conversation.id );
-			addMessage?.( { text: message, role: 'user' } );
 		}
+	};
+
+	const addMessengerListener = ( callback: ( message: Message ) => void ) => {
+		Smooch.on( 'message:received', callback );
 	};
 
 	return {
 		init,
-		destroy: Smooch.destroy,
+		destroy,
 		getConversation,
 		createConversation,
 		addMessengerListener,
