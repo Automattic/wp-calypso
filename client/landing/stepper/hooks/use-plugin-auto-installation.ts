@@ -150,7 +150,7 @@ export const usePluginAutoInstallation = (
 	} = usePluginInstallation( plugin.slug, siteId, options );
 
 	const {
-		mutate: activatePlugin,
+		mutate: activate,
 		status: activationRequestStatus,
 		error: activationError,
 		isSuccess: isActivated,
@@ -185,8 +185,8 @@ export const usePluginAutoInstallation = (
 			return;
 		}
 
-		activatePlugin();
-	}, [ activatePlugin, shouldActivate ] );
+		activate();
+	}, [ activate, shouldActivate ] );
 
 	const getStatus = (): Status => {
 		if ( completed ) {
