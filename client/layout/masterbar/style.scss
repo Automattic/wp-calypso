@@ -1225,6 +1225,7 @@ body.is-mobile-app-view {
 
 .masterbar-cart-button {
 	svg {
+		overflow: visible;
 		@media only screen and (max-width: 782px) {
 			width: 32px;
 			height: 32px;
