@@ -25,8 +25,8 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 			<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
-				heading={ translate( "Supercharge your clients' sites" ) }
-				subheading={ translate( 'Optional Jetpack Security included' ) }
+				heading={ translate( 'Optional Jetpack Security included' ) }
+				subheading={ translate( "Supercharge your clients' sites" ) }
 				description={ translate(
 					'Every Pressable hosting plan comes with a Jetpack Security License for free - a $239/year/site value.'
 				) }

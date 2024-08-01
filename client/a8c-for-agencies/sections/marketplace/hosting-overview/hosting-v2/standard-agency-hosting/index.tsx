@@ -28,8 +28,8 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
-				heading={ translate( 'Supercharge your clients’ sites' ) }
-				subheading={ translate( 'Premium Jetpack features included' ) }
+				heading={ translate( 'Premium Jetpack features included' ) }
+				subheading={ translate( 'Supercharge your clients’ sites' ) }
 				background={ BackgroundType1 }
 				items={ [
 					translate( 'Real-time backups' ),
@@ -50,8 +50,8 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 				fiveRows
 			/>
 			<HostingAdditionalFeaturesSection
-				heading={ translate( 'Just for Agencies' ) }
-				subheading={ translate( 'Included with all plans and sites' ) }
+				heading={ translate( 'Included with all plans and sites' ) }
+				subheading={ translate( 'Just for Agencies' ) }
 				items={ [
 					translate( 'Global edge caching' ),
 					translate( 'Global CDN with 28+ locations' ),
@@ -66,8 +66,8 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 				] }
 			/>
 			<HostingFeaturesSection
-				heading={ translate( 'Specialized workflows' ) }
-				subheading={ translate( 'Built for developers, by developers' ) }
+				heading={ translate( 'Built for developers, by developers' ) }
+				subheading={ translate( 'Specialized workflows' ) }
 				background={ BackgroundType2 }
 				items={ [
 					{
@@ -115,8 +115,8 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 				] }
 			/>
 			<HostingTestimonialsSection
-				heading={ translate( 'What agencies say' ) }
-				subheading={ translate( 'Love for WordPress.com hosting' ) }
+				heading={ translate( 'Love for WordPress.com hosting' ) }
+				subheading={ translate( 'What agencies say' ) }
 				items={ [
 					{
 						profile: {
