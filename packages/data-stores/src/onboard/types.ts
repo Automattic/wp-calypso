@@ -1,4 +1,4 @@
-import { GlobalStylesObject } from '@automattic/global-styles';
+import { GlobalStyles } from '../site';
 import type { DomainSuggestion } from '../domain-suggestions';
 
 export type DomainForm = {
@@ -62,5 +62,5 @@ export type ReadymadeTemplate = {
 	};
 	patterns: ReadymadeTemplatePattern[];
 	styles: ReadymadeTemplateStyles;
-	globalStyles?: GlobalStylesObject;
+	globalStyles?: GlobalStyles;
 };
