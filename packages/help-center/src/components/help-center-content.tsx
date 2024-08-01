@@ -163,10 +163,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								loggerEventNamePrefix="calypso_odie"
 								selectedSiteId={ site?.ID as number }
 								extraContactOptions={
-									<HelpCenterContactPage
-										hideHeaders
-										trackEventName="calypso_odie_extra_contact_option"
-									/>
+									<div className="help-center__container-extra-contact-options">
+										<HelpCenterContactPage
+											hideHeaders
+											trackEventName="calypso_odie_extra_contact_option"
+										/>
+									</div>
 								}
 								navigateToContactOptions={ navigateToContactOptions }
 								navigateToSupportDocs={ navigateToSupportDocs }

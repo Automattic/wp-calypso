@@ -54,11 +54,9 @@ export const OdieAssistant: React.FC = () => {
 	return (
 		<div className="chatbox">
 			<div className="chat-box-message-container" ref={ containerRef }>
-				<div className="chatbox-messages">
-					<MessagesContainer currentUser={ currentUser } ref={ messagesContainerRef } />
-				</div>
-				<OdieSendMessageButton containerReference={ messagesContainerRef } />
+				<MessagesContainer currentUser={ currentUser } ref={ messagesContainerRef } />
 			</div>
+			<OdieSendMessageButton containerReference={ messagesContainerRef } />
 		</div>
 	);
 };

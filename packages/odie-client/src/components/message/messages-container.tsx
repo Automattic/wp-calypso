@@ -30,7 +30,7 @@ export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >
 		const lastMessageIndex = chat.messages.length - 1;
 
 		return (
-			<div ref={ ref }>
+			<div className="chatbox-messages" ref={ ref }>
 				{ chat.messages.map( ( message, index ) => (
 					<ChatMessage
 						message={ message }

@@ -37,7 +37,8 @@ export const MessageContent = forwardRef<
 		const messageClasses = clsx(
 			'odie-chatbox-message',
 			isUser ? 'odie-chatbox-message-user' : 'odie-chatbox-message-wapuu',
-			`odie-chatbox-message-${ message.type }`
+			`odie-chatbox-message-${ message.type ?? 'message' }`,
+			isLastMessage && 'odie-chatbox-message-last'
 		);
 
 		return (
