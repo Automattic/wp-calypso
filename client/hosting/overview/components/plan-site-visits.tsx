@@ -43,7 +43,7 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 			} );
 	}, [ siteId ] );
 
-	if ( ! visitsNumber ) {
+	if ( ! visitsNumber && visitsNumber !== 0 ) {
 		return;
 	}
 
