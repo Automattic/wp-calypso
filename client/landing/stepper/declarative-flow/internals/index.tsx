@@ -20,7 +20,7 @@ import { useStartStepperPerformanceTracking } from '../../utils/performance-trac
 import { StepRoute, StepperLoader } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
-import { useFlowAnalyctis } from './hooks/use-flow-analyctis';
+import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
@@ -47,7 +47,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
-	useFlowAnalyctis( { flow: params.flow, step: currentStepRoute, variant: flow.variantSlug } );
+	useFlowAnalytics( { flow: params.flow, step: currentStepRoute, variant: flow.variantSlug } );
 
 	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
 		() =>

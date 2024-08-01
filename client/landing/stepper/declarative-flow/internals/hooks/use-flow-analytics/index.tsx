@@ -63,7 +63,7 @@ const removeAllExpired = () => {
  * Same flow with same parameters will be tracked only once whitin the DURATION time
  * returns void
  */
-export const useFlowAnalyctis = ( params: Params ) => {
+export const useFlowAnalytics = ( params: Params ) => {
 	const [ search ] = useSearchParams();
 	const { flow, step, variant } = params;
 	const ref = search.get( 'ref' ) || null;

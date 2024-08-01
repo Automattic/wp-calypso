@@ -9,7 +9,7 @@ import { recordFlowStart } from '../../../analytics/record-flow-start';
 
 jest.mock( '../../../analytics/record-flow-start' );
 
-describe( 'useFlowAnalyctis', () => {
+describe( 'useFlowAnalytics', () => {
 	const buildWrapper =
 		( { initialEntries } ) =>
 		( { children } ) => <MemoryRouter initialEntries={ initialEntries }>{ children }</MemoryRouter>;
