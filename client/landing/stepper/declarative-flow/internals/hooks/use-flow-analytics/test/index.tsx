@@ -4,7 +4,7 @@
 import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import { DURATION, useFlowAnalyctis } from '../';
+import { DURATION, useFlowAnalytics } from '../';
 import { recordFlowStart } from '../../../analytics/record-flow-start';
 
 jest.mock( '../../../analytics/record-flow-start' );
@@ -17,7 +17,7 @@ describe( 'useFlowAnalytics', () => {
 	const render = ( options = { initialEntries: [ '/setup/flow' ] } ) => {
 		const Wrapper = buildWrapper( options );
 		return renderHook(
-			() => useFlowAnalyctis( { flow: 'flow', step: 'step', variant: 'variant' } ),
+			() => useFlowAnalytics( { flow: 'flow', step: 'step', variant: 'variant' } ),
 			{ wrapper: Wrapper }
 		);
 	};
