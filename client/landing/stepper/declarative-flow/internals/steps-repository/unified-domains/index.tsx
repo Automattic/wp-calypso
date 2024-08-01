@@ -3,7 +3,6 @@ import { StepContainer } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import { useState } from 'react';
 import { connect } from 'react-redux';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import { planItem } from 'calypso/lib/cart-values/cart-items';
@@ -30,7 +29,8 @@ import { removeStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { StepProps } from '../../types';
+import { useStepperPersistedState } from '../../hooks/use-persisted-state';
+import { ProvidedDependencies, StepProps } from '../../types';
 import './style.scss';
 
 const RenderDomainsStepConnect = connect(
@@ -78,23 +78,24 @@ const RenderDomainsStepConnect = connect(
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 function DomainsStep( props: StepProps ) {
-	// this is kept since there will likely be more experiments to come.
-	// See peP6yB-1Np-p2
-	const isSideContentExperimentLoading = false;
+	const [ stepState, setStepState ] = useStepperPersistedState< ProvidedDependencies >();
 
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainsStepConnect
 				{ ...props }
-				isSideContentExperimentLoading={ isSideContentExperimentLoading }
+				page={ ( url: string ) => window.location.assign( url ) }
+				saveSignupStep={ ( state: ProvidedDependencies ) =>
+					setStepState( { ...stepState, ...state } )
+				}
+				submitSignupStep={ () => props.navigation.submit?.( stepState ) }
+				step={ stepState }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
 }
 
 export default function DomainStepAdaptor( props: StepProps ) {
-	const [ stepState, setStepState ] = useState();
-
 	return (
 		<StepContainer
 			stepName="domains"
@@ -103,16 +104,7 @@ export default function DomainStepAdaptor( props: StepProps ) {
 			hideFormattedHeader
 			goBack={ props.navigation.goBack }
 			isWideLayout={ false }
-			stepContent={
-				<DomainsStep
-					{ ...props }
-					step={ stepState }
-					page={ ( url: string ) => window.location.assign( url ) }
-					saveSignupStep={ setStepState }
-					submitSignupStep={ () => props.navigation.submit?.( stepState ) }
-					goToNextStep={ () => {} }
-				/>
-			}
+			stepContent={ <DomainsStep { ...props } /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
