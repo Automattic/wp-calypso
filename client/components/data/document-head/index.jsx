@@ -98,6 +98,7 @@ export default connect(
 			: getDocumentHeadFormattedTitle( state );
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+			// Use Gravatar's title for the Gravatar-related OAuth2 clients in CSR.
 			formattedTitle = isGravatarFlowOAuth2Client( oauth2Client )
 				? gravatarClientData.title
 				: oauth2Client.title;
