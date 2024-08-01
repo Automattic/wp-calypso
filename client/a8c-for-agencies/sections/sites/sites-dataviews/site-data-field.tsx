@@ -16,6 +16,8 @@ const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProp
 	}
 
 	const migrationInProgress = site.sticker?.includes( 'migration-in-progress' );
+	// TODO: Replace with actual dev site check
+	const devSite = false;
 
 	return (
 		<Button
@@ -31,9 +33,14 @@ const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProp
 			<div className="sites-dataviews__site-name">
 				<div>{ site.blogname }</div>
 				{ ! migrationInProgress && <div className="sites-dataviews__site-url">{ site.url }</div> }
-				{ migrationInProgress && (
-					<Badge className="migration-badge" type="info-blue">
-						{ translate( 'Migration in progress' ) }
+				{ ( migrationInProgress || devSite ) && (
+					<Badge
+						className="status-badge"
+						type={ migrationInProgress ? 'info-blue' : 'info-purple' }
+					>
+						{ migrationInProgress
+							? translate( 'Migration in progress' )
+							: translate( 'Development' ) }
 					</Badge>
 				) }
 			</div>
