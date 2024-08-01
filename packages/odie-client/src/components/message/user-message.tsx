@@ -10,7 +10,9 @@ import type { Message } from '../../types/';
 export const UserMessage = ( {
 	message,
 	onDislike,
+	isDisliked = false,
 }: {
+	isDisliked?: boolean;
 	message: Message;
 	onDislike: () => void;
 } ) => {
@@ -20,6 +22,9 @@ export const UserMessage = ( {
 	const isUser = message.role === 'user';
 	const isPositiveFeedback =
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
+	const showExtraContactOptions =
+		( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
+
 	return (
 		<>
 			<Markdown
@@ -30,13 +35,17 @@ export const UserMessage = ( {
 			>
 				{ message.content }
 			</Markdown>
+			{ showExtraContactOptions && extraContactOptions }
 			{ ! hasFeedback && ! isUser && (
-				<WasThisHelpfulButtons message={ message } onDislike={ onDislike } />
+				<WasThisHelpfulButtons
+					message={ message }
+					onDislike={ onDislike }
+					isDisliked={ isDisliked }
+				/>
 			) }
-			{ hasFeedback && ! isPositiveFeedback && ! isRequestingHumanSupport && extraContactOptions }
 			{ ! isUser && (
 				<>
-					{ ( ! hasFeedback || ( hasFeedback && ! isPositiveFeedback ) ) && (
+					{ ! showExtraContactOptions && (
 						<div className="disclaimer">
 							{ __( 'Feeling stuck?', __i18n_text_domain__ ) }{ ' ' }
 							<button

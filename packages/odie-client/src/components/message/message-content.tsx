@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import { ForwardedRef, forwardRef } from 'react';
 import Markdown from 'react-markdown';
-import { useOdieAssistantContext } from '../../context';
 import { Message } from '../../types/';
 import CustomALink from './custom-a-link';
 import DislikeFeedbackMessage from './dislike-feedback-message';
@@ -17,10 +16,12 @@ export const MessageContent = forwardRef<
 		message: Message;
 		messageHeader: React.ReactNode;
 		onDislike: () => void;
+		isDisliked?: boolean;
 	} & MessageIndicators
 >(
 	(
 		{
+			isDisliked = false,
 			message,
 			messageHeader,
 			onDislike,
@@ -31,8 +32,6 @@ export const MessageContent = forwardRef<
 		},
 		ref: ForwardedRef< HTMLDivElement >
 	) => {
-		const { extraContactOptions } = useOdieAssistantContext();
-		const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 		const isUser = message.role === 'user';
 		const messageClasses = clsx(
 			'odie-chatbox-message',
@@ -54,15 +53,23 @@ export const MessageContent = forwardRef<
 					{ messageHeader }
 					{ message.type === 'error' && <ErrorMessage message={ message } /> }
 					{ ( message.type === 'message' || ! message.type ) && (
-						<UserMessage message={ message } onDislike={ onDislike } />
+						<UserMessage message={ message } onDislike={ onDislike } isDisliked={ isDisliked } />
 					) }
 					{ message.type === 'introduction' && (
 						<div className="odie-introduction-message-content">
-							<div className="odie-chatbox-introduction-message">{ message.content }</div>
+							<div className="odie-chatbox-introduction-message">
+								<Markdown
+									urlTransform={ uriTransformer }
+									components={ {
+										a: CustomALink,
+									} }
+								>
+									{ message.content }
+								</Markdown>
+							</div>
 						</div>
 					) }
 					{ message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
-					{ isRequestingHumanSupport && extraContactOptions }
 				</div>
 				<Sources message={ message } />
 			</div>

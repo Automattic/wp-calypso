@@ -37,6 +37,7 @@ const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 	const { botName, addMessage } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const { _x } = useI18n();
+	const [ isDisliked, setIsDisliked ] = useState( false );
 
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const fullscreenRef = useRef< HTMLDivElement >( null );
@@ -125,7 +126,8 @@ const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 	);
 
 	const onDislike = () => {
-		if ( isRequestingHumanSupport ) {
+		setIsDisliked( true );
+		if ( isRequestingHumanSupport || isDisliked ) {
 			return;
 		}
 		setTimeout( () => {
@@ -146,6 +148,7 @@ const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 					messageHeader={ messageHeader }
 					onDislike={ onDislike }
 					ref={ fullscreenRef }
+					isDisliked={ isDisliked }
 					{ ...messageIndicators }
 				/>
 			</div>
@@ -160,6 +163,7 @@ const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 					messageHeader={ messageHeader }
 					onDislike={ onDislike }
 					ref={ fullscreenRef }
+					isDisliked={ isDisliked }
 					{ ...messageIndicators }
 				/>
 				{ ReactDOM.createPortal( fullscreenContent, document.body ) }
@@ -172,6 +176,7 @@ const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 			messageHeader={ messageHeader }
 			onDislike={ onDislike }
 			ref={ fullscreenRef }
+			isDisliked={ isDisliked }
 			{ ...messageIndicators }
 		/>
 	);
