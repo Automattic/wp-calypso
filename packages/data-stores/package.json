@@ -37,6 +37,7 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/design-picker": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
+		"@automattic/global-styles": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
