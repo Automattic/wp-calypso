@@ -43,6 +43,7 @@ body.is-mobile-app-view {
 	justify-content: space-between;
 	opacity: 1;
 	transition: all 0.3s ease-in-out;
+	--masterbar-item-active-border-radius: 6px; /* stylelint-disable-line scales/radii */
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
@@ -341,6 +342,10 @@ body.is-mobile-app-view {
 
 	&.has-subitems {
 		display: block;
+		&:hover,
+		&.is-open {
+			z-index: 2;
+		}
 	}
 
 	> a {
@@ -365,7 +370,7 @@ body.is-mobile-app-view {
 		min-width: 100%;
 		text-align: left;
 		top: var(--masterbar-height);
-		background: var(--color-masterbar-item-hover-background);
+		background: var(--color-global-masterbar-submenu-background, var(--color-masterbar-item-hover-background));
 		list-style: none;
 		clear: none;
 		text-indent: 0;
@@ -398,7 +403,7 @@ body.is-mobile-app-view {
 			}
 
 			&:hover {
-				background: var(--color-masterbar-item-hover-background);
+				background: var(--color-global-masterbar-submenu-hover-background, var(--color-masterbar-item-hover-background));
 				a {
 					color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
 				}
@@ -679,6 +684,47 @@ body.is-mobile-app-view {
 		cursor: pointer;
 		// todo may need flex: unset
 	}
+
+	// Outward border styles for active global items.
+	.is-global-sidebar-visible &.has-global-border {
+		&::before,
+		&::after {
+			content: "";
+			position: absolute;
+			width: var(--masterbar-item-active-border-radius);
+			height: var(--masterbar-item-active-border-radius);
+			background-color: var(--color-sidebar-background);
+			opacity: 0;
+			transition: opacity 0.2s ease-in-out;
+			bottom: 0;
+			z-index: 1;
+			pointer-events: none;
+		}
+
+		&::before {
+			left: calc(-1 * var(--masterbar-item-active-border-radius));
+			mask: radial-gradient(circle at 0 0, transparent var(--masterbar-item-active-border-radius), var(--color-sidebar-background) var(--masterbar-item-active-border-radius));
+		}
+
+		&::after {
+			right: calc(-1 * var(--masterbar-item-active-border-radius));
+			mask: radial-gradient(circle at 100% 0, transparent var(--masterbar-item-active-border-radius), var(--color-sidebar-background) var(--masterbar-item-active-border-radius));
+		}
+
+		&.is-active {
+			border-top-left-radius: var(--masterbar-item-active-border-radius);
+			border-top-right-radius: var(--masterbar-item-active-border-radius);
+			--color-masterbar-text: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-icon: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-highlight: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-item-active-background: var(--color-sidebar-background);
+
+			&::before,
+			&::after {
+				opacity: 1;
+			}
+		}
+	}
 }
 
 .masterbar__item-logo {
@@ -946,6 +992,10 @@ body.is-mobile-app-view {
 }
 
 .masterbar__item-howdy {
+	a {
+		outline: none;
+	}
+
 	.masterbar__item-content {
 		display: flex;
 		align-items: center;
@@ -1180,6 +1230,11 @@ body.is-mobile-app-view {
 			height: 32px;
 		}
 	}
+	.cart-circle {
+		transform: translate(10%, 2%) scale(0.93);
+		stroke-width: 6%;
+		stroke: var(--color-masterbar-background);
+	}
 }
 
 .masterbar-notifications {
@@ -1202,6 +1257,9 @@ body.is-mobile-app-view {
 		use {
 			transition: all 150ms ease-in;
 			transform-origin: 20px 4px;
+			transform: translate(-2%, 2%) scale(0.93);
+			stroke-width: 6%;
+			stroke: var(--color-masterbar-background);
 		}
 	}
 
