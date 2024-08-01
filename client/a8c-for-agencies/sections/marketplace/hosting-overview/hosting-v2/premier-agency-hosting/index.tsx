@@ -1,6 +1,9 @@
+import page from '@automattic/calypso-router';
 import { JetpackLogo } from '@automattic/components';
 import { layout, blockMeta, shuffle, help, keyboardReturn, tip } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useContext, useEffect } from 'react';
+import { A4A_MARKETPLACE_HOSTING_WPCOM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -8,6 +11,7 @@ import HostingAdditionalFeaturesSection from '../../../common/hosting-additional
 import HostingFeaturesSection from '../../../common/hosting-features-section';
 import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
+import { MarketplaceTypeContext } from '../../../context';
 import PressableOverviewPlanSelection from '../../../pressable-overview/plan-selection';
 import CommonHostingBenefits from '../common-hosting-benefits';
 
@@ -19,6 +23,15 @@ type Props = {
 
 export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
+
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
+	useEffect( () => {
+		// If on 'Referral mode', we redirect page to WPCOM section as this is Pressable is not available for Referrals.
+		if ( marketplaceType === 'referral' ) {
+			page( A4A_MARKETPLACE_HOSTING_WPCOM_LINK );
+		}
+	}, [ marketplaceType ] );
 
 	return (
 		<div className="premier-agency-hosting">
