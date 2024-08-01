@@ -91,8 +91,6 @@ const StepContainer: React.FC< Props > = ( {
 	const translate = useTranslate();
 
 	const recordClick = ( direction: 'back' | 'forward', stepSectionName?: string ) => {
-		// TODO clk stepper potential recordTracksEvent
-
 		const tracksProps = {
 			flow: flowName,
 			step: stepName,

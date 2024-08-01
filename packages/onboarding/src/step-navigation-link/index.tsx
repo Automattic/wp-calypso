@@ -49,7 +49,6 @@ const StepNavigationLink: React.FC< Props > = ( {
 	const buttonClasses = clsx( 'navigation-link', cssClass );
 
 	const onClick = () => {
-		// TODO clk stepper potential recordTracksEvent
 		recordClick?.();
 		handleClick?.();
 	};
