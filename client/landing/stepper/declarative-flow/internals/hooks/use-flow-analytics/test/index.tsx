@@ -23,7 +23,7 @@ describe( 'useFlowAnalytics', () => {
 	};
 
 	beforeEach( () => {
-		localStorage.clear();
+		sessionStorage.clear();
 		jest.clearAllMocks();
 		jest.useFakeTimers();
 	} );
@@ -35,14 +35,36 @@ describe( 'useFlowAnalytics', () => {
 	it( 'tracks the flow start', () => {
 		render();
 
-		expect( recordFlowStart ).toHaveBeenCalledWith( 'flow', 'step', 'variant', { ref: null } );
+		expect( recordFlowStart ).toHaveBeenCalledWith( 'flow', {
+			ref: null,
+			siteId: null,
+			siteSlug: null,
+			step: 'step',
+			variant: 'variant',
+		} );
 	} );
 
-	it( 'tracks the ref', () => {
+	it( 'tracks using the ref when available', () => {
 		render( { initialEntries: [ '/setup/flow?ref=previous-flow' ] } );
 
-		expect( recordFlowStart ).toHaveBeenCalledWith( 'flow', 'step', 'variant', {
+		expect( recordFlowStart ).toHaveBeenCalledWith( 'flow', {
 			ref: 'previous-flow',
+			step: 'step',
+			siteId: null,
+			siteSlug: null,
+			variant: 'variant',
+		} );
+	} );
+
+	it( 'tracks using siteId and slug when available', () => {
+		render( { initialEntries: [ '/setup/flow?siteId=123&siteSlug=somesite.example.com' ] } );
+
+		expect( recordFlowStart ).toHaveBeenCalledWith( 'flow', {
+			ref: null,
+			step: 'step',
+			siteId: '123',
+			siteSlug: 'somesite.example.com',
+			variant: 'variant',
 		} );
 	} );
 

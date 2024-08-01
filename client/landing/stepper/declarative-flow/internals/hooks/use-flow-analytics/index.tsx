@@ -31,30 +31,23 @@ const isExpired = ( session: Session ) => {
 };
 
 const isTheFlowAlreadyStarted = ( keys: SessionKeys ) => {
-	const session = JSON.parse( localStorage.getItem( getKey( keys ) ) || 'null' );
+	const key = getKey( keys );
+	const session = JSON.parse( sessionStorage.getItem( key ) || 'null' );
+
 	if ( session && isExpired( session ) ) {
-		localStorage.removeItem( getKey( keys ) );
+		sessionStorage.removeItem( key );
 		return null;
 	}
 	return session;
 };
 
-const setSession = ( keys: SessionKeys ) => {
-	localStorage.setItem(
-		getKey( keys ),
-		JSON.stringify( { ...keys, validUntil: Date.now() + DURATION } )
-	);
-};
+const startSession = ( keys: SessionKeys, extra: Record< string, any > ) => {
+	const { flow } = keys;
+	const key = getKey( keys );
 
-const removeAllExpired = () => {
-	for ( const [ key, value ] of Object.entries( localStorage ) ) {
-		if ( key.includes( 'flow_start' ) ) {
-			const session = JSON.parse( value );
-			if ( isExpired( session ) ) {
-				localStorage.removeItem( key );
-			}
-		}
-	}
+	recordFlowStart( flow!, extra );
+
+	sessionStorage.setItem( key, JSON.stringify( { ...keys, validUntil: Date.now() + DURATION } ) );
 };
 
 /**
@@ -66,25 +59,29 @@ const removeAllExpired = () => {
 export const useFlowAnalytics = ( params: Params ) => {
 	const [ search ] = useSearchParams();
 	const { flow, step, variant } = params;
-	const ref = search.get( 'ref' ) || null;
-	const siteId = search.get( 'siteId' ) || null;
-	const site = search.get( 'siteSlug' ) || siteId;
-	const flowStarted = isTheFlowAlreadyStarted( { flow, variant, site } );
+	const ref = search.get( 'ref' );
+	const siteId = search.get( 'siteId' );
+	const siteSlug = search.get( 'siteSlug' );
+
+	const sessionKeys = {
+		flow,
+		variant,
+		site: siteId || siteSlug,
+	};
+
+	const flowStarted = isTheFlowAlreadyStarted( sessionKeys );
+
+	const extraTrackingParams = {
+		ref,
+		step,
+		siteId,
+		siteSlug,
+		variant,
+	};
 
 	useEffect( () => {
-		if ( ! flow ) {
-			return;
+		if ( ! flowStarted && flow ) {
+			startSession( sessionKeys, extraTrackingParams );
 		}
-
-		if ( flowStarted ) {
-			return;
-		}
-
-		setSession( { flow, variant, site } );
-		recordFlowStart( flow, step, variant, { ref } );
 	}, [ flow ] );
-
-	useEffect( () => {
-		removeAllExpired();
-	}, [] );
 };
