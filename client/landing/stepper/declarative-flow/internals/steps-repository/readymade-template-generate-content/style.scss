@@ -37,6 +37,11 @@ $font-family: "SF Pro Text", $sans;
 		margin-bottom: 32px;
 	}
 
+	.site-preview__wrapper,
+	.readymade-template-preview {
+		height: 80vh;
+	}
+
 	.generate-content__form {
 		display: flex;
 		flex-direction: column;

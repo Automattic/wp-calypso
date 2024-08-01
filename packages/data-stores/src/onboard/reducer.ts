@@ -6,6 +6,7 @@ import type {
 	ProfilerData,
 	DomainTransferNames,
 	DomainTransferAuthCodes,
+	ReadymadeTemplate,
 } from './types';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
@@ -119,13 +120,13 @@ const selectedStyleVariation: Reducer< StyleVariation | undefined, OnboardAction
 	return state;
 };
 
-const readymadeTemplateId: Reducer< number | undefined, OnboardAction > = (
+const readymadeTemplate: Reducer< ReadymadeTemplate | undefined, OnboardAction > = (
 	state = undefined, // Initial state is set to undefined
 	action
 ) => {
 	switch ( action.type ) {
-		case 'SET_READYMADE_TEMPLATE_ID':
-			return action.readymadeTemplateId;
+		case 'SET_READYMADE_TEMPLATE':
+			return action.readymadeTemplate;
 
 		case 'RESET_ONBOARD_STORE':
 			return undefined;
@@ -607,7 +608,7 @@ const reducer = combineReducers( {
 	siteDescription,
 	siteLogo,
 	siteAccentColor,
-	readymadeTemplateId,
+	readymadeTemplate,
 	verticalId,
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,

@@ -5,23 +5,22 @@ $font-family: "SF Pro Text", $sans;
 .readymade-template-preview {
 	text-align: center;
 	overflow-x: hidden;
-	max-height: 80vh;
-	overflow-y: scroll;
+	overflow-y: auto;
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07), 0 3px 10px rgba(0, 0, 0, 0.04);
 	border-radius: 4px;
 	transition: max-width 0.2s linear;
 
 	.components-spinner {
-		width: 64px;
-		height: 64px;
+		width: 16px;
+		height: 16px;
 		padding-top: 120px;
 	}
 
 	circle {
-		stroke-width: 4px;
+		stroke-width: 3px;
 	}
 
 	path {
-		stroke-width: 4px;
+		stroke-width: 3px;
 	}
 }

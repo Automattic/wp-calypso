@@ -1,59 +1,60 @@
-import { RenderedContent } from '@automattic/block-renderer';
 import { FormLabel } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
-import {
-	__experimentalNavigatorProvider as NavigatorProvider,
-	Button,
-} from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
-import React, { useEffect, useState } from 'react';
+import { Button } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { translate } from 'i18n-calypso';
+import React, { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import { useInitialPath } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/hooks';
+import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
-import { renderReadymadeTemplate } from 'calypso/my-sites/patterns/hooks/use-render-readymade-template';
 import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 import generateAIContentForTemplate from './api/generate-content';
 import ReadymadeTemplatePreview from './components/readymade-template-preview';
 import TextProgressBar from './components/text-progress-bar';
+import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import './style.scss';
-import type { OnboardSelect } from '@automattic/data-stores';
-import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 
-const ReadymadeTemplateGenerateContent = ( {
-	selectedReadymadeTemplate,
-}: {
-	selectedReadymadeTemplate: ReadymadeTemplate;
+type ReadymadeTemplateGenerateContentProps = {
+	readymadeTemplate: ReadymadeTemplate;
+};
+
+const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateContentProps > = ( {
+	readymadeTemplate,
 } ) => {
-	const taglineLabel = 'Describe your site';
-	const [ aiContext, setAiContext ] = useState( 'No context provided' );
-	const [ readymadeTemplate, setReadymadeTemplate ] = useState( selectedReadymadeTemplate );
-	const [ renderedContent, setRenderedContent ] = useState< RenderedContent | null >( null );
+	const defaultContext = translate( 'Write an amazing description of your site.' );
+	const [ aiContext, setAiContext ] = useState( defaultContext );
 	const [ numberOfGenerations, setNumberOfGenerations ] = useState( 0 );
-	const [ isLoading, setIsLoading ] = useState( true );
+	const [ isGeneratingContent, setIsGeneratingContent ] = useState( false );
+	const { ID: siteId, URL: url } = useSite() as SiteDetails;
+	const { assembleSite } = useDispatch( SITE_STORE );
+	const siteSlug = url ? url.split( '/' ).pop() : '';
 
 	const handleTextareaChange = ( event: { target: { value: string } } ) => {
 		setAiContext( event.target.value );
 	};
 
 	const generateContent = () => {
-		setIsLoading( true );
+		setIsGeneratingContent( true );
 		setNumberOfGenerations( numberOfGenerations + 1 );
-		generateAIContentForTemplate( readymadeTemplate, aiContext ).then( setReadymadeTemplate );
+		generateAIContentForTemplate( readymadeTemplate, aiContext )
+			.then( ( rt: ReadymadeTemplate ) =>
+				assembleSite( siteId, 'assembler', {
+					homeHtml: rt.home.content,
+					headerHtml: rt.home.header,
+					footerHtml: rt.home.footer,
+					pages: [],
+					globalStyles: rt.globalStyles,
+					canReplaceContent: true,
+					siteSetupOption: 'readymade-template',
+				} )
+			)
+			.then( () => setIsGeneratingContent( false ) );
 	};
-
-	useEffect( () => {
-		if ( ! readymadeTemplate ) {
-			return;
-		}
-
-		renderReadymadeTemplate( readymadeTemplate ).then( setRenderedContent );
-		setIsLoading( false );
-	}, [ readymadeTemplate ] );
 
 	return (
 		<>
@@ -61,10 +62,11 @@ const ReadymadeTemplateGenerateContent = ( {
 				<DocumentHead title="This is the header text" />
 				<form className="generate-content__form">
 					<FormFieldset className="generate-content__form-fieldset">
-						<FormLabel htmlFor="tagline">{ taglineLabel }</FormLabel>
+						<FormLabel htmlFor="tagline">{ translate( 'Describe your site' ) }</FormLabel>
 						<p className="generate-content__description">
-							Describe your site in a few sentences. The more details you give us the better results
-							you'll get.
+							{ translate(
+								`Describe your site in a few sentences. The more details you give us the better results you'll get.`
+							) }
 						</p>
 						<FormTextarea
 							name="tagline"
@@ -80,18 +82,12 @@ const ReadymadeTemplateGenerateContent = ( {
 							onClick={ generateContent }
 							disabled={ numberOfGenerations >= 5 }
 						>
-							Generate content
-						</Button>
-						<Button
-							className="checklist-item__checklist-primary-button"
-							disabled={ numberOfGenerations < 1 }
-						>
-							Continue with this content
+							{ translate( 'Generate content' ) }
 						</Button>
 					</div>
 				</form>
 			</div>
-			<ReadymadeTemplatePreview renderedContent={ renderedContent } isLoading={ isLoading } />
+			<ReadymadeTemplatePreview isLoading={ isGeneratingContent } siteSlug={ siteSlug } />
 		</>
 	);
 };
@@ -99,18 +95,14 @@ const ReadymadeTemplateGenerateContent = ( {
 const ReadymadeTemplateGenerateContentStep: Step = function ReadymadeTemplateGenerateContentStep( {
 	navigation,
 } ) {
-	const readymadeTemplateId = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedReadymadeTemplateId(),
+	const readymadeTemplate = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedReadymadeTemplate(),
 		[]
 	);
-	console.log( 'Stored rt', readymadeTemplateId );
-	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
-	const readymadeTemplate = readymadeTemplates.find(
-		( rt ) => rt.template_id === readymadeTemplateId
-	);
 
-	if ( ! readymadeTemplate ) {
-		return;
+	let content = <></>;
+	if ( readymadeTemplate ) {
+		content = <ReadymadeTemplateGenerateContent readymadeTemplate={ readymadeTemplate } />;
 	}
 
 	return (
@@ -127,9 +119,7 @@ const ReadymadeTemplateGenerateContentStep: Step = function ReadymadeTemplateGen
 					align="center"
 				/>
 			}
-			stepContent={
-				<ReadymadeTemplateGenerateContent selectedReadymadeTemplate={ readymadeTemplate } />
-			}
+			stepContent={ content }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

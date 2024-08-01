@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
-import { ProfilerData } from './types';
+import { ProfilerData, ReadymadeTemplate } from './types';
 import type { DomainTransferData, State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
@@ -256,9 +256,9 @@ export const setSelectedStyleVariation = (
 	selectedStyleVariation,
 } );
 
-export const setSelectedReadymadeTemplateId = ( readymadeTemplateId: number ) => ( {
-	type: 'SET_READYMADE_TEMPLATE_ID' as const,
-	readymadeTemplateId,
+export const setSelectedReadymadeTemplate = ( readymadeTemplate: ReadymadeTemplate ) => ( {
+	type: 'SET_READYMADE_TEMPLATE' as const,
+	readymadeTemplate,
 } );
 
 export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
@@ -483,7 +483,7 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
-	| typeof setSelectedReadymadeTemplateId
+	| typeof setSelectedReadymadeTemplate
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof startOnboarding
