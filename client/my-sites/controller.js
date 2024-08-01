@@ -271,6 +271,8 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	}
 
 	const startsWithPaths = [
+		'/themes',
+		'/plugins',
 		'/checkout/',
 		`/me/purchases/${ slug }`,
 		`/purchases/add-payment-method/${ slug }`,
@@ -863,7 +865,19 @@ export function selectSite( context ) {
 	// Logged in: Terminate the regular handler path by not calling next()
 	// and render the site selection screen, redirecting the user if they
 	// only have one site.
-	composeHandlers( siteSelection, sites, makeLayout, render )( context );
+	composeHandlers( siteSelection, selectSiteIfNotDeleted, sites, makeLayout, render )( context );
+}
+
+export function selectSiteIfNotDeleted( context, next ) {
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( selectedSite && selectedSite.is_deleted ) {
+		context.store.dispatch( setSelectedSiteId( null ) );
+		return;
+	}
+
+	return next();
 }
 
 export function selectSiteIfLoggedIn( context, next ) {
@@ -916,7 +930,7 @@ export function hideNavigationIfLoggedInWithNoSites( context, next ) {
 
 export function addNavigationIfLoggedIn( context, next ) {
 	const state = context.store.getState();
-	if ( isUserLoggedIn( state ) && getCurrentUserSiteCount( state ) > 0 ) {
+	if ( isUserLoggedIn( state ) ) {
 		navigation( context, next );
 	}
 	next();

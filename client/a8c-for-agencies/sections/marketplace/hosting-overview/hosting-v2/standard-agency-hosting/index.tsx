@@ -1,24 +1,31 @@
 import { JetpackLogo } from '@automattic/components';
 import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
+import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.png';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
-import HostingBenefitsSection from '../../../common/hosting-benefits-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
-import {
-	BackgroundType1,
-	BackgroundType2,
-	BackgroundType3,
-} from '../../../common/hosting-section/backgrounds';
+import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
-import ProfileAvatar1 from './profile-1.jpeg';
-import ProfileAvatar2 from './profile-2.png';
+import CommonHostingBenefits from '../common-hosting-benefits';
+import WPCOMPlanSelector from './wpcom-plan-selector';
 
-export default function StandardAgencyHosting() {
+import './style.scss';
+
+type Props = {
+	onAddToCart: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+};
+
+export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 
 	return (
-		<div>
-			{ /* Sample Hosting sections */ }
+		<div className="standard-agency-hosting">
+			<section className="standard-agency-hosting__plan-selector-container">
+				<WPCOMPlanSelector onSelect={ onAddToCart } />
+			</section>
+
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
 				heading={ translate( 'Supercharge your clients’ sites' ) }
@@ -136,41 +143,7 @@ export default function StandardAgencyHosting() {
 					},
 				] }
 			/>
-
-			<HostingBenefitsSection
-				heading={ translate( 'How can Automattic help' ) }
-				subheading={ translate( 'Improve your client relationships with our hosting' ) }
-				background={ BackgroundType3 }
-				items={ [
-					{
-						title: translate( 'Create trust' ),
-						description: translate(
-							"With over 15 years of experience running hundreds of millions of sites on WordPress.com, including the highest-trafficked sites globally, we've developed a platform we confidently put up against any cloud service."
-						),
-						benefits: [
-							translate( '99.999% Uptime' ),
-							translate( 'High availability with automated scaling' ),
-						],
-					},
-					{
-						title: translate( 'Minimize risk' ),
-						description: translate(
-							'Automattic hosting plans offer exceptional security from day one, with the option to include or sell additional client-facing security features like real-time backups, anti-spam, and malware scanning.'
-						),
-						benefits: [ translate( 'Web Application Firewall' ), translate( 'DDoS protection' ) ],
-					},
-					{
-						title: translate( 'Increase speed' ),
-						description: translate(
-							"We're the only cloud platform team fully dedicated to optimizing WordPress. Your customers will feel the difference."
-						),
-						benefits: [
-							translate( 'Incredibly low page speed index' ),
-							'Automated WordPress edge caching',
-						],
-					},
-				] }
-			/>
+			<CommonHostingBenefits />
 		</div>
 	);
 }

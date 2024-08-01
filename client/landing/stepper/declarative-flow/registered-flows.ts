@@ -17,6 +17,7 @@ import {
 	ENTREPRENEUR_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
 	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
+	ONBOARDING_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -128,6 +129,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ GOOGLE_TRANSFER ]: () =>
 		import( /* webpackChunkName: "google-transfer" */ './google-transfer' ),
+
+	[ ONBOARDING_FLOW ]: () => import( /* webpackChunkName: "onboarding-flow" */ './onboarding' ),
 
 	[ 'plugin-bundle' ]: () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),

@@ -100,7 +100,12 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 					`
 				) }
 				leading={
-					<Button className="sites-dataviews__preview-trigger" onClick={ onSiteClick } borderless>
+					<Button
+						className="sites-dataviews__preview-trigger"
+						onClick={ onSiteClick }
+						borderless
+						disabled={ site.is_deleted }
+					>
 						<ListTileLeading title={ title }>
 							<SiteFavicon
 								className="sites-site-favicon"

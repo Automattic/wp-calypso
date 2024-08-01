@@ -3,8 +3,10 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent, useEffect } from 'react';
 import downloadFailureImage from 'calypso/assets/images/illustrations/jetpack-cloud-download-failure.svg';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { hasJetpackCredentials } from 'calypso/state/jetpack/credentials/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 interface Props {
 	imgSrc?: string;
@@ -23,13 +25,23 @@ const RewindFlowError: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const siteId = useSelector( getSelectedSiteId );
+	const hasCredentials = useSelector( ( state ) => hasJetpackCredentials( state, siteId ) );
 
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_failed' ) );
-	}, [ dispatch ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_failed', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
 
 	const handleContactSupportClick = () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_failed_contact_support_click' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_failed_contact_support_click', {
+				has_credentials: hasCredentials,
+			} )
+		);
 	};
 
 	return (

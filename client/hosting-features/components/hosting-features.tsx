@@ -1,15 +1,20 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { AnyAction } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
+import { transferStates } from 'calypso/state/atomic-transfer/constants';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -52,6 +57,35 @@ const HostingFeatures = () => {
 			: `/overview/${ siteId }`
 	);
 	const hasEnTranslation = useHasEnTranslation();
+
+	const transfer = useSelector( ( state ) => getAtomicTransfer( state, siteId ) );
+	const isTransferInProgress = [
+		transferStates.PENDING,
+		transferStates.ACTIVE,
+		transferStates.PROVISIONED,
+	].includes( transfer.status );
+
+	useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
+
+		if ( transfer.status === transferStates.COMPLETED ) {
+			window.location.href = `/overview/${ siteSlug }`;
+			return;
+		}
+
+		dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
+		// A user can keep one tab open and start transfer in the second tab
+		// se we always run interval to check the status, to avoid case with rendering "Activate" button on old tabs of a browser
+		const interval = setInterval( () => {
+			dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
+		}, 10000 );
+
+		return () => {
+			clearInterval( interval );
+		};
+	}, [ siteSlug, siteId, transfer.status, dispatch ] );
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const promoCards = [
@@ -150,57 +184,73 @@ const HostingFeatures = () => {
 				}
 		  );
 
+	let title;
+	let description;
+	let buttons;
+	if ( isTransferInProgress && config.isEnabled( 'hosting-overview-refinements' ) ) {
+		title = translate( 'Activating hosting features' );
+		description = translate(
+			'Stay tuned, as we activate the following features included in your plan'
+		);
+	} else if ( showActivationButton ) {
+		title = activateTitle;
+		description = activateDescription;
+		buttons = (
+			<>
+				<Button
+					variant="primary"
+					className="hosting-features__button"
+					onClick={ () => {
+						if ( showActivationButton ) {
+							dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
+							return setShowEligibility( true );
+						}
+					} }
+				>
+					{ translate( 'Activate now' ) }
+				</Button>
+
+				<Dialog
+					additionalClassNames="plugin-details-cta__dialog-content"
+					additionalOverlayClassNames="plugin-details-cta__modal-overlay"
+					isVisible={ showEligibility }
+					onClose={ () => setShowEligibility( false ) }
+					showCloseIcon
+				>
+					<EligibilityWarnings
+						className="hosting__activating-warnings"
+						onProceed={ handleTransfer }
+						backUrl={ redirectUrl.current }
+						showDataCenterPicker
+						standaloneProceed
+						currentContext="hosting-features"
+					/>
+				</Dialog>
+			</>
+		);
+	} else {
+		title = unlockTitle;
+		description = unlockDescription;
+		buttons = (
+			<Button
+				variant="primary"
+				className="hosting-features__button"
+				href={ upgradeLink }
+				onClick={ () =>
+					dispatch( recordTracksEvent( 'calypso_hosting_features_upgrade_plan_click' ) )
+				}
+			>
+				{ translate( 'Upgrade now' ) }
+			</Button>
+		);
+	}
+
 	return (
 		<div className="hosting-features">
 			<div className="hosting-features__hero">
-				<h1>{ showActivationButton ? activateTitle : unlockTitle }</h1>
-				<p>{ showActivationButton ? activateDescription : unlockDescription }</p>
-				{ showActivationButton ? (
-					<>
-						<Button
-							variant="primary"
-							className="hosting-features__button"
-							onClick={ () => {
-								if ( showActivationButton ) {
-									dispatch( recordTracksEvent( 'calypso_hosting_features_activate_click' ) );
-									return setShowEligibility( true );
-								}
-							} }
-						>
-							{ translate( 'Activate now' ) }
-						</Button>
-
-						<Dialog
-							additionalClassNames="plugin-details-cta__dialog-content"
-							additionalOverlayClassNames="plugin-details-cta__modal-overlay"
-							isVisible={ showEligibility }
-							onClose={ () => setShowEligibility( false ) }
-							showCloseIcon
-						>
-							<EligibilityWarnings
-								className="hosting__activating-warnings"
-								onProceed={ handleTransfer }
-								backUrl={ redirectUrl.current }
-								showDataCenterPicker
-								standaloneProceed
-								currentContext="hosting-features"
-							/>
-						</Dialog>
-					</>
-				) : (
-					<>
-						<Button
-							variant="primary"
-							className="hosting-features__button"
-							href={ upgradeLink }
-							onClick={ () =>
-								dispatch( recordTracksEvent( 'calypso_hosting_features_upgrade_plan_click' ) )
-							}
-						>
-							{ translate( 'Upgrade now' ) }
-						</Button>
-					</>
-				) }
+				<h1>{ title }</h1>
+				<p>{ description }</p>
+				{ buttons }
 			</div>
 			<div className="hosting-features__cards">
 				{ promoCards.map( ( card ) => (

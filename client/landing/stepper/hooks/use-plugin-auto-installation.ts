@@ -2,15 +2,13 @@ import { useMutation, useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
+import { usePluginInstallation } from './use-plugin-installation';
 import type { SitePlugin } from 'calypso/data/plugins/types';
 
 interface Response {
 	plugins: SitePlugin[];
 }
-interface SkipStatus {
-	installation: boolean;
-	activation: boolean;
-}
+
 type SitePluginParam = Pick< SitePlugin, 'slug' | 'name' >;
 type Status = 'idle' | 'pending' | 'success' | 'error';
 
@@ -20,18 +18,12 @@ interface SiteMigrationStatus {
 	error: Error | null;
 }
 
-type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
-const DEFAULT_RETRY = process.env.NODE_ENV === 'test' ? 1 : 100;
+export type Options = Pick< UseQueryOptions, 'enabled' | 'retry' >;
+export const DEFAULT_RETRY = process.env.NODE_ENV === 'test' ? 1 : 100;
 const DEFAULT_RETRY_DELAY = process.env.NODE_ENV !== 'production' ? 300 : 3000;
 
 const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
 	wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {
-		apiNamespace: 'rest/v1.2',
-	} );
-
-const installPlugin = async ( siteId: number, pluginSlug: string ) =>
-	wpcom.req.post( {
-		path: `/sites/${ siteId }/plugins/${ pluginSlug }/install`,
 		apiNamespace: 'rest/v1.2',
 	} );
 
@@ -61,14 +53,6 @@ const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options
 	} );
 };
 
-const usePluginInstallation = ( pluginSlug: string, siteId?: number, options?: Options ) => {
-	return useMutation( {
-		mutationKey: [ 'onboarding-site-plugin-installation', siteId, pluginSlug ],
-		mutationFn: async () => installPlugin( siteId!, pluginSlug ),
-		retry: options?.retry ?? DEFAULT_RETRY,
-	} );
-};
-
 const usePluginActivation = ( pluginName: string, siteId?: number, options?: Options ) => {
 	return useMutation( {
 		mutationKey: [ 'onboarding-site-plugin-activation', siteId, pluginName ],
@@ -93,56 +77,47 @@ export const usePluginAutoInstallation = (
 		mutate: install,
 		error: installationError,
 		status: installationRequestStatus,
+		isSuccess: isInstalled,
 	} = usePluginInstallation( plugin.slug, siteId, options );
 
 	const {
-		mutate: activatePlugin,
+		mutate: activate,
 		status: activationRequestStatus,
 		error: activationError,
+		isSuccess: isActivated,
 	} = usePluginActivation( plugin.name, siteId, options );
 
-	const skipped: SkipStatus = {
-		installation: status?.isInstalled,
-		activation: status?.isActive,
-	} as SkipStatus;
+	const isPluginInstalled = status?.isInstalled || isInstalled;
+	const isPluginActivated = status?.isActive || isActivated;
 
-	useEffect( () => {
-		if ( ! status || skipped?.installation ) {
-			return;
-		}
+	const shouldInstall =
+		( status && ! isPluginInstalled && installationRequestStatus === 'idle' ) ?? false;
+	const shouldActivate =
+		( status && isPluginInstalled && ! isPluginActivated && activationRequestStatus === 'idle' ) ??
+		false;
 
-		if ( installationRequestStatus === 'idle' ) {
-			install();
-		}
-	}, [ install, installationRequestStatus, skipped?.installation, status ] );
-
-	useEffect( () => {
-		if ( ! status || skipped?.activation ) {
-			return;
-		}
-
-		if ( activationRequestStatus !== 'idle' ) {
-			return;
-		}
-
-		if ( installationRequestStatus === 'success' || status.isInstalled ) {
-			activatePlugin();
-		}
-	}, [
-		activatePlugin,
-		installationRequestStatus,
-		activationRequestStatus,
-		skipped?.activation,
-		status,
-	] );
-
+	const completed = ( status && isPluginInstalled && isPluginActivated ) ?? false;
 	const error = statusError || installationError || activationError;
-	const installationStatus = skipped?.installation ? 'skipped' : installationRequestStatus;
-	const activationStatus = skipped?.activation ? 'skipped' : activationRequestStatus;
-	const completed = activationStatus === 'success' || ( skipped?.activation ?? false );
-	const isPending = [ installationStatus, activationStatus, pluginStatus ].some(
+
+	const isPending = [ installationRequestStatus, activationRequestStatus, pluginStatus ].some(
 		( status ) => status === 'pending' || status === 'fetching'
 	);
+
+	useEffect( () => {
+		if ( ! shouldInstall ) {
+			return;
+		}
+
+		install();
+	}, [ install, shouldInstall ] );
+
+	useEffect( () => {
+		if ( ! shouldActivate ) {
+			return;
+		}
+
+		activate();
+	}, [ activatePlugin, shouldActivate ] );
 
 	const getStatus = (): Status => {
 		if ( completed ) {

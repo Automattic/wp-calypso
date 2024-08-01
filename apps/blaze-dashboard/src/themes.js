@@ -68,6 +68,8 @@ const THEMES = {
 		'--theme-highlight-color': 'var(--color-primary-50)',
 		'--theme-highlight-color-rgb': 'var(--color-primary-50-rgb)',
 	},
+	// WordPress.com Color Theme
+	wpcom: {},
 	// WooCommerce Color Theme
 	woo: {},
 };

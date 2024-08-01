@@ -4,4 +4,5 @@ export interface RewindState {
 		status: 'queued' | 'running' | 'finished' | 'fail';
 		restoreId?: number;
 	};
+	canAutoconfigure: boolean;
 }

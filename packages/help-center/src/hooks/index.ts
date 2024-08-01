@@ -13,3 +13,5 @@ export {
 	getPostKey,
 } from './use-support-article-alternates-query';
 export { useOpenArticleInHelpCenter } from './use-open-article-in-help-center';
+export { usePostByUrl } from './use-post-by-url';
+export { useContentFilter } from './use-content-filter';

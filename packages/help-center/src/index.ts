@@ -9,4 +9,3 @@ export { default as NewReleases } from './icons/new-releases';
 export * from './support-variations';
 export * from './hooks/use-admin-results';
 export { useHelpSearchQuery } from './hooks/use-help-search-query';
-export { useSupportArticleAlternatesQuery } from './hooks/use-support-article-alternates-query';
