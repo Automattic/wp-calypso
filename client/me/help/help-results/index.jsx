@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import HelpResult from './item';
+import HelpResult from '../help-results-v2/help-results';
 
 import './style.scss';
 
@@ -11,6 +11,7 @@ export default function HelpResults( {
 	iconTypeDescription,
 	onClick,
 	searchLink,
+	openInHelpCenter,
 } ) {
 	if ( ! helpLinks.length ) {
 		return null;
@@ -28,6 +29,7 @@ export default function HelpResults( {
 						iconTypeDescription={ iconTypeDescription }
 						onClick={ onClick }
 						compact={ compact }
+						openInHelpCenter={ openInHelpCenter }
 					/>
 				) ) }
 				{ footer && (
