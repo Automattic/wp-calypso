@@ -68,6 +68,7 @@ declare global {
 					headerNonce: string;
 				};
 				jetpackVersion?: string;
+				blazeAdsVersion?: string;
 				hotjarSiteSettings?: object;
 				recordDSPEvent?: ( name: string, props?: any ) => void;
 				options?: object;
@@ -156,6 +157,7 @@ export async function showDSP(
 	setShowTopBar?: ( show: boolean ) => void,
 	locale?: string,
 	jetpackVersion?: string,
+	blazeAdsVersion?: string,
 	dispatch?: Dispatch,
 	dspOriginProps?: DSPOriginProps
 ): Promise< boolean > {
@@ -215,6 +217,7 @@ export async function showDSP(
 					  }
 					: undefined,
 				jetpackVersion,
+				blazeAdsVersion,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
 				recordDSPEvent: dispatch ? getRecordDSPEventHandler( dispatch, dspOriginProps ) : undefined,
 				options: getWidgetOptions(),
