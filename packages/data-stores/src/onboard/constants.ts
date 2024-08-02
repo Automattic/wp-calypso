@@ -25,4 +25,5 @@ export enum SiteIntent {
 	AIAssembler = 'ai-assembler',
 	Newsletter = 'newsletter',
 	FreePostSetup = 'free-post-setup',
+	SiteMigration = 'site-migration',
 }

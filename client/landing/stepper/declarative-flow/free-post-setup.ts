@@ -21,7 +21,6 @@ const freePostSetup: Flow = {
 			setIntent( Onboard.SiteIntent.FreePostSetup );
 		}, [] );
 	},
-
 	useSteps() {
 		return [ STEPS.FREE_POST_SETUP ];
 	},

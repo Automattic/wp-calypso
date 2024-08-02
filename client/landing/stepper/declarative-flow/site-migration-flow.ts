@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { Onboard, type SiteSelect, type UserSelect } from '@automattic/data-stores';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -15,20 +16,26 @@ import { HOW_TO_MIGRATE_OPTIONS } from '../constants';
 import { useIsSiteAdmin } from '../hooks/use-is-site-admin';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { USER_STORE, SITE_STORE } from '../stores';
+import { USER_STORE, SITE_STORE, ONBOARD_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
 import { STEPS } from './internals/steps';
 import { getSiteIdParam } from './internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
-import type { SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const FLOW_NAME = 'site-migration';
 
 const siteMigration: Flow = {
 	name: FLOW_NAME,
 	isSignupFlow: false,
+
+	useSideEffect() {
+		const { setIntent } = useDispatch( ONBOARD_STORE );
+		useEffect( () => {
+			setIntent( Onboard.SiteIntent.SiteMigration );
+		}, [] );
+	},
 
 	useSteps() {
 		const baseSteps = [
