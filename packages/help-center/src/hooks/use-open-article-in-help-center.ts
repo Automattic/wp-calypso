@@ -1,10 +1,8 @@
-import { HelpCenter } from '@automattic/data-stores';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
-
-const HELP_CENTER_STORE = HelpCenter.register();
+import { useDispatch } from '@wordpress/data';
+import { HELP_CENTER_STORE } from '../stores';
 
 export const useOpenArticleInHelpCenter = () => {
-	const helpCenterDispatch = useDataStoreDispatch( HELP_CENTER_STORE );
+	const helpCenterDispatch = useDispatch( HELP_CENTER_STORE );
 	const setShowHelpCenter = helpCenterDispatch?.setShowHelpCenter;
 	const setNavigateToRoute = helpCenterDispatch?.setNavigateToRoute;
 
