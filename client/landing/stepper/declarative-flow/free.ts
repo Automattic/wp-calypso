@@ -113,6 +113,7 @@ const free: Flow = {
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = getPostFlowUrl( {
 							flow: flowName,
+							siteId,
 							siteSlug: providedDependencies.siteSlug as string,
 						} );
 						persistSignupDestination( destination );
