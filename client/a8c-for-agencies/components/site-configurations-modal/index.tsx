@@ -219,35 +219,31 @@ export default function SiteConfigurationsModal( {
 							className={ isDevSite ? 'disabled-label' : '' }
 							htmlFor="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox"
 						>
-							{ isDevSite
-								? translate(
-										'Allow clients to use the WordPress.com Help Center and hosting features.'
-								  )
-								: translate(
-										'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
-										{
-											components: {
-												HcLink: (
-													<a
-														target="_blank"
-														href={ localizeUrl(
-															'https://wordpress.com/support/help-support-options/#how-to-contact-us'
-														) }
-														rel="noreferrer"
-													/>
-												),
-												HfLink: (
-													<a
-														target="_blank"
-														href={ localizeUrl(
-															'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
-														) }
-														rel="noreferrer"
-													/>
-												),
-											},
-										}
-								  ) }
+							{ translate(
+								'Allow clients to use the {{HcLink}}WordPress.com Help Center{{/HcLink}} and {{HfLink}}hosting features.{{/HfLink}}',
+								{
+									components: {
+										HcLink: (
+											<a
+												target="_blank"
+												href={ localizeUrl(
+													'https://wordpress.com/support/help-support-options/#how-to-contact-us'
+												) }
+												rel="noreferrer"
+											/>
+										),
+										HfLink: (
+											<a
+												target="_blank"
+												href={ localizeUrl(
+													'https://developer.wordpress.com/docs/developer-tools/web-server-settings/'
+												) }
+												rel="noreferrer"
+											/>
+										),
+									},
+								}
+							) }
 						</label>
 					</div>
 				</FormField>

@@ -19,7 +19,11 @@
 		line-height: 1.5;
 
 		.disabled-label {
-			color: var(--studio-gray-5);
+			color: var(--studio-gray-20);
+
+			a {
+				color: var(--studio-gray-20);
+			}
 		}
 	}
 
