@@ -58,7 +58,7 @@ const RenderDomainsStepConnect = connect(
 			multiDomainDefaultPlan,
 			domainsWithPlansOnly: currentUserHasFlag( state as object, DOMAINS_WITH_PLANS_ONLY ),
 			flowName: flow,
-			path: '/domains',
+			path: window.location.pathname,
 			positionInFlow: 1,
 			isReskinned: true,
 		};
@@ -97,17 +97,3 @@ export default function DomainsStep( props: StepProps ) {
 		</CalypsoShoppingCartProvider>
 	);
 }
-
-// export default function DomainStepAdaptor( props: StepProps ) {
-// 	return (
-// 		<StepContainer
-// 			stepName="domains"
-// 			hideSkip
-// 			hideBack={ false }
-// 			goBack={ props.navigation.goBack }
-// 			isWideLayout={ false }
-// 			stepContent={ <DomainsStep { ...props } /> }
-// 			recordTracksEvent={ recordTracksEvent }
-// 		/>
-// 	);
-// }

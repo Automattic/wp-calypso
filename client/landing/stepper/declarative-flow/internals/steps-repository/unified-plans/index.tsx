@@ -54,7 +54,19 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			signupDependencies={ signupDependencies }
 			renderWithoutStepWrapper
 			recordTracksEvent={ ( event: unknown ) => dispatch( recordTracksEvent( event ) ) }
-			CustomStepWrapper={ StepContainer }
+			CustomStepWrapper={ usePlanStepWrapper( props.navigation ) }
+		/>
+	);
+}
+
+function usePlanStepWrapper( navigation: StepProps[ 'navigation' ] ) {
+	const dispatch = useDispatch();
+
+	return ( props: Parameters< typeof StepContainer >[ 0 ] ) => (
+		<StepContainer
+			{ ...props }
+			goBack={ navigation.goBack }
+			recordTracksEvent={ ( event: unknown ) => dispatch( recordTracksEvent( event ) ) }
 		/>
 	);
 }
