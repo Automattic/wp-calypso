@@ -113,15 +113,16 @@ class Document extends Component {
 		// To customize the page title and favicon for Gravatar-related login pages.
 		if ( sectionName === 'login' && typeof query?.redirect_to === 'string' ) {
 			const searchParams = new URLSearchParams( query.redirect_to.split( '?' )[ 1 ] );
-			// Use Gravatar's favicon + title for the Gravatar-related OAuth2 clients in SSR.
-			const oauth2Client = query?.gravatar_flow
-				? gravatarClientData
-				: // To cover the case where the `client_id` is not provided, e.g. /log-in/link/use
-				  initialClientsData[ searchParams.get( 'client_id' ) ] || {};
+			// To cover the case where the `client_id` is not provided, e.g. /log-in/link/use
+			const oauth2Client = initialClientsData[ searchParams.get( 'client_id' ) ] || {};
 
 			if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 				headTitle = oauth2Client.title;
 				headFaviconUrl = oauth2Client.favicon;
+			} else if ( query?.gravatar_flow ) {
+				// Use Gravatar's favicon + title for the Gravatar-related OAuth2 clients in SSR.
+				headTitle = gravatarClientData.title;
+				headFaviconUrl = gravatarClientData.favicon;
 			}
 		}
 

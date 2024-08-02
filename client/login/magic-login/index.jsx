@@ -16,6 +16,7 @@ import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import {
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
@@ -355,7 +356,7 @@ class MagicLogin extends Component {
 					lang_id: getLanguage( locale ).value,
 					email,
 					redirect_to: query?.redirect_to,
-					flow: oauth2Client.name ?? oauth2Client.source,
+					flow: getGravatarOAuth2Flow( oauth2Client ),
 					create_account: true,
 					tos: getToSAcceptancePayload(),
 					token_type: 'code',
@@ -480,7 +481,7 @@ class MagicLogin extends Component {
 		this.props.fetchMagicLoginAuthenticate(
 			`${ publicToken }:${ btoa( verificationCodeInputValue ) }`,
 			query?.redirect_to,
-			oauth2Client.name ?? oauth2Client.source
+			getGravatarOAuth2Flow( oauth2Client )
 		);
 	};
 
@@ -864,7 +865,7 @@ class MagicLogin extends Component {
 								redirectTo: query?.redirect_to,
 								requestLoginEmailFormFlow: true,
 								createAccount: true,
-								flow: oauth2Client.name ?? oauth2Client.source,
+								flow: getGravatarOAuth2Flow( oauth2Client ),
 								showGlobalNotices: true,
 							} );
 
@@ -957,7 +958,7 @@ class MagicLogin extends Component {
 				<div className="grav-powered-magic-login__content">
 					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
 					<RequestLoginEmailForm
-						flow={ oauth2Client.name ?? oauth2Client.source }
+						flow={ getGravatarOAuth2Flow( oauth2Client ) }
 						headerText={ headerText }
 						subHeaderText={
 							shouldShowSubHeader

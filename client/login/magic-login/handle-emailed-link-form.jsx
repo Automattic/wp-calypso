@@ -10,6 +10,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import {
 	isGravPoweredOAuth2Client,
 	isWPJobManagerOAuth2Client,
@@ -109,7 +110,7 @@ class HandleEmailedLinkForm extends Component {
 
 		// To customize the login experience for Gravatar-powered clients in the backend, e.g. SMS messages
 		const flow = isGravPoweredOAuth2Client( this.props.oauth2Client )
-			? this.props.oauth2Client.name ?? this.props.oauth2Client.source
+			? getGravatarOAuth2Flow( this.props.oauth2Client )
 			: null;
 
 		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToOriginal, flow );

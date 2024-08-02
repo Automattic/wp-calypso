@@ -263,9 +263,9 @@ class RequestLoginEmailForm extends Component {
 					</p>
 				) }
 				<LoggedOutForm onSubmit={ onSubmit }>
-					<p className="magic-login__form-sub-header">
-						{ ! hideSubHeaderText && this.getSubHeaderText() }
-					</p>
+					{ ! hideSubHeaderText && (
+						<p className="magic-login__form-sub-header">{ this.getSubHeaderText() }</p>
+					) }
 					<FormLabel htmlFor="usernameOrEmail">{ formLabel }</FormLabel>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput

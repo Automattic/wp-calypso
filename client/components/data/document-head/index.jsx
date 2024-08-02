@@ -93,18 +93,21 @@ DocumentHead.propTypes = {
 export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
-		let formattedTitle = props.skipTitleFormatting
-			? getDocumentHeadTitle( state )
-			: getDocumentHeadFormattedTitle( state );
 
+		// Use Gravatar's title for the Gravatar-related OAuth2 clients in CSR.
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-			// Use Gravatar's title for the Gravatar-related OAuth2 clients in CSR.
-			formattedTitle = isGravatarFlowOAuth2Client( oauth2Client )
-				? gravatarClientData.title
-				: oauth2Client.title;
+			return {
+				formattedTitle: isGravatarFlowOAuth2Client( oauth2Client )
+					? gravatarClientData.title
+					: oauth2Client.title,
+			};
 		}
 
-		return { formattedTitle };
+		if ( props.skipTitleFormatting ) {
+			return { formattedTitle: getDocumentHeadTitle( state ) };
+		}
+
+		return { formattedTitle: getDocumentHeadFormattedTitle( state ) };
 	},
 	{
 		setTitle,
