@@ -21,7 +21,7 @@ export const ExtraContactOptions = ( { isUserElegible }: { isUserElegible: boole
 		} );
 		navigate( '/contact-form?mode=FORUM' );
 	};
-	if ( isUserElegible ) {
+	if ( ! isUserElegible ) {
 		return (
 			<div className="help-center-contact-support">
 				<button onClick={ handleOnClick }>
