@@ -1,3 +1,4 @@
+import { useSmooch } from '@automattic/zendesk-client';
 import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useI18n } from '@wordpress/react-i18n';
@@ -7,7 +8,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import { useOdieAssistantContext } from '../context';
 import { broadcastOdieMessage, useSetOdieStorage } from '../data';
-import { getConversationMetadada } from '../utils/conversation-utils';
+import { getConversationMetadada, getConversationUserFields } from '../utils/conversation-utils';
 import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types/';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
@@ -85,13 +86,25 @@ export const useOdieSendMessage = (): UseMutationResult<
 		updateMessage,
 		odieClientId,
 		selectedSiteId,
+		selectedSiteUrl,
+		sectionName,
 		version,
-		createConversation,
 	} = useOdieAssistantContext();
+	const { createConversation } = useSmooch();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
 	const storeChatId = useSetOdieStorage( 'chat_id' );
 	const { __ } = useI18n();
+
+	const newConversation = async () => {
+		if ( ! chat.chat_id ) {
+			return;
+		}
+		await createConversation(
+			getConversationUserFields( chat.chat_id, selectedSiteUrl, sectionName, selectedSiteId ),
+			getConversationMetadada( chat.chat_id )
+		);
+	};
 
 	/* translators: Error message when Wapuu fails to send a message */
 	const wapuuErrorMessage = __(
@@ -189,7 +202,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 			const queryKey = [ 'chat', botNameSlug, data.chat_id, 1, 30, true ];
 
 			if ( message.context?.flags?.forward_to_human_support && chat.type !== 'human' ) {
-				createConversation( getConversationMetadada( chat.chat_id ) );
+				newConversation();
 			}
 
 			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
