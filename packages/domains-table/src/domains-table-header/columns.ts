@@ -63,6 +63,7 @@ export const allSitesViewColumns = (
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
+		sortFunctions: [ getSimpleSortFunctionBy( 'ssl_status' ) ],
 	},
 	{
 		name: 'expire_renew',
@@ -123,6 +124,7 @@ export const siteSpecificViewColumns = (
 		isSortable: true,
 		initialSortDirection: 'asc',
 		supportsOrderSwitching: true,
+		sortFunctions: [ getSimpleSortFunctionBy( 'ssl_status' ) ],
 	},
 	{
 		name: 'expire_renew',
