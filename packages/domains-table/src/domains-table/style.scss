@@ -137,6 +137,21 @@
 		}
 	}
 
+	.domains-table-row__ssl-cell {
+
+		&__active {
+			color: var(--studio-green-50);
+		}
+
+		&__pending {
+			color: var(--studio-orange-50);
+		}
+
+		&__disabled {
+			color: var(--studio-gray-50);
+		}
+	}
+
 	.domains-table-checkbox-td {
 		input[type="checkbox"][disabled] {
 			cursor: no-drop;
