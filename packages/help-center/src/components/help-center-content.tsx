@@ -97,11 +97,11 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	);
 
 	useEffect( () => {
-		if ( navigateToRoute ) {
+		if ( navigateToRoute && location.pathname !== navigateToRoute ) {
 			navigate( navigateToRoute );
 			setNavigateToRoute( null );
 		}
-	}, [ navigate, navigateToRoute, setNavigateToRoute ] );
+	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
 
 	// reset the scroll location on navigation, TODO: unless there's an anchor
 	useEffect( () => {
