@@ -41,11 +41,13 @@ type HelpCenterContactPageProps = {
 	hideHeaders?: boolean;
 	onClick?: () => void;
 	trackEventName?: string;
+	isFreeUser?: boolean;
 };
 
 export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	hideHeaders = false,
 	trackEventName,
+	isFreeUser = true,
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -130,7 +132,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 			<div className="help-center-contact-support">
 				<Link
 					to={ emailUrl }
-					onClick={ () => generateContactOnClickEvent( 'email', trackEventName ) }
+					onClick={ () => generateContactOnClickEvent( 'email', trackEventName, isFreeUser ) }
 				>
 					<div
 						className={ clsx( 'help-center-contact-support__box', 'email' ) }

@@ -16,7 +16,8 @@ export const UserMessage = ( {
 	message: Message;
 	onDislike: () => void;
 } ) => {
-	const { extraContactOptions, navigateToContactOptions, trackEvent } = useOdieAssistantContext();
+	const { extraContactOptions, navigateToContactOptions, trackEvent, isFreeUser } =
+		useOdieAssistantContext();
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const hasFeedback = !! message?.rating_value;
 	const isUser = message.role === 'user';
@@ -52,6 +53,7 @@ export const UserMessage = ( {
 								onClick={ () => {
 									trackEvent( 'chat_message_direct_escalation_link_click', {
 										message_id: message.message_id,
+										free_user: isFreeUser,
 									} );
 									if ( navigateToContactOptions ) {
 										navigateToContactOptions();
