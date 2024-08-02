@@ -27,8 +27,9 @@ type OdieAssistantContextInterface = {
 	clearChat: () => void;
 	currentUser: CurrentUser;
 	initialUserMessage: string | null | undefined;
-	isLoadingChat: boolean;
 	isLoading: boolean;
+	isLoadingEnvironment: boolean;
+	isLoadingExistingChat: boolean;
 	isMinimized?: boolean;
 	isNudging: boolean;
 	isVisible: boolean;
@@ -41,7 +42,6 @@ type OdieAssistantContextInterface = {
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
 	setChat: ( chat: SetStateAction< Chat > ) => void;
-	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setLastMessageInView?: ( lastMessageInView: boolean ) => void;
 	setContext: ( context: Context ) => void;
@@ -62,8 +62,9 @@ const defaultContextInterfaceValues = {
 	chat: { context: { section_name: '', site_id: null }, messages: [] },
 	clearChat: noop,
 	initialUserMessage: null,
-	isLoadingChat: false,
 	isLoading: false,
+	isLoadingEnvironment: false,
+	isLoadingExistingChat: false,
 	isMinimized: false,
 	isNudging: false,
 	isVisible: false,
@@ -75,7 +76,6 @@ const defaultContextInterfaceValues = {
 	currentUser: { display_name: 'Me' },
 	sendNudge: noop,
 	setChat: noop,
-	setIsLoadingChat: noop,
 	setMessageLikedStatus: noop,
 	setContext: noop,
 	setIsNudging: noop,
@@ -105,6 +105,7 @@ type OdieAssistantProviderProps = {
 	enabled?: boolean;
 	initialUserMessage?: string | null | undefined;
 	isMinimized?: boolean;
+	isLoadingEnvironment?: boolean;
 	currentUser: CurrentUser;
 	extraContactOptions?: ReactNode;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
@@ -122,6 +123,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	odieInitialPromptText,
 	initialUserMessage,
 	isMinimized = false,
+	isLoadingEnvironment = false,
 	extraContactOptions,
 	enabled = true,
 	logger,
@@ -145,7 +147,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const existingChatIdString = useGetOdieStorage( 'chat_id' );
 
 	const existingChatId = existingChatIdString ? parseInt( existingChatIdString, 10 ) : null;
-	const existingChat = useLoadPreviousChat( {
+	const { chat: existingChat, isLoading: isLoadingExistingChat } = useLoadPreviousChat( {
 		botNameSlug,
 		chatId: existingChatId,
 		odieInitialPromptText,
@@ -213,9 +215,10 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
 
 				// Append new messages at the end
+				const messages = [ ...filteredMessages, ...newMessages ];
 				return {
 					chat_id: prevChat.chat_id,
-					messages: [ ...filteredMessages, ...newMessages ],
+					messages,
 				};
 			} );
 		},
@@ -258,7 +261,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				currentUser,
 				extraContactOptions,
 				initialUserMessage,
-				isLoadingChat: false,
 				isLoading: isLoading,
 				isMinimized,
 				isNudging,
@@ -271,7 +273,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				selectedSiteId,
 				sendNudge: setLastNudge,
 				setChat,
-				setIsLoadingChat: noop,
 				setMessageLikedStatus,
 				setLastMessageInView,
 				setContext: noop,
@@ -283,6 +284,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				trackEvent,
 				updateMessage,
 				version: overridenVersion,
+				isLoadingEnvironment,
+				isLoadingExistingChat,
 			} }
 		>
 			{ children }
