@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .cancel-purchase__card {
 	h2 {
 		color: var(--color-neutral-70);
@@ -16,25 +19,133 @@
 	}
 }
 
-.cancel-purchase__content {
-	margin: 0;
-	padding: 0 0 10px;
+.cancel-purchase__wrapper-card {
+	padding: 32px;
+	padding-top: 12px;
 
-	@include breakpoint-deprecated( ">660px" ) {
-		width: 55%;
+	.purchases__cancel & {
+		box-shadow: none;
+		padding: 0;
+	}
+}
+
+.cancel-purchase__back .header-cake__back {
+	padding: 24px 0;
+	text-align: left;
+}
+
+.cancel-purchase__right .purchases-site__header.card {
+	background: var(--studio-gray-0);
+	border-radius: 2px;
+
+	.site .site__content {
+		padding: 24px 18px;
+
+		@include break-mobile {
+			padding: 12px;
+		}
+	}
+}
+
+.cancel-purchase__support-link {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+	margin-top: 12px;
+}
+
+.cancel-purchase__domain-options {
+	.card {
+		margin: 16px 8px;
 	}
 
-	p {
-		color: var(--color-neutral-light);
-		display: block;
+	.cancel-purchase__refund-domain-info {
+		color: var(--color-text-subtle);
+		display: inline-block;
+		font-size: $font-body-extra-small;
+		line-height: 1.4;
+		margin-top: 4px;
+	}
+
+	.cancel-purchase__domain-warning {
+		display: inline-block;
 		font-size: $font-body-small;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 150%;
-		margin-top: 5px;
-	}
+		line-height: 1.4;
 
-	hr {
-		margin: 18px 0;
+		.form-label {
+			margin: 1.5em 0;
+		}
+	}
+}
+
+.cancel-purchase__inner-wrapper {
+	display: flex;
+	flex-direction: column-reverse;
+
+	@include break-large {
+		display: grid;
+		grid-template-columns: 7fr 3fr;
+		gap: 32px;
+	}
+}
+
+.cancel-purchase__formatter-header.formatted-header {
+	margin: 16px 0;
+}
+
+.cancel-purchase__features {
+	ul.cancel-purchase__features-list {
+		list-style: none;
+		margin: 1.5em;
+		margin-bottom: 0;
+
+		@include break-mobile {
+			column-count: 2;
+			column-gap: 20px;
+		}
+
+		li {
+			list-style: none;
+			display: flex;
+			margin-bottom: 12px;
+			font-size: $font-body-small;
+
+			span {
+				margin: auto 0;
+				flex: 1;
+			}
+
+			.gridicon {
+				color: var(--color-error-40);
+			}
+		}
+	}
+}
+
+.cancel-purchase__features-link {
+	text-align: right;
+
+	a {
+		color: var(--color-text-subtle);
+		font-size: $font-body-small;
+		text-decoration: underline;
+	}
+}
+
+.cancel-purchase__refund-string {
+	color: var(--color-success);
+	font-weight: 600;
+}
+
+.cancel-purchase__warning-string {
+	color: var(--color-error);
+	font-weight: 600;
+}
+
+.cancel-purchase__confirm-buttons {
+	display: flex;
+
+	.form-button {
+		margin-left: 8px;
 	}
 }
 
@@ -86,17 +197,28 @@
 	}
 }
 
-.cancel-purchase__refund-amount {
-	color: var(--color-success);
+.cancel-purchase__footer-text p {
 	font-size: $font-body-small;
 	margin: 0;
 	padding: 0 10px 5px 0;
+
+	&.cancel-purchase__refund-amount {
+		color: var(--color-success);
+	}
+
+	&.cancel-purchase__expiration-text {
+		color: var(--color-error);
+	}
 }
 
 .cancel-purchase__button {
 	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
 	}
+}
+
+.purchases__cancel .cancel-purchase__inner-wrapper.card {
+	box-shadow: none;
 }
 
 .cancel-purchase-loading-placeholder__cancel-button {

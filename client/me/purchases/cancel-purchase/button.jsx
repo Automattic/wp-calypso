@@ -282,15 +282,15 @@ class CancelPurchaseButton extends Component {
 			onClick = this.handleCancelPurchaseClick;
 
 			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain and Refund' );
+				text = translate( 'Cancel domain and refund' );
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription' );
+				text = translate( 'Cancel subscription' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {
-				text = translate( 'Cancel and Refund' );
+				text = translate( 'Cancel and refund' );
 			}
 		} else {
 			onClick = () => {
@@ -298,7 +298,7 @@ class CancelPurchaseButton extends Component {
 			};
 
 			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain' );
+				text = translate( 'Cancel domain' );
 
 				// Domain in AGP bought with domain credits should be canceled immediately
 				if ( isRefundable( purchase ) ) {
@@ -308,7 +308,7 @@ class CancelPurchaseButton extends Component {
 
 			if ( isSubscription( purchase ) ) {
 				onClick = this.handleCancelPurchaseClick;
-				text = translate( 'Cancel Subscription' );
+				text = translate( 'Cancel subscription' );
 			}
 		}
 
