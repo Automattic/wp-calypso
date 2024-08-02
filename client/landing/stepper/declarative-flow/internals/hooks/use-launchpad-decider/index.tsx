@@ -1,7 +1,7 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useExperiment } from 'calypso/lib/explat';
 
-export const LAUNCHPAD_EXPERIMENT_NAME = 'launchpad-decider-example';
+export const LAUNCHPAD_EXPERIMENT_NAME = 'calypso_onboarding_launchpad_removal_test_2024_08';
 
 interface Props {
 	exitFlow: ( path: string ) => void;
