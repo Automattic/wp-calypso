@@ -1,5 +1,5 @@
 import { mayWeTrackByTracker } from '../tracker-buckets';
-import { debug, TRACKING_IDS } from './constants';
+import { TRACKING_IDS, debug } from './constants';
 
 const adTrackRedditEvent = (): void => {
 	if ( ! mayWeTrackByTracker( 'reddit' ) ) {
@@ -15,9 +15,9 @@ const adTrackGoogleEvent = (): void => {
 	}
 	const params = [
 		'event',
-		'migration-flow-start',
+		'conversion',
 		{
-			send_to: TRACKING_IDS.wpcomGoogleAdsGtag,
+			send_to: TRACKING_IDS.wpcomGoogleAdsGtagMigrationStart,
 		},
 	];
 	debug( 'adTrackMigrationStart: [Google Ads Gtag]', params );
