@@ -176,7 +176,7 @@ const PlanCard: FC = () => {
 	const { hasSftpFeature } = useSelector( ( state: AppState ) => ( {
 		hasSftpFeature: siteHasFeature( state, site?.ID, FEATURE_SFTP ),
 	} ) );
-	const isEligibleForAtomic = ! isAtomic && hasSftpFeature;
+	const shouldShowBandwidthStats = isAtomic || ( ! isAtomic && hasSftpFeature );
 	const isOwner = planDetails?.user_is_owner;
 	const planPurchaseId = useSelector( ( state: AppState ) =>
 		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
@@ -282,9 +282,7 @@ const PlanCard: FC = () => {
 									<>
 										<hr />
 										<div className="hosting-overview__site-metrics-footer">
-											{ ( isAtomic || isEligibleForAtomic ) && (
-												<PlanBandwidth siteId={ site.ID } />
-											) }
+											{ shouldShowBandwidthStats && <PlanBandwidth siteId={ site.ID } /> }
 											<PlanSiteVisits siteId={ site.ID } />
 										</div>
 									</>
