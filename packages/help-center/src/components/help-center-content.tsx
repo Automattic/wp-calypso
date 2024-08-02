@@ -169,10 +169,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								logger={ trackEvent }
 								loggerEventNamePrefix="calypso_odie"
 								selectedSiteId={ site?.ID as number }
-								extraContactOptions={ <ExtraContactOptions isFreeUser={ ! isUserElegible } /> }
+								extraContactOptions={ <ExtraContactOptions isUserElegible={ isUserElegible } /> }
 								navigateToContactOptions={ navigateToContactOptions }
 								navigateToSupportDocs={ navigateToSupportDocs }
-								isFreeUser={ ! isUserElegible }
+								isUserElegible={ isUserElegible }
 							>
 								<HelpCenterOdie />
 							</OdieAssistantProvider>

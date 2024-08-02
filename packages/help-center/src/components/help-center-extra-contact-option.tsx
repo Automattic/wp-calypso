@@ -11,7 +11,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useContactFormTitle } from '../hooks';
 import { HelpCenterContactPage } from './help-center-contact-page';
 
-export const ExtraContactOptions = ( { isFreeUser }: { isFreeUser: boolean } ) => {
+export const ExtraContactOptions = ( { isUserElegible }: { isUserElegible: boolean } ) => {
 	const navigate = useNavigate();
 	const data = useContactFormTitle( 'FORUM' );
 	const handleOnClick = () => {
@@ -21,7 +21,7 @@ export const ExtraContactOptions = ( { isFreeUser }: { isFreeUser: boolean } ) =
 		} );
 		navigate( '/contact-form?mode=FORUM' );
 	};
-	if ( isFreeUser ) {
+	if ( isUserElegible ) {
 		return (
 			<div className="help-center-contact-support">
 				<button onClick={ handleOnClick }>
@@ -44,7 +44,7 @@ export const ExtraContactOptions = ( { isFreeUser }: { isFreeUser: boolean } ) =
 			<HelpCenterContactPage
 				hideHeaders
 				trackEventName="calypso_odie_extra_contact_option"
-				isFreeUser
+				isUserElegible
 			/>
 		</div>
 	);
