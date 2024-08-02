@@ -60,7 +60,7 @@ export default function ItemPreviewPaneHeader( {
 	};
 
 	const handleWpVersionClick = () => {
-		page( `/hosting-config/${ selectedSite?.domain }#php` );
+		page( `/hosting-config/${ selectedSite?.domain }#wp` );
 	};
 
 	return (
