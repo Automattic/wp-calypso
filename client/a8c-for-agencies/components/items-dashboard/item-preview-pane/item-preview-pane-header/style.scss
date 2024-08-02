@@ -21,7 +21,7 @@ $blueberry-color: #3858e9;
 			}
 
 			.item-preview__header-env-data {
-				padding-top: 8px;
+				padding-top: 6px;
 				display: flex;
 				gap: 16px;
 				font-family: $font-sf-pro-text;
@@ -32,6 +32,7 @@ $blueberry-color: #3858e9;
 				.item-preview__header-env-data-item-link {
 					color: $blueberry-color;
 					padding: 0;
+					height: auto;
 				}
 			}
 		}
@@ -66,7 +67,7 @@ $blueberry-color: #3858e9;
 				.item-preview__header-title {
 					@include a4a-font-heading-xxl;
 					color: var(--color-text-black);
-					margin-bottom: 4px;
+					padding: 4px 0;
 				}
 
 				.item-preview__header-summary {
@@ -115,7 +116,7 @@ $blueberry-color: #3858e9;
 				.item-preview__header-title {
 					@include a4a-font-heading-md;
 					color: var(--color-text-black);
-					margin-bottom: 4px;
+					padding: 6px 0 4px 0;
 				}
 
 				.item-preview__header-summary {
