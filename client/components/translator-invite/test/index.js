@@ -34,7 +34,7 @@ describe( 'TranslatorInvite', () => {
 
 	test( 'should not render when no locale information present', () => {
 		const { container } = renderWithProvider( <TranslatorInvite { ...defaultProps } /> );
-		expect( container.firstChild ).toBeEmptyDOMElement();
+		expect( container.firstChild ).toBeNull();
 	} );
 
 	test( 'should render when no locale information present', () => {

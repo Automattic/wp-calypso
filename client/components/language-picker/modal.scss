@@ -69,11 +69,11 @@
 
 .language-picker__modal-incomplete-locale-nudge-text {
 	font-weight: normal;
-	/* stylelint-disable-next-line scales/font-sizes */
-	font-size: 0.9375rem; //typography-exception
 	margin-block-start: 6px;
 	.material-icon {
 		margin: 0 4px -2px 0;
+		width: 16px;
+		height: 16px;
 		fill: #2c3338;
 	}
 }

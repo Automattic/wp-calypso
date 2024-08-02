@@ -64,30 +64,26 @@ export class TranslatorInvite extends Component {
 		const isTranslatedIncompletely = currentLanguage?.isTranslatedIncompletely;
 
 		return (
-			<div className="translator-invite">
-				{ isTranslatedIncompletely && (
-					<>
-						<MaterialIcon className="translator-invite__icon" icon="emoji_language" />
+			isTranslatedIncompletely && (
+				<div className="translator-invite">
+					<MaterialIcon className="translator-invite__icon" icon="emoji_language" />
 
-						<h2 className="translator-invite__heading">
-							{ translate( 'Translate WordPress.com' ) }
-						</h2>
+					<h2 className="translator-invite__heading">{ translate( 'Translate WordPress.com' ) }</h2>
 
-						{ this.renderNoticeLabelText() }
+					{ this.renderNoticeLabelText() }
 
-						<a
-							className="translator-invite__link is-link"
-							href="https://translate.wordpress.com/faq/"
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={ this.recordClick }
-						>
-							{ translate( 'Learn more' ) }
-						</a>
-					</>
-				) }
-				<QueryLanguageNames />
-			</div>
+					<a
+						className="translator-invite__link"
+						href="https://translate.wordpress.com/faq/"
+						target="_blank"
+						rel="noopener noreferrer"
+						onClick={ this.recordClick }
+					>
+						{ translate( 'Learn more' ) }
+					</a>
+					<QueryLanguageNames />
+				</div>
+			)
 		);
 	}
 }

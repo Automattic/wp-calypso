@@ -5,7 +5,6 @@
 }
 
 .translator-invite__content {
-	max-width: 75%;
 	text-align: start;
 
 	/* stylelint-disable-next-line scales/font-sizes */
@@ -25,6 +24,9 @@
 .translator-invite__link {
 	text-decoration: underline;
 	text-underline-offset: 3px;
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.9375rem; //typography-exception
+	font-weight: 600;
 }
 
 .translator-invite__icon {

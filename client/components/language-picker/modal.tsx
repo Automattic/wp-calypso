@@ -135,21 +135,19 @@ const LanguagePickerModal: React.FC< Props > = ( {
 							</span>
 						</FormLabel>
 					) }
-					{ selectedLanguage.isTranslatedIncompletely && (
-						<div className="language-picker__modal-incomplete-locale-nudge-text">
-							<MaterialIcon size={ 16 } icon="emoji_language" />
-							{ __( 'You can help translate WordPress.com into your language.' ) }{ ' ' }
-							<a
-								className="language-picker__modal-incomplete-locale-nudge-link"
-								href="https://translate.wordpress.com/faq/"
-								target="_blank"
-								rel="noopener noreferrer"
-								onClick={ recordClick }
-							>
-								{ __( 'Learn more' ) }
-							</a>
-						</div>
-					) }
+					<div className="language-picker__modal-incomplete-locale-nudge-text">
+						<MaterialIcon icon="emoji_language" />
+						{ __( 'You can help translate WordPress.com into your language.' ) }{ ' ' }
+						<a
+							className="language-picker__modal-incomplete-locale-nudge-link"
+							href="https://translate.wordpress.com/faq/"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ recordClick }
+						>
+							{ __( 'Learn more' ) }
+						</a>
+					</div>
 				</div>
 			) }
 			{ showEmpathyModeControl && (
