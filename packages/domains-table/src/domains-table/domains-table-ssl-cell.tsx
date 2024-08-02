@@ -1,12 +1,28 @@
 import { Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 
 interface DomainsTableSSLCellProps {
 	sslStatus: 'active' | 'pending' | 'disabled' | null;
 }
 
 export default function DomainsTableSSLCell( { sslStatus }: DomainsTableSSLCellProps ) {
+	const translate = useTranslate();
+
+	const getSSLStatusText = () => {
+		if ( sslStatus === 'active' ) {
+			return translate( 'Active' );
+		}
+		if ( sslStatus === 'pending' ) {
+			return translate( 'Pending' );
+		}
+		if ( sslStatus === 'disabled' ) {
+			return translate( 'Disabled' );
+		}
+		return '-';
+	};
+
 	return (
 		<div
 			className={ clsx( 'domains-table-row__ssl-cell', {
@@ -25,7 +41,7 @@ export default function DomainsTableSSLCell( { sslStatus }: DomainsTableSSLCellP
 					icon={ lock }
 				/>
 			) }
-			{ sslStatus === null ? '-' : sslStatus.charAt( 0 ).toUpperCase() + sslStatus.slice( 1 ) }
+			{ getSSLStatusText() }
 		</div>
 	);
 }
