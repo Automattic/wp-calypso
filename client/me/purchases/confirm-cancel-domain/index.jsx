@@ -13,13 +13,11 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getName as getDomainName } from 'calypso/lib/purchases';
 import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
 import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
-import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
@@ -285,14 +283,7 @@ class ConfirmCancelDomain extends Component {
 					path="/me/purchases/:site/:purchaseId/confirm-cancel-domain"
 					title="Purchases > Confirm Cancel Domain"
 				/>
-				<HeaderCake
-					backHref={ this.props.getCancelPurchaseUrlFor(
-						this.props.siteSlug,
-						this.props.purchaseId
-					) }
-				>
-					{ titles.confirmCancelDomain }
-				</HeaderCake>
+
 				<Card>
 					<FormSectionHeading>
 						{ this.props.translate( 'Canceling %(domain)s', { args: { domain } } ) }

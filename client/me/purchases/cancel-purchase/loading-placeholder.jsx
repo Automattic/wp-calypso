@@ -1,30 +1,27 @@
-import { Button, Card, CompactCard } from '@automattic/components';
+import { Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import LoadingPlaceholder from 'calypso/me/purchases/components/loading-placeholder';
-import titles from 'calypso/me/purchases/titles';
 
-const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurchaseUrlFor } ) => {
-	let path;
-
-	if ( siteSlug ) {
-		path = getManagePurchaseUrlFor( siteSlug, purchaseId );
-	}
-
+const CancelPurchaseLoadingPlaceholder = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
 	return (
-		<LoadingPlaceholder title={ titles.cancelPurchase } path={ path } isFullWidth>
-			<Card className="cancel-purchase-loading-placeholder__card">
-				<h2 className="loading-placeholder__content cancel-purchase-loading-placeholder__header" />
-				<div className="loading-placeholder__content cancel-purchase-loading-placeholder__subheader" />
-				<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
-				<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
-			</Card>
+		<Card className="cancel-purchase__inner-wrapper">
+			<div className="cancel-purchase__left">
+				<Card className="cancel-purchase-loading-placeholder__card">
+					<h2 className="loading-placeholder__content cancel-purchase-loading-placeholder__header" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__subheader" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
+				</Card>
+			</div>
 
-			<CompactCard>
-				<Button className="cancel-purchase-loading-placeholder__cancel-button" />
-			</CompactCard>
-		</LoadingPlaceholder>
+			<div className="cancel-purchase__right">
+				<CompactCard>
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__subheader" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
+				</CompactCard>
+			</div>
+		</Card>
 	);
 };
 /* eslint-enable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */

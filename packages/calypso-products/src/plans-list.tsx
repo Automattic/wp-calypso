@@ -773,6 +773,12 @@ const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
+	getCancellationFeatures: () => [
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+		FEATURE_AUDIO_UPLOADS,
+		FEATURE_NO_ADS,
+		FEATURE_MEMBERSHIPS,
+	],
 } );
 
 const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
@@ -932,6 +938,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
+	getCancellationFeatures: () => [
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_AUDIO_UPLOADS,
+	],
 } );
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
@@ -1178,6 +1189,14 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
+	getCancellationFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS_V2,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_ECOMMERCE_MARKETING,
+		FEATURE_SELL_SHIP,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_ADVANCED_SEO_TOOLS,
+	],
 } );
 
 const getWooExpressMediumPlanCompareFeatures = (): string[] => [
@@ -1541,6 +1560,13 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
+	getCancellationFeatures: () => [
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_AD_FREE_EXPERIENCE,
+	],
 } );
 
 const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
@@ -1882,6 +1908,15 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SENSEI_JETPACK,
 		] ),
 	getSenseiHighlightedFeatures: () => [ FEATURE_CUSTOM_DOMAIN, FEATURE_SENSEI_SUPPORT ],
+	getCancellationFeatures: () => [
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_ADVANCED_SEO_TOOLS,
+		FEATURE_DEV_TOOLS,
+		FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
+		FEATURE_SITE_BACKUPS_AND_RESTORE,
+		FEATURE_AD_FREE_EXPERIENCE,
+		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+	],
 } );
 
 const getPlanProDetails = (): IncompleteWPcomPlan => ( {
