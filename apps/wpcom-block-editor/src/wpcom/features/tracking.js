@@ -883,7 +883,7 @@ if (
 	use( ( registry ) => ( {
 		dispatch: ( namespace ) => {
 			const namespaceName = typeof namespace === 'object' ? namespace.name : namespace;
-			const actions = { ...registry.dispatch( namespaceName ) };
+			const actions = registry.dispatch( namespaceName );
 			const trackers = REDUX_TRACKING[ namespaceName ];
 
 			// Initialize namespace level objects if not yet done.
@@ -901,7 +901,7 @@ if (
 					// If we havent stored the originalAction, or it is no longer the same as the
 					// one we last wrote a corresponding rewrittenAction for, we need to update.
 					if (
-						! originalActions[ namespaceName ][ actionName ] ||
+						! originalActions[ namespaceName ][ actionName ] &&
 						originalActions[ namespaceName ][ actionName ] !== originalAction
 					) {
 						// Save the originalAction and rewrittenAction for future reference.
