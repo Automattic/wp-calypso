@@ -10,6 +10,7 @@ export default function getGravatarOAuth2Flow( oauth2Client ) {
 		return oauth2Client.name;
 	}
 
-	// If the client is not in the initial data, use the `source` as the name.
+	// If the client is in the initial data, use the `name` from there.
+	// Otherwise, use the `source` as the name.
 	return initialClientsData[ oauth2Client.id ]?.name ?? oauth2Client.source;
 }
