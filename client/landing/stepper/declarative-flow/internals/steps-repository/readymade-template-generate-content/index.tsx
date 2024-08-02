@@ -30,8 +30,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 	siteId,
 	siteSlug,
 } ) => {
-	const defaultContext = translate( 'Write an amazing description of your site.' );
-	const [ aiContext, setAiContext ] = useState( defaultContext );
+	const [ aiContext, setAiContext ] = useState( '' );
 	const [ numberOfGenerations, setNumberOfGenerations ] = useState( 0 );
 	const [ isGeneratingContent, setIsGeneratingContent ] = useState( false );
 	const { assembleSite } = useDispatch( SITE_STORE );
@@ -73,7 +72,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 						<FormTextarea
 							name="tagline"
 							id="tagline"
-							value={ aiContext }
+							placeholder={ translate( 'Write an amazing description of your site.' ) }
 							onChange={ handleTextareaChange }
 						/>
 						<TextProgressBar target={ 256 } text={ aiContext } />

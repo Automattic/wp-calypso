@@ -11,7 +11,6 @@ $font-family: "SF Pro Text", $sans;
 		flex-direction: column;
 		padding-top: 40px;
 		display: flex;
-		gap: 24px;
 		justify-content: space-between;
 		min-height: unset;
 		margin: 0 6px;
@@ -26,7 +25,7 @@ $font-family: "SF Pro Text", $sans;
 	}
 
 	.generate-content {
-		width: 30%;
+		margin-left: 10px;
 	}
 
 	.step-container__header {
