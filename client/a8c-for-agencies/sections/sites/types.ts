@@ -17,7 +17,6 @@ export interface SitesDashboardContextInterface {
 	showOnlyFavorites?: boolean;
 	setShowOnlyFavorites: ( showOnlyFavorites: boolean ) => void;
 
-	initialSelectedSiteUrl?: string;
 	path: string;
 	currentPage: number;
 

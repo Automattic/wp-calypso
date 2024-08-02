@@ -3,13 +3,8 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useContext, useEffect, useCallback, useState } from 'react';
+import { useContext, useEffect, useCallback, useState, useMemo } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
-import {
-	DATAVIEWS_LIST,
-	DATAVIEWS_TABLE,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -59,7 +54,6 @@ export default function SitesDashboard() {
 	const {
 		dataViewsState,
 		setDataViewsState,
-		initialSelectedSiteUrl,
 		selectedSiteFeature,
 		setSelectedSiteFeature,
 		selectedCategory: category,
@@ -103,41 +97,19 @@ export default function SitesDashboard() {
 
 	const noActiveSite = useNoActiveSite();
 
-	useEffect( () => {
-		if ( dataViewsState.selectedItem && ! initialSelectedSiteUrl ) {
-			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
-			return;
-		}
-
-		if (
-			dataViewsState.selectedItem &&
-			dataViewsState.selectedItem.url === initialSelectedSiteUrl
-		) {
-			return;
-		}
-
-		if ( ! isLoading && ! isError && data && initialSelectedSiteUrl ) {
-			const site = data.sites.find( ( site: Site ) => site.url === initialSelectedSiteUrl );
-
-			setDataViewsState( ( prevState: DataViewsState ) => ( {
-				...prevState,
-				selectedItem: site,
-				type: DATAVIEWS_LIST,
-			} ) );
-		}
-		// Omitting sitesViewState to prevent infinite loop
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ data, isError, isLoading, initialSelectedSiteUrl, setDataViewsState ] );
+	const site = useMemo( () => {
+		return dataViewsState.selectedItem
+			? data?.sites.find( ( site: Site ) => site.url === dataViewsState.selectedItem )
+			: undefined;
+	}, [ data?.sites, dataViewsState.selectedItem ] );
 
 	useEffect( () => {
 		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
-		if ( ! dataViewsState.selectedItem ) {
+		if ( ! site ) {
 			return;
 		}
 
-		if ( dataViewsState.selectedItem ) {
-			dispatch( setSelectedSiteId( dataViewsState.selectedItem.blog_id ) );
-		}
+		dispatch( setSelectedSiteId( site.blog_id ) );
 
 		const updatedUrl = updateSitesDashboardUrl( {
 			category: category,
@@ -164,13 +136,33 @@ export default function SitesDashboard() {
 		dataViewsState.page,
 		showOnlyFavorites,
 		dataViewsState.sort,
+		site,
 	] );
 
 	const closeSitePreviewPane = useCallback( () => {
-		if ( dataViewsState.selectedItem ) {
-			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
+		const updatedUrl = updateSitesDashboardUrl( {
+			category: category,
+			setCategory: setCategory,
+			filters: dataViewsState.filters,
+			selectedSite: undefined,
+			selectedSiteFeature: undefined,
+			search: dataViewsState.search,
+			currentPage: dataViewsState.page,
+			sort: dataViewsState.sort,
+			showOnlyFavorites,
+		} );
+		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
+			page.show( updatedUrl );
 		}
-	}, [ dataViewsState, setDataViewsState ] );
+	}, [
+		category,
+		dataViewsState.filters,
+		dataViewsState.page,
+		dataViewsState.search,
+		dataViewsState.sort,
+		setCategory,
+		showOnlyFavorites,
+	] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
@@ -208,13 +200,9 @@ export default function SitesDashboard() {
 
 	return (
 		<Layout
-			className={ clsx(
-				'sites-dashboard',
-				'sites-dashboard__layout',
-				! dataViewsState.selectedItem && 'preview-hidden'
-			) }
+			className={ clsx( 'sites-dashboard', 'sites-dashboard__layout', ! site && 'preview-hidden' ) }
 			wide
-			title={ dataViewsState.selectedItem ? null : translate( 'Sites' ) }
+			title={ site ? null : translate( 'Sites' ) }
 		>
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ navItems.length > 1 }>
@@ -272,10 +260,10 @@ export default function SitesDashboard() {
 				</DashboardDataContext.Provider>
 			</LayoutColumn>
 
-			{ dataViewsState.selectedItem && (
+			{ site && (
 				<LayoutColumn className="site-preview-pane" wide>
 					<OverviewPreviewPane
-						site={ dataViewsState.selectedItem }
+						site={ site }
 						selectedSiteFeature={ selectedSiteFeature }
 						setSelectedSiteFeature={ setSelectedSiteFeature }
 						closeSitePreviewPane={ closeSitePreviewPane }

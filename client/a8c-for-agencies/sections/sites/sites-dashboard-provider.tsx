@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import {
+	DATAVIEWS_LIST,
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -61,7 +62,6 @@ export const SitesDashboardProvider = ( {
 	const [ currentLicenseInfo, setCurrentLicenseInfo ] = useState< string | null >( null );
 	const [ mostRecentConnectedSite, setMostRecentConnectedSite ] = useState< string | null >( null );
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
-	const [ initialSelectedSiteUrl, setInitialSelectedSiteUrl ] = useState( siteUrlInitialState );
 
 	const handleSetBulkManagementActive = ( isActive: boolean ) => {
 		setIsBulkManagementActive( isActive );
@@ -91,7 +91,6 @@ export const SitesDashboardProvider = ( {
 	} );
 
 	useEffect( () => {
-		setInitialSelectedSiteUrl( siteUrlInitialState );
 		if ( ! siteUrlInitialState ) {
 			setShowOnlyFavorites( showOnlyFavoritesInitialState );
 		}
@@ -99,14 +98,14 @@ export const SitesDashboardProvider = ( {
 		setDataViewsState( ( previousState ) => ( {
 			...previousState,
 			...( siteUrlInitialState
-				? {}
+				? { selectedItem: siteUrlInitialState, type: DATAVIEWS_LIST }
 				: {
 						filters: buildFilters( { issueTypes } ),
+						search: searchQuery,
+						sort,
+						selectedItem: undefined,
+						type: DATAVIEWS_TABLE,
 				  } ),
-			...( siteUrlInitialState ? {} : { search: searchQuery } ),
-			...( siteUrlInitialState ? {} : { sort } ),
-			...( siteUrlInitialState ? {} : { selectedItem: undefined } ),
-			...( siteUrlInitialState ? {} : { type: DATAVIEWS_TABLE } ),
 		} ) );
 	}, [
 		setDataViewsState,
@@ -115,7 +114,6 @@ export const SitesDashboardProvider = ( {
 		sort,
 		issueTypes,
 		siteUrlInitialState,
-		setInitialSelectedSiteUrl,
 	] );
 
 	const sitesDashboardContextValue: SitesDashboardContextInterface = {
@@ -128,7 +126,6 @@ export const SitesDashboardProvider = ( {
 		path,
 		currentPage,
 		isBulkManagementActive,
-		initialSelectedSiteUrl: initialSelectedSiteUrl,
 		setIsBulkManagementActive: handleSetBulkManagementActive,
 		selectedSites,
 		setSelectedSites,

@@ -15,7 +15,6 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	dataViewsState: initialDataViewsState,
 	setDataViewsState: () => {},
 
-	initialSelectedSiteUrl: '',
 	currentPage: 1,
 	path: '',
 	featurePreview: null,

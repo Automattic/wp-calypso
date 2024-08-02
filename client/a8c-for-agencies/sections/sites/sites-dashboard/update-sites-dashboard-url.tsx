@@ -6,7 +6,7 @@ import {
 	DEFAULT_SORT_DIRECTION,
 	DEFAULT_SORT_FIELD,
 } from '../constants';
-import { DashboardSortInterface, Site } from '../types';
+import { DashboardSortInterface } from '../types';
 import { getSelectedFilters } from './get-selected-filters';
 
 const buildQueryString = ( {
@@ -69,7 +69,7 @@ export const updateSitesDashboardUrl = ( {
 	category?: string;
 	setCategory: ( category: string ) => void;
 	filters: DataViewsFilter[];
-	selectedSite?: Site;
+	selectedSite?: string;
 	selectedSiteFeature?: string;
 	search: string;
 	currentPage: number;
@@ -101,10 +101,10 @@ export const updateSitesDashboardUrl = ( {
 		selectedSiteFeature !== A4A_SITES_DASHBOARD_DEFAULT_FEATURE
 	) {
 		// If the selected feature is the default one, we can leave the url a little cleaner, that's why we are comparing to the default feature in the condition above.
-		url = `${ baseUrl }/${ category }/${ selectedSite.url }/${ selectedSiteFeature }`;
+		url = `${ baseUrl }/${ category }/${ selectedSite }/${ selectedSiteFeature }`;
 		shouldAddQueryArgs = false;
 	} else if ( category && selectedSite ) {
-		url = `${ baseUrl }/${ category }/${ selectedSite.url }`;
+		url = `${ baseUrl }/${ category }/${ selectedSite }`;
 		shouldAddQueryArgs = false;
 	} else if ( category && category !== A4A_SITES_DASHBOARD_DEFAULT_CATEGORY ) {
 		// If the selected category is the default one, we can leave the url a little cleaner, that's why we are comparing to the default category in the condition above.
