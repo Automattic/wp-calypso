@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
+	FEATURE_SFTP,
 	getPlan,
 	PlanSlug,
 	PRODUCT_1GB_SPACE,
@@ -28,9 +29,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { IAppState } from 'calypso/state/types';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 
@@ -172,8 +173,12 @@ const PlanCard: FC = () => {
 	);
 	const isStaging = isStagingSite( site ?? undefined );
 	const isAtomic = useSelector( ( state: AppState ) => isAtomicSite( state, site?.ID ?? 0 ) );
+	const { hasSftpFeature } = useSelector( ( state: AppState ) => ( {
+		hasSftpFeature: siteHasFeature( state, site?.ID, FEATURE_SFTP ),
+	} ) );
+	const isEligibleForAtomic = ! isAtomic && hasSftpFeature;
 	const isOwner = planDetails?.user_is_owner;
-	const planPurchaseId = useSelector( ( state: IAppState ) =>
+	const planPurchaseId = useSelector( ( state: AppState ) =>
 		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
 	);
 	const planPurchase = useSelector( getSelectedPurchase );
@@ -277,7 +282,9 @@ const PlanCard: FC = () => {
 									<>
 										<hr />
 										<div className="hosting-overview__site-metrics-footer">
-											{ isAtomic && <PlanBandwidth siteId={ site.ID } /> }
+											{ ( isAtomic || isEligibleForAtomic ) && (
+												<PlanBandwidth siteId={ site.ID } />
+											) }
 											<PlanSiteVisits siteId={ site.ID } />
 										</div>
 									</>

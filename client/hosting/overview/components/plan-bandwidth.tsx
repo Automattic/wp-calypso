@@ -1,4 +1,3 @@
-import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -37,7 +36,6 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	const canViewStat = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
 
 	const selectedSiteDomain = selectedSiteData?.domain;
-	const planDetails = selectedSiteData?.plan;
 
 	const translate = useTranslate();
 
@@ -53,12 +51,39 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 		return;
 	}
 
-	const getBandwidthFooterLink = () => {
-		const eligibleForAtomic =
-			planDetails &&
-			( isBusinessPlan( planDetails?.product_slug ) ||
-				isEcommercePlan( planDetails?.product_slug ) );
+	const getBandwidthContent = () => {
+		if ( ! isAtomic ) {
+			return translate( 'Bandwidth: {{span}}Unlimited{{/span}}', {
+				components: {
+					span: <span className="plan-bandwidth-content__value" />,
+				},
+				comment:
+					'A placeholder for sites that have not activated hosting features highlighting unlimited bandwidth',
+			} );
+		}
 
+		if ( ! data || ! selectedSiteDomain ) {
+			return <LoadingPlaceholder className="hosting-overview__plan-bandwidth-placeholder" />;
+		}
+
+		const valueInBytes = data.data.periods.reduce(
+			( acc, curr ) => acc + ( curr.dimension[ selectedSiteDomain ] || 0 ),
+			0
+		);
+
+		const { unitAmount, unit } = convertBytes( valueInBytes );
+
+		return translate( 'Bandwidth: {{span}}%(value)s %(measure)s used{{/span}}', {
+			args: { value: unitAmount, measure: unit },
+			components: {
+				span: <span className="plan-bandwidth-content__value" />,
+			},
+			comment:
+				'A description of the amount of data that has been used by the site in the current month',
+		} );
+	};
+
+	const getBandwidthFooterLink = () => {
 		if ( isAtomic ) {
 			return (
 				<a href={ `/site-monitoring/${ siteSlug }` }>
@@ -71,45 +96,16 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 
 		return (
 			<a href={ `/hosting-features/${ siteSlug }` }>
-				{ eligibleForAtomic
-					? translate( 'Activate hosting features to monitor site performance', {
-							comment: 'A link to the Hosting Features page to click an activation button',
-					  } )
-					: translate( "Want to monitor your site's performance?", {
-							comment: 'A link to the Hosting Features page to click an upgrade button',
-					  } ) }
+				{ translate( 'Activate hosting features to monitor site performance', {
+					comment: 'A link to the Hosting Features page to click an activation button',
+				} ) }
 			</a>
 		);
 	};
 
-	if ( ! data || ! selectedSiteDomain ) {
-		return (
-			<div className="hosting-overview__plan-bandwidth-wrapper">
-				<LoadingPlaceholder className="hosting-overview__plan-bandwidth-placeholder" />
-				{ getBandwidthFooterLink() }
-			</div>
-		);
-	}
-
-	const valueInBytes = data.data.periods.reduce(
-		( acc, curr ) => acc + ( curr.dimension[ selectedSiteDomain ] || 0 ),
-		0
-	);
-
-	const { unitAmount, unit } = convertBytes( valueInBytes );
-
 	return (
 		<div className="hosting-overview__plan-bandwidth-wrapper">
-			<div className="hosting-overview__plan-bandwidth-content">
-				{ translate( 'Bandwidth: {{span}}%(value)s %(measure)s used{{/span}}', {
-					args: { value: unitAmount, measure: unit },
-					components: {
-						span: <span className="plan-bandwidth-content__value" />,
-					},
-					comment:
-						'A description of the amount of data that has been used by the site in the current month',
-				} ) }
-			</div>
+			<div className="hosting-overview__plan-bandwidth-content">{ getBandwidthContent() }</div>
 			{ getBandwidthFooterLink() }
 		</div>
 	);
