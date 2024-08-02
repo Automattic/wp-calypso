@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
@@ -19,7 +19,6 @@ import {
 	HOSTING_OVERVIEW_ID,
 } from 'calypso/a8c-for-agencies/sections/sites/features/features';
 import { PreviewPaneProps } from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/types';
-import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
 import { A4A_SITES_DASHBOARD_DEFAULT_FEATURE } from '../../constants';
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
@@ -44,6 +43,8 @@ export function OverviewPreviewPane( {
 	isSmallScreen = false,
 	hasError = false,
 	onRefetchSite,
+	selectedSiteFeature = A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
+	setSelectedSiteFeature,
 }: PreviewPaneProps ) {
 	const translate = useTranslate();
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], ! isSmallScreen );
@@ -60,17 +61,6 @@ export function OverviewPreviewPane( {
 
 	// Show error pane if there is an error
 	const showErrorPane = formattedSite?.[ 0 ].site.error ?? false;
-
-	const { selectedSiteFeature, setSelectedSiteFeature } = useContext( SitesDashboardContext );
-
-	useEffect( () => {
-		if ( selectedSiteFeature === undefined ) {
-			setSelectedSiteFeature( A4A_SITES_DASHBOARD_DEFAULT_FEATURE );
-		}
-		return () => {
-			setSelectedSiteFeature( undefined );
-		};
-	}, [] );
 
 	const errorFeatures = useMemo(
 		() => [

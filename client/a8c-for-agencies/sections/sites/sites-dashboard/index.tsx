@@ -61,6 +61,7 @@ export default function SitesDashboard() {
 		setDataViewsState,
 		initialSelectedSiteUrl,
 		selectedSiteFeature,
+		setSelectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 		showOnlyFavorites,
@@ -282,6 +283,8 @@ export default function SitesDashboard() {
 				<LayoutColumn className="site-preview-pane" wide>
 					<OverviewPreviewPane
 						site={ dataViewsState.selectedItem }
+						selectedSiteFeature={ selectedSiteFeature }
+						setSelectedSiteFeature={ setSelectedSiteFeature }
 						closeSitePreviewPane={ closeSitePreviewPane }
 						isSmallScreen={ ! isLargeScreen }
 						hasError={ isError }

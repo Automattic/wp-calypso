@@ -20,7 +20,8 @@ export interface FeatureTabInterface {
 export interface PreviewPaneProps {
 	site: Site;
 	closeSitePreviewPane?: () => void;
-	selectedFeatureId?: string;
+	selectedSiteFeature?: string;
+	setSelectedSiteFeature: ( id: string ) => void;
 	features?: FeaturePreviewInterface[];
 	className?: string;
 	isSmallScreen?: boolean;
