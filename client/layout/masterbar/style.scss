@@ -733,9 +733,6 @@ body.is-mobile-app-view {
 			--color-masterbar-highlight: var(--color-sidebar-menu-selected-text);
 			--color-masterbar-item-active-background: var(--color-sidebar-background);
 
-			&.masterbar__item-my-sites {
-				border-top-left-radius: 0;
-			}
 			&.masterbar__item-howdy {
 				border-top-right-radius: 0;
 			}
@@ -743,6 +740,12 @@ body.is-mobile-app-view {
 			&::before,
 			&::after {
 				opacity: 1;
+			}
+
+			@media only screen and (min-width: 781px) {
+				&.masterbar__item-my-sites {
+					border-top-left-radius: 0;
+				}
 			}
 		}
 	}
