@@ -132,8 +132,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const setOdieStorage = useSetOdieStorage( 'chat_id' );
 
 	const navigateToContactOptions = useCallback( () => {
-		navigate( '/contact-options' );
-	}, [ navigate ] );
+		if ( isUserElegible ) {
+			navigate( '/contact-options' );
+		} else {
+			navigate( '/contact-form?mode=FORUM' );
+		}
+	}, [ navigate, isUserElegible ] );
 
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
