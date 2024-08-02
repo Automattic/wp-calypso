@@ -117,10 +117,10 @@ export const setShowMessagingChat = function* () {
 	yield resetStore();
 };
 
-export const setShowSupportDoc = function* ( link: string, postId: number, blogId?: number ) {
+export const setShowSupportDoc = function* ( link: string, postId?: number, blogId?: number ) {
 	const params = new URLSearchParams( {
 		link,
-		postId: String( postId ),
+		...( postId && { postId: String( postId ) } ),
 		...( blogId && { blogId: String( blogId ) } ), // Conditionally add blogId if it exists, the default is support blog
 		cacheBuster: String( Date.now() ),
 	} );
