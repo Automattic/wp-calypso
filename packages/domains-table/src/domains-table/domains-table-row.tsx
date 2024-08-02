@@ -15,6 +15,7 @@ import { DomainsTableExpiresRenewsOnCell } from './domains-table-expires-renews-
 import { DomainsTablePlaceholder } from './domains-table-placeholder';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
+import DomainsTableSSLCell from './domains-table-ssl-cell';
 import { DomainsTableStatusCell } from './domains-table-status-cell';
 import { DomainsTableStatusCTA } from './domains-table-status-cta';
 import type { MouseEvent } from 'react';
@@ -43,6 +44,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		isAllSitesView,
 		domainStatus,
 		pendingUpdates,
+		sslStatus,
 	} = useDomainRow( domain );
 	const { canSelectAnyDomains, domainsTableColumns, isCompact } = useDomainsTable();
 
@@ -193,6 +195,14 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 					return (
 						<td key={ domain.domain + column.name }>
 							<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
+						</td>
+					);
+				}
+
+				if ( column.name === 'ssl' ) {
+					return (
+						<td key={ domain.domain + column.name }>
+							<DomainsTableSSLCell sslStatus={ sslStatus } />
 						</td>
 					);
 				}
