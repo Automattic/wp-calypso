@@ -15,7 +15,9 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * @returns string
  */
 function updateConnectUrl( connectUrl: string, fromSite: string ): string {
-	const stateQueryString = getQueryArg( connectUrl, 'state' ) as string;
+	let stateQueryString = getQueryArg( connectUrl, 'state' ) as string | string[];
+	stateQueryString = Array.isArray( stateQueryString ) ? stateQueryString[ 0 ] : stateQueryString;
+
 	const decodedState = JSON.parse( atob( stateQueryString ) );
 	decodedState.from_site = fromSite;
 	decodedState.engine = 'substack'; // Currently we only support substack but in the future we want to pass this parameter down.

@@ -46,7 +46,8 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 
 	const stepsProgress = [ 'Content', 'Subscribers', 'Paid Subscribers', 'Summary' ];
 
-	const fromSite = getQueryArg( window.location.href, 'from' ) ?? null;
+	let fromSite = getQueryArg( window.location.href, 'from' ) as string | string[];
+	fromSite = Array.isArray( fromSite ) ? fromSite[ 0 ] : fromSite;
 
 	if ( fromSite && ! step ) {
 		step = stepSlugs[ 0 ];
