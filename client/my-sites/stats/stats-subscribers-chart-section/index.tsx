@@ -135,7 +135,7 @@ export default function SubscribersChartSection( {
 
 	const subscribersUrl = isOdysseyStats
 		? `https://cloud.jetpack.com/subscribers/${ slug }`
-		: `/people/subscribers/${ slug }`;
+		: `/subscribers/${ slug }`;
 
 	return (
 		<div className="subscribers-section">
