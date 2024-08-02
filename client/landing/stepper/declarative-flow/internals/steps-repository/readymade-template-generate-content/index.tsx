@@ -72,7 +72,9 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 						<FormTextarea
 							name="tagline"
 							id="tagline"
-							placeholder={ translate( 'Write an amazing description of your site.' ) }
+							placeholder={ translate(
+								"Write an amazing description of your site, like: The Beachcomber Bistro is a cafe offering amazing food, delicious coffee and local beers. It's located next to the beach at Harlyn Bay, offering a stunning view from our deck."
+							) }
 							onChange={ handleTextareaChange }
 						/>
 						<TextProgressBar target={ 256 } text={ aiContext } />
