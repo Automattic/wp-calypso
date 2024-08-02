@@ -3,12 +3,7 @@
 $font-family: "SF Pro Text", $sans;
 
 .readymade-template-preview {
-	text-align: center;
-	overflow-x: hidden;
-	overflow-y: auto;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07), 0 3px 10px rgba(0, 0, 0, 0.04);
-	border-radius: 4px;
-	transition: max-width 0.2s linear;
+	width: 50%;
 
 	.components-spinner {
 		width: 16px;

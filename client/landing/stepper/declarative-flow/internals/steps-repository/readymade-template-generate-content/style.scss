@@ -12,7 +12,7 @@ $font-family: "SF Pro Text", $sans;
 		padding-top: 40px;
 		display: flex;
 		gap: 24px;
-		justify-content: center;
+		justify-content: space-between;
 		min-height: unset;
 		margin: 0 6px;
 
@@ -27,10 +27,6 @@ $font-family: "SF Pro Text", $sans;
 
 	.generate-content {
 		width: 30%;
-	}
-
-	.readymade-template-preview {
-		width: 60%;
 	}
 
 	.step-container__header {
