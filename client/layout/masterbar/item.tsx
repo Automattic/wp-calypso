@@ -30,6 +30,7 @@ interface MasterbarItemProps {
 	alwaysShowContent?: boolean;
 	disabled?: boolean;
 	subItems?: Array< MasterbarSubItemProps >;
+	hasGlobalBorderStyle?: boolean;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -45,6 +46,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		hasUnseen: PropTypes.bool,
 		alwaysShowContent: PropTypes.bool,
 		subItems: PropTypes.array,
+		hasGlobalBorderStyle: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -206,6 +208,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
 			'has-subitems': this.props.subItems,
 			'is-open': this.state.isOpenForNonMouseFlow,
+			'has-global-border': this.props.hasGlobalBorderStyle,
 		} );
 
 		const attributes = {

@@ -1,16 +1,17 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-
 .enterprise-agency-hosting__top-container {
 	display: grid;
 	grid-template-columns: 1fr;
-	gap: 24px;
-	padding-inline: 8px;
-	padding-block-end: 48px;
+	gap: 16px;
+	padding: 0 16px 48px;
 
-	@include break-small {
+	@include break-medium {
+		max-width: 1500px;
+		margin-inline: auto;
 		padding-inline: 40px;
+		gap: 24px;
 	}
 
 	@include break-xlarge {

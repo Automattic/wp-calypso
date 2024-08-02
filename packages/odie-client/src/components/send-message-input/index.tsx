@@ -9,6 +9,7 @@ import React, {
 	FormEvent,
 	useRef,
 	useEffect,
+	RefObject,
 } from 'react';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import ArrowUp from '../../assets/arrow-up.svg';
@@ -19,7 +20,11 @@ import { JumpToRecent } from '../message/jump-to-recent';
 
 import './style.scss';
 
-export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () => void } ) => {
+export const OdieSendMessageButton = ( {
+	containerReference,
+}: {
+	containerReference: RefObject< HTMLDivElement >;
+} ) => {
 	const { _x } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
@@ -122,7 +127,7 @@ export const OdieSendMessageButton = ( { scrollToRecent }: { scrollToRecent: () 
 
 	return (
 		<>
-			<JumpToRecent scrollToRecent={ scrollToRecent } />
+			<JumpToRecent containerReference={ containerReference } />
 			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
 				<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
 					<TextareaAutosize

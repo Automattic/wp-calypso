@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
-import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import actions from '../state/actions';
 import getFilterName from '../state/selectors/get-filter-name';
@@ -51,11 +50,11 @@ export class NoteList extends Component {
 	}
 
 	componentDidMount() {
-		ReactDOM.findDOMNode( this.scrollableContainer ).addEventListener( 'scroll', this.onScroll );
+		this.scrollableContainer.addEventListener( 'scroll', this.onScroll );
 	}
 
 	componentWillUnmount() {
-		ReactDOM.findDOMNode( this.scrollableContainer ).removeEventListener( 'scroll', this.onScroll );
+		this.scrollableContainer.removeEventListener( 'scroll', this.onScroll );
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -68,7 +67,7 @@ export class NoteList extends Component {
 
 	componentDidUpdate( prevProps ) {
 		if ( this.noteList && ! this.props.isLoading ) {
-			const element = ReactDOM.findDOMNode( this.scrollableContainer );
+			const element = this.scrollableContainer;
 			if (
 				element.clientHeight > 0 &&
 				element.scrollTop + element.clientHeight >= this.noteList.clientHeight - 300
@@ -91,7 +90,7 @@ export class NoteList extends Component {
 
 		requestAnimationFrame( () => ( this.isScrolling = false ) );
 
-		const element = ReactDOM.findDOMNode( this.scrollableContainer );
+		const element = this.scrollableContainer;
 		if ( ! this.state.scrolling || this.state.scrollY !== element.scrollTop ) {
 			// only set state and trigger render if something has changed
 			this.setState( {
@@ -349,7 +348,6 @@ export class NoteList extends Component {
 
 		return (
 			<>
-				{ /* Keep the wpnc__note-list as the first child of the Fragment to ensure the ReactDOM.findDOMNode returns the list element */ }
 				<div className={ classes } id="wpnc__note-list" ref={ this.props.listElementRef }>
 					<FilterBar
 						controller={ this.props.filterController }

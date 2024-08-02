@@ -14,7 +14,7 @@ import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
-import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
+import { StatsCommercialUpgradeSlider, getTierQuantity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
 import {
 	MIN_STEP_SPLITS,
@@ -144,11 +144,12 @@ const StatsCommercialPurchase = ( {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
+	const haveTiers = tiers.length > 0;
 	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
-	const startingTierQuantity = getTierQuentity( tiers[ 0 ] );
+	const startingTierQuantity = haveTiers ? getTierQuantity( tiers[ 0 ] ) : 0;
 	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( startingTierQuantity ?? 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
@@ -162,6 +163,26 @@ const StatsCommercialPurchase = ( {
 	) as boolean;
 	const { pageTitle, infoText, continueButtonText } = useLocalizedStrings( isCommercial );
 
+	const tierSelectionElements = haveTiers ? (
+		<>
+			<p>{ translate( 'Pick your Stats tier below:' ) }</p>
+			<StatsCommercialUpgradeSlider
+				tiers={ tiers }
+				currencyCode={ currencyCode }
+				analyticsEventName={ `${
+					isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
+				}_stats_purchase_commercial_slider_clicked` }
+				onSliderChange={ handleSliderChanged }
+			/>
+		</>
+	) : (
+		<p>
+			{ translate(
+				'Unable to load plan tiers. Please make sure you have an active network connection and try reloading the page.'
+			) }
+		</p>
+	);
+
 	return (
 		<>
 			<h1>{ pageTitle }</h1>
@@ -172,18 +193,12 @@ const StatsCommercialPurchase = ( {
 				</>
 			) }
 			{ isCommercialOwned && <StatsUpgradeInstructions /> }
-			<p>{ translate( 'Pick your Stats tier below:' ) }</p>
-			<StatsCommercialUpgradeSlider
-				currencyCode={ currencyCode }
-				analyticsEventName={ `${
-					isOdysseyStats ? 'jetpack_odyssey' : 'calypso'
-				}_stats_purchase_commercial_slider_clicked` }
-				onSliderChange={ handleSliderChanged }
-			/>
+			{ tierSelectionElements }
 			<div className="stats-purchase-wizard__actions">
 				<ButtonComponent
 					variant="primary"
 					primary={ isWPCOMSite ? true : undefined }
+					disabled={ ! haveTiers }
 					onClick={ () =>
 						gotoCheckoutPage( {
 							from,

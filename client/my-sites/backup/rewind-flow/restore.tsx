@@ -150,11 +150,16 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		setShowConfirm( false );
 
 		// Track the restore confirmation event.
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_confirm' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_confirm', {
+				has_credentials: hasCredentials,
+			} )
+		);
 	}, [
 		isPreflightEnabled,
 		credentialsAreValid,
 		dispatch,
+		hasCredentials,
 		preflightCheck,
 		siteId,
 		refetchPreflightStatus,
@@ -170,20 +175,44 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		setShowConfirm( true );
 
 		// Track the restore retry event.
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_failed_retry' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_failed_retry', {
+				has_credentials: hasCredentials,
+			} )
+		);
 	}, [ dispatch ] );
 
 	const onGoBack = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_goback' ) );
-	}, [ dispatch ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_goback', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
 
 	const onAddingCredentialsClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_adding_credentials' ) );
-	}, [ dispatch ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_adding_credentials', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
 
 	const onLearnAddingCredentialsClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_learn_adding_credentials' ) );
-	}, [ dispatch ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_learn_adding_credentials', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
+
+	const onViewSiteClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_restore_completed_view_site', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -312,9 +341,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				href={ siteUrl }
 				target="_blank"
 				className="rewind-flow__primary-button"
-				onClick={ () =>
-					dispatch( recordTracksEvent( 'calypso_jetpack_restore_completed_view_site' ) )
-				}
+				onClick={ onViewSiteClick }
 			>
 				{ translate( 'View your website {{externalIcon/}}', {
 					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
@@ -400,7 +427,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	useEffect( () => {
 		if ( isFinished ) {
-			dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_completed' ) );
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_backup_restore_completed', {
+					has_credentials: hasCredentials,
+				} )
+			);
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
 			setRestoreFailed( false );
@@ -413,6 +444,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		}
 	}, [
 		dispatch,
+		hasCredentials,
 		inProgressRewindStatus,
 		isFinished,
 		isRestoreInProgress,

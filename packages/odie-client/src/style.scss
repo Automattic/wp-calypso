@@ -42,7 +42,17 @@
 
 	.odie-chatbox-message-sources-container {
 		width: 100%;
+
+		&:last-of-type > .odie-chatbox-message-sources-container {
+			margin-bottom: 64px;
+		}
 	}
+}
+
+.odie-chatbox-message-dislike-feedback {
+	min-height: 235px;
+	gap: 18px;
+	justify-content: flex-start;
 }
 
 .chat-box-message-container {

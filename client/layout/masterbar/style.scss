@@ -43,6 +43,7 @@ body.is-mobile-app-view {
 	justify-content: space-between;
 	opacity: 1;
 	transition: all 0.3s ease-in-out;
+	--masterbar-item-active-border-radius: 6px; /* stylelint-disable-line scales/radii */
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
@@ -326,7 +327,7 @@ body.is-mobile-app-view {
 		padding-left: 7px;
 	}
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		&.masterbar__reader,
 		&.masterbar__item-my-site-actions {
 			padding: 0;
@@ -341,6 +342,10 @@ body.is-mobile-app-view {
 
 	&.has-subitems {
 		display: block;
+		&:hover,
+		&.is-open {
+			z-index: 2;
+		}
 	}
 
 	> a {
@@ -365,7 +370,7 @@ body.is-mobile-app-view {
 		min-width: 100%;
 		text-align: left;
 		top: var(--masterbar-height);
-		background: var(--color-masterbar-item-hover-background);
+		background: var(--color-global-masterbar-submenu-background, var(--color-masterbar-item-hover-background));
 		list-style: none;
 		clear: none;
 		text-indent: 0;
@@ -398,7 +403,7 @@ body.is-mobile-app-view {
 			}
 
 			&:hover {
-				background: var(--color-masterbar-item-hover-background);
+				background: var(--color-global-masterbar-submenu-hover-background, var(--color-masterbar-item-hover-background));
 				a {
 					color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
 				}
@@ -406,7 +411,7 @@ body.is-mobile-app-view {
 
 		}
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			position: fixed;
 			.masterbar__item-subitems-item {
 				padding: 8px 16px;
@@ -554,7 +559,7 @@ body.is-mobile-app-view {
 		margin-right: 0;
 	}
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		font-size: $masterbar-mobile-font-size;
 		width: 52px;
 		padding: 0;
@@ -649,7 +654,7 @@ body.is-mobile-app-view {
 
 	&.masterbar__item-sidebar-menu {
 		display: none;
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			display: inline-block;
 			margin-right: 2px;
 			margin-left: -1px;
@@ -661,14 +666,14 @@ body.is-mobile-app-view {
 	&.masterbar__item-no-sites {
 		padding: 0 7px 0 5px; // trying to match core's 35px width
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			padding: 0;
 		}
 
 		.gridicon {
 			width: 24px;
 			height: 24px;
-			@media only screen and (max-width: 782px) {
+			@media only screen and (max-width: 781px) {
 				width: 32px;
 				height: 32px;
 			}
@@ -678,6 +683,47 @@ body.is-mobile-app-view {
 	&.masterbar__item-help {
 		cursor: pointer;
 		// todo may need flex: unset
+	}
+
+	// Outward border styles for active global items.
+	.is-global-sidebar-visible &.has-global-border {
+		&::before,
+		&::after {
+			content: "";
+			position: absolute;
+			width: var(--masterbar-item-active-border-radius);
+			height: var(--masterbar-item-active-border-radius);
+			background-color: var(--color-sidebar-background);
+			opacity: 0;
+			transition: opacity 0.2s ease-in-out;
+			bottom: 0;
+			z-index: 1;
+			pointer-events: none;
+		}
+
+		&::before {
+			left: calc(-1 * var(--masterbar-item-active-border-radius));
+			mask: radial-gradient(circle at 0 0, transparent var(--masterbar-item-active-border-radius), var(--color-sidebar-background) var(--masterbar-item-active-border-radius));
+		}
+
+		&::after {
+			right: calc(-1 * var(--masterbar-item-active-border-radius));
+			mask: radial-gradient(circle at 100% 0, transparent var(--masterbar-item-active-border-radius), var(--color-sidebar-background) var(--masterbar-item-active-border-radius));
+		}
+
+		&.is-active {
+			border-top-left-radius: var(--masterbar-item-active-border-radius);
+			border-top-right-radius: var(--masterbar-item-active-border-radius);
+			--color-masterbar-text: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-icon: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-highlight: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-item-active-background: var(--color-sidebar-background);
+
+			&::before,
+			&::after {
+				opacity: 1;
+			}
+		}
 	}
 }
 
@@ -751,7 +797,7 @@ body.is-mobile-app-view {
 	}
 }
 .masterbar__item-action-search {
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		display: none !important; //Mobile styles not yet handled
 	}
 
@@ -805,7 +851,7 @@ body.is-mobile-app-view {
 	transition: all 0.2s ease-out;
 	font-size: $masterbar-font-size;
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		height: 34px;
 		margin-top: 6px;
 		margin-right: 9px;
@@ -913,7 +959,7 @@ body.is-mobile-app-view {
 
 		border: 2px solid var(--color-border-inverted);
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 22px;
 			height: 22px;
 		}
@@ -925,7 +971,7 @@ body.is-mobile-app-view {
 	}
 
 	.gridicon {
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			position: relative;
 			left: 4px;
 		}
@@ -934,7 +980,7 @@ body.is-mobile-app-view {
 			display: block;
 			padding: 0;
 
-			@media only screen and (max-width: 782px) {
+			@media only screen and (max-width: 781px) {
 				padding-left: 8px;
 			}
 		}
@@ -946,6 +992,10 @@ body.is-mobile-app-view {
 }
 
 .masterbar__item-howdy {
+	a {
+		outline: none;
+	}
+
 	.masterbar__item-content {
 		display: flex;
 		align-items: center;
@@ -957,7 +1007,7 @@ body.is-mobile-app-view {
 		border-radius: unset;
 		margin-left: 1px;
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 26px;
 			height: 26px;
 			margin-left: 4px;
@@ -993,7 +1043,7 @@ body.is-mobile-app-view {
 		max-height: 94px;
 		padding: 12px 0 0 0;
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			min-width: 100% !important;
 			max-height: 100%;
 		}
@@ -1009,7 +1059,7 @@ body.is-mobile-app-view {
 		}
 	}
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		.masterbar__item-howdy-howdy,
 		.masterbar__item-howdy-account-gravatar {
 			display: none;
@@ -1053,7 +1103,7 @@ body.is-mobile-app-view {
 }
 
 .masterbar__reader {
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		.gridicon + .masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -1071,7 +1121,7 @@ body.is-mobile-app-view {
 		border-bottom: 1px solid #646970;
 	}
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		.masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -1089,7 +1139,7 @@ body.is-mobile-app-view {
 	color: $masterbar-color-primary;
 	font-size: $masterbar-font-size;
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		height: 34px;
 		margin-top: 6px;
 		margin-right: 9px;
@@ -1175,10 +1225,15 @@ body.is-mobile-app-view {
 
 .masterbar-cart-button {
 	svg {
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 32px;
 			height: 32px;
 		}
+	}
+	.cart-circle {
+		transform: translate(10%, 2%) scale(0.93);
+		stroke-width: 6%;
+		stroke: var(--color-masterbar-background);
 	}
 }
 
@@ -1188,7 +1243,7 @@ body.is-mobile-app-view {
 		width: 24px;
 		height: 24px;
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 32px;
 			height: 32px;
 		}
@@ -1202,6 +1257,9 @@ body.is-mobile-app-view {
 		use {
 			transition: all 150ms ease-in;
 			transform-origin: 20px 4px;
+			transform: translate(-2%, 2%) scale(0.93);
+			stroke-width: 6%;
+			stroke: var(--color-masterbar-background);
 		}
 	}
 
@@ -1385,7 +1443,7 @@ a.masterbar__quick-language-switcher {
 		width: 22px;
 		height: 22px;
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 30px;
 			height: 30px;
 		}

@@ -68,7 +68,6 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
-import StatsModuleEmailsOld from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
@@ -615,29 +614,7 @@ class StatsSite extends Component {
 						) }
 
 						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ supportsEmailStats && ! isNewStateEnabled && (
-							<StatsModuleEmailsOld // This is the old component & location. Remove and consolidate once stats/empty-module-traffic flag is removed
-								period={ this.props.period }
-								query={ query }
-								className={ clsx(
-									{
-										// half if odd number of modules after countries - UTM + Clicks + Authors or Clicks
-										'stats__flexible-grid-item--half':
-											( supportsUTMStats && ! this.isModuleHidden( 'authors' ) ) ||
-											( ! supportsUTMStats && this.isModuleHidden( 'authors' ) ),
-										// full if even number of modules after countries - UTM + Clicks or Authors + Clicks
-										'stats__flexible-grid-item--full':
-											( supportsUTMStats && this.isModuleHidden( 'authors' ) ) ||
-											( ! supportsUTMStats && ! this.isModuleHidden( 'authors' ) ),
-									},
-									'stats__flexible-grid-item--full--large',
-									'stats__flexible-grid-item--full--medium'
-								) }
-							/>
-						) }
-
-						{ /* Either stacks with "Authors" or takes full width, depending on UTM and Authors visibility */ }
-						{ supportsEmailStats && isNewStateEnabled && (
+						{ supportsEmailStats && (
 							<StatsModuleEmails
 								period={ this.props.period }
 								moduleStrings={ moduleStrings.emails }
@@ -767,7 +744,6 @@ class StatsSite extends Component {
 											'stats__flexible-grid-item--one-third--two-spaces':
 												! this.isModuleHidden( 'videos' ),
 										},
-
 										{
 											// Avoid 1/3 on smaller screen if Videos is visible
 											'stats__flexible-grid-item--full--large': ! this.isModuleHidden( 'videos' ),

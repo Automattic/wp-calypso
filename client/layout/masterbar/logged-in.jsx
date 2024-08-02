@@ -226,8 +226,16 @@ class MasterbarLoggedIn extends Component {
 		this.props.recordTracksEvent( 'calypso_masterbar_cart_remove_product', { uuid } );
 	};
 
-	isActive = ( section ) => {
+	isActive = ( section, ignoreNotifications = false ) => {
+		if ( ignoreNotifications ) {
+			return section === this.props.section;
+		}
 		return section === this.props.section && ! this.props.isNotificationsShowing;
+	};
+
+	isMySitesActive = () => {
+		const { isGlobalSidebarVisible, section } = this.props;
+		return isGlobalSidebarVisible && ( 'sites' === section || 'sites-dashboard' === section );
 	};
 
 	isSidebarOpen = () => {
@@ -285,7 +293,7 @@ class MasterbarLoggedIn extends Component {
 			hasDismissedAllSitesPopover,
 			isGlobalSidebarVisible,
 		} = this.props;
-		const { isMenuOpen, allSitesBtnRef } = this.state;
+		const { allSitesBtnRef } = this.state;
 
 		const mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
@@ -305,10 +313,11 @@ class MasterbarLoggedIn extends Component {
 					tipTarget="my-sites"
 					icon={ icon }
 					onClick={ this.clickMySites }
-					isActive={ this.isActive( 'sites-dashboard' ) && ! isMenuOpen }
+					isActive={ this.isMySitesActive() }
 					tooltip={ translate( 'Manage your sites' ) }
 					preloadSection={ this.preloadMySites }
 					ref={ ( ref ) => ref !== allSitesBtnRef && this.setState( { allSitesBtnRef: ref } ) }
+					hasGlobalBorderStyle
 				/>
 				{ allSitesBtnRef && (
 					<Popover
@@ -536,11 +545,12 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="me"
 				url="/me"
 				onClick={ this.clickMe }
-				isActive={ this.isActive( 'me' ) }
+				isActive={ this.isActive( 'me', true ) }
 				className="masterbar__item-howdy"
 				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 				preloadSection={ this.preloadMe }
 				subItems={ profileActions }
+				hasGlobalBorderStyle
 			>
 				<span className="masterbar__item-howdy-howdy">
 					{ translate( 'Howdy, %(display_name)s', {
@@ -572,9 +582,10 @@ class MasterbarLoggedIn extends Component {
 					</svg>
 				}
 				onClick={ this.clickReader }
-				isActive={ this.isActive( 'reader' ) }
+				isActive={ this.isActive( 'reader', true ) }
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
 				preloadSection={ this.preloadReader }
+				hasGlobalBorderStyle
 			>
 				{ showLabel &&
 					translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
