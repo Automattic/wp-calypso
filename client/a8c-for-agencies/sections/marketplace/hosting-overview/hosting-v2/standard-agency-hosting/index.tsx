@@ -1,8 +1,6 @@
 import { JetpackLogo } from '@automattic/components';
 import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
-import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.png';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
@@ -120,7 +118,6 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 				items={ [
 					{
 						profile: {
-							avatar: ProfileAvatar1,
 							name: 'Ajit Bohra',
 							title: 'Founder - LUBUS',
 							site: 'lubus.in',
@@ -128,18 +125,6 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 						testimonial: translate(
 							'We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com.'
 						),
-					},
-
-					{
-						profile: {
-							avatar: ProfileAvatar2,
-							name: 'Anil Gupta',
-							title: 'CEO - Multidots',
-							site: 'multidots.com',
-						},
-						testimonial:
-							// TODO: Change this to a real testimonial
-							"This should be another WordPress.com specific testimonial. Let's make sure it touches upon how they love the hosting, the support service, and especially the UI. This is just dummy text.",
 					},
 				] }
 			/>
