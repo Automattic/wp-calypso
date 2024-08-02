@@ -12,6 +12,7 @@ import AppPromo from 'calypso/blocks/app-promo';
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import GlobalNotices from 'calypso/components/global-notices';
+import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
@@ -586,6 +587,18 @@ class MagicLogin extends Component {
 			.join( '' );
 	};
 
+	renderGravPoweredLogo() {
+		const { oauth2Client } = this.props;
+
+		return (
+			<GravatarLoginLogo
+				iconUrl={ oauth2Client.icon }
+				alt={ oauth2Client.title }
+				isCoBrand={ isGravatarFlowOAuth2Client( oauth2Client ) }
+			/>
+		);
+	}
+
 	renderGravPoweredSecondaryEmailOptions() {
 		const { oauth2Client, translate, query } = this.props;
 		const {
@@ -606,7 +619,7 @@ class MagicLogin extends Component {
 
 		return (
 			<div className="grav-powered-magic-login__content">
-				<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+				{ this.renderGravPoweredLogo() }
 				<h1 className="grav-powered-magic-login__header">{ translate( 'Important note' ) }</h1>
 				<p className="grav-powered-magic-login__sub-header">
 					{ translate(
@@ -746,7 +759,7 @@ class MagicLogin extends Component {
 
 		return (
 			<div className="grav-powered-magic-login__content">
-				<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+				{ this.renderGravPoweredLogo() }
 				<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email' ) }</h1>
 				<p className="grav-powered-magic-login__sub-header">
 					<span>
@@ -891,7 +904,7 @@ class MagicLogin extends Component {
 
 		return (
 			<div className="grav-powered-magic-login__content">
-				<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+				{ this.renderGravPoweredLogo() }
 				<h1 className="grav-powered-magic-login__header">{ translate( 'Check your email!' ) }</h1>
 				<p className="grav-powered-magic-login__sub-header">
 					{ emailAddress
@@ -956,7 +969,7 @@ class MagicLogin extends Component {
 				{ this.renderLocaleSuggestions() }
 				<GlobalNotices id="notices" />
 				<div className="grav-powered-magic-login__content">
-					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+					{ this.renderGravPoweredLogo() }
 					<RequestLoginEmailForm
 						flow={ getGravatarOAuth2Flow( oauth2Client ) }
 						headerText={ headerText }

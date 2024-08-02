@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
 import AsyncLoad from 'calypso/components/async-load';
+import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
@@ -24,6 +25,7 @@ import {
 	isA4AOAuth2Client,
 	isWooOAuth2Client,
 	isBlazeProOAuth2Client,
+	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -754,7 +756,11 @@ class Login extends Component {
 		return (
 			<div className="login__form-header-wrapper">
 				{ isGravPoweredLoginPage && (
-					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+					<GravatarLoginLogo
+						iconUrl={ oauth2Client.icon }
+						alt={ oauth2Client.title }
+						isCoBrand={ isGravatarFlowOAuth2Client( oauth2Client ) }
+					/>
 				) }
 				{ preHeader }
 				<div className="login__form-header">{ headerText }</div>
