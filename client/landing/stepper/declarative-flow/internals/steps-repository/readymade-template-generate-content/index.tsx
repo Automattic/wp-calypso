@@ -60,7 +60,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 	return (
 		<>
 			<div className="generate-content">
-				<DocumentHead title="This is the header text" />
+				<DocumentHead title={ translate( 'Customize Content With AI' ) } />
 				<form className="generate-content__form">
 					<FormFieldset className="generate-content__form-fieldset">
 						<FormLabel htmlFor="tagline">{ translate( 'Describe your site' ) }</FormLabel>
