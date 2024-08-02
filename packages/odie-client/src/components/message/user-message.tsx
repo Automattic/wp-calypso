@@ -1,6 +1,5 @@
 import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
 import Markdown from 'react-markdown';
 import { useOdieAssistantContext } from '../../context';
 import CustomALink from './custom-a-link';
@@ -18,7 +17,6 @@ export const UserMessage = ( {
 	message: Message;
 	onDislike: () => void;
 } ) => {
-	const { _x } = useI18n();
 	const { extraContactOptions } = useOdieAssistantContext();
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const hasFeedback = !! message?.rating_value;
@@ -27,6 +25,10 @@ export const UserMessage = ( {
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
 	const showExtraContactOptions =
 		( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
+	const supportForumWording = __(
+		'It sounds like you want to talk to a human. Human support is only available for our [paid plans](https://wordpress.com/pricing/). For community support, visit our forums:',
+		__i18n_text_domain__
+	);
 
 	return (
 		<>
@@ -36,14 +38,7 @@ export const UserMessage = ( {
 					a: CustomALink,
 				} }
 			>
-				{ isRequestingHumanSupport
-					? /* translators: Message displayed when the user requests human support sitting on a free plan */
-					  _x(
-							'It seems you want to talk to a human. For community support, visit our forums.',
-							'Message displayed when the user asks for human support on free plans',
-							__i18n_text_domain__
-					  )
-					: message.content }
+				{ isRequestingHumanSupport ? supportForumWording : message.content }
 			</Markdown>
 			{ showExtraContactOptions && extraContactOptions }
 			{ ! hasFeedback && ! isUser && (
