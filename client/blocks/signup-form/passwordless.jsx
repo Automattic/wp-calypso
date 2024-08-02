@@ -32,6 +32,7 @@ class PasswordlessSignupForm extends Component {
 		onInputChange: PropTypes.func,
 		onCreateAccountError: PropTypes.func,
 		onCreateAccountSuccess: PropTypes.func,
+		disableTosText: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -328,7 +329,7 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.props.renderTerms?.() }
+					{ ! this.props.disableTosText && this.props.renderTerms?.() }
 					{ this.formFooter() }
 				</LoggedOutForm>
 			</div>

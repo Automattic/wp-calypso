@@ -515,6 +515,7 @@ export class JetpackSignup extends Component {
 					<SignupForm
 						disabled={ isCreatingAccount }
 						isPasswordless={ isWooCoreProfiler }
+						disableTosText={ isWooCoreProfiler }
 						email={ this.props.authQuery.userEmail }
 						footerLink={ this.renderFooterLink() }
 						handleSocialResponse={ this.handleSocialResponse }
