@@ -65,8 +65,6 @@ export default function SitesDashboard() {
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 		showOnlyFavorites,
-		hideListing,
-		setHideListing,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
@@ -108,7 +106,6 @@ export default function SitesDashboard() {
 	useEffect( () => {
 		if ( dataViewsState.selectedItem && ! initialSelectedSiteUrl ) {
 			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
-			setHideListing( false );
 			return;
 		}
 
@@ -130,11 +127,11 @@ export default function SitesDashboard() {
 		}
 		// Omitting sitesViewState to prevent infinite loop
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ data, isError, isLoading, initialSelectedSiteUrl, setDataViewsState, setHideListing ] );
+	}, [ data, isError, isLoading, initialSelectedSiteUrl, setDataViewsState ] );
 
 	useEffect( () => {
 		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
-		if ( hideListing && ! dataViewsState.selectedItem ) {
+		if ( ! dataViewsState.selectedItem ) {
 			return;
 		}
 
@@ -167,15 +164,13 @@ export default function SitesDashboard() {
 		dataViewsState.page,
 		showOnlyFavorites,
 		dataViewsState.sort,
-		hideListing,
 	] );
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( dataViewsState.selectedItem ) {
 			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
-			setHideListing( false );
 		}
-	}, [ dataViewsState, setDataViewsState, setHideListing ] );
+	}, [ dataViewsState, setDataViewsState ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
@@ -221,63 +216,61 @@ export default function SitesDashboard() {
 			wide
 			title={ dataViewsState.selectedItem ? null : translate( 'Sites' ) }
 		>
-			{ ! hideListing && (
-				<LayoutColumn className="sites-overview" wide>
-					<LayoutTop withNavigation={ navItems.length > 1 }>
-						{ recentlyCreatedSite && (
-							<ProvisioningSiteNotification
-								siteId={ Number( recentlyCreatedSite ) }
-								migrationIntent={ !! migrationIntent }
-							/>
-						) }
-
-						<LayoutHeader>
-							<Title>{ translate( 'Sites' ) }</Title>
-							<Actions>
-								<MobileSidebarNavigation />
-								<SitesHeaderActions onWPCOMImport={ () => refetch() } />
-							</Actions>
-						</LayoutHeader>
-						{ navItems.length > 1 && (
-							<LayoutNavigation { ...selectedItemProps }>
-								<NavigationTabs { ...selectedItemProps } items={ navItems } />
-							</LayoutNavigation>
-						) }
-					</LayoutTop>
-
-					<SiteNotifications />
-					{ tourId && <GuidedTour defaultTourId={ tourId } /> }
-					<QueryReaderTeams />
-					<DashboardDataContext.Provider
-						value={ {
-							verifiedContacts: {
-								emails: verifiedContacts?.emails ?? [],
-								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
-								refetchIfFailed: () => {
-									if ( fetchContactFailed ) {
-										refetchContacts();
-									}
-									return;
-								},
-							},
-							products: products ?? [],
-							isLargeScreen: isLargeScreen || false,
-						} }
-					>
-						<JetpackSitesDataViews
-							className={ clsx( 'sites-overview__content', {
-								'is-hiding-navigation': navItems.length <= 1,
-							} ) }
-							data={ data }
-							isLoading={ isLoading }
-							isLargeScreen={ isLargeScreen || false }
-							setDataViewsState={ setDataViewsState }
-							dataViewsState={ dataViewsState }
-							onRefetchSite={ refetch }
+			<LayoutColumn className="sites-overview" wide>
+				<LayoutTop withNavigation={ navItems.length > 1 }>
+					{ recentlyCreatedSite && (
+						<ProvisioningSiteNotification
+							siteId={ Number( recentlyCreatedSite ) }
+							migrationIntent={ !! migrationIntent }
 						/>
-					</DashboardDataContext.Provider>
-				</LayoutColumn>
-			) }
+					) }
+
+					<LayoutHeader>
+						<Title>{ translate( 'Sites' ) }</Title>
+						<Actions>
+							<MobileSidebarNavigation />
+							<SitesHeaderActions onWPCOMImport={ () => refetch() } />
+						</Actions>
+					</LayoutHeader>
+					{ navItems.length > 1 && (
+						<LayoutNavigation { ...selectedItemProps }>
+							<NavigationTabs { ...selectedItemProps } items={ navItems } />
+						</LayoutNavigation>
+					) }
+				</LayoutTop>
+
+				<SiteNotifications />
+				{ tourId && <GuidedTour defaultTourId={ tourId } /> }
+				<QueryReaderTeams />
+				<DashboardDataContext.Provider
+					value={ {
+						verifiedContacts: {
+							emails: verifiedContacts?.emails ?? [],
+							phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+							refetchIfFailed: () => {
+								if ( fetchContactFailed ) {
+									refetchContacts();
+								}
+								return;
+							},
+						},
+						products: products ?? [],
+						isLargeScreen: isLargeScreen || false,
+					} }
+				>
+					<JetpackSitesDataViews
+						className={ clsx( 'sites-overview__content', {
+							'is-hiding-navigation': navItems.length <= 1,
+						} ) }
+						data={ data }
+						isLoading={ isLoading }
+						isLargeScreen={ isLargeScreen || false }
+						setDataViewsState={ setDataViewsState }
+						dataViewsState={ dataViewsState }
+						onRefetchSite={ refetch }
+					/>
+				</DashboardDataContext.Provider>
+			</LayoutColumn>
 
 			{ dataViewsState.selectedItem && (
 				<LayoutColumn className="site-preview-pane" wide>

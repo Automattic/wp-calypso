@@ -18,7 +18,6 @@ function configureSitesContext( context: Context ) {
 	const category = context.params.category || A4A_SITES_DASHBOARD_DEFAULT_CATEGORY;
 	const siteUrl = context.params.siteUrl;
 	const siteFeature = context.params.feature || A4A_SITES_DASHBOARD_DEFAULT_FEATURE;
-	const hideListingInitialState = !! siteUrl;
 
 	const {
 		s: search,
@@ -40,7 +39,6 @@ function configureSitesContext( context: Context ) {
 			categoryInitialState={ category }
 			siteUrlInitialState={ siteUrl }
 			siteFeatureInitialState={ siteFeature }
-			hideListingInitialState={ hideListingInitialState }
 			showOnlyFavoritesInitialState={
 				is_favorite === '' || is_favorite === '1' || is_favorite === 'true'
 			}
