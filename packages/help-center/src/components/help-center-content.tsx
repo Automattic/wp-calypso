@@ -11,7 +11,7 @@ import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import React, { useCallback, useState } from 'react';
-import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -98,9 +98,14 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	useEffect( () => {
 		if ( navigateToRoute ) {
+			const fullLocation = [ location.pathname, location.search, location.hash ].join( '' );
+			// On navigate once to keep the back button responsive.
+			if ( fullLocation !== navigateToRoute ) {
+				navigate( navigateToRoute );
+			}
 			setNavigateToRoute( null );
 		}
-	}, [ navigate, navigateToRoute, setNavigateToRoute ] );
+	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
 
 	// reset the scroll location on navigation, TODO: unless there's an anchor
 	useEffect( () => {
@@ -130,17 +135,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/"
 						element={
-							navigateToRoute ? (
-								<Navigate to={ navigateToRoute } />
-							) : (
-								<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
-							)
+							<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
 						}
 					/>
-					<Route
-						path="/post"
-						element={ <HelpCenterArticle navigateToRoute={ navigateToRoute ?? '' } /> }
-					/>
+					<Route path="/post" element={ <HelpCenterArticle /> } />
 					<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 					<Route
 						path="/contact-form"
