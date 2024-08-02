@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import './style.scss';
 
@@ -19,7 +19,6 @@ type Props = {
 	label?: string;
 	sub?: string;
 	minimum?: number;
-	readOnly?: boolean;
 };
 
 export default function A4ASlider( {
@@ -30,23 +29,17 @@ export default function A4ASlider( {
 	label,
 	sub,
 	minimum = 0,
-	readOnly,
 }: Props ) {
 	const rangeRef = useRef< HTMLInputElement >( null );
 
 	// Safeguard incase we have minimum value that is out of bounds
 	const normalizeMinimum = Math.min( minimum, options.length - 1 );
 
-	const setValue = useCallback(
-		( next: number ) => {
-			if ( readOnly ) {
-				return;
-			}
-
-			onChange?.( options[ Math.max( next, normalizeMinimum ) ] );
-		},
-		[ normalizeMinimum, onChange, options, readOnly ]
-	);
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const onSliderChange = ( event: any ) => {
+		const next = event.target.value;
+		onChange?.( options[ Math.max( next, normalizeMinimum ) ] );
+	};
 
 	const sliderWidth = rangeRef.current?.offsetWidth ?? 1;
 	const sliderSectionWidth = sliderWidth / ( options.length - 1 );
@@ -82,9 +75,8 @@ export default function A4ASlider( {
 					type="range"
 					min="0"
 					max={ options.length - 1 }
-					onChange={ ( event ) => setValue( Number( event.target.value ) ) }
+					onChange={ onSliderChange }
 					value={ value }
-					readOnly={ readOnly }
 				/>
 
 				<div className="a4a-slider__marker-container">
@@ -95,10 +87,10 @@ export default function A4ASlider( {
 								key={ `slider-option-${ option.value }` }
 								role="button"
 								tabIndex={ -1 }
-								onClick={ () => setValue( index ) }
+								onClick={ () => onChange?.( options[ Math.max( index, normalizeMinimum ) ] ) }
 								onKeyDown={ ( event ) => {
 									if ( event.key === 'Enter' ) {
-										setValue( index );
+										onChange?.( options[ Math.max( index, normalizeMinimum ) ] );
 									}
 								} }
 							>

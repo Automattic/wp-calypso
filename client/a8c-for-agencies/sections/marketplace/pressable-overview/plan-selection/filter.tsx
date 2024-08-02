@@ -17,12 +17,10 @@ type Props = {
 	plans: APIProductFamilyProduct[];
 	existingPlan?: APIProductFamilyProduct | null;
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
-	pressableOwnership?: 'regular' | 'none' | 'agency';
 	isLoading?: boolean;
 };
 
 export default function PlanSelectionFilter( {
-	pressableOwnership,
 	selectedPlan,
 	plans,
 	onSelectPlan,
@@ -120,39 +118,36 @@ export default function PlanSelectionFilter( {
 				</div>
 			) }
 
-			{ pressableOwnership !== 'regular' && (
-				<div className="pressable-overview-plan-selection__filter-type">
-					<p className="pressable-overview-plan-selection__filter-label">
-						{ translate( 'Filter by:' ) }
-					</p>
-					<div className="pressable-overview-plan-selection__filter-buttons">
-						<Button
-							className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-								'is-dark': filterType === FILTER_TYPE_INSTALL,
-							} ) }
-							onClick={ onSelectInstallFilterType }
-						>
-							{ translate( 'WordPress installs' ) }
-						</Button>
+			<div className="pressable-overview-plan-selection__filter-type">
+				<p className="pressable-overview-plan-selection__filter-label">
+					{ translate( 'Filter by:' ) }
+				</p>
+				<div className="pressable-overview-plan-selection__filter-buttons">
+					<Button
+						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
+							'is-dark': filterType === FILTER_TYPE_INSTALL,
+						} ) }
+						onClick={ onSelectInstallFilterType }
+					>
+						{ translate( 'WordPress installs' ) }
+					</Button>
 
-						<Button
-							className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-								'is-dark': filterType === FILTER_TYPE_VISITS,
-							} ) }
-							onClick={ onSelectVisitFilterType }
-						>
-							{ translate( 'Number of visits' ) }
-						</Button>
-					</div>
+					<Button
+						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
+							'is-dark': filterType === FILTER_TYPE_VISITS,
+						} ) }
+						onClick={ onSelectVisitFilterType }
+					>
+						{ translate( 'Number of visits' ) }
+					</Button>
 				</div>
-			) }
+			</div>
 
 			<A4ASlider
 				value={ selectedOption }
 				onChange={ onSelectOption }
 				options={ options }
 				minimum={ minimum }
-				readOnly={ pressableOwnership === 'regular' }
 			/>
 		</section>
 	);
