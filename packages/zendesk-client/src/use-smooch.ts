@@ -1,19 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Smooch from 'smooch';
-import { SMOOCH_CONTAINER_ID, SMOOCH_INTEGRATION_ID } from './constants';
+import { SMOOCH_INTEGRATION_ID } from './constants';
 import { UserFields } from './types';
 import { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
 import { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 
 export const useSmooch = () => {
-	const [ init, setInit ] = useState( !! Smooch.getConversations?.() );
+	const [ init, setInit ] = useState( typeof Smooch.getConversations === 'function' );
 	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 
-	useEffect( () => {
+	const initSmooch = ( ref: HTMLDivElement ) => {
 		if ( authData?.jwt && authData?.externalId && ! Smooch.getConversations ) {
-			const messengerContainer = document.getElementById( SMOOCH_CONTAINER_ID );
 			Smooch.init( {
 				integrationId: SMOOCH_INTEGRATION_ID,
 				embedded: true,
@@ -22,11 +21,9 @@ export const useSmooch = () => {
 			} ).then( () => {
 				setInit( true );
 			} );
-			if ( messengerContainer ) {
-				Smooch.render( messengerContainer );
-			}
+			Smooch.render( ref );
 		}
-	}, [ authData?.externalId, authData?.jwt, init ] );
+	};
 
 	const destroy = () => {
 		Smooch.destroy();
@@ -36,6 +33,7 @@ export const useSmooch = () => {
 		return {
 			init,
 			destroy,
+			initSmooch,
 			getConversation: async () => undefined,
 			createConversation: async () => undefined,
 			addMessengerListener: () => undefined,
@@ -99,6 +97,7 @@ export const useSmooch = () => {
 
 	return {
 		init,
+		initSmooch,
 		destroy,
 		getConversation,
 		createConversation,

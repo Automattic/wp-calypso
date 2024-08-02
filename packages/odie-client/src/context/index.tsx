@@ -1,4 +1,4 @@
-import { useSmooch, SMOOCH_CONTAINER_ID } from '@automattic/zendesk-client';
+import { useSmooch } from '@automattic/zendesk-client';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
 	broadcastChatClearance,
@@ -297,7 +297,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 			} }
 		>
 			{ children }
-			<div style={ { display: 'none' } } id={ SMOOCH_CONTAINER_ID }></div>
 		</OdieAssistantContext.Provider>
 	);
 };

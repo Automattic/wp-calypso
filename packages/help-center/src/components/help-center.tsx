@@ -48,12 +48,22 @@ const HelpCenter: React.FC< Container > = ( {
 	useActionHooks();
 
 	const { isEligibleForChat } = useChatStatus();
-	useLoadZendeskMessaging(
+	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
 		isHelpCenterShown && isEligibleForChat,
 		isEligibleForChat
 	);
-	const { init, addUnreadCountListener } = useSmooch();
+	const { init, initSmooch, destroy, addUnreadCountListener } = useSmooch();
+	const ref = useRef( null );
+
+	useEffect( () => {
+		if ( isMessagingScriptLoaded && ref?.current ) {
+			initSmooch( ref.current );
+		}
+		return () => {
+			destroy();
+		};
+	}, [ isMessagingScriptLoaded, ref?.current ] );
 
 	useEffect( () => {
 		if ( init ) {
@@ -81,12 +91,15 @@ const HelpCenter: React.FC< Container > = ( {
 	}, [ portalParent, handleClose ] );
 
 	return createPortal(
-		<HelpCenterContainer
-			handleClose={ handleClose }
-			hidden={ hidden }
-			currentRoute={ currentRoute }
-			openingCoordinates={ openingCoordinates }
-		/>,
+		<>
+			<HelpCenterContainer
+				handleClose={ handleClose }
+				hidden={ hidden }
+				currentRoute={ currentRoute }
+				openingCoordinates={ openingCoordinates }
+			/>
+			<div ref={ ref } style={ { display: 'none' } }></div>
+		</>,
 		portalParent
 	);
 };
@@ -95,10 +108,8 @@ export default function ContextualizedHelpCenter(
 	props: Container & HelpCenterRequiredInformation
 ) {
 	return (
-		<>
-			<HelpCenterRequiredContextProvider value={ props }>
-				<HelpCenter { ...props } />
-			</HelpCenterRequiredContextProvider>
-		</>
+		<HelpCenterRequiredContextProvider value={ props }>
+			<HelpCenter { ...props } />
+		</HelpCenterRequiredContextProvider>
 	);
 }
