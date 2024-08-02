@@ -141,7 +141,6 @@ export default function PlanSelectionDetails( {
 								target="_blank"
 								rel="norefferer nooppener"
 								href="https://my.pressable.com/agency/auth"
-								primary
 							>
 								{ translate( 'Manage in Pressable' ) }
 								<Icon icon={ external } size={ 18 } />

@@ -45,6 +45,12 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 		}
 	}, [ pressablePlans, setSelectedPlan ] );
 
+	useEffect( () => {
+		if ( existingPlan ) {
+			setSelectedPlan( existingPlan );
+		}
+	}, [ existingPlan ] );
+
 	const onPlanAddToCart = useCallback( () => {
 		if ( selectedPlan ) {
 			dispatch(
@@ -64,14 +70,15 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 				'is-new-hosting-page': isNewHostingPage,
 			} ) }
 		>
-			<PlanSelectionFilter
-				selectedPlan={ selectedPlan }
-				plans={ pressablePlans }
-				onSelectPlan={ onSelectPlan }
-				existingPlan={ existingPlan }
-				isLoading={ ! isExistingPlanFetched }
-				pressableOwnership={ pressableOwnership }
-			/>
+			{ pressableOwnership !== 'regular' && (
+				<PlanSelectionFilter
+					selectedPlan={ selectedPlan }
+					plans={ pressablePlans }
+					onSelectPlan={ onSelectPlan }
+					existingPlan={ existingPlan }
+					isLoading={ ! isExistingPlanFetched }
+				/>
+			) }
 
 			<PlanSelectionDetails
 				selectedPlan={ selectedPlan }
