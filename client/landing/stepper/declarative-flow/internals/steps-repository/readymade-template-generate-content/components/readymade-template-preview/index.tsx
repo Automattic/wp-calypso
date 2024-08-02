@@ -22,13 +22,10 @@ const ReadymadeTemplatePreview: React.FC< RTPreviewProps > = ( {
 	siteSlug = null,
 } ) => {
 	if ( isLoading ) {
-		const loadingMessage = translate( '{{strong}}Generating content for your site.{{/strong}}', {
-			components: { strong: <strong /> },
-		} );
 		return (
 			<div className="readymade-template-preview">
 				<Spinner />
-				{ loadingMessage }
+				<strong>{ translate( 'Generating content for your site.' ) }</strong>
 			</div>
 		);
 	}
