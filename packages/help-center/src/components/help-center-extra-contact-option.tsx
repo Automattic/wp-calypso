@@ -17,7 +17,7 @@ export const ExtraContactOptions = ( { isUserElegible }: { isUserElegible: boole
 	const handleOnClick = () => {
 		recordTracksEvent( 'calypso_odie_extra_contact_option', {
 			contact_option: 'forum',
-			is_free_user: false,
+			is_user_elegible: false,
 		} );
 		navigate( '/contact-form?mode=FORUM' );
 	};

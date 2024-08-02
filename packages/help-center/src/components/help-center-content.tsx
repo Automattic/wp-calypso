@@ -172,7 +172,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								extraContactOptions={ <ExtraContactOptions isUserElegible={ isUserElegible } /> }
 								navigateToContactOptions={ navigateToContactOptions }
 								navigateToSupportDocs={ navigateToSupportDocs }
-								isUserElegible={ isUserElegible }
+								isUserElegible={ false }
 							>
 								<HelpCenterOdie />
 							</OdieAssistantProvider>
