@@ -13,14 +13,14 @@ import {
 } from 'calypso/my-sites/stats/features/modules/shared';
 import StatsCardSkeleton from 'calypso/my-sites/stats/features/modules/shared/stats-card-skeleton';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
+import ErrorPanel from 'calypso/my-sites/stats/stats-error';
+import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
+import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsForQuery,
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
-import ErrorPanel from '../stats-error';
-import StatsListCard from '../stats-list/stats-list-card';
-import StatsModulePlaceholder from '../stats-module/placeholder';
 import type {
 	StatsStateProps,
 	StatsPeriodGrainType,
