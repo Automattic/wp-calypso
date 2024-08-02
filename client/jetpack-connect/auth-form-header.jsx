@@ -27,7 +27,7 @@ export class AuthFormHeader extends Component {
 		// Connected props
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object,
-		hideSiteCard: PropTypes.bool,
+		disableSiteCard: PropTypes.bool,
 	};
 
 	getState() {
@@ -300,7 +300,7 @@ export class AuthFormHeader extends Component {
 					headerText={ this.getHeaderText() }
 					subHeaderText={ this.getSubHeaderText() }
 				/>
-				{ ! this.props.hideSiteCard && this.getSiteCard() }
+				{ ! this.props.disableSiteCard && this.getSiteCard() }
 			</div>
 		);
 	}
