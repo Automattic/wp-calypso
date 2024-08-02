@@ -22,6 +22,7 @@ import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
+import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
@@ -88,11 +89,12 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ flow, siteSlugOrId, selectedSite ] );
 
-	const stepNavigation = flow.useStepNavigation(
+	const stepNavigation = useStepNavigationWithTracking( {
+		flow,
 		currentStepRoute,
 		navigate,
-		flowSteps.map( ( step ) => step.slug )
-	);
+		steps: flowSteps,
+	} );
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect(

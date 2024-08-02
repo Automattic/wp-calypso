@@ -96,6 +96,7 @@ const newsletter: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+
 			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
