@@ -46,17 +46,25 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 
 	const stepsProgress = [ 'Content', 'Subscribers', 'Paid Subscribers', 'Summary' ];
 
+	const fromSite = getQueryArg( window.location.href, 'from' ) ?? null;
+
+	if ( fromSite && ! step ) {
+		step = stepSlugs[ 0 ];
+	}
+
 	let stepIndex = 0;
 	let nextStep = stepSlugs[ 0 ];
+
 	stepSlugs.forEach( ( stepName, index ) => {
 		if ( stepName === step ) {
 			stepIndex = index;
 			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
 	} );
-	const newsletterUrl = getQueryArg( window.location.href, 'newsletter' ) ?? null;
+
+	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ stepSlugs[ stepIndex ] }`;
 	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
-		newsletter: newsletterUrl,
+		from: fromSite,
 	} );
 	const Step = steps[ stepIndex ] || steps[ 0 ];
 	return (
@@ -69,14 +77,14 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 			/>
 
 			<FormattedHeader headerText="Import your newsletter" />
-			{ ( ! step || ! newsletterUrl ) && <SelectNewsletterForm nextStepUrl={ nextStepUrl } /> }
-			{ step && <StepProgress steps={ stepsProgress } currentStep={ stepIndex } /> }
-			{ step && newsletterUrl && (
+			{ ! fromSite && <SelectNewsletterForm stepUrl={ stepUrl } /> }
+			{ fromSite && <StepProgress steps={ stepsProgress } currentStep={ stepIndex } /> }
+			{ fromSite && (
 				<Step
 					siteSlug={ siteSlug }
 					nextStepUrl={ nextStepUrl }
 					selectedSite={ selectedSite }
-					newsletterUrl={ newsletterUrl }
+					fromSite={ fromSite }
 				/>
 			) }
 		</div>

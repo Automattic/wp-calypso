@@ -21,6 +21,7 @@ class ImporterSubstack extends PureComponent {
 			} ),
 			statusMessage: PropTypes.string,
 		} ),
+		fromSite: PropTypes.string,
 	};
 
 	render() {
