@@ -816,7 +816,6 @@ class StatsSite extends Component {
 				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 				) }
-				{ /* Only load Jetpack Upsell Section for Odyssey Stats excluding Atomic */ }
 				{ ! shouldShowUpsells ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
