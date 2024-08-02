@@ -15,13 +15,15 @@ import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ReferralToggle from '../common/referral-toggle';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import HostingList from './hosting-list';
 import HostingV2 from './hosting-v2';
+import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
@@ -31,6 +33,8 @@ type Props = {
 
 function Hosting( { section }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
 	const {
@@ -52,9 +56,15 @@ function Hosting( { section }: Props ) {
 
 				setSelectedCartItems( [ ...items, { ...plan, quantity } ] );
 				setShowCart( true );
+				dispatch(
+					recordTracksEvent( 'calypso_a4a_marketplace_hosting_add_to_cart', {
+						quantity,
+						item: plan.family_slug,
+					} )
+				);
 			}
 		},
-		[ selectedCartItems, setSelectedCartItems, setShowCart ]
+		[ dispatch, selectedCartItems, setSelectedCartItems, setShowCart ]
 	);
 
 	return (
