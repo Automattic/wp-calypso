@@ -80,6 +80,10 @@ $font-family: "SF Pro Text", $sans;
 
 		.generate-content__buttons {
 			width: 100%;
+
+			.checklist-item__checklist-primary-button {
+				transition: opacity 0.2s, background-color 0.2s;
+			}
 		}
 
 		.generate-content__description {

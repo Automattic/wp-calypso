@@ -83,7 +83,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 						<Button
 							className="checklist-item__checklist-primary-button"
 							onClick={ generateContent }
-							disabled={ numberOfGenerations >= 5 }
+							disabled={ numberOfGenerations >= 5 || isGeneratingContent }
 						>
 							{ translate( 'Generate content' ) }
 						</Button>
