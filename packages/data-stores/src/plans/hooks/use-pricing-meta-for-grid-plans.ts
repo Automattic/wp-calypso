@@ -14,9 +14,11 @@ import type { AddOnMeta } from '../../add-ons/types';
 export type UseCheckPlanAvailabilityForPurchase = ( {
 	planSlugs,
 	siteId,
+	shouldIgnorePlanOwnership,
 }: {
 	planSlugs: PlanSlug[];
 	siteId?: number | null;
+	shouldIgnorePlanOwnership?: boolean;
 } ) => {
 	[ planSlug in PlanSlug ]?: boolean;
 };
@@ -78,7 +80,6 @@ const usePricingMetaForGridPlans = ( {
 	storageAddOns,
 	withProratedDiscounts,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
-	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( { planSlugs, siteId } );
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
@@ -93,6 +94,17 @@ const usePricingMetaForGridPlans = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptions( siteId ),
 		[]
 	);
+	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
+		planSlugs,
+		siteId,
+
+		// TODO:
+		// We need to ignore plan ownership only if the site is on a paid plan so the CTAs are enabled for non-owner actions.
+		// See https://github.com/Automattic/wp-calypso/issues/87479 for more details.
+		// However, it's technically "not available for purchase for the current user", so it'd be better if the state
+		// can express it more explicitly.
+		shouldIgnorePlanOwnership: !! currentPlan?.purchaseId,
+	} );
 
 	let planPrices:
 		| {

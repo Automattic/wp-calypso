@@ -2,13 +2,15 @@ import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v2';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import VIPLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
 import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import EnterpriseAgencyHosting from './enterprise-agency-hosting';
 import PremierAgencyHosting from './premier-agency-hosting';
@@ -61,8 +63,17 @@ const HostingContent = ( { section, onAddToCart }: Props ) => {
 
 export default function HostingV2( { onAddToCart, section }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const isLargeScreen = useBreakpoint( '>1280px' );
+
+	const handleTabClick = useCallback(
+		( tab: string ) => {
+			page.show( `/marketplace/hosting/${ tab }` );
+			dispatch( recordTracksEvent( 'calypso_a4a_marketplace_hosting_tab_click', { tab } ) );
+		},
+		[ dispatch ]
+	);
 
 	const featureTabs = useMemo(
 		() => [
@@ -73,7 +84,7 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 				visible: true,
 				selected: section === 'wpcom',
 				onClick: () => {
-					page.show( '/marketplace/hosting/wpcom' );
+					handleTabClick( 'wpcom' );
 				},
 			},
 			{
@@ -83,7 +94,7 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 				visible: true,
 				selected: section === 'pressable',
 				onClick: () => {
-					page.show( '/marketplace/hosting/pressable' );
+					handleTabClick( 'pressable' );
 				},
 			},
 			{
@@ -93,11 +104,11 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 				visible: true,
 				selected: section === 'vip',
 				onClick: () => {
-					page.show( '/marketplace/hosting/vip' );
+					handleTabClick( 'vip' );
 				},
 			},
 		],
-		[ isLargeScreen, section, translate ]
+		[ handleTabClick, isLargeScreen, section, translate ]
 	);
 
 	const navItems = featureTabs.map( ( featureTab ) => {

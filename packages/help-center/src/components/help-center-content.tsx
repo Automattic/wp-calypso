@@ -3,7 +3,10 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import OdieAssistantProvider, { useSetOdieStorage } from '@automattic/odie-client';
+import OdieAssistantProvider, {
+	isOdieAllowedBot,
+	useSetOdieStorage,
+} from '@automattic/odie-client';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
@@ -13,7 +16,7 @@ import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-
  * Internal Dependencies
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useShouldUseWapuu } from '../hooks';
+import { useChatStatus, useShouldRenderEmailOption, useShouldUseWapuu } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterContactForm } from './help-center-contact-form';
@@ -22,6 +25,7 @@ import { HelpCenterOdie } from './help-center-odie';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
+import type { OdieAllowedBots } from '@automattic/odie-client/src/types/index';
 
 // Disabled component only applies the class if isDisabled is true, we want it always.
 function Wrapper( {
@@ -48,11 +52,21 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName, currentUser, site } = useHelpCenterContext();
+	const { isLoading: isLoadingEmailStatus } = useShouldRenderEmailOption();
+	const { isLoading: isLoadingChatStatus } = useChatStatus();
+	const isLoadingEnvironment = isLoadingEmailStatus || isLoadingChatStatus;
 	const shouldUseWapuu = useShouldUseWapuu();
-	const { isMinimized } = useSelect( ( select ) => {
+	const { isMinimized, odieInitialPromptText, odieBotNameSlug } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+
+		const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+			? ( store.getOdieBotNameSlug() as OdieAllowedBots )
+			: 'wpcom-support-chat';
+
 		return {
 			isMinimized: store.getIsMinimized(),
+			odieInitialPromptText: store.getOdieInitialPromptText(),
+			odieBotNameSlug,
 		};
 	}, [] );
 
@@ -137,8 +151,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 						path="/odie"
 						element={
 							<OdieAssistantProvider
-								botNameSlug="wpcom-support-chat"
+								isLoadingEnvironment={ isLoadingEnvironment }
+								botNameSlug={ odieBotNameSlug }
 								botName="Wapuu"
+								odieInitialPromptText={ odieInitialPromptText }
 								enabled={ shouldUseWapuu }
 								currentUser={ currentUser }
 								isMinimized={ isMinimized }
@@ -147,10 +163,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								loggerEventNamePrefix="calypso_odie"
 								selectedSiteId={ site?.ID as number }
 								extraContactOptions={
-									<HelpCenterContactPage
-										hideHeaders
-										trackEventName="calypso_odie_extra_contact_option"
-									/>
+									<div className="help-center__container-extra-contact-options">
+										<HelpCenterContactPage
+											hideHeaders
+											trackEventName="calypso_odie_extra_contact_option"
+										/>
+									</div>
 								}
 								navigateToContactOptions={ navigateToContactOptions }
 								navigateToSupportDocs={ navigateToSupportDocs }
