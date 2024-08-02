@@ -1,8 +1,11 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { convertBytes } from 'calypso/my-sites/backup/backup-contents-page/file-browser/util';
-import { useSiteMetricsQuery } from 'calypso/my-sites/site-monitoring/use-metrics-query';
+import {
+	SiteMetricsAPIResponse,
+	useSiteMetricsQuery,
+} from 'calypso/my-sites/site-monitoring/use-metrics-query';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -30,6 +33,7 @@ const getCurrentMonthRangeTimestamps = () => {
 };
 
 export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
+	const [ bandwidthData, setBandwidthData ] = useState< SiteMetricsAPIResponse >();
 	const selectedSiteData = useSelector( getSelectedSite );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
@@ -47,6 +51,12 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 		metric: 'response_bytes_persec',
 	} );
 
+	useEffect( () => {
+		if ( data ) {
+			setBandwidthData( data );
+		}
+	}, [ data ] );
+
 	if ( ! canViewStat ) {
 		return;
 	}
@@ -62,11 +72,11 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 			} );
 		}
 
-		if ( ! data || ! selectedSiteDomain ) {
+		if ( ! bandwidthData || ! selectedSiteDomain ) {
 			return <LoadingPlaceholder className="hosting-overview__plan-bandwidth-placeholder" />;
 		}
 
-		const valueInBytes = data.data.periods.reduce(
+		const valueInBytes = bandwidthData.data.periods.reduce(
 			( acc, curr ) => acc + ( curr.dimension[ selectedSiteDomain ] || 0 ),
 			0
 		);
