@@ -134,7 +134,6 @@ export const setShowSupportDoc = function* ( link: string, postId: number, blogI
 		link,
 		postId: String( postId ),
 		...( blogId && { blogId: String( blogId ) } ), // Conditionally add blogId if it exists, the default is support blog
-		cacheBuster: String( Date.now() ),
 	} );
 
 	yield setNavigateToRoute( `/post/?${ params }` );

@@ -97,8 +97,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	);
 
 	useEffect( () => {
-		if ( navigateToRoute && location.pathname !== navigateToRoute ) {
-			navigate( navigateToRoute );
+		if ( navigateToRoute ) {
+			const fullLocation = `${ location.pathname }${ location.search }`;
+			// On navigate once to keep the back button responsive.
+			if ( fullLocation !== navigateToRoute ) {
+				navigate( navigateToRoute );
+			}
 			setNavigateToRoute( null );
 		}
 	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
@@ -134,10 +138,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 							<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
 						}
 					/>
-					<Route
-						path="/post"
-						element={ <HelpCenterArticle navigateToRoute={ navigateToRoute ?? '' } /> }
-					/>
+					<Route path="/post" element={ <HelpCenterArticle /> } />
 					<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 					<Route
 						path="/contact-form"
