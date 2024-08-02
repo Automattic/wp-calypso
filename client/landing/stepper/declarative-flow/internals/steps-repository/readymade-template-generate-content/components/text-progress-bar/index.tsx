@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
 
@@ -17,11 +18,11 @@ const getProgressBarColor = ( progress: number ) => {
 
 const getProgressBarMessage = ( progress: number ) => {
 	if ( progress <= 30 ) {
-		return 'Please provide more details to get better results.';
+		return translate( 'Please provide more details to get better results.' );
 	} else if ( progress <= 80 ) {
-		return 'Not bad! You are almost there. Keep going.';
+		return translate( 'Not bad! You are almost there. Keep going.' );
 	}
-	return 'Great job! You are all set.';
+	return translate( 'Great job! You are all set.' );
 };
 
 const calculateProgress = ( text: string, target: number ) => {
