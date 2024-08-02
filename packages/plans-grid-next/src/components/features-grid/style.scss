@@ -49,15 +49,18 @@
 		margin-top: 24px;
 
 		.foldable-card__main {
-			color: var(--studio-blue-60);
-			font-family: Inter, $sans;
 			font-weight: 500;
 			font-size: $font-body-small;
 			letter-spacing: -0.24px;
 			line-height: 20px;
 
+			* {
+				color: inherit;
+			}
+
 			.foldable-card__expand .gridicon {
 				width: 14px;
+				fill: currentColor;
 			}
 		}
 
@@ -77,50 +80,36 @@
 		.plans-grid-next-features-grid__mobile-plan-card.is-free-plan & {
 			.foldable-card__main {
 				color: var(--studio-blue-50);
-
-				.foldable-card__expand .gridicon {
-					fill: var(--studio-blue-50);
-				}
 			}
 		}
 
 		.plans-grid-next-features-grid__mobile-plan-card.is-personal-plan & {
 			.foldable-card__main {
 				color: var(--studio-blue-60);
-
-				.foldable-card__expand .gridicon {
-					fill: var(--studio-blue-60);
-				}
 			}
 		}
 
 		.plans-grid-next-features-grid__mobile-plan-card.is-premium-plan & {
 			.foldable-card__main {
-				color: #004687;
-
-				.foldable-card__expand .gridicon {
-					fill: #004687;
-				}
+				color: var(--studio-blue-70);
 			}
 		}
 
 		.plans-grid-next-features-grid__mobile-plan-card.is-business-plan & {
 			.foldable-card__main {
-				color: #7f54b3;
-
-				.foldable-card__expand .gridicon {
-					fill: #7f54b3;
-				}
+				color: var(--studio-woocommerce-purple-50);
 			}
 		}
 
 		.plans-grid-next-features-grid__mobile-plan-card.is-ecommerce-plan & {
 			.foldable-card__main {
-				color: #55347d;
+				color: var(--studio-woocommerce-purple-60);
+			}
+		}
 
-				.foldable-card__expand .gridicon {
-					fill: #55347d;
-				}
+		.plans-grid-next-features-grid__mobile-plan-card.is-wpcom-enterprise-plan & {
+			.foldable-card__main {
+				color: var(--studio-gray-80);
 			}
 		}
 	}
@@ -416,18 +405,21 @@
 		}
 	}
 
-	&.plan-features-2023-grid__enterprise-logo {
-		display: flex;
-		flex-wrap: wrap;
-		column-gap: 20px;
-		row-gap: 14px;
-		position: relative;
-		margin: 32px 0 0;
+	.plan-features-2023-grid__common-title + & {
+		padding-top: 24px;
 
 		@include plans-grid-medium-large {
-			margin: 0;
-			top: 14px;
+			padding-top: 14px;
 		}
+	}
+}
+
+.plan-features-2023-grid__item-logos {
+	padding-top: 28px;
+
+	@include plans-grid-medium-large {
+		margin-right: -16px;
+		padding-top: 18px;
 	}
 }
 
@@ -598,15 +590,19 @@
 			}
 
 			&.is-premium-plan {
-				color: #004687;
+				color: var(--studio-blue-70);
 			}
 
 			&.is-business-plan {
-				color: #7f54b3;
+				color: var(--studio-woocommerce-purple-50);
 			}
 
 			&.is-ecommerce-plan {
-				color: #55347d;
+				color: var(--studio-woocommerce-purple-60);
+			}
+
+			&.is-wpcom-enterprise-grid-plan {
+				color: var(--studio-gray-80);
 			}
 		}
 	}
