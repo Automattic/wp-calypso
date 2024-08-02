@@ -3,7 +3,10 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import OdieAssistantProvider, { useSetOdieStorage } from '@automattic/odie-client';
+import OdieAssistantProvider, {
+	isOdieAllowedBot,
+	useSetOdieStorage,
+} from '@automattic/odie-client';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
@@ -22,6 +25,7 @@ import { HelpCenterOdie } from './help-center-odie';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
+import type { OdieAllowedBots } from '@automattic/odie-client/src/types/index';
 
 // Disabled component only applies the class if isDisabled is true, we want it always.
 function Wrapper( {
@@ -49,10 +53,17 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const shouldUseWapuu = useShouldUseWapuu();
-	const { isMinimized } = useSelect( ( select ) => {
+	const { isMinimized, odieInitialPromptText, odieBotNameSlug } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+
+		const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+			? ( store.getOdieBotNameSlug() as OdieAllowedBots )
+			: 'wpcom-support-chat';
+
 		return {
 			isMinimized: store.getIsMinimized(),
+			odieInitialPromptText: store.getOdieInitialPromptText(),
+			odieBotNameSlug,
 		};
 	}, [] );
 
@@ -137,8 +148,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 						path="/odie"
 						element={
 							<OdieAssistantProvider
-								botNameSlug="wpcom-support-chat"
+								botNameSlug={ odieBotNameSlug }
 								botName="Wapuu"
+								odieInitialPromptText={ odieInitialPromptText }
 								enabled={ shouldUseWapuu }
 								currentUser={ currentUser }
 								isMinimized={ isMinimized }

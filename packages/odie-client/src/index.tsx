@@ -57,3 +57,4 @@ export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';
 export { useSetOdieStorage, useGetOdieStorage } from './data';
 export { EllipsisMenu } from './components/ellipsis-menu';
+export { isOdieAllowedBot } from './utils/is-odie-allowed-bot';
