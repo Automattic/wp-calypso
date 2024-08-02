@@ -98,7 +98,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	useEffect( () => {
 		if ( navigateToRoute ) {
-			const fullLocation = `${ location.pathname }${ location.search }`;
+			const fullLocation = [ location.pathname, location.search, location.hash ].join( '' );
 			// On navigate once to keep the back button responsive.
 			if ( fullLocation !== navigateToRoute ) {
 				navigate( navigateToRoute );
