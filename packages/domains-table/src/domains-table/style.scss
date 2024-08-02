@@ -137,19 +137,30 @@
 		}
 	}
 
-	.domains-table-row__ssl-cell {
+	.domains-table-row__ssl-cell,
+	.domains-table-row__ssl-icon {
 
 		&__active {
 			color: var(--studio-green-50);
+			fill: var(--studio-green-50);
 		}
 
 		&__pending {
 			color: var(--studio-orange-50);
+			fill: var(--studio-orange-50);
 		}
 
 		&__disabled {
 			color: var(--studio-gray-50);
+			fill: var(--studio-gray-50);
 		}
+	}
+
+	.domains-table-row__ssl-icon {
+		height: 16px;
+		position: relative;
+		top: 3px;
+		margin-right: -4px;
 	}
 
 	.domains-table-checkbox-td {
@@ -157,6 +168,7 @@
 			cursor: no-drop;
 		}
 	}
+
 
 	.domains-table-row__domain {
 		flex-direction: column;

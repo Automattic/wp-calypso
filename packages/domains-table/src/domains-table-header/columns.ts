@@ -58,6 +58,13 @@ export const allSitesViewColumns = (
 		sortFunctions: [ getSimpleSortFunctionBy( 'blog_name' ) ],
 	},
 	{
+		name: 'ssl',
+		label: __( 'SSL', __i18n_text_domain__ ),
+		isSortable: true,
+		initialSortDirection: 'asc',
+		supportsOrderSwitching: true,
+	},
+	{
 		name: 'expire_renew',
 		label: __( 'Expires / renews on', __i18n_text_domain__ ),
 		isSortable: true,
