@@ -46,12 +46,16 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			saveSignupStep={ ( state: ProvidedDependencies ) =>
 				setStepState( { ...stepState, ...state } )
 			}
-			submitSignupStep={ () => props.navigation.submit?.( stepState ) }
+			submitSignupStep={ ( state: ProvidedDependencies ) =>
+				props.navigation.submit?.( { ...stepState, ...state } )
+			}
 			goToNextStep={ () => props.navigation.submit?.( stepState ) }
 			step={ stepState }
 			customerType={ customerType }
 			errorNotice={ ( message: string ) => dispatch( errorNotice( message ) ) }
 			signupDependencies={ signupDependencies }
+			stepName="plans"
+			flowName={ props.flow }
 			renderWithoutStepWrapper
 			recordTracksEvent={ ( event: unknown ) => dispatch( recordTracksEvent( event ) ) }
 			CustomStepWrapper={ usePlanStepWrapper( props.navigation ) }

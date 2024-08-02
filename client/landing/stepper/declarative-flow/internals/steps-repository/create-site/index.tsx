@@ -181,6 +181,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		}
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
+		debugger
 		const site = await createSiteWithCart(
 			flow,
 			true,
