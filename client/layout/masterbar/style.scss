@@ -1225,6 +1225,7 @@ body.is-mobile-app-view {
 
 .masterbar-cart-button {
 	svg {
+		overflow: visible;
 		@media only screen and (max-width: 781px) {
 			width: 32px;
 			height: 32px;
@@ -1234,12 +1235,19 @@ body.is-mobile-app-view {
 		transform: translate(10%, 2%) scale(0.93);
 		stroke-width: 6%;
 		stroke: var(--color-masterbar-background);
+		transition: all 200ms ease-in-out;
+	}
+
+	&:hover .cart-circle {
+		@media only screen and (min-width: 481px) {
+			stroke: var(--color-masterbar-item-hover-background);
+		}
 	}
 }
 
 .masterbar-notifications {
 	svg {
-		overflow: overlay;
+		overflow: visible;
 		width: 24px;
 		height: 24px;
 
@@ -1251,11 +1259,10 @@ body.is-mobile-app-view {
 
 	.notifications-bell-icon__bubble {
 		animation: bubble-unread-indication 0.5s linear both;
-		transition: all 150ms ease-in;
 		transform-origin: 20px 4px;
 
 		use {
-			transition: all 150ms ease-in;
+			transition: all 200ms ease-in-out;
 			transform-origin: 20px 4px;
 			transform: translate(-2%, 2%) scale(0.93);
 			stroke-width: 6%;
@@ -1263,9 +1270,10 @@ body.is-mobile-app-view {
 		}
 	}
 
-	&:hover use.border {
-		transition: all 150ms ease-in;
-		fill: var(--color-masterbar-item-active-background);
+	&:hover use {
+		@media only screen and (min-width: 481px) {
+			stroke: var(--color-masterbar-item-hover-background);
+		}
 	}
 }
 
