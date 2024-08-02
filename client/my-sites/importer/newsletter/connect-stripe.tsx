@@ -1,5 +1,6 @@
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import StripeLogo from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import { useSelector } from 'calypso/state';
@@ -7,17 +8,41 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
+/**
+ * Update the connect URL with the from_site and engine parameters.
+ * @param connectUrl
+ * @param fromSite
+ * @returns string
+ */
+function updateConnectUrl( connectUrl: string, fromSite: string ): string {
+	const stateQueryString = getQueryArg( connectUrl, 'state' ) as string;
+	const decodedState = JSON.parse( atob( stateQueryString ) );
+	decodedState.from_site = fromSite;
+	decodedState.engine = 'substack'; // Currently we only support substack but in the future we want to pass this parameter down.
+
+	return addQueryArgs( connectUrl, { state: btoa( JSON.stringify( decodedState ) ) } );
+}
+
 type Props = {
 	nextStepUrl: string;
+	fromSite: string;
 };
 
-export default function ConnectStripe( { nextStepUrl }: Props ) {
+export default function ConnectStripe( { nextStepUrl, fromSite }: Props ) {
 	const site = useSelector( getSelectedSite );
-	const connectUrl: string = useSelector( ( state ) => getConnectUrlForSiteId( state, site?.ID ) );
+	let connectUrl: string = useSelector( ( state ) => getConnectUrlForSiteId( state, site?.ID ) );
+
+	try {
+		connectUrl = updateConnectUrl( connectUrl, fromSite );
+	} catch ( error ) {
+		// Do nothing
+	}
 
 	return (
 		<Card>
-			<QueryMembershipsSettings siteId={ site?.ID } source="import-paid-subscribers" />
+			{ site?.ID && (
+				<QueryMembershipsSettings siteId={ site.ID } source="import-paid-subscribers" />
+			) }
 			<h2>Finish importing paid subscribers</h2>
 			<p>
 				To your migrate <strong>17 paid subscribers</strong> to WordPress.com, make sure you're

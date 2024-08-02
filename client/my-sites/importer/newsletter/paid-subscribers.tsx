@@ -6,9 +6,10 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectStripe from './connect-stripe';
 type Props = {
 	nextStepUrl: string;
+	fromSite: string;
 };
 
-export default function PaidSubscribers( { nextStepUrl }: Props ) {
+export default function PaidSubscribers( { nextStepUrl, fromSite }: Props ) {
 	const site = useSelector( getSelectedSite );
 
 	const hasConnectedAccount = useSelector( ( state ) =>
@@ -16,12 +17,14 @@ export default function PaidSubscribers( { nextStepUrl }: Props ) {
 	);
 
 	if ( ! hasConnectedAccount ) {
-		return <ConnectStripe nextStepUrl={ nextStepUrl } />;
+		return <ConnectStripe nextStepUrl={ nextStepUrl } fromSite={ fromSite } />;
 	}
 
 	return (
 		<Card>
-			<QueryMembershipsSettings siteId={ site?.ID } source="calypso" />
+			{ site?.ID && (
+				<QueryMembershipsSettings siteId={ site.ID } source="import-paid-subscribers" />
+			) }
 			<h2>Paid newsletter offering</h2>
 			<p>
 				<strong>
