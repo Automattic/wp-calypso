@@ -103,7 +103,9 @@ const WebServerSettingsCard = ( {
 
 		return (
 			<FormFieldset>
-				<FormLabel>{ translate( 'WordPress version' ) }</FormLabel>
+				<FormLabel data-scroll-id="wp-version-select">
+					{ translate( 'WordPress version' ) }
+				</FormLabel>
 				{ isWpcomStagingSite && (
 					<>
 						<FormSelect
@@ -202,7 +204,7 @@ const WebServerSettingsCard = ( {
 			selectedPhpVersion || phpVersion || ( disabled && recommendedValue );
 		return (
 			<FormFieldset>
-				<FormLabel>{ translate( 'PHP version' ) }</FormLabel>
+				<FormLabel data-scroll-id="php-version-select">{ translate( 'PHP version' ) }</FormLabel>
 				<FormSelect
 					disabled={ disabled || isUpdatingPhpVersion }
 					className="web-server-settings-card__php-version-select"
