@@ -63,12 +63,16 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 			<div className="pressable-overview-plan-selection__details-card">
 				<div className="pressable-overview-plan-selection__details-card-header">
 					<h3 className="pressable-overview-plan-selection__details-card-header-title plan-name">
-						{ translate( '%(planName)s plan', {
-							args: {
-								planName: selectedPlan ? getPressableShortName( selectedPlan.name ) : customString,
-							},
-							comment: '%(planName)s is the name of the selected plan.',
-						} ) }
+						{ isNewHostingPage
+							? translate( 'Pressable' )
+							: translate( '%(planName)s plan', {
+									args: {
+										planName: selectedPlan
+											? getPressableShortName( selectedPlan.name )
+											: customString,
+									},
+									comment: '%(planName)s is the name of the selected plan.',
+							  } ) }
 					</h3>
 
 					{ selectedPlan && (

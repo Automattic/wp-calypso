@@ -2,7 +2,6 @@ import { JetpackLogo } from '@automattic/components';
 import { layout, blockMeta, shuffle, help, keyboardReturn, tip } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
-import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
@@ -25,8 +24,8 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 			<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
-				heading={ translate( "Supercharge your clients' sites" ) }
-				subheading={ translate( 'Optional Jetpack Security included' ) }
+				heading={ translate( 'Jetpack Complete included' ) }
+				subheading={ translate( "Supercharge your clients' sites" ) }
 				description={ translate(
 					'Every Pressable hosting plan comes with a Jetpack Security License for free - a $239/year/site value.'
 				) }
@@ -115,25 +114,21 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					{
 						profile: {
 							avatar: ProfileAvatar1,
-							name: 'Vincent Consumano',
+							name: 'Ben Giordano',
 							title: 'Founder - Freshy',
 							site: 'freshysites.com',
 						},
 						testimonial:
-							// TODO: Change this to a real testimonial
-							"This should be a Pressable specific testimonial. Let's make sure it touches upon how they love the hosting, the support service, and especially the UI. This is just dummy text.",
+							"We needed a hosting provider that was as knowledgeable about WordPress as we are. With Pressable's affiliation with Automattic, the same people behind WordPress.com and WordPress VIP, we knew we'd found the right home for our client portfolio.",
 					},
-
 					{
 						profile: {
-							avatar: ProfileAvatar2,
-							name: 'Jordan Smith',
-							title: 'Owner - Hire Jordan Smith',
-							site: 'hirejordansmith.com',
+							name: 'Justin Barrett',
+							title: 'Director of Technology - Autoshop Solutions',
+							site: 'autoshopsolutions.com',
 						},
 						testimonial:
-							// TODO: Change this to a real testimonial
-							"This should be another Pressable specific testimonial. Let's make sure it touches upon how they love the hosting, the support service, and especially the UI. This is just dummy text.",
+							'As an agency with hundreds of clients, Pressable changed the game for our ability to grow as a business and offer best-in-class products for our clients. With fantastic support, superior uptime, and solutions to make even the largest challenges possible, Pressable is always there.',
 					},
 				] }
 			/>
