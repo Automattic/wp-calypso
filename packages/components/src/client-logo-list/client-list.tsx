@@ -1,8 +1,14 @@
 import { __ } from '@wordpress/i18n';
 
+interface Client {
+	slug: string;
+	name: string;
+	Logo: React.ComponentType;
+}
+
 // The list of client logos, manually adjusted to maintain the visual balance
 // when displayed one next to another. The order is important.
-export default [
+const CLIENT_LIST: Client[] = [
 	{
 		slug: 'slack',
 		// translators: Company name
@@ -173,3 +179,5 @@ export default [
 		),
 	},
 ];
+
+export default CLIENT_LIST;

@@ -2,8 +2,10 @@ import clsx from 'clsx';
 import CLIENT_LIST from './client-list';
 import './style.scss';
 
-const ClientLogoList = ( { className = '', ...otherProps } ) => {
-	const props = {
+const ClientLogoList = ( props: React.HTMLAttributes< HTMLDivElement > ) => {
+	const { className, ...otherProps } = props;
+
+	const elementProps: React.HTMLAttributes< HTMLDivElement > = {
 		className: clsx( 'client-logo-list', className ),
 		...otherProps,
 		role: 'presentation',
@@ -11,7 +13,7 @@ const ClientLogoList = ( { className = '', ...otherProps } ) => {
 	};
 
 	return (
-		<div { ...props }>
+		<div { ...elementProps }>
 			{ CLIENT_LIST.map( ( { slug, name, Logo } ) => (
 				<div
 					key={ slug }

@@ -1,10 +1,10 @@
 import i18n from 'i18n-calypso';
 
-export const PLAN_ENTERPRISE_FEATURE_LIST_TITLE = i18n.translate(
+export const PLAN_ENTERPRISE_FEATURE_LIST_TITLE: string = i18n.translate(
 	'High performance platform, with:'
 );
 
-export const PLAN_ENTERPRISE_FEATURE_LIST = [
+export const PLAN_ENTERPRISE_FEATURE_LIST: string[] = [
 	i18n.translate( 'Multifaceted security' ),
 	i18n.translate( 'Generative AI' ),
 	i18n.translate( 'Integrated content analytics' ),
