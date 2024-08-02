@@ -117,7 +117,7 @@ export default function ItemPreviewPaneHeader( {
 												WordPress{ ' ' }
 												<Button
 													className="item-preview__header-env-data-item-link"
-													onClick={ handlePhpVersionClick }
+													onClick={ handleWpVersionClick }
 												>
 													{ wpVersion }
 												</Button>
@@ -128,7 +128,7 @@ export default function ItemPreviewPaneHeader( {
 												PHP{ ' ' }
 												<Button
 													className="item-preview__header-env-data-item-link"
-													onClick={ handleWpVersionClick }
+													onClick={ handlePhpVersionClick }
 												>
 													{ phpVersion }
 												</Button>
