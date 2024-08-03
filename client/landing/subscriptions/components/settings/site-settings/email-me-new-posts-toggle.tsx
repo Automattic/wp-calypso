@@ -17,7 +17,7 @@ const EmailMeNewPostsToggle = ( {
 	return (
 		<div className="setting-item">
 			<ToggleControl
-				label={ translate( 'Email me new posts' ) }
+				label={ translate( 'Receive emails' ) }
 				onChange={ () => onChange( ! value ) }
 				checked={ value }
 				disabled={ isUpdating }

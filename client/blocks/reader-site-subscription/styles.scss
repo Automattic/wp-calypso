@@ -86,7 +86,7 @@
 		}
 
 		&__heading {
-			margin: 0 0 24px;
+			margin: 0 0 8px;
 			color: $studio-gray-100;
 			font-family: "SF Pro Text", $sans;
 			font-size: $font-body;
@@ -100,7 +100,7 @@
 		@extend .settings;
 
 		&__heading {
-			margin: 40px 0 24px;
+			margin: 40px 0 8px;
 			color: $studio-gray-100;
 			font-family: "SF Pro Text", $sans;
 			font-size: $font-body;
@@ -138,6 +138,16 @@
 
 		&__loading {
 			margin-bottom: 20px;
+		}
+
+		.badge {
+			margin: 0 8px 0 0;
+			border-radius: 4px;
+			font-size: rem(12px);
+		}
+		.badge--success {
+			background-color: $studio-green-5;
+			color: $studio-green-100;
 		}
 	}
 
