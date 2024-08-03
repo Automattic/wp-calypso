@@ -191,16 +191,20 @@
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
+	gap: 8px;
 
 	&::after {
 		display: none;
 	}
 }
 
+.cancel-purchase__footer-text {
+	margin: auto 0;
+}
+
 .cancel-purchase__footer-text p {
 	font-size: $font-body-small;
 	margin: 0;
-	padding: 0 10px 5px 0;
 
 	&.cancel-purchase__refund-amount {
 		color: var(--color-success);
@@ -209,6 +213,11 @@
 	&.cancel-purchase__expiration-text {
 		color: var(--color-error);
 	}
+}
+
+.cancel-purchase__footer.card .cancel-purchase__button-wrapper {
+	margin: 0 auto;
+	margin-right: 0;
 }
 
 .cancel-purchase__button {

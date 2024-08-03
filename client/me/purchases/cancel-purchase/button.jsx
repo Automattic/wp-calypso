@@ -286,10 +286,9 @@ class CancelPurchaseButton extends Component {
 					return this.handleCancelPurchaseClick;
 				}
 			} else {
-				if ( isDomainRegistration( purchase ) ) {
-					if ( isRefundable( purchase ) ) {
-						return this.handleCancelPurchaseClick;
-					}
+				if ( isDomainRegistration( purchase ) && isRefundable( purchase ) ) {
+					// Domain in AGP bought with domain credits should be canceled immediately
+					return this.handleCancelPurchaseClick;
 				}
 
 				if ( isSubscription( purchase ) ) {
@@ -336,7 +335,7 @@ class CancelPurchaseButton extends Component {
 		const planName = getName( purchase );
 
 		return (
-			<div>
+			<div className="cancel-purchase__button-wrapper">
 				<Button
 					className="cancel-purchase__button"
 					disabled={ disableButtons }
