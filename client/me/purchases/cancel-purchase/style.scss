@@ -1,22 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.cancel-purchase__card {
-	h2 {
-		color: var(--color-neutral-70);
-		font-size: $font-title-small;
-		font-weight: 400;
-		margin-bottom: 20px;
-	}
-
-	p {
-		color: var(--color-neutral-40);
-		font-size: $font-body-small;
-	}
-
-	hr {
-		background: var(--color-neutral-0);
-	}
+.is-section-me.is-global-sidebar-visible .purchases__cancel.main,
+.is-section-me.is-global-sidebar-visible .purchases__cancel-domain.main {
+	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 }
 
 .cancel-purchase__wrapper-card {
@@ -29,7 +16,8 @@
 	}
 }
 
-.cancel-purchase__back .header-cake__back {
+.cancel-purchase__back .header-cake__back,
+.confirm-cancel-domain__back .header-cake__back {
 	padding: 24px 0;
 	text-align: left;
 }
@@ -51,6 +39,11 @@
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	margin-top: 12px;
+
+	.is-link {
+		font-size: $font-body-small;
+		text-decoration: none;
+	}
 }
 
 .cancel-purchase__domain-options {
@@ -80,6 +73,7 @@
 .cancel-purchase__inner-wrapper {
 	display: flex;
 	flex-direction: column-reverse;
+	margin-bottom: 24px;
 
 	@include break-large {
 		display: grid;
@@ -88,7 +82,8 @@
 	}
 }
 
-.cancel-purchase__formatter-header.formatted-header {
+.confirm-cancel-domain__formatted-header.formatted-header,
+.cancel-purchase__formatted-header.formatted-header {
 	margin: 16px 0;
 }
 
@@ -136,6 +131,11 @@
 	font-weight: 600;
 }
 
+.cancel-purchase__site-title {
+	font-size: $font-body-extra-small;
+	text-transform: uppercase;
+}
+
 .cancel-purchase__warning-string {
 	color: var(--color-error);
 	font-weight: 600;
@@ -149,57 +149,34 @@
 	}
 }
 
-.cancel-purchase__product-information .product-link {
-	font-size: $font-body-small;
-}
-
 .cancel-purchase__purchase-name {
 	font-size: $font-body;
 	font-weight: 600;
 }
 
+.cancel-purchase__product-information .product-link,
 .cancel-purchase__refund-information,
-.cancel-purchase__plan-description,
-.cancel-purchase__support-information {
+.cancel-purchase__plan-description {
 	font-size: $font-body-small;
 }
 
-.cancel-purchase__support-information .support-link {
-	color: var(--color-primary);
-	font-weight: 600;
-	padding-inline-start: 0;
-}
-
-.cancel-purchase__site-title {
-	font-size: $font-body-extra-small;
-	text-transform: uppercase;
-}
-
-.cancel-purchase__section {
-	color: var(--color-neutral-50);
-	margin: 0;
-}
-
-.cancel-purchase__section-header {
-	display: block;
-	font-size: $font-body;
-	font-weight: 400;
-}
-
 .cancel-purchase__footer {
-	align-items: baseline;
+	align-items: center;
 	display: flex;
-	flex-wrap: wrap;
 	justify-content: space-between;
 	gap: 8px;
+
+	.cancel-purchase__footer-text {
+		flex-grow: 1;
+	}
+
+	.cancel-purchase__button-wrapper {
+		flex-shrink: 0;
+	}
 
 	&::after {
 		display: none;
 	}
-}
-
-.cancel-purchase__footer-text {
-	margin: auto 0;
 }
 
 .cancel-purchase__footer-text p {
@@ -215,11 +192,6 @@
 	}
 }
 
-.cancel-purchase__footer.card .cancel-purchase__button-wrapper {
-	margin: 0 auto;
-	margin-right: 0;
-}
-
 .cancel-purchase__button {
 	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
@@ -228,10 +200,6 @@
 
 .purchases__cancel .cancel-purchase__inner-wrapper.card {
 	box-shadow: none;
-}
-
-.cancel-purchase-loading-placeholder__cancel-button {
-	width: 30%;
 }
 
 .cancel-purchase-loading-placeholder__header {
