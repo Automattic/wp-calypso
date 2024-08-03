@@ -37,11 +37,10 @@ const HelpResultItem = ( {
 
 		onClick?.( event, helpLink );
 
-		helpLink.link && openInHelpCenter && event.preventDefault();
-		helpLink.link &&
-			openInHelpCenter &&
-			openArticleInHelpCenter &&
+		if ( helpLink.link && openInHelpCenter && openArticleInHelpCenter ) {
+			event.preventDefault();
 			openArticleInHelpCenter( helpLink.link );
+		}
 	};
 
 	const getResultImage = () => {
@@ -58,15 +57,13 @@ const HelpResultItem = ( {
 			return;
 		}
 
-		const iconClass = 'help-result__icon';
-		const iconSize = 24;
 		// By rule, gridicons don't contain logos so we need a special case here
 		if ( iconTypeDescription === 'jetpack' ) {
 			return (
 				<svg
-					className={ iconClass }
-					height={ iconSize }
-					width={ iconSize }
+					className="help-result__icon"
+					height="24"
+					width="24"
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 24 24"
 				>
@@ -74,7 +71,7 @@ const HelpResultItem = ( {
 				</svg>
 			);
 		}
-		return <Gridicon className={ iconClass } icon={ iconTypeDescription } size={ iconSize } />;
+		return <Gridicon className="help-result__icon" icon={ iconTypeDescription } size={ 24 } />;
 	};
 
 	return (
