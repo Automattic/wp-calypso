@@ -1,6 +1,5 @@
 import { Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 
 const CancelPurchaseLoadingPlaceholder = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
@@ -25,11 +24,5 @@ const CancelPurchaseLoadingPlaceholder = () => {
 	);
 };
 /* eslint-enable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
-
-CancelPurchaseLoadingPlaceholder.propTypes = {
-	purchaseId: PropTypes.number.isRequired,
-	siteSlug: PropTypes.string.isRequired,
-	getManagePurchaseUrlFor: PropTypes.func.isRequired,
-};
 
 export default localize( CancelPurchaseLoadingPlaceholder );

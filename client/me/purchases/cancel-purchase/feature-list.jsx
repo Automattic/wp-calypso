@@ -23,7 +23,7 @@ const CancelPurchaseFeatureList = ( { purchase, cancellationFeatures } ) => {
 			<ul className="cancel-purchase__features-list">
 				{ cancellationFeatures.map( ( feature ) => {
 					return (
-						<li key={ feature.key }>
+						<li key={ feature }>
 							<Gridicon
 								className="cancel-purchase__refund-information--item-cross-small"
 								size={ 24 }
