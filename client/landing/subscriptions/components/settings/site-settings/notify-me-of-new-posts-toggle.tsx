@@ -26,7 +26,20 @@ const NotifyMeOfNewPostsToggle = ( {
 			{ value && (
 				<p className="setting-item__app-hint">
 					<JetpackLogo size={ 20 } />
-					{ translate( 'Take your subscriptions on the go with the Jetpack mobile app.' ) }
+					{ translate(
+						'Take your subscriptions on the go with the {{a}}Jetpack mobile app{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href="https://wp.com/app/?campaign=calypso-subscription-link"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
 				</p>
 			) }
 		</div>

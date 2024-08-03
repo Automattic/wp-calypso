@@ -42,6 +42,10 @@ $setting-item-margin-bottom: 20px;
 				vertical-align: middle;
 				margin-right: 8px;
 			}
+			a {
+				color: $studio-gray-90;
+				text-decoration: underline;
+			}
 		}
 
 		.segmented-control__item.is-selected .segmented-control__link {
