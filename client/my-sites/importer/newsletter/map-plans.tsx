@@ -3,7 +3,6 @@ import { Button } from '@wordpress/components';
 
 type Props = {
 	nextStepUrl: string;
-	fromSite: string;
 };
 
 export default function MapPlans( { nextStepUrl }: Props ) {

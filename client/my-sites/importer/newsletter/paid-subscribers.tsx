@@ -40,7 +40,7 @@ export default function PaidSubscribers( { nextStepUrl, fromSite }: Props ) {
 			{ ! hasConnectedAccount && (
 				<ConnectStripe nextStepUrl={ nextStepUrl } fromSite={ fromSite } />
 			) }
-			{ hasConnectedAccount && <MapPlans nextStepUrl={ nextStepUrl } fromSite={ fromSite } /> }
+			{ hasConnectedAccount && <MapPlans nextStepUrl={ nextStepUrl } /> }
 		</>
 	);
 }
