@@ -123,7 +123,7 @@ class Help extends PureComponent {
 								helpLink={ result }
 								iconTypeDescription="book"
 								onClick={ trackClick }
-								openInHelpCenter="true"
+								openInHelpCenter
 							/>
 						);
 					} ) }
