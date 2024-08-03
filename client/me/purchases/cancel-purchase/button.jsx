@@ -275,42 +275,56 @@ class CancelPurchaseButton extends Component {
 
 	render() {
 		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
-		let text;
-		let onClick;
 
-		if ( hasAmountAvailableToRefund( purchase ) ) {
-			onClick = this.handleCancelPurchaseClick;
+		const onClick = ( () => {
+			if ( hasAmountAvailableToRefund( purchase ) ) {
+				if (
+					isDomainRegistration( purchase ) ||
+					isSubscription( purchase ) ||
+					isOneTimePurchase( purchase )
+				) {
+					return this.handleCancelPurchaseClick;
+				}
+			} else {
+				if ( isDomainRegistration( purchase ) ) {
+					if ( isRefundable( purchase ) ) {
+						return this.handleCancelPurchaseClick;
+					}
+				}
 
-			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel domain and refund' );
+				if ( isSubscription( purchase ) ) {
+					return this.handleCancelPurchaseClick;
+				}
+
+				return () => {
+					this.cancelPurchase( purchase );
+				};
 			}
+		} )();
 
-			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel subscription' );
-			}
+		const text = ( () => {
+			if ( hasAmountAvailableToRefund( purchase ) ) {
+				if ( isDomainRegistration( purchase ) ) {
+					return translate( 'Cancel domain and refund' );
+				}
 
-			if ( isOneTimePurchase( purchase ) ) {
-				text = translate( 'Cancel and refund' );
-			}
-		} else {
-			onClick = () => {
-				this.cancelPurchase( purchase );
-			};
+				if ( isSubscription( purchase ) ) {
+					return translate( 'Cancel subscription' );
+				}
 
-			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel domain' );
+				if ( isOneTimePurchase( purchase ) ) {
+					return translate( 'Cancel and refund' );
+				}
+			} else {
+				if ( isDomainRegistration( purchase ) ) {
+					return translate( 'Cancel domain' );
+				}
 
-				// Domain in AGP bought with domain credits should be canceled immediately
-				if ( isRefundable( purchase ) ) {
-					onClick = this.handleCancelPurchaseClick;
+				if ( isSubscription( purchase ) ) {
+					return translate( 'Cancel subscription' );
 				}
 			}
-
-			if ( isSubscription( purchase ) ) {
-				onClick = this.handleCancelPurchaseClick;
-				text = translate( 'Cancel subscription' );
-			}
-		}
+		} )();
 
 		const disableButtons = this.state.disabled || this.props.disabled;
 		const { isJetpack, isAkismet, purchaseListUrl, activeSubscriptions } = this.props;
