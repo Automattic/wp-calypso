@@ -12,7 +12,7 @@ export async function loadmShotsPreview( options = {} ) {
 
 	const mShotsEndpointUrl = addQueryArgs(
 		rest,
-		`http://localhost:8000/mshots/v1/${ encodeURIComponent( url ) }`
+		`https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }`
 	);
 
 	for ( let retries = 0; ; retries++ ) {
