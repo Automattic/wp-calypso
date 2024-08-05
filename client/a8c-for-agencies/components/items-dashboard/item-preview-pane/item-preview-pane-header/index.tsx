@@ -115,12 +115,16 @@ export default function ItemPreviewPaneHeader( {
 										{ wpVersion && (
 											<div className="item-preview__header-env-data-item">
 												WordPress{ ' ' }
-												<Button
-													className="item-preview__header-env-data-item-link"
-													onClick={ handleWpVersionClick }
-												>
-													{ wpVersion }
-												</Button>
+												{ isAtomic ? (
+													<Button
+														className="item-preview__header-env-data-item-link"
+														onClick={ handleWpVersionClick }
+													>
+														{ wpVersion }
+													</Button>
+												) : (
+													wpVersion
+												) }
 											</div>
 										) }
 										{ phpVersion && (
