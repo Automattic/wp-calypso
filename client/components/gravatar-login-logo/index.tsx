@@ -33,7 +33,7 @@ export default function GravatarLoginLogo( {
 					{ isCoBrand && (
 						<img
 							className="gravatar-login-logo__gravatar-logo"
-							src="/calypso/images/gravatar/logo_gravatar-with-bg.svg"
+							src="https://gravatar.com/images/grav-logo-with-bg.svg"
 							alt="Gravatar"
 							width={ width }
 							height={ height }
