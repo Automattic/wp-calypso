@@ -1,15 +1,19 @@
+import { addQueryArgs } from '../url';
+
 const noop = () => {};
 
 export async function loadmShotsPreview( options = {} ) {
-	const { maxRetries = 1, retryTimeout = 1000 } = options;
-	const url = options.url || '';
+	const { url = '', maxRetries = 1, retryTimeout = 1000, ...rest } = options;
 
 	if ( ! url ) {
 		// TODO translate
 		throw new Error( 'You must specify a site URL to be able to generate a preview of the site' );
 	}
 
-	const mShotsEndpointUrl = `https://s0.wp.com/mshots/v1/${ url }`;
+	const mShotsEndpointUrl = addQueryArgs(
+		rest,
+		`http://localhost:8000/mshots/v1/${ encodeURIComponent( url ) }`
+	);
 
 	for ( let retries = 0; ; retries++ ) {
 		const response = await fetch( mShotsEndpointUrl, { method: 'GET' } );

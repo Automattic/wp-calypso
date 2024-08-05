@@ -22,6 +22,10 @@ export type MShotsOptions = {
 	h?: number;
 	screen_height?: number;
 	requeue?: boolean;
+	/**
+	 * If true, the current user agent will be forwarded to the target site to mimic the user themselves viewing the site.
+	 */
+	forward_user_agent?: boolean;
 };
 
 function getRetinaSize( multiply: number, { w, h }: MShotsOptions ) {

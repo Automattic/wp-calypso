@@ -42,6 +42,8 @@ class SiteImporterSitePreview extends Component {
 			url: this.props.siteURL,
 			maxRetries: 30,
 			retryTimeout: 1000,
+			// Forward the user agent to mShots so that it can render the site the same way as the user's browser.
+			forward_user_agent: true,
 		} )
 			.then( ( imageBlob ) => {
 				this.setState( {
