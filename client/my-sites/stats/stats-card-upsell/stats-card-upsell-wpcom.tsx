@@ -32,9 +32,7 @@ const getUpsellCopy = ( statType: string ) => {
 		case STATS_FEATURE_DATE_CONTROL:
 			return translate( 'Compare different time periods to analyze your site’s growth.' );
 		case STAT_TYPE_VIDEO_PLAYS:
-			return translate(
-				'Discover your most popular videos to better understand how they performed.'
-			);
+			return translate( 'Discover your most popular videos and find out how they performed.' );
 		default:
 			return translate( 'Upgrade your plan to unlock Jetpack Stats.' );
 	}
