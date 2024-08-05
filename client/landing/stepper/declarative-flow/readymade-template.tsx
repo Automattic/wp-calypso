@@ -66,7 +66,8 @@ const readymadeTemplateFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
 		);
-		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction, setSelectedSite, setSelectedReadymadeTemplate } =
+			useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite, assembleSite } = useDispatch( SITE_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
 		const reduxDispatch = useReduxDispatch();
@@ -80,6 +81,7 @@ const readymadeTemplateFlow: Flow = {
 			setSelectedSite( selectedSiteId );
 			setIntentOnSite( selectedSiteSlug, SiteIntent.ReadyMadeTemplate );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
+			setSelectedReadymadeTemplate( readymadeTemplate );
 
 			setPendingAction(
 				enableAssemblerThemeAndConfigureTemplates(
@@ -178,6 +180,7 @@ const readymadeTemplateFlow: Flow = {
 		const goBack = () => {
 			switch ( _currentStep ) {
 				case 'freePostSetup':
+				case 'generateContent':
 				case 'domains': {
 					return navigate( 'launchpad' );
 				}
@@ -289,12 +292,12 @@ function enableAssemblerThemeAndConfigureTemplates(
 			.then( () => navigate( `launchpad?siteSlug=${ siteSlug }` ) );
 }
 
-function useReadymadeTemplate( templateId: number, options: object = { enabled: true } ) {
+function useReadymadeTemplate( templateId: number ) {
 	const { data: readymadeTemplate } = useQuery( {
-		...options,
 		queryKey: [ 'readymade-templates', templateId ],
 		queryFn: async () =>
 			wpcom.req.get( `/themes/readymade-templates/${ templateId }`, { apiNamespace: 'wpcom/v2' } ),
+		enabled: !! templateId,
 	} );
 
 	const { data: assemblerTheme } = useThemeDetails( 'assembler' );

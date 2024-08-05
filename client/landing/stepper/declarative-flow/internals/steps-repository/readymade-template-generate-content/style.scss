@@ -1,0 +1,120 @@
+@import "../style";
+
+.generate-content {
+	overflow: hidden;
+}
+
+.generate-content.step-container {
+	.step-container__content {
+		flex-direction: column;
+		padding-top: 40px;
+		display: flex;
+		justify-content: space-between;
+		min-height: unset;
+		margin: 0 6px;
+
+		@include break-medium {
+			flex-direction: row;
+		}
+
+		@include break-large {
+			margin: 0 20px 24px 24px;
+		}
+	}
+
+	.generate-content {
+		margin-left: 10px;
+	}
+
+	.step-container__header {
+		margin-bottom: 32px;
+	}
+
+	.site-preview__wrapper,
+	.readymade-template-preview {
+		height: 80vh;
+	}
+
+	.generate-content__form {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		position: relative;
+		max-width: 335px;
+		min-width: 200px;
+		padding: 0 20px;
+
+		@include break-medium {
+			padding: 0 20px;
+			max-width: 368px;
+		}
+
+		.generate-content__field,
+		fieldset {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			margin-bottom: 16px;
+		}
+
+		textarea.form-textarea {
+			color: var(--studio-gray-100);
+			font-size: $font-body-small;
+			padding: 12px 16px;
+			line-height: 20px;
+			min-height: 44px;
+			border-radius: 4px;
+			background-repeat: no-repeat;
+			background-position: 95%;
+			height: 160px;
+			resize: none;
+			overflow: hidden;
+			&:focus {
+				border-color: var(--studio-gray-10);
+				box-shadow: 0 0 0 2px var(--color-primary-10);
+				outline: none;
+			}
+		}
+
+		.generate-content__buttons {
+			width: 100%;
+
+			.checklist-item__checklist-primary-button {
+				transition: opacity 0.2s, background-color 0.2s;
+			}
+		}
+
+		.generate-content__description {
+			color: var(--studio-gray-40);
+			font-size: $font-body-small;
+			padding-bottom: 12px;
+		}
+
+		.form-label {
+			color: var(--studio-gray-100);
+			margin-bottom: 8px;
+			font-size: $font-body;
+		}
+
+		.generate-content__submit {
+			border: none;
+			width: 100%;
+			// adds +2 px of padding to the button to match the input field height
+			height: 40px;
+			margin-top: 16px;
+			&.disabled,
+			&.disabled:focus,
+			&.disabled:hover,
+			&:disabled {
+				background: var(--studio-blue-20);
+				cursor: default;
+			}
+			&:focus {
+				box-shadow: none;
+				outline: 2px solid var(--studio-blue-60);
+				outline-offset: 1px;
+				background: var(--studio-blue-60);
+			}
+		}
+	}
+}
