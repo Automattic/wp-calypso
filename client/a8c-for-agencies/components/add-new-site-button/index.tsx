@@ -28,9 +28,15 @@ type Props = {
 	onWPCOMImport?: ( blogIds: number[] ) => void;
 	showMainButtonLabel: boolean;
 	devSite?: boolean;
+	toggleSiteConfigurationsModal?: () => void;
 };
 
-export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport, devSite }: Props ) {
+export default function AddNewSiteButton( {
+	showMainButtonLabel,
+	onWPCOMImport,
+	devSite,
+	toggleSiteConfigurationsModal,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -196,6 +202,9 @@ export default function AddNewSiteButton( { showMainButtonLabel, onWPCOMImport, 
 					icon: <WordPressLogo />,
 					heading: translate( 'WordPress.com' ),
 					description: translate( 'Create a site and try our hosting features for free' ),
+					buttonProps: {
+						onClick: toggleSiteConfigurationsModal,
+					},
 					extraContent: hasAvailableDevSites ? (
 						<div className="site-selector-and-importer__popover-site-count">
 							{ translate( '%(pendingSites)d site available', '%(pendingSites)d sites available', {
