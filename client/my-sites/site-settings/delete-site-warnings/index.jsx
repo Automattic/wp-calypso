@@ -4,9 +4,12 @@ import PropTypes from 'prop-types';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
+import { useSelector } from 'calypso/state';
+import { getSite } from 'calypso/state/sites/selectors';
 
 function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialSite = false } ) {
 	const translate = useTranslate();
+	const site = useSelector( ( state ) => getSite( state, 234130114 ) );
 
 	const getButtons = () => {
 		if ( isAtomicRemovalInProgress ) {
@@ -21,14 +24,14 @@ function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialS
 			);
 		} else if ( isTrialSite ) {
 			return (
-				<Button primary href={ purchasesRoot }>
+				<Button primary href={ purchasesRoot + '/' + site?.domain }>
 					{ translate( 'Cancel trial', { context: 'button label' } ) }
 				</Button>
 			);
 		}
 
 		return (
-			<Button primary href={ purchasesRoot }>
+			<Button primary href={ purchasesRoot + '/' + site?.domain }>
 				{ translate( 'Manage purchases', { context: 'button label' } ) }
 			</Button>
 		);
