@@ -32,7 +32,7 @@ import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
+import { isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
 	getCurrentOAuth2Client,
@@ -160,15 +160,15 @@ const LayoutLoggedOut = ( {
 		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
 	}
 
-	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
-	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
+	if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
+		masterbar = null;
+	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
+		// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 		if ( isPartnerSignup && ! isPartnerSignupStart ) {
 			// Using localizeUrl directly to sidestep issue with useLocale use in SSR
 			masterbar = (
 				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
 			);
-		} else if ( isGravatar || isGravPoweredClient ) {
-			masterbar = null;
 		} else {
 			classes.dops = true;
 			classes[ oauth2Client.name ] = true;
@@ -339,15 +339,8 @@ export default withCurrentRoute(
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
-			const redirectToOriginal = getRedirectToOriginal( state ) || '';
 			const isBlazePro = getIsBlazePro( state );
-			const clientId = new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get(
-				'client_id'
-			);
-			const isGravPoweredClient =
-				isGravPoweredOAuth2Client( oauth2Client ) ||
-				// To cover the case of a login URL without the "client_id" parameter, e.g. /log-in/link/use
-				isGravPoweredOAuth2Client( { id: Number( clientId ) } );
+			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 			const isReskinLoginRoute =
 				currentRoute.startsWith( '/log-in' ) &&
 				! isJetpackLogin &&
