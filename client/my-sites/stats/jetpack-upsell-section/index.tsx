@@ -13,6 +13,7 @@ import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import usePurchasedProducts from './use-purchased-products';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -23,6 +24,24 @@ const QUERY_VALUES = {
 	// Redirects to Odyssey Stats after after removing all products from the shopping cart.
 	checkoutBackUrl: window.location.href,
 };
+
+function shouldHideUpsellSection( purchases: Purchase[] ) {
+	if ( purchases.length === 0 ) {
+		return false;
+	}
+
+	// Filter out expired plans.
+	const plans = purchases.filter( ( purchase ) => purchase.expiryStatus !== 'expired' );
+
+	// Check if site has a plan that precludes the upsell.
+	// Currenty that means Business or Complete plans.
+	const hasFullFeaturedPlan = plans.some(
+		( purchase ) =>
+			purchase.productSlug.includes( 'complete' ) || purchase.productSlug.includes( 'business' )
+	);
+
+	return hasFullFeaturedPlan;
+}
 
 export default function JetpackUpsellSection() {
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -35,13 +54,11 @@ export default function JetpackUpsellSection() {
 	// Currently checking for variations of the Complete bundle only.
 	const siteId = useSelector( getSelectedSiteId );
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-	const hasCompleteBundle = sitePurchases?.some( ( purchase ) =>
-		purchase.productSlug.includes( 'complete' )
-	);
+	const shouldHideUpsells = shouldHideUpsellSection( sitePurchases );
 
 	// Exit early if we don't have and can't get the site purchase data.
 	// Also exit early if we're not in the Odyssey Stats environment.
-	if ( ! isOdysseyStats || hasCompleteBundle ) {
+	if ( ! isOdysseyStats || shouldHideUpsells ) {
 		return null;
 	}
 
