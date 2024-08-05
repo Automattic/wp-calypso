@@ -19,12 +19,15 @@ jest.mock( 'i18n-calypso', () => ( {
 	localize: jest.fn(),
 	translate: jest.fn(),
 } ) );
+jest.mock( '@wordpress/data' );
+jest.mock( '../use-generate-action-callback', () => () => jest.fn() );
 
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
 	PLAN_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -105,7 +108,7 @@ describe( 'useGenerateActionHook', () => {
 				},
 			} )
 		);
-		jest.mock( '../use-generate-action-callback', () => jest.fn( () => jest.fn() ) );
+
 		( Plans.useCurrentPlan as jest.Mock ).mockImplementation( () => null );
 	} );
 
@@ -390,6 +393,25 @@ describe( 'useGenerateActionHook', () => {
 		const action = result.current( { planSlug: PLAN_BUSINESS } );
 
 		expect( action.primary.text ).toBe( 'Keep my plan' );
+	} );
+
+	it( 'should handle higher plan for non-plan owner', () => {
+		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+			planSlug: PLAN_BUSINESS,
+		} );
+		( useSelector as jest.Mock ).mockImplementation( currentPlanIsNotOwnerMockSelector );
+
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: false,
+				isLaunchPage: false,
+				siteId: mockSiteId,
+			} )
+		);
+
+		const action = result.current( { planSlug: PLAN_ECOMMERCE, availableForPurchase: true } );
+
+		expect( action.primary.text ).toBe( 'Upgrade' );
 	} );
 
 	it( 'should handle WooExpress Medium plan upgrade', () => {

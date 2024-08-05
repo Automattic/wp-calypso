@@ -1,8 +1,6 @@
 import { JetpackLogo } from '@automattic/components';
 import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
-import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.png';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
@@ -28,8 +26,8 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
-				heading={ translate( 'Supercharge your clients’ sites' ) }
-				subheading={ translate( 'Premium Jetpack features included' ) }
+				heading={ translate( 'Premium Jetpack features included' ) }
+				subheading={ translate( 'Supercharge your clients’ sites' ) }
 				background={ BackgroundType1 }
 				items={ [
 					translate( 'Real-time backups' ),
@@ -50,8 +48,8 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 				fiveRows
 			/>
 			<HostingAdditionalFeaturesSection
-				heading={ translate( 'Just for Agencies' ) }
-				subheading={ translate( 'Included with all plans and sites' ) }
+				heading={ translate( 'Included with all plans and sites' ) }
+				subheading={ translate( 'Just for Agencies' ) }
 				items={ [
 					translate( 'Global edge caching' ),
 					translate( 'Global CDN with 28+ locations' ),
@@ -66,8 +64,8 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 				] }
 			/>
 			<HostingFeaturesSection
-				heading={ translate( 'Specialized workflows' ) }
-				subheading={ translate( 'Built for developers, by developers' ) }
+				heading={ translate( 'Built for developers, by developers' ) }
+				subheading={ translate( 'Specialized workflows' ) }
 				background={ BackgroundType2 }
 				items={ [
 					{
@@ -115,12 +113,11 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 				] }
 			/>
 			<HostingTestimonialsSection
-				heading={ translate( 'What agencies say' ) }
-				subheading={ translate( 'Love for WordPress.com hosting' ) }
+				heading={ translate( 'Love for WordPress.com hosting' ) }
+				subheading={ translate( 'What agencies say' ) }
 				items={ [
 					{
 						profile: {
-							avatar: ProfileAvatar1,
 							name: 'Ajit Bohra',
 							title: 'Founder - LUBUS',
 							site: 'lubus.in',
@@ -128,18 +125,6 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 						testimonial: translate(
 							'We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com.'
 						),
-					},
-
-					{
-						profile: {
-							avatar: ProfileAvatar2,
-							name: 'Anil Gupta',
-							title: 'CEO - Multidots',
-							site: 'multidots.com',
-						},
-						testimonial:
-							// TODO: Change this to a real testimonial
-							"This should be another WordPress.com specific testimonial. Let's make sure it touches upon how they love the hosting, the support service, and especially the UI. This is just dummy text.",
 					},
 				] }
 			/>

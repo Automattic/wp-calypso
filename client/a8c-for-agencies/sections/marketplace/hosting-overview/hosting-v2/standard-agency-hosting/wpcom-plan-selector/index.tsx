@@ -60,7 +60,7 @@ function PlanDetails( { plan, onSelect, ownedPlans, referralMode }: PlanDetailsP
 
 	return (
 		<div className="wpcom-plan-selector__details">
-			{ ownedPlans && (
+			{ ownedPlans > 0 && (
 				<div className="wpcom-plan-selector__owned-plan">
 					{ translate( 'You own %(count)s site', 'You own %(count)s sites', {
 						args: {

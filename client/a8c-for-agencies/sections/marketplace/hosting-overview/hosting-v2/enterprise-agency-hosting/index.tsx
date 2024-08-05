@@ -9,6 +9,8 @@ import MetaLogo from 'calypso/assets/images/logos/meta.svg';
 import NewYorkPostLogo from 'calypso/assets/images/logos/new-york-post.svg';
 import NewsCorpLogo from 'calypso/assets/images/logos/news-corp.svg';
 import SpotifyLogo from 'calypso/assets/images/logos/spotify.svg';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import { BackgroundType4 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
@@ -18,6 +20,13 @@ import './style.scss';
 
 export default function EnterpriseAgencyHosting() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const onRequestDemoClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_hosting_enterprise_request_demo_click' )
+		);
+	};
 
 	return (
 		<>
@@ -35,7 +44,12 @@ export default function EnterpriseAgencyHosting() {
 							),
 						] }
 					/>
-					<Button href="https://wpvip.com/contact/" target="_blank" variant="primary">
+					<Button
+						href="https://wpvip.com/contact/"
+						onClick={ onRequestDemoClick }
+						target="_blank"
+						variant="primary"
+					>
 						{ translate( 'Request a Demo' ) } <Icon icon={ external } size={ 16 } />
 					</Button>
 				</div>

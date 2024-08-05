@@ -12,15 +12,10 @@ type ContentProps = {
 	nextStepUrl: string;
 	selectedSite?: SiteDetails;
 	siteSlug: string;
-	newsletterUrl: QueryArgParsed;
+	fromSite: QueryArgParsed;
 };
 
-export default function Content( {
-	nextStepUrl,
-	selectedSite,
-	siteSlug,
-	newsletterUrl,
-}: ContentProps ) {
+export default function Content( { nextStepUrl, selectedSite, siteSlug, fromSite }: ContentProps ) {
 	const siteTitle = selectedSite?.title;
 	const siteId = selectedSite?.ID;
 
@@ -55,7 +50,7 @@ export default function Content( {
 				To generate a ZIP file of all your Substack posts, go to Settings { '>' } Exports and click
 				'Create a new export.' Once the ZIP file is downloaded, upload it in the next step.
 			</p>
-			<Button href={ `https://${ newsletterUrl }/publish/settings#exports` }>Export content</Button>
+			<Button href={ `https://${ fromSite }/publish/settings#exports` }>Export content</Button>
 			<hr />
 			<h2>Step 2: Import your content to WordPress.com</h2>
 			{ importerStatus && (
@@ -64,6 +59,7 @@ export default function Content( {
 					siteSlug={ siteSlug }
 					siteTitle={ siteTitle }
 					importerStatus={ importerStatus }
+					fromSite={ fromSite }
 				/>
 			) }
 			<Button href={ nextStepUrl } primary>
