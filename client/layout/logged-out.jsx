@@ -98,7 +98,9 @@ const LayoutLoggedOut = ( {
 	const isJetpackThankYou =
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
-	const isReaderTagPage = sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/tag/' );
+	const isReaderTagPage =
+		sectionName === 'reader' &&
+		( pathNameWithoutLocale.startsWith( '/tag/' ) || pathNameWithoutLocale.startsWith( '/tags' ) );
 	const isReaderTagEmbed = typeof window !== 'undefined' && isReaderTagEmbedPage( window.location );
 
 	const isReaderDiscoverPage =
