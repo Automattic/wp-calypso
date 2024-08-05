@@ -24,7 +24,6 @@ function SubscribeEmailStepContent( props ) {
 
 	return (
 		<SignupForm
-			// recaptchaClientId={ this.state.recaptchaClientId }
 			displayUsernameInput={ false }
 			email={ email || '' }
 			flowName={ flowName }
