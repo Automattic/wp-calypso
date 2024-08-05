@@ -224,11 +224,6 @@ function SubscribeEmailStep( props ) {
 											className="continue-as-user__change-user-link"
 											onClick={ () => {
 												recordTracksEvent( 'calypso_signup_click_on_change_account' );
-
-												/**
-												 * Redirect to the current URL after logout. The current URL includes
-												 * query params like email, name, etc. which we parse on page load.
-												 */
 												props.redirectToLogout( window.location.href );
 											} }
 										/>
