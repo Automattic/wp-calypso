@@ -2,6 +2,7 @@ import { localize } from 'i18n-calypso';
 import SignupForm from 'calypso/blocks/signup-form';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 
+// TODO: This component is not needed. Migrate logic into the subscribe-email index file
 function SubscribeEmailStepContent( props ) {
 	const {
 		email,
