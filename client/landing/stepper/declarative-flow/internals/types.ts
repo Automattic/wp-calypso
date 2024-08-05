@@ -141,7 +141,8 @@ export type Flow = {
 	 */
 	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
 	/**
-	 * Used for extending the default/framework-handled event tracking with custom properties.
+	 * Used for overriding the props recorded by the default/framework-handled Tracks event recorders.
+	 * Can pass any properties that should be recorded for the event.
 	 *   - Currently only applicable to step-navigation events.
 	 */
 	useTracksEventProps?: (
