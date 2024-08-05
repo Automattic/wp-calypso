@@ -948,7 +948,6 @@ class MagicLogin extends Component {
 		const isFromGravatarSignup = isGravatar && query?.gravatar_from === 'signup';
 		const isFromGravatar3rdPartyApp = isGravatar && query?.gravatar_from === '3rd-party';
 		const isEmailInputDisabled = isFromGravatar3rdPartyApp || isRequestingEmail;
-		const shouldShowSubHeader = isFromGravatar3rdPartyApp || isGravatarFlow;
 		const submitButtonLabel = isGravatar
 			? translate( 'Continue' )
 			: translate( 'Send me sign in link' );
@@ -963,6 +962,15 @@ class MagicLogin extends Component {
 			? translate( 'Create your Profile' )
 			: translate( 'Edit your Profile' );
 		headerText = isWPJobManager ? translate( 'Sign in with your email' ) : headerText;
+		let subHeader = '';
+
+		if ( isGravatarFlow ) {
+			subHeader = translate( '%(clientTitle)s profiles are powered by Gravatar.', {
+				args: { clientTitle: oauth2Client.title },
+			} );
+		} else if ( isFromGravatar3rdPartyApp ) {
+			subHeader = translate( 'Profiles and avatars are powered by Gravatar.' );
+		}
 
 		return (
 			<>
@@ -973,12 +981,8 @@ class MagicLogin extends Component {
 					<RequestLoginEmailForm
 						flow={ getGravatarOAuth2Flow( oauth2Client ) }
 						headerText={ headerText }
-						subHeaderText={
-							shouldShowSubHeader
-								? translate( 'Profiles and avatars are powered by Gravatar.' )
-								: ''
-						}
-						hideSubHeaderText={ ! shouldShowSubHeader }
+						subHeaderText={ subHeader }
+						hideSubHeaderText={ ! subHeader }
 						inputPlaceholder={ translate( 'Enter your email address' ) }
 						submitButtonLabel={ submitButtonLabel }
 						tosComponent={ ! isGravatar && this.renderGravPoweredMagicLoginTos() }
