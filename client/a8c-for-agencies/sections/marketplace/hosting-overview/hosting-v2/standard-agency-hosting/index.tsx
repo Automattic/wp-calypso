@@ -120,7 +120,12 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 					{
 						profile: {
 							name: 'Ajit Bohra',
-							title: 'Founder - LUBUS',
+							title: translate( 'Founder - %(companyName)s', {
+								args: {
+									companyName: 'LUBUS',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
 							site: 'lubus.in',
 						},
 						testimonial: translate(
@@ -131,7 +136,12 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 						profile: {
 							name: 'Brian Lalli',
 							avatar: ProfileAvatar1,
-							title: 'President - Moon Rooster LLC',
+							title: translate( 'President - %(companyName)s', {
+								args: {
+									companyName: 'Moon Rooster LLC',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
 							site: 'moonrooster.com',
 						},
 						testimonial: translate(
