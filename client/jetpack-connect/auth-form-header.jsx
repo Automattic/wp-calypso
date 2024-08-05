@@ -165,8 +165,7 @@ export class AuthFormHeader extends Component {
 
 		if ( isWooCoreProfiler ) {
 			const pluginNames = {
-				'jetpack-ai': 'Jetpack AI',
-				'jetpack-boost': 'Jetpack Boost',
+				'jetpack-ai': 'Jetpack and WooPayments',
 				default: 'Jetpack and WooPayments',
 			};
 
