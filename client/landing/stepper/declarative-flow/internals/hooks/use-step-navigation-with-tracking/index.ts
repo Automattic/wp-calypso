@@ -1,5 +1,6 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordSubmitStep } from '../../analytics/record-submit-step';
 import type { Flow, Navigate, ProvidedDependencies, StepperStep } from '../../types';
@@ -36,7 +37,8 @@ export const useStepNavigationWithTracking = ( {
 					intent,
 					flow.name,
 					currentStepRoute,
-					flow.variantSlug
+					flow.variantSlug,
+					flow.useTracksEventProps?.( STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT )
 				);
 			stepNavigation.submit?.( providedDependencies, ...params );
 		},

@@ -1,5 +1,6 @@
 import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
+import { StepperTracksEventStepNavigation } from '../../types';
 
 /**
  * This is the return type of useStepNavigation hook
@@ -139,7 +140,13 @@ export type Flow = {
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
 	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
-
+	/**
+	 * Used for extending the default/framework-handled event tracking with custom properties.
+	 *   - Currently only applicable to step-navigation events.
+	 */
+	useTracksEventProps?: (
+		event: StepperTracksEventStepNavigation
+	) => Record< string, string | number | null > | undefined;
 	/**
 	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
 	 * IMPORTANT: This hook will be removed in the future.

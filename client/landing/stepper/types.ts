@@ -1,5 +1,7 @@
 /** Step */
 
+import { STEPPER_TRACKS_EVENTS_STEP_NAVIGATION } from './constants';
+
 export type StepOptions = Record< string, unknown >;
 
 export interface Step {
@@ -24,3 +26,6 @@ export interface Flow< P extends string > {
 		index: FlowStepIndex< P >;
 	} >;
 }
+
+export type StepperTracksEventStepNavigation =
+	( typeof STEPPER_TRACKS_EVENTS_STEP_NAVIGATION )[ number ];
