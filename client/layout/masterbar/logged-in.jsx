@@ -320,7 +320,7 @@ class MasterbarLoggedIn extends Component {
 					icon={ icon }
 					onClick={ this.clickMySites }
 					isActive={ this.isMySitesActive() }
-					tooltip={ translate( 'Manage your sites 3' ) }
+					tooltip={ translate( 'Manage your sites' ) }
 					preloadSection={ this.preloadMySites }
 					ref={ ( ref ) => ref !== allSitesBtnRef && this.setState( { allSitesBtnRef: ref } ) }
 					hasGlobalBorderStyle
