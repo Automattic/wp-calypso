@@ -6,5 +6,6 @@ export { default as useChatStatus } from './use-chat-status';
 export { useShouldUseWapuu } from './use-should-use-wapuu';
 export { filterListBySearchTerm } from './use-admin-results';
 export { useActionHooks } from './use-action-hooks';
+export { useOpenArticleInHelpCenter } from './use-open-article-in-help-center';
 export { usePostByUrl } from './use-post-by-url';
 export { useContentFilter } from './use-content-filter';

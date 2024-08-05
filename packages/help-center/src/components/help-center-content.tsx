@@ -11,16 +11,18 @@ import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import React, { useCallback, useState } from 'react';
-import { Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldRenderEmailOption, useShouldUseWapuu } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterArticle } from './help-center-article';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
+import { ExtraContactOptions } from './help-center-extra-contact-option';
 import { HelpCenterOdie } from './help-center-odie';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
@@ -70,6 +72,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		};
 	}, [] );
 
+	const { data } = useSupportStatus();
+
+	const isUserElegible = data?.eligibility.is_user_eligible ?? false;
+
 	const navigateToSupportDocs = useCallback(
 		( blogId: string, postId: string, title: string, link: string ) => {
 			navigate(
@@ -86,8 +92,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			section: sectionName,
 			force_site_id: true,
 			location: 'help-center',
+			is_free_user: ! isUserElegible,
 		} );
-	}, [ location, sectionName ] );
+	}, [ location, sectionName, isUserElegible ] );
 
 	const { navigateToRoute } = useSelect(
 		( select ) => ( {
@@ -98,9 +105,14 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	useEffect( () => {
 		if ( navigateToRoute ) {
+			const fullLocation = [ location.pathname, location.search, location.hash ].join( '' );
+			// On navigate once to keep the back button responsive.
+			if ( fullLocation !== navigateToRoute ) {
+				navigate( navigateToRoute );
+			}
 			setNavigateToRoute( null );
 		}
-	}, [ navigate, navigateToRoute, setNavigateToRoute ] );
+	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
 
 	// reset the scroll location on navigation, TODO: unless there's an anchor
 	useEffect( () => {
@@ -130,17 +142,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/"
 						element={
-							navigateToRoute ? (
-								<Navigate to={ navigateToRoute } />
-							) : (
-								<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
-							)
+							<HelpCenterSearch onSearchChange={ setSearchTerm } currentRoute={ currentRoute } />
 						}
 					/>
-					<Route
-						path="/post"
-						element={ <HelpCenterArticle navigateToRoute={ navigateToRoute ?? '' } /> }
-					/>
+					<Route path="/post" element={ <HelpCenterArticle /> } />
 					<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
 					<Route
 						path="/contact-form"
@@ -162,16 +167,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								logger={ trackEvent }
 								loggerEventNamePrefix="calypso_odie"
 								selectedSiteId={ site?.ID as number }
-								extraContactOptions={
-									<div className="help-center__container-extra-contact-options">
-										<HelpCenterContactPage
-											hideHeaders
-											trackEventName="calypso_odie_extra_contact_option"
-										/>
-									</div>
-								}
+								extraContactOptions={ <ExtraContactOptions isUserElegible={ isUserElegible } /> }
 								navigateToContactOptions={ navigateToContactOptions }
 								navigateToSupportDocs={ navigateToSupportDocs }
+								isUserElegible={ isUserElegible }
 							>
 								<HelpCenterOdie />
 							</OdieAssistantProvider>
