@@ -13,7 +13,7 @@ const generateAIContentForTemplate = async (
 
 	const requests = paths.map( ( { content, sectionName } ) =>
 		wpcom.req.post( {
-			path: `/ai-content/html`,
+			path: '/ai-content/html',
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			body: {
