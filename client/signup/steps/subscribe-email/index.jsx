@@ -111,7 +111,7 @@ function SubscribeEmailStep( props ) {
 				recordPasswordlessRegistration( userData );
 
 				/**
-				 * We want to log out new users out after we subscribe their email. This will
+				 * We want to log out new users after we subscribe their email. This will
 				 * require an updated logout nonce. User data in the store, however, is stale
 				 * because we just created a new account. We need to refresh the user data.
 				 */
