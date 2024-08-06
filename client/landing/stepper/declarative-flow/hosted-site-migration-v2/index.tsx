@@ -4,7 +4,7 @@ import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
 
 export default {
-	name: 'site-migration-v2',
+	name: 'hosted-site-migration-v2',
 	get title() {
 		return translate( 'Site Migration' );
 	},
@@ -13,9 +13,11 @@ export default {
 		return stepsWithRequiredLogin( [ STEPS.IMPORT_OR_MIGRATE_WITH_UPGRADE ] );
 	},
 
+	//TEMP: This is a temporary implementation to make the flow work
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	useStepNavigation( currentStep, navigate ) {
 		return {
-			submit: () => navigate( STEPS.SITE_LAUNCH.slug ),
+			submit: () => alert( 'Go' ),
 		};
 	},
 } satisfies Flow;
