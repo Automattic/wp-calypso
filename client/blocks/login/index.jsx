@@ -618,7 +618,7 @@ class Login extends Component {
 
 			switch ( true ) {
 				case isLostPasswordFlow:
-					headerText = null;
+					headerText = <h3>{ translate( "You've got mail" ) }</h3>;
 					subtitle = translate(
 						"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
 					);
