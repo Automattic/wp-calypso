@@ -13,14 +13,19 @@
 
 	.step-container__content {
 		flex-direction: column;
-		padding-top: 32px;
+		padding-top: 8px;
 		display: flex;
 		justify-content: space-between;
 		min-height: unset;
 		margin: 0 6px;
 
+		@include break-small {
+			padding-top: 16px;
+		}
+
 		@include break-medium {
 			flex-direction: row;
+			padding-top: 32px;
 		}
 
 		@include break-large {
