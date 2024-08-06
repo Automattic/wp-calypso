@@ -36,6 +36,12 @@
 		@include break-xlarge {
 			margin-bottom: 32px;
 		}
+
+		.formatted-header__title {
+			@media (max-width: #{ ($break-medium) }) {
+				font-size: 2rem;
+			}
+		}
 	}
 
 	.site-preview__wrapper,
