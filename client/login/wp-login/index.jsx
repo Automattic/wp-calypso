@@ -449,10 +449,15 @@ export class Login extends Component {
 			isPartnerSignup,
 			isWoo,
 			isBlazePro,
+			currentQuery,
 		} = this.props;
 
 		if ( isGravPoweredLoginPage ) {
 			return this.renderGravPoweredLoginBlockFooter();
+		}
+
+		if ( currentQuery.lostpassword_flow === 'true' ) {
+			return null;
 		}
 
 		if ( ( isWooPasswordless || isBlazePro ) && isLoginView ) {
