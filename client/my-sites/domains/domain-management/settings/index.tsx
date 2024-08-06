@@ -161,6 +161,7 @@ const Settings = ( {
 		return (
 			<DomainSecurityDetails
 				domain={ domain }
+				sslStatus={ domain.sslStatus }
 				selectedSite={ selectedSite }
 				purchase={ purchase }
 				isLoadingPurchase={ isLoadingPurchase }

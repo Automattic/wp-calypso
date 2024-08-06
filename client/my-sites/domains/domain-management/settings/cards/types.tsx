@@ -11,6 +11,7 @@ export type DetailsCardProps = {
 
 export type SecurityCardProps = DetailsCardProps & {
 	isDisabled: boolean;
+	sslStatus: string | null;
 };
 
 export type NameServersCardProps = {

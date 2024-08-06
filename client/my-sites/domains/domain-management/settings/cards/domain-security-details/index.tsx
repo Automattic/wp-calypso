@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
-import useDomainSSLStatusQuery from 'calypso/data/domains/ssl/use-domain-ssl-status-query';
+import useDomainSSLDetailsQuery from 'calypso/data/domains/ssl/use-domain-ssl-details-query';
 import { sslStatuses } from 'calypso/lib/domains/constants';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSslReadableStatus, isSecuredWithUs } from '../../helpers';
@@ -25,19 +25,19 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const {
-		data,
-		isFetching: isLoadingData,
+		data: sslResponse,
+		isFetching: isLoadingSSLData,
 		isError,
 		isStale,
 		refetch: refetchSSLStatusData,
-	} = useDomainSSLStatusQuery( domain.name );
+	} = useDomainSSLDetailsQuery( domain.name );
 
-	// Render an error if ssl status fails to load
+	// Render an error if ssl details fails to load
 	useEffect( () => {
 		if ( isError ) {
 			dispatch(
 				errorNotice(
-					translate( 'An error occurred while fetching your glue record.' ),
+					translate( 'An error occurred while fetching ssl certificate details.' ),
 					noticeOptions
 				)
 			);
@@ -45,16 +45,10 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 	}, [ isError, dispatch, translate ] );
 
 	useEffect( () => {
-		if ( isExpanded && isStale ) {
+		if ( isStale && domain.sslStatus === sslStatuses.SSL_PENDING ) {
 			refetchSSLStatusData();
 		}
-	}, [ isExpanded, isStale, refetchSSLStatusData ] );
-
-	useEffect( () => {
-		if ( isLoadingData || ! data ) {
-			return;
-		}
-	}, [ isLoadingData, data ] );
+	}, [ isStale, domain.sslStatus, refetchSSLStatusData ] );
 
 	if ( ! isSecuredWithUs( domain ) ) {
 		return null;
@@ -67,27 +61,40 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 			case sslStatuses.SSL_ACTIVE:
 				return null;
 			case sslStatuses.SSL_PENDING:
-				return translate(
-					'It may take up to a few hours to add an SSL certificate to your site. If you are not seeing it yet, give it some time to take effect.',
-					{ textOnly: true }
-				);
-			case sslStatuses.SSL_DISABLED:
-			default:
+				if ( sslResponse?.data.is_newly_registered ) {
+					return translate(
+						'It may take up to a few hours to add an SSL certificate to your site. If you are not seeing it yet, give it some time to take effect.',
+						{ textOnly: true }
+					);
+				}
+				if ( sslResponse?.data.failure_reasons ) {
+					return (
+						<div>
+							There are one or more problems with your DNS that prevent SSL certificate from being
+							issued. Once you have fixed them, you can request a new certificate by clicking the
+							button below:
+							<ul>
+								{ sslResponse.data.failure_reasons?.map( ( failureReason ) => {
+									return <li key={ failureReason.error_type }>{ failureReason.message }</li>;
+								} ) }
+							</ul>
+						</div>
+					);
+				}
 				return translate(
 					'There is an issue with your certificate. Contact us to {{a}}learn more{{/a}}.',
 					{ components: { a: <a href={ localizeUrl( CONTACT ) } /> } }
 				);
+			case sslStatuses.SSL_DISABLED:
+			default:
+				return translate(
+					'Your domain has expired. Renew you domain to issue a new SSL certificate.'
+				);
 		}
 	};
 
-	const sslStatusMessage = getSslStatusMessage();
-
 	const expandCard = () => {
 		setIsExpanded( true );
-		// We want to always fetch the latest ssl status when the card is expanded
-		// otherwise the user might see stale data if they made an update and refreshed the page
-		// refetchGlueRecordsData();
-		refetchSSLStatusData();
 
 		recordTracksEvent( 'calypso_domain_ssl_status_expand_card_click', {
 			domain: domain.domain,
@@ -116,8 +123,10 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 					</>
 				</div>
 				<div className="domain-security-details__description">
-					{ sslStatusMessage && (
-						<p className="domain-security-details__description-message">{ sslStatusMessage }</p>
+					{ ! isLoadingSSLData && (
+						<p className="domain-security-details__description-message">
+							{ getSslStatusMessage() }
+						</p>
 					) }
 					<div className="domain-security-details__description-help-text">
 						{ translate(
