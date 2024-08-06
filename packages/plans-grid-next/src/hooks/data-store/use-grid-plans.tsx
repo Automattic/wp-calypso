@@ -233,6 +233,7 @@ const useGridPlans: UseGridPlansType = ( {
 	siteId,
 	isDisplayingPlansNeededForFeature,
 	highlightLabelOverrides,
+	isDomainOnlySite,
 } ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
@@ -278,6 +279,7 @@ const useGridPlans: UseGridPlansType = ( {
 		selectedPlan,
 		plansAvailabilityForPurchase,
 		highlightLabelOverrides,
+		isDomainOnlySite,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
