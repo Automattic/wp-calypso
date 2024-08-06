@@ -11,7 +11,6 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import {
 	Flow,
 	ProvidedDependencies,
@@ -70,8 +69,6 @@ const domainTransfer: Flow = {
 		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
-
 			switch ( _currentStepSlug ) {
 				case 'intro':
 					clearSignupDestinationCookie();
@@ -119,6 +116,7 @@ const domainTransfer: Flow = {
 
 		return { goBack, submit };
 	},
+	use__Temporary__ShouldTrackEvent: ( event ) => 'submit' === event,
 };
 
 export default domainTransfer;

@@ -3,7 +3,6 @@ import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
-import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
 	type AssertConditionResult,
@@ -76,7 +75,6 @@ const startWriting: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
@@ -92,8 +90,6 @@ const startWriting: Flow = {
 		}, [ siteSlug, setIntentOnSite, isSiteLaunched ] );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-
 			switch ( currentStep ) {
 				case 'check-sites':
 					// Check for unlaunched sites

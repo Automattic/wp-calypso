@@ -8,13 +8,12 @@ import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/recor
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
-import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
+import type { SiteSelect } from '@automattic/data-stores';
 
 const wooexpress: Flow = {
 	name: 'wooexpress',
@@ -111,11 +110,6 @@ const wooexpress: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
-		const intent = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
-			[]
-		);
 		const siteSlugParam = useSiteSlugParam();
 
 		const { setPluginsToVerify } = useDispatch( ONBOARD_STORE );
@@ -131,7 +125,6 @@ const wooexpress: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
 			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
