@@ -10,7 +10,7 @@ export default {
 	},
 	isSignupFlow: false,
 	useSteps() {
-		return stepsWithRequiredLogin( [ STEPS.PLATFORM_SELECTION ] );
+		return stepsWithRequiredLogin( [ STEPS.IMPORT_OR_MIGRATE_WITH_UPGRADE ] );
 	},
 
 	useStepNavigation( currentStep, navigate ) {
