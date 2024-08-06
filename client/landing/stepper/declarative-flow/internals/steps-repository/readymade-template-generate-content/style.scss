@@ -71,6 +71,7 @@
 
 	.site-preview__wrapper {
 		@media (max-width: #{ ($break-medium) }) {
+			margin-left: 10px;
 			margin-top: 24px;
 		}
 	}
