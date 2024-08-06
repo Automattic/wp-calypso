@@ -116,7 +116,6 @@ const domainTransfer: Flow = {
 
 		return { goBack, submit };
 	},
-	use__Temporary__ShouldTrackEvent: ( event ) => 'submit' === event,
 };
 
 export default domainTransfer;
