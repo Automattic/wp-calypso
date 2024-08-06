@@ -284,4 +284,8 @@ export const STEPS = {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
 	},
+	PLATFORM_SELECTION: {
+		slug: 'platform-selection',
+		asyncComponent: () => import( './steps-repository/platform-selection' ),
+	},
 };
