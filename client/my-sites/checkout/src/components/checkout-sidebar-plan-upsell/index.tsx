@@ -16,9 +16,75 @@ import {
 	getItemVariantCompareToPrice,
 	getItemVariantDiscountPercentage,
 } from '../item-variation-picker/util';
+import type { WPCOMProductVariant } from '../item-variation-picker';
 import './style.scss';
 
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
+
+function getUpsellVariant( currentVariant: WPCOMProductVariant, variants: WPCOMProductVariant[] ) {
+	// Return the binennial plan if the plan in cart is a monthly or annual plan
+	if (
+		currentVariant.productBillingTermInMonths === 1 ||
+		currentVariant.productBillingTermInMonths === 12
+	) {
+		return variants?.find( ( product ) => product.termIntervalInMonths === 24 );
+	}
+
+	// Return the triennial plan if the plan in cart is a binennial plan
+	if ( currentVariant.productBillingTermInMonths === 24 ) {
+		return variants?.find( ( product ) => product.termIntervalInMonths === 36 );
+	}
+
+	debug( 'plan in cart has no upsell variant; variants are', variants );
+}
+
+function getUpsellTextForVariant(
+	upsellVariant: WPCOMProductVariant,
+	percentSavings: number,
+	__: any
+) {
+	if ( upsellVariant.productBillingTermInMonths === 24 ) {
+		return {
+			cardTitle: createInterpolateElement(
+				sprintf(
+					// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+					__( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' ),
+					{ percentSavings }
+				),
+				{ strong: createElement( 'strong' ) }
+			),
+			cellLabel: __( 'Two-year cost' ),
+			ctaText: __( 'Switch to a two-year plan' ),
+		};
+	}
+
+	if ( upsellVariant.productBillingTermInMonths === 36 ) {
+		return {
+			cardTitle: createInterpolateElement(
+				sprintf(
+					// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+					__( '<strong>Save %(percentSavings)d%%</strong> by paying for three years' ),
+					{ percentSavings }
+				),
+				{ strong: createElement( 'strong' ) }
+			),
+			cellLabel: __( 'Three-year cost' ),
+			ctaText: __( 'Switch to a three-year plan' ),
+		};
+	}
+}
+
+function getTracksEventUpsellType( upsellVariant: WPCOMProductVariant ) {
+	if ( upsellVariant.productBillingTermInMonths === 24 ) {
+		return 'biennial-plan';
+	}
+
+	if ( upsellVariant.productBillingTermInMonths === 36 ) {
+		return 'triennial-plan';
+	}
+
+	return '';
+}
 
 export function CheckoutSidebarPlanUpsell() {
 	const { formStatus } = useFormStatus();
@@ -34,6 +100,24 @@ export function CheckoutSidebarPlanUpsell() {
 
 	const variants = useGetProductVariants( plan );
 
+	if ( ! plan ) {
+		debug( 'no plan found in cart' );
+		return null;
+	}
+
+	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
+
+	if ( ! currentVariant ) {
+		debug( 'plan in cart has no current variant; variants are', variants );
+		return null;
+	}
+
+	const upsellVariant = getUpsellVariant( currentVariant, variants );
+
+	if ( ! upsellVariant ) {
+		return null;
+	}
+
 	function isBusy() {
 		// If the FormStatus is SUBMITTING and the user has not clicked this button, we want to return false for isBusy
 		if ( ! isClicked ) {
@@ -48,71 +132,21 @@ export function CheckoutSidebarPlanUpsell() {
 		return false;
 	}
 
-	if ( ! plan ) {
-		debug( 'no plan found in cart' );
-		return null;
-	}
-	const annualVariant = variants?.find( ( product ) => product.termIntervalInMonths === 12 );
-	const biennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 24 );
-	const triennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 36 );
-	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
-
-	if ( ! annualVariant ) {
-		debug( 'plan in cart has no annual variant; variants are', variants );
-		return null;
-	}
-
-	if ( ! biennialVariant ) {
-		debug( 'plan in cart has no biennial variant; variants are', variants );
-		return null;
-	}
-
-	if ( ! currentVariant ) {
-		debug( 'plan in cart has no current variant; variants are', variants );
-		return null;
-	}
-
-	if ( biennialVariant.productId === plan?.product_id ) {
-		debug( 'plan in cart is already biennial' );
-		return null;
-	}
-
-	// If the current plan is a triennial plan, we don't want to show an upsell.
-	if ( triennialVariant?.productId === plan.product_id ) {
-		debug( 'plan is triennial. hide upsell.' );
-		return null;
-	}
-
 	const onUpgradeClick = async () => {
 		setIsClicked( true );
 		if ( isFormLoading ) {
 			return;
 		}
 
-		let newPlan;
-
-		if ( currentVariant.termIntervalInMonths === 1 ) {
-			newPlan = {
-				product_slug: annualVariant.productSlug,
-				product_id: annualVariant.productId,
-			};
-		}
-
-		if ( currentVariant.termIntervalInMonths === 12 ) {
-			newPlan = {
-				product_slug: biennialVariant.productSlug,
-				product_id: biennialVariant.productId,
-			};
-		}
-
-		if ( ! newPlan ) {
-			return;
-		}
+		const newPlan = {
+			product_slug: upsellVariant.productSlug,
+			product_id: upsellVariant.productId,
+		};
 
 		debug( 'switching from', plan.product_slug, 'to', newPlan.product_slug );
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_sidebar_upsell_click', {
-				upsell_type: 'biennial-plan',
+				upsell_type: getTracksEventUpsellType( upsellVariant ),
 				switching_from: plan.product_slug,
 				switching_to: newPlan.product_slug,
 			} )
@@ -129,29 +163,29 @@ export function CheckoutSidebarPlanUpsell() {
 	};
 
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice(
-		biennialVariant,
+		upsellVariant,
 		currentVariant
 	);
-	const percentSavings = getItemVariantDiscountPercentage( biennialVariant, currentVariant );
+	const percentSavings = getItemVariantDiscountPercentage( upsellVariant, currentVariant );
 	if ( percentSavings === 0 ) {
 		debug( 'percent savings is too low', percentSavings );
 		return null;
 	}
 
 	const isComparisonWithIntroOffer =
-		biennialVariant.introductoryInterval === 2 &&
-		biennialVariant.introductoryTerm === 'year' &&
+		upsellVariant.introductoryInterval === 2 &&
+		upsellVariant.introductoryTerm === 'year' &&
 		currentVariant.introductoryInterval === 1 &&
 		currentVariant.introductoryTerm === 'year';
 
-	const cardTitle = createInterpolateElement(
-		sprintf(
-			// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-			__( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' ),
-			{ percentSavings }
-		),
-		{ strong: createElement( 'strong' ) }
-	);
+	const upsellText = getUpsellTextForVariant( upsellVariant, percentSavings, __ );
+
+	if ( ! upsellText ) {
+		return;
+	}
+
+	const { cardTitle, cellLabel, ctaText } = upsellText;
+
 	return (
 		<>
 			<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
@@ -160,7 +194,7 @@ export function CheckoutSidebarPlanUpsell() {
 						<>
 							<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
 							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-								<strong>{ __( 'Two-year cost' ) }</strong>
+								<strong>{ cellLabel }</strong>
 							</div>
 						</>
 					) }
@@ -179,7 +213,7 @@ export function CheckoutSidebarPlanUpsell() {
 						) }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ biennialVariant.variantLabel }
+						{ upsellVariant.variantLabel }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ compareToPriceForVariantTerm && (
@@ -190,7 +224,7 @@ export function CheckoutSidebarPlanUpsell() {
 								} ) }
 							</del>
 						) }
-						{ formatCurrency( biennialVariant.priceInteger, biennialVariant.currency, {
+						{ formatCurrency( upsellVariant.priceInteger, upsellVariant.currency, {
 							stripZeros: true,
 							isSmallestUnit: true,
 						} ) }
@@ -200,7 +234,7 @@ export function CheckoutSidebarPlanUpsell() {
 					cta={ {
 						disabled: isFormLoading,
 						busy: isBusy(),
-						text: __( 'Switch to a two-year plan' ),
+						text: ctaText,
 						action: onUpgradeClick,
 					} }
 				/>
