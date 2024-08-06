@@ -75,7 +75,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, rend
 									) }
 								</p>
 								<a href={ localizeUrl( 'https://wordpress.com/support/site-editor/' ) }>
-									{ translate( 'Learn more about how the block editor works.' ) }
+									{ translate( 'Learn more about how the site editor works.' ) }
 								</a>
 							</div>
 						</div>
