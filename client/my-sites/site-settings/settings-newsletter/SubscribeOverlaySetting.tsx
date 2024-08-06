@@ -47,10 +47,10 @@ export const SubscribeOverlaySetting = ( {
 			disabled={ disabled }
 			label={
 				<>
-					{ translate( 'Subscription overlay on homepage' ) }
+					{ translate( 'Subscription overlay on homepage.' ) }
 					{ subscribeOverlayEditorUrl && (
 						<>
-							{ '. ' }
+							{ ' ' }
 							<ExternalLink href={ subscribeOverlayEditorUrl } onClick={ onEditClick }>
 								{ translate( 'Preview and edit' ) }
 							</ExternalLink>
