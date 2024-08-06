@@ -63,7 +63,7 @@ export const HelpCenterArticle = () => {
 				post_url: postUrl,
 			};
 
-			recordTracksEvent( 'calypso_helpcenter_article_error', tracksData );
+			recordTracksEvent( 'calypso_helpcenter_article_api_error', tracksData );
 		}
 	}, [ postUrl, error, sectionName ] );
 
