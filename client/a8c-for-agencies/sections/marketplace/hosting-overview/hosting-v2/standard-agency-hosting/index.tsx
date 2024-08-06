@@ -1,6 +1,7 @@
 import { JetpackLogo } from '@automattic/components';
 import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
@@ -119,11 +120,32 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 					{
 						profile: {
 							name: 'Ajit Bohra',
-							title: 'Founder - LUBUS',
+							title: translate( 'Founder - %(companyName)s', {
+								args: {
+									companyName: 'LUBUS',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
 							site: 'lubus.in',
 						},
 						testimonial: translate(
 							'We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com.'
+						),
+					},
+					{
+						profile: {
+							name: 'Brian Lalli',
+							avatar: ProfileAvatar1,
+							title: translate( 'President - %(companyName)s', {
+								args: {
+									companyName: 'Moon Rooster LLC',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
+							site: 'moonrooster.com',
+						},
+						testimonial: translate(
+							"WordPress.com has been crucial to my agency's growth. Its intuitive UI allows me to quickly create sleek, functional websites for my clients, and their reliable hosting and support enable me to rest easy, knowing my sites are in good hands."
 						),
 					},
 				] }

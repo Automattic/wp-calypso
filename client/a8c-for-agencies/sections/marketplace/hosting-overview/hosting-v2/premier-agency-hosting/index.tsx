@@ -115,7 +115,12 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 						profile: {
 							avatar: ProfileAvatar1,
 							name: 'Ben Giordano',
-							title: 'Founder - Freshy',
+							title: translate( 'Founder - %(companyName)s', {
+								args: {
+									companyName: 'Freshy',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
 							site: 'freshysites.com',
 						},
 						testimonial:
@@ -124,7 +129,12 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					{
 						profile: {
 							name: 'Justin Barrett',
-							title: 'Director of Technology - Autoshop Solutions',
+							title: translate( 'Director of Technology - %(companyName)s', {
+								args: {
+									companyName: 'Autoshop Solutions',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
 							site: 'autoshopsolutions.com',
 						},
 						testimonial:

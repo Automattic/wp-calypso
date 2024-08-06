@@ -1,3 +1,4 @@
+import { GlobalStylesObject } from '@automattic/global-styles';
 import { ReactNode } from 'react';
 import type { Context } from '@automattic/calypso-router';
 import type { QueryClient } from '@tanstack/react-query';
@@ -93,4 +94,5 @@ export type ReadymadeTemplate = {
 	};
 	patterns: ReadymadeTemplatePattern[];
 	styles: ReadymadeTemplateStyles;
+	globalStyles?: GlobalStylesObject;
 };

@@ -21,7 +21,7 @@ const selectors = {
 	postStatusButton: `.editor-post-status > button`,
 
 	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
-		`button[role*="menuitem"] span:text("${ target }")`,
+		`button[role*="menuitem"] span:text-is("${ target }")`,
 	previewPane: `.edit-post-visual-editor`,
 
 	// Publish

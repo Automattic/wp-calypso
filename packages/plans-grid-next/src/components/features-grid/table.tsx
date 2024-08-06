@@ -6,7 +6,7 @@ import { usePlansGridContext } from '../../grid-context';
 import { DataResponse, GridPlan, PlanActionOverrides } from '../../types';
 import { StickyContainer } from '../sticky-container';
 import BillingTimeframes from './billing-timeframes';
-import PartnerLogos from './partner-logos';
+import EnterpriseFeatures from './enterprise-features';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
@@ -136,7 +136,7 @@ const Table = ( {
 					) }
 				</StickyContainer>
 				<tr>
-					<PartnerLogos
+					<EnterpriseFeatures
 						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 					/>

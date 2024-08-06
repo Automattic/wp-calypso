@@ -76,7 +76,7 @@ export default function ReaderFeedHeaderFollow( props ) {
 				{ siteUrl && (
 					<div className="reader-feed-header__follow-button">
 						<ReaderFollowButton
-							siteUrl={ feed.feed_URL || siteUrl }
+							siteUrl={ feed?.feed_URL || siteUrl }
 							hasButtonStyle
 							iconSize={ 24 }
 							onFollowToggle={ openSuggestedFollowsModal }

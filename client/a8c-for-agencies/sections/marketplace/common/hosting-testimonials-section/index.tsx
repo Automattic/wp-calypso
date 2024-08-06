@@ -1,3 +1,4 @@
+import React from 'react';
 import HostingSection, { HostingSectionProps } from '../hosting-section';
 
 import './style.scss';
@@ -7,7 +8,7 @@ type Props = Omit< HostingSectionProps, 'children' > & {
 		profile: {
 			avatar?: string;
 			name: string;
-			title: string;
+			title: React.ReactNode;
 			site?: string;
 			siteLink?: string;
 		};

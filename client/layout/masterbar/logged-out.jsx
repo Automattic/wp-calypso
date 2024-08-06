@@ -171,6 +171,11 @@ class MasterbarLoggedOut extends Component {
 			signupUrl = addLocaleToPath( signupUrl, locale );
 		}
 
+		// Add referrer query parameter for tracking
+		if ( sectionName === 'reader' ) {
+			signupUrl = addQueryArgs( { ref: 'reader-lp' }, signupUrl );
+		}
+
 		return (
 			<Item url={ signupUrl }>
 				{ translate( 'Sign Up', {
@@ -215,7 +220,7 @@ class MasterbarLoggedOut extends Component {
 		return (
 			<Masterbar className="masterbar__loggedout">
 				{ this.renderWordPressItem() }
-				<Item className="masterbar__item-title">{ title }</Item>
+				{ title && <Item className="masterbar__item-title">{ title }</Item> }
 				<div className="masterbar__login-links">
 					{ this.renderDiscoverItem() }
 					{ this.renderTagsItem() }

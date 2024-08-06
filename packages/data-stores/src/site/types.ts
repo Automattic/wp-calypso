@@ -292,6 +292,7 @@ export interface SiteDetailsOptions {
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;
+	blaze_ads_version?: string;
 	is_commercial?: boolean | null;
 	is_commercial_reasons?: string[];
 	wpcom_admin_interface?: string;
