@@ -65,7 +65,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, rend
 								</p>
 								<p>
 									{ translate(
-										'Just describe your site in a few sentences, and our AI tool will customize the content for your'
+										'Just describe your site in a few sentences, and our AI tool will customize the content for you.'
 									) }
 								</p>
 								<h4>{ translate( 'Need full control?' ) }</h4>
