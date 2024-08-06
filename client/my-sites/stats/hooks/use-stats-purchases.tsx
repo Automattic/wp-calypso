@@ -25,6 +25,7 @@ import {
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 const JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04 = '2024-01-04T05:30:00+00:00';
+const JETPACK_BUSINESS_PLANS = [ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
 const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: string[] ) => {
 	if ( ! ownedPurchases?.length ) {
@@ -56,8 +57,8 @@ const isCommercialPurchaseOwned = ( ownedPurchases: Purchase[] ) => {
 const supportCommercialPurchaseUse = ( ownedPurchases: Purchase[] ) => {
 	return (
 		isCommercialPurchaseOwned( ownedPurchases ) ||
-		[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, ...JETPACK_COMPLETE_PLANS ].some(
-			( plan ) => isProductOwned( ownedPurchases, plan )
+		[ ...JETPACK_BUSINESS_PLANS, ...JETPACK_COMPLETE_PLANS ].some( ( plan ) =>
+			isProductOwned( ownedPurchases, plan )
 		)
 	);
 };
@@ -67,10 +68,7 @@ const isVideoPressOwned = ( ownedPurchases: Purchase[] ) => {
 };
 
 export const hasBusinessPlan = ( ownedPurchases: Purchase[] ) => {
-	return areProductsOwned( ownedPurchases, [
-		PLAN_JETPACK_BUSINESS,
-		PLAN_JETPACK_BUSINESS_MONTHLY,
-	] );
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_BUSINESS_PLANS ] );
 };
 
 export const hasCompletePlan = ( ownedPurchases: Purchase[] ) => {
