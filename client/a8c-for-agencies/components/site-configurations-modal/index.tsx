@@ -7,9 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import useCreateWPCOMDevSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-dev-site';
-import useCreateWPCOMSiteMutation, {
-	CreateSiteParams,
-} from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
+import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
@@ -108,18 +106,20 @@ export default function SiteConfigurationsModal( {
 				},
 			} );
 		} else {
-			params.id = siteId;
-			createWPCOMSite( params as CreateSiteParams, {
-				onSuccess: () => {
-					onCreateSiteSuccess( siteId );
-				},
-				onError: async ( error ) => {
-					if ( error.status === 400 ) {
-						await siteName.revalidateCurrentSiteName();
-						setIsSubmitting( false );
-					}
-				},
-			} );
+			createWPCOMSite(
+				{ ...params, id: siteId },
+				{
+					onSuccess: () => {
+						onCreateSiteSuccess( siteId );
+					},
+					onError: async ( error ) => {
+						if ( error.status === 400 ) {
+							await siteName.revalidateCurrentSiteName();
+							setIsSubmitting( false );
+						}
+					},
+				}
+			);
 		}
 	};
 
