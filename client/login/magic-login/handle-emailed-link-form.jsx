@@ -187,7 +187,6 @@ class HandleEmailedLinkForm extends Component {
 
 			return (
 				<EmailedLoginLinkExpired
-					isGravPoweredClient={ isGravPoweredClient }
 					redirectTo={ redirectTo }
 					transition={ transition }
 					token={ token }
@@ -269,7 +268,7 @@ class HandleEmailedLinkForm extends Component {
 						'grav-powered-magic-link--wp-job-manager': isWPJobManagerOAuth2Client( oauth2Client ),
 					} ) }
 				>
-					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+					<img src={ oauth2Client.icon } width={ 32 } height={ 32 } alt={ oauth2Client.title } />
 					<EmptyContent
 						action={ this.state.hasSubmitted ? <LoadingEllipsis /> : action }
 						illustration=""

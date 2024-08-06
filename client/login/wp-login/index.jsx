@@ -27,6 +27,7 @@ import {
 	isWooOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
+	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -386,6 +387,10 @@ export class Login extends Component {
 			translate,
 			usernameOrEmail,
 		} = this.props;
+
+		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+			return null;
+		}
 
 		if (
 			( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) &&

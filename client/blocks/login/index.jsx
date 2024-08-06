@@ -755,7 +755,7 @@ class Login extends Component {
 
 		return (
 			<div className="login__form-header-wrapper">
-				{ isGravPoweredLoginPage && (
+				{ isGravPoweredClient && (
 					<GravatarLoginLogo
 						iconUrl={ oauth2Client.icon }
 						alt={ oauth2Client.title }
@@ -840,6 +840,7 @@ class Login extends Component {
 			isWooCoreProfilerFlow,
 			currentQuery,
 			isGravPoweredLoginPage,
+			isGravPoweredClient,
 			isSignupExistingAccount,
 			isSocialFirst,
 			isFromAutomatticForAgenciesPlugin,
@@ -907,6 +908,7 @@ class Login extends Component {
 						isWoo={ isWoo }
 						isBlazePro={ isBlazePro }
 						isPartnerSignup={ isPartnerSignup }
+						isGravPoweredClient={ isGravPoweredClient }
 						twoFactorAuthType={ twoFactorAuthType }
 						twoFactorNotificationSent={ twoFactorNotificationSent }
 						handleValid2FACode={ this.handleValid2FACode }
