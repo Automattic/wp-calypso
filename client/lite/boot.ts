@@ -1,5 +1,5 @@
 import '@automattic/calypso-polyfills';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { renderHome, renderAbout, makeLayout, clientRender } from './controller';
 
 page( '/about', renderAbout, makeLayout, clientRender );
