@@ -8,7 +8,6 @@ import { useEffect, useMemo } from '@wordpress/element';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useSitePlan from '../../../dotcom-fse/lib/site-plan/use-site-plan';
 import { selectors as starterPageTemplatesSelectors } from '../../../starter-page-templates/store';
-import { selectors as wpcomBlockEditorNavSidebarSelectors } from '../../../wpcom-block-editor-nav-sidebar/src/store';
 import {
 	selectors as wpcomWelcomeGuideSelectors,
 	actions as wpcomWelcomeGuideActions,
@@ -21,9 +20,6 @@ import type { WpcomConfig } from '@automattic/tour-kit';
 import type { Rect, Placement } from '@popperjs/core';
 
 type StarterPageTemplatesSelectors = SelectFromMap< typeof starterPageTemplatesSelectors >;
-type WpcomBlockEditorNavSidebarSelectors = SelectFromMap<
-	typeof wpcomBlockEditorNavSidebarSelectors
->;
 type WpcomWelcomeGuideSelectors = SelectFromMap< typeof wpcomWelcomeGuideSelectors >;
 type WPcomWelcomeGuideActions = DispatchFromMap< typeof wpcomWelcomeGuideActions >;
 type CoreEditPostPlaceholder = {
@@ -122,17 +118,11 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 		const paymentBlockIndex = tourSteps.findIndex( ( step ) => step.slug === 'payment-block' );
 		tourSteps.splice( paymentBlockIndex, 1 );
 	}
-	const { isInserterOpened, isSidebarOpened, isSettingsOpened } = useSelect(
+	const { isInserterOpened, isSettingsOpened } = useSelect(
 		( select ) => ( {
 			isInserterOpened: (
 				select( 'core/edit-post' ) as CoreEditPostPlaceholder
 			 ).isInserterOpened(),
-			isSidebarOpened:
-				(
-					select( 'automattic/block-editor-nav-sidebar' ) as
-						| WpcomBlockEditorNavSidebarSelectors
-						| undefined
-				 )?.isSidebarOpened() ?? false, // The sidebar store may not always be loaded.
 			isSettingsOpened:
 				( select( 'core/interface' ) as CoreInterfacePlaceholder ).getActiveComplementaryArea(
 					'core/edit-post'
@@ -142,8 +132,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 	);
 
 	const isTourMinimized =
-		isSidebarOpened ||
-		( isWithinBreakpoint( '<782px' ) && ( isInserterOpened || isSettingsOpened ) );
+		isWithinBreakpoint( '<782px' ) && ( isInserterOpened || isSettingsOpened );
 
 	const editorType = getEditorType();
 
