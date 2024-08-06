@@ -5,6 +5,7 @@ import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
+	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -108,6 +109,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2ClientId: oauth2Client.id,
 			redirectTo: redirectTo,
 			gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && gravatarFrom,
+			gravatarFlow: isGravatarFlowOAuth2Client( oauth2Client ),
 		} );
 	}
 

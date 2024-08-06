@@ -20,6 +20,11 @@ export class FilterBar extends Component {
 		if ( ! prevProps.isPanelOpen && this.props.isPanelOpen ) {
 			this.focusOnSelectedTab();
 		}
+
+		// Reset the filter items when i18n data changes, to ensure the translatable fields are properly updated.
+		if ( prevProps.translate !== this.props.translate ) {
+			this.setFilterItems();
+		}
 	}
 
 	componentWillUnmount() {
@@ -28,11 +33,15 @@ export class FilterBar extends Component {
 		}
 	}
 
+	setFilterItems = () => {
+		this.filterItems = Object.keys( Filters )
+			.map( ( name ) => Filters[ name ]() )
+			.sort( ( a, b ) => a.index - b.index );
+	};
+
 	getFilterItems = () => {
 		if ( ! this.filterItems ) {
-			this.filterItems = Object.keys( Filters )
-				.map( ( name ) => Filters[ name ]() )
-				.sort( ( a, b ) => a.index - b.index );
+			this.setFilterItems();
 		}
 
 		return this.filterItems;
