@@ -126,17 +126,6 @@ a.readymade-template-details-back {
 				color: var(--studio-gray-90);
 			}
 		}
-
-		&.is-secondary {
-			background-color: transparent;
-			border: 1px solid var(--studio-white);
-			color: var(--studio-white);
-
-			&:hover:not(:disabled) {
-				color: var(--studio-gray-5);
-				border-color: var(--studio-gray-5);
-			}
-		}
 	}
 }
 
