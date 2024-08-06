@@ -107,7 +107,7 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
-				hideEcommercePlan: true,
+				intent: 'plans-site-selected-legacy',
 			},
 		},
 
