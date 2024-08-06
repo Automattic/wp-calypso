@@ -246,7 +246,9 @@ $blueberry-color: #3858e9;
 	align-items: center;
 }
 
-.hosting-overview__plan-storage-title {
+.hosting-overview__plan-storage-title,
+.hosting-overview__plan-bandwidth-title span,
+.hosting-overview__plan-site-visits-title span {
 	flex: 1;
 	text-transform: uppercase;
 }

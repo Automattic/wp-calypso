@@ -129,7 +129,13 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	return (
 		<div className="hosting-overview__plan-bandwidth">
 			<div className="hosting-overview__plan-bandwidth-title">
-				{ translate( 'BANDWIDTH (Unlimited)' ) }
+				{ translate( '{{span}}Bandwidth{{/span}} (Unlimited)', {
+					components: {
+						span: <span />,
+					},
+					comment:
+						'The title of the bandwidth section of site stats, with a note that bandwidth is unlimited',
+				} ) }
 			</div>
 			<div className="hosting-overview__plan-bandwidth-content">{ getBandwidthContent() }</div>
 			{ getBandwidthFooterLink() }

@@ -76,7 +76,13 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 	return (
 		<div className="hosting-overview__plan-site-visits">
 			<div className="hosting-overview__plan-site-visits-title">
-				{ translate( 'VISITS (Unlimited)' ) }
+				{ translate( '{{span}}Visits{{/span}} (Unlimited)', {
+					components: {
+						span: <span />,
+					},
+					comment:
+						'The title of the site visits section of site stats, with a note that visits are unlimited',
+				} ) }
 			</div>
 
 			<div className="hosting-overview__plan-site-visits-content">{ getSiteVisitsContent() }</div>
