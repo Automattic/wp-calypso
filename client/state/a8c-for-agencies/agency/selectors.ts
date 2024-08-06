@@ -30,3 +30,7 @@ export function hasAgency( state: A4AStore ): boolean {
 	const agencies = state.a8cForAgencies.agencies.agencies;
 	return Array.isArray( agencies ) && agencies.length > 0;
 }
+
+export function isAgencyClientUser( state: A4AStore ): boolean {
+	return state.a8cForAgencies.agencies.isAgencyClientUser;
+}
