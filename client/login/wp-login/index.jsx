@@ -316,7 +316,7 @@ export class Login extends Component {
 
 		if (
 			isReactLostPasswordScreenEnabled() &&
-			( this.props.isWoo || this.props.isBlazePro || this.isWooCoreProfilerFlow )
+			( this.props.isWoo || this.props.isBlazePro || this.props.isWooCoreProfilerFlow )
 		) {
 			return (
 				<a
