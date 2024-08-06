@@ -1,12 +1,10 @@
 import '@automattic/calypso-polyfills';
 import page from 'page';
+import { renderHome, renderAbout, makeLayout, clientRender } from './controller';
 
-page( '/', ( ctx, next ) => {
-	const body = document.getElementsByTagName( 'body' )[ 0 ];
-	const header = document.createElement( 'h1' );
-	header.innerHTML = 'Hello Calypso Lite!';
-	body.appendChild( header );
-	next();
-} );
+page( '/about', renderAbout, makeLayout, clientRender );
+page( '/', renderHome, makeLayout, clientRender );
 
-page.start();
+window.onload = () => {
+	page.start();
+};
