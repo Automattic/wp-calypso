@@ -69,6 +69,12 @@
 		height: 80vh;
 	}
 
+	.site-preview__wrapper {
+		@media (max-width: #{ ($break-medium) }) {
+			margin-top: 24px;
+		}
+	}
+
 	.generate-content__form {
 		display: flex;
 		flex-direction: column;
@@ -87,7 +93,11 @@
 			display: flex;
 			flex-direction: column;
 			width: 100%;
-			margin-bottom: 16px;
+			margin-bottom: 4px;
+
+			@include break-medium {
+				margin-bottom: 16px;
+			}
 		}
 
 		textarea.form-textarea {
