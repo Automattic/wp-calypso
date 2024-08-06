@@ -12,7 +12,6 @@ const { workerCount } = require( './webpack.common' );
 
 const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
-const shouldHotReload = isDevelopment && process.env.CALYPSO_DISABLE_HOT_RELOAD !== 'true';
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
@@ -36,6 +35,7 @@ const webpackConfig = {
 	context: __dirname,
 	entry: path.join( __dirname, 'lite', 'boot' ),
 	mode: 'development',
+	devtool: 'source-map',
 	output: {
 		path: path.join( outputDir, 'public', extraPath ),
 		publicPath: `/calypso/${ extraPath }`,
@@ -62,7 +62,6 @@ const webpackConfig = {
 				cacheIdentifier,
 				cacheCompression: false,
 				exclude: /node_modules\//,
-				plugins: shouldHotReload ? [ require.resolve( 'react-refresh/babel' ) ] : [],
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
