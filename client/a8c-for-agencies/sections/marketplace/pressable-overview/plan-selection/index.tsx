@@ -68,6 +68,7 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 		<div
 			className={ clsx( 'pressable-overview-plan-selection', {
 				'is-new-hosting-page': isNewHostingPage,
+				'is-regular-ownership': pressableOwnership === 'regular',
 			} ) }
 		>
 			{ pressableOwnership !== 'regular' && (
