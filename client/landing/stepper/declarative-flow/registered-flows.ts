@@ -18,7 +18,7 @@ import {
 	HOSTED_SITE_MIGRATION_FLOW,
 	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	ONBOARDING_FLOW,
-	SITE_MIGRATION_V2_FLOW,
+	HOSTED_SITE_MIGRATION_V2_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
