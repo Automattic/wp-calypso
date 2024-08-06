@@ -30,6 +30,9 @@ jest.mock( '../use-generate-action-callback', () => () => jest.fn() );
 jest.mock(
 	'@automattic/plans-grid-next/src/components/shared/storage/hooks/use-default-storage-option'
 );
+jest.mock( '@automattic/calypso-router', () => ( {
+	redirect: jest.fn(),
+} ) );
 
 import {
 	PLAN_BUSINESS,
@@ -44,6 +47,7 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_SMALL,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
 import { useDefaultStorageOption } from '@automattic/plans-grid-next/src/components/shared/storage';
 import { renderHook } from '@testing-library/react';
@@ -379,7 +383,8 @@ describe( 'useGenerateActionHook', () => {
 		);
 		const action = result.current( { planSlug: PLAN_BUSINESS, isMonthlyPlan: false } );
 		expect( action.primary.text ).toBe( 'Upgrade' );
-		expect( action.primary.href ).toEqual( 'mockcheckoutlink' );
+		action.primary.callback();
+		expect( page.redirect ).toHaveBeenCalledWith( 'mockcheckoutlink' );
 	} );
 
 	it( 'should handle expired current plan for plan owner', () => {

@@ -718,7 +718,7 @@ const PlansFeaturesMain = ( {
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
 					offeringFreePlan={ offeringFreePlan }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
-					onFreePlanCTAClick={ onFreePlanCTAClick || ( () => undefined ) }
+					onFreePlanCTAClick={ onFreePlanCTAClick }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
