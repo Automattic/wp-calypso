@@ -181,6 +181,7 @@ export async function showDSP(
 
 		try {
 			const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+			const isRunningInBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 			const isRunningInWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
 			const isRunningInBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 			const isMobileApp = isWpMobileApp() || isWcMobileApp();
