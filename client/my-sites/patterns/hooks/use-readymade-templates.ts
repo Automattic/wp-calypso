@@ -4,7 +4,7 @@ import type { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 
 export const useReadymadeTemplates = () =>
 	useQuery< ReadymadeTemplate[] >( {
-		queryKey: [ 'pattern-library', 'readymade-templates' ],
+		queryKey: [ 'pattern-library', 'readymade-templates-4' ],
 		queryFn() {
 			return wpcom.req.get( {
 				path: '/themes/readymade-templates',
