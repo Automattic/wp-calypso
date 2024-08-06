@@ -274,7 +274,6 @@ class ReauthRequired extends Component {
 			<Dialog
 				autoFocus={ false }
 				className="reauth-required__dialog"
-				isFullScreen={ false }
 				isVisible={ this.props?.twoStepAuthorization.isReauthRequired() }
 			>
 				{ isSecurityKeySupported && twoFactorAuthType === 'webauthn' ? (
