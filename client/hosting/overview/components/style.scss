@@ -261,13 +261,14 @@ $blueberry-color: #3858e9;
 .hosting-overview__plan-bandwidth-title,
 .hosting-overview__plan-bandwidth-content,
 .hosting-overview__plan-bandwidth-placeholder,
+.hosting-overview__plan-site-visits-title,
 .hosting-overview__plan-site-visits-content,
 .hosting-overview__plan-site-visits-placeholder {
 	margin-bottom: 8px;
 }
 
 .hosting-overview__plan-bandwidth-content,
-.hosting-overview__plan-site-visits-content .plan-site-visits-content__value {
+.hosting-overview__plan-site-visits-content {
 	font-weight: 700;
 }
 

@@ -67,20 +67,21 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 			return <LoadingPlaceholder className="hosting-overview__plan-site-visits-placeholder" />;
 		}
 
-		return translate( 'Visits: {{span}}%(visitCount)s this month{{/span}}', {
+		return translate( '%(visitCount)s this month', {
 			args: { visitCount: visitsNumber },
-			components: {
-				span: <span className="plan-site-visits-content__value" />,
-			},
 			comment: 'A description of the number of visits the site has received in the current month',
 		} );
 	};
 
 	return (
 		<div className="hosting-overview__plan-site-visits-wrapper">
+			<div className="hosting-overview__plan-site-visits-title">
+				{ translate( 'VISITS (Unlimited)' ) }
+			</div>
+
 			<div className="hosting-overview__plan-site-visits-content">{ getSiteVisitsContent() }</div>
 			<a href={ `/stats/month/${ siteSlug }` }>
-				{ translate( 'Visit your stats', {
+				{ translate( 'Visit stats', {
 					comment: 'A link taking the user to more detailed site statistics',
 				} ) }
 			</a>
