@@ -1,3 +1,4 @@
+import { FEATURE_SFTP } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
@@ -9,6 +10,8 @@ import {
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -38,6 +41,12 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const canViewStat = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
+	const { isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
+		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
+		hasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
+	} ) );
+
+	const isEligibleForAtomic = ! isSiteAtomic && hasSftpFeature;
 
 	const selectedSiteDomain = selectedSiteData?.domain;
 
@@ -63,12 +72,9 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 
 	const getBandwidthContent = () => {
 		if ( ! isAtomic ) {
-			return translate( 'Bandwidth: {{span}}Unlimited{{/span}}', {
-				components: {
-					span: <span className="plan-bandwidth-content__value" />,
-				},
+			return translate( 'Not available', {
 				comment:
-					'A placeholder for sites that have not activated hosting features highlighting unlimited bandwidth',
+					'A message that indicates that the bandwidth data is not available for sites that are not atomic',
 			} );
 		}
 
@@ -83,13 +89,10 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 
 		const { unitAmount, unit } = convertBytes( valueInBytes );
 
-		return translate( 'Bandwidth: {{span}}%(value)s %(measure)s used{{/span}}', {
+		return translate( '%(value)s %(measure)s used', {
 			args: { value: unitAmount, measure: unit },
-			components: {
-				span: <span className="plan-bandwidth-content__value" />,
-			},
 			comment:
-				'A description of the amount of data that has been used by the site in the current month',
+				'The amount of data that has been used by the site in the current month in KB/MB/GB/TB',
 		} );
 	};
 
@@ -97,8 +100,18 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 		if ( isAtomic ) {
 			return (
 				<a href={ `/site-monitoring/${ siteSlug }` }>
-					{ translate( "Monitor your site's performance", {
+					{ translate( 'Monitor site performance', {
 						comment: 'A link to the "Monitoring" tab of the Hosting Overview',
+					} ) }
+				</a>
+			);
+		}
+
+		if ( isEligibleForAtomic ) {
+			return (
+				<a href={ `/hosting-features/${ siteSlug }` }>
+					{ translate( 'Activate hosting features', {
+						comment: 'A link to the Hosting Features page to click an activation button',
 					} ) }
 				</a>
 			);
@@ -106,8 +119,8 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 
 		return (
 			<a href={ `/hosting-features/${ siteSlug }` }>
-				{ translate( 'Activate hosting features to monitor site performance', {
-					comment: 'A link to the Hosting Features page to click an activation button',
+				{ translate( 'Upgrade to monitor site', {
+					comment: 'A link to the Hosting Features page to click an upgrade button',
 				} ) }
 			</a>
 		);
@@ -115,6 +128,9 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 
 	return (
 		<div className="hosting-overview__plan-bandwidth-wrapper">
+			<div className="hosting-overview__plan-bandwidth-title">
+				{ translate( 'BANDWIDTH (Unlimited)' ) }
+			</div>
 			<div className="hosting-overview__plan-bandwidth-content">{ getBandwidthContent() }</div>
 			{ getBandwidthFooterLink() }
 		</div>

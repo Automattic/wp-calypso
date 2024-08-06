@@ -258,6 +258,7 @@ $blueberry-color: #3858e9;
 	min-width: 0;
 }
 
+.hosting-overview__plan-bandwidth-title,
 .hosting-overview__plan-bandwidth-content,
 .hosting-overview__plan-bandwidth-placeholder,
 .hosting-overview__plan-site-visits-content,
@@ -265,7 +266,7 @@ $blueberry-color: #3858e9;
 	margin-bottom: 8px;
 }
 
-.hosting-overview__plan-bandwidth-content .plan-bandwidth-content__value,
+.hosting-overview__plan-bandwidth-content,
 .hosting-overview__plan-site-visits-content .plan-site-visits-content__value {
 	font-weight: 700;
 }
