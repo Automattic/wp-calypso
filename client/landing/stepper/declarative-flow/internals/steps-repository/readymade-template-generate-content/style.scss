@@ -39,6 +39,15 @@
 	.step-container__header {
 		margin-bottom: 24px;
 
+		@media (max-width: #{ ($break-mobile) }) {
+			margin-left: 36px;
+			margin-right: 36px;
+		}
+
+		@media (max-width: #{ ($break-small) }) {
+			margin-top: 24px;
+		}
+
 		@include break-xlarge {
 			margin-bottom: 32px;
 		}
