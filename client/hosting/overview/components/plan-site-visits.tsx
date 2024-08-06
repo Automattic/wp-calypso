@@ -74,7 +74,7 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 	};
 
 	return (
-		<div className="hosting-overview__plan-site-visits-wrapper">
+		<div className="hosting-overview__plan-site-visits">
 			<div className="hosting-overview__plan-site-visits-title">
 				{ translate( 'VISITS (Unlimited)' ) }
 			</div>

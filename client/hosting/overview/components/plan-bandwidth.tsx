@@ -127,7 +127,7 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	};
 
 	return (
-		<div className="hosting-overview__plan-bandwidth-wrapper">
+		<div className="hosting-overview__plan-bandwidth">
 			<div className="hosting-overview__plan-bandwidth-title">
 				{ translate( 'BANDWIDTH (Unlimited)' ) }
 			</div>
