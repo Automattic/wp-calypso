@@ -71,7 +71,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, rend
 								<h4>{ translate( 'Need full control?' ) }</h4>
 								<p>
 									{ translate(
-										'If you want even more control, our powerful site editing tools are always at your disposal, allowing you tu customize every single detail of this beautiful layout.'
+										'If you want even more control, our powerful site editing tools are always at your disposal, allowing you to customize every single detail of this beautiful layout.'
 									) }
 								</p>
 								<a href={ localizeUrl( 'https://wordpress.com/support/site-editor/' ) }>
