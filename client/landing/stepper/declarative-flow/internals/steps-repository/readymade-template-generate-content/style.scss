@@ -7,7 +7,7 @@
 .generate-content.step-container {
 	.step-container__content {
 		flex-direction: column;
-		padding-top: 40px;
+		padding-top: 32px;
 		display: flex;
 		justify-content: space-between;
 		min-height: unset;
@@ -20,6 +20,10 @@
 		@include break-large {
 			margin: 0 20px 24px 24px;
 		}
+
+		@include break-xlarge {
+			padding-top: 40px;
+		}
 	}
 
 	.generate-content {
@@ -27,7 +31,11 @@
 	}
 
 	.step-container__header {
-		margin-bottom: 32px;
+		margin-bottom: 24px;
+
+		@include break-xlarge {
+			margin-bottom: 32px;
+		}
 	}
 
 	.site-preview__wrapper,
