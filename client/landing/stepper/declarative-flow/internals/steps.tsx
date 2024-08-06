@@ -286,6 +286,6 @@ export const STEPS = {
 	},
 	IMPORT_OR_MIGRATE_WITH_UPGRADE: {
 		slug: 'import-or-migrate-with-selection',
-		asyncComponent: () => import('./steps-repository/import-or-migrate-with-upgrade'),
+		asyncComponent: () => import( './steps-repository/import-or-migrate-with-upgrade' ),
 	},
 };
