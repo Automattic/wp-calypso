@@ -40,6 +40,7 @@ const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: st
 const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) => {
 	return filterPurchasesByProducts( ownedPurchases, [ searchedProduct ] ).length > 0;
 };
+
 const areProductsOwned = ( ownedPurchases: Purchase[], searchedProducts: string[] ) => {
 	return filterPurchasesByProducts( ownedPurchases, searchedProducts ).length > 0;
 };
@@ -63,6 +64,17 @@ const supportCommercialPurchaseUse = ( ownedPurchases: Purchase[] ) => {
 
 const isVideoPressOwned = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_VIDEOPRESS_PRODUCTS ] );
+};
+
+export const hasBusinessPlan = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [
+		PLAN_JETPACK_BUSINESS,
+		PLAN_JETPACK_BUSINESS_MONTHLY,
+	] );
+};
+
+export const hasCompletePlan = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_COMPLETE_PLANS ] );
 };
 
 export const hasSupportedCommercialUse = ( state: object, siteId: number | null ) => {
@@ -98,6 +110,7 @@ const getPurchasesBySiteId = createSelector(
 	( state, siteId ) => getSitePurchases( state, siteId ),
 	getPurchases
 );
+
 export default function useStatsPurchases( siteId: number | null ) {
 	const sitePurchases = useSelector( ( state ) => getPurchasesBySiteId( state, siteId ) );
 	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
