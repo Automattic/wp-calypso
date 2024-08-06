@@ -611,7 +611,7 @@ class Login extends Component {
 				}
 			}
 		} else if ( isWooCoreProfilerFlow ) {
-			const isLostPasswordFlow = currentQuery.lostpassword_flow;
+			const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
 			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
 
 			let subtitle = null;
