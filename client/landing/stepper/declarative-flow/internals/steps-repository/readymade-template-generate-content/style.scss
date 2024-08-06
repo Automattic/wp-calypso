@@ -6,7 +6,7 @@
 
 .generate-content.step-container {
 	.step-container__navigation.action-buttons {
-		@media (min-width: #{ ($break-small) }) and (max-width: #{ ($break-medium) }) {
+		@media (min-width: #{ ($break-small) }) and (max-width: #{ ($break-large) }) {
 			inset-inline-start: 36px;
 		}
 	}
