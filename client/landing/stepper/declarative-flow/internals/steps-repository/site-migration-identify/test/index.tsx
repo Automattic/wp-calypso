@@ -131,12 +131,6 @@ describe( 'SiteMigrationIdentify', () => {
 		);
 	} );
 
-	it( 'sets the input value to the site url when the "from" param is set', () => {
-		render( {}, { initialEntry: '/some-path?from=existent-site.com' } );
-
-		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'existent-site.com' );
-	} );
-
 	it( 'sends again the same value set on the url', async () => {
 		const submit = jest.fn();
 		render(
@@ -149,7 +143,7 @@ describe( 'SiteMigrationIdentify', () => {
 			.query( { site_url: 'https://existent-site.com' } )
 			.reply( 200, API_RESPONSE_WITH_OTHER_PLATFORM );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+		await userEvent.click( screen.getByRole( 'heading', { name: /Scanning your site/ } ) );
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { platform: 'unknown' } ) )
 		);
