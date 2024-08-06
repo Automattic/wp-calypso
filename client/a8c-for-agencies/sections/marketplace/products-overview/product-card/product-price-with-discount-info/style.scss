@@ -7,6 +7,10 @@
 	color: var(--studio-gray-80);
 	line-height: 1;
 
+	.a4a-text-placeholder {
+		width: 5rem;
+	}
+
 	.product-price-with-discount__price-old {
 		text-decoration: line-through;
 		font-weight: 400;

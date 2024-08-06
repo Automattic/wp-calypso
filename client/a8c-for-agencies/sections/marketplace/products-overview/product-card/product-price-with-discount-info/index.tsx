@@ -1,10 +1,11 @@
 import formatCurrency from '@automattic/format-currency';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { getProductPricingInfo } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
 import { useSelector } from 'calypso/state';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import { getProductsList } from 'calypso/state/products-list/selectors';
+import { isProductsListFetching, getProductsList } from 'calypso/state/products-list/selectors';
 
 import './style.scss';
 
@@ -24,6 +25,7 @@ export default function ProductPriceWithDiscount( {
 	const translate = useTranslate();
 
 	const userProducts = useSelector( getProductsList );
+	const isFetching = useSelector( isProductsListFetching );
 	const isDailyPricing = product.price_interval === 'day';
 
 	const isBundle = quantity > 1;
@@ -39,7 +41,11 @@ export default function ProductPriceWithDiscount( {
 	if ( isFree ) {
 		return (
 			<div className={ clsx( 'product-price-with-discount__price', { 'is-compact': compact } ) }>
-				<p className="product-price-with-discount__free">{ translate( 'Free' ) }</p>
+				{ isFetching ? (
+					<TextPlaceholder />
+				) : (
+					<p className="product-price-with-discount__free">{ translate( 'Free' ) }</p>
+				) }
 			</div>
 		);
 	}
