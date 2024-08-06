@@ -7,5 +7,5 @@ import 'calypso/state/oauth2-clients/init';
  * @returns {Object}          OAuth2 client data
  */
 export const getOAuth2Client = ( state, clientId ) => {
-	return state.oauth2Clients.clients[ clientId ] ?? null;
+	return state?.oauth2Clients?.clients?.[ clientId ] ?? null;
 };

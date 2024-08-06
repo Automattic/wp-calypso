@@ -4,7 +4,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, globe, group, shield, backup } from '@wordpress/icons';
 import { createElement, useEffect } from 'react';
-import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -25,8 +24,6 @@ const ImporterMigrateMessage: Step = () => {
 	const siteSlugParam = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const siteSlug = siteSlugParam ?? '';
-	const { getSiteSetting } = useSiteSettings( siteSlug );
-	const sourceSiteUrl = getSiteSetting( 'migration_source_site_domain' ) ?? fromUrl ?? '';
 	const { isPending, sendTicket } = useSubmitMigrationTicket();
 
 	useEffect( () => {
@@ -35,7 +32,7 @@ const ImporterMigrateMessage: Step = () => {
 		} );
 		sendTicket( {
 			locale,
-			from_url: sourceSiteUrl,
+			from_url: fromUrl,
 			blog_url: siteSlug,
 		} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,7 +57,7 @@ const ImporterMigrateMessage: Step = () => {
 									),
 									{
 										email: user?.email,
-										webSite: sourceSiteUrl,
+										webSite: fromUrl,
 									}
 								),
 								{

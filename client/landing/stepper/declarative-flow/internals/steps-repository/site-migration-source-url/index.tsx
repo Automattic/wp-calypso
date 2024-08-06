@@ -71,9 +71,9 @@ const SiteMigrationSourceUrl: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 
 	const handleSubmit = useCallback(
-		async ( action: string, data?: { from: string } ) => {
+		async ( action: string, data: { from: string } ) => {
 			// If we have a site and URL, record the migration source domain.
-			if ( siteSlug && data?.from ) {
+			if ( siteSlug && data.from ) {
 				await saveSiteSettings( siteSlug, { migration_source_site_domain: data.from } );
 			}
 

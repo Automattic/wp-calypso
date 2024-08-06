@@ -19,13 +19,17 @@ const ReadymadeTemplatePreview = ( {
 	);
 };
 
-export const ReadymadeTemplatesClient: ReadymadeTemplatesFC = ( { readymadeTemplates } ) => (
+export const ReadymadeTemplatesClient: ReadymadeTemplatesFC = ( {
+	readymadeTemplates,
+	forwardRef,
+} ) => (
 	<BlockRendererProvider siteId={ RENDERER_SITE_ID }>
 		<ReadymadeTemplatesSection
 			readymadeTemplates={ readymadeTemplates }
 			renderPreview={ ( template: ReadymadeTemplate ) => (
 				<ReadymadeTemplatePreview readymadeTemplate={ template } />
 			) }
+			forwardRef={ forwardRef }
 		/>
 	</BlockRendererProvider>
 );

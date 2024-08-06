@@ -37,7 +37,7 @@ describe( 'ThemeTierStyleVariationBadge', () => {
 	} );
 
 	test( 'should render a link to the plan on the tooltip content', async () => {
-		const title = 'Explorer';
+		const title = 'Premium';
 		const pathSlug = 'premium';
 		getPlan.mockImplementation( () => ( {
 			getTitle: () => title,

@@ -41,6 +41,12 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_contact_us_click' ) );
 	}, [ dispatch ] );
 
+	const onScheduleDemo = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_schedule_demo_click' )
+		);
+	}, [ dispatch ] );
+
 	const PRESSABLE_CONTACT_LINK = 'https://pressable.com/request-demo';
 
 	if ( isLoading ) {
@@ -57,12 +63,16 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 			<div className="pressable-overview-plan-selection__details-card">
 				<div className="pressable-overview-plan-selection__details-card-header">
 					<h3 className="pressable-overview-plan-selection__details-card-header-title plan-name">
-						{ translate( '%(planName)s plan', {
-							args: {
-								planName: selectedPlan ? getPressableShortName( selectedPlan.name ) : customString,
-							},
-							comment: '%(planName)s is the name of the selected plan.',
-						} ) }
+						{ isNewHostingPage
+							? translate( 'Pressable' )
+							: translate( '%(planName)s plan', {
+									args: {
+										planName: selectedPlan
+											? getPressableShortName( selectedPlan.name )
+											: customString,
+									},
+									comment: '%(planName)s is the name of the selected plan.',
+							  } ) }
 					</h3>
 
 					{ selectedPlan && (
@@ -167,7 +177,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 					/>
 					<Button
 						className="pressable-overview-plan-selection__details-card-cta-button"
-						onClick={ onContactUs }
+						onClick={ onScheduleDemo }
 						href={ PRESSABLE_CONTACT_LINK }
 						target="_blank"
 					>

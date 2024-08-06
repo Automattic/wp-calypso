@@ -1,11 +1,16 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { type Callback } from '@automattic/calypso-router';
 import page from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
-import { A4A_MARKETPLACE_HOSTING_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_MARKETPLACE_HOSTING_LINK,
+	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import HostingOverview from './hosting-overview';
+import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import PressableOverview from './pressable-overview';
 import DownloadProducts from './primary/download-products';
@@ -38,14 +43,21 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 };
 
 export const marketplaceHostingContext: Callback = ( context, next ) => {
+	if ( isEnabled( 'a4a-hosting-page-redesign' ) && ! context.params.section ) {
+		page.redirect( A4A_MARKETPLACE_HOSTING_WPCOM_LINK );
+		return;
+	}
+
 	const { purchase_type } = context.query;
 	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
+
+	const section = getValidHostingSection( context.params.section );
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
-			<HostingOverview defaultMarketplaceType={ purchaseType } />
+			<HostingOverview defaultMarketplaceType={ purchaseType } section={ section } />
 		</>
 	);
 	next();

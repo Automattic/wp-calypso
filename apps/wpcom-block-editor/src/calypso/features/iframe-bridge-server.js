@@ -13,7 +13,6 @@ import debugFactory from 'debug';
 import { filter, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
-import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 import {
 	getPages,
 	inIframe,
@@ -458,10 +457,6 @@ function handleCloseEditor( calypsoPort ) {
 		return;
 	}
 
-	if ( isNavSidebarPresent() ) {
-		return;
-	}
-
 	registerPlugin( 'a8c-wpcom-block-editor-close-button-override', {
 		render: function CloseWpcomBlockEditor() {
 			const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
@@ -511,19 +506,8 @@ function handleCloseInLegacyEditors( handleClose ) {
 
 	// Selects the close button in modern Gutenberg versions, unless it itself is a close button override
 	const wpcomCloseSelector = '.wpcom-block-editor__close-button';
-	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
-	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
+	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector })`;
 	addEditorListener( selector, handleClose );
-}
-
-/**
- * Uses presence of data store to detect whether the nav sidebar has been loaded.
- * Could run into timing issues, but the nav sidebar's data store is currently
- * loaded early enough that this works for our needs.
- */
-function isNavSidebarPresent() {
-	const selectors = select( NAV_SIDEBAR_STORE_KEY );
-	return !! selectors;
 }
 
 /**

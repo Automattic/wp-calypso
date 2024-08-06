@@ -1,5 +1,4 @@
 import { Button, Gridicon } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, ReactNode, useEffect } from 'react';
@@ -10,7 +9,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import CommissionsColumn from './commissions-column';
 import SubscriptionStatus from './subscription-status';
-import type { Referral } from '../types';
+import type { Referral, ReferralInvoice } from '../types';
 
 import './style.scss';
 
@@ -18,9 +17,15 @@ interface Props {
 	referrals: Referral[];
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	referralInvoices: ReferralInvoice[];
 }
 
-export default function ReferralList( { referrals, dataViewsState, setDataViewsState }: Props ) {
+export default function ReferralList( {
+	referrals,
+	dataViewsState,
+	setDataViewsState,
+	referralInvoices,
+}: Props ) {
 	const isDesktop = useDesktopBreakpoint();
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -36,9 +41,6 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 		},
 		[ dispatch, setDataViewsState ]
 	);
-
-	// FIXME: Remove this flag once the API is enabled
-	const isAPIEnabled = false;
 
 	const fields = useMemo(
 		() =>
@@ -127,10 +129,14 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							header: translate( 'Commissions' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => {
-								return isAPIEnabled ? (
-									<CommissionsColumn referral={ item } />
-								) : (
-									formatCurrency( 0, 'USD' )
+								const clientReferralInvoices = referralInvoices.filter(
+									( invoice ) => invoice.clientId === item.client.id
+								);
+								return (
+									<CommissionsColumn
+										referral={ item }
+										referralInvoices={ clientReferralInvoices }
+									/>
 								);
 							},
 							enableHiding: false,
@@ -164,7 +170,7 @@ export default function ReferralList( { referrals, dataViewsState, setDataViewsS
 							enableSorting: false,
 						},
 				  ],
-		[ dataViewsState.selectedItem, isDesktop, openSitePreviewPane, translate ]
+		[ dataViewsState.selectedItem, isDesktop, openSitePreviewPane, referralInvoices, translate ]
 	);
 
 	useEffect( () => {

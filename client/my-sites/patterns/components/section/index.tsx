@@ -1,10 +1,13 @@
 import clsx from 'clsx';
+import { RefObject } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
 
 type PatternsSectionProps = {
 	title: string;
+	id?: string;
+	forwardRef?: RefObject< HTMLDivElement >;
 	description: string;
 	theme?: 'blue' | 'dark' | 'gray';
 	bodyFullWidth?: boolean;
@@ -13,13 +16,18 @@ type PatternsSectionProps = {
 
 export const PatternsSection = ( {
 	title,
+	forwardRef,
+	id,
 	description,
 	theme,
 	bodyFullWidth,
 	children,
 }: PatternsSectionProps ) => {
+	const sectionProps = id ? { id } : {};
 	return (
 		<section
+			ref={ forwardRef }
+			{ ...sectionProps }
 			className={ clsx( 'patterns-section', {
 				'patterns-section--blue': theme === 'blue',
 				'patterns-section--dark': theme === 'dark',

@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useCallback, useEffect, useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import DOMPurify from 'dompurify';
 import emailValidator from 'email-validator';
@@ -71,47 +71,33 @@ function SubscribeEmailStep( props ) {
 
 	const { mutate: subscribeEmail, isPending: isSubscribingEmail } = useSubscribeEmail();
 
-	const subscribeEmailAndCompleteFlow = useCallback(
-		( { email_address } = { email_address: email } ) => {
-			return subscribeEmail(
-				{
-					email_address,
-					mailing_list_category: queryArguments.mailing_list,
-					from: queryArguments.from,
+	const subscribeEmailAndSubmitStep = ( { email_address } = { email_address: email } ) => {
+		return subscribeEmail(
+			{
+				email_address,
+				mailing_list_category: queryArguments.mailing_list,
+				from: queryArguments.from,
+			},
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_signup_email_subscription_success', {
+						mailing_list: queryArguments.mailing_list,
+					} );
+
+					props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
+					goToNextStep();
 				},
-				{
-					onSuccess: () => {
-						recordTracksEvent( 'calypso_signup_email_subscription_success', {
-							mailing_list: queryArguments.mailing_list,
-						} );
+			}
+		);
+	};
 
-						props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
-						goToNextStep();
-					},
-				}
-			);
-		},
-		[
-			email,
-			queryArguments.from,
-			queryArguments.mailing_list,
-			subscribeEmail,
-			goToNextStep,
-			redirectUrl,
-			props.submitSignupStep,
-		]
-	);
-
-	const handleRecordRegistration = useCallback(
-		( userData ) => {
-			recordRegistration( {
-				userData,
-				flow: flowName,
-				type: 'passwordless',
-			} );
-		},
-		[ flowName ]
-	);
+	const recordPasswordlessRegistration = ( userData ) => {
+		recordRegistration( {
+			userData,
+			flow: flowName,
+			type: 'passwordless',
+		} );
+	};
 
 	const { mutate: createNewAccount, isPending: isCreatingNewAccount } = useCreateNewAccountMutation(
 		{
@@ -122,12 +108,12 @@ function SubscribeEmailStep( props ) {
 					email,
 				};
 
-				handleRecordRegistration( userData );
+				recordPasswordlessRegistration( userData );
 
 				/**
-				 * User data is stale now that a new account has been created. We need to
-				 * refresh user data because we log them out after email subscription, which
-				 * requires an updated logout nonce.
+				 * We want to log out new users after we subscribe their email. This will
+				 * require an updated logout nonce. User data in the store, however, is stale
+				 * because we just created a new account. We need to refresh the user data.
 				 */
 				wpcom.loadToken( response.bearer_token );
 				await props.fetchCurrentUser();
@@ -142,10 +128,11 @@ function SubscribeEmailStep( props ) {
 						onSuccess: () => {
 							setIsRedirectingToLogout( true );
 							/**
-							 * Logged in users will see an "Is it you?" page. Logged out users will skip the page.
-							 * To make email capture more seamless at conferences we keep users logged out after
-							 * new user creation. This allows us to capture multiple signups on one device without
-							 * showing the "Is it you?" page to each subsequent person.
+							 * Logged in users will see an "Is it you?" page. Logged out users will
+							 * skip the page. To make email capture more seamless at conferences we
+							 * keep users logged out after new user creation. This allows us to
+							 * capture multiple signups on one device without showing the "Is it you?"
+							 * page to each subsequent person.
 							 */
 							props.redirectToLogout( redirectUrl );
 						},
@@ -154,15 +141,28 @@ function SubscribeEmailStep( props ) {
 			},
 			onError: ( error ) => {
 				if ( isExistingAccountError( error.error ) ) {
-					subscribeEmailAndCompleteFlow();
+					subscribeEmailAndSubmitStep();
 				}
 			},
 		}
 	);
 
+	// On page load, attempt to subscribe the submitted email to the mailing list
 	useEffect( () => {
-		// 1. Handle subscription if user is logged out and email is valid
-		if ( ! currentUser && emailValidator.validate( email ) ) {
+		if ( ! emailValidator.validate( email ) ) {
+			return;
+		}
+
+		if ( currentUser ) {
+			if ( currentUser.email === email ) {
+				subscribeEmailAndSubmitStep();
+			}
+
+			// Otherwise show the "Is this you?" page
+			return;
+		}
+
+		if ( ! currentUser ) {
 			/**
 			 * Last name is an optional field in the subscription form, and an empty value may be
 			 * submitted. However the API will deem an empty last name invalid and return an error,
@@ -176,16 +176,12 @@ function SubscribeEmailStep( props ) {
 					extra: {
 						first_name: queryArguments.first_name,
 						...( includeLastName && { last_name: queryArguments.last_name } ),
+						generate_random_username: true,
 					},
 				},
 				flowName,
 				isPasswordless: true,
 			} );
-		}
-
-		// 2. Handle subscription if user is logged in and account email matches the submitted email
-		if ( currentUser?.email === email && ! isCreatingNewAccount && ! isSubscribingEmail ) {
-			subscribeEmailAndCompleteFlow();
 		}
 	}, [ email ] );
 
@@ -209,12 +205,12 @@ function SubscribeEmailStep( props ) {
 						redirectUrl={ redirectUrl }
 						handleCreateAccountError={ ( error, submittedEmail ) => {
 							if ( isExistingAccountError( error.error ) ) {
-								subscribeEmail( { email_address: submittedEmail } );
+								subscribeEmailAndSubmitStep( { email_address: submittedEmail } );
 							}
 						} }
 						handleCreateAccountSuccess={ ( userData ) => {
-							handleRecordRegistration( userData );
-							subscribeEmail( { email_address: userData.email } );
+							recordPasswordlessRegistration( userData );
+							subscribeEmailAndSubmitStep( { email_address: userData.email } );
 						} }
 						notYouText={ translate(
 							'Not you?{{br/}}Log out and {{link}}subscribe with %(email)s{{/link}}',

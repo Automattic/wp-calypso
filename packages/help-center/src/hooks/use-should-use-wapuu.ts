@@ -10,9 +10,7 @@ function isWapuuFlagSetInURL(): boolean {
 
 export const useShouldUseWapuu = () => {
 	const { data: supportStatus } = useSupportStatus();
-
-	// All users eligible for support should see the Wapuu assistant.
-	const isEligibleForSupport = Boolean( supportStatus?.eligibility?.is_user_eligible );
+	const wapuuAssistantEnabled = Boolean( supportStatus?.eligibility?.wapuu_assistant_enabled );
 
 	// Force Wapuu via URL flag (config is not available in wp-admin)
 	const isFlagSetInURL = isWapuuFlagSetInURL();
@@ -20,5 +18,5 @@ export const useShouldUseWapuu = () => {
 	// Wapuu can be enabled via config
 	const isConfigEnabled = config.isEnabled( 'wapuu' );
 
-	return isEligibleForSupport || isFlagSetInURL || isConfigEnabled;
+	return wapuuAssistantEnabled || isFlagSetInURL || isConfigEnabled;
 };

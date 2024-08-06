@@ -15,8 +15,8 @@ import useGridSize from '../../hooks/use-grid-size';
 import { PlanFeaturesItem } from '../item';
 import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
+import EnterpriseFeatures from './enterprise-features';
 import MobileFreeDomain from './mobile-free-domain';
-import PartnerLogos from './partner-logos';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
@@ -105,6 +105,7 @@ const MobileView = ( {
 			);
 
 			const isNotFreePlan = ! isFreePlan( gridPlan.planSlug );
+			const isEnterprisePlan = isWpcomEnterpriseGridPlan( gridPlan.planSlug );
 
 			const planCardJsx = (
 				<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
@@ -119,7 +120,7 @@ const MobileView = ( {
 					) }
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
-					{ storageFeatureGroup && (
+					{ storageFeatureGroup && ! isEnterprisePlan && (
 						<>
 							<PlanFeaturesItem>
 								<h2 className="plans-grid-next-features-grid__feature-group-title">
@@ -155,7 +156,7 @@ const MobileView = ( {
 							)
 						}
 					>
-						<PartnerLogos renderedGridPlans={ [ gridPlan ] } />
+						<EnterpriseFeatures renderedGridPlans={ [ gridPlan ] } />
 						{ ! enableCategorisedFeatures && (
 							<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
 						) }
