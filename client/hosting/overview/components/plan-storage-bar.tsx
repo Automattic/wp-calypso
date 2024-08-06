@@ -16,18 +16,17 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 	const translate = useTranslate();
 	const { storageUsedBytes, maxStorageBytes } = mediaStorage;
 
+	let usagePercent = Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 );
 	// Ensure that the displayed usage is never fully empty to avoid a confusing UI
-	const displayedUsage = Math.max(
-		MINIMUM_DISPLAYED_USAGE,
-		Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 )
-	);
-	const percent = Math.min( displayedUsage, 100 );
+	usagePercent = Math.max( MINIMUM_DISPLAYED_USAGE, usagePercent );
+	// Make sure displayed usage never exceeds 100%
+	usagePercent = Math.min( usagePercent, 100 );
 
 	const used = filesize( storageUsedBytes, { round: 0 } );
 	const max = filesize( maxStorageBytes, { round: 0 } );
 
 	const classes = clsx( 'plan-storage__bar', {
-		'is-alert': percent > ALERT_PERCENT,
+		'is-alert': usagePercent > ALERT_PERCENT,
 	} );
 
 	return (
@@ -50,8 +49,8 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 			</div>
 
 			<div className={ classes }>
-				<div className="plan-storage__bar-used" style={ { width: `${ percent }%` } } />
-				<ProgressBar value={ percent } total={ 100 } compact={ false } />
+				<div className="plan-storage__bar-used" style={ { width: `${ usagePercent }%` } } />
+				<ProgressBar value={ usagePercent } total={ 100 } compact={ false } />
 			</div>
 
 			{ children }
