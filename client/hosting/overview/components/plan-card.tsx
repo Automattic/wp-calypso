@@ -272,7 +272,6 @@ const PlanCard: FC = () => {
 								</PlanStorage>
 								{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
 									<>
-										<hr />
 										<div className="hosting-overview__site-metrics-footer">
 											<PlanBandwidth siteId={ site.ID } />
 											<PlanSiteVisits siteId={ site.ID } />
