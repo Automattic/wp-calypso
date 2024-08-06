@@ -19,14 +19,13 @@ export default function BlazePluginBanner() {
 						{ translate( 'Transform your content to an ad with a click.' ) }
 					</div>
 					<div className="posts-list-banner__description">
-					{ isWooBlaze ? 
-					translate(
-							'Increase your sales by promoting your products and pages across millions of blogs and sites.'
-					  )
-					: 
-					translate(
-							'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
-					  ) }
+						{ isWooBlaze
+							? translate(
+									'Increase your sales by promoting your products and pages across millions of blogs and sites.'
+							  )
+							: translate(
+									'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
+							  ) }
 					</div>
 				</section>
 				<section className="posts-list-banner__img-section">
