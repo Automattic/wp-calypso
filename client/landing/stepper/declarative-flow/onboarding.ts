@@ -23,7 +23,7 @@ const onboarding: Flow = {
 			},
 			{
 				slug: 'plans',
-				asyncComponent: () => import( './internals/steps-repository/unified-plans' ),
+				asyncComponent: () => import( './internals/steps-repository/plans' ),
 			},
 			{
 				slug: 'create-site',
@@ -45,8 +45,15 @@ const onboarding: Flow = {
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 
-		const { resetStore, setDomain, setProductCartItems, setPlanCartItem } =
-			useDispatch( ONBOARD_STORE );
+		const { resetStore, setDomain, setProductCartItems } = useDispatch( ONBOARD_STORE );
+
+		const { domainCartItem, planCartItem } = useSelect(
+			( select: ( key: string ) => OnboardSelect ) => ( {
+				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
+				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+			} ),
+			[]
+		);
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, currentStepSlug );
@@ -57,7 +64,6 @@ const onboarding: Flow = {
 					setProductCartItems( providedDependencies.domainCart );
 					return navigate( 'plans' );
 				case 'plans':
-					setPlanCartItem( providedDependencies.cartItems?.[ 0 ] );
 					return navigate( 'create-site', undefined, true );
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
@@ -68,6 +74,14 @@ const onboarding: Flow = {
 					persistSignupDestination( destination );
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
+
+						if ( planCartItem && siteSlug && flowName ) {
+							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
+						}
+
+						if ( domainCartItem && siteSlug && flowName ) {
+							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
+						}
 
 						resetStore();
 
