@@ -218,12 +218,10 @@ export default function PromotedPosts( { tab }: Props ) {
 				) }
 			>
 				{ isWooBlaze
-					? // used by Blaze Ads Plugin running in WooCommerce
-					  translate(
+					? translate(
 							'Increase your sales by promoting your products and pages across millions of blogs and sites.'
 					  )
-					: // used by others including Blaze Ads Plugin (without WooCommerce)
-					  translate(
+					: translate(
 							'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
 					  ) }
 			</div>
