@@ -12,6 +12,7 @@ import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purch
 import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { hasBusinessPlan, hasCompletePlan } from '../hooks/use-stats-purchases';
 import usePurchasedProducts from './use-purchased-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -30,17 +31,10 @@ function shouldHideUpsellSection( purchases: Purchase[] ) {
 		return false;
 	}
 
-	// Filter out expired plans.
-	const plans = purchases.filter( ( purchase ) => purchase.expiryStatus !== 'expired' );
+	const hasBusiness = hasBusinessPlan( purchases );
+	const hasComplete = hasCompletePlan( purchases );
 
-	// Check if site has a plan that precludes the upsell.
-	// Currenty that means Business or Complete plans.
-	const hasFullFeaturedPlan = plans.some(
-		( purchase ) =>
-			purchase.productSlug.includes( 'complete' ) || purchase.productSlug.includes( 'business' )
-	);
-
-	return hasFullFeaturedPlan;
+	return hasBusiness || hasComplete;
 }
 
 export default function JetpackUpsellSection() {
