@@ -35,6 +35,8 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 	const [ isGeneratingContent, setIsGeneratingContent ] = useState( false );
 	const { assembleSite } = useDispatch( SITE_STORE );
 
+	const isPromptEmpty = ! aiContext.trim();
+
 	const handleTextareaChange = ( event: { target: { value: string } } ) => {
 		setAiContext( event.target.value );
 	};
@@ -83,7 +85,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 						<Button
 							className="checklist-item__checklist-primary-button"
 							onClick={ generateContent }
-							disabled={ numberOfGenerations >= 5 || isGeneratingContent }
+							disabled={ isPromptEmpty || numberOfGenerations >= 5 || isGeneratingContent }
 						>
 							{ translate( 'Generate content' ) }
 						</Button>
