@@ -11,10 +11,10 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
 import { useDomainParams } from '../hooks/use-domain-params';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
+import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { redirect } from './internals/steps-repository/import/util';
 import {
 	AssertConditionResult,
@@ -106,23 +106,18 @@ const connectDomain: Flow = {
 	useSteps() {
 		return CONNECT_DOMAIN_STEPS;
 	},
-	useTracksEventProps( event ) {
-		const { domain, provider } = useDomainParams();
-
-		if ( STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT === event ) {
-			return {
-				domain,
-				provider,
-			};
-		}
-	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { domain } = useDomainParams();
+		const { domain, provider } = useDomainParams();
 
 		triggerGuidesForStep( flowName, _currentStepSlug );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
+			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug, undefined, {
+				provider,
+				domain,
+			} );
+
 			switch ( _currentStepSlug ) {
 				case 'plans':
 					clearSignupDestinationCookie();
@@ -152,7 +147,6 @@ const connectDomain: Flow = {
 			submit,
 		};
 	},
-	use__Temporary__ShouldTrackEvent: ( event ) => 'submit' === event,
 };
 
 export default connectDomain;
