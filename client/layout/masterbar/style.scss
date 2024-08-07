@@ -572,10 +572,16 @@ body.is-mobile-app-view {
 		background: var(--studio-orange-70);
 		--color-masterbar-icon: var(--studio-gray-5) !important;
 		--color-masterbar-text: var(--studio-gray-5) !important;
+		--color-masterbar-highlight: var(--studio-gray-5) !important;
 	}
 
 	.is-support-session &:hover {
 		background: var(--studio-orange-50);
+	}
+
+	.is-support-session &.is-active:hover {
+		background: var(--studio-orange-70);
+		color: var(--studio-gray-5);
 	}
 
 	&.masterbar__item-notifications {
