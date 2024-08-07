@@ -54,19 +54,6 @@ export const HelpCenterArticle = () => {
 		}
 	}, [ post, query, sectionName ] );
 
-	useEffect( () => {
-		if ( error ) {
-			const tracksData = {
-				force_site_id: true,
-				location: 'help-center',
-				section: sectionName,
-				post_url: postUrl,
-			};
-
-			recordTracksEvent( 'calypso_helpcenter_article_api_error', tracksData );
-		}
-	}, [ postUrl, error, sectionName ] );
-
 	return (
 		<>
 			<div className="help-center-article__header">
