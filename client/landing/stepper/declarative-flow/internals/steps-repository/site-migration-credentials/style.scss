@@ -1,0 +1,22 @@
+.site-migration-credentials {
+	#site-migration-credentials-header {
+		.formatted-header__subtitle {
+			text-align: center;
+		}
+	}
+
+	.card {
+		max-width: 450px;
+		padding: 2em;
+		hr {
+			margin-top: 1em;
+		}
+		.action-buttons__next {
+			width: 100%;
+			margin-top: 1em;
+		}
+		.site-migration-credentials__form__field {
+			margin-top: 1em;
+		}
+	}
+}

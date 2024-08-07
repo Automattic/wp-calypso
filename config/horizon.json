@@ -11,6 +11,7 @@
 	"facebook_api_key": "249643311490",
 	"features": {
 		"ad-tracking": false,
+		"automated-migration/collect-credentials": false,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": true,
 		"calypso/big-sky": true,

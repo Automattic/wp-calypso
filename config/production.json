@@ -22,6 +22,7 @@
 	"features": {
 		"ad-tracking": true,
 		"akismet/checkout-quantity-dropdown": true,
+		"automated-migration/collect-credentials": false,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": false,
 		"calypso/big-sky": false,
