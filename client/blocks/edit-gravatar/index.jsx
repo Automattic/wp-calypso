@@ -276,11 +276,8 @@ export class EditGravatar extends Component {
 					</p>
 					<InfoPopover className="edit-gravatar__pop-over" position="left">
 						{ translate(
-							'{{p}}The avatar you use on WordPress.com comes ' +
-								'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
-								'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
-								'{{p}}Your image may also appear on other sites using Gravatar ' +
-								"whenever you're logged in with the email %(email)s.{{/p}}",
+							'{{p}}The avatar you upload here is synced with {{ExternalLink}}Gravatar{{/ExternalLink}}.' +
+								' If you do not have a Gravatar account, one will be created for you when you upload your first image.{{/p}}',
 							{
 								components: {
 									ExternalLink: (
@@ -292,9 +289,6 @@ export class EditGravatar extends Component {
 										/>
 									),
 									p: <p />,
-								},
-								args: {
-									email: user.email,
 								},
 							}
 						) }
