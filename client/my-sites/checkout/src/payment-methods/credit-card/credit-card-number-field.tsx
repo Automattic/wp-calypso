@@ -1,5 +1,5 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { PaymentLogo } from '@automattic/wpcom-checkout';
+import { hasCheckoutVersion, PaymentLogo } from '@automattic/wpcom-checkout';
 import { CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -71,6 +71,7 @@ export default function CreditCardNumberField( {
 					options={ {
 						style: stripeElementStyle,
 						disabled: isDisabled,
+						showIcon: hasCheckoutVersion( 'cobadge' ) ? true : false,
 					} }
 					onReady={ () => {
 						setIsStripeFullyLoaded( true );
