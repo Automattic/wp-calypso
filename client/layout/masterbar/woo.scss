@@ -1786,6 +1786,16 @@ $breakpoint-mobile: 660px;
 			text-align: center;
 		}
 
+		.signup-form {
+			margin-top: 0;
+			label.form-label {
+				font-size: rem(11px);
+			}
+			input {
+				font-size: rem(13px);
+			}
+		}
+
 		.jetpack-connect__main-logo {
 			@media (max-width: $break-mobile) {
 				padding-top: 0;
