@@ -79,9 +79,7 @@ describe( 'ReaderSiteSubscription', () => {
 		renderReaderSiteSubscription( mockSiteSubscriptionContext() );
 
 		// Assert that the back button is rendered
-		expect(
-			screen.getByRole( 'button', { name: 'Manage all subscriptions' } )
-		).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeInTheDocument();
 
 		// Assert that the site subscription details are rendered
 		expect( screen.getByRole( 'heading', { name: 'View feed' } ) ).toBeInTheDocument();
