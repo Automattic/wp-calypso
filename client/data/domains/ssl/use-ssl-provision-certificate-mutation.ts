@@ -5,7 +5,7 @@ import wp from 'calypso/lib/wp';
 import type { SslDetailsResponse } from './use-ssl-details-query';
 import type { DomainsApiError } from 'calypso/lib/domains/types';
 
-export default function useDomainProvisionCertificateMutation(
+export default function useProvisionCertificateMutation(
 	domainName: string,
 	queryOptions: {
 		onSuccess?: () => void;

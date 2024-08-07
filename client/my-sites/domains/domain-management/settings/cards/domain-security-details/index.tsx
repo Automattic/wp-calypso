@@ -6,9 +6,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
-import useDomainSSLDetailsQuery from 'calypso/data/domains/ssl/use-domain-ssl-details-query';
+import useSslDetailsQuery from 'calypso/data/domains/ssl/use-ssl-details-query';
+import useProvisionCertificateMutation from 'calypso/data/domains/ssl/use-ssl-provision-certificate-mutation';
 import { sslStatuses } from 'calypso/lib/domains/constants';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSslReadableStatus, isSecuredWithUs } from '../../helpers';
 import type { SecurityCardProps } from '../types';
 
@@ -30,7 +31,20 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 		isError,
 		isStale,
 		refetch: refetchSSLStatusData,
-	} = useDomainSSLDetailsQuery( domain.name );
+	} = useSslDetailsQuery( domain.name );
+
+	// Display success notices when SSL certificate is provisioned
+	const { provisionCertificate, isPending: isProvisioningCertificate } =
+		useProvisionCertificateMutation( domain.name, {
+			onSuccess() {
+				dispatch(
+					successNotice( translate( 'New certificate provisioning requested' ), noticeOptions )
+				);
+			},
+			onError( error ) {
+				dispatch( errorNotice( error.message, noticeOptions ) );
+			},
+		} );
 
 	// Render an error if ssl details fails to load
 	useEffect( () => {
@@ -100,6 +114,10 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 		}
 	};
 
+	const handleProvisionCertificate = () => {
+		provisionCertificate();
+	};
+
 	return (
 		<Accordion
 			title={ translate( 'Domain security', { textOnly: true } ) }
@@ -123,7 +141,11 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 				</div>
 				<div className="domain-security-details__description">
 					{ ! isLoadingSSLData && getSslStatusMessage() }
-					<Button className="domain-security-details__provision-button" onClick={ () => {} }>
+					<Button
+						className="domain-security-details__provision-button"
+						disabled={ isProvisioningCertificate }
+						onClick={ handleProvisionCertificate }
+					>
 						Provision certificate
 					</Button>
 					<div className="domain-security-details__description-help-text">
