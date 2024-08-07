@@ -24,4 +24,5 @@ export enum SiteIntent {
 	ReadyMadeTemplate = 'readymade-template',
 	AIAssembler = 'ai-assembler',
 	Newsletter = 'newsletter',
+	FreePostSetup = 'free-post-setup',
 }
