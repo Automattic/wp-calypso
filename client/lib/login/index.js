@@ -15,6 +15,10 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 
+function getCookies() {
+	return typeof document === 'undefined' ? {} : cookie.parse( document.cookie );
+}
+
 export function getSocialServiceFromClientId( clientId ) {
 	if ( ! clientId ) {
 		return null;
@@ -175,7 +179,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 }
 
 export const isReactLostPasswordScreenEnabled = () => {
-	const cookies = typeof document === 'undefined' ? {} : cookie.parse( document.cookie );
+	const cookies = getCookies();
 	return (
 		config.isEnabled( 'login/react-lost-password-screen' ) ||
 		cookies.enable_react_password_screen === 'yes'
