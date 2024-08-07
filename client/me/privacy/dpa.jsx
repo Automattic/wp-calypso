@@ -78,16 +78,21 @@ const DPA = () => {
 						) }
 					</strong>
 				</p>
-				<Button
-					className="privacy__dpa-request-button"
-					disabled={ isLoading }
-					onClick={ requestDpa }
-				>
+				<Button className="privacy__dpa-request-button" disabled onClick={ requestDpa }>
 					{ translate( 'Request a DPA', {
 						comment:
 							'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
 					} ) }
 				</Button>
+				<p>
+					<small>
+						<strong>
+							{ translate(
+								'Notice: The ability to request a DPA is temporarily on hold while updates are made to our Data Processing Addendum. We expect this feature to be restored on or before August 16.'
+							) }
+						</strong>
+					</small>
+				</p>
 			</Card>
 		</>
 	);
