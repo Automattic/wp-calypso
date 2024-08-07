@@ -34,7 +34,12 @@
 		}
 
 		// Note: The checkbox does not count for column counting purposes
-
+		&.is-8-column {
+			grid-template-columns: 20px 2fr 1fr 1fr 1fr auto auto auto auto;
+		}
+		&.is-8-column:not(.has-checkbox) {
+			grid-template-columns: 2fr 1fr 1fr 1fr auto auto auto auto;
+		}
 		&.is-7-column {
 			grid-template-columns: 20px 2fr 1fr 1fr auto auto auto auto;
 		}
