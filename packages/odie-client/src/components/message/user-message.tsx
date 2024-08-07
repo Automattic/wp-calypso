@@ -17,7 +17,7 @@ export const UserMessage = ( {
 	message: Message;
 	onDislike: () => void;
 } ) => {
-	const { extraContactOptions } = useOdieAssistantContext();
+	const { extraContactOptions, isUserElegible } = useOdieAssistantContext();
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const hasFeedback = !! message?.rating_value;
 	const isUser = message.role === 'user';
@@ -30,6 +30,13 @@ export const UserMessage = ( {
 		__i18n_text_domain__
 	);
 
+	const supportHappinessWording = __(
+		'It sounds like you want to talk to a human. We’re here to help! Use the option below to message our Happiness Engineers.',
+		__i18n_text_domain__
+	);
+
+	const forwardMessage = isUserElegible ? supportHappinessWording : supportForumWording;
+
 	return (
 		<>
 			<Markdown
@@ -38,7 +45,7 @@ export const UserMessage = ( {
 					a: CustomALink,
 				} }
 			>
-				{ isRequestingHumanSupport ? supportForumWording : message.content }
+				{ isRequestingHumanSupport ? forwardMessage : message.content }
 			</Markdown>
 			{ showExtraContactOptions && extraContactOptions }
 			{ ! hasFeedback && ! isUser && (
