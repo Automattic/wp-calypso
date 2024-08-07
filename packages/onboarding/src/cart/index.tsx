@@ -144,8 +144,8 @@ export const createSiteWithCart = async (
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
 	username: string,
+	domainCartItems: MinimalRequestCartProduct[],
 	domainItem?: DomainSuggestion,
-	domainCartItem?: MinimalRequestCartProduct,
 	sourceSlug?: string
 ) => {
 	const siteUrl = domainItem?.domain_name;
@@ -213,14 +213,18 @@ export const createSiteWithCart = async (
 		await setupSiteAfterCreation( { siteId, flowName } );
 	}
 
-	await processItemCart(
-		siteSlug,
-		isFreeThemePreselected,
-		themeSlugWithRepo,
-		flowName,
-		userIsLoggedIn,
-		domainCartItem
-	);
+	if ( domainCartItems.length ) {
+		for ( const domainCartItem of domainCartItems ) {
+			await processItemCart(
+				siteSlug,
+				isFreeThemePreselected,
+				themeSlugWithRepo,
+				flowName,
+				userIsLoggedIn,
+				domainCartItem
+			);
+		}
+	}
 
 	return providedDependencies;
 };

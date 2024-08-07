@@ -28,6 +28,7 @@ function getStepperState( key: string ) {
  */
 export function useStepperPersistedState< T >( defaultValue?: T ): [ T, ( newState: T ) => void ] {
 	const match = useMatch( '/:flow/:step?/:lang?' );
+	// This gives unique id for each instance of the hook in the tree.
 	const id = useId();
 	const { flow = 'flow', step = 'step', lang = 'lang' } = match?.params || {};
 	const key = [ 'stepper-state', flow, step, lang, id ].join( '-' );

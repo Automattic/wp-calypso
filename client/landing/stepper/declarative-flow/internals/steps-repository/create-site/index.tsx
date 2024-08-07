@@ -76,17 +76,32 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	const urlData = useSelector( getUrlData );
 
-	const { domainItem, domainCartItem, planCartItem, selectedSiteTitle, productCartItems } =
-		useSelect(
-			( select ) => ( {
-				domainItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
-				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-				productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
-				selectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
-			} ),
-			[]
-		);
+	const {
+		domainItem,
+		domainCartItem,
+		domainCartItems = [],
+		planCartItem,
+		selectedSiteTitle,
+		productCartItems,
+	} = useSelect(
+		( select ) => ( {
+			domainItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			domainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems(),
+			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
+			selectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		} ),
+		[]
+	);
+
+	/**
+	 * Support singular and multiple domain cart items.
+	 */
+	const mergedDomainCartItems = domainCartItems.slice( 0 );
+	if ( domainCartItem ) {
+		mergedDomainCartItems.push( domainCartItem );
+	}
 
 	const username = useSelector( getCurrentUserName );
 
@@ -127,7 +142,9 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		}
 	}
 
-	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
+	const isPaidDomainItem = Boolean(
+		domainCartItem?.product_slug || domainCartItems?.some( ( el ) => el.product_slug )
+	);
 
 	const progress = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgress(),
@@ -194,8 +211,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			'#113AF5',
 			useThemeHeadstart,
 			username,
+			mergedDomainCartItems,
 			domainItem,
-			domainCartItem,
 			sourceSlug
 		);
 
@@ -222,6 +239,14 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			await addProductsToCart( site.siteSlug, flow, productCartItems );
 		}
 
+		if ( domainCartItems?.length && site?.siteSlug ) {
+			await addProductsToCart( site.siteSlug, flow, productCartItems );
+		}
+
+		if ( productCartItems?.length && site?.siteSlug ) {
+			await addProductsToCart( site.siteSlug, flow, productCartItems );
+		}
+
 		if ( isMigrationFlow( flow ) && site?.siteSlug && sourceMigrationStatus?.source_blog_id ) {
 			// Store temporary target blog id to source site option
 			addTempSiteToSourceOption( site.siteId, sourceMigrationStatus?.source_blog_id );
@@ -230,7 +255,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		return {
 			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
-			goToCheckout: Boolean( planCartItem ),
+			goToCheckout: Boolean( planCartItem || mergedDomainCartItems.length ),
 			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
 			siteCreated: true,
 		};

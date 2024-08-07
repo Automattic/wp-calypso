@@ -87,10 +87,12 @@ export default function DomainsStep( props: StepProps ) {
 				saveSignupStep={ ( state: ProvidedDependencies ) =>
 					setStepState( { ...stepState, ...state } )
 				}
-				submitSignupStep={ ( state: ProvidedDependencies ) =>
+				submitSignupStep={ ( state: ProvidedDependencies ) => {
+					setStepState( { ...stepState, ...state } );
+				} }
+				goToNextStep={ ( state: ProvidedDependencies ) =>
 					props.navigation.submit?.( { ...stepState, ...state } )
 				}
-				goToNextStep={ () => props.navigation.submit?.( stepState ) }
 				step={ stepState }
 				flowName={ props.flow }
 				CustomStepWrapper={ StepContainer }

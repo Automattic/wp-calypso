@@ -45,7 +45,7 @@ const onboarding: Flow = {
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 
-		const { resetStore, setDomain, setDomainCartItems } = useDispatch( ONBOARD_STORE );
+		const { setDomain, setDomainCartItems } = useDispatch( ONBOARD_STORE );
 
 		const { domainCartItem, planCartItem } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
@@ -82,8 +82,6 @@ const onboarding: Flow = {
 						if ( domainCartItem && siteSlug && flowName ) {
 							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
 						}
-
-						resetStore();
 
 						// replace the location to delete processing step from history.
 						window.location.replace(
