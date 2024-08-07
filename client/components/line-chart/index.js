@@ -14,8 +14,8 @@ import LineChartLegend from './legend';
 import './style.scss';
 
 const CHART_MARGIN = 0.01;
-const POINTS_MAX = 10;
-const POINTS_SIZE = 3;
+const POINTS_MAX = 100;
+const POINTS_SIZE = 5;
 const POINT_HIGHLIGHT_SIZE_FACTOR = 1.5;
 const POINTS_END_SIZE = 1;
 const X_AXIS_TICKS_MAX = 8;
@@ -182,21 +182,60 @@ class LineChart extends Component {
 		data.forEach( ( dataSeries, dataSeriesIndex ) => {
 			const drawFullSeries = dataSeries.length < POINTS_MAX;
 			const colorNum = dataSeriesIndex % NUM_SERIES;
+			const size = drawFullSeries ? POINTS_SIZE : POINTS_END_SIZE;
+			const halfSize = size / 2;
 
 			( drawFullSeries ? dataSeries : [ dataSeries[ 0 ], last( dataSeries ) ] ).forEach(
 				( datum ) => {
-					svg
-						.append( 'circle' )
-						.attr(
-							'class',
-							`line-chart__line-point line-chart__line${
-								drawFullSeries ? '' : '-end'
-							}-point-color-${ colorNum }`
-						)
-						.attr( 'cx', xScale( datum.date ) )
-						.attr( 'cy', yScale( datum.value ) )
-						.attr( 'r', drawFullSeries ? POINTS_SIZE : POINTS_END_SIZE )
-						.datum( { ...datum, dataSeriesIndex } );
+					const shape = datum.pointStyle ?? 'circle';
+					if ( shape === 'circle' ) {
+						svg
+							.append( 'circle' )
+							.attr(
+								'class',
+								`line-chart__line-point line-chart__line${
+									drawFullSeries ? '' : '-end'
+								}-point-color-${ colorNum }`
+							)
+							.attr( 'cx', xScale( datum.date ) )
+							.attr( 'cy', yScale( datum.value ) )
+							.attr( 'r', size )
+							.datum( { ...datum, dataSeriesIndex } );
+					} else if ( shape === 'square' ) {
+						svg
+							.append( 'rect' )
+							.attr(
+								'class',
+								`line-chart__line-point line-chart__line${
+									drawFullSeries ? '' : '-end'
+								}-point-color-${ colorNum }`
+							)
+							.attr( 'x', xScale( datum.date ) - halfSize )
+							.attr( 'y', yScale( datum.value ) - halfSize )
+							.attr( 'width', size )
+							.attr( 'height', size )
+							.datum( { ...datum, dataSeriesIndex } );
+					} else if ( shape === 'triangle' ) {
+						const x = xScale( datum.date );
+						const y = yScale( datum.value );
+						const points = [
+							[ x, y - halfSize ],
+							[ x - halfSize, y + halfSize ],
+							[ x + halfSize, y + halfSize ],
+						]
+							.map( ( p ) => p.join( ',' ) )
+							.join( ' ' );
+						svg
+							.append( 'polygon' )
+							.attr(
+								'class',
+								`line-chart__line-point line-chart__line${
+									drawFullSeries ? '' : '-end'
+								}-point-color-${ colorNum }`
+							)
+							.attr( 'points', points )
+							.datum( { ...datum, dataSeriesIndex } );
+					}
 				}
 			);
 		} );
