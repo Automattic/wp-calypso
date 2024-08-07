@@ -110,7 +110,7 @@ const PlanFeatures2023GridActions = ( {
 		selectedStorageAddOn,
 	} );
 
-	const busy = isFreePlan( planSlug ) && status === 'blocked';
+	const busy = status === 'blocked';
 
 	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
 	const canPurchaseStorageAddOns = storageAddOns?.some(
@@ -158,6 +158,7 @@ const PlanFeatures2023GridActions = ( {
 					planSlug={ planSlug }
 					classes="is-storage-upgradeable"
 					href={ storageAddOnCheckoutHref }
+					busy={ busy }
 				>
 					{ translate( 'Upgrade' ) }
 				</PlanButton>
@@ -170,7 +171,7 @@ const PlanFeatures2023GridActions = ( {
 						{ freeTrialText }
 					</PlanButton>
 					{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-						<PlanButton planSlug={ planSlug } onClick={ callback } borderless>
+						<PlanButton planSlug={ planSlug } onClick={ callback } busy={ busy } borderless>
 							{ text }
 						</PlanButton>
 					) }
@@ -180,6 +181,7 @@ const PlanFeatures2023GridActions = ( {
 					<PlanButton
 						planSlug={ planSlug }
 						disabled={ ! callback || 'disabled' === status }
+						busy={ busy }
 						onClick={ callback }
 						current={ current }
 					>

@@ -4,13 +4,14 @@
 @import "@automattic/typography/styles/variables";
 
 $head-foot-height: 50px;
+$z-index: 99999;
 
 .help-center {
 	.components-card.help-center__container {
 		position: fixed;
 		background-color: #fff;
 		color: #000;
-		z-index: 9999;
+		z-index: $z-index;
 		cursor: default;
 		transition: max-height 0.5s;
 
@@ -20,6 +21,7 @@ $head-foot-height: 50px;
 		}
 
 		.button {
+			text-decoration: none;
 			font-size: $font-body-small;
 		}
 
@@ -80,7 +82,7 @@ $head-foot-height: 50px;
 		}
 
 		.help-center__container-content-wrapper {
-			height: 100%;
+			height: auto;
 		}
 
 		.help-center__container-content {
@@ -299,6 +301,13 @@ $head-foot-height: 50px;
 				outline: var(--color-primary-light) solid 2px;
 			}
 		}
+	}
+
+	.help-center__container-extra-contact-options {
+		padding: 0;
+		margin: 0;
+		border: none;
+		min-height: 68px;
 	}
 
 	.help-center__container-content {
@@ -557,7 +566,7 @@ $head-foot-height: 50px;
 }
 
 .help-center__container-header-menu {
-	z-index: 99999;
+	z-index: $z-index;
 
 	.popover__menu {
 		.help-center__container-header-menu-item {

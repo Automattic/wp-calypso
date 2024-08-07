@@ -4,14 +4,24 @@
 
 .a4a-slider {
 	display: flex;
-	flex-direction: row;
-	gap: 24px;
-	align-items: flex-end;
+	flex-direction: column;
+	gap: 16px;
+	align-items: stretch;
+
+	@include break-medium {
+		flex-direction: row;
+		gap: 24px;
+	}
 }
 
 .a4a-slider__input {
 	position: relative;
 	flex-grow: 1;
+	margin-block-start: -16px;
+
+	@include break-medium {
+		margin-block-start: 0;
+	}
 }
 
 .a4a-slider__input [type="range"] {
@@ -92,16 +102,24 @@
 }
 
 .a4a-slider__label-container {
-	display: none;
-	text-align: right;
+	display: flex;
+	flex-direction: row;
+	text-align: left;
+	align-content: center;
+	gap: 6px;
 
 	@include break-medium {
 		display: block;
+		text-align: right;
 	}
 }
 
 .a4a-slider__sub {
-	margin-block-start: 4px;
+	margin-block-start: 0;
+
+	@include break-medium {
+		margin-block-start: 4px;
+	}
 }
 
 .a4a-slider__label,

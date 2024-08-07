@@ -1,7 +1,10 @@
-.standard-agency-hosting__plan-selector-container {
-	padding: 0 0 48px;
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-	@include breakpoint-deprecated( ">660px" ) {
+.standard-agency-hosting__plan-selector-container {
+	padding: 0 16px 48px;
+
+	@include break-medium {
 		max-width: 1500px;
 		margin-inline: auto;
 		padding-inline: 40px;

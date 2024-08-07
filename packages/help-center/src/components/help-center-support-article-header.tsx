@@ -1,10 +1,11 @@
 import { ExternalLink } from '@automattic/components';
+import type { PostObject } from '../types';
 
 export const SupportArticleHeader = ( {
 	post,
 	isLoading,
 }: {
-	post: { link: string; title: string };
+	post: PostObject;
 	isLoading: boolean;
 } ) =>
 	isLoading || ! post ? (
@@ -16,7 +17,7 @@ export const SupportArticleHeader = ( {
 			<h1 className="help-center-article-content__header-title">
 				<ExternalLink
 					className="help-center-article-content__header-title-link"
-					href={ post.link }
+					href={ post.URL }
 					target="_blank"
 					icon={ false }
 				>

@@ -9,39 +9,36 @@ import { MarketplaceTypeContext } from 'calypso/a8c-for-agencies/sections/market
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
 import { getWPCOMCreatorPlan } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import WPCOMBulkSelector from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/bulk-selection';
-import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-values-utils';
+import {
+	DiscountTier,
+	calculateTier,
+} from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-values-utils';
 import useWPCOMPlanDescription from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/wpcom-card/hooks/use-wpcom-plan-description';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import useWPCOMDiscountTiers from '../../../hooks/use-wpcom-discount-tiers';
 
 import './style.scss';
 
-type Props = {
+type PlanDetailsProps = {
+	plan: APIProductFamilyProduct;
 	onSelect: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+	ownedPlans: number;
+	referralMode?: boolean;
+	quantity: number;
+	setQuantity: ( quantity: number ) => void;
 };
 
-export default function WPCOMPlanSelector( { onSelect }: Props ) {
+function PlanDetails( {
+	plan,
+	onSelect,
+	ownedPlans,
+	referralMode,
+	quantity,
+	setQuantity,
+}: PlanDetailsProps ) {
 	const translate = useTranslate();
 
-	const { data: licenseCounts, isSuccess: isLicenseCountsReady } = useFetchLicenseCounts();
-
-	const [ quantity, setQuantity ] = useState( 1 );
-
-	const { wpcomPlans } = useProductAndPlans( {} );
-
-	const plan = getWPCOMCreatorPlan( wpcomPlans ) ?? wpcomPlans[ 0 ];
-
-	const ownedPlans = useMemo( () => {
-		if ( isLicenseCountsReady && plan ) {
-			const productStats = licenseCounts?.products?.[ plan.slug ];
-			return productStats?.not_revoked || 0;
-		}
-	}, [ isLicenseCountsReady, licenseCounts?.products, plan ] );
-
 	const discountTiers = useWPCOMDiscountTiers();
-
-	const { marketplaceType } = useContext( MarketplaceTypeContext );
-	const referralMode = marketplaceType === 'referral';
 
 	const discount = useMemo( () => {
 		if ( referralMode ) {
@@ -71,6 +68,137 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 		} );
 	}, [ planName, quantity, referralMode, translate ] );
 
+	return (
+		<div className="wpcom-plan-selector__details">
+			{ ownedPlans > 0 && (
+				<div className="wpcom-plan-selector__owned-plan">
+					{ translate( 'You own %(count)s site', 'You own %(count)s sites', {
+						args: {
+							count: ownedPlans,
+						},
+						count: ownedPlans,
+						comment: '%(count)s is the number of WordPress.com sites owned by the user',
+					} ) }
+				</div>
+			) }
+
+			<h2 className="wpcom-plan-selector__plan-name">{ planName }</h2>
+
+			<div className="wpcom-plan-selector__price">
+				<b className="wpcom-plan-selector__price-actual-value">
+					{ formatCurrency( actualPrice, plan.currency ) }
+				</b>
+				{ !! discount && (
+					<>
+						<b className="wpcom-plan-selector__price-original-value">
+							{ formatCurrency( originalPrice, plan.currency ) }
+						</b>
+
+						<span className="wpcom-plan-selector__price-discount">
+							{ translate( 'You save %(discount)s%', {
+								args: {
+									discount: Math.floor( discount * 100 ),
+								},
+								comment: '%(discount)s is the discount percentage.',
+							} ) }
+						</span>
+					</>
+				) }
+				<div className="wpcom-plan-selector__price-interval">
+					{ plan.price_interval === 'day' && translate( 'per day' ) }
+					{ plan.price_interval === 'month' && translate( 'per month' ) }
+				</div>
+			</div>
+
+			<div className="wpcom-plan-selector__cta">
+				<div className="wpcom-plan-selector__cta-label">
+					{ translate( 'How many sites would you like to buy?' ) }
+				</div>
+
+				<div className="wpcom-plan-selector__cta-component">
+					<Button
+						className="wpcom-plan-selector__cta-button"
+						variant="primary"
+						onClick={ () => onSelect( plan, quantity ) }
+					>
+						{ ctaLabel }
+					</Button>
+
+					{ ! referralMode && <A4ANumberInput value={ quantity } onChange={ setQuantity } /> }
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function PlanDetailsPlaceholder() {
+	return (
+		<div className="wpcom-plan-selector__details is-placeholder">
+			<div className="wpcom-plan-selector__owned-plan"></div>
+			<div className="wpcom-plan-selector__plan-name"></div>
+			<div className="wpcom-plan-selector__price"></div>
+			<div className="wpcom-plan-selector__price-interval"></div>
+			<div className="wpcom-plan-selector__cta">
+				<div className="wpcom-plan-selector__cta-label"></div>
+				<div className="wpcom-plan-selector__cta-component"></div>
+			</div>
+		</div>
+	);
+}
+
+type WPCOMPlanSelectorProps = {
+	onSelect: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+};
+
+export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps ) {
+	const translate = useTranslate();
+
+	const { data: licenseCounts, isSuccess: isLicenseCountsReady } = useFetchLicenseCounts();
+
+	const { wpcomPlans } = useProductAndPlans( {} );
+
+	const plan = getWPCOMCreatorPlan( wpcomPlans ) ?? wpcomPlans[ 0 ];
+
+	const ownedPlans = useMemo( () => {
+		if ( isLicenseCountsReady && plan ) {
+			const productStats = licenseCounts?.products?.[ plan.slug ];
+			return productStats?.not_revoked || 0;
+		}
+	}, [ isLicenseCountsReady, licenseCounts?.products, plan ] );
+
+	const discountTiers = useWPCOMDiscountTiers();
+
+	const [ selectedTier, setSelectedTier ] = useState< DiscountTier >( discountTiers[ 0 ] );
+
+	const [ quantity, setQuantity ] = useState(
+		selectedTier.value ? Number( selectedTier.value ) : 1
+	);
+
+	const handleSetSelectedTier = ( tier: DiscountTier ) => {
+		setSelectedTier( tier );
+		// If the user already owns plans, set the quantity to the difference between the selected tier and the owned plans
+		setQuantity( ownedPlans ? Number( tier.value ) - ownedPlans : Number( tier.value ) );
+	};
+
+	const handleSetQuantity = ( value: number ) => {
+		if ( value ) {
+			setQuantity( value );
+			const tier = discountTiers.find( ( tier ) => tier.value === value );
+			if ( tier ) {
+				if ( tier.value < 10 ) {
+					setSelectedTier( tier );
+				} else {
+					setSelectedTier(
+						discountTiers.find( ( { value } ) => value === 10 ) ?? discountTiers[ 0 ]
+					);
+				}
+			}
+		}
+	};
+
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const referralMode = marketplaceType === 'referral';
+
 	if ( ! plan ) {
 		return;
 	}
@@ -80,82 +208,30 @@ export default function WPCOMPlanSelector( { onSelect }: Props ) {
 			<div className="wpcom-plan-selector__slider-container">
 				{ ! referralMode && (
 					<WPCOMBulkSelector
-						selectedTier={ discountTiers[ 0 ] }
+						selectedTier={ selectedTier }
+						onSelectTier={ handleSetSelectedTier }
+						quantity={ quantity }
 						ownedPlans={ ownedPlans }
 						isLoading={ ! isLicenseCountsReady }
 						hideOwnedPlansBadge
-						readOnly
+						hideNumberInput
 					/>
 				) }
 			</div>
 
 			<div className="wpcom-plan-selector__card">
-				<div className="wpcom-plan-selector__details">
-					{ ownedPlans && (
-						<div className="wpcom-plan-selector__owned-plan">
-							{ translate( 'You own %(count)s site', 'You own %(count)s sites', {
-								args: {
-									count: ownedPlans,
-								},
-								count: ownedPlans,
-								comment: '%(count)s is the number of WordPress.com sites owned by the user',
-							} ) }
-						</div>
-					) }
-
-					<h2 className="wpcom-plan-selector__plan-name">{ planName }</h2>
-
-					{ ! isLicenseCountsReady && (
-						<div className="wpcom-plan-selector__price is-placeholder"></div>
-					) }
-
-					{ isLicenseCountsReady && (
-						<div className="wpcom-plan-selector__price">
-							<b className="wpcom-plan-selector__price-actual-value">
-								{ formatCurrency( actualPrice, plan.currency ) }
-							</b>
-							{ !! discount && (
-								<>
-									<b className="wpcom-plan-selector__price-original-value">
-										{ formatCurrency( originalPrice, plan.currency ) }
-									</b>
-
-									<span className="wpcom-plan-selector__price-discount">
-										{ translate( 'You save %(discount)s%', {
-											args: {
-												discount: Math.floor( discount * 100 ),
-											},
-											comment: '%(discount)s is the discount percentage.',
-										} ) }
-									</span>
-								</>
-							) }
-							<div className="wpcom-plan-selector__price-interval">
-								{ plan.price_interval === 'day' && translate( 'per day' ) }
-								{ plan.price_interval === 'month' && translate( 'per month' ) }
-							</div>
-						</div>
-					) }
-
-					<div className="wpcom-plan-selector__cta">
-						<div className="wpcom-plan-selector__cta-label">
-							{ translate( 'How many sites would you like to buy?' ) }
-						</div>
-
-						<div className="wpcom-plan-selector__cta-component">
-							<Button
-								className="wpcom-plan-selector__cta-button"
-								variant="primary"
-								onClick={ () => onSelect( plan, quantity ) }
-								disabled={ ! isLicenseCountsReady }
-							>
-								{ ctaLabel }
-							</Button>
-
-							{ ! referralMode && <A4ANumberInput value={ quantity } onChange={ setQuantity } /> }
-						</div>
-					</div>
-				</div>
+				{ isLicenseCountsReady ? (
+					<PlanDetails
+						plan={ plan }
+						onSelect={ onSelect }
+						ownedPlans={ ownedPlans }
+						referralMode={ referralMode }
+						quantity={ quantity }
+						setQuantity={ handleSetQuantity }
+					/>
+				) : (
+					<PlanDetailsPlaceholder />
+				) }
 
 				<div className="wpcom-plan-selector__features">
 					<SimpleList

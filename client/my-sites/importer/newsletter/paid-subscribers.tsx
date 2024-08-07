@@ -1,19 +1,46 @@
-import { Card, Button } from '@automattic/components';
-
+import { hasQueryArg } from '@wordpress/url';
+import { useEffect } from 'react';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import { useSelector, useDispatch } from 'calypso/state';
+import { getIsConnectedForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import ConnectStripe from './connect-stripe';
+import MapPlans from './map-plans';
 type Props = {
 	nextStepUrl: string;
+	fromSite: string;
 };
 
-export default function PaidSubscribers( { nextStepUrl }: Props ) {
+export default function PaidSubscribers( { nextStepUrl, fromSite }: Props ) {
+	const site = useSelector( getSelectedSite );
+	const dispatch = useDispatch();
+
+	const hasConnectedAccount = useSelector( ( state ) =>
+		getIsConnectedForSiteId( state, site?.ID )
+	);
+
+	const isCancelled = hasQueryArg( window.location.href, 'stripe_connect_cancelled' );
+	const isSuccess = hasQueryArg( window.location.href, 'stripe_connect_success' );
+
+	useEffect( () => {
+		if ( isSuccess ) {
+			dispatch( successNotice( 'Stripe account connected successfully' ) );
+		} else if ( isCancelled ) {
+			dispatch( infoNotice( 'Stripe account connection cancelled' ) );
+		}
+	}, [ isSuccess, dispatch, isCancelled ] );
+
 	return (
-		<Card>
-			<h2>Connect your Stripe account</h2>
-			<p>
-				To migrate your paid subscribers, ensure you're connecting the same Stripe account used with
-				your current provider.
-			</p>
-			<Button primary>Connect with Stripe</Button>{ ' ' }
-			<Button href={ nextStepUrl }>Skip for now</Button>
-		</Card>
+		<>
+			{ site?.ID && (
+				<QueryMembershipsSettings siteId={ site.ID } source="import-paid-subscribers" />
+			) }
+
+			{ ! hasConnectedAccount && (
+				<ConnectStripe nextStepUrl={ nextStepUrl } fromSite={ fromSite } />
+			) }
+			{ hasConnectedAccount && <MapPlans nextStepUrl={ nextStepUrl } /> }
+		</>
 	);
 }

@@ -39,12 +39,11 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	currentRoute,
 	openingCoordinates,
 } ) => {
-	const { show, isMinimized, navigateToRoute } = useSelect( ( select ) => {
+	const { show, isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			show: store.isHelpCenterShown(),
 			isMinimized: store.getIsMinimized(),
-			navigateToRoute: store.getNavigateToRoute(),
 		};
 	}, [] );
 
@@ -109,7 +108,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	}
 
 	return (
-		<MemoryRouter initialEntries={ navigateToRoute ? [ navigateToRoute ] : undefined }>
+		<MemoryRouter>
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile && ! isMinimized }
