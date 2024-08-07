@@ -44,12 +44,6 @@ namespace A8C\FSE;
  */
 define( 'A8C_ETK_PLUGIN_VERSION', 'dev' );
 
-// Always include these helper files for dotcom FSE.
-require_once __DIR__ . '/dotcom-fse/helpers.php';
-
-// Enqueues the shared JS data stores and defines shared helper functions.
-require_once __DIR__ . '/common/index.php';
-
 /**
  * Load dotcom-FSE.
  */
@@ -63,7 +57,6 @@ function load_full_site_editing() {
 	dangerously_load_full_site_editing_files();
 	Full_Site_Editing::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
 
 /**
  * Load Posts List Block.
@@ -93,7 +86,6 @@ function load_posts_list_block() {
 
 	Posts_List_Block::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_posts_list_block' );
 
 /**
  * Load Starter_Page_Templates.
@@ -124,7 +116,6 @@ function load_starter_page_templates() {
 
 	Starter_Page_Templates::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_starter_page_templates' );
 
 /**
  * Load Global Styles plugin.
@@ -136,7 +127,6 @@ function load_global_styles() {
 
 	require_once __DIR__ . '/global-styles/class-global-styles.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 
 /**
  * Load Event Countdown Block.
@@ -148,7 +138,6 @@ function load_countdown_block() {
 
 	require_once __DIR__ . '/event-countdown-block/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_countdown_block' );
 
 /**
  * Load Timeline Block.
@@ -160,7 +149,6 @@ function load_timeline_block() {
 
 	require_once __DIR__ . '/jetpack-timeline/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_timeline_block' );
 
 /**
  * Add front-end CoBlocks gallery block scripts.
@@ -216,7 +204,13 @@ function enqueue_coblocks_gallery_scripts() {
 		);
 	}
 }
-add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scripts' );
+
+/**
+ * Load CoBlocks gallery.
+ */
+function load_coblocks_gallery() {
+	add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_coblocks_gallery_scripts' );
+}
 
 /**
  * Load Blog Posts block.
@@ -249,7 +243,6 @@ function load_blog_posts_block() {
 
 	require_once __DIR__ . '/newspack-blocks/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
 
 /**
  * Load WPCOM Block Editor NUX.
@@ -261,7 +254,6 @@ function load_wpcom_block_editor_nux() {
 
 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 
 /**
  * Load Block Inserter Modifications module.
@@ -273,7 +265,6 @@ function load_block_inserter_modifications() {
 
 	require_once __DIR__ . '/block-inserter-modifications/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );
 
 /**
  * Load Mailerlite module.
@@ -285,7 +276,6 @@ function load_mailerlite() {
 
 	require_once __DIR__ . '/mailerlite/subscriber-popup.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_mailerlite' );
 
 /**
  * What's New section of the Tools menu.
@@ -297,7 +287,6 @@ function load_whats_new() {
 
 	require_once __DIR__ . '/whats-new/class-whats-new.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
 
 /**
  * Tags Education
@@ -309,7 +298,6 @@ function load_tags_education() {
 
 	require_once __DIR__ . '/tags-education/class-tags-education.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
 
 /**
  * Load paragraph block
@@ -321,7 +309,6 @@ function load_paragraph_block() {
 
 	require_once __DIR__ . '/paragraph-block/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_paragraph_block' );
 
 /**
  * Override org documentation links.
@@ -333,7 +320,6 @@ function load_wpcom_documentation_links() {
 
 	require_once __DIR__ . '/wpcom-documentation-links/class-wpcom-documentation-links.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_documentation_links' );
 
 /**
  * Add support links to block description.
@@ -345,7 +331,6 @@ function load_block_description_links() {
 
 	require_once __DIR__ . '/wpcom-block-description-links/class-wpcom-block-description-links.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
 
 /**
  * Load WP.com Global Styles.
@@ -357,4 +342,40 @@ function load_wpcom_global_styles() {
 
 	require_once __DIR__ . '/wpcom-global-styles/index.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_global_styles' );
+
+/**
+ * Load features of the ETK plugin.
+ */
+function load_editing_toolkit_features() {
+	/**
+	 * Turn off the ETK plugin features if the Jetpack_Mu_Wpcom is available and its version is v5.54.0-alpha and above.
+	 */
+	if ( class_exists( '\Automattic\Jetpack\Jetpack_Mu_Wpcom', false ) && version_compare( \Automattic\Jetpack\Jetpack_Mu_Wpcom::PACKAGE_VERSION, '5.54.0-alpha', '>=' ) ) {
+		return;
+	}
+
+	// Always include these helper files for dotcom FSE.
+	require_once __DIR__ . '/dotcom-fse/helpers.php';
+
+	// Enqueues the shared JS data stores and defines shared helper functions.
+	require_once __DIR__ . '/common/index.php';
+
+	load_full_site_editing();
+	load_posts_list_block();
+	load_starter_page_templates();
+	load_global_styles();
+	load_countdown_block();
+	load_timeline_block();
+	load_coblocks_gallery();
+	load_blog_posts_block();
+	load_wpcom_block_editor_nux();
+	load_block_inserter_modifications();
+	load_mailerlite();
+	load_whats_new();
+	load_tags_education();
+	load_paragraph_block();
+	load_wpcom_documentation_links();
+	load_block_description_links();
+	load_wpcom_global_styles();
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editing_toolkit_features' );
