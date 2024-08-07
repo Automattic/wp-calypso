@@ -214,6 +214,9 @@ const PlanCard: FC = () => {
 		}
 	};
 
+	const shouldRenderPlanData =
+		! isStaging || ( isStaging && config.isEnabled( 'hosting-overview-refinements' ) );
+
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
@@ -230,52 +233,54 @@ const PlanCard: FC = () => {
 						</>
 					) }
 				</div>
-				<>
-					{ isAgencyPurchase && (
-						<div className="hosting-overview__plan-agency-purchase">
-							<p>
-								{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
-									components: {
-										a: isA4A ? (
-											<a
-												href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
-											></a>
-										) : (
-											<strong></strong>
-										),
-									},
-								} ) }
-							</p>
-						</div>
-					) }
-					{ ! isAgencyPurchase && ! isStaging && <PricingSection /> }
-					{ ! isLoading && (
-						<PlanStorage
-							className="hosting-overview__plan-storage"
-							hideWhenNoStorage
-							siteId={ site?.ID }
-							StorageBarComponent={ PlanStorageBar }
-						>
-							{ storageAddons.length > 0 && ! isAgencyPurchase && (
-								<div className="hosting-overview__plan-storage-footer">
-									<Button
-										className="hosting-overview__link-button"
-										plain
-										href={ `/add-ons/${ site?.slug }` }
-									>
-										{ translate( 'Need more storage?' ) }
-									</Button>
-								</div>
-							) }
-						</PlanStorage>
-					) }
-					{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
-						<PlanSiteVisits siteId={ site.ID } />
-					) }
-					{ config.isEnabled( 'hosting-overview-refinements' ) && isAtomic && site && (
-						<PlanBandwidth siteId={ site.ID } />
-					) }
-				</>
+				{ shouldRenderPlanData && (
+					<>
+						{ isAgencyPurchase && (
+							<div className="hosting-overview__plan-agency-purchase">
+								<p>
+									{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
+										components: {
+											a: isA4A ? (
+												<a
+													href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }
+												></a>
+											) : (
+												<strong></strong>
+											),
+										},
+									} ) }
+								</p>
+							</div>
+						) }
+						{ ! isAgencyPurchase && ! isStaging && <PricingSection /> }
+						{ ! isLoading && (
+							<PlanStorage
+								className="hosting-overview__plan-storage"
+								hideWhenNoStorage
+								siteId={ site?.ID }
+								StorageBarComponent={ PlanStorageBar }
+							>
+								{ storageAddons.length > 0 && ! isAgencyPurchase && (
+									<div className="hosting-overview__plan-storage-footer">
+										<Button
+											className="hosting-overview__link-button"
+											plain
+											href={ `/add-ons/${ site?.slug }` }
+										>
+											{ translate( 'Need more storage?' ) }
+										</Button>
+									</div>
+								) }
+							</PlanStorage>
+						) }
+						{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
+							<PlanSiteVisits siteId={ site.ID } />
+						) }
+						{ config.isEnabled( 'hosting-overview-refinements' ) && isAtomic && site && (
+							<PlanBandwidth siteId={ site.ID } />
+						) }
+					</>
+				) }
 			</HostingCard>
 		</>
 	);
