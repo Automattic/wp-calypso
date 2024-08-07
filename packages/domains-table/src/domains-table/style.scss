@@ -145,14 +145,10 @@
 			fill: var(--studio-green-50);
 		}
 
-		&__pending {
+		&__pending,
+		&__disabled {
 			color: var(--studio-orange-50);
 			fill: var(--studio-orange-50);
-		}
-
-		&__disabled {
-			color: var(--studio-gray-50);
-			fill: var(--studio-gray-50);
 		}
 	}
 
