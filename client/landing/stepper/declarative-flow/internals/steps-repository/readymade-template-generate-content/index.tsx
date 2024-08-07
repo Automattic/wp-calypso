@@ -1,4 +1,5 @@
 import { FormLabel } from '@automattic/components';
+import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -16,7 +17,6 @@ import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 import generateAIContentForTemplate from './api/generate-content';
 import ReadymadeTemplatePreview from './components/readymade-template-preview';
 import TextProgressBar from './components/text-progress-bar';
-import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 type ReadymadeTemplateGenerateContentProps = {
@@ -52,6 +52,11 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 					globalStyles: rt.globalStyles,
 					canReplaceContent: true,
 					siteSetupOption: 'readymade-template',
+				} )
+			)
+			.then( () =>
+				updateLaunchpadSettings( siteSlug, {
+					checklist_statuses: { generate_content: true },
 				} )
 			)
 			.then( () => setIsGeneratingContent( false ) );
