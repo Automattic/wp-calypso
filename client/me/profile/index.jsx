@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import clsx from 'clsx';
@@ -23,6 +24,7 @@ import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import SiteLevelProfileBanner from './site-level-profile-banner';
 import UpdatedGravatarString from './updated-gravatar-string';
 
 import './style.scss';
@@ -65,6 +67,8 @@ class Profile extends Component {
 						}
 					) }
 				/>
+
+				{ isEnabled( 'layout/site-level-user-profile' ) && <SiteLevelProfileBanner /> }
 
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">
@@ -120,6 +124,21 @@ class Profile extends Component {
 								value={ this.props.getSetting( 'description' ) }
 							/>
 						</FormFieldset>
+
+						{ isEnabled( 'layout/site-level-user-profile' ) && (
+							<FormFieldset>
+								<FormLabel htmlFor="user_URL">{ this.props.translate( 'Web address' ) }</FormLabel>
+								<FormTextInput
+									disabled={ this.props.getDisabledState() }
+									id="user_URL"
+									name="user_URL"
+									type="url"
+									onChange={ this.props.updateSetting }
+									onFocus={ this.getFocusHandler( 'Web Address Field' ) }
+									value={ this.props.getSetting( 'user_URL' ) }
+								/>
+							</FormFieldset>
+						) }
 
 						<FormFieldset
 							className={ clsx( {
