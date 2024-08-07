@@ -34,11 +34,6 @@
 	#wp-admin-bar-help-center {
 		padding: 0;
 		width: 43px;
-		display: none;
-
-		@include breakpoint-deprecated( ">960px" ) {
-			display: block;
-		}
 
 		#help-center-icon-with-notification {
 			display: none;
