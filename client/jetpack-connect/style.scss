@@ -1120,6 +1120,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 
 	.signup-form {
+		max-width: 327px;
 		padding-top: 48px;
 		.signup-form__passwordless-form-wrapper {
 			button.is-primary {
@@ -1134,10 +1135,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			}
 		}
 
+		input.signup-form__passwordless-email {
+			margin-bottom: 0;
+		}
+
 		.auth-form__social {
 			padding-top: 0;
 			.auth-form__social-buttons {
-				margin-top: 38px;
 				width: 100%;
 				.social-buttons__button {
 					width: 100%;

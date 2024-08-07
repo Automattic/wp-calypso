@@ -27,7 +27,7 @@ export class AuthFormHeader extends Component {
 		// Connected props
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object,
-		hideSiteCard: PropTypes.bool,
+		disableSiteCard: PropTypes.bool,
 	};
 
 	getState() {
@@ -191,7 +191,7 @@ export class AuthFormHeader extends Component {
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate(
-						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to create a WordPress account. {{br/}} Already have one? {{a}}Log in{{/a}}",
 						translateParams
 					);
 				default:
@@ -299,7 +299,7 @@ export class AuthFormHeader extends Component {
 					headerText={ this.getHeaderText() }
 					subHeaderText={ this.getSubHeaderText() }
 				/>
-				{ ! this.props.hideSiteCard && this.getSiteCard() }
+				{ ! this.props.disableSiteCard && this.getSiteCard() }
 			</div>
 		);
 	}
