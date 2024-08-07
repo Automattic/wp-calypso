@@ -23,7 +23,10 @@
 			display: flex;
 			align-items: center;
 			.form-radio__label {
-				margin-left: 0;
+				margin-left: 0.5em;
+			}
+			.form-radio {
+				margin: 0;
 			}
 		}
 	}
