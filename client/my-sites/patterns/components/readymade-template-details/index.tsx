@@ -1,9 +1,9 @@
-import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import { addLocaleToPathLocaleInFront, useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { Icon, arrowLeft, check, copy } from '@wordpress/icons';
+import { Icon, arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { createElement, useEffect, useState } from 'react';
+import { createElement, useEffect } from 'react';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
 import { ReadymadeTemplateDetailsFC } from 'calypso/my-sites/patterns/types';
@@ -16,7 +16,7 @@ const PatternLibraryLink = ( { children }: { children: React.ReactNode } ) => (
 
 export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, renderPreview } ) => {
 	const translate = useTranslate();
-	const [ isCopied, setIsCopied ] = useState( false );
+	const localizeUrl = useLocalizeUrl();
 
 	useEffect( () => {
 		window.scroll( 0, 0 );
@@ -31,13 +31,6 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, rend
 	if ( ! readymadeTemplate ) {
 		return null;
 	}
-
-	const copyLayout = () => {
-		navigator.clipboard.writeText(
-			readymadeTemplate.home.header + readymadeTemplate.home.content + readymadeTemplate.home.footer
-		);
-		setIsCopied( true );
-	};
 
 	return (
 		<>
@@ -55,13 +48,6 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, rend
 								<h1 className="readymade-template-details-title">{ readymadeTemplate.title }</h1>
 								<div className="readymade-template-details-actions">
 									<Button
-										variant="secondary"
-										icon={ isCopied ? check : copy }
-										onClick={ copyLayout }
-									>
-										{ isCopied ? translate( 'Copied' ) : translate( 'Copy layout' ) }
-									</Button>
-									<Button
 										variant="primary"
 										href={ `/setup/readymade-template?readymadeTemplateId=${ readymadeTemplate.template_id }` }
 									>
@@ -72,20 +58,25 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, rend
 							<div className="readymade-template-details-preview-mobile">
 								{ renderPreview?.( readymadeTemplate ) }
 							</div>
-							<div
-								className="readymade-template-details-description"
-								// eslint-disable-next-line react/no-danger
-								dangerouslySetInnerHTML={ { __html: readymadeTemplate.description } }
-							/>
-
-							<div className="readymade-template-details-info">
-								<div className="readymade-template-details-subheading">
-									{ translate( 'Customize it to your heart’s content' ) }
-								</div>
-
+							<div className="readymade-template-details-description">
+								<div // eslint-disable-next-line react/no-danger
+									dangerouslySetInnerHTML={ { __html: readymadeTemplate.description } }
+								/>
+								<h4>{ translate( 'Customize it with AI' ) }</h4>
 								<p>
 									{ translate(
-										'Begin with this layout and transform it using our powerful site editing tools.'
+										'Start with this layout and use our AI assistant to create the website of your dreams without breaking a sweat.'
+									) }
+								</p>
+								<p>
+									{ translate(
+										'Just describe your site in a few sentences, and our AI tool will customize the content for you.'
+									) }
+								</p>
+								<h4>{ translate( 'Need full control?' ) }</h4>
+								<p>
+									{ translate(
+										'If you want even more control, our powerful site editing tools are always at your disposal, allowing you to customize every single detail of this beautiful layout.'
 									) }
 								</p>
 								<p>
@@ -98,11 +89,9 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, rend
 										}
 									) }
 								</p>
-								<p>
-									<a href="/support/site-editor">
-										{ translate( 'Learn more about how the site editor works.' ) }
-									</a>
-								</p>
+								<a href={ localizeUrl( 'https://wordpress.com/support/site-editor/' ) }>
+									{ translate( 'Learn more about how the site editor works.' ) }
+								</a>
 							</div>
 						</div>
 						<div className="readymade-template-details-preview">
