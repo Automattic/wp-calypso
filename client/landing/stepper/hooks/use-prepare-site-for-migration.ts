@@ -1,6 +1,8 @@
+import config from '@automattic/calypso-config';
 import { FetchStatus } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { usePluginAutoInstallation } from './use-plugin-auto-installation';
 import { useSiteMigrationKey } from './use-site-migration-key';
 import { useSiteTransfer } from './use-site-transfer';
@@ -39,6 +41,23 @@ interface TimeTrackingResult {
 	pluginInstallationStart: React.MutableRefObject< number >;
 	pluginInstallationEnd: React.MutableRefObject< number >;
 }
+
+const safeLogToLogstash = ( message: string, properties: Record< string, unknown > ) => {
+	try {
+		logToLogstash( {
+			feature: 'calypso_client',
+			message,
+			properties: {
+				env: config( 'env_id' ),
+				type: 'calypso_prepare_site_for_migration',
+				...properties,
+			},
+		} );
+	} catch ( e ) {
+		// eslint-disable-next-line no-console
+		console.error( e );
+	}
+};
 
 const useTransferTimeTracking = (
 	siteTransferState: TransferState,
@@ -104,6 +123,7 @@ export const usePrepareSiteForMigration = ( siteId?: number ) => {
 
 	const completed = siteTransferState.completed && pluginInstallationState.completed;
 	const error = siteTransferState.error || pluginInstallationState.error || migrationKeyError;
+	const criticalError = siteTransferState.error || pluginInstallationState.error;
 	const hasAllTimingInfo = siteTransferEnd.current !== 0 && pluginInstallationEnd.current !== 0;
 
 	if ( completed && hasAllTimingInfo && ! transferTimingTracked.current ) {
@@ -128,6 +148,35 @@ export const usePrepareSiteForMigration = ( siteId?: number ) => {
 			? 'idle'
 			: getMigrationKeyStatus( migrationKey, migrationKeyFetchStatus, migrationKeyError ),
 	};
+
+	useEffect( () => {
+		if ( siteTransferState.status === 'pending' ) {
+			return safeLogToLogstash( 'Site migration preparation started', {
+				status: 'started',
+				site_id: siteId,
+			} );
+		}
+	}, [ siteTransferState.status, siteId ] );
+
+	useEffect( () => {
+		if ( criticalError ) {
+			return safeLogToLogstash( 'Site migration preparation failed', {
+				status: 'error',
+				error: criticalError.message,
+				error_type: criticalError.name,
+				site_id: siteId,
+			} );
+		}
+	}, [ completed, criticalError, siteTransferState, siteId ] );
+
+	useEffect( () => {
+		if ( completed ) {
+			return safeLogToLogstash( 'Site migration preparation completed', {
+				status: 'success',
+				site_id: siteId,
+			} );
+		}
+	}, [ completed, siteId ] );
 
 	return {
 		detailedStatus,
