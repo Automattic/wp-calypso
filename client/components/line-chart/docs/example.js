@@ -93,6 +93,7 @@ export default class LineChartExample extends Component {
 				</button>
 
 				<Card>
+					<h1>Customized Line Chart</h1>
 					<LineChart
 						data={ this.state.data }
 						fillArea={ this.state.fillArea }
