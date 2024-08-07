@@ -49,6 +49,11 @@ body.is-mobile-app-view {
 		// Use generic colors so that they override whatever theme colors the user has picked.
 		background: var(--studio-orange);
 		border-bottom: 1px solid var(--studio-orange-60);
+
+		.masterbar__item.has-global-border::before,
+		.masterbar__item.has-global-border::after {
+			background: var(--studio-orange-70);
+		}
 	}
 
 	&.masterbar__loggedout {
