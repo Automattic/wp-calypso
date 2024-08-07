@@ -1,10 +1,11 @@
+import { HOSTED_SITE_MIGRATION_V2_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { type Flow } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
 
 export default {
-	name: 'hosted-site-migration-v2',
+	name: HOSTED_SITE_MIGRATION_V2_FLOW,
 	get title() {
 		return translate( 'Site Migration' );
 	},
