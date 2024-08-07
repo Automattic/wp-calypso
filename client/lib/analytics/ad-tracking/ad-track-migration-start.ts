@@ -25,6 +25,8 @@ const adTrackGoogleEvent = (): void => {
 };
 
 export const recordMigrationStart = (): void => {
-	adTrackRedditEvent();
-	adTrackGoogleEvent();
+	setTimeout( () => {
+		adTrackRedditEvent();
+		adTrackGoogleEvent();
+	}, 0 );
 };

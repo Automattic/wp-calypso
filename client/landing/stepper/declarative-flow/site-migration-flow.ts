@@ -126,9 +126,10 @@ const siteMigration: Flow = {
 			window.location.assign( to );
 		};
 
-		if ( urlQueryParams.get( 'ref' ) === 'move-lp' ) {
+		useEffect( () => {
 			recordMigrationStart();
-		}
+		}, [ urlQueryParams ] );
+
 		// Call triggerGuidesForStep for the current step
 		useEffect( () => {
 			triggerGuidesForStep( flowName, currentStep, siteId );
