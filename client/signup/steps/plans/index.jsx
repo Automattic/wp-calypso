@@ -291,11 +291,9 @@ export class PlansStep extends Component {
 			}
 		}
 
-		const Wrapper = this.props.CustomStepWrapper || StepWrapper;
-
 		return (
 			<>
-				<Wrapper
+				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
