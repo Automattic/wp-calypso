@@ -74,6 +74,13 @@
 			margin-left: 10px;
 			margin-top: 24px;
 		}
+
+		.web-preview__inner {
+			@media (max-height: 680px) {
+				height: inherit;
+			}
+
+		}
 	}
 
 	.generate-content__form {
