@@ -1,8 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-// import { useCallback } from 'react';
 import { sslDetailsQueryKey } from 'calypso/data/domains/ssl/ssl-details-query-key';
 import wp from 'calypso/lib/wp';
-import type { SslDetailsResponse } from './use-ssl-details-query';
 import type { DomainsApiError } from 'calypso/lib/domains/types';
 
 export default function useProvisionCertificateMutation(
@@ -22,11 +20,9 @@ export default function useProvisionCertificateMutation(
 				} )
 				.then( () => {} ),
 		...queryOptions,
-		onSuccess( response: SslDetailsResponse ) {
+		onSuccess() {
 			const key = sslDetailsQueryKey( domainName );
-			queryClient.setQueryData( key, () => {
-				return response.data;
-			} );
+			queryClient.invalidateQueries( { queryKey: key } );
 			queryOptions.onSuccess?.();
 		},
 		onError( error: DomainsApiError ) {

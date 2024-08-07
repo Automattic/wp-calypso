@@ -4,12 +4,13 @@ import { CONTACT, HTTPS_SSL } from '@automattic/urls';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
 import useSslDetailsQuery from 'calypso/data/domains/ssl/use-ssl-details-query';
 import useProvisionCertificateMutation from 'calypso/data/domains/ssl/use-ssl-provision-certificate-mutation';
 import { sslStatuses } from 'calypso/lib/domains/constants';
+import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSslReadableStatus, isSecuredWithUs } from '../../helpers';
 import type { SecurityCardProps } from '../types';
 
@@ -20,8 +21,10 @@ const noticeOptions = {
 	id: `ssl-status-notification`,
 };
 
-const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
+const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCardProps ) => {
 	const dispatch = useDispatch();
+	// const calypsoDispatch = useCalypsoDispatch();
+
 	const translate = useTranslate();
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
@@ -61,8 +64,9 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 	useEffect( () => {
 		if ( isStale && domain.sslStatus === sslStatuses.SSL_PENDING ) {
 			refetchSSLStatusData();
+			dispatch( fetchSiteDomains( selectedSite.ID ) );
 		}
-	}, [ isStale, domain.sslStatus, refetchSSLStatusData ] );
+	}, [ isStale, domain.sslStatus, refetchSSLStatusData, selectedSite, dispatch ] );
 
 	if ( ! isSecuredWithUs( domain ) ) {
 		return null;
@@ -76,9 +80,13 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 				return null;
 			case sslStatuses.SSL_PENDING:
 				if ( sslDetails?.is_newly_registered ) {
-					return translate(
-						'It may take up to a few hours to add an SSL certificate to your site. If you are not seeing it yet, give it some time to take effect.',
-						{ textOnly: true }
+					return (
+						<p className="domain-security-details__description-message">
+							{ translate(
+								'It may take up to a few hours to add an SSL certificate to your site. If you are not seeing it yet, give it some time to take effect.',
+								{ textOnly: true }
+							) }
+						</p>
 					);
 				}
 				if ( sslDetails?.failure_reasons ) {
@@ -96,15 +104,19 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 							</ul>
 							<p className="domain-security-details__description-message">
 								{ translate(
-									'Once you have fixed all the issue, you can request a new certificate by clicking the button below.'
+									'Once you have fixed all the issues, you can request a new certificate by clicking the button below.'
 								) }
 							</p>
 						</>
 					);
 				}
-				return translate(
-					'There is an issue with your certificate. Contact us to {{a}}learn more{{/a}}.',
-					{ components: { a: <a href={ localizeUrl( CONTACT ) } /> } }
+				return (
+					<p className="domain-security-details__description-message">
+						{ translate(
+							'There is an issue with your certificate. Contact us to {{a}}learn more{{/a}}.',
+							{ components: { a: <a href={ localizeUrl( CONTACT ) } /> } }
+						) }
+					</p>
 				);
 			case sslStatuses.SSL_DISABLED:
 			default:
@@ -141,13 +153,17 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 				</div>
 				<div className="domain-security-details__description">
 					{ ! isLoadingSSLData && getSslStatusMessage() }
-					<Button
-						className="domain-security-details__provision-button"
-						disabled={ isProvisioningCertificate }
-						onClick={ handleProvisionCertificate }
-					>
-						Provision certificate
-					</Button>
+					{ sslStatuses.SSL_PENDING === sslStatus &&
+						! sslDetails?.is_newly_registered &&
+						sslDetails?.failure_reasons && (
+							<Button
+								className="domain-security-details__provision-button"
+								disabled={ isProvisioningCertificate }
+								onClick={ handleProvisionCertificate }
+							>
+								Provision certificate
+							</Button>
+						) }
 					<div className="domain-security-details__description-help-text">
 						{ translate(
 							'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. {{a}}Learn more{{/a}}',
