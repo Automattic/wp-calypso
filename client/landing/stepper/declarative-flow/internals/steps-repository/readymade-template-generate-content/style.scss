@@ -70,6 +70,10 @@
 	}
 
 	.site-preview__wrapper {
+		@media (max-width: #{ ($break-small) }) {
+			margin-bottom: 76px;
+		}
+
 		@media (max-width: #{ ($break-medium) }) {
 			margin-left: 10px;
 			margin-top: 24px;
@@ -79,7 +83,6 @@
 			@media (max-height: 680px) {
 				height: inherit;
 			}
-
 		}
 	}
 
