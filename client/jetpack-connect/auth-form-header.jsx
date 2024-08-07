@@ -192,7 +192,7 @@ export class AuthFormHeader extends Component {
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate(
-						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
+						"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to create a WordPress account. {{br/}} Already have one? {{a}}Log in{{/a}}",
 						translateParams
 					);
 				default:
