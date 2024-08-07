@@ -1,0 +1,26 @@
+.plans-grid-next__action-button {
+	&-multi {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	&-label {
+		text-align: center;
+		font-size: 0.75rem;
+		display: block;
+		margin-top: 10px;
+	}
+
+	&--fixed-width {
+		width: 200px;
+	}
+
+	.plans-grid-next-comparison-grid & {
+		margin-bottom: auto;
+
+		.plans-grid-next__action-button-content {
+			min-height: 40px;
+		}
+	}
+}

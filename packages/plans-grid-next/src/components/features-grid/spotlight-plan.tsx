@@ -64,6 +64,7 @@ const SpotlightPlan = ( {
 				isInSignup={ isInSignup }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				planActionOverrides={ planActionOverrides }
+				options={ { isFixedWidthActionButton: true } }
 			/>
 		</div>
 	);
