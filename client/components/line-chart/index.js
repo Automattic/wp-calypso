@@ -183,7 +183,9 @@ class LineChart extends Component {
 			const drawFullSeries = dataSeries.length < POINTS_MAX;
 			const colorNum = dataSeriesIndex % NUM_SERIES;
 			const size = drawFullSeries ? POINTS_SIZE : POINTS_END_SIZE;
-			const halfSize = size / 2;
+			const halfSize = size;
+			const sizeSquare = size * 2;
+			const halfSquare = sizeSquare / 2;
 
 			( drawFullSeries ? dataSeries : [ dataSeries[ 0 ], last( dataSeries ) ] ).forEach(
 				( datum ) => {
@@ -210,10 +212,10 @@ class LineChart extends Component {
 									drawFullSeries ? '' : '-end'
 								}-point-color-${ colorNum }`
 							)
-							.attr( 'x', xScale( datum.date ) - halfSize )
-							.attr( 'y', yScale( datum.value ) - halfSize )
-							.attr( 'width', size )
-							.attr( 'height', size )
+							.attr( 'x', xScale( datum.date ) - halfSquare )
+							.attr( 'y', yScale( datum.value ) - halfSquare )
+							.attr( 'width', sizeSquare )
+							.attr( 'height', sizeSquare )
 							.datum( { ...datum, dataSeriesIndex } );
 					} else if ( shape === 'triangle' ) {
 						const x = xScale( datum.date );
