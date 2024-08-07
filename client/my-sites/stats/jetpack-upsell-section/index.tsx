@@ -45,7 +45,7 @@ export default function JetpackUpsellSection() {
 	const { purchasedProducts } = usePurchasedProducts();
 
 	// Check for bundled products.
-	// Currently checking for variations of the Complete bundle only.
+	// We don't want to show the upsell section if we find a Business or Complete plan.
 	const siteId = useSelector( getSelectedSiteId );
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const shouldHideUpsells = shouldHideUpsellSection( sitePurchases );
