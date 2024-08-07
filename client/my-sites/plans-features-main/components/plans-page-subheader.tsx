@@ -109,7 +109,7 @@ const PlansPageSubheader = ( {
 	deemphasizeFreePlan?: boolean;
 	offeringFreePlan?: boolean;
 	showPlanBenefits?: boolean;
-	onFreePlanCTAClick: () => void;
+	onFreePlanCTAClick: ( () => void ) | null;
 } ) => {
 	const translate = useTranslate();
 
@@ -121,7 +121,7 @@ const PlansPageSubheader = ( {
 						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
 						{
 							components: {
-								link: <Button onClick={ onFreePlanCTAClick } borderless />,
+								link: <Button onClick={ onFreePlanCTAClick ?? ( () => {} ) } borderless />,
 							},
 						}
 					) }
