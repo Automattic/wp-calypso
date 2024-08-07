@@ -192,6 +192,7 @@ const LayoutLoggedOut = ( {
 	} else if (
 		[
 			'patterns',
+			'performance-profiler',
 			'plugins',
 			'reader',
 			'site-profiler',
