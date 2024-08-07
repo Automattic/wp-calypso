@@ -202,7 +202,7 @@ const ActionButton = ( {
 	return (
 		<div
 			className={ clsx( 'plans-grid-next__action-button', {
-				'plans-grid-next__action-button--fixed-width': isFixedWidth,
+				'is-fixed-width': isFixedWidth,
 			} ) }
 		>
 			<div className="plans-grid-next__action-button-content">{ actionButton }</div>
