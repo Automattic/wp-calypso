@@ -18,7 +18,7 @@
 body {
 	--color-body-background: #fdfdfd;
 	--wooexpress-purple: #7f54b3;
-	background-color: var( --color-body-background );
+	background-color: var(--color-body-background);
 }
 
 body,
@@ -44,7 +44,7 @@ button {
 	a,
 	a:visited {
 		text-decoration: none;
-		color: var( --color-link );
+		color: var(--color-link);
 	}
 
 	button {
@@ -58,10 +58,11 @@ button {
 }
 
 .accessible-focus {
+
 	.site-setup,
 	.import-focused {
 		.button.is-primary:focus {
-			box-shadow: 0 0 0 2px var( --color-primary-light );
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
 }
@@ -117,6 +118,7 @@ button {
 		}
 
 		@include break-small {
+
 			&.courses,
 			&.site-picker,
 			&.new-or-existing-site {
@@ -142,7 +144,7 @@ button {
 			position: absolute;
 			inset-block-start: 20px;
 			inset-inline-start: 24px;
-			fill: var( --color-text );
+			fill: var(--color-text);
 			transform-origin: 0 0;
 		}
 
@@ -153,7 +155,7 @@ button {
 			.flow-progress-indicator {
 				font-weight: 500;
 				font-size: 0.875rem;
-				color: var( --studio-gray-30 );
+				color: var(--studio-gray-30);
 			}
 		}
 
@@ -190,27 +192,27 @@ button {
 		&:disabled,
 		&.disabled {
 			color: #fff;
-			background-color: var( --studio-blue-20 );
-			border-color: var( --studio-blue-20 );
+			background-color: var(--studio-blue-20);
+			border-color: var(--studio-blue-20);
 		}
 	}
 
 	.components-button.is-link {
-		color: var( --color-accent );
+		color: var(--color-accent);
 
-		&:hover:not( :disabled ):not( .disabled ),
-		&:focus:not( :disabled ):not( .disabled ) {
-			color: var( --color-neutral-70 );
+		&:hover:not( :disabled):not(.disabled),
+		&:focus:not( :disabled):not(.disabled) {
+			color: var(--color-neutral-70);
 		}
 	}
 
 	// WordPress.org components no longer use blue-50 as the primary color.
 	// This changes the primary color to blue-50 to conform to the WordPress.com colors.
-	--color-accent: var( --studio-blue-50 );
-	--color-accent-60: var( --studio-blue-60 );
-	--wp-components-color-accent-darker-10: var( --studio-blue-60 );
-	--wp-components-color-accent-darker-20: var( --studio-blue-70 );
-	--wp-components-color-accent: var( --studio-blue-50 );
+	--color-accent: var(--studio-blue-50);
+	--color-accent-60: var(--studio-blue-60);
+	--wp-components-color-accent-darker-10: var(--studio-blue-60);
+	--wp-components-color-accent-darker-20: var(--studio-blue-70);
+	--wp-components-color-accent: var(--studio-blue-50);
 }
 
 .import-focused .step-container.site-picker,
@@ -227,28 +229,31 @@ button {
 }
 
 .intro {
-	&:not( .newsletter ).signup-header {
-		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */
+	&:not(.newsletter).signup-header {
+		z-index: 0 !important;
+		/* set to 0 to prevent it from covering top of intro modal */
 	}
 }
 
 /**
  * Tailored flow stylings
  */
-.newsletter:not( .domains ),
-.link-in-bio:not( .domains ),
-.link-in-bio-tld:not( .domains ) {
-	&:not( .launchpad ):not( .subscribers ) {
+.newsletter:not(.domains),
+.link-in-bio:not(.domains),
+.link-in-bio-tld:not(.domains) {
+	&:not(.launchpad):not(.subscribers) {
 		@include onboarding-break-mobile-landscape {
 			padding: 40px 0 0;
 		}
 	}
 
 	.step-container {
+
 		.step-container__content h1,
 		.step-container__header h1.formatted-header__title {
 			font-size: $font-title-medium;
-			line-height: 1.2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			line-height: 1.2em;
+			/* stylelint-disable-line declaration-property-unit-allowed-list */
 
 			@include break-medium {
 				font-size: $font-headline-medium;
@@ -261,21 +266,23 @@ button {
  * Override font sizes for all newsletter onboarding screens
  */
 .newsletter,
-.newsletter:not( .domains ) {
+.newsletter:not(.domains) {
 	.step-container {
+
 		.step-container__content h1,
 		.step-container__header h1.formatted-header__title {
-			font-size: rem( 32px ); //typography-exception
-			line-height: rem( 40px ); //typography-exception
+			font-size: rem(32px); //typography-exception
+			line-height: rem(40px); //typography-exception
 
 			@include break-medium {
-				font-size: rem( 44px ); //typography-exception
-				line-height: rem( 52px ); //typography-exception
+				font-size: rem(44px); //typography-exception
+				line-height: rem(52px); //typography-exception
 			}
 		}
+
 		.step-container__header .formatted-header .formatted-header__subtitle {
-			font-size: rem( 16px ); //typography-exception
-			line-height: rem( 24px ); //typography-exception
+			font-size: rem(16px); //typography-exception
+			line-height: rem(24px); //typography-exception
 			font-family: $font-sf-pro-display;
 		}
 	}
@@ -289,7 +296,7 @@ button {
 	button {
 		&.site-icon-with-picker__upload-button {
 			border-radius: 4px;
-			border: 1px solid rgba( $color: #000, $alpha: 0.2 );
+			border: 1px solid rgba($color: #000, $alpha: 0.2);
 
 			&.site-icon-with-picker__upload-button {
 				border-radius: 50%;
@@ -297,7 +304,7 @@ button {
 				transition: ease 300ms;
 
 				svg {
-					fill: var( --studio-gray-30 );
+					fill: var(--studio-gray-30);
 				}
 
 				span {
@@ -309,29 +316,32 @@ button {
 					outline: none;
 
 					svg {
-						fill: var( --studio-blue-50 );
+						fill: var(--studio-blue-50);
 					}
 
 					span {
 						font-size: $font-body-extra-small;
 
 						&.add {
-							color: var( --studio-blue-50 );
+							color: var(--studio-blue-50);
 						}
 
 						&.replace {
-							color: var( --studio-blue-50 );
+							color: var(--studio-blue-50);
 						}
 					}
 				}
+
 				&:focus {
-					background-color: var( --studio-blue-50 );
+					background-color: var(--studio-blue-50);
 					box-shadow: none;
+
 					svg {
 						fill: #fff;
 					}
+
 					span {
-						color: var( --studio-blue-50 );
+						color: var(--studio-blue-50);
 					}
 				}
 			}
@@ -341,7 +351,7 @@ button {
 	fieldset {
 		label {
 			font-size: $font-body;
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 			font-weight: 500;
 		}
 	}
@@ -349,17 +359,17 @@ button {
 	&.intro {
 		button.intro__button {
 			border-radius: 4px;
-			background-color: var( --studio-gray-100 );
+			background-color: var(--studio-gray-100);
 			transition: ease 300ms;
 
 			&:hover,
 			&:focus {
-				background-color: var( --studio-gray-70 );
+				background-color: var(--studio-gray-70);
 			}
 
 			&:focus {
 				border: none;
-				outline: solid 2px var( --studio-gray-70 );
+				outline: solid 2px var(--studio-gray-70);
 				outline-offset: 2px;
 				box-shadow: none;
 			}
@@ -381,7 +391,7 @@ button {
 #notices {
 	top: 0;
 
-	@media ( min-width: 661px ) {
+	@media (min-width: 661px) {
 		top: 16px;
 	}
 
@@ -403,6 +413,7 @@ button {
 
 .assign-trial-plan,
 .processing {
+
 	&.wooexpress,
 	&.ecommerce {
 		padding: 60px 0;
@@ -414,8 +425,8 @@ button {
 		top: 0;
 		left: 0;
 		background-color: #fff;
-		background-image: url( calypso/assets/images/onboarding/ecommerce-intro-1.jpg ),
-			url( calypso/assets/images/onboarding/ecommerce-intro-2.jpg );
+		background-image: url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg ),
+			url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg );
 		background-position-y: -40px, 110%;
 		/*!rtl:ignore*/
 		background-position-x:
@@ -438,9 +449,9 @@ button {
 				-100px,
 				120%;
 			background-position-y: 5%, 85%, 125%;
-			background-image: url( calypso/assets/images/onboarding/ecommerce-intro-1.jpg ),
-				url( calypso/assets/images/onboarding/ecommerce-intro-2.jpg ),
-				url( calypso/assets/images/onboarding/ecommerce-intro-3.jpg );
+			background-image: url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg ),
+				url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg ),
+				url(calypso/assets/images/onboarding/ecommerce-intro-3.jpg );
 		}
 	}
 }
@@ -451,22 +462,25 @@ button {
 		font-weight: 600;
 		font-size: $font-title-large;
 	}
+
 	.loading-bar {
-		background-color: var( --studio-woocommerce-purple-5 );
+		background-color: var(--studio-woocommerce-purple-5);
 		width: 590px;
 		max-width: 100%;
 		margin-left: auto;
 		margin-right: auto;
 
-		@media screen and ( max-width: 640px ) {
+		@media screen and (max-width: 640px) {
 			width: 100%;
 		}
 	}
+
 	.processing-step {
 		width: 100%;
 		max-width: 640px;
 		box-sizing: border-box;
 	}
+
 	p.processing-step__subtitle {
 		font-family: 'SF Pro Text', $sans;
 		font-weight: 400;
@@ -482,9 +496,11 @@ button {
 			font-weight: 500;
 		}
 	}
+
 	.loading-bar::before {
-		background: var( --wooexpress-purple );
+		background: var(--wooexpress-purple);
 	}
+
 	.signup-header .wordpress-logo {
 		display: block;
 		width: 500px;
