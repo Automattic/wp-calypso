@@ -1,25 +1,22 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, ReactNode, useCallback } from 'react';
-import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
-import { addQueryArgs } from 'calypso/lib/url';
-import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ReferralDetailsTable from '../common/referral-details-table';
-import StatusBadge from '../common/step-section-item/status-badge';
+import AssignedTo from './components/assigned-to';
+import DateAssigned from './components/date';
+import ProductDetails from './components/product-details';
+import TotalAmount from './components/total-amount';
 import type { ReferralPurchase } from '../types';
-
 import './style.scss';
 
 export default function ReferralPurchases( { purchases }: { purchases: ReferralPurchase[] } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { data, isFetching } = useProductsQuery();
+	const { data, isFetching } = useProductsQuery( false, false, true );
 
 	const handleAssignToSite = useCallback(
 		( url: string ) => {
@@ -36,18 +33,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 				header: translate( 'Product Details' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
-					const product = data?.find( ( product ) => product.product_id === item.product_id );
-					return isFetching ? <TextPlaceholder /> : product?.name;
-				},
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'date',
-				header: translate( 'Date' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
-					return item.date_assigned ? new Date( item.date_assigned ).toLocaleDateString() : '-';
+					return <ProductDetails isFetching={ isFetching } purchase={ item } data={ data } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
@@ -57,39 +43,24 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 				header: translate( 'Assigned to' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
-					const product = data?.find( ( product ) => product.product_id === item.product_id );
-					const isWPCOMLicense = product?.family_slug === 'wpcom-hosting';
-					const redirectUrl = isWPCOMLicense
-						? A4A_SITES_LINK_NEEDS_SETUP
-						: item.license_key &&
-						  addQueryArgs( { key: item.license_key }, '/marketplace/assign-license' );
-
-					const isDisabled = item.status !== 'active' || isFetching || ! product || ! redirectUrl;
-
-					return item.site_assigned ? (
-						<Button
-							className="referrals-purchases__assign-button"
-							borderless
-							href={ `/sites/overview/${ urlToSlug( item.site_assigned ) }` }
-						>
-							{ urlToSlug( item.site_assigned ) }
-						</Button>
-					) : (
-						<>
-							<StatusBadge
-								statusProps={ { children: translate( 'Unassigned' ), type: 'warning' } }
-							/>
-
-							<Button
-								disabled={ isDisabled }
-								className="referrals-purchases__assign-button"
-								borderless
-								onClick={ () => handleAssignToSite( redirectUrl ) }
-							>
-								{ isWPCOMLicense ? translate( 'Create site' ) : translate( 'Assign to site' ) }
-							</Button>
-						</>
+					return (
+						<AssignedTo
+							purchase={ item }
+							data={ data }
+							handleAssignToSite={ handleAssignToSite }
+							isFetching={ isFetching }
+						/>
 					);
+				},
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'date',
+				header: translate( 'Assigned on' ).toUpperCase(),
+				getValue: () => '-',
+				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
+					return <DateAssigned purchase={ item } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
@@ -99,8 +70,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 				header: translate( 'Total' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: ReferralPurchase } ): ReactNode => {
-					const product = data?.find( ( product ) => product.product_id === item.product_id );
-					return isFetching ? <TextPlaceholder /> : `$${ product?.amount }`;
+					return <TotalAmount isFetching={ isFetching } purchase={ item } data={ data } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
@@ -109,11 +79,5 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 		[ translate, data, isFetching, handleAssignToSite ]
 	);
 
-	return (
-		<ReferralDetailsTable
-			heading={ translate( 'Purchases' ) }
-			items={ purchases }
-			fields={ fields }
-		/>
-	);
+	return <ReferralDetailsTable items={ purchases } fields={ fields } />;
 }

@@ -39,8 +39,14 @@ const entrepreneurFlow: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 
-		const { setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		const { setPluginsToVerify, setPartnerBundle } = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
+
+		const params = new URLSearchParams( window.location.search );
+		const partnerBundle = params.get( 'partnerBundle' );
+		if ( partnerBundle ) {
+			setPartnerBundle( partnerBundle );
+		}
 
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),

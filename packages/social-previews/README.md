@@ -2,13 +2,15 @@
 
 This package contains low level components that can be used to display an _approximation_ of how a given post might like look when viewed on various social media / search platforms.
 
-At the current time there are components to display previews for a:
+At the current time there are components to display previews for:
 
 - Facebook post.
 - Twitter post.
 - Google Search result.
 - Tumblr post.
 - LinkedIn post.
+- Nextdoor post.
+- Threads post.
 
 ## Prerequisites
 

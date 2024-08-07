@@ -9,7 +9,6 @@ import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import wordPressLogo from 'calypso/assets/images/icons/wordpress-logo.svg';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
-import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { marketingConnections, pluginsPath } from 'calypso/my-sites/marketing/paths';
@@ -47,10 +46,6 @@ export const MarketingTools: FunctionComponent = () => {
 
 	const handleCreateALogoClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
-	};
-
-	const handleVerblioClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_verblio_button_click' );
 	};
 
 	const handleSimpleTextingClick = () => {
@@ -145,23 +140,6 @@ export const MarketingTools: FunctionComponent = () => {
 						target="_blank"
 					>
 						{ translate( 'Start texting' ) }
-					</Button>
-				</MarketingToolsFeature>
-
-				<MarketingToolsFeature
-					title={ translate( 'Get help with content for your blog or website' ) }
-					description={ translate(
-						'Verblio makes blog and content creation happen. Its writers can help create high-powered content for your website that drives SEO. Get 35% off your first month today.'
-					) }
-					imagePath={ verblioLogo }
-					imageAlt={ translate( 'Verblio logo' ) }
-				>
-					<Button
-						onClick={ handleVerblioClick }
-						href="https://verblio.grsm.io/wordpresscom"
-						target="_blank"
-					>
-						{ translate( 'Start creating content' ) }
 					</Button>
 				</MarketingToolsFeature>
 

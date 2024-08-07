@@ -1,7 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
-.help-center-article-content__story-content {
+.help-center-article-content__main {
 	color: var(--color-neutral-70);
 	font-size: $font-body;
 	line-height: 1.7;
@@ -14,6 +14,10 @@
 	// Temporary fix on the help center article content inside the editor
 	.wp-block-columns-is-layout-flex {
 		display: block !important;
+	}
+
+	.wp-block-heading {
+		scroll-margin-top: 69px;
 	}
 
 	h1 {

@@ -12,6 +12,7 @@
 
 		.button {
 			width: 100%;
+			text-wrap: balance;
 		}
 
 		.woo-logo {
@@ -28,14 +29,14 @@
 	}
 
 	.hosting-card__heading {
-		font-size: rem(24px);
-		font-weight: 600;
+		@include a4a-font-heading-xl;
 		max-width: 90%;
 
 		@include break-large {
 			height: 95px;
 		}
-		@include break-huge {
+
+		@include break-xhuge {
 			height: 65px;
 		}
 	}
@@ -66,37 +67,32 @@
 
 	.hosting-card__price-value {
 		display: block;
-		font-size: 1.5rem;
-		font-weight: 600;
-		line-height: 1;
+		@include a4a-font-heading-xl($line-height: 1);
 		margin-block-end: 4px;
 	}
 
 	.hosting-card__price-interval {
-		font-size: 0.875rem;
-		line-height: 1.1;
-		font-weight: 400;
+		@include a4a-font-body-md;
 		color: var(--studio-gray-60, #50575e);
 	}
 
 	.hosting-card__price-discount {
-		color: var(--color-green-40, #00a32a);
-		font-size: 0.875rem;
-		line-height: 1.75;
+		color: var(--color-green-50, #008a20);
+		@include a4a-font-body-md;
 	}
 
 	.hosting-card__description {
-		font-size: rem(16px);
-		line-height: 1.3;
-		font-weight: 400;
+		@include a4a-font-body-lg;
 		margin: 0;
+		margin-block-end: 20px;
+
 		color: var(--studio-gray-80, #2c3338);
 
 		@include break-large {
-			height: 85px;
+			height: 125px;
 		}
 		@include break-huge {
-			height: 65px;
+			height: 105px;
 		}
 	}
 

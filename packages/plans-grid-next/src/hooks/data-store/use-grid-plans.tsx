@@ -257,12 +257,17 @@ const useGridPlans: UseGridPlansType = ( {
 		term,
 		intent,
 	} );
+
+	const { planSlug: sitePlanSlug, purchaseId } = Plans.useCurrentPlan( { siteId } ) || {};
+
 	const plansAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {
 		planSlugs: availablePlanSlugs,
+		siteId,
+		shouldIgnorePlanOwnership: !! purchaseId, // Ignore plan ownership only if the site is on a paid plan
 	} );
 
 	// only fetch highlights for the plans that are available for the intent
-	const { planSlug: sitePlanSlug } = Plans.useCurrentPlan( { siteId } ) || {};
+
 	const highlightLabels = useHighlightLabels( {
 		intent,
 		planSlugs: planSlugsForIntent,

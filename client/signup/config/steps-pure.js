@@ -10,13 +10,9 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_BUSINESS_2_YEARS,
-	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_PERSONAL_3_YEARS,
 	PLAN_PREMIUM_3_YEARS,
 	PLAN_BUSINESS_3_YEARS,
-	PLAN_ECOMMERCE_3_YEARS,
-	PLAN_WPCOM_PRO,
-	PLAN_WPCOM_STARTER,
 	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
@@ -32,14 +28,12 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
 	setStoreFeatures = noop,
 	setIntentOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
-	isAddOnsFulfilled = noop,
 	maybeAddStorageAddonToCart = noop,
 	isDomainFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
@@ -47,25 +41,9 @@ export function generateSteps( {
 	excludeStepIfEmailVerified = noop,
 	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
-	excludeSurveyStepIfInactive = noop,
 	excludeSegmentSurveyStepIfInactive = noop,
 } = {} ) {
 	return {
-		// `themes` does not update the theme for an existing site as we normally
-		// do this when the site is created. In flows where a site is merely being
-		// updated, we need to use a different API request function.
-		'themes-site-selected': {
-			stepName: 'themes-site-selected',
-			dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
-			apiRequestFunction: setThemeOnSite,
-			props: {
-				get headerText() {
-					return i18n.translate( 'Choose a theme for your new site.' );
-				},
-			},
-		},
-
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
@@ -110,8 +88,9 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
-				hideFreePlan: true,
+				deemphasizeFreePlan: true,
 				hideEnterprisePlan: true,
+				isCustomDomainAllowedOnFreePlan: true,
 			},
 		},
 
@@ -247,13 +226,6 @@ export function generateSteps( {
 			optionalDependencies: [ 'startingPoint' ],
 		},
 
-		test: {
-			stepName: 'test',
-		},
-		'new-user-survey': {
-			stepName: 'new-user-survey',
-			fulfilledStepCallback: excludeSurveyStepIfInactive,
-		},
 		plans: {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
@@ -274,21 +246,6 @@ export function generateSteps( {
 		'hosting-decider': {
 			stepName: 'hosting-decider',
 			providesDependencies: [ 'stepperHostingFlow' ],
-		},
-		'plans-hosting': {
-			stepName: 'plans',
-			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isPlanFulfilled,
-			props: {
-				hideFreePlan: true,
-				hidePremiumPlan: true,
-				hidePersonalPlan: true,
-				hideEnterprisePlan: true,
-				shouldHideNavButtons: true,
-			},
 		},
 
 		'plans-new': {
@@ -358,30 +315,6 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-pro': {
-			stepName: 'plans-pro',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_WPCOM_PRO,
-			},
-		},
-
-		'plans-starter': {
-			stepName: 'plans-starter',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_WPCOM_STARTER,
-			},
-		},
-
 		'plans-ecommerce-fulfilled': {
 			stepName: 'plans-ecommerce-fulfilled',
 			apiRequestFunction: addPlanToCart,
@@ -427,6 +360,7 @@ export function generateSteps( {
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				useEmailOnboardingSubheader: true,
+				hideFreePlan: true,
 			},
 		},
 
@@ -459,13 +393,10 @@ export function generateSteps( {
 			},
 			delayApiRequestUntilComplete: true,
 		},
-		emails: {
-			stepName: 'emails',
-			dependencies: [ 'domainItem', 'siteSlug' ],
-			providesDependencies: [ 'domainItem', 'emailItem' ],
-			props: {
-				isDomainOnly: false,
-			},
+		subscribe: {
+			stepName: 'subscribe',
+			providesDependencies: [ 'redirect', 'username', 'marketing_price_group', 'bearer_token' ],
+			optionalDependencies: [ 'username', 'marketing_price_group', 'bearer_token' ],
 		},
 		mailbox: {
 			stepName: 'mailbox',
@@ -505,37 +436,6 @@ export function generateSteps( {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 			},
-		},
-
-		'domains-store': {
-			stepName: 'domains',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'siteUrl',
-				'lastDomainSearched',
-				'isManageSiteFlow',
-				'shouldHideFreePlan',
-				'signupDomainOrigin',
-				'useThemeHeadstart',
-				'domainCart',
-			],
-			optionalDependencies: [
-				'siteUrl',
-				'lastDomainSearched',
-				'isManageSiteFlow',
-				'shouldHideFreePlan',
-				'signupDomainOrigin',
-				'useThemeHeadstart',
-			],
-			props: {
-				isDomainOnly: false,
-				forceDesignType: 'store',
-			},
-			delayApiRequestUntilComplete: true,
 		},
 
 		'domains-theme-preselected': {
@@ -705,11 +605,6 @@ export function generateSteps( {
 			providesDependencies: [ 'rewindconfig' ],
 		},
 
-		'rewind-migrate': {
-			stepName: 'rewind-migrate',
-			providesDependencies: [ 'rewindconfig' ],
-		},
-
 		'rewind-were-backing': {
 			stepName: 'rewind-were-backing',
 			providesDependencies: [],
@@ -738,11 +633,6 @@ export function generateSteps( {
 		'clone-point': {
 			stepName: 'clone-point',
 			providesDependencies: [ 'clonePoint' ],
-		},
-
-		'clone-jetpack': {
-			stepName: 'clone-jetpack',
-			providesDependencies: [ 'cloneJetpack' ],
 		},
 
 		'clone-ready': {
@@ -777,10 +667,6 @@ export function generateSteps( {
 			stepName: 'p2-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
-		},
-
-		'p2-get-started': {
-			stepName: 'p2-get-started',
 		},
 
 		'p2-confirm-email': {
@@ -880,18 +766,6 @@ export function generateSteps( {
 				cartItem: PLAN_BUSINESS_2_YEARS,
 			},
 		},
-
-		'plans-ecommerce-2y': {
-			stepName: 'plans-ecommerce-2y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE_2_YEARS,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
-			},
-		},
 		'plans-personal-3y': {
 			stepName: 'plans-personal-3y',
 			apiRequestFunction: addPlanToCart,
@@ -903,7 +777,6 @@ export function generateSteps( {
 				cartItem: PLAN_PERSONAL_3_YEARS,
 			},
 		},
-
 		'plans-premium-3y': {
 			stepName: 'plans-premium-3y',
 			apiRequestFunction: addPlanToCart,
@@ -927,19 +800,6 @@ export function generateSteps( {
 				cartItem: PLAN_BUSINESS_3_YEARS,
 			},
 		},
-
-		'plans-ecommerce-3y': {
-			stepName: 'plans-ecommerce-3y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE_3_YEARS,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
-			},
-		},
-
 		intent: {
 			stepName: 'intent',
 			dependencies: [ 'siteSlug' ],
@@ -952,17 +812,6 @@ export function generateSteps( {
 		'new-or-existing-site': {
 			stepName: 'new-or-existing-site',
 			providesDependencies: [ 'newOrExistingSiteChoice', 'forceAutoGeneratedBlogName' ],
-		},
-
-		'add-ons': {
-			stepName: 'add-ons',
-			props: {
-				headerText: i18n.translate( 'Add-ons' ),
-			},
-			apiRequestFunction: addAddOnsToCart,
-			fulfilledStepCallback: isAddOnsFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
 		},
 
 		'storage-addon': {
@@ -1082,7 +931,11 @@ export function generateSteps( {
 		'initial-intent': {
 			stepName: 'initial-intent',
 			fulfilledStepCallback: excludeSegmentSurveyStepIfInactive,
-			providesDependencies: [ 'segmentationSurveyAnswers', 'onboardingSegment' ],
+			providesDependencies: [
+				'segmentationSurveyAnswers',
+				'onboardingSegment',
+				'trailMapExperimentVariant',
+			],
 		},
 	};
 }

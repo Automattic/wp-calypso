@@ -9,7 +9,7 @@ import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?flags=stats/tier-upgrade-slider&from=${ from }-stats-tier-upgrade-notice&productType=commercial`;
+	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-stats-tier-upgrade-notice&productType=commercial`;
 
 	return purchasePath;
 };

@@ -19,6 +19,10 @@
 	width: 180px;
 	font-weight: 500;
 	font-size: rem(14px);
+
+	.status-badge {
+		border-radius: 2px;
+	}
 }
 
 .sites-dataviews__site-url {

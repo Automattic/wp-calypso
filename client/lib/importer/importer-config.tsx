@@ -86,7 +86,7 @@ function getConfig( {
 			}
 		),
 		overrideDestination:
-			'/setup/site-migration?siteSlug=%SITE_SLUG%&siteId=%SITE_ID%&ref=calypso-importer&hide_importer_link=true',
+			'/setup/site-migration/site-migration-import-or-migrate?siteSlug=%SITE_SLUG%&siteId=%SITE_ID%&ref=calypso-importer',
 		weight: 1,
 	};
 
@@ -335,18 +335,6 @@ function getConfig( {
 		priority: 'secondary',
 		title: 'Movable Type & TypePad',
 		icon: 'movabletype',
-		description: '',
-		uploadDescription: '',
-		weight: 0,
-	};
-
-	importerConfig.substack = {
-		engine: 'substack',
-		key: 'importer-type-substack',
-		type: 'url',
-		priority: 'secondary',
-		title: 'Substack',
-		icon: 'substack',
 		description: '',
 		uploadDescription: '',
 		weight: 0,

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, FormInputValidation, FormLabel } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
@@ -23,7 +23,7 @@ import {
 	isEmpty,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, useEffect } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
@@ -48,6 +48,7 @@ import {
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isP2Flow } from 'calypso/signup/is-flow';
@@ -90,36 +91,42 @@ const resetAnalyticsData = () => {
 class SignupForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		disableBlurValidation: PropTypes.bool,
+		disableContinueAsUser: PropTypes.bool,
+		disabled: PropTypes.bool,
 		disableEmailExplanation: PropTypes.string,
 		disableEmailInput: PropTypes.bool,
 		disableSubmitButton: PropTypes.bool,
-		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
 		email: PropTypes.string,
 		flowName: PropTypes.string,
 		footerLink: PropTypes.node,
 		formHeader: PropTypes.node,
-		redirectToAfterLoginUrl: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func,
+		handleCreateAccountError: PropTypes.func,
+		handleCreateAccountSuccess: PropTypes.func,
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
+		horizontal: PropTypes.bool,
 		isPasswordless: PropTypes.bool,
-		isSocialSignupEnabled: PropTypes.bool,
 		isSocialFirst: PropTypes.bool,
+		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
+		notYouText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 		positionInFlow: PropTypes.number,
+		redirectToAfterLoginUrl: PropTypes.string,
 		save: PropTypes.func,
+		shouldDisplayUserExistsError: PropTypes.bool,
 		signupDependencies: PropTypes.object,
 		step: PropTypes.object,
-		submitButtonText: PropTypes.string.isRequired,
+		submitButtonLabel: PropTypes.string,
+		submitButtonLoadingLabel: PropTypes.string,
+		submitButtonText: PropTypes.string,
+		submitForm: PropTypes.func,
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-		horizontal: PropTypes.bool,
-		shouldDisplayUserExistsError: PropTypes.bool,
-		submitForm: PropTypes.func,
-		isInviteLoggedOutForm: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -435,6 +442,10 @@ class SignupForm extends Component {
 	};
 
 	handleBlur = ( event ) => {
+		if ( this.props.disableBlurValidation ) {
+			return;
+		}
+
 		const fieldId = event.target.id;
 		this.setState( {
 			isFieldDirty: { ...this.state.isFieldDirty, [ fieldId ]: true },
@@ -921,9 +932,16 @@ class SignupForm extends Component {
 		}
 
 		if ( this.props.isBlazePro ) {
-			tosText = this.props.translate(
-				'By creating an account, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-				options
+			tosText = (
+				<>
+					{ this.props.translate(
+						'By creating an account, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+						options
+					) }{ ' ' }
+					{ this.props.translate(
+						'Blaze Pro uses WordPress.com accounts under the hood. Tumblr, Blaze Pro, and WordPress.com are properties of Automattic, Inc.'
+					) }
+				</>
 			);
 		}
 
@@ -973,21 +991,7 @@ class SignupForm extends Component {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			return this.globalNotice( this.props.step.errors[ 0 ], 'is-error' );
 		}
-		if ( this.userCreationComplete() ) {
-			return (
-				<TrackRender eventName="calypso_signup_account_already_created_show">
-					{ this.globalNotice(
-						{
-							info: true,
-							message: this.props.translate(
-								'Your account has already been created. You can change your email, username, and password later.'
-							),
-						},
-						'is-info'
-					) }
-				</TrackRender>
-			);
-		}
+
 		return false;
 	}
 
@@ -1036,16 +1040,6 @@ class SignupForm extends Component {
 	};
 
 	formFooter() {
-		if ( this.userCreationComplete() ) {
-			return (
-				<LoggedOutFormFooter>
-					<Button primary onClick={ () => this.props.goToNextStep() }>
-						{ this.props.translate( 'Continue' ) }
-					</Button>
-				</LoggedOutFormFooter>
-			);
-		}
-
 		const params = new URLSearchParams( window.location.search );
 		const variationName = params.get( 'variationName' );
 
@@ -1125,10 +1119,6 @@ class SignupForm extends Component {
 		);
 	}
 
-	userCreationComplete() {
-		return this.props.step && 'completed' === this.props.step.status;
-	}
-
 	handleOnChangeAccount = () => {
 		recordTracksEvent( 'calypso_signup_click_on_change_account' );
 		this.props.redirectToLogout( window.location.href );
@@ -1142,6 +1132,24 @@ class SignupForm extends Component {
 		return isEmpty( formState.getFieldValue( this.state.form, 'email' ) )
 			? this.props.queryArgs?.user_email
 			: formState.getFieldValue( this.state.form, 'email' );
+	};
+
+	handleCreateAccountError = ( error, email ) => {
+		if ( this.props.handleCreateAccountError ) {
+			return this.props.handleCreateAccountError( error, email );
+		}
+
+		if ( isExistingAccountError( error.error ) ) {
+			page(
+				addQueryArgs(
+					{
+						email_address: email,
+						is_signup_existing_account: true,
+					},
+					this.getLoginLink()
+				)
+			);
+		}
 	};
 
 	render() {
@@ -1171,12 +1179,38 @@ class SignupForm extends Component {
 			);
 		}
 
-		if ( this.props.currentUser ) {
+		if ( this.props.currentUser && ! this.props.disableContinueAsUser ) {
 			return (
 				<ContinueAsUser
-					redirectPath={ this.props.redirectToAfterLoginUrl }
+					currentUser={ this.props.currentUser }
 					onChangeAccount={ this.handleOnChangeAccount }
-					isSignUpFlow
+					redirectPath={ this.props.redirectToAfterLoginUrl }
+					isWoo={ this.props.isWoo }
+					isWooPasswordless={ this.props.isWooPasswordless }
+					isBlazePro={ this.props.isBlazePro }
+					notYouText={
+						this.props.notYouText ||
+						this.props.translate(
+							'Not you?{{br/}} Sign out or log in with {{link}}another account{{/link}}',
+							{
+								components: {
+									br: <br />,
+									link: (
+										<button
+											type="button"
+											id="loginAsAnotherUser"
+											className="continue-as-user__change-user-link"
+											onClick={ this.handleOnChangeAccount }
+										/>
+									),
+								},
+								args: {
+									userName: this.props.currentUser.display_name || this.props.currentUser.username,
+								},
+								comment: 'Link to continue login as different user',
+							}
+						)
+					}
 				/>
 			);
 		}
@@ -1191,7 +1225,7 @@ class SignupForm extends Component {
 
 						{ this.renderWooCommerce() }
 
-						{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+						{ this.props.isSocialSignupEnabled && (
 							<SocialSignupForm
 								handleResponse={ this.handleWooCommerceSocialConnect }
 								socialService={ this.props.socialService }
@@ -1238,7 +1272,6 @@ class SignupForm extends Component {
 		if ( this.props.isSocialFirst ) {
 			return (
 				<SignupFormSocialFirst
-					step={ this.props.step }
 					stepName={ this.props.stepName }
 					flowName={ this.props.flowName }
 					goToNextStep={ this.props.goToNextStep }
@@ -1259,8 +1292,7 @@ class SignupForm extends Component {
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
-			( ! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete() ) ||
-			this.props.isWoo;
+			( ! config.isEnabled( 'desktop' ) && this.isHorizontal() ) || this.props.isWoo;
 
 		if (
 			( this.props.isPasswordless &&
@@ -1269,6 +1301,7 @@ class SignupForm extends Component {
 		) {
 			let formProps = {
 				submitButtonLabel: this.props.submitButtonLabel,
+				submitButtonLoadingLabel: this.props.submitButtonLoadingLabel,
 			};
 
 			switch ( true ) {
@@ -1295,7 +1328,6 @@ class SignupForm extends Component {
 				>
 					{ this.getNotice() }
 					<PasswordlessSignupForm
-						step={ this.props.step }
 						stepName={ this.props.stepName }
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
@@ -1306,23 +1338,11 @@ class SignupForm extends Component {
 						disableSubmitButton={ this.props.disableSubmitButton || emailErrorMessage }
 						queryArgs={ this.props.queryArgs }
 						userEmail={ this.getEmailValue() }
-						isInviteLoggedOutForm={ this.props.isInviteLoggedOutForm }
 						labelText={ this.props.labelText }
 						onInputBlur={ this.handleBlur }
 						onInputChange={ this.handleChangeEvent }
-						onCreateAccountError={ ( error, email ) => {
-							if ( [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
-								page(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-										},
-										logInUrl
-									)
-								);
-							}
-						} }
+						onCreateAccountError={ this.handleCreateAccountError }
+						onCreateAccountSuccess={ this.props.handleCreateAccountSuccess }
 						{ ...formProps }
 					>
 						{ emailErrorMessage && (
@@ -1333,8 +1353,7 @@ class SignupForm extends Component {
 					{ ! isGravatar && (
 						<>
 							{ showSeparator && <FormDivider /> }
-
-							{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+							{ this.props.isSocialSignupEnabled && (
 								<SocialSignupForm
 									handleResponse={ this.props.handleSocialResponse }
 									socialService={ this.props.socialService }
@@ -1371,7 +1390,7 @@ class SignupForm extends Component {
 
 				{ showSeparator && <FormDivider /> }
 
-				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
+				{ this.props.isSocialSignupEnabled && (
 					<SocialSignupForm
 						handleResponse={ this.props.handleSocialResponse }
 						socialService={ this.props.socialService }
@@ -1387,14 +1406,6 @@ class SignupForm extends Component {
 			</div>
 		);
 	}
-}
-
-function TrackRender( { children, eventName } ) {
-	useEffect( () => {
-		recordTracksEvent( eventName );
-	}, [ eventName ] );
-
-	return children;
 }
 
 export default connect(

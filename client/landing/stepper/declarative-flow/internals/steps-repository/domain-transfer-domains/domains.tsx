@@ -11,7 +11,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import { useCallback, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
-import QueryPlans from 'calypso/components/data/query-plans';
+import QueryProducts from 'calypso/components/data/query-products-list';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -238,8 +238,8 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 
 	return (
 		<div className="bulk-domain-transfer__container">
-			{ /* QueryPlans required by getCurrentUserCurrencyCode in DomainCodePair */ }
-			<QueryPlans />
+			{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
+			<QueryProducts />
 			{ Object.entries( domainsState ).map( ( [ key, domain ], index ) => (
 				<DomainCodePair
 					key={ key }

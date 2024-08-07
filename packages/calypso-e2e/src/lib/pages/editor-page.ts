@@ -5,7 +5,6 @@ import envVariables from '../../env-variables';
 import {
 	EditorComponent,
 	EditorPublishPanelComponent,
-	EditorNavSidebarComponent,
 	EditorToolbarComponent,
 	EditorSettingsSidebarComponent,
 	EditorGutenbergComponent,
@@ -51,7 +50,6 @@ export class EditorPage {
 	private page: Page;
 	private editor: EditorComponent;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
-	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	private editorGutenbergComponent: EditorGutenbergComponent;
@@ -78,7 +76,6 @@ export class EditorPage {
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
 		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
 		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
 		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
@@ -195,12 +192,10 @@ export class EditorPage {
 	 * This method will attempt to close the following panels:
 	 * 	- Publish Panel (including pre-publish checklist)
 	 * 	- Editor Settings Panel
-	 * 	- Editor Navigation Sidebar
 	 */
 	async closeAllPanels(): Promise< void > {
 		await Promise.allSettled( [
 			this.editorPublishPanelComponent.closePanel(),
-			this.editorToolbarComponent.closeNavSidebar(),
 			this.editorToolbarComponent.closeSettings(),
 		] );
 	}
@@ -309,12 +304,13 @@ export class EditorPage {
 	async addBlockFromSidebar(
 		blockName: string,
 		blockEditorSelector: string,
-		{ noSearch }: { noSearch?: boolean } = {}
+		{ noSearch, blockFallBackName }: { noSearch?: boolean; blockFallBackName?: string } = {}
 	): Promise< ElementHandle > {
 		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
 		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent, {
 			noSearch: noSearch,
+			blockFallBackName: blockFallBackName,
 		} );
 
 		const blockHandle =
@@ -383,12 +379,12 @@ export class EditorPage {
 	private async addBlockFromInserter(
 		blockName: string,
 		inserter: BlockInserter,
-		{ noSearch }: { noSearch?: boolean } = {}
+		{ noSearch, blockFallBackName }: { noSearch?: boolean; blockFallBackName?: string } = {}
 	): Promise< void > {
 		if ( ! noSearch ) {
 			await inserter.searchBlockInserter( blockName );
 		}
-		await inserter.selectBlockInserterResult( blockName );
+		await inserter.selectBlockInserterResult( blockName, { blockFallBackName } );
 	}
 
 	/**
@@ -934,14 +930,11 @@ export class EditorPage {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			// Mobile viewports do not use an EditorNavSidebar.
 			// Instead, the regular NavBar is used, and the
-			// `My Sites` button exits the editor.
+			// `<` button exits the editor.
 			const navbarComponent = new NavbarComponent( this.page );
-			actions.push( navbarComponent.clickMySites() );
+			actions.push( navbarComponent.clickEditorBackButton() );
 		} else {
-			actions.push(
-				this.editorToolbarComponent.openNavSidebar(),
-				this.editorNavSidebarComponent.exitEditor()
-			);
+			actions.push( this.editorToolbarComponent.closeEditor() );
 		}
 
 		// Perform the actions and resolve promises.

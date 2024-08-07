@@ -10,37 +10,90 @@ export default function SubscriptionStatus( { item }: { item: Referral } ): Reac
 		item: Referral
 	): {
 		status: string | null;
-		type: 'warning' | 'success' | null;
+		type: 'warning' | 'success' | 'info' | null;
+		tooltip?: string | JSX.Element;
 	} => {
-		const activeStatuses = item.statuses.filter( ( status ) => status === 'active' );
-		const pendingStatuses = item.statuses.filter( ( status ) => status === 'pending' );
-
-		if ( ! item.statuses.length ) {
+		if ( ! item.purchaseStatuses.length ) {
 			return {
 				status: null,
 				type: null,
 			};
 		}
 
-		if ( activeStatuses.length === item.statuses.length ) {
-			return {
-				status: translate( 'Active' ),
-				type: 'success',
-			};
+		const { pendingCount, activeCount, canceledCount, overallStatus } =
+			item.purchaseStatuses.reduce(
+				( acc, status ) => {
+					if ( status === 'pending' ) {
+						acc.pendingCount++;
+					}
+					if ( status === 'active' ) {
+						acc.activeCount++;
+					}
+					if ( status === 'canceled' ) {
+						acc.canceledCount++;
+					}
+
+					if ( ! acc.overallStatus ) {
+						acc.overallStatus = status;
+					} else if ( acc.overallStatus !== status ) {
+						acc.overallStatus = 'mixed';
+					}
+
+					return acc;
+				},
+				{ pendingCount: 0, activeCount: 0, canceledCount: 0, overallStatus: '' }
+			);
+
+		const status = overallStatus || 'mixed';
+
+		switch ( status ) {
+			case 'active':
+				return {
+					status: translate( 'Active' ),
+					type: 'success',
+				};
+			case 'pending':
+				return {
+					status: translate( 'Pending' ),
+					type: 'warning',
+				};
+			case 'canceled':
+				return {
+					status: translate( 'Canceled' ),
+					type: 'info',
+				};
+			default:
+				return {
+					status: translate( 'Mixed' ),
+					type: 'warning',
+					tooltip: (
+						<div>
+							<ul>
+								<li>
+									{ translate( 'Active: %(activeCount)d', {
+										args: { activeCount },
+									} ) }
+								</li>
+								<li>
+									{ translate( 'Pending: %(pendingCount)d', {
+										args: { pendingCount },
+									} ) }
+								</li>
+								<li>
+									{ translate( 'Canceled: %(canceledCount)d', {
+										args: { canceledCount },
+									} ) }
+								</li>
+							</ul>
+						</div>
+					),
+				};
 		}
-		if ( pendingStatuses.length === item.statuses.length ) {
-			return {
-				status: translate( 'Pending' ),
-				type: 'warning',
-			};
-		}
-		return {
-			status: translate( 'Mixed' ),
-			type: 'warning',
-		};
 	};
 
-	const { status, type } = getStatus( item );
+	const { status, type, tooltip } = getStatus( item );
 
-	return status && type ? <StatusBadge statusProps={ { children: status, type } } /> : null;
+	return status && type ? (
+		<StatusBadge statusProps={ { children: status, type, tooltip } } />
+	) : null;
 }

@@ -23,7 +23,7 @@
 	}
 
 	@media (min-width: 782px) {
-		top: 32px;
+		top: calc(var(--masterbar-height) + 32px);
 		right: 32px;
 	}
 

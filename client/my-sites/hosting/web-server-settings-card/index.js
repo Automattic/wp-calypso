@@ -12,6 +12,8 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
+import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
+import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
 import {
 	updateAtomicPhpVersion,
 	updateAtomicStaticFile404,
@@ -25,7 +27,7 @@ import getRequest from 'calypso/state/selectors/get-request';
 import { isFetchingAtomicHostingGeoAffinity } from 'calypso/state/selectors/is-fetching-atomic-hosting-geo-affinity';
 import { isFetchingAtomicHostingWpVersion } from 'calypso/state/selectors/is-fetching-atomic-hosting-wp-version';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -58,6 +60,7 @@ const WebServerSettingsCard = ( {
 	isUpdatingWpVersion,
 	isWpcomStagingSite,
 	siteId,
+	selectedSiteSlug,
 	geoAffinity,
 	staticFile404,
 	translate,
@@ -70,6 +73,8 @@ const WebServerSettingsCard = ( {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 	const [ selectedWpVersion, setSelectedWpVersion ] = useState( '' );
 	const [ selectedStaticFile404, setSelectedStaticFile404 ] = useState( '' );
+	const { recommendedValue, phpVersions } = usePhpVersions();
+	const dataCenterOptions = useDataCenterOptions();
 
 	const isLoading =
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
@@ -98,7 +103,9 @@ const WebServerSettingsCard = ( {
 
 		return (
 			<FormFieldset>
-				<FormLabel>{ translate( 'WordPress version' ) }</FormLabel>
+				<FormLabel data-scroll-id="wp-version-select">
+					{ translate( 'WordPress version' ) }
+				</FormLabel>
 				{ isWpcomStagingSite && (
 					<>
 						<FormSelect
@@ -138,7 +145,7 @@ const WebServerSettingsCard = ( {
 								'For testing purposes, you can switch to the beta version of the next WordPress release on {{a}}your staging site{{/a}}.',
 							{
 								components: {
-									a: <a href="#staging-site" />,
+									a: <a href={ `/staging-site/${ selectedSiteSlug }` } />,
 								},
 							}
 						) }
@@ -153,12 +160,6 @@ const WebServerSettingsCard = ( {
 			return;
 		}
 
-		const dataCenterOptions = {
-			bur: translate( 'US West (Burbank, California)' ),
-			dfw: translate( 'US Central (Dallas-Fort Worth, Texas)' ),
-			dca: translate( 'US East (Washington, D.C.)' ),
-			ams: translate( 'EU West (Amsterdam, Netherlands)' ),
-		};
 		const displayValue =
 			dataCenterOptions[ geoAffinity ] !== undefined
 				? dataCenterOptions[ geoAffinity ]
@@ -182,8 +183,6 @@ const WebServerSettingsCard = ( {
 		);
 	};
 
-	const recommendedValue = '8.1';
-
 	const changePhpVersion = ( event ) => {
 		const newVersion = event.target.value;
 
@@ -192,43 +191,6 @@ const WebServerSettingsCard = ( {
 
 	const updateVersion = () => {
 		updatePhpVersion( siteId, selectedPhpVersion );
-	};
-
-	const getPhpVersions = () => {
-		return [
-			{
-				label: '7.3',
-				value: '7.3',
-				disabled: true, // EOL 6th December, 2021
-			},
-			{
-				label: translate( '%s (deprecated)', {
-					args: '7.4',
-					comment: 'PHP Version for a version switcher',
-				} ),
-				value: '7.4',
-			},
-			{
-				label: '8.0',
-				value: '8.0',
-				disabled: true, // EOL 26th November, 2023
-			},
-			{
-				label: translate( '%s (recommended)', {
-					args: '8.1',
-					comment: 'PHP Version for a version switcher',
-				} ),
-				value: recommendedValue,
-			},
-			{
-				label: '8.2',
-				value: '8.2',
-			},
-			{
-				label: '8.3',
-				value: '8.3',
-			},
-		];
 	};
 
 	const getPhpVersionContent = () => {
@@ -242,14 +204,14 @@ const WebServerSettingsCard = ( {
 			selectedPhpVersion || phpVersion || ( disabled && recommendedValue );
 		return (
 			<FormFieldset>
-				<FormLabel>{ translate( 'PHP version' ) }</FormLabel>
+				<FormLabel data-scroll-id="php-version-select">{ translate( 'PHP version' ) }</FormLabel>
 				<FormSelect
 					disabled={ disabled || isUpdatingPhpVersion }
 					className="web-server-settings-card__php-version-select"
 					onChange={ changePhpVersion }
 					value={ selectedPhpVersionValue }
 				>
-					{ getPhpVersions().map( ( option ) => {
+					{ phpVersions.map( ( option ) => {
 						// Show disabled PHP version only if the site is still using it.
 						if ( option.value !== phpVersion && option.disabled ) {
 							return null;
@@ -431,6 +393,7 @@ export default connect(
 				getRequest( state, updateAtomicWpVersion( siteId, null ) )?.isLoading ?? false,
 			isWpcomStagingSite,
 			siteId,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
 			geoAffinity,
 			staticFile404,
 			phpVersion,

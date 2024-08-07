@@ -5,6 +5,8 @@ import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
+	isGravatarFlowOAuth2Client,
+	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -13,6 +15,10 @@ import {
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
+
+function getCookies() {
+	return typeof document === 'undefined' ? {} : cookie.parse( document.cookie );
+}
 
 export function getSocialServiceFromClientId( clientId ) {
 	if ( ! clientId ) {
@@ -93,8 +99,22 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		return `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
 	}
 
-	if ( isGravPoweredOAuth2Client( oauth2Client ) || isStudioAppOAuth2Client( oauth2Client ) ) {
-		// Studio app and Gravatar powered clients signup via the magic login page
+	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+		const gravatarFrom = get( currentQuery, 'gravatar_from', 'signup' );
+
+		// Gravatar powered clients signup via the magic login page
+		return login( {
+			locale,
+			twoFactorAuthType: 'link',
+			oauth2ClientId: oauth2Client.id,
+			redirectTo: redirectTo,
+			gravatarFrom: isGravatarOAuth2Client( oauth2Client ) && gravatarFrom,
+			gravatarFlow: isGravatarFlowOAuth2Client( oauth2Client ),
+		} );
+	}
+
+	if ( isStudioAppOAuth2Client( oauth2Client ) ) {
+		// Studio app signup via the magic login page
 		return login( {
 			locale,
 			twoFactorAuthType: 'link',
@@ -161,7 +181,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 }
 
 export const isReactLostPasswordScreenEnabled = () => {
-	const cookies = typeof document === 'undefined' ? {} : cookie.parse( document.cookie );
+	const cookies = getCookies();
 	return (
 		config.isEnabled( 'login/react-lost-password-screen' ) ||
 		cookies.enable_react_password_screen === 'yes'

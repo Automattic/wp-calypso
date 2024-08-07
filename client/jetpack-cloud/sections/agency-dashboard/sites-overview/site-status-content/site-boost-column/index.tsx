@@ -42,6 +42,8 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 		recordEvent( 'boost_column_get_score_click' );
 	};
 
+	const isSiteMigrationInProgress = site.sticker?.includes( 'migration-in-progress' );
+
 	const noBoostHrefOption = site.is_atomic ? jetpackHref : addBoostHref;
 	if ( overallScore && ! hasBoost ) {
 		return (
@@ -57,7 +59,7 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 				}
 				href={ siteError ? '' : noBoostHrefOption }
 				target="_blank"
-				disabled={ siteError }
+				disabled={ siteError || isSiteMigrationInProgress }
 				onClick={ () =>
 					recordEvent( 'boost_column_score_click', {
 						score: overallScore,
@@ -122,7 +124,7 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 		<>
 			<span
 				className={
-					siteError
+					siteError || isSiteMigrationInProgress
 						? 'sites-overview__disabled sites-overview__row-status'
 						: 'sites-overview__row-status'
 				}
@@ -130,7 +132,7 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 				<button
 					className="sites-overview__column-action-button"
 					onClick={ handleGetBoostScoreAction }
-					disabled={ siteError }
+					disabled={ siteError || isSiteMigrationInProgress }
 				>
 					<Gridicon icon="plus-small" size={ 16 } />
 					<span>{ translate( 'Add' ) }</span>

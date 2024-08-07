@@ -60,6 +60,11 @@ export const STEPS = {
 
 	GOALS: { slug: 'goals', asyncComponent: () => import( './steps-repository/goals' ) },
 
+	GENERATE_CONTENT: {
+		slug: 'generateContent',
+		asyncComponent: () => import( './steps-repository/readymade-template-generate-content' ),
+	},
+
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
 
 	IMPORT_LIGHT: {
@@ -133,6 +138,10 @@ export const STEPS = {
 	},
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
+	MIGRATION_HANDLER: {
+		slug: 'migrationHandler',
+		asyncComponent: () => import( './steps-repository/migration-handler' ),
+	},
 
 	OPTIONS: {
 		slug: 'options',
@@ -220,9 +229,15 @@ export const STEPS = {
 		slug: 'site-migration-assign-trial-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-assign-trial-plan' ),
 	},
-	SITE_MIGRATION_INSTRUCTIONS_I2: {
-		slug: 'site-migration-instructions-i2',
-		asyncComponent: () => import( './steps-repository/site-migration-instructions-i2' ),
+
+	SITE_MIGRATION_INSTRUCTIONS: {
+		slug: 'site-migration-instructions',
+		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
+	},
+
+	SITE_MIGRATION_STARTED: {
+		slug: 'site-migration-started',
+		asyncComponent: () => import( './steps-repository/site-migration-started' ),
 	},
 
 	SITE_MIGRATION_ASSISTED_MIGRATION: {
@@ -238,6 +253,16 @@ export const STEPS = {
 	SITE_MIGRATION_IMPORT_OR_MIGRATE: {
 		slug: 'site-migration-import-or-migrate',
 		asyncComponent: () => import( './steps-repository/site-migration-import-or-migrate' ),
+	},
+
+	SITE_MIGRATION_HOW_TO_MIGRATE: {
+		slug: 'site-migration-how-to-migrate',
+		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
+	},
+
+	SITE_MIGRATION_SOURCE_URL: {
+		slug: 'site-migration-source-url',
+		asyncComponent: () => import( './steps-repository/site-migration-source-url' ),
 	},
 
 	SITE_MIGRATION_UPGRADE_PLAN: {
@@ -258,5 +283,9 @@ export const STEPS = {
 	SEGMENTATION_SURVEY: {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
+	},
+	IMPORT_OR_MIGRATE_WITH_UPGRADE: {
+		slug: 'import-or-migrate-with-selection',
+		asyncComponent: () => import( './steps-repository/import-or-migrate-with-upgrade' ),
 	},
 };

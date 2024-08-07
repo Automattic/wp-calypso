@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
-import { ProfilerData } from './types';
+import { ProfilerData, ReadymadeTemplate } from './types';
 import type { DomainTransferData, State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
@@ -157,10 +157,10 @@ export function* createSenseiSite( {
 			lang_id: lang_id,
 			site_creation_flow: 'sensei',
 			enable_fse: true,
-			theme: 'pub/course',
 			timezone_string: guessTimezone(),
 			use_patterns: true,
 			site_intent: 'sensei',
+			launchpad_screen: 'off',
 			selected_features: selectedFeatures,
 			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
@@ -254,6 +254,11 @@ export const setSelectedStyleVariation = (
 ) => ( {
 	type: 'SET_SELECTED_STYLE_VARIATION' as const,
 	selectedStyleVariation,
+} );
+
+export const setSelectedReadymadeTemplate = ( readymadeTemplate: ReadymadeTemplate ) => ( {
+	type: 'SET_READYMADE_TEMPLATE' as const,
+	readymadeTemplate,
 } );
 
 export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
@@ -449,6 +454,10 @@ export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
 	paidSubscribers,
 } );
 
+export const setPartnerBundle = ( partnerBundle: string | null ) => ( {
+	type: 'SET_PARTNER_BUNDLE' as const,
+	partnerBundle,
+} );
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -474,6 +483,7 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
+	| typeof setSelectedReadymadeTemplate
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof startOnboarding
@@ -505,4 +515,5 @@ export type OnboardAction = ReturnType<
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
 	| typeof setPaidSubscribers
+	| typeof setPartnerBundle
 >;

@@ -10,7 +10,7 @@ import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, matchPath } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
@@ -33,6 +33,7 @@ import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
+import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
 
@@ -65,21 +66,38 @@ interface AppWindow extends Window {
 	BUILD_TARGET?: string;
 }
 
-window.AppBoot = async () => {
+const DEFAULT_FLOW = 'site-setup';
+
+const getFlowFromURL = () => {
+	const fromPath = matchPath( { path: '/setup/:flow/*' }, window.location.pathname )?.params?.flow;
 	// backward support the old Stepper URL structure (?flow=something)
-	const flowNameFromQueryParam = new URLSearchParams( window.location.search ).get( 'flow' );
-	if ( flowNameFromQueryParam && availableFlows[ flowNameFromQueryParam ] ) {
-		window.location.href = `/setup/${ flowNameFromQueryParam }`;
+	const fromQuery = new URLSearchParams( window.location.search ).get( 'flow' );
+	return fromPath || fromQuery;
+};
+
+const initializeHotJar = ( flowName: string ) => {
+	if ( flowName === IMPORT_HOSTED_SITE_FLOW ) {
+		addHotJarScript();
+	}
+};
+
+window.AppBoot = async () => {
+	const flowName = getFlowFromURL();
+
+	if ( ! flowName ) {
+		// Stop the boot process if we can't determine the flow, reducing the number of edge cases
+		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
 	}
 
+	// Start tracking performance, bearing in mind this is a full page load.
+	startStepperPerformanceTracking( { fullPageLoad: true } );
+
+	initializeHotJar( flowName );
 	// put the proxy iframe in "all blog access" mode
 	// see https://github.com/Automattic/wp-calypso/pull/60773#discussion_r799208216
 	requestAllBlogsAccess();
 
 	setupWpDataDebug();
-
-	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
-	flowNameFromPathName === IMPORT_HOSTED_SITE_FLOW && addHotJarScript();
 
 	// Add accessible-focus listener.
 	accessibleFocus();

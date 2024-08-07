@@ -43,7 +43,6 @@ const StepContent = ( { flow }: { flow: string } ) => {
 		<>
 			<FormattedHeader align="center" headerText={ translate( 'Create your account' ) } brandFont />
 			<SignupFormSocialFirst
-				step={ {} }
 				stepName="user"
 				flowName={ flow }
 				goToNextStep={ setWpAccountCreateResponse }

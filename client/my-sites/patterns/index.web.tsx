@@ -9,6 +9,8 @@ import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/cate
 import { PatternsCategoryNotFound } from 'calypso/my-sites/patterns/components/category-not-found';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
+import { ReadymadeTemplateDetailsClient } from 'calypso/my-sites/patterns/components/readymade-template-details/client';
+import { ReadymadeTemplatesClient } from 'calypso/my-sites/patterns/components/readymade-templates/client';
 import { PatternsContext } from 'calypso/my-sites/patterns/context';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { extractPatternIdFromHash } from 'calypso/my-sites/patterns/lib/extract-pattern-id-from-hash';
@@ -38,6 +40,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 				value={ {
 					category: context.params.category ?? '',
 					isGridView: !! context.query.grid,
+					section: context.hashstring,
 					patternPermalinkId: extractPatternIdFromHash(),
 					patternTypeFilter:
 						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
@@ -49,6 +52,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 					<PatternLibrary
 						categoryGallery={ CategoryGalleryClient }
 						patternGallery={ PatternGalleryClient }
+						readymadeTemplates={ ReadymadeTemplatesClient }
 					/>
 				</PatternsWrapper>
 			</PatternsContext.Provider>
@@ -82,6 +86,18 @@ function checkCategorySlug( context: RouterContext, next: RouterNext ) {
 		} );
 }
 
+function renderReadymadeTemplateDetails( context: RouterContext, next: RouterNext ) {
+	if ( ! context.primary ) {
+		context.primary = (
+			<PatternsWrapper>
+				<ReadymadeTemplateDetailsClient id={ parseInt( context.params.id ) } />
+			</PatternsWrapper>
+		);
+	}
+
+	next();
+}
+
 export default function ( router: typeof clientRouter ) {
 	const langParam = getLanguageRouteParam();
 	const middleware = [ checkCategorySlug, renderPatterns, makeLayout, clientRender ];
@@ -100,4 +116,11 @@ export default function ( router: typeof clientRouter ) {
 
 	router( `/patterns/:category?`, ...middleware );
 	router( `/patterns/:type(layouts)/:category?`, ...middleware );
+
+	router(
+		'/patterns/:type(site-layouts)/:id',
+		renderReadymadeTemplateDetails,
+		makeLayout,
+		clientRender
+	);
 }

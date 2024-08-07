@@ -25,7 +25,7 @@ export function HelpCenterOdie(): JSX.Element {
 						className="help-center__container-header-menu-item"
 					>
 						<Gridicon icon="comment" />
-						{ __( 'Start a New Chat' ) }
+						{ __( 'Clear Conversation' ) }
 					</PopoverMenuItem>
 				</EllipsisMenu>
 			</div>

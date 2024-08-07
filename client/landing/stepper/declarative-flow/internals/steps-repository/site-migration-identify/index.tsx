@@ -9,8 +9,9 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import wpcom from 'calypso/lib/wp';
+import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
+import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
@@ -170,6 +171,7 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
+	const { createScreenshots } = useSitePreviewMShotImageHandler();
 
 	const handleSubmit = useCallback(
 		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
@@ -177,6 +179,13 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 			// record the migration source domain.
 			if ( siteSlug && 'wordpress' === data?.platform && data?.from ) {
 				await saveSiteSettings( siteSlug, { migration_source_site_domain: data.from } );
+			}
+
+			// If we have a URL of the source, we send requests to the mShots API to create screenshots
+			// early in the flow to avoid long loading times in the migration instructions step.
+			// Because mShots API can often take a long time to generate screenshots.
+			if ( data?.from ) {
+				createScreenshots( data?.from );
 			}
 
 			navigation?.submit?.( { action, ...data } );
@@ -190,11 +199,10 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 		const ref = urlQueryParams.get( 'ref' ) || '';
 		const shouldHideBasedOnRef = [ 'entrepreneur-signup', 'calypso-importer' ].includes( ref );
 		const shouldHideBasedOnVariant = [ HOSTED_SITE_MIGRATION_FLOW ].includes( variantSlug || '' );
+		const shouldNotHideBasedOnRef = [ GUIDED_ONBOARDING_FLOW_REFERRER ].includes( ref );
 
-		return shouldHideBasedOnRef || shouldHideBasedOnVariant;
+		return ( shouldHideBasedOnRef || shouldHideBasedOnVariant ) && ! shouldNotHideBasedOnRef;
 	};
-
-	usePresalesChat( 'wpcom', true, true );
 
 	return (
 		<>
@@ -206,7 +214,7 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug } ) {
 				hideBack={ shouldHideBackButton() }
 				hideSkip
 				hideFormattedHeader
-				goBack={ navigation.goBack }
+				goBack={ navigation?.goBack }
 				goNext={ navigation?.submit }
 				isFullLayout
 				stepContent={

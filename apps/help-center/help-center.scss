@@ -1,0 +1,104 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
+.help-center.entry-point-button {
+	&.is-active {
+		background: #1e1e1e;
+
+		svg {
+			fill: var(--studio-white);
+		}
+	}
+}
+
+// If the help center is shipped in core, we hide the black fab button
+.a8c-faux-inline-help__button {
+	display: none;
+}
+
+.help-center__container {
+	&.is-mobile {
+		&.is-minimized {
+			margin-top: 0;
+		}
+	}
+
+	svg {
+		box-sizing: content-box;
+	}
+}
+
+/**
+ * WP-ADMIN Masterbar Styling
+ */
+#wpadminbar #wp-toolbar {
+	#wp-admin-bar-help-center {
+		padding: 0;
+		width: 43px;
+		display: none;
+
+		@include breakpoint-deprecated( ">960px" ) {
+			display: block;
+		}
+
+		#help-center-icon-with-notification {
+			display: none;
+		}
+
+		svg {
+			position: absolute;
+			height: 22px;
+			width: 22px;
+			top: 1px;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 4px 11px;
+		}
+
+		@media (max-width: 782px) {
+			svg {
+				height: 30px !important;
+				padding: 7px 8px !important;
+				width: 30px !important;
+			}
+		}
+
+		&.unseen-notification {
+			#help-center-icon-with-notification {
+				display: block;
+			}
+			#help-center-icon {
+				display: none;
+			}
+		}
+
+		.ab-item.ab-empty-item {
+			transition: 250ms ease;
+		}
+
+		.ab-item:hover {
+			cursor: pointer;
+		}
+	}
+
+	.ab-icon:hover {
+		color: inherit;
+	}
+
+
+	.help-center {
+		button.components-button {
+			background: transparent;
+			border: none;
+			color: currentcolor;
+
+			&.inline-help__new-releases {
+				text-align: left;
+			}
+
+			svg {
+				fill: currentColor;
+			}
+		}
+	}
+}

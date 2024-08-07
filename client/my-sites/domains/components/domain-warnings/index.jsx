@@ -7,6 +7,7 @@ import {
 	MAP_SUBDOMAIN,
 	SETTING_PRIMARY_DOMAIN,
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
+	DOMAIN_EXPIRATION_AUCTION,
 } from '@automattic/urls';
 import _debug from 'debug';
 import { localize } from 'i18n-calypso';
@@ -91,14 +92,26 @@ export class DomainWarnings extends PureComponent {
 		} );
 		const domain = domains[ 0 ].name;
 		const subscriptionId = domains[ 0 ].subscriptionId;
+		const productSlug = domains[ 0 ].productSlug;
 		const link =
 			count === 1
-				? `/checkout/domain_map:${ domain }/renew/${ subscriptionId }/${ selectedSite.slug }`
+				? `/checkout/${ productSlug }:${ domain }/renew/${ subscriptionId }/${ selectedSite.slug }`
 				: purchasesRoot;
 
 		return (
 			<NoticeAction href={ link } onClick={ onClick }>
 				{ this.props.isCompact ? compactMessage : fullMessage }
+			</NoticeAction>
+		);
+	}
+
+	expiredDomainLink( onClick ) {
+		const { translate } = this.props;
+		return (
+			<NoticeAction href={ DOMAIN_EXPIRATION_AUCTION } onClick={ onClick }>
+				{ translate( 'Learn more', {
+					context: 'Call to action link for support page of expired domains in auction.',
+				} ) }
 			</NoticeAction>
 		);
 	}
@@ -259,6 +272,10 @@ export class DomainWarnings extends PureComponent {
 			return null;
 		}
 
+		const expiredDomainsNotAuctionLocked = expiredDomains.filter(
+			( domain ) => ! domain.aftermarketAuction
+		);
+
 		const { translate, moment } = this.props;
 		let text;
 		if ( expiredDomains.length === 1 ) {
@@ -271,6 +288,28 @@ export class DomainWarnings extends PureComponent {
 				context: 'Expired domain notice',
 				comment: '%(timeSince)s is something like "a year ago"',
 			} );
+			if ( expiredDomains[ 0 ].aftermarketAuction ) {
+				text = translate(
+					'The domain {{strong}}%(domainName)s{{/strong}} expired %(timeSince)s. ' +
+						"It's no longer available to manage or renew. " +
+						'We may be able to restore it after {{strong}}%(aftermarketAuctionEnd)s{{/strong}}.',
+					{
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							timeSince: moment( expiredDomains[ 0 ].expiry ).fromNow(),
+							domainName: expiredDomains[ 0 ].name,
+							owner: expiredDomains[ 0 ].owner,
+							aftermarketAuctionEnd: moment
+								.utc( expiredDomains[ 0 ].aftermarketAuctionEnd )
+								.format( 'LL' ),
+						},
+						context: 'Expired domain notice',
+						comment: '%(timeSince)s is something like "a year ago"',
+					}
+				);
+			}
 		} else {
 			text = translate( 'Some of your domains have expired.', {
 				context: 'Expired domain notice',
@@ -285,7 +324,9 @@ export class DomainWarnings extends PureComponent {
 				key={ expiredDomainsCanManageWarning }
 				text={ text }
 			>
-				{ this.renewLink( expiredDomains, this.onExpiredDomainsNoticeClick ) }
+				{ expiredDomainsNotAuctionLocked.length > 0
+					? this.renewLink( expiredDomainsNotAuctionLocked, this.onExpiredDomainsNoticeClick )
+					: this.expiredDomainLink( this.onExpiredDomainsNoticeClick ) }
 				{ this.trackImpression( expiredDomainsCanManageWarning, expiredDomains.length ) }
 			</Notice>
 		);
@@ -303,6 +344,7 @@ export class DomainWarnings extends PureComponent {
 
 		const { translate, moment } = this.props;
 		let text;
+		let cta;
 		if ( expiredDomains.length === 1 ) {
 			text = translate(
 				'The domain {{strong}}%(domainName)s{{/strong}} expired %(timeSince)s. ' +
@@ -318,13 +360,33 @@ export class DomainWarnings extends PureComponent {
 					comment: '%(timeSince)s is something like "a year ago"',
 				}
 			);
+			if ( expiredDomains[ 0 ].aftermarketAuction ) {
+				text = translate(
+					'The domain {{strong}}%(domainName)s{{/strong}} expired %(timeSince)s. ' +
+						"It's no longer available to manage or renew. " +
+						'We may be able to restore it after {{strong}}%(aftermarketAuctionEnd)s{{/strong}}.',
+					{
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							timeSince: moment( expiredDomains[ 0 ].expiry ).fromNow(),
+							domainName: expiredDomains[ 0 ].name,
+							owner: expiredDomains[ 0 ].owner,
+							aftermarketAuctionEnd: moment
+								.utc( expiredDomains[ 0 ].aftermarketAuctionEnd )
+								.format( 'LL' ),
+						},
+						context: 'Expired domain notice',
+						comment: '%(timeSince)s is something like "a year ago"',
+					}
+				);
+				cta = this.expiredDomainLink( this.onExpiredDomainsNoticeClick );
+			}
 		} else {
-			text = translate(
-				'Some domains on this site expired recently. They can be renewed by their owners.',
-				{
-					context: 'Expired domain notice',
-				}
-			);
+			text = translate( 'Some domains on this site expired recently.', {
+				context: 'Expired domain notice',
+			} );
 		}
 
 		return (
@@ -334,6 +396,7 @@ export class DomainWarnings extends PureComponent {
 				key={ expiredDomainsCannotManageWarning }
 				text={ text }
 			>
+				{ cta }
 				{ this.trackImpression( expiredDomainsCannotManageWarning, expiredDomains.length ) }
 			</Notice>
 		);

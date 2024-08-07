@@ -1,6 +1,6 @@
-import { updateLaunchpadSettings, type UserSelect } from '@automattic/data-stores';
+import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -15,9 +15,8 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { ONBOARD_STORE } from '../stores';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
@@ -31,13 +30,15 @@ const newsletter: Flow = {
 		const query = useQuery();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 
-		return [
-			// Load intro step component only when not coming from the marketing page
+		const publicSteps = [
 			...( ! isComingFromMarketingPage
 				? [
 						{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
 				  ]
 				: [] ),
+		];
+
+		const privateSteps = stepsWithRequiredLogin( [
 			{
 				slug: 'newsletterSetup',
 				asyncComponent: () => import( './internals/steps-repository/newsletter-setup' ),
@@ -64,33 +65,24 @@ const newsletter: Flow = {
 				slug: 'launchpad',
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
-		];
+		] );
+
+		return [ ...publicSteps, ...privateSteps ];
 	},
 	useSideEffect() {
-		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
+		const { setHidePlansFeatureComparison, setIntent } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
 			setHidePlansFeatureComparison( true );
 			clearSignupDestinationCookie();
+			setIntent( Onboard.SiteIntent.Newsletter );
 		}, [] );
 	},
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const query = useQuery();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
-		const isLoadingIntroScreen =
-			! isComingFromMarketingPage && ( 'intro' === _currentStep || undefined === _currentStep );
-
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/newsletterSetup`,
-			pageTitle: translate( 'Newsletter' ),
-		} );
 
 		const completeSubscribersTask = async () => {
 			if ( siteSlug ) {
@@ -100,23 +92,14 @@ const newsletter: Flow = {
 			}
 		};
 
-		// Unless showing intro step, send non-logged-in users to account screen.
-		if ( ! isLoadingIntroScreen && ! userIsLoggedIn ) {
-			window.location.assign( logInUrl );
-		}
-
 		triggerGuidesForStep( flowName, _currentStep );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
 				case 'intro':
-					if ( userIsLoggedIn ) {
-						return navigate( 'newsletterSetup' );
-					}
-					return window.location.assign( logInUrl );
+					return navigate( 'newsletterSetup' );
 
 				case 'newsletterSetup':
 					return navigate( 'newsletterGoals' );
@@ -151,7 +134,7 @@ const newsletter: Flow = {
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								providedDependencies?.siteSlug as string
-							) }?redirect_to=${ launchpadUrl }&signup=1`
+							) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
 						);
 					}
 
@@ -190,6 +173,7 @@ const newsletter: Flow = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
+	use__Temporary__ShouldTrackEvent: ( event ) => 'submit' === event,
 };
 
 export default newsletter;

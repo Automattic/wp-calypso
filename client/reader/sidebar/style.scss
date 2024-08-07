@@ -59,14 +59,14 @@ body.is-reader-page,
 .is-reader-page .layout,
 .layout.is-section-reader,
 .layout.is-section-reader .layout__content,
-.is-section-reader:not(.is-reader-full-post) {
+.is-section-reader {
 	background: initial;
 }
-body.is-section-reader:not(.is-reader-full-post) {
+body.is-section-reader {
 	background: var(--studio-gray-0);
 
 	&.rtl .layout__content {
-		padding: 16px calc(var(--sidebar-width-max)) 16px 16px;
+		padding: calc(var(--masterbar-height) + 16px) calc(var(--sidebar-width-max)) 16px 16px;
 	}
 
 	.layout__content {
@@ -74,7 +74,7 @@ body.is-section-reader:not(.is-reader-full-post) {
 		overflow: hidden;
 		min-height: 100vh;
 		@media only screen and (min-width: 782px) {
-			padding: 16px 16px 16px calc(var(--sidebar-width-max)) !important;
+			padding: calc(var(--masterbar-height) + 16px) 16px 16px calc(var(--sidebar-width-max)) !important;
 		}
 		.layout_primary > div {
 			padding-bottom: 0;

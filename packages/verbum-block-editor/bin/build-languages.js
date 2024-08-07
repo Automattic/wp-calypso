@@ -17,26 +17,87 @@ fs.mkdirSync( outputPath, { recursive: true } );
 const bundleContents = fs.readFileSync( bundleFile, 'utf8' ).toString();
 
 const langSlugs = languages.default.map( ( { langSlug } ) => langSlug );
+// Language slugs without translation
+const ignoreLangSlugs = [
+	'als',
+	'arc',
+	'av',
+	'ay',
+	'bm',
+	'ce',
+	'csb',
+	'cv',
+	'de_formal',
+	'dz',
+	'el-po',
+	'en',
+	'fr-ch',
+	'gn',
+	'ia',
+	'ii',
+	'ilo',
+	'ks',
+	'kv',
+	'mt',
+	'mwl',
+	'nah',
+	'nap',
+	'nds',
+	'nl_formal',
+	'non',
+	'nv',
+	'or',
+	'qu',
+	'rup',
+	'sc',
+	'sr_latin',
+	'ty',
+	'udm',
+	'uk',
+	'wa',
+	'xal',
+	'yi',
+	'yo',
+	'za',
+];
 
 const languagesUrlPattern =
 	'https://translate.wordpress.org/projects/wp-plugins/gutenberg/stable/<languageSlug>/default/export-translations/?format=jed1x';
 
-// Request and write language files
-function downloadLanguages() {
-	return Promise.all(
-		langSlugs.map( async ( langSlug ) => {
-			const translationUrl = languagesUrlPattern.replace( '<languageSlug>', langSlug );
+async function fetchLanguage( langSlug ) {
+	const translationUrl = languagesUrlPattern.replace( '<languageSlug>', langSlug );
 
-			const response = await fetch( translationUrl );
-			if ( response.status !== 200 ) {
-				return null;
-			}
+	const response = await fetch( translationUrl );
+	if ( response.status !== 200 ) {
+		console.error( `VBE: Failed to download language build for ${ langSlug }` );
+		return null;
+	}
 
-			const json = await response.json();
+	const json = await response.json();
+	return { langSlug, languageTranslations: json };
+}
 
-			return { langSlug, languageTranslations: json };
-		} )
-	);
+async function downloadLanguages() {
+	// Use lower batch size in case of download errors
+	const batchSize = 5;
+	const remaining = langSlugs.filter( ( v ) => ! ignoreLangSlugs.includes( v ) );
+
+	const responses = [];
+
+	while ( remaining.length !== 0 ) {
+		const batch = remaining.splice( 0, batchSize );
+		const [ batchResponses ] = await Promise.all( [
+			Promise.all( batch.map( ( slug ) => fetchLanguage( slug ) ) ),
+			// eslint-disable-next-line no-shadow
+			new Promise( ( resolve ) => {
+				setTimeout( resolve, 1000 );
+			} ),
+		] );
+
+		responses.push( ...batchResponses );
+	}
+
+	return responses;
 }
 
 function buildLanguages( downloadedLanguages ) {

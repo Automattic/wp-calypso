@@ -1,8 +1,7 @@
+import { filterListBySearchTerm } from '@automattic/help-center';
 import { createSelector } from '@automattic/state-utils';
-import {
-	getAdminSections,
-	filterListBySearchTerm,
-} from 'calypso/blocks/inline-help/admin-sections';
+import { getLocaleSlug } from 'i18n-calypso';
+import { getAdminSections } from 'calypso/blocks/inline-help/admin-sections';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
@@ -24,7 +23,12 @@ const getAdminHelpResults = createSelector(
 
 		const siteId = getSelectedSiteId( state );
 
-		return filterListBySearchTerm( searchTerm, getAdminSections( state, siteId ), limit );
+		return filterListBySearchTerm(
+			searchTerm,
+			getAdminSections( state, siteId ),
+			limit,
+			getLocaleSlug()
+		);
 	},
 	( state ) => [ getSelectedSiteId( state ) ]
 );

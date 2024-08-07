@@ -1,0 +1,95 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "../../../modernized-mixins";
+
+.stats-module-devices {
+	@include segmented-controls;
+
+	// Set layout for chart inside the StatsCard.
+	.stats-card--body__chart {
+		padding: 0 24px;
+	}
+
+	.pie-chart {
+		padding: 32px 0;
+	}
+
+	// Override the default legend styles.
+	.pie-chart__legend {
+		flex-direction: row;
+		align-items: center;
+		flex-wrap: wrap;
+		column-gap: 20px;
+		row-gap: 12px;
+		padding: 0 20px;
+
+		.legend-item {
+			flex-direction: row;
+
+			&:not(:first-child) {
+				margin-top: 0;
+			}
+		}
+
+		.legend-item__title {
+			&::after {
+				content: ":";
+			}
+
+			& > svg {
+				width: 14px;
+				height: 14px;
+				margin-right: 4px;
+			}
+		}
+
+		.legend-item__detail {
+			margin-left: 4px;
+		}
+	}
+
+	.pie-chart__chart-section-0,
+	.pie-chart__legend-sample-0 {
+		fill: var(--color-primary-70);
+	}
+	.pie-chart__chart-section-1,
+	.pie-chart__legend-sample-1 {
+		fill: var(--color-primary-50);
+	}
+	.pie-chart__chart-section-2,
+	.pie-chart__legend-sample-2 {
+		fill: var(--color-primary-30);
+	}
+	.pie-chart__chart-section-3,
+	.pie-chart__legend-sample-3 {
+		fill: var(--color-primary-10);
+	}
+}
+
+.stats-module-upgrade-overlay {
+	.stats-card--column-header {
+		filter: blur(10px);
+	}
+
+	.stats-card__content {
+		// Prevent blur elements from being interactable.
+		pointer-events: none;
+		user-select: none;
+	}
+}
+
+.stats-module-devices__tabs {
+	// Align items by resetting the margin set from the segmented-controls mixin.
+	&.segmented-control {
+		@media (max-width: 660px) {
+			margin-top: 0;
+		}
+	}
+
+	.segmented-control__item {
+		min-width: 80px;
+
+		@media (max-width: $break-small) {
+			min-width: auto;
+		}
+	}
+}

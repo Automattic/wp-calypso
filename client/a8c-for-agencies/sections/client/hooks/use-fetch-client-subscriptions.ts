@@ -7,7 +7,6 @@ const getClientSubscriptions = ( subscriptions: SubscriptionAPIResponse[] ) => {
 		curr.products.forEach( ( product ) => {
 			acc.push( {
 				...product,
-				status: curr.status,
 				referral_id: curr.id,
 				// id is a combination of referral_id and product_id because none of them are unique
 				id: parseInt( `${ curr.id }${ product.product_id }` ),

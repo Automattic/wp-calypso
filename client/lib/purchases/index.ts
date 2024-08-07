@@ -253,7 +253,11 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 	const { productName, productSlug, purchaseRenewalQuantity } = purchase;
 	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames( 'full' );
 
-	if ( isJetpackAISlug( purchase.productSlug ) && purchase.purchaseRenewalQuantity ) {
+	if (
+		isJetpackAISlug( purchase.productSlug ) &&
+		purchase.purchaseRenewalQuantity &&
+		purchase.priceTierList?.length
+	) {
 		return i18n.translate( '%(productName)s (%(quantity)s requests per month)', {
 			args: {
 				productName: jetpackProductsDisplayNames[ productSlug ],
@@ -262,7 +266,11 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 		} );
 	}
 
-	if ( isJetpackStatsPaidProductSlug( purchase.productSlug ) && purchase.purchaseRenewalQuantity ) {
+	if (
+		isJetpackStatsPaidProductSlug( purchase.productSlug ) &&
+		purchase.purchaseRenewalQuantity &&
+		purchase.priceTierList?.length
+	) {
 		return i18n.translate( '%(productName)s (%(quantity)s views per month)', {
 			args: {
 				productName: jetpackProductsDisplayNames[ productSlug ],
@@ -706,7 +714,9 @@ export function isRemovable( purchase: Purchase ): boolean {
 	);
 }
 
-export function isPartnerPurchase( purchase: Purchase ): boolean {
+export function isPartnerPurchase(
+	purchase: Purchase
+): purchase is Purchase & { partnerType: string } {
 	return !! purchase.partnerName;
 }
 
@@ -856,6 +866,14 @@ export function paymentLogoType( purchase: Purchase ): string | null | undefined
 	return purchase.payment.type || null;
 }
 
+export function isAgencyPartnerType( partnerType: string ) {
+	if ( ! partnerType ) {
+		return false;
+	}
+
+	return [ 'agency', 'agency_beta', 'a4a_agency' ].includes( partnerType );
+}
+
 export function purchaseType( purchase: Purchase ) {
 	if ( isThemePurchase( purchase ) ) {
 		return i18n.translate( 'Premium Theme' );
@@ -866,15 +884,11 @@ export function purchaseType( purchase: Purchase ) {
 	}
 
 	if ( isPartnerPurchase( purchase ) ) {
-		switch ( purchase.partnerType ) {
-			case 'agency':
-			case 'agency_beta':
-			case 'a4a_agency':
-				return i18n.translate( 'Agency Managed Plan' );
-
-			default:
-				return i18n.translate( 'Host Managed Plan' );
+		if ( isAgencyPartnerType( purchase.partnerType ) ) {
+			return i18n.translate( 'Agency Managed Plan' );
 		}
+
+		return i18n.translate( 'Host Managed Plan' );
 	}
 
 	if ( isPlan( purchase ) ) {

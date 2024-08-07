@@ -285,7 +285,7 @@ describe( 'Plans selectors', () => {
 		} );
 
 		it( 'should return undefined if the plan slug does not match any plans in the store', () => {
-			expect( Selectors.getPlanByPath( mockState, 'entrepreneur', MOCK_LOCALE_1 ) ).toBeUndefined();
+			expect( Selectors.getPlanByPath( mockState, 'ecommerce', MOCK_LOCALE_1 ) ).toBeUndefined();
 		} );
 
 		it( 'should select the correct plan for the given locale', () => {

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
@@ -7,6 +8,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getAllRemotePreferences } from 'calypso/state/preferences/selectors';
 import {
 	A4A_MARKETPLACE_LINK,
+	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
 	A4A_SITES_LINK_WALKTHROUGH_TOUR,
 } from '../components/sidebar-menu/lib/constants';
@@ -50,7 +52,7 @@ export default function useOnboardingTours() {
 				resetTour( [ 'addSiteStep1', 'addSiteStep2' ] );
 			},
 			id: 'add_sites',
-			title: translate( 'Learn how to add new sites' ),
+			title: translate( 'Learn how to add sites' ),
 			useCalypsoPath: true,
 		};
 
@@ -83,6 +85,31 @@ export default function useOnboardingTours() {
 				title: translate( 'Explore the marketplace' ),
 				useCalypsoPath: true,
 			},
+			...( config.isEnabled( 'a4a-partner-directory' )
+				? [
+						{
+							calypso_path: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+							completed: checkTourCompletion( preferences, 'boostAgencyVisibility' ),
+							disabled: false,
+							actionDispatch: () => {
+								dispatch(
+									recordTracksEvent(
+										'calypso_a4a_overview_next_steps_boost_agency_visibility_click'
+									)
+								);
+								dispatch(
+									savePreference(
+										A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ 'boostAgencyVisibility' ],
+										true
+									)
+								);
+							},
+							id: 'boost_agency_visibility',
+							title: translate( 'Boost your agency’s visibility across Automattic platforms' ),
+							useCalypsoPath: true,
+						},
+				  ]
+				: [] ),
 		];
 
 		if ( noActiveSite ) {

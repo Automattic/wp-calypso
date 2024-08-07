@@ -1,13 +1,13 @@
 import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useI18n } from '@wordpress/react-i18n';
 import { useRef } from 'react';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 // eslint-disable-next-line no-restricted-imports
 import wpcom from 'calypso/lib/wp';
-import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
 import { broadcastOdieMessage, useSetOdieStorage } from '../data';
-import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types';
+import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types/';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
 const buildSendChatMessage = async (
@@ -53,13 +53,13 @@ function odieWpcomSendSupportMessage(
 }
 
 // Internal helper function to generate a uuid
-function uuid() {
+export const uuid = () => {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( c ) {
 		const r = ( Math.random() * 16 ) | 0;
 		const v = c === 'x' ? r : ( r & 0x3 ) | 0x8;
 		return v.toString( 16 );
 	} );
-}
+};
 
 /**
  * It will post a new message using the current chat_id.
@@ -89,6 +89,19 @@ export const useOdieSendMessage = (): UseMutationResult<
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
 	const storeChatId = useSetOdieStorage( 'chat_id' );
+	const { __ } = useI18n();
+
+	/* translators: Error message when Wapuu fails to send a message */
+	const wapuuErrorMessage = __(
+		"Wapuu oopsie! 😺 I'm in snooze mode and can't chat just now. Don't fret, just browse through the buttons below to connect with WordPress.com support.",
+		__i18n_text_domain__
+	);
+
+	/* translators: Error message when Wapuu user's exceed free messages limit */
+	const wapuuRateLimitMessage = __(
+		"Hi there! You've hit your AI usage limit. Upgrade your plan for unlimited Wapuu support! You can still get user support using the buttons below.",
+		__i18n_text_domain__
+	);
 
 	return useMutation<
 		{ chat_id: string; messages: Message[] },
@@ -146,7 +159,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 
 			if ( ! data.messages || ! data.messages[ 0 ].content ) {
 				const message = {
-					content: WAPUU_ERROR_MESSAGE,
+					content: wapuuErrorMessage,
 					internal_message_id,
 					role: 'bot',
 					type: 'error',
@@ -193,13 +206,17 @@ export const useOdieSendMessage = (): UseMutationResult<
 		onSettled: () => {
 			setIsLoading( false );
 		},
-		onError: ( _, __, context ) => {
+		onError: ( response, __, context ) => {
 			if ( ! context ) {
 				throw new Error( 'Context is undefined' );
 			}
+
+			const { data } = response as { data: { status: number } };
+			const isRateLimitError = data.status === 429;
+
 			const { internal_message_id } = context;
 			const message = {
-				content: WAPUU_ERROR_MESSAGE,
+				content: isRateLimitError ? wapuuRateLimitMessage : wapuuErrorMessage,
 				internal_message_id,
 				role: 'bot',
 				type: 'error',

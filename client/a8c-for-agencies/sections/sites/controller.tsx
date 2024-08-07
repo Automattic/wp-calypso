@@ -117,10 +117,11 @@ export const addSitesContext: Callback = ( context: Context, next ) => {
 
 export const needsSetupContext: Callback = ( context: Context, next ) => {
 	context.secondary = <SitesSidebar path={ context.path } />;
+	const { license_key } = context.query;
 	context.primary = (
 		<>
 			<PageViewTracker title="Sites > Needs Setup" path={ context.path } />
-			<NeedSetup />
+			<NeedSetup licenseKey={ license_key } />
 		</>
 	);
 

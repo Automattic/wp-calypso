@@ -75,12 +75,16 @@ export const DomainsTableRowActions = ( {
 	const getActions = ( onClose?: () => void ) => {
 		return [
 			canViewDetails && (
-				<MenuItemLink href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }>
+				<MenuItemLink
+					key="actionDetails"
+					href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
+				>
 					{ domain.type === domainTypes.TRANSFER ? __( 'View transfer' ) : __( 'View settings' ) }
 				</MenuItemLink>
 			),
 			canManageDNS && (
 				<MenuItemLink
+					key="manageDNS"
 					onClick={ () => onDomainAction?.( 'manage-dns-settings', domain ) }
 					href={ domainMagementDNS( siteSlug, domain.name ) }
 				>
@@ -88,12 +92,16 @@ export const DomainsTableRowActions = ( {
 				</MenuItemLink>
 			),
 			canManageContactInfo && (
-				<MenuItemLink href={ domainManagementEditContactInfo( siteSlug, domain.name ) }>
+				<MenuItemLink
+					key="manageContactInfo"
+					href={ domainManagementEditContactInfo( siteSlug, domain.name ) }
+				>
 					{ __( 'Manage contact information' ) }
 				</MenuItemLink>
 			),
 			canMakePrimarySiteAddress && (
 				<MenuItemLink
+					key="makePrimarySiteAddress"
 					onClick={ () => {
 						onDomainAction?.( 'set-primary-address', domain );
 						onClose?.();
@@ -105,18 +113,23 @@ export const DomainsTableRowActions = ( {
 			),
 			canTransferToWPCOM && (
 				<MenuItemLink
+					key="transferToWPCOM"
 					href={ domainUseMyDomain( siteSlug, domain.name, useMyDomainInputMode.transferDomain ) }
 				>
 					{ __( 'Transfer to WordPress.com' ) }
 				</MenuItemLink>
 			),
 			canConnectDomainToASite && (
-				<MenuItemLink href={ domainManagementTransferToOtherSiteLink( siteSlug, domain.domain ) }>
+				<MenuItemLink
+					key="connectToSite"
+					href={ domainManagementTransferToOtherSiteLink( siteSlug, domain.domain ) }
+				>
 					{ __( 'Attach to an existing site' ) }
 				</MenuItemLink>
 			),
 			canChangeSiteAddress && (
 				<MenuItemLink
+					key="changeSiteAddress"
 					onClick={ () => {
 						onDomainAction?.( 'change-site-address', domain );
 						onClose?.();

@@ -85,7 +85,17 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const { flowName, signupProgress, stepName, userLoggedIn, queryParams } = this.props;
+		const fallbackQueryParams = window.location.search
+			? Object.fromEntries( new URLSearchParams( window.location.search ).entries() )
+			: undefined;
+
+		const {
+			flowName,
+			signupProgress,
+			stepName,
+			userLoggedIn,
+			queryParams = fallbackQueryParams,
+		} = this.props;
 		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
 		const stepSectionName = get(

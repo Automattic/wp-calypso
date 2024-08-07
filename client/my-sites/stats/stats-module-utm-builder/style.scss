@@ -6,6 +6,14 @@
 $stats-utm-builder-modal-header-margin: 76px;
 $stats-utm-builder-help-padding: 38px;
 
+.stats-utm-builder__overlay {
+	@media (min-width: $break-large) {
+		.components-modal__frame {
+			max-height: 85%;
+		}
+	}
+}
+
 .components-modal__header {
 	font-family: $font-recoleta;
 
@@ -82,48 +90,10 @@ $stats-utm-builder-help-padding: 38px;
 
 .stats-utm-builder__trigger {
 	display: flex;
-	padding: 20px 0;
 	justify-content: center;
-}
 
-.stats-empty-action__cta {
-	height: 52px;
-	margin-bottom: 12px;
-	border: 1px solid $studio-gray-5;
-	border-radius: 4px;
-	box-shadow: none;
-	width: 100%;
-	cursor: pointer;
-
-	@media (min-width: $break-xlarge) {
-		width: 300px;
-	}
-
-	&:hover {
-		background: $studio-gray-0;
-		border: 1px solid $studio-gray-80;
-	}
-
-	&:last-child {
-		margin-bottom: 0;
-	}
-
-	.stats-empty-action__card-body {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 8px;
-		font-size: $font-body-small;
-		font-weight: 500;
-		line-height: rem(20px);
-	}
-
-	.stats-empty-action__cta-link-text {
-		color: $studio-gray-80 !important;
-		flex-grow: 1;
-	}
-
-	.stats-empty-action__cta-link-icon {
-		color: $studio-gray-90 !important;
+	&.components-button {
+		color: $studio-black;
+		border-radius: 4px;
 	}
 }

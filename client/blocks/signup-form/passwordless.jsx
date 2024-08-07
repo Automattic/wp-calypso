@@ -14,6 +14,7 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -27,10 +28,10 @@ class PasswordlessSignupForm extends Component {
 		submitButtonLoadingLabel: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 		userEmail: PropTypes.string,
 		labelText: PropTypes.string,
-		isInviteLoggedOutForm: PropTypes.bool,
 		onInputBlur: PropTypes.func,
 		onInputChange: PropTypes.func,
 		onCreateAccountError: PropTypes.func,
+		onCreateAccountSuccess: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -128,16 +129,20 @@ class PasswordlessSignupForm extends Component {
 	createAccountError = async ( error ) => {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
-		if ( ! [ 'already_taken', 'already_active', 'email_exists' ].includes( error.error ) ) {
+		if ( ! isExistingAccountError( error.error ) ) {
 			this.setState( {
 				errorMessages: [
 					this.props.translate(
 						'Sorry, something went wrong when trying to create your account. Please try again.'
 					),
 				],
-				isSubmitting: false,
 			} );
 		}
+
+		this.setState( {
+			isSubmitting: false,
+		} );
+
 		this.props.onCreateAccountError?.( error, this.state.email );
 	};
 
@@ -161,6 +166,10 @@ class PasswordlessSignupForm extends Component {
 		const marketing_price_group = response?.marketing_price_group ?? '';
 		const { flowName, queryArgs = {} } = this.props;
 		const { redirect_to, oauth2_client_id, oauth2_redirect } = queryArgs;
+
+		if ( this.props.onCreateAccountSuccess ) {
+			return this.props.onCreateAccountSuccess( userData );
+		}
 
 		recordRegistration( {
 			userData,
@@ -270,21 +279,8 @@ class PasswordlessSignupForm extends Component {
 		);
 	}
 
-	userCreationComplete() {
-		return this.props.step && 'completed' === this.props.step.status;
-	}
-
 	formFooter() {
 		const { isSubmitting } = this.state;
-		if ( this.userCreationComplete() ) {
-			return (
-				<LoggedOutFormFooter>
-					<Button primary onClick={ () => this.props.goToNextStep() }>
-						{ this.props.translate( 'Continue' ) }
-					</Button>
-				</LoggedOutFormFooter>
-			);
-		}
 		const submitButtonText = isSubmitting
 			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating Your Account…' )
 			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
@@ -305,18 +301,6 @@ class PasswordlessSignupForm extends Component {
 
 	getLabelText() {
 		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
-	}
-
-	getFormButtonAndToS() {
-		return this.props.isInviteLoggedOutForm ? (
-			<>
-				{ this.formFooter() } { this.props.renderTerms?.() }
-			</>
-		) : (
-			<>
-				{ this.props.renderTerms?.() } { this.formFooter() }
-			</>
-		);
 	}
 
 	render() {
@@ -344,7 +328,8 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ this.getFormButtonAndToS() }
+					{ this.props.renderTerms?.() }
+					{ this.formFooter() }
 				</LoggedOutForm>
 			</div>
 		);

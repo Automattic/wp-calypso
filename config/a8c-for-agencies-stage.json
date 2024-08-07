@@ -29,12 +29,16 @@
 	"features": {
 		"ad-tracking": false,
 		"a8c-for-agencies": true,
-		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": true,
 		"a8c-for-agencies/import-site-from-wpcom": true,
 		"cookie-banner": false,
 		"oauth": true,
 		"a4a/site-details-pane": true,
-		"a4a-logged-out-signup": true
+		"a4a/site-migration": false,
+		"a4a-logged-out-signup": true,
+		"a4a-automated-referrals": true,
+		"a4a-partner-directory": false,
+		"a4a-dev-sites": false,
+		"hosting-overview-refinements": false
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -50,7 +54,8 @@
 		"a8c-for-agencies-referrals": true,
 		"a8c-for-agencies-settings": false,
 		"a8c-for-agencies-partner-directory": true,
-		"a8c-for-agencies-migrations": true
+		"a8c-for-agencies-migrations": true,
+		"a8c-for-agencies-client": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

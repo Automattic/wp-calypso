@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
@@ -10,6 +11,7 @@ import {
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
+import ClientSite from 'calypso/a8c-for-agencies/sections/sites/needs-setup-sites/client-site';
 import FormattedDate from 'calypso/components/formatted-date';
 import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
@@ -29,6 +31,7 @@ import BundleDetails from '../license-details/bundle-details';
 import LicensesOverviewContext from '../licenses-overview/context';
 import LicenseActions from './license-actions';
 import LicenseBundleDropDown from './license-bundle-dropdown';
+import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
 
 import './style.scss';
 
@@ -45,6 +48,7 @@ interface Props {
 	parentLicenseId?: number | null;
 	quantity?: number | null;
 	isChildLicense?: boolean;
+	referral?: ReferralAPIResponse | null;
 }
 
 export default function LicensePreview( {
@@ -60,9 +64,12 @@ export default function LicensePreview( {
 	parentLicenseId,
 	quantity,
 	isChildLicense,
+	referral,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
 
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
@@ -163,7 +170,14 @@ export default function LicensePreview( {
 				} ) }
 			>
 				<div>
-					<span className="license-preview__product">{ productTitle }</span>
+					<span className="license-preview__product">
+						{ productTitle }
+						{ isAutomatedReferralsEnabled && referral && (
+							<div className="license-preview__client-email">
+								<ClientSite referral={ referral } />
+							</div>
+						) }
+					</span>
 				</div>
 
 				<div>
@@ -188,7 +202,7 @@ export default function LicensePreview( {
 								</a>
 							) }
 							{ ! domain && licenseState === LicenseState.Detached && (
-								<span>
+								<span className="license-preview__unassigned">
 									<Badge type="warning">{ translate( 'Unassigned' ) }</Badge>
 									{ licenseType === LicenseType.Partner && (
 										<Button
@@ -293,6 +307,7 @@ export default function LicensePreview( {
 						onCopyLicense={ onCopyLicense }
 						licenseType={ licenseType }
 						isChildLicense={ isChildLicense }
+						referral={ referral }
 					/>
 				) ) }
 		</div>

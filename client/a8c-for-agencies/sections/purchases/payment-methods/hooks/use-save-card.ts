@@ -7,19 +7,17 @@ import { isClientView } from '../lib/is-client-view';
 
 type Props = {
 	useAsPrimaryPaymentMethod?: boolean;
-	stripeSetupIntentId?: string;
 };
 
 export function useSaveCard( {
 	useAsPrimaryPaymentMethod,
-	stripeSetupIntentId,
 }: Props ): ( token: string ) => Promise< unknown > {
 	const dispatch = useDispatch();
 	const agencyId = useSelector( getActiveAgencyId );
 	const isClient = isClientView();
 
 	return useCallback(
-		async ( token: string ) => {
+		async ( token: string, stripeSetupIntentId?: string ) => {
 			const response = await wpcom.req.post(
 				{
 					apiNamespace: 'wpcom/v2',
@@ -43,6 +41,6 @@ export function useSaveCard( {
 			dispatch( recordTracksEvent( 'calypso_a4a_add_new_credit_card' ) );
 			return response;
 		},
-		[ agencyId, dispatch, isClient, stripeSetupIntentId, useAsPrimaryPaymentMethod ]
+		[ agencyId, dispatch, isClient, useAsPrimaryPaymentMethod ]
 	);
 }

@@ -23,7 +23,6 @@ export const GoogleAnalyticsForm = ( props ) => {
 	const {
 		isRequestingSettings,
 		isSavingSettings,
-		enableForm,
 		translate,
 		fields,
 		updateFields,
@@ -33,14 +32,21 @@ export const GoogleAnalyticsForm = ( props ) => {
 		path,
 		isAtomic,
 		isJetpackModuleAvailable,
+		jetpackModuleActive,
 		isGoogleAnalyticsEligible,
+		site,
+		siteIsJetpack,
 	} = props;
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ loggedGoogleAnalyticsModified, setLoggedGoogleAnalyticsModified ] = useState( false );
 	const [ displayForm, setDisplayForm ] = useState( false );
+	const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
+
+	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
+	const enableForm =
+		isGoogleAnalyticsEligible && ( googleAnalyticsEnabled || fields?.wga?.is_active );
 	const isSubmitButtonDisabled =
 		isRequestingSettings || isSavingSettings || ! isCodeValid || ! enableForm;
-	const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 
 	const handleFieldChange = ( key, value, callback = () => {} ) => {
 		const updatedFields = Object.assign( {}, fields.wga || {}, {
@@ -85,6 +91,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 		recordSupportLinkClick,
 		setDisplayForm,
 		isAtomic,
+		enableForm,
 	};
 
 	if ( ( props.siteIsJetpack && ! isAtomic ) || ( isAtomic && isGoogleAnalyticsEligible ) ) {
@@ -107,12 +114,10 @@ const mapStateToProps = ( state ) => {
 	const isJetpackModuleAvailable = Boolean( getJetpackModule( state, siteId, 'google-analytics' ) );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
 	const sitePlugins = site ? getFilteredAndSortedPlugins( state, [ site.ID ] ) : [];
 	const path = getCurrentRouteParameterized( state, siteId );
 
 	return {
-		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
 		path,
 		showUpgradeNudge: ! isGoogleAnalyticsEligible,
 		site,

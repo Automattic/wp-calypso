@@ -38,12 +38,10 @@
 		{ "path": "../../packages/calypso-analytics" },
 		{ "path": "../../packages/composite-checkout" },
 		{ "path": "../../packages/data-stores" },
-		{ "path": "../../packages/help-center" },
 		{ "path": "../../packages/i18n-utils" },
 		{ "path": "../../packages/onboarding" },
 		{ "path": "../../packages/plans-grid" },
 		{ "path": "../../packages/state-utils" },
-		{ "path": "../../packages/site-picker" },
 		{ "path": "../../packages/tour-kit" },
 		{ "path": "../../packages/whats-new" }
 	]

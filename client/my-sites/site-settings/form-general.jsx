@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
+	PLAN_PERSONAL,
 	PLAN_BUSINESS,
+	WPCOM_FEATURES_NO_ADVERTS,
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 	getPlan,
@@ -29,11 +31,14 @@ import SiteLanguagePicker from 'calypso/components/language-picker/site-language
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Timezone from 'calypso/components/timezone';
+import { useMarketingBanner } from 'calypso/data/marketing-banner/use-marketing-banner';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { preventWidows } from 'calypso/lib/formatting';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SiteSettingPrivacy from 'calypso/my-sites/site-settings/site-setting-privacy';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -49,7 +54,7 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
-	isGlobalSiteViewEnabled,
+	isAdminInterfaceWPAdmin,
 	isJetpackSite,
 	isCurrentPlanPaid,
 	getCustomizerUrl,
@@ -554,10 +559,8 @@ export class SiteSettingsFormGeneral extends Component {
 
 	renderAdminInterface() {
 		const { site, siteSlug, isSimple } = this.props;
-		if ( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) || isSimple ) {
-			return isEnabled( 'layout/wpcom-admin-interface' ) ? (
-				<SiteAdminInterfaceExperiment siteId={ site.ID } siteSlug={ siteSlug } />
-			) : null;
+		if ( isSimple ) {
+			return <SiteAdminInterfaceExperiment siteId={ site.ID } siteSlug={ siteSlug } />;
 		}
 
 		return <SiteAdminInterface siteId={ site.ID } siteSlug={ siteSlug } />;
@@ -578,7 +581,10 @@ export class SiteSettingsFormGeneral extends Component {
 			isAtomicAndEditingToolkitDeactivated,
 			isWpcomStagingSite,
 			isUnlaunchedSite: propsisUnlaunchedSite,
-			isClassicView,
+			adminInterfaceIsWPAdmin,
+			hasBlockTheme,
+			isMarketingBannerVisible,
+			personalPlanMonthlyCost,
 		} = this.props;
 		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
@@ -588,15 +594,17 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ clsx( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! isClassicView && (
+				{ ! adminInterfaceIsWPAdmin && (
 					<>
 						<SettingsSectionHeader
-							data-tip-target="settings-site-profile-save"
 							disabled={ isRequestingSettings || isSavingSettings }
 							isSaving={ isSavingSettings }
 							onButtonClick={ handleSubmitForm }
 							showButton
 							title={ translate( 'Site profile' ) }
+							buttonProps={ {
+								'data-tip-target': 'settings-site-profile-save',
+							} }
 						/>
 						<Card>
 							<form>
@@ -626,45 +634,72 @@ export class SiteSettingsFormGeneral extends Component {
 				{ this.renderAdminInterface() }
 				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
-					<div className="site-settings__footer-credit-container">
-						<SettingsSectionHeader
-							title={ translate( 'Footer credit' ) }
-							id="site-settings__footer-credit-header"
-						/>
-						<CompactCard className="site-settings__footer-credit-explanation">
-							<p>
-								{ preventWidows(
-									translate(
-										'You can customize your website by changing the footer credit in customizer.'
-									),
-									2
-								) }
-							</p>
-							<div>
-								<Button className="site-settings__footer-credit-change" href={ customizerUrl }>
-									{ translate( 'Change footer credit' ) }
-								</Button>
+					<>
+						{ hasBlockTheme && isMarketingBannerVisible && (
+							<div className="site-settings__marketing-banner-container">
+								<SettingsSectionHeader
+									title={ translate( 'Marketing banner' ) }
+									id="site-settings__marketing-banner-header"
+								/>
+								<UpsellNudge
+									feature={ WPCOM_FEATURES_NO_ADVERTS }
+									plan={ PLAN_PERSONAL }
+									title={ translate(
+										'Remove the banner displayed to your visitors with any paid plan'
+									) }
+									description={ translate(
+										'Upgrade your plan to remove the banner and unlock more features, from %(monthlyCost)s/month',
+										{ args: { monthlyCost: personalPlanMonthlyCost } }
+									) }
+									showIcon
+									event="settings_remove_marketing_banner"
+									tracksImpressionName="calypso_upgrade_nudge_impression"
+									tracksClickName="calypso_upgrade_nudge_cta_click"
+								/>
 							</div>
-						</CompactCard>
-						{ ! hasNoWpcomBranding && (
-							<UpsellNudge
-								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
-								plan={ PLAN_BUSINESS }
-								title={ translate(
-									'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
-
-									{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
-								) }
-								description={ translate(
-									'Upgrade to remove the footer credit, use advanced SEO tools and more'
-								) }
-								showIcon
-								event="settings_remove_footer"
-								tracksImpressionName="calypso_upgrade_nudge_impression"
-								tracksClickName="calypso_upgrade_nudge_cta_click"
-							/>
 						) }
-					</div>
+						{ ! hasBlockTheme && (
+							<div className="site-settings__footer-credit-container">
+								<SettingsSectionHeader
+									title={ translate( 'Footer credit' ) }
+									id="site-settings__footer-credit-header"
+								/>
+								<CompactCard className="site-settings__footer-credit-explanation">
+									<p>
+										{ preventWidows(
+											translate(
+												'You can customize your website by changing the footer credit in customizer.'
+											),
+											2
+										) }
+									</p>
+									<div>
+										<Button className="site-settings__footer-credit-change" href={ customizerUrl }>
+											{ translate( 'Change footer credit' ) }
+										</Button>
+									</div>
+								</CompactCard>
+								{ ! hasNoWpcomBranding && (
+									<UpsellNudge
+										feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
+										plan={ PLAN_BUSINESS }
+										title={ translate(
+											'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
+
+											{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
+										) }
+										description={ translate(
+											'Upgrade to remove the footer credit, use advanced SEO tools and more'
+										) }
+										showIcon
+										event="settings_remove_footer"
+										tracksImpressionName="calypso_upgrade_nudge_impression"
+										tracksClickName="calypso_upgrade_nudge_cta_click"
+									/>
+								) }
+							</div>
+						) }
+					</>
 				) }
 				{ this.toolbarOption() }
 			</div>
@@ -680,7 +715,7 @@ const connectComponent = connect( ( state ) => {
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
-		isClassicView: isGlobalSiteViewEnabled( state, siteId ),
+		adminInterfaceIsWPAdmin: isAdminInterfaceWPAdmin( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
 		isPaidPlan: isCurrentPlanPaid( state, siteId ),
@@ -700,6 +735,7 @@ const connectComponent = connect( ( state ) => {
 		isLaunchable:
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
 		isSimple: isSimpleSite( state, siteId ),
+		personalPlanMonthlyCost: getProductDisplayCost( state, PLAN_PERSONAL, true ),
 	};
 } );
 
@@ -753,11 +789,18 @@ const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
 	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus(
 		props.site?.ID
 	);
+	const { data: activeThemeData } = useActiveThemeQuery( props.site?.ID ?? -1, !! props.site );
+	const hasBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
+
+	const { data: marketingBannerData } = useMarketingBanner( props.site?.ID ?? -1, !! props.site );
+	const isMarketingBannerVisible = marketingBannerData?.is_visible ?? false;
 
 	return (
 		<SiteSettingsFormGeneral
 			{ ...props }
 			shouldShowPremiumStylesNotice={ globalStylesInUse && shouldLimitGlobalStyles }
+			hasBlockTheme={ hasBlockTheme }
+			isMarketingBannerVisible={ isMarketingBannerVisible }
 		/>
 	);
 };

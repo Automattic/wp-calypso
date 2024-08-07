@@ -5,10 +5,11 @@ import { useEffect } from 'react';
 type ImportJob = Subscriber.ImportJob;
 type ImportJobStatus = Subscriber.ImportJobStatus;
 
+const INTERVAL_ACTIVE = 5000;
+const INTERVAL_INACTIVE = 10000;
+const ACTIVE_STATE: ImportJobStatus[] = [ 'pending', 'importing' ];
+
 export function useActiveJobRecognition( siteId: number ) {
-	const INTERVAL_ACTIVE = 1000;
-	const INTERVAL_INACTIVE = 5000;
-	const ACTIVE_STATE: ImportJobStatus[] = [ 'pending', 'importing' ];
 	const { getSubscribersImports, importCsvSubscribersUpdate } = useDispatch( Subscriber.store );
 
 	const imports =
@@ -18,7 +19,7 @@ export function useActiveJobRecognition( siteId: number ) {
 
 	useEffect( () => {
 		importCsvSubscribersUpdate( activeJob );
-	}, [ activeJob?.status ] );
+	}, [ activeJob, importCsvSubscribersUpdate ] );
 
 	useEffect( () => {
 		const interval = setInterval(
@@ -31,7 +32,7 @@ export function useActiveJobRecognition( siteId: number ) {
 		return () => {
 			clearInterval( interval );
 		};
-	}, [ activeJob?.status ] );
+	}, [ activeJob, getSubscribersImports, siteId ] );
 
 	return activeJob;
 }

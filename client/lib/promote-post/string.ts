@@ -36,6 +36,9 @@ const BlazePressStrings = () => {
 	translate( 'No products found.' );
 	translate( 'No posts found.' );
 	translate( 'Select post to promote' );
+	translate(
+		'Blaze is syncing your content as part of first-time setup – this can take up to 15 minutes or a few hours.'
+	);
 	translate( 'Post' );
 	translate( 'Type' );
 	translate( 'SKU' );
@@ -72,7 +75,7 @@ const BlazePressStrings = () => {
 		'%(snippetCharactersLeft)s characters remaining',
 		{ count: 1 }
 	);
-	translate( 'Loading ad text…' );
+	translate( 'Loading ad text….' );
 	translate( 'Ad text' );
 	translate( 'Use + / - or simply drag the image to adjust it' );
 	translate( 'Apply' );
@@ -148,23 +151,10 @@ const BlazePressStrings = () => {
 	translate( 'No results found' );
 	translate( 'Search for locations' );
 	translate( 'Good for: ' );
-	translate( 'Traffic' );
-	translate( 'Aims to drive more visitors and increase page views.' );
-	translate( 'E-commerce sites, content-driven websites, startups.' );
-	translate( 'Sales' );
-	translate( 'Converts potential customers into buyers by encouraging purchase.' );
-	translate( 'E-commerce, retailers, subscription services.' );
-	translate( 'Awareness' );
-	translate( 'Focuses on increasing brand recognition and visibility.' );
-	translate( 'New businesses, brands launching new products.' );
-	translate( 'Engagement' );
-	translate( 'Encourages your audience to interact and connect with your brand.' );
-	translate( 'Influencers and community builders looking for followers of the same interest.' );
 	translate( 'Choose campaign objective' );
 	translate( 'Continue' );
-	translate( 'Save my selection for future campaigns' );
 	translate( 'Cancel' );
-	translate( 'Good for:' );
+	translate( 'Save my selection for future campaigns' );
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
 	translate( 'You can pause spending at any time.' );
 	translate( 'Could not retrieve countries. Please try again later.' );

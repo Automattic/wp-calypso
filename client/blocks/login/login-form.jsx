@@ -16,14 +16,12 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
-import MigrateNotice from 'calypso/blocks/login/migrate-notice';
 import FormsButton from 'calypso/components/forms/form-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { Experiment } from 'calypso/lib/explat';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
@@ -31,7 +29,11 @@ import {
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+	isGravatarOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -69,7 +71,7 @@ import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
-
+import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
 import './login-form.scss';
 
 export class LoginForm extends Component {
@@ -106,6 +108,7 @@ export class LoginForm extends Component {
 		sendMagicLoginLink: PropTypes.func,
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
+		isJetpack: PropTypes.bool,
 	};
 
 	state = {
@@ -739,6 +742,7 @@ export class LoginForm extends Component {
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
 			isP2Login,
+			isJetpack,
 			isJetpackWooDnaFlow,
 			currentQuery,
 			showSocialLoginFormOnly,
@@ -762,6 +766,12 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
+		const isFromAutomatticForAgenciesReferralClient = isA4AReferralClient(
+			currentQuery,
+			oauth2Client
+		);
+		const isFromGravatar3rdPartyApp =
+			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
 
 		const signupUrl = this.getSignupUrl();
 
@@ -819,6 +829,12 @@ export class LoginForm extends Component {
 			} );
 		}
 
+		const shouldShowSocialLoginForm =
+			config.isEnabled( 'signup/social' ) &&
+			! isFromAutomatticForAgenciesReferralClient &&
+			! isCoreProfilerLostPasswordFlow &&
+			! isFromGravatar3rdPartyApp;
+
 		return (
 			<form
 				className={ clsx( {
@@ -873,44 +889,38 @@ export class LoginForm extends Component {
 							name="usernameOrEmail"
 							ref={ this.saveUsernameOrEmailRef }
 							value={ this.state.usernameOrEmail }
-							disabled={ isFormDisabled || this.isPasswordView() }
+							disabled={ isFormDisabled || this.isPasswordView() || isFromGravatar3rdPartyApp }
 						/>
 
-						{ requestError && requestError.field === 'usernameOrEmail' && (
-							<Fragment>
-								<FormInputValidation isError text={ requestError.message }>
-									{ 'unknown_user' === requestError.code &&
-										this.props.translate(
-											' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
-											{
-												components: {
-													newAccountLink: (
-														<a
-															href={ addQueryArgs(
-																{
-																	user_email: this.state.usernameOrEmail,
-																},
-																signupUrl
-															) }
-														/>
-													),
-												},
-											}
-										) }
-								</FormInputValidation>
+						{ isJetpack && (
+							<p className="login__form-account-tip">
+								{ this.props.translate(
+									'If you don’t have an account, we’ll use this email to create it.'
+								) }
+							</p>
+						) }
 
-								<Experiment
-									name="calypso_login_failed_show_migrate_cta_202406"
-									defaultExperience={ null }
-									loadingExperience={ null }
-									treatmentExperience={
-										<MigrateNotice
-											translate={ this.props.translate }
-											recordTracksEvent={ this.props.recordTracksEvent }
-										/>
-									}
-								/>
-							</Fragment>
+						{ requestError && requestError.field === 'usernameOrEmail' && (
+							<FormInputValidation isError text={ requestError.message }>
+								{ 'unknown_user' === requestError.code &&
+									this.props.translate(
+										' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
+										{
+											components: {
+												newAccountLink: (
+													<a
+														href={ addQueryArgs(
+															{
+																user_email: this.state.usernameOrEmail,
+															},
+															signupUrl
+														) }
+													/>
+												),
+											},
+										}
+									) }
+							</FormInputValidation>
 						) }
 
 						{ ! requestError && this.state.emailSuggestionError && (
@@ -1032,7 +1042,7 @@ export class LoginForm extends Component {
 					) }
 				</Card>
 
-				{ config.isEnabled( 'signup/social' ) && ! isCoreProfilerLostPasswordFlow && (
+				{ shouldShowSocialLoginForm && (
 					<Fragment>
 						<FormDivider />
 						<SocialLoginForm

@@ -7,12 +7,6 @@
 		margin-block: 32px 0;
 	}
 
-	.commission-overview__heading {
-		display: flex;
-		flex-direction: row;
-		gap: 8px;
-	}
-
 	.jetpack-logo {
 		fill: var(--color-jetpack);
 	}
@@ -22,7 +16,7 @@
 	}
 
 	.a4a-layout__body-wrapper {
-		max-width: 900px;
+		max-width: 700px;
 	}
 
 	.foldable-card.card,
@@ -52,6 +46,21 @@
 		color: var(--color-neutral-50);
 		font-weight: 400;
 		padding: 0 24px 24px;
+	}
+
+	.foldable-card__main {
+		display: block;
+
+		.a4a-overview-hosting__logo-container {
+			display: flex;
+			gap: 8px;
+			margin-block-end: 4px;
+
+			.pressable-icon {
+				width: 24px;
+				height: 24px;
+			}
+		}
 	}
 }
 

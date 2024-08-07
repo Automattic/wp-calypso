@@ -12,12 +12,12 @@ const HELP_CENTER_STORE = HelpCenter.register();
 
 const HelpContactUsFooter: FC = () => {
 	const { __ } = useI18n();
-	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { url } = useStillNeedHelpURL();
 
 	const onClick = () => {
 		recordTracksEvent( 'calypso_help_footer_button_click' );
-		setInitialRoute( url );
+		setNavigateToRoute( url );
 		setShowHelpCenter( true );
 	};
 
@@ -27,13 +27,13 @@ const HelpContactUsFooter: FC = () => {
 			<CompactCard className="help__contact-us-card" onClick={ onClick }>
 				<Gridicon icon="help" size={ 36 } />
 				<div className="help__contact-us-section">
-					<h3 className="help__contact-us-title">{ __( 'Contact support' ) }</h3>
+					<h3 className="help__contact-us-title">{ __( "Haven't found your answer?" ) }</h3>
 					<p className="help__contact-us-content">
-						{ __( "Can't find the answer? Drop us a line and we'll lend a hand." ) }
+						{ __( 'Our AI assistant can help, or connect you to our support team.' ) }
 					</p>
 				</div>
 				<Button primary className="help__contact-us-button">
-					{ __( 'Contact support' ) }
+					{ __( 'Get help' ) }
 				</Button>
 			</CompactCard>
 		</>

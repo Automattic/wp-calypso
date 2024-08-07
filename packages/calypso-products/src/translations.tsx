@@ -241,6 +241,8 @@ export const getJetpackProductsShortNames = (): Record< string, React.ReactEleme
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: 'Stats',
 		[ PRODUCT_JETPACK_STATS_YEARLY ]: 'Stats',
 		[ PRODUCT_JETPACK_STATS_MONTHLY ]: 'Stats',
+		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: 'Stats (Non-commercial license)',
+		[ PRODUCT_JETPACK_STATS_FREE ]: 'Stats (Non-commercial license)',
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: 'AI',
 		[ PRODUCT_JETPACK_AI_YEARLY ]: 'AI',
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: 'AI',
@@ -501,6 +503,7 @@ export const getJetpackProductsTaglines = (): Record<
 		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: { default: searchTagline },
 		[ PRODUCT_JETPACK_SEARCH ]: { default: searchTagline },
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: { default: searchTagline },
+		[ PRODUCT_JETPACK_SEARCH_FREE ]: { default: searchTagline },
 		[ PRODUCT_WPCOM_SEARCH ]: { default: searchTagline },
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: { default: searchTagline },
 		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: { default: statsTagline },
@@ -547,6 +550,14 @@ export const getJetpackProductsTaglines = (): Record<
 			default: backupAddonTagLine,
 			owned: backupAddonOwnedTagLine,
 		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY ]: {
 			default: backupAddonTagLine,
 			owned: backupAddonOwnedTagLine,
@@ -556,6 +567,14 @@ export const getJetpackProductsTaglines = (): Record<
 			owned: backupAddonOwnedTagLine,
 		},
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY ]: {
 			default: backupAddonTagLine,
 			owned: backupAddonOwnedTagLine,
 		},
@@ -1267,6 +1286,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Paywall access' ),
 		translate( 'Newsletter' ),
 		translate( 'Priority support' ),
+		translate( '2% transaction fees' ),
 	];
 	const antiSpamIncludesInfo = [
 		translate( 'Comment and form spam protection' ),
@@ -1334,6 +1354,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	const socialNetworksForSharing = [
 		translate( 'Facebook' ),
 		translate( 'Instagram' ),
+		translate( 'Threads' ),
 		translate( 'LinkedIn' ),
 		translate( 'Mastodon' ),
 		translate( 'Tumblr' ),
@@ -1365,9 +1386,9 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 			args: { socialNetworksList },
 			comment: 'Comma separated list of social networks like "Facebook, Mastodon and Tumblr".',
 		} ),
-		translate( 'Engagement Optimizer' ),
+		translate( 'Upload custom images or videos with your posts' ),
 		translate( 'Recycle content' ),
-		translate( 'Image generator' ),
+		translate( 'Automatically generate images for posts' ),
 	];
 	const socialIncludesInfo = socialAdvancedIncludesInfo;
 	const statsCommercialIncludesInfo = [

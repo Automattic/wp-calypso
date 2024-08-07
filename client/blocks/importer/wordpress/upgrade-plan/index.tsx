@@ -2,31 +2,22 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { SiteDetails } from '@automattic/data-stores';
+import { Plans } from '@automattic/data-stores';
 import { useHasEnTranslation, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
+import PlanNoticeCreditUpgrade from 'calypso/my-sites/plans-features-main/components/plan-notice-credit-update';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
+import { useUpgradePlanHostingDetailsList } from './hooks/use-get-upgrade-plan-hosting-details-list';
+import { Skeleton } from './skeleton';
 import UpgradePlanDetails from './upgrade-plan-details';
-
 import './style.scss';
+import withMigrationSticker from './with-migration-sticker';
+import type { UpgradePlanProps } from './types';
 
-interface Props {
-	site: SiteDetails;
-	isBusy: boolean;
-	ctaText: string;
-	subTitleText?: string;
-	hideTitleAndSubTitle?: boolean;
-	onFreeTrialClick?: () => void;
-	navigateToVerifyEmailStep: () => void;
-	onCtaClick: () => void;
-	onContentOnlyClick?: () => void;
-	trackingEventsProps?: Record< string, unknown >;
-	hideFreeMigrationTrialForNonVerifiedEmail?: boolean;
-}
-
-export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
+export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > = ( props ) => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const plan = getPlan( PLAN_BUSINESS );
@@ -43,6 +34,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		isBusy,
 		trackingEventsProps,
 		hideFreeMigrationTrialForNonVerifiedEmail = false,
+		visiblePlan = PLAN_BUSINESS,
 	} = props;
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan( site.ID );
 	const isEligibleForTrialPlan =
@@ -50,7 +42,31 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		// If the user's email is unverified, we still want to show the trial plan option
 		migrationTrialEligibility?.error_code === 'email-unverified';
 
+	const { list: upgradePlanHostingDetailsList, isFetching: isFetchingHostingDetails } =
+		useUpgradePlanHostingDetailsList();
+
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		coupon: undefined,
+		planSlugs: [ visiblePlan ],
+		siteId: site.ID,
+		storageAddOns: null,
+		useCheckPlanAvailabilityForPurchase,
+	} );
+
+	const pricing =
+		pricingMeta && pricingMeta[ visiblePlan ] ? pricingMeta[ visiblePlan ] : undefined;
+
+	const introOfferAvailable =
+		isEnabled( 'migration-flow/introductory-offer' ) &&
+		pricing?.introOffer &&
+		pricing.introOffer.rawPrice &&
+		! pricing.introOffer.isOfferComplete &&
+		pricing.originalPrice.monthly &&
+		pricing.originalPrice.full &&
+		pricing.currencyCode;
+
 	const hideFreeMigrationTrial =
+		introOfferAvailable ||
 		( hideFreeMigrationTrialForNonVerifiedEmail &&
 			migrationTrialEligibility?.error_code === 'email-unverified' ) ||
 		! isEnabled( 'plans/migration-trial' );
@@ -78,7 +94,12 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	}, [ migrationTrialEligibility, hideFreeMigrationTrial ] );
 
 	const renderCTAs = () => {
-		const cta = ctaText === '' ? translate( 'Continue' ) : ctaText;
+		let cta = ctaText;
+		if ( introOfferAvailable && hasEnTranslation( 'Get the plan and migrate' ) ) {
+			cta = translate( 'Get the plan and migrate' );
+		} else if ( cta === '' ) {
+			cta = translate( 'Continue' );
+		}
 		const trialText = translate( 'Try 7 days for free' );
 
 		if ( hideFreeMigrationTrial ) {
@@ -133,6 +154,10 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
 		  );
 
+	if ( isFetchingHostingDetails || ! pricing ) {
+		return <Skeleton />;
+	}
+
 	return (
 		<div className="import__upgrade-plan">
 			{ ! hideTitleAndSubTitle && (
@@ -168,7 +193,21 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				</div>
 			) }
 
-			<UpgradePlanDetails>{ renderCTAs() }</UpgradePlanDetails>
+			<PlanNoticeCreditUpgrade
+				linkTarget="_blank"
+				siteId={ site.ID }
+				visiblePlans={ [ visiblePlan ] }
+			/>
+
+			<UpgradePlanDetails
+				pricing={ pricing }
+				introOfferAvailable={ !! introOfferAvailable }
+				upgradePlanHostingDetailsList={ upgradePlanHostingDetailsList }
+			>
+				{ renderCTAs() }
+			</UpgradePlanDetails>
 		</div>
 	);
 };
+
+export const UpgradePlan = withMigrationSticker( UnwrappedUpgradePlan );

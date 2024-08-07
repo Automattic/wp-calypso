@@ -14,7 +14,7 @@ export const STORE_PRODUCT_FREE: PlanProduct = {
 export const STORE_PRODUCT_PREMIUM_ANNUALLY: PlanProduct = {
 	productId: 1003,
 	billingPeriod: 'ANNUALLY',
-	periodAgnosticSlug: 'explorer',
+	periodAgnosticSlug: 'premium',
 	storeSlug: 'value_bundle',
 	rawPrice: 96,
 	pathSlug: 'premium',
@@ -25,7 +25,7 @@ export const STORE_PRODUCT_PREMIUM_ANNUALLY: PlanProduct = {
 export const STORE_PRODUCT_PREMIUM_MONTHLY: PlanProduct = {
 	productId: 1013,
 	billingPeriod: 'MONTHLY',
-	periodAgnosticSlug: 'explorer',
+	periodAgnosticSlug: 'premium',
 	storeSlug: 'value_bundle_monthly',
 	rawPrice: 14,
 	price: '€14',

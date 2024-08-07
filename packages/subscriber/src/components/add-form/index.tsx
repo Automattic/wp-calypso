@@ -48,6 +48,7 @@ interface Props {
 	showSkipLink?: boolean;
 	hidden?: boolean;
 	isWPCOMSite?: boolean;
+	disabled?: boolean;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -78,6 +79,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		showSkipLink,
 		hidden = false,
 		isWPCOMSite = false,
+		disabled,
 	} = props;
 
 	const {
@@ -115,7 +117,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		createElement( FormFileUpload, {
 			name: 'import',
 			onChange: onFileInputChange,
-			disabled: inProgress,
+			disabled: inProgress || disabled,
 		} )
 	);
 
@@ -494,7 +496,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 								) }
 								<TextControl
 									className={ showError ? 'is-error' : '' }
-									disabled={ inProgress }
+									disabled={ inProgress || disabled }
 									placeholder={ placeholder }
 									value={ emails[ i ] || '' }
 									help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
@@ -526,8 +528,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					<NextButton
 						type="submit"
 						className="add-subscriber__form-submit-btn"
-						isBusy={ inProgress }
-						disabled={ ! submitBtnReady }
+						isBusy={ inProgress && ! disabled }
+						disabled={ ! submitBtnReady || disabled }
 					>
 						{ submitBtnName }
 					</NextButton>

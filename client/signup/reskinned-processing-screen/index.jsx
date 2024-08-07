@@ -64,6 +64,9 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 				{ title: __( 'Closing the loop' ) },
 			];
 			break;
+		case 'email-subscription':
+			steps = [ { title: __( 'Subscribing to magic' ) } ];
+			break;
 		default:
 			steps = [
 				! isDestinationSetupSiteFlow && { title: __( 'Building your site' ) },
@@ -88,7 +91,9 @@ export default function ReskinnedProcessingScreen( props ) {
 	const totalSteps = steps.current.length;
 	const shouldShowNewSpinner =
 		isDestinationSetupSiteFlow ||
-		[ 'setup-site', 'do-it-for-me', 'do-it-for-me-store' ].includes( flowName );
+		[ 'setup-site', 'do-it-for-me', 'do-it-for-me-store', 'email-subscription' ].includes(
+			flowName
+		);
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 

@@ -4,9 +4,7 @@ import type {
 	UrlFriendlyTermType,
 	PlanSlug,
 	FeatureList,
-	WPComStorageAddOnSlug,
 	FeatureObject,
-	StorageOption,
 	FeatureGroupMap,
 	Feature,
 } from '@automattic/calypso-products';
@@ -25,7 +23,7 @@ export type TransformedFeatureObject = FeatureObject & {
 export interface PlanFeaturesForGridPlan {
 	wpcomFeatures: TransformedFeatureObject[];
 	jetpackFeatures: TransformedFeatureObject[];
-	storageOptions: StorageOption[];
+	storageFeature?: FeatureObject;
 	// used for comparison grid so far
 	comparisonGridFeatureLabels?: Record< Feature, TranslateResult >;
 }
@@ -66,7 +64,6 @@ export type PlansIntent =
 	| 'plans-jetpack-app-site-creation'
 	| 'plans-import'
 	| 'plans-woocommerce'
-	| 'plans-paid-media'
 	| 'plans-p2'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
@@ -107,12 +104,10 @@ export interface CommonGridProps {
 	isInSignup: boolean;
 	isInAdmin: boolean;
 	isReskinned?: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	intervalType: string;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	planActionOverrides?: PlanActionOverrides;
-
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
 	showUpgradeableStorage: boolean; // feature flag used to show the storage add-on dropdown
@@ -120,7 +115,6 @@ export interface CommonGridProps {
 	showRefundPeriod?: boolean;
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	planUpgradeCreditsApplicable?: number | null;
 	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
 	gridSize?: string;
 }
@@ -138,24 +132,28 @@ export interface FeaturesGridProps extends CommonGridProps {
 export interface ComparisonGridProps extends CommonGridProps {
 	// Value of the `?plan=` query param, so we can highlight a given plan.
 	selectedPlan?: string;
+	intervalType: string;
 }
 
 export type UseActionCallback = ( {
 	planSlug,
 	cartItemForPlan,
 	selectedStorageAddOn,
+	availableForPurchase,
 }: {
 	planSlug: PlanSlug;
 	cartItemForPlan?: MinimalRequestCartProduct | null;
 	selectedStorageAddOn?: AddOns.AddOnMeta | null;
-} ) => () => void;
+	availableForPurchase?: boolean;
+} ) => () => Promise< void > | void;
 
 export interface GridAction {
 	primary: {
 		text: TranslateResult;
-		callback: () => void;
+		callback: () => Promise< void > | void;
 		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
 		status?: 'disabled' | 'blocked' | 'enabled';
+		variant?: 'primary' | 'secondary';
 	};
 	postButtonText?: TranslateResult;
 }

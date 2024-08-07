@@ -1,42 +1,55 @@
 import { Icon, chevronDown } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { RefObject, useCallback } from 'react';
 import { useOdieAssistantContext } from '../../context';
 
 export const JumpToRecent = ( {
-	scrollToBottom,
-	enableJumpToRecent,
+	containerReference,
 }: {
-	scrollToBottom: () => void;
-	enableJumpToRecent: boolean;
+	containerReference: RefObject< HTMLDivElement >;
 } ) => {
-	const { trackEvent, isMinimized } = useOdieAssistantContext();
-	const translate = useTranslate();
-	const jumpToRecent = () => {
-		scrollToBottom();
-		trackEvent( 'chat_jump_to_recent_click' );
-	};
+	const { trackEvent, isMinimized, lastMessageInView, chat } = useOdieAssistantContext();
+	const { _x } = useI18n();
 
-	if ( isMinimized ) {
+	const jumpToRecent = useCallback( () => {
+		if ( containerReference.current && chat.messages.length > 0 ) {
+			let lastMessageRef: HTMLDivElement | null = null;
+			if ( containerReference.current ) {
+				lastMessageRef = containerReference.current.querySelector(
+					'[data-is-last-message="true"]'
+				);
+			}
+			const lastMessage = lastMessageRef;
+			lastMessage?.scrollIntoView( { behavior: 'smooth', block: 'start', inline: 'nearest' } );
+		}
+		trackEvent( 'chat_jump_to_recent_click' );
+	}, [ containerReference, trackEvent, chat.messages.length ] );
+
+	if ( isMinimized || chat.messages.length < 2 ) {
 		return null;
 	}
 
 	const className = clsx( 'odie-gradient-to-white', {
-		'is-visible': enableJumpToRecent,
-		'is-hidden': ! enableJumpToRecent,
+		'is-visible': ! lastMessageInView,
+		'is-hidden': lastMessageInView,
 	} );
 
 	return (
 		<div className={ className }>
 			<button
 				className="odie-jump-to-recent-message-button"
-				disabled={ ! enableJumpToRecent }
+				disabled={ lastMessageInView }
 				onClick={ jumpToRecent }
 			>
-				{ translate( 'Jump to recent', {
-					context:
+				{
+					/* translators: A dynamic button that appears on a chatbox, when the last message is not vissible */
+					_x(
+						'Jump to recent',
 						'A dynamic button that appears on a chatbox, when the last message is not vissible',
-				} ) }
+						__i18n_text_domain__
+					)
+				}
 				<Icon icon={ chevronDown } fill="white" />
 			</button>
 		</div>

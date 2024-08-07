@@ -18,6 +18,8 @@ jest.mock(
 	() => 'span'
 );
 
+jest.mock( 'calypso/components/data/query-reader-teams', () => 'span' );
+
 describe( '<SiteTable>', () => {
 	beforeAll( () => {
 		window.matchMedia = jest.fn().mockImplementation( ( query ) => {

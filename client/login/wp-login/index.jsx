@@ -15,7 +15,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
-import TranslatorInvite from 'calypso/components/translator-invite';
 import {
 	getSignupUrl,
 	isReactLostPasswordScreenEnabled,
@@ -26,6 +25,8 @@ import {
 	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
+	isGravatarFlowOAuth2Client,
+	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -242,11 +243,15 @@ export class Login extends Component {
 	renderGravPoweredLoginBlockFooter() {
 		const { oauth2Client, translate, locale, currentQuery, currentRoute } = this.props;
 
+		const isGravatar = isGravatarOAuth2Client( oauth2Client );
+		const isFromGravatar3rdPartyApp = isGravatar && currentQuery?.gravatar_from === '3rd-party';
 		const magicLoginUrl = login( {
 			locale,
 			twoFactorAuthType: 'link',
 			oauth2ClientId: currentQuery?.client_id,
 			redirectTo: currentQuery?.redirect_to,
+			gravatarFrom: currentQuery?.gravatar_from,
+			gravatarFlow: isGravatarFlowOAuth2Client( oauth2Client ),
 		} );
 		const currentUrl = new URL( window.location.href );
 		currentUrl.searchParams.append( 'lostpassword_flow', true );
@@ -269,7 +274,9 @@ export class Login extends Component {
 							this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' )
 						}
 					>
-						{ translate( 'Email me a login link.' ) }
+						{ isGravatar
+							? translate( 'Email me a login code.' )
+							: translate( 'Email me a login link.' ) }
 					</a>
 					<a
 						href={ lostPasswordUrl }
@@ -279,13 +286,15 @@ export class Login extends Component {
 					>
 						{ translate( 'Lost your password?' ) }
 					</a>
-					<div>
-						{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
-							components: {
-								signupLink: <a href={ signupUrl } />,
-							},
-						} ) }
-					</div>
+					{ ! isFromGravatar3rdPartyApp && (
+						<div>
+							{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
+								components: {
+									signupLink: <a href={ signupUrl } />,
+								},
+							} ) }
+						</div>
+					) }
 					<div>
 						{ translate( 'Any question? {{a}}Check our help docs{{/a}}.', {
 							components: {
@@ -307,7 +316,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( isReactLostPasswordScreenEnabled() && this.props.isWoo ) {
+		if ( isReactLostPasswordScreenEnabled() && ( this.props.isWoo || this.props.isBlazePro ) ) {
 			return (
 				<a
 					className="login__lost-password-link"
@@ -433,7 +442,6 @@ export class Login extends Component {
 			twoFactorAuthType,
 			locale,
 			isLoginView,
-			path,
 			signupUrl,
 			isWooCoreProfilerFlow,
 			isWooPasswordless,
@@ -450,7 +458,6 @@ export class Login extends Component {
 			return (
 				<>
 					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />
-					<TranslatorInvite path={ path } />
 				</>
 			);
 		}
@@ -459,7 +466,6 @@ export class Login extends Component {
 			return (
 				<>
 					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
-					{ isLoginView && <TranslatorInvite path={ path } /> }
 				</>
 			);
 		}
@@ -491,12 +497,11 @@ export class Login extends Component {
 						getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
 						renderSignUpLink={ this.renderSignUpLink.bind( this ) }
 					/>
-					{ isLoginView && <TranslatorInvite path={ path } /> }
 				</>
 			);
 		}
 
-		return isLoginView ? <TranslatorInvite path={ path } /> : null;
+		return null;
 	}
 
 	renderContent( isSocialFirst ) {

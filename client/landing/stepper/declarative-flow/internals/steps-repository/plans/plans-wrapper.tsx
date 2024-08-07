@@ -20,8 +20,7 @@ import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
-import React, { useEffect, useLayoutEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useLayoutEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -31,8 +30,6 @@ import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlansIntent } from '@automattic/plans-grid-next';
@@ -42,8 +39,6 @@ interface Props {
 	shouldIncludeFAQ?: boolean;
 	flowName: string | null;
 	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
-	selectedSiteId: number | null;
-	setSelectedSiteId: ( siteId: number ) => void;
 }
 
 function getPlansIntent( flowName: string | null ): PlansIntent | null {
@@ -67,6 +62,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		hideFreePlan: reduxHideFreePlan,
 		domainCartItem,
 		hidePlansFeatureComparison,
+		couponCode,
 	} = useSelect( ( select ) => {
 		return {
 			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
@@ -74,24 +70,18 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			hidePlansFeatureComparison: (
 				select( ONBOARD_STORE ) as OnboardSelect
 			 ).getHidePlansFeatureComparison(),
+			couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 		};
 	}, [] );
-	const { flowName, selectedSiteId, setSelectedSiteId } = props;
+	const { flowName } = props;
 
 	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
 		useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
-	const siteId = site?.ID;
 	const currentPath = window.location.pathname + window.location.search;
 
 	useSaveHostingFlowPathStep( flowName, currentPath );
-
-	useEffect( () => {
-		if ( ! selectedSiteId && siteId ) {
-			setSelectedSiteId( siteId );
-		}
-	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
 
 	const [ planIntervalPath, setPlanIntervalPath ] = useState< string >( '' );
 	const { __ } = useI18n();
@@ -189,6 +179,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
 					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 					onPlanIntervalUpdate={ onPlanIntervalUpdate }
+					coupon={ couponCode }
 				/>
 			</div>
 		);
@@ -284,13 +275,4 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	);
 };
 
-export default connect(
-	( state ) => {
-		return {
-			selectedSiteId: getSelectedSiteId( state ),
-		};
-	},
-	{
-		setSelectedSiteId: setSelectedSiteId,
-	}
-)( localize( PlansWrapper ) );
+export default localize( PlansWrapper );

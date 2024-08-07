@@ -83,6 +83,8 @@ class SharingConnection extends Component {
 			facebook: 'user',
 			'instagram-business': 'user',
 			mastodon: 'user',
+			threads: 'user',
+			nextdoor: 'user',
 		},
 	};
 

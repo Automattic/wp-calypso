@@ -1,4 +1,5 @@
-import { translate } from 'i18n-calypso';
+import { hasTranslation } from '@wordpress/i18n';
+import { translate, getLocaleSlug } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
@@ -8,6 +9,7 @@ import {
 	STAT_TYPE_REFERRERS,
 	STAT_TYPE_SEARCH_TERMS,
 	STAT_TYPE_TOP_AUTHORS,
+	STAT_TYPE_VIDEO_PLAYS,
 } from '../constants';
 import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
 import { Props } from '.';
@@ -15,6 +17,8 @@ import { Props } from '.';
 import './style.scss';
 
 const getUpsellCopy = ( statType: string ) => {
+	const defaultCopy = translate( 'Upgrade your plan to unlock Jetpack Stats.' );
+
 	switch ( statType ) {
 		case STAT_TYPE_REFERRERS:
 			return translate(
@@ -30,8 +34,13 @@ const getUpsellCopy = ( statType: string ) => {
 			return translate( 'Identify your audience’s favorite writers and perspectives.' );
 		case STATS_FEATURE_DATE_CONTROL:
 			return translate( 'Compare different time periods to analyze your site’s growth.' );
+		case STAT_TYPE_VIDEO_PLAYS:
+			return getLocaleSlug()?.startsWith( 'en' ) ||
+				hasTranslation( 'Discover your most popular videos and find out how they performed.' )
+				? translate( 'Discover your most popular videos and find out how they performed.' )
+				: defaultCopy;
 		default:
-			return translate( 'Upgrade your plan to unlock Jetpack Stats.' );
+			return defaultCopy;
 	}
 };
 

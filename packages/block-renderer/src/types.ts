@@ -16,6 +16,12 @@ export type RenderedPattern = {
 	scripts: string;
 };
 
+export type RenderedContent = {
+	html: string;
+	styles: RenderedStyle[];
+	scripts: string;
+};
+
 export type RenderedPatterns = {
 	[ key: string ]: RenderedPattern;
 };

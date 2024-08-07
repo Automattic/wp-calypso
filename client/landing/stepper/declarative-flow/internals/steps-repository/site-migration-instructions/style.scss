@@ -1,0 +1,27 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+.step-route.site-migration-instructions {
+	.step-container {
+		padding: 0 0 60px;
+
+		@include break-large {
+			padding: 0;
+		}
+	}
+}
+
+.site-migration-instructions__steps {
+	flex: 1;
+	margin-bottom: 2.75rem;
+}
+
+.site-migration-instructions__container-without-preview {
+	margin: 16px;
+
+	@include break-large {
+		max-width: 510px;
+		margin: 60px auto;
+		padding-right: 52px;
+	}
+}

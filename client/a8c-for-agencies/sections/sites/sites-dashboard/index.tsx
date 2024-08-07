@@ -23,6 +23,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
@@ -46,7 +47,6 @@ import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
 
 import './style.scss';
 import './sites-dataviews-style.scss';
-
 export default function SitesDashboard() {
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const dispatch = useDispatch();
@@ -54,6 +54,7 @@ export default function SitesDashboard() {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const recentlyCreatedSite = getQueryArg( window.location.href, 'created_site' ) ?? null;
+	const migrationIntent = getQueryArg( window.location.href, 'migration' ) ?? null;
 
 	const {
 		dataViewsState,
@@ -223,14 +224,17 @@ export default function SitesDashboard() {
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ navItems.length > 1 }>
 						{ recentlyCreatedSite && (
-							<ProvisioningSiteNotification siteId={ Number( recentlyCreatedSite ) } />
+							<ProvisioningSiteNotification
+								siteId={ Number( recentlyCreatedSite ) }
+								migrationIntent={ !! migrationIntent }
+							/>
 						) }
 
 						<LayoutHeader>
 							<Title>{ translate( 'Sites' ) }</Title>
 							<Actions>
 								<MobileSidebarNavigation />
-								<SitesHeaderActions />
+								<SitesHeaderActions onWPCOMImport={ () => refetch() } />
 							</Actions>
 						</LayoutHeader>
 						{ navItems.length > 1 && (
@@ -242,7 +246,7 @@ export default function SitesDashboard() {
 
 					<SiteNotifications />
 					{ tourId && <GuidedTour defaultTourId={ tourId } /> }
-
+					<QueryReaderTeams />
 					<DashboardDataContext.Provider
 						value={ {
 							verifiedContacts: {
@@ -268,6 +272,7 @@ export default function SitesDashboard() {
 							isLargeScreen={ isLargeScreen || false }
 							setDataViewsState={ setDataViewsState }
 							dataViewsState={ dataViewsState }
+							onRefetchSite={ refetch }
 						/>
 					</DashboardDataContext.Provider>
 				</LayoutColumn>
@@ -280,6 +285,7 @@ export default function SitesDashboard() {
 						closeSitePreviewPane={ closeSitePreviewPane }
 						isSmallScreen={ ! isLargeScreen }
 						hasError={ isError }
+						onRefetchSite={ refetch }
 					/>
 				</LayoutColumn>
 			) }

@@ -1,0 +1,75 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.a4a-themed-modal {
+	max-width: 780px;
+	width: 100%;
+	min-height: 100vh;
+	margin: 0;
+
+	@include break-small {
+		min-height: 460px;
+		margin: auto;
+	}
+}
+
+.a4a-themed-modal .components-modal__content.hide-header {
+	background: var(--color-primary-100);
+	border-radius: 4px;
+	padding: 8px;
+
+	> * {
+		height: 100%;
+		width: 100%;
+	}
+}
+
+.a4a-themed-modal__wrapper {
+	display: flex;
+	flex-direction: row;
+	gap: 0;
+
+	height: 100%;
+	width: 100%;
+	border: none;
+}
+
+
+.a4a-themed-modal__sidebar-image-container {
+	min-width: 270px;
+
+	display: none;
+
+	@include break-small {
+		display: block;
+	}
+}
+
+.a4a-themed-modal__sidebar-image {
+	width: 270px;
+	height: auto;
+}
+
+.a4a-themed-modal__content {
+	border-radius: 4px;
+	background: var(--color-surface);
+	padding: 72px 32px;
+	width: 100%;
+}
+
+.a4a-themed-modal__dismiss-button {
+	position: absolute;
+	inset-block-start: 16px;
+	inset-inline-end: 16px;
+	cursor: pointer;
+	border-radius: 4px;
+	width: 24px;
+	height: 24px;
+
+	&:focus-visible {
+		border-color: var(--color-primary);
+		border-radius: 4px;
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		outline: none;
+	}
+}

@@ -112,14 +112,13 @@ const DoYouLoveJetpackStatsNotice = ( {
 		? translate(
 				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to a %s plan for a richer understanding and smarter decision-making.',
 				{
-					args: {
-						planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
-					},
+					args: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
 				}
 		  )
 		: translate(
 				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to an Explorer plan for a richer understanding and smarter decision-making.'
 		  );
+
 	const description = isWPCOMPaidStatsFlow
 		? paidStatsRemoveHardcoding
 		: translate( 'Upgrade to support future development and stop the upgrade banners.' );
@@ -137,8 +136,8 @@ const DoYouLoveJetpackStatsNotice = ( {
 				title={ hasFreeStats ? freeTitle : noPurchaseTitle }
 				onClose={ dismissNotice }
 			>
-				<p>{ description }</p>
-				<p>
+				<p key="desc">{ description }</p>
+				<p key="cta">
 					<button type="button" className="notice-banner__action-button" onClick={ handleCTAClick }>
 						{ CTAText }
 					</button>

@@ -18,9 +18,10 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-free';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
+import hasSiteProductJetpackStatsPWYWOnly from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-pwyw-only';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import useStatsPurchases from '../hooks/use-stats-purchases';
+import useStatsPurchases, { shouldShowPaywallNotice } from '../hooks/use-stats-purchases';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
@@ -32,6 +33,7 @@ const ensureOnlyOneNoticeVisible = (
 	noticeOptions: StatsNoticeProps
 ) => {
 	const calculatedNoticesVisibility = { ...serverNoticesVisibility };
+
 	ALL_STATS_NOTICES.forEach(
 		( notice ) =>
 			( calculatedNoticesVisibility[ notice.noticeId ] =
@@ -39,6 +41,7 @@ const ensureOnlyOneNoticeVisible = (
 				serverNoticesVisibility[ notice.noticeId ] &&
 				notice.isVisibleFunc( noticeOptions ) )
 	);
+
 	return processConflictNotices( calculatedNoticesVisibility );
 };
 
@@ -87,7 +90,21 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		wpcomSiteHasPaidStatsFeature;
 	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 
-	const { isRequestingSitePurchases, isCommercialOwned } = useStatsPurchases( siteId );
+	const { isRequestingSitePurchases, isCommercialOwned, supportCommercialUse } =
+		useStatsPurchases( siteId );
+
+	const hasPWYWPlanOnly = useSelector( ( state ) =>
+		hasSiteProductJetpackStatsPWYWOnly( state, siteId )
+	);
+
+	// Show the paywall notice if the site has reached the monthly views limit
+	// and no commercial purchase.
+	const showPaywallNotice =
+		useSelector( ( state ) => {
+			return shouldShowPaywallNotice( state, siteId );
+		} ) &&
+		! supportCommercialUse &&
+		isSiteJetpackNotAtomic;
 
 	const noticeOptions = {
 		siteId,
@@ -102,6 +119,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		statsPurchaseSuccess,
 		isCommercial,
 		isCommercialOwned,
+		hasPWYWPlanOnly,
+		showPaywallNotice,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );

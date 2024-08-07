@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { useLocale } from '@automattic/i18n-utils';
 import { useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -7,6 +8,7 @@ import { AgencyDetailsPayload } from '../../agency-details-form/types';
 
 export function useHandleWPCOMRedirect() {
 	const dispatch = useDispatch();
+	const locale = useLocale();
 	const notificationId = 'a4a-agency-signup-form-wpcom-redirect';
 
 	const handleWPCOMRedirect = useCallback(
@@ -37,13 +39,14 @@ export function useHandleWPCOMRedirect() {
 					client_id: config( 'oauth_client_id' ),
 					redirect_uri: returnUri.toString(),
 					scope: 'global',
+					locale,
 				} ).toString();
 				window.location.replace( authUrl.toString() );
 			} catch ( error ) {
 				dispatch( errorNotice( JSON.stringify( error ), { id: notificationId } ) );
 			}
 		},
-		[ dispatch ]
+		[ dispatch, locale ]
 	);
 
 	return handleWPCOMRedirect;

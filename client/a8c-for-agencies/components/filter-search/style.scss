@@ -21,8 +21,7 @@
 	}
 
 	.search__input.form-text-input[type="search"] {
-		font-size: rem(13px);
-		font-weight: 400;
+		@include a4a-font-body-md;
 		color: var(--color-text);
 	}
 }

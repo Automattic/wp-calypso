@@ -131,8 +131,6 @@
 /client/my-sites/importer @Automattic/caribou
 /client/blocks/import @Automattic/caribou
 /client/blocks/import-light @Automattic/caribou
-/client/blocks/importer @Automattic/caribou
-/client/my-sites/migrate @Automattic/caribou
 /client/landing/stepper/declarative-flow/import-flow.ts @Automattic/caribou
 /client/landing/stepper/declarative-flow/internals/steps-repository/import @Automattic/caribou
 /client/landing/stepper/declarative-flow/internals/steps-repository/import-list @Automattic/caribou
@@ -152,3 +150,9 @@
 # Renovate config
 /renovate.json5 @noahtallen
 /.github/workflows/renovate.yml @noahtallen
+
+# Support
+/packages/help-center @Automattic/vertex
+
+# Stepper
+/client/landing/stepper @Automattic/dotcom-stepper

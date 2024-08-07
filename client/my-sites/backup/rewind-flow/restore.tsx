@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
@@ -10,7 +11,7 @@ import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
-import { backupPath } from 'calypso/lib/jetpack/paths';
+import { backupPath, settingsPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -80,6 +81,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 	const [ restoreInitiated, setRestoreInitiated ] = useState( false );
+	const [ restoreFailed, setRestoreFailed ] = useState( false );
+	const [ showConfirm, setShowConfirm ] = useState( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) =>
@@ -112,9 +115,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 		if ( userHasRequestedRestore && ! isRestoreInProgress && ! restoreInitiated ) {
 			if ( credentialsAreValid || preflightPassed ) {
+				setRestoreInitiated( true );
 				dispatch( setValidFrom( 'restore', Date.now() ) );
 				requestRestore();
-				setRestoreInitiated( true );
 			}
 		}
 	}, [
@@ -143,20 +146,73 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		// Mark that the user has requested a restore
 		setUserHasRequestedRestore( true );
 
+		// Show the confirmation screen
+		setShowConfirm( false );
+
 		// Track the restore confirmation event.
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_confirm' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_confirm', {
+				has_credentials: hasCredentials,
+			} )
+		);
 	}, [
 		isPreflightEnabled,
 		credentialsAreValid,
 		dispatch,
+		hasCredentials,
 		preflightCheck,
 		siteId,
 		refetchPreflightStatus,
 	] );
 
-	const onGoBack = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_goback' ) );
+	const onRetryClick = useCallback( () => {
+		// Reset the restore state
+		setRestoreInitiated( false );
+		setRestoreFailed( false );
+		setUserHasRequestedRestore( false );
+
+		// Show the restore confirmation screen
+		setShowConfirm( true );
+
+		// Track the restore retry event.
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_failed_retry', {
+				has_credentials: hasCredentials,
+			} )
+		);
 	}, [ dispatch ] );
+
+	const onGoBack = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_goback', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
+
+	const onAddingCredentialsClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_adding_credentials', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
+
+	const onLearnAddingCredentialsClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_restore_learn_adding_credentials', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
+
+	const onViewSiteClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_restore_completed_view_site', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -285,9 +341,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				href={ siteUrl }
 				target="_blank"
 				className="rewind-flow__primary-button"
-				onClick={ () =>
-					dispatch( recordTracksEvent( 'calypso_jetpack_restore_completed_view_site' ) )
-				}
+				onClick={ onViewSiteClick }
 			>
 				{ translate( 'View your website {{externalIcon/}}', {
 					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
@@ -296,44 +350,112 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		</>
 	);
 
-	const renderError = () => (
-		<Error
-			errorText={ translate( 'Restore failed: %s', {
-				args: [ backupDisplayDate ],
-				comment: '%s is a time/date string',
-			} ) }
-			siteUrl={ siteUrl }
-		>
+	const ErrorDetails = () => {
+		return (
 			<p className="rewind-flow__info">
 				{ translate(
 					'An error occurred while restoring your site. Please {{button}}try your restore again{{/button}} or contact our support team to resolve the issue.',
 					{
 						components: {
-							button: <Button className="rewind-flow__error-retry-button" onClick={ onConfirm } />,
+							button: (
+								<Button className="rewind-flow__error-retry-button" onClick={ onRetryClick } />
+							),
 						},
 					}
 				) }
 			</p>
-		</Error>
-	);
+		);
+	};
+
+	const ErrorDetailsAddCredentials = () => {
+		return (
+			<>
+				<p className="rewind-flow__info">
+					{ translate(
+						'An error occurred while restoring your site. You may need to {{linkCredentials}}add your server credentials{{/linkCredentials}}. You can follow the steps in {{linkGuide}}our guide{{/linkGuide}} to add SSH, SFTP, or FTP credentials, and then try to restore again.',
+						{
+							components: {
+								linkCredentials: (
+									<a
+										href={
+											rewindState.canAutoconfigure
+												? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+												: `${ settingsPath( siteSlug ) }#credentials`
+										}
+										onClick={ onAddingCredentialsClick }
+									/>
+								),
+								linkGuide: (
+									<ExternalLink
+										href="https://jetpack.com/support/adding-credentials-to-jetpack/"
+										onClick={ onLearnAddingCredentialsClick }
+										children={ null }
+									/>
+								),
+							},
+						}
+					) }
+				</p>
+				<p className="rewind-flow__info">
+					{ translate(
+						'If the issue persists, contact our support team to help you resolve the issue.'
+					) }
+				</p>
+			</>
+		);
+	};
+
+	const renderError = () => {
+		return (
+			<Error
+				errorText={ translate( 'Restore failed: %s', {
+					args: [ backupDisplayDate ],
+					comment: '%s is a time/date string',
+				} ) }
+				siteUrl={ siteUrl }
+			>
+				{ credentialsAreValid ? <ErrorDetails /> : <ErrorDetailsAddCredentials /> }
+			</Error>
+		);
+	};
 
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
-		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
+		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) ) ||
+		( userHasRequestedRestore && inProgressRewindStatus === 'failed' && ! restoreFailed );
 	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 
 	useEffect( () => {
 		if ( isFinished ) {
-			dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore_completed' ) );
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_backup_restore_completed', {
+					has_credentials: hasCredentials,
+				} )
+			);
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
+			setRestoreFailed( false );
 		}
-	}, [ dispatch, isFinished ] );
+
+		if ( ! isRestoreInProgress && restoreInitiated && inProgressRewindStatus === 'failed' ) {
+			setRestoreInitiated( false );
+			setUserHasRequestedRestore( false );
+			setRestoreFailed( true );
+		}
+	}, [
+		dispatch,
+		hasCredentials,
+		inProgressRewindStatus,
+		isFinished,
+		isRestoreInProgress,
+		restoreInitiated,
+		userHasRequestedRestore,
+	] );
 
 	const render = () => {
 		if ( loading ) {
 			return <Loading />;
-		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
+		} else if ( ( ! inProgressRewindStatus && ! userHasRequestedRestore ) || showConfirm ) {
 			return renderConfirm();
 		} else if ( ! inProgressRewindStatus && needCredentials ) {
 			return (

@@ -38,8 +38,8 @@
 		"@automattic/urls": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/components": "^28.0.0",
-		"@wordpress/react-i18n": "^4.0.0",
+		"@wordpress/components": "^28.2.0",
+		"@wordpress/react-i18n": "^4.2.0",
 		"clsx": "^2.1.1",
 		"react-intersection-observer": "^9.4.3"
 	},
@@ -58,8 +58,8 @@
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
-		"@wordpress/data": "^10.0.0",
-		"@wordpress/i18n": "^5.0.0",
+		"@wordpress/data": "^10.2.0",
+		"@wordpress/i18n": "^5.2.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},

@@ -5,9 +5,10 @@ import {
 	getPlans,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
+import { AddOns } from '@automattic/data-stores';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useMemo } from '@wordpress/element';
+import { useRef, useMemo } from '@wordpress/element';
 import { Icon, chevronRightSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -22,22 +23,24 @@ import {
 } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { plansGridMediumLarge } from '../../css-mixins';
-import { usePlansGridContext } from '../../grid-context';
+import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
+import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { sortPlans } from '../../lib/sort-plan-properties';
 import PlanFeatures2023GridActions from '../actions';
-import PlanFeatures2023GridHeaderPrice from '../header-price';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
 import BillingTimeframe from '../shared/billing-timeframe';
-import { StorageFeature } from '../shared/storage';
+import HeaderPrice from '../shared/header-price';
+import { PlanStorage } from '../shared/storage';
 import { StickyContainer } from '../sticky-container';
 import type {
 	GridPlan,
+	ComparisonGridExternalProps,
 	ComparisonGridProps,
 	PlanActionOverrides,
 	TransformedFeatureObject,
@@ -48,10 +51,10 @@ import type {
 	Feature,
 	FeatureGroup,
 	PlanSlug,
-	WPComStorageAddOnSlug,
 	FeatureGroupMap,
-	StorageOption,
 } from '@automattic/calypso-products';
+
+import './style.scss';
 
 const featureGroupRowTitleCellMaxWidth = 450;
 const rowCellMaxWidth = 290;
@@ -331,14 +334,12 @@ type ComparisonGridHeaderProps = {
 	isStuck: boolean;
 	isHiddenInMobile?: boolean;
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	planUpgradeCreditsApplicable?: number | null;
 };
 
 type ComparisonGridHeaderCellProps = Omit< ComparisonGridHeaderProps, 'planTypeSelectorProps' > & {
 	allVisible: boolean;
 	isLastInRow: boolean;
 	planSlug: PlanSlug;
-	storageOptions: StorageOption[];
 };
 
 type PlanFeatureFootnotes = {
@@ -357,10 +358,8 @@ const ComparisonGridHeaderCell = ( {
 	displayedGridPlans,
 	currentSitePlanSlug,
 	planActionOverrides,
-	planUpgradeCreditsApplicable,
 	showRefundPeriod,
 	isStuck,
-	storageOptions,
 }: ComparisonGridHeaderCellProps ) => {
 	const { gridPlansIndex } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
@@ -432,9 +431,8 @@ const ComparisonGridHeaderCell = ( {
 					</select>
 				) }
 			</PlanSelector>
-			<PlanFeatures2023GridHeaderPrice
+			<HeaderPrice
 				planSlug={ planSlug }
-				planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				visibleGridPlans={ visibleGridPlans }
 			/>
@@ -450,7 +448,6 @@ const ComparisonGridHeaderCell = ( {
 				showMonthlyPrice={ false }
 				isStuck={ false }
 				visibleGridPlans={ visibleGridPlans }
-				storageOptions={ storageOptions }
 			/>
 		</Cell>
 	);
@@ -478,7 +475,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			showRefundPeriod,
 			isStuck,
 			planTypeSelectorProps,
-			planUpgradeCreditsApplicable,
 		},
 		ref
 	) => {
@@ -504,10 +500,9 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						</PlanTypeSelectorWrapper>
 					) }
 				</RowTitleCell>
-				{ visibleGridPlans.map( ( { planSlug, features: { storageOptions } }, index ) => (
+				{ visibleGridPlans.map( ( { planSlug }, index ) => (
 					<ComparisonGridHeaderCell
 						planSlug={ planSlug }
-						planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						key={ planSlug }
 						isLastInRow={ index === visibleGridPlans.length - 1 }
 						isFooter={ isFooter }
@@ -521,7 +516,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						selectedPlan={ selectedPlan }
 						showRefundPeriod={ showRefundPeriod }
 						isStuck={ isStuck }
-						storageOptions={ storageOptions }
 					/>
 				) ) }
 			</PlanRow>
@@ -539,7 +533,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 } > = ( {
 	feature,
 	visibleGridPlans,
@@ -602,9 +596,8 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
-					<StorageFeature
+					<PlanStorage
 						planSlug={ planSlug }
-						intervalType={ intervalType }
 						onStorageAddOnClick={ onStorageAddOnClick }
 						showUpgradeableStorage={ showUpgradeableStorage }
 						priceOnSeparateLine
@@ -689,7 +682,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
 	activeTooltipId: string;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -811,7 +804,7 @@ const FeatureGroup = ( {
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	showUpgradeableStorage: boolean;
-	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	visibleGridPlans: GridPlan[];
 	planFeatureFootnotes: {
@@ -933,7 +926,6 @@ const ComparisonGrid = ( {
 	onStorageAddOnClick,
 	showRefundPeriod,
 	planTypeSelectorProps,
-	planUpgradeCreditsApplicable,
 	gridSize,
 }: ComparisonGridProps ) => {
 	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
@@ -1079,7 +1071,6 @@ const ComparisonGrid = ( {
 							showRefundPeriod={ showRefundPeriod }
 							isStuck={ isStuck }
 							planTypeSelectorProps={ planTypeSelectorProps }
-							planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 						/>
 					) }
 				</StickyContainer>
@@ -1112,7 +1103,6 @@ const ComparisonGrid = ( {
 					isHiddenInMobile
 					ref={ bottomHeaderRef }
 					planTypeSelectorProps={ planTypeSelectorProps }
-					planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 				/>
 			</Grid>
 
@@ -1131,4 +1121,86 @@ const ComparisonGrid = ( {
 	);
 };
 
-export default ComparisonGrid;
+// TODO
+// Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
+// More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
+const WrappedComparisonGrid = ( {
+	siteId,
+	intent,
+	gridPlans,
+	useCheckPlanAvailabilityForPurchase,
+	useAction,
+	recordTracksEvent,
+	allFeaturesList,
+	intervalType,
+	isInSignup,
+	currentSitePlanSlug,
+	selectedPlan,
+	selectedFeature,
+	showUpgradeableStorage,
+	onStorageAddOnClick,
+	stickyRowOffset,
+	coupon,
+	className,
+	hideUnsupportedFeatures,
+	enableFeatureTooltips,
+	featureGroupMap,
+	...otherProps
+}: ComparisonGridExternalProps ) => {
+	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+
+	// TODO: this will be deprecated along side removing the wrapper component
+	const gridSize = useGridSize( {
+		containerRef: gridContainerRef,
+		containerBreakpoints: new Map( [
+			[ 'small', 0 ],
+			[ 'smedium', 686 ],
+			[ 'medium', 835 ], // enough to fit Enterpreneur plan. was 686
+			[ 'large', 1005 ], // enough to fit Enterpreneur plan. was 870
+			[ 'xlarge', 1180 ],
+		] ),
+	} );
+
+	const classNames = clsx( 'plans-grid-next', className, {
+		'is-small': 'small' === gridSize,
+		'is-smedium': 'smedium' === gridSize,
+		'is-medium': 'medium' === gridSize,
+		'is-large': 'large' === gridSize,
+		'is-xlarge': 'xlarge' === gridSize,
+		'is-visible': true,
+	} );
+
+	return (
+		<div ref={ gridContainerRef } className={ classNames }>
+			<PlansGridContextProvider
+				intent={ intent }
+				siteId={ siteId }
+				gridPlans={ gridPlans }
+				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useAction={ useAction }
+				recordTracksEvent={ recordTracksEvent }
+				allFeaturesList={ allFeaturesList }
+				coupon={ coupon }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				featureGroupMap={ featureGroupMap }
+				hideUnsupportedFeatures={ hideUnsupportedFeatures }
+			>
+				<ComparisonGrid
+					intervalType={ intervalType }
+					isInSignup={ isInSignup }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					siteId={ siteId }
+					selectedPlan={ selectedPlan }
+					selectedFeature={ selectedFeature }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					stickyRowOffset={ stickyRowOffset }
+					onStorageAddOnClick={ onStorageAddOnClick }
+					gridSize={ gridSize ?? undefined }
+					{ ...otherProps }
+				/>
+			</PlansGridContextProvider>
+		</div>
+	);
+};
+
+export default WrappedComparisonGrid;

@@ -1,8 +1,7 @@
-import page from '@automattic/calypso-router';
 import { Button, FoldableCard } from '@automattic/components';
 import { Icon, reusableBlock, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { A4A_OVERVIEW_LINK } from '../sidebar-menu/lib/constants';
+import { CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } from '../a4a-contact-support-widget';
 
 import './style.scss';
 type Props = {
@@ -23,18 +22,13 @@ const MigrationOfferHeader = ( { withIcon }: { withIcon?: boolean } ) => {
 const MigrationOfferBody = () => {
 	const translate = useTranslate();
 	const description = translate(
-		'Migrate your clients sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2024. You’ll also receive an additional $100 for each migrated site—up to $3,000 until July 31, 2024.'
+		"Migrate your clients' sites to WordPress.com or Pressable hosting and earn 50% revenue share until June 30, 2025. You'll also receive an additional $100 for each migrated site—up to $3,000 until October 31, 2024."
 	);
 
 	return (
 		<>
 			<p className="a4a-migration-offer__description">{ description }</p>
-			<Button
-				onClick={ () => {
-					page( `${ A4A_OVERVIEW_LINK }#contact-support-migration-offer` );
-				} }
-				primary
-			>
+			<Button href={ CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT } primary>
 				{ translate( 'Contact us' ) }
 				<Icon icon={ external } size={ 18 } />
 			</Button>
