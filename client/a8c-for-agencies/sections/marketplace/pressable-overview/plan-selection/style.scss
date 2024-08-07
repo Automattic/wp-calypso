@@ -56,6 +56,10 @@
 
 .pressable-overview-plan-selection__details-card-header-subtitle {
 	@include a4a-font-body-md;
+
+	&.regular-ownership {
+		padding-block-start: 32px;
+	}
 }
 
 .pressable-overview-plan-selection__details-card-header-price {
@@ -255,5 +259,11 @@
 
 	.pressable-overview-plan-selection__details > * {
 		gap: 24px;
+	}
+
+	&.is-regular-ownership {
+		.pressable-overview-plan-selection__details {
+			margin-block-start: 24px;
+		}
 	}
 }

@@ -51,7 +51,7 @@ body.is-section-reader {
 .is-reader-page .search-stream__with-sites.main {
 	margin: 0 auto;
 	@include breakpoint-deprecated( "<660px" ) {
-		margin: 16px 0;
+		margin: 16px auto;
 	}
 }
 

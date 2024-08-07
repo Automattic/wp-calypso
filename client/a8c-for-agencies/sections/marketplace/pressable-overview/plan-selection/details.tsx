@@ -18,9 +18,15 @@ type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
 	onSelectPlan: () => void;
 	isLoading?: boolean;
+	pressableOwnership?: 'regular' | 'none' | 'agency';
 };
 
-export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLoading }: Props ) {
+export default function PlanSelectionDetails( {
+	selectedPlan,
+	onSelectPlan,
+	isLoading,
+	pressableOwnership,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -58,6 +64,8 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 		);
 	}
 
+	const isRegularOwnership = pressableOwnership === 'regular';
+
 	return (
 		<section className="pressable-overview-plan-selection__details">
 			<div className="pressable-overview-plan-selection__details-card">
@@ -86,61 +94,89 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan, isLo
 							</span>
 						</div>
 					) }
+
+					{ isRegularOwnership && (
+						<div className="pressable-overview-plan-selection__details-card-header-subtitle regular-ownership">
+							{ translate(
+								'{{b}}You own this plan.{{/b}} Manage your hosting seamlessly by accessing the Pressable dashboard',
+								{
+									components: { b: <b /> },
+								}
+							) }
+						</div>
+					) }
 				</div>
 
-				<SimpleList
-					items={ [
-						info?.install
-							? translate(
-									'{{b}}%(count)d{{/b}} WordPress install',
-									'{{b}}%(count)d{{/b}} WordPress installs',
-									{
-										args: {
+				{ ! isRegularOwnership && (
+					<SimpleList
+						items={ [
+							info?.install
+								? translate(
+										'{{b}}%(count)d{{/b}} WordPress install',
+										'{{b}}%(count)d{{/b}} WordPress installs',
+										{
+											args: {
+												count: info.install,
+											},
 											count: info.install,
-										},
-										count: info.install,
-										components: { b: <b /> },
-										comment: '%(count)s is the number of WordPress installs.',
-									}
-							  )
-							: translate( 'Custom WordPress installs' ),
-						translate( '{{b}}%(count)s{{/b}} visits per month', {
-							args: {
-								count: info ? formatNumber( info.visits ) : customString,
-							},
-							components: { b: <b /> },
-							comment: '%(count)s is the number of visits per month.',
-						} ),
-						translate( '{{b}}%(size)s{{/b}} storage per month', {
-							args: {
-								size: info ? `${ info.storage }GB` : customString,
-							},
-							components: { b: <b /> },
-							comment: '%(size)s is the amount of storage in gigabytes.',
-						} ),
-						...( isNewHostingPage
-							? [
-									translate( '{{b}}Unmetered{{/b}} bandwidth', {
-										components: { b: <b /> },
-									} ),
-							  ]
-							: [] ),
-					] }
-				/>
+											components: { b: <b /> },
+											comment: '%(count)s is the number of WordPress installs.',
+										}
+								  )
+								: translate( 'Custom WordPress installs' ),
+							translate( '{{b}}%(count)s{{/b}} visits per month', {
+								args: {
+									count: info ? formatNumber( info.visits ) : customString,
+								},
+								components: { b: <b /> },
+								comment: '%(count)s is the number of visits per month.',
+							} ),
+							translate( '{{b}}%(size)s{{/b}} storage per month', {
+								args: {
+									size: info ? `${ info.storage }GB` : customString,
+								},
+								components: { b: <b /> },
+								comment: '%(size)s is the amount of storage in gigabytes.',
+							} ),
+							...( isNewHostingPage
+								? [
+										translate( '{{b}}Unmetered{{/b}} bandwidth', {
+											components: { b: <b /> },
+										} ),
+								  ]
+								: [] ),
+						] }
+					/>
+				) }
 
 				{ selectedPlan && (
-					<Button
-						className="pressable-overview-plan-selection__details-card-cta-button"
-						onClick={ onSelectPlan }
-						primary
-					>
-						{ translate( 'Select %(planName)s plan', {
-							args: {
-								planName: selectedPlan ? getPressableShortName( selectedPlan.name ) : customString,
-							},
-							comment: '%(planName)s is the name of the selected plan.',
-						} ) }
-					</Button>
+					<>
+						{ isRegularOwnership ? (
+							<Button
+								target="_blank"
+								rel="norefferer nooppener"
+								href="https://my.pressable.com/agency/auth"
+							>
+								{ translate( 'Manage in Pressable' ) }
+								<Icon icon={ external } size={ 18 } />
+							</Button>
+						) : (
+							<Button
+								className="pressable-overview-plan-selection__details-card-cta-button"
+								onClick={ onSelectPlan }
+								primary
+							>
+								{ translate( 'Select %(planName)s plan', {
+									args: {
+										planName: selectedPlan
+											? getPressableShortName( selectedPlan.name )
+											: customString,
+									},
+									comment: '%(planName)s is the name of the selected plan.',
+								} ) }
+							</Button>
+						) }
+					</>
 				) }
 
 				{ ! selectedPlan && (
