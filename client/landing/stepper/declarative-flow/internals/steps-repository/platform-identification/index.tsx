@@ -7,8 +7,8 @@ const PlatformIdentificationStep: Step = ( props ) => {
 
 	return (
 		<ImportList
-			title={ translate( 'Another title' ) }
-			subTitle={ translate( 'Another subtitle' ) }
+			title={ translate( 'Where are you coming from?' ) }
+			subTitle={ translate( ' ' ) }
 			skipTracking
 			{ ...props }
 		/>
