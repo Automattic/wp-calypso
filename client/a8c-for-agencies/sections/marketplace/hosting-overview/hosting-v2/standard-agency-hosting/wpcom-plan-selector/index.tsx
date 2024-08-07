@@ -1,7 +1,7 @@
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import A4ANumberInput from 'calypso/a8c-for-agencies/components/a4a-number-input';
 import useWPCOMOwnedSites from 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites';
 import SimpleList from 'calypso/a8c-for-agencies/sections/marketplace/common/simple-list';
@@ -199,6 +199,14 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 			}
 		}
 	};
+
+	useEffect( () => {
+		if ( isLicenseCountsReady ) {
+			setQuantity(
+				ownedPlans ? Number( selectedTier.value ) - ownedPlans : Number( selectedTier.value )
+			);
+		}
+	}, [ isLicenseCountsReady, ownedPlans, selectedTier.value ] );
 
 	if ( ! plan ) {
 		return;
