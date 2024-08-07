@@ -1803,6 +1803,7 @@ $breakpoint-mobile: 660px;
 			a {
 				font-weight: inherit;
 				font-size: inherit;
+				color: var(--wp-admin-theme-color);
 			}
 			@media (max-width: $break-mobile) {
 				text-align: start;
