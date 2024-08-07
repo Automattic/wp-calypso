@@ -1,13 +1,17 @@
-import { Icon } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
 interface DomainsTableSSLCellProps {
+	domainManagementLink: string;
 	sslStatus: 'active' | 'pending' | 'disabled' | null;
 }
 
-export default function DomainsTableSSLCell( { sslStatus }: DomainsTableSSLCellProps ) {
+export default function DomainsTableSSLCell( {
+	domainManagementLink,
+	sslStatus,
+}: DomainsTableSSLCellProps ) {
 	const translate = useTranslate();
 
 	const getSSLStatusText = () => {
@@ -20,17 +24,15 @@ export default function DomainsTableSSLCell( { sslStatus }: DomainsTableSSLCellP
 		if ( sslStatus === 'disabled' ) {
 			return translate( 'Disabled' );
 		}
-		return '-';
+	};
+
+	const handleClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
+		event.stopPropagation();
+		window.location.href = `${ domainManagementLink }?ssl-open=true`;
 	};
 
 	return (
-		<div
-			className={ clsx( 'domains-table-row__ssl-cell', {
-				[ 'domains-table-row__ssl-cell__active' ]: sslStatus === 'active',
-				[ 'domains-table-row__ssl-cell__pending' ]: sslStatus === 'pending',
-				[ 'domains-table-row__ssl-cell__disabled' ]: sslStatus === 'disabled',
-			} ) }
-		>
+		<div className="domains-table-row__ssl-cell">
 			{ sslStatus && (
 				<Icon
 					className={ clsx( 'domains-table-row__ssl-icon', {
@@ -41,7 +43,21 @@ export default function DomainsTableSSLCell( { sslStatus }: DomainsTableSSLCellP
 					icon={ lock }
 				/>
 			) }
-			{ getSSLStatusText() }
+			{ sslStatus !== null ? (
+				<Button
+					className={ clsx( 'domains-table-row__ssl-status-button', {
+						[ 'is-active' ]: sslStatus === 'active',
+						[ 'is-pending' ]: sslStatus === 'pending',
+						[ 'is-disabled' ]: sslStatus === 'disabled',
+					} ) }
+					variant="link"
+					onClick={ handleClick }
+				>
+					{ getSSLStatusText() }
+				</Button>
+			) : (
+				<>-</>
+			) }
 		</div>
 	);
 }

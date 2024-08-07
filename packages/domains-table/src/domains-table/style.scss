@@ -142,18 +142,22 @@
 		}
 	}
 
-	.domains-table-row__ssl-cell,
-	.domains-table-row__ssl-icon {
+	.domains-table-row__ssl-status-button {
+		text-decoration: none;
 
-		&__active {
-			color: var(--studio-green-50);
-			fill: var(--studio-green-50);
+		&:focus {
+			box-shadow: none;
 		}
 
+		&.is-active,
+		&.is-active :hover {
+			color: var(--studio-green-50);
+		}
 		&__pending,
-		&__disabled {
+		&__pending :hover,
+		&__disabled,
+		&__disabled :hover {
 			color: var(--studio-orange-50);
-			fill: var(--studio-orange-50);
 		}
 	}
 
@@ -162,6 +166,15 @@
 		position: relative;
 		top: 3px;
 		margin-right: -4px;
+
+		&__active {
+			fill: var(--studio-green-50);
+		}
+
+		&__pending,
+		&__disabled {
+			fill: var(--studio-orange-50);
+		}
 	}
 
 	.domains-table-checkbox-td {

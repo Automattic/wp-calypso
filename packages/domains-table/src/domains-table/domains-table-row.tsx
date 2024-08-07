@@ -202,7 +202,10 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				if ( column.name === 'ssl' ) {
 					return (
 						<td key={ domain.domain + column.name }>
-							<DomainsTableSSLCell sslStatus={ sslStatus } />
+							<DomainsTableSSLCell
+								domainManagementLink={ domainManagementLink }
+								sslStatus={ sslStatus }
+							/>
 						</td>
 					);
 				}
