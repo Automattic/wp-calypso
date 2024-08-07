@@ -1,8 +1,8 @@
 import { GridPlan } from '../../types';
-import PlanFeatures2023GridHeaderPrice from '../header-price';
 import PlanDivOrTdContainer from '../plan-div-td-container';
+import HeaderPrice from '../shared/header-price';
 
-type PlanPriceProps = {
+type PlanPricesProps = {
 	currentSitePlanSlug?: string | null;
 	renderedGridPlans: GridPlan[];
 	options?: {
@@ -10,7 +10,7 @@ type PlanPriceProps = {
 	};
 };
 
-const PlanPrice = ( { currentSitePlanSlug, options, renderedGridPlans }: PlanPriceProps ) => {
+const PlanPrices = ( { currentSitePlanSlug, options, renderedGridPlans }: PlanPricesProps ) => {
 	return renderedGridPlans.map( ( { planSlug } ) => {
 		return (
 			<PlanDivOrTdContainer
@@ -19,7 +19,7 @@ const PlanPrice = ( { currentSitePlanSlug, options, renderedGridPlans }: PlanPri
 				className="plan-features-2023-grid__table-item plan-price"
 				isTableCell={ options?.isTableCell }
 			>
-				<PlanFeatures2023GridHeaderPrice
+				<HeaderPrice
 					planSlug={ planSlug }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					visibleGridPlans={ renderedGridPlans }
@@ -29,4 +29,4 @@ const PlanPrice = ( { currentSitePlanSlug, options, renderedGridPlans }: PlanPri
 	} );
 };
 
-export default PlanPrice;
+export default PlanPrices;

@@ -44,7 +44,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 		setNumberOfGenerations( numberOfGenerations + 1 );
 		generateAIContentForTemplate( readymadeTemplate, aiContext )
 			.then( ( rt: ReadymadeTemplate ) =>
-				assembleSite( siteId, 'assembler', {
+				assembleSite( siteId, 'pub/assembler', {
 					homeHtml: rt.home.content,
 					headerHtml: rt.home.header,
 					footerHtml: rt.home.footer,

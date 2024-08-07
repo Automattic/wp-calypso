@@ -29,7 +29,6 @@
 		"build:tags-education": "calypso-build --env source='tags-education'",
 		"build:whats-new": "calypso-build --env source='whats-new'",
 		"build:wpcom-block-description-links": "calypso-build --env source='wpcom-block-description-links'",
-		"build:wpcom-block-editor-nav-sidebar": "calypso-build --env source='wpcom-block-editor-nav-sidebar'",
 		"build:wpcom-block-editor-nux": "calypso-build --env source='wpcom-block-editor-nux'",
 		"build:wpcom-documentation-links": "calypso-build --env source='wpcom-documentation-links'",
 		"build:wpcom-global-styles": "calypso-build --env source='wpcom-global-styles','wpcom-global-styles/wpcom-global-styles-view'",
