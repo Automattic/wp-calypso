@@ -12,9 +12,9 @@ import { LICENSE_INFO_MODAL_ID } from 'calypso/jetpack-cloud/sections/partner-po
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link';
-import ProductPriceWithDiscount from 'calypso/jetpack-cloud/sections/partner-portal/primary/product-price-with-discount-info';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../../state/partner-portal/types';
+import ProductPriceWithDiscount from './product-price-with-discount-info';
 
 import './style.scss';
 
