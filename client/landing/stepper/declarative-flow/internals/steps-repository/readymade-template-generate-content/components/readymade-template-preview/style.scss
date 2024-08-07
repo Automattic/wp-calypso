@@ -6,14 +6,15 @@
 	.components-spinner {
 		width: 16px;
 		height: 16px;
-		padding-top: 120px;
 	}
 
 	&.is-loading {
+		display: flex;
+		margin-top: 120px;
+
 		@media (max-width: #{ ($break-medium) }) {
 			margin-top: 24px;
 			width: unset;
-			display: flex;
 			justify-content: center;
 
 			.components-spinner {
