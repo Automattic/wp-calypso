@@ -10,7 +10,6 @@ import {
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -41,12 +40,9 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const canViewStat = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
-	const { isSiteAtomic, hasSftpFeature } = useSelector( ( state ) => ( {
-		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
-		hasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
-	} ) );
+	const hasSftpFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SFTP ) );
 
-	const isEligibleForAtomic = ! isSiteAtomic && hasSftpFeature;
+	const isEligibleForAtomic = ! isAtomic && hasSftpFeature;
 
 	const selectedSiteDomain = selectedSiteData?.domain;
 
