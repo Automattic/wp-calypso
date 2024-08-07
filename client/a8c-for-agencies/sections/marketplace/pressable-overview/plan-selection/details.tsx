@@ -99,7 +99,7 @@ export default function PlanSelectionDetails( {
 					) }
 
 					{ isRegularOwnership && ! isReferMode && (
-						<div className="pressable-overview-plan-selection__details-card-header-subtitle regular-ownership">
+						<div className="pressable-overview-plan-selection__details-card-header-subtitle is-regular-ownership">
 							{ translate(
 								'{{b}}You own this plan.{{/b}} Manage your hosting seamlessly by accessing the Pressable dashboard',
 								{
@@ -154,7 +154,7 @@ export default function PlanSelectionDetails( {
 
 				{ isReferMode ? (
 					<div>
-						<div className="pressable-overview-plan-selection__details-card-header-subtitle refer-mode">
+						<div className="pressable-overview-plan-selection__details-card-header-subtitle is-refer-mode">
 							{ translate(
 								'Pressable hosting will be included in the referral program in the future.'
 							) }
