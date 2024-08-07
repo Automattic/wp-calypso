@@ -1,3 +1,5 @@
+import { StepperStep } from './types';
+
 export const STEPS = {
 	BLOGGER_STARTING_POINT: {
 		slug: 'bloggerStartingPoint',
@@ -288,4 +290,4 @@ export const STEPS = {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
 	},
-};
+} satisfies StepperStep[];
