@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useContext } from 'react';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v2';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import VIPLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
@@ -12,6 +12,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import { MarketplaceTypeContext } from '../../context';
 import EnterpriseAgencyHosting from './enterprise-agency-hosting';
 import PremierAgencyHosting from './premier-agency-hosting';
 import StandardAgencyHosting from './standard-agency-hosting';
@@ -67,6 +68,10 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 
 	const isLargeScreen = useBreakpoint( '>1280px' );
 
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
+	const isReferMode = marketplaceType === 'referral';
+
 	const handleTabClick = useCallback(
 		( tab: string ) => {
 			page.show( `/marketplace/hosting/${ tab }` );
@@ -97,18 +102,22 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 					handleTabClick( 'pressable' );
 				},
 			},
-			{
-				key: 'vip',
-				label: translate( 'Enterprise' ),
-				subtitle: isLargeScreen && translate( 'WordPress for enterprise-level demands' ),
-				visible: true,
-				selected: section === 'vip',
-				onClick: () => {
-					handleTabClick( 'vip' );
-				},
-			},
+			...( isReferMode
+				? []
+				: [
+						{
+							key: 'vip',
+							label: translate( 'Enterprise' ),
+							subtitle: isLargeScreen && translate( 'WordPress for enterprise-level demands' ),
+							visible: true,
+							selected: section === 'vip',
+							onClick: () => {
+								handleTabClick( 'vip' );
+							},
+						},
+				  ] ),
 		],
-		[ handleTabClick, isLargeScreen, section, translate ]
+		[ handleTabClick, isLargeScreen, isReferMode, section, translate ]
 	);
 
 	const navItems = featureTabs.map( ( featureTab ) => {

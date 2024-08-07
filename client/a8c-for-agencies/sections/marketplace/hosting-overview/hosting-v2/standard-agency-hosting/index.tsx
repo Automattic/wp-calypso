@@ -120,7 +120,7 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 					{
 						profile: {
 							name: 'Ajit Bohra',
-							title: translate( 'Founder - %(companyName)s', {
+							title: translate( 'Founder, %(companyName)s', {
 								args: {
 									companyName: 'LUBUS',
 								},
@@ -136,7 +136,7 @@ export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 						profile: {
 							name: 'Brian Lalli',
 							avatar: ProfileAvatar1,
-							title: translate( 'President - %(companyName)s', {
+							title: translate( 'President, %(companyName)s', {
 								args: {
 									companyName: 'Moon Rooster LLC',
 								},

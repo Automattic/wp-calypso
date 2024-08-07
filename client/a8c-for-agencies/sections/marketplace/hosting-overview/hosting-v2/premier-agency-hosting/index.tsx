@@ -27,7 +27,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 				heading={ translate( 'Jetpack Complete included' ) }
 				subheading={ translate( "Supercharge your clients' sites" ) }
 				description={ translate(
-					'Every Pressable hosting plan comes with a Jetpack Security License for free - a $239/year/site value.'
+					'Every site built on Pressable comes with Jetpack Complete for free - a $599/year/site value.'
 				) }
 				background={ BackgroundType1 }
 				items={ [
@@ -115,7 +115,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 						profile: {
 							avatar: ProfileAvatar1,
 							name: 'Ben Giordano',
-							title: translate( 'Founder - %(companyName)s', {
+							title: translate( 'Founder, %(companyName)s', {
 								args: {
 									companyName: 'Freshy',
 								},
@@ -129,7 +129,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					{
 						profile: {
 							name: 'Justin Barrett',
-							title: translate( 'Director of Technology - %(companyName)s', {
+							title: translate( 'Director of Technology, %(companyName)s', {
 								args: {
 									companyName: 'Autoshop Solutions',
 								},
