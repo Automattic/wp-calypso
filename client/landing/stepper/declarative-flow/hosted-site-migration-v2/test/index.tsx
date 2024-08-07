@@ -82,10 +82,17 @@ describe( `${ flow.name }`, () => {
 		it( 'redirect user from processing to the import file when the platform is not wordpress', () => {
 			runNavigation( {
 				from: STEPS.PROCESSING,
-				query: { platform: 'blogger', next: 'importBlogger' },
+				query: {
+					platform: 'blogger',
+					next: 'importBlogger',
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+				},
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith( '/setup/site-setup/importBlogger' );
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'/setup/site-setup/importBlogger?siteId=123&siteSlug=example.wordpress.com'
+			);
 		} );
 
 		it( 'redirect user from processing to the upgrade plan when the platform is wordpress', () => {
