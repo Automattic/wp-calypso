@@ -1,16 +1,16 @@
 /*
     Global styles for Stepper framework
 */
-@import '@automattic/calypso-color-schemes';
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/onboarding/styles/variables';
-@import '@automattic/components/src/styles/typography';
+@import "@automattic/calypso-color-schemes";
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/onboarding/styles/variables";
+@import "@automattic/components/src/styles/typography";
 
 /**
  * Importers styles
  */
-@import '~calypso/blocks/import/style/base';
+@import "~calypso/blocks/import/style/base";
 
 /**
  * General onboarding styling
@@ -58,7 +58,6 @@ button {
 }
 
 .accessible-focus {
-
 	.site-setup,
 	.import-focused {
 		.button.is-primary:focus {
@@ -118,7 +117,6 @@ button {
 		}
 
 		@include break-small {
-
 			&.courses,
 			&.site-picker,
 			&.new-or-existing-site {
@@ -129,7 +127,7 @@ button {
 		// Importer flows
 		&.import-focused,
 		&.import-hosted-site,
-		&.site-setup[class*=' import'] {
+		&.site-setup[class*=" import"] {
 			padding: 3.75rem 0;
 		}
 	}
@@ -200,8 +198,8 @@ button {
 	.components-button.is-link {
 		color: var(--color-accent);
 
-		&:hover:not( :disabled):not(.disabled),
-		&:focus:not( :disabled):not(.disabled) {
+		&:hover:not(:disabled):not(.disabled),
+		&:focus:not(:disabled):not(.disabled) {
 			color: var(--color-neutral-70);
 		}
 	}
@@ -213,6 +211,7 @@ button {
 	--wp-components-color-accent-darker-10: var(--studio-blue-60);
 	--wp-components-color-accent-darker-20: var(--studio-blue-70);
 	--wp-components-color-accent: var(--studio-blue-50);
+
 }
 
 .import-focused .step-container.site-picker,
@@ -230,8 +229,7 @@ button {
 
 .intro {
 	&:not(.newsletter).signup-header {
-		z-index: 0 !important;
-		/* set to 0 to prevent it from covering top of intro modal */
+		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */
 	}
 }
 
@@ -248,12 +246,10 @@ button {
 	}
 
 	.step-container {
-
 		.step-container__content h1,
 		.step-container__header h1.formatted-header__title {
 			font-size: $font-title-medium;
-			line-height: 1.2em;
-			/* stylelint-disable-line declaration-property-unit-allowed-list */
+			line-height: 1.2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 
 			@include break-medium {
 				font-size: $font-headline-medium;
@@ -268,7 +264,6 @@ button {
 .newsletter,
 .newsletter:not(.domains) {
 	.step-container {
-
 		.step-container__content h1,
 		.step-container__header h1.formatted-header__title {
 			font-size: rem(32px); //typography-exception
@@ -279,7 +274,6 @@ button {
 				line-height: rem(52px); //typography-exception
 			}
 		}
-
 		.step-container__header .formatted-header .formatted-header__subtitle {
 			font-size: rem(16px); //typography-exception
 			line-height: rem(24px); //typography-exception
@@ -300,7 +294,7 @@ button {
 
 			&.site-icon-with-picker__upload-button {
 				border-radius: 50%;
-				font-family: 'SF Pro Text', $sans;
+				font-family: "SF Pro Text", $sans;
 				transition: ease 300ms;
 
 				svg {
@@ -331,15 +325,12 @@ button {
 						}
 					}
 				}
-
 				&:focus {
 					background-color: var(--studio-blue-50);
 					box-shadow: none;
-
 					svg {
 						fill: #fff;
 					}
-
 					span {
 						color: var(--studio-blue-50);
 					}
@@ -413,7 +404,6 @@ button {
 
 .assign-trial-plan,
 .processing {
-
 	&.wooexpress,
 	&.ecommerce {
 		padding: 60px 0;
@@ -425,33 +415,25 @@ button {
 		top: 0;
 		left: 0;
 		background-color: #fff;
-		background-image: url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg ),
-			url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg );
+		background-image:
+			url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
+			url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg);
 		background-position-y: -40px, 110%;
 		/*!rtl:ignore*/
-		background-position-x:
-			109%,
-			-10%;
+		background-position-x: 109%, -10%;
 		background-repeat: no-repeat, no-repeat;
 		background-attachment: fixed;
-		background-size:
-			auto 15%,
-			auto 25%;
+		background-size: auto 15%, auto 25%;
 		padding-top: 0;
 
 		@include break-huge {
-			background-size:
-				auto 15%,
-				auto 35%,
-				auto 50%;
-			background-position-x:
-				65%,
-				-100px,
-				120%;
+			background-size: auto 15%, auto 35%, auto 50%;
+			background-position-x: 65%, -100px, 120%;
 			background-position-y: 5%, 85%, 125%;
-			background-image: url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg ),
-				url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg ),
-				url(calypso/assets/images/onboarding/ecommerce-intro-3.jpg );
+			background-image:
+				url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
+				url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg),
+				url(calypso/assets/images/onboarding/ecommerce-intro-3.jpg);
 		}
 	}
 }
@@ -462,7 +444,6 @@ button {
 		font-weight: 600;
 		font-size: $font-title-large;
 	}
-
 	.loading-bar {
 		background-color: var(--studio-woocommerce-purple-5);
 		width: 590px;
@@ -474,15 +455,13 @@ button {
 			width: 100%;
 		}
 	}
-
 	.processing-step {
 		width: 100%;
 		max-width: 640px;
 		box-sizing: border-box;
 	}
-
 	p.processing-step__subtitle {
-		font-family: 'SF Pro Text', $sans;
+		font-family: "SF Pro Text", $sans;
 		font-weight: 400;
 		letter-spacing: initial;
 
@@ -496,15 +475,14 @@ button {
 			font-weight: 500;
 		}
 	}
-
 	.loading-bar::before {
 		background: var(--wooexpress-purple);
 	}
-
 	.signup-header .wordpress-logo {
 		display: block;
 		width: 500px;
 	}
+
 }
 
 /*
