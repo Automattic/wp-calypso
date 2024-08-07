@@ -45,7 +45,7 @@ const onboarding: Flow = {
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 
-		const { resetStore, setDomain, setProductCartItems } = useDispatch( ONBOARD_STORE );
+		const { resetStore, setDomain, setDomainCartItems } = useDispatch( ONBOARD_STORE );
 
 		const { domainCartItem, planCartItem } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
@@ -61,7 +61,7 @@ const onboarding: Flow = {
 			switch ( currentStepSlug ) {
 				case 'domains':
 					setDomain( providedDependencies.suggestion );
-					setProductCartItems( providedDependencies.domainCart );
+					setDomainCartItems( providedDependencies.domainCart );
 					return navigate( 'plans' );
 				case 'plans':
 					return navigate( 'create-site', undefined, true );

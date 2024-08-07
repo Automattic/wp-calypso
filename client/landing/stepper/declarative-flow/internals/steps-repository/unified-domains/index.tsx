@@ -31,7 +31,6 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useStepperPersistedState } from '../../hooks/use-persisted-state';
 import { ProvidedDependencies, StepProps } from '../../types';
-import './style.scss';
 
 const RenderDomainsStepConnect = connect(
 	( state, { flow }: StepProps ) => {

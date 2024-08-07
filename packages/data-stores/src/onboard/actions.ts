@@ -407,6 +407,13 @@ export const setDomainCartItem = ( domainCartItem: MinimalRequestCartProduct | u
 	domainCartItem,
 } );
 
+export const setDomainCartItems = (
+	domainCartItems: MinimalRequestCartProduct[] | undefined
+) => ( {
+	type: 'SET_DOMAIN_CART_ITEMS' as const,
+	domainCartItems,
+} );
+
 export const setDomainsTransferData = ( bulkDomainsData: DomainTransferData | undefined ) => ( {
 	type: 'SET_DOMAINS_TRANSFER_DATA' as const,
 	bulkDomainsData,
@@ -495,6 +502,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetSelectedDesign
 	| typeof setDomainForm
 	| typeof setDomainCartItem
+	| typeof setDomainCartItems
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor

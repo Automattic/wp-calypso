@@ -71,6 +71,7 @@ export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 
 export const getDomainForm = ( state: State ) => state.domainForm;
 export const getDomainCartItem = ( state: State ) => state.domainCartItem;
+export const getDomainCartItems = ( state: State ) => state.domainCartItems;
 export const getHideFreePlan = ( state: State ) => state.hideFreePlan;
 export const getHidePlansFeatureComparison = ( state: State ) => state.hidePlansFeatureComparison;
 export const getIsMigrateFromWp = ( state: State ) => state.isMigrateFromWp;
