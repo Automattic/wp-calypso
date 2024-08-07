@@ -4,6 +4,7 @@ import {
 	RenderedContent,
 } from '@automattic/block-renderer';
 import { Spinner } from '@wordpress/components';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
@@ -23,7 +24,7 @@ const ReadymadeTemplatePreview: React.FC< RTPreviewProps > = ( {
 } ) => {
 	if ( isLoading ) {
 		return (
-			<div className="readymade-template-preview">
+			<div className={ clsx( 'readymade-template-preview', 'is-loading' ) }>
 				<Spinner />
 				<strong>{ translate( 'Generating content for your site.' ) }</strong>
 			</div>
