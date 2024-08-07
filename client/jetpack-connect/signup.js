@@ -510,10 +510,13 @@ export class JetpackSignup extends Component {
 						isWooOnboarding={ this.isWooOnboarding() }
 						isWooCoreProfiler={ this.isWooCoreProfiler() }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-						hideSiteCard={ isWooCoreProfiler }
+						disableSiteCard={ isWooCoreProfiler }
 					/>
 					<SignupForm
 						disabled={ isCreatingAccount }
+						isPasswordless={ isWooCoreProfiler }
+						disableTosText={ isWooCoreProfiler }
+						labelText={ isWooCoreProfiler ? this.props.translate( 'Your Email' ) : null }
 						email={ this.props.authQuery.userEmail }
 						footerLink={ this.renderFooterLink() }
 						handleSocialResponse={ this.handleSocialResponse }
