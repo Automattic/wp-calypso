@@ -1,7 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Card, FormLabel } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
-import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
@@ -25,7 +23,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import SiteLevelProfileBanner from './site-level-profile-banner';
-import UpdatedGravatarString from './updated-gravatar-string';
+import WPAndGravatarLogo from './wp-and-gravatar-logo';
 
 import './style.scss';
 
@@ -38,17 +36,11 @@ class Profile extends Component {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	}
 
-	toggleGravatarHidden = ( isHidden ) => {
-		this.props.setUserSetting( 'gravatar_profile_hidden', isHidden );
-	};
-
 	toggleIsDevAccount = ( isDevAccount ) => {
 		this.props.setUserSetting( 'is_dev_account', isDevAccount );
 	};
 
 	render() {
-		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
-
 		return (
 			<Main wideLayout className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
@@ -140,18 +132,26 @@ class Profile extends Component {
 							</FormFieldset>
 						) }
 
-						<FormFieldset
-							className={ clsx( {
-								'profile__gravatar-fieldset-is-loading': this.props.isFetchingUserSettings,
-							} ) }
-						>
-							<ToggleControl
-								disabled={ this.props.getDisabledState() || this.props.isFetchingUserSettings }
-								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
-								onChange={ this.toggleGravatarHidden }
-								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
-							/>
-						</FormFieldset>
+						<p className="profile__gravatar-profile-description">
+							<span>
+								{ this.props.translate(
+									'Your WordPress.com profile is connected to Gravatar. Your Gravatar is public by default and may appear on any site using Gravatar when you’re logged in with {{strong}}%(email)s{{/strong}}.' +
+										' To manage your Gravatar profile and visibility settings, {{a}}visit your Gravatar profile{{/a}}.',
+									{
+										components: {
+											strong: <strong />,
+											a: <a href="https://gravatar.com/profile" target="_blank" rel="noreferrer" />,
+										},
+										args: {
+											email: this.props.getSetting( 'user_email' ),
+										},
+									}
+								) }
+							</span>
+							<span>
+								<WPAndGravatarLogo />
+							</span>
+						</p>
 
 						<p className="profile__submit-button-wrapper">
 							<FormButton
