@@ -31,10 +31,12 @@ export default function useWPCOMOwnedSites() {
 
 	useEffect( () => {
 		if ( data ) {
-			setLicenses( ( prevLicenses ) => [ ...prevLicenses, ...data.items ] );
+			setLicenses( ( prevLicenses ) =>
+				currentPage === 1 ? data.items : [ ...prevLicenses, ...data.items ]
+			);
 			setTotalLicenses( data.total );
 		}
-	}, [ data ] );
+	}, [ currentPage, data ] );
 
 	useEffect( () => {
 		if ( licenses.length < totalLicenses ) {
