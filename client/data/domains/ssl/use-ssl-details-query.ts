@@ -1,6 +1,6 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
-import { domainSSLDetailsQueryKey } from './domain-ssl-details-query-key';
+import { sslDetailsQueryKey } from './ssl-details-query-key';
 
 export type DnsRawRecord = {
 	host: string;
@@ -11,32 +11,29 @@ export type DnsRawRecord = {
 	ip?: string;
 };
 
-export type SSLFailureReason = {
+export type SslFailureReason = {
 	error_type: string;
 	message: string;
 	records: DnsRawRecord[];
 };
 
-export type SSLDetails = {
+export type SslDetails = {
 	certificate_provisioned: boolean;
 	certificate_expiry_date?: string;
 	last_attempt?: string;
 	next_attempt?: string;
-	failure_reasons?: SSLFailureReason[];
+	failure_reasons?: SslFailureReason[];
 	is_newly_registered: boolean;
 };
 
-export type SSLDetailsResponse = {
-	data: SSLDetails;
-	status?: string;
-	error?: string;
+export type SslDetailsResponse = {
+	data: SslDetails;
+	status: string;
 };
 
-export default function useDomainSSLDetailsQuery(
-	domainName: string
-): UseQueryResult< SSLDetailsResponse > {
+export default function useSslDetailsQuery( domainName: string ): UseQueryResult< SslDetails > {
 	return useQuery( {
-		queryKey: domainSSLDetailsQueryKey( domainName ),
+		queryKey: sslDetailsQueryKey( domainName ),
 		queryFn: () =>
 			wp.req.get( {
 				path: `/domains/ssl/${ domainName }`,
@@ -48,5 +45,6 @@ export default function useDomainSSLDetailsQuery(
 		// gcTime: 5 * 60 * 1000,
 		staleTime: 25000,
 		gcTime: 25000,
+		select: ( response: SslDetailsResponse ) => response.data,
 	} );
 }

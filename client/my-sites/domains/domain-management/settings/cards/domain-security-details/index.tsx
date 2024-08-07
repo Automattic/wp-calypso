@@ -25,7 +25,7 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const {
-		data: sslResponse,
+		data: sslDetails,
 		isFetching: isLoadingSSLData,
 		isError,
 		isStale,
@@ -61,22 +61,22 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 			case sslStatuses.SSL_ACTIVE:
 				return null;
 			case sslStatuses.SSL_PENDING:
-				if ( sslResponse?.data.is_newly_registered ) {
+				if ( sslDetails?.is_newly_registered ) {
 					return translate(
 						'It may take up to a few hours to add an SSL certificate to your site. If you are not seeing it yet, give it some time to take effect.',
 						{ textOnly: true }
 					);
 				}
-				if ( sslResponse?.data.failure_reasons ) {
+				if ( sslDetails?.failure_reasons ) {
 					return (
 						<>
 							<p className="domain-security-details__description-message">
 								{ translate(
-									'There are one or more problems with your DNS that prevent SSL certificate from being issued:'
+									'There are one or more problems with your DNS configuration that prevent SSL certificate from being issued:'
 								) }
 							</p>
 							<ul>
-								{ sslResponse.data.failure_reasons?.map( ( failureReason ) => {
+								{ sslDetails.failure_reasons?.map( ( failureReason ) => {
 									return <li key={ failureReason.error_type }>{ failureReason.message }</li>;
 								} ) }
 							</ul>
