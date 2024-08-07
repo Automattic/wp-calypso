@@ -41,10 +41,8 @@ export default function useSslDetailsQuery( domainName: string ): UseQueryResult
 			} ),
 		refetchOnWindowFocus: false,
 		enabled: false,
-		// staleTime: 5 * 60 * 1000,
-		// gcTime: 5 * 60 * 1000,
-		staleTime: 25000,
-		gcTime: 25000,
+		staleTime: 5 * 60 * 1000,
+		gcTime: 5 * 60 * 1000,
 		select: ( response: SslDetailsResponse ) => response.data,
 	} );
 }

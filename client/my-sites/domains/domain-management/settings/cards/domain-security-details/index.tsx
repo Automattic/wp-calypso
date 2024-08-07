@@ -120,8 +120,12 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 				);
 			case sslStatuses.SSL_DISABLED:
 			default:
-				return translate(
-					'Your domain has expired. Renew you domain to issue a new SSL certificate.'
+				return (
+					<p className="domain-security-details__description-message">
+						{ translate(
+							'Your domain has expired. Renew your domain to issue a new SSL certificate.'
+						) }
+					</p>
 				);
 		}
 	};
@@ -154,6 +158,7 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 				<div className="domain-security-details__description">
 					{ ! isLoadingSSLData && getSslStatusMessage() }
 					{ sslStatuses.SSL_PENDING === sslStatus &&
+						! isLoadingSSLData &&
 						! sslDetails?.is_newly_registered &&
 						sslDetails?.failure_reasons && (
 							<Button
