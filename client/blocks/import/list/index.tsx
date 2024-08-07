@@ -37,6 +37,7 @@ interface Props {
 		platform: ImporterPlatform,
 		backToFlow?: string
 	) => string;
+	skipTracking?: boolean;
 	onNavBack?: () => void;
 }
 
