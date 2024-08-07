@@ -153,3 +153,6 @@
 
 # Support
 /packages/help-center @Automattic/vertex
+
+# Stepper
+/client/landing/stepper @Automattic/dotcom-stepper

@@ -71,4 +71,17 @@
 	.a4a-layout__top-wrapper {
 		z-index: 10;
 	}
+
+	.select-dropdown__item-text {
+		.content svg {
+			position: relative;
+			top: 5px;
+			margin-inline-end: 4px;
+		}
+	}
+
+	.section-nav.a4a-layout__navigation .select-dropdown__header .count {
+		top: 8.5px;
+		margin-inline-end: 8px;
+	}
 }

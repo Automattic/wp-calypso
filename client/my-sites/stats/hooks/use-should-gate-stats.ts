@@ -83,6 +83,7 @@ const paidStats = [
 	STAT_TYPE_CLICKS,
 	STAT_TYPE_TOP_AUTHORS,
 	STAT_TYPE_SEARCH_TERMS,
+	STAT_TYPE_VIDEO_PLAYS,
 ];
 
 // Gated controls for WPCOM sites without the FEATURE_STATS_PAID feature.

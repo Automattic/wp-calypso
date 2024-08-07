@@ -23,4 +23,7 @@ export enum SiteIntent {
 	AssemblerFirst = 'assembler-first',
 	ReadyMadeTemplate = 'readymade-template',
 	AIAssembler = 'ai-assembler',
+	Newsletter = 'newsletter',
+	FreePostSetup = 'free-post-setup',
+	SiteMigration = 'site-migration',
 }

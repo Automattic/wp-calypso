@@ -280,7 +280,6 @@ import {
 	FEATURE_ASSEMBLED_KITS,
 	FEATURE_STOCK_NOTIFS,
 	FEATURE_DYNAMIC_UPSELLS,
-	FEATURE_LOYALTY_PROG,
 	FEATURE_CUSTOM_MARKETING_AUTOMATION,
 	FEATURE_BULK_DISCOUNTS,
 	FEATURE_INVENTORY_MGMT,
@@ -2356,15 +2355,6 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate(
 				'Earn more revenue with automated upsell and cross-sell product recommendations.'
-			),
-		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
-	},
-	[ FEATURE_LOYALTY_PROG ]: {
-		getSlug: () => FEATURE_LOYALTY_PROG,
-		getTitle: () => i18n.translate( 'Referral and loyalty programs' ),
-		getDescription: () =>
-			i18n.translate(
-				'Boost organic sales with a customer referral program and offer free gifts or coupons as a reward.'
 			),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
