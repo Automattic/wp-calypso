@@ -31,7 +31,7 @@ export function usePostByUrl( url: string ) {
 				post_url: url,
 			};
 
-			recordTracksEvent( 'calypso_helpcenter_article_api_error', tracksData );
+			recordTracksEvent( 'calypso_helpcenter_post_by_url_error', tracksData );
 			return false;
 		},
 	} );
