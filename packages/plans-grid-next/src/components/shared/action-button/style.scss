@@ -1,21 +1,4 @@
 .plans-grid-next__action-button {
-	&-multi {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-	}
-
-	&-label {
-		text-align: center;
-		font-size: 0.75rem;
-		display: block;
-		margin-top: 10px;
-	}
-
-	&--fixed-width {
-		width: 200px;
-	}
-
 	.plans-grid-next-comparison-grid & {
 		margin-bottom: auto;
 
@@ -23,4 +6,21 @@
 			min-height: 40px;
 		}
 	}
+}
+
+.plans-grid-next__action-button-label {
+	text-align: center;
+	font-size: 0.75rem;
+	display: block;
+	margin-top: 10px;
+}
+
+.plans-grid-next__action-button-multi {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.plans-grid-next__action-button--fixed-width {
+	width: 200px;
 }
