@@ -1,8 +1,9 @@
 import { HOSTED_SITE_MIGRATION_V2_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
-import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useSearchParams } from 'react-router-dom';
+import { Primitive } from 'utility-types';
 import { type Flow } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { addQueryArgs } from 'calypso/lib/url';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
 
@@ -37,36 +38,53 @@ export default {
 					siteSlug: props?.siteSlug || query.get( 'siteSlug' ),
 					next: props?.next || query.get( 'next' ),
 					url: props?.url,
-				};
+				} as Record< string, Primitive >;
 
 				if ( currentStep === PLATFORM_IDENTIFICATION.slug ) {
 					return navigate(
-						addQueryArgs( STEPS.SITE_CREATION_STEP.slug, {
-							platform: data?.platform,
-							...( data?.platform !== 'wordpress' ? { next: data?.url } : {} ),
-						} )
+						addQueryArgs(
+							{
+								platform: data.platform,
+								next: data.url,
+							},
+							STEPS.SITE_CREATION_STEP.slug
+						)
 					);
 				}
 
 				if ( currentStep === SITE_CREATION_STEP.slug ) {
-					return navigate( STEPS.PROCESSING.slug );
+					return navigate(
+						addQueryArgs(
+							{
+								platform: data.platform,
+								next: data.next,
+							},
+							STEPS.PROCESSING.slug
+						)
+					);
 				}
 
 				if ( currentStep === PROCESSING.slug ) {
 					if ( data?.next ) {
 						return window.location.assign(
-							addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ data?.next }`, {
-								siteId: data?.siteId,
-								siteSlug: data?.siteSlug,
-							} )
+							addQueryArgs(
+								{
+									siteId: data?.siteId,
+									siteSlug: data?.siteSlug,
+								},
+								`/setup/${ SITE_SETUP_FLOW }/${ data.next.toString() }`
+							)
 						);
 					}
 
 					return navigate(
-						addQueryArgs( SITE_MIGRATION_UPGRADE_PLAN.slug, {
-							siteId: data?.siteId,
-							siteSlug: data?.siteSlug,
-						} )
+						addQueryArgs(
+							{
+								siteId: data?.siteId,
+								siteSlug: data?.siteSlug,
+							},
+							SITE_MIGRATION_UPGRADE_PLAN.slug
+						)
 					);
 				}
 			},

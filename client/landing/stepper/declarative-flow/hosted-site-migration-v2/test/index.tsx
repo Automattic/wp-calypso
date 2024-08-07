@@ -1,0 +1,104 @@
+/**
+ * @jest-environment jsdom
+ */
+import { URLSearchParams } from 'url';
+import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
+import { addQueryArgs } from '@wordpress/url';
+import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
+import flow from '../';
+import { STEPS } from '../../internals/steps';
+import { getFlowLocation, renderFlow } from '../../test/helpers';
+
+// we need to save the original object for later to not affect tests from other files
+const originalLocation = window.location;
+
+jest.mock( '@automattic/data-stores/src/user/selectors' );
+jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
+
+describe( `${ flow.name }`, () => {
+	beforeAll( () => {
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, assign: jest.fn() },
+		} );
+	} );
+
+	afterAll( () => {
+		Object.defineProperty( window, 'location', originalLocation );
+	} );
+
+	beforeEach( () => {
+		( window.location.assign as jest.Mock ).mockClear();
+		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
+		( useIsSiteOwner as jest.Mock ).mockReturnValue( {
+			isOwner: true,
+		} );
+
+		window.location.search = '';
+	} );
+
+	const runNavigation = ( { from, dependencies = {}, query = {} } ) => {
+		const { runUseStepNavigationSubmit } = renderFlow( flow );
+
+		runUseStepNavigationSubmit( {
+			currentStep: from.slug,
+			dependencies: dependencies,
+			currentURL: addQueryArgs( `/setup/${ from.slug }`, query ),
+		} );
+
+		const destination = getFlowLocation();
+		const [ pathname, searchParams ] = destination?.path?.split( '?' ) ?? [ '', '' ];
+
+		return {
+			step: pathname.replace( /^\/+/, '' ),
+			query: new URLSearchParams( searchParams ),
+		};
+	};
+
+	describe( 'useStepNavigation', () => {
+		it( 'redirects the user from platform identification to create site step', () => {
+			const destination = runNavigation( {
+				from: STEPS.PLATFORM_IDENTIFICATION,
+				dependencies: { platform: 'any-platform' },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.SITE_CREATION_STEP,
+				query: { platform: 'any-platform' },
+			} );
+		} );
+
+		it( 'redirects user from site-create to processing passing the platform', () => {
+			const destination = runNavigation( {
+				from: STEPS.SITE_CREATION_STEP,
+				query: { platform: 'any-platform' },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.PROCESSING,
+				query: { platform: 'any-platform' },
+			} );
+		} );
+
+		it( 'redirect user from processing to the import file when the platform is not wordpress', () => {
+			runNavigation( {
+				from: STEPS.PROCESSING,
+				query: { platform: 'blogger', next: 'importBlogger' },
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith( '/setup/site-setup/importBlogger' );
+		} );
+
+		it( 'redirect user from processing to the upgrade plan when the platform is wordpress', () => {
+			const destination = runNavigation( {
+				from: STEPS.PROCESSING,
+				query: { platform: 'wordpress' },
+				dependencies: { siteSlug: 'example.wordpress.com', siteId: 123 },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+			} );
+		} );
+	} );
+} );
