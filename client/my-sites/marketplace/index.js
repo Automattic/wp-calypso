@@ -10,10 +10,13 @@ import {
 	renderThemesInstallPage,
 	redirectToHome,
 	renderMarketplaceSignupSuccess,
+	renderChartTestPage,
 } from './controller';
 
 export default function () {
 	if ( config.isEnabled( 'marketplace-test' ) ) {
+		page( '/marketplace/test/chart', navigation, renderChartTestPage, makeLayout, clientRender );
+
 		page(
 			'/marketplace/test/:site?',
 			siteSelection,
