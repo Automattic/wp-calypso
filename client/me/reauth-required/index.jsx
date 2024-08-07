@@ -272,6 +272,7 @@ class ReauthRequired extends Component {
 
 		return (
 			<Dialog
+				bodyOpenClassName="reauth-required__dialog-body"
 				autoFocus={ false }
 				className="reauth-required__dialog"
 				isVisible={ this.props?.twoStepAuthorization.isReauthRequired() }
