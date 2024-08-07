@@ -20,7 +20,7 @@ export default function SiteLevelProfileBanner() {
 			className="site-level-profile-banner"
 			icon="info-outline"
 			title={ translate(
-				'The following sections are your public WordPress.com profile.{{infoPopover/}}',
+				'The following settings are your public WordPress.com profile.{{infoPopover/}}',
 				{
 					components: {
 						infoPopover: (
