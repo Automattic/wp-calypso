@@ -60,6 +60,12 @@
 	&.regular-ownership {
 		padding-block-start: 32px;
 	}
+
+	&.refer-mode {
+		@include a4a-font-body-sm;
+		padding-block-end: 16px;
+	}
+
 }
 
 .pressable-overview-plan-selection__details-card-header-price {
@@ -261,7 +267,7 @@
 		gap: 24px;
 	}
 
-	&.is-regular-ownership {
+	&.is-slider-hidden {
 		.pressable-overview-plan-selection__details {
 			margin-block-start: 24px;
 		}
