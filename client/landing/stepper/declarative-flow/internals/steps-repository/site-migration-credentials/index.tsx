@@ -39,7 +39,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 			<Card>
 				<div>
 					<FormLabel>{ translate( 'How can we access your site?' ) }</FormLabel>
-					<div>
+					<div className="site-migration-credentials__radio">
 						<FormRadio
 							label={ translate( 'WordPress credentials' ) }
 							value="credentials"
@@ -49,7 +49,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 							disabled={ false }
 						/>
 					</div>
-					<div>
+					<div className="site-migration-credentials__radio">
 						<FormRadio
 							label={ translate( 'Backup file' ) }
 							value="backup"
@@ -130,8 +130,6 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		</form>
 	);
 };
-
-export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
 const SiteMigrationCredentials: Step = function ( { navigation } ) {
 	const translate = useTranslate();

@@ -10,13 +10,21 @@
 		padding: 2em;
 		hr {
 			margin-top: 1em;
+			background: var(--color-border-subtle);
 		}
 		.action-buttons__next {
 			width: 100%;
 			margin-top: 1em;
 		}
-		.site-migration-credentials__form__field {
+		.site-migration-credentials__form-field {
 			margin-top: 1em;
+		}
+		.site-migration-credentials__radio {
+			display: flex;
+			align-items: center;
+			.form-radio__label {
+				margin-left: 0;
+			}
 		}
 	}
 }
