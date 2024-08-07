@@ -1,10 +1,9 @@
 import page from '@automattic/calypso-router';
 import { Popover, Gridicon, Button, WordPressLogo, JetpackLogo } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
-import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
@@ -51,14 +50,6 @@ export default function AddNewSiteButton( {
 	const [ showA4AConnectionModal, setShowA4AConnectionModal ] = useState( false );
 	const [ showJetpackConnectionModal, setShowJetpackConnectionModal ] = useState( false );
 	const [ showImportFromWPCOMModal, setShowImportFromWPCOMModal ] = useState( false );
-
-	const paymentMethodAdded = getQueryArg( window.location.href, 'add_new_dev_site' );
-
-	useEffect( () => {
-		if ( devSite && paymentMethodAdded ) {
-			toggleSiteConfigurationsModal?.();
-		}
-	}, [ paymentMethodAdded, devSite, toggleSiteConfigurationsModal ] );
 
 	const toggleMenu = () => {
 		setMenuVisible( ( isVisible ) => ! isVisible );

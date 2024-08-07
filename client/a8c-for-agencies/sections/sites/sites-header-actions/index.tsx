@@ -2,9 +2,9 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { addQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AddNewSiteButton from 'calypso/a8c-for-agencies/components/add-new-site-button';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
@@ -33,9 +33,9 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 	const [ tourStepRef, setTourStepRef ] = useState< HTMLElement | null >( null );
 	const [ showConfigurationModal, setShowConfigurationModal ] = useState( false );
 
-	const toggleSiteConfigurationsModal = () => {
+	const toggleSiteConfigurationsModal = useCallback( () => {
 		setShowConfigurationModal( ! showConfigurationModal );
-	};
+	}, [ showConfigurationModal ] );
 
 	const onCreateSiteSuccess = useCallback(
 		( id: number ) => {
@@ -44,6 +44,16 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 		},
 		[ refetchPendingSites ]
 	);
+
+	const devSite = config.isEnabled( 'a4a-dev-sites' );
+
+	const paymentMethodAdded = getQueryArg( window.location.href, 'add_new_dev_site' );
+
+	useEffect( () => {
+		if ( devSite && paymentMethodAdded ) {
+			toggleSiteConfigurationsModal?.();
+		}
+	}, [ paymentMethodAdded, devSite, toggleSiteConfigurationsModal ] );
 
 	return (
 		<div className="sites-header__actions">
@@ -55,7 +65,7 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 					onCreateSiteSuccess={ onCreateSiteSuccess }
 				/>
 			) }
-			{ config.isEnabled( 'a4a-dev-sites' ) && (
+			{ devSite && (
 				<AddNewSiteButton
 					showMainButtonLabel={ ! isMobile }
 					devSite
