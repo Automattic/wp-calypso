@@ -571,6 +571,7 @@ body.is-mobile-app-view {
 	.is-support-session &.is-active {
 		background: var(--studio-orange-70);
 		--color-masterbar-icon: var(--studio-gray-5) !important;
+		--color-masterbar-text: var(--studio-gray-5) !important;
 	}
 
 	&.masterbar__item-notifications {
