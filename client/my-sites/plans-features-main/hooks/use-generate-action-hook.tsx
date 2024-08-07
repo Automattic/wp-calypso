@@ -426,7 +426,7 @@ function getLoggedInPlansAction( {
 		// No CTA if the current plan is the P2 free plan
 		if ( isP2FreePlan( planSlug ) ) {
 			return {
-				primary: { text: '', callback: () => {} },
+				primary: { text: '', callback: null },
 			};
 		}
 

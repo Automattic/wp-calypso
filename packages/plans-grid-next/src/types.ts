@@ -150,7 +150,7 @@ export type UseActionCallback = ( {
 export interface GridAction {
 	primary: {
 		text: TranslateResult;
-		callback: () => Promise< void > | void;
+		callback: ( () => Promise< void > | void ) | null;
 		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
 		status?: 'disabled' | 'blocked' | 'enabled';
 		variant?: 'primary' | 'secondary';
