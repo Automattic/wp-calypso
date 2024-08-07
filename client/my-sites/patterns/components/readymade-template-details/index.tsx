@@ -1,3 +1,4 @@
+import { PremiumBadge } from '@automattic/components';
 import { addLocaleToPathLocaleInFront, useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -44,6 +45,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, rend
 					</a>
 					<div className="readymade-template-details">
 						<div className="readymade-template-details-content">
+							<PremiumBadge shouldHideTooltip className="readymade-template-details-premium" />
 							<div className="readymade-template-details-header">
 								<h1 className="readymade-template-details-title">{ readymadeTemplate.title }</h1>
 								<div className="readymade-template-details-actions">
