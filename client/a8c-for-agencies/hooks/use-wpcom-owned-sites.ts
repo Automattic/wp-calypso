@@ -9,7 +9,7 @@ import useFetchLicenses from '../data/purchases/use-fetch-licenses';
 import useProductAndPlans from '../sections/marketplace/hooks/use-product-and-plans';
 import { getWPCOMCreatorPlan } from '../sections/marketplace/lib/hosting';
 
-export default function useWpcomOwnedSites() {
+export default function useWPCOMOwnedSites() {
 	// We will have to loop to all License pages to get all licenses and get correct calculation.
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 	const [ licenses, setLicenses ] = useState< License[] >( [] );
