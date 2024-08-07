@@ -839,7 +839,6 @@ class Login extends Component {
 			action,
 			isWooCoreProfilerFlow,
 			currentQuery,
-			isGravPoweredLoginPage,
 			isGravPoweredClient,
 			isSignupExistingAccount,
 			isSocialFirst,
@@ -1028,7 +1027,7 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
-				hideSignupLink={ isGravPoweredLoginPage || isBlazePro }
+				hideSignupLink={ isGravPoweredClient || isBlazePro }
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isSendingEmail={ this.props.isSendingEmail }
