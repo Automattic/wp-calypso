@@ -18,9 +18,11 @@ export default function useDefaultStorageOption( {
 }: Props ): AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug | undefined {
 	const { siteId, gridPlansIndex } = usePlansGridContext();
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
-	if ( ! gridPlansIndex?.features ) {
+
+	if ( ! gridPlansIndex?.[ planSlug ]?.features ) {
 		return;
 	}
+
 	const {
 		features: { storageFeature },
 	} = gridPlansIndex[ planSlug ];
