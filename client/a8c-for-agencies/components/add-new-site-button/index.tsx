@@ -3,6 +3,7 @@ import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
+import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
@@ -91,6 +92,7 @@ export default function AddNewSiteButton( {
 	const pressableOwnership = usePressableOwnershipType();
 
 	const { data: pendingSites } = useFetchPendingSites();
+	const { data: devLicenses } = useFetchDevLicenses();
 
 	const allAvailableSites =
 		pendingSites?.filter(
@@ -100,9 +102,8 @@ export default function AddNewSiteButton( {
 
 	const hasPendingWPCOMSites = allAvailableSites.length > 0;
 
-	// TODO: Replace with actual available dev sites count logic, similar to allAvailableSites above
-	const availableDevSites = [ 'site1', 'site2', 'site3' ];
-	const hasAvailableDevSites = allAvailableSites.length > 0;
+	const availableDevSites = devLicenses?.available;
+	const hasAvailableDevSites = devLicenses?.available > 0;
 
 	const mainButtonLabel = devSite
 		? translate( 'Start developing for free' )
@@ -209,9 +210,9 @@ export default function AddNewSiteButton( {
 						<div className="site-selector-and-importer__popover-site-count">
 							{ translate( '%(pendingSites)d site available', '%(pendingSites)d sites available', {
 								args: {
-									pendingSites: availableDevSites.length,
+									pendingSites: availableDevSites,
 								},
-								count: availableDevSites.length,
+								count: availableDevSites,
 								comment: '%(pendingSites)s is the number of sites available.',
 							} ) }
 						</div>
