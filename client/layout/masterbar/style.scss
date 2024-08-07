@@ -574,6 +574,10 @@ body.is-mobile-app-view {
 		--color-masterbar-text: var(--studio-gray-5) !important;
 	}
 
+	.is-support-session &:hover {
+		background: var(--studio-orange-50);
+	}
+
 	&.masterbar__item-notifications {
 		margin-right: 0;
 	}
