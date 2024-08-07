@@ -4,6 +4,10 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, useContext, useEffect } from 'react';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v2';
+import {
+	A4A_MARKETPLACE_HOSTING_LINK,
+	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import VIPLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
 import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
@@ -74,7 +78,7 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 
 	const handleTabClick = useCallback(
 		( tab: string ) => {
-			page.show( `/marketplace/hosting/${ tab }` );
+			page.show( `${ A4A_MARKETPLACE_HOSTING_LINK }/${ tab }` );
 			dispatch( recordTracksEvent( 'calypso_a4a_marketplace_hosting_tab_click', { tab } ) );
 		},
 		[ dispatch ]
@@ -83,7 +87,7 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 	useEffect( () => {
 		// Redirect since the VIP section is not available in refer mode
 		if ( isReferMode && section === 'vip' ) {
-			page.show( `/marketplace/hosting/wpcom` );
+			page.show( A4A_MARKETPLACE_HOSTING_WPCOM_LINK );
 		}
 	}, [ isReferMode, section ] );
 
