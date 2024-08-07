@@ -2,8 +2,12 @@ import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useContext, useEffect } from 'react';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v2';
+import {
+	A4A_MARKETPLACE_HOSTING_LINK,
+	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import VIPLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
 import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
@@ -12,6 +16,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import { MarketplaceTypeContext } from '../../context';
 import EnterpriseAgencyHosting from './enterprise-agency-hosting';
 import PremierAgencyHosting from './premier-agency-hosting';
 import StandardAgencyHosting from './standard-agency-hosting';
@@ -67,13 +72,24 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 
 	const isLargeScreen = useBreakpoint( '>1280px' );
 
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
+	const isReferMode = marketplaceType === 'referral';
+
 	const handleTabClick = useCallback(
 		( tab: string ) => {
-			page.show( `/marketplace/hosting/${ tab }` );
+			page.show( `${ A4A_MARKETPLACE_HOSTING_LINK }/${ tab }` );
 			dispatch( recordTracksEvent( 'calypso_a4a_marketplace_hosting_tab_click', { tab } ) );
 		},
 		[ dispatch ]
 	);
+
+	useEffect( () => {
+		// Redirect since the VIP section is not available in refer mode
+		if ( isReferMode && section === 'vip' ) {
+			page.show( A4A_MARKETPLACE_HOSTING_WPCOM_LINK );
+		}
+	}, [ isReferMode, section ] );
 
 	const featureTabs = useMemo(
 		() => [
@@ -97,18 +113,22 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 					handleTabClick( 'pressable' );
 				},
 			},
-			{
-				key: 'vip',
-				label: translate( 'Enterprise' ),
-				subtitle: isLargeScreen && translate( 'WordPress for enterprise-level demands' ),
-				visible: true,
-				selected: section === 'vip',
-				onClick: () => {
-					handleTabClick( 'vip' );
-				},
-			},
+			...( isReferMode
+				? []
+				: [
+						{
+							key: 'vip',
+							label: translate( 'Enterprise' ),
+							subtitle: isLargeScreen && translate( 'WordPress for enterprise-level demands' ),
+							visible: true,
+							selected: section === 'vip',
+							onClick: () => {
+								handleTabClick( 'vip' );
+							},
+						},
+				  ] ),
 		],
-		[ handleTabClick, isLargeScreen, section, translate ]
+		[ handleTabClick, isLargeScreen, isReferMode, section, translate ]
 	);
 
 	const navItems = featureTabs.map( ( featureTab ) => {
