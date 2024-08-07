@@ -1,4 +1,6 @@
 import clsx from 'clsx';
+import { useEffect } from 'react';
+import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import { StepperPerformanceTrackerStop } from 'calypso/landing/stepper/utils/performance-tracking';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -8,8 +10,6 @@ import VideoPressIntroBackground from '../../steps-repository/intro/videopress-i
 import UserStep from '../user';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
 import type { Flow, StepperStep } from '../../types';
-import { useEffect } from 'react';
-import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
 
 type StepRouteProps = {
 	step: StepperStep;
@@ -27,7 +27,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 	const shouldSkipRender = shouldAuthUser || ! stepContent;
 	const skipTracking = shouldAuthUser || ! stepContent;
 
-	const useBuiltItInAuth = flow.__experimental_stepper_auth_required;
+	const useBuiltItInAuth = flow.__experimentalUseBuiltinAuth;
 
 	useStepRouteTracking( {
 		flowName: flow.name,
