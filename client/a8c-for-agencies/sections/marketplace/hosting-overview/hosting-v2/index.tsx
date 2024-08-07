@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback, useContext } from 'react';
+import { useMemo, useCallback, useContext, useEffect } from 'react';
 import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v2';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import VIPLogo from 'calypso/assets/images/a8c-for-agencies/vip-full-logo.svg';
@@ -79,6 +79,13 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 		},
 		[ dispatch ]
 	);
+
+	useEffect( () => {
+		// Redirect since the VIP section is not available in refer mode
+		if ( isReferMode && section === 'vip' ) {
+			page.show( `/marketplace/hosting/wpcom` );
+		}
+	}, [ isReferMode, section ] );
 
 	const featureTabs = useMemo(
 		() => [
