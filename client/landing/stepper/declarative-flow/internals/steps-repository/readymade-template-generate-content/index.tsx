@@ -35,6 +35,8 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 	const [ isGeneratingContent, setIsGeneratingContent ] = useState( false );
 	const { assembleSite } = useDispatch( SITE_STORE );
 
+	const isPromptEmpty = ! aiContext.trim();
+
 	const handleTextareaChange = ( event: { target: { value: string } } ) => {
 		setAiContext( event.target.value );
 	};
@@ -77,6 +79,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 						<FormTextarea
 							name="tagline"
 							id="tagline"
+							disabled={ isGeneratingContent }
 							placeholder={ translate(
 								"Write an amazing description of your site, like: The Beachcomber Bistro is a cafe offering amazing food, delicious coffee and local beers. It's located next to the beach at Harlyn Bay, offering a stunning view from our deck."
 							) }
@@ -88,7 +91,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 						<Button
 							className="checklist-item__checklist-primary-button"
 							onClick={ generateContent }
-							disabled={ numberOfGenerations >= 5 || isGeneratingContent }
+							disabled={ isPromptEmpty || numberOfGenerations >= 5 || isGeneratingContent }
 						>
 							{ translate( 'Generate content' ) }
 						</Button>
