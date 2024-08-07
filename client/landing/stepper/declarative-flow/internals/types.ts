@@ -107,6 +107,10 @@ export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 ) => void;
 
 export type Flow = {
+	/**
+	 * If this flag is set to true, the flow will login the user without leaving Stepper.
+	 */
+	__experimental_stepper_auth_required?: boolean;
 	name: string;
 	/**
 	 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.

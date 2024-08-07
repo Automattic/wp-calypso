@@ -15,6 +15,7 @@ import { Flow, ProvidedDependencies } from './internals/types';
 const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
+	__experimental_stepper_auth_required: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
 			{

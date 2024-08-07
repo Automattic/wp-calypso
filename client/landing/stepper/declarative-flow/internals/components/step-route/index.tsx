@@ -8,6 +8,8 @@ import VideoPressIntroBackground from '../../steps-repository/intro/videopress-i
 import UserStep from '../user';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
 import type { Flow, StepperStep } from '../../types';
+import { useEffect } from 'react';
+import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
 
 type StepRouteProps = {
 	step: StepperStep;
@@ -20,8 +22,12 @@ type StepRouteProps = {
 const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) => {
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
 	const stepContent = renderStep( step );
-	const shouldRedirectToLogin = step.requiresLoggedInUser && ! userIsLoggedIn;
-	const skipTracking = shouldRedirectToLogin || ! stepContent;
+	const loginUrl = useLoginUrlForFlow( { flow } );
+	const shouldAuthUser = step.requiresLoggedInUser && ! userIsLoggedIn;
+	const shouldSkipRender = shouldAuthUser || ! stepContent;
+	const skipTracking = shouldAuthUser || ! stepContent;
+
+	const useBuiltItInAuth = flow.__experimental_stepper_auth_required;
 
 	useStepRouteTracking( {
 		flowName: flow.name,
@@ -30,13 +36,23 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 		flowVariantSlug: flow.variantSlug,
 	} );
 
-	if ( shouldRedirectToLogin && ! userIsLoggedIn ) {
+	useEffect( () => {
+		if ( shouldAuthUser && ! useBuiltItInAuth ) {
+			window.location.assign( loginUrl );
+		}
+	}, [ loginUrl, shouldAuthUser, useBuiltItInAuth ] );
+
+	if ( useBuiltItInAuth && shouldAuthUser && ! userIsLoggedIn ) {
 		return (
 			<div className={ clsx( 'step-route', 'user', flow.name, flow.variantSlug, flow.classnames ) }>
 				<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
 				<UserStep flow={ flow.name } />
 			</div>
 		);
+	}
+
+	if ( shouldSkipRender ) {
+		return null;
 	}
 
 	return (
