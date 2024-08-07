@@ -89,7 +89,7 @@ describe( 'ReaderSiteSubscription', () => {
 		expect( screen.getByText( 'Jan 1, 2023' ) ).toBeInTheDocument();
 		expect( screen.getByAltText( 'Test Site' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Cancel subscription' } ) ).toBeEnabled();
+		expect( screen.getByRole( 'button', { name: 'Unsubscribe' } ) ).toBeEnabled();
 	} );
 
 	it( 'The "View feed" button should navigate to the expected path', async () => {
