@@ -11,7 +11,6 @@ type TopButtonsProps = {
 	options?: {
 		isTableCell?: boolean;
 		isStuck?: boolean;
-		isFixedWidthActionButton?: boolean;
 	};
 };
 
@@ -41,7 +40,6 @@ const TopButtons = ( {
 					showMonthlyPrice
 					isStuck={ options?.isStuck || false }
 					visibleGridPlans={ renderedGridPlans }
-					isFixedWidth={ options?.isFixedWidthActionButton }
 				/>
 			</PlanDivOrTdContainer>
 		);
