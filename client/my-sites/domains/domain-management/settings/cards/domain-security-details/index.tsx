@@ -1,4 +1,4 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CONTACT, HTTPS_SSL } from '@automattic/urls';
 import { Icon, lock } from '@wordpress/icons';
@@ -69,16 +69,23 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 				}
 				if ( sslResponse?.data.failure_reasons ) {
 					return (
-						<div>
-							There are one or more problems with your DNS that prevent SSL certificate from being
-							issued. Once you have fixed them, you can request a new certificate by clicking the
-							button below:
+						<>
+							<p className="domain-security-details__description-message">
+								{ translate(
+									'There are one or more problems with your DNS that prevent SSL certificate from being issued:'
+								) }
+							</p>
 							<ul>
 								{ sslResponse.data.failure_reasons?.map( ( failureReason ) => {
 									return <li key={ failureReason.error_type }>{ failureReason.message }</li>;
 								} ) }
 							</ul>
-						</div>
+							<p className="domain-security-details__description-message">
+								{ translate(
+									'Once you have fixed all the issue, you can request a new certificate by clicking the button below.'
+								) }
+							</p>
+						</>
 					);
 				}
 				return translate(
@@ -93,14 +100,6 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 		}
 	};
 
-	const expandCard = () => {
-		setIsExpanded( true );
-
-		recordTracksEvent( 'calypso_domain_ssl_status_expand_card_click', {
-			domain: domain.domain,
-		} );
-	};
-
 	return (
 		<Accordion
 			title={ translate( 'Domain security', { textOnly: true } ) }
@@ -108,7 +107,7 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 			key="security"
 			isDisabled={ isDisabled }
 			expanded={ isExpanded }
-			onOpen={ expandCard }
+			onOpen={ () => setIsExpanded( true ) }
 			onClose={ () => setIsExpanded( false ) }
 		>
 			<div className="domain-security-details__card">
@@ -123,11 +122,10 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 					</>
 				</div>
 				<div className="domain-security-details__description">
-					{ ! isLoadingSSLData && (
-						<p className="domain-security-details__description-message">
-							{ getSslStatusMessage() }
-						</p>
-					) }
+					{ ! isLoadingSSLData && getSslStatusMessage() }
+					<Button className="domain-security-details__provision-button" onClick={ () => {} }>
+						Provision certificate
+					</Button>
 					<div className="domain-security-details__description-help-text">
 						{ translate(
 							'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. {{a}}Learn more{{/a}}',

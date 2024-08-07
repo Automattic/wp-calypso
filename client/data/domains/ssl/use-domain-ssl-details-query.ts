@@ -46,7 +46,7 @@ export default function useDomainSSLDetailsQuery(
 		enabled: false,
 		// staleTime: 5 * 60 * 1000,
 		// gcTime: 5 * 60 * 1000,
-		staleTime: 5000,
-		gcTime: 5000,
+		staleTime: 25000,
+		gcTime: 25000,
 	} );
 }
