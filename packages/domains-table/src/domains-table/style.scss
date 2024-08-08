@@ -153,10 +153,10 @@
 		&.is-active :hover {
 			color: var(--studio-green-50);
 		}
-		&__pending,
-		&__pending :hover,
-		&__disabled,
-		&__disabled :hover {
+		&.is-pending,
+		&.is-pending :hover,
+		&.is-disabled,
+		&.is-disabled :hover {
 			color: var(--studio-orange-50);
 		}
 	}
