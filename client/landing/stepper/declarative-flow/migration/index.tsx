@@ -1,5 +1,5 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
-import { HOSTED_SITE_MIGRATION_V2_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
+import { MIGRATION_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { useSearchParams } from 'react-router-dom';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -144,7 +144,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 };
 
 export default {
-	name: HOSTED_SITE_MIGRATION_V2_FLOW,
+	name: MIGRATION_FLOW,
 	get title() {
 		return translate( 'Site Migration' );
 	},
