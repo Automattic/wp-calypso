@@ -33,14 +33,14 @@ type Props = {
 	onWPCOMImport?: ( blogIds: number[] ) => void;
 	showMainButtonLabel: boolean;
 	devSite?: boolean;
-	toggleSiteConfigurationsModal?: () => void;
+	toggleDevSiteConfigurationsModal?: () => void;
 };
 
 export default function AddNewSiteButton( {
 	showMainButtonLabel,
 	onWPCOMImport,
 	devSite,
-	toggleSiteConfigurationsModal,
+	toggleDevSiteConfigurationsModal,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -215,7 +215,7 @@ export default function AddNewSiteButton( {
 									`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
 								);
 							} else {
-								toggleSiteConfigurationsModal?.();
+								toggleDevSiteConfigurationsModal?.();
 							}
 						},
 					},

@@ -192,7 +192,7 @@ function PaymentMethodForm() {
 						returnQueryArg
 					)
 				);
-			} else if ( returnQueryArg?.includes( 'new_dev_site' ) ) {
+			} else if ( returnQueryArg?.includes( 'add_new_dev_site' ) ) {
 				const params = {
 					add_new_dev_site: true,
 				};

@@ -33,7 +33,7 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 	const [ tourStepRef, setTourStepRef ] = useState< HTMLElement | null >( null );
 	const [ showConfigurationModal, setShowConfigurationModal ] = useState( false );
 
-	const toggleSiteConfigurationsModal = useCallback( () => {
+	const toggleDevSiteConfigurationsModal = useCallback( () => {
 		setShowConfigurationModal( ! showConfigurationModal );
 	}, [ showConfigurationModal ] );
 
@@ -47,19 +47,19 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 
 	const devSite = config.isEnabled( 'a4a-dev-sites' );
 
-	const paymentMethodAdded = getQueryArg( window.location.href, 'add_new_dev_site' );
+	const addNewDevSite = getQueryArg( window.location.href, 'add_new_dev_site' );
 
 	useEffect( () => {
-		if ( devSite && paymentMethodAdded ) {
-			toggleSiteConfigurationsModal?.();
+		if ( devSite && addNewDevSite ) {
+			toggleDevSiteConfigurationsModal?.();
 		}
-	}, [ paymentMethodAdded, devSite, toggleSiteConfigurationsModal ] );
+	}, [ addNewDevSite, devSite, toggleDevSiteConfigurationsModal ] );
 
 	return (
 		<div className="sites-header__actions">
 			{ showConfigurationModal && (
 				<SiteConfigurationsModal
-					closeModal={ toggleSiteConfigurationsModal }
+					closeModal={ toggleDevSiteConfigurationsModal }
 					randomSiteName={ randomSiteName }
 					isRandomSiteNameLoading={ isRandomSiteNameLoading }
 					onCreateSiteSuccess={ onCreateSiteSuccess }
@@ -69,7 +69,7 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 				<AddNewSiteButton
 					showMainButtonLabel={ ! isMobile }
 					devSite
-					toggleSiteConfigurationsModal={ toggleSiteConfigurationsModal }
+					toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
 				/>
 			) }
 			<div ref={ ( ref ) => setTourStepRef( ref ) }>
