@@ -178,5 +178,22 @@ describe( `${ flow.name }`, () => {
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 			} );
 		} );
+
+		it( 'redirects users FROM Capture Source URL > Migration assisted', () => {
+			const destination = runNavigation( {
+				from: STEPS.SITE_MIGRATION_SOURCE_URL,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				dependencies: { from: 'http://oldsite.example.com' },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+				query: {
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+					from: 'http://oldsite.example.com',
+				},
+			} );
+		} );
 	} );
 } );
