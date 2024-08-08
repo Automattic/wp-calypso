@@ -304,12 +304,13 @@ export class EditorPage {
 	async addBlockFromSidebar(
 		blockName: string,
 		blockEditorSelector: string,
-		{ noSearch }: { noSearch?: boolean } = {}
+		{ noSearch, blockFallBackName }: { noSearch?: boolean; blockFallBackName?: string } = {}
 	): Promise< ElementHandle > {
 		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
 		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent, {
 			noSearch: noSearch,
+			blockFallBackName: blockFallBackName,
 		} );
 
 		const blockHandle =
@@ -378,12 +379,12 @@ export class EditorPage {
 	private async addBlockFromInserter(
 		blockName: string,
 		inserter: BlockInserter,
-		{ noSearch }: { noSearch?: boolean } = {}
+		{ noSearch, blockFallBackName }: { noSearch?: boolean; blockFallBackName?: string } = {}
 	): Promise< void > {
 		if ( ! noSearch ) {
 			await inserter.searchBlockInserter( blockName );
 		}
-		await inserter.selectBlockInserterResult( blockName );
+		await inserter.selectBlockInserterResult( blockName, { blockFallBackName } );
 	}
 
 	/**
@@ -929,9 +930,9 @@ export class EditorPage {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			// Mobile viewports do not use an EditorNavSidebar.
 			// Instead, the regular NavBar is used, and the
-			// `My Sites` button exits the editor.
+			// `<` button exits the editor.
 			const navbarComponent = new NavbarComponent( this.page );
-			actions.push( navbarComponent.clickMySites() );
+			actions.push( navbarComponent.clickEditorBackButton() );
 		} else {
 			actions.push( this.editorToolbarComponent.closeEditor() );
 		}

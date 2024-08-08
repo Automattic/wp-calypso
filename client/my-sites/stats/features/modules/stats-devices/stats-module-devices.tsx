@@ -8,10 +8,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL } from '../../../const';
+import { JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import useModuleDevicesQuery, { StatsDevicesData } from '../../../hooks/use-modeule-devices-query';
 import { QueryStatsParams } from '../../../hooks/utils';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -150,6 +151,21 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		/>
 	);
 
+	const titleNodes = (
+		<StatsInfoArea isNew>
+			{ translate(
+				'The {{link}}devices and browsers{{/link}} your visitors use to access your website.',
+				{
+					comment: '{{link}} links to support documentation.',
+					components: {
+						link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` ) } />,
+					},
+					context: 'Stats: Info popover content when the Devices module has data.',
+				}
+			) }
+		</StatsInfoArea>
+	);
+
 	const chartData = OPTION_KEYS.SIZE === selectedOption ? prepareChartData( data ) : null;
 
 	return (
@@ -169,6 +185,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 							<StatsCard
 								className={ className }
 								title={ devicesStrings.title }
+								titleNodes={ <StatsInfoArea isNew /> }
 								isEmpty
 								emptyMessage={
 									<EmptyModuleCard
@@ -179,7 +196,11 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 												comment: '{{link}} links to support documentation.',
 												components: {
 													link: (
-														<a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#devices-stats` ) } />
+														<a
+															href={ localizeUrl(
+																`${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats`
+															) }
+														/>
 													),
 												},
 												context: 'Stats: Info box label when the Devices module is empty',
@@ -201,10 +222,10 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 							<StatsCard
 								className={ clsx( className, 'stats-module__card', path ) }
 								title={ devicesStrings.title }
+								titleNodes={ titleNodes }
 								titleURL=""
 								metricLabel=""
 								splitHeader
-								isNew
 								mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 								toggleControl={ toggleControlComponent }
 								isEmpty={ ! showLoader && ( ! chartData || ! chartData.length ) }
@@ -247,6 +268,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 								moduleType={ path }
 								data={ data }
 								title={ devicesStrings.title }
+								titleNodes={ titleNodes }
 								emptyMessage={ devicesStrings.empty }
 								metricLabel={ translate( 'Visitors' ) }
 								loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }

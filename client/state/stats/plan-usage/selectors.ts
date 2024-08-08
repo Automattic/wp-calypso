@@ -3,13 +3,27 @@ import { PlanUsage } from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 
 import 'calypso/state/stats/init';
 
-export function getPlanUsageBillableMonthlyViews( state: object, siteId: number ) {
-	const data = get( state, [ 'stats', 'planUsage', 'data', siteId ], null ) as PlanUsage;
-	// TODO: Use `data.billable_monthly_views` instead?
-	const recentViews =
-		data?.recent_usages
-			?.map( ( usage ) => usage?.views_count ?? 0 )
-			.filter( ( views ) => views > 0 ) ?? [];
+export function getShouldShowPaywallNotice( state: object, siteId: number | null ): boolean {
+	if ( ! siteId ) {
+		return false;
+	}
 
-	return recentViews.length > 0 ? Math.min( ...recentViews ) : 0;
+	const data = get( state, [ 'stats', 'planUsage', 'data', siteId ], null ) as PlanUsage;
+
+	// Sites with a `paywall_date_from` have a paywall sticker,
+	// and the date is when the sticker is added, not when the paywall is in effect.
+	return !! data?.paywall_date_from;
+}
+
+export function getShouldShowPaywallAfterGracePeriod(
+	state: object,
+	siteId: number | null
+): boolean {
+	if ( ! siteId ) {
+		return false;
+	}
+
+	const data = get( state, [ 'stats', 'planUsage', 'data', siteId ], null ) as PlanUsage;
+
+	return data?.should_show_paywall;
 }

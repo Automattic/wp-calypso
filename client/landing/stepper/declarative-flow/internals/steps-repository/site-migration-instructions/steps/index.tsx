@@ -1,18 +1,17 @@
 import { Checklist, ChecklistItem } from '@automattic/launchpad';
 import React, { FC } from 'react';
-import { useSteps } from './use-steps';
+import type { Steps as StepsType } from './use-steps';
+import './style.scss';
 
 interface Props {
-	fromUrl: string;
+	steps: StepsType;
 }
 
-export const Steps: FC< Props > = ( { fromUrl } ) => {
-	const checklistItems = useSteps( { fromUrl } );
-
+export const Steps: FC< Props > = ( { steps } ) => {
 	return (
 		<Checklist>
-			{ checklistItems.map( ( props ) => (
-				<ChecklistItem key={ props.task.id } { ...props } />
+			{ steps.map( ( step ) => (
+				<ChecklistItem key={ step.task.id } { ...step } />
 			) ) }
 		</Checklist>
 	);

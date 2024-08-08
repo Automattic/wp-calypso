@@ -1,11 +1,11 @@
 import { HelpCenter, MigrationStatusError } from '@automattic/data-stores';
-import {
-	useChatStatus,
-	useChatWidget,
-	useCanConnectToZendesk,
-	useMessagingAvailability,
-} from '@automattic/help-center/src/hooks';
+import { useChatStatus } from '@automattic/help-center/src/hooks';
 import { NextButton, SubTitle, Title } from '@automattic/onboarding';
+import {
+	useCanConnectToZendeskMessaging,
+	useZendeskMessagingAvailability,
+	useOpenZendeskMessaging,
+} from '@automattic/zendesk-client';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -23,6 +23,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 interface Props {
 	sourceSiteUrl: string;
 	targetSiteUrl: string;
+	targetSiteID: string | number;
 	status: MigrationStatusError | null;
 	resetMigration: () => void;
 	goToImportCapturePage: () => void;
@@ -30,7 +31,8 @@ interface Props {
 }
 
 export const MigrationError = ( props: Props ) => {
-	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute, resetStore } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 	const {
 		sourceSiteUrl,
 		targetSiteUrl,
@@ -38,15 +40,17 @@ export const MigrationError = ( props: Props ) => {
 		resetMigration,
 		goToImportCapturePage,
 		goToImportContentOnlyPage,
+		targetSiteID,
 	} = props;
 	const translate = useTranslate();
 	const { isEligibleForChat } = useChatStatus();
-	const { data: canConnectToZendesk } = useCanConnectToZendesk();
-	const { data: isMessagingAvailable } = useMessagingAvailability(
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
+	const { data: isMessagingAvailable } = useZendeskMessagingAvailability(
 		'wpcom_messaging',
 		isEligibleForChat
 	);
-	const { openChatWidget, isOpeningChatWidget } = useChatWidget(
+	const { openZendeskWidget, isOpeningZendeskWidget } = useOpenZendeskMessaging(
+		'migration-error',
 		'zendesk_support_chat_key',
 		isEligibleForChat
 	);
@@ -54,22 +58,29 @@ export const MigrationError = ( props: Props ) => {
 		useErrorDetails( status, sourceSiteUrl, targetSiteUrl );
 
 	const getHelp = useCallback( () => {
-		if ( isMessagingAvailable && canConnectToZendesk ) {
-			openChatWidget( {
+		if ( isMessagingAvailable && canConnectToZendeskMessaging ) {
+			openZendeskWidget( {
 				siteUrl: targetSiteUrl,
+				siteId: targetSiteID,
 				message: `${ status }: Import onboarding flow; migration failed`,
+				onSuccess: () => {
+					resetStore();
+					setShowHelpCenter( false );
+				},
 			} );
 		} else {
-			setInitialRoute( '/contact-form?mode=CHAT' );
+			setNavigateToRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );
 		}
 	}, [
-		openChatWidget,
+		resetStore,
+		openZendeskWidget,
 		targetSiteUrl,
 		status,
 		isMessagingAvailable,
-		canConnectToZendesk,
-		setInitialRoute,
+		targetSiteID,
+		canConnectToZendeskMessaging,
+		setNavigateToRoute,
 		setShowHelpCenter,
 	] );
 
@@ -109,7 +120,7 @@ export const MigrationError = ( props: Props ) => {
 						<NextButton
 							onClick={ getHelp }
 							variant={ goBackCta || tryAgainCta || importContentCta ? 'secondary' : 'primary' }
-							isBusy={ isOpeningChatWidget }
+							isBusy={ isOpeningZendeskWidget }
 						>
 							{ translate( 'Contact support' ) }
 						</NextButton>

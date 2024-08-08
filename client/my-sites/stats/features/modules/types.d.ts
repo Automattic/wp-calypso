@@ -10,6 +10,15 @@ type StatsDefaultModuleProps = {
 		value: string;
 		empty: string;
 	};
+	summaryUrl?: string;
+	/**
+	 * @property {boolean} summary Render page elements specific for a summary page, e.g. a download button.
+	 */
+	summary?: boolean;
+	/**
+	 * @property {string} listItemClassName Custom class name for list items (used on a summary page).
+	 */
+	listItemClassName?: string;
 };
 
 type StatsAdvancedModuleWrapperProps = {
@@ -19,6 +28,7 @@ type StatsAdvancedModuleWrapperProps = {
 	query: StatsQueryType;
 	summary?: boolean;
 	className?: string;
+	summaryUrl?: string;
 };
 
 type StatsPeriodType = {

@@ -27,33 +27,36 @@ export default function useProductFilterOptions() {
 
 	return {
 		[ PRODUCT_FILTER_KEY_CATEGORIES ]: [
-			{ key: PRODUCT_CATEGORY_SECURITY, label: translate( 'Security' ) },
-			{ key: PRODUCT_CATEGORY_PERFORMANCE, label: translate( 'Performance' ) },
-			{ key: PRODUCT_CATEGORY_SOCIAL, label: translate( 'Social' ) },
-			{ key: PRODUCT_CATEGORY_GROWTH, label: translate( 'Growth' ) },
-			{ key: PRODUCT_CATEGORY_PAYMENTS, label: translate( 'Payments' ) },
+			{ key: PRODUCT_CATEGORY_SECURITY, label: translate( 'Security' ) as string },
+			{ key: PRODUCT_CATEGORY_PERFORMANCE, label: translate( 'Performance' ) as string },
+			{ key: PRODUCT_CATEGORY_SOCIAL, label: translate( 'Social' ) as string },
+			{ key: PRODUCT_CATEGORY_GROWTH, label: translate( 'Growth' ) as string },
+			{ key: PRODUCT_CATEGORY_PAYMENTS, label: translate( 'Payments' ) as string },
 			{
 				key: PRODUCT_CATEGORY_SHIPPING_DELIVERY_FULFILLMENT,
-				label: translate( 'Shipping, Delivery, and Fulfillment' ),
+				label: translate( 'Shipping, Delivery, and Fulfillment' ) as string,
 			},
-			{ key: PRODUCT_CATEGORY_CONVERSION, label: translate( 'Conversion' ) },
-			{ key: PRODUCT_CATEGORY_CUSTOMER_SERVICE, label: translate( 'Customer Service' ) },
-			{ key: PRODUCT_CATEGORY_MERCHANDISING, label: translate( 'Merchandising' ) },
+			{ key: PRODUCT_CATEGORY_CONVERSION, label: translate( 'Conversion' ) as string },
+			{ key: PRODUCT_CATEGORY_CUSTOMER_SERVICE, label: translate( 'Customer Service' ) as string },
+			{ key: PRODUCT_CATEGORY_MERCHANDISING, label: translate( 'Merchandising' ) as string },
 			{
 				key: PRODUCT_CATEGORY_STORE_CONTENT,
-				label: translate( 'Store Content and Customization' ),
+				label: translate( 'Store Content and Customization' ) as string,
 			},
-			{ key: PRODUCT_CATEGORY_STORE_MANAGEMENT, label: translate( 'Store Management' ) },
+			{ key: PRODUCT_CATEGORY_STORE_MANAGEMENT, label: translate( 'Store Management' ) as string },
 		],
 		[ PRODUCT_FILTER_KEY_TYPES ]: [
-			{ key: PRODUCT_TYPE_EXTENSION, label: translate( 'Extension' ) },
-			{ key: PRODUCT_TYPE_PLAN, label: translate( 'Plan' ) },
-			{ key: PRODUCT_TYPE_PRODUCT, label: translate( 'Product' ) },
-			{ key: PRODUCT_TYPE_ADDON, label: translate( 'Add-on' ) },
+			{ key: PRODUCT_TYPE_EXTENSION, label: translate( 'Extension' ) as string },
+			{ key: PRODUCT_TYPE_PLAN, label: translate( 'Plan' ) as string },
+			{ key: PRODUCT_TYPE_PRODUCT, label: translate( 'Product' ) as string },
+			{ key: PRODUCT_TYPE_ADDON, label: translate( 'Add-on' ) as string },
 		],
 		[ PRODUCT_FILTER_KEY_PRICES ]: [
-			{ key: PRODUCT_PRICE_FREE, label: translate( 'Free' ) },
-			{ key: PRODUCT_PRICE_PAID, label: translate( 'Paid' ) },
+			{ key: PRODUCT_PRICE_FREE, label: translate( 'Free' ) as string },
+			{
+				key: PRODUCT_PRICE_PAID,
+				label: translate( 'Paid', { context: 'Label for a paid subscription plan' } ) as string,
+			},
 		],
 	};
 }

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { customLink } from '@wordpress/icons';
@@ -5,6 +6,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector } from 'calypso/state';
 import {
@@ -13,7 +15,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
@@ -23,10 +25,15 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
+	summary,
+	listItemClassName,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsClicks';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -55,12 +62,28 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 				// show data or an overlay
 				<StatsModule
 					path="clicks"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate(
+								'Most {{link}}clicked external links{{/link}} to track engaging content.',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ supportUrl }#clicks` ) } />,
+									},
+									context: 'Stats: Link in a popover for the Clicks module when it has data',
+								}
+							) }
+						</StatsInfoArea>
+					}
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
 					statType={ statType }
-					showSummaryLink
+					showSummaryLink={ !! summary }
 					className={ className }
+					summary={ summary }
+					listItemClassName={ listItemClassName }
 					skipQuery
 				/>
 			) }
@@ -78,12 +101,20 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#clicks` ) } />,
 									},
 									context: 'Stats: Info box label when the Clicks module is empty',
 								}
 							) }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

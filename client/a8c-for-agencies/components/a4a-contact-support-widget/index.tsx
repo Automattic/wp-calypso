@@ -25,13 +25,18 @@ export default function A4AContactSupportWidget() {
 		setShowUserSupportForm( true );
 	}
 
+	const migrationOfferDefaultMessage =
+		translate( "I'd like to chat more about the migration offer." ) +
+		'\n\n' +
+		translate( '[your message here]' );
+
 	return (
 		<UserContactSupportModalForm
 			show={ showUserSupportForm }
 			onClose={ onCloseUserSupportForm }
 			defaultMessage={
 				window.location.hash === CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT
-					? translate( "I'd like to chat more about the migration offer." )
+					? migrationOfferDefaultMessage
 					: undefined
 			}
 		/>

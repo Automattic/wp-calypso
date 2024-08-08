@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import wpcom from 'calypso/lib/wp';
+import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -23,7 +24,9 @@ import {
 	AssertConditionResult,
 	AssertConditionState,
 	Flow,
+	Navigate,
 	ProvidedDependencies,
+	StepperStep,
 } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { GlobalStylesObject } from '@automattic/global-styles';
@@ -53,6 +56,7 @@ const readymadeTemplateFlow: Flow = {
 			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
+			STEPS.GENERATE_CONTENT,
 		] );
 	},
 
@@ -62,26 +66,14 @@ const readymadeTemplateFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
 		);
-		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction, setSelectedSite, setSelectedReadymadeTemplate } =
+			useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite, assembleSite } = useDispatch( SITE_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
-
 		const reduxDispatch = useReduxDispatch();
-
 		const selectedTheme = getAssemblerDesign().slug;
-
 		const { value: readymadeTemplateId } = useUrlQueryParam( 'readymadeTemplateId' );
 		const readymadeTemplate = useReadymadeTemplate( readymadeTemplateId );
-
-		const exitFlow = ( to: string ) => {
-			setPendingAction( () => {
-				return new Promise( () => {
-					window.location.assign( to );
-				} );
-			} );
-
-			return navigate( 'processing' );
-		};
 
 		const handleSelectSite = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const selectedSiteSlug = providedDependencies?.siteSlug as string;
@@ -89,12 +81,15 @@ const readymadeTemplateFlow: Flow = {
 			setSelectedSite( selectedSiteId );
 			setIntentOnSite( selectedSiteSlug, SiteIntent.ReadyMadeTemplate );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
+			setSelectedReadymadeTemplate( readymadeTemplate );
 
 			setPendingAction(
 				enableAssemblerThemeAndConfigureTemplates(
 					selectedTheme,
 					selectedSiteId,
+					selectedSiteSlug,
 					readymadeTemplate,
+					navigate,
 					assembleSite,
 					reduxDispatch
 				)
@@ -146,17 +141,7 @@ const readymadeTemplateFlow: Flow = {
 						return navigate( 'celebration-step' );
 					}
 
-					if ( providedDependencies?.goToCheckout ) {
-						// Do nothing and wait for checkout redirect
-						return;
-					}
-
-					const params = new URLSearchParams( {
-						canvas: 'edit',
-						assembler: '1',
-					} );
-
-					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
+					return;
 				}
 
 				case 'launchpad': {
@@ -195,6 +180,7 @@ const readymadeTemplateFlow: Flow = {
 		const goBack = () => {
 			switch ( _currentStep ) {
 				case 'freePostSetup':
+				case 'generateContent':
 				case 'domains': {
 					return navigate( 'launchpad' );
 				}
@@ -243,7 +229,9 @@ const readymadeTemplateFlow: Flow = {
 function enableAssemblerThemeAndConfigureTemplates(
 	themeId: string,
 	siteId: number,
-	readymadeTemplate: { content: string; globalStyles: GlobalStylesObject },
+	siteSlug: string,
+	readymadeTemplate: ReadymadeTemplate & { globalStyles: GlobalStylesObject },
+	navigate: Navigate< StepperStep[] >,
 	assembleSite: (
 		arg0: any,
 		arg1: string,
@@ -292,24 +280,24 @@ function enableAssemblerThemeAndConfigureTemplates(
 					 *
 					 * For now we piggyback on Site Assembler's API endpoint to apply the template on the site.
 					 */
-					homeHtml: readymadeTemplate.content,
-					headerHtml: '',
-					footerHtml: '',
+					homeHtml: readymadeTemplate.home.content,
+					headerHtml: readymadeTemplate.home.header,
+					footerHtml: readymadeTemplate.home.footer,
 					pages: [],
 					globalStyles: readymadeTemplate.globalStyles,
 					canReplaceContent: true,
 					siteSetupOption: 'readymade-template',
 				} )
 			)
-			.then( () => window.location.assign( `/site-editor/${ siteId }?canvas=edit&assembler=1` ) );
+			.then( () => navigate( `launchpad?siteSlug=${ siteSlug }` ) );
 }
 
-function useReadymadeTemplate( templateId: number, options: object = { enabled: true } ) {
+function useReadymadeTemplate( templateId: number ) {
 	const { data: readymadeTemplate } = useQuery( {
-		...options,
 		queryKey: [ 'readymade-templates', templateId ],
 		queryFn: async () =>
 			wpcom.req.get( `/themes/readymade-templates/${ templateId }`, { apiNamespace: 'wpcom/v2' } ),
+		enabled: !! templateId,
 	} );
 
 	const { data: assemblerTheme } = useThemeDetails( 'assembler' );
@@ -322,7 +310,7 @@ function useReadymadeTemplate( templateId: number, options: object = { enabled: 
 	Object.values( readymadeTemplate.styles ?? [] ).forEach( ( readymadeTemplateStyleVariation ) => {
 		const styleVariation = assemblerTheme.style_variations.find(
 			( assemblerStyleVariation ) =>
-				assemblerStyleVariation.title === readymadeTemplateStyleVariation
+				assemblerStyleVariation.slug === readymadeTemplateStyleVariation
 		);
 		if ( styleVariation ) {
 			styleVariations.push( styleVariation );

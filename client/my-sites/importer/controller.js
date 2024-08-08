@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { camelCase } from 'lodash';
 import { BrowserRouter } from 'react-router-dom';
@@ -5,6 +6,7 @@ import CaptureScreen from 'calypso/blocks/import/capture';
 import ImporterList from 'calypso/blocks/import/list';
 import { getFinalImporterUrl } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
+import NewsletterImporter from 'calypso/my-sites/importer/newsletter/importer';
 import SectionImport from 'calypso/my-sites/importer/section-import';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import 'calypso/blocks/import/style/base.scss';
@@ -90,6 +92,23 @@ export function importerList( context, next ) {
 					} }
 				/>
 			</div>
+		</BrowserRouter>
+	);
+	next();
+}
+
+export function importSubstackSite( context, next ) {
+	if ( ! config.isEnabled( 'importers/newsletter' ) ) {
+		page.redirect( '/import' );
+		return;
+	}
+
+	const state = context.store.getState();
+	const siteSlug = getSelectedSiteSlug( state );
+
+	context.primary = (
+		<BrowserRouter>
+			<NewsletterImporter siteSlug={ siteSlug } engine="substack" step={ context.params.step } />
 		</BrowserRouter>
 	);
 	next();

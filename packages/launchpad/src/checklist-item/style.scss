@@ -227,7 +227,7 @@
 // pending disabled tasks
 .checklist-item__task.pending.disabled {
 	.checklist-item__text {
-		color: inherit;
+		color: var(--color-neutral-20);
 	}
 }
 
@@ -294,5 +294,39 @@
 
 	p {
 		margin: 12px 0;
+	}
+}
+
+.checklist-item__checklist-secondary-button.components-button {
+	width: 100%;
+	font-weight: 500;
+	padding: 11px;
+	margin-top: 12px;
+	background-color: var(--studio-white);
+	border: 1px solid var(--studio-gray-100);
+	border-radius: 4px;
+	color: var(--color-text);
+	justify-content: center;
+	font-size: $font-body-small;
+	height: auto;
+	line-height: 22px;
+
+	&:hover:not([disabled]) {
+		background-color: var(--studio-gray-0);
+		border-color: var(--color-neutral-40);
+		color: var(--color-text);
+	}
+
+	&[disabled] {
+		background-color: var(--studio-gray-0);
+		border: none;
+		color: var(--color-neutral-40);
+	}
+
+	&:disabled {
+		opacity: 1;
+		&:hover {
+			color: var(--color-neutral-40);
+		}
 	}
 }

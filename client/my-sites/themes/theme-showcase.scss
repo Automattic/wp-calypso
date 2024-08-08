@@ -13,6 +13,9 @@
 
 		.layout__content {
 			min-height: 100vh;
+			@media screen and (min-width: 782px) {
+				padding: calc(var(--masterbar-height) + 16px) 16px 16px var(--sidebar-width-max);
+			}
 		}
 
 		.layout__primary > * {

@@ -1,145 +1,165 @@
-import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import type { Task, Expandable } from '@automattic/launchpad';
+import { StepAddMigrationKey } from './step-add-migration-key';
+import { StepAddMigrationKeyFallback } from './step-add-migration-key-fallback';
+import { StepGetYourSiteReady } from './step-get-your-site-ready';
+import { StepInstallMigrationGuru } from './step-install-migation-guru';
+import type { Task, Expandable, ExpandableAction } from '@automattic/launchpad';
 
-const removeDuplicatedSlashes = ( url: string ) => url.replace( /(https?:\/\/)|(\/)+/g, '$1$2' );
-
-const getPluginInstallationPage = ( fromUrl: string ) => {
-	if ( fromUrl !== '' ) {
-		return removeDuplicatedSlashes(
-			`${ fromUrl }/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term`
-		);
-	}
-
-	return 'https://wordpress.org/plugins/migrate-guru/';
-};
-
-const getMigrateGuruPageURL = ( siteURL: string ) =>
-	removeDuplicatedSlashes( `${ siteURL }/wp-admin/admin.php?page=migrateguru` );
-
-const recordInstructionsLinkClick = ( linkname: string ) => {
-	recordTracksEvent( 'calypso_site_migration_instructions_link_click', {
-		linkname,
-	} );
-};
-
-interface Options {
+interface StepsDataOptions {
 	fromUrl: string;
+	migrationKey: string;
+	preparationError: Error | null;
+	showMigrationKeyFallback: boolean;
+}
+
+interface StepData {
+	key: string;
+	title: string;
+	content: JSX.Element;
+}
+
+type StepsData = StepData[];
+
+interface StepsOptions {
+	fromUrl: string;
+	migrationKey: string;
+	preparationError: Error | null;
+	showMigrationKeyFallback: boolean;
+	onComplete: () => void;
 }
 
 interface Step {
 	task: Task;
 	expandable?: Expandable;
+	onClick?: () => void;
 }
 
-type Steps = Step[];
+export type Steps = Step[];
 
-export const useSteps = ( { fromUrl }: Options ): Steps => {
+interface StepsObject {
+	steps: Steps;
+	completedSteps: number;
+}
+
+const useStepsData = ( {
+	fromUrl,
+	migrationKey,
+	preparationError,
+	showMigrationKeyFallback,
+}: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
 
-	const steps = [
+	return [
 		{
+			key: 'install-the-migrate-guru-plugin',
 			title: translate( 'Install the Migrate Guru plugin' ),
-			content: (
-				<p>
-					{ translate(
-						"First you'll need to install and activate the {{a}}Migrate Guru plugin{{/a}} on the site you want to migrate. Click {{strong}}Next{{/strong}} when you're ready.",
-						{
-							components: {
-								strong: <strong />,
-								a: (
-									<ExternalLink
-										href={ getPluginInstallationPage( fromUrl ) }
-										target="_blank"
-										onClick={ () => recordInstructionsLinkClick( 'install-plugin' ) }
-									/>
-								),
-							},
-						}
-					) }
-				</p>
-			),
+			content: <StepInstallMigrationGuru fromUrl={ fromUrl } />,
 		},
 		{
+			key: 'get-your-site-ready',
 			title: translate( 'Get your site ready' ),
-			content: (
-				<>
-					<p>
-						{ translate(
-							'Head to the {{a}}Migrate Guru plugin screen on your source site{{/a}}, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
-							{
-								components: {
-									strong: <strong />,
-									a: fromUrl ? (
-										<ExternalLink
-											href={ getMigrateGuruPageURL( fromUrl ) }
-											target="_blank"
-											onClick={ () => recordInstructionsLinkClick( 'go-to-plugin-page' ) }
-										/>
-									) : (
-										<strong />
-									),
-								},
-								args: { migrateLabel: 'Migrate' },
-							}
-						) }
-					</p>
-					<p>{ translate( 'Then, pick WordPress.com as your destination host.' ) }</p>
-					<p>
-						{ translate( 'All set? Click {{strong}}Next{{/strong}} below.', {
-							components: {
-								strong: <strong />,
-							},
-						} ) }
-					</p>
-				</>
-			),
+			content: <StepGetYourSiteReady fromUrl={ fromUrl } />,
 		},
 		{
+			key: 'add-your-migration-key',
 			title: translate( 'Add your migration key' ),
-			content: (
-				<>
-					<p>
-						{ translate(
-							'Copy the key below. Head to the Migrate Guru settings on your source site, and paste it into the {{strong}}%(migrationKeyLabel)s{{/strong}} field.',
-							{
-								components: {
-									strong: <strong />,
-								},
-								args: { migrationKeyLabel: 'Migrate Guru Migration Key' },
-							}
-						) }
-					</p>
-					<p>
-						{ translate( 'Click {{strong}}%(migrateLabel)s{{/strong}} to finish.', {
-							components: {
-								strong: <strong />,
-							},
-							args: { migrateLabel: 'Migrate' },
-						} ) }
-					</p>
-				</>
+			content: showMigrationKeyFallback ? (
+				<StepAddMigrationKeyFallback />
+			) : (
+				<StepAddMigrationKey migrationKey={ migrationKey } preparationError={ preparationError } />
 			),
 		},
 	];
+};
 
-	return steps.map( ( step, index ) => {
+export const useSteps = ( {
+	fromUrl,
+	migrationKey,
+	preparationError,
+	showMigrationKeyFallback,
+	onComplete,
+}: StepsOptions ): StepsObject => {
+	const translate = useTranslate();
+	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
+	const stepsData = useStepsData( {
+		fromUrl,
+		migrationKey,
+		preparationError,
+		showMigrationKeyFallback,
+	} );
+
+	const steps: Steps = stepsData.map( ( step, index, array ) => {
+		const recordCompletedStepEvent = () => {
+			recordTracksEvent( 'calypso_site_migration_instructions_substep_complete', {
+				step: step.key,
+			} );
+		};
+
+		const onNextClick = () => {
+			setCurrentStep( index + 1 );
+
+			// When completing a step that wasn't completed yet.
+			if ( lastCompleteStep < index ) {
+				setLastCompleteStep( index );
+				recordCompletedStepEvent();
+			}
+		};
+
+		const onDoneClick = () => {
+			onComplete();
+			recordCompletedStepEvent();
+		};
+
+		// Allow clicking on visited steps only, so users can see the previous steps again.
+		const onItemClick =
+			index > lastCompleteStep + 1 || index === currentStep
+				? undefined
+				: () => {
+						setCurrentStep( index );
+				  };
+
+		const isMigrationKeyStep = index === array.length - 1;
+
+		let action: ExpandableAction | undefined;
+
+		if ( ! isMigrationKeyStep ) {
+			// Next action.
+			action = {
+				label: translate( 'Next' ),
+				onClick: onNextClick,
+			};
+		} else if ( migrationKey || showMigrationKeyFallback ) {
+			// Done action for the migration key step.
+			action = {
+				label: translate( 'Done' ),
+				onClick: onDoneClick,
+			};
+		} else {
+			// No action for migration key step when migration key is not available.
+			action = undefined;
+		}
+
 		return {
 			task: {
-				id: step.title,
+				id: step.key,
 				title: step.title,
-				completed: false,
-				disabled: false,
+				completed: lastCompleteStep >= index,
+				disabled: lastCompleteStep < index - 1,
 			},
 			expandable: {
 				content: step.content,
-				isOpen: true,
-				action: {
-					label: index === steps.length - 1 ? translate( 'Done' ) : translate( 'Next' ),
-					onClick: () => {},
-				},
+				isOpen: currentStep === index,
+				action,
 			},
+			onClick: onItemClick,
 		};
 	} );
+
+	return {
+		steps,
+		completedSteps: lastCompleteStep + 1,
+	};
 };

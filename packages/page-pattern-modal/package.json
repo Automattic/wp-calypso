@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/page-pattern-modal",
-	"version": "1.0.0-alpha.0",
+	"version": "1.1.5",
 	"description": "Automattic Page Pattern Modal.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -27,8 +27,9 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@automattic/onboarding": "workspace:^",
-		"@automattic/typography": "workspace:^",
+		"@automattic/color-studio": "2.6.0",
+		"@automattic/typography": "1.0.0",
+		"@wordpress/base-styles": "5.2.0",
 		"@wordpress/block-editor": "^13.2.0",
 		"@wordpress/blocks": "^13.2.0",
 		"@wordpress/components": "^28.2.0",
@@ -55,7 +56,7 @@
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets",
 		"prepack": "yarn run clean && yarn run build"
 	}
 }

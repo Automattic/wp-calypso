@@ -1,0 +1,11 @@
+{
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
+	"compilerOptions": {
+		"outDir": "dist/esm",
+		"declarationDir": "dist/types",
+		"rootDir": "src"
+	},
+	"include": [ "src", "types.d.ts" ],
+	"exclude": [ "**/test/*" ],
+	"references": [ { "path": "../data-stores" }, { "path": "../calypso-config" } ]
+}

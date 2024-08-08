@@ -79,7 +79,11 @@ export type StepperStep = DeprecatedStepperStep | AsyncStepperStep;
 
 export type Navigate< FlowSteps extends StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
-	extraData?: any
+	extraData?: any,
+	/**
+	 * If true, the current step will be replaced in the history stack.
+	 */
+	replace?: boolean
 ) => void;
 
 /**
@@ -126,7 +130,7 @@ export type Flow = {
 		 * A custom login path to use instead of the default login path.
 		 */
 		customLoginPath?: string;
-		extraQueryParams: Record< string, string | number >;
+		extraQueryParams?: Record< string, string | number >;
 	};
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
@@ -135,6 +139,12 @@ export type Flow = {
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
 	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
+
+	/**
+	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
+	 * IMPORTANT: This hook will be removed in the future.
+	 */
+	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 };
 
 export type StepProps = {

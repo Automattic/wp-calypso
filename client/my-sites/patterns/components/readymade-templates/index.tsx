@@ -1,14 +1,20 @@
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
+import { ReadymadeTemplatePreview } from 'calypso/my-sites/patterns/components/readymade-template-preview';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
-
+import { ReadymadeTemplatesProps } from 'calypso/my-sites/patterns/types';
 import './style.scss';
 
-export const ReadymadeTemplates = () => {
+type ReadymadeTemplatesSectionProps = ReadymadeTemplatesProps & {
+	forwardRef: RefObject< HTMLDivElement > | null;
+};
+
+export const ReadymadeTemplates = ( {
+	readymadeTemplates,
+	forwardRef,
+}: ReadymadeTemplatesSectionProps ) => {
 	const translate = useTranslate();
-	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const [ currentScrollLeft, setCurrentScrollLeft ] = useState( 0 );
 	const [ maxScrollLeft, setMaxScrollLeft ] = useState( 0 );
@@ -61,24 +67,29 @@ export const ReadymadeTemplates = () => {
 		return;
 	}
 
+	const props = forwardRef ? { forwardRef } : {};
+
 	return (
 		<PatternsSection
+			{ ...props }
 			bodyFullWidth
 			description={ translate(
-				'Explore a collection of beautiful site layouts made with our patterns.'
+				'Explore our beautiful, customizable site layouts, designed for quick setup and tailored to fit your needs.'
 			) }
+			id="readymade-templates-section"
 			theme="dark"
 			title={ translate( 'Ready-to-use site layouts' ) }
+			isPremium
 		>
 			<div className="readymade-templates" ref={ containerRef }>
 				{ readymadeTemplates.map( ( readymadeTemplate ) => (
 					<a
-						href={ `/patterns/site-layouts/${ readymadeTemplate.template_id } ` }
+						href={ `/patterns/site-layouts/${ readymadeTemplate.slug } ` }
 						className="readymade-template"
 						key={ readymadeTemplate.template_id }
 					>
-						<div className="readymade-template__content">
-							<img src={ readymadeTemplate.screenshot } alt="" />
+						<div className="readymade-template__preview">
+							<ReadymadeTemplatePreview readymadeTemplate={ readymadeTemplate } />
 						</div>
 						<div className="readymade-template__title">{ readymadeTemplate.title }</div>
 					</a>

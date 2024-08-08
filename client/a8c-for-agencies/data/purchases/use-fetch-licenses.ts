@@ -16,9 +16,10 @@ export const getFetchLicensesQueryKey = (
 	sortField: LicenseSortField,
 	sortDirection: LicenseSortDirection,
 	page: number,
+	perPage: number,
 	agencyId?: number
 ) => {
-	return [ 'a4a-licenses', filter, search, sortField, sortDirection, page, agencyId ];
+	return [ 'a4a-licenses', filter, search, sortField, sortDirection, page, perPage, agencyId ];
 };
 
 export default function useFetchLicenses(
@@ -26,12 +27,21 @@ export default function useFetchLicenses(
 	search: string,
 	sortField: LicenseSortField,
 	sortDirection: LicenseSortDirection,
-	page: number
+	page: number,
+	perPage: number = LICENSES_PER_PAGE
 ) {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery( {
-		queryKey: getFetchLicensesQueryKey( filter, search, sortField, sortDirection, page, agencyId ),
+		queryKey: getFetchLicensesQueryKey(
+			filter,
+			search,
+			sortField,
+			sortDirection,
+			page,
+			perPage,
+			agencyId
+		),
 		queryFn: () =>
 			wpcom.req.get(
 				{
@@ -40,10 +50,12 @@ export default function useFetchLicenses(
 				},
 				{
 					...( agencyId && { agency_id: agencyId } ),
-					...( search ? { search: search } : { filter: filter, page: page } ),
+					...( search && { search: search } ),
+					filter: filter,
+					page: page,
 					sort_field: sortField,
 					sort_direction: sortDirection,
-					per_page: LICENSES_PER_PAGE,
+					per_page: perPage,
 				}
 			),
 		select: ( data ) => {

@@ -21,6 +21,10 @@ $business-plan-color: #7f54b3;
 		}
 	}
 
+	.notice.is-reskinned {
+		padding-right: 16px;
+	}
+
 	.import__upgrade-plan-features-container {
 		background: #fff;
 		border: solid var(--studio-gray-5) 1px;
@@ -221,7 +225,6 @@ $business-plan-color: #7f54b3;
 	}
 
 	.import__upgrade-plan-details {
-		margin-top: 2.5rem;
 		margin-bottom: 2.5rem;
 
 		&.import__upgrade-plan-details--loading {

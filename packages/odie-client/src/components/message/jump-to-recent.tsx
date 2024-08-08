@@ -1,36 +1,45 @@
 import { Icon, chevronDown } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { RefObject, useCallback } from 'react';
 import { useOdieAssistantContext } from '../../context';
 
 export const JumpToRecent = ( {
-	scrollToBottom,
-	enableJumpToRecent,
+	containerReference,
 }: {
-	scrollToBottom: () => void;
-	enableJumpToRecent: boolean;
+	containerReference: RefObject< HTMLDivElement >;
 } ) => {
-	const { trackEvent, isMinimized } = useOdieAssistantContext();
+	const { trackEvent, isMinimized, lastMessageInView, chat } = useOdieAssistantContext();
 	const { _x } = useI18n();
-	const jumpToRecent = () => {
-		scrollToBottom();
-		trackEvent( 'chat_jump_to_recent_click' );
-	};
 
-	if ( isMinimized ) {
+	const jumpToRecent = useCallback( () => {
+		if ( containerReference.current && chat.messages.length > 0 ) {
+			let lastMessageRef: HTMLDivElement | null = null;
+			if ( containerReference.current ) {
+				lastMessageRef = containerReference.current.querySelector(
+					'[data-is-last-message="true"]'
+				);
+			}
+			const lastMessage = lastMessageRef;
+			lastMessage?.scrollIntoView( { behavior: 'smooth', block: 'start', inline: 'nearest' } );
+		}
+		trackEvent( 'chat_jump_to_recent_click' );
+	}, [ containerReference, trackEvent, chat.messages.length ] );
+
+	if ( isMinimized || chat.messages.length < 2 ) {
 		return null;
 	}
 
 	const className = clsx( 'odie-gradient-to-white', {
-		'is-visible': enableJumpToRecent,
-		'is-hidden': ! enableJumpToRecent,
+		'is-visible': ! lastMessageInView,
+		'is-hidden': lastMessageInView,
 	} );
 
 	return (
 		<div className={ className }>
 			<button
 				className="odie-jump-to-recent-message-button"
-				disabled={ ! enableJumpToRecent }
+				disabled={ lastMessageInView }
 				onClick={ jumpToRecent }
 			>
 				{

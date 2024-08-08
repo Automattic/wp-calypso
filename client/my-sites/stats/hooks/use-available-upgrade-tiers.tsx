@@ -13,49 +13,6 @@ import { StatsPlanTierUI } from '../stats-purchase/types';
 export const EXTENSION_THRESHOLD_IN_MILLION = 2;
 export const MAX_TIERS_NUMBER = 6;
 
-// TODO: Remove the mock data after release.
-// No need to translate mock data.
-const MOCK_PLAN_DATA = [
-	{
-		minimum_price: 10000,
-		price: '$8.34',
-		views: 10000,
-		description: '$9/month for 10k views',
-	},
-	{
-		minimum_price: 20000,
-		price: '$16.67',
-		views: 100000,
-		description: '$19/month for 100k views',
-	},
-	{
-		minimum_price: 30000,
-		price: '$25',
-		views: 250000,
-		description: '$29/month for 250k views',
-	},
-	{
-		minimum_price: 50000,
-		price: '$41.67',
-		views: 500000,
-		description: '$49/month for 500k views',
-	},
-	{
-		minimum_price: 70000,
-		price: '$58.34',
-		views: 1000000,
-		description: '$69/month for 1M views',
-	},
-	{
-		minimum_price: 95000,
-		price: '$79.17',
-		views: null,
-		extension: true,
-		per_unit_fee: 25000,
-		description: '$25/month per million views if views exceed 1M',
-	},
-];
-
 /**
  * Filter the tiers that are lower than the current usage / limit
  */
@@ -197,30 +154,29 @@ export function getAvailableUpgradeTiers(
 	usageData: PlanUsage | undefined,
 	shouldFilterPurchasedTiers: boolean
 ): StatsPlanTierUI[] {
-	// 1. Get the tiers. Default to yearly pricing.
+	// Get the tiers. Default is yearly pricing.
 	const commercialProduct = getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY );
-
 	if ( ! commercialProduct?.price_tier_list ) {
-		return MOCK_PLAN_DATA;
+		return [];
 	}
 
+	// Get tiers applicable for the current site.
+	// We return early if we don't have any usage data to filter/extend tiers.
 	const currentTierPrice = usageData?.current_tier?.minimum_price;
 	let tiersForUi = transformTiers( commercialProduct?.price_tier_list, currentTierPrice );
-
-	// If usage is not available then we return early, as without usage we can't filter / extend tiers.
 	if ( ! usageData ) {
 		return tiersForUi;
 	}
 
-	// 2. Filter based on current plan.
+	// Filter based on current plan.
 	if ( shouldFilterPurchasedTiers ) {
 		tiersForUi = filterLowerTiers( tiersForUi, usageData );
 	}
 
+	// Handle tiers beyond the default listing.
 	const currencyCode = commercialProduct.currency_code;
 	tiersForUi = extendTiersBeyondHighestTier( tiersForUi, currencyCode, usageData );
 
-	// 3. Return the relevant upgrade options as a list.
 	return tiersForUi;
 }
 
@@ -229,11 +185,9 @@ function useAvailableUpgradeTiers(
 	shouldFilterPurchasedTiers = true
 ): StatsPlanTierUI[] {
 	const { data: usageData } = usePlanUsageQuery( siteId );
-
 	const tiersForUi = useSelector( ( state ) =>
 		getAvailableUpgradeTiers( state, usageData, shouldFilterPurchasedTiers )
 	);
-	// 3. Return the relevant upgrade options as a list.
 	return tiersForUi;
 }
 

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { search } from '@wordpress/icons';
@@ -5,6 +6,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector } from 'calypso/state';
 import {
 	isRequestingSiteStatsForQuery,
@@ -12,7 +14,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
@@ -23,10 +25,15 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
+	summary,
+	listItemClassName,
 }: StatsDefaultModuleProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsSearchTerms';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
@@ -53,12 +60,28 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
 				<StatsModule
 					path="searchterms"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate(
+								'Learn about {{link}}popular terms{{/link}} visitors use to find your site content on search engines.',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ supportUrl }#search-terms` ) } />,
+									},
+									context: 'Stats: Info box label when the Search module is empty',
+								}
+							) }
+						</StatsInfoArea>
+					}
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
 					statType={ statType }
-					showSummaryLink
+					showSummaryLink={ !! summary }
 					className={ className }
+					summary={ summary }
+					listItemClassName={ listItemClassName }
 					skipQuery
 				/>
 			) }
@@ -75,12 +98,20 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#search-terms` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#search-terms` ) } />,
 									},
 									context: 'Stats: Info box label when the Search module is empty',
 								}
 							) }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

@@ -280,7 +280,6 @@ import {
 	FEATURE_ASSEMBLED_KITS,
 	FEATURE_STOCK_NOTIFS,
 	FEATURE_DYNAMIC_UPSELLS,
-	FEATURE_LOYALTY_PROG,
 	FEATURE_CUSTOM_MARKETING_AUTOMATION,
 	FEATURE_BULK_DISCOUNTS,
 	FEATURE_INVENTORY_MGMT,
@@ -310,6 +309,10 @@ import {
 	FEATURE_WOOCOMMERCE_HOSTING,
 	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	FEATURE_PRIORITY_24_7_SUPPORT,
+	FEATURE_SOCIAL_AUTO_SHARE,
+	FEATURE_SOCIAL_SHARES_1000,
+	FEATURE_SOCIAL_ENHANCED_PUBLISHING,
+	FEATURE_SOCIAL_IMAGE_GENERATOR,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -2151,6 +2154,32 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Automatically share your latest post on Facebook, Tumblr, and more.' ),
 	},
+	[ FEATURE_SOCIAL_AUTO_SHARE ]: {
+		getSlug: () => FEATURE_SOCIAL_AUTO_SHARE,
+		getTitle: () => i18n.translate( 'Automatically share your posts and products on social media' ),
+		getDescription: () =>
+			i18n.translate(
+				'Automatically share to Facebook, Instagram, Threads, LinkedIn, Mastodon, Tumblr, and Nextdoor.'
+			),
+	},
+	[ FEATURE_SOCIAL_SHARES_1000 ]: {
+		getSlug: () => FEATURE_SOCIAL_SHARES_1000,
+		getTitle: () => i18n.translate( 'Share an unlimited number of posts' ),
+		getDescription: () => i18n.translate( 'Share an unlimited number of posts.' ),
+	},
+	[ FEATURE_SOCIAL_ENHANCED_PUBLISHING ]: {
+		getSlug: () => FEATURE_SOCIAL_ENHANCED_PUBLISHING,
+		getTitle: () => i18n.translate( 'Upload custom images or videos with your posts' ),
+		getDescription: () => i18n.translate( 'Upload custom images or videos with your posts.' ),
+	},
+	[ FEATURE_SOCIAL_IMAGE_GENERATOR ]: {
+		getSlug: () => FEATURE_SOCIAL_IMAGE_GENERATOR,
+		getTitle: () => i18n.translate( 'Automatically generate images for posts' ),
+		getDescription: () =>
+			i18n.translate(
+				'Automatically generate custom images for posts using a template or a custom text.'
+			),
+	},
 	[ FEATURE_CONTACT_FORM_JP ]: {
 		getSlug: () => FEATURE_CONTACT_FORM_JP,
 		getTitle: () => i18n.translate( 'Contact form' ),
@@ -2326,15 +2355,6 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate(
 				'Earn more revenue with automated upsell and cross-sell product recommendations.'
-			),
-		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
-	},
-	[ FEATURE_LOYALTY_PROG ]: {
-		getSlug: () => FEATURE_LOYALTY_PROG,
-		getTitle: () => i18n.translate( 'Referral and loyalty programs' ),
-		getDescription: () =>
-			i18n.translate(
-				'Boost organic sales with a customer referral program and offer free gifts or coupons as a reward.'
 			),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},

@@ -181,6 +181,7 @@ export const Sharing = ( {
 			{ ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
+					plan={ PLAN_PREMIUM }
 					feature={ WPCOM_FEATURES_NO_ADVERTS }
 					description={ translate( 'Prevent ads from showing on your site.' ) }
 					title={ translate( 'No ads with WordPress.com %(premiumPlanName)s', {

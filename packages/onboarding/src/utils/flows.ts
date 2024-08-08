@@ -26,6 +26,7 @@ export const MIGRATION_FLOW = 'import-focused';
 export const SITE_MIGRATION_FLOW = 'site-migration';
 export const MIGRATION_SIGNUP_FLOW = 'migration-signup';
 export const HOSTED_SITE_MIGRATION_FLOW = 'hosted-site-migration';
+export const HOSTED_SITE_MIGRATION_V2_FLOW = 'hosted-site-migration-v2';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
@@ -45,6 +46,7 @@ export const GOOGLE_TRANSFER = 'google-transfer';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
 export const REBLOGGING_FLOW = 'reblogging';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
+export const ONBOARDING_FLOW = 'onboarding';
 export const ONBOARDING_GUIDED_FLOW = 'onboarding';
 export const EMAIL_SUBSCRIPTION_FLOW = 'email-subscription';
 

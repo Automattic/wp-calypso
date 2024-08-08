@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { megaphone } from '@wordpress/icons';
@@ -5,6 +6,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import {
 	isRequestingSiteStatsForQuery,
@@ -12,7 +14,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionSocial } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
@@ -23,10 +25,15 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
+	summary,
+	listItemClassName,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsReferrers';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -55,12 +62,28 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 				// show data or an overlay
 				<StatsModule
 					path="referrers"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate(
+								'Websites {{link}}referring visitors{{/link}} sorted by most clicked. Learn about where your audience comes from.',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( `${ supportUrl }#referrers` ) } />,
+									},
+									context: 'Stats: Link in a popover for the Referrers when the module has data',
+								}
+							) }
+						</StatsInfoArea>
+					}
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
 					statType={ statType }
-					showSummaryLink
+					showSummaryLink={ !! summary }
 					className={ className }
+					summary={ summary }
+					listItemClassName={ listItemClassName }
 					skipQuery
 				/>
 			) }
@@ -78,13 +101,21 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#referrers` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#referrers` ) } />,
 									},
 									context: 'Stats: Info box label when the Referrers module is empty',
 								}
 							) }
 							cards={ <StatsEmptyActionSocial from="module_referrers" /> }
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

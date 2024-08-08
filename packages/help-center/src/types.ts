@@ -11,14 +11,18 @@ export interface Container {
 	openingCoordinates?: ReturnType< typeof useOpeningCoordinates >;
 }
 
+export interface PostObject {
+	content: string;
+	title: string;
+	URL: string;
+	ID: number;
+	site_ID: number;
+	slug: string;
+}
+
 export interface ArticleContentProps {
-	content: string | undefined;
-	title: string | undefined;
-	link: string | undefined;
+	post?: PostObject;
 	isLoading?: boolean;
-	postId: number;
-	blogId?: string | null;
-	slug?: string;
 }
 
 export interface Header {
@@ -76,16 +80,6 @@ export interface SupportTicket {
 	when: string;
 }
 
-export interface MessagingAuth {
-	user: {
-		jwt: string;
-	};
-}
-
-export interface MessagingAvailability {
-	is_available: boolean;
-}
-
 export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 interface Availability {
@@ -96,6 +90,7 @@ interface Availability {
 
 interface Eligibility {
 	is_user_eligible: boolean;
+	wapuu_assistant_enabled: boolean;
 	support_level:
 		| 'free'
 		| 'personal'
@@ -137,3 +132,5 @@ export type AnalysisReport = {
 	siteURL: string | undefined;
 	isWpcom: boolean;
 };
+
+export type ContactOption = 'chat' | 'email';

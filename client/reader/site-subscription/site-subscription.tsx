@@ -16,9 +16,13 @@ const SiteSubscription = ( { blogId, subscriptionId, transition }: SiteSubscript
 	return (
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 			<SiteSubscriptionProvider blogId={ blogId } subscriptionId={ subscriptionId }>
-				<Main className="site-subscriptions-manager">
-					<ReaderSiteSubscription transition={ transition } />
-				</Main>
+				<div>
+					<div>
+						<Main className="site-subscriptions-manager">
+							<ReaderSiteSubscription transition={ transition } />
+						</Main>
+					</div>
+				</div>
 			</SiteSubscriptionProvider>
 		</SubscriptionManagerContextProvider>
 	);

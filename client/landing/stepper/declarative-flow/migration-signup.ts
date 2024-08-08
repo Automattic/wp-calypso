@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { MIGRATION_SIGNUP_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -16,12 +15,6 @@ import { STEPS } from './internals/steps';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
-
-const MIGRATION_INSTRUCTIONS_STEP = config.isEnabled(
-	'migration-flow/new-migration-instructions-step'
-)
-	? STEPS.SITE_MIGRATION_INSTRUCTIONS
-	: STEPS.SITE_MIGRATION_INSTRUCTIONS_I2;
 
 const FLOW_NAME = MIGRATION_SIGNUP_FLOW;
 
@@ -41,7 +34,8 @@ const migrationSignup: Flow = {
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-			MIGRATION_INSTRUCTIONS_STEP,
+			STEPS.SITE_MIGRATION_INSTRUCTIONS,
+			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
 		] );
 	},
@@ -95,7 +89,7 @@ const migrationSignup: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
-			const siteId = getSiteIdBySlug( siteSlug );
+			const siteId = getSiteIdBySlug( siteSlug ) || urlQueryParams.get( 'siteId' );
 
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
@@ -161,8 +155,9 @@ const migrationSignup: Flow = {
 							{
 								siteSlug,
 								from: fromQueryParam,
+								siteId,
 							},
-							`/setup/${ FLOW_NAME }/${ MIGRATION_INSTRUCTIONS_STEP.slug }`
+							`/setup/${ FLOW_NAME }/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }`
 						);
 						goToCheckout( {
 							flowName: FLOW_NAME,
@@ -177,6 +172,16 @@ const migrationSignup: Flow = {
 									: {},
 						} );
 						return;
+					}
+				}
+
+				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
+					// Take the user to the migration started step.
+					if ( providedDependencies?.destination === 'migration-started' ) {
+						return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
+							siteId,
+							siteSlug,
+						} );
 					}
 				}
 			}

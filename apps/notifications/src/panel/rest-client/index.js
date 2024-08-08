@@ -480,7 +480,8 @@ function setVisibility( { isShowing, isVisible } ) {
 		isVisible: this.isVisible,
 	} );
 
-	if ( isVisible && isShowing ) {
+	// Fetch notification when visible for the first time or visible and showing
+	if ( isVisible && ( ! this.lastSeenTime || isShowing ) ) {
 		this.updateLastSeenTime( 0 );
 		this.main();
 	}

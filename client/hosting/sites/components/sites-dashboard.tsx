@@ -8,7 +8,6 @@ import {
 	useSitesListSorting,
 } from '@automattic/sites';
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
-import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -30,6 +29,7 @@ import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { isP2Theme } from 'calypso/lib/site/utils';
 import {
 	SitesDashboardQueryParams,
 	handleQueryParamChange,
@@ -49,7 +49,7 @@ import {
 import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
-import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
+import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination, addDummyDataViewPrefix } from './sites-dataviews/utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -79,6 +79,7 @@ const siteSortingKeys = [
 
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_STATUS_GROUP = 'all';
+const DEFAULT_SITE_TYPE = 'non-p2';
 
 const SitesDashboard = ( {
 	// Note - control params (eg. search, page, perPage, status...) are currently meant for
@@ -89,25 +90,52 @@ const SitesDashboard = ( {
 		search,
 		newSiteID,
 		status = DEFAULT_STATUS_GROUP,
+		siteType = DEFAULT_SITE_TYPE,
 	},
 	selectedSite,
 	initialSiteFeature = DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
-	const { __ } = useI18n();
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
+	const sitesFilterCallback = ( site: SiteExcerptData ) => {
+		const { options } = site || {};
+
+		// Early return if the site is domain-only
+		if ( options?.is_domain_only ) {
+			return false;
+		}
+
+		// siteType is 'all' - filter out sites that are P2 sites
+		if ( siteType === DEFAULT_SITE_TYPE ) {
+			return (
+				! options?.is_wpforteams_site &&
+				( ! options?.theme_slug || ! isP2Theme( options.theme_slug ) )
+			);
+		}
+
+		// siteType is 'p2' - filter out sites that are not P2
+		return (
+			!! options?.is_wpforteams_site ||
+			!! ( options?.theme_slug && isP2Theme( options.theme_slug ) )
+		);
+	};
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
-		( site ) => ! site.options?.is_domain_only
+		sitesFilterCallback,
+		'all',
+		[],
+		[ 'theme_slug' ]
 	);
 
 	const hasEnTranslation = useHasEnTranslation();
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
+
+	const siteStatusGroups = useSiteStatusGroups();
 
 	// Create the DataViews state based on initial values
 	const defaultDataViewsState = {
@@ -140,7 +168,7 @@ const SitesDashboard = ( {
 		initialSiteFeature,
 		dataViewsState,
 		featureToRouteMap: FEATURE_TO_ROUTE_MAP,
-		queryParamKeys: [ 'page', 'per-page', 'status', 'search' ],
+		queryParamKeys: [ 'page', 'per-page', 'status', 'search', 'siteType' ],
 	} );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
@@ -163,7 +191,13 @@ const SitesDashboard = ( {
 
 			setInitialSortApplied( true );
 		}
-	}, [ hasSitesSortingPreferenceLoaded, sitesSorting, dataViewsState.sort, initialSortApplied ] );
+	}, [
+		hasSitesSortingPreferenceLoaded,
+		sitesSorting,
+		dataViewsState.sort,
+		initialSortApplied,
+		siteType,
+	] );
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
@@ -173,7 +207,7 @@ const SitesDashboard = ( {
 		const statusNumber = statusFilter?.value || 1;
 		return ( siteStatusGroups.find( ( status ) => status.value === statusNumber )?.slug ||
 			'all' ) as GroupableSiteLaunchStatuses;
-	}, [ dataViewsState.filters ] );
+	}, [ dataViewsState.filters, siteStatusGroups ] );
 
 	// Filter sites list by status group.
 	const { currentStatusGroup } = useSitesListGrouping( allSites, {
@@ -258,6 +292,8 @@ const SitesDashboard = ( {
 
 	const showA8CForAgenciesBanner = paginatedSites.length >= 5;
 
+	const dashboardTitle = siteType === 'p2' ? translate( 'P2s' ) : translate( 'Sites' );
+
 	return (
 		<Layout
 			className={ clsx(
@@ -266,23 +302,23 @@ const SitesDashboard = ( {
 				! dataViewsState.selectedItem && 'preview-hidden'
 			) }
 			wide
-			title={ dataViewsState.selectedItem ? null : translate( 'Sites' ) }
+			title={ dataViewsState.selectedItem ? null : dashboardTitle }
 			disableGuidedTour
 		>
-			<DocumentHead title={ __( 'Sites' ) } />
+			<DocumentHead title={ dashboardTitle } />
 
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ false }>
 						<LayoutHeader>
-							{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
+							{ ! isNarrowView && <Title>{ dashboardTitle }</Title> }
 							<Actions>
 								<SitesDashboardHeader />
 							</Actions>
 						</LayoutHeader>
 					</LayoutTop>
 
-					<DocumentHead title={ __( 'Sites' ) } />
+					<DocumentHead title={ dashboardTitle } />
 					{ showA8CForAgenciesBanner && (
 						<div className="sites-a8c-for-agencies-banner-container">
 							<Banner
@@ -311,12 +347,8 @@ const SitesDashboard = ( {
 								) }
 								target="_blank"
 								title={
-									hasEnTranslation(
-										'Building sites for customers? Earn more with our agency program.'
-									)
-										? translate(
-												'Building sites for customers? Earn more with our agency program.'
-										  )
+									hasEnTranslation( "Building sites for customers? Here's how to earn more." )
+										? translate( "Building sites for customers? Here's how to earn more." )
 										: translate( 'Managing multiple sites? Meet our agency hosting' )
 								}
 								tracksClickName="calypso_sites_dashboard_a4a_banner_click"

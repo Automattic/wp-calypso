@@ -53,17 +53,41 @@ $brand-text: "SF Pro Text", $sans;
 		--color-sidebar-submenu-text: var(--color-sidebar-text);
 		--color-sidebar-submenu-selected-text: var(--color-sidebar-menu-selected-text);
 		--color-sidebar-submenu-hover-text: var(--color-sidebar-menu-selected-text);
+		--color-sidebar-submenu-selected-hover-text: var(--color-sidebar-menu-selected-text);
 		--color-sidebar-gridicon-fill: var(--color-sidebar-text);
 		--color-sidebar-gridicon-hover-fill: var(--color-sidebar-text);
 		--color-sidebar-gridicon-selected-fill: var(--color-sidebar-menu-selected-text);
 		--color-sidebar-tooltip-background: var(--color-sidebar-menu-hover-background);
 		--color-sidebar-tooltip-text: var(--color-sidebar-menu-hover-text);
 		--color-masterbar-unread-dot-background: #e65054;
+		--color-masterbar-background: var(--studio-gray-90);
+		--color-masterbar-text: var(--studio-gray-10);
+		--color-masterbar-icon: var(--studio-gray-10);
+		--color-masterbar-submenu-text: var(--color-sidebar-text);
+		--color-masterbar-submenu-hover-text: var(--color-accent);
+		--color-global-masterbar-submenu-background: var(--studio-white);
+		--color-global-masterbar-submenu-hover-background: var(--studio-white);
 	}
 
 	.is-global-sidebar-collapsed {
 		--sidebar-width-max: 69px;
 		--sidebar-width-min: 69px;
+
+		.sidebar {
+			.sidebar__menu-icon {
+				&.sidebar_svg-brush {
+					margin-left: 0;
+				}
+
+				&.sidebar_svg-a8c {
+					padding: 0 2px;
+				}
+
+				&.dashicons-admin-site-alt3 {
+					padding: 0 1px;
+				}
+			}
+		}
 	}
 
 	.is-unified-site-sidebar-visible {
@@ -255,6 +279,19 @@ $font-size: rem(14px);
 			background-size: contain;
 			color: var(--color-sidebar-gridicon-fill);
 			margin-right: 8px;
+
+			&.sidebar_svg-brush {
+				margin-left: -2px;
+			}
+
+			&.sidebar_svg-a8c {
+				margin-right: 10px;
+				margin-left: 0;
+				path {
+					stroke: var(--color-sidebar-gridicon-fill);
+					fill: none;
+				}
+			}
 		}
 
 		img.sidebar__menu-icon {
@@ -282,6 +319,13 @@ $font-size: rem(14px);
 
 			.sidebar__menu-icon {
 				color: var(--color-sidebar-menu-selected-text);
+
+				&.sidebar_svg-a8c {
+					path {
+						stroke: var(--color-sidebar-menu-selected-text);
+						fill: none;
+					}
+				}
 			}
 
 			img.sidebar__menu-icon {
@@ -348,6 +392,13 @@ $font-size: rem(14px);
 
 				.sidebar__menu-icon {
 					color: var(--color-sidebar-menu-selected-text);
+
+					&.sidebar_svg-a8c {
+						path {
+							stroke: var(--color-sidebar-menu-selected-text);
+							fill: none;
+						}
+					}
 				}
 				img.sidebar__menu-icon {
 					opacity: 1;
@@ -418,6 +469,7 @@ $font-size: rem(14px);
 			padding: 12px 10px;
 			margin: 0 12px;
 			border-radius: 4px;
+			max-height: 44px;
 		}
 
 		.sidebar__expandable-content .sidebar__menu-link {
@@ -665,23 +717,6 @@ $font-size: rem(14px);
 		}
 	}
 
-	// client/my-sites/current-site/style.scss
-	.current-site__switch-sites:hover .button.is-borderless:hover {
-		background-color: var(--color-sidebar-menu-hover-background);
-	}
-
-	.current-site__switch-sites .button.is-borderless {
-		color: var(--color-sidebar-text-alternative);
-		padding: 6px 8px 6px 36px;
-	}
-
-	.current-site__switch-sites .button.is-borderless .gridicon {
-		height: 20px;
-		width: 20px;
-		top: 9px;
-		left: 8px;
-	}
-
 	.all-sites .dashicons-admin-site-alt3 {
 		height: 18px;
 	}
@@ -741,18 +776,9 @@ $font-size: rem(14px);
 			transform: rotate(180deg);
 		}
 
-		// client/my-sites/current-site/style.scss
-		.current-site__switch-sites .button.is-borderless {
-			height: 34px;
-			padding: 0;
-		}
 
 		.site-selector .search .search__open-icon {
 			width: auto;
-		}
-
-		.current-site__switch-sites-label {
-			display: none;
 		}
 
 		.current-site .site .site__info {
@@ -1040,17 +1066,9 @@ $font-size: rem(14px);
 				padding: 18px 0 18px 12px;
 			}
 
-			.current-site__switch-sites .button.is-borderless {
-				padding: 11px 8px 11px 38px;
-			}
-
 			.site__home {
 				left: 12px;
 				top: 18px;
-			}
-
-			.current-site__switch-sites .button.is-borderless .gridicon {
-				top: 14px;
 			}
 
 			.sidebar__separator {
@@ -1111,7 +1129,7 @@ $font-size: rem(14px);
 		}
 
 		.focus-content:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
-			padding-top: 46px;
+			padding-top: 62px;
 			padding-bottom: 0;
 		}
 
@@ -1119,6 +1137,10 @@ $font-size: rem(14px);
 		.sidebar {
 			position: absolute;
 			padding-bottom: 120px;
+		}
+
+		.global-sidebar .sidebar {
+			top: 12px;
 		}
 
 		.is-unified-site-sidebar-visible {

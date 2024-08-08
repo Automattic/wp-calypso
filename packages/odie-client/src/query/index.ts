@@ -53,13 +53,13 @@ function odieWpcomSendSupportMessage(
 }
 
 // Internal helper function to generate a uuid
-function uuid() {
+export const uuid = () => {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( c ) {
 		const r = ( Math.random() * 16 ) | 0;
 		const v = c === 'x' ? r : ( r & 0x3 ) | 0x8;
 		return v.toString( 16 );
 	} );
-}
+};
 
 /**
  * It will post a new message using the current chat_id.
@@ -94,6 +94,12 @@ export const useOdieSendMessage = (): UseMutationResult<
 	/* translators: Error message when Wapuu fails to send a message */
 	const wapuuErrorMessage = __(
 		"Wapuu oopsie! 😺 I'm in snooze mode and can't chat just now. Don't fret, just browse through the buttons below to connect with WordPress.com support.",
+		__i18n_text_domain__
+	);
+
+	/* translators: Error message when Wapuu user's exceed free messages limit */
+	const wapuuRateLimitMessage = __(
+		"Hi there! You've hit your AI usage limit. Upgrade your plan for unlimited Wapuu support! You can still get user support using the buttons below.",
 		__i18n_text_domain__
 	);
 
@@ -200,13 +206,17 @@ export const useOdieSendMessage = (): UseMutationResult<
 		onSettled: () => {
 			setIsLoading( false );
 		},
-		onError: ( _, __, context ) => {
+		onError: ( response, __, context ) => {
 			if ( ! context ) {
 				throw new Error( 'Context is undefined' );
 			}
+
+			const { data } = response as { data: { status: number } };
+			const isRateLimitError = data.status === 429;
+
 			const { internal_message_id } = context;
 			const message = {
-				content: wapuuErrorMessage,
+				content: isRateLimitError ? wapuuRateLimitMessage : wapuuErrorMessage,
 				internal_message_id,
 				role: 'bot',
 				type: 'error',

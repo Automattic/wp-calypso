@@ -11,7 +11,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
-export function PatternsGetStarted( { theme }: { theme?: 'dark' } ) {
+export function PatternsGetStarted( { theme }: { theme?: 'dark' | 'blue' } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const localizeUrl = useLocalizeUrl();

@@ -1,0 +1,93 @@
+.newsletter-importer {
+	margin: 24px auto 0;
+	max-width: 720px;
+
+	.step-progress {
+		margin-bottom: 20px;
+	}
+
+	.card {
+		h2 {
+			font-size: rem(16px);
+			font-weight: 500;
+			line-height: 19px;
+			letter-spacing: 0.15px;
+			padding-bottom: 20px;
+		}
+
+		p {
+			font-size: rem(14px);
+			line-height: 20px;
+			color: var(--studio-gray-50);
+		}
+
+		hr {
+			margin: 32px 0;
+			color: var(--studio-gray-5);
+			background-color: var(--studio-gray-5);
+		}
+	}
+
+	.importer-header {
+		display: none;
+	}
+
+	.importer__file-importer-card.card {
+		padding: 0;
+		margin: 0;
+		box-shadow: none;
+	}
+
+	.summary__content p {
+		display: flex;
+		gap: 8px;
+	}
+
+	.stripe-logo {
+		width: 48px;
+		padding-left: 8px;
+	}
+}
+
+.logo-chain {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 20px;
+}
+
+.logo-chain__logo {
+	width: 48px;
+	height: 48px;
+	margin: 0 -16px 0 0;
+	border-radius: 50%;
+	overflow: hidden;
+	position: relative;
+}
+
+.logo-chain__logo .importer__service-icon.wordpress {
+	background-color: #3858e9;
+	width: 46px;
+	height: 46px;
+	min-width: 46px;
+	position: absolute;
+	left: 1px;
+	top: 1px;
+}
+
+.logo-chain__logo .importer__service-icon.substack-logo {
+	width: 46px;
+	min-width: 46px;
+	height: 46px;
+	position: absolute;
+	left: 1px;
+	top: 1px;
+}
+
+.select-newsletter-form__help {
+	margin-top: 8px;
+	font-size: 0.75rem;
+
+	&.is-error {
+		color: var(--color-error);
+	}
+}

@@ -308,7 +308,17 @@ export const useComparisonData = () => {
 						name: translate( 'AI' ),
 						url: links.ai,
 						icon: AIIcon,
-						info: allChecked,
+						info: {
+							FREE: {
+								content: translate( '20 free requests' ),
+							},
+							SECURITY: {
+								content: translate( '20 free requests' ),
+							},
+							COMPLETE: {
+								content: translate( '20 free requests' ),
+							},
+						},
 					},
 					{
 						id: 'blaze',

@@ -40,6 +40,7 @@ export class SiteAddressChanger extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		onSiteAddressChanged: PropTypes.func,
 		hasNonWpcomDomains: PropTypes.bool,
+		skipRedirection: PropTypes.bool,
 
 		// `connect`ed
 		isSiteAddressChangeRequesting: PropTypes.bool,
@@ -77,7 +78,10 @@ export class SiteAddressChanger extends Component {
 			domainFieldValue,
 			newDomainSuffix.substr( 1 ),
 			oldDomain,
-			type
+			type,
+			true,
+			true,
+			this.props.skipRedirection
 		);
 
 		this.props.onSiteAddressChanged?.();

@@ -24,6 +24,7 @@ import { ViewToggle } from 'calypso/my-sites/patterns/components/view-toggle';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
 import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import { filterPatternsByType } from 'calypso/my-sites/patterns/lib/filter-patterns-by-type';
@@ -72,6 +73,15 @@ function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowT
 	} );
 }
 
+function scrollToSection( element: HTMLDivElement, scrollBehavior: ScrollBehavior = 'smooth' ) {
+	requestAnimationFrame( () => {
+		element.scrollIntoView( {
+			behavior: scrollBehavior,
+			block: 'center',
+		} );
+	} );
+}
+
 type PatternLibraryProps = {
 	categoryGallery: CategoryGalleryFC;
 	patternGallery: PatternGalleryFC;
@@ -85,9 +95,10 @@ export const PatternLibrary = ( {
 	const translate = useTranslate();
 	const hasTranslation = useHasEnTranslation();
 	const navRef = useRef< HTMLDivElement >( null );
+	const readymadeTemplateSectionRef = useRef< HTMLDivElement >( null );
 
 	const { recordPatternsEvent } = useRecordPatternsEvent();
-	const { category, searchTerm, isGridView, patternTypeFilter, patternPermalinkId } =
+	const { category, searchTerm, section, isGridView, patternTypeFilter, patternPermalinkId } =
 		usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
@@ -96,6 +107,7 @@ export const PatternLibrary = ( {
 		category,
 		{ enabled: Boolean( category || searchTerm ) }
 	);
+	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
 
 	const patterns = searchTerm
 		? filterPatternsByTerm( rawPatterns, searchTerm )
@@ -163,6 +175,16 @@ export const PatternLibrary = ( {
 			window.removeEventListener( 'scroll', handleScroll );
 		};
 	}, [] );
+
+	useEffect( () => {
+		if (
+			'readymade-templates-section' === section &&
+			readymadeTemplateSectionRef.current &&
+			! searchTerm
+		) {
+			scrollToSection( readymadeTemplateSectionRef.current, 'instant' );
+		}
+	}, [ searchTerm, section ] );
 
 	// `calypso-router` has trouble with the onboarding URL we use. This code prevents click
 	// events on onboarding links from propagating to the `calypso-router` event listener,
@@ -287,7 +309,7 @@ export const PatternLibrary = ( {
 
 				{ isHomePage && (
 					<CategoryGallery
-						title={ translate( 'Ship faster, ship more', {
+						title={ translate( 'Build anything with patterns', {
 							comment:
 								'Heading text for a section in the Pattern Library with links to block pattern categories',
 							textOnly: true,
@@ -359,27 +381,33 @@ export const PatternLibrary = ( {
 					</PatternLibraryBody>
 				) }
 
-				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && <ReadymadeTemplates /> }
-
-				{ ! isEnabled( 'readymade-templates/showcase' ) && isHomePage && (
-					<PatternsCopyPasteInfo theme="dark" />
-				) }
-
 				{ isHomePage && (
-					<CategoryGallery
-						title={ pageLayoutsHeading }
-						description={ translate(
-							'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
-						) }
-						categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
-						patternTypeFilter={ PatternTypeFilter.PAGES }
+					<PatternsCopyPasteInfo
+						theme={ isEnabled( 'readymade-templates/showcase' ) ? 'gray' : 'dark' }
 					/>
 				) }
 
-				{ isEnabled( 'readymade-templates/showcase' ) && isHomePage && <PatternsCopyPasteInfo /> }
+				{ isHomePage && (
+					<>
+						<CategoryGallery
+							title={ pageLayoutsHeading }
+							description={ translate(
+								'Our page layouts are exactly what you need to easily create professional-looking pages using preassembled patterns.'
+							) }
+							categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
+							patternTypeFilter={ PatternTypeFilter.PAGES }
+						/>
+						{ isEnabled( 'readymade-templates/showcase' ) && (
+							<ReadymadeTemplates
+								readymadeTemplates={ readymadeTemplates }
+								forwardRef={ readymadeTemplateSectionRef }
+							/>
+						) }
+					</>
+				) }
 			</div>
 
-			<PatternsGetStarted theme="dark" />
+			<PatternsGetStarted theme={ isEnabled( 'readymade-templates/showcase' ) ? 'blue' : 'dark' } />
 		</>
 	);
 };

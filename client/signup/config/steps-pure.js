@@ -88,8 +88,9 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
-				hideFreePlan: true,
+				deemphasizeFreePlan: true,
 				hideEnterprisePlan: true,
+				isCustomDomainAllowedOnFreePlan: true,
 			},
 		},
 
@@ -359,6 +360,7 @@ export function generateSteps( {
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
 				useEmailOnboardingSubheader: true,
+				hideFreePlan: true,
 			},
 		},
 

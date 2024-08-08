@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import { makeLayout, render as clientRender, setSelectedSiteIdByOrigin } from 'calypso/controller';
 import { navigation } from 'calypso/my-sites/controller';
 import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
 import {
@@ -19,10 +19,22 @@ export default function () {
 	} );
 
 	page(
+		'/p2s',
+		maybeRemoveCheckoutSuccessNotice,
+		sanitizeQueryParameters,
+		navigation,
+		setSelectedSiteIdByOrigin,
+		sitesDashboard,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/sites',
 		maybeRemoveCheckoutSuccessNotice,
 		sanitizeQueryParameters,
 		navigation,
+		setSelectedSiteIdByOrigin,
 		sitesDashboard,
 		makeLayout,
 		clientRender

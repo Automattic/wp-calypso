@@ -7,25 +7,34 @@ import {
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
 import { AddOns } from '@automattic/data-stores';
-import { useMemo } from '@wordpress/element';
+import { useRef, useMemo } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../../grid-context';
+import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
+import useGridSize from '../../hooks/use-grid-size';
 import { PlanFeaturesItem } from '../item';
 import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
+import EnterpriseFeatures from './enterprise-features';
 import MobileFreeDomain from './mobile-free-domain';
-import PartnerLogos from './partner-logos';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
-import PlanPrice from './plan-price';
+import PlanPrices from './plan-prices';
 import PlanTagline from './plan-tagline';
 import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import SpotlightPlan from './spotlight-plan';
 import Table from './table';
 import TopButtons from './top-buttons';
-import type { DataResponse, FeaturesGridProps, GridPlan, PlanActionOverrides } from '../../types';
+import type {
+	DataResponse,
+	FeaturesGridExternalProps,
+	FeaturesGridProps,
+	GridPlan,
+	PlanActionOverrides,
+} from '../../types';
+
+import './style.scss';
 
 type MobileViewProps = {
 	currentSitePlanSlug?: string | null;
@@ -96,6 +105,7 @@ const MobileView = ( {
 			);
 
 			const isNotFreePlan = ! isFreePlan( gridPlan.planSlug );
+			const isEnterprisePlan = isWpcomEnterpriseGridPlan( gridPlan.planSlug );
 
 			const planCardJsx = (
 				<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
@@ -103,14 +113,14 @@ const MobileView = ( {
 					<PlanHeaders renderedGridPlans={ [ gridPlan ] } />
 					{ isNotFreePlan && isInSignup && <PlanTagline renderedGridPlans={ [ gridPlan ] } /> }
 					{ isNotFreePlan && (
-						<PlanPrice
+						<PlanPrices
 							renderedGridPlans={ [ gridPlan ] }
 							currentSitePlanSlug={ currentSitePlanSlug }
 						/>
 					) }
 					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
 					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
-					{ storageFeatureGroup && (
+					{ storageFeatureGroup && ! isEnterprisePlan && (
 						<>
 							<PlanFeaturesItem>
 								<h2 className="plans-grid-next-features-grid__feature-group-title">
@@ -146,7 +156,7 @@ const MobileView = ( {
 							)
 						}
 					>
-						<PartnerLogos renderedGridPlans={ [ gridPlan ] } />
+						<EnterpriseFeatures renderedGridPlans={ [ gridPlan ] } />
 						{ ! enableCategorisedFeatures && (
 							<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
 						) }
@@ -244,6 +254,9 @@ const TabletView = ( {
 	);
 };
 
+// TODO
+// Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
+// More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
 const FeaturesGrid = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
@@ -309,4 +322,60 @@ const FeaturesGrid = ( {
 	);
 };
 
-export default FeaturesGrid;
+const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
+	const {
+		siteId,
+		intent,
+		gridPlans,
+		useCheckPlanAvailabilityForPurchase,
+		useAction,
+		recordTracksEvent,
+		allFeaturesList,
+		coupon,
+		isInAdmin,
+		className,
+		enableFeatureTooltips,
+		enableCategorisedFeatures,
+		featureGroupMap = {},
+	} = props;
+
+	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+
+	// TODO: this will be deprecated along side removing the wrapper component
+	const gridSize = useGridSize( {
+		containerRef: gridContainerRef,
+		containerBreakpoints: new Map( [
+			[ 'small', 0 ],
+			[ 'medium', 740 ],
+			[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin
+		] ),
+	} );
+
+	const classNames = clsx( 'plans-grid-next', className, {
+		'is-small': 'small' === gridSize,
+		'is-medium': 'medium' === gridSize,
+		'is-large': 'large' === gridSize,
+	} );
+
+	return (
+		<div ref={ gridContainerRef } className={ classNames }>
+			<PlansGridContextProvider
+				intent={ intent }
+				siteId={ siteId }
+				gridPlans={ gridPlans }
+				coupon={ coupon }
+				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+				useAction={ useAction }
+				recordTracksEvent={ recordTracksEvent }
+				allFeaturesList={ allFeaturesList }
+				enableFeatureTooltips={ enableFeatureTooltips }
+				enableCategorisedFeatures={ enableCategorisedFeatures }
+				featureGroupMap={ featureGroupMap }
+			>
+				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
+			</PlansGridContextProvider>
+		</div>
+	);
+};
+
+export default WrappedFeaturesGrid;

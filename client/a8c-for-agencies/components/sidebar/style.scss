@@ -20,6 +20,15 @@
 	.sidebar__menu-icon {
 		margin: 0;
 	}
+
+	.sidebar-v2__navigator-sub-menu .components-navigator-back-button {
+		background: none;
+
+		&:hover {
+			background: var(--color-primary-80);
+			color: var(--color-text-inverted);
+		}
+	}
 }
 
 .a4a-sidebar__header {

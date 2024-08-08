@@ -37,6 +37,7 @@ export {
 	HorizontalBarListItem,
 	StatsCard,
 	StatsCardAvatar,
+	StatsCardTitleExtras,
 } from './horizontal-bar-list';
 export {
 	default as CountComparisonCard,
@@ -73,6 +74,7 @@ export * from './theme-type-badge';
 export type { RenderThumbFunction } from './pricing-slider/types';
 
 // Logos
+export { default as ClientLogoList } from './client-logo-list';
 export { default as JetpackLogo } from './logos/jetpack-logo';
 export { default as BloombergLogo } from './logos/bloomberg-logo';
 export { default as CloudLogo } from './logos/cloud-logo';

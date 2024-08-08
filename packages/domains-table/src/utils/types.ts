@@ -45,6 +45,11 @@ export type TitanEmailSubscription = EmailSubscription & {
 
 export type TransferStatus = ( typeof transferStatus )[ keyof typeof transferStatus ];
 
+export type DnssecRecords = {
+	dnskey?: string;
+	dsData?: Array< string >;
+};
+
 export type ResponseDomain = {
 	adminEmail: string | null | undefined;
 	aftermarketAuction: boolean;
@@ -74,6 +79,7 @@ export type ResponseDomain = {
 	currentUserCanManage: boolean;
 	currentUserCannotAddEmailReason: CannotAddEmailReason | null;
 	currentUserIsOwner: boolean;
+	dnssecRecords?: DnssecRecords;
 	domain: string;
 	domainLockingAvailable: boolean;
 	domainRegistrationAgreementUrl: string | null;
@@ -90,6 +96,8 @@ export type ResponseDomain = {
 	hasZone: boolean;
 	isAutoRenewing: boolean;
 	isEligibleForInboundTransfer: boolean;
+	isDnssecEnabled: boolean;
+	isDnssecSupported: boolean;
 	isGravatarDomain: boolean;
 	isIcannVerificationSuspended: boolean | null;
 	isLocked: boolean;

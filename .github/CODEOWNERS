@@ -150,3 +150,9 @@
 # Renovate config
 /renovate.json5 @noahtallen
 /.github/workflows/renovate.yml @noahtallen
+
+# Support
+/packages/help-center @Automattic/vertex
+
+# Stepper
+/client/landing/stepper @Automattic/dotcom-stepper

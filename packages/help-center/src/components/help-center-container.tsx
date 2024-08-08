@@ -39,12 +39,11 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	currentRoute,
 	openingCoordinates,
 } ) => {
-	const { show, isMinimized, initialRoute } = useSelect( ( select ) => {
+	const { show, isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			show: store.isHelpCenterShown(),
 			isMinimized: store.getIsMinimized(),
-			initialRoute: store.getInitialRoute(),
 		};
 	}, [] );
 
@@ -75,6 +74,9 @@ const HelpCenterContainer: React.FC< Container > = ( {
 			animation: isMobile
 				? `${ isVisible ? 'fadeIn' : 'fadeOut' } .25s ease-out`
 				: `${ isVisible ? 'slideIn' : 'fadeOut' } .25s ease-out`,
+			// These are overwritten by the openingCoordinates.
+			// They are set to avoid Help Center from not loading on the page.
+			...( ! isMobile && { top: 70, left: 'calc( 100vw - 500px )' } ),
 			...openingCoordinates,
 		},
 		onAnimationEnd: toggleVisible,
@@ -106,7 +108,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	}
 
 	return (
-		<MemoryRouter initialEntries={ initialRoute ? [ initialRoute ] : undefined }>
+		<MemoryRouter>
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile && ! isMinimized }

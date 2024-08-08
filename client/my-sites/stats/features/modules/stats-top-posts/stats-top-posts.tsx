@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { postList } from '@wordpress/icons';
@@ -5,13 +6,14 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionAI, StatsEmptyActionSocial } from '../shared';
@@ -23,10 +25,17 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	query,
 	moduleStrings,
 	className,
+	summaryUrl,
+	summary,
+	listItemClassName,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsTopPosts';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats
+		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
+		: `${ SUPPORT_URL }#posts-amp-pages`;
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -55,12 +64,29 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 				// show data or an overlay
 				<StatsModule
 					path="posts"
+					titleNodes={
+						<StatsInfoArea>
+							{ translate(
+								'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
+								{
+									comment: '{{link}} links to support documentation.',
+									components: {
+										link: <a href={ localizeUrl( supportUrl ) } />,
+									},
+									context:
+										'Stats: Link in a popover for the Posts & Pages when the module has data',
+								}
+							) }
+						</StatsInfoArea>
+					}
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
 					statType={ statType }
-					showSummaryLink
+					showSummaryLink={ !! summary }
 					className={ className }
+					summary={ summary }
+					listItemClassName={ listItemClassName }
 					skipQuery
 				/>
 			) }
@@ -78,7 +104,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#posts-amp-pages` ) } />,
+										link: <a href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Posts & Pages module is empty',
 								}
@@ -90,6 +116,14 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 								</>
 							}
 						/>
+					}
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
 					}
 				/>
 			) }

@@ -28,10 +28,11 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import StepSection from '../../common/step-section';
 import StepSectionItem from '../../common/step-section-item';
+import ConsolidatedViews from '../../consolidated-view';
 import { getAccountStatus } from '../../lib/get-account-status';
 import tipaltiLogo from '../../lib/tipalti-logo';
 import ReferralList from '../../referrals-list';
-import type { Referral } from '../../types';
+import type { Referral, ReferralInvoice } from '../../types';
 
 interface Props {
 	isAutomatedReferral?: boolean;
@@ -40,6 +41,8 @@ interface Props {
 	isLoading: boolean;
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	referralInvoices: ReferralInvoice[];
+	isFetchingInvoices: boolean;
 }
 
 export default function LayoutBodyContent( {
@@ -49,6 +52,8 @@ export default function LayoutBodyContent( {
 	isLoading,
 	dataViewsState,
 	setDataViewsState,
+	referralInvoices,
+	isFetchingInvoices,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -67,6 +72,7 @@ export default function LayoutBodyContent( {
 	}, [ dispatch ] );
 
 	const accountStatus = getAccountStatus( tipaltiData, translate );
+	const isPayable = !! tipaltiData?.IsPayable;
 
 	const hasPayeeAccount = !! accountStatus?.status;
 	let bankAccountCTAText = hasPayeeAccount
@@ -115,8 +121,16 @@ export default function LayoutBodyContent( {
 	if ( isAutomatedReferral && referrals?.length ) {
 		return (
 			<>
+				{ ! dataViewsState.selectedItem && (
+					<ConsolidatedViews
+						referrals={ referrals }
+						referralInvoices={ referralInvoices }
+						isFetchingInvoices={ isFetchingInvoices }
+					/>
+				) }
 				<ReferralList
 					referrals={ referrals }
+					referralInvoices={ referralInvoices }
 					dataViewsState={ dataViewsState }
 					setDataViewsState={ setDataViewsState }
 				/>
@@ -139,7 +153,7 @@ export default function LayoutBodyContent( {
 				<div className="referrals-overview__section-icons">
 					<JetpackLogo className="jetpack-logo" size={ 24 } />
 					<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
-					<img src={ pressableIcon } alt="Pressable" />
+					<img className="pressable-icon" src={ pressableIcon } alt="Pressable" />
 					<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
 				</div>
 			) }
@@ -261,6 +275,7 @@ export default function LayoutBodyContent( {
 										children: translate( 'Get started' ),
 										compact: true,
 										primary: hasPayeeAccount,
+										disabled: ! isPayable,
 										href: A4A_MARKETPLACE_PRODUCTS_LINK,
 										onClick: onGetStartedClick,
 									} }

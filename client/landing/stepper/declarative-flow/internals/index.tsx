@@ -16,11 +16,14 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
+import { useStartStepperPerformanceTracking } from '../../utils/performance-tracking';
 import { StepRoute, StepperLoader } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
+import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
+import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
@@ -42,6 +45,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const { navigate, params } = useFlowNavigation();
 	const currentStepRoute = params.step || '';
+
+	// Start tracking performance for this step.
+	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
+	useFlowAnalytics( { flow: params.flow, step: currentStepRoute, variant: flow.variantSlug } );
 
 	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
 		() =>
@@ -84,11 +91,12 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ flow, siteSlugOrId, selectedSite ] );
 
-	const stepNavigation = flow.useStepNavigation(
+	const stepNavigation = useStepNavigationWithTracking( {
+		flow,
 		currentStepRoute,
 		navigate,
-		flowSteps.map( ( step ) => step.slug )
-	);
+		steps: flowSteps,
+	} );
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect(

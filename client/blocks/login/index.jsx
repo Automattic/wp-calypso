@@ -11,11 +11,13 @@ import { connect } from 'react-redux';
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
 import AsyncLoad from 'calypso/components/async-load';
+import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
+import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -23,6 +25,7 @@ import {
 	isA4AOAuth2Client,
 	isWooOAuth2Client,
 	isBlazeProOAuth2Client,
+	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -177,7 +180,7 @@ class Login extends Component {
 				locale: this.props.locale,
 				twoFactorAuthType: 'link',
 				oauth2ClientId: this.props.currentQuery?.client_id,
-				redirectTo: this.props.currentQuery?.redirect_to,
+				redirectTo: this.props.redirectTo,
 				usernameOnly: true,
 			} );
 
@@ -753,7 +756,11 @@ class Login extends Component {
 		return (
 			<div className="login__form-header-wrapper">
 				{ isGravPoweredLoginPage && (
-					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+					<GravatarLoginLogo
+						iconUrl={ oauth2Client.icon }
+						alt={ oauth2Client.title }
+						isCoBrand={ isGravatarFlowOAuth2Client( oauth2Client ) }
+					/>
 				) }
 				{ preHeader }
 				<div className="login__form-header">{ headerText }</div>
@@ -825,6 +832,7 @@ class Login extends Component {
 			handleUsernameChange,
 			signupUrl,
 			isWoo,
+			isWooPasswordless,
 			isBlazePro,
 			translate,
 			isPartnerSignup,
@@ -836,6 +844,8 @@ class Login extends Component {
 			isSocialFirst,
 			isFromAutomatticForAgenciesPlugin,
 			loginButtons,
+			currentUser,
+			redirectTo,
 		} = this.props;
 
 		const signupLink = this.getSignupLinkComponent();
@@ -939,9 +949,11 @@ class Login extends Component {
 				return (
 					<div className="login__body login__body--continue-as-user">
 						<ContinueAsUser
+							currentUser={ currentUser }
 							onChangeAccount={ this.handleContinueAsAnotherUser }
-							isWooOAuth2Client={ isWoo }
-							isBlazePro={ isBlazePro }
+							redirectPath={ redirectTo }
+							isWoo={ isWoo }
+							isWooPasswordless={ isWooPasswordless }
 						/>
 						<LoginForm
 							disableAutoFocus={ disableAutoFocus }
@@ -966,7 +978,9 @@ class Login extends Component {
 				return (
 					<div className="login__body login__body--continue-as-user">
 						<ContinueAsUser
+							currentUser={ currentUser }
 							onChangeAccount={ this.handleContinueAsAnotherUser }
+							redirectPath={ redirectTo }
 							isBlazePro={ isBlazePro }
 						/>
 						<LoginForm
@@ -990,7 +1004,13 @@ class Login extends Component {
 			}
 
 			// someone is already logged in, offer to proceed to the app without a new login
-			return <ContinueAsUser onChangeAccount={ this.handleContinueAsAnotherUser } />;
+			return (
+				<ContinueAsUser
+					currentUser={ currentUser }
+					onChangeAccount={ this.handleContinueAsAnotherUser }
+					redirectPath={ redirectTo }
+				/>
+			);
 		}
 
 		return (
@@ -1012,6 +1032,7 @@ class Login extends Component {
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst }
 				loginButtons={ loginButtons }
+				isJetpack={ isJetpack }
 				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 			/>
 		);
@@ -1115,7 +1136,7 @@ export default connect(
 				showGlobalNotices: false,
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
-					( ownProps.isGravPoweredClient && ownProps.oauth2Client.name ) ||
+					( ownProps.isGravPoweredClient && getGravatarOAuth2Flow( ownProps.oauth2Client ) ) ||
 					null,
 				...options,
 			} ),
