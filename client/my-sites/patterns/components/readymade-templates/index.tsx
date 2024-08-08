@@ -1,19 +1,18 @@
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { RefObject, useEffect, useRef, useState, ReactNode } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
+import { ReadymadeTemplatePreview } from 'calypso/my-sites/patterns/components/readymade-templates/preview';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import { ReadymadeTemplate, ReadymadeTemplatesProps } from 'calypso/my-sites/patterns/types';
+import { ReadymadeTemplatesProps } from 'calypso/my-sites/patterns/types';
 import './style.scss';
 
 type ReadymadeTemplatesSectionProps = ReadymadeTemplatesProps & {
-	renderPreview?: ( readymadeTemplate: ReadymadeTemplate ) => ReactNode;
 	forwardRef: RefObject< HTMLDivElement > | null;
 };
 
-export const ReadymadeTemplatesSection = ( {
+export const ReadymadeTemplates = ( {
 	readymadeTemplates,
 	forwardRef,
-	renderPreview,
 }: ReadymadeTemplatesSectionProps ) => {
 	const translate = useTranslate();
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -88,8 +87,8 @@ export const ReadymadeTemplatesSection = ( {
 						className="readymade-template"
 						key={ readymadeTemplate.template_id }
 					>
-						<div className="readymade-template__content">
-							{ renderPreview?.( readymadeTemplate ) }
+						<div className="readymade-template__preview">
+							<ReadymadeTemplatePreview readymadeTemplate={ readymadeTemplate } />
 						</div>
 						<div className="readymade-template__title">{ readymadeTemplate.title }</div>
 					</a>

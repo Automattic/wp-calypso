@@ -68,6 +68,17 @@ a.readymade-template-details-back {
 	@media (max-width: $break-large) {
 		display: none;
 	}
+
+	iframe {
+		// The idea is to zoom-out the iframe to get most of the content
+		// into the thumbnail and then we scale it down so it remains the
+		// size of the parent component (348.43% * 0.287 ~= 100%)
+		min-height: 348.43%;
+		width: 348.43%;
+		max-width: 348.23%;
+		transform: scale(0.287); // This value is not arbitrary. Chrome has subpixel rendering issues at some scales, so we picked this value because it avoids them.
+		transform-origin: top left;
+	}
 }
 
 .readymade-template-details-preview-mobile {

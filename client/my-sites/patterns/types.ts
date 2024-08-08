@@ -1,5 +1,4 @@
 import { GlobalStylesObject } from '@automattic/global-styles';
-import { ReactNode } from 'react';
 import type { Context } from '@automattic/calypso-router';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Pattern as AssemblerPattern } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/types';
@@ -62,8 +61,7 @@ export type PatternGalleryProps = {
 export type PatternGalleryFC = React.FC< PatternGalleryProps >;
 
 export type ReadymadeTemplateDetailsProps = {
-	id: number;
-	renderPreview?: ( readymadeTemplate: ReadymadeTemplate ) => ReactNode;
+	slug: string;
 };
 export type ReadymadeTemplateDetailsFC = React.FC< ReadymadeTemplateDetailsProps >;
 export type ReadymadeTemplatesProps = {
@@ -86,6 +84,7 @@ type ReadymadeTemplateStyles = {
 
 export type ReadymadeTemplate = {
 	template_id: number;
+	slug: string;
 	title: string;
 	description: string;
 	home: {

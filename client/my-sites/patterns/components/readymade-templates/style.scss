@@ -30,7 +30,7 @@ a.readymade-template {
 	color: var(--studio-white);
 }
 
-.readymade-template__content {
+.readymade-template__preview {
 	--readymade-template-width: 390px;
 	width: var(--readymade-template-width);
 	height: calc(var(--readymade-template-width) * 1.4);
@@ -38,6 +38,7 @@ a.readymade-template {
 	margin-bottom: 24px;
 	overflow: hidden;
 	border-radius: 2px;
+	pointer-events: none;
 
 	@media (max-width: $break-huge) {
 		--readymade-template-width: calc(100vw / 3 - 90px);
@@ -53,6 +54,17 @@ a.readymade-template {
 
 	@media (max-width: $break-small) {
 		--readymade-template-width: calc(100vw - 170px);
+	}
+
+	iframe {
+		// The idea is to zoom-out the iframe to get most of the content
+		// into the thumbnail and then we scale it down so it remains the
+		// size of the parent component (348.43% * 0.287 ~= 100%)
+		min-height: 348.43%;
+		width: 348.43%;
+		max-width: 348.23%;
+		transform: scale(0.287); // This value is not arbitrary. Chrome has subpixel rendering issues at some scales, so we picked this value because it avoids them.
+		transform-origin: top left;
 	}
 }
 
