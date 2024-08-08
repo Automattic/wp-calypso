@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
+import { UrlData } from 'calypso/blocks/import/types';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 
