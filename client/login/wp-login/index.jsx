@@ -543,15 +543,8 @@ export class Login extends Component {
 			<>
 				{ ( ( isSocialFirst && isWhiteLogin ) || isWooPasswordless ) && (
 					<LoginButtons
-						locale={ locale }
 						twoFactorAuthType={ twoFactorAuthType }
-						isWhiteLogin={ isWhiteLogin }
-						isP2Login={ isP2Login }
-						isGravPoweredClient={ isGravPoweredClient }
-						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
-						oauth2Client={ this.props.oauth2Client }
-						isWooPasswordless={ isWooPasswordless }
 					/>
 				) }
 			</>
