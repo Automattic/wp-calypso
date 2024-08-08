@@ -31,7 +31,7 @@ $setting-item-margin-bottom: 20px;
 		}
 
 		&__app-hint {
-			margin: 8px 0;
+			margin: 16px 0 8px;
 			padding: 16px;
 			background-color: $studio-gray-0;
 			font-size: $font-body-extra-small;
@@ -42,6 +42,7 @@ $setting-item-margin-bottom: 20px;
 				vertical-align: middle;
 				margin-right: 8px;
 			}
+
 			a {
 				color: $studio-gray-90;
 				text-decoration: underline;
