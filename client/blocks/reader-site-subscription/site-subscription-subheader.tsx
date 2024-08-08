@@ -3,9 +3,11 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
+import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getFeedUrl } from 'calypso/reader/route';
 
 type SiteSubscriptionSubheaderProps = {
+	blogId: number;
 	feedId: number;
 	subscriberCount: number;
 	url: string;
@@ -31,6 +33,7 @@ const withDotSeparators = ( items: React.ReactNode[] ) => {
 };
 
 const SiteSubscriptionSubheader = ( {
+	blogId,
 	feedId,
 	subscriberCount,
 	url,
@@ -60,8 +63,20 @@ const SiteSubscriptionSubheader = ( {
 		);
 	}
 
+	const recordViewFeedButtonClicked = useRecordViewFeedButtonClicked();
+
 	subheaderItems.push(
-		<a href={ getFeedUrl( feedId ) } title={ translate( 'View feed' ) }>
+		<a
+			href={ getFeedUrl( feedId ) }
+			title={ translate( 'View feed' ) }
+			onClick={ () => {
+				recordViewFeedButtonClicked( {
+					blogId: blogId ? String( blogId ) : null,
+					feedId: String( feedId ),
+					source: 'subscription-feed-link',
+				} );
+			} }
+		>
 			Reader
 		</a>
 	);
