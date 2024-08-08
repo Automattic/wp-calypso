@@ -184,7 +184,7 @@ class CancelPurchase extends Component {
 		if ( refundAmountString ) {
 			return this.state.cancelBundledDomain && includedDomainPurchase
 				? translate(
-						'If you confirm this cancellation, you will receive a {{span}}partial refund of %(refundText)s{{/span}}, and your subscription will be removed {{b}}immediately{{/b}}.',
+						'If you confirm this cancellation, you will receive a {{span}}partial refund of %(refundText)s{{/span}}, and your subscription will be removed immediately.',
 						{
 							args: {
 								refundText: refundAmountString,
@@ -192,12 +192,11 @@ class CancelPurchase extends Component {
 							context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 							components: {
 								span: <span className="cancel-purchase__refund-string" />,
-								b: <strong />,
 							},
 						}
 				  )
 				: translate(
-						'Once you confirm this cancellation, you will receive a {{span}}full refund of %(refundText)s{{/span}} and your subscription will be removed {{b}}immediately{{/b}}.',
+						'Once you confirm this cancellation, you will receive a {{span}}full refund of %(refundText)s{{/span}}, and your subscription will be removed immediately.',
 						{
 							args: {
 								refundText: refundAmountString,
@@ -205,7 +204,6 @@ class CancelPurchase extends Component {
 							context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 							components: {
 								span: <span className="cancel-purchase__refund-string" />,
-								b: <strong />,
 							},
 						}
 				  );
