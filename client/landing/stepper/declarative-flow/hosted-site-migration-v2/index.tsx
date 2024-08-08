@@ -21,6 +21,7 @@ const {
 	SITE_MIGRATION_SOURCE_URL,
 	SITE_MIGRATION_INSTRUCTIONS,
 	SITE_MIGRATION_STARTED,
+	SITE_MIGRATION_ASSISTED_MIGRATION,
 } = STEPS;
 
 export default {
@@ -39,6 +40,7 @@ export default {
 			SITE_MIGRATION_SOURCE_URL,
 			SITE_MIGRATION_INSTRUCTIONS,
 			SITE_MIGRATION_STARTED,
+			SITE_MIGRATION_ASSISTED_MIGRATION,
 		] );
 	},
 
@@ -66,6 +68,9 @@ export default {
 
 					// How to Migrate Step
 					how: props?.how || query.get( 'how' ),
+
+					// Source URL Step
+					from: props?.from || query.get( 'from' ),
 				} as Record< string, Primitive | string >;
 
 				if ( currentStep === PLATFORM_IDENTIFICATION.slug ) {
@@ -176,6 +181,19 @@ export default {
 								siteSlug: data.siteSlug,
 							},
 							SITE_MIGRATION_STARTED.slug
+						)
+					);
+				}
+
+				if ( currentStep === SITE_MIGRATION_SOURCE_URL.slug ) {
+					return navigate(
+						addQueryArgs(
+							{
+								siteId: data.siteId,
+								siteSlug: data.siteSlug,
+								from: data.from,
+							},
+							SITE_MIGRATION_ASSISTED_MIGRATION.slug
 						)
 					);
 				}
