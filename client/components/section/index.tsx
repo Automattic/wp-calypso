@@ -19,7 +19,7 @@ interface SectionHeaderProps {
 }
 
 export const SectionContainer = styled.div< SectionContainerProps >`
-	::before {
+	.theme-default:not( .is-global ) &::before {
 		box-sizing: border-box;
 		content: '';
 		background-color: ${ ( props ) =>
