@@ -290,4 +290,4 @@ export const STEPS = {
 		slug: 'import-or-migrate-with-selection',
 		asyncComponent: () => import('./steps-repository/import-or-migrate-with-upgrade'),
 	},
-} satisfies StepperStep[];
+} satisfies Record< string, StepperStep >;
