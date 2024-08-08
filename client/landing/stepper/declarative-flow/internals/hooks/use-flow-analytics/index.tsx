@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { recordFlowStart } from '../../analytics/record-flow-start';
 
@@ -63,25 +63,30 @@ export const useFlowAnalytics = ( params: Params ) => {
 	const siteId = search.get( 'siteId' );
 	const siteSlug = search.get( 'siteSlug' );
 
-	const sessionKeys = {
-		flow,
-		variant,
-		site: siteId || siteSlug,
-	};
+	const sessionKeys = useMemo(
+		() => ( {
+			flow,
+			variant,
+			site: siteId || siteSlug,
+		} ),
+		[ flow, siteId, siteSlug, variant ]
+	);
 
 	const flowStarted = isTheFlowAlreadyStarted( sessionKeys );
-
-	const extraTrackingParams = {
-		ref,
-		step,
-		siteId,
-		siteSlug,
-		variant,
-	};
+	const extraTrackingParams = useMemo(
+		() => ( {
+			ref,
+			step,
+			site_id: siteId,
+			site_slug: siteSlug,
+			variant,
+		} ),
+		[ ref, siteId, siteSlug, step, variant ]
+	);
 
 	useEffect( () => {
 		if ( ! flowStarted && flow ) {
 			startSession( sessionKeys, extraTrackingParams );
 		}
-	}, [ flow ] );
+	}, [ extraTrackingParams, flow, flowStarted, sessionKeys ] );
 };
