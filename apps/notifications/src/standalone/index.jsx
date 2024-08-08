@@ -1,4 +1,5 @@
 import '@automattic/calypso-polyfills';
+import { setLocale } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
@@ -11,6 +12,24 @@ import '../panel/boot/stylesheets/style.scss';
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );
 const locale = match ? match[ 1 ] : 'en';
+
+const fetchLocale = ( localeSlug ) => {
+	const xhr = new XMLHttpRequest();
+
+	xhr.open( 'GET', `https://widgets.wp.com/languages/notifications/${ localeSlug }.json`, true );
+
+	xhr.onload = ( { target } ) => {
+		if ( 200 !== target.status ) {
+			return;
+		}
+
+		try {
+			setLocale( JSON.parse( xhr.response ) );
+		} catch ( e ) {}
+	};
+
+	xhr.send();
+};
 
 let store = { dispatch: () => {}, getState: () => {} };
 const customEnhancer = ( next ) => ( reducer, initialState ) =>
@@ -76,6 +95,10 @@ const NotesWrapper = ( { wpcom } ) => {
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
 	const [ isShortcutsPopoverVisible, setShortcutsPopoverVisible ] = useState( false );
+
+	if ( locale && 'en' !== locale ) {
+		fetchLocale( locale );
+	}
 
 	debug( 'wrapper state update', { isShowing, isVisible } );
 
