@@ -1,6 +1,6 @@
 import { Button, TextControl } from '@wordpress/components';
 import { Icon, lineSolid, plus } from '@wordpress/icons';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import './style.scss';
 
@@ -19,6 +19,7 @@ export default function A4ANumberInput( {
 	maximum,
 	increment = 1,
 }: Props ) {
+	const inputRef = useRef< HTMLInputElement >( null );
 	const [ dirtyValue, setDirtyValue ] = useState( '' );
 
 	const onDecrement = useCallback( () => {
@@ -48,9 +49,11 @@ export default function A4ANumberInput( {
 				<Icon icon={ lineSolid } size={ 18 } />
 			</Button>
 			<TextControl
+				ref={ inputRef }
 				value={ dirtyValue }
 				onChange={ ( newValue ) => setDirtyValue( newValue ) }
 				onBlur={ onBlur }
+				onFocus={ () => inputRef.current?.select() }
 				type="number"
 			/>
 			<Button onMouseDown={ onIncrement }>
