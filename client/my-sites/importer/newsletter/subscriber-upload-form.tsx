@@ -4,8 +4,8 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useActiveJobRecognition } from '@automattic/subscriber';
 import { Button, ProgressBar, Modal } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { Icon, cloudUpload } from '@wordpress/icons';
-import { useCallback, useState, useEffect, useRef, ChangeEvent } from 'react';
+import { Icon, cloudUpload, people, currencyEuro } from '@wordpress/icons';
+import { useCallback, useState, useEffect, useRef, FormEvent } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 import FilePicker from 'calypso/components/file-picker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -33,7 +33,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId }: Props ) {
 
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( false );
 	const onSubmit = useCallback(
-		async ( event: ChangeEvent< HTMLInputElement > ) => {
+		async ( event: FormEvent< HTMLFormElement > ) => {
 			event.preventDefault();
 			selectedFile && importCsvSubscribers( siteId, selectedFile );
 		},
@@ -86,11 +86,29 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId }: Props ) {
 		return (
 			<Modal
 				title="All done!"
+				isDismissible={ false }
 				onRequestClose={ () => setIsOpen( false ) }
 				className="subscriber-upload-form__modal"
+				size="medium"
 			>
-				<p>imported: </p>
-				<Button value="primary" href={ nextStepUrl }>
+				<div>
+					We’ve found 100 subscribers, where:
+					<ul>
+						<li>
+							<Icon icon={ people } />
+							<strong>82</strong> are free subscribers
+						</li>
+						<li>
+							<Icon icon={ people } />
+							<strong>1</strong> have a complimentary
+						</li>
+						<li>
+							<Icon icon={ currencyEuro } />
+							subscription <strong>18</strong> are paying subscribers
+						</li>
+					</ul>
+				</div>
+				<Button variant="primary" href={ nextStepUrl }>
 					Continue
 				</Button>
 			</Modal>

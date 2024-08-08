@@ -114,3 +114,16 @@
 	padding: 8px;
 	fill: var(--studio-gray-50);
 }
+
+.subscriber-upload-form__modal ul {
+	margin: 0 0 20px;
+	padding: 0;
+	list-style: none;
+}
+.subscriber-upload-form__modal li {
+	display: flex;
+}
+.subscriber-upload-form__modal svg {
+	fill: var(--studio-gray-50);
+	margin-right: 8px;
+}
