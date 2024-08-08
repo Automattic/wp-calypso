@@ -91,3 +91,26 @@
 		color: var(--color-error);
 	}
 }
+
+.subscriber-upload-form__in-progress,
+.subscriber-upload-form .file-picker {
+	background: #f6f7f7;
+	height: 180px;
+	width: 100%;
+	border: 1px dashed var(--studio-gray-50);
+	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 16px;
+	align-items: center;
+	padding-top: 50px;
+	color: var(--studio-gray-50);
+}
+.subscriber-upload-form__in-progress svg,
+.subscriber-upload-form .file-picker svg {
+	width: 48px;
+	height: 48px;
+	text-align: center;
+	padding: 8px;
+	fill: var(--studio-gray-50);
+}
