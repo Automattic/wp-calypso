@@ -26,6 +26,7 @@ export const MIGRATION_FLOW = 'import-focused';
 export const SITE_MIGRATION_FLOW = 'site-migration';
 export const MIGRATION_SIGNUP_FLOW = 'migration-signup';
 export const HOSTED_SITE_MIGRATION_FLOW = 'hosted-site-migration';
+export const HOSTED_SITE_MIGRATION_V2_FLOW = 'hosted-site-migration-v2';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';

@@ -1,7 +1,9 @@
 import { FormLabel } from '@automattic/components';
+import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
@@ -16,46 +18,76 @@ import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 import generateAIContentForTemplate from './api/generate-content';
 import ReadymadeTemplatePreview from './components/readymade-template-preview';
 import TextProgressBar from './components/text-progress-bar';
-import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 type ReadymadeTemplateGenerateContentProps = {
-	readymadeTemplate: ReadymadeTemplate;
+	selectedReadymadeTemplate: ReadymadeTemplate;
 	siteId: number;
 	siteSlug: string;
+	next?: () => void;
 };
 
 const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateContentProps > = ( {
-	readymadeTemplate,
+	selectedReadymadeTemplate,
 	siteId,
 	siteSlug,
+	next = () => {},
 } ) => {
 	const [ aiContext, setAiContext ] = useState( '' );
 	const [ numberOfGenerations, setNumberOfGenerations ] = useState( 0 );
 	const [ isGeneratingContent, setIsGeneratingContent ] = useState( false );
+	const [ isSaving, setIsSaving ] = useState( false );
+	const [ aiGeneratedRT, setAiGeneratedRT ] = useState( selectedReadymadeTemplate );
 	const { assembleSite } = useDispatch( SITE_STORE );
+	const { setSelectedReadymadeTemplate } = useDispatch( ONBOARD_STORE );
+
+	const markContentGenerationTaskComplete = () =>
+		updateLaunchpadSettings( siteSlug, {
+			checklist_statuses: { generate_content: true },
+		} );
+
+	const isPromptEmpty = ! aiContext.trim();
 
 	const handleTextareaChange = ( event: { target: { value: string } } ) => {
 		setAiContext( event.target.value );
 	};
 
+	const updateSiteContents = ( rt: ReadymadeTemplate ) =>
+		assembleSite( siteId, 'pub/assembler', {
+			homeHtml: rt.home.content,
+			headerHtml: rt.home.header,
+			footerHtml: rt.home.footer,
+			pages: [],
+			globalStyles: rt.globalStyles,
+			canReplaceContent: true,
+			siteSetupOption: 'readymade-template',
+		} );
+
+	const restoreSiteContents = () => updateSiteContents( selectedReadymadeTemplate );
+
+	const applyContent = () => {
+		setIsSaving( true );
+		setSelectedReadymadeTemplate( aiGeneratedRT );
+		updateSiteContents( aiGeneratedRT ).then( markContentGenerationTaskComplete ).then( next );
+	};
+
 	const generateContent = () => {
 		setIsGeneratingContent( true );
-		setNumberOfGenerations( numberOfGenerations + 1 );
-		generateAIContentForTemplate( readymadeTemplate, aiContext )
-			.then( ( rt: ReadymadeTemplate ) =>
-				assembleSite( siteId, 'pub/assembler', {
-					homeHtml: rt.home.content,
-					headerHtml: rt.home.header,
-					footerHtml: rt.home.footer,
-					pages: [],
-					globalStyles: rt.globalStyles,
-					canReplaceContent: true,
-					siteSetupOption: 'readymade-template',
-				} )
-			)
-			.then( () => setIsGeneratingContent( false ) );
+		generateAIContentForTemplate( selectedReadymadeTemplate, aiContext )
+			.then( ( aiGeneratedRt: ReadymadeTemplate ) => {
+				setAiGeneratedRT( aiGeneratedRt );
+				return updateSiteContents( aiGeneratedRt );
+			} )
+			.then( () => {
+				setIsGeneratingContent( false );
+				restoreSiteContents();
+				setNumberOfGenerations( numberOfGenerations + 1 );
+			} );
 	};
+
+	const primaryButtonClasses = clsx( 'checklist-item__checklist-primary-button', {
+		hidden: numberOfGenerations === 0,
+	} );
 
 	return (
 		<>
@@ -72,6 +104,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 						<FormTextarea
 							name="tagline"
 							id="tagline"
+							disabled={ isGeneratingContent || isSaving }
 							placeholder={ translate(
 								"Write an amazing description of your site, like: The Beachcomber Bistro is a cafe offering amazing food, delicious coffee and local beers. It's located next to the beach at Harlyn Bay, offering a stunning view from our deck."
 							) }
@@ -81,11 +114,22 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 					</FormFieldset>
 					<div className="generate-content__buttons">
 						<Button
-							className="checklist-item__checklist-primary-button"
+							className="checklist-item__checklist-secondary-button"
 							onClick={ generateContent }
-							disabled={ numberOfGenerations >= 5 || isGeneratingContent }
+							disabled={
+								isPromptEmpty || numberOfGenerations >= 5 || isGeneratingContent || isSaving
+							}
 						>
-							{ translate( 'Generate content' ) }
+							{ isGeneratingContent
+								? translate( 'Generating content' )
+								: translate( 'Generate content' ) }
+						</Button>
+						<Button
+							className={ primaryButtonClasses }
+							onClick={ applyContent }
+							disabled={ isSaving || numberOfGenerations === 0 || isGeneratingContent }
+						>
+							{ isSaving ? translate( 'Saving, please wait' ) : translate( 'Continue' ) }
 						</Button>
 					</div>
 				</form>
@@ -111,9 +155,10 @@ const ReadymadeTemplateGenerateContentStep: Step = function ReadymadeTemplateGen
 	if ( readymadeTemplate && siteId && siteSlug ) {
 		content = (
 			<ReadymadeTemplateGenerateContent
-				readymadeTemplate={ readymadeTemplate }
+				selectedReadymadeTemplate={ readymadeTemplate }
 				siteId={ siteId }
 				siteSlug={ siteSlug }
+				next={ navigation.goBack }
 			/>
 		);
 	}

@@ -20,7 +20,7 @@ import MobileFreeDomain from './mobile-free-domain';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
-import PlanPrice from './plan-price';
+import PlanPrices from './plan-prices';
 import PlanTagline from './plan-tagline';
 import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import SpotlightPlan from './spotlight-plan';
@@ -113,7 +113,7 @@ const MobileView = ( {
 					<PlanHeaders renderedGridPlans={ [ gridPlan ] } />
 					{ isNotFreePlan && isInSignup && <PlanTagline renderedGridPlans={ [ gridPlan ] } /> }
 					{ isNotFreePlan && (
-						<PlanPrice
+						<PlanPrices
 							renderedGridPlans={ [ gridPlan ] }
 							currentSitePlanSlug={ currentSitePlanSlug }
 						/>

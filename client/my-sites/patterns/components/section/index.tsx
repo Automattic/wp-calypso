@@ -1,3 +1,4 @@
+import { PremiumBadge } from '@automattic/components';
 import clsx from 'clsx';
 import { RefObject } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -12,6 +13,7 @@ type PatternsSectionProps = {
 	theme?: 'blue' | 'dark' | 'gray';
 	bodyFullWidth?: boolean;
 	children: React.ReactNode;
+	isPremium?: boolean;
 };
 
 export const PatternsSection = ( {
@@ -22,6 +24,7 @@ export const PatternsSection = ( {
 	theme,
 	bodyFullWidth,
 	children,
+	isPremium,
 }: PatternsSectionProps ) => {
 	const sectionProps = id ? { id } : {};
 	return (
@@ -35,6 +38,11 @@ export const PatternsSection = ( {
 				'patterns-section--full-width-body': bodyFullWidth,
 			} ) }
 		>
+			{ isPremium && (
+				<div className="patterns-section__premium-badge">
+					<PremiumBadge shouldHideTooltip />
+				</div>
+			) }
 			<div className="patterns-section__header">
 				<h2>{ title }</h2>
 				<div className="patterns-section__header-description">{ preventWidows( description ) }</div>

@@ -1,6 +1,7 @@
 import { ProgressBar } from '@automattic/components';
 import { SiteMediaStorage } from '@automattic/data-stores';
 import { Icon, cloud } from '@wordpress/icons';
+import clsx from 'clsx';
 import filesize from 'filesize';
 import { useTranslate } from 'i18n-calypso';
 import { FC, PropsWithChildren } from 'react';
@@ -8,17 +9,25 @@ import { FC, PropsWithChildren } from 'react';
 interface Props {
 	mediaStorage: SiteMediaStorage;
 }
+const MINIMUM_DISPLAYED_USAGE = 2.5;
+const ALERT_PERCENT = 80;
 
 const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStorage } ) => {
 	const translate = useTranslate();
+	const { storageUsedBytes, maxStorageBytes } = mediaStorage;
 
-	const percent = Math.min(
-		Math.round( ( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10 ),
-		100
-	);
+	let usagePercent = Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 );
+	// Ensure that the displayed usage is never fully empty to avoid a confusing UI
+	usagePercent = Math.max( MINIMUM_DISPLAYED_USAGE, usagePercent );
+	// Make sure displayed usage never exceeds 100%
+	usagePercent = Math.min( usagePercent, 100 );
 
-	const used = filesize( mediaStorage.storageUsedBytes, { round: 0 } );
-	const max = filesize( mediaStorage.maxStorageBytes, { round: 0 } );
+	const used = filesize( storageUsedBytes, { round: 0 } );
+	const max = filesize( maxStorageBytes, { round: 0 } );
+
+	const classes = clsx( 'plan-storage__bar', {
+		'is-alert': usagePercent > ALERT_PERCENT,
+	} );
 
 	return (
 		<>
@@ -39,7 +48,10 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 				</span>
 			</div>
 
-			<ProgressBar color="var(--studio-red-30)" value={ percent } total={ 100 } compact={ false } />
+			<div className={ classes }>
+				<div className="plan-storage__bar-used" style={ { width: `${ usagePercent }%` } } />
+				<ProgressBar value={ usagePercent } total={ 100 } compact={ false } />
+			</div>
 
 			{ children }
 		</>

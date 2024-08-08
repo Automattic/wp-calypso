@@ -5,20 +5,35 @@
 }
 
 .generate-content.step-container {
+	.step-container__navigation.action-buttons {
+		@media (min-width: #{ ($break-small) }) and (max-width: #{ ($break-large) }) {
+			inset-inline-start: 36px;
+		}
+	}
+
 	.step-container__content {
 		flex-direction: column;
-		padding-top: 40px;
+		padding-top: 8px;
 		display: flex;
 		justify-content: space-between;
 		min-height: unset;
 		margin: 0 6px;
 
+		@include break-small {
+			padding-top: 16px;
+		}
+
 		@include break-medium {
 			flex-direction: row;
+			padding-top: 32px;
 		}
 
 		@include break-large {
 			margin: 0 20px 24px 24px;
+		}
+
+		@include break-xlarge {
+			padding-top: 40px;
 		}
 	}
 
@@ -26,8 +41,35 @@
 		margin-left: 10px;
 	}
 
+	.checklist-item__checklist-primary-button.components-button {
+		transition: opacity 1s;
+
+		&.hidden {
+			opacity: 0;
+		}
+	}
+
 	.step-container__header {
-		margin-bottom: 32px;
+		margin-bottom: 24px;
+
+		@media (max-width: #{ ($break-mobile) }) {
+			margin-left: 36px;
+			margin-right: 36px;
+		}
+
+		@media (max-width: #{ ($break-small) }) {
+			margin-top: 24px;
+		}
+
+		@include break-xlarge {
+			margin-bottom: 32px;
+		}
+
+		.formatted-header__title {
+			@media (max-width: #{ ($break-medium) }) {
+				font-size: 2rem;
+			}
+		}
 	}
 
 	.site-preview__wrapper,
@@ -35,12 +77,28 @@
 		height: 80vh;
 	}
 
+	.site-preview__wrapper {
+		@media (max-width: #{ ($break-small) }) {
+			margin-bottom: 76px;
+		}
+
+		@media (max-width: #{ ($break-medium) }) {
+			margin-left: 10px;
+			margin-top: 24px;
+		}
+
+		.web-preview__inner {
+			@media (max-height: 680px) {
+				height: inherit;
+			}
+		}
+	}
+
 	.generate-content__form {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		position: relative;
-		max-width: 335px;
 		min-width: 200px;
 		padding: 0 20px;
 
@@ -54,7 +112,11 @@
 			display: flex;
 			flex-direction: column;
 			width: 100%;
-			margin-bottom: 16px;
+			margin-bottom: 4px;
+
+			@include break-medium {
+				margin-bottom: 16px;
+			}
 		}
 
 		textarea.form-textarea {

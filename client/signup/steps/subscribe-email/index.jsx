@@ -54,20 +54,26 @@ function getRedirectUrl( redirect ) {
  * When someone subscribes to an email campaign on a landing page like wordpress.com/learn, we'd like to
  * manage outbound communication with the Guides platform. Guides, however, requires a user_id and a WordPress
  * account. This flow streamlines the process by combining account creation and email subscription handling
- * into a single step.
+ * into a single step. To use this step, simply render it and provide the necessary query arguments.
+ *
+ * - If *no* user is logged in, we create a new account and subscribe with the given query params
+ * - If the user is logged in, we offer two choices:
+ * 		1. They can subscribe using their account email
+ *  	2. They can log out and continue subscribing with the given query params
+ * - If the email is invalid, we show the passwordless signup form
  */
 function SubscribeEmailStep( props ) {
 	const { currentUser, flowName, goToNextStep, queryArguments, stepName, translate } = props;
 
-	const email = sanitizeEmail( queryArguments.user_email );
-
-	const redirectUrl = getRedirectUrl( queryArguments.redirect_to );
+	const { mailing_list, first_name, from, user_email, redirect_to } = queryArguments;
+	const email = sanitizeEmail( user_email );
+	const redirectUrl = getRedirectUrl( redirect_to );
 
 	const redirectToAfterLoginUrl = currentUser
 		? addQueryArgs( window.location.href, { user_email: currentUser?.email } )
 		: '';
 
-	const [ isRedirectingToLogout, setIsRedirectingToLogout ] = useState( false );
+	const [ isLoading, setIsLoading ] = useState( true );
 
 	const { mutate: subscribeEmail, isPending: isSubscribingEmail } = useSubscribeEmail();
 
@@ -75,15 +81,12 @@ function SubscribeEmailStep( props ) {
 		return subscribeEmail(
 			{
 				email_address,
-				mailing_list_category: queryArguments.mailing_list,
-				from: queryArguments.from,
+				mailing_list_category: mailing_list,
+				from,
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( 'calypso_signup_email_subscription_success', {
-						mailing_list: queryArguments.mailing_list,
-					} );
-
+					recordTracksEvent( 'calypso_signup_email_subscription_success', { mailing_list } );
 					props.submitSignupStep( { stepName: 'subscribe' }, { redirect: redirectUrl } );
 					goToNextStep();
 				},
@@ -121,16 +124,16 @@ function SubscribeEmailStep( props ) {
 				subscribeEmail(
 					{
 						email_address: email,
-						mailing_list_category: queryArguments.mailing_list,
-						from: queryArguments.from,
+						mailing_list_category: mailing_list,
+						from,
 					},
 					{
 						onSuccess: () => {
-							setIsRedirectingToLogout( true );
+							setIsLoading( true );
 							/**
 							 * Logged in users will see an "Is it you?" page. Logged out users will
 							 * skip the page. To make email capture more seamless at conferences we
-							 * keep users logged out after new user creation. This allows us to
+							 * keep new users logged out after account creation. This allows us to
 							 * capture multiple signups on one device without showing the "Is it you?"
 							 * page to each subsequent person.
 							 */
@@ -150,6 +153,7 @@ function SubscribeEmailStep( props ) {
 	// On page load, attempt to subscribe the submitted email to the mailing list
 	useEffect( () => {
 		if ( ! emailValidator.validate( email ) ) {
+			setIsLoading( false );
 			return;
 		}
 
@@ -159,6 +163,7 @@ function SubscribeEmailStep( props ) {
 			}
 
 			// Otherwise show the "Is this you?" page
+			setIsLoading( false );
 			return;
 		}
 
@@ -174,7 +179,7 @@ function SubscribeEmailStep( props ) {
 				userData: {
 					email,
 					extra: {
-						first_name: queryArguments.first_name,
+						first_name,
 						...( includeLastName && { last_name: queryArguments.last_name } ),
 						generate_random_username: true,
 					},
@@ -185,7 +190,7 @@ function SubscribeEmailStep( props ) {
 		}
 	}, [ email ] );
 
-	const isPending = isCreatingNewAccount || isSubscribingEmail || isRedirectingToLogout;
+	const isPending = isCreatingNewAccount || isSubscribingEmail || isLoading;
 
 	return (
 		<div className="subscribe-email">

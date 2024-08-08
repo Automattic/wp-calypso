@@ -1,6 +1,8 @@
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import StepProgress from 'calypso/components/step-progress';
+import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ImporterLogo from '../importer-logo';
@@ -44,10 +46,20 @@ type NewsletterImporterProps = {
 export default function NewsletterImporter( { siteSlug, engine, step }: NewsletterImporterProps ) {
 	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
 
+	const [ validFromSite, setValidFromSite ] = useState( false );
+
 	const stepsProgress = [ 'Content', 'Subscribers', 'Paid Subscribers', 'Summary' ];
 
 	let fromSite = getQueryArg( window.location.href, 'from' ) as string | string[];
 	fromSite = Array.isArray( fromSite ) ? fromSite[ 0 ] : fromSite;
+
+	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
+
+	useEffect( () => {
+		if ( urlData?.platform === engine ) {
+			setValidFromSite( true );
+		}
+	}, [ urlData, fromSite, engine ] );
 
 	if ( fromSite && ! step ) {
 		step = stepSlugs[ 0 ];
@@ -68,6 +80,12 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 		from: fromSite,
 	} );
 	const Step = steps[ stepIndex ] || steps[ 0 ];
+
+	let title = 'Import your newsletter';
+	if ( urlData?.meta?.title ) {
+		title = `Import ${ urlData?.meta?.title }`;
+	}
+
 	return (
 		<div className="newsletter-importer">
 			<LogoChain
@@ -76,11 +94,17 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 					{ name: 'wordpress', color: '#3858E9' },
 				] }
 			/>
-
-			<FormattedHeader headerText="Import your newsletter" />
-			{ ! fromSite && <SelectNewsletterForm stepUrl={ stepUrl } /> }
-			{ fromSite && <StepProgress steps={ stepsProgress } currentStep={ stepIndex } /> }
-			{ fromSite && (
+			<FormattedHeader headerText={ title } />
+			{ ! validFromSite && (
+				<SelectNewsletterForm
+					stepUrl={ stepUrl }
+					urlData={ urlData }
+					isLoading={ isFetching }
+					validFromSite={ validFromSite }
+				/>
+			) }
+			{ validFromSite && <StepProgress steps={ stepsProgress } currentStep={ stepIndex } /> }
+			{ validFromSite && (
 				<Step
 					siteSlug={ siteSlug }
 					nextStepUrl={ nextStepUrl }

@@ -25,6 +25,13 @@
 		font-size: rem(14px);
 		height: 40px;
 	}
+
+	.hosting-features__content-spinner {
+		margin-top: 16px;
+		& + h1 {
+			margin-top: 0;
+		}
+	}
 }
 
 .hosting-features__cards {

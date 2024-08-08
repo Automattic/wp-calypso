@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+
 .newsletter-importer {
 	margin: 24px auto 0;
 	max-width: 720px;
@@ -126,4 +128,7 @@
 .subscriber-upload-form__modal svg {
 	fill: var(--studio-gray-50);
 	margin-right: 8px;
+}
+.select-newsletter-form .is-loading {
+	@include placeholder( --color-neutral-10 );
 }
