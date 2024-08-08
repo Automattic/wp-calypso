@@ -33,6 +33,11 @@ const LicenseTransition = ( props: PropsWithChildren< LicenseTransitionProps > )
 	<CSSTransition { ...props } classNames="license-list__license-transition" timeout={ 150 } />
 );
 
+const getProductName = ( name: string ): string => {
+	// For WordPress plans, we don't want to mention the specific plan.
+	return name.startsWith( 'WordPress.com' ) ? 'WordPress.com' : name;
+};
+
 export default function LicenseList() {
 	const dispatch = useDispatch();
 	const { filter, search, sortField, sortDirection, currentPage } =
@@ -79,7 +84,7 @@ export default function LicenseList() {
 							<LicensePreview
 								parentLicenseId={ license.licenseId }
 								licenseKey={ license.licenseKey }
-								product={ license.product }
+								product={ getProductName( license.product ) }
 								blogId={ license.blogId }
 								siteUrl={ license.siteUrl }
 								hasDownloads={ license.hasDownloads }
