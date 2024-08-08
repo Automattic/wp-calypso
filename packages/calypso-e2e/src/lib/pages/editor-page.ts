@@ -304,13 +304,12 @@ export class EditorPage {
 	async addBlockFromSidebar(
 		blockName: string,
 		blockEditorSelector: string,
-		{ noSearch, blockFallBackName }: { noSearch?: boolean; blockFallBackName?: string } = {}
+		{ noSearch }: { noSearch?: boolean } = {}
 	): Promise< ElementHandle > {
 		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
 		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent, {
 			noSearch: noSearch,
-			blockFallBackName: blockFallBackName,
 		} );
 
 		const blockHandle =
@@ -379,12 +378,12 @@ export class EditorPage {
 	private async addBlockFromInserter(
 		blockName: string,
 		inserter: BlockInserter,
-		{ noSearch, blockFallBackName }: { noSearch?: boolean; blockFallBackName?: string } = {}
+		{ noSearch }: { noSearch?: boolean } = {}
 	): Promise< void > {
 		if ( ! noSearch ) {
 			await inserter.searchBlockInserter( blockName );
 		}
-		await inserter.selectBlockInserterResult( blockName, { blockFallBackName } );
+		await inserter.selectBlockInserterResult( blockName );
 	}
 
 	/**
