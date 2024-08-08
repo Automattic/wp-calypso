@@ -83,7 +83,7 @@ const Dialog = ( {
 			role="dialog"
 			shouldCloseOnEsc={ shouldCloseOnEsc }
 			shouldCloseOnOverlayClick={ shouldCloseOnOverlayClick }
-			{ ...( bodyOpenClassName ? { bodyOpenClassName } : {} ) }
+			bodyOpenClassName={ bodyOpenClassName }
 		>
 			{ showCloseIcon && (
 				<button
