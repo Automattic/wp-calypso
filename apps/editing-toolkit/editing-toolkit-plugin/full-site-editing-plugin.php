@@ -348,9 +348,9 @@ function load_wpcom_global_styles() {
  */
 function load_editing_toolkit_features() {
 	/**
-	 * Turn off the ETK plugin features if the Jetpack_Mu_Wpcom is available and its version is v5.54.0-alpha and above.
+	 * Turn off the ETK plugin features if the Jetpack_Mu_Wpcom is available and its version is v5.55.0-alpha and above.
 	 */
-	if ( class_exists( '\Automattic\Jetpack\Jetpack_Mu_Wpcom', false ) && version_compare( \Automattic\Jetpack\Jetpack_Mu_Wpcom::PACKAGE_VERSION, '5.54.0-alpha', '>=' ) ) {
+	if ( class_exists( '\Automattic\Jetpack\Jetpack_Mu_Wpcom', false ) && version_compare( \Automattic\Jetpack\Jetpack_Mu_Wpcom::PACKAGE_VERSION, '5.55.0-alpha', '>=' ) ) {
 		return;
 	}
 
