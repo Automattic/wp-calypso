@@ -11,6 +11,7 @@ interface MShotsImageProps {
 	'aria-labelledby': string;
 	options: MShotsOptions;
 	scrollable?: boolean;
+	loading?: 'lazy' | 'eager';
 }
 
 export type MShotsOptions = {
@@ -232,6 +233,7 @@ const MShotsImageControl = ( {
 	alt,
 	options,
 	scrollable = false,
+	loading = 'lazy',
 }: MShotsImageProps ) => {
 	const imgRef = useRef< HTMLImageElement | null >( null );
 	const currentlyLoadedUrl = useMshotsImg( url, options, imgRef );
@@ -274,11 +276,17 @@ const MShotsImageControl = ( {
 	} // else, prettier doesn't like having an else after a return
 	return scrollable ? (
 		<div className={ className } style={ style } aria-labelledby={ labelledby }>
-			<img ref={ imgRef } loading="lazy" className="mshots-dummy-image" aria-hidden="true" alt="" />
+			<img
+				ref={ imgRef }
+				loading={ loading }
+				className="mshots-dummy-image"
+				aria-hidden="true"
+				alt=""
+			/>
 		</div>
 	) : (
 		<img
-			loading="lazy"
+			loading={ loading }
 			ref={ imgRef }
 			{ ...{ className, style, src, alt } }
 			aria-labelledby={ labelledby }
@@ -341,6 +349,7 @@ const MShotsImage = ( {
 	alt,
 	options,
 	scrollable = false,
+	loading = 'lazy',
 }: MShotsImageProps ) => {
 	// Return MShotsImageControl or MShotsImageTreatment depending on options.oldHighResImageLoading
 	if ( options?.oldHighResImageLoading ) {
@@ -351,6 +360,7 @@ const MShotsImage = ( {
 				alt={ alt }
 				options={ options }
 				scrollable={ scrollable }
+				loading={ loading }
 			/>
 		);
 	}
@@ -361,6 +371,7 @@ const MShotsImage = ( {
 			alt={ alt }
 			options={ options }
 			scrollable={ scrollable }
+			loading={ loading }
 		/>
 	);
 };
