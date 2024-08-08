@@ -8,6 +8,15 @@
 			fill: var(--studio-white);
 		}
 	}
+
+	.edit-site-layout:not(.is-full-canvas) & {
+		// Make it the first element in the sidebar actions
+		order: -1;
+
+		svg {
+			fill: #e0e0e0;
+		}
+	}
 }
 
 // If the help center is shipped in core, we hide the black fab button
