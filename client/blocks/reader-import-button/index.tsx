@@ -1,7 +1,7 @@
-import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ComponentProps, useState } from 'react';
+import { useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import { useResendEmailVerification } from 'calypso/landing/stepper/hooks/use-resend-email-verification';
 import wpcom from 'calypso/lib/wp';
@@ -13,18 +13,11 @@ import './style.scss';
 
 const noop = () => undefined;
 
-type ButtonProps = ComponentProps< typeof Button >;
 type ReaderImportButtonProps = {
 	onProgress?: () => void;
-	icon?: ButtonProps[ 'icon' ];
-	iconSize?: ButtonProps[ 'iconSize' ];
 };
 
-const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
-	onProgress = noop,
-	icon,
-	iconSize,
-} ) => {
+const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( { onProgress = noop } ) => {
 	const [ disabled, setDisabled ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -103,15 +96,9 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
 	const importLabel = translate( 'Import OPML' );
 
 	return (
-		<Button
-			className="reader-import-button"
-			icon={ icon }
-			iconSize={ iconSize }
-			onClick={ checkUser }
-		>
+		<Button className="reader-import-button" icon={ upload } onClick={ checkUser }>
 			{ isEmailVerified && (
 				<FilePicker accept=".xml,.opml" onClick={ onClick } onPick={ onPick }>
-					{ ! icon && <Gridicon icon="cloud-upload" className="reader-import-button__icon" /> }
 					<span className="reader-import-button__label">{ importLabel }</span>
 				</FilePicker>
 			) }

@@ -1,5 +1,5 @@
-import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { download } from '@wordpress/icons';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback, ComponentPropsWithoutRef } from 'react';
@@ -94,9 +94,9 @@ const ReaderExportButton = ( {
 			className="reader-export-button"
 			disabled={ disabled || isExportInProgress }
 			onClick={ onClick }
+			icon={ download }
 			{ ...props }
 		>
-			{ ! props.icon && <Gridicon icon="cloud-download" className="reader-export-button__icon" /> }
 			<span className="reader-export-button__label">{ translate( 'Export OPML' ) }</span>
 		</Button>
 	);
