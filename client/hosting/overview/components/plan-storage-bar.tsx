@@ -1,6 +1,5 @@
 import { ProgressBar } from '@automattic/components';
 import { SiteMediaStorage } from '@automattic/data-stores';
-import { Icon, cloud } from '@wordpress/icons';
 import clsx from 'clsx';
 import filesize from 'filesize';
 import { useTranslate } from 'i18n-calypso';
@@ -32,11 +31,8 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 	return (
 		<>
 			<div className="hosting-overview__plan-storage-title-wrapper">
-				<div className="hosting-overview__plan-storage-title">
-					<Icon icon={ cloud } />
-					{ translate( 'Storage' ) }
-				</div>
-				<span>
+				<div className="hosting-overview__plan-storage-title">{ translate( 'Storage' ) }</div>
+				<span className="hosting-overview__plan-storage-value">
 					{ translate( 'Using %(usedStorage)s of %(maxStorage)s', {
 						args: {
 							usedStorage: used,

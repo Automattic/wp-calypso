@@ -75,16 +75,16 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 
 	return (
 		<div className="hosting-overview__plan-site-visits">
-			<div className="hosting-overview__plan-site-visits-title">
-				{ translate( '{{span}}Visits{{/span}} (Unlimited)', {
-					components: {
-						span: <span className="hosting-overview__plan-site-visits-title-label" />,
-					},
-					comment:
-						'The title of the site visits section of site stats, with a note that visits are unlimited',
-				} ) }
+			<div className="hosting-overview__plan-site-visits-title-wrapper">
+				<div className="hosting-overview__plan-site-visits-title">
+					{ translate( 'Visits', {
+						comment: 'The title of the site visits section of site stats',
+					} ) }
+				</div>
+				<div className="hosting-overview__site-metrics-unlimited">
+					{ translate( 'Unlimited', { comment: 'An indicator that bandwidth is unlimited' } ) }
+				</div>
 			</div>
-
 			<div className="hosting-overview__plan-site-visits-content">{ getSiteVisitsContent() }</div>
 			<a href={ `/stats/month/${ siteSlug }` }>
 				{ translate( 'Visit stats', {
