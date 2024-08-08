@@ -167,7 +167,7 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		it( 'redirects users FROM Instructions > Migration started', () => {
+		it( 'redirects users from Instructions > Migration started', () => {
 			const destination = runNavigation( {
 				from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -179,7 +179,7 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		it( 'redirects users FROM Capture Source URL > Migration assisted', () => {
+		it( 'redirects users from Capture Source URL > Migration assisted', () => {
 			const destination = runNavigation( {
 				from: STEPS.SITE_MIGRATION_SOURCE_URL,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
