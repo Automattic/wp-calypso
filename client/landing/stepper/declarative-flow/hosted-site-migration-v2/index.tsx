@@ -10,6 +10,10 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
+import { ProvidedDependencies } from '../internals/types';
+
+const { PLATFORM_IDENTIFICATION, PROCESSING, SITE_CREATION_STEP, SITE_MIGRATION_UPGRADE_PLAN } =
+	STEPS;
 
 const {
 	PLATFORM_IDENTIFICATION,
@@ -43,8 +47,6 @@ export default {
 		] );
 	},
 
-	//TEMP: This is a temporary implementation to make the flow work
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	useStepNavigation( currentStep, navigate ) {
 		const [ query ] = useSearchParams();
 
@@ -79,7 +81,7 @@ export default {
 						addQueryArgs(
 							{
 								platform: data.platform,
-								...( data.platform !== 'wordpress' ? { next: data.next } : {} ),
+								...( data.platform !== 'wordpress' ? { next: data.url } : {} ),
 							},
 							SITE_CREATION_STEP.slug
 						)
@@ -118,83 +120,6 @@ export default {
 								siteSlug: data?.siteSlug,
 							},
 							SITE_MIGRATION_UPGRADE_PLAN.slug
-						)
-					);
-				}
-
-				if ( currentStep === SITE_MIGRATION_UPGRADE_PLAN.slug ) {
-					if ( data?.goToCheckout ) {
-						const redirectAfterCheckout = SITE_MIGRATION_HOW_TO_MIGRATE.slug;
-						const destination = addQueryArgs(
-							{
-								siteSlug: data.siteSlug,
-								siteId: data.siteId,
-							},
-							`/setup/${ data.flowPath as string }/${ redirectAfterCheckout }`
-						);
-
-						return goToCheckout( {
-							flowName: data.flowPath as string,
-							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-							siteSlug: data.siteSlug as string,
-							destination: destination,
-							plan: data.plan as string,
-							cancelDestination: `/setup/${ data.flowPath as string }/${
-								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
-							}?${ query.toString() }`,
-							extraQueryParams:
-								data?.sendIntentWhenCreatingTrial && data?.plan === PLAN_MIGRATION_TRIAL_MONTHLY
-									? { hosting_intent: HOSTING_INTENT_MIGRATE }
-									: {},
-						} );
-					}
-				}
-
-				if ( currentStep === SITE_MIGRATION_HOW_TO_MIGRATE.slug ) {
-					if ( data?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) {
-						return navigate(
-							addQueryArgs(
-								{
-									siteId: data.siteId,
-									siteSlug: data.siteSlug,
-								},
-								SITE_MIGRATION_INSTRUCTIONS.slug
-							)
-						);
-					}
-
-					return navigate(
-						addQueryArgs(
-							{
-								siteId: data.siteId,
-								siteSlug: data.siteSlug,
-							},
-							SITE_MIGRATION_SOURCE_URL.slug
-						)
-					);
-				}
-
-				if ( currentStep === SITE_MIGRATION_INSTRUCTIONS.slug ) {
-					return navigate(
-						addQueryArgs(
-							{
-								siteId: data.siteId,
-								siteSlug: data.siteSlug,
-							},
-							SITE_MIGRATION_STARTED.slug
-						)
-					);
-				}
-
-				if ( currentStep === SITE_MIGRATION_SOURCE_URL.slug ) {
-					return navigate(
-						addQueryArgs(
-							{
-								siteId: data.siteId,
-								siteSlug: data.siteSlug,
-								from: data.from,
-							},
-							SITE_MIGRATION_ASSISTED_MIGRATION.slug
 						)
 					);
 				}
