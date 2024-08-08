@@ -5,6 +5,7 @@ import { URLSearchParams } from 'url';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { addQueryArgs } from '@wordpress/url';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
+import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import flow from '../';
 import { STEPS } from '../../internals/steps';
 import { getFlowLocation, renderFlow } from '../../test/helpers';
@@ -14,6 +15,7 @@ const originalLocation = window.location;
 
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
+jest.mock( 'calypso/landing/stepper/utils/checkout' );
 
 describe( `${ flow.name }`, () => {
 	beforeAll( () => {
@@ -117,6 +119,24 @@ describe( `${ flow.name }`, () => {
 			expect( destination ).toMatchDestination( {
 				step: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+			} );
+		} );
+
+		it( 'redirects user from Upgrade plan > Checkout page', () => {
+			runNavigation( {
+				from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				dependencies: { goToCheckout: true, plan: 'business', userAcceptedDeal: false },
+			} );
+
+			expect( goToCheckout ).toHaveBeenCalledWith( {
+				destination: `/setup/hosted-site-migration-v2/site-migration-how-to-migrate?siteSlug=example.wordpress.com&siteId=123`,
+				extraQueryParams: {},
+				flowName: 'hosted-site-migration-v2',
+				siteSlug: 'example.wordpress.com',
+				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				cancelDestination: `/setup/hosted-site-migration-v2/site-migration-upgrade-plan?siteId=123&siteSlug=example.wordpress.com`,
+				plan: 'business',
 			} );
 		} );
 	} );

@@ -1,14 +1,22 @@
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { HOSTED_SITE_MIGRATION_V2_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { useSearchParams } from 'react-router-dom';
 import { Primitive } from 'utility-types';
+import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { type Flow } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { addQueryArgs } from 'calypso/lib/url';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
 
-const { PLATFORM_IDENTIFICATION, PROCESSING, SITE_CREATION_STEP, SITE_MIGRATION_UPGRADE_PLAN } =
-	STEPS;
+const {
+	PLATFORM_IDENTIFICATION,
+	PROCESSING,
+	SITE_CREATION_STEP,
+	SITE_MIGRATION_UPGRADE_PLAN,
+	SITE_MIGRATION_HOW_TO_MIGRATE,
+} = STEPS;
 
 export default {
 	name: HOSTED_SITE_MIGRATION_V2_FLOW,
@@ -22,6 +30,7 @@ export default {
 			SITE_CREATION_STEP,
 			PROCESSING,
 			SITE_MIGRATION_UPGRADE_PLAN,
+			SITE_MIGRATION_HOW_TO_MIGRATE,
 		] );
 	},
 
@@ -33,12 +42,22 @@ export default {
 		return {
 			submit: ( props?: ProvidedDependencies ) => {
 				const data = {
-					platform: props?.platform || query.get( 'platform' ),
+					// Site Creation Step
 					siteId: props?.siteId || query.get( 'siteId' ),
 					siteSlug: props?.siteSlug || query.get( 'siteSlug' ),
+
+					//Platform Identification Step
+					platform: props?.platform || query.get( 'platform' ),
 					next: props?.next || query.get( 'next' ),
 					url: props?.url,
-				} as Record< string, Primitive >;
+
+					//Upgrade Plan Step
+					userAcceptedDeal: props?.userAcceptedDeal,
+					goToCheckout: props?.goToCheckout,
+					plan: props?.plan,
+					sendIntentWhenCreatingTrial: props?.sendIntentWhenCreatingTrial,
+					flowPath: this.variantSlug ?? this.name,
+				} as Record< string, Primitive | string >;
 
 				if ( currentStep === PLATFORM_IDENTIFICATION.slug ) {
 					return navigate(
@@ -86,6 +105,34 @@ export default {
 							SITE_MIGRATION_UPGRADE_PLAN.slug
 						)
 					);
+				}
+
+				if ( currentStep === SITE_MIGRATION_UPGRADE_PLAN.slug ) {
+					if ( data?.goToCheckout ) {
+						const redirectAfterCheckout = SITE_MIGRATION_HOW_TO_MIGRATE.slug;
+						const destination = addQueryArgs(
+							{
+								siteSlug: data.siteSlug,
+								siteId: data.siteId,
+							},
+							`/setup/${ data.flowPath as string }/${ redirectAfterCheckout }`
+						);
+
+						return goToCheckout( {
+							flowName: data.flowPath as string,
+							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+							siteSlug: data.siteSlug as string,
+							destination: destination,
+							plan: data.plan as string,
+							cancelDestination: `/setup/${ data.flowPath as string }/${
+								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+							}?${ query.toString() }`,
+							extraQueryParams:
+								data?.sendIntentWhenCreatingTrial && data?.plan === PLAN_MIGRATION_TRIAL_MONTHLY
+									? { hosting_intent: HOSTING_INTENT_MIGRATE }
+									: {},
+						} );
+					}
 				}
 			},
 		};
