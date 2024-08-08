@@ -124,11 +124,21 @@ export default function ItemPreviewPaneHeader( {
 														className="item-preview__header-env-data-item-link"
 														onClick={ handleWpVersionClick }
 													>
-														{ wpVersion } { wpVersionName && `(${ wpVersionName })` }
+														{ wpVersion }{ ' ' }
+														{ wpVersionName && (
+															<span className="item-preview__header-env-data-item-link-capitalize">
+																({ wpVersionName })
+															</span>
+														) }
 													</Button>
 												) : (
 													<>
-														{ wpVersion } { wpVersionName && `(${ wpVersionName })` }
+														{ wpVersion }{ ' ' }
+														{ wpVersionName && (
+															<span className="item-preview__header-env-data-item-link-capitalize">
+																({ wpVersionName })
+															</span>
+														) }
 													</>
 												) }
 											</div>
