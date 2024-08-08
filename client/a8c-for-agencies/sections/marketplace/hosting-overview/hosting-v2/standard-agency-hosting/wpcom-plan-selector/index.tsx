@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo, useState } from 'react';
 import A4ANumberInput from 'calypso/a8c-for-agencies/components/a4a-number-input';
-import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
+import useWPCOMOwnedSites from 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites';
 import SimpleList from 'calypso/a8c-for-agencies/sections/marketplace/common/simple-list';
 import { MarketplaceTypeContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
@@ -153,18 +153,22 @@ type WPCOMPlanSelectorProps = {
 export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps ) {
 	const translate = useTranslate();
 
-	const { data: licenseCounts, isSuccess: isLicenseCountsReady } = useFetchLicenseCounts();
+	const { count, isReady: isLicenseCountsReady } = useWPCOMOwnedSites();
 
 	const { wpcomPlans } = useProductAndPlans( {} );
 
 	const plan = getWPCOMCreatorPlan( wpcomPlans ) ?? wpcomPlans[ 0 ];
 
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const referralMode = marketplaceType === 'referral';
+
 	const ownedPlans = useMemo( () => {
-		if ( isLicenseCountsReady && plan ) {
-			const productStats = licenseCounts?.products?.[ plan.slug ];
-			return productStats?.not_revoked || 0;
+		if ( referralMode ) {
+			return 0;
 		}
-	}, [ isLicenseCountsReady, licenseCounts?.products, plan ] );
+
+		return count;
+	}, [ count, referralMode ] );
 
 	const discountTiers = useWPCOMDiscountTiers();
 
@@ -195,9 +199,6 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 			}
 		}
 	};
-
-	const { marketplaceType } = useContext( MarketplaceTypeContext );
-	const referralMode = marketplaceType === 'referral';
 
 	if ( ! plan ) {
 		return;
