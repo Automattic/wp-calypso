@@ -3,6 +3,7 @@ import type { useLocalizeUrl } from '@automattic/i18n-utils';
 
 export interface HeaderProps {
 	className?: string;
+	hideGetStartedCta?: boolean;
 	isLoggedIn: boolean;
 	sectionName?: string;
 	logoColor?: string;
