@@ -45,9 +45,9 @@ export default {
 						addQueryArgs(
 							{
 								platform: data.platform,
-								next: data.url,
+								...( data.platform !== 'wordpress' ? { next: data.next } : {} ),
 							},
-							STEPS.SITE_CREATION_STEP.slug
+							SITE_CREATION_STEP.slug
 						)
 					);
 				}
@@ -59,7 +59,7 @@ export default {
 								platform: data.platform,
 								next: data.next,
 							},
-							STEPS.PROCESSING.slug
+							PROCESSING.slug
 						)
 					);
 				}
