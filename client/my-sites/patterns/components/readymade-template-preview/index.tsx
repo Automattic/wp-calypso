@@ -16,7 +16,7 @@ export const ReadymadeTemplatePreview = ( {
 	return (
 		<div className="readymade-template-preview">
 			<MShotsImage
-				url={ readymadeTemplate.previewUrl + '&t=2' }
+				url={ readymadeTemplate.previewUrl }
 				alt=""
 				options={ mShotsOptions }
 				aria-labelledby=""
