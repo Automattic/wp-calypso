@@ -95,4 +95,5 @@ export type ReadymadeTemplate = {
 	patterns: ReadymadeTemplatePattern[];
 	styles: ReadymadeTemplateStyles;
 	globalStyles?: GlobalStylesObject;
+	previewUrl: string;
 };

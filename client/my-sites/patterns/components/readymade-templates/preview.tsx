@@ -1,4 +1,4 @@
-import { addQueryArgs } from '@wordpress/url';
+import { MShotsImage } from '@automattic/onboarding';
 import { ReadymadeTemplate } from 'calypso/my-sites/patterns/types';
 
 export const ReadymadeTemplatePreview = ( {
@@ -6,14 +6,14 @@ export const ReadymadeTemplatePreview = ( {
 }: {
 	readymadeTemplate: ReadymadeTemplate;
 } ) => {
-	const previewUrl = addQueryArgs( 'https://dotcompatterns.wordpress.com', {
-		readymade_templates: readymadeTemplate.slug,
-		iframe: true,
-		theme_preview: true,
-		preview: true,
-	} );
+	const mShotsOptions = {
+		vpw: 1200,
+		vph: 1680,
+		w: 1200,
+		screen_height: 1680,
+	};
 
 	return (
-		<iframe scrolling="no" title={ readymadeTemplate.title } src={ previewUrl } tabIndex={ -1 } />
+		<MShotsImage url={ readymadeTemplate.previewUrl + '&t=2' } alt="" options={ mShotsOptions } />
 	);
 };
