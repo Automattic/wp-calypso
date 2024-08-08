@@ -91,12 +91,16 @@ a.readymade-template-details-back {
 	margin-bottom: 40px;
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
 	gap: 8px;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 
 	@media (max-width: $break-wide) {
 		margin-bottom: 24px;
+	}
+
+	@media (max-width: $break-mobile) {
+		align-items: center;
+		flex-wrap: wrap;
 	}
 }
 
@@ -111,6 +115,7 @@ a.readymade-template-details-back {
 .readymade-template-details-actions {
 	display: flex;
 	gap: 16px;
+	margin-top: 6px;
 
 	.components-button {
 		box-shadow: none;
