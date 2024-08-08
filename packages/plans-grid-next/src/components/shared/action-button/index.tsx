@@ -170,7 +170,7 @@ const ActionButton = ( {
 		} else {
 			const hasFreeTrialPlan = isInSignup ? !! freeTrialPlanSlug : false;
 			actionButton = hasFreeTrialPlan ? (
-				<div className="plans-grid-next__action-button-multi">
+				<div className="plans-grid-next-action-button__multi">
 					<PlanButton planSlug={ planSlug } onClick={ () => freeTrialCallback() } busy={ busy }>
 						{ freeTrialText }
 					</PlanButton>
@@ -192,7 +192,7 @@ const ActionButton = ( {
 						{ text }
 					</PlanButton>
 					{ postButtonText && (
-						<span className="plans-grid-next__action-button-label">{ postButtonText }</span>
+						<span className="plans-grid-next-action-button__label">{ postButtonText }</span>
 					) }
 				</>
 			);
@@ -201,11 +201,11 @@ const ActionButton = ( {
 
 	return (
 		<div
-			className={ clsx( 'plans-grid-next__action-button', {
+			className={ clsx( 'plans-grid-next-action-button', {
 				'is-fixed-width': isFixedWidth,
 			} ) }
 		>
-			<div className="plans-grid-next__action-button-content">{ actionButton }</div>
+			<div className="plans-grid-next-action-button__content">{ actionButton }</div>
 		</div>
 	);
 };
