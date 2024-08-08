@@ -189,9 +189,7 @@ const HostingFeatures = () => {
 	let buttons;
 	if ( isTransferInProgress && config.isEnabled( 'hosting-overview-refinements' ) ) {
 		title = translate( 'Activating hosting features' );
-		description = translate(
-			'Stay tuned, as we activate the following features included in your plan'
-		);
+		description = translate( 'This place will refresh once the activation is completed.' );
 	} else if ( showActivationButton ) {
 		title = activateTitle;
 		description = activateDescription;
