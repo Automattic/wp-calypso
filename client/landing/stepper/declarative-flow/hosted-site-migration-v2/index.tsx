@@ -7,6 +7,7 @@ import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-tri
 import { type Flow } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { addQueryArgs } from 'calypso/lib/url';
+import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
 
@@ -16,6 +17,8 @@ const {
 	SITE_CREATION_STEP,
 	SITE_MIGRATION_UPGRADE_PLAN,
 	SITE_MIGRATION_HOW_TO_MIGRATE,
+	SITE_MIGRATION_SOURCE_URL,
+	SITE_MIGRATION_INSTRUCTIONS,
 } = STEPS;
 
 export default {
@@ -31,6 +34,8 @@ export default {
 			PROCESSING,
 			SITE_MIGRATION_UPGRADE_PLAN,
 			SITE_MIGRATION_HOW_TO_MIGRATE,
+			SITE_MIGRATION_SOURCE_URL,
+			SITE_MIGRATION_INSTRUCTIONS,
 		] );
 	},
 
@@ -57,6 +62,9 @@ export default {
 					plan: props?.plan,
 					sendIntentWhenCreatingTrial: props?.sendIntentWhenCreatingTrial,
 					flowPath: this.variantSlug ?? this.name,
+
+					// How to Migrate Step
+					how: props?.how || query.get( 'how' ),
 				} as Record< string, Primitive | string >;
 
 				if ( currentStep === PLATFORM_IDENTIFICATION.slug ) {
@@ -133,6 +141,30 @@ export default {
 									: {},
 						} );
 					}
+				}
+
+				if ( currentStep === SITE_MIGRATION_HOW_TO_MIGRATE.slug ) {
+					if ( data?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) {
+						return navigate(
+							addQueryArgs(
+								{
+									siteId: data.siteId,
+									siteSlug: data.siteSlug,
+								},
+								SITE_MIGRATION_INSTRUCTIONS.slug
+							)
+						);
+					}
+
+					return navigate(
+						addQueryArgs(
+							{
+								siteId: data.siteId,
+								siteSlug: data.siteSlug,
+							},
+							SITE_MIGRATION_SOURCE_URL.slug
+						)
+					);
 				}
 			},
 		};

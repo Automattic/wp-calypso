@@ -138,7 +138,7 @@ expect.extend( {
 		if ( ! isSameStep ) {
 			return {
 				message: () =>
-					`expected ${ destination.step } to match ${ expected.step } but the step is different`,
+					`expected ${ destination.step } to match ${ expected.step.slug } but the step is different`,
 				pass: false,
 			};
 		}
