@@ -20,6 +20,7 @@ export const DOMAIN_EXPIRATION_AUCTION = `${ root }/domains/domain-expiration/#e
 export const DOMAIN_EXPIRATION_REDEMPTION = `${ root }/domains/domain-expiration/#renewing-a-domain-in-the-redemption-period`;
 export const DOMAIN_RECENTLY_REGISTERED = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAIN_PRICING_AND_AVAILABLE_TLDS = `${ root }/domains/domain-pricing-and-available-tlds/`;
+export const DOMAIN_PROMOTIONAL_PRICING_POLICY = `${ root }/domains/domain-pricing-and-available-tlds/#domain-name-promotional-pricing-policy`;
 export const DNS_RECORDS_EDITING_OR_DELETING = `${ root }/domains/custom-dns/#editing-or-deleting-dns-records`;
 export const DNS_TXT_RECORD_CHAR_LIMIT = `${ root }/domains/custom-dns/#txt-record-character-limit`;
 export const ECOMMERCE = `${ root }/ecommerce/`;

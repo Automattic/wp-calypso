@@ -39,16 +39,7 @@ export class EditorSidebarBlockInserterComponent {
 		}
 
 		const editorParent = await this.editor.parent();
-		const blockInserterPanelLocator = editorParent.locator( selectors.closeBlockInserterButton );
-
-		try {
-			// The panel is expected to auto-close. Let's possibly wait for that
-			// detach event
-			await blockInserterPanelLocator.waitFor( { state: 'detached' } );
-		} catch {
-			// If not auto-closed, trigger a close
-			await blockInserterPanelLocator.click();
-		}
+		await editorParent.locator( selectors.closeBlockInserterButton ).click();
 
 		await this.page.locator( sidebarParentSelector ).waitFor( { state: 'detached' } );
 	}
@@ -76,7 +67,10 @@ export class EditorSidebarBlockInserterComponent {
 	 */
 	async selectBlockInserterResult(
 		name: string,
-		{ type = 'block' }: { type?: 'block' | 'pattern' } = {}
+		{
+			type = 'block',
+			blockFallBackName = '',
+		}: { type?: 'block' | 'pattern'; blockFallBackName?: string } = {}
 	): Promise< void > {
 		const editorParent = await this.editor.parent();
 		let locator;
@@ -84,12 +78,18 @@ export class EditorSidebarBlockInserterComponent {
 		if ( type === 'pattern' ) {
 			locator = editorParent.locator( selectors.patternResultItem( name ) ).first();
 		} else {
+			const optionName = blockFallBackName
+				? new RegExp( `(${ name }|${ blockFallBackName })` )
+				: name;
 			locator = editorParent
 				// The DOM structure that hold the block options changes a LOT dependent on whether there's a search.
 				// This combined selector is not the slickest, but capture both cases.
 				// There's not an easy way to use "getByRole" to capture two cases without a lot of promise racing.
 				.locator( `.block-editor-inserter__block-list,.block-editor-block-types-list` )
-				.getByRole( 'option', { name, exact: true } )
+				.getByRole( 'option', {
+					name: optionName,
+					exact: true,
+				} )
 				.first();
 		}
 

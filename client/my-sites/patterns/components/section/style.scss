@@ -45,6 +45,15 @@
 	}
 }
 
+.patterns-section__premium-badge {
+	@include patterns-page-width;
+	margin-bottom: 10px;
+	.premium-badge {
+		margin-left: 0;
+		background-color: #50575e;
+	}
+}
+
 .patterns-section__header {
 	@include patterns-page-width;
 	padding-bottom: 48px;

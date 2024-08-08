@@ -6,11 +6,11 @@ import { usePlansGridContext } from '../../grid-context';
 import { DataResponse, GridPlan, PlanActionOverrides } from '../../types';
 import { StickyContainer } from '../sticky-container';
 import BillingTimeframes from './billing-timeframes';
-import PartnerLogos from './partner-logos';
+import EnterpriseFeatures from './enterprise-features';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
-import PlanPrice from './plan-price';
+import PlanPrices from './plan-prices';
 import PlanTagline from './plan-tagline';
 import PreviousFeaturesIncludedTitle from './previous-features-included-title';
 import TopButtons from './top-buttons';
@@ -106,7 +106,7 @@ const Table = ( {
 					/>
 				</tr>
 				<tr>
-					<PlanPrice
+					<PlanPrices
 						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 						currentSitePlanSlug={ currentSitePlanSlug }
@@ -136,7 +136,7 @@ const Table = ( {
 					) }
 				</StickyContainer>
 				<tr>
-					<PartnerLogos
+					<EnterpriseFeatures
 						renderedGridPlans={ gridPlansWithoutSpotlight }
 						options={ { isTableCell: true } }
 					/>

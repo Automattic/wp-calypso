@@ -8,7 +8,7 @@ import SubscriptionStatus from '../referrals-list/subscription-status';
 import ReferralCommissions from './commissions';
 import ReferralPurchasesMobile from './mobile/purchases-mobile';
 import ReferralPurchases from './purchases';
-import type { Referral } from '../types';
+import type { Referral, ReferralInvoice } from '../types';
 import type { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 
 import './style.scss';
@@ -16,12 +16,17 @@ import './style.scss';
 interface Props {
 	referral: Referral;
 	closeSitePreviewPane: () => void;
+	referralInvoices: ReferralInvoice[];
 }
 
 const REFERRAL_PURCHASES_ID = 'referral-purchases';
 const REFERRAL_COMMISSIONS_ID = 'referral-commissions';
 
-export default function ReferralDetails( { referral, closeSitePreviewPane }: Props ) {
+export default function ReferralDetails( {
+	referral,
+	closeSitePreviewPane,
+	referralInvoices,
+}: Props ) {
 	const translate = useTranslate();
 
 	const [ selectedReferralTab, setSelectedReferralTab ] = useState( REFERRAL_PURCHASES_ID );
@@ -46,6 +51,10 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 
 	const isDesktop = useDesktopBreakpoint();
 
+	const clientReferralInvoices = referralInvoices.filter(
+		( invoice ) => invoice.clientId === referral.client.id
+	);
+
 	const features = useMemo(
 		() => [
 			createFeaturePreview(
@@ -66,10 +75,10 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 				true,
 				selectedReferralTab,
 				setSelectedReferralTab,
-				<ReferralCommissions referral={ referral } />
+				<ReferralCommissions referral={ referral } referralInvoices={ clientReferralInvoices } />
 			),
 		],
-		[ referral, selectedReferralTab, translate, isDesktop ]
+		[ translate, selectedReferralTab, isDesktop, referral, clientReferralInvoices ]
 	);
 
 	return (

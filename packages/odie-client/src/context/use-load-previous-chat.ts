@@ -5,13 +5,26 @@ import { Chat, OdieAllowedBots } from '../types/';
 import { transformMessages } from '../utils/conversation-utils';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 
-export const useLoadPreviousChat = ( botNameSlug: OdieAllowedBots, chatId?: number | null ) => {
-	const { data: existingChat } = useOdieGetChat( botNameSlug, chatId, 1, 30 );
+export const useLoadPreviousChat = ( {
+	botNameSlug,
+	chatId,
+	odieInitialPromptText,
+}: {
+	botNameSlug: OdieAllowedBots;
+	chatId: number | null | undefined;
+	odieInitialPromptText?: string;
+} ) => {
+	const { data: existingChat, isLoading: loadingChat } = useOdieGetChat(
+		botNameSlug,
+		chatId,
+		1,
+		30
+	);
 	const { init: shouldLoadConversation, getConversation } = useSmooch();
 	const [ chat, setChat ] = useState< Chat >( {
 		chat_id: null,
 		type: 'ai',
-		messages: [ getOdieInitialMessage( botNameSlug ) ],
+		messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
 	} );
 
 	useEffect( () => {
@@ -23,10 +36,13 @@ export const useLoadPreviousChat = ( botNameSlug: OdieAllowedBots, chatId?: numb
 		}
 	}, [ shouldLoadConversation ] );
 
+	const [ isLoading, setIsLoading ] = useState( true );
+
 	useEffect( () => {
+		setIsLoading( loadingChat );
 		const loadConversation = async () => {
 			if ( existingChat?.chat_id ) {
-				const initialMessage = getOdieInitialMessage( botNameSlug );
+				const initialMessage = getOdieInitialMessage( botNameSlug, odieInitialPromptText );
 				const conversation = await getConversation( existingChat.chat_id );
 				const conversationMessages = transformMessages( conversation?.messages || [] );
 				const messages = [ initialMessage, ...existingChat.messages, ...conversationMessages ];
@@ -40,7 +56,7 @@ export const useLoadPreviousChat = ( botNameSlug: OdieAllowedBots, chatId?: numb
 				setChat( {
 					chat_id: null,
 					type: 'ai',
-					messages: [ getOdieInitialMessage( botNameSlug ) ],
+					messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
 					loading: false,
 				} );
 			}
@@ -52,7 +68,14 @@ export const useLoadPreviousChat = ( botNameSlug: OdieAllowedBots, chatId?: numb
 			} ) );
 			loadConversation();
 		}
-	}, [ botNameSlug, chatId, existingChat, shouldLoadConversation ] );
+	}, [
+		botNameSlug,
+		chatId,
+		existingChat,
+		shouldLoadConversation,
+		loadingChat,
+		odieInitialPromptText,
+	] );
 
-	return chat;
+	return { chat, isLoading };
 };

@@ -1,61 +1,73 @@
 import { JetpackLogo } from '@automattic/components';
 import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
+import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.png';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
 import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
-import ProfileAvatar1 from './profile-1.jpeg';
-import ProfileAvatar2 from './profile-2.png';
+import CommonHostingBenefits from '../common-hosting-benefits';
+import WPCOMPlanSelector from './wpcom-plan-selector';
 
-export default function StandardAgencyHosting() {
+import './style.scss';
+
+type Props = {
+	onAddToCart: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+};
+
+export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 
 	return (
-		<div>
-			{ /* Sample Hosting sections */ }
+		<div className="standard-agency-hosting">
+			<section className="standard-agency-hosting__plan-selector-container">
+				<WPCOMPlanSelector onSelect={ onAddToCart } />
+			</section>
+
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
-				heading="Supercharge your clients’ sites"
-				subheading="Premium Jetpack features included"
+				heading={ translate( 'Premium Jetpack features included' ) }
+				subheading={ translate( 'Supercharge your clients’ sites' ) }
 				background={ BackgroundType1 }
 				items={ [
-					'Real-time backups',
-					'One-click restores',
-					'Site downtime monitoring',
-					'Brute-force protection',
-					'Elastic-powered search',
-					'Optional plugin auto-updates',
-					'4K, unbranded VideoPress player',
-					'Unlimited auto-shares to social networks',
-					'Site activity log',
-					'Advanced site stats',
-					'Paid subscriptions to site content',
-					'Donation / tip buttons',
-					'Form and comment spam protection',
-					'Custom forms',
+					translate( 'Real-time backups' ),
+					translate( 'One-click restores' ),
+					translate( 'Site downtime monitoring' ),
+					translate( 'Brute-force protection' ),
+					translate( 'Elastic-powered search' ),
+					translate( 'Optional plugin auto-updates' ),
+					translate( '4K, unbranded VideoPress player' ),
+					translate( 'Unlimited auto-shares to social networks' ),
+					translate( 'Site activity log' ),
+					translate( 'Advanced site stats' ),
+					translate( 'Paid subscriptions to site content' ),
+					translate( 'Donation / tip buttons' ),
+					translate( 'Form and comment spam protection' ),
+					translate( 'Custom forms' ),
 				] }
 				fiveRows
 			/>
 			<HostingAdditionalFeaturesSection
-				heading="Just for Agencies"
-				subheading="Included with all plans and sites"
+				heading={ translate( 'Included with all plans and sites' ) }
+				subheading={ translate( 'Just for Agencies' ) }
 				items={ [
-					'Global edge caching',
-					'Global CDN with 28+ locations',
-					'Automated datacenter failover',
-					'Free managed migrations',
-					'Automated malware scanning via Jetpack',
-					'Plugin update manager',
-					'24/7 expert support',
-					'Free staging sites with sync tools',
-					'SFTP/SHH, WP-CLI, Git tools',
-					'Resource isolation across every site',
+					translate( 'Global edge caching' ),
+					translate( 'Global CDN with 28+ locations' ),
+					translate( 'Automated datacenter failover' ),
+					translate( 'Free managed migrations' ),
+					translate( 'Automated malware scanning via Jetpack' ),
+					translate( 'Plugin update manager' ),
+					translate( '24/7 expert support' ),
+					translate( 'Free staging sites with sync tools' ),
+					translate( 'SFTP/SHH, WP-CLI, Git tools' ),
+					translate( 'Resource isolation across every site' ),
 				] }
 			/>
 			<HostingFeaturesSection
-				heading="Specialized workflows"
-				subheading="Built for developers, by developers"
+				heading={ translate( 'Built for developers, by developers' ) }
+				subheading={ translate( 'Specialized workflows' ) }
 				background={ BackgroundType2 }
 				items={ [
 					{
@@ -103,32 +115,44 @@ export default function StandardAgencyHosting() {
 				] }
 			/>
 			<HostingTestimonialsSection
-				heading="What agencies say"
-				subheading="Love for WordPress.com hosting"
+				heading={ translate( 'Love for WordPress.com hosting' ) }
+				subheading={ translate( 'What agencies say' ) }
 				items={ [
 					{
 						profile: {
-							avatar: ProfileAvatar1,
 							name: 'Ajit Bohra',
-							title: 'Founder - LUBUS',
+							avatar: ProfileAvatar1,
+							title: translate( 'Founder, %(companyName)s', {
+								args: {
+									companyName: 'LUBUS',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
 							site: 'lubus.in',
 						},
-						testimonial:
-							'We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com.',
+						testimonial: translate(
+							'We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com.'
+						),
 					},
-
 					{
 						profile: {
+							name: 'Brian Lalli',
 							avatar: ProfileAvatar2,
-							name: 'Anil Gupta',
-							title: 'CEO - Multidots',
-							site: 'multidots.com',
+							title: translate( 'President, %(companyName)s', {
+								args: {
+									companyName: 'Moon Rooster LLC',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
+							site: 'moonrooster.com',
 						},
-						testimonial:
-							'This should be another WordPress.com specific testimonial. Let’s make sure it touches upon how they love the hosting, the support service, and especially the UI. This is just dummy text.',
+						testimonial: translate(
+							"WordPress.com has been crucial to my agency's growth. Its intuitive UI allows me to quickly create sleek, functional websites for my clients, and their reliable hosting and support enable me to rest easy, knowing my sites are in good hands."
+						),
 					},
 				] }
 			/>
+			<CommonHostingBenefits />
 		</div>
 	);
 }

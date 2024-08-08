@@ -1,3 +1,4 @@
+import React from 'react';
 import HostingSection, { HostingSectionProps } from '../hosting-section';
 
 import './style.scss';
@@ -7,12 +8,13 @@ type Props = Omit< HostingSectionProps, 'children' > & {
 		profile: {
 			avatar?: string;
 			name: string;
-			title: string;
+			title: React.ReactNode;
 			site?: string;
 			siteLink?: string;
 		};
 		testimonial: string;
 	}[];
+	itemBackgroundColor?: string;
 };
 
 export default function HostingTestimonialsSection( {
@@ -22,6 +24,7 @@ export default function HostingTestimonialsSection( {
 	background,
 	description,
 	items,
+	itemBackgroundColor,
 }: Props ) {
 	return (
 		<HostingSection
@@ -33,14 +36,20 @@ export default function HostingTestimonialsSection( {
 		>
 			<div className="hosting-testimonials">
 				{ items.map( ( item, index ) => (
-					<div className="hosting-testimonials__item" key={ `testimonial-item-${ index }` }>
+					<div
+						style={ {
+							backgroundColor: itemBackgroundColor,
+						} }
+						className="hosting-testimonials__item"
+						key={ `testimonial-item-${ index }` }
+					>
 						<p className="hosting-testimonials__item-message">{ item.testimonial }</p>
 
 						<div className="hosting-testimonials__item-profile">
 							{ item.profile.avatar && (
 								<img
 									className="hosting-testimonials__item-profile-avatar"
-									alt=""
+									alt="avatar"
 									src={ item.profile.avatar }
 								/>
 							) }
@@ -64,8 +73,8 @@ export default function HostingTestimonialsSection( {
 											rel="noreferrer"
 										>
 											{ item.profile.site }
-										</a>{ ' ' }
-										↗
+										</a>
+										&nbsp;↗
 									</span>
 								) }
 							</div>

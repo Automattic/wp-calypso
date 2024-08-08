@@ -33,7 +33,10 @@ ul.hosting-additional-features {
 		display: flex;
 		align-content: center;
 		gap: 4px;
-		white-space: nowrap;
+
+		@include break-medium {
+			white-space: nowrap;
+		}
 	}
 
 	.gridicon {
@@ -52,5 +55,16 @@ ul.hosting-additional-features.is-five-rows {
 		grid-template-rows: repeat(5, 1fr);
 		grid-auto-flow: column;
 	}
+}
 
+ul.hosting-additional-features.is-three-rows {
+	@include break-xlarge {
+		grid-template-rows: repeat(6, 1fr);
+		grid-auto-flow: column;
+	}
+
+	@include break-wide {
+		grid-template-rows: repeat(3, 1fr);
+		grid-auto-flow: column;
+	}
 }

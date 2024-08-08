@@ -107,7 +107,7 @@ export default function CommissionOverview( {
 							header={
 								<>
 									<div className="a4a-overview-hosting__logo-container">
-										<img src={ pressableIcon } alt="Pressable" />
+										<img className="pressable-icon" src={ pressableIcon } alt="Pressable" />
 										<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
 									</div>
 

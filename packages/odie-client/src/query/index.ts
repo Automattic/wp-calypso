@@ -1,4 +1,3 @@
-import { useSmooch } from '@automattic/zendesk-client';
 import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useI18n } from '@wordpress/react-i18n';
@@ -8,7 +7,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import { useOdieAssistantContext } from '../context';
 import { broadcastOdieMessage, useSetOdieStorage } from '../data';
-import { getConversationMetadada, getConversationUserFields } from '../utils/conversation-utils';
+import { useNewHumanConversation } from '../use-new-human-conversation';
 import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types/';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
@@ -55,13 +54,13 @@ function odieWpcomSendSupportMessage(
 }
 
 // Internal helper function to generate a uuid
-function uuid() {
+export const uuid = () => {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( c ) {
 		const r = ( Math.random() * 16 ) | 0;
 		const v = c === 'x' ? r : ( r & 0x3 ) | 0x8;
 		return v.toString( 16 );
 	} );
-}
+};
 
 /**
  * It will post a new message using the current chat_id.
@@ -86,25 +85,13 @@ export const useOdieSendMessage = (): UseMutationResult<
 		updateMessage,
 		odieClientId,
 		selectedSiteId,
-		selectedSiteUrl,
-		sectionName,
 		version,
 	} = useOdieAssistantContext();
-	const { createConversation } = useSmooch();
+	const { newConversation } = useNewHumanConversation();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
 	const storeChatId = useSetOdieStorage( 'chat_id' );
 	const { __ } = useI18n();
-
-	const newConversation = async () => {
-		if ( ! chat.chat_id ) {
-			return;
-		}
-		await createConversation(
-			getConversationUserFields( chat.chat_id, selectedSiteUrl, sectionName, selectedSiteId ),
-			getConversationMetadada( chat.chat_id )
-		);
-	};
 
 	/* translators: Error message when Wapuu fails to send a message */
 	const wapuuErrorMessage = __(

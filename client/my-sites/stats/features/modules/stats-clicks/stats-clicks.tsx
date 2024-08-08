@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { customLink } from '@wordpress/icons';
@@ -14,7 +15,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
@@ -25,10 +26,14 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 	moduleStrings,
 	className,
 	summaryUrl,
+	summary,
+	listItemClassName,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsClicks';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -64,7 +69,7 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#clicks` ) } />,
 									},
 									context: 'Stats: Link in a popover for the Clicks module when it has data',
 								}
@@ -75,8 +80,10 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 					period={ period }
 					query={ query }
 					statType={ statType }
-					showSummaryLink
+					showSummaryLink={ !! summary }
 					className={ className }
+					summary={ summary }
+					listItemClassName={ listItemClassName }
 					skipQuery
 				/>
 			) }
@@ -94,7 +101,7 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#clicks` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#clicks` ) } />,
 									},
 									context: 'Stats: Info box label when the Clicks module is empty',
 								}

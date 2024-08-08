@@ -427,7 +427,6 @@ export const FEATURE_PRODUCT_ADD_ONS = 'product-add-ons';
 export const FEATURE_ASSEMBLED_KITS = 'assembled-kits';
 export const FEATURE_STOCK_NOTIFS = 'stock-notifs';
 export const FEATURE_DYNAMIC_UPSELLS = 'dynamic-upsells';
-export const FEATURE_LOYALTY_PROG = 'loyalty-prog';
 export const FEATURE_CUSTOM_MARKETING_AUTOMATION = 'custom-marketing-automation';
 export const FEATURE_BULK_DISCOUNTS = 'bulk-discounts';
 export const FEATURE_INVENTORY_MGMT = 'inventory-mgmt';

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { search } from '@wordpress/icons';
@@ -13,7 +14,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL } from '../../../const';
+import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
@@ -25,10 +26,14 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 	moduleStrings,
 	className,
 	summaryUrl,
+	summary,
+	listItemClassName,
 }: StatsDefaultModuleProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsSearchTerms';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
@@ -62,7 +67,7 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#search-terms` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#search-terms` ) } />,
 									},
 									context: 'Stats: Info box label when the Search module is empty',
 								}
@@ -73,8 +78,10 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 					period={ period }
 					query={ query }
 					statType={ statType }
-					showSummaryLink
+					showSummaryLink={ !! summary }
 					className={ className }
+					summary={ summary }
+					listItemClassName={ listItemClassName }
 					skipQuery
 				/>
 			) }
@@ -91,7 +98,7 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ SUPPORT_URL }#search-terms` ) } />,
+										link: <a href={ localizeUrl( `${ supportUrl }#search-terms` ) } />,
 									},
 									context: 'Stats: Info box label when the Search module is empty',
 								}

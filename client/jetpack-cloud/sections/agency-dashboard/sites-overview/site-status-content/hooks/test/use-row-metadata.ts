@@ -219,8 +219,8 @@ describe( 'useRowMetadata', () => {
 
 		const expected = {
 			eventName: 'calypso_jetpack_agency_dashboard_scan_threats_click_large_screen',
-			isExternalLink: false,
-			link: '',
+			isExternalLink: true,
+			link: `https://wordpress.com/scan/history/${ FAKE_SITE.url }`,
 			isSupported: true,
 			row: rows.scan,
 			siteDown: false,

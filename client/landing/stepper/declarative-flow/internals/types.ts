@@ -139,6 +139,12 @@ export type Flow = {
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
 	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
+
+	/**
+	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
+	 * IMPORTANT: This hook will be removed in the future.
+	 */
+	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 };
 
 export type StepProps = {

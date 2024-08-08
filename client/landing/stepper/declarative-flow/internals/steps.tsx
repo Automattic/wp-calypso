@@ -60,6 +60,11 @@ export const STEPS = {
 
 	GOALS: { slug: 'goals', asyncComponent: () => import( './steps-repository/goals' ) },
 
+	GENERATE_CONTENT: {
+		slug: 'generateContent',
+		asyncComponent: () => import( './steps-repository/readymade-template-generate-content' ),
+	},
+
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
 
 	IMPORT_LIGHT: {
@@ -230,11 +235,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
 	},
 
-	SITE_MIGRATION_INSTRUCTIONS_I2: {
-		slug: 'site-migration-instructions-i2',
-		asyncComponent: () => import( './steps-repository/site-migration-instructions-i2' ),
-	},
-
 	SITE_MIGRATION_STARTED: {
 		slug: 'site-migration-started',
 		asyncComponent: () => import( './steps-repository/site-migration-started' ),
@@ -260,6 +260,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
 	},
 
+	SITE_MIGRATION_SOURCE_URL: {
+		slug: 'site-migration-source-url',
+		asyncComponent: () => import( './steps-repository/site-migration-source-url' ),
+	},
+
 	SITE_MIGRATION_UPGRADE_PLAN: {
 		slug: 'site-migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-upgrade-plan' ),
@@ -278,5 +283,9 @@ export const STEPS = {
 	SEGMENTATION_SURVEY: {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
+	},
+	IMPORT_OR_MIGRATE_WITH_UPGRADE: {
+		slug: 'import-or-migrate-with-selection',
+		asyncComponent: () => import( './steps-repository/import-or-migrate-with-upgrade' ),
 	},
 };

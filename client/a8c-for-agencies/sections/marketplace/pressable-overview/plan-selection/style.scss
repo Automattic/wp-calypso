@@ -54,6 +54,20 @@
 	font-weight: 600;
 }
 
+.pressable-overview-plan-selection__details-card-header-subtitle {
+	@include a4a-font-body-md;
+
+	&.is-regular-ownership {
+		padding-block-start: 32px;
+	}
+
+	&.is-refer-mode {
+		@include a4a-font-body-sm;
+		padding-block-end: 16px;
+	}
+
+}
+
 .pressable-overview-plan-selection__details-card-header-price {
 	display: flex;
 	flex-direction: column;
@@ -144,7 +158,7 @@
 	}
 }
 
-.components-button.pressable-overview-plan-selection__filter-button {
+.theme-a8c-for-agencies .components-button.pressable-overview-plan-selection__filter-button {
 	border: 1.5px solid var(--color-surface-backdrop);
 	font-size: 0.875rem;
 	font-weight: 600;
@@ -153,11 +167,6 @@
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 29px;
 	padding: 6px 12px;
-
-	&.is-selected {
-		background: var(--color-surface-backdrop);
-		color: var(--color-text-inverted);
-	}
 
 	&:focus {
 		box-shadow: none;
@@ -218,5 +227,49 @@
 		border-radius: 4px;
 		max-width: 350px;
 		height: 256px;
+	}
+}
+
+.is-new-hosting-page.pressable-overview-plan-selection {
+
+	@include break-huge {
+		width: 1000px;
+	}
+
+	.pressable-overview-plan-selection__filter-owned-plan {
+		margin-block-start: 32px;
+	}
+
+	.pressable-overview-plan-selection__details-card {
+		flex: 1;
+		border: 1px solid var(--color-neutral-5);
+		justify-content: space-between;
+	}
+
+	.pressable-overview-plan-selection__details-card-header-title {
+		@include a4a-font-heading-lg;
+
+		&.plan-name {
+			margin-block-end: 8px;
+			@include a4a-font-heading-xl;
+		}
+	}
+
+	.pressable-overview-plan-selection__details-card-header-price {
+		gap: 8px;
+	}
+
+	.pressable-overview-plan-selection__details-card-header-price-value {
+		@include a4a-font-heading-xl;
+	}
+
+	.pressable-overview-plan-selection__details > * {
+		gap: 24px;
+	}
+
+	&.is-slider-hidden {
+		.pressable-overview-plan-selection__details {
+			margin-block-start: 24px;
+		}
 	}
 }

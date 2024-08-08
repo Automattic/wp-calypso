@@ -30,6 +30,7 @@ interface MasterbarItemProps {
 	alwaysShowContent?: boolean;
 	disabled?: boolean;
 	subItems?: Array< MasterbarSubItemProps >;
+	hasGlobalBorderStyle?: boolean;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -45,6 +46,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		hasUnseen: PropTypes.bool,
 		alwaysShowContent: PropTypes.bool,
 		subItems: PropTypes.array,
+		hasGlobalBorderStyle: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -55,7 +57,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	};
 
 	state = {
-		isOpenByTouch: false,
+		isOpenForNonMouseFlow: false,
 	};
 
 	componentButtonRef = React.createRef< HTMLButtonElement >();
@@ -64,8 +66,14 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 	_preloaded = false;
 
 	componentDidMount() {
-		document.addEventListener( 'touchstart', this.closeMenuOnOutsideTouch );
-		return () => document.removeEventListener( 'touchstart', this.closeMenuOnOutsideTouch );
+		document.addEventListener( 'touchstart', this.closeMenuOnOutsideInteraction );
+		document.addEventListener( 'keydown', this.closeMenuOnOutsideInteraction );
+		document.addEventListener( 'click', this.closeMenuOnOutsideInteraction );
+		return () => {
+			document.removeEventListener( 'touchstart', this.closeMenuOnOutsideInteraction );
+			document.removeEventListener( 'keydown', this.closeMenuOnOutsideInteraction );
+			document.addEventListener( 'click', this.closeMenuOnOutsideInteraction );
+		};
 	}
 
 	preload = () => {
@@ -102,17 +110,22 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 							<Button
 								className="is-link"
 								onClick={ item.onClick }
-								onTouchEnd={ ( ev: React.TouchEvent ) => {
-									ev.preventDefault();
-									this.setState( { isOpenByTouch: false } );
-									item.onClick && item.onClick();
-								} }
+								onTouchEnd={ ( ev: React.TouchEvent ) =>
+									this.submenuButtonTouch( ev, item.onClick )
+								}
+								onKeyDown={ ( ev: React.KeyboardEvent ) =>
+									this.submenuButtonByKey( ev, item.onClick )
+								}
 							>
 								{ item.label }
 							</Button>
 						) }
 						{ ! item.onClick && item.url && (
-							<a href={ item.url } onTouchEnd={ this.navigateSubAnchorTouch }>
+							<a
+								href={ item.url }
+								onTouchEnd={ this.navigateSubAnchorTouch }
+								onKeyDown={ this.navigateSubAnchorByKey }
+							>
 								{ item.label }
 							</a>
 						) }
@@ -122,17 +135,23 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		);
 	}
 
-	toggleMenuByTouch = ( event: React.TouchEvent ) => {
+	toggleMenuByTouch = ( event: React.TouchEvent | React.KeyboardEvent ) => {
 		// If there are no subItems, there is nothing to toggle.
 		if ( ! this.props.subItems ) {
 			return;
 		}
 		// Prevent navigation by touching the parent menu item, and trigger toggling the menu instead.
 		event.preventDefault();
-		this.setState( { isOpenByTouch: ! this.state.isOpenByTouch } );
+		this.setState( { isOpenForNonMouseFlow: ! this.state.isOpenForNonMouseFlow } );
 	};
 
-	navigateSubAnchorTouch = ( event: React.TouchEvent ) => {
+	toggleMenuByKey = ( event: React.KeyboardEvent ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			this.toggleMenuByTouch( event );
+		}
+	};
+
+	navigateSubAnchorTouch = ( event: React.TouchEvent | React.KeyboardEvent ) => {
 		// We must prevent the default anchor behavior and navigate manually. Otherwise there is a
 		// race condition between the click on the anchor firing and the menu closing before that
 		// can happen.
@@ -141,12 +160,33 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		if ( url ) {
 			navigate( url );
 		}
-		this.setState( { isOpenByTouch: false } );
+		this.setState( { isOpenForNonMouseFlow: false } );
 	};
 
-	closeMenuOnOutsideTouch = ( event: TouchEvent ) => {
+	navigateSubAnchorByKey = ( event: React.KeyboardEvent ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			this.navigateSubAnchorTouch( event );
+		}
+	};
+
+	submenuButtonTouch = (
+		event: React.TouchEvent | React.KeyboardEvent,
+		onClick: ( () => void ) | undefined
+	) => {
+		event.preventDefault();
+		this.setState( { isOpenForNonMouseFlow: false } );
+		onClick && onClick();
+	};
+
+	submenuButtonByKey = ( event: React.KeyboardEvent, onClick: ( () => void ) | undefined ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			this.submenuButtonTouch( event, onClick );
+		}
+	};
+
+	closeMenuOnOutsideInteraction = ( event: TouchEvent | KeyboardEvent | MouseEvent ) => {
 		// If no subItems or the menu is already closed, there is nothing to close.
-		if ( ! this.props.subItems || ! this.state.isOpenByTouch ) {
+		if ( ! this.props.subItems || ! this.state.isOpenForNonMouseFlow ) {
 			return;
 		}
 
@@ -157,7 +197,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		const isInComponentDivRef = this.componentDivRef.current?.contains( event.target as Node );
 
 		if ( ! isInComponentButtonRef && ! isInComponentDivRef ) {
-			this.setState( { isOpenByTouch: false } );
+			this.setState( { isOpenForNonMouseFlow: false } );
 		}
 	};
 
@@ -167,7 +207,8 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			'has-unseen': this.props.hasUnseen,
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
 			'has-subitems': this.props.subItems,
-			'is-open': this.state.isOpenByTouch,
+			'is-open': this.state.isOpenForNonMouseFlow,
+			'has-global-border': this.props.hasGlobalBorderStyle,
 		} );
 
 		const attributes = {
@@ -194,11 +235,16 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 
 		if ( this.props.url && this.props.subItems ) {
 			return (
-				<button { ...attributes } ref={ this.componentButtonRef }>
+				<button
+					{ ...attributes }
+					ref={ this.componentButtonRef }
+					onKeyDown={ this.toggleMenuByKey }
+				>
 					<a
 						href={ this.props.url }
 						ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
 						onTouchEnd={ this.toggleMenuByTouch }
+						tabIndex={ -1 }
 					>
 						{ this.renderChildren() }
 					</a>
@@ -212,6 +258,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 				<button
 					{ ...attributes }
 					ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }
+					onKeyDown={ this.props.subItems && this.toggleMenuByKey }
 					onTouchEnd={ this.props.subItems && this.toggleMenuByTouch }
 				>
 					{ this.renderChildren() }

@@ -20,6 +20,7 @@ export interface PlanUsage {
 	billable_monthly_views: number;
 	should_show_paywall: boolean;
 	paywall_date_from: string | null;
+	upgrade_deadline_date: string | null;
 	validMonthlyViews: number;
 }
 

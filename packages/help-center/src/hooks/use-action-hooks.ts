@@ -27,6 +27,17 @@ export const useActionHooks = () => {
 			},
 		},
 		/**
+		 * Open Help Center.
+		 */
+		{
+			condition() {
+				return queryParams.get( 'help-center' ) === 'home';
+			},
+			action() {
+				setShowHelpCenter( true );
+			},
+		},
+		/**
 		 * Open to Wapuu chat.
 		 */
 		{
