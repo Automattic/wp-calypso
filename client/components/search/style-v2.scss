@@ -1,0 +1,236 @@
+@import "@automattic/typography/styles/variables";
+@import "../../assets/stylesheets/shared/mixins/long-content-fade";
+
+/**
+ * @component Search - THIS FILE IS ONLY USED IN THE HELP CENTER BECAUSE THE ORIGINAL HAS TOO GENERIC CLASS NAMES.
+ */
+
+.is-section-purchases .search {
+	z-index: z-index("root", ".is-section-purchases .search");
+}
+
+.calypso-search-bar {
+	border-radius: 2px;
+	display: flex;
+	flex: 1 1 auto;
+	margin-bottom: 24px;
+	width: 60px;
+	height: 51px;
+	position: relative;
+	align-items: center;
+	// places search above filters
+	z-index: z-index("root", ".search");
+	transition: all 0.15s ease-in-out;
+
+	.search__icon-navigation {
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
+		background-color: var(--color-surface);
+		height: 100%;
+
+		.accessible-focus &:focus {
+			box-shadow: inset 0 0 0 2px var(--color-primary-light);
+			position: relative;
+			z-index: 9999;
+		}
+	}
+
+	.search__open-icon,
+	.search__close-icon {
+		flex: 0 0 auto;
+		width: 50px;
+		z-index: z-index(".search", ".search .search__open-icon");
+		color: var(--color-primary);
+		cursor: pointer;
+	}
+
+	.search__open-icon:hover {
+		color: var(--color-neutral-60);
+	}
+
+	.search__close-icon {
+		color: var(--color-neutral-60);
+		opacity: 0;
+		transition: opacity 0.2s ease-in;
+	}
+
+	&.is-open.has-focus {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 1px var(--color-primary), 0 0 0 4px var(--color-primary-10);
+		&:hover {
+			box-shadow: 0 0 0 1px var(--color-primary), 0 0 0 4px var(--color-primary-20);
+		}
+	}
+
+	&.is-compact {
+		height: 36px;
+		.search__input {
+			height: 36px;
+			font-size: $font-body-extra-small;
+		}
+
+		.search__open-icon {
+			margin: 0 4px 0 8px;
+			width: 18px;
+		}
+
+		.search__close-icon {
+			width: 18px;
+			margin-right: 8px;
+		}
+	}
+}
+
+// Position collapsed search-button to the right
+// of the container element
+.search.is-expanded-to-container {
+	margin-bottom: 0;
+	position: absolute;
+	display: flex;
+	height: 100%;
+	width: 50px;
+	top: 0;
+	right: 0;
+
+	.search__input-fade {
+		position: relative;
+		flex: 1 1 auto;
+		display: flex;
+	}
+
+	.search__input[type="search"] {
+		flex: 1 1 auto;
+		display: flex;
+	}
+}
+
+.search__input.form-text-input[type="search"] {
+	flex: 1 1 auto;
+	display: none;
+	z-index: z-index(".search", ".search__input");
+	top: 0;
+	border: none;
+	height: 100%;
+	background: var(--color-surface);
+	appearance: none;
+	border-radius: 0;
+	box-sizing: border-box;
+	padding: 0;
+	-webkit-appearance: none;
+
+	&::-webkit-search-cancel-button {
+		-webkit-appearance: none;
+	}
+
+	&:disabled {
+		background: var(--color-surface);
+	}
+
+	&:focus {
+		box-shadow: none;
+		border: none;
+
+		&:hover {
+			border: none;
+			box-shadow: none;
+		}
+	}
+}
+
+// When search input is opened
+.search.is-open {
+	width: 100%;
+
+	.search__open-icon {
+		color: var(--color-neutral-60);
+		opacity: 0.3;
+	}
+
+	.search__close-icon {
+		display: inline-block;
+	}
+
+	.search__input,
+	.search__close-icon {
+		opacity: 1;
+	}
+
+	.search__input {
+		display: block;
+	}
+
+	.search__input-fade {
+		border-radius: 0;
+		flex: 1 1 auto;
+		height: 100%;
+		position: relative;
+		font-size: $font-body;
+		&::before {
+			@include long-content-fade(
+				$size: 32px,
+				$z-index: z-index(".search", ".search__input") + 2
+			);
+			border-radius: inherit;
+		}
+
+		&.ltr {
+			/*!rtl:ignore*/
+			&::before {
+				@include long-content-fade(
+					$direction: right,
+					$size: 32px,
+					$z-index: z-index(".search", ".search__input") + 2
+				);
+				border-radius: inherit;
+			}
+		}
+
+		padding-left: 8px;
+	}
+}
+
+.search.has-open-icon {
+	.search__input-fade {
+		padding-left: 0;
+	}
+}
+
+.search__input-fade .search__text-overlay {
+	color: transparent;
+	position: absolute;
+	pointer-events: none;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	flex: 1 1 auto;
+	overflow: hidden;
+	font-size: inherit;
+	font-family: inherit;
+	width: 100%;
+	height: 100%;
+	top: 1px;
+	left: 0;
+	z-index: z-index(".search", ".search__input") + 1;
+}
+
+.search .spinner {
+	display: none;
+}
+
+.search.is-searching .search__open-icon {
+	display: none;
+}
+
+.search.is-searching .spinner {
+	flex: 0 0 auto;
+	display: flex;
+	width: 50px;
+	height: 100%;
+	background-color: var(--color-surface);
+	z-index: z-index(".search", ".search.is-searching .spinner");
+}
+
+.animating.search-opening .search input {
+	opacity: 1;
+}
