@@ -163,11 +163,14 @@ export default function HostingV2( { onAddToCart, section }: Props ) {
 				>
 					<div className="hosting-v2__hero-content">
 						<div className="hosting-v2__heading">
-							{ translate( "Choose the hosting tailored{{br/}}for your client's needs.", {
-								components: {
-									br: <br />,
-								},
-							} ) }
+							{ translate(
+								'High Performance, Highly Secure{{br/}}Managed WordPress Hosting for Agencies',
+								{
+									components: {
+										br: <br />,
+									},
+								}
+							) }
 						</div>
 						<MigrationOffer />
 						<NavTabs enforceTabsView>{ navItems }</NavTabs>
