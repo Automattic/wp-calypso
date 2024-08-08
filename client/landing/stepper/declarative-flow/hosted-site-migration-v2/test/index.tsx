@@ -58,12 +58,24 @@ describe( `${ flow.name }`, () => {
 		it( 'redirects the user from platform identification to create site step', () => {
 			const destination = runNavigation( {
 				from: STEPS.PLATFORM_IDENTIFICATION,
-				dependencies: { platform: 'any-platform' },
+				dependencies: { platform: 'any-platform', next: 'next-url' },
 			} );
 
 			expect( destination ).toMatchDestination( {
 				step: STEPS.SITE_CREATION_STEP,
-				query: { platform: 'any-platform' },
+				query: { platform: 'any-platform', next: 'next-url' },
+			} );
+		} );
+
+		it( 'redirects the user from platform identification to create site step without passing the next when the user select WordPress', () => {
+			const destination = runNavigation( {
+				from: STEPS.PLATFORM_IDENTIFICATION,
+				dependencies: { platform: 'wordpress', next: 'next-url' },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.SITE_CREATION_STEP,
+				query: { platform: 'wordpress' },
 			} );
 		} );
 
