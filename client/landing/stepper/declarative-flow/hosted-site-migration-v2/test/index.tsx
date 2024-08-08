@@ -131,8 +131,8 @@ describe( `${ flow.name }`, () => {
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination: `/setup/hosted-site-migration-v2/site-migration-how-to-migrate?siteSlug=example.wordpress.com&siteId=123`,
-				extraQueryParams: {},
+				destination: `/setup/hosted-site-migration-v2/site-migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com`,
+				extraQueryParams: undefined,
 				flowName: 'hosted-site-migration-v2',
 				siteSlug: 'example.wordpress.com',
 				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,

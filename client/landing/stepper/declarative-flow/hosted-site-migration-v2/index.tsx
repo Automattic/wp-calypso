@@ -2,15 +2,19 @@ import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { HOSTED_SITE_MIGRATION_V2_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { useSearchParams } from 'react-router-dom';
-import { Primitive } from 'utility-types';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
-import { type Flow } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { addQueryArgs } from 'calypso/lib/url';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
-import { ProvidedDependencies } from '../internals/types';
+import type { ProvidedDependencies } from '../internals/types';
+import type {
+	Flow,
+	Navigate,
+	StepperStep,
+} from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { Primitive } from 'utility-types';
 
 const {
 	PLATFORM_IDENTIFICATION,
@@ -23,6 +27,121 @@ const {
 	SITE_MIGRATION_STARTED,
 	SITE_MIGRATION_ASSISTED_MIGRATION,
 } = STEPS;
+
+const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject: Flow ) => {
+	const [ query ] = useSearchParams();
+
+	const getFromPropsOrUrl = ( key: string, props?: ProvidedDependencies ): Primitive => {
+		const value = props?.[ key ] || query.get( key );
+		return typeof value === 'object' ? undefined : ( value as Primitive );
+	};
+
+	return {
+		[ PLATFORM_IDENTIFICATION.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const platform = getFromPropsOrUrl( 'platform', props ) as string;
+
+				const args: { platform: string | undefined; next?: string } = {
+					platform,
+				};
+
+				if ( platform !== 'wordpress' ) {
+					args.next = props?.url as string;
+				}
+
+				return navigate( addQueryArgs( args, SITE_CREATION_STEP.slug ) );
+			},
+		},
+		[ SITE_CREATION_STEP.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const platform = getFromPropsOrUrl( 'platform', props );
+				const next = getFromPropsOrUrl( 'next', props );
+
+				return navigate( addQueryArgs( { platform, next }, PROCESSING.slug ) );
+			},
+		},
+		[ PROCESSING.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const next = getFromPropsOrUrl( 'next', props );
+				const siteId = getFromPropsOrUrl( 'siteId', props );
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
+
+				if ( next ) {
+					return window.location.assign(
+						addQueryArgs( { siteId, siteSlug }, `/setup/${ SITE_SETUP_FLOW }/${ next.toString() }` )
+					);
+				}
+
+				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_UPGRADE_PLAN.slug ) );
+			},
+		},
+		[ SITE_MIGRATION_UPGRADE_PLAN.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const siteId = getFromPropsOrUrl( 'siteId', props );
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
+				const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
+				const plan = props?.plan as string;
+
+				if ( props?.goToCheckout ) {
+					const redirectAfterCheckout = SITE_MIGRATION_HOW_TO_MIGRATE.slug;
+					const destination = addQueryArgs(
+						{ siteId, siteSlug },
+						`/setup/${ flowPath as string }/${ redirectAfterCheckout }`
+					);
+
+					const extraQueryParams =
+						props?.sendIntentWhenCreatingTrial && plan === PLAN_MIGRATION_TRIAL_MONTHLY
+							? { hosting_intent: HOSTING_INTENT_MIGRATE }
+							: undefined;
+
+					return goToCheckout( {
+						flowName: flowPath,
+						stepName: SITE_MIGRATION_UPGRADE_PLAN.slug,
+						siteSlug,
+						destination: destination,
+						plan,
+						cancelDestination: `/setup/${ flowPath }/${
+							STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+						}?${ query.toString() }`,
+						extraQueryParams,
+					} );
+				}
+			},
+		},
+		[ SITE_MIGRATION_HOW_TO_MIGRATE.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const how = getFromPropsOrUrl( 'how', props );
+				const siteId = getFromPropsOrUrl( 'siteId', props );
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
+
+				if ( how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) {
+					return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_INSTRUCTIONS.slug ) );
+				}
+
+				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_SOURCE_URL.slug ) );
+			},
+		},
+		[ SITE_MIGRATION_INSTRUCTIONS.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const siteId = getFromPropsOrUrl( 'siteId', props );
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
+
+				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_STARTED.slug ) );
+			},
+		},
+		[ SITE_MIGRATION_SOURCE_URL.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const siteId = getFromPropsOrUrl( 'siteId', props );
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
+				const from = getFromPropsOrUrl( 'from', props );
+
+				return navigate(
+					addQueryArgs( { siteId, siteSlug, from }, SITE_MIGRATION_ASSISTED_MIGRATION.slug )
+				);
+			},
+		},
+	};
+};
 
 export default {
 	name: HOSTED_SITE_MIGRATION_V2_FLOW,
@@ -45,159 +164,8 @@ export default {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const [ query ] = useSearchParams();
+		const stepHandlers = useCreateStepHandlers( navigate, this );
 
-		return {
-			submit: ( props?: ProvidedDependencies ) => {
-				const data = {
-					// Site Creation Step
-					siteId: props?.siteId || query.get( 'siteId' ),
-					siteSlug: props?.siteSlug || query.get( 'siteSlug' ),
-
-					//Platform Identification Step
-					platform: props?.platform || query.get( 'platform' ),
-					next: props?.next || query.get( 'next' ),
-					url: props?.url,
-
-					//Upgrade Plan Step
-					userAcceptedDeal: props?.userAcceptedDeal,
-					goToCheckout: props?.goToCheckout,
-					plan: props?.plan,
-					sendIntentWhenCreatingTrial: props?.sendIntentWhenCreatingTrial,
-					flowPath: this.variantSlug ?? this.name,
-
-					// How to Migrate Step
-					how: props?.how || query.get( 'how' ),
-
-					// Source URL Step
-					from: props?.from || query.get( 'from' ),
-				} as Record< string, Primitive | string >;
-
-				if ( currentStep === PLATFORM_IDENTIFICATION.slug ) {
-					return navigate(
-						addQueryArgs(
-							{
-								platform: data.platform,
-								...( data.platform !== 'wordpress' ? { next: data.url } : {} ),
-							},
-							SITE_CREATION_STEP.slug
-						)
-					);
-				}
-
-				if ( currentStep === SITE_CREATION_STEP.slug ) {
-					return navigate(
-						addQueryArgs(
-							{
-								platform: data.platform,
-								next: data.next,
-							},
-							PROCESSING.slug
-						)
-					);
-				}
-
-				if ( currentStep === PROCESSING.slug ) {
-					if ( data?.next ) {
-						return window.location.assign(
-							addQueryArgs(
-								{
-									siteId: data?.siteId,
-									siteSlug: data?.siteSlug,
-								},
-								`/setup/${ SITE_SETUP_FLOW }/${ data.next.toString() }`
-							)
-						);
-					}
-
-					return navigate(
-						addQueryArgs(
-							{
-								siteId: data?.siteId,
-								siteSlug: data?.siteSlug,
-							},
-							SITE_MIGRATION_UPGRADE_PLAN.slug
-						)
-					);
-				}
-
-				if ( currentStep === SITE_MIGRATION_UPGRADE_PLAN.slug ) {
-					if ( data?.goToCheckout ) {
-						const redirectAfterCheckout = SITE_MIGRATION_HOW_TO_MIGRATE.slug;
-						const destination = addQueryArgs(
-							{
-								siteSlug: data.siteSlug,
-								siteId: data.siteId,
-							},
-							`/setup/${ data.flowPath as string }/${ redirectAfterCheckout }`
-						);
-
-						return goToCheckout( {
-							flowName: data.flowPath as string,
-							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-							siteSlug: data.siteSlug as string,
-							destination: destination,
-							plan: data.plan as string,
-							cancelDestination: `/setup/${ data.flowPath as string }/${
-								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
-							}?${ query.toString() }`,
-							extraQueryParams:
-								data?.sendIntentWhenCreatingTrial && data?.plan === PLAN_MIGRATION_TRIAL_MONTHLY
-									? { hosting_intent: HOSTING_INTENT_MIGRATE }
-									: {},
-						} );
-					}
-				}
-
-				if ( currentStep === SITE_MIGRATION_HOW_TO_MIGRATE.slug ) {
-					if ( data?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) {
-						return navigate(
-							addQueryArgs(
-								{
-									siteId: data.siteId,
-									siteSlug: data.siteSlug,
-								},
-								SITE_MIGRATION_INSTRUCTIONS.slug
-							)
-						);
-					}
-
-					return navigate(
-						addQueryArgs(
-							{
-								siteId: data.siteId,
-								siteSlug: data.siteSlug,
-							},
-							SITE_MIGRATION_SOURCE_URL.slug
-						)
-					);
-				}
-
-				if ( currentStep === SITE_MIGRATION_INSTRUCTIONS.slug ) {
-					return navigate(
-						addQueryArgs(
-							{
-								siteId: data.siteId,
-								siteSlug: data.siteSlug,
-							},
-							SITE_MIGRATION_STARTED.slug
-						)
-					);
-				}
-
-				if ( currentStep === SITE_MIGRATION_SOURCE_URL.slug ) {
-					return navigate(
-						addQueryArgs(
-							{
-								siteId: data.siteId,
-								siteSlug: data.siteSlug,
-								from: data.from,
-							},
-							SITE_MIGRATION_ASSISTED_MIGRATION.slug
-						)
-					);
-				}
-			},
-		};
+		return stepHandlers[ currentStep ];
 	},
 } satisfies Flow;
