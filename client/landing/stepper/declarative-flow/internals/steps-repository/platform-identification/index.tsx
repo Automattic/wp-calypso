@@ -7,7 +7,7 @@ const PlatformIdentificationStep: Step = ( props ) => {
 
 	return (
 		<ImportList
-			title={ translate( 'Where are you coming from?' ) }
+			title={ translate( 'Move your site to WordPress.com' ) }
 			subTitle={ translate( ' ' ) }
 			skipTracking
 			{ ...props }
