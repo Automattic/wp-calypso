@@ -24,23 +24,25 @@ const NotifyMeOfNewPostsToggle = ( {
 				disabled={ isUpdating }
 			/>
 			{ value && (
-				<p className="setting-item__app-hint">
+				<div className="setting-item__app-hint">
 					<JetpackLogo size={ 20 } />
-					{ translate(
-						'Take your subscriptions on the go with the {{a}}Jetpack mobile app{{/a}}.',
-						{
-							components: {
-								a: (
-									<a
-										href="https://wp.com/app/?campaign=calypso-subscription-link"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</p>
+					<p>
+						{ translate(
+							'Take your subscriptions on the go with the {{a}}Jetpack mobile app{{/a}}.',
+							{
+								components: {
+									a: (
+										<a
+											href="https://wp.com/app/?campaign=calypso-subscription-link"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+				</div>
 			) }
 		</div>
 	);

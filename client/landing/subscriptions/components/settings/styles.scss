@@ -36,11 +36,16 @@ $setting-item-margin-bottom: 24px;
 			background-color: $studio-gray-0;
 			font-size: $font-body-extra-small;
 			text-align: left;
+			display: flex;
 
 			.jetpack-logo {
 				display: inline-block;
 				vertical-align: middle;
 				margin-right: 8px;
+			}
+
+			p {
+				margin: 0;
 			}
 
 			a {
