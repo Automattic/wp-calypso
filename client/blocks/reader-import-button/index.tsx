@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { ComponentProps, useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
@@ -28,7 +27,6 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
 } ) => {
 	const [ disabled, setDisabled ] = useState( false );
 	const translate = useTranslate();
-	const { hasTranslation } = useI18n();
 	const dispatch = useDispatch();
 	const resendEmailVerification = useResendEmailVerification();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
@@ -102,9 +100,7 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( {
 		setDisabled( true );
 	};
 
-	const importLabel = hasTranslation( 'Import OPML' )
-		? translate( 'Import OPML' )
-		: translate( 'Import' );
+	const importLabel = translate( 'Import OPML' );
 
 	return (
 		<Button
