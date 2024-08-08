@@ -35,6 +35,7 @@ const QrCodeLoginButton = ( { twoFactorAuthType, loginUrl }: QrCodeLoginButtonPr
 	if ( twoFactorAuthType ) {
 		return null;
 	}
+
 	// Is not supported for any oauth 2 client.
 	// n.b this seems to work for woo.com so it's not clear why the above comment is here
 	if ( oauth2Client && ! isWooPasswordless ) {
