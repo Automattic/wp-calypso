@@ -420,7 +420,10 @@ function PurchaseClipboardCard( {
 					</>
 				) }
 			</div>
-			<ExternalLink href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/">
+			<ExternalLink
+				className="manage-purchase__license-clipboard-link"
+				href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
+			>
 				{ translate( 'How to activate' ) }
 			</ExternalLink>
 		</Card>
