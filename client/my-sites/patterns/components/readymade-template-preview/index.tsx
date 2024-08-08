@@ -14,6 +14,8 @@ export const ReadymadeTemplatePreview = ( {
 	};
 
 	return (
-		<MShotsImage url={ readymadeTemplate.previewUrl + '&t=2' } alt="" options={ mShotsOptions } />
+		<div className="readymade-template-preview">
+			<MShotsImage url={ readymadeTemplate.previewUrl + '&t=2' } alt="" options={ mShotsOptions } />
+		</div>
 	);
 };

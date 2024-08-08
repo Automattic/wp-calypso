@@ -1,7 +1,7 @@
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { RefObject, useEffect, useRef, useState } from 'react';
-import { ReadymadeTemplatePreview } from 'calypso/my-sites/patterns/components/readymade-templates/preview';
+import { ReadymadeTemplatePreview } from 'calypso/my-sites/patterns/components/readymade-template-preview';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import { ReadymadeTemplatesProps } from 'calypso/my-sites/patterns/types';
 import './style.scss';
@@ -83,7 +83,7 @@ export const ReadymadeTemplates = ( {
 			<div className="readymade-templates" ref={ containerRef }>
 				{ readymadeTemplates.map( ( readymadeTemplate ) => (
 					<a
-						href={ `/patterns/site-layouts/${ readymadeTemplate.template_id } ` }
+						href={ `/patterns/site-layouts/${ readymadeTemplate.slug } ` }
 						className="readymade-template"
 						key={ readymadeTemplate.template_id }
 					>

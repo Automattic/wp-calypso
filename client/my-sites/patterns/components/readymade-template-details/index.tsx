@@ -5,7 +5,7 @@ import { Icon, arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { createElement, useEffect } from 'react';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
-import { ReadymadeTemplatePreview } from 'calypso/my-sites/patterns/components/readymade-templates/preview';
+import { ReadymadeTemplatePreview } from 'calypso/my-sites/patterns/components/readymade-template-preview';
 import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
 import { ReadymadeTemplateDetailsFC } from 'calypso/my-sites/patterns/types';
 
