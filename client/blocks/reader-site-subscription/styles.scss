@@ -58,6 +58,8 @@
 					color: $studio-gray-40;
 					white-space: nowrap;
 					text-decoration: underline;
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 			}
 		}
