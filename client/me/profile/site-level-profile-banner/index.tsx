@@ -36,10 +36,9 @@ export default function SiteLevelProfileBanner() {
 			description={
 				<>
 					{ translate(
-						"To manage your profile on a specific site instead, {{modal}}click here{{/modal}} to visit the site's profile page.",
+						'To manage your profile on a specific site instead, {{modal}}visit the site’s profile page{{/modal}}.',
 						{
 							components: {
-								br: <br />,
 								modal: <SiteLevelProfileModal />,
 							},
 						}
