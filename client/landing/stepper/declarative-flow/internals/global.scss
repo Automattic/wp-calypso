@@ -215,6 +215,14 @@ button {
 
 }
 
+.hundred-year-plan.step-route {
+	@include break-small {
+		&.setup {
+			margin-top: -60px;
+		}
+	}
+}
+
 .import-focused .step-container.site-picker,
 .import-hosted-site .step-container.site-picker {
 	max-width: 1280px;
