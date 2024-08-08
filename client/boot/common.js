@@ -171,9 +171,7 @@ const oauthTokenMiddleware = () => {
 		}
 
 		if ( isA8CForAgencies() ) {
-			if ( config.isEnabled( 'a4a-logged-out-signup' ) ) {
-				loggedOutRoutes.push( ...A4A_PUBLIC_ROUTES );
-			}
+			loggedOutRoutes.push( ...A4A_PUBLIC_ROUTES );
 		}
 
 		// Forces OAuth users to the /login page if no token is present
