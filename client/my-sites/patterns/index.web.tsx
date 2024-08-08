@@ -89,7 +89,7 @@ function checkCategorySlug( context: RouterContext, next: RouterNext ) {
 function renderReadymadeTemplateDetails( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
 		context.primary = (
-			<PatternsWrapper>
+			<PatternsWrapper hideGetStartedCta>
 				<ReadymadeTemplateDetailsClient id={ parseInt( context.params.id ) } />
 			</PatternsWrapper>
 		);
