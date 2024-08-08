@@ -220,7 +220,6 @@ const SiteSubscriptionDetails = ( {
 					subHeaderAs="div"
 					subHeaderText={
 						<SiteSubscriptionSubheader
-							blogId={ blogId }
 							feedId={ feedId }
 							subscriberCount={ subscriberCount }
 							url={ url }
