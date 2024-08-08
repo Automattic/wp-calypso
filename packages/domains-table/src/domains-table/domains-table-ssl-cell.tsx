@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 
 interface DomainsTableSSLCellProps {
 	domainManagementLink: string;
-	sslStatus: 'active' | 'pending' | 'disabled' | null;
+	sslStatus: DomainData[ 'ssl_status' ];
 }
 
 export default function DomainsTableSSLCell( {
