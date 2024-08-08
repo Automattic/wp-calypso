@@ -8,14 +8,11 @@ import SimpleList from 'calypso/a8c-for-agencies/sections/marketplace/common/sim
 import { MarketplaceTypeContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
 import { getWPCOMCreatorPlan } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
-import WPCOMBulkSelector from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/bulk-selection';
-import {
-	DiscountTier,
-	calculateTier,
-} from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-values-utils';
+import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-values-utils';
 import useWPCOMPlanDescription from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/wpcom-card/hooks/use-wpcom-plan-description';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import useWPCOMDiscountTiers from '../../../hooks/use-wpcom-discount-tiers';
+import WPCOMPlanSlider from './slider';
 
 import './style.scss';
 
@@ -170,35 +167,7 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 		return count;
 	}, [ count, referralMode ] );
 
-	const discountTiers = useWPCOMDiscountTiers();
-
-	const [ selectedTier, setSelectedTier ] = useState< DiscountTier >( discountTiers[ 0 ] );
-
-	const [ quantity, setQuantity ] = useState(
-		selectedTier.value ? Number( selectedTier.value ) : 1
-	);
-
-	const handleSetSelectedTier = ( tier: DiscountTier ) => {
-		setSelectedTier( tier );
-		// If the user already owns plans, set the quantity to the difference between the selected tier and the owned plans
-		setQuantity( ownedPlans ? Number( tier.value ) - ownedPlans : Number( tier.value ) );
-	};
-
-	const handleSetQuantity = ( value: number ) => {
-		if ( value ) {
-			setQuantity( value );
-			const tier = discountTiers.find( ( tier ) => tier.value === value );
-			if ( tier ) {
-				if ( tier.value < 10 ) {
-					setSelectedTier( tier );
-				} else {
-					setSelectedTier(
-						discountTiers.find( ( { value } ) => value === 10 ) ?? discountTiers[ 0 ]
-					);
-				}
-			}
-		}
-	};
+	const [ quantity, setQuantity ] = useState( 1 );
 
 	if ( ! plan ) {
 		return;
@@ -208,14 +177,10 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 		<div className="wpcom-plan-selector">
 			<div className="wpcom-plan-selector__slider-container">
 				{ ! referralMode && (
-					<WPCOMBulkSelector
-						selectedTier={ selectedTier }
-						onSelectTier={ handleSetSelectedTier }
+					<WPCOMPlanSlider
 						quantity={ quantity }
+						onChange={ setQuantity }
 						ownedPlans={ ownedPlans }
-						isLoading={ ! isLicenseCountsReady }
-						hideOwnedPlansBadge
-						hideNumberInput
 					/>
 				) }
 			</div>
@@ -228,7 +193,7 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 						ownedPlans={ ownedPlans }
 						referralMode={ referralMode }
 						quantity={ quantity }
-						setQuantity={ handleSetQuantity }
+						setQuantity={ setQuantity }
 					/>
 				) : (
 					<PlanDetailsPlaceholder />
