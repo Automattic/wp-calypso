@@ -20,6 +20,7 @@ export const ReadymadeTemplatePreview = ( {
 				alt=""
 				options={ mShotsOptions }
 				aria-labelledby=""
+				loading="eager"
 			/>
 		</div>
 	);
