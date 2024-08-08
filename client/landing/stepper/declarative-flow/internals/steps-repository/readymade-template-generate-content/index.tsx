@@ -104,7 +104,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 						<FormTextarea
 							name="tagline"
 							id="tagline"
-							disabled={ isGeneratingContent }
+							disabled={ isGeneratingContent || isSaving }
 							placeholder={ translate(
 								"Write an amazing description of your site, like: The Beachcomber Bistro is a cafe offering amazing food, delicious coffee and local beers. It's located next to the beach at Harlyn Bay, offering a stunning view from our deck."
 							) }
@@ -116,7 +116,9 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 						<Button
 							className="checklist-item__checklist-secondary-button"
 							onClick={ generateContent }
-							disabled={ isPromptEmpty || numberOfGenerations >= 5 || isGeneratingContent }
+							disabled={
+								isPromptEmpty || numberOfGenerations >= 5 || isGeneratingContent || isSaving
+							}
 						>
 							{ isGeneratingContent
 								? translate( 'Generating content' )
