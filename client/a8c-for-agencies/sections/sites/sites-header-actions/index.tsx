@@ -45,15 +45,15 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 		[ refetchPendingSites ]
 	);
 
-	const devSite = config.isEnabled( 'a4a-dev-sites' );
+	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 
 	const addNewDevSite = getQueryArg( window.location.href, 'add_new_dev_site' );
 
 	useEffect( () => {
-		if ( devSite && addNewDevSite ) {
+		if ( devSitesEnabled && addNewDevSite ) {
 			toggleDevSiteConfigurationsModal?.();
 		}
-	}, [ addNewDevSite, devSite, toggleDevSiteConfigurationsModal ] );
+	}, [ addNewDevSite, devSitesEnabled, toggleDevSiteConfigurationsModal ] );
 
 	return (
 		<div className="sites-header__actions">
@@ -65,7 +65,7 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 					onCreateSiteSuccess={ onCreateSiteSuccess }
 				/>
 			) }
-			{ devSite && (
+			{ devSitesEnabled && (
 				<AddNewSiteButton
 					showMainButtonLabel={ ! isMobile }
 					devSite
