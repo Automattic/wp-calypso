@@ -290,4 +290,4 @@ export const STEPS = {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
 	},
-} satisfies StepperStep[];
+} satisfies Record< string, StepperStep >;
