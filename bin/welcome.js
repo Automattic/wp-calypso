@@ -15,7 +15,7 @@ if ( process.env.MOCK_WORDPRESSDOTCOM === '1' ) {
 		`${ chalk.yellowBright.bold( 'Mocking WordPress.com' ) }
 		
 - Add ${ chalk.yellowBright( '127.0.0.1 wordpress.com' ) } to your hosts file.
-- If you want to sandbox authentication backend, sandbox ${ chalk.yellowBright(
+- If you want to sandbox the authentication backend, sandbox ${ chalk.yellowBright(
 			'de.wordpress.com'
 		) } in your hosts file.
 - Type ${ chalk.white.bgBlue( ' thisisunsafe ' ) } in Chrome when you visit wordpress.com.
