@@ -25,16 +25,19 @@ const generateAIContentForTemplate = async (
 		} )
 	);
 
-	const responses = await Promise.all( requests );
-
-	return {
-		...readymadeTemplate,
-		home: {
-			header: responses[ 0 ],
-			content: responses[ 1 ],
-			footer: responses[ 2 ],
-		},
-	};
+	try {
+		const responses = await Promise.all( requests );
+		return {
+			...readymadeTemplate,
+			home: {
+				header: responses[ 0 ],
+				content: responses[ 1 ],
+				footer: responses[ 2 ],
+			},
+		};
+	} catch ( error ) {
+		return readymadeTemplate;
+	}
 };
 
 export default generateAIContentForTemplate;

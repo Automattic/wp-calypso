@@ -1,4 +1,5 @@
 import { ToggleControl } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
 type EmailMeNewPostsToggleProps = {
@@ -15,9 +16,9 @@ const EmailMeNewPostsToggle = ( {
 	const translate = useTranslate();
 
 	return (
-		<div className="setting-item">
+		<div className={ clsx( 'setting-item', 'email-me-new-posts-toggle', { 'is-enabled': value } ) }>
 			<ToggleControl
-				label={ translate( 'Email me new posts' ) }
+				label={ translate( 'Receive emails' ) }
 				onChange={ () => onChange( ! value ) }
 				checked={ value }
 				disabled={ isUpdating }

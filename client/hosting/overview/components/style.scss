@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/breakpoints";
 
 $card-padding: 24px;
+$blueberry-color: #3858e9;
 
 .hosting-overview {
 	margin: 0;
@@ -208,6 +209,15 @@ $card-padding: 24px;
 	font-size: $font-body-extra-small;
 	line-height: 16px;
 	margin-top: 30px;
+
+	.plan-storage__bar .progress-bar__progress {
+		background-color: $blueberry-color;
+
+	}
+
+	.plan-storage__bar.is-alert .progress-bar__progress {
+		background-color: var(--studio-red-30);
+	}
 }
 
 .hosting-overview__plan-storage-title-wrapper,

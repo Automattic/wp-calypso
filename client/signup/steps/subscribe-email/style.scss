@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .signup__step {
 	&.is-subscribe {
 		display: flex;
@@ -9,6 +12,10 @@
 
 	.subscribe-email {
 		margin: 0 auto;
-		width: 400px;
+		width: 100%;
+
+		@include break-small {
+			width: 400px;
+		}
 	}
 }

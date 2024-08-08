@@ -2,12 +2,12 @@ import { isWpcomEnterpriseGridPlan, type PlanSlug } from '@automattic/calypso-pr
 import { PlanPrice } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../grid-context';
-import useIsLargeCurrency from '../hooks/use-is-large-currency';
-import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
-import type { GridPlan } from '../types';
+import { usePlansGridContext } from '../../../grid-context';
+import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
+import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
+import type { GridPlan } from '../../../types';
 
-interface PlanFeatures2023GridHeaderPriceProps {
+interface HeaderPriceProps {
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
 	visibleGridPlans: GridPlan[];
@@ -130,10 +130,7 @@ const HeaderPriceContainer = styled.div`
 	}
 `;
 
-const PlanFeatures2023GridHeaderPrice = ( {
-	planSlug,
-	visibleGridPlans,
-}: PlanFeatures2023GridHeaderPriceProps ) => {
+const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex } = usePlansGridContext();
 	const {
@@ -177,12 +174,12 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					</Badge>
 				) }
 				{ isLargeCurrency ? (
-					<PricesGroup isLargeCurrency={ isLargeCurrency }>
+					<PricesGroup isLargeCurrency>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ 0 }
 							displayPerMonthNotation={ false }
-							isLargeCurrency={ isLargeCurrency }
+							isLargeCurrency
 							isSmallestUnit
 							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							className="is-placeholder-price" // This is a placeholder price to keep the layout consistent
@@ -192,7 +189,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							currencyCode={ currencyCode }
 							rawPrice={ introOfferPrice }
 							displayPerMonthNotation={ false }
-							isLargeCurrency={ isLargeCurrency }
+							isLargeCurrency
 							isSmallestUnit={ false }
 							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							discounted
@@ -203,7 +200,6 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						currencyCode={ currencyCode }
 						rawPrice={ introOfferPrice }
 						displayPerMonthNotation={ false }
-						isLargeCurrency={ isLargeCurrency }
 						isSmallestUnit={ false }
 						priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 					/>
@@ -249,12 +245,12 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					' '
 				</Badge>
 				{ isLargeCurrency ? (
-					<PricesGroup isLargeCurrency={ isLargeCurrency }>
+					<PricesGroup isLargeCurrency>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ 0 }
 							displayPerMonthNotation={ false }
-							isLargeCurrency={ isLargeCurrency }
+							isLargeCurrency
 							isSmallestUnit
 							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							className="is-placeholder-price" // This is a placeholder price to keep the layout consistent
@@ -264,7 +260,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							currencyCode={ currencyCode }
 							rawPrice={ originalPrice.monthly }
 							displayPerMonthNotation={ false }
-							isLargeCurrency={ isLargeCurrency }
+							isLargeCurrency
 							isSmallestUnit
 							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 							discounted
@@ -275,7 +271,6 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						currencyCode={ currencyCode }
 						rawPrice={ originalPrice.monthly }
 						displayPerMonthNotation={ false }
-						isLargeCurrency={ isLargeCurrency }
 						isSmallestUnit
 						priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
 					/>
@@ -298,4 +293,4 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	);
 };
 
-export default PlanFeatures2023GridHeaderPrice;
+export default HeaderPrice;

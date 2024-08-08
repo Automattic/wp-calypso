@@ -235,9 +235,3 @@ export const getLoginLinkPageUrl = ( {
 
 	return login( loginParameters );
 };
-
-export const isRecognizedLogin = () => {
-	const cookies = getCookies();
-
-	return Boolean( cookies.recognized_logins );
-};

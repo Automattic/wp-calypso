@@ -1,3 +1,5 @@
+import { StepperStep } from './types';
+
 export const STEPS = {
 	BLOGGER_STARTING_POINT: {
 		slug: 'bloggerStartingPoint',
@@ -284,4 +286,8 @@ export const STEPS = {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
 	},
-};
+	PLATFORM_IDENTIFICATION: {
+		slug: 'platform-identification',
+		asyncComponent: () => import( './steps-repository/platform-identification' ),
+	},
+} satisfies Record< string, StepperStep >;
