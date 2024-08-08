@@ -7,9 +7,17 @@ import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 
 type Props = {
 	stepUrl: string;
+	urlData?: UrlData;
+	isLoading: boolean;
+	validFromSite: boolean;
 };
-export default function SelectNewsletterForm( { stepUrl }: Props ) {
-	const [ hasError, setHasError ] = useState( false );
+export default function SelectNewsletterForm( {
+	stepUrl,
+	urlData,
+	isLoading,
+	validFromSite,
+}: Props ) {
+	const [ hasError, setHasError ] = useState( ! validFromSite );
 
 	const handleAction = ( fromSite: string ) => {
 		if ( ! isValidUrl( fromSite ) ) {
@@ -22,6 +30,16 @@ export default function SelectNewsletterForm( { stepUrl }: Props ) {
 		return;
 	};
 
+	if ( isLoading ) {
+		return (
+			<Card>
+				<div className="select-newsletter-form">
+					<p className="is-loading"></p>
+				</div>
+			</Card>
+		);
+	}
+
 	return (
 		<Card>
 			<div className="select-newsletter-form">
@@ -30,9 +48,12 @@ export default function SelectNewsletterForm( { stepUrl }: Props ) {
 					placeholder="https://example.substack.com"
 					action="Continue"
 					isError={ hasError }
+					defaultValue={ urlData?.url }
 				/>
 				{ hasError && (
-					<p className="select-newsletter-form__help is-error">Please enter a valid URL.</p>
+					<p className="select-newsletter-form__help is-error">
+						Please enter a valid substack URL.
+					</p>
 				) }
 				{ ! hasError && (
 					<p className="select-newsletter-form__help">
