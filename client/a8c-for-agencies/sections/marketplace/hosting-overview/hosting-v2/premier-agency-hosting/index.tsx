@@ -2,6 +2,7 @@ import { JetpackLogo } from '@automattic/components';
 import { layout, blockMeta, shuffle, help, keyboardReturn, tip } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
+import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
@@ -129,6 +130,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					{
 						profile: {
 							name: 'Justin Barrett',
+							avatar: ProfileAvatar2,
 							title: translate( 'Director of Technology, %(companyName)s', {
 								args: {
 									companyName: 'Autoshop Solutions',
