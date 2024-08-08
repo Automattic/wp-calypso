@@ -136,7 +136,7 @@
 			max-width: 100%;
 		}
 
-		.search,
+		.calypso-search-component,
 		.keyed-suggestions {
 			border: none;
 			box-shadow:
@@ -149,7 +149,7 @@
 			margin: 0;
 		}
 
-		.search {
+		.calypso-search-component {
 			height: 55px;
 			border-radius: 4px;
 
@@ -290,7 +290,7 @@
 }
 
 .search-themes-card {
-	.search {
+	.calypso-search-component {
 		height: 43px;
 		border-radius: 2px;
 	}

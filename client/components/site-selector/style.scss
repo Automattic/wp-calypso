@@ -16,13 +16,13 @@
 	display: flex;
 	flex-direction: column;
 
-	&.is-large .search {
+	&.is-large .calypso-search-component {
 		display: flex;
 		position: relative;
 		opacity: 1;
 	}
 
-	&:not(.is-large) .search {
+	&:not(.is-large) .calypso-search-component {
 		pointer-events: none;
 	}
 
@@ -136,7 +136,7 @@
 	}
 }
 
-.site-selector .search {
+.site-selector .calypso-search-component {
 	margin: 8px;
 	height: 33px;
 	max-height: 33px;
@@ -145,7 +145,7 @@
 	opacity: 0;
 	position: absolute;
 
-	// ensure sufficient selector specificity for .search.is-open, too
+	// ensure sufficient selector specificity for .calypso-search-component.is-open, too
 	&,
 	&.is-open {
 		width: auto;

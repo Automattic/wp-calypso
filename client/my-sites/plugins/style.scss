@@ -646,7 +646,7 @@ body.is-section-plugins .plugin-management-wrapper {
 	@include breakpoint-deprecated( ">660px" ) {
 		margin-block-end: 0;
 	}
-	.search.is-open {
+	.calypso-search-component.is-open {
 		box-shadow: none;
 		z-index: 0;
 	}

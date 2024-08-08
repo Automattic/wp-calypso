@@ -5,11 +5,11 @@
  * @component Search
  */
 
-.is-section-purchases .search {
-	z-index: z-index("root", ".is-section-purchases .search");
+.is-section-purchases .calypso-search-component {
+	z-index: z-index("root", ".is-section-purchases .calypso-search-component");
 }
 
-.search {
+.calypso-search-component {
 	border-radius: 2px;
 	display: flex;
 	flex: 1 1 auto;
@@ -19,7 +19,7 @@
 	position: relative;
 	align-items: center;
 	// places search above filters
-	z-index: z-index("root", ".search");
+	z-index: z-index("root", ".calypso-search-component");
 	transition: all 0.15s ease-in-out;
 
 	.search__icon-navigation {
@@ -40,7 +40,7 @@
 	.search__close-icon {
 		flex: 0 0 auto;
 		width: 50px;
-		z-index: z-index(".search", ".search .search__open-icon");
+		z-index: z-index(".calypso-search-component", ".calypso-search-component .search__open-icon");
 		color: var(--color-primary);
 		cursor: pointer;
 	}
@@ -84,7 +84,7 @@
 
 // Position collapsed search-button to the right
 // of the container element
-.search.is-expanded-to-container {
+.calypso-search-component.is-expanded-to-container {
 	margin-bottom: 0;
 	position: absolute;
 	display: flex;
@@ -108,7 +108,7 @@
 .search__input.form-text-input[type="search"] {
 	flex: 1 1 auto;
 	display: none;
-	z-index: z-index(".search", ".search__input");
+	z-index: z-index(".calypso-search-component", ".search__input");
 	top: 0;
 	border: none;
 	height: 100%;
@@ -139,7 +139,7 @@
 }
 
 // When search input is opened
-.search.is-open {
+.calypso-search-component.is-open {
 	width: 100%;
 
 	.search__open-icon {
@@ -180,7 +180,7 @@
 				@include long-content-fade(
 					$direction: right,
 					$size: 32px,
-					$z-index: z-index(".search", ".search__input") + 2
+					$z-index: z-index(".calypso-search-component", ".search__input") + 2
 				);
 				border-radius: inherit;
 			}
@@ -190,7 +190,7 @@
 	}
 }
 
-.search.has-open-icon {
+.calypso-search-component.has-open-icon {
 	.search__input-fade {
 		padding-left: 0;
 	}
@@ -211,26 +211,26 @@
 	height: 100%;
 	top: 1px;
 	left: 0;
-	z-index: z-index(".search", ".search__input") + 1;
+	z-index: z-index(".calypso-search-component", ".search__input") + 1;
 }
 
-.search .spinner {
+.calypso-search-component .spinner {
 	display: none;
 }
 
-.search.is-searching .search__open-icon {
+.calypso-search-component.is-searching .search__open-icon {
 	display: none;
 }
 
-.search.is-searching .spinner {
+.calypso-search-component.is-searching .spinner {
 	flex: 0 0 auto;
 	display: flex;
 	width: 50px;
 	height: 100%;
 	background-color: var(--color-surface);
-	z-index: z-index(".search", ".search.is-searching .spinner");
+	z-index: z-index(".calypso-search-component", ".calypso-search-component.is-searching .spinner");
 }
 
-.animating.search-opening .search input {
+.animating.search-opening .calypso-search-component input {
 	opacity: 1;
 }

@@ -350,7 +350,7 @@ class Search extends Component {
 			'is-compact': this.props.compact,
 			'has-focus': ! this.props.hideFocus && this.state.hasFocus,
 			'has-open-icon': ! this.props.hideOpenIcon,
-			search: true,
+			'calypso-search-component': true,
 		} );
 
 		const fadeDivClass = clsx( 'search__input-fade', this.props.dir );

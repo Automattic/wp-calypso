@@ -53,7 +53,7 @@ $z-layers: (
 		".form-text-input-with-affixes .form-text-input": 1,
 		".is-section-signup": 1,
 		".sidebar__skip-navigation": 1,
-		".media-library .search.is-expanded-to-container": 1,
+		".media-library .calypso-search-component.is-expanded-to-container": 1,
 		".ribbon": 1,
 		".reader__featured-post-title": 1,
 		".reader-list-gap__button": 1,
@@ -210,11 +210,11 @@ $z-layers: (
 		".date-picker__nav-bar": 2,
 		".search-filters__popover": 179,
 	),
-	".search": (
+	".calypso-search-component": (
 		".search__input": 10,
-		".search.is-searching .spinner": 20,
-		".search .search__open-icon": 20,
-		".search .search__close-icon": 20,
+		".calypso-search-component.is-searching .spinner": 20,
+		".calypso-search-component .search__open-icon": 20,
+		".calypso-search-component .search__close-icon": 20,
 	),
 	".profile-gravatar__edit-label-wrap": (
 		".profile-gravatar__edit-label-wrap:after": 0,
