@@ -50,6 +50,14 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			// disable module concatenation so that instances of `__()` are not renamed
 			concatenateModules: false,
 		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				'../../components/search/style.scss': path.resolve(
+					'../../client/components/search/style-v2.scss'
+				),
+			},
+		},
 		plugins: [
 			...webpackConfig.plugins.filter(
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'

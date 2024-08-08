@@ -10,8 +10,8 @@ import { v4 as uuid } from 'uuid';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-
-import './style.scss';
+// Don't change me. I'm used by the webpack alias in help-center/webpack.config.js
+import '../../components/search/style.scss';
 
 /**
  * Internal variables
@@ -343,7 +343,7 @@ class Search extends Component {
 			spellCheck: 'false',
 		};
 
-		const searchClass = clsx( this.props.additionalClasses, this.props.dir, {
+		const searchClass = clsx( 'calypso-search-bar', this.props.additionalClasses, this.props.dir, {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
