@@ -16,7 +16,7 @@ const NotifyMeOfNewPostsToggle = ( {
 	const translate = useTranslate();
 
 	return (
-		<div className="setting-item">
+		<div className="setting-item setting-item__last">
 			<ToggleControl
 				label={ translate( 'Receive web and mobile notifications' ) }
 				onChange={ () => onChange( ! value ) }

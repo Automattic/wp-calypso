@@ -67,7 +67,7 @@
 		width: 100%;
 		@extend .settings;
 
-		.email-me-new-comments-toggle {
+		.setting-item:last-child {
 			margin-bottom: 40px;
 		}
 
