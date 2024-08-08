@@ -43,15 +43,19 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 		<>
 			<hr className="subscriptions__separator" />
 			<div className="site-subscription-info">
-				<h2 className="site-subscription-info__heading">{ translate( 'Subscription' ) }</h2>
-
+				<h2 className="site-subscription-info__heading">
+					{ translate( 'Newsletter categories' ) }
+				</h2>
+				<p className="setting-item__hint">
+					{ translate( 'Receive emails and notifications for new posts' ) }
+				</p>
 				{ isLoading ? (
 					<div className="site-subscription-info__loading">
 						<Spinner />
 					</div>
 				) : (
 					<dl className="site-subscription-info__list">
-						<dt>{ translate( 'Subscribed to' ) }</dt>
+						<dt></dt>
 						<dd>
 							{ subscribedNewsletterCategoriesData?.newsletterCategories.map(
 								( newletterCategory ) => (
@@ -62,12 +66,6 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 											disabled={ isSaving }
 											label={ newletterCategory.name }
 										/>
-										<p className="setting-item__hint">
-											{ translate( 'Receive emails for new posts in %s', {
-												args: [ newletterCategory.name ],
-												comment: 'Name of the site that the user tried to resubscribe to.',
-											} ) }
-										</p>
 									</div>
 								)
 							) }
