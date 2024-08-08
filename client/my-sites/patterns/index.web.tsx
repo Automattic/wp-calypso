@@ -87,7 +87,7 @@ function checkCategorySlug( context: RouterContext, next: RouterNext ) {
 function renderReadymadeTemplateDetails( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
 		context.primary = (
-			<PatternsWrapper>
+			<PatternsWrapper hideGetStartedCta>
 				<ReadymadeTemplateDetails slug={ context.params.slug } />
 			</PatternsWrapper>
 		);
