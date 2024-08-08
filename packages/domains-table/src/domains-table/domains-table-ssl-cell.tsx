@@ -46,9 +46,9 @@ export default function DomainsTableSSLCell( {
 			{ sslStatus !== null ? (
 				<Button
 					className={ clsx( 'domains-table-row__ssl-status-button', {
-						[ 'is-active' ]: sslStatus === 'active',
-						[ 'is-pending' ]: sslStatus === 'pending',
-						[ 'is-disabled' ]: sslStatus === 'disabled',
+						[ 'domains-table-row__ssl-status-button__active' ]: sslStatus === 'active',
+						[ 'domains-table-row__ssl-status-button__pending' ]: sslStatus === 'pending',
+						[ 'domains-table-row__ssl-status-button__disabled' ]: sslStatus === 'disabled',
 					} ) }
 					variant="link"
 					onClick={ handleClick }

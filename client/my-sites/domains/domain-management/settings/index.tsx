@@ -6,7 +6,6 @@ import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
 import {
@@ -99,7 +98,6 @@ const Settings = ( {
 	const contactInformation = findRegistrantWhois( whoisData );
 
 	const queryParams = new URLSearchParams( window.location.search );
-	const shouldOpenSsl = useUrlQueryParam( 'ssl-open' );
 
 	useEffect( () => {
 		if ( ! contactInformation ) {
@@ -166,7 +164,7 @@ const Settings = ( {
 				subtitle={ getSslReadableStatus( domain ) }
 				key="security"
 				isDisabled={ domain.isMoveToNewSitePending }
-				expanded={ !! shouldOpenSsl }
+				expanded={ queryParams.get( 'ssl-open' ) === 'true' }
 			>
 				<DomainSecurityDetails
 					domain={ domain }

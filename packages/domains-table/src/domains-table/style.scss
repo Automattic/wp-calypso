@@ -142,7 +142,7 @@
 		}
 	}
 
-	.domains-table-row__ssl-status-button {
+	.domains-table-row__ssl-cell .domains-table-row__ssl-status-button {
 		text-decoration: none;
 		margin-left: -6px;
 
@@ -150,14 +150,14 @@
 			box-shadow: none;
 		}
 
-		&.is-active,
-		&.is-active :hover {
+		&__active,
+		&__active :hover {
 			color: var(--studio-green-50);
 		}
-		&.is-pending,
-		&.is-pending :hover,
-		&.is-disabled,
-		&.is-disabled :hover {
+		&__pending,
+		&__pending :hover,
+		&__disabled,
+		&__disabled :hover {
 			color: var(--studio-orange-50);
 		}
 	}
