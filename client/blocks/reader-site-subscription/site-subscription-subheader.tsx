@@ -68,7 +68,6 @@ const SiteSubscriptionSubheader = ( {
 	subheaderItems.push(
 		<a
 			href={ getFeedUrl( feedId ) }
-			title={ translate( 'View feed' ) }
 			onClick={ () => {
 				recordViewFeedButtonClicked( {
 					blogId: blogId ? String( blogId ) : null,
@@ -77,7 +76,7 @@ const SiteSubscriptionSubheader = ( {
 				} );
 			} }
 		>
-			Reader
+			{ translate( 'Reader' ) }
 		</a>
 	);
 
