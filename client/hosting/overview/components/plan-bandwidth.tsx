@@ -127,7 +127,7 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 			<div className="hosting-overview__plan-bandwidth-title">
 				{ translate( '{{span}}Bandwidth{{/span}} (Unlimited)', {
 					components: {
-						span: <span />,
+						span: <span className="hosting-overview__plan-bandwidth-title-label" />,
 					},
 					comment:
 						'The title of the bandwidth section of site stats, with a note that bandwidth is unlimited',
