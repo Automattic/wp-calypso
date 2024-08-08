@@ -86,7 +86,7 @@ export default function ViewerDetails( props: Props ) {
 				<p>
 					{ translate( 'If you remove this viewer, they will not be able to visit this site.' ) }
 				</p>
-				<p>{ translate( 'Would you still like to remove this viewer?' ) }</p>
+				<p>{ translate( 'Would you still like to remove them?' ) }</p>
 			</div>,
 			( accepted: boolean ) => {
 				if ( accepted ) {
