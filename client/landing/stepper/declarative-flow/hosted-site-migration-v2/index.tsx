@@ -19,6 +19,7 @@ const {
 	SITE_MIGRATION_HOW_TO_MIGRATE,
 	SITE_MIGRATION_SOURCE_URL,
 	SITE_MIGRATION_INSTRUCTIONS,
+	SITE_MIGRATION_STARTED,
 } = STEPS;
 
 export default {
@@ -36,6 +37,7 @@ export default {
 			SITE_MIGRATION_HOW_TO_MIGRATE,
 			SITE_MIGRATION_SOURCE_URL,
 			SITE_MIGRATION_INSTRUCTIONS,
+			SITE_MIGRATION_STARTED,
 		] );
 	},
 
@@ -163,6 +165,18 @@ export default {
 								siteSlug: data.siteSlug,
 							},
 							SITE_MIGRATION_SOURCE_URL.slug
+						)
+					);
+				}
+
+				if ( currentStep === SITE_MIGRATION_INSTRUCTIONS.slug ) {
+					return navigate(
+						addQueryArgs(
+							{
+								siteId: data.siteId,
+								siteSlug: data.siteSlug,
+							},
+							SITE_MIGRATION_STARTED.slug
 						)
 					);
 				}

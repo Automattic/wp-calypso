@@ -154,7 +154,7 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		it( 'redirects user from How To Migrate > Capture Source URL  when they selects the option "do it for me"', () => {
+		it( 'redirects user from How To Migrate > Capture Source URL when they selects the option "do it for me"', () => {
 			const destination = runNavigation( {
 				from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -163,6 +163,18 @@ describe( `${ flow.name }`, () => {
 
 			expect( destination ).toMatchDestination( {
 				step: STEPS.SITE_MIGRATION_SOURCE_URL,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+			} );
+		} );
+
+		it( 'redirects users FROM Instructions > Migration started', () => {
+			const destination = runNavigation( {
+				from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.SITE_MIGRATION_STARTED,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 			} );
 		} );
