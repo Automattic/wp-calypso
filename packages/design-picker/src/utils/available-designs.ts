@@ -26,7 +26,7 @@ export const getMShotOptions = ( {
 	let w = 500;
 	let screen_height = 1100;
 	if ( oldHighResImageLoading ) {
-		w = highRes ? 1199 : 600;
+		w = highRes ? 600 : 600;
 		screen_height = 3600;
 	}
 	return {

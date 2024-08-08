@@ -108,7 +108,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		'calypso_design_picker_image_optimization_202406'
 	);
 	const variantName = experimentAssignment?.variationName;
-	const oldHighResImageLoading = ! isLoadingExperiment && variantName === 'treatment';
+	const oldHighResImageLoading = true || ( ! isLoadingExperiment && variantName === 'treatment' );
 
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
