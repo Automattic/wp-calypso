@@ -5,6 +5,7 @@ import { getFetchLicensesQueryKey } from 'calypso/a8c-for-agencies/data/purchase
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { LicenseListContext } from 'calypso/state/partner-portal/types';
+import { LICENSES_PER_PAGE } from '../../lib/constants';
 
 export default function useRefetchLicenses( context: Context< LicenseListContext > ) {
 	const agencyId = useSelector( getActiveAgencyId );
@@ -25,6 +26,7 @@ export default function useRefetchLicenses( context: Context< LicenseListContext
 				sortField,
 				sortDirection,
 				currentPage,
+				LICENSES_PER_PAGE,
 				agencyId
 			),
 		} );
