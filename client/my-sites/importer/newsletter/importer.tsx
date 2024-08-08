@@ -80,6 +80,12 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 		from: fromSite,
 	} );
 	const Step = steps[ stepIndex ] || steps[ 0 ];
+
+	let title = 'Import your newsletter';
+	if ( urlData?.meta?.title ) {
+		title = `Import ${ urlData?.meta?.title }`;
+	}
+
 	return (
 		<div className="newsletter-importer">
 			<LogoChain
@@ -88,7 +94,7 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 					{ name: 'wordpress', color: '#3858E9' },
 				] }
 			/>
-			<FormattedHeader headerText="Import your newsletter" />
+			<FormattedHeader headerText={ title } />
 			{ ! validFromSite && (
 				<SelectNewsletterForm
 					stepUrl={ stepUrl }
