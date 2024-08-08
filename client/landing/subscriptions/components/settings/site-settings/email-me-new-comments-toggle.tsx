@@ -15,9 +15,9 @@ const EmailMeNewCommentsToggle = ( {
 	const translate = useTranslate();
 
 	return (
-		<div className="setting-item setting-item__last email-me-new-comments-toggle">
+		<div className="setting-item email-me-new-comments-toggle">
 			<ToggleControl
-				label={ translate( 'Email me new comments' ) }
+				label={ translate( 'Receive new comment emails' ) }
 				onChange={ () => onChange( ! value ) }
 				checked={ value }
 				disabled={ isUpdating }
