@@ -3,7 +3,6 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { login } from 'calypso/lib/paths';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
@@ -14,27 +13,29 @@ import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordles
 
 type QrCodeLoginButtonProps = {
 	twoFactorAuthType: string;
+	loginUrl: string;
 };
 
-const QrCodeLoginButton = ( { twoFactorAuthType }: QrCodeLoginButtonProps ) => {
+const QrCodeLoginButton = ( { twoFactorAuthType, loginUrl }: QrCodeLoginButtonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { isDisabled, query, locale, oauth2Client, isWooPasswordless } = useSelector(
+	const { isDisabled, isJetpackWooCommerceFlow, oauth2Client, isWooPasswordless } = useSelector(
 		( select ) => {
 			return {
-				isDisabled: isFormDisabled( select ),
-				query: getCurrentQueryArguments( select ),
+				isJetpackWooCommerceFlow:
+					'woocommerce-onboarding' === getCurrentQueryArguments( select )?.from,
 				oauth2Client: getCurrentOAuth2Client( select ) as { id: string },
 				locale: getCurrentLocaleSlug( select ),
 				isWooPasswordless: getIsWooPasswordless( select ),
+				isDisabled: isFormDisabled( select ),
 			};
 		}
 	);
-	const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === query?.from;
 
 	if ( twoFactorAuthType ) {
 		return null;
 	}
+
 	// Is not supported for any oauth 2 client.
 	// n.b this seems to work for woo.com so it's not clear why the above comment is here
 	if ( oauth2Client && ! isWooPasswordless ) {
@@ -52,13 +53,6 @@ const QrCodeLoginButton = ( { twoFactorAuthType }: QrCodeLoginButtonProps ) => {
 
 		dispatch( resetMagicLoginRequestForm() );
 	};
-
-	const loginUrl = login( {
-		locale: locale,
-		twoFactorAuthType: 'qr',
-		redirectTo: query?.redirect_to as string,
-		signupUrl: query?.signup_url as string,
-	} );
 
 	return (
 		<Button

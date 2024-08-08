@@ -677,6 +677,16 @@ export class LoginForm extends Component {
 	};
 
 	getMagicLoginPageLink() {
+		if (
+			! canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
+			return null;
+		}
+
 		const { query, usernameOrEmail } = this.props;
 
 		const loginLink = getLoginLinkPageUrl( {
@@ -694,6 +704,10 @@ export class LoginForm extends Component {
 	renderMagicLoginLink() {
 		const magicLoginPageLinkWithEmail = this.getMagicLoginPageLink();
 
+		if ( ! magicLoginPageLinkWithEmail ) {
+			return null;
+		}
+
 		return this.props.translate(
 			'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
 			{
@@ -710,16 +724,7 @@ export class LoginForm extends Component {
 	}
 
 	renderPasswordValidationError() {
-		if (
-			canDoMagicLogin(
-				this.props.twoFactorAuthType,
-				this.props.oauth2Client,
-				this.props.isJetpackWooCommerceFlow
-			)
-		) {
-			return this.renderMagicLoginLink();
-		}
-		return this.props.requestError.message;
+		return this.renderMagicLoginLink() ?? this.props.requestError.message;
 	}
 
 	handleAcceptEmailSuggestion() {
@@ -755,7 +760,6 @@ export class LoginForm extends Component {
 			isSignupExistingAccount,
 			isSendingEmail,
 			isSocialFirst,
-			loginButtons,
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
@@ -1057,9 +1061,8 @@ export class LoginForm extends Component {
 								this.props.isWoo && ! isPartnerSignup && ! this.props.isWooPasswordless
 							}
 							isSocialFirst={ isSocialFirst }
-						>
-							{ loginButtons }
-						</SocialLoginForm>
+							magicLoginLink={ this.getMagicLoginPageLink() }
+						/>
 					</Fragment>
 				) }
 
