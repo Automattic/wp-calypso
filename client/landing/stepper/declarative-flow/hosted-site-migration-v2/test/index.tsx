@@ -58,7 +58,7 @@ describe( `${ flow.name }`, () => {
 		it( 'redirects the user from platform identification to create site step', () => {
 			const destination = runNavigation( {
 				from: STEPS.PLATFORM_IDENTIFICATION,
-				dependencies: { platform: 'any-platform', next: 'next-url' },
+				dependencies: { platform: 'any-platform', url: 'next-url' },
 			} );
 
 			expect( destination ).toMatchDestination( {

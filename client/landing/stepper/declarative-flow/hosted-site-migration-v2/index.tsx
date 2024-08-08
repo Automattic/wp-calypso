@@ -44,7 +44,7 @@ export default {
 						addQueryArgs(
 							{
 								platform: data.platform,
-								...( data.platform !== 'wordpress' ? { next: data.next } : {} ),
+								...( data.platform !== 'wordpress' ? { next: data.url } : {} ),
 							},
 							SITE_CREATION_STEP.slug
 						)
