@@ -80,18 +80,11 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
-	const urlQueryParams = useQuery();
-	const from = urlQueryParams.get( 'from' );
-
 	useEffect( () => {
-		// If we have a URL in the query params, set it as the site URL.
-		if ( from ) {
-			setSiteURL( from );
-		}
 		if ( siteInfo ) {
 			onComplete( siteInfo );
 		}
-	}, [ from, onComplete, siteInfo ] );
+	}, [ onComplete, siteInfo ] );
 
 	if ( isFetching || ( isFetched && ! hasError ) ) {
 		return <ScanningStep />;

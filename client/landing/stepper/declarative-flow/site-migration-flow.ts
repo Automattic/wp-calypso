@@ -111,6 +111,7 @@ const siteMigration: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
+		const skipIdentificationQueryParam = urlQueryParams.get( 'skipIdentification' );
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const { data: urlData, isLoading: isLoadingFromData } = useAnalyzeUrlQuery(
 			fromQueryParam || '',
@@ -126,6 +127,32 @@ const siteMigration: Flow = {
 		useEffect( () => {
 			triggerGuidesForStep( flowName, currentStep, siteId );
 		}, [ flowName, currentStep, siteId ] );
+
+		useEffect( () => {
+			if (
+				currentStep === STEPS.SITE_MIGRATION_IDENTIFY.slug &&
+				isHostedSiteMigrationFlow( variantSlug ?? '' )
+			) {
+				// If the user is coming from a direct link/signup, check to see if we already have a from param
+				// and the unique query param to skip this step.
+				if ( fromQueryParam && 'yes' === skipIdentificationQueryParam ) {
+					if ( siteCount > 0 ) {
+						// The sitePicker step has an inconsistent step slug, so we hard-code it for now.
+						return navigate( `sitePicker?from=${ encodeURIComponent( fromQueryParam ) }` );
+					}
+					return navigate(
+						addQueryArgs( { from: fromQueryParam }, STEPS.SITE_CREATION_STEP.slug )
+					);
+				}
+			}
+		}, [
+			currentStep,
+			fromQueryParam,
+			skipIdentificationQueryParam,
+			siteCount,
+			navigate,
+			variantSlug,
+		] );
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -171,6 +198,7 @@ const siteMigration: Flow = {
 							if ( from ) {
 								return navigate( addQueryArgs( { from }, STEPS.SITE_CREATION_STEP.slug ) );
 							}
+
 							return navigate( 'error' );
 						}
 					}
