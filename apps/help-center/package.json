@@ -37,7 +37,9 @@
 		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/components": "^28.2.0",
 		"@wordpress/compose": "^7.2.0",
-		"@wordpress/plugins": "^7.2.0"
+		"@wordpress/data": "^10.2.0",
+		"@wordpress/plugins": "^7.2.0",
+		"@wordpress/private-apis": "^1.2.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",

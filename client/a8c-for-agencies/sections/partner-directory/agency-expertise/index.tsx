@@ -147,6 +147,8 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 
 	const directoryOptions = Object.keys( availableDirectories ) as DirectoryApplicationType[];
 
+	const pendingDirectories = directories.filter( ( { status } ) => status !== 'approved' );
+
 	return (
 		<Form
 			className="partner-directory-agency-expertise"
@@ -222,7 +224,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 					</div>
 				</FormField>
 
-				{ !! directories.length && (
+				{ !! pendingDirectories.length && (
 					<FormField
 						label={ translate( 'Client sites' ) }
 						sub={ translate(
@@ -232,7 +234,7 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 						isRequired
 					>
 						<div className="partner-directory-agency-expertise__directory-client-sites">
-							{ directories.map( ( { directory, urls } ) => (
+							{ pendingDirectories.map( ( { directory, urls } ) => (
 								<EnhancedDirectoryClientSamples
 									checks={ [ validateNonEmpty(), validateUniqueUrls() ] }
 									field={ urls }
