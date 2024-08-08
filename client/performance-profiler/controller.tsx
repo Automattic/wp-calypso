@@ -8,19 +8,17 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PerformanceProfilerDashboard } from './pages/dashboard';
 
 export function PerformanceProfilerDashboardContext( context: Context, next: () => void ): void {
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+
 	if ( ! config.isEnabled( 'performance-profiler' ) ) {
 		page.redirect( '/' );
 		return;
 	}
 
-	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-	const pathName = context.pathname || '';
-	const routerDomain = pathName.split( '/speed-test-tool/' )[ 1 ]?.trim() || '';
-
 	context.primary = (
 		<>
 			<Main fullWidthLayout>
-				<PerformanceProfilerDashboard domain={ routerDomain } />
+				<PerformanceProfilerDashboard url={ context.query?.url ?? '' } />
 			</Main>
 
 			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } />
