@@ -1,3 +1,4 @@
+import { DomainData } from '@automattic/data-stores';
 import { Button, Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
 import clsx from 'clsx';
