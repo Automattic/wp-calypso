@@ -80,6 +80,7 @@ export const ReadymadeTemplatesSection = ( {
 			id="readymade-templates-section"
 			theme="dark"
 			title={ translate( 'Ready-to-use site layouts' ) }
+			isPremium
 		>
 			<div className="readymade-templates" ref={ containerRef }>
 				{ readymadeTemplates.map( ( readymadeTemplate ) => (

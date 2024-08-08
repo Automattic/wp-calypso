@@ -3,16 +3,16 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo, useState } from 'react';
 import A4ANumberInput from 'calypso/a8c-for-agencies/components/a4a-number-input';
-import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
+import useWPCOMOwnedSites from 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites';
 import SimpleList from 'calypso/a8c-for-agencies/sections/marketplace/common/simple-list';
 import { MarketplaceTypeContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
 import { getWPCOMCreatorPlan } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
-import WPCOMBulkSelector from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/bulk-selection';
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/lib/wpcom-bulk-values-utils';
 import useWPCOMPlanDescription from 'calypso/a8c-for-agencies/sections/marketplace/wpcom-overview/wpcom-card/hooks/use-wpcom-plan-description';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import useWPCOMDiscountTiers from '../../../hooks/use-wpcom-discount-tiers';
+import WPCOMPlanSlider from './slider';
 
 import './style.scss';
 
@@ -21,12 +21,19 @@ type PlanDetailsProps = {
 	onSelect: ( plan: APIProductFamilyProduct, quantity: number ) => void;
 	ownedPlans: number;
 	referralMode?: boolean;
+	quantity: number;
+	setQuantity: ( quantity: number ) => void;
 };
 
-function PlanDetails( { plan, onSelect, ownedPlans, referralMode }: PlanDetailsProps ) {
+function PlanDetails( {
+	plan,
+	onSelect,
+	ownedPlans,
+	referralMode,
+	quantity,
+	setQuantity,
+}: PlanDetailsProps ) {
 	const translate = useTranslate();
-
-	const [ quantity, setQuantity ] = useState( 1 );
 
 	const discountTiers = useWPCOMDiscountTiers();
 
@@ -143,23 +150,24 @@ type WPCOMPlanSelectorProps = {
 export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps ) {
 	const translate = useTranslate();
 
-	const { data: licenseCounts, isSuccess: isLicenseCountsReady } = useFetchLicenseCounts();
+	const { count, isReady: isLicenseCountsReady } = useWPCOMOwnedSites();
 
 	const { wpcomPlans } = useProductAndPlans( {} );
 
 	const plan = getWPCOMCreatorPlan( wpcomPlans ) ?? wpcomPlans[ 0 ];
 
-	const ownedPlans = useMemo( () => {
-		if ( isLicenseCountsReady && plan ) {
-			const productStats = licenseCounts?.products?.[ plan.slug ];
-			return productStats?.not_revoked || 0;
-		}
-	}, [ isLicenseCountsReady, licenseCounts?.products, plan ] );
-
-	const discountTiers = useWPCOMDiscountTiers();
-
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const referralMode = marketplaceType === 'referral';
+
+	const ownedPlans = useMemo( () => {
+		if ( referralMode ) {
+			return 0;
+		}
+
+		return count;
+	}, [ count, referralMode ] );
+
+	const [ quantity, setQuantity ] = useState( 1 );
 
 	if ( ! plan ) {
 		return;
@@ -169,12 +177,10 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 		<div className="wpcom-plan-selector">
 			<div className="wpcom-plan-selector__slider-container">
 				{ ! referralMode && (
-					<WPCOMBulkSelector
-						selectedTier={ discountTiers[ 0 ] }
+					<WPCOMPlanSlider
+						quantity={ quantity }
+						onChange={ setQuantity }
 						ownedPlans={ ownedPlans }
-						isLoading={ ! isLicenseCountsReady }
-						hideOwnedPlansBadge
-						readOnly
 					/>
 				) }
 			</div>
@@ -186,6 +192,8 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 						onSelect={ onSelect }
 						ownedPlans={ ownedPlans }
 						referralMode={ referralMode }
+						quantity={ quantity }
+						setQuantity={ setQuantity }
 					/>
 				) : (
 					<PlanDetailsPlaceholder />

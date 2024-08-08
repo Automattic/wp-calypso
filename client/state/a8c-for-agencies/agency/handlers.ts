@@ -4,7 +4,7 @@ import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-f
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { APIError, Agency } from '../types';
 import { JETPACK_GET_AGENCIES_REQUEST } from './action-types';
-import { receiveAgencies, receiveAgenciesError } from './actions';
+import { receiveAgencies, receiveAgenciesError, setAgencyClientUser } from './actions';
 
 const formatApiAgencies = ( agencies: Agency[] ) => {
 	return agencies;
@@ -25,8 +25,14 @@ function fetchAgenciesHandler( action: AnyAction ): AnyAction {
 	) as AnyAction;
 }
 
-function receiveAgenciesHandler( _action: AnyAction, agencies: Agency[] ) {
-	return receiveAgencies( agencies );
+function receiveAgenciesHandler(
+	_action: AnyAction,
+	data: Agency[] | { is_client_user: boolean }
+) {
+	if ( 'is_client_user' in data ) {
+		return setAgencyClientUser( data.is_client_user );
+	}
+	return receiveAgencies( data );
 }
 
 function receiveAgenciesErrorHandler( _action: AnyAction, error: APIError ) {

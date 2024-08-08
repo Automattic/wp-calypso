@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useContext } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import { MarketplaceTypeContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import usePressableOwnershipType from '../../hosting-overview/hooks/use-pressable-ownership-type';
 import useExistingPressablePlan from '../hooks/use-existing-pressable-plan';
@@ -22,6 +23,10 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
 
 	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
+
+	const { marketplaceType } = useContext( MarketplaceTypeContext );
+
+	const isReferMode = marketplaceType === 'referral';
 
 	const onSelectPlan = useCallback(
 		( plan: APIProductFamilyProduct | null ) => {
@@ -68,10 +73,10 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 		<div
 			className={ clsx( 'pressable-overview-plan-selection', {
 				'is-new-hosting-page': isNewHostingPage,
-				'is-regular-ownership': pressableOwnership === 'regular',
+				'is-slider-hidden': pressableOwnership === 'regular' || isReferMode,
 			} ) }
 		>
-			{ pressableOwnership !== 'regular' && (
+			{ pressableOwnership !== 'regular' && ! isReferMode && (
 				<PlanSelectionFilter
 					selectedPlan={ selectedPlan }
 					plans={ pressablePlans }
@@ -86,6 +91,7 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 				onSelectPlan={ onPlanAddToCart }
 				isLoading={ ! isExistingPlanFetched }
 				pressableOwnership={ pressableOwnership }
+				isReferMode={ isReferMode }
 			/>
 		</div>
 	);
