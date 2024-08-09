@@ -144,11 +144,6 @@
 
 	.domains-table-row__ssl-cell .domains-table-row__ssl-status-button {
 		text-decoration: none;
-		margin-left: -6px;
-
-		&:focus {
-			box-shadow: none;
-		}
 
 		&__active,
 		&__active :hover {
@@ -166,7 +161,7 @@
 		height: 16px;
 		position: relative;
 		top: 3px;
-		margin-left: -8px;
+		margin-right: -6px;
 
 		&__active {
 			fill: var(--studio-green-50);

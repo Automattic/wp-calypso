@@ -1,8 +1,9 @@
 import { DomainData } from '@automattic/data-stores';
-import { Button, Icon } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import type { MouseEvent } from 'react';
 
 interface DomainsTableSSLCellProps {
 	domainManagementLink: string;
@@ -27,11 +28,6 @@ export default function DomainsTableSSLCell( {
 		}
 	};
 
-	const handleClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
-		event.stopPropagation();
-		window.location.href = `${ domainManagementLink }?ssl-open=true`;
-	};
-
 	return (
 		<div className="domains-table-row__ssl-cell">
 			{ sslStatus && (
@@ -45,17 +41,17 @@ export default function DomainsTableSSLCell( {
 				/>
 			) }
 			{ sslStatus !== null ? (
-				<Button
+				<a
 					className={ clsx( 'domains-table-row__ssl-status-button', {
 						[ 'domains-table-row__ssl-status-button__active' ]: sslStatus === 'active',
 						[ 'domains-table-row__ssl-status-button__pending' ]: sslStatus === 'pending',
 						[ 'domains-table-row__ssl-status-button__disabled' ]: sslStatus === 'disabled',
 					} ) }
-					variant="link"
-					onClick={ handleClick }
+					href={ `${ domainManagementLink }?ssl-open=true` }
+					onClick={ ( e: MouseEvent ) => e.stopPropagation() }
 				>
 					{ getSSLStatusText() }
-				</Button>
+				</a>
 			) : (
 				<>-</>
 			) }
