@@ -93,6 +93,17 @@ export const MarketingTools: FunctionComponent = () => {
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
+					title={ translate( 'Monetize your site' ) }
+					description={ translate(
+						'Accept payments or donations with our native payment blocks, limit content to paid subscribers only, opt into our ad network to earn revenue, and refer friends to WordPress.com for credits.'
+					) }
+					imagePath={ earnIllustration }
+					imageAlt={ translate( 'A stack of coins' ) }
+				>
+					<Button onClick={ handleEarnClick }>{ translate( 'Start earning' ) }</Button>
+				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
 					title={ translate( 'Fiverr logo maker' ) }
 					description={ translate(
 						'Create a standout brand with a custom logo. Our partner makes it easy and quick to design a professional logo that leaves a lasting impression.'
@@ -124,17 +135,6 @@ export const MarketingTools: FunctionComponent = () => {
 					>
 						{ translate( 'Talk to an SEO expert today' ) }
 					</Button>
-				</MarketingToolsFeature>
-
-				<MarketingToolsFeature
-					title={ translate( 'Monetize your site' ) }
-					description={ translate(
-						'Accept payments or donations with our native payment blocks, limit content to paid subscribers only, opt into our ad network to earn revenue, and refer friends to WordPress.com for credits.'
-					) }
-					imagePath={ earnIllustration }
-					imageAlt={ translate( 'A stack of coins' ) }
-				>
-					<Button onClick={ handleEarnClick }>{ translate( 'Start earning' ) }</Button>
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
