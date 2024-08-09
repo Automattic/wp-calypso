@@ -8,6 +8,7 @@ import { useEffect } from '@wordpress/element';
 import { localize } from 'i18n-calypso';
 import { Fragment, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
+import { useHash } from 'calypso//landing/stepper/hooks/use-hash.ts';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
@@ -139,14 +140,15 @@ const Hosting = ( props ) => {
 		transferState,
 	} = props;
 
+	const hash = useHash();
 	useEffect( () => {
-		if ( [ '#php', '#wp' ].includes( window.location.hash ) ) {
+		if ( [ '#php', '#wp' ].includes( hash ) ) {
 			let count = 0;
 			const interval = setInterval( () => {
 				let targetElement;
-				if ( window.location.hash === '#php' ) {
+				if ( hash === '#php' ) {
 					targetElement = document.querySelector( '[data-scroll-id="php-version-select"]' );
-				} else if ( window.location.hash === '#wp' ) {
+				} else if ( hash === '#wp' ) {
 					targetElement = document.querySelector( '[data-scroll-id="wp-version-select"]' );
 				}
 
@@ -156,12 +158,12 @@ const Hosting = ( props ) => {
 				}
 
 				count++;
-				if ( count > 10 ) {
+				if ( count > 15 ) {
 					clearInterval( interval );
 				}
-			}, 500 );
+			}, 300 );
 		}
-	}, [] );
+	}, [ hash ] );
 
 	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
 	const [ hasTransfer, setHasTransferring ] = useState(

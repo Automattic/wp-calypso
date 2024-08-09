@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -64,14 +63,10 @@ export default function ItemPreviewPaneHeader( {
 
 	const handlePhpVersionClick = () => {
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_php_version_update' ) );
-
-		page( `/hosting-config/${ selectedSite?.domain }#php` );
 	};
 
 	const handleWpVersionClick = () => {
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_wp_version_update' ) );
-
-		page( `/hosting-config/${ selectedSite?.domain }#wp` );
 	};
 
 	return (
@@ -130,6 +125,7 @@ export default function ItemPreviewPaneHeader( {
 												{ isAtomic ? (
 													<Button
 														className="item-preview__header-env-data-item-link"
+														href={ `/hosting-config/${ selectedSite?.domain }#wp` }
 														onClick={ handleWpVersionClick }
 													>
 														{ wpVersion }
@@ -150,6 +146,7 @@ export default function ItemPreviewPaneHeader( {
 												<Button
 													className="item-preview__header-env-data-item-link"
 													onClick={ handlePhpVersionClick }
+													href={ `/hosting-config/${ selectedSite?.domain }#php` }
 												>
 													{ phpVersion }
 												</Button>
