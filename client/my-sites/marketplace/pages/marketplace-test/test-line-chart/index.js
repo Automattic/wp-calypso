@@ -1,4 +1,7 @@
 import LineChart from 'calypso/components/line-chart';
+import MuLineChart from './muPlot.jsx';
+
+import './style.scss';
 
 const data = [
 	[
@@ -15,12 +18,29 @@ const data = [
 	],
 ];
 
+const Box = ( { name, children } ) => {
+	return (
+		<div className="box">
+			<h1>{ name }</h1>
+			{ children }
+		</div>
+	);
+};
+
 export default () => {
 	const legendInfo = [ { name: 'Line #1' } ];
 
 	return (
-		<div style={ { border: '1px solid gray', padding: '2rem' } }>
-			<LineChart data={ data } fillArea={ false } legendInfo={ legendInfo } />
+		<div className="container">
+			<Box name="Calypso Line Chart">
+				<LineChart data={ data } fillArea={ false } legendInfo={ legendInfo } />
+			</Box>
+			<Box name="uPlot Chart">
+				<MuLineChart />
+			</Box>
+			<Box name="ChartJS">
+				<h1>hola</h1>
+			</Box>
 		</div>
 	);
 };

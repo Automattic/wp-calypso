@@ -1,0 +1,5 @@
+{
+    "key": "cmd+r cmd+w",
+    "command": "editor.emmet.action.wrapWithAbbreviation",
+    "when": "editorTextFocus"
+}
