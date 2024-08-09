@@ -20,6 +20,7 @@ interface SectionHeaderProps {
 
 // TODO - re-add background color and usage of dark prop, to something other than a pseudo element.
 // We will need to adjust exterior containers margin etc. to accomodate this.
+// https://github.com/Automattic/wp-calypso/pull/93425
 export const SectionContainer = styled.div< SectionContainerProps >`
 	padding: 56px 0;
 `;
