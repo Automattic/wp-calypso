@@ -1,9 +1,13 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import type { PostObject } from '../types';
 
 export function usePostByUrl( url: string ) {
+	const { sectionName } = useHelpCenterContext();
+
 	return useQuery< PostObject >( {
 		queryKey: [ 'support-status', url ],
 		queryFn: () =>
@@ -19,5 +23,16 @@ export function usePostByUrl( url: string ) {
 		enabled: !! url,
 		refetchOnWindowFocus: false,
 		staleTime: 12 * 3600, // 12 hours
+		throwOnError: () => {
+			const tracksData = {
+				force_site_id: true,
+				location: 'help-center',
+				section: sectionName,
+				post_url: url,
+			};
+
+			recordTracksEvent( 'calypso_helpcenter_post_by_url_error', tracksData );
+			return false;
+		},
 	} );
 }

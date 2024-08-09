@@ -74,6 +74,7 @@ button {
 .import-hosted-site,
 .site-setup,
 .site-migration,
+.hosted-site-migration-v2,
 .migration-signup,
 .import-focused,
 .plugin-bundle,
@@ -104,7 +105,8 @@ button {
 .update-options,
 .hundred-year-plan,
 .link-in-bio-tld,
-.entrepreneur {
+.entrepreneur,
+.generate-content {
 	box-sizing: border-box;
 
 	&.step-route {

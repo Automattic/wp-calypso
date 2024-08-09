@@ -53,6 +53,7 @@ type ReadymadeTemplateStyles = {
 
 export type ReadymadeTemplate = {
 	template_id: number;
+	slug: string;
 	title: string;
 	description: string;
 	home: {
@@ -63,4 +64,5 @@ export type ReadymadeTemplate = {
 	patterns: ReadymadeTemplatePattern[];
 	styles: ReadymadeTemplateStyles;
 	globalStyles?: GlobalStyles;
+	previewUrl: string;
 };

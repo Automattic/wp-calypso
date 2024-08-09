@@ -10,10 +10,13 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import {
 	A4A_CLIENT_SUBSCRIPTIONS_LINK,
-	A4A_OVERVIEW_LINK,
+	A4A_LANDING_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useSelector } from 'calypso/state';
-import { hasAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import {
+	hasFetchedAgency,
+	isAgencyClientUser,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 
 /**
  * Redirect with Current Query
@@ -29,24 +32,24 @@ export default function ClientLanding() {
 	const title = translate( 'Automattic for Agencies' );
 
 	const hasFetchedAgencies = useSelector( hasFetchedAgency );
-	const isAgency = useSelector( hasAgency );
+	const isClientUser = useSelector( isAgencyClientUser );
 
 	useEffect( () => {
 		if ( ! hasFetchedAgencies ) {
 			return;
 		}
 
-		if ( isAgency ) {
-			page.redirect( A4A_OVERVIEW_LINK );
-			return;
+		if ( isClientUser ) {
+			const returnQuery = getQueryArg( window.location.href, 'return' ) as string;
+			if ( returnQuery ) {
+				page.redirect( returnQuery );
+				return;
+			}
+			return redirectWithCurrentQuery( A4A_CLIENT_SUBSCRIPTIONS_LINK );
 		}
-		const returnQuery = getQueryArg( window.location.href, 'return' ) as string;
-		if ( returnQuery ) {
-			page.redirect( returnQuery );
-			return;
-		}
-		return redirectWithCurrentQuery( A4A_CLIENT_SUBSCRIPTIONS_LINK );
-	}, [ hasFetchedAgencies, isAgency ] );
+
+		return page.redirect( A4A_LANDING_LINK );
+	}, [ hasFetchedAgencies, isClientUser ] );
 
 	return (
 		<Layout className="a4a-landing" title={ title } wide>

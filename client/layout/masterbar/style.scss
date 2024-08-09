@@ -49,6 +49,11 @@ body.is-mobile-app-view {
 		// Use generic colors so that they override whatever theme colors the user has picked.
 		background: var(--studio-orange);
 		border-bottom: 1px solid var(--studio-orange-60);
+
+		.masterbar__item.has-global-border::before,
+		.masterbar__item.has-global-border::after {
+			background: var(--studio-orange-70);
+		}
 	}
 
 	&.masterbar__loggedout {
@@ -565,6 +570,18 @@ body.is-mobile-app-view {
 
 	.is-support-session &.is-active {
 		background: var(--studio-orange-70);
+		--color-masterbar-icon: var(--studio-gray-5) !important;
+		--color-masterbar-text: var(--studio-gray-5) !important;
+		--color-masterbar-highlight: var(--studio-gray-5) !important;
+	}
+
+	.is-support-session &:hover {
+		background: var(--studio-orange-50);
+	}
+
+	.is-support-session &.is-active:hover {
+		background: var(--studio-orange-70);
+		color: var(--studio-gray-5);
 	}
 
 	&.masterbar__item-notifications {

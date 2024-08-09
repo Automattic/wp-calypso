@@ -8,8 +8,10 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
+import QuerySiteWpVersion from 'calypso/components/data/query-site-wp-version';
 import { useSelector } from 'calypso/state';
 import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
+import { getAtomicHostingWpVersion } from 'calypso/state/selectors/get-atomic-hosting-wp-version';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SiteFavicon from '../../site-favicon';
@@ -40,6 +42,7 @@ export default function ItemPreviewPaneHeader( {
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID || 0;
 	const phpVersion = useSelector( ( state ) => getAtomicHostingPhpVersion( state, siteId ) );
+	const wpVersionName = useSelector( ( state ) => getAtomicHostingWpVersion( state, siteId ) );
 	const wpVersion = selectedSite?.options?.software_version;
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
 
@@ -66,6 +69,7 @@ export default function ItemPreviewPaneHeader( {
 	return (
 		<>
 			{ isAtomic && <QuerySitePhpVersion siteId={ siteId } /> }
+			{ isAtomic && <QuerySiteWpVersion siteId={ siteId } /> }
 			<div className={ clsx( 'item-preview__header', className ) }>
 				<div className="item-preview__header-content">
 					{ !! itemData?.withIcon && (
@@ -120,10 +124,22 @@ export default function ItemPreviewPaneHeader( {
 														className="item-preview__header-env-data-item-link"
 														onClick={ handleWpVersionClick }
 													>
-														{ wpVersion }
+														{ wpVersion }{ ' ' }
+														{ wpVersionName && (
+															<span className="item-preview__header-env-data-item-link-capitalize">
+																({ wpVersionName })
+															</span>
+														) }
 													</Button>
 												) : (
-													wpVersion
+													<>
+														{ wpVersion }{ ' ' }
+														{ wpVersionName && (
+															<span className="item-preview__header-env-data-item-link-capitalize">
+																({ wpVersionName })
+															</span>
+														) }
+													</>
 												) }
 											</div>
 										) }
