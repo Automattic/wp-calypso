@@ -9,6 +9,8 @@ import { useCallback, useState, useEffect, useRef, FormEvent } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 import FilePicker from 'calypso/components/file-picker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ImporterActionButton from '../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../importer-action-buttons/container';
 
 type Props = {
 	nextStepUrl: string;
@@ -139,25 +141,26 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId }: Props ) {
 					email each person. <a href={ localizeUrl( importSubscribersUrl ) }>Learn more</a>.
 				</p>
 			) }
-			<Button
-				type="submit"
-				variant="primary"
-				onClick={ () => {
-					recordTracksEvent( 'calypso_paid_importer_add_subscriber' );
-				} }
-				disabled={ ! ( isSelectedFileValid && selectedFile ) }
-			>
-				Continue
-			</Button>{ ' ' }
-			<Button
-				variant="secondary"
-				href={ nextStepUrl }
-				onClick={ () => {
-					recordTracksEvent( 'calypso_paid_importer_connect_stripe_skipped' );
-				} }
-			>
-				Skip for now
-			</Button>
+			<ImporterActionButtonContainer noSpacing>
+				<ImporterActionButton
+					type="submit"
+					primary
+					onClick={ () => {
+						recordTracksEvent( 'calypso_paid_importer_add_subscriber' );
+					} }
+					disabled={ ! ( isSelectedFileValid && selectedFile ) }
+				>
+					Continue
+				</ImporterActionButton>
+				<ImporterActionButton
+					href={ nextStepUrl }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_paid_importer_connect_stripe_skipped' );
+					} }
+				>
+					Skip for now
+				</ImporterActionButton>
+			</ImporterActionButtonContainer>
 		</form>
 	);
 }

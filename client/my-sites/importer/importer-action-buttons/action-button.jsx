@@ -3,8 +3,11 @@ import clsx from 'clsx';
 
 import './action-button.scss';
 
-const ImporterActionButton = ( { className, ...props } ) => (
-	<Button className={ clsx( 'importer-action-buttons__action-button', className ) } { ...props } />
+const ImporterActionButton = ( props ) => (
+	<Button
+		className={ clsx( 'importer-action-buttons__action-button', props.className ) }
+		{ ...props }
+	/>
 );
 
 ImporterActionButton.displayName = 'ImporterActionButton';
