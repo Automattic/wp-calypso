@@ -261,7 +261,9 @@ export class UploadingPane extends PureComponent {
 
 		return (
 			<div>
-				<p className="importer__uploading-pane-description">{ this.props.description }</p>
+				{ this.props.description && (
+					<p className="importer__uploading-pane-description">{ this.props.description }</p>
+				) }
 				<div
 					className="importer__uploading-pane"
 					role="button"
