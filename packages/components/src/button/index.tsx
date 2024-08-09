@@ -27,11 +27,10 @@ type AnchorProps = OwnProps &
 		href: NonUndefined< AnchorElementProps[ 'href' ] >;
 	};
 
-type CleanButtonProps = OwnProps & Omit< ButtonHTMLAttributes< HTMLButtonElement >, 'href' >;
+export type ButtonProps = OwnProps & Omit< ButtonHTMLAttributes< HTMLButtonElement >, 'href' >;
 
-export type ButtonProps = AnchorProps | CleanButtonProps;
-
-const isAnchor = ( props: ButtonProps ): props is AnchorProps => !! ( props as AnchorProps ).href;
+const isAnchor = ( props: AnchorProps | ButtonProps ): props is AnchorProps =>
+	!! ( props as AnchorProps ).href;
 
 const cleanAnchorProps = ( {
 	type,
@@ -44,7 +43,7 @@ const cleanAnchorProps = ( {
 	plain,
 	transparent,
 	...anchorProps
-}: ButtonProps ): AnchorProps => anchorProps as AnchorProps;
+}: ButtonProps | AnchorProps ): AnchorProps => anchorProps as AnchorProps;
 
 const cleanButtonProps = ( {
 	type = 'button',
@@ -66,12 +65,12 @@ const cleanButtonProps = ( {
 	target,
 	transparent,
 	...buttonProps
-}: ButtonProps ): CleanButtonProps => ( { ...buttonProps, type } ) as CleanButtonProps;
+}: ButtonProps | AnchorProps ): ButtonProps => ( { ...buttonProps, type } ) as ButtonProps;
 
-const Button: ForwardRefRenderFunction< HTMLButtonElement | HTMLAnchorElement, ButtonProps > = (
-	props,
-	ref
-) => {
+const Button: ForwardRefRenderFunction<
+	HTMLButtonElement | HTMLAnchorElement,
+	ButtonProps | AnchorProps
+> = ( props, ref ) => {
 	const classes = props.plain
 		? clsx( 'button-plain', props.className )
 		: clsx( 'button', props.className, {
