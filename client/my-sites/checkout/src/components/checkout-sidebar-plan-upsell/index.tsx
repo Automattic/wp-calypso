@@ -22,7 +22,7 @@ import './style.scss';
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
 
 function getUpsellVariant( currentVariant: WPCOMProductVariant, variants: WPCOMProductVariant[] ) {
-	// Return the binennial plan if the plan in cart is a monthly or annual plan
+	// Return the biennial plan if the plan in cart is a monthly or annual plan
 	if (
 		currentVariant.productBillingTermInMonths === 1 ||
 		currentVariant.productBillingTermInMonths === 12
@@ -30,7 +30,7 @@ function getUpsellVariant( currentVariant: WPCOMProductVariant, variants: WPCOMP
 		return variants?.find( ( product ) => product.termIntervalInMonths === 24 );
 	}
 
-	// Return the triennial plan if the plan in cart is a binennial plan
+	// Return the triennial plan if the plan in cart is a biennial plan
 	if ( currentVariant.productBillingTermInMonths === 24 ) {
 		return variants?.find( ( product ) => product.termIntervalInMonths === 36 );
 	}
