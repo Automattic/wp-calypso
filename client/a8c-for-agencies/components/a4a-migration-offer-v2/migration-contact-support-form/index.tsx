@@ -18,7 +18,6 @@ import './style.scss';
 type Props = {
 	show: boolean;
 	onClose?: () => void;
-	defaultMessage?: string;
 };
 
 const DEFAULT_PRODUCT_VALUE = 'wpcom';
