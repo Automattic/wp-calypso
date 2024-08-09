@@ -172,6 +172,7 @@ const NotesWrapper = ( { wpcom } ) => {
 			receiveMessage={ sendMessage }
 			redirectPath="/"
 			wpcom={ wpcom }
+			forceLocale
 		/>
 	);
 };
