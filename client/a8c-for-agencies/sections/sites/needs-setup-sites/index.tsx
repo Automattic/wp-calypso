@@ -4,7 +4,7 @@ import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useContext, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -18,7 +18,6 @@ import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-co
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
-import SitesDashboardContext from '../sites-dashboard-context';
 import SitesHeaderActions from '../sites-header-actions';
 import ClientSite from './client-site';
 import { AvailablePlans } from './plan-field';
@@ -136,15 +135,12 @@ export default function NeedSetup( { licenseKey }: Props ) {
 				features.wpcom_atomic.state === 'provisioning' && !! features.wpcom_atomic.license_key
 		);
 
-	const { setRecentlyCreatedSiteId } = useContext( SitesDashboardContext );
-
 	const onCreateSiteSuccess = useCallback(
 		( id: number ) => {
 			refetchPendingSites();
-			//page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
-			setRecentlyCreatedSiteId( id );
+			page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
 		},
-		[ refetchPendingSites, setRecentlyCreatedSiteId ]
+		[ refetchPendingSites ]
 	);
 
 	const onCreateSiteWithConfig = useCallback(

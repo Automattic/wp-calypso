@@ -8,7 +8,10 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AddNewSiteButton from 'calypso/a8c-for-agencies/components/add-new-site-button';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
-import { A4A_MARKETPLACE_PRODUCTS_LINK, A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_MARKETPLACE_PRODUCTS_LINK,
+	A4A_SITES_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
