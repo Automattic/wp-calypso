@@ -319,6 +319,11 @@ $z-index: 99999;
 		}
 	}
 
+	.help-center-article__error {
+		font-size: 0.875rem;
+		color: var(--color-neutral-80);
+	}
+
 	.help-center-articles__list {
 		list-style: none;
 		box-sizing: border-box;

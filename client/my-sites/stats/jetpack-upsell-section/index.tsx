@@ -12,7 +12,7 @@ import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purch
 import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { hasBusinessPlan, hasCompletePlan } from '../hooks/use-stats-purchases';
+import { hasBusinessPlan, hasCompletePlan, hasSecurityPlan } from '../hooks/use-stats-purchases';
 import usePurchasedProducts from './use-purchased-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -37,6 +37,14 @@ function shouldHideUpsellSection( purchases: Purchase[] ) {
 	return hasBusiness || hasComplete;
 }
 
+function bundledProductsFromPurchases( purchases: Purchase[] ) {
+	if ( hasSecurityPlan( purchases ) ) {
+		return [ 'backup', 'security' ];
+	}
+
+	return [];
+}
+
 export default function JetpackUpsellSection() {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -55,6 +63,9 @@ export default function JetpackUpsellSection() {
 	if ( ! isOdysseyStats || shouldHideUpsells ) {
 		return null;
 	}
+
+	const bundledProducts = bundledProductsFromPurchases( sitePurchases );
+	const finalProducts = [ ...purchasedProducts, ...bundledProducts ];
 
 	// Build checkout URL prefixed with WordPress.com.
 	// TODO: Change URL to point at plugin installation within wp-admin.
@@ -83,7 +94,7 @@ export default function JetpackUpsellSection() {
 	return (
 		<div className="jetpack-upsell-section">
 			<JetpackUpsellCard
-				purchasedProducts={ purchasedProducts }
+				purchasedProducts={ finalProducts }
 				siteSlug={ siteSlug }
 				upgradeUrls={ upgradeUrls }
 			/>

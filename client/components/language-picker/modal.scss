@@ -67,6 +67,17 @@
 	}
 }
 
+.language-picker__modal-incomplete-locale-nudge-text {
+	font-weight: normal;
+	margin-block-start: 6px;
+	.material-icon {
+		margin: 0 4px -2px 0;
+		width: 16px;
+		height: 16px;
+		fill: #2c3338;
+	}
+}
+
 .language-picker__modal-incomplete-locale-text {
 	margin-right: 8px;
 }

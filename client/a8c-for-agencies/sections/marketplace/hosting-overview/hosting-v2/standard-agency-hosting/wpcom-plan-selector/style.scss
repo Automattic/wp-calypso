@@ -5,6 +5,10 @@
 	display: flex;
 	flex-direction: column;
 	gap: 32px;
+
+	&.is-slider-hidden {
+		gap: 24px;
+	}
 }
 
 .wpcom-plan-selector__slider-container {

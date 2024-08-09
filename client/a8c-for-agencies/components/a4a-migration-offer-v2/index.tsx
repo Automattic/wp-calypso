@@ -55,7 +55,7 @@ const MigrationOfferV2 = () => {
 							className="a4a-migration-offer-v2__button"
 							href={ CONTACT_URL_FOR_MIGRATION_OFFER_HASH_FRAGMENT }
 						>
-							{ translate( 'Contact us to start migrating' ) }
+							{ translate( 'Contact us to learn more' ) }
 							<Icon icon={ external } size={ 18 } />
 						</Button>
 					</div>

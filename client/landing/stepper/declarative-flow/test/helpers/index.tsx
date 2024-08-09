@@ -4,9 +4,10 @@
 import { screen } from '@testing-library/react';
 import React, { useEffect } from 'react';
 import { MemoryRouter, useNavigate, useLocation } from 'react-router';
+import { Primitive } from 'utility-types';
 import themeReducer from 'calypso/state/themes/reducer';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
-import type { Flow, ProvidedDependencies } from '../../internals/types';
+import type { Flow, ProvidedDependencies, StepperStep } from '../../internals/types';
 
 export const getFlowLocation = () => {
 	return {
@@ -101,3 +102,58 @@ export const renderFlow = ( flow: Flow ) => {
 		runUseAssertionCondition,
 	};
 };
+
+interface MatchDestinationParams {
+	step: StepperStep;
+	query: URLSearchParams | Record< string, Primitive >;
+}
+declare global {
+	// eslint-disable-next-line @typescript-eslint/no-namespace
+	namespace jest {
+		interface Matchers {
+			toMatchDestination( expected: MatchDestinationParams ): CustomMatcherResult;
+		}
+	}
+}
+
+expect.extend( {
+	toMatchDestination: ( destination, expected: MatchDestinationParams ) => {
+		const isSameStep = destination.step === expected.step.slug;
+
+		if ( expected.query instanceof URLSearchParams === false ) {
+			expected.query = new URLSearchParams( expected.query as Record< string, string > );
+		}
+		const isSameQuery = expected.query
+			? destination.query.toString() === expected.query.toString()
+			: true;
+
+		const pass = isSameStep && isSameQuery;
+
+		if ( pass ) {
+			return {
+				message: () => `expected ${ destination } not to match ${ expected }`,
+				pass: true,
+			};
+		}
+		if ( ! isSameStep ) {
+			return {
+				message: () =>
+					`expected ${ destination.step } to match ${ expected.step.slug } but the step is different`,
+				pass: false,
+			};
+		}
+
+		if ( ! isSameQuery ) {
+			return {
+				message: () =>
+					`expected ${ destination.query } to match ${ expected.query } but the query is different`,
+				pass: false,
+			};
+		}
+
+		return {
+			message: () => `expected ${ destination } to match ${ expected }`,
+			pass: false,
+		};
+	},
+} );

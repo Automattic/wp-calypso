@@ -214,6 +214,9 @@ const PlanCard: FC = () => {
 		}
 	};
 
+	const shouldRenderPlanData =
+		! isStaging || ( isStaging && config.isEnabled( 'hosting-overview-refinements' ) );
+
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
@@ -230,7 +233,7 @@ const PlanCard: FC = () => {
 						</>
 					) }
 				</div>
-				{ ! isStaging && (
+				{ shouldRenderPlanData && (
 					<>
 						{ isAgencyPurchase && (
 							<div className="hosting-overview__plan-agency-purchase">
@@ -249,7 +252,7 @@ const PlanCard: FC = () => {
 								</p>
 							</div>
 						) }
-						{ ! isAgencyPurchase && <PricingSection /> }
+						{ ! isAgencyPurchase && ! isStaging && <PricingSection /> }
 						{ ! isLoading && (
 							<PlanStorage
 								className="hosting-overview__plan-storage"

@@ -31,7 +31,13 @@ export const useStepNavigationWithTracking = ( {
 		...stepNavigation,
 		submit: ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
 			shouldTrackSubmit &&
-				recordSubmitStep( providedDependencies, intent, flow.name, currentStepRoute );
+				recordSubmitStep(
+					providedDependencies,
+					intent,
+					flow.name,
+					currentStepRoute,
+					flow.variantSlug
+				);
 			stepNavigation.submit?.( providedDependencies, ...params );
 		},
 	};

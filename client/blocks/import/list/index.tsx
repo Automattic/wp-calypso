@@ -28,6 +28,8 @@ export interface ImporterOption {
 
 interface Props {
 	siteSlug: string | null;
+	title?: string;
+	subTitle?: string;
 	submit?: ( dependencies: Record< string, unknown > ) => void;
 	getFinalImporterUrl: (
 		siteSlug: string,
@@ -35,6 +37,7 @@ interface Props {
 		platform: ImporterPlatform,
 		backToFlow?: string
 	) => string;
+	skipTracking?: boolean;
 	onNavBack?: () => void;
 }
 
@@ -43,6 +46,9 @@ export default function ListStep( props: Props ) {
 	const urlQueryParams = useQuery();
 	const { siteSlug, submit, getFinalImporterUrl, onNavBack } = props;
 	const backToFlow = urlQueryParams.get( 'backToFlow' );
+	const title = props.title || __( 'Import content from another platform' );
+	const subTitle = props.subTitle || __( 'Select the platform where your content lives' );
+	const skipTracking = props.skipTracking;
 
 	// We need to remove the wix importer from the primary importers list.
 	const primaryListOptions: ImporterOption[] = getImportersAsImporterOption( 'primary' ).filter(
@@ -64,7 +70,10 @@ export default function ListStep( props: Props ) {
 	};
 
 	const recordImportList = () => {
-		recordTracksEvent( trackEventName, trackEventParams );
+		if ( ! skipTracking ) {
+			//FIXME: This is a temporary fix to avoid tracking the import list step. This event apparently is duplicated with the stepper event.
+			recordTracksEvent( trackEventName, trackEventParams );
+		}
 	};
 
 	useEffect( recordImportList, [] );
@@ -81,8 +90,8 @@ export default function ListStep( props: Props ) {
 			) }
 			<div className="list__wrapper">
 				<div className="import__heading import__heading-center">
-					<Title>{ __( 'Import content from another platform' ) }</Title>
-					<SubTitle>{ __( 'Select the platform where your content lives' ) }</SubTitle>
+					<Title>{ title }</Title>
+					<SubTitle>{ subTitle }</SubTitle>
 				</div>
 				<div className="list__importers list__importers-primary">
 					{ primaryListOptions.map( ( x ) => (

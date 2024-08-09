@@ -186,14 +186,16 @@ export default function PlanSelectionDetails( {
 										onClick={ onSelectPlan }
 										primary
 									>
-										{ translate( 'Select %(planName)s plan', {
-											args: {
-												planName: selectedPlan
-													? getPressableShortName( selectedPlan.name )
-													: customString,
-											},
-											comment: '%(planName)s is the name of the selected plan.',
-										} ) }
+										{ isNewHostingPage
+											? translate( 'Select this plan' )
+											: translate( 'Select %(planName)s plan', {
+													args: {
+														planName: selectedPlan
+															? getPressableShortName( selectedPlan.name )
+															: customString,
+													},
+													comment: '%(planName)s is the name of the selected plan.',
+											  } ) }
 									</Button>
 								) }
 							</>

@@ -68,7 +68,6 @@ import {
 import { DIFMUpsell } from './difm-upsell-banner';
 import Masterbar from './masterbar';
 import SiteAdminInterface from './site-admin-interface';
-import SiteAdminInterfaceExperiment from './site-admin-interface/experiment';
 import SiteIconSetting from './site-icon-setting';
 import LaunchSite from './site-visibility/launch-site';
 import wrapSettingsForm from './wrap-settings-form';
@@ -558,11 +557,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderAdminInterface() {
-		const { site, siteSlug, isSimple } = this.props;
-		if ( isSimple ) {
-			return <SiteAdminInterfaceExperiment siteId={ site.ID } siteSlug={ siteSlug } />;
-		}
-
+		const { site, siteSlug } = this.props;
 		return <SiteAdminInterface siteId={ site.ID } siteSlug={ siteSlug } />;
 	}
 
