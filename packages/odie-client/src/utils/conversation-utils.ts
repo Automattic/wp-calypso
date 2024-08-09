@@ -42,7 +42,7 @@ export function getConversationMetadada( chatId: number ): Record< string, any >
 }
 
 export function getConversationUserFields(
-	chatId: number,
+	chatId: number | null,
 	siteUrl: string | null = 'No site selected',
 	sectionName: string | null = '',
 	siteId: number | null = null
