@@ -10,8 +10,6 @@ import ImporterActionButton from '../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../importer-action-buttons/container';
 import type { SiteDetails } from '@automattic/data-stores';
 
-import './content.scss';
-
 type ContentProps = {
 	nextStepUrl: string;
 	selectedSite?: SiteDetails;
@@ -70,10 +68,10 @@ export default function Content( { nextStepUrl, selectedSite, siteSlug, fromSite
 					hideActionButtons
 				/>
 			) }
-			<ImporterActionButtonContainer className="action-buttons-container">
+			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton href={ nextStepUrl } primary>
 					Continue
-				</ImporterActionButton>{ ' ' }
+				</ImporterActionButton>
 				<ImporterActionButton href={ nextStepUrl }>Skip for now</ImporterActionButton>
 			</ImporterActionButtonContainer>
 		</Card>
