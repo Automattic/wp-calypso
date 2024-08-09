@@ -467,9 +467,11 @@
 }
 
 .manage-purchase__license-clipboard-link {
+	margin-block-start: 8px;
 
 	@include breakpoint-deprecated(">480px") {
-		margin-left: 16px;
+		margin-block-start: 0;
+		margin-inline-start: 16px;
 	}
 }
 
