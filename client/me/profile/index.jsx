@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -103,7 +104,32 @@ class Profile extends Component {
 								onFocus={ this.getFocusHandler( 'Display Name Field' ) }
 								value={ this.props.getSetting( 'display_name' ) }
 							/>
+							{ isEnabled( 'layout/site-level-user-profile' ) && (
+								<FormSettingExplanation>
+									{ this.props.translate( 'Shown publicly when you comment on other sites.' ) }
+								</FormSettingExplanation>
+							) }
 						</FormFieldset>
+
+						{ isEnabled( 'layout/site-level-user-profile' ) && (
+							<FormFieldset>
+								<FormLabel htmlFor="user_URL">
+									{ this.props.translate( 'Public web address' ) }
+								</FormLabel>
+								<FormTextInput
+									disabled={ this.props.getDisabledState() }
+									id="user_URL"
+									name="user_URL"
+									type="url"
+									onChange={ this.props.updateSetting }
+									onFocus={ this.getFocusHandler( 'Web Address Field' ) }
+									value={ this.props.getSetting( 'user_URL' ) }
+								/>
+								<FormSettingExplanation>
+									{ this.props.translate( 'Shown publicly when you comment on other sites.' ) }
+								</FormSettingExplanation>
+							</FormFieldset>
+						) }
 
 						<FormFieldset>
 							<FormLabel htmlFor="description">{ this.props.translate( 'About me' ) }</FormLabel>
@@ -116,21 +142,6 @@ class Profile extends Component {
 								value={ this.props.getSetting( 'description' ) }
 							/>
 						</FormFieldset>
-
-						{ isEnabled( 'layout/site-level-user-profile' ) && (
-							<FormFieldset>
-								<FormLabel htmlFor="user_URL">{ this.props.translate( 'Web address' ) }</FormLabel>
-								<FormTextInput
-									disabled={ this.props.getDisabledState() }
-									id="user_URL"
-									name="user_URL"
-									type="url"
-									onChange={ this.props.updateSetting }
-									onFocus={ this.getFocusHandler( 'Web Address Field' ) }
-									value={ this.props.getSetting( 'user_URL' ) }
-								/>
-							</FormFieldset>
-						) }
 
 						<p className="profile__gravatar-profile-description">
 							<span>

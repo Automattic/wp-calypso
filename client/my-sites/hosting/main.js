@@ -19,6 +19,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
+import { useHash } from 'calypso/landing/stepper/hooks/use-hash.ts';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
@@ -139,14 +140,15 @@ const Hosting = ( props ) => {
 		transferState,
 	} = props;
 
+	const hash = useHash();
 	useEffect( () => {
-		if ( [ '#php', '#wp' ].includes( window.location.hash ) ) {
+		if ( [ '#php', '#wp' ].includes( hash ) ) {
 			let count = 0;
 			const interval = setInterval( () => {
 				let targetElement;
-				if ( window.location.hash === '#php' ) {
+				if ( hash === '#php' ) {
 					targetElement = document.querySelector( '[data-scroll-id="php-version-select"]' );
-				} else if ( window.location.hash === '#wp' ) {
+				} else if ( hash === '#wp' ) {
 					targetElement = document.querySelector( '[data-scroll-id="wp-version-select"]' );
 				}
 
@@ -156,12 +158,12 @@ const Hosting = ( props ) => {
 				}
 
 				count++;
-				if ( count > 10 ) {
+				if ( count > 15 ) {
 					clearInterval( interval );
 				}
-			}, 500 );
+			}, 300 );
 		}
-	}, [] );
+	}, [ hash ] );
 
 	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
 	const [ hasTransfer, setHasTransferring ] = useState(

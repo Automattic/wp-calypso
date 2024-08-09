@@ -82,8 +82,9 @@
 .odie-chat-message-input-container {
 	z-index: 10;
 	position: fixed;
-	width: 100%;
 	bottom: 0;
+	left: 0;
+	right: 0;
 	max-width: 410px;
 	flex-shrink: 0;
 	box-sizing: border-box;

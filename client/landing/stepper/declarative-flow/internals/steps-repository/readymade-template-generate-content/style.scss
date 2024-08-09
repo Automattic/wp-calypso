@@ -41,6 +41,14 @@
 		margin-left: 10px;
 	}
 
+	.checklist-item__checklist-primary-button.components-button {
+		transition: opacity 1s;
+
+		&.hidden {
+			opacity: 0;
+		}
+	}
+
 	.step-container__header {
 		margin-bottom: 24px;
 
