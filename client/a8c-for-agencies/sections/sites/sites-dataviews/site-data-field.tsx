@@ -7,17 +7,16 @@ import { Site } from '../types';
 interface SiteDataFieldProps {
 	isLoading: boolean;
 	site: Site;
+	isDevSite: boolean;
 	onSiteTitleClick: ( site: Site ) => void;
 }
 
-const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProps ) => {
+const SiteDataField = ( { isLoading, site, isDevSite, onSiteTitleClick }: SiteDataFieldProps ) => {
 	if ( isLoading ) {
 		return <TextPlaceholder />;
 	}
 
 	const migrationInProgress = site.sticker?.includes( 'migration-in-progress' );
-	// TODO: Replace with actual dev site check
-	const isDevSite = false;
 
 	return (
 		<Button
