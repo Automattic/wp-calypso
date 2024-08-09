@@ -294,4 +294,12 @@
 			}
 		}
 	}
+
+	.plans-grid-next-action-button {
+		margin-bottom: auto;
+
+		.plans-grid-next-action-button__content {
+			min-height: 40px;
+		}
+	}
 }
