@@ -8,7 +8,6 @@ import {
 import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useSelect } from '@wordpress/data';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
@@ -23,7 +22,6 @@ type ActionButtonProps = {
 	currentSitePlanSlug?: string | null;
 	isPopular?: boolean;
 	isInSignup?: boolean;
-	isFixedWidth?: boolean;
 	isMonthlyPlan?: boolean;
 	planSlug: PlanSlug;
 	buttonText?: string;
@@ -41,7 +39,6 @@ const ActionButton = ( {
 	isStuck,
 	isInSignup,
 	isMonthlyPlan,
-	isFixedWidth,
 }: ActionButtonProps ) => {
 	const translate = useTranslate();
 	const {
@@ -200,11 +197,7 @@ const ActionButton = ( {
 	}
 
 	return (
-		<div
-			className={ clsx( 'plans-grid-next-action-button', {
-				'is-fixed-width': isFixedWidth,
-			} ) }
-		>
+		<div className="plans-grid-next-action-button">
 			<div className="plans-grid-next-action-button__content">{ actionButton }</div>
 		</div>
 	);
