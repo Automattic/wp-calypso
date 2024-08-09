@@ -689,7 +689,7 @@ export class LoginForm extends Component {
 
 		const { query, usernameOrEmail } = this.props;
 
-		const loginLink = getLoginLinkPageUrl( {
+		return getLoginLinkPageUrl( {
 			locale: this.props.locale,
 			currentRoute: this.props.currentRoute,
 			signupUrl: this.props.currentQuery?.signup_url,
@@ -697,8 +697,25 @@ export class LoginForm extends Component {
 			emailAddress: usernameOrEmail || query?.email_address || this.state.usernameOrEmail,
 			redirectTo: this.props.redirectTo,
 		} );
+	}
 
-		return loginLink;
+	getQrLoginLink() {
+		if (
+			! canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
+			return null;
+		}
+
+		return getLoginLinkPageUrl( {
+			locale: this.props.locale,
+			twoFactorAuthType: 'qr',
+			redirectTo: this.props.redirectTo,
+			signupUrl: this.props.currentQuery?.signup_url,
+		} );
 	}
 
 	renderMagicLoginLink() {
@@ -1062,6 +1079,7 @@ export class LoginForm extends Component {
 							}
 							isSocialFirst={ isSocialFirst }
 							magicLoginLink={ this.getMagicLoginPageLink() }
+							qrLoginLink={ this.getQrLoginLink() }
 						/>
 					</Fragment>
 				) }

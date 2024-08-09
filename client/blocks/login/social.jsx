@@ -30,6 +30,7 @@ class SocialLoginForm extends Component {
 		socialServiceResponse: PropTypes.object,
 		shouldRenderToS: PropTypes.bool,
 		magicLoginLink: PropTypes.string,
+		qrLoginLink: PropTypes.string,
 		isSocialFirst: PropTypes.bool,
 	};
 
@@ -184,6 +185,7 @@ class SocialLoginForm extends Component {
 			socialServiceResponse,
 			magicLoginLink,
 			isSocialFirst,
+			qrLoginLink,
 		} = this.props;
 
 		return (
@@ -224,7 +226,7 @@ class SocialLoginForm extends Component {
 						{ isSocialFirst && (
 							<>
 								{ magicLoginLink && <MagicLoginButton loginUrl={ magicLoginLink } /> }
-								<QrCodeLoginButton />
+								{ qrLoginLink && <QrCodeLoginButton loginUrl={ qrLoginLink } /> }
 							</>
 						) }
 					</div>
