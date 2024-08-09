@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { useTranslate } from 'i18n-calypso';
 import { PropsWithChildren, useContext, useCallback } from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
@@ -33,12 +34,8 @@ const LicenseTransition = ( props: PropsWithChildren< LicenseTransitionProps > )
 	<CSSTransition { ...props } classNames="license-list__license-transition" timeout={ 150 } />
 );
 
-const getProductName = ( name: string ): string => {
-	// For WordPress plans, we don't want to mention the specific plan.
-	return name.startsWith( 'WordPress.com' ) ? 'WordPress.com' : name;
-};
-
 export default function LicenseList() {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { filter, search, sortField, sortDirection, currentPage } =
 		useContext( LicensesOverviewContext );
@@ -68,6 +65,11 @@ export default function LicenseList() {
 		},
 		[ dispatch ]
 	);
+
+	const getProductName = ( name: string ): string => {
+		// For WordPress plans, we don't want to mention the specific plan.
+		return name.startsWith( 'WordPress.com' ) ? translate( 'WordPress.com site' ) : name;
+	};
 
 	return (
 		<div className="license-list">
