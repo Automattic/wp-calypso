@@ -48,6 +48,10 @@ export const MarketingTools: FunctionComponent = () => {
 		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
 	};
 
+	const handleHireAnSEOExpertClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_hire_an_seo_expert_button_click' );
+	};
+
 	const handleSimpleTextingClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_simpletexting_button_click' );
 	};
@@ -102,6 +106,23 @@ export const MarketingTools: FunctionComponent = () => {
 						target="_blank"
 					>
 						{ translate( 'Make your brand' ) }
+					</Button>
+				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
+					title={ translate( 'Hire an SEO expert' ) }
+					description={ translate(
+						'In today’s digital age, visibility is key. Hire an SEO expert to boost your online presence and capture valuable opportunities.'
+					) }
+					imagePath={ fiverrLogo }
+					imageAlt={ translate( 'Fiverr logo' ) }
+				>
+					<Button
+						onClick={ handleHireAnSEOExpertClick }
+						href="https://wp.me/logo-maker/?utm_campaign=marketing_tab"
+						target="_blank"
+					>
+						{ translate( 'Talk to an SEO expert today' ) }
 					</Button>
 				</MarketingToolsFeature>
 
