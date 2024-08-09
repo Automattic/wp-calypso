@@ -1,4 +1,4 @@
-import { Card, Button } from '@automattic/components';
+import { Card, Button, Gridicon } from '@automattic/components';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import { useEffect } from 'react';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
@@ -50,7 +50,9 @@ export default function Content( { nextStepUrl, selectedSite, siteSlug, fromSite
 				To generate a ZIP file of all your Substack posts, go to Settings { '>' } Exports and click
 				'Create a new export.' Once the ZIP file is downloaded, upload it in the next step.
 			</p>
-			<Button href={ `https://${ fromSite }/publish/settings#exports` }>Export content</Button>
+			<Button href={ `https://${ fromSite }/publish/settings#exports` }>
+				Export content <Gridicon icon="external" />
+			</Button>
 			<hr />
 			<h2>Step 2: Import your content to WordPress.com</h2>
 			{ importerStatus && (
