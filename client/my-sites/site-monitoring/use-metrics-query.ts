@@ -52,11 +52,15 @@ export type MetricsType =
 	| 'response_bytes_average'
 	| 'response_time_average';
 
-export function useSiteMetricsQuery(
-	siteId: number | null | undefined,
-	params: SiteMetricsParams,
-	enableQuery: boolean = true
-) {
+export function useSiteMetricsQuery( {
+	siteId,
+	params,
+	enableQuery = true,
+}: {
+	siteId: number | null | undefined;
+	params: SiteMetricsParams;
+	enableQuery?: boolean;
+} ) {
 	const queryResult = useQuery< SiteMetricsAPIResponse >( {
 		queryKey: buildQueryKey( siteId, params ),
 		queryFn: () => {

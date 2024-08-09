@@ -38,15 +38,15 @@ const AtomicSiteBandwidthUsage = ( { siteId, domain }: { siteId: number; domain:
 
 	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
 
-	const { data } = useSiteMetricsQuery(
+	const { data } = useSiteMetricsQuery( {
 		siteId,
-		{
+		params: {
 			start: startInSeconds,
 			end: endInSeconds,
 			metric: 'response_bytes_persec',
 		},
-		! bandwidthData
-	);
+		enableQuery: ! bandwidthData,
+	} );
 
 	if ( ! data && ! bandwidthData ) {
 		return <LoadingPlaceholder className="hosting-overview__plan-bandwidth-placeholder" />;
