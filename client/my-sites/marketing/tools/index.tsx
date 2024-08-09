@@ -87,10 +87,11 @@ export const MarketingTools: FunctionComponent = () => {
 						{ translate( 'Get started' ) }
 					</Button>
 				</MarketingToolsFeature>
+
 				<MarketingToolsFeature
-					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
+					title={ translate( 'Fiverr logo maker' ) }
 					description={ translate(
-						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner today.'
+						'Create a standout brand with a custom logo. Our partner makes it easy and quick to design a professional logo that leaves a lasting impression.'
 					) }
 					imagePath={ fiverrLogo }
 					imageAlt={ translate( 'Fiverr logo' ) }
@@ -100,7 +101,7 @@ export const MarketingTools: FunctionComponent = () => {
 						href="https://wp.me/logo-maker/?utm_campaign=marketing_tab"
 						target="_blank"
 					>
-						{ translate( 'Create a logo' ) }
+						{ translate( 'Make your brand' ) }
 					</Button>
 				</MarketingToolsFeature>
 
