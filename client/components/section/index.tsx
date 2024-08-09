@@ -8,12 +8,12 @@ interface SectionProps {
 	subheader?: string | ReactElement;
 	children: ReactNode;
 	dark?: boolean;
-	hidePseudo?: boolean;
+	hideBackgroundElement?: boolean;
 }
 
 interface SectionContainerProps {
 	dark?: boolean;
-	hidePseudo?: boolean;
+	hideBackgroundElement?: boolean;
 }
 
 interface SectionHeaderProps {
@@ -22,7 +22,7 @@ interface SectionHeaderProps {
 
 export const SectionContainer = styled.div< SectionContainerProps >`
 	${ ( props ) =>
-		! props.hidePseudo &&
+		! props.hideBackgroundElement &&
 		`::before {
 		box-sizing: border-box;
 		content: '';
@@ -75,10 +75,10 @@ export const SectionHeaderContainer = styled.div< SectionHeaderProps >`
 const SectionContent = styled.div``;
 
 const Section = ( props: SectionProps ) => {
-	const { children, header, subheader, dark, hidePseudo } = props;
+	const { children, header, subheader, dark, hideBackgroundElement } = props;
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<SectionContainer dark={ dark } hidePseudo={ hidePseudo }>
+		<SectionContainer dark={ dark } hideBackgroundElement={ hideBackgroundElement }>
 			<SectionHeaderContainer>
 				<SectionHeader dark={ dark } className="wp-brand-font">
 					{ header }

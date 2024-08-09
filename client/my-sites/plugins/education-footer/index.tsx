@@ -108,7 +108,7 @@ export const MarketplaceFooter = () => {
 		<MarketplaceContainer isloggedIn={ isLoggedIn }>
 			<Section
 				header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
-				hidePseudo={ isLoggedIn && isGlobalSidebarVisible }
+				hideBackgroundElement={ isLoggedIn && isGlobalSidebarVisible }
 			>
 				{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
 					<Button className="is-primary marketplace-cta" href={ startUrl }>
