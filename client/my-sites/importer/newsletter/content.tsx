@@ -6,7 +6,11 @@ import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
+import ImporterActionButton from '../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../importer-action-buttons/container';
 import type { SiteDetails } from '@automattic/data-stores';
+
+import './content.scss';
 
 type ContentProps = {
 	nextStepUrl: string;
@@ -66,10 +70,12 @@ export default function Content( { nextStepUrl, selectedSite, siteSlug, fromSite
 					hideActionButtons
 				/>
 			) }
-			<Button href={ nextStepUrl } primary>
-				Continue
-			</Button>{ ' ' }
-			<Button href={ nextStepUrl }>Skip for now</Button>
+			<ImporterActionButtonContainer className="action-buttons-container">
+				<ImporterActionButton href={ nextStepUrl } primary>
+					Continue
+				</ImporterActionButton>{ ' ' }
+				<ImporterActionButton href={ nextStepUrl }>Skip for now</ImporterActionButton>
+			</ImporterActionButtonContainer>
 		</Card>
 	);
 }

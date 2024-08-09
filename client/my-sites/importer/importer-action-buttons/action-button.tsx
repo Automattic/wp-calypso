@@ -1,9 +1,9 @@
-import { Button } from '@automattic/components';
+import { Button, ButtonProps } from '@automattic/components';
 import clsx from 'clsx';
 
 import './action-button.scss';
 
-const ImporterActionButton = ( { className, ...props } ) => (
+const ImporterActionButton = ( { className, ...props }: ButtonProps ) => (
 	<Button className={ clsx( 'importer-action-buttons__action-button', className ) } { ...props } />
 );
 
