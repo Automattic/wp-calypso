@@ -1,0 +1,28 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
+
+.metric-tab-bar__tab {
+	display: flex;
+	gap: 6px;
+}
+
+.metric-tab-bar__tab-status {
+	line-height: normal;
+}
+
+.metric-tab-bar__tab-text {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.metric-tab-bar__tab-header {
+	font-family: $font-sf-pro-display;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 14px;
+	font-weight: 500;
+}
+.metric-tab-bar__tab-metric {
+	font-family: $font-sf-pro-display;
+	font-size: 2rem;
+}
