@@ -68,7 +68,7 @@ export default function LicenseList() {
 
 	const getProductName = ( name: string ): string => {
 		// For WordPress plans, we don't want to mention the specific plan.
-		return name.startsWith( 'WordPress.com' ) ? translate( 'WordPress.com site' ) : name;
+		return name.startsWith( 'WordPress.com' ) ? translate( 'WordPress.com Site' ) : name;
 	};
 
 	return (
