@@ -204,6 +204,7 @@
 		"browserslist": "^4.16.0",
 		"calypso": "workspace:^",
 		"calypso-codemods": "workspace:^",
+		"chart.js": "^4.4.3",
 		"cmdk": "^0.2.0",
 		"config": "^3.3.6",
 		"debug": "^4.3.3",

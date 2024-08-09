@@ -1,4 +1,5 @@
 import LineChart from 'calypso/components/line-chart';
+import ChartJsLineChart from './chartJsLineChart.jsx';
 import MuLineChart from './muPlot.jsx';
 
 import './style.scss';
@@ -39,7 +40,7 @@ export default () => {
 				<MuLineChart />
 			</Box>
 			<Box name="ChartJS">
-				<h1>hola</h1>
+				<ChartJsLineChart />
 			</Box>
 		</div>
 	);
