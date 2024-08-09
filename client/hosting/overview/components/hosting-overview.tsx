@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { FC } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -22,15 +21,6 @@ const HostingOverview: FC = () => {
 
 	return (
 		<div className="hosting-overview">
-			<p
-				className="hosting-overview-refinement-flag-test"
-				style={ {
-					display: config.isEnabled( 'hosting-overview-refinements' ) ? 'auto' : 'none',
-					gridArea: '1 / 2',
-				} }
-			>
-				Hello World
-			</p>
 			<NavigationHeader
 				className="hosting-overview__navigation-header"
 				title={ translate( 'Overview' ) }
