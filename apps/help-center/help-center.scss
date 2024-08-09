@@ -7,6 +7,23 @@
 		svg {
 			fill: var(--studio-white);
 		}
+
+		.edit-site-layout:not(.is-full-canvas) & {
+			background: var(--wp-admin-theme-color);
+
+			svg {
+				fill: var(--studio-white);
+			}
+		}
+	}
+
+	.edit-site-layout:not(.is-full-canvas) & {
+		// Make it the first element in the sidebar actions
+		order: -1;
+
+		svg {
+			fill: #e0e0e0;
+		}
 	}
 }
 
