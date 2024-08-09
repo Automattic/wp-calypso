@@ -715,12 +715,6 @@ body.is-mobile-app-view {
 		}
 	}
 
-	&.masterbar__item-my-site .masterbar__item-content {
-		max-width: 258px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
 	&.masterbar__item-help {
 		cursor: pointer;
 		// todo may need flex: unset
