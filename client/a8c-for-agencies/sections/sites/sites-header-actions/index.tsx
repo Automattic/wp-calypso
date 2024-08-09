@@ -4,18 +4,16 @@ import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AddNewSiteButton from 'calypso/a8c-for-agencies/components/add-new-site-button';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
-import {
-	A4A_MARKETPLACE_PRODUCTS_LINK,
-	A4A_SITES_LINK,
-} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { A4A_MARKETPLACE_PRODUCTS_LINK, A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-configurations-modal';
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import SitesDashboardContext from '../sites-dashboard-context';
 
 import './style.scss';
 
@@ -37,9 +35,12 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 		setShowConfigurationModal( ! showConfigurationModal );
 	}, [ showConfigurationModal ] );
 
+	const { setRecentlyCreatedSiteId } = useContext( SitesDashboardContext );
+
 	const onCreateSiteSuccess = useCallback(
 		( id: number ) => {
 			refetchPendingSites();
+			setRecentlyCreatedSiteId( id );
 			page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
 		},
 		[ refetchPendingSites ]

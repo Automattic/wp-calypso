@@ -53,7 +53,6 @@ export default function SitesDashboard() {
 
 	const agencyId = useSelector( getActiveAgencyId );
 
-	const recentlyCreatedSite = getQueryArg( window.location.href, 'created_site' ) ?? null;
 	const migrationIntent = getQueryArg( window.location.href, 'migration' ) ?? null;
 
 	const {
@@ -66,6 +65,7 @@ export default function SitesDashboard() {
 		showOnlyFavorites,
 		hideListing,
 		setHideListing,
+		recentlyCreatedSiteId,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
@@ -223,9 +223,9 @@ export default function SitesDashboard() {
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ navItems.length > 1 }>
-						{ recentlyCreatedSite && (
+						{ recentlyCreatedSiteId && (
 							<ProvisioningSiteNotification
-								siteId={ Number( recentlyCreatedSite ) }
+								siteId={ Number( recentlyCreatedSiteId ) }
 								migrationIntent={ !! migrationIntent }
 							/>
 						) }
