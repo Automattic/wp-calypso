@@ -1,8 +1,12 @@
 import { FEATURE_SFTP } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { convertBytes } from 'calypso/my-sites/backup/backup-contents-page/file-browser/util';
-import { useSiteMetricsQuery } from 'calypso/my-sites/site-monitoring/use-metrics-query';
+import {
+	SiteMetricsAPIResponse,
+	useSiteMetricsQuery,
+} from 'calypso/my-sites/site-monitoring/use-metrics-query';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -20,9 +24,6 @@ const getCurrentMonthRangeTimestamps = () => {
 	const startInSeconds = Math.floor( firstDayOfMonth.getTime() / 1000 );
 
 	const today = new Date();
-	// We track the end of the current hour to avoid excessive data fetching
-	today.setMinutes( 59 );
-	today.setSeconds( 59 );
 	const endInSeconds = Math.floor( today.getTime() / 1000 );
 
 	return {
@@ -32,21 +33,31 @@ const getCurrentMonthRangeTimestamps = () => {
 };
 
 const AtomicSiteBandwidthUsage = ( { siteId, domain }: { siteId: number; domain: string } ) => {
+	const [ bandwidthData, setBandwidthData ] = useState< SiteMetricsAPIResponse >();
 	const translate = useTranslate();
 
 	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
 
-	const { data } = useSiteMetricsQuery( siteId, {
-		start: startInSeconds,
-		end: endInSeconds,
-		metric: 'response_bytes_persec',
-	} );
+	const { data } = useSiteMetricsQuery(
+		siteId,
+		{
+			start: startInSeconds,
+			end: endInSeconds,
+			metric: 'response_bytes_persec',
+		},
+		! bandwidthData
+	);
 
-	if ( ! data ) {
+	if ( ! data && ! bandwidthData ) {
 		return <LoadingPlaceholder className="hosting-overview__plan-bandwidth-placeholder" />;
 	}
 
-	const valueInBytes = data.data.periods.reduce(
+	if ( ! bandwidthData ) {
+		setBandwidthData( data );
+		return;
+	}
+
+	const valueInBytes = bandwidthData.data.periods.reduce(
 		( acc, curr ) => acc + ( curr.dimension[ domain ] || 0 ),
 		0
 	);
