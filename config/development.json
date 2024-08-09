@@ -147,6 +147,7 @@
 		"me/vat-details": true,
 		"migration-flow/enable-migration-assistant": true,
 		"migration-flow/introductory-offer": true,
+		"migration-flow/revamp": false,
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"oauth": false,
