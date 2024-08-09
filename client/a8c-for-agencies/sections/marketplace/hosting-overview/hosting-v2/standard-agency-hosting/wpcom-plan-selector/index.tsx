@@ -26,7 +26,7 @@ type PlanDetailsProps = {
 	setQuantity: ( quantity: number ) => void;
 };
 
-const MAX_SLIDER_POINTS = 10;
+const MAX_PLANS_FOR_SLIDER = 10;
 
 function PlanDetails( {
 	plan,
@@ -177,7 +177,7 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 	}
 
 	// Show the WPCOM slider if the user has less than 10 plans and is not in referral mode.
-	const showWPCOMSlider = ! referralMode && ownedPlans < MAX_SLIDER_POINTS;
+	const showWPCOMSlider = ! referralMode && ownedPlans < MAX_PLANS_FOR_SLIDER;
 
 	return (
 		<div
