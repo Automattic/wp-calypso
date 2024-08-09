@@ -106,51 +106,48 @@ export default function AccordionFormSection< T >( props: AccordionFormSectionPr
 	const isRTL = useRtl();
 
 	return (
-		<>
-			<h1>I AM THE ACCORDION FORM SECTION</h1>
-			<Section>
-				<SectionHeader
-					isExpanded={ props.isExpanded }
-					isTouched={ props.isTouched }
-					onClick={ () => ( props.blockNavigation ? null : props.onOpen() ) }
-					disabled={ props.blockNavigation }
-				>
-					<span>{ props.title }</span>
-					{ props.isExpanded && ! props.showSkip && (
-						<RequiredLabel>{ translate( 'Required' ) }</RequiredLabel>
-					) }
-					{ ! props.isExpanded && props.summary && <SummaryLabel>{ props.summary }</SummaryLabel> }
-				</SectionHeader>
-				{ props.isExpanded && (
-					<SectionContent>
-						{ props.component ? props.component : props.children }
-						<ButtonsContainer>
-							<ActionButton
-								onClick={ props.onSave }
-								disabled={ props.blockNavigation || props.isSaving || ! props.hasUnsavedChanges }
-							>
-								{ props.isSaving ? translate( 'Saving' ) : translate( 'Save Changes' ) }
-							</ActionButton>
-							<ActionButton
-								primary={ props.showSubmit }
-								onClick={ props.onNext }
-								disabled={ props.blockNavigation || props.isSaving }
-							>
-								{ props.showSubmit ? translate( 'Submit' ) : translate( 'Next' ) }
-								{ ! props.showSubmit && <Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } /> }
-							</ActionButton>
-							{ props.showSkip && ! props.showSubmit && (
-								<SkipLink
-									disabled={ props.blockNavigation }
-									onClick={ () => ( props.blockNavigation ? null : props.onNext() ) }
-								>
-									{ translate( 'Skip' ) }
-								</SkipLink>
-							) }
-						</ButtonsContainer>
-					</SectionContent>
+		<Section>
+			<SectionHeader
+				isExpanded={ props.isExpanded }
+				isTouched={ props.isTouched }
+				onClick={ () => ( props.blockNavigation ? null : props.onOpen() ) }
+				disabled={ props.blockNavigation }
+			>
+				<span>{ props.title }</span>
+				{ props.isExpanded && ! props.showSkip && (
+					<RequiredLabel>{ translate( 'Required' ) }</RequiredLabel>
 				) }
-			</Section>
-		</>
+				{ ! props.isExpanded && props.summary && <SummaryLabel>{ props.summary }</SummaryLabel> }
+			</SectionHeader>
+			{ props.isExpanded && (
+				<SectionContent>
+					{ props.component ? props.component : props.children }
+					<ButtonsContainer>
+						<ActionButton
+							onClick={ props.onSave }
+							disabled={ props.blockNavigation || props.isSaving || ! props.hasUnsavedChanges }
+						>
+							{ props.isSaving ? translate( 'Saving' ) : translate( 'Save Changes' ) }
+						</ActionButton>
+						<ActionButton
+							primary={ props.showSubmit }
+							onClick={ props.onNext }
+							disabled={ props.blockNavigation || props.isSaving }
+						>
+							{ props.showSubmit ? translate( 'Submit' ) : translate( 'Next' ) }
+							{ ! props.showSubmit && <Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } /> }
+						</ActionButton>
+						{ props.showSkip && ! props.showSubmit && (
+							<SkipLink
+								disabled={ props.blockNavigation }
+								onClick={ () => ( props.blockNavigation ? null : props.onNext() ) }
+							>
+								{ translate( 'Skip' ) }
+							</SkipLink>
+						) }
+					</ButtonsContainer>
+				</SectionContent>
+			) }
+		</Section>
 	);
 }
