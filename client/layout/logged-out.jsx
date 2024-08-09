@@ -109,21 +109,16 @@ const LayoutLoggedOut = ( {
 	const isReaderSearchPage =
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/read/search' );
 
-	// It's used to add a class name for the login and magic login of Gravatar powered clients only (not for F2A pages)
-	const isGravPoweredLoginPage =
-		isGravPoweredClient &&
-		! currentRoute.startsWith( '/log-in/push' ) &&
-		! currentRoute.startsWith( '/log-in/authenticator' ) &&
-		! currentRoute.startsWith( '/log-in/sms' ) &&
-		! currentRoute.startsWith( '/log-in/webauthn' ) &&
-		! currentRoute.startsWith( '/log-in/backup' );
+	// It's used to add a class name for the login-related pages, except for `/log-in/link/use`.
+	const hasGravPoweredClientClass =
+		isGravPoweredClient && ! currentRoute.startsWith( '/log-in/link/use' );
 
 	const isMagicLogin = currentRoute && currentRoute.startsWith( '/log-in/link' );
 
 	const isWpcomMagicLogin =
 		isMagicLogin &&
 		! isJetpackLogin &&
-		! isGravPoweredLoginPage &&
+		! hasGravPoweredClientClass &&
 		! isJetpackCloudOAuth2Client( oauth2Client ) &&
 		! isA4AOAuth2Client( oauth2Client ) &&
 		! isWooOAuth2Client( oauth2Client );
@@ -144,8 +139,7 @@ const LayoutLoggedOut = ( {
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
 		'is-wp-job-manager': isWPJobManager,
-		'is-grav-powered-client': isGravPoweredClient,
-		'is-grav-powered-login-page': isGravPoweredLoginPage,
+		'is-grav-powered-client': hasGravPoweredClientClass,
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
 		'is-magic-login': isMagicLogin,
 		'is-wpcom-magic-login': isWpcomMagicLogin,
