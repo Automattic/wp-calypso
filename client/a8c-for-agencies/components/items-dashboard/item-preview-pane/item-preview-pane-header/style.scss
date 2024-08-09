@@ -34,8 +34,9 @@ $blueberry-color: #3858e9;
 					font-size: inherit;
 					padding: 0;
 					height: auto;
-					.item-preview__header-env-data-item-link-capitalize {
+					.item-preview__header-env-data-item-link-description {
 						text-transform: capitalize;
+						padding-left: 2px;
 					}
 				}
 			}
