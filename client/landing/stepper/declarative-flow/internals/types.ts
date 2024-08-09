@@ -107,6 +107,10 @@ export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 	navigate: Navigate< FlowSteps >
 ) => void;
 
+export type UseTracksEventPropsHook = (
+	event: StepperTracksEventStepNavigation
+) => Record< string, string | number | null > | undefined;
+
 export type Flow = {
 	name: string;
 	/**
@@ -145,9 +149,7 @@ export type Flow = {
 	 * Can pass any properties that should be recorded for the event.
 	 *   - Currently only applicable to step-navigation events.
 	 */
-	useTracksEventProps?: (
-		event: StepperTracksEventStepNavigation
-	) => Record< string, string | number | null > | undefined;
+	useTracksEventProps?: UseTracksEventPropsHook;
 	/**
 	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
 	 * IMPORTANT: This hook will be removed in the future.
