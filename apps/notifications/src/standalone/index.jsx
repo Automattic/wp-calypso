@@ -1,6 +1,6 @@
 import '@automattic/calypso-polyfills';
-import { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { useState, useEffect, useCallback } from 'react';
+import ReactDOM from 'react-dom/client';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import { createClient } from './client';
 import { receiveMessage, sendMessage } from './messaging';
@@ -17,7 +17,6 @@ const customEnhancer = ( next ) => ( reducer, initialState ) =>
 	( store = next( reducer, initialState ) );
 
 const customMiddleware = {
-	APP_IS_READY: [ () => sendMessage( { action: 'iFrameReady' } ) ],
 	APP_RENDER_NOTES: [
 		( st, { latestType, newNoteCount } ) =>
 			newNoteCount > 0
@@ -72,10 +71,53 @@ const customMiddleware = {
 	],
 };
 
-const NotesWrapper = ( { wpcom } ) => {
+function useStorageAccess() {
+	const [ hasAccess, setAccess ] = useState( null );
+
+	useEffect( () => {
+		document.hasStorageAccess().then( ( value ) => setAccess( value ) );
+	}, [] );
+
+	const requestAccess = useCallback( () => {
+		document
+			.requestStorageAccess()
+			.then( () => setAccess( true ) )
+			.catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( 'requestStorageAccess failed:', error );
+				setAccess( false );
+			} );
+	}, [] );
+
+	return {
+		hasAccess,
+		requestAccess,
+	};
+}
+
+const setTracksUser = ( wpcom ) => {
+	return wpcom
+		.me()
+		.get( { fields: 'ID,username' } )
+		.then( ( { ID, username } ) => {
+			window._tkq = window._tkq || [];
+			window._tkq.push( [ 'identifyUser', ID, username ] );
+		} )
+		.catch( () => {} );
+};
+
+async function createAndSetupClient() {
+	const wpcom = await createClient();
+	await setTracksUser( wpcom );
+	return wpcom;
+}
+
+const NotesWrapper = () => {
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
 	const [ isShortcutsPopoverVisible, setShortcutsPopoverVisible ] = useState( false );
+	const { hasAccess, requestAccess } = useStorageAccess();
+	const [ wpcom, setWpcom ] = useState( null );
 
 	debug( 'wrapper state update', { isShowing, isVisible } );
 
@@ -139,6 +181,38 @@ const NotesWrapper = ( { wpcom } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
+	useEffect( () => {
+		sendMessage( { action: 'iFrameReady' } );
+	}, [] );
+
+	useEffect( () => {
+		if ( ! wpcom && hasAccess ) {
+			createAndSetupClient().then( ( c ) => setWpcom( c ) );
+		}
+	}, [ wpcom, hasAccess ] );
+
+	if ( hasAccess === null ) {
+		return null;
+	}
+
+	if ( hasAccess === false ) {
+		return (
+			<div className="wpnc__note-list wpnc__loading">
+				<button
+					className="wpnc__button"
+					style={ { margin: '0px auto' } }
+					onClick={ () => requestAccess() }
+				>
+					Request Access
+				</button>
+			</div>
+		);
+	}
+
+	if ( ! wpcom ) {
+		return <div className="wpnc__note-list wpnc__loading">Loading wpcom</div>;
+	}
+
 	return (
 		<Notifications
 			customEnhancer={ customEnhancer }
@@ -153,29 +227,11 @@ const NotesWrapper = ( { wpcom } ) => {
 	);
 };
 
-const render = ( wpcom ) => {
+const render = () => {
 	document.body.classList.add( 'font-smoothing-antialiased' );
 
-	ReactDOM.render(
-		<NotesWrapper wpcom={ wpcom } />,
-		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
-	);
+	const root = ReactDOM.createRoot( document.querySelector( '.wpnc__main' ) );
+	root.render( <NotesWrapper /> );
 };
 
-const setTracksUser = ( wpcom ) => {
-	wpcom
-		.me()
-		.get( { fields: 'ID,username' } )
-		.then( ( { ID, username } ) => {
-			window._tkq = window._tkq || [];
-			window._tkq.push( [ 'identifyUser', ID, username ] );
-		} )
-		.catch( () => {} );
-};
-
-const init = ( wpcom ) => {
-	setTracksUser( wpcom );
-	render( wpcom );
-};
-
-createClient().then( init );
+render();
