@@ -30,6 +30,7 @@ import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getIntervalType, shouldBasePlansOnSegment } from './util';
@@ -112,6 +113,7 @@ export class PlansStep extends Component {
 			flowName,
 			initialContext,
 			intervalType,
+			isDomainOnlySite,
 		} = this.props;
 
 		const intervalTypeValue = intervalType || getIntervalType( this.props.path );
@@ -141,7 +143,17 @@ export class PlansStep extends Component {
 			? segmentSlug
 			: undefined;
 
-		const paidDomainName = domainItem?.meta;
+		let paidDomainName = domainItem?.meta;
+
+		/**
+		 * Domain-only sites have a paid domain but are on the free plan.
+		 * For flows showing plans for domain-only sites, we need to set
+		 * `paidDomainName` to the value of the domain-only site's domain.
+		 */
+		if ( ! paidDomainName && isDomainOnlySite && selectedSite.URL ) {
+			paidDomainName = selectedSite.URL;
+		}
+
 		let freeWPComSubdomain;
 		if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
 			freeWPComSubdomain = siteUrl;
@@ -412,6 +424,7 @@ export default connect(
 		// some descendants of this component may display discounted prices if
 		// they apply to the given site.
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+		isDomainOnlySite: siteSlug ? isDomainOnlySiteSelector( state, siteSlug ) : false,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		hasInitializedSitesBackUrl: getCurrentUserSiteCount( state ) ? '/sites/' : false,
 	} ),
