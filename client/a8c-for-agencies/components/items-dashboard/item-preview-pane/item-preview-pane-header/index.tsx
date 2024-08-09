@@ -9,10 +9,12 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
 import QuerySiteWpVersion from 'calypso/components/data/query-site-wp-version';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
 import { getAtomicHostingWpVersion } from 'calypso/state/selectors/get-atomic-hosting-wp-version';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SiteFavicon from '../../site-favicon';
 import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
@@ -37,14 +39,16 @@ export default function ItemPreviewPaneHeader( {
 	className,
 	extraProps,
 }: Props ) {
+	const dispatch = useDispatch();
 	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
 	const size = isLargerThan960px ? 64 : 50;
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID || 0;
 	const phpVersion = useSelector( ( state ) => getAtomicHostingPhpVersion( state, siteId ) );
 	const wpVersionName = useSelector( ( state ) => getAtomicHostingWpVersion( state, siteId ) );
-	const wpVersion = selectedSite?.options?.software_version;
+	const wpVersion = selectedSite?.options?.software_version?.match( /^\d+(\.\d+){0,2}/ )?.[ 0 ]; // Some times it can be `6.6.1-alpha-58760`, so we strip the `-alpha-58760` part
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const focusRef = useRef< HTMLButtonElement >( null );
 
@@ -59,10 +63,14 @@ export default function ItemPreviewPaneHeader( {
 		extraProps?.siteIconFallback ?? ( itemData.isDotcomSite ? 'wordpress-logo' : 'color' );
 
 	const handlePhpVersionClick = () => {
+		dispatch( recordTracksEvent( 'calypso_hosting_configuration_php_version_update' ) );
+
 		page( `/hosting-config/${ selectedSite?.domain }#php` );
 	};
 
 	const handleWpVersionClick = () => {
+		dispatch( recordTracksEvent( 'calypso_hosting_configuration_wp_version_update' ) );
+
 		page( `/hosting-config/${ selectedSite?.domain }#wp` );
 	};
 
@@ -124,22 +132,15 @@ export default function ItemPreviewPaneHeader( {
 														className="item-preview__header-env-data-item-link"
 														onClick={ handleWpVersionClick }
 													>
-														{ wpVersion }{ ' ' }
-														{ wpVersionName && (
-															<span className="item-preview__header-env-data-item-link-capitalize">
+														{ wpVersion }
+														{ wpVersionName && isStagingSite && (
+															<span className="item-preview__header-env-data-item-link-description">
 																({ wpVersionName })
 															</span>
 														) }
 													</Button>
 												) : (
-													<>
-														{ wpVersion }{ ' ' }
-														{ wpVersionName && (
-															<span className="item-preview__header-env-data-item-link-capitalize">
-																({ wpVersionName })
-															</span>
-														) }
-													</>
+													wpVersion
 												) }
 											</div>
 										) }
