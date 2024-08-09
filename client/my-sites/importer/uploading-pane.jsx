@@ -49,6 +49,7 @@ export class UploadingPane extends PureComponent {
 			validate: PropTypes.func,
 		} ),
 		fromSite: PropTypes.string,
+		hideActionButtons: PropTypes.bool,
 	};
 
 	static defaultProps = { description: null, optionalUrl: null };
@@ -241,7 +242,7 @@ export class UploadingPane extends PureComponent {
 	};
 
 	render() {
-		const { importerStatus, site, isEnabled, fromSite } = this.props;
+		const { importerStatus, site, isEnabled, fromSite, hideActionButtons } = this.props;
 		const isReadyForImport = this.isReadyForImport();
 		const importerStatusClasses = clsx(
 			'importer__upload-content',
@@ -309,22 +310,24 @@ export class UploadingPane extends PureComponent {
 						) }
 					</div>
 				) }
-				<ImporterActionButtonContainer>
-					{ this.props.optionalUrl && (
-						<ImporterActionButton
-							primary
-							onClick={ this.initiateFromUploadButton }
-							disabled={ ! uploadButtonEnabled }
-						>
-							{ this.props.translate( 'Upload' ) }
-						</ImporterActionButton>
-					) }
-					<ImporterCloseButton
-						importerStatus={ importerStatus }
-						site={ site }
-						isEnabled={ isEnabled }
-					/>
-				</ImporterActionButtonContainer>
+				{ ! hideActionButtons && (
+					<ImporterActionButtonContainer>
+						{ this.props.optionalUrl && (
+							<ImporterActionButton
+								primary
+								onClick={ this.initiateFromUploadButton }
+								disabled={ ! uploadButtonEnabled }
+							>
+								{ this.props.translate( 'Upload' ) }
+							</ImporterActionButton>
+						) }
+						<ImporterCloseButton
+							importerStatus={ importerStatus }
+							site={ site }
+							isEnabled={ isEnabled }
+						/>
+					</ImporterActionButtonContainer>
+				) }
 			</div>
 		);
 	}

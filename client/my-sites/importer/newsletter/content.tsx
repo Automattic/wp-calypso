@@ -63,6 +63,7 @@ export default function Content( { nextStepUrl, selectedSite, siteSlug, fromSite
 					importerStatus={ importerStatus }
 					fromSite={ fromSite }
 					hideUploadDescription
+					hideActionButtons
 				/>
 			) }
 			<Button href={ nextStepUrl } primary>

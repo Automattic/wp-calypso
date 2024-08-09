@@ -23,6 +23,7 @@ class ImporterSubstack extends PureComponent {
 		} ),
 		fromSite: PropTypes.string,
 		hideUploadDescription: PropTypes.bool,
+		hideActionButtons: PropTypes.bool,
 	};
 
 	render() {
