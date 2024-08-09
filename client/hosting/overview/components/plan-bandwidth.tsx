@@ -10,11 +10,9 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-interface PlanBandwidthProps {
-	children?: React.ReactNode;
+type PlanBandwidthProps = React.PropsWithChildren< {
 	siteId: number;
-	className?: string;
-}
+} >;
 
 const getCurrentMonthRangeTimestamps = () => {
 	const now = new Date();
