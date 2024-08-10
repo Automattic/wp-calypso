@@ -56,7 +56,14 @@ const siteMigration: Flow = {
 
 		return stepsWithRequiredLogin( [ ...baseSteps, ...hostedVariantSteps ] );
 	},
-
+	useSideEffect() {
+		const urlQueryParams = useQuery();
+		useEffect( () => {
+			if ( urlQueryParams.get( 'ref' ) === 'move-lp' ) {
+				recordMigrationStart();
+			}
+		}, [ urlQueryParams ] );
+	},
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
 		const { isAdmin } = useIsSiteAdmin();
@@ -125,10 +132,6 @@ const siteMigration: Flow = {
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
-
-		useEffect( () => {
-			recordMigrationStart();
-		}, [ urlQueryParams ] );
 
 		// Call triggerGuidesForStep for the current step
 		useEffect( () => {

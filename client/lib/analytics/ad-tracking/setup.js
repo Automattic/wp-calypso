@@ -8,6 +8,7 @@ import {
 	ADROLL_PURCHASE_PIXEL_URL_1,
 	ADROLL_PURCHASE_PIXEL_URL_2,
 	TRACKING_IDS,
+	WPCOM_REDDIT_PIXEL_ID,
 } from './constants';
 
 export function setup() {
@@ -223,10 +224,14 @@ function setupRedditGlobal() {
 	window.rdt =
 		window.rdt ||
 		function ( ...args ) {
+			window.rdt.callQueue = window.rdt.callQueue || [];
 			window.rdt.sendEvent ? window.rdt.sendEvent( ...args ) : window.rdt.callQueue.push( args );
 		};
-
-	window.rdt.callQueue = [];
+	const params = {
+		optOut: false,
+		useDecimalCurrencyValues: true,
+	};
+	window.rdt( 'init', WPCOM_REDDIT_PIXEL_ID, params );
 }
 
 function setupGtag() {
