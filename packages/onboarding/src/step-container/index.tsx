@@ -2,6 +2,7 @@ import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/comp
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
+// eslint-disable-next-line no-restricted-imports
 import FormattedHeader from 'calypso/components/formatted-header';
 import ActionButtons from '../action-buttons';
 import SenseiLogo from '../sensei-logo';
@@ -25,6 +26,8 @@ interface Props {
 	skipLabelText?: TranslateResult;
 	nextLabelText?: TranslateResult;
 	formattedHeader?: ReactElement;
+	headerText?: ReactElement;
+	subHeaderText?: ReactElement;
 	hideFormattedHeader?: boolean;
 	headerImageUrl?: string;
 	className?: string;
