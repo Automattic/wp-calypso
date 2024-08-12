@@ -7,18 +7,6 @@
 		align-self: stretch;
 	}
 
-	.speed-test-badge {
-		width: fit-content;
-		display: flex;
-		padding: 6px 14px;
-		align-items: flex-start;
-		gap: 16px;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 28px;
-		border: 2px solid transparent;
-		background: linear-gradient(#101517, #000) padding-box, linear-gradient(to right, #4458e4, #069e08) border-box;
-	}
-
 	.profiler-header__site-url {
 		display: flex;
 		flex-direction: row;

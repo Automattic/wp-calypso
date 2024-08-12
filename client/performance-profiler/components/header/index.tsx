@@ -3,8 +3,9 @@ import { Icon, mobile, desktop } from '@wordpress/icons';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { Badge } from 'calypso/performance-profiler/components/badge';
 
-import './styles.scss';
+import './style.scss';
 
 type HeaderProps = {
 	url: string;
@@ -24,9 +25,7 @@ const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	return (
 		<div className="profiler-header l-block-wrapper">
 			<div className="profiler-header-wrapper">
-				<div className="speed-test-badge">
-					<h1>WordPress Speed Test</h1>
-				</div>
+				<Badge />
 
 				<div className="profiler-header__site-url">
 					<h2>{ urlParts.hostname ?? '' }</h2>
