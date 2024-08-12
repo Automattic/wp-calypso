@@ -82,6 +82,10 @@ function PathName( props: { pathName?: string } ) {
 	}
 
 	if ( pathName.length > PATHNAME_MAX_LENGTH ) {
+		if ( pathName.startsWith( '/' ) ) {
+			pathName = pathName.slice( 1 );
+		}
+
 		const parts = pathName.split( '/' );
 		const hasHiddenParts = parts.length > 1;
 
