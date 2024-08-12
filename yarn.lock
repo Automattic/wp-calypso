@@ -995,7 +995,7 @@ __metadata:
     "@rollup/plugin-json": "npm:^5.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@rollup/plugin-terser": "npm:^0.2.1"
-    "@rollup/plugin-typescript": "npm:^10.0.1"
+    "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/jasmine": "npm:^3.10.3"
     "@types/karma": "npm:^6.3.3"
     "@types/karma-spec-reporter": "npm:^0.0.3"
@@ -6375,14 +6375,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-typescript@npm:^10.0.1":
-  version: 10.0.1
-  resolution: "@rollup/plugin-typescript@npm:10.0.1"
+"@rollup/plugin-typescript@npm:^11.1.6":
+  version: 11.1.6
+  resolution: "@rollup/plugin-typescript@npm:11.1.6"
   dependencies:
-    "@rollup/pluginutils": "npm:^5.0.1"
+    "@rollup/pluginutils": "npm:^5.1.0"
     resolve: "npm:^1.22.1"
   peerDependencies:
-    rollup: ^2.14.0||^3.0.0
+    rollup: ^2.14.0||^3.0.0||^4.0.0
     tslib: "*"
     typescript: ">=3.7.0"
   peerDependenciesMeta:
@@ -6390,7 +6390,7 @@ __metadata:
       optional: true
     tslib:
       optional: true
-  checksum: b3b45dbb61984f8ce354b4208f05a1d64d9ea959ce63fd1fd38457a1aef2571a92ec7d17154477687dfb6e78a1096b7f3cdbd5bc3f8c8521d0f32bcbbc881ef4
+  checksum: 5347cd73ac28d4cf2401a3e689864a1a0df8f3ae029abd9c38525cbc84bcfa16c3a32a0ac5698dac65ec531ba7cf8332e14f5fc7f8fa501193da23320a134c5c
   languageName: node
   linkType: hard
 
@@ -6407,7 +6407,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/pluginutils@npm:^5.0.1":
+"@rollup/pluginutils@npm:^5.0.1, @rollup/pluginutils@npm:^5.1.0":
   version: 5.1.0
   resolution: "@rollup/pluginutils@npm:5.1.0"
   dependencies:
@@ -35178,6 +35178,7 @@ __metadata:
     "@babel/runtime": "npm:^7.24.5"
     "@bartekbp/typescript-checkstyle": "npm:^5.0.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.13"
+    "@rollup/plugin-typescript": "npm:^11.1.6"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
     "@storybook/cli": "npm:^7.6.19"
     "@storybook/react": "npm:^7.6.19"
