@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { Icon, check } from '@wordpress/icons';
 import { FunctionComponent, useState } from 'react';
 import StepProgress from 'calypso/components/step-progress';
 import type { ClickHandler } from '../index';
@@ -10,6 +11,7 @@ const StepProgressExample: FunctionComponent = () => {
 		{
 			message: 'You got this!',
 			onClick: () => setCurrentStep( 0 ),
+			indicator: <Icon icon={ check } />,
 		},
 		{
 			message: 'Host locator ( clickable once complete )',

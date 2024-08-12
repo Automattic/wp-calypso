@@ -1,12 +1,12 @@
 import { TranslateResult } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent, ReactNode } from 'react';
 
 import './style.scss';
 
 export interface ClickHandler {
 	onClick: () => void;
 	message: TranslateResult;
-	indicator?: React.ReactNode;
+	indicator?: ReactNode;
 	show?: 'always' | 'onComplete' | 'beforeComplete';
 }
 
