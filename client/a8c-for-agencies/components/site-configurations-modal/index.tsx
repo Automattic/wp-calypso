@@ -6,6 +6,7 @@ import { check, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
+import useCreateWPCOMDevSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-dev-site';
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
@@ -40,6 +41,7 @@ export default function SiteConfigurationsModal( {
 	const { phpVersions } = usePhpVersions();
 	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
+	const { mutate: createWPCOMDevSite } = useCreateWPCOMDevSiteMutation();
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
 		setAllowClientsToUseSiteHelpCenter( ! allowClientsToUseSiteHelpCenter );
@@ -72,10 +74,6 @@ export default function SiteConfigurationsModal( {
 
 	const onSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		if ( ! siteId ) {
-			// Creating a dev site scenario.
-			return;
-		}
 
 		setIsSubmitting( true );
 		const formData = new FormData( event.currentTarget );
@@ -94,17 +92,35 @@ export default function SiteConfigurationsModal( {
 
 		recordTracksEvent( 'calypso_a4a_create_site_config_submit', trackingParams );
 
-		createWPCOMSite( params, {
-			onSuccess: () => {
-				onCreateSiteSuccess( siteId );
-			},
-			onError: async ( error ) => {
-				if ( error.status === 400 ) {
-					await siteName.revalidateCurrentSiteName();
-					setIsSubmitting( false );
+		if ( isDevSite ) {
+			createWPCOMDevSite( params, {
+				onSuccess: ( response ) => {
+					onCreateSiteSuccess( response.site.id );
+					closeModal();
+				},
+				onError: async ( error ) => {
+					if ( error.status === 400 ) {
+						await siteName.revalidateCurrentSiteName();
+						setIsSubmitting( false );
+					}
+				},
+			} );
+		} else {
+			createWPCOMSite(
+				{ ...params, id: siteId },
+				{
+					onSuccess: () => {
+						onCreateSiteSuccess( siteId );
+					},
+					onError: async ( error ) => {
+						if ( error.status === 400 ) {
+							await siteName.revalidateCurrentSiteName();
+							setIsSubmitting( false );
+						}
+					},
 				}
-			},
-		} );
+			);
+		}
 	};
 
 	const onRequestCloseModal = () => {

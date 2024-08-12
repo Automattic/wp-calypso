@@ -1,9 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
-import { FeedIcon } from 'calypso/landing/subscriptions/components/settings/icons';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getFeedUrl } from 'calypso/reader/route';
 
@@ -67,20 +66,18 @@ const SiteSubscriptionSubheader = ( {
 	const recordViewFeedButtonClicked = useRecordViewFeedButtonClicked();
 
 	subheaderItems.push(
-		<Button
-			key={ `view-feed-button-${ feedId }` }
-			title={ translate( 'View feed' ) }
-			className="site-subscription-header__view-feed-button"
-			icon={ <FeedIcon /> }
+		<a
 			href={ getFeedUrl( feedId ) }
 			onClick={ () => {
 				recordViewFeedButtonClicked( {
 					blogId: blogId ? String( blogId ) : null,
 					feedId: String( feedId ),
-					source: 'subscription-feed-icon',
+					source: 'subscription-feed-link',
 				} );
 			} }
-		/>
+		>
+			{ translate( 'Reader' ) }
+		</a>
 	);
 
 	return (

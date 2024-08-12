@@ -11,9 +11,14 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import {
 	A4A_OVERVIEW_LINK,
 	A4A_SIGNUP_LINK,
+	A4A_CLIENT_SUBSCRIPTIONS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useSelector } from 'calypso/state';
-import { getActiveAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import {
+	getActiveAgency,
+	hasFetchedAgency,
+	isAgencyClientUser,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 
 import './style.scss';
 
@@ -32,10 +37,15 @@ export default function Landing() {
 
 	const hasFetched = useSelector( hasFetchedAgency );
 	const agency = useSelector( getActiveAgency );
+	const isClientUser = useSelector( isAgencyClientUser );
 
 	useEffect( () => {
 		if ( ! hasFetched ) {
 			return;
+		}
+
+		if ( isClientUser ) {
+			return page.redirect( A4A_CLIENT_SUBSCRIPTIONS_LINK );
 		}
 
 		if ( agency ) {
@@ -50,7 +60,7 @@ export default function Landing() {
 		}
 
 		redirectWithCurrentQuery( A4A_SIGNUP_LINK );
-	}, [ agency, hasFetched ] );
+	}, [ agency, hasFetched, isClientUser ] );
 
 	return (
 		<Layout className="a4a-landing" title={ title } wide>

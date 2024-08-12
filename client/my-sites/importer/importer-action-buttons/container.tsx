@@ -1,10 +1,22 @@
 import clsx from 'clsx';
+import { ReactNode } from 'react';
 
-const ImporterActionButtonContainer = ( { justifyContentCenter = false, children } ) =>
+interface ImporterActionButtonContainerProps {
+	justifyContentCenter?: boolean;
+	children: ReactNode;
+	noSpacing?: boolean;
+}
+
+const ImporterActionButtonContainer = ( {
+	justifyContentCenter = false,
+	children,
+	noSpacing,
+}: ImporterActionButtonContainerProps ) =>
 	children ? (
 		<div
 			className={ clsx( 'importer-action-buttons__container', {
 				'is-justify-content-center': justifyContentCenter,
+				'no-spacing': noSpacing,
 			} ) }
 		>
 			{ children }
