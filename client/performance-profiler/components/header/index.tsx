@@ -12,6 +12,7 @@ type HeaderProps = {
 	url: string;
 	activeTab: string;
 	onTabChange: ( tab: TabType ) => void;
+	showNavigationTabs?: boolean;
 };
 
 export enum TabType {
@@ -21,7 +22,7 @@ export enum TabType {
 
 export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const translate = useTranslate();
-	const { url, activeTab, onTabChange } = props;
+	const { url, activeTab, onTabChange, showNavigationTabs } = props;
 	const urlParts = new URL( url );
 
 	return (
@@ -39,28 +40,30 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 						<Button href="/speed-test">Test another site</Button>
 					</div>
 				</div>
-				<SectionNav className="profiler-navigation-tabs">
-					<NavTabs>
-						<NavItem
-							onClick={ () => onTabChange( TabType.mobile ) }
-							selected={ activeTab === TabType.mobile }
-						>
-							<Icon icon={ mobile } />
-							<span>{ translate( 'Mobile' ) }</span>
-						</NavItem>
-						<NavItem
-							onClick={ () => onTabChange( TabType.desktop ) }
-							selected={ activeTab === TabType.desktop }
-						>
-							<Icon icon={ desktop } />
-							<span>{ translate( 'Desktop' ) }</span>
-						</NavItem>
-					</NavTabs>
+				{ showNavigationTabs && (
+					<SectionNav className="profiler-navigation-tabs">
+						<NavTabs>
+							<NavItem
+								onClick={ () => onTabChange( TabType.mobile ) }
+								selected={ activeTab === TabType.mobile }
+							>
+								<Icon icon={ mobile } />
+								<span>{ translate( 'Mobile' ) }</span>
+							</NavItem>
+							<NavItem
+								onClick={ () => onTabChange( TabType.desktop ) }
+								selected={ activeTab === TabType.desktop }
+							>
+								<Icon icon={ desktop } />
+								<span>{ translate( 'Desktop' ) }</span>
+							</NavItem>
+						</NavTabs>
 
-					<div className="profiler-header__navbar-right">
-						<p>Tested on July 16th, 2024 at 12:03:23 AM</p>
-					</div>
-				</SectionNav>
+						<div className="profiler-header__navbar-right">
+							<p>Tested on July 16th, 2024 at 12:03:23 AM</p>
+						</div>
+					</SectionNav>
+				) }
 			</div>
 		</div>
 	);

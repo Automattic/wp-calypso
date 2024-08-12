@@ -9,6 +9,7 @@
 		align-items: flex-start;
 		gap: 14px;
 		align-self: stretch;
+		padding-bottom: 20px;
 	}
 
 	.profiler-header__site-url {
@@ -53,7 +54,7 @@
 	.profiler-navigation-tabs.section-nav {
 		background: none;
 		box-shadow: none;
-		margin: 20px 0 0 0;
+		margin: 0;
 
 		.section-nav-tabs__list {
 			// Add padding to display the rounded border and remove the same distance to keep it aligned vertically
