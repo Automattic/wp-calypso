@@ -20,8 +20,8 @@ export const HOW_TO_MIGRATE_OPTIONS = {
  * Prefixed with `STEPPER_TRACKS_EVENT_[scope]_[action]` to avoid conflicts with other Tracks events.
  * Example: `STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT` -> scope = `STEP_NAV`, action = `SUBMIT`
  */
-export const STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT = 'calypso_signup_actions_submit_step'; // TODO clk can be updated to match the constant name
+export const STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT = 'calypso_signup_actions_submit_step';
 
-export const STEPPER_TRACKS_EVENTS_STEP_NAVIGATION = < const >[
+export const STEPPER_TRACKS_EVENTS_STEP_NAV_SUBMIT = < const >[
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 ];

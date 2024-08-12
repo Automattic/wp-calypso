@@ -26,8 +26,7 @@ export const useStepNavigationWithTracking = ( {
 	);
 	const intent =
 		useSelect( ( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(), [] ) ?? '';
-
-	const tracksEventPropsSubmit = useTracksEventProps?.( STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT );
+	const tracksEventPropsFromFlow = useTracksEventProps?.();
 
 	return useMemo(
 		() => ( {
@@ -39,11 +38,11 @@ export const useStepNavigationWithTracking = ( {
 					flowName,
 					currentStepRoute,
 					variantSlug,
-					tracksEventPropsSubmit
+					tracksEventPropsFromFlow?.submit?.[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]
 				);
 				stepNavigation.submit?.( providedDependencies, ...params );
 			},
 		} ),
-		[ stepNavigation, intent, flowName, currentStepRoute, variantSlug, tracksEventPropsSubmit ]
+		[ stepNavigation, intent, flowName, currentStepRoute, variantSlug, tracksEventPropsFromFlow ]
 	);
 };
