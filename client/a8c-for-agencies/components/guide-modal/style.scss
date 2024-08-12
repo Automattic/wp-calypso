@@ -1,6 +1,6 @@
 .guide-modal__wrapper {
 	width: 400px;
-	height: 500px;
+	align-self: start;
 
 	.components-modal__content {
 		margin: 0;
@@ -28,15 +28,14 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	height: 500px;
+	min-height: 500px;
 }
 
 .guide-modal__header {
 	width: 100%;
 	text-align: center;
 	margin-bottom: 20px;
-	height: 48%;
-
+	height: 240px;
 
 	// FIXME: remove this after proper video aspect ratio added
 	video {
@@ -75,7 +74,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	height: 48%;
+	flex: 1 0 auto;
 }
 
 .guide-modal__body {
@@ -119,4 +118,3 @@
 	gap: 1rem;
 	align-self: flex-end;
 }
-

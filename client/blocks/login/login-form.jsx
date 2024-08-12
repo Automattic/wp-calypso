@@ -16,19 +16,16 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
-import MigrateNotice from 'calypso/blocks/login/migrate-notice';
 import FormsButton from 'calypso/components/forms/form-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { Experiment } from 'calypso/lib/explat';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
 	isReactLostPasswordScreenEnabled,
-	isRecognizedLogin,
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
@@ -904,42 +901,26 @@ export class LoginForm extends Component {
 						) }
 
 						{ requestError && requestError.field === 'usernameOrEmail' && (
-							<Fragment>
-								<FormInputValidation isError text={ requestError.message }>
-									{ 'unknown_user' === requestError.code &&
-										this.props.translate(
-											' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
-											{
-												components: {
-													newAccountLink: (
-														<a
-															href={ addQueryArgs(
-																{
-																	user_email: this.state.usernameOrEmail,
-																},
-																signupUrl
-															) }
-														/>
-													),
-												},
-											}
-										) }
-								</FormInputValidation>
-
-								{ 'unknown_user' === requestError.code && ! isRecognizedLogin() && (
-									<Experiment
-										name="calypso_login_failed_show_migrate_cta_202407_v2"
-										defaultExperience={ null }
-										loadingExperience={ null }
-										treatmentExperience={
-											<MigrateNotice
-												translate={ this.props.translate }
-												recordTracksEvent={ this.props.recordTracksEvent }
-											/>
+							<FormInputValidation isError text={ requestError.message }>
+								{ 'unknown_user' === requestError.code &&
+									this.props.translate(
+										' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
+										{
+											components: {
+												newAccountLink: (
+													<a
+														href={ addQueryArgs(
+															{
+																user_email: this.state.usernameOrEmail,
+															},
+															signupUrl
+														) }
+													/>
+												),
+											},
 										}
-									/>
-								) }
-							</Fragment>
+									) }
+							</FormInputValidation>
 						) }
 
 						{ ! requestError && this.state.emailSuggestionError && (

@@ -20,7 +20,7 @@ export const STORE_PLAN_FREE: Plan = {
 	productIds: [ 1 ],
 };
 export const STORE_PLAN_PREMIUM: Plan = {
-	description: 'Mock explorer plan',
+	description: 'Mock premium plan',
 	features: [
 		{
 			name: MockData.API_FEATURE_CUSTOM_DOMAIN.name,
@@ -31,12 +31,12 @@ export const STORE_PLAN_PREMIUM: Plan = {
 			requiresAnnuallyBilledPlan: true,
 		},
 		{
-			name: 'Explorer plan highlighted feature',
+			name: 'Premium plan highlighted feature',
 			requiresAnnuallyBilledPlan: false,
 		},
 	],
 	storage: '13 GB',
-	title: 'Explorer',
+	title: 'Premium',
 	featuresSlugs: {
 		'custom-domain': true,
 		'support-live': true,
@@ -45,6 +45,6 @@ export const STORE_PLAN_PREMIUM: Plan = {
 	},
 	isFree: false,
 	isPopular: true,
-	periodAgnosticSlug: 'explorer',
+	periodAgnosticSlug: 'premium',
 	productIds: [ 1003, 1013 ],
 };

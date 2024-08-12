@@ -5,9 +5,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import useRemoveSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-remove-site';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { SiteRemoveConfirmationDialog } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-remove-confirmation-dialog';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
+import { SiteRemoveConfirmationDialog } from '../../../site-remove-confirmation-dialog';
 import type { Site } from '../../../types';
 
 import './style.scss';

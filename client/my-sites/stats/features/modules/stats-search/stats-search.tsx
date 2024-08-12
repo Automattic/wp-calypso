@@ -26,6 +26,8 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 	moduleStrings,
 	className,
 	summaryUrl,
+	summary,
+	listItemClassName,
 }: StatsDefaultModuleProps ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -76,8 +78,10 @@ const StatSearch: React.FC< StatsDefaultModuleProps > = ( {
 					period={ period }
 					query={ query }
 					statType={ statType }
-					showSummaryLink
+					showSummaryLink={ !! summary }
 					className={ className }
+					summary={ summary }
+					listItemClassName={ listItemClassName }
 					skipQuery
 				/>
 			) }

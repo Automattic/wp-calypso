@@ -17,7 +17,12 @@ import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
+import { useSelector } from 'calypso/state';
+import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
+import { useNonOwnerHandler } from './use-non-owner-handler';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -106,20 +111,17 @@ function useDowngradeHandler( {
 	siteSlug,
 	currentPlan,
 }: {
-	siteSlug: string | null | undefined;
+	siteSlug?: string | null;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
 	const { setShowHelpCenter, setNavigateToRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
 	const translate = useTranslate();
+
 	return useCallback(
 		( planSlug: PlanSlug ) => {
 			// A downgrade to the free plan is essentially cancelling the current plan.
 			if ( isFreePlan( planSlug ) ) {
 				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
-				return;
-			}
-
-			if ( ! siteSlug ) {
 				return;
 			}
 
@@ -151,7 +153,7 @@ function useGenerateActionCallback( {
 	intent,
 	showModalAndExit,
 	sitePlanSlug,
-	siteSlug,
+	siteId,
 	withDiscount,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
@@ -161,19 +163,29 @@ function useGenerateActionCallback( {
 	intent?: PlansIntent | null;
 	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
 	sitePlanSlug?: PlanSlug | null;
-	siteSlug?: string | null;
+	siteId?: number | null;
 	withDiscount?: string;
 } ): UseActionCallback {
+	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
 	} );
 	const currentPlanManageHref = useCurrentPlanManageHref();
-	const handleUpgrade = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
-	const handleDowngradeClick = useDowngradeHandler( { siteSlug, currentPlan } );
+	const canUserManageCurrentPlan = useSelector( ( state: IAppState ) =>
+		siteId
+			? ! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId )
+			: null
+	);
+	const handleUpgradeClick = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
+	const handleDowngradeClick = useDowngradeHandler( {
+		siteSlug,
+		currentPlan,
+	} );
+	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
 
-	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) => {
-		return () => {
+	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) =>
+		async () => {
 			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
 
@@ -209,6 +221,17 @@ function useGenerateActionCallback( {
 				return;
 			}
 
+			if (
+				sitePlanSlug &&
+				! flowName &&
+				intent !== 'plans-p2' &&
+				intent !== 'plans-blog-onboarding' &&
+				! canUserManageCurrentPlan
+			) {
+				await handleNonOwnerClick( { availableForPurchase } );
+				return;
+			}
+
 			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
 			if (
 				sitePlanSlug &&
@@ -235,13 +258,12 @@ function useGenerateActionCallback( {
 					saw_free_trial_offer: !! freeTrialPlanSlug,
 				} );
 			}
-			handleUpgrade( {
+			handleUpgradeClick( {
 				cartItemForPlan,
 				selectedStorageAddOn,
 			} );
 			return;
 		};
-	};
 }
 
 export default useGenerateActionCallback;

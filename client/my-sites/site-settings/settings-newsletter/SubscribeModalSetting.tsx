@@ -55,10 +55,10 @@ export const SubscribeModalSetting = ( {
 				disabled={ disabled }
 				label={
 					<>
-						{ translate( 'Show subscription pop-up when scrolling a post' ) }
+						{ translate( 'Show subscription pop-up when scrolling a post.' ) }
 						{ subscribeModalEditorUrl && (
 							<>
-								{ '. ' }
+								{ ' ' }
 								<ExternalLink href={ subscribeModalEditorUrl } onClick={ onEditClick }>
 									{ translate( 'Preview and edit' ) }
 								</ExternalLink>

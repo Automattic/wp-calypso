@@ -211,6 +211,7 @@ class SectionImport extends Component {
 					importerStatus={ importerStatus }
 					isAtomic={ site.options?.is_wpcom_atomic }
 					isJetpack={ site.jetpack }
+					fromSite={ this.props.fromSite }
 				/>
 			);
 		} );

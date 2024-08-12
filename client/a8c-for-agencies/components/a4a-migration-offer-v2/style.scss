@@ -9,16 +9,28 @@
 	border-radius: 4px;
 	border: 1px solid var(--color-primary-5);
 	background-color: var(--color-primary-0);
-	padding: 20px 32px;
 	transition: padding 0.15s linear;
+	padding: 8px 16px;
 
-	&.is-expanded {
-		padding: 20px 32px 24px;
+	@include break-medium {
+		padding: 20px 32px;
+		&.is-expanded {
+			padding: 20px 32px 24px;
+		}
 	}
 }
 
 .a4a-migration-offer-v2__side {
 	height: 48px;
+}
+
+.a4a-migration-offer-v2__side,
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle {
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
 }
 
 .a4a-migration-offer-v2__icon {
@@ -27,36 +39,51 @@
 }
 
 .a4a-migration-offer-v2__main {
-	display: flex;
 	flex-direction: column;
 	gap: 8px;
 	flex-grow: 1;
 }
 
 .a4a-migration-offer-v2__title {
-	@include a4a-font-heading-lg;
+	@include a4a-font-heading-md;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 
-	margin-block-start: 10px;
+	margin-block-end: 0;
+
+	@include break-medium {
+		@include a4a-font-heading-lg;
+		margin-block-start: 10px;
+		margin-block-end: 8px;
+	}
 }
-
 
 .a4a-migration-offer-v2__body {
 	display: flex;
-	gap: 40px;
+	gap: 16px;
 	align-content: center;
 	flex-direction: column;
 
-	@include break-large {
+	@include break-xlarge {
+		gap: 40px;
 		flex-direction: row;
 	}
 }
 
 .a4a-migration-offer-v2__description {
-	@include a4a-font-body-lg;
+	@include a4a-font-body-md;
+	margin: 0;
+	max-width: 800px;
 
 	a {
 		color: var(--color-text);
 		text-decoration: underline;
+	}
+
+	@include break-medium {
+		@include a4a-font-body-lg;
 	}
 }
 
@@ -71,7 +98,16 @@
 	@include a4a-font-body-md;
 }
 
-.theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle {
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle-mobile {
+	display: block;
+
+	@include break-medium {
+		display: none;
+	}
+}
+
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle,
+.theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle-mobile {
 	&,
 	&:hover,
 	&:focus,
@@ -89,6 +125,9 @@
 	}
 }
 
-.a4a-migration-offer-v2.is-expanded .components-button.a4a-migration-offer-v2__view-toggle svg {
-	transform: rotate(180deg);
+.a4a-migration-offer-v2.is-expanded {
+	.components-button.a4a-migration-offer-v2__view-toggle svg,
+	.components-button.a4a-migration-offer-v2__view-toggle-mobile svg {
+		transform: rotate(180deg);
+	}
 }

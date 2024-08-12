@@ -6,19 +6,19 @@ import FormTextInputWithAction from 'calypso/components/forms/form-text-input-wi
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 
 type Props = {
-	nextStepUrl: string;
+	stepUrl: string;
 };
-export default function SelectNewsletterForm( { nextStepUrl }: Props ) {
+export default function SelectNewsletterForm( { stepUrl }: Props ) {
 	const [ hasError, setHasError ] = useState( false );
 
-	const handleAction = ( newsletterUrl: string ) => {
-		if ( ! isValidUrl( newsletterUrl ) ) {
+	const handleAction = ( fromSite: string ) => {
+		if ( ! isValidUrl( fromSite ) ) {
 			setHasError( true );
 			return;
 		}
 
-		const { hostname } = parseUrl( newsletterUrl );
-		page( addQueryArgs( nextStepUrl, { newsletter: hostname } ) );
+		const { hostname } = parseUrl( fromSite );
+		page( addQueryArgs( stepUrl, { from: hostname } ) );
 		return;
 	};
 
@@ -27,7 +27,7 @@ export default function SelectNewsletterForm( { nextStepUrl }: Props ) {
 			<div className="select-newsletter-form">
 				<FormTextInputWithAction
 					onAction={ handleAction }
-					placeholder="http://example.substack.com"
+					placeholder="https://example.substack.com"
 					action="Continue"
 					isError={ hasError }
 				/>

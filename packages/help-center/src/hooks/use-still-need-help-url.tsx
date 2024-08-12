@@ -8,7 +8,7 @@ export function useStillNeedHelpURL() {
 	const shouldUseWapuu = useShouldUseWapuu();
 	const isEligibleForSupport = Boolean( supportStatus?.eligibility?.is_user_eligible );
 
-	if ( isEligibleForSupport ) {
+	if ( isEligibleForSupport || shouldUseWapuu ) {
 		const url = shouldUseWapuu ? '/odie' : '/contact-options';
 		return { url, isLoading: false };
 	}

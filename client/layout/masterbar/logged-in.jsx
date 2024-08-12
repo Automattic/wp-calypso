@@ -226,8 +226,16 @@ class MasterbarLoggedIn extends Component {
 		this.props.recordTracksEvent( 'calypso_masterbar_cart_remove_product', { uuid } );
 	};
 
-	isActive = ( section ) => {
+	isActive = ( section, ignoreNotifications = false ) => {
+		if ( ignoreNotifications ) {
+			return section === this.props.section;
+		}
 		return section === this.props.section && ! this.props.isNotificationsShowing;
+	};
+
+	isMySitesActive = () => {
+		const { isGlobalSidebarVisible, section } = this.props;
+		return isGlobalSidebarVisible && ( 'sites' === section || 'sites-dashboard' === section );
 	};
 
 	isSidebarOpen = () => {
@@ -240,7 +248,13 @@ class MasterbarLoggedIn extends Component {
 			return 'my-sites-horizon';
 		}
 
-		return 'my-sites';
+		return (
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24">
+				<g xmlns="http://www.w3.org/2000/svg">
+					<path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zM3.5 12c0-1.232.264-2.402.736-3.459L8.291 19.65A8.5 8.5 0 013.5 12zm8.5 8.501c-.834 0-1.64-.122-2.401-.346l2.551-7.411 2.613 7.158a.718.718 0 00.061.117 8.497 8.497 0 01-2.824.482zm1.172-12.486c.512-.027.973-.081.973-.081.458-.054.404-.727-.054-.701 0 0-1.377.108-2.266.108-.835 0-2.239-.108-2.239-.108-.459-.026-.512.674-.054.701 0 0 .434.054.892.081l1.324 3.629-1.86 5.579-3.096-9.208c.512-.027.973-.081.973-.081.458-.054.403-.727-.055-.701 0 0-1.376.108-2.265.108-.16 0-.347-.004-.547-.01A8.491 8.491 0 0112 3.5c2.213 0 4.228.846 5.74 2.232-.037-.002-.072-.007-.11-.007-.835 0-1.427.727-1.427 1.509 0 .701.404 1.293.835 1.994.323.566.701 1.293.701 2.344 0 .727-.28 1.572-.647 2.748l-.848 2.833-3.072-9.138zm3.101 11.332l2.596-7.506c.485-1.213.646-2.182.646-3.045 0-.313-.021-.603-.057-.874A8.455 8.455 0 0120.5 12a8.493 8.493 0 01-4.227 7.347z" />
+				</g>
+			</svg>
+		);
 	};
 
 	/**
@@ -285,7 +299,7 @@ class MasterbarLoggedIn extends Component {
 			hasDismissedAllSitesPopover,
 			isGlobalSidebarVisible,
 		} = this.props;
-		const { isMenuOpen, allSitesBtnRef } = this.state;
+		const { allSitesBtnRef } = this.state;
 
 		const mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
@@ -305,10 +319,11 @@ class MasterbarLoggedIn extends Component {
 					tipTarget="my-sites"
 					icon={ icon }
 					onClick={ this.clickMySites }
-					isActive={ this.isActive( 'sites-dashboard' ) && ! isMenuOpen }
+					isActive={ this.isMySitesActive() }
 					tooltip={ translate( 'Manage your sites' ) }
 					preloadSection={ this.preloadMySites }
 					ref={ ( ref ) => ref !== allSitesBtnRef && this.setState( { allSitesBtnRef: ref } ) }
+					hasGlobalBorderStyle
 				/>
 				{ allSitesBtnRef && (
 					<Popover
@@ -536,11 +551,12 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="me"
 				url="/me"
 				onClick={ this.clickMe }
-				isActive={ this.isActive( 'me' ) }
+				isActive={ this.isActive( 'me', true ) }
 				className="masterbar__item-howdy"
 				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 				preloadSection={ this.preloadMe }
 				subItems={ profileActions }
+				hasGlobalBorderStyle
 			>
 				<span className="masterbar__item-howdy-howdy">
 					{ translate( 'Howdy, %(display_name)s', {
@@ -572,9 +588,10 @@ class MasterbarLoggedIn extends Component {
 					</svg>
 				}
 				onClick={ this.clickReader }
-				isActive={ this.isActive( 'reader' ) }
+				isActive={ this.isActive( 'reader', true ) }
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
 				preloadSection={ this.preloadReader }
+				hasGlobalBorderStyle
 			>
 				{ showLabel &&
 					translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }

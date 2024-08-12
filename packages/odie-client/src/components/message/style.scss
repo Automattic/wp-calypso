@@ -154,6 +154,10 @@
 	}
 }
 
+.chatbox-messages:last-child {
+	margin-bottom: 64px;
+}
+
 .odie-sources {
 	display: flex;
 	align-items: center;
@@ -264,14 +268,6 @@ $feedback-button-size: 28px;
 }
 
 $custom-border-corner-size: 16px;
-
-.odie-referenced-message,
-.odie-last-message {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	width: 100%;
-}
 
 .odie-gradient-to-white {
 	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 50%);
