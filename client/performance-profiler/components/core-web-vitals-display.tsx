@@ -13,6 +13,7 @@ const CoreWebVitalsDisplay = () => {
 				ttfb={ 916 }
 				inp={ 391 }
 			/>
+			<div style={ { height: '500px' } }>Description</div>
 		</div>
 	);
 };

@@ -5,3 +5,5 @@ export type PerformanceMetrics = {
 	ttfb: number;
 	inp: number;
 };
+
+export type Valuation = 'good' | 'needsImprovement' | 'bad' | 'unknown';
