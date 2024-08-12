@@ -1,5 +1,4 @@
 import { clsx } from 'clsx';
-import { useState } from 'react';
 import {
 	PerformanceMetrics,
 	Valuation,
@@ -7,6 +6,11 @@ import {
 import { metricsTresholds, metricsNames } from 'calypso/performance-profiler/utils/metrics';
 import { StatusIndicator } from '../status-indicator';
 import './style.scss';
+
+type Props = PerformanceMetrics & {
+	activeTab: string;
+	setActiveTab: ( tab: string ) => void;
+};
 
 const mapThresholdsToStatus = ( metric: keyof PerformanceMetrics, value: number ): Valuation => {
 	const { good, needsImprovement } = metricsTresholds[ metric ];
@@ -34,8 +38,8 @@ const displayValue = ( metric: keyof PerformanceMetrics, value: number ): string
 	return `${ value }`;
 };
 
-export const MetricTabBar = ( props: PerformanceMetrics ) => {
-	const [ activeTab, setActiveTab ] = useState< string >( 'lcp' );
+export const MetricTabBar = ( props: Props ) => {
+	const { activeTab, setActiveTab } = props;
 
 	return (
 		<div className="metric-tab-bar">
