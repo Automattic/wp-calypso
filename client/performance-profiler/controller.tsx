@@ -18,7 +18,10 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 	context.primary = (
 		<>
 			<Main fullWidthLayout>
-				<PerformanceProfilerDashboard url={ context.query?.url ?? '' } />
+				<PerformanceProfilerDashboard
+					url={ context.query?.url ?? '' }
+					tab={ context.query?.tab ?? '' }
+				/>
 			</Main>
 
 			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } />
