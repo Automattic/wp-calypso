@@ -106,15 +106,17 @@ const connectDomain: Flow = {
 	useSteps() {
 		return CONNECT_DOMAIN_STEPS;
 	},
-	useTracksEventProps( event ) {
+	useTracksEventProps() {
 		const { domain, provider } = useDomainParams();
 
-		if ( STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT === event ) {
-			return {
-				domain,
-				provider,
-			};
-		}
+		return {
+			submit: {
+				[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]: {
+					domain,
+					provider,
+				},
+			},
+		};
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
