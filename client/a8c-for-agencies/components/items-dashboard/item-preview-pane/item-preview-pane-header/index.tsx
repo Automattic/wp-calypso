@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -9,10 +8,12 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
 import QuerySiteWpVersion from 'calypso/components/data/query-site-wp-version';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
 import { getAtomicHostingWpVersion } from 'calypso/state/selectors/get-atomic-hosting-wp-version';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SiteFavicon from '../../site-favicon';
 import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
@@ -37,14 +38,16 @@ export default function ItemPreviewPaneHeader( {
 	className,
 	extraProps,
 }: Props ) {
+	const dispatch = useDispatch();
 	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
 	const size = isLargerThan960px ? 64 : 50;
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID || 0;
 	const phpVersion = useSelector( ( state ) => getAtomicHostingPhpVersion( state, siteId ) );
 	const wpVersionName = useSelector( ( state ) => getAtomicHostingWpVersion( state, siteId ) );
-	const wpVersion = selectedSite?.options?.software_version;
+	const wpVersion = selectedSite?.options?.software_version?.match( /^\d+(\.\d+){0,2}/ )?.[ 0 ]; // Some times it can be `6.6.1-alpha-58760`, so we strip the `-alpha-58760` part
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const focusRef = useRef< HTMLButtonElement >( null );
 
@@ -59,11 +62,11 @@ export default function ItemPreviewPaneHeader( {
 		extraProps?.siteIconFallback ?? ( itemData.isDotcomSite ? 'wordpress-logo' : 'color' );
 
 	const handlePhpVersionClick = () => {
-		page( `/hosting-config/${ selectedSite?.domain }#php` );
+		dispatch( recordTracksEvent( 'calypso_hosting_configuration_php_version_update' ) );
 	};
 
 	const handleWpVersionClick = () => {
-		page( `/hosting-config/${ selectedSite?.domain }#wp` );
+		dispatch( recordTracksEvent( 'calypso_hosting_configuration_wp_version_update' ) );
 	};
 
 	return (
@@ -122,24 +125,18 @@ export default function ItemPreviewPaneHeader( {
 												{ isAtomic ? (
 													<Button
 														className="item-preview__header-env-data-item-link"
+														href={ `/hosting-config/${ selectedSite?.domain }#wp` }
 														onClick={ handleWpVersionClick }
 													>
-														{ wpVersion }{ ' ' }
-														{ wpVersionName && (
-															<span className="item-preview__header-env-data-item-link-capitalize">
+														{ wpVersion }
+														{ wpVersionName && isStagingSite && (
+															<span className="item-preview__header-env-data-item-link-description">
 																({ wpVersionName })
 															</span>
 														) }
 													</Button>
 												) : (
-													<>
-														{ wpVersion }{ ' ' }
-														{ wpVersionName && (
-															<span className="item-preview__header-env-data-item-link-capitalize">
-																({ wpVersionName })
-															</span>
-														) }
-													</>
+													wpVersion
 												) }
 											</div>
 										) }
@@ -149,6 +146,7 @@ export default function ItemPreviewPaneHeader( {
 												<Button
 													className="item-preview__header-env-data-item-link"
 													onClick={ handlePhpVersionClick }
+													href={ `/hosting-config/${ selectedSite?.domain }#php` }
 												>
 													{ phpVersion }
 												</Button>

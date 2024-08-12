@@ -53,7 +53,7 @@
 .plugins-browser__main-container {
 	display: contents;
 
-	&::before {
+	.theme-default:not(.is-global) &::before {
 		box-sizing: border-box;
 		content: "";
 		background-color: #fff;

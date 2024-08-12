@@ -12,7 +12,8 @@ import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-heade
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { getSectionName } from 'calypso/state/ui/selectors';
+import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
+import { getSectionGroup, getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const ThreeColumnContainer = styled.div`
 	@media ( max-width: 660px ) {
@@ -89,7 +90,12 @@ export const MarketplaceFooter = () => {
 	const { __ } = useI18n();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
-	const sectionName = useSelector( getSectionName );
+	const sectionName = useSelector( getSectionName ) || '';
+	const sectionGroup = useSelector( getSectionGroup ) || '';
+	const siteId = useSelector( getSelectedSiteId );
+	const isGlobalSidebarVisible = useSelector( ( state ) =>
+		getShouldShowGlobalSidebar( state, siteId, sectionGroup, sectionName )
+	);
 
 	const startUrl = addQueryArgs(
 		{
@@ -102,31 +108,30 @@ export const MarketplaceFooter = () => {
 		<MarketplaceContainer isloggedIn={ isLoggedIn }>
 			<Section
 				header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
+				hideBackgroundElement={ isLoggedIn && isGlobalSidebarVisible }
 			>
-				<>
-					{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
-						<Button className="is-primary marketplace-cta" href={ startUrl }>
-							{ __( 'Get Started' ) }
-						</Button>
-					) }
-					<ThreeColumnContainer>
-						<FeatureItem header={ __( 'Fully Managed' ) }>
-							{ __(
-								'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
-							) }
-						</FeatureItem>
-						<FeatureItem header={ __( 'Thousands of plugins' ) }>
-							{ __(
-								'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
-							) }
-						</FeatureItem>
-						<FeatureItem header={ __( 'Flexible pricing' ) }>
-							{ __(
-								'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
-							) }
-						</FeatureItem>
-					</ThreeColumnContainer>
-				</>
+				{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
+					<Button className="is-primary marketplace-cta" href={ startUrl }>
+						{ __( 'Get Started' ) }
+					</Button>
+				) }
+				<ThreeColumnContainer>
+					<FeatureItem header={ __( 'Fully Managed' ) }>
+						{ __(
+							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
+						) }
+					</FeatureItem>
+					<FeatureItem header={ __( 'Thousands of plugins' ) }>
+						{ __(
+							'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
+						) }
+					</FeatureItem>
+					<FeatureItem header={ __( 'Flexible pricing' ) }>
+						{ __(
+							'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
+						) }
+					</FeatureItem>
+				</ThreeColumnContainer>
 			</Section>
 		</MarketplaceContainer>
 	);
