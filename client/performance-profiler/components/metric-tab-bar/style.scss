@@ -6,7 +6,7 @@ $blueberry-color: #3858e9;
 .metric-tab-bar {
 	display: flex;
 	flex-direction: row;
-	justify-content: start;
+	justify-content: space-between;
 }
 
 .metric-tab-bar__tab {
@@ -37,7 +37,7 @@ $blueberry-color: #3858e9;
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-	min-width: 170px;
+
 }
 
 .metric-tab-bar__tab-header {
