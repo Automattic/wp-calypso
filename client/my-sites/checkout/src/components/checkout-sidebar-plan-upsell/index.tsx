@@ -21,21 +21,16 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
 
+/**
+ *  Finds the next higher billing term variant from a list of product variants.
+ */
 function getUpsellVariant( currentVariant: WPCOMProductVariant, variants: WPCOMProductVariant[] ) {
-	// Return the biennial plan if the plan in cart is a monthly or annual plan
-	if (
-		currentVariant.productBillingTermInMonths === 1 ||
-		currentVariant.productBillingTermInMonths === 12
-	) {
-		return variants?.find( ( product ) => product.termIntervalInMonths === 24 );
-	}
+	const nextHigherBillingTermInMonths =
+		Math.ceil( ( currentVariant.productBillingTermInMonths + 1 ) / 12 ) * 12;
 
-	// Return the triennial plan if the plan in cart is a biennial plan
-	if ( currentVariant.productBillingTermInMonths === 24 ) {
-		return variants?.find( ( product ) => product.termIntervalInMonths === 36 );
-	}
-
-	debug( 'plan in cart has no upsell variant; variants are', variants );
+	return variants?.find(
+		( product ) => product.termIntervalInMonths === nextHigherBillingTermInMonths
+	);
 }
 
 function getUpsellTextForVariant(
@@ -43,6 +38,21 @@ function getUpsellTextForVariant(
 	percentSavings: number,
 	__: any
 ) {
+	if ( upsellVariant.productBillingTermInMonths === 12 ) {
+		return {
+			cardTitle: createInterpolateElement(
+				sprintf(
+					// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+					__( '<strong>Save %(percentSavings)d%%</strong> by paying annually' ),
+					{ percentSavings }
+				),
+				{ strong: createElement( 'strong' ) }
+			),
+			cellLabel: __( 'One-year cost' ),
+			ctaText: __( 'Switch to an annual plan' ),
+		};
+	}
+
 	if ( upsellVariant.productBillingTermInMonths === 24 ) {
 		return {
 			cardTitle: createInterpolateElement(
@@ -75,15 +85,16 @@ function getUpsellTextForVariant(
 }
 
 function getTracksEventUpsellType( upsellVariant: WPCOMProductVariant ) {
-	if ( upsellVariant.productBillingTermInMonths === 24 ) {
-		return 'biennial-plan';
+	switch ( upsellVariant.productBillingTermInMonths ) {
+		case 12:
+			return 'annual-plan';
+		case 24:
+			return 'biennial-plan';
+		case 36:
+			return 'triennial-plan';
+		default:
+			return '';
 	}
-
-	if ( upsellVariant.productBillingTermInMonths === 36 ) {
-		return 'triennial-plan';
-	}
-
-	return '';
 }
 
 export function CheckoutSidebarPlanUpsell() {
@@ -115,6 +126,7 @@ export function CheckoutSidebarPlanUpsell() {
 	const upsellVariant = getUpsellVariant( currentVariant, variants );
 
 	if ( ! upsellVariant ) {
+		debug( 'plan in cart has no upsell variant; variants are', variants );
 		return null;
 	}
 
