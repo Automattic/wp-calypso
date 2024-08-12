@@ -87,7 +87,7 @@
 		"me/vat-details": true,
 		"migration-flow/enable-migration-assistant": true,
 		"migration-flow/introductory-offer": true,
-		"migration-flow/revamp": false,
+		"migration-flow/revamp": true,
 		"my-sites/add-ons": true,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
