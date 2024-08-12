@@ -6,7 +6,7 @@
 	}
 
 	.card {
-		max-width: 450px;
+		max-width: 500px;
 		padding: 2em;
 		hr {
 			margin-top: 1em;
@@ -15,6 +15,11 @@
 		.action-buttons__next {
 			width: 100%;
 			margin-top: 1em;
+		}
+		.site-migration-credentials__form-fields-row {
+			display: flex;
+			flex-direction: row;
+			gap: 1em;
 		}
 		.site-migration-credentials__form-field {
 			margin-top: 1em;
@@ -29,5 +34,17 @@
 				margin: 0;
 			}
 		}
+		.site-migration-credentials__form-note {
+			margin-top: 1em;
+			color: var(--color-text-subtle);
+		}
+		.site-migration-credentials__form-error {
+			color: var(--color-error);
+			font-size: 0.875rem;
+		}
+	}
+	.site-migration-credentials__skip {
+		margin-top: 1em;
+		text-align: center;
 	}
 }
