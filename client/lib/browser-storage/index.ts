@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { kebabCase } from 'lodash';
 import { bumpStat } from 'calypso/lib/analytics/mc';
@@ -25,7 +25,7 @@ const SANITY_TEST_KEY = 'browser-storage-sanity-test';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isAffectedSafari =
-	config.isEnabled( 'safari-idb-mitigation' ) &&
+	isEnabled( 'safari-idb-mitigation' ) &&
 	typeof window !== 'undefined' &&
 	!! window.IDBKeyRange?.lowerBound( 0 ).includes &&
 	!! ( window as any ).webkitAudioContext &&
