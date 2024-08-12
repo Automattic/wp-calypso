@@ -1,8 +1,3 @@
-import {
-	PerformanceMetrics,
-	Valuation,
-} from 'calypso/performance-profiler/types/performance-metrics';
-
 export const metricsNames = {
 	lcp: 'Largest Contentful Paint',
 	cls: 'Cumulative Layout Shift',
@@ -11,7 +6,7 @@ export const metricsNames = {
 	inp: 'Interaction to Next Paint',
 };
 
-export const metricsTresholds: Map< PerformanceMetrics, Map< Valuation, number > > = {
+export const metricsTresholds = {
 	lcp: {
 		good: 2500,
 		needsImprovement: 4000,
