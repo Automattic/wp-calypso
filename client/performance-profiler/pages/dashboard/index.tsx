@@ -23,13 +23,12 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 		<div className="container">
 			<DocumentHead title={ translate( 'Speed Test' ) } />
 
-			<div className="top-section">
-				<PerformanceProfilerHeader
-					url={ url }
-					activeTab={ activeTab }
-					onTabChange={ getOnTabChange }
-				/>
-			</div>
+			<PerformanceProfilerHeader
+				url={ url }
+				activeTab={ activeTab }
+				onTabChange={ getOnTabChange }
+			/>
+
 			<div className="dashboard-content">
 				<div className="l-block-wrapper">Dashboard content { activeTab }</div>
 			</div>

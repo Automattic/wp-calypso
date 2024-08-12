@@ -25,35 +25,40 @@ const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	};
 
 	return (
-		<div className="profiler-header l-block-wrapper">
-			<div className="profiler-header-wrapper">
-				<Badge />
+		<div className="profiler-header">
+			<div className="l-block-wrapper">
+				<div className="profiler-header-wrapper">
+					<Badge />
 
-				<div className="profiler-header__site-url">
-					<h2>{ urlParts.hostname ?? '' }</h2>
-					{ displayPath( urlParts.pathname ) }
-				</div>
+					<div className="profiler-header__site-url">
+						<h2>{ urlParts.hostname ?? '' }</h2>
+						{ displayPath( urlParts.pathname ) }
+					</div>
 
-				<div className="profiler-header__action">
-					<Button href="/speed-test">Test another site</Button>
+					<div className="profiler-header__action">
+						<Button href="/speed-test">Test another site</Button>
+					</div>
 				</div>
+				<SectionNav className="profiler-navigation-tabs">
+					<NavTabs>
+						<NavItem onClick={ () => onTabChange( 'mobile' ) } selected={ activeTab === 'mobile' }>
+							<Icon icon={ mobile } />
+							<span>{ translate( 'Mobile' ) }</span>
+						</NavItem>
+						<NavItem
+							onClick={ () => onTabChange( 'desktop' ) }
+							selected={ activeTab === 'desktop' }
+						>
+							<Icon icon={ desktop } />
+							<span>{ translate( 'Desktop' ) }</span>
+						</NavItem>
+					</NavTabs>
+
+					<div className="profiler-header__navbar-right">
+						<p>Tested on July 16th, 2024 at 12:03:23 AM</p>
+					</div>
+				</SectionNav>
 			</div>
-			<SectionNav className="profiler-navigation-tabs">
-				<NavTabs>
-					<NavItem onClick={ () => onTabChange( 'mobile' ) } selected={ activeTab === 'mobile' }>
-						<Icon icon={ mobile } />
-						<span>{ translate( 'Mobile' ) }</span>
-					</NavItem>
-					<NavItem onClick={ () => onTabChange( 'desktop' ) } selected={ activeTab === 'desktop' }>
-						<Icon icon={ desktop } />
-						<span>{ translate( 'Desktop' ) }</span>
-					</NavItem>
-				</NavTabs>
-
-				<div className="profiler-header__navbar-right">
-					<p>Tested on July 16th, 2024 at 12:03:23 AM</p>
-				</div>
-			</SectionNav>
 		</div>
 	);
 };
