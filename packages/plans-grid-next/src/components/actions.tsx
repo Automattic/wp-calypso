@@ -129,7 +129,7 @@ const PlanFeatures2023GridActions = ( {
 			planSlug={ planSlug }
 			onClick={ callback }
 			busy={ busy }
-			disabled={ status !== 'enabled' }
+			disabled={ ! callback || 'disabled' === status }
 			classes={ variant === 'secondary' ? 'is-secondary' : '' }
 		>
 			{ text }
