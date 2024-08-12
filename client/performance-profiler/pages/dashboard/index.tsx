@@ -2,17 +2,18 @@ import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
 import DocumentHead from 'calypso/components/data/document-head';
+import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
 import { PerformanceProfilerHeader, TabType } from 'calypso/performance-profiler/components/header';
 
 type PerformanceProfilerDashboardProps = {
 	url: string;
-	tab: string;
+	tab: TabType;
 };
 
 export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps ) => {
 	const translate = useTranslate();
 	const { url, tab } = props;
-	const [ activeTab, setActiveTab ] = React.useState( tab );
+	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
 
 	const getOnTabChange = ( tab: TabType ) => {
 		const queryParams = new URLSearchParams( window.location.search );
@@ -33,9 +34,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 				showNavigationTabs
 			/>
 
-			<div className="dashboard-content">
-				<div className="l-block-wrapper">Dashboard content { activeTab }</div>
-			</div>
+			<PerformanceProfilerDashboardContent activeTab={ activeTab } />
 		</div>
 	);
 };
