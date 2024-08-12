@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { Icon, lock } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -6,6 +7,7 @@ import DateInput from './stats-date-control-date-input';
 import { DateControlPickerDateProps } from './types';
 
 const BASE_CLASS_NAME = 'stats-date-control-picker-date';
+const isCalendarEnabled = config.isEnabled( 'stats/date-picker-calendar' );
 
 const DateControlPickerDate = ( {
 	startDate = '',
@@ -42,6 +44,7 @@ const DateControlPickerDate = ( {
 					<DateInput id="endDate" value={ endDate } onChange={ onEndChange } />
 				</div>
 			</div>
+			{ isCalendarEnabled && <div className={ `${ BASE_CLASS_NAME }s__calendar` }>Calendar</div> }
 			<div className={ `${ BASE_CLASS_NAME }s__buttons` }>
 				<Button onClick={ onCancel }>{ translate( 'Cancel' ) }</Button>
 				<Button variant="primary" onClick={ onApply }>
