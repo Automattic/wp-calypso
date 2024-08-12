@@ -25,6 +25,7 @@ interface Props extends StepProps {
 	skipLabelText?: StepContainerProps[ 'skipLabelText' ];
 	onSkip?: StepContainerProps[ 'goNext' ];
 	skipPosition?: StepContainerProps[ 'skipButtonAlign' ];
+	headerText?: string;
 }
 
 const SiteMigrationUpgradePlan: FC< Props > = ( { navigation, data, ...options } ) => {
@@ -102,6 +103,12 @@ const SiteMigrationUpgradePlan: FC< Props > = ( { navigation, data, ...options }
 		</>
 	);
 
+	const headerText =
+		options.headerText ??
+		( hasEnTranslation( 'Upgrade your plan' )
+			? translate( 'Upgrade your plan' )
+			: translate( 'Upgrade your plan to migrate your site' ) );
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'Upgrade your plan', { textOnly: true } ) } />
@@ -117,11 +124,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( { navigation, data, ...options }
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"
-						headerText={
-							hasEnTranslation( 'The plan you need' )
-								? translate( 'The plan you need' )
-								: translate( 'Take your site to the next level' )
-						}
+						headerText={ headerText }
 						subHeaderText={
 							hasEnTranslation( 'Migrations are exclusive to the %(planName)s plan.' )
 								? translate( 'Migrations are exclusive to the %(planName)s plan.', {

@@ -11,6 +11,7 @@ const MigrationUpgradePlan: Step = ( props ) => {
 			skipLabelText={ translate( 'I want to import my content only' ) }
 			skipPosition="top"
 			onSkip={ () => navigation?.submit?.( { action: 'skip', goToCheckout: false } ) }
+			headerText={ translate( 'Here’s the plan you need' ) }
 		/>
 	);
 };
