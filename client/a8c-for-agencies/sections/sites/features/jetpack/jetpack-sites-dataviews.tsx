@@ -186,7 +186,7 @@ export const JetpackSitesDataViews = ( {
 						);
 					}
 
-					const isDevSite = item.isDevSite;
+					const isDevSite = item.isDevSite ?? false;
 
 					return (
 						<>
