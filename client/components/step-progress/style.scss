@@ -55,6 +55,20 @@
 	&:not(:disabled) {
 		cursor: pointer;
 	}
+
+	.components-spinner {
+		display: flex;
+		justify-content: center;
+		margin-top: 0;
+		margin-left: 2px;
+	}
+	svg {
+		display: flex;
+		justify-content: center;
+		margin-top: -2px;
+		margin-left: -2px;
+	}
+
 }
 
 .step-progress__element-complete {

@@ -1,11 +1,12 @@
 import { TranslateResult } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 
 import './style.scss';
 
 export interface ClickHandler {
 	onClick: () => void;
 	message: TranslateResult;
+	indicator?: React.ReactNode;
 	show?: 'always' | 'onComplete' | 'beforeComplete';
 }
 
@@ -53,7 +54,8 @@ const StepProgress: FunctionComponent< Props > = ( { currentStep, steps } ) => {
 							disabled={ undefined === clickHandler }
 							onClick={ clickHandler }
 						>
-							<span>{ index + 1 }</span>
+							{ step.indicator }
+							{ ! step.indicator && <span>{ index + 1 }</span> }
 						</button>
 						<span className="step-progress__element-step-name">
 							{ isClickHandler( step ) ? step.message : step }
