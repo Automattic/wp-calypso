@@ -42,53 +42,85 @@
 		}
 	}
 
-	.section-nav {
+	.profiler-navigation-tabs.section-nav {
 		background: none;
 		box-shadow: none;
 		margin: 20px 0 0 0;
 
+		.section-nav-tabs__list {
+			// Add padding to display the rounded border and remove the same distance to keep it aligned vertically
+			padding-left: 6px;
+			margin-left: -6px;
+		}
+
 		.section-nav-tab {
 			border: 0;
-			margin-right: 10px;
 			position: relative;
 
 			.section-nav-tab__link {
 				color: #fff;
 				font-size: 1rem;
-				padding: 15px 25px 12px;
-				border-radius: 4px 4px 0 0;
+				padding: 0;
+				border-radius: 6px 6px 0 0; /* stylelint-disable-line scales/radii */
 
 				svg {
 					fill: #fff;
-					margin-right: 5px;
 				}
 
 				&:hover {
+					color: #fff;
+					background: transparent;
+
+					svg {
+						fill: #fff;
+					}
+				}
+
+				.section-nav-tab__text {
+					display: flex;
+					height: 40px;
+					padding: 0 16px;
+					align-items: center;
+					gap: 10px;
+
+					span {
+						font-size: $font-body-small;
+						line-height: $font-body;
+						font-weight: 500;
+					}
+				}
+			}
+
+			&.is-selected {
+				&::before,
+				&::after {
+					position: absolute;
+					bottom: -7px;
+				}
+
+				&::before {
+					left: -6px;
+					content: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2IiBoZWlnaHQ9IjciIHZpZXdCb3g9IjAgMCA2IDciIGZpbGw9Im5vbmUiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTAgNi4xMzc3SDZWMC4xMzc2OTVDNiAzLjQ1MTQgMy4zMTM3MSA2LjEzNzcgMCA2LjEzNzdaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=);
+				}
+
+				&::after {
+					right: -6px;
+					content: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2IiBoZWlnaHQ9IjciIHZpZXdCb3g9IjAgMCA2IDciIGZpbGw9Im5vbmUiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTYgNi4xMzc3SDBWMC4xMzc2OTVDMCAzLjQ1MTQgMi42ODYyOSA2LjEzNzcgNiA2LjEzNzdaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=);
+				}
+
+				.section-nav-tab__link {
 					color: #000;
 					background: #fff;
 
 					svg {
 						fill: #000;
 					}
-				}
 
-				.section-nav-tab__text {
-					display: flex;
-					align-items: center;
-				}
-			}
+					&:hover {
+						color: #000;
+						fill: #000;
+					}
 
-			&.is-selected .section-nav-tab__link {
-				color: #000;
-				background: #fff;
-
-				svg {
-					fill: #000;
-				}
-
-				&:hover {
-					color: #000;
-					fill: #000;
 				}
 			}
 		}

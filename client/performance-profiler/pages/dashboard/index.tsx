@@ -26,7 +26,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			<div className="top-section">
 				<PerformanceProfilerHeader
 					url={ url }
-					active={ activeTab }
+					activeTab={ activeTab }
 					onTabChange={ getOnTabChange }
 				/>
 			</div>

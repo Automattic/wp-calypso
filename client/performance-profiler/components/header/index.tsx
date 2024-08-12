@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { Icon, mobile, desktop } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -9,12 +10,13 @@ import './style.scss';
 
 type HeaderProps = {
 	url: string;
-	active: string;
+	activeTab: string;
 	onTabChange: ( tab: string ) => void;
 };
 
 const PerformanceProfilerHeader = ( props: HeaderProps ) => {
-	const { url, active, onTabChange } = props;
+	const translate = useTranslate();
+	const { url, activeTab, onTabChange } = props;
 	const urlParts = new URL( url );
 	const displayPath = ( pathname: string ) => {
 		if ( pathname && pathname !== '/' && ! pathname.endsWith( '/' ) ) {
@@ -36,15 +38,15 @@ const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 					<Button href="/speed-test">Test another site</Button>
 				</div>
 			</div>
-			<SectionNav>
+			<SectionNav className="profiler-navigation-tabs">
 				<NavTabs>
-					<NavItem onClick={ () => onTabChange( 'mobile' ) } selected={ active === 'mobile' }>
+					<NavItem onClick={ () => onTabChange( 'mobile' ) } selected={ activeTab === 'mobile' }>
 						<Icon icon={ mobile } />
-						Mobile
+						<span>{ translate( 'Mobile' ) }</span>
 					</NavItem>
-					<NavItem onClick={ () => onTabChange( 'desktop' ) } selected={ active === 'desktop' }>
+					<NavItem onClick={ () => onTabChange( 'desktop' ) } selected={ activeTab === 'desktop' }>
 						<Icon icon={ desktop } />
-						Desktop
+						<span>{ translate( 'Desktop' ) }</span>
 					</NavItem>
 				</NavTabs>
 
