@@ -7,7 +7,7 @@ import { Site } from '../types';
 interface SiteDataFieldProps {
 	isLoading: boolean;
 	site: Site;
-	isDevSite: boolean;
+	isDevSite?: boolean;
 	onSiteTitleClick: ( site: Site ) => void;
 }
 
