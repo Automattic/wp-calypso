@@ -466,6 +466,15 @@
 	}
 }
 
+.manage-purchase__license-clipboard-link {
+	margin-block-start: 8px;
+
+	@include breakpoint-deprecated(">480px") {
+		margin-block-start: 0;
+		margin-inline-start: 16px;
+	}
+}
+
 .manage-purchase__auto-renew-text button.is-link {
 	color: var(--color-link);
 	text-decoration: underline;

@@ -1,0 +1,33 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.readymade-template-preview {
+	width: 50%;
+
+	.components-spinner {
+		width: 16px;
+		height: 16px;
+	}
+
+	&.is-loading {
+		display: flex;
+		margin-top: 120px;
+
+		@media (max-width: #{ ($break-medium) }) {
+			margin-top: 24px;
+			width: unset;
+			justify-content: center;
+
+			.components-spinner {
+				padding-top: 0;
+			}
+		}
+	}
+
+	circle {
+		stroke-width: 3px;
+	}
+
+	path {
+		stroke-width: 3px;
+	}
+}

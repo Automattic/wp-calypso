@@ -25,7 +25,9 @@ import {
 	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
+	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
+	isGravPoweredOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -250,6 +252,7 @@ export class Login extends Component {
 			oauth2ClientId: currentQuery?.client_id,
 			redirectTo: currentQuery?.redirect_to,
 			gravatarFrom: currentQuery?.gravatar_from,
+			gravatarFlow: isGravatarFlowOAuth2Client( oauth2Client ),
 		} );
 		const currentUrl = new URL( window.location.href );
 		currentUrl.searchParams.append( 'lostpassword_flow', true );
@@ -384,6 +387,10 @@ export class Login extends Component {
 			translate,
 			usernameOrEmail,
 		} = this.props;
+
+		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+			return null;
+		}
 
 		if (
 			( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) &&
@@ -529,14 +536,8 @@ export class Login extends Component {
 			return <PrivateSite />;
 		}
 
-		// It's used to toggle UIs for the login and magic login of Gravatar powered clients only (not for F2A pages)
-		const isGravPoweredLoginPage =
-			isGravPoweredClient &&
-			! currentRoute.startsWith( '/log-in/push' ) &&
-			! currentRoute.startsWith( '/log-in/authenticator' ) &&
-			! currentRoute.startsWith( '/log-in/sms' ) &&
-			! currentRoute.startsWith( '/log-in/webauthn' ) &&
-			! currentRoute.startsWith( '/log-in/backup' );
+		// It's used to toggle UIs for the login page of Gravatar powered clients only (not for F2A pages).
+		const isGravPoweredLoginPage = isGravPoweredClient && currentRoute === '/log-in';
 
 		const loginButtons = (
 			<>

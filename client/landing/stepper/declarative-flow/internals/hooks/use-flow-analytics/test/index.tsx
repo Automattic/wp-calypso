@@ -37,8 +37,8 @@ describe( 'useFlowAnalytics', () => {
 
 		expect( recordFlowStart ).toHaveBeenCalledWith( 'flow', {
 			ref: null,
-			siteId: null,
-			siteSlug: null,
+			site_id: null,
+			site_slug: null,
 			step: 'step',
 			variant: 'variant',
 		} );
@@ -50,8 +50,8 @@ describe( 'useFlowAnalytics', () => {
 		expect( recordFlowStart ).toHaveBeenCalledWith( 'flow', {
 			ref: 'previous-flow',
 			step: 'step',
-			siteId: null,
-			siteSlug: null,
+			site_id: null,
+			site_slug: null,
 			variant: 'variant',
 		} );
 	} );
@@ -62,8 +62,8 @@ describe( 'useFlowAnalytics', () => {
 		expect( recordFlowStart ).toHaveBeenCalledWith( 'flow', {
 			ref: null,
 			step: 'step',
-			siteId: '123',
-			siteSlug: 'somesite.example.com',
+			site_id: '123',
+			site_slug: 'somesite.example.com',
 			variant: 'variant',
 		} );
 	} );

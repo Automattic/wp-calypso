@@ -312,6 +312,12 @@
 	font-size: 14px;
 	line-height: 1.5;
 
+	&.grav-powered-magic-login--has-sub-header {
+		.magic-login__form-header {
+			margin-bottom: 3px;
+		}
+	}
+
 	&.grav-powered-magic-login--wp-job-manager {
 		max-width: 560px;
 		font-size: 16px;
@@ -323,7 +329,7 @@
 		}
 
 		.magic-login__form-action button[type="submit"].form-button.is-primary {
-			height: unset;
+			min-height: unset;
 			margin-top: 0;
 
 			&,
@@ -354,11 +360,7 @@
 		.grav-powered-magic-login__header,
 		.magic-login__form-header {
 			font-size: 24px;
-			margin-top: 32px;
-		}
-
-		.magic-login__form-header {
-			margin-bottom: 24px;
+			margin: 32px 0 24px;
 		}
 
 		.grav-powered-magic-login__sub-header {
@@ -399,8 +401,8 @@
 	button[type="submit"].form-button.is-primary,
 	.magic-login__form-action button[type="submit"].form-button.is-primary {
 		width: 100%;
-		height: 56px;
-		margin-top: 30px;
+		min-height: 56px;
+		margin-top: 24px;
 
 		&.is-busy {
 			background-image: linear-gradient(-45deg, #1d4fc4 28%, darken(#1d4fc4, 10%) 28%, darken(#1d4fc4, 10%) 72%, #1d4fc4 72%);
@@ -412,7 +414,6 @@
 	}
 
 	.grav-powered-magic-login__content,
-	.grav-powered-magic-login__footer,
 	.grav-powered-magic-login__gravatar-info,
 	input[type="text"].form-text-input,
 	button {
@@ -421,7 +422,7 @@
 
 	.grav-powered-magic-login__content {
 		background-color: #fff;
-		color: #00101c;
+		color: #101517;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px;
 		padding: 20px;
@@ -452,20 +453,25 @@
 		font-weight: 900;
 		line-height: 1.2;
 		text-align: left;
+		margin: 24px 0;
 	}
 
-	.grav-powered-magic-login__header {
-		margin-top: 30px;
+	.grav-powered-magic-login__sub-header,
+	p.magic-login__form-sub-header {
 		margin-bottom: 24px;
 	}
 
 	.grav-powered-magic-login__sub-header {
-		margin-bottom: 30px;
 		word-break: break-word;
 
 		strong {
 			font-weight: 700;
 		}
+	}
+
+	p.magic-login__form-sub-header {
+		font-size: 13px;
+		color: #50575e;
 	}
 
 	.grav-powered-magic-login__account-info {
@@ -481,10 +487,6 @@
 		strong {
 			font-weight: 700;
 		}
-	}
-
-	.magic-login__form-header {
-		margin: 30px 0;
 	}
 
 	.logged-out-form {
@@ -514,7 +516,7 @@
 	}
 
 	.grav-powered-magic-login__tos {
-		margin: 20px 0 30px;
+		margin-bottom: 24px;
 		color: rgba(#00101c, 0.6);
 	}
 
@@ -525,7 +527,7 @@
 	.grav-powered-magic-login__feature-items {
 		display: flex;
 		flex-direction: column;
-		gap: 30px;
+		gap: 24px;
 		margin: 40px 0;
 	}
 
@@ -551,19 +553,14 @@
 	.grav-powered-magic-login__verification-code-form {
 		display: flex;
 		flex-direction: column;
-		margin-top: 30px;
-
-		button[type="submit"].form-button.is-primary {
-			margin-top: 20px;
-		}
+		margin-top: 24px;
 	}
 
 	.grav-powered-magic-login__account-options {
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
-		margin: 30px 0;
-		padding: 20px 0;
+		margin: 40px 0 24px;
 	}
 
 	.grav-powered-magic-login__account-option {
@@ -602,10 +599,10 @@
 		flex-direction: column;
 		flex-wrap: wrap;
 		align-items: center;
-		line-height: 1;
-		margin-top: 30px;
 		font-size: 16px;
-		gap: 30px;
+		line-height: 1;
+		margin-top: 24px;
+		gap: 24px;
 
 		button {
 			color: #1d4fc4;
@@ -688,12 +685,9 @@
 			font-size: 40px;
 		}
 
-		.magic-login__form-header {
+		.magic-login__form-header,
+		p.magic-login__form-sub-header {
 			margin-bottom: 40px;
-		}
-
-		.grav-powered-magic-login__sub-header {
-			margin-bottom: 20px;
 		}
 
 		.grav-powered-magic-login__footer {
@@ -704,7 +698,7 @@
 			&.grav-powered-magic-login__footer--vertical {
 				flex-direction: column;
 				align-items: start;
-				gap: 20px;
+				gap: 16px;
 			}
 		}
 
@@ -719,19 +713,12 @@
 }
 
 .grav-powered-magic-link {
-	background-color: #fff;
-	max-width: 560px;
-	margin: 0 auto;
-	padding: 20px 30px;
-	border-radius: 2px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 
 	&.grav-powered-magic-link--wp-job-manager .button.is-primary {
 		background-color: #2404eb;
-	}
-
-	.empty-content {
-		margin: 120px 0;
-		padding-top: 0;
 	}
 
 	.button.is-primary {
@@ -742,10 +729,6 @@
 		font-weight: 600;
 		color: #fff;
 		border: none;
-	}
-
-	@include break-small {
-		padding: 40px 56px;
 	}
 }
 /* stylelint-enable declaration-property-unit-allowed-list, scales/font-weights */

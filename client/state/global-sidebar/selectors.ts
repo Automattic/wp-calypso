@@ -45,7 +45,7 @@ export const getShouldShowSiteDashboard = (
 
 export const getShouldShowGlobalSidebar = (
 	state: AppState,
-	siteId: number,
+	siteId: number | null,
 	sectionGroup: string,
 	sectionName: string
 ) => {

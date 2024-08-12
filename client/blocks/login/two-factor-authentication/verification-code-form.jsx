@@ -29,6 +29,7 @@ class VerificationCodeForm extends Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthRequestError: PropTypes.object,
 		twoFactorAuthType: PropTypes.string.isRequired,
+		verificationCodeInputPlaceholder: PropTypes.string,
 	};
 
 	state = {
@@ -146,6 +147,7 @@ class VerificationCodeForm extends Component {
 							method={ twoFactorAuthType }
 							ref={ this.saveRef }
 							disabled={ this.state.isDisabled }
+							placeholder={ this.props.verificationCodeInputPlaceholder }
 						/>
 						{ requestError && requestError.field === 'twoStepCode' && (
 							<FormInputValidation isError text={ requestError.message } />

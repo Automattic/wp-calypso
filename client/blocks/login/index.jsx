@@ -11,11 +11,13 @@ import { connect } from 'react-redux';
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
 import AsyncLoad from 'calypso/components/async-load';
+import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
+import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -23,6 +25,7 @@ import {
 	isA4AOAuth2Client,
 	isWooOAuth2Client,
 	isBlazeProOAuth2Client,
+	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -752,8 +755,12 @@ class Login extends Component {
 
 		return (
 			<div className="login__form-header-wrapper">
-				{ isGravPoweredLoginPage && (
-					<img src={ oauth2Client.icon } width={ 27 } height={ 27 } alt={ oauth2Client.title } />
+				{ isGravPoweredClient && (
+					<GravatarLoginLogo
+						iconUrl={ oauth2Client.icon }
+						alt={ oauth2Client.title }
+						isCoBrand={ isGravatarFlowOAuth2Client( oauth2Client ) }
+					/>
 				) }
 				{ preHeader }
 				<div className="login__form-header">{ headerText }</div>
@@ -832,7 +839,7 @@ class Login extends Component {
 			action,
 			isWooCoreProfilerFlow,
 			currentQuery,
-			isGravPoweredLoginPage,
+			isGravPoweredClient,
 			isSignupExistingAccount,
 			isSocialFirst,
 			isFromAutomatticForAgenciesPlugin,
@@ -900,6 +907,7 @@ class Login extends Component {
 						isWoo={ isWoo }
 						isBlazePro={ isBlazePro }
 						isPartnerSignup={ isPartnerSignup }
+						isGravPoweredClient={ isGravPoweredClient }
 						twoFactorAuthType={ twoFactorAuthType }
 						twoFactorNotificationSent={ twoFactorNotificationSent }
 						handleValid2FACode={ this.handleValid2FACode }
@@ -1019,7 +1027,7 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
-				hideSignupLink={ isGravPoweredLoginPage || isBlazePro }
+				hideSignupLink={ isGravPoweredClient || isBlazePro }
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isSendingEmail={ this.props.isSendingEmail }
@@ -1129,7 +1137,7 @@ export default connect(
 				showGlobalNotices: false,
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
-					( ownProps.isGravPoweredClient && ownProps.oauth2Client.name ) ||
+					( ownProps.isGravPoweredClient && getGravatarOAuth2Flow( ownProps.oauth2Client ) ) ||
 					null,
 				...options,
 			} ),

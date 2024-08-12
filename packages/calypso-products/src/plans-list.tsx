@@ -1922,6 +1922,7 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 			WPCOM_FEATURES_SCAN,
 			WPCOM_FEATURES_ANTISPAM,
 			WPCOM_FEATURES_BACKUPS,
+			FEATURE_STATS_PAID,
 		] ),
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );

@@ -20,6 +20,8 @@ import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
+import './style.scss';
+
 const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
