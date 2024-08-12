@@ -34,7 +34,7 @@ $z-index: 99999;
 			height: $head-foot-height;
 			padding: 16px 8px 16px 16px;
 
-			> div {
+			>div {
 				display: flex;
 				align-items: center;
 				justify-content: start;
@@ -150,8 +150,10 @@ $z-index: 99999;
 			bottom: 0;
 			left: 0;
 			right: 0;
+			// If the masterbar is there, don't cover it, if not, go to the top.
+			top: var(--masterbar-height, 0);
 			max-height: calc(100% - 45px);
-			height: 100%;
+			height: calc(100% - var(--masterbar-height, 0));
 
 			.help-center__container-content {
 				flex: auto;
@@ -313,7 +315,7 @@ $z-index: 99999;
 	.help-center__container-content {
 		padding: 0 !important;
 
-		>div > *:not(iframe):not(.help-center__container-content-odie) {
+		> div > *:not(iframe):not(.help-center__container-content-odie) {
 			padding: 16px;
 			box-sizing: border-box;
 		}

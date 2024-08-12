@@ -66,7 +66,15 @@ export default function SitesDashboard() {
 		showOnlyFavorites,
 		hideListing,
 		setHideListing,
+		recentlyCreatedSiteId,
+		setRecentlyCreatedSiteId,
 	} = useContext( SitesDashboardContext );
+
+	useEffect( () => {
+		if ( recentlyCreatedSite ) {
+			setRecentlyCreatedSiteId( Number( recentlyCreatedSite ) );
+		}
+	}, [ recentlyCreatedSite, setRecentlyCreatedSiteId ] );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 	// FIXME: We should switch to a new A4A-specific endpoint when it becomes available, instead of using the public-facing endpoint for A4A
@@ -223,9 +231,9 @@ export default function SitesDashboard() {
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ navItems.length > 1 }>
-						{ recentlyCreatedSite && (
+						{ recentlyCreatedSiteId && (
 							<ProvisioningSiteNotification
-								siteId={ Number( recentlyCreatedSite ) }
+								siteId={ Number( recentlyCreatedSiteId ) }
 								migrationIntent={ !! migrationIntent }
 							/>
 						) }
