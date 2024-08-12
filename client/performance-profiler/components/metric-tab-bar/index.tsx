@@ -1,15 +1,12 @@
+import { clsx } from 'clsx';
+import { useState } from 'react';
 import {
 	PerformanceMetrics,
 	Valuation,
 } from 'calypso/performance-profiler/types/performance-metrics';
 import { metricsTresholds, metricsNames } from 'calypso/performance-profiler/utils/metrics';
-import './style.scss';
 import { StatusIndicator } from '../status-indicator';
-
-type Props = PerformanceMetrics & {
-	activeTab: string;
-	setActiveTab: ( tab: string ) => void;
-};
+import './style.scss';
 
 const mapThresholdsToStatus = ( metric: keyof PerformanceMetrics, value: number ): Valuation => {
 	const { good, needsImprovement } = metricsTresholds[ metric ];
@@ -37,11 +34,17 @@ const displayValue = ( metric: keyof PerformanceMetrics, value: number ): string
 	return `${ value }`;
 };
 
-export const MetricTabBar = ( props: Props ) => {
+export const MetricTabBar = ( props: PerformanceMetrics ) => {
+	const [ activeTab, setActiveTab ] = useState< string >( 'lcp' );
+
 	return (
 		<div className="metric-tab-bar">
 			{ Object.entries( metricsNames ).map( ( [ key, name ] ) => (
-				<div key={ key } className="metric-tab-bar__tab">
+				<button
+					key={ key }
+					className={ clsx( 'metric-tab-bar__tab', { active: key === activeTab } ) }
+					onClick={ () => setActiveTab( key ) }
+				>
 					<div className="metric-tab-bar__tab-status">
 						<StatusIndicator
 							speed={ mapThresholdsToStatus(
@@ -59,7 +62,7 @@ export const MetricTabBar = ( props: Props ) => {
 							) }
 						</div>
 					</div>
-				</div>
+				</button>
 			) ) }
 		</div>
 	);
