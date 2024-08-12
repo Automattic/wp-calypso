@@ -11,10 +11,15 @@ import './style.scss';
 type HeaderProps = {
 	url: string;
 	activeTab: string;
-	onTabChange: ( tab: string ) => void;
+	onTabChange: ( tab: TabType ) => void;
 };
 
-const PerformanceProfilerHeader = ( props: HeaderProps ) => {
+export enum TabType {
+	mobile = 'mobile',
+	desktop = 'desktop',
+}
+
+export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const translate = useTranslate();
 	const { url, activeTab, onTabChange } = props;
 	const urlParts = new URL( url );
@@ -41,13 +46,16 @@ const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 				</div>
 				<SectionNav className="profiler-navigation-tabs">
 					<NavTabs>
-						<NavItem onClick={ () => onTabChange( 'mobile' ) } selected={ activeTab === 'mobile' }>
+						<NavItem
+							onClick={ () => onTabChange( TabType.mobile ) }
+							selected={ activeTab === TabType.mobile }
+						>
 							<Icon icon={ mobile } />
 							<span>{ translate( 'Mobile' ) }</span>
 						</NavItem>
 						<NavItem
-							onClick={ () => onTabChange( 'desktop' ) }
-							selected={ activeTab === 'desktop' }
+							onClick={ () => onTabChange( TabType.desktop ) }
+							selected={ activeTab === TabType.desktop }
 						>
 							<Icon icon={ desktop } />
 							<span>{ translate( 'Desktop' ) }</span>
@@ -62,5 +70,3 @@ const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 		</div>
 	);
 };
-
-export default PerformanceProfilerHeader;
