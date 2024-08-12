@@ -13,22 +13,20 @@ const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );
 const locale = match ? match[ 1 ] : 'en';
 
-const fetchLocale = ( localeSlug ) => {
-	const xhr = new XMLHttpRequest();
+const fetchLocale = async ( localeSlug ) => {
+	try {
+		const response = await fetch(
+			`https://widgets.wp.com/languages/notifications/${ localeSlug }.json`
+		);
 
-	xhr.open( 'GET', `https://widgets.wp.com/languages/notifications/${ localeSlug }.json`, true );
-
-	xhr.onload = ( { target } ) => {
-		if ( 200 !== target.status ) {
+		// Fall back to English if the locale is not available
+		if ( ! response.ok ) {
 			return;
 		}
 
-		try {
-			setLocale( JSON.parse( xhr.response ) );
-		} catch ( e ) {}
-	};
-
-	xhr.send();
+		// Set the locale for the i18n-calypso library
+		setLocale( await response.json() );
+	} catch {}
 };
 
 let store = { dispatch: () => {}, getState: () => {} };
