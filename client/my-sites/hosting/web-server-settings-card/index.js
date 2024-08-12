@@ -1,7 +1,7 @@
 import { Button, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteGeoAffinity from 'calypso/components/data/query-site-geo-affinity';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
@@ -76,8 +76,26 @@ const WebServerSettingsCard = ( {
 	const { recommendedValue, phpVersions } = usePhpVersions();
 	const dataCenterOptions = useDataCenterOptions();
 
+	const hasScrolledOnce = useRef( false );
+	const wpVersionRef = useRef( null );
+	const phpVersionRef = useRef( null );
+
 	const isLoading =
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
+
+	useEffect( () => {
+		if ( hasScrolledOnce.current ) {
+			return;
+		}
+
+		if ( wpVersionRef.current && window.location.hash === '#wp' ) {
+			hasScrolledOnce.current = true;
+			wpVersionRef.current.scrollIntoView( { behavior: 'smooth' } );
+		} else if ( phpVersionRef.current && window.location.hash === '#php' ) {
+			hasScrolledOnce.current = true;
+			phpVersionRef.current.scrollIntoView( { behavior: 'smooth' } );
+		}
+	}, [ isLoading ] );
 
 	const getWpVersions = () => {
 		return [
@@ -103,9 +121,7 @@ const WebServerSettingsCard = ( {
 
 		return (
 			<FormFieldset>
-				<FormLabel data-scroll-id="wp-version-select">
-					{ translate( 'WordPress version' ) }
-				</FormLabel>
+				<FormLabel ref={ wpVersionRef }>{ translate( 'WordPress version' ) }</FormLabel>
 				{ isWpcomStagingSite && (
 					<>
 						<FormSelect
@@ -204,7 +220,7 @@ const WebServerSettingsCard = ( {
 			selectedPhpVersion || phpVersion || ( disabled && recommendedValue );
 		return (
 			<FormFieldset>
-				<FormLabel data-scroll-id="php-version-select">{ translate( 'PHP version' ) }</FormLabel>
+				<FormLabel ref={ phpVersionRef }>{ translate( 'PHP version' ) }</FormLabel>
 				<FormSelect
 					disabled={ disabled || isUpdatingPhpVersion }
 					className="web-server-settings-card__php-version-select"
