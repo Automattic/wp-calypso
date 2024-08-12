@@ -177,6 +177,7 @@ export interface SiteData {
 	plugin: PluginNode;
 	monitor: MonitorNode;
 	error: ErrorNode;
+	isDevSite?: boolean;
 	isFavorite?: boolean;
 	isSelected?: boolean;
 	onSelect?: () => void;

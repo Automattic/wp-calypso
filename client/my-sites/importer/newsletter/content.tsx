@@ -1,4 +1,4 @@
-import { Card, Button } from '@automattic/components';
+import { Card, Button, Gridicon } from '@automattic/components';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import { useEffect } from 'react';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
@@ -6,6 +6,8 @@ import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
+import ImporterActionButton from '../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../importer-action-buttons/container';
 import type { SiteDetails } from '@automattic/data-stores';
 
 type ContentProps = {
@@ -50,7 +52,9 @@ export default function Content( { nextStepUrl, selectedSite, siteSlug, fromSite
 				To generate a ZIP file of all your Substack posts, go to Settings { '>' } Exports and click
 				'Create a new export.' Once the ZIP file is downloaded, upload it in the next step.
 			</p>
-			<Button href={ `https://${ fromSite }/publish/settings#exports` }>Export content</Button>
+			<Button href={ `https://${ fromSite }/publish/settings#exports` }>
+				Export content <Gridicon icon="external" />
+			</Button>
 			<hr />
 			<h2>Step 2: Import your content to WordPress.com</h2>
 			{ importerStatus && (
@@ -60,12 +64,16 @@ export default function Content( { nextStepUrl, selectedSite, siteSlug, fromSite
 					siteTitle={ siteTitle }
 					importerStatus={ importerStatus }
 					fromSite={ fromSite }
+					hideUploadDescription
+					hideActionButtons
 				/>
 			) }
-			<Button href={ nextStepUrl } primary>
-				Continue
-			</Button>{ ' ' }
-			<Button href={ nextStepUrl }>Skip for now</Button>
+			<ImporterActionButtonContainer noSpacing>
+				<ImporterActionButton href={ nextStepUrl } primary>
+					Continue
+				</ImporterActionButton>
+				<ImporterActionButton href={ nextStepUrl }>Skip for now</ImporterActionButton>
+			</ImporterActionButtonContainer>
 		</Card>
 	);
 }

@@ -133,6 +133,7 @@
 		"p2-enabled": true,
 		"page/export": true,
 		"pattern-assembler/v2": true,
+		"performance-profiler": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,

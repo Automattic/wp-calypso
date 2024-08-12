@@ -51,10 +51,9 @@ const enhanceContextWithLogin = ( context ) => {
 	const isP2Login = query && query.from === 'p2';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
-	const isGravPoweredClient = isGravPoweredOAuth2Client( {
-		id: Number( clientId || oauth2ClientId ),
-		source: query?.gravatar_flow && 'gravatar',
-	} );
+	const oauth2Client =
+		getOAuth2Client( context.store.getState(), Number( clientId || oauth2ClientId ) ) || {};
+	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 	const isWhiteLogin =
 		( ! isJetpackLogin &&
 			! isP2Login &&

@@ -68,7 +68,7 @@ const ReaderSiteSubscription = ( { transition }: ReaderSiteSubscriptionProps ) =
 				onClick={ () => navigate( Path.ManageAllSubscriptions ) }
 				icon={ <Gridicon icon="chevron-left" size={ 12 } /> }
 			>
-				{ translate( 'Manage all subscriptions' ) }
+				{ translate( 'Back' ) }
 			</Button>
 
 			<div className="site-subscription-page__centered-content">

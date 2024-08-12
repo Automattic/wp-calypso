@@ -192,6 +192,11 @@ function PaymentMethodForm() {
 						returnQueryArg
 					)
 				);
+			} else if ( returnQueryArg?.includes( 'add_new_dev_site' ) ) {
+				const params = {
+					add_new_dev_site: true,
+				};
+				page( addQueryArgs( params, returnQueryArg ) );
 			}
 		} else {
 			page( isClientView() ? A4A_CLIENT_PAYMENT_METHODS_LINK : A4A_PAYMENT_METHODS_LINK );
