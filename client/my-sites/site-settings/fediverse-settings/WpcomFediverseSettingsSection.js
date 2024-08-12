@@ -225,13 +225,7 @@ export const WpcomFediverseSettingsSection = ( { siteId, needsBorders = true } )
 						}
 					) }
 				</p>
-				<ToggleControl
-					label={ translate( 'Enter the fediverse' ) }
-					disabled={ disabled }
-					checked={ isEnabled }
-					onChange={ ( value ) => setEnabled( value ) }
-				/>
-				{ isPrivate && (
+				{ isPrivate ? (
 					<Notice status="is-warning" translate={ translate } isCompact>
 						{ translate( '{{link}}Launch your site{{/link}} to enter the fediverse!', {
 							components: {
@@ -239,6 +233,13 @@ export const WpcomFediverseSettingsSection = ( { siteId, needsBorders = true } )
 							},
 						} ) }
 					</Notice>
+				) : (
+					<ToggleControl
+						label={ translate( 'Enter the fediverse' ) }
+						disabled={ disabled }
+						checked={ isEnabled }
+						onChange={ ( value ) => setEnabled( value ) }
+					/>
 				) }
 			</Wrapper>
 			{ isEnabled && (
