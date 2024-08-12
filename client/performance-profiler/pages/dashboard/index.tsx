@@ -17,7 +17,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const getOnTabChange = ( tab: TabType ) => {
 		const queryParams = new URLSearchParams( window.location.search );
 		queryParams.set( 'tab', tab );
-		window.history.pushState( null, '', `'?${ queryParams.toString() }` );
+		window.history.pushState( null, '', `?${ queryParams.toString() }` );
 
 		setActiveTab( tab );
 	};

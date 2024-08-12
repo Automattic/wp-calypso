@@ -23,11 +23,6 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const translate = useTranslate();
 	const { url, activeTab, onTabChange } = props;
 	const urlParts = new URL( url );
-	const displayPath = ( pathname: string ) => {
-		if ( pathname && pathname !== '/' && ! pathname.endsWith( '/' ) ) {
-			return <p>{ pathname }</p>;
-		}
-	};
 
 	return (
 		<div className="profiler-header">
@@ -37,7 +32,7 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 
 					<div className="profiler-header__site-url">
 						<h2>{ urlParts.hostname ?? '' }</h2>
-						{ displayPath( urlParts.pathname ) }
+						<PathName pathName={ urlParts.pathname } />
 					</div>
 
 					<div className="profiler-header__action">
@@ -70,3 +65,25 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 		</div>
 	);
 };
+
+const PATHNAME_MAX_LENGTH = 50;
+function PathName( props: { pathName?: string } ) {
+	let { pathName } = props;
+
+	if ( ! pathName || pathName === '/' ) {
+		return;
+	}
+
+	if ( pathName.endsWith( '/' ) ) {
+		pathName = pathName.slice( 0, -1 );
+	}
+
+	if ( pathName.length > PATHNAME_MAX_LENGTH ) {
+		const parts = pathName.split( '/' );
+		const hasHiddenParts = parts.length > 1;
+
+		pathName = `${ hasHiddenParts ? '/...' : '' }/${ parts[ parts.length - 1 ] }`;
+	}
+
+	return <p>{ pathName }</p>;
+}

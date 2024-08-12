@@ -15,6 +15,7 @@
 		display: flex;
 		flex-direction: row;
 		align-content: flex-end;
+		width: 100%;
 
 		h2 {
 			font-size: $font-title-large;
@@ -27,7 +28,10 @@
 			line-height: $font-title-medium;
 			color: var(--studio-gray-10);
 			align-self: flex-end;
-			margin: 0 4px;
+			margin: -1px 4px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 	}
 
