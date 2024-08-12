@@ -1,5 +1,5 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
-import { HOSTED_SITE_MIGRATION_V2_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
+import { HOSTED_SITE_MIGRATION_V2_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { useSearchParams } from 'react-router-dom';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -8,6 +8,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
+import { goToImporter } from './helpers';
 import type { ProvidedDependencies } from '../internals/types';
 import type {
 	Flow,
@@ -62,14 +63,12 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 		},
 		[ PROCESSING.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const next = getFromPropsOrUrl( 'next', props );
-				const siteId = getFromPropsOrUrl( 'siteId', props );
-				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
+				const next = getFromPropsOrUrl( 'next', props ) as string;
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 
 				if ( next ) {
-					return window.location.assign(
-						addQueryArgs( { siteId, siteSlug }, `/setup/${ SITE_SETUP_FLOW }/${ next.toString() }` )
-					);
+					return goToImporter( next, siteId, siteSlug );
 				}
 
 				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ) );
@@ -77,29 +76,24 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 		},
 		[ MIGRATION_UPGRADE_PLAN.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const siteId = getFromPropsOrUrl( 'siteId', props );
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
 				const plan = props?.plan as string;
+				const backToStep = {
+					step: MIGRATION_UPGRADE_PLAN.slug,
+					flow: flowPath,
+				};
 
 				if ( props?.action === 'skip' ) {
-					return window.location.assign(
-						addQueryArgs(
-							{
-								siteId,
-								siteSlug,
-								option: 'content',
-								backToFlow: `${ HOSTED_SITE_MIGRATION_V2_FLOW }/${ MIGRATION_UPGRADE_PLAN.slug }`,
-							},
-							`/setup/${ SITE_SETUP_FLOW }/importerWordpress`
-						)
-					);
+					return goToImporter( 'importerWordpress', siteId, siteSlug, backToStep );
 				}
+
 				if ( props?.goToCheckout ) {
 					const redirectAfterCheckout = SITE_MIGRATION_HOW_TO_MIGRATE.slug;
 					const destination = addQueryArgs(
 						{ siteId, siteSlug },
-						`/setup/${ flowPath as string }/${ redirectAfterCheckout }`
+						`/setup/${ flowPath }/${ redirectAfterCheckout }`
 					);
 
 					const extraQueryParams =

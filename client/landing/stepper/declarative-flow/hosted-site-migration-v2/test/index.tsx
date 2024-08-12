@@ -152,8 +152,8 @@ describe( `${ flow.name }`, () => {
 				addQueryArgs( '/setup/site-setup/importerWordpress', {
 					siteId: 123,
 					siteSlug: 'example.wordpress.com',
-					option: 'content',
 					backToFlow: 'hosted-site-migration-v2/migration-upgrade-plan',
+					option: 'content',
 				} )
 			);
 		} );
