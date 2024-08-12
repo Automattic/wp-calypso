@@ -125,31 +125,27 @@ export default function ItemPreviewPaneHeader( {
 									{ wpVersion && (
 										<div className="item-preview__header-env-data-item">
 											WordPress{ ' ' }
-											<Button
+											<a
 												className="item-preview__header-env-data-item-link"
 												href={ `/hosting-config/${ selectedSite?.domain }#wp` }
 												onClick={ handleWpVersionClick }
 											>
 												{ wpVersion }
-												{ wpVersionName && isStagingSite && (
-													<span className="item-preview__header-env-data-item-description">
-														({ wpVersionName })
-													</span>
-												) }
-											</Button>
+												{ wpVersionName && isStagingSite && <span> ({ wpVersionName })</span> }
+											</a>
 										</div>
 									) }
 
 									{ phpVersion && (
 										<div className="item-preview__header-env-data-item">
 											PHP{ ' ' }
-											<Button
+											<a
 												className="item-preview__header-env-data-item-link"
 												onClick={ handlePhpVersionClick }
 												href={ `/hosting-config/${ selectedSite?.domain }#php` }
 											>
 												{ phpVersion }
-											</Button>
+											</a>
 										</div>
 									) }
 								</div>
