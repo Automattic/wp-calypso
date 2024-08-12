@@ -20,7 +20,7 @@ const {
 	PLATFORM_IDENTIFICATION,
 	PROCESSING,
 	SITE_CREATION_STEP,
-	SITE_MIGRATION_UPGRADE_PLAN,
+	MIGRATION_UPGRADE_PLAN,
 	SITE_MIGRATION_HOW_TO_MIGRATE,
 	SITE_MIGRATION_SOURCE_URL,
 	SITE_MIGRATION_INSTRUCTIONS,
@@ -72,16 +72,29 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					);
 				}
 
-				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_UPGRADE_PLAN.slug ) );
+				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ) );
 			},
 		},
-		[ SITE_MIGRATION_UPGRADE_PLAN.slug ]: {
+		[ MIGRATION_UPGRADE_PLAN.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const siteId = getFromPropsOrUrl( 'siteId', props );
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
 				const plan = props?.plan as string;
 
+				if ( props?.action === 'skip' ) {
+					return window.location.assign(
+						addQueryArgs(
+							{
+								siteId,
+								siteSlug,
+								option: 'content',
+								backToFlow: `${ HOSTED_SITE_MIGRATION_V2_FLOW }/${ MIGRATION_UPGRADE_PLAN.slug }`,
+							},
+							`/setup/${ SITE_SETUP_FLOW }/importerWordpress`
+						)
+					);
+				}
 				if ( props?.goToCheckout ) {
 					const redirectAfterCheckout = SITE_MIGRATION_HOW_TO_MIGRATE.slug;
 					const destination = addQueryArgs(
@@ -96,12 +109,12 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 
 					return goToCheckout( {
 						flowName: flowPath,
-						stepName: SITE_MIGRATION_UPGRADE_PLAN.slug,
+						stepName: MIGRATION_UPGRADE_PLAN.slug,
 						siteSlug,
 						destination: destination,
 						plan,
 						cancelDestination: `/setup/${ flowPath }/${
-							STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+							STEPS.MIGRATION_UPGRADE_PLAN.slug
 						}?${ query.toString() }`,
 						extraQueryParams,
 					} );
@@ -154,7 +167,7 @@ export default {
 			PLATFORM_IDENTIFICATION,
 			SITE_CREATION_STEP,
 			PROCESSING,
-			SITE_MIGRATION_UPGRADE_PLAN,
+			MIGRATION_UPGRADE_PLAN,
 			SITE_MIGRATION_HOW_TO_MIGRATE,
 			SITE_MIGRATION_SOURCE_URL,
 			SITE_MIGRATION_INSTRUCTIONS,

@@ -7,6 +7,7 @@ import {
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
+import { type FC } from 'react';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -16,9 +17,18 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
-import type { Step } from '../../types';
+import type { StepProps } from '../../types';
 
-const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
+type StepContainerProps = React.ComponentProps< typeof StepContainer >;
+
+interface Props extends StepProps {
+	skipLabelText?: StepContainerProps[ 'skipLabelText' ];
+	onSkip?: StepContainerProps[ 'goNext' ];
+	skipPosition?: StepContainerProps[ 'skipButtonAlign' ];
+}
+
+const SiteMigrationUpgradePlan: FC< Props > = ( { navigation, data, ...options } ) => {
+	const { onSkip, skipLabelText, skipPosition } = options;
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
@@ -100,7 +110,10 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				shouldHideNavButtons={ false }
 				className="is-step-site-migration-upgrade-plan"
 				goBack={ navigation.goBack }
-				hideSkip
+				skipLabelText={ skipLabelText }
+				skipButtonAlign={ skipPosition }
+				goNext={ onSkip }
+				hideSkip={ ! onSkip }
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"

@@ -118,14 +118,14 @@ describe( `${ flow.name }`, () => {
 			} );
 
 			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+				step: STEPS.MIGRATION_UPGRADE_PLAN,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 			} );
 		} );
 
 		it( 'redirects user from Upgrade plan > Checkout page', () => {
 			runNavigation( {
-				from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+				from: STEPS.MIGRATION_UPGRADE_PLAN,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 				dependencies: { goToCheckout: true, plan: 'business', userAcceptedDeal: false },
 			} );
@@ -135,10 +135,27 @@ describe( `${ flow.name }`, () => {
 				extraQueryParams: undefined,
 				flowName: 'hosted-site-migration-v2',
 				siteSlug: 'example.wordpress.com',
-				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-				cancelDestination: `/setup/hosted-site-migration-v2/site-migration-upgrade-plan?siteId=123&siteSlug=example.wordpress.com`,
+				stepName: STEPS.MIGRATION_UPGRADE_PLAN.slug,
+				cancelDestination: `/setup/hosted-site-migration-v2/migration-upgrade-plan?siteId=123&siteSlug=example.wordpress.com`,
 				plan: 'business',
 			} );
+		} );
+
+		it( 'redirects user from Upgrade plan > Import when user skips the upgrade', () => {
+			runNavigation( {
+				from: STEPS.MIGRATION_UPGRADE_PLAN,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				dependencies: { goToCheckout: false, action: 'skip' },
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				addQueryArgs( '/setup/site-setup/importerWordpress', {
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+					option: 'content',
+					backToFlow: 'hosted-site-migration-v2/migration-upgrade-plan',
+				} )
+			);
 		} );
 
 		it( 'redirects user from How To Migrate > Instructions when they select the option "do it myself"', () => {
