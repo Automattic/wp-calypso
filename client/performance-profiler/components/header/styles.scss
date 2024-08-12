@@ -1,5 +1,13 @@
 .profiler-header {
-	.profiler-header__heading {
+	.profiler-header-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 14px;
+		align-self: stretch;
+	}
+
+	.speed-test-badge {
 		width: fit-content;
 		display: flex;
 		padding: 6px 14px;
@@ -17,30 +25,32 @@
 		align-content: flex-end;
 
 		h2 {
-			font-size: 2.25rem;
+			font-size: $font-title-large;
+			line-height: $font-title-large;
 			font-weight: 500;
 		}
 
 		p {
-			color: #ddd;
+			font-size: $font-body;
+			line-height: $font-title-medium;
+			color: var(--studio-gray-10);
 			align-self: flex-end;
-			margin-bottom: 7px;
-			margin-left: 7px;
+			margin: 0 4px;
 		}
 	}
 
 	.profiler-header__action {
 		a {
-			color: #fff;
-			font-size: 1rem;
+			height: fit-content;
 			padding: 0;
-			border-bottom: 1px solid #fff;
-			border-radius: 0;
-		}
+			color: #fff;
+			font-size: $font-body-small;
+			line-height: 20px;
+			text-decoration: underline;
 
-		a:hover {
-			color: #ddd;
-			border-color: #ddd;
+			&:hover {
+				color: var(--studio-gray-5);
+			}
 		}
 	}
 

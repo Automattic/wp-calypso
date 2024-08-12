@@ -14,7 +14,7 @@ type HeaderProps = {
 
 const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const { url, active, onTabChange } = props;
-	const parts = new URL( url );
+	const urlParts = new URL( url );
 	const displayPath = ( pathname: string ) => {
 		if ( pathname && pathname !== '/' && ! pathname.endsWith( '/' ) ) {
 			return <p>{ pathname }</p>;
@@ -23,19 +23,20 @@ const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 
 	return (
 		<div className="profiler-header l-block-wrapper">
-			<div className="profiler-header__heading">
-				<h1>WordPress Speed Test</h1>
-			</div>
+			<div className="profiler-header-wrapper">
+				<div className="speed-test-badge">
+					<h1>WordPress Speed Test</h1>
+				</div>
 
-			<div className="profiler-header__site-url">
-				<h2>{ parts.hostname ?? '' }</h2>
-				{ displayPath( parts.pathname ) }
-			</div>
+				<div className="profiler-header__site-url">
+					<h2>{ urlParts.hostname ?? '' }</h2>
+					{ displayPath( urlParts.pathname ) }
+				</div>
 
-			<div className="profiler-header__action">
-				<Button href="/speed-test">Test another site</Button>
+				<div className="profiler-header__action">
+					<Button href="/speed-test">Test another site</Button>
+				</div>
 			</div>
-
 			<SectionNav>
 				<NavTabs>
 					<NavItem onClick={ () => onTabChange( 'mobile' ) } selected={ active === 'mobile' }>
