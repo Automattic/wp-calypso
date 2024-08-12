@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
 import DocumentHead from 'calypso/components/data/document-head';
+import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
 import PerformanceProfilerHeader from 'calypso/performance-profiler/components/header';
 
 type PerformanceProfilerDashboardProps = {
@@ -31,7 +32,10 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 				/>
 			</div>
 			<div className="dashboard-content">
-				<div className="l-block-wrapper">Dashboard content { activeTab }</div>
+				<div className="l-block-wrapper">
+					<p>Dashboard content { activeTab }</p>
+					<CoreWebVitalsDisplay />
+				</div>
 			</div>
 		</div>
 	);

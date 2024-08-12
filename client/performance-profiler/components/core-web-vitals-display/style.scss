@@ -1,0 +1,12 @@
+@import "@automattic/color-studio/dist/color-variables";
+
+.core-web-vitals-display {
+	display: flex;
+	flex-direction: column;
+}
+
+.core-web-vitals-display__description {
+	height: 500px;
+	border: 1px solid $studio-gray-5;
+	border-top: none;
+}
