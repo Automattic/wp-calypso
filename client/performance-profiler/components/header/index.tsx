@@ -4,7 +4,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 
-import './header.scss';
+import './styles.scss';
 
 type HeaderProps = {
 	url: string;
