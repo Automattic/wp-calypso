@@ -37,7 +37,7 @@ class TwoFactorActions extends Component {
 		this.props.switchTwoFactorAuthType( 'sms' );
 
 		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
-			// Pass the OAuth2 flow to customize the SMS message for Gravatar-powered OAuth2 clients.
+			// Pass the OAuth2 client's flow name to customize the SMS message for Gravatar-powered OAuth2 clients.
 			this.props.sendSmsCode( getGravatarOAuth2Flow( this.props.oauth2Client ) );
 		} else {
 			this.props.sendSmsCode();
