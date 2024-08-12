@@ -34,7 +34,6 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	return (
 		<div className="container">
 			<DocumentHead title={ translate( 'Speed Test' ) } />
-
 			<PerformanceProfilerHeader
 				url={ url }
 				activeTab={ activeTab }
