@@ -120,7 +120,7 @@ export const isAnyMigrationFlow = ( flowName?: string | null ) => {
 	);
 };
 
-export const isMigrationFlow = ( flowName: string | null ) => {
+export const isImportFocusedFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ IMPORT_FOCUSED_FLOW ].includes( flowName ) );
 };
 

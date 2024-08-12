@@ -12,7 +12,7 @@ import {
 	isDesignFirstFlow,
 	isFreeFlow,
 	isLinkInBioFlow,
-	isMigrationFlow,
+	isImportFocusedFlow,
 	isMigrationSignupFlow,
 	isStartWritingFlow,
 	isWooExpressFlow,
@@ -94,7 +94,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
-	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
+	if ( isImportFocusedFlow( flow ) || isCopySiteFlow( flow ) ) {
 		theme = DEFAULT_SITE_MIGRATION_THEME;
 	} else if ( isWooExpressFlow( flow ) ) {
 		theme = DEFAULT_WOOEXPRESS_FLOW;
@@ -144,7 +144,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		isCopySiteFlow( flow ) ||
 		isFreeFlow( flow ) ||
 		isLinkInBioFlow( flow ) ||
-		isMigrationFlow( flow ) ||
+		isImportFocusedFlow( flow ) ||
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isSiteAssemblerFlow( flow ) ||
@@ -222,7 +222,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			await addProductsToCart( site.siteSlug, flow, productCartItems );
 		}
 
-		if ( isMigrationFlow( flow ) && site?.siteSlug && sourceMigrationStatus?.source_blog_id ) {
+		if ( isImportFocusedFlow( flow ) && site?.siteSlug && sourceMigrationStatus?.source_blog_id ) {
 			// Store temporary target blog id to source site option
 			addTempSiteToSourceOption( site.siteId, sourceMigrationStatus?.source_blog_id );
 		}
