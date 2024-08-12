@@ -16,12 +16,13 @@ type PerformanceProfilerDashboardProps = {
 
 export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps ) => {
 	const translate = useTranslate();
-	const { url, tab } = props;
+	const { url, tab, hash } = props;
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
-	const { data: basicMetrics } = useUrlBasicMetricsQuery( url );
+	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( finalUrl, token );
-	const isLoading = !! performanceInsights;
+	const desktopLoaded = 'completed' === performanceInsights?.status;
+	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
 
 	const getOnTabChange = ( tab: TabType ) => {
 		const queryParams = new URLSearchParams( window.location.search );
@@ -33,14 +34,21 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	return (
 		<div className="container">
 			<DocumentHead title={ translate( 'Speed Test' ) } />
+
 			<PerformanceProfilerHeader
 				url={ url }
 				activeTab={ activeTab }
 				onTabChange={ getOnTabChange }
 				showNavigationTabs
 			/>
-			{ isLoading && <LoadingScreen isSavedReport={ false } /> }
-			{ ! isLoading && <PerformanceProfilerDashboardContent activeTab={ activeTab } /> }
+			{ 'mobile' === activeTab && ! mobileLoaded && <LoadingScreen isSavedReport={ false } /> }
+			{ 'mobile' === activeTab && mobileLoaded && (
+				<PerformanceProfilerDashboardContent activeTab={ activeTab } />
+			) }
+			{ 'desktop' === activeTab && ! desktopLoaded && <LoadingScreen isSavedReport={ false } /> }
+			{ 'desktop' === activeTab && desktopLoaded && (
+				<PerformanceProfilerDashboardContent activeTab={ activeTab } />
+			) }
 		</div>
 	);
 };

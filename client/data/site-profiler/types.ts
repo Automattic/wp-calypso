@@ -148,8 +148,8 @@ export interface UrlPerformanceMetricsQueryResponse {
 export interface UrlPerformanceInsightsQueryResponse {
 	pagespeed: {
 		status: string;
-		mobile: PerformanceReport;
-		desktop: PerformanceReport;
+		mobile: PerformanceReport | string;
+		desktop: PerformanceReport | string;
 	};
 }
 
