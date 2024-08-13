@@ -9,7 +9,7 @@ interface Props {
 	onNextClick: () => void;
 }
 
-export const StepInstallMigrationGuru: FC< Props > = ( { fromUrl, onNextClick } ) => {
+export const StepInstallMigrateGuru: FC< Props > = ( { fromUrl, onNextClick } ) => {
 	const translate = useTranslate();
 
 	const onInstallPluginClick = () => {
