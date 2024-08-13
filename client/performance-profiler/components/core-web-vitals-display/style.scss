@@ -39,6 +39,8 @@
 
 .core-web-vitals-display__details {
 	border: 1.5px solid $studio-gray-5;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 0 0 6px 6px;
 	border-top: none;
 	padding: 24px;
 	display: flex;
