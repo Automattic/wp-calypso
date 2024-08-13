@@ -1,4 +1,4 @@
-import { ExternalLink } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
 import { getMigrateGuruPageURL } from './utils';
@@ -6,30 +6,25 @@ import type { FC } from 'react';
 
 interface Props {
 	fromUrl: string;
+	onNextClick: () => void;
 }
 
-export const StepGetYourSiteReady: FC< Props > = ( { fromUrl } ) => {
+export const StepGetYourSiteReady: FC< Props > = ( { fromUrl, onNextClick } ) => {
 	const translate = useTranslate();
+
+	const onGetStartedClick = () => {
+		window.open( getMigrateGuruPageURL( fromUrl ), '_blank' );
+		recordMigrationInstructionsLinkClick( 'go-to-plugin-page' );
+	};
 
 	return (
 		<>
 			<p>
 				{ translate(
-					'Head to the {{a}}Migrate Guru plugin screen on your source site{{/a}}, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
+					'Head to the Migrate Guru plugin screen on your source site, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
 					{
 						components: {
 							strong: <strong />,
-							a: fromUrl ? (
-								<ExternalLink
-									href={ getMigrateGuruPageURL( fromUrl ) }
-									icon
-									iconSize={ 14 }
-									target="_blank"
-									onClick={ () => recordMigrationInstructionsLinkClick( 'go-to-plugin-page' ) }
-								/>
-							) : (
-								<strong />
-							),
 						},
 						args: { migrateLabel: 'Migrate' },
 					}
@@ -43,6 +38,22 @@ export const StepGetYourSiteReady: FC< Props > = ( { fromUrl } ) => {
 					},
 				} ) }
 			</p>
+			<div className="checklist-item__checklist-expanded-ctas">
+				<Button
+					className="checklist-item__checklist-expanded-cta"
+					variant="primary"
+					onClick={ onGetStartedClick }
+				>
+					{ translate( 'Get started' ) }
+				</Button>
+				<Button
+					className="checklist-item__checklist-expanded-cta"
+					variant="secondary"
+					onClick={ onNextClick }
+				>
+					{ translate( 'Next' ) }
+				</Button>
+			</div>
 		</>
 	);
 };

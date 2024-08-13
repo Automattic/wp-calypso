@@ -5,12 +5,20 @@ import { StepAddMigrationKey } from './step-add-migration-key';
 import { StepAddMigrationKeyFallback } from './step-add-migration-key-fallback';
 import { StepGetYourSiteReady } from './step-get-your-site-ready';
 import { StepInstallMigrationGuru } from './step-install-migation-guru';
-import type { Task, Expandable, ExpandableAction } from '@automattic/launchpad';
+import type { Task, Expandable } from '@automattic/launchpad';
+
+const INSTALL_MIGRATE_GURU = 'install-the-migrate-guru-plugin';
+const GET_SITE_READY = 'get-your-site-ready';
+const ADD_MIGRATION_KEY = 'add-your-migration-key';
 
 interface StepsDataOptions {
 	fromUrl: string;
+	lastCompleteStep: number;
 	migrationKey: string;
+	onComplete: () => void;
 	preparationError: Error | null;
+	setCurrentStep: () => void;
+	setLastCompleteStep: () => void;
 	showMigrationKeyFallback: boolean;
 }
 
@@ -45,33 +53,76 @@ interface StepsObject {
 
 const useStepsData = ( {
 	fromUrl,
+	lastCompleteStep,
 	migrationKey,
+	onComplete,
 	preparationError,
+	setCurrentStep,
+	setLastCompleteStep,
 	showMigrationKeyFallback,
 }: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
 
-	return [
+	const recordCompletedStepEvent = ( key ) => {
+		recordTracksEvent( 'calypso_site_migration_instructions_substep_complete', {
+			step: key,
+		} );
+	};
+
+	const onNextClick = ( index, key ) => {
+		setCurrentStep( index + 1 );
+
+		// When completing a step that wasn't completed yet.
+		if ( lastCompleteStep < index ) {
+			setLastCompleteStep( index );
+			recordCompletedStepEvent( key );
+		}
+	};
+
+	const onDoneClick = ( key ) => {
+		onComplete();
+		recordCompletedStepEvent( key );
+	};
+
+	const steps = [
 		{
-			key: 'install-the-migrate-guru-plugin',
+			key: INSTALL_MIGRATE_GURU,
 			title: translate( 'Install the Migrate Guru plugin' ),
-			content: <StepInstallMigrationGuru fromUrl={ fromUrl } />,
+			content: (
+				<StepInstallMigrationGuru
+					fromUrl={ fromUrl }
+					onNextClick={ () => onNextClick( 0, INSTALL_MIGRATE_GURU ) }
+				/>
+			),
 		},
 		{
-			key: 'get-your-site-ready',
+			key: GET_SITE_READY,
 			title: translate( 'Get your site ready' ),
-			content: <StepGetYourSiteReady fromUrl={ fromUrl } />,
+			content: (
+				<StepGetYourSiteReady
+					fromUrl={ fromUrl }
+					onNextClick={ () => onNextClick( 1, GET_SITE_READY ) }
+				/>
+			),
 		},
 		{
-			key: 'add-your-migration-key',
+			key: ADD_MIGRATION_KEY,
 			title: translate( 'Add your migration key' ),
 			content: showMigrationKeyFallback ? (
-				<StepAddMigrationKeyFallback />
+				<StepAddMigrationKeyFallback onDoneClick={ () => onDoneClick( ADD_MIGRATION_KEY ) } />
 			) : (
-				<StepAddMigrationKey migrationKey={ migrationKey } preparationError={ preparationError } />
+				<StepAddMigrationKey
+					fromUrl={ fromUrl }
+					migrationKey={ migrationKey }
+					onNextClick={ () => onNextClick( 2, ADD_MIGRATION_KEY ) }
+					onDoneClick={ () => onDoneClick( 2 ) }
+					preparationError={ preparationError }
+				/>
 			),
 		},
 	];
+
+	return steps;
 };
 
 export const useSteps = ( {
@@ -81,38 +132,20 @@ export const useSteps = ( {
 	showMigrationKeyFallback,
 	onComplete,
 }: StepsOptions ): StepsObject => {
-	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
 	const stepsData = useStepsData( {
 		fromUrl,
+		lastCompleteStep,
 		migrationKey,
+		onComplete,
 		preparationError,
+		setCurrentStep,
+		setLastCompleteStep,
 		showMigrationKeyFallback,
 	} );
 
-	const steps: Steps = stepsData.map( ( step, index, array ) => {
-		const recordCompletedStepEvent = () => {
-			recordTracksEvent( 'calypso_site_migration_instructions_substep_complete', {
-				step: step.key,
-			} );
-		};
-
-		const onNextClick = () => {
-			setCurrentStep( index + 1 );
-
-			// When completing a step that wasn't completed yet.
-			if ( lastCompleteStep < index ) {
-				setLastCompleteStep( index );
-				recordCompletedStepEvent();
-			}
-		};
-
-		const onDoneClick = () => {
-			onComplete();
-			recordCompletedStepEvent();
-		};
-
+	const steps: Steps = stepsData.map( ( step, index ) => {
 		// Allow clicking on visited steps only, so users can see the previous steps again.
 		const onItemClick =
 			index > lastCompleteStep + 1 || index === currentStep
@@ -120,27 +153,6 @@ export const useSteps = ( {
 				: () => {
 						setCurrentStep( index );
 				  };
-
-		const isMigrationKeyStep = index === array.length - 1;
-
-		let action: ExpandableAction | undefined;
-
-		if ( ! isMigrationKeyStep ) {
-			// Next action.
-			action = {
-				label: translate( 'Next' ),
-				onClick: onNextClick,
-			};
-		} else if ( migrationKey || showMigrationKeyFallback ) {
-			// Done action for the migration key step.
-			action = {
-				label: translate( 'Done' ),
-				onClick: onDoneClick,
-			};
-		} else {
-			// No action for migration key step when migration key is not available.
-			action = undefined;
-		}
 
 		return {
 			task: {
@@ -152,7 +164,6 @@ export const useSteps = ( {
 			expandable: {
 				content: step.content,
 				isOpen: currentStep === index,
-				action,
 			},
 			onClick: onItemClick,
 		};
