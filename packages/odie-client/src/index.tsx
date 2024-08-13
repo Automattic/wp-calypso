@@ -20,6 +20,7 @@ export const OdieAssistant: React.FC = () => {
 		isLoadingEnvironment,
 		isLoadingExistingChat,
 		isUserElegible,
+		isLoading,
 	} = useOdieAssistantContext();
 	const [ asisstantLoaded, setAssistantLoaded ] = useState( false );
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -30,16 +31,19 @@ export const OdieAssistant: React.FC = () => {
 		trackEvent( 'chatbox_view' );
 	}, [ trackEvent ] );
 
-	// Prevent not eligible users from accessing wapuu.
 	useEffect( () => {
-		if ( ! isUserElegible ) {
+		const { pathname, search } = location;
+		const shouldRedirectHome = ! isUserElegible && ! isLoading;
+
+		// Prevent not eligible users from accessing wapuu.
+		if ( shouldRedirectHome ) {
 			trackEvent( 'calypso_helpcenter_redirect_not_eligible_user_to_homepage', {
-				pathname: location.pathname,
-				search: location.search,
+				pathname,
+				search,
 			} );
 			navigate( '/' );
 		}
-	}, [ navigate, isUserElegible, trackEvent ] );
+	}, [ navigate, isLoading, trackEvent, isUserElegible ] );
 
 	useAutoScroll( messagesContainerRef, chat.messages );
 	useLastMessageVisibility( messagesContainerRef, chat.messages.length );
