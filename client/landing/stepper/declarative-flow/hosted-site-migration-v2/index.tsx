@@ -83,7 +83,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const plan = props?.plan as string;
 
 				if ( props?.goToCheckout ) {
-					const redirectAfterCheckout = SITE_MIGRATION_HOW_TO_MIGRATE.slug;
+					const redirectAfterCheckout = MIGRATION_HOW_TO_MIGRATE.slug;
 					const destination = addQueryArgs(
 						{ siteId, siteSlug },
 						`/setup/${ flowPath as string }/${ redirectAfterCheckout }`

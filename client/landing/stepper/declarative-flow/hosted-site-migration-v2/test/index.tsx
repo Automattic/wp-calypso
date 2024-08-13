@@ -131,7 +131,7 @@ describe( `${ flow.name }`, () => {
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination: `/setup/hosted-site-migration-v2/site-migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com`,
+				destination: `/setup/hosted-site-migration-v2/migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com`,
 				extraQueryParams: undefined,
 				flowName: 'hosted-site-migration-v2',
 				siteSlug: 'example.wordpress.com',
