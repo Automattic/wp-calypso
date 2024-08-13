@@ -45,7 +45,7 @@ const FootNote = styled.div`
 export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	const translate = useTranslate();
 
-	const progressHeadings = isSavedReport
+	const steps = isSavedReport
 		? [ translate( 'Getting your report…' ) ]
 		: [
 				translate( 'Loading your site' ),
@@ -60,7 +60,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 
 	useEffect( () => {
 		const timeoutId = setTimeout( () => {
-			if ( step === progressHeadings.length - 1 ) {
+			if ( step === steps.length - 1 ) {
 				return;
 			}
 			setStep( step + 1 );
@@ -83,7 +83,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 		<LayoutBlock className="landing-page-header-block" width="medium">
 			<StyledLoadingScreen>
 				<h2>Testing your site’s speed…</h2>
-				{ progressHeadings.map( ( heading, index ) => (
+				{ steps.map( ( heading, index ) => (
 					<span key={ index } className={ stepStatus( index, step ) }>
 						{ heading }
 					</span>
