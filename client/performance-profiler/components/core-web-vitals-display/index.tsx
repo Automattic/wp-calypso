@@ -70,7 +70,7 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 							<div className="range-description">
 								<div className="range-heading">{ translate( 'Fast ' ) }</div>
 								<div className="range-subheading">
-									{ translate( '0-%(to)s %(unit)s', {
+									{ translate( '0–%(to)s %(unit)s', {
 										args: { to: formatUnit( good ), unit: displayUnit() },
 									} ) }
 								</div>
@@ -81,7 +81,7 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 							<div className="range-description">
 								<div className="range-heading">{ translate( 'Moderate' ) }</div>
 								<div className="range-subheading">
-									{ translate( '%(from)s-%(to)s %(unit)s', {
+									{ translate( '%(from)s–%(to)s %(unit)s', {
 										args: {
 											from: formatUnit( good ),
 											to: formatUnit( needsImprovement ),
