@@ -437,14 +437,13 @@ describe( 'expires or renew on cell', () => {
 			has_registration: false,
 		} );
 
-		const { container } = render( <DomainsTableRow domain={ partialDomain } />, {
+		render( <DomainsTableRow domain={ partialDomain } />, {
 			domains: [ partialDomain ],
 			isAllSitesView: true,
 		} );
 
-		const renewNowCells = container.querySelectorAll( '.domains-table-row__renews-on-cell' );
-		expect( renewNowCells ).toHaveLength( 1 );
-		expect( renewNowCells[ 0 ] ).toHaveTextContent( '-' );
+		const expiresRenewsOnCell = screen.getByTestId( 'expires-renews-on' );
+		expect( expiresRenewsOnCell ).toHaveTextContent( '-' );
 	} );
 } );
 
