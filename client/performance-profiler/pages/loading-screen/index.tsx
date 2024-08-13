@@ -1,3 +1,4 @@
+import { link } from 'fs';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -141,6 +142,39 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 				translate( 'Finalizing your results' ),
 		  ];
 
+	const tips = [
+		{
+			heading: translate( 'Performance Mattters' ),
+			description: translate(
+				'Walmart found that for every one second improvement in page load time they achieved, conversions increased by 2%.'
+			),
+		},
+		{
+			heading: translate( 'Did you know?' ),
+			description: translate(
+				'WordPress.com hosting comes with unlimited bandwidth, visitors, and traffic so you’ll never be surprised by extra fees.'
+			),
+		},
+		{
+			heading: translate( 'Performance Mattters' ),
+			description: translate(
+				'British food brand COOK increased conversions by 7% after reducing page load time by 0.85 seconds.'
+			),
+		},
+		{
+			heading: translate( 'Fast, Free, Unlimited Migrations' ),
+			description: translate(
+				'Bring your site to WordPress.com for free in minutes, not hours, with our intuitive migration tools—backed by 24/7 support from our WordPress experts.'
+			),
+		},
+		{
+			heading: translate( 'WordPress.com—Feel the Difference' ),
+			description: translate(
+				'Tap into our lightning-fast infrastructure—from a 28+ location global CDN to hundreds of WordPress optimizations, your site will be faster, smoother, and ready to take on anything.'
+			),
+		},
+	];
+
 	useEffect( () => {
 		const timeoutId = setTimeout( () => {
 			if ( step === steps.length - 1 ) {
@@ -173,12 +207,8 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 					</span>
 				) ) }
 				<FootNote>
-					<h4>{ translate( 'Performance Mattters' ) }</h4>
-					<p>
-						{ translate(
-							'Walmart found that for every one second improvement in page load time they achieved, conversions increased by 2%.'
-						) }
-					</p>
+					<h4>{ tips[ step ].heading }</h4>
+					<p>{ tips[ step ].description }</p>
 				</FootNote>
 			</StyledLoadingScreen>
 		</LayoutBlock>
