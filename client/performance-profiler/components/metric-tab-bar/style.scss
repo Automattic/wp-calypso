@@ -42,11 +42,10 @@ $blueberry-color: #3858e9;
 
 .metric-tab-bar__tab-header {
 	font-family: $font-sf-pro-display;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 500;
 }
 .metric-tab-bar__tab-metric {
 	font-family: $font-sf-pro-display;
-	font-size: 2rem;
+	font-size: $font-body-header;
 }

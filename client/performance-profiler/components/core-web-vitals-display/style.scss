@@ -6,6 +6,24 @@
 	flex-direction: column;
 }
 
+.core-web-vitals-display__ranges {
+	display: flex;
+	flex-direction: row;
+	justify-content: start;
+	margin-bottom: 24px;
+
+	.range {
+		display: flex;
+		flex-direction: row;
+		column-gap: 6px;
+
+		.range-heading {
+			font-size: $font-body-small;
+
+		}
+	}
+}
+
 
 .core-web-vitals-display__details {
 	border: 1px solid $studio-gray-5;
