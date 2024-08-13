@@ -1,0 +1,26 @@
+.chart {
+	cursor: pointer;
+
+	.tick {
+		line {
+			visibility: hidden;
+		}
+
+		text {
+			font-size: 1rem;
+			fill: #3c434a;
+		}
+	}
+
+	.tooltip {
+		z-index: 1000;
+		opacity: 0;
+		position: absolute;
+		background-color: #1e1e1e;
+		color: #fff;
+		padding: 7px 10px;
+		border-radius: 3px;
+		font-size: 1rem;
+		font-family: Arial, Helvetica, sans-serif;
+	}
+}
