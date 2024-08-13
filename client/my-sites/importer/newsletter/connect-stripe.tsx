@@ -27,10 +27,11 @@ function updateConnectUrl( connectUrl: string, fromSite: string ): string {
 
 type Props = {
 	nextStepUrl: string;
+	skipNextStep: () => void;
 	fromSite: string;
 };
 
-export default function ConnectStripe( { nextStepUrl, fromSite }: Props ) {
+export default function ConnectStripe( { nextStepUrl, fromSite, skipNextStep }: Props ) {
 	const site = useSelector( getSelectedSite );
 	let connectUrl: string = useSelector( ( state ) => getConnectUrlForSiteId( state, site?.ID ) );
 
@@ -61,6 +62,7 @@ export default function ConnectStripe( { nextStepUrl, fromSite }: Props ) {
 					href={ nextStepUrl }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_paid_importer_connect_stripe_skipped' );
+						skipNextStep();
 					} }
 				>
 					Skip for now

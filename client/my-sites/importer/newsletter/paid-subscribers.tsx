@@ -9,10 +9,11 @@ import ConnectStripe from './connect-stripe';
 import MapPlans from './map-plans';
 type Props = {
 	nextStepUrl: string;
+	skipNextStep: () => void;
 	fromSite: string;
 };
 
-export default function PaidSubscribers( { nextStepUrl, fromSite }: Props ) {
+export default function PaidSubscribers( { nextStepUrl, fromSite, skipNextStep }: Props ) {
 	const site = useSelector( getSelectedSite );
 	const dispatch = useDispatch();
 
@@ -38,7 +39,11 @@ export default function PaidSubscribers( { nextStepUrl, fromSite }: Props ) {
 			) }
 
 			{ ! hasConnectedAccount && (
-				<ConnectStripe nextStepUrl={ nextStepUrl } fromSite={ fromSite } />
+				<ConnectStripe
+					nextStepUrl={ nextStepUrl }
+					fromSite={ fromSite }
+					skipNextStep={ skipNextStep }
+				/>
 			) }
 			{ hasConnectedAccount && <MapPlans nextStepUrl={ nextStepUrl } /> }
 		</>

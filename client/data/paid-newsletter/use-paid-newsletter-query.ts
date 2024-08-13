@@ -4,7 +4,7 @@ import wp from 'calypso/lib/wp';
 export const usePaidNewsletterQuery = ( engine: string, currentStep: string, siteId?: number ) => {
 	return useQuery( {
 		enabled: !! siteId,
-		queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
+		queryKey: [ 'paid-newsletter-importer', siteId, engine ],
 		queryFn: () => {
 			return wp.req.get(
 				{
