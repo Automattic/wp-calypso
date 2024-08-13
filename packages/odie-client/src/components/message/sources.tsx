@@ -65,8 +65,8 @@ export const Sources = ( { message }: { message: Message } ) => {
 									navigateToSupportDocs(
 										String( source.blog_id ),
 										String( source.post_id ),
-										source.url,
-										source.title
+										source.title,
+										source.url
 									);
 								} }
 								title={ source.title }
