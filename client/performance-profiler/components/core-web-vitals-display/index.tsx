@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { PerformanceMetrics } from 'calypso/performance-profiler/types/performance-metrics';
 import {
 	metricsNames,
 	metricsTresholds,
@@ -9,12 +10,13 @@ import { MetricScale } from '../metric-scale';
 import { MetricTabBar } from '../metric-tab-bar';
 import './style.scss';
 
-const CoreWebVitalsDisplay = () => {
+const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 	const translate = useTranslate();
 	const [ activeTab, setActiveTab ] = useState< string >( 'lcp' );
 
 	const metricName = metricsNames[ activeTab as keyof typeof metricsNames ];
-	const valuation = mapThresholdsToStatus( activeTab as keyof typeof metricsTresholds, 1966 );
+	const value = props[ activeTab as keyof PerformanceMetrics ];
+	const valuation = mapThresholdsToStatus( activeTab as keyof typeof metricsTresholds, value );
 
 	const displayValuation = ( valuation: string ) => {
 		switch ( valuation ) {
@@ -31,15 +33,7 @@ const CoreWebVitalsDisplay = () => {
 
 	return (
 		<div className="core-web-vitals-display">
-			<MetricTabBar
-				lcp={ 1966 }
-				cls={ 0.01 }
-				fcp={ 1794 }
-				ttfb={ 916 }
-				inp={ 391 }
-				activeTab={ activeTab }
-				setActiveTab={ setActiveTab }
-			/>
+			<MetricTabBar activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props } />
 			<div className="core-web-vitals-display__details">
 				<div className="core-web-vitals-display__description">
 					<span className="core-web-vitals-display__description-subheading">
@@ -47,7 +41,7 @@ const CoreWebVitalsDisplay = () => {
 							args: { metricName, valuation: displayValuation( valuation ) },
 						} ) }
 					</span>
-					<MetricScale metricName={ activeTab } value={ 1970 } />
+					<MetricScale metricName={ activeTab } value={ value } valuation={ valuation } />
 					<span className="core-web-vitals-display__description-subheading">
 						{ translate( 'What is %(metricName)s?', {
 							args: { metricName },

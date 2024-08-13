@@ -55,11 +55,11 @@ export const mapThresholdsToStatus = (
 
 export const displayValue = ( metric: keyof PerformanceMetrics, value: number ): string => {
 	if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metric ) ) {
-		return `${ ( value / 1000 ).toFixed( 2 ) } s`;
+		return `${ ( value / 1000 ).toFixed( 2 ) }s`;
 	}
 
 	if ( [ 'inp', 'fid' ].includes( metric ) ) {
-		return `${ value } ms`;
+		return `${ value }ms`;
 	}
 
 	return `${ value }`;

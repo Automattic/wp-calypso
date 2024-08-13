@@ -1,3 +1,6 @@
+@import "@automattic/components/src/styles/typography";
+@import "@automattic/color-studio/dist/color-variables";
+
 .metrics-scale {
 	margin: 40px 0;
 	position: relative;
@@ -8,11 +11,10 @@
 		display: flex;
 		align-items: center;
 
-
 		.bar-section {
 			height: 100%;
 			border-radius: 4px;
-			border: 2px solid #fff;
+			border: 2px solid $studio-white;
 
 			&.active {
 				top: -2px;
@@ -22,7 +24,7 @@
 			}
 		}
 
-		.bar-section.fast {
+		.bar-section.good {
 			background-color: #68de86;
 
 			&.active {
@@ -30,7 +32,7 @@
 			}
 		}
 
-		.bar-section.moderate {
+		.bar-section.needs-improvement {
 			background-color: #ffbf86;
 
 			&.active {
@@ -38,7 +40,7 @@
 			}
 		}
 
-		.bar-section.slow {
+		.bar-section.bad {
 			background-color: #ffabaf;
 
 			&.active {
@@ -49,13 +51,12 @@
 		.dot {
 			position: absolute;
 			top: 50%;
-			transform: translateY(-50%);
+			transform: translate(-50%, -50%);
 			width: 8px;
 			height: 8px;
-			/* stylelint-disable-next-line color-named */
-			background-color: black;
+			background-color: $studio-black;
 			border-radius: 50%;
-			border: 2px solid #fff;
+			border: 2px solid $studio-white;
 		}
 
 		.label {
@@ -75,7 +76,9 @@
 		display: flex;
 		align-items: center;
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 14px;
+		font-size: 12px;
+		color: $studio-gray-70;
+		font-family: $font-sf-pro-display;
 
 		& > div {
 			position: absolute;

@@ -34,7 +34,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			<div className="dashboard-content">
 				<div className="l-block-wrapper">
 					<p>Dashboard content { activeTab }</p>
-					<CoreWebVitalsDisplay />
+					<CoreWebVitalsDisplay lcp={ 1966 } cls={ 0.01 } fcp={ 1794 } ttfb={ 916 } inp={ 391 } />
 				</div>
 			</div>
 		</div>
