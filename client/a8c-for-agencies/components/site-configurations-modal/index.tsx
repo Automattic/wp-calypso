@@ -42,9 +42,12 @@ export default function SiteConfigurationsModal( {
 	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
 	const { mutate: createWPCOMDevSite } = useCreateWPCOMDevSiteMutation();
+	const [ useJetpack, setUseJetpack ] = useState( false );
 
 	const toggleAllowClientsToUseSiteHelpCenter = () =>
 		setAllowClientsToUseSiteHelpCenter( ! allowClientsToUseSiteHelpCenter );
+
+	const toggleUseJetpack = () => setUseJetpack( ! useJetpack );
 
 	const phpVersionsElements = phpVersions.map( ( version ) => {
 		if ( version.disabled ) {
@@ -88,6 +91,7 @@ export default function SiteConfigurationsModal( {
 			...trackingParams,
 			id: siteId,
 			site_name: siteName.siteName,
+			plugins_for_site_provisioning: [ useJetpack ? 'jetpack' : undefined ],
 		};
 
 		recordTracksEvent( 'calypso_a4a_create_site_config_submit', trackingParams );
@@ -222,6 +226,33 @@ export default function SiteConfigurationsModal( {
 						{ dataCenterOptionsElements }
 					</FormSelect>
 				</FormField>
+
+				<FormField label={ translate( 'Plugins to activate' ) }>
+					<CheckboxControl
+						id="configure-your-site-modal-form__jetpack-plugin-checkbox"
+						onChange={ toggleUseJetpack }
+						checked={ useJetpack }
+						name="plugins_to_activate_jetpack"
+						disabled={ isSubmitting }
+					/>
+					<label
+						className={ isDevSite ? 'disabled-label' : '' }
+						htmlFor="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox"
+					>
+						{ translate( 'Activate {{JetpackLink}}Jetpack{{/JetpackLink}} plugin on this site.', {
+							components: {
+								JetpackLink: (
+									<a
+										target="_blank"
+										href={ localizeUrl( 'https://jetpack.com/' ) }
+										rel="noreferrer"
+									/>
+								),
+							},
+						} ) }
+					</label>
+				</FormField>
+
 				<FormField label="">
 					<div className="configure-your-site-modal-form__allow-clients-to-use-help-center">
 						<CheckboxControl
