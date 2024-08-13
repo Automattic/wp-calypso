@@ -80,6 +80,8 @@ const SiteMigrationSourceUrl: FC< SourceURLProps > = function ( {
 	navigation,
 	headerText,
 	subHeaderText,
+	stepName,
+	flow,
 } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
@@ -100,8 +102,8 @@ const SiteMigrationSourceUrl: FC< SourceURLProps > = function ( {
 		<>
 			<DocumentHead title={ translate( 'Share your site address' ) } />
 			<StepContainer
-				stepName="site-migration-identify"
-				flowName="site-migration"
+				stepName={ stepName }
+				flowName={ flow }
 				className="import__onboarding-page"
 				hideBack
 				hideSkip

@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { Step } from '../../types';
 import SiteMigrationSourceUrl from '../site-migration-source-url';
+import './style.scss';
 
 const MigrationSourceUrl: Step = ( props ) => {
 	const translate = useTranslate();
@@ -8,6 +9,7 @@ const MigrationSourceUrl: Step = ( props ) => {
 	return (
 		<SiteMigrationSourceUrl
 			{ ...props }
+			stepName="migration-source-url"
 			headerText={ translate( 'Let’s migrate your site' ) }
 			subHeaderText={ translate(
 				"Just drop your site's URL below and our team will review and start your migration."
