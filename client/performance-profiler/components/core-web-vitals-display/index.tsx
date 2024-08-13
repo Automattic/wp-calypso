@@ -9,6 +9,7 @@ import {
 import { MetricScale } from '../metric-scale';
 import { MetricTabBar } from '../metric-tab-bar';
 import './style.scss';
+import { StatusIndicator } from '../status-indicator';
 
 const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 	const translate = useTranslate();
@@ -31,6 +32,27 @@ const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 		}
 	};
 
+	const { good, needsImprovement } = metricsTresholds[ activeTab as keyof typeof metricsTresholds ];
+	const formatUnit = ( value: number ) => {
+		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
+			return +( value / 1000 ).toFixed( 2 );
+		}
+
+		return value;
+	};
+
+	const displayUnit = () => {
+		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
+			return 'seconds';
+		}
+
+		if ( [ 'inp' ].includes( activeTab ) ) {
+			return 'milliseconds';
+		}
+
+		return '';
+	};
+
 	return (
 		<div className="core-web-vitals-display">
 			<MetricTabBar activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props } />
@@ -42,6 +64,48 @@ const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 						} ) }
 					</span>
 					<MetricScale metricName={ activeTab } value={ value } valuation={ valuation } />
+					<div className="core-web-vitals-display__ranges">
+						<div className="range">
+							<StatusIndicator speed="good" />
+							<div className="range-description">
+								<div className="range-heading">{ translate( 'Fast ' ) }</div>
+								<div className="range-subheading">
+									{ translate( '0-%(to)s %(unit)s', {
+										args: { to: formatUnit( good ), unit: displayUnit() },
+									} ) }
+								</div>
+							</div>
+						</div>
+						<div className="range">
+							<StatusIndicator speed="needsImprovement" />
+							<div className="range-description">
+								<div className="range-heading">{ translate( 'Moderate' ) }</div>
+								<div className="range-subheading">
+									{ translate( '%(from)s-%(to)s %(unit)s', {
+										args: {
+											from: formatUnit( good ),
+											to: formatUnit( needsImprovement ),
+											unit: displayUnit(),
+										},
+									} ) }
+								</div>
+							</div>
+						</div>
+						<div className="range">
+							<StatusIndicator speed="bad" />
+							<div className="range-description">
+								<div className="range-heading">{ translate( 'Slow' ) }</div>
+								<div className="range-subheading">
+									{ translate( '%(from)s+ %(unit)s', {
+										args: {
+											from: formatUnit( needsImprovement ),
+											unit: displayUnit(),
+										},
+									} ) }
+								</div>
+							</div>
+						</div>
+					</div>
 					<span className="core-web-vitals-display__description-subheading">
 						{ translate( 'What is %(metricName)s?', {
 							args: { metricName },

@@ -8,6 +8,7 @@ export const metricsNames = {
 	inp: 'Interaction to Next Paint',
 };
 
+// bad values are only needed as a maximum value on the scales
 export const metricsTresholds = {
 	lcp: {
 		good: 2500,

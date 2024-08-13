@@ -11,15 +11,27 @@
 	flex-direction: row;
 	justify-content: start;
 	margin-bottom: 24px;
+	column-gap: 24px;
 
 	.range {
 		display: flex;
 		flex-direction: row;
 		column-gap: 6px;
+		font-family: $font-sf-pro-display;
+
+		& > svg {
+			padding-top: 4px;
+		}
 
 		.range-heading {
 			font-size: $font-body-small;
+			font-weight: 500;
+			line-height: 20px;
+		}
 
+		.range-subheading {
+			font-size: $font-body-extra-small;
+			line-height: 20px;
 		}
 	}
 }
