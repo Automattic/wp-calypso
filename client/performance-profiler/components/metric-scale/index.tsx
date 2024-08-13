@@ -15,7 +15,7 @@ export const MetricScale = ( { metricName, value, valuation }: Props ) => {
 
 	const formatValue = ( value: number ): string => {
 		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metricName ) ) {
-			return ( value / 1000 ).toFixed( 2 );
+			return `${ +( value / 1000 ).toFixed( 2 ) }`;
 		}
 		return `${ value }`;
 	};
