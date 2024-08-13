@@ -16,7 +16,7 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 	const steps = flow.useSteps();
 	const queryParams = useQuery();
 	const ref = queryParams.get( 'ref' ) || '';
-	const signedUp = queryParams.has( 'signed_up' );
+	const isSignupStep = queryParams.has( 'signup' );
 
 	// TODO: Check if we can remove the sensei flow reference from here.
 	const firstStepSlug = ( flow.name === SENSEI_FLOW ? steps[ 1 ] : steps[ 0 ] ).slug;
@@ -32,7 +32,7 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 		[ signupStartEventProps, flowVariant ]
 	);
 	const flowName = flow.name;
-	const shouldTrack = flow.isSignupFlow && isFirstStep && ! signedUp;
+	const shouldTrack = flow.isSignupFlow && ( isFirstStep || isSignupStep );
 
 	useEffect( () => {
 		if ( ! shouldTrack ) {
