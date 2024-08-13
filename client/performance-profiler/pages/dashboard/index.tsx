@@ -31,6 +31,12 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 		setActiveTab( tab );
 	};
 
+	const mobileReport =
+		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
+	const desktopReport =
+		typeof performanceInsights?.desktop === 'string' ? undefined : performanceInsights?.desktop;
+	const performanceReport = activeTab === TabType.mobile ? mobileReport : desktopReport;
+
 	return (
 		<div className="container">
 			<DocumentHead title={ translate( 'Speed Test' ) } />
@@ -43,11 +49,11 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			/>
 			{ 'mobile' === activeTab && ! mobileLoaded && <LoadingScreen isSavedReport={ false } /> }
 			{ 'mobile' === activeTab && mobileLoaded && (
-				<PerformanceProfilerDashboardContent activeTab={ activeTab } />
+				<PerformanceProfilerDashboardContent performanceReport={ performanceReport } />
 			) }
 			{ 'desktop' === activeTab && ! desktopLoaded && <LoadingScreen isSavedReport={ false } /> }
 			{ 'desktop' === activeTab && desktopLoaded && (
-				<PerformanceProfilerDashboardContent activeTab={ activeTab } />
+				<PerformanceProfilerDashboardContent performanceReport={ performanceReport } />
 			) }
 		</div>
 	);
