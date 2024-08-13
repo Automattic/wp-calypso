@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/fingerprintjs",
-	"description": "Browser fingerprinting library with the highest accuracy and stability",
+	"description": "Browser fingerprinting library with the highest accuracy and stability.",
 	"version": "3.4.2",
 	"keywords": [
 		"fraud",
@@ -14,11 +14,12 @@
 		"device fingerprint",
 		"privacy"
 	],
-	"author": "FingerprintJS, Inc (https://fingerprint.com)",
-	"license": "MIT",
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/fingerprintjs/fingerprintjs.git"
+		"url": "https://github.com/fingerprintjs/fingerprintjs.git",
+		"directory": "packages/fingerprintjs"
 	},
 	"bugs": {
 		"url": "https://github.com/fingerprintjs/fingerprintjs/issues"
