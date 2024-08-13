@@ -37,6 +37,21 @@ const useGetLicenseIssuedMessage = () => {
 			if ( licenses.length === 1 ) {
 				const productName =
 					products?.data?.find?.( ( p ) => p.slug === licenses[ 0 ].slug )?.name ?? '';
+
+				if ( licenses[ 0 ].slug.startsWith( 'pressable-wp' ) ) {
+					return translate(
+						'Thanks for your purchase! Below you can view and manage your new {{strong}}%(productName)s{{/strong}}',
+						{
+							args: {
+								productName,
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+					);
+				}
+
 				return translate(
 					'Thanks for your purchase! Below you can view and assign your new {{strong}}%(productName)s{{/strong}} license to a website.',
 					'Thanks for your purchase! Below you can view and assign your new {{strong}}%(productName)s{{/strong}} licenses to a website.',

@@ -186,12 +186,15 @@ export const JetpackSitesDataViews = ( {
 						);
 					}
 
+					const isDevSite = item.isDevSite ?? false;
+
 					return (
 						<>
 							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
 							<SiteDataField
 								site={ site }
 								isLoading={ isLoading }
+								isDevSite={ isDevSite }
 								onSiteTitleClick={ openSitePreviewPane }
 							/>
 						</>
@@ -379,6 +382,8 @@ export const JetpackSitesDataViews = ( {
 						return <div className="sites-dataview__site-error"></div>;
 					}
 
+					const isDevSite = item.isDevSite ?? false;
+
 					return (
 						<>
 							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
@@ -394,6 +399,7 @@ export const JetpackSitesDataViews = ( {
 										{ ! item.site.error && (
 											<SiteActions
 												isLargeScreen={ isLargeScreen }
+												isDevSite={ isDevSite }
 												site={ item.site }
 												siteError={ item.site.error }
 												onRefetchSite={ onRefetchSite }

@@ -509,7 +509,7 @@ function PluginDetails( props ) {
 									<Button
 										href={ `https://downloads.wordpress.org/plugin/${
 											fullPlugin?.slug || ''
-										}.zip` }
+										}.latest-stable.zip` }
 										rel="nofollow"
 									>
 										{ translate( 'Download' ) }
