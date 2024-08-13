@@ -6,12 +6,14 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Button, Spinner } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
+import { AnyAction } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -56,10 +58,29 @@ const HostingFeatures = () => {
 	);
 	const hasEnTranslation = useHasEnTranslation();
 
-	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId || undefined );
+	const { data: siteTransferData, refetch: refetchSiteTransferData } = useSiteTransferStatusQuery(
+		siteId || undefined
+	);
 	// We have some bug at the backend, when the transfer is complited, but isSiteAtomic is still false, so we need such extra condition
 	const isTransferInProgress =
 		siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED;
+
+	useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
+
+		const interval = setInterval( () => {
+			if ( siteTransferData?.status !== transferStates.COMPLETED ) {
+				refetchSiteTransferData();
+			} else {
+				clearInterval( interval );
+				dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
+			}
+		}, 3000 );
+
+		return () => clearInterval( interval );
+	}, [ siteId, siteTransferData?.status, refetchSiteTransferData, dispatch ] );
 
 	useEffect( () => {
 		if ( isSiteAtomic && ! isPlanExpired ) {
