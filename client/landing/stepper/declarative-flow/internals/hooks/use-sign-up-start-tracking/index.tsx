@@ -34,8 +34,10 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 	const flowName = flow.name;
 	const shouldTrack = flow.isSignupFlow && ( isFirstStep || isSignupStep );
 	const removeSignupParam = useCallback( () => {
-		queryParams.delete( 'signup' );
-		setQuery( queryParams );
+		if ( queryParams.has( 'signup' ) ) {
+			queryParams.delete( 'signup' );
+			setQuery( queryParams );
+		}
 	}, [ queryParams, setQuery ] );
 
 	useEffect( () => {
