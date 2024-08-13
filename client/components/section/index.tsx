@@ -32,8 +32,7 @@ export const SectionContainer = styled.div< SectionContainerProps >`
 		background-color: ${ ( props ) =>
 			props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-white )' };
 		position: absolute;
-		top: 0;
-		bottom: 0;
+		height: 100%;
 		width: 200vw;
 		left: -100vw;
 		z-index: -1;

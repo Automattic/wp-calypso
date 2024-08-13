@@ -58,11 +58,14 @@
 		content: "";
 		background-color: #fff;
 		position: absolute;
-		top: 0;
-		bottom: 0;
+		height: 100%;
 		width: 200vw;
 		left: -100vw;
 		z-index: -1;
+	}
+
+	.plugins-browser-list:last-of-type {
+		padding-bottom: 32px;
 	}
 }
 
@@ -77,20 +80,7 @@
 
 .plugins-browser__marketplace-footer {
 	position: relative;
-	padding-top: 60px;
 	margin-bottom: -32px;
-
-	&::before {
-		box-sizing: border-box;
-		content: "";
-		background-color: #fff;
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		width: 200vw;
-		left: -100vw;
-		z-index: -1;
-	}
 }
 
 body.is-section-plugins #primary .main.is-logged-out {
