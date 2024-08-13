@@ -25,7 +25,21 @@ const ThreeColumnContainer = styled.div`
 `;
 
 const EducationFooterContainer = styled.div`
-	margin-top: 32px;
+	padding-top: 32px;
+	position: relative;
+	z-index: 1;
+
+	::before {
+		box-sizing: border-box;
+		content: '';
+		background-color: var( --studio-white );
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 200vw;
+		left: -100vw;
+		z-index: -1;
+	}
 
 	> div:first-child {
 		padding: 0;
