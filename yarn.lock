@@ -63,6 +63,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/core@npm:0.4.8":
+  version: 0.4.8
+  resolution: "@ariakit/core@npm:0.4.8"
+  checksum: db0445ca7b81d0baa1d4f4799c27eab3ca3f45b47de97dda2b1050339ff6036a7a4bfba8131be5c2ba275135ad2c841e2fad53f25bbcea3f343cf6a8c1c8721c
+  languageName: node
+  linkType: hard
+
 "@ariakit/react-core@npm:0.3.14":
   version: 0.3.14
   resolution: "@ariakit/react-core@npm:0.3.14"
@@ -77,6 +84,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/react-core@npm:0.4.8":
+  version: 0.4.8
+  resolution: "@ariakit/react-core@npm:0.4.8"
+  dependencies:
+    "@ariakit/core": "npm:0.4.8"
+    "@floating-ui/dom": "npm:^1.0.0"
+    use-sync-external-store: "npm:^1.2.0"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: b63ed5a41ec533ee6183c505a385fe4b37e20c9dd85b48c77d7cc41514a06f7a5be344a94cd559d62d32aaf47343350f1743844e809c9415e241d137d9af58e4
+  languageName: node
+  linkType: hard
+
 "@ariakit/react@npm:^0.3.12":
   version: 0.3.14
   resolution: "@ariakit/react@npm:0.3.14"
@@ -86,6 +107,18 @@ __metadata:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
   checksum: f940889c52d2ba937d6f3a66d54754c2b943e36206ce12f2e7bf12fdddd72794f4826b015d7cf1be72410c7e46b8d0a4a3d7281668e099602e6281d3f3619434
+  languageName: node
+  linkType: hard
+
+"@ariakit/react@npm:^0.4.7":
+  version: 0.4.8
+  resolution: "@ariakit/react@npm:0.4.8"
+  dependencies:
+    "@ariakit/react-core": "npm:0.4.8"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: c0a165d4bf144985492955c88a3d44dd5671e706f302b6ba32ba6ed6ec79ea7a91a32904a81549b5dfbe27d740b582549f54dd663ef3e9e88eae7eeacc862d7c
   languageName: node
   linkType: hard
 
@@ -9677,47 +9710,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dataviews@npm:0.4.1":
-  version: 0.4.1
-  resolution: "@wordpress/dataviews@npm:0.4.1"
+"@wordpress/dataviews@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@wordpress/dataviews@npm:4.1.0"
   dependencies:
+    "@ariakit/react": "npm:^0.4.7"
     "@babel/runtime": "npm:^7.16.0"
-    "@wordpress/a11y": "npm:^3.50.0"
-    "@wordpress/components": "npm:^25.16.0"
-    "@wordpress/compose": "npm:^6.27.0"
-    "@wordpress/element": "npm:^5.27.0"
-    "@wordpress/i18n": "npm:^4.50.0"
-    "@wordpress/icons": "npm:^9.41.0"
-    "@wordpress/keycodes": "npm:^3.50.0"
-    "@wordpress/primitives": "npm:^3.48.0"
-    "@wordpress/private-apis": "npm:^0.32.0"
-    classnames: "npm:^2.3.1"
+    "@wordpress/components": "npm:^28.5.0"
+    "@wordpress/compose": "npm:^7.5.0"
+    "@wordpress/data": "npm:^10.5.0"
+    "@wordpress/element": "npm:^6.5.0"
+    "@wordpress/i18n": "npm:^5.5.0"
+    "@wordpress/icons": "npm:^10.5.0"
+    "@wordpress/primitives": "npm:^4.5.0"
+    "@wordpress/private-apis": "npm:^1.5.0"
+    "@wordpress/warning": "npm:^3.5.0"
+    clsx: "npm:^2.1.1"
     remove-accents: "npm:^0.5.0"
   peerDependencies:
     react: ^18.0.0
-  checksum: 00f5be7dc18de659bb52587380d5d88f0eda5fa99309bcc16bb02b9a4a7a51c82654bbf69aa0f7831e8f64df3e5c378d121874b795b7d3d60155d73a0f5adc1b
-  languageName: node
-  linkType: hard
-
-"@wordpress/dataviews@patch:@wordpress/dataviews@npm%3A0.4.1#~/.yarn/patches/@wordpress-dataviews-npm-0.4.1-2c01fa0792.patch":
-  version: 0.4.1
-  resolution: "@wordpress/dataviews@patch:@wordpress/dataviews@npm%3A0.4.1#~/.yarn/patches/@wordpress-dataviews-npm-0.4.1-2c01fa0792.patch::version=0.4.1&hash=d91dff"
-  dependencies:
-    "@babel/runtime": "npm:^7.16.0"
-    "@wordpress/a11y": "npm:^3.50.0"
-    "@wordpress/components": "npm:^25.16.0"
-    "@wordpress/compose": "npm:^6.27.0"
-    "@wordpress/element": "npm:^5.27.0"
-    "@wordpress/i18n": "npm:^4.50.0"
-    "@wordpress/icons": "npm:^9.41.0"
-    "@wordpress/keycodes": "npm:^3.50.0"
-    "@wordpress/primitives": "npm:^3.48.0"
-    "@wordpress/private-apis": "npm:^0.32.0"
-    classnames: "npm:^2.3.1"
-    remove-accents: "npm:^0.5.0"
-  peerDependencies:
-    react: ^18.0.0
-  checksum: 757d69e92446b3d0a28b94c3cf2d3711a304c9949001392e2bb62f37409bee6561af5587df057a2296229f12b70210626d25db94280dfaa8b5f0789dd5131ddb
+  checksum: 77ae6bac38480a0d0cd2e94f9eb91c09550bd55ca66d7f33f3a06196438c588f3d74734cf5849bfc5db79bf4751c3154ed6bf2f5e85d0137ec77bdc02db86fea
   languageName: node
   linkType: hard
 
@@ -9834,7 +9846,6 @@ __metadata:
     "@wordpress/core-commands": "npm:^1.2.0"
     "@wordpress/core-data": "npm:^7.2.0"
     "@wordpress/data": "npm:^10.2.0"
-    "@wordpress/dataviews": "npm:^2.2.0"
     "@wordpress/date": "npm:^5.2.0"
     "@wordpress/deprecated": "npm:^4.2.0"
     "@wordpress/dom": "npm:^4.2.0"
@@ -12738,7 +12749,7 @@ __metadata:
     "@wordpress/components": "npm:^28.2.0"
     "@wordpress/compose": "npm:^7.2.0"
     "@wordpress/data": "npm:^10.2.0"
-    "@wordpress/dataviews": "patch:@wordpress/dataviews@npm%3A0.4.1#~/.yarn/patches/@wordpress-dataviews-npm-0.4.1-2c01fa0792.patch"
+    "@wordpress/dataviews": "npm:^4.1.0"
     "@wordpress/dom": "npm:^4.2.0"
     "@wordpress/edit-post": "npm:^8.2.0"
     "@wordpress/element": "npm:^6.2.0"

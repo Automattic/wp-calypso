@@ -350,7 +350,7 @@
 		"@wordpress/customize-widgets": "5.2.0",
 		"@wordpress/data-controls": "4.2.0",
 		"@wordpress/data": "^10.2.0",
-		"@wordpress/dataviews": "patch:@wordpress/dataviews@npm%3A0.4.1#~/.yarn/patches/@wordpress-dataviews-npm-0.4.1-2c01fa0792.patch",
+		"@wordpress/dataviews": "^4.1.0",
 		"@wordpress/date": "5.2.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "5.9.0",
 		"@wordpress/deprecated": "4.2.0",
