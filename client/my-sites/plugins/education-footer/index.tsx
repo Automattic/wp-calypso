@@ -71,8 +71,12 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 		padding-bottom: 0;
 	}` }
 
-	${ SectionContainer }::before {
+	${ SectionContainer } {
 		background-color: #f6f7f7;
+		::before,
+		::after {
+			background-color: #f6f7f7;
+		}
 	}
 `;
 

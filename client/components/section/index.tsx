@@ -18,11 +18,31 @@ interface SectionHeaderProps {
 	dark?: boolean;
 }
 
-// TODO - re-add background color and usage of dark prop, to something other than a pseudo element.
-// We will need to adjust exterior containers margin etc. to accomodate this.
-// https://github.com/Automattic/wp-calypso/pull/93425
 export const SectionContainer = styled.div< SectionContainerProps >`
 	padding: 56px 0;
+	background-color: ${ ( props ) =>
+		props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-white )' };
+	position: relative;
+
+	::before,
+	::after {
+		content: '';
+		position: absolute;
+		box-sizing: border-box;
+		background-color: ${ ( props ) =>
+			props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-white )' };
+		top: 0;
+		bottom: 0;
+		width: var( --content-margin );
+	}
+
+	::before {
+		left: calc( -1 * var( --content-margin ) );
+	}
+
+	::after {
+		right: calc( -1 * var( --content-margin ) );
+	}
 `;
 
 export const SectionHeader = styled.div< SectionHeaderProps >`
