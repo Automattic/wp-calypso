@@ -1,4 +1,3 @@
-import { link } from 'fs';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
