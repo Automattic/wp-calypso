@@ -4,10 +4,10 @@ import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import ErrorPane from 'calypso/my-sites/importer/error-pane';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { startImport, cancelImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
-import ErrorPane from './error-pane';
 import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
 
