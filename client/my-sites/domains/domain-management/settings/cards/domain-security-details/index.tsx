@@ -11,7 +11,7 @@ import { sslStatuses } from 'calypso/lib/domains/constants';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
-import { getSslReadableStatus, isSecuredWithUs } from '../../helpers';
+import { getSslReadableStatus } from '../../helpers';
 import type { SecurityCardProps } from '../types';
 
 import './style.scss';
@@ -67,10 +67,6 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 			dispatch( fetchSiteDomains( selectedSite.ID ) );
 		}
 	}, [ isStale, domain.sslStatus, refetchSSLStatusData, selectedSite, dispatch ] );
-
-	if ( ! isSecuredWithUs( domain ) ) {
-		return null;
-	}
 
 	const { sslStatus } = domain;
 
