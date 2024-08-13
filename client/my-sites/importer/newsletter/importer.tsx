@@ -78,7 +78,7 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
 
-		const status = paidNewsletterQuery?.steps[ stepName ].status ?? 'nope';
+		const status = paidNewsletterQuery?.steps[ stepName ]?.status ?? '';
 		stepsProgress[ index ] = stepsProgress[ index ] + ' (' + status + ')';
 	} );
 
