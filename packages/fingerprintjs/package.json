@@ -60,6 +60,7 @@
 		"@types/karma-summary-reporter": "^3.1.0",
 		"@types/node": "^22.2.0",
 		"@types/ua-parser-js": "^0.7.36",
+		"@types/wordpress__block-editor": "^11.5.15",
 		"@typescript-eslint/eslint-plugin": "^5.44.0",
 		"@typescript-eslint/parser": "^5.44.0",
 		"eslint": "^8.57.0",
