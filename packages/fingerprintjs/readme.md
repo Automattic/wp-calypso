@@ -146,40 +146,6 @@ Full product comparison:
 
 <sub>3. Fingerprint Pro is GDPR and CCPA compliant, ISO 27001 certified, and SOC 2 Type II compliant. You still need to be compliant as the data controller and use the identification for fraud prevention under legitimate interest or ask for user consent.</sub>
 
-<details>
-<summary>Pro result example</summary>
-
-```js
-{
-  "requestId": "HFMlljrzKEiZmhUNDx7Z",
-  "visitorId": "kHqPGWS1Mj18sZFsP8Wl",
-  "visitorFound": true,
-  "confidence": { "score": 0.995 },
-  "incognito": false,
-  "browserName": "Chrome",
-  "browserVersion": "92.0.4515.107",
-  "os": "Mac OS X",
-  "osVersion": "10.15.6",
-  "device": "Other",
-  "ip": "192.65.67.131",
-  "ipLocation": {
-    "accuracyRadius": 100,
-    "latitude": 37.409657,
-    "longitude": -121.965467
-    // ...
-  },
-  "firstSeenAt": {
-    "global": "2022-03-16T11:26:45.362Z",
-    "subscription": "2022-03-16T11:31:01.101Z"
-  },
-  "lastSeenAt": {
-    "global": "2022-05-21T18:05:43.023Z",
-    "subscription": "2022-05-20T05:41:29.926Z"
-  }
-}
-```
-</details>
-
 ### Resources
 
 🍿 [Live demo](https://fingerprint.com/demo)
