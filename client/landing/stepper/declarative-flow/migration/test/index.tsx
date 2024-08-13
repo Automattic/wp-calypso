@@ -131,12 +131,12 @@ describe( `${ flow.name }`, () => {
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination: `/setup/hosted-site-migration-v2/site-migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com`,
+				destination: `/setup/migration/site-migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com`,
 				extraQueryParams: undefined,
-				flowName: 'hosted-site-migration-v2',
+				flowName: 'migration',
 				siteSlug: 'example.wordpress.com',
 				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-				cancelDestination: `/setup/hosted-site-migration-v2/site-migration-upgrade-plan?siteId=123&siteSlug=example.wordpress.com`,
+				cancelDestination: `/setup/migration/site-migration-upgrade-plan?siteId=123&siteSlug=example.wordpress.com`,
 				plan: 'business',
 			} );
 		} );
