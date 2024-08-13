@@ -1000,6 +1000,7 @@ __metadata:
     "@types/karma": "npm:^6.3.3"
     "@types/karma-spec-reporter": "npm:^0.0.3"
     "@types/karma-summary-reporter": "npm:^3.1.0"
+    "@types/node": "npm:^22.2.0"
     "@types/ua-parser-js": "npm:^0.7.36"
     "@typescript-eslint/eslint-plugin": "npm:^5.44.0"
     "@typescript-eslint/parser": "npm:^5.44.0"
@@ -8378,7 +8379,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:>=10.0.0":
+"@types/node@npm:>=10.0.0, @types/node@npm:^22.2.0":
   version: 22.2.0
   resolution: "@types/node@npm:22.2.0"
   dependencies:
