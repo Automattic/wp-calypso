@@ -1,5 +1,4 @@
-import config from '@automattic/calypso-config';
-import { ExternalLink } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
 import { getMigrationPluginPageURL } from './utils';
@@ -7,45 +6,35 @@ import type { FC } from 'react';
 
 interface Props {
 	fromUrl: string;
+	onNextClick: () => void;
 }
 
-export const StepGetYourSiteReady: FC< Props > = ( { fromUrl } ) => {
+export const StepGetYourSiteReady: FC< Props > = ( { fromUrl, onNextClick } ) => {
 	const translate = useTranslate();
-	const isWhiteLabeledPluginEnabled = config.isEnabled(
-		'migration-flow/enable-white-labeled-plugin'
-	);
-	const pluginName = isWhiteLabeledPluginEnabled ? 'Migrate to WordPress.com' : 'Migrate Guru';
+
+	const onGetStartedClick = () => {
+		window.open( getMigrateGuruPageURL( fromUrl ), '_blank' );
+		recordMigrationInstructionsLinkClick( 'go-to-plugin-page' );
+	};
 
 	return (
 		<>
 			<p>
 				{ translate(
-					'Head to the {{a}}%(pluginName)s plugin screen on your source site{{/a}}, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
+					'Head to the Migrate to WordPress.com plugin screen on your source site, enter your email address, and click {{strong}}%(migrateLabel)s{{/strong}}.',
 					{
 						components: {
 							strong: <strong />,
-							a: fromUrl ? (
-								<ExternalLink
-									href={ getMigrationPluginPageURL( fromUrl ) }
-									icon
-									iconSize={ 14 }
-									target="_blank"
-									onClick={ () => recordMigrationInstructionsLinkClick( 'go-to-plugin-page' ) }
-								/>
-							) : (
-								<strong />
-							),
 						},
 						args: {
 							pluginName,
-							migrateLabel: isWhiteLabeledPluginEnabled ? 'Continue' : 'Migrate',
+							migrateLabel: 'Continue',
 						},
 					}
 				) }
 			</p>
 			<p>
-				{ ! isWhiteLabeledPluginEnabled &&
-					translate( 'Then, pick WordPress.com as your destination host.' ) }
+				{ translate( 'Then, pick WordPress.com as your destination host.' ) }
 			</p>
 			<p>
 				{ translate( 'All set? Click {{strong}}Next{{/strong}} below.', {
@@ -54,6 +43,22 @@ export const StepGetYourSiteReady: FC< Props > = ( { fromUrl } ) => {
 					},
 				} ) }
 			</p>
+			<div className="checklist-item__checklist-expanded-ctas">
+				<Button
+					className="checklist-item__checklist-expanded-cta"
+					variant="primary"
+					onClick={ onGetStartedClick }
+				>
+					{ translate( 'Get started' ) }
+				</Button>
+				<Button
+					className="checklist-item__checklist-expanded-cta"
+					variant="secondary"
+					onClick={ onNextClick }
+				>
+					{ translate( 'Next' ) }
+				</Button>
+			</div>
 		</>
 	);
 };

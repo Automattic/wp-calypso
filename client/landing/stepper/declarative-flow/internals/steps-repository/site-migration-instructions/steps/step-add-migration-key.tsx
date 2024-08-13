@@ -1,14 +1,24 @@
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { MigrationKeyInput } from '../migration-key-input';
+import { recordMigrationInstructionsLinkClick } from '../tracking';
+import { getMigrateGuruPageURL } from './utils';
 import type { FC } from 'react';
 
 interface Props {
+	fromUrl: string;
 	migrationKey: string;
+	onDoneClick: () => void;
 	preparationError: Error | null;
 }
 
-export const StepAddMigrationKey: FC< Props > = ( { migrationKey, preparationError } ) => {
+export const StepAddMigrationKey: FC< Props > = ( {
+	fromUrl,
+	migrationKey,
+	onDoneClick,
+	preparationError,
+} ) => {
 	const translate = useTranslate();
 	const migrationKeyLabel = 'Migration Key';
 	const migrateLabel = 'Start migration';
@@ -26,6 +36,11 @@ export const StepAddMigrationKey: FC< Props > = ( { migrationKey, preparationErr
 		);
 	}
 
+	const onEnterKeyClick = () => {
+		window.open( getMigrateGuruPageURL( fromUrl ), '_blank' );
+		recordMigrationInstructionsLinkClick( 'enter-key' );
+	};
+
 	return (
 		<>
 			<p>
@@ -40,6 +55,22 @@ export const StepAddMigrationKey: FC< Props > = ( { migrationKey, preparationErr
 				) }
 			</p>
 			<MigrationKeyInput value={ migrationKey } />
+			<div className="checklist-item__checklist-expanded-ctas">
+				<Button
+					className="checklist-item__checklist-expanded-cta"
+					variant="primary"
+					onClick={ onEnterKeyClick }
+				>
+					{ translate( 'Enter key' ) }
+				</Button>
+				<Button
+					className="checklist-item__checklist-expanded-cta"
+					variant="secondary"
+					onClick={ onDoneClick }
+				>
+					{ translate( 'Done' ) }
+				</Button>
+			</div>
 		</>
 	);
 };
