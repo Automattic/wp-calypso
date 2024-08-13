@@ -1,4 +1,5 @@
 {
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
 	"compilerOptions": {
 		"module": "node16",
 		"moduleResolution": "node16",
@@ -10,11 +11,16 @@
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"noImplicitReturns": true
+		"noImplicitReturns": true,
+		"isolatedModules": false,
+		"types": [ "jasmine" ],
+		"declarationDir": "dist/types",
+		"outDir": "dist/esm",
+		"rootDir": "."
 	},
 	// It must include everything that Rollup will encounter,
 	// and preferably nothing else in order not to compile excess files
-	"include": [ "src/index.ts", "src/**/*.d.ts", "resources/content_blocking/selectors_tester.ts" ],
+	"include": [ "src/**/*", "src/index.ts", "src/**/*.d.ts", "tests/**/*", "package.json" ],
 	"ts-node": {
 		"compilerOptions": {
 			"module": "commonjs",
