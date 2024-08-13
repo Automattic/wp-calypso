@@ -172,6 +172,12 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 				'Tap into our lightning-fast infrastructure—from a 28+ location global CDN to hundreds of WordPress optimizations, your site will be faster, smoother, and ready to take on anything.'
 			),
 		},
+		{
+			heading: translate( 'Performance Mattters' ),
+			description: translate(
+				'Walmart found that for every one second improvement in page load time they achieved, conversions increased by 2%.'
+			),
+		},
 	];
 
 	useEffect( () => {
