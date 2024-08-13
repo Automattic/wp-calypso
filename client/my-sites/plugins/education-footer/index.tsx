@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import FeatureItem from 'calypso/components/feature-item';
 import LinkCard from 'calypso/components/link-card';
-import Section, { SectionContainer } from 'calypso/components/section';
+import Section, { SectionContainer, SectionWrapper } from 'calypso/components/section';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/route';
 import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
@@ -71,12 +71,8 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 		padding-bottom: 0;
 	}` }
 
-	${ SectionContainer } {
+	${ SectionWrapper } {
 		background-color: #f6f7f7;
-		::before,
-		::after {
-			background-color: #f6f7f7;
-		}
 	}
 `;
 
@@ -106,6 +102,8 @@ export const MarketplaceFooter = () => {
 		<MarketplaceContainer isloggedIn={ isLoggedIn }>
 			<Section
 				header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
+				isLoggedIn={ isLoggedIn }
+				marginBottom="-32px"
 			>
 				{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
 					<Button className="is-primary marketplace-cta" href={ startUrl }>

@@ -8,6 +8,14 @@ interface SectionProps {
 	subheader?: string | ReactElement;
 	children: ReactNode;
 	dark?: boolean;
+	isLoggedIn?: boolean;
+	marginBottom?: string;
+}
+
+interface SectionWrapperProps {
+	dark?: boolean;
+	isLoggedIn?: boolean;
+	marginBottom?: string;
 }
 
 interface SectionContainerProps {
@@ -18,31 +26,27 @@ interface SectionHeaderProps {
 	dark?: boolean;
 }
 
-export const SectionContainer = styled.div< SectionContainerProps >`
-	padding: 56px 0;
+export const SectionWrapper = styled.div< SectionWrapperProps >`
+	--content-width: ${ ( props ) =>
+		props.isLoggedIn
+			? `calc( 100vw - var( --sidebar-width-max, 0px ) - ( var( --content-frame-right-padding, 0px ))  )`
+			: '100vw' };
+	width: var( --content-width );
+	position: relative;
+	left: 50%;
+	right: 50%;
+	margin-left: calc( -1 * var( --content-width ) / 2 );
+	margin-right: calc( -1 * var( --content-width ) / 2 );
 	background-color: ${ ( props ) =>
 		props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-white )' };
-	position: relative;
+	${ ( props ) => props.marginBottom && `margin-bottom: ${ props.marginBottom };` }
+`;
 
-	::before,
-	::after {
-		content: '';
-		position: absolute;
-		box-sizing: border-box;
-		background-color: ${ ( props ) =>
-			props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-white )' };
-		top: 0;
-		bottom: 0;
-		width: var( --content-margin );
-	}
-
-	::before {
-		left: calc( -1 * var( --content-margin ) );
-	}
-
-	::after {
-		right: calc( -1 * var( --content-margin ) );
-	}
+export const SectionContainer = styled.div< SectionContainerProps >`
+	padding: 56px var( --content-margin, 0 );
+	max-width: 1040px;
+	margin: 0 auto;
+	box-sizing: border-box;
 `;
 
 export const SectionHeader = styled.div< SectionHeaderProps >`
@@ -82,18 +86,20 @@ export const SectionHeaderContainer = styled.div< SectionHeaderProps >`
 const SectionContent = styled.div``;
 
 const Section = ( props: SectionProps ) => {
-	const { children, header, subheader, dark } = props;
+	const { children, header, subheader, dark, isLoggedIn, marginBottom } = props;
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<SectionContainer dark={ dark }>
-			<SectionHeaderContainer>
-				<SectionHeader dark={ dark } className="wp-brand-font">
-					{ header }
-				</SectionHeader>
-				{ subheader && <SectionSubHeader>{ subheader }</SectionSubHeader> }
-			</SectionHeaderContainer>
-			<SectionContent>{ children }</SectionContent>
-		</SectionContainer>
+		<SectionWrapper dark={ dark } isLoggedIn={ isLoggedIn } marginBottom={ marginBottom }>
+			<SectionContainer dark={ dark }>
+				<SectionHeaderContainer>
+					<SectionHeader dark={ dark } className="wp-brand-font">
+						{ header }
+					</SectionHeader>
+					{ subheader && <SectionSubHeader>{ subheader }</SectionSubHeader> }
+				</SectionHeaderContainer>
+				<SectionContent>{ children }</SectionContent>
+			</SectionContainer>
+		</SectionWrapper>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
