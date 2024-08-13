@@ -28,6 +28,12 @@ const CoreWebVitalsDisplay = () => {
 		}
 	};
 
+	const value = 1960;
+
+	// bad to 100%
+	const { good, needsImprovement, bad } =
+		metricsTresholds[ activeTab as keyof typeof metricsTresholds ];
+
 	return (
 		<div className="core-web-vitals-display">
 			<MetricTabBar
@@ -46,9 +52,27 @@ const CoreWebVitalsDisplay = () => {
 							args: { metricName, valuation: displayValuation( valuation ) },
 						} ) }
 					</span>
-					<div className="core-web-vitals-display__progress-bar">Progress bar</div>
+					<div className="core-web-vitals-display__progress-bar">
+						<div
+							className="bar-section fast"
+							style={ { width: `${ ( good / bad ) * 100 }%` } }
+						></div>
+						<div
+							className="bar-section moderate"
+							style={ { width: `${ ( ( needsImprovement - good ) / bad ) * 100 }%` } }
+						></div>
+						<div
+							className="bar-section slow"
+							style={ { width: `${ ( ( bad - needsImprovement ) / bad ) * 100 }%` } }
+						></div>
+						<div className="dot" style={ { left: `${ ( value / bad ) * 100 }%` } }>
+							<div className="label">{ value.toFixed( 1 ) }</div>
+						</div>
+					</div>
 					<span className="core-web-vitals-display__description-subheading">
-						What is loading speed?
+						{ translate( 'What is %(metricName)s?', {
+							args: { metricName },
+						} ) }
 					</span>
 					<p>
 						Loading speed reflects the time it takes to display the first text or image to visitors.
