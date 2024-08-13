@@ -163,7 +163,8 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 
 	const { isPending, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
 
-	const handleFavoriteChange = ( e: never ) => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const handleFavoriteChange = ( e: any ) => {
 		mutate( {
 			siteId,
 			isFavorite,
