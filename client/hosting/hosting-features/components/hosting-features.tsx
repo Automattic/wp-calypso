@@ -64,7 +64,6 @@ const HostingFeatures = () => {
 	useEffect( () => {
 		if ( isSiteAtomic && ! isPlanExpired ) {
 			page.replace( redirectUrl.current );
-			//window.location.href = redirectUrl.current;
 		}
 	}, [ isSiteAtomic, isPlanExpired ] );
 
