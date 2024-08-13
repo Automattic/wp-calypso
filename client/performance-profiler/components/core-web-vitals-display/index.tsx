@@ -119,10 +119,44 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 							args: { metricName },
 						} ) }
 					</span>
-					<p>
-						Loading speed reflects the time it takes to display the first text or image to visitors.
-						The best sites load in under 1.8 seconds. Learn more ↗
-					</p>
+					{ activeTab === 'fcp' && (
+						<p>
+							Loading speed reflects the time it takes to display the first text or image to
+							visitors. The best sites load in under 1.8 seconds.&nbsp;
+							<a href="https://web.dev/articles/fcp">Learn more ↗</a>
+						</p>
+					) }
+					{ activeTab === 'lcp' && (
+						<p>
+							Largest content load measures the time it takes for the largest visible element (like
+							an image or text block) on a page to load. The best sites load in under 2.5
+							seconds.&nbsp;
+							<a href="https://web.dev/articles/lcp">Learn more ↗</a>
+						</p>
+					) }
+					{ activeTab === 'cls' && (
+						<p>
+							Visual stability is assessed by measuring how often content moves unexpectedly during
+							loading. The best sites have a score of 0.1 or lower.&nbsp;
+							<a href="https://web.dev/articles/cls">Learn more ↗</a>
+						</p>
+					) }
+					{ activeTab === 'inp' && (
+						<p>
+							Interactivity measures the overall responsiveness of a webpage by evaluating how
+							quickly it reacts to user interactions. A good score is 200 milliseconds or less,
+							indicating that the page responds swiftly to user inputs.&nbsp;
+							<a href="https://web.dev/articles/inp">Learn more ↗</a>
+						</p>
+					) }
+					{ activeTab === 'ttfb' && (
+						<p>
+							Server responsiveness reflects the time taken for a user’s browser to receive the
+							first byte of data from the server after making a request. The best sites load around
+							800 milliseconds or less.&nbsp;
+							<a href="https://web.dev/articles/ttfb">Learn more ↗</a>
+						</p>
+					) }
 				</div>
 				<div className="core-web-vitals-display__history-graph">
 					<span className="core-web-vitals-display__description-subheading">

@@ -1,6 +1,8 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/components/src/styles/typography";
 
+$blueberry-color: #3858e9;
+
 .core-web-vitals-display {
 	display: flex;
 	flex-direction: column;
@@ -65,4 +67,8 @@
 .core-web-vitals-display__description-aka {
 	font-size: $font-body-extra-small;
 	color: $studio-gray-70;
+}
+
+.core-web-vitals-display__description a {
+	color: $blueberry-color;
 }
