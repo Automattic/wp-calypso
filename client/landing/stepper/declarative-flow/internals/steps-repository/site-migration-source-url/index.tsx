@@ -7,23 +7,28 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
-import type { Step } from '../../types';
+import type { StepProps } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
-interface Props {
+
+interface SourceSiteInputProps {
 	hasError?: boolean;
 	onComplete: ( siteInfo: UrlData ) => void;
+	title?: string;
+	subTitle?: string;
 }
 
-export const SourceSiteInput: FC< Props > = ( { onComplete } ) => {
+export const SourceSiteInput: FC< SourceSiteInputProps > = ( { onComplete, ...options } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 
-	const title = translate( 'Share your site address' );
-	const subtitle = translate(
-		"Let's get your migration started. Please share your site address so we can review your site and begin your migration."
-	);
+	const title = options.title ?? translate( 'Share your site address' );
+	const subtitle =
+		options.subTitle ??
+		translate(
+			"Let's get your migration started. Please share your site address so we can review your site and begin your migration."
+		);
 
 	const { data: siteInfo, isError: hasError } = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
@@ -66,7 +71,16 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 	);
 };
 
-const SiteMigrationSourceUrl: Step = function ( { navigation } ) {
+interface SourceURLProps extends StepProps {
+	headerText?: string;
+	subHeaderText?: string;
+}
+
+const SiteMigrationSourceUrl: FC< SourceURLProps > = function ( {
+	navigation,
+	headerText,
+	subHeaderText,
+} ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 
@@ -96,6 +110,8 @@ const SiteMigrationSourceUrl: Step = function ( { navigation } ) {
 				isFullLayout
 				stepContent={
 					<SourceSiteInput
+						title={ headerText }
+						subTitle={ subHeaderText }
 						onComplete={ ( { url } ) =>
 							handleSubmit( 'skip_platform_identification', { from: url } )
 						}

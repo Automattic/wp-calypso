@@ -162,7 +162,7 @@ describe( `${ flow.name }`, () => {
 			} );
 
 			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_MIGRATION_SOURCE_URL,
+				step: STEPS.MIGRATION_SOURCE_URL,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 			} );
 		} );
@@ -181,7 +181,7 @@ describe( `${ flow.name }`, () => {
 
 		it( 'redirects users from Capture Source URL > Migration assisted', () => {
 			const destination = runNavigation( {
-				from: STEPS.SITE_MIGRATION_SOURCE_URL,
+				from: STEPS.MIGRATION_SOURCE_URL,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 				dependencies: { from: 'http://oldsite.example.com' },
 			} );
