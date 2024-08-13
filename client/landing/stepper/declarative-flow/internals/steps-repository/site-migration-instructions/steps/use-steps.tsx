@@ -4,7 +4,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { StepAddMigrationKey } from './step-add-migration-key';
 import { StepAddMigrationKeyFallback } from './step-add-migration-key-fallback';
 import { StepGetYourSiteReady } from './step-get-your-site-ready';
-import { StepInstallMigrationGuru } from './step-install-migation-guru';
+import { StepInstallMigrateGuru } from './step-install-migrate-guru';
 import type { Task, Expandable } from '@automattic/launchpad';
 
 const INSTALL_MIGRATE_GURU = 'install-the-migrate-guru-plugin';
@@ -89,7 +89,7 @@ const useStepsData = ( {
 			key: INSTALL_MIGRATE_GURU,
 			title: translate( 'Install the Migrate Guru plugin' ),
 			content: (
-				<StepInstallMigrationGuru
+				<StepInstallMigrateGuru
 					fromUrl={ fromUrl }
 					onNextClick={ () => onNextClick( 0, INSTALL_MIGRATE_GURU ) }
 				/>
