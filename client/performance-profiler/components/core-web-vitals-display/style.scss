@@ -13,6 +13,7 @@
 	padding: 24px;
 	display: flex;
 	flex-direction: row;
+	column-gap: 32px;
 
 	& > div {
 		flex: 50%;
