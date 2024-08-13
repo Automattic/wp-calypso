@@ -18,7 +18,7 @@ export const MetricTabBar = ( props: Props ) => {
 
 	return (
 		<div className="metric-tab-bar">
-			{ Object.entries( metricsNames ).map( ( [ key, name ] ) => (
+			{ Object.entries( metricsNames ).map( ( [ key, { displayName } ] ) => (
 				<button
 					key={ key }
 					className={ clsx( 'metric-tab-bar__tab', { active: key === activeTab } ) }
@@ -33,7 +33,7 @@ export const MetricTabBar = ( props: Props ) => {
 						/>
 					</div>
 					<div className="metric-tab-bar__tab-text">
-						<div className="metric-tab-bar__tab-header">{ name }</div>
+						<div className="metric-tab-bar__tab-header">{ displayName }</div>
 						<div className="metric-tab-bar__tab-metric">
 							{ displayValue(
 								key as keyof PerformanceMetrics,

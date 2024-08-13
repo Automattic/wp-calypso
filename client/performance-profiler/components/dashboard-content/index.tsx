@@ -17,7 +17,7 @@ export const PerformanceProfilerDashboardContent = (
 		<div className="performance-profiler-content">
 			<div className="l-block-wrapper">
 				<PerformanceScore value={ 70 } />
-				<CoreWebVitalsDisplay lcp={ 1966 } cls={ 0.01 } fcp={ 1794 } ttfb={ 916 } inp={ 391 } />
+				<CoreWebVitalsDisplay fcp={ 1794 } lcp={ 1966 } cls={ 0.05 } inp={ 391 } ttfb={ 916 } />
 			</div>
 		</div>
 	);

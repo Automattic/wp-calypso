@@ -1,11 +1,17 @@
 import { PerformanceMetrics, Valuation } from '../types/performance-metrics';
 
 export const metricsNames = {
-	lcp: 'Largest Contentful Paint',
-	cls: 'Cumulative Layout Shift',
-	fcp: 'First Contentful Paint',
-	ttfb: 'Time to First Byte',
-	inp: 'Interaction to Next Paint',
+	fcp: { displayName: 'Loading speed', name: 'First Contentful Paint' },
+	lcp: {
+		displayName: 'Largest content load',
+		name: 'Largest Contentful Paint',
+	},
+	cls: {
+		displayName: 'Visual stability',
+		name: 'Cumulative Layout Shift',
+	},
+	inp: { displayName: 'Interactivity', name: 'Interaction to Next Paint' },
+	ttfb: { displayName: 'Server responsiveness', name: 'Time to First Byte' },
 };
 
 // bad values are only needed as a maximum value on the scales

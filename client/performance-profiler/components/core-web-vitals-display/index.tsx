@@ -11,11 +11,11 @@ import { MetricTabBar } from '../metric-tab-bar';
 import './style.scss';
 import { StatusIndicator } from '../status-indicator';
 
-const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
+export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 	const translate = useTranslate();
 	const [ activeTab, setActiveTab ] = useState< string >( 'lcp' );
 
-	const metricName = metricsNames[ activeTab as keyof typeof metricsNames ];
+	const { name: metricName, displayName } = metricsNames[ activeTab as keyof typeof metricsNames ];
 	const value = props[ activeTab as keyof PerformanceMetrics ];
 	const valuation = mapThresholdsToStatus( activeTab as keyof typeof metricsTresholds, value );
 
@@ -59,8 +59,8 @@ const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 			<div className="core-web-vitals-display__details">
 				<div className="core-web-vitals-display__description">
 					<span className="core-web-vitals-display__description-subheading">
-						{ translate( "Your site's %(metricName)s is %(valuation)s", {
-							args: { metricName, valuation: displayValuation( valuation ) },
+						{ translate( "Your site's %(displayName)s is %(valuation)s", {
+							args: { displayName, valuation: displayValuation( valuation ) },
 						} ) }
 					</span>
 					<MetricScale metricName={ activeTab } value={ value } valuation={ valuation } />
@@ -107,8 +107,8 @@ const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 						</div>
 					</div>
 					<span className="core-web-vitals-display__description-subheading">
-						{ translate( 'What is %(metricName)s?', {
-							args: { metricName },
+						{ translate( 'What is %(displayName)s? (aka %(metricName)s)', {
+							args: { displayName, metricName },
 						} ) }
 					</span>
 					<p>
@@ -125,5 +125,3 @@ const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 		</div>
 	);
 };
-
-export { CoreWebVitalsDisplay };
