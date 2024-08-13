@@ -333,7 +333,7 @@
 	* Jetpack Login
 	*/
 	@at-root .is-jetpack-login & {
-		padding: 24px;
+		padding: 16px;
 
 		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
 			border-radius: 2px;
@@ -352,6 +352,9 @@
 			}
 		}
 
+		@include break-mobile {
+			padding: 24px;
+		}
 	}
 
 	/**
@@ -364,7 +367,7 @@
 			&.google {
 				display: block;
 				background-color: #fff;
-				margin-bottom: 40px;
+				margin-bottom: 20px;
 				box-shadow: none;
 				border: solid var(--color-neutral-10);
 				border-width: 1px 1px 2px;
@@ -382,6 +385,10 @@
 					font-weight: 600;
 					font-size: 0.875rem;
 				}
+
+				@include break-medium {
+					margin-bottom: 40px;
+				}
 			}
 		}
 	}
@@ -392,7 +399,7 @@
 	@at-root .jetpack-cloud & {
 		max-width: 375px;
 		width: 100%;
-		padding: 24px;
+		padding: 16px;
 		margin-bottom: 0;
 
 		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
@@ -408,6 +415,10 @@
 				margin-left: 9px;
 				margin-right: 0;
 			}
+		}
+
+		@include break-mobile {
+			padding: 24px;
 		}
 	}
 
