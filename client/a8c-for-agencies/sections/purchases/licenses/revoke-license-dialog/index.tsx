@@ -200,7 +200,7 @@ export default function RevokeLicenseDialog( {
 			<SecondaryConfirmationDialog
 				title={ translate( 'Are you sure you want to revoke your Pressable plan?' ) }
 				description={ translate(
-					'If you continue revoking, you will lose access to all of your Pressable sites. Are you sure you want to proceed?'
+					'If you continue to revoke, you will lose access to all of your Pressable sites. Are you sure you want to proceed?'
 				) }
 				onConfirm={ () => revoke( true ) }
 				onCancel={ () => setShowPressableConfirmationDialog( false ) }
