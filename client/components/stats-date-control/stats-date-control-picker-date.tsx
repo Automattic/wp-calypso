@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
+import DateRangePicker from 'calypso/components/date-range';
 import { Icon, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -44,7 +45,22 @@ const DateControlPickerDate = ( {
 					<DateInput id="endDate" value={ endDate } onChange={ onEndChange } />
 				</div>
 			</div>
-			{ isCalendarEnabled && <div className={ `${ BASE_CLASS_NAME }s__calendar` }>Calendar</div> }
+			{ isCalendarEnabled && (
+				<div className={ `${ BASE_CLASS_NAME }s__calendar` }>
+					<DateRangePicker
+						selectedStartDate={ new Date( startDate ) }
+						selectedEndDate={ new Date( endDate ) }
+						lastSelectableDate={ new Date() }
+						onDateCommit={ () => {} }
+						renderTrigger={ ( props: any ) => (
+							// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+							<span onClick={ props.onTriggerClick } ref={ props.buttonRef }>
+								I'm a trigger
+							</span>
+						) }
+					/>
+				</div>
+			) }
 			<div className={ `${ BASE_CLASS_NAME }s__buttons` }>
 				<Button onClick={ onCancel }>{ translate( 'Cancel' ) }</Button>
 				<Button variant="primary" onClick={ onApply }>
