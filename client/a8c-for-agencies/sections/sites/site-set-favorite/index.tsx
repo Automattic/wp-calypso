@@ -163,7 +163,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 
 	const { isPending, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
 
-	const handleFavoriteChange = () => {
+	const handleFavoriteChange = ( e: never ) => {
 		mutate( {
 			siteId,
 			isFavorite,
@@ -176,6 +176,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 					: 'calypso_jetpack_agency_dashboard_set_favorite_site'
 			)
 		);
+		e.stopPropagation();
 	};
 
 	return (
