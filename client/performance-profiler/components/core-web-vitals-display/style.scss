@@ -1,12 +1,26 @@
 @import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
 
 .core-web-vitals-display {
 	display: flex;
 	flex-direction: column;
 }
-
-.core-web-vitals-display__description {
-	height: 500px;
+.core-web-vitals-display__details {
 	border: 1px solid $studio-gray-5;
 	border-top: none;
+	padding: 24px;
+	display: flex;
+	flex-direction: row;
+
+	& > div {
+		flex: 50%;
+	}
+}
+
+.core-web-vitals-display__description-subheading {
+	font-family: $font-sf-pro-display;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 16px;
+	font-weight: 500;
+	margin-bottom: 8px;
 }

@@ -1,3 +1,5 @@
+import { PerformanceMetrics, Valuation } from '../types/performance-metrics';
+
 export const metricsNames = {
 	lcp: 'Largest Contentful Paint',
 	cls: 'Cumulative Layout Shift',
@@ -27,4 +29,21 @@ export const metricsTresholds = {
 		good: 200,
 		needsImprovement: 500,
 	},
+};
+
+export const mapThresholdsToStatus = (
+	metric: keyof PerformanceMetrics,
+	value: number
+): Valuation => {
+	const { good, needsImprovement } = metricsTresholds[ metric ];
+
+	if ( value <= good ) {
+		return 'good';
+	}
+
+	if ( value <= needsImprovement ) {
+		return 'needsImprovement';
+	}
+
+	return 'bad';
 };

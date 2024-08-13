@@ -1,29 +1,12 @@
 import { clsx } from 'clsx';
-import {
-	PerformanceMetrics,
-	Valuation,
-} from 'calypso/performance-profiler/types/performance-metrics';
-import { metricsTresholds, metricsNames } from 'calypso/performance-profiler/utils/metrics';
+import { PerformanceMetrics } from 'calypso/performance-profiler/types/performance-metrics';
+import { metricsNames, mapThresholdsToStatus } from 'calypso/performance-profiler/utils/metrics';
 import { StatusIndicator } from '../status-indicator';
 import './style.scss';
 
 type Props = PerformanceMetrics & {
 	activeTab: string;
 	setActiveTab: ( tab: string ) => void;
-};
-
-const mapThresholdsToStatus = ( metric: keyof PerformanceMetrics, value: number ): Valuation => {
-	const { good, needsImprovement } = metricsTresholds[ metric ];
-
-	if ( value <= good ) {
-		return 'good';
-	}
-
-	if ( value <= needsImprovement ) {
-		return 'needsImprovement';
-	}
-
-	return 'bad';
 };
 
 const displayValue = ( metric: keyof PerformanceMetrics, value: number ): string => {

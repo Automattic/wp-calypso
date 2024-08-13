@@ -1,9 +1,32 @@
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import {
+	metricsNames,
+	metricsTresholds,
+	mapThresholdsToStatus,
+} from 'calypso/performance-profiler/utils/metrics';
 import { MetricTabBar } from '../metric-tab-bar';
 import './style.scss';
 
 const CoreWebVitalsDisplay = () => {
+	const translate = useTranslate();
 	const [ activeTab, setActiveTab ] = useState< string >( 'lcp' );
+
+	const metricName = metricsNames[ activeTab as keyof typeof metricsNames ];
+	const valuation = mapThresholdsToStatus( activeTab as keyof typeof metricsTresholds, 1966 );
+
+	const displayValuation = ( valuation: string ) => {
+		switch ( valuation ) {
+			case 'good':
+				return 'good';
+			case 'needsImprovement':
+				return 'needs improvement';
+			case 'bad':
+				return 'bad';
+			default:
+				return 'unknown';
+		}
+	};
 
 	return (
 		<div className="core-web-vitals-display">
@@ -16,13 +39,27 @@ const CoreWebVitalsDisplay = () => {
 				activeTab={ activeTab }
 				setActiveTab={ setActiveTab }
 			/>
-			<div className="core-web-vitals-display__description">
-				<p>Your site’s loading speed is moderate</p>
-				<p>What is loading speed? (aka First Contentful Paint)</p>
-				<p>
-					Loading speed reflects the time it takes to display the first text or image to visitors.
-					The best sites load in under 1.8 seconds. Learn more ↗
-				</p>
+			<div className="core-web-vitals-display__details">
+				<div className="core-web-vitals-display__description">
+					<span className="core-web-vitals-display__description-subheading">
+						{ translate( "Your site's %(metricName)s is %(valuation)s", {
+							args: { metricName, valuation: displayValuation( valuation ) },
+						} ) }
+					</span>
+					<div className="core-web-vitals-display__progress-bar">Progress bar</div>
+					<span className="core-web-vitals-display__description-subheading">
+						What is loading speed?
+					</span>
+					<p>
+						Loading speed reflects the time it takes to display the first text or image to visitors.
+						The best sites load in under 1.8 seconds. Learn more ↗
+					</p>
+				</div>
+				<div className="core-web-vitals-display__history-graph">
+					<span className="core-web-vitals-display__description-subheading">
+						Loading speed has increased over the past eight weeks
+					</span>
+				</div>
 			</div>
 		</div>
 	);
