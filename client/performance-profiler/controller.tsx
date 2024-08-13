@@ -26,6 +26,7 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 							? context.query?.tab
 							: TabType.mobile
 					}
+					hash={ context.query?.hash ?? '' }
 				/>
 			</Main>
 
