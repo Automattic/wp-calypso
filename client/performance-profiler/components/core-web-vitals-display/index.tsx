@@ -22,11 +22,11 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 	const displayValuation = ( valuation: string ) => {
 		switch ( valuation ) {
 			case 'good':
-				return 'good';
+				return 'is good';
 			case 'needsImprovement':
 				return 'needs improvement';
 			case 'bad':
-				return 'bad';
+				return 'is bad';
 			default:
 				return 'unknown';
 		}
@@ -59,8 +59,11 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 			<div className="core-web-vitals-display__details">
 				<div className="core-web-vitals-display__description">
 					<span className="core-web-vitals-display__description-subheading">
-						{ translate( "Your site's %(displayName)s is %(valuation)s", {
-							args: { displayName, valuation: displayValuation( valuation ) },
+						{ translate( "Your site's %(displayName)s %(valuation)s", {
+							args: {
+								displayName: displayName.toLowerCase(),
+								valuation: displayValuation( valuation ),
+							},
 						} ) }
 					</span>
 					<MetricScale metricName={ activeTab } value={ value } valuation={ valuation } />
@@ -107,8 +110,13 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 						</div>
 					</div>
 					<span className="core-web-vitals-display__description-subheading">
-						{ translate( 'What is %(displayName)s? (aka %(metricName)s)', {
-							args: { displayName, metricName },
+						{ translate( 'What is %(displayName)s? ', {
+							args: { displayName: displayName.toLowerCase() },
+						} ) }
+					</span>
+					<span className="core-web-vitals-display__description-aka">
+						{ translate( '(aka %(metricName)s)', {
+							args: { metricName },
 						} ) }
 					</span>
 					<p>
@@ -118,7 +126,7 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 				</div>
 				<div className="core-web-vitals-display__history-graph">
 					<span className="core-web-vitals-display__description-subheading">
-						Loading speed has increased over the past eight weeks
+						{ translate( '%s has increased over the past eight weeks', { args: [ displayName ] } ) }
 					</span>
 				</div>
 			</div>
