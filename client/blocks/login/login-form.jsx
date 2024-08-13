@@ -1077,6 +1077,7 @@ export class LoginForm extends Component {
 							shouldRenderToS={
 								this.props.isWoo && ! isPartnerSignup && ! this.props.isWooPasswordless
 							}
+							isWoo={ isWoo && isWooPasswordless }
 							isSocialFirst={ isSocialFirst }
 							magicLoginLink={ this.getMagicLoginPageLink() }
 							qrLoginLink={ this.getQrLoginLink() }

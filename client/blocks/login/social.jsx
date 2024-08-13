@@ -189,7 +189,9 @@ class SocialLoginForm extends Component {
 		} = this.props;
 
 		return (
-			<Card className={ clsx( 'auth-form__social', 'is-login', 'is-social-first' ) }>
+			<Card
+				className={ clsx( 'auth-form__social', 'is-login', { 'is-social-first': isSocialFirst } ) }
+			>
 				<div className="auth-form__social-buttons">
 					<div className="auth-form__social-buttons-container">
 						<GoogleSocialButton
@@ -223,7 +225,7 @@ class SocialLoginForm extends Component {
 								this.trackLoginAndRememberRedirect( 'github' );
 							} }
 						/>
-						{ isSocialFirst && (
+						{ ( isSocialFirst || isWoo ) && (
 							<>
 								{ magicLoginLink && <MagicLoginButton loginUrl={ magicLoginLink } /> }
 								{ qrLoginLink && <QrCodeLoginButton loginUrl={ qrLoginLink } /> }

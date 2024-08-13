@@ -147,7 +147,7 @@ class AppleLoginButton extends Component {
 					customButton
 				) : (
 					<button
-						className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
+						className={ clsx( 'social-buttons__button button apple', { disabled: isDisabled } ) }
 						onClick={ this.handleClick }
 					>
 						<AppleIcon
