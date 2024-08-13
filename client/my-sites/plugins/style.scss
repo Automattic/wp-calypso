@@ -64,6 +64,11 @@ body.is-section-plugins {
 				height: calc(100vh - var(--masterbar-height) - 32px);
 			}
 		}
+
+		.plugins-browser,
+		.is-plugin-details {
+			overflow-x: hidden;
+		}
 	}
 
 	.is-logged-in main:not(.a4a-layout):not(.a4a-layout-column) {
