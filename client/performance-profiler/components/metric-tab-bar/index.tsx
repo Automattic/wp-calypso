@@ -1,24 +1,16 @@
 import { clsx } from 'clsx';
 import { PerformanceMetrics } from 'calypso/performance-profiler/types/performance-metrics';
-import { metricsNames, mapThresholdsToStatus } from 'calypso/performance-profiler/utils/metrics';
+import {
+	metricsNames,
+	mapThresholdsToStatus,
+	displayValue,
+} from 'calypso/performance-profiler/utils/metrics';
 import { StatusIndicator } from '../status-indicator';
 import './style.scss';
 
 type Props = PerformanceMetrics & {
 	activeTab: string;
 	setActiveTab: ( tab: string ) => void;
-};
-
-const displayValue = ( metric: keyof PerformanceMetrics, value: number ): string => {
-	if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metric ) ) {
-		return `${ ( value / 1000 ).toFixed( 2 ) } s`;
-	}
-
-	if ( [ 'inp', 'fid' ].includes( metric ) ) {
-		return `${ value } ms`;
-	}
-
-	return `${ value }`;
 };
 
 export const MetricTabBar = ( props: Props ) => {

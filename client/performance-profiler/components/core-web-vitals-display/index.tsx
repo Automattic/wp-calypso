@@ -5,6 +5,7 @@ import {
 	metricsTresholds,
 	mapThresholdsToStatus,
 } from 'calypso/performance-profiler/utils/metrics';
+import { MetricScale } from '../metric-scale';
 import { MetricTabBar } from '../metric-tab-bar';
 import './style.scss';
 
@@ -28,12 +29,6 @@ const CoreWebVitalsDisplay = () => {
 		}
 	};
 
-	const value = 1960;
-
-	// bad to 100%
-	const { good, needsImprovement, bad } =
-		metricsTresholds[ activeTab as keyof typeof metricsTresholds ];
-
 	return (
 		<div className="core-web-vitals-display">
 			<MetricTabBar
@@ -52,23 +47,7 @@ const CoreWebVitalsDisplay = () => {
 							args: { metricName, valuation: displayValuation( valuation ) },
 						} ) }
 					</span>
-					<div className="core-web-vitals-display__progress-bar">
-						<div
-							className="bar-section fast"
-							style={ { width: `${ ( good / bad ) * 100 }%` } }
-						></div>
-						<div
-							className="bar-section moderate"
-							style={ { width: `${ ( ( needsImprovement - good ) / bad ) * 100 }%` } }
-						></div>
-						<div
-							className="bar-section slow"
-							style={ { width: `${ ( ( bad - needsImprovement ) / bad ) * 100 }%` } }
-						></div>
-						<div className="dot" style={ { left: `${ ( value / bad ) * 100 }%` } }>
-							<div className="label">{ value.toFixed( 1 ) }</div>
-						</div>
-					</div>
+					<MetricScale metricName={ activeTab } value={ 1970 } />
 					<span className="core-web-vitals-display__description-subheading">
 						{ translate( 'What is %(metricName)s?', {
 							args: { metricName },
