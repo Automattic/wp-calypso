@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -17,11 +18,94 @@ const StyledLoadingScreen = styled.div`
 	}
 
 	span {
-		display: block;
+		display: flex;
+		align-items: center;
 		font-size: 16px;
 		font-weight: 400;
 		line-height: 24px;
 		margin-bottom: 15px;
+		position: relative;
+
+		.gridicons-checkmark {
+			display: none;
+		}
+
+		&:before {
+			content: '';
+			display: inline-block;
+			width: 30px;
+			height: 30px;
+			border-radius: 50%;
+			margin-right: 10px;
+			border: 1px solid transparent;
+		}
+
+		@keyframes rotate {
+			from {
+				transform: rotate( 0deg );
+			}
+			to {
+				transform: rotate( 360deg );
+			}
+		}
+
+		@-webkit-keyframes rotate {
+			from {
+				-webkit-transform: rotate( 0deg );
+			}
+			to {
+				-webkit-transform: rotate( 360deg );
+			}
+		}
+
+		&.complete {
+			.gridicons-checkmark {
+				display: block;
+				position: absolute;
+				top: 8px;
+				left: 7px;
+				fill: #fff;
+			}
+			:before {
+				background-color: var( --studio-green-30 );
+				color: #fff;
+			}
+		}
+
+		&.running:before {
+			border: 1px solid var( --studio-gray-5 );
+		}
+
+		&.running:after {
+			content: '';
+			width: 30px;
+			height: 30px;
+			position: absolute;
+			left: 0;
+			top: 0;
+			border: solid 1.5px rgba( 56, 88, 233, 1 );
+			border-radius: 50%;
+			border-right-color: transparent;
+			border-bottom-color: transparent;
+			-webkit-transition: all 0.5s ease-in;
+			-webkit-animation-name: rotate;
+			-webkit-animation-duration: 1s;
+			-webkit-animation-iteration-count: infinite;
+			-webkit-animation-timing-function: linear;
+
+			transition: all 0.5s ease-in;
+			animation-name: rotate;
+			animation-duration: 1s;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+
+		&.incomplete {
+			color: var( --studio-gray-20 );
+			::before {
+				border: 1px dashed var( --studio-gray-5 );
+			}
+		}
 	}
 `;
 
@@ -44,6 +128,7 @@ const FootNote = styled.div`
 
 export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	const translate = useTranslate();
+	const [ step, setStep ] = useState( 0 );
 
 	const steps = isSavedReport
 		? [ translate( 'Getting your report…' ) ]
@@ -56,15 +141,13 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 				translate( 'Finalizing your results' ),
 		  ];
 
-	const [ step, setStep ] = useState( 0 );
-
 	useEffect( () => {
 		const timeoutId = setTimeout( () => {
 			if ( step === steps.length - 1 ) {
 				return;
 			}
 			setStep( step + 1 );
-		}, 1000 );
+		}, 5000 );
 
 		return () => clearTimeout( timeoutId );
 	} );
@@ -80,11 +163,12 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	};
 
 	return (
-		<LayoutBlock className="landing-page-header-block" width="medium">
+		<LayoutBlock className="landing-page-header-block">
 			<StyledLoadingScreen>
 				<h2>Testing your site’s speed…</h2>
 				{ steps.map( ( heading, index ) => (
 					<span key={ index } className={ stepStatus( index, step ) }>
+						<Gridicon icon="checkmark" size={ 18 } />
 						{ heading }
 					</span>
 				) ) }
