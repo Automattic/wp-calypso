@@ -1,5 +1,6 @@
 import { Spinner } from '@wordpress/components';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MessagesContainer } from './components/message/messages-container';
 import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext, OdieAssistantProvider } from './context';
@@ -12,15 +13,33 @@ export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
 
 export const OdieAssistant: React.FC = () => {
-	const { chat, trackEvent, currentUser, isLoadingEnvironment, isLoadingExistingChat } =
-		useOdieAssistantContext();
+	const {
+		chat,
+		trackEvent,
+		currentUser,
+		isLoadingEnvironment,
+		isLoadingExistingChat,
+		isUserElegible,
+	} = useOdieAssistantContext();
 	const [ asisstantLoaded, setAssistantLoaded ] = useState( false );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
+	const navigate = useNavigate();
 
 	useEffect( () => {
 		trackEvent( 'chatbox_view' );
 	}, [ trackEvent ] );
+
+	// Prevent not eligible users from accessing wapuu.
+	useEffect( () => {
+		if ( ! isUserElegible ) {
+			trackEvent( 'calypso_helpcenter_redirect_not_eligible_user_to_homepage', {
+				pathname: location.pathname,
+				search: location.search,
+			} );
+			navigate( '/' );
+		}
+	}, [ navigate, isUserElegible, trackEvent ] );
 
 	useAutoScroll( messagesContainerRef, chat.messages );
 	useLastMessageVisibility( messagesContainerRef, chat.messages.length );
