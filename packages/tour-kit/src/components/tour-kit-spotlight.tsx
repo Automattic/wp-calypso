@@ -85,9 +85,9 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( {
 	const clipRepositionProps = referenceElement
 		? {
 				style: {
-					...( clipDimensions && clipDimensions ),
+					...clipDimensions,
 					...popperStyles?.popper,
-					...( styles && styles ),
+					...styles,
 				},
 				...popperAttributes?.popper,
 		  }
