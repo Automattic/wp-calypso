@@ -68,6 +68,7 @@ import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
+import useDefaultWpcomPlansIntentSlug from './hooks/use-default-wpcom-plans-intent-slug';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
@@ -238,6 +239,7 @@ const PlansFeaturesMain = ( {
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
+	const defaultWpcomPlansIntentSlug = useDefaultWpcomPlansIntentSlug();
 
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
@@ -299,13 +301,13 @@ const PlansFeaturesMain = ( {
 		// TODO: plans from upsell takes precedence for setting intent right now
 		// - this is currently set to the default wpcom set until we have updated tailored features for all plans
 		// - at which point, we'll inject the upsell plan to the tailored plans mix instead
-		if ( 'plans-default-wpcom' !== intent && forceDefaultPlans ) {
-			setIntent( 'plans-default-wpcom' );
+		if ( defaultWpcomPlansIntentSlug !== intent && forceDefaultPlans ) {
+			setIntent( defaultWpcomPlansIntentSlug );
 		} else if ( ! intent ) {
 			setIntent(
 				planFromUpsells
-					? 'plans-default-wpcom'
-					: intentFromProps || intentFromSiteMeta.intent || 'plans-default-wpcom'
+					? defaultWpcomPlansIntentSlug
+					: intentFromProps || intentFromSiteMeta.intent || defaultWpcomPlansIntentSlug
 			);
 		}
 	}, [
@@ -315,10 +317,11 @@ const PlansFeaturesMain = ( {
 		planFromUpsells,
 		forceDefaultPlans,
 		intentFromSiteMeta.processing,
+		defaultWpcomPlansIntentSlug,
 	] );
 
 	const showEscapeHatch =
-		intentFromSiteMeta.intent && ! isInSignup && 'plans-default-wpcom' !== intent;
+		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntentSlug !== intent;
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -372,7 +375,7 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
-		intent,
+		intent: shouldForceDefaultPlansBasedOnIntent( intent ) ? defaultWpcomPlansIntentSlug : intent,
 		isDisplayingPlansNeededForFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		selectedFeature,
@@ -383,7 +386,6 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
-		forceDefaultIntent: shouldForceDefaultPlansBasedOnIntent( intent ),
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
