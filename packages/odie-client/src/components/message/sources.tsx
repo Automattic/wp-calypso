@@ -13,16 +13,14 @@ export const Sources = ( { message }: { message: Message } ) => {
 		const messageLength = message?.context?.sources?.length ?? 0;
 		if ( messageLength > 0 ) {
 			// Record TrainTracks render events
-			let uiPosition = 0;
-			message.context?.sources?.forEach( ( source: Source ) => {
+			message.context?.sources?.forEach( ( source: Source, index: number ) => {
 				trackEvent( 'sources_traintracks_render', {
 					fetch_algo: source?.railcar?.fetch_algo,
 					ui_algo: source?.railcar?.ui_algo,
 					railcar: source?.railcar?.railcar,
 					fetch_position: source?.railcar?.fetch_position,
-					ui_position: uiPosition,
+					ui_position: index,
 				} );
-				uiPosition++;
 			} );
 			return [
 				...new Map(
