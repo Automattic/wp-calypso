@@ -36,43 +36,53 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 		return typeof value === 'object' ? undefined : ( value as Primitive );
 	};
 
+	const navigateTo = ( step: StepperStep, keys: string[], props: ProvidedDependencies = {} ) => {
+		const params = keys.reduce( ( acc: Record< string, Primitive >, key ) => {
+			const value = getFromPropsOrUrl( key, props );
+			if ( value !== undefined ) {
+				acc[ key ] = getFromPropsOrUrl( key, props );
+			}
+			return acc;
+		}, {} );
+
+		return navigate( addQueryArgs( params, step.slug ) );
+	};
+
+	const exitTo = ( path: string, keys: string[], props: ProvidedDependencies = {} ) => {
+		const params = keys.reduce( ( acc: Record< string, Primitive >, key ) => {
+			const value = getFromPropsOrUrl( key, props );
+			if ( value !== undefined ) {
+				acc[ key ] = getFromPropsOrUrl( key, props );
+			}
+			return acc;
+		}, {} );
+
+		return window.location.assign( addQueryArgs( params, path ) );
+	};
+
 	return {
 		[ PLATFORM_IDENTIFICATION.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const platform = getFromPropsOrUrl( 'platform', props ) as string;
-
-				const args: { platform: string | undefined; next?: string } = {
-					platform,
-				};
-
-				if ( platform !== 'wordpress' ) {
-					args.next = props?.url as string;
-				}
-
-				return navigate( addQueryArgs( args, SITE_CREATION_STEP.slug ) );
+				return navigateTo( SITE_CREATION_STEP, [ 'platform', 'next' ], {
+					...props,
+					next: props?.url,
+				} );
 			},
 		},
 		[ SITE_CREATION_STEP.slug ]: {
-			submit: ( props?: ProvidedDependencies ) => {
-				const platform = getFromPropsOrUrl( 'platform', props );
-				const next = getFromPropsOrUrl( 'next', props );
-
-				return navigate( addQueryArgs( { platform, next }, PROCESSING.slug ) );
-			},
+			submit: ( props?: ProvidedDependencies ) =>
+				navigateTo( PROCESSING, [ 'platform', 'next' ], props ),
 		},
 		[ PROCESSING.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const next = getFromPropsOrUrl( 'next', props );
-				const siteId = getFromPropsOrUrl( 'siteId', props );
-				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
 
 				if ( next ) {
-					return window.location.assign(
-						addQueryArgs( { siteId, siteSlug }, `/setup/${ SITE_SETUP_FLOW }/${ next.toString() }` )
-					);
+					const importerURL = `/setup/${ SITE_SETUP_FLOW }/${ next.toString() }`;
+					return exitTo( importerURL, [ 'siteId', 'siteSlug' ], props );
 				}
 
-				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_UPGRADE_PLAN.slug ) );
+				return navigateTo( SITE_MIGRATION_UPGRADE_PLAN, [ 'siteId', 'siteSlug' ], props );
 			},
 		},
 		[ SITE_MIGRATION_UPGRADE_PLAN.slug ]: {
@@ -111,32 +121,25 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 		[ SITE_MIGRATION_HOW_TO_MIGRATE.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const how = getFromPropsOrUrl( 'how', props );
-				const siteId = getFromPropsOrUrl( 'siteId', props );
-				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
 
 				if ( how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) {
-					return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_INSTRUCTIONS.slug ) );
+					return navigateTo( SITE_MIGRATION_INSTRUCTIONS, [ 'siteId', 'siteSlug' ], props );
 				}
 
-				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_SOURCE_URL.slug ) );
+				return navigateTo( SITE_MIGRATION_SOURCE_URL, [ 'siteId', 'siteSlug' ], props );
 			},
 		},
 		[ SITE_MIGRATION_INSTRUCTIONS.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const siteId = getFromPropsOrUrl( 'siteId', props );
-				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
-
-				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_STARTED.slug ) );
+				return navigateTo( SITE_MIGRATION_STARTED, [ 'siteId', 'siteSlug' ], props );
 			},
 		},
 		[ SITE_MIGRATION_SOURCE_URL.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const siteId = getFromPropsOrUrl( 'siteId', props );
-				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
-				const from = getFromPropsOrUrl( 'from', props );
-
-				return navigate(
-					addQueryArgs( { siteId, siteSlug, from }, SITE_MIGRATION_ASSISTED_MIGRATION.slug )
+				return navigateTo(
+					SITE_MIGRATION_ASSISTED_MIGRATION,
+					[ 'siteId', 'siteSlug', 'from' ],
+					props
 				);
 			},
 		},
