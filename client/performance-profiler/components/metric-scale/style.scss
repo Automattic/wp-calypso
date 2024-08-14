@@ -14,7 +14,7 @@
 		.bar-section {
 			height: 100%;
 			border-radius: 4px;
-			border: 2px solid $studio-white;
+			border: 2px solid var(--studio-white);
 
 			&.active {
 				top: -2px;
@@ -54,9 +54,9 @@
 			transform: translate(-50%, -50%);
 			width: 8px;
 			height: 8px;
-			background-color: $studio-black;
+			background-color: var(--studio-black);
 			border-radius: 50%;
-			border: 2px solid $studio-white;
+			border: 2px solid var(--studio-white);
 		}
 
 		.label {
@@ -75,7 +75,7 @@
 		display: flex;
 		align-items: center;
 		font-size: $font-body-extra-small;
-		color: $studio-gray-70;
+		color: var(--studio-gray-70);
 		font-family: $font-sf-pro-display;
 
 		& > div {

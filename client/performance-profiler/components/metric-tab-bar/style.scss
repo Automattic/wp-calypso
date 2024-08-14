@@ -13,14 +13,14 @@ $blueberry-color: #3858e9;
 	display: flex;
 	gap: 6px;
 	padding: 12px 16px;
-	border-bottom: 1.5px solid $studio-gray-5;
+	border-bottom: 1.5px solid var(--studio-gray-5);
 	text-align: initial;
 	flex-grow: 1;
 
 	&.active {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px 6px 0 0;
-		border: 1.5px solid $studio-gray-5;
+		border: 1.5px solid var(--studio-gray-5);
 		border-bottom: none;
 		position: relative;
 
