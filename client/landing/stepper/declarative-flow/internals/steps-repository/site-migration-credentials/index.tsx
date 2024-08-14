@@ -2,13 +2,16 @@ import { FormLabel } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { NextButton, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useState, type FC } from 'react';
+import { ChangeEvent, FormEvent, useState, type FC } from 'react';
+import getValidationMessage from 'calypso/blocks/import/capture/url-validation-message-helper';
+import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isValidUrl } from 'calypso/lib/importer/url-validation';
 import type { Step } from '../../types';
 
 import './style.scss';
@@ -25,13 +28,46 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	const [ username, setUsername ] = useState< string >( '' );
 	const [ password, setPassword ] = useState< string >( '' );
 	const [ backupFileLocation, setBackupFileLocation ] = useState< string >( '' );
+	const [ notes, setNotes ] = useState< string >( '' );
+	const [ errors, setError ] = useState< Record< string, string > >();
 
 	const handleAccessMethodChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setAccessMethod( event.target.value );
 	};
 
-	const handleSubmit = () => {
-		// Handle form submission logic here
+	const validateCredentials = () => {
+		const credentialsErrors: Record< string, string > = {};
+		const isSiteAddressValid = CAPTURE_URL_RGX.test( siteAddress );
+
+		if ( ! isSiteAddressValid ) {
+			const siteAddressError = getValidationMessage( siteAddress, translate );
+			credentialsErrors.siteAddress = siteAddressError;
+		}
+
+		if ( ! username || ! password ) {
+			credentialsErrors.credentials = translate(
+				'Enter your WordPress admin username and password.'
+			);
+		}
+
+		return credentialsErrors;
+	};
+
+	const handleSubmit = ( e: FormEvent ) => {
+		e.preventDefault();
+		setError( {} );
+		if ( accessMethod === 'credentials' ) {
+			const credentialsErrors = validateCredentials();
+			if ( Object.keys( credentialsErrors ).length ) {
+				setError( credentialsErrors );
+				return;
+			}
+		} else if ( accessMethod === 'backup' ) {
+			if ( ! isValidUrl( backupFileLocation ) ) {
+				setError( { backupFileLocation: translate( 'Please enter a valid URL' ) } );
+				return;
+			}
+		}
 		onSubmit();
 	};
 
@@ -72,13 +108,16 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									id="site-address"
 									value={ siteAddress }
 									placeholder={ translate( 'Enter your WordPress site address.' ) }
+									isError={ errors?.siteAddress }
 									onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
 										setSiteAddress( e.target.value )
 									}
 								/>
-								<div className="site-migration-credentials__form-error">
-									{ translate( 'Enter the URL of your source site.' ) }
-								</div>
+								{ errors?.siteAddress && (
+									<div className="site-migration-credentials__form-error">
+										{ errors.siteAddress }
+									</div>
+								) }
 							</div>
 
 							<div className="site-migration-credentials__form-fields-row">
@@ -91,6 +130,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 										id="username"
 										value={ username }
 										placeholder={ translate( 'Username' ) }
+										isError={ errors?.credentials && ! username }
 										onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
 											setUsername( e.target.value )
 										}
@@ -103,15 +143,17 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 										id="password"
 										value={ password }
 										placeholder={ translate( 'Password' ) }
+										isError={ errors?.credentials && ! password }
 										onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
 											setPassword( e.target.value )
 										}
 									/>
 								</div>
 							</div>
-							<div className="site-migration-credentials__form-error">
-								{ translate( 'Enter your WordPress admin username and password.' ) }
-							</div>
+
+							{ errors?.credentials && (
+								<div className="site-migration-credentials__form-error">{ errors.credentials }</div>
+							) }
 						</div>
 					</div>
 				) }
@@ -124,12 +166,18 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									type="text"
 									id="backup-file"
 									value={ backupFileLocation }
+									isError={ errors?.backupFileLocation }
 									onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
 										setBackupFileLocation( e.target.value )
 									}
 									placeholder={ translate( 'Enter your backup file location' ) }
 								/>
 							</div>
+							{ errors?.backupFileLocation && (
+								<div className="site-migration-credentials__form-error">
+									{ errors.backupFileLocation }
+								</div>
+							) }
 							<div className="site-migration-credentials__form-note">
 								{ translate(
 									"Upload your file to a service like Dropbox or Google Drive to get a link. Don't forget to make sure that anyone with the link can access it."
@@ -147,8 +195,8 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 						placeholder={ translate(
 							'Share any other details that will help us access your site for the migration.'
 						) }
-						value={ siteAddress }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) => setSiteAddress( e.target.value ) }
+						value={ notes }
+						onChange={ ( e: ChangeEvent< HTMLInputElement > ) => setNotes( e.target.value ) }
 					/>
 				</div>
 				<div>
