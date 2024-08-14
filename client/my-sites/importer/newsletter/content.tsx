@@ -5,6 +5,7 @@ import importerConfig from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
+import { appStates } from 'calypso/state/imports/constants';
 import { getImporterStatusForSiteId } from 'calypso/state/imports/selectors';
 import FileImporter from './content-upload/file-importer';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -60,16 +61,22 @@ export default function Content( {
 	return (
 		<Card>
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
-			<h2>Step 1: Export your content from Substack</h2>
-			<p>
-				To generate a ZIP file of all your Substack posts, go to Settings { '>' } Exports and click
-				'Create a new export.' Once the ZIP file is downloaded, upload it in the next step.
-			</p>
-			<Button href={ `https://${ fromSite }/publish/settings#exports` } target="_blank">
-				Export content <Gridicon icon="external" />
-			</Button>
-			<hr />
-			<h2>Step 2: Import your content to WordPress.com</h2>
+
+			{ importerStatus?.importerState !== appStates.MAP_AUTHORS && (
+				<>
+					<h2>Step 1: Export your content from Substack</h2>
+					<p>
+						To generate a ZIP file of all your Substack posts, go to Settings { '>' } Exports and
+						click 'Create a new export.' Once the ZIP file is downloaded, upload it in the next
+						step.
+					</p>
+					<Button href={ `https://${ fromSite }/publish/settings#exports` } target="_blank">
+						Export content <Gridicon icon="external" />
+					</Button>
+					<hr />
+					<h2>Step 2: Import your content to WordPress.com</h2>
+				</>
+			) }
 			{ importerStatus && (
 				<FileImporter
 					site={ selectedSite }
