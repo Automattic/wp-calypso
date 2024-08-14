@@ -15,15 +15,17 @@ export default function DomainsTableSSLCell( {
 }: DomainsTableSSLCellProps ) {
 	const translate = useTranslate();
 
+	const isPendingSSL = sslStatus === 'pending' || sslStatus === 'newly_registered';
+
 	const getSSLStatusText = () => {
 		if ( sslStatus === 'active' ) {
 			return translate( 'Active' );
 		}
-		if ( sslStatus === 'pending' ) {
+		if ( isPendingSSL ) {
 			return translate( 'Pending' );
 		}
 		if ( sslStatus === 'disabled' ) {
-			return translate( 'Error' );
+			return translate( 'Disabled' );
 		}
 	};
 
@@ -33,7 +35,7 @@ export default function DomainsTableSSLCell( {
 				<Icon
 					className={ clsx( 'domains-table-row__ssl-icon', {
 						[ 'domains-table-row__ssl-icon__active' ]: sslStatus === 'active',
-						[ 'domains-table-row__ssl-icon__pending' ]: sslStatus === 'pending',
+						[ 'domains-table-row__ssl-icon__pending' ]: isPendingSSL,
 						[ 'domains-table-row__ssl-icon__disabled' ]: sslStatus === 'disabled',
 					} ) }
 					icon={ lock }
@@ -44,7 +46,7 @@ export default function DomainsTableSSLCell( {
 				<a
 					className={ clsx( 'domains-table-row__ssl-status-button', {
 						[ 'domains-table-row__ssl-status-button__active' ]: sslStatus === 'active',
-						[ 'domains-table-row__ssl-status-button__pending' ]: sslStatus === 'pending',
+						[ 'domains-table-row__ssl-status-button__pending' ]: isPendingSSL,
 						[ 'domains-table-row__ssl-status-button__disabled' ]: sslStatus === 'disabled',
 					} ) }
 					href={ `${ domainManagementLink }?ssl-open=true` }
