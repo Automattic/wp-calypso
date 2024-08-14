@@ -65,7 +65,11 @@ export default function Content( {
 				To generate a ZIP file of all your Substack posts, go to Settings { '>' } Exports and click
 				'Create a new export.' Once the ZIP file is downloaded, upload it in the next step.
 			</p>
-			<Button href={ `https://${ fromSite }/publish/settings#exports` }>
+			<Button
+				href={ `https://${ fromSite }/publish/settings#import-export-settings` }
+				target="_blank"
+				rel="noreferrer noopener"
+			>
 				Export content <Gridicon icon="external" />
 			</Button>
 			<hr />
