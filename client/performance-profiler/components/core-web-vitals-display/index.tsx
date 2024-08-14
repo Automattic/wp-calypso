@@ -155,7 +155,9 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 					<p>
 						{ metricValuations[ activeTab ].explanation }
 						&nbsp;
-						<a href="https://web.dev/articles/fcp">{ translate( 'Learn more ↗' ) }</a>
+						<a href={ `https://web.dev/articles/${ activeTab }` }>
+							{ translate( 'Learn more ↗' ) }
+						</a>
 					</p>
 				</div>
 				<div className="core-web-vitals-display__history-graph">
