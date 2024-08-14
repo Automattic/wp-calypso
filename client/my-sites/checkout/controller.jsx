@@ -70,7 +70,7 @@ export function checkoutJetpackSiteless( context, next ) {
 	sitelessCheckout( context, next, {
 		sitelessCheckoutType: 'jetpack',
 		connectAfterCheckout,
-		...( fromSiteSlug && { fromSiteSlug } ),
+		...( fromSiteSlug && { from_site_slug: fromSiteSlug } ),
 		...( adminUrl && { adminUrl } ),
 	} );
 }

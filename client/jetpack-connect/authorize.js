@@ -901,7 +901,7 @@ export class JetpackAuthorize extends Component {
 
 		const { searchParams } = getUrlParts( redirectAfterAuth );
 		const productSlug = searchParams.get( 'productSlug' );
-		const siteSlug = searchParams.get( 'fromSiteSlug' );
+		const siteSlug = searchParams.get( 'from_site_slug' );
 		const siteName = formatSlugToURL( siteSlug ).replace( /^https?:\/\//, '' );
 		const productName = getJetpackProductOrPlanDisplayName( productSlug );
 
