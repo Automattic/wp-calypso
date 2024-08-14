@@ -7,6 +7,13 @@ export type Source = {
 	blog_id: number;
 	post_id: number;
 	content: string;
+	railcar?: {
+		ui_position: number;
+		ui_algo: string;
+		fetch_algo: string;
+		fetch_position: number;
+		railcar: string;
+	};
 };
 
 export type CurrentUser = {
