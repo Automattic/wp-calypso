@@ -36,17 +36,14 @@ const USER_STEP: StepperStep = {
 
 function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
 	const steps = flow.useSteps();
-	const flowRequiresAuthAt = steps.findIndex( ( step ) => step.requiresLoggedInUser );
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
+	const requiresLoggedInUser = steps.some( ( step ) => step.requiresLoggedInUser );
 
-	// Inject the user step before the auth-walled step.
-	if ( flowRequiresAuthAt > -1 && userIsLoggedIn ) {
-		const newSteps = [ ...steps ];
-		newSteps.splice( flowRequiresAuthAt, 0, USER_STEP );
-		return newSteps;
+	if ( userIsLoggedIn || ! requiresLoggedInUser ) {
+		return steps;
 	}
 
-	return steps;
+	return [ ...steps, USER_STEP ];
 }
 
 /**
