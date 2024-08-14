@@ -7,18 +7,18 @@ type PerformanceProfilerDashboardContentProps = {
 	performanceReport?: PerformanceReport;
 };
 
-export const PerformanceProfilerDashboardContent = (
-	props: PerformanceProfilerDashboardContentProps
-) => {
-	const { performanceReport } = props;
+export const PerformanceProfilerDashboardContent = ( {
+	performanceReport,
+}: PerformanceProfilerDashboardContentProps ) => {
+	const { overall_score, fcp, lcp, cls, inp, ttfb } = performanceReport;
 
 	return (
 		<div className="performance-profiler-content">
 			<div className="l-block-wrapper">
-				{ performanceReport?.overall_score && (
+				{ overall_score && (
 					<>
-						<PerformanceScore value={ performanceReport.overall_score * 100 } />
-						<CoreWebVitalsDisplay fcp={ 1794 } lcp={ 1966 } cls={ 0.05 } inp={ 391 } ttfb={ 916 } />
+						<PerformanceScore value={ overall_score * 100 } />
+						<CoreWebVitalsDisplay fcp={ fcp } lcp={ lcp } cls={ cls } inp={ inp } ttfb={ ttfb } />
 					</>
 				) }
 			</div>
