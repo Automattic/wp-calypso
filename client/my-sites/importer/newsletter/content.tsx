@@ -66,7 +66,7 @@ export default function Content( {
 				'Create a new export.' Once the ZIP file is downloaded, upload it in the next step.
 			</p>
 			<Button
-				href={ `https://${ fromSite }/publish/settings#import-export-settings` }
+				href={ `https://${ fromSite }/publish/settings?search=export` }
 				target="_blank"
 				rel="noreferrer noopener"
 			>
