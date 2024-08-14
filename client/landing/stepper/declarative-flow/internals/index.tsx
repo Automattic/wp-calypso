@@ -155,7 +155,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					// We need this special case, because the user step requires an onSuccess prop.
 					// It cannot submit like a normal step would, because then the flow would have to handle the submission.
 					// Instead, Stepper will handle onSuccess and take the user to the right step.
-					onSuccess={ () => navigate( firstAuthWalledStep.slug, undefined, true ) }
+					__onSuccess={ () => navigate( firstAuthWalledStep.slug, undefined, true ) }
 				/>
 			);
 		}

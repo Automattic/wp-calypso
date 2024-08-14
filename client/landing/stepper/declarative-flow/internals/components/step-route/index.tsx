@@ -43,7 +43,8 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 	}, [ loginUrl, shouldAuthUser, useBuiltItInAuth ] );
 
 	if ( useBuiltItInAuth && shouldAuthUser && ! userIsLoggedIn ) {
-		return navigate( 'user', undefined, true );
+		navigate( 'user', undefined, true );
+		return null;
 	}
 
 	if ( shouldSkipRender ) {

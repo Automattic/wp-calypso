@@ -18,7 +18,7 @@ import { useHandleSocialResponse } from './handle-social-response';
 import './style.scss';
 import { useSocialService } from './use-social-service';
 
-const UserStep: Step = function UserStep( { flow, stepName, onSuccess } ) {
+const UserStep: Step = function UserStep( { flow, stepName, __onSuccess } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
@@ -37,9 +37,9 @@ const UserStep: Step = function UserStep( { flow, stepName, onSuccess } ) {
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else {
-			onSuccess?.();
+			__onSuccess?.();
 		}
-	}, [ dispatch, isLoggedIn, onSuccess ] );
+	}, [ dispatch, isLoggedIn, __onSuccess ] );
 
 	const loginLink = login( {
 		signupUrl: window.location.pathname + window.location.search,
