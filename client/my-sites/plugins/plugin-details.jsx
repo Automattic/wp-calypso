@@ -530,11 +530,7 @@ function PluginDetails( props ) {
 					/>
 				</div>
 			) }
-			{ isMarketplaceProduct && ! showPlaceholder && (
-				<div className="plugins-details__marketplace-footer">
-					<MarketplaceFooter />
-				</div>
-			) }
+			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
 		</MainComponent>
 	);
 }
