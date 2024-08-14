@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -111,7 +112,7 @@ const StyledLoadingScreen = styled.div`
 
 const FootNote = styled.div`
 	max-width: 460px;
-	background-color: #f7f8fe;
+	background-color: #e7f0fa;
 	padding: 25px;
 	margin-top: 65px;
 
@@ -121,8 +122,14 @@ const FootNote = styled.div`
 		line-height: 20px;
 		margin-bottom: 10px;
 	}
+
 	p {
 		font-size: 14px;
+		margin-bottom: 0;
+	}
+
+	.learn-more-link {
+		margin-top: 20px;
 	}
 `;
 
@@ -151,7 +158,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 		{
 			heading: translate( 'Did you know?' ),
 			description: translate(
-				'WordPress.com hosting comes with unlimited bandwidth, visitors, and traffic so you’ll never be surprised by extra fees.'
+				"WordPress.com hosting comes with unlimited bandwidth, visitors, and traffic so you'll never be surprised by extra fees."
 			),
 		},
 		{
@@ -165,20 +172,17 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 			description: translate(
 				'Bring your site to WordPress.com for free in minutes, not hours, with our intuitive migration tools—backed by 24/7 support from our WordPress experts.'
 			),
+			link: localizeUrl( 'https://wordpress.com/move/' ),
 		},
 		{
 			heading: translate( 'WordPress.com—Feel the Difference' ),
 			description: translate(
 				'Tap into our lightning-fast infrastructure—from a 28+ location global CDN to hundreds of WordPress optimizations, your site will be faster, smoother, and ready to take on anything.'
 			),
-		},
-		{
-			heading: translate( 'Performance Mattters' ),
-			description: translate(
-				'Walmart found that for every one second improvement in page load time they achieved, conversions increased by 2%.'
-			),
+			link: localizeUrl( 'https://wordpress.com/hosting/' ),
 		},
 	];
+	const [ currentTip, setCurrentTip ] = useState( 0 );
 
 	useEffect( () => {
 		const timeoutId = setTimeout( () => {
@@ -190,6 +194,19 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 
 		return () => clearTimeout( timeoutId );
 	} );
+
+	useEffect( () => {
+		const updateCurrentTip = () => {
+			setTimeout( () => {
+				const randomTip = Math.floor( Math.random() * tips.length );
+				setCurrentTip( randomTip );
+
+				updateCurrentTip();
+			}, 10000 );
+		};
+
+		updateCurrentTip();
+	}, [] );
 
 	const stepStatus = ( index: number, step: number ) => {
 		if ( step > index ) {
@@ -204,17 +221,26 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	return (
 		<LayoutBlock className="landing-page-header-block">
 			<StyledLoadingScreen>
-				<h2>Testing your site’s speed…</h2>
+				<h2>{ translate( "Testing your site's speed…" ) }</h2>
 				{ steps.map( ( heading, index ) => (
 					<span key={ index } className={ stepStatus( index, step ) }>
 						<Gridicon icon="checkmark" size={ 18 } />
 						{ heading }
 					</span>
 				) ) }
-				<FootNote>
-					<h4>{ tips[ step ].heading }</h4>
-					<p>{ tips[ step ].description }</p>
-				</FootNote>
+				{ tips[ currentTip ] && (
+					<FootNote>
+						<h4>{ tips[ currentTip ].heading }</h4>
+						<p>{ tips[ currentTip ].description }</p>
+						{ tips[ currentTip ].link && (
+							<p className="learn-more-link">
+								<a href={ tips[ currentTip ].link } target="_blank" rel="noreferrer">
+									{ translate( 'Learn more ↗' ) }
+								</a>
+							</p>
+						) }
+					</FootNote>
+				) }
 			</StyledLoadingScreen>
 		</LayoutBlock>
 	);

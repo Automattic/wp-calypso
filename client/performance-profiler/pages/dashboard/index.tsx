@@ -60,7 +60,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const performanceReport = activeTab === TabType.mobile ? mobileReport : desktopReport;
 
 	return (
-		<div className="container">
+		<div className="peformance-profiler-dashboard-container">
 			<DocumentHead title={ translate( 'Speed Test' ) } />
 
 			<PerformanceProfilerHeader
