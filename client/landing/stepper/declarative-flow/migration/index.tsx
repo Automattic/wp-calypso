@@ -22,7 +22,7 @@ const {
 	PROCESSING,
 	SITE_CREATION_STEP,
 	MIGRATION_UPGRADE_PLAN,
-	SITE_MIGRATION_HOW_TO_MIGRATE,
+	MIGRATION_HOW_TO_MIGRATE,
 	MIGRATION_SOURCE_URL,
 	SITE_MIGRATION_INSTRUCTIONS,
 	SITE_MIGRATION_STARTED,
@@ -90,7 +90,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				}
 
 				if ( props?.goToCheckout ) {
-					const redirectAfterCheckout = SITE_MIGRATION_HOW_TO_MIGRATE.slug;
+					const redirectAfterCheckout = MIGRATION_HOW_TO_MIGRATE.slug;
 					const destination = addQueryArgs(
 						{ siteId, siteSlug },
 						`/setup/${ flowPath }/${ redirectAfterCheckout }`
@@ -115,7 +115,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				}
 			},
 		},
-		[ SITE_MIGRATION_HOW_TO_MIGRATE.slug ]: {
+		[ MIGRATION_HOW_TO_MIGRATE.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const how = getFromPropsOrUrl( 'how', props );
 				const siteId = getFromPropsOrUrl( 'siteId', props );
@@ -162,7 +162,7 @@ export default {
 			SITE_CREATION_STEP,
 			PROCESSING,
 			MIGRATION_UPGRADE_PLAN,
-			SITE_MIGRATION_HOW_TO_MIGRATE,
+			MIGRATION_HOW_TO_MIGRATE,
 			MIGRATION_SOURCE_URL,
 			SITE_MIGRATION_INSTRUCTIONS,
 			SITE_MIGRATION_STARTED,
