@@ -105,7 +105,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 
 	return useMutation<
 		{ chat_id: string; messages: Message[] },
-		unknown,
+		{ data: { status: number; messages: Message[] } },
 		{ message: Message },
 		{ internal_message_id: string }
 	>( {
@@ -211,8 +211,8 @@ export const useOdieSendMessage = (): UseMutationResult<
 				throw new Error( 'Context is undefined' );
 			}
 
-			const { data } = response as { data: { status: number } };
-			const isRateLimitError = data.status === 429;
+			const isRateLimitError =
+				response && response.data && response.data.status === 429 ? true : false;
 
 			const { internal_message_id } = context;
 			const message = {
