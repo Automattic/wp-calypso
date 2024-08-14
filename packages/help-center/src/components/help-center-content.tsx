@@ -76,6 +76,13 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	const isUserElegible = data?.eligibility.is_user_eligible ?? false;
 
+	useEffect( () => {
+		// Prevent not eligible users from accessing wapuu.
+		if ( ! isUserElegible && ! isLoadingEnvironment ) {
+			navigate( '/' );
+		}
+	}, [ isUserElegible, isLoadingEnvironment, navigate ] );
+
 	const navigateToSupportDocs = useCallback(
 		( blogId: string, postId: string, title: string, link: string ) => {
 			navigate(
