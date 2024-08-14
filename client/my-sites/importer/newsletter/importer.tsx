@@ -70,16 +70,18 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	let stepIndex = 0;
 	let nextStep = stepSlugs[ 0 ];
 
-	const { data: paidNewsletterQuery } = usePaidNewsletterQuery( engine, step, selectedSite?.ID );
+	const { data: paidNewsletterQuery, isFetching: isFetchingPaidNewsletter } =
+		usePaidNewsletterQuery( engine, step, selectedSite?.ID );
 
 	stepSlugs.forEach( ( stepName, index ) => {
 		if ( stepName === step ) {
 			stepIndex = index;
 			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
-
-		const status = paidNewsletterQuery?.steps[ stepName ]?.status ?? '';
-		stepsProgress[ index ] = stepsProgress[ index ] + ' (' + status + ')';
+		if ( ! isFetchingPaidNewsletter ) {
+			const status = paidNewsletterQuery?.steps[ stepName ]?.status ?? '';
+			stepsProgress[ index ] = stepsProgress[ index ] + ' (' + status + ')';
+		}
 	} );
 
 	const { skipNextStep } = useSkipNextStepMutation();
@@ -98,6 +100,11 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	} );
 
 	const Step = steps[ stepIndex ] || steps[ 0 ];
+
+	let stepContent = {};
+	if ( ! isFetchingPaidNewsletter ) {
+		stepContent = paidNewsletterQuery?.steps[ step ]?.content ?? {};
+	}
 
 	return (
 		<div className="newsletter-importer">
@@ -126,6 +133,8 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 					skipNextStep={ () => {
 						skipNextStep( selectedSite?.ID, engine, nextStep, step );
 					} }
+					cardData={ stepContent }
+					engine={ engine }
 				/>
 			) }
 		</div>

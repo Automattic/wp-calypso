@@ -77,6 +77,7 @@ export default function Content( {
 					importerData={ importerData }
 					fromSite={ fromSite as string }
 					nextStepUrl={ nextStepUrl }
+					skipNextStep={ skipNextStep }
 				/>
 			) }
 		</Card>

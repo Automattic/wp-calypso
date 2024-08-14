@@ -17,6 +17,7 @@ export const usePaidNewsletterQuery = ( engine: string, currentStep: string, sit
 				}
 			);
 		},
-		staleTime: 3600000, // 1 hour
+		refetchOnWindowFocus: true,
+		staleTime: 6000, // 1 hour
 	} );
 };
