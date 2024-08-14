@@ -40,6 +40,7 @@ function renderSinglePlugin( context, siteUrl ) {
 			path: context.path,
 			pluginSlug,
 			siteUrl,
+			isJetpackCloud: true, // TODO: this should only be true when inside the "Manage plugins" section
 		} );
 	}
 }
