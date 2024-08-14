@@ -1,11 +1,15 @@
 import { Card } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ImporterActionButton from '../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../importer-action-buttons/container';
 
 type Props = {
 	nextStepUrl: string;
+	skipNextStep: () => void;
+	cardData: any;
 };
 
-export default function MapPlans( { nextStepUrl }: Props ) {
+export default function MapPlans( { nextStepUrl, skipNextStep }: Props ) {
 	return (
 		<Card>
 			<h2>Paid newsletter offering</h2>
@@ -15,10 +19,26 @@ export default function MapPlans( { nextStepUrl }: Props ) {
 				</strong>{ ' ' }
 				to prevent disruption to your current paid subscribers.
 			</p>
-			<Button variant="primary">Continue</Button>{ ' ' }
-			<Button variant="secondary" href={ nextStepUrl }>
-				Skip for now
-			</Button>
+			<ImporterActionButtonContainer noSpacing>
+				<ImporterActionButton
+					primary
+					href={ nextStepUrl }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_paid_importer_map_plans' );
+					} }
+				>
+					Continue
+				</ImporterActionButton>
+				<ImporterActionButton
+					href={ nextStepUrl }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_paid_importer_map_plans_skipped' );
+						skipNextStep();
+					} }
+				>
+					Skip for now
+				</ImporterActionButton>
+			</ImporterActionButtonContainer>
 		</Card>
 	);
 }

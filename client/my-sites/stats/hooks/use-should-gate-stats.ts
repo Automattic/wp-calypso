@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useSelector } from 'calypso/state';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
@@ -119,11 +118,6 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 
 	// Check gated modules for Jetpack sites.
 	if ( jetpackSite && ! atomicSite ) {
-		const restrictDashboard = config.isEnabled( 'stats/restricted-dashboard' );
-		if ( ! restrictDashboard ) {
-			return false;
-		}
-
 		if ( supportStatsCommercialUse ) {
 			return false;
 		}

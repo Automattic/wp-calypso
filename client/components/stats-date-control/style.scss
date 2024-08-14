@@ -134,6 +134,12 @@ $date-control-mobile-layout-switch: $break-small;
 	}
 }
 
+.stats-date-control-picker-dates__calendar {
+	display: flex;
+	gap: 18px;
+	padding-bottom: 18px;
+}
+
 .stats-date-control-picker__popover-content {
 	display: flex;
 	min-width: 320px;

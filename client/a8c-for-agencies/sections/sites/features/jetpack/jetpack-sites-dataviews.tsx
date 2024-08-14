@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { Button, Gridicon } from '@automattic/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useContext, useMemo, useState, ReactNode } from 'react';
@@ -123,7 +122,7 @@ export const JetpackSitesDataViews = ( {
 	const [ monitorRef, setMonitorRef ] = useState< HTMLElement | null >();
 	const [ scanRef, setScanRef ] = useState< HTMLElement | null >();
 	const [ pluginsRef, setPluginsRef ] = useState< HTMLElement | null >();
-	const [ actionsRef, setActionsRef ] = useState< HTMLElement | null >();
+	const [ actionsRef ] = useState< HTMLElement | null >();
 
 	const fields = useMemo< DataViewsColumn[] >(
 		() => [
@@ -382,6 +381,8 @@ export const JetpackSitesDataViews = ( {
 						return <div className="sites-dataview__site-error"></div>;
 					}
 
+					const isDevSite = item.isDevSite ?? false;
+
 					return (
 						<>
 							{ item.site.error && <span className="sites-dataview__site-error-span"></span> }
@@ -397,19 +398,12 @@ export const JetpackSitesDataViews = ( {
 										{ ! item.site.error && (
 											<SiteActions
 												isLargeScreen={ isLargeScreen }
+												isDevSite={ isDevSite }
 												site={ item.site }
 												siteError={ item.site.error }
 												onRefetchSite={ onRefetchSite }
 											/>
 										) }
-										<Button
-											onClick={ () => openSitePreviewPane( item.site.value ) }
-											className="site-preview__open"
-											borderless
-											ref={ ( ref ) => setActionsRef( ( current ) => current || ref ) }
-										>
-											<Gridicon icon="chevron-right" />
-										</Button>
 									</>
 								) }
 							</div>
@@ -465,6 +459,51 @@ export const JetpackSitesDataViews = ( {
 		dataViewsState: dataViewsState,
 		onSelectionChange: ( [ item ]: SiteData[] ) => openSitePreviewPane( item.site.value ),
 	} );
+
+	useEffect( () => {
+		// If the user clicks on a row, open the preview pane by triggering the View details button click.
+		const handleRowClick = ( event: Event ) => {
+			const target = event.target as HTMLElement;
+			const row = target.closest(
+				'.dataviews-view-table__row, li:has(.dataviews-view-list__item)'
+			);
+
+			if ( row ) {
+				const isButtonOrLink = target.closest( 'button, a' );
+				if ( ! isButtonOrLink ) {
+					const button = row.querySelector( '.sites-dataviews__site' ) as HTMLButtonElement;
+					if ( button ) {
+						button.click();
+					}
+				}
+			}
+		};
+
+		const rowsContainer = document.querySelector( '.dataviews-view-table, .dataviews-view-list' );
+
+		if ( rowsContainer ) {
+			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
+		}
+
+		// We need to trigger the click event on the View details button when the selected item changes to ensure highlighted row is correct.
+		if (
+			rowsContainer?.classList.contains( 'dataviews-view-list' ) &&
+			dataViewsState?.selectedItem?.client_id
+		) {
+			const trigger: HTMLButtonElement | null = rowsContainer.querySelector(
+				`li:not(.is-selected) .sites-dataviews__site`
+			);
+			if ( trigger ) {
+				trigger.click();
+			}
+		}
+
+		return () => {
+			if ( rowsContainer ) {
+				rowsContainer.removeEventListener( 'click', handleRowClick as EventListener );
+			}
+		};
+	}, [ dataViewsState ] );
 
 	// Actions: Pause Monitor, Resume Monitor, Custom Notification, Reset Notification
 	// todo: Currently not in use until bulk selections are properly implemented.

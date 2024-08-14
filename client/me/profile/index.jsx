@@ -23,7 +23,6 @@ import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import SiteLevelProfileBanner from './site-level-profile-banner';
 import WPAndGravatarLogo from './wp-and-gravatar-logo';
 
 import './style.scss';
@@ -60,8 +59,6 @@ class Profile extends Component {
 						}
 					) }
 				/>
-
-				{ isEnabled( 'layout/site-level-user-profile' ) && <SiteLevelProfileBanner /> }
 
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">

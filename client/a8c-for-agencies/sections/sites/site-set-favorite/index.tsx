@@ -163,7 +163,8 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 
 	const { isPending, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
 
-	const handleFavoriteChange = () => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const handleFavoriteChange = ( e: any ) => {
 		mutate( {
 			siteId,
 			isFavorite,
@@ -176,6 +177,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 					: 'calypso_jetpack_agency_dashboard_set_favorite_site'
 			)
 		);
+		e.stopPropagation();
 	};
 
 	return (

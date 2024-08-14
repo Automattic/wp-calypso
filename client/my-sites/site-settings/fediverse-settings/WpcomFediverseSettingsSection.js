@@ -208,6 +208,10 @@ export const WpcomFediverseSettingsSection = ( { siteId, needsBorders = true } )
 		}
 	);
 	const disabled = isLoading || isError || isPrivate;
+	const baseSettingsLink = `/settings/general/${ domain }#site-privacy-settings`;
+	const settingsLink = isJetpackCloud()
+		? `https://wordpress.com${ baseSettingsLink }`
+		: baseSettingsLink;
 	return (
 		<>
 			<Wrapper needsCard={ needsBorders }>
@@ -229,23 +233,11 @@ export const WpcomFediverseSettingsSection = ( { siteId, needsBorders = true } )
 				/>
 				{ isPrivate && (
 					<Notice status="is-warning" translate={ translate } isCompact>
-						{ isJetpackCloud()
-							? translate(
-									'You cannot enter the fediverse until your site is publicly launched. {{link}}Review Privacy settings on WordPress.com{{/link}}.',
-									{
-										components: {
-											link: <a href={ `https://wordpress.com/settings/general/${ domain }` } />,
-										},
-									}
-							  )
-							: translate(
-									'You cannot enter the fediverse until your site is publicly launched. {{link}}Review Privacy settings{{/link}}.',
-									{
-										components: {
-											link: <a href={ `/settings/general/${ domain }` } />,
-										},
-									}
-							  ) }
+						{ translate( '{{link}}Launch your site{{/link}} to enter the fediverse!', {
+							components: {
+								link: <a href={ settingsLink } />,
+							},
+						} ) }
 					</Notice>
 				) }
 			</Wrapper>

@@ -1,17 +1,18 @@
 /* stylelint-disable */
-@import '@automattic/typography/styles/variables';
-@import '../../assets/stylesheets/shared/mixins/_breakpoints';
+@import "@automattic/typography/styles/variables";
+@import "../../assets/stylesheets/shared/mixins/_breakpoints";
+/* stylelint-enable */
 
 // SEARCH RESULTS
 .inline-help__empty-results {
 	padding: 8px 16px 0;
 	margin: 0;
 	font-size: $font-body-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-style: italic;
 	text-align: left;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated(">660px") {
 		font-size: $font-body;
 	}
 }
@@ -36,7 +37,7 @@
 	text-align: left;
 
 	&::after {
-		content: ':';
+		content: ":";
 	}
 }
 
@@ -52,7 +53,7 @@
 	margin: 0;
 	font-size: $font-body-small;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated(">660px") {
 		font-size: $font-title-small;
 		line-height: 1.3;
 	}
@@ -71,7 +72,7 @@
 		.gridicon,
 		svg {
 			align-self: baseline;
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 			flex-shrink: 0;
 			margin-right: 8px;
 			position: relative;
@@ -80,19 +81,19 @@
 
 		&:hover {
 			cursor: pointer;
-			background: var( --color-neutral-0 );
+			background: var(--color-neutral-0);
 
 			.gridicon {
-				color: var( --color-neutral );
+				color: var(--color-neutral);
 			}
 		}
 
 		&:focus {
-			background: var( --color-primary );
-			color: var( --color-text-inverted );
+			background: var(--color-link-0);
 
+			svg,
 			.gridicon {
-				color: var( --color-text-inverted );
+				fill: var(--color-link-dark);
 			}
 		}
 	}
@@ -105,7 +106,7 @@
 
 	.search {
 		border-radius: 2px 2px 0 0;
-		border: 6px solid var( --color-surface );
+		border: 6px solid var(--color-surface);
 
 		&.is-open {
 			width: auto;
@@ -114,30 +115,30 @@
 
 		&.is-open.has-focus {
 			box-shadow: none;
-			border-color: var( --color-primary-light );
+			border-color: var(--color-primary-light);
 
-			@include breakpoint-deprecated( '>660px' ) {
+			@include breakpoint-deprecated(">660px") {
 				box-shadow: none;
 			}
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated(">660px") {
 			border-width: 4px;
 		}
 
 		.search__input {
 			font-size: $font-body;
 			padding: 12px 0;
-			color: var( --color-text );
+			color: var(--color-text);
 
-			@include breakpoint-deprecated( '>660px' ) {
+			@include breakpoint-deprecated(">660px") {
 				padding: 16px 0;
 			}
 		}
 
 		.search__icon-navigation:focus {
 			border-radius: 2px;
-			box-shadow: 0 0 0 3px var( --color-primary-light );
+			box-shadow: 0 0 0 3px var(--color-primary-light);
 		}
 	}
 }

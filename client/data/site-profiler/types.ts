@@ -145,6 +145,14 @@ export interface UrlPerformanceMetricsQueryResponse {
 	};
 }
 
+export interface UrlPerformanceInsightsQueryResponse {
+	pagespeed: {
+		status: string;
+		mobile: PerformanceReport | string;
+		desktop: PerformanceReport | string;
+	};
+}
+
 export interface PerformanceMetricsDataQueryResponse {
 	diagnostic: Record< string, PerformanceMetricsItemQueryResponse >;
 	pass: Record< string, PerformanceMetricsItemQueryResponse >;
