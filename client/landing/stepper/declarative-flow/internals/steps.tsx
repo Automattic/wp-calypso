@@ -1,3 +1,5 @@
+import { StepperStep } from './types';
+
 export const STEPS = {
 	BLOGGER_STARTING_POINT: {
 		slug: 'bloggerStartingPoint',
@@ -245,6 +247,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/importer-migrate-message' ),
 	},
 
+	SITE_MIGRATION_CREDENTIALS: {
+		slug: 'site-migration-credentials',
+		asyncComponent: () => import( './steps-repository/site-migration-credentials' ),
+	},
+
 	SITE_MIGRATION_IDENTIFY: {
 		slug: 'site-migration-identify',
 		asyncComponent: () => import( './steps-repository/site-migration-identify' ),
@@ -284,8 +291,8 @@ export const STEPS = {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
 	},
-	IMPORT_OR_MIGRATE_WITH_UPGRADE: {
-		slug: 'import-or-migrate-with-selection',
-		asyncComponent: () => import( './steps-repository/import-or-migrate-with-upgrade' ),
+	PLATFORM_IDENTIFICATION: {
+		slug: 'platform-identification',
+		asyncComponent: () => import( './steps-repository/platform-identification' ),
 	},
-};
+} satisfies Record< string, StepperStep >;

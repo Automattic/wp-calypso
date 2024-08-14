@@ -433,7 +433,7 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="visit-site"
 				subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ] }
 			>
-				{ siteTitle }
+				{ siteTitle.length > 40 ? `${ siteTitle.substring( 0, 40 ) }\u2026` : siteTitle }
 			</Item>
 		);
 	}

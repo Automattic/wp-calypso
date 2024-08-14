@@ -6,7 +6,7 @@ This component is distinguished from `Wizard` and `WizardProgressBar` in that in
 
 ## Properties
 
-### `steps { string | { message: string, onClick: () => void}[] }`
+### `steps { string | { message: string, onClick: () => void, indicator: <Icon icon={check} />, show: 'always' }[] }`
 
 A list of the display name of the steps to progress through. Optionally an object with a click handler
 

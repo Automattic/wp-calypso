@@ -54,6 +54,7 @@ const EducationFooterContainer = styled.div`
 const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	--color-accent: #117ac9;
 	--color-accent-60: #0e64a5;
+	margin-bottom: -32px;
 
 	.marketplace-cta {
 		min-width: 122px;
@@ -68,7 +69,7 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	${ ( { isloggedIn } ) =>
 		! isloggedIn &&
 		`${ SectionContainer } {
-		padding-bottom: 0;
+		padding-bottom: 32px;
 	}` }
 
 	${ SectionContainer }::before {
@@ -103,30 +104,28 @@ export const MarketplaceFooter = () => {
 			<Section
 				header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
 			>
-				<>
-					{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
-						<Button className="is-primary marketplace-cta" href={ startUrl }>
-							{ __( 'Get Started' ) }
-						</Button>
-					) }
-					<ThreeColumnContainer>
-						<FeatureItem header={ __( 'Fully Managed' ) }>
-							{ __(
-								'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
-							) }
-						</FeatureItem>
-						<FeatureItem header={ __( 'Thousands of plugins' ) }>
-							{ __(
-								'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
-							) }
-						</FeatureItem>
-						<FeatureItem header={ __( 'Flexible pricing' ) }>
-							{ __(
-								'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
-							) }
-						</FeatureItem>
-					</ThreeColumnContainer>
-				</>
+				{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
+					<Button className="is-primary marketplace-cta" href={ startUrl }>
+						{ __( 'Get Started' ) }
+					</Button>
+				) }
+				<ThreeColumnContainer>
+					<FeatureItem header={ __( 'Fully Managed' ) }>
+						{ __(
+							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
+						) }
+					</FeatureItem>
+					<FeatureItem header={ __( 'Thousands of plugins' ) }>
+						{ __(
+							'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
+						) }
+					</FeatureItem>
+					<FeatureItem header={ __( 'Flexible pricing' ) }>
+						{ __(
+							'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
+						) }
+					</FeatureItem>
+				</ThreeColumnContainer>
 			</Section>
 		</MarketplaceContainer>
 	);

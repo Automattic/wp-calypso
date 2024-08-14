@@ -30,7 +30,7 @@ a.readymade-template {
 	color: var(--studio-white);
 }
 
-.readymade-template__content {
+.readymade-template__preview {
 	--readymade-template-width: 390px;
 	width: var(--readymade-template-width);
 	height: calc(var(--readymade-template-width) * 1.4);
@@ -38,6 +38,7 @@ a.readymade-template {
 	margin-bottom: 24px;
 	overflow: hidden;
 	border-radius: 2px;
+	pointer-events: none;
 
 	@media (max-width: $break-huge) {
 		--readymade-template-width: calc(100vw / 3 - 90px);

@@ -3,7 +3,7 @@ import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-produc
 import page from '@automattic/calypso-router';
 import { Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import { AnyAction } from 'redux';
@@ -190,7 +190,10 @@ const HostingFeatures = () => {
 	if ( isTransferInProgress && config.isEnabled( 'hosting-overview-refinements' ) ) {
 		title = translate( 'Activating hosting features' );
 		description = translate(
-			'Stay tuned, as we activate the following features included in your plan'
+			"The hosting features will appear here automatically when they're ready!",
+			{
+				comment: 'Description of the hosting features page when the features are being activated.',
+			}
 		);
 	} else if ( showActivationButton ) {
 		title = activateTitle;
@@ -248,6 +251,7 @@ const HostingFeatures = () => {
 	return (
 		<div className="hosting-features">
 			<div className="hosting-features__hero">
+				{ isTransferInProgress && <Spinner className="hosting-features__content-spinner" /> }
 				<h1>{ title }</h1>
 				<p>{ description }</p>
 				{ buttons }

@@ -17,6 +17,7 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
+import { ReadymadeTemplates } from 'calypso/my-sites/patterns/components/readymade-templates';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { TypeToggle } from 'calypso/my-sites/patterns/components/type-toggle';
 import { ViewToggle } from 'calypso/my-sites/patterns/components/view-toggle';
@@ -35,7 +36,6 @@ import {
 	PatternView,
 	CategoryGalleryFC,
 	PatternGalleryFC,
-	ReadymadeTemplatesFC,
 } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -85,13 +85,11 @@ function scrollToSection( element: HTMLDivElement, scrollBehavior: ScrollBehavio
 type PatternLibraryProps = {
 	categoryGallery: CategoryGalleryFC;
 	patternGallery: PatternGalleryFC;
-	readymadeTemplates: ReadymadeTemplatesFC;
 };
 
 export const PatternLibrary = ( {
 	categoryGallery: CategoryGallery,
 	patternGallery: PatternGallery,
-	readymadeTemplates: ReadymadeTemplates,
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
 	const translate = useTranslate();

@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Popover, Gridicon, Button, WordPressLogo, JetpackLogo } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -6,6 +7,7 @@ import { useRef, useState } from 'react';
 import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
+import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -13,6 +15,8 @@ import A4ALogo from '../a4a-logo';
 import {
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+	A4A_PAYMENT_METHODS_ADD_LINK,
+	A4A_SITES_LINK,
 	A4A_SITES_LINK_NEEDS_SETUP,
 } from '../sidebar-menu/lib/constants';
 import A4AConnectionModal from './a4a-connection-modal';
@@ -29,17 +33,18 @@ type Props = {
 	onWPCOMImport?: ( blogIds: number[] ) => void;
 	showMainButtonLabel: boolean;
 	devSite?: boolean;
-	toggleSiteConfigurationsModal?: () => void;
+	toggleDevSiteConfigurationsModal?: () => void;
 };
 
 export default function AddNewSiteButton( {
 	showMainButtonLabel,
 	onWPCOMImport,
 	devSite,
-	toggleSiteConfigurationsModal,
+	toggleDevSiteConfigurationsModal,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { paymentMethodRequired } = usePaymentMethod();
 
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
 	const [ showA4AConnectionModal, setShowA4AConnectionModal ] = useState( false );
@@ -204,7 +209,15 @@ export default function AddNewSiteButton( {
 					heading: translate( 'WordPress.com' ),
 					description: translate( 'Create a site and try our hosting features for free' ),
 					buttonProps: {
-						onClick: toggleSiteConfigurationsModal,
+						onClick: () => {
+							if ( paymentMethodRequired ) {
+								page(
+									`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
+								);
+							} else {
+								toggleDevSiteConfigurationsModal?.();
+							}
+						},
 					},
 					extraContent: hasAvailableDevSites ? (
 						<div className="site-selector-and-importer__popover-site-count">

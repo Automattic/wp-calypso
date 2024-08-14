@@ -22,6 +22,7 @@
 	"features": {
 		"ad-tracking": true,
 		"akismet/checkout-quantity-dropdown": true,
+		"automated-migration/collect-credentials": false,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": false,
 		"calypso/big-sky": false,
@@ -137,6 +138,7 @@
 		"p2/p2-plus": true,
 		"p2-enabled": false,
 		"pattern-assembler/v2": true,
+		"performance-profiler": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
@@ -187,6 +189,7 @@
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/paid-wpcom-v2": true,
+		"stats/date-picker-calendar": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"subscriber-csv-upload": true,

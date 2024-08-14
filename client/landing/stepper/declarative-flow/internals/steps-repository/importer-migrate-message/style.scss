@@ -2,9 +2,9 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .import-hosted-site,
+.migration :not(:has(.list__wrapper)),
 .site-migration :not(.site-migration-instructions--launchpad),
 .import-focused.migrate-message {
-
 	.step-container__header {
 		margin: auto;
 		max-width: 720px;
@@ -29,7 +29,6 @@
 		}
 
 		.feature {
-
 			.icon {
 				display: flex;
 				min-width: 36px;
@@ -49,7 +48,6 @@
 				margin-bottom: 14px;
 				gap: 12px;
 			}
-
 		}
 
 		svg {
