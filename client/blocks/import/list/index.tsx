@@ -49,11 +49,8 @@ export default function ListStep( props: Props ) {
 	const title = props.title || __( 'Import content from another platform' );
 	const subTitle = props.subTitle || __( 'Select the platform where your content lives' );
 	const skipTracking = props.skipTracking;
+	const primaryListOptions: ImporterOption[] = getImportersAsImporterOption( 'primary' );
 
-	// We need to remove the wix importer from the primary importers list.
-	const primaryListOptions: ImporterOption[] = getImportersAsImporterOption( 'primary' ).filter(
-		( option ) => option.value !== 'wix'
-	);
 	// We need to remove the icon property for secondary importers to avoid display issues.
 	const secondaryListOptions: ImporterOption[] = getImportersAsImporterOption( 'secondary' ).map(
 		( { icon, ...rest } ) => rest
