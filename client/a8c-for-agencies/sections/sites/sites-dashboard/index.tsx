@@ -64,6 +64,7 @@ export default function SitesDashboard() {
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 		showOnlyFavorites,
+		showOnlyDevelopmentSites,
 		hideListing,
 		setHideListing,
 		recentlyCreatedSiteId,
@@ -89,6 +90,7 @@ export default function SitesDashboard() {
 	const [ agencyDashboardFilter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],
 		showOnlyFavorites: showOnlyFavorites || false,
+		showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
 	} );
 
 	useEffect( () => {
@@ -97,8 +99,14 @@ export default function SitesDashboard() {
 		setAgencyDashboardFilter( {
 			issueTypes: selectedFilters,
 			showOnlyFavorites: showOnlyFavorites || false,
+			showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
 		} );
-	}, [ dataViewsState.filters, setAgencyDashboardFilter, showOnlyFavorites ] );
+	}, [
+		dataViewsState.filters,
+		setAgencyDashboardFilter,
+		showOnlyFavorites,
+		showOnlyDevelopmentSites,
+	] );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
@@ -159,6 +167,7 @@ export default function SitesDashboard() {
 			currentPage: dataViewsState.page,
 			sort: dataViewsState.sort,
 			showOnlyFavorites,
+			showOnlyDevelopmentSites,
 		} );
 		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
 			page.show( updatedUrl );
@@ -173,6 +182,7 @@ export default function SitesDashboard() {
 		dataViewsState.search,
 		dataViewsState.page,
 		showOnlyFavorites,
+		showOnlyDevelopmentSites,
 		dataViewsState.sort,
 		hideListing,
 	] );

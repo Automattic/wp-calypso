@@ -64,6 +64,7 @@ export default function WPCOMSitesTable( {
 		filter: {
 			issueTypes: [],
 			showOnlyFavorites: false,
+			showOnlyDevelopmentSites: false,
 		},
 	} );
 

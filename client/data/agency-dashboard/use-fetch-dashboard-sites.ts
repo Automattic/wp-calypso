@@ -73,6 +73,7 @@ const useFetchDashboardSites = ( {
 
 	const isAgencyOrPartnerAuthEnabled = isPartnerOAuthTokenLoaded || !! agencyId;
 
+	// TODO: Adjust the query to be able to fetch dev sites based on the related filter
 	return useQuery( {
 		// Disable eslint rule since TS isn't grasping that agencyId is being optionally added to the array
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps

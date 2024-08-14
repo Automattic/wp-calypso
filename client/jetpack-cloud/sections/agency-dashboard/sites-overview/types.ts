@@ -285,6 +285,7 @@ export interface AgencyDashboardFilterMap {
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption >;
 	showOnlyFavorites: boolean;
+	showOnlyDevelopmentSites: boolean;
 	isNotMultisite?: boolean;
 };
 

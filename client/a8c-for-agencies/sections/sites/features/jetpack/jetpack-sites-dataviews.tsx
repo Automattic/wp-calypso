@@ -41,6 +41,7 @@ export const JetpackSitesDataViews = ( {
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
+	// TODO: Get showOnlyDevelopmentSites from context and calculate total sites based on that.
 	const { showOnlyFavorites } = useContext( SitesDashboardContext );
 	const totalSites = showOnlyFavorites ? data?.totalFavorites || 0 : data?.total || 0;
 	const sitesPerPage = dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
