@@ -89,10 +89,11 @@ const SiteMigrationSourceUrl: Step = function ( { navigation } ) {
 				stepName="site-migration-identify"
 				flowName="site-migration"
 				className="import__onboarding-page"
-				hideBack
+				hideBack={ navigation?.goBack === undefined }
 				hideSkip
 				hideFormattedHeader
 				goNext={ navigation?.submit }
+				goBack={ navigation?.goBack }
 				isFullLayout
 				stepContent={
 					<SourceSiteInput

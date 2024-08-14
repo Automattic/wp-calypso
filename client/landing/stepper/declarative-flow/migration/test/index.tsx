@@ -57,7 +57,40 @@ describe( `${ flow.name }`, () => {
 		};
 	};
 
-	describe( 'useStepNavigation', () => {
+	const runUseStepNavigationGoBack = ( { from, dependencies = {}, query = {} } ) => {
+		const { runUseStepNavigationGoBack } = renderFlow( flow );
+
+		runUseStepNavigationGoBack( {
+			currentStep: from.slug,
+			dependencies: dependencies,
+			currentURL: addQueryArgs( `/setup/${ from.slug }`, query ),
+		} );
+
+		const destination = getFlowLocation();
+		const [ pathname, searchParams ] = destination?.path?.split( '?' ) ?? [ '', '' ];
+
+		return {
+			step: pathname.replace( /^\/+/, '' ),
+			query: new URLSearchParams( searchParams ),
+		};
+	};
+
+	describe( 'useStepNavigation > goBack', () => {
+		it( 'redirect back user from SOURCE URL TO HOW TO MIGRATE', () => {
+			const destination = runUseStepNavigationGoBack( {
+				from: STEPS.SITE_MIGRATION_SOURCE_URL,
+				dependencies: { platform: 'any-platform' },
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+			} );
+		} );
+	} );
+
+	describe( 'useStepNavigation > Submit', () => {
 		it( 'redirects the user from platform identification to create site step', () => {
 			const destination = runNavigation( {
 				from: STEPS.PLATFORM_IDENTIFICATION,

@@ -1,6 +1,5 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { MIGRATION_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
-import { translate } from 'i18n-calypso';
 import { useSearchParams } from 'react-router-dom';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -39,7 +38,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 	const navigateTo = ( step: StepperStep, keys: string[], props: ProvidedDependencies = {} ) => {
 		const params = keys.reduce( ( acc: Record< string, Primitive >, key ) => {
 			const value = getFromPropsOrUrl( key, props );
-			if ( value !== undefined ) {
+			if ( value !== undefined && value !== '' ) {
 				acc[ key ] = getFromPropsOrUrl( key, props );
 			}
 			return acc;
