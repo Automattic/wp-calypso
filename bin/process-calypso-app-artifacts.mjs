@@ -18,9 +18,6 @@ const appRoot = path.resolve( dirname, '../apps' );
 // when a trunk build changes an app, set "slackNotify: true" for the app which
 // requires it.
 const APP_CONFIG = {
-	'editing-toolkit': {
-		artifactDir: path.resolve( appRoot, 'editing-toolkit/editing-toolkit-plugin' ),
-	},
 	'o2-blocks': {
 		artifactDir: path.resolve( appRoot, 'o2-blocks/release-files' ),
 	},
