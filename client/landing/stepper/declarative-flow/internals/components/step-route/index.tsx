@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { useEffect } from 'react';
-import { Navigate } from 'react-router';
 import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import { StepperPerformanceTrackerStop } from 'calypso/landing/stepper/utils/performance-tracking';
@@ -9,17 +8,18 @@ import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import VideoPressIntroBackground from '../../steps-repository/intro/videopress-intro-background';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
-import type { Flow, StepperStep } from '../../types';
+import type { Flow, Navigate, StepperStep } from '../../types';
 
 type StepRouteProps = {
 	step: StepperStep;
 	flow: Flow;
 	showWooLogo: boolean;
 	renderStep: ( step: StepperStep ) => JSX.Element | null;
+	navigate: Navigate< StepperStep[] >;
 };
 
 // TODO: Check we can move RenderStep function to here and remove the renderStep prop
-const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) => {
+const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRouteProps ) => {
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
 	const stepContent = renderStep( step );
 	const loginUrl = useLoginUrlForFlow( { flow } );
@@ -43,7 +43,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 	}, [ loginUrl, shouldAuthUser, useBuiltItInAuth ] );
 
 	if ( useBuiltItInAuth && shouldAuthUser && ! userIsLoggedIn ) {
-		return <Navigate to="user" replace />;
+		return navigate( 'user', undefined, true );
 	}
 
 	if ( shouldSkipRender ) {

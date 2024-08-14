@@ -195,6 +195,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 								flow={ flow }
 								showWooLogo={ isWooExpressFlow( flow.name ) }
 								renderStep={ renderStep }
+								navigate={ navigate }
 							/>
 						}
 					/>
