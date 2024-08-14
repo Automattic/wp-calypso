@@ -84,7 +84,8 @@
 	font-weight: 500;
 	height: 21px;
 	letter-spacing: 0.2px;
-	line-height: 1.25;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 1.25rem;
 	margin-bottom: 10px;
 	padding: 0 12px;
 	text-align: center;
