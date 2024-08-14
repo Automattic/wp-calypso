@@ -12,6 +12,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
@@ -36,9 +37,10 @@ const USER_STEP: StepperStep = {
 function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
 	const steps = flow.useSteps();
 	const flowRequiresAuthAt = steps.findIndex( ( step ) => step.requiresLoggedInUser );
+	const userIsLoggedIn = useSelector( isUserLoggedIn );
 
 	// Inject the user step before the auth-walled step.
-	if ( flowRequiresAuthAt > -1 ) {
+	if ( flowRequiresAuthAt > -1 && userIsLoggedIn ) {
 		const newSteps = [ ...steps ];
 		newSteps.splice( flowRequiresAuthAt, 0, USER_STEP );
 		return newSteps;
