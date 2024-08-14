@@ -29,7 +29,7 @@ export default function DomainsTableSSLCell( {
 	};
 
 	return (
-		<div className="domains-table-row__ssl-cell">
+		<td className="domains-table-row__ssl-cell">
 			{ sslStatus && (
 				<Icon
 					className={ clsx( 'domains-table-row__ssl-icon', {
@@ -38,6 +38,7 @@ export default function DomainsTableSSLCell( {
 						[ 'domains-table-row__ssl-icon__disabled' ]: sslStatus === 'disabled',
 					} ) }
 					icon={ lock }
+					size={ 18 }
 				/>
 			) }
 			{ sslStatus !== null ? (
@@ -55,6 +56,6 @@ export default function DomainsTableSSLCell( {
 			) : (
 				<>-</>
 			) }
-		</div>
+		</td>
 	);
 }

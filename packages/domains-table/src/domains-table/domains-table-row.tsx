@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
@@ -200,14 +199,13 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 					);
 				}
 
-				if ( column.name === 'ssl' && config.isEnabled( 'hosting-overview-refinements' ) ) {
+				if ( column.name === 'ssl' ) {
 					return (
-						<td key={ domain.domain + column.name }>
-							<DomainsTableSSLCell
-								domainManagementLink={ domainManagementLink }
-								sslStatus={ sslStatus }
-							/>
-						</td>
+						<DomainsTableSSLCell
+							key={ domain.domain + column.name }
+							domainManagementLink={ domainManagementLink }
+							sslStatus={ sslStatus }
+						/>
 					);
 				}
 

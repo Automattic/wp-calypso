@@ -142,6 +142,10 @@
 		}
 	}
 
+	.domains-table-row__ssl-cell {
+		gap: 4px;
+	}
+
 	.domains-table-row__ssl-cell .domains-table-row__ssl-status-button {
 		text-decoration: none;
 
@@ -158,11 +162,6 @@
 	}
 
 	.domains-table-row__ssl-icon {
-		height: 16px;
-		position: relative;
-		top: 3px;
-		margin-right: -5px;
-
 		&__active {
 			fill: var(--studio-green-50);
 		}
