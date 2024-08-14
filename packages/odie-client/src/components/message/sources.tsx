@@ -29,7 +29,7 @@ export const Sources = ( { message }: { message: Message } ) => {
 			];
 		}
 		return [];
-	}, [ message.context?.sources, trackEvent ] );
+	}, [ message?.context?.sources, trackEvent ] );
 
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	if ( ! hasSources ) {
