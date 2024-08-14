@@ -49,6 +49,7 @@ export class UploadingPane extends PureComponent {
 		} ),
 		fromSite: PropTypes.string,
 		nextStepUrl: PropTypes.string,
+		skipNextStep: PropTypes.func,
 	};
 
 	static defaultProps = { description: null, optionalUrl: null };
@@ -236,7 +237,7 @@ export class UploadingPane extends PureComponent {
 	};
 
 	render() {
-		const { fromSite, nextStepUrl } = this.props;
+		const { fromSite, nextStepUrl, skipNextStep } = this.props;
 		const isReadyForImport = this.isReadyForImport();
 		const importerStatusClasses = clsx(
 			'importer__upload-content',
@@ -296,7 +297,9 @@ export class UploadingPane extends PureComponent {
 					</div>
 				) }
 				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton href={ nextStepUrl }>Skip for now</ImporterActionButton>
+					<ImporterActionButton href={ nextStepUrl } onClick={ skipNextStep }>
+						Skip for now
+					</ImporterActionButton>
 				</ImporterActionButtonContainer>
 			</div>
 		);
