@@ -15,9 +15,10 @@ import ImporterActionButtonContainer from '../importer-action-buttons/container'
 type Props = {
 	nextStepUrl: string;
 	siteId: number;
+	skipNextStep: () => void;
 };
 
-export default function SubscriberUploadForm( { nextStepUrl, siteId }: Props ) {
+export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextStep }: Props ) {
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -155,6 +156,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId }: Props ) {
 				<ImporterActionButton
 					href={ nextStepUrl }
 					onClick={ () => {
+						skipNextStep();
 						recordTracksEvent( 'calypso_paid_importer_connect_stripe_skipped' );
 					} }
 				>

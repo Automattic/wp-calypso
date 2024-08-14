@@ -271,6 +271,10 @@ export const STEPS = {
 		slug: 'site-migration-source-url',
 		asyncComponent: () => import( './steps-repository/site-migration-source-url' ),
 	},
+	MIGRATION_SOURCE_URL: {
+		slug: 'migration-source-url',
+		asyncComponent: () => import( './steps-repository/migration-source-url' ),
+	},
 
 	SITE_MIGRATION_UPGRADE_PLAN: {
 		slug: 'site-migration-upgrade-plan',

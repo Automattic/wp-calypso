@@ -23,7 +23,7 @@ const {
 	SITE_CREATION_STEP,
 	MIGRATION_UPGRADE_PLAN,
 	SITE_MIGRATION_HOW_TO_MIGRATE,
-	SITE_MIGRATION_SOURCE_URL,
+	MIGRATION_SOURCE_URL,
 	SITE_MIGRATION_INSTRUCTIONS,
 	SITE_MIGRATION_STARTED,
 	SITE_MIGRATION_ASSISTED_MIGRATION,
@@ -125,7 +125,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_INSTRUCTIONS.slug ) );
 				}
 
-				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_SOURCE_URL.slug ) );
+				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_SOURCE_URL.slug ) );
 			},
 		},
 		[ SITE_MIGRATION_INSTRUCTIONS.slug ]: {
@@ -136,7 +136,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_STARTED.slug ) );
 			},
 		},
-		[ SITE_MIGRATION_SOURCE_URL.slug ]: {
+		[ MIGRATION_SOURCE_URL.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const siteId = getFromPropsOrUrl( 'siteId', props );
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
@@ -163,7 +163,7 @@ export default {
 			PROCESSING,
 			MIGRATION_UPGRADE_PLAN,
 			SITE_MIGRATION_HOW_TO_MIGRATE,
-			SITE_MIGRATION_SOURCE_URL,
+			MIGRATION_SOURCE_URL,
 			SITE_MIGRATION_INSTRUCTIONS,
 			SITE_MIGRATION_STARTED,
 			SITE_MIGRATION_ASSISTED_MIGRATION,

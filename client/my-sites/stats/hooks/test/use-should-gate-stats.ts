@@ -225,8 +225,6 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 					return true;
 				case 'is_running_in_jetpack_site':
 					return true;
-				case 'stats/restricted-dashboard':
-					return true;
 			}
 		} );
 	} );
