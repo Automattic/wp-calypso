@@ -26,7 +26,7 @@ export default function Subscribers( {
 				To generate a CSV file of all your Substack subscribers, go to the Subscribers tab and click
 				'Export.' Once the CSV file is downloaded, upload it in the next step.
 			</p>
-			<Button href={ `https://${ fromSite }/publish/subscribers` }>
+			<Button href={ `https://${ fromSite }/publish/subscribers` } target="_blank">
 				Export subscribers <Gridicon icon="external" />
 			</Button>
 			<hr />
