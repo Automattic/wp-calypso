@@ -105,14 +105,14 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 		<>
 			<DocumentHead title={ translate( 'How do you want to migrate?' ) } />
 			<StepContainer
-				stepName="site-migration-how-to-migrate"
+				stepName={ props.stepName ?? 'site-migration-how-to-migrate' }
 				className="how-to-migrate"
 				shouldHideNavButtons={ false }
 				hideSkip
 				formattedHeader={
 					<FormattedHeader
 						id="how-to-migrate-header"
-						headerText={ headerText || translate( 'How do you want to migrate?' ) }
+						headerText={ headerText ?? translate( 'How do you want to migrate?' ) }
 						subHeaderText={ props.subHeaderText || platformText }
 						align="center"
 					/>

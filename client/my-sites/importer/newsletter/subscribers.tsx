@@ -7,9 +7,15 @@ type Props = {
 	nextStepUrl: string;
 	selectedSite?: SiteDetails;
 	fromSite: QueryArgParsed;
+	skipNextStep: () => void;
 };
 
-export default function Subscribers( { nextStepUrl, selectedSite, fromSite }: Props ) {
+export default function Subscribers( {
+	nextStepUrl,
+	selectedSite,
+	fromSite,
+	skipNextStep,
+}: Props ) {
 	if ( ! selectedSite ) {
 		return null;
 	}
@@ -26,7 +32,11 @@ export default function Subscribers( { nextStepUrl, selectedSite, fromSite }: Pr
 			<hr />
 			<h2>Step 2: Import your subscribers to WordPress.com</h2>
 			{ selectedSite.ID && (
-				<SubscriberUploadForm siteId={ selectedSite.ID } nextStepUrl={ nextStepUrl } />
+				<SubscriberUploadForm
+					siteId={ selectedSite.ID }
+					nextStepUrl={ nextStepUrl }
+					skipNextStep={ skipNextStep }
+				/>
 			) }
 		</Card>
 	);

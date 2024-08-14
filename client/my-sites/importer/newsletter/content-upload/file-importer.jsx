@@ -53,6 +53,7 @@ class FileImporter extends PureComponent {
 		} ),
 		fromSite: PropTypes.string,
 		nextStepUrl: PropTypes.string,
+		skipNextStep: PropTypes.func,
 	};
 
 	handleClick = ( shouldStartImport ) => {
@@ -73,7 +74,7 @@ class FileImporter extends PureComponent {
 
 	render() {
 		const { title, overrideDestination, uploadDescription, optionalUrl } = this.props.importerData;
-		const { importerStatus, site, fromSite, nextStepUrl } = this.props;
+		const { importerStatus, site, fromSite, nextStepUrl, skipNextStep } = this.props;
 		const { errorData, importerState } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
 		const showStart = includes( compactStates, importerState );
@@ -129,6 +130,7 @@ class FileImporter extends PureComponent {
 						optionalUrl={ optionalUrl }
 						fromSite={ fromSite }
 						nextStepUrl={ nextStepUrl }
+						skipNextStep={ skipNextStep }
 					/>
 				) }
 			</Card>
