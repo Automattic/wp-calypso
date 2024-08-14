@@ -34,7 +34,9 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 					label={ translate( 'Marketplace' ) }
 					tooltip={ isCollapsed && translate( 'Marketplace' ) }
 					selected={
-						path.startsWith( '/plugins' ) && ! path.startsWith( '/plugins/scheduled-updates' )
+						path.startsWith( '/plugins' ) &&
+						! path.startsWith( '/plugins/scheduled-updates' ) &&
+						! path.startsWith( '/plugins/manage' )
 					}
 					customIcon={ <SidebarIconPlugins /> }
 				/>
@@ -45,6 +47,14 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 					tooltip={ isCollapsed && translate( 'Scheduled Updates' ) }
 					selected={ path.startsWith( '/plugins/scheduled-updates' ) }
 					customIcon={ <SidebarIconCalendar /> }
+				/>
+				<SidebarItem
+					className="sidebar__menu-item--plugins"
+					link="/plugins/manage"
+					label={ translate( 'Manage plugins' ) }
+					tooltip={ isCollapsed && translate( 'Manage plugins' ) }
+					selected={ path.startsWith( '/plugins/manage' ) }
+					customIcon={ <SidebarIconPlugins /> }
 				/>
 			</SidebarMenu>
 		</GlobalSidebar>
