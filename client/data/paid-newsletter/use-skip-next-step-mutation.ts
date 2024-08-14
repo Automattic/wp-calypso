@@ -1,11 +1,25 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+	DefaultError,
+	useMutation,
+	UseMutationOptions,
+	useQueryClient,
+} from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
-export const useSkipNextStepMutation = ( options = {} ) => {
+interface MutationVariables {
+	siteId: number;
+	engine: string;
+	currentStep: string;
+	skipStep: string;
+}
+
+export const useSkipNextStepMutation = (
+	options: UseMutationOptions< unknown, DefaultError, MutationVariables > = {}
+) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
-		mutationFn: async ( { siteId, engine, currentStep, skipStep } ) => {
+		mutationFn: async ( { siteId, engine, currentStep, skipStep }: MutationVariables ) => {
 			const response = await wp.req.post(
 				{
 					path: `/sites/${ siteId }/site-importer/paid-newsletter`,
@@ -37,7 +51,7 @@ export const useSkipNextStepMutation = ( options = {} ) => {
 	const { mutate } = mutation;
 
 	const skipNextStep = useCallback(
-		( siteId, engine, currentStep, skipStep ) =>
+		( siteId: number, engine: string, currentStep: string, skipStep: string ) =>
 			mutate( { siteId, engine, currentStep, skipStep } ),
 		[ mutate ]
 	);

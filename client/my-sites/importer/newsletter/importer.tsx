@@ -124,17 +124,18 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 				/>
 			) }
 			{ validFromSite && <StepProgress steps={ stepsProgress } currentStep={ stepIndex } /> }
-			{ validFromSite && (
+			{ selectedSite && validFromSite && (
 				<Step
 					siteSlug={ siteSlug }
 					nextStepUrl={ nextStepUrl }
 					selectedSite={ selectedSite }
 					fromSite={ fromSite }
 					skipNextStep={ () => {
-						skipNextStep( selectedSite?.ID, engine, nextStep, step );
+						skipNextStep( selectedSite.ID, engine, nextStep, step );
 					} }
 					cardData={ stepContent }
 					engine={ engine }
+					content={ stepContent }
 				/>
 			) }
 		</div>

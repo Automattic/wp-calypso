@@ -6,6 +6,7 @@ import ImporterActionButtonContainer from '../importer-action-buttons/container'
 type Props = {
 	nextStepUrl: string;
 	skipNextStep: () => void;
+	cardData: any;
 };
 
 export default function MapPlans( { nextStepUrl, skipNextStep }: Props ) {
