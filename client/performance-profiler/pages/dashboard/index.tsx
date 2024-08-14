@@ -1,5 +1,6 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import './style.scss';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
@@ -20,16 +21,43 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
 	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
-	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( finalUrl, token );
+	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
 
-	const getOnTabChange = ( tab: TabType ) => {
+	const updateQueryParams = ( params: Record< string, string >, forceReload = false ) => {
 		const queryParams = new URLSearchParams( window.location.search );
-		queryParams.set( 'tab', tab );
-		window.history.pushState( null, '', `?${ queryParams.toString() }` );
+		Object.keys( params ).forEach( ( key ) => {
+			if ( params[ key ] ) {
+				queryParams.set( key, params[ key ] );
+			}
+		} );
+
+		// If forceReload is true, we want to reload the page with the new query params instead of just updating the URL
+		if ( forceReload ) {
+			page( `/speed-test-tool?${ queryParams.toString() }` );
+		} else {
+			window.history.replaceState( {}, '', `?${ queryParams.toString() }` );
+		}
+	};
+
+	// Append hash to the URL if it's not there to avoid losing it on page reload
+	useEffect( () => {
+		if ( ! hash && token ) {
+			updateQueryParams( { hash: token, url: finalUrl ?? url }, true );
+		}
+	}, [ hash, token, finalUrl, url ] );
+
+	const getOnTabChange = ( tab: TabType ) => {
+		updateQueryParams( { tab: tab } );
 		setActiveTab( tab );
 	};
+
+	const mobileReport =
+		typeof performanceInsights?.mobile === 'string' ? undefined : performanceInsights?.mobile;
+	const desktopReport =
+		typeof performanceInsights?.desktop === 'string' ? undefined : performanceInsights?.desktop;
+	const performanceReport = activeTab === TabType.mobile ? mobileReport : desktopReport;
 
 	return (
 		<div className="container">
@@ -43,11 +71,11 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			/>
 			{ 'mobile' === activeTab && ! mobileLoaded && <LoadingScreen isSavedReport={ false } /> }
 			{ 'mobile' === activeTab && mobileLoaded && (
-				<PerformanceProfilerDashboardContent activeTab={ activeTab } />
+				<PerformanceProfilerDashboardContent performanceReport={ performanceReport } />
 			) }
 			{ 'desktop' === activeTab && ! desktopLoaded && <LoadingScreen isSavedReport={ false } /> }
 			{ 'desktop' === activeTab && desktopLoaded && (
-				<PerformanceProfilerDashboardContent activeTab={ activeTab } />
+				<PerformanceProfilerDashboardContent performanceReport={ performanceReport } />
 			) }
 		</div>
 	);
