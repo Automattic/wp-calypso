@@ -8,7 +8,6 @@ import {
 } from 'd3-scale';
 import { select as d3Select, event as d3Event } from 'd3-selection';
 import { line as d3Line, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { timeFormat as d3TimeFormat } from 'd3-time-format';
 import React, { createRef, useEffect } from 'react';
 import './style.scss';
@@ -34,7 +33,7 @@ const createScales = ( data, range, margin, width, height ) => {
 		.range( [ margin.left + 20, width - margin.right - 20 ] );
 
 	const yScale = d3ScaleLinear()
-		.domain( [ 0, d3Max( data, ( item: chartItem ) => item.value ) ] )
+		.domain( [ 0, d3Max( data, ( item: chartItem ) => item.value ) * 2 ] )
 		.nice()
 		.range( [ height - margin.bottom, margin.top ] );
 
