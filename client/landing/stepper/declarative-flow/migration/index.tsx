@@ -142,15 +142,15 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					props
 				);
 			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				return navigateTo( SITE_MIGRATION_HOW_TO_MIGRATE, [ 'siteId', 'siteSlug' ], props );
+			},
 		},
 	};
 };
 
 export default {
 	name: MIGRATION_FLOW,
-	get title() {
-		return translate( 'Site Migration' );
-	},
 	isSignupFlow: false,
 	useSteps() {
 		return stepsWithRequiredLogin( [
