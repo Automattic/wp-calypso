@@ -2,7 +2,7 @@ import { FormLabel } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { NextButton, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useState, type FC } from 'react';
+import { ChangeEvent, FormEvent, useState, type FC } from 'react';
 import getValidationMessage from 'calypso/blocks/import/capture/url-validation-message-helper';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -53,7 +53,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		return credentialsErrors;
 	};
 
-	const handleSubmit = ( e: any ) => {
+	const handleSubmit = ( e: FormEvent ) => {
 		e.preventDefault();
 		setError( {} );
 		if ( accessMethod === 'credentials' ) {
