@@ -19,13 +19,13 @@ interface SourceSiteInputProps {
 	subTitle?: string;
 }
 
-export const SourceSiteInput: FC< SourceSiteInputProps > = ( { onComplete, ...options } ) => {
+export const SourceSiteInput: FC< SourceSiteInputProps > = ( { onComplete, ...props } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 
-	const title = options.title ?? translate( 'Share your site address' );
+	const title = props.title ?? translate( 'Share your site address' );
 	const subtitle =
-		options.subTitle ??
+		props.subTitle ??
 		translate(
 			"Let's get your migration started. Please share your site address so we can review your site and begin your migration."
 		);
