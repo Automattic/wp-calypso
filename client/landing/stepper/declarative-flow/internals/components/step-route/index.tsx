@@ -43,7 +43,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 	}, [ loginUrl, shouldAuthUser, useBuiltItInAuth ] );
 
 	if ( useBuiltItInAuth && shouldAuthUser && ! userIsLoggedIn ) {
-		return <Navigate to="user" state={ { targetStep: 'omar' } } replace />;
+		return <Navigate to="user" replace />;
 	}
 
 	if ( shouldSkipRender ) {
