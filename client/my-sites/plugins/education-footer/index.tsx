@@ -68,7 +68,7 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	${ ( { isloggedIn } ) =>
 		! isloggedIn &&
 		`${ SectionContainer } {
-		padding-bottom: 0;
+		padding-bottom: 32px;
 	}` }
 
 	${ SectionContainer }::before {
