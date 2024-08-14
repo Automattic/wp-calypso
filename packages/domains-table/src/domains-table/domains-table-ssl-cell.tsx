@@ -23,7 +23,7 @@ export default function DomainsTableSSLCell( {
 			return translate( 'Pending' );
 		}
 		if ( sslStatus === 'disabled' ) {
-			return translate( 'Disabled' );
+			return translate( 'Error' );
 		}
 	};
 
