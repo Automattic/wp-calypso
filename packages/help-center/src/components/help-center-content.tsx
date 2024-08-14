@@ -78,14 +78,14 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	useEffect( () => {
 		// Prevent not eligible users from accessing wapuu.
-		if ( ! isUserElegible && ! isLoadingEnvironment ) {
+		if ( ! shouldUseWapuu && ! isUserElegible && ! isLoadingEnvironment ) {
 			recordTracksEvent( 'calypso_helpcenter_redirect_not_eligible_user_to_homepage', {
 				pathname: window.location.pathname,
 				search: window.location.search,
 			} );
 			navigate( '/' );
 		}
-	}, [ isUserElegible, isLoadingEnvironment, navigate ] );
+	}, [ isUserElegible, isLoadingEnvironment, navigate, shouldUseWapuu ] );
 
 	const navigateToSupportDocs = useCallback(
 		( blogId: string, postId: string, title: string, link: string ) => {
