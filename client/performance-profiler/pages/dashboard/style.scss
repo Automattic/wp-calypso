@@ -6,3 +6,29 @@
 	margin: 0 auto;
 	max-width: 1056px;
 }
+
+.performance-profiler-content {
+	.thumbnail {
+		border: 1px solid #dcdcde;
+		border-radius: 4px;
+	}
+
+	.screenshot {
+		height: 25vh;
+	}
+
+	.top-section {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.timeline {
+		display: flex;
+		gap: 1.5rem;
+		text-align: center;
+
+		.thumbnail {
+			flex: 1;
+		}
+	}
+}
