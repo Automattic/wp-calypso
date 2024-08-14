@@ -1,1 +1,0 @@
-import './blocks/src/index';
