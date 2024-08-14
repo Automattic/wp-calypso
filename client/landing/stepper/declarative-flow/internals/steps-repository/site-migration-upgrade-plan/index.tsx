@@ -26,10 +26,16 @@ interface Props extends StepProps {
 	onSkip?: StepContainerProps[ 'goNext' ];
 	skipPosition?: StepContainerProps[ 'skipButtonAlign' ];
 	headerText?: string;
+	customizedActionButtons?: StepContainerProps[ 'customizedActionButtons' ];
 }
 
-const SiteMigrationUpgradePlan: FC< Props > = ( { navigation, data, ...options } ) => {
-	const { onSkip, skipLabelText, skipPosition } = options;
+const SiteMigrationUpgradePlan: FC< Props > = ( {
+	navigation,
+	data,
+	customizedActionButtons,
+	...props
+} ) => {
+	const { onSkip, skipLabelText, skipPosition } = props;
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
@@ -104,7 +110,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( { navigation, data, ...options }
 	);
 
 	const headerText =
-		options.headerText ??
+		props.headerText ??
 		( hasEnTranslation( 'Upgrade your plan' )
 			? translate( 'Upgrade your plan' )
 			: translate( 'Upgrade your plan to migrate your site' ) );
@@ -121,6 +127,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( { navigation, data, ...options }
 				skipButtonAlign={ skipPosition }
 				goNext={ onSkip }
 				hideSkip={ ! onSkip }
+				customizedActionButtons={ customizedActionButtons }
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"
