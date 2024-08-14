@@ -51,7 +51,22 @@
 	}
 }
 .plugins-browser__main-container {
-	display: contents;
+	position: relative;
+
+	&::before {
+		box-sizing: border-box;
+		content: "";
+		background-color: #fff;
+		position: absolute;
+		height: 100%;
+		width: 200vw;
+		left: -100vw;
+		z-index: -1;
+	}
+
+	.plugins-browser-list:last-of-type {
+		padding-bottom: 32px;
+	}
 }
 
 .plugins-browser__upgrade-banner {
@@ -61,10 +76,6 @@
 	.banner.card {
 		margin: 48px 0 0;
 	}
-}
-
-.plugins-browser__marketplace-footer {
-	margin-top: 60px;
 }
 
 body.is-section-plugins #primary .main.is-logged-out {
