@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, translate } from 'i18n-calypso';
 import { useState } from 'react';
 import { PerformanceMetrics } from 'calypso/performance-profiler/types/performance-metrics';
 import {
@@ -11,6 +11,34 @@ import { MetricTabBar } from '../metric-tab-bar';
 import './style.scss';
 import { StatusIndicator } from '../status-indicator';
 
+const metricValuations = {
+	fcp: {
+		good: translate( "Your site's loading speed is good" ),
+		needsImprovement: translate( "Your site's loading speed is moderate" ),
+		bad: translate( "Your site's loading speed needs improvement" ),
+	},
+	lcp: {
+		good: translate( "Your site's largest content load is good" ),
+		needsImprovement: translate( "Your site's largest content load is moderate" ),
+		bad: translate( "Your site's largest content load needs improvement" ),
+	},
+	cls: {
+		good: translate( "Your site's visual stability is good" ),
+		needsImprovement: translate( "Your site's visual stability is moderate" ),
+		bad: translate( "Your site's visual stability needs improvement" ),
+	},
+	inp: {
+		good: translate( "Your site's interactivity is good" ),
+		needsImprovement: translate( "Your site's interactivity is moderate" ),
+		bad: translate( "Your site's interactivity needs improvement" ),
+	},
+	ttfb: {
+		good: translate( "Your site's server responsiveness is good" ),
+		needsImprovement: translate( "Your site's server responsiveness is moderate" ),
+		bad: translate( "Your site's server responsiveness needs improvement" ),
+	},
+};
+
 export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 	const translate = useTranslate();
 	const [ activeTab, setActiveTab ] = useState< string >( 'lcp' );
@@ -18,19 +46,6 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 	const { name: metricName, displayName } = metricsNames[ activeTab as keyof typeof metricsNames ];
 	const value = props[ activeTab as keyof PerformanceMetrics ];
 	const valuation = mapThresholdsToStatus( activeTab as keyof typeof metricsTresholds, value );
-
-	const displayValuation = ( valuation: string ) => {
-		switch ( valuation ) {
-			case 'good':
-				return 'is good';
-			case 'needsImprovement':
-				return 'needs improvement';
-			case 'bad':
-				return 'is bad';
-			default:
-				return 'unknown';
-		}
-	};
 
 	const { good, needsImprovement } = metricsTresholds[ activeTab as keyof typeof metricsTresholds ];
 	const formatUnit = ( value: number ) => {
@@ -43,11 +58,13 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 
 	const displayUnit = () => {
 		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return 'seconds';
+			return translate( 'seconds', { comment: 'Used for displaying a range, eg. 1-2 seconds' } );
 		}
 
 		if ( [ 'inp' ].includes( activeTab ) ) {
-			return 'milliseconds';
+			return translate( 'milliseconds', {
+				comment: 'Used for displaying a range, eg. 100-200 millisenconds',
+			} );
 		}
 
 		return '';
@@ -59,12 +76,7 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 			<div className="core-web-vitals-display__details">
 				<div className="core-web-vitals-display__description">
 					<span className="core-web-vitals-display__description-subheading">
-						{ translate( "Your site's %(displayName)s %(valuation)s", {
-							args: {
-								displayName: displayName.toLowerCase(),
-								valuation: displayValuation( valuation ),
-							},
-						} ) }
+						{ metricValuations[ activeTab ][ valuation ] }
 					</span>
 					<MetricScale metricName={ activeTab } value={ value } valuation={ valuation } />
 					<div className="core-web-vitals-display__ranges">
