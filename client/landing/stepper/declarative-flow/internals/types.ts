@@ -151,17 +151,35 @@ export type Flow = {
 	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 };
 
-export type StepProps = {
-	navigation: NavigationControls;
-	stepName: string;
-	flow: string;
-	/**
-	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
-	 */
-	variantSlug?: string;
-	data?: StepperInternal.State[ 'stepData' ];
-	children?: React.ReactNode;
-};
+type UserStepSlug = 'user';
+type NotUserStepSlug = string extends UserStepSlug ? never : string;
+
+export type StepProps =
+	| {
+			navigation: NavigationControls;
+			/**
+			 * This makes the user step require "onSuccess" to be passed as a prop. And prevents other steps from getting this prop.
+			 */
+			stepName: NotUserStepSlug;
+			flow: string;
+			/**
+			 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
+			 */
+			variantSlug?: string;
+			data?: StepperInternal.State[ 'stepData' ];
+			children?: React.ReactNode;
+			onSuccess?: undefined;
+	  }
+	| {
+			navigation: NavigationControls;
+			stepName: UserStepSlug;
+			flow: string;
+			/**
+			 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
+			 */
+			variantSlug?: string;
+			onSuccess: () => void;
+	  };
 
 export type Step = React.FC< StepProps >;
 

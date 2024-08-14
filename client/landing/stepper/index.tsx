@@ -63,7 +63,7 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 	return <FlowRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {
-	BUILD_TARGET?: string;
+	BUILD_TARGET: string;
 }
 
 const DEFAULT_FLOW = 'site-setup';

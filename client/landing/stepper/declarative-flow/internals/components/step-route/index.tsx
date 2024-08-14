@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { useEffect } from 'react';
+import { Navigate } from 'react-router';
 import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import { StepperPerformanceTrackerStop } from 'calypso/landing/stepper/utils/performance-tracking';
@@ -7,7 +8,6 @@ import SignupHeader from 'calypso/signup/signup-header';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import VideoPressIntroBackground from '../../steps-repository/intro/videopress-intro-background';
-import UserStep from '../user';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
 import type { Flow, StepperStep } from '../../types';
 
@@ -43,12 +43,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 	}, [ loginUrl, shouldAuthUser, useBuiltItInAuth ] );
 
 	if ( useBuiltItInAuth && shouldAuthUser && ! userIsLoggedIn ) {
-		return (
-			<div className={ clsx( 'step-route', 'user', flow.name, flow.variantSlug, flow.classnames ) }>
-				<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
-				<UserStep flow={ flow.name } />
-			</div>
-		);
+		return <Navigate to="user" state={ { targetStep: 'omar' } } replace />;
 	}
 
 	if ( shouldSkipRender ) {

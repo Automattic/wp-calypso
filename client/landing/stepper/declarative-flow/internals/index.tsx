@@ -28,6 +28,25 @@ import { AssertConditionState, type Flow, type StepperStep, type StepProps } fro
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
 
+const USER_STEP: StepperStep = {
+	slug: 'user',
+	asyncComponent: () => import( './steps-repository/__user' ),
+};
+
+function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
+	const steps = flow.useSteps();
+	const flowRequiresAuthAt = steps.findIndex( ( step ) => step.requiresLoggedInUser );
+
+	// Inject the user step before the auth-walled step.
+	if ( flowRequiresAuthAt > -1 ) {
+		const newSteps = [ ...steps ];
+		newSteps.splice( flowRequiresAuthAt, 0, USER_STEP );
+		return newSteps;
+	}
+
+	return steps;
+}
+
 /**
  * This component accepts a single flow property. It does the following:
  *
@@ -41,7 +60,8 @@ import './global.scss';
 export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
-	const flowSteps = flow.useSteps();
+	const flowSteps = useInjectUserStepIfNeeded( flow );
+	const firstAuthWalledStep = flowSteps.find( ( step ) => step.requiresLoggedInUser );
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const { navigate, params } = useFlowNavigation();
 	const currentStepRoute = params.step || '';
@@ -119,15 +139,27 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				return <StepperLoader />;
-			/* eslint-enable wpcalypso/jsx-classname-namespace */
 			case AssertConditionState.FAILURE:
 				return null;
 		}
 
 		const StepComponent = stepComponents[ step.slug ];
 
+		if ( step.slug === 'user' && firstAuthWalledStep ) {
+			return (
+				<StepComponent
+					navigation={ stepNavigation }
+					flow={ flow.name }
+					variantSlug={ flow.variantSlug }
+					stepName="user"
+					// We need this special case, because the user step requires an onSuccess prop.
+					// It cannot submit like a normal step would, because then the flow would have to handle the submission.
+					// Instead, Stepper will handle onSuccess and take the user to the right step.
+					onSuccess={ () => navigate( firstAuthWalledStep.slug, undefined, true ) }
+				/>
+			);
+		}
 		return (
 			<StepComponent
 				navigation={ stepNavigation }
@@ -152,6 +184,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	return (
 		<Boot fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
+
 			<Routes>
 				{ flowSteps.map( ( step ) => (
 					<Route
