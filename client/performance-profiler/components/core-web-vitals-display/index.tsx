@@ -16,26 +16,46 @@ const metricValuations = {
 		good: translate( "Your site's loading speed is good" ),
 		needsImprovement: translate( "Your site's loading speed is moderate" ),
 		bad: translate( "Your site's loading speed needs improvement" ),
+		heading: translate( 'What is loading speed?' ),
+		explanation: translate(
+			'Loading speed reflects the time it takes to display the first text or image to visitors. The best sites load in under 1.8 seconds.'
+		),
 	},
 	lcp: {
 		good: translate( "Your site's largest content load is good" ),
 		needsImprovement: translate( "Your site's largest content load is moderate" ),
 		bad: translate( "Your site's largest content load needs improvement" ),
+		heading: translate( 'What is largest content load?' ),
+		explanation: translate(
+			'Largest content load measures the time it takes for the largest visible element (like an image or text block) on a page to load. The best sites load in under 2.5 seconds.'
+		),
 	},
 	cls: {
 		good: translate( "Your site's visual stability is good" ),
 		needsImprovement: translate( "Your site's visual stability is moderate" ),
 		bad: translate( "Your site's visual stability needs improvement" ),
+		heading: translate( 'What is visual stability needs?' ),
+		explanation: translate(
+			'Visual stability is assessed by measuring how often content moves unexpectedly during loading. The best sites have a score of 0.1 or lower.'
+		),
 	},
 	inp: {
 		good: translate( "Your site's interactivity is good" ),
 		needsImprovement: translate( "Your site's interactivity is moderate" ),
 		bad: translate( "Your site's interactivity needs improvement" ),
+		heading: translate( 'What is interactivity?' ),
+		explanation: translate(
+			'Interactivity measures the overall responsiveness of a webpage by evaluating how quickly it reacts to user interactions. A good score is 200 milliseconds or less, indicating that the page responds swiftly to user inputs.'
+		),
 	},
 	ttfb: {
 		good: translate( "Your site's server responsiveness is good" ),
 		needsImprovement: translate( "Your site's server responsiveness is moderate" ),
 		bad: translate( "Your site's server responsiveness needs improvement" ),
+		heading: translate( 'What is server responsiveness?' ),
+		explanation: translate(
+			'Server responsiveness reflects the time taken for a user’s browser to receive the first byte of data from the server after making a request. The best sites load around 800 milliseconds or less.'
+		),
 	},
 };
 
@@ -122,53 +142,18 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 						</div>
 					</div>
 					<span className="core-web-vitals-display__description-subheading">
-						{ translate( 'What is %(displayName)s? ', {
-							args: { displayName: displayName.toLowerCase() },
-						} ) }
+						{ metricValuations[ activeTab ].heading }&nbsp;
 					</span>
 					<span className="core-web-vitals-display__description-aka">
 						{ translate( '(aka %(metricName)s)', {
 							args: { metricName },
 						} ) }
 					</span>
-					{ activeTab === 'fcp' && (
-						<p>
-							Loading speed reflects the time it takes to display the first text or image to
-							visitors. The best sites load in under 1.8 seconds.&nbsp;
-							<a href="https://web.dev/articles/fcp">Learn more ↗</a>
-						</p>
-					) }
-					{ activeTab === 'lcp' && (
-						<p>
-							Largest content load measures the time it takes for the largest visible element (like
-							an image or text block) on a page to load. The best sites load in under 2.5
-							seconds.&nbsp;
-							<a href="https://web.dev/articles/lcp">Learn more ↗</a>
-						</p>
-					) }
-					{ activeTab === 'cls' && (
-						<p>
-							Visual stability is assessed by measuring how often content moves unexpectedly during
-							loading. The best sites have a score of 0.1 or lower.&nbsp;
-							<a href="https://web.dev/articles/cls">Learn more ↗</a>
-						</p>
-					) }
-					{ activeTab === 'inp' && (
-						<p>
-							Interactivity measures the overall responsiveness of a webpage by evaluating how
-							quickly it reacts to user interactions. A good score is 200 milliseconds or less,
-							indicating that the page responds swiftly to user inputs.&nbsp;
-							<a href="https://web.dev/articles/inp">Learn more ↗</a>
-						</p>
-					) }
-					{ activeTab === 'ttfb' && (
-						<p>
-							Server responsiveness reflects the time taken for a user’s browser to receive the
-							first byte of data from the server after making a request. The best sites load around
-							800 milliseconds or less.&nbsp;
-							<a href="https://web.dev/articles/ttfb">Learn more ↗</a>
-						</p>
-					) }
+					<p>
+						{ metricValuations[ activeTab ].explanation }
+						&nbsp;
+						<a href="https://web.dev/articles/fcp">{ translate( 'Learn more ↗' ) }</a>
+					</p>
 				</div>
 				<div className="core-web-vitals-display__history-graph">
 					<span className="core-web-vitals-display__description-subheading">
