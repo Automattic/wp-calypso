@@ -22,10 +22,16 @@ export const PerformanceProfilerDashboardContent = (
 	};
 
 	const renderHistoricalChart = ( report: PerformanceReport, metric: string ) => {
-		const metrics = report?.history?.metrics[ metric ] ?? [];
+		let metrics = report?.history?.metrics[ metric ] ?? [];
+		let dates = report?.history?.collection_period ?? [];
+
+		// last 8 weeks only
+		metrics = metrics.slice( -8 );
+		dates = dates.slice( -8 );
+
 		const data = metrics.map( ( item, index ) => {
 			return {
-				date: '2024/' + report?.history?.collection_period[ index ],
+				date: '2024/' + dates[ index ],
 				value: item ?? 0,
 			};
 		} );
