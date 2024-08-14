@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .site-migration-credentials {
 	#site-migration-credentials-header {
 		.formatted-header__subtitle {
@@ -20,6 +22,10 @@
 			display: flex;
 			flex-direction: row;
 			gap: 1em;
+			@media (max-width: $break-mobile) {
+				flex-direction: column;
+				gap: 0;
+			}
 		}
 		.site-migration-credentials__form-field {
 			margin-top: 1em;
