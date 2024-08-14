@@ -3,7 +3,6 @@ import { Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import type { MouseEvent } from 'react';
 
 interface DomainsTableSSLCellProps {
 	domainManagementLink: string;
@@ -49,7 +48,7 @@ export default function DomainsTableSSLCell( {
 						[ 'domains-table-row__ssl-status-button__disabled' ]: sslStatus === 'disabled',
 					} ) }
 					href={ `${ domainManagementLink }?ssl-open=true` }
-					onClick={ ( e: MouseEvent ) => e.stopPropagation() }
+					onClick={ ( event ) => event.stopPropagation() }
 				>
 					{ getSSLStatusText() }
 				</a>
