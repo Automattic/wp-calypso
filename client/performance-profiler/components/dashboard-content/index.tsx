@@ -1,21 +1,25 @@
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
 import './style.scss';
+import { CoreWebVitalsDisplay } from '../core-web-vitals-display';
 
 type PerformanceProfilerDashboardContentProps = {
-	performanceReport?: PerformanceReport;
+	performanceReport: PerformanceReport;
 };
 
-export const PerformanceProfilerDashboardContent = (
-	props: PerformanceProfilerDashboardContentProps
-) => {
-	const { performanceReport } = props;
+export const PerformanceProfilerDashboardContent = ( {
+	performanceReport,
+}: PerformanceProfilerDashboardContentProps ) => {
+	const { overall_score, fcp, lcp, cls, inp, ttfb } = performanceReport;
 
 	return (
 		<div className="performance-profiler-content">
 			<div className="l-block-wrapper">
-				{ performanceReport?.overall_score && (
-					<PerformanceScore value={ performanceReport.overall_score * 100 } />
+				{ overall_score && (
+					<>
+						<PerformanceScore value={ overall_score * 100 } />
+						<CoreWebVitalsDisplay fcp={ fcp } lcp={ lcp } cls={ cls } inp={ inp } ttfb={ ttfb } />
+					</>
 				) }
 			</div>
 		</div>
