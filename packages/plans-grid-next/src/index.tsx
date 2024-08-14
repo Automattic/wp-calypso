@@ -2,7 +2,7 @@ import ComparisonGrid from './components/comparison-grid';
 import FeaturesGrid from './components/features-grid';
 import PlanButton from './components/plan-button';
 import PlanTypeSelector from './components/plan-type-selector';
-import { Plans2023Tooltip } from './components/plans-2023-tooltip';
+import PlansTooltip from './components/shared/plans-tooltip';
 import useGridPlanForSpotlight from './hooks/data-store/use-grid-plan-for-spotlight';
 import useGridPlans from './hooks/data-store/use-grid-plans';
 import useGridPlansForComparisonGrid from './hooks/data-store/use-grid-plans-for-comparison-grid';
@@ -20,7 +20,7 @@ export type * from './types';
 /**
  * Components
  */
-export { ComparisonGrid, FeaturesGrid, PlanTypeSelector, PlanButton, Plans2023Tooltip };
+export { ComparisonGrid, FeaturesGrid, PlanTypeSelector, PlanButton, PlansTooltip };
 
 /**
  * Hooks/helpers

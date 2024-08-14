@@ -1,0 +1,22 @@
+.plans-grid-next-tooltip {
+	&.tooltip.popover .popover__inner {
+		background: var(--color-masterbar-background);
+		text-align: start;
+		border-radius: 4px;
+		min-height: 32px;
+		width: 210px;
+		align-items: center;
+		font-style: normal;
+		font-weight: 400;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 1em;
+		padding: 8px 10px;
+		top: -8px;
+		overflow-wrap: break-word;
+	}
+}
+
+.plans-grid-next-tooltip__hover-area-container {
+	max-width: 220px;
+}
+
