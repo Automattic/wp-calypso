@@ -4,7 +4,7 @@ import './style.scss';
 import { CoreWebVitalsDisplay } from '../core-web-vitals-display';
 
 type PerformanceProfilerDashboardContentProps = {
-	performanceReport?: PerformanceReport;
+	performanceReport: PerformanceReport;
 };
 
 export const PerformanceProfilerDashboardContent = ( {

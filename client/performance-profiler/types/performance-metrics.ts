@@ -6,4 +6,4 @@ export type PerformanceMetrics = {
 	inp: number;
 };
 
-export type Valuation = 'good' | 'needsImprovement' | 'bad' | 'unknown';
+export type Valuation = 'good' | 'needsImprovement' | 'bad';

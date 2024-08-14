@@ -66,7 +66,7 @@ const metricValuations = {
 
 export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 	const translate = useTranslate();
-	const [ activeTab, setActiveTab ] = useState< string >( 'lcp' );
+	const [ activeTab, setActiveTab ] = useState< keyof PerformanceMetrics >( 'lcp' );
 
 	const { displayName } = metricsNames[ activeTab as keyof typeof metricsNames ];
 	const value = props[ activeTab as keyof PerformanceMetrics ];

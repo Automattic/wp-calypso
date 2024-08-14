@@ -9,8 +9,8 @@ import { StatusIndicator } from '../status-indicator';
 import './style.scss';
 
 type Props = PerformanceMetrics & {
-	activeTab: string;
-	setActiveTab: ( tab: string ) => void;
+	activeTab: keyof PerformanceMetrics;
+	setActiveTab: ( tab: keyof PerformanceMetrics ) => void;
 };
 
 export const MetricTabBar = ( props: Props ) => {
@@ -22,7 +22,7 @@ export const MetricTabBar = ( props: Props ) => {
 				<button
 					key={ key }
 					className={ clsx( 'metric-tab-bar__tab', { active: key === activeTab } ) }
-					onClick={ () => setActiveTab( key ) }
+					onClick={ () => setActiveTab( key as keyof PerformanceMetrics ) }
 				>
 					<div className="metric-tab-bar__tab-status">
 						<StatusIndicator
