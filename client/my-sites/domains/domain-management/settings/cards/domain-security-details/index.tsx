@@ -40,9 +40,7 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 	const { provisionCertificate, isPending: isProvisioningCertificate } =
 		useProvisionCertificateMutation( domain.name, {
 			onSuccess() {
-				dispatch(
-					successNotice( translate( 'New certificate provisioning requested' ), noticeOptions )
-				);
+				dispatch( successNotice( translate( 'New certificate requested' ), noticeOptions ) );
 			},
 			onError( error ) {
 				dispatch( errorNotice( error.message, noticeOptions ) );
@@ -54,7 +52,7 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 		if ( isError ) {
 			dispatch(
 				errorNotice(
-					translate( 'An error occurred while fetching ssl certificate details.' ),
+					translate( 'An error occurred while fetching SSL certificate details.' ),
 					noticeOptions
 				)
 			);
@@ -79,7 +77,7 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 					return (
 						<p className="domain-security-details__description-message">
 							{ translate(
-								'It may take up to a few hours to add an SSL certificate to your site. If you are not seeing it yet, give it some time to take effect.',
+								'Your newly registered domain is almost ready! It can take up to 30 minutes for the domain to start resolving to your site so we can issue a certificate. Please check back soon.',
 								{ textOnly: true }
 							) }
 						</p>
@@ -90,7 +88,7 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 						<>
 							<p className="domain-security-details__description-message">
 								{ translate(
-									'There are one or more problems with your DNS configuration that prevent SSL certificate from being issued:'
+									'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued:'
 								) }
 							</p>
 							<ul>
