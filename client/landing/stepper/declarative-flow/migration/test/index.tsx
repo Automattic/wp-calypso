@@ -136,7 +136,7 @@ describe( `${ flow.name }`, () => {
 				flowName: 'migration',
 				siteSlug: 'example.wordpress.com',
 				stepName: STEPS.MIGRATION_UPGRADE_PLAN.slug,
-				cancelDestination: `/setup/hosted-site-migration-v2/migration-upgrade-plan?siteId=123&siteSlug=example.wordpress.com`,
+				cancelDestination: `/setup/migration/migration-upgrade-plan?siteId=123&siteSlug=example.wordpress.com`,
 				plan: 'business',
 			} );
 		} );
@@ -152,7 +152,7 @@ describe( `${ flow.name }`, () => {
 				addQueryArgs( '/setup/site-setup/importerWordpress', {
 					siteId: 123,
 					siteSlug: 'example.wordpress.com',
-					backToFlow: 'hosted-site-migration-v2/migration-upgrade-plan',
+					backToFlow: 'migration/migration-upgrade-plan',
 					option: 'content',
 				} )
 			);
