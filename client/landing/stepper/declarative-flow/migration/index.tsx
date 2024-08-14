@@ -63,9 +63,10 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 	return {
 		[ PLATFORM_IDENTIFICATION.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
+				const platform = getFromPropsOrUrl( 'platform', props );
 				return navigateTo( SITE_CREATION_STEP, [ 'platform', 'next' ], {
 					...props,
-					next: props?.url,
+					next: platform !== 'wordpress' ? props?.url : null,
 				} );
 			},
 		},

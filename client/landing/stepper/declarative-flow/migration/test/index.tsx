@@ -73,7 +73,7 @@ describe( `${ flow.name }`, () => {
 		it( 'redirects the user from platform identification to create site step without passing the next when the user select WordPress', () => {
 			const destination = runNavigation( {
 				from: STEPS.PLATFORM_IDENTIFICATION,
-				dependencies: { platform: 'wordpress', next: 'next-url' },
+				dependencies: { platform: 'wordpress', url: 'next-url' },
 			} );
 
 			expect( destination ).toMatchDestination( {
