@@ -15,14 +15,11 @@ export function useSiteMetricsStatusCodesData(
 	// Use the custom hook for time range selection
 	const { start, end } = timeRange;
 
-	const { data } = useSiteMetricsQuery( {
-		siteId,
-		params: {
-			start,
-			end,
-			metric: metric || 'requests_persec',
-			dimension: dimension || 'http_status',
-		},
+	const { data } = useSiteMetricsQuery( siteId, {
+		start,
+		end,
+		metric: metric || 'requests_persec',
+		dimension: dimension || 'http_status',
 	} );
 
 	const { dataGroupedByTime, labels } = useGroupByTime( data?.data, statusCodes );

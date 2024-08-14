@@ -43,15 +43,15 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	const translate = useTranslate();
 
 	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
-	const { data } = useSiteMetricsQuery( {
+	const { data } = useSiteMetricsQuery(
 		siteId,
-		params: {
+		{
 			start: startInSeconds,
 			end: endInSeconds,
 			metric: 'response_bytes_persec',
 		},
-		enableQuery: !! isAtomic,
-	} );
+		!! isAtomic
+	);
 
 	if ( ! canViewStat ) {
 		return;

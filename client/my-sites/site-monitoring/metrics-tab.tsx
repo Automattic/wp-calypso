@@ -53,22 +53,16 @@ export function useSiteMetricsData( timeRange: TimeRange, metric?: MetricsType )
 	// Use the custom hook for time range selection
 	const { start, end } = timeRange;
 
-	const { data: requestsData, isLoading } = useSiteMetricsQuery( {
-		siteId,
-		params: {
-			start,
-			end,
-			metric: metric || 'requests_persec',
-		},
+	const { data: requestsData, isLoading } = useSiteMetricsQuery( siteId, {
+		start,
+		end,
+		metric: metric || 'requests_persec',
 	} );
 
-	const { data: responseTimeData } = useSiteMetricsQuery( {
-		siteId,
-		params: {
-			start,
-			end,
-			metric: metric || 'response_time_average',
-		},
+	const { data: responseTimeData } = useSiteMetricsQuery( siteId, {
+		start,
+		end,
+		metric: metric || 'response_time_average',
 	} );
 
 	// Function to get the dimension value for a specific key and period
@@ -132,14 +126,11 @@ function useAggregateSiteMetricsData(
 	// Use the custom hook for time range selection
 	const { start, end } = timeRange;
 
-	const { data } = useSiteMetricsQuery( {
-		siteId,
-		params: {
-			start,
-			end,
-			metric: metric || 'requests_persec',
-			dimension: dimension || 'http_status',
-		},
+	const { data } = useSiteMetricsQuery( siteId, {
+		start,
+		end,
+		metric: metric || 'requests_persec',
+		dimension: dimension || 'http_status',
 	} );
 
 	const formattedData: Record< string, number > = {};
