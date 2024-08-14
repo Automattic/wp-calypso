@@ -10,14 +10,6 @@
 		}
 	}
 
-	.plan-features-2023-gridrison__actions {
-		margin-bottom: auto;
-	}
-
-	.plan-features-2023-gridrison__actions-buttons {
-		min-height: 40px;
-	}
-
 	.plan-comparison-grid__header-cell {
 		display: flex;
 		flex-direction: column;
@@ -300,6 +292,14 @@
 				font-size: $font-body-extra-small;
 				line-height: 16px;
 			}
+		}
+	}
+
+	.plans-grid-next-action-button {
+		margin-bottom: auto;
+
+		.plans-grid-next-action-button__content {
+			min-height: 40px;
 		}
 	}
 }

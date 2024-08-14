@@ -9,14 +9,15 @@ import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../grid-context';
-import useIsLargeCurrency from '../hooks/use-is-large-currency';
-import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
-import PlanButton from './plan-button';
-import { useDefaultStorageOption } from './shared/storage';
-import type { GridPlan, PlanActionOverrides } from '../types';
+import { usePlansGridContext } from '../../../grid-context';
+import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
+import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
+import PlanButton from '../../plan-button';
+import { useDefaultStorageOption } from '../../shared/storage';
+import type { GridPlan, PlanActionOverrides } from '../../../types';
+import './style.scss';
 
-type PlanFeaturesActionsButtonProps = {
+type ActionButtonProps = {
 	availableForPurchase: boolean;
 	currentSitePlanSlug?: string | null;
 	isPopular?: boolean;
@@ -30,7 +31,7 @@ type PlanFeaturesActionsButtonProps = {
 	visibleGridPlans: GridPlan[];
 };
 
-const PlanFeatures2023GridActions = ( {
+const ActionButton = ( {
 	planSlug,
 	currentSitePlanSlug,
 	visibleGridPlans,
@@ -38,7 +39,7 @@ const PlanFeatures2023GridActions = ( {
 	isStuck,
 	isInSignup,
 	isMonthlyPlan,
-}: PlanFeaturesActionsButtonProps ) => {
+}: ActionButtonProps ) => {
 	const translate = useTranslate();
 	const {
 		gridPlansIndex,
@@ -166,7 +167,7 @@ const PlanFeatures2023GridActions = ( {
 		} else {
 			const hasFreeTrialPlan = isInSignup ? !! freeTrialPlanSlug : false;
 			actionButton = hasFreeTrialPlan ? (
-				<div className="plan-features-2023-grid__multiple-actions-container">
+				<div className="plans-grid-next-action-button__multi">
 					<PlanButton planSlug={ planSlug } onClick={ () => freeTrialCallback() } busy={ busy }>
 						{ freeTrialText }
 					</PlanButton>
@@ -188,9 +189,7 @@ const PlanFeatures2023GridActions = ( {
 						{ text }
 					</PlanButton>
 					{ postButtonText && (
-						<span className="plan-features-2023-grid__actions-post-button-text">
-							{ postButtonText }
-						</span>
+						<span className="plans-grid-next-action-button__label">{ postButtonText }</span>
 					) }
 				</>
 			);
@@ -198,10 +197,10 @@ const PlanFeatures2023GridActions = ( {
 	}
 
 	return (
-		<div className="plan-features-2023-gridrison__actions">
-			<div className="plan-features-2023-gridrison__actions-buttons">{ actionButton }</div>
+		<div className="plans-grid-next-action-button">
+			<div className="plans-grid-next-action-button__content">{ actionButton }</div>
 		</div>
 	);
 };
 
-export default PlanFeatures2023GridActions;
+export default ActionButton;

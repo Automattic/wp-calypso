@@ -50,9 +50,9 @@ import { render, screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
 import { usePlansGridContext } from '../../grid-context';
-import PlanFeatures2023GridActions from '../actions';
+import ActionButton from '../shared/action-button';
 
-describe( 'PlanFeatures2023GridActions', () => {
+describe( 'ActionButton', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		useDispatch.mockImplementation( jest.fn( () => ( { setShowDomainUpsellDialog: jest.fn() } ) ) );
@@ -71,7 +71,6 @@ describe( 'PlanFeatures2023GridActions', () => {
 			freePlan: false,
 			isInSignup: false,
 			onUpgradeClick: jest.fn(),
-			isWpcomEnterpriseGridPlan: false,
 			isStuck: false,
 			showMonthlyPrice: true,
 			visibleGridPlans: [],
@@ -116,7 +115,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 			} ) );
 
 			render(
-				<PlanFeatures2023GridActions
+				<ActionButton
 					{ ...defaultProps }
 					currentSitePlanSlug={ PLAN_PREMIUM_2_YEARS }
 					planSlug={ PLAN_BUSINESS }
@@ -162,7 +161,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 			} ) );
 
 			render(
-				<PlanFeatures2023GridActions
+				<ActionButton
 					{ ...defaultProps }
 					currentSitePlanSlug={ PLAN_PREMIUM }
 					planSlug={ PLAN_BUSINESS }
@@ -207,7 +206,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 					},
 				} ) );
 				render(
-					<PlanFeatures2023GridActions
+					<ActionButton
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planSlug={ PLAN_BUSINESS }
@@ -266,7 +265,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 				} ) );
 
 				render(
-					<PlanFeatures2023GridActions
+					<ActionButton
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planSlug={ PLAN_BUSINESS_2_YEARS }
@@ -309,7 +308,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 					},
 				} ) );
 				render(
-					<PlanFeatures2023GridActions
+					<ActionButton
 						{ ...defaultProps }
 						currentSitePlanSlug={ PLAN_BUSINESS_MONTHLY }
 						planSlug={ PLAN_BUSINESS_3_YEARS }
@@ -344,13 +343,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 						} ),
 					},
 				} ) );
-				render(
-					<PlanFeatures2023GridActions
-						{ ...defaultProps }
-						planSlug={ PLAN_BUSINESS_3_YEARS }
-						isStuck
-					/>
-				);
+				render( <ActionButton { ...defaultProps } planSlug={ PLAN_BUSINESS_3_YEARS } isStuck /> );
 				const upgradeButton = screen.getByRole( 'button', { name: 'Upgrade – $20' } );
 
 				expect( upgradeButton ).toHaveTextContent( 'Upgrade – $20' );
@@ -384,7 +377,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 					},
 				} ) );
 				render(
-					<PlanFeatures2023GridActions
+					<ActionButton
 						{ ...defaultProps }
 						isInSignup
 						planSlug={ PLAN_BUSINESS }
