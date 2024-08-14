@@ -71,11 +71,17 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			/>
 			{ 'mobile' === activeTab && ! mobileLoaded && <LoadingScreen isSavedReport={ false } /> }
 			{ 'mobile' === activeTab && mobileLoaded && (
-				<PerformanceProfilerDashboardContent performanceReport={ performanceReport } />
+				<PerformanceProfilerDashboardContent
+					key={ activeTab }
+					performanceReport={ performanceReport }
+				/>
 			) }
 			{ 'desktop' === activeTab && ! desktopLoaded && <LoadingScreen isSavedReport={ false } /> }
 			{ 'desktop' === activeTab && desktopLoaded && (
-				<PerformanceProfilerDashboardContent performanceReport={ performanceReport } />
+				<PerformanceProfilerDashboardContent
+					key={ activeTab }
+					performanceReport={ performanceReport }
+				/>
 			) }
 		</div>
 	);

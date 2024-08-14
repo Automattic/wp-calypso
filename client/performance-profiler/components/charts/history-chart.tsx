@@ -1,3 +1,4 @@
+import { Icon, info } from '@wordpress/icons';
 import { extent as d3Extent, max as d3Max } from 'd3-array';
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
 import {
@@ -10,7 +11,6 @@ import { line as d3Line, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { timeFormat as d3TimeFormat } from 'd3-time-format';
 import React, { createRef, useEffect } from 'react';
-
 import './style.scss';
 
 type chartItem = {
@@ -24,6 +24,8 @@ type ChartProps = {
 	width: number;
 	height: number;
 };
+
+const MAX_TICKS = 4;
 
 // Create scales for the chart
 const createScales = ( data, range, margin, width, height ) => {
@@ -78,7 +80,7 @@ const createGradient = ( svg, data, xScale, colorScale, margin, width ) => {
 const drawGrid = ( svg, yScale, width, margin ) => {
 	svg
 		.selectAll( 'line.horizontal-grid' )
-		.data( yScale.ticks( 6 ) )
+		.data( yScale.ticks( MAX_TICKS ) )
 		.enter()
 		.append( 'line' )
 		.attr( 'class', 'horizontal-grid' )
@@ -124,7 +126,7 @@ const drawAxes = ( svg, xScale, yScale, data, margin, width, height ) => {
 	svg
 		.append( 'g' )
 		.attr( 'transform', `translate(${ margin.left },0)` )
-		.call( d3AxisLeft( yScale ).ticks( 6 ) )
+		.call( d3AxisLeft( yScale ).ticks( MAX_TICKS ) )
 		.select( '.domain' )
 		.remove();
 };
@@ -146,11 +148,11 @@ const createShapePath = ( item, xScale, yScale, range ) => {
 };
 
 // Show tooltip on hover
-const showTooltip = ( tooltip, item ) => {
-	const event = d3Event;
+const showTooltip = ( tooltip, data, ev = null ) => {
+	const event = d3Event || ev;
 	tooltip.style( 'opacity', 1 );
 	tooltip
-		.html( `${ item.value }` )
+		.html( data )
 		.style( 'left', event.pageX - 28 + 'px' )
 		.style( 'top', event.pageY - 50 + 'px' );
 };
@@ -172,38 +174,83 @@ const drawDots = ( svg, data, xScale, yScale, colorScale, range, tooltip ) => {
 		.attr( 'fill', ( item: chartItem ) => colorScale( item.value ) )
 		.attr( 'stroke', '#fff' )
 		.attr( 'stroke-width', 2.5 )
-		.on( 'mouseover', ( item: chartItem ) => showTooltip( tooltip, item ) )
+		.on( 'mouseover', ( item: chartItem ) => showTooltip( tooltip, item.value ) )
 		.on( 'mouseout', () => hideTooltip( tooltip ) );
+};
+
+const generateSampleData = ( range ) => {
+	const data = [];
+	const currentDate = new Date();
+	for ( let i = 1; i <= 8; i++ ) {
+		const date = new Date( currentDate );
+		date.setDate( currentDate.getDate() - i * 7 );
+		const point: chartItem = {
+			date: date.toISOString(),
+			value: range[ 0 ] + Math.random() * ( range[ 1 ] - range[ 0 ] ),
+		};
+		data.push( point );
+	}
+	return data;
 };
 
 const HistoryChart = ( { data, range, height, width }: ChartProps ) => {
 	const svgRef = createRef< SVGSVGElement >();
 	const tooltipRef = createRef< HTMLElement >();
+	const dataAvailable = data && data.length;
+
+	if ( ! dataAvailable ) {
+		data = generateSampleData( range );
+	}
 
 	useEffect( () => {
 		// Clear previous chart
 		d3Select( svgRef.current ).selectAll( '*' ).remove();
 
-		const margin = { top: 20, right: 30, bottom: 40, left: 60 };
+		const margin = { top: 20, right: 30, bottom: 40, left: 40 };
 
 		const { xScale, yScale, colorScale } = createScales( data, range, margin, width, height );
 
 		const svg = initializeSVG( svgRef, width, height );
 
-		createGradient( svg, data, xScale, colorScale, margin, width );
+		dataAvailable && createGradient( svg, data, xScale, colorScale, margin, width );
 
 		drawGrid( svg, yScale, width, margin );
-		drawLine( svg, data, xScale, yScale );
+
+		dataAvailable && drawLine( svg, data, xScale, yScale );
 		drawAxes( svg, xScale, yScale, data, margin, width, height );
 
 		const tooltip = d3Select( tooltipRef.current ).attr( 'class', 'tooltip' );
-		drawDots( svg, data, xScale, yScale, colorScale, range, tooltip );
-	}, [ data, range, height, width ] );
+		dataAvailable && drawDots( svg, data, xScale, yScale, colorScale, range, tooltip );
+	}, [ dataAvailable, data, range, height, width ] );
+
+	const handleInfoToolTip = ( event ) => {
+		const tooltip = d3Select( tooltipRef.current );
+		const data = 'Not enough real-world speed data is available for this page.';
+		showTooltip( tooltip, data, event );
+	};
+
+	const handleHideToolTip = () => {
+		const tooltip = d3Select( tooltipRef.current );
+		hideTooltip( tooltip );
+	};
 
 	return (
-		<div className="chart">
-			<svg ref={ svgRef }></svg>
+		<div className="chart-container">
 			<div ref={ tooltipRef }></div>
+			<div className="chart">
+				<svg ref={ svgRef }></svg>
+				{ ! dataAvailable && (
+					<div className="info">
+						History unavailable
+						<Icon
+							onMouseOver={ handleInfoToolTip }
+							onMouseOut={ handleHideToolTip }
+							icon={ info }
+							className="icon"
+						/>
+					</div>
+				) }
+			</div>
 		</div>
 	);
 };

@@ -136,6 +136,16 @@ export type PerformanceReport = {
 	overall_score: number;
 	is_wpcom: boolean;
 	is_wordpress: boolean;
+	history?: {
+		collection_period: string[];
+		metrics: {
+			ttfb?: number[];
+			fcp?: number[];
+			lcp?: number[];
+			cls?: number[];
+			inp?: number[];
+		};
+	};
 } & BasicMetrics;
 
 export interface UrlPerformanceMetricsQueryResponse {

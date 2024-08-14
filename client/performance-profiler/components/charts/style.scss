@@ -1,5 +1,6 @@
-.chart {
+.chart-container {
 	cursor: pointer;
+	display: inline-block;
 
 	.tick {
 		line {
@@ -22,5 +23,25 @@
 		border-radius: 3px;
 		font-size: 1rem;
 		font-family: Arial, Helvetica, sans-serif;
+	}
+
+	.chart {
+		position: relative;
+
+		.info {
+			display: flex;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			padding: 15px 25px;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 32px;
+			background: #f6f7f7;
+
+			.icon {
+				margin-left: 10px;
+			}
+		}
 	}
 }
