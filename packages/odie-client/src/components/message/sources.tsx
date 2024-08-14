@@ -16,7 +16,7 @@ export const Sources = ( { message }: { message: Message } ) => {
 			message.context?.sources?.forEach( ( source: Source, index: number ) => {
 				trackEvent( 'sources_traintracks_render', {
 					fetch_algo: source?.railcar?.fetch_algo,
-					ui_algo: source?.railcar?.ui_algo,
+					ui_algo: 'default',
 					railcar: source?.railcar?.railcar,
 					fetch_position: source?.railcar?.fetch_position,
 					ui_position: index,
