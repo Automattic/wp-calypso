@@ -135,3 +135,14 @@ export function getAffiliateCouponLabel(): string {
 	// translators: The label of the coupon line item in checkout
 	return translate( 'Exclusive Offer Applied' );
 }
+
+export function getCouponLabel(
+	originalLabel: string,
+	experimentVariationName: string | null
+): string {
+	return experimentVariationName === 'treatment' ? translate( 'Offer Applied' ) : originalLabel;
+}
+
+export function getIsCouponBoxHidden( experimentVariationName: string | null ): boolean {
+	return experimentVariationName === 'treatment' ? true : false;
+}

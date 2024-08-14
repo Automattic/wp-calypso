@@ -20,13 +20,14 @@ import {
 import styled from '@emotion/styled';
 import { useState, useCallback, useMemo } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
+import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getAffiliateCouponLabel } from '../../utils';
+import { getAffiliateCouponLabel, getCouponLabel } from '../../utils';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
@@ -93,8 +94,12 @@ export function WPOrderReviewLineItems( {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
-	if ( isOnboardingAffiliateFlow && couponLineItem ) {
-		couponLineItem.label = getAffiliateCouponLabel();
+	const [ , experimentAssignment ] = useExperiment( 'calypso_hide_coupon_box' );
+
+	if ( couponLineItem ) {
+		couponLineItem.label = isOnboardingAffiliateFlow
+			? getAffiliateCouponLabel()
+			: getCouponLabel( couponLineItem.label, experimentAssignment?.variationName || null );
 	}
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
