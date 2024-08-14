@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import { PerformanceMetrics, Valuation } from '../types/performance-metrics';
 
 export const metricsNames = {
@@ -12,6 +13,59 @@ export const metricsNames = {
 	},
 	inp: { displayName: 'Interactivity', name: 'Interaction to Next Paint' },
 	ttfb: { displayName: 'Server responsiveness', name: 'Time to First Byte' },
+};
+
+export const metricValuations = {
+	fcp: {
+		good: translate( "Your site's loading speed is good" ),
+		needsImprovement: translate( "Your site's loading speed is moderate" ),
+		bad: translate( "Your site's loading speed needs improvement" ),
+		heading: translate( 'What is loading speed?' ),
+		aka: translate( '(aka First Contentful Paint)' ),
+		explanation: translate(
+			'Loading speed reflects the time it takes to display the first text or image to visitors. The best sites load in under 1.8 seconds.'
+		),
+	},
+	lcp: {
+		good: translate( "Your site's largest content load is good" ),
+		needsImprovement: translate( "Your site's largest content load is moderate" ),
+		bad: translate( "Your site's largest content load needs improvement" ),
+		heading: translate( 'What is largest content load?' ),
+		aka: translate( '(aka Largest Contentful Paint)' ),
+		explanation: translate(
+			'Largest content load measures the time it takes for the largest visible element (like an image or text block) on a page to load. The best sites load in under 2.5 seconds.'
+		),
+	},
+	cls: {
+		good: translate( "Your site's visual stability is good" ),
+		needsImprovement: translate( "Your site's visual stability is moderate" ),
+		bad: translate( "Your site's visual stability needs improvement" ),
+		heading: translate( 'What is visual stability needs?' ),
+		aka: translate( '(aka Content Layout Shift)' ),
+		explanation: translate(
+			'Visual stability is assessed by measuring how often content moves unexpectedly during loading. The best sites have a score of 0.1 or lower.'
+		),
+	},
+	inp: {
+		good: translate( "Your site's interactivity is good" ),
+		needsImprovement: translate( "Your site's interactivity is moderate" ),
+		bad: translate( "Your site's interactivity needs improvement" ),
+		heading: translate( 'What is interactivity?' ),
+		aka: translate( '(aka Interaction to Next Paint)' ),
+		explanation: translate(
+			'Interactivity measures the overall responsiveness of a webpage by evaluating how quickly it reacts to user interactions. A good score is 200 milliseconds or less, indicating that the page responds swiftly to user inputs.'
+		),
+	},
+	ttfb: {
+		good: translate( "Your site's server responsiveness is good" ),
+		needsImprovement: translate( "Your site's server responsiveness is moderate" ),
+		bad: translate( "Your site's server responsiveness needs improvement" ),
+		heading: translate( 'What is server responsiveness?' ),
+		aka: translate( '(aka Time To First Byte)' ),
+		explanation: translate(
+			'Server responsiveness reflects the time taken for a user’s browser to receive the first byte of data from the server after making a request. The best sites load around 800 milliseconds or less.'
+		),
+	},
 };
 
 // bad values are only needed as a maximum value on the scales
