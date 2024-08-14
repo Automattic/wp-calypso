@@ -108,6 +108,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									id="site-address"
 									value={ siteAddress }
 									placeholder={ translate( 'Enter your WordPress site address.' ) }
+									isError={ errors?.siteAddress }
 									onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
 										setSiteAddress( e.target.value )
 									}
@@ -129,6 +130,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 										id="username"
 										value={ username }
 										placeholder={ translate( 'Username' ) }
+										isError={ errors?.credentials && ! username }
 										onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
 											setUsername( e.target.value )
 										}
@@ -141,6 +143,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 										id="password"
 										value={ password }
 										placeholder={ translate( 'Password' ) }
+										isError={ errors?.credentials && ! password }
 										onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
 											setPassword( e.target.value )
 										}
@@ -163,6 +166,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									type="text"
 									id="backup-file"
 									value={ backupFileLocation }
+									isError={ errors?.backupFileLocation }
 									onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
 										setBackupFileLocation( e.target.value )
 									}
