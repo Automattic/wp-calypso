@@ -2,7 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .import-hosted-site,
-.hosted-site-migration-v2 :not(:has(.list__wrapper)),
+.migration :not(:has(.list__wrapper)),
 .site-migration :not(.site-migration-instructions--launchpad),
 .import-focused.migrate-message {
 	.step-container__header {
