@@ -134,8 +134,8 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 				<div className="core-web-vitals-display__history-graph">
 					<span className="core-web-vitals-display__description-subheading">
 						{ positiveTendency
-							? translate( '%s has increased over the past eight weeks', { args: [ displayName ] } )
-							: translate( '%s has decreased over the past eight weeks', {
+							? translate( '%s has improved over the past eight weeks', { args: [ displayName ] } )
+							: translate( '%s has declined over the past eight weeks', {
 									args: [ displayName ],
 							  } ) }
 						<HistoryChart
