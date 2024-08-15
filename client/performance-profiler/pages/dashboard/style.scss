@@ -8,6 +8,15 @@
 	max-width: 1056px;
 }
 
+.performance-profiler-content {
+	.top-section {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+		column-gap: 35px;
+	}
+}
+
 .peformance-profiler-dashboard-container {
 	.loading-container {
 		display: none;
