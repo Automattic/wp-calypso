@@ -174,7 +174,7 @@ describe( `${ flow.name }`, () => {
 				} );
 			} );
 
-			it( 'redirects user from PROCESSING to Checkout page when plan is already selected', () => {
+			it( 'redirects user from PROCESSING > Checkout page when plan is already selected', () => {
 				runNavigation( {
 					from: STEPS.PROCESSING,
 					query: {
