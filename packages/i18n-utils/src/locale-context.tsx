@@ -21,7 +21,7 @@ export const LocaleProvider: React.FC< Props > = ( { children, localeSlug } ) =>
  * @param {string} locale locale to be converted e.g. "en_US".
  * @returns locale string e.g. "en"
  */
-function mapWpI18nLangToLocaleSlug( locale: Locale = '' ): Locale {
+export function mapWpI18nLangToLocaleSlug( locale: Locale = '' ): Locale {
 	if ( ! locale ) {
 		return '';
 	}
