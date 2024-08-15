@@ -65,10 +65,18 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 			{ siteId, siteSlug },
 			`/setup/${ flowPath }/${ MIGRATION_UPGRADE_PLAN.slug }?${ query.toString() }`
 		);
-		const extraQueryParams =
+		let extraQueryParams: Record< string, string > | undefined =
 			props?.sendIntentWhenCreatingTrial && plan === PLAN_MIGRATION_TRIAL_MONTHLY
 				? { hosting_intent: HOSTING_INTENT_MIGRATE }
 				: undefined;
+
+		// If the redirection is forced, the upgrade step won't add the introductory offer, so it adds it through the checkout.
+		if ( forceRedirection ) {
+			extraQueryParams = {
+				...extraQueryParams,
+				introductoryOffer: '1',
+			};
+		}
 
 		return goToCheckout( {
 			flowName: flowPath,
