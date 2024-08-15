@@ -1,5 +1,6 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
-import { MIGRATION_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
+import { MIGRATION_FLOW } from '@automattic/onboarding';
+import { translate } from 'i18n-calypso';
 import { useSearchParams } from 'react-router-dom';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -7,6 +8,8 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
+import { MigrationUpgradePlanActions } from '../internals/steps-repository/migration-upgrade-plan/actions';
+import { goToImporter } from './helpers';
 import type { ProvidedDependencies } from '../internals/types';
 import type {
 	Flow,
@@ -19,9 +22,9 @@ const {
 	PLATFORM_IDENTIFICATION,
 	PROCESSING,
 	SITE_CREATION_STEP,
-	SITE_MIGRATION_UPGRADE_PLAN,
-	SITE_MIGRATION_HOW_TO_MIGRATE,
-	SITE_MIGRATION_SOURCE_URL,
+	MIGRATION_UPGRADE_PLAN,
+	MIGRATION_HOW_TO_MIGRATE,
+	MIGRATION_SOURCE_URL,
 	SITE_MIGRATION_INSTRUCTIONS,
 	SITE_MIGRATION_STARTED,
 	SITE_MIGRATION_ASSISTED_MIGRATION,
@@ -61,31 +64,37 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 		},
 		[ PROCESSING.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const next = getFromPropsOrUrl( 'next', props );
-				const siteId = getFromPropsOrUrl( 'siteId', props );
-				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
+				const next = getFromPropsOrUrl( 'next', props ) as string;
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 
 				if ( next ) {
-					return window.location.assign(
-						addQueryArgs( { siteId, siteSlug }, `/setup/${ SITE_SETUP_FLOW }/${ next.toString() }` )
-					);
+					return goToImporter( next, siteId, siteSlug );
 				}
 
-				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_UPGRADE_PLAN.slug ) );
+				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ) );
 			},
 		},
-		[ SITE_MIGRATION_UPGRADE_PLAN.slug ]: {
+		[ MIGRATION_UPGRADE_PLAN.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const siteId = getFromPropsOrUrl( 'siteId', props );
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
 				const plan = props?.plan as string;
+				const backToStep = {
+					step: MIGRATION_UPGRADE_PLAN.slug,
+					flow: flowPath,
+				};
+
+				if ( props?.action === MigrationUpgradePlanActions.IMPORT_CONTENT_ONLY ) {
+					return goToImporter( 'importerWordpress', siteId, siteSlug, backToStep );
+				}
 
 				if ( props?.goToCheckout ) {
-					const redirectAfterCheckout = SITE_MIGRATION_HOW_TO_MIGRATE.slug;
+					const redirectAfterCheckout = MIGRATION_HOW_TO_MIGRATE.slug;
 					const destination = addQueryArgs(
 						{ siteId, siteSlug },
-						`/setup/${ flowPath as string }/${ redirectAfterCheckout }`
+						`/setup/${ flowPath }/${ redirectAfterCheckout }`
 					);
 
 					const extraQueryParams =
@@ -95,19 +104,19 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 
 					return goToCheckout( {
 						flowName: flowPath,
-						stepName: SITE_MIGRATION_UPGRADE_PLAN.slug,
+						stepName: MIGRATION_UPGRADE_PLAN.slug,
 						siteSlug,
 						destination: destination,
 						plan,
 						cancelDestination: `/setup/${ flowPath }/${
-							STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+							STEPS.MIGRATION_UPGRADE_PLAN.slug
 						}?${ query.toString() }`,
 						extraQueryParams,
 					} );
 				}
 			},
 		},
-		[ SITE_MIGRATION_HOW_TO_MIGRATE.slug ]: {
+		[ MIGRATION_HOW_TO_MIGRATE.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const how = getFromPropsOrUrl( 'how', props );
 				const siteId = getFromPropsOrUrl( 'siteId', props );
@@ -117,7 +126,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_INSTRUCTIONS.slug ) );
 				}
 
-				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_SOURCE_URL.slug ) );
+				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_SOURCE_URL.slug ) );
 			},
 		},
 		[ SITE_MIGRATION_INSTRUCTIONS.slug ]: {
@@ -128,7 +137,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_STARTED.slug ) );
 			},
 		},
-		[ SITE_MIGRATION_SOURCE_URL.slug ]: {
+		[ MIGRATION_SOURCE_URL.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const siteId = getFromPropsOrUrl( 'siteId', props );
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
@@ -150,9 +159,9 @@ export default {
 			PLATFORM_IDENTIFICATION,
 			SITE_CREATION_STEP,
 			PROCESSING,
-			SITE_MIGRATION_UPGRADE_PLAN,
-			SITE_MIGRATION_HOW_TO_MIGRATE,
-			SITE_MIGRATION_SOURCE_URL,
+			MIGRATION_UPGRADE_PLAN,
+			MIGRATION_HOW_TO_MIGRATE,
+			MIGRATION_SOURCE_URL,
 			SITE_MIGRATION_INSTRUCTIONS,
 			SITE_MIGRATION_STARTED,
 			SITE_MIGRATION_ASSISTED_MIGRATION,

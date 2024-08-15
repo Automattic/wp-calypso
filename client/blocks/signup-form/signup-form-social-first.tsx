@@ -3,7 +3,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import MailIcon from 'calypso/components/social-icons/mail';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -129,6 +128,7 @@ const SignupFormSocialFirst = ( {
 					{ notice }
 					<SocialSignupForm
 						handleResponse={ handleSocialResponse }
+						setCurrentStep={ setCurrentStep }
 						socialService={ socialService }
 						socialServiceResponse={ socialServiceResponse }
 						isReskinned={ isReskinned }
@@ -136,15 +136,7 @@ const SignupFormSocialFirst = ( {
 						disableTosText
 						compact
 						isSocialFirst={ isSocialFirst }
-					>
-						<Button
-							className="social-buttons__button button"
-							onClick={ () => setCurrentStep( 'email' ) }
-						>
-							<MailIcon width="20" height="20" />
-							<span className="social-buttons__service-name">{ __( 'Continue with Email' ) }</span>
-						</Button>
-					</SocialSignupForm>
+					/>
 				</>
 			);
 		} else if ( currentStep === 'email' ) {
