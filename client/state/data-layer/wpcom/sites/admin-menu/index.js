@@ -12,6 +12,9 @@ export const requestFetchAdminMenu = ( action ) =>
 			method: 'GET',
 			path: `/sites/${ action.siteId }/admin-menu/`,
 			apiNamespace: 'wpcom/v2',
+			query: {
+				_locale: 'user',
+			},
 		},
 		action
 	);
