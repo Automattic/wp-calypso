@@ -9,7 +9,7 @@
 
 		text {
 			font-size: 1rem;
-			fill: #3c434a;
+			fill: var(--studio-gray-70);
 		}
 	}
 
@@ -17,16 +17,16 @@
 		z-index: 1000;
 		opacity: 0;
 		position: absolute;
-		background-color: #1e1e1e;
+		background-color: var(--studio-gray-90);
 		color: #fff;
 		padding: 7px 10px;
 		border-radius: 3px;
 		font-size: 1rem;
-		font-family: Arial, Helvetica, sans-serif;
 	}
 
 	.chart {
 		position: relative;
+		padding: 0;
 
 		.info {
 			display: flex;
