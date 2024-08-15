@@ -214,7 +214,7 @@ export class AuthFormHeader extends Component {
 						return translate(
 							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooPayments'
 						);
-					} else if ( wooDnaConfig.getFlowName() === 'woodna:blaze-ads' ) {
+					} else if ( wooDnaConfig.getFlowName() === 'woodna:blaze-ads-on-woo' ) {
 						const pluginName = wooDnaConfig.getServiceName();
 						/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
 						return translate(
