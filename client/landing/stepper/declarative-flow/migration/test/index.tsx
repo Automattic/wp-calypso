@@ -9,6 +9,7 @@ import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import flow from '../';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../../constants';
 import { STEPS } from '../../internals/steps';
+import { MigrationUpgradePlanActions } from '../../internals/steps-repository/migration-upgrade-plan/actions';
 import { getFlowLocation, renderFlow } from '../../test/helpers';
 
 // we need to save the original object for later to not affect tests from other files
@@ -141,11 +142,14 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		it( 'redirects user from Upgrade plan > Import when user skips the upgrade', () => {
+		it( 'redirects user from Upgrade plan > Import when user they decide do it', () => {
 			runNavigation( {
 				from: STEPS.MIGRATION_UPGRADE_PLAN,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-				dependencies: { goToCheckout: false, action: 'skip' },
+				dependencies: {
+					goToCheckout: false,
+					action: MigrationUpgradePlanActions.IMPORT_CONTENT_ONLY,
+				},
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
