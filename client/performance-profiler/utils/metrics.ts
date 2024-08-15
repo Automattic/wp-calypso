@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { NewMetrics } from 'calypso/data/site-profiler/types';
+import { Metrics } from 'calypso/data/site-profiler/types';
 import { Valuation } from '../types/performance-metrics';
 
 export const metricsNames = {
@@ -104,7 +104,7 @@ export const metricsTresholds = {
 	},
 };
 
-export const mapThresholdsToStatus = ( metric: NewMetrics, value: number ): Valuation => {
+export const mapThresholdsToStatus = ( metric: Metrics, value: number ): Valuation => {
 	const { good, needsImprovement } = metricsTresholds[ metric ];
 
 	if ( value <= good ) {
@@ -118,7 +118,7 @@ export const mapThresholdsToStatus = ( metric: NewMetrics, value: number ): Valu
 	return 'bad';
 };
 
-export const displayValue = ( metric: NewMetrics, value: number ): string => {
+export const displayValue = ( metric: Metrics, value: number ): string => {
 	if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metric ) ) {
 		return `${ ( value / 1000 ).toFixed( 2 ) }s`;
 	}
