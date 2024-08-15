@@ -61,6 +61,9 @@ export default function ItemPreviewPaneHeader( {
 	const siteIconFallback =
 		extraProps?.siteIconFallback ?? ( itemData.isDotcomSite ? 'wordpress-logo' : 'color' );
 
+	const shouldDisplayVersionNumbers =
+		config.isEnabled( 'hosting-overview-refinements' ) && isAtomic && ( wpVersion || phpVersion );
+
 	const handlePhpVersionClick = () => {
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_php_version_update' ) );
 	};
@@ -116,45 +119,39 @@ export default function ItemPreviewPaneHeader( {
 									''
 								) }
 							</div>
-							{ config.isEnabled( 'hosting-overview-refinements' ) &&
-								( wpVersion || phpVersion ) && (
-									<div className="item-preview__header-env-data">
-										{ wpVersion && (
-											<div className="item-preview__header-env-data-item">
-												WordPress{ ' ' }
-												{ isAtomic ? (
-													<Button
-														className="item-preview__header-env-data-item-link"
-														href={ `/hosting-config/${ selectedSite?.domain }#wp` }
-														onClick={ handleWpVersionClick }
-													>
-														{ wpVersion }
-														{ wpVersionName && isStagingSite && (
-															<span className="item-preview__header-env-data-item-link-description">
-																({ wpVersionName })
-															</span>
-														) }
-													</Button>
-												) : (
-													wpVersion
-												) }
-											</div>
-										) }
-										{ phpVersion && (
-											<div className="item-preview__header-env-data-item">
-												PHP{ ' ' }
-												<Button
-													className="item-preview__header-env-data-item-link"
-													onClick={ handlePhpVersionClick }
-													href={ `/hosting-config/${ selectedSite?.domain }#php` }
-												>
-													{ phpVersion }
-												</Button>
-											</div>
-										) }
-									</div>
-								) }
+
+							{ shouldDisplayVersionNumbers && (
+								<div className="item-preview__header-env-data">
+									{ wpVersion && (
+										<div className="item-preview__header-env-data-item">
+											WordPress{ ' ' }
+											<a
+												className="item-preview__header-env-data-item-link"
+												href={ `/hosting-config/${ selectedSite?.domain }#wp` }
+												onClick={ handleWpVersionClick }
+											>
+												{ wpVersion }
+												{ wpVersionName && isStagingSite && <span> ({ wpVersionName })</span> }
+											</a>
+										</div>
+									) }
+
+									{ phpVersion && (
+										<div className="item-preview__header-env-data-item">
+											PHP{ ' ' }
+											<a
+												className="item-preview__header-env-data-item-link"
+												onClick={ handlePhpVersionClick }
+												href={ `/hosting-config/${ selectedSite?.domain }#php` }
+											>
+												{ phpVersion }
+											</a>
+										</div>
+									) }
+								</div>
+							) }
 						</div>
+
 						{ isPreviewLoaded && (
 							<div className="item-preview__header-actions">
 								{ extraProps?.headerButtons ? (

@@ -185,7 +185,7 @@ function getConfig( {
 			<>
 				<p>
 					{ translate(
-						'Import posts and images, podcasts and public comments from a Substack export file to {{b}}%(siteTitle)s{{/b}}.',
+						'Import posts and images, podcasts and public comments from Substack to {{b}}%(siteTitle)s{{/b}}.',
 						{
 							args: {
 								siteTitle,
@@ -210,17 +210,22 @@ function getConfig( {
 		uploadDescription: (
 			<>
 				{ translate(
-					'A Substack export file is a ZIP file containing a CSV file with all posts.'
+					"To generate a ZIP file of all your Substack posts, go to your Substack {{b}}Settings > Exports{{/b}} and click 'Create a new export.' Once the ZIP file is downloaded, upload it below.",
+					{
+						components: {
+							b: <strong />,
+						},
+					}
 				) }{ ' ' }
 				<InlineSupportLink supportContext="importers-substack" showIcon={ false }>
-					{ translate( 'See how to get your export file.' ) }
+					{ translate( 'Need help?' ) }
 				</InlineSupportLink>
 			</>
 		),
 		optionalUrl: {
-			title: translate( 'Substack Newsletter URL' ),
+			title: translate( 'Substack URL' ),
 			description: translate(
-				'Recommended: A Substack Newsletter URL to import comments and author information.'
+				'Recommended: Include the Substack URL to import comments and author information.'
 			),
 			invalidDescription: translate( 'Enter a valid Substack Newsletter URL (%(exampleUrl)s).', {
 				args: { exampleUrl: 'https://example-newsletter.substack.com/' },

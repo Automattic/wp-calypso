@@ -17,7 +17,7 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 		<div className="performance-profiler-performance-score">
 			<div className="score-summary">
 				<div className="title">{ translate( 'Performance Score' ) }</div>
-				<div className="score">{ value }</div>
+				<div className="score">{ Math.floor( value ) }</div>
 
 				<div className="score-bar">
 					<div className="full-bar" style={ { width: SCORE_BAR_WIDTH } } />

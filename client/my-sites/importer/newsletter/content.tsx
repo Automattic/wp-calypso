@@ -14,9 +14,17 @@ type ContentProps = {
 	selectedSite?: SiteDetails;
 	siteSlug: string;
 	fromSite: QueryArgParsed;
+	content: any;
+	skipNextStep: () => void;
 };
 
-export default function Content( { nextStepUrl, selectedSite, siteSlug, fromSite }: ContentProps ) {
+export default function Content( {
+	nextStepUrl,
+	selectedSite,
+	siteSlug,
+	fromSite,
+	skipNextStep,
+}: ContentProps ) {
 	const siteTitle = selectedSite?.title;
 	const siteId = selectedSite?.ID;
 
@@ -57,7 +65,11 @@ export default function Content( { nextStepUrl, selectedSite, siteSlug, fromSite
 				To generate a ZIP file of all your Substack posts, go to Settings { '>' } Exports and click
 				'Create a new export.' Once the ZIP file is downloaded, upload it in the next step.
 			</p>
-			<Button href={ `https://${ fromSite }/publish/settings#exports` }>
+			<Button
+				href={ `https://${ fromSite }/publish/settings?search=export` }
+				target="_blank"
+				rel="noreferrer noopener"
+			>
 				Export content <Gridicon icon="external" />
 			</Button>
 			<hr />
@@ -69,6 +81,7 @@ export default function Content( { nextStepUrl, selectedSite, siteSlug, fromSite
 					importerData={ importerData }
 					fromSite={ fromSite as string }
 					nextStepUrl={ nextStepUrl }
+					skipNextStep={ skipNextStep }
 				/>
 			) }
 		</Card>

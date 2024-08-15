@@ -1,0 +1,198 @@
+$blueberry-color: #3858e9;
+
+.performance-profiler-insights-section {
+	.title {
+		font-size: $font-title-small;
+		font-weight: 500;
+	}
+
+	.subtitle {
+		color: var(--studio-gray-70);
+		font-size: $font-body;
+		margin-bottom: 32px;
+	}
+
+	.metrics-insight-item.foldable-card {
+		box-shadow: none;
+		border-top: 1px solid var(--studio-gray-5);
+
+		&:last-child {
+			border-bottom: 1px solid var(--studio-gray-5);
+		}
+
+		.foldable-card__header {
+			padding: 16px;
+			padding-left: 0;
+
+			.title-description {
+				color: var(--studio-gray-70);
+			}
+		}
+
+		.foldable-card__secondary {
+			display: none;
+		}
+
+		.foldable-card__main {
+			padding-right: 50px;
+
+			a {
+				color: var(--studio-gray-40);
+
+				&:hover {
+					color: #fff;
+				}
+			}
+
+			.value {
+				color: var(--studio-green-40);
+			}
+		}
+
+		&.is-expanded .foldable-card__main {
+			color: #fff;
+
+			a {
+				color: #fff;
+
+				&:hover {
+					color: var(--studio-gray-40);
+				}
+			}
+
+			.value {
+				color: var(--studio-green-50);
+			}
+		}
+
+		&.is-expanded .foldable-card__header {
+			.title-description {
+				color: var(--studio-gray-100);
+			}
+		}
+
+		&.is-expanded .foldable-card__content {
+			border-top: 0;
+			max-height: fit-content;
+		}
+
+		.foldable-card__content {
+			.metrics-insight-detailed-content {
+				margin-top: 24px;
+
+				table {
+					table-layout: fixed;
+					width: 100%;
+					margin-bottom: 0;
+
+					th,
+					td {
+						padding: 8px;
+						word-break: break-word;
+						font-size: $font-body-small;
+						border-bottom: 1px solid var(--studio-gray-5);
+					}
+
+					tr.sub {
+						padding-left: 40px;
+					}
+
+					pre {
+						background: none;
+						padding: 14px 0 0;
+						margin-bottom: 0;
+					}
+
+					code {
+						color: $blueberry-color;
+					}
+
+					.score {
+						font-weight: bold;
+						display: inline-block;
+						width: 40px;
+						height: 25px;
+						line-height: 25px;
+						text-align: center;
+						border-radius: 4px;
+
+						&.dangerous {
+							color: var(--studio-red-60);
+							background: var(--studio-red-10);
+						}
+
+						&.alert {
+							color: var(--studio-yellow-60);
+							background: var(--studio-yellow-10);
+						}
+					}
+				}
+
+				.tree {
+					--spacing: 1.5rem;
+					--radius: 10px; /* stylelint-disable-line scales/radii */
+					margin: 0;
+					padding: 0;
+
+					li {
+						margin: 0;
+						display: block;
+						position: relative;
+						padding-left: calc(2 * var(--spacing) - var(--radius) - 2px);
+						line-height: 30px;
+					}
+
+					ul {
+						margin-left: calc(var(--radius) - var(--spacing));
+						padding-left: 0;
+
+						li {
+							border-left: 2px solid #ddd;
+
+							&:last-child {
+								border-color: transparent;
+							}
+
+							&::before {
+								content: "";
+								display: block;
+								position: absolute;
+								top: calc(var(--spacing) / -2);
+								left: -2px;
+								width: calc(var(--spacing) + 2px);
+								height: calc(var(--spacing) + 1px);
+								border: solid #ddd;
+								border-width: 0 0 2px 2px;
+							}
+						}
+					}
+
+					summary {
+						display: block;
+						cursor: pointer;
+
+						&::marker,
+						&::-webkit-details-marker {
+							display: none;
+						}
+
+						&:focus {
+							outline: none;
+						}
+
+						&:focus-visible {
+							outline: 1px dotted #000;
+						}
+
+						&::before {
+							z-index: 1;
+						}
+					}
+					details[open] > summary::before {
+						background-position: calc(-2 * var(--radius)) 0;
+					}
+				}
+			}
+		}
+	}
+}

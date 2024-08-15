@@ -92,14 +92,14 @@ export interface HostingProviderQueryResponse {
 	hosting_provider: HostingProvider;
 }
 
-export type Metrics = 'cls' | 'fid' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
+export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
 
 export type Scores = 'good' | 'needs-improvement' | 'poor';
 
 export type BasicMetrics = Record< Metrics, number >;
 export type BasicMetricsList = [ Metrics, number ][];
 
-export type BasicMetricsScored = Record< Metrics, { value: number; score: Scores } >;
+export type BasicMetricsScored = Record< string, { value: number; score: Scores } >;
 export type BasicMetricsScoredList = [ Metrics, { value: number; score: Scores } ][];
 
 export interface UrlBasicMetricsQueryResponse {
@@ -132,16 +132,25 @@ export type ScreenShotsTimeLine = {
 	timing: number;
 };
 
-export type PerformanceReport = {
-	audits: {
-		health: PerformanceMetricsDataQueryResponse;
-		performance: PerformanceMetricsDataQueryResponse;
+export type PerformanceMetricsHistory = {
+	collection_period: string[];
+	metrics: {
+		ttfb?: number[];
+		fcp?: number[];
+		lcp?: number[];
+		cls?: number[];
+		inp?: number[];
 	};
+};
+
+export type PerformanceReport = {
+	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	performance: number;
 	overall_score: number;
 	is_wpcom: boolean;
 	is_wordpress: boolean;
 	screenshots?: ScreenShotsTimeLine[];
+	history: PerformanceMetricsHistory;
 } & BasicMetrics;
 
 export interface UrlPerformanceMetricsQueryResponse {

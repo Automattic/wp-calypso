@@ -135,7 +135,7 @@ describe( 'HeaderPrice', () => {
 		} ) );
 
 		const { container } = render( <HeaderPrice { ...defaultProps } /> );
-		const badge = container.querySelector( '.plan-features-2023-grid__badge' );
+		const badge = container.querySelector( '.plans-grid-next-header-price__badge' );
 
 		expect( badge ).toHaveTextContent( 'Limited Time Offer' );
 	} );
@@ -158,7 +158,7 @@ describe( 'HeaderPrice', () => {
 		} ) );
 
 		const { container } = render( <HeaderPrice { ...defaultProps } /> );
-		const badge = container.querySelector( '.plan-features-2023-grid__badge' );
+		const badge = container.querySelector( '.plans-grid-next-header-price__badge' );
 
 		expect( badge ).toHaveTextContent( 'One time discount' );
 	} );

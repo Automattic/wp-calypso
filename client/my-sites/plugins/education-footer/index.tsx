@@ -54,6 +54,7 @@ const EducationFooterContainer = styled.div`
 const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	--color-accent: #117ac9;
 	--color-accent-60: #0e64a5;
+	margin-bottom: -32px;
 
 	.marketplace-cta {
 		min-width: 122px;
@@ -68,7 +69,7 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	${ ( { isloggedIn } ) =>
 		! isloggedIn &&
 		`${ SectionContainer } {
-		padding-bottom: 0;
+		padding-bottom: 32px;
 	}` }
 
 	${ SectionContainer }::before {
