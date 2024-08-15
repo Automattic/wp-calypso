@@ -1,6 +1,7 @@
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
@@ -284,6 +285,12 @@ const importFlow: Flow = {
 		};
 
 		const goBack = () => {
+			const backToFlow = urlQueryParams.get( 'backToFlow' );
+			if ( backToFlow ) {
+				return window.location.assign(
+					addQueryArgs( backToFlow, { siteSlug: siteSlugParam, siteId: site?.ID } )
+				);
+			}
 			switch ( _currentStep ) {
 				case 'importList':
 					// eslint-disable-next-line no-case-declarations

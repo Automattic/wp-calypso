@@ -139,7 +139,14 @@ describe( `${ flow.name }`, () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-setup/importBlogger?siteId=123&siteSlug=example.wordpress.com'
+				addQueryArgs( '/setup/site-setup/importBlogger', {
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+					backToFlow: addQueryArgs( `/setup/migration/platform-identification`, {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					} ),
+				} )
 			);
 		} );
 

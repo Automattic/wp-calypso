@@ -1,5 +1,5 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
-import { MIGRATION_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
+import { IMPORT_FOCUSED_FLOW, MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSearchParams } from 'react-router-dom';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -27,7 +27,7 @@ const {
 	SITE_MIGRATION_ASSISTED_MIGRATION,
 } = STEPS;
 
-const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject: Flow ) => {
+const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flow: Flow ) => {
 	const [ query ] = useSearchParams();
 
 	const getFromPropsOrUrl = ( key: string, props?: ProvidedDependencies ): Primitive => {
@@ -35,7 +35,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 		return typeof value === 'object' ? undefined : ( value as Primitive );
 	};
 
-	const navigateTo = ( step: StepperStep, keys: string[], props: ProvidedDependencies = {} ) => {
+	const getValuesFromPropsOrURL = ( keys: string[], props?: ProvidedDependencies ) => {
 		const params = keys.reduce( ( acc: Record< string, Primitive >, key ) => {
 			const value = getFromPropsOrUrl( key, props );
 			if ( value !== undefined && value !== '' ) {
@@ -44,6 +44,11 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 			return acc;
 		}, {} );
 
+		return params;
+	};
+
+	const navigateTo = ( step: StepperStep, keys: string[], props: ProvidedDependencies = {} ) => {
+		const params = getValuesFromPropsOrURL( keys, props );
 		return navigate( addQueryArgs( params, step.slug ) );
 	};
 
@@ -78,8 +83,16 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const next = getFromPropsOrUrl( 'next', props );
 
 				if ( next ) {
-					const importerURL = `/setup/${ SITE_SETUP_FLOW }/${ next.toString() }`;
-					return exitTo( importerURL, [ 'siteId', 'siteSlug' ], props );
+					const importerURL = `/setup/${ IMPORT_FOCUSED_FLOW }/${ next.toString() }`;
+
+					const backToFlow = `/setup/${ flow.variantSlug ?? flow.name }/${
+						PLATFORM_IDENTIFICATION.slug
+					}`;
+
+					return exitTo( importerURL, [ 'siteId', 'siteSlug', 'backToFlow' ], {
+						...props,
+						backToFlow,
+					} );
 				}
 
 				return navigateTo( SITE_MIGRATION_UPGRADE_PLAN, [ 'siteId', 'siteSlug' ], props );
@@ -89,7 +102,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 			submit: ( props?: ProvidedDependencies ) => {
 				const siteId = getFromPropsOrUrl( 'siteId', props );
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
-				const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
+				const flowPath = ( flow.variantSlug ?? flow.name ) as string;
 				const plan = props?.plan as string;
 
 				if ( props?.goToCheckout ) {
