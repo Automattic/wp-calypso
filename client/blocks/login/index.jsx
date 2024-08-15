@@ -843,7 +843,6 @@ class Login extends Component {
 			isSignupExistingAccount,
 			isSocialFirst,
 			isFromAutomatticForAgenciesPlugin,
-			loginButtons,
 			currentUser,
 			redirectTo,
 		} = this.props;
@@ -1032,7 +1031,6 @@ class Login extends Component {
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst }
-				loginButtons={ loginButtons }
 				isJetpack={ isJetpack }
 				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 			/>

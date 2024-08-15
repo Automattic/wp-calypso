@@ -31,35 +31,6 @@ const getCurrentMonthRangeTimestamps = () => {
 	};
 };
 
-const AtomicSiteBandwidthUsage = ( { siteId, domain }: { siteId: number; domain: string } ) => {
-	const translate = useTranslate();
-
-	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
-
-	const { data } = useSiteMetricsQuery( siteId, {
-		start: startInSeconds,
-		end: endInSeconds,
-		metric: 'response_bytes_persec',
-	} );
-
-	if ( ! data ) {
-		return <LoadingPlaceholder className="hosting-overview__plan-bandwidth-placeholder" />;
-	}
-
-	const valueInBytes = data.data.periods.reduce(
-		( acc, curr ) => acc + ( curr.dimension[ domain ] || 0 ),
-		0
-	);
-
-	const { unitAmount, unit } = convertBytes( valueInBytes );
-
-	return translate( '%(value)s %(measure)s used', {
-		args: { value: unitAmount, measure: unit },
-		comment:
-			'The amount of data that has been used by the site in the current month in KB/MB/GB/TB',
-	} );
-};
-
 export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	const selectedSiteData = useSelector( getSelectedSite );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -68,10 +39,19 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	const hasSftpFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SFTP ) );
 
 	const isEligibleForAtomic = ! isAtomic && hasSftpFeature;
-
 	const selectedSiteDomain = selectedSiteData?.domain;
-
 	const translate = useTranslate();
+
+	const { startInSeconds, endInSeconds } = getCurrentMonthRangeTimestamps();
+	const { data } = useSiteMetricsQuery(
+		siteId,
+		{
+			start: startInSeconds,
+			end: endInSeconds,
+			metric: 'response_bytes_persec',
+		},
+		!! isAtomic
+	);
 
 	if ( ! canViewStat ) {
 		return;
@@ -85,7 +65,22 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 			} );
 		}
 
-		return <AtomicSiteBandwidthUsage siteId={ siteId } domain={ selectedSiteDomain } />;
+		if ( ! data ) {
+			return <LoadingPlaceholder className="hosting-overview__plan-bandwidth-placeholder" />;
+		}
+
+		const valueInBytes = data.data.periods.reduce(
+			( acc, curr ) => acc + ( curr.dimension[ selectedSiteDomain ] || 0 ),
+			0
+		);
+
+		const { unitAmount, unit } = convertBytes( valueInBytes );
+
+		return translate( '%(value)s %(measure)s used', {
+			args: { value: unitAmount, measure: unit },
+			comment:
+				'The amount of data that has been used by the site in the current month in KB/MB/GB/TB',
+		} );
 	};
 
 	const getBandwidthFooterLink = () => {

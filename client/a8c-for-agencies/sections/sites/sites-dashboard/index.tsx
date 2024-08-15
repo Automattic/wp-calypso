@@ -21,7 +21,6 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
@@ -40,7 +39,6 @@ import { OverviewPreviewPane } from '../features/a4a/overview-preview-pane';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SitesHeaderActions from '../sites-header-actions';
 import SiteNotifications from '../sites-notifications';
-import EmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
 import ProvisioningSiteNotification from './provisioning-site-notification';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
@@ -66,7 +64,15 @@ export default function SitesDashboard() {
 		showOnlyFavorites,
 		hideListing,
 		setHideListing,
+		recentlyCreatedSiteId,
+		setRecentlyCreatedSiteId,
 	} = useContext( SitesDashboardContext );
+
+	useEffect( () => {
+		if ( recentlyCreatedSite ) {
+			setRecentlyCreatedSiteId( Number( recentlyCreatedSite ) );
+		}
+	}, [ recentlyCreatedSite, setRecentlyCreatedSiteId ] );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 	// FIXME: We should switch to a new A4A-specific endpoint when it becomes available, instead of using the public-facing endpoint for A4A
@@ -101,8 +107,6 @@ export default function SitesDashboard() {
 		perPage: dataViewsState.perPage,
 		agencyId,
 	} );
-
-	const noActiveSite = useNoActiveSite();
 
 	useEffect( () => {
 		if ( dataViewsState.selectedItem && ! initialSelectedSiteUrl ) {
@@ -206,10 +210,6 @@ export default function SitesDashboard() {
 		tourId = 'addSiteStep1';
 	}
 
-	if ( noActiveSite ) {
-		return <EmptyState />;
-	}
-
 	return (
 		<Layout
 			className={ clsx(
@@ -223,9 +223,9 @@ export default function SitesDashboard() {
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ navItems.length > 1 }>
-						{ recentlyCreatedSite && (
+						{ recentlyCreatedSiteId && (
 							<ProvisioningSiteNotification
-								siteId={ Number( recentlyCreatedSite ) }
+								siteId={ Number( recentlyCreatedSiteId ) }
 								migrationIntent={ !! migrationIntent }
 							/>
 						) }

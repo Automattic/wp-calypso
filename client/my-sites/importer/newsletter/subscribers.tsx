@@ -7,9 +7,15 @@ type Props = {
 	nextStepUrl: string;
 	selectedSite?: SiteDetails;
 	fromSite: QueryArgParsed;
+	skipNextStep: () => void;
 };
 
-export default function Subscribers( { nextStepUrl, selectedSite, fromSite }: Props ) {
+export default function Subscribers( {
+	nextStepUrl,
+	selectedSite,
+	fromSite,
+	skipNextStep,
+}: Props ) {
 	if ( ! selectedSite ) {
 		return null;
 	}
@@ -20,13 +26,21 @@ export default function Subscribers( { nextStepUrl, selectedSite, fromSite }: Pr
 				To generate a CSV file of all your Substack subscribers, go to the Subscribers tab and click
 				'Export.' Once the CSV file is downloaded, upload it in the next step.
 			</p>
-			<Button href={ `https://${ fromSite }/publish/subscribers` }>
+			<Button
+				href={ `https://${ fromSite }/publish/subscribers` }
+				target="_blank"
+				rel="noreferrer noopener"
+			>
 				Export subscribers <Gridicon icon="external" />
 			</Button>
 			<hr />
 			<h2>Step 2: Import your subscribers to WordPress.com</h2>
 			{ selectedSite.ID && (
-				<SubscriberUploadForm siteId={ selectedSite.ID } nextStepUrl={ nextStepUrl } />
+				<SubscriberUploadForm
+					siteId={ selectedSite.ID }
+					nextStepUrl={ nextStepUrl }
+					skipNextStep={ skipNextStep }
+				/>
 			) }
 		</Card>
 	);

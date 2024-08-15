@@ -12,8 +12,7 @@ import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-heade
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
-import { getSectionGroup, getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 const ThreeColumnContainer = styled.div`
 	@media ( max-width: 660px ) {
@@ -55,6 +54,7 @@ const EducationFooterContainer = styled.div`
 const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	--color-accent: #117ac9;
 	--color-accent-60: #0e64a5;
+	margin-bottom: -32px;
 
 	.marketplace-cta {
 		min-width: 122px;
@@ -69,7 +69,7 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 	${ ( { isloggedIn } ) =>
 		! isloggedIn &&
 		`${ SectionContainer } {
-		padding-bottom: 0;
+		padding-bottom: 32px;
 	}` }
 
 	${ SectionContainer }::before {
@@ -90,12 +90,7 @@ export const MarketplaceFooter = () => {
 	const { __ } = useI18n();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
-	const sectionName = useSelector( getSectionName ) || '';
-	const sectionGroup = useSelector( getSectionGroup ) || '';
-	const siteId = useSelector( getSelectedSiteId );
-	const isGlobalSidebarVisible = useSelector( ( state ) =>
-		getShouldShowGlobalSidebar( state, siteId, sectionGroup, sectionName )
-	);
+	const sectionName = useSelector( getSectionName );
 
 	const startUrl = addQueryArgs(
 		{
@@ -108,7 +103,6 @@ export const MarketplaceFooter = () => {
 		<MarketplaceContainer isloggedIn={ isLoggedIn }>
 			<Section
 				header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
-				hideBackgroundElement={ isLoggedIn && isGlobalSidebarVisible }
 			>
 				{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
 					<Button className="is-primary marketplace-cta" href={ startUrl }>
