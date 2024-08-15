@@ -22,6 +22,7 @@ export const getSslReadableStatus = ( { sslStatus }: ResponseDomain ): string =>
 		case sslStatuses.SSL_ACTIVE:
 			return sslReadableStatus.ACTIVE;
 		case sslStatuses.SSL_PENDING:
+		case sslStatuses.SSL_NEWLY_REGISTERED:
 			return sslReadableStatus.PENDING;
 		case sslStatuses.SSL_DISABLED:
 		default:
