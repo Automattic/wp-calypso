@@ -53,6 +53,10 @@
 	font-size: $font-body-small;
 }
 
+.cancel-purchase__support-information .support-link {
+	color: var(--color-primary);
+}
+
 .cancel-purchase__site-title {
 	font-size: $font-body-extra-small;
 	text-transform: uppercase;

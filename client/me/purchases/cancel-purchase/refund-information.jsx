@@ -1,8 +1,13 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import { FormLabel } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
+import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from '@automattic/urls';
+import Button from '@automattic/odie-client/src/components/button';
+import { UPDATE_NAMESERVERS } from '@automattic/urls';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -19,6 +24,9 @@ import {
 } from 'calypso/lib/purchases';
 import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
@@ -38,6 +46,51 @@ const CancelPurchaseRefundInformation = ( {
 			cancelBundledDomain: newCancelBundledDomainValue,
 			confirmCancelBundledDomain: newCancelBundledDomainValue && confirmCancelBundledDomain,
 		} );
+	};
+
+	const ContactSupportLink = () => {
+		const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+		const { url } = useStillNeedHelpURL();
+
+		const onClick = () => {
+			recordTracksEvent( 'calypso_cancellation_help_button_click' );
+			setNavigateToRoute( url );
+			setShowHelpCenter( true );
+		};
+
+		return (
+			<strong className="cancel-purchase__support-information">
+				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
+					? i18n.translate(
+							'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+							{
+								components: {
+									contactLink: (
+										<Button
+											borderless="true"
+											onClick={ onClick }
+											className="cancel-purchase__support-information support-link"
+										/>
+									),
+								},
+							}
+					  )
+					: i18n.translate(
+							'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+							{
+								components: {
+									contactLink: (
+										<Button
+											borderless="true"
+											onClick={ onClick }
+											className="cancel-purchase__support-information support-link"
+										/>
+									),
+								},
+							}
+					  ) }
+			</strong>
+		);
 	};
 
 	const onConfirmCancelBundledDomainChange = ( event ) => {
@@ -361,27 +414,7 @@ const CancelPurchaseRefundInformation = ( {
 				<p className="cancel-purchase__refund-information">{ text }</p>
 			) }
 
-			{ showSupportLink && (
-				<strong className="cancel-purchase__support-information">
-					{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
-						? i18n.translate(
-								'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-								{
-									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-						  )
-						: i18n.translate(
-								'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-								{
-									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-						  ) }
-				</strong>
-			) }
+			{ showSupportLink && <ContactSupportLink /> }
 		</div>
 	);
 };
