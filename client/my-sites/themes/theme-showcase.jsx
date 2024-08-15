@@ -58,12 +58,12 @@ import {
 	shouldSelectSite,
 } from './helpers';
 import PatternAssemblerButton from './pattern-assembler-button';
+import ThemeErrors from './theme-errors';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
 import './theme-showcase.scss';
-
 
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
@@ -603,6 +603,7 @@ class ThemeShowcase extends Component {
 			pathName,
 			featureStringFilter,
 			filterString,
+			isJetpackSite,
 			isMultisite,
 			premiumThemesEnabled,
 			isSiteECommerceFreeTrial,
@@ -648,6 +649,9 @@ class ThemeShowcase extends Component {
 		const classnames = clsx( 'theme-showcase', {
 			'is-collection-view': isCollectionView,
 		} );
+
+		const showThemeErrors =
+			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
 
 		return (
 			<div className={ classnames }>
@@ -744,6 +748,7 @@ class ThemeShowcase extends Component {
 						/>
 					) }
 					<div className="themes__showcase">
+						{ showThemeErrors && <ThemeErrors siteId={ siteId } /> }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
