@@ -246,7 +246,6 @@
 		"@storybook/react": "^7.6.19",
 		"@tanstack/eslint-plugin-query": "^5.14.6",
 		"@testing-library/jest-dom": "^6.4.5",
-		"@types/d3": "^7.4.3",
 		"@types/dompurify": "^3.0.5",
 		"@types/gtag.js": "^0.0.19",
 		"@types/superagent": "^4.1.24",
