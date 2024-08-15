@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { BasicMetrics, Metrics, PerformanceReport } from 'calypso/data/site-profiler/types';
+import { NewMetrics, PerformanceReport } from 'calypso/data/site-profiler/types';
 import {
 	metricsNames,
 	metricsTresholds,
@@ -13,13 +13,13 @@ import { MetricTabBar } from '../metric-tab-bar';
 import { StatusIndicator } from '../status-indicator';
 import './style.scss';
 
-type CoreWebVitalsDisplayProps = BasicMetrics & {
+type CoreWebVitalsDisplayProps = Record< NewMetrics, number > & {
 	performanceReport: PerformanceReport;
 };
 
 export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 	const translate = useTranslate();
-	const [ activeTab, setActiveTab ] = useState< Metrics >( 'lcp' );
+	const [ activeTab, setActiveTab ] = useState< NewMetrics >( 'lcp' );
 
 	const { displayName } = metricsNames[ activeTab as keyof typeof metricsNames ];
 	const value = props[ activeTab ];
