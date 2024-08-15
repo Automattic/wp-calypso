@@ -1,5 +1,7 @@
 import { Metrics, PerformanceReport } from 'calypso/data/site-profiler/types';
 import HistoryChart from 'calypso/performance-profiler/components/charts/history-chart';
+import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
+import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
 import './style.scss';
 
@@ -7,10 +9,10 @@ type PerformanceProfilerDashboardContentProps = {
 	performanceReport: PerformanceReport;
 };
 
-export const PerformanceProfilerDashboardContent = (
-	props: PerformanceProfilerDashboardContentProps
-) => {
-	const { performanceReport } = props;
+export const PerformanceProfilerDashboardContent = ( {
+	performanceReport,
+}: PerformanceProfilerDashboardContentProps ) => {
+	const { overall_score, fcp, lcp, cls, inp, ttfb, audits } = performanceReport;
 
 	// ttfb range
 	const valueRanges = {
@@ -43,11 +45,10 @@ export const PerformanceProfilerDashboardContent = (
 
 	return (
 		<div className="performance-profiler-content">
-			<div className="l-block-wrapper">
-				{ performanceReport?.overall_score && (
-					<PerformanceScore value={ performanceReport.overall_score * 100 } />
-				) }
-
+			<div className="l-block-wrapper container">
+				<PerformanceScore value={ overall_score * 100 } />
+				<CoreWebVitalsDisplay fcp={ fcp } lcp={ lcp } cls={ cls } inp={ inp } ttfb={ ttfb } />
+				{ audits && <InsightsSection audits={ audits } /> }
 				{ renderHistoricalChart( performanceReport, 'cls' ) }
 			</div>
 		</div>

@@ -1,6 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
@@ -12,11 +12,18 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
 import FlowCard from '../components/flow-card';
-import type { Step } from '../../types';
+import type { StepProps } from '../../types';
 
 import './style.scss';
 
-const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
+interface Props extends StepProps {
+	headerText?: string;
+	subHeaderText?: string;
+}
+
+const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
+	const { navigation, headerText } = props;
+
 	const translate = useTranslate();
 	const site = useSite();
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
@@ -88,25 +95,25 @@ const SiteMigrationHowToMigrate: Step = function ( { navigation } ) {
 		</>
 	);
 
+	const platformText = shouldDisplayHostIdentificationMessage
+		? translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
+				args: { hostingProviderName },
+		  } )
+		: '';
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'How do you want to migrate?' ) } />
 			<StepContainer
-				stepName="site-migration-how-to-migrate"
+				stepName={ props.stepName ?? 'site-migration-how-to-migrate' }
 				className="how-to-migrate"
 				shouldHideNavButtons={ false }
 				hideSkip
 				formattedHeader={
 					<FormattedHeader
 						id="how-to-migrate-header"
-						headerText={ translate( 'How do you want to migrate?' ) }
-						subHeaderText={
-							shouldDisplayHostIdentificationMessage
-								? translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
-										args: { hostingProviderName },
-								  } )
-								: ''
-						}
+						headerText={ headerText ?? translate( 'How do you want to migrate?' ) }
+						subHeaderText={ props.subHeaderText || platformText }
 						align="center"
 					/>
 				}

@@ -21,8 +21,8 @@ const {
 	PROCESSING,
 	SITE_CREATION_STEP,
 	SITE_MIGRATION_UPGRADE_PLAN,
-	SITE_MIGRATION_HOW_TO_MIGRATE,
-	SITE_MIGRATION_SOURCE_URL,
+	MIGRATION_HOW_TO_MIGRATE,
+	MIGRATION_SOURCE_URL,
 	SITE_MIGRATION_INSTRUCTIONS,
 	SITE_MIGRATION_STARTED,
 	SITE_MIGRATION_ASSISTED_MIGRATION,
@@ -83,7 +83,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const plan = props?.plan as string;
 
 				if ( props?.goToCheckout ) {
-					const redirectAfterCheckout = SITE_MIGRATION_HOW_TO_MIGRATE.slug;
+					const redirectAfterCheckout = MIGRATION_HOW_TO_MIGRATE.slug;
 					const destination = addQueryArgs(
 						{ siteId, siteSlug },
 						`/setup/${ flowPath as string }/${ redirectAfterCheckout }`
@@ -108,7 +108,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				}
 			},
 		},
-		[ SITE_MIGRATION_HOW_TO_MIGRATE.slug ]: {
+		[ MIGRATION_HOW_TO_MIGRATE.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const how = getFromPropsOrUrl( 'how', props );
 				const siteId = getFromPropsOrUrl( 'siteId', props );
@@ -118,7 +118,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_INSTRUCTIONS.slug ) );
 				}
 
-				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_SOURCE_URL.slug ) );
+				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_SOURCE_URL.slug ) );
 			},
 		},
 		[ SITE_MIGRATION_INSTRUCTIONS.slug ]: {
@@ -129,7 +129,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				return navigate( addQueryArgs( { siteId, siteSlug }, SITE_MIGRATION_STARTED.slug ) );
 			},
 		},
-		[ SITE_MIGRATION_SOURCE_URL.slug ]: {
+		[ MIGRATION_SOURCE_URL.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const siteId = getFromPropsOrUrl( 'siteId', props );
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
@@ -155,8 +155,8 @@ export default {
 			SITE_CREATION_STEP,
 			PROCESSING,
 			SITE_MIGRATION_UPGRADE_PLAN,
-			SITE_MIGRATION_HOW_TO_MIGRATE,
-			SITE_MIGRATION_SOURCE_URL,
+			MIGRATION_HOW_TO_MIGRATE,
+			MIGRATION_SOURCE_URL,
 			SITE_MIGRATION_INSTRUCTIONS,
 			SITE_MIGRATION_STARTED,
 			SITE_MIGRATION_ASSISTED_MIGRATION,
