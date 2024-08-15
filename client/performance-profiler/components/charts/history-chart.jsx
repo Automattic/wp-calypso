@@ -21,7 +21,7 @@ const createScales = ( data, range, margin, width, height ) => {
 		.range( [ margin.left + 20, width - margin.right - 20 ] );
 
 	const yScale = d3ScaleLinear()
-		.domain( [ 0, d3Max( data, ( item ) => item.value ) * 2 ] )
+		.domain( [ 0, d3Max( data, ( item ) => item.value ) * 1.5 ] )
 		.nice()
 		.range( [ height - margin.bottom, margin.top ] );
 

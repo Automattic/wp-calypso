@@ -1,23 +1,28 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { PerformanceMetrics } from 'calypso/performance-profiler/types/performance-metrics';
+import { BasicMetrics, Metrics, PerformanceReport } from 'calypso/data/site-profiler/types';
 import {
 	metricsNames,
 	metricsTresholds,
 	mapThresholdsToStatus,
 	metricValuations,
 } from 'calypso/performance-profiler/utils/metrics';
+import HistoryChart from '../charts/history-chart';
 import { MetricScale } from '../metric-scale';
 import { MetricTabBar } from '../metric-tab-bar';
 import { StatusIndicator } from '../status-indicator';
 import './style.scss';
 
-export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
+type CoreWebVitalsDisplayProps = BasicMetrics & {
+	performanceReport: PerformanceReport;
+};
+
+export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 	const translate = useTranslate();
-	const [ activeTab, setActiveTab ] = useState< keyof PerformanceMetrics >( 'lcp' );
+	const [ activeTab, setActiveTab ] = useState< Metrics >( 'lcp' );
 
 	const { displayName } = metricsNames[ activeTab as keyof typeof metricsNames ];
-	const value = props[ activeTab as keyof PerformanceMetrics ];
+	const value = props[ activeTab ];
 	const valuation = mapThresholdsToStatus( activeTab as keyof typeof metricsTresholds, value );
 
 	const { good, needsImprovement } = metricsTresholds[ activeTab as keyof typeof metricsTresholds ];
@@ -42,6 +47,21 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 
 		return '';
 	};
+
+	const { performanceReport } = props;
+	let metrics: number[] = performanceReport?.history?.metrics[ activeTab ] ?? [];
+	let dates = performanceReport?.history?.collection_period ?? [];
+
+	// last 8 weeks only
+	metrics = metrics.slice( -8 );
+	dates = dates.slice( -8 );
+
+	const data = metrics.map( ( item, index ) => {
+		return {
+			date: '2024/' + dates[ index ],
+			value: formatUnit( item ),
+		};
+	} );
 
 	return (
 		<div className="core-web-vitals-display">
@@ -111,6 +131,15 @@ export const CoreWebVitalsDisplay = ( props: PerformanceMetrics ) => {
 				<div className="core-web-vitals-display__history-graph">
 					<span className="core-web-vitals-display__description-subheading">
 						{ translate( '%s has increased over the past eight weeks', { args: [ displayName ] } ) }
+						<HistoryChart
+							data={ data }
+							range={ [
+								formatUnit( metricsTresholds[ activeTab ].good ),
+								formatUnit( metricsTresholds[ activeTab ].needsImprovement ),
+							] }
+							width={ 600 }
+							height={ 300 }
+						/>
 					</span>
 				</div>
 			</div>
