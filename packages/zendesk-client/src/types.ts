@@ -11,31 +11,34 @@ export type APIFetchOptions = {
 };
 
 export type UserFields = {
-	messaging_ai_chat_id?: string;
-	messaging_initial_message?: string;
-	messaging_plan?: string;
-	messaging_source?: string;
-	messaging_url?: string;
+	messaging_ai_chat_id?: string | number | null;
+	messaging_initial_message?: string | null;
+	messaging_plan?: string | null;
+	messaging_source?: string | null;
+	messaging_url?: string | null;
 	/**
 	 * Site ID of the site the user is currently on.
 	 */
 	messaging_site_id: string | number | null;
 };
 
-export type MessagingAuth = {
-	user: {
-		jwt: string;
-	};
-};
+export type ZendeskAuthType = 'zendesk' | 'messenger';
 
-export type MessagingAvailability = {
+export interface MessagingAuth {
+	user: {
+		external_id: string;
+		jwt: string | null;
+	};
+}
+
+export interface MessagingAvailability {
 	is_available: boolean;
-};
+}
 
 export type MessagingGroup = 'jp_presales' | 'wpcom_messaging' | 'wpcom_presales';
 
 export type MessagingMetadata = {
-	aiChatId?: string;
+	aiChatId?: number | string;
 	message?: string;
 	siteUrl?: string;
 	siteId?: string | number | null;

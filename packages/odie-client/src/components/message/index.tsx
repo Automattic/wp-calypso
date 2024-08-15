@@ -11,8 +11,10 @@ import MaximizeIcon from '../../assets/maximize-icon.svg';
 import MinimizeIcon from '../../assets/minimize-icon.svg';
 import WapuuAvatar from '../../assets/wapuu-squared-avatar.svg';
 import WapuuThinking from '../../assets/wapuu-thinking.svg';
+import AgentAvatar from '../../assets/wordpress-agent-avatar.svg';
 import { useOdieAssistantContext } from '../../context';
 import { uuid } from '../../query';
+import { useNewHumanConversation } from '../../use-new-human-conversation';
 import Button from '../button';
 import { MessageContent } from './message-content';
 import type { CurrentUser, Message } from '../../types/';
@@ -34,12 +36,13 @@ export type MessageIndicators = {
 const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 	const { message, currentUser, ...messageIndicators } = props;
 	const isUser = message.role === 'user';
-	const { botName, addMessage } = useOdieAssistantContext();
+	const isAgent = message.role === 'agent';
+	const { chat, botName, addMessage } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const { _x } = useI18n();
 	const [ isDisliked, setIsDisliked ] = useState( false );
+	const { newConversation } = useNewHumanConversation();
 
-	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const fullscreenRef = useRef< HTMLDivElement >( null );
 
 	const handleBackdropClick = () => {
@@ -62,74 +65,101 @@ const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 		'odie-chatbox-message-avatar-wapuu-liked': message.liked,
 	} );
 
-	const messageAvatarHeader = isUser ? (
-		<>
-			<Gravatar
-				user={ currentUser }
-				size={ 32 }
-				alt={ _x( 'User profile display picture', 'html alt tag', __i18n_text_domain__ ) }
-			/>
-			<strong className="message-header-name">{ currentUser.display_name }</strong>
-		</>
-	) : (
-		<>
-			<img
-				src={ WapuuAvatar }
-				alt={ sprintf(
-					/* translators: %s is bot name, like Wapuu */
-					_x( '%(botName)s profile picture', 'html alt tag', __i18n_text_domain__ ),
-					botName
-				) }
-				className={ wapuuAvatarClasses }
-			/>
-			{ message.type === 'placeholder' ? (
-				<img
-					src={ WapuuThinking }
-					alt={ sprintf(
-						/* translators: %s is bot name, like Wapuu */
-						_x(
-							'Loading state, awaiting response from %(botName)s',
-							'html alt tag',
-							__i18n_text_domain__
-						),
-						botName
-					) }
-					className="odie-chatbox-thinking-icon"
-				/>
-			) : (
-				<strong className="message-header-name">{ botName }</strong>
-			) }
-
-			<div className="message-header-buttons">
-				{ message.content?.length > 600 && (
-					<Button compact borderless onClick={ handleFullscreenToggle }>
+	let messageAvatarHeader;
+	switch ( message.role ) {
+		case 'user':
+			messageAvatarHeader = (
+				<>
+					<Gravatar
+						user={ currentUser }
+						size={ 32 }
+						alt={ _x( 'User profile display picture', 'html alt tag', __i18n_text_domain__ ) }
+					/>
+					<strong className="message-header-name">{ currentUser.display_name }</strong>
+				</>
+			);
+			break;
+		case 'agent':
+			messageAvatarHeader = (
+				<>
+					<img
+						src={ AgentAvatar }
+						alt={ _x( 'Support agent profile picture', 'html alt tag', __i18n_text_domain__ ) }
+						className={ wapuuAvatarClasses }
+					/>
+					<strong className="message-header-name">
+						{ _x( 'WordPress.com Support', 'Support message header', __i18n_text_domain__ ) }
+					</strong>
+				</>
+			);
+			break;
+		case 'bot':
+		default:
+			messageAvatarHeader = (
+				<>
+					<img
+						src={ WapuuAvatar }
+						alt={ sprintf(
+							/* translators: %s is bot name, like Wapuu */
+							_x( '%(botName)s profile picture', 'html alt tag', __i18n_text_domain__ ),
+							botName
+						) }
+						className={ wapuuAvatarClasses }
+					/>
+					{ message.type === 'placeholder' ? (
 						<img
-							src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
+							src={ WapuuThinking }
 							alt={ sprintf(
 								/* translators: %s is bot name, like Wapuu */
 								_x(
-									'Icon to expand or collapse %(botName)s messages',
+									'Loading state, awaiting response from %(botName)s',
 									'html alt tag',
 									__i18n_text_domain__
 								),
 								botName
 							) }
+							className="odie-chatbox-thinking-icon"
 						/>
-					</Button>
-				) }
-			</div>
-		</>
-	);
+					) : (
+						<strong className="message-header-name">{ botName }</strong>
+					) }
 
-	const messageHeader = (
-		<div className={ `message-header ${ isUser ? 'user' : 'bot' }` }>{ messageAvatarHeader }</div>
-	);
+					<div className="message-header-buttons">
+						{ message.content?.length > 600 && (
+							<Button compact borderless onClick={ handleFullscreenToggle }>
+								<img
+									src={ isFullscreen ? MinimizeIcon : MaximizeIcon }
+									alt={ sprintf(
+										/* translators: %s is bot name, like Wapuu */
+										_x(
+											'Icon to expand or collapse %(botName)s messages',
+											'html alt tag',
+											__i18n_text_domain__
+										),
+										botName
+									) }
+								/>
+							</Button>
+						) }
+					</div>
+				</>
+			);
+	}
+
+	const messageHeaderClass = clsx( 'message-header', {
+		user: isUser,
+		agent: isAgent,
+		bot: ! isUser && ! isAgent,
+	} );
+
+	const messageHeader = <div className={ messageHeaderClass }>{ messageAvatarHeader }</div>;
 
 	const onDislike = () => {
 		setIsDisliked( true );
-		if ( isRequestingHumanSupport || isDisliked ) {
+		if ( isDisliked || chat.type === 'human' ) {
 			return;
 		}
+		newConversation();
 		setTimeout( () => {
 			addMessage( {
 				internal_message_id: uuid(),
@@ -155,30 +185,18 @@ const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 		</div>
 	);
 
-	if ( isFullscreen ) {
-		return (
-			<>
-				<MessageContent
-					message={ message }
-					messageHeader={ messageHeader }
-					onDislike={ onDislike }
-					ref={ fullscreenRef }
-					isDisliked={ isDisliked }
-					{ ...messageIndicators }
-				/>
-				{ ReactDOM.createPortal( fullscreenContent, document.body ) }
-			</>
-		);
-	}
 	return (
-		<MessageContent
-			message={ message }
-			messageHeader={ messageHeader }
-			onDislike={ onDislike }
-			ref={ fullscreenRef }
-			isDisliked={ isDisliked }
-			{ ...messageIndicators }
-		/>
+		<>
+			<MessageContent
+				message={ message }
+				messageHeader={ messageHeader }
+				onDislike={ onDislike }
+				ref={ fullscreenRef }
+				isDisliked={ isDisliked }
+				{ ...messageIndicators }
+			/>
+			{ isFullscreen && ReactDOM.createPortal( fullscreenContent, document.body ) }
+		</>
 	);
 };
 

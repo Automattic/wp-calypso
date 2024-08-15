@@ -1,8 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import { useOdieAssistantContext } from '../../context';
+import { useNewHumanConversation } from '../../use-new-human-conversation';
 
 export const DirectEscalationLink = ( { messageId }: { messageId: number | undefined } ) => {
-	const { navigateToContactOptions, trackEvent, isUserElegible } = useOdieAssistantContext();
+	const { chat, navigateToContactOptions, trackEvent, isUserElegible } = useOdieAssistantContext();
+	const { newConversation } = useNewHumanConversation();
 
 	if ( ! isUserElegible ) {
 		return (
@@ -35,8 +37,8 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 						message_id: messageId,
 						is_user_elegible: true,
 					} );
-					if ( navigateToContactOptions ) {
-						navigateToContactOptions();
+					if ( chat.type !== 'human' ) {
+						newConversation();
 					}
 				} }
 				className="odie-button-link"

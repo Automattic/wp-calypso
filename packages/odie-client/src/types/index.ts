@@ -71,7 +71,7 @@ export type Nudge = {
 	context?: Record< string, unknown >;
 };
 
-export type MessageRole = 'user' | 'bot';
+export type MessageRole = 'user' | 'bot' | 'agent';
 
 export type MessageType =
 	| 'message'
@@ -100,6 +100,8 @@ export type Message = {
 export type Chat = {
 	chat_id?: number | null;
 	messages: Message[];
+	type: 'ai' | 'human';
+	loading?: boolean;
 };
 
 export type OdieAllowedSectionNames =

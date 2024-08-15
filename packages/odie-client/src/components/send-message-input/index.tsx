@@ -1,9 +1,9 @@
 /* eslint-disable no-restricted-imports */
+import { useSmooch } from '@automattic/zendesk-client';
 import { Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import React, {
 	useCallback,
-	useMemo,
 	useState,
 	KeyboardEvent,
 	FormEvent,
@@ -28,7 +28,8 @@ export const OdieSendMessageButton = ( {
 	const { _x } = useI18n();
 	const [ messageString, setMessageString ] = useState< string >( '' );
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { initialUserMessage, chat, trackEvent, isLoading } = useOdieAssistantContext();
+	const { addMessage, initialUserMessage, chat, trackEvent, isLoading } = useOdieAssistantContext();
+	const { sendMessage: sendHelpCenterMessage } = useSmooch();
 	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
 
 	useEffect( () => {
@@ -47,7 +48,12 @@ export const OdieSendMessageButton = ( {
 				type: 'message',
 			} as Message;
 
-			await sendOdieMessage( { message } );
+			if ( chat.type === 'human' ) {
+				sendHelpCenterMessage( messageString, chat.chat_id );
+				addMessage( message );
+			} else {
+				await sendOdieMessage( { message } );
+			}
 
 			trackEvent( 'chat_message_action_receive' );
 		} catch ( e ) {
@@ -56,7 +62,15 @@ export const OdieSendMessageButton = ( {
 				error: error?.message,
 			} );
 		}
-	}, [ messageString, sendOdieMessage, trackEvent ] );
+	}, [
+		chat.chat_id,
+		chat.type,
+		messageString,
+		sendHelpCenterMessage,
+		sendOdieMessage,
+		addMessage,
+		trackEvent,
+	] );
 
 	const sendMessageIfNotEmpty = useCallback( async () => {
 		if ( messageString.trim() === '' ) {
@@ -87,19 +101,6 @@ export const OdieSendMessageButton = ( {
 		[ sendMessageIfNotEmpty ]
 	);
 
-	const userHasAskedToContactHE = useMemo(
-		() =>
-			chat.messages.some(
-				( message ) => message.context?.flags?.forward_to_human_support === true
-			),
-		[ chat.messages ]
-	);
-
-	const userHasNegativeFeedback = useMemo(
-		() => chat.messages.some( ( message ) => message.liked === false ),
-		[ chat.messages ]
-	);
-
 	const getPlaceholderText = useCallback( () => {
 		const placeholderText = _x(
 			'Please wait…',
@@ -108,13 +109,6 @@ export const OdieSendMessageButton = ( {
 		);
 
 		if ( ! isLoading ) {
-			if ( userHasAskedToContactHE || userHasNegativeFeedback ) {
-				return _x(
-					'Continue chatting with Wapuu',
-					'Placeholder text for the message input field (chat)',
-					__i18n_text_domain__
-				);
-			}
 			return _x(
 				'Ask your question',
 				'Placeholder text for the message input field (chat)',
@@ -123,7 +117,7 @@ export const OdieSendMessageButton = ( {
 		}
 
 		return placeholderText;
-	}, [ isLoading, userHasAskedToContactHE, userHasNegativeFeedback, _x ] );
+	}, [ isLoading, _x ] );
 
 	return (
 		<>

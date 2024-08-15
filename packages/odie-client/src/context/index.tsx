@@ -1,3 +1,4 @@
+import { useSmooch } from '@automattic/zendesk-client';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
 	broadcastChatClearance,
@@ -5,6 +6,7 @@ import {
 	useOdieBroadcastWithCallbacks,
 	useGetOdieStorage,
 } from '../data';
+import { transformMessage } from '../utils/conversation-utils';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
 import type { Chat, Context, CurrentUser, Message, Nudge, OdieAllowedBots } from '../types/';
@@ -42,6 +44,8 @@ type OdieAssistantContextInterface = {
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
+	selectedSiteUrl?: string | null;
+	sectionName?: string | null;
 	setChat: ( chat: SetStateAction< Chat > ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setLastMessageInView?: ( lastMessageInView: boolean ) => void;
@@ -60,7 +64,7 @@ const defaultContextInterfaceValues = {
 	addMessage: noop,
 	botName: 'Wapuu',
 	botNameSlug: 'wpcom-support-chat' as OdieAllowedBots,
-	chat: { context: { section_name: '', site_id: null }, messages: [] },
+	chat: { context: { section_name: '', site_id: null }, messages: [], type: 'ai' as const },
 	clearChat: noop,
 	initialUserMessage: null,
 	isLoading: false,
@@ -116,6 +120,8 @@ type OdieAssistantProviderProps = {
 	navigateToContactOptions?: () => void;
 	navigateToSupportDocs?: ( blogId: string, postId: string, title: string, link: string ) => void;
 	selectedSiteId?: number | null;
+	selectedSiteUrl?: string | null;
+	sectionName?: string | null;
 	version?: string | null;
 	children?: ReactNode;
 } & PropsWithChildren;
@@ -135,6 +141,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	navigateToContactOptions,
 	navigateToSupportDocs,
 	selectedSiteId,
+	selectedSiteUrl,
+	sectionName,
 	version = null,
 	currentUser,
 	children,
@@ -145,6 +153,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	const [ lastNudge, setLastNudge ] = useState< Nudge | null >( null );
 	const [ scrollToLastMessage, setScrollToLastMessage ] =
 		useState< ScrollToLastMessageType | null >( null );
+	const { init, addMessengerListener } = useSmooch();
 
 	const [ lastMessageInView, setLastMessageInView ] = useState( true );
 
@@ -186,6 +195,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		setOdieStorage( null );
 		setChat( {
 			chat_id: null,
+			type: 'ai',
 			messages: [ getOdieInitialMessage( botNameSlug, odieInitialPromptText ) ],
 		} );
 		trackEvent( 'chat_cleared', {} );
@@ -218,16 +228,24 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 					? prevChat.messages
 					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
 
-				// Append new messages at the end
-				const messages = [ ...filteredMessages, ...newMessages ];
 				return {
 					chat_id: prevChat.chat_id,
-					messages,
+					type: newMessages.find( ( m ) => m.role === 'agent' ) ? 'human' : prevChat.type,
+					messages: [ ...filteredMessages, ...newMessages ],
 				};
 			} );
 		},
 		[ setChat ]
 	);
+
+	useEffect( () => {
+		if ( init ) {
+			addMessengerListener( ( message: Parameters< typeof transformMessage >[ 0 ] ) => {
+				const translatedMessage = transformMessage( message );
+				addMessage( translatedMessage );
+			} );
+		}
+	}, [ addMessage, init ] );
 
 	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
@@ -275,6 +293,8 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				navigateToSupportDocs,
 				odieClientId,
 				selectedSiteId,
+				selectedSiteUrl,
+				sectionName,
 				sendNudge: setLastNudge,
 				setChat,
 				setMessageLikedStatus,
