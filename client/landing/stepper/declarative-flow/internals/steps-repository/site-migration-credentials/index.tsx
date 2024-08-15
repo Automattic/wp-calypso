@@ -79,6 +79,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 					<div className="site-migration-credentials__radio">
 						<FormRadio
 							id="site-migration-credentials__radio-credentials"
+							htmlFor="site-migration-credentials__radio-credentials"
 							label={ translate( 'WordPress credentials' ) }
 							value="credentials"
 							name="how-to-access-site"
@@ -90,6 +91,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 					<div className="site-migration-credentials__radio">
 						<FormRadio
 							id="site-migration-credentials__radio-backup"
+							htmlFor="site-migration-credentials__radio-backup"
 							label={ translate( 'Backup file' ) }
 							value="backup"
 							name="how-to-access-site"
