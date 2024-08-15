@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { NewMetrics, PerformanceReport } from 'calypso/data/site-profiler/types';
+import { NewMetrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
 import {
 	metricsNames,
 	metricsTresholds,
@@ -14,7 +14,7 @@ import { StatusIndicator } from '../status-indicator';
 import './style.scss';
 
 type CoreWebVitalsDisplayProps = Record< NewMetrics, number > & {
-	performanceReport: PerformanceReport;
+	history: PerformanceMetricsHistory;
 };
 
 export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
@@ -48,9 +48,9 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 		return '';
 	};
 
-	const { performanceReport } = props;
-	let metrics: number[] = performanceReport?.history?.metrics[ activeTab ] ?? [];
-	let dates = performanceReport?.history?.collection_period ?? [];
+	const { history } = props;
+	let metrics: number[] = history?.metrics[ activeTab ] ?? [];
+	let dates = history?.collection_period ?? [];
 
 	// last 8 weeks only
 	metrics = metrics.slice( -8 );

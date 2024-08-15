@@ -128,22 +128,24 @@ export interface UrlSecurityMetricsQueryResponse {
 	};
 }
 
+export type PerformanceMetricsHistory = {
+	collection_period: string[];
+	metrics: {
+		ttfb?: number[];
+		fcp?: number[];
+		lcp?: number[];
+		cls?: number[];
+		inp?: number[];
+	};
+};
+
 export type PerformanceReport = {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	performance: number;
 	overall_score: number;
 	is_wpcom: boolean;
 	is_wordpress: boolean;
-	history?: {
-		collection_period: string[];
-		metrics: {
-			ttfb?: number[];
-			fcp?: number[];
-			lcp?: number[];
-			cls?: number[];
-			inp?: number[];
-		};
-	};
+	history: PerformanceMetricsHistory;
 } & BasicMetrics;
 
 export interface UrlPerformanceMetricsQueryResponse {
