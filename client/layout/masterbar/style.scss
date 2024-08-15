@@ -83,10 +83,15 @@ body.is-mobile-app-view {
 			color: var(--color-sidebar-text);
 		}
 		@media only screen and (max-width: 781px) {
+			padding-top: 0;
+
 			.masterbar__login-links {
 				.masterbar__item {
+					height: 30px;
+					line-height: 30px;
 					width: unset !important;
 					padding: 0 8px;
+					margin: 8px 8px 0 0;
 
 					.masterbar__item-content {
 						display: block !important;

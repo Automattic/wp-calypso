@@ -34,12 +34,10 @@ const DateControlPicker = ( {
 	const [ popoverOpened, togglePopoverOpened ] = useState( false );
 
 	const changeStartDate = ( value: string ) => {
-		// do more here
 		setInputStartDate( value );
 	};
 
 	const changeEndDate = ( value: string ) => {
-		// do more here
 		setInputEndDate( value );
 	};
 

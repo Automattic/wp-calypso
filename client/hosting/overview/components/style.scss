@@ -1,5 +1,6 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/variables";
 
 $card-padding: 24px;
 $blueberry-color: #3858e9;
@@ -215,7 +216,7 @@ $blueberry-color: #3858e9;
 .hosting-overview__site-metrics-footer {
 	display: flex;
 	justify-content: space-between;
-	gap: var(--grid-unit-10, 8px);
+	gap: $grid-unit-10;
 	margin-top: 8px;
 }
 
@@ -233,17 +234,17 @@ $blueberry-color: #3858e9;
 	border-radius: 4px;
 	border: 1px solid var(--studio-gray-0);
 	background: var(--studio-gray-0);
-	padding: var(--grid-unit-20, 16px);
+	padding: $grid-unit-20;
 }
 
 .hosting-overview__plan-storage {
-	gap: var(--grid-unit-15, 12px);
+	gap: $grid-unit-15;
 }
 
 .hosting-overview__plan-bandwidth,
 .hosting-overview__plan-site-visits {
 	flex: 1;
-	gap: var(--grid-unit-10, 8px);
+	gap: $grid-unit-10;
 }
 
 .hosting-overview__plan-storage-title-wrapper,
@@ -251,7 +252,7 @@ $blueberry-color: #3858e9;
 .hosting-overview__plan-site-visits-title-wrapper {
 	display: flex;
 	justify-content: space-between;
-	gap: var(--grid-unit-10, 8px);
+	gap: $grid-unit-10;
 }
 
 .hosting-overview__plan-storage-title,
@@ -277,7 +278,7 @@ $blueberry-color: #3858e9;
 .hosting-overview__plan-bandwidth-placeholder,
 .hosting-overview__plan-site-visits-placeholder {
 	height: 1em;
-	max-width: calc(100% - var(--grid-unit-30, 24px));
+	max-width: calc(100% - $grid-unit-30);
 }
 
 @media (max-width: $break-xlarge) {
@@ -339,7 +340,7 @@ button.hosting-overview__action-button {
 
 .hosting-overview__action {
 	border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
-	padding: var(--grid-unit-15, 12px) 0;
+	padding: $grid-unit-15 0;
 
 	svg {
 		color: var(--studio-gray-30);

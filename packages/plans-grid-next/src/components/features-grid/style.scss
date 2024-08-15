@@ -233,13 +233,6 @@
 		font-weight: 600;
 	}
 
-	.plan-features-2023-grid__actions-post-button-text {
-		text-align: center;
-		font-size: 0.75rem;
-		display: block;
-		margin-top: 10px;
-	}
-
 	&.is-top-buttons {
 		padding: 0 20px;
 		@include plans-grid-medium-large {
@@ -305,10 +298,6 @@
 		.plan-features-2023-grid__header-logo {
 			display: none;
 		}
-
-		.plan-features-2023-gridrison__actions {
-			width: 200px;
-		}
 	}
 }
 
@@ -373,12 +362,6 @@
 			margin-top: 8px;
 		}
 	}
-}
-
-.plan-features-2023-grid__multiple-actions-container {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
 }
 
 .plan-features-2023-grid__row:last-of-type .plan-features-2023-grid__table-item {

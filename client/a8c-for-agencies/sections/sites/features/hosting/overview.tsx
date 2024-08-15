@@ -1,3 +1,5 @@
+import { Button } from '@wordpress/components';
+import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -61,6 +63,24 @@ const HostingOverviewPreview = ( { site }: Props ) => {
 								{ formatHostingProviderName( site.hosting_provider_guess ) }
 							</div>
 						</div>
+						{ site.hosting_provider_guess.toLowerCase() === 'pressable' && (
+							<div className="hosting__content-row">
+								<div className="hosting__content-label"></div>
+
+								<div className="hosting__content-value">
+									<Button
+										target="_blank"
+										rel="norefferer nooppener"
+										href="https://my.pressable.com/agency/auth"
+										variant="link"
+									>
+										{ translate( 'Manage all Pressable sites' ) }
+										<Icon icon={ external } size={ 18 } />
+									</Button>
+								</div>
+							</div>
+						) }
+
 						<div className="hosting__content-row">
 							<div className="hosting__content-label">PHP version</div>
 							<div className="hosting__content-value">

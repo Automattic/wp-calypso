@@ -1,0 +1,122 @@
+.plans-grid-next-header-price {
+	padding: 0 20px;
+	margin: 0 0 4px 0;
+
+	.plan-price {
+		color: var(--studio-gray-100);
+		margin: 0;
+		line-height: 1;
+		display: flex;
+		font-family: Recoleta, sans-serif;
+
+		&.is-original {
+			color: var(--studio-gray-20);
+			text-decoration: line-through;
+			text-decoration-thickness: 1px;
+			font-family: "SF Pro Text", sans-serif;
+			margin-bottom: 5px;
+			font-size: rem(18px);
+
+			&::before {
+				display: none;
+			}
+
+			.plan-price__currency-symbol,
+			.plan-price__tax-amount {
+				color: var(--color-text-subtle);
+			}
+
+			.plan-price__integer {
+				font-size: rem(18px);
+			}
+			.plan-price__currency-symbol {
+				font-size: rem(8px);
+			}
+		}
+
+		&.is-placeholder-price {
+			visibility: hidden;
+		}
+
+		&.is-discounted {
+			color: var(--color-neutral-70);
+
+			.plans-grid-next-header-price__display-wrapper {
+				color: inherit;
+			}
+		}
+
+		&.is-large-currency {
+			.plan-price__integer {
+				font-size: rem(28px);
+			}
+			&.is-original {
+				.plan-price__integer {
+					font-size: rem(16px);
+				}
+			}
+		}
+	}
+
+	.plan-price__currency-symbol,
+	.plan-price.is-discounted .plan-price__currency-symbol {
+		font-size: rem(14px);
+		color: var(--studio-gray-100);
+		margin-top: 2px;
+	}
+
+	.plan-price__integer {
+		font-size: rem(44px);
+	}
+
+	.plan-price__term {
+		font-size: rem(12px);
+		font-weight: 400;
+	}
+}
+
+.plans-grid-next-header-price__badge {
+	background-color: var(--studio-green-0);
+	border-radius: 4px;
+	color: var(--studio-green-40);
+	display: inline-block;
+	font-size: 0.75rem;
+	font-weight: 500;
+	height: 21px;
+	letter-spacing: 0.2px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 1.25rem;
+	margin-bottom: 10px;
+	padding: 0 12px;
+	text-align: center;
+	text-transform: none;
+	white-space: nowrap;
+	width: fit-content;
+
+	&.is-intro-offer {
+		background-color: inherit;
+		color: var(--studio-blue-50);
+		font-weight: 600;
+		letter-spacing: inherit;
+		padding: 0;
+		text-align: left;
+		text-transform: uppercase;
+	}
+
+	&.is-hidden {
+		visibility: hidden;
+	}
+}
+
+.plans-grid-next-header-price__pricing-group {
+	justify-content: flex-end;
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: flex-end;
+	gap: 4px;
+
+	&.is-large-currency {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}

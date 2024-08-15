@@ -16,16 +16,21 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 		return;
 	}
 
+	const url = context.query?.url?.startsWith( 'http' )
+		? context.query.url
+		: `https://${ context.query?.url ?? '' }`;
+
 	context.primary = (
 		<>
 			<Main fullWidthLayout>
 				<PerformanceProfilerDashboard
-					url={ context.query?.url ?? '' }
+					url={ url }
 					tab={
 						[ TabType.mobile, TabType.desktop ].indexOf( context.query?.tab ) !== -1
 							? context.query?.tab
 							: TabType.mobile
 					}
+					hash={ context.query?.hash ?? '' }
 				/>
 			</Main>
 
