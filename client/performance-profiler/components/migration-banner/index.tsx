@@ -2,6 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import MigrationBannerImg from 'calypso/assets/images/performance-profiler/migration-banner-img.png';
+import { LogoBar } from '../logo-bar';
 
 import './style.scss';
 
@@ -71,8 +72,10 @@ export const MigrationBanner = ( props: { url: string } ) => {
 						/>
 					</div>
 				</div>
-				<span className="trusted-by">{ translate( 'Trusted by 160 million worldwide' ) }</span>
+				<p className="trusted-by">{ translate( 'Trusted by 160 million worldwide' ) }</p>
 			</div>
+
+			<LogoBar />
 		</div>
 	);
 };
