@@ -116,7 +116,7 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		describe( 'SITE_CREATION', () => {
+		describe( 'SITE_CREATION STEP', () => {
 			it( 'redirects user from SITE_CREATION to PROCESSING', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_CREATION_STEP,
@@ -142,7 +142,7 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		describe( 'PROCESSING', () => {
+		describe( 'PROCESSING STEP', () => {
 			it( 'redirect user from PROCESSING to IMPORTER when an importer is available', () => {
 				runNavigation( {
 					from: STEPS.PROCESSING,
@@ -175,7 +175,7 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		describe( 'MIGRATION_UPGRADE_PLAN', () => {
+		describe( 'MIGRATION_UPGRADE_PLAN STEP', () => {
 			it( 'redirects user from MIGRATION_UPGRADE_PLAN to Checkout page', () => {
 				runNavigation( {
 					from: STEPS.MIGRATION_UPGRADE_PLAN,
@@ -215,58 +215,64 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		it( 'redirects user from How To Migrate to Instructions when they select the option "do it myself"', () => {
-			const destination = runNavigation( {
-				from: STEPS.MIGRATION_HOW_TO_MIGRATE,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-				dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF },
+		describe( 'MIGRATION_HOW_TO_MIGRATE STEP', () => {
+			it( 'redirects user from How To Migrate to Site Instructions when they select the option "do it myself"', () => {
+				const destination = runNavigation( {
+					from: STEPS.MIGRATION_HOW_TO_MIGRATE,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_INSTRUCTIONS,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
 			} );
 
-			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_MIGRATION_INSTRUCTIONS,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-			} );
-		} );
+			it( 'redirects user from How To Migrate to Capture Source URL when they selects the option "do it for me"', () => {
+				const destination = runNavigation( {
+					from: STEPS.MIGRATION_HOW_TO_MIGRATE,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME },
+				} );
 
-		it( 'redirects user from How To Migrate to Capture Source URL when they selects the option "do it for me"', () => {
-			const destination = runNavigation( {
-				from: STEPS.MIGRATION_HOW_TO_MIGRATE,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-				dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.MIGRATION_SOURCE_URL,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-			} );
-		} );
-
-		it( 'redirects users from Instructions to Migration started', () => {
-			const destination = runNavigation( {
-				from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_MIGRATION_STARTED,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				expect( destination ).toMatchDestination( {
+					step: STEPS.MIGRATION_SOURCE_URL,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
 			} );
 		} );
 
-		it( 'redirects users from Capture Source URL to Migration assisted', () => {
-			const destination = runNavigation( {
-				from: STEPS.MIGRATION_SOURCE_URL,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-				dependencies: { from: 'http://oldsite.example.com' },
-			} );
+		describe( 'SITE_MIGRATION_INSTRUCTIONS STEP', () => {
+			it( 'redirects users from Instructions to Migration started', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
 
-			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
-				query: {
-					siteId: 123,
-					siteSlug: 'example.wordpress.com',
-					from: 'http://oldsite.example.com',
-				},
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_STARTED,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+			} );
+		} );
+
+		describe( 'MIGRATION_SOURCE_URL', () => {
+			it( 'redirects users from Capture Source URL to Migration assisted', () => {
+				const destination = runNavigation( {
+					from: STEPS.MIGRATION_SOURCE_URL,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { from: 'http://oldsite.example.com' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'http://oldsite.example.com',
+					},
+				} );
 			} );
 		} );
 	} );
