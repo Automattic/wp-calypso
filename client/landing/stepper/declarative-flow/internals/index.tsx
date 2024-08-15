@@ -12,7 +12,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
@@ -29,23 +28,6 @@ import { AssertConditionState, type Flow, type StepperStep, type StepProps } fro
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
 
-const USER_STEP: StepperStep = {
-	slug: 'user',
-	asyncComponent: () => import( './steps-repository/__user' ),
-};
-
-function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
-	const steps = flow.useSteps();
-	const userIsLoggedIn = useSelector( isUserLoggedIn );
-	const requiresLoggedInUser = steps.some( ( step ) => step.requiresLoggedInUser );
-
-	if ( userIsLoggedIn || ! requiresLoggedInUser ) {
-		return steps;
-	}
-
-	return [ ...steps, USER_STEP ];
-}
-
 /**
  * This component accepts a single flow property. It does the following:
  *
@@ -59,7 +41,7 @@ function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
 export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
-	const flowSteps = useInjectUserStepIfNeeded( flow );
+	const flowSteps = flow.useSteps();
 	const firstAuthWalledStep = flowSteps.find( ( step ) => step.requiresLoggedInUser );
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const { navigate, params } = useFlowNavigation();
