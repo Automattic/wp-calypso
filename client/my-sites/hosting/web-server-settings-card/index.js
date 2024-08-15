@@ -77,17 +77,38 @@ const WebServerSettingsCard = ( {
 	const dataCenterOptions = useDataCenterOptions();
 
 	const wpVersionRef = useRef( null );
+	const wpVersionDropdownRef = useRef( null );
 	const phpVersionRef = useRef( null );
+	const phpVersionDropdownRef = useRef( null );
 
 	const isLoading =
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
 
 	useEffect( () => {
 		function scrollTo( hash ) {
+			let targetLabel;
+			let targetDropdown;
+
 			if ( wpVersionRef.current && hash === '#wp' ) {
-				wpVersionRef.current.scrollIntoView( { behavior: 'smooth' } );
+				targetLabel = wpVersionRef.current;
+				targetDropdown = wpVersionDropdownRef.current;
 			} else if ( phpVersionRef.current && hash === '#php' ) {
-				phpVersionRef.current.scrollIntoView( { behavior: 'smooth' } );
+				targetLabel = phpVersionRef.current;
+				targetDropdown = phpVersionDropdownRef.current;
+			}
+
+			if ( targetLabel ) {
+				const animationKeyframes = [ { color: null }, { color: 'var(--theme-highlight-color)' } ];
+				const animationOptions = {
+					duration: 500,
+					direction: 'alternate',
+					easing: 'ease',
+					iterations: 6,
+				};
+
+				targetLabel.scrollIntoView( { behavior: 'smooth' } );
+				targetLabel.animate( animationKeyframes, animationOptions );
+				targetDropdown?.animate( animationKeyframes, animationOptions );
 			}
 		}
 
@@ -139,6 +160,7 @@ const WebServerSettingsCard = ( {
 							disabled={ disabled || isUpdatingWpVersion }
 							className="web-server-settings-card__wp-version-select"
 							onChange={ ( event ) => setSelectedWpVersion( event.target.value ) }
+							inputRef={ wpVersionDropdownRef }
 							value={ selectedWpVersionValue }
 						>
 							{ getWpVersions().map( ( option ) => {
@@ -166,7 +188,10 @@ const WebServerSettingsCard = ( {
 					</>
 				) }
 				{ ! isWpcomStagingSite && (
-					<p className="web-server-settings-card__wp-version-description">
+					<p
+						className="web-server-settings-card__wp-version-description"
+						ref={ wpVersionDropdownRef }
+					>
 						{ translate(
 							'Every WordPress.com site runs the latest WordPress version. ' +
 								'For testing purposes, you can switch to the beta version of the next WordPress release on {{a}}your staging site{{/a}}.',
@@ -236,6 +261,7 @@ const WebServerSettingsCard = ( {
 					disabled={ disabled || isUpdatingPhpVersion }
 					className="web-server-settings-card__php-version-select"
 					onChange={ changePhpVersion }
+					inputRef={ phpVersionDropdownRef }
 					value={ selectedPhpVersionValue }
 				>
 					{ phpVersions.map( ( option ) => {
