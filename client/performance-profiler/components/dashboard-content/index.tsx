@@ -1,8 +1,10 @@
+import { translate } from 'i18n-calypso';
 import { PerformanceReport, ScreenShotsTimeLine } from 'calypso/data/site-profiler/types';
 import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
 import Image from 'calypso/performance-profiler/components/image';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
+import { ScreenshotThumbnail } from '../screenshot-thumbnail';
 import './style.scss';
 
 type PerformanceProfilerDashboardContentProps = {
@@ -12,15 +14,8 @@ type PerformanceProfilerDashboardContentProps = {
 export const PerformanceProfilerDashboardContent = ( {
 	performanceReport,
 }: PerformanceProfilerDashboardContentProps ) => {
-	const { overall_score, fcp, lcp, cls, inp, ttfb, audits, history } = performanceReport;
-
-	const getScreenShotUrl = ( screenshots: ScreenShotsTimeLine[] | undefined ) => {
-		if ( ! screenshots || ! screenshots.length ) {
-			return null;
-		}
-
-		return screenshots[ screenshots.length - 1 ].data;
-	};
+	const { overall_score, fcp, lcp, cls, inp, ttfb, audits, history, screenshots } =
+		performanceReport;
 
 	const renderScreenShotsTimeLine = ( screenshots: ScreenShotsTimeLine[] | undefined ) => {
 		if ( ! screenshots || ! screenshots.length ) {
@@ -44,9 +39,9 @@ export const PerformanceProfilerDashboardContent = ( {
 			<div className="l-block-wrapper container">
 				<div className="top-section">
 					<PerformanceScore value={ overall_score * 100 } />
-					<Image
-						className="thumbnail screenshot"
-						src={ getScreenShotUrl( performanceReport?.screenshots ) ?? '' }
+					<ScreenshotThumbnail
+						alt={ translate( 'Website thumbnail' ) }
+						src={ screenshots?.[ screenshots.length - 1 ].data }
 					/>
 				</div>
 				<CoreWebVitalsDisplay

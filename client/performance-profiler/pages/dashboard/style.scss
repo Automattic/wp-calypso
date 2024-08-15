@@ -9,18 +9,11 @@
 }
 
 .performance-profiler-content {
-	.thumbnail {
-		border: 1px solid #dcdcde;
-		border-radius: 4px;
-	}
-
-	.screenshot {
-		height: 25vh;
-	}
-
 	.top-section {
 		display: flex;
 		justify-content: space-between;
+		width: 100%;
+		column-gap: 35px;
 	}
 
 	.timeline {
