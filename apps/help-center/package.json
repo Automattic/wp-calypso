@@ -39,8 +39,7 @@
 		"@wordpress/compose": "^7.2.0",
 		"@wordpress/data": "^10.2.0",
 		"@wordpress/plugins": "^7.2.0",
-		"@wordpress/private-apis": "^1.2.0",
-		"postcss-prefix-selector": "^1.16.1"
+		"@wordpress/private-apis": "^1.2.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
@@ -50,6 +49,8 @@
 		"@wordpress/dependency-extraction-webpack-plugin": "5.9.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "3.0.0",
 		"copy-webpack-plugin": "^10.2.4",
+		"postcss": "^8.4.41",
+		"postcss-prefixwrap": "^1.51.0",
 		"typescript": "^5.3.3",
 		"webpack": "^5.91.0"
 	},
