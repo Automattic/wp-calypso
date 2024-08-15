@@ -49,13 +49,19 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 		return typeof value === 'object' ? undefined : ( value as Primitive );
 	};
 
-	const navigateToCheckout = (
-		siteId: string,
-		siteSlug: string,
-		plan: string,
-		props?: ProvidedDependencies,
-		forceRedirection?: boolean
-	) => {
+	const navigateToCheckout = ( {
+		siteId,
+		siteSlug,
+		plan,
+		props,
+		forceRedirection,
+	}: {
+		siteId: string;
+		siteSlug: string;
+		plan: string;
+		props?: ProvidedDependencies;
+		forceRedirection?: boolean;
+	} ) => {
 		const redirectAfterCheckout = MIGRATION_HOW_TO_MIGRATE.slug;
 		const destination = addQueryArgs(
 			{ siteId, siteSlug },
@@ -138,7 +144,13 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				// If plan is already selected and it exists.
 				// Entry point example: /setup/migration/create-site?platform=wordpress&plan=business
 				if ( plans[ plan ] ) {
-					return navigateToCheckout( siteId, siteSlug, plans[ plan ], props, true );
+					return navigateToCheckout( {
+						siteId,
+						siteSlug,
+						plan: plans[ plan ],
+						props,
+						forceRedirection: true,
+					} );
 				}
 
 				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ) );
@@ -160,7 +172,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				}
 
 				if ( props?.goToCheckout ) {
-					return navigateToCheckout( siteId, siteSlug, plan, props );
+					return navigateToCheckout( { siteId, siteSlug, plan, props } );
 				}
 			},
 		},
