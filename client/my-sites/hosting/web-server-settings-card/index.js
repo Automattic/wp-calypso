@@ -76,7 +76,6 @@ const WebServerSettingsCard = ( {
 	const { recommendedValue, phpVersions } = usePhpVersions();
 	const dataCenterOptions = useDataCenterOptions();
 
-	const hasScrolledOnce = useRef( false );
 	const wpVersionRef = useRef( null );
 	const phpVersionRef = useRef( null );
 
@@ -84,17 +83,29 @@ const WebServerSettingsCard = ( {
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
 
 	useEffect( () => {
-		if ( hasScrolledOnce.current ) {
-			return;
+		function scrollTo( hash ) {
+			if ( wpVersionRef.current && hash === '#wp' ) {
+				wpVersionRef.current.scrollIntoView( { behavior: 'smooth' } );
+			} else if ( phpVersionRef.current && hash === '#php' ) {
+				phpVersionRef.current.scrollIntoView( { behavior: 'smooth' } );
+			}
 		}
 
-		if ( wpVersionRef.current && window.location.hash === '#wp' ) {
-			hasScrolledOnce.current = true;
-			wpVersionRef.current.scrollIntoView( { behavior: 'smooth' } );
-		} else if ( phpVersionRef.current && window.location.hash === '#php' ) {
-			hasScrolledOnce.current = true;
-			phpVersionRef.current.scrollIntoView( { behavior: 'smooth' } );
+		function onClick( event ) {
+			const href = window.location.href.replace( window.location.hash, '' );
+
+			if ( event.target instanceof HTMLAnchorElement && event.target.href.startsWith( href ) ) {
+				event.preventDefault();
+				scrollTo( event.target.hash );
+			}
 		}
+
+		document.addEventListener( 'click', onClick );
+		scrollTo( window.location.hash );
+
+		return () => {
+			document.removeEventListener( 'click', onClick );
+		};
 	}, [ isLoading ] );
 
 	const getWpVersions = () => {
