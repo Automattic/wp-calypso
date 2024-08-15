@@ -56,9 +56,9 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 	metrics = metrics.slice( -8 );
 	dates = dates.slice( -8 );
 
-	const data = metrics.map( ( item, index ) => {
+	const historicalData = metrics.map( ( item, index ) => {
 		return {
-			date: '2024/' + dates[ index ],
+			date: dates[ index ],
 			value: formatUnit( item ),
 		};
 	} );
@@ -132,7 +132,7 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 					<span className="core-web-vitals-display__description-subheading">
 						{ translate( '%s has increased over the past eight weeks', { args: [ displayName ] } ) }
 						<HistoryChart
-							data={ data }
+							data={ historicalData }
 							range={ [
 								formatUnit( metricsTresholds[ activeTab ].good ),
 								formatUnit( metricsTresholds[ activeTab ].needsImprovement ),
