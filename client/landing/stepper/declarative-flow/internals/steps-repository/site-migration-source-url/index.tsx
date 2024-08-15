@@ -105,8 +105,9 @@ const SiteMigrationSourceUrl: FC< SourceURLProps > = function ( {
 				stepName={ stepName }
 				flowName={ flow }
 				className="import__onboarding-page"
-				hideBack
+				hideBack={ navigation?.goBack === undefined }
 				hideSkip
+				goBack={ navigation?.goBack }
 				hideFormattedHeader
 				goNext={ navigation?.submit }
 				isFullLayout
