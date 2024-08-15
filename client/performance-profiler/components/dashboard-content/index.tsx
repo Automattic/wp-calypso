@@ -1,10 +1,10 @@
-import { PerformanceReport } from 'calypso/data/site-profiler/types';
+import { Metrics, PerformanceReport } from 'calypso/data/site-profiler/types';
 import HistoryChart from 'calypso/performance-profiler/components/charts/history-chart';
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
 import './style.scss';
 
 type PerformanceProfilerDashboardContentProps = {
-	performanceReport?: PerformanceReport;
+	performanceReport: PerformanceReport;
 };
 
 export const PerformanceProfilerDashboardContent = (
@@ -21,7 +21,7 @@ export const PerformanceProfilerDashboardContent = (
 		inp: [ 200, 500 ],
 	};
 
-	const renderHistoricalChart = ( report: PerformanceReport, metric: string ) => {
+	const renderHistoricalChart = ( report: PerformanceReport, metric: Metrics ) => {
 		let metrics = report?.history?.metrics[ metric ] ?? [];
 		let dates = report?.history?.collection_period ?? [];
 
@@ -32,7 +32,7 @@ export const PerformanceProfilerDashboardContent = (
 		const data = metrics.map( ( item, index ) => {
 			return {
 				date: '2024/' + dates[ index ],
-				value: item ?? 0,
+				value: item,
 			};
 		} );
 
