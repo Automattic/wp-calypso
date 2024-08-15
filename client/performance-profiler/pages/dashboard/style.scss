@@ -1,8 +1,19 @@
 .is-group-performance-profiler .layout__content {
 	padding: 0;
+	background: #fff;
 }
 
 .l-block-wrapper {
 	margin: 0 auto;
 	max-width: 1056px;
+}
+
+.peformance-profiler-dashboard-container {
+	.loading-container {
+		display: none;
+
+		&.is-active.is-loading {
+			display: block;
+		}
+	}
 }

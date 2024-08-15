@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import './style.scss';
@@ -64,7 +65,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			: ( desktopReport as PerformanceReport );
 
 	return (
-		<div className="container">
+		<div className="peformance-profiler-dashboard-container">
 			<DocumentHead title={ translate( 'Speed Test' ) } />
 
 			<PerformanceProfilerHeader
@@ -73,19 +74,28 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 				onTabChange={ getOnTabChange }
 				showNavigationTabs
 			/>
-			{ 'mobile' === activeTab && ! mobileLoaded && <LoadingScreen isSavedReport={ false } /> }
-			{ 'mobile' === activeTab && mobileLoaded && (
-				<PerformanceProfilerDashboardContent
-					key={ activeTab }
-					performanceReport={ performanceReport }
-				/>
-			) }
-			{ 'desktop' === activeTab && ! desktopLoaded && <LoadingScreen isSavedReport={ false } /> }
-			{ 'desktop' === activeTab && desktopLoaded && (
-				<PerformanceProfilerDashboardContent
-					key={ activeTab }
-					performanceReport={ performanceReport }
-				/>
+
+			<div
+				className={ clsx( 'loading-container', 'mobile-loading', {
+					'is-active': activeTab === TabType.mobile,
+					'is-loading': ! mobileLoaded,
+				} ) }
+			>
+				<LoadingScreen isSavedReport={ false } key="mobile-loading" />
+			</div>
+
+			<div
+				className={ clsx( 'loading-container', 'desktop-loading', {
+					'is-active': activeTab === TabType.desktop,
+					'is-loading': ! desktopLoaded,
+				} ) }
+			>
+				<LoadingScreen isSavedReport={ false } key="desktop-loading" />
+			</div>
+
+			{ ( ( activeTab === TabType.mobile && mobileLoaded ) ||
+				( activeTab === TabType.desktop && desktopLoaded ) ) && (
+				<PerformanceProfilerDashboardContent performanceReport={ performanceReport } />
 			) }
 		</div>
 	);
