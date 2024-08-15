@@ -12,28 +12,16 @@ import { timeFormat as d3TimeFormat } from 'd3-time-format';
 import React, { createRef, useEffect } from 'react';
 import './style.scss';
 
-type chartItem = {
-	date: string;
-	value: string;
-};
-
-type ChartProps = {
-	data: chartItem[];
-	range: string[];
-	width: number;
-	height: number;
-};
-
 const MAX_TICKS = 4;
 
 // Create scales for the chart
 const createScales = ( data, range, margin, width, height ) => {
 	const xScale = d3TimeScale()
-		.domain( d3Extent( data, ( item: chartItem ) => new Date( item.date ) ) )
+		.domain( d3Extent( data, ( item ) => new Date( item.date ) ) )
 		.range( [ margin.left + 20, width - margin.right - 20 ] );
 
 	const yScale = d3ScaleLinear()
-		.domain( [ 0, d3Max( data, ( item: chartItem ) => item.value ) * 2 ] )
+		.domain( [ 0, d3Max( data, ( item ) => item.value ) * 2 ] )
 		.nice()
 		.range( [ height - margin.bottom, margin.top ] );
 
@@ -61,7 +49,7 @@ const createGradient = ( svg, data, xScale, colorScale, margin, width ) => {
 		.attr( 'x2', width - margin.right )
 		.attr( 'y2', 0 );
 
-	data.forEach( ( item: chartItem ) => {
+	data.forEach( ( item ) => {
 		gradient
 			.append( 'stop' )
 			.attr(
@@ -94,8 +82,8 @@ const drawGrid = ( svg, yScale, width, margin ) => {
 // Draw line with gradient
 const drawLine = ( svg, data, xScale, yScale ) => {
 	const lineGenerator = d3Line()
-		.x( ( item: chartItem ) => xScale( new Date( item.date ) ) )
-		.y( ( item: chartItem ) => yScale( item.value ) )
+		.x( ( item ) => xScale( new Date( item.date ) ) )
+		.y( ( item ) => yScale( item.value ) )
 		.curve( d3MonotoneXCurve );
 
 	svg
@@ -109,7 +97,7 @@ const drawLine = ( svg, data, xScale, yScale ) => {
 
 // Draw axes
 const drawAxes = ( svg, xScale, yScale, data, margin, width, height ) => {
-	const dates = data.map( ( item: chartItem ) => new Date( item.date ) );
+	const dates = data.map( ( item ) => new Date( item.date ) );
 
 	svg
 		.append( 'g' )
@@ -169,11 +157,11 @@ const drawDots = ( svg, data, xScale, yScale, colorScale, range, tooltip ) => {
 		.enter()
 		.append( 'path' )
 		.attr( 'class', 'shape' )
-		.attr( 'd', ( item: chartItem ) => createShapePath( item, xScale, yScale, range ) )
-		.attr( 'fill', ( item: chartItem ) => colorScale( item.value ) )
+		.attr( 'd', ( item ) => createShapePath( item, xScale, yScale, range ) )
+		.attr( 'fill', ( item ) => colorScale( item.value ) )
 		.attr( 'stroke', '#fff' )
 		.attr( 'stroke-width', 2.5 )
-		.on( 'mouseover', ( item: chartItem ) => showTooltip( tooltip, item.value ) )
+		.on( 'mouseover', ( item ) => showTooltip( tooltip, item.value ) )
 		.on( 'mouseout', () => hideTooltip( tooltip ) );
 };
 
@@ -183,7 +171,7 @@ const generateSampleData = ( range ) => {
 	for ( let i = 1; i <= 8; i++ ) {
 		const date = new Date( currentDate );
 		date.setDate( currentDate.getDate() - i * 7 );
-		const point: chartItem = {
+		const point = {
 			date: date.toISOString(),
 			value: range[ 0 ] + Math.random() * ( range[ 1 ] - range[ 0 ] ),
 		};
@@ -192,9 +180,9 @@ const generateSampleData = ( range ) => {
 	return data;
 };
 
-const HistoryChart = ( { data, range, height, width }: ChartProps ) => {
-	const svgRef = createRef< SVGSVGElement >();
-	const tooltipRef = createRef< HTMLElement >();
+const HistoryChart = ( { data, range, height, width } ) => {
+	const svgRef = createRef();
+	const tooltipRef = createRef();
 	const dataAvailable = data && data.length;
 
 	if ( ! dataAvailable ) {
@@ -224,8 +212,8 @@ const HistoryChart = ( { data, range, height, width }: ChartProps ) => {
 
 	const handleInfoToolTip = ( event ) => {
 		const tooltip = d3Select( tooltipRef.current );
-		const data = 'Not enough real-world speed data is available for this page.';
-		showTooltip( tooltip, data, event );
+		const data2 = 'Not enough real-world speed data is available for this page.';
+		showTooltip( tooltip, data2, event );
 	};
 
 	const handleHideToolTip = () => {

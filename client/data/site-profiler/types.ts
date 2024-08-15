@@ -92,7 +92,7 @@ export interface HostingProviderQueryResponse {
 	hosting_provider: HostingProvider;
 }
 
-export type Metrics = 'cls' | 'fid' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
+export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
 
 export type Scores = 'good' | 'needs-improvement' | 'poor';
 
