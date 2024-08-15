@@ -17,7 +17,7 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/co
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import { getIsCouponBoxHidden } from '../../utils';
+import { isCouponBoxHidden } from '../../utils';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -198,6 +198,9 @@ export function CouponFieldArea( {
 	const translate = useTranslate();
 	const { setCouponFieldValue } = couponFieldStateProps;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	const productSlugs = responseCart.products?.map( ( product ) => product.product_slug );
 
 	useEffect( () => {
 		if ( couponStatus === 'applied' ) {
@@ -212,7 +215,7 @@ export function CouponFieldArea( {
 		isPurchaseFree ||
 		couponStatus === 'applied' ||
 		isOnboardingAffiliateFlow ||
-		getIsCouponBoxHidden( experimentAssignment?.variationName || null )
+		isCouponBoxHidden( productSlugs, experimentAssignment?.variationName || null )
 	) {
 		return null;
 	}

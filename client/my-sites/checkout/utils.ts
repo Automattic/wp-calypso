@@ -143,6 +143,16 @@ export function getCouponLabel(
 	return experimentVariationName === 'treatment' ? translate( 'Offer Applied' ) : originalLabel;
 }
 
-export function getIsCouponBoxHidden( experimentVariationName: string | null ): boolean {
+export function isCouponBoxHidden(
+	productSlugs: string[],
+	experimentVariationName: string | null
+): boolean {
+	const ignoredProductSlugs = [ 'wp_difm_lite', 'wp_difm_premium', 'wp_difm_extra_page' ];
+	const containsIgnoredProduct = productSlugs.some( ( slug ) =>
+		ignoredProductSlugs.includes( slug )
+	);
+	if ( containsIgnoredProduct ) {
+		return false;
+	}
 	return experimentVariationName === 'treatment' ? true : false;
 }
