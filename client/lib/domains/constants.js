@@ -121,6 +121,7 @@ export const sslStatuses = {
 	SSL_DISABLED: 'disabled',
 	SSL_PENDING: 'pending',
 	SSL_ACTIVE: 'active',
+	SSL_NEWLY_REGISTERED: 'newly_registered',
 };
 
 export const domainInfoContext = {

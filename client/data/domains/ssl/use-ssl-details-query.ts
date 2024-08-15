@@ -23,7 +23,6 @@ export type SslDetails = {
 	last_attempt?: string;
 	next_attempt?: string;
 	failure_reasons?: SslFailureReason[];
-	is_newly_registered: boolean;
 };
 
 export type SslDetailsResponse = {

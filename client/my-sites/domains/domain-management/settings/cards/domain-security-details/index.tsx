@@ -72,17 +72,16 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 		switch ( sslStatus ) {
 			case sslStatuses.SSL_ACTIVE:
 				return null;
+			case sslStatuses.SSL_NEWLY_REGISTERED:
+				return (
+					<p className="domain-security-details__description-message">
+						{ translate(
+							'Your newly registered domain is almost ready! It can take up to 30 minutes for the domain to start resolving to your site so we can issue a certificate. Please check back soon.',
+							{ textOnly: true }
+						) }
+					</p>
+				);
 			case sslStatuses.SSL_PENDING:
-				if ( sslDetails?.is_newly_registered ) {
-					return (
-						<p className="domain-security-details__description-message">
-							{ translate(
-								'Your newly registered domain is almost ready! It can take up to 30 minutes for the domain to start resolving to your site so we can issue a certificate. Please check back soon.',
-								{ textOnly: true }
-							) }
-						</p>
-					);
-				}
 				if ( sslDetails?.failure_reasons ) {
 					return (
 						<>
@@ -153,7 +152,6 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 					{ ! isLoadingSSLData && getSslStatusMessage() }
 					{ sslStatuses.SSL_PENDING === sslStatus &&
 						! isLoadingSSLData &&
-						! sslDetails?.is_newly_registered &&
 						sslDetails?.failure_reasons && (
 							<Button
 								className="domain-security-details__provision-button"
