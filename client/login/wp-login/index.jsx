@@ -48,7 +48,6 @@ import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
-import LoginButtons from './login-buttons';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
 import PrivateSite from './private-site';
@@ -528,7 +527,6 @@ export class Login extends Component {
 			locale,
 			signupUrl,
 			action,
-			isWooPasswordless,
 			currentRoute,
 		} = this.props;
 
@@ -538,24 +536,6 @@ export class Login extends Component {
 
 		// It's used to toggle UIs for the login page of Gravatar powered clients only (not for F2A pages).
 		const isGravPoweredLoginPage = isGravPoweredClient && currentRoute === '/log-in';
-
-		const loginButtons = (
-			<>
-				{ ( ( isSocialFirst && isWhiteLogin ) || isWooPasswordless ) && (
-					<LoginButtons
-						locale={ locale }
-						twoFactorAuthType={ twoFactorAuthType }
-						isWhiteLogin={ isWhiteLogin }
-						isP2Login={ isP2Login }
-						isGravPoweredClient={ isGravPoweredClient }
-						signupUrl={ signupUrl }
-						usernameOrEmail={ this.state.usernameOrEmail }
-						oauth2Client={ this.props.oauth2Client }
-						isWooPasswordless={ isWooPasswordless }
-					/>
-				) }
-			</>
-		);
 
 		return (
 			<LoginBlock
@@ -579,7 +559,6 @@ export class Login extends Component {
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 				signupUrl={ signupUrl }
 				isSocialFirst={ isSocialFirst }
-				loginButtons={ loginButtons }
 			/>
 		);
 	}
