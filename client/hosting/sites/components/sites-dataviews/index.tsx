@@ -16,8 +16,8 @@ import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import { addDummyDataViewPrefix } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
+import type { Field } from '@wordpress/dataviews';
 import type {
-	DataViewsColumn,
 	DataViewsPaginationInfo,
 	DataViewsState,
 	ItemsDataViewsType,
@@ -116,11 +116,12 @@ const DotcomSitesDataViews = ( {
 	const siteStatusGroups = useSiteStatusGroups();
 
 	// Generate DataViews table field-columns
-	const fields = useMemo< DataViewsColumn[] >(
+	const fields = useMemo< Field< SiteInfo >[] >(
 		() => [
 			{
 				id: 'site',
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<SiteSort
 						isSortable
 						columnKey="site"
@@ -140,7 +141,8 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'plan',
-				header: <span>{ __( 'Plan' ) }</span>,
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: <span>{ __( 'Plan' ) }</span>,
 				render: ( { item }: { item: SiteInfo } ) => <SitePlan site={ item } userId={ userId } />,
 				enableHiding: false,
 				enableSorting: false,
@@ -148,7 +150,8 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'status',
-				header: <span>{ __( 'Status' ) }</span>,
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: <span>{ __( 'Status' ) }</span>,
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
@@ -156,7 +159,8 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'last-publish',
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<SiteSort
 						isSortable
 						columnKey="last-publish"
@@ -174,7 +178,8 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'stats',
-				header: (
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: (
 					<>
 						<JetpackLogo size={ 16 } />
 						<span>{ __( 'Stats' ) }</span>
@@ -187,7 +192,8 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'actions',
-				header: <span>{ __( 'Actions' ) }</span>,
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: <span>{ __( 'Actions' ) }</span>,
 				render: ( { item }: { item: SiteInfo } ) => <ActionsField site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
@@ -196,33 +202,35 @@ const DotcomSitesDataViews = ( {
 			// Dummy fields to allow people to sort by them on mobile.
 			{
 				id: addDummyDataViewPrefix( 'site' ),
-				header: <span>{ __( 'Site' ) }</span>,
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: <span>{ __( 'Site' ) }</span>,
 				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
 			},
 			{
 				id: addDummyDataViewPrefix( 'last-publish' ),
-				header: <span>{ __( 'Last Published' ) }</span>,
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: <span>{ __( 'Last Published' ) }</span>,
 				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
 			},
 			{
 				id: addDummyDataViewPrefix( 'last-interacted' ),
-				header: __( 'Last Interacted' ),
+				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+				label: __( 'Last Interacted' ),
 				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
 			},
 			{
 				id: addDummyDataViewPrefix( 'status' ),
-				header: __( 'Status' ),
+				label: __( 'Status' ),
 				render: () => null,
-				type: 'enumeration',
 				elements: siteStatusGroups,
 				filterBy: {
-					operators: [ 'in' ],
+					operators: [ 'is' ],
 				},
 				enableHiding: false,
 				enableSorting: false,

@@ -143,16 +143,11 @@ const SitesDashboard = ( {
 		page,
 		perPage,
 		search: search ?? '',
-		hiddenFields: [
-			addDummyDataViewPrefix( 'site' ),
-			addDummyDataViewPrefix( 'last-publish' ),
-			addDummyDataViewPrefix( 'last-interacted' ),
-			addDummyDataViewPrefix( 'status' ),
-		],
+		fields: [ 'site', 'plan', 'status', 'last-publish', 'stats', 'actions' ],
 		filters: [
 			{
 				field: addDummyDataViewPrefix( 'status' ),
-				operator: 'in',
+				operator: 'is',
 				value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 			},
 		],
@@ -201,7 +196,7 @@ const SitesDashboard = ( {
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
-		const statusFilter = dataViewsState.filters.find(
+		const statusFilter = dataViewsState.filters?.find(
 			( filter ) => filter.field === addDummyDataViewPrefix( 'status' )
 		);
 		const statusNumber = statusFilter?.value || 1;
@@ -217,9 +212,9 @@ const SitesDashboard = ( {
 
 	// Perform sorting actions
 	const sortedSites = useSitesListSorting( currentStatusGroup, {
-		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
+		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
 			?.sortKey as SitesSortKey,
-		sortOrder: dataViewsState.sort.direction || undefined,
+		sortOrder: dataViewsState.sort?.direction || undefined,
 	} );
 
 	// Filter sites list by search query.
@@ -227,10 +222,13 @@ const SitesDashboard = ( {
 		search: dataViewsState.search,
 	} );
 
-	const paginatedSites = filteredSites.slice(
-		( dataViewsState.page - 1 ) * dataViewsState.perPage,
-		dataViewsState.page * dataViewsState.perPage
-	);
+	const paginatedSites =
+		dataViewsState.page && dataViewsState.perPage
+			? filteredSites.slice(
+					( dataViewsState.page - 1 ) * dataViewsState.perPage,
+					dataViewsState.page * dataViewsState.perPage
+			  )
+			: filteredSites;
 
 	const onboardingTours = useOnboardingTours();
 
@@ -242,7 +240,7 @@ const SitesDashboard = ( {
 		const queryParams = {
 			search: dataViewsState.search?.trim(),
 			status: statusSlug === DEFAULT_STATUS_GROUP ? undefined : statusSlug,
-			page: dataViewsState.page > 1 ? dataViewsState.page : undefined,
+			page: dataViewsState.page && dataViewsState.page > 1 ? dataViewsState.page : undefined,
 			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
 
@@ -251,9 +249,9 @@ const SitesDashboard = ( {
 
 	// Update site sorting preference on change
 	useEffect( () => {
-		if ( dataViewsState.sort.field ) {
+		if ( dataViewsState.sort?.field ) {
 			onSitesSortingChange( {
-				sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
+				sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
 					?.sortKey as SitesSortKey,
 				sortOrder: dataViewsState.sort.direction || 'asc',
 			} );

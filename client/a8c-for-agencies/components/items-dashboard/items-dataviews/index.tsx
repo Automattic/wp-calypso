@@ -4,7 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useRef, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { DataViews } from 'calypso/components/dataviews';
-import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
+import { ItemsDataViewsType } from './interfaces';
+import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -23,7 +24,7 @@ const getIdByPath = ( item: object, path: string ) => {
 /**
  * Create an item column for the DataViews component
  * @param id
- * @param header
+ * @param label
  * @param displayField
  * @param getValue
  * @param isSortable
@@ -31,18 +32,19 @@ const getIdByPath = ( item: object, path: string ) => {
  */
 export const createItemColumn = (
 	id: string,
-	header: ReactNode,
+	label: ReactNode,
 	displayField: () => ReactNode,
 	getValue: () => undefined,
 	isSortable: boolean = false,
 	canHide: boolean = false
-): DataViewsColumn => {
+): Field< any > => {
 	return {
 		id,
 		enableSorting: isSortable,
 		enableHiding: canHide,
 		getValue,
-		header,
+		// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
+		label,
 		render: displayField,
 	};
 };
@@ -85,7 +87,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 	return (
 		<div className={ className }>
 			<DataViews
-				data={ data.items }
+				data={ data.items ?? [] }
 				paginationInfo={ data.pagination }
 				fields={ data.fields }
 				view={ data.dataViewsState }

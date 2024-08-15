@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { SiteItem } from './wpcom-sites-table';
-import type { DataViewsColumn } from '../../items-dashboard/items-dataviews/interfaces';
+import type { Field } from '@wordpress/dataviews';
 
 interface Props {
 	items: SiteItem[];
-	fields: DataViewsColumn[];
+	fields: Field< any >[];
 }
 
 export default function WPCOMSitesTableContent( { items, fields }: Props ) {
