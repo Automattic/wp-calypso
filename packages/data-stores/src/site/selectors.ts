@@ -26,7 +26,9 @@ export const getSite: ( state: State, siteId: number | string ) => SiteDetails |
 		// Try matching numeric site ID
 		state.sites[ siteId ] ||
 		// Then try matching primary domain
-		Object.values( state.sites ).find( ( site ) => site?.URL && new URL( site.URL ).host === siteId ) ||
+		Object.values( state.sites ).find(
+			( site ) => site?.URL && new URL( site.URL ).host === siteId
+		) ||
 		// Then try matching second domain
 		Object.values( state.sites ).find(
 			( site ) =>
