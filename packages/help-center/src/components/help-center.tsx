@@ -63,12 +63,10 @@ const HelpCenter: React.FC< Container > = ( {
 	const ref = useRef( null );
 
 	useEffect( () => {
-		if ( isMessagingScriptLoaded && ref?.current ) {
+		if ( isMessagingScriptLoaded && ref.current ) {
 			initSmooch( ref.current );
 		}
-		return () => {
-			destroy();
-		};
+		return destroy;
 	}, [ isMessagingScriptLoaded, ref?.current ] );
 
 	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
@@ -96,7 +94,7 @@ const HelpCenter: React.FC< Container > = ( {
 				currentRoute={ currentRoute }
 				openingCoordinates={ openingCoordinates }
 			/>
-			<div ref={ ref } style={ { display: 'none' } }></div>
+			<div className="help-center__smooch-container" ref={ ref } style={ { display: 'none' } } />
 		</>,
 		portalParent
 	);
