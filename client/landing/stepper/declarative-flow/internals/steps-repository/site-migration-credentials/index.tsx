@@ -18,7 +18,7 @@ import type { Step } from '../../types';
 import './style.scss';
 
 interface CredentialsFormProps {
-	onSubmit: () => void;
+	onSubmit: ( data: CredentialsFormData ) => void;
 }
 
 interface CredentialsFormData {
@@ -41,8 +41,8 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		}
 	};
 
-	const isValidFile = ( fileLocation: string ) => {
-		return ! isValidUrl( fileLocation ) ? translate( 'Please enter a valid URL' ) : undefined;
+	const isBackupFileLocationValid = ( fileLocation: string ) => {
+		return ! isValidUrl( fileLocation ) ? translate( 'Please enter a valid URL.' ) : undefined;
 	};
 
 	const {
@@ -52,6 +52,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		watch,
 	} = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
+		reValidateMode: 'onSubmit',
 		defaultValues: {
 			siteAddress: '',
 			username: '',
@@ -62,15 +63,11 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		},
 	} );
 
-	console.log( errors );
-
 	// Subscribe only this field to the access method value
 	const accessMethod = watch( 'howToAccessSite' );
 
 	const submitHandler = ( data: CredentialsFormData ) => {
-		// eslint-disable-next-line no-console
-		console.log( { data } );
-		// onSubmit();
+		onSubmit( data );
 	};
 
 	return (
@@ -124,7 +121,10 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 								<Controller
 									control={ control }
 									name="siteAddress"
-									rules={ { required: true, validate: validateSiteAddress } }
+									rules={ {
+										required: translate( 'Please enter your WordPress site address.' ),
+										validate: validateSiteAddress,
+									} }
 									render={ ( { field } ) => (
 										<FormTextInput
 											id="site-address"
@@ -150,7 +150,9 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									<Controller
 										control={ control }
 										name="username"
-										rules={ { required: true } }
+										rules={ {
+											required: translate( 'Please enter your WordPress admin username.' ),
+										} }
 										render={ ( { field } ) => (
 											<FormTextInput
 												id="username"
@@ -166,7 +168,9 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									<Controller
 										control={ control }
 										name="password"
-										rules={ { required: true } }
+										rules={ {
+											required: translate( 'Please enter your WordPress admin password.' ),
+										} }
 										render={ ( { field } ) => (
 											<FormTextInput
 												id="password"
@@ -195,7 +199,10 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 								<Controller
 									control={ control }
 									name="backupFileLocation"
-									rules={ { required: true, validate: isValidFile } }
+									rules={ {
+										required: translate( 'Please enter a valid URL.' ),
+										validate: isBackupFileLocationValid,
+									} }
 									render={ ( { field } ) => (
 										<FormTextInput
 											type="text"
