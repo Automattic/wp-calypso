@@ -65,7 +65,6 @@ import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
 import './theme-showcase.scss';
 
-
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
 	header: PropTypes.string,
