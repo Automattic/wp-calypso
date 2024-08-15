@@ -10,6 +10,10 @@
 	.card {
 		max-width: 500px;
 		padding: 2em;
+
+		@media (max-width: $break-mobile) {
+			padding: 1.25em;
+		}
 		hr {
 			margin-top: 1em;
 			background: var(--color-border-subtle);
@@ -29,6 +33,17 @@
 		}
 		.site-migration-credentials__form-field {
 			margin-top: 1em;
+		}
+		.site-migration-credentials__radio-group {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+
+			@media (max-width: $break-mobile) {
+				flex-direction: row;
+				gap: 8px;
+				flex-wrap: wrap;
+			}
 		}
 		.site-migration-credentials__radio {
 			display: flex;
