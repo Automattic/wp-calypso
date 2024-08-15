@@ -7,11 +7,6 @@
 	}
 }
 
-.l-block-wrapper {
-	margin: 0 auto;
-	max-width: 1056px;
-}
-
 .performance-profiler-content {
 	.top-section {
 		display: flex;
@@ -22,6 +17,11 @@
 }
 
 .peformance-profiler-dashboard-container {
+	.l-block-wrapper {
+		margin: 0 auto;
+		max-width: 1056px;
+	}
+
 	.loading-container {
 		display: none;
 
