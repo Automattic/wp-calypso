@@ -73,8 +73,8 @@ export default function useJetpackFreeButtonProps(
 
 	if (
 		! siteWpAdminUrl &&
-		urlQueryArgs?.redirect &&
-		urlQueryArgs.redirect.toLowerCase().includes( 'wp-admin/admin.php?page=my-jetpack' )
+		urlQueryArgs?.redirectTo &&
+		urlQueryArgs.redirectTo.toLowerCase().includes( 'wp-admin/admin.php?page=my-jetpack' )
 	) {
 		if ( site?.options?.admin_url ) {
 			siteWpAdminUrl = getUrlFromParts( {

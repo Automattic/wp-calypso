@@ -1000,7 +1000,7 @@ export class JetpackAuthorize extends Component {
 		}
 
 		const jpcTarget = addQueryArgs(
-			{ redirect: redirectAfterAuth },
+			{ redirectTo: redirectAfterAuth },
 			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
 		);
 		debug( 'authorization-form: getRedirectionTarget -> Redirection target is: %s', jpcTarget );
