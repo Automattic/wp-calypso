@@ -1,6 +1,6 @@
 import { Visibility } from '@automattic/data-stores';
 import { getNewSiteParams } from '..';
-import { HOSTING_LP_FLOW, MIGRATION_FLOW } from '../../utils/flows';
+import { HOSTING_LP_FLOW, IMPORT_FOCUSED_FLOW } from '../../utils/flows';
 
 describe( 'getNewSiteParams', () => {
 	function testParams( partialParams: Partial< Parameters< typeof getNewSiteParams >[ 0 ] > = {} ) {
@@ -157,7 +157,7 @@ describe( 'getNewSiteParams', () => {
 		expect(
 			getNewSiteParams(
 				testParams( {
-					flowToCheck: MIGRATION_FLOW,
+					flowToCheck: IMPORT_FOCUSED_FLOW,
 					siteUrl: 'testing123.wordpress.com',
 					isPurchasingDomainItem: false,
 				} )

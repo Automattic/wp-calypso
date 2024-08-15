@@ -23,6 +23,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/checkout-quantity-dropdown": true,
+		"automated-migration/collect-credentials": false,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": false,
@@ -121,7 +122,6 @@
 		"ssr/prefetch-timebox": true,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
-		"stats/restricted-dashboard": true,
 		"stats/date-picker-calendar": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,

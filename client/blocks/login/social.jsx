@@ -1,15 +1,21 @@
+import config from '@automattic/calypso-config';
+import { Card } from '@automattic/components';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { SocialAuthenticationForm } from 'calypso/blocks/authentication';
+import SocialToS from 'calypso/blocks/authentication/social/social-tos.jsx';
+import {
+	GoogleSocialButton,
+	AppleLoginButton,
+	GithubSocialButton,
+	MagicLoginButton,
+	QrCodeLoginButton,
+} from 'calypso/components/social-buttons';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { loginSocialUser, createSocialUserFailed } from 'calypso/state/login/actions';
-import {
-	getCreatedSocialAccountUsername,
-	getCreatedSocialAccountBearerToken,
-	getRedirectToOriginal,
-} from 'calypso/state/login/selectors';
+import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 
 import './social.scss';
 
@@ -20,14 +26,15 @@ class SocialLoginForm extends Component {
 		onSuccess: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
 		uxMode: PropTypes.string.isRequired,
-		linkingSocialService: PropTypes.string,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
 		shouldRenderToS: PropTypes.bool,
+		magicLoginLink: PropTypes.string,
+		qrLoginLink: PropTypes.string,
+		isSocialFirst: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		linkingSocialService: '',
 		shouldRenderToS: false,
 	};
 
@@ -170,23 +177,65 @@ class SocialLoginForm extends Component {
 	};
 
 	render() {
+		const {
+			uxMode,
+			shouldRenderToS,
+			isWoo,
+			socialService,
+			socialServiceResponse,
+			magicLoginLink,
+			isSocialFirst,
+			qrLoginLink,
+		} = this.props;
+
 		return (
-			<SocialAuthenticationForm
-				compact={ this.props.compact }
-				handleGoogleResponse={ this.handleGoogleResponse }
-				handleAppleResponse={ this.handleAppleResponse }
-				handleGitHubResponse={ this.handleGitHubResponse }
-				getRedirectUri={ this.getRedirectUri }
-				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-				socialService={ this.props.socialService }
-				socialServiceResponse={ this.props.socialServiceResponse }
-				disableTosText={ ! this.props.shouldRenderToS }
-				flowName={ this.props.flowName }
-				isSocialFirst={ this.props.isSocialFirst }
-				isLogin
+			<Card
+				className={ clsx( 'auth-form__social', 'is-login', { 'is-social-first': isSocialFirst } ) }
 			>
-				{ this.props.children }
-			</SocialAuthenticationForm>
+				<div className="auth-form__social-buttons">
+					<div className="auth-form__social-buttons-container">
+						<GoogleSocialButton
+							clientId={ config( 'google_oauth_client_id' ) }
+							responseHandler={ this.handleGoogleResponse }
+							uxMode={ uxMode }
+							redirectUri={ this.getRedirectUri( 'google' ) }
+							onClick={ () => {
+								this.trackLoginAndRememberRedirect( 'google' );
+							} }
+							socialServiceResponse={ socialService === 'google' ? socialServiceResponse : null }
+							startingPoint="login"
+						/>
+
+						<AppleLoginButton
+							clientId={ config( 'apple_oauth_client_id' ) }
+							responseHandler={ this.handleAppleResponse }
+							uxMode={ uxMode }
+							redirectUri={ this.getRedirectUri( 'apple' ) }
+							onClick={ () => {
+								this.trackLoginAndRememberRedirect( 'apple' );
+							} }
+							socialServiceResponse={ socialService === 'apple' ? socialServiceResponse : null }
+						/>
+
+						<GithubSocialButton
+							socialServiceResponse={ socialService === 'github' ? socialServiceResponse : null }
+							redirectUri={ this.getRedirectUri( 'github' ) }
+							responseHandler={ this.handleGitHubResponse }
+							onClick={ () => {
+								this.trackLoginAndRememberRedirect( 'github' );
+							} }
+						/>
+						{ ( isSocialFirst || isWoo ) && (
+							<>
+								{ magicLoginLink && <MagicLoginButton loginUrl={ magicLoginLink } /> }
+								{ qrLoginLink && <QrCodeLoginButton loginUrl={ qrLoginLink } /> }
+							</>
+						) }
+					</div>
+					{ ! isWoo && shouldRenderToS && <SocialToS /> }
+				</div>
+				{ isWoo && shouldRenderToS && <SocialToS /> }
+			</Card>
 		);
 	}
 }
@@ -194,8 +243,6 @@ class SocialLoginForm extends Component {
 export default connect(
 	( state ) => ( {
 		redirectTo: getRedirectToOriginal( state ),
-		bearerToken: getCreatedSocialAccountBearerToken( state ),
-		username: getCreatedSocialAccountUsername( state ),
 	} ),
 	{
 		loginSocialUser,

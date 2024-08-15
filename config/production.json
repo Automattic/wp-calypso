@@ -22,6 +22,7 @@
 	"features": {
 		"ad-tracking": true,
 		"akismet/checkout-quantity-dropdown": true,
+		"automated-migration/collect-credentials": false,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-assembler": false,
 		"calypso/big-sky": false,
@@ -188,7 +189,6 @@
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/paid-wpcom-v2": true,
-		"stats/restricted-dashboard": true,
 		"stats/date-picker-calendar": false,
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
