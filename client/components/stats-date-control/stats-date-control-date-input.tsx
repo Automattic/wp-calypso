@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import moment from 'moment';
 import React from 'react';
 
@@ -7,6 +8,8 @@ interface Props {
 	onChange?: ( value: string ) => void;
 	max?: string;
 }
+
+const isNewCalendar = config.isEnabled( 'stats/date-picker-calendar' );
 
 const DateInput: React.FC< Props > = ( {
 	value,
@@ -18,8 +21,6 @@ const DateInput: React.FC< Props > = ( {
 		onChange && onChange( event.target.value );
 	};
 
-	const featureFlagEnabled = false;
-
 	const toDateString = ( date: moment.MomentInput ) => {
 		if ( moment.isMoment( date ) || moment( date ).isValid() ) {
 			return moment( date ).format( 'YYYY-MM-DD' );
@@ -28,7 +29,7 @@ const DateInput: React.FC< Props > = ( {
 	};
 
 	const handleBlur = () => {
-		if ( featureFlagEnabled ) {
+		if ( isNewCalendar ) {
 			const isValid = moment( value, 'YYYY-MM-DD', true ).isValid();
 			if ( ! isValid ) {
 				onChange && onChange( moment().format( 'YYYY-MM-DD' ) );
@@ -40,7 +41,7 @@ const DateInput: React.FC< Props > = ( {
 
 	return (
 		<>
-			{ featureFlagEnabled ? (
+			{ isNewCalendar ? (
 				<input
 					id={ id }
 					type="text"
