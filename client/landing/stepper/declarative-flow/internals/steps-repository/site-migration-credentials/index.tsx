@@ -27,13 +27,13 @@ interface CredentialsFormData {
 	password: string;
 	backupFileLocation: string;
 	notes: string;
-	howToAccessSite: string;
+	howToAccessSite: 'credentials' | 'backup';
 }
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	const translate = useTranslate();
 
-	const validateCredentials = ( siteAddress: string ) => {
+	const validateSiteAddress = ( siteAddress: string ) => {
 		const isSiteAddressValid = CAPTURE_URL_RGX.test( siteAddress );
 
 		if ( ! isSiteAddressValid ) {
@@ -51,7 +51,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		handleSubmit,
 		watch,
 	} = useForm< CredentialsFormData >( {
-		mode: 'onBlur',
+		mode: 'onSubmit',
 		defaultValues: {
 			siteAddress: '',
 			username: '',
@@ -62,13 +62,15 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		},
 	} );
 
+	console.log( errors );
+
 	// Subscribe only this field to the access method value
 	const accessMethod = watch( 'howToAccessSite' );
 
 	const submitHandler = ( data: CredentialsFormData ) => {
 		// eslint-disable-next-line no-console
 		console.log( { data } );
-		onSubmit();
+		// onSubmit();
 	};
 
 	return (
@@ -122,7 +124,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 								<Controller
 									control={ control }
 									name="siteAddress"
-									rules={ { required: true, validate: validateCredentials } }
+									rules={ { required: true, validate: validateSiteAddress } }
 									render={ ( { field } ) => (
 										<FormTextInput
 											id="site-address"
