@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { Step } from '../../types';
 import SiteMigrationUpgradePlan from '../site-migration-upgrade-plan';
+import { MigrationUpgradePlanAction as Actions } from './actions';
 
 interface Props {
 	onClick: () => void;
@@ -33,7 +34,11 @@ const MigrationUpgradePlan: Step = ( props ) => {
 			customizedActionButtons={
 				<ImportButton
 					label={ translate( 'I want to import my content only' ) }
-					onClick={ () => navigation?.submit?.( { action: 'skip', goToCheckout: false } ) }
+					onClick={ () =>
+						navigation?.submit?.( {
+							action: Actions.IMPORT_CONTENT_ONLY_ACTION,
+						} )
+					}
 				/>
 			}
 		/>

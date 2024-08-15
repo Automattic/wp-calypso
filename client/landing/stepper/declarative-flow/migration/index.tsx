@@ -8,6 +8,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
+import { MigrationUpgradePlanAction } from '../internals/steps-repository/migration-upgrade-plan/actions';
 import { goToImporter } from './helpers';
 import type { ProvidedDependencies } from '../internals/types';
 import type {
@@ -85,7 +86,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					flow: flowPath,
 				};
 
-				if ( props?.action === 'skip' ) {
+				if ( props?.action === MigrationUpgradePlanAction.IMPORT_CONTENT_ONLY_ACTION ) {
 					return goToImporter( 'importerWordpress', siteId, siteSlug, backToStep );
 				}
 
