@@ -2,6 +2,7 @@ import { translate } from 'i18n-calypso';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
+import { MigrationBanner } from 'calypso/performance-profiler/components/migration-banner';
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
 import { ScreenshotThumbnail } from '../screenshot-thumbnail';
 import { ScreenshotTimeline } from '../screenshot-timeline';
@@ -9,10 +10,12 @@ import './style.scss';
 
 type PerformanceProfilerDashboardContentProps = {
 	performanceReport: PerformanceReport;
+	url: string;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
 	performanceReport,
+	url,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const { overall_score, fcp, lcp, cls, inp, ttfb, audits, history, screenshots } =
 		performanceReport;
@@ -38,6 +41,8 @@ export const PerformanceProfilerDashboardContent = ( {
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
 				{ audits && <InsightsSection audits={ audits } /> }
 			</div>
+
+			<MigrationBanner url={ url } />
 		</div>
 	);
 };
