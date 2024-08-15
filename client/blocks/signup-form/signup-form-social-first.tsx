@@ -3,6 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import { getQueryArgs } from '@wordpress/url';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -147,6 +148,10 @@ const SignupFormSocialFirst = ( {
 				  }
 				: {};
 
+			const redirectToParam =
+				( getQueryArgs( window.location.href )?.redirect_to as string ) ??
+				window.location.origin + `/setup/${ flowName }`;
+
 			return (
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
@@ -166,7 +171,7 @@ const SignupFormSocialFirst = ( {
 										{
 											email_address: email,
 											is_signup_existing_account: true,
-											redirect_to: window.location.origin + `/setup/${ flowName }`,
+											redirect_to: redirectToParam,
 										},
 										logInUrl
 									)
