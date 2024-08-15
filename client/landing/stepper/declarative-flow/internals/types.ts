@@ -162,9 +162,9 @@ export type StepProps = {
 	data?: StepperInternal.State[ 'stepData' ];
 	children?: React.ReactNode;
 	/**
-	 * This prop is used internally by the Stepper to handle the onSuccess callback in the user step.
+	 * This prop is used internally by the Stepper to redirect the user from the user step.
 	 */
-	__onSuccess?: () => void;
+	_redirectTo?: string;
 };
 
 export type Step = React.FC< StepProps >;

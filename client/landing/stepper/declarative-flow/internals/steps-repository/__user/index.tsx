@@ -18,16 +18,11 @@ import { useHandleSocialResponse } from './handle-social-response';
 import './style.scss';
 import { useSocialService } from './use-social-service';
 
-const UserStep: Step = function UserStep( { flow, stepName, __onSuccess } ) {
+const UserStep: Step = function UserStep( { flow, stepName, _redirectTo = window.location.href } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
-	const {
-		handleSocialResponse,
-		notice,
-		accountCreateResponse,
-		storedRedirectToFromBeforeLoggingIn,
-	} = useHandleSocialResponse( flow );
+	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialService, socialServiceResponse } = useSocialService();
@@ -37,9 +32,9 @@ const UserStep: Step = function UserStep( { flow, stepName, __onSuccess } ) {
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else {
-			__onSuccess?.();
+			// omar
 		}
-	}, [ dispatch, isLoggedIn, __onSuccess ] );
+	}, [ dispatch, isLoggedIn ] );
 
 	const loginLink = login( {
 		signupUrl: window.location.pathname + window.location.search,
@@ -79,8 +74,7 @@ const UserStep: Step = function UserStep( { flow, stepName, __onSuccess } ) {
 						<WpcomLoginForm
 							authorization={ 'Bearer ' + response.bearer_token }
 							log={ response.username }
-							// We want to go back to the URL that we were at before logging in. Not the current URL.
-							redirectTo={ storedRedirectToFromBeforeLoggingIn }
+							redirectTo={ _redirectTo }
 						/>
 					) }
 				</>
@@ -90,7 +84,7 @@ const UserStep: Step = function UserStep( { flow, stepName, __onSuccess } ) {
 				<Button
 					className="step-wrapper__navigation-link forward"
 					href={ login( {
-						signupUrl: window.location.pathname + window.location.search,
+						signupUrl: new URL( _redirectTo, window.location.href ).href,
 					} ) }
 					variant="link"
 				>

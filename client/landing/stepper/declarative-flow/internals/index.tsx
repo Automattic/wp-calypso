@@ -7,11 +7,13 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useMemo, lazy } from 'react';
 import Modal from 'react-modal';
+import { generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
@@ -46,6 +48,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const { navigate, params } = useFlowNavigation();
 	const currentStepRoute = params.step || '';
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { lang = null } = useParams();
+
+	const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
+		flow: flow.name,
+		step: firstAuthWalledStep?.slug ?? null,
+		lang: lang === 'en' || isLoggedIn ? null : lang,
+	} );
 
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
@@ -134,10 +144,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					flow={ flow.name }
 					variantSlug={ flow.variantSlug }
 					stepName="user"
-					// We need this special case, because the user step requires an onSuccess prop.
+					// We need this special case, because the user step requires an _redirectTo prop.
 					// It cannot submit like a normal step would, because then the flow would have to handle the submission.
-					// Instead, Stepper will handle onSuccess and take the user to the right step.
-					__onSuccess={ () => navigate( firstAuthWalledStep.slug, undefined, true ) }
+					// Instead, it will redirect to `_redirectTo` to take the user to the right step.
+					_redirectTo={ postAuthStepPath }
 				/>
 			);
 		}
