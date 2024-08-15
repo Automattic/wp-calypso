@@ -13,7 +13,11 @@ const FormRadio = ( {
 } & Omit< HTMLProps< HTMLInputElement >, 'label' > ) => (
 	<>
 		<input { ...otherProps } type="radio" className={ clsx( className, 'form-radio' ) } />
-		{ label && <span className="form-radio__label">{ label }</span> }
+		{ label && (
+			<label className="form-radio__label" htmlFor={ otherProps?.id }>
+				{ label }
+			</label>
+		) }
 	</>
 );
 
