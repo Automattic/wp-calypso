@@ -51,9 +51,9 @@
 	}
 }
 .plugins-browser__main-container {
-	display: contents;
+	position: relative;
 
-	.theme-default:not(.is-global) &::before {
+	&::before {
 		box-sizing: border-box;
 		content: "";
 		background-color: #fff;
@@ -62,6 +62,10 @@
 		width: 200vw;
 		left: -100vw;
 		z-index: -1;
+	}
+
+	.plugins-browser-list:last-of-type {
+		padding-bottom: 32px;
 	}
 }
 
@@ -72,10 +76,6 @@
 	.banner.card {
 		margin: 48px 0 0;
 	}
-}
-
-.plugins-browser__marketplace-footer {
-	margin-top: 60px;
 }
 
 body.is-section-plugins #primary .main.is-logged-out {

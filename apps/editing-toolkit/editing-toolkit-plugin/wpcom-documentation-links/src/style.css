@@ -1,8 +1,0 @@
-/*
- For simple sites in "Customize Widgets" we override translations with empty strings.
- This will result in empty link in that section shown without text and href. The CSS will hide those.
- */
-.customize-widgets-welcome-guide__more-info a[href=""] {
-	display: none;
-}
-
