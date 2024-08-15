@@ -38,7 +38,7 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 	if ( useProxy ) {
 		return (
 			<ProxiedImage
-				siteId={ siteId }
+				siteId={ siteId || siteSlug }
 				filePath={ filePath }
 				query={ query }
 				component={ proxiedComponent || Component }

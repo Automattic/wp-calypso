@@ -14,7 +14,7 @@ export type RenderedComponent = string | ComponentType< RenderedComponentProps >
 export interface ProxiedImageProps {
 	query: string;
 	filePath: string;
-	siteId: number;
+	siteId: number | string;
 	placeholder: ReactNode;
 	component: RenderedComponent;
 	maxSize: number | null;
