@@ -50,6 +50,10 @@
 			align-items: center;
 			.form-radio__label {
 				margin-left: 0.5em;
+
+				&:hover {
+					cursor: pointer;
+				}
 			}
 			.form-radio {
 				margin: 0;
