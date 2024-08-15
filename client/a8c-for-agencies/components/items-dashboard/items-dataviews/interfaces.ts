@@ -1,4 +1,4 @@
-import type { View, Field, Action } from '@wordpress/dataviews';
+import type { View, Field, Action, SortDirection } from '@wordpress/dataviews';
 
 export interface ItemsDataViewsType< T > {
 	items: T[] | undefined;
@@ -21,7 +21,7 @@ export interface DataViewsPaginationInfo {
 
 export interface DataViewsSort {
 	field: string;
-	direction: 'asc' | 'desc' | '';
+	direction: SortDirection;
 }
 
 export interface DataViewsFilter {

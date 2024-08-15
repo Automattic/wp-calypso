@@ -20,7 +20,7 @@ const buildQueryString = ( {
 	filters: Filter[];
 	search: string;
 	currentPage: number;
-	sort: DashboardSortInterface;
+	sort?: DashboardSortInterface;
 	showOnlyFavorites?: boolean;
 	showOnlyDevelopmentSites?: boolean;
 } ) => {
@@ -36,8 +36,8 @@ const buildQueryString = ( {
 
 	// ASC is the default sort direction for the URL
 	if (
-		sort.field !== DEFAULT_SORT_FIELD ||
-		( sort.field === DEFAULT_SORT_FIELD && sort.direction !== DEFAULT_SORT_DIRECTION )
+		( sort && sort.field !== DEFAULT_SORT_FIELD ) ||
+		( sort && sort.field === DEFAULT_SORT_FIELD && sort.direction !== DEFAULT_SORT_DIRECTION )
 	) {
 		urlQuery.set( 'sort_field', sort.field );
 		urlQuery.set( 'sort_direction', sort.direction );
@@ -83,7 +83,7 @@ export const updateSitesDashboardUrl = ( {
 	selectedSiteFeature?: string;
 	search: string;
 	currentPage: number;
-	sort: DashboardSortInterface;
+	sort?: DashboardSortInterface;
 	showOnlyFavorites?: boolean;
 	showOnlyDevelopmentSites?: boolean;
 } ) => {

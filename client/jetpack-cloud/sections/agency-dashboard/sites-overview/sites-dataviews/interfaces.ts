@@ -1,4 +1,4 @@
-import { type Site, SiteData } from '../types';
+import { type Site } from '../types';
 import type { View } from '@wordpress/dataviews';
 
 export interface SitesDataResponse {
@@ -19,16 +19,6 @@ export interface SitesDataViewsProps {
 	sitesViewState: SitesViewState;
 }
 
-export interface Filter {
-	field: string;
-	operator: string;
-	value: number;
-}
-
 export type SitesViewState = View & {
 	selectedSite?: Site | undefined;
 };
-
-export interface SiteInfo extends SiteData {
-	id: number;
-}

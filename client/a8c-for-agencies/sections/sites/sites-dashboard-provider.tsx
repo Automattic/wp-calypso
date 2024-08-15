@@ -11,6 +11,7 @@ import {
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD, filtersMap } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
+import type { Filter } from '@wordpress/dataviews';
 
 interface Props {
 	showOnlyFavoritesInitialState?: boolean;
@@ -28,14 +29,14 @@ interface Props {
 	featurePreview?: ReactNode | null;
 }
 
-const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
+const buildFilters = ( { issueTypes }: { issueTypes: string } ): Filter[] => {
 	const issueTypesArray = issueTypes?.split( ',' );
 
 	return (
 		issueTypesArray?.map( ( issueType ) => {
 			return {
 				field: 'status',
-				operator: 'in',
+				operator: 'is',
 				value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
 			};
 		} ) || []
@@ -87,9 +88,19 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
-	initialDataViewsState.sort.field = DEFAULT_SORT_FIELD;
-	initialDataViewsState.sort.direction = DEFAULT_SORT_DIRECTION;
-	initialDataViewsState.hiddenFields = [ 'status' ];
+	initialDataViewsState.sort = {
+		field: DEFAULT_SORT_FIELD,
+		direction: DEFAULT_SORT_DIRECTION,
+	};
+	initialDataViewsState.fields = [
+		'site',
+		'status',
+		'boost',
+		'backup',
+		'monitor',
+		'scan',
+		'plugins',
+	];
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,

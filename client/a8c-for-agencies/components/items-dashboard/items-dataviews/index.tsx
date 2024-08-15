@@ -103,7 +103,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 				}
 				onSelectionChange={ data.onSelectionChange }
 				onChangeView={ data.setDataViewsState }
-				supportedLayouts={ [ 'table' ] }
+				defaultLayouts={ { table: {} } }
 				actions={ data.actions }
 				isLoading={ isLoading }
 			/>

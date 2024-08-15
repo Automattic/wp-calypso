@@ -108,8 +108,8 @@ export default function SitesDashboard() {
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
-		searchQuery: dataViewsState.search,
-		currentPage: dataViewsState.page,
+		searchQuery: dataViewsState?.search ?? '',
+		currentPage: dataViewsState.page ?? 1,
 		filter: agencyDashboardFilter,
 		sort: dataViewsState.sort,
 		perPage: dataViewsState.perPage,
@@ -156,11 +156,11 @@ export default function SitesDashboard() {
 		const updatedUrl = updateSitesDashboardUrl( {
 			category: category,
 			setCategory: setCategory,
-			filters: dataViewsState.filters,
+			filters: dataViewsState.filters ?? [],
 			selectedSite: dataViewsState.selectedItem,
 			selectedSiteFeature: selectedSiteFeature,
-			search: dataViewsState.search,
-			currentPage: dataViewsState.page,
+			search: dataViewsState.search ?? '',
+			currentPage: dataViewsState.page ?? 1,
 			sort: dataViewsState.sort,
 			showOnlyFavorites,
 			showOnlyDevelopmentSites,

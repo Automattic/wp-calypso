@@ -24,7 +24,11 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => 
 	};
 };
 
-const agencyDashboardSortToQueryObject = ( sort: DashboardSortInterface ) => {
+const agencyDashboardSortToQueryObject = ( sort?: DashboardSortInterface ) => {
+	if ( ! sort ) {
+		return;
+	}
+
 	return {
 		...( sort?.field && { sort_field: sort.field } ),
 		...( sort?.direction && { sort_direction: sort.direction } ),
@@ -36,7 +40,7 @@ export interface FetchDashboardSitesArgsInterface {
 	searchQuery: string;
 	currentPage: number;
 	filter: AgencyDashboardFilter;
-	sort: DashboardSortInterface;
+	sort?: DashboardSortInterface;
 	perPage?: number;
 	agencyId?: number;
 }

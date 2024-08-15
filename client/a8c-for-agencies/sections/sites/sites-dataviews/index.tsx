@@ -467,7 +467,7 @@ const SitesDataViews = ( {
 					return item.site.value.blog_id.toString();
 				} }
 				onChangeView={ setDataViewsState }
-				supportedLayouts={ [ 'table' ] }
+				defaultLayouts={ { table: {} } }
 				actions={ [] } // Replace with actions when bulk selections are implemented.
 				isLoading={ isLoading }
 			/>
