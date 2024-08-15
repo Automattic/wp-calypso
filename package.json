@@ -218,6 +218,7 @@
 		"photon": "workspace:^",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"react-hook-form": "^7.52.2",
 		"react-intersection-observer": "^9.4.3",
 		"react-modal": "^3.16.1",
 		"redux": "^4.2.1",
