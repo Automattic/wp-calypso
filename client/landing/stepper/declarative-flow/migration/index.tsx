@@ -47,7 +47,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const hasSite = Boolean( siteId ) || Boolean( siteSlug );
 
 				// The importer url is returning the importer name and empty query params, so we need to remove them;
-				const importer = ( props?.url as string ).split( '?' )[ 0 ];
+				const importer = ( ( props?.url as string ) || '' ).split( '?' )[ 0 ];
 
 				if ( platform === 'wordpress' ) {
 					if ( hasSite ) {

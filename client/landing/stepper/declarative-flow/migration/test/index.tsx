@@ -22,7 +22,7 @@ jest.mock( 'calypso/landing/stepper/utils/checkout' );
 describe( `${ flow.name }`, () => {
 	beforeEach( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
+			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
 		} );
 	} );
 
@@ -60,7 +60,7 @@ describe( `${ flow.name }`, () => {
 
 	describe( 'useStepNavigation', () => {
 		describe( 'PLATFORM IDENTIFICATION STEP', () => {
-			it( 'redirects the user from PLATFORM IDENTIFICATION > CREATE SITE', () => {
+			it( 'redirects the user from PLATFORM IDENTIFICATION to CREATE SITE', () => {
 				const destination = runNavigation( {
 					from: STEPS.PLATFORM_IDENTIFICATION,
 					dependencies: { platform: 'any-platform', url: 'importerBlogger' },
@@ -72,7 +72,7 @@ describe( `${ flow.name }`, () => {
 				} );
 			} );
 
-			it( 'redirects the user from PLATFORM IDENTIFICATION > CREATE SITE without passing the importer param when the user select WordPress', () => {
+			it( 'redirects the user from PLATFORM IDENTIFICATION to CREATE SITE without passing the importer param when the user select WordPress', () => {
 				const destination = runNavigation( {
 					from: STEPS.PLATFORM_IDENTIFICATION,
 					dependencies: { platform: 'wordpress', url: 'next-url' },
@@ -84,7 +84,7 @@ describe( `${ flow.name }`, () => {
 				} );
 			} );
 
-			it( 'redirects the user from PLATFORM IDENTIFICATION > UPGRADE PLAN when the user already have a site and selects WordPress', () => {
+			it( 'redirects the user from PLATFORM IDENTIFICATION to UPGRADE PLAN when the user already have a site and selects WordPress', () => {
 				const destination = runNavigation( {
 					from: STEPS.PLATFORM_IDENTIFICATION,
 					dependencies: { siteId: 123, siteSlug: 'example.wordpress.com', platform: 'wordpress' },
@@ -96,7 +96,7 @@ describe( `${ flow.name }`, () => {
 				} );
 			} );
 
-			it( 'redirects the user from PLATFORM IDENTIFICATION > IMPORT when siteSlug/siteId is available', async () => {
+			it( 'redirects the user from PLATFORM IDENTIFICATION to IMPORT when siteSlug/siteId is available', async () => {
 				runNavigation( {
 					from: STEPS.PLATFORM_IDENTIFICATION,
 					dependencies: {
@@ -107,7 +107,12 @@ describe( `${ flow.name }`, () => {
 					},
 				} );
 
-				expect( window.location.assign ).toHaveBeenCalled();
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					addQueryArgs( '/setup/site-setup/importBlogger', {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					} )
+				);
 			} );
 		} );
 
@@ -138,7 +143,7 @@ describe( `${ flow.name }`, () => {
 		} );
 
 		describe( 'PROCESSING', () => {
-			it( 'redirect user from PROCESSING > IMPORTER when an importer is available', () => {
+			it( 'redirect user from PROCESSING to IMPORTER when an importer is available', () => {
 				runNavigation( {
 					from: STEPS.PROCESSING,
 					query: {
@@ -148,12 +153,15 @@ describe( `${ flow.name }`, () => {
 					},
 				} );
 
-				expect( window.location.assign ).toHaveBeenCalledWith(
-					'/setup/site-setup/importBlogger?siteId=123&siteSlug=example.wordpress.com'
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					addQueryArgs( '/setup/site-setup/importBlogger', {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					} )
 				);
 			} );
 
-			it( 'redirect user from PROCESSING > UPGRADE PLAN when no importer is available', () => {
+			it( 'redirect user from PROCESSING to UPGRADE PLAN when no importer is available', () => {
 				const destination = runNavigation( {
 					from: STEPS.PROCESSING,
 					query: {},
@@ -168,7 +176,7 @@ describe( `${ flow.name }`, () => {
 		} );
 
 		describe( 'MIGRATION_UPGRADE_PLAN', () => {
-			it( 'redirects user from MIGRATION_UPGRADE_PLAN > Checkout page', () => {
+			it( 'redirects user from MIGRATION_UPGRADE_PLAN to Checkout page', () => {
 				runNavigation( {
 					from: STEPS.MIGRATION_UPGRADE_PLAN,
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -186,7 +194,7 @@ describe( `${ flow.name }`, () => {
 				} );
 			} );
 
-			it( 'redirects user from MIGRATION_UPGRADE_PLAN > Import when user they decide do it', () => {
+			it( 'redirects user from MIGRATION_UPGRADE_PLAN to Import when user they decide do it', () => {
 				runNavigation( {
 					from: STEPS.MIGRATION_UPGRADE_PLAN,
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -196,7 +204,7 @@ describe( `${ flow.name }`, () => {
 					},
 				} );
 
-				expect( window.location.assign ).toHaveBeenCalledWith(
+				expect( window.location.replace ).toHaveBeenCalledWith(
 					addQueryArgs( '/setup/site-setup/importerWordpress', {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
@@ -207,7 +215,7 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		it( 'redirects user from How To Migrate > Instructions when they select the option "do it myself"', () => {
+		it( 'redirects user from How To Migrate to Instructions when they select the option "do it myself"', () => {
 			const destination = runNavigation( {
 				from: STEPS.MIGRATION_HOW_TO_MIGRATE,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -220,7 +228,7 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		it( 'redirects user from How To Migrate > Capture Source URL when they selects the option "do it for me"', () => {
+		it( 'redirects user from How To Migrate to Capture Source URL when they selects the option "do it for me"', () => {
 			const destination = runNavigation( {
 				from: STEPS.MIGRATION_HOW_TO_MIGRATE,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -233,7 +241,7 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		it( 'redirects users from Instructions > Migration started', () => {
+		it( 'redirects users from Instructions to Migration started', () => {
 			const destination = runNavigation( {
 				from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -245,7 +253,7 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 
-		it( 'redirects users from Capture Source URL > Migration assisted', () => {
+		it( 'redirects users from Capture Source URL to Migration assisted', () => {
 			const destination = runNavigation( {
 				from: STEPS.MIGRATION_SOURCE_URL,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
