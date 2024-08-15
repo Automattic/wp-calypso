@@ -56,6 +56,9 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 	metrics = metrics.slice( -8 );
 	dates = dates.slice( -8 );
 
+	// the comparison is inverse here because the last value is the most recent
+	const positiveTendency = metrics[ metrics.length - 1 ] < metrics[ 0 ];
+
 	const historicalData = metrics.map( ( item, index ) => {
 		return {
 			date: dates[ index ],
@@ -130,7 +133,11 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 				</div>
 				<div className="core-web-vitals-display__history-graph">
 					<span className="core-web-vitals-display__description-subheading">
-						{ translate( '%s has increased over the past eight weeks', { args: [ displayName ] } ) }
+						{ positiveTendency
+							? translate( '%s has increased over the past eight weeks', { args: [ displayName ] } )
+							: translate( '%s has decreased over the past eight weeks', {
+									args: [ displayName ],
+							  } ) }
 						<HistoryChart
 							data={ historicalData }
 							range={ [
