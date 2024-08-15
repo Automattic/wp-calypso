@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useState } from 'react';
 import Smooch from 'smooch';
 import { SMOOCH_INTEGRATION_ID } from './constants';
@@ -18,9 +19,21 @@ export const useSmooch = () => {
 				embedded: true,
 				externalId: authData?.externalId,
 				jwt: authData?.jwt,
-			} ).then( () => {
-				setInit( true );
-			} );
+			} )
+				.then( () => {
+					recordTracksEvent( 'calypso_smooch_messenger_init', {
+						success: true,
+						error: '',
+					} );
+					setInit( true );
+				} )
+				.catch( ( error ) => {
+					recordTracksEvent( 'calypso_smooch_messenger_init', {
+						success: false,
+						error: error.message,
+					} );
+					setInit( false );
+				} );
 			Smooch.render( ref );
 		}
 	};

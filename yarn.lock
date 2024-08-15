@@ -2329,6 +2329,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/zendesk-client@workspace:packages/zendesk-client"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@types/smooch": "npm:^5.3.7"
