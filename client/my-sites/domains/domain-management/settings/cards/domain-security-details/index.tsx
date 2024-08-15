@@ -81,7 +81,15 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 						) }
 					</p>
 				);
-			case sslStatuses.SSL_PENDING:
+			case sslStatuses.SSL_DISABLED:
+				return (
+					<p className="domain-security-details__description-message">
+						{ translate(
+							'Your domain has expired. Renew your domain to issue a new SSL certificate.'
+						) }
+					</p>
+				);
+			default:
 				if ( sslDetails?.failure_reasons ) {
 					return (
 						<>
@@ -108,15 +116,6 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 						{ translate(
 							'There is an issue with your certificate. Contact us to {{a}}learn more{{/a}}.',
 							{ components: { a: <a href={ localizeUrl( CONTACT ) } /> } }
-						) }
-					</p>
-				);
-			case sslStatuses.SSL_DISABLED:
-			default:
-				return (
-					<p className="domain-security-details__description-message">
-						{ translate(
-							'Your domain has expired. Renew your domain to issue a new SSL certificate.'
 						) }
 					</p>
 				);
