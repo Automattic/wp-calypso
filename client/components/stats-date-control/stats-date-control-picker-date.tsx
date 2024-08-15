@@ -20,6 +20,14 @@ const DateControlPickerDate = ( {
 }: DateControlPickerDateProps ) => {
 	const translate = useTranslate();
 
+	const handleStartSeletion = ( date: string ) => {
+		onStartChange( date.split( 'T' )?.[ 0 ] );
+	};
+
+	const handleEndSeletion = ( date: string ) => {
+		onEndChange( date.split( 'T' )?.[ 0 ] );
+	};
+
 	return (
 		<div
 			className={ clsx( BASE_CLASS_NAME, {
@@ -46,8 +54,8 @@ const DateControlPickerDate = ( {
 			</div>
 			{ isCalendarEnabled && (
 				<div className={ `${ BASE_CLASS_NAME }s__calendar` }>
-					<DatePicker currentDate={ startDate } />
-					<DatePicker currentDate={ endDate } />
+					<DatePicker currentDate={ startDate } onChange={ handleStartSeletion } />
+					<DatePicker currentDate={ endDate } onChange={ handleEndSeletion } />
 				</div>
 			) }
 			<div className={ `${ BASE_CLASS_NAME }s__buttons` }>
