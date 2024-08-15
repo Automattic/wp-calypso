@@ -1,7 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/dataviews/build-style/style.css";
 
 .dataviews-wrapper {
+	// Maybe move upstream to the gutenberg repository
+	width: 100%;
+
 	tr.dataviews-view-table__row {
 		background: var(--studio-white);
 
@@ -9,7 +13,7 @@
 			opacity: 0;
 		}
 		.components-checkbox-control__input:checked,
-		.components-checkbox-control__input:indeterminate, {
+		.components-checkbox-control__input:indeterminate {
 			opacity: 1;
 		}
 

@@ -571,13 +571,6 @@
 		flex-direction: column;
 		height: 100%;
 
-		// This style should ideally be present in the package directly.
-		.dataviews-filters__container,
-		.dataviews__view-actions {
-			padding: 16px 48px;
-			box-sizing: border-box;
-		}
-
 		.dataviews-wrapper {
 			.dataviews-pagination {
 				margin: 0;
