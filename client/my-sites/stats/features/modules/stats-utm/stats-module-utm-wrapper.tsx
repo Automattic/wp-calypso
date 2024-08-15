@@ -23,19 +23,17 @@ const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 	summaryUrl,
 } ) => {
 	const isNewEmptyStateEnabled = config.isEnabled( 'stats/empty-module-traffic' );
-	const isGatedByShouldGateStats = config.isEnabled( 'stats/restricted-dashboard' );
 	const moduleStrings = statsStrings();
 	const shouldGateStats = useShouldGateStats( STATS_FEATURE_UTM_STATS );
 
 	// Check if blog is internal.
 	const { isPending: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
-	const { isLoading: isLoadingFeatureCheck, supportCommercialUse } = useStatsPurchases( siteId );
+	const { isLoading: isLoadingFeatureCheck } = useStatsPurchases( siteId );
 
 	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
 	const isFetching = isFetchingUsage || isLoadingFeatureCheck; // This is not fetching UTM data.
 
-	const isAdvancedFeatureEnabled =
-		isSiteInternal || ( isGatedByShouldGateStats ? ! shouldGateStats : supportCommercialUse );
+	const isAdvancedFeatureEnabled = isSiteInternal || ! shouldGateStats;
 
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {

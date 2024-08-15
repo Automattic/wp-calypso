@@ -70,7 +70,11 @@ export default function Content( {
 						click 'Create a new export.' Once the ZIP file is downloaded, upload it in the next
 						step.
 					</p>
-					<Button href={ `https://${ fromSite }/publish/settings#exports` } target="_blank">
+					<Button
+						href={ `https://${ fromSite }/publish/settings?search=export` }
+						target="_blank"
+						rel="noreferrer noopener"
+					>
 						Export content <Gridicon icon="external" />
 					</Button>
 					<hr />
