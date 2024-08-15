@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { CONTACT, HTTPS_SSL } from '@automattic/urls';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import Accordion from 'calypso/components/domains/accordion';
 import useSslDetailsQuery from 'calypso/data/domains/ssl/use-ssl-details-query';
 import useProvisionCertificateMutation from 'calypso/data/domains/ssl/use-ssl-provision-certificate-mutation';
@@ -68,7 +68,7 @@ const DomainSecurityDetails = ( { domain, isDisabled, selectedSite }: SecurityCa
 
 	const { sslStatus } = domain;
 
-	const getSslStatusMessage = () => {
+	const getSslStatusMessage = (): ReactElement | null => {
 		switch ( sslStatus ) {
 			case sslStatuses.SSL_ACTIVE:
 				return null;
