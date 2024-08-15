@@ -128,10 +128,7 @@ export interface UrlSecurityMetricsQueryResponse {
 }
 
 export type PerformanceReport = {
-	audits: {
-		health: PerformanceMetricsDataQueryResponse;
-		performance: PerformanceMetricsDataQueryResponse;
-	};
+	audits: Record< string, PerformanceMetricsItemQueryResponse >;
 	performance: number;
 	overall_score: number;
 	is_wpcom: boolean;
