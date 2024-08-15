@@ -28,6 +28,7 @@ type Props = {
 	cardData: any;
 	fromSite: string;
 	engine: string;
+	isFetchingContent: boolean;
 };
 
 export default function ConnectStripe( {
@@ -36,8 +37,13 @@ export default function ConnectStripe( {
 	cardData,
 	fromSite,
 	engine,
+	isFetchingContent,
 }: Props ) {
-	const connectUrl = updateConnectUrl( cardData.connect_url, fromSite, engine );
+	if ( isFetchingContent || cardData?.connect_url === undefined ) {
+		return null;
+	}
+
+	const connectUrl = updateConnectUrl( cardData?.connect_url ?? '', fromSite, engine );
 
 	return (
 		<Card>
