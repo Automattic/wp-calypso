@@ -17,6 +17,9 @@ describe( 'requestFetchAdminMenu', () => {
 					method: 'GET',
 					path: '/sites/73738/admin-menu/',
 					apiNamespace: 'wpcom/v2',
+					query: {
+						_locale: 'user',
+					},
 				},
 				action
 			)
