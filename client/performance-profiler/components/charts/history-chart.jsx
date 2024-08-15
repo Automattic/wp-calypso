@@ -124,7 +124,7 @@ const createShapePath = ( item, xScale, yScale, range ) => {
 	const y = yScale( item.value );
 	const size = 7;
 
-	if ( item.value <= range[ 0 ] ) {
+	if ( item.value < range[ 0 ] ) {
 		return `M${ x },${ y }m-${ size },0a${ size },${ size } 0 1,0 ${
 			2 * size
 		},0a${ size },${ size } 0 1,0 ${ -2 * size },0Z`; // Circle
