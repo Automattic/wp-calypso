@@ -1,4 +1,5 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "@wordpress/components/build-style/style";
 
 .help-center.entry-point-button {
 	&.is-active {
@@ -79,6 +80,7 @@
 			#help-center-icon-with-notification {
 				display: block;
 			}
+
 			#help-center-icon {
 				display: none;
 			}

@@ -83,6 +83,7 @@ function HelpCenterContent() {
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
+				shadowCSSFromURL="https://widgets.wp.com/help-center/help-center-gutenberg.css"
 			/>
 		</>
 	);

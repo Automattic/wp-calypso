@@ -46,6 +46,7 @@ function AdminHelpCenterContent() {
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
+				shadowCSSFromURL="https://widgets.wp.com/help-center/help-center-wp-admin.css"
 			/>
 		</QueryClientProvider>
 	);

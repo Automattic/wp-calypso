@@ -9,6 +9,10 @@ export interface Container {
 	hidden?: boolean;
 	currentRoute?: string;
 	openingCoordinates?: ReturnType< typeof useOpeningCoordinates >;
+	/**
+	 * If this property is passed. The Help Center will wrap itself in a shadow root and inject the styles from this URL.
+	 */
+	shadowCSSFromURL?: string;
 }
 
 export interface PostObject {
