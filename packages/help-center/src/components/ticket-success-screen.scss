@@ -1,0 +1,20 @@
+@import "@automattic/typography/styles/variables";
+
+.help-center {
+	.ticket-success-screen__help-center {
+		text-align: center;
+
+		.ticket-success-screen__help-center-heading {
+			font-size: $font-title-small;
+			color: var(--studio-gray-100);
+			margin: 16px;
+			font-weight: 400;
+		}
+
+		.ticket-success-screen__help-center-message {
+			font-size: $font-body-small;
+			color: var(--studio-gray-50);
+			margin: 0;
+		}
+	}
+}

@@ -112,7 +112,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 	if ( isLoading ) {
 		return (
-			<div className="help-center-contact-page__loading">
+			<div className="help-center__loading">
 				<Spinner baseClassName="" />
 			</div>
 		);

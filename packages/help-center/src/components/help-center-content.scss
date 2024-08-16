@@ -1,0 +1,15 @@
+.help-center__container {
+	.help-center__container-content {
+		scroll-behavior: smooth;
+		overflow-y: auto;
+		padding: 0;
+
+		.help-center__container-content-wrapper {
+			height: auto;
+
+			> * {
+				box-sizing: border-box;
+			}
+		}
+	}
+}

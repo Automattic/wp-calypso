@@ -11,6 +11,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useContactFormTitle } from '../hooks';
 import { HelpCenterContactPage } from './help-center-contact-page';
 
+import './help-center-extra-contact-option.scss';
+
 export const ExtraContactOptions = ( { isUserElegible }: { isUserElegible: boolean } ) => {
 	const navigate = useNavigate();
 	const data = useContactFormTitle( 'FORUM' );

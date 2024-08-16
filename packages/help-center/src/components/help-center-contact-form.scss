@@ -2,6 +2,22 @@
 @import "@wordpress/base-styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 
+.help-center__loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+
+	.spinner__outer {
+		border-top-color: var(--wp-admin-theme-color);
+	}
+
+	.spinner__inner {
+		border-top-color: var(--wp-admin-theme-color);
+		border-right-color: var(--wp-admin-theme-color);
+	}
+}
+
 .help-center-contact-form__site-picker-hes-tray {
 	margin-top: 16px;
 	display: flex;
@@ -40,6 +56,13 @@
 }
 
 .help-center-contact-form {
+	.button:not(.back-button__help-center) {
+		line-height: 2.71428571;
+		min-height: 40px;
+		margin-bottom: 4px;
+		vertical-align: middle;
+	}
+
 	div.components-base-control__field {
 		input,
 		textarea {
@@ -140,6 +163,7 @@ section.contact-form-submit {
 }
 
 .help-center-contact-form__label {
+	font-size: $font-body-small;
 	color: var(--studio-gray-60);
 	margin-bottom: 8px;
 	display: block;

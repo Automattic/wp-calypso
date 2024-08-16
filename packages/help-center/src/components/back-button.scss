@@ -1,0 +1,29 @@
+@import "@automattic/typography/styles/variables";
+
+.help-center .help-center__container {
+	.back-button__help-center {
+		display: flex;
+		color: #000;
+		font-size: $font-body-small;
+		padding: 0 4px 0 0;
+
+		&:focus {
+			color: #043959;
+			box-shadow: none;
+			outline: var(--color-primary-light) solid 2px;
+			border-color: inherit;
+		}
+
+		svg {
+			margin-top: 1px;
+			padding-left: 3px;
+		}
+
+		&:hover {
+			svg {
+				margin-left: -2px;
+				margin-right: 5px;
+			}
+		}
+	}
+}

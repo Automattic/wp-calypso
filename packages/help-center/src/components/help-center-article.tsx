@@ -10,6 +10,8 @@ import { BackButton } from './back-button';
 import { BackToTopButton } from './back-to-top-button';
 import ArticleContent from './help-center-article-content';
 
+import './help-center-article.scss';
+
 export const HelpCenterArticle = () => {
 	const [ searchParams ] = useSearchParams();
 	const { sectionName } = useHelpCenterContext();
@@ -55,7 +57,7 @@ export const HelpCenterArticle = () => {
 	}, [ post, query, sectionName ] );
 
 	return (
-		<>
+		<div className="help-center-article">
 			<div className="help-center-article__header">
 				<Flex justify="space-between">
 					<FlexItem>
@@ -74,23 +76,21 @@ export const HelpCenterArticle = () => {
 					) }
 				</Flex>
 			</div>
-			<div className="help-center-article">
-				{ ! error && <ArticleContent post={ post } isLoading={ isLoading } /> }
-				{ ! isLoading && error && (
-					<p className="help-center-article__error">
-						{ createInterpolateElement(
-							__(
-								"Sorry, we couldn't load that article. <url>Click here</url> to open it in a new tab",
-								__i18n_text_domain__
-							),
-							{
-								url: <a target="_blank" rel="noopener noreferrer" href={ postUrl } />,
-							}
-						) }
-					</p>
-				) }
-			</div>
+			{ ! error && <ArticleContent post={ post } isLoading={ isLoading } /> }
+			{ ! isLoading && error && (
+				<p className="help-center-article__error">
+					{ createInterpolateElement(
+						__(
+							"Sorry, we couldn't load that article. <url>Click here</url> to open it in a new tab",
+							__i18n_text_domain__
+						),
+						{
+							url: <a target="_blank" rel="noopener noreferrer" href={ postUrl } />,
+						}
+					) }
+				</p>
+			) }
 			<BackToTopButton />
-		</>
+		</div>
 	);
 };

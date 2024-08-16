@@ -536,7 +536,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 
 	if ( isLoadingChatStatus ) {
 		return (
-			<div className="help-center-contact-form__loading">
+			<div className="help-center__loading">
 				<Spinner baseClassName="" />
 			</div>
 		);

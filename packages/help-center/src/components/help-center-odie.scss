@@ -1,0 +1,59 @@
+@import "variables.scss";
+
+/**
+ * Styles for `/odie` route
+ */
+.help-center .help-center__container .help-center__container-content .help-center__container-content-wrapper .help-center__container-content-odie {
+	display: flex;
+	height: 100%;
+	max-height: 752px;
+	flex-direction: column;
+	max-width: 410px;
+	padding: 0;
+
+	.help-center__container-odie-header {
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+		height: 69px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 16px;
+		box-sizing: border-box;
+		background-color: #fff;
+		position: sticky;
+		top: 0;
+
+		.odie-button-default:focus {
+			border-radius: 2px;
+			outline: var(--color-primary-light) solid 2px;
+		}
+	}
+}
+
+/**
+ * Popover component
+ * Fixes broken popover component on frontend.
+ */
+.popover.help-center.help-center__container-header-menu {
+	z-index: $help-center-z-index +1;
+
+	.popover__arrow {
+		z-index: 1;
+	}
+
+	.popover__menu {
+		.help-center__container-header-menu-item {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+
+			&:hover,
+			&:focus {
+				svg {
+					fill: var(--color-text-inverted);
+				}
+			}
+		}
+	}
+}
+

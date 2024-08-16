@@ -10,6 +10,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
  * Internal Dependencies
  */
 import { BackButton } from './back-button';
+import './help-center-odie.scss';
 
 export function HelpCenterOdie(): JSX.Element {
 	const { __ } = useI18n();
@@ -19,10 +20,13 @@ export function HelpCenterOdie(): JSX.Element {
 		<div className="help-center__container-content-odie">
 			<div className="help-center__container-odie-header">
 				<BackButton className="help-center__container-odie-back-button" />
-				<EllipsisMenu popoverClassName="help-center__container-header-menu" position="bottom">
+				<EllipsisMenu
+					popoverClassName="help-center help-center__container-header-menu"
+					position="bottom"
+				>
 					<PopoverMenuItem
 						onClick={ clearChat }
-						className="help-center__container-header-menu-item"
+						className="help-center help-center__container-header-menu-item"
 					>
 						<Gridicon icon="comment" />
 						{ __( 'Clear Conversation' ) }

@@ -12,13 +12,14 @@ import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useMemo, useState } from 'react';
 import stripTags from 'striptags';
-import './help-center-article-content.scss';
 import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
 import { useTyper } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import HelpCenterSearchResults from './help-center-search-results';
 import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
 import type { SearchResult } from '../types';
+
+import './help-center-article.scss';
 
 const GPTResponsePlaceholder = styled( LoadingPlaceholder )< { width?: string } >`
 	:not( :last-child ) {

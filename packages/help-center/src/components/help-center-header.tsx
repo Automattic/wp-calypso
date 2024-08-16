@@ -10,6 +10,8 @@ import { HELP_CENTER_STORE } from '../stores';
 import type { Header } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
+import './help-center-header.scss';
+
 export function ArticleTitle() {
 	const { __ } = useI18n();
 	const [ searchParams ] = useSearchParams();

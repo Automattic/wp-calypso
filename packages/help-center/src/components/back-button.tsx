@@ -3,7 +3,8 @@ import { Icon, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import '../styles.scss';
+
+import './back-button.scss';
 
 export type Props = { onClick?: () => void; backToRoot?: boolean; className?: string };
 

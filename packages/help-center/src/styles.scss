@@ -1,15 +1,106 @@
 @import "@wordpress/base-styles/variables";
-@import "@automattic/onboarding/styles/variables";
-@import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
+@import "components/variables";
 
-$head-foot-height: 50px;
-$z-index: 1000000000;
+/**
+ * Help Center General Styles
+ *
+ * This file contains the general styles for the Help Center.
+ * THIS FILE SHOULD NOT CONTAIN ANY COMPONENT SPECIFIC STYLES.
+ */
+.help-center__container {
+	background-color: #fff;
+	z-index: $help-center-z-index;
+	cursor: default;
+	transition: max-height 0.5s;
 
-.help-center {
 	/**
-	 * Animations
+	 * Generic Stylings
 	 */
+	font-size: $font-body-small;
+	font-family:
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		Oxygen-Sans,
+		Ubuntu,
+		Cantarell,
+		"Helvetica Neue",
+		sans-serif;
+	font-weight: inherit;
+	color: var(--studio-gray-100);
+
+	button.button-primary,
+	button.button-secondary {
+		font-size: $font-title-small;
+	}
+
+	.button {
+		text-decoration: none;
+		font-size: $font-body-small;
+	}
+
+	& > div {
+		display: flex;
+		flex-direction: column;
+	}
+
+	/**
+	 * Desktop
+	 */
+	&.is-desktop {
+		position: fixed;
+		width: 410px;
+		height: 80vh;
+		max-height: 800px;
+		box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 1px 0 rgba(0, 0, 0, 0.04);
+
+		&.is-minimized {
+			min-height: $head-foot-height;
+			top: unset;
+			right: 50px;
+			bottom: calc(#{$header-height} + 16px);
+
+			.help-center__container-header {
+				cursor: pointer;
+			}
+		}
+	}
+
+	/**
+	 * Mobile
+	 */
+	&.is-mobile {
+		bottom: 0;
+		left: 0;
+		right: 0;
+		// If the masterbar is there, don't cover it, if not, go to the top.
+		top: var(--masterbar-height, 0);
+		max-height: calc(100% - 45px);
+		height: calc(100% - var(--masterbar-height, 0));
+
+		.help-center__container-footer {
+			margin-bottom: 0;
+		}
+
+		&.is-minimized {
+			min-height: $head-foot-height;
+			top: calc(100vh - #{$head-foot-height});
+
+			@supports (height: 100dvh) {
+				top: calc(100dvh - #{$head-foot-height});
+			}
+		}
+	}
+
+	&.is-maximized {
+		max-height: $head-foot-height;
+	}
+
+	/**
+	* Animations
+	*/
 	@keyframes fadeIn {
 		0% {
 			opacity: 0;
@@ -40,505 +131,5 @@ $z-index: 1000000000;
 		100% {
 			opacity: 0;
 		}
-	}
-
-	.components-card.help-center__container {
-		position: fixed;
-		background-color: #fff;
-		color: #000;
-		z-index: $z-index;
-		cursor: default;
-		transition: max-height 0.5s;
-
-		&,
-		textarea,
-		h1,
-		h2,
-		h3,
-		h4,
-		h5,
-		h6,
-		span,
-		a {
-			font-family:
-				-apple-system,
-				BlinkMacSystemFont,
-				"Segoe UI",
-				Roboto,
-				Oxygen-Sans,
-				Ubuntu,
-				Cantarell,
-				"Helvetica Neue",
-				sans-serif;
-		}
-
-		img {
-			max-width: 100%;
-			height: auto;
-		}
-
-		/* stylelint-disable-next-line unit-allowed-list */
-		@media (min-resolution: 120dpi) {
-			text-rendering: optimizeLegibility;
-			-moz-osx-font-smoothing: grayscale;
-			-webkit-font-smoothing: antialiased;
-		}
-
-		button.button-primary,
-		button.button-secondary {
-			font-size: $font-title-small;
-		}
-
-		.button {
-			text-decoration: none;
-			font-size: $font-body-small;
-		}
-
-		& > div {
-			display: flex;
-			flex-direction: column;
-		}
-
-		.help-center__container-header {
-			height: $head-foot-height;
-			padding: 16px 8px 16px 16px;
-
-			>div {
-				display: flex;
-				align-items: center;
-				justify-content: start;
-				gap: 0;
-			}
-
-			.help-center-header__maximize,
-			.help-center-header__minimize,
-			.help-center-header__close {
-				&:focus {
-					outline: var(--color-primary-light) solid 2px;
-				}
-			}
-
-			// This icon does not accept size prop due to a bug - https://github.com/WordPress/gutenberg/pull/40315
-			// We can remove this when the bug is fixed
-			.help-center-header__minimize svg {
-				transform: scale(0.7, 1);
-				transform-origin: center;
-			}
-
-			.help-center__drag-icon {
-				margin-right: 6px;
-			}
-
-			.help-center-header__text {
-				max-width: 300px;
-				font-size: $font-body-small;
-				font-weight: 500;
-				display: flex;
-				align-items: center;
-				flex: 1;
-
-				svg {
-					margin-right: 3px;
-				}
-
-				.help-center-header__article-title {
-					overflow: hidden;
-					white-space: nowrap;
-					text-overflow: ellipsis;
-					max-width: 200px;
-				}
-			}
-		}
-
-		.help-center__container-content-wrapper {
-			height: auto;
-		}
-
-		.help-center__container-content {
-			overflow-y: auto;
-			padding: 16px;
-
-			.search-card div.has-focus[role="search"] {
-				outline: var(--color-primary-light) solid 2px;
-				transition: none;
-			}
-
-			.help-center-search-results__results .help-center-search-results__item,
-			.inline-help__more-resources .inline-help__resource-item {
-
-				a:focus,
-				button:focus {
-					outline: var(--color-primary-light) solid 2px;
-					outline-offset: 2px;
-				}
-			}
-		}
-
-		.help-center__container-footer {
-			height: auto;
-			padding: 16px;
-
-			// hide when empty
-			&:empty {
-				display: none;
-			}
-		}
-
-		&.is-desktop {
-			width: 410px;
-			height: 80vh;
-			max-height: 800px;
-			box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 1px 0 rgba(0, 0, 0, 0.04);
-
-			.help-center__container-header {
-				cursor: move;
-			}
-
-			.help-center__container-content {
-				flex-grow: 1;
-				height: calc(80vh - #{$head-foot-height} * 2);
-			}
-
-			&.is-minimized {
-				min-height: $head-foot-height;
-				top: unset;
-				right: 50px;
-				bottom: calc(#{$header-height} + 16px);
-
-				.help-center__container-header {
-					cursor: pointer;
-				}
-
-				.help-center__container-content {
-					display: none;
-				}
-			}
-		}
-
-		&.is-mobile {
-			bottom: 0;
-			left: 0;
-			right: 0;
-			// If the masterbar is there, don't cover it, if not, go to the top.
-			top: var(--masterbar-height, 0);
-			max-height: calc(100% - 45px);
-			height: calc(100% - var(--masterbar-height, 0));
-
-			.help-center__container-content {
-				flex: auto;
-			}
-
-			.help-center__container-footer {
-				margin-bottom: 0;
-			}
-
-			&.is-minimized {
-				min-height: $head-foot-height;
-				top: calc(100vh - #{$head-foot-height});
-
-				@supports (height: 100dvh) {
-					top: calc(100dvh - #{$head-foot-height});
-				}
-			}
-		}
-
-		:not(.contact-form-submit) > .components-button {
-			&:hover {
-				box-shadow: none;
-				color: inherit;
-			}
-		}
-
-		&.is-mobile.is-minimized,
-		&.is-desktop.is-minimized {
-			max-height: $head-foot-height;
-		}
-
-		.help-center-header__unread-count {
-			display: inline-block;
-			margin-left: 8px;
-			padding: 2px 8px;
-			background: var(--studio-pink-50);
-			border-radius: 50%;
-			font-size: $font-body-extra-small;
-			color: #fff;
-		}
-
-		.help-center-header__a8c-only-badge {
-			display: inline-block;
-			margin-left: 8px;
-			padding: 2px 6px;
-			background: #d3d3d3;
-			border-radius: 4px;
-			font-size: $font-body-extra-small;
-			color: var(--studio-gray-50);
-			text-transform: uppercase;
-		}
-
-		.ticket-success-screen__help-center {
-			text-align: center;
-
-			.ticket-success-screen__help-center-heading {
-				font-size: $font-title-small;
-				color: $studio-gray-100;
-				margin: 16px;
-				font-weight: 400;
-			}
-
-			.ticket-success-screen__help-center-message {
-				font-size: $font-body-small;
-				color: $studio-gray-50;
-				margin: 0;
-			}
-		}
-
-		.back-button__help-center {
-			display: flex;
-			color: #000;
-			font-size: $font-body-small;
-			padding: 0 4px 0 0;
-
-			&:focus {
-				color: #043959;
-				box-shadow: none;
-				outline: var(--color-primary-light) solid 2px;
-				border-color: inherit;
-			}
-
-			svg {
-				margin-top: 1px;
-				margin-right: 3px;
-			}
-
-			&:hover {
-				svg {
-					margin-left: -2px;
-					margin-right: 5px;
-				}
-			}
-		}
-
-		.help-center__container-header-menu {
-			z-index: $z-index;
-
-			.popover__menu {
-				.help-center__container-header-menu-item {
-					display: flex;
-					flex-direction: row;
-					align-items: center;
-				}
-			}
-		}
-
-		.help-center__container-content-odie {
-			display: flex;
-			height: 100%;
-			max-height: 752px;
-			flex-direction: column;
-			max-width: 410px;
-
-			.help-center__container-odie-header {
-				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-				height: 69px;
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				padding: 16px;
-				box-sizing: border-box;
-
-				.odie-button-default:focus {
-					border-radius: 2px;
-					outline: var(--color-primary-light) solid 2px;
-				}
-			}
-		}
-	}
-
-	.help-center__container-extra-contact-options {
-		padding: 0;
-		margin: 0;
-		border: none;
-		min-height: 68px;
-	}
-
-	.help-center__container-content {
-		padding: 0 !important;
-
-		> div > *:not(iframe):not(.help-center__container-content-odie) {
-			padding: 16px;
-			box-sizing: border-box;
-		}
-	}
-
-	.help-center-article__error {
-		font-size: 0.875rem;
-		color: var(--color-neutral-80);
-	}
-
-	.help-center-articles__list {
-		list-style: none;
-		box-sizing: border-box;
-		padding: 0;
-		margin: 0;
-
-		>li {
-			padding: 0;
-
-			>a {
-				display: flex;
-				align-items: center;
-				text-decoration: none;
-				color: var(--studio-gray-100);
-				margin-bottom: 16px;
-				font-size: $font-body-small;
-
-				&:hover {
-					background: var(--color-neutral-0);
-				}
-
-				>svg:last-child {
-					margin-left: auto;
-					margin-right: 0;
-					background: unset;
-				}
-			}
-		}
-
-		svg:first-child {
-			margin-right: 15px;
-			border-radius: 2px;
-			display: block;
-			padding: 8px;
-			background: var(--studio-gray-0);
-			fill: var(--studio-blue-50);
-			flex-shrink: 0;
-		}
-
-		svg:last-child {
-			fill: var(--studio-gray-20);
-		}
-	}
-
-	.help-center-search-results__title,
-	.help-center__section-title,
-	.help-center-article-content__header-title-link {
-		font-size: $font-body-small;
-		font-family:
-			-apple-system,
-			BlinkMacSystemFont,
-			"Segoe UI",
-			Roboto,
-			Oxygen-Sans,
-			Ubuntu,
-			Cantarell,
-			"Helvetica Neue",
-			sans-serif;
-		font-weight: 500;
-		color: var(--studio-gray-100);
-		margin: 1em 0;
-	}
-
-	.help-center-article .help-center-article-content .help-center-article-content__header-title {
-		line-height: 24px;
-		margin: 0;
-	}
-
-	.help-center-container__loading,
-	.help-center-contact-form__loading,
-	.help-center-contact-page__loading {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-
-		.spinner__outer {
-			border-top-color: var(--wp-admin-theme-color);
-		}
-
-		.spinner__inner {
-			border-top-color: var(--wp-admin-theme-color);
-			border-right-color: var(--wp-admin-theme-color);
-		}
-	}
-
-	.help-center-contact-page__staging-notice {
-		margin: 5px 0;
-
-		.components-notice__content {
-			display: flex;
-			justify-content: space-between;
-			margin: 0;
-
-			.components-notice__action {
-				margin: 0;
-				font-weight: bold;
-			}
-		}
-	}
-
-	.help-center-contact-form {
-		.button:not(.back-button__help-center) {
-			line-height: 2.71428571;
-			min-height: 40px;
-			margin-bottom: 4px;
-			vertical-align: middle;
-		}
-	}
-
-	.help-center-contact-form__label,
-	.site-picker__label {
-		font-size: $font-body-small;
-	}
-
-	.help-center-header__text {
-		margin: 1em 0;
-	}
-
-	.wp-block-embed__wrapper {
-		position: relative;
-
-		&::before {
-			content: "";
-			display: block;
-			padding-top: 56.25%;
-		}
-
-		iframe {
-			bottom: 0;
-			height: 100%;
-			left: 0;
-			position: absolute;
-			right: 0;
-			top: 0;
-			width: 100%;
-		}
-	}
-
-	.components-base-control__label {
-		color: var(--studio-gray-60);
-	}
-}
-
-.popover.help-center__container-header-menu {
-	z-index: $z-index + 1;
-
-	.popover__arrow {
-		z-index: $z-index + 1;
-		border: 10px dashed var(--color-neutral-10);
-		border-bottom-style: solid;
-		border-left-color: #0000;
-		border-right-color: #0000;
-		border-top: none;
-		left: 50%;
-		margin-left: -10px;
-		top: 0;
-		height: 0;
-		line-height: 0;
-		position: absolute;
-		width: 0;
-	}
-
-	.popover__menu-item.help-center__container-header-menu-item {
-		color: var(--color-neutral-70);
 	}
 }

@@ -29,6 +29,8 @@ import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { OdieAllowedBots } from '@automattic/odie-client/src/types/index';
 
+import './help-center-content.scss';
+
 interface ProtectedRouteProps {
 	condition: boolean;
 	redirectPath?: string;
