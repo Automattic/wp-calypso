@@ -2,14 +2,15 @@ import { hasQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useDispatch } from 'calypso/state';
 import { infoNotice, successNotice } from 'calypso/state/notices/actions';
-import ConnectStripe from './connect-stripe';
-import MapPlans from './map-plans';
+import ConnectStripe from './paid-subscribers/connect-stripe';
+import MapPlans from './paid-subscribers/map-plans';
 type Props = {
 	nextStepUrl: string;
 	skipNextStep: () => void;
 	fromSite: string;
 	engine: string;
 	cardData: any;
+	selectedSite: any;
 	isFetchingContent: boolean;
 };
 
@@ -17,6 +18,7 @@ export default function PaidSubscribers( {
 	nextStepUrl,
 	fromSite,
 	engine,
+	selectedSite,
 	skipNextStep,
 	cardData,
 	isFetchingContent,
@@ -24,7 +26,6 @@ export default function PaidSubscribers( {
 	const dispatch = useDispatch();
 	const isCancelled = hasQueryArg( window.location.href, 'stripe_connect_cancelled' );
 	const isSuccess = hasQueryArg( window.location.href, 'stripe_connect_success' );
-
 	const hasConnectedAccount = cardData.is_connected_stripe;
 
 	useEffect( () => {
@@ -48,7 +49,14 @@ export default function PaidSubscribers( {
 				/>
 			) }
 			{ hasConnectedAccount && (
-				<MapPlans nextStepUrl={ nextStepUrl } cardData={ cardData } skipNextStep={ skipNextStep } />
+				<MapPlans
+					nextStepUrl={ nextStepUrl }
+					cardData={ cardData }
+					skipNextStep={ skipNextStep }
+					engine={ engine }
+					siteId={ selectedSite?.ID }
+					currentStep="paid-subscribers"
+				/>
 			) }
 		</>
 	);
