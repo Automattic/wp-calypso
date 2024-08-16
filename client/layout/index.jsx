@@ -1,11 +1,12 @@
 import config from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
+import { isDefaultLocale, useLocale } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
 import { useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
+import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
@@ -49,6 +50,7 @@ import {
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
@@ -274,6 +276,12 @@ class Layout extends Component {
 		}
 
 		if ( prevProps.locale !== this.props.locale ) {
+			console.log( {
+				COMPONENT_DID_UPDATE: true,
+				prevLocale: prevProps.locale,
+				curLocale: this.props.locale,
+			} );
+
 			this.refreshLocale( this.props.locale );
 		}
 	}
@@ -313,6 +321,10 @@ class Layout extends Component {
 
 	refreshLocale( locale ) {
 		this.props.setLocale( locale );
+
+		if ( isDefaultLocale( locale ) ) {
+			i18n.reRenderTranslations();
+		}
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
@@ -574,6 +586,8 @@ const mapStateToProps = ( state, { currentSection, currentRoute, currentQuery, s
 	const userLevelLocale = getCurrentUserLocale( state );
 	const siteLevelLocale = getLocale( state, siteId ) ?? userLevelLocale;
 	const locale = shouldShowGlobalSidebar ? userLevelLocale : siteLevelLocale;
+	const localeSlug = getCurrentLocaleSlug( state );
+	const i18nLocaleSlug = i18n.getLocaleSlug();
 
 	return {
 		masterbarIsHidden,
@@ -598,6 +612,7 @@ const mapStateToProps = ( state, { currentSection, currentRoute, currentQuery, s
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
 		colorScheme,
 		locale,
+		localeSlug,
 		siteId,
 		// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 		// request all sites before authorization has finished. That would cause the "all sites"

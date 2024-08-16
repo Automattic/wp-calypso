@@ -1,4 +1,4 @@
-import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
+import { LocaleProvider, i18nDefaultLocaleSlug, isDefaultLocale } from '@automattic/i18n-utils';
 import { defaultI18n } from '@wordpress/i18n';
 import { I18nProvider } from '@wordpress/react-i18n';
 import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';
@@ -14,8 +14,17 @@ const CalypsoI18nProvider: FunctionComponent< { i18n?: I18N; children?: React.Re
 
 	useEffect( () => {
 		const onChange = () => {
-			defaultI18n.setLocaleData( i18n.getLocale() );
+			console.log( 'ON CHANGE!!!! ' + i18n.getLocaleSlug() );
+			if ( isDefaultLocale( i18n.getLocaleSlug() ) ) {
+				console.log( 'CHANGE A' );
+				defaultI18n.resetLocaleData();
+			} else {
+				console.log( 'CHANGE B' );
+				defaultI18n.setLocaleData( i18n.getLocale() );
+			}
 			setLocaleSlug( i18n.getLocaleSlug() );
+
+			console.log( { defaultI18n: defaultI18n.getLocaleData() } );
 		};
 
 		i18n.on( 'change', onChange );
@@ -26,7 +35,15 @@ const CalypsoI18nProvider: FunctionComponent< { i18n?: I18N; children?: React.Re
 	}, [ i18n ] );
 
 	useEffect( () => {
-		defaultI18n.resetLocaleData( i18n.getLocale() );
+		console.log( 'ON RESET!!!! ' + i18n.getLocaleSlug() );
+		if ( isDefaultLocale( localeSlug ) ) {
+			console.log( 'RESET A' );
+			defaultI18n.resetLocaleData();
+		} else {
+			console.log( 'RESET B' );
+			defaultI18n.resetLocaleData( i18n.getLocale() );
+		}
+		console.log( { defaultI18n: defaultI18n.getLocaleData() } );
 	}, [ localeSlug ] );
 
 	return (

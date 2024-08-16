@@ -190,7 +190,10 @@ I18N.prototype.configure = function ( options ) {
 };
 
 I18N.prototype.setLocale = function ( localeData ) {
+	console.log( 'SETTING LOCALE...' );
+	console.log( { localeData } );
 	if ( localeData && localeData[ '' ] && localeData[ '' ][ 'key-hash' ] ) {
+		console.log( 'SETTING LOCALE... A' );
 		const keyHash = localeData[ '' ][ 'key-hash' ];
 
 		const transform = function ( string, hashLength ) {
@@ -245,10 +248,27 @@ I18N.prototype.setLocale = function ( localeData ) {
 
 	// if localeData is not given, assumes default locale and reset
 	if ( ! localeData || ! localeData[ '' ].localeSlug ) {
-		this.state.locale = {
-			'': { localeSlug: this.defaultLocaleSlug, plural_forms: this.defaultPluralForms },
-		};
+		console.log( 'SETTING LOCALE... B' );
+
+		this.state.locale = new Proxy(
+			{
+				'': { localeSlug: this.defaultLocaleSlug, plural_forms: this.defaultPluralForms },
+			},
+			{
+				set( target, key, value ) {
+					console.log( `ASHARRRR Modifying key "${ key }" with value:`, value );
+					target[ key ] = value;
+
+					console.trace();
+					return true;
+				},
+			}
+		);
+
+		console.log( 'STATE AT THIS POINT IS...' );
+		console.log( { stateLocale: this.state.locale } );
 	} else if ( localeData[ '' ].localeSlug === this.state.localeSlug ) {
+		console.log( 'SETTING LOCALE... C' );
 		// Exit if same data as current (comparing references only)
 		if ( localeData === this.state.locale ) {
 			return;
@@ -257,6 +277,7 @@ I18N.prototype.setLocale = function ( localeData ) {
 		// merge new data into existing one
 		Object.assign( this.state.locale, localeData );
 	} else {
+		console.log( 'SETTING LOCALE... D' );
 		this.state.locale = Object.assign( {}, localeData );
 	}
 
@@ -292,6 +313,9 @@ I18N.prototype.setLocale = function ( localeData ) {
 	}
 
 	this.stateObserver.emit( 'change' );
+
+	console.log( 'FINALLY, STATE IS .... ' );
+	console.log( { stateLocale: this.state.locale } );
 };
 
 I18N.prototype.getLocale = function () {

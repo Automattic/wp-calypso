@@ -295,7 +295,9 @@ function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), 
 
 		const translationChunkPromise = getTranslationChunkFile( chunkId, localeSlug )
 			.then( ( translations ) => {
-				addTranslations( translations, userTranslations );
+				if ( localeSlug === i18n.getLocaleSlug() ) {
+					addTranslations( translations, userTranslations );
+				}
 				loadedTranslationChunks[ chunkId ] = true;
 			} )
 			.catch( ( cause ) => {
@@ -344,12 +346,16 @@ export default async function switchLocale( localeSlug ) {
 		getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
 	if ( isDefaultLocale( localeSlug ) ) {
+		console.log( 'ASHAR X' );
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
+
+		console.log( { WOYYYYY: i18n } );
 		setLocaleInDOM();
 	} else if ( useTranslationChunks ) {
 		// If requested locale is same as current locale, we don't need to
 		// re-fetch the manifest and translation chunks.
 		if ( localeSlug === i18n.getLocaleSlug() ) {
+			console.log( 'ASHAR Y' );
 			setLocaleInDOM();
 			return;
 		}
@@ -358,13 +364,18 @@ export default async function switchLocale( localeSlug ) {
 		// locale data, which consists of the locale manifest data and
 		// translations for currently installed chunks.
 		try {
+			console.log( 'ASHAR 1' );
 			const languageManifest = getLanguageManifestFile( localeSlug );
+
 			const { translatedChunks, locale } =
 				( languageManifest instanceof Promise ? await languageManifest : languageManifest ) ?? {}; // Using await operator on non-Promise object would still split the execution flow which causes unnecessary delay.
 
+			console.log( 'ASHAR 2' );
 			if ( ! locale || ! translatedChunks ) {
 				return;
 			}
+
+			console.log( 'ASHAR 3' );
 
 			i18n.setLocale( locale );
 			setLocaleInDOM();
@@ -388,6 +399,8 @@ export default async function switchLocale( localeSlug ) {
 			);
 			addTranslations( preloadedTranslations );
 
+			console.log( 'ASHAR 4' );
+
 			// Load individual translation chunks
 			translatedInstalledChunksToBeLoaded.forEach( ( chunkId ) =>
 				getTranslationChunkFile( chunkId, localeSlug )
@@ -405,6 +418,7 @@ export default async function switchLocale( localeSlug ) {
 
 			const userTranslations = await loadUserUndeployedTranslations( localeSlug );
 
+			console.log( 'ASHAR 5' );
 			// Re-attach require chunk translations handler if user translations are available
 			if ( userTranslations ) {
 				removeRequireChunkTranslationsHandler();
