@@ -112,10 +112,10 @@ const PluginsBrowserListElement = ( props ) => {
 	}, [ site, plugin, selectedSite, props.listName ] );
 
 	const onClickItem = useCallback( () => {
-		dispatch( setLastVisitedPlugin( plugin.slug ) );
+		dispatch( setLastVisitedPlugin( plugin.slug, props.listName ) );
 
 		trackPluginLinkClick();
-	}, [ trackPluginLinkClick, dispatch, plugin.slug ] );
+	}, [ trackPluginLinkClick, dispatch, plugin.slug, props.listName ] );
 
 	const isWpcomPreinstalled = useMemo( () => {
 		if ( plugin.isPreinstalled ) {
@@ -163,7 +163,7 @@ const PluginsBrowserListElement = ( props ) => {
 	}, [ selectedSite, plugin ] );
 
 	const isLastVisitedPlugin = useSelector( ( state ) =>
-		getIsLastVisitedPlugin( state, plugin.slug )
+		getIsLastVisitedPlugin( state, plugin.slug, props.listName )
 	);
 
 	useEffect( () => {

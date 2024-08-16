@@ -38,9 +38,9 @@ export const useSkipNextStepMutation = (
 		},
 		...options,
 		onSuccess( ...args ) {
-			const [ , { siteId, engine } ] = args;
+			const [ , { siteId, engine, currentStep } ] = args;
 			queryClient.invalidateQueries( {
-				queryKey: [ 'paid-newsletter-importer', siteId, engine ],
+				queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
 			} );
 			options.onSuccess?.( ...args );
 		},

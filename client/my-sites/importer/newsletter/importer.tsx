@@ -135,6 +135,7 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 					} }
 					cardData={ stepContent }
 					engine={ engine }
+					isFetchingContent={ isFetchingPaidNewsletter }
 					content={ stepContent }
 				/>
 			) }

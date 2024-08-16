@@ -1,134 +1,18 @@
 import { isWpcomEnterpriseGridPlan, type PlanSlug } from '@automattic/calypso-products';
 import { PlanPrice } from '@automattic/components';
-import styled from '@emotion/styled';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
 import type { GridPlan } from '../../../types';
+import './style.scss';
 
 interface HeaderPriceProps {
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
 	visibleGridPlans: GridPlan[];
 }
-
-const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
-	justify-content: flex-end;
-	display: flex;
-	flex-direction: ${ ( props ) => ( props.isLargeCurrency ? 'column' : 'row-reverse' ) };
-	align-items: ${ ( props ) => ( props.isLargeCurrency ? 'flex-start' : 'flex-end' ) };
-	gap: 4px;
-`;
-
-const Badge = styled.div< { isForIntroOffer?: boolean; isHidden?: boolean } >`
-	text-align: center;
-	white-space: nowrap;
-	font-size: 0.75rem;
-	line-height: 1.25rem;
-	border-radius: 4px;
-	height: 21px;
-	display: inline-block;
-	width: fit-content;
-	letter-spacing: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'inherit' : '0.2px' ) };
-	font-weight: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 600 : 500 ) };
-	text-align: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'left' : 'center' ) };
-	padding: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 0 : '0 12px' ) };
-	background-color: ${ ( { isForIntroOffer } ) =>
-		isForIntroOffer ? 'inherit' : 'var( --studio-green-0 )' };
-	color: ${ ( { isForIntroOffer } ) =>
-		isForIntroOffer ? 'var( --studio-blue-50 )' : 'var( --studio-green-40 )' };
-	text-transform: ${ ( { isForIntroOffer } ) => ( isForIntroOffer ? 'uppercase' : 'none' ) };
-	visibility: ${ ( { isHidden } ) => ( isHidden ? 'hidden' : 'visible' ) };
-`;
-
-const HeaderPriceContainer = styled.div`
-	padding: 0 20px;
-	margin: 0 0 4px 0;
-
-	.plans-grid-next-comparison-grid & {
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
-	}
-
-	.plan-price {
-		color: var( --studio-gray-100 );
-		margin: 0;
-		line-height: 1;
-		display: flex;
-		font-family: Recoleta, sans-serif;
-	}
-
-	.plan-price.is-placeholder-price {
-		visibility: hidden;
-	}
-
-	.plan-price__currency-symbol,
-	.plan-price.is-discounted .plan-price__currency-symbol {
-		font-size: 14px;
-		color: var( --studio-gray-100 );
-		margin-top: 2px;
-	}
-
-	.plan-price__integer {
-		font-size: 44px;
-	}
-
-	.plan-price__term {
-		font-size: 12px;
-		font-weight: 400;
-	}
-
-	.plan-price.is-original {
-		color: var( --studio-gray-20 );
-
-		text-decoration: line-through;
-		text-decoration-thickness: 1px;
-		font-family: 'SF Pro Text', sans-serif;
-		margin-bottom: 5px;
-		font-size: 18px;
-
-		&::before {
-			display: none;
-		}
-
-		.plan-price__currency-symbol,
-		.plan-price__tax-amount {
-			color: var( --color-text-subtle );
-		}
-
-		.plan-price__integer {
-			font-size: 18px;
-		}
-		.plan-price__currency-symbol {
-			font-size: 8px;
-		}
-	}
-
-	.plan-price.is-discounted {
-		color: var( --color-neutral-70 );
-
-		.plans-grid-2023__html-price-display-wrapper {
-			color: inherit;
-		}
-	}
-
-	.plan-price.is-large-currency {
-		.plan-price__integer {
-			font-size: 28px;
-		}
-		&.is-original {
-			.plan-price__integer {
-				font-size: 16px;
-			}
-		}
-	}
-	.plan-features-2023-grid__badge {
-		margin-bottom: 10px;
-	}
-`;
 
 const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const translate = useTranslate();
@@ -167,21 +51,21 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 				? parseFloat( ( introOffer.rawPrice / ( introOffer.intervalCount * 12 ) ).toFixed( 2 ) )
 				: introOffer.rawPrice;
 		return (
-			<HeaderPriceContainer>
+			<div className="plans-grid-next-header-price">
 				{ ! current && (
-					<Badge className="plan-features-2023-grid__badge" isForIntroOffer>
+					<div className="plans-grid-next-header-price__badge is-intro-offer">
 						{ translate( 'Limited Time Offer' ) }
-					</Badge>
+					</div>
 				) }
 				{ isLargeCurrency ? (
-					<PricesGroup isLargeCurrency>
+					<div className="plans-grid-next-header-price__pricing-group is-large-currency">
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ 0 }
 							displayPerMonthNotation={ false }
 							isLargeCurrency
 							isSmallestUnit
-							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 							className="is-placeholder-price" // This is a placeholder price to keep the layout consistent
 							original
 						/>
@@ -191,37 +75,41 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 							displayPerMonthNotation={ false }
 							isLargeCurrency
 							isSmallestUnit={ false }
-							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 							discounted
 						/>
-					</PricesGroup>
+					</div>
 				) : (
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ introOfferPrice }
 						displayPerMonthNotation={ false }
 						isSmallestUnit={ false }
-						priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 					/>
 				) }
-			</HeaderPriceContainer>
+			</div>
 		);
 	}
 
 	if ( isGridPlanOneTimeDiscounted ) {
 		return (
-			<HeaderPriceContainer>
-				<Badge className="plan-features-2023-grid__badge">
+			<div className="plans-grid-next-header-price">
+				<div className="plans-grid-next-header-price__badge">
 					{ translate( 'One time discount' ) }
-				</Badge>
-				<PricesGroup isLargeCurrency={ isLargeCurrency }>
+				</div>
+				<div
+					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
+						'is-large-currency': isLargeCurrency,
+					} ) }
+				>
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ originalPrice.monthly }
 						displayPerMonthNotation={ false }
 						isLargeCurrency={ isLargeCurrency }
 						isSmallestUnit
-						priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 						original
 					/>
 					<PlanPrice
@@ -230,29 +118,27 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						displayPerMonthNotation={ false }
 						isLargeCurrency={ isLargeCurrency }
 						isSmallestUnit
-						priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 						discounted
 					/>
-				</PricesGroup>
-			</HeaderPriceContainer>
+				</div>
+			</div>
 		);
 	}
 
 	if ( isAnyVisibleGridPlanOneTimeDiscounted || isAnyVisibleGridPlanOnIntroOffer ) {
 		return (
-			<HeaderPriceContainer>
-				<Badge className="plan-features-2023-grid__badge" isHidden>
-					' '
-				</Badge>
+			<div className="plans-grid-next-header-price">
+				<div className="plans-grid-next-header-price__badge is-hidden">' '</div>
 				{ isLargeCurrency ? (
-					<PricesGroup isLargeCurrency>
+					<div className="plans-grid-next-header-price__pricing-group is-large-currency">
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ 0 }
 							displayPerMonthNotation={ false }
 							isLargeCurrency
 							isSmallestUnit
-							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 							className="is-placeholder-price" // This is a placeholder price to keep the layout consistent
 							original
 						/>
@@ -262,34 +148,34 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 							displayPerMonthNotation={ false }
 							isLargeCurrency
 							isSmallestUnit
-							priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 							discounted
 						/>
-					</PricesGroup>
+					</div>
 				) : (
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ originalPrice.monthly }
 						displayPerMonthNotation={ false }
 						isSmallestUnit
-						priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 					/>
 				) }
-			</HeaderPriceContainer>
+			</div>
 		);
 	}
 
 	return (
-		<HeaderPriceContainer>
+		<div className="plans-grid-next-header-price">
 			<PlanPrice
 				currencyCode={ currencyCode }
 				rawPrice={ originalPrice.monthly }
 				displayPerMonthNotation={ false }
 				isLargeCurrency={ isLargeCurrency }
 				isSmallestUnit
-				priceDisplayWrapperClassName="plans-grid-2023__html-price-display-wrapper"
+				priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
 			/>
-		</HeaderPriceContainer>
+		</div>
 	);
 };
 

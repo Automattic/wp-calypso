@@ -1,18 +1,25 @@
 import { translate } from 'i18n-calypso';
-import { PerformanceMetrics, Valuation } from '../types/performance-metrics';
+import { Metrics } from 'calypso/data/site-profiler/types';
+import { Valuation } from '../types/performance-metrics';
 
 export const metricsNames = {
-	fcp: { displayName: 'Loading speed', name: 'First Contentful Paint' },
+	fcp: { displayName: translate( 'Loading speed' ), name: translate( 'First Contentful Paint' ) },
 	lcp: {
-		displayName: 'Largest content load',
-		name: 'Largest Contentful Paint',
+		displayName: translate( 'Largest content load' ),
+		name: translate( 'Largest Contentful Paint' ),
 	},
 	cls: {
-		displayName: 'Visual stability',
-		name: 'Cumulative Layout Shift',
+		displayName: translate( 'Visual stability' ),
+		name: translate( 'Cumulative Layout Shift' ),
 	},
-	inp: { displayName: 'Interactivity', name: 'Interaction to Next Paint' },
-	ttfb: { displayName: 'Server responsiveness', name: 'Time to First Byte' },
+	inp: {
+		displayName: translate( 'Interactivity' ),
+		name: translate( 'Interaction to Next Paint' ),
+	},
+	ttfb: {
+		displayName: translate( 'Server responsiveness' ),
+		name: translate( 'Time to First Byte' ),
+	},
 };
 
 export const metricValuations = {
@@ -97,10 +104,7 @@ export const metricsTresholds = {
 	},
 };
 
-export const mapThresholdsToStatus = (
-	metric: keyof PerformanceMetrics,
-	value: number
-): Valuation => {
+export const mapThresholdsToStatus = ( metric: Metrics, value: number ): Valuation => {
 	const { good, needsImprovement } = metricsTresholds[ metric ];
 
 	if ( value <= good ) {
@@ -114,14 +118,20 @@ export const mapThresholdsToStatus = (
 	return 'bad';
 };
 
-export const displayValue = ( metric: keyof PerformanceMetrics, value: number ): string => {
+export const max2Decimals = ( val: number ) => +Number( val ).toFixed( 2 );
+
+export const displayValue = ( metric: Metrics, value: number ): string => {
+	if ( value === null || value === undefined ) {
+		return '';
+	}
+
 	if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metric ) ) {
-		return `${ ( value / 1000 ).toFixed( 2 ) }s`;
+		return `${ max2Decimals( value / 1000 ) }s`;
 	}
 
 	if ( [ 'inp', 'fid' ].includes( metric ) ) {
-		return `${ value }ms`;
+		return `${ max2Decimals( value ) }ms`;
 	}
 
-	return `${ value }`;
+	return `${ max2Decimals( value ) }`;
 };

@@ -11,7 +11,7 @@ import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import React, { useCallback, useState } from 'react';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate, Navigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -28,6 +28,12 @@ import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { OdieAllowedBots } from '@automattic/odie-client/src/types/index';
+
+interface ProtectedRouteProps {
+	condition: boolean;
+	redirectPath?: string;
+	children: React.ReactNode;
+}
 
 // Disabled component only applies the class if isDisabled is true, we want it always.
 function Wrapper( {
@@ -75,6 +81,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { data } = useSupportStatus();
 
 	const isUserElegible = data?.eligibility.is_user_eligible ?? false;
+	const preventOdieAccess = ! shouldUseWapuu && ! isUserElegible && ! isLoadingEnvironment;
 
 	const navigateToSupportDocs = useCallback(
 		( blogId: string, postId: string, title: string, link: string ) => {
@@ -139,6 +146,22 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		}
 	}, [ navigate, isUserElegible ] );
 
+	// Prevent not eligible users from accessing odie/wapuu.
+	const ProtectedRoute: React.FC< ProtectedRouteProps > = ( {
+		condition,
+		redirectPath = '/',
+		children,
+	} ) => {
+		if ( condition ) {
+			// redirect users home if they are not eligible for chat
+			recordTracksEvent( 'calypso_helpcenter_redirect_not_eligible_user_to_homepage', {
+				pathname: window.location.pathname,
+				search: window.location.search,
+			} );
+			return <Navigate to={ redirectPath } replace />;
+		}
+		return children;
+	};
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
 			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
@@ -159,25 +182,27 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/odie"
 						element={
-							<OdieAssistantProvider
-								isLoadingEnvironment={ isLoadingEnvironment }
-								botNameSlug={ odieBotNameSlug }
-								botName="Wapuu"
-								odieInitialPromptText={ odieInitialPromptText }
-								enabled={ shouldUseWapuu }
-								currentUser={ currentUser }
-								isMinimized={ isMinimized }
-								initialUserMessage={ searchTerm }
-								logger={ trackEvent }
-								loggerEventNamePrefix="calypso_odie"
-								selectedSiteId={ site?.ID as number }
-								extraContactOptions={ <ExtraContactOptions isUserElegible={ isUserElegible } /> }
-								navigateToContactOptions={ navigateToContactOptions }
-								navigateToSupportDocs={ navigateToSupportDocs }
-								isUserElegible={ isUserElegible }
-							>
-								<HelpCenterOdie />
-							</OdieAssistantProvider>
+							<ProtectedRoute condition={ preventOdieAccess }>
+								<OdieAssistantProvider
+									isLoadingEnvironment={ isLoadingEnvironment }
+									botNameSlug={ odieBotNameSlug }
+									botName="Wapuu"
+									odieInitialPromptText={ odieInitialPromptText }
+									enabled={ shouldUseWapuu }
+									currentUser={ currentUser }
+									isMinimized={ isMinimized }
+									initialUserMessage={ searchTerm }
+									logger={ trackEvent }
+									loggerEventNamePrefix="calypso_odie"
+									selectedSiteId={ site?.ID as number }
+									extraContactOptions={ <ExtraContactOptions isUserElegible={ isUserElegible } /> }
+									navigateToContactOptions={ navigateToContactOptions }
+									navigateToSupportDocs={ navigateToSupportDocs }
+									isUserElegible={ isUserElegible }
+								>
+									<HelpCenterOdie />
+								</OdieAssistantProvider>
+							</ProtectedRoute>
 						}
 					/>
 				</Routes>
