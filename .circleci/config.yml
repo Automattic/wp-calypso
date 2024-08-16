@@ -307,7 +307,7 @@ jobs:
             rm -rf desktop/release/linux-unpacked
             rm -rf desktop/release/.icon-set
             rm desktop/release/builder-debug.yml
-            cp /tmp/*/build.log /tmp/build_log
+            # cp /tmp/*/build.log /tmp/build_log
       - store_artifacts:
           when: always
           path: desktop/release
