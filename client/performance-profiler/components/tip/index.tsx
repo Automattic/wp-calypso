@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
-type TipProps = {
+export type TipProps = {
 	title: string;
 	content: string;
 	link?: string;

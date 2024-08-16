@@ -111,6 +111,10 @@ const StyledLoadingScreen = styled.div`
 	}
 `;
 
+const TipContainer = styled.div`
+	margin-top: 65px;
+`;
+
 export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	const translate = useTranslate();
 	const [ step, setStep ] = useState( 0 );
@@ -207,11 +211,13 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 					</span>
 				) ) }
 				{ tips[ currentTip ] && (
-					<Tip
-						title={ tips[ currentTip ].heading }
-						content={ tips[ currentTip ].description }
-						link={ tips[ currentTip ].link }
-					/>
+					<TipContainer>
+						<Tip
+							title={ tips[ currentTip ].heading }
+							content={ tips[ currentTip ].description }
+							link={ tips[ currentTip ].link }
+						/>
+					</TipContainer>
 				) }
 			</StyledLoadingScreen>
 		</LayoutBlock>
