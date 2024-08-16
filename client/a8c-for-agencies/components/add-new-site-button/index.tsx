@@ -34,14 +34,12 @@ type PendingSite = { features: { wpcom_atomic: { state: string; license_key: str
 type Props = {
 	onWPCOMImport?: ( blogIds: number[] ) => void;
 	showMainButtonLabel: boolean;
-	devSite?: boolean;
 	toggleDevSiteConfigurationsModal?: () => void;
 };
 
 export default function AddNewSiteButton( {
 	showMainButtonLabel,
 	onWPCOMImport,
-	devSite,
 	toggleDevSiteConfigurationsModal,
 }: Props ) {
 	const translate = useTranslate();
@@ -114,11 +112,7 @@ export default function AddNewSiteButton( {
 	const availableDevSites = devLicenses?.available;
 	const hasAvailableDevSites = devLicenses?.available > 0;
 
-	const mainButtonLabel = devSite
-		? translate( 'Start developing for free' )
-		: translate( 'Add sites' );
-
-	const newSitePopoverContent = (
+	const popoverContent = (
 		<div className="site-selector-and-importer__popover-content">
 			<div className="site-selector-and-importer__popover-column">
 				<div className="site-selector-and-importer__popover-column-heading">
@@ -243,45 +237,6 @@ export default function AddNewSiteButton( {
 		</div>
 	);
 
-	const newDevSitePopoverContent = (
-		<div className="site-selector-and-importer__popover-content">
-			<div className="site-selector-and-importer__popover-column">
-				<div className="site-selector-and-importer__popover-column-heading">
-					{ translate( 'Add a new development site' ).toUpperCase() }
-				</div>
-				{ menuItem( {
-					icon: <WordPressLogo />,
-					heading: translate( 'WordPress.com' ),
-					description: translate( 'Create a site and try our hosting features for free' ),
-					buttonProps: {
-						onClick: () => {
-							if ( paymentMethodRequired ) {
-								page(
-									`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
-								);
-							} else {
-								toggleDevSiteConfigurationsModal?.();
-							}
-						},
-					},
-					extraContent: hasAvailableDevSites ? (
-						<div className="site-selector-and-importer__popover-site-count">
-							{ translate( '%(pendingSites)d site available', '%(pendingSites)d sites available', {
-								args: {
-									pendingSites: availableDevSites,
-								},
-								count: availableDevSites,
-								comment: '%(pendingSites)s is the number of sites available.',
-							} ) }
-						</div>
-					) : undefined,
-				} ) }
-			</div>
-		</div>
-	);
-
-	const popoverContent = devSite ? newDevSitePopoverContent : newSitePopoverContent;
-
 	return (
 		<>
 			<Button
@@ -289,7 +244,7 @@ export default function AddNewSiteButton( {
 				ref={ popoverMenuContext }
 				onClick={ toggleMenu }
 			>
-				{ showMainButtonLabel ? mainButtonLabel : null }
+				{ showMainButtonLabel ? translate( 'Add sites' ) : null }
 				<Gridicon
 					className={ clsx(
 						{ reverse: showMainButtonLabel && isMenuVisible },

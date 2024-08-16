@@ -69,13 +69,6 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 					onCreateSiteSuccess={ onCreateSiteSuccess }
 				/>
 			) }
-			{ devSitesEnabled && (
-				<AddNewSiteButton
-					showMainButtonLabel={ ! isMobile }
-					devSite
-					toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
-				/>
-			) }
 			<div ref={ ( ref ) => setTourStepRef( ref ) }>
 				<AddNewSiteButton
 					showMainButtonLabel={ ! isMobile }
