@@ -102,12 +102,13 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
-			setValidFromSite( true );
-			selectedSite &&
-				step === stepSlugs[ 0 ] &&
+			if ( selectedSite && step === stepSlugs[ 0 ] && validFromSite === false ) {
 				resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ] );
+			}
+
+			setValidFromSite( true );
 		}
-	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter ] );
+	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter, step, validFromSite ] );
 
 	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ stepSlugs[ stepIndex ] }`;
 	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
