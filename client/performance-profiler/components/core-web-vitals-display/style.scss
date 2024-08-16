@@ -74,6 +74,10 @@ $blueberry-color: #3858e9;
 	color: var(--studio-gray-70);
 }
 
+.core-web-vitals-display__description p {
+	margin-top: 15px;
+}
+
 .core-web-vitals-display__description a {
 	color: $blueberry-color;
 }

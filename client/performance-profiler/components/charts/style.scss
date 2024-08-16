@@ -1,3 +1,5 @@
+@import "@automattic/components/src/styles/typography";
+
 .chart-container {
 	cursor: pointer;
 	display: inline-block;
@@ -8,7 +10,7 @@
 		}
 
 		text {
-			font-size: 1rem;
+			font-size: $font-body-small;
 			fill: var(--studio-gray-70);
 		}
 	}
@@ -21,7 +23,7 @@
 		color: #fff;
 		padding: 7px 10px;
 		border-radius: 3px;
-		font-size: 1rem;
+		font-size: $font-body-small;
 	}
 
 	.chart {
