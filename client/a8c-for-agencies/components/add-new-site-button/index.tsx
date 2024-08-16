@@ -195,6 +195,40 @@ export default function AddNewSiteButton( {
 					},
 				} ) }
 			</div>
+			<div className="site-selector-and-importer__popover-column">
+				<div className="site-selector-and-importer__popover-column-heading">
+					{ translate( 'Add a new development site' ).toUpperCase() }
+				</div>
+				{ menuItem( {
+					icon: <WordPressLogo />,
+					heading: translate( 'WordPress.com Development Site' ),
+					description: translate(
+						'Try our hosting for free indefinitely. Only pay when you launch.'
+					),
+					buttonProps: {
+						onClick: () => {
+							if ( paymentMethodRequired ) {
+								page(
+									`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
+								);
+							} else {
+								toggleDevSiteConfigurationsModal?.();
+							}
+						},
+					},
+					extraContent: hasAvailableDevSites ? (
+						<div className="site-selector-and-importer__popover-site-count">
+							{ translate( '%(pendingSites)d site available', '%(pendingSites)d sites available', {
+								args: {
+									pendingSites: availableDevSites,
+								},
+								count: availableDevSites,
+								comment: '%(pendingSites)s is the number of sites available.',
+							} ) }
+						</div>
+					) : undefined,
+				} ) }
+			</div>
 		</div>
 	);
 

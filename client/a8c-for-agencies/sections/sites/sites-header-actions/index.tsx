@@ -77,7 +77,11 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 				/>
 			) }
 			<div ref={ ( ref ) => setTourStepRef( ref ) }>
-				<AddNewSiteButton showMainButtonLabel={ ! isMobile } onWPCOMImport={ onWPCOMImport } />
+				<AddNewSiteButton
+					showMainButtonLabel={ ! isMobile }
+					onWPCOMImport={ onWPCOMImport }
+					toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
+				/>
 			</div>
 			<GuidedTourStep id="add-new-site" tourId="addSiteStep1" context={ tourStepRef } />
 			<Button
