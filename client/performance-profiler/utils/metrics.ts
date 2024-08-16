@@ -118,7 +118,7 @@ export const mapThresholdsToStatus = ( metric: Metrics, value: number ): Valuati
 	return 'bad';
 };
 
-export const max2Decimals = ( val: number ) => +val.toFixed( 2 );
+export const max2Decimals = ( val: number ) => +Number( val ).toFixed( 2 );
 
 export const displayValue = ( metric: Metrics, value: number ): string => {
 	if ( value === null || value === undefined ) {
