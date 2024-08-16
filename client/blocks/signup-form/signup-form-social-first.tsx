@@ -3,7 +3,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { getQueryArgs } from '@wordpress/url';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -13,6 +12,10 @@ import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerc
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import './style.scss';
+
+interface QueryArgs {
+	redirect_to?: string;
+}
 
 interface SignupFormSocialFirst {
 	goToNextStep: () => void;
@@ -33,7 +36,7 @@ interface SignupFormSocialFirst {
 		} | null
 	) => void;
 	isReskinned: boolean;
-	queryArgs: object;
+	queryArgs: QueryArgs;
 	userEmail: string;
 	notice: JSX.Element | false;
 	isSocialFirst: boolean;
@@ -149,8 +152,7 @@ const SignupFormSocialFirst = ( {
 				: {};
 
 			const redirectToParam =
-				( getQueryArgs( window.location.href )?.redirect_to as string ) ??
-				window.location.origin + `/setup/${ flowName }`;
+				queryArgs?.redirect_to ?? window.location.origin + `/setup/${ flowName }`;
 
 			return (
 				<div className="signup-form-social-first-email">
