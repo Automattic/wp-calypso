@@ -4,13 +4,16 @@ import { useTranslate } from 'i18n-calypso';
 
 const Container = styled.div`
 	background-color: #f7f8fe;
-	padding: 24px;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	gap: 24px;
 	justify-content: space-between;
 	width: 100%;
+
+	& > * {
+		margin: 24px;
+	}
 `;
 
 const Heading = styled.div`
