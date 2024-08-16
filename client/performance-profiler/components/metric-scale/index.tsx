@@ -37,7 +37,7 @@ export const MetricScale = ( { metricName, value, valuation }: Props ) => {
 					className={ clsx( 'bar-section bad', { active: valuation === 'bad' } ) }
 					style={ { width: `${ ( ( bad - needsImprovement ) / bad ) * 100 }%` } }
 				></div>
-				<div className="dot" style={ { left: `${ ( value / bad ) * 100 }%` } }>
+				<div className="dot" style={ { left: `${ value > bad ? 100 : ( value / bad ) * 100 }%` } }>
 					<div className="label">{ formatValue( value ) }</div>
 				</div>
 			</div>
