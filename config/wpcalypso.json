@@ -61,7 +61,7 @@
 		"help/gpt-response": true,
 		"home/layout-dev": true,
 		"hosting/datacenter-picker": true,
-		"hosting-overview-refinements": false,
+		"hosting-overview-refinements": true,
 		"i18n/translation-scanner": true,
 		"importer/site-backups": true,
 		"importer/unified": true,
