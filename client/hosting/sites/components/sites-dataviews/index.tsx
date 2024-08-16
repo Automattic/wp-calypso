@@ -10,7 +10,6 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ActionsField from './dataviews-fields/actions-field';
 import SiteField from './dataviews-fields/site-field';
-import { SiteInfo } from './interfaces';
 import { SiteSort } from './sites-site-sort';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
@@ -116,7 +115,7 @@ const DotcomSitesDataViews = ( {
 	const siteStatusGroups = useSiteStatusGroups();
 
 	// Generate DataViews table field-columns
-	const fields = useMemo< Field< SiteInfo >[] >(
+	const fields = useMemo< Field< SiteExcerptData >[] >(
 		() => [
 			{
 				id: 'site',
@@ -132,8 +131,8 @@ const DotcomSitesDataViews = ( {
 					</SiteSort>
 				),
 				width: getSiteNameColWidth( isDesktop, isWide ),
-				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
-				render: ( { item }: { item: SiteInfo } ) => {
+				getValue: ( { item }: { item: SiteExcerptData } ) => item.URL,
+				render: ( { item }: { item: SiteExcerptData } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
@@ -143,7 +142,9 @@ const DotcomSitesDataViews = ( {
 				id: 'plan',
 				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
 				label: <span>{ __( 'Plan' ) }</span>,
-				render: ( { item }: { item: SiteInfo } ) => <SitePlan site={ item } userId={ userId } />,
+				render: ( { item }: { item: SiteExcerptData } ) => (
+					<SitePlan site={ item } userId={ userId } />
+				),
 				enableHiding: false,
 				enableSorting: false,
 				width: '100px',
@@ -152,7 +153,7 @@ const DotcomSitesDataViews = ( {
 				id: 'status',
 				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
 				label: <span>{ __( 'Status' ) }</span>,
-				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
+				render: ( { item }: { item: SiteExcerptData } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
 				width: '116px',
@@ -170,7 +171,7 @@ const DotcomSitesDataViews = ( {
 						<span>{ __( 'Last Published' ) }</span>
 					</SiteSort>
 				),
-				render: ( { item }: { item: SiteInfo } ) =>
+				render: ( { item }: { item: SiteExcerptData } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
 				enableSorting: false,
@@ -185,7 +186,7 @@ const DotcomSitesDataViews = ( {
 						<span>{ __( 'Stats' ) }</span>
 					</>
 				),
-				render: ( { item }: { item: SiteInfo } ) => <SiteStats site={ item } />,
+				render: ( { item }: { item: SiteExcerptData } ) => <SiteStats site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
 				width: '80px',
@@ -194,7 +195,7 @@ const DotcomSitesDataViews = ( {
 				id: 'actions',
 				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
 				label: <span>{ __( 'Actions' ) }</span>,
-				render: ( { item }: { item: SiteInfo } ) => <ActionsField site={ item } />,
+				render: ( { item }: { item: SiteExcerptData } ) => <ActionsField site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
 				width: '48px',
@@ -218,11 +219,11 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: addDummyDataViewPrefix( 'last-interacted' ),
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
 				label: __( 'Last Interacted' ),
 				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
+				getValue: () => null,
 			},
 			{
 				id: addDummyDataViewPrefix( 'status' ),
@@ -234,6 +235,7 @@ const DotcomSitesDataViews = ( {
 				},
 				enableHiding: false,
 				enableSorting: false,
+				getValue: () => null,
 			},
 		],
 		[

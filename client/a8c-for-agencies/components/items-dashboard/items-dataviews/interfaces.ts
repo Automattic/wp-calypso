@@ -24,12 +24,6 @@ export interface DataViewsSort {
 	direction: SortDirection;
 }
 
-export interface DataViewsFilter {
-	field: string;
-	operator: string;
-	value: number;
-}
-
 export type DataViewsState = View & {
 	selectedItem?: any | undefined;
 };

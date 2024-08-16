@@ -1,5 +1,3 @@
-import { DataViewsFilter } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { Filter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
@@ -8,6 +6,7 @@ import {
 } from '../constants';
 import { DashboardSortInterface, Site } from '../types';
 import { getSelectedFilters } from './get-selected-filters';
+import type { Filter } from '@wordpress/dataviews';
 
 const buildQueryString = ( {
 	filters,
@@ -78,7 +77,7 @@ export const updateSitesDashboardUrl = ( {
 }: {
 	category?: string;
 	setCategory: ( category: string ) => void;
-	filters: DataViewsFilter[];
+	filters: Filter[];
 	selectedSite?: Site;
 	selectedSiteFeature?: string;
 	search: string;

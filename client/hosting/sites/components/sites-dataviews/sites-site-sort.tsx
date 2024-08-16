@@ -31,20 +31,26 @@ export const SiteSort = ( {
 	dataViewsState,
 	setDataViewsState,
 }: SiteSortProps ) => {
-	const { field, direction } = dataViewsState.sort;
-
-	const isDefault = removeDummyDataViewPrefix( field ) !== columnKey || ! field || ! direction;
+	const { field, direction } = dataViewsState.sort ?? {};
+	const isDefault = ! field || removeDummyDataViewPrefix( field ) !== columnKey || ! direction;
 
 	const setSort = () => {
-		const updatedSort = { ...dataViewsState.sort };
+		let updatedSort = dataViewsState.sort;
 		if ( isDefault ) {
-			updatedSort.field = addDummyDataViewPrefix( columnKey );
-			updatedSort.direction = SORT_DIRECTION_ASC;
+			updatedSort = {
+				field: addDummyDataViewPrefix( columnKey ),
+				direction: SORT_DIRECTION_ASC,
+			};
 		} else if ( direction === SORT_DIRECTION_ASC ) {
-			updatedSort.direction = SORT_DIRECTION_DESC;
+			updatedSort = {
+				field: addDummyDataViewPrefix( columnKey ),
+				direction: SORT_DIRECTION_DESC,
+			};
 		} else if ( direction === SORT_DIRECTION_DESC ) {
-			updatedSort.field = addDummyDataViewPrefix( 'last-interacted' );
-			updatedSort.direction = SORT_DIRECTION_DESC;
+			updatedSort = {
+				field: addDummyDataViewPrefix( 'last-interacted' ),
+				direction: SORT_DIRECTION_DESC,
+			};
 		}
 
 		setDataViewsState( ( sitesViewState ) => ( {

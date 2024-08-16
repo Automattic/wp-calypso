@@ -101,8 +101,8 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 						return item.id;
 					} )
 				}
-				onSelectionChange={ data.onSelectionChange }
-				onChangeView={ data.setDataViewsState }
+				onChangeSelection={ data.onSelectionChange }
+				onChangeView={ ( newView ) => data.setDataViewsState( () => newView ) }
 				defaultLayouts={ { table: {} } }
 				actions={ data.actions }
 				isLoading={ isLoading }

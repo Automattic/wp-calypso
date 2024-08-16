@@ -65,10 +65,12 @@ export default function NeedSetupTable( {
 				perPage: 1,
 				page: 1,
 			} }
+			onChangeView={ () => {} }
 			search={ false }
 			defaultLayouts={ { table: {} } }
 			actions={ [] }
 			isLoading={ false }
+			getItemId={ ( item: AvailablePlans ) => item.name }
 		/>
 	);
 }

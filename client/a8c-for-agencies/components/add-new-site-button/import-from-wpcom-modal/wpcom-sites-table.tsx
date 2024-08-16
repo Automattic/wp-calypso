@@ -55,10 +55,6 @@ export default function WPCOMSitesTable( {
 		isPartnerOAuthTokenLoaded: false,
 		searchQuery: '',
 		currentPage: 1,
-		sort: {
-			field: '',
-			direction: '',
-		},
 		perPage: 1,
 		agencyId,
 		filter: {
