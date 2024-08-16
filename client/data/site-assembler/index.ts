@@ -4,16 +4,21 @@ export const useIsSiteAssemblerEnabledExp = (
 	source: 'design-choices' | 'design-picker' | 'theme-showcase'
 ) => {
 	const [ isLoading, assignment ] = useExperiment( 'calypso_disable_site_assembler' );
+	const variationName =
+		assignment?.variationName ||
+		// TODO: Remove the following one after testing.
+		window.sessionStorage.getItem( 'calypso_disable_site_assembler' ) ||
+		'control';
 
 	if ( isLoading ) {
 		return false;
 	}
 
-	if ( assignment?.variationName === 'control' ) {
+	if ( variationName === 'control' ) {
 		return true;
 	}
 
-	if ( assignment?.variationName === 'treatment_disable_all' ) {
+	if ( variationName === 'treatment_disable_all' ) {
 		return false;
 	}
 
