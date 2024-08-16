@@ -10,10 +10,13 @@ import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_PERSONAL,
+	PLAN_PREMIUM,
 	redirectCheckoutToWpAdmin,
 	TITAN_MAIL_MONTHLY_SLUG,
+	WPCOM_DIFM_LITE,
 	PLAN_100_YEARS,
 } from '@automattic/calypso-products';
+import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import {
 	getEmptyResponseCart,
 	getEmptyResponseCartProduct,
@@ -127,6 +130,29 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
+	} );
+
+	// Note: This just verifies the existing behavior; this URL is invalid unless
+	// the `:receiptId` is replaced with a valid receipt ID by the PayPal
+	// transaction flow. When returning from PayPal, the user is redirected
+	// briefly to a backend page that replaces `:receiptId` and 302 redirects to
+	// the updated URL.
+	it( 'redirects to the business plan bump offer page with a placeholder receipt id when a site but no orderId is set and the cart contains the premium plan', () => {
+		const cart = {
+			...getMockCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: 'value_bundle',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+		} );
+		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/:receiptId' );
 	} );
 
 	it( 'redirects to the thank-you page with a placeholder receiptId with a site when the cart is not empty but there is no receipt id', () => {
@@ -988,6 +1014,66 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
 
+	it( 'redirects to business upgrade nudge if jetpack is not in the cart, and premium is in the cart', () => {
+		const cart = {
+			...getMockCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: 'value_bundle',
+					bill_period: '365',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: samplePurchaseId,
+		} );
+		expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/${ samplePurchaseId }` );
+	} );
+
+	it( 'redirects to business monthly upgrade nudge if jetpack is not in the cart, and premium monthly is in the cart', () => {
+		const cart = {
+			...getMockCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: 'value_bundle_monthly',
+					bill_period: '31',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: samplePurchaseId,
+		} );
+		expect( url ).toBe(
+			`/checkout/foo.bar/offer-plan-upgrade/business-monthly/${ samplePurchaseId }`
+		);
+	} );
+
+	it( 'redirects to the business upgrade nudge with a placeholder when jetpack is not in the cart and premium is in the cart but there is no receipt', () => {
+		const cart = {
+			...getMockCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: 'value_bundle',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+		} );
+		expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/:receiptId` );
+	} );
+
 	it( 'redirects to the thank you page if jetpack is not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
 		const cart = {
 			...getMockCart(),
@@ -1306,6 +1392,28 @@ describe( 'getThankYouPageUrl', () => {
 			);
 		} );
 
+		it( 'Is not displayed if Premium plan is in the cart; we show the business upgrade instead', () => {
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: PLAN_PREMIUM,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: samplePurchaseId,
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/${ samplePurchaseId }` );
+		} );
+
 		it( 'Is not displayed if nudges should be hidden and site has eligible domain and Personal plan is in the cart', () => {
 			const cart = {
 				...getMockCart(),
@@ -1455,6 +1563,126 @@ describe( 'getThankYouPageUrl', () => {
 			sitelessCheckoutType: 'jetpack',
 		} );
 		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/no_product' );
+	} );
+
+	describe( 'Plan Upgrade Upsell Nudge', () => {
+		it( 'offers discounted business plan upgrade when premium plan is purchased.', () => {
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: 'value_bundle',
+						bill_period: '365',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: samplePurchaseId,
+				cart,
+			} );
+			expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/${ samplePurchaseId }` );
+		} );
+
+		it( 'offers discounted biennial business plan upgrade when biennial premium plan is purchased.', () => {
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: 'value_bundle-2y',
+						bill_period: '730',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: samplePurchaseId,
+				cart,
+			} );
+			expect( url ).toBe(
+				`/checkout/foo.bar/offer-plan-upgrade/business-2-years/${ samplePurchaseId }`
+			);
+		} );
+
+		it( 'offers discounted monthly business plan upgrade when monthly premium plan is purchased.', () => {
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: 'value_bundle_monthly',
+						bill_period: '31',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: samplePurchaseId,
+				cart,
+			} );
+			expect( url ).toBe(
+				`/checkout/foo.bar/offer-plan-upgrade/business-monthly/${ samplePurchaseId }`
+			);
+		} );
+
+		it( 'Does not offers discounted annual business plan upgrade when annual premium plan and DIFM light is purchased together.', () => {
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: 'value_bundle',
+						bill_period: '365',
+					},
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: WPCOM_DIFM_LITE,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: samplePurchaseId,
+				cart,
+			} );
+			expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
+		} );
+
+		it( 'Does not offers discounted annual business plan for tailored flows (https://wp.me/p58i-cBr).', () => {
+			[ NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, VIDEOPRESS_FLOW ].forEach( ( flowName ) => {
+				const getUrlFromCookie = jest.fn( () => '/cookie' );
+
+				// set a tailored flow name
+				sessionStorage.setItem( 'wpcom_signup_complete_flow_name', flowName );
+
+				const cart = {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: 'value_bundle',
+							bill_period: '365',
+						},
+					],
+				};
+				const url = getThankYouPageUrl( {
+					...defaultArgs,
+					getUrlFromCookie,
+					cart,
+				} );
+
+				expect( url ).toBe( `/cookie?notice=purchase-success` );
+
+				// clean up the tailored flow name
+				sessionStorage.removeItem( 'wpcom_signup_complete_flow_name' );
+			} );
+		} );
 	} );
 
 	// Siteless checkout flow
