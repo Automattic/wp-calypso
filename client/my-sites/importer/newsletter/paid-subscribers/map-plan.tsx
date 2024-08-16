@@ -35,7 +35,7 @@ type MapPlanProps = {
 	currentStep: string;
 };
 
-function displayProduct( product ) {
+function displayProduct( product: Product | undefined ) {
 	if ( ! product ) {
 		return 'Select a Newsletter Tier';
 	}

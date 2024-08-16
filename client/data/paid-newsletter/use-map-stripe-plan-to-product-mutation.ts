@@ -64,7 +64,7 @@ export const useMapStripePlanToProductMutation = (
 			engine: string,
 			currentStep: string,
 			stripePlan: string,
-			productId: number
+			productId: string
 		) => mutate( { siteId, engine, currentStep, stripePlan, productId } ),
 		[ mutate ]
 	);
