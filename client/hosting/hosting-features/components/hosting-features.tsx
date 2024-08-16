@@ -61,7 +61,8 @@ const HostingFeatures = () => {
 	const { data: siteTransferData, refetch: refetchSiteTransferData } = useSiteTransferStatusQuery(
 		siteId || undefined
 	);
-	// We have some bug at the backend, when the transfer is complited, but isSiteAtomic is still false, so we need such extra condition
+	// `siteTransferData?.isTransferring` is not a fully reliable indicator by itself, which is why
+	// we also look at `siteTransferData.status`
 	const isTransferInProgress =
 		siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED;
 
