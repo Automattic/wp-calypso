@@ -3,6 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { Tip } from 'calypso/performance-profiler/components/tip';
 import { LayoutBlock } from 'calypso/site-profiler/components/layout';
 
 interface LoadingScreenProps {
@@ -110,29 +111,6 @@ const StyledLoadingScreen = styled.div`
 	}
 `;
 
-const FootNote = styled.div`
-	max-width: 460px;
-	background-color: #e7f0fa;
-	padding: 25px;
-	margin-top: 65px;
-
-	h4 {
-		font-size: 14px;
-		font-weight: 500;
-		line-height: 20px;
-		margin-bottom: 10px;
-	}
-
-	p {
-		font-size: 14px;
-		margin-bottom: 0;
-	}
-
-	.learn-more-link {
-		margin-top: 20px;
-	}
-`;
-
 export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	const translate = useTranslate();
 	const [ step, setStep ] = useState( 0 );
@@ -229,17 +207,11 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 					</span>
 				) ) }
 				{ tips[ currentTip ] && (
-					<FootNote>
-						<h4>{ tips[ currentTip ].heading }</h4>
-						<p>{ tips[ currentTip ].description }</p>
-						{ tips[ currentTip ].link && (
-							<p className="learn-more-link">
-								<a href={ tips[ currentTip ].link } target="_blank" rel="noreferrer">
-									{ translate( 'Learn more ↗' ) }
-								</a>
-							</p>
-						) }
-					</FootNote>
+					<Tip
+						title={ tips[ currentTip ].heading }
+						content={ tips[ currentTip ].description }
+						link={ tips[ currentTip ].link }
+					/>
 				) }
 			</StyledLoadingScreen>
 		</LayoutBlock>
