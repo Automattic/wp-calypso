@@ -19,7 +19,7 @@ type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 
 export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 	const translate = useTranslate();
-	const [ activeTab, setActiveTab ] = useState< Metrics >( 'lcp' );
+	const [ activeTab, setActiveTab ] = useState< Metrics >( 'fcp' );
 
 	const { displayName } = metricsNames[ activeTab as keyof typeof metricsNames ];
 	const value = props[ activeTab ];
@@ -144,7 +144,7 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 								formatUnit( metricsTresholds[ activeTab ].good ),
 								formatUnit( metricsTresholds[ activeTab ].needsImprovement ),
 							] }
-							width={ 600 }
+							width={ 550 }
 							height={ 300 }
 						/>
 					</span>

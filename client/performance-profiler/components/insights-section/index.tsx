@@ -1,9 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
 import { MetricsInsight } from 'calypso/performance-profiler/components/metrics-insight';
-import { InsightContent } from 'calypso/performance-profiler/components/metrics-insight/insight-content';
-import { InsightHeader } from 'calypso/performance-profiler/components/metrics-insight/insight-header';
-
 import './style.scss';
 
 type InsightsSectionProps = {
@@ -21,13 +18,7 @@ export const InsightsSection = ( props: InsightsSectionProps ) => {
 				{ translate( 'We found things you can do to speed up your site.' ) }
 			</p>
 			{ Object.values( audits ).map( ( audit, index ) => (
-				<MetricsInsight
-					key={ `insight-${ audit.id }` }
-					insight={ {
-						header: <InsightHeader data={ audit } index={ index } />,
-						description: <InsightContent data={ audit } />,
-					} }
-				/>
+				<MetricsInsight key={ `insight-${ index }` } insight={ audit } index={ index } />
 			) ) }
 		</div>
 	);
