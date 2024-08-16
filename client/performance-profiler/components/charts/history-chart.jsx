@@ -183,7 +183,7 @@ const generateSampleData = ( range ) => {
 const HistoryChart = ( { data, range, height, width } ) => {
 	const svgRef = createRef();
 	const tooltipRef = createRef();
-	const dataAvailable = data && data.length;
+	const dataAvailable = data && data.some( ( e ) => e.value !== null );
 
 	if ( ! dataAvailable ) {
 		data = generateSampleData( range );

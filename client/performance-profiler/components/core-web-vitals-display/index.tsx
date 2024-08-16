@@ -59,6 +59,7 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 	// the comparison is inverse here because the last value is the most recent
 	const positiveTendency = metrics[ metrics.length - 1 ] < metrics[ 0 ];
 
+	const dataAvailable = metrics.length > 0 && metrics.some( ( item ) => item !== null );
 	const historicalData = metrics.map( ( item, index ) => {
 		return {
 			date: dates[ index ],
@@ -135,22 +136,26 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 					</p>
 				</div>
 				<div className="core-web-vitals-display__history-graph">
-					<span className="core-web-vitals-display__description-subheading">
-						{ positiveTendency
-							? translate( '%s has improved over the past eight weeks', { args: [ displayName ] } )
-							: translate( '%s has declined over the past eight weeks', {
-									args: [ displayName ],
-							  } ) }
-						<HistoryChart
-							data={ historicalData }
-							range={ [
-								formatUnit( metricsTresholds[ activeTab ].good ),
-								formatUnit( metricsTresholds[ activeTab ].needsImprovement ),
-							] }
-							width={ 550 }
-							height={ 300 }
-						/>
-					</span>
+					{ dataAvailable && (
+						<span className="core-web-vitals-display__description-subheading">
+							{ positiveTendency
+								? translate( '%s has improved over the past eight weeks', {
+										args: [ displayName ],
+								  } )
+								: translate( '%s has declined over the past eight weeks', {
+										args: [ displayName ],
+								  } ) }
+						</span>
+					) }
+					<HistoryChart
+						data={ dataAvailable && historicalData }
+						range={ [
+							formatUnit( metricsTresholds[ activeTab ].good ),
+							formatUnit( metricsTresholds[ activeTab ].needsImprovement ),
+						] }
+						width={ 550 }
+						height={ 300 }
+					/>
 				</div>
 			</div>
 		</div>
