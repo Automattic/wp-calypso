@@ -8,6 +8,8 @@ import {
 	useSitesListSorting,
 } from '@automattic/sites';
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
+import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -97,7 +99,8 @@ const SitesDashboard = ( {
 	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
 	const [ initialSortApplied, setInitialSortApplied ] = useState( false );
-
+	const isWide = useBreakpoint( WIDE_BREAKPOINT );
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
 		const { options } = site || {};
@@ -136,6 +139,15 @@ const SitesDashboard = ( {
 	useShowSiteTransferredNotice();
 
 	const siteStatusGroups = useSiteStatusGroups();
+	const getSiteNameColWidth = ( isDesktop: boolean, isWide: boolean ) => {
+		if ( isWide ) {
+			return '40%';
+		}
+		if ( isDesktop ) {
+			return '50%';
+		}
+		return '70%';
+	};
 
 	// Create the DataViews state based on initial values
 	const defaultDataViewsState = {
@@ -153,6 +165,28 @@ const SitesDashboard = ( {
 		],
 		selectedItem: selectedSite,
 		type: selectedSite ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+		layout: {
+			styles: {
+				site: {
+					width: getSiteNameColWidth( isDesktop, isWide ),
+				},
+				plan: {
+					width: '100px',
+				},
+				status: {
+					width: '116px',
+				},
+				'last-publish': {
+					width: '120px',
+				},
+				stats: {
+					width: '80px',
+				},
+				actions: {
+					width: '48px',
+				},
+			},
+		},
 	} as DataViewsState;
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
 

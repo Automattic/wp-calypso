@@ -1,5 +1,3 @@
-import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
-import { useBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -57,17 +55,6 @@ const DotcomSitesDataViews = ( {
 }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
-	const isWide = useBreakpoint( WIDE_BREAKPOINT );
-	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
-	const getSiteNameColWidth = ( isDesktop: boolean, isWide: boolean ) => {
-		if ( isWide ) {
-			return '40%';
-		}
-		if ( isDesktop ) {
-			return '50%';
-		}
-		return '70%';
-	};
 
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
@@ -130,7 +117,6 @@ const DotcomSitesDataViews = ( {
 						<span>{ __( 'Site' ) }</span>
 					</SiteSort>
 				),
-				width: getSiteNameColWidth( isDesktop, isWide ),
 				getValue: ( { item }: { item: SiteExcerptData } ) => item.URL,
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
@@ -147,7 +133,6 @@ const DotcomSitesDataViews = ( {
 				),
 				enableHiding: false,
 				enableSorting: false,
-				width: '100px',
 			},
 			{
 				id: 'status',
@@ -156,7 +141,6 @@ const DotcomSitesDataViews = ( {
 				render: ( { item }: { item: SiteExcerptData } ) => <SiteStatus site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
-				width: '116px',
 			},
 			{
 				id: 'last-publish',
@@ -175,7 +159,6 @@ const DotcomSitesDataViews = ( {
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
 				enableSorting: false,
-				width: '120px',
 			},
 			{
 				id: 'stats',
@@ -189,7 +172,6 @@ const DotcomSitesDataViews = ( {
 				render: ( { item }: { item: SiteExcerptData } ) => <SiteStats site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
-				width: '80px',
 			},
 			{
 				id: 'actions',
@@ -198,7 +180,6 @@ const DotcomSitesDataViews = ( {
 				render: ( { item }: { item: SiteExcerptData } ) => <ActionsField site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
-				width: '48px',
 			},
 			// Dummy fields to allow people to sort by them on mobile.
 			{
@@ -238,16 +219,7 @@ const DotcomSitesDataViews = ( {
 				getValue: () => null,
 			},
 		],
-		[
-			__,
-			openSitePreviewPane,
-			userId,
-			dataViewsState,
-			setDataViewsState,
-			isWide,
-			isDesktop,
-			siteStatusGroups,
-		]
+		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState, siteStatusGroups ]
 	);
 
 	// Create the itemData packet state
