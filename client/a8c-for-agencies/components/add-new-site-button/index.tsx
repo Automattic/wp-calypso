@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Popover, Gridicon, Button, WordPressLogo, JetpackLogo } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
@@ -62,6 +63,8 @@ export default function AddNewSiteButton( {
 	};
 
 	const popoverMenuContext = useRef( null );
+
+	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 
 	const menuItem = ( {
 		icon,
@@ -195,40 +198,46 @@ export default function AddNewSiteButton( {
 					},
 				} ) }
 			</div>
-			<div className="site-selector-and-importer__popover-column">
-				<div className="site-selector-and-importer__popover-column-heading">
-					{ translate( 'Add a new development site' ).toUpperCase() }
-				</div>
-				{ menuItem( {
-					icon: <WordPressLogo />,
-					heading: translate( 'WordPress.com Development Site' ),
-					description: translate(
-						'Try our hosting for free indefinitely. Only pay when you launch.'
-					),
-					buttonProps: {
-						onClick: () => {
-							if ( paymentMethodRequired ) {
-								page(
-									`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
-								);
-							} else {
-								toggleDevSiteConfigurationsModal?.();
-							}
+			{ devSitesEnabled && (
+				<div className="site-selector-and-importer__popover-column">
+					<div className="site-selector-and-importer__popover-column-heading">
+						{ translate( 'Add a new development site' ).toUpperCase() }
+					</div>
+					{ menuItem( {
+						icon: <WordPressLogo />,
+						heading: translate( 'WordPress.com Development Site' ),
+						description: translate(
+							'Try our hosting for free indefinitely. Only pay when you launch.'
+						),
+						buttonProps: {
+							onClick: () => {
+								if ( paymentMethodRequired ) {
+									page(
+										`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
+									);
+								} else {
+									toggleDevSiteConfigurationsModal?.();
+								}
+							},
 						},
-					},
-					extraContent: hasAvailableDevSites ? (
-						<div className="site-selector-and-importer__popover-site-count">
-							{ translate( '%(pendingSites)d site available', '%(pendingSites)d sites available', {
-								args: {
-									pendingSites: availableDevSites,
-								},
-								count: availableDevSites,
-								comment: '%(pendingSites)s is the number of sites available.',
-							} ) }
-						</div>
-					) : undefined,
-				} ) }
-			</div>
+						extraContent: hasAvailableDevSites ? (
+							<div className="site-selector-and-importer__popover-site-count">
+								{ translate(
+									'%(pendingSites)d site available',
+									'%(pendingSites)d sites available',
+									{
+										args: {
+											pendingSites: availableDevSites,
+										},
+										count: availableDevSites,
+										comment: '%(pendingSites)s is the number of sites available.',
+									}
+								) }
+							</div>
+						) : undefined,
+					} ) }
+				</div>
+			) }
 		</div>
 	);
 
