@@ -67,27 +67,6 @@ import LoginForm from './login-form';
 
 import './style.scss';
 
-/*
- * Parses the `anchor_podcast` parameter from a given URL.
- * Returns `true` if provided URL is an anchor FM signup URL.
- */
-function getIsAnchorFmSignup( urlString ) {
-	if ( ! urlString ) {
-		return false;
-	}
-
-	// Assemble search params if there is actually a query in the string.
-	const queryParamIndex = urlString.indexOf( '?' );
-	if ( queryParamIndex === -1 ) {
-		return false;
-	}
-	const searchParams = new URLSearchParams(
-		decodeURIComponent( urlString.slice( queryParamIndex ) )
-	);
-	const anchorFmPodcastId = searchParams.get( 'anchor_podcast' );
-	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
-}
-
 class Login extends Component {
 	static propTypes = {
 		disableAutoFocus: PropTypes.bool,
@@ -755,7 +734,7 @@ class Login extends Component {
 
 		return (
 			<div className="login__form-header-wrapper">
-				{ isGravPoweredLoginPage && (
+				{ isGravPoweredClient && (
 					<GravatarLoginLogo
 						iconUrl={ oauth2Client.icon }
 						alt={ oauth2Client.title }
@@ -839,11 +818,10 @@ class Login extends Component {
 			action,
 			isWooCoreProfilerFlow,
 			currentQuery,
-			isGravPoweredLoginPage,
+			isGravPoweredClient,
 			isSignupExistingAccount,
 			isSocialFirst,
 			isFromAutomatticForAgenciesPlugin,
-			loginButtons,
 			currentUser,
 			redirectTo,
 		} = this.props;
@@ -907,6 +885,7 @@ class Login extends Component {
 						isWoo={ isWoo }
 						isBlazePro={ isBlazePro }
 						isPartnerSignup={ isPartnerSignup }
+						isGravPoweredClient={ isGravPoweredClient }
 						twoFactorAuthType={ twoFactorAuthType }
 						twoFactorNotificationSent={ twoFactorNotificationSent }
 						handleValid2FACode={ this.handleValid2FACode }
@@ -1026,12 +1005,11 @@ class Login extends Component {
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
-				hideSignupLink={ isGravPoweredLoginPage || isBlazePro }
+				hideSignupLink={ isGravPoweredClient || isBlazePro }
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst }
-				loginButtons={ loginButtons }
 				isJetpack={ isJetpack }
 				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 			/>
@@ -1095,9 +1073,7 @@ export default connect(
 		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 		wccomFrom: getWccomFrom( state ),
 		isWooPasswordless: getIsWooPasswordless( state ),
-		isAnchorFmSignup: getIsAnchorFmSignup(
-			get( getCurrentQueryArguments( state ), 'redirect_to' )
-		),
+		isAnchorFmSignup: false,
 		isFromMigrationPlugin: startsWith(
 			get( getCurrentQueryArguments( state ), 'from' ),
 			'wpcom-migration'

@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useIsSiteReady from 'calypso/a8c-for-agencies/data/sites/use-is-site-ready';
 import { addQueryArgs } from 'calypso/lib/url';
 
@@ -13,6 +13,12 @@ type Props = {
 export default function ProvisioningSiteNotification( { siteId, migrationIntent }: Props ) {
 	const { isReady, site } = useIsSiteReady( { siteId } );
 	const [ showBanner, setShowBanner ] = useState( true );
+
+	useEffect( () => {
+		if ( siteId ) {
+			setShowBanner( true );
+		}
+	}, [ siteId ] );
 
 	const translate = useTranslate();
 

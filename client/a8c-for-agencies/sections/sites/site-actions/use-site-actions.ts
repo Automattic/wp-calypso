@@ -18,11 +18,18 @@ import type { SiteNode, AllowedActionTypes } from '../types';
 type Props = {
 	site: SiteNode;
 	isLargeScreen: boolean;
+	isDevSite?: boolean;
 	siteError?: boolean;
 	onSelect?: ( action: AllowedActionTypes ) => void;
 };
 
-export default function useSiteActions( { site, isLargeScreen, siteError, onSelect }: Props ) {
+export default function useSiteActions( {
+	site,
+	isLargeScreen,
+	isDevSite,
+	siteError,
+	onSelect,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -58,6 +65,13 @@ export default function useSiteActions( { site, isLargeScreen, siteError, onSele
 		const isUrlOnly = site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
 
 		return [
+			{
+				name: translate( 'Prepare for launch' ),
+				href: `https://wordpress.com/settings/general/${ blog_id }?referer=a4a-dashboard`,
+				onClick: () => handleClickMenuItem( 'prepare_for_launch' ),
+				isExternalLink: true,
+				isEnabled: isDevSite,
+			},
 			{
 				name: translate( 'Set up site' ),
 				href: `https://wordpress.com/overview/${ blog_id }`,

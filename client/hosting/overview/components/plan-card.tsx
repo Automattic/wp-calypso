@@ -27,10 +27,8 @@ import { isStagingSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
-import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { IAppState } from 'calypso/state/types';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 
@@ -171,9 +169,8 @@ const PlanCard: FC = () => {
 		isJetpackSite( state, site?.ID, { treatAtomicAsJetpackSite: false } )
 	);
 	const isStaging = isStagingSite( site ?? undefined );
-	const isAtomic = useSelector( ( state: AppState ) => isAtomicSite( state, site?.ID ?? 0 ) );
 	const isOwner = planDetails?.user_is_owner;
-	const planPurchaseId = useSelector( ( state: IAppState ) =>
+	const planPurchaseId = useSelector( ( state: AppState ) =>
 		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
 	);
 	const planPurchase = useSelector( getSelectedPurchase );
@@ -214,6 +211,9 @@ const PlanCard: FC = () => {
 		}
 	};
 
+	const shouldRenderPlanData =
+		! isStaging || ( isStaging && config.isEnabled( 'hosting-overview-refinements' ) );
+
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
@@ -230,7 +230,7 @@ const PlanCard: FC = () => {
 						</>
 					) }
 				</div>
-				{ ! isStaging && (
+				{ shouldRenderPlanData && (
 					<>
 						{ isAgencyPurchase && (
 							<div className="hosting-overview__plan-agency-purchase">
@@ -249,32 +249,34 @@ const PlanCard: FC = () => {
 								</p>
 							</div>
 						) }
-						{ ! isAgencyPurchase && <PricingSection /> }
+						{ ! isAgencyPurchase && ! isStaging && <PricingSection /> }
 						{ ! isLoading && (
-							<PlanStorage
-								className="hosting-overview__plan-storage"
-								hideWhenNoStorage
-								siteId={ site?.ID }
-								StorageBarComponent={ PlanStorageBar }
-							>
-								{ storageAddons.length > 0 && ! isAgencyPurchase && (
-									<div className="hosting-overview__plan-storage-footer">
-										<Button
-											className="hosting-overview__link-button"
-											plain
-											href={ `/add-ons/${ site?.slug }` }
-										>
-											{ translate( 'Need more storage?' ) }
-										</Button>
+							<div className="hosting-overview__site-metrics">
+								<PlanStorage
+									className="hosting-overview__plan-storage"
+									hideWhenNoStorage
+									siteId={ site?.ID }
+									StorageBarComponent={ PlanStorageBar }
+								>
+									{ storageAddons.length > 0 && ! isAgencyPurchase && (
+										<div className="hosting-overview__plan-storage-footer">
+											<Button
+												className="hosting-overview__link-button"
+												plain
+												href={ `/add-ons/${ site?.slug }` }
+											>
+												{ translate( 'Need more storage?' ) }
+											</Button>
+										</div>
+									) }
+								</PlanStorage>
+								{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
+									<div className="hosting-overview__site-metrics-footer">
+										<PlanBandwidth siteId={ site.ID } />
+										<PlanSiteVisits siteId={ site.ID } />
 									</div>
 								) }
-							</PlanStorage>
-						) }
-						{ config.isEnabled( 'hosting-overview-refinements' ) && site && (
-							<PlanSiteVisits siteId={ site.ID } />
-						) }
-						{ config.isEnabled( 'hosting-overview-refinements' ) && isAtomic && site && (
-							<PlanBandwidth siteId={ site.ID } />
+							</div>
 						) }
 					</>
 				) }

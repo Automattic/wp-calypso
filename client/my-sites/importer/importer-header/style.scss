@@ -5,7 +5,7 @@
 	margin-bottom: 1.25em;
 	gap: 1em;
 
-	@include breakpoint-deprecated( ">960px" ) {
+	@include breakpoint-deprecated(">960px") {
 		gap: 1.75em;
 	}
 
@@ -20,7 +20,7 @@
 	.importer-header__service-title {
 		line-height: 40px;
 
-		@include breakpoint-deprecated( ">960px" ) {
+		@include breakpoint-deprecated(">960px") {
 			line-height: 56px;
 		}
 	}
@@ -28,13 +28,14 @@
 
 .importer-header__service-info p {
 	margin-bottom: 1em;
+	font-size: $font-body-small;
 }
 
 .importer-header__service-title {
 	font-size: $font-title-small;
 	color: var(--color-text-subtle);
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		line-height: 1;
 		margin-bottom: 0.25em;
 	}

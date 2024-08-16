@@ -2,9 +2,9 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { addQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AddNewSiteButton from 'calypso/a8c-for-agencies/components/add-new-site-button';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
@@ -16,6 +16,7 @@ import SiteConfigurationsModal from 'calypso/a8c-for-agencies/components/site-co
 import { useRandomSiteName } from 'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import SitesDashboardContext from '../sites-dashboard-context';
 
 import './style.scss';
 
@@ -33,33 +34,46 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 	const [ tourStepRef, setTourStepRef ] = useState< HTMLElement | null >( null );
 	const [ showConfigurationModal, setShowConfigurationModal ] = useState( false );
 
-	const toggleSiteConfigurationsModal = () => {
+	const toggleDevSiteConfigurationsModal = useCallback( () => {
 		setShowConfigurationModal( ! showConfigurationModal );
-	};
+	}, [ showConfigurationModal ] );
+
+	const { setRecentlyCreatedSiteId } = useContext( SitesDashboardContext );
 
 	const onCreateSiteSuccess = useCallback(
 		( id: number ) => {
 			refetchPendingSites();
+			setRecentlyCreatedSiteId( id );
 			page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
 		},
 		[ refetchPendingSites ]
 	);
 
+	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
+
+	const addNewDevSite = getQueryArg( window.location.href, 'add_new_dev_site' );
+
+	useEffect( () => {
+		if ( devSitesEnabled && addNewDevSite ) {
+			toggleDevSiteConfigurationsModal?.();
+		}
+	}, [ addNewDevSite, devSitesEnabled, toggleDevSiteConfigurationsModal ] );
+
 	return (
 		<div className="sites-header__actions">
 			{ showConfigurationModal && (
 				<SiteConfigurationsModal
-					closeModal={ toggleSiteConfigurationsModal }
+					closeModal={ toggleDevSiteConfigurationsModal }
 					randomSiteName={ randomSiteName }
 					isRandomSiteNameLoading={ isRandomSiteNameLoading }
 					onCreateSiteSuccess={ onCreateSiteSuccess }
 				/>
 			) }
-			{ config.isEnabled( 'a4a-dev-sites' ) && (
+			{ devSitesEnabled && (
 				<AddNewSiteButton
 					showMainButtonLabel={ ! isMobile }
 					devSite
-					toggleSiteConfigurationsModal={ toggleSiteConfigurationsModal }
+					toggleDevSiteConfigurationsModal={ toggleDevSiteConfigurationsModal }
 				/>
 			) }
 			<div ref={ ( ref ) => setTourStepRef( ref ) }>

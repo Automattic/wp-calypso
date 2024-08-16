@@ -6,7 +6,9 @@
 
 	background-color: var(--color-neutral-0);
 	border: 2px dashed var(--color-neutral-light);
-	transition: all 200ms ease-out, color 100ms ease-out;
+	transition:
+		all 200ms ease-out,
+		color 100ms ease-out;
 	fill: var(--color-neutral-20);
 	font-size: $font-body;
 	color: var(--color-neutral-70);
@@ -40,7 +42,7 @@
 }
 
 .importer__uploading-pane-description {
-	font-size: $font-body-small;
+	font-size: $font-body;
 }
 
 .importer__upload-content {

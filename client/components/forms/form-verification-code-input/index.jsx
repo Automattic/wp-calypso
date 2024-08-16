@@ -12,6 +12,7 @@ export default class FormVerificationCodeInput extends Component {
 		isError: PropTypes.bool,
 		isValid: PropTypes.bool,
 		method: PropTypes.string,
+		placeholder: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -28,19 +29,19 @@ export default class FormVerificationCodeInput extends Component {
 	};
 
 	render() {
-		const { className, isError, isValid, method, ...otherProps } = this.props;
+		const { className, isError, isValid, method, placeholder, ...otherProps } = this.props;
 
 		const classes = clsx( 'form-verification-code-input', className, {
 			'is-error': isError,
 			'is-valid': isValid,
 		} );
 
-		let placeholder = constants.sixDigit2faPlaceholder;
+		let defaultPlaceholder = constants.sixDigit2faPlaceholder;
 
 		if ( method === 'backup' ) {
-			placeholder = constants.eightDigitBackupCodePlaceholder;
+			defaultPlaceholder = constants.eightDigitBackupCodePlaceholder;
 		} else if ( method === 'sms' ) {
-			placeholder = constants.sevenDigit2faPlaceholder;
+			defaultPlaceholder = constants.sevenDigit2faPlaceholder;
 		}
 
 		return (
@@ -48,7 +49,7 @@ export default class FormVerificationCodeInput extends Component {
 				autoComplete="one-time-code"
 				className={ classes }
 				pattern="[0-9 ]*"
-				placeholder={ placeholder }
+				placeholder={ placeholder || defaultPlaceholder }
 				ref={ this.saveRef }
 				type="tel"
 				{ ...otherProps }

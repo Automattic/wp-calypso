@@ -1,20 +1,19 @@
-import { Dialog, FormLabel } from '@automattic/components';
+import { Dialog, FormLabel, MaterialIcon } from '@automattic/components';
 import { isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
 import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
-import { Button, Tooltip } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
-import { Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
 import { IAppState } from 'calypso/state/types';
 import type { Language, LocalizedLanguageNames } from '@automattic/language-picker';
 import type { I18n } from '@wordpress/i18n';
-
 import './modal.scss';
 
 type CalypsoLanguage = Language & {
@@ -63,31 +62,16 @@ function IncompleteLocaleNoticeMessage( {
 	}
 
 	const { name: languageName, calypsoPercentTranslated: percentTranslated } = language;
-	const translateFAQLink = 'https://translate.wordpress.com/faq/';
-
 	return (
-		<Tooltip
-			position="top center"
-			text={
-				(
-					<div className="language-picker__modal-incomplete-locale-tooltip-text">
-						{ __( 'You can help translate WordPress.com into your language.' ) }
-						<a href={ translateFAQLink }>{ __( 'Learn more' ) }</a>
-					</div>
-				 ) as unknown as string
+		<div className="language-picker__modal-incomplete-locale-notice-info">
+			{
+				/* translators: %(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%. */
+				sprintf( __( '(%(languageName)s is only %(percentTranslated)d%% translated)' ), {
+					languageName,
+					percentTranslated,
+				} )
 			}
-		>
-			<div className="language-picker__modal-incomplete-locale-notice-info">
-				{
-					/* translators: %(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%. */
-					sprintf( __( '(%(languageName)s is only %(percentTranslated)d%% translated)' ), {
-						languageName,
-						percentTranslated,
-					} )
-				}
-				<Icon icon={ info } size={ 20 } />
-			</div>
-		</Tooltip>
+		</div>
 	);
 }
 
@@ -110,6 +94,13 @@ const LanguagePickerModal: React.FC< Props > = ( {
 	const [ useFallbackForIncompleteLanguages, setUseFallbackForIncompleteLanguages ] = useState(
 		initialUseFallbackForIncompleteLanguages
 	);
+	const recordClick = () =>
+		selectedLanguage
+			? recordTracksEvent( 'calypso_translator_invitation', {
+					language: localizedLanguageNames[ selectedLanguage.langSlug ].en,
+					location: '/me/account',
+			  } )
+			: null;
 
 	const selectedLanguageSlug = selectedLanguage && selectedLanguage.langSlug;
 
@@ -144,6 +135,19 @@ const LanguagePickerModal: React.FC< Props > = ( {
 							</span>
 						</FormLabel>
 					) }
+					<div className="language-picker__modal-incomplete-locale-nudge-text">
+						<MaterialIcon icon="emoji_language" />
+						{ __( 'You can help translate WordPress.com into your language.' ) }{ ' ' }
+						<a
+							className="language-picker__modal-incomplete-locale-nudge-link"
+							href="https://translate.wordpress.com/faq/"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ recordClick }
+						>
+							{ __( 'Learn more' ) }
+						</a>
+					</div>
 				</div>
 			) }
 			{ showEmpathyModeControl && (
@@ -206,6 +210,9 @@ const LanguagePickerModal: React.FC< Props > = ( {
 	);
 };
 
-export default connect( ( state: IAppState ) => ( {
-	localizedLanguageNames: getLocalizedLanguageNames( state ) as LocalizedLanguageNames,
-} ) )( LanguagePickerModal );
+export default connect(
+	( state: IAppState ) => ( {
+		localizedLanguageNames: getLocalizedLanguageNames( state ) as LocalizedLanguageNames,
+	} ),
+	{ recordTracksEvent }
+)( LanguagePickerModal );

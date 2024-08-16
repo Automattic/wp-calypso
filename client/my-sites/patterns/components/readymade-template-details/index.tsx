@@ -6,6 +6,7 @@ import { Icon, arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { createElement, useEffect } from 'react';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
+import { ReadymadeTemplatePreview } from 'calypso/my-sites/patterns/components/readymade-template-preview';
 import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
 import { ReadymadeTemplateDetailsFC } from 'calypso/my-sites/patterns/types';
 
@@ -15,7 +16,7 @@ const PatternLibraryLink = ( { children }: { children: React.ReactNode } ) => (
 	<a href={ addLocaleToPathLocaleInFront( '/patterns' ) }>{ children }</a>
 );
 
-export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, renderPreview } ) => {
+export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { slug } ) => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 
@@ -28,7 +29,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, rend
 		return null;
 	}
 
-	const readymadeTemplate = readymadeTemplates.find( ( rt ) => rt.template_id === id );
+	const readymadeTemplate = readymadeTemplates.find( ( rt ) => rt.slug === slug );
 	if ( ! readymadeTemplate ) {
 		return null;
 	}
@@ -58,7 +59,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, rend
 								</div>
 							</div>
 							<div className="readymade-template-details-preview-mobile">
-								{ renderPreview?.( readymadeTemplate ) }
+								<ReadymadeTemplatePreview readymadeTemplate={ readymadeTemplate } />
 							</div>
 							<div className="readymade-template-details-description">
 								<div // eslint-disable-next-line react/no-danger
@@ -97,7 +98,7 @@ export const ReadymadeTemplateDetails: ReadymadeTemplateDetailsFC = ( { id, rend
 							</div>
 						</div>
 						<div className="readymade-template-details-preview">
-							{ renderPreview?.( readymadeTemplate ) }
+							<ReadymadeTemplatePreview readymadeTemplate={ readymadeTemplate } />
 						</div>
 					</div>
 				</div>

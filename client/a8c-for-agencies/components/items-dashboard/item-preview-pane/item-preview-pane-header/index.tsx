@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -8,9 +7,13 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
-import { useSelector } from 'calypso/state';
+import QuerySiteWpVersion from 'calypso/components/data/query-site-wp-version';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
+import { getAtomicHostingWpVersion } from 'calypso/state/selectors/get-atomic-hosting-wp-version';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SiteFavicon from '../../site-favicon';
 import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
@@ -35,13 +38,16 @@ export default function ItemPreviewPaneHeader( {
 	className,
 	extraProps,
 }: Props ) {
+	const dispatch = useDispatch();
 	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
 	const size = isLargerThan960px ? 64 : 50;
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID || 0;
 	const phpVersion = useSelector( ( state ) => getAtomicHostingPhpVersion( state, siteId ) );
-	const wpVersion = selectedSite?.options?.software_version;
+	const wpVersionName = useSelector( ( state ) => getAtomicHostingWpVersion( state, siteId ) );
+	const wpVersion = selectedSite?.options?.software_version?.match( /^\d+(\.\d+){0,2}/ )?.[ 0 ]; // Some times it can be `6.6.1-alpha-58760`, so we strip the `-alpha-58760` part
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const focusRef = useRef< HTMLButtonElement >( null );
 
@@ -55,17 +61,21 @@ export default function ItemPreviewPaneHeader( {
 	const siteIconFallback =
 		extraProps?.siteIconFallback ?? ( itemData.isDotcomSite ? 'wordpress-logo' : 'color' );
 
+	const shouldDisplayVersionNumbers =
+		config.isEnabled( 'hosting-overview-refinements' ) && isAtomic && ( wpVersion || phpVersion );
+
 	const handlePhpVersionClick = () => {
-		page( `/hosting-config/${ selectedSite?.domain }#php` );
+		dispatch( recordTracksEvent( 'calypso_hosting_configuration_php_version_update' ) );
 	};
 
 	const handleWpVersionClick = () => {
-		page( `/hosting-config/${ selectedSite?.domain }#wp` );
+		dispatch( recordTracksEvent( 'calypso_hosting_configuration_wp_version_update' ) );
 	};
 
 	return (
 		<>
 			{ isAtomic && <QuerySitePhpVersion siteId={ siteId } /> }
+			{ isAtomic && <QuerySiteWpVersion siteId={ siteId } /> }
 			<div className={ clsx( 'item-preview__header', className ) }>
 				<div className="item-preview__header-content">
 					{ !! itemData?.withIcon && (
@@ -109,38 +119,39 @@ export default function ItemPreviewPaneHeader( {
 									''
 								) }
 							</div>
-							{ config.isEnabled( 'hosting-overview-refinements' ) &&
-								( wpVersion || phpVersion ) && (
-									<div className="item-preview__header-env-data">
-										{ wpVersion && (
-											<div className="item-preview__header-env-data-item">
-												WordPress{ ' ' }
-												{ isAtomic ? (
-													<Button
-														className="item-preview__header-env-data-item-link"
-														onClick={ handleWpVersionClick }
-													>
-														{ wpVersion }
-													</Button>
-												) : (
-													wpVersion
-												) }
-											</div>
-										) }
-										{ phpVersion && (
-											<div className="item-preview__header-env-data-item">
-												PHP{ ' ' }
-												<Button
-													className="item-preview__header-env-data-item-link"
-													onClick={ handlePhpVersionClick }
-												>
-													{ phpVersion }
-												</Button>
-											</div>
-										) }
-									</div>
-								) }
+
+							{ shouldDisplayVersionNumbers && (
+								<div className="item-preview__header-env-data">
+									{ wpVersion && (
+										<div className="item-preview__header-env-data-item">
+											WordPress{ ' ' }
+											<a
+												className="item-preview__header-env-data-item-link"
+												href={ `/hosting-config/${ selectedSite?.domain }#wp` }
+												onClick={ handleWpVersionClick }
+											>
+												{ wpVersion }
+												{ wpVersionName && isStagingSite && <span> ({ wpVersionName })</span> }
+											</a>
+										</div>
+									) }
+
+									{ phpVersion && (
+										<div className="item-preview__header-env-data-item">
+											PHP{ ' ' }
+											<a
+												className="item-preview__header-env-data-item-link"
+												onClick={ handlePhpVersionClick }
+												href={ `/hosting-config/${ selectedSite?.domain }#php` }
+											>
+												{ phpVersion }
+											</a>
+										</div>
+									) }
+								</div>
+							) }
 						</div>
+
 						{ isPreviewLoaded && (
 							<div className="item-preview__header-actions">
 								{ extraProps?.headerButtons ? (

@@ -73,7 +73,7 @@ function SubscribeEmailStep( props ) {
 		? addQueryArgs( window.location.href, { user_email: currentUser?.email } )
 		: '';
 
-	const [ isRedirectingToLogout, setIsRedirectingToLogout ] = useState( false );
+	const [ isLoading, setIsLoading ] = useState( true );
 
 	const { mutate: subscribeEmail, isPending: isSubscribingEmail } = useSubscribeEmail();
 
@@ -129,7 +129,7 @@ function SubscribeEmailStep( props ) {
 					},
 					{
 						onSuccess: () => {
-							setIsRedirectingToLogout( true );
+							setIsLoading( true );
 							/**
 							 * Logged in users will see an "Is it you?" page. Logged out users will
 							 * skip the page. To make email capture more seamless at conferences we
@@ -153,6 +153,7 @@ function SubscribeEmailStep( props ) {
 	// On page load, attempt to subscribe the submitted email to the mailing list
 	useEffect( () => {
 		if ( ! emailValidator.validate( email ) ) {
+			setIsLoading( false );
 			return;
 		}
 
@@ -162,6 +163,7 @@ function SubscribeEmailStep( props ) {
 			}
 
 			// Otherwise show the "Is this you?" page
+			setIsLoading( false );
 			return;
 		}
 
@@ -188,7 +190,7 @@ function SubscribeEmailStep( props ) {
 		}
 	}, [ email ] );
 
-	const isPending = isCreatingNewAccount || isSubscribingEmail || isRedirectingToLogout;
+	const isPending = isCreatingNewAccount || isSubscribingEmail || isLoading;
 
 	return (
 		<div className="subscribe-email">

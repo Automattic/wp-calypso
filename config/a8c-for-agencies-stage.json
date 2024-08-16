@@ -34,11 +34,11 @@
 		"oauth": true,
 		"a4a/site-details-pane": true,
 		"a4a/site-migration": false,
-		"a4a-logged-out-signup": true,
 		"a4a-automated-referrals": true,
 		"a4a-partner-directory": false,
+		"a4a-hosting-page-redesign": true,
 		"a4a-dev-sites": false,
-		"hosting-overview-refinements": false
+		"hosting-overview-refinements": true
 	},
 	"enable_all_sections": false,
 	"sections": {

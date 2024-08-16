@@ -1,5 +1,6 @@
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo, useState } from 'react';
 import A4ANumberInput from 'calypso/a8c-for-agencies/components/a4a-number-input';
@@ -24,6 +25,8 @@ type PlanDetailsProps = {
 	quantity: number;
 	setQuantity: ( quantity: number ) => void;
 };
+
+const MAX_PLANS_FOR_SLIDER = 10;
 
 function PlanDetails( {
 	plan,
@@ -173,10 +176,17 @@ export default function WPCOMPlanSelector( { onSelect }: WPCOMPlanSelectorProps 
 		return;
 	}
 
+	// Show the WPCOM slider if the user has less than 10 plans and is not in referral mode.
+	const showWPCOMSlider = ! referralMode && ownedPlans < MAX_PLANS_FOR_SLIDER;
+
 	return (
-		<div className="wpcom-plan-selector">
+		<div
+			className={ clsx( 'wpcom-plan-selector', {
+				'is-slider-hidden': ! showWPCOMSlider,
+			} ) }
+		>
 			<div className="wpcom-plan-selector__slider-container">
-				{ ! referralMode && (
+				{ showWPCOMSlider && (
 					<WPCOMPlanSlider
 						quantity={ quantity }
 						onChange={ setQuantity }
