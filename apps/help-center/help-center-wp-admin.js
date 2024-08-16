@@ -6,8 +6,9 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback } from '@wordpress/element';
 import { createRoot } from 'react-dom/client';
+import './wp-components.scss';
+
 const queryClient = new QueryClient();
-import './help-center.scss';
 
 function AdminHelpCenterContent() {
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );

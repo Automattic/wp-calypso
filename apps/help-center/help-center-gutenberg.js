@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState, useReducer } from '@wordpress/element
 import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks';
-import './help-center.scss';
+import './wp-components.scss';
 
 const queryClient = new QueryClient();
 

@@ -6,7 +6,7 @@ import { useEffect, useReducer } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks';
-import './help-center.scss';
+import './wp-components.scss';
 
 function HelpCenterContent() {
 	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
