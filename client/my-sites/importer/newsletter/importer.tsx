@@ -91,7 +91,7 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	} );
 
 	const { skipNextStep } = useSkipNextStepMutation();
-	const { resetPaidNewsletter, isPending: isResettingPaidNewsletterPending } = useResetMutation();
+	const { resetPaidNewsletter, isPending: isResetPaidNewsletterPending } = useResetMutation();
 
 	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
 
@@ -126,18 +126,18 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 				] }
 			/>
 			<FormattedHeader headerText={ getTitle( urlData ) } />
-			{ ( ! validFromSite || isResettingPaidNewsletterPending ) && (
+			{ ( ! validFromSite || isResetPaidNewsletterPending ) && (
 				<SelectNewsletterForm
 					stepUrl={ stepUrl }
 					urlData={ urlData }
-					isLoading={ isFetching || isResettingPaidNewsletterPending }
+					isLoading={ isFetching || isResetPaidNewsletterPending }
 					validFromSite={ validFromSite }
 				/>
 			) }
-			{ validFromSite && ! isResettingPaidNewsletterPending && (
+			{ validFromSite && ! isResetPaidNewsletterPending && (
 				<StepProgress steps={ stepsProgress } currentStep={ stepIndex } />
 			) }
-			{ selectedSite && validFromSite && ! isResettingPaidNewsletterPending && (
+			{ selectedSite && validFromSite && ! isResetPaidNewsletterPending && (
 				<Step
 					siteSlug={ siteSlug }
 					nextStepUrl={ nextStepUrl }
