@@ -1,18 +1,18 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FoldableCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
+import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
+import { InsightContent } from './insight-content';
+import { InsightHeader } from './insight-header';
 
 interface MetricsInsightProps {
-	insight?: Insight;
-	locked?: boolean;
+	insight: PerformanceMetricsItemQueryResponse;
 	onClick?: () => void;
+	index: number;
 }
-
-type Insight = {
-	header?: ReactNode;
-	description?: ReactNode;
-};
 
 const Card = styled( FoldableCard )`
 	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
@@ -31,8 +31,6 @@ const Header = styled.div`
 	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
 		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 16px;
-	filter: ${ ( props: Header ) => ( props.locked ? 'blur(3px)' : 'none' ) };
-	user-select: ${ ( props: Header ) => ( props.locked ? 'none' : 'auto' ) };
 
 	p {
 		display: inline;
@@ -61,64 +59,39 @@ const Content = styled.div`
 
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
-	const { insight = {}, locked = false, onClick } = props;
 
-	const lockedInsights = useLockedInsights();
-	const [ randomInsight ] = useState( getRandomItem( lockedInsights ) );
+	const { insight, onClick, index } = props;
 
-	const itemToRender = locked ? randomInsight : insight;
+	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
+	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
+		insight.description ?? '',
+		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
+	);
 
 	return (
 		<Card
 			className="metrics-insight-item"
 			header={
-				<Header locked={ locked } onClick={ onClick }>
-					{ itemToRender.header }
+				<Header onClick={ onClick }>
+					<InsightHeader data={ insight } index={ index } />
 				</Header>
 			}
 			screenReaderText={ translate( 'More' ) }
 			compact
 			clickableHeader
 			smooth
-			disabled={ locked }
-			icon={ locked ? 'lock' : 'chevron-down' }
 			iconSize={ 18 }
+			onClick={ () => setRetrieveInsight( true ) }
 		>
-			<Content>{ itemToRender.description }</Content>
+			<Content>
+				<InsightContent
+					data={ {
+						...insight,
+						...( isEnabled( 'performance-profiler/llm' ) ? { description: llmAnswer } : {} ),
+					} }
+					isLoading={ isEnabled( 'performance-profiler/llm' ) && isLoadingLlmAnswer }
+				/>
+			</Content>
 		</Card>
 	);
 };
-
-function getRandomItem( items: Array< Insight > ): Insight {
-	return items[ Math.floor( Math.random() * items.length ) ];
-}
-
-function useLockedInsights(): Insight[] {
-	const translate = useTranslate();
-
-	return [
-		{
-			header: translate(
-				'The full report will display all the information you need to improve your site.'
-			),
-		},
-		{
-			header: translate(
-				'Click on the "Get full site report - It\'s free" button to unlock all the information you need.'
-			),
-		},
-		{
-			header: translate(
-				"You'll be asked to provide your name and email, and then you will see all of your site stats."
-			),
-		},
-		{
-			header: translate(
-				'The full report will display all the information about how your site is performing currently.'
-			),
-		},
-		{
-			header: translate( "Feel free to use our tool as many times as you want, it's free." ),
-		},
-	];
-}
