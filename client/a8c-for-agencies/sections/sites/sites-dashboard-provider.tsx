@@ -92,15 +92,7 @@ export const SitesDashboardProvider = ( {
 		field: DEFAULT_SORT_FIELD,
 		direction: DEFAULT_SORT_DIRECTION,
 	};
-	initialDataViewsState.fields = [
-		'site',
-		'status',
-		'boost',
-		'backup',
-		'monitor',
-		'scan',
-		'plugins',
-	];
+	initialDataViewsState.fields = [ 'site', 'boost', 'backup', 'monitor', 'scan', 'plugins' ];
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
