@@ -1,7 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import urlMapping from '../route-to-query-mapping.json';
-import tailoredArticlesMapping from '../tailored-post-ids-mapping.json';
-import type { TailoredArticles } from '../types';
+import tailoredSectionMapping from '../tailored-secion-mapping.json';
 
 interface CoreBlockEditor {
 	getSelectedBlock: () => object;
@@ -12,10 +11,9 @@ interface BlockStore {
 	getBlockType: ( arg0: string ) => { title: string; name: string };
 }
 
-// Returns the search query and tailored articles based on the current route.
+// Returns the search query based on the current route.
 // The search query will be determined based on the selected Gutenberg block, an exact match with URL mapping, or a fuzzy match (in this specific order).
-// The tailored Articles will be determined based on an exact URL match within the tailored article mapping.
-export function useContextBasedSearchMapping( currentRoute: string | undefined, locale: string ) {
+export function useContextBasedSearchMapping( currentRoute: string | undefined ) {
 	// When using a block in the editor, it will be used to search for help articles based on the block name.
 	const blockSearchQuery = useSelect( ( select: ( store: string ) => CoreBlockEditor ) => {
 		const selectedBlock = select( 'core/block-editor' )?.getSelectedBlock();
@@ -31,26 +29,21 @@ export function useContextBasedSearchMapping( currentRoute: string | undefined, 
 	// Fuzzier matches
 	const urlMatchKey = Object.keys( urlMapping ).find( ( key ) => currentRoute?.startsWith( key ) );
 	const urlSearchQuery = urlMatchKey ? urlMapping[ urlMatchKey as keyof typeof urlMapping ] : '';
-	const tailoredArticlesMatchKey = Object.keys( tailoredArticlesMapping ).find(
+
+	const tailoredSectionKey = Object.keys( tailoredSectionMapping ).find(
 		( key ) => currentRoute?.startsWith( key )
 	);
-
-	const tailoredArticles = tailoredArticlesMatchKey
-		? (
-				tailoredArticlesMapping[
-					tailoredArticlesMatchKey as keyof typeof tailoredArticlesMapping
-				] as TailoredArticles[] | undefined
-		   )?.find( ( tailoredArticle: TailoredArticles ) => tailoredArticle.locale === locale )
-		: undefined;
+	const tailoredSection =
+		tailoredSectionMapping[ tailoredSectionKey as keyof typeof tailoredSectionMapping ];
 
 	// Find exact URL matches
 	const exactMatch = urlMapping[ currentRoute as keyof typeof urlMapping ];
 	if ( exactMatch ) {
-		return { contextSearch: exactMatch, tailoredArticles };
+		return { contextSearch: exactMatch, tailoredSection };
 	}
 
 	return {
 		contextSearch: blockSearchQuery || urlSearchQuery || '',
-		tailoredArticles,
+		tailoredSection,
 	};
 }
