@@ -101,7 +101,7 @@ export default function CreditCardNumberField( {
 						}
 					} }
 				/>
-				<PaymentLogo brand={ brand } />
+				{ showNetworkSelector ? <PaymentLogo brand="cb" /> : <PaymentLogo brand={ brand } /> }
 
 				{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 			</StripeFieldWrapper>
