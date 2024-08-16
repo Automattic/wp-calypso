@@ -9,7 +9,12 @@
 		justify-content: center;
 	}
 
+	&.no-spacing {
+		margin: 0;
+	}
+
 	.importer-action-buttons__action-button {
+		display: flex;
 		margin-right: 0.75em;
 	}
 }

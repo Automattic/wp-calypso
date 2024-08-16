@@ -30,12 +30,12 @@ import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { sortPlans } from '../../lib/sort-plan-properties';
-import PlanFeatures2023GridActions from '../actions';
-import PlanFeatures2023GridHeaderPrice from '../header-price';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
+import ActionButton from '../shared/action-button';
 import BillingTimeframe from '../shared/billing-timeframe';
+import HeaderPrice from '../shared/header-price';
 import { PlanStorage } from '../shared/storage';
 import { StickyContainer } from '../sticky-container';
 import type {
@@ -431,7 +431,7 @@ const ComparisonGridHeaderCell = ( {
 					</select>
 				) }
 			</PlanSelector>
-			<PlanFeatures2023GridHeaderPrice
+			<HeaderPrice
 				planSlug={ planSlug }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				visibleGridPlans={ visibleGridPlans }
@@ -439,7 +439,7 @@ const ComparisonGridHeaderCell = ( {
 			<div className="plan-comparison-grid__billing-info">
 				<BillingTimeframe planSlug={ planSlug } showRefundPeriod={ showRefundPeriod } />
 			</div>
-			<PlanFeatures2023GridActions
+			<ActionButton
 				currentSitePlanSlug={ currentSitePlanSlug }
 				availableForPurchase={ gridPlan.availableForPurchase }
 				isInSignup={ isInSignup }

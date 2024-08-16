@@ -40,7 +40,6 @@ class EmailedLoginLinkExpired extends Component {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-		isGravPoweredClient: PropTypes.bool.isRequired,
 		redirectTo: PropTypes.string,
 		transition: PropTypes.bool,
 		token: PropTypes.string,
@@ -69,12 +68,6 @@ class EmailedLoginLinkExpired extends Component {
 
 	componentDidMount() {
 		this.props.recordPageView( '/log-in/link/use', 'Login > Link > Expired' );
-
-		if ( this.props.isGravPoweredClient ) {
-			document
-				.querySelector( '.is-grav-powered-login-page' )
-				?.classList.remove( 'is-grav-powered-login-page' );
-		}
 
 		// Set initial text
 		if ( this.state.isTransitingToWPComAccount ) {

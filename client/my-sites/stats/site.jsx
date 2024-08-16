@@ -65,7 +65,6 @@ import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
-import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsNotices from './stats-notices';
@@ -480,24 +479,13 @@ class StatsSite extends Component {
 							/>
 						) }
 
-						{ ! isNewStateEnabled && (
-							<Countries
-								path="countries"
-								period={ this.props.period }
-								query={ query }
-								summary={ false }
-								className={ clsx( 'stats__flexible-grid-item--full' ) }
-							/>
-						) }
-						{ isNewStateEnabled && (
-							<StatsModuleCountries
-								moduleStrings={ moduleStrings.countries }
-								period={ this.props.period }
-								query={ query }
-								summaryUrl={ this.getStatHref( this.props.period, 'countryviews', slug ) }
-								className={ clsx( 'stats__flexible-grid-item--full' ) }
-							/>
-						) }
+						<StatsModuleCountries
+							moduleStrings={ moduleStrings.countries }
+							period={ this.props.period }
+							query={ query }
+							summaryUrl={ this.getStatHref( this.props.period, 'countryviews', slug ) }
+							className={ clsx( 'stats__flexible-grid-item--full' ) }
+						/>
 
 						{ /* If UTM if supported display the module or update Jetpack plugin card */ }
 						{ supportsUTMStats && ! isOldJetpack && (
@@ -816,7 +804,6 @@ class StatsSite extends Component {
 				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 				) }
-				{ /* Only load Jetpack Upsell Section for Odyssey Stats excluding Atomic */ }
 				{ ! shouldShowUpsells ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }

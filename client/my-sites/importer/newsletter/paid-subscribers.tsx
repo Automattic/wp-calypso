@@ -1,38 +1,55 @@
-import { Card, Button } from '@automattic/components';
-import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
-import { useSelector } from 'calypso/state';
-import { getIsConnectedForSiteId } from 'calypso/state/memberships/settings/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { hasQueryArg } from '@wordpress/url';
+import { useEffect } from 'react';
+import { useDispatch } from 'calypso/state';
+import { infoNotice, successNotice } from 'calypso/state/notices/actions';
 import ConnectStripe from './connect-stripe';
+import MapPlans from './map-plans';
 type Props = {
 	nextStepUrl: string;
+	skipNextStep: () => void;
 	fromSite: string;
+	engine: string;
+	cardData: any;
+	isFetchingContent: boolean;
 };
 
-export default function PaidSubscribers( { nextStepUrl, fromSite }: Props ) {
-	const site = useSelector( getSelectedSite );
+export default function PaidSubscribers( {
+	nextStepUrl,
+	fromSite,
+	engine,
+	skipNextStep,
+	cardData,
+	isFetchingContent,
+}: Props ) {
+	const dispatch = useDispatch();
+	const isCancelled = hasQueryArg( window.location.href, 'stripe_connect_cancelled' );
+	const isSuccess = hasQueryArg( window.location.href, 'stripe_connect_success' );
 
-	const hasConnectedAccount = useSelector( ( state ) =>
-		getIsConnectedForSiteId( state, site?.ID )
-	);
+	const hasConnectedAccount = cardData.is_connected_stripe;
 
-	if ( ! hasConnectedAccount ) {
-		return <ConnectStripe nextStepUrl={ nextStepUrl } fromSite={ fromSite } />;
-	}
+	useEffect( () => {
+		if ( isSuccess ) {
+			dispatch( successNotice( 'Stripe account connected successfully' ) );
+		} else if ( isCancelled ) {
+			dispatch( infoNotice( 'Stripe account connection cancelled' ) );
+		}
+	}, [ isSuccess, dispatch, isCancelled ] );
 
 	return (
-		<Card>
-			{ site?.ID && (
-				<QueryMembershipsSettings siteId={ site.ID } source="import-paid-subscribers" />
+		<>
+			{ ! hasConnectedAccount && (
+				<ConnectStripe
+					nextStepUrl={ nextStepUrl }
+					skipNextStep={ skipNextStep }
+					cardData={ cardData }
+					fromSite={ fromSite }
+					engine={ engine }
+					isFetchingContent={ isFetchingContent }
+				/>
 			) }
-			<h2>Paid newsletter offering</h2>
-			<p>
-				<strong>
-					Review the plans retieved from Stripe and create euqivalent plans in WordPress.com
-				</strong>{ ' ' }
-				to prevent disruption to your current paid subscribers.
-			</p>
-			<Button primary>Contieneue</Button> <Button href={ nextStepUrl }>Skip for now</Button>
-		</Card>
+			{ hasConnectedAccount && (
+				<MapPlans nextStepUrl={ nextStepUrl } cardData={ cardData } skipNextStep={ skipNextStep } />
+			) }
+		</>
 	);
 }

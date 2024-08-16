@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
@@ -263,11 +264,20 @@ const SiteSubscriptionDetails = ( {
 							{ translate( 'Subscription details' ) }
 						</h2>
 						<dl className="site-subscription-info__list">
-							<dt>{ translate( 'Date' ) }</dt>
+							<dt>{ translate( 'Since' ) }</dt>
 							<dd>
 								<TimeSince date={ dateSubscribed || new Date( 0 ).toISOString() } />
 							</dd>
 						</dl>
+						{ paymentPlans.length === 0 && (
+							<dl className="site-subscription-info__list">
+								<dt>{ translate( 'Status' ) }</dt>
+								<dd>
+									<Badge type="success">{ translate( 'Active' ) }</Badge>
+									{ translate( 'Free subscriber' ) }
+								</dd>
+							</dl>
+						) }
 						{ paymentPlans &&
 							paymentPlans.map( ( { is_gift, id, renewalPrice, renewalDate } ) => {
 								if ( is_gift ) {
@@ -309,7 +319,7 @@ const SiteSubscriptionDetails = ( {
 							onClick={ onClickCancelSubscriptionButton }
 							disabled={ unsubscribing || areAllPaymentsGifts }
 						>
-							{ translate( 'Cancel subscription' ) }
+							{ translate( 'Unsubscribe' ) }
 						</Button>
 					</div>
 				</>

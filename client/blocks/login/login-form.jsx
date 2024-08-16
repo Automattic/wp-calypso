@@ -16,19 +16,16 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
-import MigrateNotice from 'calypso/blocks/login/migrate-notice';
 import FormsButton from 'calypso/components/forms/form-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { Experiment } from 'calypso/lib/explat';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
 	isReactLostPasswordScreenEnabled,
-	isRecognizedLogin,
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
@@ -680,9 +677,19 @@ export class LoginForm extends Component {
 	};
 
 	getMagicLoginPageLink() {
+		if (
+			! canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
+			return null;
+		}
+
 		const { query, usernameOrEmail } = this.props;
 
-		const loginLink = getLoginLinkPageUrl( {
+		return getLoginLinkPageUrl( {
 			locale: this.props.locale,
 			currentRoute: this.props.currentRoute,
 			signupUrl: this.props.currentQuery?.signup_url,
@@ -690,12 +697,33 @@ export class LoginForm extends Component {
 			emailAddress: usernameOrEmail || query?.email_address || this.state.usernameOrEmail,
 			redirectTo: this.props.redirectTo,
 		} );
+	}
 
-		return loginLink;
+	getQrLoginLink() {
+		if (
+			! canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
+			return null;
+		}
+
+		return getLoginLinkPageUrl( {
+			locale: this.props.locale,
+			twoFactorAuthType: 'qr',
+			redirectTo: this.props.redirectTo,
+			signupUrl: this.props.currentQuery?.signup_url,
+		} );
 	}
 
 	renderMagicLoginLink() {
 		const magicLoginPageLinkWithEmail = this.getMagicLoginPageLink();
+
+		if ( ! magicLoginPageLinkWithEmail ) {
+			return null;
+		}
 
 		return this.props.translate(
 			'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
@@ -713,16 +741,7 @@ export class LoginForm extends Component {
 	}
 
 	renderPasswordValidationError() {
-		if (
-			canDoMagicLogin(
-				this.props.twoFactorAuthType,
-				this.props.oauth2Client,
-				this.props.isJetpackWooCommerceFlow
-			)
-		) {
-			return this.renderMagicLoginLink();
-		}
-		return this.props.requestError.message;
+		return this.renderMagicLoginLink() ?? this.props.requestError.message;
 	}
 
 	handleAcceptEmailSuggestion() {
@@ -758,7 +777,6 @@ export class LoginForm extends Component {
 			isSignupExistingAccount,
 			isSendingEmail,
 			isSocialFirst,
-			loginButtons,
 		} = this.props;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
@@ -904,42 +922,26 @@ export class LoginForm extends Component {
 						) }
 
 						{ requestError && requestError.field === 'usernameOrEmail' && (
-							<Fragment>
-								<FormInputValidation isError text={ requestError.message }>
-									{ 'unknown_user' === requestError.code &&
-										this.props.translate(
-											' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
-											{
-												components: {
-													newAccountLink: (
-														<a
-															href={ addQueryArgs(
-																{
-																	user_email: this.state.usernameOrEmail,
-																},
-																signupUrl
-															) }
-														/>
-													),
-												},
-											}
-										) }
-								</FormInputValidation>
-
-								{ 'unknown_user' === requestError.code && ! isRecognizedLogin() && (
-									<Experiment
-										name="calypso_login_failed_show_migrate_cta_202407_v2"
-										defaultExperience={ null }
-										loadingExperience={ null }
-										treatmentExperience={
-											<MigrateNotice
-												translate={ this.props.translate }
-												recordTracksEvent={ this.props.recordTracksEvent }
-											/>
+							<FormInputValidation isError text={ requestError.message }>
+								{ 'unknown_user' === requestError.code &&
+									this.props.translate(
+										' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
+										{
+											components: {
+												newAccountLink: (
+													<a
+														href={ addQueryArgs(
+															{
+																user_email: this.state.usernameOrEmail,
+															},
+															signupUrl
+														) }
+													/>
+												),
+											},
 										}
-									/>
-								) }
-							</Fragment>
+									) }
+							</FormInputValidation>
 						) }
 
 						{ ! requestError && this.state.emailSuggestionError && (
@@ -1075,10 +1077,11 @@ export class LoginForm extends Component {
 							shouldRenderToS={
 								this.props.isWoo && ! isPartnerSignup && ! this.props.isWooPasswordless
 							}
+							isWoo={ isWoo && isWooPasswordless }
 							isSocialFirst={ isSocialFirst }
-						>
-							{ loginButtons }
-						</SocialLoginForm>
+							magicLoginLink={ this.getMagicLoginPageLink() }
+							qrLoginLink={ this.getQrLoginLink() }
+						/>
 					</Fragment>
 				) }
 

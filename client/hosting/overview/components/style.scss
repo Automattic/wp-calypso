@@ -1,7 +1,9 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/variables";
 
 $card-padding: 24px;
+$blueberry-color: #3858e9;
 
 .hosting-overview {
 	margin: 0;
@@ -195,34 +197,88 @@ $card-padding: 24px;
 	margin-top: 8px;
 }
 
-.hosting-overview__plan-storage {
-	border-radius: 4px;
-	border: 1px solid var(--studio-gray-0);
-	background: var(--studio-gray-0);
-	display: flex;
-	flex-direction: column;
-	gap: var(--grid-unit-30, 24px);
-	padding: var(--grid-unit-30, 24px);
+.hosting-overview__site-metrics {
 	color: var(--studio-gray-80, #2c3338);
 	font-family: "SF Pro Text", $sans;
 	font-size: $font-body-extra-small;
 	line-height: 16px;
 	margin-top: 30px;
+
+	.plan-storage__bar .progress-bar__progress {
+		background-color: $blueberry-color;
+	}
+
+	.plan-storage__bar.is-alert .progress-bar__progress {
+		background-color: var(--studio-red-30);
+	}
+}
+
+.hosting-overview__site-metrics-footer {
+	display: flex;
+	justify-content: space-between;
+	gap: $grid-unit-10;
+	margin-top: 8px;
+}
+
+@media (max-width: $break-mobile) {
+	.hosting-overview__site-metrics-footer {
+		flex-direction: column;
+	}
+}
+
+.hosting-overview__plan-storage,
+.hosting-overview__plan-bandwidth,
+.hosting-overview__plan-site-visits {
+	display: flex;
+	flex-direction: column;
+	border-radius: 4px;
+	border: 1px solid var(--studio-gray-0);
+	background: var(--studio-gray-0);
+	padding: $grid-unit-20;
+}
+
+.hosting-overview__plan-storage {
+	gap: $grid-unit-15;
+}
+
+.hosting-overview__plan-bandwidth,
+.hosting-overview__plan-site-visits {
+	flex: 1;
+	gap: $grid-unit-10;
 }
 
 .hosting-overview__plan-storage-title-wrapper,
-.hosting-overview__plan-storage-title {
+.hosting-overview__plan-bandwidth-title-wrapper,
+.hosting-overview__plan-site-visits-title-wrapper {
 	display: flex;
-	align-items: center;
+	justify-content: space-between;
+	gap: $grid-unit-10;
 }
 
-.hosting-overview__plan-storage-title {
-	flex: 1;
+.hosting-overview__plan-storage-title,
+.hosting-overview__plan-bandwidth-title,
+.hosting-overview__plan-site-visits-title {
 	text-transform: uppercase;
 }
 
 .hosting-overview__plan-storage-footer {
-	text-align: right;
+	text-align: left;
+}
+
+.hosting-overview__link-button {
+	color: var(--color-link);
+}
+
+.hosting-overview__plan-storage-value,
+.hosting-overview__plan-bandwidth-content,
+.hosting-overview__plan-site-visits-content {
+	font-weight: 700;
+}
+
+.hosting-overview__plan-bandwidth-placeholder,
+.hosting-overview__plan-site-visits-placeholder {
+	height: 1em;
+	max-width: calc(100% - $grid-unit-30);
 }
 
 @media (max-width: $break-xlarge) {
@@ -239,10 +295,6 @@ $card-padding: 24px;
 	.hosting-overview__plan-storage {
 		gap: 16px;
 		margin-top: 16px;
-	}
-
-	.hosting-overview__plan-storage-footer {
-		text-align: left;
 	}
 }
 
@@ -288,7 +340,7 @@ button.hosting-overview__action-button {
 
 .hosting-overview__action {
 	border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
-	padding: var(--grid-unit-15, 12px) 0;
+	padding: $grid-unit-15 0;
 
 	svg {
 		color: var(--studio-gray-30);

@@ -1,7 +1,12 @@
+import { LoadingPlaceholder } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
 import wpcom from 'calypso/lib/wp';
 import './style.scss';
+import { useSelector } from 'calypso/state';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 interface PlanSiteVisitsProps {
 	siteId: number;
@@ -13,6 +18,10 @@ interface VisitResponse {
 
 export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 	const [ visitsNumber, setVisitsNumber ] = useState< number | null >( null );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const canViewStat = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
+
+	const translate = useTranslate();
 
 	useEffect( () => {
 		// It's possible to go with `unit: month` and `quantity: 1` to get the last month's data
@@ -43,32 +52,45 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 			} );
 	}, [ siteId ] );
 
-	if ( ! visitsNumber ) {
+	if ( ! canViewStat ) {
 		return;
 	}
 
+	const getSiteVisitsContent = () => {
+		if ( visitsNumber === 0 ) {
+			return translate( 'No visits so far this month', {
+				comment: 'A notice that the site has not yet received any visits during the current month',
+			} );
+		}
+
+		if ( ! visitsNumber ) {
+			return <LoadingPlaceholder className="hosting-overview__plan-site-visits-placeholder" />;
+		}
+
+		return translate( '%(visitCount)s this month', {
+			args: { visitCount: visitsNumber },
+			comment: 'A description of the number of visits the site has received in the current month',
+		} );
+	};
+
 	return (
-		<div>
-			<div
-				style={ {
-					display: 'flex',
-					justifyContent: 'space-between',
-					padding: '20px 0',
-				} }
-			>
-				<div>Unlimited Site visits</div>
-				<div
-					title={
-						'From ' +
-						moment().startOf( 'month' ).format( 'DD/MM/YYYY' ) +
-						' to ' +
-						moment().format( 'DD/MM/YYYY' )
-					}
-				>
-					{ visitsNumber } views this month
+		<div className="hosting-overview__plan-site-visits">
+			<div className="hosting-overview__plan-site-visits-title-wrapper">
+				<div className="hosting-overview__plan-site-visits-title">
+					{ translate( 'Visits', {
+						comment: 'The title of the site visits section of site stats',
+					} ) }
+				</div>
+				<div className="hosting-overview__site-metrics-unlimited">
+					{ translate( 'Unlimited', { comment: 'An indicator that bandwidth is unlimited' } ) }
 				</div>
 			</div>
-			Go to Stats page
+			<div className="hosting-overview__plan-site-visits-content">{ getSiteVisitsContent() }</div>
+			<a href={ `/stats/month/${ siteSlug }` }>
+				{ translate( 'Visit stats', {
+					comment: 'A link taking the user to more detailed site statistics',
+				} ) }
+			</a>
 		</div>
 	);
 }

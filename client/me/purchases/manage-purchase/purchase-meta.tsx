@@ -7,6 +7,7 @@ import {
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from '@automattic/urls';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -419,6 +420,12 @@ function PurchaseClipboardCard( {
 					</>
 				) }
 			</div>
+			<ExternalLink
+				className="manage-purchase__license-clipboard-link"
+				href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
+			>
+				{ translate( 'How to activate' ) }
+			</ExternalLink>
 		</Card>
 	);
 }

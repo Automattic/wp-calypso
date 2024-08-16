@@ -90,10 +90,6 @@
 		button.components-button {
 			@include hover-color;
 
-			svg {
-				fill: none;
-			}
-
 			padding: 0 15px;
 
 			justify-content: flex-start;

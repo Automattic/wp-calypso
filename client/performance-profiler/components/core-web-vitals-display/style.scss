@@ -1,0 +1,83 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
+
+$blueberry-color: #3858e9;
+
+.core-web-vitals-display {
+	display: flex;
+	flex-direction: column;
+}
+
+.core-web-vitals-display__ranges {
+	display: flex;
+	flex-direction: row;
+	justify-content: start;
+	margin-bottom: 24px;
+	column-gap: 24px;
+
+	.range {
+		display: flex;
+		flex-direction: row;
+		column-gap: 6px;
+		font-family: $font-sf-pro-display;
+
+		& > svg {
+			padding-top: 4px;
+		}
+
+		.range-heading {
+			font-size: $font-body-small;
+			font-weight: 500;
+			line-height: 20px;
+		}
+
+		.range-subheading {
+			font-size: $font-body-extra-small;
+			line-height: 20px;
+		}
+	}
+}
+
+
+.core-web-vitals-display__details {
+	border: 1.5px solid var(--studio-gray-5);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 0 0 6px 6px;
+	border-top: none;
+	padding: 24px;
+	display: flex;
+	flex-direction: row;
+	column-gap: 32px;
+	min-height: 360px;
+
+	& > div {
+		flex: 50%;
+	}
+
+	& > p {
+		min-height: 80px;
+	}
+}
+
+.core-web-vitals-display__description-subheading {
+	font-family: $font-sf-pro-display;
+	color: var(--studio-black);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 16px;
+	line-height: 20px;
+	font-weight: 500;
+	margin-bottom: 8px;
+}
+
+.core-web-vitals-display__description-aka {
+	font-size: $font-body-extra-small;
+	color: var(--studio-gray-70);
+}
+
+.core-web-vitals-display__description p {
+	margin-top: 15px;
+}
+
+.core-web-vitals-display__description a {
+	color: $blueberry-color;
+}

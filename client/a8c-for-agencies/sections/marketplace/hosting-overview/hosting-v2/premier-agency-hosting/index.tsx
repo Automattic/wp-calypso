@@ -2,6 +2,7 @@ import { JetpackLogo } from '@automattic/components';
 import { layout, blockMeta, shuffle, help, keyboardReturn, tip } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.png';
+import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.png';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
@@ -27,7 +28,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 				heading={ translate( 'Jetpack Complete included' ) }
 				subheading={ translate( "Supercharge your clients' sites" ) }
 				description={ translate(
-					'Every Pressable hosting plan comes with a Jetpack Security License for free - a $239/year/site value.'
+					'Every site built on Pressable comes with Jetpack Complete for free - a $599/year/site value.'
 				) }
 				background={ BackgroundType1 }
 				items={ [
@@ -54,7 +55,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					translate( 'Plugin update manager' ),
 					translate( '24/7 expert support' ),
 					translate( 'Free staging sites with sync tools' ),
-					translate( 'SFTP/SHH, WP-CLI, Git tools' ),
+					translate( 'SFTP/SSH, WP-CLI, Git tools' ),
 					translate( 'Resource isolation across every site' ),
 				] }
 			/>
@@ -115,7 +116,12 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 						profile: {
 							avatar: ProfileAvatar1,
 							name: 'Ben Giordano',
-							title: 'Founder - Freshy',
+							title: translate( 'Founder, %(companyName)s', {
+								args: {
+									companyName: 'Freshy',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
 							site: 'freshysites.com',
 						},
 						testimonial:
@@ -124,7 +130,13 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					{
 						profile: {
 							name: 'Justin Barrett',
-							title: 'Director of Technology - Autoshop Solutions',
+							avatar: ProfileAvatar2,
+							title: translate( 'Director of Technology, %(companyName)s', {
+								args: {
+									companyName: 'Autoshop Solutions',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
 							site: 'autoshopsolutions.com',
 						},
 						testimonial:

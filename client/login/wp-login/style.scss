@@ -599,16 +599,10 @@ $image-height: 47px;
 	}
 }
 
+/* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights, scales/radii */
 .layout.is-section-login.is-grav-powered-client {
-	.login__form-gutenboarding-wordpress-logo {
-		display: none;
-	}
-}
-
-/* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights */
-.layout.is-section-login.is-grav-powered-login-page {
 	&.is-wp-job-manager {
-		background-color: #e7e9ea;
+		background-color: #efefef;
 
 		.login a,
 		.login__form-change-username {
@@ -616,22 +610,7 @@ $image-height: 47px;
 		}
 
 		.login {
-			padding-top: 30px;
-			padding-bottom: 30px;
 			border-radius: 2px;
-		}
-
-		.wp-login__main {
-			max-width: 560px;
-		}
-
-		.login__form-header {
-			font-size: 24px;
-			margin-top: 32px;
-		}
-
-		.login__form-terms {
-			text-align: center;
 		}
 
 		.form-button.is-primary {
@@ -647,6 +626,10 @@ $image-height: 47px;
 		}
 	}
 
+	.login__form-gutenboarding-wordpress-logo {
+		display: none;
+	}
+
 	.layout__content {
 		padding: 0;
 	}
@@ -656,23 +639,24 @@ $image-height: 47px;
 	}
 
 	.login,
-	.form-button.is-primary,
-	.social-buttons__service-name,
-	.login__form-change-username,
-	.login__form-userdata input:last-of-type.form-text-input {
+	.form-text-input {
 		font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	}
 
 	.login {
 		background-color: #fff;
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px;
 		padding: 20px;
-		color: #00101c;
+		color: #101517;
+		font-size: 14px;
 		line-height: 1.5;
 
 		a:not(.notice.is-error a) {
 			color: #1d4fc4;
+		}
+
+		button {
+			font-family: inherit;
 		}
 	}
 
@@ -686,21 +670,43 @@ $image-height: 47px;
 		font-weight: 900;
 		line-height: 1.2;
 		text-align: left;
-		margin: 30px 0 24px;
+		margin: 24px 0;
 	}
 
-	.login__form {
-		background-color: inherit;
-		padding: 0;
+	.login__header-subtitle,
+	.verification-code-form__help-text,
+	.two-factor-authentication__info {
+		margin-bottom: 24px;
+	}
+
+	.verification-code-form__help-text {
+		color: inherit;
+	}
+
+	.card {
+		background: transparent;
 	}
 
 	form {
 		max-width: 100%;
+
+		> .card {
+			padding: 0;
+			border: 0;
+		}
+	}
+
+	.form-fieldset {
+		margin-bottom: 0;
 	}
 
 	label.form-label {
 		color: inherit;
 		margin-bottom: 10px;
+	}
+
+	.two-factor-authentication__verification-code-form .form-label {
+		display: none;
 	}
 
 	.login__form-change-username {
@@ -711,10 +717,11 @@ $image-height: 47px;
 		margin-top: 15px;
 	}
 
+	.form-text-input,
 	.login__form-userdata input:last-of-type.form-text-input {
 		padding: 14px 16px;
 		border-color: #9ea4a8;
-		line-height: 1.5;
+		font-size: 16px;
 		margin: 0;
 		border-radius: 2px;
 		height: auto;
@@ -731,30 +738,35 @@ $image-height: 47px;
 	}
 
 	.login__form-terms {
-		font-size: 13px;
-		text-align: center;
 		color: rgba(#00101c, 0.6);
-		margin: 32px 0 20px;
+		margin: 24px 0 0;
 
 		a {
 			text-decoration: none;
 		}
 	}
 
-	.form-button.is-primary {
+	button.form-button.is-primary,
+	.two-factor-authentication__actions .button {
+		min-height: 56px;
 		margin: 0;
 		padding: 10px 16px;
-		border: 0;
-		font-size: 1rem;
+		font-size: 16px;
 		font-weight: 600;
+
+		&:disabled {
+			opacity: 0.3;
+		}
+	}
+
+	button.form-button.is-primary {
+		margin-top: 16px;
+		margin-bottom: 0;
+		border: 0;
 
 		&,
 		&:disabled {
 			background-color: #1d4fc4;
-		}
-
-		&:disabled {
-			opacity: 0.3;
 		}
 
 		&:hover:not(&:disabled),
@@ -763,55 +775,116 @@ $image-height: 47px;
 		}
 	}
 
-	div.auth-form__separator .auth-form__separator-text {
+	.two-factor-authentication__actions {
+		display: flex;
+		flex-direction: column;
+		margin-top: 24px;
+		padding: 0;
+		gap: 16px;
+		background: transparent;
+
+		&::after {
+			display: none;
+		}
+
+		.button {
+			color: #1d4fc4;
+			border: 1px solid #1d4fc44d;
+			box-shadow: none;
+
+			&:hover:not(&:disabled),
+			&:focus {
+				color: darken(#1d4fc4, 13%);
+				border-color: darken(#1d4fc44d, 13%);
+			}
+		}
+	}
+
+	div.two-factor-authentication__small-print {
+		font-size: inherit;
+		margin-top: 24px;
+		padding: 0;
+	}
+
+	.auth-form__separator {
+		margin-top: 24px;
+	}
+
+	.auth-form__separator-text {
 		font-size: 15px;
 		text-transform: lowercase;
 		color: inherit;
 	}
 
-	.auth-form__social,
-	.social-buttons__button.button {
-		background-color: inherit;
+	.auth-form__social {
+		background: transparent;
+		margin: 24px 0 0;
+		padding: 0;
+		width: fit-content;
 	}
 
-	.auth-form__separator,
-	.grav-powered-login__divider {
-		margin-top: 30px;
+	.auth-form__social-buttons-container {
+		padding: 2px 0;
+	}
+
+	.social-buttons__button {
+		display: flex;
+		align-items: center;
+		padding: 0;
+
+		&:focus {
+			outline: dotted;
+		}
+
+		> svg {
+			border: 1px solid var(--studio-gray-10);
+			border-radius: 24px;
+			margin: 0;
+			padding: 12px;
+		}
 	}
 
 	.grav-powered-login__divider {
 		background-color: #e7e9ea;
 		width: 80px;
-		margin-left: 0;
-		margin-bottom: 20px;
+		margin: 24px 0;
 	}
 
-	.grav-powered-login__footer {
+	.grav-powered-login__footer,
+	.wp-login__links.has-2fa-links {
 		display: flex;
 		flex-direction: column;
-		font-size: 15px;
+		font-size: 16px;
 		line-height: 1;
-		gap: 16px;
+		gap: 24px;
+
+		a,
+		button {
+			font-size: inherit;
+			width: fit-content;
+		}
+
+		button:focus {
+			outline: dotted;
+		}
+	}
+
+	.wp-login__links.has-2fa-links {
+		align-items: center;
+		margin-top: 24px;
+
+		a,
+		button {
+			color: #1d4fc4;
+			font-weight: normal;
+			text-decoration: underline;
+			padding: 0;
+			border: 0;
+		}
 	}
 
 	@include break-small {
-		background-color: #e7e9ea;
-
-		&.is-wp-job-manager {
-			.login {
-				padding-top: 40px;
-				padding-bottom: 40px;
-			}
-
-			.login__form-header {
-				font-size: 40px;
-				margin-top: 48px;
-			}
-
-			.auth-form__social {
-				margin-left: auto;
-			}
-		}
+		background-color: #efefef;
 
 		.login {
 			padding: 40px 56px;
@@ -821,23 +894,13 @@ $image-height: 47px;
 			font-size: 40px;
 		}
 
-		.login__form-terms {
-			margin-top: 44px;
-		}
-
-		.auth-form__social {
-			margin-left: 0;
-			width: fit-content;
-		}
-
-		.auth-form__separator,
-		.grav-powered-login__divider {
-			margin-top: 48px;
+		.grav-powered-login__footer,
+		.wp-login__links.has-2fa-links {
+			gap: 16px;
 		}
 	}
 }
-
-/* stylelint-enable declaration-property-unit-allowed-list, scales/font-weights */
+/* stylelint-enable declaration-property-unit-allowed-list, scales/font-weights, scales/radii */
 
 .wp-login__p2-logo {
 	position: absolute;

@@ -142,6 +142,8 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		  } )
 		: null;
 
+	const sslStatus = currentDomainData?.sslStatus ?? null;
+
 	return {
 		ref,
 		site,
@@ -162,5 +164,6 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		pendingUpdates,
 		currentDomainData,
 		showBulkActions,
+		sslStatus,
 	};
 };

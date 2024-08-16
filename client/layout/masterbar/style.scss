@@ -49,6 +49,11 @@ body.is-mobile-app-view {
 		// Use generic colors so that they override whatever theme colors the user has picked.
 		background: var(--studio-orange);
 		border-bottom: 1px solid var(--studio-orange-60);
+
+		.masterbar__item.has-global-border::before,
+		.masterbar__item.has-global-border::after {
+			background: var(--studio-orange-70);
+		}
 	}
 
 	&.masterbar__loggedout {
@@ -76,6 +81,23 @@ body.is-mobile-app-view {
 		}
 		.masterbar__item:last-child:hover .masterbar__item-content {
 			color: var(--color-sidebar-text);
+		}
+		@media only screen and (max-width: 781px) {
+			padding-top: 0;
+
+			.masterbar__login-links {
+				.masterbar__item {
+					height: 30px;
+					line-height: 30px;
+					width: unset !important;
+					padding: 0 8px;
+					margin: 8px 8px 0 0;
+
+					.masterbar__item-content {
+						display: block !important;
+					}
+				}
+			}
 		}
 	}
 
@@ -553,6 +575,18 @@ body.is-mobile-app-view {
 
 	.is-support-session &.is-active {
 		background: var(--studio-orange-70);
+		--color-masterbar-icon: var(--studio-gray-5) !important;
+		--color-masterbar-text: var(--studio-gray-5) !important;
+		--color-masterbar-highlight: var(--studio-gray-5) !important;
+	}
+
+	.is-support-session &:hover {
+		background: var(--studio-orange-50);
+	}
+
+	.is-support-session &.is-active:hover {
+		background: var(--studio-orange-70);
+		color: var(--studio-gray-5);
 	}
 
 	&.masterbar__item-notifications {
@@ -561,9 +595,11 @@ body.is-mobile-app-view {
 
 	@media only screen and (max-width: 781px) {
 		font-size: $masterbar-mobile-font-size;
-		width: 52px;
 		padding: 0;
 
+		&:not(.masterbar__item--always-show-content) {
+			width: 52px;
+		}
 		// Show gravatar content
 		&:not(.masterbar__item-howdy) .masterbar__item-content {
 			display: none;
@@ -571,6 +607,10 @@ body.is-mobile-app-view {
 
 		.masterbar__item-howdy-howdy {
 			display: none;
+		}
+
+		&.masterbar__item--always-show-content .masterbar__item-content {
+			display: block;
 		}
 
 		svg,
