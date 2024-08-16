@@ -9,8 +9,8 @@ import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-n
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import ImporterLogo from '../importer-logo';
 import Content from './content';
+import { LogoChain } from './logo-chain';
 import PaidSubscribers from './paid-subscribers';
 import SelectNewsletterForm from './select-newsletter-form';
 import Subscribers from './subscribers';
@@ -18,28 +18,14 @@ import Summary from './summary';
 
 import './importer.scss';
 
-type Logo = {
-	name: string;
-	color: string;
-};
-type LogoChainProps = {
-	logos: Logo[];
-};
-function LogoChain( { logos }: LogoChainProps ) {
-	return (
-		<div className="logo-chain">
-			{ logos.map( ( logo ) => (
-				<div key={ logo.name } className="logo-chain__logo" style={ { background: logo.color } }>
-					<ImporterLogo key={ logo.name } icon={ logo.name } />
-				</div>
-			) ) }
-		</div>
-	);
-}
-
 const steps = [ Content, Subscribers, PaidSubscribers, Summary ];
 
 const stepSlugs = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
+
+const logoChainLogos = [
+	{ name: 'substack', color: 'var(--color-substack)' },
+	{ name: 'wordpress', color: '#3858E9' },
+];
 
 type NewsletterImporterProps = {
 	siteSlug: string;
@@ -119,12 +105,8 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 
 	return (
 		<div className="newsletter-importer">
-			<LogoChain
-				logos={ [
-					{ name: 'substack', color: 'var(--color-substack)' },
-					{ name: 'wordpress', color: '#3858E9' },
-				] }
-			/>
+			<LogoChain logos={ logoChainLogos } />
+
 			<FormattedHeader headerText={ getTitle( urlData ) } />
 			{ ( ! validFromSite || isResetPaidNewsletterPending ) && (
 				<SelectNewsletterForm
@@ -134,9 +116,11 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 					validFromSite={ validFromSite }
 				/>
 			) }
+
 			{ validFromSite && ! isResetPaidNewsletterPending && (
 				<StepProgress steps={ stepsProgress } currentStep={ stepIndex } />
 			) }
+
 			{ selectedSite && validFromSite && ! isResetPaidNewsletterPending && (
 				<Step
 					siteSlug={ siteSlug }
