@@ -5,6 +5,7 @@ import { InsightDetailedContent } from './insight-detailed-content';
 
 interface InsightContentProps {
 	data: PerformanceMetricsItemQueryResponse;
+	secondaryArea?: React.ReactNode;
 	isLoading?: boolean;
 }
 
@@ -19,15 +20,20 @@ export const InsightContent: React.FC< InsightContentProps > = ( props ) => {
 				translate( 'Looking for the best solution…' )
 			) : (
 				<>
-					<Markdown
-						components={ {
-							a( props ) {
-								return <a target="_blank" { ...props } />;
-							},
-						} }
-					>
-						{ description }
-					</Markdown>
+					<div className="description-area">
+						<div className="content">
+							<Markdown
+								components={ {
+									a( props ) {
+										return <a target="_blank" { ...props } />;
+									},
+								} }
+							>
+								{ description }
+							</Markdown>
+						</div>
+						{ props.secondaryArea }
+					</div>
 					{ data.details?.type && (
 						<div className="metrics-insight-detailed-content">
 							<InsightDetailedContent data={ data.details } />
