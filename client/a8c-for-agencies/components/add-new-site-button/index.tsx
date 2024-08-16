@@ -219,6 +219,7 @@ export default function AddNewSiteButton( {
 								} else {
 									toggleDevSiteConfigurationsModal?.();
 								}
+								setMenuVisible( false );
 							},
 						},
 						extraContent: hasAvailableDevSites ? (
