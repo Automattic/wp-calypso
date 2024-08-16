@@ -5,6 +5,7 @@ import { translate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { TabType } from './components/header';
 import { PerformanceProfilerDashboard } from './pages/dashboard';
 
 export function PerformanceProfilerDashboardContext( context: Context, next: () => void ): void {
@@ -15,12 +16,21 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 		return;
 	}
 
+	const url = context.query?.url?.startsWith( 'http' )
+		? context.query.url
+		: `https://${ context.query?.url ?? '' }`;
+
 	context.primary = (
 		<>
 			<Main fullWidthLayout>
 				<PerformanceProfilerDashboard
-					url={ context.query?.url ?? '' }
-					tab={ context.query?.tab ?? '' }
+					url={ url }
+					tab={
+						[ TabType.mobile, TabType.desktop ].indexOf( context.query?.tab ) !== -1
+							? context.query?.tab
+							: TabType.mobile
+					}
+					hash={ context.query?.hash ?? '' }
 				/>
 			</Main>
 

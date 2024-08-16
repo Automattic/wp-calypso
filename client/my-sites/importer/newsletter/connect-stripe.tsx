@@ -1,10 +1,7 @@
 import { Card } from '@automattic/components';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import StripeLogo from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
-import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ImporterActionButton from '../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../importer-action-buttons/container';
 
@@ -14,31 +11,39 @@ import ImporterActionButtonContainer from '../importer-action-buttons/container'
  * @param fromSite
  * @returns string
  */
-function updateConnectUrl( connectUrl: string, fromSite: string ): string {
+function updateConnectUrl( connectUrl: string, fromSite: string, engine: string ): string {
 	let stateQueryString = getQueryArg( connectUrl, 'state' ) as string | string[];
 	stateQueryString = Array.isArray( stateQueryString ) ? stateQueryString[ 0 ] : stateQueryString;
 
 	const decodedState = JSON.parse( atob( stateQueryString ) );
 	decodedState.from_site = fromSite;
-	decodedState.engine = 'substack'; // Currently we only support substack but in the future we want to pass this parameter down.
+	decodedState.engine = engine;
 
 	return addQueryArgs( connectUrl, { state: btoa( JSON.stringify( decodedState ) ) } );
 }
 
 type Props = {
 	nextStepUrl: string;
+	skipNextStep: () => void;
+	cardData: any;
 	fromSite: string;
+	engine: string;
+	isFetchingContent: boolean;
 };
 
-export default function ConnectStripe( { nextStepUrl, fromSite }: Props ) {
-	const site = useSelector( getSelectedSite );
-	let connectUrl: string = useSelector( ( state ) => getConnectUrlForSiteId( state, site?.ID ) );
-
-	try {
-		connectUrl = updateConnectUrl( connectUrl, fromSite );
-	} catch ( error ) {
-		// Do nothing
+export default function ConnectStripe( {
+	nextStepUrl,
+	skipNextStep,
+	cardData,
+	fromSite,
+	engine,
+	isFetchingContent,
+}: Props ) {
+	if ( isFetchingContent || cardData?.connect_url === undefined ) {
+		return null;
 	}
+
+	const connectUrl = updateConnectUrl( cardData?.connect_url ?? '', fromSite, engine );
 
 	return (
 		<Card>
@@ -61,6 +66,7 @@ export default function ConnectStripe( { nextStepUrl, fromSite }: Props ) {
 					href={ nextStepUrl }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_paid_importer_connect_stripe_skipped' );
+						skipNextStep();
 					} }
 				>
 					Skip for now

@@ -9,7 +9,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
-	isMigrationFlow,
+	isImportFocusedFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isAnyHostingFlow,
 } from '../';
@@ -63,7 +63,7 @@ const getBlogNameGenerationParams = ( {
 	if ( siteUrl ) {
 		const blog_name = siteUrl.replace( '.wordpress.com', '' );
 
-		if ( isMigrationFlow( flowToCheck ) ) {
+		if ( isImportFocusedFlow( flowToCheck ) ) {
 			return {
 				blog_name,
 				find_available_url: true,

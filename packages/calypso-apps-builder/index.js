@@ -166,10 +166,6 @@ function showTips( tasks ) {
 		return;
 	}
 
-	const tips = {
-		'build:newspack-blocks': 'You may need to run `composer install` from wp-calypso root.',
-	};
-
 	const numFailed = tasks.reduce( ( total, { code } ) => total + ( code ? 1 : 0 ), 0 );
 	if ( numFailed === tasks.length ) {
 		console.log(
@@ -177,13 +173,6 @@ function showTips( tasks ) {
 		);
 		return;
 	}
-
-	// If only individual tasks failed, print individual tips.
-	tasks.forEach( ( { code, name } ) => {
-		if ( code !== 0 && tips[ name ] ) {
-			console.log( tips[ name ] );
-		}
-	} );
 }
 
 function git( cmd ) {

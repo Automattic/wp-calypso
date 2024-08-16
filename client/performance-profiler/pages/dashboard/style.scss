@@ -1,11 +1,6 @@
 .is-group-performance-profiler .layout__content {
 	padding: 0;
-}
-
-.top-section {
-	color: #fff;
-	padding-top: 40px;
-	background: linear-gradient(180deg, var(--studio-gray-100) 25.44%, rgba(16, 21, 23, 0) 100%), url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjEiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuMjUiLz4KPC9zdmc+Cg==) repeat, var(--studio-gray-100);
+	background: #fff;
 }
 
 .l-block-wrapper {
@@ -13,6 +8,21 @@
 	max-width: 1056px;
 }
 
-.dashboard-content {
-	min-height: 600px;
+.performance-profiler-content {
+	.top-section {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+		column-gap: 35px;
+	}
+}
+
+.peformance-profiler-dashboard-container {
+	.loading-container {
+		display: none;
+
+		&.is-active.is-loading {
+			display: block;
+		}
+	}
 }

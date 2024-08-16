@@ -14,7 +14,7 @@ export default function DisconnectedSite() {
 					<img src={ privateSiteGraphic } alt="" />
 				</div>
 				<h3 className="setup-pages__title wp-brand-font width-fix">
-					{ translate( 'Welcome to Blaze for WooCommerce' ) }
+					{ translate( 'Welcome to Blaze Ads' ) }
 				</h3>
 				<p className="setup-pages__body">
 					{ translate( 'One-click advertising for your store and products.' ) }
@@ -45,7 +45,7 @@ export default function DisconnectedSite() {
 							<h4>{ translate( 'Connect your store' ) }</h4>
 							<p>
 								{ translate(
-									"You'll need to connect your WordPress.com account to integrate Blaze for WooCommerce with your store. Don’t have an account? Not to worry - we’ll help you create one!"
+									"You'll need to connect your WordPress.com account to integrate Blaze Ads with your store. Don’t have an account? Not to worry - we’ll help you create one!"
 								) }
 							</p>
 							<Button className="is-primary" href={ connectUrl } target="_self">

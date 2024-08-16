@@ -1,7 +1,7 @@
 import { Button, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteGeoAffinity from 'calypso/components/data/query-site-geo-affinity';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
@@ -76,8 +76,58 @@ const WebServerSettingsCard = ( {
 	const { recommendedValue, phpVersions } = usePhpVersions();
 	const dataCenterOptions = useDataCenterOptions();
 
+	const wpVersionRef = useRef( null );
+	const wpVersionDropdownRef = useRef( null );
+	const phpVersionRef = useRef( null );
+	const phpVersionDropdownRef = useRef( null );
+
 	const isLoading =
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
+
+	useEffect( () => {
+		function scrollTo( hash ) {
+			let targetLabel;
+			let targetDropdown;
+
+			if ( wpVersionRef.current && hash === '#wp' ) {
+				targetLabel = wpVersionRef.current;
+				targetDropdown = wpVersionDropdownRef.current;
+			} else if ( phpVersionRef.current && hash === '#php' ) {
+				targetLabel = phpVersionRef.current;
+				targetDropdown = phpVersionDropdownRef.current;
+			}
+
+			if ( targetLabel ) {
+				const animationKeyframes = [ { color: null }, { color: 'var(--theme-highlight-color)' } ];
+				const animationOptions = {
+					duration: 500,
+					direction: 'alternate',
+					easing: 'ease',
+					iterations: 6,
+				};
+
+				targetLabel.scrollIntoView( { behavior: 'smooth' } );
+				targetLabel.animate( animationKeyframes, animationOptions );
+				targetDropdown?.animate( animationKeyframes, animationOptions );
+			}
+		}
+
+		function onClick( event ) {
+			const href = window.location.href.replace( window.location.hash, '' );
+
+			if ( event.target instanceof HTMLAnchorElement && event.target.href.startsWith( href ) ) {
+				event.preventDefault();
+				scrollTo( event.target.hash );
+			}
+		}
+
+		document.addEventListener( 'click', onClick );
+		scrollTo( window.location.hash );
+
+		return () => {
+			document.removeEventListener( 'click', onClick );
+		};
+	}, [ isLoading ] );
 
 	const getWpVersions = () => {
 		return [
@@ -103,15 +153,14 @@ const WebServerSettingsCard = ( {
 
 		return (
 			<FormFieldset>
-				<FormLabel data-scroll-id="wp-version-select">
-					{ translate( 'WordPress version' ) }
-				</FormLabel>
+				<FormLabel ref={ wpVersionRef }>{ translate( 'WordPress version' ) }</FormLabel>
 				{ isWpcomStagingSite && (
 					<>
 						<FormSelect
 							disabled={ disabled || isUpdatingWpVersion }
 							className="web-server-settings-card__wp-version-select"
 							onChange={ ( event ) => setSelectedWpVersion( event.target.value ) }
+							inputRef={ wpVersionDropdownRef }
 							value={ selectedWpVersionValue }
 						>
 							{ getWpVersions().map( ( option ) => {
@@ -139,7 +188,10 @@ const WebServerSettingsCard = ( {
 					</>
 				) }
 				{ ! isWpcomStagingSite && (
-					<p className="web-server-settings-card__wp-version-description">
+					<p
+						className="web-server-settings-card__wp-version-description"
+						ref={ wpVersionDropdownRef }
+					>
 						{ translate(
 							'Every WordPress.com site runs the latest WordPress version. ' +
 								'For testing purposes, you can switch to the beta version of the next WordPress release on {{a}}your staging site{{/a}}.',
@@ -204,11 +256,12 @@ const WebServerSettingsCard = ( {
 			selectedPhpVersion || phpVersion || ( disabled && recommendedValue );
 		return (
 			<FormFieldset>
-				<FormLabel data-scroll-id="php-version-select">{ translate( 'PHP version' ) }</FormLabel>
+				<FormLabel ref={ phpVersionRef }>{ translate( 'PHP version' ) }</FormLabel>
 				<FormSelect
 					disabled={ disabled || isUpdatingPhpVersion }
 					className="web-server-settings-card__php-version-select"
 					onChange={ changePhpVersion }
+					inputRef={ phpVersionDropdownRef }
 					value={ selectedPhpVersionValue }
 				>
 					{ phpVersions.map( ( option ) => {
