@@ -102,6 +102,7 @@ export type ResponseDomain = {
 	isIcannVerificationSuspended: boolean | null;
 	isLocked: boolean;
 	isMappedToAtomicSite: boolean;
+	isMoveToNewSitePending: boolean;
 	isPendingIcannVerification: boolean;
 	isPendingRenewal: boolean;
 	isPendingWhoisUpdate: boolean;
@@ -121,12 +122,16 @@ export type ResponseDomain = {
 	owner: string;
 	partnerDomain: boolean;
 	pendingRegistration: boolean;
+	pendingRegistrationAtRegistry: boolean;
+	pendingRegistrationAtRegistryUrl: string;
 	pendingRegistrationTime: string;
 	pendingTransfer?: boolean;
 	pointsToWpcom: boolean;
 	privacyAvailable: boolean;
 	privateDomain: boolean;
 	redeemableUntil: string;
+	registeredViaTrustee: boolean;
+	registeredViaTrusteeUrl: string;
 	registrar: string;
 	registrationDate: string;
 	registryExpiryDate: string;

@@ -7,6 +7,7 @@ import { type as domainTypes, transferStatus, useMyDomainInputMode } from '../ut
 import { isFreeUrlDomainName } from '../utils/is-free-url-domain-name';
 import { isDomainInGracePeriod } from '../utils/is-in-grace-period';
 import { isRecentlyRegistered } from '../utils/is-recently-registered';
+import { isDomainRenewable } from '../utils/is-renewable';
 import { isDomainUpdateable } from '../utils/is-updateable';
 import {
 	domainMagementDNS,
@@ -72,6 +73,7 @@ export const DomainsTableRowActions = ( {
 		domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer;
 	const canChangeSiteAddress =
 		! isAllSitesView && isSimpleSite && isFreeUrlDomainName( domain.name );
+	const canRenewDomain = isDomainRenewable( domain );
 	const getActions = ( onClose?: () => void ) => {
 		return [
 			canViewDetails && (
@@ -136,6 +138,14 @@ export const DomainsTableRowActions = ( {
 					} }
 				>
 					{ __( 'Change site address' ) }
+				</MenuItemLink>
+			),
+			canRenewDomain && (
+				<MenuItemLink
+					key="renewDomain"
+					href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
+				>
+					{ __( 'Renew domain' ) }
 				</MenuItemLink>
 			),
 		];
