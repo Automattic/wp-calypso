@@ -659,13 +659,18 @@
 		.dataviews-wrapper {
 			width: 100%;
 
-			> * {
-				flex-grow: 1;
-			}
-
 			.dataviews-view-list {
 				flex: 1;
 				max-height: none;
+
+				// Ideally instead of reusing the site name full field
+				// We should be setting a media field and a primary field.
+				.dataviews-view-list__media-wrapper {
+					display: none;
+				}
+				.dataviews-view-list__primary-field {
+					display: none;
+				}
 			}
 
 			.components-base-control {
