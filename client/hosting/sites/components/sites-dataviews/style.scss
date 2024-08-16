@@ -41,8 +41,8 @@
 	white-space: nowrap;
 }
 
-.sites-dataviews__site-url,
-.sites-dataviews__site-wp-admin-url {
+.dataviews-view-table .sites-dataviews__site-url,
+.dataviews-view-table .sites-dataviews__site-wp-admin-url {
 	color: var(--color-neutral-70);
 	font-size: rem(14px);
 	font-weight: 400;
