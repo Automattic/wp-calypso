@@ -80,6 +80,11 @@
 		.is-selected {
 			background-color: var(--color-neutral-0);
 		}
+
+		// Needs to be moved upstream to the gutenberg repository.
+		.dataviews-view-list__item {
+			box-sizing: border-box;
+		}
 	}
 
 	.components-checkbox-control__input[type="checkbox"]:focus {

@@ -206,7 +206,7 @@
 	}
 
 	.sites-overview__content {
-		margin-top: 11px;
+		margin-top: 0;
 	}
 
 	@media (max-width: $break-wide) {
@@ -419,7 +419,6 @@
 			}
 
 			li {
-				border-bottom: 1px solid #f1f1f1 !important;
 				cursor: pointer;
 			}
 
