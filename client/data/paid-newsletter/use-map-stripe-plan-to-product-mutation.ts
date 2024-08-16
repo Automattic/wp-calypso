@@ -12,7 +12,7 @@ interface MutationVariables {
 	engine: string;
 	currentStep: string;
 	stripePlan: string;
-	productId: number;
+	productId: string;
 }
 
 export const useMapStripePlanToProductMutation = (

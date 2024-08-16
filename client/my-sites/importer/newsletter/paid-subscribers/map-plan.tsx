@@ -2,7 +2,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import { DropdownMenu, MenuGroup, MenuItem, MenuItemsChoice, Button } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { chevronDown, Icon, arrowRight } from '@wordpress/icons';
-import { useState } from 'react';
+import { useState, KeyboardEvent } from 'react';
 import { useMapStripePlanToProductMutation } from 'calypso/data/paid-newsletter/use-map-stripe-plan-to-product-mutation';
 
 import './map-plan.scss';
@@ -35,15 +35,11 @@ type MapPlanProps = {
 	currentStep: string;
 };
 
-function displayProduct( productId: string, products: Array< Product > ) {
-	if ( ! productId ) {
+function displayProduct( product ) {
+	if ( ! product ) {
 		return 'Select a Newsletter Tier';
 	}
 
-	const product = products.find( ( product: Product ) => product.id.toString() === productId );
-	if ( ! product ) {
-		return '';
-	}
 	return (
 		<div>
 			<strong>{ product.title || '' }</strong>
@@ -78,19 +74,22 @@ export default function MapPlan( {
 		active_subscriptions = ` • ${ plan.active_subscriptions } active subscribers`;
 	}
 
-	const mappedProduct =
+	const mappedProductId =
 		( map_plans.hasOwnProperty( plan.product_id ) && map_plans[ plan.product_id ] ) ?? '';
 
-	const [ selectedProduct, setSelectedProduct ] = useState( mappedProduct );
+	const [ selectedProductId, setSelectedProductId ] = useState( mappedProductId );
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	const handleProductChange = ( productId: string, onClose ) => {
-		setSelectedProduct( productId );
+	const handleProductChange = ( productId: string ) => {
+		setSelectedProductId( productId );
 		mapStripePlanToProduct( siteId, engine, currentStep, plan.product_id, productId );
-		onClose();
 	};
 
-	const specificProducts = products.filter( ( product ) => {
+	const selectedProduct = products.find(
+		( product ) => product.id.toString() === selectedProductId
+	);
+
+	const sameIntervalProducts = products.filter( ( product ) => {
 		return product.interval === plan.plan_interval;
 	} );
 
@@ -117,13 +116,13 @@ export default function MapPlan( {
 					onClick={ () => {
 						setIsOpen( ! isOpen );
 					} }
-					onKeyDown={ ( event ) => {
+					onKeyDown={ ( event: KeyboardEvent ) => {
 						if ( event.key === 'Enter' || event.key === ' ' ) {
 							setIsOpen( ! isOpen );
 						}
 					} }
 				>
-					{ displayProduct( selectedProduct, products ) }
+					{ displayProduct( selectedProduct ) }
 				</Button>
 				<DropdownMenu
 					onToggle={ ( openState: boolean ) => {
@@ -133,16 +132,17 @@ export default function MapPlan( {
 					label="Choose a Newsletter Tier"
 					open={ isOpen }
 				>
-					{ ( { onClose } ) => (
+					{ ( { onClose }: { onClose: () => void } ) => (
 						<Fragment>
-							<MenuGroup label="Newsletter Tiers">
+							<MenuGroup label="Select">
 								<MenuItemsChoice
-									choices={ getProductChoices( specificProducts ) }
+									choices={ getProductChoices( sameIntervalProducts ) }
 									onSelect={ ( productId ) => {
-										handleProductChange( productId, onClose );
+										handleProductChange( productId );
+										onClose();
 									} }
 									onHover={ () => {} }
-									value={ selectedProduct.toString() }
+									value={ selectedProductId.toString() }
 								/>
 							</MenuGroup>
 							<MenuGroup label="OR">
