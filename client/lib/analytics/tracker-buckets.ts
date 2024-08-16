@@ -1,5 +1,5 @@
 import { getDoNotTrack, getTrackingPrefs } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isPiiUrl,
 	isUrlExcludedForPerformance,
@@ -113,7 +113,7 @@ const isTrackerIntialized = ( tracker: AdTracker ): boolean => {
 };
 
 export const mayWeTrackGeneral = () =>
-	! isE2ETest() && ! getDoNotTrack() && ! isPiiUrl() && config.isEnabled( 'ad-tracking' );
+	! isE2ETest() && ! getDoNotTrack() && ! isPiiUrl() && isEnabled( 'ad-tracking' );
 
 export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 	if ( ! mayWeTrackGeneral() ) {
