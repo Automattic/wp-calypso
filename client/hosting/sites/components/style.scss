@@ -53,11 +53,6 @@
 		padding-inline-end: 16px;
 		text-align: end;
 	}
-
-	.dataviews-view-table-wrapper {
-		overflow: auto;
-	}
-
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -204,10 +199,6 @@
 			display: none;
 		}
 
-		.dataviews-view-table-wrapper td:nth-child(n+2):nth-child(-n+5) {
-			display: none;
-		}
-
 		tr td:first-child {
 			padding-inline-start: 8px;
 		}
@@ -224,24 +215,6 @@
 				padding-bottom: 88px; /* 88px matches the padding from PR #39201. */
 				overflow: hidden;
 			}
-		}
-
-		.dataviews-view-table-wrapper {
-			flex: 1;
-			overflow-y: auto;
-
-			table {
-				width: 100%;
-				max-width: 100vw;
-			}
-
-			th[data-field-id="plan"],
-			th[data-field-id="status"],
-			th[data-field-id="last-publish"],
-			th[data-field-id="stats"] {
-				display: none;
-			}
-
 		}
 	}
 

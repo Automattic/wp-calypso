@@ -66,9 +66,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 			! scrollContainerRef.current ||
 			previousDataViewsState?.type !== data.dataViewsState.type
 		) {
-			scrollContainerRef.current = document.querySelector(
-				'.dataviews-view-list, .dataviews-view-table-wrapper'
-			) as HTMLElement;
+			scrollContainerRef.current = document.querySelector( '.dataviews-view-list' ) as HTMLElement;
 		}
 
 		if ( ! previousDataViewsState?.selectedItem && data.dataViewsState.selectedItem ) {

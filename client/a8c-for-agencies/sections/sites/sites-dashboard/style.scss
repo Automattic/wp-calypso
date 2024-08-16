@@ -221,26 +221,6 @@
 				overflow: hidden;
 			}
 		}
-
-		.dataviews-view-table-wrapper {
-			flex: 1;
-			overflow-y: auto;
-
-			table {
-				width: 100%;
-				max-width: 100vw;
-			}
-
-			th[data-field-id="stats"],
-			th[data-field-id="boost"],
-			th[data-field-id="backup"],
-			th[data-field-id="monitor"],
-			th[data-field-id="scan"],
-			th[data-field-id="plugins"],
-			th[data-field-id="favorite"] {
-				display: none;
-			}
-		}
 	}
 
 	@media (max-width: $break-wide) {
@@ -265,12 +245,6 @@
 	}
 
 	@media (min-width: $break-large) {
-		&.sites-dashboard__layout {
-			.dataviews-view-table-wrapper {
-				overflow-y: auto;
-			}
-		}
-
 		&.sites-dashboard__layout:not(.preview-hidden) {
 			.sites-overview {
 				padding: 0;
@@ -565,7 +539,6 @@
 			flex-direction: column;
 			height: 100%;
 			width: 100%;
-			overflow: hidden;
 
 			> div[data-wp-component="VStack"] {
 				align-items: stretch;
@@ -597,7 +570,7 @@
 				display: flex;
 				flex: 1;
 				height: 100%;
-				overflow: hidden;
+				overflow: auto;
 			}
 		}
 
