@@ -1,8 +1,10 @@
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useState, useEffect } from 'react';
+import { UrlData } from 'calypso/blocks/import/types';
 import FormattedHeader from 'calypso/components/formatted-header';
 import StepProgress from 'calypso/components/step-progress';
 import { usePaidNewsletterQuery } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useSelector } from 'calypso/state';
@@ -45,10 +47,11 @@ type NewsletterImporterProps = {
 	step: string;
 };
 
-function getTitle( urlData: any ) {
+function getTitle( urlData?: UrlData ) {
 	if ( urlData?.meta?.title ) {
 		return `Import ${ urlData?.meta?.title }`;
 	}
+
 	return 'Import your newsletter';
 }
 
@@ -70,8 +73,11 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	let stepIndex = 0;
 	let nextStep = stepSlugs[ 0 ];
 
-	const { data: paidNewsletterQuery, isFetching: isFetchingPaidNewsletter } =
-		usePaidNewsletterQuery( engine, step, selectedSite?.ID );
+	const { data: paidNewsletterData, isFetching: isFetchingPaidNewsletter } = usePaidNewsletterQuery(
+		engine,
+		step,
+		selectedSite?.ID
+	);
 
 	stepSlugs.forEach( ( stepName, index ) => {
 		if ( stepName === step ) {
@@ -79,20 +85,29 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
 		if ( ! isFetchingPaidNewsletter ) {
-			const status = paidNewsletterQuery?.steps[ stepName ]?.status ?? '';
+			const status = paidNewsletterData?.steps[ stepName ]?.status ?? '';
 			stepsProgress[ index ] = stepsProgress[ index ] + ' (' + status + ')';
 		}
 	} );
 
 	const { skipNextStep } = useSkipNextStepMutation();
+	const { resetPaidNewsletter, isPending: isResettingPaidNewsletterPending } = useResetMutation();
 
 	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
+
+	let stepContent = {};
+	if ( ! isFetchingPaidNewsletter ) {
+		stepContent = paidNewsletterData?.steps[ step ]?.content ?? {};
+	}
 
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
 			setValidFromSite( true );
+			selectedSite &&
+				step === stepSlugs[ 0 ] &&
+				resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ] );
 		}
-	}, [ urlData, fromSite, engine ] );
+	}, [ urlData, fromSite, engine, selectedSite, resetPaidNewsletter ] );
 
 	const stepUrl = `/import/newsletter/${ engine }/${ siteSlug }/${ stepSlugs[ stepIndex ] }`;
 	const nextStepUrl = addQueryArgs( `/import/newsletter/${ engine }/${ siteSlug }/${ nextStep }`, {
@@ -100,11 +115,6 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	} );
 
 	const Step = steps[ stepIndex ] || steps[ 0 ];
-
-	let stepContent = {};
-	if ( ! isFetchingPaidNewsletter ) {
-		stepContent = paidNewsletterQuery?.steps[ step ]?.content ?? {};
-	}
 
 	return (
 		<div className="newsletter-importer">
@@ -115,16 +125,18 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 				] }
 			/>
 			<FormattedHeader headerText={ getTitle( urlData ) } />
-			{ ! validFromSite && (
+			{ ( ! validFromSite || isResettingPaidNewsletterPending ) && (
 				<SelectNewsletterForm
 					stepUrl={ stepUrl }
 					urlData={ urlData }
-					isLoading={ isFetching }
+					isLoading={ isFetching || isResettingPaidNewsletterPending }
 					validFromSite={ validFromSite }
 				/>
 			) }
-			{ validFromSite && <StepProgress steps={ stepsProgress } currentStep={ stepIndex } /> }
-			{ selectedSite && validFromSite && (
+			{ validFromSite && ! isResettingPaidNewsletterPending && (
+				<StepProgress steps={ stepsProgress } currentStep={ stepIndex } />
+			) }
+			{ selectedSite && validFromSite && ! isResettingPaidNewsletterPending && (
 				<Step
 					siteSlug={ siteSlug }
 					nextStepUrl={ nextStepUrl }
