@@ -78,8 +78,19 @@ export default function CreditCardNumberField( {
 					onChange={ ( input ) => {
 						handleStripeFieldChange( input );
 					} }
+					onNetworksChange={ ( event ) => {
+						switch ( event.networks ) {
+							case null:
+							case undefined:
+								break;
+							default: {
+								setShowNetworkSelector( true );
+								break;
+							}
+						}
+					} }
 				/>
-				<PaymentLogo brand={ brand } />
+				{ showNetworkSelector ? <PaymentLogo brand="cb" /> : <PaymentLogo brand={ brand } /> }
 
 				{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 			</StripeFieldWrapper>
