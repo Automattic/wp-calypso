@@ -204,3 +204,9 @@
 		display: none;
 	}
 }
+
+// This should be moved to the gutenberg repository upstream.
+// We should hide the "properties" section in the view config menu if empty.
+.dataviews-settings-section:has(.dataviews-settings-section__content:empty) {
+	display: none;
+}
