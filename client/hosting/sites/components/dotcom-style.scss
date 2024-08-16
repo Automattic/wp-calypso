@@ -59,11 +59,7 @@
 		}
 	}
 
-	height: calc(100vh - var(--masterbar-height));
-
-	@include break-small {
-		height: calc(100vh - var(--masterbar-height) - 32px);
-	}
+	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 
 	.sites-site-favicon {
 		margin-right: 0;

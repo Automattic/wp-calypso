@@ -67,6 +67,8 @@ $brand-text: "SF Pro Text", $sans;
 		--color-masterbar-submenu-hover-text: var(--color-accent);
 		--color-global-masterbar-submenu-background: var(--studio-white);
 		--color-global-masterbar-submenu-hover-background: var(--studio-white);
+		--content-padding-top: 16px;
+		--content-padding-bottom: 16px;
 	}
 
 	.is-global-sidebar-collapsed {
