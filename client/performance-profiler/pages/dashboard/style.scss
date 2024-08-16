@@ -5,6 +5,11 @@
 	.main {
 		padding: 0;
 	}
+
+	.lpc-footer-nav-container a,
+	.lpc-footer-automattic-nav a {
+		text-decoration: none;
+	}
 }
 
 .performance-profiler-content {
