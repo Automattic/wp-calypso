@@ -35,6 +35,7 @@ import { canBulkUpdate } from '../utils/can-bulk-update';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { ResponseDomain } from '../utils/types';
 import { DomainAction } from './domains-table-row-actions';
+import { useDispatch } from 'calypso/state';
 
 type DomainActionDescription = {
 	message?: string;
@@ -103,6 +104,7 @@ type Value = {
 	sortKey: string;
 	sortDirection: 'asc' | 'desc';
 	handleAutoRenew: ( enable: boolean ) => void;
+	handleManualRenew: ( domain: ResponseDomain ) => void;
 	handleUpdateContactInfo: () => void;
 	changeBulkSelection: () => void;
 	getBulkSelectionStatus: () => 'all-domains' | 'some-domains' | 'no-domains';
@@ -228,6 +230,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		} );
 	}, [ domains ] );
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	let domainsTableColumns = isAllSitesView
 		? allSitesViewColumns( translate, domainStatusPurchaseActions )
 		: siteSpecificViewColumns( translate, domainStatusPurchaseActions );
@@ -368,6 +371,14 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		page( formLink );
 	};
 
+	const handleManualRenew = ( domain: ResponseDomain ) => {
+		console.log( 'Renew domain', domain );
+		const subscriptionId = domain && domain.subscriptionId;
+		const purchase = subscriptionId
+			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
+			: null;
+	};
+
 	const currentUsersOwnsAllSelectedDomains = ! Array.from( selectedDomains ).some( ( selected ) =>
 		( domains ?? [] ).find(
 			( domain ) => getDomainId( domain ) === selected && ! domain.current_user_is_owner
@@ -390,6 +401,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		sortKey,
 		sortDirection,
 		handleAutoRenew,
+		handleManualRenew,
 		handleUpdateContactInfo,
 		changeBulkSelection,
 		getBulkSelectionStatus,

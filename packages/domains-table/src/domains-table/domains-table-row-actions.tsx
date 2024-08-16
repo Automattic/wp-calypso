@@ -19,8 +19,12 @@ import {
 import { shouldUpgradeToMakeDomainPrimary } from '../utils/should-upgrade-to-make-domain-primary';
 import { ResponseDomain } from '../utils/types';
 import { useDomainsTable } from './domains-table';
+import { isDomainReactivatable } from '../utils/is-reactivatable';
+import { useDispatch } from 'calypso/state';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
-export type DomainAction = 'change-site-address' | 'manage-dns-settings' | 'set-primary-address';
+export type DomainAction = 'change-site-address' | 'manage-dns-settings' | 'set-primary-address' | 'renew-domain' | 'reactivate-doamin';
 
 interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof MenuItem >, 'href' > {
 	href?: string;
@@ -35,6 +39,7 @@ interface DomainsTableRowActionsProps {
 	canSetPrimaryDomainForSite: boolean;
 	isSiteOnFreePlan: boolean;
 	isSimpleSite: boolean;
+	purchase: Purchase | null;
 }
 
 export const DomainsTableRowActions = ( {
@@ -44,8 +49,9 @@ export const DomainsTableRowActions = ( {
 	canSetPrimaryDomainForSite,
 	isSiteOnFreePlan,
 	isSimpleSite,
+	purchase,
 }: DomainsTableRowActionsProps ) => {
-	const { onDomainAction, userCanSetPrimaryDomains = false, updatingDomain } = useDomainsTable();
+	const { onDomainAction, userCanSetPrimaryDomains = false, updatingDomain, handleManualRenew } = useDomainsTable();
 	const { __ } = useI18n();
 
 	const canViewDetails = domain.type !== domainTypes.WPCOM;
@@ -74,6 +80,7 @@ export const DomainsTableRowActions = ( {
 	const canChangeSiteAddress =
 		! isAllSitesView && isSimpleSite && isFreeUrlDomainName( domain.name );
 	const canRenewDomain = isDomainRenewable( domain );
+	const canReactivateDomain = isDomainReactivatable( domain );
 	const getActions = ( onClose?: () => void ) => {
 		return [
 			canViewDetails && (
@@ -143,9 +150,25 @@ export const DomainsTableRowActions = ( {
 			canRenewDomain && (
 				<MenuItemLink
 					key="renewDomain"
-					href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
+					onClick={ () => {
+						handleManualRenew( domain );
+						onClose?.();
+					} }
 				>
-					{ __( 'Renew domain' ) }
+					{ ! domain.expired || domain.isRenewable
+						? __( 'Renew now' )
+						: __( 'Redeem now' ) }
+				</MenuItemLink>
+			),
+			canReactivateDomain && (
+				<MenuItemLink
+					key="reactivateDomain"
+					onClick={ () => {
+						handleManualRenew( domain );
+						onClose?.();
+					} }
+				>
+					{ __( 'Reactivate domain' ) }
 				</MenuItemLink>
 			),
 		];
