@@ -42,9 +42,9 @@ export default class ReaderMain extends Component {
 	}
 
 	render() {
-		const { children, ...props } = this.props;
+		const { children, forwardRef, ...props } = this.props;
 		return (
-			<div>
+			<div ref={ forwardRef }>
 				<Main { ...props }>
 					<SyncReaderFollows key="syncReaderFollows" />
 					{ children }

@@ -30,12 +30,10 @@ const renderSetupComponent = ( setupInfo ) => {
 };
 
 export default function BlazeSetup( { setupInfo } ) {
-	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
+	const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 	const translate = useTranslate();
 
-	const headerTitle = isWooBlaze
-		? translate( 'Blaze for WooCommerce' )
-		: translate( 'Advertising' );
+	const headerTitle = isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' );
 
 	return (
 		<MainWrapper>

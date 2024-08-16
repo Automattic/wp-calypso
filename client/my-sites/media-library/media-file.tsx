@@ -25,6 +25,7 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 	src,
 	query,
 	filePath,
+	siteId,
 	siteSlug,
 	useProxy = false,
 	placeholder = null,
@@ -37,7 +38,7 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 	if ( useProxy ) {
 		return (
 			<ProxiedImage
-				siteSlug={ siteSlug }
+				siteId={ siteId || siteSlug }
 				filePath={ filePath }
 				query={ query }
 				component={ proxiedComponent || Component }
@@ -60,6 +61,7 @@ export default connect( ( state: IAppState, { src }: Pick< MediaFileProps, 'src'
 	const useProxy = ! isJetpackNonAtomic && !! filePath && isRelativeToSiteRoot;
 
 	return {
+		siteId,
 		query,
 		siteSlug,
 		useProxy,
