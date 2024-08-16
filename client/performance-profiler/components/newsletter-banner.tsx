@@ -23,6 +23,14 @@ const Body = styled.div`
 	color: var( --studio-gray-70 );
 `;
 
+const BlueberryButton = styled( Button )`
+	// && is needed for specificity
+	&& {
+		background: #3858e9;
+		border-color: #3858e9;
+	}
+`;
+
 export const NewsletterBanner = () => {
 	const translate = useTranslate();
 
@@ -37,7 +45,9 @@ export const NewsletterBanner = () => {
 				</Body>
 				<Body>{ translate( 'All you need is a free WordPress.com account to get started.' ) }</Body>
 			</div>
-			<Button variant="primary">{ translate( 'Sign up for email reports' ) }</Button>
+			<BlueberryButton variant="primary">
+				{ translate( 'Sign up for email reports' ) }
+			</BlueberryButton>
 		</Container>
 	);
 };
