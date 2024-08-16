@@ -297,7 +297,9 @@ export default function AddNewSiteButton( {
 				/>
 			</Button>
 			<Popover
-				className={ clsx( 'site-selector-and-importer__popover', { 'dev-site': devSite } ) }
+				className={ clsx( 'site-selector-and-importer__popover', {
+					'dev-sites-enabled': devSitesEnabled,
+				} ) }
 				context={ popoverMenuContext?.current }
 				isVisible={ isMenuVisible }
 				closeOnEsc

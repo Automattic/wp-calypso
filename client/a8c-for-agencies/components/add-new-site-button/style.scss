@@ -30,12 +30,16 @@
 		}
 	}
 
-	&.dev-site {
-		margin-inline-start: 82px;
+	&.dev-sites-enabled {
+		margin-inline-start: 33px;
 
 		.popover__inner {
 			width: 280px;
 			text-align: unset;
+
+			@include break-large {
+				width: 917px;
+			}
 		}
 	}
 }
@@ -51,11 +55,14 @@
 	}
 
 	.site-selector-and-importer__popover-column {
-		&:first-child {
-			flex: 1.4;
+		&:nth-child(1) {
+			flex: 341;
 		}
-		&:last-child {
-			flex: 1;
+		&:nth-child(2) {
+			flex: 250;
+		}
+		&:nth-child(3) {
+			flex: 214;
 		}
 	}
 }
