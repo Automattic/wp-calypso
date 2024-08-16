@@ -249,6 +249,7 @@ jobs:
     # version to keep this one working for now.
       - image: cimg/node:20.8.1-browsers
     <<: *desktop_defaults
+    resource_class: medium+
     shell: /bin/bash --login
     environment:
       CONFIG_ENV: release
