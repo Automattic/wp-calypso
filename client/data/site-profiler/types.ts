@@ -127,6 +127,11 @@ export interface UrlSecurityMetricsQueryResponse {
 	};
 }
 
+export type ScreenShotsTimeLine = {
+	data: string;
+	timing: number;
+};
+
 export type PerformanceMetricsHistory = {
 	collection_period: string[];
 	metrics: {
@@ -144,7 +149,9 @@ export type PerformanceReport = {
 	overall_score: number;
 	is_wpcom: boolean;
 	is_wordpress: boolean;
+	screenshots?: ScreenShotsTimeLine[];
 	history: PerformanceMetricsHistory;
+	timestamp?: string;
 } & BasicMetrics;
 
 export interface UrlPerformanceMetricsQueryResponse {

@@ -4,6 +4,8 @@ export const getLastVisitedPlugin = function ( state ) {
 	return state.plugins.lastVisited;
 };
 
-export const isLastVisitedPlugin = function ( state, pluginSlug ) {
-	return getLastVisitedPlugin( state ) === pluginSlug;
+export const isLastVisitedPlugin = function ( state, pluginSlug, pluginListName ) {
+	const lastVisitedPlugin = getLastVisitedPlugin( state );
+	const { slug, listName } = lastVisitedPlugin || {};
+	return slug === pluginSlug && listName === pluginListName;
 };

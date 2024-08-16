@@ -10,6 +10,7 @@ type Props = {
 	fromSite: string;
 	engine: string;
 	cardData: any;
+	isFetchingContent: boolean;
 };
 
 export default function PaidSubscribers( {
@@ -18,6 +19,7 @@ export default function PaidSubscribers( {
 	engine,
 	skipNextStep,
 	cardData,
+	isFetchingContent,
 }: Props ) {
 	const dispatch = useDispatch();
 	const isCancelled = hasQueryArg( window.location.href, 'stripe_connect_cancelled' );
@@ -42,6 +44,7 @@ export default function PaidSubscribers( {
 					cardData={ cardData }
 					fromSite={ fromSite }
 					engine={ engine }
+					isFetchingContent={ isFetchingContent }
 				/>
 			) }
 			{ hasConnectedAccount && (

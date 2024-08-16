@@ -26593,6 +26593,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-hook-form@npm:^7.52.2":
+  version: 7.52.2
+  resolution: "react-hook-form@npm:7.52.2"
+  peerDependencies:
+    react: ^16.8.0 || ^17 || ^18 || ^19
+  checksum: 2b8d37239d40f4326a24609c1bf5b4ba2cf66bc4a988213ccd7eb92a254dd5bf9c4b94caa353bce4b1d6d8a9ecd2ea3103e25c6d2d72d53f7be26f09053a8b2f
+  languageName: node
+  linkType: hard
+
 "react-intersection-observer@npm:^9.4.3":
   version: 9.4.3
   resolution: "react-intersection-observer@npm:9.4.3"
@@ -32891,6 +32900,7 @@ __metadata:
     prettier: "npm:wp-prettier@3.0.3"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
+    react-hook-form: "npm:^7.52.2"
     react-intersection-observer: "npm:^9.4.3"
     react-modal: "npm:^3.16.1"
     react-refresh: "npm:^0.14.0"
