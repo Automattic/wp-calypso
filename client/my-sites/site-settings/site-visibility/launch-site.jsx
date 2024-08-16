@@ -23,7 +23,6 @@ import {
 } from 'calypso/state/ui/selectors';
 import SettingsSectionHeader from '../settings-section-header';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
-
 import './styles.scss';
 
 const LaunchSite = () => {
@@ -34,6 +33,8 @@ const LaunchSite = () => {
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const isPaidPlan = useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
+	// TODO: replace with actual value whether the site is a development site
+	const isDevelomentSite = true;
 	const hasSitePreviewLink = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS )
 	);
@@ -101,8 +102,30 @@ const LaunchSite = () => {
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  ) }
 						</p>
+						{
+							// TODO: add feature flag check
+							// TODO: replace agency name with actual agency name
+							isDevelomentSite && (
+								<p>
+									{ translate(
+										'Once the site is launched, MyCoolAgency will be billed for this site in the next billing cycle.'
+									) }
+								</p>
+							)
+						}
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
+					{
+						// TODO: add feature flag check
+						// TODO: add onClick handler
+						isDevelomentSite && (
+							<div className={ launchSiteClasses }>
+								<Button onClick={ null } disabled={ false }>
+									{ translate( 'Refer to client' ) }
+								</Button>
+							</div>
+						)
+					}
 				</div>
 			</LaunchCard>
 			{ showPreviewLink && (
