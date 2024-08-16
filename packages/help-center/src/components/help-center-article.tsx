@@ -20,17 +20,17 @@ export const HelpCenterArticle = () => {
 	const { data: post, isLoading, error } = usePostByUrl( postUrl );
 
 	useEffect( () => {
-		//If a url includes an anchor, let's scroll this into view!
+		// If a URL includes an anchor, let's scroll this into view!
 		if ( postUrl?.includes( '#' ) && post?.content ) {
-			setTimeout( () => {
+			requestAnimationFrame( () => {
 				const anchorId = postUrl.split( '#' ).pop();
 				if ( anchorId ) {
 					const element = document.getElementById( anchorId );
 					if ( element ) {
-						element.scrollIntoView();
+						element.scrollIntoView( { behavior: 'smooth' } );
 					}
 				}
-			}, 0 );
+			} );
 		}
 	}, [ postUrl, post ] );
 
