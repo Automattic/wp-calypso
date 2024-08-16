@@ -146,6 +146,7 @@ import {
 	JETPACK_SECURITY_PLANS,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
+	PLAN_WORDPRESS_BASIC,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
@@ -219,6 +220,7 @@ import {
 	TYPE_PRO,
 	TYPE_STARTER,
 	TYPE_GOLDEN_TOKEN,
+	TYPE_WORDPRESS_BASIC,
 	WPCOM_FEATURES_ATOMIC,
 	WPCOM_FEATURES_SCAN,
 	WPCOM_FEATURES_ANTISPAM,
@@ -2346,6 +2348,23 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1030,
 		getStoreSlug: () => PLAN_BLOGGER_2_YEARS,
 		getPathSlug: () => 'blogger-2-years',
+	},
+
+	// TODO: Repeat definition for each new plan and each new billing timeframe
+	[ PLAN_WORDPRESS_BASIC ]: {
+		// TODO: Define getPlanWordPressBasicDetails
+		...getPlanBusinessDetails(),
+		term: TERM_ANNUALLY,
+		type: TYPE_WORDPRESS_BASIC,
+		getTitle: () => i18n.translate( 'WordPress Basic' ),
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		// TODO: Investigate what the availableFor key is used for
+		availableFor: ( plan ) => [ PLAN_FREE ].includes( plan ),
+		// TODO: Fill in correct product Id
+		getProductId: () => 1010,
+		getStoreSlug: () => PLAN_WORDPRESS_BASIC,
+		// TODO: Fill in correct path slug
+		getPathSlug: () => 'wordpress-basic',
 	},
 
 	[ PLAN_PERSONAL_MONTHLY ]: {

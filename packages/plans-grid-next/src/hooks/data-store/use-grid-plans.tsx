@@ -1,5 +1,6 @@
 import {
 	TYPE_BLOGGER,
+	TYPE_WORDPRESS_BASIC,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 	TYPE_ENTERPRISE_GRID_WPCOM,
@@ -115,7 +116,8 @@ const usePlanTypesWithIntent = ( {
 	const availablePlanTypes = [
 		TYPE_FREE,
 		...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
-		TYPE_PERSONAL,
+		TYPE_WORDPRESS_BASIC,
+		// TYPE_PERSONAL,
 		TYPE_PREMIUM,
 		TYPE_BUSINESS,
 		TYPE_ECOMMERCE,
@@ -183,11 +185,12 @@ const usePlanTypesWithIntent = ( {
 			planTypes = [
 				TYPE_FREE,
 				...( isBloggerAvailable ? [ TYPE_BLOGGER ] : [] ),
-				TYPE_PERSONAL,
+				// TYPE_PERSONAL,
+				TYPE_WORDPRESS_BASIC,
 				TYPE_PREMIUM,
 				TYPE_BUSINESS,
 				TYPE_ECOMMERCE,
-				...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
+				// ...( isEnterpriseAvailable ? [ TYPE_ENTERPRISE_GRID_WPCOM ] : [] ),
 			];
 			break;
 		case 'plans-business-trial':
