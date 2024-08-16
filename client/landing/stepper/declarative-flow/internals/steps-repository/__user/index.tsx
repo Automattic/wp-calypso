@@ -85,6 +85,7 @@ const UserStep: Step = function UserStep( { flow, stepName, _redirectTo = window
 					className="step-wrapper__navigation-link forward"
 					href={ login( {
 						signupUrl: new URL( _redirectTo, window.location.href ).href,
+						redirectTo: _redirectTo,
 					} ) }
 					variant="link"
 				>
