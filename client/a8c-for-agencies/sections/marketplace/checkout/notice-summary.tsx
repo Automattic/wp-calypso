@@ -97,6 +97,12 @@ export default function NoticeSummary( { type }: Props ) {
 						"Your client will be sent an invoice where they will be asked to create a WordPress.com account to pay for these products. Once paid, you'll be able to manage these products on behalf of the client."
 					),
 					translate( 'The client can cancel their products at any time.' ),
+
+					<b key="referral-expiration-notice">
+						{ translate(
+							'Important: Your referral order link is only valid for 12 hours. Please notify your client to complete the payment within this timeframe to avoid expiration.'
+						) }
+					</b>,
 				];
 
 			case 'request-payment-method':
