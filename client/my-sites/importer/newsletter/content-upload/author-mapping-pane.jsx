@@ -6,7 +6,6 @@ import { PureComponent } from 'react';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import AuthorMapping from 'calypso/my-sites/importer/author-mapping-item';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
-import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 
 import './author-mapping-pane.scss';
@@ -124,8 +123,6 @@ class AuthorMappingPane extends PureComponent {
 			onStartImport,
 			siteId,
 			sourceType,
-			importerStatus,
-			site,
 			totalUsers,
 		} = this.props;
 
@@ -160,10 +157,9 @@ class AuthorMappingPane extends PureComponent {
 					} ) }
 				</div>
 				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
+					<ImporterActionButton disabled={ ! canStartImport } onClick={ onStartImport }>
 						Continue import
 					</ImporterActionButton>
-					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 				</ImporterActionButtonContainer>
 			</div>
 		);
