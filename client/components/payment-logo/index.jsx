@@ -4,6 +4,7 @@ import { keys } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import creditCardAmexImage from 'calypso/assets/images/upgrades/cc-amex.svg';
+import creditCardCartesBancairesImage from 'calypso/assets/images/upgrades/cc-cb.svg';
 import creditCardDinersImage from 'calypso/assets/images/upgrades/cc-diners.svg';
 import creditCardDiscoverImage from 'calypso/assets/images/upgrades/cc-discover.svg';
 import creditCardJCBImage from 'calypso/assets/images/upgrades/cc-jcb.svg';
@@ -16,6 +17,7 @@ import './style.scss';
 
 const LOGO_PATHS = {
 	amex: creditCardAmexImage,
+	cb: creditCardCartesBancairesImage,
 	diners: creditCardDinersImage,
 	discover: creditCardDiscoverImage,
 	jcb: creditCardJCBImage,
@@ -30,6 +32,7 @@ const ALT_TEXT = {
 	amex: 'American Express',
 	'apple-pay': 'Apple Pay',
 	bancontact: 'Bancontact',
+	cb: 'Cartes Bancaires',
 	diners: 'Diners Club',
 	discover: 'Discover',
 	eps: 'eps',

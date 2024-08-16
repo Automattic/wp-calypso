@@ -30,6 +30,14 @@ export function PaymentLogo( { brand, isSummary }: { brand: string; isSummary?: 
 				</BrandLogo>
 			);
 			break;
+		case 'cb':
+		case 'cartes_bancaires':
+			cardFieldIcon = (
+				<BrandLogo isSummary={ isSummary }>
+					<CBLogo />
+				</BrandLogo>
+			);
+			break;
 		case 'mastercard':
 			cardFieldIcon = (
 				<BrandLogo isSummary={ isSummary }>
@@ -149,6 +157,51 @@ export function VisaLogo( { className }: { className?: string } ) {
 				d="M8.02162 3.14371H3.55414L3.52972 3.36342C6.9963 4.21786 9.29107 6.29292 10.2432 8.78299L9.26666 4.02256C9.09577 3.36342 8.63193 3.16812 8.02162 3.14371Z"
 				fill="#D97B16"
 			/>
+		</svg>
+	);
+}
+
+export function CBLogo( { className }: { className?: string } ) {
+	return (
+		<svg
+			className={ className }
+			width="41"
+			height="17"
+			viewBox="0 0 41 17"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			aria-hidden="true"
+			focusable="false"
+		>
+			<radialGradient
+				id="b"
+				cx="1.47"
+				cy="18.27"
+				gradientTransform="matrix(1 0 0 .94 0 .5)"
+				gradientUnits="userSpaceOnUse"
+				r="26.83"
+			>
+				<stop offset=".09" stopColor="#009245" />
+				<stop offset=".23" stopColor="#049552" stopOpacity=".89" />
+				<stop offset=".52" stopColor="#0d9e74" stopOpacity=".59" />
+				<stop offset=".91" stopColor="#1bacab" stopOpacity=".12" />
+				<stop offset="1" stopColor="#1fb0b8" stopOpacity="0" />
+			</radialGradient>
+			<radialGradient id="c" cx="5.89" cy="19.23" gradientUnits="userSpaceOnUse" r="34.42">
+				<stop offset=".15" stopColor="#1fb0b8" stopOpacity="0" />
+				<stop offset=".35" stopColor="#1c7491" stopOpacity=".4" />
+				<stop offset=".56" stopColor="#1a4471" stopOpacity=".73" />
+				<stop offset=".74" stopColor="#18265e" stopOpacity=".93" />
+				<stop offset=".87" stopColor="#181b57" />
+			</radialGradient>
+			<g>
+				<path d="M0 0h26.47v18.16H0z" fill="#29abe2" />
+				<path d="M0 0h26.47v18.16H0z" fill="url(#b)" />
+				<path d="M0 0h26.47v18.16H0z" fill="url(#c)" />
+			</g>
+			<g fill="#fff">
+				<path d="M14.39 3.86h7.07a2.47 2.47 0 0 1 2.47 2.47 2.47 2.47 0 0 1-2.47 2.47h-7.07V3.86zM14.39 9.36h7.07a2.47 2.47 0 0 1 2.47 2.47 2.47 2.47 0 0 1-2.47 2.47h-7.07V9.36zM8.23 9.36V8.8h5.69a5.51 5.51 0 0 0-5.69-4.94 5.47 5.47 0 0 0-5.69 5.22 5.47 5.47 0 0 0 5.69 5.22 5.51 5.51 0 0 0 5.69-4.94z" />
+			</g>
 		</svg>
 	);
 }
