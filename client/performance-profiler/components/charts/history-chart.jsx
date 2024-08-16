@@ -91,7 +91,7 @@ const drawLine = ( svg, data, xScale, yScale ) => {
 		.datum( data )
 		.attr( 'd', lineGenerator )
 		.attr( 'stroke', 'url(#line-gradient)' )
-		.attr( 'stroke-width', 4 )
+		.attr( 'stroke-width', 2 )
 		.attr( 'fill', 'none' );
 };
 
@@ -105,7 +105,7 @@ const drawAxes = ( svg, xScale, yScale, data, margin, width, height ) => {
 		.call(
 			d3AxisBottom( xScale )
 				.tickValues( dates )
-				.tickFormat( d3TimeFormat( '%m/%d' ) )
+				.tickFormat( d3TimeFormat( '%-m/%d' ) )
 				.tickPadding( 10 )
 		)
 		.call( ( g ) => g.select( '.domain' ).remove() );
@@ -193,7 +193,7 @@ const HistoryChart = ( { data, range, height, width } ) => {
 		// Clear previous chart
 		d3Select( svgRef.current ).selectAll( '*' ).remove();
 
-		const margin = { top: 20, right: 30, bottom: 40, left: 40 };
+		const margin = { top: 20, right: 0, bottom: 40, left: 40 };
 
 		const { xScale, yScale, colorScale } = createScales( data, range, margin, width, height );
 
