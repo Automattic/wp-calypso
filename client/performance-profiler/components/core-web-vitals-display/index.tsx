@@ -36,12 +36,12 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 
 	const displayUnit = () => {
 		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
-			return translate( 'seconds', { comment: 'Used for displaying a range, eg. 1-2 seconds' } );
+			return translate( 's', { comment: 'Used for displaying a time range in seconds, eg. 1-2s' } );
 		}
 
 		if ( [ 'inp' ].includes( activeTab ) ) {
-			return translate( 'milliseconds', {
-				comment: 'Used for displaying a range, eg. 100-200 millisenconds',
+			return translate( 'ms', {
+				comment: 'Used for displaying a range in milliseconds, eg. 100-200ms',
 			} );
 		}
 
@@ -81,8 +81,9 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 							<div className="range-description">
 								<div className="range-heading">{ translate( 'Fast' ) }</div>
 								<div className="range-subheading">
-									{ translate( '0–%(to)s %(unit)s', {
+									{ translate( '0–%(to)s%(unit)s', {
 										args: { to: formatUnit( good ), unit: displayUnit() },
+										comment: 'Displaying a time range, eg. 0-1s',
 									} ) }
 								</div>
 							</div>
@@ -92,12 +93,13 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 							<div className="range-description">
 								<div className="range-heading">{ translate( 'Moderate' ) }</div>
 								<div className="range-subheading">
-									{ translate( '%(from)s–%(to)s %(unit)s', {
+									{ translate( '%(from)s–%(to)s%(unit)s', {
 										args: {
 											from: formatUnit( good ),
 											to: formatUnit( needsImprovement ),
 											unit: displayUnit(),
 										},
+										comment: 'Displaying a time range, eg. 2-3s',
 									} ) }
 								</div>
 							</div>
@@ -107,11 +109,12 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 							<div className="range-description">
 								<div className="range-heading">{ translate( 'Slow' ) }</div>
 								<div className="range-subheading">
-									{ translate( '%(from)s+ %(unit)s', {
+									{ translate( '>%(from)s%(unit)s', {
 										args: {
 											from: formatUnit( needsImprovement ),
 											unit: displayUnit(),
 										},
+										comment: 'Displaying a time range, eg. >2s',
 									} ) }
 								</div>
 							</div>
