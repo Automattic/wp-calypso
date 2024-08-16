@@ -22,14 +22,14 @@ const PlanRenewContainer = styled.div( {
 	marginTop: '-2px',
 } );
 
-const PlanRenewLink = styled.a( {
-	whiteSpace: 'nowrap',
-	textDecoration: 'underline !important',
-	fontSize: '12px',
-	fontWeight: '400 !important',
-	paddingTop: '2px',
-	color: '#3858e9 !important',
-} );
+const PlanRenewLink = styled.a`
+	white-space: nowrap;
+	text-decoration: underline !important;
+	font-size: 12px;
+	font-weight: 400 !important;
+	padding-top: 2px;
+	color: var( --color-link ) !important;
+`;
 
 const IconContainer = styled.div( {
 	color: '#ea303f',
