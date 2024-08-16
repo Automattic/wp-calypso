@@ -691,7 +691,7 @@
 .wpcom-site div.is-section-plugins.is-global-sidebar-visible {
 	&.focus-content .layout__content,
 	&.focus-sidebar .layout__content {
-		min-height: 100vh;
+		height: 100vh;
 		padding-top: calc(var(--masterbar-height) + var(--content-padding-top));
 		padding-bottom: var(--content-padding-bottom);
 
