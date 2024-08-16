@@ -102,7 +102,7 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	const Step = steps[ stepIndex ] || steps[ 0 ];
 
 	let stepContent = {};
-	if ( ! isFetchingPaidNewsletter ) {
+	if ( paidNewsletterQuery?.steps ) {
 		stepContent = paidNewsletterQuery?.steps[ step ]?.content ?? {};
 	}
 
