@@ -212,7 +212,7 @@ export class ImportingPane extends PureComponent {
 	render() {
 		const {
 			importerStatus,
-			site: { ID: siteId, name: siteName },
+			site: { ID: siteId },
 			sourceType,
 			site,
 		} = this.props;
@@ -257,8 +257,8 @@ export class ImportingPane extends PureComponent {
 						siteId={ siteId }
 						sourceType={ sourceType }
 						sourceAuthors={ customData.sourceAuthors }
-						sourceTitle={ customData.siteTitle || this.props.translate( 'Original Site' ) }
-						targetTitle={ siteName }
+						sourceTitle={ customData.siteTitle || 'Substack Site' }
+						targetTitle="WordPress.com"
 						importerStatus={ importerStatus }
 						site={ site }
 					/>
