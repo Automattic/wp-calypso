@@ -1,6 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import urlMapping from '../route-to-query-mapping.json';
-import tailoredSectionMapping from '../tailored-secion-mapping.json';
+import tailoredSectionMapping from '../tailored-section-mapping.json';
 
 interface CoreBlockEditor {
 	getSelectedBlock: () => object;
