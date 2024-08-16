@@ -147,7 +147,7 @@ jobs:
     <<: *desktop_defaults
     environment:
       VERSION: << pipeline.git.tag >>
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     working_directory: ~/wp-calypso
     steps:
       - checkout
@@ -173,7 +173,7 @@ jobs:
     working_directory: /Users/distiller/wp-calypso
     environment:
       CONFIG_ENV: release
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -252,7 +252,7 @@ jobs:
     shell: /bin/bash --login
     environment:
       CONFIG_ENV: release
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -321,7 +321,7 @@ jobs:
     working_directory: C:\Users\circleci\wp-calypso
     environment:
       CONFIG_ENV: release
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
