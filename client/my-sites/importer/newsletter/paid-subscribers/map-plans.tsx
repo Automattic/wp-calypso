@@ -41,7 +41,7 @@ export default function MapPlans( {
 						engine={ engine }
 						currentStep={ currentStep }
 						plan={ plan }
-						products={ cardData.availabible_tiers }
+						products={ cardData.available_tiers }
 						map_plans={ cardData.map_plans }
 					/>
 				) ) }
