@@ -150,9 +150,9 @@ export default function CreditCardFields( {
 
 					<FieldRow>
 						<CreditCardNumberField
+							changeCardNetworks={ changeCardNetworks }
 							setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
 							handleStripeFieldChange={ handleStripeFieldChange }
-							changeCardNetworks={ changeCardNetworks }
 							stripeElementStyle={ stripeElementStyle }
 							shouldUseEbanx={ shouldUseEbanx }
 							getErrorMessagesForField={ getErrorMessagesForField }
