@@ -3,6 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import {
+	CBLogo,
 	VisaLogo,
 	MastercardLogo,
 	AmexLogo,
@@ -42,9 +43,9 @@ function CreditCardSummary() {
 	);
 }
 
-const CreditCardLabel: React.FC< { hasExistingCardMethods: boolean | undefined } > = ( {
-	hasExistingCardMethods,
-} ) => {
+const CreditCardLabel: React.FC< {
+	hasExistingCardMethods: boolean | undefined;
+} > = ( { hasExistingCardMethods } ) => {
 	const { __ } = useI18n();
 	return (
 		<Fragment>
@@ -61,6 +62,7 @@ const CreditCardLabel: React.FC< { hasExistingCardMethods: boolean | undefined }
 function CreditCardLogos() {
 	return (
 		<PaymentMethodLogos className="credit-card__logo payment-logos">
+			<CBLogo />
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />

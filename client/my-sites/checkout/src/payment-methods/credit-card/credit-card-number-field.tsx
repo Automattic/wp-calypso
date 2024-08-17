@@ -12,6 +12,7 @@ import type { StripeElementStyle } from '@stripe/stripe-js';
 export default function CreditCardNumberField( {
 	setIsStripeFullyLoaded,
 	handleStripeFieldChange,
+	changeCardNetworks,
 	stripeElementStyle,
 	shouldUseEbanx = false,
 	getErrorMessagesForField,
@@ -20,6 +21,7 @@ export default function CreditCardNumberField( {
 }: {
 	setIsStripeFullyLoaded: ( isLoaded: boolean ) => void;
 	handleStripeFieldChange: ( input: StripeFieldChangeInput ) => void;
+	changeCardNetworks: ( networks: string[] ) => void;
 	stripeElementStyle: StripeElementStyle;
 	shouldUseEbanx?: boolean;
 	getErrorMessagesForField: ( key: string ) => string[];
@@ -85,6 +87,7 @@ export default function CreditCardNumberField( {
 								break;
 							default: {
 								setShowNetworkSelector( true );
+								changeCardNetworks( event.networks );
 								break;
 							}
 						}

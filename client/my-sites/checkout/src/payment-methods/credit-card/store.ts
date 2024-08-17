@@ -18,6 +18,9 @@ export const actions = {
 	changeBrand( payload: string ): CardStoreAction {
 		return { type: 'BRAND_SET', payload };
 	},
+	changeCardNetworks( payload: string[] ): CardStoreAction {
+		return { type: 'CARD_NETWORKS_SET', payload };
+	},
 	setCardDataError( type: CardElementType, message: string | null ): CardStoreAction {
 		return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
 	},
@@ -44,6 +47,9 @@ export const actions = {
 export const selectors = {
 	getBrand( state: CardStoreState ): string {
 		return state.brand || '';
+	},
+	getCardNetworks( state: CardStoreState ): string[] {
+		return state.cardNetworks || [];
 	},
 	getCardDataErrors( state: CardStoreState ) {
 		return state.cardDataErrors;
@@ -152,6 +158,18 @@ export function createCreditCardPaymentMethodStore( {
 		}
 	}
 
+	function cardNetworksReducer(
+		state: string[] | null | undefined = null,
+		action?: CardStoreAction
+	) {
+		switch ( action?.type ) {
+			case 'CARD_NETWORKS_SET':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
 	function allSubscriptionsReducer( state: boolean, action?: CardStoreAction ) {
 		switch ( action?.type ) {
 			case 'USE_FOR_ALL_SUBSCRIPTIONS_SET':
@@ -179,6 +197,7 @@ export function createCreditCardPaymentMethodStore( {
 					cardDataErrors: cardDataErrorsReducer(),
 					cardDataComplete: cardDataCompleteReducer(),
 					brand: brandReducer(),
+					cardNetworks: cardNetworksReducer(),
 					useForAllSubscriptions: getInitialUseForAllSubscriptionsValue(),
 				},
 				action: AnyAction
@@ -188,6 +207,7 @@ export function createCreditCardPaymentMethodStore( {
 					cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
 					cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
 					brand: brandReducer( state.brand, action ),
+					cardNetworks: cardNetworksReducer( state.cardNetworks, action ),
 					useForAllSubscriptions: allowUseForAllSubscriptions
 						? allSubscriptionsReducer( state.useForAllSubscriptions, action )
 						: false,
