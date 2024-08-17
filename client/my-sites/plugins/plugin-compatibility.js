@@ -21,6 +21,7 @@ const incompatiblePlugins = new Set( [
 	'extended-wp-reset',
 	'file-manager-advanced',
 	'file-manager',
+	'hide-my-wp',
 	'plugins-garbage-collector',
 	'post-type-switcher',
 	'reset-wp',
@@ -51,9 +52,12 @@ const incompatiblePlugins = new Set( [
 	'backup-wd',
 	'backupwordpress',
 	'backwpup',
+	'backwpup-pro',
+	'jetpack-backup',
 	'wp-db-backup',
 
 	// caching
+	'breeze',
 	'cache-enabler',
 	'comet-cache',
 	'hyper-cache',
@@ -101,6 +105,7 @@ const incompatiblePlugins = new Set( [
 	'disable-xml-rpc-fully',
 	'disable-xml-rpc-unset-x-pingback',
 	'disable-xml-rpc',
+	'ithemes-security-pro',
 	'manage-xml-rpc',
 	'sg-security',
 	'simple-xml-rpc-disabler',
@@ -118,6 +123,7 @@ const incompatiblePlugins = new Set( [
 
 	// cloning/staging
 	'flo-launch',
+	'wp-staging',
 
 	// misc
 	'adult-mass-photos-downloader',
@@ -135,12 +141,14 @@ const incompatiblePlugins = new Set( [
 	'facetwp-manipulator',
 	'fast-velocity-minify',
 	'nginx-helper',
+	'one-click-ssl',
 	'p3',
 	'pexlechris-adminer',
 	'plugin-detective',
 	'porn-embed',
 	'propellerads-official',
 	'really-simple-ssl',
+	'really-simple-ssl-pro',
 	'speed-contact-bar',
 	'trafficzion',
 	'tubeace',
