@@ -9,7 +9,6 @@ import {
 	isTranslatedIncompletely,
 	isDefaultLocale,
 	getLanguageSlugs,
-	localizeUrl,
 } from '@automattic/i18n-utils';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -706,9 +705,7 @@ function wpcomPages( app ) {
 		res.redirect( redirectUrl );
 	} );
 
-	app.get( `/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/plans`, function ( req, res, next ) {
-		const locale = req.params?.locale;
-
+	app.get( '/plans', function ( req, res, next ) {
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
 			const ref = req.query?.ref;
@@ -718,18 +715,12 @@ function wpcomPages( app ) {
 					'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 				);
 			} else {
-				const pricingPage = 'https://wordpress.com/pricing/';
-				const refQuery = ref ? `?ref=${ ref }` : '';
-				const pricingPageUrl = localizeUrl( `${ pricingPage }${ refQuery }`, locale );
+				const pricingPageUrl = ref
+					? `https://wordpress.com/pricing/?ref=${ ref }`
+					: 'https://wordpress.com/pricing/';
 				res.redirect( pricingPageUrl );
 			}
 		} else {
-			if ( locale ) {
-				const queryParams = new URLSearchParams( req.query );
-				const queryString = queryParams.size ? '?' + queryParams.toString() : '';
-				res.redirect( `/plans${ queryString }` );
-				return;
-			}
 			next();
 		}
 	} );
