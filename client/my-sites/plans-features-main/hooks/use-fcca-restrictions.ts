@@ -4,6 +4,7 @@ import {
 	PLAN_BUSINESS_3_YEARS,
 	PLAN_ECOMMERCE_3_YEARS,
 } from '@automattic/calypso-products';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -22,6 +23,7 @@ export const useFCCARestrictions = () => {
 	const userCountryCode = useSelector( getCurrentUserCountryCode );
 	const currentSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getCurrentPlan( state, currentSite?.ID ) );
+	const geoQuery = useGeoLocationQuery();
 
 	const replaceablePlanSlugs: string[] = [
 		PLAN_PERSONAL_3_YEARS,
@@ -31,7 +33,7 @@ export const useFCCARestrictions = () => {
 	];
 
 	const isFCCACountry = (): boolean => {
-		return userCountryCode === 'DE';
+		return ( userCountryCode || geoQuery.data?.country_short ) === 'DE';
 	};
 
 	const isReplaceablePlan = ( planSlug: string ): boolean => {
