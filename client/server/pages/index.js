@@ -724,7 +724,7 @@ function wpcomPages( app ) {
 				res.redirect( pricingPageUrl );
 			}
 		} else {
-			if ( locale ) {
+			if ( locale && locale !== config( 'i18n_default_locale_slug' ) ) {
 				const queryParams = new URLSearchParams( req.query );
 				const queryString = queryParams.size ? '?' + queryParams.toString() : '';
 				res.redirect( `/plans${ queryString }` );
