@@ -707,7 +707,7 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( `/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/plans`, function ( req, res, next ) {
-		const locale = req.params?.locale;
+		const locale = req.params?.locale ?? config( 'i18n_default_locale_slug' );
 
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
