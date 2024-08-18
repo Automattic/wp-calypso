@@ -14,7 +14,7 @@ import {
 } from 'calypso/components/social-buttons';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import { loginSocialUser as loginUser, createSocialUserFailed } from 'calypso/state/login/actions';
+import { loginSocialUser, createSocialUserFailed } from 'calypso/state/login/actions';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 
 import './social.scss';
@@ -24,7 +24,7 @@ class SocialLoginForm extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
 		onSuccess: PropTypes.func.isRequired,
-		loginSocialUser: PropTypes.func.isRequired,
+		loginUser: PropTypes.func.isRequired,
 		uxMode: PropTypes.string.isRequired,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
@@ -39,11 +39,7 @@ class SocialLoginForm extends Component {
 	};
 
 	handleLogin = ( service, result ) => {
-		const { onSuccess, loginSocialUser, socialService } = this.props;
-
-		if ( socialService !== service ) {
-			return;
-		}
+		const { onSuccess, loginUser } = this.props;
 
 		let redirectTo = this.props.redirectTo;
 
@@ -59,7 +55,7 @@ class SocialLoginForm extends Component {
 			...result,
 		};
 
-		loginSocialUser( socialInfo, redirectTo ).then(
+		loginUser( socialInfo, redirectTo ).then(
 			() => {
 				this.recordEvent( 'calypso_login_social_login_success', service );
 				onSuccess();
@@ -130,15 +126,12 @@ class SocialLoginForm extends Component {
 							onClick={ () => {
 								this.trackLoginAndRememberRedirect( 'google' );
 							} }
-							socialServiceResponse={ socialService === 'google' ? socialServiceResponse : null }
 							startingPoint="login"
 						/>
 
 						<AppleLoginButton
 							clientId={ config( 'apple_oauth_client_id' ) }
-							responseHandler={ ( result ) => {
-								this.handleLogin( 'apple', result );
-							} }
+							responseHandler={ ( result ) => this.handleLogin( 'apple', result ) }
 							uxMode={ uxMode }
 							redirectUri={ this.getRedirectUri( 'apple' ) }
 							onClick={ () => {
@@ -150,9 +143,7 @@ class SocialLoginForm extends Component {
 						<GithubSocialButton
 							socialServiceResponse={ socialService === 'github' ? socialServiceResponse : null }
 							redirectUri={ this.getRedirectUri( 'github' ) }
-							responseHandler={ ( result ) => {
-								this.handleLogin( 'github', result );
-							} }
+							responseHandler={ ( result ) => this.handleLogin( 'github', result ) }
 							onClick={ () => {
 								this.trackLoginAndRememberRedirect( 'github' );
 							} }
@@ -177,7 +168,7 @@ export default connect(
 		redirectTo: getRedirectToOriginal( state ),
 	} ),
 	{
-		loginSocialUser: loginUser,
+		loginUser: loginSocialUser,
 		createSocialUserFailed,
 		recordTracksEvent,
 	}
