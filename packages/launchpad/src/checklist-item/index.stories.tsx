@@ -81,10 +81,6 @@ export const ExpandedWithAction: Story = {
 		expandable: {
 			content: <p>This is the expanded content.</p>,
 			isOpen: true,
-			action: {
-				label: 'Next',
-				onClick: () => {},
-			},
 		},
 	},
 };
