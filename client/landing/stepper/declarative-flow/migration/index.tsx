@@ -150,7 +150,11 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const siteId = getFromPropsOrUrl( 'siteId', props );
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
 
-				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_HOW_TO_MIGRATE.slug ) );
+				return navigate(
+					addQueryArgs( { siteId, siteSlug }, MIGRATION_HOW_TO_MIGRATE.slug ),
+					{},
+					true
+				);
 			},
 		},
 	};
