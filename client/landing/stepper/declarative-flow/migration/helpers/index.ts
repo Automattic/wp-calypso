@@ -10,7 +10,7 @@ export const goToImporter = (
 		flow: string;
 	}
 ) => {
-	return window.location.assign(
+	return window.location.replace(
 		addQueryArgs(
 			{
 				siteId,
