@@ -14,7 +14,7 @@ import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
 import { MigrationUpgradePlanActions } from '../internals/steps-repository/migration-upgrade-plan/actions';
-import { goToImporter } from './helpers/importer';
+import { goToImporter } from './helpers';
 import type { ProvidedDependencies } from '../internals/types';
 import type {
 	Flow,
