@@ -32,7 +32,6 @@ export const BackButton = ( { onClick, backToRoot = false, className }: Props ) 
 		<Button
 			className={ buttonClassName }
 			/* eslint-disable-next-line jsx-a11y/no-autofocus */
-			autoFocus
 			onClick={ onClick || defaultOnClick }
 		>
 			<Icon icon={ chevronLeft } size={ 18 } />
