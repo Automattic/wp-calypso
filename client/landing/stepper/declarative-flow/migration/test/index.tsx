@@ -203,6 +203,44 @@ describe( `${ flow.name }`, () => {
 					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 				} );
 			} );
+
+			it( 'redirects user from PROCESSING > Checkout page when plan is already selected', () => {
+				runNavigation( {
+					from: STEPS.PROCESSING,
+					query: {
+						plan: 'business',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+				} );
+
+				expect( goToCheckout ).toHaveBeenCalledWith( {
+					destination: `/setup/migration/migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com`,
+					extraQueryParams: { introductoryOffer: '1' },
+					flowName: 'migration',
+					siteSlug: 'example.wordpress.com',
+					stepName: STEPS.MIGRATION_UPGRADE_PLAN.slug,
+					cancelDestination: `/setup/migration/migration-upgrade-plan?plan=business&siteId=123&siteSlug=example.wordpress.com`,
+					plan: 'business-bundle',
+					forceRedirection: true,
+				} );
+			} );
+
+			it( 'redirects user from PROCESSING to UPGRADE PLAN when the plan is selected but unknown', () => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					query: {
+						plan: 'unknown',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.MIGRATION_UPGRADE_PLAN,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+			} );
 		} );
 
 		describe( 'MIGRATION_UPGRADE_PLAN STEP', () => {

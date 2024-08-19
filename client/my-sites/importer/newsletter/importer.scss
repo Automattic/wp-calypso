@@ -51,40 +51,6 @@
 	}
 }
 
-.logo-chain {
-	display: flex;
-	justify-content: center;
-	margin-bottom: 20px;
-}
-
-.logo-chain__logo {
-	width: 48px;
-	height: 48px;
-	margin: 0 -16px 0 0;
-	border-radius: 50%;
-	overflow: hidden;
-	position: relative;
-}
-
-.logo-chain__logo .importer__service-icon.wordpress {
-	background-color: #3858e9;
-	width: 46px;
-	height: 46px;
-	min-width: 46px;
-	position: absolute;
-	left: 1px;
-	top: 1px;
-}
-
-.logo-chain__logo .importer__service-icon.substack-logo {
-	width: 46px;
-	min-width: 46px;
-	height: 46px;
-	position: absolute;
-	left: 1px;
-	top: 1px;
-}
-
 .select-newsletter-form__help {
 	margin-top: 8px;
 	font-size: 0.75rem;

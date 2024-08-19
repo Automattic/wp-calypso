@@ -47,8 +47,8 @@ export const metricValuations = {
 		good: translate( "Your site's visual stability is good" ),
 		needsImprovement: translate( "Your site's visual stability is moderate" ),
 		bad: translate( "Your site's visual stability needs improvement" ),
-		heading: translate( 'What is visual stability needs?' ),
-		aka: translate( '(aka Content Layout Shift)' ),
+		heading: translate( 'What is visual stability?' ),
+		aka: translate( '(aka Cumulative Layout Shift)' ),
 		explanation: translate(
 			'Visual stability is assessed by measuring how often content moves unexpectedly during loading. The best sites have a score of 0.1 or lower.'
 		),
