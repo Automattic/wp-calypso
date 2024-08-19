@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import ChecklistItem from './';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -79,7 +80,16 @@ export const ExpandedWithAction: Story = {
 	args: {
 		task: baseTask,
 		expandable: {
-			content: <p>This is the expanded content.</p>,
+			content: (
+				<>
+					<p>This is the expanded content.</p>
+					<div>
+						<Button variant="primary" onClick={ () => {} }>
+							Action
+						</Button>
+					</div>
+				</>
+			),
 			isOpen: true,
 		},
 	},
