@@ -9,7 +9,7 @@ import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
 import { MigrationUpgradePlanActions } from '../internals/steps-repository/migration-upgrade-plan/actions';
-import { useImporterNavigator } from './hooks/use-importer-navigator';
+import { goToImporter } from './helpers/importer';
 import type { ProvidedDependencies } from '../internals/types';
 import type {
 	Flow,
@@ -32,7 +32,6 @@ const {
 
 const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject: Flow ) => {
 	const [ query ] = useSearchParams();
-	const { getPartial, goToImporter } = useImporterNavigator();
 
 	const getFromPropsOrUrl = ( key: string, props?: ProvidedDependencies ): Primitive => {
 		const value = props?.[ key ] || query.get( key );
@@ -46,7 +45,6 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const hasSite = Boolean( siteId ) || Boolean( siteSlug );
-				const importer = getPartial( platform );
 
 				if ( platform === 'wordpress' ) {
 					if ( hasSite ) {
@@ -57,27 +55,37 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				}
 
 				if ( hasSite ) {
-					return goToImporter( importer, siteId, siteSlug );
+					return goToImporter( {
+						siteId,
+						siteSlug,
+						platform,
+						backToStep: PLATFORM_IDENTIFICATION,
+					} );
 				}
 
-				return navigate( addQueryArgs( { importer }, SITE_CREATION_STEP.slug ), {}, true );
+				return navigate( addQueryArgs( { platform }, SITE_CREATION_STEP.slug ), {}, true );
 			},
 		},
 		[ SITE_CREATION_STEP.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const importer = getFromPropsOrUrl( 'importer', props );
+				const platform = getFromPropsOrUrl( 'platform', props );
 
-				return navigate( addQueryArgs( { importer }, PROCESSING.slug ), {}, true );
+				return navigate( addQueryArgs( { platform }, PROCESSING.slug ), {}, true );
 			},
 		},
 		[ PROCESSING.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const importer = getFromPropsOrUrl( 'importer', props ) as string;
+				const platform = getFromPropsOrUrl( 'platform', props ) as ImporterPlatform;
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 
-				if ( importer ) {
-					return goToImporter( importer, siteId, siteSlug );
+				if ( platform ) {
+					return goToImporter( {
+						platform,
+						siteId,
+						siteSlug,
+						backToStep: PLATFORM_IDENTIFICATION,
+					} );
 				}
 
 				return navigate(
@@ -93,10 +101,14 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
 				const plan = props?.plan as string;
-				const partial = getPartial( 'wordpress' );
 
 				if ( props?.action === MigrationUpgradePlanActions.IMPORT_CONTENT_ONLY ) {
-					return goToImporter( partial, siteId, siteSlug );
+					return goToImporter( {
+						platform: 'wordpress',
+						siteId,
+						siteSlug,
+						backToStep: MIGRATION_UPGRADE_PLAN,
+					} );
 				}
 
 				if ( props?.goToCheckout ) {

@@ -18,11 +18,6 @@ const originalLocation = window.location;
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
 jest.mock( 'calypso/landing/stepper/utils/checkout' );
-jest.mock( '@automattic/calypso-config', () => {
-	const config = () => 'test';
-	config.isEnabled = () => true;
-	return config;
-} );
 
 describe( `${ flow.name }`, () => {
 	beforeEach( () => {
@@ -73,10 +68,7 @@ describe( `${ flow.name }`, () => {
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_CREATION_STEP,
-					query: {
-						importer:
-							'importerBlogger?siteSlug=%7Bsite%7D&from=&backToFlow=%2Fmigration%2Fplatform-identification',
-					},
+					query: { platform: 'blogger' },
 				} );
 			} );
 
@@ -122,6 +114,7 @@ describe( `${ flow.name }`, () => {
 						from: '',
 						backToFlow: '/migration/platform-identification',
 						siteId: 123,
+						ref: 'migration',
 					} )
 				);
 			} );
@@ -147,12 +140,12 @@ describe( `${ flow.name }`, () => {
 			it( 'redirects user from SITE_CREATION to PROCESSING passing the importer param', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_CREATION_STEP,
-					query: { importer: 'any-importer' },
+					query: { platform: 'any-platform' },
 				} );
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.PROCESSING,
-					query: { importer: 'any-importer' },
+					query: { platform: 'any-platform' },
 				} );
 			} );
 		} );
@@ -162,16 +155,19 @@ describe( `${ flow.name }`, () => {
 				runNavigation( {
 					from: STEPS.PROCESSING,
 					query: {
-						importer: 'importerBlogger',
-						siteId: 123,
+						platform: 'blogger',
 						siteSlug: 'example.wordpress.com',
+						siteId: 123,
 					},
 				} );
 
 				expect( window.location.replace ).toHaveBeenCalledWith(
 					addQueryArgs( '/setup/site-setup/importerBlogger', {
-						siteId: 123,
 						siteSlug: 'example.wordpress.com',
+						from: '',
+						backToFlow: '/migration/platform-identification',
+						siteId: 123,
+						ref: 'migration',
 					} )
 				);
 			} );
@@ -180,7 +176,7 @@ describe( `${ flow.name }`, () => {
 				runNavigation( {
 					from: STEPS.PROCESSING,
 					query: {
-						importer: '/import/{site}?engine=substack&from-site=',
+						platform: 'substack',
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
 					},
@@ -190,6 +186,7 @@ describe( `${ flow.name }`, () => {
 					addQueryArgs( '/import/example.wordpress.com', {
 						engine: 'substack',
 						'from-site': '',
+						backToFlow: '/migration/platform-identification',
 					} )
 				);
 			} );
@@ -244,6 +241,7 @@ describe( `${ flow.name }`, () => {
 						option: 'content',
 						backToFlow: '/migration/migration-upgrade-plan',
 						siteId: 123,
+						ref: 'migration',
 					} )
 				);
 			} );
