@@ -149,13 +149,20 @@ const SitesDashboard = ( {
 		return '70%';
 	};
 
+	// Limit fields on breakpoints smaller than 960px wide.
+	const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats', 'actions' ];
+	const mobileFields = [ 'site', 'actions' ];
+
+	const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
+		isDesktop ? desktopFields : mobileFields;
+
 	// Create the DataViews state based on initial values
 	const defaultDataViewsState = {
 		...initialDataViewsState,
 		page,
 		perPage,
 		search: search ?? '',
-		fields: [ 'site', 'plan', 'status', 'last-publish', 'stats', 'actions' ],
+		fields: getFieldsByBreakpoint( isDesktop ),
 		filters: [
 			{
 				field: addDummyDataViewPrefix( 'status' ),
