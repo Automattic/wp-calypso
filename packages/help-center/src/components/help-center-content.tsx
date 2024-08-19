@@ -121,11 +121,20 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		}
 	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
 
-	// reset the scroll location on navigation, TODO: unless there's an anchor
+	// reset the scroll location on navigation.
 	useEffect( () => {
 		setSearchTerm( '' );
-		if ( containerRef.current ) {
-			containerRef.current.scrollTo( 0, 0 );
+		const searchParams = new URLSearchParams( location.search );
+		const encodedLink = searchParams.get( 'link' );
+
+		if ( encodedLink ) {
+			const decodedLink = decodeURIComponent( encodedLink );
+			const hasAnchor = decodedLink.includes( '#' );
+
+			// If has anchor, just scroll to the anchor. Otherwise we scroll to the top probably because we are navigating to a new page.
+			if ( ! hasAnchor && containerRef.current ) {
+				containerRef.current.scrollTo( 0, 0 );
+			}
 		}
 	}, [ location ] );
 
