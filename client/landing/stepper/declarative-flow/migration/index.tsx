@@ -3,12 +3,13 @@ import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSearchParams } from 'react-router-dom';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
 import { MigrationUpgradePlanActions } from '../internals/steps-repository/migration-upgrade-plan/actions';
-import { goToImporter } from './helpers';
+import { getPartialImporterURL, goToImporter } from './helpers';
 import type { ProvidedDependencies } from '../internals/types';
 import type {
 	Flow,
@@ -40,13 +41,11 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 	return {
 		[ PLATFORM_IDENTIFICATION.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const platform = getFromPropsOrUrl( 'platform', props ) as string;
+				const platform = getFromPropsOrUrl( 'platform', props ) as ImporterPlatform;
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const hasSite = Boolean( siteId ) || Boolean( siteSlug );
-
-				// The importer url is returning the importer name and empty query params, so we need to remove them;
-				const importer = ( ( props?.url as string ) || '' ).split( '?' )[ 0 ];
+				const importer = getPartialImporterURL( platform );
 
 				if ( platform === 'wordpress' ) {
 					if ( hasSite ) {
@@ -60,14 +59,14 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					return goToImporter( importer, siteId, siteSlug );
 				}
 
-				return navigate( addQueryArgs( { importer }, SITE_CREATION_STEP.slug ) );
+				return navigate( addQueryArgs( { importer }, SITE_CREATION_STEP.slug ), {}, true );
 			},
 		},
 		[ SITE_CREATION_STEP.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const importer = getFromPropsOrUrl( 'importer', props );
 
-				return navigate( addQueryArgs( { importer }, PROCESSING.slug ) );
+				return navigate( addQueryArgs( { importer }, PROCESSING.slug ), {}, true );
 			},
 		},
 		[ PROCESSING.slug ]: {
@@ -80,7 +79,11 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					return goToImporter( importer, siteId, siteSlug );
 				}
 
-				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ) );
+				return navigate(
+					addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ),
+					{},
+					true
+				);
 			},
 		},
 		[ MIGRATION_UPGRADE_PLAN.slug ]: {

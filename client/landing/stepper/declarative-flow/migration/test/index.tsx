@@ -18,6 +18,11 @@ const originalLocation = window.location;
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
 jest.mock( 'calypso/landing/stepper/utils/checkout' );
+jest.mock( '@automattic/calypso-config', () => {
+	const config = () => 'test';
+	config.isEnabled = () => true;
+	return config;
+} );
 
 describe( `${ flow.name }`, () => {
 	beforeEach( () => {
@@ -60,15 +65,15 @@ describe( `${ flow.name }`, () => {
 
 	describe( 'useStepNavigation', () => {
 		describe( 'PLATFORM IDENTIFICATION STEP', () => {
-			it( 'redirects the user from PLATFORM IDENTIFICATION to CREATE SITE', () => {
+			it( 'redirects the user from PLATFORM IDENTIFICATION to CREATE SITE passing the importer url template', () => {
 				const destination = runNavigation( {
 					from: STEPS.PLATFORM_IDENTIFICATION,
-					dependencies: { platform: 'any-platform', url: 'importerBlogger' },
+					dependencies: { platform: 'blogger' },
 				} );
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_CREATION_STEP,
-					query: { importer: 'importerBlogger' },
+					query: { importer: 'importerBlogger?siteSlug={site}&from=' },
 				} );
 			} );
 
@@ -96,27 +101,33 @@ describe( `${ flow.name }`, () => {
 				} );
 			} );
 
-			it( 'redirects the user from PLATFORM IDENTIFICATION to IMPORT when siteSlug/siteId is available', async () => {
+			it( 'redirects the user from PLATFORM IDENTIFICATION to IMPORT when siteSlug/siteId it is available', async () => {
 				runNavigation( {
 					from: STEPS.PLATFORM_IDENTIFICATION,
 					dependencies: {
+						platform: 'blogger',
+					},
+					query: {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
-						platform: 'blogger',
-						url: 'importBlogger',
 					},
 				} );
 
 				expect( window.location.replace ).toHaveBeenCalledWith(
-					addQueryArgs( '/setup/site-setup/importBlogger', {
-						siteId: 123,
+					addQueryArgs( '/setup/site-setup/importerBlogger', {
 						siteSlug: 'example.wordpress.com',
+						from: '',
+						siteId: 123,
 					} )
 				);
 			} );
 		} );
 
 		describe( 'SITE_CREATION STEP', () => {
+			beforeEach( () => {
+				jest.clearAllMocks();
+			} );
+
 			it( 'redirects user from SITE_CREATION to PROCESSING', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_CREATION_STEP,
@@ -143,20 +154,38 @@ describe( `${ flow.name }`, () => {
 		} );
 
 		describe( 'PROCESSING STEP', () => {
-			it( 'redirect user from PROCESSING to IMPORTER when an importer is available', () => {
+			it( 'redirect user from PROCESSING to WPCOM IMPORTER when a wpcom importer is selected', () => {
 				runNavigation( {
 					from: STEPS.PROCESSING,
 					query: {
-						importer: 'importBlogger',
+						importer: 'importerBlogger',
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
 					},
 				} );
 
 				expect( window.location.replace ).toHaveBeenCalledWith(
-					addQueryArgs( '/setup/site-setup/importBlogger', {
+					addQueryArgs( '/setup/site-setup/importerBlogger', {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
+					} )
+				);
+			} );
+
+			it( 'redirect user from PROCESSING to WPORG IMPORTER when a wporg importer is selected', () => {
+				runNavigation( {
+					from: STEPS.PROCESSING,
+					query: {
+						importer: '/import/{site}?engine=substack&from-site=',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+				} );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					addQueryArgs( '/import/example.wordpress.com', {
+						engine: 'substack',
+						'from-site': '',
 					} )
 				);
 			} );
