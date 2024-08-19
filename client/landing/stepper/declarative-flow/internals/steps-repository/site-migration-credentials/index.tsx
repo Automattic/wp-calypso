@@ -33,6 +33,18 @@ interface CredentialsFormData {
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	const translate = useTranslate();
 
+	const validateSiteAddress = ( siteAddress: string ) => {
+		const isSiteAddressValid = CAPTURE_URL_RGX.test( siteAddress );
+
+		if ( ! isSiteAddressValid ) {
+			return getValidationMessage( siteAddress, translate );
+		}
+	};
+
+	const isBackupFileLocationValid = ( fileLocation: string ) => {
+		return ! isValidUrl( fileLocation ) ? translate( 'Please enter a valid URL.' ) : undefined;
+	};
+
 	const {
 		formState: { errors },
 		control,
@@ -60,18 +72,6 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 			recordTracksEvent( 'calypso_site_migration_automated_request_error' );
 		},
 	} );
-
-	const validateSiteAddress = ( siteAddress: string ) => {
-		const isSiteAddressValid = CAPTURE_URL_RGX.test( siteAddress );
-
-		if ( ! isSiteAddressValid ) {
-			return getValidationMessage( siteAddress, translate );
-		}
-	};
-
-	const isBackupFileLocationValid = ( fileLocation: string ) => {
-		return ! isValidUrl( fileLocation ) ? translate( 'Please enter a valid URL.' ) : undefined;
-	};
 
 	// Subscribe only this field to the access method value
 	const accessMethod = watch( 'howToAccessSite' );
