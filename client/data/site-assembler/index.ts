@@ -10,7 +10,8 @@ export const useIsSiteAssemblerEnabledExp = (
 	const variationName =
 		assignment?.variationName ||
 		// TODO: Remove the following one after testing.
-		window.sessionStorage.getItem( 'calypso_disable_site_assembler' );
+		( typeof window !== 'undefined' &&
+			window.sessionStorage.getItem( 'calypso_disable_site_assembler' ) );
 
 	if ( isLoading ) {
 		return false;
