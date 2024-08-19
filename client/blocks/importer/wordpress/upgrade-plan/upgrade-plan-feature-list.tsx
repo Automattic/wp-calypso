@@ -6,7 +6,7 @@ import {
 	isMonthly,
 } from '@automattic/calypso-products';
 import { Badge } from '@automattic/components';
-import { PlansTooltip } from '@automattic/plans-grid-next';
+import { Tooltip } from '@automattic/plans-grid-next';
 import { chevronDown, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -60,7 +60,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 				<>
 					{ wpcomFeatures?.map( ( feature, i ) => (
 						<li className={ clsx( 'import__upgrade-plan-feature' ) } key={ i }>
-							<PlansTooltip
+							<Tooltip
 								id={ `feature-${ i }` }
 								text={ feature?.getDescription?.() }
 								setActiveTooltipId={ setActiveTooltipId }
@@ -68,7 +68,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 							>
 								{ i === 0 && <strong>{ feature?.getTitle() }</strong> }
 								{ i > 0 && <span>{ feature?.getTitle() }</span> }
-							</PlansTooltip>
+							</Tooltip>
 						</li>
 					) ) }
 
@@ -77,14 +77,14 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 					</li>
 					{ jetpackFeatures?.map( ( feature, i ) => (
 						<li className={ clsx( 'import__upgrade-plan-feature' ) } key={ i }>
-							<PlansTooltip
+							<Tooltip
 								id={ `jetpack-feature-${ i }` }
 								text={ feature?.getDescription?.() }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
 							>
 								<span>{ feature?.getTitle() }</span>
-							</PlansTooltip>
+							</Tooltip>
 						</li>
 					) ) }
 					<li className={ clsx( 'import__upgrade-plan-feature logo' ) }>

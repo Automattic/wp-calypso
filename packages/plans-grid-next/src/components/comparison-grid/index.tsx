@@ -35,8 +35,8 @@ import PopularBadge from '../popular-badge';
 import ActionButton from '../shared/action-button';
 import BillingTimeframe from '../shared/billing-timeframe';
 import HeaderPrice from '../shared/header-price';
-import PlansTooltip from '../shared/plans-tooltip';
 import { PlanStorage } from '../shared/storage';
+import Tooltip from '../shared/tooltip';
 import { StickyContainer } from '../sticky-container';
 import type {
 	GridPlan,
@@ -609,7 +609,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 						<>
 							{ planPaymentTransactionFees ? (
 								<>
-									<PlansTooltip
+									<Tooltip
 										text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 										setActiveTooltipId={ setActiveTooltipId }
 										activeTooltipId={ activeTooltipId }
@@ -618,7 +618,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 										<span className="plan-comparison-grid__plan-title">
 											{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
 										</span>
-									</PlansTooltip>
+									</Tooltip>
 									<span className="plan-comparison-grid__plan-conditional-title">
 										{ planPaymentTransactionFees?.getAlternativeTitle?.() }
 									</span>
@@ -635,7 +635,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getIcon() as React.ReactNode }
 								</span>
 							) }
-							<PlansTooltip
+							<Tooltip
 								text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
@@ -644,7 +644,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 								<span className="plan-comparison-grid__plan-title">
 									{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
 								</span>
-							</PlansTooltip>
+							</Tooltip>
 							{ feature?.getCompareTitle && (
 								<span className="plan-comparison-grid__plan-subtitle">
 									{ feature.getCompareTitle() }
@@ -719,7 +719,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 				isFeatureGroupRowTitleCell
 			>
 				{ isStorageFeature ? (
-					<PlansTooltip
+					<Tooltip
 						text={
 							enableFeatureTooltips
 								? translate( 'Space to store your photos, media, and more.' )
@@ -730,12 +730,12 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 						id={ tooltipId }
 					>
 						{ translate( 'Storage' ) }
-					</PlansTooltip>
+					</Tooltip>
 				) : (
 					<>
 						{ feature && (
 							<>
-								<PlansTooltip
+								<Tooltip
 									text={ enableFeatureTooltips ? feature.getDescription?.() : undefined }
 									setActiveTooltipId={ setActiveTooltipId }
 									activeTooltipId={ activeTooltipId }
@@ -747,10 +747,10 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 											<sup>{ footnote }</sup>
 										</FeatureFootnote>
 									) }
-								</PlansTooltip>
+								</Tooltip>
 								{ allJetpackFeatures.has( feature.getSlug() ) ? (
 									<JetpackIconContainer>
-										<PlansTooltip
+										<Tooltip
 											text={ translate(
 												'Security, performance, and growth tools—powered by Jetpack.'
 											) }
@@ -759,7 +759,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 											id={ `jp-${ tooltipId }` }
 										>
 											<JetpackLogo size={ 16 } />
-										</PlansTooltip>
+										</Tooltip>
 									</JetpackIconContainer>
 								) : null }
 							</>

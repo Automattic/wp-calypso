@@ -17,7 +17,7 @@ import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix
 import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import PlanDivOrTdContainer from './plan-div-td-container';
 import PopularBadge from './popular-badge';
-import PlansTooltip from './shared/plans-tooltip';
+import Tooltip from './shared/tooltip';
 import type { GridPlan } from '../types';
 
 const PlanLogo: React.FunctionComponent< {
@@ -72,7 +72,7 @@ const PlanLogo: React.FunctionComponent< {
 			/>
 			<header className={ headerClasses }>
 				{ isBusinessPlan( planSlug ) && (
-					<PlansTooltip
+					<Tooltip
 						text={ translate(
 							'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
 						) }
@@ -81,27 +81,27 @@ const PlanLogo: React.FunctionComponent< {
 						activeTooltipId={ activeTooltipId }
 					>
 						<CloudLogo />
-					</PlansTooltip>
+					</Tooltip>
 				) }
 				{ shouldShowWooLogo && (
-					<PlansTooltip
+					<Tooltip
 						text={ translate( 'Make your online store a reality with the power of WooCommerce.' ) }
 						id="woo-logo"
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					>
 						<WooLogo />
-					</PlansTooltip>
+					</Tooltip>
 				) }
 				{ isWpcomEnterpriseGridPlan( planSlug ) && (
-					<PlansTooltip
+					<Tooltip
 						text={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
 						id="enterprise-logo"
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					>
 						<VIPLogo />
-					</PlansTooltip>
+					</Tooltip>
 				) }
 			</header>
 		</PlanDivOrTdContainer>

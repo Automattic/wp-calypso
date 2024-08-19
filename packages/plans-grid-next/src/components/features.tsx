@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
 import { usePlansGridContext } from '../grid-context';
 import { PlanFeaturesItem } from './item';
-import PlansTooltip from './shared/plans-tooltip';
+import Tooltip from './shared/tooltip';
 import type { TransformedFeatureObject, DataResponse } from '../types';
 
 const SubdomainSuggestion = styled.div`
@@ -114,7 +114,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
 									{ isFreePlanAndCustomDomainFeature ? (
-										<PlansTooltip
+										<Tooltip
 											text={
 												enableFeatureTooltips
 													? translate( '%s is not included', {
@@ -133,9 +133,9 @@ const PlanFeatures2023GridFeatures: React.FC< {
 												generatedWPComSubdomain={ generatedWPComSubdomain }
 												isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 											/>
-										</PlansTooltip>
+										</Tooltip>
 									) : (
-										<PlansTooltip
+										<Tooltip
 											text={ enableFeatureTooltips ? currentFeature.getDescription?.() : undefined }
 											activeTooltipId={ activeTooltipId }
 											setActiveTooltipId={ setActiveTooltipId }
@@ -153,7 +153,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 													</ul>
 												) : null }
 											</>
-										</PlansTooltip>
+										</Tooltip>
 									) }
 								</span>
 							</span>

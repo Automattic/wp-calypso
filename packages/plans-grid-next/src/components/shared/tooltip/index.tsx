@@ -1,10 +1,10 @@
-import { Tooltip } from '@automattic/components';
+import { Tooltip as CoreTooltip } from '@automattic/components';
 import { TranslateResult } from 'i18n-calypso';
 import { Dispatch, PropsWithChildren, SetStateAction, useRef } from 'react';
 import { hasTouch } from '../../../lib/touch-detect';
 import './style.scss';
 
-export type PlansTooltipProps = PropsWithChildren< {
+export type TooltipProps = PropsWithChildren< {
 	text?: TranslateResult;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 	activeTooltipId: string;
@@ -12,14 +12,14 @@ export type PlansTooltipProps = PropsWithChildren< {
 	showOnMobile?: boolean;
 } >;
 
-const PlansTooltip = ( {
+const Tooltip = ( {
 	showOnMobile = true,
 	activeTooltipId,
 	setActiveTooltipId,
 	id,
 	text,
 	children,
-}: PlansTooltipProps ) => {
+}: TooltipProps ) => {
 	const tooltipRef = useRef< HTMLDivElement >( null );
 	const isTouch = hasTouch();
 
@@ -50,7 +50,7 @@ const PlansTooltip = ( {
 			>
 				{ children }
 			</span>
-			<Tooltip
+			<CoreTooltip
 				className="plans-grid-next-tooltip"
 				isVisible={ isVisible }
 				position="top"
@@ -59,9 +59,9 @@ const PlansTooltip = ( {
 				showOnMobile={ showOnMobile }
 			>
 				{ text }
-			</Tooltip>
+			</CoreTooltip>
 		</>
 	);
 };
 
-export default PlansTooltip;
+export default Tooltip;
