@@ -18,8 +18,6 @@
 		"analyze-bundles": "EMIT_STATS=true yarn run build && webpack-bundle-analyzer stats.json dist -h 127.0.0.1 -s gzip",
 		"clean": "rm -rf dist stats.json",
 		"build:notifications": "calypso-build",
-		"dev-server": "NODE_ENV=development webpack serve",
-		"start": "yarn run clean && yarn run build:notifications && yarn run dev-server",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/notifications",
 		"build": "NODE_ENV=production yarn dev",
 		"teamcity:build-app": "yarn build"
@@ -45,8 +43,7 @@
 		"redux-thunk": "^2.4.2",
 		"webpack-bundle-analyzer": "^4.10.2",
 		"wpcom": "workspace:^",
-		"wpcom-proxy-request": "workspace:^",
-		"wpcom-xhr-request": "workspace:^"
+		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
@@ -55,7 +52,6 @@
 		"html-webpack-plugin": "^5.6.0",
 		"postcss": "^8.4.5",
 		"postcss-custom-properties": "^11.0.0",
-		"webpack": "^5.91.0",
-		"webpack-dev-server": "^4.15.2"
+		"webpack": "^5.91.0"
 	}
 }
