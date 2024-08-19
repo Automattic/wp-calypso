@@ -1,6 +1,6 @@
 import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
-import { STEPPER_TRACKS_EVENTS_STEP_NAV_SUBMIT } from '../../constants';
+import { STEPPER_TRACKS_EVENTS } from '../../constants';
 
 /**
  * This is the return type of useStepNavigation hook
@@ -110,20 +110,9 @@ export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 /**
  * Used for overriding props recorded by the default Tracks event loggers.
  * Can pass any properties that should be recorded for the respective events.
- * Can be used to pass new Tracks events and their props to be logged on the respective flow control key.
- *
- * - Currently only applicable to `NavigationControls`, as per the signature.
- * - Passing in new events to log needs only updating the respective event constant in `stepper/constants.ts`.
  */
 export type UseTracksEventPropsHook = () => {
-	[ key in keyof NavigationControls ]?: key extends 'submit'
-		? {
-				[ key in ( typeof STEPPER_TRACKS_EVENTS_STEP_NAV_SUBMIT )[ number ] ]?: Record<
-					string,
-					string | number | null
-				>;
-		  }
-		: undefined;
+	[ key in ( typeof STEPPER_TRACKS_EVENTS )[ number ] ]?: Record< string, string | number | null >;
 };
 
 export type Flow = {

@@ -22,6 +22,4 @@ export const HOW_TO_MIGRATE_OPTIONS = {
  */
 export const STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT = 'calypso_signup_actions_submit_step';
 
-export const STEPPER_TRACKS_EVENTS_STEP_NAV_SUBMIT = < const >[
-	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
-];
+export const STEPPER_TRACKS_EVENTS = < const >[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ];

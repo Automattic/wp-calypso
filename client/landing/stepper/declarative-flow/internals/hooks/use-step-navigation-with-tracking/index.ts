@@ -38,7 +38,7 @@ export const useStepNavigationWithTracking = ( {
 					flowName,
 					currentStepRoute,
 					variantSlug,
-					tracksEventPropsFromFlow?.submit?.[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]
+					tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]
 				);
 				stepNavigation.submit?.( providedDependencies, ...params );
 			},
