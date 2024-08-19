@@ -5,6 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
+import { CardNetworkInput } from '../../components/card-network-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 import type { WpcomCreditCardSelectors } from './store';
 import type { StripeFieldChangeInput } from './types';
@@ -101,7 +102,15 @@ export default function CreditCardNumberField( {
 						}
 					} }
 				/>
-				{ showNetworkSelector ? <PaymentLogo brand="cb" /> : <PaymentLogo brand={ brand } /> }
+				{ showNetworkSelector ? (
+					<CardNetworkInput
+						className="test"
+						disabled={ ! cardNetworks }
+						cardNetworks={ cardNetworks }
+					/>
+				) : (
+					<PaymentLogo brand={ brand } />
+				) }
 
 				{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 			</StripeFieldWrapper>
