@@ -231,36 +231,6 @@
 	}
 }
 
-// Styles for actions (search, filters).
-.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
-	@include search-control-wpcom-styles;
-
-	.components-search-control .components-input-control__container {
-		width: 100%;
-		height: 40px;
-		flex: 1 1 auto;
-		flex-direction: row;
-		align-items: center;
-		// Places search above filters
-		z-index: 1;
-		margin-top: 2px;
-
-		.components-input-control__input {
-			padding: 0 0 0 10px;
-			font-size: $font-body-small;
-
-			&::placeholder {
-				color: var(--studio-gray-40);
-			}
-		}
-
-		// Search icon
-		.components-input-control__suffix {
-			margin-right: 4px;
-		}
-	}
-}
-
 // Style the sortable table headers.
 .wpcom-site .dataviews-view-table .components-button.is-tertiary {
 	&:active:not(:disabled),
