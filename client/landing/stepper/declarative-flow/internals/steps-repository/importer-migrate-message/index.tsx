@@ -37,6 +37,7 @@ const ImporterMigrateMessage: Step = () => {
 	const siteSlugParam = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const siteSlug = siteSlugParam ?? '';
+	const isCredentialsSkipped = useQuery().get( 'credentials' ) === 'skipped';
 	const { isPending, sendTicket } = useSubmitMigrationTicket();
 
 	useEffect( () => {
@@ -53,7 +54,7 @@ const ImporterMigrateMessage: Step = () => {
 	let whatToExpect: WhatToExpectProps[] = [];
 	let actions: ActionsProps[] = [];
 
-	if ( config.isEnabled( 'automated-migration/collect-credentials' ) ) {
+	if ( ! isCredentialsSkipped && config.isEnabled( 'automated-migration/collect-credentials' ) ) {
 		whatToExpect = [
 			{
 				icon: group,
