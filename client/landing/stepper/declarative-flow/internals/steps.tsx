@@ -300,12 +300,19 @@ export const STEPS = {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
 	},
+
 	PLATFORM_IDENTIFICATION: {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
 	},
+
 	MIGRATION_UPGRADE_PLAN: {
 		slug: 'migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/migration-upgrade-plan' ),
+	},
+
+	MIGRATION_IMPORTER_WORDPRESS: {
+		slug: 'migration-importer-wordpress',
+		asyncComponent: () => import( './steps-repository/migration-importer-wordpress' ),
 	},
 } satisfies Record< string, StepperStep >;

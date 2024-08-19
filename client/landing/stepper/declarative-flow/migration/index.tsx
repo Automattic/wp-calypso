@@ -22,6 +22,7 @@ const {
 	PROCESSING,
 	SITE_CREATION_STEP,
 	MIGRATION_UPGRADE_PLAN,
+	MIGRATION_IMPORTER_WORDPRESS,
 	MIGRATION_HOW_TO_MIGRATE,
 	MIGRATION_SOURCE_URL,
 	SITE_MIGRATION_INSTRUCTIONS,
@@ -80,13 +81,18 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
 				const plan = props?.plan as string;
-				const backToStep = {
-					step: MIGRATION_UPGRADE_PLAN.slug,
-					flow: flowPath,
-				};
+				// const backToStep = {
+				// 	step: MIGRATION_UPGRADE_PLAN.slug,
+				// 	flow: flowPath,
+				// };
 
 				if ( props?.action === MigrationUpgradePlanActions.IMPORT_CONTENT_ONLY ) {
-					return goToImporter( 'importerWordpress', siteId, siteSlug, backToStep );
+					return navigate(
+						addQueryArgs(
+							{ siteId, siteSlug, option: 'content' },
+							MIGRATION_IMPORTER_WORDPRESS.slug
+						)
+					);
 				}
 
 				if ( props?.goToCheckout ) {
@@ -159,6 +165,7 @@ export default {
 			SITE_CREATION_STEP,
 			PROCESSING,
 			MIGRATION_UPGRADE_PLAN,
+			MIGRATION_IMPORTER_WORDPRESS,
 			MIGRATION_HOW_TO_MIGRATE,
 			MIGRATION_SOURCE_URL,
 			SITE_MIGRATION_INSTRUCTIONS,
