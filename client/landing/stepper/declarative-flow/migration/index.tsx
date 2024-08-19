@@ -41,34 +41,43 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 		[ PLATFORM_IDENTIFICATION.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const platform = getFromPropsOrUrl( 'platform', props ) as string;
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
+				const hasSite = Boolean( siteId ) || Boolean( siteSlug );
 
-				const args: { platform: string | undefined; next?: string } = {
-					platform,
-				};
+				// The importer url is returning the importer name and empty query params, so we need to remove them;
+				const importer = ( ( props?.url as string ) || '' ).split( '?' )[ 0 ];
 
-				if ( platform !== 'wordpress' ) {
-					args.next = props?.url as string;
+				if ( platform === 'wordpress' ) {
+					if ( hasSite ) {
+						return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ) );
+					}
+
+					return navigate( SITE_CREATION_STEP.slug );
 				}
 
-				return navigate( addQueryArgs( args, SITE_CREATION_STEP.slug ) );
+				if ( hasSite ) {
+					return goToImporter( importer, siteId, siteSlug );
+				}
+
+				return navigate( addQueryArgs( { importer }, SITE_CREATION_STEP.slug ) );
 			},
 		},
 		[ SITE_CREATION_STEP.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const platform = getFromPropsOrUrl( 'platform', props );
-				const next = getFromPropsOrUrl( 'next', props );
+				const importer = getFromPropsOrUrl( 'importer', props );
 
-				return navigate( addQueryArgs( { platform, next }, PROCESSING.slug ) );
+				return navigate( addQueryArgs( { importer }, PROCESSING.slug ) );
 			},
 		},
 		[ PROCESSING.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const next = getFromPropsOrUrl( 'next', props ) as string;
+				const importer = getFromPropsOrUrl( 'importer', props ) as string;
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 
-				if ( next ) {
-					return goToImporter( next, siteId, siteSlug );
+				if ( importer ) {
+					return goToImporter( importer, siteId, siteSlug );
 				}
 
 				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ) );

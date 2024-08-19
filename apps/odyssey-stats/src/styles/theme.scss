@@ -1,4 +1,4 @@
-:root {
+.is-section-stats {
 	--jetpack-white-off: #f9f9f6;
 
 	--color-primary: var(--studio-jetpack-green);
@@ -66,4 +66,7 @@
 
 	--theme-highlight-color: var(--color-primary-50);
 	--theme-highlight-color-rgb: var(--color-primary-50-rgb);
+
+	--geo-chart-color-light: var(--color-accent-5);
+	--geo-chart-color-dark: var(--color-accent);
 }
