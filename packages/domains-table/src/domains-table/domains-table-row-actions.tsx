@@ -143,9 +143,21 @@ export const DomainsTableRowActions = ( {
 					{ __( 'Change site address' ) }
 				</MenuItemLink>
 			),
-			canRenewDomain && <ManualRenewal key="renewDomain" domain={ domain } onClose={ onClose } />,
+			canRenewDomain && (
+				<ManualRenewal
+					key="renewDomain"
+					domain={ domain }
+					onClose={ onClose }
+					label={ __( 'Renew now' ) }
+				/>
+			),
 			canReactivateDomain && (
-				<ManualRenewal key="reactivateDomain" domain={ domain } onClose={ onClose } />
+				<ManualRenewal
+					key="reactivateDomain"
+					domain={ domain }
+					onClose={ onClose }
+					label={ __( 'Reactivate now' ) }
+				/>
 			),
 		];
 	};
