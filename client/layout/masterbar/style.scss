@@ -43,7 +43,7 @@ body.is-mobile-app-view {
 	justify-content: space-between;
 	opacity: 1;
 	transition: all 0.3s ease-in-out;
-	--masterbar-item-active-border-radius: 6px; /* stylelint-disable-line scales/radii */
+	--masterbar-item-active-border-radius: 4px; /* stylelint-disable-line scales/radii */
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
@@ -288,10 +288,10 @@ body.is-mobile-app-view {
 	justify-content: center;
 
 	&.masterbar__reader {
-		padding: 0 10px 0 6px;
+		padding: 0 8px;
 
 		.masterbar_svg-reader {
-			padding: 0 0 0 4px;
+			padding: 0 8px 0 0;
 		}
 	}
 
@@ -667,7 +667,7 @@ body.is-mobile-app-view {
 
 	&.masterbar__item-my-sites,
 	&.masterbar__item-no-sites {
-		padding: 0 10px;
+		padding: 0 8px;
 
 		@media only screen and (max-width: 781px) {
 			padding: 0;
