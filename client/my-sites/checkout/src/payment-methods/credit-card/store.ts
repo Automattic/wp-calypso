@@ -48,7 +48,7 @@ export const selectors = {
 	getBrand( state: CardStoreState ): string {
 		return state.brand || '';
 	},
-	getCardNetworks( state: CardStoreState ): string[] {
+	getCardNetworks( state: CardStoreState ): { brand: string }[] {
 		return state.cardNetworks || [];
 	},
 	getCardDataErrors( state: CardStoreState ) {
