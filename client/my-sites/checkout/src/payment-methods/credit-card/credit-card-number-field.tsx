@@ -3,7 +3,6 @@ import { PaymentLogo } from '@automattic/wpcom-checkout';
 import { CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 import type { WpcomCreditCardSelectors } from './store';
@@ -38,7 +37,6 @@ export default function CreditCardNumberField( {
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
 		[]
 	);
-	const [ showNetworkSelector, setShowNetworkSelector ] = useState( false );
 
 	const errorMessages = getErrorMessagesForField( 'number' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;
