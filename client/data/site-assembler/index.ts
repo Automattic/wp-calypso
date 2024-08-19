@@ -7,27 +7,26 @@ export const useIsSiteAssemblerEnabledExp = (
 	const variationName =
 		assignment?.variationName ||
 		// TODO: Remove the following one after testing.
-		window.sessionStorage.getItem( 'calypso_disable_site_assembler' ) ||
-		'control';
+		window.sessionStorage.getItem( 'calypso_disable_site_assembler' );
 
 	if ( isLoading ) {
 		return false;
 	}
 
-	if ( variationName === 'control' ) {
-		return true;
+	if ( variationName === 'treatment_disable_onboarding' ) {
+		switch ( source ) {
+			case 'theme-showcase':
+				return true;
+			case 'design-choices':
+			case 'design-picker':
+			default:
+				return false;
+		}
 	}
 
 	if ( variationName === 'treatment_disable_all' ) {
 		return false;
 	}
 
-	switch ( source ) {
-		case 'theme-showcase':
-			return true;
-		case 'design-choices':
-		case 'design-picker':
-		default:
-			return false;
-	}
+	return true;
 };

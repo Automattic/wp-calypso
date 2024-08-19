@@ -187,6 +187,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
 				upsellCardDisplayed={ props.upsellCardDisplayed }
+				isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 			/>
 		);
 	}
@@ -346,7 +347,14 @@ export function ThemeBlock( props ) {
 	);
 }
 
-function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsellCardDisplayed } ) {
+function Options( {
+	isFSEActive,
+	recordTracksEvent,
+	searchTerm,
+	translate,
+	upsellCardDisplayed,
+	isSiteAssemblerEnabled,
+} ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
@@ -374,7 +382,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	}, [ upsellCardDisplayed ] );
 
 	// Design your own theme / homepage.
-	if ( isFSEActive || assemblerCtaData.shouldGoToAssemblerStep ) {
+	if ( ( isFSEActive || assemblerCtaData.shouldGoToAssemblerStep ) && isSiteAssemblerEnabled ) {
 		options.push( {
 			title: assemblerCtaData.title,
 			icon: addTemplate,
@@ -516,6 +524,7 @@ function Empty( props ) {
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
 				upsellCardDisplayed={ props.upsellCardDisplayed }
+				isSiteAssemblerEnabled={ props.isSiteAssemblerEnabled }
 			/>
 		</>
 	);
