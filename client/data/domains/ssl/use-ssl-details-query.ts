@@ -20,6 +20,8 @@ export type SslFailureReason = {
 export type SslDetails = {
 	certificate_provisioned: boolean;
 	certificate_expiry_date?: string;
+	is_newly_registered: boolean;
+	is_expired: boolean;
 	last_attempt?: string;
 	next_attempt?: string;
 	failure_reasons?: SslFailureReason[];
@@ -39,7 +41,6 @@ export default function useSslDetailsQuery( domainName: string ): UseQueryResult
 				apiNamespace: 'wpcom/v2',
 			} ),
 		refetchOnWindowFocus: false,
-		enabled: false,
 		staleTime: 5 * 60 * 1000,
 		gcTime: 5 * 60 * 1000,
 		select: ( response: SslDetailsResponse ) => response.data,

@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { SslDetails } from 'calypso/data/domains/ssl/use-ssl-details-query';
 import { sslStatuses } from 'calypso/lib/domains/constants';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -28,4 +29,14 @@ export const getSslReadableStatus = ( { sslStatus }: ResponseDomain ): string =>
 		default:
 			return sslReadableStatus.DISABLED;
 	}
+};
+
+export const getSslReadableStatusFromSslDetail = ( sslDetails: SslDetails ): string => {
+	if ( sslDetails.certificate_provisioned ) {
+		return sslReadableStatus.ACTIVE;
+	}
+	if ( sslDetails.is_expired ) {
+		return sslReadableStatus.DISABLED;
+	}
+	return sslReadableStatus.PENDING;
 };
