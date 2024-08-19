@@ -1,8 +1,9 @@
-import { PaymentLogo } from '@automattic/wpcom-checkout';
+import { hasCheckoutVersion, PaymentLogo } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import {
+	CBLogo,
 	VisaLogo,
 	MastercardLogo,
 	AmexLogo,
@@ -61,6 +62,7 @@ const CreditCardLabel: React.FC< { hasExistingCardMethods: boolean | undefined }
 function CreditCardLogos() {
 	return (
 		<PaymentMethodLogos className="credit-card__logo payment-logos">
+			{ hasCheckoutVersion( 'cobadge' ) && <CBLogo /> }
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />
