@@ -35,7 +35,6 @@ import { canBulkUpdate } from '../utils/can-bulk-update';
 import { DomainStatusPurchaseActions } from '../utils/resolve-domain-status';
 import { ResponseDomain } from '../utils/types';
 import { DomainAction } from './domains-table-row-actions';
-import { useDispatch } from 'calypso/state';
 
 type DomainActionDescription = {
 	message?: string;
@@ -104,7 +103,6 @@ type Value = {
 	sortKey: string;
 	sortDirection: 'asc' | 'desc';
 	handleAutoRenew: ( enable: boolean ) => void;
-	handleManualRenew: ( domain: ResponseDomain ) => void;
 	handleUpdateContactInfo: () => void;
 	changeBulkSelection: () => void;
 	getBulkSelectionStatus: () => 'all-domains' | 'some-domains' | 'no-domains';
@@ -230,7 +228,8 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		} );
 	}, [ domains ] );
 	const translate = useTranslate();
-	const dispatch = useDispatch();
+	//const dispatch = useDispatch();
+
 	let domainsTableColumns = isAllSitesView
 		? allSitesViewColumns( translate, domainStatusPurchaseActions )
 		: siteSpecificViewColumns( translate, domainStatusPurchaseActions );
@@ -371,13 +370,16 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		page( formLink );
 	};
 
-	const handleManualRenew = ( domain: ResponseDomain ) => {
-		console.log( 'Renew domain', domain );
-		const subscriptionId = domain && domain.subscriptionId;
-		const purchase = subscriptionId
-			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
-			: null;
-	};
+	// const handleManualRenew = ( domain: ResponseDomain ) => {
+	// 	console.log( 'Renew domain', domain );
+	// 	const subscriptionId = domain && domain.subscriptionId;
+	// 	const siteId = domain && domain.blogId;
+	// 	const sitePurchases = Purchases.useSitePurchases( { siteId: siteId } );
+	// 	console.log( 'subscriptionId', subscriptionId, 'siteId', siteId, 'sitePurchases', sitePurchases );
+	// 	// const purchase = subscriptionId
+	// 	// 	? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
+	// 	// 	: null;
+	// };
 
 	const currentUsersOwnsAllSelectedDomains = ! Array.from( selectedDomains ).some( ( selected ) =>
 		( domains ?? [] ).find(
@@ -401,7 +403,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		sortKey,
 		sortDirection,
 		handleAutoRenew,
-		handleManualRenew,
 		handleUpdateContactInfo,
 		changeBulkSelection,
 		getBulkSelectionStatus,

@@ -6,9 +6,11 @@ import { canSetAsPrimary } from '../utils/can-set-as-primary';
 import { type as domainTypes, transferStatus, useMyDomainInputMode } from '../utils/constants';
 import { isFreeUrlDomainName } from '../utils/is-free-url-domain-name';
 import { isDomainInGracePeriod } from '../utils/is-in-grace-period';
+import { isDomainReactivatable } from '../utils/is-reactivatable';
 import { isRecentlyRegistered } from '../utils/is-recently-registered';
 import { isDomainRenewable } from '../utils/is-renewable';
 import { isDomainUpdateable } from '../utils/is-updateable';
+import ManualRenewal from '../utils/manual-renewal';
 import {
 	domainMagementDNS,
 	domainManagementEditContactInfo,
@@ -19,12 +21,8 @@ import {
 import { shouldUpgradeToMakeDomainPrimary } from '../utils/should-upgrade-to-make-domain-primary';
 import { ResponseDomain } from '../utils/types';
 import { useDomainsTable } from './domains-table';
-import { isDomainReactivatable } from '../utils/is-reactivatable';
-import { useDispatch } from 'calypso/state';
-import { handleRenewNowClick } from 'calypso/lib/purchases';
-import type { Purchase } from 'calypso/lib/purchases/types';
 
-export type DomainAction = 'change-site-address' | 'manage-dns-settings' | 'set-primary-address' | 'renew-domain' | 'reactivate-doamin';
+export type DomainAction = 'change-site-address' | 'manage-dns-settings' | 'set-primary-address';
 
 interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof MenuItem >, 'href' > {
 	href?: string;
@@ -39,7 +37,6 @@ interface DomainsTableRowActionsProps {
 	canSetPrimaryDomainForSite: boolean;
 	isSiteOnFreePlan: boolean;
 	isSimpleSite: boolean;
-	purchase: Purchase | null;
 }
 
 export const DomainsTableRowActions = ( {
@@ -49,9 +46,8 @@ export const DomainsTableRowActions = ( {
 	canSetPrimaryDomainForSite,
 	isSiteOnFreePlan,
 	isSimpleSite,
-	purchase,
 }: DomainsTableRowActionsProps ) => {
-	const { onDomainAction, userCanSetPrimaryDomains = false, updatingDomain, handleManualRenew } = useDomainsTable();
+	const { onDomainAction, userCanSetPrimaryDomains = false, updatingDomain } = useDomainsTable();
 	const { __ } = useI18n();
 
 	const canViewDetails = domain.type !== domainTypes.WPCOM;
@@ -147,29 +143,9 @@ export const DomainsTableRowActions = ( {
 					{ __( 'Change site address' ) }
 				</MenuItemLink>
 			),
-			canRenewDomain && (
-				<MenuItemLink
-					key="renewDomain"
-					onClick={ () => {
-						handleManualRenew( domain );
-						onClose?.();
-					} }
-				>
-					{ ! domain.expired || domain.isRenewable
-						? __( 'Renew now' )
-						: __( 'Redeem now' ) }
-				</MenuItemLink>
-			),
+			canRenewDomain && <ManualRenewal key="renewDomain" domain={ domain } onClose={ onClose } />,
 			canReactivateDomain && (
-				<MenuItemLink
-					key="reactivateDomain"
-					onClick={ () => {
-						handleManualRenew( domain );
-						onClose?.();
-					} }
-				>
-					{ __( 'Reactivate domain' ) }
-				</MenuItemLink>
+				<ManualRenewal key="reactivateDomain" domain={ domain } onClose={ onClose } />
 			),
 		];
 	};
