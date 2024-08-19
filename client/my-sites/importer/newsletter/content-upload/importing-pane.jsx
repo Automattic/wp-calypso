@@ -5,6 +5,7 @@ import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { navigate } from 'calypso/lib/navigate';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
@@ -249,7 +250,10 @@ export class ImportingPane extends PureComponent {
 				{ this.isMapping() && (
 					<AuthorMappingPane
 						onMap={ this.handleOnMap }
-						onStartImport={ () => this.props.startImporting( this.props.importerStatus ) }
+						onStartImport={ () => {
+							this.props.startImporting( this.props.importerStatus );
+							navigate( this.props.nextStepUrl );
+						} }
 						siteId={ siteId }
 						sourceType={ sourceType }
 						sourceAuthors={ customData.sourceAuthors }

@@ -1,18 +1,22 @@
 import { translate } from 'i18n-calypso';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
+import { Disclaimer } from 'calypso/performance-profiler/components/disclaimer-section';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
+import { MigrationBanner } from 'calypso/performance-profiler/components/migration-banner';
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
-import { ScreenshotThumbnail } from '../screenshot-thumbnail';
-import { ScreenshotTimeline } from '../screenshot-timeline';
+import { ScreenshotThumbnail } from 'calypso/performance-profiler/components/screenshot-thumbnail';
+import { ScreenshotTimeline } from 'calypso/performance-profiler/components/screenshot-timeline';
 import './style.scss';
 
 type PerformanceProfilerDashboardContentProps = {
 	performanceReport: PerformanceReport;
+	url: string;
 };
 
 export const PerformanceProfilerDashboardContent = ( {
 	performanceReport,
+	url,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const { overall_score, fcp, lcp, cls, inp, ttfb, audits, history, screenshots } =
 		performanceReport;
@@ -38,6 +42,9 @@ export const PerformanceProfilerDashboardContent = ( {
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
 				{ audits && <InsightsSection audits={ audits } /> }
 			</div>
+
+			<Disclaimer />
+			<MigrationBanner url={ url } />
 		</div>
 	);
 };
