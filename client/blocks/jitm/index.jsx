@@ -93,14 +93,18 @@ function getEventHandlers( props, dispatch ) {
 	}
 
 	handlers.onDismiss = () => {
-		tracks.dismiss &&
-			props.recordTracksEvent( tracks.dismiss.name, { ...tracks.dismiss.props, ...eventProps } );
+		if ( tracks.dismiss ) {
+			dispatch(
+				recordTracksEvent( tracks.dismiss.name, { ...tracks.dismiss.props, ...eventProps } )
+			);
+		}
 		dispatch( dismissJITM( currentSite.ID, messagePath, jitm.featureClass ) );
 	};
 
 	handlers.onClick = () => {
-		tracks.click &&
-			props.recordTracksEvent( tracks.click.name, { ...tracks.click.props, ...eventProps } );
+		if ( tracks.click ) {
+			dispatch( recordTracksEvent( tracks.click.name, { ...tracks.click.props, ...eventProps } ) );
+		}
 		if ( jitm.action ) {
 			switch ( jitm.action.type ) {
 				// Cases for dispatching action thunks
@@ -122,23 +126,32 @@ function getEventHandlers( props, dispatch ) {
 	return handlers;
 }
 
-function useDevTool( { currentSite }, dispatch ) {
+function useDevTool( currentSite, dispatch ) {
 	useEffect( () => {
 		// Do not setup the tool in production
-		if ( process.env.NODE_ENV === 'production' || ! currentSite ) {
+		if ( process.env.NODE_ENV === 'production' || ! currentSite || ! currentSite.ID ) {
 			return;
 		}
 
-		currentSite.ID && setupDevTool( currentSite.ID, dispatch );
-	}, [ currentSite?.ID ] );
+		setupDevTool( currentSite.ID, dispatch );
+	}, [ currentSite, dispatch ] );
 }
 
 export function JITM( props ) {
-	const { jitm, isFetching, currentSite, messagePath, searchQuery, isJetpack, jitmPlaceholder } =
-		props;
+	const {
+		jitm,
+		isFetching,
+		currentSite,
+		messagePath,
+		searchQuery,
+		isJetpack,
+		jitmPlaceholder,
+		template,
+	} = props;
+
 	const dispatch = useDispatch();
 
-	useDevTool( props, dispatch );
+	useDevTool( currentSite, dispatch );
 
 	if ( ! currentSite || ! messagePath ) {
 		return null;
@@ -159,7 +172,7 @@ export function JITM( props ) {
 			/>
 			{ isFetching && jitmPlaceholder }
 			{ jitm &&
-				renderTemplate( jitm.template || props.template, {
+				renderTemplate( jitm.template || template || 'default', {
 					...jitm,
 					...getEventHandlers( props, dispatch ),
 					currentSite,
@@ -176,11 +189,6 @@ JITM.propTypes = {
 	isFetching: PropTypes.bool,
 };
 
-JITM.defaultProps = {
-	template: 'default',
-	isFetching: false,
-};
-
 const mapStateToProps = ( state, { messagePath } ) => {
 	const currentSite = getSelectedSite( state );
 	return {
@@ -191,8 +199,4 @@ const mapStateToProps = ( state, { messagePath } ) => {
 	};
 };
 
-const mapDispatchToProps = {
-	recordTracksEvent,
-};
-
-export default connect( mapStateToProps, mapDispatchToProps )( JITM );
+export default connect( mapStateToProps )( JITM );
