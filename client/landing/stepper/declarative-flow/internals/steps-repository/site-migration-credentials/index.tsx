@@ -2,7 +2,6 @@ import { FormLabel } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { NextButton, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { type FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import getValidationMessage from 'calypso/blocks/import/capture/url-validation-message-helper';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
@@ -13,12 +12,13 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isValidUrl } from 'calypso/lib/importer/url-validation';
+import { useRequestAutomatedMigration } from './hooks/use-request-automated-migration';
 import type { Step } from '../../types';
 
 import './style.scss';
 
 interface CredentialsFormProps {
-	onSubmit: ( data: CredentialsFormData ) => void;
+	onSubmit: () => void;
 }
 
 interface CredentialsFormData {
@@ -32,18 +32,6 @@ interface CredentialsFormData {
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	const translate = useTranslate();
-
-	const validateSiteAddress = ( siteAddress: string ) => {
-		const isSiteAddressValid = CAPTURE_URL_RGX.test( siteAddress );
-
-		if ( ! isSiteAddressValid ) {
-			return getValidationMessage( siteAddress, translate );
-		}
-	};
-
-	const isBackupFileLocationValid = ( fileLocation: string ) => {
-		return ! isValidUrl( fileLocation ) ? translate( 'Please enter a valid URL.' ) : undefined;
-	};
 
 	const {
 		formState: { errors },
@@ -63,11 +51,33 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		},
 	} );
 
+	const { isPending, requestAutomatedMigration } = useRequestAutomatedMigration( {
+		onSuccess: () => {
+			recordTracksEvent( 'calypso_site_migration_automated_request_success' );
+			onSubmit();
+		},
+		onError: () => {
+			recordTracksEvent( 'calypso_site_migration_automated_request_error' );
+		},
+	} );
+
+	const validateSiteAddress = ( siteAddress: string ) => {
+		const isSiteAddressValid = CAPTURE_URL_RGX.test( siteAddress );
+
+		if ( ! isSiteAddressValid ) {
+			return getValidationMessage( siteAddress, translate );
+		}
+	};
+
+	const isBackupFileLocationValid = ( fileLocation: string ) => {
+		return ! isValidUrl( fileLocation ) ? translate( 'Please enter a valid URL.' ) : undefined;
+	};
+
 	// Subscribe only this field to the access method value
 	const accessMethod = watch( 'howToAccessSite' );
 
 	const submitHandler = ( data: CredentialsFormData ) => {
-		onSubmit( data );
+		requestAutomatedMigration( data );
 	};
 
 	return (
@@ -252,7 +262,10 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 				</div>
 			</Card>
 			<div className="site-migration-credentials__skip">
-				<button className="button navigation-link step-container__navigation-link has-underline is-borderless">
+				<button
+					className="button navigation-link step-container__navigation-link has-underline is-borderless"
+					disabled={ isPending }
+				>
 					{ translate( 'Skip, I need help providing access' ) }
 				</button>
 			</div>
