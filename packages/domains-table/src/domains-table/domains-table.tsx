@@ -228,7 +228,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		} );
 	}, [ domains ] );
 	const translate = useTranslate();
-	//const dispatch = useDispatch();
 
 	let domainsTableColumns = isAllSitesView
 		? allSitesViewColumns( translate, domainStatusPurchaseActions )
@@ -369,17 +368,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 
 		page( formLink );
 	};
-
-	// const handleManualRenew = ( domain: ResponseDomain ) => {
-	// 	console.log( 'Renew domain', domain );
-	// 	const subscriptionId = domain && domain.subscriptionId;
-	// 	const siteId = domain && domain.blogId;
-	// 	const sitePurchases = Purchases.useSitePurchases( { siteId: siteId } );
-	// 	console.log( 'subscriptionId', subscriptionId, 'siteId', siteId, 'sitePurchases', sitePurchases );
-	// 	// const purchase = subscriptionId
-	// 	// 	? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
-	// 	// 	: null;
-	// };
 
 	const currentUsersOwnsAllSelectedDomains = ! Array.from( selectedDomains ).some( ( selected ) =>
 		( domains ?? [] ).find(
