@@ -17,8 +17,12 @@ export const InsightsSection = ( props: InsightsSectionProps ) => {
 			<p className="subtitle">
 				{ translate( 'We found things you can do to speed up your site.' ) }
 			</p>
-			{ Object.values( audits ).map( ( audit, index ) => (
-				<MetricsInsight key={ `insight-${ index }` } insight={ audit } index={ index } />
+			{ Object.keys( audits ).map( ( key, index ) => (
+				<MetricsInsight
+					key={ `insight-${ index }` }
+					insight={ { ...audits[ key ], id: key } }
+					index={ index }
+				/>
 			) ) }
 		</div>
 	);

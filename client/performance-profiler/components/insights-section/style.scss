@@ -77,6 +77,13 @@ $blueberry-color: #3858e9;
 		}
 
 		.foldable-card__content {
+			.description-area {
+				display: flex;
+				align-items: flex-start;
+				gap: 32px;
+				align-self: stretch;
+			}
+
 			.metrics-insight-detailed-content {
 				margin-top: 24px;
 

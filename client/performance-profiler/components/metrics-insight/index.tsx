@@ -4,7 +4,9 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import { Tip } from 'calypso/performance-profiler/components/tip';
 import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
+import { tips } from 'calypso/performance-profiler/utils/tips';
 import { InsightContent } from './insight-content';
 import { InsightHeader } from './insight-header';
 
@@ -67,6 +69,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		insight.description ?? '',
 		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
 	);
+	const tip = tips[ insight.id ];
 
 	return (
 		<Card
@@ -89,6 +92,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 						...insight,
 						...( isEnabled( 'performance-profiler/llm' ) ? { description: llmAnswer } : {} ),
 					} }
+					secondaryArea={ tip && <Tip { ...tip } /> }
 					isLoading={ isEnabled( 'performance-profiler/llm' ) && isLoadingLlmAnswer }
 				/>
 			</Content>

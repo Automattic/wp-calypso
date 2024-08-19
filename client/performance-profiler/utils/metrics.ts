@@ -118,14 +118,20 @@ export const mapThresholdsToStatus = ( metric: Metrics, value: number ): Valuati
 	return 'bad';
 };
 
+export const max2Decimals = ( val: number ) => +Number( val ).toFixed( 2 );
+
 export const displayValue = ( metric: Metrics, value: number ): string => {
+	if ( value === null || value === undefined ) {
+		return '';
+	}
+
 	if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metric ) ) {
-		return `${ ( value / 1000 ).toFixed( 2 ) }s`;
+		return `${ max2Decimals( value / 1000 ) }s`;
 	}
 
 	if ( [ 'inp', 'fid' ].includes( metric ) ) {
-		return `${ value }ms`;
+		return `${ max2Decimals( value ) }ms`;
 	}
 
-	return `${ value }`;
+	return `${ max2Decimals( value ) }`;
 };
