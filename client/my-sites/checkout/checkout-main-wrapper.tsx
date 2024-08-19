@@ -12,6 +12,7 @@ import Recaptcha from 'calypso/signup/recaptcha';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useVisitorId } from '../../lib/fingerprintjs/hooks/use-visitor-id';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMain from './src/components/checkout-main';
 import { logStashLoadErrorEvent } from './src/lib/analytics';
@@ -76,6 +77,9 @@ export default function CheckoutMainWrapper( {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
+	const visitorId = useVisitorId();
+	// eslint-disable-next-line no-console
+	console.log( { visitorId } );
 
 	useEffect( () => {
 		if ( productAliasFromUrl ) {
