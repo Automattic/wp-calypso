@@ -126,15 +126,15 @@ function getEventHandlers( props, dispatch ) {
 	return handlers;
 }
 
-function useDevTool( currentSite, dispatch ) {
+function useDevTool( siteId, dispatch ) {
 	useEffect( () => {
 		// Do not setup the tool in production
-		if ( process.env.NODE_ENV === 'production' || ! currentSite || ! currentSite.ID ) {
+		if ( process.env.NODE_ENV === 'production' || ! siteId ) {
 			return;
 		}
 
-		setupDevTool( currentSite.ID, dispatch );
-	}, [ currentSite, dispatch ] );
+		setupDevTool( siteId, dispatch );
+	}, [ siteId, dispatch ] );
 }
 
 export function JITM( props ) {
@@ -151,7 +151,7 @@ export function JITM( props ) {
 
 	const dispatch = useDispatch();
 
-	useDevTool( currentSite, dispatch );
+	useDevTool( currentSite?.ID, dispatch );
 
 	if ( ! currentSite || ! messagePath ) {
 		return null;
