@@ -140,12 +140,12 @@ describe( 'SiteMigrationInstructions', () => {
 	} );
 
 	it( 'should be able to navigate back to the first step when it was completed', async () => {
-		const { queryByText, getByRole } = render();
+		const { getByRole } = render();
 
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 		await userEvent.click( getByRole( 'button', { name: /Install the Migrate Guru plugin/ } ) );
 
-		expect( queryByText( 'Migrate Guru plugin' ) ).toBeInTheDocument();
+		expect( getByRole( 'button', { name: /Install plugin/ } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should navigate to the next step when the steps are completed', async () => {
@@ -167,14 +167,12 @@ describe( 'SiteMigrationInstructions', () => {
 			error: null,
 		} );
 
-		const { getByRole } = render();
+		const { getByRole, queryByText } = render();
 
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
 
-		expect(
-			getByRole( 'link', { name: /Migrate Guru page on the new WordPress.com site/ } )
-		).toBeInTheDocument();
+		expect( queryByText( /Migrate Guru page on the new WordPress.com site/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'should animate skeleton when waiting for completion', async () => {
