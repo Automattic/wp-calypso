@@ -19,7 +19,7 @@ export type CardDataCompleteState = Record< CardElementType, boolean >;
 
 export interface CardStoreState {
 	brand: string | null | undefined;
-	cardNetworks: string[];
+	cardNetworks: { brand: string }[];
 	fields: CardFieldState;
 	cardDataErrors: Record< string, string | null >;
 	cardDataComplete: CardDataCompleteState;

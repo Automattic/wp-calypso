@@ -38,6 +38,11 @@ export default function CreditCardNumberField( {
 		[]
 	);
 
+	const cardNetworks: { brand: string }[] = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardNetworks(),
+		[]
+	);
+
 	const { cardNumber: cardNumberError } = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
 		[]
