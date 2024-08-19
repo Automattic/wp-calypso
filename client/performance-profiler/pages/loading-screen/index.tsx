@@ -132,7 +132,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 
 	const tips = [
 		{
-			heading: translate( 'Performance Mattters' ),
+			heading: translate( 'Performance Matters' ),
 			description: translate(
 				'Walmart found that for every one second improvement in page load time they achieved, conversions increased by 2%.'
 			),
@@ -144,7 +144,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 			),
 		},
 		{
-			heading: translate( 'Performance Mattters' ),
+			heading: translate( 'Performance Matters' ),
 			description: translate(
 				'British food brand COOK increased conversions by 7% after reducing page load time by 0.85 seconds.'
 			),

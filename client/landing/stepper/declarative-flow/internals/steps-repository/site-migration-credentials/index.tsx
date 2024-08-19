@@ -128,6 +128,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									render={ ( { field } ) => (
 										<FormTextInput
 											id="site-address"
+											isError={ !! errors.siteAddress }
 											placeholder={ translate( 'Enter your WordPress site address.' ) }
 											type="text"
 											{ ...field }
@@ -157,6 +158,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 											<FormTextInput
 												id="username"
 												type="text"
+												isError={ !! errors.username }
 												placeholder={ translate( 'Username' ) }
 												{ ...field }
 											/>
@@ -175,6 +177,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 											<FormTextInput
 												id="password"
 												type="password"
+												isError={ !! errors.password }
 												placeholder={ translate( 'Password' ) }
 												{ ...field }
 											/>
@@ -206,6 +209,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									render={ ( { field } ) => (
 										<FormTextInput
 											type="text"
+											isError={ !! errors.backupFileLocation }
 											placeholder={ translate( 'Enter your backup file location' ) }
 											{ ...field }
 										/>
