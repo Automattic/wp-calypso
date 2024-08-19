@@ -67,7 +67,7 @@ const HelpCenter: React.FC< Container > = ( {
 			initSmooch( ref.current );
 		}
 		return destroy;
-	}, [ isMessagingScriptLoaded, ref?.current ] );
+	}, [ destroy, initSmooch, isMessagingScriptLoaded ] );
 
 	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 
