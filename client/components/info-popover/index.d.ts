@@ -5,6 +5,8 @@ interface InfoPopoverProps {
 	position?: string;
 	iconSize?: number;
 	showOnHover?: boolean;
+	screenReaderText?: string;
+	className?: string;
 }
 
 const InfoPopover: FC< PropsWithChildren< InfoPopoverProps > >;
