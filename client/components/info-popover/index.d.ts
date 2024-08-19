@@ -7,6 +7,7 @@ interface InfoPopoverProps {
 	showOnHover?: boolean;
 	screenReaderText?: string;
 	className?: string;
+	onOpen?: () => void;
 }
 
 const InfoPopover: FC< PropsWithChildren< InfoPopoverProps > >;
