@@ -290,7 +290,7 @@ describe( `${ flow.name }`, () => {
 					},
 				} );
 
-				expect( window.location.assign ).toHaveBeenCalledWith(
+				expect( window.location.replace ).toHaveBeenCalledWith(
 					addQueryArgs( '/setup/site-setup/importerWordpress', {
 						siteSlug: 'example.wordpress.com',
 						from: '',
@@ -298,6 +298,8 @@ describe( `${ flow.name }`, () => {
 						backToFlow: '/migration/migration-upgrade-plan',
 						siteId: 123,
 						ref: 'migration',
+						customizedActionFlow: 'migration/migration-upgrade-plan',
+						customizedActionLabel: 'I want to migrate my entire site',
 					} )
 				);
 			} );

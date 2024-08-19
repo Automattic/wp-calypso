@@ -1,3 +1,6 @@
+import { StepNavigationLink } from '@automattic/onboarding';
+import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import WordpressImporter from 'calypso/blocks/importer/wordpress';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { MigrationAssistanceModal } from 'calypso/landing/stepper/declarative-flow/internals/components/migration-assistance-modal';
@@ -16,6 +19,7 @@ interface Props extends StepProps {
 }
 
 const ImporterWordpress: FC< Props > = function ( props ) {
+	const translate = useTranslate();
 	const queryParams = useQuery();
 	const site = useSite();
 	const migrateFrom = queryParams.get( 'from' );
@@ -28,6 +32,23 @@ const ImporterWordpress: FC< Props > = function ( props ) {
 		siteSlug,
 		migrateFrom
 	);
+
+	const customizedActionLabel = queryParams.get( 'customizedActionLabel' );
+	let customizedActionButtons;
+
+	if ( customizedActionLabel ) {
+		customizedActionButtons = (
+			<StepNavigationLink
+				direction="forward"
+				handleClick={ () => {
+					props.navigation.submit?.( { action: 'customized-action-flow' } );
+				} }
+				label={ translate( 'I want to migrate my entire site' ) }
+				cssClass={ clsx( 'step-container__navigation-link', 'forward', 'has-underline' ) }
+				borderless
+			/>
+		);
+	}
 
 	return (
 		<>
@@ -46,7 +67,11 @@ const ImporterWordpress: FC< Props > = function ( props ) {
 					navigateBack={ props.navigation.goBack }
 				/>
 			) }
-			<Importer importer="wordpress" { ...props } />
+			<Importer
+				importer="wordpress"
+				{ ...props }
+				customizedActionButtons={ customizedActionButtons }
+			/>
 		</>
 	);
 };
