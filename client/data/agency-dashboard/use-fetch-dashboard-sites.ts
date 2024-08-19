@@ -20,6 +20,7 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => 
 		...( filter.showOnlyFavorites && { show_only_favorites: true } ),
 		...( filter.isNotMultisite && { not_multisite: true } ),
 		...( filter?.showOnlyFavorites && { show_only_favorites: true } ),
+		...( filter?.showOnlyDevelopmentSites && { show_only_dev_sites: true } ),
 	};
 };
 
@@ -73,7 +74,6 @@ const useFetchDashboardSites = ( {
 
 	const isAgencyOrPartnerAuthEnabled = isPartnerOAuthTokenLoaded || !! agencyId;
 
-	// TODO: Adjust the query to be able to fetch dev sites based on the related filter
 	return useQuery( {
 		// Disable eslint rule since TS isn't grasping that agencyId is being optionally added to the array
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
@@ -98,6 +98,7 @@ const useFetchDashboardSites = ( {
 				sites: data.sites,
 				total: data.total,
 				perPage: data.per_page,
+				totalDevelopmentSites: data.total_dev_sites,
 				totalFavorites: data.total_favorites,
 			};
 		},
