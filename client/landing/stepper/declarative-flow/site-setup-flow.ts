@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
+import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -150,6 +151,12 @@ const siteSetupFlow: Flow = {
 		);
 
 		const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-choices' );
+
+		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
+
+		const isDesignChoicesStepEnabled =
+			isEnabled( 'onboarding/design-choices' ) &&
+			( ( isAssemblerSupported() && isSiteAssemblerEnabled ) || isBigSkyEligible );
 
 		const { setPendingAction, resetOnboardStoreWithSkipFlags, setIntent } =
 			useDispatch( ONBOARD_STORE );
@@ -354,11 +361,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Sell:
 							return navigate( 'options' );
 						default: {
-							if (
-								isEnabled( 'onboarding/design-choices' ) &&
-								isAssemblerSupported() &&
-								isSiteAssemblerEnabled
-							) {
+							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'designSetup' );
@@ -506,11 +509,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Write:
 							return navigate( 'bloggerStartingPoint' );
 						default: {
-							if (
-								isEnabled( 'onboarding/design-choices' ) &&
-								isAssemblerSupported() &&
-								isSiteAssemblerEnabled
-							) {
+							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'goals' );
