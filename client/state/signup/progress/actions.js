@@ -56,11 +56,6 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 				propValue = !! propValue;
 			}
 
-			// The segmentation_survey_answers are stored as an object with nested arrays. Which is not supported by tracks.
-			if ( stepName === 'initial-intent' && propName === 'segmentation_survey_answers' ) {
-				propValue = JSON.stringify( propValue );
-			}
-
 			// Ensure we don't capture identifiable user data we don't need.
 			if ( propName === 'email' ) {
 				propName = `user_entered_${ propName }`;
