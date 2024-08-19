@@ -37,7 +37,7 @@ function Tooltip( {
 			isVisible={ isVisible }
 			position={ position }
 			showDelay={ showDelay }
-			hideArrow={ hideArrow ?? true }
+			hideArrow={ hideArrow }
 		>
 			{ children }
 		</Popover>
