@@ -19,7 +19,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
-import { isAnyHostingFlow, isOnboardingGuidedFlow } from '@automattic/onboarding';
+import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
 	ComparisonGrid,
@@ -651,15 +651,6 @@ const PlansFeaturesMain = ( {
 	const getComparisonGridToggleLabel = () => {
 		if ( showPlansComparisonGrid ) {
 			return translate( 'Hide comparison' );
-		}
-		if (
-			Array.isArray( gridPlansForFeaturesGrid ) &&
-			Array.isArray( gridPlansForComparisonGrid ) &&
-			gridPlansForFeaturesGrid.length < gridPlansForComparisonGrid.length &&
-			flowName &&
-			isOnboardingGuidedFlow( flowName )
-		) {
-			return translate( 'Compare all plans' );
 		}
 		return translate( 'Compare plans' );
 	};

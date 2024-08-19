@@ -1,12 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
-import {
-	isSiteAssemblerFlow,
-	isTailoredSignupFlow,
-	isOnboardingGuidedFlow,
-	ONBOARDING_GUIDED_FLOW,
-} from '@automattic/onboarding';
+import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -21,7 +15,6 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
-import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-intent';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
@@ -30,7 +23,7 @@ import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getIntervalType, shouldBasePlansOnSegment } from './util';
+import { getIntervalType } from './util';
 import './style.scss';
 
 export class PlansStep extends Component {
@@ -108,7 +101,6 @@ export class PlansStep extends Component {
 			selectedSite,
 			intent,
 			flowName,
-			initialContext,
 		} = this.props;
 
 		const intervalType = getIntervalType( this.props.path );
@@ -124,17 +116,7 @@ export class PlansStep extends Component {
 		}
 
 		const { signupDependencies } = this.props;
-		const { siteUrl, domainItem, siteTitle, username, coupon, segmentationSurveyAnswers } =
-			signupDependencies;
-
-		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
-
-		const surveyedIntent = shouldBasePlansOnSegment(
-			flowName,
-			initialContext?.trailMapExperimentVariant
-		)
-			? segmentSlug
-			: undefined;
+		const { siteUrl, domainItem, siteTitle, username, coupon } = signupDependencies;
 
 		const paidDomainName = domainItem?.meta;
 		let freeWPComSubdomain;
@@ -145,7 +127,7 @@ export class PlansStep extends Component {
 		// De-emphasize the Free plan as a CTA link on the main onboarding flow, and the guided flow, when a paid domain is picked.
 		// More context can be found in p2-p5uIfZ-f5p
 		const deemphasizeFreePlan =
-			( [ 'onboarding', ONBOARDING_GUIDED_FLOW ].includes( flowName ) && paidDomainName != null ) ||
+			( [ 'onboarding' ].includes( flowName ) && paidDomainName != null ) ||
 			deemphasizeFreePlanFromProps;
 
 		return (
@@ -167,7 +149,7 @@ export class PlansStep extends Component {
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					plansWithScroll={ this.state.isDesktop }
-					intent={ intent || surveyedIntent }
+					intent={ intent }
 					flowName={ flowName }
 					hideFreePlan={ hideFreePlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }
@@ -202,32 +184,7 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, useEmailOnboardingSubheader, signupDependencies, flowName } = this.props;
-
-		const { segmentationSurveyAnswers } = signupDependencies;
-		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
-
-		if (
-			isOnboardingGuidedFlow( flowName ) &&
-			segmentSlug === 'plans-guided-segment-developer-or-agency'
-		) {
-			const a4aLinkButton = (
-				<Button
-					href={ localizeUrl( 'https://wordpress.com/for-agencies?ref=onboarding' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-					onClick={ () =>
-						this.props.recordTracksEvent( 'calypso_guided_onboarding_agency_link_click' )
-					}
-					borderless
-				/>
-			);
-
-			return translate(
-				'Are you an agency? Get bulk discounts and premier support with {{link}}Automattic for Agencies{{/link}}.',
-				{ components: { link: a4aLinkButton } }
-			);
-		}
+		const { translate, useEmailOnboardingSubheader } = this.props;
 
 		const freePlanButton = (
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
