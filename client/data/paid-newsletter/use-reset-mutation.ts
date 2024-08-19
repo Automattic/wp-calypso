@@ -8,12 +8,12 @@ import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
 interface MutationVariables {
-	siteId: string;
+	siteId: number;
 	engine: string;
 	currentStep: string;
 }
 
-export const useSkipNextStepMutation = (
+export const useResetMutation = (
 	options: UseMutationOptions< unknown, DefaultError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
@@ -49,7 +49,7 @@ export const useSkipNextStepMutation = (
 	const { mutate } = mutation;
 
 	const resetPaidNewsletter = useCallback(
-		( siteId: string, engine: string, currentStep: string ) =>
+		( siteId: number, engine: string, currentStep: string ) =>
 			mutate( { siteId, engine, currentStep } ),
 		[ mutate ]
 	);
