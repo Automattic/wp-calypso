@@ -18,7 +18,7 @@ export const actions = {
 	changeBrand( payload: string ): CardStoreAction {
 		return { type: 'BRAND_SET', payload };
 	},
-	changeCardNetworks( payload: string[] ): CardStoreAction {
+	changeCardNetworks( payload: { brand: string }[] ): CardStoreAction {
 		return { type: 'CARD_NETWORKS_SET', payload };
 	},
 	setCardDataError( type: CardElementType, message: string | null ): CardStoreAction {
@@ -159,7 +159,7 @@ export function createCreditCardPaymentMethodStore( {
 	}
 
 	function cardNetworksReducer(
-		state: string[] | null | undefined = null,
+		state: { brand: string }[] | null | undefined = null,
 		action?: CardStoreAction
 	) {
 		switch ( action?.type ) {

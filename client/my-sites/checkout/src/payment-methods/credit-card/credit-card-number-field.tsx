@@ -92,14 +92,13 @@ export default function CreditCardNumberField( {
 							case undefined:
 								break;
 							default: {
-								setShowNetworkSelector( true );
 								changeCardNetworks( event.networks );
 								break;
 							}
 						}
 					} }
 				/>
-				{ showNetworkSelector ? <PaymentLogo brand="cb" /> : <PaymentLogo brand={ brand } /> }
+				<PaymentLogo brand={ brand } />
 
 				{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 			</StripeFieldWrapper>

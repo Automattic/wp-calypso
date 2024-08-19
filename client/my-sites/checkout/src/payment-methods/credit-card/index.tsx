@@ -3,7 +3,6 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import {
-	CBLogo,
 	VisaLogo,
 	MastercardLogo,
 	AmexLogo,
@@ -62,7 +61,6 @@ const CreditCardLabel: React.FC< {
 function CreditCardLogos() {
 	return (
 		<PaymentMethodLogos className="credit-card__logo payment-logos">
-			<CBLogo />
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />
