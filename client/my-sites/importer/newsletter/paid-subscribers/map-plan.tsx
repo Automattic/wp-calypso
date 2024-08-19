@@ -33,6 +33,7 @@ type MapPlanProps = {
 	siteId: string;
 	engine: string;
 	currentStep: string;
+	onProductAdd: () => void;
 };
 
 function displayProduct( product: Product | undefined ) {
@@ -67,6 +68,7 @@ export default function MapPlan( {
 	siteId,
 	engine,
 	currentStep,
+	onProductAdd,
 }: MapPlanProps ) {
 	const { mapStripePlanToProduct } = useMapStripePlanToProductMutation();
 	let active_subscriptions = '';
@@ -146,7 +148,13 @@ export default function MapPlan( {
 								/>
 							</MenuGroup>
 							<MenuGroup label="OR">
-								<MenuItem key="add-new" onClick={ onClose }>
+								<MenuItem
+									key="add-new"
+									onClick={ () => {
+										onClose();
+										onProductAdd();
+									} }
+								>
 									Add Newsletter Tier
 								</MenuItem>
 							</MenuGroup>

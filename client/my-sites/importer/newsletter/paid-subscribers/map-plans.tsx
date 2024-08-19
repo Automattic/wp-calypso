@@ -1,4 +1,6 @@
 import { Card } from '@automattic/components';
+import { useState } from 'react';
+import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
@@ -21,6 +23,10 @@ export default function MapPlans( {
 	engine,
 	currentStep,
 }: Props ) {
+	const [ productToAdd, setProductToAdd ] = useState< Product | null >( null );
+
+	const closeDialog = () => {};
+
 	return (
 		<Card>
 			<h2>Paid newsletter offering</h2>
@@ -43,6 +49,7 @@ export default function MapPlans( {
 						plan={ plan }
 						products={ cardData.available_tiers }
 						map_plans={ cardData.map_plans }
+						onProductAdd={ setProductToAdd }
 					/>
 				) ) }
 			</div>
@@ -66,6 +73,13 @@ export default function MapPlans( {
 					Skip for now
 				</ImporterActionButton>
 			</ImporterActionButtonContainer>
+			{ productToAdd && (
+				<RecurringPaymentsPlanAddEditModal
+					closeDialog={ closeDialog }
+					product={ productToAdd }
+					annualProduct={ productToAdd.annualProduct }
+				/>
+			) }
 		</Card>
 	);
 }
