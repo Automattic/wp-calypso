@@ -51,7 +51,7 @@ describe( `${ flow.name }`, () => {
 		runUseStepNavigationSubmit( {
 			currentStep: from.slug,
 			dependencies: dependencies,
-			currentURL: addQueryArgs( `/setup/${ flow.name }/${ from.slug }`, query ),
+			currentURL: addQueryArgs( `/${ flow.name }/${ from.slug }`, query ),
 		} );
 
 		const destination = getFlowLocation();
@@ -75,7 +75,7 @@ describe( `${ flow.name }`, () => {
 					step: STEPS.SITE_CREATION_STEP,
 					query: {
 						importer:
-							'importerBlogger?siteSlug=%7Bsite%7D&from=&backToFlow=%2Fsetup%2Fmigration%2Fplatform-identification',
+							'importerBlogger?siteSlug=%7Bsite%7D&from=&backToFlow=%2Fmigration%2Fplatform-identification',
 					},
 				} );
 			} );
@@ -120,7 +120,7 @@ describe( `${ flow.name }`, () => {
 					addQueryArgs( '/setup/site-setup/importerBlogger', {
 						siteSlug: 'example.wordpress.com',
 						from: '',
-						backToFlow: '/setup/migration/platform-identification',
+						backToFlow: '/migration/platform-identification',
 						siteId: 123,
 					} )
 				);
@@ -242,7 +242,7 @@ describe( `${ flow.name }`, () => {
 						siteSlug: 'example.wordpress.com',
 						from: '',
 						option: 'content',
-						backToFlow: '/setup/migration/migration-upgrade-plan',
+						backToFlow: '/migration/migration-upgrade-plan',
 						siteId: 123,
 					} )
 				);

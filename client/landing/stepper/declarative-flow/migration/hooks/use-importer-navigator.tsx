@@ -1,5 +1,5 @@
 import { SITE_SETUP_FLOW } from '@automattic/onboarding';
-import { useHref, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getFinalImporterUrl } from '../../internals/steps-repository/import/helper';
@@ -15,8 +15,7 @@ export const parsePartial = ( partial: PartialImporter, siteSlug: string ) => {
 
 export const useImporterNavigator = () => {
 	const location = useLocation();
-	const backToFlow = useHref( location.pathname );
-
+	const backToFlow = location.pathname;
 	const getPartial = ( platform: ImporterPlatform ): PartialImporter => {
 		return getFinalImporterUrl( '{site}', '', platform, backToFlow );
 	};
