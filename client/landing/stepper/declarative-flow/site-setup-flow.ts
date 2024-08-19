@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { MIGRATION_FLOW } from '@automattic/onboarding';
@@ -155,8 +154,7 @@ const siteSetupFlow: Flow = {
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 
 		const isDesignChoicesStepEnabled =
-			isEnabled( 'onboarding/design-choices' ) &&
-			( ( isAssemblerSupported() && isSiteAssemblerEnabled ) || isBigSkyEligible );
+			( isAssemblerSupported() && isSiteAssemblerEnabled ) || isBigSkyEligible;
 
 		const { setPendingAction, resetOnboardStoreWithSkipFlags, setIntent } =
 			useDispatch( ONBOARD_STORE );
