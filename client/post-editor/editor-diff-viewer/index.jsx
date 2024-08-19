@@ -11,6 +11,7 @@ import scrollTo from 'calypso/lib/scroll-to';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPostRevision } from 'calypso/state/posts/selectors/get-post-revision';
 import './style.scss';
+import { getPostRevisionFields } from 'calypso/state/posts/selectors/get-post-revision-fields';
 
 const getCenterOffset = ( node ) =>
 	get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
@@ -19,6 +20,7 @@ class EditorDiffViewer extends PureComponent {
 	static propTypes = {
 		postId: PropTypes.number.isRequired,
 		selectedRevisionId: PropTypes.number,
+		revisionFields: PropTypes.object,
 		siteId: PropTypes.number.isRequired,
 		diff: PropTypes.shape( {
 			post_content: PropTypes.array,
@@ -149,7 +151,7 @@ class EditorDiffViewer extends PureComponent {
 	};
 
 	render() {
-		const { diff, diffView } = this.props;
+		const { diff, diffView, revisionFields } = this.props;
 		const classes = clsx( 'editor-diff-viewer', {
 			'is-loading':
 				! diff.hasOwnProperty( 'post_content' ) && ! diff.hasOwnProperty( 'post_title' ),
@@ -170,6 +172,24 @@ class EditorDiffViewer extends PureComponent {
 		const countAbove = this.changesAboveViewport.length;
 		const countBelow = this.changesBelowViewport.length;
 
+		const fields = [];
+
+		for ( const field in diff ) {
+			// Skip post_title field.
+			if ( 'post_title' === field ) {
+				continue;
+			}
+
+			fields.push(
+				<div key={ field }>
+					<h2 className="editor-diff-viewer__fieldname">{ revisionFields[ field ] }</h2>
+					<pre className="editor-diff-viewer__content">
+						<TextDiff operations={ diff[ field ] } splitLines />
+					</pre>
+				</div>
+			);
+		}
+
 		return (
 			<div className={ classes }>
 				<div className="editor-diff-viewer__scrollable" ref={ this.handleScrollableRef }>
@@ -177,18 +197,14 @@ class EditorDiffViewer extends PureComponent {
 						<h1 className="editor-diff-viewer__title">
 							<TextDiff operations={ diff.post_title } />
 						</h1>
-						<pre className="editor-diff-viewer__content">
-							<TextDiff operations={ diff.post_content } splitLines />
-						</pre>
+						{ fields }
 					</div>
 					{ diffView === 'split' && (
 						<div className="editor-diff-viewer__secondary-pane">
 							<h1 className="editor-diff-viewer__title">
 								<TextDiff operations={ diff.post_title } />
 							</h1>
-							<pre className="editor-diff-viewer__content">
-								<TextDiff operations={ diff.post_content } splitLines />
-							</pre>
+							{ fields }
 						</div>
 					) }
 				</div>
@@ -219,6 +235,7 @@ class EditorDiffViewer extends PureComponent {
 
 export default connect(
 	( state, { siteId, postId, selectedRevisionId } ) => ( {
+		revisionFields: getPostRevisionFields( state, siteId, postId ),
 		revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
 	} ),
 	{ recordTracksEvent }
