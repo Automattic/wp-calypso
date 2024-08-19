@@ -1,7 +1,14 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { OnboardSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
-import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from 'calypso/landing/stepper/constants';
+import {
+	STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
+	STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
+	STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT,
+	STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
+	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+} from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordSubmitStep } from '../../analytics/record-submit-step';
 import type { Flow, Navigate, ProvidedDependencies, StepperStep } from '../../types';
@@ -41,6 +48,30 @@ export const useStepNavigationWithTracking = ( {
 					tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]
 				);
 				stepNavigation.submit?.( providedDependencies, ...params );
+			},
+			exitFlow: ( to: string ) => {
+				recordTracksEvent( STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW, {
+					...( tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW ] ?? {} ),
+				} );
+				stepNavigation.exitFlow?.( to );
+			},
+			goBack: () => {
+				recordTracksEvent( STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK, {
+					...( tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK ] ?? {} ),
+				} );
+				stepNavigation.goBack?.();
+			},
+			goNext: () => {
+				recordTracksEvent( STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT, {
+					...( tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT ] ?? {} ),
+				} );
+				stepNavigation.goNext?.();
+			},
+			goToStep: ( step: string ) => {
+				recordTracksEvent( STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO, {
+					...( tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO ] ?? {} ),
+				} );
+				stepNavigation.goToStep?.( step );
 			},
 		} ),
 		[ stepNavigation, intent, flow, currentStepRoute, tracksEventPropsFromFlow ]
