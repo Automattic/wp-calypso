@@ -43,6 +43,7 @@ const SEARCH_CATEGORIES_HEIGHT = 36;
 const LAYOUT_PADDING = 16;
 const MASTERBAR_HEIGHT = 32;
 
+// If adding new, longer search terms, ensure that the search input field is wide enough to accommodate it.
 const searchTerms = [ 'woocommerce', 'seo', 'file manager', 'jetpack', 'ecommerce', 'form' ];
 
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isLoggedIn } ) => {
