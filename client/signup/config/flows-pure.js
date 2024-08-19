@@ -656,6 +656,13 @@ export function generateFlows( {
 			enableHotjar: true,
 		},
 		...emailSubscriptionFlow,
+		{
+			name: 'zzz-flow',
+			steps: [ userSocialStep, 'plans-step-zzz', 'domains' ],
+			destination: getSignupDestination,
+			description: 'Zzz flow',
+			lastModified: '2024-08-16',
+		},
 	];
 
 	// convert the array to an object keyed by `name`

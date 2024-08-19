@@ -257,7 +257,8 @@
 		"domain-for-gravatar",
 		"plans-first",
 		"onboarding-affiliate",
-		"email-subscription"
+		"email-subscription",
+		"zzz-flow"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

@@ -937,6 +937,13 @@ export function generateSteps( {
 				'trailMapExperimentVariant',
 			],
 		},
+
+		'plans-step-zzz': {
+			stepName: 'plans-step-zzz',
+			props: {
+				intent: 'plans-intent-zzz',
+			},
+		},
 	};
 }
 

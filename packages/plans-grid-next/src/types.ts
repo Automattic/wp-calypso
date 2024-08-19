@@ -54,6 +54,7 @@ export interface GridPlan {
 export type GridSize = 'small' | 'medium' | 'large';
 
 export type PlansIntent =
+	| 'plans-intent-zzz'
 	| 'plans-affiliate'
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'

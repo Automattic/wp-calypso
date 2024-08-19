@@ -199,6 +199,9 @@ const usePlanTypesWithIntent = ( {
 		case 'plans-affiliate':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
+		case 'plans-intent-zzz':
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			break;
 		default:
 			planTypes = availablePlanTypes;
 	}
