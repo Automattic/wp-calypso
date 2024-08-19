@@ -29,6 +29,10 @@ export default function CreditCardNumberField( {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	// const brand: string = useSelect(
+	// 	( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
+	// 	[]
+	// );
 	const { cardNumber: cardNumberError } = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
 		[]
@@ -67,7 +71,6 @@ export default function CreditCardNumberField( {
 					options={ {
 						style: stripeElementStyle,
 						disabled: isDisabled,
-						showIcon: hasCheckoutVersion( 'cobadge' ) ? true : false,
 					} }
 					onReady={ () => {
 						setIsStripeFullyLoaded( true );
@@ -76,7 +79,9 @@ export default function CreditCardNumberField( {
 						handleStripeFieldChange( input );
 					} }
 				/>
-				<PaymentLogo />
+				{ hasCheckoutVersion( 'cobadge' ) && (
+					<PaymentLogo brand="Added some cobadge related changes!" />
+				) }
 
 				{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 			</StripeFieldWrapper>
