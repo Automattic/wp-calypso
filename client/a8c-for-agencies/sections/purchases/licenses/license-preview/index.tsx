@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
+import { Icon, external } from '@wordpress/icons';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -199,6 +200,7 @@ export default function LicensePreview( {
 									href={ pressableManageUrl }
 								>
 									{ translate( 'Manage in Pressable' ) }
+									<Icon className="gridicon" icon={ external } size={ 18 } />
 								</a>
 							) }
 							{ ! domain && licenseState === LicenseState.Detached && (

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- Remove console.log and bump dependency version
+
 ## 0.1.0
 
 - Fix bug with late loading of initial render of useExperiment

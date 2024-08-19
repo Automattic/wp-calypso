@@ -1,6 +1,6 @@
 import { SENSEI_FLOW } from '@automattic/onboarding';
-import { useEffect, useMemo } from 'react';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import { type Flow } from '../../types';
 
@@ -14,11 +14,11 @@ interface Props {
 
 export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 	const steps = flow.useSteps();
-	const queryParams = useQuery();
+	const [ queryParams, setQuery ] = useSearchParams();
 	const ref = queryParams.get( 'ref' ) || '';
-	const signedUp = queryParams.has( 'signed_up' );
+	const isSignupStep = queryParams.has( 'signup' );
 
-	// TODO: Check if we can remove the sensei flow reference from here.
+	// TODO: Using the new signup flag we can remove reference to SENSEI_FLOW
 	const firstStepSlug = ( flow.name === SENSEI_FLOW ? steps[ 1 ] : steps[ 0 ] ).slug;
 	const isFirstStep = firstStepSlug === currentStepRoute;
 	const flowVariant = flow.variantSlug;
@@ -32,13 +32,19 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 		[ signupStartEventProps, flowVariant ]
 	);
 	const flowName = flow.name;
-	const shouldTrack = flow.isSignupFlow && isFirstStep && ! signedUp;
+	const shouldTrack = flow.isSignupFlow && ( isFirstStep || isSignupStep );
+	const removeSignupParam = useCallback( () => {
+		if ( queryParams.has( 'signup' ) ) {
+			queryParams.delete( 'signup' );
+			setQuery( queryParams );
+		}
+	}, [ queryParams, setQuery ] );
 
 	useEffect( () => {
 		if ( ! shouldTrack ) {
 			return;
 		}
-
 		recordSignupStart( flowName, ref, extraProps || {} );
-	}, [ extraProps, flowName, ref, shouldTrack ] );
+		removeSignupParam();
+	}, [ extraProps, flowName, ref, removeSignupParam, shouldTrack ] );
 };

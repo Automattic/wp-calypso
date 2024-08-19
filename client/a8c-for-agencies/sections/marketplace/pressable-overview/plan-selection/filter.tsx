@@ -125,7 +125,7 @@ export default function PlanSelectionFilter( {
 				<div className="pressable-overview-plan-selection__filter-buttons">
 					<Button
 						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-							'is-selected': filterType === FILTER_TYPE_INSTALL,
+							'is-dark': filterType === FILTER_TYPE_INSTALL,
 						} ) }
 						onClick={ onSelectInstallFilterType }
 					>
@@ -134,7 +134,7 @@ export default function PlanSelectionFilter( {
 
 					<Button
 						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-							'is-selected': filterType === FILTER_TYPE_VISITS,
+							'is-dark': filterType === FILTER_TYPE_VISITS,
 						} ) }
 						onClick={ onSelectVisitFilterType }
 					>

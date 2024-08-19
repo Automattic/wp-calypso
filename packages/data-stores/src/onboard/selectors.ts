@@ -40,6 +40,7 @@ export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
 export const getSelectedSiteLogo = ( state: State ) => state.siteLogo;
 export const getSelectedSiteDescription = ( state: State ) => state.siteDescription;
 export const getSelectedSiteAccentColor = ( state: State ) => state.siteAccentColor;
+export const getSelectedReadymadeTemplate = ( state: State ) => state.readymadeTemplate;
 export const getIntent = ( state: State ) => state.intent;
 export const getStartingPoint = ( state: State ) => state.startingPoint;
 export const getStoreType = ( state: State ) => state.storeType;
@@ -71,6 +72,7 @@ export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 
 export const getDomainForm = ( state: State ) => state.domainForm;
 export const getDomainCartItem = ( state: State ) => state.domainCartItem;
+export const getDomainCartItems = ( state: State ) => state.domainCartItems;
 export const getHideFreePlan = ( state: State ) => state.hideFreePlan;
 export const getHidePlansFeatureComparison = ( state: State ) => state.hidePlansFeatureComparison;
 export const getIsMigrateFromWp = ( state: State ) => state.isMigrateFromWp;

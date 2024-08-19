@@ -76,7 +76,8 @@ class StatsDownloadCsv extends Component {
 	};
 
 	render() {
-		const { data, siteId, statType, query, translate, isLoading, borderless } = this.props;
+		const { data, siteId, statType, query, translate, isLoading, borderless, skipQuery } =
+			this.props;
 		try {
 			new Blob(); // eslint-disable-line no-new
 		} catch ( e ) {
@@ -92,7 +93,7 @@ class StatsDownloadCsv extends Component {
 				disabled={ disabled }
 				borderless={ borderless }
 			>
-				{ siteId && statType && query && (
+				{ ! skipQuery && siteId && statType && query && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				<Gridicon icon="cloud-download" />{ ' ' }

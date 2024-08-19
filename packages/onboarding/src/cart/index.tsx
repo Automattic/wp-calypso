@@ -9,7 +9,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
-	isMigrationFlow,
+	isImportFocusedFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isAnyHostingFlow,
 } from '../';
@@ -63,7 +63,7 @@ const getBlogNameGenerationParams = ( {
 	if ( siteUrl ) {
 		const blog_name = siteUrl.replace( '.wordpress.com', '' );
 
-		if ( isMigrationFlow( flowToCheck ) ) {
+		if ( isImportFocusedFlow( flowToCheck ) ) {
 			return {
 				blog_name,
 				find_available_url: true,
@@ -144,8 +144,8 @@ export const createSiteWithCart = async (
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
 	username: string,
+	domainCartItems: MinimalRequestCartProduct[],
 	domainItem?: DomainSuggestion,
-	domainCartItem?: MinimalRequestCartProduct,
 	sourceSlug?: string
 ) => {
 	const siteUrl = domainItem?.domain_name;
@@ -213,14 +213,18 @@ export const createSiteWithCart = async (
 		await setupSiteAfterCreation( { siteId, flowName } );
 	}
 
-	await processItemCart(
-		siteSlug,
-		isFreeThemePreselected,
-		themeSlugWithRepo,
-		flowName,
-		userIsLoggedIn,
-		domainCartItem
-	);
+	if ( domainCartItems.length ) {
+		for ( const domainCartItem of domainCartItems ) {
+			await processItemCart(
+				siteSlug,
+				isFreeThemePreselected,
+				themeSlugWithRepo,
+				flowName,
+				userIsLoggedIn,
+				domainCartItem
+			);
+		}
+	}
 
 	return providedDependencies;
 };

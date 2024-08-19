@@ -21,7 +21,7 @@ const decodeEntitiesFromPlugins = < T >(
 
 		fields.forEach( ( field ) => {
 			if ( plugin?.hasOwnProperty( field ) ) {
-				decodedPlugin[ field ] = decodeEntities( plugin[ field ] as string );
+				decodedPlugin[ field ] = decodeEntities( plugin[ field ] as string ) as T[ keyof T ];
 			}
 		} );
 

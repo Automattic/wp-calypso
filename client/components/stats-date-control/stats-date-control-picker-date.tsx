@@ -1,11 +1,14 @@
-import { Button } from '@wordpress/components';
+import config from '@automattic/calypso-config';
+import { Button, DatePicker } from '@wordpress/components';
 import { Icon, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import DateInput from './stats-date-control-date-input';
 import { DateControlPickerDateProps } from './types';
 
 const BASE_CLASS_NAME = 'stats-date-control-picker-date';
+const isCalendarEnabled = config.isEnabled( 'stats/date-picker-calendar' );
 
 const DateControlPickerDate = ( {
 	startDate = '',
@@ -17,6 +20,27 @@ const DateControlPickerDate = ( {
 	overlay,
 }: DateControlPickerDateProps ) => {
 	const translate = useTranslate();
+
+	const [ previewDateStart, setPreviewDateStart ] = useState( startDate );
+	const [ previewDateEnd, setPreviewDateEnd ] = useState( endDate );
+
+	const handleStartSeletion = ( date: string ) => {
+		onStartChange( date.split( 'T' )?.[ 0 ] );
+	};
+
+	const handleEndSeletion = ( date: string ) => {
+		onEndChange( date.split( 'T' )?.[ 0 ] );
+	};
+
+	const handleStartMonthTogglePrevious = ( date: string ) => {
+		setPreviewDateEnd( previewDateStart );
+		setPreviewDateStart( date );
+	};
+
+	const handleEndMonthToggleNext = ( date: string ) => {
+		setPreviewDateStart( previewDateEnd );
+		setPreviewDateEnd( date );
+	};
 
 	return (
 		<div
@@ -42,6 +66,24 @@ const DateControlPickerDate = ( {
 					<DateInput id="endDate" value={ endDate } onChange={ onEndChange } />
 				</div>
 			</div>
+			{ isCalendarEnabled && (
+				<div className={ `${ BASE_CLASS_NAME }s__calendar` }>
+					<div className={ `${ BASE_CLASS_NAME }s__calendar--from` }>
+						<DatePicker
+							currentDate={ previewDateStart || startDate }
+							onChange={ handleStartSeletion }
+							onMonthPreviewed={ handleStartMonthTogglePrevious }
+						/>
+					</div>
+					<div className={ `${ BASE_CLASS_NAME }s__calendar--to` }>
+						<DatePicker
+							currentDate={ previewDateEnd || endDate }
+							onChange={ handleEndSeletion }
+							onMonthPreviewed={ handleEndMonthToggleNext }
+						/>
+					</div>
+				</div>
+			) }
 			<div className={ `${ BASE_CLASS_NAME }s__buttons` }>
 				<Button onClick={ onCancel }>{ translate( 'Cancel' ) }</Button>
 				<Button variant="primary" onClick={ onApply }>

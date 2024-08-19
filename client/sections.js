@@ -224,13 +224,13 @@ const sections = [
 	{
 		name: 'hosting-overview',
 		paths: [ '/overview' ],
-		module: 'calypso/hosting-overview',
+		module: 'calypso/hosting/overview',
 		group: 'sites',
 	},
 	{
 		name: 'hosting-features',
 		paths: [ '/hosting-features' ],
-		module: 'calypso/hosting-features',
+		module: 'calypso/hosting/hosting-features',
 		group: 'sites',
 	},
 	{
@@ -317,6 +317,16 @@ const sections = [
 		group: 'site-profiler',
 		isomorphic: true,
 		title: 'Site Profiler',
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'performance-profiler',
+		paths: [ '/speed-test-tool', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/speed-test-tool` ],
+		module: 'calypso/performance-profiler',
+		enableLoggedOut: true,
+		group: 'performance-profiler',
+		isomorphic: true,
+		title: 'Speed Test',
 		trackLoadPerformance: true,
 	},
 	{
@@ -569,7 +579,7 @@ const sections = [
 	{
 		name: 'hosting',
 		paths: [ '/hosting-config' ],
-		module: 'calypso/hosting-overview',
+		module: 'calypso/hosting/overview',
 		group: 'sites',
 	},
 	{

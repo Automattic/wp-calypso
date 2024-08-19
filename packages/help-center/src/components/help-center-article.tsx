@@ -1,35 +1,29 @@
-/* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Flex, FlexItem } from '@wordpress/components';
-import { useEffect } from '@wordpress/element';
+import { useEffect, createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { Icon, external } from '@wordpress/icons';
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { usePostByKey, useSupportArticleAlternatePostKey } from '../hooks';
+import { usePostByUrl } from '../hooks';
 import { BackButton } from './back-button';
 import { BackToTopButton } from './back-to-top-button';
 import ArticleContent from './help-center-article-content';
 
-export const HelpCenterArticle: React.FC = () => {
-	const { search, key } = useLocation();
-	const navigate = useNavigate();
+export const HelpCenterArticle = () => {
+	const [ searchParams ] = useSearchParams();
 	const { sectionName } = useHelpCenterContext();
 
-	const params = new URLSearchParams( search );
-	const postId = Number( params.get( 'postId' ) );
-	const blogId = params.get( 'blogId' ) ?? undefined;
-	const articleUrl = params.get( 'link' ) ?? undefined;
-	const query = params.get( 'query' );
-	const postKey = useSupportArticleAlternatePostKey( blogId, postId );
-	const post = usePostByKey( postKey ).data;
-	const isLoading = ! post?.content || ! postKey;
+	const postUrl = searchParams.get( 'link' ) || '';
+	const query = searchParams.get( 'query' );
+
+	const { data: post, isLoading, error } = usePostByUrl( postUrl );
 
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
-		if ( articleUrl?.includes( '#' ) && post?.content ) {
+		if ( postUrl?.includes( '#' ) && post?.content ) {
 			setTimeout( () => {
-				const anchorId = articleUrl.split( '#' ).pop();
+				const anchorId = postUrl.split( '#' ).pop();
 				if ( anchorId ) {
 					const element = document.getElementById( anchorId );
 					if ( element ) {
@@ -38,82 +32,63 @@ export const HelpCenterArticle: React.FC = () => {
 				}
 			}, 0 );
 		}
-	}, [ articleUrl, post ] );
+	}, [ postUrl, post ] );
 
 	useEffect( () => {
-		const tracksData = {
-			search_query: query,
-			force_site_id: true,
-			location: 'help-center',
-			section: sectionName,
-			result_url: articleUrl,
-			post_id: postId,
-			blog_id: blogId,
-		};
+		if ( post ) {
+			const tracksData = {
+				force_site_id: true,
+				location: 'help-center',
+				section: sectionName,
+				result_url: post.URL,
+				post_id: post.ID,
+				blog_id: post.site_ID,
+			};
 
-		recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
-	}, [ query, articleUrl, sectionName, postId, blogId ] );
-
-	const redirectBack = () => {
-		recordTracksEvent( `calypso_inlinehelp_navigate_back`, {
-			result_url: articleUrl,
-			post_id: postId,
-			blog_id: blogId,
-			search_query: query,
-		} );
-		if ( key === 'default' ) {
-			navigate( -1 );
-		} else if ( query ) {
-			navigate( `/?query=${ query }` );
-		} else {
-			navigate( '/' );
+			query
+				? recordTracksEvent( 'calypso_helpcenter_search_result_article_viewed', {
+						...tracksData,
+						search_query: query,
+				  } )
+				: recordTracksEvent( 'calypso_helpcenter_article_viewed', tracksData );
 		}
-	};
-
-	const recordTracksAndRedirect = () => {
-		const tracksData = {
-			search_query: query,
-			force_site_id: true,
-			location: 'help-center',
-			section: sectionName,
-			result_url: articleUrl,
-			post_id: postId,
-			blog_id: blogId,
-		};
-
-		recordTracksEvent( `calypso_inlinehelp_article_click_external_link`, tracksData );
-	};
+	}, [ post, query, sectionName ] );
 
 	return (
 		<>
 			<div className="help-center-article__header">
 				<Flex justify="space-between">
 					<FlexItem>
-						<BackButton onClick={ redirectBack } />
+						<BackButton />
 					</FlexItem>
-					<FlexItem>
-						<Button
-							href={ articleUrl }
-							target="_blank"
-							onClick={ recordTracksAndRedirect }
-							className="help-center-article__external-button"
-						>
-							<Icon icon={ external } size={ 20 } />
-						</Button>
-					</FlexItem>
+					{ post?.URL && (
+						<FlexItem>
+							<Button
+								href={ post?.URL }
+								target="_blank"
+								className="help-center-article__external-button"
+							>
+								<Icon icon={ external } size={ 20 } />
+							</Button>
+						</FlexItem>
+					) }
 				</Flex>
 			</div>
 			<div className="help-center-article">
-				<ArticleContent
-					content={ post?.content }
-					title={ post?.title }
-					link={ post?.link }
-					isLoading={ isLoading }
-					postId={ postId }
-					blogId={ blogId }
-					slug={ post?.slug }
-					articleUrl={ articleUrl }
-				/>
+				{ ! error && <ArticleContent post={ post } isLoading={ isLoading } /> }
+				{ ! isLoading && error && (
+					<p className="help-center-article__error">
+						{ createInterpolateElement(
+							__(
+								"Sorry, we couldn't load that article. <url>Click here</url> to open it in a new tab",
+								__i18n_text_domain__
+							),
+							{
+								url: <a target="_blank" rel="noopener noreferrer" href={ postUrl } />,
+							}
+						) }
+					</p>
+				) }
 			</div>
 			<BackToTopButton />
 		</>

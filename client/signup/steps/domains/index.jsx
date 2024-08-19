@@ -359,7 +359,9 @@ export class RenderDomainsStep extends Component {
 	};
 
 	handleUseYourDomainClick = () => {
-		page( this.getUseYourDomainUrl() );
+		// Stepper doesn't support page.js
+		const navigate = this.props.page || page;
+		navigate( this.getUseYourDomainUrl() );
 		this.props.recordUseYourDomainButtonClick( this.getAnalyticsSection() );
 	};
 
@@ -1399,8 +1401,10 @@ export class RenderDomainsStep extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
+		const Wrapper = this.props.CustomStepWrapper || StepWrapper;
+
 		return (
-			<StepWrapper
+			<Wrapper
 				hideBack={ hideBack }
 				flowName={ flowName }
 				stepName={ stepName }
@@ -1429,7 +1433,7 @@ export class RenderDomainsStep extends Component {
 	}
 }
 
-const submitDomainStepSelection = ( suggestion, section ) => {
+export const submitDomainStepSelection = ( suggestion, section ) => {
 	let domainType = 'domain_reg';
 	if ( suggestion.is_free ) {
 		domainType = 'wpcom_subdomain';
@@ -1462,7 +1466,7 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 const RenderDomainsStepConnect = connect(
-	( state, { steps, flowName, stepName } ) => {
+	( state, { steps, flowName, stepName, previousStepName } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
@@ -1483,7 +1487,7 @@ const RenderDomainsStepConnect = connect(
 				[ 'pro', 'starter' ].includes( flowName ),
 			userLoggedIn,
 			multiDomainDefaultPlan,
-			previousStepName: getPreviousStepName( flowName, stepName, userLoggedIn ),
+			previousStepName: previousStepName || getPreviousStepName( flowName, stepName, userLoggedIn ),
 		};
 	},
 	{

@@ -48,6 +48,8 @@ export class UploadingPane extends PureComponent {
 			invalidDescription: PropTypes.string,
 			validate: PropTypes.func,
 		} ),
+		fromSite: PropTypes.string,
+		hideActionButtons: PropTypes.bool,
 	};
 
 	static defaultProps = { description: null, optionalUrl: null };
@@ -169,7 +171,11 @@ export class UploadingPane extends PureComponent {
 	};
 
 	initiateFromUploadButton = () => {
-		this.startUpload( this.state.fileToBeUploaded, this.state.urlInput );
+		let url = this.state.urlInput;
+		if ( this.props.optionalUrl && this.props.fromSite ) {
+			url = this.props.fromSite;
+		}
+		this.startUpload( this.state.fileToBeUploaded, url );
 	};
 
 	setupUpload = ( file ) => {
@@ -236,7 +242,7 @@ export class UploadingPane extends PureComponent {
 	};
 
 	render() {
-		const { importerStatus, site, isEnabled } = this.props;
+		const { importerStatus, site, isEnabled, fromSite, hideActionButtons } = this.props;
 		const isReadyForImport = this.isReadyForImport();
 		const importerStatusClasses = clsx(
 			'importer__upload-content',
@@ -256,7 +262,9 @@ export class UploadingPane extends PureComponent {
 
 		return (
 			<div>
-				<p className="importer__uploading-pane-description">{ this.props.description }</p>
+				{ this.props.description && (
+					<p className="importer__uploading-pane-description">{ this.props.description }</p>
+				) }
 				<div
 					className="importer__uploading-pane"
 					role="button"
@@ -284,7 +292,7 @@ export class UploadingPane extends PureComponent {
 					) }
 					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 				</div>
-				{ this.props.optionalUrl && (
+				{ this.props.optionalUrl && ! fromSite && (
 					<div className="importer__uploading-pane-url-input">
 						<FormLabel>
 							{ this.props.optionalUrl.title }
@@ -302,22 +310,24 @@ export class UploadingPane extends PureComponent {
 						) }
 					</div>
 				) }
-				<ImporterActionButtonContainer>
-					{ this.props.optionalUrl && (
-						<ImporterActionButton
-							primary
-							onClick={ this.initiateFromUploadButton }
-							disabled={ ! uploadButtonEnabled }
-						>
-							{ this.props.translate( 'Upload' ) }
-						</ImporterActionButton>
-					) }
-					<ImporterCloseButton
-						importerStatus={ importerStatus }
-						site={ site }
-						isEnabled={ isEnabled }
-					/>
-				</ImporterActionButtonContainer>
+				{ ! hideActionButtons && (
+					<ImporterActionButtonContainer>
+						{ this.props.optionalUrl && (
+							<ImporterActionButton
+								primary
+								onClick={ this.initiateFromUploadButton }
+								disabled={ ! uploadButtonEnabled }
+							>
+								{ this.props.translate( 'Upload' ) }
+							</ImporterActionButton>
+						) }
+						<ImporterCloseButton
+							importerStatus={ importerStatus }
+							site={ site }
+							isEnabled={ isEnabled }
+						/>
+					</ImporterActionButtonContainer>
+				) }
 			</div>
 		);
 	}

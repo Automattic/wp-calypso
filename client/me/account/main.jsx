@@ -677,21 +677,23 @@ class Account extends Component {
 					{ this.renderPrimarySite() }
 				</FormFieldset>
 
-				<FormFieldset>
-					<FormLabel htmlFor="user_URL">{ translate( 'Web address' ) }</FormLabel>
-					<FormTextInput
-						disabled={ this.getDisabledState( ACCOUNT_FORM_NAME ) }
-						id="user_URL"
-						name="user_URL"
-						type="url"
-						onFocus={ this.getFocusHandler( 'Web Address Field' ) }
-						value={ this.getUserSetting( 'user_URL' ) || '' }
-						onChange={ this.updateUserSettingInput }
-					/>
-					<FormSettingExplanation>
-						{ translate( 'Shown publicly when you comment on blogs.' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
+				{ ! config.isEnabled( 'layout/site-level-user-profile' ) && (
+					<FormFieldset>
+						<FormLabel htmlFor="user_URL">{ translate( 'Web address' ) }</FormLabel>
+						<FormTextInput
+							disabled={ this.getDisabledState( ACCOUNT_FORM_NAME ) }
+							id="user_URL"
+							name="user_URL"
+							type="url"
+							onFocus={ this.getFocusHandler( 'Web Address Field' ) }
+							value={ this.getUserSetting( 'user_URL' ) || '' }
+							onChange={ this.updateUserSettingInput }
+						/>
+						<FormSettingExplanation>
+							{ translate( 'Shown publicly when you comment on blogs.' ) }
+						</FormSettingExplanation>
+					</FormFieldset>
+				) }
 
 				<FormButton
 					isSubmitting={ this.isSubmittingForm( ACCOUNT_FORM_NAME ) }
@@ -953,12 +955,7 @@ class Account extends Component {
 
 						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
 
-						<FormFieldset
-							className="account__settings-admin-home"
-							style={
-								config.isEnabled( 'layout/site-level-user-profile' ) ? { marginBottom: 0 } : {}
-							}
-						>
+						<FormFieldset className="account__settings-admin-home">
 							<FormLabel id="account__default_landing_page">
 								{ translate( 'Admin home' ) }
 							</FormLabel>
@@ -966,17 +963,24 @@ class Account extends Component {
 						</FormFieldset>
 
 						{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
-							! config.isEnabled( 'layout/site-level-user-profile' ) &&
 							supportsCssCustomProperties() && (
 								<FormFieldset>
 									<FormLabel id="account__color_scheme" htmlFor="color_scheme">
 										{ translate( 'Dashboard color scheme' ) }
 									</FormLabel>
-									<ColorSchemePicker
-										disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
-										defaultSelection="classic-dark"
-										onSelection={ this.updateColorScheme }
-									/>
+									{ config.isEnabled( 'layout/site-level-user-profile' ) ? (
+										<FormSettingExplanation>
+											{ translate(
+												'You can now set the color scheme on your individual site by visiting Users → Profile from your site dashboard.'
+											) }
+										</FormSettingExplanation>
+									) : (
+										<ColorSchemePicker
+											disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
+											defaultSelection="classic-dark"
+											onSelection={ this.updateColorScheme }
+										/>
+									) }
 								</FormFieldset>
 							) }
 					</form>

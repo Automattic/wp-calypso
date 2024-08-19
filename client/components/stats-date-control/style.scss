@@ -134,6 +134,54 @@ $date-control-mobile-layout-switch: $break-small;
 	}
 }
 
+.stats-date-control-picker-dates__calendar {
+	display: flex;
+	gap: 18px;
+	padding-bottom: 18px;
+
+	.stats-date-control-picker-dates__calendar--from {
+		.components-datetime__date {
+			h3 + button {
+				display: none;
+			}
+
+			[data-wp-component="HStack"] {
+				button {
+					position: absolute;
+					left: 0;
+				}
+			}
+		}
+	}
+
+	.stats-date-control-picker-dates__calendar--to {
+		.components-datetime__date {
+			button:first-of-type {
+				display: none;
+			}
+
+			[data-wp-component="HStack"] {
+				button {
+					position: absolute;
+					right: 0;
+				}
+			}
+		}
+	}
+
+	[data-wp-component="HStack"] {
+		position: relative;
+	}
+
+	h3 {
+		margin: 0 auto;
+		height: 36px;
+		display: flex;
+		gap: 4px;
+		align-items: center;
+	}
+}
+
 .stats-date-control-picker__popover-content {
 	display: flex;
 	min-width: 320px;

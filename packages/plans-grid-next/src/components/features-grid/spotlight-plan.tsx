@@ -6,9 +6,10 @@ import BillingTimeframes from './billing-timeframes';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
-import PlanPrice from './plan-price';
+import PlanPrices from './plan-prices';
 import PlanTagline from './plan-tagline';
 import TopButtons from './top-buttons';
+import './spotlight-plan.scss';
 
 type SpotlightPlanProps = {
 	currentSitePlanSlug?: string | null;
@@ -47,7 +48,7 @@ const SpotlightPlan = ( {
 			<PlanHeaders renderedGridPlans={ [ gridPlanForSpotlight ] } />
 			{ isNotFreePlan && <PlanTagline renderedGridPlans={ [ gridPlanForSpotlight ] } /> }
 			{ isNotFreePlan && (
-				<PlanPrice
+				<PlanPrices
 					renderedGridPlans={ [ gridPlanForSpotlight ] }
 					currentSitePlanSlug={ currentSitePlanSlug }
 				/>

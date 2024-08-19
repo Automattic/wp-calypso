@@ -65,7 +65,7 @@ export const DomainsTableExpiresRenewsOnCell = ( {
 	);
 
 	return (
-		<Element className="domains-table-row__renews-on-cell">
+		<Element data-testid="expires-renews-on" className="domains-table-row__renews-on-cell">
 			{ expiryDate ? (
 				<>
 					{ ! isCompact && (

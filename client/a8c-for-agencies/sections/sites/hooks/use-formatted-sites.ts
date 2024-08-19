@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
+import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import {
 	StatsNode,
 	BoostNode,
@@ -25,6 +26,19 @@ const formatBoostData = ( site: Site ): BoostNode => ( {
 	type: 'boost',
 	value: site.jetpack_boost_scores,
 } );
+
+const useFormatDevSite = () => {
+	const { data: { licenses = [] } = {} } = useFetchDevLicenses();
+
+	return useCallback(
+		( site: Site ) =>
+			!! licenses.find(
+				( license: { managed_site_id: number | undefined } ) =>
+					license.managed_site_id === site.a4a_site_id
+			),
+		[ licenses ]
+	);
+};
 
 const useFormatBackupData = () => {
 	const translate = useTranslate();
@@ -160,8 +174,15 @@ const useFormatPluginData = () => {
 					updates: 0,
 				};
 			}
+
 			return {
-				value: `${ pluginUpdates?.length } ${ translate( 'Available' ) }`,
+				value: translate( '%(count)d Update', '%(count)d Updates', {
+					count: pluginUpdates?.length,
+					args: {
+						count: pluginUpdates?.length,
+					},
+					comment: '%(count)d is the number of plugin updates available',
+				} ) as string,
 				status: pluginUpdates?.length > 0 ? 'warning' : 'success',
 				type: 'plugin',
 				updates: pluginUpdates?.length,
@@ -182,6 +203,7 @@ const useFormatSite = () => {
 	const formatMonitorData = useFormatMonitorData();
 	const formatPluginData = useFormatPluginData();
 	const formatScanData = useFormatScanData();
+	const formatDevSite = useFormatDevSite();
 
 	return useCallback(
 		( site: Site, isConnected: boolean ): SiteData => {
@@ -199,12 +221,13 @@ const useFormatSite = () => {
 				monitor: formatMonitorData( site ),
 				plugin: formatPluginData( site ),
 				error: formatErrorData( isConnected ),
+				isDevSite: formatDevSite( site ),
 				isFavorite: site.is_favorite,
 				isSelected: site.isSelected,
 				onSelect: site.onSelect,
 			};
 		},
-		[ formatBackupData, formatMonitorData, formatPluginData, formatScanData ]
+		[ formatBackupData, formatMonitorData, formatPluginData, formatScanData, formatDevSite ]
 	);
 };
 

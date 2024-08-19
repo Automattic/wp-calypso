@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+
 .newsletter-importer {
 	margin: 24px auto 0;
 	max-width: 720px;
@@ -42,6 +44,11 @@
 		display: flex;
 		gap: 8px;
 	}
+
+	.stripe-logo {
+		width: 48px;
+		padding-left: 8px;
+	}
 }
 
 .logo-chain {
@@ -85,4 +92,43 @@
 	&.is-error {
 		color: var(--color-error);
 	}
+}
+
+.subscriber-upload-form__in-progress,
+.subscriber-upload-form .file-picker {
+	background: #f6f7f7;
+	height: 180px;
+	width: 100%;
+	border: 1px dashed var(--studio-gray-50);
+	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 16px;
+	align-items: center;
+	padding-top: 50px;
+	color: var(--studio-gray-50);
+}
+.subscriber-upload-form__in-progress svg,
+.subscriber-upload-form .file-picker svg {
+	width: 48px;
+	height: 48px;
+	text-align: center;
+	padding: 8px;
+	fill: var(--studio-gray-50);
+}
+
+.subscriber-upload-form__modal ul {
+	margin: 0 0 20px;
+	padding: 0;
+	list-style: none;
+}
+.subscriber-upload-form__modal li {
+	display: flex;
+}
+.subscriber-upload-form__modal svg {
+	fill: var(--studio-gray-50);
+	margin-right: 8px;
+}
+.select-newsletter-form .is-loading {
+	@include placeholder( --color-neutral-10 );
 }

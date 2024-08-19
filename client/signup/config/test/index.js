@@ -12,9 +12,11 @@ jest.mock( 'calypso/lib/explat', () => {
 		return [ false, null ];
 	};
 } );
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: () => true,
-} ) );
+jest.mock( '@automattic/calypso-config', () => {
+	const config = () => 'development';
+	config.isEnabled = () => true;
+	return config;
+} );
 
 describe( 'index', () => {
 	// eslint-disable-next-line jest/expect-expect

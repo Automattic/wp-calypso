@@ -43,11 +43,17 @@ body.is-mobile-app-view {
 	justify-content: space-between;
 	opacity: 1;
 	transition: all 0.3s ease-in-out;
+	--masterbar-item-active-border-radius: 6px; /* stylelint-disable-line scales/radii */
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
 		background: var(--studio-orange);
 		border-bottom: 1px solid var(--studio-orange-60);
+
+		.masterbar__item.has-global-border::before,
+		.masterbar__item.has-global-border::after {
+			background: var(--studio-orange-70);
+		}
 	}
 
 	&.masterbar__loggedout {
@@ -75,6 +81,23 @@ body.is-mobile-app-view {
 		}
 		.masterbar__item:last-child:hover .masterbar__item-content {
 			color: var(--color-sidebar-text);
+		}
+		@media only screen and (max-width: 781px) {
+			padding-top: 0;
+
+			.masterbar__login-links {
+				.masterbar__item {
+					height: 30px;
+					line-height: 30px;
+					width: unset !important;
+					padding: 0 8px;
+					margin: 8px 8px 0 0;
+
+					.masterbar__item-content {
+						display: block !important;
+					}
+				}
+			}
 		}
 	}
 
@@ -157,12 +180,6 @@ body.is-mobile-app-view {
 					border-color: #a2aab2;
 				}
 			}
-		}
-	}
-	.masterbar__item-notifications {
-		svg.sidebar_svg-notifications {
-			margin: 0;
-			fill: none;
 		}
 	}
 }
@@ -332,7 +349,7 @@ body.is-mobile-app-view {
 		padding-left: 7px;
 	}
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		&.masterbar__reader,
 		&.masterbar__item-my-site-actions {
 			padding: 0;
@@ -347,6 +364,10 @@ body.is-mobile-app-view {
 
 	&.has-subitems {
 		display: block;
+		&:hover,
+		&.is-open {
+			z-index: 2;
+		}
 	}
 
 	> a {
@@ -371,7 +392,7 @@ body.is-mobile-app-view {
 		min-width: 100%;
 		text-align: left;
 		top: var(--masterbar-height);
-		background: var(--color-masterbar-item-hover-background);
+		background: var(--color-global-masterbar-submenu-background, var(--color-masterbar-item-hover-background));
 		list-style: none;
 		clear: none;
 		text-indent: 0;
@@ -404,7 +425,7 @@ body.is-mobile-app-view {
 			}
 
 			&:hover {
-				background: var(--color-masterbar-item-hover-background);
+				background: var(--color-global-masterbar-submenu-hover-background, var(--color-masterbar-item-hover-background));
 				a {
 					color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
 				}
@@ -412,7 +433,7 @@ body.is-mobile-app-view {
 
 		}
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			position: fixed;
 			.masterbar__item-subitems-item {
 				padding: 8px 16px;
@@ -554,18 +575,31 @@ body.is-mobile-app-view {
 
 	.is-support-session &.is-active {
 		background: var(--studio-orange-70);
+		--color-masterbar-icon: var(--studio-gray-5) !important;
+		--color-masterbar-text: var(--studio-gray-5) !important;
+		--color-masterbar-highlight: var(--studio-gray-5) !important;
+	}
+
+	.is-support-session &:hover {
+		background: var(--studio-orange-50);
+	}
+
+	.is-support-session &.is-active:hover {
+		background: var(--studio-orange-70);
+		color: var(--studio-gray-5);
 	}
 
 	&.masterbar__item-notifications {
 		margin-right: 0;
 	}
 
-	@media only screen and (max-width: 782px) {
-		color: var(--color-masterbar-highlight);
+	@media only screen and (max-width: 781px) {
 		font-size: $masterbar-mobile-font-size;
-		width: 52px;
 		padding: 0;
 
+		&:not(.masterbar__item--always-show-content) {
+			width: 52px;
+		}
 		// Show gravatar content
 		&:not(.masterbar__item-howdy) .masterbar__item-content {
 			display: none;
@@ -575,10 +609,13 @@ body.is-mobile-app-view {
 			display: none;
 		}
 
+		&.masterbar__item--always-show-content .masterbar__item-content {
+			display: block;
+		}
+
 		svg,
 		svg path,
 		.gridicon {
-			fill: var(--color-masterbar-highlight);
 			height: 36px;
 			width: 36px;
 		}
@@ -593,7 +630,6 @@ body.is-mobile-app-view {
 		}
 
 		.dashicons-before {
-			color: var(--color-masterbar-highlight);
 			height: unset;
 			&::before {
 				width: 52px;
@@ -658,7 +694,7 @@ body.is-mobile-app-view {
 
 	&.masterbar__item-sidebar-menu {
 		display: none;
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			display: inline-block;
 			margin-right: 2px;
 			margin-left: -1px;
@@ -670,14 +706,14 @@ body.is-mobile-app-view {
 	&.masterbar__item-no-sites {
 		padding: 0 7px 0 5px; // trying to match core's 35px width
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			padding: 0;
 		}
 
 		.gridicon {
 			width: 24px;
 			height: 24px;
-			@media only screen and (max-width: 782px) {
+			@media only screen and (max-width: 781px) {
 				width: 32px;
 				height: 32px;
 			}
@@ -687,6 +723,71 @@ body.is-mobile-app-view {
 	&.masterbar__item-help {
 		cursor: pointer;
 		// todo may need flex: unset
+	}
+
+	// Outward border styles for active global items.
+	.is-global-sidebar-visible &.has-global-border {
+		&::before,
+		&::after {
+			content: "";
+			position: absolute;
+			width: var(--masterbar-item-active-border-radius);
+			height: var(--masterbar-item-active-border-radius);
+			background-color: var(--color-sidebar-background);
+			opacity: 0;
+			transition: opacity 0.2s ease-in-out;
+			bottom: 0;
+			z-index: 1;
+			pointer-events: none;
+		}
+
+		body.rtl & {
+			&::before {
+				left: auto;
+				right: calc(-1 * var(--masterbar-item-active-border-radius));
+				mask: radial-gradient(circle at 0 0, transparent var(--masterbar-item-active-border-radius), var(--color-sidebar-background) var(--masterbar-item-active-border-radius));
+			}
+
+			&::after {
+				right: auto;
+				left: calc(-1 * var(--masterbar-item-active-border-radius));
+				mask: radial-gradient(circle at 100% 0, transparent var(--masterbar-item-active-border-radius), var(--color-sidebar-background) var(--masterbar-item-active-border-radius));
+			}
+		}
+
+		&::before {
+			left: calc(-1 * var(--masterbar-item-active-border-radius));
+			mask: radial-gradient(circle at 0 0, transparent var(--masterbar-item-active-border-radius), var(--color-sidebar-background) var(--masterbar-item-active-border-radius));
+		}
+
+		&::after {
+			right: calc(-1 * var(--masterbar-item-active-border-radius));
+			mask: radial-gradient(circle at 100% 0, transparent var(--masterbar-item-active-border-radius), var(--color-sidebar-background) var(--masterbar-item-active-border-radius));
+		}
+
+		&.is-active {
+			border-top-left-radius: var(--masterbar-item-active-border-radius);
+			border-top-right-radius: var(--masterbar-item-active-border-radius);
+			--color-masterbar-text: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-icon: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-highlight: var(--color-sidebar-menu-selected-text);
+			--color-masterbar-item-active-background: var(--color-sidebar-background);
+
+			&.masterbar__item-howdy {
+				border-top-right-radius: 0;
+			}
+
+			&::before,
+			&::after {
+				opacity: 1;
+			}
+
+			@media only screen and (min-width: 781px) {
+				&.masterbar__item-my-sites {
+					border-top-left-radius: 0;
+				}
+			}
+		}
 	}
 }
 
@@ -760,7 +861,7 @@ body.is-mobile-app-view {
 	}
 }
 .masterbar__item-action-search {
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		display: none !important; //Mobile styles not yet handled
 	}
 
@@ -814,7 +915,7 @@ body.is-mobile-app-view {
 	transition: all 0.2s ease-out;
 	font-size: $masterbar-font-size;
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		height: 34px;
 		margin-top: 6px;
 		margin-right: 9px;
@@ -922,7 +1023,7 @@ body.is-mobile-app-view {
 
 		border: 2px solid var(--color-border-inverted);
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 22px;
 			height: 22px;
 		}
@@ -934,7 +1035,7 @@ body.is-mobile-app-view {
 	}
 
 	.gridicon {
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			position: relative;
 			left: 4px;
 		}
@@ -943,7 +1044,7 @@ body.is-mobile-app-view {
 			display: block;
 			padding: 0;
 
-			@media only screen and (max-width: 782px) {
+			@media only screen and (max-width: 781px) {
 				padding-left: 8px;
 			}
 		}
@@ -955,6 +1056,10 @@ body.is-mobile-app-view {
 }
 
 .masterbar__item-howdy {
+	a {
+		outline: none;
+	}
+
 	.masterbar__item-content {
 		display: flex;
 		align-items: center;
@@ -962,11 +1067,11 @@ body.is-mobile-app-view {
 	}
 
 	.gravatar {
-		border: 1px solid var(--color-sidebar-submenu-background);
+		border: 1px solid var(--color-masterbar-border);
 		border-radius: unset;
 		margin-left: 1px;
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			width: 26px;
 			height: 26px;
 			margin-left: 4px;
@@ -1002,7 +1107,7 @@ body.is-mobile-app-view {
 		max-height: 94px;
 		padding: 12px 0 0 0;
 
-		@media only screen and (max-width: 782px) {
+		@media only screen and (max-width: 781px) {
 			min-width: 100% !important;
 			max-height: 100%;
 		}
@@ -1018,7 +1123,7 @@ body.is-mobile-app-view {
 		}
 	}
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		.masterbar__item-howdy-howdy,
 		.masterbar__item-howdy-account-gravatar {
 			display: none;
@@ -1062,7 +1167,7 @@ body.is-mobile-app-view {
 }
 
 .masterbar__reader {
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		.gridicon + .masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -1080,7 +1185,7 @@ body.is-mobile-app-view {
 		border-bottom: 1px solid #646970;
 	}
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		.masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -1098,7 +1203,7 @@ body.is-mobile-app-view {
 	color: $masterbar-color-primary;
 	font-size: $masterbar-font-size;
 
-	@media only screen and (max-width: 782px) {
+	@media only screen and (max-width: 781px) {
 		height: 34px;
 		margin-top: 6px;
 		margin-right: 9px;
@@ -1182,39 +1287,56 @@ body.is-mobile-app-view {
 	}
 }
 
+.masterbar-cart-button {
+	svg {
+		overflow: visible;
+		@media only screen and (max-width: 781px) {
+			width: 32px;
+			height: 32px;
+		}
+	}
+	.cart-circle {
+		transform: translate(10%, 2%) scale(0.93);
+		stroke-width: 6%;
+		stroke: var(--color-masterbar-background);
+		transition: all 200ms ease-in-out;
+	}
+
+	&:hover .cart-circle {
+		@media only screen and (min-width: 481px) {
+			stroke: var(--color-masterbar-item-hover-background);
+		}
+	}
+}
+
 .masterbar-notifications {
 	svg {
-		overflow: overlay;
-		width: 27px;
-		height: 27px;
+		overflow: visible;
+		width: 24px;
+		height: 24px;
 
-		@media only screen and (max-width: 782px) {
-			width: 36px;
-			height: 36px;
-			padding: 3px 8px 5px;
+		@media only screen and (max-width: 781px) {
+			width: 32px;
+			height: 32px;
 		}
 	}
 
 	.notifications-bell-icon__bubble {
 		animation: bubble-unread-indication 0.5s linear both;
-		transition: all 150ms ease-in;
-		transform-origin: 8px 4px;
+		transform-origin: 20px 4px;
 
 		use {
-			transition: all 150ms ease-in;
-			transform-origin: 8px 4px;
+			transition: all 200ms ease-in-out;
+			transform-origin: 20px 4px;
+			transform: translate(-2%, 2%) scale(0.93);
+			stroke-width: 6%;
+			stroke: var(--color-masterbar-background);
 		}
 	}
 
-	&:hover use.border {
-		transition: all 150ms ease-in;
-		fill: var(--color-masterbar-item-active-background);
-	}
-
-	@media only screen and (max-width: 782px) {
-		&:not(.has-unread) svg path {
-			stroke: var(--color-masterbar-highlight);
-			fill: none;
+	&:hover use {
+		@media only screen and (min-width: 481px) {
+			stroke: var(--color-masterbar-item-hover-background);
 		}
 	}
 }
@@ -1390,14 +1512,12 @@ a.masterbar__quick-language-switcher {
 
 	svg {
 		fill: var(--color-masterbar-icon);
-		width: 24px;
-		height: 24px;
+		width: 22px;
+		height: 22px;
 
-		@media only screen and (max-width: 782px) {
-			fill: var(--color-masterbar-highlight);
-			width: 36px;
-			height: 36px;
-			padding: 3px 8px 5px;
+		@media only screen and (max-width: 781px) {
+			width: 30px;
+			height: 30px;
 		}
 	}
 }

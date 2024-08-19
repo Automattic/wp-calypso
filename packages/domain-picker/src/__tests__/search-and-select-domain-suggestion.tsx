@@ -12,13 +12,21 @@ const mockUseDomainSuggestionsResult: ReturnType< typeof useDomainSuggestions > 
 	retryRequest: jest.fn(),
 };
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: () => false,
-	__esModule: true,
-	default: function config( key: string ) {
+jest.mock( '@automattic/calypso-config', () => {
+	function config( key: string ) {
 		return key;
-	},
-} ) );
+	}
+	function isEnabled() {
+		return false;
+	}
+	config.isEnabled = isEnabled;
+
+	return {
+		default: config,
+		isEnabled,
+		__esModule: true,
+	};
+} );
 
 jest.mock( '../hooks/use-domain-suggestions', () => ( {
 	useDomainSuggestions: () => mockUseDomainSuggestionsResult,

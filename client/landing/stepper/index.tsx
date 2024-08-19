@@ -26,6 +26,8 @@ import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/sta
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { FlowRenderer } from './declarative-flow/internals';
 import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
@@ -36,6 +38,7 @@ import { setupWpDataDebug } from './utils/devtools';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
+import type { AnyAction } from 'redux';
 
 declare const window: AppWindow;
 
@@ -121,6 +124,10 @@ window.AppBoot = async () => {
 
 	const flowLoader = determineFlow();
 	const { default: flow } = await flowLoader();
+	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
+	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
+	// Reset the selected site ID when the stepper is loaded.
+	reduxStore.dispatch( setSelectedSiteId( null ) as unknown as AnyAction );
 
 	ReactDom.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>

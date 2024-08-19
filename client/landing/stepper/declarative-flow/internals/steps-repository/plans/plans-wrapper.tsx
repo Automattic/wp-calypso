@@ -62,13 +62,16 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		hideFreePlan: reduxHideFreePlan,
 		domainCartItem,
 		hidePlansFeatureComparison,
+		couponCode,
 	} = useSelect( ( select ) => {
 		return {
 			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			domainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems(),
 			hidePlansFeatureComparison: (
 				select( ONBOARD_STORE ) as OnboardSelect
 			 ).getHidePlansFeatureComparison(),
+			couponCode: ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 		};
 	}, [] );
 	const { flowName } = props;
@@ -177,6 +180,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
 					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 					onPlanIntervalUpdate={ onPlanIntervalUpdate }
+					coupon={ couponCode }
 				/>
 			</div>
 		);

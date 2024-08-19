@@ -52,6 +52,8 @@ class FileImporter extends PureComponent {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
+		fromSite: PropTypes.string,
+		hideActionButtons: PropTypes.bool,
 	};
 
 	handleClick = ( shouldStartImport ) => {
@@ -73,7 +75,7 @@ class FileImporter extends PureComponent {
 	render() {
 		const { title, icon, description, overrideDestination, uploadDescription, optionalUrl } =
 			this.props.importerData;
-		const { importerStatus, site } = this.props;
+		const { importerStatus, site, fromSite, hideActionButtons } = this.props;
 		const { errorData, importerState } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
 		const showStart = includes( compactStates, importerState );
@@ -128,6 +130,8 @@ class FileImporter extends PureComponent {
 						importerStatus={ importerStatus }
 						site={ site }
 						optionalUrl={ optionalUrl }
+						fromSite={ fromSite }
+						hideActionButtons={ hideActionButtons }
 					/>
 				) }
 			</Card>

@@ -41,4 +41,7 @@ export interface SitesDashboardContextInterface {
 	setIsPopoverOpen: Dispatch< SetStateAction< boolean > >;
 
 	featurePreview: ReactNode | null;
+
+	recentlyCreatedSiteId: number | null;
+	setRecentlyCreatedSiteId: ( value: number ) => void;
 }

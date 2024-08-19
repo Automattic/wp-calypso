@@ -1,0 +1,78 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
+
+$blueberry-color: #3858e9;
+
+.metric-tab-bar {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.metric-tab-bar__tab {
+	display: flex;
+	gap: 6px;
+	padding: 12px 16px;
+	border: 1.5px solid var(--studio-white);
+	border-bottom: 1.5px solid var(--studio-gray-5);
+	text-align: initial;
+	flex-grow: 1;
+
+	&.active {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px 6px 0 0;
+		border: 1.5px solid var(--studio-gray-5);
+		border-bottom: none;
+		position: relative;
+
+		&::before,
+		&::after {
+			position: absolute;
+			width: 6px;
+			height: 6px;
+			bottom: 0;
+			content: "";
+		}
+
+		&::before {
+			left: -6px;
+			background-image: url(calypso/assets/images/performance-profiler/menu-bar-left-border.svg);
+		}
+
+		&::after {
+			right: -6px;
+			background-image: url(calypso/assets/images/performance-profiler/menu-bar-right-border.svg);
+		}
+	}
+
+	&.active:first-child::before,
+	&.active:last-child::after {
+		display: none;
+	}
+
+	&:hover {
+		cursor: pointer;
+		color: $blueberry-color;
+	}
+}
+
+.metric-tab-bar__tab-status {
+	line-height: normal;
+}
+
+.metric-tab-bar__tab-text {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+}
+
+.metric-tab-bar__tab-header {
+	font-family: $font-sf-pro-display;
+	font-size: $font-body-small;
+	font-weight: 500;
+}
+.metric-tab-bar__tab-metric {
+	font-family: $font-sf-pro-display;
+	font-size: $font-size-header;
+}

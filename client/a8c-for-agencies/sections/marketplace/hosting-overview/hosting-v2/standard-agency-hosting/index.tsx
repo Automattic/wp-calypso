@@ -3,22 +3,33 @@ import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpres
 import { useTranslate } from 'i18n-calypso';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.png';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
 import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import CommonHostingBenefits from '../common-hosting-benefits';
+import WPCOMPlanSelector from './wpcom-plan-selector';
 
-export default function StandardAgencyHosting() {
+import './style.scss';
+
+type Props = {
+	onAddToCart: ( plan: APIProductFamilyProduct, quantity: number ) => void;
+};
+
+export default function StandardAgencyHosting( { onAddToCart }: Props ) {
 	const translate = useTranslate();
 
 	return (
-		<div>
-			{ /* Sample Hosting sections */ }
+		<div className="standard-agency-hosting">
+			<section className="standard-agency-hosting__plan-selector-container">
+				<WPCOMPlanSelector onSelect={ onAddToCart } />
+			</section>
+
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }
-				heading={ translate( 'Supercharge your clients’ sites' ) }
-				subheading={ translate( 'Premium Jetpack features included' ) }
+				heading={ translate( 'Premium Jetpack features included' ) }
+				subheading={ translate( 'Supercharge your clients’ sites' ) }
 				background={ BackgroundType1 }
 				items={ [
 					translate( 'Real-time backups' ),
@@ -39,8 +50,8 @@ export default function StandardAgencyHosting() {
 				fiveRows
 			/>
 			<HostingAdditionalFeaturesSection
-				heading={ translate( 'Just for Agencies' ) }
-				subheading={ translate( 'Included with all plans and sites' ) }
+				heading={ translate( 'Included with all plans and sites' ) }
+				subheading={ translate( 'Just for Agencies' ) }
 				items={ [
 					translate( 'Global edge caching' ),
 					translate( 'Global CDN with 28+ locations' ),
@@ -50,13 +61,13 @@ export default function StandardAgencyHosting() {
 					translate( 'Plugin update manager' ),
 					translate( '24/7 expert support' ),
 					translate( 'Free staging sites with sync tools' ),
-					translate( 'SFTP/SHH, WP-CLI, Git tools' ),
+					translate( 'SFTP/SSH, WP-CLI, Git tools' ),
 					translate( 'Resource isolation across every site' ),
 				] }
 			/>
 			<HostingFeaturesSection
-				heading={ translate( 'Specialized workflows' ) }
-				subheading={ translate( 'Built for developers, by developers' ) }
+				heading={ translate( 'Built for developers, by developers' ) }
+				subheading={ translate( 'Specialized workflows' ) }
 				background={ BackgroundType2 }
 				items={ [
 					{
@@ -104,31 +115,40 @@ export default function StandardAgencyHosting() {
 				] }
 			/>
 			<HostingTestimonialsSection
-				heading={ translate( 'What agencies say' ) }
-				subheading={ translate( 'Love for WordPress.com hosting' ) }
+				heading={ translate( 'Love for WordPress.com hosting' ) }
+				subheading={ translate( 'What agencies say' ) }
 				items={ [
 					{
 						profile: {
-							avatar: ProfileAvatar1,
 							name: 'Ajit Bohra',
-							title: 'Founder - LUBUS',
+							avatar: ProfileAvatar1,
+							title: translate( 'Founder, %(companyName)s', {
+								args: {
+									companyName: 'LUBUS',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
 							site: 'lubus.in',
 						},
 						testimonial: translate(
 							'We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com.'
 						),
 					},
-
 					{
 						profile: {
+							name: 'Brian Lalli',
 							avatar: ProfileAvatar2,
-							name: 'Anil Gupta',
-							title: 'CEO - Multidots',
-							site: 'multidots.com',
+							title: translate( 'President, %(companyName)s', {
+								args: {
+									companyName: 'Moon Rooster LLC',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
+							site: 'moonrooster.com',
 						},
-						testimonial:
-							// TODO: Change this to a real testimonial
-							"This should be another WordPress.com specific testimonial. Let's make sure it touches upon how they love the hosting, the support service, and especially the UI. This is just dummy text.",
+						testimonial: translate(
+							"WordPress.com has been crucial to my agency's growth. Its intuitive UI allows me to quickly create sleek, functional websites for my clients, and their reliable hosting and support enable me to rest easy, knowing my sites are in good hands."
+						),
 					},
 				] }
 			/>

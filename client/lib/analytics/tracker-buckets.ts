@@ -1,5 +1,5 @@
 import { getDoNotTrack, getTrackingPrefs } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isPiiUrl,
 	isUrlExcludedForPerformance,
@@ -60,8 +60,6 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	googleAds: Bucket.ADVERTISING,
 	googleTagManager: Bucket.ADVERTISING,
 	logrocket: Bucket.ADVERTISING,
-	outbrain: Bucket.ADVERTISING,
-	pinterest: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
 	reddit: Bucket.ADVERTISING,
@@ -79,6 +77,8 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	quora: null,
 	adroll: null,
 	clarity: null,
+	outbrain: null,
+	pinterest: null,
 };
 
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
@@ -113,7 +113,7 @@ const isTrackerIntialized = ( tracker: AdTracker ): boolean => {
 };
 
 export const mayWeTrackGeneral = () =>
-	! isE2ETest() && ! getDoNotTrack() && ! isPiiUrl() && config.isEnabled( 'ad-tracking' );
+	! isE2ETest() && ! getDoNotTrack() && ! isPiiUrl() && isEnabled( 'ad-tracking' );
 
 export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 	if ( ! mayWeTrackGeneral() ) {

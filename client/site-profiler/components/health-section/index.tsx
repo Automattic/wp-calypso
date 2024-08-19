@@ -22,7 +22,7 @@ const OVERALL_SCORE_THRESHOLD = 0.8;
 export const HealthSection: React.FC< HealthSectionProps > = ( props ) => {
 	const translate = useTranslate();
 	const { url, hash, hostingProvider, healthMetricsRef, setIsGetReportFormOpen } = props;
-	const { data } = useUrlPerformanceMetricsQuery( url, hash );
+	const { data }: { data: any } = useUrlPerformanceMetricsQuery( url, hash );
 	const { truncated, diagnostic: healthData = {} } = data?.audits.health ?? {};
 
 	const isWPcom = hostingProvider?.slug?.toLowerCase() === 'automattic';
@@ -68,7 +68,7 @@ export const HealthSection: React.FC< HealthSectionProps > = ( props ) => {
 			}
 			ref={ healthMetricsRef }
 		>
-			{ Object.values( healthData ).map( ( metric ) => (
+			{ Object.values( healthData ).map( ( metric: any ) => (
 				<MetricsInsight
 					key={ `insight-${ metric.id }` }
 					insight={ {
