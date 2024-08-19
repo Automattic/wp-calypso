@@ -38,6 +38,9 @@ type RecurringPaymentsPlanAddEditModalProps = {
 	product: Product;
 	annualProduct: Product | null;
 	siteId?: number;
+	isOnlyTier?: boolean;
+	hideWelcomeEmailInput?: boolean;
+	hideAdvancedSettings?: boolean;
 };
 
 type StripeMinimumCurrencyAmounts = {
@@ -77,6 +80,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	product,
 	annualProduct /* annual product for tiers */,
 	siteId,
+	isOnlyTier = false,
+	hideWelcomeEmailInput = false,
+	hideAdvancedSettings = false,
 }: RecurringPaymentsPlanAddEditModalProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -363,17 +369,20 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
 					) }
 				</FormFieldset>
-				<FormFieldset className="memberships__dialog-sections-type">
-					<ToggleControl
-						onChange={ ( newValue ) => {
-							setEditedPostIsTier( newValue );
-							setEditedPostPaidNewsletter( newValue );
-						} }
-						checked={ editedPostIsTier }
-						disabled={ !! product.ID }
-						label={ translate( 'Paid newsletter tier' ) }
-					/>
-				</FormFieldset>
+				{ ! isOnlyTier && (
+					<FormFieldset className="memberships__dialog-sections-type">
+						<ToggleControl
+							onChange={ ( newValue ) => {
+								setEditedPostIsTier( newValue );
+								setEditedPostPaidNewsletter( newValue );
+							} }
+							checked={ editedPostIsTier }
+							disabled={ !! product.ID }
+							label={ translate( 'Paid newsletter tier' ) }
+						/>
+					</FormFieldset>
+				) }
+				{ isOnlyTier && <input type="hidden" name="type" value={ TYPE_TIER } /> }
 				{ editing && editedPrice && (
 					<Notice
 						text={ translate(
@@ -492,53 +501,57 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					/>
 				) }
 
-				<FormFieldset className="memberships__dialog-sections-message">
-					<FormLabel htmlFor="renewal_schedule">{ translate( 'Welcome message' ) }</FormLabel>
-					<CountedTextArea
-						value={ editedCustomConfirmationMessage }
-						onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
-							setEditedCustomConfirmationMessage( event.target.value )
-						}
-						acceptableLength={ MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE }
-						showRemainingCharacters
-						placeholder={ translate( 'Thank you for subscribing!' ) }
-					/>
-					<FormSettingExplanation>
-						{ translate( 'The welcome message sent when your customer completes their order.' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
-				<FoldableCard
-					header={ translate( 'Advanced options' ) }
-					hideSummary
-					className="memberships__dialog-advanced-options"
-				>
-					{ ! editedPostIsTier && (
-						<FormFieldset className="memberships__dialog-sections-type">
+				{ ! hideWelcomeEmailInput && (
+					<FormFieldset className="memberships__dialog-sections-message">
+						<FormLabel htmlFor="renewal_schedule">{ translate( 'Welcome message' ) }</FormLabel>
+						<CountedTextArea
+							value={ editedCustomConfirmationMessage }
+							onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
+								setEditedCustomConfirmationMessage( event.target.value )
+							}
+							acceptableLength={ MAX_LENGTH_CUSTOM_CONFIRMATION_EMAIL_MESSAGE }
+							showRemainingCharacters
+							placeholder={ translate( 'Thank you for subscribing!' ) }
+						/>
+						<FormSettingExplanation>
+							{ translate( 'The welcome message sent when your customer completes their order.' ) }
+						</FormSettingExplanation>
+					</FormFieldset>
+				) }
+				{ ! hideAdvancedSettings && (
+					<FoldableCard
+						header={ translate( 'Advanced options' ) }
+						hideSummary
+						className="memberships__dialog-advanced-options"
+					>
+						{ ! editedPostIsTier && (
+							<FormFieldset className="memberships__dialog-sections-type">
+								<ToggleControl
+									onChange={ ( newValue ) => {
+										setEditedPostPaidNewsletter( newValue );
+									} }
+									checked={ editedPostPaidNewsletter }
+									disabled={ !! product.ID || editedPostIsTier }
+									label={ translate( 'Add customers to newsletter mailing list' ) }
+								/>
+							</FormFieldset>
+						) }
+						<FormFieldset>
 							<ToggleControl
-								onChange={ ( newValue ) => {
-									setEditedPostPaidNewsletter( newValue );
-								} }
-								checked={ editedPostPaidNewsletter }
-								disabled={ !! product.ID || editedPostIsTier }
-								label={ translate( 'Add customers to newsletter mailing list' ) }
+								onChange={ handlePayWhatYouWant }
+								checked={ editedPayWhatYouWant }
+								label={ translate(
+									'Enable customers to pick their own amount (“Pay what you want”)'
+								) }
+							/>
+							<ToggleControl
+								onChange={ handleMultiplePerUser }
+								checked={ editedMultiplePerUser }
+								label={ translate( 'Enable customers to make the same purchase multiple times' ) }
 							/>
 						</FormFieldset>
-					) }
-					<FormFieldset>
-						<ToggleControl
-							onChange={ handlePayWhatYouWant }
-							checked={ editedPayWhatYouWant }
-							label={ translate(
-								'Enable customers to pick their own amount (“Pay what you want”)'
-							) }
-						/>
-						<ToggleControl
-							onChange={ handleMultiplePerUser }
-							checked={ editedMultiplePerUser }
-							label={ translate( 'Enable customers to make the same purchase multiple times' ) }
-						/>
-					</FormFieldset>
-				</FoldableCard>
+					</FoldableCard>
+				) }
 			</div>
 		</Dialog>
 	);

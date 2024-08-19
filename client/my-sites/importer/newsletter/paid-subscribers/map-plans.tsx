@@ -1,7 +1,16 @@
 import { Card } from '@automattic/components';
-import { useState } from 'react';
+import { formatCurrency } from '@automattic/format-currency';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
+import {
+	PLAN_YEARLY_FREQUENCY,
+	PLAN_MONTHLY_FREQUENCY,
+	TYPE_TIER,
+} from 'calypso/my-sites/earn/memberships/constants';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
 import MapPlan from './map-plan';
@@ -25,7 +34,44 @@ export default function MapPlans( {
 }: Props ) {
 	const [ productToAdd, setProductToAdd ] = useState< Product | null >( null );
 
-	const closeDialog = () => {};
+	const queryClient = useQueryClient();
+
+	const closeDialog = () => {
+		setProductToAdd( null );
+	};
+
+	const products = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
+
+	useEffect( () => {
+		if ( ! products ) {
+			return;
+		}
+		queryClient.invalidateQueries( {
+			queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
+		} );
+	}, [ products, siteId, engine, currentStep, queryClient ] );
+
+	const monthyPlan = cardData.plans.find( ( plan: any ) => plan.plan_interval === 'month' );
+
+	const annualPlan = cardData.plans.find( ( plan: any ) => plan.plan_interval === 'year' );
+
+	const tierToAdd = {
+		currency: monthyPlan.plan_currency,
+		price: formatCurrency( monthyPlan.plan_amount_decimal, monthyPlan.plan_currency, {
+			isSmallestUnit: true,
+		} ).replace( /[^\d.-]/g, '' ),
+		type: TYPE_TIER,
+		title: 'Newsletter tier',
+		interval: PLAN_MONTHLY_FREQUENCY,
+		annualProduct: {
+			currency: annualPlan.plan_currency,
+			price: formatCurrency( annualPlan.plan_amount_decimal, annualPlan.plan_currency, {
+				isSmallestUnit: true,
+			} ).replace( /[^\d.-]/g, '' ),
+			type: TYPE_TIER,
+			interval: PLAN_YEARLY_FREQUENCY,
+		},
+	};
 
 	return (
 		<Card>
@@ -50,6 +96,7 @@ export default function MapPlans( {
 						products={ cardData.available_tiers }
 						map_plans={ cardData.map_plans }
 						onProductAdd={ setProductToAdd }
+						tierToAdd={ tierToAdd }
 					/>
 				) ) }
 			</div>
@@ -78,6 +125,9 @@ export default function MapPlans( {
 					closeDialog={ closeDialog }
 					product={ productToAdd }
 					annualProduct={ productToAdd.annualProduct }
+					isOnlyTier
+					hideWelcomeEmailInput
+					hideAdvancedSettings
 				/>
 			) }
 		</Card>

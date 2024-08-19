@@ -34,6 +34,7 @@ type MapPlanProps = {
 	engine: string;
 	currentStep: string;
 	onProductAdd: () => void;
+	tierToAdd: any;
 };
 
 function displayProduct( product: Product | undefined ) {
@@ -69,6 +70,7 @@ export default function MapPlan( {
 	engine,
 	currentStep,
 	onProductAdd,
+	tierToAdd,
 }: MapPlanProps ) {
 	const { mapStripePlanToProduct } = useMapStripePlanToProductMutation();
 	let active_subscriptions = '';
@@ -110,58 +112,74 @@ export default function MapPlan( {
 			<div className="map-plan__arrow">
 				<Icon icon={ arrowRight } />
 			</div>
-			<div className="map-plan__select-product">
-				<Button
-					aria-haspopup="true"
-					tabIndex={ 0 }
-					className="map-plan__selected"
-					onClick={ () => {
-						setIsOpen( ! isOpen );
-					} }
-					onKeyDown={ ( event: KeyboardEvent ) => {
-						if ( event.key === 'Enter' || event.key === ' ' ) {
+			{ ! products.length && (
+				<div className="map-plan__select-product">
+					<Button
+						aria-haspopup="true"
+						tabIndex={ 0 }
+						className="map-plan__selected"
+						onClick={ () => {
+							onProductAdd( tierToAdd );
+						} }
+					>
+						Add Newsletter Tier
+					</Button>
+				</div>
+			) }
+			{ !! products.length && (
+				<div className="map-plan__select-product">
+					<Button
+						aria-haspopup="true"
+						tabIndex={ 0 }
+						className="map-plan__selected"
+						onClick={ () => {
 							setIsOpen( ! isOpen );
-						}
-					} }
-				>
-					{ displayProduct( selectedProduct ) }
-				</Button>
-				<DropdownMenu
-					onToggle={ ( openState: boolean ) => {
-						setIsOpen( openState );
-					} }
-					icon={ chevronDown }
-					label="Choose a Newsletter Tier"
-					open={ isOpen }
-				>
-					{ ( { onClose }: { onClose: () => void } ) => (
-						<Fragment>
-							<MenuGroup label="Select">
-								<MenuItemsChoice
-									choices={ getProductChoices( sameIntervalProducts ) }
-									onSelect={ ( productId ) => {
-										handleProductChange( productId );
-										onClose();
-									} }
-									onHover={ () => {} }
-									value={ selectedProductId.toString() }
-								/>
-							</MenuGroup>
-							<MenuGroup label="OR">
-								<MenuItem
-									key="add-new"
-									onClick={ () => {
-										onClose();
-										onProductAdd();
-									} }
-								>
-									Add Newsletter Tier
-								</MenuItem>
-							</MenuGroup>
-						</Fragment>
-					) }
-				</DropdownMenu>
-			</div>
+						} }
+						onKeyDown={ ( event: KeyboardEvent ) => {
+							if ( event.key === 'Enter' || event.key === ' ' ) {
+								setIsOpen( ! isOpen );
+							}
+						} }
+					>
+						{ displayProduct( selectedProduct ) }
+					</Button>
+					<DropdownMenu
+						onToggle={ ( openState: boolean ) => {
+							setIsOpen( openState );
+						} }
+						icon={ chevronDown }
+						label="Choose a Newsletter Tier"
+						open={ isOpen }
+					>
+						{ ( { onClose }: { onClose: () => void } ) => (
+							<Fragment>
+								<MenuGroup label="Select">
+									<MenuItemsChoice
+										choices={ getProductChoices( sameIntervalProducts ) }
+										onSelect={ ( productId ) => {
+											handleProductChange( productId );
+											onClose();
+										} }
+										onHover={ () => {} }
+										value={ selectedProductId.toString() }
+									/>
+								</MenuGroup>
+								<MenuGroup label="OR">
+									<MenuItem
+										key="add-new"
+										onClick={ () => {
+											onClose();
+											onProductAdd( tierToAdd );
+										} }
+									>
+										Add Newsletter Tier
+									</MenuItem>
+								</MenuGroup>
+							</Fragment>
+						) }
+					</DropdownMenu>
+				</div>
+			) }
 		</div>
 	);
 }
