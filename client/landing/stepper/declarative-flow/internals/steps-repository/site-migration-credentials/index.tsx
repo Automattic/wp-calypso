@@ -11,23 +11,16 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isValidUrl } from 'calypso/lib/importer/url-validation';
+import { CredentialsFormData } from './types';
+import { useSiteMigrationCredentialsFormHandler } from './use-site-migration-credentials-form-handler';
 import type { Step } from '../../types';
-
 import './style.scss';
 
 interface CredentialsFormProps {
 	onSubmit: ( data: CredentialsFormData ) => void;
-}
-
-interface CredentialsFormData {
-	siteAddress: string;
-	username: string;
-	password: string;
-	backupFileLocation: string;
-	notes: string;
-	howToAccessSite: 'credentials' | 'backup';
 }
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
@@ -45,16 +38,20 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		return ! isValidUrl( fileLocation ) ? translate( 'Please enter a valid URL.' ) : undefined;
 	};
 
+	const importSiteQueryParam = useQuery().get( 'from' ) || '';
+
 	const {
 		formState: { errors },
 		control,
 		handleSubmit,
 		watch,
+		setError,
+		clearErrors,
 	} = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
 		defaultValues: {
-			siteAddress: '',
+			siteAddress: importSiteQueryParam,
 			username: '',
 			password: '',
 			backupFileLocation: '',
@@ -63,12 +60,15 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		},
 	} );
 
-	// Subscribe only this field to the access method value
+	// Subscribe only this field to the access method value.
 	const accessMethod = watch( 'howToAccessSite' );
 
-	const submitHandler = ( data: CredentialsFormData ) => {
-		onSubmit( data );
-	};
+	const { submitHandler } = useSiteMigrationCredentialsFormHandler(
+		watch,
+		clearErrors,
+		onSubmit,
+		setError
+	);
 
 	return (
 		<form onSubmit={ handleSubmit( submitHandler ) }>
@@ -243,6 +243,9 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 						) }
 					/>
 				</div>
+				{ errors?.root && (
+					<div className="site-migration-credentials__form-error">{ errors.root.message }</div>
+				) }
 				<div>
 					<NextButton type="submit">{ translate( 'Continue' ) }</NextButton>
 				</div>
