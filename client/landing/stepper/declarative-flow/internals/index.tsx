@@ -51,12 +51,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { lang = null } = useParams();
 
-	const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
-		flow: flow.name,
-		step: firstAuthWalledStep?.slug ?? null,
-		lang: lang === 'en' || isLoggedIn ? null : lang,
-	} );
-
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
 	useFlowAnalytics( { flow: params.flow, step: currentStepRoute, variant: flow.variantSlug } );
@@ -138,6 +132,12 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		const StepComponent = stepComponents[ step.slug ];
 
 		if ( step.slug === 'user' && firstAuthWalledStep ) {
+			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
+				flow: flow.name,
+				step: firstAuthWalledStep.slug,
+				lang: lang === 'en' || isLoggedIn ? null : lang,
+			} );
+
 			return (
 				<StepComponent
 					navigation={ stepNavigation }
