@@ -9,7 +9,7 @@ import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
 import { STEPS } from '../internals/steps';
 import { MigrationUpgradePlanActions } from '../internals/steps-repository/migration-upgrade-plan/actions';
-import { getPartialImporterURL, goToImporter } from './helpers';
+import { useImporterNavigator } from './hooks/use-importer-navigator';
 import type { ProvidedDependencies } from '../internals/types';
 import type {
 	Flow,
@@ -32,6 +32,7 @@ const {
 
 const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject: Flow ) => {
 	const [ query ] = useSearchParams();
+	const { getPartial, goToImporter } = useImporterNavigator();
 
 	const getFromPropsOrUrl = ( key: string, props?: ProvidedDependencies ): Primitive => {
 		const value = props?.[ key ] || query.get( key );
@@ -45,7 +46,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const hasSite = Boolean( siteId ) || Boolean( siteSlug );
-				const importer = getPartialImporterURL( platform );
+				const importer = getPartial( platform );
 
 				if ( platform === 'wordpress' ) {
 					if ( hasSite ) {
@@ -92,13 +93,10 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
 				const plan = props?.plan as string;
-				const backToStep = {
-					step: MIGRATION_UPGRADE_PLAN.slug,
-					flow: flowPath,
-				};
+				const partial = getPartial( 'wordpress' );
 
 				if ( props?.action === MigrationUpgradePlanActions.IMPORT_CONTENT_ONLY ) {
-					return goToImporter( 'importerWordpress', siteId, siteSlug, backToStep );
+					return goToImporter( partial, siteId, siteSlug );
 				}
 
 				if ( props?.goToCheckout ) {

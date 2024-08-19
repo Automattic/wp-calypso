@@ -146,9 +146,9 @@ expect.extend( {
 		if ( ! isSameQuery ) {
 			return {
 				message: () =>
-					`Expected query params: ${ this.utils.printExpected(
+					`Expected query: ${ this.utils.printExpected(
 						decodeURIComponent( expected.query.toString() )
-					) } \nReceived query params: ${ this.utils.printReceived(
+					) } \nReceived query: ${ this.utils.printReceived(
 						decodeURIComponent( destination.query.toString() )
 					) }`,
 				pass: false,
