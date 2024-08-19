@@ -8,7 +8,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import { teamContext, teamInviteContext } from './controller';
 
 export default function () {
-	page( A4A_TEAM_INVITE_LINK, requireAccessContext, teamContext, makeLayout, clientRender );
+	page( A4A_TEAM_LINK, requireAccessContext, teamContext, makeLayout, clientRender );
 
-	page( A4A_TEAM_LINK, requireAccessContext, teamInviteContext, makeLayout, clientRender );
+	page( A4A_TEAM_INVITE_LINK, requireAccessContext, teamInviteContext, makeLayout, clientRender );
 }

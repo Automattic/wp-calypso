@@ -852,7 +852,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-team',
-		paths: [ '/team' ],
+		paths: [ '/team', '/team/invite' ],
 		module: 'calypso/a8c-for-agencies/sections/team',
 		group: 'a8c-for-agencies',
 	},
