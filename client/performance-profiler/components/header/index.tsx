@@ -1,6 +1,7 @@
 import { Button } from '@wordpress/components';
 import { Icon, mobile, desktop } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -13,6 +14,7 @@ type HeaderProps = {
 	activeTab: string;
 	onTabChange: ( tab: TabType ) => void;
 	showNavigationTabs?: boolean;
+	timestamp?: string;
 };
 
 export enum TabType {
@@ -22,7 +24,7 @@ export enum TabType {
 
 export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const translate = useTranslate();
-	const { url, activeTab, onTabChange, showNavigationTabs } = props;
+	const { url, activeTab, onTabChange, showNavigationTabs, timestamp } = props;
 	const urlParts = new URL( url );
 
 	return (
@@ -59,9 +61,15 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 							</NavItem>
 						</NavTabs>
 
-						<div className="profiler-header__navbar-right">
-							<p>Tested on July 16th, 2024 at 12:03:23 AM</p>
-						</div>
+						{ timestamp && (
+							<div className="profiler-header__navbar-right">
+								<p>
+									{ translate( 'Tested on %(date)s', {
+										args: { date: moment( timestamp ).format( 'MMMM Do, YYYY h:mm:ss A' ) },
+									} ) }
+								</p>
+							</div>
+						) }
 					</SectionNav>
 				) }
 			</div>
