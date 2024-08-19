@@ -110,11 +110,9 @@ const connectDomain: Flow = {
 		const { domain, provider } = useDomainParams();
 
 		return {
-			submit: {
-				[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]: {
-					domain,
-					provider,
-				},
+			[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]: {
+				domain,
+				provider,
 			},
 		};
 	},
