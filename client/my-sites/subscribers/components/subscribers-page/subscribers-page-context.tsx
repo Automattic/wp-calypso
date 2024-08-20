@@ -37,6 +37,7 @@ type SubscribersPageContextProps = {
 	subscribers: Subscriber[];
 	total: number;
 	grandTotal: number;
+	socialTotal: number;
 	pageChangeCallback: ( page: number ) => void;
 	sortTerm: SubscribersSortBy;
 	setSortTerm: ( term: SubscribersSortBy ) => void;
@@ -122,6 +123,7 @@ export const SubscribersPageProvider = ( {
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId );
 
 	const grandTotal = subscribersTotals?.email_subscribers ?? 0;
+	const socialTotal = subscribersTotals?.social_followers ?? 0;
 
 	const { pageChangeCallback } = usePagination(
 		pageNumber,
@@ -215,6 +217,7 @@ export const SubscribersPageProvider = ( {
 				page: pageNumber,
 				grandTotal,
 				total,
+				socialTotal,
 				perPage,
 				setPerPage,
 				subscribers,

@@ -13,6 +13,12 @@
 			color: $studio-gray-100;
 		}
 
+		.subscriber-list-container__social-count {
+			color: var(--color-text-subtle);
+			font-size: $font-body-small;
+			margin-right: 4px;
+		}
+
 		.subscriber-list-container__subscriber-count {
 			font-weight: 500;
 			color: $studio-gray-40;
