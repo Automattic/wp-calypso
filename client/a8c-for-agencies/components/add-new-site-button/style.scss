@@ -31,14 +31,14 @@
 	}
 
 	&.dev-sites-enabled {
-		margin-inline-start: 33px;
+		margin-inline-start: 32px;
 
 		.popover__inner {
 			width: 280px;
 			text-align: unset;
 
 			@include break-large {
-				width: 917px;
+				width: 980px;
 			}
 		}
 	}
@@ -62,7 +62,7 @@
 			flex: 250;
 		}
 		&:nth-child(3) {
-			flex: 214;
+			flex: 277;
 		}
 	}
 }
@@ -147,4 +147,10 @@
 	font-size: rem(12px);
 	font-style: italic;
 	color: var(--color-accent-100);
+}
+
+.site-selector-and-importer__popover-development-site-cta {
+	padding-top: 12px;
+	font-size: rem(12px);
+	font-weight: 600;
 }
