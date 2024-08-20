@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
 interface PaidNewsletterStep {
@@ -27,7 +27,8 @@ export const usePaidNewsletterQuery = ( engine: string, currentStep: string, sit
 				}
 			);
 		},
+		placeholderData: keepPreviousData,
 		refetchOnWindowFocus: true,
-		staleTime: 6000, // 1 hour
+		staleTime: 6000, // 10 minutes
 	} );
 };
