@@ -50,7 +50,7 @@ export const DomainsTableRowActions = ( {
 		onDomainAction,
 		userCanSetPrimaryDomains = false,
 		updatingDomain,
-		purchaseActions,
+		domainStatusPurchaseActions,
 	} = useDomainsTable();
 	const { __ } = useI18n();
 
@@ -151,7 +151,7 @@ export const DomainsTableRowActions = ( {
 				<MenuItemLink
 					key="renewDomain"
 					onClick={ () => {
-						purchaseActions?.onRenewNowClick?.( domain.domain ?? '', domain );
+						domainStatusPurchaseActions?.onRenewNowClick?.( domain.domain ?? '', domain );
 						onClose?.();
 					} }
 				>
@@ -162,7 +162,7 @@ export const DomainsTableRowActions = ( {
 				<MenuItemLink
 					key="reactivateDomain"
 					onClick={ () => {
-						purchaseActions?.onRenewNowClick?.( domain.domain ?? '', domain );
+						domainStatusPurchaseActions?.onRenewNowClick?.( domain.domain ?? '', domain );
 						onClose?.();
 					} }
 				>
