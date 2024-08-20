@@ -86,7 +86,7 @@ const LaunchSite = () => {
 
 	// TODO: replace with actual value whether the site is a development site
 	const urlParams = new URLSearchParams( window.location.search );
-	const isDevelomentSite = urlParams.get( 'referer' ) === 'a4a-dashboard';
+	const isDevelopmentSite = urlParams.get( 'referer' ) === 'a4a-dashboard';
 
 	// TODO: retrieve the actual agency name
 	const agencyName = 'MyCoolAgency';
@@ -107,7 +107,7 @@ const LaunchSite = () => {
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  ) }
 						</p>
-						{ isDevelomentSite && (
+						{ isDevelopmentSite && (
 							<p>
 								{ translate(
 									'Once the site is launched, %(agencyName)s will be billed for this site in the next billing cycle.',
@@ -124,7 +124,7 @@ const LaunchSite = () => {
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
 					{
 						// TODO: add onClick handler
-						isDevelomentSite && (
+						isDevelopmentSite && (
 							<div className={ launchSiteClasses }>
 								<Button onClick={ null } disabled={ false }>
 									{ translate( 'Refer to client' ) }
