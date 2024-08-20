@@ -21,7 +21,7 @@ export default function CreditCardNumberField( {
 }: {
 	setIsStripeFullyLoaded: ( isLoaded: boolean ) => void;
 	handleStripeFieldChange: ( input: StripeFieldChangeInput ) => void;
-	changeCardNetworks: ( networks: string[] ) => void;
+	changeCardNetworks: ( networks: [] ) => void;
 	stripeElementStyle: StripeElementStyle;
 	shouldUseEbanx?: boolean;
 	getErrorMessagesForField: ( key: string ) => string[];
