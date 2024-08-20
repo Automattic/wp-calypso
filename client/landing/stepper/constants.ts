@@ -1,5 +1,6 @@
 import type { Design } from '@automattic/design-picker';
 
+// Changing this? Consider also updating DEFAULT_START_WRITING_THEME so the write *flow* matches the write intent.
 export const WRITE_INTENT_DEFAULT_DESIGN: Design = {
 	slug: 'poema',
 	title: 'Poema',
