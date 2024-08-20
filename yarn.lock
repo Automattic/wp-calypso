@@ -2185,11 +2185,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/zendesk-client@workspace:packages/zendesk-client"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
+    "@types/smooch": "npm:^5.3.7"
     "@wordpress/api-fetch": "npm:^7.2.0"
     "@wordpress/element": "npm:^6.2.0"
     "@wordpress/url": "npm:^4.2.0"
+    smooch: "npm:5.6.0"
     typescript: "npm:^5.3.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -3952,6 +3955,17 @@ __metadata:
     global-agent:
       optional: true
   checksum: fc48ca5afb3e8d0b17a7a15ca47644bb3f464f98995271b827455d7bb137bfbc0ed6fd287216dd7b753e7e053706415ef4ef22cf02d6f39b12066cf7f5570965
+  languageName: node
+  linkType: hard
+
+"@electron/notarize@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@electron/notarize@npm:2.4.0"
+  dependencies:
+    debug: "npm:^4.1.1"
+    fs-extra: "npm:^9.0.1"
+    promise-retry: "npm:^2.0.1"
+  checksum: 87703b8abe27f07622f18d056eb2999ac403c6e34140445d6475eebfaa86f0c348269c7411a5b2e1acf6ac16e872917f7ec2a5fde6d1386c2f017fc2b57e3343
   languageName: node
   linkType: hard
 
@@ -8142,6 +8156,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/smooch@npm:^5.3.7":
+  version: 5.3.7
+  resolution: "@types/smooch@npm:5.3.7"
+  checksum: b37b0a50037933e4b2313b0e1f0a31df1c9d8a033ff994eb7342720596a9941745a9b6fd1012ab58f828397a5e76d493d818eeb1bfb6576453021afbfc0bf115
+  languageName: node
+  linkType: hard
+
 "@types/social-logos@npm:^2.3.1":
   version: 2.3.1
   resolution: "@types/social-logos@npm:2.3.1"
@@ -10143,13 +10164,13 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@electron/notarize": "npm:^2.4.0"
     archiver: "npm:^3.1.1"
     copy-webpack-plugin: "npm:^10.2.4"
     cross-env: "npm:^7.0.3"
     electron: "npm:26.2.4"
     electron-builder: "npm:23.0.3"
     electron-fetch: "npm:^1.7.4"
-    electron-notarize: "npm:^0.1.1"
     electron-rebuild: "npm:^2.3.5"
     electron-store: "npm:^8.1.0"
     electron-updater: "npm:^4.2.5"
@@ -15229,16 +15250,6 @@ __metadata:
   dependencies:
     encoding: "npm:^0.1.13"
   checksum: 67b4497d6b02449f24f2e776c367944696ad83fe5c6827c43bf96a92453d71dccef6ca0cfe9607d202f5fdf49c0fdf90533d4188fbbce72c823b90df12ba4d54
-  languageName: node
-  linkType: hard
-
-"electron-notarize@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "electron-notarize@npm:0.1.1"
-  dependencies:
-    debug: "npm:^4.1.1"
-    fs-extra: "npm:^8.0.1"
-  checksum: 9e5fb5bf7925408cb009e8c70d55745127937b17837bb3f42c5facd753e25bd8799dd087229514ac6ff80810f8fda1579ba1772a9b76a482eba7614f9d808ccb
   languageName: node
   linkType: hard
 
@@ -28872,6 +28883,13 @@ __metadata:
   version: 4.2.0
   resolution: "smart-buffer@npm:4.2.0"
   checksum: a16775323e1404dd43fabafe7460be13a471e021637bc7889468eb45ce6a6b207261f454e4e530a19500cc962c4cc5348583520843b363f4193cee5c00e1e539
+  languageName: node
+  linkType: hard
+
+"smooch@npm:5.6.0":
+  version: 5.6.0
+  resolution: "smooch@npm:5.6.0"
+  checksum: 3a1c4cd17a136903443372a92e197752a80423fe8d8f299d96853dba4af6f51f43a6b573b23fbc04fc558b0b707a679361edce17e3e9f8ae9809a03cfccc0978
   languageName: node
   linkType: hard
 
