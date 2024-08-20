@@ -295,8 +295,10 @@ function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), 
 
 		const translationChunkPromise = getTranslationChunkFile( chunkId, localeSlug )
 			.then( ( translations ) => {
-				addTranslations( translations, userTranslations );
-				loadedTranslationChunks[ chunkId ] = true;
+				if ( localeSlug === i18n.getLocaleSlug() ) {
+					addTranslations( translations, userTranslations );
+					loadedTranslationChunks[ chunkId ] = true;
+				}
 			} )
 			.catch( ( cause ) => {
 				const error = new Error(
