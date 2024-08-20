@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import {
 	PLAN_YEARLY_FREQUENCY,
@@ -41,15 +41,19 @@ export default function MapPlans( {
 	};
 
 	const products = useSelector( ( state ) => getProductsForSiteId( state, siteId ) );
+	const sizeOfProductsRef = useRef( products.length );
 
+	const sizeOfProducts = products.length;
+	// check if we added new products and if so invalidate the query to check it again.
 	useEffect( () => {
-		if ( ! products ) {
+		if ( sizeOfProducts === sizeOfProductsRef.current || sizeOfProducts === 0 ) {
 			return;
 		}
+		sizeOfProductsRef.current = sizeOfProducts;
 		queryClient.invalidateQueries( {
 			queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
 		} );
-	}, [ products, siteId, engine, currentStep, queryClient ] );
+	}, [ sizeOfProducts, sizeOfProductsRef, siteId, engine, currentStep, queryClient ] );
 
 	const monthyPlan = cardData.plans.find( ( plan: any ) => plan.plan_interval === 'month' );
 
