@@ -515,7 +515,7 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderReader( showLabel = true ) {
+	renderReader() {
 		const { translate } = this.props;
 		return (
 			<Item
@@ -539,10 +539,7 @@ class MasterbarLoggedIn extends Component {
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
 				preloadSection={ this.preloadReader }
 				hasGlobalBorderStyle
-			>
-				{ showLabel &&
-					translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-			</Item>
+			/>
 		);
 	}
 
@@ -836,7 +833,6 @@ class MasterbarLoggedIn extends Component {
 				<div className="masterbar__section masterbar__section--left">
 					{ this.renderSidebarMobileMenu() }
 					{ this.renderMySites() }
-					{ this.renderReader( ! isMobile ) }
 					{ this.renderSiteMenu() }
 					{ this.renderSiteActionMenu() }
 					{ this.renderLanguageSwitcher() }
@@ -845,6 +841,7 @@ class MasterbarLoggedIn extends Component {
 				<div className="masterbar__section masterbar__section--right">
 					{ this.renderCart() }
 					{ this.renderLaunchpadNavigator() }
+					{ this.renderReader( ! isMobile ) }
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
 					{ this.renderNotifications() }
 					{ this.renderProfileMenu() }
