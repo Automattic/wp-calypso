@@ -350,7 +350,7 @@ function PurchaseJetpackUserLicense( { purchaseId }: { purchaseId: number } ) {
 			size={ licenseKeyInputSize }
 			value={ licenseKey }
 			loading={ isLoading || isInitialLoading }
-			activationURL="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
+			activationUrl="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
 		/>
 	);
 }
@@ -373,7 +373,7 @@ function PurchaseAkismetApiKey() {
 				size={ keyInputSize }
 				value={ akismetApiKey }
 				loading={ isLoading }
-				activationURL="https://akismet.com/support/getting-started/api-key/"
+				activationUrl="https://akismet.com/support/getting-started/api-key/"
 			/>
 		</>
 	);
@@ -384,13 +384,13 @@ function PurchaseClipboardCard( {
 	value,
 	size,
 	loading = false,
-	activationURL,
+	activationUrl,
 }: {
 	label: string;
 	value: string;
 	size: number;
 	loading?: boolean;
-	activationURL: string;
+	activationUrl: string;
 } ) {
 	const translate = useTranslate();
 	const [ isCopied, setCopied ] = useState( false );
@@ -424,7 +424,7 @@ function PurchaseClipboardCard( {
 					</>
 				) }
 			</div>
-			<ExternalLink className="manage-purchase__license-clipboard-link" href={ activationURL }>
+			<ExternalLink className="manage-purchase__license-clipboard-link" href={ activationUrl }>
 				{ translate( 'How to activate' ) }
 			</ExternalLink>
 		</Card>
