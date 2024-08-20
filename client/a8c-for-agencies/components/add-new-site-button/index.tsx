@@ -9,7 +9,7 @@ import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fet
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
-import devSiteIcon from 'calypso/assets/images/a8c-for-agencies/dev-site-icon.svg';
+import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -195,11 +195,8 @@ export default function AddNewSiteButton( {
 			</div>
 			{ devSitesEnabled && (
 				<div className="site-selector-and-importer__popover-column">
-					<div className="site-selector-and-importer__popover-column-heading">
-						{ translate( 'Add a new development site' ).toUpperCase() }
-					</div>
 					{ menuItem( {
-						icon: <img src={ devSiteIcon } alt="WordPress.com Development Site" />,
+						icon: <img src={ devSiteBanner } alt="WordPress.com Development Site" />,
 						heading: translate( 'WordPress.com Development Site' ),
 						description: translate(
 							'Try our hosting for free indefinitely. Only pay when you launch.'
