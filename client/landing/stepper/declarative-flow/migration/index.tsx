@@ -1,4 +1,9 @@
-import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import {
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_3_YEARS,
+} from '@automattic/calypso-products';
 import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSearchParams } from 'react-router-dom';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -29,46 +34,123 @@ const {
 	SITE_MIGRATION_ASSISTED_MIGRATION,
 } = STEPS;
 
+const plans: { [ key: string ]: string } = {
+	business: PLAN_BUSINESS,
+	'business-2y': PLAN_BUSINESS_2_YEARS,
+	'business-3y': PLAN_BUSINESS_3_YEARS,
+};
+
 const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject: Flow ) => {
 	const [ query ] = useSearchParams();
+	const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
 
 	const getFromPropsOrUrl = ( key: string, props?: ProvidedDependencies ): Primitive => {
 		const value = props?.[ key ] || query.get( key );
 		return typeof value === 'object' ? undefined : ( value as Primitive );
 	};
 
+	const navigateToCheckout = ( {
+		siteId,
+		siteSlug,
+		plan,
+		props,
+		forceRedirection,
+	}: {
+		siteId: string;
+		siteSlug: string;
+		plan: string;
+		props?: ProvidedDependencies;
+		forceRedirection?: boolean;
+	} ) => {
+		const redirectAfterCheckout = MIGRATION_HOW_TO_MIGRATE.slug;
+		const destination = addQueryArgs(
+			{ siteId, siteSlug },
+			`/setup/${ flowPath }/${ redirectAfterCheckout }`
+		);
+		const cancelDestination = addQueryArgs(
+			{ siteId, siteSlug },
+			`/setup/${ flowPath }/${ MIGRATION_UPGRADE_PLAN.slug }?${ query.toString() }`
+		);
+		let extraQueryParams: Record< string, string > | undefined =
+			props?.sendIntentWhenCreatingTrial && plan === PLAN_MIGRATION_TRIAL_MONTHLY
+				? { hosting_intent: HOSTING_INTENT_MIGRATE }
+				: undefined;
+
+		// If the redirection is forced, the upgrade step won't add the introductory offer, so it adds it through the checkout.
+		if ( forceRedirection ) {
+			extraQueryParams = {
+				...extraQueryParams,
+				introductoryOffer: '1',
+			};
+		}
+
+		return goToCheckout( {
+			flowName: flowPath,
+			stepName: MIGRATION_UPGRADE_PLAN.slug,
+			siteSlug,
+			destination,
+			plan,
+			cancelDestination,
+			extraQueryParams,
+			forceRedirection,
+		} );
+	};
+
 	return {
 		[ PLATFORM_IDENTIFICATION.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				const platform = getFromPropsOrUrl( 'platform', props ) as string;
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
+				const hasSite = Boolean( siteId ) || Boolean( siteSlug );
 
-				const args: { platform: string | undefined; next?: string } = {
-					platform,
-				};
+				// The importer url is returning the importer name and empty query params, so we need to remove them;
+				const importer = ( ( props?.url as string ) || '' ).split( '?' )[ 0 ];
 
-				if ( platform !== 'wordpress' ) {
-					args.next = props?.url as string;
+				if ( platform === 'wordpress' ) {
+					if ( hasSite ) {
+						return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ) );
+					}
+
+					return navigate( SITE_CREATION_STEP.slug );
 				}
 
-				return navigate( addQueryArgs( args, SITE_CREATION_STEP.slug ) );
+				if ( hasSite ) {
+					return goToImporter( importer, siteId, siteSlug );
+				}
+
+				return navigate( addQueryArgs( { importer }, SITE_CREATION_STEP.slug ) );
 			},
 		},
 		[ SITE_CREATION_STEP.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const platform = getFromPropsOrUrl( 'platform', props );
-				const next = getFromPropsOrUrl( 'next', props );
+				const importer = getFromPropsOrUrl( 'importer', props );
+				const plan = getFromPropsOrUrl( 'plan', props );
 
-				return navigate( addQueryArgs( { platform, next }, PROCESSING.slug ) );
+				return navigate( addQueryArgs( { importer, plan }, PROCESSING.slug ) );
 			},
 		},
 		[ PROCESSING.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const next = getFromPropsOrUrl( 'next', props ) as string;
+				const importer = getFromPropsOrUrl( 'importer', props ) as string;
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
+				const plan = getFromPropsOrUrl( 'plan', props ) as string;
 
-				if ( next ) {
-					return goToImporter( next, siteId, siteSlug );
+				if ( importer ) {
+					return goToImporter( importer, siteId, siteSlug );
+				}
+
+				// If plan is already selected and it exists.
+				// Entry point example: /setup/migration/create-site?platform=wordpress&plan=business
+				if ( plans[ plan ] ) {
+					return navigateToCheckout( {
+						siteId,
+						siteSlug,
+						plan: plans[ plan ],
+						props,
+						forceRedirection: true,
+					} );
 				}
 
 				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ) );
@@ -78,7 +160,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 			submit: ( props?: ProvidedDependencies ) => {
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
-				const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
+
 				const plan = props?.plan as string;
 				const backToStep = {
 					step: MIGRATION_UPGRADE_PLAN.slug,
@@ -90,28 +172,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				}
 
 				if ( props?.goToCheckout ) {
-					const redirectAfterCheckout = MIGRATION_HOW_TO_MIGRATE.slug;
-					const destination = addQueryArgs(
-						{ siteId, siteSlug },
-						`/setup/${ flowPath }/${ redirectAfterCheckout }`
-					);
-
-					const extraQueryParams =
-						props?.sendIntentWhenCreatingTrial && plan === PLAN_MIGRATION_TRIAL_MONTHLY
-							? { hosting_intent: HOSTING_INTENT_MIGRATE }
-							: undefined;
-
-					return goToCheckout( {
-						flowName: flowPath,
-						stepName: MIGRATION_UPGRADE_PLAN.slug,
-						siteSlug,
-						destination: destination,
-						plan,
-						cancelDestination: `/setup/${ flowPath }/${
-							STEPS.MIGRATION_UPGRADE_PLAN.slug
-						}?${ query.toString() }`,
-						extraQueryParams,
-					} );
+					return navigateToCheckout( { siteId, siteSlug, plan, props } );
 				}
 			},
 		},
