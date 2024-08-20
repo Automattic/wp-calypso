@@ -12,27 +12,41 @@ interface GoToImporterParams {
 	siteId: string;
 	siteSlug: string;
 	backToStep?: StepperStep;
+	replaceHistory?: boolean;
 }
 
 const getBackToFlowParam = ( step: string ) => `/${ MIGRATION_FLOW }/${ step }`;
+const goTo = ( path: string, replaceHistory: boolean ) => {
+	if ( replaceHistory ) {
+		return window.location.replace( path );
+	}
 
-export const goToImporter = ( { platform, siteId, siteSlug, backToStep }: GoToImporterParams ) => {
+	return window.location.assign( path );
+};
+
+export const goToImporter = ( {
+	platform,
+	siteId,
+	siteSlug,
+	backToStep,
+	replaceHistory = false,
+}: GoToImporterParams ) => {
 	const backToFlow = backToStep ? getBackToFlowParam( backToStep?.slug ) : undefined;
 	const path = getFinalImporterUrl( siteSlug, '', platform, backToFlow );
 
 	if ( isWpAdminImporter( path ) ) {
-		return window.location.replace( path );
+		return goTo( path, replaceHistory );
 	}
 
-	return window.location.replace(
-		addQueryArgs(
-			{
-				siteId,
-				siteSlug,
-				ref: MIGRATION_FLOW,
-				...( platform === 'wordpress' ? { option: 'content' } : {} ),
-			},
-			`/setup/${ SITE_SETUP_FLOW }/${ path }`
-		)
+	const stepURL = addQueryArgs(
+		{
+			siteId,
+			siteSlug,
+			ref: MIGRATION_FLOW,
+			...( platform === 'wordpress' ? { option: 'content' } : {} ),
+		},
+		`/setup/${ SITE_SETUP_FLOW }/${ path }`
 	);
+
+	return goTo( stepURL, replaceHistory );
 };

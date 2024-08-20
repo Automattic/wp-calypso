@@ -146,6 +146,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 						siteId,
 						siteSlug,
 						backToStep: PLATFORM_IDENTIFICATION,
+						replaceHistory: true,
 					} );
 				}
 

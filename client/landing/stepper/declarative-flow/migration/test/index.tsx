@@ -126,7 +126,7 @@ describe( `${ flow.name }`, () => {
 					},
 				} );
 
-				expect( window.location.replace ).toHaveBeenCalledWith(
+				expect( window.location.assign ).toHaveBeenCalledWith(
 					addQueryArgs( '/setup/site-setup/importerBlogger', {
 						siteSlug: 'example.wordpress.com',
 						from: '',
@@ -290,7 +290,7 @@ describe( `${ flow.name }`, () => {
 					},
 				} );
 
-				expect( window.location.replace ).toHaveBeenCalledWith(
+				expect( window.location.assign ).toHaveBeenCalledWith(
 					addQueryArgs( '/setup/site-setup/importerWordpress', {
 						siteSlug: 'example.wordpress.com',
 						from: '',
