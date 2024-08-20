@@ -103,11 +103,6 @@ export const useSmooch = () => {
 			init,
 			destroy,
 			initSmooch,
-			getConversation: async () => undefined,
-			createConversation: async () => undefined,
-			addMessengerListener: () => undefined,
-			addUnreadCountListener: () => undefined,
-			sendMessage: () => undefined,
 		};
 	}
 
