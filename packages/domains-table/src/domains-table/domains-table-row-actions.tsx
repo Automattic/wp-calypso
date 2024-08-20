@@ -146,6 +146,7 @@ export const DomainsTableRowActions = ( {
 			),
 			canRenewDomain && (
 				<MenuItemLink
+					key="renewDomain"
 					onClick={ () => {
 						purchaseActions?.onRenewNowClick?.( domain.domain ?? '', domain );
 						onClose?.();
@@ -156,6 +157,7 @@ export const DomainsTableRowActions = ( {
 			),
 			canReactivateDomain && (
 				<MenuItemLink
+					key="reactivateDomain"
 					onClick={ () => {
 						purchaseActions?.onRenewNowClick?.( domain.domain ?? '', domain );
 						onClose?.();
