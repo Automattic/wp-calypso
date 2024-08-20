@@ -42,7 +42,8 @@ const SitesDataViews = ( {
 		}
 		return data?.total || 0;
 	} )();
-	const sitesPerPage = dataViewsState.perPage && dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
+	const sitesPerPage =
+		dataViewsState.perPage && dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );
 
@@ -177,7 +178,7 @@ const SitesDataViews = ( {
 			{
 				id: 'boost',
 				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				header: (
+				label: (
 					<>
 						<span
 							className="sites-dataview__boost-header"
