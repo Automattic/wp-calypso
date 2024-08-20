@@ -3,7 +3,7 @@ import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
-import { Icon, globe, group, shield, backup } from '@wordpress/icons';
+import { Icon, globe, group, shield, backup, scheduled } from '@wordpress/icons';
 import { createElement, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -63,7 +63,7 @@ const ImporterMigrateMessage: Step = () => {
 				),
 			},
 			{
-				icon: backup,
+				icon: scheduled,
 				text: __(
 					`You'll get an update on the progress of your migration within 2-3 business days.`
 				),
