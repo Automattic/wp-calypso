@@ -2185,14 +2185,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/zendesk-client@workspace:packages/zendesk-client"
   dependencies:
-    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
-    "@types/smooch": "npm:^5.3.7"
     "@wordpress/api-fetch": "npm:^7.2.0"
     "@wordpress/element": "npm:^6.2.0"
     "@wordpress/url": "npm:^4.2.0"
-    smooch: "npm:5.6.0"
     typescript: "npm:^5.3.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -8153,13 +8150,6 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: ef55b05fb2d12ed790d8e3b46d96bb84224c67bbcdfb6a867d14129ffc77f7b3edbf66b1eb5e737953d1f1b2ce9928f3505fe29061bfb048016616beaf866ef8
-  languageName: node
-  linkType: hard
-
-"@types/smooch@npm:^5.3.7":
-  version: 5.3.7
-  resolution: "@types/smooch@npm:5.3.7"
-  checksum: b37b0a50037933e4b2313b0e1f0a31df1c9d8a033ff994eb7342720596a9941745a9b6fd1012ab58f828397a5e76d493d818eeb1bfb6576453021afbfc0bf115
   languageName: node
   linkType: hard
 
@@ -28883,13 +28873,6 @@ __metadata:
   version: 4.2.0
   resolution: "smart-buffer@npm:4.2.0"
   checksum: a16775323e1404dd43fabafe7460be13a471e021637bc7889468eb45ce6a6b207261f454e4e530a19500cc962c4cc5348583520843b363f4193cee5c00e1e539
-  languageName: node
-  linkType: hard
-
-"smooch@npm:5.6.0":
-  version: 5.6.0
-  resolution: "smooch@npm:5.6.0"
-  checksum: 3a1c4cd17a136903443372a92e197752a80423fe8d8f299d96853dba4af6f51f43a6b573b23fbc04fc558b0b707a679361edce17e3e9f8ae9809a03cfccc0978
   languageName: node
   linkType: hard
 

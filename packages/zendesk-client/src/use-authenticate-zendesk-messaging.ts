@@ -9,21 +9,18 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 /**
  * Internal dependencies
  */
-import type { APIFetchOptions, MessagingAuth, ZendeskAuthType } from './types';
+import type { APIFetchOptions, MessagingAuth } from './types';
 
 let isLoggedIn = false;
 
-export function useAuthenticateZendeskMessaging(
-	enabled = true,
-	type: ZendeskAuthType = 'zendesk'
-) {
+export function useAuthenticateZendeskMessaging( enabled = true ) {
 	const currentEnvironment = config( 'env_id' );
 	const isTestMode = currentEnvironment === 'development';
 
 	return useQuery( {
-		queryKey: [ 'getMessagingAuth', type, isTestMode ],
+		queryKey: [ 'getMessagingAuth', isTestMode ],
 		queryFn: () => {
-			const params = { type, test_mode: String( isTestMode ) };
+			const params = { type: 'zendesk', test_mode: String( isTestMode ) };
 			const wpcomParams = new URLSearchParams( params );
 
 			return canAccessWpcomApis()
@@ -43,8 +40,8 @@ export function useAuthenticateZendeskMessaging(
 		staleTime: 7 * 24 * 60 * 60 * 1000, // 1 week (JWT is actually 2 weeks, but lets be on the safe side)
 		enabled,
 		select: ( messagingAuth ) => {
-			const jwt = messagingAuth?.user.jwt;
 			if ( ! isLoggedIn ) {
+				const jwt = messagingAuth?.user.jwt;
 				if ( typeof window.zE !== 'function' || ! jwt ) {
 					return;
 				}
@@ -54,7 +51,7 @@ export function useAuthenticateZendeskMessaging(
 					callback( jwt );
 				} );
 			}
-			return { isLoggedIn, jwt, externalId: messagingAuth?.user.external_id };
+			return { isLoggedIn };
 		},
 	} );
 }

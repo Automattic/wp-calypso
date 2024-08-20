@@ -24,7 +24,6 @@ export type UserFields = {
 
 export type MessagingAuth = {
 	user: {
-		external_id?: string;
 		jwt: string;
 	};
 };
@@ -43,5 +42,3 @@ export type MessagingMetadata = {
 	onError?: () => void;
 	onSuccess?: () => void;
 };
-
-export type ZendeskAuthType = 'zendesk' | 'messenger';

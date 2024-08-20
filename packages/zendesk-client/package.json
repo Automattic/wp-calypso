@@ -22,13 +22,10 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/calypso-analytics": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@types/smooch": "^5.3.7",
 		"@wordpress/api-fetch": "^7.2.0",
 		"@wordpress/element": "^6.2.0",
 		"@wordpress/url": "^4.2.0",
-		"smooch": "5.6.0",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {

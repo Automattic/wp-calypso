@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import { isRefactoredForThankYouV2 } from '../utils';
 
