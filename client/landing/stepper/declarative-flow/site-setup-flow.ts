@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
+import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -530,6 +531,9 @@ const siteSetupFlow: Flow = {
 				case 'importerMedium':
 				case 'importerSquarespace':
 					if ( backToFlow ) {
+						if ( urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
+							return goToFlow( backToFlow );
+						}
 						return navigate( `importList?siteSlug=${ siteSlug }&backToFlow=${ backToFlow }` );
 					}
 					return navigate( `importList?siteSlug=${ siteSlug }` );
@@ -561,6 +565,10 @@ const siteSetupFlow: Flow = {
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
+					if ( backToFlow && urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
+						return goToFlow( backToFlow );
+					}
+
 					return navigate( `import?siteSlug=${ siteSlug }` );
 
 				case 'options':
