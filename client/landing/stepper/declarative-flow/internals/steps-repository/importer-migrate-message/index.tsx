@@ -43,6 +43,8 @@ const ImporterMigrateMessage: Step = () => {
 	useEffect( () => {
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
 			path: window.location.pathname,
+			automated_migration: config.isEnabled( 'automated-migration/collect-credentials' ),
+			skipped_credentials: isCredentialsSkipped,
 		} );
 		if ( ! config.isEnabled( 'automated-migration/collect-credentials' ) || isCredentialsSkipped ) {
 			sendTicket( {
