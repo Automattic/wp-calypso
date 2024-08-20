@@ -68,6 +68,7 @@
 		.components-checkbox-control__label {
 			font-size: 0.875rem;
 			color: var(--studio-gray-60);
+			text-wrap: pretty;
 		}
 
 		.components-checkbox-control__input[type="checkbox"]:checked {
@@ -84,6 +85,11 @@
 		svg.components-checkbox-control__checked {
 			width: 1rem;
 			height: 1rem;
+		}
+
+		.components-checkbox-control__input-container {
+			margin-top: auto;
+			margin-bottom: auto;
 		}
 
 		svg.components-checkbox-control__checked {
