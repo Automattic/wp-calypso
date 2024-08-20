@@ -12,13 +12,13 @@ interface MenuItemLinkProps extends Omit< React.ComponentProps< typeof MenuItem 
 
 const MenuItemLink = MenuItem as ComponentType< MenuItemLinkProps >;
 
-interface ManualRenewalProps {
+interface ManualRenewalLinkProps {
 	domain: ResponseDomain;
 	onClose?: () => void;
 	label: string;
 }
 
-const ManualRenewal: React.FC< ManualRenewalProps > = ( { domain, onClose, label } ) => {
+const ManualRenewalLink: React.FC< ManualRenewalLinkProps > = ( { domain, onClose, label } ) => {
 	const subscriptionId = domain.subscriptionId ? parseInt( domain.subscriptionId ) : 0;
 	const siteId = domain?.blogId;
 	const sitePurchases = Purchases.useSitePurchases( { siteId } );
@@ -41,4 +41,4 @@ const ManualRenewal: React.FC< ManualRenewalProps > = ( { domain, onClose, label
 	);
 };
 
-export default ManualRenewal;
+export default ManualRenewalLink;

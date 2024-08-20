@@ -10,7 +10,7 @@ import { isDomainReactivatable } from '../utils/is-reactivatable';
 import { isRecentlyRegistered } from '../utils/is-recently-registered';
 import { isDomainRenewable } from '../utils/is-renewable';
 import { isDomainUpdateable } from '../utils/is-updateable';
-import ManualRenewal from '../utils/manual-renewal';
+import ManualRenewalLink from '../utils/manual-renewal-link';
 import {
 	domainMagementDNS,
 	domainManagementEditContactInfo,
@@ -144,7 +144,7 @@ export const DomainsTableRowActions = ( {
 				</MenuItemLink>
 			),
 			canRenewDomain && (
-				<ManualRenewal
+				<ManualRenewalLink
 					key="renewDomain"
 					domain={ domain }
 					onClose={ onClose }
@@ -152,7 +152,7 @@ export const DomainsTableRowActions = ( {
 				/>
 			),
 			canReactivateDomain && (
-				<ManualRenewal
+				<ManualRenewalLink
 					key="reactivateDomain"
 					domain={ domain }
 					onClose={ onClose }
