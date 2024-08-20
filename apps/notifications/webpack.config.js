@@ -8,6 +8,7 @@ const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
+const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -93,6 +94,9 @@ function getWebpackConfig(
 				scriptLoading: 'blocking',
 				meta: pageMeta,
 				includeStyle: ( href ) => href.includes( '.rtl.css' ),
+			} ),
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( __dirname, 'dist/chunks-map.json' ),
 			} ),
 			shouldEmitStats &&
 				new BundleAnalyzerPlugin( {

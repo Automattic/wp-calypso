@@ -8,25 +8,35 @@ import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
 interface MutationVariables {
-	siteId: number;
+	siteId: string;
 	engine: string;
 	currentStep: string;
+	stripePlan: string;
+	productId: string;
 }
 
-export const useResetMutation = (
+export const useMapStripePlanToProductMutation = (
 	options: UseMutationOptions< unknown, DefaultError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
-		mutationFn: async ( { siteId, engine, currentStep }: MutationVariables ) => {
+		mutationFn: async ( {
+			siteId,
+			engine,
+			currentStep,
+			stripePlan,
+			productId,
+		}: MutationVariables ) => {
 			const response = await wp.req.post(
 				{
-					path: `/sites/${ siteId }/site-importer/paid-newsletter/reset`,
+					path: `/sites/${ siteId }/site-importer/paid-newsletter/map-stripe-plan-to-product`,
 					apiNamespace: 'wpcom/v2',
 				},
 				{
 					engine: engine,
 					current_step: currentStep,
+					stripe_plan_id: stripePlan,
+					product_id: productId,
 				}
 			);
 
@@ -48,11 +58,16 @@ export const useResetMutation = (
 
 	const { mutate } = mutation;
 
-	const resetPaidNewsletter = useCallback(
-		( siteId: number, engine: string, currentStep: string ) =>
-			mutate( { siteId, engine, currentStep } ),
+	const mapStripePlanToProduct = useCallback(
+		(
+			siteId: string,
+			engine: string,
+			currentStep: string,
+			stripePlan: string,
+			productId: string
+		) => mutate( { siteId, engine, currentStep, stripePlan, productId } ),
 		[ mutate ]
 	);
 
-	return { resetPaidNewsletter, ...mutation };
+	return { mapStripePlanToProduct, ...mutation };
 };

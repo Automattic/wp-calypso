@@ -1,4 +1,4 @@
-import { useLocale } from '@automattic/i18n-utils';
+import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
@@ -20,6 +20,7 @@ import { useSubmitMigrationTicket } from './hooks/use-submit-migration-ticket';
 
 const ImporterMigrateMessage: Step = () => {
 	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
 	const user = useSelector( getCurrentUser ) as UserData;
 	const siteSlugParam = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
@@ -38,11 +39,15 @@ const ImporterMigrateMessage: Step = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
+	const title = hasEnTranslation( "We'll take it from here!" )
+		? __( "We'll take it from here!" )
+		: __( 'Let us take it from here!' );
+
 	return (
 		<StepContainer
 			stepName="migration-message"
 			hideBack
-			formattedHeader={ <FormattedHeader headerText={ __( 'Let us take it from here!' ) } /> }
+			formattedHeader={ <FormattedHeader headerText={ title } /> }
 			isHorizontalLayout={ false }
 			stepContent={
 				<>
