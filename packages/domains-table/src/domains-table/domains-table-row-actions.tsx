@@ -1,7 +1,8 @@
 import { Gridicon } from '@automattic/components';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ComponentType } from 'react';
+import React, { ComponentType } from 'react';
+import { usePurchaseActions } from 'calypso/my-sites/domains/domain-management/list/use-purchase-actions'; // eslint-disable-line no-restricted-imports
 import { canSetAsPrimary } from '../utils/can-set-as-primary';
 import { type as domainTypes, transferStatus, useMyDomainInputMode } from '../utils/constants';
 import { isFreeUrlDomainName } from '../utils/is-free-url-domain-name';
@@ -10,7 +11,6 @@ import { isDomainReactivatable } from '../utils/is-reactivatable';
 import { isRecentlyRegistered } from '../utils/is-recently-registered';
 import { isDomainRenewable } from '../utils/is-renewable';
 import { isDomainUpdateable } from '../utils/is-updateable';
-import ManualRenewalLink from '../utils/manual-renewal-link';
 import {
 	domainMagementDNS,
 	domainManagementEditContactInfo,
@@ -75,6 +75,7 @@ export const DomainsTableRowActions = ( {
 		domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer;
 	const canChangeSiteAddress =
 		! isAllSitesView && isSimpleSite && isFreeUrlDomainName( domain.name );
+	const purchaseActions = usePurchaseActions();
 	const canRenewDomain = isDomainRenewable( domain );
 	const canReactivateDomain = isDomainReactivatable( domain );
 	const getActions = ( onClose?: () => void ) => {
@@ -144,20 +145,24 @@ export const DomainsTableRowActions = ( {
 				</MenuItemLink>
 			),
 			canRenewDomain && (
-				<ManualRenewalLink
-					key="renewDomain"
-					domain={ domain }
-					onClose={ onClose }
-					label={ __( 'Renew now' ) }
-				/>
+				<MenuItemLink
+					onClick={ () => {
+						purchaseActions?.onRenewNowClick?.( domain.domain ?? '', domain );
+						onClose?.();
+					} }
+				>
+					{ __( 'Renew now' ) }
+				</MenuItemLink>
 			),
 			canReactivateDomain && (
-				<ManualRenewalLink
-					key="reactivateDomain"
-					domain={ domain }
-					onClose={ onClose }
-					label={ __( 'Reactivate now' ) }
-				/>
+				<MenuItemLink
+					onClick={ () => {
+						purchaseActions?.onRenewNowClick?.( domain.domain ?? '', domain );
+						onClose?.();
+					} }
+				>
+					{ __( 'Reactivate now' ) }
+				</MenuItemLink>
 			),
 		];
 	};
