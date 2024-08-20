@@ -70,6 +70,8 @@ function usePlanStepWrapper( navigation: StepProps[ 'navigation' ] ) {
 			{ ...props }
 			goBack={ navigation.goBack }
 			recordTracksEvent={ ( event: unknown ) => dispatch( recordTracksEvent( event ) ) }
+			isFullLayout
+			isExtraWideLayout={ false }
 		/>
 	);
 }
