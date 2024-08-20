@@ -246,6 +246,7 @@ class Login extends Component {
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
 					isPartnerSignup: this.props.isPartnerSignup,
+					from: this.props.currentQuery?.from,
 				} )
 			);
 		}
