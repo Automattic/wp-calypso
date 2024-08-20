@@ -161,6 +161,7 @@ const PricingSection: FC = () => {
 };
 
 const PlanCard: FC = () => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
@@ -264,6 +265,11 @@ const PlanCard: FC = () => {
 												className="hosting-overview__link-button"
 												plain
 												href={ `/add-ons/${ site?.slug }` }
+												onClick={ () => {
+													dispatch(
+														recordTracksEvent( 'calypso_hosting_overview_need_more_storage_click' )
+													);
+												} }
 											>
 												{ translate( 'Need more storage?' ) }
 											</Button>

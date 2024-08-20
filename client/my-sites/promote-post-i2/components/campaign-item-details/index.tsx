@@ -158,7 +158,7 @@ export default function CampaignItemDetails( props: Props ) {
 			? `$${ formatCents( total_budget_used / clicks_total, 2 ) }`
 			: '-';
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
-	const clicksFormatted = clicks_total && clicks_total > 0 ? clicks_total : '-';
+	const clicksFormatted = clicks_total && clicks_total > 0 ? formatNumber( clicks_total ) : '-';
 	const weeklyBudget = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
 
 	const weeklyBudgetFormatted = `$${ formatCents( weeklyBudget || 0, 2 ) }`;
