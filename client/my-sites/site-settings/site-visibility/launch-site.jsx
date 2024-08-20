@@ -104,26 +104,22 @@ const LaunchSite = () => {
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  ) }
 						</p>
-						{
-							// TODO: add feature flag check
-							isDevelomentSite && (
-								<p>
-									{ translate(
-										'Once the site is launched, %(agencyName)s will be billed for this site in the next billing cycle.',
-										{
-											args: {
-												agencyName: agencyName,
-											},
-											comment: 'name of the agency that will be billed for the site',
-										}
-									) }
-								</p>
-							)
-						}
+						{ isDevelomentSite && (
+							<p>
+								{ translate(
+									'Once the site is launched, %(agencyName)s will be billed for this site in the next billing cycle.',
+									{
+										args: {
+											agencyName: agencyName,
+										},
+										comment: 'name of the agency that will be billed for the site',
+									}
+								) }
+							</p>
+						) }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
 					{
-						// TODO: add feature flag check
 						// TODO: add onClick handler
 						isDevelomentSite && (
 							<div className={ launchSiteClasses }>
