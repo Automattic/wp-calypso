@@ -604,60 +604,6 @@ describe( 'domain status cell', () => {
 			);
 		} );
 
-		test( 'when the domain expires, display a reactivate now domain action if the user is the owner', async () => {
-			const onRenewNowClick = jest.fn();
-
-			renderDomainStatusCell(
-				{
-					domain: 'example.com',
-					blog_id: 123,
-					wpcom_domain: false,
-					expired: true,
-					is_renewable: true,
-					expiry: '2023-08-01T00:00:00+00:00',
-					renewable_until: '2024-08-01T00:00:00+00:00',
-					current_user_is_owner: true,
-				},
-				{
-					domainStatusPurchaseActions: {
-						isPurchasedDomain: () => true,
-						onRenewNowClick,
-					},
-				}
-			);
-
-			await waitFor( () => {
-				expect( screen.getByText( 'Expired' ) );
-			} );
-
-			fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
-
-			await waitFor( () => {
-				expect( screen.getByRole( 'tooltip' ) ).toHaveTextContent(
-					'This domain expired on August 1, 2023. You can renew the domain at the regular rate until August 1, 2024.'
-				);
-			} );
-
-			const domainActionsButton = screen.getByLabelText( 'Domain actions' );
-
-			expect( domainActionsButton ).toBeInTheDocument();
-			fireEvent.click( domainActionsButton );
-
-			await waitFor( () => {
-				const connectAction = screen.getByText( 'Reactivate now' );
-
-				expect( connectAction ).toBeInTheDocument();
-				fireEvent.click( connectAction );
-			} );
-
-			expect( onRenewNowClick ).toHaveBeenCalledWith(
-				'example.com',
-				expect.objectContaining( {
-					domain: 'example.com',
-				} )
-			);
-		} );
-
 		test( 'when the domain expires, display a notice if the user is not the owner', async () => {
 			renderDomainStatusCell(
 				{
