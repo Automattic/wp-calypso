@@ -1,4 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "@automattic/typography/styles/variables";
 
 .formatted-header {
 	margin: 16px 0 24px;
