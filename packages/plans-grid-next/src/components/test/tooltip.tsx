@@ -2,17 +2,13 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import Tooltip from '../shared/tooltip';
 
-jest.mock( '@automattic/components', () => ( {
-	Tooltip: ( { children, isVisible } ) => ( isVisible ? children : null ),
-} ) );
-
 const tooltipId = 'tooltip-123';
 const tooltipAnchor = 'Hover me';
-const tooltipText = 'Wow, that was fun';
+const tooltipHoverText = 'Wow, that was fun';
 
 describe( 'Tooltip', () => {
 	it( 'should display the anchor', () => {
@@ -24,31 +20,59 @@ describe( 'Tooltip', () => {
 		expect( screen.getByText( tooltipAnchor ) ).toBeInTheDocument();
 	} );
 
-	it( 'should display the tooltip text when active', async () => {
-		render(
+	it( 'should display the tooltip hover text when it becomes active', async () => {
+		// Initially inactive
+		const { rerender } = render(
+			<Tooltip
+				id={ tooltipId }
+				activeTooltipId=""
+				text={ tooltipHoverText }
+				setActiveTooltipId={ () => {} }
+			>
+				{ tooltipAnchor }
+			</Tooltip>
+		);
+		// Becomes active
+		rerender(
 			<Tooltip
 				id={ tooltipId }
 				activeTooltipId={ tooltipId }
-				text={ tooltipText }
+				text={ tooltipHoverText }
 				setActiveTooltipId={ () => {} }
 			>
 				{ tooltipAnchor }
 			</Tooltip>
 		);
-		expect( screen.getByText( tooltipText ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( tooltipHoverText ) ).toBeInTheDocument();
+		} );
 	} );
 
-	it( 'should not display the tooltip text when inactive', async () => {
-		render(
+	it( 'should hide the tooltip hover text when it becomes inactive', async () => {
+		// Initially active
+		const { rerender } = render(
 			<Tooltip
 				id={ tooltipId }
-				activeTooltipId="another-tooltip-123"
-				text={ tooltipText }
+				activeTooltipId="tooltipId"
+				text={ tooltipHoverText }
 				setActiveTooltipId={ () => {} }
 			>
 				{ tooltipAnchor }
 			</Tooltip>
 		);
-		expect( screen.queryByText( tooltipText ) ).not.toBeInTheDocument();
+		// Becomes inactive
+		rerender(
+			<Tooltip
+				id={ tooltipId }
+				activeTooltipId=""
+				text={ tooltipHoverText }
+				setActiveTooltipId={ () => {} }
+			>
+				{ tooltipAnchor }
+			</Tooltip>
+		);
+		await waitFor( () => {
+			expect( screen.queryByText( tooltipHoverText ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
