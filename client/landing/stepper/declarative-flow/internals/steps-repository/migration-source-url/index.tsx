@@ -13,6 +13,7 @@ const MigrationSourceUrl: Step = ( props ) => {
 			subHeaderText={ translate(
 				"Just drop your site's URL below and our team will review and start your migration."
 			) }
+			showBack
 		/>
 	);
 };

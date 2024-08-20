@@ -207,6 +207,16 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					addQueryArgs( { siteId, siteSlug, from }, SITE_MIGRATION_ASSISTED_MIGRATION.slug )
 				);
 			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				const siteId = getFromPropsOrUrl( 'siteId', props );
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
+
+				return navigate(
+					addQueryArgs( { siteId, siteSlug }, MIGRATION_HOW_TO_MIGRATE.slug ),
+					{},
+					true
+				);
+			},
 		},
 	};
 };

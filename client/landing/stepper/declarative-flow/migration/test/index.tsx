@@ -58,6 +58,24 @@ describe( `${ flow.name }`, () => {
 		};
 	};
 
+	const runNavigationBack = ( { from, dependencies = {}, query = {} } ) => {
+		const { runUseStepNavigationGoBack } = renderFlow( flow );
+
+		runUseStepNavigationGoBack( {
+			currentStep: from.slug,
+			dependencies: dependencies,
+			currentURL: addQueryArgs( `/setup/${ from.slug }`, query ),
+		} );
+
+		const destination = getFlowLocation();
+		const [ pathname, searchParams ] = destination?.path?.split( '?' ) ?? [ '', '' ];
+
+		return {
+			step: pathname.replace( /^\/+/, '' ),
+			query: new URLSearchParams( searchParams ),
+		};
+	};
+
 	describe( 'useStepNavigation', () => {
 		describe( 'PLATFORM IDENTIFICATION STEP', () => {
 			it( 'redirects the user from PLATFORM IDENTIFICATION to CREATE SITE', () => {
@@ -313,6 +331,20 @@ describe( `${ flow.name }`, () => {
 						from: 'http://oldsite.example.com',
 					},
 				} );
+			} );
+		} );
+	} );
+
+	describe( 'useStepNavigation > goBack', () => {
+		it( 'redirect back user from SOURCE URL TO HOW TO MIGRATE', () => {
+			const destination = runNavigationBack( {
+				from: STEPS.MIGRATION_SOURCE_URL,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.MIGRATION_HOW_TO_MIGRATE,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 			} );
 		} );
 	} );
