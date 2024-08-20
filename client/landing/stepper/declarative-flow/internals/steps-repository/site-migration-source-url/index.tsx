@@ -83,7 +83,7 @@ const SiteMigrationSourceUrl: FC< SourceURLProps > = function ( {
 	subHeaderText,
 	stepName,
 	flow,
-	showBack = true,
+	showBack = false,
 } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
