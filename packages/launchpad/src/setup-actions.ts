@@ -15,6 +15,7 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'site_monitoring_page',
 	'front_page_updated',
 	'post_sharing_enabled',
+	'mobile_app_installed',
 ];
 
 export const setUpActionsForTasks = ( {
