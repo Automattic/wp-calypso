@@ -113,7 +113,7 @@
 
 		.site-selector-and-importer__popover-button-content {
 			@include break-large {
-				padding: 8px;
+				padding: 8px 8px 0 8px;
 			}
 		}
 	}
@@ -151,8 +151,9 @@
 
 	.site-selector-and-importer__popover-button-description {
 		font-size: rem(12px);
-		line-height: 1.7;
+		line-height: 1.33;
 		color: var(--color-accent);
+		padding-top: 4px;
 	}
 }
 
@@ -160,6 +161,7 @@
 	font-size: rem(12px);
 	font-style: italic;
 	color: var(--color-accent-100);
+	padding-top: 4px;
 }
 
 .site-selector-and-importer__popover-development-site-cta {
