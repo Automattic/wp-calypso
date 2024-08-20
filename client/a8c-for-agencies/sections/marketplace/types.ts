@@ -3,6 +3,7 @@ import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types
 export type ShoppingCartItem = APIProductFamilyProduct & {
 	quantity: number;
 	siteUrls?: string[];
+	licenseId?: number;
 };
 
 export type MarketplaceType = 'referral' | 'regular';

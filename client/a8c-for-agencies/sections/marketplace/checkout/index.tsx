@@ -3,7 +3,7 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useContext } from 'react';
+import { useCallback, useMemo, useContext, useEffect } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -24,6 +24,7 @@ import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-mark
 import useProductsById from '../hooks/use-products-by-id';
 import useProductsBySlug from '../hooks/use-products-by-slug';
 import useShoppingCart from '../hooks/use-shopping-cart';
+import useReferralDevSite from '../hosting-overview/hooks/use-referral-dev-site';
 import { getClientReferralQueryArgs } from '../lib/get-client-referral-query-args';
 import useSubmitForm from '../products-overview/product-listing/hooks/use-submit-form';
 import NoticeSummary from './notice-summary';
@@ -35,14 +36,20 @@ import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
 
-function Checkout( { isClient }: { isClient?: boolean } ) {
+interface Props {
+	isClient?: boolean;
+	referralBlogId?: number;
+}
+
+function Checkout( { isClient, referralBlogId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isAutomatedReferrals = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
-	const { selectedCartItems, onRemoveCartItem, onClearCart } = useShoppingCart();
+	const { selectedCartItems, onRemoveCartItem, onClearCart, setSelectedCartItems } =
+		useShoppingCart();
 
 	// Fetch selected products by slug for site checkout
 	const { selectedProductsBySlug } = useProductsBySlug();
@@ -118,6 +125,19 @@ function Checkout( { isClient }: { isClient?: boolean } ) {
 		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_cancel_purchase_click' ) );
 		page( A4A_SITES_LINK );
 	}, [ dispatch ] );
+
+	const { addReferralPlanToCart, isLoading: isLoadingReferralDevSite } = useReferralDevSite(
+		setSelectedCartItems,
+		referralBlogId
+	);
+
+	useEffect( () => {
+		// When the referralBlogId is present, add the referral plan to the cart.
+		if ( referralBlogId && ! isLoadingReferralDevSite ) {
+			addReferralPlanToCart();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ referralBlogId && isLoadingReferralDevSite ] );
 
 	const title = isAutomatedReferrals ? translate( 'Referral checkout' ) : translate( 'Checkout' );
 
