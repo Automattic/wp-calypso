@@ -93,6 +93,18 @@
 		justify-content: unset;
 	}
 
+	&.banner {
+		flex-direction: column;
+		/* padding: 16px; */
+
+		.site-selector-and-importer__popover-button-icon {
+			.sidebar__menu-icon {
+				width: 249px;
+				height: auto;
+			}
+		}
+	}
+
 	.site-selector-and-importer__popover-button-icon {
 		display: none;
 

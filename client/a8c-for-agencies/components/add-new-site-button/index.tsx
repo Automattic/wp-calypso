@@ -70,6 +70,7 @@ export default function AddNewSiteButton( {
 		iconClassName,
 		heading,
 		description,
+		isBanner,
 		buttonProps,
 		extraContent,
 	}: {
@@ -77,11 +78,16 @@ export default function AddNewSiteButton( {
 		iconClassName?: string;
 		heading: string;
 		description: string | TranslateResult;
+		isBanner?: boolean;
 		buttonProps?: React.ComponentProps< typeof Button >;
 		extraContent?: JSX.Element;
 	} ) => {
 		return (
-			<Button { ...buttonProps } className="site-selector-and-importer__popover-button" borderless>
+			<Button
+				{ ...buttonProps }
+				className={ clsx( 'site-selector-and-importer__popover-button', { banner: isBanner } ) }
+				borderless
+			>
 				<div className={ clsx( 'site-selector-and-importer__popover-button-icon', iconClassName ) }>
 					<Icon className="sidebar__menu-icon" icon={ icon } size={ ICON_SIZE } />
 				</div>
@@ -201,6 +207,7 @@ export default function AddNewSiteButton( {
 						description: translate(
 							'Try our hosting for free indefinitely. Only pay when you launch.'
 						),
+						isBanner: true,
 						buttonProps: {
 							onClick: () => {
 								if ( paymentMethodRequired ) {
@@ -214,19 +221,22 @@ export default function AddNewSiteButton( {
 							},
 						},
 						extraContent: hasAvailableDevSites ? (
-							<div className="site-selector-and-importer__popover-site-count">
-								{ translate(
-									'%(pendingSites)d site available',
-									'%(pendingSites)d sites available',
-									{
-										args: {
-											pendingSites: availableDevSites,
-										},
-										count: availableDevSites,
-										comment: '%(pendingSites)s is the number of sites available.',
-									}
-								) }
-							</div>
+							<>
+								<div className="site-selector-and-importer__popover-site-count">
+									{ translate(
+										'%(pendingSites)d site available',
+										'%(pendingSites)d sites available',
+										{
+											args: {
+												pendingSites: availableDevSites,
+											},
+											count: availableDevSites,
+											comment: '%(pendingSites)s is the number of sites available.',
+										}
+									) }
+								</div>
+								<div>{ translate( 'Create a site now →' ) }</div>
+							</>
 						) : undefined,
 					} ) }
 				</div>
