@@ -53,8 +53,8 @@ const HelpCenter: React.FC< Container > = ( {
 	const { hasActiveChats, isEligibleForChat } = useChatStatus();
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
-		isHelpCenterShown && isEligibleForChat,
-		isEligibleForChat
+		( isHelpCenterShown && isEligibleForChat ) || hasActiveChats,
+		isEligibleForChat || hasActiveChats
 	);
 
 	useZendeskMessagingBindings( HELP_CENTER_STORE, hasActiveChats, isMessagingScriptLoaded );
