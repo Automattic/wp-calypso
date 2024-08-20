@@ -235,7 +235,9 @@ export default function AddNewSiteButton( {
 										}
 									) }
 								</div>
-								<div>{ translate( 'Create a site now →' ) }</div>
+								<div className="site-selector-and-importer__popover-development-site-cta">
+									{ translate( 'Create a site now →' ) }
+								</div>
 							</>
 						) : undefined,
 					} ) }
