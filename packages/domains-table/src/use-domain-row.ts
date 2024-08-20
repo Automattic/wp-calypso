@@ -143,6 +143,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		: null;
 
 	const sslStatus = currentDomainData?.sslStatus ?? null;
+	const hasWpcomManagedSslCert = currentDomainData?.hasWpcomManagedSslCert;
 
 	return {
 		ref,
@@ -165,5 +166,6 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		currentDomainData,
 		showBulkActions,
 		sslStatus,
+		hasWpcomManagedSslCert,
 	};
 };

@@ -118,6 +118,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		) as TitanEmailSubscription,
 		hasPendingContactUpdate: Boolean( domain.has_pending_contact_update ),
 		hasRegistration: Boolean( domain.has_registration ),
+		hasWpcomManagedSslCert: Boolean( domain.has_wpcom_managed_ssl_cert ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
 		isDnssecEnabled: Boolean( domain.is_dnssec_enabled ),

@@ -49,6 +49,7 @@ export interface DomainData {
 	partner_domain: boolean;
 	wpcom_domain: boolean;
 	has_pending_contact_update: boolean;
+	has_wpcom_managed_ssl_cert: boolean;
 	has_zone: boolean;
 	is_dnssec_enabled: boolean;
 	is_dnssec_supported: boolean;

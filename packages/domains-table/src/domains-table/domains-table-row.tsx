@@ -45,6 +45,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		domainStatus,
 		pendingUpdates,
 		sslStatus,
+		hasWpcomManagedSslCert,
 	} = useDomainRow( domain );
 	const { canSelectAnyDomains, domainsTableColumns, isCompact } = useDomainsTable();
 
@@ -205,6 +206,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 							key={ domain.domain + column.name }
 							domainManagementLink={ domainManagementLink }
 							sslStatus={ sslStatus }
+							hasWpcomManagedSslCert={ hasWpcomManagedSslCert }
 						/>
 					);
 				}
