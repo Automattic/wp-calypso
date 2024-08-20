@@ -48,9 +48,9 @@ export class Notifications extends PureComponent {
 		receiveMessage: noop,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		debug( 'component will mount', this.props );
+	constructor( props ) {
+		super( props );
+
 		const { customEnhancer, customMiddleware, isShowing, isVisible, receiveMessage, wpcom } =
 			this.props;
 

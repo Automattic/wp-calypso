@@ -37,8 +37,9 @@ export class NoteList extends Component {
 
 	noteElements = {};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	constructor( props ) {
+		super( props );
+
 		this.props.global.updateStatusBar = this.updateStatusBar;
 		this.props.global.resetStatusBar = this.resetStatusBar;
 		this.props.global.updateUndoBar = this.updateUndoBar;
