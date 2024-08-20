@@ -122,7 +122,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					} );
 				}
 
-				return navigate( addQueryArgs( { platform }, SITE_CREATION_STEP.slug ), {}, true );
+				return navigate( addQueryArgs( { platform }, SITE_CREATION_STEP.slug ), {} );
 			},
 		},
 		[ SITE_CREATION_STEP.slug ]: {
