@@ -205,7 +205,11 @@ export default function AddNewSiteButton( {
 						icon: <img src={ devSiteBanner } alt="WordPress.com Development Site" />,
 						heading: translate( 'WordPress.com Development Site' ),
 						description: translate(
-							'Try our hosting for free indefinitely. Only pay when you launch.'
+							'Try our hosting for free indefinitely.{{br/}}Only pay when you launch.',
+							{
+								components: { br: <br /> },
+								comment: 'br is a line break',
+							}
 						),
 						isBanner: true,
 						buttonProps: {
@@ -221,7 +225,7 @@ export default function AddNewSiteButton( {
 							},
 						},
 						extraContent: hasAvailableDevSites ? (
-							<>
+							<div>
 								<div className="site-selector-and-importer__popover-site-count">
 									{ translate(
 										'%(pendingSites)d site available',
@@ -238,7 +242,7 @@ export default function AddNewSiteButton( {
 								<div className="site-selector-and-importer__popover-development-site-cta">
 									{ translate( 'Create a site now →' ) }
 								</div>
-							</>
+							</div>
 						) : undefined,
 					} ) }
 				</div>
