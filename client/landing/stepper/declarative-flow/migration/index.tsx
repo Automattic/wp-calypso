@@ -189,6 +189,13 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					return navigateToCheckout( { siteId, siteSlug, plan, props } );
 				}
 			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
+				const plan = getFromPropsOrUrl( 'plan', props ) as string;
+
+				return navigate( addQueryArgs( { siteId, siteSlug, plan }, PLATFORM_IDENTIFICATION.slug ) );
+			},
 		},
 		[ MIGRATION_HOW_TO_MIGRATE.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {

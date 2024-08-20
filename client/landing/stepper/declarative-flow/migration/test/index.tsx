@@ -378,4 +378,16 @@ describe( `${ flow.name }`, () => {
 			} );
 		} );
 	} );
+
+	it( 'redirect back user from MIGRATION_UPGRADE_PLAN > PLATFORM_IDENTIFICATION', () => {
+		const destination = runNavigationBack( {
+			from: STEPS.MIGRATION_UPGRADE_PLAN,
+			query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
+		} );
+
+		expect( destination ).toMatchDestination( {
+			step: STEPS.PLATFORM_IDENTIFICATION,
+			query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
+		} );
+	} );
 } );
