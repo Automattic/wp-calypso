@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import moment from 'moment';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Props {
 	id: string;
@@ -17,24 +17,27 @@ const DateInput: React.FC< Props > = ( {
 	id,
 	max = moment().format( 'YYYY-MM-DD' ),
 } ) => {
+	const [ inputValue, setInputValue ] = useState( value );
+
+	useEffect( () => {
+		setInputValue( value );
+	}, [ value ] );
+
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		onChange && onChange( event.target.value );
+		// track value internally
+		setInputValue( event?.target?.value );
 	};
 
-	const toDateString = ( date: moment.MomentInput ) => {
-		if ( moment.isMoment( date ) || moment( date ).isValid() ) {
-			return moment( date ).format( 'YYYY-MM-DD' );
-		}
-		return moment().format( 'YYYY-MM-DD' );
-	};
+	const handleBlur = ( event: React.FocusEvent< HTMLInputElement > ) => {
+		const value = event?.target?.value;
 
-	const handleBlur = () => {
 		if ( isNewCalendar ) {
 			const isValid = moment( value, 'YYYY-MM-DD', true ).isValid();
+
 			if ( ! isValid ) {
-				onChange && onChange( moment().format( 'YYYY-MM-DD' ) );
+				setInputValue( moment().format( 'YYYY-MM-DD' ) );
 			} else {
-				toDateString( value );
+				onChange?.( value );
 			}
 		}
 	};
@@ -44,8 +47,9 @@ const DateInput: React.FC< Props > = ( {
 			{ isNewCalendar ? (
 				<input
 					id={ id }
+					className="stats-date-control-picker-dates__input"
 					type="text"
-					value={ value }
+					value={ inputValue }
 					onChange={ handleChange }
 					onBlur={ handleBlur } // Add onBlur event for validation
 					placeholder="YYYY-MM-DD" // Placeholder text in input field
