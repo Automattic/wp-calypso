@@ -20,7 +20,7 @@ export const HelpCenterArticle = () => {
 	const { data: post, isLoading, error } = usePostByUrl( postUrl );
 
 	useEffect( () => {
-		let timeoutId: number;
+		let timeoutId: ReturnType< typeof setTimeout >;
 		if ( postUrl?.includes( '#' ) && post?.content ) {
 			const anchorId = postUrl.split( '#' ).pop();
 			if ( anchorId ) {
