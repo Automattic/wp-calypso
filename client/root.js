@@ -6,7 +6,13 @@ import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selector
 import getIsSubscriptionOnly from 'calypso/state/selectors/get-is-subscription-only';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
-import { canCurrentUserUseCustomerHome, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	canCurrentUserUseCustomerHome,
+	getSite,
+	getSiteSlug,
+	getSiteOption,
+	getSiteUrl,
+} from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 
 /**
@@ -41,7 +47,12 @@ async function handleLoggedIn( page, context ) {
 		redirectPath += `?${ context.querystring }`;
 	}
 
-	page.redirect( redirectPath );
+	if ( redirectPath.startsWith( '/' ) ) {
+		page.redirect( redirectPath );
+	} else {
+		// Case for wp-admin redirection when primary site has classic admin interface.
+		window.location.assign( redirectPath );
+	}
 }
 
 // Helper thunk that ensures that the requested site info is fetched into Redux state before we
@@ -85,8 +96,10 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	// ensure that the primary site info is loaded into Redux before proceeding.
 	const primarySiteId = getPrimarySiteId( getState() );
 	await dispatch( waitForSite( primarySiteId ) );
-
 	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
+	const primarySiteURL = getSiteUrl( getState(), primarySiteId );
+	const adminInterface = getSiteOption( getState(), primarySiteId, 'wpcom_admin_interface' );
+	const isClassicAdmin = adminInterface === 'wp-admin';
 
 	if ( ! primarySiteSlug ) {
 		if ( getIsSubscriptionOnly( getState() ) ) {
@@ -99,6 +112,10 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( getState(), primarySiteId );
 
 	if ( isCustomerHomeEnabled ) {
+		if ( isClassicAdmin ) {
+			// This URL starts with 'https://' because it's the access to wp-admin.
+			return `${ primarySiteURL }/wp-admin/`;
+		}
 		return `/home/${ primarySiteSlug }`;
 	}
 
