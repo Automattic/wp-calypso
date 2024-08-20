@@ -20,6 +20,7 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => 
 		...( filter.showOnlyFavorites && { show_only_favorites: true } ),
 		...( filter.isNotMultisite && { not_multisite: true } ),
 		...( filter?.showOnlyFavorites && { show_only_favorites: true } ),
+		...( filter?.showOnlyDevelopmentSites && { show_only_dev_sites: true } ),
 	};
 };
 
@@ -97,6 +98,7 @@ const useFetchDashboardSites = ( {
 				sites: data.sites,
 				total: data.total,
 				perPage: data.per_page,
+				totalDevelopmentSites: data.total_dev_sites,
 				totalFavorites: data.total_favorites,
 			};
 		},
