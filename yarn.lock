@@ -1326,6 +1326,32 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/masterbar-cart@workspace:apps/masterbar-cart":
+  version: 0.0.0-use.local
+  resolution: "@automattic/masterbar-cart@workspace:apps/masterbar-cart"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/mini-cart": "workspace:^"
+    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
+    "@emotion/react": ^11.4.1
+    autoprefixer: ^10.2.5
+    enzyme: ^3.11.0
+    html-webpack-plugin: ^5.0.0-beta.4
+    jest: ^27.3.1
+    postcss: ^8.4.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-query: ^3.32.1
+    redux: ^4.1.2
+    webpack: ^5.65.0
+    webpack-bundle-analyzer: ^4.5.0
+    webpack-dev-server: ^4.7.2
+    wpcom: "workspace:^"
+    wpcom-proxy-request: "workspace:^"
+    wpcom-xhr-request: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/material-design-icons@workspace:^, @automattic/material-design-icons@workspace:packages/material-design-icons":
   version: 0.0.0-use.local
   resolution: "@automattic/material-design-icons@workspace:packages/material-design-icons"
