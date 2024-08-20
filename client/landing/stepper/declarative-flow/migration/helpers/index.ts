@@ -1,6 +1,6 @@
 import { MIGRATION_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
-import { addQueryArgs } from '@wordpress/url';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
+import { addQueryArgs } from 'calypso/lib/url';
 import { getFinalImporterUrl } from '../../internals/steps-repository/import/helper';
 import { StepperStep } from '../../internals/types';
 
@@ -43,12 +43,15 @@ export const goToImporter = ( {
 		return goTo( path, replaceHistory );
 	}
 
-	const stepURL = addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ path }`, {
-		siteId,
-		siteSlug,
-		ref: MIGRATION_FLOW,
-		...( platform === 'wordpress' ? { option: 'content' } : {} ),
-	} );
+	const stepURL = addQueryArgs(
+		{
+			siteId,
+			siteSlug,
+			ref: MIGRATION_FLOW,
+			...( platform === 'wordpress' ? { option: 'content' } : {} ),
+		},
+		`/setup/${ SITE_SETUP_FLOW }/${ path }`
+	);
 
 	return goTo( stepURL, replaceHistory );
 };
