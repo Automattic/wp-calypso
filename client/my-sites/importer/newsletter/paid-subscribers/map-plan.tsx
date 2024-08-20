@@ -26,6 +26,20 @@ type Product = {
 	interval: string;
 };
 
+type TierToAdd = {
+	currency: string;
+	price: number;
+	type: string;
+	title: string;
+	interval: string;
+	annualProduct: {
+		currency: string;
+		price: number;
+		type: string;
+		interval: string;
+	};
+};
+
 type MapPlanProps = {
 	plan: Plan;
 	products: Array< Product >;
@@ -33,8 +47,8 @@ type MapPlanProps = {
 	siteId: string;
 	engine: string;
 	currentStep: string;
-	onProductAdd: () => void;
-	tierToAdd: any;
+	onProductAdd: ( arg0: TierToAdd | null ) => void;
+	tierToAdd: TierToAdd;
 };
 
 function displayProduct( product: Product | undefined ) {
