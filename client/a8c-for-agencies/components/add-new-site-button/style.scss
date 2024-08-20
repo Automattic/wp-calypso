@@ -95,8 +95,12 @@
 
 	&.banner {
 		flex-direction: column;
+		padding-top: 0;
 		gap: 4px;
-		padding: 16px;
+
+		@include break-large {
+			padding: 16px;
+		}
 
 		.site-selector-and-importer__popover-button-icon {
 			height: 78px;
@@ -108,7 +112,9 @@
 		}
 
 		.site-selector-and-importer__popover-button-content {
-			padding: 8px;
+			@include break-large {
+				padding: 8px;
+			}
 		}
 	}
 
