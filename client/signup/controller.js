@@ -278,6 +278,12 @@ export default {
 			flow: flowName,
 		};
 
+		// Clean me up after the experiment is over (see: pdDR7T-1xi-p2)
+		// This is kept for documentation purposes.
+		// if ( isOnboardingGuidedFlow( flowName ) ) {
+		// 	params.trailmap_variant = initialContext.trailMapExperimentVariant || 'control';
+		// }
+
 		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, params );
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
@@ -285,12 +291,6 @@ export default {
 
 		const searchParams = new URLSearchParams( window.location.search );
 		const isAddNewSiteFlow = searchParams.has( 'ref' );
-
-		// Clean me up after the experiment is over (see: pdDR7T-1xi-p2)
-		// This is kept for documentation purposes.
-		// if ( isOnboardingGuidedFlow( flowName ) ) {
-		// 	params.trailmap_variant = initialContext.trailMapExperimentVariant || 'control';
-		// }
 
 		if ( isAddNewSiteFlow ) {
 			clearSignupDestinationCookie();
