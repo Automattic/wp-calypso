@@ -21,7 +21,8 @@
 	font-size: rem(14px);
 
 	.status-badge {
-		border-radius: 2px;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 12px;
 	}
 }
 
