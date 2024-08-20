@@ -173,6 +173,10 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	font-family: $highlight-card-count-font;
 	line-height: 1;
 	margin-right: 8px;
+
+	&.is-loading {
+			@include placeholder();
+	}
 }
 
 .highlight-card-difference {

@@ -94,7 +94,9 @@ export default function CountComparisonCard( {
 				onMouseLeave={ () => setTooltipVisible( false ) }
 			>
 				<span
-					className="highlight-card-count-value"
+					className={ classNames( 'highlight-card-count-value', {
+						'is-loading': ! Number.isFinite( count ),
+					} ) }
 					title={ Number.isFinite( count ) ? String( count ) : undefined }
 					ref={ textRef }
 				>
