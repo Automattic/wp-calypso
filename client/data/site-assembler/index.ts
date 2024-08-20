@@ -32,5 +32,5 @@ export const useIsSiteAssemblerEnabledExp = (
 		return false;
 	}
 
-	return true;
+	return isLoggedIn;
 };
