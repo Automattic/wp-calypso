@@ -117,7 +117,7 @@ declare global {
 }
 
 expect.extend( {
-	toMatchDestination: ( destination, expected: MatchDestinationParams ) => {
+	toMatchDestination( destination, expected: MatchDestinationParams ) {
 		const isSameStep = destination.step === expected.step.slug;
 
 		if ( expected.query instanceof URLSearchParams === false ) {
@@ -146,7 +146,11 @@ expect.extend( {
 		if ( ! isSameQuery ) {
 			return {
 				message: () =>
-					`expected ${ destination.query } to match ${ expected.query } but the query is different`,
+					`Expected query: ${ this.utils.printExpected(
+						decodeURIComponent( expected.query.toString() )
+					) } \nReceived query: ${ this.utils.printReceived(
+						decodeURIComponent( destination.query.toString() )
+					) }`,
 				pass: false,
 			};
 		}
