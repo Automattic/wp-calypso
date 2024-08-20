@@ -122,7 +122,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					} );
 				}
 
-				return navigate( addQueryArgs( { platform }, SITE_CREATION_STEP.slug ), {}, true );
+				return navigate( addQueryArgs( { platform }, SITE_CREATION_STEP.slug ), {} );
 			},
 		},
 		[ SITE_CREATION_STEP.slug ]: {
@@ -146,6 +146,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 						siteId,
 						siteSlug,
 						backToStep: PLATFORM_IDENTIFICATION,
+						replaceHistory: true,
 					} );
 				}
 
@@ -187,6 +188,13 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				if ( props?.goToCheckout ) {
 					return navigateToCheckout( { siteId, siteSlug, plan, props } );
 				}
+			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
+				const plan = getFromPropsOrUrl( 'plan', props ) as string;
+
+				return navigate( addQueryArgs( { siteId, siteSlug, plan }, PLATFORM_IDENTIFICATION.slug ) );
 			},
 		},
 		[ MIGRATION_HOW_TO_MIGRATE.slug ]: {

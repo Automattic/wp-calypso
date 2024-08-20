@@ -126,7 +126,7 @@ describe( `${ flow.name }`, () => {
 					},
 				} );
 
-				expect( window.location.replace ).toHaveBeenCalledWith(
+				expect( window.location.assign ).toHaveBeenCalledWith(
 					addQueryArgs( '/setup/site-setup/importerBlogger', {
 						siteSlug: 'example.wordpress.com',
 						from: '',
@@ -290,7 +290,7 @@ describe( `${ flow.name }`, () => {
 					},
 				} );
 
-				expect( window.location.replace ).toHaveBeenCalledWith(
+				expect( window.location.assign ).toHaveBeenCalledWith(
 					addQueryArgs( '/setup/site-setup/importerWordpress', {
 						siteSlug: 'example.wordpress.com',
 						from: '',
@@ -376,6 +376,18 @@ describe( `${ flow.name }`, () => {
 				step: STEPS.MIGRATION_HOW_TO_MIGRATE,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 			} );
+		} );
+	} );
+
+	it( 'redirect back user from MIGRATION_UPGRADE_PLAN > PLATFORM_IDENTIFICATION', () => {
+		const destination = runNavigationBack( {
+			from: STEPS.MIGRATION_UPGRADE_PLAN,
+			query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
+		} );
+
+		expect( destination ).toMatchDestination( {
+			step: STEPS.PLATFORM_IDENTIFICATION,
+			query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
 		} );
 	} );
 } );
