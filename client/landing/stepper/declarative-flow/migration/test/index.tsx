@@ -9,6 +9,7 @@ import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import flow from '../';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../../constants';
 import { STEPS } from '../../internals/steps';
+import { MigrationUpgradePlanActions } from '../../internals/steps-repository/migration-upgrade-plan/actions';
 import { getFlowLocation, renderFlow } from '../../test/helpers';
 
 // we need to save the original object for later to not affect tests from other files
@@ -19,9 +20,9 @@ jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
 jest.mock( 'calypso/landing/stepper/utils/checkout' );
 
 describe( `${ flow.name }`, () => {
-	beforeAll( () => {
+	beforeEach( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
+			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
 		} );
 	} );
 
@@ -58,141 +59,260 @@ describe( `${ flow.name }`, () => {
 	};
 
 	describe( 'useStepNavigation', () => {
-		it( 'redirects the user from platform identification to create site step', () => {
-			const destination = runNavigation( {
-				from: STEPS.PLATFORM_IDENTIFICATION,
-				dependencies: { platform: 'any-platform', url: 'next-url' },
+		describe( 'PLATFORM IDENTIFICATION STEP', () => {
+			it( 'redirects the user from PLATFORM IDENTIFICATION to CREATE SITE', () => {
+				const destination = runNavigation( {
+					from: STEPS.PLATFORM_IDENTIFICATION,
+					dependencies: { platform: 'any-platform', url: 'importerBlogger' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_CREATION_STEP,
+					query: { importer: 'importerBlogger' },
+				} );
 			} );
 
-			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_CREATION_STEP,
-				query: { platform: 'any-platform', next: 'next-url' },
+			it( 'redirects the user from PLATFORM IDENTIFICATION to CREATE SITE without passing the importer param when the user select WordPress', () => {
+				const destination = runNavigation( {
+					from: STEPS.PLATFORM_IDENTIFICATION,
+					dependencies: { platform: 'wordpress', url: 'next-url' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_CREATION_STEP,
+					query: {},
+				} );
+			} );
+
+			it( 'redirects the user from PLATFORM IDENTIFICATION to UPGRADE PLAN when the user already have a site and selects WordPress', () => {
+				const destination = runNavigation( {
+					from: STEPS.PLATFORM_IDENTIFICATION,
+					dependencies: { siteId: 123, siteSlug: 'example.wordpress.com', platform: 'wordpress' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.MIGRATION_UPGRADE_PLAN,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+			} );
+
+			it( 'redirects the user from PLATFORM IDENTIFICATION to IMPORT when siteSlug/siteId is available', async () => {
+				runNavigation( {
+					from: STEPS.PLATFORM_IDENTIFICATION,
+					dependencies: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						platform: 'blogger',
+						url: 'importBlogger',
+					},
+				} );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					addQueryArgs( '/setup/site-setup/importBlogger', {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					} )
+				);
 			} );
 		} );
 
-		it( 'redirects the user from platform identification to create site step without passing the next when the user select WordPress', () => {
-			const destination = runNavigation( {
-				from: STEPS.PLATFORM_IDENTIFICATION,
-				dependencies: { platform: 'wordpress', next: 'next-url' },
+		describe( 'SITE_CREATION STEP', () => {
+			it( 'redirects user from SITE_CREATION to PROCESSING', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_CREATION_STEP,
+					query: {},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.PROCESSING,
+					query: {},
+				} );
 			} );
 
-			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_CREATION_STEP,
-				query: { platform: 'wordpress' },
+			it( 'redirects user from SITE_CREATION to PROCESSING passing the importer param', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_CREATION_STEP,
+					query: { importer: 'any-importer' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.PROCESSING,
+					query: { importer: 'any-importer' },
+				} );
 			} );
 		} );
 
-		it( 'redirects user from site-create to processing passing the platform', () => {
-			const destination = runNavigation( {
-				from: STEPS.SITE_CREATION_STEP,
-				query: { platform: 'any-platform' },
+		describe( 'PROCESSING STEP', () => {
+			it( 'redirect user from PROCESSING to IMPORTER when an importer is available', () => {
+				runNavigation( {
+					from: STEPS.PROCESSING,
+					query: {
+						importer: 'importBlogger',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+				} );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					addQueryArgs( '/setup/site-setup/importBlogger', {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					} )
+				);
 			} );
 
-			expect( destination ).toMatchDestination( {
-				step: STEPS.PROCESSING,
-				query: { platform: 'any-platform' },
-			} );
-		} );
+			it( 'redirect user from PROCESSING to UPGRADE PLAN when no importer is available', () => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					query: {},
+					dependencies: { siteSlug: 'example.wordpress.com', siteId: 123 },
+				} );
 
-		it( 'redirect user from processing to the import file when the platform is not wordpress', () => {
-			runNavigation( {
-				from: STEPS.PROCESSING,
-				query: {
-					platform: 'blogger',
-					next: 'importBlogger',
-					siteId: 123,
+				expect( destination ).toMatchDestination( {
+					step: STEPS.MIGRATION_UPGRADE_PLAN,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+			} );
+
+			it( 'redirects user from PROCESSING > Checkout page when plan is already selected', () => {
+				runNavigation( {
+					from: STEPS.PROCESSING,
+					query: {
+						platform: 'wordpress',
+						plan: 'business',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+				} );
+
+				expect( goToCheckout ).toHaveBeenCalledWith( {
+					destination: `/setup/migration/migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com`,
+					extraQueryParams: { introductoryOffer: '1' },
+					flowName: 'migration',
 					siteSlug: 'example.wordpress.com',
-				},
+					stepName: STEPS.MIGRATION_UPGRADE_PLAN.slug,
+					cancelDestination: `/setup/migration/migration-upgrade-plan?platform=wordpress&plan=business&siteId=123&siteSlug=example.wordpress.com`,
+					plan: 'business-bundle',
+					forceRedirection: true,
+				} );
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-setup/importBlogger?siteId=123&siteSlug=example.wordpress.com'
-			);
-		} );
+			it( 'redirects user from PROCESSING to UPGRADE PLAN when the plan is selected but unknown', () => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					query: {
+						platform: 'wordpress',
+						plan: 'unknown',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+				} );
 
-		it( 'redirect user from processing to the upgrade plan when the platform is wordpress', () => {
-			const destination = runNavigation( {
-				from: STEPS.PROCESSING,
-				query: { platform: 'wordpress' },
-				dependencies: { siteSlug: 'example.wordpress.com', siteId: 123 },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-			} );
-		} );
-
-		it( 'redirects user from Upgrade plan > Checkout page', () => {
-			runNavigation( {
-				from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-				dependencies: { goToCheckout: true, plan: 'business', userAcceptedDeal: false },
-			} );
-
-			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination: `/setup/migration/migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com`,
-				extraQueryParams: undefined,
-				flowName: 'migration',
-				siteSlug: 'example.wordpress.com',
-				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-				cancelDestination: `/setup/migration/site-migration-upgrade-plan?siteId=123&siteSlug=example.wordpress.com`,
-				plan: 'business',
+				expect( destination ).toMatchDestination( {
+					step: STEPS.MIGRATION_UPGRADE_PLAN,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
 			} );
 		} );
 
-		it( 'redirects user from How To Migrate > Instructions when they select the option "do it myself"', () => {
-			const destination = runNavigation( {
-				from: STEPS.MIGRATION_HOW_TO_MIGRATE,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-				dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF },
-			} );
+		describe( 'MIGRATION_UPGRADE_PLAN STEP', () => {
+			it( 'redirects user from MIGRATION_UPGRADE_PLAN to Checkout page', () => {
+				runNavigation( {
+					from: STEPS.MIGRATION_UPGRADE_PLAN,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { goToCheckout: true, plan: 'business', userAcceptedDeal: false },
+				} );
 
-			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_MIGRATION_INSTRUCTIONS,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-			} );
-		} );
-
-		it( 'redirects user from How To Migrate > Capture Source URL when they selects the option "do it for me"', () => {
-			const destination = runNavigation( {
-				from: STEPS.MIGRATION_HOW_TO_MIGRATE,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-				dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.MIGRATION_SOURCE_URL,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-			} );
-		} );
-
-		it( 'redirects users from Instructions > Migration started', () => {
-			const destination = runNavigation( {
-				from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_MIGRATION_STARTED,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-			} );
-		} );
-
-		it( 'redirects users from Capture Source URL > Migration assisted', () => {
-			const destination = runNavigation( {
-				from: STEPS.MIGRATION_SOURCE_URL,
-				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-				dependencies: { from: 'http://oldsite.example.com' },
-			} );
-
-			expect( destination ).toMatchDestination( {
-				step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
-				query: {
-					siteId: 123,
+				expect( goToCheckout ).toHaveBeenCalledWith( {
+					destination: `/setup/migration/migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com`,
+					extraQueryParams: undefined,
+					flowName: 'migration',
 					siteSlug: 'example.wordpress.com',
-					from: 'http://oldsite.example.com',
-				},
+					stepName: STEPS.MIGRATION_UPGRADE_PLAN.slug,
+					cancelDestination: `/setup/migration/migration-upgrade-plan?siteId=123&siteSlug=example.wordpress.com`,
+					plan: 'business',
+				} );
+			} );
+
+			it( 'redirects user from MIGRATION_UPGRADE_PLAN to Import when user they decide do it', () => {
+				runNavigation( {
+					from: STEPS.MIGRATION_UPGRADE_PLAN,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: {
+						goToCheckout: false,
+						action: MigrationUpgradePlanActions.IMPORT_CONTENT_ONLY,
+					},
+				} );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					addQueryArgs( '/setup/site-setup/importerWordpress', {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						backToFlow: 'migration/migration-upgrade-plan',
+						option: 'content',
+					} )
+				);
+			} );
+		} );
+
+		describe( 'MIGRATION_HOW_TO_MIGRATE STEP', () => {
+			it( 'redirects user from How To Migrate to Site Instructions when they select the option "do it myself"', () => {
+				const destination = runNavigation( {
+					from: STEPS.MIGRATION_HOW_TO_MIGRATE,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_INSTRUCTIONS,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+			} );
+
+			it( 'redirects user from How To Migrate to Capture Source URL when they selects the option "do it for me"', () => {
+				const destination = runNavigation( {
+					from: STEPS.MIGRATION_HOW_TO_MIGRATE,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.MIGRATION_SOURCE_URL,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+			} );
+		} );
+
+		describe( 'SITE_MIGRATION_INSTRUCTIONS STEP', () => {
+			it( 'redirects users from Instructions to Migration started', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_STARTED,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+			} );
+		} );
+
+		describe( 'MIGRATION_SOURCE_URL', () => {
+			it( 'redirects users from Capture Source URL to Migration assisted', () => {
+				const destination = runNavigation( {
+					from: STEPS.MIGRATION_SOURCE_URL,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					dependencies: { from: 'http://oldsite.example.com' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'http://oldsite.example.com',
+					},
+				} );
 			} );
 		} );
 	} );

@@ -1,0 +1,26 @@
+.performance-profiler-disclaimer {
+	display: flex;
+	padding: 64px 0;
+	justify-content: center;
+	align-items: flex-end;
+	gap: 10px;
+
+	color: var(--studio-gray-70);
+	font-size: $font-body-extra-small;
+	line-height: $font-title-small;
+
+	.link {
+		width: 470px;
+		flex-shrink: 0;
+		text-align: right;
+
+		&:hover {
+			text-decoration: underline;
+		}
+
+		a,
+		a:visited {
+			color: var(--studio-gray-70);
+		}
+	}
+}

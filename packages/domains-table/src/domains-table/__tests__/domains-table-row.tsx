@@ -442,7 +442,8 @@ describe( 'expires or renew on cell', () => {
 			isAllSitesView: true,
 		} );
 
-		expect( screen.getByText( '-' ) ).toBeInTheDocument();
+		const expiresRenewsOnCell = screen.getByTestId( 'expires-renews-on' );
+		expect( expiresRenewsOnCell ).toHaveTextContent( '-' );
 	} );
 } );
 

@@ -4,7 +4,6 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useEffect } from '@wordpress/element';
 import { localize } from 'i18n-calypso';
 import { Fragment, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
@@ -19,7 +18,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
-import { useHash } from 'calypso/landing/stepper/hooks/use-hash.ts';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
@@ -139,31 +137,6 @@ const Hosting = ( props ) => {
 		isSiteAtomic,
 		transferState,
 	} = props;
-
-	const hash = useHash();
-	useEffect( () => {
-		if ( [ '#php', '#wp' ].includes( hash ) ) {
-			let count = 0;
-			const interval = setInterval( () => {
-				let targetElement;
-				if ( hash === '#php' ) {
-					targetElement = document.querySelector( '[data-scroll-id="php-version-select"]' );
-				} else if ( hash === '#wp' ) {
-					targetElement = document.querySelector( '[data-scroll-id="wp-version-select"]' );
-				}
-
-				if ( targetElement ) {
-					targetElement.scrollIntoView( { behavior: 'smooth' } );
-					clearInterval( interval );
-				}
-
-				count++;
-				if ( count > 15 ) {
-					clearInterval( interval );
-				}
-			}, 300 );
-		}
-	}, [ hash ] );
 
 	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
 	const [ hasTransfer, setHasTransferring ] = useState(

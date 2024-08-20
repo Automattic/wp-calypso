@@ -1,10 +1,12 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import './style.scss';
 import photoBanner from 'calypso/assets/images/blaze/woo-blaze-banner@3x.png';
 import BlazeLogo from 'calypso/components/blaze-logo';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 
-export default function WooBanner() {
+export default function BlazePluginBanner() {
+	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
 	return (
 		<div className="posts-list-woo-banner__container">
 			<div className="posts-list-banner__content">
@@ -17,9 +19,13 @@ export default function WooBanner() {
 						{ translate( 'Transform your content to an ad with a click.' ) }
 					</div>
 					<div className="posts-list-banner__description">
-						{ translate(
-							'Increase your sales by promoting your products and pages across millions of blogs and sites.'
-						) }
+						{ isWooBlaze
+							? translate(
+									'Increase your sales by promoting your products and pages across millions of blogs and sites.'
+							  )
+							: translate(
+									'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
+							  ) }
 					</div>
 				</section>
 				<section className="posts-list-banner__img-section">
