@@ -44,13 +44,15 @@ const ImporterMigrateMessage: Step = () => {
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
 			path: window.location.pathname,
 		} );
-		sendTicket( {
-			locale,
-			from_url: fromUrl,
-			blog_url: siteSlug,
-		} );
+		if ( ! config.isEnabled( 'automated-migration/collect-credentials' ) || isCredentialsSkipped ) {
+			sendTicket( {
+				locale,
+				from_url: fromUrl,
+				blog_url: siteSlug,
+			} );
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ isCredentialsSkipped, config, fromUrl, siteSlug ] );
 	let whatToExpect: WhatToExpectProps[] = [];
 	let actions: ActionsProps[] = [];
 
