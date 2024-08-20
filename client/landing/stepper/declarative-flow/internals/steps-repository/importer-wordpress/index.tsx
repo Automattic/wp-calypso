@@ -1,4 +1,4 @@
-import { StepNavigationLink } from '@automattic/onboarding';
+import { StepNavigationLink, MIGRATION_FLOW } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import WordpressImporter from 'calypso/blocks/importer/wordpress';
@@ -33,10 +33,8 @@ const ImporterWordpress: FC< Props > = function ( props ) {
 		migrateFrom
 	);
 
-	const customizedActionLabel = queryParams.get( 'customizedActionLabel' );
 	let customizedActionButtons;
-
-	if ( customizedActionLabel ) {
+	if ( queryParams.get( 'ref' ) === MIGRATION_FLOW ) {
 		customizedActionButtons = (
 			<StepNavigationLink
 				direction="forward"

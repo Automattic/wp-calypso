@@ -448,17 +448,17 @@ const siteSetupFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					const customizedActionFlow = urlQueryParams.get( 'customizedActionFlow' );
-
 					switch ( providedDependencies?.action ) {
 						case 'verify-email':
 							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
 						case 'checkout':
 							return exitFlow( providedDependencies?.checkoutUrl as string );
-						case 'customized-action-flow':
-							if ( customizedActionFlow ) {
-								return goToFlow( customizedActionFlow );
+						case 'migrate-entire-site': {
+							const migrateEntireSiteFlow = urlQueryParams.get( 'migrateEntireSiteFlow' );
+							if ( migrateEntireSiteFlow ) {
+								return goToFlow( migrateEntireSiteFlow );
 							}
+						}
 						default:
 							return navigate( providedDependencies?.url as string );
 					}

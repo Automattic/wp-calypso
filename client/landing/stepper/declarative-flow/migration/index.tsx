@@ -5,7 +5,6 @@ import {
 	PLAN_BUSINESS_3_YEARS,
 } from '@automattic/calypso-products';
 import { MIGRATION_FLOW } from '@automattic/onboarding';
-import { translate } from 'i18n-calypso';
 import { useSearchParams } from 'react-router-dom';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -178,19 +177,13 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const plan = props?.plan as string;
 
 				if ( props?.action === MigrationUpgradePlanActions.IMPORT_CONTENT_ONLY ) {
-					const customizedActionButton = {
-						step: MIGRATION_UPGRADE_PLAN.slug,
-						flow: flowPath,
-						label: translate( 'I want to migrate my entire site' ),
-					};
-
 					return goToImporter( {
 						platform: 'wordpress',
 						siteId,
 						siteSlug,
 						backToStep: PLATFORM_IDENTIFICATION,
+						migrateEntireSiteStep: MIGRATION_UPGRADE_PLAN,
 						replaceHistory: true,
-						customizedActionButton,
 					} );
 				}
 

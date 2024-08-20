@@ -296,10 +296,9 @@ describe( `${ flow.name }`, () => {
 						from: '',
 						option: 'content',
 						backToFlow: '/migration/platform-identification',
+						migrateEntireSiteFlow: '/migration/migration-upgrade-plan',
 						siteId: 123,
 						ref: 'migration',
-						customizedActionFlow: 'migration/migration-upgrade-plan',
-						customizedActionLabel: 'I want to migrate my entire site',
 					} )
 				);
 			} );
