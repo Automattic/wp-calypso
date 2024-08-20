@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { HOSTING_LP_FLOW } from '@automattic/onboarding';
+import { HOSTING_LP_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { onEnterOnboarding } from '../flow-actions';
 
@@ -204,7 +204,7 @@ export function generateFlows( {
 			onEnterFlow: onEnterOnboarding,
 		},
 		{
-			name: 'onboarding',
+			name: ONBOARDING_FLOW,
 			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
