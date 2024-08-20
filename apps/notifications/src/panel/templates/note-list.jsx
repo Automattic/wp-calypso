@@ -37,8 +37,9 @@ export class NoteList extends Component {
 
 	noteElements = {};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	constructor( props ) {
+		super( props );
+
 		this.props.global.updateStatusBar = this.updateStatusBar;
 		this.props.global.resetStatusBar = this.resetStatusBar;
 		this.props.global.updateUndoBar = this.updateUndoBar;
@@ -203,20 +204,22 @@ export class NoteList extends Component {
 	};
 
 	render() {
+		const { translate } = this.props;
+
 		const groupTitles = [
-			this.props.translate( 'Today', {
+			translate( 'Today', {
 				comment: 'heading for a list of notifications from today',
 			} ),
-			this.props.translate( 'Yesterday', {
+			translate( 'Yesterday', {
 				comment: 'heading for a list of notifications from yesterday',
 			} ),
-			this.props.translate( 'Older than 2 days', {
+			translate( 'Older than 2 days', {
 				comment: 'heading for a list of notifications that are more than 2 days old',
 			} ),
-			this.props.translate( 'Older than a week', {
+			translate( 'Older than a week', {
 				comment: 'heading for a list of notifications that are more than a week old',
 			} ),
-			this.props.translate( 'Older than a month', {
+			translate( 'Older than a month', {
 				comment: 'heading for a list of notifications that are more than a month old',
 			} ),
 		];
@@ -296,7 +299,7 @@ export class NoteList extends Component {
 
 		const emptyNoteList = 0 === notes.length;
 
-		const filter = Filters[ this.props.filterName ]();
+		const filter = Filters[ this.props.filterName ];
 		const loadingIndicatorVisibility = { opacity: 0 };
 		if ( this.props.isLoading ) {
 			loadingIndicatorVisibility.opacity = 1;
@@ -306,9 +309,9 @@ export class NoteList extends Component {
 		} else if ( ! this.props.initialLoad && emptyNoteList && filter.emptyMessage ) {
 			notes = (
 				<EmptyMessage
-					emptyMessage={ filter.emptyMessage }
+					emptyMessage={ filter.emptyMessage( translate ) }
 					height={ this.props.height }
-					linkMessage={ filter.emptyLinkMessage }
+					linkMessage={ filter.emptyLinkMessage( translate ) }
 					link={ filter.emptyLink }
 					name={ filter.name }
 					showing={ this.props.isPanelOpen }

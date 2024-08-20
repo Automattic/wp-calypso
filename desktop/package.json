@@ -1,6 +1,6 @@
 {
 	"name": "WordPressDesktop",
-	"version": "8.0.3",
+	"version": "8.0.4-beta2",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso/",
@@ -36,10 +36,10 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@electron/notarize": "^2.4.0",
 		"copy-webpack-plugin": "^10.2.4",
 		"electron": "26.2.4",
 		"electron-builder": "23.0.3",
-		"electron-notarize": "^0.1.1",
 		"electron-rebuild": "^2.3.5",
 		"jest": "^29.7.0",
 		"lodash": "^4.17.21",

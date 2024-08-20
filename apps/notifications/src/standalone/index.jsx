@@ -16,7 +16,7 @@ const locale = match ? match[ 1 ] : 'en';
 const fetchLocale = async ( localeSlug ) => {
 	try {
 		const response = await fetch(
-			`https://widgets.wp.com/languages/notifications/${ localeSlug }.json`
+			`https://widgets.wp.com/notifications/languages/${ localeSlug }-v1.1.json`
 		);
 
 		// Fall back to English if the locale is not available
