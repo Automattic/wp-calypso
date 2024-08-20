@@ -2,7 +2,7 @@ import { FormLabel } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { NextButton, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import getValidationMessage from 'calypso/blocks/import/capture/url-validation-message-helper';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
@@ -14,14 +14,25 @@ import FormTextArea from 'calypso/components/forms/form-textarea';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isValidUrl } from 'calypso/lib/importer/url-validation';
-import { CredentialsFormData } from './types';
-import { useSiteMigrationCredentialsFormHandler } from './use-site-migration-credentials-form-handler';
+import { CredentialsFormData, MigrationError } from './types';
+import { useSiteMigrationCredentialsMutation } from './use-site-migration-credentials-mutation';
 import type { Step } from '../../types';
 import './style.scss';
 
 interface CredentialsFormProps {
-	onSubmit: ( data: CredentialsFormData ) => void;
+	onSubmit: () => void;
 }
+
+const mapApiError = ( error: any ) => {
+	return {
+		body: {
+			code: error.code,
+			message: error.message,
+			data: error.data,
+		},
+		status: error.status,
+	};
+};
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	const translate = useTranslate();
@@ -34,11 +45,58 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		}
 	};
 
+	const fieldMapping = {
+		from_url: {
+			fieldName: 'siteAddress',
+			errorMessage: translate( 'Please enter a valid URL.' ),
+		},
+		username: {
+			fieldName: null,
+			errorMessage: translate( 'Enter a valid username' ),
+		},
+		password: {
+			fieldName: null,
+			errorMessage: translate( 'Enter a valid password' ),
+		},
+	};
+
 	const isBackupFileLocationValid = ( fileLocation: string ) => {
-		return ! isValidUrl( fileLocation ) ? translate( 'Please enter a valid URL.' ) : undefined;
+		return ! isValidUrl( fileLocation ) ? fieldMapping.from_url.errorMessage : undefined;
 	};
 
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
+
+	const handleMigrationError = ( err: MigrationError ) => {
+		if ( err.body?.code === 'rest_invalid_param' && err.body?.data?.params ) {
+			Object.entries( err.body.data.params ).forEach( ( [ key ] ) => {
+				const field = fieldMapping[ key as keyof typeof fieldMapping ];
+				const keyName = field?.fieldName ?? key;
+				const message = field?.errorMessage ?? translate( 'Invalid input, please check again' );
+				// eslint-disable-next-line @typescript-eslint/no-use-before-define
+				setError( keyName as keyof CredentialsFormData, {
+					type: 'manual',
+					message,
+				} );
+			} );
+		} else {
+			// eslint-disable-next-line @typescript-eslint/no-use-before-define
+			setError( 'root', {
+				type: 'manual',
+				message: err.body?.message ?? translate( 'An error occurred while saving credentials.' ),
+			} );
+		}
+	};
+
+	const { isPending, requestAutomatedMigration } = useSiteMigrationCredentialsMutation( {
+		onSuccess: () => {
+			recordTracksEvent( 'calypso_site_migration_automated_request_success' );
+			onSubmit();
+		},
+		onError: ( error ) => {
+			handleMigrationError( mapApiError( error ) );
+			recordTracksEvent( 'calypso_site_migration_automated_request_error' );
+		},
+	} );
 
 	const {
 		formState: { errors },
@@ -50,6 +108,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	} = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
+		disabled: isPending,
 		defaultValues: {
 			siteAddress: importSiteQueryParam,
 			username: '',
@@ -60,15 +119,20 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		},
 	} );
 
+	// Clear any root errors when the user changes any field.
+	useEffect( () => {
+		const { unsubscribe } = watch( () => {
+			clearErrors( 'root' );
+		} );
+		return () => unsubscribe();
+	}, [ watch, clearErrors ] );
+
 	// Subscribe only this field to the access method value.
 	const accessMethod = watch( 'howToAccessSite' );
 
-	const { submitHandler } = useSiteMigrationCredentialsFormHandler(
-		watch,
-		clearErrors,
-		onSubmit,
-		setError
-	);
+	const submitHandler = ( data: CredentialsFormData ) => {
+		requestAutomatedMigration( data );
+	};
 
 	return (
 		<form onSubmit={ handleSubmit( submitHandler ) }>
@@ -159,6 +223,14 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 												type="text"
 												placeholder={ translate( 'Username' ) }
 												{ ...field }
+												onChange={ ( e: any ) => {
+													const trimmedValue = e.target.value.trim();
+													field.onChange( trimmedValue );
+												} }
+												onBlur={ ( e: any ) => {
+													field.onBlur();
+													e.target.value = e.target.value.trim();
+												} }
 											/>
 										) }
 									/>
@@ -247,11 +319,16 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 					<div className="site-migration-credentials__form-error">{ errors.root.message }</div>
 				) }
 				<div>
-					<NextButton type="submit">{ translate( 'Continue' ) }</NextButton>
+					<NextButton disabled={ isPending } type="submit">
+						{ translate( 'Continue' ) }
+					</NextButton>
 				</div>
 			</Card>
 			<div className="site-migration-credentials__skip">
-				<button className="button navigation-link step-container__navigation-link has-underline is-borderless">
+				<button
+					className="button navigation-link step-container__navigation-link has-underline is-borderless"
+					disabled={ isPending }
+				>
 					{ translate( 'Skip, I need help providing access' ) }
 				</button>
 			</div>
