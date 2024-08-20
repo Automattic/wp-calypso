@@ -22,6 +22,7 @@ import {
 	AssertConditionState,
 	Flow,
 	ProvidedDependencies,
+	StepProps,
 } from './internals/types';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -69,6 +70,27 @@ function useIsValidSite() {
 	};
 }
 
+function ProcessingCopy( props: StepProps ) {
+	return (
+		<ProcessingStep
+			{ ...props }
+			title={ translate( 'We’re copying your site' ) }
+			subtitle={ translate(
+				'Feel free to close this window. We’ll email you when your new site is ready.'
+			) }
+		/>
+	);
+}
+
+const COPY_SITE_STEPS = [
+	{ slug: 'domains', component: DomainsStep },
+	{ slug: 'create-site', component: CreateSite },
+	{ slug: 'processing', component: ProcessingStep },
+	{ slug: 'automated-copy', component: AutomatedCopySite },
+	{ slug: 'processing-copy', component: ProcessingCopy },
+	{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
+];
+
 const copySite: Flow = {
 	name: COPY_SITE_FLOW,
 
@@ -78,25 +100,7 @@ const copySite: Flow = {
 	isSignupFlow: false,
 
 	useSteps() {
-		return [
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'create-site', component: CreateSite },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'automated-copy', component: AutomatedCopySite },
-			{
-				slug: 'processing-copy',
-				component: ( props ) => (
-					<ProcessingStep
-						{ ...props }
-						title={ translate( 'We’re copying your site' ) }
-						subtitle={ translate(
-							'Feel free to close this window. We’ll email you when your new site is ready.'
-						) }
-					/>
-				),
-			},
-			{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
-		];
+		return COPY_SITE_STEPS;
 	},
 
 	useStepNavigation( _currentStepSlug, navigate ) {
