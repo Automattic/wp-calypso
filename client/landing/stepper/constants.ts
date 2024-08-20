@@ -1,10 +1,10 @@
 import type { Design } from '@automattic/design-picker';
 
 export const WRITE_INTENT_DEFAULT_DESIGN: Design = {
-	slug: 'hey',
-	title: 'Hey',
+	slug: 'hola',
+	title: 'Hola',
 	categories: [],
-	theme: 'hey',
+	theme: 'hola',
 	design_tier: null,
 };
 
