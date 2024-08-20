@@ -34,7 +34,8 @@ const LaunchSite = () => {
 	const isPaidPlan = useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
 	// TODO: replace with actual value whether the site is a development site
-	const isDevelomentSite = true;
+	const urlParams = new URLSearchParams( window.location.search );
+	const isDevelomentSite = urlParams.get( 'referer' ) === 'a4a-dashboard';
 	// TODO: retrieve the actual agency name
 	const agencyName = 'MyCoolAgency';
 	const hasSitePreviewLink = useSelector( ( state ) =>
