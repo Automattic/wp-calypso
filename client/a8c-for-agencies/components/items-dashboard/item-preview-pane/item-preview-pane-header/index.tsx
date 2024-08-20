@@ -65,11 +65,11 @@ export default function ItemPreviewPaneHeader( {
 		config.isEnabled( 'hosting-overview-refinements' ) && isAtomic && ( wpVersion || phpVersion );
 
 	const handlePhpVersionClick = () => {
-		dispatch( recordTracksEvent( 'calypso_hosting_configuration_php_version_update' ) );
+		dispatch( recordTracksEvent( 'calypso_hosting_php_version_click' ) );
 	};
 
 	const handleWpVersionClick = () => {
-		dispatch( recordTracksEvent( 'calypso_hosting_configuration_wp_version_update' ) );
+		dispatch( recordTracksEvent( 'calypso_hosting_wp_version_click' ) );
 	};
 
 	return (
