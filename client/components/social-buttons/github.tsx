@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isFormDisabled as isFormDisabledSelector } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { getRedirectUri } from './utils';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
@@ -23,26 +24,29 @@ import './style.scss';
 type GithubLoginButtonProps = {
 	children?: ReactNode;
 	responseHandler: ( response: ExchangeCodeForTokenResponse ) => void;
-	redirectUri: string;
-	onClick?: () => void;
+	onClick?: ( event: MouseEvent< HTMLButtonElement > ) => void;
 	socialServiceResponse?: ExchangeCodeForTokenResponse | null;
 	userHasDisconnected?: boolean;
+	isLogin: boolean;
 };
 
 type ExchangeCodeForTokenResponse = {
+	service: string;
 	access_token: string;
 };
 
 const GitHubLoginButton = ( {
 	children,
 	responseHandler,
-	redirectUri,
 	onClick,
 	socialServiceResponse,
 	userHasDisconnected,
+	isLogin,
 }: GithubLoginButtonProps ) => {
 	const translate = useTranslate();
-
+	const redirectUri = useSelector( ( state: AppState ) =>
+		getRedirectUri( 'github', state, isLogin )
+	);
 	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial ) ?? {};
 	const authError = useSelector( ( state: AppState ) => {
 		const path = state?.route?.path?.current;
@@ -106,7 +110,7 @@ const GitHubLoginButton = ( {
 				} )
 			);
 			const { access_token } = response?.body?.data as ExchangeCodeForTokenResponse;
-			responseHandler( { access_token } );
+			responseHandler( { access_token, service: 'github' } );
 		},
 		[ dispatch, handleGitHubError, responseHandler ]
 	);
@@ -118,7 +122,7 @@ const GitHubLoginButton = ( {
 
 	useEffect( () => {
 		if ( socialServiceResponse ) {
-			responseHandler( socialServiceResponse );
+			responseHandler( { ...socialServiceResponse, service: 'github' } );
 		}
 	}, [ socialServiceResponse, responseHandler ] );
 
@@ -139,7 +143,7 @@ const GitHubLoginButton = ( {
 		e.preventDefault();
 
 		if ( onClick ) {
-			onClick();
+			onClick( e );
 		}
 
 		const scope = encodeURIComponent( 'read:user,user:email' );
@@ -169,6 +173,7 @@ const GitHubLoginButton = ( {
 			) : (
 				<button
 					className={ clsx( 'social-buttons__button button github', { disabled: isDisabled } ) }
+					data-social-service="github"
 					{ ...eventHandlers }
 				>
 					<GitHubIcon isDisabled={ isDisabled } />

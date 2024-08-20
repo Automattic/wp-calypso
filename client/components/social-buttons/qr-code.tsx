@@ -12,11 +12,10 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 
 type QrCodeLoginButtonProps = {
-	twoFactorAuthType: string;
 	loginUrl: string;
 };
 
-const QrCodeLoginButton = ( { twoFactorAuthType, loginUrl }: QrCodeLoginButtonProps ) => {
+const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { isDisabled, isJetpackWooCommerceFlow, oauth2Client, isWooPasswordless } = useSelector(
@@ -31,10 +30,6 @@ const QrCodeLoginButton = ( { twoFactorAuthType, loginUrl }: QrCodeLoginButtonPr
 			};
 		}
 	);
-
-	if ( twoFactorAuthType ) {
-		return null;
-	}
 
 	// Is not supported for any oauth 2 client.
 	// n.b this seems to work for woo.com so it's not clear why the above comment is here

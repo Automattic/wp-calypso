@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -12,7 +11,6 @@ import {
 	MagicLoginButton,
 	QrCodeLoginButton,
 } from 'calypso/components/social-buttons';
-import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { loginSocialUser, createSocialUserFailed } from 'calypso/state/login/actions';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
@@ -25,8 +23,6 @@ class SocialLoginForm extends Component {
 		redirectTo: PropTypes.string,
 		onSuccess: PropTypes.func.isRequired,
 		loginUser: PropTypes.func.isRequired,
-		uxMode: PropTypes.string.isRequired,
-		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
 		shouldRenderToS: PropTypes.bool,
 		magicLoginLink: PropTypes.string,
@@ -38,7 +34,13 @@ class SocialLoginForm extends Component {
 		shouldRenderToS: false,
 	};
 
-	handleLogin = ( service, result ) => {
+	handleLogin = ( result ) => {
+		const socialLoginUsed = window.sessionStorage.getItem( 'social_login_used' );
+
+		if ( ! result || socialLoginUsed !== result.service ) {
+			return;
+		}
+
 		const { onSuccess, loginUser } = this.props;
 
 		let redirectTo = this.props.redirectTo;
@@ -49,33 +51,36 @@ class SocialLoginForm extends Component {
 		}
 
 		window.sessionStorage.removeItem( 'login_redirect_to' );
+		window.sessionStorage.removeItem( 'social_login_used' );
 
-		const socialInfo = {
-			service: service,
-			...result,
-		};
-
-		loginUser( socialInfo, redirectTo ).then(
+		loginUser( result, redirectTo ).then(
 			() => {
-				this.recordEvent( 'calypso_login_social_login_success', service );
+				this.recordEvent( 'calypso_login_social_login_success', result.service );
 				onSuccess();
 			},
 			( error ) => {
-				this.reportSocialLoginFailure( { service, socialInfo, error } );
+				if ( error.code === 'user_exists' || error.code === 'unknown_user' ) {
+					this.props.createSocialUserFailed( result, error, 'login' );
+					return;
+				}
+
+				this.recordEvent( 'calypso_login_social_login_failure', result.service, {
+					error_code: error.code,
+					error_message: error.message,
+				} );
 			}
 		);
 	};
 
-	reportSocialLoginFailure = ( { service, socialInfo, error } ) => {
-		if ( error.code === 'user_exists' || error.code === 'unknown_user' ) {
-			this.props.createSocialUserFailed( socialInfo, error, 'login' );
-			return;
-		}
+	trackLoginAndRememberRedirect = ( event ) => {
+		const service = event.currentTarget.getAttribute( 'data-social-service' );
+		this.recordEvent( 'calypso_login_social_button_click', service );
 
-		this.recordEvent( 'calypso_login_social_login_failure', service, {
-			error_code: error.code,
-			error_message: error.message,
-		} );
+		window.sessionStorage.setItem( 'social_login_used', service );
+
+		if ( this.props.redirectTo && typeof window !== 'undefined' ) {
+			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
+		}
 	};
 
 	recordEvent = ( eventName, service, params ) =>
@@ -84,28 +89,10 @@ class SocialLoginForm extends Component {
 			...params,
 		} );
 
-	trackLoginAndRememberRedirect = ( service ) => {
-		this.recordEvent( 'calypso_login_social_button_click', service );
-
-		if ( this.props.redirectTo && typeof window !== 'undefined' ) {
-			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
-		}
-	};
-
-	getRedirectUri = ( service ) => {
-		const host = typeof window !== 'undefined' && window.location.host;
-		if ( typeof window !== 'undefined' && window.location.hostname === 'calypso.localhost' ) {
-			return `http://${ host }${ login( { socialService: service } ) }`;
-		}
-		return `https://${ host }${ login( { socialService: service } ) }`;
-	};
-
 	render() {
 		const {
-			uxMode,
 			shouldRenderToS,
 			isWoo,
-			socialService,
 			socialServiceResponse,
 			magicLoginLink,
 			isSocialFirst,
@@ -119,35 +106,25 @@ class SocialLoginForm extends Component {
 				<div className="auth-form__social-buttons">
 					<div className="auth-form__social-buttons-container">
 						<GoogleSocialButton
-							clientId={ config( 'google_oauth_client_id' ) }
-							responseHandler={ ( result ) => this.handleLogin( 'google', result ) }
-							uxMode={ uxMode }
-							redirectUri={ this.getRedirectUri( 'google' ) }
-							onClick={ () => {
-								this.trackLoginAndRememberRedirect( 'google' );
-							} }
-							startingPoint="login"
+							responseHandler={ this.handleLogin }
+							onClick={ this.trackLoginAndRememberRedirect }
+							isLogin
 						/>
 
 						<AppleLoginButton
-							clientId={ config( 'apple_oauth_client_id' ) }
-							responseHandler={ ( result ) => this.handleLogin( 'apple', result ) }
-							uxMode={ uxMode }
-							redirectUri={ this.getRedirectUri( 'apple' ) }
-							onClick={ () => {
-								this.trackLoginAndRememberRedirect( 'apple' );
-							} }
-							socialServiceResponse={ socialService === 'apple' ? socialServiceResponse : null }
+							responseHandler={ this.handleLogin }
+							onClick={ this.trackLoginAndRememberRedirect }
+							socialServiceResponse={ socialServiceResponse }
+							isLogin
 						/>
 
 						<GithubSocialButton
-							socialServiceResponse={ socialService === 'github' ? socialServiceResponse : null }
-							redirectUri={ this.getRedirectUri( 'github' ) }
-							responseHandler={ ( result ) => this.handleLogin( 'github', result ) }
-							onClick={ () => {
-								this.trackLoginAndRememberRedirect( 'github' );
-							} }
+							responseHandler={ this.handleLogin }
+							onClick={ this.trackLoginAndRememberRedirect }
+							socialServiceResponse={ socialServiceResponse }
+							isLogin
 						/>
+
 						{ ( isSocialFirst || isWoo ) && (
 							<>
 								{ magicLoginLink && <MagicLoginButton loginUrl={ magicLoginLink } /> }

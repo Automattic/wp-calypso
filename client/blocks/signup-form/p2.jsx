@@ -37,9 +37,7 @@ class P2SignupForm extends Component {
 				{ this.props.isSocialSignupEnabled && (
 					<SocialSignupForm
 						handleResponse={ this.props.handleSocialResponse }
-						socialService={ this.props.socialService }
 						socialServiceResponse={ this.props.socialServiceResponse }
-						isReskinned={ this.props.isReskinned }
 						compact
 					/>
 				) }
