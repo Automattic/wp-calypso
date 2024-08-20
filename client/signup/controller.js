@@ -1,15 +1,12 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { isOnboardingGuidedFlow } from '@automattic/onboarding';
 import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
-import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
@@ -229,18 +226,17 @@ export default {
 
 		store.set( 'signup-locale', localeFromParams );
 
-		const isOnboardingFlow = flowName === 'onboarding';
-
-		// See: 1113-gh-Automattic/experimentation-platform for details.
-		if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
-			// `isTokenLoaded` covers users who just logged in.
-			if ( wpcom.isTokenLoaded() || userLoggedIn ) {
-				const trailMapExperimentAssignment = await loadExperimentAssignment(
-					'calypso_signup_onboarding_trailmap_guided_flow'
-				);
-				initialContext.trailMapExperimentVariant = trailMapExperimentAssignment.variationName;
-			}
-		}
+		// const isOnboardingFlow = flowName === 'onboarding';
+		// // See: 1113-gh-Automattic/experimentation-platform for details.
+		// if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
+		// 	// `isTokenLoaded` covers users who just logged in.
+		// 	if ( wpcom.isTokenLoaded() || userLoggedIn ) {
+		// 		const trailMapExperimentAssignment = await loadExperimentAssignment(
+		// 			'calypso_signup_onboarding_trailmap_guided_flow'
+		// 		);
+		// 		initialContext.trailMapExperimentVariant = trailMapExperimentAssignment.variationName;
+		// 	}
+		// }
 
 		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
 			return page.redirect(
@@ -273,7 +269,7 @@ export default {
 			initialContext = context;
 		}
 
-		const { query, trailMapExperimentVariant } = initialContext;
+		const { query } = initialContext;
 
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
@@ -281,11 +277,6 @@ export default {
 		const params = {
 			flow: flowName,
 		};
-
-		// Clean me up after the experiment is over (see: pdDR7T-1xi-p2)
-		if ( isOnboardingGuidedFlow( flowName ) ) {
-			params.trailmap_variant = trailMapExperimentVariant || 'control';
-		}
 
 		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, params );
 
