@@ -20,6 +20,7 @@ import { useQueries } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useLayoutEffect, useMemo, useState, createContext, useContext } from 'react';
+import { usePurchaseActions } from 'calypso/my-sites/domains/domain-management/list/use-purchase-actions'; // eslint-disable-line no-restricted-imports
 import { DomainsTableFilter } from '../domains-table-filters/index';
 import {
 	allSitesViewColumns,
@@ -123,6 +124,7 @@ type Value = {
 	currentUsersOwnsAllSelectedDomains: boolean;
 	currentUserCanBulkUpdateContactInfo: boolean;
 	isCompact: boolean;
+	purchaseActions: ReturnType< typeof usePurchaseActions >;
 };
 
 export const DomainsTableStateContext = createContext< Value | undefined >( undefined );
@@ -374,6 +376,8 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		)
 	);
 
+	const purchaseActions = usePurchaseActions();
+
 	const value: Value = {
 		filter,
 		setFilter,
@@ -431,6 +435,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		isLoadingDomains,
 		currentUserCanBulkUpdateContactInfo,
 		isCompact,
+		purchaseActions,
 	};
 
 	return value;

@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { ComponentType } from 'react';
-import { usePurchaseActions } from 'calypso/my-sites/domains/domain-management/list/use-purchase-actions'; // eslint-disable-line no-restricted-imports
 import { canSetAsPrimary } from '../utils/can-set-as-primary';
 import { type as domainTypes, transferStatus, useMyDomainInputMode } from '../utils/constants';
 import { isFreeUrlDomainName } from '../utils/is-free-url-domain-name';
@@ -47,7 +46,12 @@ export const DomainsTableRowActions = ( {
 	isSiteOnFreePlan,
 	isSimpleSite,
 }: DomainsTableRowActionsProps ) => {
-	const { onDomainAction, userCanSetPrimaryDomains = false, updatingDomain } = useDomainsTable();
+	const {
+		onDomainAction,
+		userCanSetPrimaryDomains = false,
+		updatingDomain,
+		purchaseActions,
+	} = useDomainsTable();
 	const { __ } = useI18n();
 
 	const canViewDetails = domain.type !== domainTypes.WPCOM;
@@ -75,7 +79,6 @@ export const DomainsTableRowActions = ( {
 		domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer;
 	const canChangeSiteAddress =
 		! isAllSitesView && isSimpleSite && isFreeUrlDomainName( domain.name );
-	const purchaseActions = usePurchaseActions();
 	const canRenewDomain = isDomainRenewable( domain );
 	const canReactivateDomain = isDomainReactivatable( domain );
 	const getActions = ( onClose?: () => void ) => {
