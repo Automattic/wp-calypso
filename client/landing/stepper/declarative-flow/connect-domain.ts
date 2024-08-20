@@ -24,6 +24,21 @@ import {
 } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
+const CONNECT_DOMAIN_STEPS = [
+	{
+		slug: 'plans',
+		asyncComponent: () => import( './internals/steps-repository/plans' ),
+	},
+	{
+		slug: 'createSite',
+		asyncComponent: () => import( './internals/steps-repository/create-site' ),
+	},
+	{
+		slug: 'processing',
+		asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+	},
+];
+
 const connectDomain: Flow = {
 	name: CONNECT_DOMAIN_FLOW,
 	get title() {
@@ -89,17 +104,7 @@ const connectDomain: Flow = {
 		}, [] );
 	},
 	useSteps() {
-		return [
-			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
-			{
-				slug: 'createSite',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
-		];
+		return CONNECT_DOMAIN_STEPS;
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
