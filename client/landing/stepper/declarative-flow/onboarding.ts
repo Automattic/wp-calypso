@@ -9,7 +9,6 @@ import {
 } from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 
 const onboarding: Flow = {
@@ -45,7 +44,7 @@ const onboarding: Flow = {
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 
-		const { setDomain, setDomainCartItems } = useDispatch( ONBOARD_STORE );
+		const { setDomain, setDomainCartItem, setDomainCartItems } = useDispatch( ONBOARD_STORE );
 
 		const { domainCartItem, planCartItem } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
@@ -56,11 +55,10 @@ const onboarding: Flow = {
 		);
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, currentStepSlug );
-
 			switch ( currentStepSlug ) {
 				case 'domains':
 					setDomain( providedDependencies.suggestion );
+					setDomainCartItem( providedDependencies.domainItem );
 					setDomainCartItems( providedDependencies.domainCart );
 					return navigate( 'plans' );
 				case 'plans':

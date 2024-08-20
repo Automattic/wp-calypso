@@ -1,6 +1,6 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -21,18 +21,28 @@ export const LocalizedPlanStep = localize( PlansStep );
 export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepperPersistedState< ProvidedDependencies >();
 	const siteSlug = useSiteSlug();
-	const siteTitle = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+	const { siteTitle, domainItem, domainItems } = useSelect(
+		( select: ( key: string ) => OnboardSelect ) => {
+			return {
+				siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
+				domainItem: select( ONBOARD_STORE ).getDomainCartItem(),
+				domainItems: select( ONBOARD_STORE ).getDomainCartItems(),
+			};
+		},
 		[]
 	);
 	const username = useSelector( getCurrentUserName );
 	const coupon = undefined;
+
+	const { setDomainCartItem, setDomainCartItems } = useWPDispatch( ONBOARD_STORE );
 
 	const signupDependencies = {
 		siteSlug,
 		siteTitle,
 		username,
 		coupon,
+		domainItem,
+		domainCart: domainItems,
 	};
 
 	const site = useSite();
@@ -45,9 +55,16 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			saveSignupStep={ ( state: ProvidedDependencies ) =>
 				setStepState( { ...stepState, ...state } )
 			}
-			submitSignupStep={ ( state: ProvidedDependencies ) =>
-				props.navigation.submit?.( { ...stepState, ...state } )
-			}
+			submitSignupStep={ ( state: ProvidedDependencies ) => {
+				/* The plans step removes paid domains domains when the user picks a free plan
+				   after picking a paid domain */
+				if ( state.stepName === 'domains' ) {
+					setDomainCartItem( undefined );
+					setDomainCartItems( undefined );
+				} else {
+					props.navigation.submit?.( { ...stepState, ...state } );
+				}
+			} }
 			goToNextStep={ () => props.navigation.submit?.( stepState ) }
 			step={ stepState }
 			customerType={ customerType }

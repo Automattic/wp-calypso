@@ -78,6 +78,11 @@ const RenderDomainsStepConnect = connect(
 
 export default function DomainsStep( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepperPersistedState< ProvidedDependencies >();
+	/**
+	 * The domain step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
+	 * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
+	 */
+	let mostRecentState: ProvidedDependencies;
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -88,11 +93,11 @@ export default function DomainsStep( props: StepProps ) {
 					setStepState( { ...stepState, ...state } )
 				}
 				submitSignupStep={ ( state: ProvidedDependencies ) => {
-					setStepState( { ...stepState, ...state } );
+					setStepState( ( mostRecentState = { ...stepState, ...state } ) );
 				} }
-				goToNextStep={ ( state: ProvidedDependencies ) =>
-					props.navigation.submit?.( { ...stepState, ...state } )
-				}
+				goToNextStep={ ( state: ProvidedDependencies ) => {
+					props.navigation.submit?.( { ...stepState, ...state, ...mostRecentState } );
+				} }
 				step={ stepState }
 				flowName={ props.flow }
 				CustomStepWrapper={ StepContainer }
