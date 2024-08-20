@@ -5,9 +5,9 @@ import repliesCache from './comment-replies-cache';
 import RestClient from './rest-client';
 import { init as initAPI } from './rest-client/wpcom';
 import { init as initStore, store } from './state';
-import { mergeHandlers } from './state/action-middleware/utils';
 import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
+import { addListeners, removeListeners } from './state/create-listener-middleware';
 import Layout from './templates';
 const debug = require( 'debug' )( 'notifications:panel' );
 
@@ -26,6 +26,32 @@ repliesCache.cleanup();
 export const refreshNotes = () => client && client.refreshNotes.call( client );
 
 export const RestClientContext = createContext( client );
+
+const DEFAULT_HANDLERS = {
+	APP_REFRESH_NOTES: [
+		( _store, action ) => {
+			if ( ! client ) {
+				return;
+			}
+
+			if ( 'boolean' === typeof action.isVisible ) {
+				debug( 'APP_REFRESH_NOTES', {
+					isShowing: this.props.isShowing,
+					isVisible: action.isVisible,
+				} );
+				// Use this.props instead of destructuring isShowing, so that this uses
+				// the value on props at any given time and not only the value that was
+				// present on initial mount.
+				client.setVisibility.call( client, {
+					isShowing: this.props.isShowing,
+					isVisible: action.isVisible,
+				} );
+			}
+
+			client.refreshNotes.call( client, action.isVisible );
+		},
+	],
+};
 
 export class Notifications extends PureComponent {
 	static propTypes = {
@@ -54,34 +80,10 @@ export class Notifications extends PureComponent {
 		const { customEnhancer, customMiddleware, isShowing, isVisible, receiveMessage, wpcom } =
 			this.props;
 
-		initStore( {
-			customEnhancer,
-			customMiddleware: mergeHandlers( customMiddleware, {
-				APP_REFRESH_NOTES: [
-					( _store, action ) => {
-						if ( ! client ) {
-							return;
-						}
+		initStore( { customEnhancer } );
 
-						if ( 'boolean' === typeof action.isVisible ) {
-							debug( 'APP_REFRESH_NOTES', {
-								isShowing: this.props.isShowing,
-								isVisible: action.isVisible,
-							} );
-							// Use this.props instead of destructuring isShowing, so that this uses
-							// the value on props at any given time and not only the value that was
-							// present on initial mount.
-							client.setVisibility.call( client, {
-								isShowing: this.props.isShowing,
-								isVisible: action.isVisible,
-							} );
-						}
-
-						client.refreshNotes.call( client, action.isVisible );
-					},
-				],
-			} ),
-		} );
+		store.dispatch( addListeners( customMiddleware ) );
+		store.dispatch( addListeners( DEFAULT_HANDLERS ) );
 
 		initAPI( wpcom );
 
@@ -134,6 +136,12 @@ export class Notifications extends PureComponent {
 		if ( isShowing !== this.props.isShowing || isVisible !== this.props.isVisible ) {
 			client.setVisibility( { isShowing, isVisible } );
 		}
+	}
+
+	componentWillUnmount() {
+		const { customMiddleware } = this.props;
+		store.dispatch( removeListeners( customMiddleware ) );
+		store.dispatch( removeListeners( DEFAULT_HANDLERS ) );
 	}
 
 	render() {
