@@ -1496,6 +1496,53 @@ $breakpoint-mobile: 660px;
 				align-items: center;
 			}
 		}
+		// /log-in/jetpack/link styles
+		.magic-login__main-content-woo-core-profiler {
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+			max-width: 327px;
+			margin: auto;
+			h1.magic-login__form-header {
+				font-size: rem(32px);
+				margin-bottom: 15px;
+			}
+
+			p.email-sent {
+				max-width: 200px;
+				text-align: center;
+				font-size: rem(16px);
+				color: #757575;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 24px; /* 150% */
+			}
+
+			p.email-resend {
+				text-align: center;
+				font-size: rem(13px);
+				color: #757575;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 20px; /* 153.846% */
+			}
+
+			.magic-login__emails-list {
+				display: contents;
+				ul {
+					width: 100%;
+					li {
+						border-radius: 2px;
+						border: 1px solid #a7aaad;
+					}
+				}
+			}
+
+			svg {
+				margin: 48px 0 48px 0;
+			}
+		}
+
 	}
 
 	&.is-woocommerce-core-profiler-flow {
