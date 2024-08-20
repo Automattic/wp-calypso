@@ -188,7 +188,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 						platform: 'wordpress',
 						siteId,
 						siteSlug,
-						backToStep: MIGRATION_UPGRADE_PLAN,
+						backToStep: PLATFORM_IDENTIFICATION,
 						replaceHistory: true,
 						customizedActionButton,
 					} );

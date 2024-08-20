@@ -295,7 +295,7 @@ describe( `${ flow.name }`, () => {
 						siteSlug: 'example.wordpress.com',
 						from: '',
 						option: 'content',
-						backToFlow: '/migration/migration-upgrade-plan',
+						backToFlow: '/migration/platform-identification',
 						siteId: 123,
 						ref: 'migration',
 						customizedActionFlow: 'migration/migration-upgrade-plan',
