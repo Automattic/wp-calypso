@@ -1,56 +1,74 @@
-import { useMutation } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useMutation, UseMutationOptions } from '@tanstack/react-query';
+import wpcomRequest from 'wpcom-proxy-request';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import wp from 'calypso/lib/wp';
 import { CredentialsFormData } from './types';
 
-export const useMigrationCredentialsMutation = () => {
+interface AutomatedMigrationAPIResponse {
+	success: boolean;
+}
+
+interface AutomatedMigrationBody {
+	migration_type: 'credentials' | 'backup';
+	blog_url: string;
+	from_url?: string;
+	username?: string;
+	password?: string;
+	backup_file_location?: string;
+	notes?: string;
+}
+
+export const useSiteMigrationCredentialsMutation = <
+	TData = AutomatedMigrationAPIResponse | unknown,
+	TError = unknown,
+	TContext = unknown,
+>(
+	options: UseMutationOptions< TData, TError, CredentialsFormData, TContext > = {}
+) => {
 	const siteSlug = useSiteSlugParam();
 
-	const saveCredentialsMutation = useMutation( {
-		mutationFn: async ( {
+	const { mutate, ...rest } = useMutation( {
+		mutationFn: ( {
 			siteAddress,
 			username,
 			password,
 			notes,
 			howToAccessSite,
-		}: CredentialsFormData ) => {
-			try {
-				await wp.req.post( {
-					path: `/help/automated-migration`,
-					apiNamespace: 'wpcom/v2',
-					body: {
-						blog_url: siteSlug,
-						from_url: siteAddress,
-						migration_type: howToAccessSite,
-						username,
-						password,
-						notes,
-					},
-				} );
-			} catch ( error: any ) {
-				throw {
-					body: {
-						code: error.code,
-						message: error.message,
-						data: error.data,
-					},
-					status: error.status,
+			backupFileLocation,
+		} ) => {
+			let body: AutomatedMigrationBody = {
+				migration_type: howToAccessSite,
+				blog_url: siteSlug ?? '',
+				notes,
+			};
+
+			if ( howToAccessSite === 'credentials' ) {
+				body = {
+					...body,
+					from_url: siteAddress,
+					username,
+					password,
+				};
+			} else {
+				// In case of backup, we need to send the backup file location.
+				body = {
+					...body,
+					from_url: backupFileLocation,
 				};
 			}
+
+			return wpcomRequest( {
+				path: 'help/automated-migration',
+				apiNamespace: 'wpcom/v2/',
+				apiVersion: '2',
+				method: 'POST',
+				body,
+			} );
 		},
+		...options,
 	} );
 
-	const { mutate: saveCredentialsMutate, ...saveCredentialsMutationRest } = saveCredentialsMutation;
-
-	const saveCredentials = useCallback(
-		( saveCredentialsOptions: CredentialsFormData ) =>
-			saveCredentialsMutation.mutateAsync( saveCredentialsOptions ),
-		[ saveCredentialsMutation ]
-	);
-
 	return {
-		saveCredentials,
-		saveCredentialsMutationRest,
+		requestAutomatedMigration: mutate,
+		...rest,
 	};
 };
