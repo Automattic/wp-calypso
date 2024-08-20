@@ -35,6 +35,8 @@ const LaunchSite = () => {
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
 	// TODO: replace with actual value whether the site is a development site
 	const isDevelomentSite = true;
+	// TODO: retrieve the actual agency name
+	const agencyName = 'MyCoolAgency';
 	const hasSitePreviewLink = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS )
 	);
@@ -104,11 +106,16 @@ const LaunchSite = () => {
 						</p>
 						{
 							// TODO: add feature flag check
-							// TODO: replace agency name with actual agency name
 							isDevelomentSite && (
 								<p>
 									{ translate(
-										'Once the site is launched, MyCoolAgency will be billed for this site in the next billing cycle.'
+										'Once the site is launched, %(agencyName)s will be billed for this site in the next billing cycle.',
+										{
+											args: {
+												agencyName: agencyName,
+											},
+											comment: 'name of the agency that will be billed for the site',
+										}
 									) }
 								</p>
 							)
