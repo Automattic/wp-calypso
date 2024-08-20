@@ -33,11 +33,6 @@ const LaunchSite = () => {
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const isPaidPlan = useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
-	// TODO: replace with actual value whether the site is a development site
-	const urlParams = new URLSearchParams( window.location.search );
-	const isDevelomentSite = urlParams.get( 'referer' ) === 'a4a-dashboard';
-	// TODO: retrieve the actual agency name
-	const agencyName = 'MyCoolAgency';
 	const hasSitePreviewLink = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS )
 	);
@@ -88,6 +83,13 @@ const LaunchSite = () => {
 	const showPreviewLink = isComingSoon && hasSitePreviewLink;
 
 	const LaunchCard = showPreviewLink ? CompactCard : Card;
+
+	// TODO: replace with actual value whether the site is a development site
+	const urlParams = new URLSearchParams( window.location.search );
+	const isDevelomentSite = urlParams.get( 'referer' ) === 'a4a-dashboard';
+
+	// TODO: retrieve the actual agency name
+	const agencyName = 'MyCoolAgency';
 
 	return (
 		<>
