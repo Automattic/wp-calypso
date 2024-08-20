@@ -18,7 +18,12 @@ import { useHandleSocialResponse } from './handle-social-response';
 import './style.scss';
 import { useSocialService } from './use-social-service';
 
-const UserStep: Step = function UserStep( { flow, stepName, _redirectTo = window.location.href } ) {
+const UserStep: Step = function UserStep( {
+	flow,
+	stepName,
+	navigation,
+	_redirectTo = window.location.href,
+} ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
@@ -31,10 +36,8 @@ const UserStep: Step = function UserStep( { flow, stepName, _redirectTo = window
 	useEffect( () => {
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-		} else {
-			// omar
 		}
-	}, [ dispatch, isLoggedIn ] );
+	}, [ dispatch, isLoggedIn, _redirectTo, navigation ] );
 
 	const loginLink = login( {
 		signupUrl: window.location.pathname + window.location.search,

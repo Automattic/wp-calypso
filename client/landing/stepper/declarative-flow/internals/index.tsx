@@ -15,6 +15,7 @@ import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
+import { useFirstStep } from '../../hooks/use-first-step';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
@@ -44,8 +45,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
 	const flowSteps = flow.useSteps();
-	const firstAuthWalledStep = flowSteps.find( ( step ) => step.requiresLoggedInUser );
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
+	const firstStepSlug = useFirstStep( stepPaths );
 	const { navigate, params } = useFlowNavigation();
 	const currentStepRoute = params.step || '';
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -131,6 +132,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 		const StepComponent = stepComponents[ step.slug ];
 
+		const firstAuthWalledStep = flowSteps.find( ( step ) => step.requiresLoggedInUser );
+
 		if ( step.slug === 'user' && firstAuthWalledStep ) {
 			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
@@ -140,7 +143,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 			return (
 				<StepComponent
-					navigation={ stepNavigation }
+					navigation={ {
+						submit() {
+							navigate( firstAuthWalledStep.slug, undefined, true );
+						},
+					} }
 					flow={ flow.name }
 					variantSlug={ flow.variantSlug }
 					stepName="user"
@@ -192,7 +199,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 						}
 					/>
 				) ) }
-				<Route path="/:flow/:lang?" element={ <RedirectToStep slug={ stepPaths[ 0 ] } /> } />
+				<Route path="/:flow/:lang?" element={ <RedirectToStep slug={ firstStepSlug } /> } />
 			</Routes>
 			<AsyncCheckoutModal siteId={ site?.ID } />
 		</Boot>
