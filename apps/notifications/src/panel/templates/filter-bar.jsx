@@ -34,9 +34,7 @@ export class FilterBar extends Component {
 	}
 
 	setFilterItems = () => {
-		this.filterItems = Object.keys( Filters )
-			.map( ( name ) => Filters[ name ]() )
-			.sort( ( a, b ) => a.index - b.index );
+		this.filterItems = Object.values( Filters ).sort( ( a, b ) => a.index - b.index );
 	};
 
 	getFilterItems = () => {
@@ -122,7 +120,7 @@ export class FilterBar extends Component {
 								aria-controls="wpnc__note-list"
 								tabIndex={ isSelected ? 0 : -1 }
 							>
-								{ label }
+								{ label( translate ) }
 							</li>
 						);
 					} ) }
