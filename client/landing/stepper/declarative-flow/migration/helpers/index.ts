@@ -4,10 +4,8 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { getFinalImporterUrl } from '../../internals/steps-repository/import/helper';
 import { StepperStep } from '../../internals/types';
 
-type PartialImporter = string;
-
-const isWPOrgImporter = ( importer: PartialImporter ) =>
-	importer.startsWith( 'http' ) || importer.startsWith( '/import' );
+const isWpAdminImporter = ( importerPath: string ) =>
+	importerPath.startsWith( 'http' ) || importerPath.startsWith( '/import' );
 
 interface GoToImporterParams {
 	platform: ImporterPlatform;
@@ -22,7 +20,7 @@ export const goToImporter = ( { platform, siteId, siteSlug, backToStep }: GoToIm
 	const backToFlow = backToStep ? getBackToFlowParam( backToStep?.slug ) : undefined;
 	const path = getFinalImporterUrl( siteSlug, '', platform, backToFlow );
 
-	if ( isWPOrgImporter( path ) ) {
+	if ( isWpAdminImporter( path ) ) {
 		return window.location.replace( path );
 	}
 
