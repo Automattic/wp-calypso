@@ -23,7 +23,6 @@ import {
 } from 'calypso/state/ui/selectors';
 import SettingsSectionHeader from '../settings-section-header';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
-
 import './styles.scss';
 
 const LaunchSite = () => {
@@ -85,6 +84,13 @@ const LaunchSite = () => {
 
 	const LaunchCard = showPreviewLink ? CompactCard : Card;
 
+	// TODO: replace with actual value whether the site is a development site
+	const urlParams = new URLSearchParams( window.location.search );
+	const isDevelopmentSite = urlParams.get( 'referer' ) === 'a4a-dashboard';
+
+	// TODO: retrieve the actual agency name
+	const agencyName = 'MyCoolAgency';
+
 	return (
 		<>
 			<SettingsSectionHeader title={ translate( 'Launch site' ) } />
@@ -101,8 +107,31 @@ const LaunchSite = () => {
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  ) }
 						</p>
+						{ isDevelopmentSite && (
+							<p>
+								{ translate(
+									'Once the site is launched, %(agencyName)s will be billed for this site in the next billing cycle.',
+									{
+										args: {
+											agencyName: agencyName,
+										},
+										comment: 'name of the agency that will be billed for the site',
+									}
+								) }
+							</p>
+						) }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
+					{
+						// TODO: add onClick handler
+						isDevelopmentSite && (
+							<div className={ launchSiteClasses }>
+								<Button onClick={ null } disabled={ false }>
+									{ translate( 'Refer to client' ) }
+								</Button>
+							</div>
+						)
+					}
 				</div>
 			</LaunchCard>
 			{ showPreviewLink && (

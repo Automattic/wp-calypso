@@ -63,7 +63,7 @@ const sensei: Flow = {
 					return navigate( 'senseiLaunch' );
 				case 'senseiLaunch':
 				default:
-					return window.location.assign( `/home/${ siteSlug }` );
+					return window.location.assign( `https://${ siteSlug }/wp-admin/admin.php?page=sensei` );
 			}
 		};
 

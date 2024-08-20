@@ -62,17 +62,6 @@ function getWebpackConfig(
 		optimization: {
 			concatenateModules: ! shouldEmitStats,
 		},
-		devServer: {
-			host: 'calypso.localhost',
-			port: 3000,
-			static: {
-				directory: path.join( __dirname, 'dist' ),
-			},
-			client: {
-				progress: true,
-			},
-			watchFiles: [ 'dist/**/*' ],
-		},
 		plugins: [
 			...webpackConfig.plugins,
 			new HtmlWebpackPlugin( {
