@@ -14,7 +14,7 @@ import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
-( useSiteSlugParam as jest.Mock ).mockImplementation( () => 'https://site-url.wordpress.com' );
+( useSiteSlugParam as jest.Mock ).mockImplementation( () => 'site-url.wordpress.com' );
 
 const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions ) => {
 	const combinedProps = { ...mockStepProps( props ) };
@@ -189,13 +189,13 @@ describe( 'SiteMigrationCredentials', () => {
 
 			await waitFor( async () => {
 				expect( wpcomRequest ).toHaveBeenCalledWith( {
-					path: 'help/automated-migration',
+					path: 'sites/site-url.wordpress.com/automated-migration',
 					apiNamespace: 'wpcom/v2/',
 					apiVersion: '2',
 					method: 'POST',
 					body: {
 						migration_type: howToAccessSite,
-						blog_url: 'https://site-url.wordpress.com',
+						blog_url: 'site-url.wordpress.com',
 						notes: 'notes',
 						from_url: siteAddress,
 						...( isBackupRequest
@@ -294,13 +294,13 @@ describe( 'SiteMigrationCredentials', () => {
 
 			await waitFor( async () => {
 				expect( wpcomRequest ).toHaveBeenCalledWith( {
-					path: 'help/automated-migration',
+					path: 'sites/site-url.wordpress.com/automated-migration',
 					apiNamespace: 'wpcom/v2/',
 					apiVersion: '2',
 					method: 'POST',
 					body: {
 						migration_type: 'credentials',
-						blog_url: 'https://site-url.wordpress.com',
+						blog_url: 'site-url.wordpress.com',
 						notes: 'notes',
 						from_url: 'test.com',
 						username: 'username',

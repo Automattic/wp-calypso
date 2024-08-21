@@ -57,7 +57,7 @@ export const useSiteMigrationCredentialsMutation = <
 			}
 
 			return wpcomRequest( {
-				path: 'help/automated-migration',
+				path: `sites/${ siteSlug }/automated-migration`,
 				apiNamespace: 'wpcom/v2/',
 				apiVersion: '2',
 				method: 'POST',

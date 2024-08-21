@@ -334,6 +334,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 							<FormTextArea
 								id="notes"
 								type="text"
+								maxLength={ 1000 }
 								placeholder={ translate(
 									'Share any other details that will help us access your site for the migration.'
 								) }
