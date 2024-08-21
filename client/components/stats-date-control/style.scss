@@ -118,7 +118,8 @@ $date-control-mobile-layout-switch: $break-small;
 	display: flex; // to position "From" and "To" groups side by side
 	gap: 16px; // spacing between the "From" input and the "To" input
 
-	input[type="date"] {
+	input[type="date"],
+	.stats-date-control-picker-dates__input {
 		font-family: $font-sf-pro-text;
 		font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
 		font-style: normal;

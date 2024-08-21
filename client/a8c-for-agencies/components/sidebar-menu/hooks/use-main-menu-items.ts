@@ -8,6 +8,7 @@ import {
 	tag,
 	cog,
 	commentAuthorAvatar,
+	people,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -24,6 +25,7 @@ import {
 	A4A_SETTINGS_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_REFERRALS_DASHBOARD,
+	A4A_TEAM_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -150,6 +152,19 @@ const useMainMenuItems = ( path: string ) => {
 							title: translate( 'Settings' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Settings',
+							},
+						},
+				  ]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-team' )
+				? [
+						{
+							icon: people,
+							path: '/',
+							link: A4A_TEAM_LINK,
+							title: translate( 'Team' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Team',
 							},
 						},
 				  ]

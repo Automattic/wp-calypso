@@ -39,7 +39,9 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 					</div>
 
 					<div className="profiler-header__action">
-						<Button href="/speed-test">{ translate( 'Test another site' ) }</Button>
+						<Button href="https://wordpress.com/speed-test">
+							{ translate( 'Test another site' ) }
+						</Button>
 					</div>
 				</div>
 				{ showNavigationTabs && (

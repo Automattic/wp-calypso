@@ -139,7 +139,7 @@
 	font-size: rem(12px);
 	font-weight: 600;
 	text-align: center;
-	width: 20px;
+	min-width: 20px;
 	height: 20px;
 	border-radius: 50%;
 	border: 2px solid var(--color-accent);

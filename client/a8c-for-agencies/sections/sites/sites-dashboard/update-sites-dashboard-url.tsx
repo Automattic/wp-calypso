@@ -15,12 +15,14 @@ const buildQueryString = ( {
 	currentPage,
 	sort,
 	showOnlyFavorites,
+	showOnlyDevelopmentSites,
 }: {
 	filters: Filter[];
 	search: string;
 	currentPage: number;
 	sort: DashboardSortInterface;
 	showOnlyFavorites?: boolean;
+	showOnlyDevelopmentSites?: boolean;
 } ) => {
 	const urlQuery = new URLSearchParams();
 
@@ -50,7 +52,14 @@ const buildQueryString = ( {
 		urlQuery.set( 'is_favorite', '' );
 	}
 
-	const queryString = urlQuery.toString().replace( 'is_favorite=', 'is_favorite' );
+	if ( showOnlyDevelopmentSites ) {
+		urlQuery.set( 'is_development', '' );
+	}
+
+	const queryString = urlQuery
+		.toString()
+		.replace( 'is_favorite=', 'is_favorite' )
+		.replace( 'is_development=', 'is_development' );
 
 	return queryString ? `?${ queryString }` : '';
 };
@@ -65,6 +74,7 @@ export const updateSitesDashboardUrl = ( {
 	currentPage,
 	sort,
 	showOnlyFavorites,
+	showOnlyDevelopmentSites,
 }: {
 	category?: string;
 	setCategory: ( category: string ) => void;
@@ -75,6 +85,7 @@ export const updateSitesDashboardUrl = ( {
 	currentPage: number;
 	sort: DashboardSortInterface;
 	showOnlyFavorites?: boolean;
+	showOnlyDevelopmentSites?: boolean;
 } ) => {
 	// We need a category in the URL if we have a selected site
 	if ( selectedSite && ! category ) {
@@ -92,6 +103,7 @@ export const updateSitesDashboardUrl = ( {
 		currentPage,
 		sort,
 		showOnlyFavorites,
+		showOnlyDevelopmentSites,
 	} );
 
 	if (

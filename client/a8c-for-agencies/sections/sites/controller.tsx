@@ -27,6 +27,7 @@ function configureSitesContext( context: Context ) {
 		sort_field,
 		sort_direction,
 		is_favorite,
+		is_development,
 	} = context.query;
 
 	const sort: DashboardSortInterface = {
@@ -43,6 +44,9 @@ function configureSitesContext( context: Context ) {
 			hideListingInitialState={ hideListingInitialState }
 			showOnlyFavoritesInitialState={
 				is_favorite === '' || is_favorite === '1' || is_favorite === 'true'
+			}
+			showOnlyDevelopmentInitialState={
+				is_development === '' || is_development === '1' || is_development === 'true'
 			}
 			path={ context.path }
 			searchQuery={ search }
@@ -81,6 +85,7 @@ export const dashboardSitesContext: Callback = ( context: Context, next ) => {
 		sort_direction,
 		issue_types,
 		is_favorite,
+		is_development,
 	} = context.query;
 	const state = context.store.getState();
 	const agency = getActiveAgency( state );
@@ -98,6 +103,7 @@ export const dashboardSitesContext: Callback = ( context: Context, next ) => {
 		filter: {
 			issueTypes: [ issue_types ],
 			showOnlyFavorites: !! is_favorite,
+			showOnlyDevSites: !! is_development,
 		},
 	};
 
