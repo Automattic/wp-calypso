@@ -38,7 +38,10 @@ const useMigrationFlowRevampRedirect = () => {
 
 	// Redirect user to the new migration flow.
 	useEffect( () => {
-		if ( ! config.isEnabled( 'migration-flow/revamp' ) ) {
+		if (
+			! config.isEnabled( 'migration-flow/revamp' ) &&
+			! window.localStorage.getItem( 'migration-flow/revamp' )
+		) {
 			return;
 		}
 
