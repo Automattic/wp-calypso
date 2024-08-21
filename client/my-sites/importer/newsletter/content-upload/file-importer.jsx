@@ -111,6 +111,10 @@ class FileImporter extends PureComponent {
 			this.props.openSummaryModal( importerStatus.importerId );
 		}
 
+		const showImportingPane =
+			includes( importingStates, importerState ) && summaryModalOpen === false;
+		const showUploadingPane = includes( uploadingStates, importerState ) || summaryModalOpen;
+
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
 				{ errorData && (
@@ -131,7 +135,7 @@ class FileImporter extends PureComponent {
 						authorsNumber={ importerStatus?.customData?.sourceAuthors.length }
 					/>
 				) }
-				{ includes( importingStates, importerState ) && summaryModalOpen === false && (
+				{ showImportingPane && (
 					<ImportingPane
 						importerStatus={ importerStatus }
 						sourceType={ title }
@@ -139,7 +143,7 @@ class FileImporter extends PureComponent {
 						nextStepUrl={ nextStepUrl }
 					/>
 				) }
-				{ ( includes( uploadingStates, importerState ) || summaryModalOpen ) && (
+				{ showUploadingPane && (
 					<UploadingPane
 						isEnabled={ isEnabled }
 						description={ uploadDescription }
