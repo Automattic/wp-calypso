@@ -21,7 +21,8 @@ export default function Subscribers( {
 	skipNextStep,
 	cardData,
 }: Props ) {
-	const [ isOpen, setIsOpen ] = useState( false );
+	const open = cardData.meta.paid_subscribers_count || false;
+	const [ isOpen, setIsOpen ] = useState( open );
 
 	return (
 		<>
