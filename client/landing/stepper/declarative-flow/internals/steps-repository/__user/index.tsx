@@ -77,7 +77,7 @@ const UserStep: Step = function UserStep( {
 						<WpcomLoginForm
 							authorization={ 'Bearer ' + response.bearer_token }
 							log={ response.username }
-							redirectTo={ _redirectTo }
+							redirectTo={ new URL( _redirectTo, window.location.href ).href }
 						/>
 					) }
 				</>

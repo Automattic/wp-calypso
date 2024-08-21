@@ -1,7 +1,6 @@
 import { SENSEI_FLOW } from '@automattic/onboarding';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useFirstStep } from 'calypso/landing/stepper/hooks/use-first-step';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import { type Flow } from '../../types';
 
@@ -19,10 +18,8 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 	const ref = queryParams.get( 'ref' ) || '';
 	const isSignupStep = queryParams.has( 'signup' );
 
-	const flowFirstStepSlug = useFirstStep( steps.map( ( el ) => el.slug ) );
-
 	// TODO: Using the new signup flag we can remove reference to SENSEI_FLOW
-	const firstStepSlug = flow.name === SENSEI_FLOW ? steps[ 1 ].slug : flowFirstStepSlug;
+	const firstStepSlug = ( flow.name === SENSEI_FLOW ? steps[ 1 ] : steps[ 0 ] ).slug;
 	const isFirstStep = firstStepSlug === currentStepRoute;
 	const flowVariant = flow.variantSlug;
 	const signupStartEventProps = flow.useSignupStartEventProps?.();

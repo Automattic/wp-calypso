@@ -12,5 +12,6 @@ export const useFirstStep = ( stepPaths: string[] ) => {
 	if ( stepPaths[ 0 ] === 'user' && isLoggedIn ) {
 		return stepPaths[ 1 ];
 	}
+
 	return stepPaths[ 0 ];
 };
