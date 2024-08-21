@@ -1,5 +1,5 @@
 import { useSelect } from '@wordpress/data';
-import urlMapping from '../route-to-query-mapping.json';
+import urlMapping from '../route-to-query-mapping';
 
 interface CoreBlockEditor {
 	getSelectedBlock: () => object;
