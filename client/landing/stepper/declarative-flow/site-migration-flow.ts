@@ -28,15 +28,16 @@ import type { AssertConditionResult, Flow, ProvidedDependencies } from './intern
 const FLOW_NAME = 'site-migration';
 
 /**
- * Redirects users coming from 'move-lp' and 'hosting-lp' to the new migration flow.
+ * Redirects users coming from landing pages and "/sites" to the new migration flow.
  */
 const useMigrationFlowRevampRedirect = () => {
 	const [ query ] = useSearchParams();
 	const fullQueryString = query.toString();
 	const ref = query.get( 'ref' ) ?? '';
+	const source = query.get( 'source' ) ?? '';
 	const from = query.get( 'from' ) ?? '';
 
-	// Redirect user to the new flow.
+	// Redirect user to the new migration flow.
 	useEffect( () => {
 		if ( ! config.isEnabled( 'migration-flow/revamp' ) ) {
 			return;
@@ -50,10 +51,15 @@ const useMigrationFlowRevampRedirect = () => {
 			return;
 		}
 
-		if ( [ 'move-lp', 'hosting-lp' ].includes( ref ) ) {
+		if (
+			// Landing pages.
+			[ 'move-lp', 'hosting-lp' ].includes( ref ) ||
+			// "Add new site" dropdown in /sites
+			( 'sites-dashboard' === source && 'topbar' === ref )
+		) {
 			window.location.replace( '/setup/migration?' + fullQueryString );
 		}
-	}, [ fullQueryString, ref, from ] );
+	}, [ fullQueryString, ref, source, from ] );
 };
 
 const siteMigration: Flow = {
