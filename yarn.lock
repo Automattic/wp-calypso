@@ -1063,8 +1063,7 @@ __metadata:
     "@wordpress/private-apis": "npm:^1.2.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:3.0.0"
     copy-webpack-plugin: "npm:^10.2.4"
-    postcss: "npm:^8.4.41"
-    postcss-prefixwrap: "npm:^1.51.0"
+    postcss-prefix-selector: "npm:^1.16.1"
     typescript: "npm:^5.3.3"
     webpack: "npm:^5.91.0"
   peerDependencies:
@@ -25181,13 +25180,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picocolors@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "picocolors@npm:1.0.1"
-  checksum: c63cdad2bf812ef0d66c8db29583802355d4ca67b9285d846f390cc15c2f6ccb94e8cb7eb6a6e97fc5990a6d3ad4ae42d86c84d3146e667c739a4234ed50d400
-  languageName: node
-  linkType: hard
-
 "picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.2.2, picomatch@npm:^2.2.3, picomatch@npm:^2.3.0, picomatch@npm:^2.3.1":
   version: 2.3.1
   resolution: "picomatch@npm:2.3.1"
@@ -25788,21 +25780,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss-prefix-selector@npm:^1.16.1":
+  version: 1.16.1
+  resolution: "postcss-prefix-selector@npm:1.16.1"
+  peerDependencies:
+    postcss: ">4 <9"
+  checksum: e72d3fc000252ce22d000e7de5b74b718fe794a191e79598634ba73bbff3f1493a877d04e7fbf649b79f7d47428741324c5b157cf946bb63328d5e9883cea14c
+  languageName: node
+  linkType: hard
+
 "postcss-prefixwrap@npm:^1.41.0":
   version: 1.43.0
   resolution: "postcss-prefixwrap@npm:1.43.0"
   peerDependencies:
     postcss: "*"
   checksum: 6ac0dbf86610c7cee143a6855c210f376d3afca871a85f696d44a5f3b91eecae8a784b3837b17cad39329ef0b4d4b6aead9a564f55af9aa346349eb22d7d86cf
-  languageName: node
-  linkType: hard
-
-"postcss-prefixwrap@npm:^1.51.0":
-  version: 1.51.0
-  resolution: "postcss-prefixwrap@npm:1.51.0"
-  peerDependencies:
-    postcss: "*"
-  checksum: 78090540627d35418c121a85d46221758dcc47f2499a7f84f2e26984cebf876808e41076963ea0c8e2f1458badde482da121881343ca31c6df0251cacf883a9f
   languageName: node
   linkType: hard
 
@@ -25965,17 +25957,6 @@ __metadata:
     picocolors: "npm:^1.0.0"
     source-map-js: "npm:^1.0.2"
   checksum: 16eda83458fcd8a91bece287b5920c7f57164c3ea293e6c80d0ea71ce7843007bcd8592260a5160b9a7f02693e6ac93e2495b02d8c7596d3f3f72c1447e3ba79
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^8.4.41":
-  version: 8.4.41
-  resolution: "postcss@npm:8.4.41"
-  dependencies:
-    nanoid: "npm:^3.3.7"
-    picocolors: "npm:^1.0.1"
-    source-map-js: "npm:^1.2.0"
-  checksum: c1828fc59e7ec1a3bf52b3a42f615dba53c67960ed82a81df6441b485fe43c20aba7f4e7c55425762fd99c594ecabbaaba8cf5b30fd79dfec5b52a9f63a2d690
   languageName: node
   linkType: hard
 
@@ -29316,13 +29297,6 @@ __metadata:
   version: 1.0.2
   resolution: "source-map-js@npm:1.0.2"
   checksum: 32f2dfd1e9b7168f9a9715eb1b4e21905850f3b50cf02cf476e47e4eebe8e6b762b63a64357896aa29b37e24922b4282df0f492e0d2ace572b43d15525976ff8
-  languageName: node
-  linkType: hard
-
-"source-map-js@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "source-map-js@npm:1.2.0"
-  checksum: 7e5f896ac10a3a50fe2898e5009c58ff0dc102dcb056ed27a354623a0ece8954d4b2649e1a1b2b52ef2e161d26f8859c7710350930751640e71e374fe2d321a4
   languageName: node
   linkType: hard
 
