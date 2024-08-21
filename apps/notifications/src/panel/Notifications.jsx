@@ -27,32 +27,6 @@ export const refreshNotes = () => client && client.refreshNotes.call( client );
 
 export const RestClientContext = createContext( client );
 
-const DEFAULT_HANDLERS = {
-	APP_REFRESH_NOTES: [
-		( _store, action ) => {
-			if ( ! client ) {
-				return;
-			}
-
-			if ( 'boolean' === typeof action.isVisible ) {
-				debug( 'APP_REFRESH_NOTES', {
-					isShowing: this.props.isShowing,
-					isVisible: action.isVisible,
-				} );
-				// Use this.props instead of destructuring isShowing, so that this uses
-				// the value on props at any given time and not only the value that was
-				// present on initial mount.
-				client.setVisibility.call( client, {
-					isShowing: this.props.isShowing,
-					isVisible: action.isVisible,
-				} );
-			}
-
-			client.refreshNotes.call( client, action.isVisible );
-		},
-	],
-};
-
 export class Notifications extends PureComponent {
 	static propTypes = {
 		customEnhancer: PropTypes.func,
@@ -74,6 +48,32 @@ export class Notifications extends PureComponent {
 		receiveMessage: noop,
 	};
 
+	defaultHandlers = {
+		APP_REFRESH_NOTES: [
+			( _store, action ) => {
+				if ( ! client ) {
+					return;
+				}
+
+				if ( 'boolean' === typeof action.isVisible ) {
+					debug( 'APP_REFRESH_NOTES', {
+						isShowing: this.props.isShowing,
+						isVisible: action.isVisible,
+					} );
+					// Use this.props instead of destructuring isShowing, so that this uses
+					// the value on props at any given time and not only the value that was
+					// present on initial mount.
+					client.setVisibility.call( client, {
+						isShowing: this.props.isShowing,
+						isVisible: action.isVisible,
+					} );
+				}
+
+				client.refreshNotes.call( client, action.isVisible );
+			},
+		],
+	};
+
 	constructor( props ) {
 		super( props );
 
@@ -83,7 +83,7 @@ export class Notifications extends PureComponent {
 		initStore( { customEnhancer } );
 
 		store.dispatch( addListeners( customMiddleware ) );
-		store.dispatch( addListeners( DEFAULT_HANDLERS ) );
+		store.dispatch( addListeners( this.defaultHandlers ) );
 
 		initAPI( wpcom );
 
@@ -141,7 +141,7 @@ export class Notifications extends PureComponent {
 	componentWillUnmount() {
 		const { customMiddleware } = this.props;
 		store.dispatch( removeListeners( customMiddleware ) );
-		store.dispatch( removeListeners( DEFAULT_HANDLERS ) );
+		store.dispatch( removeListeners( this.defaultHandlers ) );
 	}
 
 	render() {
