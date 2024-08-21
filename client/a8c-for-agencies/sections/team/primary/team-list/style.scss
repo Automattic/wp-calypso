@@ -1,0 +1,65 @@
+.team-list {
+	.a4a-layout__body {
+		padding-block-start: 32px;
+	}
+
+	.dataviews-filters__view-actions {
+		display: none;
+	}
+
+	.dataviews-view-table__row td:last-child {
+		text-align: right;
+		padding: 16px 48px;
+
+	}
+}
+
+
+.team-list__member-column {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
+}
+
+.team-list__member-column-gravatar {
+	border-radius: 4px;
+}
+
+.team-list__member-column-details {
+	display: flex;
+	flex-direction: column;
+}
+
+.team-list__member-column-details-name {
+	@include a4a-font-heading-md($font-size: rem(14px));
+}
+
+.team-list__member-column-details-email {
+	@include a4a-font-body-sm;
+	color: var(--color-neutral-70);
+}
+
+.team-list__status-badge {
+	@include a4a-font-body-sm;
+
+	&.badge--warning {
+		color: var(--color-warning-50);
+		background-color: var(--color-warning-0);
+	}
+
+	&.badge--error {
+		color: var(--color-error-50);
+		background-color: var(--color-error-0);
+	}
+}
+
+.team-list__actions-column {
+	display: flex;
+	align-items: flex-end;
+}
+
+.team-list__action-menu-item.is-danger {
+	color: var(--color-error);
+}
+
