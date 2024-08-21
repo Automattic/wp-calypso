@@ -13,7 +13,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
-import MapPlan from './map-plan';
+import { MapPlan, TierToAdd } from './map-plan';
 
 type Props = {
 	nextStepUrl: string;
@@ -24,6 +24,13 @@ type Props = {
 	currentStep: string;
 };
 
+function formatCurrencyFloat( amount: number, currency: string ) {
+	const formattedCurrency = formatCurrency( amount, currency, {
+		isSmallestUnit: true,
+	} ).replace( /[^\d.-]/g, '' );
+	return parseFloat( formattedCurrency );
+}
+
 export default function MapPlans( {
 	nextStepUrl,
 	skipNextStep,
@@ -32,7 +39,7 @@ export default function MapPlans( {
 	engine,
 	currentStep,
 }: Props ) {
-	const [ productToAdd, setProductToAdd ] = useState< Product | null >( null );
+	const [ productToAdd, setProductToAdd ] = useState< TierToAdd | null >( null );
 
 	const queryClient = useQueryClient();
 
@@ -61,17 +68,13 @@ export default function MapPlans( {
 
 	const tierToAdd = {
 		currency: monthyPlan.plan_currency,
-		price: formatCurrency( monthyPlan.plan_amount_decimal, monthyPlan.plan_currency, {
-			isSmallestUnit: true,
-		} ).replace( /[^\d.-]/g, '' ),
+		price: formatCurrencyFloat( monthyPlan.plan_amount_decimal, monthyPlan.plan_currency ),
 		type: TYPE_TIER,
 		title: 'Newsletter tier',
 		interval: PLAN_MONTHLY_FREQUENCY,
 		annualProduct: {
 			currency: annualPlan.plan_currency,
-			price: formatCurrency( annualPlan.plan_amount_decimal, annualPlan.plan_currency, {
-				isSmallestUnit: true,
-			} ).replace( /[^\d.-]/g, '' ),
+			price: formatCurrencyFloat( annualPlan.plan_amount_decimal, annualPlan.plan_currency ),
 			type: TYPE_TIER,
 			interval: PLAN_YEARLY_FREQUENCY,
 		},

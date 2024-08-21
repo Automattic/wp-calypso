@@ -26,7 +26,7 @@ type Product = {
 	interval: string;
 };
 
-type TierToAdd = {
+export type TierToAdd = {
 	currency: string;
 	price: number;
 	type: string;
@@ -76,7 +76,7 @@ function getProductChoices( products: Array< Product > ) {
 	} ) );
 }
 
-export default function MapPlan( {
+export function MapPlan( {
 	plan,
 	products,
 	map_plans,
