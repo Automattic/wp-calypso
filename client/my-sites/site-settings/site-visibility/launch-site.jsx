@@ -92,7 +92,7 @@ const LaunchSite = () => {
 	const agencyName = 'MyCoolAgency';
 
 	const handleReferToClient = () => {
-		window.location.href = `https://agencies.automattic.com/marketplace/checkout/referral_blog_id=${ siteId }`;
+		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
 	};
 
 	return (
