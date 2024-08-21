@@ -19,7 +19,7 @@ export const useStepNavigationWithTracking = ( {
 	navigate,
 	steps,
 }: Params< ReturnType< Flow[ 'useSteps' ] > > ) => {
-	const stepNavigation = flow.useStepNavigation?.(
+	const stepNavigation = flow.useStepNavigation(
 		currentStepRoute,
 		navigate,
 		steps.map( ( step ) => step.slug )
