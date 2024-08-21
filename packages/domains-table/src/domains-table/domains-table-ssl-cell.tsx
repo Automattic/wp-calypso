@@ -20,7 +20,7 @@ export default function DomainsTableSslCell( {
 	// are covered by a wildcard SSL cert, so we display them as 'Active'.
 	const isActiveSsl = sslStatus === 'active' || hasWpcomManagedSslCert;
 	const isPendingSsl = sslStatus === 'pending' || sslStatus === 'newly_registered';
-	const domainHasSsl = sslStatus || hasWpcomManagedSslCert;
+	const domainHasSsl = sslStatus !== null || hasWpcomManagedSslCert;
 
 	const Element = ( { children, ...props }: { children: React.ReactNode; className: string } ) => {
 		if ( sslStatus ) {
