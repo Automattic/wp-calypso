@@ -148,7 +148,7 @@ class ProfileLinks extends Component {
 			<div>
 				<p>
 					{ this.props.translate(
-						'Manage which sites appear when people visit your Gravatar profile'
+						'Manage which sites appear when people visit your Gravatar profile.'
 					) }
 				</p>
 
