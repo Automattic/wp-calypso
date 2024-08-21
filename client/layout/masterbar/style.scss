@@ -288,10 +288,10 @@ body.is-mobile-app-view {
 	justify-content: center;
 
 	&.masterbar__reader {
-		padding: 0 7px 0 4px;
+		padding: 0 12px 0 9px;
 
 		.masterbar_svg-reader {
-			padding: 0 8px 0 3px;
+			padding: 0 0 0 3px;
 		}
 	}
 
@@ -306,9 +306,7 @@ body.is-mobile-app-view {
 		}
 
 		&.masterbar__reader {
-			.masterbar_svg-reader {
-				padding: 0;
-			}
+			padding: 0 9px 0 6px;
 		}
 	}
 
@@ -1256,6 +1254,10 @@ body.is-mobile-app-view {
 		@media only screen and (min-width: 481px) {
 			stroke: var(--color-masterbar-item-hover-background);
 		}
+	}
+
+	@media only screen and (max-width: 781px) {
+		padding: 0 8px;
 	}
 }
 
