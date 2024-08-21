@@ -49,42 +49,63 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 	const fieldMapping = {
 		from_url: {
 			fieldName: 'siteAddress',
-			errorMessage: translate( 'Please enter a valid URL.' ),
+			errorMessage: translate( 'Enter a valid URL.' ),
 		},
 		username: {
-			fieldName: null,
-			errorMessage: translate( 'Enter a valid username' ),
+			fieldName: 'username',
+			errorMessage: translate( 'Enter a valid username.' ),
 		},
 		password: {
-			fieldName: null,
-			errorMessage: translate( 'Enter a valid password' ),
+			fieldName: 'password',
+			errorMessage: translate( 'Enter a valid password.' ),
+		},
+		migration_type: {
+			fieldName: 'howToAccessSite',
+			errorMessage: null,
+		},
+		notes: {
+			fieldName: 'notes',
+			errorMessage: null,
 		},
 	};
 
 	const isBackupFileLocationValid = ( fileLocation: string ) => {
-		return ! isValidUrl( fileLocation ) ? fieldMapping.from_url.errorMessage : undefined;
+		return ! isValidUrl( fileLocation ) ? translate( 'Please enter a valid URL.' ) : undefined;
 	};
 
 	const importSiteQueryParam = useQuery().get( 'from' ) || '';
 
+	const setGlobalError = ( message?: string | null | undefined ) => {
+		// eslint-disable-next-line @typescript-eslint/no-use-before-define
+		setError( 'root', {
+			type: 'manual',
+			message: message ?? translate( 'An error occurred while saving credentials.' ),
+		} );
+	};
+
 	const handleMigrationError = ( err: MigrationError ) => {
+		let hasUnmappedFieldError = false;
+
 		if ( err.body?.code === 'rest_invalid_param' && err.body?.data?.params ) {
 			Object.entries( err.body.data.params ).forEach( ( [ key ] ) => {
 				const field = fieldMapping[ key as keyof typeof fieldMapping ];
-				const keyName = field?.fieldName ?? key;
-				const message = field?.errorMessage ?? translate( 'Invalid input, please check again' );
-				// eslint-disable-next-line @typescript-eslint/no-use-before-define
-				setError( keyName as keyof CredentialsFormData, {
-					type: 'manual',
-					message,
-				} );
+				const keyName =
+					// eslint-disable-next-line @typescript-eslint/no-use-before-define
+					'backup' === accessMethod && field?.fieldName === 'siteAddress'
+						? 'backupFileLocation'
+						: field?.fieldName;
+
+				if ( keyName ) {
+					const message = field?.errorMessage ?? translate( 'Invalid input, please check again' );
+					// eslint-disable-next-line @typescript-eslint/no-use-before-define
+					setError( keyName as keyof CredentialsFormData, { type: 'manual', message } );
+				} else if ( ! hasUnmappedFieldError ) {
+					hasUnmappedFieldError = true;
+					setGlobalError();
+				}
 			} );
 		} else {
-			// eslint-disable-next-line @typescript-eslint/no-use-before-define
-			setError( 'root', {
-				type: 'manual',
-				message: err.body?.message ?? translate( 'An error occurred while saving credentials.' ),
-			} );
+			setGlobalError( err.body?.message );
 		}
 	};
 
@@ -322,6 +343,9 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 						) }
 					/>
 				</div>
+				{ errors?.notes && (
+					<div className="site-migration-credentials__form-error">{ errors.notes.message }</div>
+				) }
 				{ errors?.root && (
 					<div className="site-migration-credentials__form-error">{ errors.root.message }</div>
 				) }

@@ -25,6 +25,8 @@ const messages = {
 	urlError: 'Please enter your WordPress site address.',
 	usernameError: 'Please enter your WordPress admin username.',
 	passwordError: 'Please enter your WordPress admin password.',
+	noTLDError:
+		"Looks like your site address is missing its domain extension. Please try again with something like 'example.com' or 'example.net'.",
 };
 
 describe( 'SiteMigrationCredentials', () => {
@@ -56,6 +58,13 @@ describe( 'SiteMigrationCredentials', () => {
 			'username',
 			'password',
 			[],
+			[ messages.passwordError, messages.urlError, messages.usernameError ],
+		],
+		[
+			'siteurlnotld',
+			'username',
+			'password',
+			[ messages.noTLDError ],
 			[ messages.passwordError, messages.urlError, messages.usernameError ],
 		],
 		[
@@ -143,7 +152,7 @@ describe( 'SiteMigrationCredentials', () => {
 			[ messages.passwordError, messages.urlError, messages.usernameError ],
 		],
 	] )(
-		'sends correct request',
+		'sends correctly formed request',
 		async (
 			howToAccessSite,
 			siteAddress,
@@ -208,44 +217,101 @@ describe( 'SiteMigrationCredentials', () => {
 		}
 	);
 
-	it( 'clicking without any input renders default error messages', async () => {
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
+	it.each( [
+		[
+			'Enter a valid URL.',
+			{
+				code: 'rest_invalid_param',
+				message: 'Test',
+				data: { params: { from_url: 'Invalid Param' } },
+			},
+		],
+		[
+			'Enter a valid username.',
+			{
+				code: 'rest_invalid_param',
+				message: 'Test',
+				data: { params: { username: 'Invalid Param' } },
+			},
+		],
+		[
+			'Invalid input, please check again',
+			{
+				code: 'rest_invalid_param',
+				message: 'Test note',
+				data: { params: { notes: 'Invalid Param' } },
+			},
+		],
+		[
+			'Enter a valid password.',
+			{
+				code: 'rest_invalid_param',
+				message: 'Test',
+				data: { params: { password: 'Invalid Param' } },
+			},
+		],
+		[
+			'An error occurred while saving credentials.',
+			{
+				code: 'rest_invalid_param',
+				message: 'Test',
+				data: { params: { nonexistant: 'Invalid Param' } },
+			},
+		],
+		[
+			'A test message',
+			{
+				code: 'rest_other_error',
+				message: 'A test message',
+				data: {},
+			},
+		],
+		[
+			'An error occurred while saving credentials.',
+			{
+				code: 'rest_other_error_no_message',
+				data: {},
+			},
+		],
+	] )(
+		'shows correct error messages after server validation -- %s -- %p',
+		async ( message, errorResponse ) => {
+			( wpcomRequest as jest.Mock ).mockClear();
 
-		await waitFor( async () => {
-			await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
-		} );
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
 
-		await waitFor( async () => {
-			expect(
-				screen.queryByText( 'Please enter your WordPress site address.' )
-			).toBeInTheDocument();
-			expect(
-				screen.queryByText( 'Please enter your WordPress admin username.' )
-			).toBeInTheDocument();
-		} );
-	} );
+			await userEvent.type( screen.getByLabelText( /Site address/ ), 'test.com' );
+			await userEvent.type( screen.getByLabelText( /WordPress admin username/ ), 'username' );
+			await userEvent.type( screen.getByLabelText( /Password/ ), 'password' );
+			await userEvent.type( screen.getByLabelText( /Notes \(optional\)/ ), 'notes' );
 
-	it( 'shows a valid error when a wrong web address is typed', async () => {
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
+			( wpcomRequest as jest.Mock ).mockRejectedValue( errorResponse );
 
-		const inputField = screen.getByLabelText( /Site address/ );
-		await userEvent.type( inputField, 'urlwithouttld' );
+			await waitFor( async () => {
+				await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+			} );
 
-		await waitFor( async () => {
-			await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
-		} );
+			await waitFor( async () => {
+				expect( wpcomRequest ).toHaveBeenCalledWith( {
+					path: 'help/automated-migration',
+					apiNamespace: 'wpcom/v2/',
+					apiVersion: '2',
+					method: 'POST',
+					body: {
+						migration_type: 'credentials',
+						blog_url: 'https://site-url.wordpress.com',
+						notes: 'notes',
+						from_url: 'test.com',
+						username: 'username',
+						password: 'password',
+					},
+				} );
+			} );
 
-		await waitFor( async () => {
-			expect(
-				screen.queryByText(
-					"Looks like your site address is missing its domain extension. Please try again with something like 'example.com' or 'example.net'."
-				)
-			).toBeInTheDocument();
-			expect(
-				screen.queryByText( 'Please enter your WordPress admin username.' )
-			).toBeInTheDocument();
-		} );
-	} );
+			await waitFor( () => {
+				expect( screen.queryByText( message ) ).toBeInTheDocument();
+			} );
+		}
+	);
 } );
