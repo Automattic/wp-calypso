@@ -5,6 +5,7 @@ import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -25,6 +26,26 @@ import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 
 const FLOW_NAME = 'site-migration';
+
+/**
+ * Redirects users coming from 'move-lp' and 'hosting-lp' to the new migration flow.
+ */
+const useMigrationFlowRevampRedirect = () => {
+	const [ query ] = useSearchParams();
+	const fullQueryString = query.toString();
+	const ref = query.get( 'ref' ) ?? '';
+
+	// Redirect user to the new flow.
+	useEffect( () => {
+		if ( ! config.isEnabled( 'migration-flow/revamp' ) ) {
+			return;
+		}
+
+		if ( [ 'move-lp', 'hosting-lp' ].includes( ref ) ) {
+			window.location.assign( '/setup/migration?' + fullQueryString );
+		}
+	}, [ fullQueryString, ref ] );
+};
 
 const siteMigration: Flow = {
 	name: FLOW_NAME,
@@ -60,6 +81,7 @@ const siteMigration: Flow = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
+		useMigrationFlowRevampRedirect();
 		const { siteSlug, siteId } = useSiteData();
 		const { isAdmin } = useIsSiteAdmin();
 		const userIsLoggedIn = useSelect(
