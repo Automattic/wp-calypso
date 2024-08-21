@@ -56,38 +56,42 @@ const HostingFeatures = () => {
 			? `/hosting-config/${ siteId }`
 			: `/overview/${ siteId }`
 	);
+	const hasRedirectQueryParam = searchParams.has( 'redirect_to' );
 	const hasEnTranslation = useHasEnTranslation();
 
-	const { data: siteTransferData, refetch: refetchSiteTransferData } = useSiteTransferStatusQuery(
-		siteId || undefined
-	);
-	// `siteTransferData?.isTransferring` is not a fully reliable indicator by itself, which is why
-	// we also look at `siteTransferData.status`
+	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId || undefined, {
+		refetchInterval: 3000,
+		refetchIntervalInBackground: true,
+	} );
+	// We have some bug at the backend, when the transfer is complited, but isSiteAtomic is still false, so we need such extra condition
 	const isTransferInProgress =
 		siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED;
+
+	useEffect( () => {
+		if ( isSiteAtomic && ! isPlanExpired ) {
+			if ( hasRedirectQueryParam ) {
+				window.location.href = redirectUrl.current;
+			} else {
+				// The setTimeout is needed when transitioning a site to Atomic.
+				// Once the transition is completed, the user should be redirected to the hosting configuration page.
+				// However, due to a backend delay, immediate redirection may lead to the login page instead.
+				// To avoid this, we introduce a 5-second delay before redirecting.
+				setTimeout( () => {
+					window.location.href = redirectUrl.current;
+				}, 5000 );
+			}
+		}
+	}, [ isSiteAtomic, isPlanExpired, hasRedirectQueryParam ] );
 
 	useEffect( () => {
 		if ( ! siteId ) {
 			return;
 		}
 
-		const interval = setInterval( () => {
-			if ( siteTransferData?.status !== transferStates.COMPLETED ) {
-				refetchSiteTransferData();
-			} else {
-				clearInterval( interval );
-				dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
-			}
-		}, 3000 );
-
-		return () => clearInterval( interval );
-	}, [ siteId, siteTransferData?.status, refetchSiteTransferData, dispatch ] );
-
-	useEffect( () => {
-		if ( isSiteAtomic && ! isPlanExpired ) {
-			page.replace( redirectUrl.current );
+		if ( siteTransferData?.status === transferStates.COMPLETED ) {
+			dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
 		}
-	}, [ isSiteAtomic, isPlanExpired ] );
+	}, [ siteTransferData?.status, siteId, dispatch ] );
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const promoCards = [
