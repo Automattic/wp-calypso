@@ -253,6 +253,7 @@ class Layout extends Component {
 	 * - the color scheme has changed
 	 * - the global sidebar is visible and the color scheme is not `global`
 	 * - the global sidebar was visible and is now hidden and the color scheme is not `global`
+	 * - the section changed to `checkout` or changes from 'checkout' to something else
 	 * @param prevProps object
 	 */
 	componentDidUpdate( prevProps ) {
@@ -261,7 +262,9 @@ class Layout extends Component {
 			( this.props.isGlobalSidebarVisible && this.props.colorScheme !== 'global' ) ||
 			( prevProps.isGlobalSidebarVisible &&
 				! this.props.isGlobalSidebarVisible &&
-				this.props.colorScheme !== 'global' )
+				this.props.colorScheme !== 'global' ) ||
+			( prevProps.sectionName !== 'checkout' && this.props.sectionName === 'checkout' ) ||
+			( prevProps.sectionName === 'checkout' && this.props.sectionName !== 'checkout' )
 		) {
 			this.refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
 		}
@@ -275,6 +278,11 @@ class Layout extends Component {
 		if ( typeof document !== 'undefined' ) {
 			const classList = document.querySelector( 'body' ).classList;
 			const globalColorScheme = 'global';
+
+			if ( this.props.sectionName === 'checkout' ) {
+				classList.remove( `is-${ prevColorScheme }` );
+				return;
+			}
 
 			if ( this.props.isGlobalSidebarVisible ) {
 				// Force the global color scheme when the global sidebar is visible.
