@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { transferStates, type TransferStates } from 'calypso/state/automated-transfer/constants';
 
@@ -53,7 +53,11 @@ const shouldRefetch = ( status: TransferStates | undefined ) => {
 	return isTransferring( status );
 };
 
-type Options = Pick< UseQueryOptions, 'retry' >;
+type Options = {
+	retry?: number;
+	refetchInterval?: number;
+	refetchIntervalInBackground?: boolean;
+};
 
 /**
  * Query hook to get the site transfer status, pooling the endpoint.
@@ -75,8 +79,10 @@ export const useSiteTransferStatusQuery = ( siteId: number | undefined, options?
 			};
 		},
 		refetchOnWindowFocus: false,
-		refetchInterval: ( { state } ) =>
-			shouldRefetch( state.data?.status ) ? REFETCH_TIME : false,
+		refetchIntervalInBackground: !! options?.refetchIntervalInBackground,
+		refetchInterval:
+			options?.refetchInterval ||
+			( ( { state } ) => ( shouldRefetch( state.data?.status ) ? REFETCH_TIME : false ) ),
 		enabled: !! siteId,
 	} );
 };
