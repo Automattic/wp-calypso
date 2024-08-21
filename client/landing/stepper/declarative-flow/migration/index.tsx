@@ -122,7 +122,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					} );
 				}
 
-				return navigate( addQueryArgs( { platform }, SITE_CREATION_STEP.slug ), {}, true );
+				return navigate( addQueryArgs( { platform }, SITE_CREATION_STEP.slug ), {} );
 			},
 		},
 		[ SITE_CREATION_STEP.slug ]: {
@@ -146,11 +146,12 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 						siteId,
 						siteSlug,
 						backToStep: PLATFORM_IDENTIFICATION,
+						replaceHistory: true,
 					} );
 				}
 
 				// If plan is already selected and it exists.
-				// Entry point example: /setup/migration/create-site?platform=wordpress&plan=business
+				// Entry point example: /setup/migration/create-site?plan=business
 				if ( plans[ plan ] ) {
 					return navigateToCheckout( {
 						siteId,
@@ -180,13 +181,22 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 						platform: 'wordpress',
 						siteId,
 						siteSlug,
-						backToStep: MIGRATION_UPGRADE_PLAN,
+						backToStep: PLATFORM_IDENTIFICATION,
+						migrateEntireSiteStep: MIGRATION_UPGRADE_PLAN,
+						replaceHistory: true,
 					} );
 				}
 
 				if ( props?.goToCheckout ) {
 					return navigateToCheckout( { siteId, siteSlug, plan, props } );
 				}
+			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
+				const plan = getFromPropsOrUrl( 'plan', props ) as string;
+
+				return navigate( addQueryArgs( { siteId, siteSlug, plan }, PLATFORM_IDENTIFICATION.slug ) );
 			},
 		},
 		[ MIGRATION_HOW_TO_MIGRATE.slug ]: {
@@ -256,4 +266,6 @@ export default {
 
 		return stepHandlers[ currentStep ];
 	},
+
+	use__Temporary__ShouldTrackEvent: ( event ) => 'submit' === event,
 } satisfies Flow;

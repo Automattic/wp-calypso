@@ -12,27 +12,46 @@ interface GoToImporterParams {
 	siteId: string;
 	siteSlug: string;
 	backToStep?: StepperStep;
+	migrateEntireSiteStep?: StepperStep;
+	replaceHistory?: boolean;
 }
 
-const getBackToFlowParam = ( step: string ) => `/${ MIGRATION_FLOW }/${ step }`;
-
-export const goToImporter = ( { platform, siteId, siteSlug, backToStep }: GoToImporterParams ) => {
-	const backToFlow = backToStep ? getBackToFlowParam( backToStep?.slug ) : undefined;
-	const path = getFinalImporterUrl( siteSlug, '', platform, backToFlow );
-
-	if ( isWpAdminImporter( path ) ) {
+const getFlowPath = ( step: string ) => `/${ MIGRATION_FLOW }/${ step }`;
+const goTo = ( path: string, replaceHistory: boolean ) => {
+	if ( replaceHistory ) {
 		return window.location.replace( path );
 	}
 
-	return window.location.replace(
-		addQueryArgs(
-			{
-				siteId,
-				siteSlug,
-				ref: MIGRATION_FLOW,
-				...( platform === 'wordpress' ? { option: 'content' } : {} ),
-			},
-			`/setup/${ SITE_SETUP_FLOW }/${ path }`
-		)
+	return window.location.assign( path );
+};
+
+export const goToImporter = ( {
+	platform,
+	siteId,
+	siteSlug,
+	backToStep,
+	migrateEntireSiteStep,
+	replaceHistory = false,
+}: GoToImporterParams ) => {
+	const backToFlow = backToStep ? getFlowPath( backToStep?.slug ) : undefined;
+	const customizedActionGoToFlow = migrateEntireSiteStep
+		? getFlowPath( migrateEntireSiteStep?.slug )
+		: undefined;
+	const path = getFinalImporterUrl( siteSlug, '', platform, backToFlow, customizedActionGoToFlow );
+
+	if ( isWpAdminImporter( path ) ) {
+		return goTo( path, replaceHistory );
+	}
+
+	const stepURL = addQueryArgs(
+		{
+			siteId,
+			siteSlug,
+			ref: MIGRATION_FLOW,
+			...( platform === 'wordpress' ? { option: 'content' } : {} ),
+		},
+		`/setup/${ SITE_SETUP_FLOW }/${ path }`
 	);
+
+	return goTo( stepURL, replaceHistory );
 };

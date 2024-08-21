@@ -44,15 +44,18 @@ import type { ImporterCompType } from './types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { Importer, ImportJob } from 'calypso/blocks/importer/types';
 
+type StepContainerProps = React.ComponentProps< typeof StepContainer >;
+
 interface Props {
 	importer: Importer;
+	customizedActionButtons?: StepContainerProps[ 'customizedActionButtons' ];
 }
 
 export function withImporterWrapper( Importer: ImporterCompType ) {
 	const ImporterWrapper = ( props: Props & StepProps ) => {
 		const { __ } = useI18n();
 		const dispatch = useDispatch();
-		const { importer, navigation, flow } = props;
+		const { importer, customizedActionButtons, navigation, flow } = props;
 		const currentSearchParams = useQuery();
 		/**
 	 	↓ Fields
@@ -213,6 +216,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 						}
 					) }
 					stepName="importer-step"
+					customizedActionButtons={ customizedActionButtons }
 					hideSkip
 					hideBack={ isMigrationInProgress }
 					hideFormattedHeader

@@ -447,12 +447,17 @@ const siteSetupFlow: Flow = {
 					if ( providedDependencies?.type === 'redirect' ) {
 						return exitFlow( providedDependencies?.url as string );
 					}
-
 					switch ( providedDependencies?.action ) {
 						case 'verify-email':
 							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
 						case 'checkout':
 							return exitFlow( providedDependencies?.checkoutUrl as string );
+						case 'customized-action-go-to-flow': {
+							const customizedActionGoToFlow = urlQueryParams.get( 'customizedActionGoToFlow' );
+							if ( customizedActionGoToFlow ) {
+								return goToFlow( customizedActionGoToFlow );
+							}
+						}
 						default:
 							return navigate( providedDependencies?.url as string );
 					}
