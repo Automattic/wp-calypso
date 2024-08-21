@@ -63,7 +63,8 @@ const HostingFeatures = () => {
 		refetchInterval: 3000,
 		refetchIntervalInBackground: true,
 	} );
-	// We have some bug at the backend, when the transfer is completed, but isSiteAtomic is still false, so we need such extra condition
+	// `siteTransferData?.isTransferring` is not a fully reliable indicator by itself, which is why
+	// we also look at `siteTransferData.status`
 	const isTransferInProgress =
 		siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED;
 
