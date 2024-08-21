@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Badge, Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
@@ -17,6 +18,7 @@ const SiteDataField = ( { isLoading, site, isDevSite, onSiteTitleClick }: SiteDa
 	}
 
 	const migrationInProgress = site.sticker?.includes( 'migration-in-progress' );
+	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 
 	return (
 		<Button
@@ -32,14 +34,14 @@ const SiteDataField = ( { isLoading, site, isDevSite, onSiteTitleClick }: SiteDa
 			<div className="sites-dataviews__site-name">
 				<div>{ site.blogname }</div>
 				{ ! migrationInProgress && <div className="sites-dataviews__site-url">{ site.url }</div> }
-				{ ( migrationInProgress || isDevSite ) && (
-					<Badge
-						className="status-badge"
-						type={ migrationInProgress ? 'info-blue' : 'info-purple' }
-					>
-						{ migrationInProgress
-							? translate( 'Migration in progress' )
-							: translate( 'Development' ) }
+				{ migrationInProgress && (
+					<Badge className="status-badge" type="info-blue">
+						{ translate( 'Migration in progress' ) }
+					</Badge>
+				) }
+				{ devSitesEnabled && isDevSite && (
+					<Badge className="status-badge" type="info-purple">
+						{ translate( 'Development' ) }
 					</Badge>
 				) }
 			</div>
