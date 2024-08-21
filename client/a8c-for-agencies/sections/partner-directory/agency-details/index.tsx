@@ -182,6 +182,20 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				</FormField>
 				<FormField
 					label={ translate( 'Company bio' ) }
+					description={ translate(
+						'Basic Markdown syntax is supported. {{a}}Learn more about Markdown.{{/a}}',
+						{
+							components: {
+								a: (
+									<a
+										href="https://commonmark.org/help/"
+										target="_blank"
+										rel="noreferrer noopener"
+									/>
+								),
+							},
+						}
+					) }
 					error={ validationError.bio }
 					checks={ [ validateNonEmpty() ] }
 					field={ formData.bioDescription }
