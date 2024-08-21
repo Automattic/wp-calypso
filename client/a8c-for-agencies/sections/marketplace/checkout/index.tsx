@@ -23,8 +23,8 @@ import { MarketplaceTypeContext } from '../context';
 import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
 import useProductsById from '../hooks/use-products-by-id';
 import useProductsBySlug from '../hooks/use-products-by-slug';
+import useReferralDevSite from '../hooks/use-referral-dev-site';
 import useShoppingCart from '../hooks/use-shopping-cart';
-import useReferralDevSite from '../hosting-overview/hooks/use-referral-dev-site';
 import { getClientReferralQueryArgs } from '../lib/get-client-referral-query-args';
 import useSubmitForm from '../products-overview/product-listing/hooks/use-submit-form';
 import NoticeSummary from './notice-summary';
@@ -127,6 +127,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 	}, [ dispatch ] );
 
 	const { addReferralPlanToCart, isLoading: isLoadingReferralDevSite } = useReferralDevSite(
+		selectedCartItems,
 		setSelectedCartItems,
 		referralBlogId
 	);
@@ -137,7 +138,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 			addReferralPlanToCart();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ referralBlogId && isLoadingReferralDevSite ] );
+	}, [ isLoadingReferralDevSite ] );
 
 	const title = isAutomatedReferrals ? translate( 'Referral checkout' ) : translate( 'Checkout' );
 
