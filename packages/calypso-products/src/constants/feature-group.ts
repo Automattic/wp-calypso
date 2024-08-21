@@ -27,4 +27,8 @@ export const FEATURE_GROUP_SHIPPING = 'feature-group-shipping';
 /* END: Woo Express Feature Groups */
 
 export const FEATURE_GROUP_STORAGE = 'feature-group-storage';
+export const FEATURE_GROUP_DOMAIN = 'feature-group-domain';
+export const FEATURE_GROUP_THEMES = 'feature-group-themes';
+export const FEATURE_GROUP_PERFORMANCE = 'feature-group-performance';
+
 export const FEATURE_GROUP_ALL_FEATURES = 'feature-group-all-freatures';

@@ -119,6 +119,12 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+	FEATURE_GROUP_DOMAIN,
+	FEATURE_GROUP_THEMES,
+	FEATURE_GROUP_PERFORMANCE,
+	FEATURE_GROUP_SUPPORT,
+	FEATURE_DNS_SSL_CACHING,
+	FEATURE_DNS_SSL_CACHING_CDN,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -132,6 +138,30 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		slug: FEATURE_GROUP_STORAGE,
 		getTitle: () => i18n.translate( 'Storage' ),
 		getFeatures: () => [], // Intentionally empty for now. We will include a fixed list of feature slugs in a follow-up.
+	},
+	[ FEATURE_GROUP_DOMAIN ]: {
+		slug: FEATURE_GROUP_DOMAIN,
+		getTitle: () => i18n.translate( 'Domain' ),
+		getFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
+	},
+	[ FEATURE_GROUP_SUPPORT ]: {
+		slug: FEATURE_GROUP_SUPPORT,
+		getTitle: () => i18n.translate( 'Support' ),
+		getFeatures: () => [ FEATURE_FAST_SUPPORT_FROM_EXPERTS, FEATURE_PRIORITY_24_7_SUPPORT ],
+	},
+	[ FEATURE_GROUP_THEMES ]: {
+		slug: FEATURE_GROUP_THEMES,
+		getTitle: () => i18n.translate( 'Themes' ),
+		getFeatures: () => [
+			FEATURE_BEAUTIFUL_THEMES,
+			FEATURE_PREMIUM_THEMES,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+		],
+	},
+	[ FEATURE_GROUP_PERFORMANCE ]: {
+		slug: FEATURE_GROUP_PERFORMANCE,
+		getTitle: () => i18n.translate( 'Performance' ),
+		getFeatures: () => [ FEATURE_DNS_SSL_CACHING, FEATURE_DNS_SSL_CACHING_CDN ],
 	},
 	[ FEATURE_GROUP_ESSENTIAL_FEATURES ]: {
 		slug: FEATURE_GROUP_ESSENTIAL_FEATURES,
@@ -341,10 +371,18 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 };
 
 export function resolveFeatureGroupsForFeaturesGrid(): Partial< FeatureGroupMap > {
-	return {
-		[ FEATURE_GROUP_ALL_FEATURES ]: featureGroups[ FEATURE_GROUP_ALL_FEATURES ],
-		[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
-	};
+	if ( true ) {
+		return {
+			[ FEATURE_GROUP_DOMAIN ]: featureGroups[ FEATURE_GROUP_DOMAIN ],
+			[ FEATURE_GROUP_THEMES ]: featureGroups[ FEATURE_GROUP_THEMES ],
+			[ FEATURE_GROUP_PERFORMANCE ]: featureGroups[ FEATURE_GROUP_PERFORMANCE ],
+			// [ FEATURE_GROUP_THINGS ]: featureGroups[ FEATURE_GROUP_THINGS ],
+			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
+			// [ FEATURE_GROUP_THEMES_AND_CUSTOMIZATION ]:
+			// 	featureGroups[ FEATURE_GROUP_THEMES_AND_CUSTOMIZATION ],
+			[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
+		};
+	}
 }
 
 export function resolveFeatureGroupsForComparisonGrid(): Partial< FeatureGroupMap > {

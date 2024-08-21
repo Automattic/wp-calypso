@@ -78,6 +78,12 @@ const PlanFeaturesList = ( {
 							( feature ) => featureGroup?.getFeatures().includes( feature.getSlug() )
 					  );
 
+			console.debug(
+				'zzz',
+				planSlug,
+				featureGroup?.slug,
+				filteredWpcomFeatures.map( ( f ) => f.getSlug() )
+			);
 			/**
 			 * 1. Storage group is still it's own thing, with no actual features associated. It will join the rest in a follow-up.
 			 */

@@ -313,6 +313,8 @@ import {
 	FEATURE_SOCIAL_SHARES_1000,
 	FEATURE_SOCIAL_ENHANCED_PUBLISHING,
 	FEATURE_SOCIAL_IMAGE_GENERATOR,
+	FEATURE_DNS_SSL_CACHING,
+	FEATURE_DNS_SSL_CACHING_CDN,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -658,9 +660,11 @@ const FEATURES_LIST: FeatureList = {
 				} );
 			}
 
-			return i18n.translate( 'Free domain for one year', {
-				context: 'title',
-			} );
+			return true
+				? 'Free domain'
+				: i18n.translate( 'Free domain for one year', {
+						context: 'title',
+				  } );
 		},
 		getAlternativeTitle: () => i18n.translate( 'Free custom domain' ),
 		getDescription: ( { domainName = undefined } = {} ) => {
@@ -2604,6 +2608,16 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Advanced Jetpack features' ),
 	},
 	/* END: Sensei Features */
+
+	[ FEATURE_DNS_SSL_CACHING ]: {
+		getSlug: () => FEATURE_DNS_SSL_CACHING,
+		getTitle: () => i18n.translate( 'Extremely fast DNS with SSL & global edge caching' ),
+	},
+	[ FEATURE_DNS_SSL_CACHING_CDN ]: {
+		getSlug: () => FEATURE_DNS_SSL_CACHING_CDN,
+		getTitle: () =>
+			i18n.translate( 'High performance with global CDN with 28+ locations and more' ),
+	},
 };
 
 export { FEATURES_LIST };

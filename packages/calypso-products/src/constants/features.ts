@@ -486,3 +486,7 @@ export const FEATURE_TYPE_JETPACK_SOCIAL = 'jetpack_social';
 export const FEATURE_TYPE_JETPACK_SEARCH = 'jetpack_search';
 export const FEATURE_TYPE_JETPACK_STATS = 'jetpack_stats';
 export const FEATURE_TYPE_JETPACK_VIDEOPRESS = 'jetpack_videopress';
+
+// Zzz
+export const FEATURE_DNS_SSL_CACHING = 'feature-dns-ssl-caching';
+export const FEATURE_DNS_SSL_CACHING_CDN = 'feature-dns-ssl-caching-cdn';
