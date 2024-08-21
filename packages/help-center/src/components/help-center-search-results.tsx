@@ -20,6 +20,7 @@ import {
 	chevronRight,
 	external as externalIcon,
 } from '@wordpress/icons';
+import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
@@ -46,10 +47,16 @@ type HelpLinkProps = {
 	externalLinks?: boolean;
 };
 
+const isResultFromDeveloperWordpress = ( url: string ) => {
+	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
+	return developerSiteRegex.test( url );
+};
+
 const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 	const { result, type, index, onLinkClickHandler, externalLinks } = props;
 	const { link, title, icon } = result;
 	const { sectionName } = useHelpCenterContext();
+	const isRtl = useRtl();
 
 	const wpAdminSections = [ 'wp-admin', 'gutenberg-editor' ].includes( sectionName );
 	const external = wpAdminSections || ( externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION );
@@ -64,6 +71,12 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 		}
 
 		return <Icon icon={ pageIcon } />;
+	};
+
+	const DeveloperResourceIndicator = () => {
+		return (
+			<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
+		);
 	};
 
 	return (
@@ -83,7 +96,11 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 							rel: 'noreferrer',
 						} ) }
 					>
-						<LinkIcon />
+						{ isResultFromDeveloperWordpress( result.link ) ? (
+							<DeveloperResourceIndicator />
+						) : (
+							<LinkIcon />
+						) }
 						<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						<Icon
 							width={ 20 }

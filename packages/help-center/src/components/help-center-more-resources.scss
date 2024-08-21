@@ -1,69 +1,64 @@
 // More resources
 .help-center-more-resources {
-	.help-center-more-resources__resource-item {
-		.help-center-more-resources__resource-cell {
-			.help-center-more-resources__institution {
-				svg {
-					fill: var(--studio-pink-50);
-				}
-			}
-
-			.help-center-more-resources__capture-video {
-				svg {
-					fill: var(--studio-orange-30);
-				}
-			}
-
-			.help-center-more-resources__desktop {
-				svg {
-					fill: var(--studio-celadon-30);
-				}
-			}
-
-			.help-center-more-resources__format-list-numbered {
-				svg {
-					fill: var(--studio-purple-40);
-				}
-			}
-
-			.help-center-more-resources__new-releases {
-				padding: 0;
-				font-size: $font-body-small !important;
-				color: var(--studio-gray-100);
-				text-decoration: none !important;
-				width: 100%;
-
-				> :first-child {
-					fill: var(--studio-blue-70);
+	.help-center-link__item.help-center-more-resources__resource-item {
+		.help-center-link__cell.help-center-more-resources__resource-cell {
+			a,
+			button {
+				&.help-center-more-resources__institution {
+					> svg:first-child {
+						fill: var(--studio-pink-50);
+					}
 				}
 
-				span {
+				&.help-center-more-resources__capture-video {
+					> svg:first-child {
+						fill: var(--studio-orange-30);
+					}
+				}
+
+				&.help-center-more-resources__desktop {
+					> svg:first-child {
+						fill: var(--studio-celadon-30);
+					}
+				}
+
+				&.help-center-more-resources__format-list-numbered {
+					> svg:first-child {
+						fill: var(--studio-purple-40);
+					}
+				}
+
+				&.help-center-more-resources__new-releases {
+					padding: 0;
+					font-size: $font-body-small !important;
 					color: var(--studio-gray-100);
-					flex-grow: 0;
-					text-decoration: none;
-				}
+					text-decoration: none !important;
+					width: 100%;
 
-				.help-center-more-resources__new-releases_dot {
-					align-self: auto;
-					background: none;
-					color: var(--color-masterbar-unread-dot-background);
-					padding-left: 8px;
-				}
+					> svg:first-child {
+						fill: var(--studio-blue-70);
+					}
 
-				&:active,
-				&:focus {
-					box-shadow: none;
-					outline: var(--color-primary-light) solid 2px;
+					span {
+						color: var(--studio-gray-100);
+						flex-grow: 0;
+						text-decoration: none;
+					}
+
+					.help-center-more-resources__new-releases_dot {
+						align-self: auto;
+						background: none;
+						color: var(--color-masterbar-unread-dot-background);
+						padding-left: 8px;
+					}
+
+					&:active,
+					&:focus {
+						box-shadow: none;
+						outline: var(--color-primary-light) solid 2px;
+					}
 				}
 			}
-
-			:not(.help-center-more-resources__new-releases) {
-				>svg:last-child {
-					fill: var(--studio-gray-20);
-					margin-left: auto;
-				}
-			}
-
 		}
 	}
 }

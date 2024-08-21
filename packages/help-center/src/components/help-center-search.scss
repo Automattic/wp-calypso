@@ -58,18 +58,26 @@
 
 			a,
 			button {
-				color: #000;
-				text-decoration: none;
-				font-weight: normal;
 				display: flex;
+				text-decoration: none;
+				color: var(--studio-gray-100);
+				font-size: $font-body-small;
+				border-radius: 2px;
+				font-weight: normal;
 				align-items: center;
 				transition: background-color 0.3s ease;
+				line-height: 1.4;
 
-				svg:first-of-type {
+				> svg:first-child {
 					margin-right: 15px;
-					display: block;
+					fill: var(--studio-blue-50);
 					padding: 8px;
+					display: block;
 					background: var(--studio-gray-0);
+				}
+
+				> svg:last-child {
+					fill: var(--studio-gray-20);
 				}
 
 				span {
@@ -80,6 +88,12 @@
 				&:hover {
 					cursor: pointer;
 					background: var(--color-neutral-0);
+				}
+
+				&:focus {
+					color: var(--color-text-inverted);
+					outline: var(--color-primary-light) solid 2px;
+					outline-offset: 2px;
 				}
 			}
 		}
