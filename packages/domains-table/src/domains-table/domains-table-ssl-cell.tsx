@@ -22,26 +22,6 @@ export default function DomainsTableSslCell( {
 	const isPendingSsl = sslStatus === 'pending' || sslStatus === 'newly_registered';
 	const domainHasSsl = sslStatus !== null || hasWpcomManagedSslCert;
 
-	const Element = ( { children, ...props }: { children: React.ReactNode; className: string } ) => {
-		if ( sslStatus ) {
-			return (
-				<a
-					href={ `${ domainManagementLink }?ssl-open=true` }
-					onClick={ ( event ) => event.stopPropagation() }
-					{ ...props }
-				>
-					{ children }
-				</a>
-			);
-		}
-
-		if ( hasWpcomManagedSslCert ) {
-			return <span { ...props }>{ children }</span>;
-		}
-
-		return '-';
-	};
-
 	const getSslStatusText = () => {
 		if ( isActiveSsl ) {
 			return translate( 'Active' );
@@ -53,6 +33,29 @@ export default function DomainsTableSslCell( {
 			return translate( 'Disabled' );
 		}
 	};
+
+	const buttonClassNames = clsx( 'domains-table-row__ssl-status-button', {
+		[ 'domains-table-row__ssl-status-button__active' ]: isActiveSsl,
+		[ 'domains-table-row__ssl-status-button__pending' ]: isPendingSsl,
+		[ 'domains-table-row__ssl-status-button__disabled' ]: sslStatus === 'disabled',
+	} );
+	let button: React.ReactElement | string;
+
+	if ( sslStatus ) {
+		button = (
+			<a
+				className={ buttonClassNames }
+				href={ `${ domainManagementLink }?ssl-open=true` }
+				onClick={ ( event ) => event.stopPropagation() }
+			>
+				{ getSslStatusText() }
+			</a>
+		);
+	} else if ( hasWpcomManagedSslCert ) {
+		button = <span className={ buttonClassNames }>{ getSslStatusText() }</span>;
+	} else {
+		button = '-';
+	}
 
 	return (
 		<td className="domains-table-row__ssl-cell">
@@ -67,15 +70,7 @@ export default function DomainsTableSslCell( {
 					size={ 18 }
 				/>
 			) }
-			<Element
-				className={ clsx( 'domains-table-row__ssl-status-button', {
-					[ 'domains-table-row__ssl-status-button__active' ]: isActiveSsl,
-					[ 'domains-table-row__ssl-status-button__pending' ]: isPendingSsl,
-					[ 'domains-table-row__ssl-status-button__disabled' ]: sslStatus === 'disabled',
-				} ) }
-			>
-				{ getSslStatusText() }
-			</Element>
+			{ button }
 		</td>
 	);
 }
