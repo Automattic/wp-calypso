@@ -39,7 +39,12 @@ export function createActions() {
 		job,
 	} );
 
-	function* importCsvSubscribers( siteId: number, file?: File, emails: string[] = [] ) {
+	function* importCsvSubscribers(
+		siteId: number,
+		file?: File,
+		emails: string[] = [],
+		parseOnly?: boolean = false
+	) {
 		yield importCsvSubscribersStart( siteId, file, emails );
 
 		try {
@@ -52,7 +57,7 @@ export function createActions() {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				formData: file && [ [ 'import', file, file.name ] ],
-				body: { emails },
+				body: { emails, parse_only: parseOnly },
 			} );
 
 			yield importCsvSubscribersStartSuccess( siteId, data.upload_id );
