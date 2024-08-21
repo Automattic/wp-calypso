@@ -601,6 +601,8 @@ $image-height: 47px;
 
 /* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights, scales/radii */
 .layout.is-section-login.is-grav-powered-client {
+	background-color: #fff;
+
 	&.is-wp-job-manager {
 		background-color: #efefef;
 
