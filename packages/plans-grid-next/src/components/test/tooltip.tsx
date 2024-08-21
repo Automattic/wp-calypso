@@ -11,7 +11,7 @@ const tooltipAnchor = 'Hover me';
 const tooltipHoverText = 'Wow, that was fun';
 
 describe( 'Tooltip', () => {
-	it( 'should display the anchor', () => {
+	it( 'should display the anchor when no hover text is provided', () => {
 		render(
 			<Tooltip id={ tooltipId } activeTooltipId="" setActiveTooltipId={ () => {} }>
 				{ tooltipAnchor }
@@ -20,7 +20,7 @@ describe( 'Tooltip', () => {
 		expect( screen.getByText( tooltipAnchor ) ).toBeInTheDocument();
 	} );
 
-	it( 'should display the tooltip hover text when it becomes active', async () => {
+	it( 'should display the hover text when the tooltip becomes active', async () => {
 		// Initially inactive
 		const { rerender } = render(
 			<Tooltip
@@ -48,7 +48,7 @@ describe( 'Tooltip', () => {
 		} );
 	} );
 
-	it( 'should hide the tooltip hover text when it becomes inactive', async () => {
+	it( 'should hide the hover text when the tooltip becomes inactive', async () => {
 		// Initially active
 		const { rerender } = render(
 			<Tooltip
