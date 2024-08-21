@@ -1,4 +1,5 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -22,6 +23,7 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	const reduxDispatch = useDispatch();
 	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDialogVisible( false ), [] );
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	const handleDelete = useCallback( () => {
 		closeDialog();
@@ -59,7 +61,7 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 				scary
 				borderless
 			>
-				{ text }
+				{ isNarrowView ? <Gridicon icon="trash" /> : text }
 			</Button>
 		);
 	};
