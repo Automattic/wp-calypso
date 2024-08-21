@@ -64,7 +64,6 @@ export default function CreditCardFields( {
 	const {
 		setFieldValue,
 		changeBrand,
-		changeCardNetworks,
 		setCardDataError,
 		setCardDataComplete,
 		setUseForAllSubscriptions,
@@ -150,7 +149,6 @@ export default function CreditCardFields( {
 
 					<FieldRow>
 						<CreditCardNumberField
-							changeCardNetworks={ changeCardNetworks }
 							setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
 							handleStripeFieldChange={ handleStripeFieldChange }
 							stripeElementStyle={ stripeElementStyle }

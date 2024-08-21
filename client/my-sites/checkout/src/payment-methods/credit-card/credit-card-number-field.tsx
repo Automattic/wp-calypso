@@ -1,11 +1,9 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { PaymentLogo } from '@automattic/wpcom-checkout';
 import { CardNumberElement } from '@stripe/react-stripe-js';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
-import { CardNetworkInput } from '../../components/card-network-input';
+import { CardNetworkInput } from '../../components/card-network-selector/card-network-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 import type { WpcomCreditCardSelectors } from './store';
 import type { StripeFieldChangeInput } from './types';
@@ -14,7 +12,6 @@ import type { StripeElementStyle } from '@stripe/stripe-js';
 export default function CreditCardNumberField( {
 	setIsStripeFullyLoaded,
 	handleStripeFieldChange,
-	changeCardNetworks,
 	stripeElementStyle,
 	shouldUseEbanx = false,
 	getErrorMessagesForField,
@@ -23,7 +20,6 @@ export default function CreditCardNumberField( {
 }: {
 	setIsStripeFullyLoaded: ( isLoaded: boolean ) => void;
 	handleStripeFieldChange: ( input: StripeFieldChangeInput ) => void;
-	changeCardNetworks: ( networks: [] ) => void;
 	stripeElementStyle: StripeElementStyle;
 	shouldUseEbanx?: boolean;
 	getErrorMessagesForField: ( key: string ) => string[];
@@ -33,12 +29,14 @@ export default function CreditCardNumberField( {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	const { changeBrand, changeCardNetworks } = useDispatch( 'wpcom-credit-card' );
+
 	const brand: string = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
 		[]
 	);
 
-	const cardNetworks: { brand: string }[] = useSelect(
+	const cardNetworks: string[] = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardNetworks(),
 		[]
 	);
