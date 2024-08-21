@@ -6,6 +6,27 @@
 $head-foot-height: 50px;
 $z-index: 99999;
 
+@layer {
+	.help-center__container {
+		transition:
+			opacity 0.5s ease-in,
+			scale 0.5s ease-in,
+			display 1.5s ease-in;
+		/* stylelint-disable-next-line property-no-unknown */
+		transition-behavior: allow-discrete;
+
+		/* stylelint-disable-next-line scss/at-rule-no-unknown */
+		@starting-style {
+			opacity: 0;
+			scale: 1.1;
+		}
+
+		&[hidden] {
+			opacity: 0;
+		}
+	}
+}
+
 .help-center {
 	.components-card.help-center__container {
 		position: fixed;
@@ -13,7 +34,6 @@ $z-index: 99999;
 		color: #000;
 		z-index: $z-index;
 		cursor: default;
-		transition: max-height 0.5s;
 
 		button.button-primary,
 		button.button-secondary {

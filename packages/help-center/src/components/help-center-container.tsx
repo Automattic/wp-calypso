@@ -7,7 +7,7 @@ import { Card } from '@wordpress/components';
 import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
-import { useRef, useEffect, useCallback, FC } from 'react';
+import { useState, useRef, useEffect, useCallback, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 import { MemoryRouter } from 'react-router-dom';
 /**
@@ -39,6 +39,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	currentRoute,
 	openingCoordinates,
 } ) => {
+	const [ closed, setClosed ] = useState( true );
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const { show, isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -58,22 +59,23 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 	const onDismiss = useCallback( () => {
 		setShowHelpCenter( false );
+		handleClose();
 		recordTracksEvent( `calypso_inlinehelp_close` );
-	}, [ setShowHelpCenter ] );
-
-	useEffect( () => {
-		if ( ! show ) {
-			handleClose();
-		}
-	}, [ show, handleClose ] );
+	}, [ setShowHelpCenter, handleClose ] );
 
 	const animationProps = {
 		style: {
-			animation: isMobile ? 'fadeIn .25s ease-out' : 'slideIn .25s ease-out',
-			// These are overwritten by the openingCoordinates.
-			// They are set to avoid Help Center from not loading on the page.
 			...( ! isMobile && { top: 70, left: 'calc( 100vw - 500px )' } ),
 			...openingCoordinates,
+		},
+		onTransitionEnd: ( event ) => {
+			if (
+				event.target === nodeRef.current &&
+				( ! show || hidden ) &&
+				event.propertyName === 'opacity'
+			) {
+				setClosed( true );
+			}
 		},
 	};
 
@@ -98,7 +100,13 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		};
 	}, [ shouldCloseOnEscapeRef, onDismiss ] );
 
-	if ( ! show || hidden ) {
+	useEffect( () => {
+		if ( ! hidden && show ) {
+			setClosed( false );
+		}
+	}, [ show, hidden ] );
+
+	if ( closed ) {
 		return null;
 	}
 
@@ -111,7 +119,12 @@ const HelpCenterContainer: React.FC< Container > = ( {
 					handle=".help-center__container-header"
 					bounds="body"
 				>
-					<Card className={ classNames } { ...animationProps } ref={ cardMergeRefs }>
+					<Card
+						className={ classNames }
+						{ ...animationProps }
+						ref={ cardMergeRefs }
+						hidden={ ! hidden && ! show }
+					>
 						<HelpCenterHeader
 							isMinimized={ isMinimized }
 							onMinimize={ () => setIsMinimized( true ) }
