@@ -6,7 +6,6 @@ import { canSetAsPrimary } from '../utils/can-set-as-primary';
 import { type as domainTypes, transferStatus, useMyDomainInputMode } from '../utils/constants';
 import { isFreeUrlDomainName } from '../utils/is-free-url-domain-name';
 import { isDomainInGracePeriod } from '../utils/is-in-grace-period';
-import { isDomainReactivatable } from '../utils/is-reactivatable';
 import { isRecentlyRegistered } from '../utils/is-recently-registered';
 import { isDomainRenewable } from '../utils/is-renewable';
 import { isDomainUpdateable } from '../utils/is-updateable';
@@ -80,7 +79,6 @@ export const DomainsTableRowActions = ( {
 	const canChangeSiteAddress =
 		! isAllSitesView && isSimpleSite && isFreeUrlDomainName( domain.name );
 	const canRenewDomain = isDomainRenewable( domain );
-	const canReactivateDomain = isDomainReactivatable( domain );
 	const getActions = ( onClose?: () => void ) => {
 		return [
 			canViewDetails && (
@@ -156,17 +154,6 @@ export const DomainsTableRowActions = ( {
 					} }
 				>
 					{ __( 'Renew now' ) }
-				</MenuItemLink>
-			),
-			canReactivateDomain && (
-				<MenuItemLink
-					key="reactivateDomain"
-					onClick={ () => {
-						domainStatusPurchaseActions?.onRenewNowClick?.( domain.domain ?? '', domain );
-						onClose?.();
-					} }
-				>
-					{ __( 'Reactivate now' ) }
 				</MenuItemLink>
 			),
 		];

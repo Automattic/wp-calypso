@@ -983,4 +983,51 @@ describe( 'domain status cell', () => {
 			} );
 		} );
 	} );
+
+	describe( 'renew now is in domain actions', () => {
+		test( 'when a domain is renewable, check the Renew now is in the domain actions', async () => {
+			const onRenewNowClick = jest.fn();
+
+			renderDomainStatusCell(
+				{
+					domain: 'example.com',
+					blog_id: 123,
+					wpcom_domain: false,
+					subscription_id: '123',
+					is_renewable: true,
+					current_user_can_manage: true,
+					expiry: moment().add( 12, 'months' ).toISOString(),
+				},
+				{
+					domainStatusPurchaseActions: {
+						isPurchasedDomain: () => true,
+						onRenewNowClick,
+					},
+				}
+			);
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Active' ) );
+			} );
+
+			const domainActionsButton = screen.getByLabelText( 'Domain actions' );
+
+			expect( domainActionsButton ).toBeInTheDocument();
+			fireEvent.click( domainActionsButton );
+
+			await waitFor( () => {
+				const renewNowAction = screen.getByText( 'Renew now' );
+
+				expect( renewNowAction ).toBeInTheDocument();
+				fireEvent.click( renewNowAction );
+
+				expect( onRenewNowClick ).toHaveBeenCalledWith(
+					'example.com',
+					expect.objectContaining( {
+						domain: 'example.com',
+					} )
+				);
+			} );
+		} );
+	} );
 } );
