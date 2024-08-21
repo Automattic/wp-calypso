@@ -324,7 +324,7 @@ export function CouponCostOverride( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
-	const [ , experimentAssignment ] = useExperiment( 'calypso_hide_coupon_box' );
+	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box' );
 
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;

@@ -209,7 +209,7 @@ export function CouponFieldArea( {
 		}
 	}, [ couponStatus, setCouponFieldValue ] );
 
-	const [ , experimentAssignment ] = useExperiment( 'calypso_hide_coupon_box' );
+	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box' );
 
 	if (
 		isPurchaseFree ||
