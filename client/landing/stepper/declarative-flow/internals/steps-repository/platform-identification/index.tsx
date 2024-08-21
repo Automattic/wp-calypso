@@ -11,7 +11,6 @@ const PlatformIdentificationStep: Step = ( props ) => {
 			subTitle={ translate(
 				'Tell us which platform your site is built with so we can get started.'
 			) }
-			skipTracking
 			{ ...props }
 		/>
 	);
