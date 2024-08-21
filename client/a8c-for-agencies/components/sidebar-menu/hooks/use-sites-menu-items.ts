@@ -23,10 +23,42 @@ const useSitesMenuItems = ( path: string ) => {
 	const shouldAddNeedsSetup = totalAvailableSites > 0;
 
 	return useMemo( () => {
-		if ( noActiveSite ) {
-			// We hide the rest of the options when we do not have sites yet.
-			return [
-				createItem(
+		const items = noActiveSite
+			? [
+					// We hide the rest of the options when we do not have sites yet.
+					createItem(
+						{
+							id: 'sites-all-menu-item',
+							icon: category,
+							path: A4A_SITES_LINK,
+							link: A4A_SITES_LINK,
+							title: translate( 'All' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Sites / All',
+							},
+						},
+						path
+					),
+			  ]
+			: [
+					{
+						icon: warning,
+						path: A4A_SITES_LINK,
+						link: A4A_SITES_LINK_NEEDS_ATTENTION,
+						title: translate( 'Needs attention' ),
+						trackEventProps: {
+							menu_item: 'Automattic for Agencies / Sites / Needs Attention',
+						},
+					},
+					{
+						icon: starEmpty,
+						path: A4A_SITES_LINK,
+						link: A4A_SITES_LINK_FAVORITE,
+						title: translate( 'Favorites' ),
+						trackEventProps: {
+							menu_item: 'Automattic for Agencies / Sites / Favorites',
+						},
+					},
 					{
 						id: 'sites-all-menu-item',
 						icon: category,
@@ -37,41 +69,7 @@ const useSitesMenuItems = ( path: string ) => {
 							menu_item: 'Automattic for Agencies / Sites / All',
 						},
 					},
-					path
-				),
-			];
-		}
-
-		const items = [
-			{
-				icon: warning,
-				path: A4A_SITES_LINK,
-				link: A4A_SITES_LINK_NEEDS_ATTENTION,
-				title: translate( 'Needs attention' ),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Sites / Needs Attention',
-				},
-			},
-			{
-				icon: starEmpty,
-				path: A4A_SITES_LINK,
-				link: A4A_SITES_LINK_FAVORITE,
-				title: translate( 'Favorites' ),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Sites / Favorites',
-				},
-			},
-			{
-				id: 'sites-all-menu-item',
-				icon: category,
-				path: A4A_SITES_LINK,
-				link: A4A_SITES_LINK,
-				title: translate( 'All' ),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Sites / All',
-				},
-			},
-		].map( ( item ) => createItem( item, path ) );
+			  ].map( ( item ) => createItem( item, path ) );
 
 		if ( shouldAddNeedsSetup ) {
 			const needsSetupItem = createItem(
@@ -86,7 +84,7 @@ const useSitesMenuItems = ( path: string ) => {
 				},
 				path
 			);
-			items.splice( 1, 0, needsSetupItem );
+			items.splice( noActiveSite ? 0 : 1, 0, needsSetupItem );
 		}
 
 		return items;

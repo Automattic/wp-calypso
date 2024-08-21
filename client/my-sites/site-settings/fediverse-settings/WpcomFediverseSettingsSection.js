@@ -166,7 +166,7 @@ const EnabledSettingsSection = ( { data, siteId, needsCard } ) => {
 			<Wrapper needsCard={ needsCard }>
 				<p>
 					{ translate(
-						'Anyone in the fediverse (eg Mastodon) can follow your site with this identifier:'
+						'People on the Fediverse (such as on Mastodon) can follow your site using this identifier:'
 					) }
 				</p>
 				{ isDomainPending && <DomainPendingWarning siteId={ siteId } domains={ domains } /> }
