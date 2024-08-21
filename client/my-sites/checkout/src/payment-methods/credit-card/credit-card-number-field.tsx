@@ -45,7 +45,6 @@ export default function CreditCardNumberField( {
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
 		[]
 	);
-	const [ showNetworkSelector, setShowNetworkSelector ] = useState( false );
 
 	const errorMessages = getErrorMessagesForField( 'number' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;
@@ -74,10 +73,13 @@ export default function CreditCardNumberField( {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Label>
-			<LabelText>{ __( 'Card number' ) }</LabelText>
+		<>
+			<Label htmlFor="stripe-card-number">
+				<LabelText>{ __( 'Card number' ) }</LabelText>
+			</Label>
 			<StripeFieldWrapper className="number" hasError={ !! cardNumberError }>
 				<CardNumberElement
+					id="stripe-card-number"
 					options={ {
 						style: stripeElementStyle,
 						disabled: isDisabled,
@@ -105,18 +107,19 @@ export default function CreditCardNumberField( {
 						}
 					} }
 				/>
-				{ showNetworkSelector ? (
+
+				{ cardNetworks.length && (
 					<CardNetworkInput
 						className="test"
-						disabled={ ! cardNetworks }
+						disabled={ isDisabled }
 						cardNetworks={ cardNetworks }
+						changeBrand={ changeBrand }
+						brand={ brand }
 					/>
-				) : (
-					<PaymentLogo brand={ brand } />
 				) }
 
 				{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 			</StripeFieldWrapper>
-		</Label>
+		</>
 	);
 }
