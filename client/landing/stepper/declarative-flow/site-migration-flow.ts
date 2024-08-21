@@ -34,7 +34,6 @@ const useMigrationFlowRevampRedirect = () => {
 	const [ query ] = useSearchParams();
 	const fullQueryString = query.toString();
 	const ref = query.get( 'ref' ) ?? '';
-	const source = query.get( 'source' ) ?? '';
 	const from = query.get( 'from' ) ?? '';
 
 	// Redirect user to the new migration flow.
@@ -51,15 +50,8 @@ const useMigrationFlowRevampRedirect = () => {
 			return;
 		}
 
-		if (
-			// Landing pages.
-			[ 'move-lp', 'hosting-lp' ].includes( ref ) ||
-			// "Add new site" dropdown in /sites
-			( 'sites-dashboard' === source && 'topbar' === ref )
-		) {
-			window.location.replace( '/setup/migration?' + fullQueryString );
-		}
-	}, [ fullQueryString, ref, source, from ] );
+		window.location.replace( '/setup/migration?' + fullQueryString );
+	}, [ fullQueryString, ref, from ] );
 };
 
 const siteMigration: Flow = {
