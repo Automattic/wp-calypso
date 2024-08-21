@@ -281,6 +281,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 									} }
 									render={ ( { field } ) => (
 										<FormTextInput
+											id="backup-file"
 											type="text"
 											isError={ !! errors.backupFileLocation }
 											placeholder={ translate( 'Enter your backup file location' ) }
@@ -304,12 +305,13 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 				) }
 
 				<div className="site-migration-credentials__form-field">
-					<FormLabel htmlFor="site-address">{ translate( 'Notes (optional)' ) }</FormLabel>
+					<FormLabel htmlFor="notes">{ translate( 'Notes (optional)' ) }</FormLabel>
 					<Controller
 						control={ control }
 						name="notes"
 						render={ ( { field } ) => (
 							<FormTextArea
+								id="notes"
 								type="text"
 								placeholder={ translate(
 									'Share any other details that will help us access your site for the migration.'
