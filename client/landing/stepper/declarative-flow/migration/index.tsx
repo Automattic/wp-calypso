@@ -151,7 +151,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				}
 
 				// If plan is already selected and it exists.
-				// Entry point example: /setup/migration/create-site?platform=wordpress&plan=business
+				// Entry point example: /setup/migration/create-site?plan=business
 				if ( plans[ plan ] ) {
 					return navigateToCheckout( {
 						siteId,
