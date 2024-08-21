@@ -9,6 +9,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
+import wpcom from 'calypso/lib/wp';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -31,13 +32,18 @@ const UserStep: Step = function UserStep( {
 
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialService, socialServiceResponse } = useSocialService();
-	const response = wpAccountCreateResponse || accountCreateResponse;
 
 	useEffect( () => {
-		if ( ! isLoggedIn ) {
+		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
+			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		}
-	}, [ dispatch, isLoggedIn, _redirectTo, navigation ] );
+		if ( ! isLoggedIn ) {
+			dispatch( fetchCurrentUser() as unknown as AnyAction );
+		} else {
+			navigation.submit?.();
+		}
+	}, [ dispatch, isLoggedIn, _redirectTo, navigation, wpAccountCreateResponse ] );
 
 	const loginLink = login( {
 		signupUrl: window.location.pathname + window.location.search,
@@ -73,10 +79,10 @@ const UserStep: Step = function UserStep( {
 						notice={ notice }
 						isSocialFirst
 					/>
-					{ response && 'bearer_token' in response && (
+					{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 						<WpcomLoginForm
-							authorization={ 'Bearer ' + response.bearer_token }
-							log={ response.username }
+							authorization={ 'Bearer ' + accountCreateResponse.bearer_token }
+							log={ accountCreateResponse.username }
 							redirectTo={ new URL( _redirectTo, window.location.href ).href }
 						/>
 					) }
