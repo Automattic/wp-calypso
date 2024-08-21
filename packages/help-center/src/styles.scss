@@ -3,9 +3,10 @@
 @import "components/variables";
 
 /**
- * Help Center General Styles
+ * Help Center GENERAL Styles
  *
  * This file contains the general styles for the Help Center.
+ *
  * THIS FILE SHOULD NOT CONTAIN ANY COMPONENT SPECIFIC STYLES.
  */
 .help-center__container {
@@ -44,6 +45,25 @@
 	& > div {
 		display: flex;
 		flex-direction: column;
+	}
+
+	/**
+	 * Used on loading screens across Help Center
+	 */
+	.help-center__loading {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+
+		.spinner__outer {
+			border-top-color: var(--wp-admin-theme-color);
+		}
+
+		.spinner__inner {
+			border-top-color: var(--wp-admin-theme-color);
+			border-right-color: var(--wp-admin-theme-color);
+		}
 	}
 
 	/**

@@ -2,22 +2,6 @@
 @import "@wordpress/base-styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 
-.help-center__loading {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 100%;
-
-	.spinner__outer {
-		border-top-color: var(--wp-admin-theme-color);
-	}
-
-	.spinner__inner {
-		border-top-color: var(--wp-admin-theme-color);
-		border-right-color: var(--wp-admin-theme-color);
-	}
-}
-
 .help-center-contact-form__site-picker-hes-tray {
 	margin-top: 16px;
 	display: flex;

@@ -1,5 +1,6 @@
 .help-center__container {
 	.help-center__container-content {
+		flex-grow: 1;
 		scroll-behavior: smooth;
 		overflow-y: auto;
 		padding: 0;

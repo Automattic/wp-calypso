@@ -13,6 +13,8 @@ import { NewReleases } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
+import './help-center-more-resources.scss';
+
 const circle = (
 	<SVG viewBox="0 0 24 24">
 		<Circle cx="12" cy="12" r="5" />
@@ -77,18 +79,21 @@ export const HelpCenterMoreResources = () => {
 	};
 
 	return (
-		<>
+		<div className="help-center-more-resources">
 			<h3 className="help-center__section-title">
 				{ __( 'More Resources', __i18n_text_domain__ ) }
 			</h3>
-			<ul className="inline-help__more-resources" aria-labelledby="inline-help__more-resources">
-				<li className="inline-help__resource-item">
-					<div className="inline-help__resource-cell">
+			<ul
+				className="help-center-more-resources__resources"
+				aria-labelledby="help-center-more-resources__resources"
+			>
+				<li className="help-center-more-resources__resource-item help-center-link__item">
+					<div className="help-center-more-resources__resource-cell help-center-link__cell">
 						<a
 							href={ localizeUrl( 'https://wordpress.com/support' ) }
 							rel="noreferrer"
 							target="_blank"
-							className="inline-help__format-list-numbered"
+							className="help-center-more-resources__format-list-numbered"
 							onClick={ () => trackMoreResourcesButtonClick( 'support-documentation' ) }
 						>
 							<Icon icon={ formatListNumbered } size={ 24 } />
@@ -97,14 +102,14 @@ export const HelpCenterMoreResources = () => {
 						</a>
 					</div>
 				</li>
-				<li className="inline-help__resource-item">
-					<div className="inline-help__resource-cell">
+				<li className="help-center-more-resources__resource-item help-center-link__item">
+					<div className="help-center-more-resources__resource-cell help-center-link__cell">
 						<a
 							href={ localizeUrl( 'https://wordpress.com/webinars/' ) }
 							rel="noreferrer"
 							target="_blank"
 							onClick={ () => trackLearnButtonClick( 'webinairs' ) }
-							className="inline-help__capture-video"
+							className="help-center-more-resources__capture-video"
 						>
 							<Icon icon={ captureVideo } size={ 24 } />
 							<span>{ __( 'Webinars', __i18n_text_domain__ ) }</span>
@@ -112,14 +117,14 @@ export const HelpCenterMoreResources = () => {
 						</a>
 					</div>
 				</li>
-				<li className="inline-help__resource-item">
-					<div className="inline-help__resource-cell">
+				<li className="help-center-more-resources__resource-item help-center-link__item">
+					<div className="help-center-more-resources__resource-cell help-center-link__cell">
 						<a
 							href={ localizeUrl( 'https://wordpress.com/courses/' ) }
 							rel="noreferrer"
 							target="_blank"
 							onClick={ () => trackLearnButtonClick( 'courses' ) }
-							className="inline-help__institution"
+							className="help-center-more-resources__institution"
 						>
 							<Icon icon={ institution } size={ 24 } />
 							<span>{ __( 'Courses', __i18n_text_domain__ ) }</span>
@@ -128,17 +133,21 @@ export const HelpCenterMoreResources = () => {
 					</div>
 				</li>
 				{ showWhatsNewItem && (
-					<li className="inline-help__resource-item">
-						<div className="inline-help__resource-cell">
+					<li className="help-center-more-resources__resource-item help-center-link__item">
+						<div className="help-center-more-resources__resource-cell help-center-link__cell">
 							<Button
 								variant="link"
 								onClick={ handleWhatsNewClick }
-								className="inline-help__new-releases"
+								className="help-center-more-resources__new-releases"
 							>
 								<Icon icon={ <NewReleases /> } size={ 24 } />
 								<span>{ __( "What's New", __i18n_text_domain__ ) }</span>
 								{ showWhatsNewDot && (
-									<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
+									<Icon
+										className="help-center-more-resources__new-releases_dot"
+										icon={ circle }
+										size={ 16 }
+									/>
 								) }
 							</Button>
 						</div>
@@ -148,6 +157,6 @@ export const HelpCenterMoreResources = () => {
 			{ showGuide && site && (
 				<WhatsNewGuide onClose={ () => setShowGuide( false ) } siteId={ site.ID } />
 			) }
-		</>
+		</div>
 	);
 };

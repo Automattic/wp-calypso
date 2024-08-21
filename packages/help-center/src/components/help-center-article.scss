@@ -1,6 +1,9 @@
 @import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
+/**
+ * Styling for '/post' route.
+ */
 .help-center-article {
 	padding: 0;
 
@@ -27,7 +30,7 @@
 	}
 
 	.help-center-article-content {
-		padding: 0 30px 20px;
+		padding: 16px 30px 20px;
 		display: flex;
 		flex-direction: column;
 

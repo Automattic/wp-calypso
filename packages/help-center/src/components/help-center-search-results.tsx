@@ -20,7 +20,6 @@ import {
 	chevronRight,
 	external as externalIcon,
 } from '@wordpress/icons';
-import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
@@ -32,6 +31,8 @@ import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
+
+import './help-center-search-results.scss';
 
 type HelpLinkProps = {
 	result: SearchResult;
@@ -45,16 +46,10 @@ type HelpLinkProps = {
 	externalLinks?: boolean;
 };
 
-const isResultFromDeveloperWordpress = ( url: string ) => {
-	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
-	return developerSiteRegex.test( url );
-};
-
 const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 	const { result, type, index, onLinkClickHandler, externalLinks } = props;
 	const { link, title, icon } = result;
 	const { sectionName } = useHelpCenterContext();
-	const isRtl = useRtl();
 
 	const wpAdminSections = [ 'wp-admin', 'gutenberg-editor' ].includes( sectionName );
 	const external = wpAdminSections || ( externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION );
@@ -71,16 +66,10 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 		return <Icon icon={ pageIcon } />;
 	};
 
-	const DeveloperResourceIndicator = () => {
-		return (
-			<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
-		);
-	};
-
 	return (
 		<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
-			<li className="help-center-search-results__item">
-				<div className="help-center-search-results__cell">
+			<li className="help-center-search-results__item help-center-link__item">
+				<div className="help-center-search-results__cell help-center-link__cell">
 					<a
 						href={ localizeUrl( link ) }
 						onClick={ ( event ) => {
@@ -94,11 +83,7 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 							rel: 'noreferrer',
 						} ) }
 					>
-						{ isResultFromDeveloperWordpress( result.link ) ? (
-							<DeveloperResourceIndicator />
-						) : (
-							<LinkIcon />
-						) }
+						<LinkIcon />
 						<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						<Icon
 							width={ 20 }
@@ -291,7 +276,7 @@ function HelpSearchResults( {
 		return condition ? (
 			<Fragment key={ id }>
 				{ title ? (
-					<h3 id={ id } className="help-center-search-results__title">
+					<h3 id={ id } className="help-center-search-results__title help-center__section-title">
 						{ title }
 					</h3>
 				) : null }
@@ -340,7 +325,7 @@ function HelpSearchResults( {
 		: __( 'Helpful resources for this section', __i18n_text_domain__ );
 
 	return (
-		<>
+		<div className="help-center-search-results" aria-label={ resultsLabel }>
 			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 				<p className="help-center-search-results__empty-results">
@@ -351,10 +336,8 @@ function HelpSearchResults( {
 				</p>
 			) : null }
 
-			<div className="help-center-search-results__results" aria-label={ resultsLabel }>
-				{ sections }
-			</div>
-		</>
+			{ sections }
+		</div>
 	);
 }
 
