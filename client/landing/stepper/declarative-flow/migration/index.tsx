@@ -181,7 +181,9 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 						platform: 'wordpress',
 						siteId,
 						siteSlug,
-						backToStep: MIGRATION_UPGRADE_PLAN,
+						backToStep: PLATFORM_IDENTIFICATION,
+						migrateEntireSiteStep: MIGRATION_UPGRADE_PLAN,
+						replaceHistory: true,
 					} );
 				}
 

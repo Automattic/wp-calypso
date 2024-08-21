@@ -15,7 +15,8 @@ export function getFinalImporterUrl(
 	targetSlug: string,
 	fromSite: string,
 	platform: ImporterPlatform,
-	backToFlow?: string
+	backToFlow?: string,
+	migrateEntireSiteFlow?: string
 ) {
 	let importerUrl;
 	const encodedFromSite = encodeURIComponent( fromSite );
@@ -42,6 +43,12 @@ export function getFinalImporterUrl(
 	if ( backToFlow ) {
 		importerUrl = addQueryArgs( importerUrl, {
 			backToFlow,
+		} );
+	}
+
+	if ( migrateEntireSiteFlow ) {
+		importerUrl = addQueryArgs( importerUrl, {
+			migrateEntireSiteFlow,
 		} );
 	}
 

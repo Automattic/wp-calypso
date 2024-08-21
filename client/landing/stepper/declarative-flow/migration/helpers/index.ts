@@ -12,10 +12,11 @@ interface GoToImporterParams {
 	siteId: string;
 	siteSlug: string;
 	backToStep?: StepperStep;
+	migrateEntireSiteStep?: StepperStep;
 	replaceHistory?: boolean;
 }
 
-const getBackToFlowParam = ( step: string ) => `/${ MIGRATION_FLOW }/${ step }`;
+const getFlowPath = ( step: string ) => `/${ MIGRATION_FLOW }/${ step }`;
 const goTo = ( path: string, replaceHistory: boolean ) => {
 	if ( replaceHistory ) {
 		return window.location.replace( path );
@@ -29,10 +30,14 @@ export const goToImporter = ( {
 	siteId,
 	siteSlug,
 	backToStep,
+	migrateEntireSiteStep,
 	replaceHistory = false,
 }: GoToImporterParams ) => {
-	const backToFlow = backToStep ? getBackToFlowParam( backToStep?.slug ) : undefined;
-	const path = getFinalImporterUrl( siteSlug, '', platform, backToFlow );
+	const backToFlow = backToStep ? getFlowPath( backToStep?.slug ) : undefined;
+	const migrateEntireSiteFlow = migrateEntireSiteStep
+		? getFlowPath( migrateEntireSiteStep?.slug )
+		: undefined;
+	const path = getFinalImporterUrl( siteSlug, '', platform, backToFlow, migrateEntireSiteFlow );
 
 	if ( isWpAdminImporter( path ) ) {
 		return goTo( path, replaceHistory );
