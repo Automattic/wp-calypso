@@ -70,8 +70,9 @@ class Layout extends Component {
 		selectedNote: null,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	constructor( props ) {
+		super( props );
+
 		this.filterController = FilterBarController( this.refreshNotesToDisplay );
 		this.props.global.client = this.props.client;
 		this.props.global.toggleNavigation = this.toggleNavigation;
@@ -85,11 +86,10 @@ class Layout extends Component {
 			};
 		}
 		this.props.enableKeyboardShortcuts();
-
-		window.addEventListener( 'keydown', this.handleKeyDown, false );
 	}
 
 	componentDidMount() {
+		window.addEventListener( 'keydown', this.handleKeyDown, false );
 		window.addEventListener( 'resize', this.redraw );
 		if ( this.noteListElement ) {
 			this.height = this.noteListElement.clientHeight;

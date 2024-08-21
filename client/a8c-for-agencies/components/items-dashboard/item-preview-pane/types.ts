@@ -26,6 +26,7 @@ export interface ItemData {
 	isDotcomSite?: boolean;
 	adminUrl?: string;
 	withIcon?: boolean;
+	hideEnvDataInHeader?: boolean;
 }
 
 export interface PreviewPaneProps {

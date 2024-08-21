@@ -408,6 +408,19 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
+					const { action } = providedDependencies as {
+						action: 'skip' | 'submit';
+					};
+
+					if ( action === 'skip' ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, from: fromQueryParam, siteSlug, credentials: 'skipped' },
+								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+							)
+						);
+					}
+
 					return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
 						siteId,
 						siteSlug,

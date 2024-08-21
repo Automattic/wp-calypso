@@ -12,6 +12,7 @@ export default function useNoActiveSite() {
 		filter: {
 			issueTypes: [],
 			showOnlyFavorites: false,
+			showOnlyDevelopmentSites: false,
 		},
 		sort: {
 			field: '',

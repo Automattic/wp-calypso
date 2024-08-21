@@ -5,6 +5,8 @@ import { Skeleton } from './skeleton';
 import type { UpgradePlanProps } from './types';
 import type { FC } from 'react';
 
+const isIntroductoryOfferEnabled = config.isEnabled( 'migration-flow/introductory-offer' );
+
 const withMigrationSticker =
 	( WrappedComponent: FC< UpgradePlanProps > ) => ( props: UpgradePlanProps ) => {
 		const { site } = props;
@@ -17,7 +19,7 @@ const withMigrationSticker =
 		} = useMigrationStickerMutation();
 
 		useEffect( () => {
-			if ( ! config.isEnabled( 'migration-flow/introductory-offer' ) ) {
+			if ( ! isIntroductoryOfferEnabled ) {
 				return;
 			}
 
@@ -32,7 +34,7 @@ const withMigrationSticker =
 			};
 		}, [ addMigrationSticker, deleteMigrationSticker, siteId ] );
 
-		if ( isIdle || isPending ) {
+		if ( isIntroductoryOfferEnabled && ( isIdle || isPending ) ) {
 			return <Skeleton />;
 		}
 

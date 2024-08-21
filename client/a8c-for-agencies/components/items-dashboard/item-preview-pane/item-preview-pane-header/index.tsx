@@ -62,14 +62,17 @@ export default function ItemPreviewPaneHeader( {
 		extraProps?.siteIconFallback ?? ( itemData.isDotcomSite ? 'wordpress-logo' : 'color' );
 
 	const shouldDisplayVersionNumbers =
-		config.isEnabled( 'hosting-overview-refinements' ) && isAtomic && ( wpVersion || phpVersion );
+		config.isEnabled( 'hosting-overview-refinements' ) &&
+		! itemData.hideEnvDataInHeader &&
+		isAtomic &&
+		( wpVersion || phpVersion );
 
 	const handlePhpVersionClick = () => {
-		dispatch( recordTracksEvent( 'calypso_hosting_configuration_php_version_update' ) );
+		dispatch( recordTracksEvent( 'calypso_hosting_php_version_click' ) );
 	};
 
 	const handleWpVersionClick = () => {
-		dispatch( recordTracksEvent( 'calypso_hosting_configuration_wp_version_update' ) );
+		dispatch( recordTracksEvent( 'calypso_hosting_wp_version_click' ) );
 	};
 
 	return (

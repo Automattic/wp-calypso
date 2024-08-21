@@ -10,6 +10,7 @@ export const useCheckoutMigrationIntroductoryOfferSticker = (
 	const urlQueryParams = new URLSearchParams( window.location.search );
 	const refPath = urlQueryParams?.get( 'ref' ) ?? '';
 	const checkoutBackPath = urlQueryParams?.get( 'checkoutBackUrl' ) ?? '';
+	const introductoryOffer = urlQueryParams?.get( 'introductoryOffer' ) ?? '';
 
 	const {
 		addMigrationSticker,
@@ -25,6 +26,10 @@ export const useCheckoutMigrationIntroductoryOfferSticker = (
 			return false;
 		}
 
+		if ( introductoryOffer ) {
+			return true;
+		}
+
 		let tempRefPath = refPath;
 
 		if ( ! refPath && checkoutBackPath ) {
@@ -33,7 +38,7 @@ export const useCheckoutMigrationIntroductoryOfferSticker = (
 		}
 
 		return REF_PATHS_WITH_INTRODUCTORY_OFFER.some( ( path ) => tempRefPath.includes( path ) );
-	}, [ refPath, checkoutBackPath, siteId ] );
+	}, [ introductoryOffer, refPath, checkoutBackPath, siteId ] );
 
 	useEffect( () => {
 		if ( shouldSetMigrationSticker ) {

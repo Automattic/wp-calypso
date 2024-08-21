@@ -179,6 +179,7 @@ export interface PerformanceMetricsItemQueryResponse {
 	id: string;
 	title?: string;
 	description?: string;
+	type: 'warning' | 'fail';
 	displayValue?: string;
 	details?: PerformanceMetricsDetailsQueryResponse;
 }
