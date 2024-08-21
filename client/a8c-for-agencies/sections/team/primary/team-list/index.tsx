@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo, useState } from 'react';
@@ -25,6 +26,8 @@ export default function TeamList() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const isDesktop = useDesktopBreakpoint();
+
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
 	const title = translate( 'Manage team members' );
@@ -44,37 +47,37 @@ export default function TeamList() {
 			{
 				id: 'user',
 				header: translate( 'User' ).toUpperCase(),
-				getValue: () => '-',
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
-					return <MemberColumn member={ item } />;
+					return <MemberColumn member={ item } withRoleStatus={ ! isDesktop } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
 			},
-			{
-				id: 'role',
-				header: translate( 'Role' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: TeamMember } ): ReactNode => {
-					return <RoleStatusColumn member={ item } />;
-				},
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'added-date',
-				header: translate( 'Added' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: TeamMember } ): ReactNode => {
-					return <DateColumn date={ item.dateAdded } />;
-				},
-				enableHiding: false,
-				enableSorting: false,
-			},
+			...( isDesktop
+				? [
+						{
+							id: 'role',
+							header: translate( 'Role' ).toUpperCase(),
+							render: ( { item }: { item: TeamMember } ): ReactNode => {
+								return <RoleStatusColumn member={ item } />;
+							},
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
+							id: 'added-date',
+							header: translate( 'Added' ).toUpperCase(),
+							render: ( { item }: { item: TeamMember } ): ReactNode => {
+								return <DateColumn date={ item.dateAdded } />;
+							},
+							enableHiding: false,
+							enableSorting: false,
+						},
+				  ]
+				: [] ),
 			{
 				id: 'actions',
 				header: '',
-				getValue: () => '-',
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
 					return (
 						<ActionColumn
@@ -83,12 +86,12 @@ export default function TeamList() {
 						/>
 					);
 				},
-				width: '40%',
+				width: isDesktop ? '40%' : undefined,
 				enableHiding: false,
 				enableSorting: false,
 			},
 		],
-		[ translate ]
+		[ isDesktop, translate ]
 	);
 
 	// FIXME: Fetch team members

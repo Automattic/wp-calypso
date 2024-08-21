@@ -7,30 +7,6 @@ import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { TeamMember } from '../../types';
 
-export const MemberColumn = ( { member }: { member: TeamMember } ): ReactNode => {
-	const translate = useTranslate();
-
-	return (
-		<div className="team-list__member-column">
-			<Gravatar
-				className="team-list__member-column-gravatar"
-				user={ {
-					display_name: member.displayName,
-					avatar_URL: member.avatar,
-				} }
-				size={ 40 }
-			/>
-
-			<div className="team-list__member-column-details">
-				<div className="team-list__member-column-details-name">
-					{ member.displayName ?? translate( 'Team member' ) }
-				</div>
-				<div className="team-list__member-column-details-email">{ member.email }</div>
-			</div>
-		</div>
-	);
-};
-
 export const RoleStatusColumn = ( { member }: { member: TeamMember } ): ReactNode => {
 	const translate = useTranslate();
 
@@ -59,6 +35,38 @@ export const RoleStatusColumn = ( { member }: { member: TeamMember } ): ReactNod
 	}
 
 	return <div className="team-list__role">{ getRoleLabel( member.role ) }</div>;
+};
+
+export const MemberColumn = ( {
+	member,
+	withRoleStatus,
+}: {
+	member: TeamMember;
+	withRoleStatus: boolean;
+} ): ReactNode => {
+	const translate = useTranslate();
+
+	return (
+		<div className="team-list__member-column">
+			<Gravatar
+				className="team-list__member-column-gravatar"
+				user={ {
+					display_name: member.displayName,
+					avatar_URL: member.avatar,
+				} }
+				size={ 40 }
+			/>
+
+			<div className="team-list__member-column-details">
+				<div className="team-list__member-column-details-name">
+					{ member.displayName ?? translate( 'Team member' ) }
+				</div>
+				<div className="team-list__member-column-details-email">{ member.email }</div>
+
+				{ withRoleStatus && <RoleStatusColumn member={ member } /> }
+			</div>
+		</div>
+	);
 };
 
 export const DateColumn = ( { date }: { date?: string } ): ReactNode => {

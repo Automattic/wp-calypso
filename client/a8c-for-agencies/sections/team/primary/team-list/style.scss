@@ -20,6 +20,11 @@
 	flex-direction: row;
 	align-items: center;
 	gap: 12px;
+
+	.team-list__status-badge {
+		margin-block-start: 4px;
+		text-align: center;
+	}
 }
 
 .team-list__member-column-gravatar {
