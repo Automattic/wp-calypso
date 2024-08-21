@@ -130,7 +130,7 @@ const connectComponent = connect( ( state ) => {
 	const hasJetpackAntiSpamProduct =
 		getSiteProducts( state, siteId )?.filter( isJetpackAntiSpam ).length > 0;
 
-	const includeAkismetFields =
+	const includeAkismetKeyField =
 		! isAtomic && ( hasAkismetFeature || hasAntiSpamFeature || hasJetpackAntiSpamProduct );
 
 	return {
@@ -141,11 +141,11 @@ const connectComponent = connect( ( state ) => {
 		protectModuleActive,
 		protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
 		akismetUnavailable: siteInDevMode && akismetIsUnavailableInDevMode,
-		includeAkismetFields,
+		includeAkismetKeyField,
 	};
 } );
 
-const getFormSettings = ( includeAkismetFields ) => ( settings ) => {
+const getFormSettings = ( includeAkismetKeyField ) => ( settings ) => {
 	const settingsToPick = [
 		'akismet',
 		'protect',
@@ -161,7 +161,7 @@ const getFormSettings = ( includeAkismetFields ) => ( settings ) => {
 		'jetpack_sso_require_two_step',
 	];
 
-	if ( includeAkismetFields || settings.akismet ) {
+	if ( includeAkismetKeyField || settings.akismet ) {
 		settingsToPick.push( 'wordpress_api_key' );
 	}
 
