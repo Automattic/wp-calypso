@@ -24,6 +24,19 @@ jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
 jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
 	triggerGuidesForStep: jest.fn(),
 } ) );
+jest.mock( '@automattic/calypso-config', () => {
+	const actual = jest.requireActual( '@automattic/calypso-config' );
+	const actualIsEnabled = actual.isEnabled;
+
+	actual.isEnabled = jest.fn().mockImplementation( ( feature ) => {
+		if ( 'migration-flow/revamp' === feature ) {
+			return false;
+		}
+		return actualIsEnabled( feature );
+	} );
+
+	return actual;
+} );
 
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
