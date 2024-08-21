@@ -266,6 +266,4 @@ export default {
 
 		return stepHandlers[ currentStep ];
 	},
-
-	use__Temporary__ShouldTrackEvent: ( event ) => 'submit' === event,
 } satisfies Flow;
