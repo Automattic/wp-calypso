@@ -6,8 +6,8 @@ function mapResult( response: WPComSupportQueryResponse ) {
 }
 
 export const useSupportChatLLMQuery = ( description: string, enable: boolean ) => {
-	const question = `I have the following performance metric for my site: ${ description }. Can you help me with that?`;
-	const howToAnswer = 'Answer me in two paragraphs maximum';
+	const question = `I have the following performance metric for my site: ${ description }. How good is this metric compared to the average? Give me some recommendations to improve my WordPress site using bulletpoints.`;
+	const howToAnswer = 'Answer me in 4 sentences maximum.';
 	const message = `${ question } ${ howToAnswer }`;
 
 	return useQuery( {
