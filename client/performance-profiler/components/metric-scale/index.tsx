@@ -1,7 +1,7 @@
 import './style.scss';
 import clsx from 'clsx';
 import { Valuation } from 'calypso/performance-profiler/types/performance-metrics';
-import { metricsTresholds } from 'calypso/performance-profiler/utils/metrics';
+import { metricsTresholds, max2Decimals } from 'calypso/performance-profiler/utils/metrics';
 
 type Props = {
 	metricName: string;
@@ -14,10 +14,14 @@ export const MetricScale = ( { metricName, value, valuation }: Props ) => {
 		metricsTresholds[ metricName as keyof typeof metricsTresholds ];
 
 	const formatValue = ( value: number ): string => {
-		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metricName ) ) {
-			return `${ +( value / 1000 ).toFixed( 2 ) }`;
+		if ( value === null || value === undefined ) {
+			return '';
 		}
-		return `${ value }`;
+
+		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metricName ) ) {
+			return `${ max2Decimals( value / 1000 ) }`;
+		}
+		return `${ max2Decimals( value ) }`;
 	};
 
 	return (
@@ -37,7 +41,7 @@ export const MetricScale = ( { metricName, value, valuation }: Props ) => {
 					className={ clsx( 'bar-section bad', { active: valuation === 'bad' } ) }
 					style={ { width: `${ ( ( bad - needsImprovement ) / bad ) * 100 }%` } }
 				></div>
-				<div className="dot" style={ { left: `${ ( value / bad ) * 100 }%` } }>
+				<div className="dot" style={ { left: `${ value > bad ? 100 : ( value / bad ) * 100 }%` } }>
 					<div className="label">{ formatValue( value ) }</div>
 				</div>
 			</div>

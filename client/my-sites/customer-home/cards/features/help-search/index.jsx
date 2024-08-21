@@ -6,6 +6,7 @@ import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useDebounce } from 'use-debounce';
 import { RESULT_ARTICLE } from 'calypso/blocks/inline-help/constants';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import HelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-results';
@@ -26,6 +27,7 @@ export default function HelpSearch() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ searchQuery, setSearchQuery ] = useState( '' );
+	const [ debouncedQuery ] = useDebounce( searchQuery, 500 );
 
 	// trackResultView: Given a result, send an "_open" tracking event indicating that result is opened.
 	const trackResultView = ( event, result ) => {
@@ -38,7 +40,7 @@ export default function HelpSearch() {
 
 		const tracksData = Object.fromEntries(
 			Object.entries( {
-				search_query: searchQuery,
+				search_query: debouncedQuery,
 				tour,
 				result_url: resultLink,
 				location: HELP_COMPONENT_LOCATION,
@@ -65,14 +67,14 @@ export default function HelpSearch() {
 						<div className="help-search__search inline-help__search">
 							<HelpSearchCard
 								onSelect={ trackResultView }
-								searchQuery={ searchQuery }
+								searchQuery={ debouncedQuery }
 								onSearch={ setSearchQuery }
 								location={ HELP_COMPONENT_LOCATION }
 								placeholder={ translate( 'Search support articles' ) }
 							/>
 							<HelpSearchResults
 								onSelect={ trackResultView }
-								searchQuery={ searchQuery }
+								searchQuery={ debouncedQuery }
 								placeholderLines={ 5 }
 								externalLinks
 							/>

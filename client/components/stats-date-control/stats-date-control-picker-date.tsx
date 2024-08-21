@@ -3,6 +3,7 @@ import { Button, DatePicker } from '@wordpress/components';
 import { Icon, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import DateInput from './stats-date-control-date-input';
 import { DateControlPickerDateProps } from './types';
 
@@ -20,12 +21,27 @@ const DateControlPickerDate = ( {
 }: DateControlPickerDateProps ) => {
 	const translate = useTranslate();
 
+	const [ previewDateStart, setPreviewDateStart ] = useState( startDate );
+	const [ previewDateEnd, setPreviewDateEnd ] = useState( endDate );
+
 	const handleStartSeletion = ( date: string ) => {
 		onStartChange( date.split( 'T' )?.[ 0 ] );
+		setPreviewDateStart( date.split( 'T' )?.[ 0 ] );
 	};
 
 	const handleEndSeletion = ( date: string ) => {
 		onEndChange( date.split( 'T' )?.[ 0 ] );
+		setPreviewDateEnd( date.split( 'T' )?.[ 0 ] );
+	};
+
+	const handleStartMonthTogglePrevious = ( date: string ) => {
+		setPreviewDateEnd( previewDateStart );
+		setPreviewDateStart( date );
+	};
+
+	const handleEndMonthToggleNext = ( date: string ) => {
+		setPreviewDateStart( previewDateEnd );
+		setPreviewDateEnd( date );
 	};
 
 	return (
@@ -45,17 +61,37 @@ const DateControlPickerDate = ( {
 			<div className={ `${ BASE_CLASS_NAME }s__inputs` }>
 				<div className={ `${ BASE_CLASS_NAME }s__inputs-input-group` }>
 					<label htmlFor="startDate">{ translate( 'From', { context: 'from date' } ) }</label>
-					<DateInput id="startDate" value={ startDate } onChange={ onStartChange } />
+					<DateInput
+						id="startDate"
+						value={ previewDateStart || startDate }
+						onChange={ handleStartSeletion }
+					/>
 				</div>
 				<div className={ `${ BASE_CLASS_NAME }s__inputs-input-group` }>
 					<label htmlFor="endDate">{ translate( 'To', { context: 'to date' } ) }</label>
-					<DateInput id="endDate" value={ endDate } onChange={ onEndChange } />
+					<DateInput
+						id="endDate"
+						value={ previewDateEnd || endDate }
+						onChange={ handleEndSeletion }
+					/>
 				</div>
 			</div>
 			{ isCalendarEnabled && (
 				<div className={ `${ BASE_CLASS_NAME }s__calendar` }>
-					<DatePicker currentDate={ startDate } onChange={ handleStartSeletion } />
-					<DatePicker currentDate={ endDate } onChange={ handleEndSeletion } />
+					<div className={ `${ BASE_CLASS_NAME }s__calendar--from` }>
+						<DatePicker
+							currentDate={ previewDateStart || startDate }
+							onChange={ handleStartSeletion }
+							onMonthPreviewed={ handleStartMonthTogglePrevious }
+						/>
+					</div>
+					<div className={ `${ BASE_CLASS_NAME }s__calendar--to` }>
+						<DatePicker
+							currentDate={ previewDateEnd || endDate }
+							onChange={ handleEndSeletion }
+							onMonthPreviewed={ handleEndMonthToggleNext }
+						/>
+					</div>
 				</div>
 			) }
 			<div className={ `${ BASE_CLASS_NAME }s__buttons` }>

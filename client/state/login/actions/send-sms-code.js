@@ -17,9 +17,10 @@ import 'calypso/state/login/init';
 
 /**
  * Sends a two factor authentication recovery code to a user.
+ * @param {string} flow (Optional) OAuth2 client's flow name
  * @returns {Function} A thunk that can be dispatched
  */
-export const sendSmsCode = () => ( dispatch, getState ) => {
+export const sendSmsCode = ( flow ) => ( dispatch, getState ) => {
 	dispatch( {
 		type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 		notice: {
@@ -32,6 +33,7 @@ export const sendSmsCode = () => ( dispatch, getState ) => {
 		two_step_nonce: getTwoFactorAuthNonce( getState(), 'sms' ),
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
+		...( flow ? { flow } : {} ),
 	} )
 		.then( ( response ) => {
 			const message = getSMSMessageFromResponse( response );

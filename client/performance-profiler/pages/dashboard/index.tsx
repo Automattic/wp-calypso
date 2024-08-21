@@ -73,6 +73,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 				timestamp={ performanceReport?.timestamp }
 				activeTab={ activeTab }
 				onTabChange={ getOnTabChange }
+				showWPcomBadge={ performanceReport?.is_wpcom }
 				showNavigationTabs
 			/>
 

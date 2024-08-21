@@ -4,7 +4,8 @@ import moment from 'moment';
 import { useEffect, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
 import wpcom from 'calypso/lib/wp';
 import './style.scss';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
@@ -17,6 +18,7 @@ interface VisitResponse {
 }
 
 export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
+	const dispatch = useDispatch();
 	const [ visitsNumber, setVisitsNumber ] = useState< number | null >( null );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const canViewStat = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
@@ -86,7 +88,12 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 				</div>
 			</div>
 			<div className="hosting-overview__plan-site-visits-content">{ getSiteVisitsContent() }</div>
-			<a href={ `/stats/month/${ siteSlug }` }>
+			<a
+				href={ `/stats/month/${ siteSlug }` }
+				onClick={ () => {
+					dispatch( recordTracksEvent( 'calypso_hosting_overview_visit_stats_click' ) );
+				} }
+			>
 				{ translate( 'Visit stats', {
 					comment: 'A link taking the user to more detailed site statistics',
 				} ) }

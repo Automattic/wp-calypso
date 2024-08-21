@@ -4,6 +4,7 @@ export const A4A_SITES_LINK = '/sites';
 export const A4A_SITES_LINK_NEEDS_ATTENTION = '/sites?issue_types=all_issues';
 export const A4A_SITES_LINK_NEEDS_SETUP = '/sites/need-setup';
 export const A4A_SITES_LINK_FAVORITE = '/sites?is_favorite';
+export const A4A_SITES_LINK_DEVELOPMENT = '/sites?is_development';
 export const A4A_SITES_LINK_WALKTHROUGH_TOUR = `${ A4A_SITES_LINK }?tour=sites-walkthrough`;
 export const A4A_SITES_LINK_ADD_NEW_SITE_TOUR = '/sites?tour=add-new-site';
 export const A4A_SITES_CONNECT_URL_LINK = '/sites/connect-url';
@@ -35,6 +36,8 @@ export const A4A_MIGRATIONS_LINK = '/migrations';
 export const A4A_SETTINGS_LINK = '/settings';
 export const A4A_PARTNER_DIRECTORY_LINK = '/partner-directory';
 export const A4A_PARTNER_DIRECTORY_DASHBOARD_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/dashboard`;
+export const A4A_TEAM_LINK = '/team';
+export const A4A_TEAM_INVITE_LINK = '/team/invite';
 export const EXTERNAL_A4A_KNOWLEDGE_BASE = 'http://automattic.com/for-agencies/help';
 
 // Client

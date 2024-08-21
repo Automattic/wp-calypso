@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
+import { isWooOAuth2Client, isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendSmsCode } from 'calypso/state/login/actions';
@@ -17,6 +18,7 @@ import './two-factor-actions.scss';
 
 class TwoFactorActions extends Component {
 	static propTypes = {
+		oauth2Client: PropTypes.object.isRequired,
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isSecurityKeySupported: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
@@ -34,7 +36,12 @@ class TwoFactorActions extends Component {
 
 		this.props.switchTwoFactorAuthType( 'sms' );
 
-		this.props.sendSmsCode();
+		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
+			// Pass the OAuth2 client's flow name to customize the SMS message for Gravatar-powered OAuth2 clients.
+			this.props.sendSmsCode( getGravatarOAuth2Flow( this.props.oauth2Client ) );
+		} else {
+			this.props.sendSmsCode();
+		}
 	};
 
 	recordAuthenticatorLinkClick = ( event ) => {
@@ -118,16 +125,19 @@ class TwoFactorActions extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
-		isBackupCodeSupported: isTwoFactorAuthTypeSupported( state, 'backup' ),
-		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
-		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
-		isWoo:
-			isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
-			isWooCommerceCoreProfilerFlow( state ),
-		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
-	} ),
+	( state ) => {
+		const oauth2Client = getCurrentOAuth2Client( state );
+
+		return {
+			oauth2Client,
+			isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
+			isBackupCodeSupported: isTwoFactorAuthTypeSupported( state, 'backup' ),
+			isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
+			isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
+			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCommerceCoreProfilerFlow( state ),
+			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
+		};
+	},
 	{
 		recordTracksEvent,
 		sendSmsCode,

@@ -147,7 +147,7 @@ jobs:
     <<: *desktop_defaults
     environment:
       VERSION: << pipeline.git.tag >>
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     working_directory: ~/wp-calypso
     steps:
       - checkout
@@ -173,7 +173,7 @@ jobs:
     working_directory: /Users/distiller/wp-calypso
     environment:
       CONFIG_ENV: release
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -187,7 +187,6 @@ jobs:
           no_output_timeout: 45m
           environment:
             CSC_LINK: resource/certificates/mac.p12
-            CSC_FOR_PULL_REQUEST: true
             USE_HARD_LINKS: 'false'
           command: |
             set +e
@@ -249,10 +248,11 @@ jobs:
     # version to keep this one working for now.
       - image: cimg/node:20.8.1-browsers
     <<: *desktop_defaults
+    resource_class: medium+
     shell: /bin/bash --login
     environment:
       CONFIG_ENV: release
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -321,7 +321,7 @@ jobs:
     working_directory: C:\Users\circleci\wp-calypso
     environment:
       CONFIG_ENV: release
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:

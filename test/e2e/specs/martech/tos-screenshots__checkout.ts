@@ -3,10 +3,7 @@
  */
 import {
 	DataHelper,
-	NavbarComponent,
-	PlansPage,
 	CartCheckoutPage,
-	SidebarComponent,
 	BrowserManager,
 	TestAccount,
 	RestAPIClient,
@@ -36,16 +33,11 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		await page.reload( { waitUntil: 'domcontentloaded', timeout: EXTENDED_TIMEOUT } );
 	} );
 
-	it( 'Navigate to Upgrades > Plans', async function () {
-		const navbarCompnent = new NavbarComponent( page );
-		await navbarCompnent.clickMySites();
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Upgrades', 'Plans' );
-	} );
-
 	it( 'Add WordPress.com Business plan to cart', async function () {
-		const plansPage = new PlansPage( page );
-		await Promise.all( [ page.waitForURL( /.*checkout.*/ ), plansPage.selectPlan( 'Business' ) ] );
+		await Promise.all( [
+			page.waitForURL( /.*checkout.*/ ),
+			page.goto( DataHelper.getCalypsoURL( `/checkout/business` ) ),
+		] );
 	} );
 
 	describe.each( DataHelper.getMag16Locales() )(
