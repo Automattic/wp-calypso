@@ -1,4 +1,15 @@
 .help-center-search-results {
+	.help-center-search-results-dev__resource {
+		margin-right: 15px;
+		display: block;
+		background: var(--studio-gray-0);
+		fill: var(--studio-blue-50);
+		padding: 8px;
+		text-transform: uppercase;
+		font-weight: 500;
+		font-size: 0.75rem;
+	}
+
 	li:last-child {
 		margin-bottom: 40px;
 	}
@@ -58,14 +69,6 @@
 				}
 			}
 		}
-
-		// .help-center-search-results__cell {
-		// 	width: 100%;
-
-		// 	svg {
-		// 		overflow: visible;
-		// 	}
-		// }
 
 		.help-center-search-results__cell a {
 			display: flex;

@@ -10,6 +10,7 @@ import OdieAssistantProvider, {
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
+import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate, Navigate } from 'react-router-dom';
 /**
@@ -57,6 +58,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	currentRoute,
 } ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
+	const [ hasBackButtonHeader, setHasBackButtonHeader ] = useState( false );
 	const location = useLocation();
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
@@ -131,6 +133,13 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		}
 	}, [ location ] );
 
+	// The back button header requires extra styling to the container.
+	useEffect( () => {
+		setHasBackButtonHeader(
+			Boolean( containerRef.current?.querySelector( '.help-center-back-button__header' ) )
+		);
+	}, [ location ] );
+
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
 			recordTracksEvent( eventName, properties );
@@ -165,7 +174,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		return children;
 	};
 	return (
-		<CardBody ref={ containerRef } className="help-center__container-content">
+		<CardBody
+			ref={ containerRef }
+			className={ clsx( 'help-center__container-content', {
+				'has-back-button-header': hasBackButtonHeader,
+			} ) }
+		>
 			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
 				<Routes>
 					<Route

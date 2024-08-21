@@ -11,21 +11,11 @@
 	max-width: 410px;
 	padding: 0;
 
-	.help-center__container-odie-header {
-		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-		height: 69px;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 16px;
-		box-sizing: border-box;
-		background-color: #fff;
-		position: sticky;
-		top: 0;
+	.odie-chat-message-input-container {
+		border-radius: 0;
 
-		.odie-button-default:focus {
-			border-radius: 2px;
-			outline: var(--color-primary-light) solid 2px;
+		@media screen and (max-width: 660px) {
+			max-width: 100%;
 		}
 	}
 }

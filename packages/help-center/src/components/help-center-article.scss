@@ -12,20 +12,8 @@
 	}
 
 	.help-center-article__header {
-		height: 50px;
-		display: flex;
-		width: 100%;
-		position: sticky;
-		top: 0;
-		background: var(--color-surface);
-		z-index: 99;
-		border-bottom: 1px solid var(--studio-gray-0);
-		padding: 0 10px;
-
-		.help-center-article__external-button {
-			display: flex;
-			align-items: center;
-			padding: 6px;
+		a.help-center-article__external-button {
+			padding: 8px;
 		}
 	}
 

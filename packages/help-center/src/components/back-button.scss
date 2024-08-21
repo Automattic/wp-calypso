@@ -19,4 +19,17 @@
 			padding-left: 3px;
 		}
 	}
+
+	.help-center-back-button__header {
+		height: 50px;
+		display: flex;
+		width: 100%;
+		position: absolute;
+		top: 50px;
+		background: var(--color-surface);
+		z-index: 99;
+		border-bottom: 1px solid var(--studio-gray-0);
+		padding: 0 10px;
+		box-sizing: border-box;
+	}
 }

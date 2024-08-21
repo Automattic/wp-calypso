@@ -14,6 +14,7 @@
 	z-index: $help-center-z-index;
 	cursor: default;
 	transition: max-height 0.5s;
+	position: fixed;
 
 	/**
 	 * Generic Stylings
@@ -70,7 +71,6 @@
 	 * Desktop
 	 */
 	&.is-desktop {
-		position: fixed;
 		width: 410px;
 		height: 80vh;
 		max-height: 800px;
@@ -78,12 +78,17 @@
 
 		&.is-minimized {
 			min-height: $head-foot-height;
+			max-height: $head-foot-height;
 			top: unset;
 			right: 50px;
 			bottom: calc(#{$header-height} + 16px);
 
 			.help-center__container-header {
 				cursor: pointer;
+			}
+
+			.help-center__container-content {
+				display: none;
 			}
 		}
 	}
@@ -106,16 +111,13 @@
 
 		&.is-minimized {
 			min-height: $head-foot-height;
+			max-height: $head-foot-height;
 			top: calc(100vh - #{$head-foot-height});
 
 			@supports (height: 100dvh) {
 				top: calc(100dvh - #{$head-foot-height});
 			}
 		}
-	}
-
-	&.is-maximized {
-		max-height: $head-foot-height;
 	}
 
 	/**
