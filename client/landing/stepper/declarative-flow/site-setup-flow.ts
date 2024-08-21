@@ -452,10 +452,10 @@ const siteSetupFlow: Flow = {
 							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
 						case 'checkout':
 							return exitFlow( providedDependencies?.checkoutUrl as string );
-						case 'customized-action-flow': {
-							const migrateEntireSiteFlow = urlQueryParams.get( 'migrateEntireSiteFlow' );
-							if ( migrateEntireSiteFlow ) {
-								return goToFlow( migrateEntireSiteFlow );
+						case 'customized-action-go-to-flow': {
+							const customizedActionGoToFlow = urlQueryParams.get( 'customizedActionGoToFlow' );
+							if ( customizedActionGoToFlow ) {
+								return goToFlow( customizedActionGoToFlow );
 							}
 						}
 						default:

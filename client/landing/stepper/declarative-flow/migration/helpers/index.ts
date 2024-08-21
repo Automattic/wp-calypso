@@ -34,10 +34,10 @@ export const goToImporter = ( {
 	replaceHistory = false,
 }: GoToImporterParams ) => {
 	const backToFlow = backToStep ? getFlowPath( backToStep?.slug ) : undefined;
-	const migrateEntireSiteFlow = migrateEntireSiteStep
+	const customizedActionGoToFlow = migrateEntireSiteStep
 		? getFlowPath( migrateEntireSiteStep?.slug )
 		: undefined;
-	const path = getFinalImporterUrl( siteSlug, '', platform, backToFlow, migrateEntireSiteFlow );
+	const path = getFinalImporterUrl( siteSlug, '', platform, backToFlow, customizedActionGoToFlow );
 
 	if ( isWpAdminImporter( path ) ) {
 		return goTo( path, replaceHistory );
