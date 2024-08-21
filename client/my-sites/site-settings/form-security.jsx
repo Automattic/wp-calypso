@@ -144,7 +144,7 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-const getFormSettings = ( includeAkismetKeyField ) => ( settings ) => {
+const getFormSettings = ( settings, props ) => {
 	const settingsToPick = [
 		'akismet',
 		'protect',
@@ -160,7 +160,7 @@ const getFormSettings = ( includeAkismetKeyField ) => ( settings ) => {
 		'jetpack_sso_require_two_step',
 	];
 
-	if ( includeAkismetKeyField || settings.akismet ) {
+	if ( props.includeAkismetKeyField || settings.akismet ) {
 		settingsToPick.push( 'wordpress_api_key' );
 	}
 
@@ -168,11 +168,5 @@ const getFormSettings = ( includeAkismetKeyField ) => ( settings ) => {
 };
 
 export default connectComponent(
-	localize( ( props ) => {
-		const WrappedSiteSettingsFormSecurity = wrapSettingsForm(
-			getFormSettings( props.includeAkismetFields )
-		)( SiteSettingsFormSecurity );
-
-		return <WrappedSiteSettingsFormSecurity { ...props } />;
-	} )
+	localize( wrapSettingsForm( getFormSettings )( SiteSettingsFormSecurity ) )
 );
