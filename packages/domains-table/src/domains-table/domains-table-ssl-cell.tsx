@@ -34,17 +34,19 @@ export default function DomainsTableSslCell( {
 		}
 	};
 
-	const buttonClassNames = clsx( 'domains-table-row__ssl-status-button', {
-		[ 'domains-table-row__ssl-status-button__active' ]: isActiveSsl,
-		[ 'domains-table-row__ssl-status-button__pending' ]: isPendingSsl,
-		[ 'domains-table-row__ssl-status-button__disabled' ]: sslStatus === 'disabled',
-	} );
+	const getSslStatusClassnames = ( element: 'button' | 'icon' ) =>
+		clsx( `domains-table-row__ssl-status-${ element }`, {
+			[ `domains-table-row__ssl-status-${ element }__active` ]: isActiveSsl,
+			[ `domains-table-row__ssl-status-${ element }__pending` ]: isPendingSsl,
+			[ `domains-table-row__ssl-status-${ element }__disabled` ]: sslStatus === 'disabled',
+		} );
+
 	let button: React.ReactElement | string;
 
 	if ( sslStatus ) {
 		button = (
 			<a
-				className={ buttonClassNames }
+				className={ getSslStatusClassnames( 'button' ) }
 				href={ `${ domainManagementLink }?ssl-open=true` }
 				onClick={ ( event ) => event.stopPropagation() }
 			>
@@ -52,7 +54,7 @@ export default function DomainsTableSslCell( {
 			</a>
 		);
 	} else if ( hasWpcomManagedSslCert ) {
-		button = <span className={ buttonClassNames }>{ getSslStatusText() }</span>;
+		button = <span className={ getSslStatusClassnames( 'button' ) }>{ getSslStatusText() }</span>;
 	} else {
 		button = '-';
 	}
@@ -60,15 +62,7 @@ export default function DomainsTableSslCell( {
 	return (
 		<td className="domains-table-row__ssl-cell">
 			{ domainHasSsl && (
-				<Icon
-					className={ clsx( 'domains-table-row__ssl-icon', {
-						[ 'domains-table-row__ssl-icon__active' ]: isActiveSsl,
-						[ 'domains-table-row__ssl-icon__pending' ]: isPendingSsl,
-						[ 'domains-table-row__ssl-icon__disabled' ]: sslStatus === 'disabled',
-					} ) }
-					icon={ lock }
-					size={ 18 }
-				/>
+				<Icon className={ getSslStatusClassnames( 'icon' ) } icon={ lock } size={ 18 } />
 			) }
 			{ button }
 		</td>
