@@ -98,7 +98,7 @@ export type ResponseDomain = {
 	isDnssecEnabled: boolean;
 	isDnssecSupported: boolean;
 	isEligibleForInboundTransfer: boolean;
-	isIcannVerificationSuspended: boolean;
+	isIcannVerificationSuspended: boolean | null;
 	isGravatarDomain: boolean;
 	isLocked: boolean;
 	isMappedToAtomicSite: boolean;

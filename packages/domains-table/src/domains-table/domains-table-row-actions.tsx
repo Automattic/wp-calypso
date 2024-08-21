@@ -1,12 +1,13 @@
 import { Gridicon } from '@automattic/components';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ComponentType } from 'react';
+import React, { ComponentType } from 'react';
 import { canSetAsPrimary } from '../utils/can-set-as-primary';
 import { type as domainTypes, transferStatus, useMyDomainInputMode } from '../utils/constants';
 import { isFreeUrlDomainName } from '../utils/is-free-url-domain-name';
 import { isDomainInGracePeriod } from '../utils/is-in-grace-period';
 import { isRecentlyRegistered } from '../utils/is-recently-registered';
+import { isDomainRenewable } from '../utils/is-renewable';
 import { isDomainUpdateable } from '../utils/is-updateable';
 import {
 	domainMagementDNS,
@@ -44,7 +45,12 @@ export const DomainsTableRowActions = ( {
 	isSiteOnFreePlan,
 	isSimpleSite,
 }: DomainsTableRowActionsProps ) => {
-	const { onDomainAction, userCanSetPrimaryDomains = false, updatingDomain } = useDomainsTable();
+	const {
+		onDomainAction,
+		userCanSetPrimaryDomains = false,
+		updatingDomain,
+		domainStatusPurchaseActions,
+	} = useDomainsTable();
 	const { __ } = useI18n();
 
 	const canViewDetails = domain.type !== domainTypes.WPCOM;
@@ -72,6 +78,7 @@ export const DomainsTableRowActions = ( {
 		domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer;
 	const canChangeSiteAddress =
 		! isAllSitesView && isSimpleSite && isFreeUrlDomainName( domain.name );
+	const canRenewDomain = isDomainRenewable( domain );
 	const getActions = ( onClose?: () => void ) => {
 		return [
 			canViewDetails && (
@@ -136,6 +143,17 @@ export const DomainsTableRowActions = ( {
 					} }
 				>
 					{ __( 'Change site address' ) }
+				</MenuItemLink>
+			),
+			canRenewDomain && (
+				<MenuItemLink
+					key="renewDomain"
+					onClick={ () => {
+						domainStatusPurchaseActions?.onRenewNowClick?.( domain.domain ?? '', domain );
+						onClose?.();
+					} }
+				>
+					{ __( 'Renew now' ) }
 				</MenuItemLink>
 			),
 		];
