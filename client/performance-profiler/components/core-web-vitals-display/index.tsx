@@ -72,7 +72,7 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
-		`${ metricValuations[ activeTab ].aka }: ${ formatUnit( value ) }`,
+		`${ metricsNames[ activeTab ].name }: ${ formatUnit( value ) }`,
 		retrieveInsight
 	);
 
