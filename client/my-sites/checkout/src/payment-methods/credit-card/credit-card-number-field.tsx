@@ -107,16 +107,13 @@ export default function CreditCardNumberField( {
 						}
 					} }
 				/>
-
-				{ cardNetworks.length && (
-					<CardNetworkInput
-						className="test"
-						disabled={ isDisabled }
-						cardNetworks={ cardNetworks }
-						changeBrand={ changeBrand }
-						brand={ brand }
-					/>
-				) }
+				<CardNetworkInput
+					className="test"
+					disabled={ isDisabled }
+					cardNetworks={ cardNetworks }
+					changeBrand={ changeBrand }
+					brand={ brand }
+				/>
 
 				{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 			</StripeFieldWrapper>

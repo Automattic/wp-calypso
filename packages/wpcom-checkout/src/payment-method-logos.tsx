@@ -89,7 +89,8 @@ export function PaymentLogo( {
 			);
 			break;
 		default:
-			cardFieldIcon = brand === 'unknown' && isSummary ? null : <LockIconGraphic />;
+			cardFieldIcon =
+				brand === 'unknown' && isSummary ? null : <LockIconGraphic className={ className } />;
 	}
 
 	return cardFieldIcon;

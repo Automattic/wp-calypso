@@ -2,6 +2,11 @@
 	color: var( --color-neutral-20 );
 	margin-inline-start: 3px;
 	align-self: center;
+
+	&.hidden {
+		visibility: hidden;
+		display: unset;
+	}
 }
 
 .card-network-input__logo-container {
@@ -43,6 +48,10 @@
 	height: 42px;
 	display: flex;
 	align-items: center;
+
+	&.hidden {
+		border-left: none;
+	}
 }
 
 select.card-network__brand-select {

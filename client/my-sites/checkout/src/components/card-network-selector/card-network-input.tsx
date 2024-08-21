@@ -20,10 +20,15 @@ export const CardNetworkInput: FC< CardNetworkInputProps > = ( {
 	changeBrand,
 	brand,
 } ) => {
+	const areThereMultipleNetworks = cardNetworks && cardNetworks.length > 1;
 	return (
 		<div className="card-network-input__select-container">
-			<div className="card-network-input__select-inner-container">
-				{ cardNetworks && (
+			<div
+				className={ `card-network-input__select-inner-container ${
+					! areThereMultipleNetworks && 'hidden'
+				}` }
+			>
+				{ areThereMultipleNetworks && (
 					<CardNetworkSelect
 						className={ clsx( className, 'card-network__brand-select' ) }
 						changeBrand={ changeBrand }
@@ -36,7 +41,9 @@ export const CardNetworkInput: FC< CardNetworkInputProps > = ( {
 					<Gridicon
 						icon="chevron-down"
 						size={ 12 }
-						className="card-network-input__logo-selector-icon"
+						className={ `card-network-input__logo-selector-icon ${
+							! areThereMultipleNetworks && 'hidden'
+						}` }
 					/>
 					<PaymentLogo brand={ brand } className="card-network-input__logo-icon" />
 				</div>
