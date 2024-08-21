@@ -14,19 +14,19 @@ interface Params< FlowSteps extends StepperStep[] > {
 }
 
 export const useStepNavigationWithTracking = ( {
-	flow: { useTracksEventProps, useStepNavigation, name: flowName, variantSlug },
+	flow,
 	currentStepRoute,
 	navigate,
 	steps,
 }: Params< ReturnType< Flow[ 'useSteps' ] > > ) => {
-	const stepNavigation = useStepNavigation(
+	const stepNavigation = flow.useStepNavigation?.(
 		currentStepRoute,
 		navigate,
 		steps.map( ( step ) => step.slug )
 	);
 	const intent =
 		useSelect( ( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(), [] ) ?? '';
-	const tracksEventPropsFromFlow = useTracksEventProps?.();
+	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
 
 	return useMemo(
 		() => ( {
@@ -35,14 +35,14 @@ export const useStepNavigationWithTracking = ( {
 				recordSubmitStep(
 					providedDependencies,
 					intent,
-					flowName,
+					flow.name,
 					currentStepRoute,
-					variantSlug,
+					flow.variantSlug,
 					tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]
 				);
 				stepNavigation.submit?.( providedDependencies, ...params );
 			},
 		} ),
-		[ stepNavigation, intent, flowName, currentStepRoute, variantSlug, tracksEventPropsFromFlow ]
+		[ stepNavigation, intent, flow, currentStepRoute, tracksEventPropsFromFlow ]
 	);
 };
