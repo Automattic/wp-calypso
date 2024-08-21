@@ -37,7 +37,6 @@ export default function CreditCardNumberField( {
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
 		[]
 	);
-
 	const errorMessages = getErrorMessagesForField( 'number' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;
 
