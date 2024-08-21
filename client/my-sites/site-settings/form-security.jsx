@@ -1,3 +1,8 @@
+import {
+	WPCOM_FEATURES_AKISMET,
+	WPCOM_FEATURES_ANTISPAM,
+	isJetpackAntiSpam,
+} from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { Component } from 'react';
@@ -10,7 +15,8 @@ import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { isSimpleSite } from 'calypso/state/sites/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteProducts, isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Firewall from './firewall';
 import SpamFilteringSettings from './spam-filtering-settings';
@@ -119,6 +125,14 @@ const connectComponent = connect( ( state ) => {
 		'akismet'
 	);
 
+	const hasAkismetFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_AKISMET );
+	const hasAntiSpamFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM );
+	const hasJetpackAntiSpamProduct =
+		getSiteProducts( state, siteId )?.filter( isJetpackAntiSpam ).length > 0;
+
+	const includeAkismetFields =
+		! isAtomic && ( hasAkismetFeature || hasAntiSpamFeature || hasJetpackAntiSpamProduct );
+
 	return {
 		siteId,
 		isAtomic,
@@ -127,11 +141,13 @@ const connectComponent = connect( ( state ) => {
 		protectModuleActive,
 		protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
 		akismetUnavailable: siteInDevMode && akismetIsUnavailableInDevMode,
+		includeAkismetFields,
 	};
 } );
 
-const getFormSettings = ( isAtomic ) => ( settings ) => {
+const getFormSettings = ( includeAkismetFields ) => ( settings ) => {
 	const settingsToPick = [
+		'akismet',
 		'protect',
 		'jetpack_protect_global_whitelist',
 		'jetpack_waf_automatic_rules',
@@ -145,8 +161,7 @@ const getFormSettings = ( isAtomic ) => ( settings ) => {
 		'jetpack_sso_require_two_step',
 	];
 
-	if ( ! isAtomic ) {
-		settingsToPick.push( 'akismet' );
+	if ( includeAkismetFields || settings.akismet ) {
 		settingsToPick.push( 'wordpress_api_key' );
 	}
 
@@ -155,9 +170,9 @@ const getFormSettings = ( isAtomic ) => ( settings ) => {
 
 export default connectComponent(
 	localize( ( props ) => {
-		const WrappedSiteSettingsFormSecurity = wrapSettingsForm( getFormSettings( props.isAtomic ) )(
-			SiteSettingsFormSecurity
-		);
+		const WrappedSiteSettingsFormSecurity = wrapSettingsForm(
+			getFormSettings( props.includeAkismetFields )
+		)( SiteSettingsFormSecurity );
 
 		return <WrappedSiteSettingsFormSecurity { ...props } />;
 	} )
