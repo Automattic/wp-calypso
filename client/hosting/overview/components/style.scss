@@ -253,6 +253,7 @@ $blueberry-color: #3858e9;
 	display: flex;
 	justify-content: space-between;
 	gap: $grid-unit-10;
+	color: var(--studio-gray-80);
 }
 
 .hosting-overview__plan-storage-title,
