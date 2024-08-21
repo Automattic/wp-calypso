@@ -47,8 +47,8 @@ export const metricValuations = {
 		good: translate( "Your site's visual stability is good" ),
 		needsImprovement: translate( "Your site's visual stability is moderate" ),
 		bad: translate( "Your site's visual stability needs improvement" ),
-		heading: translate( 'What is visual stability needs?' ),
-		aka: translate( '(aka Content Layout Shift)' ),
+		heading: translate( 'What is visual stability?' ),
+		aka: translate( '(aka Cumulative Layout Shift)' ),
 		explanation: translate(
 			'Visual stability is assessed by measuring how often content moves unexpectedly during loading. The best sites have a score of 0.1 or lower.'
 		),
@@ -118,14 +118,20 @@ export const mapThresholdsToStatus = ( metric: Metrics, value: number ): Valuati
 	return 'bad';
 };
 
+export const max2Decimals = ( val: number ) => +Number( val ).toFixed( 2 );
+
 export const displayValue = ( metric: Metrics, value: number ): string => {
+	if ( value === null || value === undefined ) {
+		return '';
+	}
+
 	if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metric ) ) {
-		return `${ ( value / 1000 ).toFixed( 2 ) }s`;
+		return `${ max2Decimals( value / 1000 ) }s`;
 	}
 
 	if ( [ 'inp', 'fid' ].includes( metric ) ) {
-		return `${ value }ms`;
+		return `${ max2Decimals( value ) }ms`;
 	}
 
-	return `${ value }`;
+	return `${ max2Decimals( value ) }`;
 };

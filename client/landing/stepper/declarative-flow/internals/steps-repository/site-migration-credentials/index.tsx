@@ -19,6 +19,7 @@ import './style.scss';
 
 interface CredentialsFormProps {
 	onSubmit: ( data: CredentialsFormData ) => void;
+	onSkip: () => void;
 }
 
 interface CredentialsFormData {
@@ -30,7 +31,7 @@ interface CredentialsFormData {
 	howToAccessSite: 'credentials' | 'backup';
 }
 
-export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
+export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
 
 	const validateSiteAddress = ( siteAddress: string ) => {
@@ -128,6 +129,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									render={ ( { field } ) => (
 										<FormTextInput
 											id="site-address"
+											isError={ !! errors.siteAddress }
 											placeholder={ translate( 'Enter your WordPress site address.' ) }
 											type="text"
 											{ ...field }
@@ -157,6 +159,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 											<FormTextInput
 												id="username"
 												type="text"
+												isError={ !! errors.username }
 												placeholder={ translate( 'Username' ) }
 												{ ...field }
 											/>
@@ -175,6 +178,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 											<FormTextInput
 												id="password"
 												type="password"
+												isError={ !! errors.password }
 												placeholder={ translate( 'Password' ) }
 												{ ...field }
 											/>
@@ -206,6 +210,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									render={ ( { field } ) => (
 										<FormTextInput
 											type="text"
+											isError={ !! errors.backupFileLocation }
 											placeholder={ translate( 'Enter your backup file location' ) }
 											{ ...field }
 										/>
@@ -248,7 +253,10 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 				</div>
 			</Card>
 			<div className="site-migration-credentials__skip">
-				<button className="button navigation-link step-container__navigation-link has-underline is-borderless">
+				<button
+					className="button navigation-link step-container__navigation-link has-underline is-borderless"
+					onClick={ onSkip }
+				>
 					{ translate( 'Skip, I need help providing access' ) }
 				</button>
 			</div>
@@ -261,6 +269,12 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 
 	const handleSubmit = () => {
 		return navigation.submit?.();
+	};
+
+	const handleSkip = () => {
+		return navigation.submit?.( {
+			action: 'skip',
+		} );
 	};
 
 	return (
@@ -283,7 +297,7 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 						align="center"
 					/>
 				}
-				stepContent={ <CredentialsForm onSubmit={ handleSubmit } /> }
+				stepContent={ <CredentialsForm onSubmit={ handleSubmit } onSkip={ handleSkip } /> }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</>

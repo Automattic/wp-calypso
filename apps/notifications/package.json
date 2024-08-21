@@ -18,11 +18,10 @@
 		"analyze-bundles": "EMIT_STATS=true yarn run build && webpack-bundle-analyzer stats.json dist -h 127.0.0.1 -s gzip",
 		"clean": "rm -rf dist stats.json",
 		"build:notifications": "calypso-build",
-		"dev-server": "NODE_ENV=development webpack serve",
-		"start": "yarn run clean && yarn run build:notifications && yarn run dev-server",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/notifications",
 		"build": "NODE_ENV=production yarn dev",
-		"teamcity:build-app": "yarn build"
+		"teamcity:build-app": "yarn build",
+		"translate": "rm -rf dist/strings && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './' --dir './dist/strings' --output './dist/notifications.pot' && build-app-languages --stringsFilePath='./dist/notifications.pot' --outputPath='./dist/languages'"
 	},
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
@@ -32,6 +31,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@wordpress/data": "^10.2.0",
+		"@wordpress/i18n": "^5.2.0",
 		"autoprefixer": "^10.2.5",
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",
@@ -45,17 +45,17 @@
 		"redux-thunk": "^2.4.2",
 		"webpack-bundle-analyzer": "^4.10.2",
 		"wpcom": "workspace:^",
-		"wpcom-proxy-request": "workspace:^",
-		"wpcom-xhr-request": "workspace:^"
+		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/languages": "workspace:^",
+		"@automattic/wp-babel-makepot": "workspace:^",
 		"html-webpack-plugin": "^5.6.0",
 		"postcss": "^8.4.5",
 		"postcss-custom-properties": "^11.0.0",
-		"webpack": "^5.91.0",
-		"webpack-dev-server": "^4.15.2"
+		"webpack": "^5.91.0"
 	}
 }

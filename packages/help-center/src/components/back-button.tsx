@@ -30,12 +30,7 @@ export const BackButton = ( { onClick, backToRoot = false, className }: Props ) 
 	}
 
 	return (
-		<Button
-			className={ buttonClassName }
-			/* eslint-disable-next-line jsx-a11y/no-autofocus */
-			autoFocus
-			onClick={ onClick || defaultOnClick }
-		>
+		<Button className={ buttonClassName } onClick={ onClick || defaultOnClick }>
 			<Icon icon={ chevronLeft } size={ 18 } />
 			{ __( 'Back', __i18n_text_domain__ ) }
 		</Button>
