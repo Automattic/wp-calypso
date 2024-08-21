@@ -81,3 +81,9 @@ $blueberry-color: #3858e9;
 .core-web-vitals-display__description a {
 	color: $blueberry-color;
 }
+
+.core-web-vitals-display__description {
+	.components-button.is-link {
+		font-size: 1rem;
+	}
+}

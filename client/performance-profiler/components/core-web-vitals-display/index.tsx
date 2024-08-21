@@ -1,6 +1,9 @@
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import Markdown from 'react-markdown';
 import { Metrics, PerformanceMetricsHistory } from 'calypso/data/site-profiler/types';
+import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
 import {
 	metricsNames,
 	metricsTresholds,
@@ -67,6 +70,12 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 		};
 	} );
 
+	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
+	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
+		`${ metricValuations[ activeTab ].aka }: ${ formatUnit( value ) }`,
+		retrieveInsight
+	);
+
 	return (
 		<div className="core-web-vitals-display">
 			<MetricTabBar activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props } />
@@ -127,13 +136,23 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 					<span className="core-web-vitals-display__description-aka">
 						{ metricValuations[ activeTab ].aka }
 					</span>
-					<p>
-						{ metricValuations[ activeTab ].explanation }
-						&nbsp;
-						<a href={ `https://web.dev/articles/${ activeTab }` }>
-							{ translate( 'Learn more ↗' ) }
-						</a>
-					</p>
+					<p>{ metricValuations[ activeTab ].explanation }</p>
+					<div>
+						{ ! retrieveInsight && (
+							<Button variant="link" onClick={ () => setRetrieveInsight( true ) }>
+								{ translate( 'Explain my score' ) }
+							</Button>
+						) }
+						<Markdown
+							components={ {
+								a( props: any ) {
+									return <a target="_blank" { ...props } />;
+								},
+							} }
+						>
+							{ isLoadingLlmAnswer ? 'Loading explanation...' : llmAnswer }
+						</Markdown>
+					</div>
 				</div>
 				<div className="core-web-vitals-display__history-graph">
 					{ dataAvailable && (
