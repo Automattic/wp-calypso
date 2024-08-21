@@ -11,8 +11,9 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import GetStarted from './get-started';
 
-export default function Overview() {
+export default function TeamList() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const title = translate( 'Manage team members' );
@@ -21,6 +22,12 @@ export default function Overview() {
 		dispatch( recordTracksEvent( 'calypso_a4a_team_invite_team_member_click' ) );
 		page( A4A_TEAM_INVITE_LINK );
 	};
+
+	const isEmpty = true; // FIXME: Fetch team members and check if empty
+
+	if ( isEmpty ) {
+		return <GetStarted />;
+	}
 
 	return (
 		<Layout className="a4a-team-list" title={ title } wide>
