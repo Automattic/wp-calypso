@@ -24,24 +24,11 @@ jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
 jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
 	triggerGuidesForStep: jest.fn(),
 } ) );
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
-	const actualIsEnabled = actual.isEnabled;
-
-	actual.isEnabled = jest.fn().mockImplementation( ( feature ) => {
-		if ( 'migration-flow/revamp' === feature ) {
-			return false;
-		}
-		return actualIsEnabled( feature );
-	} );
-
-	return actual;
-} );
 
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
+			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
 		} );
 	} );
 
@@ -51,6 +38,7 @@ describe( 'Site Migration Flow', () => {
 
 	beforeEach( () => {
 		( window.location.assign as jest.Mock ).mockClear();
+		( window.location.replace as jest.Mock ).mockClear();
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
 		( useIsSiteAdmin as jest.Mock ).mockReturnValue( {
 			isAdmin: true,
@@ -61,14 +49,50 @@ describe( 'Site Migration Flow', () => {
 		nock( apiBaseUrl ).get( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( '/wpcom/v2/guides/trigger' ).reply( 200, {} );
+
+		config.disable( 'migration-flow/revamp' );
 	} );
 
 	afterEach( () => {
+		config.enable( 'migration-flow/revamp' );
+
 		// Restore the original implementation after each test
 		jest.restoreAllMocks();
 	} );
 
 	describe( 'useAssertConditions', () => {
+		describe( 'Redirect to the new migration flow', () => {
+			beforeEach( () => {
+				config.enable( 'migration-flow/revamp' );
+			} );
+
+			it( 'redirects the user to the new flow with the existing query string', () => {
+				const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+
+				runUseAssertionCondition( {
+					currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+					currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?param1=1&param2=2`,
+				} );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					'/setup/migration?param1=1&param2=2'
+				);
+			} );
+
+			it( 'redirects the user to the site creation when it comes from the /move page with a "from"', () => {
+				const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+
+				runUseAssertionCondition( {
+					currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+					currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?ref=move-lp&from=example.com`,
+				} );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					`/setup/migration/${ STEPS.SITE_CREATION_STEP.slug }?ref=move-lp&from=example.com`
+				);
+			} );
+		} );
+
 		it( 'redirects the user to the start page when there is not siteSlug and SiteID', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
 

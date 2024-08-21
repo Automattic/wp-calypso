@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
@@ -18,19 +19,6 @@ const originalLocation = window.location;
 jest.mock( '../../utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
-	const actualIsEnabled = actual.isEnabled;
-
-	actual.isEnabled = jest.fn().mockImplementation( ( feature ) => {
-		if ( 'migration-flow/revamp' === feature ) {
-			return false;
-		}
-		return actualIsEnabled( feature );
-	} );
-
-	return actual;
-} );
 
 describe( 'Hosted site Migration Flow', () => {
 	beforeAll( () => {
@@ -55,9 +43,13 @@ describe( 'Hosted site Migration Flow', () => {
 		nock( apiBaseUrl ).get( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( '/wpcom/v2/guides/trigger' ).reply( 200, {} );
+
+		config.disable( 'migration-flow/revamp' );
 	} );
 
 	afterEach( () => {
+		config.enable( 'migration-flow/revamp' );
+
 		// Restore the original implementation after each test
 		jest.restoreAllMocks();
 	} );

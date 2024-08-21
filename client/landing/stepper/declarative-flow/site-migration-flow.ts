@@ -48,12 +48,12 @@ const useMigrationFlowRevampRedirect = () => {
 		// If user is coming from 'move-lp' and has a source site, we assume it's a WordPress site because it's already validated there.
 		if ( 'move-lp' === ref && '' !== from ) {
 			window.location.replace(
-				'/setup/migration/' + STEPS.SITE_CREATION_STEP.slug + '?' + fullQueryString
+				`/setup/migration/${ STEPS.SITE_CREATION_STEP.slug }?${ fullQueryString }`
 			);
 			return;
 		}
 
-		window.location.replace( '/setup/migration?' + fullQueryString );
+		window.location.replace( `/setup/migration?${ fullQueryString }` );
 	}, [ fullQueryString, ref, from ] );
 };
 
