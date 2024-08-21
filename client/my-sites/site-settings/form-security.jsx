@@ -127,8 +127,7 @@ const connectComponent = connect( ( state ) => {
 
 	const hasAkismetFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_AKISMET );
 	const hasAntiSpamFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM );
-	const hasJetpackAntiSpamProduct =
-		getSiteProducts( state, siteId )?.filter( isJetpackAntiSpam ).length > 0;
+	const hasJetpackAntiSpamProduct = getSiteProducts( state, siteId )?.some( isJetpackAntiSpam );
 
 	const includeAkismetKeyField =
 		! isAtomic && ( hasAkismetFeature || hasAntiSpamFeature || hasJetpackAntiSpamProduct );
