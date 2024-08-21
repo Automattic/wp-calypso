@@ -49,8 +49,13 @@
 	display: flex;
 	align-items: center;
 
+	&:hover {
+		box-shadow: -1px 0 2px 0 rgba( 220, 220, 222, 0.5 );
+	}
+
 	&.hidden {
 		border-left: none;
+		box-shadow: none;
 	}
 }
 

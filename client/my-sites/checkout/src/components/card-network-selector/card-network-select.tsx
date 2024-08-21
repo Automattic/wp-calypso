@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import FormSelect from 'calypso/components/forms/form-select';
 import { useRef, type FC } from 'react';
@@ -19,8 +18,8 @@ export type CardNetworkSelectProps = {
 
 export type OptionObject = {
 	key: string | number;
-	brand?: string;
-	disabled?: boolean;
+	brand: string;
+	disabled: boolean;
 };
 
 export const CardNetworkSelect: FC< CardNetworkSelectProps > = ( {
@@ -36,17 +35,12 @@ export const CardNetworkSelect: FC< CardNetworkSelectProps > = ( {
 	size,
 } ) => {
 	const inputRef = useRef< HTMLSelectElement | null >( null );
-	const getNetworkOptions = (): OptionObject[] => {
-		if ( ! cardNetworks?.length ) {
-			return [
-				{
-					key: '',
-					brand: translate( 'Loading…' ),
-					disabled: ! cardNetworks,
-				},
-			];
-		}
 
+	if ( ! cardNetworks ) {
+		return;
+	}
+
+	const getNetworkOptions = (): OptionObject[] => {
 		return cardNetworks.map( ( network, idx ) => ( {
 			key: idx,
 			brand: network,
@@ -54,15 +48,20 @@ export const CardNetworkSelect: FC< CardNetworkSelectProps > = ( {
 		} ) );
 	};
 	const options = getNetworkOptions();
-	console.log( 'Options: ', options );
+
+	const toTitleCase = ( str: string ) => {
+		return str
+			.split( '_' )
+			.map( ( word ) => word.charAt( 0 ).toUpperCase() + word.slice( 1 ).toLowerCase() )
+			.join( ' ' );
+	};
+
 	return (
 		<FormSelect
 			className={ className }
 			onFocus={ ( input ) => {
 				input.stopPropagation();
-				console.log( 'Focus event triggered' );
 				if ( inputRef.current ) {
-					console.log( 'Focusing element:', inputRef.current );
 					inputRef.current.focus();
 				}
 			} }
@@ -80,7 +79,7 @@ export const CardNetworkSelect: FC< CardNetworkSelectProps > = ( {
 		>
 			{ options.map( ( option ) => (
 				<option key={ option.key } value={ option.brand } disabled={ option.disabled }>
-					{ option.brand }
+					{ translate( toTitleCase( option.brand ) ) }
 				</option>
 			) ) }
 		</FormSelect>
