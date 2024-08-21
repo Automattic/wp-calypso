@@ -9,14 +9,19 @@ export interface ClickHandler {
 	indicator?: ReactNode;
 	show?: 'always' | 'onComplete' | 'beforeComplete';
 }
+export interface MessageIndicator {
+	message: TranslateResult;
+	indicator: ReactNode;
+}
 
 interface Props {
 	currentStep: number;
-	steps: ( TranslateResult | ClickHandler )[];
+	steps: ( TranslateResult | MessageIndicator | ClickHandler )[];
 }
 
-const isClickHandler = ( item: TranslateResult | ClickHandler ): item is ClickHandler =>
-	'object' === typeof item && item.hasOwnProperty( 'onClick' );
+const isClickHandler = (
+	item: TranslateResult | ClickHandler | MessageIndicator
+): item is ClickHandler => 'object' === typeof item && item.hasOwnProperty( 'onClick' );
 
 const StepProgress: FunctionComponent< Props > = ( { currentStep, steps } ) => {
 	const getElementClass = ( stepNumber: number ) => {
@@ -28,7 +33,10 @@ const StepProgress: FunctionComponent< Props > = ( { currentStep, steps } ) => {
 			: 'step-progress__element-future';
 	};
 
-	const getClickHandler = ( step: TranslateResult | ClickHandler, stepNumber: number ) => {
+	const getClickHandler = (
+		step: TranslateResult | ClickHandler | MessageIndicator,
+		stepNumber: number
+	) => {
 		if ( isClickHandler( step ) ) {
 			if ( undefined === step?.show || 'always' === step.show ) {
 				return step.onClick;
@@ -54,14 +62,14 @@ const StepProgress: FunctionComponent< Props > = ( { currentStep, steps } ) => {
 							disabled={ undefined === clickHandler }
 							onClick={ clickHandler }
 						>
-							{ isClickHandler( step ) && !! step.indicator ? (
+							{ step.hasOwnProperty( 'indicator' ) && step.indicator ? (
 								step.indicator
 							) : (
 								<span>{ index + 1 }</span>
 							) }
 						</button>
 						<span className="step-progress__element-step-name">
-							{ isClickHandler( step ) ? step.message : step }
+							{ step.hasOwnProperty( 'message' ) ? step.message : step }
 						</span>
 					</div>
 				);

@@ -1,3 +1,5 @@
+import { Spinner } from '@wordpress/components';
+import { Icon, check } from '@wordpress/icons';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -46,7 +48,12 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 
 	const [ validFromSite, setValidFromSite ] = useState( false );
 
-	const stepsProgress = [ 'Content', 'Subscribers', 'Paid Subscribers', 'Summary' ];
+	const stepsProgress = [
+		{ message: 'Content', indicator: null },
+		{ message: 'Subscribers', indicator: null },
+		{ message: 'Paid Subscribers', indicator: null },
+		{ message: 'Summary', indicator: null },
+	];
 
 	let fromSite = getQueryArg( window.location.href, 'from' ) as string | string[];
 
@@ -70,9 +77,15 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 			stepIndex = index;
 			nextStep = stepSlugs[ index + 1 ] ? stepSlugs[ index + 1 ] : stepSlugs[ index ];
 		}
-		if ( ! isFetchingPaidNewsletter ) {
+
+		if ( paidNewsletterData?.steps ) {
 			const status = paidNewsletterData?.steps[ stepName ]?.status ?? '';
-			stepsProgress[ index ] = stepsProgress[ index ] + ' (' + status + ')';
+			if ( status === 'done' ) {
+				stepsProgress[ index ].indicator = <Icon icon={ check } />;
+			}
+			if ( status === 'processing' ) {
+				stepsProgress[ index ].indicator = <Spinner style={ { color: '#3858e9' } } />;
+			}
 		}
 	} );
 
