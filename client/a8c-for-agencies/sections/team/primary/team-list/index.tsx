@@ -91,6 +91,7 @@ export default function TeamList() {
 		[ translate ]
 	);
 
+	// FIXME: Fetch team members
 	const members: TeamMember[] = [
 		{
 			displayName: 'Owner',
@@ -117,9 +118,9 @@ export default function TeamList() {
 			role: 'member',
 			status: 'expired',
 		},
-	]; // FIXME: Fetch team members
+	];
 
-	const isEmpty = ! members.length;
+	const isEmpty = members.length <= 1; // We always have one member (owner) so we exclude it from count.
 
 	if ( isEmpty ) {
 		return <GetStarted />;
