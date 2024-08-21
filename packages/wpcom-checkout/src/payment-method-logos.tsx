@@ -19,13 +19,21 @@ export const PaymentMethodLogos = styled.span`
 	}
 `;
 
-export function PaymentLogo( { brand, isSummary }: { brand: string; isSummary?: boolean } ) {
+export function PaymentLogo( {
+	brand,
+	isSummary,
+	className,
+}: {
+	brand: string;
+	isSummary?: boolean;
+	className?: string;
+} ) {
 	let cardFieldIcon = null;
 
 	switch ( brand ) {
 		case 'visa':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<BrandLogo className={ className } isSummary={ isSummary }>
 					<VisaLogo />
 				</BrandLogo>
 			);
@@ -33,49 +41,49 @@ export function PaymentLogo( { brand, isSummary }: { brand: string; isSummary?: 
 		case 'cb':
 		case 'cartes_bancaires':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<BrandLogo className={ className } isSummary={ isSummary }>
 					<CBLogo />
 				</BrandLogo>
 			);
 			break;
 		case 'mastercard':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<BrandLogo className={ className } isSummary={ isSummary }>
 					<MastercardLogo />
 				</BrandLogo>
 			);
 			break;
 		case 'amex':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<BrandLogo className={ className } isSummary={ isSummary }>
 					<AmexLogo />
 				</BrandLogo>
 			);
 			break;
 		case 'jcb':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<BrandLogo className={ className } isSummary={ isSummary }>
 					<JcbLogo />
 				</BrandLogo>
 			);
 			break;
 		case 'diners':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<BrandLogo className={ className } isSummary={ isSummary }>
 					<DinersLogo />
 				</BrandLogo>
 			);
 			break;
 		case 'unionpay':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<BrandLogo className={ className } isSummary={ isSummary }>
 					<UnionpayLogo />
 				</BrandLogo>
 			);
 			break;
 		case 'discover':
 			cardFieldIcon = (
-				<BrandLogo isSummary={ isSummary }>
+				<BrandLogo className={ className } isSummary={ isSummary }>
 					<DiscoverLogo />
 				</BrandLogo>
 			);
@@ -167,11 +175,12 @@ export function CBLogo( { className }: { className?: string } ) {
 			className={ className }
 			width="41"
 			height="17"
-			viewBox="0 0 41 17"
+			viewBox="0 0 26 17"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
 			focusable="false"
+			preserveAspectRatio="xMidYMid meet"
 		>
 			<radialGradient
 				id="b"
