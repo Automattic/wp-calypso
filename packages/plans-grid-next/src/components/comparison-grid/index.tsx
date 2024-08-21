@@ -26,7 +26,6 @@ import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
 import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
-import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import { sortPlans } from '../../lib/sort-plan-properties';
@@ -36,7 +35,7 @@ import ActionButton from '../shared/action-button';
 import BillingTimeframe from '../shared/billing-timeframe';
 import HeaderPrice from '../shared/header-price';
 import { PlanStorage } from '../shared/storage';
-import Tooltip from '../shared/tooltip';
+import Tooltip, { useManageTooltipToggle } from '../shared/tooltip';
 import { StickyContainer } from '../sticky-container';
 import type {
 	GridPlan,

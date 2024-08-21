@@ -3,8 +3,8 @@
  */
 
 import { renderHook, act } from '@testing-library/react';
+import { useManageTooltipToggle } from '../../components/shared/tooltip';
 import { hasTouch } from '../../lib/touch-detect';
-import { useManageTooltipToggle } from '../use-manage-tooltip-toggle';
 
 // Mocking the hasTouch function
 jest.mock( '../../lib/touch-detect', () => ( {

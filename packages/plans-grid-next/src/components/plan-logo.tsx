@@ -14,10 +14,9 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
-import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import PlanDivOrTdContainer from './plan-div-td-container';
 import PopularBadge from './popular-badge';
-import Tooltip from './shared/tooltip';
+import Tooltip, { useManageTooltipToggle } from './shared/tooltip';
 import type { GridPlan } from '../types';
 
 const PlanLogo: React.FunctionComponent< {

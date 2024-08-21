@@ -1,7 +1,8 @@
 import { Tooltip as CoreTooltip } from '@automattic/components';
 import { TranslateResult } from 'i18n-calypso';
 import { Dispatch, PropsWithChildren, SetStateAction, useRef } from 'react';
-import { hasTouch } from '../../../lib/touch-detect';
+import { hasTouch } from '../../../../lib/touch-detect';
+
 import './style.scss';
 
 export type TooltipProps = PropsWithChildren< {

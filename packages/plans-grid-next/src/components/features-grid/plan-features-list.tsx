@@ -9,12 +9,11 @@ import { AddOns } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { usePlansGridContext } from '../../grid-context';
-import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import PlanFeatures2023GridFeatures from '../features';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import { PlanStorage } from '../shared/storage';
-import Tooltip from '../shared/tooltip';
+import Tooltip, { useManageTooltipToggle } from '../shared/tooltip';
 import type { DataResponse, GridPlan } from '../../types';
 
 type PlanFeaturesListProps = {
