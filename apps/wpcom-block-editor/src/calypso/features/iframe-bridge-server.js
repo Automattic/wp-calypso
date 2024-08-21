@@ -1047,6 +1047,15 @@ function handleAppBannerShowing( calypsoPort ) {
 	};
 }
 
+function handlePatterns( calypsoPort ) {
+	addEditorListener( '[data-value="Patterns"]', () => {
+		calypsoPort.postMessage( {
+			action: 'goToPatterns',
+			payload: { destinationUrl: '/wp-admin/site-editor.php?postType=wp_block' },
+		} );
+	} );
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1147,6 +1156,8 @@ function initPort( message ) {
 		handleCheckoutModal( calypsoPort );
 
 		handleAppBannerShowing( calypsoPort );
+
+		handlePatterns( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
