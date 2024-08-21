@@ -34,6 +34,7 @@ const useMigrationFlowRevampRedirect = () => {
 	const [ query ] = useSearchParams();
 	const fullQueryString = query.toString();
 	const ref = query.get( 'ref' ) ?? '';
+	const from = query.get( 'from' ) ?? '';
 
 	// Redirect user to the new flow.
 	useEffect( () => {
@@ -41,10 +42,18 @@ const useMigrationFlowRevampRedirect = () => {
 			return;
 		}
 
-		if ( [ 'move-lp', 'hosting-lp' ].includes( ref ) ) {
-			window.location.assign( '/setup/migration?' + fullQueryString );
+		// If user is coming from 'move-lp' and has a source site, we assume it's a WordPress site because it's already validated there.
+		if ( 'move-lp' === ref && '' !== from ) {
+			window.location.replace(
+				'/setup/migration/' + STEPS.SITE_CREATION_STEP.slug + '?' + fullQueryString
+			);
+			return;
 		}
-	}, [ fullQueryString, ref ] );
+
+		if ( [ 'move-lp', 'hosting-lp' ].includes( ref ) ) {
+			window.location.replace( '/setup/migration?' + fullQueryString );
+		}
+	}, [ fullQueryString, ref, from ] );
 };
 
 const siteMigration: Flow = {
