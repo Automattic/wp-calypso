@@ -130,9 +130,8 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-const getFormSettings = ( settings ) =>
-	pick( settings, [
-		'akismet',
+const getFormSettings = ( isAtomic ) => ( settings ) => {
+	const settingsToPick = [
 		'protect',
 		'jetpack_protect_global_whitelist',
 		'jetpack_waf_automatic_rules',
@@ -144,9 +143,22 @@ const getFormSettings = ( settings ) =>
 		'sso',
 		'jetpack_sso_match_by_email',
 		'jetpack_sso_require_two_step',
-		'wordpress_api_key',
-	] );
+	];
+
+	if ( ! isAtomic ) {
+		settingsToPick.push( 'akismet' );
+		settingsToPick.push( 'wordpress_api_key' );
+	}
+
+	return pick( settings, settingsToPick );
+};
 
 export default connectComponent(
-	localize( wrapSettingsForm( getFormSettings )( SiteSettingsFormSecurity ) )
+	localize( ( props ) => {
+		const WrappedSiteSettingsFormSecurity = wrapSettingsForm( getFormSettings( props.isAtomic ) )(
+			SiteSettingsFormSecurity
+		);
+
+		return <WrappedSiteSettingsFormSecurity { ...props } />;
+	} )
 );
