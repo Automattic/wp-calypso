@@ -91,6 +91,10 @@ const LaunchSite = () => {
 	// TODO: retrieve the actual agency name
 	const agencyName = 'MyCoolAgency';
 
+	const handleReferToClient = () => {
+		window.location.href = `https://agencies.automattic.com/marketplace/checkout/referral_blog_id=${ siteId }`;
+	};
+
 	return (
 		<>
 			<SettingsSectionHeader title={ translate( 'Launch site' ) } />
@@ -126,7 +130,7 @@ const LaunchSite = () => {
 						// TODO: add onClick handler
 						isDevelopmentSite && (
 							<div className={ launchSiteClasses }>
-								<Button onClick={ null } disabled={ false }>
+								<Button onClick={ handleReferToClient } disabled={ false }>
 									{ translate( 'Refer to client' ) }
 								</Button>
 							</div>
