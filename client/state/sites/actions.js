@@ -77,7 +77,6 @@ export function requestSites() {
 			type: SITES_REQUEST,
 		} );
 		const siteFilter = config( 'site_filter' );
-
 		return wpcom
 			.me()
 			.sites( {
@@ -85,8 +84,7 @@ export function requestSites() {
 				site_visibility: 'all',
 				include_domain_only: true,
 				site_activity: 'active',
-				fields: SITE_REQUEST_FIELDS,
-				options: SITE_REQUEST_OPTIONS,
+				fields: 'ID',
 				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 			} )
 			.then( ( response ) => {
