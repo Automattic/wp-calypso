@@ -81,7 +81,7 @@ export default function CreditCardNumberField( {
 					onChange={ ( input ) => {
 						handleStripeFieldChange( input );
 					} }
-					onNetworksChange={ ( event ) => {
+					onNetworksChange={ ( event: { elementType: 'cardNumber'; networks: [] } ) => {
 						switch ( event.networks ) {
 							case null:
 							case undefined:
