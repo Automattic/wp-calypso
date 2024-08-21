@@ -131,7 +131,7 @@ class FileImporter extends PureComponent {
 				{ summaryModalOpen && (
 					<ImportSummaryModal
 						onRequestClose={ () => this.props.closeSummaryModal( importerStatus.importerId ) }
-						postsNumber={ 123 }
+						postsNumber={ importerStatus?.customData?.postsNumber || 0 }
 						authorsNumber={ importerStatus?.customData?.sourceAuthors.length }
 					/>
 				) }
