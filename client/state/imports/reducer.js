@@ -16,6 +16,8 @@ import {
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
+	IMPORTS_SUMMARY_MODAL_OPEN,
+	IMPORTS_SUMMARY_MODAL_CLOSE,
 } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import { fromApi } from './api';
@@ -163,6 +165,24 @@ function importerStatus( state = {}, action ) {
 					...state[ action.importerId ],
 					importerState: appStates.UPLOADING,
 					filename: action.filename,
+				},
+			};
+
+		case IMPORTS_SUMMARY_MODAL_OPEN:
+			return {
+				...state,
+				[ action.importerId ]: {
+					...state[ action.importerId ],
+					summaryModalOpen: true,
+				},
+			};
+
+		case IMPORTS_SUMMARY_MODAL_CLOSE:
+			return {
+				...state,
+				[ action.importerId ]: {
+					...state[ action.importerId ],
+					summaryModalOpen: false,
 				},
 			};
 	}

@@ -6,8 +6,14 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ErrorPane from 'calypso/my-sites/importer/error-pane';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { startImport, cancelImport } from 'calypso/state/imports/actions';
+import {
+	startImport,
+	cancelImport,
+	openSummaryModal,
+	closeSummaryModal,
+} from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
+import ImportSummaryModal from './import-summary-modal';
 import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
 
@@ -47,6 +53,7 @@ class FileImporter extends PureComponent {
 			importerState: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 			type: PropTypes.string.isRequired,
+			summaryModalOpen: PropTypes.bool,
 		} ),
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
@@ -75,7 +82,7 @@ class FileImporter extends PureComponent {
 	render() {
 		const { title, overrideDestination, uploadDescription, optionalUrl } = this.props.importerData;
 		const { importerStatus, site, fromSite, nextStepUrl, skipNextStep } = this.props;
-		const { errorData, importerState } = importerStatus;
+		const { errorData, importerState, summaryModalOpen } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
 		const showStart = includes( compactStates, importerState );
 		const cardClasses = clsx( 'importer__file-importer-card', {
@@ -100,6 +107,14 @@ class FileImporter extends PureComponent {
 			cardProps.onClick = this.handleClick.bind( this, false );
 		}
 
+		if ( importerState === appStates.UPLOAD_SUCCESS && ! summaryModalOpen ) {
+			this.props.openSummaryModal( importerStatus.importerId );
+		}
+
+		const showImportingPane =
+			includes( importingStates, importerState ) && summaryModalOpen === false;
+		const showUploadingPane = includes( uploadingStates, importerState ) || summaryModalOpen;
+
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
 				{ errorData && (
@@ -113,7 +128,16 @@ class FileImporter extends PureComponent {
 						} }
 					/>
 				) }
-				{ includes( importingStates, importerState ) && (
+				{ summaryModalOpen && (
+					<ImportSummaryModal
+						onRequestClose={ () => this.props.closeSummaryModal( importerStatus.importerId ) }
+						postsNumber={ importerStatus?.customData?.postsNumber || 0 }
+						pagesNumber={ importerStatus?.customData?.pagesNumber || 0 }
+						attachmentsNumber={ importerStatus?.customData?.attachmentsNumber || 0 }
+						authorsNumber={ importerStatus?.customData?.sourceAuthors.length }
+					/>
+				) }
+				{ showImportingPane && (
 					<ImportingPane
 						importerStatus={ importerStatus }
 						sourceType={ title }
@@ -121,7 +145,7 @@ class FileImporter extends PureComponent {
 						nextStepUrl={ nextStepUrl }
 					/>
 				) }
-				{ includes( uploadingStates, importerState ) && (
+				{ showUploadingPane && (
 					<UploadingPane
 						isEnabled={ isEnabled }
 						description={ uploadDescription }
@@ -138,4 +162,10 @@ class FileImporter extends PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent, startImport, cancelImport } )( FileImporter );
+export default connect( null, {
+	recordTracksEvent,
+	startImport,
+	cancelImport,
+	openSummaryModal,
+	closeSummaryModal,
+} )( FileImporter );
