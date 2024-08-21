@@ -48,7 +48,6 @@ const Header = styled.div`
 	}
 
 	.counter {
-		color: #3858e9;
 		font-size: 16px;
 		font-weight: 500;
 		margin-right: 8px;
