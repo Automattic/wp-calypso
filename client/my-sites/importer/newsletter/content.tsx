@@ -32,6 +32,7 @@ export default function Content( {
 	const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 
 	const dispatch = useDispatch();
+
 	function fetchImporters() {
 		siteId && dispatch( fetchImporterState( siteId ) );
 	}
@@ -58,11 +59,14 @@ export default function Content( {
 		siteTitle,
 	} ).substack;
 
+	const showStepDescriptions =
+		importerStatus?.importerState !== appStates.MAP_AUTHORS || importerStatus?.summaryModalOpen;
+
 	return (
 		<Card>
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
-			{ importerStatus?.importerState !== appStates.MAP_AUTHORS && (
+			{ showStepDescriptions && (
 				<>
 					<h2>Step 1: Export your content from Substack</h2>
 					<p>
