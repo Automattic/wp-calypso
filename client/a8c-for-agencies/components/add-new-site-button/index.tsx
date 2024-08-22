@@ -243,7 +243,11 @@ export default function AddNewSiteButton( {
 										}
 									) }
 								</div>
-								<div className="site-selector-and-importer__popover-development-site-cta">
+								<div
+									className={ clsx( 'site-selector-and-importer__popover-development-site-cta', {
+										disabled: ! hasAvailableDevSites,
+									} ) }
+								>
 									{ translate( 'Create a site now →' ) }
 								</div>
 							</div>
