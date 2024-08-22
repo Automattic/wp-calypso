@@ -178,39 +178,26 @@ class CancelPurchase extends Component {
 		const refundAmountString = this.renderRefundAmountString(
 			purchase,
 			this.state.cancelBundledDomain,
-			this.props.includedDomainPurchase
+			includedDomainPurchase
 		);
 
 		if ( refundAmountString ) {
-			return this.state.cancelBundledDomain && includedDomainPurchase
-				? translate(
-						'If you confirm this cancellation, you will receive a {{span}}partial refund of %(refundText)s{{/span}}, and your subscription will be removed immediately.',
-						{
-							args: {
-								refundText: refundAmountString,
-							},
-							context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
-							components: {
-								span: <span className="cancel-purchase__refund-string" />,
-							},
-						}
-				  )
-				: translate(
-						'Once you confirm this cancellation, you will receive a {{span}}full refund of %(refundText)s{{/span}}, and your subscription will be removed immediately.',
-						{
-							args: {
-								refundText: refundAmountString,
-							},
-							context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
-							components: {
-								span: <span className="cancel-purchase__refund-string" />,
-							},
-						}
-				  );
+			return translate(
+				'If you confirm this cancellation, you will receive a {{span}}refund of %(refundText)s{{/span}}, and your subscription will be removed immediately.',
+				{
+					args: {
+						refundText: refundAmountString,
+					},
+					context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
+					components: {
+						span: <span className="cancel-purchase__refund-string" />,
+					},
+				}
+			);
 		}
 
 		return translate(
-			'Once you confirm this cancellation, your subscription will be removed on {{span}}%(expirationDate)s{{/span}}.',
+			'If you complete this cancellation, your subscription will be removed on {{span}}%(expirationDate)s{{/span}}.',
 			{
 				args: {
 					expirationDate,

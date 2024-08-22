@@ -1,4 +1,4 @@
-import { isDomainRegistration } from '@automattic/calypso-products';
+import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import { CompactCard, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { UPDATE_NAMESERVERS } from '@automattic/urls';
@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
-import { getName, isRefundable } from 'calypso/lib/purchases';
+import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
 
 const CancelPurchaseDomainOptions = ( {
 	includedDomainPurchase,
@@ -21,6 +21,10 @@ const CancelPurchaseDomainOptions = ( {
 	useEffect( () => {
 		setConfirmCancel( confirmCancelBundledDomain );
 	}, [ confirmCancelBundledDomain ] );
+
+	if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
+		return null;
+	}
 
 	const onCancelBundledDomainChange = ( event ) => {
 		const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
@@ -41,23 +45,110 @@ const CancelPurchaseDomainOptions = ( {
 
 	const planCostText = purchase.totalRefundText;
 
-	if ( ! includedDomainPurchase || ! isDomainRegistration( includedDomainPurchase ) ) {
+	if (
+		! isDomainMapping( includedDomainPurchase ) &&
+		! isDomainRegistration( includedDomainPurchase )
+	) {
 		return null;
 	}
 
-	if ( ! isRefundable( includedDomainPurchase ) ) {
+	// Domain mapping.
+	if ( isDomainMapping( includedDomainPurchase ) ) {
+		if ( ! isRefundable( purchase ) ) {
+			return (
+				<div>
+					<p>
+						{ translate(
+							'This plan includes the custom domain mapping for %(mappedDomain)s. ' +
+								'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
+							{
+								args: {
+									mappedDomain: includedDomainPurchase.meta,
+									mappingCost: includedDomainPurchase.priceText,
+								},
+							}
+						) }
+					</p>
+				</div>
+			);
+		}
+
 		return (
 			<div>
-				{ translate(
-					'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
-						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
-					{
-						args: {
-							domain: includedDomainPurchase.meta,
-							domainCost: includedDomainPurchase.priceText,
-						},
-					}
-				) }
+				<p>
+					{ translate(
+						'This plan includes mapping for the domain %(mappedDomain)s. ' +
+							"Cancelling will remove all the plan's features from your site, including the domain.",
+						{
+							args: {
+								mappedDomain: includedDomainPurchase.meta,
+							},
+						}
+					) }
+				</p>
+
+				<p>
+					{ translate(
+						'Your site will no longer be available at %(mappedDomain)s. Instead, it will be at %(wordpressSiteUrl)s',
+						{
+							args: {
+								mappedDomain: includedDomainPurchase.meta,
+								wordpressSiteUrl: purchase.domain,
+							},
+						}
+					) }
+				</p>
+
+				<p>
+					{ translate(
+						'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
+							'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
+						{
+							args: {
+								mappedDomain: includedDomainPurchase.meta,
+							},
+						}
+					) }
+				</p>
+			</div>
+		);
+	}
+
+	// Domain registration.
+	if ( ! isRefundable( purchase ) ) {
+		return (
+			<div>
+				<p>
+					{ translate(
+						'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
+							'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
+						{
+							args: {
+								domain: includedDomainPurchase.meta,
+								domainCost: includedDomainPurchase.priceText,
+							},
+						}
+					) }
+				</p>
+			</div>
+		);
+	}
+
+	if ( isRefundable( purchase ) && ! isRefundable( includedDomainPurchase ) ) {
+		return (
+			<div>
+				<p>
+					{ translate(
+						'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
+							'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
+						{
+							args: {
+								domain: includedDomainPurchase.meta,
+								domainCost: includedDomainPurchase.priceText,
+							},
+						}
+					) }
+				</p>
 				<p>
 					{ translate(
 						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
