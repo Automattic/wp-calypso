@@ -13,7 +13,8 @@
 		"noUnusedParameters": true,
 		"noImplicitReturns": true,
 		"isolatedModules": false,
-		"types": [ "jasmine" ],
+		"types": [ "node", "jasmine" ],
+		"typeRoots": [ "../../node_modules/@types", "node_modules/@types/jasmine" ],
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "."
