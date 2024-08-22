@@ -195,7 +195,7 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
+            # ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
             # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
             # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
