@@ -48,7 +48,8 @@ export const JetpackSitesDataViews = ( {
 		}
 		return data?.total || 0;
 	} )();
-	const sitesPerPage = dataViewsState.perPage && dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
+	const sitesPerPage =
+		dataViewsState.perPage && dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 
 	const possibleSites = data?.sites ?? [];
