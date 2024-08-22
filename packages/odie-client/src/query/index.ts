@@ -228,17 +228,29 @@ export const useOdieSendMessage = (): UseMutationResult<
 	} );
 };
 
+/**
+ * Builds a GET request URL for fetching chat messages.
+ * @param botNameSlug The slug name of the bot for which to fetch messages.
+ * @param chat_id The unique identifier of the chat session. Can be `null` or `undefined` for new chats.
+ * @param page The page number of chat messages to fetch.
+ * @param perPage The number of chat messages to fetch per page.
+ * @param includeFeedback A boolean indicating whether to include feedback messages in the response.
+ * @param freshness The freshness threshold in hours. If the last message sent by the assistant is older than this value, it will be considered a new chat.
+ * @returns A Promise that resolves to a Chat object containing the requested chat messages.
+ */
 const buildGetChatMessage = (
 	botNameSlug: OdieAllowedBots,
 	chat_id: number | null | undefined,
 	page: number,
 	perPage: number,
-	includeFeedback: boolean
+	includeFeedback: boolean,
+	freshness: number
 ): Promise< Chat > => {
 	const urlQueryParams = new URLSearchParams( {
 		page_number: page.toString(),
 		items_per_page: perPage.toString(),
 		include_feedback: includeFeedback.toString(),
+		freshness: freshness.toString(),
 	} );
 	const baseApiPath = `/help-center/odie/chat/${ botNameSlug }/${ chat_id }?${ urlQueryParams.toString() }`;
 	const wpcomBaseApiPath = `/odie/chat/${ botNameSlug }/${ chat_id }?${ urlQueryParams.toString() }`;
@@ -269,14 +281,17 @@ export const useOdieGetChat = (
 	chatId: number | undefined | null,
 	page = 1,
 	perPage = 10,
-	includeFeedback = true
+	includeFeedback = true,
+	freshness = 24
 ) => {
 	const { chat } = useOdieAssistantContext();
 	return useQuery< Chat, unknown >( {
-		queryKey: [ 'chat', botNameSlug, chatId, page, perPage, includeFeedback ],
-		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage, includeFeedback ),
+		queryKey: [ 'chat', botNameSlug, chatId, page, perPage, includeFeedback, freshness ],
+		queryFn: () =>
+			buildGetChatMessage( botNameSlug, chatId, page, perPage, includeFeedback, freshness ),
 		refetchOnWindowFocus: false,
 		enabled: !! chatId && ! chat.chat_id,
+		staleTime: 1000 * 60 * 60,
 	} );
 };
 
