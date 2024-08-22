@@ -130,7 +130,7 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button
 						onClick={ handleHireAnSEOExpertClick }
-						href="https://wp.me/logo-maker/?utm_campaign=marketing_tab"
+						href="https://wp.me/hire-seo-expert/?utm_source=marketing_tab"
 						target="_blank"
 					>
 						{ translate( 'Talk to an SEO expert today' ) }
