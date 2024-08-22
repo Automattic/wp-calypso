@@ -192,6 +192,8 @@ jobs:
             set +e
             source $HOME/.nvm/nvm.sh
             nvm use
+            ruby -v
+            bundle install
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
