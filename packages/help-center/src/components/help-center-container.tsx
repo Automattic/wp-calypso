@@ -39,7 +39,10 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	currentRoute,
 	openingCoordinates,
 } ) => {
-	const [ closed, setClosed ] = useState( true );
+	// We use this to determine if we should render the container or not
+	// This allows us to manage the animate in and out.
+	const [ renderContainer, setRenderContainer ] = useState( false );
+
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const { show, isMinimized } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -63,18 +66,26 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		recordTracksEvent( `calypso_inlinehelp_close` );
 	}, [ setShowHelpCenter, handleClose ] );
 
-	const animationProps = {
+	const containerProps: {
+		style: React.CSSProperties;
+		onTransitionEnd: ( event: React.TransitionEvent ) => void;
+	} = {
 		style: {
 			...( ! isMobile && { top: 70, left: 'calc( 100vw - 500px )' } ),
 			...openingCoordinates,
 		},
 		onTransitionEnd: ( event ) => {
+			/**
+			 * We only want to remove the Help Center if:
+			 * 1. Its set to hidden or not show
+			 * 2. The display has finsihsed transitioning
+			 */
 			if (
 				event.target === nodeRef.current &&
 				( ! show || hidden ) &&
-				event.propertyName === 'opacity'
+				event.propertyName === 'display'
 			) {
-				setClosed( true );
+				setRenderContainer( false );
 			}
 		},
 	};
@@ -102,11 +113,15 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 	useEffect( () => {
 		if ( ! hidden && show ) {
-			setClosed( false );
+			setRenderContainer( true );
 		}
-	}, [ show, hidden ] );
 
-	if ( closed ) {
+		if ( hidden ) {
+			onDismiss();
+		}
+	}, [ show, hidden, onDismiss ] );
+
+	if ( ! renderContainer ) {
 		return null;
 	}
 
@@ -121,9 +136,9 @@ const HelpCenterContainer: React.FC< Container > = ( {
 				>
 					<Card
 						className={ classNames }
-						{ ...animationProps }
+						{ ...containerProps }
 						ref={ cardMergeRefs }
-						hidden={ ! hidden && ! show }
+						hidden={ ! show || hidden }
 					>
 						<HelpCenterHeader
 							isMinimized={ isMinimized }
