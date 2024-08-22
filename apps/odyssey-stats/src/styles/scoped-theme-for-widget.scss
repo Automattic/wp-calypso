@@ -1,6 +1,5 @@
 @import "variables.scss";
 
-:root {
+.stats-widget-content {
 	@include jetpack-theme-for-odyssey-stats;
-	--wp-components-color-accent: var(--color-primary);
 }
