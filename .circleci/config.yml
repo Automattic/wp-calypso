@@ -195,6 +195,7 @@ jobs:
 
             pushd desktop
 
+            rbenv install --skip-existing $(cat .ruby-version)
             rbenv global $(cat .ruby-version) && rbenv rehash
             ruby -v
             bundle install
