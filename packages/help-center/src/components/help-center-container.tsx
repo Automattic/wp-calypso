@@ -7,7 +7,7 @@ import { Card } from '@wordpress/components';
 import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
-import { useState, useRef, useEffect, useCallback, FC } from 'react';
+import { useRef, useEffect, useCallback, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 import { MemoryRouter } from 'react-router-dom';
 /**
@@ -48,30 +48,20 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	}, [] );
 
 	const nodeRef = useRef< HTMLDivElement >( null );
-
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
-	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
 
 	const onDismiss = useCallback( () => {
-		setIsVisible( false );
 		handleClose();
-		setTimeout( () => {
-			// Set the visibility back to true, it will make the animation work when the Help Center is opened again.
-			setIsVisible( true );
-		}, 0 );
-
 		recordTracksEvent( `calypso_inlinehelp_close` );
-	}, [ setIsVisible, handleClose ] );
+	}, [ handleClose ] );
 
 	const animationProps = {
 		style: {
-			animation: isMobile
-				? `${ isVisible ? 'fadeIn .25s ease-out' : '' }`
-				: `${ isVisible ? 'slideIn .25s ease-out' : '' }`,
+			animation: isMobile ? 'fadeIn .25s ease-out' : 'slideIn .25s ease-out',
 			// These are overwritten by the openingCoordinates.
 			// They are set to avoid Help Center from not loading on the page.
 			...( ! isMobile && { top: 70, left: 'calc( 100vw - 500px )' } ),
