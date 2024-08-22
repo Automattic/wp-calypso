@@ -250,4 +250,12 @@ export default {
 
 		return stepHandlers[ currentStep ];
 	},
+
+	useSideEffect( currentStep, navigate ) {
+		const [ search ] = useSearchParams();
+
+		if ( currentStep === PLATFORM_IDENTIFICATION.slug && search.get( 'from' ) ) {
+			return navigate( SITE_CREATION_STEP.slug );
+		}
+	},
 } satisfies Flow;
