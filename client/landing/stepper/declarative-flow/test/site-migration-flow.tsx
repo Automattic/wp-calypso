@@ -28,7 +28,7 @@ jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
+			value: { ...originalLocation, assign: jest.fn() },
 		} );
 	} );
 
@@ -38,7 +38,6 @@ describe( 'Site Migration Flow', () => {
 
 	beforeEach( () => {
 		( window.location.assign as jest.Mock ).mockClear();
-		( window.location.replace as jest.Mock ).mockClear();
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
 		( useIsSiteAdmin as jest.Mock ).mockReturnValue( {
 			isAdmin: true,
@@ -61,38 +60,6 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	describe( 'useAssertConditions', () => {
-		describe( 'Redirect to the new migration flow', () => {
-			beforeEach( () => {
-				config.enable( 'migration-flow/revamp' );
-			} );
-
-			it( 'redirects the user to the new flow with the existing query string', () => {
-				const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
-
-				runUseAssertionCondition( {
-					currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-					currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?param1=1&param2=2`,
-				} );
-
-				expect( window.location.replace ).toHaveBeenCalledWith(
-					'/setup/migration?param1=1&param2=2&signup=1'
-				);
-			} );
-
-			it( 'redirects the user to the site creation when it comes from the /move page with a "from"', () => {
-				const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
-
-				runUseAssertionCondition( {
-					currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-					currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?ref=move-lp&from=example.com`,
-				} );
-
-				expect( window.location.replace ).toHaveBeenCalledWith(
-					`/setup/migration/${ STEPS.SITE_CREATION_STEP.slug }?ref=move-lp&from=example.com&signup=1`
-				);
-			} );
-		} );
-
 		it( 'redirects the user to the start page when there is not siteSlug and SiteID', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
 
