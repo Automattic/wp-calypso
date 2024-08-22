@@ -213,6 +213,7 @@ const DotcomSitesDataViews = ( {
 				elements: siteStatusGroups,
 				filterBy: {
 					operators: [ 'is' ],
+					isPrimary: true,
 				},
 				enableHiding: false,
 				enableSorting: false,
