@@ -246,7 +246,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 
 export default {
 	name: MIGRATION_FLOW,
-	isSignupFlow: false,
+	isSignupFlow: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
 			PLATFORM_IDENTIFICATION,
