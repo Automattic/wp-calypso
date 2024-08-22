@@ -46,6 +46,6 @@ describe( 'Email Step Titan Signup Card', () => {
 		);
 
 		expect( screen.getByText( 'Add' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Loading...' ) ).toBeNull();
+		expect( screen.queryByText( 'Loading…' ) ).toBeNull();
 	} );
 } );
