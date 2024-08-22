@@ -33,7 +33,7 @@ const FLOW_NAME = 'site-migration';
 const useMigrationFlowRevampRedirect = () => {
 	const [ query ] = useSearchParams();
 	const fullQueryString = query.toString();
-	const ref = query.get( 'ref' ) ?? '';
+	const ref = query.get( 'ref' );
 	const from = query.get( 'from' ) ?? '';
 
 	// Redirect user to the new migration flow.
@@ -43,7 +43,8 @@ const useMigrationFlowRevampRedirect = () => {
 		}
 
 		// If user is coming from 'move-lp' and has a source site, we assume it's a WordPress site because it's already validated there.
-		if ( 'move-lp' === ref && '' !== from ) {
+		const shouldSkipPlatformSelection = ref && from && isHostedSiteMigrationFlow( flow );
+		if ( shouldSkipPlatformSelection ) {
 			window.location.replace(
 				`/setup/migration/${ STEPS.SITE_CREATION_STEP.slug }?${ fullQueryString }&signup=1`
 			);
