@@ -12,14 +12,16 @@ const CancelPurchaseFeatureList = ( { purchase, cancellationFeatures } ) => {
 
 	return (
 		<div className="cancel-purchase__features">
-			{ translate(
-				'By cancelling the %(productName)s plan, these features will no longer be available on your site:',
-				{
-					args: {
-						productName: getName( purchase ),
-					},
-				}
-			) }
+			<p>
+				{ translate(
+					'By canceling the %(productName)s plan, these features will no longer be available on your site:',
+					{
+						args: {
+							productName: getName( purchase ),
+						},
+					}
+				) }
+			</p>
 			<ul className="cancel-purchase__features-list">
 				{ cancellationFeatures.map( ( feature ) => {
 					return (
