@@ -174,15 +174,14 @@ class EditorDiffViewer extends PureComponent {
 
 		const fields = [];
 
-		for ( const field in diff ) {
-			// Skip post_title field.
-			if ( 'post_title' === field ) {
-				continue;
-			}
+		const { post_title, totals, ...fieldsWithoutTitle } = diff;
 
+		for ( const field in fieldsWithoutTitle ) {
 			fields.push(
 				<div key={ field }>
-					<h2 className="editor-diff-viewer__fieldname">{ revisionFields[ field ] }</h2>
+					{ Object.keys( fieldsWithoutTitle ).length > 1 && (
+						<h2 className="editor-diff-viewer__fieldname">{ revisionFields[ field ] }</h2>
+					) }
 					<pre className="editor-diff-viewer__content">
 						<TextDiff operations={ diff[ field ] } splitLines />
 					</pre>
