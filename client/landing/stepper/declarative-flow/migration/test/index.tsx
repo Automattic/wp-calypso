@@ -383,7 +383,7 @@ describe( `${ flow.name }`, () => {
 	} );
 
 	describe( 'useStepNavigation > goBack', () => {
-		it( 'redirect back user from SOURCE URL TO HOW TO MIGRATE', () => {
+		it( 'redirects back user from SOURCE URL TO HOW TO MIGRATE', () => {
 			const destination = runNavigationBack( {
 				from: STEPS.MIGRATION_SOURCE_URL,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -394,17 +394,17 @@ describe( `${ flow.name }`, () => {
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 			} );
 		} );
-	} );
 
-	it( 'redirect back user from MIGRATION_UPGRADE_PLAN > PLATFORM_IDENTIFICATION', () => {
-		const destination = runNavigationBack( {
-			from: STEPS.MIGRATION_UPGRADE_PLAN,
-			query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
-		} );
+		it( 'redirects back user from MIGRATION_UPGRADE_PLAN > PLATFORM_IDENTIFICATION', () => {
+			const destination = runNavigationBack( {
+				from: STEPS.MIGRATION_UPGRADE_PLAN,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
+			} );
 
-		expect( destination ).toMatchDestination( {
-			step: STEPS.PLATFORM_IDENTIFICATION,
-			query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
+			expect( destination ).toMatchDestination( {
+				step: STEPS.PLATFORM_IDENTIFICATION,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
+			} );
 		} );
 	} );
 } );
