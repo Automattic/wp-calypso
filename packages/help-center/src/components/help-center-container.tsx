@@ -110,7 +110,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		if ( show ) {
 			setRenderContainer( true );
 		}
-	}, [ show, onDismiss ] );
+	}, [ show ] );
 
 	if ( ! renderContainer ) {
 		return null;
