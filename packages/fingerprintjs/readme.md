@@ -31,6 +31,8 @@ FingerprintJS is a browser fingerprinting library that queries browser attribute
 
 FingerprintJS is 100% open-source, but its accuracy is limited because it's only a client-side library without a backend.
 
+Forked from https://github.com/fingerprintjs/fingerprintjs in order to add fingerprinting during user transacations on WPCOM.
+
 <table>
   <thead>
     <tr>
