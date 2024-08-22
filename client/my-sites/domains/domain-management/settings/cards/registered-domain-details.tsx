@@ -1,6 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Button } from '@automattic/components';
+import { ResponseDomain, DomainType, TransferStatus } from '@automattic/domains-table';
+import { isDomainRenewable } from '@automattic/domains-table/src/utils/is-renewable';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -106,16 +108,13 @@ const RegisteredDomainDetails = ( {
 	};
 
 	const shouldNotRenderRenewButton = () => {
-		return (
-			! domain.subscriptionId ||
-			domain.isPendingRenewal ||
-			domain.pendingRegistrationAtRegistry ||
-			domain.pendingRegistration ||
-			! domain.currentUserCanManage ||
-			( domain.expired && ! domain.isRenewable && ! domain.isRedeemable ) ||
-			( ! isLoadingPurchase && ! purchase ) ||
-			domain.aftermarketAuction
-		);
+		const updatedDomain: ResponseDomain = {
+			...domain,
+			type: domain.type as DomainType,
+			transferStatus: domain.transferStatus as TransferStatus,
+		};
+		r;
+		return ( ! isLoadingPurchase && ! purchase ) || ! isDomainRenewable( updatedDomain );
 	};
 
 	const renderRenewButton = () => {
