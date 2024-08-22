@@ -3,9 +3,9 @@
  */
 import { URLSearchParams } from 'url';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
-import { addQueryArgs } from '@wordpress/url';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { addQueryArgs } from 'calypso/lib/url';
 import flow from '../';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../../constants';
 import { STEPS } from '../../internals/steps';
@@ -46,7 +46,25 @@ describe( `${ flow.name }`, () => {
 		runUseStepNavigationSubmit( {
 			currentStep: from.slug,
 			dependencies: dependencies,
-			currentURL: addQueryArgs( `/setup/${ from.slug }`, query ),
+			currentURL: addQueryArgs( query, `/${ flow.name }/${ from.slug }` ),
+		} );
+
+		const destination = getFlowLocation();
+		const [ pathname, searchParams ] = destination?.path?.split( '?' ) ?? [ '', '' ];
+
+		return {
+			step: pathname.replace( /^\/+/, '' ),
+			query: new URLSearchParams( searchParams ),
+		};
+	};
+
+	const runNavigationBack = ( { from, dependencies = {}, query = {} } ) => {
+		const { runUseStepNavigationGoBack } = renderFlow( flow );
+
+		runUseStepNavigationGoBack( {
+			currentStep: from.slug,
+			dependencies: dependencies,
+			currentURL: addQueryArgs( query, `/setup/${ from.slug }` ),
 		} );
 
 		const destination = getFlowLocation();
@@ -60,15 +78,15 @@ describe( `${ flow.name }`, () => {
 
 	describe( 'useStepNavigation', () => {
 		describe( 'PLATFORM IDENTIFICATION STEP', () => {
-			it( 'redirects the user from PLATFORM IDENTIFICATION to CREATE SITE', () => {
+			it( 'redirects the user from PLATFORM IDENTIFICATION to CREATE SITE passing the importer url template', () => {
 				const destination = runNavigation( {
 					from: STEPS.PLATFORM_IDENTIFICATION,
-					dependencies: { platform: 'any-platform', url: 'importerBlogger' },
+					dependencies: { platform: 'blogger' },
 				} );
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_CREATION_STEP,
-					query: { importer: 'importerBlogger' },
+					query: { platform: 'blogger' },
 				} );
 			} );
 
@@ -96,27 +114,38 @@ describe( `${ flow.name }`, () => {
 				} );
 			} );
 
-			it( 'redirects the user from PLATFORM IDENTIFICATION to IMPORT when siteSlug/siteId is available', async () => {
+			it( 'redirects the user from PLATFORM IDENTIFICATION to IMPORT when siteSlug/siteId it is available', async () => {
 				runNavigation( {
 					from: STEPS.PLATFORM_IDENTIFICATION,
 					dependencies: {
+						platform: 'blogger',
+					},
+					query: {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
-						platform: 'blogger',
-						url: 'importBlogger',
 					},
 				} );
 
-				expect( window.location.replace ).toHaveBeenCalledWith(
-					addQueryArgs( '/setup/site-setup/importBlogger', {
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
-					} )
+				expect( window.location.assign ).toHaveBeenCalledWith(
+					addQueryArgs(
+						{
+							siteSlug: 'example.wordpress.com',
+							from: '',
+							backToFlow: '/migration/platform-identification',
+							siteId: 123,
+							ref: 'migration',
+						},
+						'/setup/site-setup/importerBlogger'
+					)
 				);
 			} );
 		} );
 
 		describe( 'SITE_CREATION STEP', () => {
+			beforeEach( () => {
+				jest.clearAllMocks();
+			} );
+
 			it( 'redirects user from SITE_CREATION to PROCESSING', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_CREATION_STEP,
@@ -132,32 +161,60 @@ describe( `${ flow.name }`, () => {
 			it( 'redirects user from SITE_CREATION to PROCESSING passing the importer param', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_CREATION_STEP,
-					query: { importer: 'any-importer' },
+					query: { platform: 'any-platform' },
 				} );
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.PROCESSING,
-					query: { importer: 'any-importer' },
+					query: { platform: 'any-platform' },
 				} );
 			} );
 		} );
 
 		describe( 'PROCESSING STEP', () => {
-			it( 'redirect user from PROCESSING to IMPORTER when an importer is available', () => {
+			it( 'redirect user from PROCESSING to WPCOM IMPORTER when a wpcom importer is selected', () => {
 				runNavigation( {
 					from: STEPS.PROCESSING,
 					query: {
-						importer: 'importBlogger',
+						platform: 'blogger',
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+					},
+				} );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					addQueryArgs(
+						{
+							siteSlug: 'example.wordpress.com',
+							from: '',
+							backToFlow: '/migration/platform-identification',
+							siteId: 123,
+							ref: 'migration',
+						},
+						'/setup/site-setup/importerBlogger'
+					)
+				);
+			} );
+
+			it( 'redirect user from PROCESSING to WPORG IMPORTER when a wporg importer is selected', () => {
+				runNavigation( {
+					from: STEPS.PROCESSING,
+					query: {
+						platform: 'substack',
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
 					},
 				} );
 
 				expect( window.location.replace ).toHaveBeenCalledWith(
-					addQueryArgs( '/setup/site-setup/importBlogger', {
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
-					} )
+					addQueryArgs(
+						{
+							engine: 'substack',
+							'from-site': '',
+							backToFlow: '/migration/platform-identification',
+						},
+						'/import/example.wordpress.com'
+					)
 				);
 			} );
 
@@ -166,6 +223,44 @@ describe( `${ flow.name }`, () => {
 					from: STEPS.PROCESSING,
 					query: {},
 					dependencies: { siteSlug: 'example.wordpress.com', siteId: 123 },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.MIGRATION_UPGRADE_PLAN,
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+			} );
+
+			it( 'redirects user from PROCESSING > Checkout page when plan is already selected', () => {
+				runNavigation( {
+					from: STEPS.PROCESSING,
+					query: {
+						plan: 'business',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+				} );
+
+				expect( goToCheckout ).toHaveBeenCalledWith( {
+					destination: `/setup/migration/migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com`,
+					extraQueryParams: { introductoryOffer: '1' },
+					flowName: 'migration',
+					siteSlug: 'example.wordpress.com',
+					stepName: STEPS.MIGRATION_UPGRADE_PLAN.slug,
+					cancelDestination: `/setup/migration/migration-upgrade-plan?plan=business&siteId=123&siteSlug=example.wordpress.com`,
+					plan: 'business-bundle',
+					forceRedirection: true,
+				} );
+			} );
+
+			it( 'redirects user from PROCESSING to UPGRADE PLAN when the plan is selected but unknown', () => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					query: {
+						plan: 'unknown',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
 				} );
 
 				expect( destination ).toMatchDestination( {
@@ -205,12 +300,18 @@ describe( `${ flow.name }`, () => {
 				} );
 
 				expect( window.location.replace ).toHaveBeenCalledWith(
-					addQueryArgs( '/setup/site-setup/importerWordpress', {
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
-						backToFlow: 'migration/migration-upgrade-plan',
-						option: 'content',
-					} )
+					addQueryArgs(
+						{
+							siteSlug: 'example.wordpress.com',
+							from: '',
+							option: 'content',
+							backToFlow: '/migration/platform-identification',
+							migrateEntireSiteFlow: '/migration/migration-upgrade-plan',
+							siteId: 123,
+							ref: 'migration',
+						},
+						'/setup/site-setup/importerWordpress'
+					)
 				);
 			} );
 		} );
@@ -274,6 +375,32 @@ describe( `${ flow.name }`, () => {
 					},
 				} );
 			} );
+		} );
+	} );
+
+	describe( 'useStepNavigation > goBack', () => {
+		it( 'redirect back user from SOURCE URL TO HOW TO MIGRATE', () => {
+			const destination = runNavigationBack( {
+				from: STEPS.MIGRATION_SOURCE_URL,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+			} );
+
+			expect( destination ).toMatchDestination( {
+				step: STEPS.MIGRATION_HOW_TO_MIGRATE,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+			} );
+		} );
+	} );
+
+	it( 'redirect back user from MIGRATION_UPGRADE_PLAN > PLATFORM_IDENTIFICATION', () => {
+		const destination = runNavigationBack( {
+			from: STEPS.MIGRATION_UPGRADE_PLAN,
+			query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
+		} );
+
+		expect( destination ).toMatchDestination( {
+			step: STEPS.PLATFORM_IDENTIFICATION,
+			query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
 		} );
 	} );
 } );

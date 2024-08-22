@@ -52,7 +52,8 @@
 		"a8c-for-agencies-settings": false,
 		"a8c-for-agencies-partner-directory": true,
 		"a8c-for-agencies-migrations": true,
-		"a8c-for-agencies-client": true
+		"a8c-for-agencies-client": true,
+		"a8c-for-agencies-team": false
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

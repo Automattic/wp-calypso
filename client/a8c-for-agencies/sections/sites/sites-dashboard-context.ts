@@ -15,6 +15,9 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	showOnlyFavorites: undefined,
 	setShowOnlyFavorites: () => {},
 
+	showOnlyDevelopmentSites: undefined,
+	setShowOnlyDevelopmentSites: () => {},
+
 	dataViewsState: initialDataViewsState,
 	setDataViewsState: () => {},
 

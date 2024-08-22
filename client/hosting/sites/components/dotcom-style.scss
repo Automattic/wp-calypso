@@ -59,11 +59,7 @@
 		}
 	}
 
-	height: calc(100vh - var(--masterbar-height));
-
-	@include break-small {
-		height: calc(100vh - var(--masterbar-height) - 32px);
-	}
+	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 
 	.sites-site-favicon {
 		margin-right: 0;
@@ -695,19 +691,16 @@
 .wpcom-site div.is-section-plugins.is-global-sidebar-visible {
 	&.focus-content .layout__content,
 	&.focus-sidebar .layout__content {
-		padding-bottom: 16px;
-		min-height: 100vh;
-
-		@include break-small {
-			padding-top: calc(var(--masterbar-height) + 16px);
-		}
+		height: 100vh;
+		padding-top: calc(var(--masterbar-height) + var(--content-padding-top));
+		padding-bottom: var(--content-padding-bottom);
 
 		@include break-medium {
 			padding-left: calc(var(--sidebar-width-max));
 			padding-right: 16px;
 
 			.main.a4a-layout.sites-dashboard.sites-dashboard__layout {
-				height: calc(100vh - var(--masterbar-height) - 32px);
+				height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
 			}
 		}
 

@@ -23,6 +23,7 @@ export const agencyDashboardContext: Callback = ( context, next ) => {
 	const filter = {
 		issueTypes: issue_types?.split( ',' ),
 		showOnlyFavorites: context.params.filter === 'favorites',
+		showOnlyDevelopmentSites: context.params.filter === 'development',
 	};
 	const sort = {
 		field: sort_field,

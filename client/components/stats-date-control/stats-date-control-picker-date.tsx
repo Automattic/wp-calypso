@@ -26,10 +26,12 @@ const DateControlPickerDate = ( {
 
 	const handleStartSeletion = ( date: string ) => {
 		onStartChange( date.split( 'T' )?.[ 0 ] );
+		setPreviewDateStart( date.split( 'T' )?.[ 0 ] );
 	};
 
 	const handleEndSeletion = ( date: string ) => {
 		onEndChange( date.split( 'T' )?.[ 0 ] );
+		setPreviewDateEnd( date.split( 'T' )?.[ 0 ] );
 	};
 
 	const handleStartMonthTogglePrevious = ( date: string ) => {
@@ -59,11 +61,19 @@ const DateControlPickerDate = ( {
 			<div className={ `${ BASE_CLASS_NAME }s__inputs` }>
 				<div className={ `${ BASE_CLASS_NAME }s__inputs-input-group` }>
 					<label htmlFor="startDate">{ translate( 'From', { context: 'from date' } ) }</label>
-					<DateInput id="startDate" value={ startDate } onChange={ onStartChange } />
+					<DateInput
+						id="startDate"
+						value={ previewDateStart || startDate }
+						onChange={ handleStartSeletion }
+					/>
 				</div>
 				<div className={ `${ BASE_CLASS_NAME }s__inputs-input-group` }>
 					<label htmlFor="endDate">{ translate( 'To', { context: 'to date' } ) }</label>
-					<DateInput id="endDate" value={ endDate } onChange={ onEndChange } />
+					<DateInput
+						id="endDate"
+						value={ previewDateEnd || endDate }
+						onChange={ handleEndSeletion }
+					/>
 				</div>
 			</div>
 			{ isCalendarEnabled && (

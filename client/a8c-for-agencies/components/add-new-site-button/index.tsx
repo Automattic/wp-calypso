@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Popover, Gridicon, Button, WordPressLogo, JetpackLogo } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
@@ -8,6 +9,7 @@ import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fet
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
+import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -32,14 +34,12 @@ type PendingSite = { features: { wpcom_atomic: { state: string; license_key: str
 type Props = {
 	onWPCOMImport?: ( blogIds: number[] ) => void;
 	showMainButtonLabel: boolean;
-	devSite?: boolean;
 	toggleDevSiteConfigurationsModal?: () => void;
 };
 
 export default function AddNewSiteButton( {
 	showMainButtonLabel,
 	onWPCOMImport,
-	devSite,
 	toggleDevSiteConfigurationsModal,
 }: Props ) {
 	const translate = useTranslate();
@@ -63,11 +63,14 @@ export default function AddNewSiteButton( {
 
 	const popoverMenuContext = useRef( null );
 
+	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
+
 	const menuItem = ( {
 		icon,
 		iconClassName,
 		heading,
 		description,
+		isBanner,
 		buttonProps,
 		extraContent,
 	}: {
@@ -75,11 +78,16 @@ export default function AddNewSiteButton( {
 		iconClassName?: string;
 		heading: string;
 		description: string | TranslateResult;
+		isBanner?: boolean;
 		buttonProps?: React.ComponentProps< typeof Button >;
 		extraContent?: JSX.Element;
 	} ) => {
 		return (
-			<Button { ...buttonProps } className="site-selector-and-importer__popover-button" borderless>
+			<Button
+				{ ...buttonProps }
+				className={ clsx( 'site-selector-and-importer__popover-button', { banner: isBanner } ) }
+				borderless
+			>
 				<div className={ clsx( 'site-selector-and-importer__popover-button-icon', iconClassName ) }>
 					<Icon className="sidebar__menu-icon" icon={ icon } size={ ICON_SIZE } />
 				</div>
@@ -110,11 +118,7 @@ export default function AddNewSiteButton( {
 	const availableDevSites = devLicenses?.available;
 	const hasAvailableDevSites = devLicenses?.available > 0;
 
-	const mainButtonLabel = devSite
-		? translate( 'Start developing for free' )
-		: translate( 'Add sites' );
-
-	const newSitePopoverContent = (
+	const popoverContent = (
 		<div className="site-selector-and-importer__popover-content">
 			<div className="site-selector-and-importer__popover-column">
 				<div className="site-selector-and-importer__popover-column-heading">
@@ -195,47 +199,56 @@ export default function AddNewSiteButton( {
 					},
 				} ) }
 			</div>
-		</div>
-	);
-
-	const newDevSitePopoverContent = (
-		<div className="site-selector-and-importer__popover-content">
-			<div className="site-selector-and-importer__popover-column">
-				<div className="site-selector-and-importer__popover-column-heading">
-					{ translate( 'Add a new development site' ).toUpperCase() }
-				</div>
-				{ menuItem( {
-					icon: <WordPressLogo />,
-					heading: translate( 'WordPress.com' ),
-					description: translate( 'Create a site and try our hosting features for free' ),
-					buttonProps: {
-						onClick: () => {
-							if ( paymentMethodRequired ) {
-								page(
-									`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
-								);
-							} else {
-								toggleDevSiteConfigurationsModal?.();
+			{ devSitesEnabled && (
+				<div className="site-selector-and-importer__popover-column">
+					{ menuItem( {
+						icon: <img src={ devSiteBanner } alt="WordPress.com Development Site" />,
+						heading: translate( 'WordPress.com Development Site' ),
+						description: translate(
+							'Try our hosting for free indefinitely.{{br/}}Only pay when you launch.',
+							{
+								components: { br: <br /> },
+								comment: 'br is a line break',
 							}
+						),
+						isBanner: true,
+						buttonProps: {
+							onClick: () => {
+								if ( paymentMethodRequired ) {
+									page(
+										`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
+									);
+								} else {
+									toggleDevSiteConfigurationsModal?.();
+								}
+								setMenuVisible( false );
+							},
 						},
-					},
-					extraContent: hasAvailableDevSites ? (
-						<div className="site-selector-and-importer__popover-site-count">
-							{ translate( '%(pendingSites)d site available', '%(pendingSites)d sites available', {
-								args: {
-									pendingSites: availableDevSites,
-								},
-								count: availableDevSites,
-								comment: '%(pendingSites)s is the number of sites available.',
-							} ) }
-						</div>
-					) : undefined,
-				} ) }
-			</div>
+						extraContent: hasAvailableDevSites ? (
+							<div>
+								<div className="site-selector-and-importer__popover-site-count">
+									{ translate(
+										'%(pendingSites)d site available',
+										'%(pendingSites)d sites available',
+										{
+											args: {
+												pendingSites: availableDevSites,
+											},
+											count: availableDevSites,
+											comment: '%(pendingSites)s is the number of sites available.',
+										}
+									) }
+								</div>
+								<div className="site-selector-and-importer__popover-development-site-cta">
+									{ translate( 'Create a site now →' ) }
+								</div>
+							</div>
+						) : undefined,
+					} ) }
+				</div>
+			) }
 		</div>
 	);
-
-	const popoverContent = devSite ? newDevSitePopoverContent : newSitePopoverContent;
 
 	return (
 		<>
@@ -244,7 +257,7 @@ export default function AddNewSiteButton( {
 				ref={ popoverMenuContext }
 				onClick={ toggleMenu }
 			>
-				{ showMainButtonLabel ? mainButtonLabel : null }
+				{ showMainButtonLabel ? translate( 'Add sites' ) : null }
 				<Gridicon
 					className={ clsx(
 						{ reverse: showMainButtonLabel && isMenuVisible },
@@ -254,7 +267,9 @@ export default function AddNewSiteButton( {
 				/>
 			</Button>
 			<Popover
-				className={ clsx( 'site-selector-and-importer__popover', { 'dev-site': devSite } ) }
+				className={ clsx( 'site-selector-and-importer__popover', {
+					'dev-sites-enabled': devSitesEnabled,
+				} ) }
 				context={ popoverMenuContext?.current }
 				isVisible={ isMenuVisible }
 				closeOnEsc

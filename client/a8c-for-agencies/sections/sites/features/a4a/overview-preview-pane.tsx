@@ -196,6 +196,7 @@ export function OverviewPreviewPane( {
 		url: site.url_with_scheme,
 		blogId: site.blog_id,
 		isDotcomSite: site.is_atomic,
+		hideEnvDataInHeader: true,
 	};
 
 	return (

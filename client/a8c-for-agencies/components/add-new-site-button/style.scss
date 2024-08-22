@@ -30,12 +30,16 @@
 		}
 	}
 
-	&.dev-site {
-		margin-inline-start: 82px;
+	&.dev-sites-enabled {
+		margin-inline-start: 32px;
 
 		.popover__inner {
 			width: 280px;
 			text-align: unset;
+
+			@include break-large {
+				width: 980px;
+			}
 		}
 	}
 }
@@ -51,11 +55,14 @@
 	}
 
 	.site-selector-and-importer__popover-column {
-		&:first-child {
-			flex: 1.4;
+		&:nth-child(1) {
+			flex: 341;
 		}
-		&:last-child {
-			flex: 1;
+		&:nth-child(2) {
+			flex: 250;
+		}
+		&:nth-child(3) {
+			flex: 277;
 		}
 	}
 }
@@ -84,6 +91,31 @@
 		gap: 8px;
 		align-items: unset;
 		justify-content: unset;
+	}
+
+	&.banner {
+		flex-direction: column;
+		padding-top: 0;
+		gap: 4px;
+
+		@include break-large {
+			padding: 16px;
+		}
+
+		.site-selector-and-importer__popover-button-icon {
+			height: 78px;
+
+			.sidebar__menu-icon {
+				width: 249px;
+				height: auto;
+			}
+		}
+
+		.site-selector-and-importer__popover-button-content {
+			@include break-large {
+				padding: 8px 8px 0 8px;
+			}
+		}
 	}
 
 	.site-selector-and-importer__popover-button-icon {
@@ -119,8 +151,9 @@
 
 	.site-selector-and-importer__popover-button-description {
 		font-size: rem(12px);
-		line-height: 1.7;
+		line-height: 1.33;
 		color: var(--color-accent);
+		padding-top: 4px;
 	}
 }
 
@@ -128,4 +161,11 @@
 	font-size: rem(12px);
 	font-style: italic;
 	color: var(--color-accent-100);
+	padding-top: 4px;
+}
+
+.site-selector-and-importer__popover-development-site-cta {
+	padding-top: 12px;
+	font-size: rem(12px);
+	font-weight: 600;
 }

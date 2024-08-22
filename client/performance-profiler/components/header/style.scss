@@ -139,10 +139,37 @@
 		}
 
 		.profiler-header__navbar-right {
-			p {
-				margin-bottom: 0;
-				font-size: 1rem;
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			font-size: $font-body-small;
+
+			.report-site-details {
+				display: flex;
+				align-items: center;
+				gap: 32px;
+
+				.wpcom-badge {
+					display: flex;
+					align-items: center;
+					gap: 6px;
+				}
+			}
+
+			.share-option {
+				cursor: pointer;
+				display: flex;
+				height: 40px;
+				justify-content: center;
+				align-items: center;
+				gap: 4px;
+
+				.share-icon {
+					fill: #fff;
+					margin-bottom: -1px;
+				}
 			}
 		}
 	}
 }
+

@@ -1,15 +1,26 @@
 import { Card } from '@automattic/components';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import ImporterActionButton from '../importer-action-buttons/action-button';
-import ImporterActionButtonContainer from '../importer-action-buttons/container';
+import ImporterActionButton from '../../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../../importer-action-buttons/container';
+import MapPlan from './map-plan';
 
 type Props = {
 	nextStepUrl: string;
 	skipNextStep: () => void;
 	cardData: any;
+	siteId: string;
+	engine: string;
+	currentStep: string;
 };
 
-export default function MapPlans( { nextStepUrl, skipNextStep }: Props ) {
+export default function MapPlans( {
+	nextStepUrl,
+	skipNextStep,
+	cardData,
+	siteId,
+	engine,
+	currentStep,
+}: Props ) {
 	return (
 		<Card>
 			<h2>Paid newsletter offering</h2>
@@ -19,6 +30,22 @@ export default function MapPlans( { nextStepUrl, skipNextStep }: Props ) {
 				</strong>{ ' ' }
 				to prevent disruption to your current paid subscribers.
 			</p>
+			<div className="map-plans__mapping">
+				<p>
+					<strong>Existing Stripe plans</strong>
+				</p>
+				{ cardData.plans.map( ( plan: any ) => (
+					<MapPlan
+						key={ plan.plan_id }
+						siteId={ siteId }
+						engine={ engine }
+						currentStep={ currentStep }
+						plan={ plan }
+						products={ cardData.available_tiers }
+						map_plans={ cardData.map_plans }
+					/>
+				) ) }
+			</div>
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton
 					primary

@@ -5,7 +5,7 @@ import {
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useMemo, lazy } from 'react';
+import React, { useEffect, lazy } from 'react';
 import Modal from 'react-modal';
 import { generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
@@ -29,13 +29,37 @@ import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import {
 	AssertConditionState,
-	UserStep,
+	UserStepProps,
 	type Flow,
 	type StepperStep,
 	type StepProps,
 } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
+
+const lazyCache = new WeakMap<
+	() => Promise< {
+		default: React.ComponentType< StepProps > | React.ComponentType< UserStepProps >;
+	} >,
+	React.ComponentType< StepProps >
+>();
+
+function flowStepComponent( flowStep: StepperStep | undefined ) {
+	if ( ! flowStep ) {
+		return null;
+	}
+
+	if ( 'asyncComponent' in flowStep ) {
+		let lazyComponent = lazyCache.get( flowStep.asyncComponent );
+		if ( ! lazyComponent ) {
+			lazyComponent = lazy( flowStep.asyncComponent );
+			lazyCache.set( flowStep.asyncComponent, lazyComponent );
+		}
+		return lazyComponent;
+	}
+
+	return flowStep.component;
+}
 
 /**
  * This component accepts a single flow property. It does the following:
@@ -61,19 +85,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
 	useFlowAnalytics( { flow: params.flow, step: currentStepRoute, variant: flow.variantSlug } );
-
-	const stepComponents: Record< string, React.FC< StepProps > > = useMemo(
-		() =>
-			flowSteps.reduce(
-				( acc, flowStep ) => ( {
-					...acc,
-					[ flowStep.slug ]:
-						'asyncComponent' in flowStep ? lazy( flowStep.asyncComponent ) : flowStep.component,
-				} ),
-				{}
-			),
-		[ flowSteps ]
-	);
 
 	const { __ } = useI18n();
 	useSaveQueryParams();
@@ -136,11 +147,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return null;
 		}
 
+		const StepComponent = flowStepComponent( flowSteps.find( ( { slug } ) => slug === step.slug ) );
+
+		if ( ! StepComponent ) {
+			return null;
+		}
+
 		const firstAuthWalledStep = flowSteps.find( ( step ) => step.requiresLoggedInUser );
 
 		if ( step.slug === 'user' && firstAuthWalledStep ) {
-			const StepComponent = stepComponents[ step.slug ] as UserStep;
-
 			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
 				step: firstAuthWalledStep.slug,
@@ -167,8 +182,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				/>
 			);
 		}
-
-		const StepComponent = stepComponents[ step.slug ];
 
 		return (
 			<StepComponent

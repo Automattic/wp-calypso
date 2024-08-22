@@ -3,7 +3,8 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { convertBytes } from 'calypso/my-sites/backup/backup-contents-page/file-browser/util';
 import { useSiteMetricsQuery } from 'calypso/my-sites/site-monitoring/use-metrics-query';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -32,6 +33,8 @@ const getCurrentMonthRangeTimestamps = () => {
 };
 
 export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
+	const dispatch = useDispatch();
+
 	const selectedSiteData = useSelector( getSelectedSite );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
@@ -86,7 +89,14 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	const getBandwidthFooterLink = () => {
 		if ( isAtomic ) {
 			return (
-				<a href={ `/site-monitoring/${ siteSlug }` }>
+				<a
+					href={ `/site-monitoring/${ siteSlug }` }
+					onClick={ () => {
+						dispatch(
+							recordTracksEvent( 'calypso_hosting_overview_monitor_site_performance_click' )
+						);
+					} }
+				>
 					{ translate( 'Monitor site performance', {
 						comment: 'A link to the "Monitoring" tab of the Hosting Overview',
 					} ) }
@@ -96,7 +106,14 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 
 		if ( isEligibleForAtomic ) {
 			return (
-				<a href={ `/hosting-features/${ siteSlug }` }>
+				<a
+					href={ `/hosting-features/${ siteSlug }` }
+					onClick={ () => {
+						dispatch(
+							recordTracksEvent( 'calypso_hosting_overview_activate_hosting_features_click' )
+						);
+					} }
+				>
 					{ translate( 'Activate hosting features', {
 						comment: 'A link to the Hosting Features page to click an activation button',
 					} ) }
@@ -105,7 +122,12 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 		}
 
 		return (
-			<a href={ `/hosting-features/${ siteSlug }` }>
+			<a
+				href={ `/hosting-features/${ siteSlug }` }
+				onClick={ () => {
+					dispatch( recordTracksEvent( 'calypso_hosting_overview_hosting_features_click' ) );
+				} }
+			>
 				{ translate( 'Upgrade to monitor site', {
 					comment: 'A link to the Hosting Features page to click an upgrade button',
 				} ) }

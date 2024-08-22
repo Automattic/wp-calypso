@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
+import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -446,12 +447,17 @@ const siteSetupFlow: Flow = {
 					if ( providedDependencies?.type === 'redirect' ) {
 						return exitFlow( providedDependencies?.url as string );
 					}
-
 					switch ( providedDependencies?.action ) {
 						case 'verify-email':
 							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
 						case 'checkout':
 							return exitFlow( providedDependencies?.checkoutUrl as string );
+						case 'customized-action-flow': {
+							const migrateEntireSiteFlow = urlQueryParams.get( 'migrateEntireSiteFlow' );
+							if ( migrateEntireSiteFlow ) {
+								return goToFlow( migrateEntireSiteFlow );
+							}
+						}
 						default:
 							return navigate( providedDependencies?.url as string );
 					}
@@ -530,6 +536,9 @@ const siteSetupFlow: Flow = {
 				case 'importerMedium':
 				case 'importerSquarespace':
 					if ( backToFlow ) {
+						if ( urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
+							return goToFlow( backToFlow );
+						}
 						return navigate( `importList?siteSlug=${ siteSlug }&backToFlow=${ backToFlow }` );
 					}
 					return navigate( `importList?siteSlug=${ siteSlug }` );
@@ -561,6 +570,10 @@ const siteSetupFlow: Flow = {
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
+					if ( backToFlow && urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
+						return goToFlow( backToFlow );
+					}
+
 					return navigate( `import?siteSlug=${ siteSlug }` );
 
 				case 'options':

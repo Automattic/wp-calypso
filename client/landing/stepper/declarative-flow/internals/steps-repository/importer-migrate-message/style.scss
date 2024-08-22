@@ -69,6 +69,9 @@
 
 		@include break-small {
 			flex-direction: row;
+			.flow-question {
+				width: 50%;
+			}
 		}
 	}
 }

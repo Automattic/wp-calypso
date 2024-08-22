@@ -2,8 +2,8 @@ import { Card } from '@automattic/components';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import StripeLogo from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import ImporterActionButton from '../importer-action-buttons/action-button';
-import ImporterActionButtonContainer from '../importer-action-buttons/container';
+import ImporterActionButton from '../../importer-action-buttons/action-button';
+import ImporterActionButtonContainer from '../../importer-action-buttons/container';
 
 /**
  * Update the connect URL with the from_site and engine parameters.
