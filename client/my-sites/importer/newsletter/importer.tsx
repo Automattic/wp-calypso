@@ -4,7 +4,7 @@ import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import FormattedHeader from 'calypso/components/formatted-header';
-import StepProgress from 'calypso/components/step-progress';
+import StepProgress, { ClickHandler } from 'calypso/components/step-progress';
 import { usePaidNewsletterQuery } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
@@ -23,6 +23,8 @@ import './importer.scss';
 const steps = [ Content, Subscribers, PaidSubscribers, Summary ];
 
 const stepSlugs = [ 'content', 'subscribers', 'paid-subscribers', 'summary' ];
+
+const noop = () => {};
 
 const logoChainLogos = [
 	{ name: 'substack', color: 'var(--color-substack)' },
@@ -48,11 +50,11 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 
 	const [ validFromSite, setValidFromSite ] = useState( false );
 
-	const stepsProgress = [
-		{ message: 'Content', indicator: null, onClick: undefined },
-		{ message: 'Subscribers', indicator: null, onClick: undefined },
-		{ message: 'Paid Subscribers', indicator: null, onClick: undefined },
-		{ message: 'Summary', indicator: null, onClick: undefined },
+	const stepsProgress: ClickHandler[] = [
+		{ message: 'Content', onClick: noop },
+		{ message: 'Subscribers', onClick: noop },
+		{ message: 'Paid Subscribers', onClick: noop },
+		{ message: 'Summary', onClick: noop },
 	];
 
 	let fromSite = getQueryArg( window.location.href, 'from' ) as string | string[];
