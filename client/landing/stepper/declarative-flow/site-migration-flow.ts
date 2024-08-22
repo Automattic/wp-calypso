@@ -30,11 +30,11 @@ const FLOW_NAME = 'site-migration';
 /**
  * Redirects users coming from landing pages and "/sites" to the new migration flow.
  */
-const useMigrationFlowRevampRedirect = () => {
+const useMigrationFlowRevampRedirect = ( flowPath: string ) => {
 	const [ query ] = useSearchParams();
 	const fullQueryString = query.toString();
 	const ref = query.get( 'ref' );
-	const from = query.get( 'from' ) ?? '';
+	const from = query.get( 'from' );
 
 	// Redirect user to the new migration flow.
 	useEffect( () => {
@@ -43,7 +43,8 @@ const useMigrationFlowRevampRedirect = () => {
 		}
 
 		// If user is coming from 'move-lp' and has a source site, we assume it's a WordPress site because it's already validated there.
-		const shouldSkipPlatformSelection = ref && from && isHostedSiteMigrationFlow( flow );
+		const shouldSkipPlatformSelection =
+			'move-lp' === ref && from && isHostedSiteMigrationFlow( flowPath );
 		if ( shouldSkipPlatformSelection ) {
 			return window.location.replace(
 				`/setup/migration/${ STEPS.SITE_CREATION_STEP.slug }?${ fullQueryString }&signup=1`
@@ -51,7 +52,7 @@ const useMigrationFlowRevampRedirect = () => {
 		}
 
 		window.location.replace( `/setup/migration?${ fullQueryString }&signup=1` );
-	}, [ fullQueryString, ref, from ] );
+	}, [ fullQueryString, ref, from, flowPath ] );
 };
 
 const siteMigration: Flow = {
@@ -88,14 +89,16 @@ const siteMigration: Flow = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		useMigrationFlowRevampRedirect();
+		const flowPath = this.variantSlug ?? FLOW_NAME;
+
+		useMigrationFlowRevampRedirect( flowPath );
+
 		const { siteSlug, siteId } = useSiteData();
 		const { isAdmin } = useIsSiteAdmin();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
-		const flowPath = this.variantSlug ?? FLOW_NAME;
 
 		useEffect( () => {
 			if ( isAdmin === false ) {

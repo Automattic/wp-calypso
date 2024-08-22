@@ -75,7 +75,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( window.location.replace ).toHaveBeenCalledWith(
-					'/setup/migration?param1=1&param2=2'
+					'/setup/migration?param1=1&param2=2&signup=1'
 				);
 			} );
 
@@ -88,7 +88,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( window.location.replace ).toHaveBeenCalledWith(
-					`/setup/migration/${ STEPS.SITE_CREATION_STEP.slug }?ref=move-lp&from=example.com`
+					`/setup/migration/${ STEPS.SITE_CREATION_STEP.slug }?ref=move-lp&from=example.com&signup=1`
 				);
 			} );
 		} );
