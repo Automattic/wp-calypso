@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -29,7 +30,10 @@ const useUnsubscribeModal = (
 	const onConfirmModal = ( action: UnsubscribeActionType, subscriber?: Subscriber ) => {
 		if ( action === UnsubscribeActionType.Manage ) {
 			recordRemoveModal( true, 'manage_button_clicked' );
-			navigate( `/earn/supporters/${ selectedSiteSlug ?? '' }` );
+			const link = isJetpackCloud()
+				? `/monetize/supporters/${ selectedSiteSlug }`
+				: `/earn/supporters/${ selectedSiteSlug }`;
+			navigate( link ?? '' );
 		} else if ( action === UnsubscribeActionType.Unsubscribe && subscriber ) {
 			mutate( subscriber, {
 				onSuccess: () => {
