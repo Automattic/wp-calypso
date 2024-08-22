@@ -214,6 +214,10 @@ export default function AddNewSiteButton( {
 						isBanner: true,
 						buttonProps: {
 							onClick: () => {
+								if ( ! hasAvailableDevSites ) {
+									return;
+								}
+
 								if ( paymentMethodRequired ) {
 									page(
 										`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
