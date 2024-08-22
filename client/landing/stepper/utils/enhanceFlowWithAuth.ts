@@ -1,4 +1,4 @@
-import { Flow, StepperStep } from '../declarative-flow/internals/types';
+import type { Flow, StepperStep } from '../declarative-flow/internals/types';
 
 const USER_STEP: StepperStep = {
 	slug: 'user',

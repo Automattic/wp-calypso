@@ -49,7 +49,8 @@ const UserStepComponent: Step = function UserStep( {
 	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse ] );
 
 	const loginLink = login( {
-		signupUrl: window.location.pathname + window.location.search,
+		signupUrl,
+		redirectTo,
 	} );
 
 	return (
@@ -93,14 +94,7 @@ const UserStepComponent: Step = function UserStep( {
 			}
 			recordTracksEvent={ recordTracksEvent }
 			customizedActionButtons={
-				<Button
-					className="step-wrapper__navigation-link forward"
-					href={ login( {
-						signupUrl,
-						redirectTo,
-					} ) }
-					variant="link"
-				>
+				<Button className="step-wrapper__navigation-link forward" href={ loginLink } variant="link">
 					<span>{ translate( 'Log in' ) }</span>
 				</Button>
 			}
