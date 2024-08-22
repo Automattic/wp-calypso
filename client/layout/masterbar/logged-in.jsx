@@ -841,7 +841,7 @@ class MasterbarLoggedIn extends Component {
 				<div className="masterbar__section masterbar__section--right">
 					{ this.renderCart() }
 					{ this.renderLaunchpadNavigator() }
-					{ this.renderReader( ! isMobile ) }
+					{ this.renderReader() }
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
 					{ this.renderNotifications() }
 					{ this.renderProfileMenu() }
