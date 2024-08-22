@@ -13,6 +13,10 @@ import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import './style.scss';
 
+interface QueryArgs {
+	redirect_to?: string;
+}
+
 interface SignupFormSocialFirst {
 	goToNextStep: () => void;
 	stepName: string;
@@ -32,7 +36,7 @@ interface SignupFormSocialFirst {
 		} | null
 	) => void;
 	isReskinned: boolean;
-	queryArgs: object;
+	queryArgs: QueryArgs;
 	userEmail: string;
 	notice: JSX.Element | false;
 	isSocialFirst: boolean;
@@ -147,6 +151,9 @@ const SignupFormSocialFirst = ( {
 				  }
 				: {};
 
+			const redirectToParam =
+				queryArgs?.redirect_to ?? window.location.origin + `/setup/${ flowName }`;
+
 			return (
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
@@ -166,7 +173,7 @@ const SignupFormSocialFirst = ( {
 										{
 											email_address: email,
 											is_signup_existing_account: true,
-											redirect_to: window.location.origin + `/setup/${ flowName }`,
+											redirect_to: redirectToParam,
 										},
 										logInUrl
 									)
