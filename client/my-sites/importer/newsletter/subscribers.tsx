@@ -2,7 +2,6 @@ import { Card, Gridicon } from '@automattic/components';
 import { Modal, Button } from '@wordpress/components';
 import { Icon, people, currencyEuro } from '@wordpress/icons';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
-import { useState } from 'react';
 import SubscriberUploadForm from './subscriber-upload-form';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -21,8 +20,11 @@ export default function Subscribers( {
 	skipNextStep,
 	cardData,
 }: Props ) {
-	const open = cardData.meta.paid_subscribers_count || false;
-	const [ isOpen, setIsOpen ] = useState( open );
+	const open = cardData?.meta?.status === 'pending' || false;
+
+	const all_emails = cardData?.meta?.email_count || 0;
+	const paid_emails = cardData?.meta?.paid_subscribers_count || 0;
+	const free_emails = all_emails - paid_emails;
 
 	return (
 		<>
@@ -51,29 +53,29 @@ export default function Subscribers( {
 					/>
 				) }
 			</Card>
-			{ isOpen && (
+			{ open && (
 				<Modal
 					title="All done!"
 					isDismissible={ false }
-					onRequestClose={ () => setIsOpen( false ) }
+					onRequestClose={ () => {} }
 					className="subscriber-upload-form__modal"
 					size="medium"
 				>
 					<div>
-						We’ve found 100 subscribers, where:
+						We’ve found { all_emails } subscribers.
 						<ul>
-							<li>
-								<Icon icon={ people } />
-								<strong>82</strong> are free subscribers
-							</li>
-							<li>
-								<Icon icon={ people } />
-								<strong>1</strong> have a complimentary
-							</li>
-							<li>
-								<Icon icon={ currencyEuro } />
-								subscription <strong>18</strong> are paying subscribers
-							</li>
+							{ free_emails !== 0 && (
+								<li>
+									<Icon icon={ people } />
+									<strong>{ free_emails }</strong> are free subscribers
+								</li>
+							) }
+							{ paid_emails !== 0 && (
+								<li>
+									<Icon icon={ currencyEuro } />
+									subscription <strong>{ paid_emails }</strong> are paying subscribers
+								</li>
+							) }
 						</ul>
 					</div>
 					<Button variant="primary" href={ nextStepUrl }>
