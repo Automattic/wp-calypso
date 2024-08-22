@@ -62,10 +62,11 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 	const dataAvailable = metrics.length > 0 && metrics.some( ( item ) => item !== null );
 	const historicalData = metrics.map( ( item, index ) => {
 		let formattedDate: unknown;
-		if ( typeof dates[ index ] === 'string' ) {
-			formattedDate = dates[ index ]; // this is to ensure compability with reports before https://code.a8c.com/D159137
+		const date = dates[ index ];
+		if ( 'string' === typeof date ) {
+			formattedDate = date; // this is to ensure compability with reports before https://code.a8c.com/D159137
 		} else {
-			const { year, month, day } = dates[ index ];
+			const { year, month, day } = date;
 			formattedDate = `${ year }-${ month }-${ day }`;
 		}
 
