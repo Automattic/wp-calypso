@@ -1,0 +1,6 @@
+---
+BUNDLE_PATH: "vendor/bundle"
+BUNDLE_JOBS: "3"
+BUNDLE_WITHOUT: "screenshots"
+BUNDLE_RETRY: "3"
+BUNDLE_SPECIFIC_PLATFORM: "false"
