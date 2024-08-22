@@ -27,7 +27,13 @@ import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
-import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
+import {
+	AssertConditionState,
+	UserStep,
+	type Flow,
+	type StepperStep,
+	type StepProps,
+} from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
 
@@ -130,14 +136,19 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return null;
 		}
 
-		const StepComponent = stepComponents[ step.slug ];
-
 		const firstAuthWalledStep = flowSteps.find( ( step ) => step.requiresLoggedInUser );
 
 		if ( step.slug === 'user' && firstAuthWalledStep ) {
+			const StepComponent = stepComponents[ step.slug ] as UserStep;
+
 			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
 				flow: flow.name,
 				step: firstAuthWalledStep.slug,
+				lang: lang === 'en' || isLoggedIn ? null : lang,
+			} );
+			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
+				flow: flow.name,
+				step: 'user',
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
 
@@ -151,13 +162,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					flow={ flow.name }
 					variantSlug={ flow.variantSlug }
 					stepName="user"
-					// We need this special case, because the user step requires an _redirectTo prop.
-					// It cannot submit like a normal step would, because then the flow would have to handle the submission.
-					// Instead, it will redirect to `_redirectTo` to take the user to the right step.
-					_redirectTo={ postAuthStepPath }
+					redirectTo={ postAuthStepPath }
+					signupUrl={ signupUrl }
 				/>
 			);
 		}
+
+		const StepComponent = stepComponents[ step.slug ];
+
 		return (
 			<StepComponent
 				navigation={ stepNavigation }

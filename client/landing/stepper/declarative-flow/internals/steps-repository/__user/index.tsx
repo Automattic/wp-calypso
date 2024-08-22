@@ -15,16 +15,17 @@ import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { Step } from '../../types';
+import { UserStep } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import './style.scss';
 import { useSocialService } from './use-social-service';
 
-const UserStep: Step = function UserStep( {
+const UserStepComponent: UserStep = function UserStep( {
 	flow,
 	stepName,
 	navigation,
-	_redirectTo = window.location.href,
+	redirectTo = window.location.href,
+	signupUrl = window.location.href,
 } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -45,7 +46,7 @@ const UserStep: Step = function UserStep( {
 		} else {
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, _redirectTo, navigation, wpAccountCreateResponse ] );
+	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse ] );
 
 	const loginLink = login( {
 		signupUrl: window.location.pathname + window.location.search,
@@ -85,7 +86,7 @@ const UserStep: Step = function UserStep( {
 						<WpcomLoginForm
 							authorization={ 'Bearer ' + accountCreateResponse.bearer_token }
 							log={ accountCreateResponse.username }
-							redirectTo={ new URL( _redirectTo, window.location.href ).href }
+							redirectTo={ new URL( redirectTo, window.location.href ).href }
 						/>
 					) }
 				</>
@@ -95,8 +96,8 @@ const UserStep: Step = function UserStep( {
 				<Button
 					className="step-wrapper__navigation-link forward"
 					href={ login( {
-						signupUrl: new URL( _redirectTo, window.location.href ).href,
-						redirectTo: _redirectTo,
+						signupUrl: signupUrl,
+						redirectTo: redirectTo,
 					} ) }
 					variant="link"
 				>
@@ -107,4 +108,4 @@ const UserStep: Step = function UserStep( {
 	);
 };
 
-export default UserStep;
+export default UserStepComponent;

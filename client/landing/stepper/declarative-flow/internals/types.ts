@@ -72,7 +72,7 @@ export type AsyncStepperStep = {
 	 *
 	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
 	 */
-	asyncComponent: () => Promise< { default: React.FC< StepProps > } >;
+	asyncComponent: () => Promise< { default: React.FC< StepProps > | React.FC< UserStepProps > } >;
 };
 
 export type StepperStep = DeprecatedStepperStep | AsyncStepperStep;
@@ -161,13 +161,26 @@ export type StepProps = {
 	variantSlug?: string;
 	data?: StepperInternal.State[ 'stepData' ];
 	children?: React.ReactNode;
+};
+
+export type UserStepProps = {
+	navigation: NavigationControls;
+	stepName: string;
+	flow: string;
 	/**
-	 * This prop is used internally by the Stepper to redirect the user from the user step.
+	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
 	 */
-	_redirectTo?: string;
+	variantSlug?: string;
+	children?: React.ReactNode;
+	/**
+	 * These two prop are used internally by the Stepper to redirect the user from the user step.
+	 */
+	redirectTo: string;
+	signupUrl: string;
 };
 
 export type Step = React.FC< StepProps >;
+export type UserStep = React.FC< UserStepProps >;
 
 export type ProvidedDependencies = Record< string, unknown >;
 
