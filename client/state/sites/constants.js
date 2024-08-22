@@ -30,6 +30,7 @@ export const SITE_REQUEST_FIELDS = [
 	'user_interactions',
 	'is_deleted',
 	'is_a4a_client',
+	'is_a4a_dev_site',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [

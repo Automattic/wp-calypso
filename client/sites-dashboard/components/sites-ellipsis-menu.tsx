@@ -87,6 +87,21 @@ const LaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	);
 };
 
+const PrepareForLaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
+	const { __ } = useI18n();
+
+	return (
+		<MenuItem
+			onClick={ () => {
+				window.location.href = `https://wordpress.com/settings/general/${ site.ID }?referer=a4a-dashboard`;
+				recordTracks( 'calypso_sites_dashboard_site_action_prepare_for_launch_click' );
+			} }
+		>
+			{ __( 'Prepare for launch' ) }
+		</MenuItem>
+	);
+};
+
 const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
@@ -505,6 +520,7 @@ export const SitesEllipsisMenu = ( {
 	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 	const hasCustomDomain = isCustomDomain( site.slug );
 	const isLaunched = site.launch_status !== 'unlaunched';
+	const isA4ADevSite = site.is_a4a_dev_site;
 	const isClassicSimple = isWpAdminInterface && isSimpleSite( site );
 	const isWpcomStagingSite = useSelector( ( state: AppState ) =>
 		isSiteWpcomStaging( state, site.ID )
@@ -521,7 +537,10 @@ export const SitesEllipsisMenu = ( {
 
 		return (
 			<SiteMenuGroup>
-				{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
+				{ ! isWpcomStagingSite && ! isLaunched && ! isA4ADevSite && <LaunchItem { ...props } /> }
+				{ ! isWpcomStagingSite && ! isLaunched && isA4ADevSite && (
+					<PrepareForLaunchItem { ...props } />
+				) }
 				<SettingsItem { ...props } />
 				{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
 				{ site.is_wpcom_atomic && <SiteMonitoringItem { ...props } /> }
