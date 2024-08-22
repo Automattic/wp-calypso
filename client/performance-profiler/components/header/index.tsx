@@ -83,7 +83,11 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 							</div>
 							<div
 								className="share-option"
-								onClick={ () => alert( 'To be implemented' ) }
+								onClick={ () =>
+									window.open(
+										`https://twitter.com/intent/tweet?text=Look%20at%20my%20site%20speed%20test%20results%20on%20WordPress.com%20Speed%20Test%20Tool&url=${ window.location.href }`
+									)
+								}
 								onKeyUp={ () => {} }
 								role="button"
 								tabIndex={ 0 }
