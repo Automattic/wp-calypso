@@ -9,7 +9,6 @@ import {
 } from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 
 const onboarding: Flow = {
@@ -56,8 +55,6 @@ const onboarding: Flow = {
 		const { resetStore } = useDispatch( ONBOARD_STORE );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, currentStepSlug );
-
 			switch ( currentStepSlug ) {
 				case 'domains':
 					return navigate( 'plans' );
