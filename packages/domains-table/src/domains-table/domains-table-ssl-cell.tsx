@@ -54,7 +54,9 @@ export default function DomainsTableSslCell( {
 			</a>
 		);
 	} else if ( hasWpcomManagedSslCert ) {
-		button = <span className={ getSslStatusClassnames( 'button' ) }>{ getSslStatusText() }</span>;
+		button = (
+			<span className={ getSslStatusClassnames( 'button' ) }>{ translate( 'Active' ) }</span>
+		);
 	} else {
 		button = '-';
 	}
