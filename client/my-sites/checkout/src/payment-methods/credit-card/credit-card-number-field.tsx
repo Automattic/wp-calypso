@@ -81,12 +81,17 @@ export default function CreditCardNumberField( {
 					onChange={ ( input ) => {
 						handleStripeFieldChange( input );
 					} }
-					onNetworksChange={ ( event: { elementType: 'cardNumber'; networks: [] } ) => {
+					/* Note, the onNetworksChange event is deprecated and will be removed at some point
+					 * This will need to be updated before we upgrade Stripe beyond v3
+					 */
+					onNetworksChange={ ( event ) => {
+						// @ts-expect-error: The onNetworksChange method is deprecated, but is necessary for cobrand compliance
 						switch ( event.networks ) {
 							case null:
 							case undefined:
 								break;
 							default: {
+								// @ts-expect-error: The onNetworksChange method is deprecated, but is necessary for cobrand compliance
 								changeCardNetworks( event.networks );
 								break;
 							}
