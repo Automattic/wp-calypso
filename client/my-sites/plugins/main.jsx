@@ -80,10 +80,12 @@ export class PluginsMain extends Component {
 		} = this.props;
 
 		currentPlugins.map( ( plugin ) => {
-			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
-			if ( ! pluginData ) {
-				this.props.wporgFetchPluginData( plugin.slug );
-			}
+			// Performs parallel requests to Dotorg API, one for each plugin! This completely frozes the site when having more than 100 plugins
+			// This data is also loaded when we click on the plugin, so it's not necessary to load it here if we're okay in not loading the plugin icon for /plugins/manage
+			// const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
+			// if ( ! pluginData ) {
+			// 	this.props.wporgFetchPluginData( plugin.slug );
+			// }
 		} );
 
 		if (
@@ -428,6 +430,7 @@ export class PluginsMain extends Component {
 	}
 
 	render() {
+		console.log( 'my-sites/plugins/main.jsx render()' );
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 		}
@@ -585,6 +588,7 @@ export default flow(
 			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
+			// console.log( 'pluginsWithUpdates: ', pluginsWithUpdates );
 			const allPlugins = getPlugins( state, siteIds, 'all' );
 			const jetpackNonAtomic =
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId );

@@ -129,11 +129,12 @@ export function getPluginsWithUpdates( state, siteIds ) {
 }
 
 export function getPluginsOnSites( state, plugins ) {
-	return Object.values( plugins ).reduce( ( acc, plugin ) => {
-		const siteIds = Object.keys( plugin.sites );
-		acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
-		return acc;
-	}, {} );
+	// Adds up to 10s to the "freezing time" for 1700 sites
+	// return Object.values( plugins ).reduce( ( acc, plugin ) => {
+	// 	const siteIds = Object.keys( plugin.sites );
+	// 	acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
+	// 	return acc;
+	// }, {} );
 }
 
 export function getPluginOnSites( state, siteIds, pluginSlug ) {
