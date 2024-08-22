@@ -384,7 +384,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.GoToPatterns === action ) {
-			navigate( `https://${ this.props.siteSlug }${ payload.destinationUrl }` );
+			const { destinationUrl, unsavedChanges } = payload;
+
+			this.navigate( `https://${ this.props.siteSlug }${ destinationUrl }`, unsavedChanges );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {

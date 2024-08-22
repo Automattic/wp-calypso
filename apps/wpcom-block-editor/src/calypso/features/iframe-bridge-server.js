@@ -1049,11 +1049,14 @@ function handleAppBannerShowing( calypsoPort ) {
 }
 
 function handlePatterns( calypsoPort ) {
-	addEditorListener( `[data-value="${ __( 'Patterns' ) }"]`, () => {
+	addEditorListener( `[data-value="${ __( 'Patterns' ) }"]`, ( e ) => {
+		e.preventDefault();
+
 		calypsoPort.postMessage( {
 			action: 'goToPatterns',
 			payload: {
 				destinationUrl: '/wp-admin/site-editor.php?postType=wp_block',
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
 			},
 		} );
 	} );
