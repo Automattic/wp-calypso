@@ -156,7 +156,8 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-team' )
+			...( isSectionNameEnabled( 'a8c-for-agencies-team' ) &&
+			config.isEnabled( 'a4a-multi-user-support' )
 				? [
 						{
 							icon: people,
