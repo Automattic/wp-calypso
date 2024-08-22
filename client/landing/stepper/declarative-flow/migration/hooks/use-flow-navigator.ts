@@ -32,7 +32,7 @@ export const useFlowNavigator = ( navigate: Navigate< StepperStep[] > ) => {
 	};
 
 	return {
-		navigate: navigateWithQueryParams,
+		navigateWithQueryParams,
 		getFromPropsOrUrl,
 	};
 };
