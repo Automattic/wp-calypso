@@ -49,12 +49,12 @@ import {
 	FEATURE_CRM_TRACK_TRANSACTIONS,
 	FEATURE_CRM_V2,
 	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_CUSTOM_DOMAIN_EXPANDED,
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
 	FEATURE_ECOMMERCE_MARKETING,
 	FEATURE_FILTERING_V2,
 	FEATURE_FREE_BLOG_DOMAIN,
-	FEATURE_FREE_DOMAIN,
 	FEATURE_FREE_THEMES,
 	FEATURE_FREE_THEMES_SIGNUP,
 	FEATURE_FREE_WORDPRESS_THEMES,
@@ -475,29 +475,6 @@ const FEATURES_LIST: FeatureList = {
 			),
 	},
 
-	[ FEATURE_FREE_DOMAIN ]: {
-		getSlug: () => FEATURE_FREE_DOMAIN,
-		getTitle: () => i18n.translate( 'Free domain for one year' ),
-		getDescription: () =>
-			i18n.translate(
-				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
-					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br /}}{{br /}}' +
-					'This offer is redeemable one time only, and does not apply to plan upgrades, renewals, or premium domains.',
-				{
-					components: {
-						a: (
-							<a
-								href={ localizeUrl( DOMAIN_PRICING_AND_AVAILABLE_TLDS ) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-						br: <br />,
-					},
-				}
-			),
-	},
-
 	[ FEATURE_HOSTING ]: {
 		getSlug: () => FEATURE_HOSTING,
 		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
@@ -679,6 +656,29 @@ const FEATURES_LIST: FeatureList = {
 				}
 			);
 		},
+	},
+
+	[ FEATURE_CUSTOM_DOMAIN_EXPANDED ]: {
+		getSlug: () => FEATURE_CUSTOM_DOMAIN_EXPANDED,
+		getTitle: () => i18n.translate( 'Free domain for one year' ),
+		getDescription: () =>
+			i18n.translate(
+				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
+					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br /}}{{br /}}' +
+					'This offer is redeemable one time only, and does not apply to plan upgrades, renewals, or premium domains.',
+				{
+					components: {
+						a: (
+							<a
+								href={ localizeUrl( DOMAIN_PRICING_AND_AVAILABLE_TLDS ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+						br: <br />,
+					},
+				}
+			),
 	},
 
 	[ FEATURE_JETPACK_ESSENTIAL ]: {

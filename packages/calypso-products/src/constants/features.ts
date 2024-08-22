@@ -43,6 +43,7 @@ import {
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
 export const FEATURE_BLOG_DOMAIN = 'blog-domain';
 export const FEATURE_CUSTOM_DOMAIN = 'custom-domain';
+export const FEATURE_CUSTOM_DOMAIN_EXPANDED = 'custom-domain-expanded';
 export const FEATURE_SET_PRIMARY_CUSTOM_DOMAIN = 'set-primary-custom-domain';
 export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
 export const FEATURE_JETPACK_ADVANCED = 'jetpack-advanced';
@@ -89,7 +90,6 @@ export const FEATURE_ALL_PREMIUM_FEATURES = 'all-premium-features';
 export const FEATURE_ALL_PREMIUM_FEATURES_JETPACK = 'all-premium-features-jetpack';
 export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customization';
 export const FEATURE_UPLOAD_THEMES_PLUGINS = 'upload-themes-and-plugins';
-export const FEATURE_FREE_DOMAIN = 'free-custom-domain';
 export const FEATURE_FREE_BLOG_DOMAIN = 'free-blog-domain';
 export const FEATURE_MONETISE = 'monetise-your-site';
 export const FEATURE_EARN_AD = 'earn-ad-revenue';
