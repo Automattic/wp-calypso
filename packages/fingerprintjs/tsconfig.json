@@ -9,6 +9,7 @@
 		"importHelpers": true,
 		"noErrorTruncation": true,
 		"strict": true,
+		"composite": false,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noImplicitReturns": true,
