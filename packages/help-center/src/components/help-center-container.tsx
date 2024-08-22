@@ -58,28 +58,25 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 	const onDismiss = useCallback( () => {
 		setIsVisible( false );
-		recordTracksEvent( `calypso_inlinehelp_close` );
-	}, [ setIsVisible ] );
-
-	const toggleVisible = () => {
-		if ( ! isVisible ) {
-			handleClose();
-			// after calling handleClose, reset the visibility state to default
+		handleClose();
+		setTimeout( () => {
+			// Set the visibility back to true, it will make the animation work when the Help Center is opened again.
 			setIsVisible( true );
-		}
-	};
+		}, 0 );
+
+		recordTracksEvent( `calypso_inlinehelp_close` );
+	}, [ setIsVisible, handleClose ] );
 
 	const animationProps = {
 		style: {
 			animation: isMobile
-				? `${ isVisible ? 'fadeIn' : 'fadeOut' } .25s ease-out`
-				: `${ isVisible ? 'slideIn' : 'fadeOut' } .25s ease-out`,
+				? `${ isVisible ? 'fadeIn .25s ease-out' : '' }`
+				: `${ isVisible ? 'slideIn .25s ease-out' : '' }`,
 			// These are overwritten by the openingCoordinates.
 			// They are set to avoid Help Center from not loading on the page.
 			...( ! isMobile && { top: 70, left: 'calc( 100vw - 500px )' } ),
 			...openingCoordinates,
 		},
-		onAnimationEnd: toggleVisible,
 	};
 
 	const focusReturnRef = useFocusReturn();
