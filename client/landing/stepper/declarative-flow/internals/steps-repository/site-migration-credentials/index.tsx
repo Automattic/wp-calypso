@@ -213,6 +213,8 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 									} }
 									render={ ( { field } ) => (
 										<FormTextInput
+											readOnly={ !! importSiteQueryParam }
+											disabled={ !! importSiteQueryParam }
 											id="site-address"
 											isError={ !! errors.siteAddress }
 											placeholder={ translate( 'Enter your WordPress site address.' ) }
