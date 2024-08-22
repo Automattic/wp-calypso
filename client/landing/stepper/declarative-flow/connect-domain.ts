@@ -11,10 +11,10 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
 import { useDomainParams } from '../hooks/use-domain-params';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { redirect } from './internals/steps-repository/import/util';
 import {
 	AssertConditionResult,
@@ -106,18 +106,23 @@ const connectDomain: Flow = {
 	useSteps() {
 		return CONNECT_DOMAIN_STEPS;
 	},
+	useTracksEventProps() {
+		const { domain, provider } = useDomainParams();
+
+		return {
+			[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]: {
+				domain,
+				provider,
+			},
+		};
+	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { domain, provider } = useDomainParams();
+		const { domain } = useDomainParams();
 
 		triggerGuidesForStep( flowName, _currentStepSlug );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug, undefined, {
-				provider,
-				domain,
-			} );
-
 			switch ( _currentStepSlug ) {
 				case 'plans':
 					clearSignupDestinationCookie();

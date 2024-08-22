@@ -34,18 +34,20 @@ const ImporterWordpress: FC< Props > = function ( props ) {
 	);
 
 	let customizedActionButtons;
-	if ( queryParams.get( 'ref' ) === MIGRATION_FLOW ) {
-		customizedActionButtons = (
-			<StepNavigationLink
-				direction="forward"
-				handleClick={ () => {
-					props.navigation.submit?.( { action: 'customized-action-flow' } );
-				} }
-				label={ translate( 'I want to migrate my entire site' ) }
-				cssClass={ clsx( 'step-container__navigation-link', 'forward', 'has-underline' ) }
-				borderless
-			/>
-		);
+	switch ( queryParams.get( 'ref' ) ) {
+		case MIGRATION_FLOW:
+			customizedActionButtons = (
+				<StepNavigationLink
+					direction="forward"
+					handleClick={ () => {
+						props.navigation.submit?.( { action: 'customized-action-go-to-flow' } );
+					} }
+					label={ translate( 'I want to migrate my entire site' ) }
+					cssClass={ clsx( 'step-container__navigation-link', 'forward', 'has-underline' ) }
+					borderless
+				/>
+			);
+			break;
 	}
 
 	return (

@@ -306,7 +306,7 @@ describe( `${ flow.name }`, () => {
 							from: '',
 							option: 'content',
 							backToFlow: '/migration/platform-identification',
-							migrateEntireSiteFlow: '/migration/migration-upgrade-plan',
+							customizedActionGoToFlow: '/migration/migration-upgrade-plan',
 							siteId: 123,
 							ref: 'migration',
 						},

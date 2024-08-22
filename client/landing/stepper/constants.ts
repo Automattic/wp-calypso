@@ -14,3 +14,12 @@ export const HOW_TO_MIGRATE_OPTIONS = {
 	DO_IT_FOR_ME: 'difm',
 	DO_IT_MYSELF: 'myself',
 };
+
+/**
+ * All Tracks events related to Stepper.
+ * Prefixed with `STEPPER_TRACKS_EVENT_[scope]_[action]` to avoid conflicts with other Tracks events.
+ * Example: `STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT` -> scope = `STEP_NAV`, action = `SUBMIT`
+ */
+export const STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT = 'calypso_signup_actions_submit_step';
+
+export const STEPPER_TRACKS_EVENTS = < const >[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ];

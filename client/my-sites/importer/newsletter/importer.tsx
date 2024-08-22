@@ -82,7 +82,7 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	const { data: urlData, isFetching } = useAnalyzeUrlQuery( fromSite );
 
 	let stepContent = {};
-	if ( ! isFetchingPaidNewsletter ) {
+	if ( paidNewsletterData?.steps ) {
 		stepContent = paidNewsletterData?.steps[ step ]?.content ?? {};
 	}
 

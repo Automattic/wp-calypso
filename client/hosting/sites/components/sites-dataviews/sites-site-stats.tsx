@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import { useSelector } from 'calypso/state';
+import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -72,6 +73,11 @@ export const SiteStats = ( { site }: SiteStatsProps ) => {
 		return siteId && hasSiteStatsQueryFailed( state, siteId, statType, query );
 	} );
 
+	const { isWPAdmin: isClassicView, adminUrl } = useSiteAdminInterfaceData( site.ID );
+	const statsUrl = isClassicView
+		? `${ adminUrl }admin.php?page=stats`
+		: `/stats/day/${ site.slug }`;
+
 	return (
 		<div ref={ ref }>
 			{ inView && (
@@ -79,7 +85,7 @@ export const SiteStats = ( { site }: SiteStatsProps ) => {
 					{ hasStatsLoadingError || site.is_deleted ? (
 						<StatsOffIndicator />
 					) : (
-						<a href={ `/stats/day/${ site.slug }` }>
+						<a href={ statsUrl }>
 							<StatsSparkline siteId={ site.ID } showLoader />
 						</a>
 					) }

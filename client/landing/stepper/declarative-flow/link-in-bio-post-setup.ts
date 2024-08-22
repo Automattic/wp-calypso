@@ -1,9 +1,11 @@
+import { Onboard } from '@automattic/data-stores';
 import { LINK_IN_BIO_POST_SETUP_FLOW } from '@automattic/onboarding';
+import { useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { ONBOARD_STORE } from '../stores';
 import LinkInBioPostSetup from './internals/steps-repository/link-in-bio-post-setup';
-import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
 const linkInBioPostSetup: Flow = {
@@ -15,14 +17,18 @@ const linkInBioPostSetup: Flow = {
 	useSteps() {
 		return [ { slug: 'linkInBioPostSetup', component: LinkInBioPostSetup } ];
 	},
+	useSideEffect() {
+		const { setIntent } = useDispatch( ONBOARD_STORE );
+
+		useEffect( () => {
+			setIntent( Onboard.SiteIntent.LinkInBioPostSetup );
+		}, [] );
+	},
 
 	useStepNavigation( currentStep ) {
-		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, 'link-in-bio-post-setup', flowName, currentStep );
-
+		function submit() {
 			switch ( currentStep ) {
 				case 'linkInBioPostSetup':
 					return window.location.assign( `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` );
