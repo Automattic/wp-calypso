@@ -84,7 +84,7 @@ class EmailSignupTitanCard extends Component {
 
 		return (
 			<>
-				<QueryProductsList type="titan" />
+				<QueryProductsList />
 				<Card className={ classes } compact>
 					{ this.renderEmailSuggestion( domainItem ) }
 					{ wrapDivActionContainer(

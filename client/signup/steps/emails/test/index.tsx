@@ -2,11 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import * as useQueryProductsList from 'calypso/components/data/query-products-list';
 import EmailSignupTitanCard from '../index.jsx';
 
 const initialState = {
@@ -23,8 +24,10 @@ const initialState = {
 	},
 };
 
+const productListQuerySpy = jest.spyOn( useQueryProductsList, 'default' );
+
 describe( 'Email Step Titan Signup Card', () => {
-	test( 'should display price information', () => {
+	test( 'should request a complete product list', () => {
 		const newInitialState = {
 			...initialState,
 			sites: {
@@ -46,7 +49,9 @@ describe( 'Email Step Titan Signup Card', () => {
 			</Provider>
 		);
 
-		expect( screen.getByText( 'Add' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'Loading…' ) ).toBeNull();
+		expect( productListQuerySpy ).toHaveBeenCalled();
+		// An empty first argument means we're fetching all products, so we'll
+		// have access to email product data.
+		expect( productListQuerySpy.mock.calls[ 0 ][ 0 ] ).toStrictEqual( {} );
 	} );
 } );
