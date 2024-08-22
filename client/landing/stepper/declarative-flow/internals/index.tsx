@@ -27,19 +27,13 @@ import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
-import {
-	AssertConditionState,
-	UserStepProps,
-	type Flow,
-	type StepperStep,
-	type StepProps,
-} from './types';
+import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
 
 const lazyCache = new WeakMap<
 	() => Promise< {
-		default: React.ComponentType< StepProps > | React.ComponentType< UserStepProps >;
+		default: React.ComponentType< StepProps >;
 	} >,
 	React.ComponentType< StepProps >
 >();

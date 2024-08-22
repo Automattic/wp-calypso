@@ -62,7 +62,7 @@ export type AsyncStepperStep = {
 	/**
 	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
 	 */
-	slug: string;
+	slug: Exclude< string, 'user' >;
 	/**
 	 * Does the step require a logged-in user?
 	 */
@@ -72,10 +72,17 @@ export type AsyncStepperStep = {
 	 *
 	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
 	 */
-	asyncComponent: () => Promise< { default: React.FC< StepProps > | React.FC< UserStepProps > } >;
+	asyncComponent: () => Promise< { default: React.FC< StepProps > } >;
 };
 
-export type StepperStep = DeprecatedStepperStep | AsyncStepperStep;
+export interface AsyncUserStep extends AsyncStepperStep {
+	/**
+	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
+	 */
+	slug: 'user';
+}
+
+export type StepperStep = DeprecatedStepperStep | AsyncStepperStep | AsyncUserStep;
 
 export type Navigate< FlowSteps extends StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
@@ -151,36 +158,35 @@ export type Flow = {
 	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 };
 
-export type StepProps = {
-	navigation: NavigationControls;
-	stepName: string;
-	flow: string;
-	/**
-	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
-	 */
-	variantSlug?: string;
-	data?: StepperInternal.State[ 'stepData' ];
-	children?: React.ReactNode;
-};
-
-export type UserStepProps = {
-	navigation: NavigationControls;
-	stepName: string;
-	flow: string;
-	/**
-	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
-	 */
-	variantSlug?: string;
-	children?: React.ReactNode;
-	/**
-	 * These two prop are used internally by the Stepper to redirect the user from the user step.
-	 */
-	redirectTo: string;
-	signupUrl: string;
-};
+export type StepProps =
+	| {
+			navigation: NavigationControls;
+			stepName: string;
+			flow: string;
+			/**
+			 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
+			 */
+			variantSlug?: string;
+			data?: StepperInternal.State[ 'stepData' ];
+			children?: React.ReactNode;
+	  }
+	| {
+			navigation: NavigationControls;
+			stepName: 'user';
+			flow: string;
+			/**
+			 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
+			 */
+			variantSlug?: string;
+			children?: React.ReactNode;
+			/**
+			 * These two prop are used internally by the Stepper to redirect the user from the user step.
+			 */
+			redirectTo: string;
+			signupUrl: string;
+	  };
 
 export type Step = React.FC< StepProps >;
-export type UserStep = React.FC< UserStepProps >;
 
 export type ProvidedDependencies = Record< string, unknown >;
 
