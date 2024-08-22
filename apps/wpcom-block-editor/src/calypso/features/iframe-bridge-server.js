@@ -37,6 +37,17 @@ function addEditorListener( selector, cb ) {
 	}
 }
 
+function addCommandsInputListener( selector, cb ) {
+	document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
+		const isInputActive = document.activeElement?.matches( '.commands-command-menu__header input' );
+		const isCommandSelected = document.querySelector( '[data-selected=true]' )?.matches( selector );
+
+		if ( e.key === 'Enter' && isInputActive && isCommandSelected ) {
+			cb( e );
+		}
+	} );
+}
+
 // Calls a callback if the event occured on an element or parent thereof matching
 // the callback's selector. This is needed because elements are added and removed
 // from the DOM dynamically after the listeners are created. We need to handle
@@ -1049,7 +1060,9 @@ function handleAppBannerShowing( calypsoPort ) {
 }
 
 function handlePatterns( calypsoPort ) {
-	addEditorListener( `[data-value="${ __( 'Patterns' ) }"]`, ( e ) => {
+	const selector = `[data-value="${ __( 'Patterns' ) }"]`;
+
+	const callback = ( e ) => {
 		e.preventDefault();
 
 		calypsoPort.postMessage( {
@@ -1059,7 +1072,10 @@ function handlePatterns( calypsoPort ) {
 				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
 			},
 		} );
-	} );
+	};
+
+	addEditorListener( selector, callback );
+	addCommandsInputListener( selector, callback );
 }
 
 function initPort( message ) {
