@@ -57,6 +57,7 @@ class AppleLoginButton extends Component {
 
 	handleSocialResponseFromRedirect( socialServiceResponse ) {
 		const { client_id, state, user_email, user_name, id_token } = socialServiceResponse;
+
 		if ( client_id !== config( 'apple_oauth_client_id' ) ) {
 			return;
 		}

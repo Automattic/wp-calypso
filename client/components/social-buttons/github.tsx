@@ -48,6 +48,7 @@ const GitHubLoginButton = ( {
 		getRedirectUri( 'github', state, isLogin )
 	);
 	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial ) ?? {};
+
 	const authError = useSelector( ( state: AppState ) => {
 		const path = state?.route?.path?.current;
 		const { initial, current } = state?.route?.query ?? {};
@@ -59,6 +60,7 @@ const GitHubLoginButton = ( {
 		if ( path?.includes( '/start/user-social' ) ) {
 			return initialError;
 		}
+
 		return currentError;
 	} );
 
@@ -121,7 +123,10 @@ const GitHubLoginButton = ( {
 	};
 
 	useEffect( () => {
-		if ( socialServiceResponse ) {
+		if (
+			window.sessionStorage.getItem( 'social_login_used' ) === 'github' &&
+			socialServiceResponse
+		) {
 			responseHandler( { ...socialServiceResponse, service: 'github' } );
 		}
 	}, [ socialServiceResponse, responseHandler ] );
@@ -133,7 +138,7 @@ const GitHubLoginButton = ( {
 	}, [ code, service, userHasDisconnected, exchangeCodeForToken ] );
 
 	useEffect( () => {
-		if ( authError ) {
+		if ( window.sessionStorage.getItem( 'social_login_used' ) === 'github' && authError ) {
 			handleGitHubError();
 		}
 	}, [ authError, handleGitHubError ] );

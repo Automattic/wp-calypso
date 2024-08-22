@@ -39,20 +39,27 @@ class SocialSignupForm extends Component {
 		compact: false,
 	};
 
-	handleSignup = ( { access_token, id_token, service, ...userData } ) => {
+	handleSignup = ( result ) => {
+		if ( ! result || window.sessionStorage.getItem( 'social_login_used' ) !== result.service ) {
+			return;
+		}
+
 		const { recordTracksEvent, isDevAccount, handleResponse } = this.props;
 		recordTracksEvent( 'calypso_signup_social_button_success', {
-			social_account_type: service,
+			social_account_type: result.service,
 		} );
 
-		handleResponse( service, access_token, id_token, {
-			...userData,
-			is_dev_account: service === 'github' ? true : isDevAccount,
+		window.sessionStorage.removeItem( 'login_redirect_to' );
+		window.sessionStorage.removeItem( 'social_login_used' );
+
+		handleResponse( result.service, result.access_token, result.id_token, {
+			...result,
+			is_dev_account: result.service === 'github' ? true : isDevAccount,
 		} );
 	};
 
-	trackLoginAndRememberRedirect = ( event ) => {
-		const service = event.currentTarget.getAttribute( 'data-service' );
+	trackSignupAndRememberRedirect = ( event ) => {
+		const service = event.currentTarget.getAttribute( 'data-social-service' );
 
 		const { recordTracksEvent, oauth2Client, redirectToAfterLoginUrl, showErrorNotice, translate } =
 			this.props;
@@ -65,6 +72,7 @@ class SocialSignupForm extends Component {
 		try {
 			if ( redirectToAfterLoginUrl && typeof window !== 'undefined' ) {
 				window.sessionStorage.setItem( 'signup_redirect_to', redirectToAfterLoginUrl );
+				window.sessionStorage.setItem( 'social_login_used', service );
 			}
 		} catch ( error ) {
 			showErrorNotice(
@@ -114,19 +122,19 @@ class SocialSignupForm extends Component {
 					<div className="auth-form__social-buttons-container">
 						<GoogleSocialButton
 							responseHandler={ this.handleSignup }
-							onClick={ this.trackLoginAndRememberRedirect }
+							onClick={ this.trackSignupAndRememberRedirect }
 						/>
 
 						<AppleLoginButton
 							responseHandler={ this.handleSignup }
-							onClick={ this.trackLoginAndRememberRedirect }
+							onClick={ this.trackSignupAndRememberRedirect }
 							socialServiceResponse={ socialServiceResponse }
 							queryString={ isWpccFlow( flowName ) ? window?.location?.search?.slice( 1 ) : '' }
 						/>
 
 						<GithubSocialButton
 							responseHandler={ this.handleSignup }
-							onClick={ this.trackLoginAndRememberRedirect }
+							onClick={ this.trackSignupAndRememberRedirect }
 							socialServiceResponse={ socialServiceResponse }
 						/>
 						{ isSocialFirst && (
