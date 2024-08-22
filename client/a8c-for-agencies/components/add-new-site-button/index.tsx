@@ -228,7 +228,7 @@ export default function AddNewSiteButton( {
 								setMenuVisible( false );
 							},
 						},
-						extraContent: hasAvailableDevSites ? (
+						extraContent: (
 							<div>
 								<div className="site-selector-and-importer__popover-site-count">
 									{ translate(
@@ -247,7 +247,7 @@ export default function AddNewSiteButton( {
 									{ translate( 'Create a site now →' ) }
 								</div>
 							</div>
-						) : undefined,
+						),
 					} ) }
 				</div>
 			) }
