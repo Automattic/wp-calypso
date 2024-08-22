@@ -257,14 +257,17 @@ class Layout extends Component {
 	 * @param prevProps object
 	 */
 	componentDidUpdate( prevProps ) {
+		const willTransitionFromOrToCheckout =
+			( prevProps.sectionName === 'checkout' && this.props.sectionName !== 'checkout' ) ||
+			( prevProps.sectionName !== 'checkout' && this.props.sectionName === 'checkout' );
+
 		if (
 			prevProps.colorScheme !== this.props.colorScheme ||
 			( this.props.isGlobalSidebarVisible && this.props.colorScheme !== 'global' ) ||
 			( prevProps.isGlobalSidebarVisible &&
 				! this.props.isGlobalSidebarVisible &&
 				this.props.colorScheme !== 'global' ) ||
-			( prevProps.sectionName !== 'checkout' && this.props.sectionName === 'checkout' ) ||
-			( prevProps.sectionName === 'checkout' && this.props.sectionName !== 'checkout' )
+			willTransitionFromOrToCheckout
 		) {
 			this.refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
 		}
