@@ -42,9 +42,9 @@ function CreditCardSummary() {
 	);
 }
 
-const CreditCardLabel: React.FC< { hasExistingCardMethods: boolean | undefined } > = ( {
-	hasExistingCardMethods,
-} ) => {
+const CreditCardLabel: React.FC< {
+	hasExistingCardMethods: boolean | undefined;
+} > = ( { hasExistingCardMethods } ) => {
 	const { __ } = useI18n();
 	return (
 		<Fragment>
