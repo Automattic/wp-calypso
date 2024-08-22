@@ -35,6 +35,18 @@ const {
 	SITE_MIGRATION_ASSISTED_MIGRATION,
 } = STEPS;
 
+const steps = [
+	PLATFORM_IDENTIFICATION,
+	SITE_CREATION_STEP,
+	PROCESSING,
+	MIGRATION_UPGRADE_PLAN,
+	MIGRATION_HOW_TO_MIGRATE,
+	MIGRATION_SOURCE_URL,
+	SITE_MIGRATION_INSTRUCTIONS,
+	SITE_MIGRATION_STARTED,
+	SITE_MIGRATION_ASSISTED_MIGRATION,
+];
+
 const plans: { [ key: string ]: string } = {
 	business: PLAN_BUSINESS,
 	'business-2y': PLAN_BUSINESS_2_YEARS,
@@ -261,17 +273,7 @@ export default {
 	name: MIGRATION_FLOW,
 	isSignupFlow: false,
 	useSteps() {
-		return stepsWithRequiredLogin( [
-			PLATFORM_IDENTIFICATION,
-			SITE_CREATION_STEP,
-			PROCESSING,
-			MIGRATION_UPGRADE_PLAN,
-			MIGRATION_HOW_TO_MIGRATE,
-			MIGRATION_SOURCE_URL,
-			SITE_MIGRATION_INSTRUCTIONS,
-			SITE_MIGRATION_STARTED,
-			SITE_MIGRATION_ASSISTED_MIGRATION,
-		] );
+		return stepsWithRequiredLogin( steps );
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -283,8 +285,19 @@ export default {
 	useSideEffect( currentStep, navigate ) {
 		const [ search ] = useSearchParams();
 
-		if ( currentStep === PLATFORM_IDENTIFICATION.slug && search.get( 'from' ) ) {
-			return navigate( SITE_CREATION_STEP.slug );
+		// Handle cases when starting the flow.
+		if ( currentStep === steps[ 0 ].slug ) {
+			// If the plan is already defined, it creates the site and automatically goes to the checkout.
+			const plan = search.get( 'plan' ) ?? '';
+			if ( Object.keys( plans ).includes( plan ) ) {
+				return navigate( SITE_CREATION_STEP.slug, { plan } );
+			}
+
+			// If it has the from, it assumes that it's a WordPress site.
+			// If we need to handle it for other platforms in the future, we should enhance the conditionals.
+			if ( search.get( 'from' ) ) {
+				return navigate( SITE_CREATION_STEP.slug );
+			}
 		}
 	},
 } satisfies Flow;
