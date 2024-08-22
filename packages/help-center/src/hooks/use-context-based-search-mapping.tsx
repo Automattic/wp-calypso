@@ -1,6 +1,5 @@
 import { useSelect } from '@wordpress/data';
 import urlMapping from '../route-to-query-mapping.json';
-import tailoredSectionMapping from '../tailored-section-mapping.json';
 
 interface CoreBlockEditor {
 	getSelectedBlock: () => object;
@@ -30,20 +29,13 @@ export function useContextBasedSearchMapping( currentRoute: string | undefined )
 	const urlMatchKey = Object.keys( urlMapping ).find( ( key ) => currentRoute?.startsWith( key ) );
 	const urlSearchQuery = urlMatchKey ? urlMapping[ urlMatchKey as keyof typeof urlMapping ] : '';
 
-	const tailoredSectionKey = Object.keys( tailoredSectionMapping ).find(
-		( key ) => currentRoute?.startsWith( key )
-	);
-	const tailoredSection =
-		tailoredSectionMapping[ tailoredSectionKey as keyof typeof tailoredSectionMapping ];
-
 	// Find exact URL matches
 	const exactMatch = urlMapping[ currentRoute as keyof typeof urlMapping ];
 	if ( exactMatch ) {
-		return { contextSearch: exactMatch, tailoredSection };
+		return { contextSearch: exactMatch };
 	}
 
 	return {
 		contextSearch: blockSearchQuery || urlSearchQuery || '',
-		tailoredSection,
 	};
 }

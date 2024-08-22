@@ -199,12 +199,12 @@ function HelpSearchResults( {
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 
-	const { contextSearch, tailoredSection } = useContextBasedSearchMapping( currentRoute );
+	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
 
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
 		searchQuery || contextSearch, // If there's a query, we don't context search
 		locale,
-		tailoredSection || sectionName
+		currentRoute
 	);
 
 	const searchResults = searchData ?? [];
@@ -267,7 +267,7 @@ function HelpSearchResults( {
 		};
 
 		const eventName =
-			tailoredSection && ! searchQuery
+			! contextSearch && ! searchQuery
 				? 'calypso_inlinehelp_tailored_article_select'
 				: 'calypso_inlinehelp_article_select';
 
