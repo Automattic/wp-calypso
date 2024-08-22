@@ -214,6 +214,10 @@ export default function AddNewSiteButton( {
 						isBanner: true,
 						buttonProps: {
 							onClick: () => {
+								if ( ! hasAvailableDevSites ) {
+									return;
+								}
+
 								if ( paymentMethodRequired ) {
 									page(
 										`${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_SITES_LINK }?add_new_dev_site=true`
@@ -224,7 +228,7 @@ export default function AddNewSiteButton( {
 								setMenuVisible( false );
 							},
 						},
-						extraContent: hasAvailableDevSites ? (
+						extraContent: (
 							<div>
 								<div className="site-selector-and-importer__popover-site-count">
 									{ translate(
@@ -239,11 +243,15 @@ export default function AddNewSiteButton( {
 										}
 									) }
 								</div>
-								<div className="site-selector-and-importer__popover-development-site-cta">
+								<div
+									className={ clsx( 'site-selector-and-importer__popover-development-site-cta', {
+										disabled: ! hasAvailableDevSites,
+									} ) }
+								>
 									{ translate( 'Create a site now →' ) }
 								</div>
 							</div>
-						) : undefined,
+						),
 					} ) }
 				</div>
 			) }
