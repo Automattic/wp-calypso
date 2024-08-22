@@ -106,6 +106,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Promotions' );
 		} else if ( 'reports' === category ) {
 			return this.props.translate( 'Reports' );
+		} else if ( 'news_developer' === category ) {
+			return this.props.translate( 'Developer Newsletter' );
 		} else if ( 'scheduled_updates' === category ) {
 			return this.props.translate( 'Scheduled Updates' );
 		} else if ( 'learn' === category ) {
@@ -160,6 +162,10 @@ class MainComponent extends Component {
 		} else if ( 'reports' === category ) {
 			return this.props.translate(
 				'Complimentary reports and updates regarding site performance and traffic.'
+			);
+		} else if ( 'news_developer' === category ) {
+			return this.props.translate(
+				'A once-monthly roundup of notable news for WordPress developers.'
 			);
 		} else if ( 'scheduled_updates' === category ) {
 			return this.props.translate( 'Complimentary reports regarding scheduled plugin updates.' );
