@@ -72,7 +72,6 @@ import RegisteredDomainDetails from './cards/registered-domain-details';
 import SiteRedirectCard from './cards/site-redirect-card';
 import TransferredDomainDetails from './cards/transferred-domain-details';
 import DnsRecords from './dns';
-import { isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
 import SettingsHeader from './settings-header';
 import type { SettingsPageConnectedProps, SettingsPageProps } from './types';
@@ -147,9 +146,7 @@ const Settings = ( {
 		if ( ! domain ) {
 			return null;
 		}
-		if ( ! isSecuredWithUs( domain ) ) {
-			return null;
-		}
+
 		if (
 			domain.type === domainTypes.SITE_REDIRECT ||
 			domain.type === domainTypes.TRANSFER ||
