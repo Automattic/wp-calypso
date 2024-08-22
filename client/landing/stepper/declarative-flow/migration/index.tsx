@@ -44,31 +44,34 @@ const plans: { [ key: string ]: string } = {
 const useCreateStepHandlers = ( _navigate: Navigate< StepperStep[] >, flowObject: Flow ) => {
 	const [ query ] = useSearchParams();
 	const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
-
 	const { navigate, getFromPropsOrUrl } = useFlowNavigator( _navigate );
 
 	const navigateToCheckout = ( {
 		siteId,
 		siteSlug,
+		from,
 		plan,
 		props,
 		forceRedirection,
 	}: {
 		siteId: string;
 		siteSlug: string;
+		from?: string;
 		plan: string;
 		props?: ProvidedDependencies;
 		forceRedirection?: boolean;
 	} ) => {
 		const redirectAfterCheckout = MIGRATION_HOW_TO_MIGRATE.slug;
 		const destination = addQueryArgs(
-			{ siteId, siteSlug },
+			{ siteId, siteSlug, from },
 			`/setup/${ flowPath }/${ redirectAfterCheckout }`
 		);
+
 		const cancelDestination = addQueryArgs(
-			{ siteId, siteSlug },
+			{ siteId, siteSlug, from },
 			`/setup/${ flowPath }/${ MIGRATION_UPGRADE_PLAN.slug }?${ query.toString() }`
 		);
+
 		let extraQueryParams: Record< string, string > | undefined =
 			props?.sendIntentWhenCreatingTrial && plan === PLAN_MIGRATION_TRIAL_MONTHLY
 				? { hosting_intent: HOSTING_INTENT_MIGRATE }
@@ -81,7 +84,6 @@ const useCreateStepHandlers = ( _navigate: Navigate< StepperStep[] >, flowObject
 				introductoryOffer: '1',
 			};
 		}
-
 		return goToCheckout( {
 			flowName: flowPath,
 			stepName: MIGRATION_UPGRADE_PLAN.slug,
@@ -157,6 +159,7 @@ const useCreateStepHandlers = ( _navigate: Navigate< StepperStep[] >, flowObject
 						siteId,
 						siteSlug,
 						plan: selectedPlan,
+						from,
 						props,
 						forceRedirection: true,
 					} );
@@ -171,6 +174,7 @@ const useCreateStepHandlers = ( _navigate: Navigate< StepperStep[] >, flowObject
 			submit: ( props?: ProvidedDependencies ) => {
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
+				const from = getFromPropsOrUrl( 'from', props ) as string;
 
 				const plan = props?.plan as string;
 
@@ -186,7 +190,7 @@ const useCreateStepHandlers = ( _navigate: Navigate< StepperStep[] >, flowObject
 				}
 
 				if ( props?.goToCheckout ) {
-					return navigateToCheckout( { siteId, siteSlug, plan, props } );
+					return navigateToCheckout( { siteId, siteSlug, plan, from, props } );
 				}
 			},
 			goBack: ( props?: ProvidedDependencies ) => {
