@@ -6,6 +6,7 @@ import { dispatch, select, subscribe, use } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
+import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
@@ -34,6 +35,17 @@ function addEditorListener( selector, cb ) {
 			?.addEventListener( 'click', triggerOverrideHandler );
 		addedListener = true;
 	}
+}
+
+function addCommandsInputListener( selector, cb ) {
+	document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
+		const isInputActive = document.activeElement?.matches( '.commands-command-menu__header input' );
+		const isCommandSelected = document.querySelector( '[data-selected=true]' )?.matches( selector );
+
+		if ( e.key === 'Enter' && isInputActive && isCommandSelected ) {
+			cb( e );
+		}
+	} );
 }
 
 // Calls a callback if the event occured on an element or parent thereof matching
@@ -1047,6 +1059,25 @@ function handleAppBannerShowing( calypsoPort ) {
 	};
 }
 
+function handlePatterns( calypsoPort ) {
+	const selector = `[data-value="${ __( 'Patterns' ) }"]`;
+
+	const callback = ( e ) => {
+		e.preventDefault();
+
+		calypsoPort.postMessage( {
+			action: 'goToPatterns',
+			payload: {
+				destinationUrl: '/wp-admin/site-editor.php?postType=wp_block',
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+			},
+		} );
+	};
+
+	addEditorListener( selector, callback );
+	addCommandsInputListener( selector, callback );
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1147,6 +1178,8 @@ function initPort( message ) {
 		handleCheckoutModal( calypsoPort );
 
 		handleAppBannerShowing( calypsoPort );
+
+		handlePatterns( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
