@@ -121,7 +121,7 @@ const useCreateStepHandlers = ( _navigate: Navigate< StepperStep[] >, flowObject
 					} );
 				}
 
-				return navigate( SITE_CREATION_STEP, [ 'platform', 'from', 'platform' ], props, {
+				return navigate( SITE_CREATION_STEP, [ 'platform', 'from' ], props, {
 					replaceHistory: true,
 				} );
 			},
