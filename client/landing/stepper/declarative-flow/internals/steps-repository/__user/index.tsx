@@ -15,12 +15,12 @@ import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { UserStep } from '../../types';
+import { Step } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import './style.scss';
 import { useSocialService } from './use-social-service';
 
-const UserStepComponent: UserStep = function UserStep( {
+const UserStepComponent: Step = function UserStep( {
 	flow,
 	stepName,
 	navigation,
@@ -96,8 +96,8 @@ const UserStepComponent: UserStep = function UserStep( {
 				<Button
 					className="step-wrapper__navigation-link forward"
 					href={ login( {
-						signupUrl: signupUrl,
-						redirectTo: redirectTo,
+						signupUrl,
+						redirectTo,
 					} ) }
 					variant="link"
 				>

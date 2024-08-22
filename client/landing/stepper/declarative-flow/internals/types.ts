@@ -167,33 +167,22 @@ export type Flow = {
 	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 };
 
-export type StepProps =
-	| {
-			navigation: NavigationControls;
-			stepName: string;
-			flow: string;
-			/**
-			 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
-			 */
-			variantSlug?: string;
-			data?: StepperInternal.State[ 'stepData' ];
-			children?: React.ReactNode;
-	  }
-	| {
-			navigation: NavigationControls;
-			stepName: 'user';
-			flow: string;
-			/**
-			 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
-			 */
-			variantSlug?: string;
-			children?: React.ReactNode;
-			/**
-			 * These two prop are used internally by the Stepper to redirect the user from the user step.
-			 */
-			redirectTo: string;
-			signupUrl: string;
-	  };
+export type StepProps = {
+	navigation: NavigationControls;
+	stepName: string;
+	flow: string;
+	/**
+	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
+	 */
+	variantSlug?: string;
+	data?: StepperInternal.State[ 'stepData' ];
+	children?: React.ReactNode;
+	/**
+	 * These two prop are used internally by the Stepper to redirect the user from the user step.
+	 */
+	redirectTo?: string;
+	signupUrl?: string;
+};
 
 export type Step = React.FC< StepProps >;
 
