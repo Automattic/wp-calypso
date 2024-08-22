@@ -50,21 +50,23 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
 
 		if ( oldHighResImageLoading ) {
-			<img
-				src={ themeImgSrc }
-				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
-				alt={ design.description }
-			/>;
-		} else {
 			return (
 				<img
-					loading="lazy"
 					src={ themeImgSrc }
-					srcSet={ `${ themeImgSrc }` }
+					srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
 					alt={ design.description }
 				/>
 			);
 		}
+
+		return (
+			<img
+				loading="lazy"
+				src={ themeImgSrc }
+				srcSet={ `${ themeImgSrc }` }
+				alt={ design.description }
+			/>
+		);
 	}
 
 	return (

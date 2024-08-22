@@ -7,7 +7,7 @@ export default function CommonHostingBenefits() {
 	return (
 		<HostingBenefitsSection
 			heading={ translate( 'Improve your client relationships with our hosting' ) }
-			subheading={ translate( 'How can Automattic help' ) }
+			subheading={ translate( 'How Automattic can help' ) }
 			background={ BackgroundType3 }
 			items={ [
 				{

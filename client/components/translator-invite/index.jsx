@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
+import { MaterialIcon } from '@automattic/components';
+import languages from '@automattic/languages';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -28,52 +29,61 @@ export class TranslatorInvite extends Component {
 	recordClick = () =>
 		this.props.recordTracksEvent( 'calypso_translator_invitation', {
 			language: this.props.localizedLanguageNames[ this.props.locale ].en,
+			location: this.props.path,
 		} );
 
 	renderNoticeLabelText() {
 		const { locale, localizedLanguageNames, translate } = this.props;
 
-		if ( localizedLanguageNames && localizedLanguageNames[ locale ] ) {
-			return (
-				<div className="translator-invite__content">
-					<Gridicon className="translator-invite__gridicon" icon="globe" size={ 18 } />
-					{ translate(
-						'Would you like to help us translate WordPress.com into {{a}}%(language)s{{/a}}?',
-						{
-							args: { language: localizedLanguageNames[ locale ].localized },
-							comment:
-								'The language variable can be any major spoken language that WordPress.com supports',
-							components: {
-								a: (
-									<a
-										href={ `https://translate.wordpress.com/projects/wpcom/${ locale }/default/` }
-										onClick={ this.recordClick }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</div>
-			);
+		if ( ! localizedLanguageNames || ! localizedLanguageNames[ locale ] ) {
+			return null;
 		}
 
-		return null;
+		const languageName = localizedLanguageNames[ locale ].localized;
+		const currentLanguage = languages.find( ( language ) => language.langSlug === locale );
+		const percentTranslated = currentLanguage?.calypsoPercentTranslated || 0;
+
+		// translators: '%(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%'
+		const noticeText = translate(
+			'%(languageName)s is only %(percentTranslated)d%% translated. Help translate WordPress into your language.',
+			{
+				args: { languageName, percentTranslated },
+			}
+		);
+
+		return <div className="translator-invite__content">{ noticeText }</div>;
 	}
 
 	render() {
-		const { locale } = this.props;
-
+		const { locale, translate } = this.props;
 		if ( config( 'i18n_default_locale_slug' ) === locale ) {
 			return null;
 		}
 
+		const currentLanguage = languages.find( ( language ) => language.langSlug === locale );
+		const isTranslatedIncompletely = currentLanguage?.isTranslatedIncompletely;
+
 		return (
-			<div className="translator-invite">
-				{ this.renderNoticeLabelText() }
-				<QueryLanguageNames />
-			</div>
+			isTranslatedIncompletely && (
+				<div className="translator-invite">
+					<MaterialIcon className="translator-invite__icon" icon="emoji_language" />
+
+					<h2 className="translator-invite__heading">{ translate( 'Translate WordPress.com' ) }</h2>
+
+					{ this.renderNoticeLabelText() }
+
+					<a
+						className="translator-invite__link"
+						href="https://translate.wordpress.com/faq/"
+						target="_blank"
+						rel="noopener noreferrer"
+						onClick={ this.recordClick }
+					>
+						{ translate( 'Learn more' ) }
+					</a>
+					<QueryLanguageNames />
+				</div>
+			)
 		);
 	}
 }

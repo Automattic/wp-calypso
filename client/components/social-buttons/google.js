@@ -198,7 +198,7 @@ class GoogleSocialButton extends Component {
 					customButton
 				) : (
 					<button
-						className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
+						className={ clsx( 'social-buttons__button button google', { disabled: isDisabled } ) }
 						onClick={ this.handleClick }
 						disabled={ isDisabled }
 					>

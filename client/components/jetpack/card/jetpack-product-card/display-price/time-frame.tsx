@@ -173,7 +173,7 @@ const OneYearDiscountTimeFrame: React.FC< OneYearDiscountTimeFrameProps & A11yPr
 	if ( ! discountPercentage ) {
 		text = translate( 'per month, billed yearly' );
 	} else {
-		text = translate( 'per month, billed yearly. %(discount)d% off the first year.', {
+		text = translate( 'per month, billed yearly. %(discount)d%% off the first year.', {
 			args: {
 				discount: discountPercentage,
 			},

@@ -8,6 +8,7 @@ import {
 	STAT_TYPE_REFERRERS,
 	STAT_TYPE_SEARCH_TERMS,
 	STAT_TYPE_TOP_AUTHORS,
+	STAT_TYPE_VIDEO_PLAYS,
 } from '../constants';
 import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
 import { Props } from '.';
@@ -30,6 +31,8 @@ const getUpsellCopy = ( statType: string ) => {
 			return translate( 'Identify your audience’s favorite writers and perspectives.' );
 		case STATS_FEATURE_DATE_CONTROL:
 			return translate( 'Compare different time periods to analyze your site’s growth.' );
+		case STAT_TYPE_VIDEO_PLAYS:
+			return translate( 'Discover your most popular videos and find out how they performed.' );
 		default:
 			return translate( 'Upgrade your plan to unlock Jetpack Stats.' );
 	}

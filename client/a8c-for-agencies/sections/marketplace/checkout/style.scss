@@ -168,12 +168,12 @@
 		font-size: 1rem;
 		color: var(--color-neutral-70);
 	}
+}
 
-	.checkout__summary-notice-item {
-		font-size: 0.75rem;
-		color: var(--color-neutral-50);
-		margin-block-end: 0.5rem;
-	}
+.checkout__summary-notice-item {
+	font-size: 0.75rem;
+	color: var(--color-neutral-50);
+	margin-block-end: 0.5rem;
 }
 
 .checkout__aside-actions {
@@ -182,6 +182,7 @@
 	align-items: stretch;
 	gap: 16px;
 	text-align: center;
+	margin-block-end: 8px;
 
 	> .button {
 		display: flex;

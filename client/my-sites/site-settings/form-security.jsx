@@ -9,8 +9,10 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import Protect from './protect';
+import Firewall from './firewall';
 import SpamFilteringSettings from './spam-filtering-settings';
 import Sso from './sso';
 import wrapSettingsForm from './wrap-settings-form';
@@ -24,6 +26,8 @@ class SiteSettingsFormSecurity extends Component {
 			handleAutosavingToggle,
 			handleSubmitForm,
 			isAtomic,
+			isSimple,
+			isVip,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -33,6 +37,7 @@ class SiteSettingsFormSecurity extends Component {
 			settings,
 			siteId,
 			translate,
+			activateModule,
 		} = this.props;
 		const disableProtect = ! protectModuleActive || protectModuleUnavailable;
 		const disableSpamFiltering = ! fields.akismet || akismetUnavailable;
@@ -44,23 +49,24 @@ class SiteSettingsFormSecurity extends Component {
 				className="site-settings__security-settings"
 			>
 				<QueryJetpackModules siteId={ siteId } />
+				<QueryJetpackSettings siteId={ siteId } />
 
-				<SettingsSectionHeader
-					disabled={ isRequestingSettings || isSavingSettings || disableProtect }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Prevent brute force login attacks' ) }
-				/>
-				<Protect
+				<Firewall
+					settings={ settings }
 					fields={ fields }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					onChangeField={ onChangeField }
 					setFieldValue={ setFieldValue }
+					handleAutosavingToggle={ handleAutosavingToggle }
+					handleSubmitForm={ handleSubmitForm }
+					dirtyFields={ dirtyFields }
+					disableProtect={ disableProtect }
+					activateModule={ activateModule }
+					isAtomic={ isAtomic }
+					isSimple={ isSimple }
+					isVip={ isVip }
 				/>
-
-				<QueryJetpackSettings siteId={ siteId } />
 
 				{ ! isAtomic && (
 					<div>
@@ -98,6 +104,8 @@ class SiteSettingsFormSecurity extends Component {
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
+	const isSimple = isSimpleSite( state, siteId );
+	const isVip = isVipSite( state, siteId );
 	const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
 	const protectIsUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
@@ -114,6 +122,8 @@ const connectComponent = connect( ( state ) => {
 	return {
 		siteId,
 		isAtomic,
+		isSimple,
+		isVip,
 		protectModuleActive,
 		protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
 		akismetUnavailable: siteInDevMode && akismetIsUnavailableInDevMode,
@@ -125,6 +135,12 @@ const getFormSettings = ( settings ) =>
 		'akismet',
 		'protect',
 		'jetpack_protect_global_whitelist',
+		'jetpack_waf_automatic_rules',
+		'jetpack_waf_ip_allow_list',
+		'jetpack_waf_ip_allow_list_enabled',
+		'jetpack_waf_ip_block_list',
+		'jetpack_waf_ip_block_list_enabled',
+		'jetpack_waf_automatic_rules_last_updated_timestamp',
 		'sso',
 		'jetpack_sso_match_by_email',
 		'jetpack_sso_require_two_step',

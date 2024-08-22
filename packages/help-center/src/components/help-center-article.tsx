@@ -1,25 +1,23 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Flex, FlexItem } from '@wordpress/components';
-import { useEffect } from '@wordpress/element';
+import { useEffect, createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { Icon, external } from '@wordpress/icons';
-import React from 'react';
-import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { usePostByUrl } from '../hooks';
 import { BackButton } from './back-button';
 import { BackToTopButton } from './back-to-top-button';
 import ArticleContent from './help-center-article-content';
 
-export const HelpCenterArticle = ( { navigateToRoute }: { navigateToRoute: string } ) => {
+export const HelpCenterArticle = () => {
 	const [ searchParams ] = useSearchParams();
 	const { sectionName } = useHelpCenterContext();
-	const { pathname, search, hash } = useLocation();
-	const navigate = useNavigate();
 
 	const postUrl = searchParams.get( 'link' ) || '';
 	const query = searchParams.get( 'query' );
 
-	const { data: post, isLoading } = usePostByUrl( postUrl );
+	const { data: post, isLoading, error } = usePostByUrl( postUrl );
 
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
@@ -35,13 +33,6 @@ export const HelpCenterArticle = ( { navigateToRoute }: { navigateToRoute: strin
 			}, 0 );
 		}
 	}, [ postUrl, post ] );
-
-	// Handle redirecting to new routes
-	useEffect( () => {
-		if ( navigateToRoute && navigateToRoute !== pathname + search + hash ) {
-			navigate( navigateToRoute );
-		}
-	}, [ navigateToRoute, pathname, search, hash, navigate ] );
 
 	useEffect( () => {
 		if ( post ) {
@@ -70,19 +61,34 @@ export const HelpCenterArticle = ( { navigateToRoute }: { navigateToRoute: strin
 					<FlexItem>
 						<BackButton />
 					</FlexItem>
-					<FlexItem>
-						<Button
-							href={ post?.URL }
-							target="_blank"
-							className="help-center-article__external-button"
-						>
-							<Icon icon={ external } size={ 20 } />
-						</Button>
-					</FlexItem>
+					{ post?.URL && (
+						<FlexItem>
+							<Button
+								href={ post?.URL }
+								target="_blank"
+								className="help-center-article__external-button"
+							>
+								<Icon icon={ external } size={ 20 } />
+							</Button>
+						</FlexItem>
+					) }
 				</Flex>
 			</div>
 			<div className="help-center-article">
-				<ArticleContent post={ post } isLoading={ isLoading } />
+				{ ! error && <ArticleContent post={ post } isLoading={ isLoading } /> }
+				{ ! isLoading && error && (
+					<p className="help-center-article__error">
+						{ createInterpolateElement(
+							__(
+								"Sorry, we couldn't load that article. <url>Click here</url> to open it in a new tab",
+								__i18n_text_domain__
+							),
+							{
+								url: <a target="_blank" rel="noopener noreferrer" href={ postUrl } />,
+							}
+						) }
+					</p>
+				) }
 			</div>
 			<BackToTopButton />
 		</>

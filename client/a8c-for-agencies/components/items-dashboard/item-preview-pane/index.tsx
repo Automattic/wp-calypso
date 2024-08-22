@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
@@ -80,10 +79,7 @@ export default function ItemPreviewPane( {
 		);
 	} );
 
-	const shouldHideNav =
-		hideNavIfSingleTab &&
-		featureTabs.length <= 1 &&
-		! config.isEnabled( 'hosting-overview-refinements' );
+	const shouldHideNav = hideNavIfSingleTab && featureTabs.length <= 1;
 
 	return (
 		<div className={ clsx( 'item-preview__pane', className ) }>

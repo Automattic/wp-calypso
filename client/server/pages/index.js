@@ -707,7 +707,7 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( `/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/plans`, function ( req, res, next ) {
-		const locale = req.params?.locale;
+		const locale = req.params?.locale ?? config( 'i18n_default_locale_slug' );
 
 		if ( ! req.context.isLoggedIn ) {
 			const queryFor = req.query?.for;
@@ -724,7 +724,7 @@ function wpcomPages( app ) {
 				res.redirect( pricingPageUrl );
 			}
 		} else {
-			if ( locale ) {
+			if ( locale && locale !== config( 'i18n_default_locale_slug' ) ) {
 				const queryParams = new URLSearchParams( req.query );
 				const queryString = queryParams.size ? '?' + queryParams.toString() : '';
 				res.redirect( `/plans${ queryString }` );

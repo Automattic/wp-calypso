@@ -8,7 +8,7 @@ import {
 	Scores,
 } from './types';
 
-export const BASIC_METRICS_SCORES: Record< Metrics, [ number, number ] > = {
+export const BASIC_METRICS_SCORES: Record< string, [ number, number ] > = {
 	cls: [ 0.1, 0.25 ], // https://web.dev/articles/cls
 	fid: [ 100, 300 ], // https://web.dev/articles/fid
 	lcp: [ 2500, 4000 ], // https://web.dev/articles/lcp
@@ -79,9 +79,7 @@ export function getBasicMetricsScored( metrics: BasicMetrics ) {
 	}, {} as BasicMetricsScored );
 }
 
-export function getBasicMetricsFromPerfReport(
-	metrics?: PerformanceReport
-): BasicMetricsScored | undefined {
+export function getBasicMetricsFromPerfReport( metrics?: any ): BasicMetricsScored | undefined {
 	if ( ! metrics ) {
 		return undefined;
 	}

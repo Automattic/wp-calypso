@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { GridPlan, PlanActionOverrides } from '../../types';
-import PlanFeatures2023GridActions from '../actions';
 import PlanDivOrTdContainer from '../plan-div-td-container';
+import ActionButton from '../shared/action-button';
 
 type TopButtonsProps = {
 	currentSitePlanSlug?: string | null;
@@ -30,7 +30,7 @@ const TopButtons = ( {
 				className={ classes }
 				isTableCell={ options?.isTableCell }
 			>
-				<PlanFeatures2023GridActions
+				<ActionButton
 					availableForPurchase={ availableForPurchase }
 					isInSignup={ isInSignup }
 					isMonthlyPlan={ isMonthlyPlan }

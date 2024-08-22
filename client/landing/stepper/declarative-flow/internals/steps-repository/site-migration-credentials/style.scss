@@ -1,0 +1,76 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.site-migration-credentials {
+	#site-migration-credentials-header {
+		.formatted-header__subtitle {
+			text-align: center;
+		}
+	}
+
+	.card {
+		max-width: 500px;
+		padding: 2em;
+
+		@media (max-width: $break-mobile) {
+			padding: 1.25em;
+		}
+		hr {
+			margin-top: 1em;
+			background: var(--color-border-subtle);
+		}
+		.action-buttons__next {
+			width: 100%;
+			margin-top: 1em;
+		}
+		.site-migration-credentials__form-fields-row {
+			display: flex;
+			flex-direction: row;
+			gap: 1em;
+			@media (max-width: 510px) {
+				flex-direction: column;
+				gap: 0;
+			}
+		}
+		.site-migration-credentials__form-field {
+			margin-top: 1em;
+		}
+		.site-migration-credentials__radio-group {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+
+			@media (max-width: $break-mobile) {
+				flex-direction: row;
+				gap: 8px;
+				flex-wrap: wrap;
+			}
+		}
+		.site-migration-credentials__radio {
+			display: flex;
+			align-items: center;
+			.form-radio__label {
+				margin-left: 0.5em;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+			.form-radio {
+				margin: 0;
+			}
+		}
+		.site-migration-credentials__form-note {
+			margin-top: 1em;
+			color: var(--color-text-subtle);
+		}
+		.site-migration-credentials__form-error {
+			color: var(--color-error);
+			font-size: 0.875rem;
+			margin-top: 0.25rem;
+		}
+	}
+	.site-migration-credentials__skip {
+		margin-top: 1em;
+		text-align: center;
+	}
+}

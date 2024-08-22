@@ -3,7 +3,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import MailIcon from 'calypso/components/social-icons/mail';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -13,6 +12,10 @@ import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerc
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import './style.scss';
+
+interface QueryArgs {
+	redirect_to?: string;
+}
 
 interface SignupFormSocialFirst {
 	goToNextStep: () => void;
@@ -33,7 +36,7 @@ interface SignupFormSocialFirst {
 		} | null
 	) => void;
 	isReskinned: boolean;
-	queryArgs: object;
+	queryArgs: QueryArgs;
 	userEmail: string;
 	notice: JSX.Element | false;
 	isSocialFirst: boolean;
@@ -129,6 +132,7 @@ const SignupFormSocialFirst = ( {
 					{ notice }
 					<SocialSignupForm
 						handleResponse={ handleSocialResponse }
+						setCurrentStep={ setCurrentStep }
 						socialService={ socialService }
 						socialServiceResponse={ socialServiceResponse }
 						isReskinned={ isReskinned }
@@ -136,15 +140,7 @@ const SignupFormSocialFirst = ( {
 						disableTosText
 						compact
 						isSocialFirst={ isSocialFirst }
-					>
-						<Button
-							className="social-buttons__button button"
-							onClick={ () => setCurrentStep( 'email' ) }
-						>
-							<MailIcon width="20" height="20" />
-							<span className="social-buttons__service-name">{ __( 'Continue with Email' ) }</span>
-						</Button>
-					</SocialSignupForm>
+					/>
 				</>
 			);
 		} else if ( currentStep === 'email' ) {
@@ -154,6 +150,9 @@ const SignupFormSocialFirst = ( {
 						submitButtonLoadingLabel: __( 'Continue' ),
 				  }
 				: {};
+
+			const redirectToParam =
+				queryArgs?.redirect_to ?? window.location.origin + `/setup/${ flowName }`;
 
 			return (
 				<div className="signup-form-social-first-email">
@@ -174,7 +173,7 @@ const SignupFormSocialFirst = ( {
 										{
 											email_address: email,
 											is_signup_existing_account: true,
-											redirect_to: window.location.origin + `/setup/${ flowName }`,
+											redirect_to: redirectToParam,
 										},
 										logInUrl
 									)

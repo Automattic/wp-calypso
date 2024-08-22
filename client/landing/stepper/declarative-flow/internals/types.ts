@@ -1,5 +1,6 @@
 import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
+import { STEPPER_TRACKS_EVENTS } from '../../constants';
 
 /**
  * This is the return type of useStepNavigation hook
@@ -106,6 +107,14 @@ export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 	navigate: Navigate< FlowSteps >
 ) => void;
 
+/**
+ * Used for overriding props recorded by the default Tracks event loggers.
+ * Can pass any properties that should be recorded for the respective events.
+ */
+export type UseTracksEventPropsHook = () => {
+	[ key in ( typeof STEPPER_TRACKS_EVENTS )[ number ] ]?: Record< string, string | number | null >;
+};
+
 export type Flow = {
 	name: string;
 	/**
@@ -139,6 +148,12 @@ export type Flow = {
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
 	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
+	useTracksEventProps?: UseTracksEventPropsHook;
+	/**
+	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
+	 * IMPORTANT: This hook will be removed in the future.
+	 */
+	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 };
 
 export type StepProps = {

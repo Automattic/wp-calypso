@@ -1,0 +1,90 @@
+.importer__uploading-pane {
+	cursor: pointer;
+	position: relative;
+	height: 180px;
+	margin-bottom: 1.5em;
+
+	background-color: var(--color-neutral-0);
+	border: 2px dashed var(--color-neutral-light);
+	transition: all 200ms ease-out, color 100ms ease-out;
+	fill: var(--color-neutral-20);
+	font-size: $font-body;
+	color: var(--color-neutral-70);
+	text-align: center;
+
+	input {
+		visibility: hidden;
+	}
+
+	.accessible-focus &:focus {
+		border-color: var(--color-neutral-20);
+	}
+
+	&:hover {
+		border-color: var(--color-neutral-70);
+		transform: translate3d(0, -1px, 0);
+		box-shadow: 0 2px 4px var(--color-neutral-10);
+	}
+
+	p {
+		margin-top: -0.5em;
+	}
+
+	.importer__upload-icon {
+		color: var(--color-neutral-light);
+	}
+}
+
+.importer__uploading-pane:hover .importer__upload-content .importer__upload-icon {
+	color: var(--color-neutral-70);
+}
+
+.importer__uploading-pane-description {
+	font-size: $font-body-small;
+}
+
+.importer__upload-content {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	right: 0;
+	text-align: center;
+	transform: translateY(-50%);
+
+	&.importer-upload-success {
+		color: var(--color-success);
+	}
+
+	&.importer-upload-failure {
+		color: var(--color-error);
+	}
+
+	.importer-upload-warning {
+		color: var(--studio-gray-90);
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+}
+
+.importer__upload-progress {
+	&.progress-bar {
+		width: 80%;
+
+		&.is-pulsing {
+			.progress-bar__progress {
+				background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-light) 28%, var(--color-accent-light) 72%, var(--color-accent) 72%);
+			}
+		}
+	}
+
+	.progress-bar__progress {
+		background-color: var(--color-accent);
+	}
+
+	&.is-complete .progress-bar__progress {
+		background-color: var(--color-success);
+	}
+}

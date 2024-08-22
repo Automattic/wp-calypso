@@ -165,7 +165,7 @@ const GitHubLoginButton = ( {
 				customButton
 			) : (
 				<button
-					className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
+					className={ clsx( 'social-buttons__button button github', { disabled: isDisabled } ) }
 					{ ...eventHandlers }
 				>
 					<GitHubIcon isDisabled={ isDisabled } />

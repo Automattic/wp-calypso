@@ -118,6 +118,7 @@ export interface Site {
 	site_color?: string;
 	enabled_plugin_slugs?: Array< string >;
 	a4a_site_id?: number;
+	a4a_is_dev_site?: boolean;
 }
 export interface SiteNode {
 	value: Site;
@@ -177,6 +178,7 @@ export interface SiteData {
 	plugin: PluginNode;
 	monitor: MonitorNode;
 	error: ErrorNode;
+	isDevSite?: boolean;
 	isFavorite?: boolean;
 	isSelected?: boolean;
 	onSelect?: () => void;
@@ -223,7 +225,8 @@ export type AllowedActionTypes =
 	| 'set_up_site'
 	| 'change_domain'
 	| 'hosting_configuration'
-	| 'remove_site';
+	| 'remove_site'
+	| 'prepare_for_launch';
 
 export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };
@@ -237,7 +240,11 @@ export interface DashboardOverviewContextInterface {
 	path: string;
 	search: string;
 	currentPage: number;
-	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
+	filter: {
+		issueTypes: Array< AgencyDashboardFilterOption >;
+		showOnlyFavorites: boolean;
+		showOnlyDevelopmentSites: boolean;
+	};
 	sort: DashboardSortInterface;
 	showSitesDashboardV2: boolean;
 }
@@ -283,6 +290,7 @@ export interface AgencyDashboardFilterMap {
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption >;
 	showOnlyFavorites: boolean;
+	showOnlyDevelopmentSites: boolean;
 	isNotMultisite?: boolean;
 };
 

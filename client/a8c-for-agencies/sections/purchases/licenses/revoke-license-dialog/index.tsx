@@ -1,6 +1,6 @@
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/lib/constants';
 import { LicenseRole } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { useDispatch } from 'calypso/state';
@@ -9,6 +9,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import useRefetchLicenses from '../hooks/use-refetch-licenses';
 import LicensesOverviewContext from '../licenses-overview/context';
 import useRevokeLicenseMutation from './hooks/use-revoke-license-mutation';
+import { SecondaryConfirmationDialog } from './secondary-confirmation-dialog';
 
 import './style.scss';
 
@@ -38,6 +39,8 @@ export default function RevokeLicenseDialog( {
 
 	const { mutate, isPending, status, error } = useRevokeLicenseMutation();
 
+	const [ showPressableConfirmationDialog, setShowPressableConfirmationDialog ] = useState( false );
+
 	useEffect( () => {
 		if ( status === 'success' ) {
 			close();
@@ -54,24 +57,32 @@ export default function RevokeLicenseDialog( {
 		}
 	}, [ onClose, isPending ] );
 
-	const revoke = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_license_list_revoke_dialog_revoke', {
-				license_role: licenseRole,
-			} )
-		);
-		mutate( { licenseKey } );
-	}, [ dispatch, licenseKey, licenseRole, mutate ] );
+	const revoke = useCallback(
+		( force?: boolean ) => {
+			if ( ! force && licenseKey.startsWith( 'pressable-wp' ) ) {
+				setShowPressableConfirmationDialog( true );
+				return;
+			}
+
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_license_list_revoke_dialog_revoke', {
+					license_role: licenseRole,
+				} )
+			);
+			mutate( { licenseKey } );
+		},
+		[ dispatch, licenseKey, licenseRole, mutate ]
+	);
 
 	const isParentLicense = licenseRole === LicenseRole.Parent;
 	const isAssignedChildLicense = licenseRole === LicenseRole.Child && siteUrl;
 
 	const buttons = [
-		<Button disabled={ false } onClick={ close }>
+		<Button disabled={ false } onClick={ close } key="cancel-button">
 			{ translate( 'Go back' ) }
 		</Button>,
 
-		<Button primary scary busy={ isPending } onClick={ revoke }>
+		<Button primary scary busy={ isPending } onClick={ () => revoke() } key="revoke-button">
 			{ isParentLicense ? translate( 'Revoke bundle' ) : translate( 'Revoke License' ) }
 		</Button>,
 	];
@@ -183,6 +194,20 @@ export default function RevokeLicenseDialog( {
 			</>
 		);
 	};
+
+	if ( showPressableConfirmationDialog ) {
+		return (
+			<SecondaryConfirmationDialog
+				title={ translate( 'Are you sure you want to revoke your Pressable plan?' ) }
+				description={ translate(
+					'If you continue to revoke, you will lose access to all of your Pressable sites. Are you sure you want to proceed?'
+				) }
+				onConfirm={ () => revoke( true ) }
+				onCancel={ () => setShowPressableConfirmationDialog( false ) }
+				isPending={ isPending }
+			/>
+		);
+	}
 
 	return (
 		<Dialog

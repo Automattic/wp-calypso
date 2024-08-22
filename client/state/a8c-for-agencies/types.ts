@@ -70,6 +70,7 @@ export interface AgencyStore {
 	activeAgency: Agency | null;
 	agencies: Agency[] | [];
 	error: APIError | null;
+	isAgencyClientUser: boolean;
 }
 
 export type AgencyThunkAction< A extends Action = AnyAction, R = unknown > = ThunkAction<

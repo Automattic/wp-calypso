@@ -1,9 +1,19 @@
+import config from '@automattic/calypso-config';
+import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { SocialAuthenticationForm } from 'calypso/blocks/authentication';
+import SocialToS from 'calypso/blocks/authentication/social/social-tos.jsx';
+import {
+	GoogleSocialButton,
+	AppleLoginButton,
+	GithubSocialButton,
+	UsernameOrEmailButton,
+} from 'calypso/components/social-buttons';
+import { preventWidows } from 'calypso/lib/formatting';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWpccFlow } from 'calypso/signup/is-flow';
@@ -18,6 +28,7 @@ class SocialSignupForm extends Component {
 	static propTypes = {
 		compact: PropTypes.bool,
 		handleResponse: PropTypes.func.isRequired,
+		setCurrentStep: PropTypes.func,
 		translate: PropTypes.func.isRequired,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
@@ -142,22 +153,75 @@ class SocialSignupForm extends Component {
 	};
 
 	render() {
+		const {
+			compact,
+			translate,
+			socialService,
+			socialServiceResponse,
+			disableTosText,
+			isSocialFirst,
+			flowName,
+			isWoo,
+			setCurrentStep,
+		} = this.props;
+
+		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
+
 		return (
-			<SocialAuthenticationForm
-				compact={ this.props.compact }
-				handleGoogleResponse={ this.handleGoogleResponse }
-				handleGitHubResponse={ this.handleGitHubResponse }
-				handleAppleResponse={ this.handleAppleResponse }
-				getRedirectUri={ this.getRedirectUri }
-				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-				socialService={ this.props.socialService }
-				socialServiceResponse={ this.props.socialServiceResponse }
-				disableTosText={ this.props.disableTosText }
-				flowName={ this.props.flowName }
-				isSocialFirst={ this.props.isSocialFirst }
+			<Card
+				className={ clsx( 'auth-form__social', 'is-signup', {
+					'is-social-first': isSocialFirst,
+				} ) }
 			>
-				{ this.props.children }
-			</SocialAuthenticationForm>
+				{ ! compact && (
+					<p className="auth-form__social-text">
+						{ preventWidows( translate( 'Or create an account using:' ) ) }
+					</p>
+				) }
+
+				<div className="auth-form__social-buttons">
+					<div className="auth-form__social-buttons-container">
+						<GoogleSocialButton
+							clientId={ config( 'google_oauth_client_id' ) }
+							responseHandler={ this.handleGoogleResponse }
+							uxMode={ uxMode }
+							redirectUri={ this.getRedirectUri( 'google' ) }
+							onClick={ () => {
+								this.trackLoginAndRememberRedirect( 'google' );
+							} }
+							socialServiceResponse={ socialService === 'google' ? socialServiceResponse : null }
+							startingPoint="signup"
+						/>
+
+						<AppleLoginButton
+							clientId={ config( 'apple_oauth_client_id' ) }
+							responseHandler={ this.handleAppleResponse }
+							uxMode={ uxMode }
+							redirectUri={ this.getRedirectUri( 'apple' ) }
+							onClick={ () => {
+								this.trackLoginAndRememberRedirect( 'apple' );
+							} }
+							socialServiceResponse={ socialService === 'apple' ? socialServiceResponse : null }
+							originalUrlPath={ window?.location?.pathname }
+							queryString={ isWpccFlow( flowName ) ? window?.location?.search?.slice( 1 ) : '' }
+						/>
+
+						<GithubSocialButton
+							socialServiceResponse={ socialService === 'github' ? socialServiceResponse : null }
+							redirectUri={ this.getRedirectUri( 'github' ) }
+							responseHandler={ this.handleGitHubResponse }
+							onClick={ () => {
+								this.trackLoginAndRememberRedirect( 'github' );
+							} }
+						/>
+						{ isSocialFirst && (
+							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
+						) }
+					</div>
+					{ ! isWoo && ! disableTosText && <SocialToS /> }
+				</div>
+				{ isWoo && ! disableTosText && <SocialToS /> }
+			</Card>
 		);
 	}
 }

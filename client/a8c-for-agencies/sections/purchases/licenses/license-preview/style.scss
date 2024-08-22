@@ -38,7 +38,22 @@
 }
 
 .license-preview__product-pressable-link {
-	text-decoration: underline;
+
+	&,
+	&:visited {
+		@include a4a-font-body-md($font-weight: 500);
+		display: flex;
+		flex-direction: row;
+		gap: 4px;
+		align-items: center;
+		text-decoration: underline;
+		color: var(--color-text);
+	}
+
+	.gridicon {
+		fill: var(--color-text);
+
+	}
 }
 
 .license-preview__domain {

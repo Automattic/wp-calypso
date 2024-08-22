@@ -13,7 +13,7 @@ import {
 	external,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -27,7 +27,7 @@ import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
+import useWPCOMOwnedSites from 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
@@ -63,7 +63,7 @@ function WpcomOverview() {
 		toggleCart,
 	} = useShoppingCart();
 
-	const { data: licenseCounts, isSuccess: isLicenseCountsReady } = useFetchLicenseCounts();
+	const { count: ownedPlans, isReady: isLicenseCountsReady } = useWPCOMOwnedSites();
 
 	const options = wpcomBulkOptions( [] );
 
@@ -76,13 +76,6 @@ function WpcomOverview() {
 	const { wpcomPlans } = useProductAndPlans( {} );
 
 	const creatorPlan = getWPCOMCreatorPlan( wpcomPlans );
-
-	const ownedPlans = useMemo( () => {
-		if ( isLicenseCountsReady && creatorPlan ) {
-			const productStats = licenseCounts?.products?.[ creatorPlan.slug ];
-			return productStats?.not_revoked || 0;
-		}
-	}, [ creatorPlan, isLicenseCountsReady, licenseCounts?.products ] );
 
 	// For referral mode we only display 1 option.
 	const displayQuantity = referralMode ? 1 : ( selectedTier.value as number ) - ownedPlans;

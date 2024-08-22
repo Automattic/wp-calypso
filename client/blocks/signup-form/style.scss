@@ -1,6 +1,7 @@
 @import "calypso/components/text-control/style.scss";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/onboarding/styles/mixins";
 
 .signup-form .signup-form__input.form-text-input {
 	margin-bottom: 20px;
@@ -267,4 +268,254 @@ body.is-section-accept-invite {
 		}
 	}
 
+}
+
+.card.auth-form__social.is-signup {
+	margin-bottom: 0;
+
+	.auth-form__social-buttons-container {
+		gap: 10px;
+		display: flex;
+		flex-direction: column;
+	}
+
+	/**
+	* Social First Signups
+	*/
+	&.is-social-first {
+		box-shadow: none;
+		padding: 0 0 0 1px;
+
+		.auth-form__social-buttons {
+			display: flex;
+			flex-direction: column;
+
+			.auth-form__social-buttons-container {
+				gap: 16px;
+				display: flex;
+				flex-direction: column;
+				width: 100%;
+
+				.social-buttons__button {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					align-self: stretch;
+					background: var(--black-white-white, #fff);
+					border: 1px solid #ccc;
+					border-radius: 4px;
+					box-shadow: none;
+					height: 40px;
+					margin-bottom: 0;
+					padding: 4px 16px;
+
+					& > svg {
+						border: 0;
+						border-radius: 0;
+						margin-right: auto;
+					}
+
+					span {
+						font-feature-settings: "clig" off, "liga" off;
+						color: var(--studio-gray-80, #2c3338);
+						font-family: "SF Pro Text", sans-serif;
+						font-size: 0.875rem;
+						font-style: normal;
+						font-weight: 500;
+						letter-spacing: 0.32px;
+						line-height: normal;
+						margin-left: -20px;
+						margin-right: auto;
+						max-width: 240px;
+						text-align: center;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	* P2 Signup
+	*/
+	@at-root .is-p2-login & .auth-form__social-buttons-container .social-buttons__button {
+		align-items: center;
+		background-color: var(--p2-color-button);
+		border: none;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 50px;
+		color: var(--p2-color-text);
+		display: flex;
+		font-family: var(--p2-font-inter);
+		font-size: var(--p2-font-size-form-xs);
+		height: auto;
+		justify-content: center;
+		letter-spacing: -0.01em;
+		line-height: 1.5;
+		padding: 1em 2em;
+		transition: 0.2s ease-in-out;
+		width: 100%;
+
+		> svg {
+			margin-right: 0;
+		}
+
+		span {
+			margin-left: 9px;
+			margin-right: 0;
+			font-family: inherit;
+			font-size: inherit;
+			font-style: inherit;
+			font-weight: inherit;
+			letter-spacing: -0.01em;
+			line-height: 1.5;
+		}
+	}
+
+
+	/**
+	* Jetpack Signup
+	*/
+	@at-root .is-jetpack-login & {
+		padding: 16px;
+
+		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+			border-radius: 2px;
+
+			> svg {
+				margin-right: 0;
+			}
+
+			span {
+				font-weight: 400;
+				font-family: inherit;
+				letter-spacing: normal;
+				line-height: 22px;
+				margin-left: 9px;
+				margin-right: 0;
+			}
+		}
+
+		@include break-mobile {
+			padding: 24px;
+		}
+	}
+
+	/**
+	* Crowdsignal Signup
+	*/
+	@at-root .crowdsignal & {
+		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+			display: none;
+
+			&.google {
+				display: block;
+				background-color: #fff;
+				margin-bottom: 20px;
+				box-shadow: none;
+				border: solid var(--color-neutral-10);
+				border-width: 1px 1px 2px;
+				border-radius: 2px;
+				box-sizing: border-box;
+				height: 45px;
+				padding: 13px 40px 12px;
+
+				span {
+					margin-left: 15px;
+					font-family: inherit;
+					font-style: inherit;
+					line-height: normal;
+					letter-spacing: normal;
+					font-weight: 600;
+					font-size: 0.875rem;
+				}
+
+				@include break-medium {
+					margin-bottom: 40px;
+				}
+			}
+		}
+	}
+
+	/**
+	* Jetpack Cloud
+	*/
+	@at-root .jetpack-cloud & {
+		max-width: 375px;
+		width: 100%;
+		padding: 16px;
+		margin-bottom: 0;
+
+		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+			> svg {
+				margin-right: 0;
+			}
+
+			span {
+				font-weight: 400;
+				font-family: inherit;
+				letter-spacing: normal;
+				line-height: 22px;
+				margin-left: 9px;
+				margin-right: 0;
+			}
+		}
+
+		@include break-mobile {
+			padding: 24px;
+		}
+	}
+
+	/**
+	* WooCommerce Signup
+	*/
+	@at-root .is-woo-passwordless & {
+		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+			height: 48px;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 8px;
+
+			> svg {
+				margin-right: auto;
+			}
+
+			span {
+				color: var(--studio-gray-100);
+				font-family: Inter, -apple-system, system-ui, sans-serif;
+				font-size: 1rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 24px;
+				letter-spacing: 0.32px;
+				margin-left: -20px;
+				margin-right: auto;
+			}
+		}
+	}
+
+	/**
+	* Videopress Signup
+	*/
+	@at-root .is-videopress-account & {
+		.auth-form__social-buttons-container {
+			gap: 0;
+		}
+
+		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+			margin: 0 auto 15px;
+			padding-bottom: 0;
+			padding-left: 0;
+			text-align: start;
+
+			span {
+				color: var(--videopress-color-text);
+				margin-left: 8px;
+				letter-spacing: normal;
+				line-height: 22px;
+			}
+		}
+	}
+}
+
+.is-woo-passwordless .signup-form .auth-form__separator {
+	margin: 32px 0;
 }

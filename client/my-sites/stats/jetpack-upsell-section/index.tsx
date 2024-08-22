@@ -10,8 +10,11 @@ import {
 import { JetpackUpsellCard } from '@automattic/components';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { hasBusinessPlan, hasCompletePlan, hasSecurityPlan } from '../hooks/use-stats-purchases';
 import usePurchasedProducts from './use-purchased-products';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -23,17 +26,46 @@ const QUERY_VALUES = {
 	checkoutBackUrl: window.location.href,
 };
 
+function shouldHideUpsellSection( purchases: Purchase[] ) {
+	if ( purchases.length === 0 ) {
+		return false;
+	}
+
+	const hasBusiness = hasBusinessPlan( purchases );
+	const hasComplete = hasCompletePlan( purchases );
+
+	return hasBusiness || hasComplete;
+}
+
+function bundledProductsFromPurchases( purchases: Purchase[] ) {
+	if ( hasSecurityPlan( purchases ) ) {
+		return [ 'backup', 'security' ];
+	}
+
+	return [];
+}
+
 export default function JetpackUpsellSection() {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	// NOTE: This will only work within Odyssey Stats.
+	// Doesn't recogize Commercial plan bundles.
 	const { purchasedProducts } = usePurchasedProducts();
+
+	// Check for bundled products.
+	// We don't want to show the upsell section if we find a Business or Complete plan.
+	const siteId = useSelector( getSelectedSiteId );
+	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const shouldHideUpsells = shouldHideUpsellSection( sitePurchases );
 
 	// Exit early if we don't have and can't get the site purchase data.
 	// Also exit early if we're not in the Odyssey Stats environment.
-	if ( ! isOdysseyStats ) {
+	if ( ! isOdysseyStats || shouldHideUpsells ) {
 		return null;
 	}
+
+	const bundledProducts = bundledProductsFromPurchases( sitePurchases );
+	const finalProducts = [ ...purchasedProducts, ...bundledProducts ];
 
 	// Build checkout URL prefixed with WordPress.com.
 	// TODO: Change URL to point at plugin installation within wp-admin.
@@ -62,7 +94,7 @@ export default function JetpackUpsellSection() {
 	return (
 		<div className="jetpack-upsell-section">
 			<JetpackUpsellCard
-				purchasedProducts={ purchasedProducts }
+				purchasedProducts={ finalProducts }
 				siteSlug={ siteSlug }
 				upgradeUrls={ upgradeUrls }
 			/>

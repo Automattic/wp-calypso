@@ -103,6 +103,9 @@
 	"/wp-admin/edit.php": [
 		{ "locale": "en", "post_ids": [ 100846, 84, 176675, 191604, 82 ], "blog_id": 9619154 }
 	],
+	"/wp-admin/post.php?post=": [
+		{ "locale": "en", "post_ids": [ 100846, 84, 176675, 191604, 82 ], "blog_id": 9619154 }
+	],
 	"/wp-admin/post-new.php?post_type=page": [
 		{ "locale": "en", "post_ids": [ 86, 1698, 163330, 124077, 147594 ], "blog_id": 9619154 }
 	],

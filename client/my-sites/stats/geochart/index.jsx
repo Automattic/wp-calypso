@@ -127,9 +127,17 @@ class StatsGeochart extends Component {
 		// support switching color schemes in IE11 thus applying the
 		// defaults as raw hex values here.
 		const chartColorLight =
-			getComputedStyle( document.body ).getPropertyValue( '--color-accent-5' ).trim() || '#ffdff3';
+			getComputedStyle(
+				document.getElementsByClassName( 'is-section-stats' )?.[ 0 ] || document.body
+			)
+				.getPropertyValue( '--geo-chart-color-light' )
+				.trim() || '#ffdff3';
 		const chartColorDark =
-			getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
+			getComputedStyle(
+				document.getElementsByClassName( 'is-section-stats' )?.[ 0 ] || document.body
+			)
+				.getPropertyValue( '--geo-chart-color-dark' )
+				.trim() || '#d52c82';
 
 		const options = {
 			keepAspectRatio: true,

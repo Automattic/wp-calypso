@@ -11,10 +11,10 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
 import { useDomainParams } from '../hooks/use-domain-params';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { redirect } from './internals/steps-repository/import/util';
 import {
 	AssertConditionResult,
@@ -23,6 +23,21 @@ import {
 	ProvidedDependencies,
 } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
+
+const CONNECT_DOMAIN_STEPS = [
+	{
+		slug: 'plans',
+		asyncComponent: () => import( './internals/steps-repository/plans' ),
+	},
+	{
+		slug: 'createSite',
+		asyncComponent: () => import( './internals/steps-repository/create-site' ),
+	},
+	{
+		slug: 'processing',
+		asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+	},
+];
 
 const connectDomain: Flow = {
 	name: CONNECT_DOMAIN_FLOW,
@@ -89,30 +104,25 @@ const connectDomain: Flow = {
 		}, [] );
 	},
 	useSteps() {
-		return [
-			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
-			{
-				slug: 'createSite',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
+		return CONNECT_DOMAIN_STEPS;
+	},
+	useTracksEventProps() {
+		const { domain, provider } = useDomainParams();
+
+		return {
+			[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]: {
+				domain,
+				provider,
 			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
-		];
+		};
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { domain, provider } = useDomainParams();
+		const { domain } = useDomainParams();
 
 		triggerGuidesForStep( flowName, _currentStepSlug );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug, undefined, {
-				provider,
-				domain,
-			} );
-
 			switch ( _currentStepSlug ) {
 				case 'plans':
 					clearSignupDestinationCookie();

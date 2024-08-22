@@ -1,19 +1,12 @@
 .item-preview__content .hosting__wrapper {
 	.hosting__card {
-		border-radius: 4px;
+		box-shadow: none;
 		padding: 0;
 	}
 
-	.hosting__header {
-		border-bottom: 1px solid var(--color-border-subtle);
-	}
-
 	.hosting__title {
-		padding: 16px 24px;
-		font-size: rem(16px);
-		font-weight: 600;
-		line-height: 24px;
-		text-align: left;
+		@include a4a-font-heading-lg;
+		padding: 0 0 16px;
 	}
 
 	.hosting__content {
@@ -29,7 +22,7 @@
 
 	.hosting__content-value,
 	.hosting__content-label {
-		padding: 12px 24px;
+		padding: 12px 24px 12px 0;
 	}
 
 

@@ -24,7 +24,6 @@ import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
-import { useDebounce } from 'use-debounce';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
@@ -202,13 +201,11 @@ function HelpSearchResults( {
 
 	const { contextSearch, tailoredArticles } = useContextBasedSearchMapping( currentRoute, locale );
 
-	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
-
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		debouncedQuery || contextSearch, // If there's a query, we don't context search
+		searchQuery || contextSearch, // If there's a query, we don't context search
 		locale,
 		sectionName,
-		debouncedQuery
+		searchQuery
 			? undefined // If there's a query, we don't need tailored articles
 			: tailoredArticles
 	);

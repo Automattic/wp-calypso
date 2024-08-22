@@ -67,7 +67,7 @@ export default function ToggleActivateMonitoring( {
 		setShowNotificationSettings( ( isOpen ) => ! isOpen );
 	}
 
-	const statusContentRef = useRef< HTMLSpanElement | null >( null );
+	const statusContentRef = useRef< HTMLButtonElement | null >( null );
 
 	const isChecked = status !== 'disabled';
 	const isLoading = statuses?.[ site.blog_id ] === 'loading';
@@ -195,7 +195,7 @@ export default function ToggleActivateMonitoring( {
 
 	return (
 		<>
-			<span
+			<button
 				className="toggle-activate-monitoring__toggle-button"
 				// We don't want to hide the tooltip when the user clicks on the
 				// upgrade popover since it has buttons that user can interact with.
@@ -203,13 +203,11 @@ export default function ToggleActivateMonitoring( {
 				onMouseEnter={ handleShowTooltip }
 				onMouseLeave={ handleHideTooltip }
 				ref={ statusContentRef }
-				role="button"
-				tabIndex={ 0 }
 			>
 				{ toggleContent }
 
 				{ onHoverContent() }
-			</span>
+			</button>
 
 			{ showNotificationSettings && (
 				<NotificationSettings

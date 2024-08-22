@@ -75,6 +75,7 @@
 .a4a-migration-offer-v2__description {
 	@include a4a-font-body-md;
 	margin: 0;
+	max-width: 800px;
 
 	a {
 		color: var(--color-text);

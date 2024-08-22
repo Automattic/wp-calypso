@@ -40,12 +40,16 @@ class AppleLoginButton extends Component {
 
 	appleClient = null;
 
+	getUxMode() {
+		return config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : this.props.uxMode;
+	}
+
 	componentDidMount() {
 		if ( ! config.isEnabled( 'sign-in-with-apple' ) ) {
 			return;
 		}
 
-		if ( this.props.uxMode === 'redirect' ) {
+		if ( this.getUxMode() === 'redirect' ) {
 			this.props.socialServiceResponse &&
 				this.handleSocialResponseFromRedirect( this.props.socialServiceResponse );
 			this.loadAppleClient();
@@ -109,12 +113,12 @@ class AppleLoginButton extends Component {
 			this.props.onClick( event );
 		}
 
-		if ( this.props.uxMode === 'popup' ) {
+		if ( this.getUxMode() === 'popup' ) {
 			requestExternalAccess( connectUrlPopupFLow, this.props.responseHandler );
 			return;
 		}
 
-		if ( this.props.uxMode === 'redirect' ) {
+		if ( this.getUxMode() === 'redirect' ) {
 			this.loadAppleClient().then( ( AppleID ) => AppleID.auth.signIn() );
 			return;
 		}
@@ -143,7 +147,7 @@ class AppleLoginButton extends Component {
 					customButton
 				) : (
 					<button
-						className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
+						className={ clsx( 'social-buttons__button button apple', { disabled: isDisabled } ) }
 						onClick={ this.handleClick }
 					>
 						<AppleIcon

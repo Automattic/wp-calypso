@@ -36,3 +36,4 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 export { default as useSite } from './queries/use-site';
 export { default as useSiteFeatures } from './queries/use-site-features';
 export { default as useSiteMediaStorage } from './queries/use-site-media-storage';
+export { default as useSiteUser } from './queries/use-site-user-query';

@@ -31,10 +31,7 @@
 		}
 
 		.button.select-items__item-button {
-			width: 279px;
-			@include break-small {
-				width: 140px;
-			}
+			width: 140px;
 		}
 	}
 }

@@ -8,7 +8,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from './internals/steps-repository/segmentation-survey';
@@ -78,8 +77,6 @@ const entrepreneurFlow: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, '' /* intent */, flowName, currentStep );
-
 			switch ( currentStep ) {
 				case SEGMENTATION_SURVEY_SLUG: {
 					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );

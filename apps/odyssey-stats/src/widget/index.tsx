@@ -29,7 +29,7 @@ export function init() {
 	setLocale( localeSlug ).then( () =>
 		render(
 			<QueryClientProvider client={ queryClient }>
-				<div id="stats-widget-content" className="stats-widget-content">
+				<div id="stats-widget-content" className="stats-widget-content is-section-stats">
 					<MiniChart
 						siteId={ currentSiteId }
 						gmtOffset={ config( 'gmt_offset' ) }

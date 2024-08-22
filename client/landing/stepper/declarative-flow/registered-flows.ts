@@ -12,9 +12,11 @@ import {
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
 	REBLOGGING_FLOW,
+	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
+	IMPORT_FOCUSED_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
 	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	ONBOARDING_FLOW,
@@ -33,7 +35,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	newsletter: () =>
 		import( /* webpackChunkName: "newsletter-flow" */ '../declarative-flow/newsletter' ),
 
-	'import-focused': () =>
+	[ IMPORT_FOCUSED_FLOW ]: () =>
 		import( /* webpackChunkName: "import-flow" */ '../declarative-flow/import-flow' ),
 
 	videopress: () =>
@@ -150,6 +152,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import(
 			/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
 		),
+	[ MIGRATION_FLOW ]: () =>
+		import( /* webpackChunkName: "migration-flow" */ '../declarative-flow/migration' ),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(

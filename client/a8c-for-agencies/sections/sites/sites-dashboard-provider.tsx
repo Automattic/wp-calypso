@@ -14,6 +14,7 @@ import SitesDashboardContext from './sites-dashboard-context';
 
 interface Props {
 	showOnlyFavoritesInitialState?: boolean;
+	showOnlyDevelopmentInitialState?: boolean;
 	hideListingInitialState?: boolean;
 	categoryInitialState?: string;
 	siteUrlInitialState?: string;
@@ -44,6 +45,7 @@ const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
 export const SitesDashboardProvider = ( {
 	hideListingInitialState = false,
 	showOnlyFavoritesInitialState = false,
+	showOnlyDevelopmentInitialState = false,
 	categoryInitialState,
 	siteUrlInitialState,
 	siteFeatureInitialState,
@@ -59,12 +61,16 @@ export const SitesDashboardProvider = ( {
 	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( siteFeatureInitialState );
 	const [ showOnlyFavorites, setShowOnlyFavorites ] = useState( showOnlyFavoritesInitialState );
+	const [ showOnlyDevelopmentSites, setShowOnlyDevelopmentSites ] = useState(
+		showOnlyDevelopmentInitialState
+	);
 	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( false );
 	const [ selectedSites, setSelectedSites ] = useState< Site[] >( [] );
 	const [ currentLicenseInfo, setCurrentLicenseInfo ] = useState< string | null >( null );
 	const [ mostRecentConnectedSite, setMostRecentConnectedSite ] = useState< string | null >( null );
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 	const [ initialSelectedSiteUrl, setInitialSelectedSiteUrl ] = useState( siteUrlInitialState );
+	const [ recentlyCreatedSiteId, setRecentlyCreatedSiteId ] = useState< number | null >( null );
 
 	const handleSetBulkManagementActive = ( isActive: boolean ) => {
 		setIsBulkManagementActive( isActive );
@@ -97,6 +103,7 @@ export const SitesDashboardProvider = ( {
 		setInitialSelectedSiteUrl( siteUrlInitialState );
 		if ( ! siteUrlInitialState ) {
 			setShowOnlyFavorites( showOnlyFavoritesInitialState );
+			setShowOnlyDevelopmentSites( showOnlyDevelopmentInitialState );
 			setHideListing( false );
 		}
 
@@ -115,6 +122,7 @@ export const SitesDashboardProvider = ( {
 	}, [
 		setDataViewsState,
 		showOnlyFavoritesInitialState,
+		showOnlyDevelopmentInitialState,
 		searchQuery,
 		sort,
 		issueTypes,
@@ -131,6 +139,8 @@ export const SitesDashboardProvider = ( {
 		setHideListing: setHideListing,
 		showOnlyFavorites: showOnlyFavorites,
 		setShowOnlyFavorites: setShowOnlyFavorites,
+		showOnlyDevelopmentSites: showOnlyDevelopmentSites,
+		setShowOnlyDevelopmentSites: setShowOnlyDevelopmentSites,
 		path,
 		currentPage,
 		isBulkManagementActive,
@@ -148,6 +158,8 @@ export const SitesDashboardProvider = ( {
 		dataViewsState,
 		setDataViewsState,
 		featurePreview,
+		recentlyCreatedSiteId,
+		setRecentlyCreatedSiteId,
 	};
 	return (
 		<SitesDashboardContext.Provider value={ sitesDashboardContextValue }>

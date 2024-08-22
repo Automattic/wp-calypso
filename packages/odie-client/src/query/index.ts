@@ -53,13 +53,13 @@ function odieWpcomSendSupportMessage(
 }
 
 // Internal helper function to generate a uuid
-function uuid() {
+export const uuid = () => {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( c ) {
 		const r = ( Math.random() * 16 ) | 0;
 		const v = c === 'x' ? r : ( r & 0x3 ) | 0x8;
 		return v.toString( 16 );
 	} );
-}
+};
 
 /**
  * It will post a new message using the current chat_id.
@@ -105,7 +105,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 
 	return useMutation<
 		{ chat_id: string; messages: Message[] },
-		unknown,
+		{ data: { status: number; messages: Message[] } },
 		{ message: Message },
 		{ internal_message_id: string }
 	>( {
@@ -211,8 +211,8 @@ export const useOdieSendMessage = (): UseMutationResult<
 				throw new Error( 'Context is undefined' );
 			}
 
-			const { data } = response as { data: { status: number } };
-			const isRateLimitError = data.status === 429;
+			const isRateLimitError =
+				response && response.data && response.data.status === 429 ? true : false;
 
 			const { internal_message_id } = context;
 			const message = {

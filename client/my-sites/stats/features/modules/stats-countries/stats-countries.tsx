@@ -20,12 +20,16 @@ import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
+import './style.scss';
+
 const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 	period,
 	query,
 	moduleStrings,
 	className,
 	summaryUrl,
+	summary,
+	listItemClassName,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -76,8 +80,10 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 					period={ period }
 					query={ query }
 					statType={ statType }
-					showSummaryLink
+					showSummaryLink={ !! summary }
 					className={ className }
+					summary={ summary }
+					listItemClassName={ listItemClassName }
 					skipQuery
 				>
 					<Geochart query={ query } skipQuery />

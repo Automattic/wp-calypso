@@ -36,6 +36,7 @@ export class Notifications extends PureComponent {
 		locale: PropTypes.string,
 		receiveMessage: PropTypes.func,
 		wpcom: PropTypes.object.isRequired,
+		forceLocale: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -47,9 +48,9 @@ export class Notifications extends PureComponent {
 		receiveMessage: noop,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		debug( 'component will mount', this.props );
+	constructor( props ) {
+		super( props );
+
 		const { customEnhancer, customMiddleware, isShowing, isVisible, receiveMessage, wpcom } =
 			this.props;
 
@@ -87,6 +88,10 @@ export class Notifications extends PureComponent {
 		client = new RestClient();
 		client.global = globalData;
 		client.sendMessage = receiveMessage;
+
+		if ( this.props.forceLocale ) {
+			client.locale = this.props.locale;
+		}
 
 		/**
 		 * Initialize store with actions that need to occur on

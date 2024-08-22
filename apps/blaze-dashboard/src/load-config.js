@@ -25,6 +25,8 @@ productionConfig.features.is_running_in_jetpack_site =
 // Set is is_running_in_woo_site to true if the dashboard is running on the Blaze Ads plugin
 productionConfig.features.is_running_in_blaze_plugin = isBlazePlugin;
 
+productionConfig.features[ 'jetpack/magic-link-signup' ] = true;
+
 // Set is is_running_in_woo_site to true if the dashboard is running on a Woo site
 productionConfig.features.is_running_in_woo_site = isWooStore;
 

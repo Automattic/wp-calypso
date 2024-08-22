@@ -164,6 +164,7 @@ const Settings = ( {
 				subtitle={ getSslReadableStatus( domain ) }
 				key="security"
 				isDisabled={ domain.isMoveToNewSitePending }
+				expanded={ queryParams.get( 'ssl-open' ) === 'true' }
 			>
 				<DomainSecurityDetails
 					domain={ domain }

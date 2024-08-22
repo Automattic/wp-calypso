@@ -13,7 +13,8 @@ type Props = {
 	ownedPlans: number;
 	isLoading?: boolean;
 	hideOwnedPlansBadge?: boolean;
-	readOnly?: boolean;
+	hideNumberInput?: boolean;
+	quantity?: number;
 };
 
 export default function WPCOMBulkSelector( {
@@ -22,7 +23,8 @@ export default function WPCOMBulkSelector( {
 	ownedPlans,
 	isLoading,
 	hideOwnedPlansBadge,
-	readOnly,
+	hideNumberInput,
+	quantity,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -53,9 +55,11 @@ export default function WPCOMBulkSelector( {
 	const minimumQuantity = ownedPlans + 1;
 
 	useEffect( () => {
-		onSelectTier?.( calculateTier( options, minimumQuantity ) );
+		if ( ! hideNumberInput ) {
+			onSelectTier?.( calculateTier( options, minimumQuantity ) );
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ ownedPlans, options ] );
+	}, [ ownedPlans, options, hideNumberInput ] );
 
 	if ( isLoading ) {
 		return (
@@ -94,10 +98,11 @@ export default function WPCOMBulkSelector( {
 				label={ translate( 'Total sites' ) }
 				sub={ translate( 'Total discount' ) }
 				value={ selectedOption }
+				quantity={ quantity }
 				onChange={ onSelectOption }
 				options={ options }
 				minimum={ minimumQuantity }
-				readOnly={ readOnly }
+				hideNumberInput={ hideNumberInput }
 			/>
 		</div>
 	);

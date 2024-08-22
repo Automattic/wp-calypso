@@ -116,7 +116,7 @@ class PurchaseItem extends Component {
 						TLDR: Don't display more than one primary button or action in a single card. (in which the card itself if a primary action/link in this case) */ }
 						<ExternalLink
 							className="purchase-item__link"
-							href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/#how-can-i-activate-my-license-key-in-my-jetpack-installation"
+							href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
 						>
 							{ translate( 'Learn more' ) }
 						</ExternalLink>

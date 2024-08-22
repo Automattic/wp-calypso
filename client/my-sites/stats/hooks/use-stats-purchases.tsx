@@ -1,5 +1,6 @@
 import {
 	JETPACK_COMPLETE_PLANS,
+	JETPACK_SECURITY_PLANS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -25,6 +26,7 @@ import {
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 const JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04 = '2024-01-04T05:30:00+00:00';
+const JETPACK_BUSINESS_PLANS = [ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
 const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: string[] ) => {
 	if ( ! ownedPurchases?.length ) {
@@ -40,6 +42,7 @@ const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: st
 const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) => {
 	return filterPurchasesByProducts( ownedPurchases, [ searchedProduct ] ).length > 0;
 };
+
 const areProductsOwned = ( ownedPurchases: Purchase[], searchedProducts: string[] ) => {
 	return filterPurchasesByProducts( ownedPurchases, searchedProducts ).length > 0;
 };
@@ -55,14 +58,26 @@ const isCommercialPurchaseOwned = ( ownedPurchases: Purchase[] ) => {
 const supportCommercialPurchaseUse = ( ownedPurchases: Purchase[] ) => {
 	return (
 		isCommercialPurchaseOwned( ownedPurchases ) ||
-		[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY, ...JETPACK_COMPLETE_PLANS ].some(
-			( plan ) => isProductOwned( ownedPurchases, plan )
+		[ ...JETPACK_BUSINESS_PLANS, ...JETPACK_COMPLETE_PLANS ].some( ( plan ) =>
+			isProductOwned( ownedPurchases, plan )
 		)
 	);
 };
 
 const isVideoPressOwned = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_VIDEOPRESS_PRODUCTS ] );
+};
+
+export const hasBusinessPlan = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_BUSINESS_PLANS ] );
+};
+
+export const hasCompletePlan = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_COMPLETE_PLANS ] );
+};
+
+export const hasSecurityPlan = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_SECURITY_PLANS ] );
 };
 
 export const hasSupportedCommercialUse = ( state: object, siteId: number | null ) => {
@@ -98,6 +113,7 @@ const getPurchasesBySiteId = createSelector(
 	( state, siteId ) => getSitePurchases( state, siteId ),
 	getPurchases
 );
+
 export default function useStatsPurchases( siteId: number | null ) {
 	const sitePurchases = useSelector( ( state ) => getPurchasesBySiteId( state, siteId ) );
 	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );

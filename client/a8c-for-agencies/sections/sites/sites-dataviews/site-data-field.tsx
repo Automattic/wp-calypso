@@ -7,10 +7,11 @@ import { Site } from '../types';
 interface SiteDataFieldProps {
 	isLoading: boolean;
 	site: Site;
+	isDevSite?: boolean;
 	onSiteTitleClick: ( site: Site ) => void;
 }
 
-const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProps ) => {
+const SiteDataField = ( { isLoading, site, isDevSite, onSiteTitleClick }: SiteDataFieldProps ) => {
 	if ( isLoading ) {
 		return <TextPlaceholder />;
 	}
@@ -32,8 +33,13 @@ const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProp
 				<div>{ site.blogname }</div>
 				{ ! migrationInProgress && <div className="sites-dataviews__site-url">{ site.url }</div> }
 				{ migrationInProgress && (
-					<Badge className="migration-badge" type="info-blue">
+					<Badge className="status-badge" type="info-blue">
 						{ translate( 'Migration in progress' ) }
+					</Badge>
+				) }
+				{ isDevSite && (
+					<Badge className="status-badge" type="info-purple">
+						{ translate( 'Development' ) }
 					</Badge>
 				) }
 			</div>
