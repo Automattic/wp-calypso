@@ -49,10 +49,10 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	const [ validFromSite, setValidFromSite ] = useState( false );
 
 	const stepsProgress = [
-		{ message: 'Content', indicator: null },
-		{ message: 'Subscribers', indicator: null },
-		{ message: 'Paid Subscribers', indicator: null },
-		{ message: 'Summary', indicator: null },
+		{ message: 'Content', indicator: null, onClick: undefined },
+		{ message: 'Subscribers', indicator: null, onClick: undefined },
+		{ message: 'Paid Subscribers', indicator: null, onClick: undefined },
+		{ message: 'Summary', indicator: null, onClick: undefined },
 	];
 
 	let fromSite = getQueryArg( window.location.href, 'from' ) as string | string[];

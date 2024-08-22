@@ -4,24 +4,19 @@ import { FunctionComponent, ReactNode } from 'react';
 import './style.scss';
 
 export interface ClickHandler {
-	onClick: () => void;
+	onClick: () => void | undefined;
 	message: TranslateResult;
 	indicator?: ReactNode;
 	show?: 'always' | 'onComplete' | 'beforeComplete';
 }
-export interface MessageIndicator {
-	message: TranslateResult;
-	indicator: ReactNode;
-}
 
 interface Props {
 	currentStep: number;
-	steps: ( TranslateResult | MessageIndicator | ClickHandler )[];
+	steps: ( TranslateResult | ClickHandler )[];
 }
 
-const isClickHandler = (
-	item: TranslateResult | ClickHandler | MessageIndicator
-): item is ClickHandler => 'object' === typeof item && item.hasOwnProperty( 'onClick' );
+const isClickHandler = ( item: TranslateResult | ClickHandler ): item is ClickHandler =>
+	'object' === typeof item && item.hasOwnProperty( 'onClick' );
 
 const StepProgress: FunctionComponent< Props > = ( { currentStep, steps } ) => {
 	const getElementClass = ( stepNumber: number ) => {
@@ -33,10 +28,7 @@ const StepProgress: FunctionComponent< Props > = ( { currentStep, steps } ) => {
 			: 'step-progress__element-future';
 	};
 
-	const getClickHandler = (
-		step: TranslateResult | ClickHandler | MessageIndicator,
-		stepNumber: number
-	) => {
+	const getClickHandler = ( step: TranslateResult | ClickHandler, stepNumber: number ) => {
 		if ( isClickHandler( step ) ) {
 			if ( undefined === step?.show || 'always' === step.show ) {
 				return step.onClick;
@@ -62,14 +54,14 @@ const StepProgress: FunctionComponent< Props > = ( { currentStep, steps } ) => {
 							disabled={ undefined === clickHandler }
 							onClick={ clickHandler }
 						>
-							{ step.hasOwnProperty( 'indicator' ) && step.indicator ? (
+							{ isClickHandler( step ) && !! step.indicator ? (
 								step.indicator
 							) : (
 								<span>{ index + 1 }</span>
 							) }
 						</button>
 						<span className="step-progress__element-step-name">
-							{ step.hasOwnProperty( 'message' ) ? step.message : step }
+							{ isClickHandler( step ) ? step.message : step }
 						</span>
 					</div>
 				);
