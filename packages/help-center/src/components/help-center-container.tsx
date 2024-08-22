@@ -16,6 +16,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { FeatureFlagProvider } from '../contexts/FeatureFlagContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
+import HelpCenterAnimationWrapper from './help-center-animation-wrapper';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
@@ -50,36 +51,29 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	const nodeRef = useRef< HTMLDivElement >( null );
 
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
-	const [ isVisible, setIsVisible ] = useState( true );
+	const [ isVisible, setIsVisible ] = useState( false );
 	const isMobile = useMobileBreakpoint();
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
 
 	const onDismiss = useCallback( () => {
-		setIsVisible( false );
+		handleClose();
 		recordTracksEvent( `calypso_inlinehelp_close` );
-	}, [ setIsVisible ] );
+	}, [ handleClose ] );
 
-	const toggleVisible = () => {
-		if ( ! isVisible ) {
-			handleClose();
-			// after calling handleClose, reset the visibility state to default
-			setIsVisible( true );
-		}
-	};
+	useEffect( () => {
+		// Show prop can be undefined, so we default to false.
+		setIsVisible( show || false );
+	}, [ show ] );
 
 	const animationProps = {
 		style: {
-			animation: isMobile
-				? `${ isVisible ? 'fadeIn' : 'fadeOut' } .25s ease-out`
-				: `${ isVisible ? 'slideIn' : 'fadeOut' } .25s ease-out`,
 			// These are overwritten by the openingCoordinates.
 			// They are set to avoid Help Center from not loading on the page.
 			...( ! isMobile && { top: 70, left: 'calc( 100vw - 500px )' } ),
 			...openingCoordinates,
 		},
-		onAnimationEnd: toggleVisible,
 	};
 
 	const focusReturnRef = useFocusReturn();
@@ -103,32 +97,34 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		};
 	}, [ shouldCloseOnEscapeRef, onDismiss ] );
 
-	if ( ! show || hidden ) {
+	if ( hidden ) {
 		return null;
 	}
 
 	return (
-		<MemoryRouter>
-			<FeatureFlagProvider>
-				<OptionalDraggable
-					draggable={ ! isMobile && ! isMinimized }
-					nodeRef={ nodeRef }
-					handle=".help-center__container-header"
-					bounds="body"
-				>
-					<Card className={ classNames } { ...animationProps } ref={ cardMergeRefs }>
-						<HelpCenterHeader
-							isMinimized={ isMinimized }
-							onMinimize={ () => setIsMinimized( true ) }
-							onMaximize={ () => setIsMinimized( false ) }
-							onDismiss={ onDismiss }
-						/>
-						<HelpCenterContent currentRoute={ currentRoute } />
-						{ ! isMinimized && <HelpCenterFooter /> }
-					</Card>
-				</OptionalDraggable>
-			</FeatureFlagProvider>
-		</MemoryRouter>
+		<HelpCenterAnimationWrapper visible={ isVisible } duration={ 200 }>
+			<MemoryRouter>
+				<FeatureFlagProvider>
+					<OptionalDraggable
+						draggable={ ! isMobile && ! isMinimized }
+						nodeRef={ nodeRef }
+						handle=".help-center__container-header"
+						bounds="body"
+					>
+						<Card className={ classNames } { ...animationProps } ref={ cardMergeRefs }>
+							<HelpCenterHeader
+								isMinimized={ isMinimized }
+								onMinimize={ () => setIsMinimized( true ) }
+								onMaximize={ () => setIsMinimized( false ) }
+								onDismiss={ onDismiss }
+							/>
+							<HelpCenterContent currentRoute={ currentRoute } />
+							{ ! isMinimized && <HelpCenterFooter /> }
+						</Card>
+					</OptionalDraggable>
+				</FeatureFlagProvider>
+			</MemoryRouter>
+		</HelpCenterAnimationWrapper>
 	);
 };
 
