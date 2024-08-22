@@ -133,7 +133,7 @@ export type ScreenShotsTimeLine = {
 };
 
 export type PerformanceMetricsHistory = {
-	collection_period: string[];
+	collection_period: Array< string | { year: number; month: number; day: number } >;
 	metrics: {
 		ttfb?: number[];
 		fcp?: number[];
@@ -179,6 +179,7 @@ export interface PerformanceMetricsItemQueryResponse {
 	id: string;
 	title?: string;
 	description?: string;
+	type: 'warning' | 'fail';
 	displayValue?: string;
 	details?: PerformanceMetricsDetailsQueryResponse;
 }

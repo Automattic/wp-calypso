@@ -1,7 +1,6 @@
 import {
-	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
-	TERM_MONTHLY,
+	TERM_ANNUALLY,
 	findFirstSimilarPlanKey,
 	getPlan,
 	isFreePlan,
@@ -70,12 +69,12 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 		}
 
 		const currentPlanSlug = getSitePlanSlug( state, siteId );
-		let requiredTerm = TERM_MONTHLY;
+		let requiredTerm = TERM_ANNUALLY;
 		if ( currentPlanSlug && ! isFreePlan( currentPlanSlug ) ) {
-			requiredTerm = getPlan( currentPlanSlug )?.term || TERM_MONTHLY;
+			requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
 		}
 		const requiredPlanSlug =
-			findFirstSimilarPlanKey( PLAN_BUSINESS, { term: requiredTerm } ) || PLAN_BUSINESS_MONTHLY;
+			findFirstSimilarPlanKey( PLAN_BUSINESS, { term: requiredTerm } ) || PLAN_BUSINESS;
 
 		const productSlug = getPreferredBillingCycleProductSlug( products, requiredPlanSlug );
 

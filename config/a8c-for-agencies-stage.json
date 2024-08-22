@@ -38,6 +38,7 @@
 		"a4a-partner-directory": false,
 		"a4a-hosting-page-redesign": true,
 		"a4a-dev-sites": false,
+		"a4a-multi-user-support": false,
 		"hosting-overview-refinements": true
 	},
 	"enable_all_sections": false,
@@ -55,7 +56,8 @@
 		"a8c-for-agencies-settings": false,
 		"a8c-for-agencies-partner-directory": true,
 		"a8c-for-agencies-migrations": true,
-		"a8c-for-agencies-client": true
+		"a8c-for-agencies-client": true,
+		"a8c-for-agencies-team": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

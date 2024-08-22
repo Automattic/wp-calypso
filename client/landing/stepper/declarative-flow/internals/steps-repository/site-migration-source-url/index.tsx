@@ -74,6 +74,7 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 interface SourceURLProps extends StepProps {
 	headerText?: string;
 	subHeaderText?: string;
+	showBack?: boolean;
 }
 
 const SiteMigrationSourceUrl: FC< SourceURLProps > = function ( {
@@ -82,6 +83,7 @@ const SiteMigrationSourceUrl: FC< SourceURLProps > = function ( {
 	subHeaderText,
 	stepName,
 	flow,
+	showBack = false,
 } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
@@ -105,8 +107,9 @@ const SiteMigrationSourceUrl: FC< SourceURLProps > = function ( {
 				stepName={ stepName }
 				flowName={ flow }
 				className="import__onboarding-page"
-				hideBack
+				hideBack={ ! showBack }
 				hideSkip
+				goBack={ navigation?.goBack }
 				hideFormattedHeader
 				goNext={ navigation?.submit }
 				isFullLayout

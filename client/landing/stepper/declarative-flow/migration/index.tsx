@@ -8,6 +8,7 @@ import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSearchParams } from 'react-router-dom';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { stepsWithRequiredLogin } from '../../utils/steps-with-required-login';
@@ -99,13 +100,10 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 	return {
 		[ PLATFORM_IDENTIFICATION.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const platform = getFromPropsOrUrl( 'platform', props ) as string;
+				const platform = getFromPropsOrUrl( 'platform', props ) as ImporterPlatform;
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const hasSite = Boolean( siteId ) || Boolean( siteSlug );
-
-				// The importer url is returning the importer name and empty query params, so we need to remove them;
-				const importer = ( ( props?.url as string ) || '' ).split( '?' )[ 0 ];
 
 				if ( platform === 'wordpress' ) {
 					if ( hasSite ) {
@@ -116,33 +114,44 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				}
 
 				if ( hasSite ) {
-					return goToImporter( importer, siteId, siteSlug );
+					return goToImporter( {
+						siteId,
+						siteSlug,
+						platform,
+						backToStep: PLATFORM_IDENTIFICATION,
+					} );
 				}
 
-				return navigate( addQueryArgs( { importer }, SITE_CREATION_STEP.slug ) );
+				return navigate( addQueryArgs( { platform }, SITE_CREATION_STEP.slug ), {} );
 			},
 		},
 		[ SITE_CREATION_STEP.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const importer = getFromPropsOrUrl( 'importer', props );
+				const platform = getFromPropsOrUrl( 'platform', props );
 				const plan = getFromPropsOrUrl( 'plan', props );
 
-				return navigate( addQueryArgs( { importer, plan }, PROCESSING.slug ) );
+				return navigate( addQueryArgs( { platform, plan }, PROCESSING.slug ), {}, true );
 			},
 		},
 		[ PROCESSING.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				const importer = getFromPropsOrUrl( 'importer', props ) as string;
+				const platform = getFromPropsOrUrl( 'platform', props ) as ImporterPlatform;
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const plan = getFromPropsOrUrl( 'plan', props ) as string;
 
-				if ( importer ) {
-					return goToImporter( importer, siteId, siteSlug );
+				if ( platform ) {
+					return goToImporter( {
+						platform,
+						siteId,
+						siteSlug,
+						backToStep: PLATFORM_IDENTIFICATION,
+						replaceHistory: true,
+					} );
 				}
 
 				// If plan is already selected and it exists.
-				// Entry point example: /setup/migration/create-site?platform=wordpress&plan=business
+				// Entry point example: /setup/migration/create-site?plan=business
 				if ( plans[ plan ] ) {
 					return navigateToCheckout( {
 						siteId,
@@ -153,7 +162,11 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					} );
 				}
 
-				return navigate( addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ) );
+				return navigate(
+					addQueryArgs( { siteId, siteSlug }, MIGRATION_UPGRADE_PLAN.slug ),
+					{},
+					true
+				);
 			},
 		},
 		[ MIGRATION_UPGRADE_PLAN.slug ]: {
@@ -162,18 +175,28 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 
 				const plan = props?.plan as string;
-				const backToStep = {
-					step: MIGRATION_UPGRADE_PLAN.slug,
-					flow: flowPath,
-				};
 
 				if ( props?.action === MigrationUpgradePlanActions.IMPORT_CONTENT_ONLY ) {
-					return goToImporter( 'importerWordpress', siteId, siteSlug, backToStep );
+					return goToImporter( {
+						platform: 'wordpress',
+						siteId,
+						siteSlug,
+						backToStep: PLATFORM_IDENTIFICATION,
+						migrateEntireSiteStep: MIGRATION_UPGRADE_PLAN,
+						replaceHistory: true,
+					} );
 				}
 
 				if ( props?.goToCheckout ) {
 					return navigateToCheckout( { siteId, siteSlug, plan, props } );
 				}
+			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
+				const plan = getFromPropsOrUrl( 'plan', props ) as string;
+
+				return navigate( addQueryArgs( { siteId, siteSlug, plan }, PLATFORM_IDENTIFICATION.slug ) );
 			},
 		},
 		[ MIGRATION_HOW_TO_MIGRATE.slug ]: {
@@ -205,6 +228,16 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 
 				return navigate(
 					addQueryArgs( { siteId, siteSlug, from }, SITE_MIGRATION_ASSISTED_MIGRATION.slug )
+				);
+			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				const siteId = getFromPropsOrUrl( 'siteId', props );
+				const siteSlug = getFromPropsOrUrl( 'siteSlug', props );
+
+				return navigate(
+					addQueryArgs( { siteId, siteSlug }, MIGRATION_HOW_TO_MIGRATE.slug ),
+					{},
+					true
 				);
 			},
 		},

@@ -118,6 +118,7 @@ export interface Site {
 	site_color?: string;
 	enabled_plugin_slugs?: Array< string >;
 	a4a_site_id?: number;
+	a4a_is_dev_site?: boolean;
 }
 export interface SiteNode {
 	value: Site;
