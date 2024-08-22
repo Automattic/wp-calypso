@@ -6,6 +6,7 @@ import { dispatch, select, subscribe, use } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
+import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
@@ -1048,10 +1049,12 @@ function handleAppBannerShowing( calypsoPort ) {
 }
 
 function handlePatterns( calypsoPort ) {
-	addEditorListener( '[data-value="Patterns"]', () => {
+	addEditorListener( `[data-value="${ __( 'Patterns' ) }"]`, () => {
 		calypsoPort.postMessage( {
 			action: 'goToPatterns',
-			payload: { destinationUrl: '/wp-admin/site-editor.php?postType=wp_block' },
+			payload: {
+				destinationUrl: '/wp-admin/site-editor.php?postType=wp_block',
+			},
 		} );
 	} );
 }
