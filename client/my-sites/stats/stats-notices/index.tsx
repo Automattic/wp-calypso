@@ -113,7 +113,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const { views } = useSelector(
 		( state ) => getSiteStatsNormalizedData( state, siteId, 'stats', {} ) || {}
 	) as AllTimeData;
-	const hasSignificantViews = views && views >= SIGNIFICANT_VIEWS_AMOUNT;
+	const hasSignificantViews = !! ( views && views >= SIGNIFICANT_VIEWS_AMOUNT );
 
 	const noticeOptions = {
 		siteId,
