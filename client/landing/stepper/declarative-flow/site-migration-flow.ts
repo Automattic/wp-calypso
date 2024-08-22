@@ -45,10 +45,9 @@ const useMigrationFlowRevampRedirect = () => {
 		// If user is coming from 'move-lp' and has a source site, we assume it's a WordPress site because it's already validated there.
 		const shouldSkipPlatformSelection = ref && from && isHostedSiteMigrationFlow( flow );
 		if ( shouldSkipPlatformSelection ) {
-			window.location.replace(
+			return window.location.replace(
 				`/setup/migration/${ STEPS.SITE_CREATION_STEP.slug }?${ fullQueryString }&signup=1`
 			);
-			return;
 		}
 
 		window.location.replace( `/setup/migration?${ fullQueryString }&signup=1` );
