@@ -35,7 +35,6 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 
 const HelpCenterContainer: React.FC< Container > = ( {
 	handleClose,
-	hidden,
 	currentRoute,
 	openingCoordinates,
 } ) => {
@@ -77,14 +76,10 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		onTransitionEnd: ( event ) => {
 			/**
 			 * We only want to remove the Help Center if:
-			 * 1. Its set to hidden or not show
-			 * 2. The display has finsihsed transitioning
+			 * 1. isHelpCenterShown is false
+			 * 2. The display has finished transitioning
 			 */
-			if (
-				event.target === nodeRef.current &&
-				( ! show || hidden ) &&
-				event.propertyName === 'display'
-			) {
+			if ( event.target === nodeRef.current && ! show && event.propertyName === 'display' ) {
 				setRenderContainer( false );
 			}
 		},
@@ -96,7 +91,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 	const shouldCloseOnEscapeRef = useRef( false );
 
-	shouldCloseOnEscapeRef.current = !! show && ! hidden && ! isMinimized;
+	shouldCloseOnEscapeRef.current = !! show && ! isMinimized;
 
 	useEffect( () => {
 		const handleKeydown = ( e: KeyboardEvent ) => {
@@ -112,14 +107,10 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	}, [ shouldCloseOnEscapeRef, onDismiss ] );
 
 	useEffect( () => {
-		if ( ! hidden && show ) {
+		if ( show ) {
 			setRenderContainer( true );
 		}
-
-		if ( hidden ) {
-			onDismiss();
-		}
-	}, [ show, hidden, onDismiss ] );
+	}, [ show, onDismiss ] );
 
 	if ( ! renderContainer ) {
 		return null;
@@ -138,7 +129,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 						className={ classNames }
 						{ ...containerProps }
 						ref={ cardMergeRefs }
-						hidden={ ! show || hidden }
+						hidden={ ! show }
 					>
 						<HelpCenterHeader
 							isMinimized={ isMinimized }

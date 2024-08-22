@@ -72,10 +72,13 @@ const HelpCenter: React.FC< Container > = ( {
 		};
 	}, [ portalParent, handleClose ] );
 
+	if ( hidden ) {
+		return null;
+	}
+
 	return createPortal(
 		<HelpCenterContainer
 			handleClose={ handleClose }
-			hidden={ hidden }
 			currentRoute={ currentRoute }
 			openingCoordinates={ openingCoordinates }
 		/>,
