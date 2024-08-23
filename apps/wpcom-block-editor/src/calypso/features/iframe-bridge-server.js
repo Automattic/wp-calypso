@@ -752,7 +752,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 
 	// Observe children of the Popover Container
 	const popoverContainer = getPopoverFallbackContainer();
-	popoverContainer && popoverContainer.observe( popoverContainer, { childList: true } );
+	popoverContainer && popoverSlotObserver.observe( popoverContainer, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
