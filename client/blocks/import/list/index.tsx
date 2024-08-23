@@ -1,9 +1,7 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon, FormLabel, SelectDropdown } from '@automattic/components';
 import { Title, SubTitle } from '@automattic/onboarding';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import {
 	getImportersAsImporterOption,
@@ -12,12 +10,6 @@ import {
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import './style.scss';
-
-const trackEventName = 'calypso_signup_step_start';
-const trackEventParams = {
-	flow: 'importer',
-	step: 'list',
-};
 
 export interface ImporterOption {
 	value: ImporterPlatform;
@@ -37,7 +29,6 @@ interface Props {
 		platform: ImporterPlatform,
 		backToFlow?: string
 	) => string;
-	skipTracking?: boolean;
 	onNavBack?: () => void;
 }
 
@@ -48,7 +39,6 @@ export default function ListStep( props: Props ) {
 	const backToFlow = urlQueryParams.get( 'backToFlow' );
 	const title = props.title || __( 'Import content from another platform' );
 	const subTitle = props.subTitle || __( 'Select the platform where your content lives' );
-	const skipTracking = props.skipTracking;
 
 	// We need to remove the wix importer from the primary importers list.
 	const primaryListOptions: ImporterOption[] = getImportersAsImporterOption( 'primary' ).filter(
@@ -68,15 +58,6 @@ export default function ListStep( props: Props ) {
 		);
 		submit?.( { platform, url: importerUrl } );
 	};
-
-	const recordImportList = () => {
-		if ( ! skipTracking ) {
-			//FIXME: This is a temporary fix to avoid tracking the import list step. This event apparently is duplicated with the stepper event.
-			recordTracksEvent( trackEventName, trackEventParams );
-		}
-	};
-
-	useEffect( recordImportList, [] );
 
 	return (
 		<>

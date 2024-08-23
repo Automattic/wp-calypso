@@ -13,6 +13,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
+import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { getWooMyCustomThemeOptions } from 'calypso/my-sites/themes/theme-options';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -80,6 +81,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 	} = props;
 	const themesListRef = useRef( null );
 	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'theme-showcase' );
 	const updateShowSecondUpsellNudge = useCallback( () => {
 		const minColumnWidth = 320; // $theme-item-min-width: 320px;
 		const margin = 32; // $theme-item-horizontal-margin: 32px;
@@ -185,6 +187,7 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
 				upsellCardDisplayed={ props.upsellCardDisplayed }
+				isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 			/>
 		);
 	}
@@ -228,7 +231,8 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 			{ ! props.isWooCYSEligibleSite &&
 				! ( props.isSiteWooExpressOrEcomFreeTrial && props.tier === 'free' ) &&
 				tabFilter !== 'my-themes' &&
-				_themes.length > 0 && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
+				_themes.length > 0 &&
+				isSiteAssemblerEnabled && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
 			{ /* The Woo Design with AI banner will be displayed on the 2nd or last row.The behavior is controlled by CSS */ }
 			{ props.isWooCYSEligibleSite && _themes.length > 0 && (
 				<WooDesignWithAIBanner
@@ -343,7 +347,14 @@ export function ThemeBlock( props ) {
 	);
 }
 
-function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsellCardDisplayed } ) {
+function Options( {
+	isFSEActive,
+	recordTracksEvent,
+	searchTerm,
+	translate,
+	upsellCardDisplayed,
+	isSiteAssemblerEnabled,
+} ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
@@ -371,7 +382,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	}, [ upsellCardDisplayed ] );
 
 	// Design your own theme / homepage.
-	if ( isFSEActive || assemblerCtaData.shouldGoToAssemblerStep ) {
+	if ( ( isFSEActive || assemblerCtaData.shouldGoToAssemblerStep ) && isSiteAssemblerEnabled ) {
 		options.push( {
 			title: assemblerCtaData.title,
 			icon: addTemplate,
@@ -513,6 +524,7 @@ function Empty( props ) {
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
 				upsellCardDisplayed={ props.upsellCardDisplayed }
+				isSiteAssemblerEnabled={ props.isSiteAssemblerEnabled }
 			/>
 		</>
 	);
