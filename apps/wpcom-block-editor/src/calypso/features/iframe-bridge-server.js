@@ -48,6 +48,21 @@ function addCommandsInputListener( selector, cb ) {
 	} );
 }
 
+/**
+ * Returns the Popover fallback container if exists or creates a new node
+ */
+const fallbackContainerClassname = 'components-popover__fallback-container';
+const getPopoverFallbackContainer = () => {
+	let container = document.body.querySelector( '.' + fallbackContainerClassname );
+	if ( ! container ) {
+		container = document.createElement( 'div' );
+		container.className = fallbackContainerClassname;
+		document.body.append( container );
+	}
+
+	return container;
+};
+
 // Calls a callback if the event occured on an element or parent thereof matching
 // the callback's selector. This is needed because elements are added and removed
 // from the DOM dynamically after the listeners are created. We need to handle
@@ -700,7 +715,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 					continue;
 				}
 
-				// The popoverSlotObserverObserver will observe addedNodes containing components-popover__fallback-container node elemnts which contain the components-popover
 				// The popoverSlotObserver will observe addedNodes containing components-popover node elements
 				const popoverSlot = node?.classList?.contains( 'components-popover' )
 					? node
@@ -735,21 +749,10 @@ async function openLinksInParentFrame( calypsoPort ) {
 			}
 		}
 	} );
-	const popoverSlotObserverObserver = new window.MutationObserver( ( mutations ) => {
-		for ( const record of mutations ) {
-			for ( const node of record.addedNodes ) {
-				if ( ! node ) {
-					continue;
-				}
-				if ( node?.classList?.contains( 'components-popover__fallback-container' ) ) {
-					popoverSlotObserver.observe( node, { childList: true } );
-				}
-			}
-		}
-	} );
-	const htmlBody = document.querySelector( 'body' );
-	htmlBody && popoverSlotObserver.observe( htmlBody, { childList: true } );
-	htmlBody && popoverSlotObserverObserver.observe( htmlBody, { childList: true } );
+
+	// Observe children of the Popover Container
+	const popoverContainer = getPopoverFallbackContainer();
+	popoverContainer && popoverContainer.observe( popoverContainer, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
