@@ -1,21 +1,8 @@
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { recordMigrationInstructionsLinkClick } from '../tracking';
-import { getMigrateGuruPageURL } from './utils';
 import type { FC } from 'react';
 
-interface Props {
-	fromUrl: string;
-	onNextClick: () => void;
-}
-
-export const StepGetYourSiteReady: FC< Props > = ( { fromUrl, onNextClick } ) => {
+export const StepGetYourSiteReady: FC< Props > = () => {
 	const translate = useTranslate();
-
-	const onGetStartedClick = () => {
-		window.open( getMigrateGuruPageURL( fromUrl ), '_blank' );
-		recordMigrationInstructionsLinkClick( 'go-to-plugin-page' );
-	};
 
 	return (
 		<>
@@ -38,22 +25,6 @@ export const StepGetYourSiteReady: FC< Props > = ( { fromUrl, onNextClick } ) =>
 					},
 				} ) }
 			</p>
-			<div className="checklist-item__checklist-expanded-ctas">
-				<Button
-					className="checklist-item__checklist-expanded-cta"
-					variant="primary"
-					onClick={ onGetStartedClick }
-				>
-					{ translate( 'Get started' ) }
-				</Button>
-				<Button
-					className="checklist-item__checklist-expanded-cta"
-					variant="secondary"
-					onClick={ onNextClick }
-				>
-					{ translate( 'Next' ) }
-				</Button>
-			</div>
 		</>
 	);
 };
