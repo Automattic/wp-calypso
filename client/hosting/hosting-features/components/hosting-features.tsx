@@ -3,6 +3,7 @@ import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-produc
 import page from '@automattic/calypso-router';
 import { Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, Spinner } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
@@ -10,6 +11,7 @@ import { AnyAction } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { queryKeyForAllSitesWithThemeSlug } from 'calypso/data/sites/use-site-excerpts-query';
 import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -40,6 +42,7 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 
 const HostingFeatures = () => {
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const { searchParams } = new URL( document.location.toString() );
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
@@ -91,8 +94,11 @@ const HostingFeatures = () => {
 
 		if ( siteTransferData?.status === transferStates.COMPLETED ) {
 			dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
+			queryClient.invalidateQueries( {
+				queryKey: queryKeyForAllSitesWithThemeSlug,
+			} );
 		}
-	}, [ siteTransferData?.status, siteId, dispatch ] );
+	}, [ siteTransferData?.status, siteId, dispatch, queryClient ] );
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
 	const promoCards = [
