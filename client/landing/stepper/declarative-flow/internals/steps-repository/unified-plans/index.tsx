@@ -49,12 +49,18 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const customerType = useQuery().get( 'customerType' );
 	const dispatch = useDispatch();
 
+	/**
+	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
+	 * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
+	 */
+	let mostRecentState: ProvidedDependencies;
+
 	return (
 		<LocalizedPlanStep
 			selectedSite={ site }
-			saveSignupStep={ ( state: ProvidedDependencies ) =>
-				setStepState( { ...stepState, ...state } )
-			}
+			saveSignupStep={ ( state: ProvidedDependencies ) => {
+				setStepState( ( mostRecentState = { ...stepState, ...state } ) );
+			} }
 			submitSignupStep={ ( state: ProvidedDependencies ) => {
 				/* The plans step removes paid domains domains when the user picks a free plan
 				   after picking a paid domain */
@@ -62,10 +68,13 @@ export default function PlansStepAdaptor( props: StepProps ) {
 					setDomainCartItem( undefined );
 					setDomainCartItems( undefined );
 				} else {
-					props.navigation.submit?.( { ...stepState, ...state } );
+					setStepState( { ...stepState, ...state } );
+					props.navigation.submit?.(
+						( mostRecentState = { ...stepState, ...state, ...mostRecentState } )
+					);
 				}
 			} }
-			goToNextStep={ () => props.navigation.submit?.( stepState ) }
+			goToNextStep={ () => props.navigation.submit?.( { ...stepState, ...mostRecentState } ) }
 			step={ stepState }
 			customerType={ customerType }
 			errorNotice={ ( message: string ) => dispatch( errorNotice( message ) ) }

@@ -1,5 +1,5 @@
 import { OnboardSelect } from '@automattic/data-stores';
-import { addPlanToCart, addProductsToCart, ONBOARDING_FLOW } from '@automattic/onboarding';
+import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -42,11 +42,10 @@ const onboarding: Flow = {
 	},
 
 	useStepNavigation( currentStepSlug, navigate ) {
-		const flowName = this.name;
+		const { setDomain, setDomainCartItem, setDomainCartItems, setPlanCartItem } =
+			useDispatch( ONBOARD_STORE );
 
-		const { setDomain, setDomainCartItem, setDomainCartItems } = useDispatch( ONBOARD_STORE );
-
-		const { domainCartItem, planCartItem } = useSelect(
+		const { planCartItem } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
 				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
@@ -61,8 +60,11 @@ const onboarding: Flow = {
 					setDomainCartItem( providedDependencies.domainItem );
 					setDomainCartItems( providedDependencies.domainCart );
 					return navigate( 'plans' );
-				case 'plans':
+				case 'plans': {
+					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
+					setPlanCartItem( cartItems?.[ 0 ] ?? null );
 					return navigate( 'create-site', undefined, true );
+				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'processing': {
@@ -72,14 +74,6 @@ const onboarding: Flow = {
 					persistSignupDestination( destination );
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
-
-						if ( planCartItem && siteSlug && flowName ) {
-							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
-						}
-
-						if ( domainCartItem && siteSlug && flowName ) {
-							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
-						}
 
 						// replace the location to delete processing step from history.
 						window.location.replace(
