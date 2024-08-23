@@ -7,8 +7,8 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import * as useQueryProductsList from 'calypso/components/data/query-products-list';
-import EmailSignupTitanCard from '../index.jsx';
+import * as queryProductsList from 'calypso/components/data/query-products-list';
+import EmailStep from '../index';
 
 const initialState = {
 	flowName: 'test:flow',
@@ -24,34 +24,23 @@ const initialState = {
 	},
 };
 
-const productListQuerySpy = jest.spyOn( useQueryProductsList, 'default' );
+const productListQuerySpy = jest.spyOn( queryProductsList, 'default' );
 
-describe( 'Email Step Titan Signup Card', () => {
+describe( 'Email Step', () => {
 	test( 'should request a complete product list', () => {
-		const newInitialState = {
-			...initialState,
-			sites: {
-				...initialState.sites,
-				items: {
-					1: {
-						...initialState.sites.items[ 1 ],
-					},
-				},
-			},
-		};
 		const middlewares = [ thunk ];
 		const mockStore = configureStore( middlewares );
-		const store = mockStore( newInitialState );
+		const store = mockStore( initialState );
 
 		render(
 			<Provider store={ store }>
-				<EmailSignupTitanCard { ...newInitialState } />
+				<EmailStep flowName="test:flow" stepName="test:step2" />
 			</Provider>
 		);
 
-		expect( productListQuerySpy ).toHaveBeenCalled();
 		// An empty first argument means we're fetching all products, so we'll
-		// have access to email product data.
-		expect( productListQuerySpy.mock.calls[ 0 ][ 0 ] ).toStrictEqual( {} );
+		// have access to email product data. The second empty prop represents
+		// the React children (we have none).
+		expect( productListQuerySpy ).toHaveBeenCalledWith( {}, {} );
 	} );
 } );
