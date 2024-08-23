@@ -166,6 +166,7 @@ GEM
     plist (3.7.1)
     public_suffix (6.0.1)
     rake (13.2.1)
+    rb-readline (0.5.5)
     representable (3.2.0)
       declarative (< 0.1.0)
       trailblazer-option (>= 0.1.1, < 0.2.0)
@@ -215,6 +216,7 @@ PLATFORMS
 
 DEPENDENCIES
   fastlane (~> 2.221)
+  rb-readline
 
 BUNDLED WITH
    2.4.21
