@@ -212,8 +212,7 @@ jobs:
             # export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk'
             # export MACOSX_DEPLOYMENT_TARGET=10.13
 
-            # CSC_FOR_PULL_REQUEST=1 ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
-            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
+            CSC_FOR_PULL_REQUEST=1 ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
       - run:
           name: e2e Tests
           command: |
