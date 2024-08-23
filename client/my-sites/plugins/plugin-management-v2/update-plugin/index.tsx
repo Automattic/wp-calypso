@@ -20,32 +20,29 @@ interface Props {
 	selectedSite?: SiteDetails;
 	className?: string;
 	updatePlugin?: ( plugin: PluginComponentProps ) => void;
-	siteCount?: number;
 }
 
-export default function UpdatePlugin( {
-	plugin,
-	selectedSite,
-	className,
-	updatePlugin,
-	siteCount,
-}: Props ) {
+export default function UpdatePlugin( { plugin, selectedSite, className, updatePlugin }: Props ) {
 	const translate = useTranslate();
-	const state = useSelector( ( state ) => state );
+
 	const [ displayConfirmModal, setDisplayConfirmModal ] = useState( false );
 
-	const { currentVersionsRange, updatedVersions, hasUpdate } = usePluginVersionInfo(
+	const { currentVersionsRange, updatedVersions, hasUpdate, siteCount } = usePluginVersionInfo(
 		plugin,
 		selectedSite?.ID
 	);
 
-	const allowedActions = getAllowedPluginActions( plugin, state, selectedSite );
+	const allowedActions = useSelector( ( state ) => {
+		return getAllowedPluginActions( plugin, state, selectedSite );
+	} );
 
 	let content;
 
-	const allStatuses = getPluginActionStatuses( state );
+	const allStatuses = useSelector( ( state ) => {
+		return getPluginActionStatuses( state );
+	} );
 
-	const updateStatuses = allStatuses.filter(
+	const updateStatuses = allStatuses?.filter(
 		( status ) =>
 			status.pluginId === plugin.id &&
 			status.action === UPDATE_PLUGIN &&
