@@ -61,10 +61,8 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 	const animationProps = {
 		style: {
-			animation: isMobile ? 'fadeIn .25s ease-out' : 'slideIn .25s ease-out',
 			// These are overwritten by the openingCoordinates.
 			// They are set to avoid Help Center from not loading on the page.
-			...( ! isMobile && { top: 70, left: 'calc( 100vw - 500px )' } ),
 			...openingCoordinates,
 		},
 	};
