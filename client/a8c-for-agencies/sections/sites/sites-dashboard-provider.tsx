@@ -9,7 +9,7 @@ import {
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD, filtersMap } from './constants';
+import { filtersMap } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
 import type { Filter } from '@wordpress/dataviews';
 
@@ -88,24 +88,19 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
-	initialDataViewsState.sort = {
-		field: DEFAULT_SORT_FIELD,
-		direction: DEFAULT_SORT_DIRECTION,
-	};
-	initialDataViewsState.fields = [
-		'site',
-		'stats',
-		'boost',
-		'backup',
-		'monitor',
-		'scan',
-		'plugins',
-		'favorite',
-		'actions',
-	];
-
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
+		fields: [
+			'site',
+			'stats',
+			'boost',
+			'backup',
+			'monitor',
+			'scan',
+			'plugins',
+			'favorite',
+			'actions',
+		],
 		page: currentPage,
 		search: searchQuery,
 		sort,
