@@ -144,28 +144,26 @@
 
 	.domains-table-row__ssl-cell {
 		gap: 2px;
-		text-decoration: none;
 
-		&__active,
-		&__active:hover {
+		&__active {
 			fill: var(--studio-green-50);
 			color: var(--studio-green-50);
-
-			.domains-table-row__ssl-status-button {
-				color: var(--studio-green-50);
-			}
 		}
 
 		&__pending,
-		&__pending:hover,
-		&__disabled,
-		&__disabled:hover {
+		&__disabled {
 			fill: var(--studio-orange-50);
 			color: var(--studio-orange-50);
+		}
+	}
 
-			.domains-table-row__ssl-status-button {
-				color: var(--studio-orange-50);
-			}
+	.domains-table-row__ssl-status-button {
+		color: inherit;
+	}
+
+	.domains-table-checkbox-td {
+		input[type="checkbox"][disabled] {
+			cursor: no-drop;
 		}
 	}
 
