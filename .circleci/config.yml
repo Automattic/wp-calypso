@@ -186,7 +186,6 @@ jobs:
           name: Build Desktop Mac
           no_output_timeout: 45m
           environment:
-            CSC_LINK: resource/certificates/mac.p12
             USE_HARD_LINKS: 'false'
           command: |
             set +e

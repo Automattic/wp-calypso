@@ -12,7 +12,7 @@ PROJECT_ROOT_FOLDER = File.dirname(File.expand_path(__dir__))
 ENV_FILE_NAME = 'wordpress-desktop.env'
 USER_ENV_FILE_PATH = File.join(Dir.home, '.a8c-apps', ENV_FILE_NAME)
 
-# TODO: This is duplicated with `after_sign_hook.js`. It would be nice to have a single source of truth.
+# TODO: This is duplicated with `after_sign_hook.js` (APPLE_DEVELOPER_SHORT_NAME). It would be nice to have a single source of truth.
 TEAM_ID = '99KV9Z6BKV'
 
 CODE_SIGNING_STORAGE_OPTIONS = {
