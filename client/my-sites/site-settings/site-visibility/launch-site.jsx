@@ -91,7 +91,7 @@ const LaunchSite = () => {
 		data: agency,
 		error: agencyError,
 		isLoading: agencyLoading,
-	} = useFetchAgencyFromBlog( site?.ID );
+	} = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID && isDevelopmentSite } );
 	const agencyName = agency?.name;
 
 	return (
