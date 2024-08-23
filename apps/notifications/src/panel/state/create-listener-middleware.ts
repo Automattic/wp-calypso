@@ -21,7 +21,8 @@ function createListenerMiddleware(): Middleware {
 	return ( storeAPI: MiddlewareAPI ) =>
 		( next: ( action: Action ) => void ) =>
 		( anyAction: AnyAction ) => {
-			// We only want to notify listeners of actions that are actions.
+			// We only want to notify listeners of actions that are objects.
+			// (That is, ignore thunks and other non-action objects.)
 			if ( typeof anyAction !== 'object' || typeof anyAction.type !== 'string' ) {
 				return next( anyAction );
 			}
@@ -57,7 +58,9 @@ function createListenerMiddleware(): Middleware {
 						return next( otherAction );
 					}
 
-					listeners.get( otherAction.type )!.forEach( ( handler ) => handler( storeAPI, action ) );
+					listeners
+						.get( otherAction.type )!
+						.forEach( ( handler ) => handler( storeAPI, otherAction ) );
 					return next( otherAction );
 				}
 			}
