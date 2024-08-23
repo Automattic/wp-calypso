@@ -13,7 +13,8 @@ ENV_FILE_NAME = 'wordpress-desktop.env'
 USER_ENV_FILE_PATH = File.join(Dir.home, '.a8c-apps', ENV_FILE_NAME)
 
 # TODO: This is duplicated with `after_sign_hook.js` (APPLE_DEVELOPER_SHORT_NAME). It would be nice to have a single source of truth.
-TEAM_ID = '99KV9Z6BKV'
+# TEAM_ID = '99KV9Z6BKV'
+TEAM_ID = 'PZYM8XX95Q'
 
 CODE_SIGNING_STORAGE_OPTIONS = {
   storage_mode: 's3',
