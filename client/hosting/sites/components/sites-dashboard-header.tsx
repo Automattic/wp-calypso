@@ -8,6 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
+import { useExperiment } from 'calypso/lib/explat';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
@@ -107,6 +108,8 @@ const SitesDashboardHeader = () => {
 		ref: 'topbar',
 	} );
 
+	const [ isLoadingExperiment ] = useExperiment( 'EXPERIMENT_NAME_HERE' );
+
 	return (
 		<PageHeader>
 			<HeaderControls>
@@ -141,8 +144,14 @@ const SitesDashboardHeader = () => {
 						} }
 						href={ importSiteUrl }
 					>
-						<DownloadIcon icon={ download } size={ 18 } />
-						<span>{ __( 'Import an existing site' ) }</span>
+						{ isLoadingExperiment ? (
+							'LOADING STATE HERE...'
+						) : (
+							<>
+								<DownloadIcon icon={ download } size={ 18 } />
+								<span>{ __( 'Import an existing site' ) }</span>
+							</>
+						) }
 					</PopoverMenuItem>
 				</AddNewSiteSplitButton>
 			</HeaderControls>
