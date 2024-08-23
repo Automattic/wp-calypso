@@ -475,6 +475,7 @@ export const JetpackSitesDataViews = ( {
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
 		onSelectionChange: ( [ item ]: SiteData[] ) => openSitePreviewPane( item.site.value ),
+		defaultLayouts: { table: {} },
 	} );
 
 	useEffect( () => {

@@ -12,6 +12,7 @@ export interface ItemsDataViewsType< T > {
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 	dataViewsState: DataViewsState;
 	onSelectionChange?: ( item: T[] ) => void;
+	defaultLayouts?: any; // TODO: improve this type
 }
 
 export interface DataViewsPaginationInfo {
