@@ -1,15 +1,16 @@
+import { Gridicon } from '@automattic/components';
 import { PaymentLogo } from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
 import { FC } from 'react';
 import CardNetworkSelect from './card-network-select';
 import './styles.scss';
-import { Gridicon } from '@automattic/components';
 
 export type CardNetworkInputProps = {
 	className?: string;
 	disabled?: boolean;
 	cardNetworks: string[];
 	changeBrand: ( brand: string ) => void;
+	changePreferredNetwork: ( preferredNetwork: string ) => void;
 	brand: string;
 };
 
@@ -18,6 +19,7 @@ export const CardNetworkInput: FC< CardNetworkInputProps > = ( {
 	disabled,
 	cardNetworks,
 	changeBrand,
+	changePreferredNetwork,
 	brand,
 } ) => {
 	const areThereMultipleNetworks = cardNetworks && cardNetworks.length > 1;
@@ -32,6 +34,7 @@ export const CardNetworkInput: FC< CardNetworkInputProps > = ( {
 					<CardNetworkSelect
 						className={ clsx( className, 'card-network__brand-select' ) }
 						changeBrand={ changeBrand }
+						changePreferredNetwork={ changePreferredNetwork }
 						cardNetworks={ cardNetworks }
 						value={ brand }
 						disabled={ disabled }

@@ -29,7 +29,8 @@ export default function CreditCardNumberField( {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const { changeBrand, changeCardNetworks } = useDispatch( 'wpcom-credit-card' );
+	const { changeBrand, changePreferredNetwork, changeCardNetworks } =
+		useDispatch( 'wpcom-credit-card' );
 
 	const brand: string = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
@@ -108,10 +109,10 @@ export default function CreditCardNumberField( {
 					} }
 				/>
 				<CardNetworkInput
-					className="test"
 					disabled={ isDisabled }
 					cardNetworks={ cardNetworks }
 					changeBrand={ changeBrand }
+					changePreferredNetwork={ changePreferredNetwork }
 					brand={ brand }
 				/>
 

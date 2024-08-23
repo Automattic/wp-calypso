@@ -1,12 +1,13 @@
-import { localize, translate } from 'i18n-calypso';
-import FormSelect from 'calypso/components/forms/form-select';
+import { localize } from 'i18n-calypso';
 import { useRef, type FC } from 'react';
+import FormSelect from 'calypso/components/forms/form-select';
 import './styles.scss';
 
 export type CardNetworkSelectProps = {
 	cardNetworks: string[];
 	className?: string;
 	changeBrand: ( brand: string ) => void;
+	changePreferredNetwork: ( preferredNetwork: string ) => void;
 	disabled?: boolean;
 	name?: string;
 	id?: string;
@@ -26,6 +27,7 @@ export const CardNetworkSelect: FC< CardNetworkSelectProps > = ( {
 	cardNetworks,
 	className,
 	changeBrand,
+	changePreferredNetwork,
 	disabled,
 	name,
 	id,
@@ -35,6 +37,12 @@ export const CardNetworkSelect: FC< CardNetworkSelectProps > = ( {
 	size,
 } ) => {
 	const inputRef = useRef< HTMLSelectElement | null >( null );
+	const toTitleCase = ( str: string ) => {
+		return str
+			.split( '_' )
+			.map( ( word ) => word.charAt( 0 ).toUpperCase() + word.slice( 1 ).toLowerCase() )
+			.join( ' ' );
+	};
 
 	if ( ! cardNetworks ) {
 		return;
@@ -43,18 +51,11 @@ export const CardNetworkSelect: FC< CardNetworkSelectProps > = ( {
 	const getNetworkOptions = (): OptionObject[] => {
 		return cardNetworks.map( ( network, idx ) => ( {
 			key: idx,
-			brand: network,
+			brand: toTitleCase( network ),
 			disabled: ! network,
 		} ) );
 	};
 	const options = getNetworkOptions();
-
-	const toTitleCase = ( str: string ) => {
-		return str
-			.split( '_' )
-			.map( ( word ) => word.charAt( 0 ).toUpperCase() + word.slice( 1 ).toLowerCase() )
-			.join( ' ' );
-	};
 
 	return (
 		<FormSelect
@@ -67,6 +68,7 @@ export const CardNetworkSelect: FC< CardNetworkSelectProps > = ( {
 			} }
 			onChange={ ( input ) => {
 				changeBrand( input?.currentTarget.value );
+				changePreferredNetwork( input?.currentTarget.value );
 			} }
 			disabled={ disabled }
 			name={ name }
@@ -79,7 +81,7 @@ export const CardNetworkSelect: FC< CardNetworkSelectProps > = ( {
 		>
 			{ options.map( ( option ) => (
 				<option key={ option.key } value={ option.brand } disabled={ option.disabled }>
-					{ translate( toTitleCase( option.brand ) ) }
+					{ option.brand }
 				</option>
 			) ) }
 		</FormSelect>

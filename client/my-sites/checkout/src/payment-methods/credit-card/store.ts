@@ -18,6 +18,9 @@ export const actions = {
 	changeBrand( payload: string ): CardStoreAction {
 		return { type: 'BRAND_SET', payload };
 	},
+	changePreferredNetwork( payload: string ): CardStoreAction {
+		return { type: 'PREFERRED_NETWORK_SET', payload };
+	},
 	changeCardNetworks( payload: string[] ): CardStoreAction {
 		return { type: 'CARD_NETWORKS_SET', payload };
 	},
@@ -47,6 +50,9 @@ export const actions = {
 export const selectors = {
 	getBrand( state: CardStoreState ): string {
 		return state.brand || '';
+	},
+	getPreferredNetwork( state: CardStoreState ): string {
+		return state.preferredNetwork || '';
 	},
 	getCardNetworks( state: CardStoreState ): string[] {
 		return state.cardNetworks || [];
@@ -158,6 +164,18 @@ export function createCreditCardPaymentMethodStore( {
 		}
 	}
 
+	function preferredNetworkReducer(
+		state: string | null | undefined = null,
+		action?: CardStoreAction
+	) {
+		switch ( action?.type ) {
+			case 'PREFERRED_NETWORK_SET':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
 	function cardNetworksReducer(
 		state: string[] | null | undefined = null,
 		action?: CardStoreAction
@@ -197,6 +215,7 @@ export function createCreditCardPaymentMethodStore( {
 					cardDataErrors: cardDataErrorsReducer(),
 					cardDataComplete: cardDataCompleteReducer(),
 					brand: brandReducer(),
+					preferredNetwork: preferredNetworkReducer(),
 					cardNetworks: cardNetworksReducer(),
 					useForAllSubscriptions: getInitialUseForAllSubscriptionsValue(),
 				},
@@ -207,6 +226,7 @@ export function createCreditCardPaymentMethodStore( {
 					cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
 					cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
 					brand: brandReducer( state.brand, action ),
+					preferredNetwork: preferredNetworkReducer( state.preferredNetwork, action ),
 					cardNetworks: cardNetworksReducer( state.cardNetworks, action ),
 					useForAllSubscriptions: allowUseForAllSubscriptions
 						? allSubscriptionsReducer( state.useForAllSubscriptions, action )
