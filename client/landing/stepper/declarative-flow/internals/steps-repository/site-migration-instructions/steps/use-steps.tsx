@@ -1,10 +1,15 @@
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordMigrationInstructionsLinkClick } from '../tracking';
 import { StepAddMigrationKey } from './step-add-migration-key';
 import { StepAddMigrationKeyFallback } from './step-add-migration-key-fallback';
 import { StepGetYourSiteReady } from './step-get-your-site-ready';
 import { StepInstallMigrateGuru } from './step-install-migrate-guru';
+import { StepPrimaryCta } from './step-primary-cta';
+import { getMigrateGuruPageURL, getPluginInstallationPage } from './utils';
 import type { Task, Expandable } from '@automattic/launchpad';
 
 const INSTALL_MIGRATE_GURU = 'install-the-migrate-guru-plugin';
@@ -13,12 +18,8 @@ const ADD_MIGRATION_KEY = 'add-your-migration-key';
 
 interface StepsDataOptions {
 	fromUrl: string;
-	lastCompleteStep: number;
 	migrationKey: string;
-	onComplete: () => void;
 	preparationError: Error | null;
-	setCurrentStep: () => void;
-	setLastCompleteStep: () => void;
 	showMigrationKeyFallback: boolean;
 }
 
@@ -26,6 +27,7 @@ interface StepData {
 	key: string;
 	title: string;
 	content: JSX.Element;
+	ctaText: string;
 }
 
 type StepsData = StepData[];
@@ -52,77 +54,36 @@ interface StepsObject {
 }
 
 const useStepsData = ( {
-	fromUrl,
-	lastCompleteStep,
 	migrationKey,
-	onComplete,
 	preparationError,
-	setCurrentStep,
-	setLastCompleteStep,
 	showMigrationKeyFallback,
 }: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
 
-	const recordCompletedStepEvent = ( key ) => {
-		recordTracksEvent( 'calypso_site_migration_instructions_substep_complete', {
-			step: key,
-		} );
-	};
-
-	const onNextClick = ( index, key ) => {
-		setCurrentStep( index + 1 );
-
-		// When completing a step that wasn't completed yet.
-		if ( lastCompleteStep < index ) {
-			setLastCompleteStep( index );
-			recordCompletedStepEvent( key );
-		}
-	};
-
-	const onDoneClick = ( key ) => {
-		onComplete();
-		recordCompletedStepEvent( key );
-	};
-
-	const steps = [
+	return [
 		{
 			key: INSTALL_MIGRATE_GURU,
 			title: translate( 'Install the Migrate Guru plugin' ),
-			content: (
-				<StepInstallMigrateGuru
-					fromUrl={ fromUrl }
-					onNextClick={ () => onNextClick( 0, INSTALL_MIGRATE_GURU ) }
-				/>
-			),
+			content: <StepInstallMigrateGuru />,
+			ctaText: translate( 'Install plugin' ),
 		},
 		{
 			key: GET_SITE_READY,
 			title: translate( 'Get your site ready' ),
-			content: (
-				<StepGetYourSiteReady
-					fromUrl={ fromUrl }
-					onNextClick={ () => onNextClick( 1, GET_SITE_READY ) }
-				/>
-			),
+			content: <StepGetYourSiteReady />,
+			ctaText: translate( 'Get started' ),
 		},
 		{
 			key: ADD_MIGRATION_KEY,
 			title: translate( 'Add your migration key' ),
 			content: showMigrationKeyFallback ? (
-				<StepAddMigrationKeyFallback onDoneClick={ () => onDoneClick( ADD_MIGRATION_KEY ) } />
+				<StepAddMigrationKeyFallback />
 			) : (
-				<StepAddMigrationKey
-					fromUrl={ fromUrl }
-					migrationKey={ migrationKey }
-					onNextClick={ () => onNextClick( 2, ADD_MIGRATION_KEY ) }
-					onDoneClick={ () => onDoneClick( 2 ) }
-					preparationError={ preparationError }
-				/>
+				<StepAddMigrationKey migrationKey={ migrationKey } preparationError={ preparationError } />
 			),
+			ctaText: showMigrationKeyFallback ? translate( 'Get key' ) : translate( 'Enter key' ),
 		},
 	];
-
-	return steps;
 };
 
 export const useSteps = ( {
@@ -132,20 +93,49 @@ export const useSteps = ( {
 	showMigrationKeyFallback,
 	onComplete,
 }: StepsOptions ): StepsObject => {
+	const translate = useTranslate();
+	const site = useSite();
+	const siteUrl = site?.URL ?? '';
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
 	const stepsData = useStepsData( {
-		fromUrl,
-		lastCompleteStep,
 		migrationKey,
-		onComplete,
 		preparationError,
-		setCurrentStep,
-		setLastCompleteStep,
 		showMigrationKeyFallback,
 	} );
 
-	const steps: Steps = stepsData.map( ( step, index ) => {
+	const steps: Steps = stepsData.map( ( step, index, array ) => {
+		const recordCompletedStepEvent = () => {
+			recordTracksEvent( 'calypso_site_migration_instructions_substep_complete', {
+				step: step.key,
+			} );
+		};
+
+		const openPluginInstallationPage = () => {
+			window.open( getPluginInstallationPage( fromUrl ), '_blank' );
+			recordMigrationInstructionsLinkClick( 'install-plugin' );
+		};
+
+		const openMigrateGuruPage = ( url, linkname ) => {
+			window.open( getMigrateGuruPageURL( url ), '_blank' );
+			recordMigrationInstructionsLinkClick( linkname );
+		};
+
+		const onNextClick = () => {
+			setCurrentStep( index + 1 );
+
+			// When completing a step that wasn't completed yet.
+			if ( lastCompleteStep < index ) {
+				setLastCompleteStep( index );
+				recordCompletedStepEvent();
+			}
+		};
+
+		const onDoneClick = () => {
+			onComplete();
+			recordCompletedStepEvent();
+		};
+
 		// Allow clicking on visited steps only, so users can see the previous steps again.
 		const onItemClick =
 			index > lastCompleteStep + 1 || index === currentStep
@@ -153,6 +143,28 @@ export const useSteps = ( {
 				: () => {
 						setCurrentStep( index );
 				  };
+
+		const isMigrationKeyStep = index === array.length - 1;
+
+		let secondaryCtaText = translate( 'Next' );
+		let onPrimaryCtaClick = openPluginInstallationPage;
+		let onSecondaryCtaClick = onNextClick;
+
+		if ( ! isMigrationKeyStep ) {
+			if ( 1 === index ) {
+				onPrimaryCtaClick = () => openMigrateGuruPage( fromUrl, 'go-to-plugin-page' );
+			}
+		} else if ( migrationKey || showMigrationKeyFallback ) {
+			// Migration key step.
+			if ( migrationKey ) {
+				onPrimaryCtaClick = () => openMigrateGuruPage( fromUrl, 'enter-key' );
+			} else {
+				onPrimaryCtaClick = () => openMigrateGuruPage( siteUrl, 'copy-key-fallback' );
+			}
+
+			secondaryCtaText = translate( 'Done' );
+			onSecondaryCtaClick = onDoneClick;
+		}
 
 		return {
 			task: {
@@ -162,7 +174,22 @@ export const useSteps = ( {
 				disabled: lastCompleteStep < index - 1,
 			},
 			expandable: {
-				content: step.content,
+				content: (
+					<>
+						{ step.content }
+
+						<div className="checklist-item__checklist-expanded-ctas">
+							<StepPrimaryCta text={ step.ctaText } onClick={ onPrimaryCtaClick } />
+							<Button
+								className="checklist-item__checklist-expanded-cta"
+								variant="secondary"
+								onClick={ onSecondaryCtaClick }
+							>
+								{ secondaryCtaText }
+							</Button>
+						</div>
+					</>
+				),
 				isOpen: currentStep === index,
 			},
 			onClick: onItemClick,
