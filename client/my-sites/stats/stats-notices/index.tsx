@@ -1,5 +1,6 @@
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useState, useEffect } from 'react';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import {
 	DEFAULT_NOTICES_VISIBILITY,
 	Notices,
@@ -20,13 +21,16 @@ import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-si
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
 import hasSiteProductJetpackStatsPWYWOnly from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-pwyw-only';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import { AllTimeData } from '../all-time-highlights-section';
 import useStatsPurchases, { shouldShowPaywallNotice } from '../hooks/use-stats-purchases';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
 
 const TEAM51_OWNER_ID = 70055110;
+const SIGNIFICANT_VIEWS_AMOUNT = 100;
 
 const ensureOnlyOneNoticeVisible = (
 	serverNoticesVisibility: Notices,
@@ -106,6 +110,11 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		! supportCommercialUse &&
 		isSiteJetpackNotAtomic;
 
+	const { views } = useSelector(
+		( state ) => getSiteStatsNormalizedData( state, siteId, 'stats', {} ) || {}
+	) as AllTimeData;
+	const hasSignificantViews = !! ( views && views >= SIGNIFICANT_VIEWS_AMOUNT );
+
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
@@ -120,6 +129,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isCommercial,
 		isCommercialOwned,
 		hasPWYWPlanOnly,
+		hasSignificantViews,
 		showPaywallNotice,
 	};
 
@@ -176,10 +186,13 @@ export default function StatsNotices( {
 	}
 
 	return (
-		<NewStatsNotices
-			siteId={ siteId }
-			isOdysseyStats={ isOdysseyStats }
-			statsPurchaseSuccess={ statsPurchaseSuccess }
-		/>
+		<>
+			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ {} } /> }
+			<NewStatsNotices
+				siteId={ siteId }
+				isOdysseyStats={ isOdysseyStats }
+				statsPurchaseSuccess={ statsPurchaseSuccess }
+			/>
+		</>
 	);
 }
