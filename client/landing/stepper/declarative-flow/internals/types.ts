@@ -138,8 +138,6 @@ export type Flow = {
 	 * Required flag to indicate if the flow is a signup flow.
 	 */
 	isSignupFlow: boolean;
-	useSignupStartEventProps?: () => Record< string, string | number >;
-
 	/**
 	 *  You can use this hook to configure the login url.
 	 * @returns An object describing the configuration.
