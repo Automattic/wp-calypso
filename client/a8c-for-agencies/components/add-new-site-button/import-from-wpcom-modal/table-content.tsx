@@ -67,6 +67,7 @@ export default function WPCOMSitesTableContent( { items, fields }: Props ) {
 				actions: [],
 				dataViewsState: dataViewsState,
 				setDataViewsState: setDataViewsState,
+				defaultLayouts: { table: {} },
 			} }
 		/>
 	);
