@@ -69,6 +69,29 @@
 			font-size: 0.875rem;
 			margin-top: 0.25rem;
 		}
+
+		.site-migration-credentials__form-password {
+			position: relative;
+		}
+
+		.site-migration-credentials__form-password__toggle {
+			display: block;
+			cursor: pointer;
+			position: absolute;
+			right: 8px;
+			top: 50%;
+			transform: translateY(-50%);
+			user-select: none;
+			line-height: 1;
+
+			svg {
+				fill: var(--color-neutral-20);
+
+				&:hover {
+					fill: var(--color-neutral-40);
+				}
+			}
+		}
 	}
 	.site-migration-credentials__skip {
 		margin-top: 1em;
