@@ -80,7 +80,6 @@ export default function PluginRowFormatter( {
 		};
 
 	const moment = useLocalizedMoment();
-	const state = useSelector( ( state ) => state );
 
 	const ago = ( date: MomentInput ) => {
 		return moment.utc( date, 'YYYY-MM-DD hh:mma' ).fromNow();
@@ -94,11 +93,13 @@ export default function PluginRowFormatter( {
 			selectedSite && isPluginActionInProgress( state, selectedSite.ID, pluginId, INSTALL_PLUGIN )
 	);
 
-	if ( selectedSite ) {
-		const { activation, autoupdate } = getAllowedPluginActions( item, state, selectedSite );
-		canActivate = activation;
-		canUpdate = autoupdate;
-	}
+	useSelector( ( state ) => {
+		if ( selectedSite ) {
+			const { activation, autoupdate } = getAllowedPluginActions( item, state, selectedSite );
+			canActivate = activation;
+			canUpdate = autoupdate;
+		}
+	} );
 
 	const pluginOnSite = useSelector(
 		( state ) => selectedSite && getPluginOnSite( state, selectedSite.ID, item.slug )
@@ -106,7 +107,7 @@ export default function PluginRowFormatter( {
 
 	const siteCount = item?.sites && Object.keys( item.sites ).length;
 
-	const allStatuses = getPluginActionStatuses( state );
+	const allStatuses = useSelector( ( state ) => getPluginActionStatuses( state ) );
 
 	let currentSiteStatuses = allStatuses.filter(
 		( status ) => status.pluginId === pluginId && status.action !== UPDATE_PLUGIN
