@@ -11,7 +11,6 @@ import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
@@ -80,11 +79,6 @@ const assemblerFirstFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const flowName = this.name;
-		const intent = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
-			[]
-		);
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
@@ -133,8 +127,6 @@ const assemblerFirstFlow: Flow = {
 			providedDependencies: ProvidedDependencies = {},
 			...results: string[]
 		) => {
-			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
-
 			switch ( _currentStep ) {
 				case 'check-sites': {
 					// Check for unlaunched sites

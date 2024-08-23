@@ -1,5 +1,7 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
+import { useMemo } from '@wordpress/element';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordSubmitStep } from '../../analytics/record-submit-step';
 import type { Flow, Navigate, ProvidedDependencies, StepperStep } from '../../types';
@@ -24,21 +26,23 @@ export const useStepNavigationWithTracking = ( {
 	);
 	const intent =
 		useSelect( ( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(), [] ) ?? '';
+	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
 
-	const shouldTrackSubmit = flow.use__Temporary__ShouldTrackEvent?.( 'submit' ) ?? false;
-
-	return {
-		...stepNavigation,
-		submit: ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
-			shouldTrackSubmit &&
+	return useMemo(
+		() => ( {
+			...stepNavigation,
+			submit: ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
 				recordSubmitStep(
 					providedDependencies,
 					intent,
 					flow.name,
 					currentStepRoute,
-					flow.variantSlug
+					flow.variantSlug,
+					tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]
 				);
-			stepNavigation.submit?.( providedDependencies, ...params );
-		},
-	};
+				stepNavigation.submit?.( providedDependencies, ...params );
+			},
+		} ),
+		[ stepNavigation, intent, flow, currentStepRoute, tracksEventPropsFromFlow ]
+	);
 };

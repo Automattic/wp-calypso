@@ -82,11 +82,12 @@ describe( `${ flow.name }`, () => {
 				const destination = runNavigation( {
 					from: STEPS.PLATFORM_IDENTIFICATION,
 					dependencies: { platform: 'blogger' },
+					query: { from: 'optional' },
 				} );
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_CREATION_STEP,
-					query: { platform: 'blogger' },
+					query: { platform: 'blogger', from: 'optional' },
 				} );
 			} );
 
@@ -94,11 +95,12 @@ describe( `${ flow.name }`, () => {
 				const destination = runNavigation( {
 					from: STEPS.PLATFORM_IDENTIFICATION,
 					dependencies: { platform: 'wordpress', url: 'next-url' },
+					query: { from: 'optional' },
 				} );
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_CREATION_STEP,
-					query: {},
+					query: { from: 'optional' },
 				} );
 			} );
 
@@ -106,11 +108,12 @@ describe( `${ flow.name }`, () => {
 				const destination = runNavigation( {
 					from: STEPS.PLATFORM_IDENTIFICATION,
 					dependencies: { siteId: 123, siteSlug: 'example.wordpress.com', platform: 'wordpress' },
+					query: { from: 'optional' },
 				} );
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.MIGRATION_UPGRADE_PLAN,
-					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					query: { siteId: 123, siteSlug: 'example.wordpress.com', from: 'optional' },
 				} );
 			} );
 
@@ -149,12 +152,12 @@ describe( `${ flow.name }`, () => {
 			it( 'redirects user from SITE_CREATION to PROCESSING', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_CREATION_STEP,
-					query: {},
+					query: { from: 'optional' },
 				} );
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.PROCESSING,
-					query: {},
+					query: { from: 'optional' },
 				} );
 			} );
 
@@ -238,16 +241,17 @@ describe( `${ flow.name }`, () => {
 						plan: 'business',
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
+						from: 'https://example.com',
 					},
 				} );
 
 				expect( goToCheckout ).toHaveBeenCalledWith( {
-					destination: `/setup/migration/migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com`,
+					destination: `/setup/migration/migration-how-to-migrate?siteId=123&siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample.com`,
 					extraQueryParams: { introductoryOffer: '1' },
 					flowName: 'migration',
 					siteSlug: 'example.wordpress.com',
 					stepName: STEPS.MIGRATION_UPGRADE_PLAN.slug,
-					cancelDestination: `/setup/migration/migration-upgrade-plan?plan=business&siteId=123&siteSlug=example.wordpress.com`,
+					cancelDestination: `/setup/migration/migration-upgrade-plan?plan=business&siteId=123&siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample.com`,
 					plan: 'business-bundle',
 					forceRedirection: true,
 				} );
@@ -306,7 +310,7 @@ describe( `${ flow.name }`, () => {
 							from: '',
 							option: 'content',
 							backToFlow: '/migration/platform-identification',
-							migrateEntireSiteFlow: '/migration/migration-upgrade-plan',
+							customizedActionGoToFlow: '/migration/migration-upgrade-plan',
 							siteId: 123,
 							ref: 'migration',
 						},
@@ -379,7 +383,7 @@ describe( `${ flow.name }`, () => {
 	} );
 
 	describe( 'useStepNavigation > goBack', () => {
-		it( 'redirect back user from SOURCE URL TO HOW TO MIGRATE', () => {
+		it( 'redirects back user from SOURCE URL TO HOW TO MIGRATE', () => {
 			const destination = runNavigationBack( {
 				from: STEPS.MIGRATION_SOURCE_URL,
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -390,17 +394,17 @@ describe( `${ flow.name }`, () => {
 				query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 			} );
 		} );
-	} );
 
-	it( 'redirect back user from MIGRATION_UPGRADE_PLAN > PLATFORM_IDENTIFICATION', () => {
-		const destination = runNavigationBack( {
-			from: STEPS.MIGRATION_UPGRADE_PLAN,
-			query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
-		} );
+		it( 'redirects back user from MIGRATION_UPGRADE_PLAN > PLATFORM_IDENTIFICATION', () => {
+			const destination = runNavigationBack( {
+				from: STEPS.MIGRATION_UPGRADE_PLAN,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
+			} );
 
-		expect( destination ).toMatchDestination( {
-			step: STEPS.PLATFORM_IDENTIFICATION,
-			query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
+			expect( destination ).toMatchDestination( {
+				step: STEPS.PLATFORM_IDENTIFICATION,
+				query: { siteId: 123, siteSlug: 'example.wordpress.com', plan: 'business' },
+			} );
 		} );
 	} );
 } );
