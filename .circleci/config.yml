@@ -110,7 +110,6 @@ references:
   desktop-decrypt-certs: &desktop-decrypt-certs
     name: Decrypt desktop code signing certificates
     command: |
-      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
