@@ -34,6 +34,15 @@
 		width: 800px;
 		padding: 40px;
 	}
+
+	// TODO: to remove when using dataviews@4.2.0.
+	// This is because a bug in dataviews that shows
+	// the filter toggle even if there are no filters.
+	// The table in the modal does not declare any filters.
+	.dataviews-filters__visibility-toggle {
+		display: none !important;
+	}
+
 }
 
 .import-from-wpcom-modal__title {
