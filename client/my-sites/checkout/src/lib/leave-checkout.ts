@@ -38,7 +38,11 @@ export const leaveCheckout = ( {
 	const launchpadURLRegex = /^\/setup\/[a-z][a-z\-_]*[a-z]\/launchpad\b/g;
 	const launchpadURLRegexMatch = redirectToParam?.toString().match( launchpadURLRegex );
 
-	if ( siteSlug && sendMessageToOpener( siteSlug, 'checkoutCancelled' ) ) {
+	if (
+		siteSlug &&
+		sendMessageToOpener( siteSlug, 'checkoutCancelled' ) &&
+		signupFlowName !== 'hosted-site-migration'
+	) {
 		return;
 	}
 
