@@ -61,8 +61,6 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 	const animationProps = {
 		style: {
-			// These are overwritten by the openingCoordinates.
-			// They are set to avoid Help Center from not loading on the page.
 			...openingCoordinates,
 		},
 	};
