@@ -31,11 +31,11 @@ body.is-section-me {
 	}
 
 	.masterbar__item-subitems {
-		background: var(--studio-gray-0);
+		background: var(--color-masterbar-item-active-background);
 
 		a:hover,
 		.masterbar__item-subitems-item:hover {
-			background: var(--studio-gray-0);
+			background: var(--color-masterbar-item-active-background);
 		}
 	}
 
