@@ -83,7 +83,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 					'is-loading': ! mobileLoaded,
 				} ) }
 			>
-				<LoadingScreen isSavedReport={ false } key="mobile-loading" />
+				<LoadingScreen isSavedReport={ !! hash } key="mobile-loading" />
 			</div>
 
 			<div
@@ -92,7 +92,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 					'is-loading': ! desktopLoaded,
 				} ) }
 			>
-				<LoadingScreen isSavedReport={ false } key="desktop-loading" />
+				<LoadingScreen isSavedReport={ !! hash } key="desktop-loading" />
 			</div>
 
 			{ ( ( activeTab === TabType.mobile && mobileLoaded ) ||
