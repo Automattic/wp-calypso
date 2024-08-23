@@ -12,7 +12,7 @@ type AddSitesModalProps = {
 const AddSitesModal = ( { showModal, onClose, onAddFinished }: AddSitesModalProps ) => {
 	const translate = useTranslate();
 
-	const modalTitle = translate( 'Add a site', {
+	const modalTitle = translate( 'Add a New Subscription', {
 		context: 'Modal title',
 	} );
 

@@ -37,7 +37,9 @@ const AddSitesButton = () => {
 				} }
 			>
 				<Gridicon className="subscriptions-add-sites__button-icon" icon="plus" size={ 24 } />
-				<span className="subscriptions-add-sites__button-text">{ translate( 'Add a site' ) }</span>
+				<span className="subscriptions-add-sites__button-text">
+					{ translate( 'New subscription' ) }
+				</span>
 			</Button>
 			<AddSitesModal
 				showModal={ isAddSitesModalVisible }
