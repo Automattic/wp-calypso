@@ -1,17 +1,29 @@
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { reduce, snakeCase } from 'lodash';
+import { STEPPER_TRACKS_EVENT_STEP_NAV } from 'calypso/landing/stepper/constants';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ProvidedDependencies } from '../types';
 
-export function recordSubmitStep(
-	providedDependencies: ProvidedDependencies = {},
-	intent: string,
-	flow: string,
-	step: string,
-	variant?: string,
-	additionalProps: ProvidedDependencies = {}
-) {
+export interface RecordStepNavigationParams {
+	event: ( typeof STEPPER_TRACKS_EVENT_STEP_NAV )[ number ];
+	intent: string;
+	flow: string;
+	step: string;
+	variant?: string;
+	providedDependencies?: ProvidedDependencies;
+	additionalProps?: ProvidedDependencies;
+}
+
+export function recordStepNavigation( {
+	event,
+	intent,
+	flow,
+	step,
+	variant,
+	providedDependencies = {},
+	additionalProps = {},
+}: RecordStepNavigationParams ) {
 	const device = resolveDeviceTypeByViewPort();
 	const inputs = reduce(
 		providedDependencies,
@@ -58,7 +70,7 @@ export function recordSubmitStep(
 		{}
 	);
 
-	recordTracksEvent( 'calypso_signup_actions_submit_step', {
+	recordTracksEvent( event, {
 		device,
 		flow,
 		variant,
@@ -70,7 +82,7 @@ export function recordSubmitStep(
 
 	const stepOldSlug = getStepOldSlug( step );
 	if ( stepOldSlug ) {
-		recordTracksEvent( 'calypso_signup_actions_submit_step', {
+		recordTracksEvent( event, {
 			device,
 			flow,
 			variant,
