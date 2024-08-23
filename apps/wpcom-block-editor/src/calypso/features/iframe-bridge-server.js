@@ -700,12 +700,17 @@ async function openLinksInParentFrame( calypsoPort ) {
 					continue;
 				}
 
-				const popoverSlot = node.querySelector( '.components-popover' );
+				// The popoverSlotObserverObserver will observe addedNodes containing components-popover__fallback-container node elemnts which contain the components-popover
+				// The popoverSlotObserver will observe addedNodes containing components-popover node elements
+				const popoverSlot = node?.classList?.contains( 'components-popover' )
+					? node
+					: node.querySelector( '.components-popover' );
 
 				if ( popoverSlot ) {
 					const manageReusableBlocksAnchorElem = popoverSlot.querySelector(
 						'a[href$="site-editor.php?path=%2Fpatterns"]'
 					);
+
 					const manageNavigationMenusAnchorElem = popoverSlot.querySelector(
 						'a[href$="edit.php?post_type=wp_navigation"]'
 					);
@@ -730,8 +735,21 @@ async function openLinksInParentFrame( calypsoPort ) {
 			}
 		}
 	} );
-	const popoverSlotElem = document.querySelector( 'body' );
-	popoverSlotElem && popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
+	const popoverSlotObserverObserver = new window.MutationObserver( ( mutations ) => {
+		for ( const record of mutations ) {
+			for ( const node of record.addedNodes ) {
+				if ( ! node ) {
+					continue;
+				}
+				if ( node?.classList?.contains( 'components-popover__fallback-container' ) ) {
+					popoverSlotObserver.observe( node, { childList: true } );
+				}
+			}
+		}
+	} );
+	const htmlBody = document.querySelector( 'body' );
+	htmlBody && popoverSlotObserver.observe( htmlBody, { childList: true } );
+	htmlBody && popoverSlotObserverObserver.observe( htmlBody, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
