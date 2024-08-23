@@ -56,9 +56,7 @@ const HelpCenter: React.FC< Container > = ( {
 		( isHelpCenterShown && isEligibleForChat ) || hasActiveChats,
 		isEligibleForChat || hasActiveChats
 	);
-	const { initSmooch, destroy } = useSmooch(
-		isMessagingScriptLoaded && ( isEligibleForChat || hasActiveChats )
-	);
+	const { initSmooch, destroy } = useSmooch( isMessagingScriptLoaded && hasActiveChats );
 	const ref = useRef( null );
 
 	useZendeskMessagingBindings( HELP_CENTER_STORE, hasActiveChats, isMessagingScriptLoaded );
