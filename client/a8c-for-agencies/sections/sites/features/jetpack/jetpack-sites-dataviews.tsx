@@ -87,7 +87,6 @@ export const JetpackSitesDataViews = ( {
 				...prevState,
 				selectedItem: site,
 				type: DATAVIEWS_LIST,
-				fields: [ 'site' ],
 			} ) );
 		},
 		[ isNotProduction, setDataViewsState ]
