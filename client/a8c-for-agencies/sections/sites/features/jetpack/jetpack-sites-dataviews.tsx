@@ -150,6 +150,7 @@ export const JetpackSitesDataViews = ( {
 				],
 				filterBy: {
 					operators: [ 'is' ],
+					isPrimary: true,
 				},
 				enableHiding: false,
 				enableSorting: false,
