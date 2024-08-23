@@ -492,7 +492,6 @@ const getJetpackCommonPlanDetails = () => ( {
 const getDotcomPlanDetails = () => ( {
 	// Features only available for annual plans
 	getAnnualPlansOnlyFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN_EXPANDED,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_PRIORITY_24_7_SUPPORT,
