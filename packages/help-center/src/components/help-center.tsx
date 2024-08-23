@@ -3,7 +3,11 @@
  * External Dependencies
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { useZendeskMessagingBindings, useLoadZendeskMessaging } from '@automattic/zendesk-client';
+import {
+	useZendeskMessagingBindings,
+	useLoadZendeskMessaging,
+	useSmooch,
+} from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
@@ -52,8 +56,18 @@ const HelpCenter: React.FC< Container > = ( {
 		( isHelpCenterShown && isEligibleForChat ) || hasActiveChats,
 		isEligibleForChat || hasActiveChats
 	);
+	const { initSmooch, destroy } = useSmooch(
+		isMessagingScriptLoaded && ( isEligibleForChat || hasActiveChats )
+	);
+	const ref = useRef( null );
 
 	useZendeskMessagingBindings( HELP_CENTER_STORE, hasActiveChats, isMessagingScriptLoaded );
+	useEffect( () => {
+		if ( isMessagingScriptLoaded && ref.current ) {
+			initSmooch( ref.current );
+		}
+		return destroy;
+	}, [ destroy, initSmooch, isMessagingScriptLoaded ] );
 
 	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 
@@ -73,12 +87,15 @@ const HelpCenter: React.FC< Container > = ( {
 	}, [ portalParent, handleClose ] );
 
 	return createPortal(
-		<HelpCenterContainer
-			handleClose={ handleClose }
-			hidden={ hidden }
-			currentRoute={ currentRoute }
-			openingCoordinates={ openingCoordinates }
-		/>,
+		<>
+			<HelpCenterContainer
+				handleClose={ handleClose }
+				hidden={ hidden }
+				currentRoute={ currentRoute }
+				openingCoordinates={ openingCoordinates }
+			/>
+			<div className="help-center__smooch-container" ref={ ref } style={ { display: 'none' } } />
+		</>,
 		portalParent
 	);
 };

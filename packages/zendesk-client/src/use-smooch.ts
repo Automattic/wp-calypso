@@ -50,9 +50,9 @@ const addUnreadCountListener = ( callback: ( unreadCount: number ) => void ) => 
 	Smooch.on( 'unreadCount', callback );
 };
 
-export const useSmooch = () => {
+export const useSmooch = ( enabled: boolean ) => {
 	const [ init, setInit ] = useState( typeof Smooch.getConversations === 'function' );
-	const { data: authData } = useAuthenticateZendeskMessaging( true, 'messenger' );
+	const { data: authData } = useAuthenticateZendeskMessaging( enabled, 'messenger' );
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 
