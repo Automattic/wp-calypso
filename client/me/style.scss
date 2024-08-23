@@ -30,6 +30,15 @@ body.is-section-me {
 		padding: 24px;
 	}
 
+	.masterbar__item-subitems {
+		background: var(--studio-gray-0);
+
+		a:hover,
+		.masterbar__item-subitems-item:hover {
+			background: var(--studio-gray-0);
+		}
+	}
+
 	div.layout.is-global-sidebar-visible {
 		.layout__primary {
 			.main {
