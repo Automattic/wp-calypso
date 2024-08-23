@@ -167,7 +167,6 @@ export function testDomain(
 		pending_registration_at_registry_url: '',
 		registered_via_trustee: false,
 		registered_via_trustee_url: '',
-		has_wpcom_managed_ssl_cert: false,
 		...defaults,
 	};
 

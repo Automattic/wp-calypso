@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 interface DomainsTableSslCellProps {
 	domainManagementLink: string;
 	sslStatus: DomainData[ 'ssl_status' ];
-	hasWpcomManagedSslCert?: DomainData[ 'has_wpcom_managed_ssl_cert' ];
+	hasWpcomManagedSslCert: boolean;
 }
 
 export default function DomainsTableSslCell( {

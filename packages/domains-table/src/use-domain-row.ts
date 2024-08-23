@@ -143,7 +143,7 @@ export const useDomainRow = ( domain: PartialDomainData ) => {
 		: null;
 
 	const sslStatus = currentDomainData?.sslStatus ?? null;
-	const hasWpcomManagedSslCert = currentDomainData?.hasWpcomManagedSslCert;
+	const hasWpcomManagedSslCert = currentDomainData?.type === 'wpcom';
 
 	return {
 		ref,
