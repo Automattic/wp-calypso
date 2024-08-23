@@ -167,7 +167,7 @@ jobs:
 
   wp-desktop-mac:
     macos:
-      xcode: '14.2.0'
+      xcode: '15.4.0'
     resource_class: macos.m1.medium.gen1
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
@@ -198,6 +198,7 @@ jobs:
             rbenv install --skip-existing $(cat .ruby-version)
             rbenv global $(cat .ruby-version) && rbenv rehash
             ruby -v
+
             bundle install
 
             # Build all artifacts only when project config changes.
@@ -206,8 +207,8 @@ jobs:
 
             # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
             # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
-            export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk'
-            export MACOSX_DEPLOYMENT_TARGET=10.13
+            # export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk'
+            # export MACOSX_DEPLOYMENT_TARGET=10.13
 
             CSC_FOR_PULL_REQUEST=1 ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
       - run:
