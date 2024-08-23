@@ -534,8 +534,14 @@ export class Login extends Component {
 			return <PrivateSite />;
 		}
 
-		// It's used to toggle UIs for the login page of Gravatar powered clients only (not for F2A pages).
-		const isGravPoweredLoginPage = isGravPoweredClient && currentRoute === '/log-in';
+		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
+		const isGravPoweredLoginPage =
+			isGravPoweredClient &&
+			! currentRoute.startsWith( '/log-in/push' ) &&
+			! currentRoute.startsWith( '/log-in/authenticator' ) &&
+			! currentRoute.startsWith( '/log-in/sms' ) &&
+			! currentRoute.startsWith( '/log-in/webauthn' ) &&
+			! currentRoute.startsWith( '/log-in/backup' );
 
 		return (
 			<LoginBlock

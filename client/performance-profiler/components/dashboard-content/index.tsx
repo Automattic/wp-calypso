@@ -42,7 +42,7 @@ export const PerformanceProfilerDashboardContent = ( {
 				/>
 				<NewsletterBanner />
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
-				{ audits && <InsightsSection audits={ audits } /> }
+				{ audits && <InsightsSection audits={ audits } url={ url } /> }
 			</div>
 
 			<Disclaimer />

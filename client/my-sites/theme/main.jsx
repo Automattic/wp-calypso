@@ -44,7 +44,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
-import SectionHeader from 'calypso/components/section-header';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
@@ -459,10 +458,6 @@ class ThemeSheet extends Component {
 		this.trackButtonClick( 'css_forum' );
 	};
 
-	trackNextThemeClick = () => {
-		this.trackButtonClick( 'next_theme' );
-	};
-
 	renderBar = () => {
 		const { author, name, translate, softLaunched } = this.props;
 
@@ -705,7 +700,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderSectionContent = () => {
-		const { isPremium, isWpcomTheme, supportDocumentation } = this.props;
+		const { isPremium, supportDocumentation } = this.props;
 
 		return (
 			<div className="theme__sheet-content">
@@ -721,7 +716,6 @@ class ThemeSheet extends Component {
 						{ this.renderOverviewTab() }
 						{ ! isPremium && supportDocumentation && this.renderSetupTab() }
 						{ this.renderSupportTab() }
-						{ isWpcomTheme && this.renderNextTheme() }
 					</>
 				) }
 			</div>
@@ -896,23 +890,6 @@ class ThemeSheet extends Component {
 				title={ translate( 'Partner themes cannot be purchased on staging sites' ) }
 				description={ translate( 'Subscribe to this theme on your production site.' ) }
 			/>
-		);
-	};
-
-	renderNextTheme = () => {
-		const { next, siteSlug, translate, locale, isLoggedIn } = this.props;
-		const sitePart = siteSlug ? `/${ siteSlug }` : '';
-
-		const nextThemeHref = localizeThemesPath(
-			`/theme/${ next }${ sitePart }`,
-			locale,
-			! isLoggedIn
-		);
-
-		return (
-			<div onClick={ this.trackNextThemeClick } role="presentation">
-				<SectionHeader href={ nextThemeHref } label={ translate( 'Next theme' ) } />
-			</div>
 		);
 	};
 

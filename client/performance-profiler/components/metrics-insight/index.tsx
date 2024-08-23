@@ -14,6 +14,7 @@ interface MetricsInsightProps {
 	insight: PerformanceMetricsItemQueryResponse;
 	onClick?: () => void;
 	index: number;
+	url?: string;
 }
 
 const Card = styled( FoldableCard )`
@@ -48,7 +49,6 @@ const Header = styled.div`
 	}
 
 	.counter {
-		color: #3858e9;
 		font-size: 16px;
 		font-weight: 500;
 		margin-right: 8px;
@@ -70,6 +70,10 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
 	);
 	const tip = tips[ insight.id ];
+
+	if ( props.url && tip ) {
+		tip.link = `https://wordpress.com/setup/hosted-site-migration?from=${ props.url }&ref=performance-profiler-dashboard`;
+	}
 
 	return (
 		<Card

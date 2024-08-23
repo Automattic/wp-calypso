@@ -5,6 +5,7 @@ import './style.scss';
 
 type InsightsSectionProps = {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	url: string;
 };
 
 export const InsightsSection = ( props: InsightsSectionProps ) => {
@@ -22,6 +23,7 @@ export const InsightsSection = ( props: InsightsSectionProps ) => {
 					key={ `insight-${ index }` }
 					insight={ { ...audits[ key ], id: key } }
 					index={ index }
+					url={ props.url }
 				/>
 			) ) }
 		</div>

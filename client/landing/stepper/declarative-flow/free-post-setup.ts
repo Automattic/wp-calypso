@@ -50,7 +50,6 @@ const freePostSetup: Flow = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
-	use__Temporary__ShouldTrackEvent: ( event ) => 'submit' === event,
 };
 
 export default freePostSetup;

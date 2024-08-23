@@ -623,7 +623,10 @@ body.is-mobile-app-view {
 		// reset flex value on mobile
 		flex: 0 1 auto;
 		padding: 0;
-		width: 46px;
+
+		&:not(.masterbar__item--always-show-content) {
+			width: 46px;
+		}
 
 		.masterbar__item-content {
 			display: none;
@@ -668,12 +671,8 @@ body.is-mobile-app-view {
 
 		@media only screen and (max-width: 781px) {
 			padding: 0;
-		}
 
-		.gridicon {
-			width: 24px;
-			height: 24px;
-			@media only screen and (max-width: 781px) {
+			svg {
 				width: 32px;
 				height: 32px;
 			}
@@ -1251,7 +1250,7 @@ body.is-mobile-app-view {
 	svg {
 		overflow: visible;
 		@media only screen and (max-width: 781px) {
-			width: 32px;
+			width: 52px;
 			height: 32px;
 		}
 	}
