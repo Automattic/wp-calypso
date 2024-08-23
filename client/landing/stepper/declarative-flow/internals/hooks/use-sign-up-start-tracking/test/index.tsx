@@ -9,6 +9,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useSignUpStartTracking } from '../';
+import { STEPPER_TRACKS_EVENT_SIGNUP_START } from '../../../../../constants';
 import type { Flow, StepperStep } from '../../../types';
 
 const steps = [ { slug: 'step-1' }, { slug: 'step-2' } ] as StepperStep[];
@@ -79,7 +80,7 @@ describe( 'useSignUpTracking', () => {
 				queryParams: { ref: 'another-flow-or-cta' },
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_start', {
+			expect( recordTracksEvent ).toHaveBeenCalledWith( STEPPER_TRACKS_EVENT_SIGNUP_START, {
 				flow: 'sign-up-flow',
 				ref: 'another-flow-or-cta',
 			} );
@@ -92,7 +93,7 @@ describe( 'useSignUpTracking', () => {
 				queryParams: { signup: 1 },
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_start', {
+			expect( recordTracksEvent ).toHaveBeenCalledWith( STEPPER_TRACKS_EVENT_SIGNUP_START, {
 				flow: 'sign-up-flow',
 				ref: '',
 			} );
@@ -102,13 +103,15 @@ describe( 'useSignUpTracking', () => {
 			render( {
 				flow: {
 					...signUpFlow,
-					useSignupStartEventProps: () => ( { extra: 'props' } ),
+					useTracksEventProps: () => ( {
+						[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+					} ),
 				} satisfies Flow,
 				currentStepRoute: 'step-1',
 				queryParams: { ref: 'another-flow-or-cta' },
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_start', {
+			expect( recordTracksEvent ).toHaveBeenCalledWith( STEPPER_TRACKS_EVENT_SIGNUP_START, {
 				flow: 'sign-up-flow',
 				ref: 'another-flow-or-cta',
 				extra: 'props',
@@ -124,7 +127,7 @@ describe( 'useSignUpTracking', () => {
 				currentStepRoute: 'step-1',
 			} );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_start', {
+			expect( recordTracksEvent ).toHaveBeenCalledWith( STEPPER_TRACKS_EVENT_SIGNUP_START, {
 				flow: 'sign-up-flow',
 				flow_variant: 'variant-slug',
 				ref: '',
@@ -141,7 +144,7 @@ describe( 'useSignUpTracking', () => {
 		it( "tracks when the user is on the sensei's flow second step", () => {
 			render( { flow: senseiFlow, currentStepRoute: 'step-2' } );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_start', {
+			expect( recordTracksEvent ).toHaveBeenCalledWith( STEPPER_TRACKS_EVENT_SIGNUP_START, {
 				flow: SENSEI_FLOW,
 				ref: '',
 			} );
@@ -149,14 +152,19 @@ describe( 'useSignUpTracking', () => {
 
 		it( 'does not trigger the event on rerender', () => {
 			const { rerender } = render( {
-				flow: { ...signUpFlow, useSignupStartEventProps: () => ( { extra: 'props' } ) },
+				flow: {
+					...signUpFlow,
+					useTracksEventProps: () => ( {
+						[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+					} ),
+				},
 				currentStepRoute: 'step-1',
 				queryParams: { ref: 'another-flow-or-cta' },
 			} );
 
 			rerender();
 
-			expect( recordTracksEvent ).toHaveBeenNthCalledWith( 1, 'calypso_signup_start', {
+			expect( recordTracksEvent ).toHaveBeenNthCalledWith( 1, STEPPER_TRACKS_EVENT_SIGNUP_START, {
 				flow: 'sign-up-flow',
 				ref: 'another-flow-or-cta',
 				extra: 'props',

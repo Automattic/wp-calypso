@@ -1,6 +1,7 @@
 import { SENSEI_FLOW } from '@automattic/onboarding';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { STEPPER_TRACKS_EVENT_SIGNUP_START } from 'calypso/landing/stepper/constants';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import { type Flow } from '../../types';
 
@@ -22,7 +23,7 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 	const firstStepSlug = ( flow.name === SENSEI_FLOW ? steps[ 1 ] : steps[ 0 ] ).slug;
 	const isFirstStep = firstStepSlug === currentStepRoute;
 	const flowVariant = flow.variantSlug;
-	const signupStartEventProps = flow.useSignupStartEventProps?.();
+	const signupStartEventProps = flow.useTracksEventProps?.()[ STEPPER_TRACKS_EVENT_SIGNUP_START ];
 
 	const extraProps = useMemo(
 		() => ( {
