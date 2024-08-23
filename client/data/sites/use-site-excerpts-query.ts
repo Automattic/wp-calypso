@@ -29,6 +29,16 @@ const fetchSites = (
 	} );
 };
 
+export const queryKeyForAllSitesWithThemeSlug = [
+	USE_SITE_EXCERPTS_QUERY_KEY,
+	SITE_EXCERPT_REQUEST_FIELDS,
+	SITE_EXCERPT_REQUEST_OPTIONS,
+	[],
+	'all',
+	[],
+	[ 'theme_slug' ],
+];
+
 export const useSiteExcerptsQuery = (
 	fetchFilter?: string[],
 	sitesFilterFn?: ( site: SiteExcerptData ) => boolean,
