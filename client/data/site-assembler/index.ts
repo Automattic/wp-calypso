@@ -7,11 +7,7 @@ export const useIsSiteAssemblerEnabledExp = (
 ) => {
 	const isLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
 	const [ isLoading, assignment ] = useExperiment( 'calypso_disable_site_assembler' );
-	const variationName =
-		assignment?.variationName ||
-		// TODO: Remove the following one after testing.
-		( typeof window !== 'undefined' &&
-			window.sessionStorage.getItem( 'calypso_disable_site_assembler' ) );
+	const variationName = assignment?.variationName;
 
 	if ( isLoading ) {
 		return false;
