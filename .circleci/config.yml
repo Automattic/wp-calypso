@@ -201,6 +201,8 @@ jobs:
 
             bundle install
 
+            bundle exec fastlane configure_code_signing
+
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
             # ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
