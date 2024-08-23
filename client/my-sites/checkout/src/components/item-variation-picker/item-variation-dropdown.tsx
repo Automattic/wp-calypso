@@ -179,7 +179,7 @@ function ItemVariantOptionList( {
 		<OptionList role="listbox" tabIndex={ -1 }>
 			{ variants.map( ( variant, index ) => (
 				<ItemVariantOption
-					key={ variant.productSlug + variant.variantLabel }
+					key={ variant.productSlug + variant.variantLabel.noun }
 					isSelected={ index === highlightedVariantIndex }
 					onSelect={ () =>
 						handleChange(
@@ -219,7 +219,7 @@ function ItemVariantOption( {
 		<Option
 			id={ productId.toString() }
 			className={ isSelected ? 'item-variant-option--selected' : undefined }
-			aria-label={ variantLabel }
+			aria-label={ variantLabel.noun }
 			data-product-slug={ productSlug }
 			role="option"
 			onClick={ onSelect }

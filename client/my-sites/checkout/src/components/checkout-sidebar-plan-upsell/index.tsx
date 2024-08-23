@@ -156,16 +156,14 @@ export function CheckoutSidebarPlanUpsell() {
 		<>
 			<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
-					{ isComparisonWithIntroOffer && (
-						<>
-							<div className="checkout-sidebar-plan-upsell__plan-grid-cell"></div>
-							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-								<strong>{ __( 'Two-year cost' ) }</strong>
-							</div>
-						</>
-					) }
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ currentVariant.variantLabel }
+						<strong>{ __( 'Plan' ) }</strong>
+					</div>
+					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+						<strong>{ isComparisonWithIntroOffer ? __( 'Two-year cost' ) : __( 'Cost' ) }</strong>
+					</div>
+					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+						{ currentVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ formatCurrency(
@@ -179,7 +177,7 @@ export function CheckoutSidebarPlanUpsell() {
 						) }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						{ biennialVariant.variantLabel }
+						{ biennialVariant.variantLabel.adjective }
 					</div>
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ compareToPriceForVariantTerm && (
