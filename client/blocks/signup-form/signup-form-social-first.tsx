@@ -116,7 +116,7 @@ const SignupFormSocialFirst = ( {
 				<p className="signup-form-social-first__email-tos-link">
 					{ createInterpolateElement(
 						__(
-							'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+							'By clicking "Continue", you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
 						),
 						options
 					) }
