@@ -48,7 +48,7 @@ class PreviewToolbar extends Component {
 		// Whether or not the current user has access to the customizer
 		canUserEditThemeOptions: PropTypes.bool,
 		isUnlaunchedSite: PropTypes.bool,
-		launcSite: PropTypes.func,
+		launchSite: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -57,6 +57,11 @@ class PreviewToolbar extends Component {
 
 	handleEditorWebPreviewExternalClick = () => {
 		this.props.recordTracksEvent( 'calypso_editor_preview_toolbar_external_click' );
+	};
+
+	handleEditorWebPreviewLaunchSiteClick = () => {
+		this.props.recordTracksEvent( 'calypso_editor_preview_toolbar_launch_site__click' );
+		this.props.launchSite();
 	};
 
 	handleEditorWebPreviewClose = () => {
@@ -94,7 +99,6 @@ class PreviewToolbar extends Component {
 			showEditHeaderLink,
 			translate,
 			isUnlaunchedSite,
-			launchSite,
 		} = this.props;
 
 		const devices = {
@@ -184,8 +188,7 @@ class PreviewToolbar extends Component {
 								<Button
 									primary
 									className="web-preview__launch-site"
-									target={ isModalWindow ? '_blank' : null }
-									onClick={ () => launchSite() }
+									onClick={ this.handleEditorWebPreviewLaunchSiteClick }
 								>
 									{ translate( 'Launch site' ) }
 								</Button>
