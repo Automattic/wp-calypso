@@ -53,7 +53,7 @@ export default function ContentSummary( { status, cardData }: Props ) {
 		);
 	}
 
-	if ( status === 'importing' ) {
+	if ( status === 'importing' || status === 'processing' ) {
 		return (
 			<div className="summary__content">
 				<p>

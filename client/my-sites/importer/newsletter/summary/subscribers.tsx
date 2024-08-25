@@ -19,6 +19,10 @@ export default function SubscriberSummary( { status, proStatus, cardData, siteId
 
 	const { enqueSubscriberImport } = useSubscriberImportMutation();
 
+	const importSubscribers = () => {
+		enqueSubscriberImport( siteId, 'substack', 'summary' );
+	};
+
 	const onChange = ( { target: { checked } }: ChangeEvent< HTMLInputElement > ) =>
 		setIsDisabled( checked );
 
@@ -31,10 +35,6 @@ export default function SubscriberSummary( { status, proStatus, cardData, siteId
 			</div>
 		);
 	}
-
-	const importSubscribers = () => {
-		enqueSubscriberImport( siteId, 'substack', 'summary' );
-	};
 
 	if ( status === 'pending' ) {
 		return (
@@ -81,13 +81,25 @@ export default function SubscriberSummary( { status, proStatus, cardData, siteId
 		);
 	}
 
-	if ( status === 'imported' ) {
+	if ( status === 'importing' || status === 'processing' ) {
 		return (
 			<div className="summary__content">
-				<p>We migrated</p>
+				<p>
+					<Icon icon={ people } /> Importing subscribers...
+				</p>
+			</div>
+		);
+	}
+
+	if ( status === 'imported' ) {
+		const paid_subscribers = cardData.meta.paid_subscribers_count;
+		const free_subscribers = cardData.meta.subscribed_count - paid_subscribers;
+		return (
+			<div className="summary__content">
+				<p>We migrated { cardData.meta.subscribed_count } subscribers</p>
 				<p>
 					<Icon icon={ people } />
-					<strong>{ cardData.meta.email_count }</strong> subscribers
+					<strong>{ free_subscribers }</strong> free subscribers
 				</p>
 				{ hasPaidSubscribers && (
 					<p>
