@@ -9,7 +9,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { launchSite } from 'calypso/state/sites/launch/actions';
+import { launchSite as launchSiteAction } from 'calypso/state/sites/launch/actions';
 import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -47,9 +47,8 @@ class PreviewToolbar extends Component {
 		onEdit: PropTypes.func,
 		// Whether or not the current user has access to the customizer
 		canUserEditThemeOptions: PropTypes.bool,
-		selectedSiteId: PropTypes.numbers,
-		launchSite: PropTypes.func,
 		isUnlaunchedSite: PropTypes.bool,
+		launcSite: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -94,8 +93,8 @@ class PreviewToolbar extends Component {
 			showSEO,
 			showEditHeaderLink,
 			translate,
-			selectedSiteId,
 			isUnlaunchedSite,
+			launchSite,
 		} = this.props;
 
 		const devices = {
@@ -186,7 +185,7 @@ class PreviewToolbar extends Component {
 									primary
 									className="web-preview__launch-site"
 									target={ isModalWindow ? '_blank' : null }
-									onClick={ () => this.props.launchSite( selectedSiteId ) }
+									onClick={ () => launchSite() }
 								>
 									{ translate( 'Launch site' ) }
 								</Button>
@@ -211,9 +210,9 @@ export default connect(
 		return {
 			canUserEditThemeOptions,
 			customizeUrl: getCustomizerUrl( state, siteId, null, window.location.href ),
-			selectedSiteId,
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
+			launchSite: launchSiteAction( selectedSiteId ),
 		};
 	},
-	{ recordTracksEvent, launchSite }
+	{ recordTracksEvent }
 )( localize( PreviewToolbar ) );
