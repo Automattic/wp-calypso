@@ -1,7 +1,11 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { Subscriber } from '@automattic/data-stores';
+import { useQueryClient } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
-import { Icon, people, currencyEuro } from '@wordpress/icons';
+import { useSelect } from '@wordpress/data';
+import { Icon, people, currencyEuro, external } from '@wordpress/icons';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
+import { useEffect, useRef } from 'react';
 import SubscriberUploadForm from './subscriber-upload-form';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -11,6 +15,7 @@ type Props = {
 	fromSite: QueryArgParsed;
 	skipNextStep: () => void;
 	cardData: any;
+	engine: string;
 };
 
 export default function Subscribers( {
@@ -19,7 +24,29 @@ export default function Subscribers( {
 	fromSite,
 	skipNextStep,
 	cardData,
+	engine,
 }: Props ) {
+	const queryClient = useQueryClient();
+	const { importSelector } = useSelect( ( select ) => {
+		const subscriber = select( Subscriber.store );
+		return {
+			importSelector: subscriber.getImportSubscribersSelector(),
+		};
+	}, [] );
+
+	const prevInProgress = useRef( importSelector?.inProgress );
+	useEffect( () => {
+		if ( ! prevInProgress.current && importSelector?.inProgress ) {
+			setTimeout( () => {
+				queryClient.invalidateQueries( {
+					queryKey: [ 'paid-newsletter-importer', selectedSite.ID, engine, 'subscribers' ],
+				} );
+			}, 1500 ); // 1500ms = 1.5s delay so that we have enought time to propagate the changes.
+		}
+
+		prevInProgress.current = importSelector?.inProgress;
+	}, [ importSelector?.inProgress ] );
+
 	const open = cardData?.meta?.status === 'pending' || false;
 
 	const all_emails = cardData?.meta?.email_count || 0;
@@ -39,8 +66,10 @@ export default function Subscribers( {
 					href={ `https://${ fromSite }/publish/subscribers` }
 					target="_blank"
 					rel="noreferrer noopener"
+					iconPosition="right"
+					icon={ external }
 				>
-					Export subscribers <Gridicon icon="external" />
+					Export subscribers
 				</Button>
 				<hr />
 				<h2>Step 2: Import your subscribers to WordPress.com</h2>

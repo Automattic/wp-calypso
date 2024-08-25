@@ -85,7 +85,7 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 			if ( status === 'done' ) {
 				stepsProgress[ index ].indicator = <Icon icon={ check } />;
 			}
-			if ( status === 'processing' ) {
+			if ( status === 'importing' ) {
 				stepsProgress[ index ].indicator = <Spinner style={ { color: '#3858e9' } } />;
 			}
 		}
@@ -98,7 +98,12 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 
 	let stepContent = {};
 	if ( paidNewsletterData?.steps ) {
-		stepContent = paidNewsletterData?.steps[ step ]?.content ?? {};
+		// This is useful for the summary step.
+		if ( ! paidNewsletterData?.steps[ step ] ) {
+			stepContent = paidNewsletterData.steps;
+		} else {
+			stepContent = paidNewsletterData.steps[ step ]?.content ?? {};
+		}
 	}
 
 	useEffect( () => {
