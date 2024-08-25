@@ -9,7 +9,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { launchSite as launchSiteAction } from 'calypso/state/sites/launch/actions';
+import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -48,6 +48,7 @@ class PreviewToolbar extends Component {
 		// Whether or not the current user has access to the customizer
 		canUserEditThemeOptions: PropTypes.bool,
 		isUnlaunchedSite: PropTypes.bool,
+		selectedSiteId: PropTypes.number,
 		launchSite: PropTypes.func,
 	};
 
@@ -61,7 +62,7 @@ class PreviewToolbar extends Component {
 
 	handleEditorWebPreviewLaunchSiteClick = () => {
 		this.props.recordTracksEvent( 'calypso_editor_preview_toolbar_launch_site__click' );
-		this.props.launchSite();
+		this.props.launchSite( this.props.selectedSiteId );
 	};
 
 	handleEditorWebPreviewClose = () => {
@@ -214,8 +215,8 @@ export default connect(
 			canUserEditThemeOptions,
 			customizeUrl: getCustomizerUrl( state, siteId, null, window.location.href ),
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
-			launchSite: launchSiteAction( selectedSiteId ),
+			selectedSiteId,
 		};
 	},
-	{ recordTracksEvent }
+	{ recordTracksEvent, launchSite }
 )( localize( PreviewToolbar ) );
