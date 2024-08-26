@@ -63,7 +63,7 @@ const ReaderFeaturedImage = ( {
 	canonicalMedia,
 	href,
 	children,
-	onClick,
+	onClick = noop,
 	className,
 	fetched,
 	imageUrl,
@@ -193,10 +193,6 @@ ReaderFeaturedImage.propTypes = {
 	canonicalMedia: PropTypes.object,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
-};
-
-ReaderFeaturedImage.defaultProps = {
-	onClick: noop,
 };
 
 const mapStateToProps = ( state, ownProps ) => {

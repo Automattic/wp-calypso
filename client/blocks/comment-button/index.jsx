@@ -10,9 +10,16 @@ import './style.scss';
 
 const noop = () => {};
 
-function CommentButton( props ) {
-	const { commentCount, href, onClick, tagName, target, icon, defaultLabel } = props;
-
+function CommentButton( {
+	commentCount = 0,
+	href = null,
+	onClick = noop,
+	size = 24,
+	tagName = 'li',
+	target = null,
+	icon = null,
+	defaultLabel,
+} ) {
 	const showLabel = commentCount > 0 || defaultLabel;
 	const label = commentCount || defaultLabel;
 
@@ -28,7 +35,7 @@ function CommentButton( props ) {
 			},
 			( prop ) => prop === null
 		),
-		icon || <Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
+		icon || <Gridicon icon="comment" size={ size } className="comment-button__icon" />,
 		<span className="comment-button__label">
 			{ showLabel && <span className="comment-button__label-count">{ label }</span> }
 		</span>
@@ -37,26 +44,13 @@ function CommentButton( props ) {
 
 CommentButton.propTypes = {
 	commentCount: PropTypes.number,
-	defaultLabel: PropTypes.string,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
 	post: PropTypes.object,
-	showLabel: PropTypes.bool,
 	tagName: PropTypes.string,
 	target: PropTypes.string,
 	icon: PropTypes.object,
-};
-
-CommentButton.defaultProps = {
-	commentCount: 0,
-	href: null,
-	onClick: noop,
-	post: {},
-	showLabel: true,
-	size: 24,
-	tagName: 'li',
-	target: null,
-	icon: null,
+	defaultLabel: PropTypes.string,
 };
 
 const mapStateToProps = ( state, ownProps ) => {

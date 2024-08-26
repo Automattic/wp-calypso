@@ -49,7 +49,7 @@ export const DeploymentStyle = ( {
 			</p>
 			<p>
 				{ __(
-					' Advanced deployments allow you to use a workflow script, enabling custom build steps such as installing Composer dependencies, conducting pre-deployment code testing, and controlling file deployment. '
+					' Advanced deployments allow you to use a workflow script, enabling custom build steps such as installing Composer dependencies, conducting pre-deployment code testing, and controlling file deployment.'
 				) }
 			</p>
 		</>

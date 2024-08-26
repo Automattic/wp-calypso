@@ -43,21 +43,21 @@ function getYAxisMax( values ) {
 
 // The Chart component.
 function Chart( {
-	barClick,
+	barClick = noop,
 	children,
 	data,
-	isPlaceholder,
+	isPlaceholder = false,
 	isRtl,
-	minBarWidth,
-	minTouchBarWidth,
+	minBarWidth = 15,
+	minTouchBarWidth = 42,
 	numberFormat,
 	translate,
-	chartXPadding,
-	sliceFromBeginning,
+	chartXPadding = 20,
+	sliceFromBeginning = true,
 	onChangeMaxBars,
 	minBarsToBeShown,
-	hideYAxis,
-	hideXAxis,
+	hideYAxis = false,
+	hideXAxis = false,
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 0, hasResized: false } );
@@ -235,17 +235,6 @@ Chart.propTypes = {
 	minBarsToBeShown: PropTypes.number,
 	hideYAxis: PropTypes.bool,
 	hideXAxis: PropTypes.bool,
-};
-
-Chart.defaultProps = {
-	barClick: noop,
-	isPlaceholder: false,
-	minBarWidth: 15,
-	minTouchBarWidth: 42,
-	chartXPadding: 20,
-	sliceFromBeginning: true,
-	hideYAxis: false,
-	hideXAxis: false,
 };
 
 export default withRtl( localize( Chart ) );
