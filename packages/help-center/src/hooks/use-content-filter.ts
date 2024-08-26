@@ -61,9 +61,12 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 					};
 				},
 			},
+			/**
+			 * Fix width of VideoPress embeds.
+			 */
 			{
 				pattern: 'iframe[data-wpcom-embed-url*="videopress.com"]',
-				action: ( element ) => {
+				action: ( element: HTMLElement ) => {
 					const parent = element.parentNode;
 					if ( parent ) {
 						const width = parseFloat( element.getAttribute( 'width' ) ?? '' );
