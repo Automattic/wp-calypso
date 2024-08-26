@@ -1,10 +1,11 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
@@ -134,12 +135,10 @@ class ReaderShare extends Component {
 						</>
 					) : (
 						<>
-							<Gridicon
-								icon="reblog"
-								size={ this.props.iconSize }
-								style={ { height: this.props.iconSize, width: this.props.iconSize } }
-							/>
-							<span className="reader-share__label">{ translate( 'Repost' ) }</span>
+							{ ReaderRepostIcon( {
+								iconSize: this.props.iconSize,
+							} ) }
+							<span className="repost__label">{ translate( 'Repost' ) }</span>
 						</>
 					) }
 				</Button>
