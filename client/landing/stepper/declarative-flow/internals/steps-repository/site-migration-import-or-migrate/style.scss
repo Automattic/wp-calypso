@@ -3,7 +3,6 @@
 
 .import-or-migrate {
 	max-width: 602px;
-	padding: 0 12px;
 
 	.onboarding-title {
 		font-size: 2.75rem;
@@ -29,6 +28,12 @@
 
 		.flow-question {
 			max-width: none;
+			margin: 0 0 18px;
+			&__heading {
+				flex-wrap: wrap-reverse;
+				min-width: min-content;
+				white-space: nowrap;
+			}
 		}
 	}
 
