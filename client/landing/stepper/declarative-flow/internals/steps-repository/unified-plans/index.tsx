@@ -1,5 +1,5 @@
 import { OnboardSelect } from '@automattic/data-stores';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, usePersistedState } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
@@ -12,14 +12,13 @@ import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { useStepperPersistedState } from '../../hooks/use-persisted-state';
 import { ProvidedDependencies, StepProps } from '../../types';
 import './styles.scss';
 
 export const LocalizedPlanStep = localize( PlansStep );
 
 export default function PlansStepAdaptor( props: StepProps ) {
-	const [ stepState, setStepState ] = useStepperPersistedState< ProvidedDependencies >();
+	const [ stepState, setStepState ] = usePersistedState< ProvidedDependencies >();
 	const siteSlug = useSiteSlug();
 	const { siteTitle, domainItem, domainItems } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
