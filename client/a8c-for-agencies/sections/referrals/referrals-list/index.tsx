@@ -7,9 +7,10 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { Referral, ReferralInvoice } from '../types';
 import CommissionsColumn from './commissions-column';
 import SubscriptionStatus from './subscription-status';
-import type { Referral, ReferralInvoice } from '../types';
+import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -42,7 +43,7 @@ export default function ReferralList( {
 		[ dispatch, setDataViewsState ]
 	);
 
-	const fields = useMemo(
+	const fields: Field< any >[] = useMemo(
 		() =>
 			dataViewsState.selectedItem || ! isDesktop
 				? [
@@ -70,7 +71,7 @@ export default function ReferralList( {
 							? [
 									{
 										id: 'actions',
-										label: null,
+										label: '',
 										render: ( { item }: { item: Referral } ) => (
 											<div>
 												<Button
