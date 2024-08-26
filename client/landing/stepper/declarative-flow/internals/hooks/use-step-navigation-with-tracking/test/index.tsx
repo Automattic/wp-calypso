@@ -57,7 +57,7 @@ describe( 'useStepNavigationWithTracking', () => {
 		expect( result.current ).toHaveProperty( 'goToStep' );
 	} );
 
-	it( 'calls submit control being wrapped with correct parameters and records the respective event', () => {
+	it( 'calls the wrapped submit control with correct parameters and records the respective event', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 		const providedDependencies = { foo: 'foo' };
 		act( () => {
@@ -76,7 +76,7 @@ describe( 'useStepNavigationWithTracking', () => {
 		} );
 	} );
 
-	it( 'calls goBack control being wrapped with correct parameters', () => {
+	it( 'calls the wrapped goBack control with correct parameters and records the respective event', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 
 		act( () => {
@@ -95,7 +95,7 @@ describe( 'useStepNavigationWithTracking', () => {
 		} );
 	} );
 
-	it( 'calls goNext control being wrapped with correct parameters', () => {
+	it( 'calls the wrapped goNext control with correct parameters and records the respective event', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 
 		act( () => {
@@ -114,7 +114,7 @@ describe( 'useStepNavigationWithTracking', () => {
 		} );
 	} );
 
-	it( 'calls exitFlow control being wrapped with correct parameters', () => {
+	it( 'calls the wrapped exitFlow control with correct parameters and records the respective event', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 
 		act( () => {
@@ -133,7 +133,7 @@ describe( 'useStepNavigationWithTracking', () => {
 		} );
 	} );
 
-	it( 'calls goToStep control being wrapped with correct parameters', () => {
+	it( 'calls the wrapped goToStep control with correct parameters and records the respective event', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 
 		act( () => {
