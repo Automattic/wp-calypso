@@ -156,6 +156,7 @@ export default function TeamList() {
 						actions: [],
 						setDataViewsState: setDataViewsState,
 						dataViewsState: dataViewsState,
+						defaultLayouts: { table: {} },
 					} }
 				/>
 			</LayoutBody>
