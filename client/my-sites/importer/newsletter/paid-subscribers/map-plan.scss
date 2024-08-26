@@ -12,10 +12,11 @@
 .map-plan__info {
 	min-height: 80px;
 	display: flex;
-	align-items: center;
 	min-width: 230px;
+	align-items: center;
 }
 .map-plan__info {
+	align-items: start;
 	flex-direction: column;
 	justify-content: center;
 	p {
@@ -30,7 +31,7 @@
 .map-plan__select-product .map-plan__selected {
 	display: flex;
 	height: auto;
-
+	text-align: right;
 	p {
 		margin: 0;
 	}
