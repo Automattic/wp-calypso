@@ -1,6 +1,5 @@
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
-import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
 	AssertConditionResult,
@@ -23,10 +22,7 @@ const domainUserTransfer: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
-
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, currentStep );
 			switch ( currentStep ) {
 				case 'domain-contact-info':
 					return window.location.assign(

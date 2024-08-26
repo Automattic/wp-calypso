@@ -85,7 +85,7 @@ export default function GetStarted() {
 						target="_blank"
 						href="#" // FIXME: Add link to the KB article
 					>
-						{ translate( 'Team members Knowledge Base article?' ) }
+						{ translate( 'Team members Knowledge Base article' ) }
 						<Icon icon={ external } size={ 18 } />
 					</Button>
 					<br />

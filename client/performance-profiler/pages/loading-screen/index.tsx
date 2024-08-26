@@ -119,6 +119,10 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	const translate = useTranslate();
 	const [ step, setStep ] = useState( 0 );
 
+	const heading = isSavedReport
+		? translate( "Your site's results are ready" )
+		: translate( "Testing your site's speed…" );
+
 	const steps = isSavedReport
 		? [ translate( 'Getting your report…' ) ]
 		: [
@@ -203,7 +207,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 	return (
 		<LayoutBlock className="landing-page-header-block">
 			<StyledLoadingScreen>
-				<h2>{ translate( "Testing your site's speed…" ) }</h2>
+				<h2>{ heading }</h2>
 				{ steps.map( ( heading, index ) => (
 					<span key={ index } className={ stepStatus( index, step ) }>
 						<Gridicon icon="checkmark" size={ 18 } />

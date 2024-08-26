@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { MIGRATION_FLOW } from '@automattic/onboarding';
@@ -6,6 +5,8 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
+import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
+import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -18,7 +19,6 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
@@ -94,7 +94,6 @@ const siteSetupFlow: Flow = {
 		];
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
 		const stepData = useSelect(
 			( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
 			[]
@@ -149,6 +148,14 @@ const siteSetupFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
 			[]
 		);
+
+		const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-choices' );
+
+		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
+
+		const isDesignChoicesStepEnabled =
+			( isAssemblerSupported() && isSiteAssemblerEnabled ) || isBigSkyEligible;
+
 		const { setPendingAction, resetOnboardStoreWithSkipFlags, setIntent } =
 			useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
@@ -240,8 +247,6 @@ const siteSetupFlow: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
-
 			switch ( currentStep ) {
 				case 'options': {
 					if ( intent === 'sell' ) {
@@ -354,7 +359,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Sell:
 							return navigate( 'options' );
 						default: {
-							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'designSetup' );
@@ -452,10 +457,10 @@ const siteSetupFlow: Flow = {
 							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
 						case 'checkout':
 							return exitFlow( providedDependencies?.checkoutUrl as string );
-						case 'customized-action-flow': {
-							const migrateEntireSiteFlow = urlQueryParams.get( 'migrateEntireSiteFlow' );
-							if ( migrateEntireSiteFlow ) {
-								return goToFlow( migrateEntireSiteFlow );
+						case 'customized-action-go-to-flow': {
+							const customizedActionGoToFlow = urlQueryParams.get( 'customizedActionGoToFlow' );
+							if ( customizedActionGoToFlow ) {
+								return goToFlow( customizedActionGoToFlow );
 							}
 						}
 						default:
@@ -502,7 +507,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Write:
 							return navigate( 'bloggerStartingPoint' );
 						default: {
-							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'goals' );

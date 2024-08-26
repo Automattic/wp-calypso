@@ -123,6 +123,11 @@ export interface DomainData {
 	subdomain_part: string;
 	auth_code_required: boolean;
 	is_mapped_to_atomic_site: boolean;
+	is_move_to_new_site_pending: boolean;
+	pending_registration_at_registry: boolean;
+	pending_registration_at_registry_url: string;
+	registered_via_trustee: boolean;
+	registered_via_trustee_url: string;
 }
 
 export interface SiteDomainsQueryFnData {
