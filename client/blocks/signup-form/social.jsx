@@ -72,8 +72,9 @@ class SocialSignupForm extends Component {
 		try {
 			if ( redirectToAfterLoginUrl && typeof window !== 'undefined' ) {
 				window.sessionStorage.setItem( 'signup_redirect_to', redirectToAfterLoginUrl );
-				window.sessionStorage.setItem( 'social_login_used', service );
 			}
+
+			window.sessionStorage.setItem( 'social_login_used', service );
 		} catch ( error ) {
 			showErrorNotice(
 				translate(
