@@ -90,7 +90,7 @@ export const useStepNavigationWithTracking = ( {
 				} );
 				stepNavigation.goNext?.();
 			},
-			goToStep( step: string ) {
+			goToStep: ( step: string ) => {
 				handleRecordStepNavigation( {
 					event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
 					additionalProps: {
