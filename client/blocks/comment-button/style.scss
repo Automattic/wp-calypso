@@ -14,30 +14,24 @@
 	}
 
 	.comment-button__label-status {
-		@include breakpoint-deprecated( "<480px" ) {
+		@include breakpoint-deprecated("<480px") {
 			display: none;
 		}
 	}
 }
 
 .comment-button__label {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 13px;
-	font-weight: 500;
+	font-size: $font-body-small;
 
 	&:empty {
 		display: none;
 	}
 
 	.comment-button__label-count {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 13px;
-		font-weight: 500;
+		font-size: $font-body-small;
 	}
 }
 
 .reader-full-post .reader-post-actions .comment-button__label {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 13px;
-	font-weight: 500;
+	font-size: $font-body-small;
 }

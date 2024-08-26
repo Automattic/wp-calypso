@@ -57,7 +57,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( "<480px" ) {
+	@include breakpoint-deprecated("<480px") {
 		.like-button__label-status {
 			display: none;
 		}
@@ -69,14 +69,11 @@
 }
 
 .like-button__label {
-
 	&:empty {
 		display: none;
 	}
 
 	.like-button__label-count {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 13px;
-		font-weight: 500;
+		font-size: $font-body-small;
 	}
 }
