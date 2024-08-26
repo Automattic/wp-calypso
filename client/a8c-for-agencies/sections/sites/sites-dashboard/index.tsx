@@ -274,9 +274,7 @@ export default function SitesDashboard() {
 						} }
 					>
 						<JetpackSitesDataViews
-							className={ clsx( 'sites-overview__content', {
-								'is-hiding-navigation': navItems.length <= 1,
-							} ) }
+							className={ clsx( 'sites-overview__content' ) }
 							data={ data }
 							isLoading={ isLoading }
 							isLargeScreen={ isLargeScreen || false }
