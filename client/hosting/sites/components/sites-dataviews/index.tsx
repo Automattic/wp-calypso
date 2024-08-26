@@ -233,6 +233,7 @@ const DotcomSitesDataViews = ( {
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
 		pagination: paginationInfo,
+		defaultLayouts: { table: {} },
 	} );
 
 	// Update the itemData packet
