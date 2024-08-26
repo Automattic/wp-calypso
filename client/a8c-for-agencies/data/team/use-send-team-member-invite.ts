@@ -25,7 +25,7 @@ function mutationSendTeamMemberInvite(
 		throw new Error( 'Agency ID is required to send team member invite' );
 	}
 
-	return wpcom.req.put( {
+	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: `/agency/${ agencyId }/user-invites`,
 		method: 'POST',

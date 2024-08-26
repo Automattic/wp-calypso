@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
@@ -14,9 +14,11 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useCancelMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-cancel-member-invite';
 import useFetchMemberInvites from 'calypso/a8c-for-agencies/data/team/use-fetch-member-invite';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { TeamMember } from '../../types';
 import GetStarted from '../get-started';
 import { ActionColumn, DateColumn, MemberColumn, RoleStatusColumn } from './columns';
@@ -31,7 +33,13 @@ export default function TeamList() {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
-	const { data: memberInvites, isPending: isMemberInvitesPending } = useFetchMemberInvites();
+	const {
+		data: memberInvites,
+		isPending: isMemberInvitesPending,
+		refetch: refetchMemberInvites,
+	} = useFetchMemberInvites();
+
+	const { mutate: cancelMemberInvite } = useCancelMemberInviteMutation();
 
 	const title = translate( 'Manage team members' );
 
@@ -40,10 +48,31 @@ export default function TeamList() {
 		page( A4A_TEAM_INVITE_LINK );
 	};
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleAction = ( action: string, item: TeamMember ) => {
-		// FIXME: Implement action handling
-	};
+	const handleAction = useCallback(
+		( action: string, item: TeamMember ) => {
+			if ( action === 'cancel-user-invite' ) {
+				cancelMemberInvite(
+					{ id: item.id },
+					{
+						onSuccess: () => {
+							dispatch(
+								successNotice( 'The invitation has been successfully cancelled.', {
+									id: 'cancel-user-invite-success',
+									duration: 5000,
+								} )
+							);
+							refetchMemberInvites();
+						},
+
+						onError: ( error ) => {
+							dispatch( errorNotice( error.message ) );
+						},
+					}
+				);
+			}
+		},
+		[ cancelMemberInvite, dispatch, refetchMemberInvites ]
+	);
 
 	const fields = useMemo(
 		() => [
@@ -94,13 +123,14 @@ export default function TeamList() {
 				enableSorting: false,
 			},
 		],
-		[ isDesktop, translate ]
+		[ handleAction, isDesktop, translate ]
 	);
 
 	const members: TeamMember[] = useMemo( () => {
 		const activeMembers: TeamMember[] = [
 			// FIXME: Fetch team members
 			{
+				id: 0,
 				displayName: 'Owner',
 				email: 'owner@automattic.com',
 				role: 'owner',
