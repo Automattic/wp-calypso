@@ -16,21 +16,22 @@ const reducer = combineReducers( {
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const listenerMiddleware = createListenerMiddleware();
-const withMiddleware = ( customMiddleware ) =>
-	composeEnhancers(
-		applyMiddleware( thunkMiddleware, listenerMiddleware, actionMiddleware( customMiddleware ) )
-	)( createStore );
+const withMiddleware = () =>
+	composeEnhancers( applyMiddleware( thunkMiddleware, listenerMiddleware, actionMiddleware() ) )(
+		createStore
+	);
 
-const store = init();
+let store = null;
+store = init();
 
 // Note: this function has the unexpected side effect of modifying
 // the `store` export. In order to maintain behaviour for consumers,
 // it's being kept this way, but beware this is not a pure function.
-function init( { customEnhancer, customMiddleware = {} } = {} ) {
-	const middle = withMiddleware( customMiddleware );
+function init( { customEnhancer } = {} ) {
+	const middle = withMiddleware();
 	const create = customEnhancer ? customEnhancer( middle ) : middle;
 
-	return create( reducer, reducer( undefined, { type: '@@INIT' } ) );
+	store = create( reducer );
 }
 
 export { store, init };

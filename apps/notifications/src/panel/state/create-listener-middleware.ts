@@ -35,7 +35,8 @@ function createListenerMiddleware(): Middleware {
 						if ( ! listeners.has( type ) ) {
 							listeners.set( type, new Set< Handler >() );
 						}
-						handlers.forEach( ( handler ) => listeners.get( type )!.add( handler ) );
+						const listenersForType = listeners.get( type )!;
+						handlers.forEach( ( handler ) => listenersForType.add( handler ) );
 					}
 					return;
 				}
@@ -44,7 +45,8 @@ function createListenerMiddleware(): Middleware {
 						if ( ! listeners.has( type ) ) {
 							continue;
 						}
-						handlers.forEach( ( handler ) => listeners.get( type )!.delete( handler ) );
+						const listenersForType = listeners.get( type )!;
+						handlers.forEach( ( handler ) => listenersForType.delete( handler ) );
 					}
 				}
 				case 'LISTENER-MIDDLEWARE/CLEAR_LISTENERS': {

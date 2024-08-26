@@ -30,7 +30,7 @@ export const RestClientContext = createContext( client );
 export class Notifications extends PureComponent {
 	static propTypes = {
 		customEnhancer: PropTypes.func,
-		customMiddleware: PropTypes.object,
+		actionHandlers: PropTypes.object,
 		isShowing: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		locale: PropTypes.string,
@@ -41,7 +41,7 @@ export class Notifications extends PureComponent {
 
 	static defaultProps = {
 		customEnhancer: ( a ) => a,
-		customMiddleware: {},
+		actionHandlers: {},
 		isShowing: false,
 		isVisible: false,
 		locale: 'en',
@@ -77,12 +77,12 @@ export class Notifications extends PureComponent {
 	constructor( props ) {
 		super( props );
 
-		const { customEnhancer, customMiddleware, isShowing, isVisible, receiveMessage, wpcom } =
+		const { customEnhancer, actionHandlers, isShowing, isVisible, receiveMessage, wpcom } =
 			this.props;
 
 		initStore( { customEnhancer } );
 
-		store.dispatch( addListeners( customMiddleware ) );
+		store.dispatch( addListeners( actionHandlers ) );
 		store.dispatch( addListeners( this.defaultHandlers ) );
 
 		initAPI( wpcom );
@@ -139,8 +139,8 @@ export class Notifications extends PureComponent {
 	}
 
 	componentWillUnmount() {
-		const { customMiddleware } = this.props;
-		store.dispatch( removeListeners( customMiddleware ) );
+		const { actionHandlers } = this.props;
+		store.dispatch( removeListeners( actionHandlers ) );
 		store.dispatch( removeListeners( this.defaultHandlers ) );
 	}
 
