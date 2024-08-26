@@ -43,7 +43,7 @@ export function createActions() {
 		siteId: number,
 		file?: File,
 		emails: string[] = [],
-		parseOnly?: boolean = false
+		parseOnly: boolean = false
 	) {
 		yield importCsvSubscribersStart( siteId, file, emails );
 
