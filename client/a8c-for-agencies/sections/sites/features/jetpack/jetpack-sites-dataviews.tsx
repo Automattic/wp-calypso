@@ -193,7 +193,8 @@ export const JetpackSitesDataViews = ( {
 						);
 					}
 
-					const isDevSite = item.isDevSite ?? false;
+					const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
+					const isDevSite = ( item.isDevSite && devSitesEnabled ) || false;
 
 					return (
 						<>

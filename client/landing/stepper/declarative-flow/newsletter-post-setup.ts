@@ -1,7 +1,10 @@
+import { Onboard } from '@automattic/data-stores';
 import { NEWSLETTER_POST_SETUP_FLOW } from '@automattic/onboarding';
+import { useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { ONBOARD_STORE } from '../stores';
 import NewsletterPostSetup from './internals/steps-repository/newsletter-post-setup';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
@@ -15,14 +18,17 @@ const newsletterPostSetup: Flow = {
 	useSteps() {
 		return [ { slug: 'newsletterPostSetup', component: NewsletterPostSetup } ];
 	},
+	useSideEffect() {
+		const { setIntent } = useDispatch( ONBOARD_STORE );
 
+		useEffect( () => {
+			setIntent( Onboard.SiteIntent.NewsletterPostSetup );
+		}, [] );
+	},
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, 'newsletter-post-setup', flowName, currentStep );
-
 			switch ( currentStep ) {
 				case 'newsletterPostSetup':
 					return window.location.assign(

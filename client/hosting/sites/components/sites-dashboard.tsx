@@ -126,7 +126,7 @@ const SitesDashboard = ( {
 		[],
 		sitesFilterCallback,
 		'all',
-		[],
+		[ 'is_a4a_dev_site' ],
 		[ 'theme_slug' ]
 	);
 

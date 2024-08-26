@@ -40,5 +40,5 @@ export const useLoadPreviousChat = ( {
 		}
 	}, [ botNameSlug, chatId, existingChat, loadingChat, odieInitialPromptText ] );
 
-	return { chat, isLoading };
+	return { chat, isLoading: loadingChat || isLoading };
 };

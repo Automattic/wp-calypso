@@ -108,7 +108,7 @@ const useMenuItems = ( {
 					icon: cloud,
 					path: '/',
 					link: backupPath( siteSlug ),
-					title: translate( 'Backup' ),
+					title: translate( 'VaultPress Backup' ),
 					trackEventName: 'calypso_jetpack_sidebar_backup_clicked',
 					enabled: isAdmin && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, backupPath( siteSlug ) ),

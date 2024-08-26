@@ -173,7 +173,6 @@ const newsletter: Flow = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
-	use__Temporary__ShouldTrackEvent: ( event ) => 'submit' === event,
 };
 
 export default newsletter;
