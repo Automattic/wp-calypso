@@ -13,8 +13,8 @@ type Props = {
 	siteId: number;
 };
 export default function SubscriberSummary( { status, proStatus, cardData, siteId }: Props ) {
-	const hasPaidSubscribers =
-		proStatus !== 'skipped' && parseInt( cardData.meta.paid_subscribers_count ) > 0;
+	const paidSubscribers = cardData?.meta?.paid_subscribers_count ?? 0;
+	const hasPaidSubscribers = proStatus !== 'skipped' && parseInt( paidSubscribers ) > 0;
 	const [ isDisabled, setIsDisabled ] = useState( ! hasPaidSubscribers );
 
 	const { enqueSubscriberImport } = useSubscriberImportMutation();
@@ -42,12 +42,12 @@ export default function SubscriberSummary( { status, proStatus, cardData, siteId
 				<p>Here's an overview of what you'll migrate:</p>
 				<p>
 					<Icon icon={ people } />
-					<strong>{ cardData.meta.email_count }</strong> subscribers
+					<strong>{ cardData?.meta?.email_count }</strong> subscribers
 				</p>
 				{ hasPaidSubscribers && (
 					<p>
 						<Icon icon={ currencyDollar } />
-						<strong>{ cardData.meta.paid_subscribers_count }</strong> paid subscribers
+						<strong>{ cardData?.meta?.paid_subscribers_count }</strong> paid subscribers
 					</p>
 				) }
 				{ hasPaidSubscribers && (
@@ -81,7 +81,7 @@ export default function SubscriberSummary( { status, proStatus, cardData, siteId
 		);
 	}
 
-	if ( status === 'importing' || status === 'processing' ) {
+	if ( status === 'importing' || status === 'awaiting' ) {
 		return (
 			<div className="summary__content">
 				<p>
@@ -92,8 +92,8 @@ export default function SubscriberSummary( { status, proStatus, cardData, siteId
 	}
 
 	if ( status === 'imported' ) {
-		const paid_subscribers = cardData.meta.paid_subscribers_count;
-		const free_subscribers = cardData.meta.subscribed_count - paid_subscribers;
+		const paid_subscribers = cardData?.meta?.paid_subscribers_count ?? 0;
+		const free_subscribers = cardData?.meta?.subscribed_count - paid_subscribers;
 		return (
 			<div className="summary__content">
 				<p>We migrated { cardData.meta.subscribed_count } subscribers</p>
