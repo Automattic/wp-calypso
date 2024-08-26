@@ -58,48 +58,58 @@ export const useStepNavigationWithTracking = ( {
 
 	return useMemo(
 		() => ( {
-			submit: ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
-				handleRecordStepNavigation( {
-					event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
-					providedDependencies,
-					additionalProps: tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ],
-				} );
-				stepNavigation.submit?.( providedDependencies, ...params );
-			},
-			exitFlow: ( to: string ) => {
-				handleRecordStepNavigation( {
-					event: STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
-					additionalProps: {
-						to,
-						...( tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW ] ?? {} ),
-					},
-				} );
-				stepNavigation.exitFlow?.( to );
-			},
-			goBack: () => {
-				handleRecordStepNavigation( {
-					event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
-					additionalProps: tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK ],
-				} );
-				stepNavigation.goBack?.();
-			},
-			goNext: () => {
-				handleRecordStepNavigation( {
-					event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT,
-					additionalProps: tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT ],
-				} );
-				stepNavigation.goNext?.();
-			},
-			goToStep: ( step: string ) => {
-				handleRecordStepNavigation( {
-					event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
-					additionalProps: {
-						to: step,
-						...( tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO ] ?? {} ),
-					},
-				} );
-				stepNavigation.goToStep?.( step );
-			},
+			...( stepNavigation.submit && {
+				submit: ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
+					handleRecordStepNavigation( {
+						event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+						providedDependencies,
+						additionalProps: tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ],
+					} );
+					stepNavigation.submit?.( providedDependencies, ...params );
+				},
+			} ),
+			...( stepNavigation.exitFlow && {
+				exitFlow: ( to: string ) => {
+					handleRecordStepNavigation( {
+						event: STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
+						additionalProps: {
+							to,
+							...( tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW ] ?? {} ),
+						},
+					} );
+					stepNavigation.exitFlow?.( to );
+				},
+			} ),
+			...( stepNavigation.goBack && {
+				goBack: () => {
+					handleRecordStepNavigation( {
+						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
+						additionalProps: tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK ],
+					} );
+					stepNavigation.goBack?.();
+				},
+			} ),
+			...( stepNavigation.goNext && {
+				goNext: () => {
+					handleRecordStepNavigation( {
+						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT,
+						additionalProps: tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT ],
+					} );
+					stepNavigation.goNext?.();
+				},
+			} ),
+			...( stepNavigation.goToStep && {
+				goToStep: ( step: string ) => {
+					handleRecordStepNavigation( {
+						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
+						additionalProps: {
+							to: step,
+							...( tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO ] ?? {} ),
+						},
+					} );
+					stepNavigation.goToStep?.( step );
+				},
+			} ),
 		} ),
 		[ handleRecordStepNavigation, tracksEventPropsFromFlow, stepNavigation ]
 	);

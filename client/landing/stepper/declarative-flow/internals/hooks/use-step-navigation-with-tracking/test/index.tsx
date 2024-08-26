@@ -61,7 +61,7 @@ describe( 'useStepNavigationWithTracking', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 		const providedDependencies = { foo: 'foo' };
 		act( () => {
-			result.current.submit( { foo: 'foo' }, 'bar', 'baz' );
+			result.current.submit?.( { foo: 'foo' }, 'bar', 'baz' );
 		} );
 
 		expect( stepNavControls.submit ).toHaveBeenCalledWith( providedDependencies, 'bar', 'baz' );
@@ -80,7 +80,7 @@ describe( 'useStepNavigationWithTracking', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 
 		act( () => {
-			result.current.goBack();
+			result.current.goBack?.();
 		} );
 
 		expect( stepNavControls.goBack ).toHaveBeenCalled();
@@ -99,7 +99,7 @@ describe( 'useStepNavigationWithTracking', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 
 		act( () => {
-			result.current.goNext();
+			result.current.goNext?.();
 		} );
 
 		expect( stepNavControls.goNext ).toHaveBeenCalled();
@@ -118,7 +118,7 @@ describe( 'useStepNavigationWithTracking', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 
 		act( () => {
-			result.current.exitFlow( 'to' );
+			result.current.exitFlow?.( 'to' );
 		} );
 
 		expect( stepNavControls.exitFlow ).toHaveBeenCalledWith( 'to' );
@@ -137,7 +137,7 @@ describe( 'useStepNavigationWithTracking', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 
 		act( () => {
-			result.current.goToStep( 'to' );
+			result.current.goToStep?.( 'to' );
 		} );
 
 		expect( stepNavControls.goToStep ).toHaveBeenCalledWith( 'to' );
