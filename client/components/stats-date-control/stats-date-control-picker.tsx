@@ -3,6 +3,7 @@ import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, calendar } from '@wordpress/icons';
 import { useState, useRef } from 'react';
+import DateRange from 'calypso/components/date-range';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DateControlPickerDate from './stats-date-control-picker-date';
@@ -94,12 +95,33 @@ const DateControlPicker = ( {
 		togglePopoverOpened( ! popoverOpened );
 	};
 
+	const customTrigger = ( props: {
+		buttonRef: React.RefObject< HTMLButtonElement >;
+		onTriggerClick: () => void;
+	} ) => (
+		<Button onClick={ props.onTriggerClick } ref={ props.buttonRef }>
+			{ buttonLabel }
+			<Icon className="gridicon" icon={ calendar } />
+		</Button>
+	);
+
 	return (
 		<div className="stats-date-control-picker">
+			{ /* New custom trigger button */ }
+			<DateRange
+				startDate={ inputStartDate }
+				endDate={ inputEndDate }
+				onStartChange={ changeStartDate }
+				onEndChange={ changeEndDate }
+				renderTrigger={ customTrigger }
+			/>
+
+			{ /* Existing button for toggling popover */ }
 			<Button onClick={ togglePopoverVisibility } ref={ infoReferenceElement }>
 				{ buttonLabel }
 				<Icon className="gridicon" icon={ calendar } />
 			</Button>
+
 			<Popover
 				position="bottom"
 				context={ infoReferenceElement?.current }
