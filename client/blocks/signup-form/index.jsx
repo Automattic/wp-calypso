@@ -1369,9 +1369,9 @@ class SignupForm extends Component {
 					'is-horizontal': this.isHorizontal(),
 				} ) }
 			>
-				{ this.getNotice() }
-
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate>
+					{ this.getNotice() }
+
 					{ this.props.formHeader && (
 						<header className="signup-form__header">{ this.props.formHeader }</header>
 					) }
