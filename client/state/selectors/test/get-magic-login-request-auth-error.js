@@ -7,13 +7,14 @@ describe( 'getMagicLoginRequestAuthError()', () => {
 	} );
 
 	test( 'should return the error if set', () => {
+		const requestAuthError = { status: 'foo', code: 'bar' };
 		const error = getMagicLoginRequestAuthError( {
 			login: {
 				magicLogin: {
-					requestAuthError: 'to err is human',
+					requestAuthError,
 				},
 			},
 		} );
-		expect( error ).toEqual( 'to err is human' );
+		expect( error ).toEqual( requestAuthError );
 	} );
 } );
