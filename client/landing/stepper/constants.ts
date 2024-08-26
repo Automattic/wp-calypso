@@ -26,7 +26,7 @@ export const STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT = 'calypso_signup_step_nav_ne
 export const STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO = 'calypso_signup_step_nav_go_to';
 export const STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW = 'calypso_signup_step_nav_exit_flow';
 
-export const STEPPER_TRACKS_EVENT_STEP_NAV = < const >[
+export const STEPPER_TRACKS_EVENTS_STEP_NAV = < const >[
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 	STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
 	STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT,
@@ -34,4 +34,4 @@ export const STEPPER_TRACKS_EVENT_STEP_NAV = < const >[
 	STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
 ];
 
-export const STEPPER_TRACKS_EVENTS = < const >[ ...STEPPER_TRACKS_EVENT_STEP_NAV ];
+export const STEPPER_TRACKS_EVENTS = < const >[ ...STEPPER_TRACKS_EVENTS_STEP_NAV ];
