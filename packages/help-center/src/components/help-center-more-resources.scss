@@ -1,7 +1,10 @@
 @import "@automattic/typography/styles/variables";
+@import "mixins";
 
 // More resources
 .help-center-more-resources {
+	@include help-center-link;
+
 	.help-center-link__item.help-center-more-resources__resource-item {
 		.help-center-link__cell.help-center-more-resources__resource-cell {
 			a,

@@ -19,31 +19,3 @@
 		}
 	}
 }
-
-/**
- * Popover component
- * Fixes broken popover component on frontend.
- */
-.popover.help-center.help-center__container-header-menu {
-	z-index: $help-center-z-index +1;
-
-	.popover__arrow {
-		z-index: 1;
-	}
-
-	.popover__menu {
-		.help-center__container-header-menu-item {
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-
-			&:hover,
-			&:focus {
-				svg {
-					fill: var(--color-text-inverted);
-				}
-			}
-		}
-	}
-}
-

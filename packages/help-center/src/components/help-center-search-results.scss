@@ -1,7 +1,10 @@
 @import "@automattic/typography/styles/variables";
+@import "mixins";
 
 // Search results section
 .help-center-search-results {
+	@include help-center-link;
+
 	.help-center-search-results-dev__resource {
 		margin-right: 15px;
 		display: block;

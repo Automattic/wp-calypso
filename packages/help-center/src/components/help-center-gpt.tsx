@@ -19,7 +19,7 @@ import HelpCenterSearchResults from './help-center-search-results';
 import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
 import type { SearchResult } from '../types';
 
-import './help-center-article.scss';
+import './help-center-gpt.scss';
 
 const GPTResponsePlaceholder = styled( LoadingPlaceholder )< { width?: string } >`
 	:not( :last-child ) {

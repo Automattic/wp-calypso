@@ -9,7 +9,7 @@
  *
  * THIS FILE SHOULD NOT CONTAIN ANY COMPONENT SPECIFIC STYLES.
  */
-.help-center__container {
+.help-center > div.help-center__container {
 	background-color: #fff;
 	z-index: $help-center-z-index;
 	cursor: default;
@@ -47,6 +47,13 @@
 	& > div {
 		display: flex;
 		flex-direction: column;
+	}
+
+	.help-center__section-title {
+		font-size: $font-body-small;
+		font-weight: 500;
+		color: var(--studio-gray-100);
+		margin: 1em 0;
 	}
 
 	/**
@@ -144,6 +151,50 @@
 		100% {
 			opacity: 1;
 			transform: scale(1);
+		}
+	}
+}
+
+/**
+ * Popover component
+ * Fixes broken popover component on frontend.
+ */
+.popover.help-center {
+	z-index: $help-center-z-index +1;
+
+	.popover__arrow {
+		z-index: 1;
+	}
+
+	.popover__menu {
+		// Odie Chat Menu
+		.help-center__container-header-menu-item {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+
+			&:hover,
+			&:focus {
+				svg {
+					fill: var(--color-text-inverted);
+				}
+			}
+		}
+	}
+
+	// Contact Form URL privacy popover
+	.popover__inner {
+		.help-center-contact-form__site-picker-forum-privacy-popover {
+			display: inline-block;
+			max-width: 200px;
+			padding: 5px;
+		}
+
+		.help-center-contact-form__site-picker-forum-privacy-info {
+			padding: 0;
+			margin: 0;
+			background: none;
+			border: none;
 		}
 	}
 }
