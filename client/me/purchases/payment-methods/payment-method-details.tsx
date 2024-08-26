@@ -12,6 +12,7 @@ import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {
 	lastDigits?: string;
+	displayBrand?: string;
 	cardType?: string;
 	name: string;
 	expiry?: string;
@@ -24,6 +25,7 @@ interface Props {
 
 const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	lastDigits,
+	displayBrand,
 	cardType,
 	name,
 	expiry,
@@ -39,7 +41,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	const expirationDate = expiry ? moment( expiry, moment.ISO_8601, true ) : null;
 	const displayExpirationDate = expirationDate?.isValid() ? expirationDate.format( 'MM/YY' ) : null;
 
-	const type = cardType?.toLocaleLowerCase() || paymentPartner || '';
+	const type = displayBrand ?? ( cardType?.toLocaleLowerCase() || paymentPartner || '' );
 
 	return (
 		<div className="payment-method-details">
