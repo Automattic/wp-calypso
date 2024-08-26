@@ -14,6 +14,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useFetchMemberInvites from 'calypso/a8c-for-agencies/data/team/use-fetch-member-invite';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { TeamMember } from '../../types';
@@ -29,6 +30,8 @@ export default function TeamList() {
 	const isDesktop = useDesktopBreakpoint();
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+
+	const { data: memberInvites, isPending: isMemberInvitesPending } = useFetchMemberInvites();
 
 	const title = translate( 'Manage team members' );
 
@@ -94,36 +97,32 @@ export default function TeamList() {
 		[ isDesktop, translate ]
 	);
 
-	// FIXME: Fetch team members
-	const members: TeamMember[] = [
-		{
-			displayName: 'Owner',
-			email: 'owner@automattic.com',
-			role: 'owner',
-			status: 'active',
-		},
-		{
-			displayName: 'User 1',
-			email: 'user1@automattic.com',
-			role: 'member',
-			status: 'active',
-			dateAdded: new Date().toDateString(),
-		},
-		{
-			displayName: 'User 2',
-			email: 'user2@automattic.com',
-			role: 'member',
-			status: 'pending',
-			dateAdded: new Date().toDateString(),
-		},
-		{
-			email: 'user3@automattic.com',
-			role: 'member',
-			status: 'expired',
-		},
-	];
+	const members: TeamMember[] = useMemo( () => {
+		const activeMembers: TeamMember[] = [
+			// FIXME: Fetch team members
+			{
+				displayName: 'Owner',
+				email: 'owner@automattic.com',
+				role: 'owner',
+				status: 'active',
+			},
+		];
+
+		const pendingMembers: TeamMember[] =
+			memberInvites?.map( ( invite ) => ( {
+				id: invite.id,
+				email: invite.email,
+				status: 'pending',
+			} ) ) ?? [];
+
+		return [ ...activeMembers, ...pendingMembers ];
+	}, [ memberInvites ] );
 
 	const isEmpty = members.length <= 1; // We always have one member (owner) so we exclude it from count.
+
+	if ( isMemberInvitesPending ) {
+		// FIXME: Add placeholder when UI is pending
+	}
 
 	if ( isEmpty ) {
 		return <GetStarted />;
