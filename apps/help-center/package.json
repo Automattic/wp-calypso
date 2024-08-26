@@ -21,7 +21,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"types": "dist/types",
 	"scripts": {
-		"clean": "rm -rf dist",
+		"clean": "",
 		"teamcity:build-app": "yarn run build",
 		"build": "NODE_ENV=production yarn dev",
 		"build:app": "calypso-build",
