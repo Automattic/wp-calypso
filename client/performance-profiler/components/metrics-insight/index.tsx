@@ -70,10 +70,14 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		insight.description ?? '',
 		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
 	);
-	const tip = ! isWpcom && tips[ insight.id ];
+	const tip = tips[ insight.id ];
 
 	if ( props.url && tip ) {
 		tip.link = `https://wordpress.com/setup/hosted-site-migration?from=${ props.url }&ref=performance-profiler-dashboard`;
+	}
+
+	if ( tip && isWpcom ) {
+		tip.link = '';
 	}
 
 	return (
