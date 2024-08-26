@@ -5,6 +5,7 @@ import {
 	noSite,
 	redirectToLoginIfSiteRequested,
 	selectSiteOrSkipIfLoggedInWithMultipleSites,
+	addNavigationIfLoggedIn,
 } from 'calypso/my-sites/controller';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { details, fetchThemeDetailsData } from './controller';
@@ -36,6 +37,7 @@ export default function ( router ) {
 		noSite,
 		fetchThemeDetailsData,
 		details,
+		addNavigationIfLoggedIn,
 		makeLayout
 	);
 }
