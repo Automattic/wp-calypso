@@ -137,9 +137,10 @@ export function getPluginsOnSites( state, plugins ) {
 	// }, {} );
 }
 
-export function getPluginOnSites( state, siteIds, pluginSlug ) {
+// We earn 200ms by using a createSelector selector here
+export const getPluginOnSites = createSelector( ( state, siteIds, pluginSlug ) => {
 	return getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
-}
+} );
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );
