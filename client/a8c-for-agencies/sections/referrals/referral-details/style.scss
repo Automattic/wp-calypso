@@ -29,3 +29,10 @@
 		width: auto;
 	}
 }
+
+// For now, we don't need the DataViews toolbar in this context.
+// todo: Remove this when we need to use the sorting, filtering or searching functionalities.dataviews__view-actions,
+.dataviews__view-actions,
+.dataviews-view-list__media-wrapper {
+	display: none !important;
+}
