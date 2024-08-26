@@ -41,7 +41,12 @@ export default function TeamInvite() {
 			{ username, message },
 			{
 				onSuccess: () => {
-					dispatch( successNotice( 'The invitation has been successfully sent.' ) );
+					dispatch(
+						successNotice( 'The invitation has been successfully sent.', {
+							id: 'submit-user-invite-success',
+							duration: 5000,
+						} )
+					);
 					page( A4A_TEAM_LINK );
 				},
 

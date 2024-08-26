@@ -27,10 +27,10 @@ function mutationSendTeamMemberInvite(
 
 	return wpcom.req.put( {
 		apiNamespace: 'wpcom/v2',
-		path: `/agency/${ agencyId }/team/invite`,
-		method: 'PUT',
+		path: `/agency/${ agencyId }/user-invites`,
+		method: 'POST',
 		body: {
-			username: inviteDetails.username,
+			email: inviteDetails.username,
 			message: inviteDetails.message,
 		},
 	} );
