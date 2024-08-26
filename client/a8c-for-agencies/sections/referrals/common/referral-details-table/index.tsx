@@ -28,6 +28,7 @@ export default function ReferralDetailsTable( { items, fields }: Props ) {
 					actions: [],
 					dataViewsState: dataViewsState,
 					setDataViewsState: setDataViewsState,
+					defaultLayouts: { table: {} },
 				} }
 			/>
 		</div>
