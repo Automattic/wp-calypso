@@ -85,7 +85,7 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 			if ( status === 'done' || status === 'imported' ) {
 				stepsProgress[ index ].indicator = <Icon icon={ check } />;
 			}
-			if ( status === 'importing' || status === 'processing' ) {
+			if ( status === 'importing' || status === 'awaiting' ) {
 				stepsProgress[ index ].indicator = <Spinner style={ { color: '#3858e9' } } />;
 			}
 		}
