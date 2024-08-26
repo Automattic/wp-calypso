@@ -74,7 +74,7 @@ export default function TeamList() {
 		() => [
 			{
 				id: 'user',
-				header: translate( 'User' ).toUpperCase(),
+				label: translate( 'User' ).toUpperCase(),
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
 					return <MemberColumn member={ item } withRoleStatus={ ! isDesktop } />;
 				},
@@ -85,7 +85,7 @@ export default function TeamList() {
 				? [
 						{
 							id: 'role',
-							header: translate( 'Role' ).toUpperCase(),
+							label: translate( 'Role' ).toUpperCase(),
 							render: ( { item }: { item: TeamMember } ): ReactNode => {
 								return <RoleStatusColumn member={ item } />;
 							},
@@ -94,7 +94,7 @@ export default function TeamList() {
 						},
 						{
 							id: 'added-date',
-							header: translate( 'Added' ).toUpperCase(),
+							label: translate( 'Added' ).toUpperCase(),
 							render: ( { item }: { item: TeamMember } ): ReactNode => {
 								return <DateColumn date={ item.dateAdded } />;
 							},
@@ -105,7 +105,7 @@ export default function TeamList() {
 				: [] ),
 			{
 				id: 'actions',
-				header: '',
+				label: '',
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
 					return (
 						<ActionColumn
