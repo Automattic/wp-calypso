@@ -715,17 +715,12 @@ async function openLinksInParentFrame( calypsoPort ) {
 					continue;
 				}
 
-				// The popoverSlotObserver will observe addedNodes containing components-popover node elements
-				const popoverSlot = node?.classList?.contains( 'components-popover' )
-					? node
-					: node.querySelector( '.components-popover' );
-
-				if ( popoverSlot ) {
-					const manageReusableBlocksAnchorElem = popoverSlot.querySelector(
+				if ( node?.classList?.contains( 'components-popover' ) ) {
+					const manageReusableBlocksAnchorElem = node.querySelector(
 						'a[href$="site-editor.php?path=%2Fpatterns"]'
 					);
 
-					const manageNavigationMenusAnchorElem = popoverSlot.querySelector(
+					const manageNavigationMenusAnchorElem = node.querySelector(
 						'a[href$="edit.php?post_type=wp_navigation"]'
 					);
 
