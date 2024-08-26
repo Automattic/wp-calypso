@@ -129,6 +129,7 @@ const connectComponent = connect( ( state ) => {
 	const hasAntiSpamFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM );
 	const hasJetpackAntiSpamProduct = getSiteProducts( state, siteId )?.some( isJetpackAntiSpam );
 
+	// This is the same condition as the one in SpamFilteringSettings that's used to determine whether to show the Akismet key field.
 	const includeAkismetKeyField =
 		! isAtomic && ( hasAkismetFeature || hasAntiSpamFeature || hasJetpackAntiSpamProduct );
 
