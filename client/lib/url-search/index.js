@@ -45,7 +45,8 @@ const UrlSearch = ( Component ) =>
 		};
 
 		UNSAFE_componentWillReceiveProps( { search } ) {
-			return ! search && this.setState( { searchOpen: false } );
+			console.log( 'UNSAFE_componentWillReceiveProps' );
+			// return ! search && this.setState( { searchOpen: false } );
 		}
 
 		doSearch = ( query ) => {

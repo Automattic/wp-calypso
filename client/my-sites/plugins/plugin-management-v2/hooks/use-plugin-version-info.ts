@@ -13,8 +13,63 @@ export default function usePluginVersionInfo(
 	currentVersionsRange: { min: string; max: string };
 	updatedVersions: string[];
 	hasUpdate: boolean;
+	siteCount?: number;
 } {
 	const allSites = useSelector( getSites );
+
+	// if ( plugin.name !== 'Akismet Anti-spam: Spam Protection' ) {
+	// 	return {
+	// 		currentVersionsRange: {
+	// 			min: '1',
+	// 			max: '2',
+	// 		},
+	// 		updatedVersions: [ '3' ],
+	// 		hasUpdate: false,
+	// 	};
+	// }
+	// console.log( 'plugin', plugin );
+
+	// let minVersion = '100.1.1';
+	// let maxVersion = '0.0.0';
+	// let updateVersion = '0';
+	// let siteCount = 0;
+
+	// function getNumberValue( version: string ) {
+	// 	const [ major, minor, patch ] = version.split( '.' ).map( ( v ) => parseInt( v ) );
+	// 	return major * 1000000 + minor * 100 + patch;
+	// }
+
+	// console.log( 'plugin.sites: ', plugin.sites );
+	// console.log( 'allSites: ', allSites );
+
+	// for ( const siteId in plugin.sites ) {
+	// 	if ( getNumberValue( plugin.sites[ siteId ].version ) < getNumberValue( minVersion ) ) {
+	// 		minVersion = plugin.sites[ siteId ].version;
+	// 	}
+
+	// 	if ( getNumberValue( plugin.sites[ siteId ].version ) >= getNumberValue( maxVersion ) ) {
+	// 		maxVersion = plugin.sites[ siteId ].version;
+	// 	}
+
+	// 	if ( plugin.sites[ siteId ].update ) {
+	// 		const canUpdateFiles = allSites.find( ( s ) => s?.ID === parseInt( siteId ) )?.canUpdateFiles;
+
+	// 		if ( canUpdateFiles ) {
+	// 			updateVersion = plugin.sites[ siteId ].update.new_version;
+	// 			siteCount++;
+	// 		}
+	// 	}
+	// }
+
+	// return {
+	// 	currentVersionsRange: {
+	// 		min: minVersion,
+	// 		max: minVersion === maxVersion ? '' : maxVersion,
+	// 	},
+	// 	updatedVersions: [ updateVersion ],
+	// 	hasUpdate: updateVersion !== '0',
+	// 	siteCount,
+	// };
 
 	const sites = plugin?.sites
 		? Object.keys( plugin.sites ).map( ( siteId ) => {
@@ -28,9 +83,14 @@ export default function usePluginVersionInfo(
 
 	const siteIds = siteObjectsToSiteIds( sites );
 
-	const pluginsOnSites: any = useSelector( ( state ) =>
+	const pluginsOnSites2: any = useSelector( ( state ) =>
 		getPluginOnSites( state, siteIds, plugin?.slug )
 	);
+
+	const pluginsOnSites = plugin;
+
+	// console.log( 'pluginsOnSites ', pluginsOnSites );
+	// console.log( 'pluginsOnSites2 ', pluginsOnSites2 );
 
 	const getSitePlugin = ( site: SiteDetails ) => {
 		const siteId = selectedSiteId || site.ID;

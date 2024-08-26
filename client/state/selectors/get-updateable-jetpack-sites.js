@@ -1,3 +1,4 @@
+import { createSelector } from '@wordpress/data';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { canJetpackSiteUpdateFiles } from 'calypso/state/sites/selectors';
 
@@ -6,7 +7,10 @@ import { canJetpackSiteUpdateFiles } from 'calypso/state/sites/selectors';
  * @param   {Object} state Global state tree
  * @returns {Array}        Array of updateable Jetpack sites
  */
-export default function getUpdateableJetpackSites( state ) {
-	const sites = getSelectedOrAllSitesWithPlugins( state );
-	return sites.filter( ( site ) => canJetpackSiteUpdateFiles( state, site.ID ) );
-}
+export default createSelector(
+	( state ) =>
+		getSelectedOrAllSitesWithPlugins( state ).filter( ( site ) =>
+			canJetpackSiteUpdateFiles( state, site.ID )
+		),
+	( state ) => [ state.sites.items ]
+);

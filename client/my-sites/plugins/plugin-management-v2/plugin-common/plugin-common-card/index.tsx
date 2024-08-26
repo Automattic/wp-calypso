@@ -24,6 +24,7 @@ export default function PluginCommonCard( {
 	columns,
 	renderActions,
 }: Props ) {
+	// return <>TODO: why this adds 3 extra seconds?</>;
 	const columnKeys: { [ key: string ]: boolean } = columns.reduce(
 		( obj, cur ) => ( { ...obj, [ cur.key ]: true } ),
 		{}
