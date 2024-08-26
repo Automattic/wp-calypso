@@ -2,6 +2,7 @@ import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products'
 import { Card, CompactCard, Button } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
+import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -84,12 +85,14 @@ const LaunchSite = () => {
 
 	const LaunchCard = showPreviewLink ? CompactCard : Card;
 
-	// TODO: replace with actual value whether the site is a development site
-	const urlParams = new URLSearchParams( window.location.search );
-	const isDevelopmentSite = urlParams.get( 'referer' ) === 'a4a-dashboard';
+	const isDevelopmentSite = site?.is_a4a_dev_site || false;
 
-	// TODO: retrieve the actual agency name
-	const agencyName = 'MyCoolAgency';
+	const {
+		data: agency,
+		error: agencyError,
+		isLoading: agencyLoading,
+	} = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID && isDevelopmentSite } );
+	const agencyName = agency?.name;
 
 	const handleReferToClient = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
@@ -113,15 +116,22 @@ const LaunchSite = () => {
 						</p>
 						{ isDevelopmentSite && (
 							<p>
-								{ translate(
-									'Once the site is launched, %(agencyName)s will be billed for this site in the next billing cycle.',
-									{
-										args: {
-											agencyName: agencyName,
-										},
-										comment: 'name of the agency that will be billed for the site',
-									}
-								) }
+								{ agencyLoading || agencyError
+									? translate(
+											'Once the site is launched, your agency will be billed for this site in the next billing cycle.'
+									  )
+									: translate(
+											'Once the site is launched, {{strong}}%(agencyName)s{{/strong}} will be billed for this site in the next billing cycle.',
+											{
+												args: {
+													agencyName: agencyName,
+												},
+												components: {
+													strong: <strong />,
+												},
+												comment: 'name of the agency that will be billed for the site',
+											}
+									  ) }
 							</p>
 						) }
 					</div>
