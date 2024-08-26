@@ -16,7 +16,6 @@ import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { Flow, ProvidedDependencies } from './internals/types';
@@ -68,8 +67,6 @@ const free: Flow = {
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
-
 			switch ( _currentStep ) {
 				case 'freeSetup':
 					return navigate( 'create-site' );

@@ -12,7 +12,6 @@ import {
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { useSiteCopy } from '../hooks/use-site-copy';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
 import CreateSite from './internals/steps-repository/create-site';
 import DomainsStep from './internals/steps-repository/domains';
@@ -108,8 +107,6 @@ const copySite: Flow = {
 		const urlQueryParams = useQuery();
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
-
 			switch ( _currentStepSlug ) {
 				case 'domains': {
 					return navigate( 'create-site', {

@@ -14,6 +14,7 @@
 	z-index: $help-center-z-index;
 	cursor: default;
 	transition: max-height 0.5s;
+  animation: 0.25s ease-out 0s 1 normal none running slideIn;
 	position: fixed;
 
 	/**
@@ -104,6 +105,7 @@
 		top: var(--masterbar-height, 0);
 		max-height: calc(100% - 45px);
 		height: calc(100% - var(--masterbar-height, 0));
+    animation: 0.25s ease-out 0s 1 normal none running fadeIn;
 
 		.help-center__container-footer {
 			margin-bottom: 0;
@@ -142,16 +144,6 @@
 		100% {
 			opacity: 1;
 			transform: scale(1);
-		}
-	}
-
-	@keyframes fadeOut {
-		0% {
-			opacity: 1;
-		}
-
-		100% {
-			opacity: 0;
 		}
 	}
 }

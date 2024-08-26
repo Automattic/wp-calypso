@@ -1,5 +1,5 @@
-import { Card } from '../..';
-import ExternalLink from './index';
+import { Card } from '..';
+import ExternalLink from '.';
 
 export default { title: 'packages/components/ExternalLink' };
 

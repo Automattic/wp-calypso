@@ -24,7 +24,6 @@ import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
-import { useDebounce } from 'use-debounce';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
@@ -202,17 +201,12 @@ function HelpSearchResults( {
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 
-	const { contextSearch, tailoredArticles } = useContextBasedSearchMapping( currentRoute, locale );
-
-	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
+	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
 
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		debouncedQuery || contextSearch, // If there's a query, we don't context search
+		searchQuery || contextSearch, // If there's a query, we don't context search
 		locale,
-		sectionName,
-		debouncedQuery
-			? undefined // If there's a query, we don't need tailored articles
-			: tailoredArticles
+		currentRoute
 	);
 
 	const searchResults = searchData ?? [];
@@ -274,9 +268,10 @@ function HelpSearchResults( {
 			section: sectionName,
 		};
 
-		const eventName = tailoredArticles?.post_ids.includes( post_id ?? 0 )
-			? 'calypso_inlinehelp_tailored_article_select'
-			: 'calypso_inlinehelp_article_select';
+		const eventName =
+			! contextSearch && ! searchQuery
+				? 'calypso_inlinehelp_tailored_article_select'
+				: 'calypso_inlinehelp_article_select';
 
 		recordTracksEvent( eventName, eventData );
 		onSelect( event, result );
