@@ -27,4 +27,5 @@ export interface DataViewsSort {
 
 export type DataViewsState = View & {
 	selectedItem?: any | undefined;
+	layout?: any; // TODO: improve this type.
 };

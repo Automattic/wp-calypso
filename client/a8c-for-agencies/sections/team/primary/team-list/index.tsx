@@ -31,7 +31,16 @@ export default function TeamList() {
 
 	const isDesktop = useDesktopBreakpoint();
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
+		layout: {
+			styles: {
+				actions: {
+					width: isDesktop ? '10%' : undefined,
+				},
+			},
+		},
+	} );
 
 	const { members, hasMembers, isPending, refetch } = useMemberList();
 
@@ -114,7 +123,6 @@ export default function TeamList() {
 						/>
 					);
 				},
-				width: isDesktop ? '40%' : undefined,
 				enableHiding: false,
 				enableSorting: false,
 			},
