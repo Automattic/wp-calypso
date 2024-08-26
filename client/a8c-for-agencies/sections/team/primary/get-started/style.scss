@@ -1,0 +1,19 @@
+.team-list-get-started .a4a-layout__body-wrapper {
+	max-width: 700px;
+}
+
+.team-list-get-started__heading {
+	@include a4a-font-heading-xl;
+
+	margin-block-start: 48px;
+	margin-block-end: 8px;
+}
+
+.team-list-get-started__subtitle {
+	@include a4a-font-body-lg;
+	margin-block-end: 32px;
+}
+
+a.team-list-get-started__learn-more-button.is-link {
+	color: var(--color-primary-50);
+}

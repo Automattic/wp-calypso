@@ -1,5 +1,6 @@
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import creditCardAmexImage from 'calypso/assets/images/upgrades/cc-amex.svg';
+import creditCardCartesBancairesImage from 'calypso/assets/images/upgrades/cc-cb.svg';
 import creditCardDinersImage from 'calypso/assets/images/upgrades/cc-diners.svg';
 import creditCardDiscoverImage from 'calypso/assets/images/upgrades/cc-discover.svg';
 import creditCardJCBImage from 'calypso/assets/images/upgrades/cc-jcb.svg';
@@ -116,6 +117,7 @@ interface ImagePathsMap {
 
 const CREDIT_CARD_SELECTED_PATHS: ImagePathsMap = {
 	amex: creditCardAmexImage,
+	cb: creditCardCartesBancairesImage,
 	diners: creditCardDinersImage,
 	discover: creditCardDiscoverImage,
 	jcb: creditCardJCBImage,
@@ -156,6 +158,11 @@ export const PaymentMethodSummary = ( {
 		case 'american express':
 		case 'amex':
 			displayType = translate( 'American Express' );
+			break;
+
+		case 'cartes bancaires':
+		case 'cb':
+			displayType = translate( 'Cartes Bancaires' );
 			break;
 
 		case 'diners':

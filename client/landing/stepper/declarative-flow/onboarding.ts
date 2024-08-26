@@ -53,6 +53,8 @@ const onboarding: Flow = {
 			[]
 		);
 
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'domains':

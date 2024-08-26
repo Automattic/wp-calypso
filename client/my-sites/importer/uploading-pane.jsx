@@ -49,6 +49,7 @@ export class UploadingPane extends PureComponent {
 			validate: PropTypes.func,
 		} ),
 		fromSite: PropTypes.string,
+		acceptedFileTypes: PropTypes.array,
 		hideActionButtons: PropTypes.bool,
 	};
 
@@ -242,7 +243,8 @@ export class UploadingPane extends PureComponent {
 	};
 
 	render() {
-		const { importerStatus, site, isEnabled, fromSite, hideActionButtons } = this.props;
+		const { importerStatus, site, isEnabled, fromSite, acceptedFileTypes, hideActionButtons } =
+			this.props;
 		const isReadyForImport = this.isReadyForImport();
 		const importerStatusClasses = clsx(
 			'importer__upload-content',
@@ -288,6 +290,7 @@ export class UploadingPane extends PureComponent {
 							type="file"
 							name="exportFile"
 							onChange={ this.initiateFromForm }
+							accept={ acceptedFileTypes ? acceptedFileTypes.join( ',' ) : undefined }
 						/>
 					) }
 					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />

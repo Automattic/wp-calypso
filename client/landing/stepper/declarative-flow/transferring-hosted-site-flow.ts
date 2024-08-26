@@ -4,7 +4,6 @@ import { useDispatch as useReduxDispatch } from 'react-redux';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { ONBOARD_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import ErrorStep from './internals/steps-repository/error-step';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
@@ -27,7 +26,6 @@ const transferringHostedSite: Flow = {
 		setProgress( 0 );
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
 		const siteId = useSiteIdParam();
 		const dispatch = useReduxDispatch();
 
@@ -36,8 +34,6 @@ const transferringHostedSite: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-
 			switch ( currentStep ) {
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;

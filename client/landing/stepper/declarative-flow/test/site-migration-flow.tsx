@@ -310,6 +310,22 @@ describe( 'Site Migration Flow', () => {
 			config.disable( 'automated-migration/collect-credentials' );
 		} );
 
+		it( 'Skipping the credentials step redirects the user to the instructions page', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
+				dependencies: {
+					action: 'skip',
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }?siteSlug=example.wordpress.com&credentials=skipped`,
+				state: null,
+			} );
+		} );
+
 		it( 'redirects the user to the instructions page when the user submits the credentials step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 

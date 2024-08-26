@@ -150,7 +150,6 @@
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"oauth": false,
-		"onboarding/design-choices": true,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,

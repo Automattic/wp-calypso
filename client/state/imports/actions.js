@@ -15,6 +15,8 @@ import {
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
+	IMPORTS_SUMMARY_MODAL_OPEN,
+	IMPORTS_SUMMARY_MODAL_CLOSE,
 } from 'calypso/state/action-types';
 import { fromApi, toApi } from './api';
 import { appStates } from './constants';
@@ -256,6 +258,16 @@ export const startUpload =
 				dispatch( failUploadAction );
 			} );
 	};
+
+export const openSummaryModal = ( importerId ) => ( {
+	type: IMPORTS_SUMMARY_MODAL_OPEN,
+	importerId,
+} );
+
+export const closeSummaryModal = ( importerId ) => ( {
+	type: IMPORTS_SUMMARY_MODAL_CLOSE,
+	importerId,
+} );
 
 export const failPreUpload = ( importerId, message, code, file ) => ( {
 	type: IMPORTS_PRE_UPLOAD_FAILED,

@@ -26,13 +26,14 @@
 			display: flex;
 			flex-direction: row;
 			gap: 1em;
-			@media (max-width: 510px) {
+			@media (max-width: 522px) {
 				flex-direction: column;
 				gap: 0;
 			}
 		}
 		.site-migration-credentials__form-field {
 			margin-top: 1em;
+			flex: 1;
 		}
 		.site-migration-credentials__radio-group {
 			display: flex;

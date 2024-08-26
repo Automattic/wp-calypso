@@ -32,14 +32,14 @@ const SiteDataField = ( { isLoading, site, isDevSite, onSiteTitleClick }: SiteDa
 			<div className="sites-dataviews__site-name">
 				<div>{ site.blogname }</div>
 				{ ! migrationInProgress && <div className="sites-dataviews__site-url">{ site.url }</div> }
-				{ ( migrationInProgress || isDevSite ) && (
-					<Badge
-						className="status-badge"
-						type={ migrationInProgress ? 'info-blue' : 'info-purple' }
-					>
-						{ migrationInProgress
-							? translate( 'Migration in progress' )
-							: translate( 'Development' ) }
+				{ migrationInProgress && (
+					<Badge className="status-badge" type="info-blue">
+						{ translate( 'Migration in progress' ) }
+					</Badge>
+				) }
+				{ isDevSite && (
+					<Badge className="status-badge" type="info-purple">
+						{ translate( 'Development' ) }
 					</Badge>
 				) }
 			</div>

@@ -30,7 +30,7 @@ import PostCardsGroup from './post-cards-group';
 
 import './style.scss';
 
-type AllTimeData = {
+export type AllTimeData = {
 	comments: number;
 	posts: number;
 	views: number;

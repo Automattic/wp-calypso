@@ -4,7 +4,7 @@ import { FunctionComponent, ReactNode } from 'react';
 import './style.scss';
 
 export interface ClickHandler {
-	onClick: () => void;
+	onClick: () => void | undefined;
 	message: TranslateResult;
 	indicator?: ReactNode;
 	show?: 'always' | 'onComplete' | 'beforeComplete';

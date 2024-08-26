@@ -1,7 +1,8 @@
 import { Button } from '@wordpress/components';
-import { Icon, mobile, desktop } from '@wordpress/icons';
+import { Icon, mobile, desktop, share } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import WPcomBadge from 'calypso/assets/images/performance-profiler/wpcom-badge.svg';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -15,6 +16,7 @@ type HeaderProps = {
 	onTabChange: ( tab: TabType ) => void;
 	showNavigationTabs?: boolean;
 	timestamp?: string;
+	showWPcomBadge?: boolean;
 };
 
 export enum TabType {
@@ -24,7 +26,7 @@ export enum TabType {
 
 export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const translate = useTranslate();
-	const { url, activeTab, onTabChange, showNavigationTabs, timestamp } = props;
+	const { url, activeTab, onTabChange, showNavigationTabs, timestamp, showWPcomBadge } = props;
 	const urlParts = new URL( url );
 
 	return (
@@ -63,15 +65,33 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 							</NavItem>
 						</NavTabs>
 
-						{ timestamp && (
-							<div className="profiler-header__navbar-right">
-								<p>
-									{ translate( 'Tested on %(date)s', {
-										args: { date: moment( timestamp ).format( 'MMMM Do, YYYY h:mm:ss A' ) },
-									} ) }
-								</p>
+						<div className="profiler-header__navbar-right">
+							<div className="report-site-details">
+								{ timestamp && (
+									<span>
+										{ translate( 'Tested on %(date)s', {
+											args: { date: moment( timestamp ).format( 'MMMM Do, YYYY h:mm:ss A' ) },
+										} ) }
+									</span>
+								) }
+								{ showWPcomBadge && (
+									<span className="wpcom-badge">
+										<img src={ WPcomBadge } alt={ translate( 'WordPress.com badge' ) } />
+										<span>{ translate( 'Hosted on WordPress.com' ) }</span>
+									</span>
+								) }
 							</div>
-						) }
+							<div
+								className="share-option"
+								onClick={ () => alert( 'To be implemented' ) }
+								onKeyUp={ () => {} }
+								role="button"
+								tabIndex={ 0 }
+							>
+								<Icon className="share-icon" icon={ share } />
+								<span>{ translate( 'Share results' ) }</span>
+							</div>
+						</div>
 					</SectionNav>
 				) }
 			</div>
