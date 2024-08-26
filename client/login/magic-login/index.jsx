@@ -751,7 +751,7 @@ class MagicLogin extends Component {
 
 		if ( codeValidationError?.code === 'sms_code_throttled' ) {
 			errorText = translate(
-				'We can’t send your two-factor authentication code via SMS right now. Please wait over a minute, then request a new code and try again.'
+				'We can’t send your two-factor code via SMS right now. Please wait over a minute and request a new code to log in.'
 			);
 		} else if ( codeValidationError?.status === 403 ) {
 			errorText = translate(
