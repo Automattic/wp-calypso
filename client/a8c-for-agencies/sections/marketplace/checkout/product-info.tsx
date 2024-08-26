@@ -108,7 +108,7 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 					<span className="product-info__count">{ countInfo }</span>
 				</div>
 				<p className="product-info__description">{ productDescription }</p>
-				<p className="product-info__site-url">{ siteUrls }</p>
+				{ product.licenseId && siteUrls && <p className="product-info__site-url">{ siteUrls }</p> }
 			</div>
 		</div>
 	);
