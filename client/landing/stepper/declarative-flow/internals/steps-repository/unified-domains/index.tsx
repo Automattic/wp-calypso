@@ -1,5 +1,5 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, usePersistedState } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
@@ -29,7 +29,6 @@ import { removeStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { useStepperPersistedState } from '../../hooks/use-persisted-state';
 import { ProvidedDependencies, StepProps } from '../../types';
 
 const RenderDomainsStepConnect = connect(
@@ -77,7 +76,7 @@ const RenderDomainsStepConnect = connect(
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props: StepProps ) {
-	const [ stepState, setStepState ] = useStepperPersistedState< ProvidedDependencies >();
+	const [ stepState, setStepState ] = usePersistedState< ProvidedDependencies >();
 
 	return (
 		<CalypsoShoppingCartProvider>
