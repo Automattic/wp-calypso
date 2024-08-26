@@ -136,16 +136,13 @@ const LaunchSite = () => {
 						) }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
-					{
-						// TODO: add onClick handler
-						isDevelopmentSite && (
-							<div className={ launchSiteClasses }>
-								<Button onClick={ handleReferToClient } disabled={ false }>
-									{ translate( 'Refer to client' ) }
-								</Button>
-							</div>
-						)
-					}
+					{ isDevelopmentSite && (
+						<div className={ launchSiteClasses }>
+							<Button onClick={ handleReferToClient } disabled={ false }>
+								{ translate( 'Refer to client' ) }
+							</Button>
+						</div>
+					) }
 				</div>
 			</LaunchCard>
 			{ showPreviewLink && (
