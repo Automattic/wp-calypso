@@ -117,10 +117,13 @@ const LaunchSite = () => {
 											'Once the site is launched, your agency will be billed for this site in the next billing cycle.'
 									  )
 									: translate(
-											'Once the site is launched, %(agencyName)s will be billed for this site in the next billing cycle.',
+											'Once the site is launched, {{strong}}%(agencyName)s{{/strong}} will be billed for this site in the next billing cycle.',
 											{
 												args: {
 													agencyName: agencyName,
+												},
+												components: {
+													strong: <strong />,
 												},
 												comment: 'name of the agency that will be billed for the site',
 											}
