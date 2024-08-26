@@ -130,6 +130,15 @@ const SitesDashboard = ( {
 		[ 'theme_slug' ]
 	);
 
+	// console.log(
+	// 	'222',
+	// 	allSites.find(
+	// 		( item ) =>
+	// 			item.ID === +window.location.href.split( '/' ).pop() ||
+	// 			item.URL.includes( window.location.href.split( '/' ).pop() )
+	// 	)?.is_wpcom_atomic
+	// );
+
 	const hasEnTranslation = useHasEnTranslation();
 
 	useShowSiteCreationNotice( allSites, newSiteID );

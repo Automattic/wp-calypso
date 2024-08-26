@@ -61,6 +61,14 @@ export const useSiteExcerptsQuery = (
 		queryFn: () =>
 			fetchSites( site_visibility, fetchFilter, additional_fields, additional_options ),
 		select: ( data ) => {
+			// console.log(
+			// 	'111',
+			// 	data.sites.find(
+			// 		( item ) =>
+			// 			item.ID === +window.location.href.split( '/' ).pop() ||
+			// 			item.URL.includes( window.location.href.split( '/' ).pop() )
+			// 	)?.is_wpcom_atomic
+			// );
 			const sites = data?.sites.map( computeFields( data?.sites ) ) || [];
 			return sitesFilterFn ? sites.filter( sitesFilterFn ) : sites;
 		},

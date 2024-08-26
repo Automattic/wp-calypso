@@ -147,6 +147,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 			const siteFeatures = await reduxDispatch< Promise< { active: string[] } > >(
 				fetchSiteFeatures( siteId )
 			);
+
 			if ( siteFeatures?.active?.indexOf?.( feature ) >= 0 ) {
 				break;
 			}

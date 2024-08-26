@@ -47,6 +47,7 @@ const transferringHostedSite: Flow = {
 					const redirectTo = providedDependencies?.redirectTo
 						? providedDependencies?.redirectTo
 						: `/home/${ siteId }`;
+
 					return exitFlow( redirectTo as string );
 				}
 

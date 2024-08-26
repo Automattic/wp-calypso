@@ -5,6 +5,7 @@ import { Dialog } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Spinner } from '@wordpress/components';
+import { useDispatch as useDispatchData, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import { AnyAction } from 'redux';
@@ -12,15 +13,19 @@ import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { queryKeyForAllSitesWithThemeSlug } from 'calypso/data/sites/use-site-excerpts-query';
-import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
+// import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
+import { SITE_STORE } from 'calypso/landing/stepper/stores'; // ONBOARD_STORE
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { requestSite } from 'calypso/state/sites/actions';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { SiteDetails, SiteSelect } from '@automattic/data-stores'; // OnboardSelect
 import './style.scss';
 
 type PromoCardProps = {
@@ -40,9 +45,12 @@ const PromoCard = ( { title, text, supportContext }: PromoCardProps ) => (
 	</HostingCard>
 );
 
+const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
+
 const HostingFeatures = () => {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
+	const { requestLatestAtomicTransfer } = useDispatchData( SITE_STORE );
 	const { searchParams } = new URL( document.location.toString() );
 	const showActivationModal = searchParams.get( 'activate' ) !== null;
 	const [ showEligibility, setShowEligibility ] = useState( showActivationModal );
@@ -61,43 +69,100 @@ const HostingFeatures = () => {
 	);
 	const hasRedirectQueryParam = searchParams.has( 'redirect_to' );
 	const hasEnTranslation = useHasEnTranslation();
-
-	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId || undefined, {
-		refetchInterval: 3000,
-		refetchIntervalInBackground: true,
-	} );
+	const siteTransferData = true;
+	const isTransferInProgress = true;
+	// const { data: siteTransferData } = useSiteTransferStatusQuery( siteId || undefined, {
+	// 	refetchInterval: 3000,
+	// 	refetchIntervalInBackground: true,
+	// } );
 	// `siteTransferData?.isTransferring` is not a fully reliable indicator by itself, which is why
 	// we also look at `siteTransferData.status`
-	const isTransferInProgress =
-		siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED;
+	// const isTransferInProgress =
+	// 	siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED;
 
 	useEffect( () => {
 		if ( isSiteAtomic && ! isPlanExpired ) {
+			// console.log(hasSftpFeature);
 			if ( hasRedirectQueryParam ) {
-				window.location.href = redirectUrl.current;
+				// window.location.href = redirectUrl.current;
+				page.replace( redirectUrl.current );
 			} else {
 				// The setTimeout is needed when transitioning a site to Atomic.
 				// Once the transition is completed, the user should be redirected to the hosting configuration page.
 				// However, due to a backend delay, immediate redirection may lead to the login page instead.
 				// To avoid this, we introduce a 5-second delay before redirecting.
-				setTimeout( () => {
-					window.location.href = redirectUrl.current;
-				}, 5000 );
+				// setTimeout( () => {
+				page.replace( redirectUrl.current );
+				// }, 5000 );
 			}
 		}
-	}, [ isSiteAtomic, isPlanExpired, hasRedirectQueryParam ] );
+	}, [ isSiteAtomic, isPlanExpired, hasRedirectQueryParam, hasSftpFeature ] );
+
+	const { getSiteLatestAtomicTransfer } = useSelect(
+		( select ) => select( SITE_STORE ) as SiteSelect,
+		[]
+	);
 
 	useEffect( () => {
-		if ( ! siteId ) {
-			return;
-		}
+		( async () => {
+			if ( ! siteId ) {
+				return;
+			}
 
-		if ( siteTransferData?.status === transferStates.COMPLETED ) {
-			dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
-			queryClient.invalidateQueries( {
-				queryKey: queryKeyForAllSitesWithThemeSlug,
-			} );
-		}
+			// if ( siteTransferData?.status === transferStates.COMPLETED ) {
+			while ( true ) {
+				const site = await dispatch< SiteDetails >( requestSite( siteId ) );
+				const siteFeatures = await dispatch< Promise< { active: string[] } > >(
+					fetchSiteFeatures( siteId )
+				);
+				await requestLatestAtomicTransfer( siteId );
+				const transfer = getSiteLatestAtomicTransfer( siteId );
+				const transferStatus = transfer?.status;
+
+				if ( transferStatus === transferStates.COMPLETED ) {
+					// debugger;
+				}
+
+				if (
+					site?.options?.is_wpcom_atomic &&
+					site?.capabilities?.manage_options &&
+					siteFeatures?.active?.indexOf?.( FEATURE_SFTP ) >= 0 &&
+					transferStatus === transferStates.COMPLETED
+				) {
+					dispatch( fetchAtomicTransfer( siteId ) as unknown as AnyAction );
+					queryClient.invalidateQueries( {
+						queryKey: queryKeyForAllSitesWithThemeSlug,
+					} );
+					break;
+				}
+
+				await wait( 3000 );
+			}
+
+			// let stopPollingPlugins = ! pluginsToVerify || pluginsToVerify.length <= 0;
+			// let backoffTime = 1000;
+
+			// while ( ! stopPollingPlugins ) {
+			// 		const response: PluginsResponse = await wpcomRequest( {
+			// 			path: `/sites/${ siteId }/plugins`,
+			// 			apiVersion: '1.1',
+			// 		} );
+
+			// 		// Check that all plugins to verify have been installed and activated.
+			// 		// If they _have_ been installed and activated, we can stop polling.
+			// 		if ( response?.plugins && pluginsToVerify ) {
+			// 			stopPollingPlugins = pluginsToVerify.every( ( slug ) => {
+			// 				return response?.plugins.find(
+			// 					( plugin: { slug: string; active: boolean } ) =>
+			// 						plugin.slug === slug && plugin.active === true
+			// 				);
+			// 			} );
+			// 		}
+			// }
+
+			// page.replace( redirectUrl.current );
+			// }
+		} )();
 	}, [ siteTransferData?.status, siteId, dispatch, queryClient ] );
 
 	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
@@ -196,7 +261,7 @@ const HostingFeatures = () => {
 	let title;
 	let description;
 	let buttons;
-	if ( isTransferInProgress && config.isEnabled( 'hosting-overview-refinements' ) ) {
+	if ( isTransferInProgress && ! config.isEnabled( 'hosting-overview-refinements' ) ) {
 		title = translate( 'Activating hosting features' );
 		description = translate(
 			"The hosting features will appear here automatically when they're ready!",

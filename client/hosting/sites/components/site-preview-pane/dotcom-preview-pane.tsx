@@ -55,6 +55,8 @@ const DotcomPreviewPane = ( {
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
 
+	// console.log( '444', site.is_wpcom_atomic );
+
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
 		const siteFeatures = [
