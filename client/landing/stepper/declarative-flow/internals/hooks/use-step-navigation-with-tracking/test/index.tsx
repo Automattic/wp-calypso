@@ -61,7 +61,7 @@ describe( 'useStepNavigationWithTracking', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 		const providedDependencies = { foo: 'foo' };
 		act( () => {
-			result.current.submit?.( { foo: 'foo' }, 'bar', 'baz' );
+			result.current.submit?.( providedDependencies, 'bar', 'baz' );
 		} );
 
 		expect( stepNavControls.submit ).toHaveBeenCalledWith( providedDependencies, 'bar', 'baz' );
