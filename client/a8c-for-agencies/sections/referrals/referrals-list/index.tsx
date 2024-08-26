@@ -49,7 +49,7 @@ export default function ReferralList( {
 						// Show the client column as a button on mobile
 						{
 							id: 'client',
-							header: translate( 'Client' ).toUpperCase(),
+							label: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => (
 								<Button
@@ -70,7 +70,7 @@ export default function ReferralList( {
 							? [
 									{
 										id: 'actions',
-										header: null,
+										label: null,
 										render: ( { item }: { item: Referral } ) => (
 											<div>
 												<Button
@@ -91,7 +91,7 @@ export default function ReferralList( {
 				: [
 						{
 							id: 'client',
-							header: translate( 'Client' ).toUpperCase(),
+							label: translate( 'Client' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => (
 								<Button
@@ -108,7 +108,7 @@ export default function ReferralList( {
 						},
 						{
 							id: 'pending-orders',
-							header: translate( 'Pending Orders' ).toUpperCase(),
+							label: translate( 'Pending Orders' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode =>
 								item.referralStatuses.filter( ( status ) => status === 'pending' ).length,
@@ -117,7 +117,7 @@ export default function ReferralList( {
 						},
 						{
 							id: 'completed-orders',
-							header: translate( 'Completed Orders' ).toUpperCase(),
+							label: translate( 'Completed Orders' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode =>
 								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
@@ -126,7 +126,7 @@ export default function ReferralList( {
 						},
 						{
 							id: 'commissions',
-							header: translate( 'Commissions' ).toUpperCase(),
+							label: translate( 'Commissions' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => {
 								const clientReferralInvoices = referralInvoices.filter(
@@ -144,7 +144,7 @@ export default function ReferralList( {
 						},
 						{
 							id: 'subscription-status',
-							header: translate( 'Subscription Status' ).toUpperCase(),
+							label: translate( 'Subscription Status' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: Referral } ): ReactNode => (
 								<SubscriptionStatus item={ item } />
@@ -154,7 +154,7 @@ export default function ReferralList( {
 						},
 						{
 							id: 'actions',
-							header: translate( 'Actions' ).toUpperCase(),
+							label: translate( 'Actions' ).toUpperCase(),
 							render: ( { item }: { item: Referral } ) => (
 								<div>
 									<Button
