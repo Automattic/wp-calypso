@@ -732,7 +732,7 @@ class MagicLogin extends Component {
 			translate,
 			isValidatingCode,
 			isCodeValidated,
-			codeValidationError = {},
+			codeValidationError,
 			query,
 		} = this.props;
 		const {
@@ -749,15 +749,15 @@ class MagicLogin extends Component {
 		const isProcessingCode = isValidatingCode || isCodeValidated;
 		let errorText = translate( 'Something went wrong. Please try again.' );
 
-		if ( codeValidationError.code === 'sms_code_throttled' ) {
+		if ( codeValidationError?.code === 'sms_code_throttled' ) {
 			errorText = translate(
 				'We can’t send your two-factor authentication code via SMS right now. Please wait over a minute, then request a new code and try again.'
 			);
-		} else if ( codeValidationError.status === 403 ) {
+		} else if ( codeValidationError?.status === 403 ) {
 			errorText = translate(
 				'Invalid code. If the error persists, please request a new code and try again.'
 			);
-		} else if ( codeValidationError.status === 429 ) {
+		} else if ( codeValidationError?.status === 429 ) {
 			errorText = translate( 'Please wait a minute before trying again.' );
 		}
 
