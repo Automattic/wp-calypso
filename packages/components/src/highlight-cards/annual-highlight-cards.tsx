@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ComponentSwapper from '../component-swapper';
 import CountComparisonCard from './count-comparison-card';
+import HighlightCardsHeading from './highlight-cards-heading';
 import MobileHighlightCardListing from './mobile-highlight-cards';
 
 import './style.scss';
@@ -89,7 +90,7 @@ export default function AnnualHighlightCards( {
 	const translate = useTranslate();
 
 	const header = (
-		<h3 className="highlight-cards-heading">
+		<HighlightCardsHeading>
 			{ year != null && Number.isFinite( year )
 				? translate( '%(year)s in review', { args: { year } } )
 				: translate( 'Year in review' ) }{ ' ' }
@@ -100,7 +101,7 @@ export default function AnnualHighlightCards( {
 					</a>
 				</small>
 			) : null }
-		</h3>
+		</HighlightCardsHeading>
 	);
 
 	return (
