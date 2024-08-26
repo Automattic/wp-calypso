@@ -110,7 +110,12 @@ export default function TeamInvite() {
 					</div>
 
 					<div className="team-invite-form__footer">
-						<Button variant="primary" onClick={ onSendInvite } disabled={ isSending }>
+						<Button
+							variant="primary"
+							onClick={ onSendInvite }
+							disabled={ isSending }
+							isBusy={ isSending }
+						>
 							{ translate( 'Send invite' ) }
 						</Button>
 					</div>

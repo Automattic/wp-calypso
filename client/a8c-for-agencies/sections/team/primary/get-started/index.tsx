@@ -32,7 +32,7 @@ export default function GetStarted() {
 				<LayoutHeader>
 					<Title>{ title }</Title>
 					<Actions>
-						<Button variant="primary" onClick={ onInviteClick }>
+						<Button variant="primary" onClick={ onInviteClick } href={ A4A_TEAM_INVITE_LINK }>
 							{ translate( 'Invite a team member' ) }
 						</Button>
 					</Actions>
