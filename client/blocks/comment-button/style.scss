@@ -2,6 +2,7 @@
 	align-items: center;
 	box-sizing: border-box;
 	color: var(--color-text-subtle);
+	fill: var(--color-text-subtle);
 	cursor: pointer;
 	display: flex;
 	height: 20px;
@@ -11,6 +12,7 @@
 	&:hover,
 	&:active {
 		color: var(--color-link);
+		fill: var(--color-link);
 	}
 
 	.comment-button__label-status {
