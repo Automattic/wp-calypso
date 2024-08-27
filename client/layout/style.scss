@@ -73,7 +73,7 @@ body.command-palette-modal-open {
 		margin: 0;
 	}
 
-	// Themes sets it own padding/margin
+	// Themes sets its own padding/margin when there is no sidebar
 	.is-section-theme.has-no-sidebar &,
 	.is-section-themes.has-no-sidebar &,
 	.theme-default .layout.is-section-theme.has-no-sidebar &,
