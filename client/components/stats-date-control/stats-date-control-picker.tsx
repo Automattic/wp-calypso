@@ -23,6 +23,7 @@ const DateControlPicker = ( {
 }: DateControlPickerProps ) => {
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isNewCalendar = config.isEnabled( 'stats/date-picker-calendar' );
 
 	// Pull dates from provided range.
 	const [ inputStartDate, setInputStartDate ] = useState(
@@ -114,44 +115,54 @@ const DateControlPicker = ( {
 
 	return (
 		<div className="stats-date-control-picker">
-			<DateRange
-				startDate={ inputStartDate }
-				endDate={ inputEndDate }
-				onStartChange={ changeStartDate }
-				onEndChange={ changeEndDate }
-				onDateCommit={ handleOnDateCommit }
-				renderTrigger={ customTrigger }
-			/>
+			{ isNewCalendar && (
+				<DateRange
+					startDate={ inputStartDate }
+					endDate={ inputEndDate }
+					onStartChange={ changeStartDate }
+					onEndChange={ changeEndDate }
+					onDateCommit={ handleOnDateCommit }
+					renderTrigger={ customTrigger }
+				/>
+			) }
+			{ ! isNewCalendar && (
+				<>
+					<Button onClick={ togglePopoverVisibility } ref={ infoReferenceElement }>
+						{ buttonLabel }
+						<Icon className="gridicon" icon={ calendar } />
+						<DateControlPickerShortcuts
+							shortcutList={ shortcutList }
+							currentShortcut={ selectedShortcut }
+							onClick={ handleShortcutSelected }
+						/>
+					</Button>
 
-			<Button onClick={ togglePopoverVisibility } ref={ infoReferenceElement }>
-				{ buttonLabel }
-				<Icon className="gridicon" icon={ calendar } />
-			</Button>
-
-			<Popover
-				position="bottom"
-				context={ infoReferenceElement?.current }
-				isVisible={ popoverOpened }
-				className="stats-date-control-picker__popover-wrapper"
-				onClose={ () => togglePopoverOpened( false ) }
-			>
-				<div className="stats-date-control-picker__popover-content">
-					<DateControlPickerShortcuts
-						shortcutList={ shortcutList }
-						currentShortcut={ selectedShortcut }
-						onClick={ handleShortcutSelected }
-					/>
-					<DateControlPickerDate
-						startDate={ inputStartDate }
-						endDate={ inputEndDate }
-						onStartChange={ changeStartDate }
-						onEndChange={ changeEndDate }
-						onApply={ handleOnApply }
-						onCancel={ handleOnCancel }
-						overlay={ overlay }
-					/>
-				</div>
-			</Popover>
+					<Popover
+						position="bottom"
+						context={ infoReferenceElement?.current }
+						isVisible={ popoverOpened }
+						className="stats-date-control-picker__popover-wrapper"
+						onClose={ () => togglePopoverOpened( false ) }
+					>
+						<div className="stats-date-control-picker__popover-content">
+							<DateControlPickerShortcuts
+								shortcutList={ shortcutList }
+								currentShortcut={ selectedShortcut }
+								onClick={ handleShortcutSelected }
+							/>
+							<DateControlPickerDate
+								startDate={ inputStartDate }
+								endDate={ inputEndDate }
+								onStartChange={ changeStartDate }
+								onEndChange={ changeEndDate }
+								onApply={ handleOnApply }
+								onCancel={ handleOnCancel }
+								overlay={ overlay }
+							/>
+						</div>
+					</Popover>
+				</>
+			) }
 		</div>
 	);
 };
