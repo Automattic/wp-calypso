@@ -38,6 +38,7 @@ export const A4A_PARTNER_DIRECTORY_LINK = '/partner-directory';
 export const A4A_PARTNER_DIRECTORY_DASHBOARD_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/dashboard`;
 export const A4A_TEAM_LINK = '/team';
 export const A4A_TEAM_INVITE_LINK = '/team/invite';
+export const A4A_TEAM_ACCEPT_INVITE_LINK = '/team/invite/accept';
 export const EXTERNAL_A4A_KNOWLEDGE_BASE = 'http://automattic.com/for-agencies/help';
 
 // Client
