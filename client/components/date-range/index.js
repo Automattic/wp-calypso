@@ -463,8 +463,8 @@ export class DateRange extends Component {
 					</div>
 					{ this.props.renderInputs( inputsProps ) }
 					<DateRangePicker
-						firstSelectableDate={ this.state.initialStartDate }
-						lastSelectableDate={ this.state.initialEndDate }
+						firstSelectableDate={ this.props.firstSelectableDate }
+						lastSelectableDate={ this.props.lastSelectableDate }
 						selectedStartDate={ this.state.startDate }
 						selectedEndDate={ this.state.endDate }
 						onDateRangeChange={ onDateRangeChange }
