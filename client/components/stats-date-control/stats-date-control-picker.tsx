@@ -57,6 +57,14 @@ const DateControlPicker = ( {
 		setInputEndDate( endDate );
 	};
 
+	const handleOnDateCommit = ( startDate: string, endDate: string ) => {
+		// Format the dates correctly before applying
+		const formattedStartDate = moment( startDate ).format( 'YYYY-MM-DD' ); // Ensure this is a string
+		const formattedEndDate = moment( endDate ).format( 'YYYY-MM-DD' ); // Ensure this is a string
+
+		onApply( formattedStartDate, formattedEndDate ); // Call the onApply function with the formatted dates
+	};
+
 	const handleOnApply = () => {
 		togglePopoverOpened( false );
 		onApply( inputStartDate, inputEndDate );
@@ -88,7 +96,6 @@ const DateControlPicker = ( {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 
 		if ( ! popoverOpened ) {
-			// record an event for opening the date picker
 			recordTracksEvent( `${ event_from }_stats_date_picker_opened` );
 		}
 
@@ -107,16 +114,15 @@ const DateControlPicker = ( {
 
 	return (
 		<div className="stats-date-control-picker">
-			{ /* New custom trigger button */ }
 			<DateRange
 				startDate={ inputStartDate }
 				endDate={ inputEndDate }
 				onStartChange={ changeStartDate }
 				onEndChange={ changeEndDate }
+				onDateCommit={ handleOnDateCommit }
 				renderTrigger={ customTrigger }
 			/>
 
-			{ /* Existing button for toggling popover */ }
 			<Button onClick={ togglePopoverVisibility } ref={ infoReferenceElement }>
 				{ buttonLabel }
 				<Icon className="gridicon" icon={ calendar } />
