@@ -15,23 +15,22 @@ interface Props {
 }
 
 export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
-	const steps = flow.useSteps();
 	const [ queryParams, setQuery ] = useSearchParams();
+	const steps = flow.useSteps();
+	const flowVariant = flow.variantSlug;
+	const flowName = flow.name;
 	const ref = queryParams.get( 'ref' ) || '';
 	const isSignupStep = queryParams.has( 'signup' );
 
 	// TODO: Using the new signup flag we can remove reference to SENSEI_FLOW
-	const firstStepSlug = ( flow.name === SENSEI_FLOW ? steps[ 1 ] : steps[ 0 ] ).slug;
+	const firstStepSlug = ( flowName === SENSEI_FLOW ? steps[ 1 ] : steps[ 0 ] ).slug;
 	const isFirstStep = firstStepSlug === currentStepRoute;
-	const extraProps = useSnakeCasedKeys( {
-		input: {
-			flowVariant: flow.variantSlug,
-			...flow.useTracksEventProps?.()[ STEPPER_TRACKS_EVENT_SIGNUP_START ],
-		},
+	const shouldTrack = flow.isSignupFlow && ( isFirstStep || isSignupStep );
+
+	const signupStartEventProps = useSnakeCasedKeys( {
+		input: flow.useTracksEventProps?.()[ STEPPER_TRACKS_EVENT_SIGNUP_START ],
 	} );
 
-	const flowName = flow.name;
-	const shouldTrack = flow.isSignupFlow && ( isFirstStep || isSignupStep );
 	const removeSignupParam = useCallback( () => {
 		if ( queryParams.has( 'signup' ) ) {
 			queryParams.delete( 'signup' );
@@ -43,7 +42,11 @@ export const useSignUpStartTracking = ( { flow, currentStepRoute }: Props ) => {
 		if ( ! shouldTrack ) {
 			return;
 		}
-		recordSignupStart( flowName, ref, extraProps || {} );
+
+		recordSignupStart( flowName, ref, {
+			...signupStartEventProps,
+			...( flowVariant && { flow_variant: flowVariant } ),
+		} );
 		removeSignupParam();
-	}, [ extraProps, flowName, ref, removeSignupParam, shouldTrack ] );
+	}, [ signupStartEventProps, flowName, flowVariant, ref, removeSignupParam, shouldTrack ] );
 };
