@@ -7,6 +7,7 @@ import {
 	hashComponents,
 	componentsToDebugString,
 } from './agent';
+import { getVisitorId } from './runtime';
 import { BuiltinComponents } from './sources';
 import { Confidence } from './confidence';
 import { Component, UnknownComponents } from './utils/entropy_source';
@@ -14,6 +15,7 @@ import { x64hash128 } from './utils/hashing';
 
 // Exports that are under Semantic versioning
 export {
+	getVisitorId,
 	load,
 	Agent,
 	LoadOptions,
