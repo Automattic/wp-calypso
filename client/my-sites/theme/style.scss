@@ -15,6 +15,23 @@ $button-border: 4px;
 		--color-surface-backdrop: var(--studio-white);
 	}
 
+	.layout.is-logged-in .layout__content {
+		overflow: clip;
+
+		.theme__sheet-screenshot,
+		.theme__sheet-web-preview {
+			@include breakpoint-deprecated( ">960px" ) {
+				top: calc(var(--masterbar-height) + 16px);
+			}
+		}
+
+		.theme__sheet-web-preview .theme-preview__frame-wrapper {
+			@include breakpoint-deprecated( ">960px" ) {
+				max-height: calc(100vh - 32px - var(--masterbar-height));
+			}
+		}
+	}
+
 	.layout__primary .main {
 		@include breakpoint-deprecated( "<960px" ) {
 			padding-bottom: 40px;
@@ -137,7 +154,8 @@ $button-border: 4px;
 		display: flex;
 		gap: 16px;
 		flex-direction: column;
-		padding: 0;
+		padding-top: 0;
+		padding-bottom: 0;
 
 		.theme__sheet-column-left {
 			padding: 0 24px;
