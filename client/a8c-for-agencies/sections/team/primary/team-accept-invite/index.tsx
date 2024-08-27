@@ -9,6 +9,7 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { A4A_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useActivateMemberMutation from 'calypso/a8c-for-agencies/data/team/use-activate-member';
+import AgencyLogo from 'calypso/assets/images/a8c-for-agencies/agency-logo.svg';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -93,7 +94,17 @@ export default function TeamAcceptInvite( { agencyId, agencyName, inviteId, secr
 		}
 	}, [ currentAgency, agencyId ] );
 
-	const title = translate( 'Accepting team invite' );
+	const title = useMemo( () => {
+		if ( isAgencyFetched && isMemberOfAnotherAgency && hasCompleteParameters ) {
+			return <img src={ AgencyLogo } alt="" />;
+		}
+
+		if ( error ) {
+			return translate( 'Invalid invite link' );
+		}
+
+		return <div className="team-accept-invite__title-placeholder"></div>;
+	}, [ error, hasCompleteParameters, isAgencyFetched, isMemberOfAnotherAgency, translate ] );
 
 	const content = useMemo( () => {
 		if ( isAgencyFetched && isMemberOfAnotherAgency && hasCompleteParameters ) {
@@ -121,16 +132,10 @@ export default function TeamAcceptInvite( { agencyId, agencyName, inviteId, secr
 	] );
 
 	return (
-		<Layout className="team-accept-invite" title={ title } wide>
+		<Layout className="team-accept-invite" title={ translate( 'Accepting team invite' ) } wide>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>
-						{ error ? (
-							translate( 'Invalid invite link' )
-						) : (
-							<div className="team-accept-invite__title-placeholder"></div>
-						) }
-					</Title>
+					<Title>{ title }</Title>
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>{ content }</LayoutBody>
