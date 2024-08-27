@@ -45,6 +45,7 @@ export class DateRange extends Component {
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
 		renderInputs: PropTypes.func,
+		renderWrapper: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -56,6 +57,7 @@ export class DateRange extends Component {
 		renderTrigger: ( props ) => <DateRangeTrigger { ...props } />,
 		renderHeader: ( props ) => <DateRangeHeader { ...props } />,
 		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
+		renderWrapper: ( children ) => <>{ children }</>,
 	};
 
 	constructor( props ) {
@@ -597,14 +599,17 @@ export class DateRange extends Component {
 				position="bottom"
 				onClose={ this.closePopoverAndCommit }
 			>
-				<div className="date-range__popover-inner">
-					<div className="date-range__controls">
-						{ this.props.renderHeader( headerProps ) }
-						{ this.renderDateHelp() }
+				{ this.props.renderWrapper(
+					// {{ edit_3 }}
+					<div className="date-range__popover-inner">
+						<div className="date-range__controls">
+							{ this.props.renderHeader( headerProps ) }
+							{ this.renderDateHelp() }
+						</div>
+						{ this.props.renderInputs( inputsProps ) }
+						{ this.renderDatePicker() }
 					</div>
-					{ this.props.renderInputs( inputsProps ) }
-					{ this.renderDatePicker() }
-				</div>
+				) }
 			</Popover>
 		);
 	}
