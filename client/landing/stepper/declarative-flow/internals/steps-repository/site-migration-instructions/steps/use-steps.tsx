@@ -81,7 +81,7 @@ const useStepsData = ( {
 			) : (
 				<StepAddMigrationKey migrationKey={ migrationKey } preparationError={ preparationError } />
 			),
-			ctaText: showMigrationKeyFallback ? translate( 'Get key' ) : translate( 'Enter key' ),
+			ctaText: migrationKey ? translate( 'Enter key' ) : translate( 'Get key' ),
 		},
 	];
 };
@@ -150,12 +150,7 @@ export const useSteps = ( {
 		let onPrimaryCtaClick = openPluginInstallationPage;
 		let onSecondaryCtaClick = onNextClick;
 
-		if ( ! isMigrationKeyStep ) {
-			if ( 1 === index ) {
-				onPrimaryCtaClick = () => openMigrateGuruPage( fromUrl, 'go-to-plugin-page' );
-			}
-		} else if ( migrationKey || showMigrationKeyFallback ) {
-			// Migration key step.
+		if ( isMigrationKeyStep ) {
 			if ( migrationKey ) {
 				onPrimaryCtaClick = () => openMigrateGuruPage( fromUrl, 'enter-key' );
 			} else {
@@ -164,6 +159,8 @@ export const useSteps = ( {
 
 			secondaryCtaText = translate( 'Done' );
 			onSecondaryCtaClick = onDoneClick;
+		} else if ( 1 === index ) {
+			onPrimaryCtaClick = () => openMigrateGuruPage( fromUrl, 'go-to-plugin-page' );
 		}
 
 		return {
