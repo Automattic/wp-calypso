@@ -478,7 +478,10 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
-				url: isClassicView ? siteUrl + '/wp-admin/profile.php' : '/me',
+				url:
+					config.isEnabled( 'layout/site-level-user-profile' ) || isClassicView
+						? siteUrl + '/wp-admin/profile.php'
+						: '/me',
 			},
 			{
 				label: translate( 'My Account' ),
