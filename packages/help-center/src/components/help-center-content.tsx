@@ -109,6 +109,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		},
 		[ navigate ]
 	);
+	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -185,6 +186,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 						element={
 							<ProtectedRoute condition={ preventOdieAccess }>
 								<OdieAssistantProvider
+									setIsMinimized={ setIsMinimized }
 									isLoadingEnvironment={ isLoadingEnvironment }
 									botNameSlug={ odieBotNameSlug }
 									botName="Wapuu"

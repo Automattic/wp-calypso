@@ -95,3 +95,17 @@
 	border-top: 1px solid var(--gray-gray-5, #dcdcde);
 	background: var(--black-white-white, #fff);
 }
+
+.chatbox-screenshot {
+	display: flex;
+	justify-content: center;
+	padding: 16px;
+	flex-direction: column;
+	gap: 8px;
+
+	.disclaimer {
+		color: var(--studio-gray-50);
+		font-size: $font-body-extra-small;
+		text-align: right;
+	}
+}

@@ -34,7 +34,7 @@ export type MessageIndicators = {
 const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 	const { message, currentUser, ...messageIndicators } = props;
 	const isUser = message.role === 'user';
-	const { botName, addMessage } = useOdieAssistantContext();
+	const { botName, addMessage, screenShot } = useOdieAssistantContext();
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const { _x } = useI18n();
 	const [ isDisliked, setIsDisliked ] = useState( false );
@@ -98,6 +98,20 @@ const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 				/>
 			) : (
 				<strong className="message-header-name">{ botName }</strong>
+			) }
+
+			{ message.type === 'screenshot' && (
+				<>
+					<Markdown
+						urlTransform={ uriTransformer }
+						components={ {
+							a: CustomALink,
+						} }
+					>
+						{ message.content }
+					</Markdown>
+					<img src={ screenShot } alt="Screenshot" />
+				</>
 			) }
 
 			<div className="message-header-buttons">
