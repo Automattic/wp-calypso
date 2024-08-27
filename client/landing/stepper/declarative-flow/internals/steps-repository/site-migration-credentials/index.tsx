@@ -45,7 +45,6 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 
 	const toggleVisibilityClasses = clsx( {
 		'site-migration-credentials__form-password__toggle': true,
-		'site-migration-credentials__form-password__toggle-visibility': ! passwordHidden,
 	} );
 
 	const validateSiteAddress = ( siteAddress: string ) => {
@@ -283,7 +282,6 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 											<div className="site-migration-credentials__form-password">
 												<FormTextInput
 													autoComplete="off"
-													id="password"
 													type={ passwordHidden ? 'password' : 'text' }
 													isError={ !! errors.password }
 													placeholder={ translate( 'Password' ) }
