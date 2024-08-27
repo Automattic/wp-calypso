@@ -48,6 +48,13 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
 		const isCurrentPostScheduled = select( 'core/editor' ).isCurrentPostScheduled();
 		const getCurrentPostRevisionsCount = select( 'core/editor' ).getCurrentPostRevisionsCount();
+		const currentPostType = select( 'core/editor' ).getCurrentPostType();
+
+		// If we're editing anything that is not a post, including pages, templates, and navigation, nothing further needed.
+		if ( currentPostType && currentPostType !== 'post' ) {
+			unsubscribe();
+			return;
+		}
 
 		if (
 			! isSavingPost &&
