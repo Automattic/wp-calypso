@@ -49,6 +49,19 @@
 		flex-direction: column;
 	}
 
+	button,
+	a {
+		&:focus {
+			box-shadow: none;
+			outline: var(--color-link, --studio-blue-30) solid 2px;
+		}
+
+		&:hover {
+			color: var(--color-link-dark, --studio-blue-70);
+			border-color: inherit;
+		}
+	}
+
 	.help-center__section-title {
 		font-size: $font-body-small;
 		font-weight: 500;

@@ -7,13 +7,6 @@
 		font-size: $font-body-small;
 		padding: 0 4px 0 0;
 
-		&:focus {
-			color: #043959;
-			box-shadow: none;
-			outline: var(--color-primary-light) solid 2px;
-			border-color: inherit;
-		}
-
 		svg {
 			margin-top: 1px;
 			padding-left: 3px;

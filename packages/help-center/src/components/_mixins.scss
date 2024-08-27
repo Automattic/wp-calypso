@@ -45,11 +45,13 @@
 				}
 
 				&:hover {
+					color: var(--studio-gray-100);
 					cursor: pointer;
 					background: var(--color-neutral-0);
 				}
 
 				&:focus {
+					color: var(--studio-gray-100);
 					outline: var(--color-primary-light) solid 2px;
 					outline-offset: 2px;
 				}
