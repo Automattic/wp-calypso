@@ -74,9 +74,9 @@ body.command-palette-modal-open {
 	}
 
 	// Themes sets it own padding/margin
-	.is-section-theme &,
+	.is-section-theme.has-no-sidebar &,
 	.is-section-themes.has-no-sidebar &,
-	.theme-default .layout.is-section-theme &,
+	.theme-default .layout.is-section-theme.has-no-sidebar &,
 	.theme-default .layout.is-section-themes.has-no-sidebar &,
 	.theme-default .layout.is-section-themes:not(.is-logged-in) & {
 		padding: 0;
