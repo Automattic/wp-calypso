@@ -1,7 +1,7 @@
 import { getVisitorId } from '@automattic/fingerprintjs';
 import { useEffect, useState } from 'react';
 
-export default function useVisitorId() {
+export function useVisitorId() {
 	const [ visitorId, setVisitorId ] = useState( '' );
 	useEffect( () => {
 		getVisitorId().then( ( id ) => setVisitorId( id ) );
