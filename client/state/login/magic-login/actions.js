@@ -94,8 +94,8 @@ export const fetchMagicLoginAuthenticate =
 				dispatch( {
 					type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
 					error: {
-						status,
-						code: response?.body?.data?.errors?.[ 0 ]?.code || null,
+						code: status,
+						type: response?.body?.data?.errors?.[ 0 ]?.code || null,
 					},
 				} );
 			} );

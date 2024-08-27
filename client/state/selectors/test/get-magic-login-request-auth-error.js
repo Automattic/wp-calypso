@@ -7,7 +7,7 @@ describe( 'getMagicLoginRequestAuthError()', () => {
 	} );
 
 	test( 'should return the error if set', () => {
-		const requestAuthError = { status: 'foo', code: 'bar' };
+		const requestAuthError = { code: 'foo', type: 'bar' };
 		const error = getMagicLoginRequestAuthError( {
 			login: {
 				magicLogin: {

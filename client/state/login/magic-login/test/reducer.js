@@ -115,7 +115,7 @@ describe( 'reducer', () => {
 		test( 'should be false on error', () => {
 			const state = requestAuthSuccess( undefined, {
 				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
-				error: { status: 'foo', code: 'bar' },
+				error: { code: 'foo', type: 'bar' },
 			} );
 			expect( state ).toBe( false );
 		} );
@@ -142,7 +142,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should be error on error', () => {
-			const error = { status: 'foo', code: 'bar' };
+			const error = { code: 'foo', type: 'bar' };
 			const state = requestAuthError( undefined, {
 				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
 				error,
