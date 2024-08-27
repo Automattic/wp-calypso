@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -84,6 +85,7 @@ export default function TeamList() {
 			{
 				id: 'user',
 				label: translate( 'User' ).toUpperCase(),
+				getValue: ( { item }: { item: TeamMember } ) => item.displayName ?? '',
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
 					return <MemberColumn member={ item } withRoleStatus={ ! isDesktop } />;
 				},
@@ -95,6 +97,7 @@ export default function TeamList() {
 						{
 							id: 'role',
 							label: translate( 'Role' ).toUpperCase(),
+							getValue: ( { item }: { item: TeamMember } ) => item.role || '',
 							render: ( { item }: { item: TeamMember } ): ReactNode => {
 								return <RoleStatusColumn member={ item } />;
 							},
@@ -103,6 +106,7 @@ export default function TeamList() {
 						},
 						{
 							id: 'added-date',
+							getValue: ( { item }: { item: TeamMember } ): string => item.dateAdded || '',
 							label: translate( 'Added' ).toUpperCase(),
 							render: ( { item }: { item: TeamMember } ): ReactNode => {
 								return <DateColumn date={ item.dateAdded } />;
@@ -114,6 +118,7 @@ export default function TeamList() {
 				: [] ),
 			{
 				id: 'actions',
+				getValue: () => '',
 				label: '',
 				render: ( { item }: { item: TeamMember } ): ReactNode => {
 					return (
@@ -134,7 +139,12 @@ export default function TeamList() {
 		// FIXME: Add placeholder when UI is pending
 	}
 
-	if ( ! hasMembers ) {
+
+	const { data: items, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( members, dataViewsState, fields );
+	}, [ members, dataViewsState, fields ] );
+
+	if ( items.length === 0 ) {
 		return <GetStarted />;
 	}
 
@@ -153,14 +163,11 @@ export default function TeamList() {
 			<LayoutBody>
 				<ItemsDataViews
 					data={ {
-						items: members,
+						items,
 						getItemId: ( user ) => `${ user.id }`,
-						pagination: {
-							totalItems: 1,
-							totalPages: 1,
-						},
+						pagination: paginationInfo,
 						enableSearch: false,
-						fields: fields,
+						fields,
 						actions: [],
 						setDataViewsState: setDataViewsState,
 						dataViewsState: dataViewsState,
