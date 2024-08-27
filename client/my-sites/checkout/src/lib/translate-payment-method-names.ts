@@ -4,6 +4,9 @@ import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/
 
 const isP24RedirectEnabled = config.isEnabled( 'stripe-redirect-migration-p24' );
 const isStripeIdealRedirectEnabled = config.isEnabled( 'stripe-redirect-migration-ideal' );
+const StripeRedirectMigrationBancontact = config.isEnabled(
+	'stripe-redirect-migration-bancontact'
+);
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
@@ -29,6 +32,7 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 		case 'WPCOM_Billing_Stripe_Source_Alipay':
 			return 'alipay';
 		case 'WPCOM_Billing_Stripe_Source_Bancontact':
+		case 'WPCOM_Billing_Stripe_Bancontact':
 			return 'bancontact';
 		case 'WPCOM_Billing_Stripe_Source_Eps':
 			return 'eps';
@@ -82,6 +86,9 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'alipay':
 			return 'WPCOM_Billing_Stripe_Source_Alipay';
 		case 'bancontact':
+			if ( StripeRedirectMigrationBancontact ) {
+				return 'WPCOM_Billing_Stripe_Bancontact';
+			}
 			return 'WPCOM_Billing_Stripe_Source_Bancontact';
 		case 'eps':
 			return 'WPCOM_Billing_Stripe_Source_Eps';
@@ -122,7 +129,11 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
+<<<<<<< HEAD
 		case 'WPCOM_Billing_Stripe_P24':
+=======
+		case 'WPCOM_Billing_Stripe_Bancontact':
+>>>>>>> 7f27e4da7ad (Handle new Bancontact payment method class in the correct environment)
 		case 'WPCOM_Billing_Stripe_Source_Alipay':
 		case 'WPCOM_Billing_Stripe_Source_Bancontact':
 		case 'WPCOM_Billing_Stripe_Source_Eps':
