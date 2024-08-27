@@ -16,6 +16,7 @@
 		"isolatedModules": false,
 		"types": [ "node", "jasmine" ],
 		"typeRoots": [ "../../node_modules/@types", "node_modules/@types/jasmine" ],
+		"sourceMap": false,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "."
