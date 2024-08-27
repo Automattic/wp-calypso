@@ -44,7 +44,7 @@ const SORT_OPTIONS_CLICKS_LOW_HIGH = 'clicks_total|asc';
 const SORT_OPTIONS_CREATED_AT = 'created_at';
 
 export const SORT_OPTIONS_DEFAULT = {
-	orderBy: SORT_OPTIONS_BY_TITLE,
+	orderBy: SORT_OPTIONS_LAST_PUBLISHED,
 	order: 'desc',
 };
 
