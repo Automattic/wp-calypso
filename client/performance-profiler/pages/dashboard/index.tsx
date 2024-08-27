@@ -26,6 +26,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
+	const isSavedReport = desktopLoaded && mobileLoaded && !! hash;
 
 	const updateQueryParams = ( params: Record< string, string >, forceReload = false ) => {
 		const queryParams = new URLSearchParams( window.location.search );
@@ -83,7 +84,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 					'is-loading': ! mobileLoaded,
 				} ) }
 			>
-				<LoadingScreen isSavedReport={ !! hash } key="mobile-loading" />
+				<LoadingScreen isSavedReport={ isSavedReport } key="mobile-loading" />
 			</div>
 
 			<div
@@ -92,7 +93,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 					'is-loading': ! desktopLoaded,
 				} ) }
 			>
-				<LoadingScreen isSavedReport={ !! hash } key="desktop-loading" />
+				<LoadingScreen isSavedReport={ isSavedReport } key="desktop-loading" />
 			</div>
 
 			{ ( ( activeTab === TabType.mobile && mobileLoaded ) ||
