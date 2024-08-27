@@ -11,12 +11,14 @@ import { A4A_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-m
 import useActivateMemberMutation from 'calypso/a8c-for-agencies/data/team/use-activate-member';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { getActiveAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import NoMultiAgencyMessage from './no-multi-agency-message';
 
 import './style.scss';
 
 type Props = {
 	agencyId?: number;
+	agencyName?: string;
 	inviteId?: number;
 	secret?: string;
 };
@@ -35,20 +37,27 @@ function ErrorMessage( { error }: { error: string } ) {
 	return <div className="team-accept-invite__error">{ error }</div>;
 }
 
-export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props ) {
+export default function TeamAcceptInvite( { agencyId, agencyName, inviteId, secret }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const agency = useSelector( getActiveAgency );
+	const currentAgency = useSelector( getActiveAgency );
+	const isAgencyFetched = useSelector( hasFetchedAgency );
 
 	const { mutate: activateMember } = useActivateMemberMutation();
 
 	const [ error, setError ] = useState( '' );
 
-	useEffect( () => {
-		// FIXME: Check if current user is not member of any agency. If so, display some instructions on how to join to the new agency.
+	const isMemberOfAnotherAgency = currentAgency && currentAgency.id !== Number( agencyId );
 
-		if ( agencyId && inviteId && secret ) {
+	const hasCompleteParameters = agencyId && inviteId && secret;
+
+	useEffect( () => {
+		if ( ! isAgencyFetched ) {
+			return;
+		}
+
+		if ( hasCompleteParameters ) {
 			setError( '' );
 
 			activateMember(
@@ -67,24 +76,49 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 				}
 			);
 		}
-	}, [ activateMember, agencyId, dispatch, inviteId, secret ] );
+	}, [
+		activateMember,
+		agencyId,
+		dispatch,
+		hasCompleteParameters,
+		inviteId,
+		isAgencyFetched,
+		secret,
+	] );
 
 	useEffect( () => {
-		if ( agency && agency.id === Number( agencyId ) ) {
+		if ( currentAgency && currentAgency.id === Number( agencyId ) ) {
 			// If current agency is the same as the one in the URL, redirect to the overview page
 			page( A4A_OVERVIEW_LINK );
 		}
-	}, [ agency, agencyId ] );
+	}, [ currentAgency, agencyId ] );
 
 	const title = translate( 'Accepting team invite' );
 
 	const content = useMemo( () => {
+		if ( isAgencyFetched && isMemberOfAnotherAgency && hasCompleteParameters ) {
+			return (
+				<NoMultiAgencyMessage
+					currentAgency={ currentAgency }
+					invitingAgencyName={ agencyName ?? translate( 'Agency' ) }
+				/>
+			);
+		}
+
 		if ( error ) {
 			return <ErrorMessage error={ error } />;
 		}
 
 		return <PlaceHolder />;
-	}, [ error ] );
+	}, [
+		agencyName,
+		currentAgency,
+		error,
+		hasCompleteParameters,
+		isAgencyFetched,
+		isMemberOfAnotherAgency,
+		translate,
+	] );
 
 	return (
 		<Layout className="team-accept-invite" title={ title } wide>

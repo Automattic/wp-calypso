@@ -3,6 +3,29 @@
 	background: var(--color-neutral-10);
 }
 
+.team-accept-invite__heading {
+	@include a4a-font-heading-xl;
+
+	margin-block-start: 48px;
+	margin-block-end: 8px;
+}
+
+.team-accept-invite__subtitle {
+	@include a4a-font-body-lg;
+	margin-block-end: 32px;
+	color: var(--color-neutral-60);
+}
+
+a.team-accept-invite__link {
+	color: var(--color-neutral-60);
+	text-decoration: underline;
+}
+
+a.team-accept-invite__learn-more-button.is-link {
+	color: var(--color-primary-50);
+}
+
+
 .team-accept-invite__title-placeholder {
 	@include loading-effect;
 
