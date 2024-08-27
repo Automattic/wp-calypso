@@ -4,8 +4,8 @@
 .import-or-migrate {
 	max-width: 602px;
 
-	&.site-migration-import-or-migrate .step-container__header {
-		padding: 25px;
+	&.site-migration-import-or-migrate.step-container .step-container__header {
+		padding: 36px;
 	}
 
 	.onboarding-title {
