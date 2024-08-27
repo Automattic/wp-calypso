@@ -4,6 +4,14 @@ import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
+type MemberAPIResponse = {
+	id: number;
+	username: string;
+	email: string;
+	avatar_url: string;
+	role: string;
+};
+
 export default function useFetchActiveMembers(): UseQueryResult< TeamMember[], unknown > {
 	const agencyId = useSelector( getActiveAgencyId );
 
@@ -15,8 +23,7 @@ export default function useFetchActiveMembers(): UseQueryResult< TeamMember[], u
 				path: `/agency/${ agencyId }/users`,
 			} ),
 		select: ( data ) => {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			return data?.map( ( member: any ) => ( {
+			return data?.map( ( member: MemberAPIResponse ) => ( {
 				id: member.id,
 				displayName: member.username,
 				email: member.email,

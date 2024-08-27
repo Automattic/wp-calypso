@@ -13,6 +13,16 @@ type MemberInvite = {
 	displayName?: string;
 };
 
+type MemberInviteAPIResponse = {
+	id: number;
+	email: string;
+	status: string;
+	expires_at: string;
+	created_at: string;
+	avatar_url?: string;
+	username?: string;
+};
+
 export default function useFetchMemberInvites(): UseQueryResult< MemberInvite[], unknown > {
 	const agencyId = useSelector( getActiveAgencyId );
 
@@ -24,8 +34,7 @@ export default function useFetchMemberInvites(): UseQueryResult< MemberInvite[],
 				path: `/agency/${ agencyId }/user-invites`,
 			} ),
 		select: ( data ) => {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			return data?.map( ( invite: any ) => ( {
+			return data?.map( ( invite: MemberInviteAPIResponse ) => ( {
 				id: invite.id,
 				email: invite.email,
 				status: invite.status,
