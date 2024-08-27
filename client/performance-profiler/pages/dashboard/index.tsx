@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './style.scss';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
@@ -20,13 +20,13 @@ type PerformanceProfilerDashboardProps = {
 export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps ) => {
 	const translate = useTranslate();
 	const { url, tab, hash } = props;
+	const [ isSavedReport ] = useState( !! hash );
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
 	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
 	const { data: performanceInsights } = useUrlPerformanceInsightsQuery( url, hash );
 	const desktopLoaded = 'completed' === performanceInsights?.status;
 	const mobileLoaded = typeof performanceInsights?.mobile === 'object';
-	const isSavedReport = desktopLoaded && mobileLoaded && !! hash;
 
 	const updateQueryParams = ( params: Record< string, string >, forceReload = false ) => {
 		const queryParams = new URLSearchParams( window.location.search );
