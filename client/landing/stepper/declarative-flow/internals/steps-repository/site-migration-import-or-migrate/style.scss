@@ -4,6 +4,10 @@
 .import-or-migrate {
 	max-width: 602px;
 
+	&.site-migration-import-or-migrate .step-container__header {
+		padding: 25px;
+	}
+
 	.onboarding-title {
 		font-size: 2.75rem;
 		text-align: center;
