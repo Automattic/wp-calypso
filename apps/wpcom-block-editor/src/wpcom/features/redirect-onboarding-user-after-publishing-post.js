@@ -26,6 +26,14 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		}
 	}, [ intent ] );
 
+	// Check the URL parameter first so we can skip later processing ASAP.
+	const hasStartWritingFlowQueryArg =
+		getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
+
+	if ( ! hasStartWritingFlowQueryArg ) {
+		return false;
+	}
+
 	if ( intent !== START_WRITING_FLOW && intent !== DESIGN_FIRST_FLOW ) {
 		return false;
 	}
