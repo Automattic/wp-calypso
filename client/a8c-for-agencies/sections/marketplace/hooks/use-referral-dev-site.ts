@@ -32,7 +32,10 @@ export default function useReferralDevSite(
 				siteUrls: [ license.siteUrl ],
 			};
 
-			setSelectedCartItems( [ cartProduct ] );
+			// Wait for the next tick to set the selected cart items, to avoid outdated marketplace type
+			setTimeout( () => {
+				setSelectedCartItems( [ cartProduct ] );
+			}, 0 );
 		}
 	}, [ license, product, referralPlanAdded, setSelectedCartItems ] );
 
