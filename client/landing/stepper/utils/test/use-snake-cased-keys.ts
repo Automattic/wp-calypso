@@ -16,9 +16,31 @@ describe( 'useSnakeCasedKeys', () => {
 		expect( result.current ).toBe( previous );
 	} );
 
-	test( 'given an object with mixture of snake_cased/camelCased keys it will convert correctly', () => {
-		const input = { fooBar: 'fooBar', foo_not_bar: 'foo_not_bar', foo123: 'foo123' };
-		const expectedOutput = { foo_bar: 'fooBar', foo_not_bar: 'foo_not_bar', foo123: 'foo123' };
+	test( 'given fooBar it will convert correctly', () => {
+		const input = { fooBar: 'fooBar' };
+		const expectedOutput = { foo_bar: 'fooBar' };
+
+		const { result } = renderHook( ( params ) => useSnakeCasedKeys( params ), {
+			initialProps: { input },
+		} );
+
+		expect( result.current ).toEqual( expectedOutput );
+	} );
+
+	test( 'given foo_bar it will convert correctly', () => {
+		const input = { foo_bar: 'fooBar' };
+		const expectedOutput = { foo_bar: 'fooBar' };
+
+		const { result } = renderHook( ( params ) => useSnakeCasedKeys( params ), {
+			initialProps: { input },
+		} );
+
+		expect( result.current ).toEqual( expectedOutput );
+	} );
+
+	test( 'given foo123 it will convert correctly', () => {
+		const input = { foo123bar: 'fooBar' };
+		const expectedOutput = { foo_123_bar: 'fooBar' };
 
 		const { result } = renderHook( ( params ) => useSnakeCasedKeys( params ), {
 			initialProps: { input },
