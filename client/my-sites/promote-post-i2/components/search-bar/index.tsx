@@ -32,7 +32,7 @@ export type DropdownOption = {
 };
 
 const SORT_OPTIONS_BY_TITLE = 'post_title';
-const SORT_OPTIONS_LAST_PUBLISHED = 'post_date';
+const SORT_OPTIONS_LAST_PUBLISHED = 'date';
 const SORT_OPTIONS_RECENTLY_UPDATED = 'modified';
 const SORT_OPTIONS_MOST_LIKED = 'like_count';
 const SORT_OPTIONS_MOST_COMMENTED = 'comment_count';
@@ -204,7 +204,7 @@ export default function SearchBar( props: Props ) {
 		setSearchInput( search );
 		handleSetSearch( {
 			search: search,
-			order: sortOption,
+			order: mode === 'posts' ? sortOption : campaignSortOption,
 			filter: filterOption,
 		} );
 	};
