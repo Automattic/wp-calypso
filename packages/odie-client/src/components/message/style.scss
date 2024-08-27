@@ -124,13 +124,17 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 9999;
+	z-index: 999999;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	background-color: rgba(0, 0, 0, 0.1);
 
 	.odie-fullscreen-backdrop {
+		width: 75vw;
+		height: 85vh;
+		overflow: scroll;
+
 		.odie-chatbox-message {
 			box-shadow: 0 0 0 1px var(--color-border-subtle);
 			width: auto;
@@ -144,6 +148,7 @@
 				position: sticky;
 				top: 0;
 				background-color: #fff;
+				z-index: 1;
 			}
 		}
 
@@ -151,6 +156,10 @@
 			max-width: 800px;
 			max-height: 80vh;
 			overflow-y: auto;
+		}
+
+		.odie-foldable-card.odie-sources-foldable-card {
+			margin-bottom: 0;
 		}
 	}
 }
