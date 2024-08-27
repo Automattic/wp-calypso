@@ -45,6 +45,21 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 							{ translate( 'Test another site' ) }
 						</Button>
 					</div>
+					<div className="profiler-header__report-site-details show-on-mobile">
+						{ timestamp && (
+							<span>
+								{ translate( 'Tested on %(date)s', {
+									args: { date: moment( timestamp ).format( 'MMMM Do, YYYY h:mm:ss A' ) },
+								} ) }
+							</span>
+						) }
+						{ showWPcomBadge && (
+							<span className="wpcom-badge">
+								<img src={ WPcomBadge } alt={ translate( 'WordPress.com badge' ) } />
+								<span>{ translate( 'Hosted on WordPress.com' ) }</span>
+							</span>
+						) }
+					</div>
 				</div>
 				{ showNavigationTabs && (
 					<SectionNav className="profiler-navigation-tabs">
@@ -66,7 +81,7 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 						</NavTabs>
 
 						<div className="profiler-header__navbar-right">
-							<div className="report-site-details">
+							<div className="report-site-details hide-on-mobile">
 								{ timestamp && (
 									<span>
 										{ translate( 'Tested on %(date)s', {

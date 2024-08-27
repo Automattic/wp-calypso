@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .profiler-header {
 	color: #fff;
 	padding-top: 40px;
@@ -49,6 +51,26 @@
 				color: var(--studio-gray-5);
 			}
 		}
+	}
+
+	.profiler-header__report-site-details {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+
+		&.show-on-mobile {
+			@media (min-width: $break-large) {
+				display: none;
+			}
+		}
+
+
+	}
+
+	.wpcom-badge {
+		display: flex;
+		align-items: center;
+		gap: 6px;
 	}
 
 	.profiler-navigation-tabs.section-nav {
@@ -138,6 +160,7 @@
 			}
 		}
 
+
 		.profiler-header__navbar-right {
 			display: flex;
 			align-items: center;
@@ -149,10 +172,10 @@
 				align-items: center;
 				gap: 32px;
 
-				.wpcom-badge {
-					display: flex;
-					align-items: center;
-					gap: 6px;
+				&.hide-on-mobile {
+					@media (max-width: $break-large) {
+						display: none;
+					}
 				}
 			}
 
