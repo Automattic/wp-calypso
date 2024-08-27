@@ -38,6 +38,7 @@ module.exports = async function ( context ) {
 		appleId: NOTARIZATION_ID,
 		appleIdPassword: NOTARIZATION_PWD,
 		ascProvider: NOTARIZATION_ASC_PROVIDER,
+		teamId: NOTARIZATION_ASC_PROVIDER,
 	} );
 	console.log( `  • done notarizing ${ appName } ( ${ arch } ), took ${ elapsed( start ) }` );
 };

@@ -59,6 +59,86 @@ export class Notifications extends Component {
 
 	focusedElementBeforeOpen = null;
 
+	actionHandlers = {
+		APP_RENDER_NOTES: [
+			( store, { newNoteCount } ) => {
+				localStorageHelper.set( 'wpnotes_unseen_count', newNoteCount );
+				this.props.setUnseenCount( newNoteCount );
+			},
+		],
+		OPEN_LINK: [
+			( store, { href, tracksEvent } ) => {
+				if ( tracksEvent ) {
+					this.props.recordTracksEventAction( 'calypso_notifications_' + tracksEvent, {
+						link: href,
+					} );
+				}
+				window.open( href, '_blank' );
+			},
+		],
+		OPEN_POST: [
+			( store, { siteId, postId } ) => {
+				this.props.checkToggle();
+				this.props.recordTracksEventAction( 'calypso_notifications_open_post', {
+					site_id: siteId,
+					post_id: postId,
+				} );
+				page( `/read/blogs/${ siteId }/posts/${ postId }` );
+			},
+		],
+		OPEN_COMMENT: [
+			( store, { siteId, postId, commentId } ) => {
+				this.props.checkToggle();
+				this.props.recordTracksEventAction( 'calypso_notifications_open_comment', {
+					site_id: siteId,
+					post_id: postId,
+					comment_id: commentId,
+				} );
+				page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
+			},
+		],
+		OPEN_SITE: [
+			( store, { siteId } ) => {
+				this.props.checkToggle();
+				this.props.recordTracksEventAction( 'calypso_notifications_open_site', {
+					site_id: siteId,
+				} );
+				page( `/read/blogs/${ siteId }` );
+			},
+		],
+		VIEW_SETTINGS: [
+			() => {
+				this.props.checkToggle();
+				page( '/me/notifications' );
+			},
+		],
+		EDIT_COMMENT: [
+			( store, { siteId, postId, commentId } ) => {
+				this.props.checkToggle();
+				this.props.recordTracksEventAction( 'calypso_notifications_edit_comment', {
+					site_id: siteId,
+					post_id: postId,
+					comment_id: commentId,
+				} );
+				page( `/comment/${ siteId }/${ commentId }?action=edit` );
+			},
+		],
+		ANSWER_PROMPT: [
+			( store, { siteId, href } ) => {
+				this.props.checkToggle();
+				this.props.recordTracksEventAction( 'calypso_notifications_answer_prompt', {
+					site_id: siteId,
+				} );
+				window.open( href, '_blank' );
+			},
+		],
+		CLOSE_PANEL: [
+			() => {
+				this.props.checkToggle();
+			},
+		],
+	};
+
 	componentDidMount() {
 		document.addEventListener( 'click', this.props.checkToggle );
 		document.addEventListener( 'keydown', this.handleKeyPress );
@@ -188,86 +268,6 @@ export class Notifications extends Component {
 			this.props.didForceRefresh();
 		}
 
-		const customMiddleware = {
-			APP_RENDER_NOTES: [
-				( store, { newNoteCount } ) => {
-					localStorageHelper.set( 'wpnotes_unseen_count', newNoteCount );
-					this.props.setUnseenCount( newNoteCount );
-				},
-			],
-			OPEN_LINK: [
-				( store, { href, tracksEvent } ) => {
-					if ( tracksEvent ) {
-						this.props.recordTracksEventAction( 'calypso_notifications_' + tracksEvent, {
-							link: href,
-						} );
-					}
-					window.open( href, '_blank' );
-				},
-			],
-			OPEN_POST: [
-				( store, { siteId, postId } ) => {
-					this.props.checkToggle();
-					this.props.recordTracksEventAction( 'calypso_notifications_open_post', {
-						site_id: siteId,
-						post_id: postId,
-					} );
-					page( `/read/blogs/${ siteId }/posts/${ postId }` );
-				},
-			],
-			OPEN_COMMENT: [
-				( store, { siteId, postId, commentId } ) => {
-					this.props.checkToggle();
-					this.props.recordTracksEventAction( 'calypso_notifications_open_comment', {
-						site_id: siteId,
-						post_id: postId,
-						comment_id: commentId,
-					} );
-					page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
-				},
-			],
-			OPEN_SITE: [
-				( store, { siteId } ) => {
-					this.props.checkToggle();
-					this.props.recordTracksEventAction( 'calypso_notifications_open_site', {
-						site_id: siteId,
-					} );
-					page( `/read/blogs/${ siteId }` );
-				},
-			],
-			VIEW_SETTINGS: [
-				() => {
-					this.props.checkToggle();
-					page( '/me/notifications' );
-				},
-			],
-			EDIT_COMMENT: [
-				( store, { siteId, postId, commentId } ) => {
-					this.props.checkToggle();
-					this.props.recordTracksEventAction( 'calypso_notifications_edit_comment', {
-						site_id: siteId,
-						post_id: postId,
-						comment_id: commentId,
-					} );
-					page( `/comment/${ siteId }/${ commentId }?action=edit` );
-				},
-			],
-			ANSWER_PROMPT: [
-				( store, { siteId, href } ) => {
-					this.props.checkToggle();
-					this.props.recordTracksEventAction( 'calypso_notifications_answer_prompt', {
-						site_id: siteId,
-					} );
-					window.open( href, '_blank' );
-				},
-			],
-			CLOSE_PANEL: [
-				() => {
-					this.props.checkToggle();
-				},
-			],
-		};
-
 		return (
 			<div
 				id="wpnc-panel"
@@ -277,7 +277,7 @@ export class Notifications extends Component {
 				} ) }
 			>
 				<NotificationsPanel
-					customMiddleware={ customMiddleware }
+					actionHandlers={ this.actionHandlers }
 					isShowing={ this.props.isShowing }
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
