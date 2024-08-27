@@ -271,7 +271,9 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 									/>
 								</div>
 								<div className="site-migration-credentials__form-field">
-									<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
+									<FormLabel htmlFor="site-migration-credentials__password">
+										{ translate( 'Password' ) }
+									</FormLabel>
 									<Controller
 										control={ control }
 										name="password"
@@ -282,6 +284,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 											<div className="site-migration-credentials__form-password">
 												<FormTextInput
 													autoComplete="off"
+													id="site-migration-credentials__password"
 													type={ passwordHidden ? 'password' : 'text' }
 													isError={ !! errors.password }
 													placeholder={ translate( 'Password' ) }
