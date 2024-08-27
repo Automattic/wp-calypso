@@ -11,7 +11,7 @@
 
 	.help-center__container-header {
 		height: $head-foot-height;
-		padding: 16px 8px 16px 16px;
+		padding: 16px;
 
 		>div {
 			display: flex;
@@ -29,27 +29,23 @@
 		}
 
 		// This icon does not accept size prop due to a bug - https://github.com/WordPress/gutenberg/pull/40315
-		// We can remove this when the bug is fixed
+		// We can remove this when the bug is fixed AND the package is updated.
 		.help-center-header__minimize svg {
 			transform: scale(0.7, 1);
 			transform-origin: center;
 		}
 
-		.help-center__drag-icon {
-			margin-right: 6px;
-		}
-
 		.help-center-header__text {
 			margin: 1em 0;
-			max-width: 300px;
 			font-size: $font-body-small;
 			font-weight: 500;
 			display: flex;
 			align-items: center;
 			flex: 1;
+			gap: 4px;
 
 			svg {
-				margin-right: 3px;
+				margin: 0;
 			}
 
 			.help-center-header__article-title {

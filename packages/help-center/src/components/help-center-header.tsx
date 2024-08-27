@@ -60,10 +60,11 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 
 	return (
 		<>
-			<DragIcon />
-			<p id="header-text" className="help-center-header__text" role="presentation">
+			<span id="header-text" className="help-center-header__text" role="presentation">
+				<DragIcon />
+
 				{ __( 'Help Center', __i18n_text_domain__ ) }
-			</p>
+			</span>
 			<Button
 				className="help-center-header__minimize"
 				label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
