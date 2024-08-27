@@ -190,7 +190,7 @@ export class DateRange extends Component {
 		if ( isSameDate ) {
 			return;
 		}
-
+		// Should we juggle the dates more??
 		if ( ! this.state.startDate ) {
 			this.setState( {
 				startDate: date,
