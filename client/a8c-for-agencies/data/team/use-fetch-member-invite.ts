@@ -10,6 +10,7 @@ type MemberInvite = {
 	expiresAt: number;
 	createdAt: number;
 	avatar?: string;
+	displayName?: string;
 };
 
 export default function useFetchMemberInvites(): UseQueryResult< MemberInvite[], unknown > {
@@ -31,6 +32,7 @@ export default function useFetchMemberInvites(): UseQueryResult< MemberInvite[],
 				expiresAt: new Date( invite.expires_at ),
 				createdAt: new Date( invite.created_at ),
 				avatar: invite.avatar_url,
+				displayName: invite.username,
 			} ) );
 		},
 		enabled: !! agencyId,

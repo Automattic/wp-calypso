@@ -25,6 +25,7 @@ export function useMemberList() {
 			...( activeMembers ?? [] ),
 			...( memberInvites?.map( ( invite ) => ( {
 				id: invite.id,
+				displayName: invite.displayName,
 				email: invite.email,
 				avatar: invite.avatar,
 				status: 'pending',
