@@ -1812,6 +1812,18 @@ $breakpoint-mobile: 660px;
 		.login__lostpassword-subtitle a {
 			line-height: inherit;
 		}
+
+		&.two-factor-auth-enabled {
+			.two-factor-authentication__verification-code-form-wrapper {
+				fieldset,
+				button,
+				.auth-form__separator,
+				.two-factor-authentication__actions,
+				.login__two-factor-footer {
+					max-width: 327px;
+				}
+			}
+		}
 	}
 
 	&.is-woocommerce-core-profiler-flow.is-woo-passwordless {
