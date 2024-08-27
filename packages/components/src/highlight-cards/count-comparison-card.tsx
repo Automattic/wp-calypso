@@ -39,12 +39,11 @@ type TrendComparisonProps = {
 
 export function TrendComparison( { count, previousCount }: TrendComparisonProps ) {
 	const difference = subtract( count, previousCount );
-	const differenceMagnitude = Math.abs( difference as number );
 	const percentage = Number.isFinite( difference )
 		? percentCalculator( Math.abs( difference as number ), previousCount )
 		: null;
 
-	if ( difference === null ) {
+	if ( difference === null || difference === 0 ) {
 		return null;
 	}
 
@@ -55,18 +54,35 @@ export function TrendComparison( { count, previousCount }: TrendComparisonProps 
 				'highlight-card-difference--negative': difference > 0,
 			} ) }
 		>
-			<span className="highlight-card-difference-icon" title={ String( difference ) }>
+			<span className="highlight-card-difference-icon">
 				{ difference < 0 && <Icon size={ 18 } icon={ arrowDown } /> }
 				{ difference > 0 && <Icon size={ 18 } icon={ arrowUp } /> }
 			</span>
-			<span className="highlight-card-difference-absolute-value">
-				{ differenceMagnitude <= 9999 && formattedNumber( differenceMagnitude ) }
-				{ differenceMagnitude > 9999 && <ShortenedNumber value={ differenceMagnitude } /> }
-			</span>
 			{ percentage !== null && (
-				<span className="highlight-card-difference-absolute-percentage"> ({ percentage }%)</span>
+				<span className="highlight-card-difference-absolute-percentage"> { percentage }%</span>
 			) }
 		</span>
+	);
+}
+
+function TooltipContent( { count, previousCount, icon, heading }: CountComparisonCardProps ) {
+	if ( previousCount ) {
+		return (
+			<div className="highlight-card-tooltip-content">
+				{ /* TODO: Address RTL languages in arrow usage */ }
+				{ formattedNumber( previousCount ) } → { formattedNumber( count ) }
+			</div>
+		);
+	}
+
+	return (
+		<div className="highlight-card-tooltip-content">
+			<span className="highlight-card-tooltip-label">
+				{ icon && <span className="highlight-card-tooltip-icon">{ icon }</span> }
+				{ heading && <span className="highlight-card-tooltip-heading">{ heading }</span> }
+			</span>
+			<span>{ formattedNumber( count ) }</span>
+		</div>
 	);
 }
 
@@ -93,11 +109,7 @@ export default function CountComparisonCard( {
 				onMouseEnter={ () => setTooltipVisible( true ) }
 				onMouseLeave={ () => setTooltipVisible( false ) }
 			>
-				<span
-					className="highlight-card-count-value"
-					title={ Number.isFinite( count ) ? String( count ) : undefined }
-					ref={ textRef }
-				>
+				<span className="highlight-card-count-value" ref={ textRef }>
 					<ShortenedNumber value={ count } />
 				</span>{ ' ' }
 				<TrendComparison count={ count } previousCount={ previousCount } />
@@ -108,13 +120,12 @@ export default function CountComparisonCard( {
 						position="bottom right"
 						context={ textRef.current }
 					>
-						<div className="highlight-card-tooltip-content">
-							<span className="highlight-card-tooltip-label">
-								{ icon && <span className="highlight-card-tooltip-icon">{ icon }</span> }
-								{ heading && <span className="highlight-card-tooltip-heading">{ heading }</span> }
-							</span>
-							<span>{ formattedNumber( count ) }</span>
-						</div>
+						<TooltipContent
+							count={ count }
+							previousCount={ previousCount }
+							icon={ icon }
+							heading={ heading }
+						/>
 						{ note && <div className="highlight-card-tooltip-note">{ note }</div> }
 					</Popover>
 				) }

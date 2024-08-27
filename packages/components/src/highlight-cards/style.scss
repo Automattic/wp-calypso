@@ -223,7 +223,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	&.highlight-card-popover { // overload tooltip's styles
 		.popover__inner {
 			padding: 16px 24px;
-			width: 244px;
 			box-sizing: border-box;
 			border-radius: 5px; // stylelint-disable-line scales/radii
 		}
@@ -385,6 +384,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	.highlight-card-tooltip-label {
 		display: flex;
 		align-items: center;
+		margin-right: 1.5em;
 	}
 	.highlight-card-tooltip-icon {
 		fill: var(--studio-white);
