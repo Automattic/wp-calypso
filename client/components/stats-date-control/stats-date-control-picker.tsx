@@ -123,6 +123,16 @@ const DateControlPicker = ( {
 					onEndChange={ changeEndDate }
 					onDateCommit={ handleOnDateCommit }
 					renderTrigger={ customTrigger }
+					renderWrapper={ ( children: React.ReactNode ) => (
+						<div className="custom-wrapper" style={ { display: 'flex' } }>
+							<div style={ { flex: 1 } }>{ children }</div>
+							<DateControlPickerShortcuts
+								shortcutList={ shortcutList }
+								currentShortcut={ selectedShortcut }
+								onClick={ handleShortcutSelected }
+							/>
+						</div>
+					) }
 				/>
 			) }
 			{ ! isNewCalendar && (
@@ -130,11 +140,6 @@ const DateControlPicker = ( {
 					<Button onClick={ togglePopoverVisibility } ref={ infoReferenceElement }>
 						{ buttonLabel }
 						<Icon className="gridicon" icon={ calendar } />
-						<DateControlPickerShortcuts
-							shortcutList={ shortcutList }
-							currentShortcut={ selectedShortcut }
-							onClick={ handleShortcutSelected }
-						/>
 					</Button>
 
 					<Popover
