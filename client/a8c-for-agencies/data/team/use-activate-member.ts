@@ -31,6 +31,6 @@ export default function useActivateMemberMutation< TContext = unknown >(
 ): UseMutationResult< APIResponse, APIError, Params, TContext > {
 	return useMutation< APIResponse, APIError, Params, TContext >( {
 		...options,
-		mutationFn: ( args ) => activateMemberMutation( args ),
+		mutationFn: activateMemberMutation,
 	} );
 }
