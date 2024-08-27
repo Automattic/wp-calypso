@@ -1,5 +1,5 @@
 import moment, { Moment } from 'moment';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { DateUtils } from 'react-day-picker';
 import DatePicker from 'calypso/components/date-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -23,31 +23,6 @@ interface DateRangePickerProps {
 const NO_DATE_SELECTED_VALUE = null;
 const noop = () => {};
 
-/**
- * Enforces that given date is within the bounds of the
- * range specified
- * @param  {import('moment').Moment}  date             momentJS instance
- * @param  {Object} options          date range
- * @param  {import('moment').Moment | Date}  options.dateFrom the start of the date range
- * @param  {import('moment').Moment | Date}  options.dateTo   the end of the date range
- * @returns {import('moment').Moment}                  the date clamped to be within the range
- */
-const clampDateToRange = (
-	date: Moment,
-	{ dateFrom, dateTo }: { dateFrom: MomentOrNull; dateTo: MomentOrNull }
-) => {
-	// Ensure endDate is within bounds of firstSelectableDate
-	if ( dateFrom && date.isBefore( dateFrom ) ) {
-		date = dateFrom;
-	}
-
-	if ( dateTo && date.isAfter( dateTo ) ) {
-		date = dateTo;
-	}
-
-	return date;
-};
-
 const DateRangePicker = ( {
 	firstSelectableDate,
 	lastSelectableDate,
@@ -58,61 +33,6 @@ const DateRangePicker = ( {
 	onDateRangeChange = noop,
 	numberOfMonths = 2,
 }: DateRangePickerProps ) => {
-	const [ focusedMonthCalendar, setFocusedMonthCalendar ] = useState< Date | undefined >(
-		focusedMonth
-	);
-
-	useEffect( () => {
-		const initStartEndDates = ( {
-			firstSelectableDate,
-			lastSelectableDate,
-			selectedStartDate,
-			selectedEndDate,
-		}: Partial< DateRangePickerProps > ) => {
-			// Define the date range that is selectable (ie: not disabled)
-			firstSelectableDate = firstSelectableDate ? moment( firstSelectableDate ) : null;
-			lastSelectableDate = lastSelectableDate ? moment( lastSelectableDate ) : null;
-
-			// Clamp start/end dates to ranges (if specified)
-			let startDate =
-				selectedStartDate == null
-					? NO_DATE_SELECTED_VALUE
-					: clampDateToRange( moment( selectedStartDate ), {
-							dateFrom: firstSelectableDate,
-							dateTo: lastSelectableDate,
-					  } );
-
-			let endDate =
-				selectedEndDate == null
-					? NO_DATE_SELECTED_VALUE
-					: clampDateToRange( moment( selectedEndDate ), {
-							dateFrom: firstSelectableDate,
-							dateTo: lastSelectableDate,
-					  } );
-
-			// Ensure start is before end otherwise flip the values
-			if ( startDate && endDate && endDate.isBefore( startDate ) ) {
-				// flip values via array destructuring (think about it...)
-				[ startDate, endDate ] = [ endDate, startDate ];
-			}
-			return [ startDate, endDate ];
-		};
-
-		const [ startDate, endDate ] = initStartEndDates( {
-			firstSelectableDate,
-			lastSelectableDate,
-			selectedStartDate,
-			selectedEndDate,
-		} );
-
-		// Set calendar focus to the start or end date
-		if ( startDate ) {
-			setFocusedMonthCalendar( startDate.toDate() );
-		} else if ( endDate ) {
-			setFocusedMonthCalendar( endDate.toDate() );
-		}
-	}, [ firstSelectableDate, lastSelectableDate, selectedStartDate, selectedEndDate ] );
-
 	/**
 	 * Converts a moment date to a native JS Date object
 	 * @param  {import('moment').Moment} momentDate a momentjs date object to convert
@@ -274,7 +194,7 @@ const DateRangePicker = ( {
 
 	return (
 		<DatePicker
-			calendarViewDate={ focusedMonthCalendar }
+			calendarViewDate={ focusedMonth }
 			calendarInitialDate={ momentDateToJsDate( calendarInitialDate ) }
 			rootClassNames={ rootClassNames }
 			modifiers={ modifiers }
