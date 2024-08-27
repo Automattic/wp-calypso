@@ -107,16 +107,19 @@ const DoYouLoveJetpackStatsNotice = ( {
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
 	const paidStatsRemoveHardcoding = hasEnTranslation(
-		'Finesse your scaling-up strategy with detailed insights and data. Upgrade to a %s plan for a richer understanding and smarter decision-making.'
+		'Finesse your scaling-up strategy with detailed insights and data. Upgrade to the %s plan for a richer understanding and smarter decision-making.'
 	)
 		? translate(
-				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to a %s plan for a richer understanding and smarter decision-making.',
+				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to the %s plan for a richer understanding and smarter decision-making.',
 				{
 					args: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
 				}
 		  )
 		: translate(
-				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to an Explorer plan for a richer understanding and smarter decision-making.'
+				'Finesse your scaling-up strategy with detailed insights and data. Upgrade to a %s plan for a richer understanding and smarter decision-making.',
+				{
+					args: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
+				}
 		  );
 
 	const description = isWPCOMPaidStatsFlow
