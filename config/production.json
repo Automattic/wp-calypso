@@ -192,6 +192,7 @@
 		"storage-addon": true,
 		"stripe-redirect-migration-p24": false,
 		"stripe-redirect-migration-ideal": false,
+		"stripe-redirect-migration-bancontact": false,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
 		"subscription-gifting": true,
