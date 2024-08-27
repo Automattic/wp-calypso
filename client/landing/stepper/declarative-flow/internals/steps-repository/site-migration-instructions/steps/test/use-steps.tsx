@@ -1,8 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, render } from '@testing-library/react';
+import { act, fireEvent, renderHook, render } from '@testing-library/react';
 import { useSteps } from '../use-steps';
+
+const siteUrl = 'https://staging.wordpress.com';
+
+jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+	useSite: () => ( { URL: siteUrl } ),
+} ) );
 
 describe( 'useSteps', () => {
 	const baseStepsOptions = {
@@ -22,10 +28,119 @@ describe( 'useSteps', () => {
 		expect( result.current.steps ).toHaveLength( 3 );
 	} );
 
+	it( 'Should render the "Install plugin" and "Next" buttons in the first step', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
+
+		expect( getByRole( 'button', { name: /Install plugin/ } ) ).toBeInTheDocument();
+		expect( getByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should open the Migrate Guru plugin installation screen on the source site when the "Install plugin" button is clicked', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
+
+		window.open = jest.fn();
+		fireEvent.click( getByRole( 'button', { name: /Install plugin/ } ) );
+
+		expect( window.open ).toHaveBeenCalledWith(
+			`${ baseStepsOptions.fromUrl }/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term`,
+			'_blank'
+		);
+	} );
+
+	it( 'Should render the "Get started" and "Next" buttons in the second step', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 1 ].expandable?.content );
+
+		expect( getByRole( 'button', { name: /Get started/ } ) ).toBeInTheDocument();
+		expect( getByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should open the Migrate Guru plugin page on the source site when the "Get started" button is clicked', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 1 ].expandable?.content );
+
+		window.open = jest.fn();
+		fireEvent.click( getByRole( 'button', { name: /Get started/ } ) );
+
+		expect( window.open ).toHaveBeenCalledWith(
+			`${ baseStepsOptions.fromUrl }/wp-admin/admin.php?page=migrateguru`,
+			'_blank'
+		);
+	} );
+
+	it( 'Should render the "Enter key" and "Done" buttons if the migration key is set', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( getByRole( 'button', { name: /Enter key/ } ) ).toBeInTheDocument();
+		expect( getByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
+	} );
+
+	it( 'Should render the "Get key" and "Done" buttons if the migration key is not set', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( getByRole( 'button', { name: /Get key/ } ) ).toBeInTheDocument();
+		expect( getByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should open the Migrate Guru plugin page on the source site when the "Enter key" button is clicked', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		window.open = jest.fn();
+		fireEvent.click( getByRole( 'button', { name: /Enter key/ } ) );
+
+		expect( window.open ).toHaveBeenCalledWith(
+			`${ baseStepsOptions.fromUrl }/wp-admin/admin.php?page=migrateguru`,
+			'_blank'
+		);
+	} );
+
+	it( 'should open the Migrate Guru plugin page on the new site when the "Get key" button is clicked', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		window.open = jest.fn();
+		fireEvent.click( getByRole( 'button', { name: /Get key/ } ) );
+
+		expect( window.open ).toHaveBeenCalledWith(
+			`${ siteUrl }/wp-admin/admin.php?page=migrateguru`,
+			'_blank'
+		);
+	} );
+
+	it( 'Should display the migration key field when the key is ready', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( getByRole( 'textbox', { name: 'Migration key' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'Should display waiting message when migration key is not ready', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+		const { getByText } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect(
+			getByText( 'The key will be available here when your new site is ready.' )
+		).toBeInTheDocument();
+	} );
+
 	it( 'Should start with the steps marked as not completed', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
 		expect( result.current.steps[ 0 ].task.completed ).toBeFalsy();
+	} );
+
+	it( 'Should mark step as completed after navigating through it', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
+
+		fireEvent.click( getByRole( 'button', { name: /Next/ } ) );
+
+		expect( result.current.steps[ 0 ].task.completed ).toBeTruthy();
 	} );
 
 	it( 'Should start with no completed steps', () => {
@@ -34,10 +149,46 @@ describe( 'useSteps', () => {
 		expect( result.current.completedSteps ).toEqual( 0 );
 	} );
 
+	it( 'Should return the correct number of completed steps when navigating through them', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
+
+		fireEvent.click( getByRole( 'button', { name: /Next/ } ) );
+
+		expect( result.current.completedSteps ).toEqual( 1 );
+	} );
+
+	it( 'Should call onComplete after calling the action of the last step', () => {
+		const onCompleteMock = jest.fn();
+		const options = {
+			...baseStepsOptions,
+			onComplete: onCompleteMock,
+		};
+		const { result } = renderHook( () => useSteps( options ) );
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		fireEvent.click( getByRole( 'button', { name: /Done/ } ) );
+
+		expect( onCompleteMock ).toHaveBeenCalled();
+	} );
+
 	it( 'Should start with the first step open', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 
 		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeTruthy();
+	} );
+
+	it( 'Should have only the current step as open', () => {
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
+
+		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeTruthy();
+		expect( result.current.steps[ 1 ].expandable?.isOpen ).toBeFalsy();
+
+		fireEvent.click( getByRole( 'button', { name: /Next/ } ) );
+
+		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeFalsy();
+		expect( result.current.steps[ 1 ].expandable?.isOpen ).toBeTruthy();
 	} );
 
 	it( 'Should not allow navigate directly to a step when it was not completed yet', () => {
@@ -47,29 +198,27 @@ describe( 'useSteps', () => {
 		expect( result.current.steps[ 1 ].onClick ).toBeUndefined();
 	} );
 
-	it( 'Should have a text about migrate guru screen on the source site on the second step when the from is empty', () => {
-		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
-
-		const { getByText } = render( result.current.steps[ 1 ].expandable?.content );
-
-		expect( getByText( /Migrate Guru plugin screen on your source site/ ) ).toBeInTheDocument();
-	} );
-
-	it( 'Should display the migration key field when the key is ready', () => {
+	it( 'Should allow to navigate directly to already visited steps', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
-		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+		// Navigate through the action button to the next step.
+		fireEvent.click( getByRole( 'button', { name: /Next/ } ) );
 
-		expect( getByRole( 'textbox', { name: 'Migration key' } ) ).toBeInTheDocument();
-	} );
+		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeFalsy();
 
-	it( 'Should display waiting message when migration key is not ready', () => {
-		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+		// Navigate directly to the first step.
+		act( () => {
+			result.current.steps[ 0 ].onClick!();
+		} );
 
-		const { getByText } = render( result.current.steps[ 2 ].expandable?.content );
+		expect( result.current.steps[ 0 ].expandable?.isOpen ).toBeTruthy();
 
-		expect(
-			getByText( 'The key will be available here when your new site is ready.' )
-		).toBeInTheDocument();
+		// Navigate directly to the second which was already visited.
+		act( () => {
+			result.current.steps[ 1 ].onClick!();
+		} );
+
+		expect( result.current.steps[ 1 ].expandable?.isOpen ).toBeTruthy();
 	} );
 } );
