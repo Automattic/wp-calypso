@@ -5,6 +5,8 @@ import { getSiteFilters, rangeOfPeriod, type SiteFilterType } from '../shared/he
 import PageLoading from '../shared/page-loading';
 import type { Context } from '@automattic/calypso-router';
 
+setTimeout( () => import( 'calypso/my-sites/stats/pages/subscribers' ), 3000 );
+
 function subscribers( context: Context, next: () => void ) {
 	const givenSiteId = context.params.site;
 	const filters = getSiteFilters( givenSiteId );

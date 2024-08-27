@@ -1,13 +1,12 @@
 import AsyncLoad from 'calypso/components/async-load';
-import LoadStatsPage from '../../stats-redirect/load-stats-page';
 import PageLoading from '../shared/page-loading';
 import type { Context } from '@automattic/calypso-router';
 
+setTimeout( () => import( 'calypso/my-sites/stats/pages/insights' ), 3000 );
+
 function insights( context: Context, next: () => void ) {
 	context.primary = (
-		<LoadStatsPage>
-			<AsyncLoad require="calypso/my-sites/stats/pages/insights" placeholder={ PageLoading } />
-		</LoadStatsPage>
+		<AsyncLoad require="calypso/my-sites/stats/pages/insights" placeholder={ PageLoading } />
 	);
 	next();
 }

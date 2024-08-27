@@ -177,6 +177,7 @@ const MarketplaceThankYou = ( {
 						headerButtons={ thankYouHeaderAction }
 						products={ products }
 						footerDetails={ footerDetails }
+						showSuccessAnimation={ hasThemes }
 					/>
 				</Main>
 			) }
