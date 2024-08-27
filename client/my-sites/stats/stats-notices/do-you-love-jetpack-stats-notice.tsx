@@ -3,11 +3,14 @@ import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
+import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -15,6 +18,8 @@ import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions
 import { STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE } from '../constants';
 import { trackStatsAnalyticsEvent } from '../utils';
 import { StatsNoticeProps } from './types';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 const getStatsPurchaseURL = (
 	siteId: number | null,
@@ -46,6 +51,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 		'postponed',
 		30 * 24 * 3600
 	);
+	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const dismissNotice = () => {
 		isOdysseyStats
@@ -128,6 +134,12 @@ const DoYouLoveJetpackStatsNotice = ( {
 
 	const CTAText = isWPCOMPaidStatsFlow ? translate( 'Upgrade' ) : translate( 'Upgrade my Stats' );
 
+	const localizedLearnMoreLink = localizeUrl( learnMoreLink );
+	const openHelpCenter = () => {
+		setShowHelpCenter( true );
+		setShowSupportDoc( localizedLearnMoreLink );
+	};
+
 	return (
 		<div
 			className={ `inner-notice-container has-odyssey-stats-bg-color ${
@@ -146,9 +158,15 @@ const DoYouLoveJetpackStatsNotice = ( {
 					</button>
 					<a
 						className="notice-banner__action-link"
-						href={ localizeUrl( learnMoreLink ) }
+						href={ localizedLearnMoreLink }
 						target="_blank"
 						rel="noreferrer"
+						onClick={ ( event ) => {
+							if ( ! isJetpackCloud() ) {
+								event.preventDefault();
+								openHelpCenter();
+							}
+						} }
 					>
 						{ translate( 'Learn more' ) }
 						<Icon className="stats-icon" icon={ external } size={ 24 } />
