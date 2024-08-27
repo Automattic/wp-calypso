@@ -127,7 +127,7 @@
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
-		"layout/site-level-user-profile": false,
+		"layout/site-level-user-profile": true,
 		"layout/support-article-dialog": true,
 		"legal-updates-banner": true,
 		"livechat_solution": true,
