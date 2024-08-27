@@ -219,12 +219,16 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 						<h1 className="checkout__main-title">{ title }</h1>
 
 						<div className="checkout__main-list">
-							{ checkoutItems.map( ( items ) => (
+							{ referralBlogId && isLoadingReferralDevSite ? (
+								<div className="product-info__placeholder"></div>
+							) : (
+								checkoutItems.map( ( items ) => (
 									<ProductInfo
 										key={ `product-info-${ items.product_id }-${ items.quantity }` }
 										product={ items }
 									/>
-							) ) }
+								) )
+							) }
 						</div>
 					</div>
 					<div
