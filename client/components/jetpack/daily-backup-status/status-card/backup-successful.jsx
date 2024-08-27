@@ -15,6 +15,7 @@ import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-sit
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActionButtons from '../action-buttons';
 import useGetDisplayDate from '../use-get-display-date';
+import { BackupRealtimeMessage } from './backup-realtime-message';
 import cloudSuccessIcon from './icons/cloud-success.svg';
 import cloudWarningIcon from './icons/cloud-warning.svg';
 
@@ -67,6 +68,7 @@ const BackupSuccessful = ( {
 	const isCloneFlow =
 		availableActions && availableActions.length === 1 && availableActions[ 0 ] === 'clone';
 
+	const showRealTimeMessage = backup.baseRewindId && backup.rewindStepCount > 0;
 	return (
 		<>
 			<div className="status-card__message-head">
@@ -93,6 +95,12 @@ const BackupSuccessful = ( {
 			</div>
 			<div className="status-card__hide-mobile">
 				<div className="status-card__title">{ displayDateNoLatest }</div>
+				{ showRealTimeMessage && (
+					<BackupRealtimeMessage
+						backupDate={ backup.baseRewindId * 1000 }
+						eventsCount={ backup.rewindStepCount }
+					/>
+				) }
 			</div>
 			<div className="status-card__meta">{ meta }</div>
 			{ isMultiSite && (
