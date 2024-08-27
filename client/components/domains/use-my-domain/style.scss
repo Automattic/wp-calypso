@@ -55,7 +55,7 @@
 		max-width: 370px;
 
 		.form-text-input {
-			padding: 9px 28px 9px 68px;
+			padding: 9px 28px 9px 10px;
 			margin-bottom: 9px;
 
 			text-overflow: ellipsis;
@@ -95,14 +95,6 @@
 				fill: var(--color-text);
 			}
 		}
-	}
-
-	& &__domain-input-fieldset::before {
-		content: "https://";
-		color: var(--color-text);
-		position: absolute;
-		left: 16px;
-		top: 10px;
 	}
 }
 
