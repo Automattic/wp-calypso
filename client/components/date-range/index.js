@@ -191,11 +191,9 @@ export class DateRange extends Component {
 			return;
 		}
 
-		// this.onSelectDate( date );//????
-		// TODO!!
-		// this.setState({
-
-		// });
+		this.setState( {
+			[ stateKey ]: date,
+		} );
 	};
 
 	/**
