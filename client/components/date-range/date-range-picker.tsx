@@ -14,6 +14,7 @@ interface DateRangePickerProps {
 	moment: typeof moment;
 	onDateRangeChange?: ( startDate: DateType, endDate: DateType ) => void;
 	focusedMonthProp?: Date | null;
+	numberOfMonths?: number;
 }
 
 /**
@@ -87,6 +88,7 @@ const DateRangePicker = ( {
 	moment,
 	focusedMonthProp = null,
 	onDateRangeChange = noop,
+	numberOfMonths = 2,
 }: DateRangePickerProps ) => {
 	const [ initialStartDate, initialEndDate ] = initStartEndDates( {
 		firstSelectableDate,
@@ -185,22 +187,6 @@ const DateRangePicker = ( {
 	};
 
 	/**
-	 * Converts date-like object to a string suitable
-	 * for display in a text input. Also converts
-	 * to locale appropriate format.
-	 * @param  {import('moment').Moment | Date} date the date for conversion
-	 * @returns {string}      the date expressed as a locale appropriate string or if null
-	 *                       then returns the locale format (eg: MM/DD/YYYY)
-	 */
-	const toDateString = ( date ) => {
-		if ( moment.isMoment( date ) || moment.isDate( date ) ) {
-			return formatDateToLocale( moment( date ) );
-		}
-
-		return getLocaleDateFormat(); // "MM/DD/YYY" or locale equivalent
-	};
-
-	/**
 	 * Handles selection (only) of new dates persisting
 	 * the values to state. Note that if the user does not
 	 * commit the dates (eg: clicking "Apply") then the `revertDates`
@@ -240,10 +226,6 @@ const DateRangePicker = ( {
 		// setEndDate( newEndDate );
 
 		onDateRangeChange( newStartDate, newEndDate );
-	};
-
-	const getNumberOfMonths = () => {
-		return window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1;
 	};
 
 	/**
@@ -317,7 +299,7 @@ const DateRangePicker = ( {
 			toMonth={ momentDateToJsDate( lastSelectableDate ) }
 			onSelectDay={ selectDate }
 			selectedDays={ selected }
-			numberOfMonths={ getNumberOfMonths() }
+			numberOfMonths={ numberOfMonths }
 			disabledDays={ getDisabledDaysConfig() }
 		/>
 	);
