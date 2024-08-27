@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import useFetchActiveMembers from 'calypso/a8c-for-agencies/data/team/use-fetch-active-members';
-import useFetchMemberInvites from 'calypso/a8c-for-agencies/data/team/use-fetch-member-invite';
+import useFetchMemberInvites from 'calypso/a8c-for-agencies/data/team/use-fetch-member-invites';
 
 export function useMemberList() {
 	const {
