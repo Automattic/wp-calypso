@@ -191,6 +191,13 @@ export class DateRange extends Component {
 			return;
 		}
 
+		if ( ! this.state.startDate ) {
+			this.setState( {
+				startDate: date,
+			} );
+			return;
+		}
+
 		this.setState( {
 			[ stateKey ]: date,
 		} );
