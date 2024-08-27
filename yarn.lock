@@ -1020,7 +1020,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/fingerprintjs@workspace:packages/fingerprintjs":
+"@automattic/fingerprintjs@workspace:^, @automattic/fingerprintjs@workspace:packages/fingerprintjs":
   version: 0.0.0-use.local
   resolution: "@automattic/fingerprintjs@workspace:packages/fingerprintjs"
   dependencies:
@@ -12684,6 +12684,7 @@ __metadata:
     "@automattic/domains-table": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
+    "@automattic/fingerprintjs": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/generate-password": "workspace:^"
     "@automattic/global-styles": "workspace:^"
