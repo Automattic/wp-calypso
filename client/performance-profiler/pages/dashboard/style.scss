@@ -19,7 +19,11 @@ $blueberry-color: #3858e9;
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
+		flex-wrap: wrap;
 		column-gap: 35px;
+		@media (max-width: 550px) {
+			justify-content: center;
+		}
 	}
 }
 
