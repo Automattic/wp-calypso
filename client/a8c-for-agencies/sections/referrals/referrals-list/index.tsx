@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, ReactNode, useEffect } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -219,19 +220,20 @@ export default function ReferralList( {
 		};
 	}, [ dataViewsState ] );
 
+	const { data: items, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( referrals, dataViewsState, fields );
+	}, [ referrals, dataViewsState, fields ] );
+
 	return (
 		<div className="redesigned-a8c-table full-width">
 			<ItemsDataViews
 				data={ {
-					items: referrals,
+					items,
 					getItemId: ( item: Referral ) => `${ item.client.id }`,
 					onSelectionChange: ( data ) => {
 						openSitePreviewPane( data[ 0 ] );
 					},
-					pagination: {
-						totalItems: 1,
-						totalPages: 1,
-					},
+					pagination: paginationInfo,
 					enableSearch: false,
 					fields: fields,
 					actions: [],
