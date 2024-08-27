@@ -70,7 +70,7 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 	}, [ activateMember, agencyId, dispatch, inviteId, secret ] );
 
 	useEffect( () => {
-		if ( agency && agency.id === agencyId ) {
+		if ( agency && agency.id === Number( agencyId ) ) {
 			// If current agency is the same as the one in the URL, redirect to the overview page
 			page( A4A_OVERVIEW_LINK );
 		}
