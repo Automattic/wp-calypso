@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './style.scss';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
@@ -20,7 +20,7 @@ type PerformanceProfilerDashboardProps = {
 export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps ) => {
 	const translate = useTranslate();
 	const { url, tab, hash } = props;
-	const [ isSavedReport ] = useState( !! hash );
+	const isSavedReport = useRef( !! hash );
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
 	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
@@ -84,7 +84,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 					'is-loading': ! mobileLoaded,
 				} ) }
 			>
-				<LoadingScreen isSavedReport={ isSavedReport } key="mobile-loading" />
+				<LoadingScreen isSavedReport={ isSavedReport.current } key="mobile-loading" />
 			</div>
 
 			<div
@@ -93,7 +93,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 					'is-loading': ! desktopLoaded,
 				} ) }
 			>
-				<LoadingScreen isSavedReport={ isSavedReport } key="desktop-loading" />
+				<LoadingScreen isSavedReport={ isSavedReport.current } key="desktop-loading" />
 			</div>
 
 			{ ( ( activeTab === TabType.mobile && mobileLoaded ) ||
