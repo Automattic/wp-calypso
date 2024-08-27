@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import useFetchActiveMembers from 'calypso/a8c-for-agencies/data/team/use-fetch-active-members';
 import useFetchMemberInvites from 'calypso/a8c-for-agencies/data/team/use-fetch-member-invite';
-import { OWNER_ROLE } from '../constants';
 
 export function useMemberList() {
 	const {
@@ -23,7 +22,7 @@ export function useMemberList() {
 
 	const members = useMemo( () => {
 		const data = [
-			...( activeMembers?.filter( ( member ) => member.role !== OWNER_ROLE ) ?? [] ),
+			...( activeMembers ?? [] ),
 			...( memberInvites?.map( ( invite ) => ( {
 				id: invite.id,
 				email: invite.email,
@@ -31,13 +30,6 @@ export function useMemberList() {
 				status: 'pending',
 			} ) ) ?? [] ),
 		];
-
-		const owner = activeMembers?.find( ( member ) => member.role === OWNER_ROLE );
-
-		if ( owner ) {
-			// We need to make sure the owner is always at the first position
-			data.unshift( owner );
-		}
 
 		return data;
 	}, [ activeMembers, memberInvites ] );
