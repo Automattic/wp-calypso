@@ -9,6 +9,7 @@ import { Icon, chevronLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
+import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -135,7 +136,7 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_last_currency_found,
 	} = campaign_stats || {};
 
-	const { card_name, payment_method, credits, total, orders } = billing_data || {};
+	const { card_name, payment_method, credits, total, orders, payment_links } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
 	const canDisplayPaymentSection =
 		orders && orders.length > 0 && ( payment_method || ! isNaN( total || 0 ) );
@@ -478,8 +479,47 @@ export default function CampaignItemDetails( props: Props ) {
 					</Notice>
 				) }
 
+				{ status === 'suspended' && payment_links && (
+					<>
+						<Notice
+							isReskinned
+							showDismiss={ false }
+							status="is-error"
+							icon="notice-outline"
+							className="promote-post-notice campaign-item-details__notice campaign-suspended"
+							text={ translate(
+								'Your campaigns are suspended due to exceeding the credit limit. Please complete the payments using the provided links to resume your campaigns.'
+							) }
+						/>
+					</>
+				) }
+
 				<section className="campaign-item-details__wrapper">
 					<div className="campaign-item-details__main">
+						{ status === 'suspended' && payment_links && (
+							<div className="campaign-item-details__payment-links-container">
+								<div className="campaign-item-details__payment-links">
+									<div className="campaign-item-details__payment-link-row">
+										<div className="payment-link__label">{ translate( 'Date' ) }</div>
+										<div className="payment-link__label">{ translate( 'Amount' ) }</div>
+										<div>&nbsp;</div>
+									</div>
+									{ payment_links.map( ( info, index ) => (
+										<div key={ index } className="campaign-item-details__payment-link-row">
+											<div>{ moment( info.date ).format( 'MMMM DD, YYYY' ) }</div>
+											<div>${ formatNumber( info.amount ) }</div>
+											<div className="payment-link__link">
+												<ExternalLink href={ info.url } target="_blank">
+													{ translate( 'Pay' ) }
+													{ getExternalLinkIcon() }
+												</ExternalLink>
+											</div>
+										</div>
+									) ) }
+								</div>
+							</div>
+						) }
+
 						<div className="campaign-item-details__main-stats-container">
 							{ shouldShowStats && (
 								<div className="campaign-item-details__main-stats campaign-item-details__impressions">
