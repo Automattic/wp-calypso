@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import recordSignupStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start';
 import { adTrackSignupStart } from 'calypso/lib/analytics/ad-tracking';
@@ -16,17 +16,14 @@ interface Props {
 export const useSignUpStartTracking = ( { flow }: Props ) => {
 	const [ queryParams ] = useSearchParams();
 	const ref = queryParams.get( 'ref' ) || '';
-	const flowVariant = flow.variantSlug;
 	const flowName = flow.name;
 	const isSignupFlow = flow.isSignupFlow;
-	const signupStartEventProps = flow.useSignupStartEventProps?.();
-	const extraProps = useMemo(
-		() => ( {
-			...signupStartEventProps,
-			...( flowVariant && { flow_variant: flowVariant } ),
-		} ),
-		[ signupStartEventProps, flowVariant ]
-	);
+	const extraProps = useSnakeCasedKeys( {
+		input: {
+			flowVariant: flow.variantSlug,
+			...flow.useTracksEventProps?.()[ STEPPER_TRACKS_EVENT_SIGNUP_START ],
+		},
+	} );
 
 	/**
 	 * Timers and other analytics
