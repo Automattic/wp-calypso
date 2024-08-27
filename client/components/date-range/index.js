@@ -468,7 +468,7 @@ export class DateRange extends Component {
 						selectedStartDate={ this.state.startDate }
 						selectedEndDate={ this.state.endDate }
 						onDateRangeChange={ onDateRangeChange }
-						focusedMonthProp={ this.state.focusedMonth }
+						focusedMonth={ this.state.focusedMonth }
 						numberOfMonths={ this.getNumberOfMonths() }
 					/>
 				</div>

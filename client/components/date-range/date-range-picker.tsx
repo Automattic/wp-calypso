@@ -1,19 +1,19 @@
-import moment from 'moment';
-import React, { useState } from 'react';
+import moment, { Moment } from 'moment';
+import React, { useEffect, useState } from 'react';
 import { DateUtils } from 'react-day-picker';
 import DatePicker from 'calypso/components/date-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
-type DateType = Date | moment.Moment | null; //TODO: fix this
+type MomentOrNull = Moment | null;
 
 interface DateRangePickerProps {
-	firstSelectableDate: DateType;
-	lastSelectableDate: DateType;
-	selectedStartDate?: DateType; //?
-	selectedEndDate: DateType; //?
+	firstSelectableDate: MomentOrNull;
+	lastSelectableDate: MomentOrNull;
+	selectedStartDate: MomentOrNull;
+	selectedEndDate: MomentOrNull;
 	moment: typeof moment;
-	onDateRangeChange?: ( startDate: DateType, endDate: DateType ) => void;
-	focusedMonthProp?: Date | null;
+	onDateRangeChange?: ( startDate: MomentOrNull, endDate: MomentOrNull ) => void;
+	focusedMonth?: Date;
 	numberOfMonths?: number;
 }
 
@@ -32,7 +32,10 @@ const noop = () => {};
  * @param  {import('moment').Moment | Date}  options.dateTo   the end of the date range
  * @returns {import('moment').Moment}                  the date clamped to be within the range
  */
-const clampDateToRange = ( date, { dateFrom, dateTo } ) => {
+const clampDateToRange = (
+	date: Moment,
+	{ dateFrom, dateTo }: { dateFrom: MomentOrNull; dateTo: MomentOrNull }
+) => {
 	// Ensure endDate is within bounds of firstSelectableDate
 	if ( dateFrom && date.isBefore( dateFrom ) ) {
 		date = dateFrom;
@@ -45,78 +48,77 @@ const clampDateToRange = ( date, { dateFrom, dateTo } ) => {
 	return date;
 };
 
-const initStartEndDates = ( {
-	firstSelectableDate,
-	lastSelectableDate,
-	selectedStartDate,
-	selectedEndDate,
-}: Partial< DateRangePickerProps > ) => {
-	// Define the date range that is selectable (ie: not disabled)
-	firstSelectableDate = firstSelectableDate && moment( firstSelectableDate );
-	lastSelectableDate = lastSelectableDate && moment( lastSelectableDate );
-
-	// Clamp start/end dates to ranges (if specified)
-	let startDate =
-		selectedStartDate == null
-			? NO_DATE_SELECTED_VALUE
-			: clampDateToRange( moment( selectedStartDate ), {
-					dateFrom: firstSelectableDate,
-					dateTo: lastSelectableDate,
-			  } );
-
-	let endDate =
-		selectedEndDate == null
-			? NO_DATE_SELECTED_VALUE
-			: clampDateToRange( moment( selectedEndDate ), {
-					dateFrom: firstSelectableDate,
-					dateTo: lastSelectableDate,
-			  } );
-
-	// Ensure start is before end otherwise flip the values
-	if ( startDate && endDate && endDate.isBefore( startDate ) ) {
-		// flip values via array destructuring (think about it...)
-		[ startDate, endDate ] = [ endDate, startDate ];
-	}
-	return [ startDate, endDate ];
-};
-
 const DateRangePicker = ( {
 	firstSelectableDate,
 	lastSelectableDate,
 	selectedStartDate,
 	selectedEndDate,
 	moment,
-	focusedMonthProp = null,
+	focusedMonth,
 	onDateRangeChange = noop,
 	numberOfMonths = 2,
 }: DateRangePickerProps ) => {
-	const [ initialStartDate, initialEndDate ] = initStartEndDates( {
-		firstSelectableDate,
-		lastSelectableDate,
-		selectedStartDate,
-		selectedEndDate,
-	} );
-	// const [ startDate, setStartDate ] = useState< DateType >( initialStartDate );
-	// const [ endDate, setEndDate ] = useState< DateType >( initialEndDate );
-	const [ focusedMonth, setFocusedMonth ] = useState< DateType >( focusedMonthProp );
-	const [ staleStartDate, setStaleStartDate ] = useState< DateType >( null );
-	const [ staleEndDate, setStaleEndDate ] = useState< DateType >( null );
-	const [ staleDatesSaved, setStaleDatesSaved ] = useState( false );
+	const [ focusedMonthCalendar, setFocusedMonthCalendar ] = useState< Date | undefined >(
+		focusedMonth
+	);
 
-	// this needs to be independent from startDate because we must independently validate them
-	// before updating the central source of truth (ie: startDate)
-	// textInputStartDate: this.toDateString( startDate ),
-	// textInputEndDate: this.toDateString( endDate ),
-	// initialStartDate: startDate, // cache values in case we need to reset to them
-	// initialEndDate: endDate, // cache values in case we need to reset to them
-	// focusedMonth: this.props.focusedMonth,
+	useEffect( () => {
+		const initStartEndDates = ( {
+			firstSelectableDate,
+			lastSelectableDate,
+			selectedStartDate,
+			selectedEndDate,
+		}: Partial< DateRangePickerProps > ) => {
+			// Define the date range that is selectable (ie: not disabled)
+			firstSelectableDate = firstSelectableDate ? moment( firstSelectableDate ) : null;
+			lastSelectableDate = lastSelectableDate ? moment( lastSelectableDate ) : null;
+
+			// Clamp start/end dates to ranges (if specified)
+			let startDate =
+				selectedStartDate == null
+					? NO_DATE_SELECTED_VALUE
+					: clampDateToRange( moment( selectedStartDate ), {
+							dateFrom: firstSelectableDate,
+							dateTo: lastSelectableDate,
+					  } );
+
+			let endDate =
+				selectedEndDate == null
+					? NO_DATE_SELECTED_VALUE
+					: clampDateToRange( moment( selectedEndDate ), {
+							dateFrom: firstSelectableDate,
+							dateTo: lastSelectableDate,
+					  } );
+
+			// Ensure start is before end otherwise flip the values
+			if ( startDate && endDate && endDate.isBefore( startDate ) ) {
+				// flip values via array destructuring (think about it...)
+				[ startDate, endDate ] = [ endDate, startDate ];
+			}
+			return [ startDate, endDate ];
+		};
+
+		const [ startDate, endDate ] = initStartEndDates( {
+			firstSelectableDate,
+			lastSelectableDate,
+			selectedStartDate,
+			selectedEndDate,
+		} );
+
+		// Set calendar focus to the start or end date
+		if ( startDate ) {
+			setFocusedMonthCalendar( startDate.toDate() );
+		} else if ( endDate ) {
+			setFocusedMonthCalendar( endDate.toDate() );
+		}
+	}, [ firstSelectableDate, lastSelectableDate, selectedStartDate, selectedEndDate ] );
 
 	/**
 	 * Converts a moment date to a native JS Date object
 	 * @param  {import('moment').Moment} momentDate a momentjs date object to convert
 	 * @returns {Date}            the converted JS Date object
 	 */
-	function momentDateToJsDate( momentDate ) {
+	function momentDateToJsDate( momentDate: MomentOrNull ) {
 		return moment.isMoment( momentDate ) ? momentDate.toDate() : momentDate;
 	}
 
@@ -128,7 +130,7 @@ const DateRangePicker = ( {
 		return moment.localeData().longDateFormat( 'L' );
 	};
 
-	const isValidDate = ( date ) => {
+	const isValidDate = ( date: Moment ) => {
 		const epoch = moment( '01/01/1970', getLocaleDateFormat() );
 
 		// By default check
@@ -160,7 +162,7 @@ const DateRangePicker = ( {
 	 * @param  {import('moment').Moment} endDate   the end date for the range
 	 * @returns {Object}           the date range object
 	 */
-	const toDateRange = ( startDate, endDate ) => {
+	const toDateRange = ( startDate: MomentOrNull, endDate: MomentOrNull ) => {
 		return {
 			from: momentDateToJsDate( startDate ),
 			to: momentDateToJsDate( endDate ),
@@ -172,18 +174,8 @@ const DateRangePicker = ( {
 	 * @param  {Date} nativeDate date to be converted
 	 * @returns {import('moment').Moment}            the converted Date
 	 */
-	const nativeDateToMoment = ( nativeDate ) => {
+	const nativeDateToMoment = ( nativeDate: Date ) => {
 		return moment( nativeDate );
-	};
-
-	/**
-	 * Formats a given date to the appropriate format for the
-	 * current locale
-	 * @param  {import('moment').Moment | Date} date the date to be converted
-	 * @returns {string}      the date as a formatted locale string
-	 */
-	const formatDateToLocale = ( date ) => {
-		return moment( date ).format( 'L' );
 	};
 
 	/**
@@ -195,7 +187,7 @@ const DateRangePicker = ( {
 	 * Dates are only persisted via the commitDates method.
 	 * @param  {import('moment').Moment} date the newly selected date object
 	 */
-	const selectDate = ( date ) => {
+	const selectDate = ( date: Moment ) => {
 		if ( ! isValidDate( date ) ) {
 			return;
 		}
@@ -204,26 +196,18 @@ const DateRangePicker = ( {
 		const range = toDateRange( selectedStartDate, selectedEndDate );
 
 		const rawDay = momentDateToJsDate( date );
+		if ( ! rawDay ) {
+			return;
+		}
 
 		// Calculate the new Date range
 		const newRange = DateUtils.addDayToRange( rawDay, range );
 
 		// Update to date or `null` which means "not date"
-		const newStartDate =
-			newRange.from === null ? NO_DATE_SELECTED_VALUE : nativeDateToMoment( newRange.from );
-		const newEndDate =
-			newRange.to === null ? NO_DATE_SELECTED_VALUE : nativeDateToMoment( newRange.to );
-
-		// For first date selection only: "cache" previous dates
-		// just in case user doesn't "Apply" and we need to revert
-		// to the original dates
-		if ( ! staleDatesSaved ) {
-			setStaleStartDate( selectedStartDate );
-			setStaleEndDate( selectedEndDate );
-			setStaleDatesSaved( true ); // marks that we have saved stale dates
-		}
-		// setStartDate( newStartDate );
-		// setEndDate( newEndDate );
+		const newStartDate = ! newRange.from
+			? NO_DATE_SELECTED_VALUE
+			: nativeDateToMoment( newRange.from );
+		const newEndDate = ! newRange.to ? NO_DATE_SELECTED_VALUE : nativeDateToMoment( newRange.to );
 
 		onDateRangeChange( newStartDate, newEndDate );
 	};
@@ -242,11 +226,11 @@ const DateRangePicker = ( {
 		const config: { before?: Date; after?: Date } = {};
 
 		if ( firstSelectableDate ) {
-			config.before = momentDateToJsDate( firstSelectableDate ); // disable all days before today
+			config.before = momentDateToJsDate( firstSelectableDate ) ?? undefined; // disable all days before today
 		}
 
 		if ( lastSelectableDate ) {
-			config.after = momentDateToJsDate( lastSelectableDate ); // disable all days before today
+			config.after = momentDateToJsDate( lastSelectableDate ) ?? undefined; // disable all days before today
 		}
 
 		// Requires a wrapping Array
@@ -290,8 +274,8 @@ const DateRangePicker = ( {
 
 	return (
 		<DatePicker
-			calendarViewDate={ focusedMonth }
-			calendarInitialDate={ momentDateToJsDate( calendarInitialDate ) ?? null }
+			calendarViewDate={ focusedMonthCalendar }
+			calendarInitialDate={ momentDateToJsDate( calendarInitialDate ) }
 			rootClassNames={ rootClassNames }
 			modifiers={ modifiers }
 			showOutsideDays={ false }
