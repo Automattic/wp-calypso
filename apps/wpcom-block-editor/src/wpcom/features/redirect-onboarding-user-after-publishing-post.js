@@ -38,7 +38,7 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		return false;
 	}
 
-	if ( [ 'off', 'skipped' ].includes( launchpadScreen ) ) {
+	if ( 'full' !== launchpadScreen ) {
 		return false;
 	}
 
