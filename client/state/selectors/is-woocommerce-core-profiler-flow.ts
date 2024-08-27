@@ -12,7 +12,9 @@ import type { AppState } from 'calypso/types';
 export const isWooCommerceCoreProfilerFlow = ( state: AppState ): boolean => {
 	return (
 		'woocommerce-core-profiler' === get( getCurrentQueryArguments( state ), 'from' ) ||
-		'woocommerce-core-profiler' === get( getInitialQueryArguments( state ), 'from' )
+		'woocommerce-core-profiler' === get( getInitialQueryArguments( state ), 'from' ) ||
+		new URLSearchParams( state.login?.redirectTo?.original ).get( 'from' ) ===
+			'woocommerce-core-profiler'
 	);
 };
 
