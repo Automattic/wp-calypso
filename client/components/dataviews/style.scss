@@ -200,8 +200,12 @@
 	}
 }
 
-// This should be moved to the gutenberg repository upstream.
-// We should hide the "properties" section in the view config menu if empty.
+// TODO: remove when updating to dataviews@4.2.0.
+//
+// This is a hotfix to hiding the properties section in the view config menu
+// when no field is hidable.
+// This has been fixed upstream as of
+// https://github.com/WordPress/gutenberg/pull/64711/files
 .dataviews-settings-section:has(.dataviews-settings-section__content:empty) {
 	display: none;
 }
@@ -218,7 +222,7 @@
 	display: none !important;
 }
 
-// TODO: remove when updating to dataviews@4.3.0
+// TODO: remove when updating to dataviews@4.2.0
 //
 // This is a hotfix for the sort direction control within the view config.
 // It shouldn't be visible when there are no sortable fields.
