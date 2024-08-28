@@ -4,7 +4,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import type { Moment } from 'moment';
 
 type Props = {
-	baseBackupDate: Moment; // timestamp
+	baseBackupDate: Moment;
 	eventsCount: number;
 	selectedBackupDate: Moment;
 };
