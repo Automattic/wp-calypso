@@ -424,11 +424,14 @@ export const JetpackSitesDataViews = ( {
 				},
 				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
 				label: (
-					<GuidedTourStep
-						id="sites-walkthrough-site-preview"
-						tourId="sitesWalkthrough"
-						context={ actionsRef }
-					/>
+					<>
+						<span>ACTIONS</span>
+						<GuidedTourStep
+							id="sites-walkthrough-site-preview"
+							tourId="sitesWalkthrough"
+							context={ actionsRef }
+						/>
+					</>
 				),
 				enableHiding: false,
 				enableSorting: false,
