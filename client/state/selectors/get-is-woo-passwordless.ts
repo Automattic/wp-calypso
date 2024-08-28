@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getCurrentOAuth2Client } from '../oauth2-clients/ui/selectors';
 import getWccomFrom from './get-wccom-from';
+import { isWooCommerceCoreProfilerFlow } from './is-woocommerce-core-profiler-flow';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -15,7 +16,7 @@ export default function getIsWooPasswordless( state: AppState ): boolean {
 	}
 
 	// Enable Woo Passwordless if user is from WooCommerce Core Profiler.
-	if ( state?.route?.query?.initial?.from === 'woocommerce-core-profiler' ) {
+	if ( isWooCommerceCoreProfilerFlow( state ) ) {
 		return true;
 	}
 

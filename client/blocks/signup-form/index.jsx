@@ -127,6 +127,7 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		disableTosText: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -1045,7 +1046,7 @@ class SignupForm extends Component {
 
 		return (
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
-				{ this.termsOfServiceLink() }
+				{ ! this.props.disableTosText && this.termsOfServiceLink() }
 				<FormButton
 					className={ clsx(
 						'signup-form__submit',
@@ -1332,6 +1333,7 @@ class SignupForm extends Component {
 						flowName={ this.props.flowName }
 						goToNextStep={ this.props.goToNextStep }
 						renderTerms={ this.termsOfServiceLink }
+						disableTosText={ this.props.disableTosText }
 						submitForm={ this.handlePasswordlessSubmit }
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
