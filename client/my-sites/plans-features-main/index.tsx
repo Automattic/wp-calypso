@@ -617,6 +617,7 @@ const PlansFeaturesMain = ( {
 	const isLoadingGridPlans = Boolean(
 		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid
 	);
+
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
 
 	const isMobile = useMobileBreakpoint();

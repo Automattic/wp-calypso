@@ -1,13 +1,15 @@
 import { OnboardSelect } from '@automattic/data-stores';
-import { StepContainer, usePersistedState } from '@automattic/onboarding';
+import { usePersistedState } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { PlansStep } from 'calypso/signup/steps/plans';
+import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -20,6 +22,7 @@ export const LocalizedPlanStep = localize( PlansStep );
 export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = usePersistedState< ProvidedDependencies >();
 	const siteSlug = useSiteSlug();
+
 	const { siteTitle, domainItem, domainItems } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
 			return {
@@ -47,6 +50,13 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const site = useSite();
 	const customerType = useQuery().get( 'customerType' );
 	const dispatch = useDispatch();
+
+	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
+
+	const onPlanIntervalUpdate = ( path: string ) => {
+		const intervalType = getIntervalType( path );
+		setPlanInterval( intervalType );
+	};
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
@@ -80,23 +90,16 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			signupDependencies={ signupDependencies }
 			stepName="plans"
 			flowName={ props.flow }
-			renderWithoutStepWrapper
 			recordTracksEvent={ ( event: unknown ) => dispatch( recordTracksEvent( event ) ) }
-			CustomStepWrapper={ usePlanStepWrapper( props.navigation ) }
-		/>
-	);
-}
-
-function usePlanStepWrapper( navigation: StepProps[ 'navigation' ] ) {
-	const dispatch = useDispatch();
-
-	return ( props: Parameters< typeof StepContainer >[ 0 ] ) => (
-		<StepContainer
-			{ ...props }
-			goBack={ navigation.goBack }
-			recordTracksEvent={ ( event: unknown ) => dispatch( recordTracksEvent( event ) ) }
-			isFullLayout
-			isExtraWideLayout={ false }
+			onPlanIntervalUpdate={ onPlanIntervalUpdate }
+			intervalType={ planInterval }
+			wrapperProps={ {
+				goBack: props.navigation.goBack,
+				recordTracksEvent: ( event: unknown ) => dispatch( recordTracksEvent( event ) ),
+				isFullLayout: true,
+				isExtraWideLayout: false,
+			} }
+			useStepperWrapper
 		/>
 	);
 }
