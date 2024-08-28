@@ -612,8 +612,9 @@ class MagicLogin extends Component {
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.title };
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party';
-		const isGravatarFlowWithEmail =
-			!! isGravatarFlowOAuth2Client( oauth2Client ) && query?.email_address;
+		const isGravatarFlowWithEmail = !! (
+			isGravatarFlowOAuth2Client( oauth2Client ) && query?.email_address
+		);
 
 		this.emailToSha256( usernameOrEmail ).then( ( email ) =>
 			this.setState( { hashedEmail: email } )
@@ -748,8 +749,9 @@ class MagicLogin extends Component {
 		} = this.state;
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party';
-		const isGravatarFlowWithEmail =
-			!! isGravatarFlowOAuth2Client( oauth2Client ) && query?.email_address;
+		const isGravatarFlowWithEmail = !! (
+			isGravatarFlowOAuth2Client( oauth2Client ) && query?.email_address
+		);
 		const isProcessingCode = isValidatingCode || isCodeValidated;
 		let errorText = translate( 'Something went wrong. Please try again.' );
 
@@ -951,7 +953,7 @@ class MagicLogin extends Component {
 		const { isRequestingEmail, requestEmailErrorMessage } = this.state;
 
 		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
-		const isGravatarFlowWithEmail = !! isGravatarFlow && query?.email_address;
+		const isGravatarFlowWithEmail = !! ( isGravatarFlow && query?.email_address );
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 		const isFromGravatarSignup = isGravatar && query?.gravatar_from === 'signup';

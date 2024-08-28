@@ -559,8 +559,9 @@ class Login extends Component {
 				if ( isGravPoweredLoginPage ) {
 					const isFromGravatar3rdPartyApp =
 						isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
-					const isGravatarFlowWithEmail =
-						!! isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address;
+					const isGravatarFlowWithEmail = !! (
+						isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
+					);
 
 					postHeader = (
 						<p className="login__header-subtitle">

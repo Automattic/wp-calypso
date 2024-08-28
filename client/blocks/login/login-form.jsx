@@ -794,8 +794,9 @@ export class LoginForm extends Component {
 		);
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
-		const isGravatarFlowWithEmail =
-			!! isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address;
+		const isGravatarFlowWithEmail = !! (
+			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
+		);
 
 		const signupUrl = this.getSignupUrl();
 
