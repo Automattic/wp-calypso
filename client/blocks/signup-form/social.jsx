@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -14,8 +15,9 @@ import {
 } from 'calypso/components/social-buttons';
 import { preventWidows } from 'calypso/lib/formatting';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { login } from 'calypso/lib/paths';
 import { isWpccFlow } from 'calypso/signup/is-flow';
-import { recordTracksEvent as recordTracks } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -28,6 +30,7 @@ class SocialSignupForm extends Component {
 		handleResponse: PropTypes.func.isRequired,
 		setCurrentStep: PropTypes.func,
 		translate: PropTypes.func.isRequired,
+		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
 		disableTosText: PropTypes.bool,
 		flowName: PropTypes.string,
@@ -39,45 +42,99 @@ class SocialSignupForm extends Component {
 		compact: false,
 	};
 
-	handleSignup = ( result ) => {
-		if ( ! result || window.sessionStorage.getItem( 'social_login_used' ) !== result.service ) {
+	handleAppleResponse = ( response ) => {
+		if ( ! response.id_token ) {
 			return;
 		}
 
-		const { recordTracksEvent, isDevAccount, handleResponse } = this.props;
-		recordTracksEvent( 'calypso_signup_social_button_success', {
-			social_account_type: result.service,
+		const extraUserData = { is_dev_account: this.props.isDevAccount };
+
+		if ( response.user ) {
+			extraUserData.user_name = response.user.name;
+			extraUserData.user_email = response.user.email;
+		}
+
+		this.props.handleResponse( 'apple', null, response.id_token, extraUserData );
+	};
+
+	handleGoogleResponse = ( tokens, triggeredByUser = true ) => {
+		if ( ! triggeredByUser && this.props.socialService !== 'google' ) {
+			return;
+		}
+
+		this.props.recordTracksEvent( 'calypso_signup_social_button_success', {
+			social_account_type: 'google',
 		} );
 
-		window.sessionStorage.removeItem( 'login_redirect_to' );
-		window.sessionStorage.removeItem( 'social_login_used' );
-
-		handleResponse( result.service, result.access_token, result.id_token, {
-			...result,
-			is_dev_account: result.service === 'github' ? true : isDevAccount,
+		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token, {
+			is_dev_account: this.props.isDevAccount,
 		} );
 	};
 
-	trackSignupAndRememberRedirect = ( event ) => {
-		const service = event.currentTarget.getAttribute( 'data-social-service' );
+	handleGitHubResponse = ( { access_token }, triggeredByUser = true ) => {
+		if ( ! triggeredByUser && this.props.socialService !== 'github' ) {
+			return;
+		}
 
-		const { recordTracksEvent, oauth2Client, redirectToAfterLoginUrl, showErrorNotice, translate } =
-			this.props;
-
-		recordTracksEvent( 'calypso_signup_social_button_click', {
-			social_account_type: service,
-			client_id: oauth2Client?.id,
+		this.props.recordTracksEvent( 'calypso_signup_social_button_success', {
+			social_account_type: 'github',
 		} );
 
-		try {
-			if ( redirectToAfterLoginUrl && typeof window !== 'undefined' ) {
-				window.sessionStorage.setItem( 'signup_redirect_to', redirectToAfterLoginUrl );
-			}
+		this.props.handleResponse( 'github', access_token, null, {
+			// Make accounts signed up via GitHub as dev accounts
+			is_dev_account: true,
+		} );
+	};
 
-			window.sessionStorage.setItem( 'social_login_used', service );
+	trackSocialSignup = ( service ) => {
+		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
+			social_account_type: service,
+			client_id: this.props.oauth2Client?.id,
+		} );
+	};
+
+	shouldUseRedirectFlow() {
+		const { currentRoute } = this.props;
+
+		// If calypso is loaded in a popup, we don't want to open a second popup for social signup
+		// let's use the redirect flow instead in that case
+		let isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+
+		// Jetpack Connect-in-place auth flow contains special reserved args, so we want a popup for social signup.
+		// See p1HpG7-7nj-p2 for more information.
+		if ( isPopup && '/jetpack/connect/authorize' === currentRoute ) {
+			isPopup = false;
+		}
+
+		return isPopup;
+	}
+
+	getRedirectUri = ( socialService ) => {
+		const origin = typeof window !== 'undefined' && window.location.origin;
+		const pathname = typeof window !== 'undefined' && window.location.pathname;
+
+		// If the user is in the WPCC flow, we want to redirect user to login callback so that we can automatically log them in.
+		if ( isWpccFlow( this.props.flowName ) ) {
+			return `${ origin + login( { socialService } ) }`;
+		}
+
+		if ( socialService === 'github' ) {
+			return `${ origin }${ pathname }`;
+		}
+
+		return `${ origin }/start/user`;
+	};
+
+	trackLoginAndRememberRedirect = ( service ) => {
+		this.trackSocialSignup( service );
+
+		try {
+			if ( this.props.redirectToAfterLoginUrl && typeof window !== 'undefined' ) {
+				window.sessionStorage.setItem( 'signup_redirect_to', this.props.redirectToAfterLoginUrl );
+			}
 		} catch ( error ) {
-			showErrorNotice(
-				translate(
+			this.props.showErrorNotice(
+				this.props.translate(
 					'Error accessing sessionStorage. {{a}}Please check your browser settings{{/a}}.',
 					{
 						components: {
@@ -99,6 +156,7 @@ class SocialSignupForm extends Component {
 		const {
 			compact,
 			translate,
+			socialService,
 			socialServiceResponse,
 			disableTosText,
 			isSocialFirst,
@@ -106,6 +164,8 @@ class SocialSignupForm extends Component {
 			isWoo,
 			setCurrentStep,
 		} = this.props;
+
+		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
 
 		return (
 			<Card
@@ -122,21 +182,37 @@ class SocialSignupForm extends Component {
 				<div className="auth-form__social-buttons">
 					<div className="auth-form__social-buttons-container">
 						<GoogleSocialButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
+							clientId={ config( 'google_oauth_client_id' ) }
+							responseHandler={ this.handleGoogleResponse }
+							uxMode={ uxMode }
+							redirectUri={ this.getRedirectUri( 'google' ) }
+							onClick={ () => {
+								this.trackLoginAndRememberRedirect( 'google' );
+							} }
+							socialServiceResponse={ socialService === 'google' ? socialServiceResponse : null }
+							startingPoint="signup"
 						/>
 
 						<AppleLoginButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
-							socialServiceResponse={ socialServiceResponse }
+							clientId={ config( 'apple_oauth_client_id' ) }
+							responseHandler={ this.handleAppleResponse }
+							uxMode={ uxMode }
+							redirectUri={ this.getRedirectUri( 'apple' ) }
+							onClick={ () => {
+								this.trackLoginAndRememberRedirect( 'apple' );
+							} }
+							socialServiceResponse={ socialService === 'apple' ? socialServiceResponse : null }
+							originalUrlPath={ window?.location?.pathname }
 							queryString={ isWpccFlow( flowName ) ? window?.location?.search?.slice( 1 ) : '' }
 						/>
 
 						<GithubSocialButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
-							socialServiceResponse={ socialServiceResponse }
+							socialServiceResponse={ socialService === 'github' ? socialServiceResponse : null }
+							redirectUri={ this.getRedirectUri( 'github' ) }
+							responseHandler={ this.handleGitHubResponse }
+							onClick={ () => {
+								this.trackLoginAndRememberRedirect( 'github' );
+							} }
 						/>
 						{ isSocialFirst && (
 							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
@@ -156,7 +232,6 @@ export default connect(
 		const isDevAccount = query?.ref === 'hosting-lp' || query?.ref === 'developer-lp';
 
 		return {
-			recordTracksEvent: recordTracks,
 			currentRoute: getCurrentRoute( state ),
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isDevAccount: isDevAccount,
@@ -165,5 +240,5 @@ export default connect(
 				isWooCommerceCoreProfilerFlow( state ),
 		};
 	},
-	{ showErrorNotice: errorNotice }
+	{ recordTracksEvent, showErrorNotice: errorNotice }
 )( localize( SocialSignupForm ) );
