@@ -4,13 +4,14 @@ import type { FC } from 'react';
 interface Props {
 	onClick: () => void;
 	text: string;
+	variant: string;
 }
 
-export const StepPrimaryCta: FC< Props > = ( { onClick, text } ) => {
+export const StepCta: FC< Props > = ( { onClick, text, variant } ) => {
 	return (
 		<Button
 			className="checklist-item__checklist-expanded-cta"
-			variant="primary"
+			variant={ variant }
 			onClick={ onClick }
 		>
 			{ text }
