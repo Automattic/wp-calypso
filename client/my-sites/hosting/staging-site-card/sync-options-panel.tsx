@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 const DangerousItemsContainer = styled.div( {
 	marginTop: '16px',
@@ -138,6 +140,8 @@ export default function SyncOptionsPanel( {
 		onChange( selectedItems );
 	}, [ optionItemsMap, onChange ] );
 
+	const stagingSiteSyncWoo = config.isEnabled( 'staging-site-sync-woo' );
+
 	return (
 		<>
 			{ nonDangerousItems.map( ( item ) => {
@@ -185,6 +189,23 @@ export default function SyncOptionsPanel( {
 						</div>
 					);
 				} ) }
+				{ stagingSiteSyncWoo && (
+					<div>
+						<p>
+							{ translate(
+								'This site has WooCommerce installed. All orders in the production database will be overwritten. {{a}}Learn more{{/a}}.',
+								{
+									components: {
+										a: (
+											<InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />
+										),
+									},
+								}
+							) }
+						</p>
+						<p>{ translate( 'Confirm I want to proceed with database synchronization ' ) }</p>
+					</div>
+				) }
 			</DangerousItemsContainer>
 		</>
 	);
