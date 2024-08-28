@@ -69,6 +69,7 @@ const BackupSuccessful = ( {
 		availableActions && availableActions.length === 1 && availableActions[ 0 ] === 'clone';
 
 	const showRealTimeMessage = backup.baseRewindId && backup.rewindStepCount > 0;
+	const baseBackupDate = moment.unix( backup.baseRewindId );
 	return (
 		<>
 			<div className="status-card__message-head">
@@ -97,7 +98,7 @@ const BackupSuccessful = ( {
 				<div className="status-card__title">{ displayDateNoLatest }</div>
 				{ showRealTimeMessage && (
 					<BackupRealtimeMessage
-						baseBackupDate={ backup.baseRewindId * 1000 }
+						baseBackupDate={ baseBackupDate }
 						eventsCount={ backup.rewindStepCount }
 						selectedBackupDate={ selectedDate }
 					/>
