@@ -82,14 +82,6 @@
 				position: sticky;
 				right: 0;
 				z-index: 1;
-				background: linear-gradient(to right, transparent 0%, #fff 25%);
-			}
-
-			&:hover {
-				th:last-child,
-				td:last-child {
-					background: linear-gradient(to right, transparent 0%, var(--color-neutral-0) 25%);
-				}
 			}
 		}
 	}
