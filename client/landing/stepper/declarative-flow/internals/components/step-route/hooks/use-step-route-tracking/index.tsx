@@ -2,6 +2,7 @@
 
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import { useEffect, useRef } from '@wordpress/element';
+import { STEPPER_TRACKS_EVENT_SIGNUP_STEP_START } from 'calypso/landing/stepper/constants';
 import { getStepOldSlug } from 'calypso/landing/stepper/declarative-flow/helpers/get-step-old-slug';
 import { getAssemblerSource } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-design';
 import recordStepComplete, {
@@ -12,6 +13,7 @@ import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
+import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import {
 	getSignupCompleteFlowNameAndClear,
@@ -19,6 +21,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { isRequestingSite } from 'calypso/state/sites/selectors';
+import type { Flow } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 /**
  * We wait for the site to be fetched before tracking the step route when a site ID/slug are defined in the params.
@@ -35,26 +38,25 @@ const useHasRequestedSelectedSite = () => {
 };
 
 interface Props {
-	flowName: string;
+	flow: Flow;
 	stepSlug: string;
-	flowVariantSlug?: string;
 	skipStepRender?: boolean;
 }
 
 /**
  * Hook to track the step route in the declarative flow.
  */
-export const useStepRouteTracking = ( {
-	flowName,
-	stepSlug,
-	flowVariantSlug,
-	skipStepRender,
-}: Props ) => {
+export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props ) => {
 	const intent = useIntent();
 	const design = useSelectedDesign();
 	const hasRequestedSelectedSite = useHasRequestedSelectedSite();
 	const stepCompleteEventPropsRef = useRef< RecordStepCompleteProps | null >( null );
 	const pathname = window.location.pathname;
+	const flowVariantSlug = flow.variantSlug;
+	const flowName = flow.name;
+	const signupStepStartProps = useSnakeCasedKeys( {
+		input: flow.useTracksEventProps?.()?.[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ],
+	} );
 
 	/**
 	 * Cleanup effect to record step-complete event when `StepRoute` unmounts.
@@ -80,7 +82,7 @@ export const useStepRouteTracking = ( {
 		const signupCompleteStepName = getSignupCompleteStepNameAndClear();
 
 		const isReEnteringStep =
-			signupCompleteFlowName === flowName && signupCompleteStepName === stepSlug;
+			signupCompleteFlowName === flow.name && signupCompleteStepName === stepSlug;
 
 		if ( ! isReEnteringStep ) {
 			recordStepStart( flowName, kebabCase( stepSlug ), {
@@ -89,6 +91,7 @@ export const useStepRouteTracking = ( {
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
 				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 				...( skipStepRender && { skip_step_render: skipStepRender } ),
+				...signupStepStartProps,
 			} );
 
 			// Apply the props to record in the exit/step-complete event. We only record this if start event gets recorded.
@@ -99,7 +102,6 @@ export const useStepRouteTracking = ( {
 			};
 
 			const stepOldSlug = getStepOldSlug( stepSlug );
-
 			if ( stepOldSlug ) {
 				recordStepStart( flowName, kebabCase( stepOldSlug ), {
 					intent,
@@ -107,6 +109,7 @@ export const useStepRouteTracking = ( {
 					...( design && { assembler_source: getAssemblerSource( design ) } ),
 					...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
 					...( skipStepRender && { skip_step_render: skipStepRender } ),
+					...signupStepStartProps,
 				} );
 			}
 		}

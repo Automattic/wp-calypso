@@ -29,9 +29,8 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 	const useBuiltItInAuth = flow.__experimentalUseBuiltinAuth;
 
 	useStepRouteTracking( {
-		flowName: flow.name,
+		flow,
 		stepSlug: step.slug,
-		flowVariantSlug: flow.variantSlug,
 		skipStepRender: shouldSkipRender,
 	} );
 
