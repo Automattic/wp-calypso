@@ -1,15 +1,17 @@
 import { RefObject, useEffect } from 'react';
+import { useOdieAssistantContext } from './context';
 import { Message } from './types/';
 
 const useAutoScroll = (
 	messagesContainerRef: RefObject< HTMLDivElement >,
 	messages: Message[]
 ) => {
+	const { isLoadingExistingChat } = useOdieAssistantContext();
 	const lastMessage = messages[ messages.length - 1 ];
 	const lastMessageType = lastMessage?.type;
 	useEffect( () => {
 		const messageCount = messages.length;
-		if ( messageCount < 2 ) {
+		if ( messageCount < 2 || isLoadingExistingChat ) {
 			return;
 		}
 
@@ -68,7 +70,8 @@ const useAutoScroll = (
 		} else {
 			scrollToLastUserMessage();
 		}
-	}, [ messages.length, messagesContainerRef, lastMessageType ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ messages.length, lastMessageType, isLoadingExistingChat ] );
 };
 
 export default useAutoScroll;

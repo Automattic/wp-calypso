@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useMigrationStickerMutation } from './use-migration-sticker';
 
-const REF_PATHS_WITH_INTRODUCTORY_OFFER = [ 'move-lp' ];
+const REF_PATHS_WITH_INTRODUCTORY_OFFER = [ 'move-lp', 'logged-out-homepage-lp' ];
 
 export const useCheckoutMigrationIntroductoryOfferSticker = (
 	siteId: number | undefined,

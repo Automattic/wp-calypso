@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -33,6 +34,9 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const { isEligible, isLoading } = useIsBigSkyEligible();
+
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-choices' );
+
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
@@ -81,14 +85,16 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								destination="designSetup"
 								onSelect={ handleSubmit }
 							/>
-							<DesignChoice
-								className="design-choices__design-your-own"
-								title={ translate( 'Design your own' ) }
-								description={ translate( 'Design your site with patterns, pages, styles.' ) }
-								imageSrc={ assemblerIllustrationImage }
-								destination="pattern-assembler"
-								onSelect={ handleSubmit }
-							/>
+							{ isSiteAssemblerEnabled && (
+								<DesignChoice
+									className="design-choices__design-your-own"
+									title={ translate( 'Design your own' ) }
+									description={ translate( 'Design your site with patterns, pages, styles.' ) }
+									imageSrc={ assemblerIllustrationImage }
+									destination="pattern-assembler"
+									onSelect={ handleSubmit }
+								/>
+							) }
 							{ ! isLoading && isEligible && (
 								<BigSkyDisclaimerModal flow={ flow } stepName={ stepName }>
 									<DesignChoice

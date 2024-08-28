@@ -288,26 +288,36 @@ body.is-mobile-app-view {
 	justify-content: center;
 
 	&.masterbar__reader {
-		padding: 0 7px 0 4px;
+		padding: 0 10px 0 6px;
 
 		.masterbar_svg-reader {
-			padding: 0 8px 0 3px;
+			padding: 0 0 0 4px;
 		}
 	}
 
+	&.masterbar__item-my-site,
 	&.masterbar__item-my-site-actions {
 		padding-left: 7px;
 	}
 
 	@media only screen and (max-width: 781px) {
-		&.masterbar__reader,
+		&.masterbar__item-my-site {
+			padding-left: inherit;
+		}
 		&.masterbar__item-my-site-actions {
 			padding: 0;
 		}
 
 		&.masterbar__reader {
+			padding: 0 8px;
+
 			.masterbar_svg-reader {
-				padding: 0;
+				padding: 0 0 0 2px;
+			}
+
+			&.is-active {
+				padding: 0 2px 0 0;
+				margin: 0 6px 0 4px;
 			}
 		}
 	}
@@ -613,7 +623,10 @@ body.is-mobile-app-view {
 		// reset flex value on mobile
 		flex: 0 1 auto;
 		padding: 0;
-		width: 46px;
+
+		&:not(.masterbar__item--always-show-content) {
+			width: 46px;
+		}
 
 		.masterbar__item-content {
 			display: none;
@@ -658,12 +671,8 @@ body.is-mobile-app-view {
 
 		@media only screen and (max-width: 781px) {
 			padding: 0;
-		}
 
-		.gridicon {
-			width: 24px;
-			height: 24px;
-			@media only screen and (max-width: 781px) {
+			svg {
 				width: 32px;
 				height: 32px;
 			}
@@ -1240,9 +1249,14 @@ body.is-mobile-app-view {
 .masterbar-cart-button {
 	svg {
 		overflow: visible;
+
 		@media only screen and (max-width: 781px) {
-			width: 32px;
+			width: 52px;
 			height: 32px;
+		}
+
+		@media only screen and (max-width: 481px) {
+			width: 44px;
 		}
 	}
 	.cart-circle {

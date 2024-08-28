@@ -88,11 +88,14 @@ export const marketplaceWpcomContext: Callback = ( context, next ) => {
 };
 
 export const checkoutContext: Callback = ( context, next ) => {
+	const { referral_blog_id } = context.query;
+	const referralBlogId = referral_blog_id ? parseInt( referral_blog_id ) : undefined;
+
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Checkout" path={ context.path } />
-			<Checkout />
+			<Checkout referralBlogId={ referralBlogId } />
 		</>
 	);
 	next();
