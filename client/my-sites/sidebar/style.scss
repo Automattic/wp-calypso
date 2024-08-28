@@ -1014,11 +1014,6 @@ $font-size: rem(14px);
 					overflow: initial;
 				}
 			}
-			.is-section-theme {
-				.layout__secondary {
-					transform: translateX(-100%);
-				}
-			}
 		}
 
 		.sidebar__menu.is-togglable:not(.is-toggle-open).hovered {
