@@ -1509,7 +1509,6 @@ $breakpoint-mobile: 660px;
 			}
 
 			p.email-sent {
-				max-width: 200px;
 				text-align: center;
 				font-size: rem(16px);
 				color: #757575;
@@ -1742,6 +1741,7 @@ $breakpoint-mobile: 660px;
 
 			a {
 				line-height: 16px;
+				color: var(--wp-admin-theme-color);
 			}
 		}
 
