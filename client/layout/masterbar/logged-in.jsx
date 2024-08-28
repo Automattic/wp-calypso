@@ -528,7 +528,8 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderReader() {
-		const { translate, sectionGroup, isFetchingPrefs, hasDismissedReaderPopover } = this.props;
+		const { translate, sectionName, sectionGroup, isFetchingPrefs, hasDismissedReaderPopover } =
+			this.props;
 		const { readerBtnRef } = this.state;
 		return (
 			<>
@@ -559,7 +560,9 @@ class MasterbarLoggedIn extends Component {
 					<Popover
 						className="masterbar__reader-popover"
 						isVisible={
-							sectionGroup !== 'reader' && ! isFetchingPrefs && ! hasDismissedReaderPopover
+							( sectionName === 'home' || sectionGroup === 'sites-dashboard' ) &&
+							! isFetchingPrefs &&
+							! hasDismissedReaderPopover
 						}
 						context={ readerBtnRef }
 						position="bottom left"
@@ -896,6 +899,7 @@ class MasterbarLoggedIn extends Component {
 export default connect(
 	( state ) => {
 		const sectionGroup = getSectionGroup( state );
+		const sectionName = getSectionName( state );
 
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
@@ -919,6 +923,7 @@ export default connect(
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			sectionGroup,
+			sectionName,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
 			user: getCurrentUser( state ),

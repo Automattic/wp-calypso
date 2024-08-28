@@ -438,15 +438,6 @@ function setupBrowserProxyTrap( browser: Browser ): Browser {
 						} )
 					);
 
-					// Remove the Reader popover if it exists, to prevent the element we want to click
-					// from being covered by it so that the element isn't clickable.
-					await page.evaluate( () => {
-						const readerPopover = document.querySelector( '.masterbar__reader-popover' );
-						if ( readerPopover ) {
-							readerPopover.remove();
-						}
-					} );
-
 					// Add route abort for slow requests on AT sites.
 					await page.route( /store\/v1\/cart/, ( route ) => {
 						route.abort();
