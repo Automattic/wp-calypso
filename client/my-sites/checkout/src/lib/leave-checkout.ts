@@ -1,4 +1,8 @@
-import { isTailoredSignupFlow } from '@automattic/onboarding';
+import {
+	isTailoredSignupFlow,
+	MIGRATION_FLOW,
+	HOSTED_SITE_MIGRATION_FLOW,
+} from '@automattic/onboarding';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -41,7 +45,7 @@ export const leaveCheckout = ( {
 	if (
 		siteSlug &&
 		sendMessageToOpener( siteSlug, 'checkoutCancelled' ) &&
-		signupFlowName !== 'hosted-site-migration'
+		! [ HOSTED_SITE_MIGRATION_FLOW, MIGRATION_FLOW ].includes( signupFlowName )
 	) {
 		return;
 	}
