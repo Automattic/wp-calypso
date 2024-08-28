@@ -97,8 +97,9 @@ const BackupSuccessful = ( {
 				<div className="status-card__title">{ displayDateNoLatest }</div>
 				{ showRealTimeMessage && (
 					<BackupRealtimeMessage
-						backupDate={ backup.baseRewindId * 1000 }
+						baseBackupDate={ backup.baseRewindId * 1000 }
 						eventsCount={ backup.rewindStepCount }
+						selectedBackupDate={ selectedDate }
 					/>
 				) }
 			</div>
