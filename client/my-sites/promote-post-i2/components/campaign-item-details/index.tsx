@@ -479,7 +479,7 @@ export default function CampaignItemDetails( props: Props ) {
 					</Notice>
 				) }
 
-				{ status === 'suspended' && payment_links && (
+				{ status === 'suspended' && payment_links && payment_links.length > 0 && (
 					<>
 						<Notice
 							isReskinned
@@ -496,7 +496,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 				<section className="campaign-item-details__wrapper">
 					<div className="campaign-item-details__main">
-						{ status === 'suspended' && payment_links && (
+						{ status === 'suspended' && payment_links && payment_links.length > 0 && (
 							<div className="campaign-item-details__payment-links-container">
 								<div className="campaign-item-details__payment-links">
 									<div className="campaign-item-details__payment-link-row">
