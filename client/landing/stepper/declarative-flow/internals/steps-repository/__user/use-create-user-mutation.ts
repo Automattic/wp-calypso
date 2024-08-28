@@ -3,8 +3,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { createAccount } from 'calypso/lib/signup/api/account';
 import { useDispatch } from 'calypso/state';
-import { LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING } from 'calypso/state/action-types';
-import { receiveSuccess } from 'calypso/state/data-layer/wpcom/users/auth-options';
+import {
+	SOCIAL_LOGIN_REQUEST,
+	SOCIAL_LOGIN_REQUEST_FAILURE,
+	SOCIAL_LOGIN_REQUEST_SUCCESS,
+} from 'calypso/state/action-types';
 
 export function useCreateAccountMutation() {
 	const dispatch = useDispatch();
@@ -12,14 +15,22 @@ export function useCreateAccountMutation() {
 	return useMutation( {
 		mutationKey: [ 'create' ],
 		mutationFn: createAccount,
-		onMutate: ( variables ) => {
+		onMutate: () => {
 			dispatch( {
-				type: LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
-				usernameOrEmail: variables.userData?.email,
+				type: SOCIAL_LOGIN_REQUEST,
 			} );
 		},
 		onSuccess: ( data ) => {
-			dispatch( receiveSuccess( null, data ) );
+			dispatch( {
+				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
+				data: data,
+			} );
+		},
+		onError: ( error ) => {
+			dispatch( {
+				type: SOCIAL_LOGIN_REQUEST_FAILURE,
+				error,
+			} );
 		},
 	} );
 }
