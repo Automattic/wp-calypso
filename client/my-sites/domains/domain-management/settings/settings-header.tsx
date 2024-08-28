@@ -92,7 +92,10 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 		}
 
 		if ( type === DomainType.MAPPED ) {
-			return renderNeutralBadge( __( 'Registered with an external provider' ) );
+			if ( domain.isSubdomain ) {
+				return renderNeutralBadge( __( 'Connected subdomain' ) );
+			}
+			return renderNeutralBadge( __( 'Connected domain' ) );
 		}
 
 		return renderNeutralBadge( __( 'Domain Transfer' ) );
