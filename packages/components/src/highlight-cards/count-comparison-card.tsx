@@ -1,7 +1,11 @@
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
-import { Card, ShortenedNumber, formattedNumber } from '../';
+import { Card, ShortenedNumber } from '../';
+import importedFormatNumber, {
+	DEFAULT_LOCALE,
+	DEFAULT_OPTIONS,
+} from '../number-formatters/lib/format-number';
 import Popover from '../popover';
 
 type CountComparisonCardProps = {
@@ -14,6 +18,14 @@ type CountComparisonCardProps = {
 	note?: string;
 	compact?: boolean;
 };
+
+// TODO: Remove this by improving number-formatters/lib/format-number to better handle default option overrides.
+function formatNumber( number: number | null ) {
+	return importedFormatNumber( number, DEFAULT_LOCALE, {
+		...DEFAULT_OPTIONS,
+		maximumSignificantDigits: 3,
+	} );
+}
 
 function subtract( a: number | null, b: number | null | undefined ): number | null {
 	return a === null || b === null || b === undefined ? null : a - b;
@@ -70,7 +82,7 @@ function TooltipContent( { count, previousCount, icon, heading }: CountCompariso
 		return (
 			<div className="highlight-card-tooltip-content">
 				{ /* TODO: Address RTL languages in arrow usage */ }
-				{ formattedNumber( previousCount ) } → { formattedNumber( count ) }
+				{ formatNumber( previousCount ) } → { formatNumber( count ) }
 			</div>
 		);
 	}
@@ -81,7 +93,7 @@ function TooltipContent( { count, previousCount, icon, heading }: CountCompariso
 				{ icon && <span className="highlight-card-tooltip-icon">{ icon }</span> }
 				{ heading && <span className="highlight-card-tooltip-heading">{ heading }</span> }
 			</span>
-			<span>{ formattedNumber( count ) }</span>
+			<span>{ formatNumber( count ) }</span>
 		</div>
 	);
 }
