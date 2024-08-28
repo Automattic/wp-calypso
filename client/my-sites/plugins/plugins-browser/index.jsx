@@ -1,4 +1,6 @@
+import { Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -152,6 +154,32 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 		);
 	};
 
+	const renderBackLink = () => {
+		const StyledBackLink = styled.a`
+			display: flex;
+			alignitems: center;
+			font-size: 13px;
+			&,
+			&:link,
+			&:visited,
+			&:hover,
+			&:active {
+				color: var( --studio-gray-80 );
+			}
+			> svg {
+				margin-right: 5px;
+			}
+		`;
+		return (
+			<div className="plugins-browser__back">
+				<StyledBackLink href="/plugins">
+					<Gridicon icon="chevron-left" size={ 18 } />
+					{ __( 'Back' ) }
+				</StyledBackLink>
+			</div>
+		);
+	};
+
 	if ( ! isRequestingSitesData && noPermissionsError ) {
 		return <NoPermissionsError title={ __( 'Plugins' ) } />;
 	}
@@ -188,6 +216,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				search={ search }
 			/>
 			<div className="plugins-browser__content-wrapper">
+				{ ( category || search ) && renderBackLink() }
 				{ selectedSite && isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
