@@ -33,7 +33,7 @@ describe( 'BackupRealtimeMessage', () => {
 		useTranslate.mockImplementation( () => translateMock );
 	} );
 
-	test( "renders correct message for today's backup", () => {
+	test( 'renders correct message when the base backup is from the same date as the selected backup', () => {
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = selectedDate; // same day
 		const { container } = renderMessage( baseBackupDate, 3, selectedDate );
@@ -42,7 +42,7 @@ describe( 'BackupRealtimeMessage', () => {
 		);
 	} );
 
-	test( "renders correct message for yesterday's backup", () => {
+	test( 'renders correct message when the base backup is from the day before as the selected backup', () => {
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = selectedDate.clone().subtract( 1, 'day' ); // previous day
 		const { container } = renderMessage( baseBackupDate, 25, selectedDate );
@@ -51,7 +51,7 @@ describe( 'BackupRealtimeMessage', () => {
 		);
 	} );
 
-	test( 'renders correct message for a backup less than 7 days old', () => {
+	test( 'renders correct message when the base backup is from 2 or more days before as the selected backup', () => {
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = moment( '2024-08-23T12:00:00Z' );
 		const { container } = renderMessage( baseBackupDate, 5, selectedDate );
@@ -60,7 +60,7 @@ describe( 'BackupRealtimeMessage', () => {
 		);
 	} );
 
-	test( 'renders correct singular message', () => {
+	test( 'renders correct singular message when there is only 1 change', () => {
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = moment( '2024-08-26T12:00:00Z' );
 		const { container } = renderMessage( baseBackupDate, 1, selectedDate );
@@ -69,7 +69,7 @@ describe( 'BackupRealtimeMessage', () => {
 		);
 	} );
 
-	test( 'renders correct plural message', () => {
+	test( 'renders correct plural message when there are 2 or more changes', () => {
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = moment( '2024-08-26T12:00:00Z' );
 		const { container } = renderMessage( baseBackupDate, 2, selectedDate );
