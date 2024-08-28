@@ -79,7 +79,7 @@ project {
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
 		password("E2E_SECRETS_ENCRYPTION_KEY_JUN_27_24" , "credentialsJSON:6472fa88-cddb-4274-87c0-c935887e61eb", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_AUG_28_24" , "credentialsJSON:d76defb1-872a-429d-8e7e-786e107d0b3e", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_AUG_28_24" , "credentialsJSON:d1948ba8-3da0-4e9a-8478-1823619afca7", display = ParameterDisplay.HIDDEN)
 		// Define the currently used encryption key here. This allows easy swapping between previously used keys.
 		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_AUG_28_24%", display = ParameterDisplay.HIDDEN)
 
