@@ -126,6 +126,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		object.payment.creditCard = {
 			id: Number( purchase.payment_card_id ),
 			type: purchase.payment_card_type,
+			displayBrand: purchase.payment_display_brand,
 			processor: purchase.payment_card_processor,
 			number: purchase.payment_details,
 			expiryDate: purchase.payment_expiry,

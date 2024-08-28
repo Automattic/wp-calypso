@@ -224,6 +224,7 @@ export interface RawPurchase {
 		| 'emergent-paywall'
 		| 'brazil-tef'
 		| string;
+	payment_display_brand: string | null;
 	payment_country_name: string;
 	payment_country_code: string | null;
 	stored_details_id: string | null;
@@ -337,12 +338,14 @@ export type PurchasePaymentWithCreditCard = PurchasePayment & {
 	countryName: string | undefined;
 	storedDetailsId: string | number;
 	type: string;
+	displayBrand: string | null;
 	creditCard: PurchasePaymentCreditCard;
 };
 
 export interface PurchasePaymentCreditCard {
 	id: number;
 	type: string;
+	displayBrand: string | null;
 	processor: string;
 	number: string;
 	expiryDate: string;
