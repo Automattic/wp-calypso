@@ -231,7 +231,10 @@ export default function ReferralList( {
 					items,
 					getItemId: ( item: Referral ) => `${ item.client.id }`,
 					onSelectionChange: ( data ) => {
-						openSitePreviewPane( data[ 0 ] );
+						const referral = referrals.find( ( r ) => r.client.id === +data[ 0 ] );
+						if ( referral ) {
+							openSitePreviewPane( referral );
+						}
 					},
 					pagination: paginationInfo,
 					enableSearch: false,
