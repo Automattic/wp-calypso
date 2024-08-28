@@ -1,14 +1,65 @@
-import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { useDispatch } from 'calypso/state';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { MagicLoginEmailWrapper } from './magic-login-email/magic-login-email-wrapper';
 
 interface Props {
 	emailAddress: string;
+	redirectTo: string;
 }
 
-const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress } ) => {
+const RESEND_EMAIL_COUNTDOWN_TIME = 5;
+let resendEmailCountdownId: ReturnType< typeof setInterval > | null = null;
+
+const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const [ resendEmailCountdown, setResendEmailCountdown ] = useState( RESEND_EMAIL_COUNTDOWN_TIME );
+
+	const resetResendEmailCountdown = () => {
+		if ( ! resendEmailCountdownId ) {
+			return;
+		}
+		clearInterval( resendEmailCountdownId );
+		resendEmailCountdownId = null;
+		setResendEmailCountdown( RESEND_EMAIL_COUNTDOWN_TIME );
+	};
+
+	const startResendEmailCountdown = () => {
+		resetResendEmailCountdown();
+
+		resendEmailCountdownId = setInterval( () => {
+			setResendEmailCountdown( ( prevState ) => {
+				if ( prevState === 0 && resendEmailCountdownId ) {
+					clearInterval( resendEmailCountdownId );
+					return prevState;
+				}
+				return prevState - 1;
+			} );
+		}, 1000 );
+	};
+
+	const sendEmail = () => {
+		dispatch(
+			sendEmailLogin( emailAddress, {
+				redirectTo,
+				loginFormFlow: true,
+				showGlobalNotices: true,
+				flow: 'jetpack',
+			} )
+		);
+
+		startResendEmailCountdown();
+	};
+
+	useEffect( () => {
+		startResendEmailCountdown();
+
+		return () => {
+			resetResendEmailCountdown();
+		};
+	}, [] );
 
 	return (
 		<div className="magic-login__main-content-woo-core-profiler">
@@ -62,15 +113,23 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress } ) => {
 			<div className="magic-login__emails-list">
 				<MagicLoginEmailWrapper emailAddress={ emailAddress } />
 			</div>
+
 			<p className="email-resend">
-				{ createInterpolateElement(
-					translate(
-						"Didn't receive the email? You might want to double check your spam folder, or <button>resend</button> the email."
-					),
-					{
-						button: <button onClick={ () => {} } />,
-					}
+				{ translate(
+					"Didn't receive the email? You might want to double check your spam folder, or "
 				) }
+				<button
+					onClick={ () => {
+						sendEmail();
+					} }
+					disabled={ resendEmailCountdown > 0 }
+				>
+					{ resendEmailCountdown > 0
+						? translate( 'resend the email (%(countdown)d)', {
+								args: { countdown: resendEmailCountdown },
+						  } )
+						: translate( 'resend the email' ) }
+				</button>
 			</p>
 		</div>
 	);

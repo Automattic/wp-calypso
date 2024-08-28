@@ -1527,6 +1527,10 @@ $breakpoint-mobile: 660px;
 				button {
 					color: var(--wp-admin-theme-color);
 					cursor: pointer;
+					&:disabled {
+						opacity: 0.5; // Reduce intensity
+						cursor: not-allowed; // Optional: change the cursor to indicate it's disabled
+					}
 				}
 			}
 

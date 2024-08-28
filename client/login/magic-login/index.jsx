@@ -1182,7 +1182,10 @@ class MagicLogin extends Component {
 				<Main className="magic-login magic-login__request-link is-white-login">
 					{ this.renderLocaleSuggestions() }
 					<GlobalNotices id="notices" />
-					<MainContentWooCoreProfiler emailAddress={ usernameOrEmail } />
+					<MainContentWooCoreProfiler
+						emailAddress={ usernameOrEmail }
+						redirectTo={ this.props.redirectToSanitized }
+					/>
 				</Main>
 			);
 		}
