@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
-import { reloadProxy } from 'wpcom-proxy-request';
+import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -39,6 +39,7 @@ const UserStepComponent: Step = function UserStep( {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
 			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
 			reloadProxy();
+			requestAllBlogsAccess();
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		}
 		if ( ! isLoggedIn ) {
