@@ -1,3 +1,4 @@
+import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { MagicLoginEmailWrapper } from './magic-login-email/magic-login-email-wrapper';
@@ -62,8 +63,13 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress } ) => {
 				<MagicLoginEmailWrapper emailAddress={ emailAddress } />
 			</div>
 			<p className="email-resend">
-				{ translate(
-					"Didn't receive the email? You might want to double check your spam folder, or resend the email."
+				{ createInterpolateElement(
+					translate(
+						"Didn't receive the email? You might want to double check your spam folder, or <button>resend</button> the email."
+					),
+					{
+						button: <button onClick={ () => {} } />,
+					}
 				) }
 			</p>
 		</div>
