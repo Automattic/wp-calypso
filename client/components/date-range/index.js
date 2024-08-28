@@ -8,6 +8,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateRangePicker from './date-range-picker';
 import DateRangeHeader from './header';
 import DateRangeInputs from './inputs';
+import Shortcuts from './shortcuts';
 import DateRangeTrigger from './trigger';
 
 import './style.scss';
