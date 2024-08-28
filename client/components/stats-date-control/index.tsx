@@ -126,8 +126,6 @@ const StatsDateControl = ( {
 					selectedStartDate={ moment( dateRange.chartStart ) }
 					selectedEndDate={ moment( dateRange.chartEnd ) }
 					lastSelectableDate={ moment().toDate() }
-					// TODO: We should use probably the create date of the site here?
-					firstSelectableDate={ moment( '2005-01-01' ).toDate() }
 					onDateCommit={ ( startDate: Moment, endDate: Moment ) =>
 						startDate &&
 						endDate &&
