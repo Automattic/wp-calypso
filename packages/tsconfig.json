@@ -27,6 +27,7 @@
 		{ "path": "./domains-table" },
 		{ "path": "./explat-client" },
 		{ "path": "./explat-client-react-helpers" },
+		{ "path": "./fingerprintjs" },
 		{ "path": "./format-currency" },
 		{ "path": "./generate-password" },
 		{ "path": "./global-styles" },

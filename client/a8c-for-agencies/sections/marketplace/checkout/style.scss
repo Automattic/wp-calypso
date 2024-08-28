@@ -250,6 +250,12 @@
 		margin-block: 4px 0;
 		color: var(--color-neutral-70);
 	}
+
+	.product-info__site-url {
+		@include a4a-font-body-md;
+		margin-block: 4px 0;
+		color: var(--color-neutral-40);
+	}
 }
 
 .checkout__client-referral-form {

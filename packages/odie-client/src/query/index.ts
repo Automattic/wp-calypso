@@ -277,6 +277,8 @@ export const useOdieGetChat = (
 		queryFn: () => buildGetChatMessage( botNameSlug, chatId, page, perPage, includeFeedback ),
 		refetchOnWindowFocus: false,
 		enabled: !! chatId && ! chat.chat_id,
+		// 4 hours (we update the messages when a new message is sent, so cache is not stale while we are chatting)
+		staleTime: 4 * 60 * 60 * 1000,
 	} );
 };
 
@@ -322,7 +324,6 @@ export const useOdieSendMessageFeedback = (): UseMutationResult<
 		},
 		onSuccess: ( _, { rating_value, message } ) => {
 			const queryKey = [ 'chat', botNameSlug, chat.chat_id, 1, 30, true ];
-
 			queryClient.setQueryData( queryKey, ( currentChatCache: Chat ) => {
 				if ( ! currentChatCache ) {
 					return;
@@ -331,7 +332,7 @@ export const useOdieSendMessageFeedback = (): UseMutationResult<
 				return {
 					...currentChatCache,
 					messages: currentChatCache.messages.map( ( m ) =>
-						m.internal_message_id === message.internal_message_id ? { ...m, rating_value } : m
+						m.message_id === message.message_id ? { ...m, rating_value } : m
 					),
 				};
 			} );

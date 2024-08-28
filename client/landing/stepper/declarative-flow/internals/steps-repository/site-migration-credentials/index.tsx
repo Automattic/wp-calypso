@@ -1,8 +1,11 @@
 import { FormLabel } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { NextButton, StepContainer } from '@automattic/onboarding';
+import { Icon } from '@wordpress/components';
+import { seen, unseen } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import getValidationMessage from 'calypso/blocks/import/capture/url-validation-message-helper';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
@@ -37,6 +40,12 @@ const mapApiError = ( error: any ) => {
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
+
+	const [ passwordHidden, setPasswordHidden ] = useState( true );
+
+	const toggleVisibilityClasses = clsx( {
+		'site-migration-credentials__form-password__toggle': true,
+	} );
 
 	const validateSiteAddress = ( siteAddress: string ) => {
 		const isSiteAddressValid = CAPTURE_URL_RGX.test( siteAddress );
@@ -262,7 +271,9 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 									/>
 								</div>
 								<div className="site-migration-credentials__form-field">
-									<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
+									<FormLabel htmlFor="site-migration-credentials__password">
+										{ translate( 'Password' ) }
+									</FormLabel>
 									<Controller
 										control={ control }
 										name="password"
@@ -270,13 +281,23 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 											required: translate( 'Please enter your WordPress admin password.' ),
 										} }
 										render={ ( { field } ) => (
-											<FormTextInput
-												id="password"
-												type="password"
-												isError={ !! errors.password }
-												placeholder={ translate( 'Password' ) }
-												{ ...field }
-											/>
+											<div className="site-migration-credentials__form-password">
+												<FormTextInput
+													autoComplete="off"
+													id="site-migration-credentials__password"
+													type={ passwordHidden ? 'password' : 'text' }
+													isError={ !! errors.password }
+													placeholder={ translate( 'Password' ) }
+													{ ...field }
+												/>
+												<button
+													className={ toggleVisibilityClasses }
+													onClick={ () => setPasswordHidden( ! passwordHidden ) }
+													type="button"
+												>
+													{ passwordHidden ? <Icon icon={ unseen } /> : <Icon icon={ seen } /> }
+												</button>
+											</div>
 										) }
 									/>
 								</div>

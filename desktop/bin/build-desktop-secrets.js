@@ -14,7 +14,6 @@ const REPO_DIR = path.resolve( PROJECT_DIR, '../' );
 
 const secrets = [
 	path.resolve( PROJECT_DIR, 'resource', 'calypso', 'secrets.json' ),
-	path.resolve( PROJECT_DIR, 'resource', 'certificates', 'mac.p12' ),
 	path.resolve( PROJECT_DIR, 'resource', 'certificates', 'win.p12' ),
 ];
 

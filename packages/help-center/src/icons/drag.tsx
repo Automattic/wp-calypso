@@ -2,7 +2,7 @@ const DragIcon = () => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width="8"
+			width="18"
 			height="12"
 			viewBox="0 0 10 24"
 			className="help-center__drag-icon"

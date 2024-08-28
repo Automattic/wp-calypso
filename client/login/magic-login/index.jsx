@@ -97,7 +97,7 @@ class MagicLogin extends Component {
 		localeSuggestions: PropTypes.array,
 		isValidatingCode: PropTypes.bool,
 		isCodeValidated: PropTypes.bool,
-		codeValidationError: PropTypes.number,
+		codeValidationError: PropTypes.object,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
 		redirectToSanitized: PropTypes.string,
@@ -749,11 +749,15 @@ class MagicLogin extends Component {
 		const isProcessingCode = isValidatingCode || isCodeValidated;
 		let errorText = translate( 'Something went wrong. Please try again.' );
 
-		if ( codeValidationError === 403 ) {
+		if ( codeValidationError?.type === 'sms_code_throttled' ) {
+			errorText = translate(
+				'Your two-factor code via SMS can only be requested once per minute. Please wait, then request a new code via email to proceed.'
+			);
+		} else if ( codeValidationError?.code === 403 ) {
 			errorText = translate(
 				'Invalid code. If the error persists, please request a new code and try again.'
 			);
-		} else if ( codeValidationError === 429 ) {
+		} else if ( codeValidationError?.code === 429 ) {
 			errorText = translate( 'Please wait a minute before trying again.' );
 		}
 

@@ -145,9 +145,6 @@ const SignupFormSocialFirst = ( {
 				  }
 				: {};
 
-			const redirectToParam =
-				queryArgs?.redirect_to ?? window.location.origin + `/setup/${ flowName }`;
-
 			return (
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
@@ -167,7 +164,7 @@ const SignupFormSocialFirst = ( {
 										{
 											email_address: email,
 											is_signup_existing_account: true,
-											redirect_to: redirectToParam,
+											redirect_to: queryArgs?.redirect_to,
 										},
 										logInUrl
 									)

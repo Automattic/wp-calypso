@@ -32,7 +32,7 @@ export default function GetStarted() {
 				<LayoutHeader>
 					<Title>{ title }</Title>
 					<Actions>
-						<Button variant="primary" onClick={ onInviteClick }>
+						<Button variant="primary" onClick={ onInviteClick } href={ A4A_TEAM_INVITE_LINK }>
 							{ translate( 'Invite a team member' ) }
 						</Button>
 					</Actions>
@@ -85,7 +85,7 @@ export default function GetStarted() {
 						target="_blank"
 						href="#" // FIXME: Add link to the KB article
 					>
-						{ translate( 'Team members Knowledge Base article?' ) }
+						{ translate( 'Team members Knowledge Base article' ) }
 						<Icon icon={ external } size={ 18 } />
 					</Button>
 					<br />

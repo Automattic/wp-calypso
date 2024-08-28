@@ -115,7 +115,7 @@ describe( 'reducer', () => {
 		test( 'should be false on error', () => {
 			const state = requestAuthSuccess( undefined, {
 				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
-				error: 'foo bar',
+				error: { code: 403, type: 'foo_bar' },
 			} );
 			expect( state ).toBe( false );
 		} );
@@ -142,11 +142,12 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should be error on error', () => {
+			const error = { code: 403, type: 'foo_bar' };
 			const state = requestAuthError( undefined, {
 				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
-				error: 'foo bar',
+				error,
 			} );
-			expect( state ).toEqual( 'foo bar' );
+			expect( state ).toEqual( error );
 		} );
 
 		test( 'should be null on success', () => {
