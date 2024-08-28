@@ -222,8 +222,6 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 						? MIGRATION_SOURCE_URL
 						: MIGRATION_HOW_TO_MIGRATE;
 
-					// console.log( 'GoToCheckout', props );
-
 					return navigateToCheckout( { siteId, siteSlug, plan, from, props, destinationStep } );
 				}
 			},
