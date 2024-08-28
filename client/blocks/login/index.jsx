@@ -559,10 +559,12 @@ class Login extends Component {
 				if ( isGravPoweredLoginPage ) {
 					const isFromGravatar3rdPartyApp =
 						isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+					const isGravatarFlowWithEmail =
+						!! isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address;
 
 					postHeader = (
 						<p className="login__header-subtitle">
-							{ isFromGravatar3rdPartyApp
+							{ isFromGravatar3rdPartyApp || isGravatarFlowWithEmail
 								? translate( 'Please log in with your email and password.' )
 								: translate(
 										'If you prefer logging in with a password, or a social media account, choose below:'
