@@ -25,7 +25,6 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 			) }
 			{ ! isDesktop && (
 				<div className="core-web-vitals-display">
-					Hola tio
 					<CoreWebVitalsAccordion
 						activeTab={ activeTab }
 						setActiveTab={ setActiveTab }
