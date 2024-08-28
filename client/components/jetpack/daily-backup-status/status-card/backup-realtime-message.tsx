@@ -50,21 +50,6 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 					'%(baseBackupDate)s is the date and time of the backup, and %(eventsCount)d is the number of changes made since the backup.',
 			}
 		);
-	} else if ( daysAgo < 7 ) {
-		message = translate(
-			'We are using a %(daysAgo)d-day old full backup (%(baseBackupDate)s) with %(eventsCount)d change you have made since then until now.',
-			'We are using a %(daysAgo)d-day old full backup (%(baseBackupDate)s) with %(eventsCount)d changes you have made since then until now.',
-			{
-				count: eventsCount,
-				args: {
-					daysAgo: daysAgo,
-					baseBackupDate: baseBackupDateMoment.format( 'YYYY-MM-DD hh:mm A' ),
-					eventsCount: eventsCount,
-				},
-				comment:
-					'%(daysAgo)d is the number of days since the backup, %(baseBackupDate)s is the date and time of the backup, and %(eventsCount)d is the number of changes made since the backup.',
-			}
-		);
 	} else {
 		message = translate(
 			'We are using a %(daysAgo)d-day old full backup (%(baseBackupDate)s) with %(eventsCount)d change you have made since then until now.',
