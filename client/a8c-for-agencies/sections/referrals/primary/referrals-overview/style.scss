@@ -164,8 +164,6 @@ $data-view-border-color: #f1f1f1;
 		}
 
 		li:not(.section-nav-tab) {
-			margin-inline: -24px;
-			padding: 16px 24px;
 			border-bottom: 1px solid $data-view-border-color;
 		}
 
@@ -181,8 +179,7 @@ $data-view-border-color: #f1f1f1;
 			margin-block-end: 0;
 		}
 
-		.a4a-layout__top-wrapper > *,
-		.a4a-layout__body > * {
+		.a4a-layout__top-wrapper > * {
 			padding-inline: 24px;
 		}
 
