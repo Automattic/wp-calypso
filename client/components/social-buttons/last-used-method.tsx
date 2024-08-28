@@ -9,17 +9,15 @@ import {
 
 type LastUsedSocialButtonProps = {
 	lastUsedAuthenticationMethod: string;
-	qrLoginLink?: string;
-	magicLoginLink?: string;
+	loginUrl?: string;
 	handleLogin?: ( result: Record< string, string > ) => void;
-	onClick?: any;
+	onClick?: () => void;
 	socialServiceResponse?: any;
 };
 
 const LastUsedSocialButton = ( {
 	lastUsedAuthenticationMethod,
-	qrLoginLink,
-	magicLoginLink,
+	loginUrl,
 	handleLogin,
 	onClick,
 	socialServiceResponse,
@@ -27,56 +25,44 @@ const LastUsedSocialButton = ( {
 	// Render the single social button based on the last used social login method
 	switch ( lastUsedAuthenticationMethod ) {
 		case 'google':
-			if ( ! handleLogin ) {
-				return null;
-			}
-
-			return <GoogleSocialButton responseHandler={ handleLogin } onClick={ onClick } isLogin />;
+			return (
+				handleLogin && (
+					<GoogleSocialButton responseHandler={ handleLogin } onClick={ onClick } isLogin />
+				)
+			);
 
 		case 'apple':
-			if ( ! handleLogin || ! onClick ) {
-				return null;
-			}
-
 			return (
-				<AppleLoginButton
-					responseHandler={ handleLogin }
-					onClick={ onClick }
-					socialServiceResponse={ socialServiceResponse }
-					isLogin
-				/>
+				handleLogin && (
+					<AppleLoginButton
+						responseHandler={ handleLogin }
+						onClick={ onClick }
+						socialServiceResponse={ socialServiceResponse }
+						isLogin
+					/>
+				)
 			);
 
 		case 'github':
-			if ( ! handleLogin ) {
-				return null;
-			}
-
 			return (
-				<GithubSocialButton
-					socialServiceResponse={ socialServiceResponse }
-					responseHandler={ handleLogin }
-					onClick={ onClick }
-					isLogin
-				/>
+				handleLogin && (
+					<GithubSocialButton
+						socialServiceResponse={ socialServiceResponse }
+						responseHandler={ handleLogin }
+						onClick={ onClick }
+						isLogin
+					/>
+				)
 			);
 
-		case 'magic':
-			if ( ! magicLoginLink ) {
-				return null;
-			}
+		case 'magic-login':
+			return loginUrl && <MagicLoginButton loginUrl={ loginUrl } />;
 
-			return <MagicLoginButton loginUrl={ magicLoginLink } />;
-
-		case 'qrCode':
-			if ( ! qrLoginLink ) {
-				return null;
-			}
-
-			return <QrCodeLoginButton loginUrl={ qrLoginLink } />;
+		case 'qr':
+			return loginUrl && <QrCodeLoginButton loginUrl={ loginUrl } />;
 
 		case 'usernameOrEmail':
-			return <UsernameOrEmailButton onClick={ onClick } />;
+			return onClick && <UsernameOrEmailButton onClick={ onClick } />;
 
 		default:
 			return null;
