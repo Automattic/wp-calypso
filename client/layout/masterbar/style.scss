@@ -1492,7 +1492,9 @@ a.masterbar__quick-language-switcher {
 	}
 }
 
-.masterbar__reader-popover {
+.popover.masterbar__reader-popover {
+	z-index: 176;
+
 	.popover__arrow::before {
 		--color-border-inverted: var(--color-neutral-100);
 	}
