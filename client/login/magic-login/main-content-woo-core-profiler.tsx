@@ -9,7 +9,7 @@ interface Props {
 	redirectTo: string;
 }
 
-const RESEND_EMAIL_COUNTDOWN_TIME = 5;
+const RESEND_EMAIL_COUNTDOWN_TIME = 90;
 let resendEmailCountdownId: ReturnType< typeof setInterval > | null = null;
 
 const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } ) => {
