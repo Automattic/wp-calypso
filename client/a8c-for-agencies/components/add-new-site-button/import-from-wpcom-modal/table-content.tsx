@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { useMemo, useState, useEffect } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { SiteItem } from './wpcom-sites-table';
@@ -12,8 +13,12 @@ interface Props {
 export default function WPCOMSitesTableContent( { items, fields }: Props ) {
 	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
 
+	const { data, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( items, dataViewsState, fields );
+	}, [ items, dataViewsState, fields ] );
+
 	useEffect( () => {
-		if ( items.length ) {
+		if ( data.length ) {
 			const handleRowClick = ( event: Event ) => {
 				const target = event.target as HTMLElement;
 
@@ -51,18 +56,15 @@ export default function WPCOMSitesTableContent( { items, fields }: Props ) {
 				}
 			};
 		}
-	}, [ dataViewsState, items ] );
+	}, [ dataViewsState, data ] );
 
 	return (
 		<ItemsDataViews
 			data={ {
-				items,
+				items: data,
 				fields,
 				getItemId: ( item ) => `${ item.id }`,
-				pagination: {
-					totalItems: 1,
-					totalPages: 1,
-				},
+				pagination: paginationInfo,
 				enableSearch: false,
 				actions: [],
 				dataViewsState: dataViewsState,
