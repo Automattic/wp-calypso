@@ -63,7 +63,7 @@ export type AsyncStepperStep = {
 	/**
 	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
 	 */
-	slug: Exclude< string, 'user' >;
+	slug: string;
 	/**
 	 * Does the step require a logged-in user?
 	 */
@@ -76,14 +76,7 @@ export type AsyncStepperStep = {
 	asyncComponent: () => Promise< { default: React.FC< StepProps > } >;
 };
 
-export interface AsyncUserStep extends AsyncStepperStep {
-	/**
-	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
-	 */
-	slug: 'user';
-}
-
-export type StepperStep = DeprecatedStepperStep | AsyncStepperStep | AsyncUserStep;
+export type StepperStep = DeprecatedStepperStep | AsyncStepperStep;
 
 export type Navigate< FlowSteps extends StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
@@ -123,10 +116,6 @@ export type UseTracksEventPropsHook = () => {
 };
 
 export type Flow = {
-	/**
-	 * If this flag is set to true, the flow will login the user without leaving Stepper.
-	 */
-	__experimentalUseBuiltinAuth?: boolean;
 	name: string;
 	/**
 	 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.
@@ -177,11 +166,6 @@ export type StepProps = {
 	variantSlug?: string;
 	data?: StepperInternal.State[ 'stepData' ];
 	children?: React.ReactNode;
-	/**
-	 * These two prop are used internally by the Stepper to redirect the user from the user step.
-	 */
-	redirectTo?: string;
-	signupUrl?: string;
 };
 
 export type Step = React.FC< StepProps >;

@@ -201,7 +201,7 @@ class PasswordlessSignupForm extends Component {
 			data
 		);
 		this.submitTracksEvent( true, { action_message: 'Successful login', username: data.username } );
-		goToNextStep( data );
+		goToNextStep();
 	};
 
 	handleAcceptDomainSuggestion = ( newEmail, newDomain, oldDomain ) => {

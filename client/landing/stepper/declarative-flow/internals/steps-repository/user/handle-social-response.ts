@@ -11,9 +11,6 @@ export const useHandleSocialResponse = ( flowName: string ) => {
 		useState< SocialAuthParams >();
 
 	const { mutate: createAccount, data: accountCreateResponse, error } = useCreateAccountMutation();
-	const [ storedRedirectToFromBeforeLoggingIn, setRedirectTo ] = useState< string >(
-		window.location.href
-	);
 
 	const notice: false | JSX.Element = useErrorNotice( {
 		error,
@@ -35,10 +32,11 @@ export const useHandleSocialResponse = ( flowName: string ) => {
 			id_token: string | null = null,
 			userData: PreSignUpUserData | null
 		) => {
+			const query = { redirect_to: '' };
 			const storedRedirectTo = window.sessionStorage.getItem( 'signup_redirect_to' );
 
 			if ( storedRedirectTo ) {
-				setRedirectTo( storedRedirectTo );
+				query.redirect_to = storedRedirectTo;
 				window.sessionStorage.removeItem( 'signup_redirect_to' );
 			}
 
@@ -59,11 +57,5 @@ export const useHandleSocialResponse = ( flowName: string ) => {
 		[ createAccount, flowName ]
 	);
 
-	return {
-		handleSocialResponse,
-		notice,
-		storedRedirectToFromBeforeLoggingIn,
-		accountCreateResponse,
-		recentSocialAuthAttemptParams,
-	};
+	return { handleSocialResponse, notice, accountCreateResponse, recentSocialAuthAttemptParams };
 };
