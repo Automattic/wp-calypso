@@ -22,6 +22,7 @@ import RegisterDomainStep from 'calypso/components/domains/register-domain-step'
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
@@ -81,7 +82,6 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DomainsMiniCart from './domains-mini-cart';
 import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
-
 import './style.scss';
 
 export class RenderDomainsStep extends Component {
@@ -1331,6 +1331,7 @@ export class RenderDomainsStep extends Component {
 			isReskinned,
 			userSiteCount,
 			previousStepName,
+			CustomStepWrapper,
 		} = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
@@ -1401,7 +1402,23 @@ export class RenderDomainsStep extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
-		const Wrapper = this.props.CustomStepWrapper || StepWrapper;
+		const Wrapper = CustomStepWrapper || StepWrapper;
+
+		// CustomStepWrapper is basically StepContainer from Stepper.
+		// It needs this extraProps to render the header.
+		const extraProps = CustomStepWrapper
+			? {
+					formattedHeader: (
+						<FormattedHeader
+							id="domains-header"
+							align="center"
+							subHeaderAlign="center"
+							headerText={ headerText }
+							subHeaderText={ fallbackSubHeaderText }
+						/>
+					),
+			  }
+			: {};
 
 		return (
 			<Wrapper
@@ -1428,6 +1445,7 @@ export class RenderDomainsStep extends Component {
 				goToNextStep={ this.handleSkip }
 				align="center"
 				isWideLayout={ isReskinned }
+				{ ...extraProps }
 			/>
 		);
 	}

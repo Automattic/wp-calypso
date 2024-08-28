@@ -2,8 +2,6 @@ import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/comp
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
-// eslint-disable-next-line no-restricted-imports
-import FormattedHeader from 'calypso/components/formatted-header';
 import ActionButtons from '../action-buttons';
 import SenseiLogo from '../sensei-logo';
 import StepNavigationLink from '../step-navigation-link';
@@ -26,8 +24,6 @@ interface Props {
 	skipLabelText?: TranslateResult;
 	nextLabelText?: TranslateResult;
 	formattedHeader?: ReactElement;
-	headerText?: ReactElement;
-	subHeaderText?: ReactElement;
 	hideFormattedHeader?: boolean;
 	headerImageUrl?: string;
 	className?: string;
@@ -68,8 +64,6 @@ const StepContainer: React.FC< Props > = ( {
 	hideNext = true,
 	nextLabelText,
 	formattedHeader,
-	headerText,
-	subHeaderText,
 	headerImageUrl,
 	headerButton,
 	hideFormattedHeader,
@@ -180,21 +174,6 @@ const StepContainer: React.FC< Props > = ( {
 		'is-extra-wide-layout': isExtraWideLayout,
 	} );
 
-	let headers = null;
-	if ( formattedHeader ) {
-		headers = formattedHeader;
-	} else if ( headerText ) {
-		headers = (
-			<FormattedHeader
-				id="domains-header"
-				align="center"
-				subHeaderAlign="center"
-				headerText={ headerText }
-				subHeaderText={ subHeaderText }
-			/>
-		);
-	}
-
 	return (
 		<div className={ classes }>
 			<ActionButtons
@@ -214,7 +193,7 @@ const StepContainer: React.FC< Props > = ( {
 			</ActionButtons>
 			{ ! hideFormattedHeader && (
 				<div className="step-container__header">
-					{ headers }
+					{ formattedHeader }
 					{ headerImageUrl && (
 						<div className="step-container__header-image">
 							<img src={ headerImageUrl } alt="" />
