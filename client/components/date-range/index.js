@@ -478,6 +478,7 @@ export class DateRange extends Component {
 						numberOfMonths={ this.getNumberOfMonths() }
 					/>
 				</div>
+				{ showShortcuts && <Shortcuts onClick={ this.handleShortcutClick } /> }
 			</Popover>
 		);
 	}
@@ -515,6 +516,13 @@ export class DateRange extends Component {
 			</div>
 		);
 	}
+
+	handleShortcutClick = ( { newFromDate, newToDate } ) => {
+		this.setState( {
+			startDate: newFromDate,
+			endDate: newToDate,
+		} );
+	};
 }
 
 export default localize( withLocalizedMoment( DateRange ) );
