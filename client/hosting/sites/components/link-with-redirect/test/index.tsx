@@ -35,7 +35,7 @@ describe( 'LinkWithRedirect', () => {
 
 		userEvent.click( getByText( 'Click me' ) );
 
-		expect( await findByText( 'Redirecting...' ) ).toBeVisible();
+		expect( await findByText( 'Redirecting' ) ).toBeVisible();
 	} );
 
 	it( 'redirects user to the link when is available after the redirecting state', async () => {
@@ -45,7 +45,7 @@ describe( 'LinkWithRedirect', () => {
 
 		userEvent.click( getByText( 'Click me' ) );
 
-		expect( await findByText( 'Redirecting...' ) ).toBeVisible();
+		expect( await findByText( 'Redirecting' ) ).toBeVisible();
 
 		rerender( <LinkWithRedirect href="https://example.com">Click me</LinkWithRedirect> );
 

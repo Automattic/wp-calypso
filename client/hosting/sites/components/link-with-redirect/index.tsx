@@ -30,7 +30,7 @@ export const LinkWithRedirect = ( props: Props ) => {
 
 	return (
 		<a { ...props } href={ href ?? '#' } onClick={ onClickHandler }>
-			{ delayedEvent ? __( 'Redirecting...' ) : children }
+			{ delayedEvent ? __( 'Redirecting' ) : children }
 		</a>
 	);
 };
