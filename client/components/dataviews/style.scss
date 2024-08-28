@@ -227,13 +227,3 @@
 .dataviews-filters-toggle__count {
 	padding: revert !important;
 }
-
-// TODO: remove when updating to dataviews@4.3.0
-//
-// This is a hotfix to set the media placeholder
-// to the full size of the media wrapper in the list view.
-// It has been fixed at https://github.com/WordPress/gutenberg/pull/64837
-.dataviews-view-list .dataviews-view-list__media-placeholder {
-	width: 100% !important;
-	height: 100% !important;
-}
