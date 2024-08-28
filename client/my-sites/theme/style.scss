@@ -18,6 +18,10 @@ $button-border: 4px;
 	.layout.is-logged-in .layout__content {
 		overflow: clip;
 
+		@media screen and (min-width: 782px) {
+			padding-left: calc(var(--sidebar-width-max) + 32px + 1px);
+		}
+
 		.theme__sheet-screenshot,
 		.theme__sheet-web-preview {
 			@include breakpoint-deprecated( ">960px" ) {
