@@ -237,7 +237,7 @@ export class UploadingPane extends PureComponent {
 	};
 
 	render() {
-		const { fromSite, nextStepUrl, skipNextStep } = this.props;
+		const { importerStatus, fromSite, nextStepUrl, skipNextStep } = this.props;
 		const isReadyForImport = this.isReadyForImport();
 		const importerStatusClasses = clsx(
 			'importer__upload-content',
@@ -248,6 +248,7 @@ export class UploadingPane extends PureComponent {
 		const urlDescription = isValidUrl
 			? this.props?.optionalUrl?.description
 			: this.props?.optionalUrl?.invalidDescription;
+		const skipButtonDisabled = importerStatus.importerState === appStates.UPLOAD_PROCESSING;
 
 		return (
 			<div>
@@ -297,7 +298,11 @@ export class UploadingPane extends PureComponent {
 					</div>
 				) }
 				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton href={ nextStepUrl } onClick={ skipNextStep }>
+					<ImporterActionButton
+						href={ nextStepUrl }
+						onClick={ skipNextStep }
+						disabled={ skipButtonDisabled }
+					>
 						Skip for now
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>

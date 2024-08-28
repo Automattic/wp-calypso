@@ -52,7 +52,7 @@
 		"google-my-business": true,
 		"help": true,
 		"help/gpt-response": true,
-		"hosting-overview-refinements": false,
+		"hosting-overview-refinements": true,
 		"i18n/empathy-mode": true,
 		"importer/site-backups": true,
 		"importer/unified": true,

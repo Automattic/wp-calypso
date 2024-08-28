@@ -67,27 +67,6 @@ import LoginForm from './login-form';
 
 import './style.scss';
 
-/*
- * Parses the `anchor_podcast` parameter from a given URL.
- * Returns `true` if provided URL is an anchor FM signup URL.
- */
-function getIsAnchorFmSignup( urlString ) {
-	if ( ! urlString ) {
-		return false;
-	}
-
-	// Assemble search params if there is actually a query in the string.
-	const queryParamIndex = urlString.indexOf( '?' );
-	if ( queryParamIndex === -1 ) {
-		return false;
-	}
-	const searchParams = new URLSearchParams(
-		decodeURIComponent( urlString.slice( queryParamIndex ) )
-	);
-	const anchorFmPodcastId = searchParams.get( 'anchor_podcast' );
-	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
-}
-
 class Login extends Component {
 	static propTypes = {
 		disableAutoFocus: PropTypes.bool,
@@ -1094,9 +1073,7 @@ export default connect(
 		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 		wccomFrom: getWccomFrom( state ),
 		isWooPasswordless: getIsWooPasswordless( state ),
-		isAnchorFmSignup: getIsAnchorFmSignup(
-			get( getCurrentQueryArguments( state ), 'redirect_to' )
-		),
+		isAnchorFmSignup: false,
 		isFromMigrationPlugin: startsWith(
 			get( getCurrentQueryArguments( state ), 'from' ),
 			'wpcom-migration'

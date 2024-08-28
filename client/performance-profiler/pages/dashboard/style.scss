@@ -1,11 +1,10 @@
 .is-group-performance-profiler .layout__content {
 	padding: 0;
 	background: #fff;
-}
 
-.l-block-wrapper {
-	margin: 0 auto;
-	max-width: 1056px;
+	.main {
+		padding: 0;
+	}
 }
 
 .performance-profiler-content {
@@ -18,6 +17,11 @@
 }
 
 .peformance-profiler-dashboard-container {
+	.l-block-wrapper {
+		margin: 0 auto;
+		max-width: 1056px;
+	}
+
 	.loading-container {
 		display: none;
 

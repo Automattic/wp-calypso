@@ -70,6 +70,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 
 			<PerformanceProfilerHeader
 				url={ url }
+				timestamp={ performanceReport?.timestamp }
 				activeTab={ activeTab }
 				onTabChange={ getOnTabChange }
 				showNavigationTabs
@@ -95,7 +96,10 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 
 			{ ( ( activeTab === TabType.mobile && mobileLoaded ) ||
 				( activeTab === TabType.desktop && desktopLoaded ) ) && (
-				<PerformanceProfilerDashboardContent performanceReport={ performanceReport } />
+				<PerformanceProfilerDashboardContent
+					performanceReport={ performanceReport }
+					url={ finalUrl ?? url }
+				/>
 			) }
 		</div>
 	);

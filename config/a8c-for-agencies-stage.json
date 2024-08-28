@@ -38,7 +38,7 @@
 		"a4a-partner-directory": false,
 		"a4a-hosting-page-redesign": true,
 		"a4a-dev-sites": false,
-		"hosting-overview-refinements": false
+		"hosting-overview-refinements": true
 	},
 	"enable_all_sections": false,
 	"sections": {

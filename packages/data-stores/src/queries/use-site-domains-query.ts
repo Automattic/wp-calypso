@@ -75,7 +75,7 @@ export interface DomainData {
 	};
 	pending_whois_update: boolean;
 	tld_maintenance_end_time: 0;
-	ssl_status: 'active' | 'pending' | 'disabled' | null;
+	ssl_status: 'active' | 'pending' | 'newly_registered' | 'disabled' | null;
 	gdpr_consent_status: string;
 	supports_gdpr_consent_management: boolean;
 	supports_transfer_approval: boolean;

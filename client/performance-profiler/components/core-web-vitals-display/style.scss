@@ -48,6 +48,7 @@ $blueberry-color: #3858e9;
 	display: flex;
 	flex-direction: row;
 	column-gap: 32px;
+	min-height: 360px;
 
 	& > div {
 		flex: 50%;
@@ -71,6 +72,10 @@ $blueberry-color: #3858e9;
 .core-web-vitals-display__description-aka {
 	font-size: $font-body-extra-small;
 	color: var(--studio-gray-70);
+}
+
+.core-web-vitals-display__description p {
+	margin-top: 15px;
 }
 
 .core-web-vitals-display__description a {

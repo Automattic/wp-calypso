@@ -151,6 +151,7 @@ export type PerformanceReport = {
 	is_wordpress: boolean;
 	screenshots?: ScreenShotsTimeLine[];
 	history: PerformanceMetricsHistory;
+	timestamp?: string;
 } & BasicMetrics;
 
 export interface UrlPerformanceMetricsQueryResponse {
