@@ -64,7 +64,7 @@
 
 		.follow-button__label,
 		.conversation-follow-button__label {
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated("<660px") {
 				display: inline-block;
 			}
 		}
