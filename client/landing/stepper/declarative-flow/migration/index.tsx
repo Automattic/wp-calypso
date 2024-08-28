@@ -54,7 +54,7 @@ const plans: { [ key: string ]: string } = {
 };
 
 const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject: Flow ) => {
-	const [ query ] = useSearchParams();
+	const [ query, setQuery ] = useSearchParams();
 	const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
 	const { navigateWithQueryParams, getFromPropsOrUrl } = useFlowNavigator( navigate );
 
@@ -64,16 +64,18 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 		from,
 		plan,
 		props,
+		destinationStep = MIGRATION_HOW_TO_MIGRATE,
 		forceRedirection,
 	}: {
 		siteId: string;
 		siteSlug: string;
 		from?: string;
 		plan: string;
+		destinationStep?: StepperStep;
 		props?: ProvidedDependencies;
 		forceRedirection?: boolean;
 	} ) => {
-		const redirectAfterCheckout = MIGRATION_HOW_TO_MIGRATE.slug;
+		const redirectAfterCheckout = destinationStep.slug;
 		const destination = addQueryArgs(
 			{ siteId, siteSlug, from },
 			`/setup/${ flowPath }/${ redirectAfterCheckout }`
@@ -196,7 +198,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const from = getFromPropsOrUrl( 'from', props ) as string;
-
+				const migrationDealAccepted = getFromPropsOrUrl( 'userAcceptedDeal', props ) as string;
 				const plan = props?.plan as string;
 
 				if ( props?.action === MigrationUpgradePlanActions.IMPORT_CONTENT_ONLY ) {
@@ -211,10 +213,26 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				}
 
 				if ( props?.goToCheckout ) {
-					return navigateToCheckout( { siteId, siteSlug, plan, from, props } );
+					if ( query.has( 'showModal' ) ) {
+						query.delete( 'showModal' );
+						setQuery( query );
+					}
+
+					const destinationStep = migrationDealAccepted
+						? MIGRATION_SOURCE_URL
+						: MIGRATION_HOW_TO_MIGRATE;
+
+					// console.log( 'GoToCheckout', props );
+
+					return navigateToCheckout( { siteId, siteSlug, plan, from, props, destinationStep } );
 				}
 			},
 			goBack: ( props?: ProvidedDependencies ) => {
+				if ( ! query.has( 'showModal' ) ) {
+					query.set( 'showModal', 'true' );
+					return setQuery( query );
+				}
+
 				return navigateWithQueryParams(
 					PLATFORM_IDENTIFICATION,
 					[ 'siteId', 'siteSlug', 'plan', 'from' ],
