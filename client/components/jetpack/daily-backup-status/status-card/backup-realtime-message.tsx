@@ -25,10 +25,11 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 		return;
 	}
 
-	const daysAgo = selectedBackupDate.diff( baseBackupDate, 'days' );
+	const daysDiff = selectedBackupDate.diff( baseBackupDate, 'days' );
 	let message: string | React.ReactNode;
 
-	if ( baseBackupDate.isSame( selectedBackupDate, 'day' ) ) {
+	if ( daysDiff === 0 ) {
+		// Base backup date is the same as the selected backup date
 		message = translate(
 			'We are using a full backup from this day (%(baseBackupDate)s) with %(eventsCount)d change you have made since then until now.',
 			'We are using a full backup from this day (%(baseBackupDate)s) with %(eventsCount)d changes you have made since then until now.',
@@ -42,7 +43,8 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 					'%(baseBackupDate)s is the date and time of the backup, and %(eventsCount)d is the number of changes made since the backup.',
 			}
 		);
-	} else if ( baseBackupDate.isSame( selectedBackupDate.clone().subtract( 1, 'days' ), 'day' ) ) {
+	} else if ( daysDiff === 1 ) {
+		// Base backup date is the day before the selected backup date
 		message = translate(
 			'We are using a full backup from the previous day (%(baseBackupDate)s) with %(eventsCount)d change you have made since then until now.',
 			'We are using a full backup from the previous day (%(baseBackupDate)s) with %(eventsCount)d changes you have made since then until now.',
@@ -57,13 +59,14 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 			}
 		);
 	} else {
+		// Base backup date is two or more days before the selected backup date
 		message = translate(
 			'We are using a %(daysAgo)d-day old full backup (%(baseBackupDate)s) with %(eventsCount)d change you have made since then until now.',
 			'We are using a %(daysAgo)d-day old full backup (%(baseBackupDate)s) with %(eventsCount)d changes you have made since then until now.',
 			{
 				count: eventsCount,
 				args: {
-					daysAgo: daysAgo,
+					daysAgo: daysDiff,
 					baseBackupDate: baseBackupDate.format( 'YYYY-MM-DD hh:mm A' ),
 					eventsCount: eventsCount,
 				},
