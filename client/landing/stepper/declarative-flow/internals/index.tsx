@@ -7,12 +7,15 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, lazy } from 'react';
 import Modal from 'react-modal';
+import { generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
+import { useFirstStep } from '../../hooks/use-first-step';
 import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
@@ -29,7 +32,9 @@ import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
 
 const lazyCache = new WeakMap<
-	() => Promise< { default: React.ComponentType< StepProps > } >,
+	() => Promise< {
+		default: React.ComponentType< StepProps >;
+	} >,
 	React.ComponentType< StepProps >
 >();
 
@@ -65,8 +70,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	Modal.setAppElement( '#wpcom' );
 	const flowSteps = flow.useSteps();
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
+	const firstStepSlug = useFirstStep( stepPaths );
 	const { navigate, params } = useFlowNavigation();
 	const currentStepRoute = params.step || '';
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { lang = null } = useParams();
 
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
@@ -128,16 +136,45 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				return <StepperLoader />;
-			/* eslint-enable wpcalypso/jsx-classname-namespace */
 			case AssertConditionState.FAILURE:
 				return null;
 		}
 
 		const StepComponent = flowStepComponent( flowSteps.find( ( { slug } ) => slug === step.slug ) );
+
 		if ( ! StepComponent ) {
 			return null;
+		}
+
+		const firstAuthWalledStep = flowSteps.find( ( step ) => step.requiresLoggedInUser );
+
+		if ( step.slug === 'user' && firstAuthWalledStep ) {
+			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
+				flow: flow.name,
+				step: firstAuthWalledStep.slug,
+				lang: lang === 'en' || isLoggedIn ? null : lang,
+			} );
+			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
+				flow: flow.name,
+				step: 'user',
+				lang: lang === 'en' || isLoggedIn ? null : lang,
+			} );
+
+			return (
+				<StepComponent
+					navigation={ {
+						submit() {
+							navigate( firstAuthWalledStep.slug, undefined, true );
+						},
+					} }
+					flow={ flow.name }
+					variantSlug={ flow.variantSlug }
+					stepName="user"
+					redirectTo={ postAuthStepPath }
+					signupUrl={ signupUrl }
+				/>
+			);
 		}
 
 		return (
@@ -164,6 +201,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	return (
 		<Boot fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
+
 			<Routes>
 				{ flowSteps.map( ( step ) => (
 					<Route
@@ -175,11 +213,12 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 								flow={ flow }
 								showWooLogo={ isWooExpressFlow( flow.name ) }
 								renderStep={ renderStep }
+								navigate={ navigate }
 							/>
 						}
 					/>
 				) ) }
-				<Route path="/:flow/:lang?" element={ <RedirectToStep slug={ stepPaths[ 0 ] } /> } />
+				<Route path="/:flow/:lang?" element={ <RedirectToStep slug={ firstStepSlug } /> } />
 			</Routes>
 			<AsyncCheckoutModal siteId={ site?.ID } />
 		</Boot>
