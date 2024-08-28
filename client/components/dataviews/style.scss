@@ -220,3 +220,10 @@
 .is-section-a8c-for-agencies-referrals .dataviews-settings-section__content .is-divided-in-two {
 	display: none !important;
 }
+
+// TODO: remove when updating dataviews to have this built-in.
+//
+// https://github.com/Automattic/wp-calypso/pull/93503#discussion_r1734341411
+.dataviews-filters-toggle__count {
+	padding: revert !important;
+}
