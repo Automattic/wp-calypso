@@ -309,7 +309,6 @@ export class PlansStep extends Component {
 				<StepperStepContainer
 					flowName={ flowName }
 					stepName={ stepName }
-					positionInFlow={ positionInFlow }
 					headerText={ headerText }
 					shouldHideNavButtons={ this.props.shouldHideNavButtons }
 					fallbackHeaderText={ fallbackHeaderText }
@@ -318,10 +317,7 @@ export class PlansStep extends Component {
 					isWideLayout={ false }
 					isExtraWideLayout
 					stepContent={ this.plansFeaturesList() }
-					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
-					backUrl={ backUrl }
 					backLabelText={ backLabelText }
-					queryParams={ queryParams }
 					{ ...wrapperProps }
 				/>
 			);
