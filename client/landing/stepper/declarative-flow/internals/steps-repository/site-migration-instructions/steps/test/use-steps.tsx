@@ -36,7 +36,7 @@ describe( 'useSteps', () => {
 		expect( getByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'should open the Migrate Guru plugin installation screen on the source site when the "Install plugin" button is clicked', () => {
+	it( 'Should open the Migrate Guru plugin installation screen on the source site when the "Install plugin" button is clicked', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
@@ -57,7 +57,7 @@ describe( 'useSteps', () => {
 		expect( getByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'should open the Migrate Guru plugin page on the source site when the "Get started" button is clicked', () => {
+	it( 'Should open the Migrate Guru plugin page on the source site when the "Get started" button is clicked', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { getByRole } = render( result.current.steps[ 1 ].expandable?.content );
 
@@ -86,7 +86,7 @@ describe( 'useSteps', () => {
 		expect( getByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'should open the Migrate Guru plugin page on the source site when the "Enter key" button is clicked', () => {
+	it( 'Should open the Migrate Guru plugin page on the source site when the "Enter key" button is clicked', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
 
@@ -99,7 +99,7 @@ describe( 'useSteps', () => {
 		);
 	} );
 
-	it( 'should open the Migrate Guru plugin page on the new site when the "Get key" button is clicked', () => {
+	it( 'Should open the Migrate Guru plugin page on the new site when the "Get key" button is clicked', () => {
 		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
 		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
 
@@ -220,5 +220,44 @@ describe( 'useSteps', () => {
 		} );
 
 		expect( result.current.steps[ 1 ].expandable?.isOpen ).toBeTruthy();
+	} );
+
+	it( 'Should open the plugin page on WordPress.org when the "Install plugin" button is clicked and the source site is unknown', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
+		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
+
+		window.open = jest.fn();
+		fireEvent.click( getByRole( 'button', { name: /Install plugin/ } ) );
+
+		expect( window.open ).toHaveBeenCalledWith(
+			'https://wordpress.org/plugins/migrate-guru/',
+			'_blank'
+		);
+	} );
+
+	it( 'Should not render the "Get started" button when the source site is unknown', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
+		const { queryByRole } = render( result.current.steps[ 1 ].expandable?.content );
+
+		expect( queryByRole( 'button', { name: /Get started/ } ) ).not.toBeInTheDocument();
+		expect( queryByRole( 'button', { name: /Next/ } ) ).toBeInTheDocument();
+	} );
+
+	it( 'Should not render the "Enter key" button when the source site is unknown', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
+		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( queryByRole( 'button', { name: /Enter key/ } ) ).not.toBeInTheDocument();
+		expect( queryByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
+	} );
+
+	it( 'Should not render the "Get key" button when the migration key is not set and the source site is unknown', () => {
+		const { result } = renderHook( () =>
+			useSteps( { ...baseStepsOptions, fromUrl: '', migrationKey: '' } )
+		);
+		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( queryByRole( 'button', { name: /Get key/ } ) ).not.toBeInTheDocument();
+		expect( queryByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
 	} );
 } );
