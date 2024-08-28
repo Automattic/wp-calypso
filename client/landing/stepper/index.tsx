@@ -122,9 +122,10 @@ window.AppBoot = async () => {
 
 	const flowLoader = determineFlow();
 	const { default: rawFlow } = await flowLoader();
-	const flow = enhanceFlowWithAuth( rawFlow );
+	const flow = rawFlow.__experimentalUseBuiltinAuth ? enhanceFlowWithAuth( rawFlow ) : rawFlow;
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
+
 	root.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
 			<Provider store={ reduxStore }>
