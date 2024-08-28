@@ -4,13 +4,13 @@ import { useTranslate } from 'i18n-calypso'; // Ensure this import is present
 import moment from 'moment'; // Assuming moment is used for date calculations
 import PropTypes from 'prop-types';
 
-const STATS_PERIOD = {
+const DATERANGE_PERIOD = {
 	DAY: 'day',
 	WEEK: 'week',
 	MONTH: 'month',
 };
 
-const DateControlPickerShortcuts = ( {
+const DateRangePickerShortcuts = ( {
 	currentShortcut,
 	onClick,
 }: {
@@ -26,28 +26,28 @@ const DateControlPickerShortcuts = ( {
 				label: translate( 'Last 7 Days' ),
 				offset: 0,
 				range: 6,
-				period: STATS_PERIOD.DAY,
+				period: DATERANGE_PERIOD.DAY,
 			},
 			{
 				id: 'last_30_days',
 				label: translate( 'Last 30 Days' ),
 				offset: 0,
 				range: 29,
-				period: STATS_PERIOD.DAY,
+				period: DATERANGE_PERIOD.DAY,
 			},
 			{
 				id: 'last_3_months',
 				label: translate( 'Last 90 Days' ),
 				offset: 0,
 				range: 89,
-				period: STATS_PERIOD.WEEK,
+				period: DATERANGE_PERIOD.WEEK,
 			},
 			{
 				id: 'last_year',
 				label: translate( 'Last Year' ),
 				offset: 0,
 				range: 364, // ranges are zero based!
-				period: STATS_PERIOD.MONTH,
+				period: DATERANGE_PERIOD.MONTH,
 			},
 		];
 	};
@@ -97,9 +97,9 @@ const DateControlPickerShortcuts = ( {
 	);
 };
 
-DateControlPickerShortcuts.propTypes = {
+DateRangePickerShortcuts.propTypes = {
 	currentShortcut: PropTypes.string,
 	onClick: PropTypes.func.isRequired,
 };
 
-export default DateControlPickerShortcuts;
+export default DateRangePickerShortcuts;
