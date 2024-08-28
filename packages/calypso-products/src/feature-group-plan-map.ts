@@ -119,7 +119,20 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+	/* START: Features & groups for experiment calypso_pricing_grid_fewer_features */
+	FEATURE_GROUP_DOMAIN,
+	FEATURE_GROUP_THEMES,
+	FEATURE_GROUP_SUPPORT,
+	FEATURE_GROUP_ENTITIES,
+	FEATURE_GROUP_ADS,
+	FEATURE_GROUP_ANALYTICS,
+	FEATURE_THEMES_PREMIUM_AND_STORE,
+	FEATURE_UNLIMITED_ENTITIES,
+	FEATURE_GROUP_WOO,
+	FEATURE_WOOCOMMERCE_HOSTING,
+	/* END: Features & groups for experiment calypso_pricing_grid_fewer_features */
 } from './constants';
+import { isAssignedToFewerFeaturesExperimentVariant } from './experiments';
 import { FeatureGroupMap } from './types';
 
 export const featureGroups: Partial< FeatureGroupMap > = {
@@ -337,10 +350,75 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			) ]: [ FEATURE_DISCOUNTED_SHIPPING, FEATURE_PRINT_SHIPPING_LABELS ],
 		} ),
 	},
-	/* START: WooExpress Feature Groups */
+	/* START Feature groups for experiment calypso_pricing_grid_fewer_features */
+	[ FEATURE_GROUP_DOMAIN ]: {
+		slug: FEATURE_GROUP_DOMAIN,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_CUSTOM_DOMAIN ],
+	},
+	[ FEATURE_GROUP_SUPPORT ]: {
+		slug: FEATURE_GROUP_SUPPORT,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_FAST_SUPPORT_FROM_EXPERTS, FEATURE_PRIORITY_24_7_SUPPORT ],
+	},
+	[ FEATURE_GROUP_THEMES ]: {
+		slug: FEATURE_GROUP_THEMES,
+		getTitle: () => null,
+		getFeatures: () => [
+			FEATURE_BEAUTIFUL_THEMES,
+			FEATURE_PREMIUM_THEMES,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+			FEATURE_THEMES_PREMIUM_AND_STORE,
+		],
+	},
+	[ FEATURE_GROUP_ENTITIES ]: {
+		slug: FEATURE_GROUP_ENTITIES,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_UNLIMITED_ENTITIES ],
+	},
+	[ FEATURE_GROUP_ADS ]: {
+		slug: FEATURE_GROUP_ADS,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_AD_FREE_EXPERIENCE ],
+	},
+	[ FEATURE_GROUP_ANALYTICS ]: {
+		slug: FEATURE_GROUP_ANALYTICS,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_STATS_PAID ],
+	},
+	[ FEATURE_GROUP_WOO ]: {
+		slug: FEATURE_GROUP_WOO,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_WOOCOMMERCE_HOSTING ],
+	},
+	/* END Feature groups for experiment calypso_pricing_grid_fewer_features */
 };
 
 export function resolveFeatureGroupsForFeaturesGrid(): Partial< FeatureGroupMap > {
+	if ( isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' ) ) {
+		return {
+			[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
+			[ FEATURE_GROUP_ENTITIES ]: featureGroups[ FEATURE_GROUP_ENTITIES ],
+			[ FEATURE_GROUP_DOMAIN ]: featureGroups[ FEATURE_GROUP_DOMAIN ],
+			[ FEATURE_GROUP_ADS ]: featureGroups[ FEATURE_GROUP_ADS ],
+			[ FEATURE_GROUP_THEMES ]: featureGroups[ FEATURE_GROUP_THEMES ],
+			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
+			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
+			[ FEATURE_GROUP_DEVELOPER_TOOLS ]: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ],
+			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],
+		};
+	} else if ( isAssignedToFewerFeaturesExperimentVariant( 'treatment-b' ) ) {
+		return {
+			[ FEATURE_GROUP_DOMAIN ]: featureGroups[ FEATURE_GROUP_DOMAIN ],
+			[ FEATURE_GROUP_ADS ]: featureGroups[ FEATURE_GROUP_ADS ],
+			[ FEATURE_GROUP_THEMES ]: featureGroups[ FEATURE_GROUP_THEMES ],
+			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
+			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
+			[ FEATURE_GROUP_DEVELOPER_TOOLS ]: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ],
+			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],
+		};
+	}
+
 	return {
 		[ FEATURE_GROUP_ALL_FEATURES ]: featureGroups[ FEATURE_GROUP_ALL_FEATURES ],
 		[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],

@@ -69,6 +69,7 @@ import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks
 import PlansPageSubheader from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
+import useFewerFeaturesExperiment from './hooks/use-fewer-features-experiment';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
@@ -326,6 +327,13 @@ const PlansFeaturesMain = ( {
 
 	const showEscapeHatch =
 		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
+
+	const { isLoadingFewerFeaturesExperiment, isAssignedToFewerFeaturesExperiment } =
+		useFewerFeaturesExperiment( {
+			flowName,
+			isInSignup,
+			intent,
+		} );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -624,7 +632,8 @@ const PlansFeaturesMain = ( {
 		! intent ||
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
 			! gridPlansForFeaturesGrid ||
-			! gridPlansForComparisonGrid
+			! gridPlansForComparisonGrid ||
+			isLoadingFewerFeaturesExperiment
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
@@ -777,6 +786,7 @@ const PlansFeaturesMain = ( {
 										useAction={ useAction }
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
+										enableCategorisedFeatures={ isAssignedToFewerFeaturesExperiment }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (

@@ -486,3 +486,8 @@ export const FEATURE_TYPE_JETPACK_SOCIAL = 'jetpack_social';
 export const FEATURE_TYPE_JETPACK_SEARCH = 'jetpack_search';
 export const FEATURE_TYPE_JETPACK_STATS = 'jetpack_stats';
 export const FEATURE_TYPE_JETPACK_VIDEOPRESS = 'jetpack_videopress';
+
+/* START: Features for experiment calypso_pricing_grid_fewer_features */
+export const FEATURE_THEMES_PREMIUM_AND_STORE = 'feature-themes-premium-and-store';
+export const FEATURE_UNLIMITED_ENTITIES = 'feature-unlimited-entities';
+/* END: Features for experiment calypso_pricing_grid_fewer_features */

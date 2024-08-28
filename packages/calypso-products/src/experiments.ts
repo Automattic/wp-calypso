@@ -22,3 +22,21 @@ export const setPlansListExperiment = ( experimentName: string, variation: strin
 export const getPlansListExperiment = ( experimentName: string ): string | undefined => {
 	return getExperiment( PLANS_LIST_NAMESPACE, experimentName );
 };
+
+/* START: Experiment calypso_pricing_grid_fewer_features */
+
+export const FEWER_FEATURES_EXPERIMENT_ID = 'calypso_pricing_grid_fewer_features';
+
+export type FewerFeaturesExperimentVariant = 'control' | 'treatment-a' | 'treatment-b';
+
+export const setFewerFeaturesExperimentVariant = ( variant: FewerFeaturesExperimentVariant ) =>
+	setExperiment( PLANS_LIST_NAMESPACE, FEWER_FEATURES_EXPERIMENT_ID, variant );
+
+export const isAssignedToFewerFeaturesExperiment = (): boolean =>
+	getExperiment( PLANS_LIST_NAMESPACE, FEWER_FEATURES_EXPERIMENT_ID ) !== 'control';
+
+export const isAssignedToFewerFeaturesExperimentVariant = (
+	variant: FewerFeaturesExperimentVariant
+): boolean => getExperiment( PLANS_LIST_NAMESPACE, FEWER_FEATURES_EXPERIMENT_ID ) === variant;
+
+/* END: Experiment calypso_pricing_grid_fewer_features */

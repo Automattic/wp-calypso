@@ -2,6 +2,8 @@ import {
 	getFeaturesList,
 	getPlanFeaturesGroupedForFeaturesGrid,
 	getPlanFeaturesGroupedForComparisonGrid,
+	setFewerFeaturesExperimentVariant,
+	type FewerFeaturesExperimentVariant,
 } from '@automattic/calypso-products';
 import {
 	FeaturesGrid,
@@ -11,7 +13,11 @@ import {
 } from '../..';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' > ) => {
+const ComponentWrapper = (
+	props: Omit< FeaturesGridExternalProps, 'gridPlans' > & {
+		fewerFeaturesExperimentVariant?: FewerFeaturesExperimentVariant;
+	}
+) => {
 	const gridPlans = useGridPlansForFeaturesGrid( {
 		eligibleForFreeHostingTrial: true,
 		hasRedeemedDomainCredit: undefined,
@@ -41,6 +47,8 @@ const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' >
 		isSpotlightOnCurrentPlan: true,
 	} );
 
+	const featureGroupMap = getPlanFeaturesGroupedForFeaturesGrid();
+
 	return (
 		gridPlans && (
 			<FeaturesGrid
@@ -49,6 +57,7 @@ const ComponentWrapper = ( props: Omit< FeaturesGridExternalProps, 'gridPlans' >
 				gridPlanForSpotlight={
 					'gridPlanForSpotlight' in props ? props.gridPlanForSpotlight : gridPlanForSpotlight
 				}
+				featureGroupMap={ featureGroupMap }
 			/>
 		)
 	);
@@ -58,7 +67,6 @@ const defaultProps = {
 	allFeaturesList: getFeaturesList(),
 	coupon: undefined,
 	currentSitePlanSlug: undefined,
-	featureGroupMap: getPlanFeaturesGroupedForFeaturesGrid(),
 	generatedWPComSubdomain: {
 		isLoading: false,
 		result: { domain_name: 'zzz.wordpress.com' },
@@ -89,6 +97,12 @@ const defaultProps = {
 const meta = {
 	title: 'FeaturesGrid',
 	component: ComponentWrapper,
+	decorators: [
+		( Story, { args: { fewerFeaturesExperimentVariant = 'control' } } ) => {
+			setFewerFeaturesExperimentVariant( fewerFeaturesExperimentVariant );
+			return <Story />;
+		},
+	],
 } satisfies Meta< typeof ComponentWrapper >;
 
 export default meta;
@@ -132,5 +146,27 @@ export const CuratedPlanMixByIntent = {
 	args: {
 		...defaultProps,
 		intent: 'plans-newsletter',
+	},
+} satisfies Story;
+
+export const FewerFeaturesExperimentTreatmentVariantA = {
+	name: 'Experiment [Fewer Features]: Treatment A',
+	args: {
+		...PlansInSignup.args,
+		intent: 'plans-default-wpcom',
+		isInSignup: true,
+		enableCategorisedFeatures: true,
+		fewerFeaturesExperimentVariant: 'treatment-a',
+	},
+} satisfies Story;
+
+export const FewerFeaturesExperimentTreatmentVariantB = {
+	name: 'Experiment [Fewer Features]: Treatment B',
+	args: {
+		...PlansInSignup.args,
+		intent: 'plans-default-wpcom',
+		isInSignup: true,
+		enableCategorisedFeatures: true,
+		fewerFeaturesExperimentVariant: 'treatment-b',
 	},
 } satisfies Story;

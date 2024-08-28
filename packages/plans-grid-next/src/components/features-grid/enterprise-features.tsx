@@ -8,17 +8,15 @@ import { GridPlan } from '../../types';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 
-type PreviousFeaturesIncludedTitleProps = {
+type EnterpriseFeaturesProps = {
 	renderedGridPlans: GridPlan[];
 	options?: {
 		isTableCell?: boolean;
+		isLogosOnly?: boolean;
 	};
 };
 
-const EnterpriseFeatures = ( {
-	renderedGridPlans,
-	options,
-}: PreviousFeaturesIncludedTitleProps ) => {
+const EnterpriseFeatures = ( { renderedGridPlans, options }: EnterpriseFeaturesProps ) => {
 	const { featureGroupMap, enableCategorisedFeatures } = usePlansGridContext();
 	const translate = useTranslate();
 	const isTableCell = options?.isTableCell;
@@ -99,24 +97,26 @@ const EnterpriseFeatures = ( {
 				className="plan-features-2023-grid__table-item"
 				{ ...rowspanProp }
 			>
-				{ isWpcomEnterpriseGridPlan( planSlug ) && (
+				{ shouldRenderLogos && (
 					<>
 						<div className="plan-features-2023-grid__item">
 							<ClientLogoList className="plan-features-2023-grid__item-logos" />
 						</div>
 
-						<CardContainer>
-							<div className={ clsx( 'plan-features-2023-grid__common-title', planClassName ) }>
-								{ translate( 'High performance platform, with:' ) }
-							</div>
-							{ enterpriseFeaturesList.map( ( title, index ) => (
-								<PlanFeaturesItem key={ index }>
-									<span className="plan-features-2023-grid__item-info is-available">
-										<span className="plan-features-2023-grid__item-title">{ title }</span>
-									</span>
-								</PlanFeaturesItem>
-							) ) }
-						</CardContainer>
+						{ ! options?.isLogosOnly && (
+							<CardContainer>
+								<div className={ clsx( 'plan-features-2023-grid__common-title', planClassName ) }>
+									{ translate( 'High performance platform, with:' ) }
+								</div>
+								{ enterpriseFeaturesList.map( ( title, index ) => (
+									<PlanFeaturesItem key={ index }>
+										<span className="plan-features-2023-grid__item-info is-available">
+											<span className="plan-features-2023-grid__item-title">{ title }</span>
+										</span>
+									</PlanFeaturesItem>
+								) ) }
+							</CardContainer>
+						) }
 					</>
 				) }
 			</PlanDivOrTdContainer>
