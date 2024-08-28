@@ -8,44 +8,35 @@ import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import VideoPressIntroBackground from '../../steps-repository/intro/videopress-intro-background';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
-import type { Flow, Navigate, StepperStep } from '../../types';
+import type { Flow, StepperStep } from '../../types';
 
 type StepRouteProps = {
 	step: StepperStep;
 	flow: Flow;
 	showWooLogo: boolean;
 	renderStep: ( step: StepperStep ) => JSX.Element | null;
-	navigate: Navigate< StepperStep[] >;
 };
 
-// TODO: Check we can move RenderStep function to here and remove the renderStep prop
-const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRouteProps ) => {
+//TODO: Check we can move RenderStep function to here and remove the renderStep prop
+const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) => {
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
-	const stepContent = renderStep( step );
 	const loginUrl = useLoginUrlForFlow( { flow } );
-	const shouldAuthUser = step.requiresLoggedInUser && ! userIsLoggedIn;
-	const shouldSkipRender = shouldAuthUser || ! stepContent;
-	const skipTracking = shouldAuthUser || ! stepContent;
-
-	const useBuiltItInAuth = flow.__experimentalUseBuiltinAuth;
+	const stepContent = renderStep( step );
+	const shouldRedirectToLogin = step.requiresLoggedInUser && ! userIsLoggedIn;
+	const shouldSkipRender = shouldRedirectToLogin || ! stepContent;
 
 	useStepRouteTracking( {
 		flowName: flow.name,
 		stepSlug: step.slug,
-		skipTracking,
+		skipTracking: shouldSkipRender,
 		flowVariantSlug: flow.variantSlug,
 	} );
 
 	useEffect( () => {
-		if ( shouldAuthUser && ! useBuiltItInAuth ) {
+		if ( shouldRedirectToLogin ) {
 			window.location.assign( loginUrl );
 		}
-	}, [ loginUrl, shouldAuthUser, useBuiltItInAuth ] );
-
-	if ( useBuiltItInAuth && shouldAuthUser && ! userIsLoggedIn ) {
-		navigate( 'user', undefined, true );
-		return null;
-	}
+	}, [ loginUrl, shouldRedirectToLogin ] );
 
 	if ( shouldSkipRender ) {
 		return null;

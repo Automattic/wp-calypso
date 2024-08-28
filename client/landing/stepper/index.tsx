@@ -33,7 +33,6 @@ import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
-import { enhanceFlowWithAuth } from './utils/enhanceFlowWithAuth';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
@@ -64,7 +63,7 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 	return <FlowRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {
-	BUILD_TARGET: string;
+	BUILD_TARGET?: string;
 }
 
 const DEFAULT_FLOW = 'site-setup';
@@ -121,8 +120,7 @@ window.AppBoot = async () => {
 	setupErrorLogger( reduxStore );
 
 	const flowLoader = determineFlow();
-	const { default: rawFlow } = await flowLoader();
-	const flow = enhanceFlowWithAuth( rawFlow );
+	const { default: flow } = await flowLoader();
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 	root.render(
