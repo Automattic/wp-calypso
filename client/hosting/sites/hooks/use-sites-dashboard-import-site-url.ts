@@ -6,10 +6,12 @@ import { TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 export const useSitesDashboardImportSiteUrl = (
 	additionalParameters: Record< string, Primitive >
 ) => {
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment( 'EXPERIMENT_NAME_HERE' );
+	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
+		'calypso_optimized_migration_flow'
+	);
 
 	if ( isLoadingExperiment ) {
-		return '#';
+		return null;
 	}
 
 	const path =
