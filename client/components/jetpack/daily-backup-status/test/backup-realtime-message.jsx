@@ -33,7 +33,7 @@ describe( 'BackupRealtimeMessage', () => {
 		useTranslate.mockImplementation( () => translateMock );
 	} );
 
-	test( 'renders correct message when the base backup is from the same date as the selected backup', () => {
+	test( 'renders the correct message when the base backup date is the same as the selected backup date', () => {
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = selectedDate; // same day
 		const { container } = renderMessage( baseBackupDate, 3, selectedDate );
@@ -42,7 +42,7 @@ describe( 'BackupRealtimeMessage', () => {
 		);
 	} );
 
-	test( 'renders correct message when the base backup is from the day before as the selected backup', () => {
+	test( 'renders the correct message when the base backup date is the day before the selected backup date', () => {
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = selectedDate.clone().subtract( 1, 'day' ); // previous day
 		const { container } = renderMessage( baseBackupDate, 25, selectedDate );
@@ -51,7 +51,7 @@ describe( 'BackupRealtimeMessage', () => {
 		);
 	} );
 
-	test( 'renders correct message when the base backup is from 2 or more days before as the selected backup', () => {
+	test( 'renders the correct message when the base backup date is two or more days before the selected backup date', () => {
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = moment( '2024-08-23T12:00:00Z' );
 		const { container } = renderMessage( baseBackupDate, 5, selectedDate );
@@ -60,7 +60,7 @@ describe( 'BackupRealtimeMessage', () => {
 		);
 	} );
 
-	test( 'renders correct singular message when there is only 1 change', () => {
+	test( 'renders the correct singular message when there is only 1 change', () => {
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = moment( '2024-08-26T12:00:00Z' );
 		const { container } = renderMessage( baseBackupDate, 1, selectedDate );
@@ -69,7 +69,7 @@ describe( 'BackupRealtimeMessage', () => {
 		);
 	} );
 
-	test( 'renders correct plural message when there are 2 or more changes', () => {
+	test( 'renders the correct plural message when there are 2 or more changes', () => {
 		const selectedDate = moment( '2024-08-26T12:00:00Z' );
 		const baseBackupDate = moment( '2024-08-26T12:00:00Z' );
 		const { container } = renderMessage( baseBackupDate, 2, selectedDate );
