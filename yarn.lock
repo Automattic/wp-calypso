@@ -63,10 +63,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/core@npm:0.4.8":
-  version: 0.4.8
-  resolution: "@ariakit/core@npm:0.4.8"
-  checksum: db0445ca7b81d0baa1d4f4799c27eab3ca3f45b47de97dda2b1050339ff6036a7a4bfba8131be5c2ba275135ad2c841e2fad53f25bbcea3f343cf6a8c1c8721c
+"@ariakit/core@npm:0.4.9":
+  version: 0.4.9
+  resolution: "@ariakit/core@npm:0.4.9"
+  checksum: 17a2b95804b3d3b1d7c6bc6aeef25dc300b3d7303e700c70878cfaea203105a5f1a0b5c67b7997d911cda0ba5895783ef2d3b5b83268a4e24d504eb67fa25fec
   languageName: node
   linkType: hard
 
@@ -84,17 +84,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/react-core@npm:0.4.8":
-  version: 0.4.8
-  resolution: "@ariakit/react-core@npm:0.4.8"
+"@ariakit/react-core@npm:0.4.10":
+  version: 0.4.10
+  resolution: "@ariakit/react-core@npm:0.4.10"
   dependencies:
-    "@ariakit/core": "npm:0.4.8"
+    "@ariakit/core": "npm:0.4.9"
     "@floating-ui/dom": "npm:^1.0.0"
     use-sync-external-store: "npm:^1.2.0"
   peerDependencies:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: b63ed5a41ec533ee6183c505a385fe4b37e20c9dd85b48c77d7cc41514a06f7a5be344a94cd559d62d32aaf47343350f1743844e809c9415e241d137d9af58e4
+  checksum: eeb51c643ad36af8a293cc0fe3267214780ce9e97811dc44e69166f4592282efe0fd452bf12fee09a74f8deacce73a4c8d1859d0c11fbb4ca2b1a3dde2c7e708
   languageName: node
   linkType: hard
 
@@ -110,15 +110,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/react@npm:^0.4.7":
-  version: 0.4.8
-  resolution: "@ariakit/react@npm:0.4.8"
+"@ariakit/react@npm:^0.4.10":
+  version: 0.4.10
+  resolution: "@ariakit/react@npm:0.4.10"
   dependencies:
-    "@ariakit/react-core": "npm:0.4.8"
+    "@ariakit/react-core": "npm:0.4.10"
   peerDependencies:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: c0a165d4bf144985492955c88a3d44dd5671e706f302b6ba32ba6ed6ec79ea7a91a32904a81549b5dfbe27d740b582549f54dd663ef3e9e88eae7eeacc862d7c
+  checksum: ed70c8b25694cec6022cd9fff87ef1ced57f75803df2db2c362a38f3dc15fb345cdd60b6c63aa7d305cef489ff2a49ef964cee9d5d518f09319d169a071a8190
   languageName: node
   linkType: hard
 
@@ -9710,26 +9710,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dataviews@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@wordpress/dataviews@npm:4.1.0"
+"@wordpress/dataviews@npm:4.2.0":
+  version: 4.2.0
+  resolution: "@wordpress/dataviews@npm:4.2.0"
   dependencies:
-    "@ariakit/react": "npm:^0.4.7"
+    "@ariakit/react": "npm:^0.4.10"
     "@babel/runtime": "npm:^7.16.0"
-    "@wordpress/components": "npm:^28.5.0"
-    "@wordpress/compose": "npm:^7.5.0"
-    "@wordpress/data": "npm:^10.5.0"
-    "@wordpress/element": "npm:^6.5.0"
-    "@wordpress/i18n": "npm:^5.5.0"
-    "@wordpress/icons": "npm:^10.5.0"
-    "@wordpress/primitives": "npm:^4.5.0"
-    "@wordpress/private-apis": "npm:^1.5.0"
-    "@wordpress/warning": "npm:^3.5.0"
+    "@wordpress/components": "npm:^28.6.0"
+    "@wordpress/compose": "npm:^7.6.0"
+    "@wordpress/data": "npm:^10.6.0"
+    "@wordpress/element": "npm:^6.6.0"
+    "@wordpress/i18n": "npm:^5.6.0"
+    "@wordpress/icons": "npm:^10.6.0"
+    "@wordpress/primitives": "npm:^4.6.0"
+    "@wordpress/private-apis": "npm:^1.6.0"
+    "@wordpress/warning": "npm:^3.6.0"
     clsx: "npm:^2.1.1"
     remove-accents: "npm:^0.5.0"
   peerDependencies:
     react: ^18.0.0
-  checksum: 77ae6bac38480a0d0cd2e94f9eb91c09550bd55ca66d7f33f3a06196438c588f3d74734cf5849bfc5db79bf4751c3154ed6bf2f5e85d0137ec77bdc02db86fea
+  checksum: 01dbabaea48def0b810b5bc53012d89f3aa308fa44a6b5ac51a2537474f6f2ce513390ca9c4fdf9d0190f3fc9d3210d5ba0bb2fbb4862d9e3ac085d23dabe646
   languageName: node
   linkType: hard
 
