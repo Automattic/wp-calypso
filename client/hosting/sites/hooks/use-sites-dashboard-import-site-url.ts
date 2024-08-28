@@ -16,8 +16,8 @@ export const useSitesDashboardImportSiteUrl = (
 
 	const path =
 		experimentAssignment?.variationName === 'treatment'
-			? '/setup/hosted-site-migration'
-			: '/setup/migration';
+			? '/setup/migration'
+			: '/setup/hosted-site-migration';
 
 	return addQueryArgs(
 		{
