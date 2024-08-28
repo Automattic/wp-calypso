@@ -12,14 +12,14 @@ export default function Summary( { cardData, selectedSite }: Props ) {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
 	function shouldRenderConfetti( contentStatus: string, subscriberStatue: string ) {
-		if ( contentStatus === 'done' && subscriberStatue === 'done' ) {
+		if ( contentStatus === 'done' && subscriberStatue === 'imported' ) {
 			return true;
 		}
 		if ( contentStatus === 'done' && subscriberStatue === 'skipped' ) {
 			return true;
 		}
 
-		if ( contentStatus === 'skipped' && subscriberStatue === 'done' ) {
+		if ( contentStatus === 'skipped' && subscriberStatue === 'imported' ) {
 			return true;
 		}
 
