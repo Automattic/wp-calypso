@@ -4,7 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { A4A_REFERRALS_DASHBOARD } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -56,6 +56,17 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 
 	const productIds = checkoutItems.map( ( item ) => item.product_id ).join( ',' );
 
+	const licenses = useMemo(
+		() =>
+			checkoutItems
+				.filter( ( item ) => item.licenseId )
+				.map( ( item ) => ( {
+					product_id: item.product_id,
+					license_id: item.licenseId as number,
+				} ) ),
+		[ checkoutItems ]
+	);
+
 	const handleRequestPayment = useCallback( () => {
 		if ( ! hasCompletedForm ) {
 			return;
@@ -67,8 +78,22 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_request_payment_click' )
 		);
-		requestPayment( { client_email: email, client_message: message, product_ids: productIds } );
-	}, [ dispatch, email, hasCompletedForm, message, productIds, requestPayment, translate ] );
+		requestPayment( {
+			client_email: email,
+			client_message: message,
+			product_ids: productIds,
+			licenses: licenses,
+		} );
+	}, [
+		dispatch,
+		email,
+		hasCompletedForm,
+		licenses,
+		message,
+		productIds,
+		requestPayment,
+		translate,
+	] );
 
 	useEffect( () => {
 		if ( isSuccess && !! email ) {

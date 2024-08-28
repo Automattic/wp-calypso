@@ -21,5 +21,15 @@ export const HOW_TO_MIGRATE_OPTIONS = {
  * Example: `STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT` -> scope = `STEP_NAV`, action = `SUBMIT`
  */
 export const STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT = 'calypso_signup_actions_submit_step';
+export const STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK = 'calypso_signup_step_nav_back';
+export const STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT = 'calypso_signup_step_nav_next';
+export const STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO = 'calypso_signup_step_nav_go_to';
+export const STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW = 'calypso_signup_step_nav_exit_flow';
 
-export const STEPPER_TRACKS_EVENTS = < const >[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ];
+export const STEPPER_TRACKS_EVENTS = < const >[
+	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+	STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
+	STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT,
+	STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
+	STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
+];

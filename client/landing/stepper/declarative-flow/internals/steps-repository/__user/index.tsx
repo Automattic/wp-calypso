@@ -33,7 +33,7 @@ const UserStepComponent: Step = function UserStep( {
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
-	const { socialService, socialServiceResponse } = useSocialService();
+	const { socialServiceResponse } = useSocialService();
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -74,9 +74,7 @@ const UserStepComponent: Step = function UserStep( {
 						goToNextStep={ setWpAccountCreateResponse }
 						logInUrl={ loginLink }
 						handleSocialResponse={ handleSocialResponse }
-						socialService={ socialService }
 						socialServiceResponse={ socialServiceResponse }
-						isReskinned
 						redirectToAfterLoginUrl={ window.location.href }
 						queryArgs={ {} }
 						userEmail=""

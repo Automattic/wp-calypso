@@ -7,6 +7,8 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { BackButton } from './back-button';
 import { SuccessIcon } from './success-icon';
 
+import './ticket-success-screen.scss';
+
 export const SuccessScreen: React.FC = () => {
 	const { __ } = useI18n();
 	const { search } = useLocation();

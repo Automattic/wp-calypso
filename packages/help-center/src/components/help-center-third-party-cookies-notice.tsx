@@ -7,6 +7,8 @@ import React from 'react';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { BackButton } from './back-button';
 
+import './help-center-third-party-cookies-notice.scss';
+
 const ThirdPartyCookiesNotice: React.FC = () => {
 	const { __ } = useI18n();
 	const { sectionName } = useHelpCenterContext();

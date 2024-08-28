@@ -15,6 +15,7 @@ interface MetricsInsightProps {
 	onClick?: () => void;
 	index: number;
 	url?: string;
+	isWpcom: boolean;
 }
 
 const Card = styled( FoldableCard )`
@@ -62,7 +63,7 @@ const Content = styled.div`
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
 
-	const { insight, onClick, index } = props;
+	const { insight, onClick, index, isWpcom } = props;
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
@@ -73,6 +74,10 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 
 	if ( props.url && tip ) {
 		tip.link = `https://wordpress.com/setup/hosted-site-migration?from=${ props.url }&ref=performance-profiler-dashboard`;
+	}
+
+	if ( tip && isWpcom ) {
+		tip.link = '';
 	}
 
 	return (
