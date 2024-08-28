@@ -137,13 +137,13 @@ export const LogsTab = ( {
 		}
 
 		const nextPageIndex = nextPageNumber - 1;
-		if ( nextPageIndex < currentPageIndex && currentPageIndex > 0 ) {
-			setCurrentPageIndex( currentPageIndex - 1 );
+		if ( nextPageIndex < currentPageIndex && nextPageIndex >= 0 ) {
+			setCurrentPageIndex( nextPageIndex );
 		} else if (
 			nextPageIndex > currentPageIndex &&
-			( currentPageIndex + 1 ) * pageSize < ( data?.total_results ?? 0 )
+			nextPageIndex * pageSize < ( data?.total_results ?? 0 )
 		) {
-			setCurrentPageIndex( currentPageIndex + 1 );
+			setCurrentPageIndex( nextPageIndex );
 		}
 
 		setAutoRefresh( false );
