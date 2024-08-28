@@ -20,7 +20,7 @@
     </clipPath>
     <!-- Adjusted gradients to fit the viewBox -->
     <radialGradient
-      id="b"
+      id="cbb"
       cx="-5"
       cy="70"
       gradientUnits="userSpaceOnUse"
@@ -33,7 +33,7 @@
       <stop offset="1" stop-color="#1fb0b8" stop-opacity="0" />
     </radialGradient>
     <radialGradient
-      id="c"
+      id="cbc"
       cx="-5"
       cy="70"
       gradientUnits="userSpaceOnUse"
@@ -50,20 +50,9 @@
   <g clip-path="url(#paths)">
     <!-- Background paths adjusted to fit the viewBox -->
     <path d="M0 0h60v38H0z" fill="#29abe2" />
-    <path d="M0 0h60v38H0z" fill="url(#b)" />
-    <path d="M0 0h60v38H0z" fill="url(#c)" />
+    <path d="M0 0h60v38H0z" fill="url(#cbb)" />
+    <path d="M0 0h60v38H0z" fill="url(#cbc)" />
   </g>
-  <rect
-    x="1"
-    y="1"
-    width="58"
-    height="36"
-    rx="2.5"
-    fill="none"
-    stroke-width="1"
-    stroke="#DCDCDE"
-  />
-
   <!-- Adjusted position and scaling for the foreground paths -->
   <g fill="#fff" transform="scale(1.8) translate(3, 1.5)">
     <path
