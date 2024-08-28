@@ -4,7 +4,7 @@ import type { FC } from 'react';
 interface Props {
 	onClick: () => void;
 	text: string;
-	variant: string;
+	variant: 'primary' | 'secondary';
 }
 
 export const StepCta: FC< Props > = ( { onClick, text, variant } ) => {
