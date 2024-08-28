@@ -8,7 +8,6 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ActionsField from './dataviews-fields/actions-field';
 import SiteField from './dataviews-fields/site-field';
-import { SiteSort } from './sites-site-sort';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import { addDummyDataViewPrefix } from './utils';
@@ -107,22 +106,13 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'site',
 				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: (
-					<SiteSort
-						isSortable
-						columnKey="site"
-						dataViewsState={ dataViewsState }
-						setDataViewsState={ setDataViewsState }
-					>
-						<span>{ __( 'Site' ) }</span>
-					</SiteSort>
-				),
+				label: <span>{ __( 'Site' ) }</span>,
 				getValue: ( { item }: { item: SiteExcerptData } ) => item.URL,
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'plan',
@@ -145,20 +135,11 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'last-publish',
 				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: (
-					<SiteSort
-						isSortable
-						columnKey="last-publish"
-						dataViewsState={ dataViewsState }
-						setDataViewsState={ setDataViewsState }
-					>
-						<span>{ __( 'Last Published' ) }</span>
-					</SiteSort>
-				),
+				label: <span>{ __( 'Last Published' ) }</span>,
 				render: ( { item }: { item: SiteExcerptData } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'stats',
@@ -181,25 +162,8 @@ const DotcomSitesDataViews = ( {
 				enableHiding: false,
 				enableSorting: false,
 			},
-			// Dummy fields to allow people to sort by them on mobile.
 			{
-				id: addDummyDataViewPrefix( 'site' ),
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Site' ) }</span>,
-				render: () => null,
-				enableHiding: false,
-				enableSorting: true,
-			},
-			{
-				id: addDummyDataViewPrefix( 'last-publish' ),
-				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-				label: <span>{ __( 'Last Published' ) }</span>,
-				render: () => null,
-				enableHiding: false,
-				enableSorting: true,
-			},
-			{
-				id: addDummyDataViewPrefix( 'last-interacted' ),
+				id: 'last-interacted',
 				label: __( 'Last Interacted' ),
 				render: () => null,
 				enableHiding: false,

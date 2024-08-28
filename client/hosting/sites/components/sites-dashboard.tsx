@@ -71,12 +71,9 @@ interface SitesDashboardProps {
 }
 
 const siteSortingKeys = [
-	// Put the dummy data view at the beginning for searching the sort key.
-	{ dataView: addDummyDataViewPrefix( 'site' ), sortKey: 'alphabetically' },
-	{ dataView: addDummyDataViewPrefix( 'last-publish' ), sortKey: 'updatedAt' },
-	{ dataView: addDummyDataViewPrefix( 'last-interacted' ), sortKey: 'lastInteractedWith' },
 	{ dataView: 'site', sortKey: 'alphabetically' },
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
+	{ dataView: 'last-interacted', sortKey: 'lastInteractedWith' },
 ];
 
 const DEFAULT_PER_PAGE = 50;
