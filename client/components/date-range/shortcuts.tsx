@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { Icon, check, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso'; // Ensure this import is present
 import moment from 'moment'; // Assuming moment is used for date calculations
@@ -70,7 +69,7 @@ const DateControlPickerShortcuts = ( {
 	};
 
 	return (
-		<div className="date-control-picker-shortcuts">
+		<div className="date-control-picker-shortcuts__inner">
 			<ul className="date-control-picker-shortcuts__list">
 				{ shortcutList.map( ( shortcut, idx ) => {
 					const isSelected = shortcut.id === currentShortcut;
@@ -89,8 +88,6 @@ const DateControlPickerShortcuts = ( {
 								aria-label={ `Time range ${ shortcut.label }. Click to select.` }
 							>
 								<span>{ shortcut.label }</span>
-								{ isSelected && <Icon icon={ check } /> }
-								{ ! isSelected && <Icon icon={ lock } /> }
 							</Button>
 						</li>
 					);

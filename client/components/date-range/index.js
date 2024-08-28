@@ -462,23 +462,29 @@ export class DateRange extends Component {
 				position="bottom"
 				onClose={ this.closePopoverAndCommit }
 			>
-				<div className="date-range__popover-inner">
-					<div className="date-range__controls">
-						{ this.props.renderHeader( headerProps ) }
-						{ this.renderDateHelp() }
+				<div className="date-range__popover-content">
+					<div className="date-range__popover-inner">
+						<div className="date-range__controls">
+							{ this.props.renderHeader( headerProps ) }
+							{ this.renderDateHelp() }
+						</div>
+						{ this.props.renderInputs( inputsProps ) }
+						<DateRangePicker
+							firstSelectableDate={ this.props.firstSelectableDate }
+							lastSelectableDate={ this.props.lastSelectableDate }
+							selectedStartDate={ this.state.startDate }
+							selectedEndDate={ this.state.endDate }
+							onDateRangeChange={ onDateRangeChange }
+							focusedMonth={ this.state.focusedMonth }
+							numberOfMonths={ this.getNumberOfMonths() }
+						/>
 					</div>
-					{ this.props.renderInputs( inputsProps ) }
-					<DateRangePicker
-						firstSelectableDate={ this.props.firstSelectableDate }
-						lastSelectableDate={ this.props.lastSelectableDate }
-						selectedStartDate={ this.state.startDate }
-						selectedEndDate={ this.state.endDate }
-						onDateRangeChange={ onDateRangeChange }
-						focusedMonth={ this.state.focusedMonth }
-						numberOfMonths={ this.getNumberOfMonths() }
-					/>
+					{ showShortcuts && (
+						<div className="date-control-picker-shortcuts">
+							<Shortcuts onClick={ this.handleShortcutClick } />
+						</div>
+					) }
 				</div>
-				{ showShortcuts && <Shortcuts onClick={ this.handleShortcutClick } /> }
 			</Popover>
 		);
 	}
