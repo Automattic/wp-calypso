@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import type { FC } from 'react';
 
-export const StepGetYourSiteReady: FC< Props > = () => {
+export const StepGetYourSiteReady: FC = () => {
 	const translate = useTranslate();
 
 	return (

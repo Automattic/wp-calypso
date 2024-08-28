@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import type { FC } from 'react';
 
-export const StepInstallMigrateGuru: FC< Props > = () => {
+export const StepInstallMigrateGuru: FC = () => {
 	const translate = useTranslate();
 
 	return (

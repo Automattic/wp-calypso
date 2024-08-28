@@ -17,7 +17,6 @@ const GET_SITE_READY = 'get-your-site-ready';
 const ADD_MIGRATION_KEY = 'add-your-migration-key';
 
 interface StepsDataOptions {
-	fromUrl: string;
 	migrationKey: string;
 	preparationError: Error | null;
 	showMigrationKeyFallback: boolean;
@@ -116,7 +115,7 @@ export const useSteps = ( {
 			recordMigrationInstructionsLinkClick( 'install-plugin' );
 		};
 
-		const openMigrateGuruPage = ( url, linkname ) => {
+		const openMigrateGuruPage = ( url: string, linkname: string ) => {
 			window.open( getMigrateGuruPageURL( url ), '_blank' );
 			recordMigrationInstructionsLinkClick( linkname );
 		};
