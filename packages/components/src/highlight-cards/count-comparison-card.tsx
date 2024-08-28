@@ -55,6 +55,7 @@ export function TrendComparison( { count, previousCount }: TrendComparisonProps 
 		? percentCalculator( Math.abs( difference as number ), previousCount )
 		: null;
 
+	// Show nothing if inputs are invalid or if there is no change.
 	if ( difference === null || difference === 0 ) {
 		return null;
 	}
