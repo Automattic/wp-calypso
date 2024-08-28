@@ -527,6 +527,8 @@ export class DateRange extends Component {
 		this.setState( {
 			startDate: newFromDate,
 			endDate: newToDate,
+			textInputStartDate: this.toDateString( newFromDate ),
+			textInputEndDate: this.toDateString( newToDate ),
 		} );
 	};
 }
