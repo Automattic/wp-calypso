@@ -86,11 +86,12 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 		<div className={ className }>
 			<DataViews
 				data={ data.items ?? [] }
-				paginationInfo={ data.pagination }
-				fields={ data.fields }
 				view={ data.dataViewsState }
+				onChangeView={ ( newView ) => data.setDataViewsState( () => newView ) }
+				fields={ data.fields }
 				search={ data?.enableSearch ?? true }
 				searchLabel={ data.searchLabel ?? translate( 'Search' ) }
+				actions={ data.actions }
 				getItemId={
 					data.getItemId ??
 					( ( item: any ) => {
@@ -99,11 +100,12 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 						return item.id;
 					} )
 				}
-				onChangeSelection={ data.onSelectionChange }
-				onChangeView={ ( newView ) => data.setDataViewsState( () => newView ) }
-				defaultLayouts={ data.defaultLayouts }
-				actions={ data.actions }
 				isLoading={ isLoading }
+				paginationInfo={ data.pagination }
+				defaultLayouts={ data.defaultLayouts }
+				selection={ data.selection }
+				onChangeSelection={ data.onSelectionChange }
+				header={ data.header }
 			/>
 			{ dataviewsWrapper &&
 				ReactDOM.createPortal(
