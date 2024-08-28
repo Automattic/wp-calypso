@@ -29,7 +29,7 @@ const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 
 const excludedPackages = [
-	// /^calypso\/components\/inline-support-link$/,
+	/^calypso\/components\/inline-support-link$/,
 	/^calypso\/components\/web-preview.*$/,
 	/^calypso\/blocks\/upsell-nudge.*$/,
 	/^calypso\/my-sites\/stats\/mini-carousel.*$/,
