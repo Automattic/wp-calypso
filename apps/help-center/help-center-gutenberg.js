@@ -8,6 +8,7 @@ import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState, useReducer } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
+import { useI18n } from '@wordpress/react-i18n';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks';
 import './wp-components.scss';
@@ -15,6 +16,12 @@ import './wp-components.scss';
 const queryClient = new QueryClient();
 
 function HelpCenterContent() {
+	const { isRTL } = useI18n();
+
+	const cssUrl = `https://widgets.wp.com/help-center/help-center-gutenberg${
+		isRTL ? '.rtl' : ''
+	}'.css`;
+
 	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
@@ -83,7 +90,7 @@ function HelpCenterContent() {
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
-				shadowCSSFromURL="https://widgets.wp.com/help-center/help-center-gutenberg.css"
+				shadowCSSFromURL={ cssUrl }
 			/>
 		</>
 	);

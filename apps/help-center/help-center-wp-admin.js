@@ -5,12 +5,19 @@ import HelpCenter from '@automattic/help-center';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
 import { createRoot } from 'react-dom/client';
 import './wp-components.scss';
 
 const queryClient = new QueryClient();
 
 function AdminHelpCenterContent() {
+	const { isRTL } = useI18n();
+
+	const cssUrl = `https://widgets.wp.com/help-center/help-center-wp-admin${
+		isRTL ? '.rtl' : ''
+	}'.css`;
+
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const button = document.getElementById( 'wp-admin-bar-help-center' );
@@ -47,7 +54,7 @@ function AdminHelpCenterContent() {
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
-				shadowCSSFromURL="https://widgets.wp.com/help-center/help-center-wp-admin.css"
+				shadowCSSFromURL={ cssUrl }
 			/>
 		</QueryClientProvider>
 	);
