@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { isGravatarOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
@@ -18,7 +19,7 @@ interface QueryArgs {
 }
 
 interface SignupFormSocialFirst {
-	goToNextStep: () => void;
+	goToNextStep: ( data: AccountCreateReturn ) => void;
 	stepName: string;
 	flowName: string;
 	redirectToAfterLoginUrl: string;
