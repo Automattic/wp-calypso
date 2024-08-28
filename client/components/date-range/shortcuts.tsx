@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso'; // Ensure this import is present
 import moment from 'moment'; // Assuming moment is used for date calculations
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react'; // Add useState and useEffect
 
 const DATERANGE_PERIOD = {
 	DAY: 'day',
@@ -18,6 +19,11 @@ const DateRangePickerShortcuts = ( {
 	onClick: ( shortcut: any ) => void;
 } ) => {
 	const translate = useTranslate();
+	const [ selectedShortcut, setSelectedShortcut ] = useState( currentShortcut ); // Track selected shortcut
+
+	useEffect( () => {
+		setSelectedShortcut( currentShortcut ); // Update state when currentShortcut changes
+	}, [ currentShortcut ] );
 
 	const generateShortcutList = () => {
 		return [
@@ -61,6 +67,7 @@ const DateRangePickerShortcuts = ( {
 		range: any;
 		period?: string;
 	} ) => {
+		setSelectedShortcut( shortcut.id ); // Update selected shortcut on click
 		const { offset, range } = shortcut; // Assuming these are part of the shortcut structure
 		const newToDate = moment().subtract( offset, 'days' ); // Ensure this is a Moment object
 		const newFromDate = moment().subtract( offset + range, 'days' ); // Ensure this is a Moment object
@@ -72,7 +79,7 @@ const DateRangePickerShortcuts = ( {
 		<div className="date-control-picker-shortcuts__inner">
 			<ul className="date-control-picker-shortcuts__list">
 				{ shortcutList.map( ( shortcut, idx ) => {
-					const isSelected = shortcut.id === currentShortcut;
+					const isSelected = shortcut.id === selectedShortcut; // Use state for selection
 
 					return (
 						<li
