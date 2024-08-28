@@ -17,12 +17,11 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const baseBackupDateMoment = moment( baseBackupDate );
-	const today = selectedBackupDate;
 	const daysAgo = selectedBackupDate.diff( baseBackupDate, 'days' );
 
 	let message: string | React.ReactNode;
 
-	if ( baseBackupDateMoment.isSame( today, 'day' ) ) {
+	if ( baseBackupDateMoment.isSame( selectedBackupDate, 'day' ) ) {
 		message = translate(
 			'We are using a full backup from this day (%(baseBackupDate)s) with %(eventsCount)d change you have made since then until now.',
 			'We are using a full backup from this day (%(baseBackupDate)s) with %(eventsCount)d changes you have made since then until now.',
@@ -36,7 +35,9 @@ export const BackupRealtimeMessage: FunctionComponent< Props > = ( {
 					'%(baseBackupDate)s is the date and time of the backup, and %(eventsCount)d is the number of changes made since the backup.',
 			}
 		);
-	} else if ( baseBackupDateMoment.isSame( today.clone().subtract( 1, 'days' ), 'day' ) ) {
+	} else if (
+		baseBackupDateMoment.isSame( selectedBackupDate.clone().subtract( 1, 'days' ), 'day' )
+	) {
 		message = translate(
 			'We are using a full backup from the previous day (%(baseBackupDate)s) with %(eventsCount)d change you have made since then until now.',
 			'We are using a full backup from the previous day (%(baseBackupDate)s) with %(eventsCount)d changes you have made since then until now.',
