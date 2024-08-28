@@ -23,7 +23,7 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
-	const { socialService, socialServiceResponse } = useSocialService();
+	const { socialServiceResponse } = useSocialService();
 
 	useEffect( () => {
 		if ( isLoggedIn ) {
@@ -49,9 +49,7 @@ const StepContent: Step = ( { flow, stepName, navigation } ) => {
 				} }
 				logInUrl={ loginLink }
 				handleSocialResponse={ handleSocialResponse }
-				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
-				isReskinned
 				redirectToAfterLoginUrl={ window.location.href }
 				queryArgs={ {} }
 				userEmail=""

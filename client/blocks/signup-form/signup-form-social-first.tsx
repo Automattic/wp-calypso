@@ -23,7 +23,6 @@ interface SignupFormSocialFirst {
 	flowName: string;
 	redirectToAfterLoginUrl: string;
 	logInUrl: string;
-	socialService: string;
 	socialServiceResponse: object;
 	handleSocialResponse: (
 		service: string,
@@ -35,7 +34,6 @@ interface SignupFormSocialFirst {
 			extra: { first_name: string; last_name: string; username_hint: string };
 		} | null
 	) => void;
-	isReskinned: boolean;
 	queryArgs: QueryArgs;
 	userEmail: string;
 	notice: JSX.Element | false;
@@ -67,10 +65,8 @@ const SignupFormSocialFirst = ( {
 	flowName,
 	redirectToAfterLoginUrl,
 	logInUrl,
-	socialService,
 	socialServiceResponse,
 	handleSocialResponse,
-	isReskinned,
 	queryArgs,
 	userEmail,
 	notice,
@@ -133,9 +129,7 @@ const SignupFormSocialFirst = ( {
 					<SocialSignupForm
 						handleResponse={ handleSocialResponse }
 						setCurrentStep={ setCurrentStep }
-						socialService={ socialService }
 						socialServiceResponse={ socialServiceResponse }
-						isReskinned={ isReskinned }
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 						disableTosText
 						compact
