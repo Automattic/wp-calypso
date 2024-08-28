@@ -200,7 +200,7 @@
 	}
 }
 
-// TODO: remove when updating to dataviews@4.2.0.
+// TODO: remove when updating to dataviews@4.3.0.
 //
 // This is a hotfix to hiding the properties section in the view config menu
 // when no field is hidable.
@@ -210,19 +210,7 @@
 	display: none;
 }
 
-// TODO: remove when updating to dataviews@4.2.0.
-//
-// This is a hotfix for the filter toggle, that is visible
-// when there are no filters.
-// Fixed at https://github.com/WordPress/gutenberg/issues/64631
-//
-.is-section-a8c-for-agencies-team .dataviews-filters__visibility-toggle,
-.is-section-a8c-for-agencies-sites.modal-open .dataviews-filters__visibility-toggle,
-.is-section-a8c-for-agencies-referrals .dataviews-filters__visibility-toggle {
-	display: none !important;
-}
-
-// TODO: remove when updating to dataviews@4.2.0
+// TODO: remove when updating to dataviews@4.3.0
 //
 // This is a hotfix for the sort direction control within the view config.
 // It shouldn't be visible when there are no sortable fields.
