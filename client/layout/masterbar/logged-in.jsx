@@ -567,12 +567,12 @@ class MasterbarLoggedIn extends Component {
 						ignoreViewportSize
 					>
 						<h1 className="masterbar__reader-popover-heading">
-							{ translate( 'Read the blogs and topics you follow', {
+							{ translate( "We've moved the Reader!", {
 								comment: 'This is a popover title',
 							} ) }
 						</h1>
 						<p className="masterbar__reader-popover-description">
-							{ translate( 'Click on the eyeglasses to access the Reader.' ) }
+							{ translate( 'Click the eyeglasses icon to check it out.' ) }
 						</p>
 						<div className="masterbar__reader-popover-actions">
 							<WPButton isPrimary onClick={ this.dismissLogoPopover }>
