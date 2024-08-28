@@ -91,7 +91,7 @@ export const SitesDashboardProvider = ( {
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
 		fields: [
-			'site',
+			'url',
 			'stats',
 			'boost',
 			'backup',

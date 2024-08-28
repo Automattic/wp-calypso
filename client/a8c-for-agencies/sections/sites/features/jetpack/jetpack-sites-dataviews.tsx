@@ -9,7 +9,6 @@ import {
 	DataViewsState,
 	ItemsDataViewsType,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import SiteSort from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/site-sort';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { SitesDataViewsProps } from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
@@ -155,18 +154,16 @@ export const JetpackSitesDataViews = ( {
 				enableSorting: false,
 			},
 			{
-				id: 'site',
+				id: 'url',
 				// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
 				label: (
 					<>
-						<SiteSort isSortable columnKey="site">
-							<span
-								className="sites-dataview__site-header sites-dataview__site-header--sort"
-								ref={ ( ref ) => setIntroRef( ref as HTMLElement | null ) }
-							>
-								{ translate( 'Site' ).toUpperCase() }
-							</span>
-						</SiteSort>
+						<span
+							className="sites-dataview__site-header sites-dataview__site-header--sort"
+							ref={ ( ref ) => setIntroRef( ref as HTMLElement | null ) }
+						>
+							{ translate( 'Site' ).toUpperCase() }
+						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-intro"
 							tourId="sitesWalkthrough"
@@ -208,7 +205,7 @@ export const JetpackSitesDataViews = ( {
 					);
 				},
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'stats',
