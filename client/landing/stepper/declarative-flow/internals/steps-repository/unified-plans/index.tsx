@@ -15,7 +15,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { ProvidedDependencies, StepProps } from '../../types';
-import './styles.scss';
 
 export const LocalizedPlanStep = localize( PlansStep );
 
