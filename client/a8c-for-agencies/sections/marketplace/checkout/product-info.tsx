@@ -65,11 +65,12 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 		);
 
 		siteUrls = product.siteUrls?.length
-			? translate( 'Site: %(sitesList)s', {
+			? translate( 'Site: %(sitesList)s', 'Sites: %(sitesList)s', {
+					count: product.siteUrls.length,
 					args: {
 						sitesList: formattedSiteUrls?.join( ',' ) ?? '',
 					},
-					context: 'product description',
+					context: 'site URLs in the plan description',
 					comment: 'The `sitesList` is the list of site URLs in the plan description.',
 			  } )
 			: '';
