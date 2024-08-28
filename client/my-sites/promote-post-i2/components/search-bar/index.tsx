@@ -204,7 +204,7 @@ export default function SearchBar( props: Props ) {
 		setSearchInput( search );
 		handleSetSearch( {
 			search: search,
-			order: sortOption,
+			order: mode === 'posts' ? sortOption : campaignSortOption,
 			filter: filterOption,
 		} );
 	};
