@@ -134,7 +134,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		border-color: var(--studio-gray-5);
 		border-radius: 5px; // stylelint-disable-line scales/radii
 		width: 100%;
-		min-width: 180px; // Minimum mobile width
 		padding: 16px 24px;
 		margin-bottom: 0;
 
@@ -159,7 +158,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 .highlight-card-count {
 	align-items: flex-end;
 	display: flex;
-	flex-wrap: wrap;
 	font-size: 36px; // stylelint-disable-line declaration-property-unit-allowed-list
 	font-weight: 400;
 	line-height: 40px;
