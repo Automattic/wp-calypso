@@ -26,10 +26,9 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep }: StepRouteProps ) =>
 	const shouldSkipRender = shouldRedirectToLogin || ! stepContent;
 
 	useStepRouteTracking( {
-		flowName: flow.name,
+		flow,
 		stepSlug: step.slug,
 		skipTracking: shouldSkipRender,
-		flowVariantSlug: flow.variantSlug,
 	} );
 
 	useEffect( () => {
