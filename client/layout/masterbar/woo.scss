@@ -1143,6 +1143,7 @@ $breakpoint-mobile: 660px;
 					font-weight: 500;
 					line-height: 24px;
 					color: var(--studio-gray-100);
+					font-family: $woo-inter-font;
 				}
 
 				.social-icons {
@@ -1600,7 +1601,7 @@ $breakpoint-mobile: 660px;
 
 		.login form,
 		.signup-form {
-			max-width: 405px;
+			max-width: 327px;
 			margin: 0 auto;
 
 			input.form-text-input {
@@ -1891,6 +1892,20 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
+		.wp-login__main-footer {
+			.login__lost-password-link {
+				font-weight: inherit;
+			}
+			.auth-form__social-buttons-tos {
+				font-family: $woo-inter-font;
+				a {
+					font-family: inherit;
+					line-height: 18px;
+					text-underline-offset: 2px;
+				}
+			}
+		}
+
 		.auth-form__social .auth-form__social-buttons .social-buttons__button.button {
 			border-radius: 2px;
 			border: 1px solid var(--Gray-Gray-20, #a7aaad) !important;
@@ -1898,6 +1913,7 @@ $breakpoint-mobile: 660px;
 			span {
 				font-size: 0.875rem;
 				letter-spacing: 0.32px;
+				font-family: inherit;
 			}
 		}
 	}
