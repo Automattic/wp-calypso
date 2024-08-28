@@ -110,6 +110,7 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,
+		"reader/hide-tooltip": true,
 		"reader/first-posts-stream": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,

@@ -530,6 +530,7 @@ class MasterbarLoggedIn extends Component {
 	renderReader() {
 		const { translate, sectionGroup, isFetchingPrefs, hasDismissedReaderPopover } = this.props;
 		const { readerBtnRef } = this.state;
+		const showReaderPopover = ! config.isEnabled( 'reader/hide-tooltip' );
 		return (
 			<>
 				<Item
@@ -555,7 +556,7 @@ class MasterbarLoggedIn extends Component {
 					ref={ ( ref ) => ref !== readerBtnRef && this.setState( { readerBtnRef: ref } ) }
 					hasGlobalBorderStyle
 				/>
-				{ readerBtnRef && (
+				{ showReaderPopover && readerBtnRef && (
 					<Popover
 						className="masterbar__reader-popover"
 						isVisible={
