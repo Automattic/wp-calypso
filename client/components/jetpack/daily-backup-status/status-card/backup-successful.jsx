@@ -68,8 +68,8 @@ const BackupSuccessful = ( {
 	const isCloneFlow =
 		availableActions && availableActions.length === 1 && availableActions[ 0 ] === 'clone';
 
-	const showRealTimeMessage = backup.baseRewindId && backup.rewindStepCount > 0;
-	const baseBackupDate = moment.unix( backup.baseRewindId );
+	const baseBackupDate = backup.baseRewindId ? moment.unix( backup.baseRewindId ) : null;
+	const showRealTimeMessage = backup.baseRewindId && baseBackupDate && backup.rewindStepCount > 0;
 	return (
 		<>
 			<div className="status-card__message-head">
