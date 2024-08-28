@@ -10,7 +10,6 @@ import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -162,7 +161,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 						target="_blank"
 						rel="noreferrer"
 						onClick={ ( event ) => {
-							if ( ! isJetpackCloud() ) {
+							if ( ! isOdysseyStats && isWPCOMSite ) {
 								event.preventDefault();
 								openHelpCenter();
 							}
