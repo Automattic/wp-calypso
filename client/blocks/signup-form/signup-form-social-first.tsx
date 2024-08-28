@@ -39,6 +39,7 @@ interface SignupFormSocialFirst {
 	userEmail: string;
 	notice: JSX.Element | false;
 	isSocialFirst: boolean;
+	passDataToNextStep?: boolean;
 }
 
 const options = {
@@ -72,6 +73,7 @@ const SignupFormSocialFirst = ( {
 	userEmail,
 	notice,
 	isSocialFirst,
+	passDataToNextStep,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
 	const { __ } = useI18n();
@@ -158,6 +160,7 @@ const SignupFormSocialFirst = ( {
 						submitButtonLabel={ __( 'Continue' ) }
 						userEmail={ userEmail }
 						renderTerms={ renderEmailStepTermsOfService }
+						passDataToNextStep={ passDataToNextStep }
 						onCreateAccountError={ ( error: { error: string }, email: string ) => {
 							if ( isExistingAccountError( error.error ) ) {
 								window.location.assign(

@@ -72,6 +72,7 @@ const UserStepComponent: Step = function UserStep( {
 						stepName={ stepName }
 						flowName={ flow }
 						goToNextStep={ setWpAccountCreateResponse }
+						passDataToNextStep
 						logInUrl={ loginLink }
 						handleSocialResponse={ handleSocialResponse }
 						socialServiceResponse={ socialServiceResponse }
