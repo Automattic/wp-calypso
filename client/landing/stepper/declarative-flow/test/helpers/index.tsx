@@ -47,9 +47,10 @@ export const renderFlow = ( flow: Flow ) => {
 			}
 		}, [] );
 
+		const pathname = location.pathname.replace( `${ flow.name }/`, '' );
 		return (
 			<>
-				<p data-testid="pathname">{ `${ location.pathname }${ location.search }` }</p>
+				<p data-testid="pathname">{ `${ pathname }${ location.search }` }</p>
 				<p data-testid="search">{ location.search }</p>
 				<p data-testid="state">{ JSON.stringify( location.state ) }</p>
 				{ assertionConditionResult && (
@@ -118,6 +119,7 @@ declare global {
 
 expect.extend( {
 	toMatchDestination( destination, expected: MatchDestinationParams ) {
+		// console.log( 'OIE', destination.step, expected.step.slug)
 		const isSameStep = destination.step === expected.step.slug;
 
 		if ( expected.query instanceof URLSearchParams === false ) {
@@ -138,7 +140,11 @@ expect.extend( {
 		if ( ! isSameStep ) {
 			return {
 				message: () =>
-					`expected ${ destination.step } to match ${ expected.step.slug } but the step is different`,
+					`Expected step: ${ this.utils.printExpected(
+						decodeURIComponent( expected.step.slug )
+					) } \nReceived step: ${ this.utils.printReceived(
+						decodeURIComponent( destination.step )
+					) }`,
 				pass: false,
 			};
 		}
