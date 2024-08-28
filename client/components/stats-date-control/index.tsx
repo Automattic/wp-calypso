@@ -1,6 +1,11 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { Button } from '@wordpress/components';
+import { Icon, calendar } from '@wordpress/icons';
+import { Moment } from 'moment';
 import qs from 'qs';
+import { RefObject } from 'react';
+import DateRange from 'calypso/components/date-range';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DateControlPicker from './stats-date-control-picker';
@@ -8,6 +13,7 @@ import { StatsDateControlProps, DateControlPickerShortcut } from './types';
 import './style.scss';
 
 const COMPONENT_CLASS_NAME = 'stats-date-control';
+const isCalendarEnabled = config.isEnabled( 'stats/date-picker-calendar' );
 
 const StatsDateControl = ( {
 	slug,
@@ -115,16 +121,46 @@ const StatsDateControl = ( {
 
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
-			<DateControlPicker
-				buttonLabel={ getButtonLabel() }
-				dateRange={ dateRange }
-				shortcutList={ shortcutList }
-				selectedShortcut={ getShortcutForRange()?.id }
-				onShortcut={ onShortcutHandler }
-				onApply={ onApplyButtonHandler }
-				onGatedHandler={ onGatedHandler }
-				overlay={ overlay }
-			/>
+			{ isCalendarEnabled ? (
+				<DateRange
+					selectedStartDate={ moment( dateRange.chartStart ) }
+					selectedEndDate={ moment( dateRange.chartEnd ) }
+					lastSelectableDate={ moment().toDate() }
+					// TODO: We should use probably the create date of the site here?
+					firstSelectableDate={ moment( '2005-01-01' ).toDate() }
+					onDateCommit={ ( startDate: Moment, endDate: Moment ) =>
+						startDate &&
+						endDate &&
+						onApplyButtonHandler( startDate.format( 'YYYY-MM-DD' ), endDate.format( 'YYYY-MM-DD' ) )
+					}
+					renderTrigger={ ( {
+						onTriggerClick,
+						buttonRef,
+					}: {
+						onTriggerClick: () => void;
+						buttonRef: RefObject< typeof Button >;
+					} ) => {
+						return (
+							<Button onClick={ onTriggerClick } ref={ buttonRef }>
+								{ getButtonLabel() }
+								<Icon className="gridicon" icon={ calendar } />
+							</Button>
+						);
+					} }
+					rootClass="stats-date-control-picker"
+				/>
+			) : (
+				<DateControlPicker
+					buttonLabel={ getButtonLabel() }
+					dateRange={ dateRange }
+					shortcutList={ shortcutList }
+					selectedShortcut={ getShortcutForRange()?.id }
+					onShortcut={ onShortcutHandler }
+					onApply={ onApplyButtonHandler }
+					onGatedHandler={ onGatedHandler }
+					overlay={ overlay }
+				/>
+			) }
 		</div>
 	);
 };
