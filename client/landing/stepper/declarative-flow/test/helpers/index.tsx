@@ -119,7 +119,6 @@ declare global {
 
 expect.extend( {
 	toMatchDestination( destination, expected: MatchDestinationParams ) {
-		// console.log( 'OIE', destination.step, expected.step.slug)
 		const isSameStep = destination.step === expected.step.slug;
 
 		if ( expected.query instanceof URLSearchParams === false ) {
