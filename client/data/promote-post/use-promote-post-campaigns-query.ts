@@ -51,6 +51,12 @@ export type CampaignResponse = {
 		total: number;
 		card_name: string;
 		orders: Order[];
+		debt_amount?: number;
+		payment_links?: {
+			date: string;
+			amount: number;
+			url: string;
+		}[];
 	};
 	is_evergreen?: boolean;
 };

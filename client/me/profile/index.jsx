@@ -103,7 +103,7 @@ class Profile extends Component {
 							/>
 							{ isEnabled( 'layout/site-level-user-profile' ) && (
 								<FormSettingExplanation>
-									{ this.props.translate( 'Shown publicly when you comment on other sites.' ) }
+									{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
 								</FormSettingExplanation>
 							) }
 						</FormFieldset>
@@ -120,10 +120,11 @@ class Profile extends Component {
 									type="url"
 									onChange={ this.props.updateSetting }
 									onFocus={ this.getFocusHandler( 'Web Address Field' ) }
+									placeholder="https://example.com"
 									value={ this.props.getSetting( 'user_URL' ) }
 								/>
 								<FormSettingExplanation>
-									{ this.props.translate( 'Shown publicly when you comment on other sites.' ) }
+									{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
 								</FormSettingExplanation>
 							</FormFieldset>
 						) }
