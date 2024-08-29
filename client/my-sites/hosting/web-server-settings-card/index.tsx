@@ -251,10 +251,6 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 		);
 	};
 
-	const updateVersion = () => {
-		dispatch( updateAtomicPhpVersion( siteId, selectedPhpVersion ) );
-	};
-
 	const getPhpVersionContent = () => {
 		if ( isGettingPhpVersion ) {
 			return;
@@ -297,7 +293,9 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 				{ ! isPhpVersionButtonDisabled && (
 					<Button
 						className="web-server-settings-card__php-set-version"
-						onClick={ updateVersion }
+						onClick={ () => {
+							dispatch( updateAtomicPhpVersion( siteId, selectedPhpVersion ) );
+						} }
 						busy={ isUpdatingPhpVersion }
 						disabled={ isUpdatingPhpVersion }
 					>
