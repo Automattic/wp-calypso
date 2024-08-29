@@ -7,7 +7,16 @@ import tracksRecordEvent from './track-record-event';
  */
 export default () => ( {
 	id: 'wpcom-preview-dropdown-selected',
-	selector: '.components-menu-item__button',
+	selector: [
+		'.components-menu-item__button',
+		// The “Preview in new tab” item in the post/page editor
+		'.editor-preview-dropdown__button-external',
+	]
+		.map(
+			( className ) =>
+				`.components-dropdown-menu__menu[aria-label="${ __( 'View options' ) }"] ${ className }`
+		)
+		.join( ',' ),
 	type: 'click',
 	capture: true,
 	handler: ( _event, target ) => {
@@ -16,12 +25,11 @@ export default () => ( {
 			[ __( 'Desktop (50%)' ) ]: 'zoom-out',
 			[ __( 'Tablet' ) ]: 'tablet',
 			[ __( 'Mobile' ) ]: 'mobile',
-			[ `${ __( 'View site' ) }\n${ __( '(opens in a new tab)' ) }` ]: 'view-site',
+			[ [ __( 'View site' ), __( '(opens in a new tab)' ) ].join( '\n' ) ]: 'view-site',
 			[ __( 'Preview in new tab' ) ]: 'preview',
 		};
 
-		const item = target.querySelector( '.components-menu-item__item' );
-		const previewMode = mapTextToPreviewMode[ item?.innerText ];
+		const previewMode = mapTextToPreviewMode[ target.innerText ];
 		if ( previewMode ) {
 			tracksRecordEvent( 'wpcom_editor_preview_dropdown_selected', {
 				preview_mode: previewMode,
