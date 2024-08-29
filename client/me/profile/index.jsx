@@ -103,7 +103,7 @@ class Profile extends Component {
 							/>
 							{ isEnabled( 'layout/site-level-user-profile' ) && (
 								<FormSettingExplanation>
-									{ this.props.translate( 'Shown publicly when you comment on other sites.' ) }
+									{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
 								</FormSettingExplanation>
 							) }
 						</FormFieldset>
@@ -123,7 +123,7 @@ class Profile extends Component {
 									value={ this.props.getSetting( 'user_URL' ) }
 								/>
 								<FormSettingExplanation>
-									{ this.props.translate( 'Shown publicly when you comment on other sites.' ) }
+									{ this.props.translate( 'Shown publicly when you comment on blogs.' ) }
 								</FormSettingExplanation>
 							</FormFieldset>
 						) }
