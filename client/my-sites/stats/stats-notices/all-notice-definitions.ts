@@ -80,8 +80,10 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			hasPaidStats,
 			isSiteJetpackNotAtomic,
 			isCommercial,
+			hasSignificantViews,
 		}: StatsNoticeProps ) => {
-			const showUpgradeNoticeForWpcomSites = isWpcom && ! isP2 && ! isOwnedByTeam51;
+			const showUpgradeNoticeForWpcomSites =
+				isWpcom && ! isP2 && ! isOwnedByTeam51 && hasSignificantViews;
 
 			// Show the notice if the site is Jetpack or it is Odyssey Stats.
 			const showUpgradeNoticeOnOdyssey = isOdysseyStats;

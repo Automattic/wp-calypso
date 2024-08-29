@@ -30,6 +30,7 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 					args: { productName: productDisplayName, quantity: item.quantity },
 			  } )
 			: productDisplayName;
+	const isFree = actualCost === 0;
 
 	return (
 		<li className="shopping-cart__menu-list-item">
@@ -37,19 +38,25 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 			<div className="shopping-cart__menu-list-item-details">
 				<div className="shopping-cart__menu-list-item-title">{ itemDisplayName }</div>
 				<div className="shopping-cart__menu-list-item-price">
-					<span className="shopping-cart__menu-list-item-price-discounted">
-						{ formatCurrency( discountedCost, item.currency ) }
-					</span>
-					{ actualCost > discountedCost && (
-						<span className="shopping-cart__menu-list-item-price-actual">
-							{ formatCurrency( actualCost, item.currency ) }
-						</span>
+					{ isFree ? (
+						translate( 'Free' )
+					) : (
+						<>
+							<span className="shopping-cart__menu-list-item-price-discounted">
+								{ formatCurrency( discountedCost, item.currency ) }
+							</span>
+							{ actualCost > discountedCost && (
+								<span className="shopping-cart__menu-list-item-price-actual">
+									{ formatCurrency( actualCost, item.currency ) }
+								</span>
+							) }
+							<span>
+								{ translate( '/mo', {
+									comment: 'Abbreviation for per month',
+								} ) }
+							</span>
+						</>
 					) }
-					<span>
-						{ translate( '/mo', {
-							comment: 'Abbreviation for per month',
-						} ) }
-					</span>
 				</div>
 			</div>
 			{ onRemoveItem && (

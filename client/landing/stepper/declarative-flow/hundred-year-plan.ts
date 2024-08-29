@@ -11,7 +11,6 @@ import {
 import { SiteId, SiteSlug } from 'calypso/types';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { ProvidedDependencies, Flow } from './internals/types';
 
 const HundredYearPlanFlow: Flow = {
@@ -88,8 +87,6 @@ const HundredYearPlanFlow: Flow = {
 		const { setPlanCartItem, setPendingAction } = useDispatch( ONBOARD_STORE );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
-
 			const updateCartForExistingSite = async () => {
 				if ( ! providedDependencies?.siteSlug || ! providedDependencies?.siteId ) {
 					return;

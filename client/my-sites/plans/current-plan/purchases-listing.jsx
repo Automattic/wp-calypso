@@ -2,7 +2,6 @@ import {
 	isFreeJetpackPlan,
 	isFreePlan,
 	isJetpackProduct,
-	getJetpackProductDisplayName,
 	getJetpackProductTagline,
 	isJetpackBackup,
 	isJetpackScan,
@@ -30,6 +29,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import ProductExpiration from 'calypso/components/product-expiration';
 import {
 	isExpiring,
+	getDisplayName,
 	isPartnerPurchase,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'calypso/lib/purchases';
@@ -108,7 +108,7 @@ class PurchasesListing extends Component {
 		const { currentPlan, translate } = this.props;
 
 		if ( isJetpackProduct( purchase ) ) {
-			return getJetpackProductDisplayName( purchase );
+			return getDisplayName( purchase );
 		}
 
 		if ( currentPlan ) {

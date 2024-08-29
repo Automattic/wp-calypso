@@ -21,7 +21,6 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
@@ -40,7 +39,6 @@ import { OverviewPreviewPane } from '../features/a4a/overview-preview-pane';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SitesHeaderActions from '../sites-header-actions';
 import SiteNotifications from '../sites-notifications';
-import EmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
 import ProvisioningSiteNotification from './provisioning-site-notification';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
@@ -64,6 +62,7 @@ export default function SitesDashboard() {
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 		showOnlyFavorites,
+		showOnlyDevelopmentSites,
 		hideListing,
 		setHideListing,
 		recentlyCreatedSiteId,
@@ -89,6 +88,7 @@ export default function SitesDashboard() {
 	const [ agencyDashboardFilter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],
 		showOnlyFavorites: showOnlyFavorites || false,
+		showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
 	} );
 
 	useEffect( () => {
@@ -97,8 +97,14 @@ export default function SitesDashboard() {
 		setAgencyDashboardFilter( {
 			issueTypes: selectedFilters,
 			showOnlyFavorites: showOnlyFavorites || false,
+			showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
 		} );
-	}, [ dataViewsState.filters, setAgencyDashboardFilter, showOnlyFavorites ] );
+	}, [
+		dataViewsState.filters,
+		setAgencyDashboardFilter,
+		showOnlyFavorites,
+		showOnlyDevelopmentSites,
+	] );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
@@ -109,8 +115,6 @@ export default function SitesDashboard() {
 		perPage: dataViewsState.perPage,
 		agencyId,
 	} );
-
-	const noActiveSite = useNoActiveSite();
 
 	useEffect( () => {
 		if ( dataViewsState.selectedItem && ! initialSelectedSiteUrl ) {
@@ -159,6 +163,7 @@ export default function SitesDashboard() {
 			currentPage: dataViewsState.page,
 			sort: dataViewsState.sort,
 			showOnlyFavorites,
+			showOnlyDevelopmentSites,
 		} );
 		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
 			page.show( updatedUrl );
@@ -173,6 +178,7 @@ export default function SitesDashboard() {
 		dataViewsState.search,
 		dataViewsState.page,
 		showOnlyFavorites,
+		showOnlyDevelopmentSites,
 		dataViewsState.sort,
 		hideListing,
 	] );
@@ -212,10 +218,6 @@ export default function SitesDashboard() {
 		tourId = 'sitesWalkthrough';
 	} else if ( urlParams.get( 'tour' ) === 'add-new-site' ) {
 		tourId = 'addSiteStep1';
-	}
-
-	if ( noActiveSite ) {
-		return <EmptyState />;
 	}
 
 	return (

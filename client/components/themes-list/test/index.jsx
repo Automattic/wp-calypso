@@ -14,6 +14,10 @@ jest.mock( 'calypso/components/theme', () => ( { theme } ) => (
 	<div data-testid={ `theme-${ theme.id }` } />
 ) );
 
+jest.mock( 'calypso/data/site-assembler', () => ( {
+	useIsSiteAssemblerEnabledExp: () => true,
+} ) );
+
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: () => false,

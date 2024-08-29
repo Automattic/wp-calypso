@@ -1,0 +1,49 @@
+@import "@automattic/components/src/styles/typography";
+
+.chart-container {
+	cursor: pointer;
+	display: inline-block;
+
+	.tick {
+		line {
+			visibility: hidden;
+		}
+
+		text {
+			font-size: $font-body-small;
+			fill: var(--studio-gray-70);
+		}
+	}
+
+	.tooltip {
+		z-index: 1000;
+		opacity: 0;
+		position: absolute;
+		background-color: var(--studio-gray-90);
+		color: #fff;
+		padding: 7px 10px;
+		border-radius: 3px;
+		font-size: $font-body-small;
+	}
+
+	.chart {
+		position: relative;
+		padding: 0;
+
+		.info {
+			display: flex;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			padding: 15px 25px;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 32px;
+			background: #f6f7f7;
+
+			.icon {
+				margin-left: 10px;
+			}
+		}
+	}
+}

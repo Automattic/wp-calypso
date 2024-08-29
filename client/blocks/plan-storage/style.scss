@@ -1,7 +1,8 @@
 .plan-storage {
 	display: flex;
+	color: var(--studio-gray-80);
 	&:visited {
-		color: var(--studio-gray-80);
+		color: inherit;
 	}
 }
 

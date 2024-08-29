@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const path = require( 'path' );
-const { notarize } = require( 'electron-notarize' );
+const { notarize } = require( '@electron/notarize' );
 
 const APP_ID = 'com.automattic.wordpress';
 const NOTARIZATION_ID = process.env.WPDESKTOP_NOTARIZATION_ID;
@@ -38,6 +38,7 @@ module.exports = async function ( context ) {
 		appleId: NOTARIZATION_ID,
 		appleIdPassword: NOTARIZATION_PWD,
 		ascProvider: NOTARIZATION_ASC_PROVIDER,
+		teamId: NOTARIZATION_ASC_PROVIDER,
 	} );
 	console.log( `  • done notarizing ${ appName } ( ${ arch } ), took ${ elapsed( start ) }` );
 };

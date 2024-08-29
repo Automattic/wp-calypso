@@ -25,6 +25,7 @@ export interface ImporterConfig {
 	weight: number;
 	overrideDestination?: string;
 	optionalUrl?: ImporterOptionalURL;
+	acceptedFileTypes?: string[];
 }
 
 interface ImporterConfigMap {
@@ -130,6 +131,7 @@ function getConfig( {
 				},
 			}
 		),
+		acceptedFileTypes: [ '.xml' ],
 		weight: 0,
 	};
 
@@ -171,6 +173,7 @@ function getConfig( {
 				},
 			}
 		),
+		acceptedFileTypes: [ '.zip' ],
 		weight: 0,
 	};
 
@@ -231,6 +234,7 @@ function getConfig( {
 				args: { exampleUrl: 'https://example-newsletter.substack.com/' },
 			} ),
 		},
+		acceptedFileTypes: [ '.zip' ],
 		weight: 0,
 	};
 
@@ -274,6 +278,7 @@ function getConfig( {
 				},
 			}
 		),
+		acceptedFileTypes: [ '.xml' ],
 		weight: 0,
 	};
 

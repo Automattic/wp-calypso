@@ -12,6 +12,7 @@ type Props = {
 	isLoading: boolean;
 	validFromSite: boolean;
 };
+
 export default function SelectNewsletterForm( {
 	stepUrl,
 	urlData,

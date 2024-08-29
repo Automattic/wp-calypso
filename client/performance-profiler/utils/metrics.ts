@@ -1,18 +1,29 @@
 import { translate } from 'i18n-calypso';
-import { PerformanceMetrics, Valuation } from '../types/performance-metrics';
+import { Metrics } from 'calypso/data/site-profiler/types';
+import { Valuation } from '../types/performance-metrics';
 
 export const metricsNames = {
-	fcp: { displayName: 'Loading speed', name: 'First Contentful Paint' },
+	fcp: { displayName: translate( 'Loading speed' ), name: translate( 'First Contentful Paint' ) },
 	lcp: {
-		displayName: 'Largest content load',
-		name: 'Largest Contentful Paint',
+		displayName: translate( 'Largest content load' ),
+		name: translate( 'Largest Contentful Paint' ),
 	},
 	cls: {
-		displayName: 'Visual stability',
-		name: 'Cumulative Layout Shift',
+		displayName: translate( 'Visual stability' ),
+		name: translate( 'Cumulative Layout Shift' ),
 	},
-	inp: { displayName: 'Interactivity', name: 'Interaction to Next Paint' },
-	ttfb: { displayName: 'Server responsiveness', name: 'Time to First Byte' },
+	inp: {
+		displayName: translate( 'Interactivity' ),
+		name: translate( 'Interaction to Next Paint' ),
+	},
+	ttfb: {
+		displayName: translate( 'Server responsiveness' ),
+		name: translate( 'Time to First Byte' ),
+	},
+	tbt: {
+		displayName: translate( 'Wait time' ),
+		name: translate( 'Total Blocking Time' ),
+	},
 };
 
 export const metricValuations = {
@@ -40,8 +51,8 @@ export const metricValuations = {
 		good: translate( "Your site's visual stability is good" ),
 		needsImprovement: translate( "Your site's visual stability is moderate" ),
 		bad: translate( "Your site's visual stability needs improvement" ),
-		heading: translate( 'What is visual stability needs?' ),
-		aka: translate( '(aka Content Layout Shift)' ),
+		heading: translate( 'What is visual stability?' ),
+		aka: translate( '(aka Cumulative Layout Shift)' ),
 		explanation: translate(
 			'Visual stability is assessed by measuring how often content moves unexpectedly during loading. The best sites have a score of 0.1 or lower.'
 		),
@@ -64,6 +75,16 @@ export const metricValuations = {
 		aka: translate( '(aka Time To First Byte)' ),
 		explanation: translate(
 			'Server responsiveness reflects the time taken for a user’s browser to receive the first byte of data from the server after making a request. The best sites load around 800 milliseconds or less.'
+		),
+	},
+	tbt: {
+		good: translate( "Your site's wait time is good" ),
+		needsImprovement: translate( "Your site's wait time is moderate" ),
+		bad: translate( "Your site's wait time needs improvement" ),
+		heading: translate( 'What is wait time?' ),
+		aka: translate( '(aka Total Blocking Time)' ),
+		explanation: translate(
+			'Wait time measures the total amount of time that a page is blocked from responding to user input, such as mouse clicks, screen taps, or keyboard presses. The best sites have a wait time of less than 200 milliseconds.'
 		),
 	},
 };
@@ -95,12 +116,14 @@ export const metricsTresholds = {
 		needsImprovement: 500,
 		bad: 1000,
 	},
+	tbt: {
+		good: 200,
+		needsImprovement: 600,
+		bad: 1000,
+	},
 };
 
-export const mapThresholdsToStatus = (
-	metric: keyof PerformanceMetrics,
-	value: number
-): Valuation => {
+export const mapThresholdsToStatus = ( metric: Metrics, value: number ): Valuation => {
 	const { good, needsImprovement } = metricsTresholds[ metric ];
 
 	if ( value <= good ) {
@@ -114,14 +137,20 @@ export const mapThresholdsToStatus = (
 	return 'bad';
 };
 
-export const displayValue = ( metric: keyof PerformanceMetrics, value: number ): string => {
+export const max2Decimals = ( val: number ) => +Number( val ).toFixed( 2 );
+
+export const displayValue = ( metric: Metrics, value: number ): string => {
+	if ( value === null || value === undefined ) {
+		return '';
+	}
+
 	if ( [ 'lcp', 'fcp', 'ttfb' ].includes( metric ) ) {
-		return `${ ( value / 1000 ).toFixed( 2 ) }s`;
+		return `${ max2Decimals( value / 1000 ) }s`;
 	}
 
-	if ( [ 'inp', 'fid' ].includes( metric ) ) {
-		return `${ value }ms`;
+	if ( [ 'inp', 'fid', 'tbt' ].includes( metric ) ) {
+		return `${ max2Decimals( value ) }ms`;
 	}
 
-	return `${ value }`;
+	return `${ max2Decimals( value ) }`;
 };

@@ -14,8 +14,22 @@
 		margin: 0 auto;
 		width: 100%;
 
+		.continue-as-user__user-info {
+			a {
+				margin: 13px auto;
+				min-width: 100%;
+			}
+		}
+
 		@include break-small {
 			width: 400px;
+
+			.continue-as-user__user-info {
+				a {
+					margin: 13px auto;
+					min-width: 170px;
+				}
+			}
 		}
 	}
 }

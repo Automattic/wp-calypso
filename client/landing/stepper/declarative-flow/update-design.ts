@@ -1,6 +1,7 @@
-import { useLaunchpad } from '@automattic/data-stores';
+import { Onboard, useLaunchpad } from '@automattic/data-stores';
 import { isAssemblerDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import {
 	setSignupCompleteSlug,
@@ -10,7 +11,6 @@ import {
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ProvidedDependencies } from './internals/types';
@@ -26,9 +26,14 @@ const updateDesign: Flow = {
 	useSteps() {
 		return [ STEPS.DESIGN_SETUP, STEPS.PATTERN_ASSEMBLER, STEPS.PROCESSING, STEPS.ERROR ];
 	},
+	useSideEffect() {
+		const { setIntent } = useDispatch( ONBOARD_STORE );
 
+		useEffect( () => {
+			setIntent( Onboard.SiteIntent.UpdateDesign );
+		}, [] );
+	},
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
@@ -49,7 +54,6 @@ const updateDesign: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) {
-			recordSubmitStep( providedDependencies, 'update-design', flowName, currentStep );
 			switch ( currentStep ) {
 				case 'processing':
 					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {

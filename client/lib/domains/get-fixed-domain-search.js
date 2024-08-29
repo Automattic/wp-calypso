@@ -5,5 +5,5 @@ export function getFixedDomainSearch( domainName ) {
 		.toLowerCase()
 		.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
 		.replace( /^www[0-9]?\./, '' )
-		.replace( /[^a-z0-9-.]/, '' );
+		.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
 }

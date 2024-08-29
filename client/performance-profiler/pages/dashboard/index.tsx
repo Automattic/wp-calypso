@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './style.scss';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
@@ -19,6 +20,7 @@ type PerformanceProfilerDashboardProps = {
 export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps ) => {
 	const translate = useTranslate();
 	const { url, tab, hash } = props;
+	const isSavedReport = useRef( !! hash );
 	const [ activeTab, setActiveTab ] = React.useState< TabType >( tab );
 	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
 	const { final_url: finalUrl, token } = basicMetrics || {};
@@ -64,22 +66,42 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 			: ( desktopReport as PerformanceReport );
 
 	return (
-		<div className="container">
+		<div className="peformance-profiler-dashboard-container">
 			<DocumentHead title={ translate( 'Speed Test' ) } />
 
 			<PerformanceProfilerHeader
 				url={ url }
+				timestamp={ performanceReport?.timestamp }
 				activeTab={ activeTab }
 				onTabChange={ getOnTabChange }
+				showWPcomBadge={ performanceReport?.is_wpcom }
 				showNavigationTabs
 			/>
-			{ 'mobile' === activeTab && ! mobileLoaded && <LoadingScreen isSavedReport={ false } /> }
-			{ 'mobile' === activeTab && mobileLoaded && (
-				<PerformanceProfilerDashboardContent performanceReport={ performanceReport } />
-			) }
-			{ 'desktop' === activeTab && ! desktopLoaded && <LoadingScreen isSavedReport={ false } /> }
-			{ 'desktop' === activeTab && desktopLoaded && (
-				<PerformanceProfilerDashboardContent performanceReport={ performanceReport } />
+
+			<div
+				className={ clsx( 'loading-container', 'mobile-loading', {
+					'is-active': activeTab === TabType.mobile,
+					'is-loading': ! mobileLoaded,
+				} ) }
+			>
+				<LoadingScreen isSavedReport={ isSavedReport.current } key="mobile-loading" />
+			</div>
+
+			<div
+				className={ clsx( 'loading-container', 'desktop-loading', {
+					'is-active': activeTab === TabType.desktop,
+					'is-loading': ! desktopLoaded,
+				} ) }
+			>
+				<LoadingScreen isSavedReport={ isSavedReport.current } key="desktop-loading" />
+			</div>
+
+			{ ( ( activeTab === TabType.mobile && mobileLoaded ) ||
+				( activeTab === TabType.desktop && desktopLoaded ) ) && (
+				<PerformanceProfilerDashboardContent
+					performanceReport={ performanceReport }
+					url={ finalUrl ?? url }
+				/>
 			) }
 		</div>
 	);

@@ -95,6 +95,7 @@ enum WindowActions {
 
 enum EditorActions {
 	GoToAllPosts = 'goToAllPosts', // Unused action in favor of CloseEditor. Maintained here to support cached scripts.
+	GoToPatterns = 'goToPatterns',
 	CloseEditor = 'closeEditor',
 	OpenMediaModal = 'openMediaModal',
 	OpenCheckoutModal = 'openCheckoutModal',
@@ -380,6 +381,12 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			}
 			this.props.setEditorIframeLoaded( false );
 			this.navigate( destinationUrl, unsavedChanges );
+		}
+
+		if ( EditorActions.GoToPatterns === action ) {
+			const { destinationUrl, unsavedChanges } = payload;
+
+			this.navigate( `https://${ this.props.siteSlug }${ destinationUrl }`, unsavedChanges );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {

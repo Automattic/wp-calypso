@@ -92,17 +92,38 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 	const dataCenterOptions = useDataCenterOptions();
 
 	const wpVersionRef = useRef< HTMLLabelElement >( null );
+	const wpVersionDropdownRef = useRef< HTMLSelectElement >( null );
 	const phpVersionRef = useRef< HTMLLabelElement >( null );
+	const phpVersionDropdownRef = useRef< HTMLSelectElement >( null );
 
 	const isLoading =
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
 
 	useEffect( () => {
 		function scrollTo( hash: string ) {
+			let targetLabel;
+			let targetDropdown;
+
 			if ( wpVersionRef.current && hash === '#wp' ) {
-				wpVersionRef.current.scrollIntoView( { behavior: 'smooth' } );
+				targetLabel = wpVersionRef.current;
+				targetDropdown = wpVersionDropdownRef.current;
 			} else if ( phpVersionRef.current && hash === '#php' ) {
-				phpVersionRef.current.scrollIntoView( { behavior: 'smooth' } );
+				targetLabel = phpVersionRef.current;
+				targetDropdown = phpVersionDropdownRef.current;
+			}
+
+			if ( targetLabel ) {
+				const animationKeyframes = [ { color: null }, { color: 'var(--theme-highlight-color)' } ];
+				const animationOptions: KeyframeAnimationOptions = {
+					duration: 500,
+					direction: 'alternate',
+					easing: 'ease',
+					iterations: 6,
+				};
+
+				targetLabel.scrollIntoView( { behavior: 'smooth' } );
+				targetLabel.animate( animationKeyframes, animationOptions );
+				targetDropdown?.animate( animationKeyframes, animationOptions );
 			}
 		}
 
@@ -154,6 +175,7 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 							disabled={ disabled || isUpdatingWpVersion }
 							className="web-server-settings-card__wp-version-select"
 							onChange={ ( event ) => setSelectedWpVersion( event.currentTarget.value ) }
+							inputRef={ wpVersionDropdownRef }
 							value={ selectedWpVersionValue }
 						>
 							{ getWpVersions().map( ( option ) => {
@@ -181,7 +203,10 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 					</>
 				) }
 				{ ! isWpcomStagingSite && (
-					<p className="web-server-settings-card__wp-version-description">
+					<p
+						className="web-server-settings-card__wp-version-description"
+						ref={ wpVersionDropdownRef }
+					>
 						{ translate(
 							'Every WordPress.com site runs the latest WordPress version. ' +
 								'For testing purposes, you can switch to the beta version of the next WordPress release on {{a}}your staging site{{/a}}.',
@@ -247,6 +272,7 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 						const newVersion = event.currentTarget.value;
 						setSelectedPhpVersion( newVersion );
 					} }
+					inputRef={ phpVersionDropdownRef }
 					value={ selectedPhpVersionValue }
 				>
 					{ phpVersions.map( ( option ) => {

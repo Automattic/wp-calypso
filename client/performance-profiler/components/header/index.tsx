@@ -1,6 +1,8 @@
 import { Button } from '@wordpress/components';
-import { Icon, mobile, desktop } from '@wordpress/icons';
+import { Icon, mobile, desktop, share } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
+import WPcomBadge from 'calypso/assets/images/performance-profiler/wpcom-badge.svg';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -13,6 +15,8 @@ type HeaderProps = {
 	activeTab: string;
 	onTabChange: ( tab: TabType ) => void;
 	showNavigationTabs?: boolean;
+	timestamp?: string;
+	showWPcomBadge?: boolean;
 };
 
 export enum TabType {
@@ -22,8 +26,26 @@ export enum TabType {
 
 export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const translate = useTranslate();
-	const { url, activeTab, onTabChange, showNavigationTabs } = props;
+	const { url, activeTab, onTabChange, showNavigationTabs, timestamp, showWPcomBadge } = props;
 	const urlParts = new URL( url );
+
+	const renderTimestampAndBadge = () => (
+		<>
+			{ timestamp && (
+				<span>
+					{ translate( 'Tested on %(date)s', {
+						args: { date: moment( timestamp ).format( 'MMMM Do, YYYY h:mm:ss A' ) },
+					} ) }
+				</span>
+			) }
+			{ showWPcomBadge && (
+				<span className="wpcom-badge">
+					<img src={ WPcomBadge } alt={ translate( 'WordPress.com badge' ) } />
+					<span>{ translate( 'Hosted on WordPress.com' ) }</span>
+				</span>
+			) }
+		</>
+	);
 
 	return (
 		<div className="profiler-header">
@@ -37,7 +59,12 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 					</div>
 
 					<div className="profiler-header__action">
-						<Button href="/speed-test">{ translate( 'Test another site' ) }</Button>
+						<Button href="https://wordpress.com/speed-test">
+							{ translate( 'Test another site' ) }
+						</Button>
+					</div>
+					<div className="profiler-header__report-site-details show-on-mobile">
+						{ renderTimestampAndBadge() }
 					</div>
 				</div>
 				{ showNavigationTabs && (
@@ -60,7 +87,19 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 						</NavTabs>
 
 						<div className="profiler-header__navbar-right">
-							<p>Tested on July 16th, 2024 at 12:03:23 AM</p>
+							<div className="report-site-details hide-on-mobile">
+								{ renderTimestampAndBadge() }
+							</div>
+							<div
+								className="share-option"
+								onClick={ () => alert( 'To be implemented' ) }
+								onKeyUp={ () => {} }
+								role="button"
+								tabIndex={ 0 }
+							>
+								<Icon className="share-icon" icon={ share } />
+								<span>{ translate( 'Share results' ) }</span>
+							</div>
 						</div>
 					</SectionNav>
 				) }

@@ -652,6 +652,14 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 }
 
 .site-settings__reading-settings {
+	.site-settings__your-homepage-display-container fieldset {
+		min-width: 0;
+
+		select {
+			max-width: 100%;
+		}
+	}
+
 	.select-homepage-setting {
 		margin-bottom: 12px;
 	}
