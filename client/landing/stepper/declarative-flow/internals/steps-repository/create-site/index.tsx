@@ -69,10 +69,7 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const partnerBundle = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPartnerBundle(),
-		[]
-	);
+	const partnerBundle = useSelect( ( select ) => select( ONBOARD_STORE ).getPartnerBundle(), [] );
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 
 	const urlData = useSelector( getUrlData );
@@ -84,14 +81,16 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		planCartItem,
 		selectedSiteTitle,
 		productCartItems,
+		siteUrl,
 	} = useSelect(
-		( select ) => ( {
-			domainItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
-			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-			domainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems(),
-			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
-			selectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		( select: ( arg: string ) => OnboardSelect ) => ( {
+			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
+			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
+			domainCartItems: select( ONBOARD_STORE ).getDomainCartItems(),
+			planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+			productCartItems: select( ONBOARD_STORE ).getProductCartItems(),
+			selectedSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
+			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
 		} ),
 		[]
 	);
@@ -147,10 +146,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		domainCartItem?.product_slug || domainCartItems?.some( ( el ) => el.product_slug )
 	);
 
-	const progress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgress(),
-		[]
-	);
+	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress(), [] );
 	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	// Default visibility is public
@@ -213,6 +209,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			useThemeHeadstart,
 			username,
 			mergedDomainCartItems,
+			siteUrl,
 			domainItem,
 			sourceSlug
 		);
