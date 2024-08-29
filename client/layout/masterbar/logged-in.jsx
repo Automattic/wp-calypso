@@ -462,6 +462,10 @@ class MasterbarLoggedIn extends Component {
 
 	renderProfileMenu() {
 		const { translate, user, siteUrl, isClassicView } = this.props;
+		const editProfileLink =
+			config.isEnabled( 'layout/site-level-user-profile' ) || isClassicView
+				? siteUrl + '/wp-admin/profile.php'
+				: '/me';
 		const profileActions = [
 			{
 				label: (
@@ -478,10 +482,7 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</div>
 				),
-				url:
-					config.isEnabled( 'layout/site-level-user-profile' ) || isClassicView
-						? siteUrl + '/wp-admin/profile.php'
-						: '/me',
+				url: editProfileLink,
 			},
 			{
 				label: translate( 'My Account' ),
@@ -499,7 +500,7 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<Item
 				tipTarget="me"
-				url="/me"
+				url={ editProfileLink }
 				onClick={ this.clickMe }
 				isActive={ this.isActive( 'me', true ) }
 				className="masterbar__item-howdy"
