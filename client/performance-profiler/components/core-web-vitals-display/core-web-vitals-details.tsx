@@ -12,7 +12,7 @@ import { StatusIndicator } from '../status-indicator';
 
 type CoreWebVitalsDetailsProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
-	activeTab: Metrics;
+	activeTab: Metrics | null;
 };
 
 export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
@@ -21,6 +21,10 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 	...metrics
 } ) => {
 	const translate = useTranslate();
+
+	if ( ! activeTab ) {
+		return null;
+	}
 
 	const { displayName } = metricsNames[ activeTab ];
 	const value = metrics[ activeTab ];

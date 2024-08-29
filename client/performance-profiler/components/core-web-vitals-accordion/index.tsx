@@ -11,8 +11,8 @@ import { StatusIndicator } from '../status-indicator';
 import './styles.scss';
 
 type Props = Record< Metrics, number > & {
-	activeTab: Metrics;
-	setActiveTab: ( tab: Metrics ) => void;
+	activeTab: Metrics | null;
+	setActiveTab: ( tab: Metrics | null ) => void;
 	children: React.ReactNode;
 };
 type HeaderProps = {
@@ -41,7 +41,12 @@ export const CoreWebVitalsAccordion = ( props: Props ) => {
 	const translate = useTranslate();
 
 	const onClick = ( key: Metrics ) => {
-		setActiveTab( key as Metrics );
+		// If the user clicks the current tab, close it.
+		if ( key === activeTab ) {
+			setActiveTab( null );
+		} else {
+			setActiveTab( key as Metrics );
+		}
 	};
 
 	return (
@@ -67,7 +72,7 @@ export const CoreWebVitalsAccordion = ( props: Props ) => {
 						onClick={ () => onClick( key as Metrics ) }
 						expanded={ key === activeTab }
 					>
-						<div className="core-web-vitals-accordion__content">{ children }</div>
+						{ children }
 					</FoldableCard>
 				);
 			} ) }

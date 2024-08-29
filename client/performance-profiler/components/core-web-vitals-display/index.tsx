@@ -12,14 +12,19 @@ type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 };
 
 export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
-	const [ activeTab, setActiveTab ] = useState< Metrics >( 'fcp' );
+	const defaultTab = 'fcp';
+	const [ activeTab, setActiveTab ] = useState< Metrics | null >( defaultTab );
 	const isDesktop = useDesktopBreakpoint();
 
 	return (
 		<>
 			{ isDesktop && (
 				<div className="core-web-vitals-display">
-					<MetricTabBar activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props } />
+					<MetricTabBar
+						activeTab={ activeTab ?? defaultTab }
+						setActiveTab={ setActiveTab }
+						{ ...props }
+					/>
 					<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
 				</div>
 			) }
