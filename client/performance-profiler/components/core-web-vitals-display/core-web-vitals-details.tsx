@@ -43,7 +43,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 		if ( [ 'lcp', 'fcp', 'ttfb' ].includes( activeTab ) ) {
 			return translate( 's', { comment: 'Used for displaying a time range in seconds, eg. 1-2s' } );
 		}
-		if ( [ 'inp' ].includes( activeTab ) ) {
+		if ( [ 'inp', 'tbt' ].includes( activeTab ) ) {
 			return translate( 'ms', {
 				comment: 'Used for displaying a range in milliseconds, eg. 100-200ms',
 			} );

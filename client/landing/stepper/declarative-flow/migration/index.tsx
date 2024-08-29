@@ -54,9 +54,12 @@ const plans: { [ key: string ]: string } = {
 };
 
 const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject: Flow ) => {
-	const [ query ] = useSearchParams();
+	const [ query, setQuery ] = useSearchParams();
 	const flowPath = ( flowObject.variantSlug ?? flowObject.name ) as string;
-	const { navigateWithQueryParams, getFromPropsOrUrl } = useFlowNavigator( navigate );
+	const { navigateWithQueryParams, getFromPropsOrUrl } = useFlowNavigator( {
+		navigate,
+		persistedUrlParams: [ 'siteId', 'siteSlug', 'from' ],
+	} );
 
 	const navigateToCheckout = ( {
 		siteId,
@@ -64,16 +67,18 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 		from,
 		plan,
 		props,
+		destinationStep = MIGRATION_HOW_TO_MIGRATE,
 		forceRedirection,
 	}: {
 		siteId: string;
 		siteSlug: string;
 		from?: string;
 		plan: string;
+		destinationStep?: StepperStep;
 		props?: ProvidedDependencies;
 		forceRedirection?: boolean;
 	} ) => {
-		const redirectAfterCheckout = MIGRATION_HOW_TO_MIGRATE.slug;
+		const redirectAfterCheckout = destinationStep.slug;
 		const destination = addQueryArgs(
 			{ siteId, siteSlug, from },
 			`/setup/${ flowPath }/${ redirectAfterCheckout }`
@@ -118,14 +123,10 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 
 				if ( platform === 'wordpress' ) {
 					if ( hasSite ) {
-						return navigateWithQueryParams(
-							MIGRATION_UPGRADE_PLAN,
-							[ 'siteId', 'siteSlug', 'from' ],
-							props
-						);
+						return navigateWithQueryParams( MIGRATION_UPGRADE_PLAN, [], props );
 					}
 
-					return navigateWithQueryParams( SITE_CREATION_STEP, [ 'from' ], props );
+					return navigateWithQueryParams( SITE_CREATION_STEP, [], props );
 				}
 
 				if ( hasSite ) {
@@ -137,14 +138,14 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					} );
 				}
 
-				return navigateWithQueryParams( SITE_CREATION_STEP, [ 'platform', 'from' ], props, {
+				return navigateWithQueryParams( SITE_CREATION_STEP, [ 'platform' ], props, {
 					replaceHistory: true,
 				} );
 			},
 		},
 		[ SITE_CREATION_STEP.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				return navigateWithQueryParams( PROCESSING, [ 'platform', 'plan', 'from' ], props, {
+				return navigateWithQueryParams( PROCESSING, [ 'platform', 'plan' ], props, {
 					replaceHistory: true,
 				} );
 			},
@@ -181,14 +182,9 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					} );
 				}
 
-				return navigateWithQueryParams(
-					MIGRATION_UPGRADE_PLAN,
-					[ 'siteId', 'siteSlug', 'from' ],
-					props,
-					{
-						replaceHistory: true,
-					}
-				);
+				return navigateWithQueryParams( MIGRATION_UPGRADE_PLAN, [], props, {
+					replaceHistory: true,
+				} );
 			},
 		},
 		[ MIGRATION_UPGRADE_PLAN.slug ]: {
@@ -196,7 +192,7 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const siteId = getFromPropsOrUrl( 'siteId', props ) as string;
 				const siteSlug = getFromPropsOrUrl( 'siteSlug', props ) as string;
 				const from = getFromPropsOrUrl( 'from', props ) as string;
-
+				const migrationDealAccepted = getFromPropsOrUrl( 'userAcceptedDeal', props ) as string;
 				const plan = props?.plan as string;
 
 				if ( props?.action === MigrationUpgradePlanActions.IMPORT_CONTENT_ONLY ) {
@@ -211,15 +207,25 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				}
 
 				if ( props?.goToCheckout ) {
-					return navigateToCheckout( { siteId, siteSlug, plan, from, props } );
+					if ( query.has( 'showModal' ) ) {
+						query.delete( 'showModal' );
+						setQuery( query );
+					}
+
+					const destinationStep = migrationDealAccepted
+						? MIGRATION_SOURCE_URL
+						: MIGRATION_HOW_TO_MIGRATE;
+
+					return navigateToCheckout( { siteId, siteSlug, plan, from, props, destinationStep } );
 				}
 			},
 			goBack: ( props?: ProvidedDependencies ) => {
-				return navigateWithQueryParams(
-					PLATFORM_IDENTIFICATION,
-					[ 'siteId', 'siteSlug', 'plan', 'from' ],
-					props
-				);
+				if ( ! query.has( 'showModal' ) ) {
+					query.set( 'showModal', 'true' );
+					return setQuery( query );
+				}
+
+				return navigateWithQueryParams( PLATFORM_IDENTIFICATION, [ 'plan' ], props );
 			},
 		},
 		[ MIGRATION_HOW_TO_MIGRATE.slug ]: {
@@ -227,43 +233,23 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				const how = getFromPropsOrUrl( 'how', props );
 
 				if ( how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) {
-					return navigateWithQueryParams(
-						SITE_MIGRATION_INSTRUCTIONS,
-						[ 'siteId', 'siteSlug', 'from' ],
-						props
-					);
+					return navigateWithQueryParams( SITE_MIGRATION_INSTRUCTIONS, [], props );
 				}
 
-				return navigateWithQueryParams(
-					MIGRATION_SOURCE_URL,
-					[ 'siteId', 'siteSlug', 'from' ],
-					props
-				);
+				return navigateWithQueryParams( MIGRATION_SOURCE_URL, [], props );
 			},
 		},
 		[ SITE_MIGRATION_INSTRUCTIONS.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				return navigateWithQueryParams(
-					SITE_MIGRATION_STARTED,
-					[ 'siteId', 'siteSlug', 'from' ],
-					props
-				);
+				return navigateWithQueryParams( SITE_MIGRATION_STARTED, [], props );
 			},
 		},
 		[ MIGRATION_SOURCE_URL.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
-				return navigateWithQueryParams(
-					SITE_MIGRATION_ASSISTED_MIGRATION,
-					[ 'siteId', 'siteSlug', 'from' ],
-					props
-				);
+				return navigateWithQueryParams( SITE_MIGRATION_ASSISTED_MIGRATION, [], props );
 			},
 			goBack: ( props?: ProvidedDependencies ) => {
-				return navigateWithQueryParams(
-					MIGRATION_HOW_TO_MIGRATE,
-					[ 'siteId', 'siteSlug', 'from' ],
-					props
-				);
+				return navigateWithQueryParams( MIGRATION_HOW_TO_MIGRATE, [], props );
 			},
 		},
 	};
