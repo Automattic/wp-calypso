@@ -1945,14 +1945,10 @@ $breakpoint-mobile: 660px;
 
 			.security-key-form__help-text {
 				p {
-					@media screen and (max-width: $break-mobile) {
-						line-height: 24px;
-					}
+					line-height: 24px;
 
 					&:first-child {
-						@media screen and (max-width: $break-mobile) {
-							margin-bottom: 0;
-						}
+						margin-bottom: 0;
 					}
 				}
 			}
