@@ -35,6 +35,7 @@ import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
+import { enhanceFlowWithAuth } from './utils/enhanceFlowWithAuth';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
@@ -66,7 +67,7 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 	return <FlowRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {
-	BUILD_TARGET?: string;
+	BUILD_TARGET: string;
 }
 
 const DEFAULT_FLOW = 'site-setup';
@@ -121,15 +122,18 @@ window.AppBoot = async () => {
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
-
-	const flowLoader = determineFlow();
-	const { default: flow } = await flowLoader();
+    
+  const flowLoader = determineFlow();
+	const { default: rawFlow } = await flowLoader();
+	const flow = rawFlow.__experimentalUseBuiltinAuth ? enhanceFlowWithAuth( rawFlow ) : rawFlow;
+  
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
 	// Reset the selected site ID when the stepper is loaded.
 	reduxStore.dispatch( setSelectedSiteId( null ) as unknown as AnyAction );
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
+
 	root.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
 			<Provider store={ reduxStore }>

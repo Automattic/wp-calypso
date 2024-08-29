@@ -45,7 +45,6 @@ export default function CreditCardFields( {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
-
 	const fields: CardFieldState = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
 		[]
@@ -64,7 +63,6 @@ export default function CreditCardFields( {
 	const {
 		setFieldValue,
 		changeBrand,
-		changeCardNetworks,
 		setCardDataError,
 		setCardDataComplete,
 		setUseForAllSubscriptions,
@@ -152,7 +150,6 @@ export default function CreditCardFields( {
 						<CreditCardNumberField
 							setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
 							handleStripeFieldChange={ handleStripeFieldChange }
-							changeCardNetworks={ changeCardNetworks }
 							stripeElementStyle={ stripeElementStyle }
 							shouldUseEbanx={ shouldUseEbanx }
 							getErrorMessagesForField={ getErrorMessagesForField }

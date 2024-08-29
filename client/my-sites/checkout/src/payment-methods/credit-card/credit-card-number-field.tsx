@@ -12,7 +12,6 @@ import type { StripeElementStyle } from '@stripe/stripe-js';
 export default function CreditCardNumberField( {
 	setIsStripeFullyLoaded,
 	handleStripeFieldChange,
-	changeCardNetworks,
 	stripeElementStyle,
 	shouldUseEbanx = false,
 	getErrorMessagesForField,
@@ -21,7 +20,6 @@ export default function CreditCardNumberField( {
 }: {
 	setIsStripeFullyLoaded: ( isLoaded: boolean ) => void;
 	handleStripeFieldChange: ( input: StripeFieldChangeInput ) => void;
-	changeCardNetworks: ( networks: [] ) => void;
 	stripeElementStyle: StripeElementStyle;
 	shouldUseEbanx?: boolean;
 	getErrorMessagesForField: ( key: string ) => string[];
@@ -35,7 +33,6 @@ export default function CreditCardNumberField( {
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
 		[]
 	);
-
 	const { cardNumber: cardNumberError } = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
 		[]
@@ -80,22 +77,6 @@ export default function CreditCardNumberField( {
 					} }
 					onChange={ ( input ) => {
 						handleStripeFieldChange( input );
-					} }
-					/* Note, the onNetworksChange event is deprecated and will be removed at some point
-					 * This will need to be updated before we upgrade Stripe beyond v3
-					 */
-					onNetworksChange={ ( event ) => {
-						// @ts-expect-error: The onNetworksChange method is deprecated, but is necessary for cobrand compliance
-						switch ( event.networks ) {
-							case null:
-							case undefined:
-								break;
-							default: {
-								// @ts-expect-error: The onNetworksChange method is deprecated, but is necessary for cobrand compliance
-								changeCardNetworks( event.networks );
-								break;
-							}
-						}
 					} }
 				/>
 				<PaymentLogo brand={ brand } />

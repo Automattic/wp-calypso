@@ -22,6 +22,12 @@ export const MetricTabBar = ( props: Props ) => {
 				if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {
 					return null;
 				}
+
+				// Only display TBT if INP is not available
+				if ( key === 'tbt' && props[ 'inp' ] !== undefined && props[ 'inp' ] !== null ) {
+					return null;
+				}
+
 				return (
 					<button
 						key={ key }
