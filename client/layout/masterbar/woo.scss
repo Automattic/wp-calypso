@@ -1937,6 +1937,10 @@ $breakpoint-mobile: 660px;
 				button {
 					color: var(--wp-admin-theme-color);
 				}
+
+				@media screen and (max-width: $break-mobile) {
+					margin-bottom: 40px;
+				}
 			}
 		}
 
@@ -1983,6 +1987,16 @@ $breakpoint-mobile: 660px;
 				ul li a p {
 					font-size: rem(14px);
 				}
+			}
+		}
+
+		.login__two-factor-footer {
+			@media screen and (max-width: $break-mobile) {
+				max-width: 327px;
+				padding-left: 0;
+				padding-right: 0;
+				margin: 0 auto 0 auto;
+				align-items: baseline;
 			}
 		}
 	}
