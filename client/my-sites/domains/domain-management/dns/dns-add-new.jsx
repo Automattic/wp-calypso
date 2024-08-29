@@ -282,11 +282,11 @@ class DnsAddNew extends React.Component {
 			return true;
 		}
 
-		// Specific to NS records, avoid invalid state by checking if the target Host field is a WordPress.com nameserver
+		// Specific to NS records, avoid invalid state by checking if the target Host field is at *.wordpress.com
 		if (
 			this.state.fields.type.value === 'NS' &&
 			fieldName === 'data' &&
-			/^ns\d+\.wordpress\.com$/.test( this.state.fields.data.value ) // ns1.wordpress.com, ns2.wordpress.com, etc.
+			/\.wordpress\.com$/i.test( this.state.fields.data.value ) // matches on ns1.wordpress.com, ns2.wordpress.com, *.wordpress.com, etc.
 		) {
 			return false;
 		}
