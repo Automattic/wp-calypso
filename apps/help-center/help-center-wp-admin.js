@@ -80,4 +80,4 @@ function AdminHelpCenterContent() {
 }
 
 const target = document.getElementById( 'help-center-masterbar' );
-createRoot( target ).render( <AdminHelpCenterContent /> );
+target && createRoot( target ).render( <AdminHelpCenterContent /> );
