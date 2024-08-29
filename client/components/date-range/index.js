@@ -45,6 +45,7 @@ export class DateRange extends Component {
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
 		renderInputs: PropTypes.func,
+		rootClass: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -56,6 +57,7 @@ export class DateRange extends Component {
 		renderTrigger: ( props ) => <DateRangeTrigger { ...props } />,
 		renderHeader: ( props ) => <DateRangeHeader { ...props } />,
 		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
+		rootClass: '',
 	};
 
 	constructor( props ) {
@@ -672,10 +674,13 @@ export class DateRange extends Component {
 	 * @returns {import('react').Element} the DateRange component
 	 */
 	render() {
-		const rootClassNames = clsx( {
-			'date-range': true,
-			'toggle-visible': this.state.popoverVisible,
-		} );
+		const rootClassNames = clsx(
+			{
+				'date-range': true,
+				'toggle-visible': this.state.popoverVisible,
+			},
+			this.props.rootClass
+		);
 
 		const triggerProps = {
 			startDate: this.state.startDate,

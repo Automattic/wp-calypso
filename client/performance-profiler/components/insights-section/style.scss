@@ -44,8 +44,26 @@ $blueberry-color: #3858e9;
 				}
 			}
 
+			.counter {
+				&.fail {
+					color: var(--studio-red-50);
+				}
+
+				&.warning {
+					color: var(--studio-orange-40);
+				}
+			}
+
 			.value {
 				color: var(--studio-green-40);
+
+				&.fail {
+					color: var(--studio-red-50);
+				}
+
+				&.warning {
+					color: var(--studio-orange-40);
+				}
 			}
 		}
 
@@ -60,8 +78,26 @@ $blueberry-color: #3858e9;
 				}
 			}
 
+			.counter {
+				&.fail {
+					color: var(--studio-red-60);
+				}
+
+				&.warning {
+					color: var(--studio-orange-50);
+				}
+			}
+
 			.value {
 				color: var(--studio-green-50);
+
+				&.fail {
+					color: var(--studio-red-60);
+				}
+
+				&.warning {
+					color: var(--studio-orange-50);
+				}
 			}
 		}
 
@@ -77,6 +113,13 @@ $blueberry-color: #3858e9;
 		}
 
 		.foldable-card__content {
+			.description-area {
+				display: flex;
+				align-items: flex-start;
+				gap: 32px;
+				align-self: stretch;
+			}
+
 			.metrics-insight-detailed-content {
 				margin-top: 24px;
 

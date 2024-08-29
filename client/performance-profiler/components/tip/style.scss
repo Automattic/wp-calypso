@@ -1,0 +1,22 @@
+.performance-profiler-tip {
+	max-width: 460px;
+	background-color: #e7f0fa;
+	padding: 25px;
+	min-width: 300px;
+
+	h4 {
+		font-size: $font-body-small;
+		font-weight: 500;
+		line-height: $font-title-small;
+		margin-bottom: 10px;
+	}
+
+	p {
+		font-size: $font-body-small;
+		margin-bottom: 0;
+	}
+
+	.learn-more-link {
+		margin-top: 20px;
+	}
+}

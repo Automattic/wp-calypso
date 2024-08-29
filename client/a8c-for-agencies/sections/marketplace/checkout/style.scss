@@ -1,6 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+@mixin loading-effect {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var(--color-sidebar-menu-selected-background);
+}
+
 .checkout .a4a-layout__body,
 .checkout .a4a-layout__body-wrapper {
 	/* stylelint-disable-next-line scales/radii */
@@ -168,12 +173,12 @@
 		font-size: 1rem;
 		color: var(--color-neutral-70);
 	}
+}
 
-	.checkout__summary-notice-item {
-		font-size: 0.75rem;
-		color: var(--color-neutral-50);
-		margin-block-end: 0.5rem;
-	}
+.checkout__summary-notice-item {
+	font-size: 0.75rem;
+	color: var(--color-neutral-50);
+	margin-block-end: 0.5rem;
 }
 
 .checkout__aside-actions {
@@ -182,6 +187,7 @@
 	align-items: stretch;
 	gap: 16px;
 	text-align: center;
+	margin-block-end: 8px;
 
 	> .button {
 		display: flex;
@@ -249,6 +255,21 @@
 		margin-block: 4px 0;
 		color: var(--color-neutral-70);
 	}
+
+	.product-info__site-url {
+		@include a4a-font-body-md;
+		margin-block: 4px 0;
+		color: var(--color-neutral-40);
+	}
+}
+
+.product-info__placeholder {
+	@include loading-effect();
+
+	width: 100%;
+	height: 48px;
+	background-color: var(--color-neutral-0);
+	border-radius: 4px;
 }
 
 .checkout__client-referral-form {

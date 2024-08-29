@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Gravatar } from '@automattic/components';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -38,6 +39,7 @@ const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const { _x } = useI18n();
 	const [ isDisliked, setIsDisliked ] = useState( false );
+	const isMobile = useMobileBreakpoint();
 
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support;
 	const fullscreenRef = useRef< HTMLDivElement >( null );
@@ -101,7 +103,7 @@ const ChatMessage = ( props: ChatMessageProps & MessageIndicators ) => {
 			) }
 
 			<div className="message-header-buttons">
-				{ message.content?.length > 600 && (
+				{ message.content?.length > 600 && ! isMobile && (
 					<Button compact borderless onClick={ handleFullscreenToggle }>
 						<img
 							src={ isFullscreen ? MinimizeIcon : MaximizeIcon }

@@ -57,7 +57,7 @@ class UploadDropZone extends Component {
 		return (
 			<div className={ className }>
 				<div className="upload-drop-zone__dropzone">
-					<DropZone onFilesDrop={ this.onFileSelect } />
+					<DropZone onFilesDrop={ this.onFileSelect } disabled={ disabled } />
 					<FilePicker accept="application/zip" onPick={ this.onFileSelect }>
 						<Gridicon className="upload-drop-zone__icon" icon="cloud-upload" size={ 48 } />
 						{ dropText }

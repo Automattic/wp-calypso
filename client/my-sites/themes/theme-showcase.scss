@@ -14,7 +14,7 @@
 		.layout__content {
 			min-height: 100vh;
 			@media screen and (min-width: 782px) {
-				padding: calc(var(--masterbar-height) + 16px) 16px 16px var(--sidebar-width-max);
+				padding: calc(var(--masterbar-height) + var(--content-padding-top)) 16px var(--content-padding-bottom) var(--sidebar-width-max);
 			}
 		}
 
@@ -22,13 +22,9 @@
 			background-color: var(--color-surface);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
 			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
-			height: calc(100vh - var(--masterbar-height));
+			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
 			overflow-y: auto;
-
-			@include break-small {
-				height: calc(100vh - var(--masterbar-height) - 32px);
-			}
 		}
 
 		.navigation-header {

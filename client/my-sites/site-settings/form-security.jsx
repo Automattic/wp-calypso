@@ -1,3 +1,8 @@
+import {
+	WPCOM_FEATURES_AKISMET,
+	WPCOM_FEATURES_ANTISPAM,
+	isJetpackAntiSpam,
+} from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { Component } from 'react';
@@ -10,7 +15,8 @@ import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { isSimpleSite } from 'calypso/state/sites/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteProducts, isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Firewall from './firewall';
 import SpamFilteringSettings from './spam-filtering-settings';
@@ -119,6 +125,14 @@ const connectComponent = connect( ( state ) => {
 		'akismet'
 	);
 
+	const hasAkismetFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_AKISMET );
+	const hasAntiSpamFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM );
+	const hasJetpackAntiSpamProduct = getSiteProducts( state, siteId )?.some( isJetpackAntiSpam );
+
+	// This is the same condition as the one in SpamFilteringSettings that's used to determine whether to show the Akismet key field.
+	const includeAkismetKeyField =
+		! isAtomic && ( hasAkismetFeature || hasAntiSpamFeature || hasJetpackAntiSpamProduct );
+
 	return {
 		siteId,
 		isAtomic,
@@ -127,11 +141,12 @@ const connectComponent = connect( ( state ) => {
 		protectModuleActive,
 		protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
 		akismetUnavailable: siteInDevMode && akismetIsUnavailableInDevMode,
+		includeAkismetKeyField,
 	};
 } );
 
-const getFormSettings = ( settings ) =>
-	pick( settings, [
+const getFormSettings = ( settings, props ) => {
+	const settingsToPick = [
 		'akismet',
 		'protect',
 		'jetpack_protect_global_whitelist',
@@ -144,8 +159,14 @@ const getFormSettings = ( settings ) =>
 		'sso',
 		'jetpack_sso_match_by_email',
 		'jetpack_sso_require_two_step',
-		'wordpress_api_key',
-	] );
+	];
+
+	if ( props.includeAkismetKeyField || settings.akismet ) {
+		settingsToPick.push( 'wordpress_api_key' );
+	}
+
+	return pick( settings, settingsToPick );
+};
 
 export default connectComponent(
 	localize( wrapSettingsForm( getFormSettings )( SiteSettingsFormSecurity ) )

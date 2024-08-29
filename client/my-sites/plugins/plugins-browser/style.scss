@@ -50,7 +50,7 @@
 		padding-top: 0;
 	}
 }
-.plugins-browser__main-container {
+.has-no-sidebar .plugins-browser__main-container {
 	position: relative;
 
 	&::before {
@@ -64,9 +64,10 @@
 		z-index: -1;
 	}
 
-	.plugins-browser-list:last-of-type {
-		padding-bottom: 32px;
-	}
+}
+
+.plugins-browser__main-container .plugins-browser-list:last-of-type {
+	padding-bottom: 32px;
 }
 
 .plugins-browser__upgrade-banner {

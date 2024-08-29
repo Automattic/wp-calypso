@@ -8,6 +8,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { dismiss } from 'calypso/state/jetpack-review-prompt/actions';
 import { getIsDismissed, getValidFromDate } from 'calypso/state/jetpack-review-prompt/selectors';
 import { hasReceivedRemotePreferences as getHasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -19,6 +21,10 @@ interface Props {
 const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', type } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const site = useSelector( ( state ) => getSite( state, siteId ) ); // Replace `siteId` with the appropriate variable or prop
+	const hasBackup = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-backup' );
 
 	// dismiss count is stored in a preference, make sure we have that before rendering
 	const hasReceivedRemotePreferences = useSelector( getHasReceivedRemotePreferences );
@@ -33,20 +39,22 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 			recordTracksEvent( 'calypso_jetpack_review_prompt_dismiss', {
 				reviewed: false,
 				type,
+				has_backup: hasBackup,
 			} )
 		);
 		dispatch( dismiss( type, Date.now() ) );
-	}, [ dispatch, type ] );
+	}, [ dispatch, hasBackup, type ] );
 
 	const dismissPromptAsReviewed = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_review_prompt_dismiss', {
 				reviewed: true,
 				type,
+				has_backup: hasBackup,
 			} )
 		);
 		dispatch( dismiss( type, Date.now(), true ) );
-	}, [ dispatch, type ] );
+	}, [ dispatch, hasBackup, type ] );
 
 	const shouldRenderReviewPrompt = hasReceivedRemotePreferences && ! isDismissed && isValid;
 
@@ -55,10 +63,11 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_review_prompt_view', {
 					type,
+					has_backup: hasBackup,
 				} )
 			);
 		}
-	}, [ dispatch, shouldRenderReviewPrompt, type ] );
+	}, [ dispatch, hasBackup, shouldRenderReviewPrompt, type ] );
 
 	const body = () => {
 		switch ( type ) {
@@ -96,6 +105,11 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 		}
 	};
 
+	const reviewLink =
+		hasBackup && type === 'restore'
+			? 'https://wordpress.org/support/plugin/jetpack-backup/reviews/#new-post'
+			: 'https://wordpress.org/support/plugin/jetpack/reviews/#new-post';
+
 	return (
 		<>
 			<QueryPreferences />
@@ -114,7 +128,7 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 					<Button
 						borderless
 						className="jetpack-review-prompt__review-link"
-						href="https://wordpress.org/support/plugin/jetpack/reviews/#new-post"
+						href={ reviewLink }
 						onClick={ dismissPromptAsReviewed }
 						target="_blank"
 					>

@@ -25,8 +25,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
-	const { hasLoadedSitePurchases, isRequestingSitePurchases, hasAnyPlan } =
-		useStatsPurchases( siteId );
+	const { hasLoadedSitePurchases, hasAnyPlan } = useStatsPurchases( siteId );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
@@ -48,7 +47,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		canUserManageOptions
 	);
 
-	const isLoading = ! hasLoadedSitePurchases || isRequestingSitePurchases || isLoadingNotices;
+	const isLoading = ! hasLoadedSitePurchases || isLoadingNotices;
 	const { isNewSite, shouldShowPaywall } = useSiteCompulsoryPlanSelectionQualifiedCheck( siteId );
 	// to redirect the user can't have a plan purached and can't have the flag true, if either is true the user either has a plan or is postponing
 	const redirectToPurchase =

@@ -1,217 +1,127 @@
 @import "@automattic/typography/styles/variables";
-@import "@wordpress/base-styles/variables";
-@import "@automattic/color-studio/dist/color-variables";
 
-.help-center-contact-form__site-picker-hes-tray {
-	margin-top: 16px;
-	display: flex;
-	align-items: center;
+.help-center__container-content .help-center-contact-form__wrapper {
+	padding: 0 16px 80px;
 
-	.happiness-engineers-tray {
-		margin: 0;
-		flex-wrap: nowrap;
-	}
+	.contact-form-submit {
+		display: flex;
+		gap: 10px;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		box-sizing: border-box;
+		border-top: 1px solid rgba(0, 0, 0, 0.1);
+		background: #fff;
+		padding: 16px;
+		height: auto;
 
-	img {
-		width: 32px;
-		height: 32px;
-		border: 2px solid #fff;
-		border-radius: 50%;
-	}
-
-	img + img {
-		margin-left: -16px;
-	}
-
-	.help-center-contact-form__site-picker-hes-tray-text {
-		font-size: $font-body-extra-small;
-		color: var(--studio-gray-60);
-		margin: 0;
-		margin-left: 8px;
-	}
-}
-
-.site-picker__site-item {
-	padding: 12px 8px;
-}
-
-.help-center-contact-form section {
-	margin-top: 16px;
-}
-
-.help-center-contact-form {
-	div.components-base-control__field {
-		input,
-		textarea {
-			&.components-text-control__input {
-				// they have very high specificity
-				padding: 15.5px !important;
-				border: 1px solid var(--studio-gray-10) !important;
-				border-radius: 4px !important;
-				box-sizing: border-box;
-			}
+		button {
+			height: 42px;
+			margin: 0;
 		}
 	}
 
-	.site-picker__site-item {
-		padding: 12px 8px;
-	}
+	.help-center-contact-form__site-picker-hes-tray {
+		margin-top: 16px;
+		display: flex;
+		align-items: center;
 
-	.popover.is-top-left {
-		z-index: 9999;
-
-		.popover__arrow {
-			z-index: 1;
+		.happiness-engineers-tray {
+			margin: 0;
+			flex-wrap: nowrap;
 		}
 
-		.popover__inner span {
-			display: block;
-			padding: 16px;
+		img {
+			width: 32px;
+			height: 32px;
+			border: 2px solid #fff;
+			border-radius: 50%;
 		}
-	}
 
-}
+		img + img {
+			margin-left: -16px;
+		}
 
-.help-center-contact-form__message,
-.help-center-contact-form__subject input.components-text-control__input {
-	padding: 15.5px;
-	border: 1px solid var(--studio-gray-10);
-	border-radius: 4px;
-	width: 100%;
-	display: block;
-	box-sizing: border-box;
-
-	&:focus {
-		box-shadow: none;
-		outline: none;
-		border-color: var(--studio-gray-10);
-	}
-}
-
-section.contact-form-submit {
-	// this creates a border for the CTA.
-	// a simple border won't cut it because it would be padded in.
-	&::before {
-		content: " ";
-		display: block;
-		height: 1px;
-		background: rgba(0, 0, 0, 0.1);
-		position: absolute;
-		left: -16px;
-		top: 0;
-		width: calc(100% + 32px);
-	}
-	display: flex;
-	flex-direction: row;
-	position: sticky;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	box-sizing: border-box;
-	background: #fff;
-	padding: 16px;
-	& > * + * {
-		margin-left: 10px;
+		.help-center-contact-form__site-picker-hes-tray-text {
+			font-size: $font-body-extra-small;
+			color: var(--studio-gray-60);
+			margin: 0;
+			margin-left: 8px;
+		}
 	}
 
 	button {
 		width: 100%;
 		justify-content: center;
+		margin-bottom: 4px;
+		vertical-align: middle;
 	}
 
-	.components-tip {
-		margin-top: 8px;
-	}
-}
+	// Contact Form
+	.help-center-contact-form {
+		section {
+			margin-top: 16px;
+		}
 
-.help-center .help-center-contact-form .site-picker__site-item-site-logo svg {
-	fill: var(--studio-gray-30);
-}
+		.help-center-contact-form__site-picker-title {
+			font-size: $root-font-size;
+			color: var(--studio-gray-100);
+			margin-top: 20px;
+		}
 
-.help-center-contact-form__site-picker-title {
-	font-size: $root-font-size;
-	color: var(--studio-gray-100);
-	margin-top: 20px;
-}
+		.components-base-control__field {
+			input,
+			textarea {
+				&.components-text-control__input {
+					// they have very high specificity
+					padding: 15.5px !important;
+					border: 1px solid var(--studio-gray-10) !important;
+					border-radius: 4px !important;
+					box-sizing: border-box;
+				}
+			}
+		}
 
-.help-center-contact-form__site-picker-form-warning,
-.help-center-contact-form__site-picker-form-subtitle {
-	color: var(--studio-gray-60);
-}
+		.help-center-contact-form__domain-sharing .components-checkbox-control {
+			display: flex;
 
-.help-center-contact-form__label {
-	color: var(--studio-gray-60);
-	margin-bottom: 8px;
-	display: block;
-}
+			.components-base-control__help {
+				margin: 0;
+				padding-left: 8px;
 
-.help-center-notice__positive-feedback {
-	font-size: $font-body-extra-small;
-	color: var(--studio-gray-60);
-	max-width: 100%;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	margin: 0;
-}
+				svg {
+					fill: var(--studio-gray-50);
+				}
+			}
+		}
 
-.help-center-notice__container {
-	background-color: var(--studio-gray-0);
-	border-radius: 4px;
-	color: $studio-gray-80;
-	padding: 16px 21px;
-	font-size: $font-body-small;
-	display: flex;
-	margin-top: 16px;
+		.help-center-contact-form__message,
+		.help-center-contact-form__subject input.components-text-control__input {
+			padding: 15.5px;
+			border: 1px solid var(--studio-gray-10);
+			border-radius: 4px;
+			width: 100%;
+			display: block;
+			box-sizing: border-box;
 
-	p {
-		margin: 0;
-		margin-left: 16px;
-	}
+			&:focus {
+				box-shadow: none;
+				outline: none;
+				border-color: var(--studio-gray-10);
+			}
+		}
 
-	.info-icon {
-		display: block;
-		fill: var(--studio-orange-40);
-		margin-top: 2px;
-	}
-	.components-external-link__icon {
-		display: none;
-	}
-}
+		.help-center-contact-form__site-picker-form-warning,
+		.help-center-contact-form__site-picker-form-subtitle {
+			color: var(--studio-gray-60);
+		}
 
-.help-center-contact-form__domain-sharing .components-checkbox-control {
-	display: flex;
-
-	.components-base-control__help {
-		margin: 0;
-		padding-left: 8px;
-
-		svg {
-			fill: var(--studio-gray-50);
+		.help-center-contact-form__label {
+			font-size: $font-body-small;
+			color: var(--studio-gray-60);
+			margin-bottom: 8px;
+			display: block;
 		}
 	}
-}
-
-.form-input-validation {
-	line-height: 1.5;
-
-	.gridicon {
-		fill: currentColor;
-	}
-}
-
-.help-center-contact-form__site-picker-forum-privacy-popover {
-	display: inline-block;
-	max-width: 200px;
-	padding: 5px;
-}
-
-.help-center-contact-form__site-picker-forum-privacy-info {
-	padding: 0;
-	margin: 0;
-	background: none;
-	border: none;
-}
-
-.help-center-contact-form__site-picker-privacy-popover {
-	z-index: 10000;
 }

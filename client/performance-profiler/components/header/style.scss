@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+
 .profiler-header {
 	color: #fff;
 	padding-top: 40px;
@@ -49,6 +52,27 @@
 				color: var(--studio-gray-5);
 			}
 		}
+	}
+
+	.profiler-header__report-site-details {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		font-size: $font-body-small;
+
+		&.show-on-mobile {
+			@media (min-width: $break-large) {
+				display: none;
+			}
+		}
+
+
+	}
+
+	.wpcom-badge {
+		display: flex;
+		align-items: center;
+		gap: 6px;
 	}
 
 	.profiler-navigation-tabs.section-nav {
@@ -138,11 +162,39 @@
 			}
 		}
 
+
 		.profiler-header__navbar-right {
-			p {
-				margin-bottom: 0;
-				font-size: 1rem;
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			font-size: $font-body-small;
+
+			.report-site-details {
+				display: flex;
+				align-items: center;
+				gap: 32px;
+
+				&.hide-on-mobile {
+					@media (max-width: $break-large) {
+						display: none;
+					}
+				}
+			}
+
+			.share-option {
+				cursor: pointer;
+				display: flex;
+				height: 40px;
+				justify-content: center;
+				align-items: center;
+				gap: 4px;
+
+				.share-icon {
+					fill: #fff;
+					margin-bottom: -1px;
+				}
 			}
 		}
 	}
 }
+

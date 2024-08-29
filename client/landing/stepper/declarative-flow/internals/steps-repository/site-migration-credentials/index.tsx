@@ -1,8 +1,11 @@
 import { FormLabel } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { NextButton, StepContainer } from '@automattic/onboarding';
+import { Icon } from '@wordpress/components';
+import { seen, unseen } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import getValidationMessage from 'calypso/blocks/import/capture/url-validation-message-helper';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
@@ -11,27 +14,38 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isValidUrl } from 'calypso/lib/importer/url-validation';
+import { CredentialsFormData, MigrationError } from './types';
+import { useSiteMigrationCredentialsMutation } from './use-site-migration-credentials-mutation';
 import type { Step } from '../../types';
-
 import './style.scss';
 
 interface CredentialsFormProps {
-	onSubmit: ( data: CredentialsFormData ) => void;
+	onSubmit: () => void;
+	onSkip: () => void;
 }
 
-interface CredentialsFormData {
-	siteAddress: string;
-	username: string;
-	password: string;
-	backupFileLocation: string;
-	notes: string;
-	howToAccessSite: 'credentials' | 'backup';
-}
+const mapApiError = ( error: any ) => {
+	return {
+		body: {
+			code: error.code,
+			message: error.message,
+			data: error.data,
+		},
+		status: error.status,
+	};
+};
 
-export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
+export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
+
+	const [ passwordHidden, setPasswordHidden ] = useState( true );
+
+	const toggleVisibilityClasses = clsx( {
+		'site-migration-credentials__form-password__toggle': true,
+	} );
 
 	const validateSiteAddress = ( siteAddress: string ) => {
 		const isSiteAddressValid = CAPTURE_URL_RGX.test( siteAddress );
@@ -41,20 +55,93 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		}
 	};
 
+	const fieldMapping = {
+		from_url: {
+			fieldName: 'siteAddress',
+			errorMessage: translate( 'Enter a valid URL.' ),
+		},
+		username: {
+			fieldName: 'username',
+			errorMessage: translate( 'Enter a valid username.' ),
+		},
+		password: {
+			fieldName: 'password',
+			errorMessage: translate( 'Enter a valid password.' ),
+		},
+		migration_type: {
+			fieldName: 'howToAccessSite',
+			errorMessage: null,
+		},
+		notes: {
+			fieldName: 'notes',
+			errorMessage: null,
+		},
+	};
+
 	const isBackupFileLocationValid = ( fileLocation: string ) => {
 		return ! isValidUrl( fileLocation ) ? translate( 'Please enter a valid URL.' ) : undefined;
 	};
+
+	const importSiteQueryParam = useQuery().get( 'from' ) || '';
+
+	const setGlobalError = ( message?: string | null | undefined ) => {
+		// eslint-disable-next-line @typescript-eslint/no-use-before-define
+		setError( 'root', {
+			type: 'manual',
+			message: message ?? translate( 'An error occurred while saving credentials.' ),
+		} );
+	};
+
+	const handleMigrationError = ( err: MigrationError ) => {
+		let hasUnmappedFieldError = false;
+
+		if ( err.body?.code === 'rest_invalid_param' && err.body?.data?.params ) {
+			Object.entries( err.body.data.params ).forEach( ( [ key ] ) => {
+				const field = fieldMapping[ key as keyof typeof fieldMapping ];
+				const keyName =
+					// eslint-disable-next-line @typescript-eslint/no-use-before-define
+					'backup' === accessMethod && field?.fieldName === 'siteAddress'
+						? 'backupFileLocation'
+						: field?.fieldName;
+
+				if ( keyName ) {
+					const message = field?.errorMessage ?? translate( 'Invalid input, please check again' );
+					// eslint-disable-next-line @typescript-eslint/no-use-before-define
+					setError( keyName as keyof CredentialsFormData, { type: 'manual', message } );
+				} else if ( ! hasUnmappedFieldError ) {
+					hasUnmappedFieldError = true;
+					setGlobalError();
+				}
+			} );
+		} else {
+			setGlobalError( err.body?.message );
+		}
+	};
+
+	const { isPending, requestAutomatedMigration } = useSiteMigrationCredentialsMutation( {
+		onSuccess: () => {
+			recordTracksEvent( 'calypso_site_migration_automated_request_success' );
+			onSubmit();
+		},
+		onError: ( error ) => {
+			handleMigrationError( mapApiError( error ) );
+			recordTracksEvent( 'calypso_site_migration_automated_request_error' );
+		},
+	} );
 
 	const {
 		formState: { errors },
 		control,
 		handleSubmit,
 		watch,
+		setError,
+		clearErrors,
 	} = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
+		disabled: isPending,
 		defaultValues: {
-			siteAddress: '',
+			siteAddress: importSiteQueryParam,
 			username: '',
 			password: '',
 			backupFileLocation: '',
@@ -63,11 +150,19 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		},
 	} );
 
-	// Subscribe only this field to the access method value
+	// Clear any root errors when the user changes any field.
+	useEffect( () => {
+		const { unsubscribe } = watch( () => {
+			clearErrors( 'root' );
+		} );
+		return () => unsubscribe();
+	}, [ watch, clearErrors ] );
+
+	// Subscribe only this field to the access method value.
 	const accessMethod = watch( 'howToAccessSite' );
 
 	const submitHandler = ( data: CredentialsFormData ) => {
-		onSubmit( data );
+		requestAutomatedMigration( data );
 	};
 
 	return (
@@ -127,7 +222,10 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									} }
 									render={ ( { field } ) => (
 										<FormTextInput
+											readOnly={ !! importSiteQueryParam }
+											disabled={ !! importSiteQueryParam }
 											id="site-address"
+											isError={ !! errors.siteAddress }
 											placeholder={ translate( 'Enter your WordPress site address.' ) }
 											type="text"
 											{ ...field }
@@ -157,14 +255,25 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 											<FormTextInput
 												id="username"
 												type="text"
+												isError={ !! errors.username }
 												placeholder={ translate( 'Username' ) }
 												{ ...field }
+												onChange={ ( e: any ) => {
+													const trimmedValue = e.target.value.trim();
+													field.onChange( trimmedValue );
+												} }
+												onBlur={ ( e: any ) => {
+													field.onBlur();
+													e.target.value = e.target.value.trim();
+												} }
 											/>
 										) }
 									/>
 								</div>
 								<div className="site-migration-credentials__form-field">
-									<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
+									<FormLabel htmlFor="site-migration-credentials__password">
+										{ translate( 'Password' ) }
+									</FormLabel>
 									<Controller
 										control={ control }
 										name="password"
@@ -172,12 +281,23 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 											required: translate( 'Please enter your WordPress admin password.' ),
 										} }
 										render={ ( { field } ) => (
-											<FormTextInput
-												id="password"
-												type="password"
-												placeholder={ translate( 'Password' ) }
-												{ ...field }
-											/>
+											<div className="site-migration-credentials__form-password">
+												<FormTextInput
+													autoComplete="off"
+													id="site-migration-credentials__password"
+													type={ passwordHidden ? 'password' : 'text' }
+													isError={ !! errors.password }
+													placeholder={ translate( 'Password' ) }
+													{ ...field }
+												/>
+												<button
+													className={ toggleVisibilityClasses }
+													onClick={ () => setPasswordHidden( ! passwordHidden ) }
+													type="button"
+												>
+													{ passwordHidden ? <Icon icon={ unseen } /> : <Icon icon={ seen } /> }
+												</button>
+											</div>
 										) }
 									/>
 								</div>
@@ -205,7 +325,9 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 									} }
 									render={ ( { field } ) => (
 										<FormTextInput
+											id="backup-file"
 											type="text"
+											isError={ !! errors.backupFileLocation }
 											placeholder={ translate( 'Enter your backup file location' ) }
 											{ ...field }
 										/>
@@ -227,13 +349,15 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 				) }
 
 				<div className="site-migration-credentials__form-field">
-					<FormLabel htmlFor="site-address">{ translate( 'Notes (optional)' ) }</FormLabel>
+					<FormLabel htmlFor="notes">{ translate( 'Notes (optional)' ) }</FormLabel>
 					<Controller
 						control={ control }
 						name="notes"
 						render={ ( { field } ) => (
 							<FormTextArea
+								id="notes"
 								type="text"
+								maxLength={ 1000 }
 								placeholder={ translate(
 									'Share any other details that will help us access your site for the migration.'
 								) }
@@ -243,12 +367,24 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 						) }
 					/>
 				</div>
+				{ errors?.notes && (
+					<div className="site-migration-credentials__form-error">{ errors.notes.message }</div>
+				) }
+				{ errors?.root && (
+					<div className="site-migration-credentials__form-error">{ errors.root.message }</div>
+				) }
 				<div>
-					<NextButton type="submit">{ translate( 'Continue' ) }</NextButton>
+					<NextButton disabled={ isPending } type="submit">
+						{ translate( 'Continue' ) }
+					</NextButton>
 				</div>
 			</Card>
 			<div className="site-migration-credentials__skip">
-				<button className="button navigation-link step-container__navigation-link has-underline is-borderless">
+				<button
+					className="button navigation-link step-container__navigation-link has-underline is-borderless"
+					disabled={ isPending }
+					onClick={ onSkip }
+				>
 					{ translate( 'Skip, I need help providing access' ) }
 				</button>
 			</div>
@@ -261,6 +397,12 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 
 	const handleSubmit = () => {
 		return navigation.submit?.();
+	};
+
+	const handleSkip = () => {
+		return navigation.submit?.( {
+			action: 'skip',
+		} );
 	};
 
 	return (
@@ -283,7 +425,7 @@ const SiteMigrationCredentials: Step = function ( { navigation } ) {
 						align="center"
 					/>
 				}
-				stepContent={ <CredentialsForm onSubmit={ handleSubmit } /> }
+				stepContent={ <CredentialsForm onSubmit={ handleSubmit } onSkip={ handleSkip } /> }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</>

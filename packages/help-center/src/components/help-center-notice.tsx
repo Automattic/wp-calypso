@@ -6,6 +6,8 @@ import { Icon, info } from '@wordpress/icons';
 import type { AnalysisReport, SupportActivity } from '../types';
 import type { ReactNode } from 'react';
 
+import './help-center-notice.scss';
+
 type Props = {
 	ownershipResult: AnalysisReport | null;
 };

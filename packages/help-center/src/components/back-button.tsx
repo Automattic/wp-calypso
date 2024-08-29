@@ -1,13 +1,19 @@
-import { Button } from '@wordpress/components';
+import { Button, Flex, FlexItem } from '@wordpress/components';
 import { Icon, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import '../styles.scss';
 
-export type Props = { onClick?: () => void; backToRoot?: boolean; className?: string };
+import './back-button.scss';
 
-export const BackButton = ( { onClick, backToRoot = false, className }: Props ) => {
+export type BackButtonProps = {
+	onClick?: () => void;
+	backToRoot?: boolean;
+	className?: string;
+	children?: React.ReactNode;
+};
+
+export const BackButton = ( { onClick, backToRoot = false, className }: BackButtonProps ) => {
 	const { __ } = useI18n();
 	const { key } = useLocation();
 	const navigate = useNavigate();
@@ -29,14 +35,22 @@ export const BackButton = ( { onClick, backToRoot = false, className }: Props ) 
 	}
 
 	return (
-		<Button
-			className={ buttonClassName }
-			/* eslint-disable-next-line jsx-a11y/no-autofocus */
-			autoFocus
-			onClick={ onClick || defaultOnClick }
-		>
+		<Button className={ buttonClassName } onClick={ onClick || defaultOnClick }>
 			<Icon icon={ chevronLeft } size={ 18 } />
 			{ __( 'Back', __i18n_text_domain__ ) }
 		</Button>
+	);
+};
+
+export const BackButtonHeader = ( { children, className }: BackButtonProps ) => {
+	return (
+		<div className={ clsx( 'help-center-back-button__header', className ) }>
+			<Flex justify="space-between">
+				<FlexItem>
+					<BackButton />
+				</FlexItem>
+				{ children }
+			</Flex>
+		</div>
 	);
 };

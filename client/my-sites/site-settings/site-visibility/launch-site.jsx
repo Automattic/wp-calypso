@@ -2,6 +2,7 @@ import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products'
 import { Card, CompactCard, Button } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
+import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -23,7 +24,6 @@ import {
 } from 'calypso/state/ui/selectors';
 import SettingsSectionHeader from '../settings-section-header';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
-
 import './styles.scss';
 
 const LaunchSite = () => {
@@ -85,6 +85,19 @@ const LaunchSite = () => {
 
 	const LaunchCard = showPreviewLink ? CompactCard : Card;
 
+	const isDevelopmentSite = site?.is_a4a_dev_site || false;
+
+	const {
+		data: agency,
+		error: agencyError,
+		isLoading: agencyLoading,
+	} = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID && isDevelopmentSite } );
+	const agencyName = agency?.name;
+
+	const handleReferToClient = () => {
+		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
+	};
+
 	return (
 		<>
 			<SettingsSectionHeader title={ translate( 'Launch site' ) } />
@@ -101,8 +114,35 @@ const LaunchSite = () => {
 										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
 								  ) }
 						</p>
+						{ isDevelopmentSite && (
+							<p>
+								{ agencyLoading || agencyError
+									? translate(
+											'Once the site is launched, your agency will be billed for this site in the next billing cycle.'
+									  )
+									: translate(
+											'Once the site is launched, {{strong}}%(agencyName)s{{/strong}} will be billed for this site in the next billing cycle.',
+											{
+												args: {
+													agencyName: agencyName,
+												},
+												components: {
+													strong: <strong />,
+												},
+												comment: 'name of the agency that will be billed for the site',
+											}
+									  ) }
+							</p>
+						) }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
+					{ isDevelopmentSite && (
+						<div className={ launchSiteClasses }>
+							<Button onClick={ handleReferToClient } disabled={ false }>
+								{ translate( 'Refer to client' ) }
+							</Button>
+						</div>
+					) }
 				</div>
 			</LaunchCard>
 			{ showPreviewLink && (

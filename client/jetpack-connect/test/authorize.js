@@ -464,7 +464,7 @@ describe( 'JetpackAuthorize', () => {
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
 			expect( windowOpenSpy ).toHaveBeenCalledWith(
-				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
+				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect_to=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
 				) }`,
 				expect.any( String )
@@ -487,7 +487,7 @@ describe( 'JetpackAuthorize', () => {
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
 			expect( windowOpenSpy ).toHaveBeenCalledWith(
-				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
+				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect_to=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
 				) }`,
 				expect.any( String )
@@ -514,7 +514,7 @@ describe( 'JetpackAuthorize', () => {
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
 			expect( windowOpenSpy ).toHaveBeenCalledWith(
-				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
+				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect_to=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
 				) }`,
 				expect.any( String )

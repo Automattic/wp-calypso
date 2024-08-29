@@ -1,9 +1,18 @@
+@import "@wordpress/base-styles/breakpoints";
+
+$blueberry-color: #3858e9;
+
 .is-group-performance-profiler .layout__content {
 	padding: 0;
 	background: #fff;
 
 	.main {
 		padding: 0;
+	}
+
+	.lpc-footer-nav-container a,
+	.lpc-footer-automattic-nav a {
+		text-decoration: none;
 	}
 }
 
@@ -12,11 +21,34 @@
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
+		flex-wrap: wrap;
 		column-gap: 35px;
+		@media (max-width: $break-small) {
+			justify-content: center;
+		}
 	}
 }
 
 .peformance-profiler-dashboard-container {
+	a {
+		color: $blueberry-color;
+
+		&:hover {
+			color: darken($blueberry-color, 10%);
+			text-decoration: underline;
+		}
+
+		&.is-primary {
+			color: #fff;
+			background-color: $blueberry-color;
+			border-radius: 4px;
+
+			&:hover:not(:disabled) {
+				background-color: darken($blueberry-color, 10%);
+			}
+		}
+	}
+
 	.l-block-wrapper {
 		margin: 0 auto;
 		max-width: 1056px;
