@@ -448,9 +448,7 @@ export class LoginForm extends Component {
 
 	resetLastUsedAuthenticationMethod = () => {
 		if ( typeof document !== 'undefined' ) {
-			this.setState( { lastUsedAuthenticationMethod: '' } );
-			document.cookie =
-				'last_used_authentication_method=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=wordpress.com; secure: true;';
+			this.setState( { lastUsedAuthenticationMethod: 'password' } );
 		}
 	};
 
@@ -798,11 +796,13 @@ export class LoginForm extends Component {
 		);
 	};
 
-	trackLoginAndRememberRedirect = ( event ) => {
+	trackLoginAndRememberRedirect = ( event, isLastUsedAuthenticationMethod = false ) => {
 		const service = event.currentTarget.getAttribute( 'data-social-service' );
 		this.recordEvent( 'calypso_login_social_button_click', service );
 
-		window.sessionStorage.setItem( 'social_login_used', service );
+		window.sessionStorage.setItem( 'social_login_used', service, {
+			is_last_used_authentication_method: isLastUsedAuthenticationMethod,
+		} );
 
 		if ( this.props.redirectTo && typeof window !== 'undefined' ) {
 			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
@@ -937,7 +937,8 @@ export class LoginForm extends Component {
 				{ this.renderPrivateSiteNotice() }
 
 				<Card className="login__form">
-					{ this.state.lastUsedAuthenticationMethod ? (
+					{ this.state.lastUsedAuthenticationMethod &&
+					this.state.lastUsedAuthenticationMethod !== 'password' ? (
 						<>
 							<span className="last-used-authentication-method">
 								{ this.props.translate( 'Previously used' ) }
