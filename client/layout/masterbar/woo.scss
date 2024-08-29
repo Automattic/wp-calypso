@@ -1966,5 +1966,18 @@ $breakpoint-mobile: 660px;
 				padding-top: 24px;
 			}
 		}
+
+		.magic-login__main-content-woo-core-profiler {
+			h1 {
+				@media screen and (max-width: $break-mobile) {
+					font-weight: 500;
+				}
+			}
+			.magic-login__emails-list {
+				ul li a p {
+					font-size: rem(14px);
+				}
+			}
+		}
 	}
 }
