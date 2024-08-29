@@ -35,7 +35,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const username = useSelector( getCurrentUserName );
 	const coupon = undefined;
 
-	const { setDomainCartItem, setDomainCartItems } = useWPDispatch( ONBOARD_STORE );
+	const { setDomainCartItem, setDomainCartItems, setSiteUrl } = useWPDispatch( ONBOARD_STORE );
 
 	const signupDependencies = {
 		siteSlug,
@@ -73,8 +73,12 @@ export default function PlansStepAdaptor( props: StepProps ) {
 				/* The plans step removes paid domains when the user picks a free plan
 				   after picking a paid domain */
 				if ( state.stepName === 'domains' ) {
-					setDomainCartItem( undefined );
-					setDomainCartItems( undefined );
+					if ( state.isPurchasingItem === false ) {
+						setDomainCartItem( undefined );
+						setDomainCartItems( undefined );
+					} else if ( state.siteUrl ) {
+						setSiteUrl( state.siteUrl );
+					}
 				} else {
 					setStepState( ( mostRecentState = { ...stepState, ...state } ) );
 					props.navigation.submit?.(
