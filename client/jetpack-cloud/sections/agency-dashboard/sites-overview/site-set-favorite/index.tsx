@@ -5,6 +5,7 @@ import { Icon, starFilled, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
+import { hashParameters } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -27,12 +28,17 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 	const { showOnlyFavorites } = filter;
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
+	const queryKey = [
+		'jetpack-agency-dashboard-sites',
+		hashParameters( [ search, currentPage, filter, sort ] ),
+	];
 	const siblingQueryKey = [
 		'jetpack-agency-dashboard-sites',
-		search,
-		currentPage,
-		{ ...filter, ...sort, showOnlyFavorites: ! showOnlyFavorites },
+		hashParameters( [
+			search,
+			currentPage,
+			{ ...filter, ...sort, showOnlyFavorites: ! showOnlyFavorites },
+		] ),
 	];
 	const successNoticeId = 'success-notice';
 
