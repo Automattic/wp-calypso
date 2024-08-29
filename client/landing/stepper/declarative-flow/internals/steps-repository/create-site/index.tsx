@@ -69,7 +69,6 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 
 	const urlData = useSelector( getUrlData );
 
@@ -82,6 +81,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		productCartItems,
 		siteUrl,
 		progress,
+		partnerBundle,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -96,6 +96,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		} ),
 		[]
 	);
+
+	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 
 	/**
 	 * Support singular and multiple domain cart items.
