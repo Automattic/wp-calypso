@@ -25,8 +25,9 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	}
 
 	// This takes into account the '?' button's padding and align the close button with the help center icon
-	const computedStyle = window.getComputedStyle( element );
-	const helpCenterPaddingRight = parseInt( computedStyle.paddingRight, 10 );
+	const helpCenterIconPaddingRight =
+		parseInt( element.style.paddingRight, 10 ) ||
+		parseInt( element.getAttribute( 'data-padding-right' ) || '0', 10 );
 
 	// Return an empty object in mobile view.
 	if ( innerWidth <= 480 ) {
@@ -36,7 +37,7 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	const { x, y, width, height } = element.getBoundingClientRect();
 
 	const buttonLeftEdge = x;
-	const buttonRightEdge = x + width + helpCenterPaddingRight;
+	const buttonRightEdge = x + width + helpCenterIconPaddingRight;
 
 	const buttonTopEdge = y;
 	const buttonBottomEdge = y + height;
@@ -99,6 +100,12 @@ export function useOpeningCoordinates( disabled: boolean = false, isMinimized: b
 							element instanceof HTMLButtonElement || element instanceof HTMLAnchorElement
 					) || path[ 0 ] ) as HTMLElement;
 
+					// Cache the computed padding-right if not already done
+					// This will be used to align the help center close button with the "?" icon
+					if ( ! openingElement.hasAttribute( 'data-padding-right' ) ) {
+						const computedStyle = window.getComputedStyle( openingElement );
+						openingElement.setAttribute( 'data-padding-right', computedStyle.paddingRight );
+					}
 					setOpeningCoordinates( calculateOpeningPosition( openingElement ) );
 				} catch ( e ) {
 					// In case something weird is clicked. e.g something without `getBoundingClientRect`.
