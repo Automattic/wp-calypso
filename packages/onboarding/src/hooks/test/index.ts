@@ -4,9 +4,12 @@ import { useStepPersistedState } from '../use-persisted-state';
 
 describe( 'useStepPersistedState', () => {
 	test( 'Should return default value and update it on request', () => {
-		const { result, rerender } = renderHook( () => useStepPersistedState( 'some-random-state' ), {
-			wrapper: MemoryRouter,
-		} );
+		const { result, rerender } = renderHook(
+			() => useStepPersistedState( 'key', 'some-random-state' ),
+			{
+				wrapper: MemoryRouter,
+			}
+		);
 
 		const [ state, setState ] = result.current;
 
@@ -21,13 +24,13 @@ describe( 'useStepPersistedState', () => {
 
 	test( 'Instances should not collide', () => {
 		const { result: resultOne, rerender: rerenderOne } = renderHook(
-			() => useStepPersistedState( 'some-random-state' ),
+			() => useStepPersistedState( 'key', 'some-random-state' ),
 			{
 				wrapper: MemoryRouter,
 			}
 		);
 		const { result: resultTwo, rerender: rerenderTwo } = renderHook(
-			() => useStepPersistedState( 'some-random-state-2' ),
+			() => useStepPersistedState( 'key2', 'some-random-state-2' ),
 			{
 				wrapper: MemoryRouter,
 			}
