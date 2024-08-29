@@ -147,7 +147,7 @@ export function isCouponBoxHidden(
 	productSlugs: string[],
 	experimentVariationName: string | null
 ): boolean {
-	const ignoredProductSlugs = [ 'wp_difm_lite', 'wp_difm_premium', 'wp_difm_extra_page' ];
+	const ignoredProductSlugs = [ 'wp_difm_lite' ];
 	const containsIgnoredProduct = productSlugs.some( ( slug ) =>
 		ignoredProductSlugs.includes( slug )
 	);
