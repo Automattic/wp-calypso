@@ -9,6 +9,7 @@ function StatsFeedbackCard() {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
 
+	const ctaText = translate( 'How do you rate your overall experience with Jetpack Stats?' );
 	const primaryButtonText = translate( 'Love it? Leave a review' );
 	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
 
@@ -24,7 +25,7 @@ function StatsFeedbackCard() {
 	return (
 		<div className="stats-feedback-container">
 			<div className="stats-feedback-card">
-				<div className="stats-feedback-card__cta">Hello from StatsFeedbackCard</div>
+				<div className="stats-feedback-card__cta">{ ctaText }</div>
 				<div className="stats-feedback-card__actions">
 					<Button variant="secondary" onClick={ handleClickWriteReview }>
 						<span className="stats-feedback-card__emoji">😍</span>
