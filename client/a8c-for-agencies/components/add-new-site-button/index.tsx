@@ -71,6 +71,7 @@ export default function AddNewSiteButton( {
 		heading,
 		description,
 		isBanner,
+		disabled,
 		buttonProps,
 		extraContent,
 	}: {
@@ -79,13 +80,17 @@ export default function AddNewSiteButton( {
 		heading: string;
 		description: string | TranslateResult;
 		isBanner?: boolean;
+		disabled?: boolean;
 		buttonProps?: React.ComponentProps< typeof Button >;
 		extraContent?: JSX.Element;
 	} ) => {
 		return (
 			<Button
 				{ ...buttonProps }
-				className={ clsx( 'site-selector-and-importer__popover-button', { banner: isBanner } ) }
+				className={ clsx( 'site-selector-and-importer__popover-button', {
+					banner: isBanner,
+					disabled,
+				} ) }
 				borderless
 			>
 				<div className={ clsx( 'site-selector-and-importer__popover-button-icon', iconClassName ) }>
@@ -211,6 +216,7 @@ export default function AddNewSiteButton( {
 								comment: 'br is a line break',
 							}
 						),
+						disabled: ! hasAvailableDevSites,
 						isBanner: true,
 						buttonProps: {
 							onClick: () => {

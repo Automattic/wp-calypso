@@ -32,6 +32,8 @@ import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
+import './help-center-search-results.scss';
+
 type HelpLinkProps = {
 	result: SearchResult;
 	type: string;
@@ -78,8 +80,8 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 
 	return (
 		<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
-			<li className="help-center-search-results__item">
-				<div className="help-center-search-results__cell">
+			<li className="help-center-search-results__item help-center-link__item">
+				<div className="help-center-search-results__cell help-center-link__cell">
 					<a
 						href={ localizeUrl( link ) }
 						onClick={ ( event ) => {
@@ -286,7 +288,7 @@ function HelpSearchResults( {
 		return condition ? (
 			<Fragment key={ id }>
 				{ title ? (
-					<h3 id={ id } className="help-center-search-results__title">
+					<h3 id={ id } className="help-center-search-results__title help-center__section-title">
 						{ title }
 					</h3>
 				) : null }
@@ -335,7 +337,7 @@ function HelpSearchResults( {
 		: __( 'Helpful resources for this section', __i18n_text_domain__ );
 
 	return (
-		<>
+		<div className="help-center-search-results" aria-label={ resultsLabel }>
 			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 				<p className="help-center-search-results__empty-results">
@@ -346,10 +348,8 @@ function HelpSearchResults( {
 				</p>
 			) : null }
 
-			<div className="help-center-search-results__results" aria-label={ resultsLabel }>
-				{ sections }
-			</div>
-		</>
+			{ sections }
+		</div>
 	);
 }
 

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -19,6 +20,7 @@ export const NewStagingSiteCardContent = ( {
 	{
 		const translate = useTranslate();
 		const hasEnTranslation = useHasEnTranslation();
+		const stagingSiteSyncWoo = config.isEnabled( 'staging-site-sync-woo' );
 
 		return (
 			<>
@@ -47,6 +49,23 @@ export const NewStagingSiteCardContent = ( {
 								}
 						  ) }
 				</HostingCardDescription>
+				{ stagingSiteSyncWoo && (
+					<div>
+						<p>{ translate( 'WooCommerce Site' ) }</p>
+						<p>
+							{ translate(
+								'Syncing staging database to production overwrites posts, pages, products and orders. {{a}}Learn more{{/a}}.',
+								{
+									components: {
+										a: (
+											<InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />
+										),
+									},
+								}
+							) }
+						</p>
+					</div>
+				) }
 				<Button primary disabled={ isButtonDisabled } onClick={ onAddClick }>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>

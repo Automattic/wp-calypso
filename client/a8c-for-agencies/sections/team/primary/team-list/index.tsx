@@ -15,10 +15,10 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useCancelMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-cancel-member-invite';
-import useFetchMemberInvites from 'calypso/a8c-for-agencies/data/team/use-fetch-member-invite';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { useMemberList } from '../../hooks/use-member-list';
 import { TeamMember } from '../../types';
 import GetStarted from '../get-started';
 import { ActionColumn, DateColumn, MemberColumn, RoleStatusColumn } from './columns';
@@ -33,11 +33,7 @@ export default function TeamList() {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
-	const {
-		data: memberInvites,
-		isPending: isMemberInvitesPending,
-		refetch: refetchMemberInvites,
-	} = useFetchMemberInvites();
+	const { members, hasMembers, isPending, refetch } = useMemberList();
 
 	const { mutate: cancelMemberInvite } = useCancelMemberInviteMutation();
 
@@ -61,7 +57,7 @@ export default function TeamList() {
 									duration: 5000,
 								} )
 							);
-							refetchMemberInvites();
+							refetch();
 						},
 
 						onError: ( error ) => {
@@ -71,7 +67,7 @@ export default function TeamList() {
 				);
 			}
 		},
-		[ cancelMemberInvite, dispatch, refetchMemberInvites ]
+		[ cancelMemberInvite, dispatch, refetch ]
 	);
 
 	const fields = useMemo(
@@ -126,35 +122,11 @@ export default function TeamList() {
 		[ handleAction, isDesktop, translate ]
 	);
 
-	const members: TeamMember[] = useMemo( () => {
-		const activeMembers: TeamMember[] = [
-			// FIXME: Fetch team members
-			{
-				id: 0,
-				displayName: 'Owner',
-				email: 'owner@automattic.com',
-				role: 'owner',
-				status: 'active',
-			},
-		];
-
-		const pendingMembers: TeamMember[] =
-			memberInvites?.map( ( invite ) => ( {
-				id: invite.id,
-				email: invite.email,
-				status: 'pending',
-			} ) ) ?? [];
-
-		return [ ...activeMembers, ...pendingMembers ];
-	}, [ memberInvites ] );
-
-	const isEmpty = members.length <= 1; // We always have one member (owner) so we exclude it from count.
-
-	if ( isMemberInvitesPending ) {
+	if ( isPending ) {
 		// FIXME: Add placeholder when UI is pending
 	}
 
-	if ( isEmpty ) {
+	if ( ! hasMembers ) {
 		return <GetStarted />;
 	}
 

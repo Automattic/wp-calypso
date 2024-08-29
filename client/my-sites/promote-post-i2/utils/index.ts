@@ -22,6 +22,7 @@ export const campaignStatus = {
 	CANCELED: 'canceled',
 	FINISHED: 'finished',
 	PROCESSING: 'processing',
+	SUSPENDED: 'suspended',
 };
 
 export const getPostType = ( type: string ) => {
@@ -63,6 +64,9 @@ export const getCampaignStatusBadgeColor = ( status?: string ) => {
 		case campaignStatus.FINISHED: {
 			return 'info-blue';
 		}
+		case campaignStatus.SUSPENDED: {
+			return 'error';
+		}
 		default:
 			return 'warning';
 	}
@@ -93,6 +97,9 @@ export const getCampaignStatus = ( status?: string ) => {
 		}
 		case campaignStatus.PROCESSING: {
 			return __( 'Creating' );
+		}
+		case campaignStatus.SUSPENDED: {
+			return __( 'Suspended' );
 		}
 		default:
 			return status;

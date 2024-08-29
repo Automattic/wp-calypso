@@ -7,7 +7,20 @@ type MemberInvite = {
 	id: number;
 	email: string;
 	status: string;
-	expires_at: number;
+	expiresAt: number;
+	createdAt: number;
+	avatar?: string;
+	displayName?: string;
+};
+
+type MemberInviteAPIResponse = {
+	id: number;
+	email: string;
+	status: string;
+	expires_at: string;
+	created_at: string;
+	avatar_url?: string;
+	username?: string;
 };
 
 export default function useFetchMemberInvites(): UseQueryResult< MemberInvite[], unknown > {
@@ -21,11 +34,14 @@ export default function useFetchMemberInvites(): UseQueryResult< MemberInvite[],
 				path: `/agency/${ agencyId }/user-invites`,
 			} ),
 		select: ( data ) => {
-			return data?.map( ( invite: MemberInvite ) => ( {
+			return data?.map( ( invite: MemberInviteAPIResponse ) => ( {
 				id: invite.id,
 				email: invite.email,
 				status: invite.status,
-				expires_at: new Date( invite.expires_at ),
+				expiresAt: new Date( invite.expires_at ),
+				createdAt: new Date( invite.created_at ),
+				avatar: invite.avatar_url,
+				displayName: invite.username,
 			} ) );
 		},
 		enabled: !! agencyId,

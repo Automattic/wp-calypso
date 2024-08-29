@@ -1,0 +1,38 @@
+@import "@automattic/typography/styles/variables";
+
+.help-center {
+	.help-center-notice__container {
+		margin: 0 0 16px;
+		background-color: var(--studio-gray-0);
+		border-radius: 4px;
+		color: var(--studio-gray-80);
+		padding: 16px 21px;
+		font-size: $font-body-small;
+		display: flex;
+		margin-top: 16px;
+
+		p {
+			margin: 0;
+			margin-left: 16px;
+		}
+
+		.info-icon {
+			display: block;
+			fill: var(--studio-orange-40);
+			margin-top: 2px;
+		}
+
+		.components-external-link__icon {
+			display: none;
+		}
+	}
+
+	.help-center-notice__positive-feedback {
+		font-size: $font-body-extra-small;
+		color: var(--studio-gray-60);
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		margin: 0;
+	}
+}

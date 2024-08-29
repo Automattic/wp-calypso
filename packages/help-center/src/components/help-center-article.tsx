@@ -1,14 +1,28 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, Flex, FlexItem } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useEffect, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, external } from '@wordpress/icons';
 import { useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { usePostByUrl } from '../hooks';
-import { BackButton } from './back-button';
+import { BackButtonHeader } from './back-button';
 import { BackToTopButton } from './back-to-top-button';
 import ArticleContent from './help-center-article-content';
+
+import './help-center-article.scss';
+
+const ExternalLink = ( { href }: { href?: string } ) => {
+	if ( ! href ) {
+		return null;
+	}
+
+	return (
+		<Button href={ href } target="_blank" className="help-center-article__external-button">
+			<Icon icon={ external } size={ 20 } />
+		</Button>
+	);
+};
 
 export const HelpCenterArticle = () => {
 	const [ searchParams ] = useSearchParams();
@@ -55,42 +69,25 @@ export const HelpCenterArticle = () => {
 	}, [ post, query, sectionName ] );
 
 	return (
-		<>
-			<div className="help-center-article__header">
-				<Flex justify="space-between">
-					<FlexItem>
-						<BackButton />
-					</FlexItem>
-					{ post?.URL && (
-						<FlexItem>
-							<Button
-								href={ post?.URL }
-								target="_blank"
-								className="help-center-article__external-button"
-							>
-								<Icon icon={ external } size={ 20 } />
-							</Button>
-						</FlexItem>
+		<div className="help-center-article">
+			<BackButtonHeader className="help-center-article__header">
+				<ExternalLink href={ post?.URL } />
+			</BackButtonHeader>
+			{ ! error && <ArticleContent post={ post } isLoading={ isLoading } /> }
+			{ ! isLoading && error && (
+				<p className="help-center-article__error">
+					{ createInterpolateElement(
+						__(
+							"Sorry, we couldn't load that article. <url>Click here</url> to open it in a new tab",
+							__i18n_text_domain__
+						),
+						{
+							url: <a target="_blank" rel="noopener noreferrer" href={ postUrl } />,
+						}
 					) }
-				</Flex>
-			</div>
-			<div className="help-center-article">
-				{ ! error && <ArticleContent post={ post } isLoading={ isLoading } /> }
-				{ ! isLoading && error && (
-					<p className="help-center-article__error">
-						{ createInterpolateElement(
-							__(
-								"Sorry, we couldn't load that article. <url>Click here</url> to open it in a new tab",
-								__i18n_text_domain__
-							),
-							{
-								url: <a target="_blank" rel="noopener noreferrer" href={ postUrl } />,
-							}
-						) }
-					</p>
-				) }
-			</div>
+				</p>
+			) }
 			<BackToTopButton />
-		</>
+		</div>
 	);
 };
