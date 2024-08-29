@@ -76,12 +76,12 @@ const RenderDomainsStepConnect = connect(
 )( withCartKey( withShoppingCart( localize( RenderDomainsStep ) ) ) );
 
 export default function DomainsStep( props: StepProps ) {
-  /**
+	/**
 	 * The domain step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
 	 * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
 	 */
 	let mostRecentState: ProvidedDependencies;
-  
+
 	const [ stepState, setStepState ] = usePersistedState< ProvidedDependencies >();
 
 	return (
@@ -90,7 +90,7 @@ export default function DomainsStep( props: StepProps ) {
 				{ ...props }
 				page={ ( url: string ) => window.location.assign( url ) }
 				saveSignupStep={ ( state: ProvidedDependencies ) =>
-					setStepState( { ...stepState, ...state } )
+					setStepState( ( mostRecentState = { ...stepState, ...state } ) )
 				}
 				submitSignupStep={ ( state: ProvidedDependencies ) => {
 					setStepState( ( mostRecentState = { ...stepState, ...state } ) );

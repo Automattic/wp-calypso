@@ -70,13 +70,13 @@ export default function PlansStepAdaptor( props: StepProps ) {
 				setStepState( ( mostRecentState = { ...stepState, ...state } ) );
 			} }
 			submitSignupStep={ ( state: ProvidedDependencies ) => {
-				/* The plans step removes paid domains domains when the user picks a free plan
+				/* The plans step removes paid domains when the user picks a free plan
 				   after picking a paid domain */
 				if ( state.stepName === 'domains' ) {
 					setDomainCartItem( undefined );
 					setDomainCartItems( undefined );
 				} else {
-					setStepState( { ...stepState, ...state } );
+					setStepState( ( mostRecentState = { ...stepState, ...state } ) );
 					props.navigation.submit?.(
 						( mostRecentState = { ...stepState, ...state, ...mostRecentState } )
 					);
