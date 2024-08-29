@@ -4,7 +4,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter from '@automattic/help-center';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useCallback } from '@wordpress/element';
+import { useEffect, useCallback, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { createRoot } from 'react-dom/client';
 import './help-button.scss';
@@ -21,6 +21,8 @@ function AdminHelpCenterContent() {
 	const wpComponentsCssUrl = `https://widgets.wp.com/help-center/wp-components-styles${
 		isRTL() ? '.rtl' : ''
 	}.css`;
+
+	const cssUrls = useMemo( () => [ cssUrl, wpComponentsCssUrl ], [ cssUrl, wpComponentsCssUrl ] );
 
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 
@@ -87,7 +89,7 @@ function AdminHelpCenterContent() {
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
-				shadowCSSFromUrlss={ [ cssUrl, wpComponentsCssUrl ] }
+				shadowCSSFromUrls={ cssUrls }
 			/>
 		</QueryClientProvider>
 	);

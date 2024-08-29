@@ -22,24 +22,26 @@ import HelpCenterContainer from './help-center-container';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
-function createRoot( stylesURL: string ) {
+function createShadowRoot( stylesURLs: string[] ) {
 	const shadowRootOwner = document.createElement( 'div' );
 	document.body.appendChild( shadowRootOwner );
 
 	const root = shadowRootOwner.attachShadow( { mode: 'open' } );
 
-	const style = document.createElement( 'style' );
-	style.innerHTML = `@import '${ stylesURL }'`;
-	root.appendChild( style );
+	stylesURLs.forEach( ( url ) => {
+		const style = document.createElement( 'style' );
+		style.innerHTML = `@import '${ url }'`;
+		root.appendChild( style );
+	} );
 
-	return root;
+	return shadowRootOwner;
 }
 
 const HelpCenter: React.FC< Container > = ( {
 	handleClose,
 	hidden,
 	currentRoute = window.location.pathname + window.location.search,
-	shadowCSSFromURL,
+	shadowCSSFromUrls,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const [ shadowRoot, setShadowRoot ] = useState< ShadowRoot >();
@@ -78,20 +80,25 @@ const HelpCenter: React.FC< Container > = ( {
 
 		portalParent.setAttribute( 'aria-modal', 'true' );
 		portalParent.setAttribute( 'aria-labelledby', 'header-text' );
+		let rootContainer: HTMLDivElement;
 
-		if ( shadowCSSFromURL ) {
-			const root = createRoot( shadowCSSFromURL );
-			root.appendChild( portalParent );
-			setShadowRoot( root );
+		if ( shadowCSSFromUrls ) {
+			rootContainer = createShadowRoot( shadowCSSFromUrls );
+			rootContainer.shadowRoot?.appendChild( portalParent );
+			setShadowRoot( rootContainer.shadowRoot as ShadowRoot );
 		} else {
 			document.body.appendChild( portalParent );
 		}
 
 		return () => {
-			document.body.removeChild( portalParent );
+			if ( shadowCSSFromUrls ) {
+				document.body.removeChild( rootContainer );
+			} else {
+				document.body.removeChild( portalParent );
+			}
 			handleClose();
 		};
-	}, [ portalParent, shadowCSSFromURL, handleClose ] );
+	}, [ portalParent, shadowCSSFromUrls, handleClose ] );
 
 	useEffect( () => {
 		/**
