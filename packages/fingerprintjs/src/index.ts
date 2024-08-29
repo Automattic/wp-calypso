@@ -1,5 +1,4 @@
 import { load, hashComponents, componentsToDebugString } from './agent';
-import { getVisitorId } from './runtime';
 import { x64hash128 } from './utils/hashing';
 import type { Agent, GetOptions, GetResult, LoadOptions } from './agent';
 import type { BuiltinComponents } from './sources';
@@ -7,7 +6,7 @@ import type { Component, UnknownComponents } from './utils/entropy_source';
 import type { Confidence } from './confidence';
 
 // Exports that are under Semantic versioning
-export { getVisitorId, load, hashComponents, componentsToDebugString };
+export { load, hashComponents, componentsToDebugString };
 export type {
 	Agent,
 	BuiltinComponents,
