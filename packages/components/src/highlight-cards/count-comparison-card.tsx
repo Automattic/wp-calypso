@@ -4,7 +4,8 @@ import { useRef, useState } from 'react';
 import { Card } from '../';
 import importedFormatNumber, {
 	DEFAULT_LOCALE,
-	DEFAULT_OPTIONS,
+	STANDARD_FORMATTING_OPTIONS,
+	COMPACT_FORMATTING_OPTIONS,
 } from '../number-formatters/lib/format-number';
 import Popover from '../popover';
 
@@ -19,17 +20,12 @@ type CountComparisonCardProps = {
 	compact?: boolean;
 };
 
-// TODO: Remove this by...
-//   - improving number-formatters/lib/format-number to better handle default option overrides.
-//   - improving ShortenedNumber to handle default option overrides.
 function formatNumber( number: number | null, isShortened = true ) {
-	const options = { ...DEFAULT_OPTIONS };
-	if ( isShortened ) {
-		options.maximumSignificantDigits = 2;
-	} else {
-		options.notation = 'standard';
-	}
-	return importedFormatNumber( number, DEFAULT_LOCALE, options );
+	return importedFormatNumber(
+		number,
+		DEFAULT_LOCALE,
+		isShortened ? COMPACT_FORMATTING_OPTIONS : STANDARD_FORMATTING_OPTIONS
+	);
 }
 
 function subtract( a: number | null, b: number | null | undefined ): number | null {
