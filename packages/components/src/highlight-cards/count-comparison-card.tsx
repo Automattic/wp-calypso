@@ -1,5 +1,6 @@
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { Card } from '../';
 import importedFormatNumber, {
@@ -80,11 +81,18 @@ export function TrendComparison( { count, previousCount }: TrendComparisonProps 
 }
 
 function TooltipContent( { count, previousCount, icon, heading }: CountComparisonCardProps ) {
+	const translate = useTranslate();
 	if ( previousCount ) {
 		return (
 			<div className="highlight-card-tooltip-content">
-				{ /* TODO: Address RTL languages in arrow usage */ }
-				{ formatNumber( previousCount, false ) } → { formatNumber( count, false ) }
+				{ translate( '%(beforeValue)s → %(afterValue)s', {
+					// Wrapped in translate to handle RTL languages
+					args: {
+						beforeValue: formatNumber( previousCount, false ),
+						afterValue: formatNumber( count, false ),
+					},
+					comment: 'Tooltip content for a count comparison card',
+				} ) }
 			</div>
 		);
 	}
