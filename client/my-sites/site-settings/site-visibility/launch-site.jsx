@@ -117,11 +117,9 @@ const LaunchSite = () => {
 						{ isDevelopmentSite && (
 							<p>
 								{ agencyLoading || agencyError
-									? translate(
-											'Once the site is launched, your agency will be billed for this site in the next billing cycle.'
-									  )
+									? translate( 'After launch, we’ll bill your agency in the next billing cycle.' )
 									: translate(
-											'Once the site is launched, {{strong}}%(agencyName)s{{/strong}} will be billed for this site in the next billing cycle.',
+											'After launch, we’ll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle.',
 											{
 												args: {
 													agencyName: agencyName,

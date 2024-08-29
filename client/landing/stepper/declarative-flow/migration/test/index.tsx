@@ -88,7 +88,7 @@ describe( `${ flow.name }`, () => {
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_CREATION_STEP,
-					query: { platform: 'blogger', from: 'optional' },
+					query: { from: 'optional', platform: 'blogger' },
 				} );
 			} );
 
