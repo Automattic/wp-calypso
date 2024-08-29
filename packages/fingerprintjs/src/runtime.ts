@@ -1,7 +1,7 @@
 import { load } from './agent';
 
-export async function getVisitorId() {
-	const agent = await load();
-	const result = await agent.get();
-	return result.visitorId;
+const promise = load().then( ( agent ) => agent.get().then( ( result ) => result.visitorId ) );
+
+export async function getVisitorId(): Promise< string > {
+	return promise;
 }
