@@ -120,6 +120,7 @@ class Profile extends Component {
 									type="url"
 									onChange={ this.props.updateSetting }
 									onFocus={ this.getFocusHandler( 'Web Address Field' ) }
+									placeholder="https://example.com"
 									value={ this.props.getSetting( 'user_URL' ) }
 								/>
 								<FormSettingExplanation>
