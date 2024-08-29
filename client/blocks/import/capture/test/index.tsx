@@ -11,7 +11,6 @@ const mockedRecordTracksEvent = jest.fn();
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: ( ...args ) => mockedRecordTracksEvent( ...args ),
-	getDoNotTrack: () => true,
 } ) );
 
 describe( 'CaptureInput', () => {

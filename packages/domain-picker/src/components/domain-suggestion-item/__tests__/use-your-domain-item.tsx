@@ -1,21 +1,16 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import UseYourDomainItem from '../use-your-domain-item';
 
-jest.mock( '@automattic/calypso-config', () => {
-	function config() {
-		return '';
-	}
-	function isEnabled() {
-		return false;
-	}
-	config.isEnabled = isEnabled;
-
-	return {
-		default: config,
-		isEnabled,
-		__esModule: true,
-	};
-} );
+jest.mock( '@automattic/calypso-config', () => ( {
+	config: () => '',
+	__esModule: true,
+	default: function config( key: string ) {
+		return key;
+	},
+	isEnabled: function isEnabled( key: string ) {
+		return key;
+	},
+} ) );
 
 describe( '<UseYourDomainItem />', () => {
 	it( 'should render with correct messaging', () => {

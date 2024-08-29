@@ -10,7 +10,7 @@ const config = ( key ) => {
 	throw new Error( 'key ' + key + ' not expected to be needed' );
 };
 
-export const isEnabled = ( feature ) => {
+config.isEnabled = ( feature ) => {
 	if ( 'google-analytics' === feature ) {
 		return false;
 	}
@@ -23,7 +23,5 @@ export const isEnabled = ( feature ) => {
 
 	throw new Error( 'config.isEnabled to ' + feature + ' not expected to be needed' );
 };
-
-config.isEnabled = isEnabled;
 
 export default config;
