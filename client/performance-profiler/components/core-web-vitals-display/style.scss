@@ -50,9 +50,10 @@ $blueberry-color: #3858e9;
 	flex-direction: row;
 	column-gap: 32px;
 	min-height: 360px;
+	flex-wrap: wrap;
 
 	& > div {
-		flex: 50%;
+		flex: 1;
 	}
 
 	& > p {
