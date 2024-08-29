@@ -19,7 +19,7 @@ export const PerformanceProfilerDashboardContent = ( {
 	performanceReport,
 	url,
 }: PerformanceProfilerDashboardContentProps ) => {
-	const { overall_score, fcp, lcp, cls, inp, ttfb, audits, history, screenshots, is_wpcom } =
+	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history, screenshots, is_wpcom } =
 		performanceReport;
 
 	return (
@@ -38,6 +38,7 @@ export const PerformanceProfilerDashboardContent = ( {
 					cls={ cls }
 					inp={ inp }
 					ttfb={ ttfb }
+					tbt={ tbt }
 					history={ history }
 				/>
 				<NewsletterBanner />

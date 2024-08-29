@@ -67,7 +67,7 @@ export default function useSiteActions( {
 		return [
 			{
 				name: translate( 'Prepare for launch' ),
-				href: `https://wordpress.com/settings/general/${ blog_id }?referer=a4a-dashboard`,
+				href: `https://wordpress.com/settings/general/${ blog_id }`,
 				onClick: () => handleClickMenuItem( 'prepare_for_launch' ),
 				isExternalLink: true,
 				isEnabled: isDevSite,

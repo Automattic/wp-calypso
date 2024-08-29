@@ -519,3 +519,9 @@ body.is-section-accept-invite {
 .is-woo-passwordless .signup-form .auth-form__separator {
 	margin: 32px 0;
 }
+
+.signup-form.is-horizontal .notice.signup-form__notice {
+	width: 100%;
+	margin: auto;
+	margin-bottom: 16px;
+}

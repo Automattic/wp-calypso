@@ -1,8 +1,7 @@
-import { useCallback, useContext, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import useFetchDevLicense from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-license';
-import { MarketplaceTypeContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
-import { MARKETPLACE_TYPE_REFERRAL } from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
+import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hooks/use-get-tipalti-payee';
 import { ShoppingCartItem } from '../types';
 
 export default function useReferralDevSite(
@@ -12,7 +11,7 @@ export default function useReferralDevSite(
 ) {
 	const { data: allProducts, isLoading: isLoadingProducts } = useProductsQuery();
 	const { data: license, isLoading: isLoadingLicense } = useFetchDevLicense( referralBlogId );
-	const { setMarketplaceType } = useContext( MarketplaceTypeContext );
+	const { isLoading: isLoadingTipalti } = useGetTipaltiPayee();
 
 	const product = useMemo(
 		() => allProducts?.find( ( p ) => p.product_id === license?.productId ),
@@ -26,8 +25,6 @@ export default function useReferralDevSite(
 
 	const addReferralPlanToCart = useCallback( () => {
 		if ( product && license && ! referralPlanAdded ) {
-			setMarketplaceType( MARKETPLACE_TYPE_REFERRAL );
-
 			const cartProduct: ShoppingCartItem = {
 				...product,
 				quantity: 1,
@@ -35,9 +32,15 @@ export default function useReferralDevSite(
 				siteUrls: [ license.siteUrl ],
 			};
 
-			setSelectedCartItems( [ cartProduct ] );
+			// Wait for the next tick to set the selected cart items, to avoid outdated marketplace type
+			setTimeout( () => {
+				setSelectedCartItems( [ cartProduct ] );
+			}, 0 );
 		}
-	}, [ license, product, referralPlanAdded, setMarketplaceType, setSelectedCartItems ] );
+	}, [ license, product, referralPlanAdded, setSelectedCartItems ] );
 
-	return { addReferralPlanToCart, isLoading: isLoadingProducts || isLoadingLicense };
+	return {
+		addReferralPlanToCart,
+		isLoading: isLoadingProducts || isLoadingLicense || isLoadingTipalti,
+	};
 }

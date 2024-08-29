@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
@@ -14,8 +14,11 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useCancelMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-cancel-member-invite';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { useMemberList } from '../../hooks/use-member-list';
 import { TeamMember } from '../../types';
 import GetStarted from '../get-started';
 import { ActionColumn, DateColumn, MemberColumn, RoleStatusColumn } from './columns';
@@ -30,6 +33,10 @@ export default function TeamList() {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
+	const { members, hasMembers, isPending, refetch } = useMemberList();
+
+	const { mutate: cancelMemberInvite } = useCancelMemberInviteMutation();
+
 	const title = translate( 'Manage team members' );
 
 	const onInviteClick = () => {
@@ -37,10 +44,31 @@ export default function TeamList() {
 		page( A4A_TEAM_INVITE_LINK );
 	};
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const handleAction = ( action: string, item: TeamMember ) => {
-		// FIXME: Implement action handling
-	};
+	const handleAction = useCallback(
+		( action: string, item: TeamMember ) => {
+			if ( action === 'cancel-user-invite' ) {
+				cancelMemberInvite(
+					{ id: item.id },
+					{
+						onSuccess: () => {
+							dispatch(
+								successNotice( 'The invitation has been successfully cancelled.', {
+									id: 'cancel-user-invite-success',
+									duration: 5000,
+								} )
+							);
+							refetch();
+						},
+
+						onError: ( error ) => {
+							dispatch( errorNotice( error.message ) );
+						},
+					}
+				);
+			}
+		},
+		[ cancelMemberInvite, dispatch, refetch ]
+	);
 
 	const fields = useMemo(
 		() => [
@@ -91,41 +119,14 @@ export default function TeamList() {
 				enableSorting: false,
 			},
 		],
-		[ isDesktop, translate ]
+		[ handleAction, isDesktop, translate ]
 	);
 
-	// FIXME: Fetch team members
-	const members: TeamMember[] = [
-		{
-			displayName: 'Owner',
-			email: 'owner@automattic.com',
-			role: 'owner',
-			status: 'active',
-		},
-		{
-			displayName: 'User 1',
-			email: 'user1@automattic.com',
-			role: 'member',
-			status: 'active',
-			dateAdded: new Date().toDateString(),
-		},
-		{
-			displayName: 'User 2',
-			email: 'user2@automattic.com',
-			role: 'member',
-			status: 'pending',
-			dateAdded: new Date().toDateString(),
-		},
-		{
-			email: 'user3@automattic.com',
-			role: 'member',
-			status: 'expired',
-		},
-	];
+	if ( isPending ) {
+		// FIXME: Add placeholder when UI is pending
+	}
 
-	const isEmpty = members.length <= 1; // We always have one member (owner) so we exclude it from count.
-
-	if ( isEmpty ) {
+	if ( ! hasMembers ) {
 		return <GetStarted />;
 	}
 
