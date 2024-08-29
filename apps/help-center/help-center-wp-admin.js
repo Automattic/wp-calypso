@@ -7,6 +7,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { createRoot } from 'react-dom/client';
+// Remove me once jetpack#38935 is deployed.
 import './help-button.scss';
 
 const queryClient = new QueryClient();

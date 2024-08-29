@@ -12,6 +12,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks';
+// Remove me once jetpack#38935 is deployed.
 import './help-button.scss';
 
 const queryClient = new QueryClient();
