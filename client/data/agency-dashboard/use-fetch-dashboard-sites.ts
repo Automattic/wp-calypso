@@ -45,6 +45,33 @@ export interface FetchDashboardSitesArgsInterface {
 	agencyId?: number;
 }
 
+/**
+ * Hashes the unordered input to generate a hash value.
+ *
+ * @param parameters The parameter array to hash.
+ * @param seed The seed value to multiply the sum with, default is 3.
+ */
+export const hashParameters = ( parameters: any[], seed: number = 3 ): string => {
+	let hashSum = 0;
+
+	parameters.forEach( ( param ) => {
+		const paramString = JSON.stringify( param || '' );
+
+		// Initialize the sum with the length of the parameter characters
+		let paramSum = paramString.length * seed;
+
+		// Add the char code of each character to the sum
+		for ( let i = 0; i < paramString.length; i++ ) {
+			paramSum += paramString.charCodeAt( i ) * seed;
+		}
+
+		// Accumulate the parameter hash sum to the final hash
+		hashSum += paramSum;
+	} );
+
+	return hashSum.toString();
+};
+
 const useFetchDashboardSites = ( {
 	isPartnerOAuthTokenLoaded,
 	searchQuery,
