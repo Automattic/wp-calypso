@@ -5,7 +5,7 @@ const AESTHETIC_OFFSET = 20;
 const HELP_CENTER_POSITION_MASTERBAR = 11;
 const HELP_CENTER_POSITION_EDITOR = 15;
 
-const getPosition = ( element: HTMLElement ) => {
+const originElementOffset = ( element: HTMLElement ) => {
 	if ( element.classList.contains( 'masterbar__item' ) ) {
 		return HELP_CENTER_POSITION_MASTERBAR;
 	}
@@ -44,17 +44,10 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 
 	const { x, y, width, height } = element.getBoundingClientRect();
 
-	const position = getPosition( element );
+	const position = originElementOffset( element );
 
 	// handle RTL languages
 	const buttonLeftEdge = x - position;
-
-	const buttonRightEdge =
-		x +
-		width +
-		( element.classList.contains( 'masterbar__item' )
-			? HELP_CENTER_POSITION_MASTERBAR
-			: HELP_CENTER_POSITION_EDITOR );
 
 	const buttonTopEdge = y;
 	const buttonBottomEdge = y + height;
@@ -73,6 +66,7 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 
 	if ( buttonLeftEdge + helpCenterWidth + AESTHETIC_OFFSET > innerWidth ) {
 		// Align right edge of the help center with the right edge of the button
+		const buttonRightEdge = x + width + position;
 		coords.left = buttonRightEdge - helpCenterWidth;
 		coords.transformOrigin += ' right';
 	} else {
