@@ -578,7 +578,7 @@ class MasterbarLoggedIn extends Component {
 							{ translate( 'Click the eyeglasses icon to check it out.' ) }
 						</p>
 						<div className="masterbar__reader-popover-actions">
-							<WPButton isPrimary onClick={ this.dismissLogoPopover }>
+							<WPButton isPrimary onClick={ this.dismissReaderPopover }>
 								{ translate( 'Got it', { comment: 'Got it, as in OK' } ) }
 							</WPButton>
 						</div>
