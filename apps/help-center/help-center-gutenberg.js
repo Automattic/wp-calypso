@@ -11,7 +11,6 @@ import { registerPlugin } from '@wordpress/plugins';
 import { useI18n } from '@wordpress/react-i18n';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks';
-import './wp-components.scss';
 import './help-button.scss';
 
 const queryClient = new QueryClient();
@@ -20,6 +19,10 @@ function HelpCenterContent() {
 	const { isRTL } = useI18n();
 
 	const cssUrl = `https://widgets.wp.com/help-center/help-center-wp-admin${
+		isRTL() ? '.rtl' : ''
+	}.css`;
+
+	const wpComponentsCssUrl = `https://widgets.wp.com/help-center/wp-components-styles${
 		isRTL() ? '.rtl' : ''
 	}.css`;
 
@@ -91,7 +94,7 @@ function HelpCenterContent() {
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
-				shadowCSSFromURL={ cssUrl }
+				shadowCSSFromUrls={ [ cssUrl, wpComponentsCssUrl ] }
 			/>
 		</>
 	);

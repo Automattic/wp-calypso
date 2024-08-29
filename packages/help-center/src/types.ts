@@ -12,7 +12,7 @@ export interface Container {
 	/**
 	 * If this property is passed. The Help Center will wrap itself in a shadow root and inject the styles from this URL.
 	 */
-	shadowCSSFromURL?: string;
+	shadowCSSFromUrls?: string[];
 }
 
 export interface PostObject {
