@@ -947,7 +947,7 @@ export class LoginForm extends Component {
 								lastUsedAuthenticationMethod={ this.state.lastUsedAuthenticationMethod }
 								handleLogin={ this.handleSocialLogin }
 								loginUrl={ loginUrl }
-								onClick={ this.trackLoginAndRememberRedirect }
+								onClick={ ( event ) => this.trackLoginAndRememberRedirect( event, true ) }
 								socialServiceResponse={ this.props.socialServiceResponse }
 							/>
 						</>
