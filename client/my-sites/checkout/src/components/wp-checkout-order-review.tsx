@@ -209,7 +209,9 @@ export function CouponFieldArea( {
 		}
 	}, [ couponStatus, setCouponFieldValue ] );
 
-	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box' );
+	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box', {
+		isEligible: ! productSlugs.some( ( slug ) => 'wp_difm_lite' === slug ),
+	} );
 
 	if (
 		isPurchaseFree ||

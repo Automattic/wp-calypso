@@ -324,7 +324,10 @@ export function CouponCostOverride( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
-	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box' );
+	const productSlugs = responseCart.products?.map( ( product ) => product.product_slug );
+	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box', {
+		isEligible: ! productSlugs.some( ( slug ) => 'wp_difm_lite' === slug ),
+	} );
 
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;
