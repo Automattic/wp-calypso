@@ -62,7 +62,7 @@ const CreditCardLabel: React.FC< {
 
 function CreditCardLogos( { currency }: { currency: string } ) {
 	return (
-		<PaymentMethodLogos className="credit-card__logo payment-logos">
+		<PaymentMethodLogos className="credit-card__logo">
 			{ currency === 'EUR' && <CBLogo className="has-background" /> }
 			<VisaLogo />
 			<MastercardLogo />
