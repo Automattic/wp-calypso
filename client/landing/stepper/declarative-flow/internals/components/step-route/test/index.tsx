@@ -2,11 +2,13 @@
  * @jest-environment jsdom
  */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { waitFor } from '@testing-library/react';
 import { addQueryArgs } from '@wordpress/url';
 import React, { FC, Suspense } from 'react';
 import { MemoryRouter } from 'react-router';
-import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
+import { STEPPER_TRACKS_EVENT_SIGNUP_STEP_START } from 'calypso/landing/stepper/constants';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -26,10 +28,13 @@ import type {
 
 jest.mock( 'calypso/signup/storageUtils' );
 jest.mock( 'calypso/state/current-user/selectors' );
-jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start' );
 jest.mock( 'calypso/landing/stepper/hooks/use-intent' );
 jest.mock( 'calypso/landing/stepper/hooks/use-selected-design' );
 jest.mock( 'calypso/lib/analytics/page-view' );
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	...jest.requireActual( '@automattic/calypso-analytics' ),
+	recordTracksEvent: jest.fn(),
+} ) );
 
 const regularStep: StepperStep = {
 	slug: 'some-step-slug',
@@ -157,12 +162,16 @@ describe( 'StepRoute', () => {
 		} );
 
 		it( 'records recordStepStart when the step is rendered', async () => {
+			const device = resolveDeviceTypeByViewPort();
 			render( { step: regularStep } );
 
-			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
+			expect( recordTracksEvent ).toHaveBeenCalledWith( STEPPER_TRACKS_EVENT_SIGNUP_STEP_START, {
+				step: 'some-step-slug',
+				flow: 'some-flow',
 				intent: 'build',
 				assembler_source: 'premium',
 				is_in_hosting_flow: false,
+				device,
 			} );
 		} );
 
@@ -170,7 +179,9 @@ describe( 'StepRoute', () => {
 			( isUserLoggedIn as jest.Mock ).mockReturnValue( false );
 			render( { step: requiresLoginStep } );
 
-			expect( recordStepStart ).not.toHaveBeenCalled();
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				STEPPER_TRACKS_EVENT_SIGNUP_STEP_START
+			);
 			expect( recordPageView ).not.toHaveBeenCalled();
 		} );
 
@@ -180,13 +191,17 @@ describe( 'StepRoute', () => {
 
 			render( { step: regularStep } );
 
-			expect( recordStepStart ).not.toHaveBeenCalled();
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				STEPPER_TRACKS_EVENT_SIGNUP_STEP_START
+			);
 		} );
 
 		it( 'skips trackings when the renderStep returns null', () => {
 			render( { step: regularStep, renderStep: () => null } );
 
-			expect( recordStepStart ).not.toHaveBeenCalled();
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				STEPPER_TRACKS_EVENT_SIGNUP_STEP_START
+			);
 			expect( recordPageView ).not.toHaveBeenCalled();
 		} );
 	} );
