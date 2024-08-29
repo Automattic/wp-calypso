@@ -43,6 +43,7 @@ const ReaderFullPostHeader = ( { post, authorProfile } ) => {
 					</h1>
 				</AutoDirection>
 			) : null }
+			<div className="reader-full-post__author-block">{ authorProfile }</div>
 			<div className="reader-full-post__header-meta">
 				{ post.date ? (
 					<span className="reader-full-post__header-date">
@@ -57,8 +58,6 @@ const ReaderFullPostHeader = ( { post, authorProfile } ) => {
 						</a>
 					</span>
 				) : null }
-
-				{ authorProfile }
 			</div>
 			<TagsList post={ post } tagsToShow={ 5 } />
 		</div>

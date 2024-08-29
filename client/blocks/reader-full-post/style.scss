@@ -192,138 +192,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 }
 
-.reader-full-post .author-compact-profile {
-	display: inline-flex;
-	flex-direction: column;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		margin-bottom: 35px;
-		padding-right: 10px;
-		position: relative;
-		text-overflow: clip;
-		white-space: nowrap;
-
-		&::after {
-			height: 40px;
-		}
-
-		&:not(.is-placeholder)::after {
-			@include long-content-fade( $size: 15% );
-		}
-	}
-
-	.reader-author-link {
-		margin-top: 0;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		flex-direction: row;
-		margin-top: 20px;
-
-		.reader-avatar {
-			flex: 1;
-			margin: 0 0 0 -9px;
-
-			&.has-site-and-author-icon,
-			&.has-site-icon,
-			&.has-gravatar {
-				margin: 0 10px 5px 0;
-			}
-
-			&.has-gravatar {
-				.gravatar {
-					height: 32px !important;
-					width: 32px !important;
-					max-width: none;
-				}
-			}
-
-			&.has-site-and-author-icon.has-site-icon.has-gravatar {
-				margin-bottom: -15px;
-
-				.gravatar {
-					height: 24px !important;
-					margin-right: 1em;
-					position: relative;
-					left: 18px;
-					top: -18px;
-					vertical-align: bottom;
-					width: 24px !important;
-				}
-			}
-
-			.site-icon {
-				height: 32px !important;
-				width: 32px !important;
-				line-height: 32px !important;
-				font-size: rem(32px) !important;
-
-				.gridicon {
-					@include breakpoint-deprecated( "<660px" ) {
-						height: 32px !important;
-						width: 32px !important;
-						line-height: 32px !important;
-						font-size: rem(32px) !important;
-					}
-				}
-			}
-		}
-
-		.reader-author-link {
-			font-weight: 600;
-			display: inline;
-			margin-right: 5px;
-
-			&::after {
-				content: ",";
-				font-weight: 400;
-			}
-		}
-
-		.author-compact-profile__site-link {
-			flex: 1 0 0;
-			display: inline;
-
-			@include breakpoint-deprecated( "<660px" ) {
-				margin-top: 0;
-			}
-		}
-
-		.reader-author-link,
-		.author-compact-profile__site-link {
-			padding-top: 5px;
-		}
-
-		.author-compact-profile__follow .follow-button {
-			position: fixed;
-			left: calc(100% - 270px);
-			top: 5px;
-
-			@include breakpoint-deprecated( "<660px" ) {
-				background: transparent;
-				position: fixed;
-				z-index: z-index(".reader-full-post__sidebar-comment-like", ".author-compact-profile__follow .follow-button");
-
-				.gridicon {
-					height: 24px;
-					top: 7px;
-					width: 24px;
-				}
-			}
-		}
-
-		.author-compact-profile__follow-count {
-			display: none;
-		}
-
-		.author-compact-profile__follow .follow-button__label {
-			@include breakpoint-deprecated( "<660px" ) {
-				display: none;
-			}
-		}
-	}
-}
-
 .reader-full-post .reader-full-post__sidebar {
 	color: var(--color-text-subtle);
 
@@ -516,77 +384,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 }
 
-/* Mini profile in header */
-.reader-full-post {
-	.reader-full-post__header-meta {
-		@include breakpoint-deprecated( "<660px" ) {
-			flex-wrap: wrap;
-		}
-
-		.author-compact-profile {
-			flex-direction: row;
-			line-height: 1.6;
-
-			@media (min-width: $reader-full-post-desktop-min) {
-				display: none;
-			}
-
-			@include breakpoint-deprecated( "<660px" ) {
-				margin-bottom: 0;
-				margin-top: 0;
-				flex-wrap: wrap;
-				align-items: center;
-			}
-
-			.reader-avatar .site-icon {
-				width: 16px !important;
-				height: 16px !important;
-				line-height: 16px !important;
-				font-size: rem(16px) !important;
-				margin-right: 4px;
-			}
-
-			&__avatar-link {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				flex-shrink: 0;
-			}
-
-			.reader-avatar {
-				margin-bottom: 0;
-
-				@include breakpoint-deprecated( "<660px" ) {
-					margin: 0;
-					margin-right: 5px;
-				}
-			}
-
-			&__site-link {
-				margin-right: 25px;
-
-				@include breakpoint-deprecated( "<660px" ) {
-					padding-top: 0;
-					margin-right: 5px;
-					flex: 0;
-				}
-			}
-
-			.author-compact-profile__follow {
-				margin: 0;
-			}
-
-			.follow-button {
-				@include breakpoint-deprecated( "<660px" ) {
-					position: static;
-					left: auto;
-					top: auto;
-				}
-			}
-		}
-	}
-}
-
 .reader-full-post__header-date {
 	line-height: 1.6;
 
@@ -741,4 +538,87 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 .is-reader-full-post {
 	background: var(--color-surface);
+}
+
+.reader-full-post {
+	.reader-full-post__author-block {
+		.author-compact-profile {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			grid-template-areas:
+				"avatar links"
+				"avatar follow";
+			column-gap: 5px;
+			margin-top: 20px;
+
+			&:not(.has-author-link) {
+				margin-left: -17px;
+			}
+
+			@media (min-width: 1300px) {
+				display: none;
+			}
+
+			&__avatar-link {
+				grid-area: avatar;
+			}
+
+			.reader-avatar {
+				margin: 0 10px 5px 0;
+
+				&:not(.has-site-and-author-icon) img {
+					top: 5px;
+				}
+
+				.gravatar {
+					height: 24px;
+					width: 24px;
+					margin-right: 1em;
+					position: relative;
+					left: 18px;
+					top: -18px;
+					vertical-align: bottom;
+				}
+
+				.site-icon {
+					height: 32px !important;
+					width: 32px !important;
+					line-height: 32px !important;
+					font-size: rem(32px) !important;
+					margin: 0 2px;
+				}
+			}
+
+			&__names {
+				position: relative;
+				top: -2px;
+
+				.reader-author-link,
+				.author-compact-profile__site-link {
+					grid-area: links;
+					display: inline;
+					margin-right: 5px;
+					padding-top: 0;
+
+					&::after {
+						content: ", ";
+						font-weight: 400;
+						white-space: pre;
+					}
+				}
+			}
+
+			&__follow {
+				grid-area: follow;
+				justify-content: initial;
+				position: relative;
+				top: -12px;
+				margin-top: 0;
+
+				.author-compact-profile__follow-count {
+					padding: 5px 5px 5px 0;
+				}
+			}
+		}
+	}
 }
