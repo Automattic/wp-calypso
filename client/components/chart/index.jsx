@@ -10,7 +10,6 @@ import BarContainer from './bar-container';
 
 import './style.scss';
 
-const noop = () => {};
 const isTouch = hasTouch();
 
 /**
@@ -43,7 +42,7 @@ function getYAxisMax( values ) {
 
 // The Chart component.
 function Chart( {
-	barClick = noop,
+	barClick,
 	children,
 	data,
 	isPlaceholder = false,

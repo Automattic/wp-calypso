@@ -2,9 +2,7 @@ import { CompactCard } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
-const noop = () => {};
-
-const SiteToolsLink = ( { description, href, isWarning, onClick = noop, title } ) => {
+const SiteToolsLink = ( { description, href, isWarning, onClick, title } ) => {
 	const titleClasses = clsx( 'site-tools__section-title', {
 		'is-warning': isWarning,
 	} );
@@ -21,7 +19,7 @@ const SiteToolsLink = ( { description, href, isWarning, onClick = noop, title } 
 
 SiteToolsLink.propTypes = {
 	description: PropTypes.string,
-	href: PropTypes.string,
+	href: PropTypes.string.isRequired,
 	isWarning: PropTypes.bool,
 	onClick: PropTypes.func,
 	title: PropTypes.string,
