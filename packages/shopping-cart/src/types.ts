@@ -126,6 +126,7 @@ export type ShoppingCartAction =
 	  }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'REMOVE_COUPON' }
+	| { type: 'SET_FINGERPRINT'; fingerprint: string }
 	| { type: 'CART_RELOAD' }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
 	| { type: 'FETCH_INITIAL_RESPONSE_CART' }
@@ -200,6 +201,7 @@ export interface RequestCart {
 	tax: RequestCartTaxData;
 	coupon: string;
 	temporary: false;
+	fingerprint?: string;
 }
 
 export type RequestCartTaxData = null | {
@@ -313,6 +315,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	bundled_domain?: string;
 	terms_of_service?: TermsOfServiceRecord[];
 	has_pending_payment?: boolean;
+	fingerprint?: string;
 }
 
 export interface ResponseCartTaxData {

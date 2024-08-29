@@ -1,3 +1,4 @@
+import { getVisitorId } from '@automattic/fingerprintjs';
 import debugFactory from 'debug';
 import { findCartKeyFromSiteSlug } from './cart-functions';
 import { CartActionError, CartActionConnectionError, CartActionResponseError } from './errors';
@@ -126,6 +127,10 @@ function createShoppingCartManager(
 			subscriptionManager.notifySubscribers();
 		}
 	};
+
+	getVisitorId().then( ( visitorId ) => {
+		dispatch( { type: 'SET_FINGERPRINT', fingerprint: visitorId } );
+	} );
 
 	// `dispatchAndWaitForValid` enhances the action dispatcher to return a
 	// Promise that will resolve when the cart next reaches a `valid`

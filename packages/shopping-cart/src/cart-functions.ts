@@ -34,6 +34,7 @@ export function convertResponseCartToRequestCart( {
 	coupon,
 	tax,
 	blog_id,
+	fingerprint,
 }: TempResponseCart ): RequestCart {
 	let requestCartTax = null;
 	if (
@@ -63,6 +64,7 @@ export function convertResponseCartToRequestCart( {
 		coupon,
 		temporary: false,
 		tax: requestCartTax,
+		fingerprint,
 	};
 }
 
@@ -107,6 +109,16 @@ export function removeCouponFromResponseCart( cart: TempResponseCart ): TempResp
 		...cart,
 		coupon: '',
 		is_coupon_applied: false,
+	};
+}
+
+export function addFingerprintToResponseCart(
+	cart: TempResponseCart,
+	fingerprint: string
+): TempResponseCart {
+	return {
+		...cart,
+		fingerprint,
 	};
 }
 

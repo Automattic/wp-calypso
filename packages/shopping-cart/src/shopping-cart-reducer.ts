@@ -10,6 +10,7 @@ import {
 	doesCartLocationDifferFromResponseCartLocation,
 	doesResponseCartContainProductMatching,
 	convertTempResponseCartToResponseCart,
+	addFingerprintToResponseCart,
 } from './cart-functions';
 import { getEmptyResponseCart } from './empty-carts';
 import type {
@@ -235,6 +236,17 @@ function shoppingCartReducer(
 				...state,
 				responseCart: addCouponToResponseCart( state.responseCart, newCoupon ),
 				couponStatus: 'pending',
+				cacheStatus: 'invalid',
+				loadingError: undefined,
+				loadingErrorType: undefined,
+			};
+		}
+
+		case 'SET_FINGERPRINT': {
+			const fingerprint = action.fingerprint;
+			return {
+				...state,
+				responseCart: addFingerprintToResponseCart( state.responseCart, fingerprint ),
 				cacheStatus: 'invalid',
 				loadingError: undefined,
 				loadingErrorType: undefined,
