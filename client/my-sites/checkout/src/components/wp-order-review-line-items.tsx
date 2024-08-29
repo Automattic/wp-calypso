@@ -100,6 +100,9 @@ export function WPOrderReviewLineItems( {
 		couponLineItem.label = isOnboardingAffiliateFlow
 			? getAffiliateCouponLabel()
 			: getCouponLabel( couponLineItem.label, experimentAssignment?.variationName || null );
+		if ( experimentAssignment?.variationName === 'treatment' ) {
+			couponLineItem.hasDeleteButton = false;
+		}
 	}
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
