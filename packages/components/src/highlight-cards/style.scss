@@ -391,6 +391,10 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 }
 
+.highlight-card-tooltip-count-difference {
+	color: var(--studio-gray-10);
+}
+
 .highlight-card-tooltip-note {
 	font-size: $font-body-extra-small;
 	padding-top: 8px;

@@ -1,6 +1,5 @@
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { Card } from '../';
 import importedFormatNumber, {
@@ -81,18 +80,20 @@ export function TrendComparison( { count, previousCount }: TrendComparisonProps 
 }
 
 function TooltipContent( { count, previousCount, icon, heading }: CountComparisonCardProps ) {
-	const translate = useTranslate();
 	if ( previousCount ) {
+		const difference = subtract( count, previousCount ) as number;
 		return (
 			<div className="highlight-card-tooltip-content">
-				{ translate( '%(beforeValue)s → %(afterValue)s', {
-					// Wrapped in translate to handle RTL languages
-					args: {
-						beforeValue: formatNumber( previousCount, false ),
-						afterValue: formatNumber( count, false ),
-					},
-					comment: 'Tooltip content for a count comparison card',
-				} ) }
+				<div className="highlight-card-tooltip-counts">
+					{ formatNumber( count, false ) }
+					{ '  ' }
+					{ difference !== 0 && difference !== null && (
+						<span className="highlight-card-tooltip-count-difference">
+							({ difference < 0 ? '-' : '+' }
+							{ formatNumber( Math.abs( difference as number ), false ) })
+						</span>
+					) }
+				</div>
 			</div>
 		);
 	}
@@ -103,7 +104,7 @@ function TooltipContent( { count, previousCount, icon, heading }: CountCompariso
 				{ icon && <span className="highlight-card-tooltip-icon">{ icon }</span> }
 				{ heading && <span className="highlight-card-tooltip-heading">{ heading }</span> }
 			</span>
-			<span>{ formatNumber( count ) }</span>
+			<span className="highlight-card-tooltip-counts">{ formatNumber( count ) }</span>
 		</div>
 	);
 }
