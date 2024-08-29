@@ -28,11 +28,11 @@ function StatsFeedbackCard() {
 			</div>
 			<div className="stats-feedback-card__actions">
 				<Button variant="secondary" onClick={ handleClickWriteReview }>
-					<span className="stats-button-emoji">😍</span>
+					<span className="stats-feedback-card__emoji">😍</span>
 					{ primaryButtonText }
 				</Button>
 				<Button variant="secondary" onClick={ handleClickSendFeedback }>
-					<span className="stats-button-emoji">😠</span>
+					<span className="stats-feedback-card__emoji">😠</span>
 					{ secondaryButtonText }
 				</Button>
 			</div>
