@@ -55,7 +55,7 @@ export const hashParameters = ( parameters: any[], seed: number = 3 ): string =>
 	let hashSum = 0;
 
 	parameters.forEach( ( param ) => {
-		const paramString = JSON.stringify( param || '' );
+		const paramString = JSON.stringify( param ?? '' );
 
 		// Initialize the sum with the length of the parameter characters
 		let paramSum = paramString.length * seed;
