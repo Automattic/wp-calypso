@@ -599,7 +599,9 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 					display: inline;
 					margin-right: 5px;
 					padding-top: 0;
+				}
 
+				.reader-author-link {
 					&::after {
 						content: ", ";
 						font-weight: 400;
