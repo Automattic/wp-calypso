@@ -61,6 +61,20 @@ $button-border: 4px;
 			overflow-y: auto;
 		}
 	}
+
+	.theme__sheet .navigation-header {
+		margin: 0 auto;
+		max-width: $theme-sheet-content-max-width;
+		padding: 24px 44px;
+
+		@media screen and (min-width: 960px) {
+			padding: 24px 20px;
+		}
+
+		@media screen and (min-width: 1806px) {
+			padding: 24px 0;
+		}
+	}
 }
 
 .main.theme__sheet {
@@ -286,10 +300,6 @@ $button-border: 4px;
 
 .theme__sheet-column-right {
 	grid-area: preview;
-}
-
-.theme__sheet-action-bar-container {
-	box-shadow: 0 1px var(--color-border-subtle);
 }
 
 .header-cake.card.theme__sheet-action-bar {

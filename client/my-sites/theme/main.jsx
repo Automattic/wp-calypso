@@ -39,9 +39,9 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
-import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
@@ -1377,6 +1377,11 @@ class ThemeSheet extends Component {
 			'is-removed': isRemoved,
 		} );
 
+		const navigationItems = [
+			{ label: 'Themes', href: siteSlug ? `/themes/${ siteSlug }` : '/themes' },
+			{ label: title },
+		];
+
 		return (
 			<Main className="theme__sheet">
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
@@ -1426,14 +1431,7 @@ class ThemeSheet extends Component {
 				/>
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<ActivationModal source="details" />
-				<div className="theme__sheet-action-bar-container">
-					<HeaderCake
-						className="theme__sheet-action-bar"
-						backText={ translate( 'Back to themes' ) }
-						onClick={ this.goBack }
-						alwaysShowBackText
-					/>
-				</div>
+				<NavigationHeader navigationItems={ navigationItems } />
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-header">
 						{ this.renderStagingPaidThemeNotice() }
