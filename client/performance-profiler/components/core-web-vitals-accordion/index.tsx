@@ -15,20 +15,21 @@ type Props = Record< Metrics, number > & {
 	setActiveTab: ( tab: Metrics ) => void;
 	children: React.ReactNode;
 };
-type HeaderProps = Record< Metrics, number > & {
+type HeaderProps = {
 	displayName: string;
 	metricKey: Metrics;
+	metricValue: number;
 };
 
-const Header = ( props: HeaderProps ) => {
-	const { displayName, metricKey } = props;
+const CardHeader = ( props: HeaderProps ) => {
+	const { displayName, metricKey, metricValue } = props;
 	return (
 		<div className="core-web-vitals-accordion__header">
-			<StatusIndicator speed={ mapThresholdsToStatus( metricKey, props[ metricKey ] ) } />
+			<StatusIndicator speed={ mapThresholdsToStatus( metricKey, metricValue ) } />
 			<div className="core-web-vitals-accordion__header-text">
 				<span className="core-web-vitals-accordion__header-text-name">{ displayName }</span>
 				<span className="core-web-vitals-accordion__header-text-value">
-					{ displayValue( metricKey, props[ metricKey ] ) }
+					{ displayValue( metricKey, metricValue ) }
 				</span>
 			</div>
 		</div>
@@ -51,7 +52,11 @@ export const CoreWebVitalsAccordion = ( props: Props ) => {
 						className="core-web-vitals-accordion__card"
 						key={ key }
 						header={
-							<Header displayName={ displayName } metricKey={ key as Metrics } { ...props } />
+							<CardHeader
+								displayName={ displayName }
+								metricKey={ key as Metrics }
+								metricValue={ props[ key as Metrics ] }
+							/>
 						}
 						hideSummary
 						screenReaderText={ translate( 'More' ) }
