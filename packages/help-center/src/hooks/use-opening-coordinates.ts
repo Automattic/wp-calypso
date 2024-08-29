@@ -24,6 +24,10 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 		return defaultPosition;
 	}
 
+	// This takes into account the '?' button's padding and align the close button with the help center icon
+	const computedStyle = window.getComputedStyle( element );
+	const helpCenterPaddingRight = parseInt( computedStyle.paddingRight, 10 );
+
 	// Return an empty object in mobile view.
 	if ( innerWidth <= 480 ) {
 		return {};
@@ -32,7 +36,7 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	const { x, y, width, height } = element.getBoundingClientRect();
 
 	const buttonLeftEdge = x;
-	const buttonRightEdge = x + width;
+	const buttonRightEdge = x + width + helpCenterPaddingRight;
 
 	const buttonTopEdge = y;
 	const buttonBottomEdge = y + height;
