@@ -4,11 +4,22 @@ const warnOnce = memoize( console.warn ); // eslint-disable-line no-console
 
 export const DEFAULT_LOCALE =
 	( typeof window === 'undefined' ? null : window.navigator?.language ) ?? 'en-US';
-export const DEFAULT_OPTIONS = {
-	compactDisplay: 'short',
-	maximumFractionDigits: 1,
+
+// Preset Options
+export const COMPACT_FORMATTING_OPTIONS = {
 	notation: 'compact',
+	maximumSignificantDigits: 3,
+	maximumFractionDigits: 1,
+	compactDisplay: 'short',
 } as Intl.NumberFormatOptions;
+export const STANDARD_FORMATTING_OPTIONS = {
+	notation: 'standard',
+} as Intl.NumberFormatOptions;
+
+// Default Options
+export const DEFAULT_OPTIONS = { ...COMPACT_FORMATTING_OPTIONS };
+// For backward compatibility; original implementation did not specify max sigfigs.
+delete DEFAULT_OPTIONS.maximumSignificantDigits;
 
 export default function formatNumber(
 	number: number | null,
@@ -43,7 +54,7 @@ export default function formatNumber(
 	const optionNamesToRemove = [ 'signDisplay', 'compactDisplay' ];
 
 	// Create new format options object with problematic parameters removed.
-	const reducedFormatOptions: Record< string, string > = {};
+	const reducedFormatOptions: Record< string, boolean | number | string > = {};
 	for ( const [ key, value ] of Object.entries( options ) ) {
 		if ( optionsToRemove[ key ] && value === optionsToRemove[ key ] ) {
 			continue;
