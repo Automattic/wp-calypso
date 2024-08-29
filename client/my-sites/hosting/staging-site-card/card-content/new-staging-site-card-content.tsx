@@ -10,12 +10,14 @@ type CardContentProps = {
 	onAddClick: () => void;
 	isButtonDisabled: boolean;
 	showQuotaError: boolean;
+	isDevelopmentSite?: boolean;
 };
 
 export const NewStagingSiteCardContent = ( {
 	onAddClick,
 	isButtonDisabled,
 	showQuotaError,
+	isDevelopmentSite,
 }: CardContentProps ) => {
 	{
 		const translate = useTranslate();
@@ -65,6 +67,10 @@ export const NewStagingSiteCardContent = ( {
 							) }
 						</p>
 					</div>
+				) }
+				{ isDevelopmentSite && (
+					// Not wrapped in translation to avoid request unconfirmed copy
+					<p>The staging feature will be available once the site is launched.</p>
 				) }
 				<Button primary disabled={ isButtonDisabled } onClick={ onAddClick }>
 					<span>{ translate( 'Add staging site' ) }</span>

@@ -2,6 +2,7 @@ import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products'
 import { Card, CompactCard, Button } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
+import { useState } from 'react';
 import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SitePreviewLink from 'calypso/components/site-preview-link';
@@ -23,10 +24,15 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import SettingsSectionHeader from '../settings-section-header';
+import { LaunchConfirmationModal } from './launch-confirmation-modal';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 import './styles.scss';
 
 const LaunchSite = () => {
+	const [ isLaunchConfirmationModalOpen, setLaunchConfirmationModalOpen ] = useState( false );
+	const openLaunchConfirmationModal = () => setLaunchConfirmationModalOpen( true );
+	const closeLaunchConfirmationModal = () => setLaunchConfirmationModalOpen( false );
+
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -49,18 +55,33 @@ const LaunchSite = () => {
 		'site-settings__disable-privacy-settings': ! siteDomains.length,
 	} );
 	const btnText = translate( 'Launch site' );
-	const handleLaunchSite = () => {
+
+	const isDevelopmentSite = site?.is_a4a_dev_site || false;
+
+	const dispatchSiteLaunch = () => {
 		dispatch( launchSite( site.ID ) );
 	};
+
+	const handleLaunchSiteClick = () => {
+		if ( isDevelopmentSite ) {
+			openLaunchConfirmationModal();
+		} else {
+			dispatchSiteLaunch();
+		}
+	};
+
 	let querySiteDomainsComponent;
 	let btnComponent;
-
 	if ( 0 === siteDomains.length ) {
 		querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
 		btnComponent = <Button>{ btnText }</Button>;
 	} else if ( isPaidPlan && siteDomains.length > 1 ) {
 		btnComponent = (
-			<Button onClick={ handleLaunchSite } disabled={ ! isLaunchable }>
+			<Button
+				onClick={ handleLaunchSiteClick }
+				disabled={ ! isLaunchable }
+				primary={ isDevelopmentSite }
+			>
 				{ btnText }
 			</Button>
 		);
@@ -85,8 +106,6 @@ const LaunchSite = () => {
 
 	const LaunchCard = showPreviewLink ? CompactCard : Card;
 
-	const isDevelopmentSite = site?.is_a4a_dev_site || false;
-
 	const {
 		data: agency,
 		error: agencyError,
@@ -98,8 +117,29 @@ const LaunchSite = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
 	};
 
+	// Not wrapped in translation to avoid request unconfirmed copy
+	const billingAgencyMessage =
+		agencyLoading || agencyError ? (
+			'Once launched, your agency {agench-name} will be billed for this website in the next billing cycle.'
+		) : (
+			<>
+				Once launched, <strong>{ agencyName }</strong> will be billed for this website in the next
+				billing cycle.
+			</>
+		);
+
 	return (
 		<>
+			{ isLaunchConfirmationModalOpen && (
+				<LaunchConfirmationModal
+					billingAgencyMessage={ billingAgencyMessage }
+					closeModal={ closeLaunchConfirmationModal }
+					onConfirmation={ () => {
+						dispatchSiteLaunch();
+						closeLaunchConfirmationModal();
+					} }
+				/>
+			) }
 			<SettingsSectionHeader title={ translate( 'Launch site' ) } />
 			<LaunchCard>
 				<LaunchSiteTrialUpsellNotice />
@@ -115,7 +155,7 @@ const LaunchSite = () => {
 								  ) }
 						</p>
 						{ isDevelopmentSite && (
-							<p>
+							<i>
 								{ agencyLoading || agencyError
 									? translate( 'After launch, we’ll bill your agency in the next billing cycle.' )
 									: translate(
@@ -130,7 +170,7 @@ const LaunchSite = () => {
 												comment: 'name of the agency that will be billed for the site',
 											}
 									  ) }
-							</p>
+							</i>
 						) }
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
