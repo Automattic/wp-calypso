@@ -844,6 +844,10 @@ export class LoginForm extends Component {
 			! isCoreProfilerLostPasswordFlow &&
 			! isFromGravatar3rdPartyApp;
 
+		const shouldRenderForgotPasswordLink =
+			( ! isPasswordHidden && isWoo && ! isPartnerSignup && ! isWooPasswordless ) ||
+			! isPasswordHidden;
+
 		return (
 			<form
 				className={ clsx( {
@@ -1042,7 +1046,7 @@ export class LoginForm extends Component {
 					</div>
 
 					{ ! isBlazePro && <p className="login__form-terms">{ socialToS }</p> }
-					{ isWoo && ! isPartnerSignup && ! isWooPasswordless && this.renderLostPasswordLink() }
+					{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 					<div className="login__form-action">
 						<FormsButton
 							primary
