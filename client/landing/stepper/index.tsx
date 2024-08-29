@@ -122,11 +122,11 @@ window.AppBoot = async () => {
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
-    
-  const flowLoader = determineFlow();
+
+	const flowLoader = determineFlow();
 	const { default: rawFlow } = await flowLoader();
 	const flow = rawFlow.__experimentalUseBuiltinAuth ? enhanceFlowWithAuth( rawFlow ) : rawFlow;
-  
+
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
 	// Reset the selected site ID when the stepper is loaded.
