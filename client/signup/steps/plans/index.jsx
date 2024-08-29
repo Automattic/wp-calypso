@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -309,11 +310,15 @@ export class PlansStep extends Component {
 				<StepperStepContainer
 					flowName={ flowName }
 					stepName={ stepName }
-					headerText={ headerText }
-					shouldHideNavButtons={ this.props.shouldHideNavButtons }
-					fallbackHeaderText={ fallbackHeaderText }
-					subHeaderText={ subHeaderText }
-					fallbackSubHeaderText={ fallbackSubHeaderText }
+					formattedHeader={
+						<FormattedHeader
+							id="plans-header"
+							align="center"
+							subHeaderAlign="center"
+							headerText={ headerText }
+							subHeaderText={ fallbackSubHeaderText }
+						/>
+					}
 					isWideLayout={ false }
 					isExtraWideLayout
 					stepContent={ this.plansFeaturesList() }
