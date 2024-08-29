@@ -5,6 +5,7 @@ import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/componen
 import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import ExternalLink from 'calypso/components/external-link';
+import { hashParameters } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -29,7 +30,8 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 
-	const { dataViewsState, showOnlyFavorites } = useContext( SitesDashboardContext );
+	const { dataViewsState, showOnlyFavorites, showOnlyDevelopmentSites } =
+		useContext( SitesDashboardContext );
 
 	const { isLargeScreen } = useContext( DashboardDataContext );
 
@@ -45,23 +47,28 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 			isA4AEnabled
 				? [
 						'jetpack-agency-dashboard-sites',
-						dataViewsState?.search,
-						dataViewsState?.page,
-						{
-							issueTypes: getSelectedFilters( dataViewsState?.filters ),
-							showOnlyFavorites: showOnlyFavorites || false,
-						},
-						dataViewsState.sort,
-						dataViewsState?.perPage,
-						...( agencyId ? [ agencyId ] : [] ),
+						hashParameters( [
+							dataViewsState?.search,
+							dataViewsState?.page,
+							{
+								issueTypes: getSelectedFilters( dataViewsState?.filters ),
+								showOnlyFavorites: showOnlyFavorites || false,
+								showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
+							},
+							dataViewsState.sort,
+							dataViewsState?.perPage,
+							...( agencyId ? [ agencyId ] : [] ),
+						] ),
 				  ]
 				: [
 						'jetpack-agency-dashboard-sites',
-						search,
-						currentPage,
-						filter,
-						sort,
-						...( agencyId ? [ agencyId ] : [] ),
+						hashParameters( [
+							search,
+							currentPage,
+							filter,
+							sort,
+							...( agencyId ? [ agencyId ] : [] ),
+						] ),
 				  ],
 		[
 			isA4AEnabled,
