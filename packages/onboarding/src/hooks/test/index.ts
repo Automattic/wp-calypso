@@ -1,10 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { usePersistedState } from '../use-persisted-state';
+import { useStepPersistedState } from '../use-persisted-state';
 
-describe( 'usePersistedState', () => {
+describe( 'useStepPersistedState', () => {
 	test( 'Should return default value and update it on request', () => {
-		const { result, rerender } = renderHook( () => usePersistedState( 'some-random-state' ), {
+		const { result, rerender } = renderHook( () => useStepPersistedState( 'some-random-state' ), {
 			wrapper: MemoryRouter,
 		} );
 
@@ -21,13 +21,13 @@ describe( 'usePersistedState', () => {
 
 	test( 'Instances should not collide', () => {
 		const { result: resultOne, rerender: rerenderOne } = renderHook(
-			() => usePersistedState( 'some-random-state' ),
+			() => useStepPersistedState( 'some-random-state' ),
 			{
 				wrapper: MemoryRouter,
 			}
 		);
 		const { result: resultTwo, rerender: rerenderTwo } = renderHook(
-			() => usePersistedState( 'some-random-state-2' ),
+			() => useStepPersistedState( 'some-random-state-2' ),
 			{
 				wrapper: MemoryRouter,
 			}

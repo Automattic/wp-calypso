@@ -1,5 +1,5 @@
 import { OnboardSelect } from '@automattic/data-stores';
-import { usePersistedState } from '@automattic/onboarding';
+import { useStepPersistedState } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
@@ -19,7 +19,7 @@ import { ProvidedDependencies, StepProps } from '../../types';
 export const LocalizedPlanStep = localize( PlansStep );
 
 export default function PlansStepAdaptor( props: StepProps ) {
-	const [ stepState, setStepState ] = usePersistedState< ProvidedDependencies >();
+	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
 	const { siteTitle, domainItem, domainItems } = useSelect(
