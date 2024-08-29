@@ -24,13 +24,13 @@ describe( 'useStepPersistedState', () => {
 
 	test( 'Instances should not collide', () => {
 		const { result: resultOne, rerender: rerenderOne } = renderHook(
-			() => useStepPersistedState( 'key', 'some-random-state' ),
+			() => useStepPersistedState( 'key2', 'some-random-state' ),
 			{
 				wrapper: MemoryRouter,
 			}
 		);
 		const { result: resultTwo, rerender: rerenderTwo } = renderHook(
-			() => useStepPersistedState( 'key2', 'some-random-state-2' ),
+			() => useStepPersistedState( 'key3', 'some-random-state-2' ),
 			{
 				wrapper: MemoryRouter,
 			}
