@@ -17,6 +17,7 @@ export default () => ( {
 			[ __( 'Tablet' ) ]: 'tablet',
 			[ __( 'Mobile' ) ]: 'mobile',
 			[ `${ __( 'View site' ) }\n${ __( '(opens in a new tab)' ) }` ]: 'view-site',
+			[ __( 'Preview in new tab' ) ]: 'preview',
 		};
 
 		const item = target.querySelector( '.components-menu-item__item' );
