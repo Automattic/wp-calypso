@@ -65,7 +65,7 @@ export interface StoredPaymentMethodCard extends StoredPaymentMethodBase {
 	card_iin: string;
 	card_last_4: string;
 	card_zip: string;
-	display_brand: string;
+	display_brand: string | null;
 }
 
 export interface StoredPaymentMethodEbanx extends StoredPaymentMethodBase {
@@ -162,7 +162,6 @@ export const PaymentMethodSummary = ( {
 			break;
 
 		case 'cartes_bancaires':
-		case 'cb':
 			displayType = translate( 'Cartes Bancaires' );
 			break;
 

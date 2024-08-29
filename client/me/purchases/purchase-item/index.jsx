@@ -441,10 +441,6 @@ class PurchaseItem extends Component {
 
 	getPaymentMethod() {
 		const { purchase, translate } = this.props;
-		const paymentMethodType =
-			purchase.payment.creditCard.displayBrand?.trim() !== ''
-				? purchase.payment.creditCard.displayBrand
-				: purchase.payment.creditCard.type || purchase.payment.paymentPartner || '';
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			return translate( 'Included with Plan' );
@@ -488,6 +484,10 @@ class PurchaseItem extends Component {
 
 		if ( isRenewing( purchase ) ) {
 			if ( purchase.payment.type === 'credit_card' ) {
+				const paymentMethodType = purchase.payment.creditCard.displayBrand
+					? purchase.payment.creditCard.displayBrand
+					: purchase.payment.creditCard.type || purchase.payment.paymentPartner || '';
+
 				return (
 					<>
 						<img

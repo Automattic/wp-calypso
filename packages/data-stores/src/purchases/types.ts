@@ -270,7 +270,7 @@ export interface RawPurchase {
 export type RawPurchaseCreditCard = RawPurchase & {
 	payment_type: 'credit_card';
 	payment_card_type: string;
-	payment_card_display_brand: string;
+	payment_card_display_brand: string | null;
 	payment_card_processor: string;
 	payment_details: string | number;
 	payment_expiry: string;

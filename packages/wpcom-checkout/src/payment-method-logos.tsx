@@ -4,14 +4,22 @@ import styled from '@emotion/styled';
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 export const PaymentMethodLogos = styled.span`
+	display: flex;
+	flex: 1;
 	text-align: right;
-	transform: translateY( 3px );
+	align-items: center;
+	justify-content: flex-end;
+	padding-inline-end: 24px;
+
 	.rtl & {
 		text-align: left;
 	}
 
 	svg {
 		display: block;
+		&.has-background {
+			padding-inline-end: 5px;
+		}
 	}
 
 	&.google-pay__logo svg {
@@ -162,6 +170,8 @@ export function VisaLogo( { className }: { className?: string } ) {
 }
 
 export function CBLogo( { className }: { className?: string } ) {
+	// We need to provide a unique ID to any svg that uses an id prop
+	// especially if we expect multiple instances of the component to render on the page
 	const uniqueID = `${ Math.floor( 10000 + Math.random() * 90000 ) }`;
 
 	return (
