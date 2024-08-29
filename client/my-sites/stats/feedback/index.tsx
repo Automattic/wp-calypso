@@ -22,21 +22,21 @@ function StatsFeedbackCard() {
 	};
 
 	return (
-		<div className="stats-feedback-card">
-			<div className="stats-feedback-card__cta">
-				<p>Hello from StatsFeedbackCard</p>
+		<div className="stats-feedback-container">
+			<div className="stats-feedback-card">
+				<div className="stats-feedback-card__cta">Hello from StatsFeedbackCard</div>
+				<div className="stats-feedback-card__actions">
+					<Button variant="secondary" onClick={ handleClickWriteReview }>
+						<span className="stats-feedback-card__emoji">😍</span>
+						{ primaryButtonText }
+					</Button>
+					<Button variant="secondary" onClick={ handleClickSendFeedback }>
+						<span className="stats-feedback-card__emoji">😠</span>
+						{ secondaryButtonText }
+					</Button>
+				</div>
+				<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
 			</div>
-			<div className="stats-feedback-card__actions">
-				<Button variant="secondary" onClick={ handleClickWriteReview }>
-					<span className="stats-feedback-card__emoji">😍</span>
-					{ primaryButtonText }
-				</Button>
-				<Button variant="secondary" onClick={ handleClickSendFeedback }>
-					<span className="stats-feedback-card__emoji">😠</span>
-					{ secondaryButtonText }
-				</Button>
-			</div>
-			<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
 		</div>
 	);
 }

@@ -4,5 +4,45 @@
 	border-radius: 5px; // stylelint-disable-line scales/radii
 
 	padding: 20px;
-	margin: 32px;
+
+	@media (max-width: 782px) {
+		border-radius: 0;
+		border-top: none;
+		border-left: none;
+		border-right: none;
+	}
+
+	display: flex;
+	flex-direction: column;
+
+	@media (min-width: 1340px) {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+}
+
+.stats-feedback-card__cta {
+	@media (max-width: 1340px) {
+		margin-bottom: 12px;
+	}
+}
+
+.stats-feedback-card__actions {
+	display: flex;
+	flex-direction: column;
+	// margin: 20px 0;
+
+	.components-button {
+		margin: 6px 0;
+		width: fit-content;
+	}
+
+	@media (min-width: 1340px) {
+		flex-direction: row;
+
+		.components-button {
+			margin: 0 6px;
+		}
+	}
 }
