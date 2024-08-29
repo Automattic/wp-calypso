@@ -22,7 +22,7 @@ export default () => ( {
 		const item = target.querySelector( '.components-menu-item__item' );
 		const previewMode = mapTextToPreviewMode[ item?.innerText ];
 		if ( previewMode ) {
-			tracksRecordEvent( 'wpcom_preview_dropdown_selected', {
+			tracksRecordEvent( 'wpcom_editor_preview_dropdown_selected', {
 				preview_mode: previewMode,
 			} );
 		}
