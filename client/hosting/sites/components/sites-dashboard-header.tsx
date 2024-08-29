@@ -11,6 +11,7 @@ import SplitButton from 'calypso/components/split-button';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
+import { LinkWithRedirect } from './link-with-redirect';
 
 const PageHeader = styled.div( {
 	backgroundColor: 'var( --studio-white )',
@@ -140,6 +141,7 @@ const SitesDashboardHeader = () => {
 							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 						} }
 						href={ importSiteUrl }
+						itemComponent={ LinkWithRedirect }
 					>
 						<DownloadIcon icon={ download } size={ 18 } />
 						<span>{ __( 'Import an existing site' ) }</span>

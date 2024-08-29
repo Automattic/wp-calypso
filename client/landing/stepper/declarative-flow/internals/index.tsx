@@ -218,7 +218,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 						}
 					/>
 				) ) }
-				<Route path="/:flow/:lang?" element={ <RedirectToStep slug={ firstStepSlug } /> } />
+				<Route
+					path="/:flow/:lang?"
+					element={
+						<RedirectToStep
+							slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
+						/>
+					}
+				/>
 			</Routes>
 			<AsyncCheckoutModal siteId={ site?.ID } />
 		</Boot>
