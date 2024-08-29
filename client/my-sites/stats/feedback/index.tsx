@@ -23,7 +23,6 @@ function StatsFeedbackCard() {
 				<p>Hello from StatsFeedbackCard</p>
 			</div>
 			<div className="stats-feedback-card__actions">
-				<button onClick={ () => setIsOpen( true ) }>two</button>
 				<Button variant="secondary" onClick={ handleClickWriteReview }>
 					<span className="stats-button-emoji">😍</span>
 					Click me!
