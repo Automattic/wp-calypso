@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import { useState } from 'react';
 import FeedbackModal from './modal';
 
@@ -13,8 +14,15 @@ function StatsFeedbackCard() {
 				<p>Hello from StatsFeedbackCard</p>
 			</div>
 			<div className="stats-feedback-card__actions">
-				<button>one</button>
 				<button onClick={ () => setIsOpen( true ) }>two</button>
+				<Button variant="secondary">
+					<span className="stats-button-emoji">😍</span>
+					Click me!
+				</Button>
+				<Button variant="secondary">
+					<span className="stats-button-emoji">😠</span>
+					Click me too!
+				</Button>
 			</div>
 			<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
 		</div>
