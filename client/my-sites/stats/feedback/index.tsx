@@ -8,6 +8,15 @@ function StatsFeedbackCard() {
 	// A simple card component with feedback buttons.
 	const [ isOpen, setIsOpen ] = useState( false );
 
+	const handleClickWriteReview = () => {
+		// console.log( 'happy user, leave a review' );
+	};
+
+	const handleClickSendFeedback = () => {
+		// console.log( 'angry user, send feedback' );
+		setIsOpen( true );
+	};
+
 	return (
 		<div className="stats-feedback-card">
 			<div className="stats-feedback-card__cta">
@@ -15,11 +24,11 @@ function StatsFeedbackCard() {
 			</div>
 			<div className="stats-feedback-card__actions">
 				<button onClick={ () => setIsOpen( true ) }>two</button>
-				<Button variant="secondary">
+				<Button variant="secondary" onClick={ handleClickWriteReview }>
 					<span className="stats-button-emoji">😍</span>
 					Click me!
 				</Button>
-				<Button variant="secondary">
+				<Button variant="secondary" onClick={ handleClickSendFeedback }>
 					<span className="stats-button-emoji">😠</span>
 					Click me too!
 				</Button>
