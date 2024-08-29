@@ -55,7 +55,7 @@ class HandleEmailedLinkForm extends Component {
 		activate: PropTypes.string,
 
 		// Connected props
-		authError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		authError: PropTypes.object,
 		currentUser: PropTypes.object,
 		isAuthenticated: PropTypes.bool,
 		isExpired: PropTypes.bool,

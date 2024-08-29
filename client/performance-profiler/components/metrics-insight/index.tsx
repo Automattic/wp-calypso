@@ -4,7 +4,9 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { PerformanceMetricsItemQueryResponse } from 'calypso/data/site-profiler/types';
+import { Tip } from 'calypso/performance-profiler/components/tip';
 import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
+import { tips } from 'calypso/performance-profiler/utils/tips';
 import { InsightContent } from './insight-content';
 import { InsightHeader } from './insight-header';
 
@@ -12,6 +14,8 @@ interface MetricsInsightProps {
 	insight: PerformanceMetricsItemQueryResponse;
 	onClick?: () => void;
 	index: number;
+	url?: string;
+	isWpcom: boolean;
 }
 
 const Card = styled( FoldableCard )`
@@ -46,7 +50,6 @@ const Header = styled.div`
 	}
 
 	.counter {
-		color: #3858e9;
 		font-size: 16px;
 		font-weight: 500;
 		margin-right: 8px;
@@ -60,13 +63,22 @@ const Content = styled.div`
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
 
-	const { insight, onClick, index } = props;
+	const { insight, onClick, index, isWpcom } = props;
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
 		insight.description ?? '',
 		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
 	);
+	const tip = tips[ insight.id ];
+
+	if ( props.url && tip ) {
+		tip.link = `https://wordpress.com/setup/hosted-site-migration?from=${ props.url }&ref=performance-profiler-dashboard`;
+	}
+
+	if ( tip && isWpcom ) {
+		tip.link = '';
+	}
 
 	return (
 		<Card
@@ -89,6 +101,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 						...insight,
 						...( isEnabled( 'performance-profiler/llm' ) ? { description: llmAnswer } : {} ),
 					} }
+					secondaryArea={ tip && <Tip { ...tip } /> }
 					isLoading={ isEnabled( 'performance-profiler/llm' ) && isLoadingLlmAnswer }
 				/>
 			</Content>

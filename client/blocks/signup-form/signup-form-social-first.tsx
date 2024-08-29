@@ -13,13 +13,16 @@ import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import './style.scss';
 
+interface QueryArgs {
+	redirect_to?: string;
+}
+
 interface SignupFormSocialFirst {
 	goToNextStep: () => void;
 	stepName: string;
 	flowName: string;
 	redirectToAfterLoginUrl: string;
 	logInUrl: string;
-	socialService: string;
 	socialServiceResponse: object;
 	handleSocialResponse: (
 		service: string,
@@ -31,8 +34,7 @@ interface SignupFormSocialFirst {
 			extra: { first_name: string; last_name: string; username_hint: string };
 		} | null
 	) => void;
-	isReskinned: boolean;
-	queryArgs: object;
+	queryArgs: QueryArgs;
 	userEmail: string;
 	notice: JSX.Element | false;
 	isSocialFirst: boolean;
@@ -63,10 +65,8 @@ const SignupFormSocialFirst = ( {
 	flowName,
 	redirectToAfterLoginUrl,
 	logInUrl,
-	socialService,
 	socialServiceResponse,
 	handleSocialResponse,
-	isReskinned,
 	queryArgs,
 	userEmail,
 	notice,
@@ -129,9 +129,7 @@ const SignupFormSocialFirst = ( {
 					<SocialSignupForm
 						handleResponse={ handleSocialResponse }
 						setCurrentStep={ setCurrentStep }
-						socialService={ socialService }
 						socialServiceResponse={ socialServiceResponse }
-						isReskinned={ isReskinned }
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 						disableTosText
 						compact
@@ -166,7 +164,7 @@ const SignupFormSocialFirst = ( {
 										{
 											email_address: email,
 											is_signup_existing_account: true,
-											redirect_to: window.location.origin + `/setup/${ flowName }`,
+											redirect_to: queryArgs?.redirect_to,
 										},
 										logInUrl
 									)

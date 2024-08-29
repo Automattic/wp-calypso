@@ -5,11 +5,13 @@ import './style.scss';
 
 type InsightsSectionProps = {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	url: string;
+	isWpcom: boolean;
 };
 
 export const InsightsSection = ( props: InsightsSectionProps ) => {
 	const translate = useTranslate();
-	const { audits } = props;
+	const { audits, isWpcom } = props;
 
 	return (
 		<div className="performance-profiler-insights-section">
@@ -17,8 +19,14 @@ export const InsightsSection = ( props: InsightsSectionProps ) => {
 			<p className="subtitle">
 				{ translate( 'We found things you can do to speed up your site.' ) }
 			</p>
-			{ Object.values( audits ).map( ( audit, index ) => (
-				<MetricsInsight key={ `insight-${ index }` } insight={ audit } index={ index } />
+			{ Object.keys( audits ).map( ( key, index ) => (
+				<MetricsInsight
+					key={ `insight-${ index }` }
+					insight={ { ...audits[ key ], id: key } }
+					index={ index }
+					url={ props.url }
+					isWpcom={ isWpcom }
+				/>
 			) ) }
 		</div>
 	);

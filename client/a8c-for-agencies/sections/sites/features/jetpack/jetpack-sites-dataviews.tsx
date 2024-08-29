@@ -41,8 +41,16 @@ export const JetpackSitesDataViews = ( {
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
-	const { showOnlyFavorites } = useContext( SitesDashboardContext );
-	const totalSites = showOnlyFavorites ? data?.totalFavorites || 0 : data?.total || 0;
+	const { showOnlyFavorites, showOnlyDevelopmentSites } = useContext( SitesDashboardContext );
+	const totalSites = ( () => {
+		if ( showOnlyFavorites ) {
+			return data?.totalFavorites || 0;
+		}
+		if ( showOnlyDevelopmentSites ) {
+			return data?.totalDevelopmentSites || 0;
+		}
+		return data?.total || 0;
+	} )();
 	const sitesPerPage = dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 
@@ -185,7 +193,8 @@ export const JetpackSitesDataViews = ( {
 						);
 					}
 
-					const isDevSite = item.isDevSite ?? false;
+					const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
+					const isDevSite = ( item.isDevSite && devSitesEnabled ) || false;
 
 					return (
 						<>

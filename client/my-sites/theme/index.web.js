@@ -1,10 +1,15 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { makeLayout, redirectWithoutLocaleParamIfLoggedIn } from 'calypso/controller';
+import {
+	makeLayout,
+	redirectWithoutLocaleParamIfLoggedIn,
+	render as clientRender,
+} from 'calypso/controller';
 import {
 	noSite,
 	redirectToLoginIfSiteRequested,
 	selectSiteOrSkipIfLoggedInWithMultipleSites,
+	addNavigationIfLoggedIn,
 } from 'calypso/my-sites/controller';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { details, fetchThemeDetailsData } from './controller';
@@ -36,6 +41,8 @@ export default function ( router ) {
 		noSite,
 		fetchThemeDetailsData,
 		details,
-		makeLayout
+		addNavigationIfLoggedIn,
+		makeLayout,
+		clientRender
 	);
 }

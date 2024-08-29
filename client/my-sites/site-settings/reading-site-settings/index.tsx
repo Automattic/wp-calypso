@@ -66,7 +66,7 @@ export const SiteSettingsSection = ( {
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
-			<Card className="site-settings__card">
+			<Card className="site-settings__card site-settings__your-homepage-display-container">
 				<YourHomepageDisplaysSetting
 					value={ { page_for_posts, page_on_front, show_on_front } }
 					onChange={ ( value ) => {

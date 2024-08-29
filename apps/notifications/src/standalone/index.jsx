@@ -16,7 +16,7 @@ const locale = match ? match[ 1 ] : 'en';
 const fetchLocale = async ( localeSlug ) => {
 	try {
 		const response = await fetch(
-			`https://widgets.wp.com/languages/notifications/${ localeSlug }.json`
+			`https://widgets.wp.com/notifications/languages/${ localeSlug }-v1.1.json`
 		);
 
 		// Fall back to English if the locale is not available
@@ -33,7 +33,7 @@ let store = { dispatch: () => {}, getState: () => {} };
 const customEnhancer = ( next ) => ( reducer, initialState ) =>
 	( store = next( reducer, initialState ) );
 
-const customMiddleware = {
+const ACTION_HANDLERS = {
 	APP_IS_READY: [ () => sendMessage( { action: 'iFrameReady' } ) ],
 	APP_RENDER_NOTES: [
 		( st, { latestType, newNoteCount } ) =>
@@ -163,7 +163,7 @@ const NotesWrapper = ( { wpcom } ) => {
 	return (
 		<Notifications
 			customEnhancer={ customEnhancer }
-			customMiddleware={ customMiddleware }
+			actionHandlers={ ACTION_HANDLERS }
 			isShowing={ isShowing }
 			isVisible={ isVisible }
 			locale={ locale }

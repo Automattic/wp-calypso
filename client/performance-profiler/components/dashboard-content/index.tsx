@@ -4,6 +4,7 @@ import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/co
 import { Disclaimer } from 'calypso/performance-profiler/components/disclaimer-section';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
 import { MigrationBanner } from 'calypso/performance-profiler/components/migration-banner';
+import { NewsletterBanner } from 'calypso/performance-profiler/components/newsletter-banner';
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
 import { ScreenshotThumbnail } from 'calypso/performance-profiler/components/screenshot-thumbnail';
 import { ScreenshotTimeline } from 'calypso/performance-profiler/components/screenshot-timeline';
@@ -18,7 +19,7 @@ export const PerformanceProfilerDashboardContent = ( {
 	performanceReport,
 	url,
 }: PerformanceProfilerDashboardContentProps ) => {
-	const { overall_score, fcp, lcp, cls, inp, ttfb, audits, history, screenshots } =
+	const { overall_score, fcp, lcp, cls, inp, ttfb, tbt, audits, history, screenshots, is_wpcom } =
 		performanceReport;
 
 	return (
@@ -37,10 +38,12 @@ export const PerformanceProfilerDashboardContent = ( {
 					cls={ cls }
 					inp={ inp }
 					ttfb={ ttfb }
+					tbt={ tbt }
 					history={ history }
 				/>
+				<NewsletterBanner />
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
-				{ audits && <InsightsSection audits={ audits } /> }
+				{ audits && <InsightsSection audits={ audits } url={ url } isWpcom={ is_wpcom } /> }
 			</div>
 
 			<Disclaimer />

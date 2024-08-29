@@ -110,7 +110,6 @@ references:
   desktop-decrypt-certs: &desktop-decrypt-certs
     name: Decrypt desktop code signing certificates
     command: |
-      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
@@ -147,7 +146,7 @@ jobs:
     <<: *desktop_defaults
     environment:
       VERSION: << pipeline.git.tag >>
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     working_directory: ~/wp-calypso
     steps:
       - checkout
@@ -167,13 +166,13 @@ jobs:
 
   wp-desktop-mac:
     macos:
-      xcode: '14.2.0'
+      xcode: '15.4.0'
     resource_class: macos.m1.medium.gen1
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
     environment:
       CONFIG_ENV: release
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -186,24 +185,25 @@ jobs:
           name: Build Desktop Mac
           no_output_timeout: 45m
           environment:
-            CSC_LINK: resource/certificates/mac.p12
-            CSC_FOR_PULL_REQUEST: true
             USE_HARD_LINKS: 'false'
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
             nvm use
 
+            pushd desktop
+
+            rbenv global $(cat .ruby-version) && rbenv rehash
+
+            bundle install
+
+            bundle exec fastlane configure_code_signing
+
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
             ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
-            # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
-            # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
-            export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk'
-            export MACOSX_DEPLOYMENT_TARGET=10.13
-
-            cd desktop && ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
+            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
       - run:
           name: e2e Tests
           command: |
@@ -249,10 +249,11 @@ jobs:
     # version to keep this one working for now.
       - image: cimg/node:20.8.1-browsers
     <<: *desktop_defaults
+    resource_class: medium+
     shell: /bin/bash --login
     environment:
       CONFIG_ENV: release
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -321,7 +322,7 @@ jobs:
     working_directory: C:\Users\circleci\wp-calypso
     environment:
       CONFIG_ENV: release
-      PLAYWRIGHT_SKIP_DOWNLOAD: true
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:

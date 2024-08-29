@@ -5,6 +5,7 @@ export interface SitesDataResponse {
 	sites: Array< Site >;
 	total: number;
 	perPage: number;
+	totalDevelopmentSites: number;
 	totalFavorites: number;
 }
 

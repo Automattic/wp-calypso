@@ -92,7 +92,7 @@ export interface HostingProviderQueryResponse {
 	hosting_provider: HostingProvider;
 }
 
-export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp';
+export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt';
 
 export type Scores = 'good' | 'needs-improvement' | 'poor';
 
@@ -133,13 +133,14 @@ export type ScreenShotsTimeLine = {
 };
 
 export type PerformanceMetricsHistory = {
-	collection_period: string[];
+	collection_period: Array< string | { year: number; month: number; day: number } >;
 	metrics: {
 		ttfb?: number[];
 		fcp?: number[];
 		lcp?: number[];
 		cls?: number[];
 		inp?: number[];
+		tbt?: number[];
 	};
 };
 
@@ -179,6 +180,7 @@ export interface PerformanceMetricsItemQueryResponse {
 	id: string;
 	title?: string;
 	description?: string;
+	type: 'warning' | 'fail';
 	displayValue?: string;
 	details?: PerformanceMetricsDetailsQueryResponse;
 }

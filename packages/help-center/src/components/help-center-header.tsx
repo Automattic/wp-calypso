@@ -10,6 +10,8 @@ import { HELP_CENTER_STORE } from '../stores';
 import type { Header } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
+import './help-center-header.scss';
+
 export function ArticleTitle() {
 	const { __ } = useI18n();
 	const [ searchParams ] = useSearchParams();
@@ -58,10 +60,11 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 
 	return (
 		<>
-			<DragIcon />
-			<p id="header-text" className="help-center-header__text" role="presentation">
+			<span id="header-text" className="help-center-header__text" role="presentation">
+				<DragIcon />
+
 				{ __( 'Help Center', __i18n_text_domain__ ) }
-			</p>
+			</span>
 			<Button
 				className="help-center-header__minimize"
 				label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }

@@ -2,10 +2,8 @@ import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
 
 const Container = styled.div`
-	width: 370px;
 	height: 255px;
 	display: flex;
-	justify-content: center;
 	align-items: center;
 
 	& > * {

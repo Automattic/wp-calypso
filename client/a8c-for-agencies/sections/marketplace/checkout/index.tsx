@@ -3,7 +3,7 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useContext } from 'react';
+import { useCallback, useMemo, useContext, useEffect } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -23,6 +23,7 @@ import { MarketplaceTypeContext } from '../context';
 import withMarketplaceType, { MARKETPLACE_TYPE_REFERRAL } from '../hoc/with-marketplace-type';
 import useProductsById from '../hooks/use-products-by-id';
 import useProductsBySlug from '../hooks/use-products-by-slug';
+import useReferralDevSite from '../hooks/use-referral-dev-site';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getClientReferralQueryArgs } from '../lib/get-client-referral-query-args';
 import useSubmitForm from '../products-overview/product-listing/hooks/use-submit-form';
@@ -35,14 +36,20 @@ import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
 
-function Checkout( { isClient }: { isClient?: boolean } ) {
+interface Props {
+	isClient?: boolean;
+	referralBlogId?: number;
+}
+
+function Checkout( { isClient, referralBlogId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const { marketplaceType, setMarketplaceType } = useContext( MarketplaceTypeContext );
 	const isAutomatedReferrals = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
-	const { selectedCartItems, onRemoveCartItem, onClearCart } = useShoppingCart();
+	const { selectedCartItems, onRemoveCartItem, onClearCart, setSelectedCartItems } =
+		useShoppingCart();
 
 	// Fetch selected products by slug for site checkout
 	const { selectedProductsBySlug } = useProductsBySlug();
@@ -119,6 +126,28 @@ function Checkout( { isClient }: { isClient?: boolean } ) {
 		page( A4A_SITES_LINK );
 	}, [ dispatch ] );
 
+	const { addReferralPlanToCart, isLoading: isLoadingReferralDevSite } = useReferralDevSite(
+		selectedCartItems,
+		setSelectedCartItems,
+		referralBlogId
+	);
+
+	useEffect( () => {
+		// On mount, set the marketplace type to referral if the referralBlogId is present.
+		if ( referralBlogId ) {
+			setMarketplaceType( MARKETPLACE_TYPE_REFERRAL );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	useEffect( () => {
+		// When the referralBlogId is present, add the referral plan to the cart.
+		if ( referralBlogId && ! isLoadingReferralDevSite ) {
+			addReferralPlanToCart();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isLoadingReferralDevSite ] );
+
 	const title = isAutomatedReferrals ? translate( 'Referral checkout' ) : translate( 'Checkout' );
 
 	let actionContent = (
@@ -190,12 +219,16 @@ function Checkout( { isClient }: { isClient?: boolean } ) {
 						<h1 className="checkout__main-title">{ title }</h1>
 
 						<div className="checkout__main-list">
-							{ checkoutItems.map( ( items ) => (
-								<ProductInfo
-									key={ `product-info-${ items.product_id }-${ items.quantity }` }
-									product={ items }
-								/>
-							) ) }
+							{ referralBlogId && isLoadingReferralDevSite ? (
+								<div className="product-info__placeholder"></div>
+							) : (
+								checkoutItems.map( ( items ) => (
+									<ProductInfo
+										key={ `product-info-${ items.product_id }-${ items.quantity }` }
+										product={ items }
+									/>
+								) )
+							) }
 						</div>
 					</div>
 					<div

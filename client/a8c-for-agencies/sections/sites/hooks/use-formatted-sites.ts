@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import {
 	StatsNode,
 	BoostNode,
@@ -26,19 +25,6 @@ const formatBoostData = ( site: Site ): BoostNode => ( {
 	type: 'boost',
 	value: site.jetpack_boost_scores,
 } );
-
-const useFormatDevSite = () => {
-	const { data: { licenses = [] } = {} } = useFetchDevLicenses();
-
-	return useCallback(
-		( site: Site ) =>
-			!! licenses.find(
-				( license: { managed_site_id: number | undefined } ) =>
-					license.managed_site_id === site.a4a_site_id
-			),
-		[ licenses ]
-	);
-};
 
 const useFormatBackupData = () => {
 	const translate = useTranslate();
@@ -203,7 +189,6 @@ const useFormatSite = () => {
 	const formatMonitorData = useFormatMonitorData();
 	const formatPluginData = useFormatPluginData();
 	const formatScanData = useFormatScanData();
-	const formatDevSite = useFormatDevSite();
 
 	return useCallback(
 		( site: Site, isConnected: boolean ): SiteData => {
@@ -221,13 +206,13 @@ const useFormatSite = () => {
 				monitor: formatMonitorData( site ),
 				plugin: formatPluginData( site ),
 				error: formatErrorData( isConnected ),
-				isDevSite: formatDevSite( site ),
+				isDevSite: site.a4a_is_dev_site,
 				isFavorite: site.is_favorite,
 				isSelected: site.isSelected,
 				onSelect: site.onSelect,
 			};
 		},
-		[ formatBackupData, formatMonitorData, formatPluginData, formatScanData, formatDevSite ]
+		[ formatBackupData, formatMonitorData, formatPluginData, formatScanData ]
 	);
 };
 

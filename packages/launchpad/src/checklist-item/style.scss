@@ -203,6 +203,8 @@
 // pending tasks and completed enabled
 .checklist-item__task.completed.enabled > button:hover,
 .checklist-item__task.pending > button:hover,
+.checklist-item__task.completed.enabled > a:hover,
+.checklist-item__task.pending > a:hover,
 .checklist-item__task.completed.enabled > a:focus,
 .checklist-item__task.pending > a:focus {
 	.checklist-item__text {

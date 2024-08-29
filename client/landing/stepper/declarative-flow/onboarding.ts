@@ -9,7 +9,6 @@ import {
 } from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 
 const onboarding: Flow = {
@@ -53,11 +52,9 @@ const onboarding: Flow = {
 			[]
 		);
 
-		const { resetStore } = useDispatch( ONBOARD_STORE );
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, currentStepSlug );
-
 			switch ( currentStepSlug ) {
 				case 'domains':
 					return navigate( 'plans' );
@@ -81,7 +78,7 @@ const onboarding: Flow = {
 							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
 						}
 
-						resetStore();
+						resetOnboardStore();
 
 						// replace the location to delete processing step from history.
 						window.location.replace(
