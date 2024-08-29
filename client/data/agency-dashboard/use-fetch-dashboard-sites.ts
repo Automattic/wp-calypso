@@ -37,7 +37,7 @@ const agencyDashboardSortToQueryObject = ( sort?: DashboardSortInterface ) => {
 
 export interface FetchDashboardSitesArgsInterface {
 	isPartnerOAuthTokenLoaded: boolean;
-	searchQuery: string;
+	searchQuery: string | undefined;
 	currentPage: number;
 	filter: AgencyDashboardFilter;
 	sort?: DashboardSortInterface;

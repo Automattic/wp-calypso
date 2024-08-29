@@ -108,7 +108,7 @@ export default function SitesDashboard() {
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
-		searchQuery: dataViewsState?.search ?? '',
+		searchQuery: dataViewsState?.search,
 		currentPage: dataViewsState.page ?? 1,
 		filter: agencyDashboardFilter,
 		sort: dataViewsState.sort,
