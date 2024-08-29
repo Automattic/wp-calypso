@@ -4,7 +4,6 @@ import {
 	GithubSocialButton,
 	MagicLoginButton,
 	QrCodeLoginButton,
-	UsernameOrEmailButton,
 } from './';
 
 type LastUsedSocialButtonProps = {
@@ -58,11 +57,8 @@ const LastUsedSocialButton = ( {
 		case 'magic-login':
 			return loginUrl && <MagicLoginButton loginUrl={ loginUrl } />;
 
-		case 'qr':
+		case 'qr-code':
 			return loginUrl && <QrCodeLoginButton loginUrl={ loginUrl } />;
-
-		case 'usernameOrEmail':
-			return onClick && <UsernameOrEmailButton onClick={ onClick } />;
 
 		default:
 			return null;

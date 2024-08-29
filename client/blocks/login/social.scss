@@ -2,6 +2,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.wp-login__container .is-social-first .login__form span.last-used-authentication-method {
+	margin-bottom: 5px;
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
 .auth-form__social.is-login {
 	margin-bottom: 0;
 

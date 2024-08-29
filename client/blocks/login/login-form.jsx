@@ -856,7 +856,7 @@ export class LoginForm extends Component {
 
 		const signupUrl = this.getSignupUrl();
 
-		if ( this.state.lastUsedAuthenticationMethod === 'qr' ) {
+		if ( this.state.lastUsedAuthenticationMethod === 'qr-code' ) {
 			loginUrl = this.getQrLoginLink();
 		} else if ( this.state.lastUsedAuthenticationMethod === 'magic-login' ) {
 			loginUrl = this.getMagicLoginPageLink();
@@ -939,8 +939,8 @@ export class LoginForm extends Component {
 				<Card className="login__form">
 					{ this.state.lastUsedAuthenticationMethod ? (
 						<>
-							<span style={ { marginBottom: '5px', fontSize: '14px', fontWeight: 600 } }>
-								Previously used
+							<span className="last-used-authentication-method">
+								{ this.props.translate( 'Previously used' ) }
 							</span>
 							<LastUsedSocialButton
 								lastUsedAuthenticationMethod={ this.state.lastUsedAuthenticationMethod }
@@ -1153,7 +1153,7 @@ export class LoginForm extends Component {
 							lastUsedAuthenticationMethod={ this.state.lastUsedAuthenticationMethod }
 							handleLogin={ this.handleSocialLogin }
 							trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-							reset={ this.resetLastUsedAuthenticationMethod }
+							resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
 							socialServiceResponse={ this.props.socialServiceResponse }
 							shouldRenderToS={ isWoo && ! isPartnerSignup && ! isWooPasswordless }
 							isWoo={ isWoo && isWooPasswordless }

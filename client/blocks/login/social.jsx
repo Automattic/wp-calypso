@@ -68,13 +68,13 @@ class SocialLoginForm extends Component {
 			),
 		},
 		{
-			service: 'magic',
+			service: 'magic-login',
 			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.magicLoginLink && (
 				<MagicLoginButton loginUrl={ this.props.magicLoginLink } key={ 4 } />
 			),
 		},
 		{
-			service: 'qr',
+			service: 'qr-code',
 			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.qrLoginLink && (
 				<QrCodeLoginButton loginUrl={ this.props.qrLoginLink } key={ 5 } />
 			),
