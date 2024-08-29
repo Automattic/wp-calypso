@@ -112,6 +112,7 @@ export class LoginForm extends Component {
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		loginButtonText: PropTypes.string,
 	};
 
 	state = {
@@ -434,7 +435,12 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, isWooCoreProfilerFlow, isWooPasswordless } = this.props;
+		const { translate, isWoo, isWooCoreProfilerFlow, isWooPasswordless, loginButtonText } =
+			this.props;
+
+		if ( loginButtonText ) {
+			return loginButtonText;
+		}
 
 		if ( this.isUsernameOrEmailView() || isWooPasswordless ) {
 			return translate( 'Continue' );

@@ -1027,6 +1027,9 @@ class Login extends Component {
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst }
 				loginButtons={ loginButtons }
+				loginButtonText={
+					this.props.initialQuery?.lostpassword_flow === 'true' ? translate( 'Log in' ) : null
+				}
 				isJetpack={ isJetpack }
 				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 			/>
