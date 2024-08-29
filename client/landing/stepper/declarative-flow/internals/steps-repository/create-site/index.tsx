@@ -82,6 +82,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		selectedSiteTitle,
 		productCartItems,
 		siteUrl,
+		progress,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
