@@ -12,15 +12,16 @@ import { useI18n } from '@wordpress/react-i18n';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks';
 import './wp-components.scss';
+import './help-button.scss';
 
 const queryClient = new QueryClient();
 
 function HelpCenterContent() {
 	const { isRTL } = useI18n();
 
-	const cssUrl = `https://widgets.wp.com/help-center/help-center-gutenberg${
-		isRTL ? '.rtl' : ''
-	}'.css`;
+	const cssUrl = `https://widgets.wp.com/help-center/help-center-wp-admin${
+		isRTL() ? '.rtl' : ''
+	}.css`;
 
 	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );

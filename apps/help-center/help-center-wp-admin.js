@@ -8,6 +8,7 @@ import { useEffect, useCallback } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { createRoot } from 'react-dom/client';
 import './wp-components.scss';
+import './help-button.scss';
 
 const queryClient = new QueryClient();
 
@@ -15,12 +16,41 @@ function AdminHelpCenterContent() {
 	const { isRTL } = useI18n();
 
 	const cssUrl = `https://widgets.wp.com/help-center/help-center-wp-admin${
-		isRTL ? '.rtl' : ''
-	}'.css`;
+		isRTL() ? '.rtl' : ''
+	}.css`;
 
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
+
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const button = document.getElementById( 'wp-admin-bar-help-center' );
+
+	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
+
+	const closeHelpCenterWhenNotificationsPanelIsOpened = useCallback( () => {
+		const helpCenterContainerIsVisible = document.querySelector( '.help-center__container' );
+		if (
+			masterbarNotificationsButton?.classList?.contains( 'wpnt-show' ) &&
+			helpCenterContainerIsVisible
+		) {
+			setShowHelpCenter( false );
+		}
+	}, [ masterbarNotificationsButton.classList, setShowHelpCenter ] );
+
+	useEffect( () => {
+		if ( masterbarNotificationsButton ) {
+			masterbarNotificationsButton.addEventListener( 'click', () => {
+				closeHelpCenterWhenNotificationsPanelIsOpened();
+			} );
+		}
+
+		return () => {
+			if ( masterbarNotificationsButton ) {
+				masterbarNotificationsButton.removeEventListener( 'click', () => {
+					closeHelpCenterWhenNotificationsPanelIsOpened();
+				} );
+			}
+		};
+	}, [] );
 
 	useEffect( () => {
 		if ( show ) {
