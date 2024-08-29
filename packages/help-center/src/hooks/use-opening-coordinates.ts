@@ -3,6 +3,17 @@ import { useState, useEffect } from 'react';
 
 const AESTHETIC_OFFSET = 20;
 
+// Since the help center is not rendered yet, we cannot get the these dynamically
+const HELP_CENTER_CLOSE_SVG_BUTTON_WIDTH = 24;
+const HELP_CENTER_CLOSE_SVG_BUTTON_PADDING = 6;
+const HELP_CENTER_BORDER = 15;
+const HELP_CENTER_CLOSE_BUTTON_DISTANCE =
+	HELP_CENTER_CLOSE_SVG_BUTTON_WIDTH + HELP_CENTER_CLOSE_SVG_BUTTON_PADDING + HELP_CENTER_BORDER;
+
+// Help center in the editor gets a padding-right in the .editor-header__settings class that makes it harder to align properly
+// We need to consider this in the calculation when the Help center is being opened from the editor
+const HELP_CENTER_EDITOR_HEADER_PADDING = 4;
+
 /**
  * This function calculates the position of the Help Center based on the last click event.
  * @param element The element that was clicked
@@ -19,6 +30,13 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 		transformOrigin: 'center',
 	};
 
+	// Cache the computed padding-right if not already done
+	// This will be used to align the help center close button with the "?" icon
+	if ( ! element.hasAttribute( 'data-padding-right' ) ) {
+		const computedStyle = window.getComputedStyle( element );
+		element.setAttribute( 'data-padding-right', computedStyle.paddingRight );
+	}
+
 	// To prevent Help Center from not being shown if an element is not found.
 	if ( ! element ) {
 		return defaultPosition;
@@ -27,7 +45,7 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	// This takes into account the '?' button's padding and align the close button with the help center icon
 	const helpCenterIconPaddingRight =
 		parseInt( element.style.paddingRight, 10 ) ||
-		parseInt( element.getAttribute( 'data-padding-right' ) || '0', 10 );
+		parseInt( element.dataset.paddingRight || '0', 10 );
 
 	// Return an empty object in mobile view.
 	if ( innerWidth <= 480 ) {
@@ -35,9 +53,16 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 	}
 
 	const { x, y, width, height } = element.getBoundingClientRect();
+	const helpCenterIconCenter = x + width / 2;
+
+	// Depending where the Help center is located (editor or masterbar), we need to consider the spacings.
+	const paddingConsiderations = element.classList.contains( 'masterbar__item' )
+		? helpCenterIconPaddingRight
+		: helpCenterIconPaddingRight + HELP_CENTER_EDITOR_HEADER_PADDING;
 
 	const buttonLeftEdge = x;
-	const buttonRightEdge = x + width + helpCenterIconPaddingRight;
+	const buttonRightEdge =
+		helpCenterIconCenter + HELP_CENTER_CLOSE_BUTTON_DISTANCE - paddingConsiderations;
 
 	const buttonTopEdge = y;
 	const buttonBottomEdge = y + height;
@@ -100,12 +125,6 @@ export function useOpeningCoordinates( disabled: boolean = false, isMinimized: b
 							element instanceof HTMLButtonElement || element instanceof HTMLAnchorElement
 					) || path[ 0 ] ) as HTMLElement;
 
-					// Cache the computed padding-right if not already done
-					// This will be used to align the help center close button with the "?" icon
-					if ( ! openingElement.hasAttribute( 'data-padding-right' ) ) {
-						const computedStyle = window.getComputedStyle( openingElement );
-						openingElement.setAttribute( 'data-padding-right', computedStyle.paddingRight );
-					}
 					setOpeningCoordinates( calculateOpeningPosition( openingElement ) );
 				} catch ( e ) {
 					// In case something weird is clicked. e.g something without `getBoundingClientRect`.
