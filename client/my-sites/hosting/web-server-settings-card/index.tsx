@@ -93,6 +93,8 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 
 	const wpVersionRef = useRef< HTMLLabelElement >( null );
 	const wpVersionDropdownRef = useRef< HTMLSelectElement >( null );
+	const wpVersionExplainerRef = useRef< HTMLParagraphElement >( null );
+
 	const phpVersionRef = useRef< HTMLLabelElement >( null );
 	const phpVersionDropdownRef = useRef< HTMLSelectElement >( null );
 
@@ -102,14 +104,14 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 	useEffect( () => {
 		function scrollTo( hash: string ) {
 			let targetLabel;
-			let targetDropdown;
+			let targetControl;
 
 			if ( wpVersionRef.current && hash === '#wp' ) {
 				targetLabel = wpVersionRef.current;
-				targetDropdown = wpVersionDropdownRef.current;
+				targetControl = wpVersionDropdownRef.current || wpVersionExplainerRef.current;
 			} else if ( phpVersionRef.current && hash === '#php' ) {
 				targetLabel = phpVersionRef.current;
-				targetDropdown = phpVersionDropdownRef.current;
+				targetControl = phpVersionDropdownRef.current;
 			}
 
 			if ( targetLabel ) {
@@ -123,7 +125,7 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 
 				targetLabel.scrollIntoView( { behavior: 'smooth' } );
 				targetLabel.animate( animationKeyframes, animationOptions );
-				targetDropdown?.animate( animationKeyframes, animationOptions );
+				targetControl?.animate( animationKeyframes, animationOptions );
 			}
 		}
 
@@ -205,7 +207,7 @@ export default function WebServerSettingsCard( { disabled }: WebServerSettingsCa
 				{ ! isWpcomStagingSite && (
 					<p
 						className="web-server-settings-card__wp-version-description"
-						ref={ wpVersionDropdownRef }
+						ref={ wpVersionExplainerRef }
 					>
 						{ translate(
 							'Every WordPress.com site runs the latest WordPress version. ' +
