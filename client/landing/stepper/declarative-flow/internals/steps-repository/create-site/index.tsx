@@ -91,6 +91,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			productCartItems: select( ONBOARD_STORE ).getProductCartItems(),
 			selectedSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
 			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
+			progress: select( ONBOARD_STORE ).getProgress(),
 		} ),
 		[]
 	);
@@ -105,7 +106,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	const username = useSelector( getCurrentUserName );
 
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
@@ -145,9 +146,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const isPaidDomainItem = Boolean(
 		domainCartItem?.product_slug || domainCartItems?.some( ( el ) => el.product_slug )
 	);
-
-	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress(), [] );
-	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
