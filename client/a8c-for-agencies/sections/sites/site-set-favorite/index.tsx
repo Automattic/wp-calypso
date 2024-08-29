@@ -4,9 +4,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Icon, starFilled, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+import { hashParameters } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -50,23 +51,45 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	}, [ dataViewsState.filters, showOnlyFavorites, showOnlyDevelopmentSites ] );
 	const search = dataViewsState.search;
 
-	const queryKey = [
-		'jetpack-agency-dashboard-sites',
-		search,
-		currentPage,
-		filter,
-		dataViewsState.sort,
-		dataViewsState.perPage,
-		...( agencyId ? [ agencyId ] : [] ),
-	];
+	const queryKey = useMemo(
+		() => [
+			'jetpack-agency-dashboard-sites',
+			hashParameters( [
+				search,
+				currentPage,
+				filter,
+				dataViewsState.sort,
+				dataViewsState.perPage,
+				...( agencyId ? [ agencyId ] : [] ),
+			] ),
+		],
+		[ dataViewsState, agencyId, search, currentPage, filter ]
+	);
 
-	const siblingQueryKey = [
-		'jetpack-agency-dashboard-sites',
-		search,
-		currentPage,
-		{ ...filter, ...dataViewsState.sort, showOnlyFavorites: ! showOnlyFavorites },
-		...( agencyId ? [ agencyId ] : [] ),
-	];
+	const siblingQueryKey = useMemo(
+		() => [
+			'jetpack-agency-dashboard-sites',
+			hashParameters( [
+				search,
+				currentPage,
+				{
+					...filter,
+					...dataViewsState.sort,
+					showOnlyFavorites: ! showOnlyFavorites,
+					showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
+				},
+				...( agencyId ? [ agencyId ] : [] ),
+			] ),
+		],
+		[
+			search,
+			currentPage,
+			filter,
+			dataViewsState.sort,
+			showOnlyDevelopmentSites,
+			showOnlyFavorites,
+		]
+	);
 	const successNoticeId = 'success-notice';
 
 	const handleViewFavorites = () => {
@@ -107,7 +130,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		dispatch( successNotice( text, options ) );
 	};
 
-	const handleMutation = () => {
+	const handleMutation = useMemo( () => {
 		return {
 			onMutate: async ( { siteId, isFavorite }: { siteId: number; isFavorite: boolean } ) => {
 				// Cancel any current refetches, so they don't overwrite our optimistic update
@@ -162,9 +185,9 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 				} );
 			},
 		};
-	};
+	}, [ siteId, isFavorite ] );
 
-	const { isPending, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
+	const { isPending, mutate } = useToggleFavoriteSiteMutation( handleMutation );
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleFavoriteChange = ( e: any ) => {
