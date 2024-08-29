@@ -1849,7 +1849,7 @@ $breakpoint-mobile: 660px;
 		button.button.is-primary {
 			background-color: var(--wp-admin-theme-color);
 			font-family: inherit;
-			&:hover {
+			&:hover:not(:disabled) {
 				background-color: var(--wp-admin-theme-color);
 			}
 		}
