@@ -1942,6 +1942,20 @@ $breakpoint-mobile: 660px;
 					margin-bottom: 40px;
 				}
 			}
+
+			.security-key-form__help-text {
+				p {
+					@media screen and (max-width: $break-mobile) {
+						line-height: 24px;
+					}
+
+					&:first-child {
+						@media screen and (max-width: $break-mobile) {
+							margin-bottom: 0;
+						}
+					}
+				}
+			}
 		}
 
 		.auth-form__social-buttons-tos {
