@@ -1,12 +1,16 @@
 import { Button } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FeedbackModal from './modal';
 
 import './style.scss';
 
 function StatsFeedbackCard() {
-	// A simple card component with feedback buttons.
+	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
+
+	const primaryButtonText = translate( 'Love it? Leave a review' );
+	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
 
 	const handleClickWriteReview = () => {
 		// console.log( 'happy user, leave a review' );
@@ -25,11 +29,11 @@ function StatsFeedbackCard() {
 			<div className="stats-feedback-card__actions">
 				<Button variant="secondary" onClick={ handleClickWriteReview }>
 					<span className="stats-button-emoji">😍</span>
-					Click me!
+					{ primaryButtonText }
 				</Button>
 				<Button variant="secondary" onClick={ handleClickSendFeedback }>
 					<span className="stats-button-emoji">😠</span>
-					Click me too!
+					{ secondaryButtonText }
 				</Button>
 			</div>
 			<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
