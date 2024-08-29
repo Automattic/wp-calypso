@@ -810,7 +810,7 @@ class StatsSite extends Component {
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
-				{ isFeedbackCardEnabled && <StatsFeedbackCard /> }
+				{ isFeedbackCardEnabled && <StatsFeedbackCard siteId={ siteId } /> }
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }

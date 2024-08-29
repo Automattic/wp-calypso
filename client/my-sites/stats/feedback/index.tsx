@@ -3,7 +3,7 @@ import FeedbackModal from './modal';
 
 import './style.scss';
 
-function StatsFeedbackCard() {
+function StatsFeedbackCard( { siteId }: { siteId: number } ) {
 	// A simple card component with feedback buttons.
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -16,7 +16,7 @@ function StatsFeedbackCard() {
 				<button>one</button>
 				<button onClick={ () => setIsOpen( true ) }>two</button>
 			</div>
-			<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
+			{ isOpen && <FeedbackModal siteId={ siteId } onClose={ () => setIsOpen( false ) } /> }
 		</div>
 	);
 }
