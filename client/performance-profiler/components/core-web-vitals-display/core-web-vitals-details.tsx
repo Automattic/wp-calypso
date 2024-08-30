@@ -160,8 +160,8 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 						formatUnit( metricsTresholds[ activeTab ].good ),
 						formatUnit( metricsTresholds[ activeTab ].needsImprovement ),
 					] }
-					width={ 550 }
-					height={ 300 }
+					width={ 500 }
+					height={ 280 }
 				/>
 			</div>
 		</div>
