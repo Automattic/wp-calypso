@@ -1,11 +1,12 @@
 import { isDomainRegistration } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, FormLabel } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { map, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -122,12 +123,30 @@ class ConfirmCancelDomain extends Component {
 			}
 
 			if ( error ) {
-				this.props.errorNotice(
-					error.message ||
+				if (
+					getLocaleSlug() === 'en' ||
+					getLocaleSlug() === 'en-gb' ||
+					i18n.hasTranslation(
+						'Unable to cancel your purchase. Please try again later {{a}}or contact support{{/a}}.'
+					)
+				) {
+					this.props.errorNotice(
+						translate(
+							'Unable to cancel your purchase. Please try again later {{a}}or contact support{{/a}}.',
+							{
+								components: {
+									a: <ActionPanelLink href="/help/contact" />,
+								},
+							}
+						)
+					);
+				} else {
+					this.props.errorNotice(
 						translate(
 							'Unable to cancel your purchase. Please try again later or contact support.'
 						)
-				);
+					);
+				}
 
 				return;
 			}
