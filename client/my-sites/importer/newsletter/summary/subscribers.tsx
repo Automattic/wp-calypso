@@ -81,7 +81,7 @@ export default function SubscriberSummary( { status, proStatus, cardData, siteId
 		);
 	}
 
-	if ( status === 'importing' || status === 'awaiting' ) {
+	if ( status === 'importing' ) {
 		return (
 			<div className="summary__content">
 				<p>
@@ -91,7 +91,7 @@ export default function SubscriberSummary( { status, proStatus, cardData, siteId
 		);
 	}
 
-	if ( status === 'imported' ) {
+	if ( status === 'done' ) {
 		const paid_subscribers = cardData?.meta?.paid_subscribers_count ?? 0;
 		const free_subscribers = cardData?.meta?.subscribed_count - paid_subscribers;
 		return (

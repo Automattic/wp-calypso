@@ -82,10 +82,10 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 
 		if ( paidNewsletterData?.steps ) {
 			const status = paidNewsletterData?.steps[ stepName ]?.status ?? '';
-			if ( status === 'done' || status === 'imported' ) {
+			if ( status === 'done' ) {
 				stepsProgress[ index ].indicator = <Icon icon={ check } />;
 			}
-			if ( status === 'importing' || status === 'awaiting' ) {
+			if ( status === 'importing' ) {
 				stepsProgress[ index ].indicator = <Spinner style={ { color: '#3858e9' } } />;
 			}
 		}
