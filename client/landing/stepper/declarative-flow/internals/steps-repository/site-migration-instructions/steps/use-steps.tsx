@@ -157,8 +157,8 @@ export const useSteps = ( {
 
 		const isMigrationKeyStep = index === array.length - 1;
 
-		let navigationCtaText;
-		let onNavigationCtaClick;
+		let navigationCtaText = '';
+		let onNavigationCtaClick = () => {};
 		let onActionCtaClick = openPluginInstallationPage;
 
 		if ( isMigrationKeyStep ) {
