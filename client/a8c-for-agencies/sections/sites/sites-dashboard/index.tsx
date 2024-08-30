@@ -51,7 +51,10 @@ export default function SitesDashboard() {
 
 	const agencyId = useSelector( getActiveAgencyId );
 
-	const recentlyCreatedSite = getQueryArg( window.location.href, 'created_site' ) ?? null;
+	const createdSiteId = getQueryArg( window.location.href, 'created_site' ) ?? null;
+	const createdDevSiteId = getQueryArg( window.location.href, 'created_dev_site' ) ?? null;
+
+	const recentlyCreatedSite = createdSiteId || createdDevSiteId;
 	const migrationIntent = getQueryArg( window.location.href, 'migration' ) ?? null;
 
 	const {
@@ -237,11 +240,16 @@ export default function SitesDashboard() {
 							<ProvisioningSiteNotification
 								siteId={ Number( recentlyCreatedSiteId ) }
 								migrationIntent={ !! migrationIntent }
+								isDevSite={ !! createdDevSiteId }
 							/>
 						) }
 
 						<LayoutHeader>
-							<Title>{ translate( 'Sites' ) }</Title>
+							<Title>
+								{ showOnlyDevelopmentSites
+									? translate( 'Development Sites' )
+									: translate( 'Sites' ) }
+							</Title>
 							<Actions>
 								<MobileSidebarNavigation />
 								<SitesHeaderActions onWPCOMImport={ () => refetch() } />
