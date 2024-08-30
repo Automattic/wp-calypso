@@ -65,7 +65,7 @@ const useStepsData = ( {
 	if ( fromUrl ) {
 		if ( migrationKey ) {
 			migrationKeyActionCtaText = translate( 'Enter key' );
-		} else {
+		} else if ( showMigrationKeyFallback ) {
 			migrationKeyActionCtaText = translate( 'Get key' );
 		}
 	}
@@ -157,21 +157,30 @@ export const useSteps = ( {
 
 		const isMigrationKeyStep = index === array.length - 1;
 
-		let navigationCtaText = translate( 'Next' );
-		let onNavigationCtaClick = onNextClick;
+		let navigationCtaText;
+		let onNavigationCtaClick;
 		let onActionCtaClick = openPluginInstallationPage;
 
 		if ( isMigrationKeyStep ) {
-			if ( migrationKey ) {
-				onActionCtaClick = () => openMigrateGuruPage( fromUrl, 'enter-key' );
-			} else {
-				onActionCtaClick = () => openMigrateGuruPage( siteUrl, 'copy-key-fallback' );
-			}
+			// Show the Done button if there's a migration key OR if the fallback text is displayed.
+			// If neither are true, then the migration key is still being generated.
+			if ( migrationKey || showMigrationKeyFallback ) {
+				navigationCtaText = translate( 'Done' );
+				onNavigationCtaClick = onDoneClick;
 
-			navigationCtaText = translate( 'Done' );
-			onNavigationCtaClick = onDoneClick;
-		} else if ( 1 === index ) {
-			onActionCtaClick = () => openMigrateGuruPage( fromUrl, 'go-to-plugin-page' );
+				if ( migrationKey ) {
+					onActionCtaClick = () => openMigrateGuruPage( fromUrl, 'enter-key' );
+				} else {
+					onActionCtaClick = () => openMigrateGuruPage( siteUrl, 'copy-key-fallback' );
+				}
+			}
+		} else {
+			navigationCtaText = translate( 'Next' );
+			onNavigationCtaClick = onNextClick;
+
+			if ( 1 === index ) {
+				onActionCtaClick = () => openMigrateGuruPage( fromUrl, 'go-to-plugin-page' );
+			}
 		}
 
 		return {
@@ -202,7 +211,7 @@ export const useSteps = ( {
 								</>
 							) }
 
-							{ ! step.actionCtaText && (
+							{ ! step.actionCtaText && navigationCtaText && (
 								<StepCta
 									text={ navigationCtaText }
 									variant="primary"
