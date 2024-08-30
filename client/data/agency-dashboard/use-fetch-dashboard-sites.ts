@@ -76,26 +76,21 @@ const useFetchDashboardSites = ( {
 	perPage,
 	agencyId,
 }: FetchDashboardSitesArgsInterface ) => {
-	let queryKey = [
+	const queryKey = getQueryKey( {
 		searchQuery,
 		currentPage,
 		filter,
 		sort,
 		perPage,
-		...( agencyId ? [ agencyId ] : [] ),
-	];
-
-	// If perPage is not provided, we want to remove perPage from the query_key as existing tests don't pass otherwise.
-	if ( ! perPage ) {
-		queryKey = [ searchQuery, currentPage, filter, sort, ...( agencyId ? [ agencyId ] : [] ) ];
-	}
+		agencyId,
+	} );
 
 	const isAgencyOrPartnerAuthEnabled = isPartnerOAuthTokenLoaded || !! agencyId;
 
 	return useQuery( {
 		// Disable eslint rule since TS isn't grasping that agencyId is being optionally added to the array
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
-		queryKey: [ 'jetpack-agency-dashboard-sites', hashParameters( queryKey ) ],
+		queryKey,
 		queryFn: () =>
 			client.req.get(
 				{
