@@ -5,7 +5,7 @@
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { useZendeskMessagingBindings, useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
-import { createPortal, useEffect, useRef, useState } from '@wordpress/element';
+import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
@@ -22,29 +22,12 @@ import HelpCenterContainer from './help-center-container';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
-function createShadowRoot( stylesURLs: string[] ) {
-	const shadowRootOwner = document.createElement( 'div' );
-	document.body.appendChild( shadowRootOwner );
-
-	const root = shadowRootOwner.attachShadow( { mode: 'open' } );
-
-	stylesURLs.forEach( ( url ) => {
-		const style = document.createElement( 'style' );
-		style.innerHTML = `@import '${ url }'`;
-		root.appendChild( style );
-	} );
-
-	return shadowRootOwner;
-}
-
 const HelpCenter: React.FC< Container > = ( {
 	handleClose,
 	hidden,
 	currentRoute = window.location.pathname + window.location.search,
-	shadowCSSFromUrls,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const [ shadowRoot, setShadowRoot ] = useState< ShadowRoot >();
 	const { isHelpCenterShown, isMinimized } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -80,47 +63,14 @@ const HelpCenter: React.FC< Container > = ( {
 
 		portalParent.setAttribute( 'aria-modal', 'true' );
 		portalParent.setAttribute( 'aria-labelledby', 'header-text' );
-		let rootContainer: HTMLDivElement;
 
-		if ( shadowCSSFromUrls ) {
-			rootContainer = createShadowRoot( shadowCSSFromUrls );
-			rootContainer.shadowRoot?.appendChild( portalParent );
-			setShadowRoot( rootContainer.shadowRoot as ShadowRoot );
-		} else {
-			document.body.appendChild( portalParent );
-		}
+		document.body.appendChild( portalParent );
 
 		return () => {
-			if ( shadowCSSFromUrls ) {
-				document.body.removeChild( rootContainer );
-			} else {
-				document.body.removeChild( portalParent );
-			}
+			document.body.removeChild( portalParent );
 			handleClose();
 		};
-	}, [ portalParent, shadowCSSFromUrls, handleClose ] );
-
-	useEffect( () => {
-		/**
-		 * Annoyingly, @wordpress/components use Emotion (CSS in JS).
-		 * Which stylizes elements in runtime, losing ShadowDOM support.
-		 * This copies the styles added by emotion to our shadowRoot.
-		 */
-		if ( shadowRoot && isHelpCenterShown ) {
-			try {
-				const emotionStyleSheets =
-					document.querySelectorAll< HTMLStyleElement >( "[ data-emotion='css' ]" );
-				emotionStyleSheets.forEach( ( el ) => {
-					const css = Array.from( el.sheet?.cssRules ?? [] )
-						.map( ( el ) => el.cssText )
-						.join( '\n' );
-					const sheet = new CSSStyleSheet();
-					sheet.replaceSync( css );
-					shadowRoot.adoptedStyleSheets.push( sheet );
-				} );
-			} catch ( e ) {}
-		}
-	}, [ shadowRoot, isHelpCenterShown ] );
+	}, [ portalParent, handleClose ] );
 
 	return createPortal(
 		<HelpCenterContainer

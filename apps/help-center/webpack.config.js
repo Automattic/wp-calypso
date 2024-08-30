@@ -38,8 +38,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				__dirname,
 				'help-center-wp-admin-disconnected.js'
 			),
-			'help-center-button-styles': path.join( __dirname, 'help-button.scss' ),
-			'wp-components-styles': path.join( __dirname, 'wp-components.scss' ),
 		},
 		output: {
 			...webpackConfig.output,
