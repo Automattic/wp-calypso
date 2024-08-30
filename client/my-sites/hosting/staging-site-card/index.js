@@ -57,6 +57,7 @@ export const StagingSiteCard = ( {
 	isJetpack,
 	isPossibleJetpackConnectionProblem,
 	dispatch,
+	isDevelopmentSite,
 	isBorderless,
 } ) => {
 	const { __ } = useI18n();
@@ -503,13 +504,15 @@ export const StagingSiteCard = ( {
 		stagingSiteCardContent = (
 			<NewStagingSiteCardContent
 				onAddClick={ onAddClick }
+				isDevelopmentSite={ isDevelopmentSite }
 				isButtonDisabled={
 					disabled ||
 					isLoadingAddStagingSite ||
 					isLoadingQuotaValidation ||
 					! hasValidQuota ||
 					isSyncInProgress ||
-					isPossibleJetpackConnectionProblem
+					isPossibleJetpackConnectionProblem ||
+					isDevelopmentSite
 				}
 				showQuotaError={ ! hasValidQuota && ! isLoadingQuotaValidation }
 			/>
@@ -532,6 +535,7 @@ export default connect( ( state ) => {
 	const currentUserId = getCurrentUserId( state );
 	const siteId = getSelectedSiteId( state );
 	const siteOwnerId = getSelectedSite( state )?.site_owner;
+	const isDevelopmentSite = getSelectedSite( state )?.is_a4a_dev_site || false;
 
 	return {
 		currentUserId,
@@ -539,5 +543,6 @@ export default connect( ( state ) => {
 		isPossibleJetpackConnectionProblem: isJetpackConnectionProblem( state, siteId ),
 		siteId,
 		siteOwnerId,
+		isDevelopmentSite,
 	};
 } )( localize( StagingSiteCard ) );
