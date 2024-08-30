@@ -11,7 +11,14 @@ interface PaidNewsletterData {
 	steps: Record< string, PaidNewsletterStep >;
 }
 
-export const usePaidNewsletterQuery = ( engine: string, currentStep: string, siteId?: number ) => {
+const REFRESH_INTERVAL = 2000; // every 2 seconds.
+
+export const usePaidNewsletterQuery = (
+	engine: string,
+	currentStep: string,
+	siteId?: number,
+	autoRefresh?: boolean
+) => {
 	return useQuery( {
 		enabled: !! siteId,
 		queryKey: [ 'paid-newsletter-importer', siteId, engine, currentStep ],
@@ -30,5 +37,6 @@ export const usePaidNewsletterQuery = ( engine: string, currentStep: string, sit
 		placeholderData: keepPreviousData,
 		refetchOnWindowFocus: true,
 		staleTime: 6000, // 10 minutes
+		refetchInterval: autoRefresh ? REFRESH_INTERVAL : false,
 	} );
 };
