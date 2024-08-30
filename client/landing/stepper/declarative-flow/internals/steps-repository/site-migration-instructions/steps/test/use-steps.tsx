@@ -169,19 +169,30 @@ describe( 'Step 2 - Get your site ready', () => {
 } );
 
 describe( 'Step 3 - Add your migration key', () => {
+	it( 'Should not render any buttons if the migration key is not set and the fallback is not displayed', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( queryByRole( 'button', { name: /Enter key/ } ) ).not.toBeInTheDocument();
+		expect( queryByRole( 'button', { name: /Get key/ } ) ).not.toBeInTheDocument();
+		expect( queryByRole( 'button', { name: /Done/ } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'Should render the "Get key" and "Done" buttons if the migration key is not set and the fallback is displayed', () => {
+		const { result } = renderHook( () =>
+			useSteps( { ...baseStepsOptions, migrationKey: '', showMigrationKeyFallback: true } )
+		);
+		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( getByRole( 'button', { name: /Get key/ } ) ).toBeInTheDocument();
+		expect( getByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
+	} );
+
 	it( 'Should render the "Enter key" and "Done" buttons if the migration key is set', () => {
 		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
 
 		expect( getByRole( 'button', { name: /Enter key/ } ) ).toBeInTheDocument();
-		expect( getByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
-	} );
-
-	it( 'Should render the "Get key" and "Done" buttons if the migration key is not set', () => {
-		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
-		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
-
-		expect( getByRole( 'button', { name: /Get key/ } ) ).toBeInTheDocument();
 		expect( getByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
 	} );
 
@@ -199,7 +210,9 @@ describe( 'Step 3 - Add your migration key', () => {
 	} );
 
 	it( 'Should open the Migrate Guru plugin page on the new site when the "Get key" button is clicked', () => {
-		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+		const { result } = renderHook( () =>
+			useSteps( { ...baseStepsOptions, migrationKey: '', showMigrationKeyFallback: true } )
+		);
 		const { getByRole } = render( result.current.steps[ 2 ].expandable?.content );
 
 		window.open = jest.fn();
@@ -229,8 +242,10 @@ describe( 'Step 3 - Add your migration key', () => {
 } );
 
 describe( 'Unknown source site', () => {
+	beforeAll( () => ( baseStepsOptions.fromUrl = '' ) );
+
 	it( 'Should open the plugin page on WordPress.org when the "Install plugin" button is clicked', () => {
-		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { getByRole } = render( result.current.steps[ 0 ].expandable?.content );
 
 		window.open = jest.fn();
@@ -243,7 +258,7 @@ describe( 'Unknown source site', () => {
 	} );
 
 	it( 'Should not render the "Get started" button', () => {
-		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { queryByRole } = render( result.current.steps[ 1 ].expandable?.content );
 
 		expect( queryByRole( 'button', { name: /Get started/ } ) ).not.toBeInTheDocument();
@@ -251,20 +266,29 @@ describe( 'Unknown source site', () => {
 	} );
 
 	it( 'Should not render the "Enter key" button', () => {
-		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, fromUrl: '' } ) );
+		const { result } = renderHook( () => useSteps( baseStepsOptions ) );
 		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
 
 		expect( queryByRole( 'button', { name: /Enter key/ } ) ).not.toBeInTheDocument();
 		expect( queryByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
 	} );
 
-	it( 'Should not render the "Get key" button when the migration key is not set', () => {
+	it( 'Should not render the "Get key" button', () => {
 		const { result } = renderHook( () =>
-			useSteps( { ...baseStepsOptions, fromUrl: '', migrationKey: '' } )
+			useSteps( { ...baseStepsOptions, migrationKey: '', showMigrationKeyFallback: true } )
 		);
 		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
 
 		expect( queryByRole( 'button', { name: /Get key/ } ) ).not.toBeInTheDocument();
 		expect( queryByRole( 'button', { name: /Done/ } ) ).toBeInTheDocument();
+	} );
+
+	it( 'Should not render any buttons on the migration key step if the migration key is not set and the fallback is not displayed', () => {
+		const { result } = renderHook( () => useSteps( { ...baseStepsOptions, migrationKey: '' } ) );
+		const { queryByRole } = render( result.current.steps[ 2 ].expandable?.content );
+
+		expect( queryByRole( 'button', { name: /Enter key/ } ) ).not.toBeInTheDocument();
+		expect( queryByRole( 'button', { name: /Get key/ } ) ).not.toBeInTheDocument();
+		expect( queryByRole( 'button', { name: /Done/ } ) ).not.toBeInTheDocument();
 	} );
 } );
