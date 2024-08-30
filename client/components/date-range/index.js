@@ -544,7 +544,7 @@ export class DateRange extends Component {
 			this.state.startDate;
 
 		return (
-			<DatePicker
+			<DateRangePicker
 				calendarViewDate={ this.state.focusedMonth }
 				calendarInitialDate={ this.momentDateToJsDate( calendarInitialDate ) ?? null }
 				rootClassNames={ rootClassNames }
