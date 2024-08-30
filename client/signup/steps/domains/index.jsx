@@ -6,6 +6,7 @@ import {
 	isWithThemeFlow,
 	isHostingSignupFlow,
 	isOnboardingGuidedFlow,
+	StepContainer as StepperStepContainer,
 } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -46,7 +47,7 @@ import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import StepWrapper from 'calypso/signup/step-wrapper';
+import StartStepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getStepUrl,
 	isPlanSelectionAvailableLaterInFlow,
@@ -1331,7 +1332,7 @@ export class RenderDomainsStep extends Component {
 			isReskinned,
 			userSiteCount,
 			previousStepName,
-			CustomStepWrapper,
+			useStepperWrapper,
 		} = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
@@ -1402,13 +1403,22 @@ export class RenderDomainsStep extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
-		const Wrapper = CustomStepWrapper || StepWrapper;
-
-		// CustomStepWrapper is basically StepContainer from Stepper.
-		// It needs this extraProps to render the header.
-		const extraProps = CustomStepWrapper
-			? {
-					formattedHeader: (
+		if ( useStepperWrapper ) {
+			return (
+				<StepperStepContainer
+					hideBack={ hideBack }
+					flowName={ flowName }
+					stepName={ stepName }
+					backUrl={ backUrl }
+					isExternalBackUrl={ isExternalBackUrl }
+					shouldHideNavButtons={ this.shouldHideNavButtons() }
+					stepContent={
+						<div>
+							<QueryProductsList type="domains" />
+							{ this.renderContent() }
+						</div>
+					}
+					formattedHeader={
 						<FormattedHeader
 							id="domains-header"
 							align="center"
@@ -1416,12 +1426,17 @@ export class RenderDomainsStep extends Component {
 							headerText={ headerText }
 							subHeaderText={ fallbackSubHeaderText }
 						/>
-					),
-			  }
-			: {};
+					}
+					backLabelText={ backLabelText }
+					hideSkip
+					align="center"
+					isWideLayout
+				/>
+			);
+		}
 
 		return (
-			<Wrapper
+			<StartStepWrapper
 				hideBack={ hideBack }
 				flowName={ flowName }
 				stepName={ stepName }
@@ -1445,7 +1460,6 @@ export class RenderDomainsStep extends Component {
 				goToNextStep={ this.handleSkip }
 				align="center"
 				isWideLayout={ isReskinned }
-				{ ...extraProps }
 			/>
 		);
 	}

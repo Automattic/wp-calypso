@@ -14,6 +14,7 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import {
 	currentUserHasFlag,
 	getCurrentUser,
+	getCurrentUserSiteCount,
 	isUserLoggedIn,
 } from 'calypso/state/current-user/selectors';
 import {
@@ -38,6 +39,7 @@ const RenderDomainsStepConnect = connect(
 		const selectedSite = getSelectedSite( state );
 		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
 		const userLoggedIn = isUserLoggedIn( state as object );
+		const currentUserSiteCount = getCurrentUserSiteCount( state as object );
 
 		return {
 			designType: getDesignType( state ),
@@ -47,10 +49,8 @@ const RenderDomainsStepConnect = connect(
 			selectedSite,
 			isDomainOnly: false,
 			sites: getSitesItems( state ),
-			// <this info is used to hide the back button>
-			userSiteCount: 0,
+			userSiteCount: currentUserSiteCount,
 			previousStepName: 'user',
-			// <this info is used to hide the back button />
 			isPlanSelectionAvailableLaterInFlow: true,
 			userLoggedIn,
 			multiDomainDefaultPlan,
@@ -101,7 +101,7 @@ export default function DomainsStep( props: StepProps ) {
 				} }
 				step={ stepState }
 				flowName={ props.flow }
-				CustomStepWrapper={ StepContainer }
+				useStepperWrapper
 			/>
 		</CalypsoShoppingCartProvider>
 	);
