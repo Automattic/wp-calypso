@@ -5,6 +5,10 @@
 	display: flex;
 	flex-direction: column;
 	gap: 32px;
+
+	&.is-slider-hidden {
+		gap: 24px;
+	}
 }
 
 .wpcom-plan-selector__slider-container {
@@ -56,6 +60,7 @@
 .wpcom-plan-selector__price-discount {
 	@include a4a-font-body-md;
 	color: var(--color-success);
+	text-wrap: nowrap;
 }
 
 .wpcom-plan-selector__price-interval {

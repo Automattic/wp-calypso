@@ -1,0 +1,68 @@
+.performance-profiler-performance-score {
+	display: flex;
+	padding: 24px 0;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 24px;
+
+	.score-summary {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+		align-self: stretch;
+	}
+
+	.title {
+		font-size: $font-title-small;
+		line-height: $font-title-medium;
+		font-weight: 500;
+	}
+
+	.score {
+		font-size: 96px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		line-height: 96px;
+		font-weight: 300; /* stylelint-disable-line scales/font-weights */
+	}
+
+	.disclaimer {
+		color: var(--studio-gray-70);
+		font-size: $font-body-extra-small;
+		line-height: $font-title-small;
+		width: 360px;
+	}
+
+	.score-bar {
+		position: relative;
+
+		.full-bar {
+			width: 280px;
+			height: 4px;
+			border-radius: 3px;
+			background: #d9d9d9;
+			position: absolute;
+		}
+
+		.current-value-bar {
+			height: 8px;
+			width: 200px;
+			border-radius: 8px; /* stylelint-disable-line scales/radii */
+			border: 2px solid #fff;
+			position: absolute;
+			top: -4px;
+			background: var(--studio-orange-40);
+
+			&.poor {
+				background: var(--studio-red-50);
+			}
+
+			&.neutral {
+				background: var(--studio-orange-40);
+			}
+
+			&.good {
+				background: var(--studio-green-30);
+			}
+		}
+	}
+}

@@ -27,6 +27,12 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 	const locale = useSelector( getCurrentUserLocale );
 
 	const firstColumnValue = log[ columns[ 0 ] ] as string; // Get the value of the first column
+	const formattedSeverities = {
+		User: __( 'User' ),
+		Warning: __( 'Warning' ),
+		Deprecated: __( 'Deprecated' ),
+		'Fatal error': __( 'Fatal error' ),
+	};
 
 	const specifiedLogs =
 		logType === 'php'
@@ -45,7 +51,8 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset, logType
 					<td key={ column } className={ column }>
 						{ index === 0 ? (
 							<Badge className={ `badge--${ firstColumnValue }` }>
-								{ log[ column ] as React.ReactNode }
+								{ formattedSeverities[ log[ column ] as keyof typeof formattedSeverities ] ??
+									( log[ column ] as React.ReactNode ) }
 							</Badge>
 						) : (
 							renderCell( column, log[ column ], moment, siteGmtOffset, locale )

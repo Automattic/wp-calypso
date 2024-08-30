@@ -192,9 +192,9 @@ describe( 'Hosting Configuration', () => {
 			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
 
 			expect(
-				await screen.findByText( 'Upgrade to the Creator plan to access all hosting features:' )
+				await screen.findByText( 'Upgrade to the Business plan to access all hosting features:' )
 			).toBeVisible();
-			expect( screen.getByText( 'Upgrade to Creator Plan' ) ).toBeVisible();
+			expect( screen.getByText( 'Upgrade to Business Plan' ) ).toBeVisible();
 
 			const [ mainFeatureExampleElement ] = screen.getAllByTestId( 'feature-example-wrapper' );
 
@@ -213,10 +213,10 @@ describe( 'Hosting Configuration', () => {
 			await waitFor( () => expect( wpcomGetStub ).toHaveBeenCalled() );
 
 			expect(
-				await screen.findByText( 'Upgrade to the Creator plan to access all hosting features:' )
+				await screen.findByText( 'Upgrade to the Business plan to access all hosting features:' )
 			).toBeVisible();
 
-			expect( screen.getByText( 'Upgrade to Creator Plan' ) ).toBeVisible();
+			expect( screen.getByText( 'Upgrade to Business Plan' ) ).toBeVisible();
 
 			const [ mainFeatureExampleElement ] = screen.getAllByTestId( 'feature-example-wrapper' );
 
@@ -227,7 +227,7 @@ describe( 'Hosting Configuration', () => {
 		} );
 	} );
 
-	describe( 'Site on Creator plan', () => {
+	describe( 'Site on Business plan', () => {
 		it( 'should show activation notice when the site is not Atomic', async () => {
 			const testConfig = getTestConfig( {
 				planSlug: PLAN_BUSINESS_MONTHLY,

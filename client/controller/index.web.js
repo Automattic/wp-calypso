@@ -1,12 +1,6 @@
 import config from '@automattic/calypso-config';
-import {
-	isJetpackPlanSlug,
-	isJetpackProductSlug,
-	setPlansListExperiment,
-} from '@automattic/calypso-products';
+import { isJetpackPlanSlug, isJetpackProductSlug } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { localStorageExperimentAssignmentKey } from '@automattic/explat-client/src/internal/experiment-assignment-store';
-import localStorage from '@automattic/explat-client/src/internal/local-storage';
 import {
 	getLanguage,
 	getLanguageSlugs,
@@ -15,7 +9,6 @@ import {
 import { QueryClientProvider } from '@tanstack/react-query';
 import { removeQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
@@ -23,7 +16,6 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
@@ -50,7 +42,6 @@ import { hydrate, render } from './web-util.js';
 export { setLocaleMiddleware, setSectionMiddleware } from './shared.js';
 export { hydrate, render } from './web-util.js';
 
-const PLAN_NAME_EXPERIMENT = 'wpcom_plan_name_change_personal_premium_v1';
 export const ProviderWrappedLayout = ( {
 	store,
 	queryClient,
@@ -64,24 +55,6 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
-
-	const [ isLoading, experimentAssignment ] = useExperiment( PLAN_NAME_EXPERIMENT );
-
-	useEffect( () => {
-		if ( ! isLoading ) {
-			setPlansListExperiment( PLAN_NAME_EXPERIMENT, experimentAssignment?.variationName );
-		}
-	}, [ isLoading, experimentAssignment?.variationName ] );
-
-	useEffect( () => {
-		// TODO: Implement a proper way to reset the experiment assignment
-		try {
-			localStorage.removeItem( localStorageExperimentAssignmentKey( PLAN_NAME_EXPERIMENT ) );
-			loadExperimentAssignment( PLAN_NAME_EXPERIMENT );
-		} catch ( e ) {
-			// Ignore NS_ERROR_FILE_NOT_FOUND Firefox (bug report: https://bugzilla.mozilla.org/show_bug.cgi?id=1536796)
-		}
-	}, [ userLoggedIn ] );
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />

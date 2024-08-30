@@ -6,11 +6,11 @@ import './style.scss';
 
 const WooBlazeHeader = ( { className = '', children } ) => {
 	const translate = useTranslate();
-	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
+	const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 
 	return (
 		<header className={ clsx( 'blaze-plugin-header', className ) }>
-			<h2>{ isWooBlaze ? translate( 'Blaze for WooCommerce' ) : translate( 'Advertising' ) }</h2>
+			<h2>{ isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' ) }</h2>
 			{ children }
 		</header>
 	);

@@ -3,7 +3,7 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo, useEffect } from 'react';
 import ItemPreviewPane from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
-import HostingFeaturesIcon from 'calypso/hosting-features/components/hosting-features-icon';
+import HostingFeaturesIcon from 'calypso/hosting/hosting-features/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';

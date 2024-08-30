@@ -8,5 +8,3 @@ dist
 packages/calypso-color-schemes/css
 packages/calypso-color-schemes/root-only
 packages/calypso-color-schemes/src/__color-studio
-
-apps/editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks/

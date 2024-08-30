@@ -13,7 +13,7 @@ import { createBlockTests } from './shared/block-smoke-testing';
 const blockFlows: BlockFlow[] = [
 	new YouTubeBlockFlow( {
 		embedUrl: 'https://www.youtube.com/watch?v=twGLN4lug-I',
-		expectedVideoTitle: 'Getting Started on @WordPressdotcom',
+		expectedVideoTitle: 'Getting Started on @wordpress-com',
 	} ),
 	new LayoutGridBlockFlow( {
 		leftColumnText: DataHelper.getRandomPhrase(),

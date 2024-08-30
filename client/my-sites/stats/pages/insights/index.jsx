@@ -11,17 +11,16 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import AllTimeViewsSection from 'calypso/my-sites/stats/features/modules/all-time-views-section';
+import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-comments';
+import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
+import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimeHighlightsSection from '../../all-time-highlights-section';
 import AnnualHighlightsSection from '../../annual-highlights-section';
-import StatsModuleComments from '../../features/modules/stats-comments';
-import StatsModuleTags from '../../features/modules/stats-tags';
 import PostingActivity from '../../post-trends';
-import Comments from '../../stats-comments';
 import StatsModule from '../../stats-module';
 import PageViewTracker from '../../stats-page-view-tracker';
-import StatShares from '../../stats-shares';
 import statsStrings from '../../stats-strings';
 
 const StatsInsights = ( props ) => {
@@ -96,24 +95,13 @@ const StatsInsights = ( props ) => {
 							) }
 						/>
 					) }
-					{ isEmptyStateV2 && (
-						<StatsModuleComments
-							className={ clsx(
-								'stats__flexible-grid-item--half',
-								'stats__flexible-grid-item--full--large'
-							) }
-						/>
-					) }
 
-					{ ! isEmptyStateV2 && (
-						<Comments
-							path="comments"
-							className={ clsx(
-								'stats__flexible-grid-item--half',
-								'stats__flexible-grid-item--full--large'
-							) }
-						/>
-					) }
+					<StatsModuleComments
+						className={ clsx(
+							'stats__flexible-grid-item--half',
+							'stats__flexible-grid-item--full--large'
+						) }
+					/>
 
 					{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
 					{ ! isJetpack && (

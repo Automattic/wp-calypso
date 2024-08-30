@@ -21,6 +21,8 @@ import { INSIGHTS_SUPPORT_URL } from '../../../const';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
+import './styles.scss';
+
 type CommentActionType = {
 	type: string;
 	data: boolean;

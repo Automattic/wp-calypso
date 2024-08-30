@@ -72,6 +72,11 @@
 		max-width: 100%;
 		max-height: calc(100vw - 48px);
 
+		svg {
+			max-width: 100%;
+			max-height: calc(100vw - 48px);
+		}
+
 		canvas {
 			max-width: 100%;
 			max-height: calc(100vw - 48px);

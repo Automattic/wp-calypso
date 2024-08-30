@@ -54,7 +54,7 @@ const ThemeCard = forwardRef(
 		}: ThemeCardProps,
 		forwardedRef: Ref< any > // eslint-disable-line @typescript-eslint/no-explicit-any
 	) => {
-		const e2eName = useMemo( () => name.toLowerCase().replace( /\s+/g, '-' ), [ name ] );
+		const e2eName = useMemo( () => name?.toLowerCase?.().replace( /\s+/g, '-' ), [ name ] );
 		const imageRef = useRef< HTMLAnchorElement >( null );
 		const [ isShowTooltip, setIsShowTooltip ] = useState( false );
 

@@ -62,6 +62,10 @@ export interface Agency {
 		};
 	};
 	partner_directory_allowed: boolean;
+	user: {
+		role: 'a4a_administrator' | 'a4a_manager';
+		capabilities: string[];
+	};
 }
 
 export interface AgencyStore {
@@ -70,6 +74,7 @@ export interface AgencyStore {
 	activeAgency: Agency | null;
 	agencies: Agency[] | [];
 	error: APIError | null;
+	isAgencyClientUser: boolean;
 }
 
 export type AgencyThunkAction< A extends Action = AnyAction, R = unknown > = ThunkAction<

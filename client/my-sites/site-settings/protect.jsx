@@ -1,14 +1,10 @@
-import { Button, FoldableCard, FormLabel } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { includes, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormTextarea from 'calypso/components/forms/form-textarea';
-import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
@@ -22,6 +18,7 @@ class Protect extends Component {
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
 		fields: PropTypes.object,
+		disableProtect: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -30,136 +27,31 @@ class Protect extends Component {
 		fields: {},
 	};
 
-	handleAddToAllowedList = () => {
-		const { setFieldValue } = this.props;
-		let allowedIps = this.getProtectAllowedIps().trimEnd();
-
-		if ( allowedIps.length ) {
-			allowedIps += '\n';
-		}
-
-		setFieldValue( 'jetpack_protect_global_whitelist', allowedIps + this.getIpAddress() );
-	};
-
-	getIpAddress() {
-		if ( window.app && window.app.clientIp ) {
-			return window.app.clientIp;
-		}
-
-		return null;
-	}
-
-	getProtectAllowedIps() {
-		const { jetpack_protect_global_whitelist } = this.props.fields;
-		return jetpack_protect_global_whitelist || '';
-	}
-
-	isIpAddressAllowed() {
-		const ipAddress = this.getIpAddress();
-		if ( ! ipAddress ) {
-			return false;
-		}
-
-		const allowedIps = this.getProtectAllowedIps().split( '\n' );
-
-		return (
-			includes( allowedIps, ipAddress ) ||
-			some( allowedIps, ( entry ) => {
-				if ( entry.indexOf( '-' ) < 0 ) {
-					return false;
-				}
-
-				const range = entry.split( '-' ).map( ( ip ) => ip.trim() );
-				return includes( range, ipAddress );
-			} )
-		);
-	}
-
 	render() {
 		const {
 			isRequestingSettings,
 			isSavingSettings,
-			onChangeField,
-			protectModuleActive,
 			protectModuleUnavailable,
 			selectedSiteId,
 			translate,
 		} = this.props;
 
-		const ipAddress = this.getIpAddress();
-		const isIpAllowed = this.isIpAddressAllowed();
-		const disabled =
-			isRequestingSettings || isSavingSettings || protectModuleUnavailable || ! protectModuleActive;
-		const protectToggle = (
-			<JetpackModuleToggle
-				siteId={ selectedSiteId }
-				moduleSlug="protect"
-				label={ translate( 'Prevent and block malicious login attempts' ) }
-				disabled={ isRequestingSettings || isSavingSettings || protectModuleUnavailable }
-			/>
-		);
-
 		return (
-			<FoldableCard
-				className="protect__foldable-card site-settings__foldable-card"
-				header={ protectToggle }
-			>
-				<QueryJetpackConnection siteId={ selectedSiteId } />
-
+			<Card>
 				<FormFieldset>
-					<div className="protect__module-settings site-settings__child-settings">
-						<SupportInfo
-							text={ translate(
-								'Protects your site from traditional and distributed brute force login attacks.'
-							) }
-							link="https://jetpack.com/support/protect/"
-						/>
-						<p>
-							{ translate( 'Your current IP address: {{strong}}%(IP)s{{/strong}}{{br/}}', {
-								args: {
-									IP: ipAddress || translate( 'Unknown IP address' ),
-								},
-								components: {
-									strong: <strong />,
-									br: <br />,
-								},
-							} ) }
-
-							{ ipAddress && (
-								<Button
-									className="site-settings__add-to-explicitly-allowed-list"
-									onClick={ this.handleAddToAllowedList }
-									disabled={ disabled || isIpAllowed }
-									compact
-								>
-									{ isIpAllowed
-										? translate( 'Already in list of allowed IPs' )
-										: translate( 'Add to list of allowed IPs' ) }
-								</Button>
-							) }
-						</p>
-
-						<FormLabel htmlFor="jetpack_protect_global_whitelist">
-							{ translate( 'Allowed IP addresses' ) }
-						</FormLabel>
-						<FormTextarea
-							id="jetpack_protect_global_whitelist"
-							value={ this.getProtectAllowedIps() }
-							onChange={ onChangeField( 'jetpack_protect_global_whitelist' ) }
-							disabled={ disabled }
-							placeholder={ translate( 'Example: 12.12.12.1-12.12.12.100' ) }
-						/>
-						<FormSettingExplanation>
-							{ translate(
-								'You may explicitly allow an IP address or series of addresses preventing them from ' +
-									'ever being blocked by Jetpack. IPv4 and IPv6 are acceptable. ' +
-									'To specify a range, enter the low value and high value separated by a dash. ' +
-									'Example: 12.12.12.1-12.12.12.100'
-							) }
-						</FormSettingExplanation>
-					</div>
+					<JetpackModuleToggle
+						siteId={ selectedSiteId }
+						moduleSlug="protect"
+						label={ translate( 'Enable brute force login protection' ) }
+						disabled={ isRequestingSettings || isSavingSettings || protectModuleUnavailable }
+					/>
+					<FormSettingExplanation isIndented>
+						{ translate(
+							'Prevent and block unwanted login attempts from bots and hackers attempting to log in to your website with common username and password combinations.'
+						) }
+					</FormSettingExplanation>
 				</FormFieldset>
-			</FoldableCard>
+			</Card>
 		);
 	}
 }

@@ -16,34 +16,39 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isFormDisabled as isFormDisabledSelector } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { getRedirectUri } from './utils';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
 type GithubLoginButtonProps = {
 	children?: ReactNode;
-	responseHandler: ( response: any, triggeredByUser?: boolean ) => void;
-	redirectUri: string;
-	onClick?: () => void;
-	socialServiceResponse?: string | null;
+	responseHandler: ( response: ExchangeCodeForTokenResponse ) => void;
+	onClick?: ( event: MouseEvent< HTMLButtonElement > ) => void;
+	socialServiceResponse?: ExchangeCodeForTokenResponse | null;
 	userHasDisconnected?: boolean;
+	isLogin: boolean;
 };
 
 type ExchangeCodeForTokenResponse = {
+	service: string;
 	access_token: string;
 };
 
 const GitHubLoginButton = ( {
 	children,
 	responseHandler,
-	redirectUri,
 	onClick,
 	socialServiceResponse,
 	userHasDisconnected,
+	isLogin,
 }: GithubLoginButtonProps ) => {
 	const translate = useTranslate();
-
+	const redirectUri = useSelector( ( state: AppState ) =>
+		getRedirectUri( 'github', state, isLogin )
+	);
 	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial ) ?? {};
+
 	const authError = useSelector( ( state: AppState ) => {
 		const path = state?.route?.path?.current;
 		const { initial, current } = state?.route?.query ?? {};
@@ -55,6 +60,7 @@ const GitHubLoginButton = ( {
 		if ( path?.includes( '/start/user-social' ) ) {
 			return initialError;
 		}
+
 		return currentError;
 	} );
 
@@ -68,45 +74,48 @@ const GitHubLoginButton = ( {
 				translate( 'Something went wrong when trying to connect with GitHub. Please try again.' )
 			)
 		);
-	}, [ dispatch, errorNotice, translate ] );
+	}, [ dispatch, translate ] );
 
-	const exchangeCodeForToken = async ( auth_code: string ) => {
-		let response;
-		try {
-			response = await postLoginRequest( 'exchange-social-auth-code', {
-				service: 'github',
-				auth_code,
-				client_id: config( 'wpcom_signup_id' ),
-				client_secret: config( 'wpcom_signup_key' ),
-			} );
-		} catch ( httpError ) {
-			const { code: error_code } = getErrorFromHTTPError( httpError as object );
+	const exchangeCodeForToken = useCallback(
+		async ( auth_code: string ) => {
+			let response;
+			try {
+				response = await postLoginRequest( 'exchange-social-auth-code', {
+					service: 'github',
+					auth_code,
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+				} );
+			} catch ( httpError ) {
+				const { code: error_code } = getErrorFromHTTPError( httpError as object );
 
-			if ( error_code ) {
-				dispatch(
-					recordTracksEvent( 'calypso_social_button_auth_code_exchange_failure', {
-						social_account_type: 'github',
-						// TODO
-						//starting_point: this.props.startingPoint,
-						error_code,
-					} )
-				);
+				if ( error_code ) {
+					dispatch(
+						recordTracksEvent( 'calypso_social_button_auth_code_exchange_failure', {
+							social_account_type: 'github',
+							// TODO
+							//starting_point: this.props.startingPoint,
+							error_code,
+						} )
+					);
+				}
+
+				handleGitHubError();
+				return;
 			}
 
-			handleGitHubError();
-			return;
-		}
-
-		dispatch(
-			recordTracksEvent( 'calypso_social_button_auth_code_exchange_success', {
-				social_account_type: 'github',
-				// TODO
-				//starting_point: this.props.startingPoint,
-			} )
-		);
-		const { access_token } = response?.body?.data as ExchangeCodeForTokenResponse;
-		responseHandler( { access_token } );
-	};
+			dispatch(
+				recordTracksEvent( 'calypso_social_button_auth_code_exchange_success', {
+					social_account_type: 'github',
+					// TODO
+					//starting_point: this.props.startingPoint,
+				} )
+			);
+			const { access_token } = response?.body?.data as ExchangeCodeForTokenResponse;
+			responseHandler( { access_token, service: 'github' } );
+		},
+		[ dispatch, handleGitHubError, responseHandler ]
+	);
 
 	const stripQueryString = ( url: string ) => {
 		const urlParts = url.split( '?' );
@@ -114,19 +123,22 @@ const GitHubLoginButton = ( {
 	};
 
 	useEffect( () => {
-		if ( socialServiceResponse ) {
-			responseHandler( socialServiceResponse );
+		if (
+			window.sessionStorage.getItem( 'social_login_used' ) === 'github' &&
+			socialServiceResponse
+		) {
+			responseHandler( { ...socialServiceResponse, service: 'github' } );
 		}
-	}, [ socialServiceResponse ] );
+	}, [ socialServiceResponse, responseHandler ] );
 
 	useEffect( () => {
 		if ( code && service === 'github' && ! userHasDisconnected ) {
 			exchangeCodeForToken( code );
 		}
-	}, [ code, service, userHasDisconnected ] );
+	}, [ code, service, userHasDisconnected, exchangeCodeForToken ] );
 
 	useEffect( () => {
-		if ( authError ) {
+		if ( window.sessionStorage.getItem( 'social_login_used' ) === 'github' && authError ) {
 			handleGitHubError();
 		}
 	}, [ authError, handleGitHubError ] );
@@ -136,7 +148,7 @@ const GitHubLoginButton = ( {
 		e.preventDefault();
 
 		if ( onClick ) {
-			onClick();
+			onClick( e );
 		}
 
 		const scope = encodeURIComponent( 'read:user,user:email' );
@@ -165,7 +177,8 @@ const GitHubLoginButton = ( {
 				customButton
 			) : (
 				<button
-					className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
+					className={ clsx( 'social-buttons__button button github', { disabled: isDisabled } ) }
+					data-social-service="github"
 					{ ...eventHandlers }
 				>
 					<GitHubIcon isDisabled={ isDisabled } />

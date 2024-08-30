@@ -48,6 +48,18 @@ export const setUnreadCount = ( count: number ) =>
 		count,
 	} ) as const;
 
+export const setOdieInitialPromptText = ( text: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_ODIE_INITIAL_PROMPT_TEXT',
+		text,
+	} ) as const;
+
+export const setOdieBotNameSlug = ( odieBotNameSlug: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_ODIE_BOT_NAME_SLUG',
+		odieBotNameSlug,
+	} ) as const;
+
 export const setIsMinimized = ( minimized: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_MINIMIZED',
@@ -117,12 +129,11 @@ export const setShowMessagingChat = function* () {
 	yield resetStore();
 };
 
-export const setShowSupportDoc = function* ( link: string, postId: number, blogId?: number ) {
+export const setShowSupportDoc = function* ( link: string, postId?: number, blogId?: number ) {
 	const params = new URLSearchParams( {
 		link,
-		postId: String( postId ),
+		...( postId && { postId: String( postId ) } ),
 		...( blogId && { blogId: String( blogId ) } ), // Conditionally add blogId if it exists, the default is support blog
-		cacheBuster: String( Date.now() ),
 	} );
 
 	yield setNavigateToRoute( `/post/?${ params }` );
@@ -143,5 +154,7 @@ export type HelpCenterAction =
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 			| typeof setNavigateToRoute
+			| typeof setOdieInitialPromptText
+			| typeof setOdieBotNameSlug
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

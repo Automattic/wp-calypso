@@ -584,12 +584,12 @@ export class RenderDomainsStep extends Component {
 
 	shouldHideDomainExplainer = () => {
 		const { flowName } = this.props;
-		return [ 'domain', 'domain-for-gravatar' ].includes( flowName );
+		return [ 'domain', 'domain-for-gravatar', 'onboarding-with-email' ].includes( flowName );
 	};
 
 	shouldHideUseYourDomain = () => {
 		const { flowName } = this.props;
-		return [ 'domain', 'domain-for-gravatar' ].includes( flowName );
+		return [ 'domain', 'domain-for-gravatar', 'onboarding-with-email' ].includes( flowName );
 	};
 
 	shouldDisplayDomainOnlyExplainer = () => {

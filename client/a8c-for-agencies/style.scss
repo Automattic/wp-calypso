@@ -283,7 +283,8 @@
 	}
 
 	.components-form-token-field__input-container,
-	.components-text-control__input {
+	.components-text-control__input,
+	.components-textarea-control__input {
 		background-color: var(--color-surface);
 		border: 1px solid var(--color-neutral-10);
 		border-radius: 2px;

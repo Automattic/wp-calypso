@@ -189,7 +189,8 @@ class PasswordlessSignupForm extends Component {
 	};
 
 	submitStep = ( data ) => {
-		const { flowName, stepName, goToNextStep, submitCreateAccountStep } = this.props;
+		const { flowName, stepName, goToNextStep, submitCreateAccountStep, passDataToNextStep } =
+			this.props;
 		submitCreateAccountStep(
 			{
 				flowName,
@@ -202,7 +203,11 @@ class PasswordlessSignupForm extends Component {
 			data
 		);
 		this.submitTracksEvent( true, { action_message: 'Successful login', username: data.username } );
-		goToNextStep();
+		if ( passDataToNextStep ) {
+			goToNextStep( data );
+		} else {
+			goToNextStep();
+		}
 	};
 
 	handleAcceptDomainSuggestion = ( newEmail, newDomain, oldDomain ) => {

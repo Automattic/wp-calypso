@@ -1,4 +1,5 @@
 import { ExternalLink } from '@automattic/components';
+import { decodeEntities } from '@wordpress/html-entities';
 import type { PostObject } from '../types';
 
 export const SupportArticleHeader = ( {
@@ -21,7 +22,7 @@ export const SupportArticleHeader = ( {
 					target="_blank"
 					icon={ false }
 				>
-					{ post.title }
+					{ decodeEntities( post.title ) }
 				</ExternalLink>
 			</h1>
 		</div>

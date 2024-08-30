@@ -6,6 +6,7 @@ import { dispatch, select, subscribe, use } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
+import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
@@ -13,7 +14,6 @@ import debugFactory from 'debug';
 import { filter, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
-import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 import {
 	getPages,
 	inIframe,
@@ -36,6 +36,32 @@ function addEditorListener( selector, cb ) {
 		addedListener = true;
 	}
 }
+
+function addCommandsInputListener( selector, cb ) {
+	document.querySelector( 'body.is-iframed' )?.addEventListener( 'keydown', ( e ) => {
+		const isInputActive = document.activeElement?.matches( '.commands-command-menu__header input' );
+		const isCommandSelected = document.querySelector( '[data-selected=true]' )?.matches( selector );
+
+		if ( e.key === 'Enter' && isInputActive && isCommandSelected ) {
+			cb( e );
+		}
+	} );
+}
+
+/**
+ * Returns the Popover fallback container if exists or creates a new node
+ */
+const fallbackContainerClassname = 'components-popover__fallback-container';
+const getPopoverFallbackContainer = () => {
+	let container = document.body.querySelector( '.' + fallbackContainerClassname );
+	if ( ! container ) {
+		container = document.createElement( 'div' );
+		container.className = fallbackContainerClassname;
+		document.body.append( container );
+	}
+
+	return container;
+};
 
 // Calls a callback if the event occured on an element or parent thereof matching
 // the callback's selector. This is needed because elements are added and removed
@@ -458,10 +484,6 @@ function handleCloseEditor( calypsoPort ) {
 		return;
 	}
 
-	if ( isNavSidebarPresent() ) {
-		return;
-	}
-
 	registerPlugin( 'a8c-wpcom-block-editor-close-button-override', {
 		render: function CloseWpcomBlockEditor() {
 			const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
@@ -511,19 +533,8 @@ function handleCloseInLegacyEditors( handleClose ) {
 
 	// Selects the close button in modern Gutenberg versions, unless it itself is a close button override
 	const wpcomCloseSelector = '.wpcom-block-editor__close-button';
-	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
-	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
+	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector })`;
 	addEditorListener( selector, handleClose );
-}
-
-/**
- * Uses presence of data store to detect whether the nav sidebar has been loaded.
- * Could run into timing issues, but the nav sidebar's data store is currently
- * loaded early enough that this works for our needs.
- */
-function isNavSidebarPresent() {
-	const selectors = select( NAV_SIDEBAR_STORE_KEY );
-	return !! selectors;
 }
 
 /**
@@ -704,13 +715,12 @@ async function openLinksInParentFrame( calypsoPort ) {
 					continue;
 				}
 
-				const popoverSlot = node.querySelector( '.components-popover' );
-
-				if ( popoverSlot ) {
-					const manageReusableBlocksAnchorElem = popoverSlot.querySelector(
+				if ( node?.classList?.contains( 'components-popover' ) ) {
+					const manageReusableBlocksAnchorElem = node.querySelector(
 						'a[href$="site-editor.php?path=%2Fpatterns"]'
 					);
-					const manageNavigationMenusAnchorElem = popoverSlot.querySelector(
+
+					const manageNavigationMenusAnchorElem = node.querySelector(
 						'a[href$="edit.php?post_type=wp_navigation"]'
 					);
 
@@ -734,8 +744,10 @@ async function openLinksInParentFrame( calypsoPort ) {
 			}
 		}
 	} );
-	const popoverSlotElem = document.querySelector( 'body' );
-	popoverSlotElem && popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
+
+	// Observe children of the Popover Container
+	const popoverContainer = getPopoverFallbackContainer();
+	popoverContainer && popoverSlotObserver.observe( popoverContainer, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
@@ -1063,6 +1075,25 @@ function handleAppBannerShowing( calypsoPort ) {
 	};
 }
 
+function handlePatterns( calypsoPort ) {
+	const selector = `[data-value="${ __( 'Patterns' ) }"]`;
+
+	const callback = ( e ) => {
+		e.preventDefault();
+
+		calypsoPort.postMessage( {
+			action: 'goToPatterns',
+			payload: {
+				destinationUrl: '/wp-admin/site-editor.php?postType=wp_block',
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+			},
+		} );
+	};
+
+	addEditorListener( selector, callback );
+	addCommandsInputListener( selector, callback );
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1163,6 +1194,8 @@ function initPort( message ) {
 		handleCheckoutModal( calypsoPort );
 
 		handleAppBannerShowing( calypsoPort );
+
+		handlePatterns( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

@@ -44,7 +44,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		};
 
 		componentDidMount() {
-			this.props.replaceFields( getFormSettings( this.props.settings ) );
+			this.props.replaceFields( getFormSettings( this.props.settings, this.props ) );
 
 			// Check if site_title task is completed
 			fetchLaunchpad( this.props.siteSlug, 'intent-build' ).then( ( { checklist_statuses } ) => {
@@ -124,7 +124,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 
 		updateDirtyFields() {
 			const currentFields = this.props.fields;
-			const persistedFields = getFormSettings( this.props.settings );
+			const persistedFields = getFormSettings( this.props.settings, this.props );
 
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;

@@ -15,6 +15,7 @@ import './style.scss';
 
 interface Props {
 	isLargeScreen?: boolean;
+	isDevSite?: boolean;
 	site: SiteNode;
 	siteError: boolean | undefined;
 	onRefetchSite?: () => Promise< unknown >;
@@ -22,6 +23,7 @@ interface Props {
 
 export default function SiteActions( {
 	isLargeScreen = false,
+	isDevSite,
 	site,
 	siteError,
 	onRefetchSite,
@@ -52,6 +54,7 @@ export default function SiteActions( {
 	const siteActions = useSiteActions( {
 		site,
 		isLargeScreen,
+		isDevSite,
 		siteError,
 		onSelect: onSelectAction,
 	} );

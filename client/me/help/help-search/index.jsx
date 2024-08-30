@@ -84,6 +84,7 @@ export default function HelpSearch( props ) {
 					iconTypeDescription="book"
 					// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 					searchLink={ 'https://wordpress.com/support?s=' + searchQuery }
+					openInHelpCenter
 				/>
 				<HelpResults
 					footer={ translate( 'See more from Community Forum…' ) }

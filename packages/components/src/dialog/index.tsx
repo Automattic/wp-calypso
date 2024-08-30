@@ -25,6 +25,7 @@ type Props = {
 	shouldCloseOnOverlayClick?: boolean;
 	labelledby?: string;
 	describedby?: string;
+	bodyOpenClassName?: string;
 };
 
 const Dialog = ( {
@@ -45,6 +46,7 @@ const Dialog = ( {
 	shouldCloseOnOverlayClick = true,
 	labelledby,
 	describedby,
+	bodyOpenClassName,
 }: PropsWithChildren< Props > ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const onButtonClick = useCallback(
@@ -81,6 +83,7 @@ const Dialog = ( {
 			role="dialog"
 			shouldCloseOnEsc={ shouldCloseOnEsc }
 			shouldCloseOnOverlayClick={ shouldCloseOnOverlayClick }
+			bodyOpenClassName={ bodyOpenClassName }
 		>
 			{ showCloseIcon && (
 				<button

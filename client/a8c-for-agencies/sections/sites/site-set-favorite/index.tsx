@@ -32,10 +32,12 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const agencyId = useSelector( getActiveAgencyId );
-	const { dataViewsState, showOnlyFavorites, currentPage } = useContext( SitesDashboardContext );
+	const { dataViewsState, showOnlyFavorites, showOnlyDevelopmentSites, currentPage } =
+		useContext( SitesDashboardContext );
 	const [ filter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],
 		showOnlyFavorites: showOnlyFavorites || false,
+		showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
 	} );
 	useEffect( () => {
 		const selectedFilters = getSelectedFilters( dataViewsState.filters );
@@ -43,8 +45,9 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		setAgencyDashboardFilter( {
 			issueTypes: selectedFilters,
 			showOnlyFavorites: showOnlyFavorites || false,
+			showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
 		} );
-	}, [ dataViewsState.filters, showOnlyFavorites ] );
+	}, [ dataViewsState.filters, showOnlyFavorites, showOnlyDevelopmentSites ] );
 	const search = dataViewsState.search;
 
 	const queryKey = [
@@ -163,7 +166,8 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 
 	const { isPending, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
 
-	const handleFavoriteChange = () => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const handleFavoriteChange = ( e: any ) => {
 		mutate( {
 			siteId,
 			isFavorite,
@@ -176,6 +180,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 					: 'calypso_jetpack_agency_dashboard_set_favorite_site'
 			)
 		);
+		e.stopPropagation();
 	};
 
 	return (

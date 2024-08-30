@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
 import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
@@ -102,7 +103,7 @@ export default function LicenseDetailsActions( {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{ translate( 'Manage in Pressable' ) }
+					{ translate( 'Manage in Pressable' ) } <Icon icon={ external } size={ 18 } />
 				</Button>
 			) }
 

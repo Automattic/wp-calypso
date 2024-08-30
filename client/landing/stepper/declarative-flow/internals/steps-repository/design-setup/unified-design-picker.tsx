@@ -44,6 +44,7 @@ import {
 } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
+import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
@@ -127,6 +128,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
+
+	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-picker' );
+
 	const isDesignFirstFlow =
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
 
@@ -922,6 +926,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 			getBadge={ getBadge }
 			oldHighResImageLoading={ oldHighResImageLoading }
+			isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 		/>
 	);
 

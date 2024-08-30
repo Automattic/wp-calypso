@@ -12,7 +12,6 @@ import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-u
 import { getTheme } from 'calypso/state/themes/selectors';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
@@ -80,11 +79,6 @@ const withAIAssemblerFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const flowName = this.name;
-		const intent = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
-			[]
-		);
 		const siteId = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSite(),
 			[]
@@ -169,7 +163,6 @@ const withAIAssemblerFlow: Flow = {
 			providedDependencies: ProvidedDependencies = {},
 			...results: string[]
 		) => {
-			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 			const selectedSiteSlug = providedDependencies?.siteSlug as string;
 			const selectedSiteId = providedDependencies?.siteId as string;
 

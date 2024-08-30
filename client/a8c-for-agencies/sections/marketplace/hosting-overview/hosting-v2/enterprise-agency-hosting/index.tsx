@@ -9,6 +9,8 @@ import MetaLogo from 'calypso/assets/images/logos/meta.svg';
 import NewYorkPostLogo from 'calypso/assets/images/logos/new-york-post.svg';
 import NewsCorpLogo from 'calypso/assets/images/logos/news-corp.svg';
 import SpotifyLogo from 'calypso/assets/images/logos/spotify.svg';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import { BackgroundType4 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
@@ -18,6 +20,13 @@ import './style.scss';
 
 export default function EnterpriseAgencyHosting() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const onRequestDemoClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_hosting_enterprise_request_demo_click' )
+		);
+	};
 
 	return (
 		<>
@@ -35,7 +44,12 @@ export default function EnterpriseAgencyHosting() {
 							),
 						] }
 					/>
-					<Button href="https://wpvip.com/contact/" target="_blank" variant="primary">
+					<Button
+						href="https://wpvip.com/contact/"
+						onClick={ onRequestDemoClick }
+						target="_blank"
+						variant="primary"
+					>
 						{ translate( 'Request a Demo' ) } <Icon icon={ external } size={ 16 } />
 					</Button>
 				</div>
@@ -88,30 +102,40 @@ export default function EnterpriseAgencyHosting() {
 						profile: {
 							avatar: ProfileAvatar1,
 							name: 'David Rousseau',
-							title: 'Vice President, Kaiser Family Foundation',
+							title: translate( 'Vice President, %(companyName)s', {
+								args: {
+									companyName: 'Kaiser Family Foundation',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
 							site: translate( 'Read the case study' ),
 							siteLink:
 								'https://wpvip.com/case-studies/evolving-the-kaiser-family-foundations-data-rich-platforms/',
 						},
-						testimonial:
-							// TODO: Change this to a real testimonial
+						testimonial: translate(
 							"In the past, the staff didn't touch the CMS. They wrote things in Word, sent it to the production team, and they put it online. With WordPress, that workflow is changing slowly and dramatically." +
-							" We've trained many of our content creators in the CMS. And, the closer the content creators are to it, the more creatively they are able to think about it.",
+								" We've trained many of our content creators in the CMS. And, the closer the content creators are to it, the more creatively they are able to think about it."
+						),
 					},
 
 					{
 						profile: {
 							avatar: ProfileAvatar2,
 							name: 'Joel Davies',
-							title: 'Head of Editorial Operations, News UK',
+							title: translate( 'Head of Editorial Operations, %(companyName)s', {
+								args: {
+									companyName: 'News UK',
+								},
+								comment: '%(companyName)s is the name of the company the testimonial is about.',
+							} ),
 							site: translate( 'Read the case study' ),
 							siteLink:
 								'https://wpvip.com/case-studies/behind-the-scenes-of-news-uks-rampant-speed-to-value-with-gutenberg/',
 						},
-						testimonial:
-							// TODO: Change this to a real testimonial
+						testimonial: translate(
 							'With Gutenberg, we were able to publish a breaking news story in two minutes versus five minutes in Classic [WordPress].' +
-							" The main reason for this is the reusable blocks which have been renamed 'The Game Changer.'",
+								" The main reason for this is the reusable blocks which have been renamed 'The Game Changer.'"
+						),
 					},
 				] }
 				itemBackgroundColor="#F5F2F1"

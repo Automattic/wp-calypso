@@ -31,6 +31,8 @@ p.product-listing__description {
 	gap: 16px;
 	margin: 16px 0 32px;
 	justify-content: space-between;
+	position: relative;
+	z-index: 1;
 }
 
 .select-dropdown.is-compact.product-listing__product-filter-select {

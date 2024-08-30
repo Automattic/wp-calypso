@@ -23,7 +23,9 @@ const TRANSFER_COMPLETED = ( siteId: number ) => ( {
 const errorCaptureMigrationKey = replyWithError( {
 	error: 'anyError',
 } );
+
 jest.mock( 'calypso/lib/analytics/tracks' );
+jest.mock( 'calypso/lib/logstash' );
 
 describe( 'usePrepareSiteForMigration', () => {
 	beforeAll( () => nock.disableNetConnect() );

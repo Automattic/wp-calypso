@@ -50,21 +50,23 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
 
 		if ( oldHighResImageLoading ) {
-			<img
-				src={ themeImgSrc }
-				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
-				alt={ design.description }
-			/>;
-		} else {
 			return (
 				<img
-					loading="lazy"
 					src={ themeImgSrc }
-					srcSet={ `${ themeImgSrc }` }
+					srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
 					alt={ design.description }
 				/>
 			);
 		}
+
+		return (
+			<img
+				loading="lazy"
+				src={ themeImgSrc }
+				srcSet={ `${ themeImgSrc }` }
+				alt={ design.description }
+			/>
+		);
 	}
 
 	return (
@@ -241,6 +243,7 @@ interface DesignPickerProps {
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
+	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -255,6 +258,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	shouldLimitGlobalStyles,
 	getBadge,
 	oldHighResImageLoading,
+	isSiteAssemblerEnabled,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredDesigns = useMemo( () => {
@@ -278,7 +282,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						selectedSlug={ categorization.selection }
 					/>
 				) }
-				{ assemblerCtaData.shouldGoToAssemblerStep && (
+				{ assemblerCtaData.shouldGoToAssemblerStep && isSiteAssemblerEnabled && (
 					<Button
 						className={ clsx( 'design-picker__design-your-own-button', {
 							'design-picker__design-your-own-button-without-categories': ! hasCategories,
@@ -311,7 +315,9 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					);
 				} ) }
-				<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( getAssemblerDesign() ) } />
+				{ isSiteAssemblerEnabled && (
+					<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( getAssemblerDesign() ) } />
+				) }
 			</div>
 		</div>
 	);
@@ -331,6 +337,7 @@ export interface UnifiedDesignPickerProps {
 	shouldLimitGlobalStyles?: boolean;
 	getBadge: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
+	isSiteAssemblerEnabled?: boolean; // Temporary for A/B test
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -347,6 +354,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	shouldLimitGlobalStyles,
 	getBadge,
 	oldHighResImageLoading,
+	isSiteAssemblerEnabled,
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
@@ -380,6 +388,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					getBadge={ getBadge }
 					oldHighResImageLoading={ oldHighResImageLoading }
+					isSiteAssemblerEnabled={ isSiteAssemblerEnabled }
 				/>
 				{ bottomAnchorContent }
 			</div>

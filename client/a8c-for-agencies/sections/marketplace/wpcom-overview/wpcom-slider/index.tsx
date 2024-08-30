@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import {
 	mapOptionsToSliderOptions,
 	sliderPosToValue,
@@ -21,7 +21,8 @@ type Props = {
 	label?: string;
 	sub?: string;
 	minimum?: number;
-	readOnly?: boolean;
+	hideNumberInput?: boolean;
+	quantity?: number;
 };
 
 export default function A4AWPCOMSlider( {
@@ -32,7 +33,8 @@ export default function A4AWPCOMSlider( {
 	label,
 	sub,
 	minimum = 0,
-	readOnly,
+	hideNumberInput,
+	quantity,
 }: Props ) {
 	const total = ( options.length + 1 ) * 20;
 	const mappedOptions = useMemo(
@@ -49,16 +51,21 @@ export default function A4AWPCOMSlider( {
 		valueToSliderPos( defaultValue, mappedOptions )
 	);
 
+	useEffect( () => {
+		if ( hideNumberInput && quantity ) {
+			// Update the slider position if the value is changed from outside
+			const next = isNaN( quantity ) || quantity < minimum ? minimum : quantity;
+			setCurrentValue( next ); // We do not want to override the value with next here to avoid disrupting user input.
+			setCurrentSliderPos( valueToSliderPos( next, mappedOptions ) );
+		}
+	}, [ hideNumberInput, mappedOptions, minimum, quantity ] );
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onSliderChange = ( event: any ) => {
 		const sliderPos = Number( event.target.value );
 		const selected = sliderPosToValue( sliderPos, mappedOptions );
 
 		const next = selected < minimum ? minimum : selected;
-
-		if ( readOnly ) {
-			return;
-		}
 
 		onChange?.( next );
 		setCurrentValue( next );
@@ -84,7 +91,7 @@ export default function A4AWPCOMSlider( {
 	};
 
 	const onNumberSelect = ( value: number ) => {
-		if ( value >= minimum && ! readOnly ) {
+		if ( value >= minimum ) {
 			onChange?.( value );
 			setCurrentValue( value );
 			setCurrentSliderPos( valueToSliderPos( value, mappedOptions ) );
@@ -110,14 +117,12 @@ export default function A4AWPCOMSlider( {
 			) }
 
 			<div className="a4a-slider__input">
-				{ ! readOnly && (
-					<div
-						className="a4a-slider__input-disabled-area"
-						style={ {
-							width: disabledAreaWidth,
-						} }
-					></div>
-				) }
+				<div
+					className="a4a-slider__input-disabled-area"
+					style={ {
+						width: disabledAreaWidth,
+					} }
+				></div>
 
 				<input
 					ref={ rangeRef }
@@ -127,7 +132,6 @@ export default function A4AWPCOMSlider( {
 					onChange={ onSliderChange }
 					value={ currentSliderPos }
 					step="1"
-					readOnly={ readOnly }
 				/>
 
 				<div className="a4a-slider__marker-container">
@@ -158,7 +162,7 @@ export default function A4AWPCOMSlider( {
 					} ) }
 				</div>
 			</div>
-			{ ! readOnly && (
+			{ ! hideNumberInput && (
 				<input
 					type="number"
 					className="a4a-slider__number-input"

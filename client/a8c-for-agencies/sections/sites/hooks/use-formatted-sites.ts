@@ -206,6 +206,7 @@ const useFormatSite = () => {
 				monitor: formatMonitorData( site ),
 				plugin: formatPluginData( site ),
 				error: formatErrorData( isConnected ),
+				isDevSite: site.a4a_is_dev_site,
 				isFavorite: site.is_favorite,
 				isSelected: site.isSelected,
 				onSelect: site.onSelect,

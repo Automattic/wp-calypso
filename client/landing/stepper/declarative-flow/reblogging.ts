@@ -8,7 +8,6 @@ import {
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 const reblogging: Flow = {
@@ -38,8 +37,6 @@ const reblogging: Flow = {
 		triggerGuidesForStep( flowName, _currentStepSlug );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
-
 			switch ( _currentStepSlug ) {
 				case 'domains':
 					return navigate( 'plans' );

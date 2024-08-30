@@ -186,6 +186,7 @@ export class JetpackAuthorize extends Component {
 			this.isFromJpo( nextProps ) ||
 			this.isFromJetpackBoost( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps ) ||
+			this.isFromBlazeAdsPlugin( nextProps ) ||
 			this.props.isVip
 		) {
 			if ( authorizeSuccess ) {
@@ -309,7 +310,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJetpackSearchPlugin() ||
 			this.isFromJetpackVideoPressPlugin() ||
 			( this.isFromJetpackBackupPlugin() && siteHasBackups ) ||
-			this.isFromAutomatticForAgenciesPlugin()
+			this.isFromAutomatticForAgenciesPlugin() ||
+			this.isFromBlazeAdsPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -472,6 +474,11 @@ export class JetpackAuthorize extends Component {
 	isFromAutomatticForAgenciesPlugin( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'automattic-for-agencies-client' );
+	}
+
+	isFromBlazeAdsPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'blaze-ads' );
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
@@ -989,7 +996,7 @@ export class JetpackAuthorize extends Component {
 		}
 
 		const jpcTarget = addQueryArgs(
-			{ redirect: redirectAfterAuth },
+			{ redirect_to: redirectAfterAuth },
 			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
 		);
 		debug( 'authorization-form: getRedirectionTarget -> Redirection target is: %s', jpcTarget );

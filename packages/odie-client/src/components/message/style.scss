@@ -20,6 +20,7 @@
 	ul {
 		margin: 0 0 1.5em 1.5em;
 		width: calc(100% - 1.5em);
+		padding: 0;
 	}
 
 	.help-center-contact-page {
@@ -123,13 +124,17 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 9999;
+	z-index: 999999;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	background-color: rgba(0, 0, 0, 0.1);
 
 	.odie-fullscreen-backdrop {
+		width: 75vw;
+		height: 85vh;
+		overflow: scroll;
+
 		.odie-chatbox-message {
 			box-shadow: 0 0 0 1px var(--color-border-subtle);
 			width: auto;
@@ -143,6 +148,7 @@
 				position: sticky;
 				top: 0;
 				background-color: #fff;
+				z-index: 1;
 			}
 		}
 
@@ -151,7 +157,15 @@
 			max-height: 80vh;
 			overflow-y: auto;
 		}
+
+		.odie-foldable-card.odie-sources-foldable-card {
+			margin-bottom: 0;
+		}
 	}
+}
+
+.chatbox-messages:last-child {
+	margin-bottom: 64px;
 }
 
 .odie-sources {
@@ -264,14 +278,6 @@ $feedback-button-size: 28px;
 }
 
 $custom-border-corner-size: 16px;
-
-.odie-referenced-message,
-.odie-last-message {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	width: 100%;
-}
 
 .odie-gradient-to-white {
 	background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 50%);

@@ -502,7 +502,7 @@ class PostShare extends Component {
 	}
 
 	renderPrimarySection() {
-		const { hasFetchedConnections, hasRepublicizeFeature, siteSlug } = this.props;
+		const { hasFetchedConnections, hasRepublicizeFeature, siteSlug, siteId } = this.props;
 
 		if ( ! hasFetchedConnections ) {
 			return null;
@@ -515,7 +515,7 @@ class PostShare extends Component {
 		if ( ! hasRepublicizeFeature ) {
 			return (
 				<div>
-					<UpgradeToPremiumNudge { ...this.props } />
+					<UpgradeToPremiumNudge siteId={ siteId } />
 					<ActionsList { ...this.props } />
 				</div>
 			);

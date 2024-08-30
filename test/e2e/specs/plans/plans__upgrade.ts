@@ -28,11 +28,11 @@ const postTitles = Array.from( { length: 2 }, () => DataHelper.getRandomPhrase()
 
 describe(
 	DataHelper.createSuiteTitle(
-		'Plans: Upgrade exising WordPress.com Free site to WordPress.com Explorer'
+		'Plans: Upgrade exising WordPress.com Free site to WordPress.com Premium'
 	),
 	function () {
 		const blogName = DataHelper.getBlogName();
-		const planName = 'Explorer';
+		const planName = 'Premium';
 		const publishedPosts: PostResponse[] = [];
 		let testMediaFile: TestFile;
 		let siteCreatedFlag: boolean;
