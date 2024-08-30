@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	PLAN_BUSINESS,
@@ -33,6 +34,7 @@ const {
 	SITE_MIGRATION_INSTRUCTIONS,
 	SITE_MIGRATION_STARTED,
 	SITE_MIGRATION_ASSISTED_MIGRATION,
+	SITE_MIGRATION_CREDENTIALS,
 } = STEPS;
 
 const steps = [
@@ -45,6 +47,7 @@ const steps = [
 	SITE_MIGRATION_INSTRUCTIONS,
 	SITE_MIGRATION_STARTED,
 	SITE_MIGRATION_ASSISTED_MIGRATION,
+	SITE_MIGRATION_CREDENTIALS,
 ];
 
 const plans: { [ key: string ]: string } = {
@@ -236,7 +239,12 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 					return navigateWithQueryParams( SITE_MIGRATION_INSTRUCTIONS, [], props );
 				}
 
-				return navigateWithQueryParams( MIGRATION_SOURCE_URL, [], props );
+				// @deprecated Remove the MIGRATION_SOURCE_URL when SITE_MIGRATION_CREDENTIALS is considered stable.
+				const SOURCE_STEP = config.isEnabled( 'automated-migration/collect-credentials' )
+					? SITE_MIGRATION_CREDENTIALS
+					: MIGRATION_SOURCE_URL;
+
+				return navigateWithQueryParams( SOURCE_STEP, [], props );
 			},
 		},
 		[ SITE_MIGRATION_INSTRUCTIONS.slug ]: {
@@ -244,9 +252,30 @@ const useCreateStepHandlers = ( navigate: Navigate< StepperStep[] >, flowObject:
 				return navigateWithQueryParams( SITE_MIGRATION_STARTED, [], props );
 			},
 		},
+
+		// @deprecated Remove the MIGRATION_SOURCE_URL when SITE_MIGRATION_CREDENTIALS is considered stable.
 		[ MIGRATION_SOURCE_URL.slug ]: {
 			submit: ( props?: ProvidedDependencies ) => {
 				return navigateWithQueryParams( SITE_MIGRATION_ASSISTED_MIGRATION, [], props );
+			},
+			goBack: ( props?: ProvidedDependencies ) => {
+				return navigateWithQueryParams( MIGRATION_HOW_TO_MIGRATE, [], props );
+			},
+		},
+
+		[ SITE_MIGRATION_CREDENTIALS.slug ]: {
+			submit: ( props?: ProvidedDependencies ) => {
+				const action = getFromPropsOrUrl( 'action', props ) as 'skip' | 'submit';
+				const extraPrams = {
+					...( action === 'skip' ? { credentials: 'skipped' } : {} ),
+				};
+
+				return navigateWithQueryParams(
+					SITE_MIGRATION_ASSISTED_MIGRATION,
+					[ 'credentials' ],
+					{ ...props, ...extraPrams },
+					{ replaceHistory: true }
+				);
 			},
 			goBack: ( props?: ProvidedDependencies ) => {
 				return navigateWithQueryParams( MIGRATION_HOW_TO_MIGRATE, [], props );

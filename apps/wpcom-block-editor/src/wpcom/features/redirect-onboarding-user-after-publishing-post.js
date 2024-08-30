@@ -1,4 +1,4 @@
-import { dispatch, select, subscribe } from '@wordpress/data';
+import { dispatch, select, subscribe, useSelect } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import useLaunchpadScreen from './use-launchpad-screen';
@@ -11,34 +11,31 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
 	const { launchpad_screen: launchpadScreen } = useLaunchpadScreen();
 
-	useEffect( () => {
-		// We check the URL param along with site intent because the param loads faster and prevents element flashing.
-		const hasStartWritingFlowQueryArg =
-			getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
+	const currentPostType = useSelect(
+		( localSelect ) => localSelect( 'core/editor' ).getCurrentPostType(),
+		[]
+	);
 
-		if (
-			intent === START_WRITING_FLOW ||
-			intent === DESIGN_FIRST_FLOW ||
-			hasStartWritingFlowQueryArg
-		) {
-			dispatch( 'core/edit-post' ).closeGeneralSidebar();
-			document.documentElement.classList.add( 'blog-onboarding-hide' );
-		}
-	}, [ intent ] );
-
-	// Check the URL parameter first so we can skip later processing ASAP.
+	// Check the URL parameter first so we can skip later processing ASAP and avoid flashing.
 	const hasStartWritingFlowQueryArg =
 		getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 
-	if ( ! hasStartWritingFlowQueryArg ) {
-		return false;
-	}
+	const shouldShowMinimalUIAndRedirectToFullscreenLaunchpad =
+		( intent === START_WRITING_FLOW || intent === DESIGN_FIRST_FLOW ) &&
+		hasStartWritingFlowQueryArg &&
+		'full' === launchpadScreen &&
+		currentPostType === 'post';
 
-	if ( intent !== START_WRITING_FLOW && intent !== DESIGN_FIRST_FLOW ) {
-		return false;
-	}
+	useEffect( () => {
+		if ( shouldShowMinimalUIAndRedirectToFullscreenLaunchpad ) {
+			dispatch( 'core/edit-post' ).closeGeneralSidebar();
+			document.documentElement.classList.add( 'blog-onboarding-hide' );
+		} else {
+			document.documentElement.classList.remove( 'blog-onboarding-hide' );
+		}
+	}, [ shouldShowMinimalUIAndRedirectToFullscreenLaunchpad ] );
 
-	if ( 'full' !== launchpadScreen ) {
+	if ( ! shouldShowMinimalUIAndRedirectToFullscreenLaunchpad ) {
 		return false;
 	}
 
@@ -56,13 +53,6 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
 		const isCurrentPostScheduled = select( 'core/editor' ).isCurrentPostScheduled();
 		const getCurrentPostRevisionsCount = select( 'core/editor' ).getCurrentPostRevisionsCount();
-		const currentPostType = select( 'core/editor' ).getCurrentPostType();
-
-		// If we're editing anything that is not a post, including pages, templates, and navigation, nothing further needed.
-		if ( currentPostType && currentPostType !== 'post' ) {
-			unsubscribe();
-			return;
-		}
 
 		if (
 			! isSavingPost &&
