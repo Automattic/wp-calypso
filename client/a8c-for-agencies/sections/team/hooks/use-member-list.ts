@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import useFetchActiveMembers from 'calypso/a8c-for-agencies/data/team/use-fetch-active-members';
 import useFetchMemberInvites from 'calypso/a8c-for-agencies/data/team/use-fetch-member-invites';
+import { TeamMember } from '../types';
 
 export function useMemberList() {
 	const {
@@ -20,7 +21,7 @@ export function useMemberList() {
 		refetchMemberInvites();
 	}, [ refetchActiveMembers, refetchMemberInvites ] );
 
-	const members = useMemo( () => {
+	const members: TeamMember[] = useMemo( () => {
 		const data = [
 			...( activeMembers ?? [] ),
 			...( memberInvites?.map( ( invite ) => ( {
@@ -28,7 +29,7 @@ export function useMemberList() {
 				displayName: invite.displayName,
 				email: invite.email,
 				avatar: invite.avatar,
-				status: 'pending',
+				status: 'pending' as const,
 			} ) ) ?? [] ),
 		];
 

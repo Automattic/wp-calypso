@@ -140,7 +140,7 @@ export default function TeamList() {
 	}
 
 	const { data: items, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( members as TeamMember[], dataViewsState, fields );
+		return filterSortAndPaginate( members, dataViewsState, fields );
 	}, [ members, dataViewsState, fields ] );
 
 	if ( items.length === 0 ) {

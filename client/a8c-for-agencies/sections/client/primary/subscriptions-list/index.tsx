@@ -93,9 +93,8 @@ export default function SubscriptionsList() {
 		],
 		[ isFetchingProducts, onCancelSubscription, products, translate ]
 	);
-
 	const { data: items, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( data, dataViewsState, fields );
+		return filterSortAndPaginate( data ?? [], dataViewsState, fields );
 	}, [ data, dataViewsState, fields ] );
 
 	return (
