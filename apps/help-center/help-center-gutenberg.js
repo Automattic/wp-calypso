@@ -8,13 +8,29 @@ import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState, useReducer } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
+import { useI18n } from '@wordpress/react-i18n';
+import { useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks';
-import './help-center.scss';
+import './color-scheme.scss';
+// Remove me once jetpack#38935 is deployed.
+import './help-button.scss';
 
 const queryClient = new QueryClient();
 
 function HelpCenterContent() {
+	const { isRTL } = useI18n();
+
+	const cssUrl = `https://widgets.wp.com/help-center/help-center-wp-admin${
+		isRTL() ? '.rtl' : ''
+	}.css`;
+
+	const wpComponentsCssUrl = `https://widgets.wp.com/help-center/wp-components-styles${
+		isRTL() ? '.rtl' : ''
+	}.css`;
+
+	const cssUrls = useMemo( () => [ cssUrl, wpComponentsCssUrl ], [ cssUrl, wpComponentsCssUrl ] );
+
 	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
@@ -83,6 +99,7 @@ function HelpCenterContent() {
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
+				shadowCSSFromUrls={ cssUrls }
 			/>
 		</>
 	);

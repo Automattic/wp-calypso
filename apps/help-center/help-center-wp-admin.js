@@ -3,14 +3,31 @@ import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter from '@automattic/help-center';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useCallback } from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useEffect, useCallback, useMemo } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
 import { createRoot } from 'react-dom/client';
+import './color-scheme.scss';
+// Remove me once jetpack#38935 is deployed.
+import './help-button.scss';
+
 const queryClient = new QueryClient();
-import './help-center.scss';
 
 function AdminHelpCenterContent() {
-	const { setShowHelpCenter } = useDataStoreDispatch( 'automattic/help-center' );
+	const { isRTL } = useI18n();
+
+	const cssUrl = `https://widgets.wp.com/help-center/help-center-wp-admin${
+		isRTL() ? '.rtl' : ''
+	}.css`;
+
+	const wpComponentsCssUrl = `https://widgets.wp.com/help-center/wp-components-styles${
+		isRTL() ? '.rtl' : ''
+	}.css`;
+
+	const cssUrls = useMemo( () => [ cssUrl, wpComponentsCssUrl ], [ cssUrl, wpComponentsCssUrl ] );
+
+	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
+
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const button = document.getElementById( 'wp-admin-bar-help-center' );
 
@@ -74,6 +91,7 @@ function AdminHelpCenterContent() {
 				hasPurchases={ false }
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
+				shadowCSSFromUrls={ cssUrls }
 			/>
 		</QueryClientProvider>
 	);
