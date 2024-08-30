@@ -12749,7 +12749,7 @@ __metadata:
     "@wordpress/components": "npm:^28.2.0"
     "@wordpress/compose": "npm:^7.2.0"
     "@wordpress/data": "npm:^10.2.0"
-    "@wordpress/dataviews": "npm:^4.1.0"
+    "@wordpress/dataviews": "npm:^4.2.0"
     "@wordpress/dom": "npm:^4.2.0"
     "@wordpress/edit-post": "npm:^8.2.0"
     "@wordpress/element": "npm:^6.2.0"
