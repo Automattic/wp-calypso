@@ -51,7 +51,9 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 		<div className="profiler-header">
 			<div className="l-block-wrapper">
 				<div className="profiler-header-wrapper">
-					<Badge />
+					<Button className="profiler-header__badge" href="https://wordpress.com/speed-test">
+						<Badge />
+					</Button>
 
 					<div className="profiler-header__site-url">
 						<h2>{ urlParts.hostname ?? '' }</h2>

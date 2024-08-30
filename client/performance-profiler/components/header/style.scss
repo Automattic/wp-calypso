@@ -15,6 +15,22 @@
 		padding-bottom: 20px;
 	}
 
+	.profiler-header__badge {
+		font-size: $root-font-size;
+		text-decoration: none;
+		color: var(--studio-white);
+		padding: 0;
+		font-family: $brand-serif;
+
+		&:hover {
+			color: var(--studio-white);
+			text-decoration: none;
+		}
+		&:focus {
+			box-shadow: none;
+		}
+	}
+
 	.profiler-header__site-url {
 		display: flex;
 		flex-direction: row;
