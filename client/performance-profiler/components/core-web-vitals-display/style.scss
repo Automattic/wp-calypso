@@ -53,7 +53,9 @@ $blueberry-color: #3858e9;
 	flex-wrap: wrap;
 
 	& > div {
-		flex: 1;
+		flex-grow: 1;
+		flex-basis: 0;
+		min-width: 300px;
 	}
 
 	& > p {
