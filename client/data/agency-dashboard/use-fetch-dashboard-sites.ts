@@ -35,8 +35,11 @@ const agencyDashboardSortToQueryObject = ( sort?: DashboardSortInterface ) => {
 	};
 };
 
-export interface FetchDashboardSitesArgsInterface {
+export interface FetchDashboardSitesArgsInterface extends FetchSitesQueryKeyParams {
 	isPartnerOAuthTokenLoaded: boolean;
+}
+
+export interface FetchSitesQueryKeyParams {
 	searchQuery: string | undefined;
 	currentPage: number;
 	filter: AgencyDashboardFilter;
