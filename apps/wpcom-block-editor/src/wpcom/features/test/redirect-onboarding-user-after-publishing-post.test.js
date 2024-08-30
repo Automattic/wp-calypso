@@ -9,15 +9,15 @@ const mockUnSubscribe = jest.fn();
 const mockClosePublishSidebar = jest.fn();
 const mockCloseSidebar = jest.fn();
 const mockSubscribeFunction = {};
-const mockUseEffectFunctions = [];
-let mockSubscribeFunctionDescriptor = '';
+const mockUseEffectFunctions = {};
+let mockFunctionDescriptor = '';
 let mockIsSaving = false;
 let mockPostType = 'post';
 let mockLaunchpadScreen = 'full';
 
 jest.mock( 'react', () => ( {
 	useEffect: ( userFunction ) => {
-		mockUseEffectFunctions.push( userFunction );
+		mockUseEffectFunctions[ mockFunctionDescriptor ] = userFunction;
 	},
 } ) );
 
@@ -39,29 +39,31 @@ jest.mock( '../use-site-intent', () => ( {
 	},
 } ) );
 
+const stubSelect = ( item ) => {
+	if ( item === 'core/editor' ) {
+		return {
+			isSavingPost: () => mockIsSaving,
+			isCurrentPostPublished: () => true,
+			getCurrentPostRevisionsCount: () => 1,
+			isCurrentPostScheduled: () => true,
+			getCurrentPostType: () => mockPostType,
+		};
+	}
+
+	if ( item === 'core/preferences' ) {
+		return {
+			get: () => true,
+		};
+	}
+};
+
 jest.mock( '@wordpress/data', () => ( {
 	subscribe: ( userFunction ) => {
-		mockSubscribeFunction[ mockSubscribeFunctionDescriptor ] = userFunction;
+		mockSubscribeFunction[ mockFunctionDescriptor ] = userFunction;
 
 		return mockUnSubscribe;
 	},
-	select: ( item ) => {
-		if ( item === 'core/editor' ) {
-			return {
-				isSavingPost: () => mockIsSaving,
-				isCurrentPostPublished: () => true,
-				getCurrentPostRevisionsCount: () => 1,
-				isCurrentPostScheduled: () => true,
-				getCurrentPostType: () => mockPostType,
-			};
-		}
-
-		if ( item === 'core/preferences' ) {
-			return {
-				get: () => true,
-			};
-		}
-	},
+	select: stubSelect,
 	dispatch: () => {
 		return {
 			closePublishSidebar: () => {
@@ -72,12 +74,13 @@ jest.mock( '@wordpress/data', () => ( {
 			},
 		};
 	},
+	useSelect: ( selector ) => selector( stubSelect ),
 } ) );
 
 describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 	it( 'should NOT redirect while saving the post', () => {
 		mockIsSaving = true;
-		mockSubscribeFunctionDescriptor = 'no_redirect_while_saving_post';
+		mockFunctionDescriptor = 'no_redirect_while_saving_post';
 		delete global.window;
 		global.window = {
 			sessionStorage: {
@@ -94,8 +97,8 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 
 		RedirectOnboardingUserAfterPublishingPost();
 
-		expect( mockSubscribeFunction[ mockSubscribeFunctionDescriptor ] ).not.toBe( undefined );
-		mockSubscribeFunction[ mockSubscribeFunctionDescriptor ]();
+		expect( mockSubscribeFunction[ mockFunctionDescriptor ] ).not.toBe( undefined );
+		mockSubscribeFunction[ mockFunctionDescriptor ]();
 
 		expect( mockUnSubscribe ).not.toHaveBeenCalled();
 		expect( global.window.location.href ).toBe( undefined );
@@ -104,7 +107,7 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 	it( 'should redirect the user to the launchpad when a post is published and the start-writing query parameter is "true"', () => {
 		jest.clearAllMocks();
 		mockIsSaving = false;
-		mockSubscribeFunctionDescriptor = 'redirect_to_launchpad_post';
+		mockFunctionDescriptor = 'redirect_to_launchpad_post';
 		delete global.window;
 
 		global.window = {
@@ -122,8 +125,8 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 
 		RedirectOnboardingUserAfterPublishingPost();
 
-		expect( mockSubscribeFunction[ mockSubscribeFunctionDescriptor ] ).not.toBe( null );
-		mockSubscribeFunction[ mockSubscribeFunctionDescriptor ]();
+		expect( mockSubscribeFunction[ mockFunctionDescriptor ] ).not.toBe( null );
+		mockSubscribeFunction[ mockFunctionDescriptor ]();
 
 		expect( mockUnSubscribe ).toHaveBeenCalledTimes( 1 );
 		expect( mockClosePublishSidebar ).toHaveBeenCalledTimes( 1 );
@@ -135,7 +138,7 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 	it( 'should NOT redirect the user to the launchpad when a post is published and the start-writing query parameter is present but not "true"', () => {
 		jest.clearAllMocks();
 		mockIsSaving = false;
-		mockSubscribeFunctionDescriptor = 'no_redirect_to_launchpad_bad_start_writing_param';
+		mockFunctionDescriptor = 'no_redirect_to_launchpad_bad_start_writing_param';
 		delete global.window;
 
 		global.window = {
@@ -153,7 +156,7 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 
 		RedirectOnboardingUserAfterPublishingPost();
 
-		expect( mockSubscribeFunction[ mockSubscribeFunctionDescriptor ] ).toBe( undefined );
+		expect( mockSubscribeFunction[ mockFunctionDescriptor ] ).toBe( undefined );
 		expect( mockClosePublishSidebar ).not.toHaveBeenCalled();
 		expect( global.window.location.href ).toBe( undefined );
 	} );
@@ -162,7 +165,7 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 		jest.clearAllMocks();
 		mockIsSaving = false;
 		mockLaunchpadScreen = 'skipped';
-		mockSubscribeFunctionDescriptor = 'no_redirect_to_launchpad_skipped_launchpad_screen';
+		mockFunctionDescriptor = 'no_redirect_to_launchpad_skipped_launchpad_screen';
 		delete global.window;
 
 		global.window = {
@@ -180,7 +183,7 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 
 		RedirectOnboardingUserAfterPublishingPost();
 
-		expect( mockSubscribeFunction[ mockSubscribeFunctionDescriptor ] ).toBe( undefined );
+		expect( mockSubscribeFunction[ mockFunctionDescriptor ] ).toBe( undefined );
 		expect( mockClosePublishSidebar ).not.toHaveBeenCalled();
 		expect( global.window.location.href ).toBe( undefined );
 
@@ -191,7 +194,7 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 		jest.clearAllMocks();
 		mockIsSaving = false;
 		mockPostType = 'page';
-		mockSubscribeFunctionDescriptor = 'no_redirect_page_published';
+		mockFunctionDescriptor = 'no_redirect_page_published';
 		delete global.window;
 
 		global.window = {
@@ -209,11 +212,8 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 
 		RedirectOnboardingUserAfterPublishingPost();
 
-		expect( mockSubscribeFunction[ mockSubscribeFunctionDescriptor ] ).not.toBe( null );
+		expect( mockSubscribeFunction[ mockFunctionDescriptor ] ).toBe( undefined );
 
-		mockSubscribeFunction[ mockSubscribeFunctionDescriptor ]();
-
-		expect( mockUnSubscribe ).toHaveBeenCalledTimes( 1 );
 		expect( mockClosePublishSidebar ).not.toHaveBeenCalled();
 		expect( global.window.location.href ).toBe( undefined );
 	} );
@@ -222,7 +222,7 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 		jest.clearAllMocks();
 		mockIsSaving = false;
 		mockPostType = 'template';
-		mockSubscribeFunctionDescriptor = 'no_redirect_template_published';
+		mockFunctionDescriptor = 'no_redirect_template_published';
 		delete global.window;
 
 		global.window = {
@@ -240,11 +240,8 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 
 		RedirectOnboardingUserAfterPublishingPost();
 
-		expect( mockSubscribeFunction[ mockSubscribeFunctionDescriptor ] ).not.toBe( null );
+		expect( mockSubscribeFunction[ mockFunctionDescriptor ] ).toBe( undefined );
 
-		mockSubscribeFunction[ mockSubscribeFunctionDescriptor ]();
-
-		expect( mockUnSubscribe ).toHaveBeenCalledTimes( 1 );
 		expect( mockClosePublishSidebar ).not.toHaveBeenCalled();
 		expect( global.window.location.href ).toBe( undefined );
 	} );
@@ -252,7 +249,8 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 	it( 'should close the sidebar once isComplementaryAreaVisible === true', () => {
 		jest.clearAllMocks();
 		mockIsSaving = false;
-		mockSubscribeFunctionDescriptor = 'close_sidebar';
+		mockPostType = 'post';
+		mockFunctionDescriptor = 'close_sidebar';
 		delete global.window;
 		global.window = {
 			sessionStorage: {
@@ -269,10 +267,10 @@ describe( 'RedirectOnboardingUserAfterPublishingPost', () => {
 
 		RedirectOnboardingUserAfterPublishingPost();
 
-		expect( mockSubscribeFunction[ mockSubscribeFunctionDescriptor ] ).not.toBe( null );
+		expect( mockSubscribeFunction[ mockFunctionDescriptor ] ).not.toBe( undefined );
+		expect( mockUseEffectFunctions[ mockFunctionDescriptor ] ).not.toBe( undefined );
 
-		mockSubscribeFunction[ mockSubscribeFunctionDescriptor ]();
-		mockUseEffectFunctions[ 0 ]();
+		mockUseEffectFunctions[ mockFunctionDescriptor ]();
 
 		expect( mockCloseSidebar ).toHaveBeenCalledTimes( 1 );
 	} );
