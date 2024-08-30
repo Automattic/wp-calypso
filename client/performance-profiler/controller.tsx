@@ -51,7 +51,7 @@ export function WeeklyReportContext( context: Context, next: () => void ): void 
 	}
 
 	if ( ! isLoggedIn ) {
-		page.redirect( '/log-in?redirect_to=' + context.path );
+		window.location.href = '/log-in?redirect_to=' + encodeURIComponent( context.path );
 		return;
 	}
 
