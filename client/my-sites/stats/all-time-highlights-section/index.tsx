@@ -2,10 +2,10 @@ import {
 	Card,
 	ComponentSwapper,
 	formattedNumber,
-	percentCalculator,
 	ShortenedNumber,
 	DotPager,
 } from '@automattic/components';
+import { percentCalculator } from '@automattic/components/src/highlight-cards/lib/numbers';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import clsx from 'clsx';
