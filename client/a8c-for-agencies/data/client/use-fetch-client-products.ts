@@ -43,7 +43,7 @@ function queryClientProducts(): Promise< APIProductFamily[] > {
 }
 
 export default function useFetchClientProducts(
-	isEnabled = true
+	isEnabled = false
 ): UseQueryResult< APIProductFamilyProduct[], unknown > {
 	return useQuery( {
 		queryKey: [ 'a4a-client-products' ],
