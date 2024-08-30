@@ -162,8 +162,8 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 							formatUnit( metricsTresholds[ activeTab ].good ),
 							formatUnit( metricsTresholds[ activeTab ].needsImprovement ),
 						] }
-						width={ 550 }
-						height={ 300 }
+						width={ 500 }
+						height={ 280 }
 					/>
 				</div>
 			</div>
