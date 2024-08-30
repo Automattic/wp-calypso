@@ -16,13 +16,7 @@ const DateRangePickerShortcuts = ( {
 	onClick,
 }: {
 	currentShortcut?: string;
-	onClick: ( shortcut: {
-		id?: string;
-		label?: string;
-		offset: number;
-		range: number;
-		period?: string;
-	} ) => void;
+	onClick: ( shortcut: { newFromDate: moment.Moment; newToDate: moment.Moment } ) => void;
 } ) => {
 	const translate = useTranslate();
 	const [ selectedShortcut, setSelectedShortcut ] = useState( currentShortcut );
