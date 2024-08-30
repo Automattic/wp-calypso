@@ -667,7 +667,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post {
-	.reader-full-post__author-block {
+	div.reader-full-post__author-block {
 		.author-compact-profile {
 			display: grid;
 			grid-template-columns: auto 1fr;
@@ -702,7 +702,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			}
 
 			.reader-avatar {
-				margin: 0 10px 5px 0 !important;
+				margin: 0 10px 5px 0;
 				position: relative;
 				top: 2px;
 
