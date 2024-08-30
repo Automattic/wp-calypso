@@ -39,6 +39,7 @@ export {
 	StatsCardAvatar,
 	StatsCardTitleExtras,
 } from './horizontal-bar-list';
+export { default as CountCard } from './highlight-cards/count-card';
 export { default as CountComparisonCard } from './highlight-cards/count-comparison-card';
 export { default as AnnualHighlightCards } from './highlight-cards/annual-highlight-cards';
 export {
