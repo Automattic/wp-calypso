@@ -681,9 +681,9 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			text-overflow: clip;
 			white-space: nowrap;
 
-			&:not(.has-author-link).has-author-icon {
-				margin-left: -17px;
-			}
+			//&:not(.has-author-link).has-author-icon {
+			//	margin-left: -17px;
+			//}
 
 			&:not(.has-author-icon).has-author-link {
 				grid-template-areas:
@@ -709,6 +709,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				margin: 0 10px 5px 0;
 
 				&:not(.has-site-and-author-icon) img {
+					margin-left: -17px;
 					top: 7px;
 				}
 
