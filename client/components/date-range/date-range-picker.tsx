@@ -1,5 +1,5 @@
 import moment, { Moment } from 'moment';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { DateUtils } from 'react-day-picker';
 import DatePicker from 'calypso/components/date-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -159,6 +159,12 @@ const DateRangePicker = ( {
 
 	const fromDate = momentDateToJsDate( selectedStartDate );
 	const toDate = momentDateToJsDate( selectedEndDate );
+
+	useEffect( () => {
+		if ( selectedStartDate && selectedEndDate && selectedStartDate.isAfter() ) {
+			onDateRangeChange( selectedEndDate, selectedStartDate );
+		}
+	}, [ selectedStartDate?.format(), selectedEndDate?.format() ] );
 
 	// Add "Range" modifier classes to Day component
 	// within Date Picker to aid "range" styling
