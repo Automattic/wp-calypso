@@ -82,6 +82,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 			] ),
 		],
 		[
+			agencyId,
 			search,
 			currentPage,
 			filter,
@@ -185,7 +186,15 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 				} );
 			},
 		};
-	}, [ siteId, isFavorite ] );
+	}, [
+		siteId,
+		isFavorite,
+		queryClient,
+		queryKey,
+		siblingQueryKey,
+		handleOnChangeFavoriteSuccess,
+		dispatch,
+	] );
 
 	const { isPending, mutate } = useToggleFavoriteSiteMutation( handleMutation );
 

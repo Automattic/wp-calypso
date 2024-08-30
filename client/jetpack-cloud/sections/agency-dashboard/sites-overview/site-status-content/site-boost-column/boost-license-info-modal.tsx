@@ -83,6 +83,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 			currentPage,
 			filter,
 			sort,
+			showOnlyDevelopmentSites,
 		]
 	);
 	const { installBoost, status } = useInstallBoost( siteId, siteUrl, queryKey );

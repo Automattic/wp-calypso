@@ -58,7 +58,16 @@ export default function useToggleActivateMonitor(
 							...( agencyId ? [ agencyId ] : [] ),
 						] ),
 				  ],
-		[ agencyId, currentPage, dataViewsState, showOnlyFavorites, showOnlyDevelopmentSites ]
+		[
+			filter,
+			search,
+			sort,
+			agencyId,
+			currentPage,
+			dataViewsState,
+			showOnlyFavorites,
+			showOnlyDevelopmentSites,
+		]
 	);
 
 	const toggleActivateMonitoring = useToggleActivateMonitorMutation( {
