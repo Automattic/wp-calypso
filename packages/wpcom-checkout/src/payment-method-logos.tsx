@@ -38,7 +38,6 @@ export function PaymentLogo( { brand, isSummary }: { brand: string; isSummary?: 
 				</BrandLogo>
 			);
 			break;
-		case 'cb':
 		case 'cartes_bancaires':
 			cardFieldIcon = (
 				<BrandLogo isSummary={ isSummary }>

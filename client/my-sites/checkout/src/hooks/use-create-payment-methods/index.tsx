@@ -75,7 +75,7 @@ export function useCreateCreditCard( {
 	allowUseForAllSubscriptions,
 	hasExistingCardMethods,
 }: {
-	currency: string;
+	currency: string | null;
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	shouldUseEbanx: boolean;
@@ -108,6 +108,7 @@ export function useCreateCreditCard( {
 				  } )
 				: null,
 		[
+			currency,
 			shouldLoadStripeMethod,
 			stripePaymentMethodStore,
 			shouldUseEbanx,

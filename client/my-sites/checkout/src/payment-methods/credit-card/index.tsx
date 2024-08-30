@@ -45,7 +45,7 @@ function CreditCardSummary() {
 
 const CreditCardLabel: React.FC< {
 	hasExistingCardMethods: boolean | undefined;
-	currency: string;
+	currency: string | null;
 } > = ( { hasExistingCardMethods, currency } ) => {
 	const { __ } = useI18n();
 	return (
@@ -60,7 +60,7 @@ const CreditCardLabel: React.FC< {
 	);
 };
 
-function CreditCardLogos( { currency }: { currency: string } ) {
+function CreditCardLogos( { currency }: { currency: string | null } ) {
 	return (
 		<PaymentMethodLogos className="credit-card__logo">
 			{ currency === 'EUR' && <CBLogo className="has-background" /> }
@@ -80,7 +80,7 @@ export function createCreditCardMethod( {
 	allowUseForAllSubscriptions,
 	hasExistingCardMethods,
 }: {
-	currency: string;
+	currency: string | null;
 	store: CardStoreType;
 	shouldUseEbanx?: boolean;
 	shouldShowTaxFields?: boolean;
