@@ -8,6 +8,7 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
 import QuerySiteWpVersion from 'calypso/components/data/query-site-wp-version';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
@@ -48,6 +49,7 @@ export default function ItemPreviewPaneHeader( {
 	const wpVersion = selectedSite?.options?.software_version?.match( /^\d+(\.\d+){0,2}/ )?.[ 0 ]; // Some times it can be `6.6.1-alpha-58760`, so we strip the `-alpha-58760` part
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
 	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+	const isMobileApp = isWpMobileApp();
 
 	const focusRef = useRef< HTMLButtonElement >( null );
 
@@ -81,101 +83,105 @@ export default function ItemPreviewPaneHeader( {
 			{ isAtomic && <QuerySiteWpVersion siteId={ siteId } /> }
 			<div className={ clsx( 'item-preview__header', className ) }>
 				<div className="item-preview__header-content">
-					{ !! itemData?.withIcon && (
-						<SiteFavicon
-							blogId={ itemData.blogId }
-							fallback={ siteIconFallback }
-							color={ itemData.color }
-							className="item-preview__header-favicon"
-							size={ size }
-						/>
-					) }
-					<div className="item-preview__header-info">
-						<div className="item-preview__header-title-summary">
-							<div className="item-preview__header-title">{ itemData.title }</div>
-							<div className="item-preview__header-summary">
-								{ itemData?.url ? (
-									<Button
-										variant="link"
-										className="item-preview__header-summary-link"
-										href={ itemData.url }
-										target="_blank"
-									>
-										<span>
-											{ itemData.subtitle }
-											<Icon
-												className="sidebar-v2__external-icon"
-												icon={ external }
-												size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
-											/>
-										</span>
-									</Button>
-								) : (
-									itemData.subtitle
-								) }
-
-								{ extraProps && extraProps.subtitleExtra ? (
-									<span>
-										<extraProps.subtitleExtra />
-									</span>
-								) : (
-									''
-								) }
-							</div>
-
-							{ shouldDisplayVersionNumbers && (
-								<div className="item-preview__header-env-data">
-									{ wpVersion && (
-										<div className="item-preview__header-env-data-item">
-											WordPress{ ' ' }
-											<a
-												className="item-preview__header-env-data-item-link"
-												href={ `/hosting-config/${ selectedSite?.domain }#wp` }
-												onClick={ handleWpVersionClick }
+					{ ! isMobileApp && (
+						<>
+							{ !! itemData?.withIcon && (
+								<SiteFavicon
+									blogId={ itemData.blogId }
+									fallback={ siteIconFallback }
+									color={ itemData.color }
+									className="item-preview__header-favicon"
+									size={ size }
+								/>
+							) }
+							<div className="item-preview__header-info">
+								<div className="item-preview__header-title-summary">
+									<div className="item-preview__header-title">{ itemData.title }</div>
+									<div className="item-preview__header-summary">
+										{ itemData?.url ? (
+											<Button
+												variant="link"
+												className="item-preview__header-summary-link"
+												href={ itemData.url }
+												target="_blank"
 											>
-												{ wpVersion }
-												{ wpVersionName && isStagingSite && <span> ({ wpVersionName })</span> }
-											</a>
-										</div>
-									) }
+												<span>
+													{ itemData.subtitle }
+													<Icon
+														className="sidebar-v2__external-icon"
+														icon={ external }
+														size={ extraProps?.externalIconSize || ICON_SIZE_SMALL }
+													/>
+												</span>
+											</Button>
+										) : (
+											itemData.subtitle
+										) }
 
-									{ phpVersion && (
-										<div className="item-preview__header-env-data-item">
-											PHP{ ' ' }
-											<a
-												className="item-preview__header-env-data-item-link"
-												onClick={ handlePhpVersionClick }
-												href={ `/hosting-config/${ selectedSite?.domain }#php` }
-											>
-												{ phpVersion }
-											</a>
+										{ extraProps && extraProps.subtitleExtra ? (
+											<span>
+												<extraProps.subtitleExtra />
+											</span>
+										) : (
+											''
+										) }
+									</div>
+
+									{ shouldDisplayVersionNumbers && (
+										<div className="item-preview__header-env-data">
+											{ wpVersion && (
+												<div className="item-preview__header-env-data-item">
+													WordPress{ ' ' }
+													<a
+														className="item-preview__header-env-data-item-link"
+														href={ `/hosting-config/${ selectedSite?.domain }#wp` }
+														onClick={ handleWpVersionClick }
+													>
+														{ wpVersion }
+														{ wpVersionName && isStagingSite && <span> ({ wpVersionName })</span> }
+													</a>
+												</div>
+											) }
+
+											{ phpVersion && (
+												<div className="item-preview__header-env-data-item">
+													PHP{ ' ' }
+													<a
+														className="item-preview__header-env-data-item-link"
+														onClick={ handlePhpVersionClick }
+														href={ `/hosting-config/${ selectedSite?.domain }#php` }
+													>
+														{ phpVersion }
+													</a>
+												</div>
+											) }
 										</div>
 									) }
 								</div>
-							) }
-						</div>
 
-						{ isPreviewLoaded && (
-							<div className="item-preview__header-actions">
-								{ extraProps?.headerButtons ? (
-									<extraProps.headerButtons
-										focusRef={ focusRef }
-										itemData={ itemData }
-										closeSitePreviewPane={ closeItemPreviewPane || ( () => {} ) }
-									/>
-								) : (
-									<Button
-										onClick={ closeItemPreviewPane }
-										className="item-preview__close-preview"
-										aria-label={ translate( 'Close Preview' ) }
-										ref={ focusRef }
-									>
-										<Gridicon icon="cross" size={ ICON_SIZE_REGULAR } />
-									</Button>
+								{ isPreviewLoaded && (
+									<div className="item-preview__header-actions">
+										{ extraProps?.headerButtons ? (
+											<extraProps.headerButtons
+												focusRef={ focusRef }
+												itemData={ itemData }
+												closeSitePreviewPane={ closeItemPreviewPane || ( () => {} ) }
+											/>
+										) : (
+											<Button
+												onClick={ closeItemPreviewPane }
+												className="item-preview__close-preview"
+												aria-label={ translate( 'Close Preview' ) }
+												ref={ focusRef }
+											>
+												<Gridicon icon="cross" size={ ICON_SIZE_REGULAR } />
+											</Button>
+										) }
+									</div>
 								) }
 							</div>
-						) }
-					</div>
+						</>
+					) }
 				</div>
 			</div>
 		</>

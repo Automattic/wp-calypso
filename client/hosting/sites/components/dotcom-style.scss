@@ -710,3 +710,11 @@
 		}
 	}
 }
+
+.is-mobile-app-view {
+	.wpcom-site .a4a-layout.sites-dashboard .site-preview-pane {
+		.item-preview__header {
+			padding: 0;
+		}
+	}
+}
