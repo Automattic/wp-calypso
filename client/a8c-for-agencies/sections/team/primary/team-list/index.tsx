@@ -43,7 +43,7 @@ export default function TeamList() {
 		},
 	} );
 
-	const { members, hasMembers, isPending, refetch } = useMemberList();
+	const { members, isPending, refetch } = useMemberList();
 
 	const { mutate: cancelMemberInvite } = useCancelMemberInviteMutation();
 
@@ -139,9 +139,8 @@ export default function TeamList() {
 		// FIXME: Add placeholder when UI is pending
 	}
 
-
 	const { data: items, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( members, dataViewsState, fields );
+		return filterSortAndPaginate( members as TeamMember[], dataViewsState, fields );
 	}, [ members, dataViewsState, fields ] );
 
 	if ( items.length === 0 ) {
