@@ -851,12 +851,15 @@ export function subscribedWithinPastWeek( purchase: Purchase ) {
 
 /**
  * Returns the payment logo to display based on the payment method
+ * 'displayBrand' respects the customer's card brand choice if available
  * @param {Object} purchase - the purchase with which we are concerned
  * @returns {string|null} the payment logo type, or null if no payment type is set.
  */
 export function paymentLogoType( purchase: Purchase ): string | null | undefined {
 	if ( isPaidWithCreditCard( purchase ) ) {
-		return purchase.payment.creditCard?.type;
+		return purchase.payment.creditCard?.displayBrand
+			? purchase.payment.creditCard?.displayBrand
+			: purchase.payment.creditCard?.type;
 	}
 
 	if ( isPaidWithPayPalDirect( purchase ) ) {
