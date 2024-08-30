@@ -45,10 +45,11 @@ const onboarding: Flow = {
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 
-		const { domainCartItem, planCartItem } = useSelect(
+		const { domainCartItem, planCartItem, couponCode } = useSelect(
 			( select: ( key: string ) => OnboardSelect ) => ( {
 				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+				couponCode: select( ONBOARD_STORE ).getCouponCode(),
 			} ),
 			[]
 		);
@@ -86,6 +87,7 @@ const onboarding: Flow = {
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 								redirect_to: destination,
 								signup: 1,
+								coupon: couponCode,
 							} )
 						);
 					} else {
