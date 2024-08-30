@@ -12,7 +12,7 @@ import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {
 	lastDigits?: string;
-	displayBrand?: string;
+	displayBrand?: string | null;
 	cardType?: string;
 	name: string;
 	expiry?: string;
