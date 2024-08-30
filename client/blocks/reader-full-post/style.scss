@@ -681,10 +681,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			text-overflow: clip;
 			white-space: nowrap;
 
-			//&:not(.has-author-link).has-author-icon {
-			//	margin-left: -17px;
-			//}
-
 			&:not(.has-author-icon).has-author-link {
 				grid-template-areas:
 					"links"
@@ -706,7 +702,14 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			}
 
 			.reader-avatar {
-				margin: 0 10px 5px 0;
+				margin: 0 10px 5px 0 !important;
+				position: relative;
+				top: 2px;
+
+				@include breakpoint-deprecated( "<480px" ) {
+					position: relative;
+					top: 5px;
+				}
 
 				&:not(.has-site-and-author-icon) img {
 					margin-left: -17px;
@@ -747,6 +750,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				}
 
 				.reader-author-link {
+					@include breakpoint-deprecated( "<480px" ) {
+						display: none;
+					}
+
 					&::after {
 						content: ", ";
 						font-weight: 400;
