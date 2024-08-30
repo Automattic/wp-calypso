@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -62,10 +61,7 @@ export default function ItemPreviewPaneHeader( {
 		extraProps?.siteIconFallback ?? ( itemData.isDotcomSite ? 'wordpress-logo' : 'color' );
 
 	const shouldDisplayVersionNumbers =
-		config.isEnabled( 'hosting-overview-refinements' ) &&
-		! itemData.hideEnvDataInHeader &&
-		isAtomic &&
-		( wpVersion || phpVersion );
+		! itemData.hideEnvDataInHeader && isAtomic && ( wpVersion || phpVersion );
 
 	const handlePhpVersionClick = () => {
 		dispatch( recordTracksEvent( 'calypso_hosting_php_version_click' ) );
