@@ -118,6 +118,10 @@ $blueberry-color: #3858e9;
 				align-items: flex-start;
 				gap: 32px;
 				align-self: stretch;
+
+				p {
+					line-height: 24px;
+				}
 			}
 
 			.metrics-insight-detailed-content {
