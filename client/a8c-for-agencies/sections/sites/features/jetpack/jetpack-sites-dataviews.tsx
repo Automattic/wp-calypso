@@ -473,7 +473,12 @@ export const JetpackSitesDataViews = ( {
 		actions: [],
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
-		onSelectionChange: ( [ item ]: SiteData[] ) => openSitePreviewPane( item.site.value ),
+		onSelectionChange: ( items: string[] ) => {
+			const selectedItem = sites.find( ( site ) => site.ref === items[ 0 ] );
+			if ( selectedItem ) {
+				openSitePreviewPane( selectedItem.site.value );
+			}
+		},
 		defaultLayouts: { table: {} },
 	} );
 
