@@ -550,8 +550,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				"avatar follow";
 			column-gap: 5px;
 			margin-top: 20px;
+			padding-right: 10px;
+			text-overflow: clip;
+			white-space: nowrap;
 
-			&:not(.has-author-link) {
+			&:not(.has-author-link).has-author-icon {
 				margin-left: -17px;
 			}
 
@@ -571,16 +574,18 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				}
 
 				.gravatar {
-					height: 24px;
-					width: 24px;
+					height: 24px !important;
+					width: 24px !important;
 					margin-right: 1em;
 					position: relative;
 					left: 18px;
 					top: -18px;
 					vertical-align: bottom;
+					max-width: initial;
 				}
 
-				.site-icon {
+				.site-icon,
+				.gridicon {
 					height: 32px !important;
 					width: 32px !important;
 					line-height: 32px !important;
@@ -616,8 +621,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				position: relative;
 				top: -12px;
 				margin-top: 0;
+				flex-wrap: inherit;
 
-				.author-compact-profile__follow-count {
+				.author-compact-profile__follow-count,
+				.follow-button {
 					padding: 5px 5px 5px 0;
 				}
 			}
