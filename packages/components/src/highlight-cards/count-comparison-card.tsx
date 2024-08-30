@@ -20,12 +20,14 @@ type CountComparisonCardProps = {
 	compact?: boolean;
 };
 
-function formatNumber( number: number | null, isShortened = true ) {
-	return importedFormatNumber(
-		number,
-		DEFAULT_LOCALE,
-		isShortened ? COMPACT_FORMATTING_OPTIONS : STANDARD_FORMATTING_OPTIONS
-	);
+function formatNumber( number: number | null, isShortened = true, showSign = false ) {
+	const option = isShortened
+		? { ...COMPACT_FORMATTING_OPTIONS }
+		: { ...STANDARD_FORMATTING_OPTIONS };
+	if ( showSign ) {
+		option.signDisplay = 'exceptZero';
+	}
+	return importedFormatNumber( number, DEFAULT_LOCALE, option );
 }
 
 function subtract( a: number | null, b: number | null | undefined ): number | null {
@@ -89,8 +91,7 @@ function TooltipContent( { count, previousCount, icon, heading }: CountCompariso
 					{ '  ' }
 					{ difference !== 0 && difference !== null && (
 						<span className="highlight-card-tooltip-count-difference">
-							({ difference < 0 ? '-' : '+' }
-							{ formatNumber( Math.abs( difference as number ), false ) })
+							({ formatNumber( difference, false, true ) })
 						</span>
 					) }
 				</div>
