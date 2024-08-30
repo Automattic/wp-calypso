@@ -22,16 +22,12 @@ interface SiteProps {
 export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment( LAUNCHPAD_EXPERIMENT_NAME );
 
-	const variationsToSkipLaunchpad = [ 'treatment_no_launchpad', 'treatment_home_launchpad' ];
-	const shouldByPassLaunchpad =
-		! isLoadingExperiment ||
-		variationsToSkipLaunchpad.includes( experimentAssignment?.variationName ?? '' ) ||
-		true;
+	const shouldShowCustomerHome =
+		! isLoadingExperiment && 'treatment' === experimentAssignment?.variationName;
 
-	let launchpadStateOnSkip: null | 'skipped' | 'off' = null;
-	if ( shouldByPassLaunchpad ) {
-		launchpadStateOnSkip =
-			experimentAssignment?.variationName === 'treatment_no_launchpad' ? 'off' : 'skipped';
+	let launchpadStateOnSkip: null | 'skipped' = null;
+	if ( shouldShowCustomerHome ) {
+		launchpadStateOnSkip = 'skipped';
 	}
 
 	const setLaunchpadSkipState = ( siteIdOrSlug: string | number | null ) => {
@@ -42,7 +38,7 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 
 	return {
 		getPostFlowUrl: ( { flow, siteId, siteSlug }: PostFlowUrlProps ) => {
-			if ( shouldByPassLaunchpad ) {
+			if ( shouldShowCustomerHome ) {
 				return '/home/' + siteSlug;
 			}
 
@@ -53,7 +49,7 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 			return `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`;
 		},
 		postFlowNavigator: ( { siteId, siteSlug }: SiteProps ) => {
-			if ( shouldByPassLaunchpad ) {
+			if ( shouldShowCustomerHome ) {
 				setLaunchpadSkipState( siteId || siteSlug );
 
 				exitFlow( '/home/' + siteSlug );
@@ -64,7 +60,7 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 			return;
 		},
 		initializeLaunchpadState: ( { siteId, siteSlug }: SiteProps ) => {
-			if ( shouldByPassLaunchpad ) {
+			if ( shouldShowCustomerHome ) {
 				setLaunchpadSkipState( siteId || siteSlug );
 				return;
 			}
