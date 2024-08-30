@@ -45,6 +45,7 @@ export class DateRange extends Component {
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
 		renderInputs: PropTypes.func,
+		renderShortcuts: PropTypes.bool,
 		rootClass: PropTypes.string,
 	};
 
@@ -57,6 +58,7 @@ export class DateRange extends Component {
 		renderTrigger: ( props ) => <DateRangeTrigger { ...props } />,
 		renderHeader: ( props ) => <DateRangeHeader { ...props } />,
 		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
+		renderShortcuts: false,
 		rootClass: '',
 	};
 
@@ -431,6 +433,11 @@ export class DateRange extends Component {
 	 * @returns {import('react').Element} the Popover component
 	 */
 	renderPopover() {
+		const { renderShortcuts } = this.props;
+
+		// Only render shortcuts if renderShortcuts is true
+		const shortcuts = renderShortcuts ? this.renderShortcutsComponent() : null;
+
 		const headerProps = {
 			onApplyClick: this.commitDates,
 			onCancelClick: this.closePopoverAndRevert,
@@ -479,13 +486,77 @@ export class DateRange extends Component {
 							numberOfMonths={ this.getNumberOfMonths() }
 						/>
 					</div>
-					{ showShortcuts && (
-						<div className="date-control-picker-shortcuts">
-							<Shortcuts onClick={ this.handleShortcutClick } />
-						</div>
+					{ shortcuts && (
+						<div className="date-control-picker-shortcuts">{ this.renderShortcutsComponent() }</div>
 					) }
 				</div>
 			</Popover>
+		);
+	}
+
+	/**
+	 * Renders the Shortcuts component
+	 * @returns {import('react').Element} the Shortcuts component
+	 */
+	renderShortcutsComponent() {
+		return <Shortcuts onClick={ this.handleShortcutClick } />;
+	}
+
+	/**
+	 * Renders the DatePicker component
+	 * @returns {import('react').Element} the DatePicker component
+	 */
+	renderDatePicker() {
+		const fromDate = this.momentDateToJsDate( this.state.startDate );
+		const toDate = this.momentDateToJsDate( this.state.endDate );
+
+		// Add "Range" modifier classes to Day component
+		// within Date Picker to aid "range" styling
+		// http://react-day-picker.js.org/api/DayPicker/#modifiers
+		const modifiers = {
+			start: fromDate,
+			end: toDate,
+			'range-start': fromDate,
+			'range-end': toDate,
+			range: {
+				from: fromDate,
+				to: toDate,
+			},
+		};
+
+		// Dates to be "selected" in Picker
+		const selected = [
+			fromDate,
+			{
+				from: fromDate,
+				to: toDate,
+			},
+		];
+
+		const rootClassNames = {
+			'date-range__picker': true,
+		};
+
+		const calendarInitialDate =
+			this.props.firstSelectableDate ||
+			( this.props.lastSelectableDate &&
+				moment( this.props.lastSelectableDate ).subtract( 1, 'month' ) ) ||
+			this.state.startDate;
+
+		return (
+			<DatePicker
+				calendarViewDate={ this.state.focusedMonth }
+				calendarInitialDate={ this.momentDateToJsDate( calendarInitialDate ) ?? null }
+				rootClassNames={ rootClassNames }
+				modifiers={ modifiers }
+				showOutsideDays={ false }
+				fromMonth={ this.momentDateToJsDate( this.props.firstSelectableDate ) }
+				toMonth={ this.momentDateToJsDate( this.props.lastSelectableDate ) }
+				onSelectDay={ this.onSelectDate }
+				selectedDays={ selected }
+				numberOfMonths={ this.getNumberOfMonths() }
+				disabledDays={ this.getDisabledDaysConfig() }
+			/>
 		);
 	}
 
