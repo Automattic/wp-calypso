@@ -6,7 +6,6 @@ import { useEffect, useReducer } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks';
-import './help-center.scss';
 
 function HelpCenterContent() {
 	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
@@ -22,7 +21,7 @@ function HelpCenterContent() {
 				href="https://wordpress.com/help"
 				icon={ <HelpIcon /> }
 				label="Help"
-				size={ canvasMode === 'edit' ? 'compact' : undefined }
+				size={ ! canvasMode || canvasMode === 'edit' ? 'compact' : undefined }
 				target="_blank"
 			/>
 		</>
