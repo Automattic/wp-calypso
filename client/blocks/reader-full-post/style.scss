@@ -549,6 +549,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				"avatar links"
 				"avatar follow";
 			column-gap: 5px;
+			row-gap: 5px;
 			margin-top: 20px;
 			padding-right: 10px;
 			text-overflow: clip;
@@ -556,6 +557,18 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 			&:not(.has-author-link).has-author-icon {
 				margin-left: -17px;
+			}
+
+			&:not(.has-author-icon).has-author-link {
+				grid-template-areas:
+					"links"
+					"follow";
+			}
+
+			&:not(.has-author-link):not(.has-author-icon) {
+				.reader-avatar {
+					margin: 5px 0 0 0;
+				}
 			}
 
 			@media (min-width: 1300px) {
@@ -570,7 +583,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				margin: 0 10px 5px 0;
 
 				&:not(.has-site-and-author-icon) img {
-					top: 5px;
+					top: 7px;
 				}
 
 				.gravatar {
@@ -602,7 +615,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				.author-compact-profile__site-link {
 					grid-area: links;
 					display: inline;
-					margin-right: 5px;
 					padding-top: 0;
 				}
 
