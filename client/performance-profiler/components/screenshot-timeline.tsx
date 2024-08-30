@@ -29,7 +29,7 @@ export const ScreenshotTimeline = ( { screenshots }: Props ) => {
 	return (
 		<div>
 			<H2>Timeline</H2>
-			<p>{ translate( 'Screenshots of your site loading taken while loading the page.' ) }</p>
+			<p>{ translate( 'How your site appears to users while loading.' ) }</p>
 			<Timeline>
 				{ screenshots.map( ( screenshot, index ) => {
 					const timing = `${ ( screenshot.timing / 1000 ).toFixed( 1 ) }s`;
