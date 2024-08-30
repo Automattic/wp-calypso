@@ -49,31 +49,23 @@ export interface FetchSitesQueryKeyParams {
 }
 
 /**
- * Hashes the unordered input to generate a hash value.
- *
- * @param parameters The parameter array to hash.
- * @param seed The seed value to multiply the sum with, default is 3.
+ * Query key generator to preserving the right order of the query key and to ensure the data type.
+ * @param queryParams The query object to generate the key from
  */
-export const hashParameters = ( parameters: any[], seed: number = 3 ): string => {
-	let hashSum = 0;
+export function getQueryKey( queryParams: FetchSitesQueryKeyParams ) {
+	const { agencyId, searchQuery, currentPage, perPage, filter, sort } = queryParams;
 
-	parameters.forEach( ( param ) => {
-		const paramString = JSON.stringify( param ?? '' );
-
-		// Initialize the sum with the length of the parameter characters
-		let paramSum = paramString.length * seed;
-
-		// Add the char code of each character to the sum
-		for ( let i = 0; i < paramString.length; i++ ) {
-			paramSum += paramString.charCodeAt( i ) * seed;
-		}
-
-		// Accumulate the parameter hash sum to the final hash
-		hashSum += paramSum;
-	} );
-
-	return hashSum.toString();
-};
+	// Generate the key always in the same order
+	return [
+		'jetpack-agency-dashboard-sites',
+		searchQuery,
+		currentPage,
+		filter,
+		sort,
+		perPage,
+		...( agencyId ? [ agencyId ] : [] ),
+	];
+}
 
 const useFetchDashboardSites = ( {
 	isPartnerOAuthTokenLoaded,
