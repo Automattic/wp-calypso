@@ -1,0 +1,50 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+
+.message-display {
+	color: #fff;
+	padding-top: 40px;
+	background: linear-gradient(180deg, var(--studio-gray-100) 25.44%, rgba(16, 21, 23, 0) 100%), url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjEiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuMjUiLz4KPC9zdmc+Cg==) repeat, var(--studio-gray-100);
+
+	.l-block-wrapper {
+		height: 100%;
+		max-width: 1056px;
+	}
+
+	.message-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+		gap: 16px;
+		min-height: 700px;
+		width: 50%;
+
+		.title {
+			font-family: $brand-serif;
+			font-size: $font-headline-medium;
+			line-height: $font-headline-large;
+			color: #fff;
+		}
+
+		.message {
+			font-size: $font-body;
+			font-weight: 500;
+			line-height: $font-title-medium;
+		}
+
+		.cta-button {
+			margin-top: 16px;
+			font-size: $font-body-small;
+			line-height: $font-title-small;
+			padding: 20px;
+		}
+
+		.secondary-message {
+			margin-top: 48px;
+			font-size: $font-body-small;
+			line-height: $font-title-small;
+			color: var(--studio-gray-20);
+		}
+	}
+}
