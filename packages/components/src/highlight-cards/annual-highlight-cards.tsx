@@ -1,8 +1,8 @@
 import { comment, Icon, paragraph, people, postContent, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { translate, useTranslate } from 'i18n-calypso';
 import ComponentSwapper from '../component-swapper';
-import CountComparisonCard from './count-comparison-card';
+import CountCard from './count-card';
 import MobileHighlightCardListing from './mobile-highlight-cards';
 
 import './style.scss';
@@ -27,54 +27,33 @@ type AnnualHighlightCardsProps = {
 	navigation?: React.ReactNode;
 };
 
-function AnnualHighlightsMobile( { counts }: AnnualHighlightsProps ) {
-	const translate = useTranslate();
-
-	const highlights = [
-		{ heading: translate( 'Posts' ), count: counts?.posts, icon: postContent },
-		{ heading: translate( 'Words' ), count: counts?.words, icon: paragraph },
-		{ heading: translate( 'Likes' ), count: counts?.likes, icon: starEmpty },
-		{ heading: translate( 'Comments' ), count: counts?.comments, icon: comment },
-		{ heading: translate( 'Subscribers' ), count: counts?.followers, icon: people },
+function getCardProps( counts: AnnualHighlightCounts ) {
+	return [
+		{ count: counts?.posts, heading: translate( 'Posts' ), icon: postContent },
+		{ count: counts?.words, heading: translate( 'Words' ), icon: paragraph },
+		{ count: counts?.likes, heading: translate( 'Likes' ), icon: starEmpty },
+		{ count: counts?.comments, heading: translate( 'Comments' ), icon: comment },
+		{ count: counts?.followers, heading: translate( 'Subscribers' ), icon: people },
 	];
+}
 
-	return <MobileHighlightCardListing highlights={ highlights } />;
+function AnnualHighlightsMobile( { counts }: AnnualHighlightsProps ) {
+	return <MobileHighlightCardListing highlights={ getCardProps( counts ) } />;
 }
 
 function AnnualHighlightsStandard( { counts }: AnnualHighlightsProps ) {
-	const translate = useTranslate();
+	const props = getCardProps( counts );
 	return (
 		<div className="highlight-cards-list">
-			<CountComparisonCard
-				heading={ translate( 'Posts' ) }
-				icon={ <Icon icon={ postContent } /> }
-				count={ counts?.posts ?? null }
-				showValueTooltip
-			/>
-			<CountComparisonCard
-				heading={ translate( 'Words' ) }
-				icon={ <Icon icon={ paragraph } /> }
-				count={ counts?.words ?? null }
-				showValueTooltip
-			/>
-			<CountComparisonCard
-				heading={ translate( 'Likes' ) }
-				icon={ <Icon icon={ starEmpty } /> }
-				count={ counts?.likes ?? null }
-				showValueTooltip
-			/>
-			<CountComparisonCard
-				heading={ translate( 'Comments' ) }
-				icon={ <Icon icon={ comment } /> }
-				count={ counts?.comments ?? null }
-				showValueTooltip
-			/>
-			<CountComparisonCard
-				heading={ translate( 'Subscribers' ) }
-				icon={ <Icon icon={ people } /> }
-				count={ counts?.followers ?? null }
-				showValueTooltip
-			/>
+			{ props.map( ( { count, heading, icon }, index ) => (
+				<CountCard
+					key={ index }
+					heading={ heading }
+					value={ count }
+					icon={ <Icon icon={ icon } /> }
+					showValueTooltip
+				/>
+			) ) }
 		</div>
 	);
 }
