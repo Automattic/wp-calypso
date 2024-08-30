@@ -3,7 +3,7 @@ import { Subscriber } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { Icon, people, currencyEuro, external } from '@wordpress/icons';
+import { Icon, people, currencyDollar, external } from '@wordpress/icons';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import { useEffect, useRef } from 'react';
 import SubscriberUploadForm from './subscriber-upload-form';
@@ -101,8 +101,8 @@ export default function Subscribers( {
 							) }
 							{ paid_emails !== 0 && (
 								<li>
-									<Icon icon={ currencyEuro } />
-									subscription <strong>{ paid_emails }</strong> are paying subscribers
+									<Icon icon={ currencyDollar } />
+									<strong>{ paid_emails }</strong> are paying subscribers
 								</li>
 							) }
 						</ul>

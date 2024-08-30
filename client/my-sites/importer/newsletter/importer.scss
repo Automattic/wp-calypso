@@ -99,6 +99,9 @@
 .subscriber-upload-form__modal li {
 	display: flex;
 }
+.subscriber-upload-form__modal strong {
+	margin-right: 8px;
+}
 .subscriber-upload-form__modal svg {
 	fill: var(--studio-gray-50);
 	margin-right: 8px;
