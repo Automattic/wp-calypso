@@ -48,19 +48,17 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipTracking }: Props ) 
 	const signupStepStartProps = useSnakeCasedKeys( {
 		input: flow.useTracksEventProps?.()?.[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ],
 	} );
-	const flowName = flow.name;
-	const flowVariantSlug = flow.variantSlug;
 
 	const recordStepStart = useCallback(
 		( step: string ) => {
 			recordTracksEvent( STEPPER_TRACKS_EVENT_SIGNUP_STEP_START, {
-				flow: flowName,
+				flow: flow.name,
 				step: kebabCase( step ),
 				device: resolveDeviceTypeByViewPort(),
 				intent,
-				is_in_hosting_flow: isAnyHostingFlow( flowName ),
+				is_in_hosting_flow: isAnyHostingFlow( flow.name ),
 				...( design && { assembler_source: getAssemblerSource( design ) } ),
-				...( flowVariantSlug && { flow_variant: flowVariantSlug } ),
+				...( flow.variantSlug && { flow_variant: flow.variantSlug } ),
 				...signupStepStartProps,
 			} );
 		},
@@ -68,7 +66,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipTracking }: Props ) 
 		// We leave out intent and design from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// The store reset causes these values to become empty, and may trigger this event again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ flowName, flowVariantSlug, signupStepStartProps ]
+		[ flow.name, flow.variantSlug, signupStepStartProps ]
 	);
 
 	useEffect( () => {
@@ -81,7 +79,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipTracking }: Props ) 
 		const signupCompleteStepName = getSignupCompleteStepNameAndClear();
 
 		const isReEnteringStep =
-			signupCompleteFlowName === flowName && signupCompleteStepName === stepSlug;
+			signupCompleteFlowName === flow.name && signupCompleteStepName === stepSlug;
 
 		if ( ! isReEnteringStep ) {
 			recordStepStart( stepSlug );
@@ -94,7 +92,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipTracking }: Props ) 
 
 		// Also record page view for data and analytics
 		const pathname = window.location.pathname;
-		const pageTitle = `Setup > ${ flowName } > ${ stepSlug }`;
+		const pageTitle = `Setup > ${ flow.name } > ${ stepSlug }`;
 		recordPageView( pathname, pageTitle );
-	}, [ flowName, hasRequestedSelectedSite, stepSlug, skipTracking, recordStepStart ] );
+	}, [ flow.name, hasRequestedSelectedSite, stepSlug, skipTracking, recordStepStart ] );
 };
