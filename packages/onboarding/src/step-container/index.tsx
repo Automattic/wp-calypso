@@ -1,4 +1,5 @@
 import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
@@ -189,9 +190,17 @@ const StepContainer: React.FC< Props > = ( {
 				{ shouldStickyNavButtons && (
 					<WordPressLogo className="step-container__navigation-logo" size={ 24 } />
 				) }
-				{ ! hideBack && <BackButton /> }
-				{ ! hideSkip && skipButtonAlign === 'top' && <SkipButton /> }
-				{ ! hideNext && <NextButton /> }
+				{
+					// hide navigation buttons on mobile
+					// to be consistent with #57288
+					isMobile() ? null : (
+						<>
+							{ ! hideBack && <BackButton /> }
+							{ ! hideSkip && skipButtonAlign === 'top' && <SkipButton /> }
+							{ ! hideNext && <NextButton /> }
+						</>
+					)
+				}
 				{ customizedActionButtons }
 			</ActionButtons>
 			{ ! hideFormattedHeader && (
