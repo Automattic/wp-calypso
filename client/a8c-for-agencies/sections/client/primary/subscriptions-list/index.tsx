@@ -1,4 +1,5 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, ReactNode, useState, useCallback } from 'react';
@@ -44,7 +45,7 @@ export default function SubscriptionsList() {
 		() => [
 			{
 				id: 'purchase',
-				header: translate( 'Purchase' ).toUpperCase(),
+				label: translate( 'Purchase' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					const product = products?.find( ( product ) => product.product_id === item.product_id );
@@ -55,7 +56,7 @@ export default function SubscriptionsList() {
 			},
 			{
 				id: 'price',
-				header: translate( 'Price' ).toUpperCase(),
+				label: translate( 'Price' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					const product = products?.find( ( product ) => product.product_id === item.product_id );
@@ -66,7 +67,7 @@ export default function SubscriptionsList() {
 			},
 			{
 				id: 'subscription-status',
-				header: translate( 'Subscription Status' ).toUpperCase(),
+				label: translate( 'Subscription Status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					return <SubscriptionStatus status={ item.status } translate={ translate } />;
@@ -76,7 +77,7 @@ export default function SubscriptionsList() {
 			},
 			{
 				id: 'actions',
-				header: translate( 'Actions' ).toUpperCase(),
+				label: translate( 'Actions' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: Subscription } ): ReactNode => {
 					return (
@@ -92,6 +93,10 @@ export default function SubscriptionsList() {
 		],
 		[ isFetchingProducts, onCancelSubscription, products, translate ]
 	);
+
+	const { data: items, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( data, dataViewsState, fields );
+	}, [ data, dataViewsState, fields ] );
 
 	return (
 		<Layout
@@ -114,17 +119,15 @@ export default function SubscriptionsList() {
 					<div className="redesigned-a8c-table">
 						<ItemsDataViews
 							data={ {
-								items: data || [],
-								pagination: {
-									totalItems: 1,
-									totalPages: 1,
-								},
+								items,
+								pagination: paginationInfo,
 								itemFieldId: 'id',
 								enableSearch: false,
 								fields: fields,
 								actions: [],
 								setDataViewsState: setDataViewsState,
 								dataViewsState: dataViewsState,
+								defaultLayouts: { table: {} },
 							} }
 							isLoading={ isFetching }
 						/>
