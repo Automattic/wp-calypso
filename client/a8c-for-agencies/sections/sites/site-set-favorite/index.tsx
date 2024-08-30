@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
-import { hashParameters } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
+import { getQueryKey } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -52,35 +52,31 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	const search = dataViewsState.search;
 
 	const queryKey = useMemo(
-		() => [
-			'jetpack-agency-dashboard-sites',
-			hashParameters( [
-				search,
+		() =>
+			getQueryKey( {
+				searchQuery: search,
 				currentPage,
 				filter,
-				dataViewsState.sort,
-				dataViewsState.perPage,
-				...( agencyId ? [ agencyId ] : [] ),
-			] ),
-		],
+				sort: dataViewsState.sort,
+				perPage: dataViewsState.perPage,
+				agencyId,
+			} ),
 		[ dataViewsState, agencyId, search, currentPage, filter ]
 	);
 
 	const siblingQueryKey = useMemo(
-		() => [
-			'jetpack-agency-dashboard-sites',
-			hashParameters( [
-				search,
+		() =>
+			getQueryKey( {
+				searchQuery: search,
 				currentPage,
-				{
+				filter: {
 					...filter,
-					...dataViewsState.sort,
 					showOnlyFavorites: ! showOnlyFavorites,
 					showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
 				},
-				...( agencyId ? [ agencyId ] : [] ),
-			] ),
-		],
+				sort: dataViewsState.sort,
+				agencyId,
+			} ),
 		[
 			agencyId,
 			search,
