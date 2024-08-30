@@ -676,7 +676,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				"avatar follow";
 			column-gap: 5px;
 			row-gap: 5px;
-			margin-top: 20px;
+			margin: 20px 0 0 0;
 			padding-right: 10px;
 			text-overflow: clip;
 			white-space: nowrap;
@@ -742,6 +742,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 					grid-area: links;
 					display: inline;
 					padding-top: 0;
+					margin-right: 0;
 				}
 
 				.reader-author-link {
@@ -761,9 +762,18 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				margin-top: 0;
 				flex-wrap: inherit;
 
+				.author-compact-profile__follow-count{
+					display: inline-block;
+				}
+
 				.author-compact-profile__follow-count,
 				.follow-button {
 					padding: 5px 5px 5px 0;
+					position: initial;
+
+					&__label {
+						display: inline-block;
+					}
 				}
 			}
 		}
