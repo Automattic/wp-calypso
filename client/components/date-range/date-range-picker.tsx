@@ -157,14 +157,14 @@ const DateRangePicker = ( {
 		return [ config ];
 	};
 
-	const fromDate = momentDateToJsDate( selectedStartDate );
-	const toDate = momentDateToJsDate( selectedEndDate );
-
 	useEffect( () => {
-		if ( selectedStartDate && selectedEndDate && selectedStartDate.isAfter() ) {
-			onDateRangeChange( selectedEndDate, selectedStartDate );
+		if ( selectedStartDate && selectedEndDate && selectedStartDate.isAfter( selectedEndDate ) ) {
+			onDateRangeChange?.( selectedEndDate, selectedStartDate );
 		}
 	}, [ selectedStartDate?.format(), selectedEndDate?.format() ] );
+
+	const fromDate = momentDateToJsDate( selectedStartDate );
+	const toDate = momentDateToJsDate( selectedEndDate );
 
 	// Add "Range" modifier classes to Day component
 	// within Date Picker to aid "range" styling
