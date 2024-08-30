@@ -205,7 +205,7 @@
 // This is a hotfix to hiding the properties section in the view config menu
 // when no field is hidable.
 // This has been fixed upstream as of
-// https://github.com/WordPress/gutenberg/pull/64711/files
+// https://github.com/WordPress/gutenberg/pull/64711
 .dataviews-settings-section:has(.dataviews-settings-section__content:empty) {
 	display: none;
 }
@@ -223,7 +223,7 @@
 
 // TODO: remove when updating dataviews to have this built-in.
 //
-// https://github.com/Automattic/wp-calypso/pull/93503#discussion_r1734341411
+// https://github.com/WordPress/gutenberg/issues/64927
 .dataviews-filters-toggle__count {
 	padding: revert !important;
 }
