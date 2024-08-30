@@ -1,5 +1,4 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
-import { Dispatch, SetStateAction, useEffect } from 'react';
 import ContentSummary from './summary/content';
 import SubscribersSummary from './summary/subscribers';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -7,28 +6,20 @@ import type { SiteDetails } from '@automattic/data-stores';
 type Props = {
 	cardData: any;
 	selectedSite: SiteDetails;
-	setAutoFetchData: Dispatch< SetStateAction< boolean > >;
 };
 
-export default function Summary( { cardData, selectedSite, setAutoFetchData }: Props ) {
+export default function Summary( { cardData, selectedSite }: Props ) {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
-	useEffect( () => {
-		if ( cardData.content.status === 'importing' || cardData.subscribers.status === 'importing' ) {
-			setAutoFetchData( true );
-		} else {
-			setAutoFetchData( false );
-		}
-	}, [ cardData.content.status, cardData.subscribers.status, setAutoFetchData ] );
 
 	function shouldRenderConfetti( contentStatus: string, subscriberStatue: string ) {
-		if ( contentStatus === 'done' && subscriberStatue === 'imported' ) {
+		if ( contentStatus === 'done' && subscriberStatue === 'done' ) {
 			return true;
 		}
 		if ( contentStatus === 'done' && subscriberStatue === 'skipped' ) {
 			return true;
 		}
 
-		if ( contentStatus === 'skipped' && subscriberStatue === 'imported' ) {
+		if ( contentStatus === 'skipped' && subscriberStatue === 'done' ) {
 			return true;
 		}
 
@@ -37,7 +28,9 @@ export default function Summary( { cardData, selectedSite, setAutoFetchData }: P
 	return (
 		<Card>
 			{ shouldRenderConfetti( cardData.content.status, cardData.subscribers.status ) && (
-				<ConfettiAnimation trigger={ ! prefersReducedMotion } />
+				<>
+					<ConfettiAnimation trigger={ ! prefersReducedMotion } /> <h1>Success! 🎉</h1>
+				</>
 			) }
 			<ContentSummary cardData={ cardData.content.content } status={ cardData.content.status } />
 			<SubscribersSummary

@@ -76,6 +76,21 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 		autoFetchData
 	);
 
+	useEffect( () => {
+		if (
+			paidNewsletterData?.steps?.content?.status === 'importing' ||
+			paidNewsletterData?.steps.subscribers?.status === 'importing'
+		) {
+			setAutoFetchData( true );
+		} else {
+			setAutoFetchData( false );
+		}
+	}, [
+		paidNewsletterData?.steps?.content?.status,
+		paidNewsletterData?.steps.subscribers?.status,
+		setAutoFetchData,
+	] );
+
 	stepSlugs.forEach( ( stepName, index ) => {
 		if ( stepName === step ) {
 			stepIndex = index;
@@ -155,7 +170,6 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 					cardData={ stepContent }
 					engine={ engine }
 					isFetchingContent={ isFetchingPaidNewsletter }
-					setAutoFetchData={ setAutoFetchData }
 				/>
 			) }
 		</div>
