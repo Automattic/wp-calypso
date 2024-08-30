@@ -10,7 +10,7 @@ type CountComparisonCardProps = {
 	heading?: React.ReactNode;
 	icon?: React.ReactNode;
 	onClick?: ( event: MouseEvent ) => void;
-	previousCount?: number | null;
+	previousCount: number | null;
 	showValueTooltip?: boolean | null;
 	compact?: boolean;
 };
@@ -49,31 +49,19 @@ export function TrendComparison( { count, previousCount }: TrendComparisonProps 
 	);
 }
 
-function TooltipContent( { count, previousCount, icon, heading }: CountComparisonCardProps ) {
-	if ( previousCount ) {
-		const difference = subtract( count, previousCount ) as number;
-		return (
-			<div className="highlight-card-tooltip-content">
-				<div className="highlight-card-tooltip-counts">
-					{ formatNumber( count, false ) }
-					{ '  ' }
-					{ difference !== 0 && difference !== null && (
-						<span className="highlight-card-tooltip-count-difference">
-							({ formatNumber( difference, false, true ) })
-						</span>
-					) }
-				</div>
-			</div>
-		);
-	}
-
+function TooltipContent( { count, previousCount }: CountComparisonCardProps ) {
+	const difference = subtract( count, previousCount ) as number;
 	return (
 		<div className="highlight-card-tooltip-content">
-			<span className="highlight-card-tooltip-label">
-				{ icon && <span className="highlight-card-tooltip-icon">{ icon }</span> }
-				{ heading && <span className="highlight-card-tooltip-heading">{ heading }</span> }
-			</span>
-			<span className="highlight-card-tooltip-counts">{ formatNumber( count, false ) }</span>
+			<div className="highlight-card-tooltip-counts">
+				{ formatNumber( count, false ) }
+				{ '  ' }
+				{ difference !== 0 && difference !== null && (
+					<span className="highlight-card-tooltip-count-difference">
+						({ formatNumber( difference, false, true ) })
+					</span>
+				) }
+			</div>
 		</div>
 	);
 }
@@ -88,6 +76,9 @@ export default function CountComparisonCard( {
 }: CountComparisonCardProps ) {
 	const textRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
+
+	const difference = subtract( count, previousCount ) as number;
+	const shouldShowTooltip = showValueTooltip && Math.abs( difference ) > 0;
 
 	return (
 		<Card className="highlight-card" compact={ compact }>
@@ -104,7 +95,7 @@ export default function CountComparisonCard( {
 					{ formatNumber( count ) }
 				</span>{ ' ' }
 				<TrendComparison count={ count } previousCount={ previousCount } />
-				{ showValueTooltip && (
+				{ shouldShowTooltip && (
 					<Popover
 						className="tooltip tooltip--darker highlight-card-tooltip"
 						isVisible={ isTooltipVisible }
