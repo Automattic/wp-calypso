@@ -1,5 +1,5 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
-import { StepContainer, useStepPersistedState } from '@automattic/onboarding';
+import { useStepPersistedState } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
