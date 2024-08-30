@@ -1236,6 +1236,32 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/jetpackme-support@workspace:apps/jetpackme-support":
+  version: 0.0.0-use.local
+  resolution: "@automattic/jetpackme-support@workspace:apps/jetpackme-support"
+  dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@automattic/odie-client": "workspace:^"
+    "@automattic/wp-babel-makepot": "workspace:^"
+    "@wordpress/components": "npm:^28.2.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:5.9.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:3.0.0"
+    autoprefixer: "npm:^10.4.20"
+    copy-webpack-plugin: "npm:^10.2.4"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    typescript: "npm:^5.3.3"
+    webpack: "npm:^5.91.0"
+  peerDependencies:
+    "@wordpress/data": ^10.2.0
+    postcss: "*"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/js-utils@workspace:^, @automattic/js-utils@workspace:packages/js-utils":
   version: 0.0.0-use.local
   resolution: "@automattic/js-utils@workspace:packages/js-utils"
@@ -11623,6 +11649,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"autoprefixer@npm:^10.4.20":
+  version: 10.4.20
+  resolution: "autoprefixer@npm:10.4.20"
+  dependencies:
+    browserslist: "npm:^4.23.3"
+    caniuse-lite: "npm:^1.0.30001646"
+    fraction.js: "npm:^4.3.7"
+    normalize-range: "npm:^0.1.2"
+    picocolors: "npm:^1.0.1"
+    postcss-value-parser: "npm:^4.2.0"
+  peerDependencies:
+    postcss: ^8.1.0
+  bin:
+    autoprefixer: bin/autoprefixer
+  checksum: e1f00978a26e7c5b54ab12036d8c13833fad7222828fc90914771b1263f51b28c7ddb5803049de4e77696cbd02bb25cfc3634e80533025bb26c26aacdf938940
+  languageName: node
+  linkType: hard
+
 "autosize@npm:^4.0.2, autosize@npm:^4.0.4":
   version: 4.0.4
   resolution: "autosize@npm:4.0.4"
@@ -12255,7 +12299,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.3, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.23.0, browserslist@npm:^4.23.1, browserslist@npm:^4.8.2":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.3, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.23.0, browserslist@npm:^4.23.1, browserslist@npm:^4.23.3, browserslist@npm:^4.8.2":
   version: 4.23.3
   resolution: "browserslist@npm:4.23.3"
   dependencies:
@@ -18391,6 +18435,13 @@ __metadata:
   version: 4.1.0
   resolution: "fraction.js@npm:4.1.0"
   checksum: db0e43d60dbe9211673dd88a0ba7984a1b3b34dcefa2619e12c73e9d58106fc172f13b6e6f10af5c17f2ef6439a02fe848218ec9498d4ced7cccb7ecce42e776
+  languageName: node
+  linkType: hard
+
+"fraction.js@npm:^4.3.7":
+  version: 4.3.7
+  resolution: "fraction.js@npm:4.3.7"
+  checksum: df291391beea9ab4c263487ffd9d17fed162dbb736982dee1379b2a8cc94e4e24e46ed508c6d278aded9080ba51872f1bc5f3a5fd8d7c74e5f105b508ac28711
   languageName: node
   linkType: hard
 
