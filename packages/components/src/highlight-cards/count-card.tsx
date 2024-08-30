@@ -12,17 +12,11 @@ interface CountCardProps {
 	value: number | string | null;
 }
 
-function TooltipContent( { value, icon, heading }: CountCardProps ) {
+function TooltipContent( { value }: CountCardProps ) {
 	return (
 		<div className="highlight-card-tooltip-content">
-			{ ( icon || heading ) && (
-				<span className="highlight-card-tooltip-label">
-					{ icon && <span className="highlight-card-tooltip-icon">{ icon }</span> }
-					{ heading && <span className="highlight-card-tooltip-heading">{ heading }</span> }
-				</span>
-			) }
 			<span className="highlight-card-tooltip-counts">
-				{ typeof value === 'number' ? formatNumber( value, false ) : value }
+				{ formatNumber( value as number, false ) }
 			</span>
 		</div>
 	);
@@ -37,6 +31,10 @@ export default function CountCard( {
 }: CountCardProps ) {
 	const textRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
+
+	// Tooltips are used to show the full number instead of the shortened number.
+	// Non-numeric values are not shown in the tooltip.
+	const shouldShowTooltip = showValueTooltip && typeof value === 'number';
 
 	return (
 		<Card className="highlight-card">
@@ -53,7 +51,7 @@ export default function CountCard( {
 					{ typeof value === 'number' ? formatNumber( value, true ) : value }
 				</span>
 			</div>
-			{ showValueTooltip && (
+			{ shouldShowTooltip && (
 				<Popover
 					className="tooltip tooltip--darker highlight-card-tooltip"
 					isVisible={ isTooltipVisible }
