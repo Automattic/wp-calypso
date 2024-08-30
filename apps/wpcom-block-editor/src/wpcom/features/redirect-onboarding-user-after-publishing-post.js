@@ -1,6 +1,7 @@
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
+import useLaunchpadScreen from './use-launchpad-screen';
 import useSiteIntent from './use-site-intent';
 
 const START_WRITING_FLOW = 'start-writing';
@@ -8,6 +9,7 @@ const DESIGN_FIRST_FLOW = 'design-first';
 
 export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
+	const { launchpad_screen: launchpadScreen } = useLaunchpadScreen();
 
 	useEffect( () => {
 		// We check the URL param along with site intent because the param loads faster and prevents element flashing.
@@ -24,7 +26,19 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		}
 	}, [ intent ] );
 
+	// Check the URL parameter first so we can skip later processing ASAP.
+	const hasStartWritingFlowQueryArg =
+		getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
+
+	if ( ! hasStartWritingFlowQueryArg ) {
+		return false;
+	}
+
 	if ( intent !== START_WRITING_FLOW && intent !== DESIGN_FIRST_FLOW ) {
+		return false;
+	}
+
+	if ( 'full' !== launchpadScreen ) {
 		return false;
 	}
 
@@ -42,6 +56,13 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
 		const isCurrentPostScheduled = select( 'core/editor' ).isCurrentPostScheduled();
 		const getCurrentPostRevisionsCount = select( 'core/editor' ).getCurrentPostRevisionsCount();
+		const currentPostType = select( 'core/editor' ).getCurrentPostType();
+
+		// If we're editing anything that is not a post, including pages, templates, and navigation, nothing further needed.
+		if ( currentPostType && currentPostType !== 'post' ) {
+			unsubscribe();
+			return;
+		}
 
 		if (
 			! isSavingPost &&

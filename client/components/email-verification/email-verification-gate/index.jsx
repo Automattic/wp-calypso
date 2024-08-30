@@ -16,15 +16,10 @@ export class EmailVerificationGate extends Component {
 		allowUnlaunched: PropTypes.bool,
 		noticeText: PropTypes.node,
 		noticeStatus: PropTypes.string,
-		children: PropTypes.Node,
+		children: PropTypes.node,
 		//connected
 		userEmail: PropTypes.string,
 		needsVerification: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		noticeText: null,
-		noticeStatus: '',
 	};
 
 	handleFocus = ( e ) => {
