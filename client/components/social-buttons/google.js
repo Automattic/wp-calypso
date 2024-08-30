@@ -12,6 +12,7 @@ import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import { getUxMode, getRedirectUri } from './utils';
 
 import './style.scss';
 
@@ -19,22 +20,17 @@ const noop = () => {};
 
 class GoogleSocialButton extends Component {
 	static propTypes = {
-		clientId: PropTypes.string.isRequired,
-		fetchBasicProfile: PropTypes.bool,
 		isFormDisabled: PropTypes.bool,
 		onClick: PropTypes.func,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectUri: PropTypes.string,
 		responseHandler: PropTypes.func.isRequired,
-		scope: PropTypes.string,
-		startingPoint: PropTypes.string.isRequired,
+		isLogin: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		uxMode: PropTypes.string,
 	};
 
 	static defaultProps = {
-		scope: 'openid profile email',
-		fetchBasicProfile: true,
 		onClick: noop,
 	};
 
@@ -72,8 +68,8 @@ class GoogleSocialButton extends Component {
 		}
 
 		this.client = googleSignIn.initCodeClient( {
-			client_id: this.props.clientId,
-			scope: this.props.scope,
+			client_id: config( 'google_oauth_client_id' ),
+			scope: 'openid profile email',
 			ux_mode: this.props.uxMode,
 			redirect_uri: this.props.redirectUri,
 			state: state,
@@ -144,7 +140,7 @@ class GoogleSocialButton extends Component {
 
 		const { access_token, id_token } = response.body.data;
 
-		this.props.responseHandler( { access_token, id_token } );
+		this.props.responseHandler( { service: 'google', access_token, id_token } );
 	}
 
 	async fetchNonceAndInitializeGoogleSignIn() {
@@ -171,8 +167,11 @@ class GoogleSocialButton extends Component {
 		event.preventDefault();
 		event.stopPropagation();
 
+		if ( this.props.onClick ) {
+			this.props.onClick( event );
+		}
+
 		await this.fetchNonceAndInitializeGoogleSignIn();
-		this.props.onClick( event );
 
 		this.client?.requestCode();
 	}
@@ -200,6 +199,7 @@ class GoogleSocialButton extends Component {
 					<button
 						className={ clsx( 'social-buttons__button button google', { disabled: isDisabled } ) }
 						onClick={ this.handleClick }
+						data-social-service="google"
 						disabled={ isDisabled }
 					>
 						<GoogleIcon
@@ -223,11 +223,14 @@ class GoogleSocialButton extends Component {
 }
 
 export default connect(
-	( state ) => ( {
+	( state, ownProps ) => ( {
 		isFormDisabled: isFormDisabled( state ),
 		authCodeFromRedirect: getInitialQueryArguments( state ).code,
 		serviceFromRedirect: getInitialQueryArguments( state ).service,
 		state: getInitialQueryArguments( state ).state,
+		uxMode: getUxMode( state ),
+		redirectUri: getRedirectUri( 'google', state, ownProps.isLogin ),
+		startingPoint: ownProps.isLogin ? 'login' : 'signup',
 	} ),
 	{
 		recordTracksEvent,

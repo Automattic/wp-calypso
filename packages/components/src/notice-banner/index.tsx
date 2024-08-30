@@ -39,29 +39,16 @@ const getIconByLevel = ( level: NoticeBannerProps[ 'level' ] ) => {
 	}
 };
 
-/**
- * NoticeBanner component
- * @param {Object} props                    - The component properties.
- * @param {string} props.level              - The notice level: error, warning, info, success.
- * @param {boolean} props.hideCloseButton   - Whether to hide the close button.
- * @param {Function} props.onClose          - The function to call when the close button is clicked.
- * @param {string} props.title              - The title of the notice.
- * @param {React.ReactNode[]} props.actions - Actions to show across the bottom of the bar.
- * @param {React.Component} props.children  - The notice content.
- * @returns {React.ReactElement}              The `NoticeBanner` component.
- */
-const NoticeBanner: React.FC< NoticeBannerProps > = ( {
-	level,
+export default function NoticeBanner( {
+	level = 'info',
 	title,
 	children,
 	actions,
-	hideCloseButton,
+	hideCloseButton = false,
 	onClose,
-} ) => {
-	const classes = clsx( 'notice-banner', `is-${ level }` );
-
+}: NoticeBannerProps ) {
 	return (
-		<div className={ classes }>
+		<div className={ clsx( 'notice-banner', `is-${ level }` ) }>
 			<div className="notice-banner__icon-wrapper">
 				<Icon icon={ getIconByLevel( level ) } className="notice-banner__icon" />
 			</div>
@@ -86,11 +73,4 @@ const NoticeBanner: React.FC< NoticeBannerProps > = ( {
 			) }
 		</div>
 	);
-};
-
-NoticeBanner.defaultProps = {
-	level: 'info',
-	hideCloseButton: false,
-};
-
-export default NoticeBanner;
+}

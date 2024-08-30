@@ -14,6 +14,7 @@ import wpcomBlockEditorTemplatePartDetachBlocks from './wpcom-block-editor-templ
 import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content-stripe-connect';
 import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
 import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
+import wpcomPreviewDropdownSelected from './wpcom-preview-dropdown-selected';
 import {
 	wpcomSiteEditorDocumentActionsDropdownOpen,
 	wpcomSiteEditorDocumentActionsTemplateAreaClick,
@@ -85,6 +86,7 @@ const EVENTS_MAPPING = [
 	wpcomSiteEditorSidebarPatternsClick(),
 	wpcomSiteEditorSidebarStylesClick(),
 	wpcomSiteEditorSidebarTemplatesClick(),
+	wpcomPreviewDropdownSelected(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
 const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! capture );

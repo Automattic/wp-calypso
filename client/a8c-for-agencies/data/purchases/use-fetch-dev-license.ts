@@ -25,7 +25,7 @@ export default function useFetchDevLicense( blogId?: number ) {
 			productId: data?.product_id,
 			siteUrl: data?.site_url,
 		} ),
-		enabled: !! agencyId,
+		enabled: !! agencyId && !! blogId,
 		refetchOnWindowFocus: false,
 	} );
 }

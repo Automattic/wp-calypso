@@ -1,7 +1,13 @@
-import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import {
+	useMutation,
+	UseMutationOptions,
+	UseMutationResult,
+	useQueryClient,
+} from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { getFetchDevLicensesQueryKey } from '../purchases/use-fetch-dev-licenses';
 
 export interface APIError {
 	status: number;
@@ -43,10 +49,16 @@ function createWPCOMDevSiteMutation(
 export default function useCreateWPCOMDevSiteMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIResponse, APIError, CreateDevSiteParams, TContext >
 ): UseMutationResult< APIResponse, APIError, CreateDevSiteParams, TContext > {
+	const queryClient = useQueryClient();
 	const agencyId = useSelector( getActiveAgencyId );
 
 	return useMutation< APIResponse, APIError, CreateDevSiteParams, TContext >( {
 		...options,
 		mutationFn: ( args ) => createWPCOMDevSiteMutation( args, agencyId ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( {
+				queryKey: getFetchDevLicensesQueryKey( agencyId ),
+			} );
+		},
 	} );
 }

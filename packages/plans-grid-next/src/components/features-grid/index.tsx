@@ -339,16 +339,22 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		featureGroupMap = {},
 	} = props;
 
-	const gridContainerRef = useRef< HTMLDivElement | null >( null );
+	const gridContainerRef = useRef< HTMLDivElement >( null );
+
+	const gridBreakpoints = useMemo(
+		() =>
+			new Map( [
+				[ 'small', 0 ],
+				[ 'medium', 740 ],
+				[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin
+			] ),
+		[ isInAdmin ]
+	);
 
 	// TODO: this will be deprecated along side removing the wrapper component
 	const gridSize = useGridSize( {
 		containerRef: gridContainerRef,
-		containerBreakpoints: new Map( [
-			[ 'small', 0 ],
-			[ 'medium', 740 ],
-			[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin
-		] ),
+		containerBreakpoints: gridBreakpoints,
 	} );
 
 	const classNames = clsx( 'plans-grid-next', className, {
