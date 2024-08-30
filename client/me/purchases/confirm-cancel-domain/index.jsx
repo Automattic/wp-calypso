@@ -127,12 +127,12 @@ class ConfirmCancelDomain extends Component {
 					getLocaleSlug() === 'en' ||
 					getLocaleSlug() === 'en-gb' ||
 					i18n.hasTranslation(
-						'Unable to cancel your purchase. Please try again later {{a}}or contact support{{/a}}.'
+						'Unable to cancel your purchase. Please try again later or {{a}}contact support{{/a}}.'
 					)
 				) {
 					this.props.errorNotice(
 						translate(
-							'Unable to cancel your purchase. Please try again later {{a}}or contact support{{/a}}.',
+							'Unable to cancel your purchase. Please try again later or {{a}}contact support{{/a}}.',
 							{
 								components: {
 									a: <ActionPanelLink href="/help/contact" />,
