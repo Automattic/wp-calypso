@@ -48,11 +48,11 @@ export const useSubscriberImportMutation = (
 
 	const { mutate } = mutation;
 
-	const enqueSubscriberImport = useCallback(
+	const enqueueSubscriberImport = useCallback(
 		( siteId: number, engine: string, currentStep: string ) =>
 			mutate( { siteId, engine, currentStep } ),
 		[ mutate ]
 	);
 
-	return { enqueSubscriberImport, ...mutation };
+	return { enqueueSubscriberImport, ...mutation };
 };
