@@ -17,10 +17,10 @@ export default function SubscriberSummary( { status, proStatus, cardData, siteId
 	const hasPaidSubscribers = proStatus !== 'skipped' && parseInt( paidSubscribers ) > 0;
 	const [ isDisabled, setIsDisabled ] = useState( ! hasPaidSubscribers );
 
-	const { enqueSubscriberImport } = useSubscriberImportMutation();
+	const { enqueueSubscriberImport } = useSubscriberImportMutation();
 
 	const importSubscribers = () => {
-		enqueSubscriberImport( siteId, 'substack', 'summary' );
+		enqueueSubscriberImport( siteId, 'substack', 'summary' );
 	};
 
 	const onChange = ( { target: { checked } }: ChangeEvent< HTMLInputElement > ) =>
