@@ -3,13 +3,19 @@ import config from '@automattic/calypso-config';
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import { FormLabel } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
+import { useChatStatus } from '@automattic/help-center/src/hooks';
 import { localizeUrl } from '@automattic/i18n-utils';
 import Button from '@automattic/odie-client/src/components/button';
 import { UPDATE_NAMESERVERS } from '@automattic/urls';
+import {
+	useCanConnectToZendeskMessaging,
+	useZendeskMessagingAvailability,
+	useOpenZendeskMessaging,
+} from '@automattic/zendesk-client';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { useCallback } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -37,7 +43,7 @@ const CancelPurchaseRefundInformation = ( {
 	confirmCancelBundledDomain,
 	onCancelConfirmationStateChange,
 } ) => {
-	const { refundPeriodInDays } = purchase;
+	const { siteId, siteUrl, refundPeriodInDays } = purchase;
 	let text;
 	let showSupportLink = true;
 	const onCancelBundledDomainChange = ( event ) => {
@@ -47,15 +53,50 @@ const CancelPurchaseRefundInformation = ( {
 			confirmCancelBundledDomain: newCancelBundledDomainValue && confirmCancelBundledDomain,
 		} );
 	};
+	const { setShowHelpCenter, setNavigateToRoute, resetStore } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
+	const { isEligibleForChat } = useChatStatus();
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
+	const { data: isMessagingAvailable } = useZendeskMessagingAvailability(
+		'wpcom_messaging',
+		isEligibleForChat
+	);
+	const { openZendeskWidget, isOpeningZendeskWidget } = useOpenZendeskMessaging(
+		'migration-error',
+		'zendesk_support_chat_key',
+		isEligibleForChat
+	);
+
+	const getHelp = useCallback( () => {
+		if ( isMessagingAvailable && canConnectToZendeskMessaging ) {
+			openZendeskWidget( {
+				siteUrl: siteUrl,
+				siteId: siteId,
+				message: `${ status }: Import onboarding flow; migration failed`,
+				onSuccess: () => {
+					resetStore();
+					setShowHelpCenter( false );
+				},
+			} );
+		} else {
+			setNavigateToRoute( '/contact-form?mode=CHAT' );
+			setShowHelpCenter( true );
+		}
+	}, [
+		resetStore,
+		openZendeskWidget,
+		siteId,
+		isMessagingAvailable,
+		siteUrl,
+		canConnectToZendeskMessaging,
+		setNavigateToRoute,
+		setShowHelpCenter,
+	] );
 
 	const ContactSupportLink = () => {
-		const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
-		const { url } = useStillNeedHelpURL();
-
 		const onClick = () => {
 			recordTracksEvent( 'calypso_cancellation_help_button_click' );
-			setNavigateToRoute( url );
-			setShowHelpCenter( true );
+			getHelp();
 		};
 
 		return (
@@ -70,6 +111,7 @@ const CancelPurchaseRefundInformation = ( {
 											borderless="true"
 											onClick={ onClick }
 											className="cancel-purchase__support-information support-link"
+											disabled={ isOpeningZendeskWidget }
 										/>
 									),
 								},
@@ -84,6 +126,7 @@ const CancelPurchaseRefundInformation = ( {
 											borderless="true"
 											onClick={ onClick }
 											className="cancel-purchase__support-information support-link"
+											disabled={ isOpeningZendeskWidget }
 										/>
 									),
 								},
