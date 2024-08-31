@@ -1,9 +1,10 @@
 .reader-post-options-menu__ellipsis-menu {
-	margin-left: 16px;
+	padding: 0;
+	transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-	.ellipsis-menu__toggle {
-		padding: 0;
-		height: 24px;
+	&.is-menu-visible svg {
+		transform: rotate(90deg);
+		transform-origin: center;
 	}
 }
 
