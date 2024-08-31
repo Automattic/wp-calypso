@@ -34,6 +34,7 @@ import {
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import scrollTo from 'calypso/lib/scroll-to';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
+import EditIcon from 'calypso/reader/components/icons/edit-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -544,10 +545,11 @@ export class FullPostView extends Component {
 							<div className="reader-full-post__sidebar-comment-like">
 								{ userCan( 'edit_post', post ) && (
 									<PostEditButton
+										key="edit-button"
 										post={ post }
 										site={ site }
-										iconSize={ 20 }
 										onClick={ this.onEditClick }
+										icon={ EditIcon( { iconSize: 20 } ) }
 									/>
 								) }
 

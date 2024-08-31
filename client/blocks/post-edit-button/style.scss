@@ -7,11 +7,15 @@
 	list-style-type: none;
 	position: relative;
 
+	& svg {
+		fill: var(--color-text-subtle);
+	}
+
 	&:hover,
 	&:focus,
 	&:active {
 
-		.gridicon {
+		svg {
 			fill: var(--color-accent);
 		}
 
@@ -20,14 +24,10 @@
 		}
 	}
 
-	.gridicon {
-		fill: var(--color-neutral-light);
-	}
-
 	.post-edit-button__label {
 		color: var(--color-text-subtle);
 
-		@include breakpoint-deprecated( "<480px" ) {
+		@include breakpoint-deprecated("<480px") {
 			display: none;
 		}
 	}
@@ -38,7 +38,7 @@
 	font-size: 13px;
 	margin-left: 4px;
 
-	@include breakpoint-deprecated( "<480px" ) {
+	@include breakpoint-deprecated("<480px") {
 		display: none;
 	}
 }
