@@ -37,7 +37,7 @@ export default function ContactFields( {
 	};
 
 	return (
-		<div className="contact-fields">
+		<>
 			{ shouldUseEbanx && ! shouldShowTaxFields && (
 				<CountrySpecificPaymentFields
 					countryCode={ getFieldValue( 'countryCode' ) }
@@ -57,6 +57,6 @@ export default function ContactFields( {
 					isDisabled={ isDisabled }
 				/>
 			) }
-		</div>
+		</>
 	);
 }
