@@ -47,7 +47,7 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 					{
 						onSuccess: () => {
 							dispatch(
-								successNotice( translate( 'The user has been successfully removed.' ), {
+								successNotice( translate( 'The member has been successfully removed.' ), {
 									id: 'remove-user-success',
 									duration: 5000,
 								} )
