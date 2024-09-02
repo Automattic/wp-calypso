@@ -14,34 +14,29 @@ $theme-card-info-margin-top: 16px;
 
 	&--is-active {
 		.theme-card__image-container {
-			border: 0;
-		}
-
-		.theme-card__info {
-			align-items: center;
-			background: var(--color-primary);
-			border-bottom-left-radius: 2px;
-			border-bottom-right-radius: 2px;
-			box-sizing: initial;
-			flex-direction: row;
-			gap: 16px;
-			margin-top: 0;
-			padding: 8px 24px;
-
-			.theme-card__info-options,
-			.theme-card__info-options .theme__more-button {
-				position: relative;
-			}
-		}
-
-		.theme-card__info-title {
-			color: var(--color-text-inverted);
+			border: 2px solid var(--color-primary);
+			border-radius: 4px;
 		}
 	}
 
 	&--is-actionable {
 		.theme-card__image {
 			cursor: pointer;
+		}
+	}
+
+	.theme-card__info-badge-container {
+		display: flex;
+		flex-basis: 100%;
+	}
+
+	.theme-card__info-badge-active {
+		display: flex;
+		background-color: var(--color-primary);
+		color: var(--studio-white);
+
+		svg {
+			margin-right: 6px;
 		}
 	}
 }

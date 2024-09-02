@@ -317,8 +317,12 @@
 			}
 		}
 
-		.theme-card__image-container {
-			border-color: rgba(0, 0, 0, 0.12);
+		&.theme-card--is-active {
+			order: 0;
+		}
+
+		&:not(.theme-card--is-active) {
+			order: 1;
 		}
 	}
 
