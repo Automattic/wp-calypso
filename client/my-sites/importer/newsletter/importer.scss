@@ -61,6 +61,7 @@
 
 .select-newsletter-form__help {
 	margin-top: 8px;
+	margin-bottom: 0;
 	font-size: 0.75rem;
 
 	&.is-error {
@@ -113,4 +114,5 @@
 
 .select-newsletter-form .is-loading {
 	@include placeholder( --color-neutral-10 );
+	margin-bottom: 0;
 }
