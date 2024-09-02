@@ -48,12 +48,12 @@ export default function SelectNewsletterForm( { stepUrl, urlData, isLoading }: P
 				/>
 				{ hasError && (
 					<p className="select-newsletter-form__help is-error">
-						Please enter a valid substack URL.
+						Please enter a valid Substack URL.
 					</p>
 				) }
 				{ ! hasError && (
 					<p className="select-newsletter-form__help">
-						Enter the URL of the substack newsletter that you wish to import.
+						Enter the URL of the Substack newsletter that you wish to import.
 					</p>
 				) }
 			</div>
