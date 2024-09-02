@@ -10,16 +10,10 @@ type Props = {
 	stepUrl: string;
 	urlData?: UrlData;
 	isLoading: boolean;
-	validFromSite: boolean;
 };
 
-export default function SelectNewsletterForm( {
-	stepUrl,
-	urlData,
-	isLoading,
-	validFromSite,
-}: Props ) {
-	const [ hasError, setHasError ] = useState( ! validFromSite );
+export default function SelectNewsletterForm( { stepUrl, urlData, isLoading }: Props ) {
+	const [ hasError, setHasError ] = useState( false );
 
 	const handleAction = ( fromSite: string ) => {
 		if ( ! isValidUrl( fromSite ) ) {
