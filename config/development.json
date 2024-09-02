@@ -220,6 +220,7 @@
 		"stepper-woocommerce-poc": true,
 		"storage-addon": true,
 		"stripe-redirect-migration-p24": true,
+		"stripe-redgit irect-migration-ideal": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
 		"subscription-gifting": true,
