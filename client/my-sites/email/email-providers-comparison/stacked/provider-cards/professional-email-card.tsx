@@ -92,12 +92,19 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 	const shoppingCartManager = useShoppingCart( cartKey );
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
-	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
-		FIELD_NAME,
-		FIELD_PASSWORD_RESET_EMAIL,
-	] );
-
 	const userEmail = useSelector( getCurrentUserEmail );
+
+	// Check if the email is valid prior to official validation so we can
+	// show the field without triggering a validation error when the page
+	// first loads.
+	const isPasswordResetEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test( userEmail );
+
+	const defaultHiddenFields: HiddenFieldNames[] = isPasswordResetEmailValid
+		? [ FIELD_NAME, FIELD_PASSWORD_RESET_EMAIL ]
+		: [ FIELD_NAME ];
+
+	const [ hiddenFieldNames, setHiddenFieldNames ] =
+		useState< HiddenFieldNames[] >( defaultHiddenFields );
 
 	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
 		event.preventDefault();

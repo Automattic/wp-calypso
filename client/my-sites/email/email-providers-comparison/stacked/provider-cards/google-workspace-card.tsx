@@ -78,8 +78,6 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 	const dispatch = useDispatch();
 	const shoppingCartManager = useShoppingCart( cartKey );
 
-	const userEmail = useSelector( getCurrentUserEmail );
-
 	const provider = EmailProvider.Google;
 	const gSuiteProduct = useSelector( ( state ) =>
 		getProductByProviderAndInterval( state, provider, intervalLength )
@@ -89,9 +87,19 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
-	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
-		FIELD_PASSWORD_RESET_EMAIL,
-	] );
+	const userEmail = useSelector( getCurrentUserEmail );
+
+	// Check if the email is valid prior to official validation so we can
+	// show the field without triggering a validation error when the page
+	// first loads.
+	const isPasswordResetEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test( userEmail );
+
+	const defaultHiddenFields: HiddenFieldNames[] = isPasswordResetEmailValid
+		? [ FIELD_PASSWORD_RESET_EMAIL ]
+		: [];
+
+	const [ hiddenFieldNames, setHiddenFieldNames ] =
+		useState< HiddenFieldNames[] >( defaultHiddenFields );
 
 	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
 		event.preventDefault();
