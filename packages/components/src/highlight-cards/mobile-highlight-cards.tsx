@@ -3,6 +3,8 @@ import ShortenedNumber from '../number-formatters';
 import { TrendComparison } from './count-comparison-card';
 import './style.scss';
 
+// TODO: Figure out a way to remove this and make count-comparison-card handle the mobile layout.
+
 type MobileHighlightCardProps = {
 	heading: string;
 	count: number | null;
