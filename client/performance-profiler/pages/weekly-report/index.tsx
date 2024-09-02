@@ -118,7 +118,7 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 						</>
 					}
 					ctaText={ translate( 'Enable email reports' ) }
-					ctaHref="/speed-test"
+					ctaHref={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` }
 					secondaryMessage={ secondaryMessage }
 				/>
 			) }
