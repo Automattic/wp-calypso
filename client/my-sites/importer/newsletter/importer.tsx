@@ -150,7 +150,6 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 					stepUrl={ stepUrl }
 					urlData={ urlData }
 					isLoading={ isFetching || isResetPaidNewsletterPending }
-					validFromSite={ validFromSite }
 				/>
 			) }
 

@@ -62,12 +62,11 @@ export default function Subscribers( {
 					click 'Export.' Once the CSV file is downloaded, upload it in the next step.
 				</p>
 				<Button
-					variant="secondary"
 					href={ `https://${ fromSite }/publish/subscribers` }
 					target="_blank"
 					rel="noreferrer noopener"
-					iconPosition="right"
 					icon={ external }
+					variant="secondary"
 				>
 					Export subscribers
 				</Button>
@@ -107,9 +106,7 @@ export default function Subscribers( {
 							) }
 						</ul>
 					</div>
-					<Button variant="primary" href={ nextStepUrl }>
-						Continue
-					</Button>
+					<Button href={ nextStepUrl }>Continue</Button>
 				</Modal>
 			) }
 		</>
