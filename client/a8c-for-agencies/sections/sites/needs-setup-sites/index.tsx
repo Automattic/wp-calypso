@@ -41,7 +41,7 @@ type NeedsSetupSite = {
 };
 
 export default function NeedSetup( { licenseKey }: Props ) {
-	const { randomSiteName, isRandomSiteNameLoading } = useRandomSiteName();
+	const { randomSiteName, isRandomSiteNameLoading, refetchRandomSiteName } = useRandomSiteName();
 	const translate = useTranslate();
 	const [ currentSiteConfigurationId, setCurrentSiteConfigurationId ] = useState< number | null >(
 		null
@@ -138,9 +138,10 @@ export default function NeedSetup( { licenseKey }: Props ) {
 	const onCreateSiteSuccess = useCallback(
 		( id: number ) => {
 			refetchPendingSites();
+			refetchRandomSiteName();
 			page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
 		},
-		[ refetchPendingSites ]
+		[ refetchPendingSites, refetchRandomSiteName ]
 	);
 
 	const onCreateSiteWithConfig = useCallback(
