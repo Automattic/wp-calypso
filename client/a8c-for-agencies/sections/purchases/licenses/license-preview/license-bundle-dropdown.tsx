@@ -5,7 +5,8 @@ import { useCallback, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { LicenseRole } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import RevokeLicenseDialog from '../revoke-license-dialog';
 
@@ -18,6 +19,8 @@ type Props = {
 export default function LicenseBundleDropDown( { licenseKey, product, bundleSize }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isOwner = useSelector( isAgencyOwner );
 
 	const [ showRevokeDialog, setShowRevokeDialog ] = useState( false );
 	const [ showContextMenu, setShowContextMenu ] = useState( false );
@@ -40,6 +43,10 @@ export default function LicenseBundleDropDown( { licenseKey, product, bundleSize
 		dispatch( recordTracksEvent( 'calypso_a4a_license_list_revoke_bundle_dialog_close' ) );
 		setShowRevokeDialog( false );
 	}, [ dispatch ] );
+
+	if ( ! isOwner ) {
+		return null;
+	}
 
 	return (
 		<>

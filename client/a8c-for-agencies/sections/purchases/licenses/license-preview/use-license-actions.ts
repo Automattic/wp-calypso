@@ -7,7 +7,8 @@ import {
 	LicenseType,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export default function useLicenseActions(
@@ -19,6 +20,8 @@ export default function useLicenseActions(
 ): LicenseAction[] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isOwner = useSelector( isAgencyOwner );
 
 	return useMemo( () => {
 		if ( ! siteUrl ) {
@@ -75,11 +78,22 @@ export default function useLicenseActions(
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_hosting_configuration_click' ),
 				type: 'revoke',
 				isEnabled:
+					isOwner &&
 					( isChildLicense
 						? licenseState === LicenseState.Attached
-						: licenseState !== LicenseState.Revoked ) && licenseType === LicenseType.Partner,
+						: licenseState !== LicenseState.Revoked ) &&
+					licenseType === LicenseType.Partner,
 				className: 'is-destructive',
 			},
 		];
-	}, [ attachedAt, dispatch, isChildLicense, licenseType, revokedAt, siteUrl, translate ] );
+	}, [
+		attachedAt,
+		dispatch,
+		isChildLicense,
+		isOwner,
+		licenseType,
+		revokedAt,
+		siteUrl,
+		translate,
+	] );
 }
