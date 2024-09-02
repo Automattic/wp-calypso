@@ -21,8 +21,12 @@ $blueberry-color: #3858e9;
 			background-color: $blueberry-color;
 			border-radius: 4px;
 
-			&:hover:not(:disabled) {
+			&:hover:not(:disabled),
+			&:active:not(:disabled),
+			&:focus:not(:disabled) {
 				background-color: darken($blueberry-color, 10%);
+				border-color: darken($blueberry-color, 10%);
+				box-shadow: none;
 			}
 		}
 	}
