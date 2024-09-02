@@ -1,3 +1,4 @@
+import { useResizeObserver } from '@wordpress/compose';
 import { Icon, info } from '@wordpress/icons';
 import { extent as d3Extent, max as d3Max } from 'd3-array';
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
@@ -180,7 +181,7 @@ const generateSampleData = ( range ) => {
 	return data;
 };
 
-const HistoryChart = ( { data, range, height, width } ) => {
+const HistoryChart = ( { data, range, height } ) => {
 	const svgRef = createRef();
 	const tooltipRef = createRef();
 	const dataAvailable = data && data.some( ( e ) => e.value !== null );
@@ -189,11 +190,17 @@ const HistoryChart = ( { data, range, height, width } ) => {
 		data = generateSampleData( range );
 	}
 
+	const [ resizeObserverRef, entry ] = useResizeObserver();
+
 	useEffect( () => {
+		if ( ! entry ) {
+			return;
+		}
 		// Clear previous chart
 		d3Select( svgRef.current ).selectAll( '*' ).remove();
 
-		const margin = { top: 20, right: 0, bottom: 40, left: 40 };
+		const width = entry.width;
+		const margin = { top: 20, right: 20, bottom: 40, left: 40 };
 
 		const { xScale, yScale, colorScale } = createScales( data, range, margin, width, height );
 
@@ -208,7 +215,7 @@ const HistoryChart = ( { data, range, height, width } ) => {
 
 		const tooltip = d3Select( tooltipRef.current ).attr( 'class', 'tooltip' );
 		dataAvailable && drawDots( svg, data, xScale, yScale, colorScale, range, tooltip );
-	}, [ dataAvailable, data, range, height, width ] );
+	}, [ dataAvailable, data, range, svgRef, tooltipRef, height, entry ] );
 
 	const handleInfoToolTip = ( event ) => {
 		const tooltip = d3Select( tooltipRef.current );
@@ -223,6 +230,7 @@ const HistoryChart = ( { data, range, height, width } ) => {
 
 	return (
 		<div className="chart-container">
+			{ resizeObserverRef }
 			<div ref={ tooltipRef }></div>
 			<div className="chart">
 				<svg ref={ svgRef }></svg>

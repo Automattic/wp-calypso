@@ -612,6 +612,9 @@ class MagicLogin extends Component {
 		const eventOptions = { client_id: oauth2Client.id, client_name: oauth2Client.title };
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party';
+		const isGravatarFlowWithEmail = !! (
+			isGravatarFlowOAuth2Client( oauth2Client ) && query?.email_address
+		);
 
 		this.emailToSha256( usernameOrEmail ).then( ( email ) =>
 			this.setState( { hashedEmail: email } )
@@ -713,7 +716,7 @@ class MagicLogin extends Component {
 					{ translate( 'Continue' ) }
 				</FormButton>
 				<footer className="grav-powered-magic-login__footer">
-					{ ! isFromGravatar3rdPartyApp && (
+					{ ! isFromGravatar3rdPartyApp && ! isGravatarFlowWithEmail && (
 						<button onClick={ this.handleGravPoweredEmailSwitch }>
 							{ translate( 'Switch email' ) }
 						</button>
@@ -746,6 +749,9 @@ class MagicLogin extends Component {
 		} = this.state;
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && query?.gravatar_from === '3rd-party';
+		const isGravatarFlowWithEmail = !! (
+			isGravatarFlowOAuth2Client( oauth2Client ) && query?.email_address
+		);
 		const isProcessingCode = isValidatingCode || isCodeValidated;
 		let errorText = translate( 'Something went wrong. Please try again.' );
 
@@ -844,7 +850,7 @@ class MagicLogin extends Component {
 									args: { countdown: resendEmailCountdown },
 							  } ) }
 					</button>
-					{ ! isFromGravatar3rdPartyApp && (
+					{ ! isFromGravatar3rdPartyApp && ! isGravatarFlowWithEmail && (
 						<button
 							onClick={ () => {
 								this.resetResendEmailCountdown();
@@ -947,11 +953,13 @@ class MagicLogin extends Component {
 		const { isRequestingEmail, requestEmailErrorMessage } = this.state;
 
 		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
+		const isGravatarFlowWithEmail = !! ( isGravatarFlow && query?.email_address );
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 		const isFromGravatarSignup = isGravatar && query?.gravatar_from === 'signup';
 		const isFromGravatar3rdPartyApp = isGravatar && query?.gravatar_from === '3rd-party';
-		const isEmailInputDisabled = isFromGravatar3rdPartyApp || isRequestingEmail;
+		const isEmailInputDisabled =
+			isFromGravatar3rdPartyApp || isRequestingEmail || isGravatarFlowWithEmail;
 		const submitButtonLabel = isGravatar
 			? translate( 'Continue' )
 			: translate( 'Send me sign in link' );
@@ -961,6 +969,7 @@ class MagicLogin extends Component {
 			oauth2ClientId: query?.client_id,
 			gravatarFrom: query?.gravatar_from,
 			gravatarFlow: isGravatarFlow,
+			emailAddress: query?.email_address,
 		} );
 		let headerText = isFromGravatarSignup
 			? translate( 'Create your Profile' )
