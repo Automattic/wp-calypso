@@ -104,5 +104,10 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return path.startsWith( '/stats/' );
 	}
 
+	// For `/theme/*` paths, show Themes menu as selected.
+	if ( pathIncludes( currentPath, 'theme', 1 ) ) {
+		return pathIncludes( path, 'themes', 1 );
+	}
+
 	return fragmentIsEqual( path, currentPath, 1 );
 };

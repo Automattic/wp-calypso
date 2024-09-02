@@ -3,7 +3,12 @@ import { Primitive } from 'utility-types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { Navigate, ProvidedDependencies, StepperStep } from '../../internals/types';
 
-export const useFlowNavigator = ( navigate: Navigate< StepperStep[] > ) => {
+interface Options {
+	navigate: Navigate< StepperStep[] >;
+	persistedUrlParams: string[];
+}
+
+export const useFlowNavigator = ( { navigate, persistedUrlParams }: Options ) => {
 	const [ query ] = useSearchParams();
 
 	const getFromPropsOrUrl = ( key: string, props?: ProvidedDependencies ): Primitive => {
@@ -17,7 +22,9 @@ export const useFlowNavigator = ( navigate: Navigate< StepperStep[] > ) => {
 		props: ProvidedDependencies = {},
 		options = { replaceHistory: false }
 	) => {
-		const queryParams = keys.reduce(
+		const allKeys = [ ...persistedUrlParams, ...keys ];
+
+		const queryParams = allKeys.reduce(
 			( acc, key ) => {
 				const value = getFromPropsOrUrl( key, props );
 				if ( value ) {
