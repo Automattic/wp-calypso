@@ -13,12 +13,9 @@ function StatsFeedbackCard() {
 	const primaryButtonText = translate( 'Love it? Leave a review' );
 	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
 
-	const handleClickWriteReview = () => {
-		// console.log( 'happy user, leave a review' );
-	};
+	const handleClickWriteReview = () => {};
 
 	const handleClickSendFeedback = () => {
-		// console.log( 'angry user, send feedback' );
 		setIsOpen( true );
 	};
 
