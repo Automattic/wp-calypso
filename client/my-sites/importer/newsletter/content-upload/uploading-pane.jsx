@@ -276,7 +276,7 @@ export class UploadingPane extends PureComponent {
 							type="file"
 							name="exportFile"
 							onChange={ this.initiateFromForm }
-							accept={ acceptedFileTypes ? acceptedFileTypes.join( ',' ) : undefined }
+							accept={ acceptedFileTypes?.length ? acceptedFileTypes.join( ',' ) : undefined }
 						/>
 					) }
 					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
