@@ -1,5 +1,6 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { useStepPersistedState } from '@automattic/onboarding';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
@@ -23,6 +24,7 @@ export const LocalizedPlanStep = localize( PlansStep );
 export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
+	const isMobile = useMobileBreakpoint();
 
 	const { siteTitle, domainItem, domainItems } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
@@ -99,6 +101,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			wrapperProps={ {
+				hideBack: isMobile,
 				goBack: props.navigation.goBack,
 				recordTracksEvent: ( event: unknown ) => dispatch( recordTracksEvent( event ) ),
 				isFullLayout: true,
