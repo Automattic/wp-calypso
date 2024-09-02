@@ -348,6 +348,7 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Bancontact'
 	| 'WPCOM_Billing_Stripe_Ideal'
 	| 'WPCOM_Billing_Stripe_P24'
+	| 'WPCOM_Billing_Stripe_Wechat'
 	| 'WPCOM_Billing_Stripe_Source_Alipay'
 	| 'WPCOM_Billing_Stripe_Source_Bancontact'
 	| 'WPCOM_Billing_Stripe_Source_Eps'
