@@ -12,14 +12,14 @@ export default function Summary( { cardData, selectedSite }: Props ) {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
 	function shouldRenderConfetti( contentStatus: string, subscriberStatue: string ) {
-		if ( contentStatus === 'done' && subscriberStatue === 'imported' ) {
+		if ( contentStatus === 'done' && subscriberStatue === 'done' ) {
 			return true;
 		}
 		if ( contentStatus === 'done' && subscriberStatue === 'skipped' ) {
 			return true;
 		}
 
-		if ( contentStatus === 'skipped' && subscriberStatue === 'imported' ) {
+		if ( contentStatus === 'skipped' && subscriberStatue === 'done' ) {
 			return true;
 		}
 
@@ -28,7 +28,9 @@ export default function Summary( { cardData, selectedSite }: Props ) {
 	return (
 		<Card>
 			{ shouldRenderConfetti( cardData.content.status, cardData.subscribers.status ) && (
-				<ConfettiAnimation trigger={ ! prefersReducedMotion } />
+				<>
+					<ConfettiAnimation trigger={ ! prefersReducedMotion } /> <h1>Success! 🎉</h1>
+				</>
 			) }
 			<ContentSummary cardData={ cardData.content.content } status={ cardData.content.status } />
 			<SubscribersSummary

@@ -49,6 +49,7 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
 
 	const [ validFromSite, setValidFromSite ] = useState( false );
+	const [ autoFetchData, setAutoFetchData ] = useState( false );
 
 	const stepsProgress: ClickHandler[] = [
 		{ message: 'Content', onClick: noop },
@@ -71,8 +72,24 @@ export default function NewsletterImporter( { siteSlug, engine, step }: Newslett
 	const { data: paidNewsletterData, isFetching: isFetchingPaidNewsletter } = usePaidNewsletterQuery(
 		engine,
 		step,
-		selectedSite?.ID
+		selectedSite?.ID,
+		autoFetchData
 	);
+
+	useEffect( () => {
+		if (
+			paidNewsletterData?.steps?.content?.status === 'importing' ||
+			paidNewsletterData?.steps.subscribers?.status === 'importing'
+		) {
+			setAutoFetchData( true );
+		} else {
+			setAutoFetchData( false );
+		}
+	}, [
+		paidNewsletterData?.steps?.content?.status,
+		paidNewsletterData?.steps.subscribers?.status,
+		setAutoFetchData,
+	] );
 
 	stepSlugs.forEach( ( stepName, index ) => {
 		if ( stepName === step ) {
