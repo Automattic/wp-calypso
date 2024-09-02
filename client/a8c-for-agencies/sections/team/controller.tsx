@@ -30,22 +30,12 @@ export const teamInviteContext: Callback = ( context, next ) => {
 };
 
 export const teamAcceptInviteContext: Callback = ( context, next ) => {
-	const {
-		agency_id: agencyId,
-		agency_name: agencyName,
-		invite_id: inviteId,
-		secret: secret,
-	} = context.query;
+	const { agency_id: agencyId, invite_id: inviteId, secret: secret } = context.query;
 
 	context.primary = (
 		<>
 			<PageViewTracker title="Accept team invite" path={ context.path } />
-			<TeamAcceptInvite
-				agencyId={ agencyId }
-				agencyName={ agencyName }
-				inviteId={ inviteId }
-				secret={ secret }
-			/>
+			<TeamAcceptInvite agencyId={ agencyId } inviteId={ inviteId } secret={ secret } />
 		</>
 	);
 

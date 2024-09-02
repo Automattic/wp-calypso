@@ -1,10 +1,15 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import { Agency } from 'calypso/state/a8c-for-agencies/types';
 
-interface APIError {
+export interface APIError {
 	status: number;
 	code: string | null;
 	message: string;
+	data?: {
+		user_agencies?: Agency[];
+		target_agency?: Agency;
+	};
 }
 
 interface Params {

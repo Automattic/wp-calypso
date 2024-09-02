@@ -11,10 +11,10 @@ import { Agency } from 'calypso/state/a8c-for-agencies/types';
 
 type Props = {
 	currentAgency: Agency;
-	invitingAgencyName?: string;
+	targetAgency: Agency;
 };
 
-export default function NoMultiAgencyMessage( { currentAgency, invitingAgencyName = '' }: Props ) {
+export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: Props ) {
 	const translate = useTranslate();
 
 	return (
@@ -25,13 +25,13 @@ export default function NoMultiAgencyMessage( { currentAgency, invitingAgencyNam
 
 			<div className="team-accept-invite__subtitle">
 				{ translate(
-					'To join %(invitingAgencyName)s, first leave the %(currentAgencyName)s dashboard.',
+					'To join %(targetAgencyName)s, first leave the %(currentAgencyName)s dashboard.',
 					{
 						args: {
-							invitingAgencyName,
-							currentAgencyName: currentAgency.name,
+							targetAgencyName: targetAgency?.name,
+							currentAgencyName: currentAgency?.name,
 						},
-						comment: '%(invitingAgencyName)s and %(currentAgencyName)s are agency names',
+						comment: '%(targetAgencyName)s and %(currentAgencyName)s are agency names',
 					}
 				) }
 			</div>
@@ -73,18 +73,18 @@ export default function NoMultiAgencyMessage( { currentAgency, invitingAgencyNam
 					isNewLayout
 					stepNumber={ 2 }
 					heading={
-						translate( 'Join the %(invitingAgencyName)s Dashboard', {
-							args: { invitingAgencyName },
-							comment: '%(invitingAgencyName)s is an agency name',
+						translate( 'Join the %(targetAgencyName)s Dashboard', {
+							args: { targetAgencyName: targetAgency?.name },
+							comment: '%(targetAgencyName)s is an agency name',
 						} ) as string
 					}
 					description={
 						<>
 							{ translate(
-								`Click the invite link in your email again to join %(invitingAgencyName)s.`,
+								`Click the invite link in your email again to join %(targetAgencyName)s.`,
 								{
-									args: { invitingAgencyName },
-									comment: '%(invitingAgencyName)s is an agency name',
+									args: { targetAgencyName: targetAgency?.name },
+									comment: '%(targetAgencyName)s is an agency name',
 								}
 							) }
 						</>
