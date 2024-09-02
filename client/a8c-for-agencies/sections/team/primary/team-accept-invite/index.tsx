@@ -83,15 +83,15 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 	}, [ agency, agencyId ] );
 
 	const title = useMemo( () => {
-		if ( error && error.code === ALREADY_MEMBER_OF_AGENCY_ERROR_CODE ) {
+		if ( ! error ) {
+			return <div className="team-accept-invite__title-placeholder"></div>;
+		}
+
+		if ( error.code === ALREADY_MEMBER_OF_AGENCY_ERROR_CODE ) {
 			return <img src={ AgencyLogo } alt="" />;
 		}
 
-		if ( error ) {
-			return translate( 'Invalid invite link' );
-		}
-
-		return <div className="team-accept-invite__title-placeholder"></div>;
+		return translate( 'Invalid invite link' );
 	}, [ error, translate ] );
 
 	const content = useMemo( () => {
