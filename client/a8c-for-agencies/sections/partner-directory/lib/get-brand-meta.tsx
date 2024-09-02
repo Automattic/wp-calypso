@@ -37,7 +37,7 @@ export const getBrandMeta = ( brand: string, agency?: Agency | null ): BrandMeta
 				className: 'partner-directory-dashboard__woo-icon',
 				url: 'https://woocommerce.com/development-services/',
 				urlProfile: `https://woocommerce.com/development-services/${ agencySlug }/${ agencyId }`,
-				isAvailable: false,
+				isAvailable: true,
 			};
 		case 'Pressable.com':
 			return {
@@ -45,7 +45,7 @@ export const getBrandMeta = ( brand: string, agency?: Agency | null ): BrandMeta
 				icon: <img src={ pressableIcon } alt="" />,
 				url: 'https://pressable.com/development-services/',
 				urlProfile: `https://pressable.com/development-services/${ agencySlug }/${ agencyId }`,
-				isAvailable: false,
+				isAvailable: true,
 			};
 		case 'Jetpack.com':
 			return {

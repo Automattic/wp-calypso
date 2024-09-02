@@ -5,12 +5,5 @@ export type ShortenedNumberProps = {
 };
 
 export default function ShortenedNumber( { value }: ShortenedNumberProps ) {
-	return (
-		<span
-			className="shortened-number"
-			title={ Number.isFinite( value ) ? String( value ) : undefined }
-		>
-			{ formatNumber( value ) }
-		</span>
-	);
+	return <span className="shortened-number">{ formatNumber( value ) }</span>;
 }
