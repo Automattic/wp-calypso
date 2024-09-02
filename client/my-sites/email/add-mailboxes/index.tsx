@@ -318,10 +318,6 @@ const MailboxesForm = ( {
 			} );
 	};
 
-	const passwordResetEmailDefaultValue = {
-		[ FIELD_PASSWORD_RESET_EMAIL ]: isPasswordResetEmailValid ? userEmail : '',
-	};
-
 	return (
 		<>
 			<SectionHeader label={ translate( 'Add New Mailboxes' ) } />
@@ -330,7 +326,9 @@ const MailboxesForm = ( {
 				<NewMailBoxList
 					areButtonsBusy={ isAddingToCart || isValidating }
 					hiddenFieldNames={ hiddenFieldNames }
-					initialFieldValues={ passwordResetEmailDefaultValue }
+					initialFieldValues={ {
+						[ FIELD_PASSWORD_RESET_EMAIL ]: isPasswordResetEmailValid ? userEmail : '',
+					} }
 					onSubmit={ onSubmit }
 					onCancel={ onCancel }
 					provider={ provider }

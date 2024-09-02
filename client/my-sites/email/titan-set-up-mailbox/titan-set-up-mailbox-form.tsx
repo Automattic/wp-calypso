@@ -145,7 +145,9 @@ const TitanSetUpMailboxForm = ( {
 			<NewMailBoxList
 				areButtonsBusy={ isValidating }
 				hiddenFieldNames={ hiddenFieldNames }
-				initialFieldValues={ { [ FIELD_PASSWORD_RESET_EMAIL ]: userEmail } }
+				initialFieldValues={ {
+					[ FIELD_PASSWORD_RESET_EMAIL ]: isPasswordResetEmailValid ? userEmail : '',
+				} }
 				isAutoFocusEnabled
 				onSubmit={ handleCompleteSetup }
 				provider={ EmailProvider.Titan }

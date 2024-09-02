@@ -134,7 +134,9 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 		<NewMailBoxList
 			areButtonsBusy={ addingToCart }
 			hiddenFieldNames={ hiddenFieldNames }
-			initialFieldValues={ { [ FIELD_PASSWORD_RESET_EMAIL ]: userEmail } }
+			initialFieldValues={ {
+				[ FIELD_PASSWORD_RESET_EMAIL ]: isPasswordResetEmailValid ? userEmail : '',
+			} }
 			isInitialMailboxPurchase
 			onSubmit={ handleSubmit }
 			provider={ provider }

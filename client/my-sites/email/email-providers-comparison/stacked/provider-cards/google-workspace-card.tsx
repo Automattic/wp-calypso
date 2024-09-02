@@ -136,7 +136,9 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 	googleWorkspace.formFields = ! isGSuiteSupported ? undefined : (
 		<NewMailBoxList
 			areButtonsBusy={ addingToCart }
-			initialFieldValues={ { [ FIELD_PASSWORD_RESET_EMAIL ]: userEmail } }
+			initialFieldValues={ {
+				[ FIELD_PASSWORD_RESET_EMAIL ]: isPasswordResetEmailValid ? userEmail : '',
+			} }
 			isInitialMailboxPurchase
 			hiddenFieldNames={ hiddenFieldNames }
 			onSubmit={ handleSubmit }
