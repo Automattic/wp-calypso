@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useLeadquery } from 'calypso/data/site-profiler/use-lead-query';
+import { useLeadMutation } from 'calypso/data/site-profiler/use-lead-query';
 import { MessageDisplay } from 'calypso/performance-profiler/components/message-display';
 
 type WeeklyReportProps = {
@@ -73,7 +73,7 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 
 	const siteUrl = new URL( url );
 
-	const { mutate, isLoading, isError, isSuccess } = useLeadquery( url, hash );
+	const { mutate, isPending, isError, isSuccess } = useLeadMutation( url, hash );
 
 	useEffect( () => {
 		mutate();
@@ -87,7 +87,7 @@ export const WeeklyReport = ( props: WeeklyReportProps ) => {
 		<div className="peformance-profiler-weekly-report-container">
 			<DocumentHead title={ translate( 'Speed Test weekly reports' ) } />
 
-			{ isLoading && (
+			{ isPending && (
 				<MessageDisplay
 					displayBadge
 					message={
