@@ -21,8 +21,8 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import { usePasswordResetEmailField } from 'calypso/my-sites/email/hooks/use-password-reset-email-field';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersStackedCardProps, ProviderCardProps } from './provider-card-props';
@@ -91,20 +91,14 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 	const dispatch = useDispatch();
 	const shoppingCartManager = useShoppingCart( cartKey );
 	const [ addingToCart, setAddingToCart ] = useState( false );
+	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
 
-	const userEmail = useSelector( getCurrentUserEmail );
+	const { hiddenFields, passwordResetEmailFieldInitialValue } = usePasswordResetEmailField( {
+		selectedDomainName,
+		defaultHiddenFields,
+	} );
 
-	// Check if the email is valid prior to official validation so we can
-	// show the field without triggering a validation error when the page
-	// first loads.
-	const isPasswordResetEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test( userEmail );
-
-	const defaultHiddenFields: HiddenFieldNames[] = isPasswordResetEmailValid
-		? [ FIELD_NAME, FIELD_PASSWORD_RESET_EMAIL ]
-		: [ FIELD_NAME ];
-
-	const [ hiddenFieldNames, setHiddenFieldNames ] =
-		useState< HiddenFieldNames[] >( defaultHiddenFields );
+	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( hiddenFields );
 
 	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
 		event.preventDefault();
@@ -135,7 +129,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 			areButtonsBusy={ addingToCart }
 			hiddenFieldNames={ hiddenFieldNames }
 			initialFieldValues={ {
-				[ FIELD_PASSWORD_RESET_EMAIL ]: isPasswordResetEmailValid ? userEmail : '',
+				[ FIELD_PASSWORD_RESET_EMAIL ]: passwordResetEmailFieldInitialValue,
 			} }
 			isInitialMailboxPurchase
 			onSubmit={ handleSubmit }
