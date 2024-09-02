@@ -3,6 +3,7 @@ import { camelToSnakeCase } from '@automattic/js-utils';
 import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/wpcom-checkout';
 
 const isP24RedirectEnabled = config.isEnabled( 'stripe-redirect-migration-p24' );
+const StripeRedirectMigrationIdeal = config.isEnabled( 'stripe-redirect-migration-ideal' );
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
@@ -85,7 +86,10 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'eps':
 			return 'WPCOM_Billing_Stripe_Source_Eps';
 		case 'ideal':
-			return 'WPCOM_Billing_Stripe_Ideal';
+			if ( StripeRedirectMigrationIdeal ) {
+				return 'WPCOM_Billing_Stripe_Ideal';
+			}
+			return 'WPCOM_Billing_Stripe_Source_Ideal';
 		case 'p24':
 			if ( isP24RedirectEnabled ) {
 				return 'WPCOM_Billing_Stripe_P24';
