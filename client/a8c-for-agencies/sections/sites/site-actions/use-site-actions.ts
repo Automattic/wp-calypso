@@ -6,6 +6,7 @@ import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashbo
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
+import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -42,6 +43,8 @@ export default function useSiteActions( {
 	const isA4AClient = useSelector( ( state ) => isA4AClientSite( state, siteValue?.blog_id ) );
 	const isWPCOMSimpleSite = ! isJetpack && ! isA4AClient;
 	const isWPCOMSite = isWPCOMSimpleSite || isWPCOMAtomicSite;
+
+	const isOwner = useSelector( isAgencyOwner );
 
 	return useMemo( () => {
 		if ( ! siteValue ) {
@@ -162,17 +165,20 @@ export default function useSiteActions( {
 				onClick: () => handleClickMenuItem( 'remove_site' ),
 				icon: 'trash',
 				className: 'is-error',
-				isEnabled: true,
+				isEnabled: isOwner,
 			},
 		];
 	}, [
 		dispatch,
+		isDevSite,
 		isLargeScreen,
+		isOwner,
 		isWPCOMSimpleSite,
 		isWPCOMSite,
 		onSelect,
+		setDataViewsState,
 		setSelectedSiteFeature,
-		site?.value?.sticker,
+		site?.value,
 		siteError,
 		siteValue,
 		translate,
