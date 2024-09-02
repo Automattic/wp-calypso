@@ -29,6 +29,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
+import { HostingErrorStatus } from 'calypso/my-sites/hosting/hosting-error-status';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
@@ -69,6 +70,8 @@ import {
 	getUploadProgressTotal,
 	getUploadProgressLoaded,
 	isInstallInProgress,
+	isTransferInProgress,
+	isTransferComplete,
 } from 'calypso/state/themes/upload-theme/selectors';
 import {
 	getSelectedSiteId,
@@ -109,9 +112,6 @@ class Upload extends Component {
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
-		if ( this.props.isAtomic && this.props.canUploadThemesOrPlugins ) {
-			this.redirectToWpAdmin();
-		}
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -159,22 +159,11 @@ class Upload extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		if (
-			this.props.isAtomic &&
-			this.props.canUploadThemesOrPlugins &&
-			! this.state.hasRequestedTrial
-		) {
-			this.redirectToWpAdmin();
-		}
 		if ( this.props.complete && ! prevProps.complete ) {
 			this.successMessage();
 		} else if ( this.props.failed && ! prevProps.failed ) {
 			this.failureMessage();
 		}
-	}
-
-	redirectToWpAdmin() {
-		window.location = this.props.siteThemeInstallUrl;
 	}
 
 	successMessage() {
@@ -312,9 +301,11 @@ class Upload extends Component {
 				<div className="theme-upload__description">{ theme.description }</div>
 				<div className="theme-upload__action-buttons">
 					<Button onClick={ this.onTryAndCustomizeClick }>{ tryandcustomize.label }</Button>
-					<Button primary onClick={ this.onActivateClick }>
-						{ activate.label }
-					</Button>
+					{ this.props.activeTheme !== theme.id && (
+						<Button primary onClick={ this.onActivateClick }>
+							{ activate.label }
+						</Button>
+					) }
 				</div>
 			</div>
 		);
@@ -409,6 +400,8 @@ class Upload extends Component {
 
 		const isTrial = isTransferring || isTrialSite || hasRequestedTrial;
 
+		const shouldShowAtNotice = this.props.isTransferInProgress;
+
 		return (
 			<Main className="theme-upload" wideLayout>
 				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
@@ -435,12 +428,16 @@ class Upload extends Component {
 				></NavigationHeader>
 
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
-				{ ! showTrialAcknowledgeModal && ! isAtomic && (
+				{ ! showTrialAcknowledgeModal && shouldShowAtNotice && (
 					<HostingActivateStatus
 						context="theme"
 						onTick={ this.requestUpdatedSiteData }
 						keepAlive={ hasRequestedTrial && ! isAtomic }
+						forceEnable={ shouldShowAtNotice }
 					/>
+				) }
+				{ this.props.isTransferCompleted && themeId !== this.props.activeTheme && (
+					<HostingErrorStatus context="theme" />
 				) }
 				{ showUpgradeBanner && ! isTrial && this.renderUpgradeBanner() }
 
@@ -512,6 +509,8 @@ const mapStateToProps = ( state ) => {
 		progressLoaded: getUploadProgressLoaded( state, siteId ),
 		installing: isInstallInProgress( state, siteId ),
 		backPath: getBackPath( state ),
+		isTransferInProgress: isTransferInProgress( state, siteId ),
+		isTransferCompleted: isTransferComplete( state, siteId ),
 		showEligibility,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteThemeInstallUrl: getSiteThemeInstallUrl( state, siteId ),

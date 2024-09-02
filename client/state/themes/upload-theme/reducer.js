@@ -247,6 +247,39 @@ export const isTransferComplete = ( state = {}, action ) => {
 	return state;
 };
 
+export const isTransferInProgress = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case THEME_TRANSFER_INITIATE_REQUEST:
+		case THEME_TRANSFER_INITIATE_PROGRESS: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: true,
+			};
+		}
+		case THEME_TRANSFER_INITIATE_FAILURE:
+		case THEME_TRANSFER_STATUS_FAILURE: {
+			const { siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: false,
+			};
+		}
+		case THEME_TRANSFER_STATUS_RECEIVE: {
+			const { siteId, status } = action;
+
+			return {
+				...state,
+				[ siteId ]: status !== 'complete',
+			};
+		}
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	uploadedThemeId,
 	uploadError,
@@ -254,4 +287,5 @@ export default combineReducers( {
 	progressTotal,
 	inProgress,
 	isTransferComplete,
+	isTransferInProgress,
 } );

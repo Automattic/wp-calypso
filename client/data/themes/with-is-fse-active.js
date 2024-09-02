@@ -11,7 +11,14 @@ const withIsFSEActive = createHigherOrderComponent(
 		const { data, isLoading } = useActiveThemeQuery( siteId, userLoggedIn );
 		const isFSEActive = data?.[ 0 ]?.is_block_theme ?? false;
 
-		return <Wrapped { ...props } isFSEActiveLoading={ isLoading } isFSEActive={ isFSEActive } />;
+		return (
+			<Wrapped
+				{ ...props }
+				isFSEActiveLoading={ isLoading }
+				activeTheme={ data?.[ 0 ]?.stylesheet }
+				isFSEActive={ isFSEActive }
+			/>
+		);
 	},
 	'withIsFSEActive'
 );

@@ -8,6 +8,7 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_UPLOAD_SUCCESS,
 } from 'calypso/state/themes/action-types';
 
 import 'calypso/state/themes/init';
@@ -170,6 +171,11 @@ export function pollThemeTransferStatus( siteId, transferId, interval = 3000, ti
 				.then( ( { status, message, uploaded_theme_slug } ) => {
 					dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
 					if ( status === 'complete' ) {
+						dispatch( {
+							type: THEME_UPLOAD_SUCCESS,
+							siteId,
+							themeId: uploaded_theme_slug,
+						} );
 						// finished, stop polling
 						return resolve();
 					}
