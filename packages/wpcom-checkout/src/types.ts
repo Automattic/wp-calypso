@@ -349,7 +349,7 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Source_Bancontact'
 	| 'WPCOM_Billing_Stripe_Source_Eps'
 	| 'WPCOM_Billing_Stripe_Source_Ideal'
-	| 'WPCOM_Billing_Stripe_IDeal'
+	| 'WPCOM_Billing_Stripe_Ideal'
 	| 'WPCOM_Billing_Stripe_Source_P24'
 	| 'WPCOM_Billing_Stripe_Source_Sofort'
 	| 'WPCOM_Billing_Stripe_Source_Three_D_Secure'
