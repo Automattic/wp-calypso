@@ -3,6 +3,7 @@ import i18n from 'i18n-calypso';
 import { createElement } from 'react';
 import wp from 'calypso/lib/wp';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import type { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import type { FieldError, MailboxFormFieldBase } from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface Validator< T > {
@@ -129,10 +130,15 @@ class MailboxNameValidator extends BaseValidator< string > {
 
 class PasswordResetEmailValidator extends BaseValidator< string > {
 	private readonly domainName: string;
+	private readonly setFieldIsVisible: MailboxForm< EmailProvider >[ 'setFieldIsVisible' ];
 
-	constructor( domainName: string ) {
+	constructor(
+		domainName: string,
+		setFieldIsVisible: MailboxForm< EmailProvider >[ 'setFieldIsVisible' ]
+	) {
 		super();
 		this.domainName = domainName;
+		this.setFieldIsVisible = setFieldIsVisible;
 	}
 
 	static getInvalidEmailError(): FieldError {
@@ -174,6 +180,7 @@ class PasswordResetEmailValidator extends BaseValidator< string > {
 			parts[ 1 ].toLowerCase() === this.domainName?.toLowerCase()
 		) {
 			field.error = PasswordResetEmailValidator.getSameDomainError( this.domainName );
+			this.setFieldIsVisible( field.fieldName, true );
 		}
 	}
 }

@@ -73,7 +73,12 @@ class MailboxForm< T extends EmailProvider > {
 			[ FIELD_PASSWORD, new RequiredValidator< string >() ],
 			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],
 			[ FIELD_PASSWORD_RESET_EMAIL, new RequiredValidator< string >() ],
-			[ FIELD_PASSWORD_RESET_EMAIL, new PasswordResetEmailValidator( domainName ) ],
+			[
+				FIELD_PASSWORD_RESET_EMAIL,
+				new PasswordResetEmailValidator( domainName, ( fieldName, isVisible ) =>
+					this.setFieldIsVisible( fieldName, isVisible )
+				),
+			],
 			[ FIELD_UUID, new RequiredValidator< string >() ],
 		];
 	}

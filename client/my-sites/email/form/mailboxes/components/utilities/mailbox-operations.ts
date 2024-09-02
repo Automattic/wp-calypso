@@ -22,7 +22,7 @@ export class MailboxOperations {
 				.map( ( mailbox ) => mailbox.getFieldValue< string >( FIELD_MAILBOX ) ?? '' );
 
 			mailbox.validate(
-				true,
+				false,
 				mailbox.getPreviouslySpecifiedMailboxNameValidators( otherMailboxNames )
 			);
 		} );
