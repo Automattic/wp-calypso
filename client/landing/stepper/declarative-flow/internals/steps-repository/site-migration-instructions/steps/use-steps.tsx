@@ -1,13 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { recordMigrationInstructionsLinkClick } from '../tracking';
+import { MigrationKeyCta } from './migration-key-cta';
 import { StepAddMigrationKey } from './step-add-migration-key';
 import { StepAddMigrationKeyFallback } from './step-add-migration-key-fallback';
-import { StepCta } from './step-cta';
+import { StepButton } from './step-button';
 import { StepGetYourSiteReady } from './step-get-your-site-ready';
 import { StepInstallMigrateGuru } from './step-install-migrate-guru';
+import { StepLinkCta } from './step-link-cta';
 import { getMigrateGuruPageURL, getPluginInstallationPage } from './utils';
 import type { Task, Expandable } from '@automattic/launchpad';
 
@@ -26,7 +26,7 @@ interface StepData {
 	key: string;
 	title: string;
 	content: JSX.Element;
-	actionCtaText: string;
+	action?: JSX.Element;
 }
 
 type StepsData = StepData[];
@@ -60,28 +60,26 @@ const useStepsData = ( {
 }: StepsDataOptions ): StepsData => {
 	const translate = useTranslate();
 
-	let migrationKeyActionCtaText = '';
-
-	if ( fromUrl ) {
-		if ( migrationKey ) {
-			migrationKeyActionCtaText = translate( 'Enter key' );
-		} else if ( showMigrationKeyFallback ) {
-			migrationKeyActionCtaText = translate( 'Get key' );
-		}
-	}
-
 	return [
 		{
 			key: INSTALL_MIGRATE_GURU,
 			title: translate( 'Install the Migrate Guru plugin' ),
 			content: <StepInstallMigrateGuru />,
-			actionCtaText: translate( 'Install plugin' ),
+			action: (
+				<StepLinkCta url={ getPluginInstallationPage( fromUrl ) } linkname="install-plugin">
+					{ translate( 'Install plugin' ) }
+				</StepLinkCta>
+			),
 		},
 		{
 			key: GET_SITE_READY,
 			title: translate( 'Get your site ready' ),
 			content: <StepGetYourSiteReady />,
-			actionCtaText: fromUrl && translate( 'Get started' ),
+			action: fromUrl ? (
+				<StepLinkCta url={ getMigrateGuruPageURL( fromUrl ) } linkname="go-to-plugin-page">
+					{ translate( 'Get started' ) }
+				</StepLinkCta>
+			) : undefined,
 		},
 		{
 			key: ADD_MIGRATION_KEY,
@@ -91,7 +89,13 @@ const useStepsData = ( {
 			) : (
 				<StepAddMigrationKey migrationKey={ migrationKey } preparationError={ preparationError } />
 			),
-			actionCtaText: migrationKeyActionCtaText,
+			action: (
+				<MigrationKeyCta
+					fromUrl={ fromUrl }
+					hasMigrationKey={ !! migrationKey }
+					showMigrationKeyFallback={ showMigrationKeyFallback }
+				/>
+			),
 		},
 	];
 };
@@ -104,8 +108,6 @@ export const useSteps = ( {
 	onComplete,
 }: StepsOptions ): StepsObject => {
 	const translate = useTranslate();
-	const site = useSite();
-	const siteUrl = site?.URL ?? '';
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ lastCompleteStep, setLastCompleteStep ] = useState( -1 );
 	const stepsData = useStepsData( {
@@ -120,16 +122,6 @@ export const useSteps = ( {
 			recordTracksEvent( 'calypso_site_migration_instructions_substep_complete', {
 				step: step.key,
 			} );
-		};
-
-		const openPluginInstallationPage = () => {
-			window.open( getPluginInstallationPage( fromUrl ), '_blank' );
-			recordMigrationInstructionsLinkClick( 'install-plugin' );
-		};
-
-		const openMigrateGuruPage = ( url: string, linkname: string ) => {
-			window.open( getMigrateGuruPageURL( url ), '_blank' );
-			recordMigrationInstructionsLinkClick( linkname );
 		};
 
 		const onNextClick = () => {
@@ -155,32 +147,26 @@ export const useSteps = ( {
 						setCurrentStep( index );
 				  };
 
+		let navigationAction = undefined;
+		const navigationButtonVariant = step.action ? 'secondary' : 'primary';
 		const isMigrationKeyStep = index === array.length - 1;
-
-		let navigationCtaText = '';
-		let onNavigationCtaClick = () => {};
-		let onActionCtaClick = openPluginInstallationPage;
 
 		if ( isMigrationKeyStep ) {
 			// Show the Done button if there's a migration key OR if the fallback text is displayed.
 			// If neither are true, then the migration key is still being generated.
 			if ( migrationKey || showMigrationKeyFallback ) {
-				navigationCtaText = translate( 'Done' );
-				onNavigationCtaClick = onDoneClick;
-
-				if ( migrationKey ) {
-					onActionCtaClick = () => openMigrateGuruPage( fromUrl, 'enter-key' );
-				} else {
-					onActionCtaClick = () => openMigrateGuruPage( siteUrl, 'copy-key-fallback' );
-				}
+				navigationAction = (
+					<StepButton variant={ navigationButtonVariant } onClick={ onDoneClick }>
+						{ translate( 'Done' ) }
+					</StepButton>
+				);
 			}
 		} else {
-			navigationCtaText = translate( 'Next' );
-			onNavigationCtaClick = onNextClick;
-
-			if ( 1 === index ) {
-				onActionCtaClick = () => openMigrateGuruPage( fromUrl, 'go-to-plugin-page' );
-			}
+			navigationAction = (
+				<StepButton variant={ navigationButtonVariant } onClick={ onNextClick }>
+					{ translate( 'Next' ) }
+				</StepButton>
+			);
 		}
 
 		return {
@@ -196,28 +182,8 @@ export const useSteps = ( {
 						{ step.content }
 
 						<div className="checklist-item__checklist-expanded-ctas">
-							{ step.actionCtaText && (
-								<>
-									<StepCta
-										text={ step.actionCtaText }
-										variant="primary"
-										onClick={ onActionCtaClick }
-									/>
-									<StepCta
-										text={ navigationCtaText }
-										variant="secondary"
-										onClick={ onNavigationCtaClick }
-									/>
-								</>
-							) }
-
-							{ ! step.actionCtaText && navigationCtaText && (
-								<StepCta
-									text={ navigationCtaText }
-									variant="primary"
-									onClick={ onNavigationCtaClick }
-								/>
-							) }
+							{ step.action }
+							{ navigationAction }
 						</div>
 					</>
 				),

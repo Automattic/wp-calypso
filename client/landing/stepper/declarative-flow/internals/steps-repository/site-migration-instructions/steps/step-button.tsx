@@ -1,20 +1,20 @@
 import { Button } from '@wordpress/components';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 
 interface Props {
-	onClick: () => void;
-	text: string;
 	variant: 'primary' | 'secondary';
+	onClick: () => void;
+	children: ReactNode;
 }
 
-export const StepCta: FC< Props > = ( { onClick, text, variant } ) => {
+export const StepButton: FC< Props > = ( { variant, onClick, children } ) => {
 	return (
 		<Button
 			className="checklist-item__checklist-expanded-cta"
 			variant={ variant }
 			onClick={ onClick }
 		>
-			{ text }
+			{ children }
 		</Button>
 	);
 };
