@@ -39,7 +39,6 @@ type PlanFeaturesListProps = {
 	featureGroupSlug?: FeatureGroupSlug;
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	showUpgradeableStorage: boolean;
-	enableCategorisedFeatures?: boolean;
 };
 
 const PlanFeaturesList = ( {
@@ -53,7 +52,6 @@ const PlanFeaturesList = ( {
 	featureGroupSlug,
 	onStorageAddOnClick,
 	showUpgradeableStorage = false,
-	enableCategorisedFeatures = false,
 }: PlanFeaturesListProps ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
@@ -134,7 +132,7 @@ const PlanFeaturesList = ( {
 					isTableCell={ options?.isTableCell }
 					className="plan-features-2023-grid__table-item"
 				>
-					{ ! enableCategorisedFeatures && featureGroup?.getTitle() && (
+					{ featureGroup?.getTitle() && (
 						<PlanFeaturesItem>
 							<h2 className="plans-grid-next-features-grid__feature-group-title">
 								{ featureGroup?.getTitle() }

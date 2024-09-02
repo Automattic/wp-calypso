@@ -175,7 +175,6 @@ const MobileView = ( {
 									featureGroupSlug={ featureGroupSlug }
 									onStorageAddOnClick={ onStorageAddOnClick }
 									showUpgradeableStorage={ showUpgradeableStorage }
-									enableCategorisedFeatures={ enableCategorisedFeatures }
 								/>
 							</div>
 						) ) }

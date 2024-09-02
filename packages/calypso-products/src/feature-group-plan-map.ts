@@ -132,7 +132,10 @@ import {
 	FEATURE_WOOCOMMERCE_HOSTING,
 	/* END: Features & groups for experiment calypso_pricing_grid_fewer_features */
 } from './constants';
-import { isAssignedToFewerFeaturesExperimentVariant } from './experiments';
+import {
+	isAssignedToFewerFeaturesExperiment,
+	isAssignedToFewerFeaturesExperimentVariant,
+} from './experiments';
 import { FeatureGroupMap } from './types';
 
 export const featureGroups: Partial< FeatureGroupMap > = {
@@ -143,7 +146,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	},
 	[ FEATURE_GROUP_STORAGE ]: {
 		slug: FEATURE_GROUP_STORAGE,
-		getTitle: () => i18n.translate( 'Storage' ),
+		getTitle: () => ( isAssignedToFewerFeaturesExperiment() ? null : i18n.translate( 'Storage' ) ),
 		getFeatures: () => [], // Intentionally empty for now. We will include a fixed list of feature slugs in a follow-up.
 	},
 	[ FEATURE_GROUP_ESSENTIAL_FEATURES ]: {
@@ -189,7 +192,8 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	},
 	[ FEATURE_GROUP_DEVELOPER_TOOLS ]: {
 		slug: FEATURE_GROUP_DEVELOPER_TOOLS,
-		getTitle: () => i18n.translate( 'Developer tools' ),
+		getTitle: () =>
+			isAssignedToFewerFeaturesExperiment() ? null : i18n.translate( 'Developer tools' ),
 		getFeatures: () => [
 			FEATURE_DEV_TOOLS,
 			FEATURE_SITE_STAGING_SITES,
