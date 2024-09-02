@@ -45,7 +45,7 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const currentAgency = useSelector( getActiveAgency );
+	const agency = useSelector( getActiveAgency );
 
 	const { mutate: activateMember } = useActivateMemberMutation();
 
@@ -76,11 +76,11 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 	}, [ activateMember, agencyId, dispatch, hasCompleteParameters, inviteId, secret ] );
 
 	useEffect( () => {
-		if ( currentAgency && currentAgency.id === Number( agencyId ) ) {
+		if ( agency && agency.id === Number( agencyId ) ) {
 			// If current agency is the same as the one in the URL, redirect to the overview page
 			page( A4A_OVERVIEW_LINK );
 		}
-	}, [ currentAgency, agencyId ] );
+	}, [ agency, agencyId ] );
 
 	const title = useMemo( () => {
 		if ( error && error.code === ALREADY_MEMBER_OF_AGENCY_ERROR_CODE ) {
