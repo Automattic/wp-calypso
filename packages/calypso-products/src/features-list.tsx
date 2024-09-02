@@ -2305,7 +2305,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_WOOCOMMERCE_HOSTING,
 		getTitle: () =>
 			isAssignedToFewerFeaturesExperiment()
-				? i18n.translate( 'eCommerice tools, integrations, and optimized WooCommerce hosting' )
+				? i18n.translate( 'eCommerce tools, integrations, and optimized WooCommerce hosting' )
 				: i18n.translate( 'Optimized WooCommerce hosting' ),
 		getDescription: () =>
 			i18n.translate(
