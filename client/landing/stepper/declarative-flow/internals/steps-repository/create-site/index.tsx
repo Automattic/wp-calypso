@@ -244,10 +244,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			await addProductsToCart( site.siteSlug, flow, productCartItems );
 		}
 
-		if ( productCartItems?.length && site?.siteSlug ) {
-			await addProductsToCart( site.siteSlug, flow, productCartItems );
-		}
-
 		if ( isImportFocusedFlow( flow ) && site?.siteSlug && sourceMigrationStatus?.source_blog_id ) {
 			// Store temporary target blog id to source site option
 			addTempSiteToSourceOption( site.siteId, sourceMigrationStatus?.source_blog_id );
