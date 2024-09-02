@@ -1,5 +1,5 @@
 import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
-import { isMobile } from '@automattic/viewport';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
@@ -178,6 +178,8 @@ const StepContainer: React.FC< Props > = ( {
 		'is-extra-wide-layout': isExtraWideLayout,
 	} );
 
+	const isMobile = useMobileBreakpoint();
+
 	return (
 		<div className={ classes }>
 			<ActionButtons
@@ -193,7 +195,7 @@ const StepContainer: React.FC< Props > = ( {
 				{
 					// hide navigation buttons on mobile
 					// to be consistent with #57288
-					isMobile() ? null : (
+					isMobile ? null : (
 						<>
 							{ ! hideBack && <BackButton /> }
 							{ ! hideSkip && skipButtonAlign === 'top' && <SkipButton /> }
