@@ -1,5 +1,6 @@
 import { Onboard, useLaunchpad } from '@automattic/data-stores';
 import { isAssemblerDesign } from '@automattic/design-picker';
+import { FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
@@ -38,7 +39,7 @@ const updateDesign: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
+		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || FREE_FLOW;
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
