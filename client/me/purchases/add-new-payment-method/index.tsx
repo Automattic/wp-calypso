@@ -19,6 +19,7 @@ import { paymentMethods } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/src/hooks/use-create-payment-methods';
 import { useSelector, useDispatch } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { PaymentMethodSelectorSubmitButtonContent } from '../manage-purchase/payment-method-selector/payment-method-selector-submit-button-content';
@@ -26,10 +27,12 @@ import { PaymentMethodSelectorSubmitButtonContent } from '../manage-purchase/pay
 function AddNewPaymentMethod() {
 	const goToPaymentMethods = () => page( paymentMethods );
 	const addPaymentMethodTitle = String( titles.addPaymentMethod );
+	const currency = useSelector( getCurrentUserCurrencyCode );
 
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError } = useStripe();
 	const stripeMethod = useCreateCreditCard( {
+		currency,
 		isStripeLoading,
 		stripeLoadingError,
 		shouldUseEbanx: false,

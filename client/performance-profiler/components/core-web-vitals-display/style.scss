@@ -47,13 +47,14 @@ $blueberry-color: #3858e9;
 	padding: 24px;
 	display: flex;
 	flex-direction: row;
-	column-gap: 20px;
-	min-height: 340px;
-	margin-top: -1.5px;
+	column-gap: 32px;
+	min-height: 360px;
+	flex-wrap: wrap;
 
 	& > div {
-		width: 50%;
-		flex: 50%;
+		flex-grow: 1;
+		flex-basis: 0;
+		min-width: 300px;
 	}
 
 	& > p {

@@ -294,11 +294,8 @@ const PartnerDirectoryDashboard = () => {
 			<div className="partner-directory-dashboard__completed-section">
 				<div className="partner-directory-dashboard__heading">
 					{ translate(
-						'Thank you! You’ll be notified when the partner directory is live.',
-						'Thank you! You’ll be notified when the partner directories are live.',
-						// todo: Once the partner directory are live use the copy below:
-						//'Congratulations! Your agency is now listed in our partner directory.',
-						//'Congratulations! Your agency is now listed in our partner directories.',
+						'Congratulations! Your agency is now listed in our partner directory.',
+						'Congratulations! Your agency is now listed in our partner directories.',
 						{
 							count: directoryApplicationStatuses.filter( ( { key } ) => key === 'approved' )
 								.length,

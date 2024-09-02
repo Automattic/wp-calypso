@@ -44,6 +44,7 @@ class FileImporter extends PureComponent {
 			icon: PropTypes.string.isRequired,
 			description: PropTypes.node.isRequired,
 			uploadDescription: PropTypes.node,
+			acceptedFileTypes: PropTypes.array,
 		} ).isRequired,
 		importerStatus: PropTypes.shape( {
 			errorData: PropTypes.shape( {
@@ -80,7 +81,8 @@ class FileImporter extends PureComponent {
 	};
 
 	render() {
-		const { title, overrideDestination, uploadDescription, optionalUrl } = this.props.importerData;
+		const { title, overrideDestination, uploadDescription, optionalUrl, acceptedFileTypes } =
+			this.props.importerData;
 		const { importerStatus, site, fromSite, nextStepUrl, skipNextStep } = this.props;
 		const { errorData, importerState, summaryModalOpen } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
@@ -153,6 +155,7 @@ class FileImporter extends PureComponent {
 						site={ site }
 						optionalUrl={ optionalUrl }
 						fromSite={ fromSite }
+						acceptedFileTypes={ acceptedFileTypes }
 						nextStepUrl={ nextStepUrl }
 						skipNextStep={ skipNextStep }
 					/>
