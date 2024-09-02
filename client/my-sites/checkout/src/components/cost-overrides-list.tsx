@@ -333,7 +333,7 @@ export function CouponCostOverride( {
 		return null;
 	}
 
-	// translators: The label of the coupon line item in checkout, including the coupon coden
+	// translators: The label of the coupon line item in checkout, including the coupon code
 	const couponLabel = translate( 'Coupon: %(couponCode)s', {
 		args: { couponCode: responseCart.coupon },
 	} );
