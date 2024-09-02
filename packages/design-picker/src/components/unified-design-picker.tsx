@@ -205,6 +205,10 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 		shouldLimitGlobalStyles,
 	} );
 
+	const conditionalProps = ! isActive
+		? { onImageClick: () => onPreview( design, selectedStyleVariation ) }
+		: {};
+
 	return (
 		<ThemeCard
 			className="design-button-container"
@@ -223,13 +227,13 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 			badge={ getBadge( design.slug, isLocked ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
-			onImageClick={ () => onPreview( design, selectedStyleVariation ) }
 			onStyleVariationClick={ ( variation ) => {
 				onChangeVariation( design, variation );
 				setSelectedStyleVariation( variation );
 			} }
 			onStyleVariationMoreClick={ () => onPreview( design ) }
 			isActive={ isActive }
+			{ ...conditionalProps }
 		/>
 	);
 };
