@@ -40,7 +40,7 @@ export default function LicenseDetailsActions( {
 	const translate = useTranslate();
 
 	const canRevoke = useSelector( ( state: A4AStore ) =>
-		hasAgencyCapability( state, 'a4a_revoke_license' )
+		hasAgencyCapability( state, 'a4a_revoke_licenses' )
 	);
 
 	const [ revokeDialog, setRevokeDialog ] = useState( false );

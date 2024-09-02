@@ -44,7 +44,7 @@ export default function StoredCreditCard( {
 	const { paging } = useContext( PaymentMethodOverviewContext );
 
 	const canRemove = useSelector( ( state: A4AStore ) =>
-		hasAgencyCapability( state, 'a4a_remove_payment_method' )
+		hasAgencyCapability( state, 'a4a_remove_payment_methods' )
 	);
 
 	// Fetch the stored cards from the cache if they are available.

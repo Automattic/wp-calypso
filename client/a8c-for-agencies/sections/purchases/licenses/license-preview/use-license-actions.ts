@@ -23,7 +23,7 @@ export default function useLicenseActions(
 	const dispatch = useDispatch();
 
 	const canRevoke = useSelector( ( state: A4AStore ) =>
-		hasAgencyCapability( state, 'a4a_revoke_license' )
+		hasAgencyCapability( state, 'a4a_revoke_licenses' )
 	);
 
 	return useMemo( () => {

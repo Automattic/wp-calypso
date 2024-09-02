@@ -22,7 +22,7 @@ export default function LicenseBundleDropDown( { licenseKey, product, bundleSize
 	const dispatch = useDispatch();
 
 	const canRevoke = useSelector( ( state: A4AStore ) =>
-		hasAgencyCapability( state, 'a4a_revoke_license' )
+		hasAgencyCapability( state, 'a4a_revoke_licenses' )
 	);
 
 	const [ showRevokeDialog, setShowRevokeDialog ] = useState( false );
