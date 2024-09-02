@@ -1094,6 +1094,25 @@ function handlePatterns( calypsoPort ) {
 	addCommandsInputListener( selector, callback );
 }
 
+function handleAddPage( calypsoPort ) {
+	const selector = `[data-value="${ __( 'Add new page' ) }"]`;
+
+	const callback = ( e ) => {
+		e.preventDefault();
+
+		calypsoPort.postMessage( {
+			action: 'addNewPage',
+			payload: {
+				destinationUrl: '/wp-admin/post-new.php?post_type=page',
+				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+			},
+		} );
+	};
+
+	addEditorListener( selector, callback );
+	addCommandsInputListener( selector, callback );
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1196,6 +1215,8 @@ function initPort( message ) {
 		handleAppBannerShowing( calypsoPort );
 
 		handlePatterns( calypsoPort );
+
+		handleAddPage( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
