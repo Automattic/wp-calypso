@@ -1,3 +1,5 @@
+@import "@automattic/components/src/styles/typography";
+
 .stats-feedback-card {
 	background: var(--studio-white);
 	border: 1px solid var(--studio-gray-5);
@@ -20,6 +22,12 @@
 		justify-content: space-between;
 		align-items: center;
 	}
+
+	font-family: $font-sf-pro-text;
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 21px;
+	letter-spacing: -0.24px;
 }
 
 .stats-feedback-card__cta {
@@ -45,4 +53,9 @@
 			margin: 0 6px;
 		}
 	}
+}
+
+.stats-feedback-card__emoji {
+	font-size: larger;
+	margin-right: 6px;
 }
