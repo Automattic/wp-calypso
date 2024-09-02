@@ -52,20 +52,19 @@
 		fill: var(--studio-gray-50);
 	}
 
-
 	.stripe-logo {
 		width: 48px;
 		padding-left: 8px;
 	}
-}
 
-.select-newsletter-form__help {
-	margin-top: 8px;
-	margin-bottom: 0;
-	font-size: 0.75rem;
+	.select-newsletter-form__help {
+		margin-top: 8px;
+		margin-bottom: 0;
+		font-size: 0.75rem;
 
-	&.is-error {
-		color: var(--color-error) !important;
+		&.is-error {
+			color: var(--color-error);
+		}
 	}
 }
 
