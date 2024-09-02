@@ -133,6 +133,7 @@ const MobileView = ( {
 										planSlug={ gridPlan.planSlug }
 										onStorageAddOnClick={ onStorageAddOnClick }
 										showUpgradeableStorage={ showUpgradeableStorage }
+										withDescription={ enableCategorisedFeatures }
 									/>
 								</PlanFeaturesItem>
 							</div>

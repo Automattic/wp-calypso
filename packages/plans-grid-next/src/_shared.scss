@@ -75,6 +75,15 @@ $mobile-card-max-width: 440px;
 	margin-left: 4px;
 }
 
+.plans-grid-next-storage-feature-label__volume {
+	color: var(--studio-gray-90);
+	padding: 4px 0;
+	font-size: $font-body-extra-small;
+	font-weight: 400;
+	line-height: 20px;
+
+}
+
 .plans-grid-next-storage-feature-label__volume-badge {
 	background: #f2f2f2;
 	color: var(--studio-gray-90);
