@@ -21,6 +21,9 @@ export default function PaymentMethod( { paymentMethod }: { paymentMethod: Store
 				<PaymentMethodDetails
 					lastDigits={ 'card_last_4' in paymentMethod ? paymentMethod.card_last_4 : undefined }
 					email={ paymentMethod.email }
+					displayBrand={
+						'display_brand' in paymentMethod ? paymentMethod.display_brand : undefined
+					}
 					cardType={ 'card_type' in paymentMethod ? paymentMethod.card_type : undefined }
 					paymentPartner={ paymentMethod.payment_partner }
 					name={ paymentMethod.name }

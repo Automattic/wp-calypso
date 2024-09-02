@@ -110,8 +110,4 @@ const Button: ForwardRefRenderFunction<
  */
 const ButtonWithForwardedRef = forwardRef( Button );
 
-ButtonWithForwardedRef.defaultProps = {
-	type: 'button',
-};
-
 export default ButtonWithForwardedRef;

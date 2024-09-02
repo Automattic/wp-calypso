@@ -15,7 +15,7 @@ type ContentProps = {
 	selectedSite?: SiteDetails;
 	siteSlug: string;
 	fromSite: QueryArgParsed;
-	content: any;
+	cardData: any;
 	skipNextStep: () => void;
 };
 

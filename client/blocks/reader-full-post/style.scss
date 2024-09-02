@@ -665,3 +665,125 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 .is-reader-full-post {
 	background: var(--color-surface);
 }
+
+.reader-full-post {
+	div.reader-full-post__author-block {
+		.author-compact-profile {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			grid-template-areas:
+				"avatar links"
+				"avatar follow";
+			column-gap: 5px;
+			row-gap: 5px;
+			margin: 20px 0 0 0;
+			padding-right: 10px;
+			text-overflow: clip;
+			white-space: nowrap;
+
+			&:not(.has-author-icon).has-author-link {
+				grid-template-areas:
+					"links"
+					"follow";
+			}
+
+			&:not(.has-author-link):not(.has-author-icon) {
+				.reader-avatar {
+					margin: 5px 0 0 0;
+				}
+			}
+
+			@media (min-width: 1300px) {
+				display: none;
+			}
+
+			&__avatar-link {
+				grid-area: avatar;
+			}
+
+			.reader-avatar {
+				margin: 0 10px 5px 0;
+				position: relative;
+				top: 2px;
+
+				@include breakpoint-deprecated( "<480px" ) {
+					position: relative;
+					top: 5px;
+				}
+
+				&:not(.has-site-and-author-icon) img {
+					margin-left: -17px;
+					top: 7px;
+				}
+
+				.gravatar {
+					height: 24px !important;
+					width: 24px !important;
+					margin-right: 1em;
+					position: relative;
+					left: 18px;
+					top: -18px;
+					vertical-align: bottom;
+					max-width: initial;
+				}
+
+				.site-icon,
+				.gridicon {
+					height: 32px !important;
+					width: 32px !important;
+					line-height: 32px !important;
+					font-size: rem(32px) !important;
+					margin: 0 2px;
+				}
+			}
+
+			&__names {
+				position: relative;
+				top: -2px;
+
+				.reader-author-link,
+				.author-compact-profile__site-link {
+					grid-area: links;
+					display: inline;
+					padding-top: 0;
+					margin-right: 0;
+				}
+
+				.reader-author-link {
+					@include breakpoint-deprecated( "<480px" ) {
+						display: none;
+					}
+
+					&::after {
+						content: ", ";
+						font-weight: 400;
+						white-space: pre;
+					}
+				}
+			}
+
+			&__follow {
+				grid-area: follow;
+				justify-content: initial;
+				position: relative;
+				top: -12px;
+				margin-top: 0;
+				flex-wrap: inherit;
+
+				.author-compact-profile__follow-count {
+					display: inline-block;
+				}
+
+				.author-compact-profile__follow-count,
+				.follow-button {
+					padding: 5px 5px 5px 0;
+					position: initial;
+
+					&__label {
+						display: inline-block;
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,11 +1,10 @@
 import { FormInputValidation } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useActiveJobRecognition } from '@automattic/subscriber';
-import { Button, ProgressBar, Modal } from '@wordpress/components';
+import { ProgressBar } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { Icon, cloudUpload, people, currencyEuro } from '@wordpress/icons';
-import { useCallback, useState, useEffect, useRef, FormEvent } from 'react';
+import { Icon, cloudUpload } from '@wordpress/icons';
+import { useCallback, useState, FormEvent } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 import FilePicker from 'calypso/components/file-picker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -16,13 +15,13 @@ type Props = {
 	nextStepUrl: string;
 	siteId: number;
 	skipNextStep: () => void;
+	cardData: any;
 };
 
 export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextStep }: Props ) {
 	const [ selectedFile, setSelectedFile ] = useState< File >();
-	const [ isOpen, setIsOpen ] = useState( false );
 
-	const { importCsvSubscribers, getSubscribersImports } = useDispatch( Subscriber.store );
+	const { importCsvSubscribers } = useDispatch( Subscriber.store );
 	const { importSelector } = useSelect( ( select ) => {
 		const subscriber = select( Subscriber.store );
 
@@ -32,13 +31,11 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 		};
 	}, [] );
 
-	const prevInProgress = useRef( importSelector?.inProgress );
-
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( false );
 	const onSubmit = useCallback(
 		async ( event: FormEvent< HTMLFormElement > ) => {
 			event.preventDefault();
-			selectedFile && importCsvSubscribers( siteId, selectedFile );
+			selectedFile && importCsvSubscribers( siteId, selectedFile, [], true );
 		},
 		[ siteId, selectedFile ]
 	);
@@ -59,19 +56,6 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 		return validExtensions.includes( match?.groups?.extension.toLowerCase() as string );
 	}
 
-	useActiveJobRecognition( siteId );
-
-	useEffect( () => {
-		getSubscribersImports( siteId );
-	}, [ siteId, getSubscribersImports ] );
-
-	useEffect( () => {
-		if ( prevInProgress.current ) {
-			setIsOpen( true );
-		}
-		prevInProgress.current = importSelector?.inProgress;
-	}, [ importSelector?.inProgress ] );
-
 	const importSubscribersUrl =
 		'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
 
@@ -82,39 +66,6 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 				<p>Uploading...</p>
 				<ProgressBar />
 			</div>
-		);
-	}
-
-	if ( isOpen ) {
-		return (
-			<Modal
-				title="All done!"
-				isDismissible={ false }
-				onRequestClose={ () => setIsOpen( false ) }
-				className="subscriber-upload-form__modal"
-				size="medium"
-			>
-				<div>
-					We’ve found 100 subscribers, where:
-					<ul>
-						<li>
-							<Icon icon={ people } />
-							<strong>82</strong> are free subscribers
-						</li>
-						<li>
-							<Icon icon={ people } />
-							<strong>1</strong> have a complimentary
-						</li>
-						<li>
-							<Icon icon={ currencyEuro } />
-							subscription <strong>18</strong> are paying subscribers
-						</li>
-					</ul>
-				</div>
-				<Button variant="primary" href={ nextStepUrl }>
-					Continue
-				</Button>
-			</Modal>
 		);
 	}
 

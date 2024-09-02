@@ -2,7 +2,8 @@
 
 .chart-container {
 	cursor: pointer;
-	display: inline-block;
+	position: relative;
+	max-width: 550px;
 
 	.tick {
 		line {

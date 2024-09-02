@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 
 export const getRandomSiteBaseUrl = async ( title: string ) => {
@@ -38,7 +38,8 @@ const getRandomSiteName = async () => {
 export const useRandomSiteName = () => {
 	const [ randomSiteName, setRandomSiteName ] = useState( '' );
 	const [ isRandomSiteNameLoading, setIsRandomSiteNameLoading ] = useState( true );
-	useEffect( () => {
+
+	const fetchRandomSiteName = useCallback( async () => {
 		getRandomSiteName()
 			.then( ( randomSiteName ) => {
 				setRandomSiteName( randomSiteName );
@@ -50,5 +51,9 @@ export const useRandomSiteName = () => {
 			} );
 	}, [] );
 
-	return { randomSiteName, isRandomSiteNameLoading };
+	useEffect( () => {
+		fetchRandomSiteName();
+	}, [ fetchRandomSiteName ] );
+
+	return { randomSiteName, isRandomSiteNameLoading, refetchRandomSiteName: fetchRandomSiteName };
 };

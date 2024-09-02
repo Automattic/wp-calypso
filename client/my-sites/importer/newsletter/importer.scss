@@ -40,10 +40,18 @@
 		box-shadow: none;
 	}
 
-	.summary__content p {
-		display: flex;
-		gap: 8px;
+
+	.summary__content input[type="checkbox"] {
+		margin-right: 8px;
 	}
+
+	.summary__content svg {
+		float: left;
+		margin-right: 6px;
+		margin-top: -1px;
+		fill: var(--studio-gray-50);
+	}
+
 
 	.stripe-logo {
 		width: 48px;
@@ -90,6 +98,9 @@
 }
 .subscriber-upload-form__modal li {
 	display: flex;
+}
+.subscriber-upload-form__modal strong {
+	margin-right: 8px;
 }
 .subscriber-upload-form__modal svg {
 	fill: var(--studio-gray-50);
