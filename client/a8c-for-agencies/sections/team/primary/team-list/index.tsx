@@ -15,8 +15,11 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import { A4A_TEAM_INVITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useCancelMemberInviteMutation from 'calypso/a8c-for-agencies/data/team/use-cancel-member-invite';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { useMemberList } from '../../hooks/use-member-list';
 import { TeamMember } from '../../types';
@@ -70,6 +73,12 @@ export default function TeamList() {
 		[ cancelMemberInvite, dispatch, refetch ]
 	);
 
+	const canRemove = useSelector( ( state: A4AStore ) =>
+		hasAgencyCapability( state, 'a4a_remove_users' )
+	);
+
+	const currentUser = useSelector( getCurrentUser );
+
 	const fields = useMemo(
 		() => [
 			{
@@ -111,6 +120,7 @@ export default function TeamList() {
 						<ActionColumn
 							member={ item }
 							onMenuSelected={ ( action ) => handleAction( action, item ) }
+							withDelete={ canRemove || item.email === currentUser?.email }
 						/>
 					);
 				},
@@ -119,7 +129,7 @@ export default function TeamList() {
 				enableSorting: false,
 			},
 		],
-		[ handleAction, isDesktop, translate ]
+		[ canRemove, currentUser?.email, handleAction, isDesktop, translate ]
 	);
 
 	if ( isPending ) {

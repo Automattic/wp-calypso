@@ -35,7 +35,7 @@ export function isAgencyClientUser( state: A4AStore ): boolean {
 	return state.a8cForAgencies.agencies.isAgencyClientUser;
 }
 
-export function isAgencyOwner( state: A4AStore ): boolean {
+export function hasAgencyCapability( state: A4AStore, capability: string ): boolean {
 	const agency = getActiveAgency( state );
-	return !! agency && agency.user.role === 'a4a_administrator';
+	return !! agency && agency?.user?.capabilities?.includes( capability );
 }

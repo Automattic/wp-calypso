@@ -10,7 +10,8 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
-import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import RevokeLicenseDialog from '../revoke-license-dialog';
@@ -38,7 +39,9 @@ export default function LicenseDetailsActions( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const isOwner = useSelector( isAgencyOwner );
+	const canRevoke = useSelector( ( state: A4AStore ) =>
+		hasAgencyCapability( state, 'a4a_revoke_license' )
+	);
 
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
@@ -110,7 +113,7 @@ export default function LicenseDetailsActions( {
 				</Button>
 			) }
 
-			{ isOwner &&
+			{ canRevoke &&
 				( isChildLicense
 					? licenseState === LicenseState.Attached
 					: licenseState !== LicenseState.Revoked ) &&

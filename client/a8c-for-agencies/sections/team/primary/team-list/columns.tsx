@@ -77,11 +77,11 @@ export const DateColumn = ( { date }: { date?: string } ): ReactNode => {
 export const ActionColumn = ( {
 	member,
 	onMenuSelected,
-	asOwner = true,
+	withDelete = true,
 }: {
 	member: TeamMember;
 	onMenuSelected?: ( action: string ) => void;
-	asOwner?: boolean;
+	withDelete?: boolean;
 } ): ReactNode => {
 	const translate = useTranslate();
 
@@ -121,7 +121,7 @@ export const ActionColumn = ( {
 						name: 'delete-user',
 						label: translate( 'Delete user' ),
 						className: 'is-danger',
-						isEnabled: asOwner,
+						isEnabled: withDelete,
 					},
 			  ];
 
