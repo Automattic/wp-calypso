@@ -1,4 +1,5 @@
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 .stats-feedback-card {
 	background: var(--studio-white);
@@ -7,7 +8,7 @@
 
 	padding: 20px;
 
-	@media (max-width: 782px) {
+	@media (max-width: $break-medium) {
 		border-radius: 0;
 		border-top: none;
 		border-left: none;
@@ -17,7 +18,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@media (min-width: 1340px) {
+	@media (min-width: $break-wide) {
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
@@ -31,7 +32,7 @@
 }
 
 .stats-feedback-card__cta {
-	@media (max-width: 1340px) {
+	@media (max-width: $break-wide) {
 		margin-bottom: 12px;
 	}
 }
@@ -45,7 +46,7 @@
 		width: fit-content;
 	}
 
-	@media (min-width: 1340px) {
+	@media (min-width: $break-wide) {
 		flex-direction: row;
 
 		.components-button {
