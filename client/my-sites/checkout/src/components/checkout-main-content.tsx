@@ -1144,6 +1144,10 @@ const WPCheckoutMainContent = styled.div`
 			padding: 0 24px 0 64px;
 		}
 	}
+
+	.editor-checkout-modal & {
+		margin-top: 33px;
+	}
 `;
 
 const WPCheckoutSidebarContent = styled.div`
