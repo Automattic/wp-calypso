@@ -9,6 +9,7 @@ import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
+import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -592,6 +593,8 @@ class ThemeShowcase extends Component {
 		window.scrollTo( { top: 0 } );
 	};
 
+	shouldThemeControlsSticky = ( inView ) => this.props.isLoggedIn && ! inView;
+
 	render() {
 		const {
 			siteId,
@@ -681,57 +684,70 @@ class ThemeShowcase extends Component {
 						<div className="themes__showcase">{ this.renderBanner() }</div>
 					) }
 					{ ! isCollectionView && (
-						<div className="themes__controls">
-							<div className="theme__search">
-								<div className="theme__search-input">
-									{ isSearchV2 ? (
-										<SearchThemesV2
-											query={ featureStringFilter + search }
-											onSearch={ this.doSearch }
-										/>
-									) : (
-										<SearchThemes
-											query={ filterString + search }
-											onSearch={ this.doSearch }
-											recordTracksEvent={ this.recordSearchThemesTracksEvent }
-										/>
-									) }
-								</div>
-								{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-									<>
-										<SelectDropdown
-											className="section-nav-tabs__dropdown"
-											onSelect={ this.onTierSelectFilter }
-											selectedText={ translate( 'View: %s', {
-												args: getOptionLabel( tiers, tier ) || '',
+						<InView rootMargin="-180px 0px 0px 0px" fallbackInView>
+							{ ( { inView, ref } ) => (
+								<>
+									<div
+										className={ clsx( 'themes__controls', {
+											'is-sticky': this.shouldThemeControlsSticky( inView ),
+										} ) }
+									>
+										<div className="theme__search">
+											<div className="theme__search-input">
+												{ isSearchV2 ? (
+													<SearchThemesV2
+														query={ featureStringFilter + search }
+														onSearch={ this.doSearch }
+													/>
+												) : (
+													<SearchThemes
+														query={ filterString + search }
+														onSearch={ this.doSearch }
+														recordTracksEvent={ this.recordSearchThemesTracksEvent }
+													/>
+												) }
+											</div>
+											{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+												<>
+													<SelectDropdown
+														className="section-nav-tabs__dropdown"
+														onSelect={ this.onTierSelectFilter }
+														selectedText={ translate( 'View: %s', {
+															args: getOptionLabel( tiers, tier ) || '',
+														} ) }
+														options={ tiers }
+														initialSelected={ tier }
+													></SelectDropdown>
+												</>
+											) }
+										</div>
+										<div
+											className={ clsx( 'themes__filters', {
+												'is-woo-express': isSiteWooExpress,
 											} ) }
-											options={ tiers }
-											initialSelected={ tier }
-										></SelectDropdown>
-									</>
-								) }
-							</div>
-							<div
-								className={ clsx( 'themes__filters', {
-									'is-woo-express': isSiteWooExpress,
-								} ) }
-							>
-								{ tabFilters && ! isSiteECommerceFreeTrial && (
-									<ThemesToolbarGroup
-										items={ Object.values( tabFilters ) }
-										selectedKey={ this.getSelectedTabFilter().key }
-										onSelect={ ( key ) =>
-											this.onFilterClick(
-												Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-											)
-										}
-									/>
-								) }
-								{ ! isLoggedIn && tabFilters && (
-									<PatternAssemblerButton onClick={ this.onDesignYourOwnClick } />
-								) }
-							</div>
-						</div>
+										>
+											{ tabFilters && ! isSiteECommerceFreeTrial && (
+												<ThemesToolbarGroup
+													items={ Object.values( tabFilters ) }
+													selectedKey={ this.getSelectedTabFilter().key }
+													onSelect={ ( key ) =>
+														this.onFilterClick(
+															Object.values( tabFilters ).find(
+																( tabFilter ) => tabFilter.key === key
+															)
+														)
+													}
+												/>
+											) }
+											{ ! isLoggedIn && tabFilters && (
+												<PatternAssemblerButton onClick={ this.onDesignYourOwnClick } />
+											) }
+										</div>
+									</div>
+									<div className="themes__controls-placeholder" ref={ ref } />
+								</>
+							) }
+						</InView>
 					) }
 					{ isCollectionView && (
 						<ThemeCollectionViewHeader
