@@ -24,6 +24,7 @@ const StatsButton: React.FC< StatsButtonProps > = ( { children, primary, ...rest
 				} ) }
 				variant="primary"
 				primary={ isWPCOMSite ? true : undefined }
+				isBusy={ rest.busy }
 				{ ...rest }
 			>
 				{ children }
