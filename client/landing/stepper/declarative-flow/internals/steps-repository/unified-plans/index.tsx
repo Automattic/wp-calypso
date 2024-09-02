@@ -16,6 +16,8 @@ import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { ProvidedDependencies, StepProps } from '../../types';
 
+import './style.scss';
+
 export const LocalizedPlanStep = localize( PlansStep );
 
 export default function PlansStepAdaptor( props: StepProps ) {
