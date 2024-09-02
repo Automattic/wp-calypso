@@ -1,4 +1,6 @@
-import { Card, Button, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { external } from '@wordpress/icons';
 import { useEffect } from 'react';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
@@ -72,8 +74,10 @@ export default function Content( {
 						href={ `https://${ fromSite }/publish/settings?search=export` }
 						target="_blank"
 						rel="noreferrer noopener"
+						icon={ external }
+						variant="secondary"
 					>
-						Export content <Gridicon icon="external" />
+						Export content
 					</Button>
 					<hr />
 					<h2>Step 2: Import your content to WordPress.com</h2>

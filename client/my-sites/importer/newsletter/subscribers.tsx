@@ -1,9 +1,9 @@
-import { Card, Button, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
-import { Modal } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { Icon, people, currencyDollar } from '@wordpress/icons';
+import { Icon, people, currencyDollar, external } from '@wordpress/icons';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import { useEffect, useRef } from 'react';
 import SubscriberUploadForm from './subscriber-upload-form';
@@ -65,8 +65,10 @@ export default function Subscribers( {
 					href={ `https://${ fromSite }/publish/subscribers` }
 					target="_blank"
 					rel="noreferrer noopener"
+					icon={ external }
+					variant="secondary"
 				>
-					Export subscribers <Gridicon icon="external" />
+					Export subscribers
 				</Button>
 				<hr />
 				<h2>Step 2: Import your subscribers to WordPress.com</h2>
