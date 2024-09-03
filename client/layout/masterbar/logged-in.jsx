@@ -128,6 +128,9 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	setupReaderPositionObserver() {
+		if ( this.props.sectionName !== 'home' && this.props.sectionGroup !== 'sites-dashboard' ) {
+			return;
+		}
 		const readerItem = document.querySelector( '.masterbar__reader' );
 		this.resizeObserver = new ResizeObserver(
 			debounce( () => {
