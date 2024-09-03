@@ -85,3 +85,14 @@
 
 	background-color: var(--studio-white);
 }
+
+.stats-feedback-panel__close-button {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+
+	svg {
+		width: 14px;
+		height: 14px;
+	}
+}
