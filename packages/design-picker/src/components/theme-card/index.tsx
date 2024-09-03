@@ -33,7 +33,7 @@ const ActiveBadge = () => {
 	return (
 		<div className="theme-card__info-badge-container">
 			<div className="theme-card__info-badge theme-card__info-badge-active">
-				<svg fill="none" height="16" width="16" viewBox="0 0 14 14">
+				<svg fill="none" height="14" width="14" viewBox="0 0 14 14">
 					<clipPath id="a">
 						<path d="m0 .5h14v14h-14z" />
 					</clipPath>

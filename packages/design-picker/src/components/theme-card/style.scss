@@ -34,9 +34,11 @@ $theme-card-info-margin-top: 16px;
 		display: flex;
 		background-color: var(--color-primary);
 		color: var(--studio-white);
+		font-weight: 400;
 
 		svg {
-			margin-right: 6px;
+			margin-right: 3px;
+			margin-top: 1px;
 		}
 	}
 }
