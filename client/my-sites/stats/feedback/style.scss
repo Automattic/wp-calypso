@@ -78,7 +78,7 @@
 
 .stats-feedback-panel {
 	position: fixed;
-	bottom: 16px;
+	bottom: 24px;
 	right: 24px;
 	z-index: 10;
 
@@ -94,8 +94,8 @@
 
 .stats-feedback-panel__close-button {
 	position: absolute;
-	top: 6px;
-	right: 6px;
+	top: 10px;
+	right: 10px;
 
 	svg {
 		width: 14px;
