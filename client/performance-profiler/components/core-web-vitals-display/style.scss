@@ -44,13 +44,13 @@ $blueberry-color: #3858e9;
 	border: 1.5px solid var(--studio-gray-5);
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 0 0 6px 6px;
-	border-top: none;
 	padding: 24px;
 	display: flex;
 	flex-direction: row;
 	column-gap: 32px;
 	min-height: 360px;
 	flex-wrap: wrap;
+	margin-top: -1.5px;
 
 	& > div {
 		flex-grow: 1;
