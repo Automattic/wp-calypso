@@ -115,7 +115,7 @@ export const ActionColumn = ( {
 					{
 						name: 'password-reset',
 						label: translate( 'Send password reset' ),
-						isEnabled: true,
+						isEnabled: false, // FIXME: Implement this action
 					},
 					{
 						name: 'delete-user',
