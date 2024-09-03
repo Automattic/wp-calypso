@@ -490,4 +490,6 @@ export const FEATURE_TYPE_JETPACK_VIDEOPRESS = 'jetpack_videopress';
 /* START: Features for experiment calypso_pricing_grid_fewer_features */
 export const FEATURE_THEMES_PREMIUM_AND_STORE = 'feature-themes-premium-and-store';
 export const FEATURE_UNLIMITED_ENTITIES = 'feature-unlimited-entities';
+export const FEATURE_CUSTOMIZE_STYLE = 'feature-customize-style';
+export const FEATURE_CUSTOM_PLUGINS = 'feature-custom-plugins';
 /* END: Features for experiment calypso_pricing_grid_fewer_features */

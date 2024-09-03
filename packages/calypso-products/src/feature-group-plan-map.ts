@@ -120,15 +120,19 @@ import {
 	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	/* START: Features & groups for experiment calypso_pricing_grid_fewer_features */
-	FEATURE_GROUP_DOMAIN,
-	FEATURE_GROUP_THEMES,
-	FEATURE_GROUP_SUPPORT,
-	FEATURE_GROUP_ENTITIES,
 	FEATURE_GROUP_ADS,
 	FEATURE_GROUP_ANALYTICS,
+	FEATURE_GROUP_CUSTOM_PLUGINS,
+	FEATURE_GROUP_CUSTOMIZE_STYLE,
+	FEATURE_GROUP_DOMAIN,
+	FEATURE_GROUP_ENTITIES,
+	FEATURE_GROUP_SUPPORT,
+	FEATURE_GROUP_THEMES,
+	FEATURE_GROUP_WOO,
+	FEATURE_CUSTOM_PLUGINS,
+	FEATURE_CUSTOMIZE_STYLE,
 	FEATURE_THEMES_PREMIUM_AND_STORE,
 	FEATURE_UNLIMITED_ENTITIES,
-	FEATURE_GROUP_WOO,
 	FEATURE_WOOCOMMERCE_HOSTING,
 	/* END: Features & groups for experiment calypso_pricing_grid_fewer_features */
 } from './constants';
@@ -385,6 +389,11 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		getTitle: () => null,
 		getFeatures: () => [ FEATURE_AD_FREE_EXPERIENCE ],
 	},
+	[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: {
+		slug: FEATURE_GROUP_CUSTOMIZE_STYLE,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_CUSTOMIZE_STYLE ],
+	},
 	[ FEATURE_GROUP_ANALYTICS ]: {
 		slug: FEATURE_GROUP_ANALYTICS,
 		getTitle: () => null,
@@ -394,6 +403,11 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		slug: FEATURE_GROUP_WOO,
 		getTitle: () => null,
 		getFeatures: () => [ FEATURE_WOOCOMMERCE_HOSTING ],
+	},
+	[ FEATURE_GROUP_CUSTOM_PLUGINS ]: {
+		slug: FEATURE_GROUP_CUSTOM_PLUGINS,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_CUSTOM_PLUGINS ],
 	},
 	/* END Feature groups for experiment calypso_pricing_grid_fewer_features */
 };
@@ -407,7 +421,9 @@ export function resolveFeatureGroupsForFeaturesGrid(): Partial< FeatureGroupMap 
 			[ FEATURE_GROUP_ADS ]: featureGroups[ FEATURE_GROUP_ADS ],
 			[ FEATURE_GROUP_THEMES ]: featureGroups[ FEATURE_GROUP_THEMES ],
 			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
+			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
+			[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
 			[ FEATURE_GROUP_DEVELOPER_TOOLS ]: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ],
 			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],
 		};

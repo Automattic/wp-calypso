@@ -315,6 +315,8 @@ import {
 	FEATURE_SOCIAL_IMAGE_GENERATOR,
 	FEATURE_THEMES_PREMIUM_AND_STORE,
 	FEATURE_UNLIMITED_ENTITIES,
+	FEATURE_CUSTOMIZE_STYLE,
+	FEATURE_CUSTOM_PLUGINS,
 } from './constants';
 import { isAssignedToFewerFeaturesExperiment } from './experiments';
 import type { FeatureList } from './types';
@@ -1621,7 +1623,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_AD_FREE_EXPERIENCE ]: {
 		getSlug: () => FEATURE_AD_FREE_EXPERIENCE,
-		getTitle: () => i18n.translate( 'Ad-free experience' ),
+		getTitle: () =>
+			isAssignedToFewerFeaturesExperiment()
+				? i18n.translate( 'Ad-free browsing experience for your visitors' )
+				: i18n.translate( 'Ad-free experience' ),
 		getDescription: () =>
 			i18n.translate( 'Unlock a clean, ad-free browsing experience for your visitors.' ),
 	},
@@ -1862,7 +1867,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STATS_PAID,
 		getTitle: () =>
 			isAssignedToFewerFeaturesExperiment()
-				? i18n.translate( 'In-depth site analytics dashboard and site activity log' )
+				? i18n.translate( 'Connect Google Analytics and Cloudflare Web Analytics' )
 				: i18n.translate( 'In-depth site analytics dashboard' ),
 		getDescription: () =>
 			i18n.translate(
@@ -2431,7 +2436,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			// eslint-disable-next-line no-nested-ternary
 			isAssignedToFewerFeaturesExperiment()
-				? i18n.translate( 'Fast support' )
+				? i18n.translate( 'Support access to our expert team' )
 				: englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
 				  i18n.hasTranslation( 'Fast support from our expert team' )
 				? i18n.translate( 'Fast support from our expert team' )
@@ -2637,6 +2642,14 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_UNLIMITED_ENTITIES ]: {
 		getSlug: () => FEATURE_UNLIMITED_ENTITIES,
 		getTitle: () => i18n.translate( 'Unlimited pages, posts, users, and visitors' ),
+	},
+	[ FEATURE_CUSTOMIZE_STYLE ]: {
+		getSlug: () => FEATURE_CUSTOMIZE_STYLE,
+		getTitle: () => i18n.translate( 'Customize fonts and colors' ),
+	},
+	[ FEATURE_CUSTOM_PLUGINS ]: {
+		getSlug: () => FEATURE_CUSTOM_PLUGINS,
+		getTitle: () => i18n.translate( 'Install plugins' ),
 	},
 	/* END: Features for experiment calypso_pricing_grid_fewer_features */
 };
