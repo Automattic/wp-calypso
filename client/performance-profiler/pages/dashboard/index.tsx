@@ -101,6 +101,7 @@ export const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboar
 				<PerformanceProfilerDashboardContent
 					performanceReport={ performanceReport }
 					url={ finalUrl ?? url }
+					hash={ hash }
 				/>
 			) }
 		</div>

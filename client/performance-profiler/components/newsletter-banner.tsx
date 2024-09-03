@@ -34,7 +34,7 @@ const BlueberryButton = styled( Button )`
 	}
 `;
 
-export const NewsletterBanner = () => {
+export const NewsletterBanner = ( { link }: { link: string } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -48,7 +48,7 @@ export const NewsletterBanner = () => {
 				</Body>
 				<Body>{ translate( 'All you need is a free WordPress.com account to get started.' ) }</Body>
 			</div>
-			<BlueberryButton variant="primary">
+			<BlueberryButton variant="primary" href={ link }>
 				{ translate( 'Sign up for email reports' ) }
 			</BlueberryButton>
 		</Container>
