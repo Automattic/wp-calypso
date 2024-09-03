@@ -45,7 +45,7 @@ export class DateRange extends Component {
 		renderTrigger: PropTypes.func,
 		renderHeader: PropTypes.func,
 		renderInputs: PropTypes.func,
-		shouldRenderShortcuts: PropTypes.bool,
+		displayShortcuts: PropTypes.bool,
 		rootClass: PropTypes.string,
 	};
 
@@ -58,7 +58,7 @@ export class DateRange extends Component {
 		renderTrigger: ( props ) => <DateRangeTrigger { ...props } />,
 		renderHeader: ( props ) => <DateRangeHeader { ...props } />,
 		renderInputs: ( props ) => <DateRangeInputs { ...props } />,
-		shouldRenderShortcuts: false,
+		displayShortcuts: false,
 		rootClass: '',
 	};
 
@@ -433,10 +433,10 @@ export class DateRange extends Component {
 	 * @returns {import('react').Element} the Popover component
 	 */
 	renderPopover() {
-		const { shouldRenderShortcuts } = this.props;
+		const { displayShortcuts } = this.props;
 
-		// Only render shortcuts if shouldRenderShortcuts is true
-		const shortcuts = shouldRenderShortcuts ? this.shouldRenderShortcutsComponent() : null;
+		// Only render shortcuts if displayShortcuts is true
+		const shortcuts = displayShortcuts ? this.displayShortcutsComponent() : null;
 
 		const headerProps = {
 			onApplyClick: this.commitDates,
@@ -488,7 +488,7 @@ export class DateRange extends Component {
 					</div>
 					{ shortcuts && (
 						<div className="date-control-picker-shortcuts">
-							{ this.shouldRenderShortcutsComponent() }
+							{ this.displayShortcutsComponent() }
 						</div>
 					) }
 				</div>
@@ -500,7 +500,7 @@ export class DateRange extends Component {
 	 * Renders the Shortcuts component
 	 * @returns {import('react').Element} the Shortcuts component
 	 */
-	shouldRenderShortcutsComponent() {
+	displayShortcutsComponent() {
 		return <Shortcuts onClick={ this.handleShortcutClick } />;
 	}
 
