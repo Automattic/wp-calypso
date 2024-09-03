@@ -146,7 +146,7 @@
 
 	table.dataviews-view-table thead .dataviews-view-table__row th {
 		border-bottom-color: var(--color-border-secondary);
-		padding-left: 16px;
+
 		@include break-large {
 			padding-left: 26px;
 		}

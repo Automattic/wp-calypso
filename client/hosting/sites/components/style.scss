@@ -165,13 +165,6 @@
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
 			min-width: 40px;
 		}
-		.components-button.is-compact.is-tertiary:not(.dataviews-filters-button) {
-			display: none;
-		}
-
-		.components-button.is-compact.is-tertiary {
-			margin-right: 8px;
-		}
 
 		.dataviews-filters__view-actions {
 			padding-bottom: 8px;
