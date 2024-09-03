@@ -59,12 +59,6 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		recordTracksEvent( `calypso_inlinehelp_close` );
 	}, [ handleClose ] );
 
-	const animationProps = {
-		style: {
-			...openingCoordinates,
-		},
-	};
-
 	const focusReturnRef = useFocusReturn();
 
 	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef ] );
@@ -99,7 +93,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 					handle=".help-center__container-header"
 					bounds="body"
 				>
-					<Card className={ classNames } { ...animationProps } ref={ cardMergeRefs }>
+					<Card className={ classNames } style={ { ...openingCoordinates } } ref={ cardMergeRefs }>
 						<HelpCenterHeader
 							isMinimized={ isMinimized }
 							onMinimize={ () => setIsMinimized( true ) }
