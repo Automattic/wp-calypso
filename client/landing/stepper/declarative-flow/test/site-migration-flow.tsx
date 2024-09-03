@@ -241,10 +241,10 @@ describe( 'Site Migration Flow', () => {
 					siteSlug: 'example.wordpress.com',
 				},
 			} );
+			config.enable( 'automated-migration/collect-credentials' );
 		} );
 
 		it( 'migrate redirects from the how-to-migrate (do it for me) page to credential collection step', () => {
-			config.enable( 'automated-migration/collect-credentials' );
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
