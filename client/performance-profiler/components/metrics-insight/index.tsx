@@ -53,11 +53,13 @@ const Header = styled.div`
 		font-size: 16px;
 		font-weight: 500;
 		margin-right: 8px;
+		width: 15px;
+		text-align: right;
 	}
 `;
 
 const Content = styled.div`
-	padding: 24px;
+	padding: 15px 22px;
 `;
 
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {

@@ -34,6 +34,7 @@ import {
 import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
+	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
@@ -853,6 +854,9 @@ export class LoginForm extends Component {
 		);
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+		const isGravatarFlowWithEmail = !! (
+			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
+		);
 
 		const signupUrl = this.getSignupUrl();
 
@@ -916,7 +920,14 @@ export class LoginForm extends Component {
 			config.isEnabled( 'signup/social' ) &&
 			! isFromAutomatticForAgenciesReferralClient &&
 			! isCoreProfilerLostPasswordFlow &&
-			! isFromGravatar3rdPartyApp;
+			! isFromGravatar3rdPartyApp &&
+			! isGravatarFlowWithEmail;
+
+		const shouldDisableEmailInput =
+			isFormDisabled ||
+			this.isPasswordView() ||
+			isFromGravatar3rdPartyApp ||
+			isGravatarFlowWithEmail;
 
 		return (
 			<form
@@ -978,19 +989,19 @@ export class LoginForm extends Component {
 								</FormLabel>
 
 								<FormTextInput
-									autoCapitalize="off"
-									autoCorrect="off"
-									spellCheck="false"
-									autoComplete="username"
-									className={ clsx( {
-										'is-error': requestError && requestError.field === 'usernameOrEmail',
-									} ) }
-									onChange={ this.onChangeUsernameOrEmailField }
-									id="usernameOrEmail"
-									name="usernameOrEmail"
-									ref={ this.saveUsernameOrEmailRef }
-									value={ this.state.usernameOrEmail }
-									disabled={ isFormDisabled || this.isPasswordView() || isFromGravatar3rdPartyApp }
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck="false"
+                  autoComplete="username"
+                  className={ clsx( {
+                    'is-error': requestError && requestError.field === 'usernameOrEmail',
+                  } ) }
+                  onChange={ this.onChangeUsernameOrEmailField }
+                  id="usernameOrEmail"
+                  name="usernameOrEmail"
+                  ref={ this.saveUsernameOrEmailRef }
+                  value={ this.state.usernameOrEmail }
+                  disabled={ shouldDisableEmailInput }
 								/>
 
 								{ isJetpack && (

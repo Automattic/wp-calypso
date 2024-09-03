@@ -2,7 +2,9 @@ import { PaymentLogo } from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PaymentMethodOverviewContext } from '../../context';
 import { useDeleteCard } from '../../hooks/use-delete-card';
@@ -41,6 +43,10 @@ export default function StoredCreditCard( {
 
 	const { paging } = useContext( PaymentMethodOverviewContext );
 
+	const canRemove = useSelector( ( state: A4AStore ) =>
+		hasAgencyCapability( state, 'a4a_remove_payment_methods' )
+	);
+
 	// Fetch the stored cards from the cache if they are available.
 	const {
 		data: { allStoredCards },
@@ -64,7 +70,7 @@ export default function StoredCreditCard( {
 		},
 		{
 			name: translate( 'Delete' ),
-			isEnabled: true,
+			isEnabled: canRemove,
 			onClick: () => {
 				setIsDeleteDialogVisible( true );
 				dispatch( recordTracksEvent( 'calypso_a4a_payments_card_actions_delete_click' ) );

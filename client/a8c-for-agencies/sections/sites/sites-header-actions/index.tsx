@@ -28,7 +28,7 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
-	const { randomSiteName, isRandomSiteNameLoading } = useRandomSiteName();
+	const { randomSiteName, isRandomSiteNameLoading, refetchRandomSiteName } = useRandomSiteName();
 	const { refetch: refetchPendingSites } = useFetchPendingSites();
 
 	const [ tourStepRef, setTourStepRef ] = useState< HTMLElement | null >( null );
@@ -43,10 +43,11 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 	const onCreateSiteSuccess = useCallback(
 		( id: number ) => {
 			refetchPendingSites();
+			refetchRandomSiteName();
 			setRecentlyCreatedSiteId( id );
 			page( addQueryArgs( A4A_SITES_LINK, { created_site: id } ) );
 		},
-		[ refetchPendingSites ]
+		[ refetchPendingSites, refetchRandomSiteName, setRecentlyCreatedSiteId ]
 	);
 
 	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );

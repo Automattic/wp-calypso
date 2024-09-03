@@ -14,9 +14,9 @@ const ActionCard = ( {
 	buttonHref,
 	buttonOnClick,
 	children,
-	compact,
+	compact = true,
 	classNames,
-	buttonDisabled,
+	buttonDisabled = false,
 	illustration,
 } ) => (
 	<Card className={ clsx( 'action-card', classNames ) } compact={ compact }>
@@ -61,11 +61,6 @@ ActionCard.propTypes = {
 	compact: PropTypes.bool,
 	illustration: PropTypes.string,
 	classNames: PropTypes.string,
-};
-
-ActionCard.defaultProps = {
-	compact: true,
-	buttonDisabled: false,
 };
 
 export default ActionCard;

@@ -11,8 +11,6 @@ import {
 } from 'calypso/state/reader/posts/sizes';
 import './style.scss';
 
-const noop = () => {};
-
 const getFeaturedImageType = (
 	canonicalMedia,
 	imageWidth,
@@ -193,10 +191,6 @@ ReaderFeaturedImage.propTypes = {
 	canonicalMedia: PropTypes.object,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
-};
-
-ReaderFeaturedImage.defaultProps = {
-	onClick: noop,
 };
 
 const mapStateToProps = ( state, ownProps ) => {
