@@ -69,7 +69,7 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 				</div>
 				{ showNavigationTabs && (
 					<SectionNav className="profiler-navigation-tabs">
-						<NavTabs>
+						<NavTabs enforceTabsView>
 							<NavItem
 								onClick={ () => onTabChange( TabType.mobile ) }
 								selected={ activeTab === TabType.mobile }

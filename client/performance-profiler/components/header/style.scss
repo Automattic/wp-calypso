@@ -80,6 +80,18 @@
 		box-shadow: none;
 		margin: 0;
 
+		.section-nav__mobile-header {
+			display: none;
+		}
+
+		.section-nav__panel {
+			display: flex;
+			align-items: center;
+			flex-wrap: nowrap;
+			overflow-wrap: normal;
+			justify-content: space-between;
+		}
+
 		.section-nav-tabs__list {
 			// Add padding to display the rounded border and remove the same distance to keep it aligned vertically
 			padding-left: 6px;
@@ -115,6 +127,7 @@
 					padding: 0 16px;
 					align-items: center;
 					gap: 10px;
+					width: auto;
 
 					span {
 						font-size: $font-body-small;
@@ -168,6 +181,7 @@
 			align-items: center;
 			gap: 16px;
 			font-size: $font-body-small;
+			margin-left: 25px;
 
 			.report-site-details {
 				display: flex;
