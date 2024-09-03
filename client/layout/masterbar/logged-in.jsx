@@ -81,6 +81,7 @@ class MasterbarLoggedIn extends Component {
 		// making the ref a state triggers a re-render when it changes (needed for popover)
 		menuBtnRef: null,
 		readerBtnRef: null,
+		readerPosition: null,
 	};
 
 	static propTypes = {
@@ -138,12 +139,36 @@ class MasterbarLoggedIn extends Component {
 		};
 		document.addEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.subscribeToViewPortChanges();
+
+		// Observe if the position of the reader item has changed.
+		this.observer = new window.MutationObserver( () => {
+			const readerItem = document.querySelector( '.masterbar__reader' );
+			if ( readerItem ) {
+				const rect = readerItem.getBoundingClientRect();
+				if ( this.state.readerPosition ) {
+					if (
+						rect.left !== this.lastReaderPosition.left ||
+						rect.top !== this.lastReaderPosition.top
+					) {
+						this.setState( { readerPosition: rect } );
+					}
+				} else {
+					this.setState( { readerPosition: rect } );
+				}
+				this.lastReaderPosition = rect;
+			}
+		} );
+		this.observer.observe( document.body, { attributes: true, childList: true, subtree: true } );
 	}
 
 	componentWillUnmount() {
 		document.removeEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.unsubscribeToViewPortChanges?.();
 		this.unsubscribeResponsiveMenuViewPortChanges?.();
+
+		if ( this.observer ) {
+			this.observer.disconnect();
+		}
 	}
 
 	handleToggleMobileMenu = () => {
