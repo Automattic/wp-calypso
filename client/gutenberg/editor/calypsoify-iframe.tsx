@@ -115,6 +115,7 @@ enum EditorActions {
 	GetIsAppBannerVisible = 'getIsAppBannerVisible',
 	NavigateToHome = 'navigateToHome',
 	AddNewPage = 'addNewPage',
+	AddNewPost = 'addNewPost',
 }
 
 type ComponentProps = Props &
@@ -384,7 +385,11 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			this.navigate( destinationUrl, unsavedChanges );
 		}
 
-		if ( EditorActions.GoToPatterns === action || EditorActions.AddNewPage === action ) {
+		if (
+			EditorActions.GoToPatterns === action ||
+			EditorActions.AddNewPage === action ||
+			EditorActions.AddNewPost === action
+		) {
 			const { destinationUrl, unsavedChanges } = payload;
 
 			this.navigate( `https://${ this.props.siteSlug }${ destinationUrl }`, unsavedChanges );
