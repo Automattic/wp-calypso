@@ -29,11 +29,11 @@ type AnnualHighlightCardsProps = {
 
 function getCardProps( counts: AnnualHighlightCounts ) {
 	return [
-		{ count: counts?.posts, heading: translate( 'Posts' ), icon: postContent },
-		{ count: counts?.words, heading: translate( 'Words' ), icon: paragraph },
-		{ count: counts?.likes, heading: translate( 'Likes' ), icon: starEmpty },
-		{ count: counts?.comments, heading: translate( 'Comments' ), icon: comment },
-		{ count: counts?.followers, heading: translate( 'Subscribers' ), icon: people },
+		{ heading: translate( 'Posts' ), count: counts?.posts, icon: postContent },
+		{ heading: translate( 'Words' ), count: counts?.words, icon: paragraph },
+		{ heading: translate( 'Likes' ), count: counts?.likes, icon: starEmpty },
+		{ heading: translate( 'Comments' ), count: counts?.comments, icon: comment },
+		{ heading: translate( 'Subscribers' ), count: counts?.followers, icon: people },
 	];
 }
 
