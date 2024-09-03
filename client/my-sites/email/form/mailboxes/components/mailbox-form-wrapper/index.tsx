@@ -59,7 +59,7 @@ const createCommonFieldPropsHandler = (
 			field,
 			fieldLabelText: fieldLabelTexts?.[ field.fieldName as MutableFormFieldNames ],
 			onFieldValueChanged,
-			onRequestFieldValidation: () => mailbox.validateField( field.fieldName ),
+			onRequestFieldValidation: async () => await mailbox.validateField( field.fieldName ),
 			isAutoFocusEnabled,
 			isFirstVisibleField: formIndex === 0 && renderPosition === 1,
 		};

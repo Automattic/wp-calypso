@@ -238,7 +238,7 @@ class MailboxForm< T extends EmailProvider > {
 		);
 	}
 
-	validateField( fieldName: FormFieldNames ) {
+	async validateField( fieldName: FormFieldNames ) {
 		const field = this.getFormField( fieldName );
 		if ( ! field ) {
 			return;
@@ -248,9 +248,13 @@ class MailboxForm< T extends EmailProvider > {
 		field.error = null;
 
 		// Validate single field by name
-		this.getValidators()
-			.filter( ( [ currentFieldName, validator ] ) => currentFieldName === fieldName && validator )
-			.forEach( ( [ , validator ] ) => validator.validate( field ) );
+		const validators = this.getValidators()
+			.filter( ( [ currentFieldName ] ) => currentFieldName === fieldName )
+			.map( ( [ , validator ] ) => validator );
+
+		const promises = Promise.all( validators.map( ( validator ) => validator.validate( field ) ) );
+
+		await promises;
 	}
 
 	async validateOnDemand() {

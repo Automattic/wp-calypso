@@ -12,7 +12,8 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
-type FieldError = TranslateResult | null;
+type SingleFieldError = TranslateResult | null;
+type FieldError = SingleFieldError | SingleFieldError[];
 
 enum EmailProvider {
 	Google = 'Google',
@@ -151,6 +152,7 @@ class MailboxFormFieldsFactory {
 
 export type {
 	FieldError,
+	SingleFieldError,
 	FormFieldNames,
 	GoogleFormFieldNames,
 	GoogleMailboxFormFields,

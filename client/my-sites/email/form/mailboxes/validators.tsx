@@ -10,19 +10,19 @@ import type {
 } from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface Validator< T > {
-	validate( field?: MailboxFormFieldBase< T > ): void;
+	validate( field?: MailboxFormFieldBase< T > ): Promise< void >;
 }
 
 abstract class BaseValidator< T > implements Validator< T > {
-	validate( field?: MailboxFormFieldBase< T > ): void {
+	async validate( field?: MailboxFormFieldBase< T > ): Promise< void > {
 		if ( ! field || field.hasError() ) {
 			return;
 		}
 
-		this.validateField( field );
+		await this.validateField( field );
 	}
 
-	abstract validateField( field: MailboxFormFieldBase< T > ): void;
+	abstract validateField( field: MailboxFormFieldBase< T > ): Promise< void >;
 }
 
 class RequiredValidator< T > extends BaseValidator< T > {
@@ -30,7 +30,7 @@ class RequiredValidator< T > extends BaseValidator< T > {
 		return i18n.translate( 'This field is required.' );
 	}
 
-	validateField( field: MailboxFormFieldBase< T > ): void {
+	async validateField( field: MailboxFormFieldBase< T > ): Promise< void > {
 		if ( ! field.isRequired ) {
 			return;
 		}
@@ -50,12 +50,12 @@ class RequiredValidator< T > extends BaseValidator< T > {
 }
 
 class RequiredIfVisibleValidator extends RequiredValidator< string > {
-	validateField( field: MailboxFormFieldBase< string > ): void {
+	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		if ( ! field.isVisible ) {
 			return;
 		}
 
-		super.validateField( field );
+		await super.validateField( field );
 	}
 }
 
@@ -73,7 +73,7 @@ class MaximumStringLengthValidator extends BaseValidator< string > {
 		} );
 	}
 
-	validateField( field: MailboxFormFieldBase< string > ): void {
+	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		if ( this.maximumStringLength < ( field.value?.length ?? 0 ) ) {
 			field.error = MaximumStringLengthValidator.getFieldTooLongError( this.maximumStringLength );
 		}
@@ -108,14 +108,10 @@ class MailboxNameValidator extends BaseValidator< string > {
 			: i18n.translate( 'Only numbers, letters, dashes, underscores, and periods are allowed.' );
 	}
 
-<<<<<<< HEAD:client/my-sites/email/form/mailboxes/validators.ts
-	validateField( field: MailboxFormFieldBase< string > ): void {
-=======
 	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		const value = field.value;
 		const validationErrors: FieldError = [];
 
->>>>>>> 1ecb0e815b (multi error support and mock API handling):client/my-sites/email/form/mailboxes/validators.tsx
 		const regex = this.areApostrophesSupported
 			? /^[\da-z_'-](\.?[\da-z_'-])*$/i
 			: /^[\da-z_-](\.?[\da-z_-])*$/i;
@@ -167,7 +163,7 @@ class PasswordResetEmailValidator extends BaseValidator< string > {
 		);
 	}
 
-	validateField( field: MailboxFormFieldBase< string > ): void {
+	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		if ( ! field.value || field.value.trim() === '' ) {
 			return;
 		}
@@ -197,11 +193,15 @@ class PasswordResetEmailValidator extends BaseValidator< string > {
 
 class PasswordValidator extends BaseValidator< string > {
 	private readonly minimumPasswordLength: number;
+	private readonly domain: string;
+	private readonly mailboxName?: string;
 	static readonly maximumPasswordLength = 100;
 
-	constructor( minimumPasswordLength: number ) {
+	constructor( minimumPasswordLength: number, domain: string, mailboxName?: string ) {
 		super();
 		this.minimumPasswordLength = minimumPasswordLength;
+		this.domain = domain;
+		this.mailboxName = mailboxName;
 	}
 
 	static getPasswordTooShortError( minimumPasswordLength: number ): SingleFieldError {
@@ -233,8 +233,6 @@ class PasswordValidator extends BaseValidator< string > {
 		} );
 	}
 
-<<<<<<< HEAD:client/my-sites/email/form/mailboxes/validators.ts
-=======
 	static getPasswordContainsDomainError( domain: string ): SingleFieldError {
 		return i18n.translate( "Your password can't contain your domain name (%s).", {
 			args: domain,
@@ -253,7 +251,6 @@ class PasswordValidator extends BaseValidator< string > {
 		return errors;
 	}
 
->>>>>>> 1ecb0e815b (multi error support and mock API handling):client/my-sites/email/form/mailboxes/validators.tsx
 	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		const value = field.value;
 		const validationErrors: FieldError = [];
@@ -289,18 +286,6 @@ class PasswordValidator extends BaseValidator< string > {
 			validationErrors.push( PasswordValidator.getPasswordEndsWithSpaceError() );
 		}
 
-<<<<<<< HEAD:client/my-sites/email/form/mailboxes/validators.ts
-		if ( ! field.error ) {
-			try {
-				const apiResponse = await this.mockApiCall( value );
-				if ( ! apiResponse.success && apiResponse.errors ) {
-					field.error = apiResponse.errors[ 0 ];
-				}
-			} catch ( error ) {
-				// This is for API call errors, not validation errors
-				field.error = PasswordValidator.getApiCallError();
-			}
-=======
 		const domainParts = `${ this.domain }`.split( '.' );
 
 		if ( value.toLowerCase().includes( domainParts[ 0 ].toLowerCase() ) ) {
@@ -321,7 +306,7 @@ class PasswordValidator extends BaseValidator< string > {
 			}
 		} catch ( error ) {
 			field.error = PasswordValidator.getApiCallError();
->>>>>>> 1ecb0e815b (multi error support and mock API handling):client/my-sites/email/form/mailboxes/validators.tsx
+			return;
 		}
 
 		field.error =
@@ -337,15 +322,30 @@ class PasswordValidator extends BaseValidator< string > {
 	private async mockApiCall(
 		password: string
 	): Promise< { success: boolean; errors?: SingleFieldError[] } > {
-		return new Promise( ( resolve ) => {
+		return new Promise( ( resolve, reject ) => {
 			setTimeout( () => {
-				if ( password === 'password123' || password === 'short' ) {
-					resolve( {
-						success: false,
-						errors: [ i18n.translate( 'This password is too common.' ) ],
-					} );
-				} else {
-					resolve( { success: true } );
+				try {
+					if ( password === 'password123' || password === 'short' ) {
+						resolve( {
+							success: false,
+							errors: [ i18n.translate( 'This password is too common.' ) ],
+						} );
+					} else if ( password === 'multierrors' ) {
+						resolve( {
+							success: false,
+							errors: [
+								i18n.translate( 'This password is too common.' ),
+								i18n.translate( 'This password has angered the entropy gods' ),
+								i18n.translate( "No real error, I just don't like you." ),
+							],
+						} );
+					} else if ( password === 'testerror' ) {
+						reject( new Error( 'Simulated API error' ) );
+					} else {
+						resolve( { success: true } );
+					}
+				} catch ( error ) {
+					reject( error );
 				}
 			}, 500 );
 		} );
@@ -380,7 +380,7 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 		return ExistingMailboxNamesValidator.getExistingMailboxError( this.domainName, fieldValue );
 	}
 
-	validateField( field: MailboxFormFieldBase< string > ): void {
+	async validateField( field: MailboxFormFieldBase< string > ): Promise< void > {
 		if ( ! field.value || field.error ) {
 			return;
 		}
