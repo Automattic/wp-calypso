@@ -20,9 +20,9 @@ function StatsFeedbackCard() {
 		<div className="stats-feedback-container">
 			<div className="stats-feedback-card">
 				<FeedbackContent clickHandler={ handleButtonClick } />
-				<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
 			</div>
 			<FeedbackPanel clickHandler={ handleButtonClick } />
+			<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
 		</div>
 	);
 }
