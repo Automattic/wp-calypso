@@ -15,7 +15,7 @@ export const PaymentMethodLogos = styled.span`
 	}
 
 	svg {
-		display: block;
+		display: inline-block;
 		&.has-background {
 			padding-inline-end: 5px;
 		}
