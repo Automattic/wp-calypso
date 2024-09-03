@@ -2,6 +2,7 @@ import importedFormatNumber, {
 	DEFAULT_LOCALE,
 	STANDARD_FORMATTING_OPTIONS,
 	COMPACT_FORMATTING_OPTIONS,
+	PERCENTAGE_FORMATTING_OPTIONS,
 } from '../../number-formatters/lib/format-number';
 
 export function formatNumber( number: number | null, isShortened = true, showSign = false ) {
@@ -11,6 +12,16 @@ export function formatNumber( number: number | null, isShortened = true, showSig
 	if ( showSign ) {
 		option.signDisplay = 'exceptZero';
 	}
+	return importedFormatNumber( number, DEFAULT_LOCALE, option );
+}
+
+export function formatPercentage( number: number | null ) {
+	// If the number is < 1%, then use 2 significant digits and maximumFractionDigits of 2.
+	// Otherwise, use the default percentage formatting options.
+	const option =
+		number && number < 0.01
+			? { ...PERCENTAGE_FORMATTING_OPTIONS, maximumFractionDigits: 2, maximumSignificantDigits: 2 }
+			: PERCENTAGE_FORMATTING_OPTIONS;
 	return importedFormatNumber( number, DEFAULT_LOCALE, option );
 }
 
@@ -26,7 +37,7 @@ export function percentCalculator( part: number | null, whole: number | null | u
 	if ( part === 0 && whole === 0 ) {
 		return 0;
 	}
-	const answer = ( part / whole ) * 100;
-	// Handle Infinities.
-	return Math.abs( answer ) === Infinity ? 100 : Math.round( answer );
+	const answer = part / whole;
+	// Handle Infinities as 100%.
+	return ! Number.isFinite( answer ) ? 1 : answer;
 }

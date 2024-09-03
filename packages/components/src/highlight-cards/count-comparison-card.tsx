@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import { Card } from '../';
 import Popover from '../popover';
-import { formatNumber, subtract, percentCalculator } from './lib/numbers';
+import { formatNumber, formatPercentage, subtract, percentCalculator } from './lib/numbers';
 
 type CountComparisonCardProps = {
 	count: number | null;
@@ -43,7 +43,10 @@ export function TrendComparison( { count, previousCount }: TrendComparisonProps 
 				{ difference > 0 && <Icon size={ 18 } icon={ arrowUp } /> }
 			</span>
 			{ percentage !== null && (
-				<span className="highlight-card-difference-absolute-percentage"> { percentage }%</span>
+				<span className="highlight-card-difference-absolute-percentage">
+					{ ' ' }
+					{ formatPercentage( percentage ) }
+				</span>
 			) }
 		</span>
 	);

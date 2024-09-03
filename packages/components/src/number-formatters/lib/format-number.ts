@@ -15,6 +15,9 @@ export const COMPACT_FORMATTING_OPTIONS = {
 export const STANDARD_FORMATTING_OPTIONS = {
 	notation: 'standard',
 } as Intl.NumberFormatOptions;
+export const PERCENTAGE_FORMATTING_OPTIONS = {
+	style: 'percent',
+} as Intl.NumberFormatOptions;
 
 // Default Options
 export const DEFAULT_OPTIONS = { ...COMPACT_FORMATTING_OPTIONS };
