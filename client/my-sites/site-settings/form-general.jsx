@@ -65,6 +65,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { A4AFullyManagedSiteSetting } from './a4a-fully-managed-site-setting';
 import { DIFMUpsell } from './difm-upsell-banner';
 import Masterbar from './masterbar';
 import SiteAdminInterface from './site-admin-interface';
@@ -620,6 +621,7 @@ export class SiteSettingsFormGeneral extends Component {
 				) : (
 					this.privacySettings()
 				) }
+				<A4AFullyManagedSiteSetting site={ site } isWpcomStagingSite={ isWpcomStagingSite } />
 				{ this.enhancedOwnershipSettings() }
 				<DIFMUpsell
 					site={ site }
