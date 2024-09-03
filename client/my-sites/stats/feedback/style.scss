@@ -7,7 +7,7 @@
 	font-weight: 400;
 	line-height: 21px;
 	letter-spacing: -0.24px;
-    color: var(--studio-gray-100);
+	color: var(--studio-gray-100);
 }
 
 .stats-feedback-content__actions {
@@ -17,9 +17,9 @@
 	.components-button {
 		margin-bottom: 6px;
 		width: fit-content;
-        font-weight: 500;
-        font-size: $font-body-small;
-        border-radius: 4px;
+		font-weight: 500;
+		font-size: $font-body-small;
+		border-radius: 4px;
 	}
 }
 
@@ -83,11 +83,11 @@
 	z-index: 10;
 
 	border: 1px solid var(--studio-gray-5);
-	border-radius: 8px;
+	border-radius: 8px; // stylelint-disable-line scales/radii
 	padding: 24px;
 	width: 300px;
 	box-sizing: border-box;
-	box-shadow: 0px 10px 20px 0px #00000014;
+	box-shadow: 0 10px 20px 0 #00000014;
 
 	background-color: var(--studio-white);
 }
