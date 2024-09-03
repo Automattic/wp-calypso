@@ -15,7 +15,7 @@ function StatsFeedbackCard() {
 	return (
 		<div className="stats-feedback-container">
 			<div className="stats-feedback-card">
-				<FeedbackContent clickhandler={ handleButtonClick } />
+				<FeedbackContent clickHandler={ handleButtonClick } />
 				<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
 			</div>
 			<FeedbackPanel />
@@ -32,7 +32,7 @@ function FeedbackPanel() {
 	);
 }
 
-function FeedbackContent( { clickhandler } ) {
+function FeedbackContent( { clickHandler } ) {
 	const translate = useTranslate();
 
 	const ctaText = translate( 'How do you rate your overall experience with Jetpack Stats?' );
@@ -41,8 +41,8 @@ function FeedbackContent( { clickhandler } ) {
 
 	const handleButtonClick = () => {
 		console.log( 'button clicked' );
-		if ( clickhandler ) {
-			clickhandler();
+		if ( clickHandler ) {
+			clickHandler();
 		}
 	};
 
