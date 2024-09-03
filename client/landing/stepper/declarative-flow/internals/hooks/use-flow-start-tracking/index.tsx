@@ -1,17 +1,20 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { recordFlowStart } from '../../analytics/record-flow-start';
+import { STEPPER_TRACKS_EVENT_FLOW_START } from 'calypso/landing/stepper/constants';
+import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
+import { Flow } from '../../types';
 
 export const DURATION = 20 * 60 * 1000; // 20 min
 
 interface Params {
-	flow: string | null;
-	variant?: string;
+	flow: Flow;
 	step: string;
 }
 
 interface SessionKeys {
-	flow: string | null;
+	flowName: string | null;
 	variant: string | null | undefined;
 	site: string | null;
 }
@@ -21,7 +24,7 @@ interface Session {
 }
 
 const getKey = ( keys: SessionKeys ) => {
-	return [ 'stepper_flow_started', keys.flow, keys.variant, keys.site ]
+	return [ 'stepper_flow_started', keys.flowName, keys.variant, keys.site ]
 		.filter( Boolean )
 		.join( '_' );
 };
@@ -38,16 +41,8 @@ const isTheFlowAlreadyStarted = ( keys: SessionKeys ) => {
 		sessionStorage.removeItem( key );
 		return null;
 	}
+
 	return session;
-};
-
-const startSession = ( keys: SessionKeys, extra: Record< string, any > ) => {
-	const { flow } = keys;
-	const key = getKey( keys );
-
-	recordFlowStart( flow!, extra );
-
-	sessionStorage.setItem( key, JSON.stringify( { ...keys, validUntil: Date.now() + DURATION } ) );
 };
 
 /**
@@ -56,37 +51,40 @@ const startSession = ( keys: SessionKeys, extra: Record< string, any > ) => {
  * Same flow with same parameters will be tracked only once whitin the DURATION time
  * returns void
  */
-export const useFlowAnalytics = ( params: Params ) => {
+export const useFlowStartTracking = ( { flow, step }: Params ) => {
 	const [ search ] = useSearchParams();
-	const { flow, step, variant } = params;
 	const ref = search.get( 'ref' );
 	const siteId = search.get( 'siteId' );
 	const siteSlug = search.get( 'siteSlug' );
-
 	const sessionKeys = useMemo(
 		() => ( {
-			flow,
-			variant,
+			flowName: flow.name,
+			variant: flow.variantSlug,
 			site: siteId || siteSlug,
 		} ),
-		[ flow, siteId, siteSlug, variant ]
+		[ flow, siteId, siteSlug ]
 	);
-
-	const flowStarted = isTheFlowAlreadyStarted( sessionKeys );
-	const extraTrackingParams = useMemo(
-		() => ( {
-			ref,
-			step,
-			site_id: siteId,
-			site_slug: siteSlug,
-			variant,
-		} ),
-		[ ref, siteId, siteSlug, step, variant ]
-	);
+	const tracksEventPropsFromFlow = useSnakeCasedKeys( {
+		input: flow.useTracksEventProps?.()[ STEPPER_TRACKS_EVENT_FLOW_START ],
+	} );
 
 	useEffect( () => {
-		if ( ! flowStarted && flow ) {
-			startSession( sessionKeys, extraTrackingParams );
+		if ( ! isTheFlowAlreadyStarted( sessionKeys ) ) {
+			recordTracksEvent( STEPPER_TRACKS_EVENT_FLOW_START, {
+				flow: flow.name,
+				device: resolveDeviceTypeByViewPort(),
+				ref,
+				step,
+				site_id: siteId,
+				site_slug: siteSlug,
+				variant: flow.variantSlug,
+				...tracksEventPropsFromFlow,
+			} );
+
+			sessionStorage.setItem(
+				getKey( sessionKeys ),
+				JSON.stringify( { ...sessionKeys, validUntil: Date.now() + DURATION } )
+			);
 		}
-	}, [ extraTrackingParams, flow, flowStarted, sessionKeys ] );
+	}, [ flow, ref, sessionKeys, siteId, siteSlug, step, tracksEventPropsFromFlow ] );
 };

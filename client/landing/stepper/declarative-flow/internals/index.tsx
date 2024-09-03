@@ -20,8 +20,8 @@ import { useStartStepperPerformanceTracking } from '../../utils/performance-trac
 import { StepRoute, StepperLoader } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
-import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
+import { useFlowStartTracking } from './hooks/use-flow-start-tracking';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
@@ -70,7 +70,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
-	useFlowAnalytics( { flow: params.flow, step: currentStepRoute, variant: flow.variantSlug } );
+	useFlowStartTracking( { flow: flow, step: currentStepRoute } );
 
 	const { __ } = useI18n();
 	useSaveQueryParams();
