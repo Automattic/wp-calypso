@@ -88,7 +88,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 					<StatsButton
 						primary
 						onClick={ onFormSubmit }
-						busy={ isSubmittingFeedback || isSubmissionSuccessful }
+						busy={ isSubmittingFeedback }
 						disabled={ isSubmittingFeedback || isSubmissionSuccessful || ! content }
 					>
 						{ translate( 'Submit' ) }
