@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FeedbackModal from './modal';
@@ -39,8 +40,20 @@ function FeedbackCard( { clickHandler }: FeedbackProps ) {
 }
 
 function FeedbackPanel( { clickHandler }: FeedbackProps ) {
+	const translate = useTranslate();
+
+	const handleCloseButtonClicked = () => {
+		console.log( 'close button cicked' );
+	};
+
 	return (
 		<div className="stats-feedback-panel">
+			<Button
+				className="stats-feedback-panel__close-button"
+				onClick={ handleCloseButtonClicked }
+				icon={ close }
+				label={ translate( 'Close' ) }
+			/>
 			<FeedbackContent clickHandler={ clickHandler } />
 		</div>
 	);
