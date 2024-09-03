@@ -14,22 +14,28 @@ interface FeedbackProps {
 	clickHandler: ( action: string ) => void;
 }
 
+interface FeedbackPanelProps {
+	clickHandler: ( action: string ) => void;
+	isOpen: boolean;
+}
+
 function StatsFeedbackController() {
 	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( true );
 
 	const handleButtonClick = ( action: string ) => {
 		if ( action === FEEDBACK_ACTION_SEND_FEEDBACK ) {
 			setIsOpen( true );
 		}
 		if ( action === FEEDBACK_ACTION_DISMISS_FLOATING_PANEL ) {
-			console.log( 'dismiss floating panel' );
+			setIsFloatingPanelOpen( false );
 		}
 	};
 
 	return (
 		<div className="stats-feedback-container">
 			<FeedbackCard clickHandler={ handleButtonClick } />
-			<FeedbackPanel clickHandler={ handleButtonClick } />
+			<FeedbackPanel isOpen={ isFloatingPanelOpen } clickHandler={ handleButtonClick } />
 			<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
 		</div>
 	);
@@ -43,12 +49,16 @@ function FeedbackCard( { clickHandler }: FeedbackProps ) {
 	);
 }
 
-function FeedbackPanel( { clickHandler }: FeedbackProps ) {
+function FeedbackPanel( { isOpen, clickHandler }: FeedbackPanelProps ) {
 	const translate = useTranslate();
 
 	const handleCloseButtonClicked = () => {
 		clickHandler( FEEDBACK_ACTION_DISMISS_FLOATING_PANEL );
 	};
+
+	if ( ! isOpen ) {
+		return null;
+	}
 
 	return (
 		<div className="stats-feedback-panel">
