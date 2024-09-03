@@ -22,7 +22,7 @@ function HelpCenterContent() {
 				href="https://wordpress.com/help"
 				icon={ <HelpIcon /> }
 				label="Help"
-				size={ canvasMode === 'edit' ? 'compact' : undefined }
+				size={ ! canvasMode || canvasMode === 'edit' ? 'compact' : undefined }
 				target="_blank"
 			/>
 		</>

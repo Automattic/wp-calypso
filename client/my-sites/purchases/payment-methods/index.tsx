@@ -26,6 +26,7 @@ import { useCreateCreditCard } from 'calypso/my-sites/checkout/src/hooks/use-cre
 import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths';
@@ -84,9 +85,11 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ) 
 	const logPaymentMethodsError = useLogPaymentMethodsError(
 		'site level add new payment method load error'
 	);
+	const currency = useSelector( getCurrentUserCurrencyCode );
 
 	const { isStripeLoading, stripeLoadingError } = useStripe();
 	const stripeMethod = useCreateCreditCard( {
+		currency,
 		isStripeLoading,
 		stripeLoadingError,
 		shouldUseEbanx: false,

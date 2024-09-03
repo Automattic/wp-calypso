@@ -62,6 +62,10 @@ export interface Agency {
 		};
 	};
 	partner_directory_allowed: boolean;
+	user: {
+		role: 'a4a_administrator' | 'a4a_manager';
+		capabilities: string[];
+	};
 }
 
 export interface AgencyStore {

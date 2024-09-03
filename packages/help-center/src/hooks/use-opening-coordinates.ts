@@ -2,6 +2,19 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useState, useEffect } from 'react';
 
 const AESTHETIC_OFFSET = 20;
+const HELP_CENTER_POSITION_MASTERBAR = 11;
+const HELP_CENTER_POSITION_EDITOR = 15;
+
+const originElementOffset = ( element: HTMLElement ) => {
+	if ( element.classList.contains( 'masterbar__item' ) ) {
+		return HELP_CENTER_POSITION_MASTERBAR;
+	}
+	if ( element.classList.contains( 'entry-point-button' ) ) {
+		return HELP_CENTER_POSITION_EDITOR;
+	}
+	// opening it from another location, example `my home`
+	return 0;
+};
 
 /**
  * This function calculates the position of the Help Center based on the last click event.
@@ -31,8 +44,10 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 
 	const { x, y, width, height } = element.getBoundingClientRect();
 
-	const buttonLeftEdge = x;
-	const buttonRightEdge = x + width;
+	const position = originElementOffset( element );
+
+	// handle RTL languages
+	const buttonLeftEdge = x - position;
 
 	const buttonTopEdge = y;
 	const buttonBottomEdge = y + height;
@@ -51,6 +66,7 @@ export const calculateOpeningPosition = ( element: HTMLElement ) => {
 
 	if ( buttonLeftEdge + helpCenterWidth + AESTHETIC_OFFSET > innerWidth ) {
 		// Align right edge of the help center with the right edge of the button
+		const buttonRightEdge = x + width + position;
 		coords.left = buttonRightEdge - helpCenterWidth;
 		coords.transformOrigin += ' right';
 	} else {

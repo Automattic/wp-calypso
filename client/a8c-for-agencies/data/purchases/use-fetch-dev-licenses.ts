@@ -3,11 +3,13 @@ import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
+const getFetchDevLicensesQueryKey = ( agencyId?: number ) => [ 'a4a-dev-licenses', agencyId ];
+
 export default function useFetchDevLicenses() {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery( {
-		queryKey: [ 'a4a-dev-licenses', agencyId ],
+		queryKey: getFetchDevLicensesQueryKey( agencyId ),
 		queryFn: () =>
 			wpcom.req.get(
 				{
@@ -28,3 +30,5 @@ export default function useFetchDevLicenses() {
 		refetchOnWindowFocus: false,
 	} );
 }
+
+export { getFetchDevLicensesQueryKey };
