@@ -433,11 +433,6 @@ export class DateRange extends Component {
 	 * @returns {import('react').Element} the Popover component
 	 */
 	renderPopover() {
-		const { displayShortcuts } = this.props;
-
-		// Only render shortcuts if displayShortcuts is true
-		const shortcuts = displayShortcuts ? this.displayShortcutsComponent() : null;
-
 		const headerProps = {
 			onApplyClick: this.commitDates,
 			onCancelClick: this.closePopoverAndRevert,
@@ -486,11 +481,7 @@ export class DateRange extends Component {
 							numberOfMonths={ this.getNumberOfMonths() }
 						/>
 					</div>
-					{ shortcuts && (
-						<div className="date-control-picker-shortcuts">
-							{ this.displayShortcutsComponent() }
-						</div>
-					) }
+					{ this.props.displayShortcuts && this.renderShortcuts() }
 				</div>
 			</Popover>
 		);
@@ -500,8 +491,12 @@ export class DateRange extends Component {
 	 * Renders the Shortcuts component
 	 * @returns {import('react').Element} the Shortcuts component
 	 */
-	displayShortcutsComponent() {
-		return <Shortcuts onClick={ this.handleShortcutClick } />;
+	renderShortcuts() {
+		return (
+			<div className="date-control-picker-shortcuts">
+				<Shortcuts onClick={ this.handleShortcutClick } />
+			</div>
+		);
 	}
 
 	/**
