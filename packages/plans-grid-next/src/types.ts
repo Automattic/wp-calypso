@@ -197,11 +197,8 @@ export type GridContextProps = {
 	enableFeatureTooltips?: boolean;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
-	/**
-	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.
-	 * It is only used for showing "Everything in [previous] plus".
-	 */
 	enableCategorisedFeatures?: boolean;
+	enableLargeFeatureTitles?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

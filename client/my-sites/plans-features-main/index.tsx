@@ -787,6 +787,10 @@ const PlansFeaturesMain = ( {
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
 										enableCategorisedFeatures={ isAssignedToFewerFeaturesExperiment }
+										enableLargeFeatureTitles={ isAssignedToFewerFeaturesExperimentVariant(
+											'treatment-a'
+										) }
+										enableLargeFeatureTitles={ isAssignedToFewerFeaturesExperiment }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (

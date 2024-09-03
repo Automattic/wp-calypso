@@ -22,6 +22,7 @@ interface PlansGridContext {
 	 * for rendering features with categories based on available/associated feature group map.
 	 */
 	enableCategorisedFeatures?: boolean;
+	enableLargeFeatureTitles?: boolean;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
 }
@@ -40,6 +41,7 @@ const PlansGridContextProvider = ( {
 	coupon,
 	enableFeatureTooltips,
 	enableCategorisedFeatures,
+	enableLargeFeatureTitles,
 	featureGroupMap,
 	hideUnsupportedFeatures,
 }: GridContextProps ) => {
@@ -67,6 +69,7 @@ const PlansGridContextProvider = ( {
 				coupon,
 				enableFeatureTooltips,
 				enableCategorisedFeatures,
+				enableLargeFeatureTitles,
 				featureGroupMap,
 				hideUnsupportedFeatures,
 			} }
