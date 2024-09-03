@@ -62,15 +62,15 @@ function FeedbackContent( { clickHandler }: FeedbackProps ) {
 	};
 
 	return (
-		<div className="stats-feedback-card__content">
-			<div className="stats-feedback-card__cta">{ ctaText }</div>
-			<div className="stats-feedback-card__actions">
+		<div className="stats-feedback-content">
+			<div className="stats-feedback-content__cta">{ ctaText }</div>
+			<div className="stats-feedback-content__actions">
 				<Button variant="secondary" onClick={ handleLeaveReview }>
-					<span className="stats-feedback-card__emoji">😍</span>
+					<span className="stats-feedback-content__emoji">😍</span>
 					{ primaryButtonText }
 				</Button>
 				<Button variant="secondary" onClick={ handleSendFeedback }>
-					<span className="stats-feedback-card__emoji">😠</span>
+					<span className="stats-feedback-content__emoji">😠</span>
 					{ secondaryButtonText }
 				</Button>
 			</div>

@@ -1,6 +1,14 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 
+.stats-feedback-content {
+	font-family: $font-sf-pro-text;
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 21px;
+	letter-spacing: -0.24px;
+}
+
 .stats-feedback-card {
 	background: var(--studio-white);
 	border: 1px solid var(--studio-gray-5);
@@ -15,47 +23,43 @@
 		border-right: none;
 	}
 
-	display: flex;
-	flex-direction: column;
+	.stats-feedback-content {
+		display: flex;
+		flex-direction: column;
 
-	@media (min-width: $break-wide) {
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
+		@media (min-width: $break-wide) {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+		}
 	}
 
-	font-family: $font-sf-pro-text;
-	font-size: $font-body-small;
-	font-weight: 400;
-	line-height: 21px;
-	letter-spacing: -0.24px;
-}
-
-.stats-feedback-card__cta {
-	@media (max-width: $break-wide) {
-		margin-bottom: 12px;
-	}
-}
-
-.stats-feedback-card__actions {
-	display: flex;
-	flex-direction: column;
-
-	.components-button {
-		margin: 6px 0;
-		width: fit-content;
+	.stats-feedback-content__cta {
+		@media (max-width: $break-wide) {
+			margin-bottom: 12px;
+		}
 	}
 
-	@media (min-width: $break-wide) {
-		flex-direction: row;
+	.stats-feedback-content__actions {
+		display: flex;
+		flex-direction: column;
 
 		.components-button {
-			margin: 0 6px;
+			margin: 6px 0;
+			width: fit-content;
+		}
+
+		@media (min-width: $break-wide) {
+			flex-direction: row;
+
+			.components-button {
+				margin: 0 6px;
+			}
 		}
 	}
 }
 
-.stats-feedback-card__emoji {
+.stats-feedback-content__emoji {
 	font-size: larger;
 	margin-right: 6px;
 }
