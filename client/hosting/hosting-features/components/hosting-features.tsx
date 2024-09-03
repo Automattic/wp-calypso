@@ -64,7 +64,8 @@ const HostingFeatures = () => {
 	// `siteTransferData?.isTransferring` is not a fully reliable indicator by itself, which is why
 	// we also look at `siteTransferData.status`
 	const isTransferInProgress =
-		siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED;
+		( siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED ) &&
+		! isPlanExpired;
 
 	useEffect( () => {
 		if ( ! siteId ) {
