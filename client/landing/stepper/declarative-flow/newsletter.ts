@@ -4,6 +4,7 @@ import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -82,7 +83,21 @@ const newsletter: Flow = {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const query = useQuery();
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
+
+		const exitFlow = ( to: string ) => {
+			setPendingAction( () => {
+				return new Promise( () => {
+					window.location.assign( to );
+				} );
+			} );
+		};
+
+		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
 
 		const completeSubscribersTask = async () => {
 			if ( siteSlug ) {
@@ -138,8 +153,17 @@ const newsletter: Flow = {
 						);
 					}
 
+					initializeLaunchpadState( {
+						siteId: providedDependencies?.siteId as number,
+						siteSlug: providedDependencies?.siteSlug as string,
+					} );
+
 					return window.location.assign(
-						`/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`
+						getPostFlowUrl( {
+							flow: flowName,
+							siteId: providedDependencies?.siteId as number,
+							siteSlug: providedDependencies?.siteSlug as string,
+						} )
 					);
 
 				case 'subscribers':
