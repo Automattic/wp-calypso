@@ -59,3 +59,13 @@
 	font-size: larger;
 	margin-right: 6px;
 }
+
+.stats-feedback-panel {
+	position: fixed;
+	bottom: 64px;
+	right: 16px;
+	z-index: 10;
+
+	background-color: green;
+	// background-color: var(--studio-white);
+}

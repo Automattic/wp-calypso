@@ -35,6 +35,16 @@ function StatsFeedbackCard() {
 				</div>
 				<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
 			</div>
+			<FeedbackPanel />
+		</div>
+	);
+}
+
+function FeedbackPanel() {
+	return (
+		<div className="stats-feedback-panel">
+			<p>floating panel content here</p>
+			<p>buttons here</p>
 		</div>
 	);
 }
