@@ -120,7 +120,7 @@ export default function TeamList() {
 						<ActionColumn
 							member={ item }
 							onMenuSelected={ ( action ) => handleAction( action, item ) }
-							withDelete={ canRemove || item.email === currentUser?.email }
+							canRemove={ canRemove || item.email === currentUser?.email }
 						/>
 					);
 				},
