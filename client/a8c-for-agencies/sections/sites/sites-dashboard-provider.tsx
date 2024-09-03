@@ -1,3 +1,5 @@
+import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { ReactNode, useEffect, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
@@ -88,19 +90,26 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
+	// Limit fields on breakpoints smaller than 960px wide.
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+	const desktopFields = [
+		'url',
+		'stats',
+		'boost',
+		'backup',
+		'monitor',
+		'scan',
+		'plugins',
+		'favorite',
+		'actions',
+	];
+	const mobileFields = [ 'url', 'actions' ];
+	const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
+		isDesktop ? desktopFields : mobileFields;
+
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		fields: [
-			'url',
-			'stats',
-			'boost',
-			'backup',
-			'monitor',
-			'scan',
-			'plugins',
-			'favorite',
-			'actions',
-		],
+		fields: getFieldsByBreakpoint( isDesktop ),
 		page: currentPage,
 		search: searchQuery,
 		sort,
