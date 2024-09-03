@@ -43,7 +43,6 @@ function FeedbackContent( { clickHandler }: FeedbackProps ) {
 	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
 
 	const handleButtonClick = () => {
-		console.log( 'button clicked' );
 		if ( clickHandler ) {
 			clickHandler();
 		}
