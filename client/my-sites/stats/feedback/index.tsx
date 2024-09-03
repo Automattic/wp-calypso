@@ -5,6 +5,10 @@ import FeedbackModal from './modal';
 
 import './style.scss';
 
+interface FeedbackProps {
+	clickHandler: () => void;
+}
+
 function StatsFeedbackCard() {
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -23,7 +27,7 @@ function StatsFeedbackCard() {
 	);
 }
 
-function FeedbackPanel( { clickHandler } ) {
+function FeedbackPanel( { clickHandler }: FeedbackProps ) {
 	return (
 		<div className="stats-feedback-panel">
 			<FeedbackContent clickHandler={ clickHandler } />
@@ -31,7 +35,7 @@ function FeedbackPanel( { clickHandler } ) {
 	);
 }
 
-function FeedbackContent( { clickHandler } ) {
+function FeedbackContent( { clickHandler }: FeedbackProps ) {
 	const translate = useTranslate();
 
 	const ctaText = translate( 'How do you rate your overall experience with Jetpack Stats?' );
