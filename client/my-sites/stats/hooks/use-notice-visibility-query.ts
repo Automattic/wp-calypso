@@ -12,6 +12,7 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 	gdpr_cookie_consent: false,
+	able_to_submit_user_feedback: false,
 };
 const DEFAULT_CLIENT_NOTICES_VISIBILITY = {
 	client_paid_plan_purchase_success: true,

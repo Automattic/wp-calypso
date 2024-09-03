@@ -44,12 +44,18 @@
 }
 
 .stats-feedback-modal__button {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
 	margin-top: 24px;
 	font-family: $font-sf-pro-text;
 	font-size: $font-body-small;
 	font-weight: 400;
 	line-height: 20px;
-	text-align: right;
+
+	small {
+		margin-right: 8px;
+	}
 
 	button {
 		padding: 10px 16px;
