@@ -12,6 +12,7 @@ const Timeline = styled.div`
 	gap: 1.5rem;
 	text-align: center;
 	overflow: auto;
+	padding: 0 2px;
 `;
 
 const H2 = styled.h2`
