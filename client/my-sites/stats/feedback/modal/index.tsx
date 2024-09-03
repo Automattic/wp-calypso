@@ -3,6 +3,8 @@ import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useEffect } from 'react';
 import StatsButton from 'calypso/my-sites/stats/components/stats-button';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -19,6 +21,20 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ content, setContent ] = useState( '' );
+
+	const {
+		data: isAbleToSubmitFeedback,
+		isFetching: isCheckingAbilityToSubmitFeedback,
+		refetch: refetchNotices,
+	} = useNoticeVisibilityQuery( siteId, 'able_to_submit_user_feedback' );
+
+	// Disable feedback submission for 24 hours.
+	const { mutateAsync: disableFeedbackSubmissionInOneDay } = useNoticeVisibilityMutation(
+		siteId,
+		'able_to_submit_user_feedback',
+		'postponed',
+		24 * 3600
+	);
 
 	const { isSubmittingFeedback, submitFeedback, isSubmissionSuccessful } =
 		useSubmitProductFeedback( siteId );
@@ -53,9 +69,20 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				} )
 			);
 
+			disableFeedbackSubmissionInOneDay().then( () => {
+				refetchNotices();
+			} );
+
 			handleClose();
 		}
-	}, [ dispatch, isSubmissionSuccessful, handleClose, translate ] );
+	}, [
+		dispatch,
+		isSubmissionSuccessful,
+		handleClose,
+		translate,
+		disableFeedbackSubmissionInOneDay,
+		refetchNotices,
+	] );
 
 	return (
 		<Modal className="stats-feedback-modal" onRequestClose={ handleClose } __experimentalHideHeader>
@@ -85,11 +112,20 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 					onChange={ setContent }
 				/>
 				<div className="stats-feedback-modal__button">
+					{ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback && (
+						<small>{ translate( 'You may submit additional feedback 24 hours later.' ) }</small>
+					) }
 					<StatsButton
 						primary
 						onClick={ onFormSubmit }
 						busy={ isSubmittingFeedback }
-						disabled={ isSubmittingFeedback || isSubmissionSuccessful || ! content }
+						disabled={
+							isCheckingAbilityToSubmitFeedback ||
+							! isAbleToSubmitFeedback ||
+							isSubmittingFeedback ||
+							isSubmissionSuccessful ||
+							! content
+						}
 					>
 						{ translate( 'Submit' ) }
 					</StatsButton>
