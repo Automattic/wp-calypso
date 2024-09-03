@@ -5,6 +5,7 @@ import { PromptIcon } from '@automattic/command-palette';
 import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { Button as WPButton } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -126,6 +127,24 @@ class MasterbarLoggedIn extends Component {
 		}
 	};
 
+	setupReaderPositionObserver() {
+		const readerItem = document.querySelector( '.masterbar__reader' );
+		this.resizeObserver = new ResizeObserver(
+			debounce( () => {
+				const newRect = readerItem.getBoundingClientRect();
+				const readerPositionChanged =
+					! this.lastReaderPosition ||
+					newRect.left !== this.lastReaderPosition.left ||
+					newRect.top !== this.lastReaderPosition.top;
+				if ( readerPositionChanged ) {
+					this.setState( { readerPosition: newRect } );
+					this.lastReaderPosition = newRect;
+				}
+			}, 100 )
+		);
+		this.resizeObserver.observe( readerItem );
+	}
+
 	componentDidMount() {
 		// Give a chance to direct URLs to open the sidebar on page load ( eg by clicking 'me' in wp-admin ).
 		const qryString = parse( document.location.search.replace( /^\?/, '' ) );
@@ -141,24 +160,8 @@ class MasterbarLoggedIn extends Component {
 		this.subscribeToViewPortChanges();
 
 		// Observe if the position of the reader item has changed.
-		this.observer = new window.MutationObserver( () => {
-			const readerItem = document.querySelector( '.masterbar__reader' );
-			if ( readerItem ) {
-				const rect = readerItem.getBoundingClientRect();
-				if ( this.state.readerPosition ) {
-					if (
-						rect.left !== this.lastReaderPosition.left ||
-						rect.top !== this.lastReaderPosition.top
-					) {
-						this.setState( { readerPosition: rect } );
-					}
-				} else {
-					this.setState( { readerPosition: rect } );
-				}
-				this.lastReaderPosition = rect;
-			}
-		} );
-		this.observer.observe( document.body, { attributes: true, childList: true, subtree: true } );
+		// Re-render to update the reader tooltip position.
+		this.setupReaderPositionObserver();
 	}
 
 	componentWillUnmount() {
@@ -166,8 +169,8 @@ class MasterbarLoggedIn extends Component {
 		this.unsubscribeToViewPortChanges?.();
 		this.unsubscribeResponsiveMenuViewPortChanges?.();
 
-		if ( this.observer ) {
-			this.observer.disconnect();
+		if ( this.resizeObserver ) {
+			this.resizeObserver.disconnect();
 		}
 	}
 
