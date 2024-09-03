@@ -390,6 +390,16 @@ export class DateRange extends Component {
 		return window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1;
 	}
 
+	onDateRangeChange( startDate, endDate ) {
+		this.setState( {
+			startDate,
+			endDate,
+			textInputStartDate: this.toDateString( startDate ),
+			textInputEndDate: this.toDateString( endDate ),
+		} );
+		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
+	}
+
 	renderDateHelp() {
 		const { startDate, endDate } = this.state;
 
@@ -446,16 +456,6 @@ export class DateRange extends Component {
 			onInputFocus: this.handleInputFocus,
 		};
 
-		const onDateRangeChange = ( startDate, endDate ) => {
-			this.setState( {
-				startDate,
-				endDate,
-				textInputStartDate: this.toDateString( startDate ),
-				textInputEndDate: this.toDateString( endDate ),
-			} );
-			this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
-		};
-
 		return (
 			<Popover
 				className="date-range__popover"
@@ -471,15 +471,7 @@ export class DateRange extends Component {
 							{ this.renderDateHelp() }
 						</div>
 						{ this.props.renderInputs( inputsProps ) }
-						<DateRangePicker
-							firstSelectableDate={ this.props.firstSelectableDate }
-							lastSelectableDate={ this.props.lastSelectableDate }
-							selectedStartDate={ this.state.startDate }
-							selectedEndDate={ this.state.endDate }
-							onDateRangeChange={ onDateRangeChange }
-							focusedMonth={ this.state.focusedMonth }
-							numberOfMonths={ this.getNumberOfMonths() }
-						/>
+						{ this.renderDatePicker() }
 					</div>
 					{ this.props.displayShortcuts && this.renderShortcuts() }
 				</div>
@@ -504,55 +496,15 @@ export class DateRange extends Component {
 	 * @returns {import('react').Element} the DatePicker component
 	 */
 	renderDatePicker() {
-		const fromDate = this.momentDateToJsDate( this.state.startDate );
-		const toDate = this.momentDateToJsDate( this.state.endDate );
-
-		// Add "Range" modifier classes to Day component
-		// within Date Picker to aid "range" styling
-		// http://react-day-picker.js.org/api/DayPicker/#modifiers
-		const modifiers = {
-			start: fromDate,
-			end: toDate,
-			'range-start': fromDate,
-			'range-end': toDate,
-			range: {
-				from: fromDate,
-				to: toDate,
-			},
-		};
-
-		// Dates to be "selected" in Picker
-		const selected = [
-			fromDate,
-			{
-				from: fromDate,
-				to: toDate,
-			},
-		];
-
-		const rootClassNames = {
-			'date-range__picker': true,
-		};
-
-		const calendarInitialDate =
-			this.props.firstSelectableDate ||
-			( this.props.lastSelectableDate &&
-				moment( this.props.lastSelectableDate ).subtract( 1, 'month' ) ) ||
-			this.state.startDate;
-
 		return (
 			<DateRangePicker
-				calendarViewDate={ this.state.focusedMonth }
-				calendarInitialDate={ this.momentDateToJsDate( calendarInitialDate ) ?? null }
-				rootClassNames={ rootClassNames }
-				modifiers={ modifiers }
-				showOutsideDays={ false }
-				fromMonth={ this.momentDateToJsDate( this.props.firstSelectableDate ) }
-				toMonth={ this.momentDateToJsDate( this.props.lastSelectableDate ) }
-				onSelectDay={ this.onSelectDate }
-				selectedDays={ selected }
+				firstSelectableDate={ this.props.firstSelectableDate }
+				lastSelectableDate={ this.props.lastSelectableDate }
+				selectedStartDate={ this.state.startDate }
+				selectedEndDate={ this.state.endDate }
+				onDateRangeChange={ ( startDate, endDate ) => this.onDateRangeChange( startDate, endDate ) }
+				focusedMonth={ this.state.focusedMonth }
 				numberOfMonths={ this.getNumberOfMonths() }
-				disabledDays={ this.getDisabledDaysConfig() }
 			/>
 		);
 	}
