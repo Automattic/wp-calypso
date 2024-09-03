@@ -9,7 +9,6 @@ export const PaymentMethodLogos = styled.span`
 	text-align: right;
 	align-items: center;
 	justify-content: flex-end;
-	padding-inline-end: 24px;
 
 	.rtl & {
 		text-align: left;
