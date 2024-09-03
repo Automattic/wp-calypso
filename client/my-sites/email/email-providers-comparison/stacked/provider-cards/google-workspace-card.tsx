@@ -87,9 +87,10 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
-	const { hiddenFields, passwordResetEmailFieldInitialValue } = usePasswordResetEmailField( {
-		selectedDomainName,
-	} );
+	const { hiddenFields, initialValue: passwordResetEmailFieldInitialValue } =
+		usePasswordResetEmailField( {
+			selectedDomainName,
+		} );
 
 	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( hiddenFields );
 

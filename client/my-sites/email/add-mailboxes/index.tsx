@@ -240,10 +240,11 @@ const MailboxesForm = ( {
 
 	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
 
-	const { hiddenFields, passwordResetEmailFieldInitialValue } = usePasswordResetEmailField( {
-		selectedDomainName,
-		defaultHiddenFields,
-	} );
+	const { hiddenFields, initialValue: passwordResetEmailFieldInitialValue } =
+		usePasswordResetEmailField( {
+			selectedDomainName,
+			defaultHiddenFields,
+		} );
 
 	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( hiddenFields );
 

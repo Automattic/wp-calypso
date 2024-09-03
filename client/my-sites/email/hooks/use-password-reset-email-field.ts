@@ -10,7 +10,7 @@ type PasswordResetEmailFieldProps = {
 
 type PasswordResetEmailFieldOptions = {
 	hiddenFields: HiddenFieldNames[];
-	passwordResetEmailFieldInitialValue: string;
+	initialValue: string;
 };
 
 export function usePasswordResetEmailField( {
@@ -28,6 +28,6 @@ export function usePasswordResetEmailField( {
 		hiddenFields: isPasswordResetEmailValid
 			? [ ...defaultHiddenFields, FIELD_PASSWORD_RESET_EMAIL ]
 			: defaultHiddenFields,
-		passwordResetEmailFieldInitialValue: isPasswordResetEmailValid ? userEmail : '',
+		initialValue: isPasswordResetEmailValid ? userEmail : '',
 	};
 }
