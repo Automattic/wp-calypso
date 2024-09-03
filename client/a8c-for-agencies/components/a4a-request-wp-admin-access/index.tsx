@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import svg from './illustration.svg';
+import illustration from 'calypso/assets/images/a8c-for-agencies/request-wp-admin-access-illustration.svg';
 
 import './style.scss';
 
@@ -38,7 +38,7 @@ export function A4ARequestWPAdminAccess() {
 				</Button>
 			</div>
 			<div className="a4a-request-wp-admin-access__illustration">
-				<img src={ svg } alt="illustration" />
+				<img src={ illustration } alt="illustration" />
 			</div>
 		</div>
 	);

@@ -83,14 +83,12 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 	'sites-overview': [ 'a4a_read_managed_sites' ],
-	'marketplace-hosting': [ 'a4a_read_marketplace' ],
-	'marketplace-products': [ 'a4a_read_marketplace' ],
+	marketplace: [ 'a4a_read_marketplace' ],
 };
 
 const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	'sites-overview': /^\/sites\/overview\/[^/]+(\/.*)?$/,
-	'marketplace-hosting': /^\/marketplace\/hosting\/[^/]+(\/.*)?$/,
-	'marketplace-products': /^\/marketplace\/products\/[^/]+(\/.*)?$/,
+	marketplace: /^\/marketplace\/[^/]+\/[^/]+(\/.*)?$/,
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
