@@ -74,7 +74,11 @@ const DateRangePickerShortcuts = ( {
 					>
 						<Button
 							onClick={ () => handleClick( shortcut ) }
-							aria-label={ `Time range ${ shortcut.label }. Click to select.` }
+							aria-label={ translate( `Time range %(label)s. Click to select.`, {
+								args: {
+									label: shortcut.label,
+								},
+							} ) }
 						>
 							<span>{ shortcut.label }</span>
 						</Button>
