@@ -263,10 +263,14 @@ $blueberry-color: #3858e9;
 
 .hosting-overview__plan-storage-footer {
 	text-align: left;
-}
 
-.hosting-overview__link-button {
-	color: var(--color-link);
+	.hosting-overview__storage-footer-text {
+		color: var(--color-link);
+
+		&:hover {
+			color: var(--color-link-dark);
+		}
+	}
 }
 
 .hosting-overview__plan-storage-value,

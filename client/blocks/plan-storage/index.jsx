@@ -16,7 +16,8 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { ComponentType, FC, PropsWithChildren, ReactNode, useRef, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
@@ -63,6 +64,8 @@ export function PlanStorage( {
 	);
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
 	const tooltipAnchorRef = useRef( null );
+
+	const dispatch = useDispatch();
 
 	if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
 		return null;
@@ -143,6 +146,9 @@ export function PlanStorage( {
 					onMouseLeave={ hideTooltip }
 					onFocus={ showTooltip }
 					onBlur={ hideTooltip }
+					onClick={ () => {
+						dispatch( recordTracksEvent( 'calypso_hosting_overview_need_more_storage_click' ) );
+					} }
 				>
 					{ planStorageComponents }
 				</a>
