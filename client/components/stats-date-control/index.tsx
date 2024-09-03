@@ -146,7 +146,7 @@ const StatsDateControl = ( {
 						);
 					} }
 					rootClass="stats-date-control-picker"
-					renderShortcuts
+					shouldRenderShortcuts
 				/>
 			) : (
 				<DateControlPicker
