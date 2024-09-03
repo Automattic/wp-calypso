@@ -989,19 +989,19 @@ export class LoginForm extends Component {
 								</FormLabel>
 
 								<FormTextInput
-                  autoCapitalize="off"
-                  autoCorrect="off"
-                  spellCheck="false"
-                  autoComplete="username"
-                  className={ clsx( {
-                    'is-error': requestError && requestError.field === 'usernameOrEmail',
-                  } ) }
-                  onChange={ this.onChangeUsernameOrEmailField }
-                  id="usernameOrEmail"
-                  name="usernameOrEmail"
-                  ref={ this.saveUsernameOrEmailRef }
-                  value={ this.state.usernameOrEmail }
-                  disabled={ shouldDisableEmailInput }
+									autoCapitalize="off"
+									autoCorrect="off"
+									spellCheck="false"
+									autoComplete="username"
+									className={ clsx( {
+										'is-error': requestError && requestError.field === 'usernameOrEmail',
+									} ) }
+									onChange={ this.onChangeUsernameOrEmailField }
+									id="usernameOrEmail"
+									name="usernameOrEmail"
+									ref={ this.saveUsernameOrEmailRef }
+									value={ this.state.usernameOrEmail }
+									disabled={ shouldDisableEmailInput }
 								/>
 
 								{ isJetpack && (
