@@ -8,14 +8,14 @@ import './style.scss';
 function StatsFeedbackCard() {
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	// const handleClickSendFeedback = () => {
-	// 	setIsOpen( true );
-	// };
+	const handleButtonClick = () => {
+		setIsOpen( true );
+	};
 
 	return (
 		<div className="stats-feedback-container">
 			<div className="stats-feedback-card">
-				<FeedbackContent />
+				<FeedbackContent clickhandler={ handleButtonClick } />
 				<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
 			</div>
 			<FeedbackPanel />
@@ -32,7 +32,7 @@ function FeedbackPanel() {
 	);
 }
 
-function FeedbackContent() {
+function FeedbackContent( { clickhandler } ) {
 	const translate = useTranslate();
 
 	const ctaText = translate( 'How do you rate your overall experience with Jetpack Stats?' );
@@ -41,6 +41,9 @@ function FeedbackContent() {
 
 	const handleButtonClick = () => {
 		console.log( 'button clicked' );
+		if ( clickhandler ) {
+			clickhandler();
+		}
 	};
 
 	return (
