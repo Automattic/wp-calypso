@@ -191,10 +191,8 @@ describe( 'Hosted site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }`,
-				state: {
-					siteSlug: 'example.wordpress.com',
-				},
+				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
+				state: null,
 			} );
 		} );
 
