@@ -156,7 +156,7 @@ export default function AllTimeHighlightsSection( {
 					header: translate( 'Views' ),
 					content: <ShortenedNumber value={ viewsBestDayTotal } />,
 					footer: translate( '%(percent)s of views', {
-						args: { percent: formatPercentage( bestViewsEverPercent ) },
+						args: { percent: formatPercentage( bestViewsEverPercent, true ) },
 						context: 'Stats: Percentage of views',
 					} ),
 				},

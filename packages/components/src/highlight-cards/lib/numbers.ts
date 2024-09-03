@@ -15,11 +15,14 @@ export function formatNumber( number: number | null, isShortened = true, showSig
 	return importedFormatNumber( number, DEFAULT_LOCALE, option );
 }
 
-export function formatPercentage( number: number | null ) {
+export function formatPercentage(
+	number: number | null,
+	usePreciseSmallPercentages: boolean = false
+) {
 	// If the number is < 1%, then use 2 significant digits and maximumFractionDigits of 2.
 	// Otherwise, use the default percentage formatting options.
 	const option =
-		number && number < 0.01
+		usePreciseSmallPercentages && number && number < 0.01
 			? { ...PERCENTAGE_FORMATTING_OPTIONS, maximumFractionDigits: 2, maximumSignificantDigits: 2 }
 			: PERCENTAGE_FORMATTING_OPTIONS;
 	return importedFormatNumber( number, DEFAULT_LOCALE, option );
