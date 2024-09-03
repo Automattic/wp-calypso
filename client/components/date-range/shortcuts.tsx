@@ -16,7 +16,7 @@ const DateRangePickerShortcuts = ( {
 	onClick,
 }: {
 	currentShortcut?: string;
-	onClick: ( shortcut: { newFromDate: moment.Moment; newToDate: moment.Moment } ) => void;
+	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment ) => void;
 } ) => {
 	const translate = useTranslate();
 	const [ selectedShortcut, setSelectedShortcut ] = useState( currentShortcut );
@@ -63,7 +63,7 @@ const DateRangePickerShortcuts = ( {
 		const newToDate = moment().subtract( offset, 'days' );
 		const newFromDate = moment().subtract( offset + range, 'days' );
 
-		onClick( { newFromDate, newToDate } );
+		onClick( newFromDate, newToDate );
 	};
 
 	return (

@@ -390,7 +390,7 @@ export class DateRange extends Component {
 		return window.matchMedia( '(min-width: 480px)' ).matches ? 2 : 1;
 	}
 
-	onDateRangeChange( startDate, endDate ) {
+	handleDateRangeChange( startDate, endDate ) {
 		this.setState( {
 			startDate,
 			endDate,
@@ -486,7 +486,9 @@ export class DateRange extends Component {
 	renderShortcuts() {
 		return (
 			<div className="date-control-picker-shortcuts">
-				<Shortcuts onClick={ this.handleShortcutClick } />
+				<Shortcuts
+					onClick={ ( startDate, endDate ) => this.handleDateRangeChange( startDate, endDate ) }
+				/>
 			</div>
 		);
 	}
@@ -502,7 +504,9 @@ export class DateRange extends Component {
 				lastSelectableDate={ this.props.lastSelectableDate }
 				selectedStartDate={ this.state.startDate }
 				selectedEndDate={ this.state.endDate }
-				onDateRangeChange={ ( startDate, endDate ) => this.onDateRangeChange( startDate, endDate ) }
+				onDateRangeChange={ ( startDate, endDate ) =>
+					this.handleDateRangeChange( startDate, endDate )
+				}
 				focusedMonth={ this.state.focusedMonth }
 				numberOfMonths={ this.getNumberOfMonths() }
 			/>
@@ -542,15 +546,6 @@ export class DateRange extends Component {
 			</div>
 		);
 	}
-
-	handleShortcutClick = ( { newFromDate, newToDate } ) => {
-		this.setState( {
-			startDate: newFromDate,
-			endDate: newToDate,
-			textInputStartDate: this.toDateString( newFromDate ),
-			textInputEndDate: this.toDateString( newToDate ),
-		} );
-	};
 }
 
 export default localize( withLocalizedMoment( DateRange ) );
