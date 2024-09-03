@@ -9,7 +9,7 @@ interface FeedbackProps {
 	clickHandler: () => void;
 }
 
-function StatsFeedbackCard() {
+function StatsFeedbackController() {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const handleButtonClick = () => {
@@ -71,4 +71,4 @@ function FeedbackContent( { clickHandler }: FeedbackProps ) {
 	);
 }
 
-export default StatsFeedbackCard;
+export default StatsFeedbackController;
