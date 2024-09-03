@@ -1075,8 +1075,8 @@ function handleAppBannerShowing( calypsoPort ) {
 	};
 }
 
-function handlePatterns( calypsoPort ) {
-	const selector = `[data-value="${ __( 'Patterns' ) }"]`;
+function handleWpAdminRedirect( { calypsoPort, path, title } ) {
+	const selector = `[data-value="${ title }"]`;
 
 	const callback = ( e ) => {
 		e.preventDefault();
@@ -1084,7 +1084,7 @@ function handlePatterns( calypsoPort ) {
 		calypsoPort.postMessage( {
 			action: 'wpAdminRedirect',
 			payload: {
-				destinationUrl: '/wp-admin/site-editor.php?postType=wp_block',
+				destinationUrl: `/wp-admin/${ path }`,
 				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
 			},
 		} );
@@ -1092,44 +1092,26 @@ function handlePatterns( calypsoPort ) {
 
 	addEditorListener( selector, callback );
 	addCommandsInputListener( selector, callback );
+}
+
+function handlePatterns( calypsoPort ) {
+	handleWpAdminRedirect( {
+		calypsoPort,
+		path: 'site-editor.php?postType=wp_block',
+		title: __( 'Patterns' ),
+	} );
 }
 
 function handleAddPage( calypsoPort ) {
-	const selector = `[data-value="${ __( 'Add new page' ) }"]`;
-
-	const callback = ( e ) => {
-		e.preventDefault();
-
-		calypsoPort.postMessage( {
-			action: 'wpAdminRedirect',
-			payload: {
-				destinationUrl: '/wp-admin/post-new.php?post_type=page',
-				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
-			},
-		} );
-	};
-
-	addEditorListener( selector, callback );
-	addCommandsInputListener( selector, callback );
+	handleWpAdminRedirect( {
+		calypsoPort,
+		path: 'post-new.php?post_type=page',
+		title: __( 'Add new page' ),
+	} );
 }
 
 function handleAddPost( calypsoPort ) {
-	const selector = `[data-value="${ __( 'Add new post' ) }"]`;
-
-	const callback = ( e ) => {
-		e.preventDefault();
-
-		calypsoPort.postMessage( {
-			action: 'wpAdminRedirect',
-			payload: {
-				destinationUrl: '/wp-admin/post-new.php',
-				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
-			},
-		} );
-	};
-
-	addEditorListener( selector, callback );
-	addCommandsInputListener( selector, callback );
+	handleWpAdminRedirect( { calypsoPort, path: 'post-new.php', title: __( 'Add new post' ) } );
 }
 
 function initPort( message ) {
