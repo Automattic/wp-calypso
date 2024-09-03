@@ -18,11 +18,17 @@ function StatsFeedbackCard() {
 
 	return (
 		<div className="stats-feedback-container">
-			<div className="stats-feedback-card">
-				<FeedbackContent clickHandler={ handleButtonClick } />
-			</div>
+			<FeedbackCard clickHandler={ handleButtonClick } />
 			<FeedbackPanel clickHandler={ handleButtonClick } />
 			<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
+		</div>
+	);
+}
+
+function FeedbackCard( { clickHandler }: FeedbackProps ) {
+	return (
+		<div className="stats-feedback-card">
+			<FeedbackContent clickHandler={ clickHandler } />
 		</div>
 	);
 }
