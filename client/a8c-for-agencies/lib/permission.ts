@@ -37,6 +37,8 @@ import {
 	A4A_PAYMENT_METHODS_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
 	A4A_MIGRATIONS_LINK,
+	A4A_TEAM_LINK,
+	A4A_TEAM_INVITE_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -79,6 +81,8 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_PAYMENT_METHODS_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_PAYMENT_METHODS_ADD_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_MIGRATIONS_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_TEAM_LINK ]: [ 'a4a_read_users' ],
+	[ A4A_TEAM_INVITE_LINK ]: [ 'a4a_edit_user_invites' ],
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
