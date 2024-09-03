@@ -3,6 +3,7 @@ import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
+import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
 	type AssertConditionResult,
@@ -76,7 +77,7 @@ const startWriting: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
-		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
+		const { setSelectedSite, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { site, siteSlug, siteId } = useSiteData();
 
 		// This flow clear the site_intent when flow is completed.
@@ -88,6 +89,19 @@ const startWriting: Flow = {
 				setIntentOnSite( siteSlug, '' );
 			}
 		}, [ siteSlug, setIntentOnSite, isSiteLaunched ] );
+
+		const exitFlow = ( to: string ) => {
+			setPendingAction( () => {
+				return new Promise( () => {
+					window.location.assign( to );
+				} );
+			} );
+		};
+
+		const { getPostFlowUrl, postFlowNavigator, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
@@ -114,10 +128,21 @@ const startWriting: Flow = {
 							} ),
 						] );
 
+						initializeLaunchpadState( {
+							siteId: providedDependencies?.siteId as number,
+							siteSlug: providedDependencies?.siteSlug as string,
+						} );
+
 						const siteOrigin = window.location.origin;
 
 						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true`
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?` +
+								`${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true` +
+								`&postFlowUrl=${ getPostFlowUrl( {
+									flow: START_WRITING_FLOW,
+									siteId: providedDependencies?.siteId as string,
+									siteSlug: providedDependencies?.siteSlug as string,
+								} ) }`
 						);
 					}
 				}
@@ -134,10 +159,21 @@ const startWriting: Flow = {
 							} ),
 						] );
 
+						initializeLaunchpadState( {
+							siteId: providedDependencies?.siteId as number,
+							siteSlug: providedDependencies?.siteSlug as string,
+						} );
+
 						const siteOrigin = window.location.origin;
 
 						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true`
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?` +
+								`${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true` +
+								`&postFlowUrl=${ getPostFlowUrl( {
+									flow: START_WRITING_FLOW,
+									siteId: providedDependencies?.siteId as string,
+									siteSlug: providedDependencies?.siteSlug as string,
+								} ) }`
 						);
 					}
 
@@ -152,7 +188,7 @@ const startWriting: Flow = {
 						return;
 					}
 
-					return navigate( 'launchpad' );
+					return postFlowNavigator( { siteId, siteSlug } );
 				}
 				case 'domains':
 					if ( siteId ) {

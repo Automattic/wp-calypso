@@ -25,6 +25,7 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		hasStartWritingFlowQueryArg &&
 		'full' === launchpadScreen &&
 		currentPostType === 'post';
+	const postFlowUrl = getQueryArg( window.location.search, 'postFlowUrl' );
 
 	useEffect( () => {
 		if ( shouldShowMinimalUIAndRedirectToFullscreenLaunchpad ) {
@@ -63,7 +64,10 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 
 			dispatch( 'core/edit-post' ).closePublishSidebar();
 
-			window.location.href = `${ siteOrigin }/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
+			// Redirect to the post flow URL if it's provided, otherwise redirect to the launchpad.
+			window.location.href =
+				`${ siteOrigin }${ postFlowUrl }` ||
+				`${ siteOrigin }/setup/${ intent }/launchpad?siteSlug=${ siteSlug }`;
 		}
 	} );
 }
