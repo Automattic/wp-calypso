@@ -320,7 +320,9 @@
 				}
 
 				li:has(.sites-dataview__site-error) {
-					padding: 0 24px 24px;
+					.dataviews-view-list__item {
+						padding: 0 24px;
+					}
 				}
 
 				.dataviews-view-list__fields {
@@ -354,7 +356,7 @@
 						.sites-dataview__site-error {
 							font-size: rem(13px);
 							border-radius: 4px;
-							padding: 4px 4px 4px 2px;
+							padding: 4px 8px;
 						}
 					}
 				}
@@ -419,11 +421,11 @@
 	}
 
 	td:first-child:has(.sites-dataview__site-error) {
-		padding: 0 0 16px 64px;
+		padding: 0 0 0 64px;
 
 		.sites-dataview__site-error {
-			padding-left: 10px;
-			border-radius: 4px 0 0 4px;
+			padding: 5px 10px;
+			border-radius: 4px;
 		}
 	}
 
@@ -431,7 +433,7 @@
 		padding: 0 64px 16px 0;
 
 		.sites-dataview__site-error {
-			border-radius: 0 4px 4px 0;
+			border-radius: 4px;
 		}
 	}
 
