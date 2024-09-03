@@ -5,15 +5,20 @@ import FeedbackModal from './modal';
 
 import './style.scss';
 
+const FEEDBACK_ACTION_LEAVE_REVIEW = 'feedback-action-leave-review';
+const FEEDBACK_ACTION_SEND_FEEDBACK = 'feedback-action-send-feedback';
+
 interface FeedbackProps {
-	clickHandler: () => void;
+	clickHandler: ( action: string ) => void;
 }
 
 function StatsFeedbackController() {
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	const handleButtonClick = () => {
-		setIsOpen( true );
+	const handleButtonClick = ( action: string ) => {
+		if ( action === FEEDBACK_ACTION_SEND_FEEDBACK ) {
+			setIsOpen( true );
+		}
 	};
 
 	return (
@@ -48,21 +53,23 @@ function FeedbackContent( { clickHandler }: FeedbackProps ) {
 	const primaryButtonText = translate( 'Love it? Leave a review' );
 	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
 
-	const handleButtonClick = () => {
-		if ( clickHandler ) {
-			clickHandler();
-		}
+	const handleLeaveReview = () => {
+		clickHandler( FEEDBACK_ACTION_LEAVE_REVIEW );
+	};
+
+	const handleSendFeedback = () => {
+		clickHandler( FEEDBACK_ACTION_SEND_FEEDBACK );
 	};
 
 	return (
 		<div className="stats-feedback-card__content">
 			<div className="stats-feedback-card__cta">{ ctaText }</div>
 			<div className="stats-feedback-card__actions">
-				<Button variant="secondary" onClick={ handleButtonClick }>
+				<Button variant="secondary" onClick={ handleLeaveReview }>
 					<span className="stats-feedback-card__emoji">😍</span>
 					{ primaryButtonText }
 				</Button>
-				<Button variant="secondary" onClick={ handleButtonClick }>
+				<Button variant="secondary" onClick={ handleSendFeedback }>
 					<span className="stats-feedback-card__emoji">😠</span>
 					{ secondaryButtonText }
 				</Button>
