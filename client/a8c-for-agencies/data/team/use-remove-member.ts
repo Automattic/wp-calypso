@@ -19,7 +19,7 @@ interface APIResponse {
 
 function removeMemberMutation( params: Params, agencyId?: number ): Promise< APIResponse > {
 	if ( ! agencyId ) {
-		throw new Error( 'Agency ID is required to assign a license' );
+		throw new Error( 'Agency ID is required to remove a team member' );
 	}
 
 	return wpcom.req.post( {

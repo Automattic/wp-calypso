@@ -35,7 +35,12 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 						},
 
 						onError: ( error ) => {
-							dispatch( errorNotice( error.message ) );
+							dispatch(
+								errorNotice( error.message, {
+									id: 'cancel-user-invite-error',
+									duration: 5000,
+								} )
+							);
 						},
 					}
 				);
@@ -56,7 +61,12 @@ export default function useHandleMemberAction( { onRefetchList }: Props ) {
 						},
 
 						onError: ( error ) => {
-							dispatch( errorNotice( error.message ) );
+							dispatch(
+								errorNotice( error.message, {
+									id: 'remove-user-error',
+									duration: 5000,
+								} )
+							);
 						},
 					}
 				);
