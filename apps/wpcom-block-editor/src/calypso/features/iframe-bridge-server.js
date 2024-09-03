@@ -1082,7 +1082,7 @@ function handlePatterns( calypsoPort ) {
 		e.preventDefault();
 
 		calypsoPort.postMessage( {
-			action: 'goToPatterns',
+			action: 'wpAdminRedirect',
 			payload: {
 				destinationUrl: '/wp-admin/site-editor.php?postType=wp_block',
 				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
@@ -1101,7 +1101,7 @@ function handleAddPage( calypsoPort ) {
 		e.preventDefault();
 
 		calypsoPort.postMessage( {
-			action: 'addNewPage',
+			action: 'wpAdminRedirect',
 			payload: {
 				destinationUrl: '/wp-admin/post-new.php?post_type=page',
 				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
@@ -1120,7 +1120,7 @@ function handleAddPost( calypsoPort ) {
 		e.preventDefault();
 
 		calypsoPort.postMessage( {
-			action: 'addNewPost',
+			action: 'wpAdminRedirect',
 			payload: {
 				destinationUrl: '/wp-admin/post-new.php',
 				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),

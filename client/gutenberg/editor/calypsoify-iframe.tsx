@@ -95,7 +95,7 @@ enum WindowActions {
 
 enum EditorActions {
 	GoToAllPosts = 'goToAllPosts', // Unused action in favor of CloseEditor. Maintained here to support cached scripts.
-	GoToPatterns = 'goToPatterns',
+	WpAdminRedirect = 'wpAdminRedirect',
 	CloseEditor = 'closeEditor',
 	OpenMediaModal = 'openMediaModal',
 	OpenCheckoutModal = 'openCheckoutModal',
@@ -114,8 +114,6 @@ enum EditorActions {
 	TrackPerformance = 'trackPerformance',
 	GetIsAppBannerVisible = 'getIsAppBannerVisible',
 	NavigateToHome = 'navigateToHome',
-	AddNewPage = 'addNewPage',
-	AddNewPost = 'addNewPost',
 }
 
 type ComponentProps = Props &
@@ -385,11 +383,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			this.navigate( destinationUrl, unsavedChanges );
 		}
 
-		if (
-			EditorActions.GoToPatterns === action ||
-			EditorActions.AddNewPage === action ||
-			EditorActions.AddNewPost === action
-		) {
+		if ( EditorActions.WpAdminRedirect === action ) {
 			const { destinationUrl, unsavedChanges } = payload;
 
 			this.navigate( `https://${ this.props.siteSlug }${ destinationUrl }`, unsavedChanges );
