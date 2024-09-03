@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const DATERANGE_PERIOD = {
 	DAY: 'day',
@@ -20,10 +20,6 @@ const DateRangePickerShortcuts = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ selectedShortcut, setSelectedShortcut ] = useState( currentShortcut );
-
-	useEffect( () => {
-		setSelectedShortcut( currentShortcut );
-	}, [ currentShortcut ] );
 
 	const getShortcutList = () => [
 		{
