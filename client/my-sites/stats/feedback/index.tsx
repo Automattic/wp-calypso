@@ -19,60 +19,6 @@ interface FeedbackPanelProps {
 	isOpen: boolean;
 }
 
-function StatsFeedbackController() {
-	const [ isOpen, setIsOpen ] = useState( false );
-	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( true );
-
-	const handleButtonClick = ( action: string ) => {
-		if ( action === FEEDBACK_ACTION_SEND_FEEDBACK ) {
-			setIsOpen( true );
-		}
-		if ( action === FEEDBACK_ACTION_DISMISS_FLOATING_PANEL ) {
-			setIsFloatingPanelOpen( false );
-		}
-	};
-
-	return (
-		<div className="stats-feedback-container">
-			<FeedbackCard clickHandler={ handleButtonClick } />
-			<FeedbackPanel isOpen={ isFloatingPanelOpen } clickHandler={ handleButtonClick } />
-			<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
-		</div>
-	);
-}
-
-function FeedbackCard( { clickHandler }: FeedbackProps ) {
-	return (
-		<div className="stats-feedback-card">
-			<FeedbackContent clickHandler={ clickHandler } />
-		</div>
-	);
-}
-
-function FeedbackPanel( { isOpen, clickHandler }: FeedbackPanelProps ) {
-	const translate = useTranslate();
-
-	const handleCloseButtonClicked = () => {
-		clickHandler( FEEDBACK_ACTION_DISMISS_FLOATING_PANEL );
-	};
-
-	if ( ! isOpen ) {
-		return null;
-	}
-
-	return (
-		<div className="stats-feedback-panel">
-			<Button
-				className="stats-feedback-panel__close-button"
-				onClick={ handleCloseButtonClicked }
-				icon={ close }
-				label={ translate( 'Close' ) }
-			/>
-			<FeedbackContent clickHandler={ clickHandler } />
-		</div>
-	);
-}
-
 function FeedbackContent( { clickHandler }: FeedbackProps ) {
 	const translate = useTranslate();
 
@@ -101,6 +47,60 @@ function FeedbackContent( { clickHandler }: FeedbackProps ) {
 					{ secondaryButtonText }
 				</Button>
 			</div>
+		</div>
+	);
+}
+
+function FeedbackPanel( { isOpen, clickHandler }: FeedbackPanelProps ) {
+	const translate = useTranslate();
+
+	const handleCloseButtonClicked = () => {
+		clickHandler( FEEDBACK_ACTION_DISMISS_FLOATING_PANEL );
+	};
+
+	if ( ! isOpen ) {
+		return null;
+	}
+
+	return (
+		<div className="stats-feedback-panel">
+			<Button
+				className="stats-feedback-panel__close-button"
+				onClick={ handleCloseButtonClicked }
+				icon={ close }
+				label={ translate( 'Close' ) }
+			/>
+			<FeedbackContent clickHandler={ clickHandler } />
+		</div>
+	);
+}
+
+function FeedbackCard( { clickHandler }: FeedbackProps ) {
+	return (
+		<div className="stats-feedback-card">
+			<FeedbackContent clickHandler={ clickHandler } />
+		</div>
+	);
+}
+
+function StatsFeedbackController() {
+	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( true );
+
+	const handleButtonClick = ( action: string ) => {
+		if ( action === FEEDBACK_ACTION_SEND_FEEDBACK ) {
+			setIsOpen( true );
+		}
+		if ( action === FEEDBACK_ACTION_DISMISS_FLOATING_PANEL ) {
+			setIsFloatingPanelOpen( false );
+		}
+	};
+
+	return (
+		<div className="stats-feedback-container">
+			<FeedbackCard clickHandler={ handleButtonClick } />
+			<FeedbackPanel isOpen={ isFloatingPanelOpen } clickHandler={ handleButtonClick } />
+			<FeedbackModal isOpen={ isOpen } onClose={ () => setIsOpen( false ) } />
 		</div>
 	);
 }
