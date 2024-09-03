@@ -224,6 +224,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		it( 'migrate redirects from the how-to-migrate (do it for me) page to assisted migration page', () => {
+			config.disable( 'automated-migration/collect-credentials' );
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -239,6 +240,24 @@ describe( 'Site Migration Flow', () => {
 				state: {
 					siteSlug: 'example.wordpress.com',
 				},
+			} );
+		} );
+
+		it( 'migrate redirects from the how-to-migrate (do it for me) page to credential collection step', () => {
+			config.enable( 'automated-migration/collect-credentials' );
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug,
+				dependencies: {
+					destination: 'migrate',
+					how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
+				state: null,
 			} );
 		} );
 
