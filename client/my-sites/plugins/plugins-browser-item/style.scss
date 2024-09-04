@@ -36,6 +36,14 @@
 		margin-left: calc(47px + 16px); // icon width + margin
 	}
 
+	.plugins-browser-item__title {
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		white-space: unset;
+	}
+
 	.plugins-browser-item__ratings {
 		display: flex;
 		justify-content: flex-end;
