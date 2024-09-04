@@ -90,6 +90,10 @@
 	box-shadow: 0 10px 20px 0 #00000014;
 
 	background-color: var(--studio-white);
+
+	.components-button.is-link {
+		color: var(--studio-gray-100);
+	}
 }
 
 .stats-feedback-panel__close-button {
@@ -101,4 +105,11 @@
 		width: 14px;
 		height: 14px;
 	}
+}
+
+.stats-feedback-panel__dismiss-button {
+	font-family: $font-sf-pro-text;
+	font-size: $font-body-small;
+	font-weight: 500;
+	line-height: 21px;
 }
