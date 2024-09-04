@@ -139,14 +139,11 @@
 
 		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
-			width: 70%;
+			width: 80%;
 		}
 
 		.dataviews-view-table tr td:first-child:has(.sites-dataview__site-error) {
 			padding: 8px 0 8px 8px;
-		}
-		.dataviews-view-table tr td:last-child {
-			padding: 8px 8px 8px 0;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
@@ -185,10 +182,6 @@
 		.sites-dataviews__favorite-btn-wrapper,
 		.sites-overview__boost-score {
 			display: none;
-		}
-
-		tr td:last-child {
-			padding-inline-end: 8px;
 		}
 
 		.item-preview__content {
