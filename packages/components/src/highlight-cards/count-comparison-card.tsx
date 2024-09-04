@@ -31,7 +31,7 @@ export function TrendComparison( { count, previousCount }: TrendComparisonProps 
 		return null;
 	}
 
-	return (
+	return Math.abs( difference ) === 0 ? null : (
 		<span
 			className={ clsx( 'highlight-card-difference', {
 				'highlight-card-difference--positive': difference < 0,
@@ -79,10 +79,6 @@ export default function CountComparisonCard( {
 }: CountComparisonCardProps ) {
 	const textRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
-
-	const difference = subtract( count, previousCount ) as number;
-	const shouldShowTooltip = showValueTooltip && Math.abs( difference ) > 0;
-
 	return (
 		<Card className="highlight-card" compact={ compact }>
 			{ icon && <div className="highlight-card-icon">{ icon }</div> }
@@ -98,7 +94,7 @@ export default function CountComparisonCard( {
 					{ formatNumber( count ) }
 				</span>{ ' ' }
 				<TrendComparison count={ count } previousCount={ previousCount } />
-				{ shouldShowTooltip && (
+				{ showValueTooltip && (
 					<Popover
 						className="tooltip tooltip--darker highlight-card-tooltip"
 						isVisible={ isTooltipVisible }
