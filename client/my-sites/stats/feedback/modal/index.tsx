@@ -118,7 +118,9 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 				/>
 				<div className="stats-feedback-modal__button">
 					{ ! isCheckingAbilityToSubmitFeedback && ! isAbleToSubmitFeedback && (
-						<small>{ translate( 'You may submit additional feedback 24 hours later.' ) }</small>
+						<strong>
+							<em>{ translate( 'You may submit additional feedback 24 hours later.' ) }</em>
+						</strong>
 					) }
 					<StatsButton
 						primary
