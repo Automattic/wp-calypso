@@ -15,6 +15,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isValidUrl } from 'calypso/lib/importer/url-validation';
@@ -42,9 +43,12 @@ const mapApiError = ( error: any ) => {
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
 	const translate = useTranslate();
 	const { hasTranslation } = useI18n();
+	const locale = useFlowLocale();
 
 	const [ passwordHidden, setPasswordHidden ] = useState( true );
-	const [ showNotes, setShowNotes ] = useState( ! hasTranslation( 'Special instructions' ) );
+	const [ showNotes, setShowNotes ] = useState(
+		! ( locale === 'en' || hasTranslation( 'Special instructions' ) )
+	);
 
 	const toggleVisibilityClasses = clsx( {
 		'site-migration-credentials__form-password__toggle': true,
@@ -259,7 +263,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 											type="text"
 											isError={ !! errors.username }
 											placeholder={
-												hasTranslation( 'Enter your Admin username' )
+												locale === 'en' || hasTranslation( 'Enter your Admin username' )
 													? translate( 'Enter your Admin username' )
 													: translate( 'Username' )
 											}
@@ -295,7 +299,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 												type={ passwordHidden ? 'password' : 'text' }
 												isError={ !! errors.password }
 												placeholder={
-													hasTranslation( 'Enter your Admin password' )
+													locale === 'en' || hasTranslation( 'Enter your Admin password' )
 														? translate( 'Enter your Admin password' )
 														: translate( 'Password' )
 												}
@@ -359,7 +363,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 				) }
 
 				<div className="site-migration-credentials__special-instructions">
-					{ hasTranslation( 'Special instructions' ) && (
+					{ ( locale === 'en' || hasTranslation( 'Special instructions' ) ) && (
 						<Button onClick={ () => setShowNotes( ! showNotes ) }>
 							{ translate( 'Special instructions' ) }
 							<Icon
@@ -395,9 +399,10 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 									{ errors.notes.message }
 								</div>
 							) }
-							{ hasTranslation(
-								"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
-							) && (
+							{ ( locale === 'en' ||
+								hasTranslation(
+									"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
+								) ) && (
 								<div className="site-migration-credentials__form-note">
 									{ translate(
 										"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
