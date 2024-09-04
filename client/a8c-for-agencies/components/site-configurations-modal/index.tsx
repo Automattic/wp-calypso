@@ -259,7 +259,7 @@ export default function SiteConfigurationsModal( {
 									onChange={ toggleAllowClientsToUseSiteHelpCenter }
 									checked={ allowClientsToUseSiteHelpCenter }
 									name="is_fully_managed_agency_site"
-									disabled={ isDevSite || isSubmitting }
+									disabled={ isSubmitting }
 								/>
 								<label htmlFor="configure-your-site-modal-form__allow-clients-to-use-help-center-checkbox">
 									{ translate(
