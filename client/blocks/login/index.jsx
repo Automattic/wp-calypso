@@ -303,6 +303,9 @@ class Login extends Component {
 						event.preventDefault();
 						this.props.redirectToLogout( signupUrl );
 					}
+
+					event.preventDefault();
+					window.location.href = signupUrl;
 				} }
 			/>
 		);
