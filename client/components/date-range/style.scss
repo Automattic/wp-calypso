@@ -278,11 +278,6 @@
 	padding: 16px;
 	border-left: 1px solid var(--gray-gray-5, #dcdcde);
 	box-sizing: border-box;
-
-	@media (max-width: $date-control-mobile-layout-switch) {
-		border-left: 0 none;
-		border-bottom: 1px solid var(--gray-gray-5, #dcdcde);
-	}
 }
 
 .date-control-picker-shortcuts__list {
