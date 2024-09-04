@@ -416,9 +416,6 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 					) }
 				</div>
 
-				{ errors?.notes && (
-					<div className="site-migration-credentials__form-error">{ errors.notes.message }</div>
-				) }
 				{ errors?.root && (
 					<div className="site-migration-credentials__form-error">{ errors.root.message }</div>
 				) }

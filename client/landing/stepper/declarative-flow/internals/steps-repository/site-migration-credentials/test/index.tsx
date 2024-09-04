@@ -110,6 +110,9 @@ describe( 'SiteMigrationCredentials', () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 
+			const expandNotesButton = screen.getByTestId( 'special-instructions' );
+			await userEvent.click( expandNotesButton );
+
 			const addressInput = screen.getByLabelText( /Site address/ );
 			const usernameInput = screen.getByLabelText( /WordPress admin username/ );
 			const passwordInput = screen.getByLabelText( /Password/ );
