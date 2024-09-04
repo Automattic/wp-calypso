@@ -1,7 +1,5 @@
-import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-import './style.scss';
+import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
 
 type Props = {
 	siteName: string;
@@ -16,30 +14,14 @@ export function SiteRemoveConfirmationDialog( { siteName, onConfirm, onClose, bu
 	const title = translate( 'Remove site' );
 
 	return (
-		<Dialog
-			label={ title }
-			isVisible
-			additionalClassNames="site-remove-confirmation-dialog"
+		<A4AConfirmationDialog
+			title={ title }
 			onClose={ onClose }
-			buttons={ [
-				<Button key="cancel-button" onClick={ onClose } disabled={ busy }>
-					{ translate( 'Cancel' ) }
-				</Button>,
-
-				<Button
-					key="remove-site-button"
-					primary
-					scary
-					disabled={ busy }
-					busy={ busy }
-					onClick={ onConfirm }
-				>
-					{ translate( 'Remove site' ) }
-				</Button>,
-			] }
+			onConfirm={ onConfirm }
+			ctaLabel={ translate( 'Remove site' ) }
+			busy={ busy }
+			scary
 		>
-			<h2 className="site-remove-confirmation-dialog__heading">{ title }</h2>
-
 			{ translate(
 				'Are you sure you want to remove the site {{b}}%(siteName)s{{/b}} from the dashboard?',
 				{
@@ -50,6 +32,6 @@ export function SiteRemoveConfirmationDialog( { siteName, onConfirm, onClose, bu
 					comment: '%(siteName)s is the site name',
 				}
 			) }
-		</Dialog>
+		</A4AConfirmationDialog>
 	);
 }
