@@ -133,7 +133,6 @@ function StagingSiteProductionCard( { disabled, siteId, translate, isBorderless 
 				</p>
 				<ActionButtons>
 					<Button
-						primary
 						onClick={ () => {
 							navigate(
 								`/overview/${ urlToSlug( productionSite.url ) }?search=${ urlToSlug(
