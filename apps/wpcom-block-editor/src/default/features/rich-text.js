@@ -1,5 +1,10 @@
 /* global wpcomGutenberg */
-import { RichTextToolbarButton } from '@wordpress/block-editor';
+import {
+	RichTextShortcut,
+	RichTextToolbarButton,
+	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+	__unstableRichTextInputEvent,
+} from '@wordpress/block-editor';
 import { compose, ifCondition } from '@wordpress/compose';
 import { withSelect, withDispatch, select, subscribe } from '@wordpress/data';
 import { toggleFormat, registerFormatType, unregisterFormatType } from '@wordpress/rich-text';
@@ -27,12 +32,16 @@ const unsubscribe = subscribe( () => {
 				);
 
 			return (
-				<RichTextToolbarButton
-					icon="editor-underline"
-					title={ settings.title }
-					onClick={ onToggle }
-					isActive={ isActive }
-				/>
+				<>
+					<RichTextShortcut type="primary" character="u" onUse={ onToggle } />
+					<RichTextToolbarButton
+						icon="editor-underline"
+						title={ settings.title }
+						onClick={ onToggle }
+						isActive={ isActive }
+					/>
+					<__unstableRichTextInputEvent inputType="formatUnderline" onInput={ onToggle } />
+				</>
 			);
 		},
 	} );
