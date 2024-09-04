@@ -77,11 +77,11 @@ export const DateColumn = ( { date }: { date?: string } ): ReactNode => {
 export const ActionColumn = ( {
 	member,
 	onMenuSelected,
-	asOwner = true,
+	canRemove = true,
 }: {
 	member: TeamMember;
 	onMenuSelected?: ( action: string ) => void;
-	asOwner?: boolean;
+	canRemove?: boolean;
 } ): ReactNode => {
 	const translate = useTranslate();
 
@@ -115,13 +115,13 @@ export const ActionColumn = ( {
 					{
 						name: 'password-reset',
 						label: translate( 'Send password reset' ),
-						isEnabled: true,
+						isEnabled: false, // FIXME: Implement this action
 					},
 					{
 						name: 'delete-user',
 						label: translate( 'Delete user' ),
 						className: 'is-danger',
-						isEnabled: asOwner,
+						isEnabled: canRemove,
 					},
 			  ];
 

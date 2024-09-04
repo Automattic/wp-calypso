@@ -7,13 +7,12 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 24px;
+	gap: 10px;
 	justify-content: space-between;
 	width: 100%;
-
-	& > * {
-		margin: 24px;
-	}
+	box-sizing: border-box;
+	flex-wrap: wrap;
+	padding: 24px;
 `;
 
 const Heading = styled.div`
@@ -34,21 +33,21 @@ const BlueberryButton = styled( Button )`
 	}
 `;
 
-export const NewsletterBanner = () => {
+export const NewsletterBanner = ( { link }: { link: string } ) => {
 	const translate = useTranslate();
 
 	return (
 		<Container>
 			<div>
-				<Heading>{ translate( 'Sign up for weekly performance reports—it’s free!' ) }</Heading>
+				<Heading>{ translate( "Sign up for weekly performance reports—it's free!" ) }</Heading>
 				<Body>
 					{ translate(
-						'Monitor your site’s key performance metrics with a free report delivered to your inbox each week.'
+						"Monitor your site's key performance metrics with a free report delivered to your inbox each week."
 					) }
 				</Body>
 				<Body>{ translate( 'All you need is a free WordPress.com account to get started.' ) }</Body>
 			</div>
-			<BlueberryButton variant="primary">
+			<BlueberryButton variant="primary" href={ link }>
 				{ translate( 'Sign up for email reports' ) }
 			</BlueberryButton>
 		</Container>

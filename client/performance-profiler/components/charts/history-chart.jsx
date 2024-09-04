@@ -141,8 +141,8 @@ const showTooltip = ( tooltip, data, ev = null ) => {
 	tooltip.style( 'opacity', 1 );
 	tooltip
 		.html( data )
-		.style( 'left', event.pageX - 28 + 'px' )
-		.style( 'top', event.pageY - 50 + 'px' );
+		.style( 'left', event.layerX - 28 + 'px' )
+		.style( 'top', event.layerY - 50 + 'px' );
 };
 
 // Hide tooltip on mouse out

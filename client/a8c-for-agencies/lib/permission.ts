@@ -37,6 +37,8 @@ import {
 	A4A_PAYMENT_METHODS_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
 	A4A_MIGRATIONS_LINK,
+	A4A_TEAM_LINK,
+	A4A_TEAM_INVITE_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -79,6 +81,18 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_PAYMENT_METHODS_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_PAYMENT_METHODS_ADD_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_MIGRATIONS_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_TEAM_LINK ]: [ 'a4a_read_users' ],
+	[ A4A_TEAM_INVITE_LINK ]: [ 'a4a_edit_user_invites' ],
+};
+
+const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
+	'sites-overview': [ 'a4a_read_managed_sites' ],
+	marketplace: [ 'a4a_read_marketplace' ],
+};
+
+const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
+	'sites-overview': /^\/sites\/overview\/[^/]+(\/.*)?$/,
+	marketplace: /^\/marketplace\/[^/]+\/[^/]+(\/.*)?$/,
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
@@ -103,8 +117,20 @@ export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 	const capabilities = agency?.user?.capabilities;
 	if ( capabilities ) {
 		const permissions = MEMBER_ACCESSIBLE_PATHS?.[ pathname ];
-		return permissions
-			? capabilities.some( ( capability: string ) => permissions.includes( capability ) )
-			: false;
+		if ( permissions ) {
+			return capabilities.some( ( capability: string ) => permissions?.includes( capability ) );
+		}
+
+		// Check dynamic path patterns
+		for ( const [ key, pattern ] of Object.entries( DYNAMIC_PATH_PATTERNS ) ) {
+			if ( pattern.test( pathname ) ) {
+				const dynamicPermissions = MEMBER_ACCESSIBLE_DYNAMIC_PATHS[ key ];
+				return capabilities.some(
+					( capability: string ) => dynamicPermissions?.includes( capability )
+				);
+			}
+		}
 	}
+
+	return false;
 };
