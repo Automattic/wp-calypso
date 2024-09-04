@@ -249,6 +249,20 @@
 	.layout__secondary .global-sidebar {
 		border: none;
 	}
+
+	// Custom style for toggle and page number controls.
+	.item-preview__content {
+		.pagination__page-number.pagination__list-item.is-selected button,
+		.segmented-control__item.is-selected a:hover,
+		.segmented-control__item.is-selected a {
+			color: var(--studio-white);
+			background-color: var(--studio-gray-50);
+			border-color: var(--studio-gray-50);
+		}
+		.segmented-control__item.is-selected + .segmented-control__item .segmented-control__link {
+			border-left-color: var(--studio-gray-50);
+		}
+	}
 }
 
 // Styles collapsed site list.
