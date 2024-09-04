@@ -150,7 +150,10 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	},
 	[ FEATURE_GROUP_STORAGE ]: {
 		slug: FEATURE_GROUP_STORAGE,
-		getTitle: () => ( isAssignedToFewerFeaturesExperiment() ? null : i18n.translate( 'Storage' ) ),
+		getTitle: () =>
+			isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
+				? null
+				: i18n.translate( 'Storage' ),
 		getFeatures: () => [], // Intentionally empty for now. We will include a fixed list of feature slugs in a follow-up.
 	},
 	[ FEATURE_GROUP_ESSENTIAL_FEATURES ]: {
@@ -424,16 +427,6 @@ export function resolveFeatureGroupsForFeaturesGrid(): Partial< FeatureGroupMap 
 			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
 			[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
-			[ FEATURE_GROUP_DEVELOPER_TOOLS ]: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ],
-			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],
-		};
-	} else if ( isAssignedToFewerFeaturesExperimentVariant( 'treatment-b' ) ) {
-		return {
-			[ FEATURE_GROUP_DOMAIN ]: featureGroups[ FEATURE_GROUP_DOMAIN ],
-			[ FEATURE_GROUP_ADS ]: featureGroups[ FEATURE_GROUP_ADS ],
-			[ FEATURE_GROUP_THEMES ]: featureGroups[ FEATURE_GROUP_THEMES ],
-			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
-			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
 			[ FEATURE_GROUP_DEVELOPER_TOOLS ]: featureGroups[ FEATURE_GROUP_DEVELOPER_TOOLS ],
 			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],
 		};

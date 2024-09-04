@@ -437,7 +437,7 @@ import {
 	FEATURE_CUSTOMIZE_STYLE,
 	FEATURE_CUSTOM_PLUGINS,
 } from './constants';
-import { isAssignedToFewerFeaturesExperiment } from './experiments';
+import { isAssignedToFewerFeaturesExperimentVariant } from './experiments';
 import {
 	getPlanBusinessTitle,
 	getPlanEcommerceTitle,
@@ -561,7 +561,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_FREE_THEMES_SIGNUP,
 	],
 	get2023PricingGridSignupWpcomFeatures: () => {
-		return isAssignedToFewerFeaturesExperiment()
+		return isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
 			? [ FEATURE_UNLIMITED_ENTITIES ]
 			: [
 					FEATURE_CUSTOM_DOMAIN,
@@ -602,7 +602,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	get2023PricingGridSignupJetpackFeatures: () => {
-		return isAssignedToFewerFeaturesExperiment()
+		return isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
 			? []
 			: [
 					FEATURE_PAID_SUBSCRIBERS_JP,
@@ -791,7 +791,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	],
 	get2023PricingGridSignupWpcomFeatures: () => {
-		return isAssignedToFewerFeaturesExperiment()
+		return isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
 			? [
 					FEATURE_UNLIMITED_ENTITIES,
 					FEATURE_CUSTOM_DOMAIN,
@@ -967,7 +967,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			PREMIUM_DESIGN_FOR_STORES,
 		].filter( isValueTruthy ),
 	get2023PricingGridSignupWpcomFeatures: () => {
-		return isAssignedToFewerFeaturesExperiment()
+		return isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
 			? [
 					FEATURE_UNLIMITED_ENTITIES,
 					FEATURE_CUSTOM_DOMAIN,
@@ -1342,7 +1342,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
 	get2023PricingGridSignupWpcomFeatures: () => {
-		return isAssignedToFewerFeaturesExperiment()
+		return isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
 			? [
 					FEATURE_UNLIMITED_ENTITIES,
 					FEATURE_CUSTOM_DOMAIN,
@@ -1376,7 +1376,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_ACTIVITY_LOG_JP,
 	],
 	get2023PricingGridSignupJetpackFeatures: () =>
-		isAssignedToFewerFeaturesExperiment()
+		isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
 			? []
 			: [
 					FEATURE_VIDEOPRESS_JP,
@@ -1510,7 +1510,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SFTP_DATABASE,
 		].filter( isValueTruthy ),
 	get2023PricingGridSignupWpcomFeatures: () =>
-		isAssignedToFewerFeaturesExperiment()
+		isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
 			? [
 					FEATURE_UNLIMITED_ENTITIES,
 					FEATURE_CUSTOM_DOMAIN,
@@ -1596,7 +1596,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_STAGING_SITES,
 	],
 	get2023PricingGridSignupJetpackFeatures: () =>
-		isAssignedToFewerFeaturesExperiment()
+		isAssignedToFewerFeaturesExperimentVariant( 'treatment-a' )
 			? []
 			: [
 					FEATURE_REALTIME_BACKUPS_JP,
