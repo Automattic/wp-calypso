@@ -1003,7 +1003,6 @@ class Login extends Component {
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst }
-				loginButtons={ loginButtons }
 				loginButtonText={
 					this.props.initialQuery?.lostpassword_flow === 'true' ? translate( 'Log in' ) : null
 				}
